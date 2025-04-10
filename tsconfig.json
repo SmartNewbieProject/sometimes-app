@@ -2,16 +2,46 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "types": [
+      "react-native"
+    ],
     "paths": {
       "@/*": [
-        "./*"
-      ]
+        "./*",
+      ],
+      "@features/*": [
+        "./src/features/*"
+      ],
+      "@hooks/*": [
+        "./src/shared/hooks/*"
+      ],
+      "@utils/*": [
+        "./src/shared/utils/*"
+      ],
+      "@constants/*": [
+        "./src/shared/constants/*"
+      ],
+      "@ui/*": [
+        "./src/shared/ui/*"
+      ],
+      "@entities/*": [
+        "./src/entities/*"
+      ],
+      "@widgets/*": [
+        "./src/widgets/*"
+      ],
+      "@shared/*": [
+        "./src/shared/*"
+      ],
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
   ]
 }
