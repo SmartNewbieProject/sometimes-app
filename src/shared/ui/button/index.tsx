@@ -3,7 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { cva, VariantProps } from 'class-variance-authority';
 
 const buttonStyles = cva(
-  'rounded-[20] w-fit text-white py-2 px-6 transition-all duration-200', 
+  'rounded-[20] flex items-center justify-center w-fit h-[50] text-white py-2 px-6 transition-all duration-200', 
   {
     variants: {
       variant: {
