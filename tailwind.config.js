@@ -12,7 +12,10 @@ module.exports = {
     extend: {
       colors: {
         ...appColors,
-      }
+      },
+      fontSize: {
+        md: '20px',
+      },
     },
   },
   plugins: [],

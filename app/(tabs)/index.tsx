@@ -5,6 +5,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import colors from '@/src/shared/constants/colors';
+import { Button } from '@shared/ui/button';
 
 export default function HomeScreen() {
   return (
@@ -21,6 +22,12 @@ export default function HomeScreen() {
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
+        <Button variant="primary" onPress={() => {}}>
+          안녕하세요
+        </Button>
+        <Button variant="secondary" onPress={() => {}}>
+          안녕하세요
+        </Button>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
           Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
