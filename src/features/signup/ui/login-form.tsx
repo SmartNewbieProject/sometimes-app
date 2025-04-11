@@ -18,6 +18,7 @@ export default function LoginForm() {
         <Text className="text-[18px] font-semibold text-primaryPurple">비밀번호</Text>
         <Input
           placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
+          isPassword
         />
       </View>
 
