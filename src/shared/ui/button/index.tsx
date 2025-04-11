@@ -1,6 +1,8 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { cva, VariantProps } from 'class-variance-authority';
+import { Text } from '../text';
+import { cn } from '../../libs/cn';
 
 const buttonStyles = cva(
   'rounded-[20] flex items-center justify-center w-fit h-[50] text-white py-2 px-6 transition-all duration-200', 
@@ -33,17 +35,27 @@ const buttonStyles = cva(
 type ButtonProps = VariantProps<typeof buttonStyles> & {
   children?: React.ReactNode;
   onPress: () => void;
+  className?: string;
 };
 
-export const Button: React.FC<ButtonProps> = ({ onPress, variant, disabled = false, children }) => {
+export const Button: React.FC<ButtonProps> = ({ 
+  onPress, 
+  variant, 
+  disabled = false, 
+  children, 
+  textColor = 'white',
+  className = '' 
+}) => {
   return (
     <TouchableOpacity
-      className={buttonStyles({ variant, disabled })}
+      className={cn(buttonStyles({ variant, disabled }), className)}
       onPress={onPress}
       disabled={!!disabled}
       activeOpacity={1}
     >
-      {children}
+      <Text textColor={textColor} size="md" weight="medium">
+        {children}        
+      </Text>
     </TouchableOpacity>
   );
 };
