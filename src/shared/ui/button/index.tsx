@@ -46,11 +46,15 @@ export const Button: React.FC<ButtonProps> = ({
   textColor = 'white',
   className = '' 
 }) => {
+  const press = () => {
+    if (disabled) return;
+    onPress();
+  };
+
   return (
     <TouchableOpacity
       className={cn(buttonStyles({ variant, disabled }), className)}
-      onPress={onPress}
-      disabled={!!disabled}
+      onPress={press}
       activeOpacity={1}
     >
       <Text textColor={textColor} size="md" weight="semibold">

@@ -6,7 +6,7 @@ import { Divider, Button, Check } from '@/src/shared/ui';
 import { CheckboxLabel } from '@/src/widgets';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { debounce } from '@shared/libs/debounce';
+import { debounce } from '@/src/shared/libs/debounce';
 
 export default function TermsScreen() {
   const [agreements, setAgreements] = useState<Agreement[]>(AGREEMENTS);
@@ -17,16 +17,18 @@ export default function TermsScreen() {
     .filter(agreement => agreement.required)
     .every(agreement => agreement.checked);
 
-  const handleAgreement = (id: string, value: boolean) => {
+  const handleAgreement = debounce((id: string, value: boolean) => {
     setAgreements(prev => prev.map(agreement => agreement.id === id ? { ...agreement, checked: value } : agreement));
-  };
+  }, 100);
 
   const handleAllAgreement = debounce(() => {
-    if (allAgreement) {
-      setAgreements(prev => prev.map(agreement => ({ ...agreement, checked: false })));
-    } else {
-      setAgreements(prev => prev.map(agreement => ({ ...agreement, checked: true })));
-    }
+    const newValue = !allAgreement;
+    setAgreements(prev => 
+      prev.map(agreement => ({ 
+        ...agreement, 
+        checked: newValue 
+      }))
+    );
   }, 100);
 
   return (
@@ -49,7 +51,10 @@ export default function TermsScreen() {
             delayPressIn={0}
           >
             <View className="flex flex-row gap-x-[10px] mt-[16px] mb-[10px]">
-              <Check.Box checked={allAgreement} onChange={handleAllAgreement} />
+              <Check.Box 
+                checked={allAgreement} 
+                onChange={handleAllAgreement}
+              />
               <Text weight="semibold" size="20" textColor="black">
                 모두 동의합니다.
               </Text>
