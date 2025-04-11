@@ -20,7 +20,7 @@ export const PalePurpleGradient = () => {
 
   return (
     <LinearGradient
-    colors={['#FFFFFF', '#E6DAFF']}
+    colors={['#FFFFFF', '#EAE0FF']}
     style={StyleSheet.create({
       gradient: {
         direction: 'inherit',
