@@ -22,7 +22,7 @@ export default function LoginScreen() {
       <View className="flex-1 px-5 pt-10">
         {/* 로고 섹션 */}
         <View className="flex flex-col items-center gap-y-2">
-          <IconWrapper size={128} className="text-primaryPurple">
+          <IconWrapper width={128} className="text-primaryPurple pb-[24px] md:pb-[58px]">
             <SmallTitle />
           </IconWrapper>
           <View className="bg-primaryPurple rounded-full p-4">
@@ -47,7 +47,7 @@ export default function LoginScreen() {
           </View>
 
           {/* 비밀번호 입력 */}
-          <View className="space-y-2">
+          <View>
             <Text className="text-[18px] font-semibold text-primaryPurple">비밀번호</Text>
             <Input
               placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
@@ -63,7 +63,7 @@ export default function LoginScreen() {
         </View>
 
         {/* 버튼 섹션 */}
-        <View className="mt-auto flex flex-col gap-y-2 mb-[58px]">
+        <View className="mt-auto flex flex-col gap-y-2 mb-[58px] pt-[58px]">
           <Button 
             size="md"
             variant="primary" 
