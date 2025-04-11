@@ -12,19 +12,24 @@ const textStyles = cva('text-base', {
     size: {
       sm: 'text-sm',
       md: 'text-md',
+      '20': 'text-[20px]',
+      '13': 'text-[13px]',
       lg: 'text-lg',
     },
     weight: {
       normal: 'font-normal',
       medium: 'font-medium',
       semibold: 'font-semibold',
+      light: 'font-light',
       bold: 'font-bold',
     },
     textColor: {
       white: 'text-white',
       purple: 'text-primaryPurple',
       dark: 'text-darkPurple',
+      black: 'text-black',
       light: 'text-lightPurple',
+      'pale-purple': 'text-[#9B94AB]',
     },
   },
   defaultVariants: {

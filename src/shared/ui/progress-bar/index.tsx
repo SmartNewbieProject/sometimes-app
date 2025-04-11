@@ -6,10 +6,11 @@ export const ProgressBar = ({ progress }: { progress: number }) => {
     <Bar
       progress={progress}
       color={colors.primaryPurple}
-      unfilledColor={colors.lightPurple}
-      borderColor={colors.primaryPurple}
-      borderWidth={1}
-      height={10}
+      unfilledColor="#F3EDFF"
+      borderWidth={0}
+      borderRadius={100}
+      width={330}
+      height={12}
     />
   );
 };

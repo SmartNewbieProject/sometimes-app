@@ -3,7 +3,6 @@ import { Platform } from 'react-native';
 
 
 export default function TabLayout() {
-
   return (
     <Tabs
       screenOptions={{
