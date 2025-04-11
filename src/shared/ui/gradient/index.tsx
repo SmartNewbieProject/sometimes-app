@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Platform } from 'react-native';
 
 export const PalePurpleGradient = () => {
+
   if (Platform.OS === 'web') {
     return (
       <LinearGradient
