@@ -9,14 +9,19 @@ import 'react-native-reanimated';
 import '../global.css';
 
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
+import { cn } from '@/src/shared/libs/cn';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'Pretendard-Thin': require('../assets/fonts/Pretendard-Thin.ttf'),
+    'Pretendard-ExtraLight': require('../assets/fonts/Pretendard-ExtraLight.ttf'),
+    'Pretendard-SemiBold': require('../assets/fonts/Pretendard-SemiBold.ttf'),
+    'Pretendard-ExtraBold': require('../assets/fonts/Pretendard-ExtraBold.ttf'),
+    'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.ttf'),
+    'Pretendard-Black': require('../assets/fonts/Pretendard-Black.ttf'),
   });
 
   useEffect(() => {
@@ -30,17 +35,16 @@ export default function RootLayout() {
   }
 
   return (
-    <View style={{ 
-      flex: 1, 
-      ...(Platform.OS === 'web' ? {
-        maxWidth: 468,
-        width: '100%',
-        alignSelf: 'center'
-      } : {})
-    }}>
+    <View 
+      className={cn(
+        'flex-1 font-extralight',
+        Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
+      )}
+    >
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />

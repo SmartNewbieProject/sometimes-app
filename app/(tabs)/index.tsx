@@ -1,83 +1,73 @@
-import { Image, StyleSheet, Platform, Text } from 'react-native';
+import { View, TextInput } from 'react-native';
+import { Text } from '@/src/shared/ui/text';
+import { Button } from '@/src/shared/ui/button';
+import { IconWrapper } from '@/src/shared/ui/icons';
+import SmallTitle from '@/assets/icons/paper-plane.svg'
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import colors from '@/src/shared/constants/colors';
-import { Button } from '@shared/ui/button';
-
-export default function HomeScreen() {
+export default function LoginScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Button variant="primary" onPress={() => {}}>
-          안녕하세요
+    <View className="flex-1 purple-gradient-bg px-5 pt-10">
+      {/* 로고 섹션 */}
+      <View className="items-center space-y-2 mb-10">
+        <Text className="text-2xl font-bold text-primaryPurple">SOMETIME</Text>
+        <View className="bg-primaryPurple rounded-full p-4">
+          <IconWrapper size={128} className="text-white">
+            <SmallTitle />
+          </IconWrapper>
+        </View>
+        <View className="items-center space-y-1">
+          <Text className="text-xl font-bold">익숙한 하루에 설렘 하나,</Text>
+          <Text className="text-lg text-gray">SOMETIME에서</Text>
+        </View>
+      </View>
+
+      {/* 입력 폼 섹션 */}
+      <View className="space-y-6">
+        {/* 이메일 입력 */}
+        <View className="space-y-2">
+          <Text className="text-lg text-primaryPurple">이메일</Text>
+          <TextInput
+            className="w-full h-12 px-4 rounded-xl bg-white border border-lightPurple"
+            placeholder="이메일 주소"
+            placeholderTextColor="#9CA3AF"
+          />
+        </View>
+
+        {/* 비밀번호 입력 */}
+        <View className="space-y-2">
+          <Text className="text-lg text-primaryPurple">비밀번호</Text>
+          <TextInput
+            className="w-full h-12 px-4 rounded-xl bg-white border border-lightPurple"
+            placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
+            placeholderTextColor="#9CA3AF"
+            secureTextEntry
+          />
+        </View>
+
+        {/* 아이디/비밀번호 찾기 */}
+        <View className="flex-row justify-center space-x-4">
+          <Text className="text-gray">아이디 찾기</Text>
+          <Text className="text-gray">비밀번호 찾기</Text>
+        </View>
+      </View>
+
+      {/* 버튼 섹션 */}
+      <View className="mt-auto space-y-3 mb-8">
+        <Button 
+          variant="primary" 
+          onPress={() => {}}
+          className="w-full"
+        >
+          로그인
         </Button>
-        <Button variant="secondary" onPress={() => {}}>
-          안녕하세요
+        <Button 
+          variant="secondary" 
+          onPress={() => {}}
+          className="w-full"
+        >
+          회원가입
         </Button>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-          <Text style={{ color: colors.primaryPurple }}>미직가이</Text>
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

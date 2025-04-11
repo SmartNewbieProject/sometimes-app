@@ -13,7 +13,7 @@ const buttonStyles = cva(
         secondary: 'bg-lightPurple text-primaryPurple hover:bg-darkPurple/20 active:bg-darkPurple/40',
       },
       size: {
-        md: 'text-md',
+        md: 'text-md h-[50px]',
       },
       disabled: {
         true: 'opacity-50',
@@ -53,7 +53,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={!!disabled}
       activeOpacity={1}
     >
-      <Text textColor={textColor} size="md" weight="medium">
+      <Text textColor={textColor} size="md" weight="semibold">
         {children}        
       </Text>
     </TouchableOpacity>

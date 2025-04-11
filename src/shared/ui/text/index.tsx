@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as RNText } from 'react-native';
+import { Text as RNText, TextStyle } from 'react-native';
 import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '../../libs/cn';
 
@@ -17,6 +17,7 @@ const textStyles = cva('text-base', {
     weight: {
       normal: 'font-normal',
       medium: 'font-medium',
+      semibold: 'font-semibold',
       bold: 'font-bold',
     },
     textColor: {
@@ -37,6 +38,7 @@ const textStyles = cva('text-base', {
 export type TextProps = VariantProps<typeof textStyles> & {
   children: React.ReactNode;
   className?: string;
+  style?: TextStyle;
 };
 
 export const Text: React.FC<TextProps> = ({ 
@@ -45,10 +47,11 @@ export const Text: React.FC<TextProps> = ({
   weight, 
   textColor, 
   className = '', 
+  style,
   children 
 }) => {
   return (
-    <RNText className={cn(textStyles({ variant, size, weight, textColor }), className)}>
+    <RNText className={cn(textStyles({ variant, size, weight, textColor }), className)} style={style}>
       {children}
     </RNText>
   );

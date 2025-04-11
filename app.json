@@ -36,6 +36,32 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "fonts": [
+      {
+        "asset": "assets/fonts/Pretendard-Thin.ttf",
+        "family": "Pretendard-Thin"
+      },
+      {
+        "asset": "assets/fonts/Pretendard-ExtraLight.ttf",
+        "family": "Pretendard-ExtraLight"
+      },
+      {
+        "asset": "assets/fonts/Pretendard-SemiBold.ttf",
+        "family": "Pretendard-SemiBold"
+      },
+      {
+        "asset": "assets/fonts/Pretendard-ExtraBold.ttf",
+        "family": "Pretendard-ExtraBold"
+      },
+      {
+        "asset": "assets/fonts/Pretendard-Bold.ttf",
+        "family": "Pretendard-Bold"
+      },
+      {
+        "asset": "assets/fonts/Pretendard-Black.ttf",
+        "family": "Pretendard-Black"
+      }
+    ]
   }
 }
