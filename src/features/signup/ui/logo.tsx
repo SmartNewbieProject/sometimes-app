@@ -3,6 +3,8 @@ import { View, StyleSheet } from "react-native";
 import LogoIcon from '@/assets/icons/paper-plane.svg';
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { Text } from "@/src/shared/ui";
+import { cn } from "@/src/shared/libs/cn";
+import { platform } from "@/src/shared/libs/platform";
 
 const styles = StyleSheet.create({
   shadowText: {
@@ -14,7 +16,14 @@ const styles = StyleSheet.create({
 
 export default function Logo() {
   return (
-    <View className="flex flex-col items-center gap-y-2">
+    <View className={cn(
+      "flex flex-col items-center gap-y-2",
+      platform({
+        ios: () => "pt-[80px]",
+        android: () => "pt-[80px]",
+        web: () => "pt-[30px]",
+      })
+    )}>
     <IconWrapper width={128} className="text-primaryPurple pb-[24px] md:pb-[58px]">
       <SmallTitle />
     </IconWrapper>

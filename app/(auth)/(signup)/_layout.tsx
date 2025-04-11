@@ -13,7 +13,7 @@ export default function SignupLayout() {
     <View className="flex-1">
         <PalePurpleGradient />
         <View className={cn(
-          "px-5 pb-[30px] items-center",
+          "px-5 pb-[30px] items-center bg-white",
           platform({
             ios: () => "pt-[80px]",
             android: () => "pt-[80px]",
