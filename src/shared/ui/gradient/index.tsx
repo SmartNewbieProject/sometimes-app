@@ -1,10 +1,26 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export const PalePurpleGradient = () => {
+  if (Platform.OS === 'web') {
+    return (
+      <LinearGradient
+      colors={['#FFFFFF', '#F8F5FF']}
+      style={StyleSheet.create({
+        gradient: {
+          direction: 'inherit',
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+        }
+      }).gradient}
+    />
+    );
+  }
+
   return (
     <LinearGradient
-    colors={['#FFFFFF', '#F5F1FF']}
+    colors={['#FFFFFF', '#E6DAFF']}
     style={StyleSheet.create({
       gradient: {
         direction: 'inherit',
