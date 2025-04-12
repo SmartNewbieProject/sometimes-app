@@ -13,7 +13,7 @@ export default function Logo() {
       platform({
         ios: () => "pt-[80px]",
         android: () => "pt-[80px]",
-        web: () => "pt-[30px]",
+        web: () => "pt-2 md:pt-[14px]",
       })
     )}>
     <IconWrapper width={128} className="text-primaryPurple pb-[24px] md:pb-[58px]">
