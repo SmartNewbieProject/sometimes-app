@@ -11,27 +11,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import { z } from 'zod';
+import { useState } from 'react';
 
-const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
-
-type Gender = 'male' | 'female';
+const { SignupSteps, useChangePhase, useSignupProgress } = Signup;
 
 type Form = {
-  name: string;
-  birthday: string;
-  gender: Gender;
-  mbti: string;
+  images: string[];
 }
 
 const schema = z.object({
-  name: z.string({ required_error: '이름을 입력해주세요' }).min(1, { message: '이름을 입력해주세요' }),
-  birthday: z.string({ required_error: '생년월일을 입력해주세요' }).min(6, { message: '생년월일 6자리' }),
-  gender: z.enum(['male', 'female'] as const, { required_error: '성별을 선택해주세요' }),
-  mbti: z.string({ required_error: 'MBTI를 선택해주세요' }).min(4, { message: 'MBTI를 선택해주세요' }),
+  images: z.array(z.string()).min(3, { message: '3장의 사진을 올려주세요' }),
 });
 
 export default function ProfilePage() {
   const { updateForm, form: userForm } = useSignupProgress();
+  const [images, setImages] = useState<(string | null)[]>([null, null, null]);
 
   const form = useForm<Form>({
     resolver: zodResolver(schema),
@@ -39,30 +33,23 @@ export default function ProfilePage() {
   });
 
   const { handleSubmit, formState: { isValid, errors } } = form;
-  const mbti = form.watch('mbti');
-  const gender = form.watch('gender');
-
-  console.log({ gender });
 
   const onNext = handleSubmit((data) => {
     updateForm({
       ...userForm,
-      name: data.name,
-      birthday: data.birthday,
-      gender: data.gender,
-      mbti: data.mbti,
+      profileImages: images as string[],
     });
   });
 
-  const nextable = (() => {
-    return isValid;
-  })();
+  const nextable = images.every((image) => image !== null);
 
   const nextButtonMessage = (() => {
-    if (!isValid) return '조금만 더 알려주세요';
-    if (!mbti) return 'MBTI를 선택해주세요';
+    if (!nextable) return '조금만 더 알려주세요';
     return '다음으로';
   })();
+
+  const uploadImage = (index: number, value: string) =>
+    setImages([...images.slice(0, index), value, ...images.slice(index + 1)]);
 
   useChangePhase(SignupSteps.PROFILE_IMAGE);
 
@@ -72,14 +59,9 @@ export default function ProfilePage() {
       <View className="px-5">
         <Image  
           source={require('@assets/images/personal.png')}
-          style={platform({
-            web: () => ({ width: 96, height: 96 }),
-            ios: () => ({ width: 128, height: 128 }),
-            android: () => ({ width: 128, height: 128 }),
-            default: () => ({ width: 128, height: 128 }),
-          })}
+          style={{ width: 81, height: 81 }}
         />
-          <Text weight="semibold" size="20" textColor="black">
+          <Text weight="semibold" size="20" textColor="black" className="mt-2">
           프로필 사진 없으면 매칭이 안 돼요!
           </Text>
           <Text weight="semibold" size="20" textColor="black">
@@ -87,11 +69,39 @@ export default function ProfilePage() {
           </Text>
       </View>
 
-      <View className="flex-1 flex flex-col">
-        <ImageSelector
-          onChange={(value) => {
-          }}
-        />
+      <View className="flex flex-col py-4 px-5">
+        <Text weight="medium" size="sm" textColor="pale-purple">
+        매칭을 위해 3장의 프로필 사진을 모두 올려주세요
+        </Text>
+        <Text weight="medium" size="sm" textColor="pale-purple">
+        얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+        </Text>
+      </View>
+
+      <View className="flex-1 flex flex-col gap-y-4">
+        <View className="flex w-full justify-center items-center">
+          <ImageSelector 
+            size="sm"
+            onChange={(value) => {
+              uploadImage(0, value);
+            }}
+          />
+        </View>
+
+        <View className="flex flex-row justify-center gap-x-4">
+          <ImageSelector
+            size="sm"
+            onChange={(value) => {
+              uploadImage(1, value);
+            }}
+          />
+          <ImageSelector
+            size="sm"
+            onChange={(value) => {
+              uploadImage(2, value);
+            }}
+          />
+        </View>
       </View>
 
       <View className={cn(
@@ -102,7 +112,7 @@ export default function ProfilePage() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.back()} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)/profile')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

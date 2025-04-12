@@ -7,6 +7,7 @@ type SignupForm = {
   birthday: string;
   gender: 'female' | 'male';
   mbti: string;
+  profileImages: string[];
 }
 
 type StoreProps = {
