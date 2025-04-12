@@ -4,7 +4,7 @@ import { Text } from "@/src/shared/ui";
 import SignupButtons from "./buttons";
 import { Form } from "@/src/widgets";
 import { useForm } from "react-hook-form";
-import axiosClient from "@/src/api/axios";
+import { axiosClient } from "@/src/shared/libs";
 
 type Form = {
   email: string;

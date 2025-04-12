@@ -13,9 +13,9 @@ module.exports = {
         ...appColors,
       },
       fontSize: {
-        sm: '15px',
-        md: '18px',
-        lg: '25px',
+        sm: '13px',
+        md: '16px',
+        lg: '23px',
       },
       fontFamily: {
         thin: ['Pretendard-Thin'],

@@ -2,11 +2,11 @@ import { View } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
 import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { Image } from 'expo-image';
-import { Button, ImageSelector, Label } from '@/src/shared/ui';
+import { Button, ImageSelector } from '@/src/shared/ui';
 import { router } from 'expo-router';
 import Signup from '@/src/features/signup';
 import { Form } from '@/src/widgets';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
@@ -32,14 +32,13 @@ export default function ProfilePage() {
     mode: 'onBlur',
   });
 
-  const { handleSubmit, formState: { isValid, errors } } = form;
-
-  const onNext = handleSubmit((data) => {
+  const onNext = () => {
     updateForm({
       ...userForm,
       profileImages: images as string[],
     });
-  });
+    router.push('/(auth)/(signup)/university');
+  };
 
   const nextable = images.every((image) => image !== null);
 
