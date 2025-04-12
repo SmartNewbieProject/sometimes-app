@@ -7,15 +7,25 @@ import { CheckboxLabel } from '@/src/widgets';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { debounce } from '@/src/shared/libs/debounce';
+import Signup from '@/src/features/signup';
+
+const { useSignupProgress, SignupSteps, useChangePhase } = Signup;
 
 export default function TermsScreen() {
   const [agreements, setAgreements] = useState<Agreement[]>(AGREEMENTS);
-
+  const { updateStep } = useSignupProgress();
   const allAgreement = agreements.every(agreement => agreement.checked);
+  useChangePhase(SignupSteps.TERMS);
 
   const isNext = agreements
     .filter(agreement => agreement.required)
     .every(agreement => agreement.checked);
+
+  const onNext = () => {
+    if (!isNext) return;
+    updateStep(SignupSteps.ACCOUNT);
+    router.push('/(auth)/(signup)/account');
+  }
 
   const handleAgreement = debounce((id: string, value: boolean) => {
     setAgreements(prev => prev.map(agreement => agreement.id === id ? { ...agreement, checked: value } : agreement));
@@ -86,7 +96,7 @@ export default function TermsScreen() {
       </View>
 
       <View className="px-5 mb-[58px] w-full">
-        <Button onPress={() => router.push('/')} className="w-full" disabled={!isNext}>
+        <Button onPress={onNext} className="w-full" disabled={!isNext}>
           동의하고 계속하기 
         </Button>
       </View>

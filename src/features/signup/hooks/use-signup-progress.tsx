@@ -7,7 +7,7 @@ type StoreProps = {
   updateStep: (step: SignupSteps) => void;
 };
 
-enum SignupSteps {
+export enum SignupSteps {
   TERMS = 1,
   ACCOUNT = 2,
   PERSON = 3,

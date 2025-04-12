@@ -6,14 +6,6 @@ import { Text } from "@/src/shared/ui";
 import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
 
-const styles = StyleSheet.create({
-  shadowText: {
-    textShadowColor: '#A9A9A9',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-});
-
 export default function Logo() {
   return (
     <View className={cn(
@@ -34,7 +26,7 @@ export default function Logo() {
     </View>
     <View className="items-center pt-[8px] flex flex-col gap-y-[6px]">
       <Text className="text-[25px] font-semibold text-black">익숙한 하루에 설렘 하나,</Text>
-        <Text className="text-[15px] text-[#4F4F4F]" style={styles.shadowText}>SOMETIME에서</Text>
+        <Text className="text-[15px] text-[#4F4F4F]">SOMETIME에서</Text>
       </View>
     </View>
   );
