@@ -2,8 +2,22 @@ import { View } from 'react-native';
 import { Input, Text } from '@/src/shared/ui';
 import type { InputProps } from '@/src/shared/ui';
 import { cn } from '@shared/libs/cn';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-export interface LabelInputProps extends InputProps {
+const labelInput = cva('space-y-2', {
+  variants: {
+    size: {
+      sm: 'gap-y-1',
+      md: 'gap-y-2',
+      lg: 'gap-y-3',
+    }
+  },
+  defaultVariants: {
+    size: 'md'
+  }
+});
+
+export interface LabelInputProps extends InputProps, VariantProps<typeof labelInput> {
   label: string;
   required?: boolean;
   description?: string;
@@ -22,28 +36,38 @@ export function LabelInput({
   containerClassName,
   placeholder,
   onBlur,
+  size,
   ...props
 }: LabelInputProps) {
   return (
-    <View className={cn("space-y-2", wrapperClassName)}>
+    <View className={cn(labelInput({ size }), wrapperClassName)}>
       <View className="flex-row items-center gap-x-1">
-        <Text size="md" weight="semibold" textColor="purple">
+        <Text 
+          size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'} 
+          weight="semibold" 
+          textColor="purple"
+        >
           {label}
         </Text>
         {required && (
-          <Text size="sm" textColor="purple">
+          <Text size={size === 'lg' ? 'md' : 'sm'} textColor="purple">
             *
           </Text>
         )}
       </View>
       
       {description && (
-        <Text size="sm" textColor="black" className="mb-1">
+        <Text 
+          size={size === 'sm' ? 'xs' : 'sm'} 
+          textColor="black" 
+          className="mb-1"
+        >
           {description}
         </Text>
       )}
 
       <Input
+        size={size}
         containerClassName={cn("mb-1", containerClassName)}
         placeholder={placeholder}
         status={error ? "error" : "default"}
@@ -52,7 +76,7 @@ export function LabelInput({
       />
 
       {error && (
-        <Text size="sm" className="text-rose-400">
+        <Text size={size === 'lg' ? 'md' : 'sm'} className="text-rose-400">
           {error}
         </Text>
       )}

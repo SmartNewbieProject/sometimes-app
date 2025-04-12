@@ -1,5 +1,5 @@
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import LogoIcon from '@/assets/icons/paper-plane.svg';
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { Text } from "@/src/shared/ui";
@@ -20,7 +20,11 @@ export default function Logo() {
       <SmallTitle />
     </IconWrapper>
     <View className="bg-primaryPurple rounded-full p-4 mt-[12px]">
-      <IconWrapper size={128} className="text-white">
+      <IconWrapper size={platform({
+        ios: () => 128,
+        android: () => 128,
+        web: () => 96,
+      })} className="text-white">
         <LogoIcon />
       </IconWrapper>
     </View>

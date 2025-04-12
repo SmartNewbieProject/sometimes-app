@@ -5,7 +5,7 @@ import SignupButtons from "./buttons";
 
 export default function LoginForm() {
   return (
-    <View className="flex flex-col flex-1">
+    <View className="flex flex-col flex-1 h-full">
       <View className="flex flex-col gap-y-[40px] mt-8">
         <View className="flex flex-col gap-y-2">
           <Text className="text-[18px] font-semibold text-primaryPurple">이메일</Text>

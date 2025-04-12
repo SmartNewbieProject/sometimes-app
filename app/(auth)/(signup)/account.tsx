@@ -8,6 +8,8 @@ import Signup from '@/src/features/signup';
 import { Form } from '@/src/widgets';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { cn } from '@/src/shared/libs/cn';
+import { platform } from '@/src/shared/libs/platform';
 
 const { SignupSteps, useChangePhase, schemas } = Signup;
 
@@ -62,15 +64,24 @@ export default function AccountScreen() {
           </Text>
       </View>
 
-      <View className="px-8 flex flex-col gap-y-[40px] flex-1 mt-[30px]">
+      <View className={cn(
+        platform({
+          web: () => "px-8 flex flex-col gap-y-[8px] flex-1 mt-[14px]",
+          ios: () => "px-8 flex flex-col gap-y-[40px] flex-1 mt-[30px]",
+          android: () => "px-8 flex flex-col gap-y-[40px] flex-1 mt-[30px]",
+          default: () => ""
+        })
+      )}>
         <Form.LabelInput 
           name="email"
           control={form.control}
           label="이메일" 
+          size="sm"
           placeholder="이메일 주소"
         />
         <Form.LabelInput 
           name="password"
+          size="sm"
           control={form.control}
           label="비밀번호" 
           placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
@@ -78,6 +89,7 @@ export default function AccountScreen() {
         />
         <Form.LabelInput 
           name="passwordConfirm"
+          size="sm"
           control={form.control}
           label="비밀번호 확인" 
           placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
@@ -85,7 +97,14 @@ export default function AccountScreen() {
         />
       </View>
 
-      <View className="px-5 mb-[58px] w-full flex flex-row gap-x-[15px]">
+      <View className={cn(
+        platform({
+          web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+          android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+          ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+          default: () => ""
+        })
+      )}>
         <Button variant="secondary" onPress={() => router.back()} className="flex-[0.3]">
             뒤로
         </Button>

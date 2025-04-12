@@ -36,7 +36,7 @@ export default function SignupLayout() {
         platform({
           ios: () => "pt-[80px]",
           android: () => "pt-[80px]",
-          web: () => "pt-[30px]",
+          web: () => "pt-[14px] !pb-[8px]",
         })
       )}>
         <ProgressBar progress={progress} />

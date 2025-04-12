@@ -6,9 +6,9 @@ import { cn } from '@shared/libs/cn';
 
 export default function LoginScreen() {
   return (
-    <View className="flex-1">
+    <View className="flex-1 h-full">
       <PalePurpleGradient />
-      <View style={{
+      <View className="h-full" style={{
         ...platform({
           ios: () => ({
             paddingTop: 48,

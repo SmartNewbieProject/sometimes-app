@@ -8,6 +8,8 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { debounce } from '@/src/shared/libs/debounce';
 import Signup from '@/src/features/signup';
+import { cn } from '@/src/shared/libs/cn';
+import { platform } from '@/src/shared/libs/platform';
 
 const { useSignupProgress, SignupSteps, useChangePhase } = Signup;
 
@@ -81,7 +83,14 @@ export default function TermsScreen() {
 
         <Divider.Horizontal />
 
-        <View className="flex flex-col gap-y-[22px] mt-[20px]">
+        <View className={cn(
+          platform({
+            web: () => "flex flex-col gap-y-[14px] mt-[14px]",
+            android: () => "flex flex-col gap-y-[22px] mt-[20px]",
+            ios: () => "flex flex-col gap-y-[22px] mt-[20px]",
+            default: () => ""
+          })
+        )}>
           {agreements.map((agreement) => (
             <CheckboxLabel 
               key={agreement.id} 
@@ -95,7 +104,14 @@ export default function TermsScreen() {
         </View>
       </View>
 
-      <View className="px-5 mb-[58px] w-full flex flex-row gap-x-[15px]">
+      <View className={cn(
+        platform({
+          web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+          android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+          ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+          default: () => ""
+        })
+      )}>
         <Button variant="secondary" onPress={() => router.push('/login')} className="flex-[0.3]">
           뒤로
         </Button>
