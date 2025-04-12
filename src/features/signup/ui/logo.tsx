@@ -16,10 +16,10 @@ export default function Logo() {
         web: () => "",
       })
     )}>
-    <IconWrapper width={128} className="text-primaryPurple pb-[24px] md:pb-[58px]">
+    <IconWrapper width={128} className="text-primaryPurple md:pb-[58px]">
       <SmallTitle />
     </IconWrapper>
-    <View className="bg-primaryPurple rounded-full p-4">
+    <View className="bg-primaryPurple rounded-full p-4 mt-[12px]">
       <IconWrapper size={128} className="text-white">
         <LogoIcon />
       </IconWrapper>

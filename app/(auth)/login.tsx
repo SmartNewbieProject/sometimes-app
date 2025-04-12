@@ -2,6 +2,7 @@ import { View } from 'react-native';
 import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import Signup from '@features/signup';
 import { platform } from '@shared/libs/platform';
+import { cn } from '@shared/libs/cn';
 
 export default function LoginScreen() {
   return (
@@ -18,18 +19,21 @@ export default function LoginScreen() {
             paddingHorizontal: 8,
           }),
           web: () => ({
-            paddingTop: 32,
-            paddingHorizontal: 8,
-            paddingBottom: 32,
-            minHeight: '100dvh',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            paddingTop: 12,
+            paddingHorizontal: 0,
           }),
         })  
       }}>
-        <Signup.Logo />
-        <Signup.LoginForm />
+        <View className={cn(
+          'px-4',
+          platform({
+            web: () => "h-screen overflow-auto flex flex-col justify-center",
+            default: () => ""
+          })
+        )}>
+          <Signup.Logo />
+          <Signup.LoginForm />
+        </View>
       </View>
     </View>
   );
