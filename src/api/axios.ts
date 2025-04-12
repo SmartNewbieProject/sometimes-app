@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const axiosServer = axios.create({
+const axiosClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
   timeout: 10000,
   headers: {
@@ -9,7 +9,7 @@ const axiosServer = axios.create({
 });
 
 // 요청 인터셉터
-axiosServer.interceptors.request.use(
+axiosClient.interceptors.request.use(
   (config) => {
     // 여기에 토큰이나 다른 인증 정보를 추가할 수 있습니다
     return config;
@@ -20,7 +20,7 @@ axiosServer.interceptors.request.use(
 );
 
 // 응답 인터셉터
-axiosServer.interceptors.response.use(
+axiosClient.interceptors.response.use(
   (response) => {
     return response;
   },
@@ -30,4 +30,4 @@ axiosServer.interceptors.response.use(
   }
 );
 
-export default axiosServer; 
+export default axiosClient; 

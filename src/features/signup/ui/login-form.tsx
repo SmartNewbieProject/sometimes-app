@@ -4,6 +4,7 @@ import { Text } from "@/src/shared/ui";
 import SignupButtons from "./buttons";
 import { Form } from "@/src/widgets";
 import { useForm } from "react-hook-form";
+import axiosClient from "@/src/api/axios";
 
 type Form = {
   email: string;
@@ -17,6 +18,17 @@ export default function LoginForm() {
       password: '',
     },
   });
+
+  const handleLogin = (values: Form) => {
+    console.log(values);
+    axiosClient.post('/auth/login', values)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <View className="flex flex-col flex-1 h-full">
@@ -44,7 +56,7 @@ export default function LoginForm() {
         </View>
       </View>
   
-      <SignupButtons />
+      <SignupButtons onPress={() => handleLogin(form.getValues())} />
     </View>
   );
 }

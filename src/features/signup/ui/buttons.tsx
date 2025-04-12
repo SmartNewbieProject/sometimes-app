@@ -3,7 +3,11 @@ import { Button } from "@/src/shared/ui/button";
 import { router } from "expo-router";
 import { View } from "react-native";
 
-export default function SignupButtons() {
+interface SignupButtonsProps {
+  onPress?: () => void;
+}
+
+export default function SignupButtons({ onPress }: SignupButtonsProps) {
   return (
     <View className="mt-flex flex-col px-2 gap-y-2" style={{
       ...platform({
@@ -24,7 +28,7 @@ export default function SignupButtons() {
     <Button 
       size="md"
       variant="primary" 
-      onPress={() => {}}
+      onPress={onPress || (() => {})}
       className="w-full"
     >
       로그인
