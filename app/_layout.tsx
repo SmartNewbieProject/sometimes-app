@@ -4,10 +4,11 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { View, Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
 
+import { QueryProvider } from '@/src/shared/config';
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
 import { cn } from '@/src/shared/libs/cn';
 
@@ -41,14 +42,15 @@ export default function RootLayout() {
         Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
       )}
     >
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <QueryProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+        </ThemeProvider>
+      </QueryProvider>
     </View>
   );
 }
