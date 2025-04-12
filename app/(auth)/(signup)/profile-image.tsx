@@ -10,8 +10,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
-import { Selector } from '@/src/widgets/selector';
-import { MbtiSelector } from '@/src/widgets/mbti-selector';
 import { z } from 'zod';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
