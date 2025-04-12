@@ -6,7 +6,7 @@ import { cn } from '@shared/libs/cn';
 
 export default function LoginScreen() {
   return (
-    <View className="flex-1 h-full">
+    <View className="flex-1 flex flex-col h-full">
       <PalePurpleGradient />
       <View className="h-full" style={{
         ...platform({

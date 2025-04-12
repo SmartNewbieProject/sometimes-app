@@ -1,10 +1,12 @@
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import LogoIcon from '@/assets/icons/paper-plane.svg';
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { Text } from "@/src/shared/ui";
 import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
+import { Image } from "expo-image";
+
 
 export default function Logo() {
   return (
@@ -19,14 +21,11 @@ export default function Logo() {
     <IconWrapper width={128} className="text-primaryPurple md:pb-[58px]">
       <SmallTitle />
     </IconWrapper>
-    <View className="bg-primaryPurple rounded-full p-4 mt-[12px]">
-      <IconWrapper size={platform({
-        ios: () => 128,
-        android: () => 128,
-        web: () => 96,
-      })} className="text-white">
-        <LogoIcon />
-      </IconWrapper>
+    <View className="p-0 md:p-12 mt-[8px]">
+      <Image
+        source={require('@assets/images/paper-plane.png')}
+        style={{ width: 128, height: 128 }}
+      />
     </View>
     <View className="items-center pt-[8px] flex flex-col gap-y-[6px]">
       <Text className="text-[25px] font-semibold text-black">익숙한 하루에 설렘 하나,</Text>

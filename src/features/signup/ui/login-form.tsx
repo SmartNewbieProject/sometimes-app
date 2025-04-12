@@ -43,6 +43,7 @@ export default function LoginForm() {
           <Text className="text-gray-600 text-sm">비밀번호 찾기</Text>
         </View>
       </View>
+  
       <SignupButtons />
     </View>
   );
