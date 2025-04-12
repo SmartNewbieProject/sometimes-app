@@ -5,7 +5,7 @@ import { View } from "react-native";
 
 export default function SignupButtons() {
   return (
-    <View className="mt-flex flex-col gap-y-2" style={{
+    <View className="mt-flex flex-col px-6 gap-y-2" style={{
       ...platform({
         ios: () => ({
           paddingTop: 58,
