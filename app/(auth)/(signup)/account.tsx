@@ -38,6 +38,12 @@ export default function AccountScreen() {
     return true;
   })();
 
+  const nextButtonMessage = (() => {
+    if (!isValid) return '조금만 더 알려주세요';
+    if (!isPasswordMatch) return '비밀번호가 동일하지 않아요';
+    return '다음으로';
+  })();
+
   useChangePhase(SignupSteps.ACCOUNT);
 
   return (
@@ -79,9 +85,12 @@ export default function AccountScreen() {
         />
       </View>
 
-      <View className="px-5 mb-[58px] w-full">
-        <Button onPress={onNext} className="w-full" disabled={!nextable}>
-          동의하고 계속하기 
+      <View className="px-5 mb-[58px] w-full flex flex-row gap-x-[15px]">
+        <Button variant="secondary" onPress={() => router.back()} className="flex-[0.3]">
+            뒤로
+        </Button>
+        <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
+          {nextButtonMessage}
         </Button>
       </View>
     </View>

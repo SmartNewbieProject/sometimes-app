@@ -57,7 +57,7 @@ export const Button: React.FC<ButtonProps> = ({
       onPress={press}
       activeOpacity={1}
     >
-      <Text textColor={textColor} size="md" weight="semibold">
+      <Text textColor={textColor} size="md" weight="semibold" className="text-center">
         {children}        
       </Text>
     </TouchableOpacity>

@@ -95,8 +95,11 @@ export default function TermsScreen() {
         </View>
       </View>
 
-      <View className="px-5 mb-[58px] w-full">
-        <Button onPress={onNext} className="w-full" disabled={!isNext}>
+      <View className="px-5 mb-[58px] w-full flex flex-row gap-x-[15px]">
+        <Button variant="secondary" onPress={() => router.push('/login')} className="flex-[0.3]">
+          뒤로
+        </Button>
+        <Button onPress={onNext} className="flex-[0.7]" disabled={!isNext}>
           동의하고 계속하기 
         </Button>
       </View>
