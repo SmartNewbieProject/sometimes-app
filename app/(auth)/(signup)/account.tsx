@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 
-const { SignupSteps, useChangePhase, schemas } = Signup;
+const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
 type Form = {
   email: string;
@@ -19,11 +19,16 @@ type Form = {
   passwordConfirm: string;
 }
 
-
 export default function AccountScreen() {
+  const { updateForm, form: { email, password } } = useSignupProgress();
+
   const form = useForm<Form>({
     resolver: zodResolver(schemas.account),
     mode: 'onBlur',
+    defaultValues: {
+      email,
+      password,
+    },
   });
 
   const { handleSubmit, formState: { isValid } } = form;
@@ -31,7 +36,11 @@ export default function AccountScreen() {
   const isPasswordMatch = form.watch('password') === form.watch('passwordConfirm');
 
   const onNext = handleSubmit((data) => {
-    router.push('/');
+    updateForm({
+      email: data.email,
+      password: data.password,
+    });
+    router.push('/(auth)/(signup)/profile');
   });
 
   const nextable = (() => {

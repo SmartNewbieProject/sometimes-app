@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Input, Text } from '@/src/shared/ui';
+import { Input, Text, Label } from '@/src/shared/ui';
 import type { InputProps } from '@/src/shared/ui';
 import { cn } from '@shared/libs/cn';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -7,7 +7,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 const labelInput = cva('space-y-2', {
   variants: {
     size: {
-      sm: 'gap-y-1',
+      sm: 'gap-y-0',
       md: 'gap-y-2',
       lg: 'gap-y-3',
     }
@@ -41,24 +41,15 @@ export function LabelInput({
 }: LabelInputProps) {
   return (
     <View className={cn(labelInput({ size }), wrapperClassName)}>
-      <View className="flex-row items-center gap-x-1">
-        <Text 
-          size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'} 
-          weight="semibold" 
-          textColor="purple"
-        >
-          {label}
-        </Text>
-        {required && (
-          <Text size={size === 'lg' ? 'md' : 'sm'} textColor="purple">
-            *
-          </Text>
-        )}
-      </View>
+      <Label 
+        label={label}
+        required={required}
+        size={size}
+      />
       
       {description && (
         <Text 
-          size={size === 'sm' ? 'xs' : 'sm'} 
+          size={size} 
           textColor="black" 
           className="mb-1"
         >

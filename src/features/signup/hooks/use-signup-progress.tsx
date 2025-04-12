@@ -1,16 +1,26 @@
 import { create } from 'zustand';
 
+type SignupForm = {
+  email: string;
+  password: string;
+  name: string;
+  birthday: string;
+  gender: 'female' | 'male';
+  mbti: string;
+}
 
 type StoreProps = {
   progress: number;
   step: SignupSteps;
   updateStep: (step: SignupSteps) => void;
+  form: Partial<SignupForm>;
+  updateForm: (form: Partial<SignupForm>) => void;
 };
 
 export enum SignupSteps {
   TERMS = 1,
   ACCOUNT = 2,
-  PERSON = 3,
+  PERSONAL_INFO = 3,
   PROFILE_IMAGE = 4,
   UNIVERSITY = 5,
   UNIVERSITY_DETAIL = 6,
@@ -28,6 +38,8 @@ const useSignupProgress = create<StoreProps>((set) => ({
       progress: isLast ? 1 : step / phaseCount,
     });
   },
+  form: {},
+  updateForm: (form) => set({ form }),
 }));
 
 export default useSignupProgress;
