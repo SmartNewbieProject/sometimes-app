@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { View } from "react-native";
 
 interface SignupButtonsProps {
-  onPress?: () => void;
+  onPress: () => void;
 }
 
 export default function SignupButtons({ onPress }: SignupButtonsProps) {
