@@ -52,7 +52,7 @@ export function LabelInput({
       />
 
       {error && (
-        <Text size="sm" className="text-red-500">
+        <Text size="sm" className="text-rose-400">
           {error}
         </Text>
       )}
