@@ -24,7 +24,7 @@ export default function AccountScreen() {
     mode: 'onBlur',
   });
 
-  const { handleSubmit, formState: { errors, isValid } } = form;
+  const { handleSubmit, formState: { isValid } } = form;
 
   const isPasswordMatch = form.watch('password') === form.watch('passwordConfirm');
 

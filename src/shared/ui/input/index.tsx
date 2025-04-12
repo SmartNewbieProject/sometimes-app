@@ -15,7 +15,7 @@ const input = cva(
       },
       status: {
         default: 'border-lightPurple',
-        error: 'border-red-500',
+        error: 'border-rose-400',
         success: 'border-green-500',
       },
       isDisabled: {
