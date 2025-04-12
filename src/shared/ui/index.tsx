@@ -6,3 +6,4 @@ export * from './input';
 export * from './check';
 export * from './divider';
 export * from './label';
+export * from './image-selector';

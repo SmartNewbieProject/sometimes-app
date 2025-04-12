@@ -19,7 +19,6 @@ export function MbtiSelector({ onChange, onBlur }: Props) {
   const mbti = `${first}${second}${third}${fourth}`;
 
   useEffect(() => {
-    console.log({ mbti });
     if (mbti.length <= 3) return;
     onChange(mbti);
   }, [mbti]);

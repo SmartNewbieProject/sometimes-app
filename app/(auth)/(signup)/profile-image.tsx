@@ -2,7 +2,7 @@ import { View } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
 import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { Image } from 'expo-image';
-import { Button, Label } from '@/src/shared/ui';
+import { Button, ImageSelector, Label } from '@/src/shared/ui';
 import { router } from 'expo-router';
 import Signup from '@/src/features/signup';
 import { Form } from '@/src/widgets';
@@ -40,11 +40,11 @@ export default function ProfilePage() {
     mode: 'onBlur',
   });
 
-  const { handleSubmit, formState: { isValid, errors }, trigger } = form;
+  const { handleSubmit, formState: { isValid, errors } } = form;
   const mbti = form.watch('mbti');
   const gender = form.watch('gender');
 
-  console.log({ errors, isValid });
+  console.log({ gender });
 
   const onNext = handleSubmit((data) => {
     updateForm({
@@ -54,7 +54,6 @@ export default function ProfilePage() {
       gender: data.gender,
       mbti: data.mbti,
     });
-    router.push('/(auth)/(signup)/profile-image');
   });
 
   const nextable = (() => {
@@ -67,14 +66,14 @@ export default function ProfilePage() {
     return '다음으로';
   })();
 
-  useChangePhase(SignupSteps.PERSONAL_INFO);
+  useChangePhase(SignupSteps.PROFILE_IMAGE);
 
   return (
     <View className="flex-1 flex flex-col">
       <PalePurpleGradient />
       <View className="px-5">
         <Image  
-          source={require('@assets/images/details.png')}
+          source={require('@assets/images/personal.png')}
           style={platform({
             web: () => ({ width: 96, height: 96 }),
             ios: () => ({ width: 128, height: 128 }),
@@ -83,67 +82,18 @@ export default function ProfilePage() {
           })}
         />
           <Text weight="semibold" size="20" textColor="black">
-          이제 거의 다 왔어요!
+          프로필 사진 없으면 매칭이 안 돼요!
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-          간단한 정보만 입력해볼까요?
+          지금 바로 추가해 주세요
           </Text>
       </View>
 
-      <View className="px-5 flex flex-col gap-y-[14px] mt-[20px] flex-1">
-        <Form.LabelInput 
-          name="name"
-          control={form.control}
-          label="이름"
-          size="sm"
-          placeholder="이름"
+      <View className="flex-1 flex flex-col">
+        <ImageSelector
+          onChange={(value) => {
+          }}
         />
-
-        <View className="flex flex-row gap-x-2 items-center">
-          <Form.LabelInput
-            name="birthday"
-            control={form.control}
-            label="생년월일"
-            size="sm"
-            placeholder="생년월일6자리"
-            className="w-[146px]"
-          />
-          <View className="flex flex-col gap-y-1">
-            <Label label="성별" size="sm" />
-            <Selector
-              value={gender}
-              options={[
-                { label: '남성', value: 'male' },
-                { label: '여성', value: 'female' },
-              ]}
-              onChange={(value) => {
-                form.setValue('gender', value as Gender);
-              }}
-              className="w-fit"
-              buttonProps={{
-                className: 'w-fit h-[38px]',
-              }}
-            />
-          </View>
-        </View>
-
-        <View className="flex flex-col gap-y-1.5">
-          <Label label="MBTI" size="sm" />
-          <Controller 
-            control={form.control}
-            name="mbti"
-            render={({ field }) => (
-              <MbtiSelector 
-                onChange={(value) => {
-                  field.onChange(value);
-                  trigger('mbti');
-                }} 
-                onBlur={field.onBlur}
-              />
-            )}
-          />
-        </View>
-
       </View>
 
       <View className={cn(

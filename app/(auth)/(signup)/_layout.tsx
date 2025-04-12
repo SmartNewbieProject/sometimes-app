@@ -59,6 +59,7 @@ export default function SignupLayout() {
           }}
         />
         <Stack.Screen name="profile" options={{ headerShown: false }} />
+        <Stack.Screen name="profile-image" options={{ headerShown: false }} />
       </Stack>
     </View>
   );
