@@ -75,12 +75,7 @@ export default function ProfilePage() {
       <View className="px-5">
         <Image  
           source={require('@assets/images/details.png')}
-          style={platform({
-            web: () => ({ width: 96, height: 96 }),
-            ios: () => ({ width: 128, height: 128 }),
-            android: () => ({ width: 128, height: 128 }),
-            default: () => ({ width: 128, height: 128 }),
-          })}
+          style={{ width: 81, height: 81 }}
         />
           <Text weight="semibold" size="20" textColor="black">
           이제 거의 다 왔어요!
@@ -154,7 +149,7 @@ export default function ProfilePage() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.back()} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)/account')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

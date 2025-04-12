@@ -49,7 +49,7 @@ export default function TermsScreen() {
       <View className="px-5 flex-1">
         <Image
           source={require('@assets/images/terms.png')}
-          style={{ width: 128, height: 128 }}
+          style={{ width: 81, height: 81 }}
         />
           <Text weight="semibold" size="20" textColor="black">
           서비스 이용을 위해

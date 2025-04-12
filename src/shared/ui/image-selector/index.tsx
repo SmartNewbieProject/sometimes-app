@@ -33,7 +33,6 @@ export function ImageSelector({
   className,
 }: ImageSelectorProps) {
   const [_value, setValue] = useState<string | null>(value ?? null);
-  console.log({ value, _value });
 
   const pickImage = async () => {
     if (platform({ web: () => true, default: () => false })) {

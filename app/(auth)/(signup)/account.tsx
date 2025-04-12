@@ -62,8 +62,8 @@ export default function AccountScreen() {
       <PalePurpleGradient />
       <View className="px-5">
         <Image  
-          source={require('@assets/images/profile.png')}
-          style={{ width: 128, height: 128 }}
+          source={require('@assets/images/personal.png')}
+          style={{ width: 81, height: 81 }}
         />
           <Text weight="semibold" size="20" textColor="black">
           동의해 주셔서 감사합니다 :)
@@ -114,7 +114,7 @@ export default function AccountScreen() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.back()} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

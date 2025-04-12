@@ -58,8 +58,8 @@ export default function ProfilePage() {
       <PalePurpleGradient />
       <View className="px-5">
         <Image  
-          source={require('@assets/images/personal.png')}
-          style={{ width: 81, height: 81 }}
+          source={require('@assets/images/profile-image.png')}
+          style={{ width: 81, height: 81 }} 
         />
           <Text weight="semibold" size="20" textColor="black" className="mt-2">
           프로필 사진 없으면 매칭이 안 돼요!
