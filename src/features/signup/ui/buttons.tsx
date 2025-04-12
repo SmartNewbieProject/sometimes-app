@@ -1,10 +1,26 @@
+import { platform } from "@shared/libs/platform";
 import { Button } from "@/src/shared/ui/button";
 import { router } from "expo-router";
 import { View } from "react-native";
 
 export default function SignupButtons() {
   return (
-    <View className="mt-auto flex flex-col gap-y-2 mb-[58px] pt-[58px]">
+    <View className="mt-flex flex-col gap-y-2" style={{
+      ...platform({
+        ios: () => ({
+          paddingTop: 58,
+          paddingBottom: 58,
+        }),
+        android: () => ({
+          paddingTop: 58,
+          paddingBottom: 58,
+        }),
+        web: () => ({
+          paddingTop: 14,
+          paddingBottom: 0,
+        }),
+      })
+    }}>
     <Button 
       size="md"
       variant="primary" 
