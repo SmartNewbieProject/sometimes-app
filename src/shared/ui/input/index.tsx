@@ -29,7 +29,7 @@ const input = cva(
   }
 );
 
-interface InputProps extends Omit<TextInputProps, 'style'>, VariantProps<typeof input> {
+export interface InputProps extends Omit<TextInputProps, 'style'>, VariantProps<typeof input> {
   className?: string;
   containerClassName?: string;
   isPassword?: boolean;
