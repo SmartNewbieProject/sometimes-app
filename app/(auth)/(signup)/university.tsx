@@ -1,69 +1,46 @@
-import { View } from 'react-native';
-import { Text } from '@/src/shared/ui/text';
-import { PalePurpleGradient } from '@/src/shared/ui/gradient';
-import { Image } from 'expo-image';
-import { Button, Divider, Label } from '@/src/shared/ui';
-import { router } from 'expo-router';
 import Signup from '@/src/features/signup';
-import { Form } from '@/src/widgets';
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
-import { Selector } from '@/src/widgets/selector';
-import { MbtiSelector } from '@/src/widgets/mbti-selector';
-import { z } from 'zod';
+import { Button, Divider, Lottie } from '@/src/shared/ui';
+import { PalePurpleGradient } from '@/src/shared/ui/gradient';
+import { Text } from '@/src/shared/ui/text';
+import { ChipSelector, LabelInput } from '@/src/widgets';
+import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { View } from 'react-native';
 
-const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
+const { SignupSteps, useChangePhase, useSignupProgress, queries } = Signup;
+const { useUnivQuery } = queries;
 
-type Gender = 'male' | 'female';
-
-type Form = {
-  name: string;
-  birthday: string;
-  gender: Gender;
-  mbti: string;
-}
-
-const schema = z.object({
-  name: z.string({ required_error: '이름을 입력해주세요' }).min(1, { message: '이름을 입력해주세요' }),
-  birthday: z.string({ required_error: '생년월일을 입력해주세요' }).min(6, { message: '생년월일 6자리' }),
-  gender: z.enum(['male', 'female'] as const, { required_error: '성별을 선택해주세요' }),
-  mbti: z.string({ required_error: 'MBTI를 선택해주세요' }).min(4, { message: 'MBTI를 선택해주세요' }),
-});
 
 export default function UniversityPage() {
   const { updateForm, form: userForm } = useSignupProgress();
+  const { data: univs = [], isLoading } = useUnivQuery();
+  const [selectedUniv, setSelectedUniv] = useState<string>();
+  const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
 
-  const form = useForm<Form>({
-    resolver: zodResolver(schema),
-    mode: 'onBlur',
-  });
-
-  const { handleSubmit, formState: { isValid, errors }, trigger } = form;
-  const mbti = form.watch('mbti');
-  const gender = form.watch('gender');
-
-  console.log({ errors, isValid });
-
-  const onNext = handleSubmit((data) => {
+  const onNext = () => {
+    if (!selectedUniv) {
+      return;
+    }
     updateForm({
       ...userForm,
-      name: data.name,
-      birthday: data.birthday,
-      gender: data.gender,
-      mbti: data.mbti,
     });
     router.push('/(auth)/(signup)/profile-image');
-  });
+  };
 
   const nextable = (() => {
-    return isValid;
+    if (!selectedUniv) {
+      return false;
+    }
+    return univs.includes(selectedUniv);
   })();
 
   const nextButtonMessage = (() => {
-    if (!isValid) return '조금만 더 알려주세요';
-    if (!mbti) return 'MBTI를 선택해주세요';
+    if (!nextable) {
+      return '조금만 더 알려주세요';
+    }
     return '다음으로';
   })();
 
@@ -88,14 +65,25 @@ export default function UniversityPage() {
           <Divider.Horizontal className="my-4" />
       </View>
 
-      <View className="px-5 flex flex-col gap-y-[14px] mt-[20px] flex-1">
-        <Form.LabelInput 
-          name="name"
-          control={form.control}
+      <View className="px-5 flex flex-col gap-y-[14px] mt-[8px] flex-1">
+        <LabelInput
           label="대학교"
           size="sm"
+          value={selectedUniv}
           placeholder="대학교를 입력하세요"
+          onChangeText={setSelectedUniv}
         />
+        <View className="w-full">
+          {isLoading && <Lottie />}
+          {!isLoading && (
+            <ChipSelector
+              value={selectedUniv}
+              options={filteredUnivs.map((univ) => ({ label: univ, value: univ }))}
+              onChange={setSelectedUniv}
+              className="w-full"
+            />
+          )}
+        </View>
       </View>
 
       <View className={cn(
