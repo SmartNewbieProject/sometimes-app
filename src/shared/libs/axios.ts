@@ -22,10 +22,9 @@ axiosClient.interceptors.request.use(
 // 응답 인터셉터
 axiosClient.interceptors.response.use(
   (response) => {
-    return response;
+    return response.data;
   },
   (error) => {
-    // 에러 처리 로직을 여기에 추가할 수 있습니다
     return Promise.reject(error);
   }
 );
