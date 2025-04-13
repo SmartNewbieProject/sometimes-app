@@ -40,7 +40,7 @@ export default function ProfilePage() {
       ...userForm,
       profileImages: images as string[],
     });
-    router.push('/(auth)/(signup)/university');
+    router.push('/auth/signup/university');
   };
 
   const nextable = images.every((image) => image !== null);
@@ -114,7 +114,7 @@ export default function ProfilePage() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)/profile')} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/auth/signup/profile')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

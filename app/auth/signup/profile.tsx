@@ -61,7 +61,7 @@ export default function ProfilePage() {
       gender: data.gender,
       mbti: data.mbti,
     });
-    router.push('/(auth)/(signup)/profile-image');
+    router.push('/auth/signup/profile-image');
   });
 
   const nextable = (() => {
@@ -159,7 +159,7 @@ export default function ProfilePage() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)/account')} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

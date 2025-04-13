@@ -31,7 +31,7 @@ export default function UniversityPage() {
       ...userForm,
       universityName: selectedUniv,
     });
-    router.push(`/(auth)/(signup)/university-details?universityName=${selectedUniv}`);
+    router.push(`/auth/signup/university-details?universityName=${selectedUniv}`);
   };
 
   const nextable = (() => {
@@ -97,7 +97,7 @@ export default function UniversityPage() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)/profile-image')} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/auth/signup/profile-image')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

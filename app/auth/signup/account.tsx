@@ -40,7 +40,7 @@ export default function AccountScreen() {
       email: data.email,
       password: data.password,
     });
-    router.push('/(auth)/(signup)/profile');
+    router.push('/auth/signup/profile');
   });
 
   const nextable = (() => {
@@ -114,7 +114,7 @@ export default function AccountScreen() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)')} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

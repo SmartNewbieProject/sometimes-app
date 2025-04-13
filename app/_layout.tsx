@@ -10,6 +10,7 @@ import '../global.css';
 import { QueryProvider } from '@/src/shared/config';
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
 import { cn } from '@/src/shared/libs/cn';
+import { ModalProvider } from '@/src/shared/providers/modal-provider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,23 +36,25 @@ export default function RootLayout() {
   }
 
   return (
-    <View 
-      className={cn(
-        'flex-1 font-extralight',
-        Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
-      )}
-    >
-      <Suspense fallback={null}>  
-      <QueryProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        </ThemeProvider>
-      </QueryProvider>
-      </Suspense>
-    </View>
+    <ModalProvider>
+      <View 
+        className={cn(
+          'flex-1 font-extralight',
+          Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
+        )}
+      >
+        <Suspense fallback={null}>  
+        <QueryProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="auth" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </ThemeProvider>
+        </QueryProvider>
+        </Suspense>
+      </View>
+    </ModalProvider>
   );
 }

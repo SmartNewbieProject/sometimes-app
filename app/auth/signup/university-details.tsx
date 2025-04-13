@@ -12,6 +12,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { View } from 'react-native';
 import { z } from 'zod';
 import { SignupForm } from '@/src/features/signup/hooks';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { tryCatch } from '@/src/shared/libs';
 
 const { SignupSteps, useChangePhase, useSignupProgress, queries, apis } = Signup;
 const { useDepartmentQuery } = queries;
@@ -47,6 +49,7 @@ export default function UniversityDetailsPage() {
   const { updateForm, form: userForm } = useSignupProgress();
   const { universityName } = useGlobalSearchParams<{ universityName: string }>();
   const { data: departments = [] } = useDepartmentQuery(universityName);
+  const { showErrorModal } = useModal();
   const form = useForm<FormProps>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
@@ -58,23 +61,21 @@ export default function UniversityDetailsPage() {
     },
   });
 
-  const data = form.watch();
-  console.log(data);
-  
   const { handleSubmit, formState: { isValid } } = form;
 
   const onNext = handleSubmit(async (data) => {
-    const signupForm = { ...userForm, ...data };
-    updateForm(signupForm);
-    await apis.signup(signupForm as SignupForm);
-
-    // router.push('/(auth)/(signup)/profile-image');
+    tryCatch(async () => {
+      const signupForm = { ...userForm, ...data };
+      updateForm(signupForm);
+      await apis.signup(signupForm as SignupForm);
+      router.push('/auth/signup/done');
+    }, (error) => {
+      console.log({ error });
+      showErrorModal(error.error);
+    });
   });
 
-  const nextable = (() => {
-    if (!isValid) return false;
-    return true;
-  })();
+  const nextable = isValid;
 
   const nextButtonMessage = (() => {
     if (!nextable) {
@@ -169,7 +170,7 @@ export default function UniversityDetailsPage() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)/university')} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/auth/signup/university')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
