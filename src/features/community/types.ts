@@ -26,6 +26,6 @@ export interface Article {
   createdAt: string;
   author: Author;
   likes: number;
-  shares: number;
+  views: number;
   comments?: Comment[];
 } 

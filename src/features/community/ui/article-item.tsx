@@ -1,21 +1,24 @@
-import { View, TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity, Image, ImageSourcePropType } from 'react-native';
 import { Text } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
+import { Article } from '../types';
+import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
 import HeartIcon from '@/assets/icons/heart.svg';
 import CommentIcon from '@/assets/icons/engagement.svg';
 import EyesIcon from '@/assets/icons/ph_eyes-fill.svg';
-import { formatDistanceToNow } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { Article } from '../types';
-import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
+
 interface ArticleItemProps {
   article: Article;
+  onPress: () => void;
+  onLike: () => void;
+  onComment: () => void;
+  onViews: () => void;
 }
 
-export function ArticleItem({ article }: ArticleItemProps) {
+export function ArticleItem({ article, onPress, onLike, onComment, onViews }: ArticleItemProps) {
   return (
     <View>
-      <TouchableOpacity className="p-4 bg-white" activeOpacity={0.7}>
+      <TouchableOpacity onPress={onPress} className="p-4 bg-white" activeOpacity={0.7}>
         <View className="flex-row items-center mb-2">
           <Image 
             source={article.author.university.image}
@@ -34,35 +37,37 @@ export function ArticleItem({ article }: ArticleItemProps) {
             </Text>
           </View>
         </View>
+
         <Text size="md" weight="medium" textColor="black">{article.title}</Text>
-        <Text size="sm" className="mb-3 leading-5" textColor="black">
+        <Text size="sm" className="mb-4 leading-5" textColor="black">
           {article.content}
         </Text>
 
-        <View className="flex-row justify-between px-4">
-          <TouchableOpacity className="flex-row items-center gap-1">
-            <IconWrapper size={18}>
-              <HeartIcon />
-            </IconWrapper>
-            <Text size="sm" textColor="black">{article.likes}</Text>
-          </TouchableOpacity>
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center gap-4">
+            <TouchableOpacity className="flex-row items-center gap-2" onPress={onLike}>
+              <IconWrapper size={20}>
+                <HeartIcon stroke="#646464" />
+              </IconWrapper>
+              <Text className="text-[16px] h-[24px]  text-[#646464]">{article.likes}</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center gap-1">
-            <IconWrapper size={18}>
-              <CommentIcon />
-            </IconWrapper>
-            <Text size="sm" textColor="black">{article.comments?.length || 0}</Text>
-          </TouchableOpacity>
+            <TouchableOpacity className="flex-row items-center gap-2" onPress={onComment}>
+              <IconWrapper size={20}>
+                <CommentIcon stroke="#646464" />
+              </IconWrapper>
+              <Text className="text-[16px] h-[24px]text-[#646464]">{article.comments?.length || 0}</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center gap-1">
-            <IconWrapper size={18}>
-              <EyesIcon />
-            </IconWrapper>
-            <Text size="sm" textColor="black">{article.shares}</Text>
-          </TouchableOpacity>
+            <TouchableOpacity className="flex-row items-center gap-2" onPress={onViews}>
+              <IconWrapper size={16} >
+                <EyesIcon stroke="#646464" />
+              </IconWrapper>
+              <Text className="text-[16px] h-[24px] text-[#646464]" >{article.views || 0}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </TouchableOpacity>
-      <View className="h-[1px] bg-[#F3F0FF]" />
     </View>
   );
 } 

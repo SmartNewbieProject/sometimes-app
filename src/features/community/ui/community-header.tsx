@@ -4,6 +4,7 @@ import { IconWrapper } from '@/src/shared/ui/icons';
 import StopwatchIcon from '@/assets/icons/ph_eyes-fill.svg';
 import FireIcon from '@/assets/icons/heart.svg';
 import BellIcon from '@/assets/icons/bell.svg';
+import CommunityIcon from '@/assets/icons/community.svg';
 // features/community/ui/CommunityHeader.tsx
 interface Props {
   activeTab: "realtime" | "popular";
@@ -18,7 +19,9 @@ export function CommunityHeader() {
           {/* Empty view for spacing */}
         </View>
         <View className="flex-1 items-center">
-          <Text size="lg" weight="bold" textColor="purple">COMMUNITY</Text>
+          <IconWrapper >
+            <CommunityIcon className="w-[151px] h-[17px]" />
+          </IconWrapper>
         </View>
         <View className="flex-1 items-end">
           <TouchableOpacity className="p-2" activeOpacity={0.7}>
