@@ -4,7 +4,7 @@ import type { InputProps } from '@/src/shared/ui';
 import { cn } from '@shared/libs/cn';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-const labelInput = cva('space-y-2', {
+const labelInput = cva('flex flex-col', {
   variants: {
     size: {
       sm: 'gap-y-0',

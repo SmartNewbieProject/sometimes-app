@@ -8,3 +8,4 @@ export * from './divider';
 export * from './label';
 export * from './image-selector';
 export * from './lottie';
+export * from './select';
