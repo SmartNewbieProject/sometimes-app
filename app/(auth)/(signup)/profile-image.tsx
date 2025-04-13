@@ -15,7 +15,7 @@ import { useState } from 'react';
 
 const { SignupSteps, useChangePhase, useSignupProgress } = Signup;
 
-type Form = {
+type FormState = {
   images: string[];
 }
 
@@ -25,11 +25,14 @@ const schema = z.object({
 
 export default function ProfilePage() {
   const { updateForm, form: userForm } = useSignupProgress();
-  const [images, setImages] = useState<(string | null)[]>([null, null, null]);
+  const [images, setImages] = useState<(string | null)[]>(userForm.profileImages ?? [null, null, null]);
 
-  const form = useForm<Form>({
+  const form = useForm<FormState>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
+    defaultValues: {
+      images: userForm.profileImages,
+    },
   });
 
   const onNext = () => {

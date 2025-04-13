@@ -6,22 +6,26 @@ import { Selector } from "../selector";
 type Props = {
   onChange: (mbti: string) => void;
   onBlur: () => void;
+  value?: string;
 }
 
-export function MbtiSelector({ onChange, onBlur }: Props) {
-  const [first, setFirst] = useState<string>('');
-  const [second, setSecond] = useState<string>('');
-  const [third, setThird] = useState<string>('');
-  const [fourth, setFourth] = useState<string>('');
+const parse = (mbti: string, index: number) => mbti.charAt(index);
 
-  console.log({ onBlur });
+export function MbtiSelector({ onChange, onBlur, value }: Props) {
+  const [_value, setValue] = useState<string>(value ?? '');
+
+  const [first, setFirst] = useState<string>(parse(_value, 0));
+  const [second, setSecond] = useState<string>(parse(_value, 1));
+  const [third, setThird] = useState<string>(parse(_value, 2));
+  const [fourth, setFourth] = useState<string>(parse(_value, 3));
 
   const mbti = `${first}${second}${third}${fourth}`;
 
   useEffect(() => {
     if (mbti.length <= 3) return;
     onChange(mbti);
-  }, [mbti]);
+    setValue(mbti);
+  }, [mbti, _value]);
 
   return (
     <View>

@@ -41,13 +41,17 @@ export default function ProfilePage() {
   const form = useForm<FormState>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
+    defaultValues: {
+      name: userForm.name,
+      birthday: userForm.birthday,
+      gender: userForm.gender,
+      mbti: userForm.mbti,
+    },
   });
 
-  const { handleSubmit, formState: { isValid, errors }, trigger } = form;
+  const { handleSubmit, formState: { isValid }, trigger } = form;
   const mbti = form.watch('mbti');
   const gender = form.watch('gender');
-
-  console.log({ errors, isValid });
 
   const onNext = handleSubmit((data) => {
     updateForm({
@@ -107,6 +111,7 @@ export default function ProfilePage() {
             className="w-[146px]"
             maxLength={6}
             inputMode="numeric"
+            wrapperClassName="flex-1"
           />
           <View className="flex flex-col gap-y-1">
             <Label label="성별" size="sm" />
@@ -121,7 +126,7 @@ export default function ProfilePage() {
               }}
               className="w-fit"
               buttonProps={{
-                className: 'w-fit h-[38px]',
+                className: 'w-fit h-[38px] !text-sm',
               }}
             />
           </View>

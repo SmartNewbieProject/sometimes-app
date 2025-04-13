@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type SignupForm = {
+export type SignupForm = {
   email: string;
   password: string;
   name: string;

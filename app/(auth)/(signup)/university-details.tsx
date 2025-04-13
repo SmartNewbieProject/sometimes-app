@@ -11,8 +11,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { View } from 'react-native';
 import { z } from 'zod';
+import { SignupForm } from '@/src/features/signup/hooks';
 
-const { SignupSteps, useChangePhase, useSignupProgress, queries } = Signup;
+const { SignupSteps, useChangePhase, useSignupProgress, queries, apis } = Signup;
 const { useDepartmentQuery } = queries;
 
 type FormProps = {
@@ -56,15 +57,18 @@ export default function UniversityDetailsPage() {
       instagramId: userForm.instagramId,
     },
   });
+
+  const data = form.watch();
+  console.log(data);
   
   const { handleSubmit, formState: { isValid } } = form;
 
-  const onNext = handleSubmit((data) => {
-    updateForm({
-      ...userForm,
-      ...data,
-    });
-    router.push('/(auth)/(signup)/profile-image');
+  const onNext = handleSubmit(async (data) => {
+    const signupForm = { ...userForm, ...data };
+    updateForm(signupForm);
+    await apis.signup(signupForm as SignupForm);
+
+    // router.push('/(auth)/(signup)/profile-image');
   });
 
   const nextable = (() => {
