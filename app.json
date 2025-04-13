@@ -23,6 +23,12 @@
       "favicon": "./assets/images/favicon.png",
       "meta": {
         "viewport": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+      },
+      "viewport": {
+        "width": "device-width",
+        "initialScale": 1.0,
+        "maximumScale": 1.0,
+        "userScalable": false
       }
     },
     "plugins": [

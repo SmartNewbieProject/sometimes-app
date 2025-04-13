@@ -16,3 +16,7 @@
 .purple-gradient-bg {
   background: linear-gradient(180deg, #FFF 0%, #F9F7FF 100%);
 }
+
+input {
+  transform: scale(1); /* iOS에서 추가적인 확대 방지 */
+}
