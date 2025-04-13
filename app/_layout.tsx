@@ -2,8 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Platform, View } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
@@ -42,6 +41,7 @@ export default function RootLayout() {
         Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
       )}
     >
+      <Suspense fallback={null}>  
       <QueryProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack>
@@ -51,6 +51,7 @@ export default function RootLayout() {
         </Stack>
         </ThemeProvider>
       </QueryProvider>
+      </Suspense>
     </View>
   );
 }
