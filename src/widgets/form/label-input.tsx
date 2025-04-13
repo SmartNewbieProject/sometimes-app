@@ -3,8 +3,10 @@ import { LabelInput } from '@/src/widgets/label-input';
 import type { LabelInputProps } from '@/src/widgets/label-input';
 
 interface FormLabelInputProps extends Omit<LabelInputProps, 'value' | 'onChangeText' | 'error'> {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   control: Control<any>;
   name: string;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   rules?: Record<string, any>;
 }
 

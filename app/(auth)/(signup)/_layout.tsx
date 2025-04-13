@@ -2,11 +2,11 @@ import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { ProgressBar } from '@/src/shared/ui/progress-bar';
-import { Stack, router } from 'expo-router';
-import { View } from 'react-native';
 import Signup from '@features/signup';
-import { useCallback, useRef } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import { Stack, router } from 'expo-router';
+import { useCallback, useRef } from 'react';
+import { View } from 'react-native';
 import { BackHandler } from 'react-native';
 
 const { useSignupProgress, SignupSteps } = Signup;
@@ -61,6 +61,7 @@ export default function SignupLayout() {
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen name="profile-image" options={{ headerShown: false }} />
         <Stack.Screen name="university" options={{ headerShown: false }} />
+        <Stack.Screen name="university-details" options={{ headerShown: false }} />
       </Stack>
     </View>
   );

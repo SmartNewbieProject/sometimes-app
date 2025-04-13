@@ -6,7 +6,7 @@ import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { Text } from '@/src/shared/ui/text';
 import { ChipSelector, LabelInput } from '@/src/widgets';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { router, useGlobalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -17,8 +17,11 @@ const { useUnivQuery } = queries;
 export default function UniversityPage() {
   const { updateForm, form: userForm } = useSignupProgress();
   const { data: univs = [], isLoading } = useUnivQuery();
-  const [selectedUniv, setSelectedUniv] = useState<string>();
+  const params = useGlobalSearchParams();
+  console.log(params);
+  const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityName);
   const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
+  useChangePhase(SignupSteps.UNIVERSITY);
 
   const onNext = () => {
     if (!selectedUniv) {
@@ -26,8 +29,9 @@ export default function UniversityPage() {
     }
     updateForm({
       ...userForm,
+      universityName: selectedUniv,
     });
-    router.push('/(auth)/(signup)/profile-image');
+    router.push(`/(auth)/(signup)/university-details?universityName=${selectedUniv}`);
   };
 
   const nextable = (() => {
@@ -44,7 +48,6 @@ export default function UniversityPage() {
     return '다음으로';
   })();
 
-  useChangePhase(SignupSteps.UNIVERSITY);
 
   return (
     <View className="flex-1 flex flex-col">
