@@ -6,7 +6,7 @@ export default function AuthLayout() {
     <View className="flex-1">
       <Stack>
       <Stack.Screen 
-          name="(signup)" 
+          name="signup" 
           options={{ 
             headerShown: false,
             contentStyle: {

@@ -36,7 +36,7 @@ export default function SignupButtons({ onPress }: SignupButtonsProps) {
     <Button 
       size="md"
       variant="secondary" 
-      onPress={() => router.push('/(auth)/(signup)')}
+      onPress={() => router.push('/auth/signup/terms')}
       className="w-full"
       textColor="purple"
     >

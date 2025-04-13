@@ -14,8 +14,7 @@ import { platform } from '@/src/shared/libs/platform';
 const { useSignupProgress, SignupSteps, useChangePhase } = Signup;
 
 export default function TermsScreen() {
-  const [agreements, setAgreements] = useState<Agreement[]>(AGREEMENTS);
-  const { updateStep } = useSignupProgress();
+  const { updateStep, agreements, updateAgreements } = useSignupProgress();
   const allAgreement = agreements.every(agreement => agreement.checked);
   useChangePhase(SignupSteps.TERMS);
 
@@ -26,27 +25,25 @@ export default function TermsScreen() {
   const onNext = () => {
     if (!isNext) return;
     updateStep(SignupSteps.ACCOUNT);
-    router.push('/(auth)/(signup)/account');
+    router.push('/auth/signup/account');
   }
 
   const handleAgreement = debounce((id: string, value: boolean) => {
-    setAgreements(prev => prev.map(agreement => agreement.id === id ? { ...agreement, checked: value } : agreement));
+    updateAgreements(
+      agreements.map(agreement => agreement.id === id ? { ...agreement, checked: value } : agreement)
+    );
   }, 100);
 
   const handleAllAgreement = debounce(() => {
-    const newValue = !allAgreement;
-    setAgreements(prev => 
-      prev.map(agreement => ({ 
-        ...agreement, 
-        checked: newValue 
-      }))
+    updateAgreements(
+      agreements.map(agreement => ({ ...agreement, checked: !allAgreement }))
     );
   }, 100);
 
   return (
     <View className="flex-1 flex flex-col">
       <PalePurpleGradient />
-      <View className="px-5 flex-1">
+      <View className="px-5 flex-1 mt-[20px]">
         <Image
           source={require('@assets/images/terms.png')}
           style={{ width: 81, height: 81 }}
@@ -112,7 +109,7 @@ export default function TermsScreen() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.push('/login')} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/auth/login')} className="flex-[0.3]">
           뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!isNext}>
@@ -122,49 +119,3 @@ export default function TermsScreen() {
     </View>
   );
 }
-
-type Agreement = {
-  id: string;
-  label: string;
-  link?: string;
-  required: boolean;
-  checked: boolean;
-}
-
-const AGREEMENTS: Agreement[] = [
-  {
-    id: 'privacy',
-    label: '(필수) 개인정보 수집 및 이용 동의',
-    link: 'https://ruby-composer-6d2.notion.site/1cd1bbec5ba180a3a4bbdf9301683145',
-    required: true,
-    checked: false
-  },
-  {
-    id: 'terms',
-    label: '(필수) 서비스 이용약관 동의',
-    link: 'https://ruby-composer-6d2.notion.site/1cd1bbec5ba1805dbafbc9426a0aaa80',
-    required: true,
-    checked: false
-  },
-  {
-    id: 'location',
-    label: '(필수) 개인정보 처리방침 동의',
-    link: 'https://www.notion.so/1cd1bbec5ba180a3a4bbdf9301683145',
-    required: true,
-    checked: false
-  },
-  {
-    id: 'sensitive',
-    label: '(필수) 민감정보 이용 동의',
-    link: 'https://www.notion.so/1cd1bbec5ba180ae800ff36c46285274',
-    required: true,
-    checked: false
-  },
-  {
-    id: 'marketing',
-    label: '(선택) 마케팅 수신 동의',
-    link: 'https://www.notion.so/1cd1bbec5ba1800daa29fd7a8d01b7c9',
-    required: false,
-    checked: false
-  }
-];

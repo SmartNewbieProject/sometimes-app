@@ -15,7 +15,7 @@ import { useState } from 'react';
 
 const { SignupSteps, useChangePhase, useSignupProgress } = Signup;
 
-type Form = {
+type FormState = {
   images: string[];
 }
 
@@ -25,11 +25,14 @@ const schema = z.object({
 
 export default function ProfilePage() {
   const { updateForm, form: userForm } = useSignupProgress();
-  const [images, setImages] = useState<(string | null)[]>([null, null, null]);
+  const [images, setImages] = useState<(string | null)[]>(userForm.profileImages ?? [null, null, null]);
 
-  const form = useForm<Form>({
+  const form = useForm<FormState>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
+    defaultValues: {
+      images: userForm.profileImages,
+    },
   });
 
   const onNext = () => {
@@ -37,7 +40,7 @@ export default function ProfilePage() {
       ...userForm,
       profileImages: images as string[],
     });
-    router.push('/(auth)/(signup)/university');
+    router.push('/auth/signup/university');
   };
 
   const nextable = images.every((image) => image !== null);
@@ -111,7 +114,7 @@ export default function ProfilePage() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.push('/(auth)/(signup)/profile')} className="flex-[0.3]">
+        <Button variant="secondary" onPress={() => router.push('/auth/signup/profile')} className="flex-[0.3]">
             뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

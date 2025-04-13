@@ -1,34 +1,54 @@
-import { Input } from "@/src/shared/ui/input";
 import { View } from "react-native";
 import { Text } from "@/src/shared/ui";
 import SignupButtons from "./buttons";
 import { Form } from "@/src/widgets";
 import { useForm } from "react-hook-form";
-import { axiosClient } from "@/src/shared/libs";
+import { tryCatch } from "@/src/shared/libs";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../../auth";
+import { router } from "expo-router";
 
 type Form = {
   email: string;
   password: string;
 }
 
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$/;
+
+const loginSchema = z.object({
+  email: z.string({ required_error: "이메일을 입력해주세요" }).email({ message: "이메일을 입력해주세요" }),
+  password: z.string({ required_error: '비밀번호를 입력해주세요.' }).regex(passwordRegex, { message: '올바른 비밀번호를 입력해주세요' }),
+});
+
 export default function LoginForm() {
+  const { login, isAuthorized } = useAuth();
   const form = useForm<Form>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
     },
+    mode: 'onBlur',
   });
 
-  const handleLogin = (values: Form) => {
-    console.log(values);
-    axiosClient.post('/auth/login', values)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  const onPressLogin = form.handleSubmit(async ({ email, password }) => {
+    tryCatch(async () => {  
+      await login(email, password);
+      router.push('/');
+    }, (error) => {
+      if (error.status === 401) {
+        form.setError('password', { message: '아이디가 존재하지 않거나 비밀번호가 일치하지 않습니다' });
+      }
+    });
+  });
+
+  // 테스트 목적으로 주석..해제하면 로그인상태면 다시 홈으로 리다이렉션
+  // useFocusEffect(useCallback(
+  //   () => {
+  //     if (isAuthorized) router.push('/');
+  //   }, [isAuthorized]
+  // ));
 
   return (
     <View className="flex flex-col flex-1 h-full">
@@ -56,7 +76,7 @@ export default function LoginForm() {
         </View>
       </View>
   
-      <SignupButtons onPress={() => handleLogin(form.getValues())} />
+      <SignupButtons onPress={onPressLogin} />
     </View>
   );
 }

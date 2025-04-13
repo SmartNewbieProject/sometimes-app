@@ -61,7 +61,7 @@ export function Input({
         />
         {isPassword && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-            {isPasswordVisible ? <EyeOff width={24} height={24} /> : <EyeOn width={24} height={24} />}
+            {isPasswordVisible  ? <EyeOn width={24} height={24} /> : <EyeOff width={24} height={24} />}
           </TouchableOpacity>
         )}
       </View>

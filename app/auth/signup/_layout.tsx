@@ -4,7 +4,7 @@ import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { ProgressBar } from '@/src/shared/ui/progress-bar';
 import Signup from '@features/signup';
 import { useFocusEffect } from '@react-navigation/native';
-import { Stack, router } from 'expo-router';
+import { Stack, router, usePathname } from 'expo-router';
 import { useCallback, useRef } from 'react';
 import { View } from 'react-native';
 import { BackHandler } from 'react-native';
@@ -13,6 +13,10 @@ const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
   const { progress, updateStep } = useSignupProgress();
+  const pathname = usePathname();
+  const renderProgress = pathname !== '/done';
+
+  console.log({ pathname });
 
   const handleBackPress = useCallback(() => {
     updateStep(SignupSteps.TERMS);
@@ -31,6 +35,7 @@ export default function SignupLayout() {
   return (
     <View className="flex-1">
       <PalePurpleGradient />
+      {renderProgress && (
       <View className={cn(
         "px-5 pb-[30px] items-center bg-white",
         platform({
@@ -41,6 +46,7 @@ export default function SignupLayout() {
       )}>
         <ProgressBar progress={progress} />
       </View>
+      )}
       <Stack
         screenOptions={{
           headerShown: false,
@@ -50,7 +56,7 @@ export default function SignupLayout() {
           animation: 'slide_from_right',
         }}
       >
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="terms" options={{ headerShown: false }} />
         <Stack.Screen 
           name="account" 
           options={{ 
@@ -62,6 +68,7 @@ export default function SignupLayout() {
         <Stack.Screen name="profile-image" options={{ headerShown: false }} />
         <Stack.Screen name="university" options={{ headerShown: false }} />
         <Stack.Screen name="university-details" options={{ headerShown: false }} />
+        <Stack.Screen name="done" options={{ headerShown: false }} />
       </Stack>
     </View>
   );
