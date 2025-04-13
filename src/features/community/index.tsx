@@ -4,9 +4,10 @@ import * as queries from "./queries";
 import * as ui from "./ui";
 
 const Community = {
-  apis,
+  ...apis,
   ...hooks,
-  queries,
-};
+  ...queries,
+  ...ui,
+}
 
 export default Community;

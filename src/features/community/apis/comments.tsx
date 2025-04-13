@@ -1,17 +1,5 @@
 import { axiosClient } from "@/src/shared/libs";
-
-type Comment = {
-  id: number;
-  articleId: number;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  author: {
-    id: number;
-    name: string;
-    email: string;
-  };
-}
+import { Comment } from "../types";
 
 type CommentParams = {
   articleId: number;

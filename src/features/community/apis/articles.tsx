@@ -1,17 +1,7 @@
 import { axiosClient } from "@/src/shared/libs";
+import { Article } from "../types";
 
-export type Article = {
-  id: number;
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  author: {
-    id: number;
-    name: string;
-    email: string;
-  };
-}
+
 
 type PostArticleBody = {
   content: string;
