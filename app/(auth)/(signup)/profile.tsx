@@ -27,7 +27,10 @@ type Form = {
 
 const schema = z.object({
   name: z.string({ required_error: '이름을 입력해주세요' }).min(1, { message: '이름을 입력해주세요' }),
-  birthday: z.string({ required_error: '생년월일을 입력해주세요' }).min(6, { message: '생년월일 6자리' }),
+  birthday: z.string({ required_error: '생년월일을 입력해주세요' })
+    .min(6, { message: '생년월일 6자리' })
+    .max(6, { message: '생년월일 6자리' })
+    .regex(/^\d+$/, { message: '숫자만 입력해주세요' }),
   gender: z.enum(['male', 'female'] as const, { required_error: '성별을 선택해주세요' }),
   mbti: z.string({ required_error: 'MBTI를 선택해주세요' }).min(4, { message: 'MBTI를 선택해주세요' }),
 });
@@ -102,6 +105,8 @@ export default function ProfilePage() {
             size="sm"
             placeholder="생년월일6자리"
             className="w-[146px]"
+            maxLength={6}
+            inputMode="numeric"
           />
           <View className="flex flex-col gap-y-1">
             <Label label="성별" size="sm" />
