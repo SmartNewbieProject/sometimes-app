@@ -13,7 +13,7 @@ import { platform } from '@/src/shared/libs/platform';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
-type Form = {
+type FormState = {
   email: string;
   password: string;
   passwordConfirm: string;
@@ -22,7 +22,7 @@ type Form = {
 export default function AccountScreen() {
   const { updateForm, form: { email, password } } = useSignupProgress();
 
-  const form = useForm<Form>({
+  const form = useForm<FormState>({
     resolver: zodResolver(schemas.account),
     mode: 'onBlur',
     defaultValues: {

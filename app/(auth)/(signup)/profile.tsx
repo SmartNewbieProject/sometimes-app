@@ -1,24 +1,24 @@
-import { View } from 'react-native';
-import { Text } from '@/src/shared/ui/text';
-import { PalePurpleGradient } from '@/src/shared/ui/gradient';
-import { Image } from 'expo-image';
-import { Button, Label } from '@/src/shared/ui';
-import { router } from 'expo-router';
 import Signup from '@/src/features/signup';
-import { Form } from '@/src/widgets';
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
-import { Selector } from '@/src/widgets/selector';
+import { Button, Label } from '@/src/shared/ui';
+import { PalePurpleGradient } from '@/src/shared/ui/gradient';
+import { Text } from '@/src/shared/ui/text';
+import { Form } from '@/src/widgets';
 import { MbtiSelector } from '@/src/widgets/mbti-selector';
+import { Selector } from '@/src/widgets/selector';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import { Controller, useForm } from 'react-hook-form';
+import { View } from 'react-native';
 import { z } from 'zod';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
 type Gender = 'male' | 'female';
 
-type Form = {
+type FormState = {
   name: string;
   birthday: string;
   gender: Gender;
@@ -38,7 +38,7 @@ const schema = z.object({
 export default function ProfilePage() {
   const { updateForm, form: userForm } = useSignupProgress();
 
-  const form = useForm<Form>({
+  const form = useForm<FormState>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
   });

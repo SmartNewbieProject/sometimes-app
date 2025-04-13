@@ -6,8 +6,13 @@ type SignupForm = {
   name: string;
   birthday: string;
   gender: 'female' | 'male';
+  universityName: string;
   mbti: string;
   profileImages: string[];
+  departmentName: string;
+  grade: string;
+  studentNumber: string;
+  instagramId: string;
 }
 
 type StoreProps = {
