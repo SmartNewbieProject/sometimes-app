@@ -19,7 +19,7 @@ type PatchArticleBody = {
 }
 
 type DeleteArticle = {
-  id: number;
+  id: string;
 }
 
 export const getAllArticles = async (params: getArticleParams): Promise<Article[]> => {
@@ -30,29 +30,29 @@ export const postArticles = async (body: PostArticleBody): Promise<Article> => {
   return axiosClient.post('/articles', body);
 };
 
-export const getArticle = async (articleId: number): Promise<Article> => {
+export const getArticle = async (articleId: string): Promise<Article> => {
   return axiosClient.get(`/articles/${articleId}`);
 };
 
-export const patchArticle = async (articleId: number, body: PatchArticleBody): Promise<Article> => {
+export const patchArticle = async (articleId: string, body: PatchArticleBody): Promise<Article> => {
   return axiosClient.patch(`/articles/${articleId}`, body);
 };
 
-export const deleteArticle = async (articleId: number): Promise<Article> => {
+export const deleteArticle = async (articleId: string): Promise<Article> => {
   return axiosClient.delete(`/articles/${articleId}`);
 };
 
-export const patchArticleLike = async (articleId: number): Promise<Article> => {
+export const patchArticleLike = async (articleId: string): Promise<Article> => {
   return axiosClient.patch(`/articles/${articleId}/like`);
 };
 
 type Service = {
   getAllArticles: (params: getArticleParams) => Promise<Article[]>;
   postArticles: (body: PostArticleBody) => Promise<Article>;
-  getArticle: (articleId: number) => Promise<Article>;
-  patchArticle: (articleId: number, body: PatchArticleBody) => Promise<Article>;
-  deleteArticle: (articleId: number) => Promise<Article>;
-  patchArticleLike: (articleId: number) => Promise<Article>;
+  getArticle: (articleId: string) => Promise<Article>;
+  patchArticle: (articleId: string, body: PatchArticleBody) => Promise<Article>;
+  deleteArticle: (articleId: string) => Promise<Article>;
+  patchArticleLike: (articleId: string) => Promise<Article>;
 }
 
 const apis: Service = {

@@ -3,11 +3,11 @@ import { getComments } from '../apis/comments';
 
 const QUERY_KEYS = {
   comments: {
-    lists: (articleId: number) => ['comments', articleId],
+    lists: (articleId: string) => ['comments', articleId],
   },
 };
 
-export function useArticleComments(articleId: number) {
+export function useArticleComments(articleId: string) {
   const { data: comments = [], isLoading } = useQuery({
     queryKey: QUERY_KEYS.comments.lists(articleId),
     queryFn: async () => {
