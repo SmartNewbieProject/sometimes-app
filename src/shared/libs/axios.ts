@@ -32,7 +32,7 @@ const temporaryAxiosClient = axios.create({
 axiosClient.interceptors.request.use(
   async (config) => {
     const accessToken = await storage.getItem('access-token');
-    config.headers.Authorization = `Bearer ${accessToken}`;
+    config.headers.Authorization = `Bearer ${accessToken?.replaceAll('\"', '')}`;
     return config;
   },
   (error) => {
@@ -54,6 +54,7 @@ axiosClient.interceptors.response.use(
 
         return await tryCatch(async () => {
           const result = await temporaryAxiosClient(error.config);
+          console.log('twice tryCatch');
           return result.data;
         }, (error) => {
           storage.removeItem('access-token');
