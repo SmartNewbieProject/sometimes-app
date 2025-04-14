@@ -10,7 +10,6 @@ type Props = {
 }
 
 const parse = (mbti: string, index: number) => mbti.charAt(index);
-
 export function MbtiSelector({ onChange, onBlur, value }: Props) {
   const [_value, setValue] = useState<string>(value ?? '');
 

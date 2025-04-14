@@ -69,6 +69,7 @@ type StoreProps = {
   updateForm: (form: Partial<SignupForm>) => void;
   agreements: Agreement[];
   updateAgreements: (agreements: Agreement[]) => void;
+  clear: () => void;
 };
 
 export enum SignupSteps {
@@ -96,6 +97,7 @@ const useSignupProgress = create<StoreProps>((set) => ({
 
   form: {},
   updateForm: (form) => set({ form }),
+  clear: () => set({ form: {}, step: SignupSteps.TERMS }),
 
   agreements: AGREEMENTS,
   updateAgreements: (agreements) => set({ agreements }),

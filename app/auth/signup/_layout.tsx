@@ -14,9 +14,7 @@ const { useSignupProgress, SignupSteps } = Signup;
 export default function SignupLayout() {
   const { progress, updateStep } = useSignupProgress();
   const pathname = usePathname();
-  const renderProgress = pathname !== '/done';
-
-  console.log({ pathname });
+  const renderProgress = pathname !== '/auth/signup/done';
 
   const handleBackPress = useCallback(() => {
     updateStep(SignupSteps.TERMS);

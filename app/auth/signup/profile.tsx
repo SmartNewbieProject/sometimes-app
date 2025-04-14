@@ -51,6 +51,7 @@ export default function ProfilePage() {
 
   const { handleSubmit, formState: { isValid }, trigger } = form;
   const mbti = form.watch('mbti');
+  const formData = form.watch();
   const gender = form.watch('gender');
 
   const onNext = handleSubmit((data) => {
@@ -123,6 +124,7 @@ export default function ProfilePage() {
               ]}
               onChange={(value) => {
                 form.setValue('gender', value as Gender);
+                form.trigger('gender');
               }}
               className="w-fit"
               buttonProps={{
@@ -138,7 +140,8 @@ export default function ProfilePage() {
             control={form.control}
             name="mbti"
             render={({ field }) => (
-              <MbtiSelector 
+              <MbtiSelector
+                value={field.value}
                 onChange={(value) => {
                   field.onChange(value);
                   trigger('mbti');

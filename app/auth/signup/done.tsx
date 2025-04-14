@@ -3,9 +3,18 @@ import { View } from "react-native";
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from 'expo-image';
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import Signup from "@features/signup";
+import { useCallback } from "react";
+
+const { useSignupProgress } = Signup;
 
 export default function SignupDoneScreen() {
+  const { clear } = useSignupProgress();
+
+  const clearSignup = useCallback(clear, []);
+  useFocusEffect(clearSignup);
+
   return (
     <View className="flex-1 flex flex-col w-full items-center">
       <PalePurpleGradient />
