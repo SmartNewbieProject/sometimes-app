@@ -50,6 +50,7 @@ export default function UniversityDetailsPage() {
   const { universityName } = useGlobalSearchParams<{ universityName: string }>();
   const { data: departments = [] } = useDepartmentQuery(universityName);
   const { showErrorModal } = useModal();
+  useChangePhase(SignupSteps.UNIVERSITY_DETAIL);
   const form = useForm<FormProps>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
@@ -70,8 +71,8 @@ export default function UniversityDetailsPage() {
       await apis.signup(signupForm as SignupForm);
       router.push('/auth/signup/done');
     }, (error) => {
-      console.log({ error });
-      showErrorModal(error.error);
+      console.log(error);
+      showErrorModal(error.error, "announcement");
     });
   });
 
@@ -84,7 +85,6 @@ export default function UniversityDetailsPage() {
     return '다음으로';
   })();
 
-  useChangePhase(SignupSteps.UNIVERSITY);
 
   return (
     <View className="flex-1 flex flex-col">

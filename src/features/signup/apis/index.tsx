@@ -30,7 +30,6 @@ export const signup = (form: SignupForm): Promise<void> => {
   formData.append('studentNumber', form.studentNumber);
   formData.append('instagramId', form.instagramId);
 
-  console.log(files);
   for (const file of files) {
     formData.append('profileImages', file);
   }

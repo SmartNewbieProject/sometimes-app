@@ -37,18 +37,21 @@ export default function RootLayout() {
 
   return (
     <ModalProvider>
-      <View 
+      <View
         className={cn(
           'flex-1 font-extralight',
           Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
         )}
       >
-        <Suspense fallback={null}>  
+        <Suspense fallback={null}>
         <QueryProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="auth" options={{ headerShown: false }} />
+              <Stack.Screen name="home" options={{ headerShown: false }} />
+              <Stack.Screen name="community" options={{ headerShown: false }} />
+              <Stack.Screen name="my" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
             </Stack>
           </ThemeProvider>

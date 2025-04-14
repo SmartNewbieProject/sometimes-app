@@ -1,14 +1,16 @@
-import dayjs from 'dayjs';
+import dayjs, { ConfigType } from 'dayjs';
 import 'dayjs/locale/ko';
 
 dayjs.locale('ko');
 
 const getDayBy6Digit = (digit: string) => {
-  const now = dayjs();
+  const now = create();
   const year = (() => {
-    const prefix = now.format('YY');
-    const year = digit.slice(0, 2);
-    return year < prefix ? `19${year}` : `20${year}`;
+    console.log(now.format('YYYY'));
+    const prefix = Number(now.format('YYYY').slice(2, 4));
+    const year = Number(digit.slice(0, 2));
+    console.log({ prefix, year });
+    return year > prefix ? `19${year}` : `20${year}`;
   })();
 
   const month = digit.slice(2, 4);
@@ -20,13 +22,16 @@ const getDayBy6Digit = (digit: string) => {
 const getAgeBy6Digit = (digit: string) => {
   const day = getDayBy6Digit(digit);
   const now = dayjs(new Date());
-  console.log({ day: day.format('YYYY-MM-DD'), now: now.format('YYYY-MM-DD') });
   return now.diff(day, 'year');
 };
+
+const create = (config?: ConfigType) =>
+  dayjs(config);
 
 const dayUtils = {
   getDayBy6Digit, 
   getAgeBy6Digit,
+  create,
 };
 
 export default dayUtils;
