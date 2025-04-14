@@ -80,7 +80,7 @@ export enum SignupSteps {
   UNIVERSITY_DETAIL = 6,
 }
 
-const phaseCount = Object.keys(SignupSteps).length;
+const phaseCount = Object.keys(SignupSteps).length / 2;
 
 const useSignupProgress = create<StoreProps>((set) => ({
   progress: 1 / phaseCount,
