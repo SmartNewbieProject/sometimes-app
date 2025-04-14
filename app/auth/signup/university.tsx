@@ -7,7 +7,7 @@ import { Text } from '@/src/shared/ui/text';
 import { ChipSelector, LabelInput } from '@/src/widgets';
 import { Image } from 'expo-image';
 import { router, useGlobalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { KeyboardAvoidingView, View } from 'react-native';
 
 const { SignupSteps, useChangePhase, useSignupProgress, queries } = Signup;
@@ -16,7 +16,7 @@ const { useUnivQuery } = queries;
 
 export default function UniversityPage() {
   const { updateForm, form: userForm } = useSignupProgress();
-  const { data: univs = [], isLoading } = useUnivQuery();
+  const { data: univs = [] } = useUnivQuery();
   const params = useGlobalSearchParams();
   console.log(params);
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityName);
@@ -77,17 +77,16 @@ export default function UniversityPage() {
           placeholder="대학교를 입력하세요"
           onChangeText={setSelectedUniv}
         />
-        <View className="w-full">
-          {isLoading && <Lottie />}
-          {!isLoading && (
+        <Suspense fallback={<Lottie />}>
+          <View className="w-full">
             <ChipSelector
               value={selectedUniv}
               options={filteredUnivs.map((univ) => ({ label: univ, value: univ }))}
               onChange={setSelectedUniv}
               className="w-full"
             />
-          )}
-        </View>
+          </View>
+        </Suspense>
       </View>
 
       <View className={cn(

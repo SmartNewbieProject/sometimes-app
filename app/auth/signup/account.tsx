@@ -43,11 +43,7 @@ export default function AccountScreen() {
     router.push('/auth/signup/profile');
   });
 
-  const nextable = (() => {
-    if (!isValid) return false;
-    if (!isPasswordMatch) return false;
-    return true;
-  })();
+  const nextable = isValid;
 
   const nextButtonMessage = (() => {
     if (!isValid) return '조금만 더 알려주세요';
