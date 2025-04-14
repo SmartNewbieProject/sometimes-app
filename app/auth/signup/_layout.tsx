@@ -1,11 +1,12 @@
-import { cn } from '@/src/shared/libs/cn';
-import { platform } from '@/src/shared/libs/platform';
-import { PalePurpleGradient } from '@/src/shared/ui/gradient';
-import { ProgressBar } from '@/src/shared/ui/progress-bar';
+import Loading from '@features/loading';
+import { cn } from '@shared/libs/cn';
+import { platform } from '@shared/libs/platform';
+import { PalePurpleGradient } from '@shared/ui/gradient';
+import { ProgressBar } from '@shared/ui/progress-bar';
 import Signup from '@features/signup';
 import { useFocusEffect } from '@react-navigation/native';
 import { Stack, router, usePathname } from 'expo-router';
-import { useCallback, useRef } from 'react';
+import { Suspense, useCallback, useRef } from 'react';
 import { View } from 'react-native';
 import { BackHandler } from 'react-native';
 
@@ -45,6 +46,7 @@ export default function SignupLayout() {
         <ProgressBar progress={progress} />
       </View>
       )}
+      <Suspense fallback={<Loading.Page />}>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -68,6 +70,7 @@ export default function SignupLayout() {
         <Stack.Screen name="university-details" options={{ headerShown: false }} />
         <Stack.Screen name="done" options={{ headerShown: false }} />
       </Stack>
+      </Suspense>
     </View>
   );
 }

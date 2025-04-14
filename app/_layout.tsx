@@ -11,6 +11,7 @@ import { QueryProvider } from '@/src/shared/config';
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
 import { cn } from '@/src/shared/libs/cn';
 import { ModalProvider } from '@/src/shared/providers/modal-provider';
+import Loading from "@features/loading";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -43,7 +44,7 @@ export default function RootLayout() {
           Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
         )}
       >
-        <Suspense fallback={null}>
+        <Suspense fallback={<Loading.Page />}>
         <QueryProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <Stack>
