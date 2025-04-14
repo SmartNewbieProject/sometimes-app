@@ -9,7 +9,7 @@ import { Image } from 'expo-image';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { useForm } from 'react-hook-form';  
 import { zodResolver } from '@hookform/resolvers/zod';
-import { View } from 'react-native';
+import { KeyboardAvoidingView, View } from 'react-native';
 import { z } from 'zod';
 import { SignupForm } from '@/src/features/signup/hooks';
 import { useModal } from '@/src/shared/hooks/use-modal';
@@ -87,7 +87,7 @@ export default function UniversityDetailsPage() {
 
 
   return (
-    <View className="flex-1 flex flex-col">
+    <KeyboardAvoidingView className="flex-1 flex flex-col">
       <PalePurpleGradient />
       <View className="px-5">
         <Image  
@@ -177,6 +177,6 @@ export default function UniversityDetailsPage() {
           {nextButtonMessage}
         </Button>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

@@ -31,7 +31,7 @@ export default function LoginScreen() {
           <View className={cn(
             'px-4',
             platform({
-              web: () => "h-screen overflow-auto flex flex-col justify-center",
+              web: () => "overflow-auto flex flex-col justify-center",
               default: () => ""
             })
           )}>

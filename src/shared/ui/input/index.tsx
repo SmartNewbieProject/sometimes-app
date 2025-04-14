@@ -57,6 +57,8 @@ export function Input({
           editable={!isDisabled && editable}
           secureTextEntry={isPassword && !isPasswordVisible}
           style={{ flex: 1 }}
+          autoCapitalize="none"
+          autoCorrect={false}
           {...props}
         />
         {isPassword && (

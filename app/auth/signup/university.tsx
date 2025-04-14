@@ -8,7 +8,7 @@ import { ChipSelector, LabelInput } from '@/src/widgets';
 import { Image } from 'expo-image';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { KeyboardAvoidingView, View } from 'react-native';
 
 const { SignupSteps, useChangePhase, useSignupProgress, queries } = Signup;
 const { useUnivQuery } = queries;
@@ -50,7 +50,8 @@ export default function UniversityPage() {
 
 
   return (
-    <View className="flex-1 flex flex-col">
+    <KeyboardAvoidingView
+      className="flex-1 flex flex-col">
       <PalePurpleGradient />
       <View className="px-5">
         <Image  
@@ -104,6 +105,6 @@ export default function UniversityPage() {
           {nextButtonMessage}
         </Button>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

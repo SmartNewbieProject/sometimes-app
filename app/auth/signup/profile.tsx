@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
-import { View } from 'react-native';
+import { KeyboardAvoidingView, View } from 'react-native';
 import { z } from 'zod';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
@@ -78,7 +78,7 @@ export default function ProfilePage() {
   useChangePhase(SignupSteps.PERSONAL_INFO);
 
   return (
-    <View className="flex-1 flex flex-col">
+    <KeyboardAvoidingView className="flex-1 flex flex-col">
       <PalePurpleGradient />
       <View className="px-5">
         <Image  
@@ -169,6 +169,6 @@ export default function ProfilePage() {
           {nextButtonMessage}
         </Button>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
