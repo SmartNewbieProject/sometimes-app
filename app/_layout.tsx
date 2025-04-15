@@ -44,8 +44,8 @@ export default function RootLayout() {
           Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
         )}
       >
-        <Suspense fallback={<Loading.Page />}>
         <QueryProvider>
+          <Suspense fallback={<Loading.Page />}>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -56,8 +56,8 @@ export default function RootLayout() {
               <Stack.Screen name="+not-found" />
             </Stack>
           </ThemeProvider>
+          </Suspense>
         </QueryProvider>
-        </Suspense>
       </View>
     </ModalProvider>
   );

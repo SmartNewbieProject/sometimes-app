@@ -11,16 +11,22 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const { SignupSteps, useChangePhase, useSignupProgress } = Signup;
 
 type FormState = {
-  images: string[];
+  images: (string | null)[];
 }
 
+type ImageState = (string | null)[];
+
 const schema = z.object({
-  images: z.array(z.string()).min(3, { message: '3장의 사진을 올려주세요' }),
+  images: z.array(z.string().nullable())
+    .min(3, { message: '3장의 사진을 올려주세요' })
+    .refine((images) => images.every((img) => img !== null), {
+      message: '3장의 사진을 올려주세요'
+    }),
 });
 
 export default function ProfilePage() {
@@ -31,9 +37,12 @@ export default function ProfilePage() {
     resolver: zodResolver(schema),
     mode: 'onBlur',
     defaultValues: {
-      images: userForm.profileImages,
+      images: userForm.profileImages ?? [null, null, null],
     },
   });
+
+  const formImages = form.watch('images');
+  console.log({ formImages });
 
   const onNext = () => {
     updateForm({
@@ -54,6 +63,10 @@ export default function ProfilePage() {
     setImages([...images.slice(0, index), value, ...images.slice(index + 1)]);
 
   useChangePhase(SignupSteps.PROFILE_IMAGE);
+
+  useEffect(() => {
+    form.setValue('images', images);
+  }, [images]);
 
   return (
     <View className="flex-1 flex flex-col">
@@ -84,8 +97,10 @@ export default function ProfilePage() {
         <View className="flex w-full justify-center items-center">
           <ImageSelector 
             size="sm"
+            value={images[0] ?? undefined}
             onChange={(value) => {
               uploadImage(0, value);
+              form.trigger('images');
             }}
           />
         </View>
@@ -93,14 +108,18 @@ export default function ProfilePage() {
         <View className="flex flex-row justify-center gap-x-4">
           <ImageSelector
             size="sm"
+            value={images[1] ?? undefined}
             onChange={(value) => {
               uploadImage(1, value);
+              form.trigger('images');
             }}
           />
           <ImageSelector
             size="sm"
+            value={images[2] ?? undefined}
             onChange={(value) => {
               uploadImage(2, value);
+              form.trigger('images');
             }}
           />
         </View>

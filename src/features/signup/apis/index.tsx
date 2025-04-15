@@ -7,6 +7,7 @@ export const getUnivs = async (): Promise<string[]> => {
 };
 
 export const getDepartments = async (univ: string): Promise<string[]> => {
+  await new Promise(resolve => setTimeout(resolve, 10000));
   return axiosClient.get(`/universities/departments?university=${univ}`);
 };
 

@@ -1,9 +1,26 @@
 import LottieView from 'lottie-react-native';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 
-export const Lottie = () => {
+export interface LottieProps {
+  classNames?: string;
+  size?: number;
+  style?: ViewStyle;
+}
+
+export const Lottie = ({ 
+  classNames,
+  size = 80,
+  style
+}: LottieProps) => {
+  const styles = StyleSheet.create({
+    lottie: {
+      width: size,
+      height: size,
+    },
+  });
+
   return (
-    <View style={styles.container}>
+    <View style={style} className={classNames}>
       <LottieView
         source={require('@assets/lottie.json')}
         autoPlay
@@ -13,15 +30,3 @@ export const Lottie = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  lottie: {
-    width: 100,
-    height: 100,
-  },
-});

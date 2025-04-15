@@ -14,6 +14,8 @@ import { z } from 'zod';
 import { SignupForm } from '@/src/features/signup/hooks';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { tryCatch } from '@/src/shared/libs';
+import Loading from "@features/loading";
+import { useState } from "react";
 
 const { SignupSteps, useChangePhase, useSignupProgress, queries, apis } = Signup;
 const { useDepartmentQuery } = queries;
@@ -48,7 +50,8 @@ const schema = z.object({
 export default function UniversityDetailsPage() {
   const { updateForm, form: userForm } = useSignupProgress();
   const { universityName } = useGlobalSearchParams<{ universityName: string }>();
-  const { data: departments = [] } = useDepartmentQuery(universityName);
+  const { data: departments = [], isLoading } = useDepartmentQuery(universityName);
+  const [signupLoading, setSignupLoading] = useState(false);
   const { showErrorModal } = useModal();
   useChangePhase(SignupSteps.UNIVERSITY_DETAIL);
   const form = useForm<FormProps>({
@@ -65,12 +68,15 @@ export default function UniversityDetailsPage() {
   const { handleSubmit, formState: { isValid } } = form;
 
   const onNext = handleSubmit(async (data) => {
-    tryCatch(async () => {
+    setSignupLoading(true);
+    await tryCatch(async () => {
       const signupForm = { ...userForm, ...data };
       updateForm(signupForm);
       await apis.signup(signupForm as SignupForm);
+      setSignupLoading(false);
       router.push('/auth/signup/done');
     }, (error) => {
+      setSignupLoading(false);
       console.log(error);
       showErrorModal(error.error, "announcement");
     });
@@ -85,6 +91,13 @@ export default function UniversityDetailsPage() {
     return '다음으로';
   })();
 
+  if (signupLoading) {
+    return <Loading.Page title="잠시만 기다려주세요.." />;
+  }
+
+  if (isLoading) {
+    return <Loading.Page title="학과를 검색중이에요" />;
+  }
 
   return (
     <KeyboardAvoidingView className="flex-1 flex flex-col">

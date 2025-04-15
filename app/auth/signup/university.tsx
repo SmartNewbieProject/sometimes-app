@@ -9,6 +9,7 @@ import { Image } from 'expo-image';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { Suspense, useState } from 'react';
 import { KeyboardAvoidingView, View } from 'react-native';
+import Loading from "@features/loading";
 
 const { SignupSteps, useChangePhase, useSignupProgress, queries } = Signup;
 const { useUnivQuery } = queries;
@@ -16,7 +17,7 @@ const { useUnivQuery } = queries;
 
 export default function UniversityPage() {
   const { updateForm, form: userForm } = useSignupProgress();
-  const { data: univs = [] } = useUnivQuery();
+  const { data: univs = [], isLoading } = useUnivQuery();
   const params = useGlobalSearchParams();
   console.log(params);
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityName);
@@ -77,7 +78,11 @@ export default function UniversityPage() {
           placeholder="대학교를 입력하세요"
           onChangeText={setSelectedUniv}
         />
-        <Suspense fallback={<Lottie />}>
+        <Loading.Lottie
+          title="학교를 검색중이에요"
+          loading={isLoading}
+          size={10}
+        >
           <View className="w-full">
             <ChipSelector
               value={selectedUniv}
@@ -86,7 +91,7 @@ export default function UniversityPage() {
               className="w-full"
             />
           </View>
-        </Suspense>
+        </Loading.Lottie>
       </View>
 
       <View className={cn(
