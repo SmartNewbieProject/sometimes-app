@@ -12,7 +12,7 @@ const Lottie: React.FC<Props> = ({ title, loading, children, ...props }) => {
   if (loading) {
     return (
       <View className="w-full flex flex-col items-center justify-center">
-        <L {...props} />
+        <L {...props} style={{ height: 60 }} />
         <Text variant="primary" size="sm" textColor="pale-purple">
           {title}
         </Text>

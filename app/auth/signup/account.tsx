@@ -58,70 +58,70 @@ export default function AccountScreen() {
       behavior="padding"
       style={{ flex: 1 }}
     >
-    <View className="flex-1 flex flex-col">
-      <PalePurpleGradient />
-      <View className="px-5">
-        <Image  
-          source={require('@assets/images/personal.png')}
-          style={{ width: 81, height: 81 }}
-        />
+      <View className="flex-1 flex flex-col">
+        <PalePurpleGradient />
+        <View className="px-5">
+          <Image
+            source={require('@assets/images/personal.png')}
+            style={{ width: 81, height: 81 }}
+          />
           <Text weight="semibold" size="20" textColor="black">
-          동의해 주셔서 감사합니다 :)
+            동의해 주셔서 감사합니다 :)
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-          이제 몇 가지만 더 알려주세요
+            이제 몇 가지만 더 알려주세요
           </Text>
-      </View>
+        </View>
 
-      <View className={cn(
-        platform({
-          web: () => "px-8 flex flex-col gap-y-[8px] flex-1 mt-[14px]",
-          ios: () => "px-8 flex flex-col gap-y-[40px] flex-1 mt-[30px]",
-          android: () => "px-8 flex flex-col gap-y-[40px] flex-1 mt-[30px]",
-          default: () => ""
-        })
-      )}>
-        <Form.LabelInput 
-          name="email"
-          control={form.control}
-          label="이메일" 
-          size="sm"
-          placeholder="이메일 주소"
-        />
-        <Form.LabelInput 
-          name="password"
-          size="sm"
-          control={form.control}
-          label="비밀번호" 
-          placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
-          isPassword 
-        />
-        <Form.LabelInput 
-          name="passwordConfirm"
-          size="sm"
-          control={form.control}
-          label="비밀번호 확인" 
-          placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
-          isPassword 
-        />
-      </View>
+        <View className={cn(
+          platform({
+            web: () => "px-8 flex flex-col gap-y-[8px] flex-1 mt-[14px]",
+            ios: () => "px-8 flex flex-col gap-y-[40px] flex-1 mt-[30px]",
+            android: () => "px-8 flex flex-col gap-y-[40px] flex-1 mt-[30px]",
+            default: () => ""
+          })
+        )}>
+          <Form.LabelInput
+            name="email"
+            control={form.control}
+            label="이메일"
+            size="sm"
+            placeholder="이메일 주소"
+          />
+          <Form.LabelInput
+            name="password"
+            size="sm"
+            control={form.control}
+            label="비밀번호"
+            placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
+            isPassword
+          />
+          <Form.LabelInput
+            name="passwordConfirm"
+            size="sm"
+            control={form.control}
+            label="비밀번호 확인"
+            placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
+            isPassword
+          />
+        </View>
 
-      <View className={cn(
-        platform({
-          web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-          android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-          ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-          default: () => ""
-        })
-      )}>
-        <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
+        <View className={cn(
+          platform({
+            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+            default: () => ""
+          })
+        )}>
+          <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
             뒤로
-        </Button>
-        <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
-          {nextButtonMessage}
-        </Button>
+          </Button>
+          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable && !isPasswordMatch}>
+            {nextButtonMessage}
+          </Button>
+        </View>
       </View>
-    </View>
     </KeyboardAvoidingView>
   );
 }
