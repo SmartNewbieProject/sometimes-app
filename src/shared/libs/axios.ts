@@ -57,6 +57,7 @@ axiosClient.interceptors.response.use(
           console.log('twice tryCatch');
           return result.data;
         }, (error) => {
+          console.log({ refreshError: error })
           storage.removeItem('access-token');
           storage.removeItem('refresh-token');
           console.error(error);

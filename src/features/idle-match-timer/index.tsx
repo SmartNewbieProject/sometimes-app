@@ -21,7 +21,7 @@ export default function IdleMatchTimer({ onTimeEnd }: IdleMatchTimerProps) {
   const { profileDetails } = useAuth();
   const { data: day = {
     nextMatchingDate: currentTime,
-  }, isLoading } = useNextMatchingDate();
+  } } = useNextMatchingDate();
   const time = calculateTime(day.nextMatchingDate, currentTime);
 
   const onLayout = (event: LayoutChangeEvent) => {
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   previousButton: {
     borderTopLeftRadius: 999,
     borderBottomLeftRadius: 999,
-    height: 92,
+    height: 112,
   },
   topRadius: {
     borderBottomRightRadius: 16,

@@ -7,3 +7,4 @@ export { default as fileUtils } from './file';
 export { default as dayUtils } from './day';
 export { tryCatch } from './try-catch';
 export { storage } from './store';
+export * from './univ';
