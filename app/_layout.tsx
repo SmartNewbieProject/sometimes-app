@@ -24,6 +24,11 @@ export default function RootLayout() {
     'Pretendard-ExtraBold': require('../assets/fonts/Pretendard-ExtraBold.ttf'),
     'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.ttf'),
     'Pretendard-Black': require('../assets/fonts/Pretendard-Black.ttf'),
+    'Rubik': require('../assets/fonts/Rubik-Regular.ttf'),
+    'Rubik-Medium': require('../assets/fonts/Rubik-Medium.ttf'),
+    'Rubik-Bold': require('../assets/fonts/Rubik-Bold.ttf'),
+    'Rubik-Light': require('../assets/fonts/Rubik-Light.ttf'),
+    'Rubik-SemiBold': require('../assets/fonts/Rubik-SemiBold.ttf'),
   });
 
   useEffect(() => {
@@ -46,16 +51,16 @@ export default function RootLayout() {
       >
         <QueryProvider>
           <Suspense fallback={<Loading.Page />}>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="auth" options={{ headerShown: false }} />
-              <Stack.Screen name="home" options={{ headerShown: false }} />
-              <Stack.Screen name="community" options={{ headerShown: false }} />
-              <Stack.Screen name="my" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-          </ThemeProvider>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="auth" options={{ headerShown: false }} />
+                <Stack.Screen name="home" options={{ headerShown: false }} />
+                <Stack.Screen name="community" options={{ headerShown: false }} />
+                <Stack.Screen name="my" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </ThemeProvider>
           </Suspense>
         </QueryProvider>
       </View>
