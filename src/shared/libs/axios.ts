@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 
 const refresh = async () => {
   const refreshToken = await storage.getItem('refresh-token');
-  const { accessToken, refreshToken: newRefreshToken } = await axiosClient.post('/auth/refresh', { refreshToken }) as TokenResponse;
+  const { accessToken, refreshToken: newRefreshToken } = await temporaryAxiosClient.post('/auth/refresh', { refreshToken }) as TokenResponse;
   await storage.setItem('access-token', accessToken);
   await storage.setItem('refresh-token', newRefreshToken);
   return accessToken;
