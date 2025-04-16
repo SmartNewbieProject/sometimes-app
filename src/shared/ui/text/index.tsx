@@ -14,6 +14,7 @@ const textStyles = cva('text-base', {
       md: 'text-md',
       '20': 'text-[20px]',
       '13': 'text-[13px]',
+      chip: 'text-[13px]',
       lg: 'text-lg',
     },
     weight: {
@@ -46,14 +47,14 @@ export type TextProps = VariantProps<typeof textStyles> & {
   style?: TextStyle;
 };
 
-export const Text: React.FC<TextProps> = ({ 
-  variant, 
-  size, 
-  weight, 
-  textColor, 
-  className = '', 
+export const Text: React.FC<TextProps> = ({
+  variant,
+  size,
+  weight,
+  textColor,
+  className = '',
   style,
-  children 
+  children
 }) => {
   return (
     <RNText className={cn(textStyles({ variant, size, weight, textColor }), className)} style={style}>

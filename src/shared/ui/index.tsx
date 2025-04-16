@@ -7,6 +7,7 @@ export * from './check';
 export * from './divider';
 export * from './label';
 export * from './image-selector';
+export * from './content-selector';
 export * from './lottie';
 export * from './select';
 export * from './navigation';
