@@ -10,6 +10,10 @@ export function useAuth() {
     key: 'access-token',
     initialValue: null,
   });
+  console.log({
+    accessToken,
+    accessTokenable: !!accessToken,
+  });
   const { value: refreshToken, setValue: setRefreshToken } = useStorage<string | null>({
     key: 'refresh-token',
     initialValue: null,
@@ -19,6 +23,11 @@ export function useAuth() {
 
   const login = async (email: string, password: string) => {
     const { accessToken, refreshToken } = await loginApi(email, password);
+    console.log({
+      accessToken,
+      refreshToken,
+    });
+    
     await setToken(accessToken);
     await setRefreshToken(refreshToken);
   };
