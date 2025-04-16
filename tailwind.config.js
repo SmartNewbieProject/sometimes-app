@@ -24,6 +24,7 @@ module.exports = {
         extrabold: ['Pretendard-ExtraBold'],
         bold: ['Pretendard-Bold'],
         black: ['Pretendard-Black'],
+        rubik: ['Rubik']
       },
     },
   },

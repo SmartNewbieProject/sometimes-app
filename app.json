@@ -71,6 +71,26 @@
       {
         "asset": "assets/fonts/Pretendard-Black.ttf",
         "family": "Pretendard-Black"
+      },
+      {
+        "asset": "assets/fonts/Rubik-Regular.ttf",
+        "family": "Rubik"
+      },
+      {
+        "asset": "assets/fonts/Rubik-Medium.ttf",
+        "family": "Rubik-Medium"
+      },
+      {
+        "asset": "assets/fonts/Rubik-Bold.ttf",
+        "family": "Rubik-Bold"
+      },
+      {
+        "asset": "assets/fonts/Rubik-Light.ttf",
+        "family": "Rubik-Light"
+      },
+      {
+        "asset": "assets/fonts/Rubik-SemiBold.ttf",
+        "family": "Rubik-SemiBold"
       }
     ]
   }
