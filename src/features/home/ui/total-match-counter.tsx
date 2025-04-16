@@ -26,7 +26,7 @@ export default function TotalMatchCounter({
         <View style={styles.leftContent} className="w-full flex flex-row">
           <Text textColor="white" className="mb-1 whitespace-nowrap text-sm md:text-md pt-5 pr-1">지금까지</Text>
           <View style={styles.counterContainer} className="self-center">
-            <Text weight="bold" textColor="white" className="text-[48px] tracking-wide">{formattedCount}</Text>
+            <Text weight="bold" textColor="white" className="text-[42px] tracking-wide font-rubik">{formattedCount}</Text>
           </View>
           <Text textColor="white" className="self-end text-sm md:text-md pb-[19px]">명이 신청했어요!</Text>
         </View>

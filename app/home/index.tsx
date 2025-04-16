@@ -1,12 +1,11 @@
 import { View, TouchableOpacity, ScrollView } from 'react-native';
-import { Text, Button, PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
+import { PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
 import { Image } from 'expo-image';
 import Home from "@features/home";
 import IdleMatchTimer from '@features/idle-match-timer';
 
 const { ui } = Home;
-const { TotalMatchCounter } = ui;
-
+const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
 
 export default function HomeScreen() {
   return (
@@ -27,13 +26,21 @@ export default function HomeScreen() {
         }
       />
 
-      <ScrollView className="flex-1 px-5">
+      <ScrollView className="flex-1 px-5 flex flex-col gap-y-[14px] pb-14">
         <View>
           <TotalMatchCounter count={15000} />
         </View>
 
         <View className="mt-[25px]">
           <IdleMatchTimer />
+        </View>
+
+        <View>
+          <CommunityAnnouncement />
+          <ReviewSlide />
+        </View>
+        <View className="my-[25px]">
+          <TipAnnouncement />
         </View>
       </ScrollView>
 
