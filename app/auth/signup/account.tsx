@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, View } from 'react-native';
+import { View } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
 import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { Image } from 'expo-image';
@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
+import Layout from '@/src/features/layout';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
@@ -54,10 +55,7 @@ export default function AccountScreen() {
   useChangePhase(SignupSteps.ACCOUNT);
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      style={{ flex: 1 }}
-    >
+    <Layout.Default>
       <View className="flex-1 flex flex-col">
         <PalePurpleGradient />
         <View className="px-5">
@@ -122,6 +120,6 @@ export default function AccountScreen() {
           </Button>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </Layout.Default>
   );
 }

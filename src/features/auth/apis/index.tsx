@@ -1,3 +1,3 @@
-import { axiosClient } from "@/src/shared/libs";
+import { axiosClient } from "@shared/libs";
 
 export const getMySimpleDetails = () => axiosClient.get('/api/user');
