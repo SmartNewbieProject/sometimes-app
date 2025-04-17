@@ -12,8 +12,12 @@ const { useSignupProgress } = Signup;
 export default function SignupDoneScreen() {
   const { clear } = useSignupProgress();
 
-  const clearSignup = useCallback(clear, []);
-  useFocusEffect(clearSignup);
+  // development 환경에서만 회원가입 데이터 초기화
+  useEffect(() => {
+      if (process.env.NODE_ENV !== 'production') {
+         clear();
+      }
+  }, []);
 
   return (
     <View className="flex-1 flex flex-col w-full items-center">
@@ -53,7 +57,10 @@ export default function SignupDoneScreen() {
     <Button
         variant="primary"
         size="md"
-        onPress={() => router.push('/auth/login')}
+        onPress={() => {
+          const redirectPath = process.env.NODE_ENV === 'production' ? '/commingsoon' : '/home';
+          router.push(redirectPath);
+        }}
         className="mb-[14px] w-full"
       >
         이상형 찾으러 가기 →

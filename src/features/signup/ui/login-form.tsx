@@ -35,7 +35,8 @@ export default function LoginForm() {
   const onPressLogin = form.handleSubmit(async ({ email, password }) => {
     tryCatch(async () => {  
       await login(email, password);
-      router.push('/');
+      const redirectPath = process.env.NODE_ENV === 'production' ? '/commingsoon' : '/home';
+      router.push(redirectPath);
     }, (error) => {
       if (error.status === 401) {
         form.setError('password', { message: '아이디가 존재하지 않거나 비밀번호가 일치하지 않습니다' });
