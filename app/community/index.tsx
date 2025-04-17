@@ -1,7 +1,20 @@
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
+import { CommunityHeader } from '@/src/features/community/ui/community-header';
+import { ArticleList } from '@/src/features/community/ui/articles';
+import { useState } from 'react';
+import { IconWrapper } from '@/src/shared/ui/icons';
+import BellIcon from '@/assets/icons/bell.svg';
+
+type TabType = 'realtime' | 'popular';
 
 export default function CommunityScreen() {
+  const [activeTab, setActiveTab] = useState<TabType>('realtime');
+
+  const handleChangeTab = (tab: TabType) => {
+    setActiveTab(tab);
+  };
+
   return (
     <View className="flex-1">
       <PalePurpleGradient />
@@ -13,24 +26,19 @@ export default function CommunityScreen() {
         </Header.LeftContent>
 
         <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
-
+      
         <Header.RightContent>
           <TouchableOpacity>
-            <View className="w-10 h-10 bg-lightPurple rounded-full items-center justify-center">
-              <Text size="sm" weight="bold" textColor="purple">+</Text>
-            </View>
+            <IconWrapper>
+              <BellIcon />
+            </IconWrapper>
           </TouchableOpacity>
         </Header.RightContent>
       </Header.Container>
 
       <ScrollView className="flex-1 px-5">
-        <View className="py-10 items-center justify-center">
-          <Text size="lg" weight="bold" textColor="black">
-            커뮤니티 화면
-          </Text>
-          <Text size="md" textColor="pale-purple" className="mt-2">
-            여기에 커뮤니티 콘텐츠가 표시됩니다.
-          </Text>
+        <View>
+          <ArticleList type={activeTab} />
         </View>
       </ScrollView>
 
