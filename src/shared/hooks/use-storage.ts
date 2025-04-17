@@ -1,31 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { storage } from '../libs';
 
 interface StorageProps<T> {
   key: string;
   initialValue?: T;
 }
-
-interface StorageAdapter {
-  getItem: (key: string) => Promise<string | null>;
-  setItem: (key: string, value: string) => Promise<void>;
-  removeItem: (key: string) => Promise<void>;
-}
-
-const webStorage: StorageAdapter = {
-  getItem: async (key) => localStorage.getItem(key),
-  setItem: async (key, value) => localStorage.setItem(key, value),
-  removeItem: async (key) => localStorage.removeItem(key),
-};
-
-const nativeStorage: StorageAdapter = {
-  getItem: AsyncStorage.getItem,
-  setItem: AsyncStorage.setItem,
-  removeItem: AsyncStorage.removeItem,
-};
-
-const storage = Platform.OS === 'web' ? webStorage : nativeStorage;
 
 export function useStorage<T>({ key, initialValue }: StorageProps<T>) {
   const [storedValue, setStoredValue] = useState<T | undefined>(initialValue);

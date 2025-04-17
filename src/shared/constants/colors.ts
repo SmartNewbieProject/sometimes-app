@@ -1,6 +1,7 @@
 const colors = {
   primaryPurple: '#7A4AE2', // 주요 보라색
   lightPurple: '#E2D5FF',   // 배경에 사용된 연한 보라색
+  moreLightPurple: '#F6F2FF',
   darkPurple: '#7C3AED',    // 버튼에 사용된 진한 보라색
   white: '#FFFFFF',         // 텍스트 및 배경에 사용된 흰색
   black: '#000000',         // 텍스트에 사용된 검정색

@@ -8,11 +8,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest --watchAll",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
     "lint": "expo lint"
-  },
-  "jest": {
-    "preset": "jest-expo"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
@@ -69,6 +67,8 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@biomejs/biome": "1.9.4",
+    "@testing-library/react-native": "^13.2.0",
+    "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
     "@types/react-test-renderer": "^18.3.0",
@@ -76,6 +76,7 @@
     "jest-expo": "~52.0.6",
     "react-native-svg-transformer": "^1.5.0",
     "react-test-renderer": "18.3.1",
+    "ts-jest": "^29.3.2",
     "typescript": "^5.3.3"
   },
   "private": true

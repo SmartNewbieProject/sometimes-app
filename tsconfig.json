@@ -5,7 +5,9 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "types": [
-      "react-native"
+      "react-native",
+      "jest",
+      "node"
     ],
     "paths": {
       "@/*": [
@@ -37,6 +39,9 @@
       ],
       "@assets/*": [
         "./assets/*"
+      ],
+      "@types/*": [
+        "./src/types/*"
       ]
     }
   },

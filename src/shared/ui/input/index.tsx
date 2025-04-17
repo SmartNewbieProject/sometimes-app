@@ -57,11 +57,13 @@ export function Input({
           editable={!isDisabled && editable}
           secureTextEntry={isPassword && !isPasswordVisible}
           style={{ flex: 1 }}
+          autoCapitalize="none"
+          autoCorrect={false}
           {...props}
         />
         {isPassword && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-            {isPasswordVisible ? <EyeOff width={24} height={24} /> : <EyeOn width={24} height={24} />}
+            {isPasswordVisible  ? <EyeOn width={24} height={24} /> : <EyeOff width={24} height={24} />}
           </TouchableOpacity>
         )}
       </View>
