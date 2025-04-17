@@ -13,10 +13,11 @@ export default function SignupDoneScreen() {
   const { clear } = useSignupProgress();
 
   // development 환경에서만 회원가입 데이터 초기화
-  if (process.env.NODE_ENV !== 'production') {
-    const clearSignup = useCallback(clear, []);
-    useFocusEffect(clearSignup);
-  }
+  useEffect(() => {
+      if (process.env.NODE_ENV !== 'production') {
+         clear();
+      }
+  }, []);
 
   return (
     <View className="flex-1 flex flex-col w-full items-center">
