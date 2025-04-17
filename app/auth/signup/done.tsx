@@ -10,10 +10,11 @@ import { useCallback } from "react";
 const { useSignupProgress } = Signup;
 
 export default function SignupDoneScreen() {
-  const { clear } = useSignupProgress();
+  // 임시로 clear 함수 주석처리, 나중에 살려야함
+/*   const { clear } = useSignupProgress();
 
   const clearSignup = useCallback(clear, []);
-  useFocusEffect(clearSignup);
+  useFocusEffect(clearSignup); */
 
   return (
     <View className="flex-1 flex flex-col w-full items-center">
@@ -53,7 +54,7 @@ export default function SignupDoneScreen() {
     <Button
         variant="primary"
         size="md"
-        onPress={() => router.push('/auth/login')}
+        onPress={() => router.push('/commingsoon')} // 임시로 라우팅 페이지 변경, 나중에 / 으로 수정 필요요
         className="mb-[14px] w-full"
       >
         이상형 찾으러 가기 →
