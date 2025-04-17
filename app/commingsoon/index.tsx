@@ -4,9 +4,26 @@ import { Image } from 'expo-image';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import SmallTitle from '@assets/icons/small-title.svg';
 import Signup from '@/src/features/signup';
+import { useAuth } from '@/src/features/auth';
+import { useModal } from '@/src/shared/hooks/use-modal';
 
 export default function CommingSoonScreen() {
-  const { form } = Signup.useSignupProgress();
+  const { form: signupForm } = Signup.useSignupProgress();
+  const { profileDetails } = useAuth();
+  const { showModal } = useModal();
+
+  const onClickSeeYouLater = () =>
+    showModal({
+      title: '꼭 다시 만나요!',
+      children: <Text>4월 27일, 꼭 다시 만나요!</Text>,
+      primaryButton: {
+        text: '확인',
+        onClick: () => {},
+      },
+    });
+
+  // 회원가입 데이터를 우선 확인하고, 없으면 로그인 프로필 데이터 사용
+  const userName = signupForm.name || profileDetails?.name;
   
   return (
     <View className="flex-1 flex flex-col w-full items-center">
@@ -24,7 +41,7 @@ export default function CommingSoonScreen() {
         <View className="flex flex-col">
           <View className="mt-8 px-5" >
             <Text size="md" textColor="black" weight="semibold">
-              {form.name}님!
+              {userName}님!
             </Text>
             <Text size="md" textColor="black" weight="semibold">
               빨리 보고싶어요!
@@ -54,7 +71,10 @@ export default function CommingSoonScreen() {
         <Button
           variant="primary"
           size="md"
-          onPress={() => {}}
+          onPress={() => {
+            onClickSeeYouLater();
+            
+          }}
           className="mb-[14px] w-full"
         >
           출시일에 다시 볼게요.
