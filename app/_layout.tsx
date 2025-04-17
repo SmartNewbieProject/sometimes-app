@@ -42,6 +42,7 @@ export default function RootLayout() {
   }
 
   return (
+
     <ModalProvider>
       <View
         className={cn(
