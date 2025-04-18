@@ -58,6 +58,7 @@ export default function RootLayout() {
                 <Stack.Screen name="auth" options={{ headerShown: false }} />
                 <Stack.Screen name="home" options={{ headerShown: false }} />
                 <Stack.Screen name="community" options={{ headerShown: false }} />
+                <Stack.Screen name="interest" options={{ headerShown: false }} />
                 <Stack.Screen name="my" options={{ headerShown: false }} />
                 <Stack.Screen name="commingsoon" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />

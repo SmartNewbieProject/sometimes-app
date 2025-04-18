@@ -33,7 +33,7 @@ export const ReviewSlide = () => {
               <Text size="md" weight="semibold" textColor="black">
                 {review.name}
               </Text>
-              <Text size="md" weight="medium" textColor="black">
+              <Text size="md" weight="light" textColor="black">
                 {review.universityName}
               </Text>
             </View>

@@ -39,7 +39,7 @@ const buttonStyles = cva(
 
 export type ButtonProps = VariantProps<typeof buttonStyles> & {
 	children?: React.ReactNode;
-	onPress: () => void;
+	onPress?: () => void;
 	className?: string;
 };
 
@@ -54,7 +54,7 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
 	const press = () => {
 		if (disabled) return;
-		onPress();
+		onPress?.();
 	};
 
 	return (
@@ -67,7 +67,7 @@ export const Button: React.FC<ButtonProps> = ({
 				textColor={textColor}
 				size={size}
 				weight="semibold"
-				className="text-center"
+				className="text-center whitespace-nowrap"
 			>
 				{children}
 			</Text>
