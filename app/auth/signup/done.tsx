@@ -58,7 +58,7 @@ export default function SignupDoneScreen() {
         variant="primary"
         size="md"
         onPress={() => {
-          const redirectPath = process.env.NODE_ENV === 'production' ? '/commingsoon' : '/home';
+          const redirectPath = process.env.NODE_ENV === 'production' ? '/commingsoon' : '/auth/login';
           router.push(redirectPath);
         }}
         className="mb-[14px] w-full"
