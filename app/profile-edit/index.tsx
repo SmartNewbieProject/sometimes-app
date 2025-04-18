@@ -1,6 +1,6 @@
 import { View, ScrollView, KeyboardAvoidingView, Platform, Pressable, Animated } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
-import { Button } from '@/src/shared/ui';
+import { Button, ImageSelector } from '@/src/shared/ui';
 import { Form } from '@/src/widgets';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,6 +24,7 @@ type FormState = {
   university: string;
   mbti: string;
   instagramId: string;
+  profileImages: (string | null)[];
 };
 
 const schema = z.object({
@@ -36,11 +37,13 @@ const schema = z.object({
   university: z.string().min(1, { message: '대학교를 입력해주세요' }),
   mbti: z.string().min(4, { message: 'MBTI를 입력해주세요' }),
   instagramId: z.string().min(1, { message: '인스타그램 아이디를 입력해주세요' }),
+  profileImages: z.array(z.string().nullable()).length(3),
 });
 
 export default function ProfileEditPage() {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<'profile' | 'ideal'>('profile');
+  const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const fadeAnim = useState(() => ({
     profile: new Animated.Value(1),
     ideal: new Animated.Value(0),
@@ -55,6 +58,7 @@ export default function ProfileEditPage() {
       university: '한밭대학교',
       mbti: 'ENFP',
       instagramId: 'hyunsu_0129',
+      profileImages: [null, null, null],
     },
   });
 
@@ -66,9 +70,11 @@ export default function ProfileEditPage() {
     router.back();
   });
 
-  const handlePhotoChange = () => {
-    // TODO: 사진 변경 로직 구현
-    console.log('사진 변경');
+  const handleImageChange = (index: number, value: string) => {
+    const newImages = [...images];
+    newImages[index] = value;
+    setImages(newImages);
+    form.setValue('profileImages', newImages);
   };
 
   const handleTabChange = (tabId: 'profile' | 'ideal') => {
@@ -122,16 +128,15 @@ export default function ProfileEditPage() {
               pointerEvents: activeTab === 'profile' ? 'auto' : 'none'
             }}>
               <View className="mb-8">
-                <View className="items-center mb-4">
-                  <View className="w-24 h-24 rounded-full bg-gray-100 overflow-hidden mb-2">
-                    <Image
-                      source={require('@assets/images/image.png')}
-                      style={{ width: '100%', height: '100%' }}
+                <View className="flex flex-row justify-center gap-x-4">
+                  {images.map((image, index) => (
+                    <ImageSelector
+                      key={index}
+                      size="sm"
+                      value={image ?? undefined}
+                      onChange={(value) => handleImageChange(index, value)}
                     />
-                  </View>
-                  <Button variant="secondary" className="py-1" onPress={handlePhotoChange}>
-                    사진 변경
-                  </Button>
+                  ))}
                 </View>
               </View>
 
@@ -213,7 +218,7 @@ export default function ProfileEditPage() {
                       style={{ width: '100%', height: '100%' }}
                     />
                   </View>
-                  <Button variant="secondary" className="py-1" onPress={handlePhotoChange}>
+                  <Button variant="secondary" className="py-1" onPress={() => {}}>
                     사진 변경
                   </Button>
                 </View>
@@ -226,7 +231,6 @@ export default function ProfileEditPage() {
           </View>
         </View>
       </ScrollView>
-
     </KeyboardAvoidingView>
   );
 } 
