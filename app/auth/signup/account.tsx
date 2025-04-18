@@ -21,7 +21,22 @@ type FormState = {
 }
 
 export default function AccountScreen() {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { updateForm, form: { email, password } } = useSignupProgress();
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.account),
@@ -104,21 +119,23 @@ export default function AccountScreen() {
           />
         </View>
 
-        <View className={cn(
-          platform({
-            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            default: () => ""
-          })
-        )}>
-          <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
-            뒤로
-          </Button>
-          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable && !isPasswordMatch}>
-            {nextButtonMessage}
-          </Button>
-        </View>
+        {!isKeyboardVisible && (
+          <View className={cn(
+            platform({
+              web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+              android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+              ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+              default: () => ""
+            })
+          )}>
+            <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
+              뒤로
+            </Button>
+            <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable && !isPasswordMatch}>
+              {nextButtonMessage}
+            </Button>
+          </View>
+        )}
       </View>
     </Layout.Default>
   );

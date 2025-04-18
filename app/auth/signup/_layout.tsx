@@ -6,7 +6,7 @@ import { ProgressBar } from '@shared/ui/progress-bar';
 import Signup from '@features/signup';
 import { useFocusEffect } from '@react-navigation/native';
 import { Stack, router, usePathname } from 'expo-router';
-import { Suspense, useCallback, useRef } from 'react';
+import { Suspense, useCallback } from 'react';
 import { View } from 'react-native';
 import { BackHandler } from 'react-native';
 

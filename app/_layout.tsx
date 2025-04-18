@@ -42,6 +42,7 @@ export default function RootLayout() {
   }
 
   return (
+
     <ModalProvider>
       <View
         className={cn(
@@ -59,6 +60,7 @@ export default function RootLayout() {
                 <Stack.Screen name="community" options={{ headerShown: false }} />
                 <Stack.Screen name="interest" options={{ headerShown: false }} />
                 <Stack.Screen name="my" options={{ headerShown: false }} />
+                <Stack.Screen name="commingsoon" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
             </ThemeProvider>
