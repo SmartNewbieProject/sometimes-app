@@ -16,6 +16,7 @@ export interface UniversityDetail {
 export interface PreferenceOption {
   id: string;
   displayName: string;
+  imageUrl?: string;
 }
 
 export interface PreferenceTypeGroup {
