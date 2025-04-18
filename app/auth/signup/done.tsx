@@ -5,7 +5,7 @@ import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from "expo-router";
 import Signup from "@features/signup";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 const { useSignupProgress } = Signup;
 
