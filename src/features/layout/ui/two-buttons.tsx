@@ -9,10 +9,11 @@ type Props = {
     prev?: string;
     next?: string;
   };
+  disabledNext: boolean;
   classNames?: string;
 }
 
-export const TwoButtons = ({ onClickNext, onClickPrevious, content, classNames }: Props) => {
+export const TwoButtons = ({ onClickNext, onClickPrevious, content, classNames, disabledNext }: Props) => {
   return (
     <View
       className={cn([
@@ -36,6 +37,7 @@ export const TwoButtons = ({ onClickNext, onClickPrevious, content, classNames }
       <Button
         className="flex-[0.7]"
         onPress={onClickNext}
+        disabled={disabledNext}
       >
         {content?.next || '다음으로'}
       </Button>

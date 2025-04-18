@@ -35,7 +35,7 @@ const ageOptions: AgeOptionData[] = [
   },
 ];
 
-const ageSelector = cva('grid grid-cols-2 gap-4', {
+const ageSelector = cva('flex flex-row w-full justify-center flex-wrap gap-4', {
   variants: {
     size: {
       sm: 'max-w-[300px]',
@@ -61,7 +61,13 @@ export function AgeSelector({
   className,
 }: AgeSelectorProps) {
   return (
-    <View className={cn(ageSelector({ size }), className)}>
+    <View
+      className={cn(ageSelector({ size }), className)}
+      style={{
+        width: "100%",
+        flexWrap: "wrap",
+      }}
+    >
       {ageOptions.map((option) => (
         <AgeCard
           key={option.value}
@@ -86,27 +92,26 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
       activeOpacity={0.8}
       onPress={onSelect}
       className={cn(
-        'rounded-[20px] overflow-hidden border-2 w-full',
+        'rounded-[20px] overflow-hidden border-2 min-w-[138px] min-h-[138px] flex flex-row items-center',
         isSelected ? 'border-primaryPurple' : 'border-[#E2D5FF]',
       )}
     >
-      <View className="relative">
+      <View className="relative w-full h-full flex flex-col justify-center items-center">
         <Image
           source={option.image}
-          style={{ width: 100, height: 100, aspectRatio: 1 }}
+          style={{ width: 81, height: 81, aspectRatio: 1 }}
           resizeMode="cover"
         />
+        <Text variant="primary" size="md" weight="semibold">
+          {option.label}
+        </Text>
+
         <View className={cn(
           "absolute top-0 right-0 px-2.5 py-1 rounded-bl-lg",
           isSelected ? 'bg-primaryPurple' : 'bg-[#E2D5FF]',
         )}>
           <Text size="sm" textColor="white">
             선택
-          </Text>
-        </View>
-        <View className="absolute bottom-0 left-0 right-0 p-2 bg-white bg-opacity-80">
-          <Text size="md" textColor="purple" className="text-center">
-            {option.label}
           </Text>
         </View>
       </View>

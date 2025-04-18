@@ -1,33 +1,38 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Layout from "@/src/features/layout";
-import { Button, PalePurpleGradient } from "@/src/shared/ui";
-import { Image, View } from "react-native";
+import { PalePurpleGradient } from "@/src/shared/ui";
 import { Text } from '@shared/ui';
+import { Image, View } from "react-native";
 import Interest from '@features/interest';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { AgeOption } from '@/src/features/interest/ui';
 
-const { ui } = Interest;
+const { ui, hooks, services } = Interest;
 const { AgeSelector } = ui;
+const { useInterestStep } = hooks;
+const { InterestSteps } = services;
 
 export default function AgeSelectionScreen() {
   const [selectedAge, setSelectedAge] = useState<AgeOption | undefined>();
+  const { updateStep } = useInterestStep();
 
   const handleNext = () => {
     if (selectedAge) {
-      router.back(); // For now, just go back since we don't have a next screen
+      router.back();
     }
   };
+
+  useFocusEffect(useCallback(() => updateStep(InterestSteps.AGE), []));
 
   return (
     <Layout.Default>
       <PalePurpleGradient />
-      <View className="flex-1 px-5 pt-10">
+      <View className="flex-1 px-5 pt-4">
         <Image
           source={require('@assets/images/peoples.png')}
           style={{ width: 81, height: 81 }}
         />
-        <View className="flex flex-col my-2 mb-8">
+        <View className="flex flex-col my-2 mb-4">
           <Text weight="semibold" size="20" textColor="black">
             선호하는 나이대를
           </Text>
@@ -36,7 +41,7 @@ export default function AgeSelectionScreen() {
           </Text>
         </View>
 
-        <View className="flex-1 items-center">
+        <View className="flex-1 w-full flex items-center">
           <AgeSelector
             value={selectedAge}
             onChange={setSelectedAge}
@@ -45,16 +50,12 @@ export default function AgeSelectionScreen() {
           />
         </View>
 
-        <View className="pb-10">
-          <Button
-            variant="primary"
-            onPress={handleNext}
-            disabled={!selectedAge}
-            className="w-full py-4"
-          >
-            다음
-          </Button>
-        </View>
+        <Layout.TwoButtons
+          classNames="px-0"
+          disabledNext={!selectedAge}
+          onClickNext={() => router.navigate("/interest/drinking")}
+          onClickPrevious={() => router.navigate("/interest")}
+        />
       </View>
     </Layout.Default>
   );

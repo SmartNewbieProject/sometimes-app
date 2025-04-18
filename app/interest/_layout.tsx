@@ -46,6 +46,15 @@ export default function InterestLayout() {
             },
           }}
         />
+        <Stack.Screen
+          name="drinking"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
       </Stack>
     </View>
   );

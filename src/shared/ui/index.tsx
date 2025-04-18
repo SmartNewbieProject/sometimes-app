@@ -13,3 +13,4 @@ export * from './select';
 export * from './navigation';
 export * from './layout';
 export * from './header';
+export * from './step-slider';

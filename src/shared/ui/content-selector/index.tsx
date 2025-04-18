@@ -86,5 +86,3 @@ export function ContentSelector({
     </TouchableOpacity>
   );
 }
-
-export * from './examples';
