@@ -10,7 +10,7 @@ const { useInterestStep } = hooks;
 
 export default function InterestLayout() {
   const pathname = usePathname();
-  const renderProgress = pathname !== '/interest';
+  const renderProgress = ['/interest', '/intrest/done'].includes(pathname);
   const { progress } = useInterestStep();
 
   return (
@@ -48,6 +48,42 @@ export default function InterestLayout() {
         />
         <Stack.Screen
           name="drinking"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="interest"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="smoking"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="tattoo"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="done"
           options={{
             headerShown: false,
             contentStyle: {

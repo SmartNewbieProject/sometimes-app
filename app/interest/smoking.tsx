@@ -14,31 +14,31 @@ const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 
-export default function DrinkingSelectionScreen() {
+export default function SmokingSelectionScreen() {
   const { updateStep } = useInterestStep();
   const [preference, setPreference] = useState<PreferenceOption>();
 
   const { data: preferences = {
     id: '',
     options: [],
-  }, isLoading: optionsLoading } = usePreferenceOptionsQuery(Keys.DRINKING);
+  }, isLoading: optionsLoading } = usePreferenceOptionsQuery(Keys.SMOKING);
 
-  useFocusEffect(useCallback(() => updateStep(InterestSteps.DRIKNING), []));
+  useFocusEffect(useCallback(() => updateStep(InterestSteps.SMOKING), []));
 
   return (
     <Layout.Default>
       <PalePurpleGradient />
       <View className="flex-1 px-5 pt-4">
         <Image
-          source={require('@assets/images/drink.png')}
+          source={require('@assets/images/loved.png')}
           style={{ width: 81, height: 81 }}
         />
         <View className="flex flex-col my-2 mb-4">
           <Text weight="semibold" size="20" textColor="black">
-            음주는 만남에서 중요한 부분이죠
+            담배에 대해
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            음주 선호도를 알려주세요!
+            어떻게 생각하시나요?
           </Text>
         </View>
 
@@ -66,8 +66,8 @@ export default function DrinkingSelectionScreen() {
         <Layout.TwoButtons
           classNames="px-0"
           disabledNext={!preference}
-          onClickNext={() => router.navigate("/interest/interest")}
-          onClickPrevious={() => router.navigate("/interest/age")}
+          onClickNext={() => router.navigate("/interest/tattoo")}
+          onClickPrevious={() => router.navigate("/interest/interest")}
         />
       </View>
     </Layout.Default>

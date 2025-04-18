@@ -73,6 +73,7 @@ export default function InterestIntroScreen() {
 
       <Layout.TwoButtons
         onClickNext={() => router.navigate('/interest/age')}
+        disabledNext={false}
         onClickPrevious={showPreviousModal}
         content={{
           prev: '이전',
