@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, View } from 'react-native';
+import { KeyboardAvoidingView, View, Keyboard, Platform } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
 import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { Image } from 'expo-image';
@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
+import { useEffect, useState } from 'react';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
@@ -20,7 +21,22 @@ type FormState = {
 }
 
 export default function AccountScreen() {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { updateForm, form: { email, password } } = useSignupProgress();
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.account),
@@ -55,7 +71,7 @@ export default function AccountScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior="padding"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
       <View className="flex-1 flex flex-col">
@@ -106,21 +122,23 @@ export default function AccountScreen() {
           />
         </View>
 
-        <View className={cn(
-          platform({
-            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            default: () => ""
-          })
-        )}>
-          <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
-            뒤로
-          </Button>
-          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable && !isPasswordMatch}>
-            {nextButtonMessage}
-          </Button>
-        </View>
+        {!isKeyboardVisible && (
+          <View className={cn(
+            platform({
+              web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+              android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+              ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+              default: () => ""
+            })
+          )}>
+            <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
+              뒤로
+            </Button>
+            <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable && !isPasswordMatch}>
+              {nextButtonMessage}
+            </Button>
+          </View>
+        )}
       </View>
     </KeyboardAvoidingView>
   );

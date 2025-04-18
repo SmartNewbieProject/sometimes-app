@@ -11,8 +11,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
-import { KeyboardAvoidingView, View } from 'react-native';
+import { KeyboardAvoidingView, View, Keyboard, Platform } from 'react-native';
 import { z } from 'zod';
+import { useEffect, useState } from 'react';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
@@ -36,7 +37,22 @@ const schema = z.object({
 });
 
 export default function ProfilePage() {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { updateForm, form: userForm } = useSignupProgress();
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const form = useForm<FormState>({
     resolver: zodResolver(schema),
@@ -78,7 +94,10 @@ export default function ProfilePage() {
   useChangePhase(SignupSteps.PERSONAL_INFO);
 
   return (
-    <KeyboardAvoidingView className="flex-1 flex flex-col">
+    <KeyboardAvoidingView 
+      className="flex-1 flex flex-col"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <PalePurpleGradient />
       <View className="px-5">
         <Image  
@@ -154,21 +173,23 @@ export default function ProfilePage() {
 
       </View>
 
-      <View className={cn(
-        platform({
-          web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-          android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-          ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-          default: () => ""
-        })
-      )}>
-        <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
-            뒤로
-        </Button>
-        <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
-          {nextButtonMessage}
-        </Button>
-      </View>
+      {!isKeyboardVisible && (
+        <View className={cn(
+          platform({
+            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+            default: () => ""
+          })
+        )}>
+          <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
+              뒤로
+          </Button>
+          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
+            {nextButtonMessage}
+          </Button>
+        </View>
+      )}
     </KeyboardAvoidingView>
   );
 }
