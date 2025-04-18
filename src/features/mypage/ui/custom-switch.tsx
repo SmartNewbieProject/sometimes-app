@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 
-const CustomSwitch = () => {
-  const [isOn, setIsOn] = useState(false);
+interface CustomSwitchProps {
+  value: boolean;
+  onChange: (value: boolean) => void;
+}
 
-  const toggleSwitch = () => setIsOn(!isOn);
+const CustomSwitch = ({ value, onChange }: CustomSwitchProps) => {
+  const [isOn, setIsOn] = useState(value);
+
+  const toggleSwitch = () => {
+    setIsOn(!isOn);
+    onChange(!isOn);
+  };
 
   return (
     <TouchableOpacity onPress={toggleSwitch} style={styles.switchContainer}>
