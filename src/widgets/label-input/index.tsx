@@ -25,6 +25,7 @@ export interface LabelInputProps extends InputProps, VariantProps<typeof labelIn
   onBlur?: () => void;
   error?: string;
   wrapperClassName?: string;
+  textColor?: "white" | "purple" | "light" | "dark" | "black" | "pale-purple";
 }
 
 export function LabelInput({
@@ -37,6 +38,7 @@ export function LabelInput({
   placeholder,
   onBlur,
   size,
+  textColor,
   ...props
 }: LabelInputProps) {
   return (
@@ -45,6 +47,7 @@ export function LabelInput({
         label={label}
         required={required}
         size={size}
+        textColor={textColor}
       />
       
       {description && (
