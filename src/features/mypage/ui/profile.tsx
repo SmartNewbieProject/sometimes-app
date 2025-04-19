@@ -6,6 +6,9 @@ import CustomSwitch from './custom-switch';
 import  ArrowUp  from '@/assets/icons/Vector-up.svg';
 import { useState } from 'react';
 import NotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
+import { LinearGradient } from 'expo-linear-gradient';
+
+
 export const Profile = () => {
   const profileData = {
     name: '홍길동',
@@ -23,7 +26,10 @@ export const Profile = () => {
   const [domatching, setDomatching] = useState(profileData.doMatching);
   return (
     <View style={styles.container}>
-      <View style={styles.baseRectangle} />
+      <LinearGradient
+        colors={['#E9D9FF', '#D6B6FF']}
+        style={styles.baseRectangle}
+      />
       <View style={styles.overlapWrapper}>
         <View style={styles.overlapRectangle}>
             <View style={{ flexDirection: 'row' }}>
@@ -42,7 +48,7 @@ export const Profile = () => {
                     </View>
                     <View className='flex-colum items-center'>
                         <CustomSwitch value={domatching} onChange={setDomatching} />
-                        <Text className='text-[10px] pt-[8px] text-[#FFFFFF]'>매칭쉬기</Text>
+                        <Text className='text-[10px] pt-[8px] text-[#FFFFFF]'>매칭 쉬기</Text>
                     </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', transform: [{ translateY: -60 }] }}>
@@ -63,6 +69,20 @@ export const Profile = () => {
                 </View>
             </View>
         </View>
+        <View className='pt-[5px] pl-[32px] flex-row' style={{ alignItems: 'center' }}>
+          <Image source={require('@/assets/images/ticket.png')} style={{ width: 30, height: 30 }} />
+          <View className='pl-[10px] flex-row'>
+            <Text className='text-[13px] text-[#FFFFFF]'>
+              재매칭 티켓이  
+            </Text>
+            <Text className='text-[13px] text-[#9747FF]'>
+              &nbsp;{profileData.reMatching_ticket}장
+            </Text>
+            <Text className='text-[13px] text-[#FFFFFF]'>
+              &nbsp;남았어요
+            </Text>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -77,11 +97,10 @@ const styles = StyleSheet.create({
     width: 331,
     height: 200,
     borderRadius: 15,
-    backgroundColor: '#E9D9FF',
     zIndex: 0,
   },
   overlapWrapper: {
-    marginTop: -190,
+    marginTop: -185,
     zIndex: 1,
   },
   overlapRectangle: {
@@ -92,48 +111,48 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     paddingTop: 10,
     overflow: 'hidden',
+},
+  previousButton: {
+      width: 74,
+      height: 42.75,
+      borderBottomLeftRadius: 999,
+      borderBottomRightRadius: 999,
+      backgroundColor: '#E9D9FF',
   },
-    previousButton: {
-        width: 74,
-        height: 42.75,
-        borderBottomLeftRadius: 999,
-        borderBottomRightRadius: 999,
-        backgroundColor: '#E9D9FF',
-    },
-    leftRect: {
-        width: 19,
-        height: 20,
-        backgroundColor: '#E9D9FF',
-        position: 'absolute',
-        top: 5,
-        left: -14,
-    },
-    leftRadius: {
-        width: 20,
-        height: 20,
-        backgroundColor: '#9747FF',
-        borderTopRightRadius: 999,
-        position: 'absolute',
-        top: 5,
-        left: -14,
-    },
-    rightRadius: {
-        width: 20,
-        height: 20,
-        backgroundColor: '#9747FF',
-        borderTopLeftRadius: 999,
-        position: 'absolute',
-        top: 5,
-        right: -16,
-    },
-    rightRect: {
-        width: 19,
-        height: 20,
-        backgroundColor: '#E9D9FF',
-        position: 'absolute',
-        top: 5,
-        right: -16,
-    }
+  leftRect: {
+      width: 19,
+      height: 20,
+      backgroundColor: '#E9D9FF',
+      position: 'absolute',
+      top: 5,
+      left: -18,
+  },
+  leftRadius: {
+      width: 20,
+      height: 20,
+      backgroundColor: '#9747FF',
+      borderTopRightRadius: 14,
+      position: 'absolute',
+      top: 5,
+      left: -18,
+  },
+  rightRadius: {
+      width: 20,
+      height: 20,
+      backgroundColor: '#9747FF',
+      borderTopLeftRadius: 14,
+      position: 'absolute',
+      top: 5,
+      right: -18,
+  },
+  rightRect: {
+      width: 19,
+      height: 20,
+      backgroundColor: '#E9D9FF',
+      position: 'absolute',
+      top: 5,
+      right: -18,
+  }
 });
 
 export default Profile;

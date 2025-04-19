@@ -9,14 +9,14 @@ export const Notice = () => {
 
     return (
         <View>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>알림 설정</Text>
+            <Text className="text-[18px] font-medium text-black">알림 설정</Text>
             <View style={{ borderBottomWidth: 1, borderBottomColor: '#E0E0E0', marginBottom: 16 }} />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <Text style={{ fontSize: 16, color: '#757575' }}>매칭 완료 알림</Text>
+            <View className="flex-row justify-between items-center mb-[16px]">
+                <Text className="text-[16px] text-[#4C4854] font-medium">매칭 완료 알림</Text>
                 <CustomSwitch value={isMatchComplete} onChange={setIsMatchComplete} />
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontSize: 16, color: '#757575' }}>이벤트 알림</Text>
+            <View className="flex-row justify-between items-center">
+                <Text className="text-[16px] text-[#4C4854] font-medium">이벤트 알림</Text>
                 <CustomSwitch value={isEvent} onChange={setIsEvent} />  
             </View>
         </View>

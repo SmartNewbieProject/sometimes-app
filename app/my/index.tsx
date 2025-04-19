@@ -1,9 +1,7 @@
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, PalePurpleGradient, BottomNavigation, Header, Button } from '@/src/shared/ui';
 import { useAuth } from "@features/auth";
-import { Notice } from '@/src/features/mypage/ui/notice';
-import { Profile } from '@/src/features/mypage/ui/profile';
-
+import { Notice, Profile, LogoutOrWithdrawal } from '@/src/features/mypage/ui';
 export default function MyScreen() {
   const { logout } = useAuth();
 
@@ -36,14 +34,7 @@ export default function MyScreen() {
         </View>
           <Notice />
         <View className="py-10 items-center justify-center">
-          <Text size="lg" weight="bold" textColor="black">
-            마이페이지
-          </Text>
-
-          <Text size="md" textColor="pale-purple" className="mt-2">
-            여기에 사용자 정보와 설정이 표시됩니다.
-          </Text>
-          <Button variant="primary" onPress={logout} className="mt-4">로그아웃</Button>
+          <LogoutOrWithdrawal/>
         </View>
       </ScrollView>
 
