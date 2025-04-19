@@ -1,29 +1,57 @@
-import { Text, PalePurpleGradient, StepSlider } from "@shared/ui";
+import { Text, PalePurpleGradient } from "@shared/ui";
 import Layout from "@features/layout";
 import { View, Image } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import Interest from '@features/interest';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Selector } from "@/src/widgets/selector";
 import Loading from "@/src/features/loading";
-import { PreferenceOption } from "@/src/types/user";
+import { tryCatch } from "@/src/shared/libs";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { Properties, savePreferences } from "@/src/features/interest/services";
 
 const { ui, hooks, services, queries } = Interest;
-const { useInterestStep } = hooks;
+const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 
 export default function TattooSelectionScreen() {
   const { updateStep } = useInterestStep();
-  const [preference, setPreference] = useState<PreferenceOption>();
+  const { updateForm, clear: _, ...form } = useInterestForm();
+  const [formSubmitLoading, setFormSubmitLoading] = useState(false);
 
   const { data: preferences = {
     id: '',
     options: [],
   }, isLoading: optionsLoading } = usePreferenceOptionsQuery(Keys.TATTOO);
+  const { showErrorModal } = useModal();
+
+  const onFinish = async () => {
+    setFormSubmitLoading(true);
+    await tryCatch(async () => {
+      const validation = Object.values(form).every(v => v !== null);
+      if (!validation) throw new Error("비어있는 양식이 존재합니다.");
+      await savePreferences({
+        age: form.age as string,
+        drinking: form.drinking?.id as string,
+        interestIds: form.interestIds as string[],
+        smoking: form.smoking?.id as string,
+        tattoo: form.tattoo?.id as string,
+      });
+      router.navigate("/interest/done");
+      setFormSubmitLoading(false);
+    }, ({ error }) => {
+      showErrorModal(error, 'error');
+      setFormSubmitLoading(false);
+    });
+  };
 
   useFocusEffect(useCallback(() => updateStep(InterestSteps.TATTOO), []));
+
+  if (formSubmitLoading) {
+    return <Loading.Page />;
+  }
 
   return (
     <Layout.Default>
@@ -48,12 +76,12 @@ export default function TattooSelectionScreen() {
             loading={optionsLoading}
           >
             <Selector
-              value={preference?.id}
+              value={form.tattoo?.id}
               direction="vertical"
               options={preferences.options.map((option) => ({ label: option.displayName, value: option.id }))}
               onChange={value => {
                 const target = preferences.options.find(o => o.id === value);
-                setPreference(target);
+                updateForm('tattoo', target);
               }}
               buttonProps={{
                 className: 'min-w-[180px] w-full h-[52px]',
@@ -65,8 +93,8 @@ export default function TattooSelectionScreen() {
 
         <Layout.TwoButtons
           classNames="px-0"
-          disabledNext={!preference}
-          onClickNext={() => router.navigate("/interest/done")}
+          disabledNext={!form.tattoo}
+          onClickNext={onFinish}
           onClickPrevious={() => router.navigate("/interest/smoking")}
         />
       </View>

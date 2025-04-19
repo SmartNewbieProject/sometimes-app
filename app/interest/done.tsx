@@ -6,11 +6,13 @@ import { Image } from 'expo-image';
 import { router, useFocusEffect } from "expo-router";
 import Signup from "@features/signup";
 import { useCallback, useEffect } from "react";
+import { useAuth } from "@features/auth";
 
 const { useSignupProgress } = Signup;
 
 export default function InterestDoneScreen() {
   const { clear } = useSignupProgress();
+  const { profileDetails } = useAuth();
 
   // development 환경에서만 회원가입 데이터 초기화
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function InterestDoneScreen() {
 
           <View className="mt-2">
             <Text size="sm" textColor="pale-purple" weight="light">
-              썸타임이 000님의 이상형을 찾아드릴게요
+              썸타임이 {profileDetails?.name}님의 이상형을 찾아드릴게요
             </Text>
           </View>
         </View>
