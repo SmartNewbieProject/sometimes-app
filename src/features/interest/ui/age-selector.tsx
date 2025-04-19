@@ -4,7 +4,7 @@ import { Text } from "@/src/shared/ui";
 import { cn } from '@/src/shared/libs/cn';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-export type AgeOption = 'same' | 'younger' | 'older' | 'any';
+export type AgeOption = 'SAME_AGE' | 'YOUNGER' | 'OLDER' | 'NO_PREFERENCE';
 
 interface AgeOptionData {
   value: AgeOption;
@@ -14,22 +14,22 @@ interface AgeOptionData {
 
 const ageOptions: AgeOptionData[] = [
   {
-    value: 'same',
+    value: 'SAME_AGE',
     label: '동갑',
     image: require('@assets/images/age/same.png'),
   },
   {
-    value: 'younger',
+    value: 'YOUNGER',
     label: '연하',
     image: require('@assets/images/age/under.png'),
   },
   {
-    value: 'older',
+    value: 'OLDER',
     label: '연상',
     image: require('@assets/images/age/high.png'),
   },
   {
-    value: 'any',
+    value: 'NO_PREFERENCE',
     label: '상관없음',
     image: require('@assets/images/age/nothing.png'),
   },

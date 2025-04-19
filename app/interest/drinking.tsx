@@ -1,27 +1,31 @@
-import { Text, PalePurpleGradient, StepSlider } from "@shared/ui";
+import { Text, PalePurpleGradient } from "@shared/ui";
 import Layout from "@features/layout";
 import { View, Image } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import Interest from '@features/interest';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { Selector } from "@/src/widgets/selector";
 import Loading from "@/src/features/loading";
-import { PreferenceOption } from "@/src/types/user";
 
-const { ui, hooks, services, queries } = Interest;
-const { useInterestStep } = hooks;
+const { hooks, services, queries } = Interest;
+const { useInterestStep, useInterestForm } = hooks;
+
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-
 export default function DrinkingSelectionScreen() {
   const { updateStep } = useInterestStep();
-  const [preference, setPreference] = useState<PreferenceOption>();
+  const { drinking, updateForm } = useInterestForm();
 
   const { data: preferences = {
     id: '',
     options: [],
   }, isLoading: optionsLoading } = usePreferenceOptionsQuery(Keys.DRINKING);
+
+  const onChangeDrinking = (value: string) => {
+    const target = preferences.options.find(o => o.id === value);
+    updateForm('drinking', target);
+  };
 
   useFocusEffect(useCallback(() => updateStep(InterestSteps.DRIKNING), []));
 
@@ -48,13 +52,10 @@ export default function DrinkingSelectionScreen() {
             loading={optionsLoading}
           >
             <Selector
-              value={preference?.id}
+              value={drinking?.id}
               direction="vertical"
               options={preferences.options.map((option) => ({ label: option.displayName, value: option.id }))}
-              onChange={value => {
-                const target = preferences.options.find(o => o.id === value);
-                setPreference(target);
-              }}
+              onChange={onChangeDrinking}
               buttonProps={{
                 className: 'min-w-[180px] w-full h-[52px]',
               }}
@@ -65,7 +66,7 @@ export default function DrinkingSelectionScreen() {
 
         <Layout.TwoButtons
           classNames="px-0"
-          disabledNext={!preference}
+          disabledNext={!drinking}
           onClickNext={() => router.navigate("/interest/interest")}
           onClickPrevious={() => router.navigate("/interest/age")}
         />

@@ -9,14 +9,14 @@ import Loading from "@/src/features/loading";
 import { PreferenceOption } from "@/src/types/user";
 
 const { ui, hooks, services, queries } = Interest;
-const { useInterestStep } = hooks;
+const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 
 export default function SmokingSelectionScreen() {
   const { updateStep } = useInterestStep();
-  const [preference, setPreference] = useState<PreferenceOption>();
+  const { smoking, updateForm } = useInterestForm();
 
   const { data: preferences = {
     id: '',
@@ -48,12 +48,12 @@ export default function SmokingSelectionScreen() {
             loading={optionsLoading}
           >
             <Selector
-              value={preference?.id}
+              value={smoking?.id}
               direction="vertical"
               options={preferences.options.map((option) => ({ label: option.displayName, value: option.id }))}
               onChange={value => {
                 const target = preferences.options.find(o => o.id === value);
-                setPreference(target);
+                updateForm('smoking', target);
               }}
               buttonProps={{
                 className: 'min-w-[180px] w-full h-[52px]',
@@ -65,7 +65,7 @@ export default function SmokingSelectionScreen() {
 
         <Layout.TwoButtons
           classNames="px-0"
-          disabledNext={!preference}
+          disabledNext={!smoking}
           onClickNext={() => router.navigate("/interest/tattoo")}
           onClickPrevious={() => router.navigate("/interest/interest")}
         />

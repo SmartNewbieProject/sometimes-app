@@ -8,28 +8,27 @@ import { ChipSelector, StepIndicator } from "@/src/widgets";
 import Loading from "@/src/features/loading";
 
 const { ui, hooks, services, queries } = Interest;
-const { useInterestStep } = hooks;
+const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function InterestSelectionScreen() {
   const { updateStep } = useInterestStep();
+  const { interestIds, updateForm } = useInterestForm();
   const { data: preferences, isLoading } = usePreferenceOptionsQuery(PreferenceKeys.INTEREST);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const onChangeOption = (values: string[]) => {
     if (values.length > 5) {
       return;
     }
-
-    setSelectedIds(values);
+    updateForm("interestIds", values);
   };
 
-  const disabled = selectedIds.length < 3;
+  const disabled = interestIds.length < 3;
 
   const nextMessage = (() => {
-    if (selectedIds.length < 3) {
-      return `${3 - selectedIds.length} 개만 더 선택해주세요`;
+    if (interestIds.length < 3) {
+      return `${3 - interestIds.length} 개만 더 선택해주세요`;
     }
     return '다음으로';
   })();
@@ -56,7 +55,7 @@ export default function InterestSelectionScreen() {
         <View className="w-full flex flex-col gap-y-2">
           <StepIndicator
             length={5}
-            step={selectedIds.length}
+            step={interestIds.length}
             dotGap={4}
             dotSize={16}
             className="self-end"
@@ -71,7 +70,7 @@ export default function InterestSelectionScreen() {
           loading={isLoading}
         >
           <ChipSelector
-            value={selectedIds}
+            value={interestIds}
             options={
               preferences?.
                 options.map((option) => ({ label: option.displayName, value: option.id, imageUrl: option?.imageUrl })) || []
