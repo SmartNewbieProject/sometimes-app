@@ -19,7 +19,6 @@ export default function UniversityPage() {
   const { updateForm, form: userForm } = useSignupProgress();
   const { data: univs = [], isLoading } = useUnivQuery();
   const params = useGlobalSearchParams();
-  console.log(params);
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityName);
   const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
   useChangePhase(SignupSteps.UNIVERSITY);
@@ -55,19 +54,19 @@ export default function UniversityPage() {
       className="flex-1 flex flex-col">
       <PalePurpleGradient />
       <View className="px-5">
-        <Image  
+        <Image
           source={require('@assets/images/university.png')}
           style={{ width: 81, height: 81 }}
           className="mb-4"
         />
-          <Text weight="semibold" size="20" textColor="black">
+        <Text weight="semibold" size="20" textColor="black">
           다니고 있는
-          </Text>
-          <Text weight="semibold" size="20" textColor="black">
+        </Text>
+        <Text weight="semibold" size="20" textColor="black">
           대학교 이름을 입력해 주세요
-          </Text>
+        </Text>
 
-          <Divider.Horizontal className="my-4" />
+        <Divider.Horizontal className="my-4" />
       </View>
 
       <View className="px-5 flex flex-col gap-y-[14px] mt-[8px] flex-1">
@@ -103,7 +102,7 @@ export default function UniversityPage() {
         })
       )}>
         <Button variant="secondary" onPress={() => router.push('/auth/signup/profile-image')} className="flex-[0.3]">
-            뒤로
+          뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
           {nextButtonMessage}

@@ -4,9 +4,8 @@ interface TotalMatchCountResponse {
   count: number;
 }
 
-export const getTotalMatchCount = (): Promise<TotalMatchCountResponse> => {
-  return axiosClient.get('/api/matching/total-count');
-};
+export const getTotalMatchCount = (): Promise<TotalMatchCountResponse> =>
+  axiosClient.get('/matching/total-count');
 
 type HomeApiService = {
   getTotalMatchCount: () => Promise<TotalMatchCountResponse>;

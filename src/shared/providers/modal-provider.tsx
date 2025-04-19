@@ -6,6 +6,7 @@ import ErrorFace from '@assets/icons/error-face.svg';
 
 type ModalOptions = {
   title?: ReactNode;
+  customTitle?: ReactNode;
   children: ReactNode;
   primaryButton?: {
     text: string;
@@ -72,7 +73,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
   const renderCustomModal = () => (
     <View className="bg-white w-max-[468px] w-[300px] md:w-full rounded-2xl p-5">
-      {modalContent?.title && (
+      {!!modalContent?.customTitle && modalContent.customTitle}
+      {!modalContent?.customTitle && modalContent?.title && (
         <View className="mb-4">
           {typeof modalContent.title === 'string' ? (
             <Text size="lg" weight="semibold" textColor="black" className="text-center">

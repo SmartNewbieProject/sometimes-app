@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { View, StyleSheet } from "react-native";
-import { useEffect, useState } from "react";
+import { View, StyleSheet, Animated, Easing } from "react-native";
+import { useEffect, useState, useRef } from "react";
 import { Image } from "expo-image";
 import { Text } from "@/src/shared/ui";
 
@@ -11,8 +11,56 @@ interface TotalMatchCounterProps {
 export default function TotalMatchCounter({
   count
 }: TotalMatchCounterProps) {
-  const [_count, setCount] = useState<number>(count);
-  const formattedCount = _count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const animatedValue = useRef(new Animated.Value(0)).current;
+  const [displayValue, setDisplayValue] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const isFirstRender = useRef(true);
+  const finalCountRef = useRef(count);
+
+  const formatNumber = (num: number) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const formattedCount = formatNumber(displayValue);
+
+  useEffect(() => {
+    // Update the final count reference
+    finalCountRef.current = count;
+
+    // Set up listener for animated value changes
+    const listener = animatedValue.addListener(({ value }) => {
+      setDisplayValue(Math.floor(value));
+    });
+
+    // Prevent animation from restarting if already animating
+    if (!isAnimating) {
+      setIsAnimating(true);
+
+      if (isFirstRender.current) {
+        animatedValue.setValue(0);
+        isFirstRender.current = false;
+      } else {
+        animatedValue.setValue(displayValue);
+      }
+
+      Animated.timing(animatedValue, {
+        toValue: count,
+        duration: 1500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: false,
+      }).start(({ finished }) => {
+        if (finished) {
+          setDisplayValue(finalCountRef.current);
+          setIsAnimating(false);
+        }
+      });
+    }
+
+    return () => {
+      animatedValue.removeListener(listener);
+    };
+  }, [count]);
 
   return (
     <LinearGradient

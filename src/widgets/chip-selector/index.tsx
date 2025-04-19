@@ -1,7 +1,7 @@
 import { Button } from "@/src/shared/ui";
 import { cn } from "@shared/libs/cn";
 import { type VariantProps, cva } from "class-variance-authority";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 
 const chipSelector = cva("flex flex-row flex-wrap gap-2", {
   variants: {
@@ -19,6 +19,7 @@ const chipSelector = cva("flex flex-row flex-wrap gap-2", {
 interface Option<T> {
   label: string;
   value: T;
+  imageUrl?: string;
 }
 
 interface ChipSelectorProps<T> extends VariantProps<typeof chipSelector> {
@@ -65,14 +66,19 @@ export function ChipSelector<T>(props: ChipSelectorProps<T> | MultipleChipSelect
           onPress={() => handleSelect(option.value)}
           className={cn(
             "py-2 px-4",
-            "rounded-xl",
+            "rounded-xl flex flex-row items-center gap-x-2 justify-between",
             props.buttonClassName
           )}
           size="chip"
         >
+          {option?.imageUrl &&
+            <Image
+              source={{ uri: option.imageUrl }}
+              style={{ width: 16, height: 16, marginRight: 4 }}
+            />}
           {option.label}
         </Button>
       ))}
     </View>
   );
-} 
+}
