@@ -61,6 +61,7 @@ export default function RootLayout() {
                 <Stack.Screen name="interest" options={{ headerShown: false }} />
                 <Stack.Screen name="my" options={{ headerShown: false }} />
                 <Stack.Screen name="commingsoon" options={{ headerShown: false }} />
+                <Stack.Screen name="profile-edit" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
             </ThemeProvider>
