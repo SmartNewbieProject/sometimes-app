@@ -39,7 +39,7 @@ interface SelectorProps extends VariantProps<typeof selector> {
   variant?: "default" | "circle";
   buttonClassName?: string;
   topDownText?: TopDownText;
-  buttonProps?: Pick<ButtonProps, 'variant' | 'textColor' | 'className'>;
+  buttonProps?: Pick<ButtonProps, 'variant' | 'textColor' | 'className' | 'size'>;
 }
 
 export function Selector({
