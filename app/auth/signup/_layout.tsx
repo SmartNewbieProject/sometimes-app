@@ -64,6 +64,7 @@ export default function SignupLayout() {
             headerBackVisible: false,
           }}
         />
+        <Stack.Screen name="phone" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen name="profile-image" options={{ headerShown: false }} />
         <Stack.Screen name="university" options={{ headerShown: false }} />

@@ -42,7 +42,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "@portone/react-native-sdk/plugin"
     ],
     "experiments": {
       "typedRoutes": true
