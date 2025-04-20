@@ -11,6 +11,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import Layout from '@/src/features/layout';
+import { useEffect, useState } from 'react';
+import { Keyboard } from 'react-native';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
@@ -56,7 +58,7 @@ export default function AccountScreen() {
       email: data.email,
       password: data.password,
     });
-    router.push('/auth/signup/profile');
+    router.push('/auth/signup/phone');
   });
 
   const nextable = isValid;

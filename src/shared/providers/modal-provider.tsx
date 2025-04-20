@@ -130,6 +130,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         visible={visible}
         transparent
         animationType="fade"
+        style={{
+          maxWidth: 468,
+        }}
         onRequestClose={hideModal}
       >
         <View className="flex-1 bg-black/50 justify-center items-center px-5">

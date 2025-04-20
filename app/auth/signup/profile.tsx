@@ -182,7 +182,7 @@ export default function ProfilePage() {
             default: () => ""
           })
         )}>
-          <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
+          <Button variant="secondary" onPress={() => router.push('/auth/signup/phone')} className="flex-[0.3]">
               뒤로
           </Button>
           <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
