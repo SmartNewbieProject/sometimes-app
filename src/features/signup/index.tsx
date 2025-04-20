@@ -1,7 +1,7 @@
 import apis from "./apis";
 import * as hooks from "./hooks";
 import * as queries from "./queries";
-import { accountSchema } from "./services/schema";
+import { accountSchema, phoneSchema } from "./services/schema";
 import { LoginForm, Logo } from "./ui";
 
 const Signup = {
@@ -9,6 +9,7 @@ const Signup = {
   LoginForm,
   schemas: {
     account: accountSchema,
+    phone: phoneSchema,
   },
   ...hooks,
   apis,

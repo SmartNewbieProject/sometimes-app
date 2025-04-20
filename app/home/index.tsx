@@ -4,6 +4,7 @@ import { Image } from 'expo-image';
 import Home from "@features/home";
 import IdleMatchTimer from '@features/idle-match-timer';
 import Loading from '@/src/features/loading';
+import { router } from 'expo-router';
 
 const { ui, queries } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
@@ -22,7 +23,10 @@ export default function HomeScreen() {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => router.navigate('/purchase/tickets/rematch')}
+          >
             <Image
               source={require('@assets/images/ticket.png')}
               style={{ width: 40, height: 40 }}

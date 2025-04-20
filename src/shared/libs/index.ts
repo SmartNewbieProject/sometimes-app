@@ -8,3 +8,4 @@ export { default as dayUtils } from './day';
 export { tryCatch } from './try-catch';
 export { storage } from './store';
 export * from './univ';
+export { default as imageUtils, ImageResources } from './image';

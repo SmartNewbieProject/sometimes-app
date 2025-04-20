@@ -8,11 +8,13 @@ export type SignupForm = {
   gender: 'female' | 'male';
   universityName: string;
   mbti: string;
+  phoneNumber: string;
   profileImages: string[];
   departmentName: string;
   grade: string;
   studentNumber: string;
   instagramId: string;
+  smsUniqueKey: string;
 }
 
 type Agreement = {
@@ -70,15 +72,18 @@ type StoreProps = {
   agreements: Agreement[];
   updateAgreements: (agreements: Agreement[]) => void;
   clear: () => void;
+  smsComplete: boolean;
+  completeSms: () => void;
 };
 
 export enum SignupSteps {
   TERMS = 1,
   ACCOUNT = 2,
-  PERSONAL_INFO = 3,
-  PROFILE_IMAGE = 4,
-  UNIVERSITY = 5,
-  UNIVERSITY_DETAIL = 6,
+  PHONE = 3,
+  PERSONAL_INFO = 4,
+  PROFILE_IMAGE = 5,
+  UNIVERSITY = 6,
+  UNIVERSITY_DETAIL = 7,
 }
 
 const phaseCount = Object.keys(SignupSteps).length / 2;
@@ -101,6 +106,9 @@ const useSignupProgress = create<StoreProps>((set) => ({
 
   agreements: AGREEMENTS,
   updateAgreements: (agreements) => set({ agreements }),
+
+  smsComplete: false,
+  completeSms: () => set({ smsComplete: true }),
 }));
 
 export default useSignupProgress;
