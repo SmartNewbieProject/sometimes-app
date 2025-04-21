@@ -42,7 +42,7 @@ export default function AccountScreen() {
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.account),
-    mode: 'onBlur',
+    mode: 'onChange',
     defaultValues: {
       email,
       password,
@@ -61,11 +61,11 @@ export default function AccountScreen() {
     router.push('/auth/signup/phone');
   });
 
-  const nextable = isValid;
+  const nextable = isValid && isPasswordMatch;
 
   const nextButtonMessage = (() => {
-    if (!isValid) return '조금만 더 알려주세요';
     if (!isPasswordMatch) return '비밀번호가 동일하지 않아요';
+    if (!isValid) return '조금만 더 알려주세요';
     return '다음으로';
   })();
 
@@ -133,7 +133,7 @@ export default function AccountScreen() {
             <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
               뒤로
             </Button>
-            <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable && !isPasswordMatch}>
+            <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
               {nextButtonMessage}
             </Button>
           </View>

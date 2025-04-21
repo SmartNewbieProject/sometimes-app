@@ -33,7 +33,7 @@ export default function PhoneScreen() {
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.phone),
-    mode: 'onBlur',
+    mode: 'onChange',
     defaultValues: {
       phoneNumber: formStates.phoneNumber,
     },
