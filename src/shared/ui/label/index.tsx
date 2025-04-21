@@ -20,6 +20,7 @@ interface LabelProps extends VariantProps<typeof label> {
   label: string;
   required?: boolean;
   className?: string;
+  textColor?: "white" | "purple" | "light" | "dark" | "black" | "pale-purple";
 }
 
 export function Label({
@@ -27,18 +28,19 @@ export function Label({
   required = false,
   size,
   className,
+  textColor = "purple",
 }: LabelProps) {
   return (
     <View className={cn(label({ size }), className)}>
       <Text 
         size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'} 
         weight="semibold" 
-        textColor="purple"
+        textColor={textColor}
       >
         {labelText}
       </Text>
       {required && (
-        <Text size={size === 'lg' ? 'md' : 'sm'} textColor="purple">
+        <Text size={size === 'lg' ? 'md' : 'sm'} textColor={textColor}>
           *
         </Text>
       )}

@@ -1,26 +1,19 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import Layout from "@/src/features/layout";
 import { PalePurpleGradient } from "@/src/shared/ui";
 import { Text } from '@shared/ui';
 import { Image, View } from "react-native";
 import Interest from '@features/interest';
 import { router, useFocusEffect } from 'expo-router';
-import { AgeOption } from '@/src/features/interest/ui';
 
 const { ui, hooks, services } = Interest;
 const { AgeSelector } = ui;
-const { useInterestStep } = hooks;
+const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 
 export default function AgeSelectionScreen() {
-  const [selectedAge, setSelectedAge] = useState<AgeOption | undefined>();
+  const { age, updateForm } = useInterestForm();
   const { updateStep } = useInterestStep();
-
-  const handleNext = () => {
-    if (selectedAge) {
-      router.back();
-    }
-  };
 
   useFocusEffect(useCallback(() => updateStep(InterestSteps.AGE), []));
 
@@ -43,8 +36,8 @@ export default function AgeSelectionScreen() {
 
         <View className="flex-1 w-full flex items-center">
           <AgeSelector
-            value={selectedAge}
-            onChange={setSelectedAge}
+            value={age}
+            onChange={age => updateForm('age', age)}
             size="md"
             className="mb-8"
           />
@@ -52,7 +45,7 @@ export default function AgeSelectionScreen() {
 
         <Layout.TwoButtons
           classNames="px-0"
-          disabledNext={!selectedAge}
+          disabledNext={!age}
           onClickNext={() => router.navigate("/interest/drinking")}
           onClickPrevious={() => router.navigate("/interest")}
         />

@@ -10,7 +10,7 @@ const { useInterestStep } = hooks;
 
 export default function InterestLayout() {
   const pathname = usePathname();
-  const renderProgress = ['/interest', '/intrest/done'].includes(pathname);
+  const renderProgress = !(['/interest', '/interest/done'].includes(pathname));
   const { progress } = useInterestStep();
 
   return (
