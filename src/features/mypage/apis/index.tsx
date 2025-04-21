@@ -1,16 +1,7 @@
 import { axiosClient } from "@/src/shared/libs";
 
-
-type MyPageProfile = {
-    id: number;
-    name: string;
-    image: string[];
-    university: {
-        id: number;
-        name: string;
-        image: string;
-    };
-    gender: string;
+type RematchingTicket = {
+    total: number;
 }
 
 type MyRematchingTicket = {
@@ -18,22 +9,24 @@ type MyRematchingTicket = {
     name: string;
 }
 
-const getMyPageProfile = async (): Promise<MyPageProfile> => {
-    return await axiosClient.get('/profile');
-}
 
 const getMyRematchingTicket = async (): Promise<MyRematchingTicket[]> => {
     return await axiosClient.get('/rematching-ticket');
 }
 
+const getAllRematchingTicket = async (): Promise<RematchingTicket> => {
+    const myRematchingTickets = await getMyRematchingTicket();
+    return { total: myRematchingTickets.length };
+}
+
 type Service = {
-    getMyPageProfile: () => Promise<MyPageProfile>;
     getMyRematchingTicket: () => Promise<MyRematchingTicket[]>;
+    getAllRematchingTicket: () => Promise<RematchingTicket>;
 }
 
 const apis: Service = {
-    getMyPageProfile,
     getMyRematchingTicket,
+    getAllRematchingTicket,
 }
 
 export default apis;

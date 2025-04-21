@@ -1,6 +1,5 @@
 import apis from './apis';
 
-
 const MyPage = {
     ...apis,
 }

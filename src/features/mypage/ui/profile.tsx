@@ -4,26 +4,40 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
 import CustomSwitch from './custom-switch';
 import  ArrowUp  from '@/assets/icons/Vector-up.svg';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { useAuth } from '@/src/features/auth';
+import MyPage from '@/src/features/mypage';
 
 export const Profile = () => {
+  const { profileDetails } = useAuth();
+  const [domatching, setDomatching] = useState(false);
+  const [reMatchingTicketCount, setReMatchingTicketCount] = useState(0);
+
+    useEffect(() => {
+    const fetchRematchingTickets = async () => {
+      try {
+        const reMatchingTicket = await MyPage.getAllRematchingTicket();
+        setReMatchingTicketCount(reMatchingTicket.total || 0);
+      } catch (error) {
+        console.error('Failed to fetch rematching tickets:', error);
+      }
+    };
+
+    fetchRematchingTickets();
+  }, []);
+
   const profileData = {
-    name: '홍길동',
-    grade: 'n년생',
-    university: '대학교',
-    department: '학과',
-    mbti: 'mbti',
-    instagram: 'instagram',
-    birthday: '생년월일',
-    gender: '성별',
-    doMatching: false,
-    reMatching_ticket: 3,
-    profileImage: require('@/assets/images/fireIcon.png'),
-  };
-  const [domatching, setDomatching] = useState(profileData.doMatching);
+    name: profileDetails?.name || '이름',
+    age: profileDetails?.age || '20',
+    grade: profileDetails?.universityDetails?.grade || '19학번',
+    domatching: domatching,
+    university: profileDetails?.universityDetails?.name || '한밭대학교',
+    profileImage: profileDetails?.profileImages[0] || require('@/assets/images/profile.png'),
+    totalRematchingTickets: reMatchingTicketCount,
+  }
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -76,7 +90,7 @@ export const Profile = () => {
               재매칭 티켓이  
             </Text>
             <Text className='text-[13px] text-[#9747FF]'>
-              &nbsp;{profileData.reMatching_ticket}장
+              &nbsp;{profileData.totalRematchingTickets}장
             </Text>
             <Text className='text-[13px] text-[#FFFFFF]'>
               &nbsp;남았어요

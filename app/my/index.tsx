@@ -1,10 +1,8 @@
 import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, PalePurpleGradient, BottomNavigation, Header, Button } from '@/src/shared/ui';
-import { useAuth } from "@features/auth";
 import { Notice, Profile, LogoutOrWithdrawal } from '@/src/features/mypage/ui';
-export default function MyScreen() {
-  const { logout } = useAuth();
 
+export default function MyScreen() {
   return (
     <View className="flex-1">
       <PalePurpleGradient />
