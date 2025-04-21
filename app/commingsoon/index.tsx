@@ -59,15 +59,13 @@ export default function CommingSoonScreen() {
               {', '}꼭 다시 만나요!
             </Text>
           </View>
-          <View className="mt-24 items-center">
-            <Text size="sm" textColor="pale-purple" weight="light">
-              회원님의 이메일로 관련 내용을 발신했습니다.
-            </Text>
-          </View>
         </View>
       </View>
 
       <View className="w-full px-5">
+        <Text size="sm" textColor="pale-purple" weight="light" className="text-center mb-4">
+          회원님의 이메일로 관련 내용을 발신했습니다.
+        </Text>
         <Button
           variant="primary"
           size="md"
