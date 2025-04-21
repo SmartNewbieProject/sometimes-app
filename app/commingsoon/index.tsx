@@ -49,10 +49,10 @@ export default function CommingSoonScreen() {
           </View>
 
           <View className="mt-2 px-5">
-            <Text weight="medium" size="sm" textColor="black">
+            <Text weight="medium" size="sm" style={{ color: '#49386E' }}>
               곧, 당신에게 꼭 맞는 사람을 소개해드릴게요.
             </Text>
-            <Text weight="medium" size="sm" textColor="black">
+            <Text weight="medium" size="sm" style={{ color: '#49386E' }}>
               <Text weight="medium" size="sm" textColor="dark">
                 4월 27일
               </Text>
