@@ -1,6 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { Platform, View } from 'react-native';
@@ -41,7 +41,6 @@ export default function RootLayout() {
   }
 
   return (
-
     <ModalProvider>
       <View
         className={cn(
@@ -51,18 +50,7 @@ export default function RootLayout() {
       >
         <QueryProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="auth" options={{ headerShown: false }} />
-              <Stack.Screen name="home" options={{ headerShown: false }} />
-              <Stack.Screen name="community" options={{ headerShown: false }} />
-              <Stack.Screen name="interest" options={{ headerShown: false }} />
-              <Stack.Screen name="my" options={{ headerShown: false }} />
-              <Stack.Screen name="purchase" options={{ headerShown: false }} />
-              <Stack.Screen name="commingsoon" options={{ headerShown: false }} />
-              <Stack.Screen name="profile-edit" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
+            <Slot />
           </ThemeProvider>
         </QueryProvider>
       </View>
