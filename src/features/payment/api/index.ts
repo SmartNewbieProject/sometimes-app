@@ -1,11 +1,11 @@
 import { axiosClient } from "@/src/shared/libs";
-import { PaymentBeforeHistory, PaymentDetails } from "../types";
+import { PaymentBeforeHistory, PortOnePayment } from "../types";
 
 
 const savePaymentHistory = async (paymentHistory: PaymentBeforeHistory) =>
   axiosClient.post('/payments/history', paymentHistory);
 
-const pay = (paymentDetails: PaymentDetails) =>
+const pay = (paymentDetails: PortOnePayment) =>
   axiosClient.post('/payments/confirm', paymentDetails);
 
 const paymentApis = {

@@ -15,3 +15,4 @@ export * from './layout';
 export * from './header';
 export * from './step-slider';
 export * from './show';
+export * from './image-resource';

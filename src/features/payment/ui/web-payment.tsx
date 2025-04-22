@@ -1,16 +1,20 @@
 import { Alert, Platform, View } from "react-native";
 import { useEffect, useState } from "react";
-import webPayment from "../web";
+import webPayment, { initializeIMP } from "../web";
 import paymentApis from "../api";
 import { useAuth } from "../../auth";
-import { resolveScheme } from "expo-linking";
+import Loading from "../../loading";
+import { PaymentResponse } from "@/src/types/payment";
+import { Product } from "../types";
 
 export interface WebPaymentProps {
   paymentId: string;
   orderName: string;
   totalAmount: number;
+  productType: Product;
   productName?: string;
-  onComplete?: (result: IMP.RequestPayResponse) => void;
+  productCount: number;
+  onComplete?: (result: PaymentResponse) => void;
   onError?: (error: any) => void;
   onCancel?: () => void;
 }
@@ -19,42 +23,60 @@ export interface WebPaymentProps {
  * 웹 환경에서 I'mport.js를 사용한 결제 컴포넌트
  */
 export const WebPaymentView = (props: WebPaymentProps) => {
-  const { paymentId, orderName, totalAmount, productName, onComplete, onError, onCancel } = props;
+  const { paymentId, orderName, productCount, totalAmount, productName, productType, onComplete, onError, onCancel } = props;
   const [isProcessing, setIsProcessing] = useState(true);
-  const { profileDetails } = useAuth();
+  const { my } = useAuth();
+  console.log({ my });
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
       onError?.({ message: '웹 환경에서만 사용 가능합니다.' });
+      setIsProcessing(false);
       return;
     }
 
     const processPayment = async () => {
+      if (!my) {
+        console.debug("로그인 사용자가 조회되지 않습니다.");
+        setIsProcessing(false);
+        return;
+      }
+
       try {
+        await initializeIMP(process.env.EXPO_PUBLIC_IMP as string);
+
+        // 결제 내역 저장
         await paymentApis.saveHistory({
           orderId: paymentId,
           amount: totalAmount,
           orderName: productName || orderName,
         });
-  
+
+        // 결제 파라미터 설정
         const paymentParams: IMP.RequestPayParams = {
           channelKey: process.env.EXPO_PUBLIC_CHANNEL_KEY || '',
-          pay_method: 'card', // 결제 수단
-          merchant_uid: paymentId, // 주문번호
-          name: orderName, // 주문명
-          amount: totalAmount, // 결제금액
-          buyer_name: profileDetails?.name!,
-          buyer_tel: '010-5705-1328',
+          pay_method: 'card',
+          merchant_uid: paymentId,
+          name: productName || orderName,
+          amount: totalAmount,
+          buyer_name: my.name,
+          buyer_tel: my.phoneNumber,
           m_redirect_url: window.location.origin + '/purchase/complete',
           custom_data: {
-            orderName,
-            paymentId,
+            orderName: productName || orderName,
+            amount: totalAmount,
+            productType,
+            productCount,
           },
         };
-        const response = await webPayment.requestPay(paymentParams);
+
+        // 결제 요청
+        const response = await webPayment.requestPay(paymentParams) as PaymentResponse;
+        console.log('결제 응답:', response);
         onComplete?.(response);
       } catch (error: any) {
-        Alert.alert("실패", error.message || '결제 처리 중 오류가 발생했습니다.');
+        console.error('결제 오류:', error);
+        Alert.alert("결제 실패", error.message || '결제 처리 중 오류가 발생했습니다.');
         onError?.(error);
       } finally {
         setIsProcessing(false);
@@ -62,15 +84,13 @@ export const WebPaymentView = (props: WebPaymentProps) => {
     };
 
     processPayment();
-  }, []);
+  }, [my]);
 
   if (isProcessing) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <View style={{ padding: 20, backgroundColor: 'white', borderRadius: 10 }}>
-          <p>결제를 처리 중입니다. 잠시만 기다려주세요...</p>
-        </View>
-      </View>
+      <Loading.Page
+        title="결제를 처리 중입니다. 잠시만 기다려주세요..."
+      />
     );
   }
 

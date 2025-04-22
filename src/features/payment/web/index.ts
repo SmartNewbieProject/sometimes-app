@@ -15,11 +15,7 @@ export const requestPay = (params: IMP.RequestPayParams): Promise<IMP.RequestPay
     }
 
     window.IMP.request_pay(params, (response) => {
-      if (response.success) {
-        resolve(response);
-      } else {
-        reject(new Error(response.error_msg || '결제에 실패했습니다.'));
-      }
+      resolve(response);
     });
   });
 };
@@ -36,6 +32,7 @@ export const initializeIMP = (accountID: string): void => {
   }
   if (window.IMP) {
     window.IMP.init(accountID);
+    console.debug(`${accountID} 로 객체가 초기화되었습니다.`);
     authorized = true;
   } else {
     console.error('IMP 객체를 찾을 수 없습니다. 스크립트가 로드되었는지 확인하세요.');

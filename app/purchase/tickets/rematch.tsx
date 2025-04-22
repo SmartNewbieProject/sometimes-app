@@ -1,17 +1,21 @@
 import { Button, PalePurpleGradient, Text } from "@shared/ui";
 import Layout from "@features/layout";
-import { Alert, BackHandler, Image, View } from "react-native";
-import { ImageResources, imageUtils } from "@/src/shared/libs";
+import { Alert, BackHandler, Image, Platform, View } from "react-native";
+import { ImageResources, imageUtils, tryCatch } from "@/src/shared/libs";
 import { Selector } from "@/src/widgets/selector";
-import { createRef, useEffect, useState } from "react";
+import { createRef, useEffect, useMemo, useState } from "react";
 import Payment from '@features/payment';
 import { PortOneController } from "@portone/react-native-sdk";
+import { PaymentResponse } from "@/src/types/payment";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { Product } from "@/src/features/payment/types";
+import { router } from "expo-router";
 
-const { ui } = Payment;
+const { ui, apis } = Payment;
 const { PriceDisplay, PaymentView } = ui;
 
 
-const PRICE = 4000;
+const PRICE = 1000;
 
 export default function RematchingTicketSellingScreen() {
   const [productCount, setProductCount] = useState<number>();
@@ -20,6 +24,8 @@ export default function RematchingTicketSellingScreen() {
   const [showPayment, setShowPayment] = useState<boolean>(false);
   const controller = createRef<PortOneController>();
   const rawPrice = productCount ? productCount * PRICE : 0;
+  const { showErrorModal, showModal } = useModal();
+  const paymentId = useMemo(() => Date.now().toString(16), []);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -34,6 +40,28 @@ export default function RematchingTicketSellingScreen() {
     );
     return () => backHandler.remove();
   }, []);
+
+  useEffect(() => {
+    if (showPayment === false) {
+      // 결제 정보 초기화
+      setProductCount(undefined);
+      setTotalPrice(undefined);
+      setSalesPercent(0);
+
+      // 결제 모듈 초기화
+      if (Platform.OS === 'web') {
+        // 웹 환경에서는 IMP 객체 초기화 상태 리셋
+        if (typeof window !== 'undefined' && window.IMP) {
+          // 웹 환경에서 IMP 객체 재초기화
+          const merchantID = process.env.EXPO_PUBLIC_IMP || 'imp00000000';
+          Payment.web.initializeIMP(merchantID);
+        }
+      } else {
+        // 네이티브 환경에서는 controller 초기화
+        // controller는 createRef로 생성되어 있으므로 새로운 참조가 자동으로 생성됨
+      }
+    }
+  }, [showPayment]);
 
   const calculateDiscount = (count: number): number => {
     if (count === 3) return 10;
@@ -65,19 +93,64 @@ export default function RematchingTicketSellingScreen() {
     }
   };
 
-  const paymentId = Date.now().toString(16);
+  const onCompletePayment = (result: PaymentResponse) => {
+    console.log({ result });
+    setShowPayment(false);
+    if (result?.error_msg) {
+      console.error({
+        code: result.error_code,
+        message: result.error_msg,
+      });
+      showErrorModal(result.error_msg, 'error');
+    }
+
+    tryCatch(async () => {
+      await apis.pay({ impUid: result.imp_uid, merchantUid: result.merchant_uid });
+
+      // 결제 성공 정보 - 현재는 모달로 처리하고 있지만 추후 페이지 리다이렉션으로 처리할 수 있음
+
+      showModal({
+        title: "구매 완료",
+        children: (
+          <View className="flex flex-col gap-y-1">
+            <Text textColor="pale-purple" weight="semibold">연인 재매칭권 {productCount} 개 구매를 완료했어요</Text>
+            <Text textColor="pale-purple" weight="semibold">결제가 완료되었으니 홈으로 이동할게요</Text>
+          </View>
+        ),
+        primaryButton: {
+          text: "홈으로 이동",
+          onClick: () => router.push('/home'),
+        }
+      });
+      // router.navigate({
+        // pathname: '/purchase/complete',
+        // params: payload,
+      // });
+    }, ({ error }) => {
+      showErrorModal(error, "error");
+    });
+  }
 
   if (showPayment) {
     return (
       <PaymentView
+        productType={Product.REMATCHING}
         ref={controller}
+        productCount={productCount!}
         paymentId={paymentId}
         orderName={"연인 재매칭권 x" + productCount}
-        totalAmount={totalPrice as number}
+        totalAmount={totalPrice!}
         productName="연인 재매칭권"
-        onError={() => setShowPayment(false)}
-        onComplete={(response) => setShowPayment(false)}
-        onCancel={() => setShowPayment(false)}
+        onError={(error) => {
+          console.error(error);
+          console.log('onError Payment');
+          setShowPayment(false)
+        }}
+        onComplete={onCompletePayment}
+        onCancel={() => {
+          console.log('onCancel Payment');
+          setShowPayment(false)
+        }}
       />
     );
   }
@@ -132,7 +205,6 @@ export default function RematchingTicketSellingScreen() {
                 salesPercent={salesPercent}
               />
             </View>
-
           )}
 
           <Button

@@ -3,12 +3,15 @@ import { createRef, forwardRef, ForwardedRef } from "react";
 import { PortOneController } from "@portone/react-native-sdk";
 import { PortOnePaymentView, PortOnePaymentProps } from "./port-one-payment";
 import { WebPaymentView } from "./web-payment";
+import { Product } from "../types";
 
 export interface PaymentViewProps {
   paymentId: string;
   orderName: string;
   totalAmount: number;
   productName?: string;
+  productType: Product;
+  productCount: number;
   onComplete?: (result: any) => void;
   onError?: (error: any) => void;
   onCancel?: () => void;
@@ -35,7 +38,7 @@ export interface PaymentViewProps {
  */
 export const PaymentView = forwardRef(
   (props: PaymentViewProps, ref: ForwardedRef<PortOneController>) => {
-    const { paymentId, orderName, totalAmount, productName, onComplete, onError, onCancel } = props;
+    const { paymentId, orderName, totalAmount, productCount, productType, productName, onComplete, onError, onCancel } = props;
 
     // 웹 환경인 경우
     if (Platform.OS === 'web') {
@@ -43,8 +46,10 @@ export const PaymentView = forwardRef(
         <WebPaymentView
           paymentId={paymentId}
           orderName={orderName}
+          productType={productType}
           totalAmount={totalAmount}
           productName={productName}
+          productCount={productCount}
           onComplete={onComplete}
           onError={onError}
           onCancel={onCancel}

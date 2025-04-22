@@ -14,8 +14,8 @@ export default function PaymentComplete() {
       try {
         const paymentInfo = JSON.parse(customData as string);
         await apis.pay({
-          orderId: paymentInfo.paymentId,
-          txId: imp_uid as string,
+          impUid: imp_uid as string,
+          merchantUid: merchant_uid as string,
         });
       } catch (error) {
         Alert.alert("결제에 오류가 발생했습니다.");

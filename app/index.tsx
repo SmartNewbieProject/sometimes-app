@@ -1,4 +1,4 @@
-import { Redirect, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useAuth } from '@/src/features/auth';
 import { useEffect } from 'react';
 import Loading from '@/src/features/loading';

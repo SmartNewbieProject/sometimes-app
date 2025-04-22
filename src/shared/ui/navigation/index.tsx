@@ -2,10 +2,8 @@ import React, { ReactNode } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
 import { router, usePathname } from 'expo-router';
-import { cn } from '@/src/shared/libs/cn';
 import { IconWrapper } from '@/src/shared/ui/icons';
 
-// Import navigation icons
 import HomeSelected from '@/assets/icons/nav/home-selected.svg';
 import HomeUnselected from '@/assets/icons/nav/home-unselected.svg';
 import CommunitySelected from '@/assets/icons/nav/community-selected.svg';
@@ -72,19 +70,19 @@ export function BottomNavigation() {
     <View className="bg-white border-t border-lightPurple">
       <View className="flex-row justify-around py-3">
         {navigationItems.map((item) => (
-          <TouchableOpacity 
+          <TouchableOpacity
             key={item.name}
             className="items-center"
             onPress={() => router.push(item.path as any)}
           >
             <IconWrapper width={24} height={24} className="mb-1">
-              {isActive(item.path) 
-                ? item.icon.selected 
+              {isActive(item.path)
+                ? item.icon.selected
                 : item.icon.unSelected
               }
             </IconWrapper>
-            <Text 
-              size="sm" 
+            <Text
+              size="sm"
               weight={isActive(item.path) ? "semibold" : "normal"}
               textColor={isActive(item.path) ? "purple" : "pale-purple"}
             >
