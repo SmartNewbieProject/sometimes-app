@@ -102,7 +102,12 @@ const useSignupProgress = create<StoreProps>((set) => ({
 
   form: {},
   updateForm: (form) => set({ form }),
-  clear: () => set({ form: {}, step: SignupSteps.TERMS }),
+  clear: () => set({
+    form: {},
+    step: SignupSteps.TERMS,
+    smsComplete: false,
+    agreements: AGREEMENTS,
+  }),
 
   agreements: AGREEMENTS,
   updateAgreements: (agreements) => set({ agreements }),

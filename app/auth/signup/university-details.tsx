@@ -50,7 +50,7 @@ const schema = z.object({
 });
 
 export default function UniversityDetailsPage() {
-  const { updateForm, form: userForm } = useSignupProgress();
+  const { updateForm, form: userForm, clear } = useSignupProgress();
   const { universityName } = useGlobalSearchParams<{ universityName: string }>();
   const { data: departments = [], isLoading } = useDepartmentQuery(universityName);
   const [signupLoading, setSignupLoading] = useState(false);
@@ -102,6 +102,7 @@ export default function UniversityDetailsPage() {
       updateForm(signupForm);
       await apis.signup(signupForm as SignupForm);
       setSignupLoading(false);
+      clear();
       router.push('/auth/signup/done');
     }, (error) => {
       setSignupLoading(false);
@@ -214,20 +215,20 @@ export default function UniversityDetailsPage() {
 
       <Show when={!isKeyboardVisible}>
         <View className={cn(
-            platform({
-              web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-              android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-              ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-              default: () => ""
-            })
-          )}>
-            <Button variant="secondary" onPress={() => router.push('/auth/signup/university')} className="flex-[0.3]">
-              뒤로
-            </Button>
-            <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable || instaLoading}>
-              {nextButtonMessage}
-            </Button>
-          </View>
+          platform({
+            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+            default: () => ""
+          })
+        )}>
+          <Button variant="secondary" onPress={() => router.push('/auth/signup/university')} className="flex-[0.3]">
+            뒤로
+          </Button>
+          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable || instaLoading}>
+            {nextButtonMessage}
+          </Button>
+        </View>
       </Show>
     </KeyboardAvoidingView>
   );

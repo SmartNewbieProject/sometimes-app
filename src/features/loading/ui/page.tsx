@@ -14,7 +14,7 @@ export default function PageLoading({ title, children, size = 96 }: Props) {
       <PalePurpleGradient />
       <Lottie size={size} />
       {!!children && children}
-      {!children && <Text variant="primary" weight="normal"  textColor="black" size="md" className="text-center mt-4">
+      {!children && <Text variant="primary" weight="normal" textColor="black" size="md" className="text-center mt-4">
         {title}
       </Text>}
     </View>
