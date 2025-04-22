@@ -9,3 +9,4 @@ export { tryCatch } from './try-catch';
 export { storage } from './store';
 export * from './univ';
 export { default as imageUtils, ImageResources } from './image';
+export * from './environment';
