@@ -1,7 +1,7 @@
 import Signup from '@/src/features/signup';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
-import { Button, Label } from '@/src/shared/ui';
+import { Button, Label, Show } from '@/src/shared/ui';
 import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { Text } from '@/src/shared/ui/text';
 import { Form } from '@/src/widgets';
@@ -17,6 +17,7 @@ import { tryCatch } from '@/src/shared/libs';
 import Loading from "@features/loading";
 import { useState, useEffect } from "react";
 import { checkExistsInstagram } from '@/src/features/auth';
+import { useKeyboarding } from '@/src/shared/hooks';
 
 const { SignupSteps, useChangePhase, useSignupProgress, queries, apis } = Signup;
 const { useDepartmentQuery } = queries;
@@ -49,12 +50,12 @@ const schema = z.object({
 });
 
 export default function UniversityDetailsPage() {
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { updateForm, form: userForm } = useSignupProgress();
   const { universityName } = useGlobalSearchParams<{ universityName: string }>();
   const { data: departments = [], isLoading } = useDepartmentQuery(universityName);
   const [signupLoading, setSignupLoading] = useState(false);
   const [instaLoading, setInstaLoading] = useState(false);
+  const { isKeyboardVisible } = useKeyboarding();
 
   const { showErrorModal } = useModal();
   useChangePhase(SignupSteps.UNIVERSITY_DETAIL);
@@ -117,20 +118,6 @@ export default function UniversityDetailsPage() {
     }
     return '다음으로';
   })();
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
 
   if (signupLoading) {
     return <Loading.Page title="잠시만 기다려주세요.." />;
@@ -225,23 +212,23 @@ export default function UniversityDetailsPage() {
         </View>
       </View>
 
-      {!isKeyboardVisible && (
+      <Show when={!isKeyboardVisible}>
         <View className={cn(
-          platform({
-            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            default: () => ""
-          })
-        )}>
-          <Button variant="secondary" onPress={() => router.push('/auth/signup/university')} className="flex-[0.3]">
-            뒤로
-          </Button>
-          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable || instaLoading}>
-            {nextButtonMessage}
-          </Button>
-        </View>
-      )}
+            platform({
+              web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+              android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+              ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+              default: () => ""
+            })
+          )}>
+            <Button variant="secondary" onPress={() => router.push('/auth/signup/university')} className="flex-[0.3]">
+              뒤로
+            </Button>
+            <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable || instaLoading}>
+              {nextButtonMessage}
+            </Button>
+          </View>
+      </Show>
     </KeyboardAvoidingView>
   );
 }

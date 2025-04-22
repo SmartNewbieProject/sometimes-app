@@ -13,6 +13,7 @@ import { router } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
 import { KeyboardAvoidingView, View, Keyboard, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
+import { useKeyboarding } from '@/src/shared/hooks';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
@@ -26,22 +27,8 @@ type FormState = {
 }
 
 export default function ProfilePage() {
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const { isKeyboardVisible } = useKeyboarding();
   const { updateForm, form: userForm } = useSignupProgress();
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.profile),
@@ -161,7 +148,7 @@ export default function ProfilePage() {
         </View>
 
       </View>
-
+      
       {!isKeyboardVisible && (
         <View className={cn(
           platform({

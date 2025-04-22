@@ -1,15 +1,14 @@
-import Signup from '@/src/features/signup';
-import { cn } from '@/src/shared/libs/cn';
-import { platform } from '@/src/shared/libs/platform';
-import { Button, Divider, Lottie } from '@/src/shared/ui';
-import { PalePurpleGradient } from '@/src/shared/ui/gradient';
-import { Text } from '@/src/shared/ui/text';
+import Signup from '@features/signup';
+import { cn } from '@shared/libs/cn';
+import { platform } from '@shared/libs/platform';
+import { Text, PalePurpleGradient, Button, Show, Divider } from '@shared/ui';
 import { ChipSelector, LabelInput } from '@/src/widgets';
 import { Image } from 'expo-image';
-import { router, useGlobalSearchParams } from 'expo-router';
-import { Suspense, useState } from 'react';
+import { router } from 'expo-router';
+import { useState } from 'react';
 import { KeyboardAvoidingView, View } from 'react-native';
 import Loading from "@features/loading";
+import { useKeyboarding } from '@shared/hooks';
 
 const { SignupSteps, useChangePhase, useSignupProgress, queries } = Signup;
 const { useUnivQuery } = queries;
@@ -18,7 +17,7 @@ const { useUnivQuery } = queries;
 export default function UniversityPage() {
   const { updateForm, form: userForm } = useSignupProgress();
   const { data: univs = [], isLoading } = useUnivQuery();
-  const params = useGlobalSearchParams();
+  const { isKeyboardVisible } = useKeyboarding();
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityName);
   const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
   useChangePhase(SignupSteps.UNIVERSITY);
@@ -93,21 +92,24 @@ export default function UniversityPage() {
         </Loading.Lottie>
       </View>
 
-      <View className={cn(
-        platform({
-          web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-          android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-          ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-          default: () => ""
-        })
-      )}>
-        <Button variant="secondary" onPress={() => router.push('/auth/signup/profile-image')} className="flex-[0.3]">
-          뒤로
-        </Button>
-        <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
-          {nextButtonMessage}
-        </Button>
-      </View>
+      <Show when={!isKeyboardVisible}>
+        <View className={cn(
+          platform({
+            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+            default: () => ""
+          })
+        )}>
+          <Button variant="secondary" onPress={() => router.push('/auth/signup/profile-image')} className="flex-[0.3]">
+            뒤로
+          </Button>
+          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
+            {nextButtonMessage}
+          </Button>
+        </View>
+      </Show>
+
     </KeyboardAvoidingView>
   );
 }

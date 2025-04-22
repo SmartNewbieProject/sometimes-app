@@ -11,8 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import Layout from '@/src/features/layout';
-import { useEffect, useState } from 'react';
-import { Keyboard } from 'react-native';
+import { useKeyboarding } from '@/src/shared/hooks';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
 
@@ -23,22 +22,8 @@ type FormState = {
 }
 
 export default function AccountScreen() {
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const { isKeyboardVisible } = useKeyboarding();
   const { updateForm, form: { email, password } } = useSignupProgress();
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.account),
