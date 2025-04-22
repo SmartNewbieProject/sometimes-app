@@ -7,7 +7,7 @@ import { Text } from '@/src/shared/ui/text';
 import { Form } from '@/src/widgets';
 import { Image } from 'expo-image';
 import { router, useGlobalSearchParams } from 'expo-router';
-import { useForm } from 'react-hook-form';  
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyboardAvoidingView, View, Keyboard, Platform } from 'react-native';
 import { z } from 'zod';
@@ -16,6 +16,7 @@ import { useModal } from '@/src/shared/hooks/use-modal';
 import { tryCatch } from '@/src/shared/libs';
 import Loading from "@features/loading";
 import { useState, useEffect } from "react";
+import { checkExistsInstagram } from '@/src/features/auth';
 
 const { SignupSteps, useChangePhase, useSignupProgress, queries, apis } = Signup;
 const { useDepartmentQuery } = queries;
@@ -39,12 +40,12 @@ const schema = z.object({
   grade: z.string().min(1),
   studentNumber: z.string().min(1),
   instagramId: z.string({ required_error: '인스타그램 아이디를 입력해주세요.' })
-  .min(5, {
-    message: '인스타그램 아이디를 입력해주세요.',
-  })
-  .max(30, {
-    message: '인스타그램 아이디는 최대 30자입니다.',
-  })
+    .min(5, {
+      message: '인스타그램 아이디를 입력해주세요.',
+    })
+    .max(30, {
+      message: '인스타그램 아이디는 최대 30자입니다.',
+    })
 });
 
 export default function UniversityDetailsPage() {
@@ -53,11 +54,13 @@ export default function UniversityDetailsPage() {
   const { universityName } = useGlobalSearchParams<{ universityName: string }>();
   const { data: departments = [], isLoading } = useDepartmentQuery(universityName);
   const [signupLoading, setSignupLoading] = useState(false);
+  const [instaLoading, setInstaLoading] = useState(false);
+
   const { showErrorModal } = useModal();
   useChangePhase(SignupSteps.UNIVERSITY_DETAIL);
   const form = useForm<FormProps>({
     resolver: zodResolver(schema),
-    mode: 'onBlur',
+    mode: 'onChange',
     defaultValues: {
       departmentName: userForm.departmentName,
       grade: userForm.grade,
@@ -68,19 +71,28 @@ export default function UniversityDetailsPage() {
 
   const { handleSubmit, formState: { isValid } } = form;
 
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
+  const validateInstagramId = async (value: string) => {
+    try {
+      setInstaLoading(true);
+      const { exists } = await checkExistsInstagram(value);
+      if (!exists) {
+        form.setError('instagramId', {
+          type: 'manual',
+          message: '존재하지 않는 인스타그램 아이디입니다.'
+        });
+        return;
+      }
+      form.clearErrors('instagramId');
+    } catch (error) {
+      console.error('Instagram validation error:', error);
+      form.setError('instagramId', {
+        type: 'manual',
+        message: '인스타그램 아이디 확인 중 오류가 발생했습니다.'
+      });
+    } finally {
+      setInstaLoading(false);
+    }
+  };
 
   const onNext = handleSubmit(async (data) => {
     setSignupLoading(true);
@@ -106,6 +118,20 @@ export default function UniversityDetailsPage() {
     return '다음으로';
   })();
 
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   if (signupLoading) {
     return <Loading.Page title="잠시만 기다려주세요.." />;
   }
@@ -115,23 +141,23 @@ export default function UniversityDetailsPage() {
   }
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       className="flex-1 flex flex-col"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <PalePurpleGradient />
       <View className="px-5">
-        <Image  
+        <Image
           source={require('@assets/images/details.png')}
           style={{ width: 81, height: 81 }}
           className="mb-4"
         />
-          <Text weight="semibold" size="20" textColor="black">
+        <Text weight="semibold" size="20" textColor="black">
           이제 몇 가지만
-          </Text>
-          <Text weight="semibold" size="20" textColor="black">
+        </Text>
+        <Text weight="semibold" size="20" textColor="black">
           더 입력해 주시면 끝이에요!
-          </Text>
+        </Text>
       </View>
 
       <View className="px-5 flex flex-col gap-y-[14px] mt-[20px] flex-1">
@@ -145,7 +171,7 @@ export default function UniversityDetailsPage() {
             placeholder="학과를 선택하세요."
           />
         </View>
-    
+
         <View className="w-full flex flex-row gap-x-[14px]">
           <View className="flex-1 flex flex-row gap-x-[4px]">
             <Form.Select
@@ -173,7 +199,7 @@ export default function UniversityDetailsPage() {
 
         </View>
 
-        
+
         <View className="w-full flex flex-col">
           <Form.LabelInput
             name="instagramId"
@@ -181,15 +207,21 @@ export default function UniversityDetailsPage() {
             control={form.control}
             label="인스타그램 아이디"
             placeholder="인스타그램 아이디를 입력"
+            onBlur={() => {
+              const value = form.getValues('instagramId');
+              if (value && value.length >= 5) {
+                validateInstagramId(value);
+              }
+            }}
           />
-                  <View className="w-full flex flex-col gap-y-0"> 
-          <Text size="sm" textColor="pale-purple">
-          사진을 업로드하고 계정을 공개로 설정하면, 매칭 확률이 높아져요.
-        </Text>
-        <Text size="sm" textColor="pale-purple">
-            매칭된 상대와 더 자연스러운 대화를 나눠보세요!
-          </Text>
-        </View>
+          <View className="w-full flex flex-col gap-y-0">
+            <Text size="sm" textColor="pale-purple">
+              사진을 업로드하고 계정을 공개로 설정하면, 매칭 확률이 높아져요.
+            </Text>
+            <Text size="sm" textColor="pale-purple">
+              매칭된 상대와 더 자연스러운 대화를 나눠보세요!
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -203,9 +235,9 @@ export default function UniversityDetailsPage() {
           })
         )}>
           <Button variant="secondary" onPress={() => router.push('/auth/signup/university')} className="flex-[0.3]">
-              뒤로
+            뒤로
           </Button>
-          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
+          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable || instaLoading}>
             {nextButtonMessage}
           </Button>
         </View>

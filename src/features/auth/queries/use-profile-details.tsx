@@ -5,12 +5,12 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 const getProfileDetails = (): Promise<UserProfile> =>
   axiosClient.get('/profile');
 
-export function useProfileDetailsQuery(isAuthorized: boolean) {
+export function useProfileDetailsQuery(authToken: string | null) {
   return useQuery({
-    enabled: isAuthorized,
-    queryKey: ['my-profile-details'],
+    enabled: !!authToken,
+    queryKey: ['my-profile-details', authToken],
     queryFn: () => {
       return getProfileDetails();
     },
   });
-}
+};
