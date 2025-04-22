@@ -1,6 +1,6 @@
 import { axiosClient } from "@/src/shared/libs";
 import { UserProfile } from "@/src/types/user";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const getProfileDetails = (): Promise<UserProfile> =>
   axiosClient.get('/profile');

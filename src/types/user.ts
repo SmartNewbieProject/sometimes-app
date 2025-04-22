@@ -34,4 +34,14 @@ export interface UserProfile {
   preferences: PreferenceTypeGroup[];
 }
 
+export interface MyDetails {
+  name: string;
+  age: number;
+  gender: Gender;
+  phoneNumber: string;
+  profileImages: ProfileImage[];
+  instagramId: string;
+  universityDetails: UniversityDetail;
+}
+
 export type Gender = 'MALE' | 'FEMALE';

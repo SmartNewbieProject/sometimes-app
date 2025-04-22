@@ -1,6 +1,6 @@
 import { axiosClient } from "@/src/shared/libs";
 import { useStorage } from "@shared/hooks/use-storage";
-import { useProfileDetailsQuery } from "../queries";
+import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
 import { TokenResponse } from "@/src/types/auth";
 import { useModal } from "@hooks/use-modal";
 import { router } from "expo-router";
@@ -16,6 +16,7 @@ export function useAuth() {
     initialValue: null,
   });
   const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
+  const { my, ...myQueryProps } = useMyDetailsQuery(!!accessToken);
   const { showModal } = useModal();
 
   const login = async (email: string, password: string) => {
@@ -49,6 +50,10 @@ export function useAuth() {
     profileDetails,
     isAuthorized: !!accessToken,
     logout,
+    my,
+    queryProps: {
+      my: myQueryProps,
+    },
   };
 }
 
