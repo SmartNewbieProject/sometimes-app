@@ -15,12 +15,12 @@ export function useAuth() {
     key: 'refresh-token',
     initialValue: null,
   });
-  const { data: profileDetails } = useProfileDetailsQuery(!!accessToken);
+  const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
   const { showModal } = useModal();
 
   const login = async (email: string, password: string) => {
     const { accessToken, refreshToken } = await loginApi(email, password);
-    
+
     await setToken(accessToken);
     await setRefreshToken(refreshToken);
   };

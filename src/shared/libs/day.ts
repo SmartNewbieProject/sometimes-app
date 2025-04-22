@@ -6,15 +6,23 @@ dayjs.locale('ko');
 const getDayBy6Digit = (digit: string) => {
   const now = create();
   const year = (() => {
-    console.log(now.format('YYYY'));
     const prefix = Number(now.format('YYYY').slice(2, 4));
     const year = Number(digit.slice(0, 2));
-    console.log({ prefix, year });
-    return year > prefix ? `19${year}` : `20${year}`;
+    return year > prefix ? `19${year}` : `20${year < 10 ? `0${year}` : year}`;
   })();
 
   const month = digit.slice(2, 4);
   const day = digit.slice(4, 6);
+
+  const isOverDayOfMonth = (() => {
+    const d = now.set('month', Number(month) - 1);
+    const dayOfMonths = d.endOf('month').date();
+    return dayOfMonths < Number(day);
+  })();
+
+  if (isOverDayOfMonth) {
+    throw new Error("날짜가 존재하지 않습니다.");
+  }
 
   return dayjs(`${year}-${month}-${day}`);
 };
@@ -29,7 +37,7 @@ const create = (config?: ConfigType) =>
   dayjs(config);
 
 const dayUtils = {
-  getDayBy6Digit, 
+  getDayBy6Digit,
   getAgeBy6Digit,
   create,
 };

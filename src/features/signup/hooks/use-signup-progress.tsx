@@ -5,7 +5,7 @@ export type SignupForm = {
   password: string;
   name: string;
   birthday: string;
-  gender: 'female' | 'male';
+  gender: 'FEMALE' | 'MALE';
   universityName: string;
   mbti: string;
   phoneNumber: string;

@@ -29,7 +29,7 @@ export default function SignupDoneScreen() {
       <View className="flex flex-col flex-1">
         <Image
           source={require('@assets/images/signup-completion.png')}
-          style={{ width: 312, height: 328 }}
+          style={{ width: 248, height: 290 }}
         />
 
         <View className="flex flex-col">

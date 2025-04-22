@@ -1,21 +1,19 @@
 import { View } from 'react-native';
-import { Text } from '@/src/shared/ui/text';
-import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { Image } from 'expo-image';
-import { Button } from '@/src/shared/ui';
+import { Button, Text, PalePurpleGradient, Show } from '@shared/ui';
 import { router } from 'expo-router';
-import Signup from '@/src/features/signup';
+import Signup from '@features/signup';
 import { Form } from '@/src/widgets';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { cn } from '@/src/shared/libs/cn';
+import { cn } from '@shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
-import Layout from '@/src/features/layout';
-import React, { useEffect, useState } from 'react';
-import { Keyboard } from 'react-native';
-import { ImageResources, imageUtils, tryCatch } from '@/src/shared/libs';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import Loading from '@/src/features/loading';
+import Layout from '@features/layout';
+import { useEffect, useState } from 'react';
+import { ImageResources, imageUtils, tryCatch } from '@shared/libs';
+import { useModal } from '@shared/hooks/use-modal';
+import Loading from '@features/loading';
+import { useKeyboarding } from '@shared/hooks';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress, apis } = Signup;
 
@@ -25,8 +23,8 @@ type FormState = {
 }
 
 export default function PhoneScreen() {
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const { updateForm, form: formStates, completeSms, smsComplete  } = useSignupProgress();
+  const { isKeyboardVisible } = useKeyboarding();
+  const { updateForm, form: formStates, completeSms, smsComplete } = useSignupProgress();
   const [sendedSms, setSendedSms] = useState(false);
   const { showModal, showErrorModal } = useModal();
   const [loadingApi, setLoadingApi] = useState(false);
@@ -35,7 +33,7 @@ export default function PhoneScreen() {
     resolver: zodResolver(schemas.phone),
     mode: 'onChange',
     defaultValues: {
-      phoneNumber: formStates.phoneNumber,
+      phoneNumber: formStates.phoneNumber ?? '',
     },
   });
   const { handleSubmit, formState: { isValid }, watch, setValue } = form;
@@ -52,10 +50,10 @@ export default function PhoneScreen() {
       showModal({
         title: "인증 성공!",
         children: (
-        <View className="flex flex-col gap-y-2">
-          <Text size="sm" textColor="black">휴대폰 인증에 성공했어요!</Text>
-          <Text size="sm" textColor="black">다음 화면으로 이동할게요.</Text>
-        </View>
+          <View className="flex flex-col gap-y-2">
+            <Text size="sm" textColor="black">휴대폰 인증에 성공했어요!</Text>
+            <Text size="sm" textColor="black">다음 화면으로 이동할게요.</Text>
+          </View>
         ),
         primaryButton: {
           text: "네 이동할게요",
@@ -65,7 +63,7 @@ export default function PhoneScreen() {
           },
         },
       });
-  }, error => {
+    }, error => {
       showErrorModal(error.error, 'error');
     });
     setLoadingApi(false);
@@ -88,7 +86,7 @@ export default function PhoneScreen() {
         ),
         primaryButton: {
           text: "네 확인했어요.",
-          onClick: () => {},
+          onClick: () => { },
         },
       });
     }, error => {
@@ -102,67 +100,46 @@ export default function PhoneScreen() {
     return !!matches;
   })();
 
-  const nextable =  !!isInputPhoneNumber || isValid;
+  const nextable = !!isInputPhoneNumber || isValid;
   const renderPhoneAuthButton = !isValid;
 
   useChangePhase(SignupSteps.PHONE);
 
   useEffect(() => {
-    if (phoneNumberValue) {
-      const rawValue = phoneNumberValue.replace(/[^\d-]/g, '');
-      const digitsOnly = rawValue.replace(/-/g, '');
-      const formattedValue = formatPhoneNumber(digitsOnly);
-
-      if (formattedValue !== phoneNumberValue) {
-        setValue('phoneNumber', formattedValue);
-      }
-    }
-  }, [phoneNumberValue, setValue]);
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
+    const phone = formatPhoneNumber(phoneNumberValue);
+    setValue('phoneNumber', phone);
+  }, [phoneNumberValue]);
 
   if (loadingApi) {
-    return <Loading.Page />;
+    return <Loading.Page size={96} />;
   }
 
   if (smsComplete) {
     return (
       <Layout.Default>
-      <View className="flex-1 flex flex-col">
-        <PalePurpleGradient />
-        <View className="px-5 flex-1">
-          <Image
-          source={{ uri: imageUtils.get(ImageResources.SMS_CHECK) }}
-            style={{ width: 81, height: 81 }}
-          />
-          <Text weight="semibold" size="20" textColor="black">
-            이미 번호 인증이 되었어요!
-          </Text>
-          <Text weight="semibold" size="20" textColor="black">
-            다음화면으로 이동할게요
-          </Text>
+        <View className="flex-1 flex flex-col">
+          <PalePurpleGradient />
+          <View className="px-5 flex-1">
+            <Image
+              source={{ uri: imageUtils.get(ImageResources.SMS_CHECK) }}
+              style={{ width: 81, height: 81 }}
+            />
+            <Text weight="semibold" size="20" textColor="black">
+              이미 번호 인증이 되었어요!
+            </Text>
+            <Text weight="semibold" size="20" textColor="black">
+              다음화면으로 이동할게요
+            </Text>
+          </View>
         </View>
-      </View>
-      {!isKeyboardVisible && (
+        {!isKeyboardVisible && (
           <View className={cn(
             platform({
               web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
               android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
               ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-              default: () => ""
-            })
+              default: () => "",
+            }),
           )}>
             <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
               뒤로
@@ -182,7 +159,7 @@ export default function PhoneScreen() {
         <PalePurpleGradient />
         <View className="px-5">
           <Image
-          source={{ uri: imageUtils.get(ImageResources.SMS_CHECK) }}
+            source={{ uri: imageUtils.get(ImageResources.SMS_CHECK) }}
             style={{ width: 81, height: 81 }}
           />
           <Text weight="semibold" size="20" textColor="black">
@@ -220,30 +197,31 @@ export default function PhoneScreen() {
           )}
         </View>
 
-        {!isKeyboardVisible && (
+        <Show when={!isKeyboardVisible}>
           <View className={cn(
-            platform({
-              web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-              android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-              ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-              default: () => ""
-            })
-          )}>
-            <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
-              뒤로
-            </Button>
-            {renderPhoneAuthButton && (
-              <Button onPress={sendSmsCode} className="flex-[0.7]" disabled={!nextable}>
-                {!sendedSms ? '인증코드 발송하기' : '코드 재발송하기'}
+              platform({
+                web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+                android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+                ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+                default: () => ""
+              }),
+            )}>
+              <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
+                뒤로
               </Button>
-            )}
-            {isValid && (
-              <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
-                인증하기
-              </Button>
-            )}
-          </View>
-        )}
+              {renderPhoneAuthButton && (
+                <Button onPress={sendSmsCode} className="flex-[0.7]" disabled={!nextable}>
+                  {!sendedSms ? '인증코드 발송하기' : '코드 재발송하기'}
+                </Button>
+              )}
+              {isValid && (
+                <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
+                  인증하기
+                </Button>
+              )}
+            </View>
+        </Show>
+
       </View>
     </Layout.Default>
   );
