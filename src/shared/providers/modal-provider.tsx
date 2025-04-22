@@ -55,7 +55,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const renderErrorModal = () => (
-    <View className="bg-white w-max-[468px] w-[300px] md:w-full rounded-2xl p-5">
+    <View className="bg-white w-[300px] md:w-[468px] rounded-2xl p-5">
       <View className="flex flex-row items-center gap-x-2 mb-4">
         <ErrorFace />
         <Text size="lg" weight="semibold" textColor="black">
@@ -72,7 +72,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   );
 
   const renderCustomModal = () => (
-    <View className="bg-white w-max-[468px] w-[300px] md:w-full rounded-2xl p-5">
+    <View className="bg-white w-[300px] md:w-[468px] rounded-2xl p-5">
       {!!modalContent?.customTitle && modalContent.customTitle}
       {!modalContent?.customTitle && modalContent?.title && (
         <View className="mb-4">
@@ -130,9 +130,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         visible={visible}
         transparent
         animationType="fade"
-        style={{
-          maxWidth: 468,
-        }}
         onRequestClose={hideModal}
       >
         <View className="flex-1 bg-black/50 justify-center items-center px-5">
