@@ -102,10 +102,6 @@ export default function UniversityDetailsPage() {
       updateForm(signupForm);
       await apis.signup(signupForm as SignupForm);
       setSignupLoading(false);
-      // FIX ME: 사전 출시 기간 이후에 회원가입 데이터 초기화
-      environmentStrategy({
-        development: clear,
-      })
       router.push('/auth/signup/done');
     }, (error) => {
       setSignupLoading(false);

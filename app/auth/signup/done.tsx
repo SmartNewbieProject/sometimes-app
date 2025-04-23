@@ -3,21 +3,31 @@ import { View } from "react-native";
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from 'expo-image';
-import { router, useFocusEffect } from "expo-router";
-import Signup from "@features/signup";
-import { useCallback, useEffect } from "react";
-
+import { router } from "expo-router";
+import { environmentStrategy } from "@/src/shared/libs";
+import Signup from '@/src/features/signup';
 const { useSignupProgress } = Signup;
 
 export default function SignupDoneScreen() {
-  const { clear } = useSignupProgress();
+  const { clear, form } = useSignupProgress();
 
-  // development 환경에서만 회원가입 데이터 초기화
-  useEffect(() => {
-      if (process.env.NODE_ENV !== 'production') {
-         clear();
-      }
-  }, []);
+  const onNext = () => {
+    const email = form.email;
+    clear();
+
+    environmentStrategy({
+      production: () => {
+        if (email === 'billing-test@gmail.com') {
+          return router.push('/auth/login');
+        }
+
+        router.push('/commingsoon');
+      },
+      development: () => {
+        router.push('/auth/login');
+      },
+    });
+  };
 
   return (
     <View className="flex-1 flex flex-col w-full items-center">
@@ -57,10 +67,7 @@ export default function SignupDoneScreen() {
     <Button
         variant="primary"
         size="md"
-        onPress={() => {
-          const redirectPath = process.env.NODE_ENV === 'production' ? '/commingsoon' : '/auth/login';
-          router.push(redirectPath);
-        }}
+        onPress={onNext}
         className="mb-[14px] w-full"
       >
         이상형 찾으러 가기 →

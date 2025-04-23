@@ -3,7 +3,7 @@ import { Text } from "@/src/shared/ui";
 import SignupButtons from "./buttons";
 import { Form } from "@/src/widgets";
 import { useForm } from "react-hook-form";
-import { tryCatch } from "@/src/shared/libs";
+import { environmentStrategy, tryCatch } from "@/src/shared/libs";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../auth";
@@ -35,8 +35,17 @@ export default function LoginForm() {
   const onPressLogin = form.handleSubmit(async ({ email, password }) => {
     tryCatch(async () => {  
       await login(email, password);
-      const redirectPath = process.env.NODE_ENV === 'production' ? '/commingsoon' : '/home';
-      router.push(redirectPath);
+      environmentStrategy({
+        production: () => {
+          if (email === 'billing-test@gmail.com') {
+            return router.navigate('/home');
+          }
+          router.navigate('/commingsoon');
+        },
+        development: () => {
+          router.navigate('/home');
+        },
+      });
     }, (error) => {
       if (error.status === 401) {
         form.setError('password', { message: '아이디가 존재하지 않거나 비밀번호가 일치하지 않습니다' });
