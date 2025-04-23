@@ -69,6 +69,7 @@ export default function UniversityDetailsPage() {
 
   const { handleSubmit, formState: { isValid } } = form;
 
+  // TODO: 서버 API 완성시 연동 필요
   const validateInstagramId = async (value: string) => {
     try {
       setInstaLoading(true);
