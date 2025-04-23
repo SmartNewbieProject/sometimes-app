@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import Layout from '@/src/features/layout';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ImageResources, imageUtils, tryCatch } from '@shared/libs';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import Loading from '@/src/features/loading';
@@ -104,6 +104,11 @@ export default function PhoneScreen() {
   const renderPhoneAuthButton = !isValid;
 
   useChangePhase(SignupSteps.PHONE);
+
+  useEffect(() => {
+    const phone = formatPhoneNumber(phoneNumberValue);
+    form.setValue('phoneNumber', phone);
+  }, [phoneNumberValue]);
 
   if (loadingApi) {
     return <Loading.Page />;
