@@ -1,9 +1,6 @@
-/**
- * I'mport.js 사용 예제 코드
- * 실제 사용 시에는 이 파일을 참고하여 구현하세요.
- */
 import { Platform } from 'react-native';
 import webPayment from './index';
+import { useAuth } from '../../auth';
 
 /**
  * 웹 환경에서 결제 요청 예제
@@ -13,6 +10,7 @@ export const requestWebPayment = async (
   amount: number,
   merchantUid: string
 ): Promise<IMP.RequestPayResponse> => {
+  const { profileDetails } = useAuth();
   // 웹 환경에서만 실행
   if (Platform.OS !== 'web') {
     throw new Error('웹 환경에서만 사용 가능합니다.');
@@ -30,7 +28,7 @@ export const requestWebPayment = async (
     name: orderName, // 주문명
     amount: amount, // 결제금액
     buyer_email: 'buyer@example.com', // 구매자 이메일
-    buyer_name: '구매자', // 구매자 이름
+    buyer_name: profileDetails?.name!, // 구매자 이름
     buyer_tel: '010-1234-5678', // 구매자 전화번호
     buyer_addr: '서울특별시 강남구 삼성동', // 구매자 주소
     buyer_postcode: '123-456', // 구매자 우편번호

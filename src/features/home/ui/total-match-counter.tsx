@@ -6,10 +6,12 @@ import { Text } from "@/src/shared/ui";
 
 interface TotalMatchCounterProps {
   count: number;
+  className?: string;
 }
 
 export default function TotalMatchCounter({
-  count
+  count,
+  className,
 }: TotalMatchCounterProps) {
   const animatedValue = useRef(new Animated.Value(0)).current;
   const [displayValue, setDisplayValue] = useState(0);
@@ -69,6 +71,7 @@ export default function TotalMatchCounter({
       end={{ x: 1, y: 0.5 }}
       locations={[0, 0.2853, 1]}
       style={styles.container}
+      className={className}
     >
       <View style={styles.contentContainer} className="whitespace-nowrap">
         <View style={styles.leftContent} className="w-full flex flex-row">

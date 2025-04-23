@@ -35,42 +35,42 @@ export default function SignupLayout() {
     <View className="flex-1">
       <PalePurpleGradient />
       {renderProgress && (
-      <View className={cn(
-        "px-5 pb-[30px] items-center bg-white",
-        platform({
-          ios: () => "pt-[80px]",
-          android: () => "pt-[80px]",
-          web: () => "pt-[14px] !pb-[8px]",
-        })
-      )}>
-        <ProgressBar progress={progress} />
-      </View>
+        <View className={cn(
+          "px-5 pb-[30px] items-center bg-white",
+          platform({
+            ios: () => "pt-[80px]",
+            android: () => "pt-[80px]",
+            web: () => "pt-[14px] !pb-[8px]",
+          })
+        )}>
+          <ProgressBar progress={progress} />
+        </View>
       )}
       <Suspense fallback={<Loading.Page />}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: {
-            backgroundColor: 'transparent',
-          },
-          animation: 'slide_from_right',
-        }}
-      >
-        <Stack.Screen name="terms" options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="account" 
-          options={{ 
+        <Stack
+          screenOptions={{
             headerShown: false,
-            headerBackVisible: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+            animation: 'slide_from_right',
           }}
-        />
-        <Stack.Screen name="phone" options={{ headerShown: false }} />
-        <Stack.Screen name="profile" options={{ headerShown: false }} />
-        <Stack.Screen name="profile-image" options={{ headerShown: false }} />
-        <Stack.Screen name="university" options={{ headerShown: false }} />
-        <Stack.Screen name="university-details" options={{ headerShown: false }} />
-        <Stack.Screen name="done" options={{ headerShown: false }} />
-      </Stack>
+        >
+          <Stack.Screen name="terms" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="account"
+            options={{
+              headerShown: false,
+              headerBackVisible: false,
+            }}
+          />
+          <Stack.Screen name="phone" options={{ headerShown: false }} />
+          <Stack.Screen name="profile" options={{ headerShown: false }} />
+          <Stack.Screen name="profile-image" options={{ headerShown: false }} />
+          <Stack.Screen name="university" options={{ headerShown: false }} />
+          <Stack.Screen name="university-details" options={{ headerShown: false }} />
+          <Stack.Screen name="done" options={{ headerShown: false }} />
+        </Stack>
       </Suspense>
     </View>
   );

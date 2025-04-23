@@ -18,17 +18,17 @@ export default function Logo() {
         web: () => "",
       })
     )}>
-    <IconWrapper width={128} className="text-primaryPurple md:pb-[58px]">
-      <SmallTitle />
-    </IconWrapper>
-    <View className="p-0 md:p-12 mt-[8px]">
-      <Image
-        source={require('@assets/images/paper-plane.png')}
-        style={{ width: 128, height: 128 }}
-      />
-    </View>
-    <View className="items-center pt-[8px] flex flex-col gap-y-[6px]">
-      <Text className="text-[25px] font-semibold text-black">익숙한 하루에 설렘 하나,</Text>
+      <IconWrapper width={128} className="text-primaryPurple md:pb-[58px]">
+        <SmallTitle />
+      </IconWrapper>
+      <View className="p-0 md:p-12 mt-[8px]">
+        <Image
+          source={require('@assets/images/paper-plane.png')}
+          style={{ width: 128, height: 128 }}
+        />
+      </View>
+      <View className="items-center pt-[8px] flex flex-col gap-y-[6px]">
+        <Text className="text-[25px] font-semibold text-black">익숙한 하루에 설렘 하나,</Text>
         <Text className="text-[15px] text-[#4F4F4F]">SOMETIME에서</Text>
       </View>
     </View>

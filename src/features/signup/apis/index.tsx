@@ -13,9 +13,11 @@ export const getDepartments = async (univ: string): Promise<string[]> => {
 
 export const signup = (form: SignupForm): Promise<void> => {
   const files = form.profileImages
-  .map(fileUtils.dataURLtoBlob)
-  .map(blob => fileUtils.toFile(blob, `${form.email}-${nanoid(6)}.png`));
+    .map(fileUtils.dataURLtoBlob)
+    .map(blob => fileUtils.toFile(blob, `${form.email}-${nanoid(6)}.png`));
   const birthday = dayUtils.getDayBy6Digit(form.birthday);
+
+  console.log({ form });
 
   const formData = new FormData();
   formData.append('email', form.email);

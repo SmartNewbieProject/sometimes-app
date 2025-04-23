@@ -1,18 +1,18 @@
 import { View } from 'react-native';
 import { Image } from 'expo-image';
-import { Button, Text, PalePurpleGradient, Show } from '@shared/ui';
+import { Button, Text, PalePurpleGradient } from '@shared/ui';
 import { router } from 'expo-router';
 import Signup from '@features/signup';
 import { Form } from '@/src/widgets';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { cn } from '@shared/libs/cn';
+import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
-import Layout from '@features/layout';
-import { useEffect, useState } from 'react';
+import Layout from '@/src/features/layout';
+import { useState } from 'react';
 import { ImageResources, imageUtils, tryCatch } from '@shared/libs';
-import { useModal } from '@shared/hooks/use-modal';
-import Loading from '@features/loading';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import Loading from '@/src/features/loading';
 import { useKeyboarding } from '@shared/hooks';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress, apis } = Signup;
@@ -33,10 +33,10 @@ export default function PhoneScreen() {
     resolver: zodResolver(schemas.phone),
     mode: 'onChange',
     defaultValues: {
-      phoneNumber: formStates.phoneNumber ?? '',
+      phoneNumber: formStates.phoneNumber,
     },
   });
-  const { handleSubmit, formState: { isValid }, watch, setValue } = form;
+  const { handleSubmit, formState: { isValid }, watch } = form;
   const phoneNumberValue = watch('phoneNumber');
 
   const onNext = handleSubmit(async ({ authorizationCode }) => {
@@ -105,13 +105,8 @@ export default function PhoneScreen() {
 
   useChangePhase(SignupSteps.PHONE);
 
-  useEffect(() => {
-    const phone = formatPhoneNumber(phoneNumberValue);
-    setValue('phoneNumber', phone);
-  }, [phoneNumberValue]);
-
   if (loadingApi) {
-    return <Loading.Page size={96} />;
+    return <Loading.Page />;
   }
 
   if (smsComplete) {
@@ -197,31 +192,30 @@ export default function PhoneScreen() {
           )}
         </View>
 
-        <Show when={!isKeyboardVisible}>
+        {!isKeyboardVisible && (
           <View className={cn(
-              platform({
-                web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-                android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-                ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-                default: () => ""
-              }),
-            )}>
-              <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
-                뒤로
+            platform({
+              web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
+              android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+              ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
+              default: () => ""
+            }),
+          )}>
+            <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
+              뒤로
+            </Button>
+            {renderPhoneAuthButton && (
+              <Button onPress={sendSmsCode} className="flex-[0.7]" disabled={!nextable}>
+                {!sendedSms ? '인증코드 발송하기' : '코드 재발송하기'}
               </Button>
-              {renderPhoneAuthButton && (
-                <Button onPress={sendSmsCode} className="flex-[0.7]" disabled={!nextable}>
-                  {!sendedSms ? '인증코드 발송하기' : '코드 재발송하기'}
-                </Button>
-              )}
-              {isValid && (
-                <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
-                  인증하기
-                </Button>
-              )}
-            </View>
-        </Show>
-
+            )}
+            {isValid && (
+              <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
+                인증하기
+              </Button>
+            )}
+          </View>
+        )}
       </View>
     </Layout.Default>
   );

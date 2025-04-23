@@ -1,4 +1,4 @@
-import { axiosClient } from "@/src/shared/libs";
+import { axiosClient, tryCatch } from "@/src/shared/libs";
 import { useStorage } from "@shared/hooks/use-storage";
 import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
 import { TokenResponse } from "@/src/types/auth";
@@ -26,22 +26,27 @@ export function useAuth() {
     await setRefreshToken(refreshToken);
   };
 
-  const logout = async () => {
-    if (!refreshToken) {
-      router.push('/auth/login');
+  const logout = () => {
+    tryCatch(async () => {
+      if (!refreshToken) {
+        router.push('/auth/login');
+        await setToken(null);
+        await setRefreshToken(null);
+        return;
+      }
+      await logoutApi(refreshToken);
       await setToken(null);
-      await setRefreshToken(null);
-      return;
-    }
-    await logoutApi(refreshToken);
-    await setToken(null);
-    showModal({
-      title: '로그아웃',
-      children: '로그아웃 되었습니다.',
-      primaryButton: {
-        text: '확인',
-        onClick: () => router.push('/auth/login'),
-      },
+      showModal({
+        title: '로그아웃',
+        children: '로그아웃 되었습니다.',
+        primaryButton: {
+          text: '확인',
+          onClick: () => router.push('/auth/login'),
+        },
+      });
+    }, error => {
+      console.error(error);
+      router.push('/auth/login');
     });
   };
 

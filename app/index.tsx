@@ -5,7 +5,7 @@ import Loading from '@/src/features/loading';
 
 export default function Home() {
   const { isAuthorized } = useAuth();
-  const redirectPath = process.env.NODE_ENV === 'production' ? '/commingsoon' : '/home';
+  const redirectPath = process.env.NODE_ENV === 'production' ? '/event/pre-signup' : '/home';
 
   useEffect(() => {
     const timer = setTimeout(() => {
