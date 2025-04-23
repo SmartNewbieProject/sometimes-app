@@ -12,14 +12,19 @@ import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import { environmentStrategy } from '@/src/shared/libs';
 
-const { useSignupProgress, SignupSteps, useChangePhase } = Signup;
+
+const { useSignupProgress, SignupSteps, useChangePhase, useSignupAnalytics } = Signup;
 
 export default function TermsScreen() {
   const { updateStep, agreements, updateAgreements } = useSignupProgress();
   const allAgreement = agreements.every(agreement => agreement.checked);
   useChangePhase(SignupSteps.TERMS);
 
+  // 애널리틱스 추적 설정
+  const { trackSignupEvent } = useSignupAnalytics('terms');
+
   const onBack = () => {
+    trackSignupEvent('back_button_click');
     environmentStrategy({
       production: () => router.navigate('/event/pre-signup'),
       development: () => router.navigate('/auth/login'),
@@ -32,17 +37,20 @@ export default function TermsScreen() {
 
   const onNext = () => {
     if (!isNext) return;
+    trackSignupEvent('next_button_click', 'to_account');
     updateStep(SignupSteps.ACCOUNT);
     router.push('/auth/signup/account');
   }
 
   const handleAgreement = debounce((id: string, value: boolean) => {
+    trackSignupEvent('agreement_change', `${id}:${value}`);
     updateAgreements(
       agreements.map(agreement => agreement.id === id ? { ...agreement, checked: value } : agreement)
     );
   }, 100);
 
   const handleAllAgreement = debounce(() => {
+    trackSignupEvent('all_agreement_change', `${!allAgreement}`);
     updateAgreements(
       agreements.map(agreement => ({ ...agreement, checked: !allAgreement }))
     );

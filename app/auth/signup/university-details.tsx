@@ -19,7 +19,7 @@ import { useState, useEffect } from "react";
 import { checkExistsInstagram } from '@/src/features/auth';
 import { useKeyboarding } from '@/src/shared/hooks';
 
-const { SignupSteps, useChangePhase, useSignupProgress, queries, apis } = Signup;
+const { SignupSteps, useChangePhase, useSignupProgress, queries, apis, useSignupAnalytics } = Signup;
 const { useDepartmentQuery } = queries;
 
 type FormProps = {
@@ -56,6 +56,9 @@ export default function UniversityDetailsPage() {
 
   const { showErrorModal } = useModal();
   useChangePhase(SignupSteps.UNIVERSITY_DETAIL);
+
+  // 애널리틱스 추적 설정
+  const { trackSignupEvent } = useSignupAnalytics('university_details');
   const form = useForm<FormProps>({
     resolver: zodResolver(schema),
     mode: 'onChange',
@@ -94,6 +97,7 @@ export default function UniversityDetailsPage() {
   };
 
   const onNext = handleSubmit(async (data) => {
+    trackSignupEvent('next_button_click', 'to_done');
     setSignupLoading(true);
     await tryCatch(async () => {
       const signupForm = { ...userForm, ...data };
@@ -104,6 +108,7 @@ export default function UniversityDetailsPage() {
     }, (error) => {
       setSignupLoading(false);
       console.log(error);
+      trackSignupEvent('signup_error', error.error);
       showErrorModal(error.error, "announcement");
     });
   });
@@ -192,12 +197,12 @@ export default function UniversityDetailsPage() {
             control={form.control}
             label="인스타그램 아이디"
             placeholder="인스타그램 아이디를 입력"
-            // onBlur={() => {
-              // const value = form.getValues('instagramId');
-              // if (value && value.length >= 5) {
-                // validateInstagramId(value);
-              // }
-            // }}
+          // onBlur={() => {
+          // const value = form.getValues('instagramId');
+          // if (value && value.length >= 5) {
+          // validateInstagramId(value);
+          // }
+          // }}
           />
           <View className="w-full flex flex-col gap-y-0">
             <Text size="sm" textColor="pale-purple">
@@ -219,7 +224,10 @@ export default function UniversityDetailsPage() {
             default: () => ""
           })
         )}>
-          <Button variant="secondary" onPress={() => router.push('/auth/signup/university')} className="flex-[0.3]">
+          <Button variant="secondary" onPress={() => {
+            trackSignupEvent('back_button_click', 'to_university');
+            router.push('/auth/signup/university');
+          }} className="flex-[0.3]">
             뒤로
           </Button>
           <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable || instaLoading}>

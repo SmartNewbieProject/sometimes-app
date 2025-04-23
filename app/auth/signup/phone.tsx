@@ -15,7 +15,7 @@ import { useModal } from '@/src/shared/hooks/use-modal';
 import Loading from '@/src/features/loading';
 import { useKeyboarding } from '@shared/hooks';
 
-const { SignupSteps, useChangePhase, schemas, useSignupProgress, apis } = Signup;
+const { SignupSteps, useChangePhase, schemas, useSignupProgress, apis, useSignupAnalytics } = Signup;
 
 type FormState = {
   phoneNumber: string;
@@ -28,6 +28,9 @@ export default function PhoneScreen() {
   const [sendedSms, setSendedSms] = useState(false);
   const { showModal, showErrorModal } = useModal();
   const [loadingApi, setLoadingApi] = useState(false);
+
+  // 애널리틱스 추적 설정
+  const { trackSignupEvent } = useSignupAnalytics('phone');
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.phone),
@@ -141,10 +144,16 @@ export default function PhoneScreen() {
               default: () => "",
             }),
           )}>
-            <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
+            <Button variant="secondary" onPress={() => {
+              trackSignupEvent('back_button_click', 'to_account');
+              router.push('/auth/signup/account');
+            }} className="flex-[0.3]">
               뒤로
             </Button>
-            <Button onPress={() => router.navigate("/auth/signup/profile")} className="flex-[0.7]">
+            <Button onPress={() => {
+              trackSignupEvent('next_button_click', 'to_profile');
+              router.navigate("/auth/signup/profile");
+            }} className="flex-[0.7]">
               다음으로
             </Button>
           </View>
@@ -206,16 +215,25 @@ export default function PhoneScreen() {
               default: () => ""
             }),
           )}>
-            <Button variant="secondary" onPress={() => router.push('/auth/signup/account')} className="flex-[0.3]">
+            <Button variant="secondary" onPress={() => {
+              trackSignupEvent('back_button_click', 'to_account');
+              router.push('/auth/signup/account');
+            }} className="flex-[0.3]">
               뒤로
             </Button>
             {renderPhoneAuthButton && (
-              <Button onPress={sendSmsCode} className="flex-[0.7]" disabled={!nextable}>
+              <Button onPress={() => {
+                trackSignupEvent('sms_code_request', !sendedSms ? 'first_send' : 'resend');
+                sendSmsCode();
+              }} className="flex-[0.7]" disabled={!nextable}>
                 {!sendedSms ? '인증코드 발송하기' : '코드 재발송하기'}
               </Button>
             )}
             {isValid && (
-              <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
+              <Button onPress={() => {
+                trackSignupEvent('verify_sms_code');
+                onNext();
+              }} className="flex-[0.7]" disabled={!nextable}>
                 인증하기
               </Button>
             )}
@@ -227,7 +245,7 @@ export default function PhoneScreen() {
 }
 
 const formatPhoneNumber = (value: string) => {
-  if (!value) return;
+  if (!value) return '';
   value = value.replace(/[^\d]/g, '');
   if (value.length <= 3) {
     return value;

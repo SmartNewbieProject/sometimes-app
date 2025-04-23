@@ -10,7 +10,7 @@ import '../global.css';
 import { QueryProvider } from '@/src/shared/config';
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
 import { cn } from '@/src/shared/libs/cn';
-import { ModalProvider } from '@/src/shared/providers/modal-provider';
+import { ModalProvider, AnalyticsProvider } from '@/src/shared/providers';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,7 +50,9 @@ export default function RootLayout() {
       >
         <QueryProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Slot />
+            <AnalyticsProvider>
+              <Slot />
+            </AnalyticsProvider>
           </ThemeProvider>
         </QueryProvider>
       </View>

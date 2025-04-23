@@ -13,7 +13,7 @@ import { platform } from '@/src/shared/libs/platform';
 import Layout from '@/src/features/layout';
 import { useKeyboarding } from '@/src/shared/hooks';
 
-const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
+const { SignupSteps, useChangePhase, schemas, useSignupProgress, useSignupAnalytics } = Signup;
 
 type FormState = {
   email: string;
@@ -24,6 +24,9 @@ type FormState = {
 export default function AccountScreen() {
   const { isKeyboardVisible } = useKeyboarding();
   const { updateForm, form: { email, password } } = useSignupProgress();
+
+  // 애널리틱스 추적 설정
+  const { trackSignupEvent } = useSignupAnalytics('account');
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.account),
@@ -39,6 +42,7 @@ export default function AccountScreen() {
   const isPasswordMatch = form.watch('password') === form.watch('passwordConfirm');
 
   const onNext = handleSubmit((data) => {
+    trackSignupEvent('next_button_click', 'to_phone');
     updateForm({
       email: data.email,
       password: data.password,
@@ -115,7 +119,10 @@ export default function AccountScreen() {
               default: () => ""
             })
           )}>
-            <Button variant="secondary" onPress={() => router.push('/auth/signup/terms')} className="flex-[0.3]">
+            <Button variant="secondary" onPress={() => {
+              trackSignupEvent('back_button_click', 'to_terms');
+              router.push('/auth/signup/terms');
+            }} className="flex-[0.3]">
               뒤로
             </Button>
             <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

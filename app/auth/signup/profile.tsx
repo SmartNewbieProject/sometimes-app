@@ -15,7 +15,7 @@ import { KeyboardAvoidingView, View, Keyboard, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useKeyboarding } from '@/src/shared/hooks';
 
-const { SignupSteps, useChangePhase, schemas, useSignupProgress } = Signup;
+const { SignupSteps, useChangePhase, schemas, useSignupProgress, useSignupAnalytics } = Signup;
 
 type Gender = 'MALE' | 'FEMALE';
 
@@ -29,6 +29,9 @@ type FormState = {
 export default function ProfilePage() {
   const { isKeyboardVisible } = useKeyboarding();
   const { updateForm, form: userForm } = useSignupProgress();
+
+  // 애널리틱스 추적 설정
+  const { trackSignupEvent } = useSignupAnalytics('profile');
 
   const form = useForm<FormState>({
     resolver: zodResolver(schemas.profile),
@@ -46,6 +49,7 @@ export default function ProfilePage() {
   const gender = form.watch('gender');
 
   const onNext = handleSubmit((data) => {
+    trackSignupEvent('next_button_click', 'to_profile_image');
     updateForm({
       ...userForm,
       name: data.name,
@@ -148,7 +152,7 @@ export default function ProfilePage() {
         </View>
 
       </View>
-      
+
       {!isKeyboardVisible && (
         <View className={cn(
           platform({
@@ -158,7 +162,10 @@ export default function ProfilePage() {
             default: () => ""
           })
         )}>
-          <Button variant="secondary" onPress={() => router.push('/auth/signup/phone')} className="flex-[0.3]">
+          <Button variant="secondary" onPress={() => {
+            trackSignupEvent('back_button_click', 'to_phone');
+            router.push('/auth/signup/phone');
+          }} className="flex-[0.3]">
             뒤로
           </Button>
           <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

@@ -10,7 +10,7 @@ import { KeyboardAvoidingView, View } from 'react-native';
 import Loading from "@features/loading";
 import { useKeyboarding } from '@shared/hooks';
 
-const { SignupSteps, useChangePhase, useSignupProgress, queries } = Signup;
+const { SignupSteps, useChangePhase, useSignupProgress, queries, useSignupAnalytics } = Signup;
 const { useUnivQuery } = queries;
 
 
@@ -22,10 +22,14 @@ export default function UniversityPage() {
   const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
   useChangePhase(SignupSteps.UNIVERSITY);
 
+  // 애널리틱스 추적 설정
+  const { trackSignupEvent } = useSignupAnalytics('university');
+
   const onNext = () => {
     if (!selectedUniv) {
       return;
     }
+    trackSignupEvent('next_button_click', 'to_university_details');
     updateForm({
       ...userForm,
       universityName: selectedUniv,
@@ -101,7 +105,10 @@ export default function UniversityPage() {
             default: () => ""
           })
         )}>
-          <Button variant="secondary" onPress={() => router.push('/auth/signup/profile-image')} className="flex-[0.3]">
+          <Button variant="secondary" onPress={() => {
+            trackSignupEvent('back_button_click', 'to_profile_image');
+            router.push('/auth/signup/profile-image');
+          }} className="flex-[0.3]">
             뒤로
           </Button>
           <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>

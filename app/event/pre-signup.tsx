@@ -1,6 +1,7 @@
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import Signup from '@features/signup';
+import Event from '@features/event';
 import { platform } from '@shared/libs/platform';
 import { cn } from '@shared/libs/cn';
 import { IconWrapper } from "@/src/shared/ui/icons";
@@ -8,14 +9,17 @@ import SmallTitle from '@/assets/icons/small-title.svg';
 import { useEffect } from 'react';
 import { Image } from "expo-image";
 import { ReviewSlide, TotalMatchCounter } from '@/src/features/home/ui';
-import { Button, ImageResource, Text } from '@shared/ui';
-import { ImageResources } from '@/src/shared/libs';
+import { Button, Text } from '@shared/ui';
 import { router } from 'expo-router';
 
 const { useSignupProgress } = Signup;
+const { hooks: { useEventAnalytics } } = Event;
 
 export default function PreSignupScreen() {
   const { clear } = useSignupProgress();
+
+  // 애널리틱스 추적 설정
+  const { trackEventAction } = useEventAnalytics('pre-signup');
 
   useEffect(() => {
     clear();
@@ -84,10 +88,16 @@ export default function PreSignupScreen() {
             연인 즉시 매칭 티켓 을 발급해드려요!
           </Text>
         </View>
-        <Button className="text-white w-full" onPress={() => router.navigate('/auth/signup/terms')}>
+        <Button className="text-white w-full" onPress={() => {
+          trackEventAction('signup_button_click');
+          router.navigate('/auth/signup/terms');
+        }}>
           사전회원가입하러 가기
         </Button>
-        <Button variant="secondary" onPress={() => router.navigate('/auth/login')} className="w-full mt-1.5">
+        <Button variant="secondary" onPress={() => {
+          trackEventAction('login_button_click');
+          router.navigate('/auth/login');
+        }} className="w-full mt-1.5">
           로그인하러 가기
         </Button>
       </View>

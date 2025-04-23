@@ -13,7 +13,7 @@ import { platform } from '@/src/shared/libs/platform';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
 
-const { SignupSteps, useChangePhase, useSignupProgress } = Signup;
+const { SignupSteps, useChangePhase, useSignupProgress, useSignupAnalytics } = Signup;
 
 type FormState = {
   images: (string | null)[];
@@ -33,6 +33,9 @@ export default function ProfilePage() {
   const { updateForm, form: userForm } = useSignupProgress();
   const [images, setImages] = useState<(string | null)[]>(userForm.profileImages ?? [null, null, null]);
 
+  // 애널리틱스 추적 설정
+  const { trackSignupEvent } = useSignupAnalytics('profile_image');
+
   const form = useForm<FormState>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
@@ -45,6 +48,7 @@ export default function ProfilePage() {
   console.log({ formImages });
 
   const onNext = () => {
+    trackSignupEvent('next_button_click', 'to_university');
     updateForm({
       ...userForm,
       profileImages: images as string[],
@@ -72,33 +76,34 @@ export default function ProfilePage() {
     <View className="flex-1 flex flex-col">
       <PalePurpleGradient />
       <View className="px-5">
-        <Image  
+        <Image
           source={require('@assets/images/profile-image.png')}
-          style={{ width: 81, height: 81 }} 
+          style={{ width: 81, height: 81 }}
         />
-          <Text weight="semibold" size="20" textColor="black" className="mt-2">
+        <Text weight="semibold" size="20" textColor="black" className="mt-2">
           프로필 사진 없으면 매칭이 안 돼요!
-          </Text>
-          <Text weight="semibold" size="20" textColor="black">
+        </Text>
+        <Text weight="semibold" size="20" textColor="black">
           지금 바로 추가해 주세요
-          </Text>
+        </Text>
       </View>
 
       <View className="flex flex-col py-4 px-5">
         <Text weight="medium" size="sm" textColor="pale-purple">
-        매칭을 위해 3장의 프로필 사진을 모두 올려주세요
+          매칭을 위해 3장의 프로필 사진을 모두 올려주세요
         </Text>
         <Text weight="medium" size="sm" textColor="pale-purple">
-        얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+          얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
         </Text>
       </View>
 
       <View className="flex-1 flex flex-col gap-y-4">
         <View className="flex w-full justify-center items-center">
-          <ImageSelector 
+          <ImageSelector
             size="sm"
             value={images[0] ?? undefined}
             onChange={(value) => {
+              trackSignupEvent('image_upload', 'image_1');
               uploadImage(0, value);
               form.trigger('images');
             }}
@@ -110,6 +115,7 @@ export default function ProfilePage() {
             size="sm"
             value={images[1] ?? undefined}
             onChange={(value) => {
+              trackSignupEvent('image_upload', 'image_2');
               uploadImage(1, value);
               form.trigger('images');
             }}
@@ -118,6 +124,7 @@ export default function ProfilePage() {
             size="sm"
             value={images[2] ?? undefined}
             onChange={(value) => {
+              trackSignupEvent('image_upload', 'image_3');
               uploadImage(2, value);
               form.trigger('images');
             }}
@@ -133,8 +140,11 @@ export default function ProfilePage() {
           default: () => ""
         })
       )}>
-        <Button variant="secondary" onPress={() => router.push('/auth/signup/profile')} className="flex-[0.3]">
-            뒤로
+        <Button variant="secondary" onPress={() => {
+          trackSignupEvent('back_button_click', 'to_profile');
+          router.push('/auth/signup/profile');
+        }} className="flex-[0.3]">
+          뒤로
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
           {nextButtonMessage}
