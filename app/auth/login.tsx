@@ -3,10 +3,19 @@ import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import Signup from '@features/signup';
 import { platform } from '@shared/libs/platform';
 import { cn } from '@shared/libs/cn';
+import { useEffect } from 'react';
+
+const { useSignupProgress } = Signup;
 
 export default function LoginScreen() {
+  const { clear } = useSignupProgress();
+
+  useEffect(() => {
+    clear();
+  }, []);
+
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
@@ -26,7 +35,7 @@ export default function LoginScreen() {
               paddingTop: 12,
               paddingHorizontal: 0,
             }),
-          })  
+          })
         }}>
           <View className={cn(
             'px-4',
