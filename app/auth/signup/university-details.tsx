@@ -41,11 +41,8 @@ const schema = z.object({
   grade: z.string().min(1),
   studentNumber: z.string().min(1),
   instagramId: z.string({ required_error: '인스타그램 아이디를 입력해주세요.' })
-    .min(5, {
-      message: '인스타그램 아이디를 입력해주세요.',
-    })
-    .max(30, {
-      message: '인스타그램 아이디는 최대 30자입니다.',
+    .regex(/^[a-zA-Z0-9._]{5,30}$/, {
+      message: '올바른 인스타그램 아이디를 입력해주세요.',
     })
 });
 
@@ -65,7 +62,7 @@ export default function UniversityDetailsPage() {
     defaultValues: {
       departmentName: userForm.departmentName,
       grade: userForm.grade,
-      studentNumber: userForm.studentNumber,  
+      studentNumber: userForm.studentNumber,
       instagramId: userForm.instagramId,
     },
   });
@@ -194,12 +191,12 @@ export default function UniversityDetailsPage() {
             control={form.control}
             label="인스타그램 아이디"
             placeholder="인스타그램 아이디를 입력"
-            onBlur={() => {
-              const value = form.getValues('instagramId');
-              if (value && value.length >= 5) {
-                validateInstagramId(value);
-              }
-            }}
+            // onBlur={() => {
+              // const value = form.getValues('instagramId');
+              // if (value && value.length >= 5) {
+                // validateInstagramId(value);
+              // }
+            // }}
           />
           <View className="w-full flex flex-col gap-y-0">
             <Text size="sm" textColor="pale-purple">
