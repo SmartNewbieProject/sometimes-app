@@ -6,13 +6,14 @@ import Loading from '@/src/features/loading';
 export default function Home() {
   const { isAuthorized } = useAuth();
   const redirectPath = process.env.NODE_ENV === 'production' ? '/event/pre-signup' : '/home';
+  const loginPath = process.env.NODE_ENV === 'production' ? '/event/pre-signup' : '/auth/login';
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (isAuthorized) {
         router.push(redirectPath);
       } else {
-        router.push('/auth/login');
+        router.push(loginPath);
       }
     }, 100);
 
