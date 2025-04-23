@@ -7,7 +7,7 @@ import { IconWrapper } from "@/src/shared/ui/icons";
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { useEffect } from 'react';
 import { Image } from "expo-image";
-import { TotalMatchCounter } from '@/src/features/home/ui';
+import { ReviewSlide, TotalMatchCounter } from '@/src/features/home/ui';
 import { Button, ImageResource, Text } from '@shared/ui';
 import { ImageResources } from '@/src/shared/libs';
 import { router } from 'expo-router';
@@ -65,8 +65,16 @@ export default function PreSignupScreen() {
               AI를 활용한 나만의 이상형 분석 및 매칭
             </Text>
           </View>
+
+          <View className="mb-4 hidden md:block w-full mt-4">
+            <ReviewSlide />
+          </View>
         </View>
+
       </View>
+
+
+
       <View className="w-full px-4 mb-4 md:mb-16">
         <View className="flex flex-col gap-y-1 mb-1.5 md:mb-4 items-center">
           <Text textColor="pale-purple" weight="semibold" size="13">
