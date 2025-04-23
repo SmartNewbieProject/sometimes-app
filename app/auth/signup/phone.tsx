@@ -227,6 +227,7 @@ export default function PhoneScreen() {
 }
 
 const formatPhoneNumber = (value: string) => {
+  if (!value) return;
   value = value.replace(/[^\d]/g, '');
   if (value.length <= 3) {
     return value;
