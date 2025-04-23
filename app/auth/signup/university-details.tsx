@@ -50,7 +50,7 @@ const schema = z.object({
 });
 
 export default function UniversityDetailsPage() {
-  const { updateForm, form: userForm, clear } = useSignupProgress();
+  const { updateForm, form: userForm } = useSignupProgress();
   const { universityName } = useGlobalSearchParams<{ universityName: string }>();
   const { data: departments = [], isLoading } = useDepartmentQuery(universityName);
   const [signupLoading, setSignupLoading] = useState(false);
@@ -65,7 +65,7 @@ export default function UniversityDetailsPage() {
     defaultValues: {
       departmentName: userForm.departmentName,
       grade: userForm.grade,
-      studentNumber: userForm.studentNumber,
+      studentNumber: userForm.studentNumber,  
       instagramId: userForm.instagramId,
     },
   });

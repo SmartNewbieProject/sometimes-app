@@ -5,6 +5,7 @@ import { ImageResources, imageUtils, tryCatch } from "@/src/shared/libs";
 import { Selector } from "@/src/widgets/selector";
 import { createRef, useEffect, useMemo, useState } from "react";
 import Payment from '@features/payment';
+import { resetIMP } from '@/src/features/payment/web';
 import { PortOneController } from "@portone/react-native-sdk";
 import { PaymentResponse } from "@/src/types/payment";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -51,6 +52,8 @@ export default function RematchingTicketSellingScreen() {
       // 결제 모듈 초기화
       if (Platform.OS === 'web') {
         // 웹 환경에서는 IMP 객체 초기화 상태 리셋
+        resetIMP(); // 초기화 상태를 리셋하여 다음 결제에서 재초기화되도록 함
+
         if (typeof window !== 'undefined' && window.IMP) {
           // 웹 환경에서 IMP 객체 재초기화
           const merchantID = process.env.EXPO_PUBLIC_IMP || 'imp00000000';

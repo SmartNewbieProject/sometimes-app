@@ -2,11 +2,15 @@ import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform, View } from 'react-native';
 import Payment from '@features/payment';
+import { resetIMP } from '@/src/features/payment/web';
 
 export default function PurchaseLayout() {
 
   useEffect(() => {
     if (Platform.OS === 'web') {
+      // 초기 로드 시 IMP 초기화 상태 리셋
+      resetIMP();
+
       if (!document.querySelector('script[src="https://cdn.iamport.kr/v1/iamport.js"]')) {
         const script = document.createElement('script');
         script.src = 'https://cdn.iamport.kr/v1/iamport.js';

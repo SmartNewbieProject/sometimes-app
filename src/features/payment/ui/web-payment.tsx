@@ -1,6 +1,6 @@
 import { Alert, Platform, View } from "react-native";
 import { useEffect, useState } from "react";
-import webPayment, { initializeIMP } from "../web";
+import webPayment, { initializeIMP, resetIMP } from "../web";
 import paymentApis from "../api";
 import { useAuth } from "../../auth";
 import Loading from "../../loading";
@@ -43,7 +43,9 @@ export const WebPaymentView = (props: WebPaymentProps) => {
       }
 
       try {
-        await initializeIMP(process.env.EXPO_PUBLIC_IMP as string);
+        // 결제 전 IMP 초기화 상태 리셋
+        resetIMP();
+        initializeIMP(process.env.EXPO_PUBLIC_IMP as string);
 
         // 결제 내역 저장
         await paymentApis.saveHistory({

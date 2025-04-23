@@ -26,6 +26,7 @@ export const requestPay = (params: IMP.RequestPayParams): Promise<IMP.RequestPay
  */
 let authorized = false;
 export const initializeIMP = (accountID: string): void => {
+  console.log('initializeIMP()');
   if (authorized) {
     console.debug("이미 IMP 객체가 초기화되었습니다.");
     return;
@@ -47,8 +48,18 @@ export const isIMPLoaded = (): boolean => {
   return typeof window !== 'undefined' && !!window.IMP;
 };
 
+/**
+ * I'mport 초기화 상태 리셋
+ * 결제 모듈을 완전히 초기화하기 위해 호출
+ */
+export const resetIMP = (): void => {
+  console.debug('IMP 초기화 상태 리셋');
+  authorized = false;
+};
+
 export default {
   requestPay,
   initializeIMP,
   isIMPLoaded,
+  resetIMP,
 };
