@@ -1,57 +1,70 @@
-  import { View, LayoutChangeEvent, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
-  import { useState, useEffect, useCallback } from 'react';
-  import { Image } from 'expo-image';
-  import { Text } from '@/src/shared/ui';
-  import { useAuth } from '../auth';
-  import { Time } from './ui';
-  import { useNextMatchingDate } from './queries';
-  import { dayUtils } from '@/src/shared/libs';
-  import { calculateTime } from './services/calculate-time';
-  import ArrowRight from '@assets/icons/right-white-arrow.svg';
-  import { IconWrapper } from '@/src/shared/ui/icons';
+import { View, LayoutChangeEvent, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
+import { Image } from 'expo-image';
+import { Text } from '@/src/shared/ui';
+import { useAuth } from '../auth';
+import { Time } from './ui';
+import { useLatestMatching, useNextMatchingDate } from './queries';
+import { dayUtils } from '@/src/shared/libs';
+import { calculateTime } from './services/calculate-time';
+import ArrowRight from '@assets/icons/right-white-arrow.svg';
+import { IconWrapper } from '@/src/shared/ui/icons';
+import Loading from '../loading';
 
-  interface IdleMatchTimerProps {
-    onTimeEnd?: () => void;
-  }
+interface IdleMatchTimerProps {
+  onTimeEnd?: () => void;
+}
 
-  export default function IdleMatchTimer({ onTimeEnd }: IdleMatchTimerProps) {
-    const [width, setWidth] = useState(0);
-    const [currentTime, setCurrentTime] = useState(() => dayUtils.create());
+export default function IdleMatchTimer({ onTimeEnd }: IdleMatchTimerProps) {
+  const [width, setWidth] = useState(0);
+  const [currentTime, setCurrentTime] = useState(() => dayUtils.create());
 
-    const { profileDetails } = useAuth();
-    const { data: day = {
-      nextMatchingDate: currentTime,
-    } } = useNextMatchingDate();
-    const time = calculateTime(day.nextMatchingDate, currentTime);
+  const { match, isLoading: matchLoading } = useLatestMatching();
+  const { my } = useAuth();
 
-    const onLayout = (event: LayoutChangeEvent) => {
-      const { width: layoutWidth } = event.nativeEvent.layout;
-      setWidth(layoutWidth);
+  const loading = (() => {
+    console.log({ my, match, matchLoading });
+    if (!my || !match || matchLoading) return true;
+    return false;
+  })();
+
+  const time = calculateTime(match?.endOfView ?? null, currentTime);
+
+  const onLayout = (event: LayoutChangeEvent) => {
+    const { width: layoutWidth } = event.nativeEvent.layout;
+    setWidth(layoutWidth);
+  };
+
+  const updateTime = useCallback(() => {
+    if (!match || !match.endOfView) return;
+    const { endOfView } = match;
+
+    if (currentTime.isSame(endOfView, 'second')) {
+      return;
+    }
+
+    const now = dayUtils.create();
+    setCurrentTime(now);
+    const { shouldTriggerCallback } = calculateTime(endOfView, now);
+    if (shouldTriggerCallback && onTimeEnd) {
+      onTimeEnd();
+    }
+  }, [match, onTimeEnd]);
+
+  useEffect(() => {
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => {
+      clearInterval(interval);
     };
+  }, [updateTime]);
 
-    const updateTime = useCallback(() => {
-      if (currentTime.isSame(day.nextMatchingDate, 'second')) {
-        return;
-      }
-      const now = dayUtils.create();
-      setCurrentTime(now);
-      const { shouldTriggerCallback } = calculateTime(day.nextMatchingDate, now);
-      if (shouldTriggerCallback && onTimeEnd) {
-        onTimeEnd();
-      }
-    }, [day.nextMatchingDate, onTimeEnd]);
-
-    useEffect(() => {
-      updateTime();
-      const interval = setInterval(updateTime, 1000);
-      return () => {
-        clearInterval(interval);
-      };
-    }, [updateTime]);
-
-
-    return (
-      <View style={styles.container}>
+  return (
+    <View style={styles.container}>
+      <Loading.Lottie
+        title="불러오고 있어요"
+        loading={loading}
+      >
         <ImageBackground
           source={require('@assets/images/time-card-bg.png')}
           onLayout={onLayout}
@@ -66,7 +79,7 @@
 
           <View className="my-[8px]">
             <Text size="md" textColor="black" weight="semibold">
-              {profileDetails?.name}님
+              {my?.name}님
             </Text>
             <Text size="md" textColor="black" weight="semibold">
               이상형 매칭까지
@@ -114,49 +127,51 @@
             </View>
           </View>
         </ImageBackground>
-      </View>
-    );
-  }
+      </Loading.Lottie>
 
-  const styles = StyleSheet.create({
-    container: {
-      width: '100%',
-      aspectRatio: 1,
-      alignSelf: 'center',
-      position: 'relative',
-      overflow: 'hidden',
-    },
-    imageBackground: {
-      width: '100%',
-      height: '100%',
-    },
-    previousContainer: {
-      position: 'absolute',
-      width: 72,
-      flexDirection: 'column',
-      backgroundColor: '#ECE5FF',
-      height: 128,
-      borderTopLeftRadius: 999,
-      borderBottomLeftRadius: 999,
-      right: 0,
-      top: 0,
-    },
-    previousButton: {
-      borderTopLeftRadius: 999,
-      borderBottomLeftRadius: 999,
-      height: 112,
-    },
-    topRadius: {
-      borderBottomRightRadius: 16,
-      borderTopEndRadius: 16,
-      height: 35,
-      width: '100%',
-      backgroundColor: '#ECE5FF',
-    },
-    bottomRadius: {
-      borderTopEndRadius: 16,
-      height: 35,
-      width: '100%',
-      backgroundColor: '#e6ddff',
-    },
-  });
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    aspectRatio: 1,
+    alignSelf: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  imageBackground: {
+    width: '100%',
+    height: '100%',
+  },
+  previousContainer: {
+    position: 'absolute',
+    width: 72,
+    flexDirection: 'column',
+    backgroundColor: '#ECE5FF',
+    height: 128,
+    borderTopLeftRadius: 999,
+    borderBottomLeftRadius: 999,
+    right: 0,
+    top: 0,
+  },
+  previousButton: {
+    borderTopLeftRadius: 999,
+    borderBottomLeftRadius: 999,
+    height: 112,
+  },
+  topRadius: {
+    borderBottomRightRadius: 16,
+    borderTopEndRadius: 16,
+    height: 35,
+    width: '100%',
+    backgroundColor: '#ECE5FF',
+  },
+  bottomRadius: {
+    borderTopEndRadius: 16,
+    height: 35,
+    width: '100%',
+    backgroundColor: '#e6ddff',
+  },
+});

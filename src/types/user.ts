@@ -25,12 +25,13 @@ export interface PreferenceTypeGroup {
 }
 
 export interface UserProfile {
+  id: string;
   name: string;
   age: number;
   gender: string;
   profileImages: ProfileImage[];
-  instagramId: string | null;
-  universityDetails: UniversityDetail | null;
+  instagramId: string;
+  universityDetails: UniversityDetail;
   preferences: PreferenceTypeGroup[];
 }
 

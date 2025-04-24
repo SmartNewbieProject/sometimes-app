@@ -6,7 +6,15 @@ interface TimeResult {
   shouldTriggerCallback?: boolean;
 }
 
-export function calculateTime(nextMatchingDate: Dayjs, now: Dayjs): TimeResult {
+export function calculateTime(nextMatchingDate: Dayjs | null, now: Dayjs): TimeResult {
+  if (!nextMatchingDate) {
+    return {
+      delimeter: 'D',
+      value: 0,
+      shouldTriggerCallback: false,
+    }
+  }
+
   const hours = nextMatchingDate.diff(now, 'hour');
   const minutes = nextMatchingDate.diff(now, 'minute');
   const seconds = nextMatchingDate.diff(now, 'second');
