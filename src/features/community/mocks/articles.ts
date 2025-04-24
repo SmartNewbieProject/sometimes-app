@@ -14,7 +14,7 @@ export const mockArticles: Article[] = [
       university: { name: '서울대학교', image: require('@/assets/images/univ.png') }
     },
     likes: 0,
-    shares: 0
+    views: 0
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ export const mockArticles: Article[] = [
       university: { name: '연세대학교', image: require('@/assets/images/univ.png') }
     },
     likes: 0,
-    shares: 0
+    views: 0
   },
   {
     id: 3,
@@ -44,7 +44,7 @@ export const mockArticles: Article[] = [
       university: { name: '고려대학교', image: require('@/assets/images/univ.png') }
     },
     likes: 0,
-    shares: 0
+    views: 0
   }
 ];
 
@@ -62,7 +62,7 @@ export const mockPopularArticles: Article[] = [
       university: { name: '서울대학교', image: require('@/assets/images/univ.png') }
     },
     likes: 10,
-    shares: 5
+    views: 5
   },
   {
     id: 5,
@@ -77,7 +77,7 @@ export const mockPopularArticles: Article[] = [
       university: { name: '서울대학교', image: require('@/assets/images/univ.png') }
     },
     likes: 15,
-    shares: 8
+    views: 8
   }
 ];
 
@@ -151,7 +151,7 @@ export const mockComments = [
     articleId: 5,
     content: '진짜요?? 저도 보고 싶었는데!!',
     createdAt: '2024-03-19T18:15:00Z',
-    author: {
+    author: {   
       id: 7,
       name: '별구경러',
       email: 'stargazer@example.com',

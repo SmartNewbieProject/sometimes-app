@@ -1,7 +1,6 @@
 import { FlatList, TouchableOpacity, View, Image } from 'react-native';
 import { ArticleItem } from './article-item';
 import { mockArticles, mockPopularArticles, mockComments } from '../mocks/articles';
-import { Article } from '../types';
 import { useState } from 'react';
 import { useArticles } from '../hooks/use-articles';
 import { FilterButton } from './filter-button';
