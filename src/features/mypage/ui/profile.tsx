@@ -1,4 +1,5 @@
 import { Text } from '@/src/shared/ui';
+import { router } from 'expo-router';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
@@ -38,6 +39,10 @@ export const Profile = () => {
     totalRematchingTickets: reMatchingTicketCount,
   }
 
+  const handleProfileEdit = () => {
+    router.push('/profile-edit');
+  }
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -66,7 +71,7 @@ export const Profile = () => {
                     </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', transform: [{ translateY: -60 }] }}>
-                    <TouchableOpacity onPress={() => {}}>
+                    <TouchableOpacity onPress={handleProfileEdit}>
                         <View style={styles.leftRect} />
                         <View style={styles.leftRadius} />
                         <View style={[styles.previousButton]}>
