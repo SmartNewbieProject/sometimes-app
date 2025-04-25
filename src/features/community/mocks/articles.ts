@@ -5,7 +5,7 @@ export const mockArticles: Article[] = [
     id: 1,
     title: '첫 번째 게시글',
     content: '안녕하세요! 첫 번째 게시글입니다.',
-    createdAt: '2024-03-20T10:00:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 1,
       name: '홍길동',
@@ -20,7 +20,7 @@ export const mockArticles: Article[] = [
     id: 2,
     title: '두 번째 게시글',
     content: '반갑습니다! 두 번째 게시글입니다.',
-    createdAt: '2024-03-20T11:00:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 2,
       name: '김철수',
@@ -35,7 +35,7 @@ export const mockArticles: Article[] = [
     id: 3,
     title: '세 번째 게시글',
     content: '잘 부탁드립니다! 세 번째 게시글입니다.',
-    createdAt: '2024-03-20T12:00:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 3,
       name: '이영희',
@@ -53,7 +53,7 @@ export const mockPopularArticles: Article[] = [
     id: 4,
     title: '토끼는 귀여워',
     content: '토끼는 귀엽다. 토끼는 깡총깡총 뛰어다닌다. 토끼는 당근을 좋아한다.',
-    createdAt: '2024-03-19T15:00:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 4,
       name: '토끼러버',
@@ -68,7 +68,7 @@ export const mockPopularArticles: Article[] = [
     id: 5,
     title: '오늘 진짜 신기한일 있었음',
     content: '아니 진짜 대박. 오늘 학교 가는데 별이 떨어지는걸 봤어요. 진짜에요!!',
-    createdAt: '2024-03-19T18:00:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 5,
       name: '별덕후',
@@ -86,7 +86,7 @@ export const mockComments = [
     id: 1,
     articleId: 1,
     content: '첫 번째 게시글의 첫 번째 댓글입니다.',
-    createdAt: '2024-03-20T10:30:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 2,
       name: '김철수',
@@ -102,7 +102,7 @@ export const mockComments = [
     id: 2,
     articleId: 1,
     content: '첫 번째 게시글의 두 번째 댓글입니다.',
-    createdAt: '2024-03-20T10:45:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 3,
       name: '이영희',
@@ -118,7 +118,7 @@ export const mockComments = [
     id: 3,
     articleId: 2,
     content: '두 번째 게시글의 첫 번째 댓글입니다.',
-    createdAt: '2024-03-20T11:30:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 1,
       name: '홍길동',
@@ -134,7 +134,7 @@ export const mockComments = [
     id: 4,
     articleId: 4,
     content: '토끼 너무 귀여워요 ㅠㅠ',
-    createdAt: '2024-03-19T15:10:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {
       id: 6,
       name: '토끼팬',
@@ -150,7 +150,7 @@ export const mockComments = [
     id: 5,
     articleId: 5,
     content: '진짜요?? 저도 보고 싶었는데!!',
-    createdAt: '2024-03-19T18:15:00Z',
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
     author: {   
       id: 7,
       name: '별구경러',

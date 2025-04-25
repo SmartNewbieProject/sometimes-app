@@ -1,6 +1,6 @@
 import { FlatList, TouchableOpacity, View, Image } from 'react-native';
 import { ArticleItem } from './article-item';
-import { mockArticles, mockPopularArticles, mockComments } from '../mocks/articles';
+import { mockArticles, mockPopularArticles } from '../mocks/articles';
 import { useState } from 'react';
 import { useArticles } from '../hooks/use-articles';
 import { FilterButton } from './filter-button';
@@ -18,7 +18,6 @@ export function ArticleList({ type }: ArticleListProps) {
   const [articles, setArticles] = useState(() => 
     (type === 'popular' ? mockPopularArticles : mockArticles).map(article => ({
       ...article,
-      comments: mockComments.filter(comment => comment.articleId === article.id)
     }))
   );
 
@@ -35,7 +34,6 @@ export function ArticleList({ type }: ArticleListProps) {
     setActiveTab(tab);
     const filteredArticles = (tab === 'popular' ? mockPopularArticles : mockArticles).map(article => ({
       ...article,
-      comments: mockComments.filter(comment => comment.articleId === article.id)
     }));
     setArticles(filteredArticles);
   };

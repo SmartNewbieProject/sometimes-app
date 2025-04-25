@@ -13,24 +13,26 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormState, useForm } from "react-hook-form";
 import SendIcon from '@/assets/icons/send.svg';
 import { Check } from '@/src/shared/ui/check';
+import { useState } from "react";
+import { useArticleComments } from "../hooks/use-article-comments";
+import { mockComments } from '../mocks/articles';
 
-const schema = z.object({
-    content: z.string().min(1, { message: '댓글을 입력해주세요' }),
-});
-
-type FormState = {
-    content: string;
-};
-
-export const ArticleDetail = ({article, comments}: {article: Article, comments: Comment[]}) => {
+export const ArticleDetail = ({article}: {article: Article}) => {
+    const [checked, setChecked] = useState(true);
     const form = useForm<FormState>({
-        resolver: zodResolver(schema),
         defaultValues: {
             content: '',
         },
     });
+    {}
+    const comments = mockComments.filter(comment => comment.articleId === article.id);
+
+    const handleSubmit = (data: FormState) => {
+        console.log(data);
+    }
+
     return (
-        <View className="flex-1 px-[16px] w-full">
+        <View className="flex-1 px-[16px] w-full h-full">
             <View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
             <View className="flex-row items-center mb-[12px]">
                 <Image 
@@ -88,21 +90,24 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
                     <ArticleDetailComment key={comment.id} comment={comment} />
                 ))}
             </View>
-            <View>
-                <Check />
-                <Form.LabelInput
-                    name="content"
-                    control={form.control}
-                    label="댓글"
-                    textColor="black"
-                    placeholder="댓글을 입력하세요"
-                />
-                <TouchableOpacity onPress={form.handleSubmit()}>
+            <View className="h-[1px] bg-[#FFFFFF]"></View>
+            <View className=" w-full flex-row items-center justify-between px-[16px] py-[9px] rounded-[15px] bg-[#F8F4FF]">
+                <View className="flex-row items-center gap-1">
+                    <Check.Box className="h-[25px]" checked={checked} size={25} onChange={(checked) => setChecked(checked)} />
+                    <Text className="mr-1 text-black text-[15px] h-[25px] flex items-center">익명</Text>
+                    <Form.LabelInput
+                        name="content"
+                        control={form.control}
+                        className="w-full h-[25px] border-b-0 text-xs text-[#A892D7]"
+                        placeholder="댓글을 입력하세요"
+                        label=""
+                    />
+                </View>
+                <TouchableOpacity onPress={form.handleSubmit(handleSubmit)}>
                     <IconWrapper>
                         <SendIcon />
                     </IconWrapper>
                 </TouchableOpacity>
-
             </View>
         </View>
     )
