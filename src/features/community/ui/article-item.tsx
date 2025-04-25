@@ -66,6 +66,7 @@ export function ArticleItem({ article, onPress, onLike, onComment, onViews }: Ar
               <Text className="text-[16px] h-[24px] text-[#646464]" >{article.views || 0}</Text>
             </TouchableOpacity>
           </View>
+
         </View>
       </TouchableOpacity>
     </View>
