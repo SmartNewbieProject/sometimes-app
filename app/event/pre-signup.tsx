@@ -50,7 +50,7 @@ export default function PreSignupScreen() {
           />
         </View>
         <View className="w-full mt-4">
-          <TotalMatchCounter count={786} className="h-[64px] !min-h-[76px]" />
+          <TotalMatchCounter count={1928} className="h-[64px] !min-h-[76px]" />
         </View>
 
         <View className="flex flex-col gap-y-[8px] w-full mt-4 items-center">
