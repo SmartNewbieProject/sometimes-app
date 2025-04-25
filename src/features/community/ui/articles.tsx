@@ -7,13 +7,14 @@ import { FilterButton } from './filter-button';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
 import { Text } from '@/src/shared/ui';
+import { router } from 'expo-router';
 interface ArticleListProps {
   type: 'realtime' | 'popular';
 }
 
 export function ArticleList({ type }: ArticleListProps) {
   const { handleLike, handleComment, handleViews } = useArticles();
-  const [activeTab, setActiveTab] = useState<'realtime' | 'popular'>(type);
+  const [activeTab, setActiveTab] = useState<'realtime' | 'popular'| 'review'>(type);
   const [articles, setArticles] = useState(() => 
     (type === 'popular' ? mockPopularArticles : mockArticles).map(article => ({
       ...article,
@@ -22,6 +23,7 @@ export function ArticleList({ type }: ArticleListProps) {
   );
 
   const handleArticlePress = (articleId: number) => {
+    router.push(`/community/${articleId}`);
     setArticles(prev => prev.map(article => 
       article.id === articleId 
         ? { ...article, views: (article.views || 0) + 1 }
@@ -29,7 +31,7 @@ export function ArticleList({ type }: ArticleListProps) {
     ));
   };
 
-  const handleTabChange = (tab: 'realtime' | 'popular') => {
+  const handleTabChange = (tab: 'realtime' | 'popular' | 'review') => {
     setActiveTab(tab);
     const filteredArticles = (tab === 'popular' ? mockPopularArticles : mockArticles).map(article => ({
       ...article,
