@@ -1,134 +1,49 @@
-import { View, LayoutChangeEvent, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
-import { useState, useEffect, useCallback } from 'react';
-import { Image } from 'expo-image';
-import { Text } from '@/src/shared/ui';
+import { View, StyleSheet } from 'react-native';
 import { useAuth } from '../auth';
-import { Time } from './ui';
-import { useLatestMatching, useNextMatchingDate } from './queries';
-import { dayUtils } from '@/src/shared/libs';
-import { calculateTime } from './services/calculate-time';
-import ArrowRight from '@assets/icons/right-white-arrow.svg';
-import { IconWrapper } from '@/src/shared/ui/icons';
+import { useLatestMatching } from './queries';
 import Loading from '../loading';
+import { Waiting } from './ui';
+import { Partner } from './ui/partner';
+import { NotFound } from './ui/not-found';
+import { Container } from './ui/container';
+import { InteractionNavigation } from './ui/nav';
+import { useState } from 'react';
+import { RematchLoading } from './ui/rematching';
 
-interface IdleMatchTimerProps {
-  onTimeEnd?: () => void;
-}
-
-export default function IdleMatchTimer({ onTimeEnd }: IdleMatchTimerProps) {
-  const [width, setWidth] = useState(0);
-  const [currentTime, setCurrentTime] = useState(() => dayUtils.create());
-
-  const { match, isLoading: matchLoading } = useLatestMatching();
+export default function IdleMatchTimer() {
+  const { match, isLoading: matchLoading, refetch } = useLatestMatching();
   const { my } = useAuth();
+  const [isRematching, setIsRematching] = useState(false);
+
+  const isOpen = match?.type ? ['open', 'rematching'].includes(match.type) : false;
 
   const loading = (() => {
-    console.log({ my, match, matchLoading });
     if (!my || !match || matchLoading) return true;
     return false;
   })();
 
-  const time = calculateTime(match?.endOfView ?? null, currentTime);
-
-  const onLayout = (event: LayoutChangeEvent) => {
-    const { width: layoutWidth } = event.nativeEvent.layout;
-    setWidth(layoutWidth);
-  };
-
-  const updateTime = useCallback(() => {
-    if (!match || !match.endOfView) return;
-    const { endOfView } = match;
-
-    if (currentTime.isSame(endOfView, 'second')) {
-      return;
-    }
-
-    const now = dayUtils.create();
-    setCurrentTime(now);
-    const { shouldTriggerCallback } = calculateTime(endOfView, now);
-    if (shouldTriggerCallback && onTimeEnd) {
-      onTimeEnd();
-    }
-  }, [match, onTimeEnd]);
-
-  useEffect(() => {
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [updateTime]);
+  if (isRematching) {
+    return <RematchLoading />;
+  }
 
   return (
-    <View style={styles.container}>
-      <Loading.Lottie
-        title="불러오고 있어요"
-        loading={loading}
-      >
-        <ImageBackground
-          source={require('@assets/images/time-card-bg.png')}
-          onLayout={onLayout}
-          style={[styles.imageBackground, { height: width }]}
-          resizeMode="cover"
-          className="w-full flex flex-col px-[14px] py-[25px]"
+    <View>
+      <View style={styles.container}>
+        <Loading.Lottie
+          title="불러오고 있어요"
+          loading={loading}
         >
-          <Image
-            source={require('@assets/images/sandclock.png')}
-            style={{ width: 72, height: 82 }}
-          />
-
-          <View className="my-[8px]">
-            <Text size="md" textColor="black" weight="semibold">
-              {my?.name}님
-            </Text>
-            <Text size="md" textColor="black" weight="semibold">
-              이상형 매칭까지
-            </Text>
-          </View>
-
-          <View className="flex flex-row gap-x-1 mb-[8px]">
-            <Time value={time.delimeter} />
-            <Time value="-" />
-            {time.value?.toString().split('').map((value, index) => (
-              <Time key={index} value={value} />
-            ))}
-          </View>
-
-          <View>
-            <Text size="md" textColor="black" weight="semibold">
-              남았어요
-            </Text>
-            <Text size="sm" textColor="pale-purple" weight="light" className="mt-[8px]">
-              매주 목·일 21시에 매칭이 시작돼요!
-            </Text>
-          </View>
-
-          <View style={styles.previousContainer}>
-            <View className="w-full bg-[#fcfaff] relative">
-              <View style={styles.topRadius} />
-            </View>
-            <View className="w-full flex flex-row">
-              <TouchableOpacity
-                className="bg-primaryPurple flex-1 flex flex-row justify-end items-center pr-1"
-                style={styles.previousButton}
-              >
-                <Text className="w-[24px] text-white text-[12px]">
-                  이전
-                  매칭
-                </Text>
-                <IconWrapper width={12} height={12}>
-                  <ArrowRight />
-                </IconWrapper>
-              </TouchableOpacity>
-              <View className="w-[16px] bg-[#fcfaff] h-full" />
-            </View>
-            <View className="w-full bg-[#fcfaff] relative">
-              <View style={styles.bottomRadius} />
-            </View>
-          </View>
-        </ImageBackground>
-      </Loading.Lottie>
-
+          <Container
+            gradientMode={['not-found', 'waiting'].includes(match?.type as string)}
+          >
+            {match?.type === 'not-found' && <NotFound />}
+            {isOpen && <Partner match={match!} />}
+            {match?.type === 'waiting' && <Waiting match={match!} onTimeEnd={refetch} />}
+            {/* <Waiting match={match!} onTimeEnd={onTimeEnd} /> */}
+          </Container>
+        </Loading.Lottie>
+      </View>
+      {match && <InteractionNavigation match={match} setRematching={setIsRematching} />}
     </View>
   );
 }
@@ -140,10 +55,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     position: 'relative',
     overflow: 'hidden',
+    borderRadius: 20,
+    display: 'flex',
+    flexDirection: 'column',
   },
   imageBackground: {
     width: '100%',
     height: '100%',
+    overflow: 'hidden',
   },
   previousContainer: {
     position: 'absolute',

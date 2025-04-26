@@ -52,4 +52,4 @@ export function calculateTime(nextMatchingDate: Dayjs | null, now: Dayjs): TimeR
     value: seconds,
     shouldTriggerCallback,
   }
-} 
+}

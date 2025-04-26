@@ -1,10 +1,11 @@
 import { UserProfile } from "@/src/types/user";
+import { Dayjs } from "dayjs";
 
 export type MatchViewType = 'open' | 'waiting' | 'not-found' | 'rematching';
 
 export type MatchDetails = {
   type: MatchViewType;
-  endOfView: Date | null;
+  endOfView: Dayjs | null;
   partner: UserProfile | null;
 };
 
