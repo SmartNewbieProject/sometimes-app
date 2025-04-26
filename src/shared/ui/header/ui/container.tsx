@@ -17,7 +17,7 @@ export function Container({ children, className, centered = false }: ContainerPr
         platform({
           ios: () => 'pt-16 pb-4',
           android: () => 'pt-16 pb-4',
-          web: () => 'pt-8 pb-4',
+          web: () => 'pt-3 pb-4',
         }),
         className
       )}

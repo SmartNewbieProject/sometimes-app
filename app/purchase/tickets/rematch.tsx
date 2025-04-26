@@ -1,6 +1,6 @@
-import { Button, PalePurpleGradient, Text } from "@shared/ui";
+import { Button, Header, PalePurpleGradient, Text } from "@shared/ui";
 import Layout from "@features/layout";
-import { Alert, BackHandler, Image, Platform, View } from "react-native";
+import { Alert, BackHandler, Image, Platform, TouchableOpacity, View } from "react-native";
 import { ImageResources, imageUtils, tryCatch } from "@/src/shared/libs";
 import { Selector } from "@/src/widgets/selector";
 import { createRef, useEffect, useMemo, useState } from "react";
@@ -160,9 +160,16 @@ export default function RematchingTicketSellingScreen() {
 
   return (
     <Layout.Default className="flex h-full flex-col">
-      <PalePurpleGradient />
 
-      <View className="h-full flex flex-col px-4">
+      <PalePurpleGradient />
+      <Header.Container>
+        <Header.LeftContent>
+          <Header.LeftButton onPress={router.back} visible />
+        </Header.LeftContent>
+
+      </Header.Container>
+
+      <View className="flex-1 flex flex-col px-4 pb-4">
         <Image
           source={{ uri: imageUtils.get(ImageResources.TICKET) }}
           style={{ width: 81, height: 81 }}
@@ -177,7 +184,7 @@ export default function RematchingTicketSellingScreen() {
           </Text>
         </View>
 
-        <View className="flex flex-col gap-y-3 mb-4">
+        <View className="flex flex-col gap-y-3 mb-2">
           <Text size="sm" textColor="pale-purple">
           연인 매칭권 결제
           </Text>
@@ -186,7 +193,7 @@ export default function RematchingTicketSellingScreen() {
           </Text>
         </View>
 
-        <View className="flex flex-1 flex-col gap-y-2 justify-center">
+        <View className="flex flex-col gap-y-2 justify-center mb-auto">
           <Selector
             value={productCount?.toString()}
             options={purchaseOptions}
@@ -199,7 +206,7 @@ export default function RematchingTicketSellingScreen() {
           />
         </View>
 
-        <View className="mb-4">
+        <View className="mt-4">
           {!!totalPrice && (
             <View className="w-full flex flex-row justify-end my-1.5">
               <PriceDisplay

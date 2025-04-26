@@ -46,7 +46,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
   }, [updateTime]);
 
   return (
-    <>
+    <View className="p-[14px]">
       <Image
         source={require('@assets/images/sandclock.png')}
         style={{ width: 72, height: 82 }}
@@ -100,6 +100,6 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           <View style={sideStyle.bottomRadius} />
         </View>
       </View>
-    </>
+    </View>
   )
 };

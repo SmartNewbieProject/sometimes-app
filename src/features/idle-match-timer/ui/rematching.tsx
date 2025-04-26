@@ -1,10 +1,11 @@
 import { ImageResources } from "@/src/shared/libs";
-import { ImageResource, Text } from "@/src/shared/ui";
+import { ImageResource, PurpleGradient, Text } from "@/src/shared/ui";
 import { View } from "react-native";
 
 export const RematchLoading = () => {
   return (
     <View className="w-full h-full flex justify-center items-center">
+      <PurpleGradient />
       <ImageResource
         resource={ImageResources.SANDTIMER}
         width={246}

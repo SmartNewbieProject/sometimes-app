@@ -7,13 +7,13 @@ import { Partner } from './ui/partner';
 import { NotFound } from './ui/not-found';
 import { Container } from './ui/container';
 import { InteractionNavigation } from './ui/nav';
-import { useState } from 'react';
 import { RematchLoading } from './ui/rematching';
+import { useMatchLoading } from './hooks';
 
 export default function IdleMatchTimer() {
   const { match, isLoading: matchLoading, refetch } = useLatestMatching();
   const { my } = useAuth();
-  const [isRematching, setIsRematching] = useState(false);
+  const { loading: isRematching } = useMatchLoading();
 
   const isOpen = match?.type ? ['open', 'rematching'].includes(match.type) : false;
 
@@ -23,7 +23,13 @@ export default function IdleMatchTimer() {
   })();
 
   if (isRematching) {
-    return <RematchLoading />;
+    return (
+      <View style={styles.container}>
+        <Container gradientMode>
+          <RematchLoading />
+        </Container>
+      </View>
+    );
   }
 
   return (
@@ -43,7 +49,7 @@ export default function IdleMatchTimer() {
           </Container>
         </Loading.Lottie>
       </View>
-      {match && <InteractionNavigation match={match} setRematching={setIsRematching} />}
+      {match && <InteractionNavigation match={match} />}
     </View>
   );
 }
@@ -58,39 +64,5 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     display: 'flex',
     flexDirection: 'column',
-  },
-  imageBackground: {
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-  },
-  previousContainer: {
-    position: 'absolute',
-    width: 72,
-    flexDirection: 'column',
-    backgroundColor: '#ECE5FF',
-    height: 128,
-    borderTopLeftRadius: 999,
-    borderBottomLeftRadius: 999,
-    right: 0,
-    top: 0,
-  },
-  previousButton: {
-    borderTopLeftRadius: 999,
-    borderBottomLeftRadius: 999,
-    height: 112,
-  },
-  topRadius: {
-    borderBottomRightRadius: 16,
-    borderTopEndRadius: 16,
-    height: 35,
-    width: '100%',
-    backgroundColor: '#ECE5FF',
-  },
-  bottomRadius: {
-    borderTopEndRadius: 16,
-    height: 35,
-    width: '100%',
-    backgroundColor: '#e6ddff',
   },
 });

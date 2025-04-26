@@ -15,11 +15,7 @@ export default function PurchaseLayout() {
         <Stack.Screen 
           name="rematch" 
           options={{
-            headerTitle: '매칭권',
-            headerTitleAlign: 'center',
-            headerTitleStyle: {
-              fontWeight: 600,
-            },
+            headerShown: false,
             contentStyle: {
               backgroundColor: 'transparent',
             },

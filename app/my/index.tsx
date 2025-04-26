@@ -7,7 +7,6 @@ export default function MyScreen() {
     <View className="flex-1">
       <PalePurpleGradient />
 
-      {/* Header - Compound Pattern 사용 예시 */}
       <Header.Container>
         <Header.LeftContent>
           <Header.LeftButton visible={false} />
