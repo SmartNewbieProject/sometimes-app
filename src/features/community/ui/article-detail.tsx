@@ -10,26 +10,45 @@ import { z } from "zod";
 import { ArticleDetailComment } from "./article-detail-comment";
 import { Form } from "@/src/widgets/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormState, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import SendIcon from '@/assets/icons/send.svg';
 import { Check } from '@/src/shared/ui/check';
 import { useState } from "react";
 import { useArticleComments } from "../hooks/use-article-comments";
 import { mockComments } from '../mocks/articles';
+import React from "react";
 
 export const ArticleDetail = ({article}: {article: Article}) => {
     const [checked, setChecked] = useState(true);
-    const form = useForm<FormState>({
+    const form = useForm({
         defaultValues: {
             content: '',
         },
     });
-    {}
+    
     const comments = mockComments.filter(comment => comment.articleId === article.id);
-
-    const handleSubmit = (data: FormState) => {
+    
+    const handleSubmit = (data: { content: string }) => {
         console.log(data);
     }
+
+    const renderComments = (comments: any[]) => {
+        return comments
+            .filter((comment: any) => !comment.repliesid)
+            .map((comment: any) => {
+                const replies = comments.filter((reply: any) => reply.repliesid === comment.id);
+                return (
+                    <React.Fragment key={comment.id}>
+                        <ArticleDetailComment comment={comment} />
+                        {replies.map((reply: any) => (
+                            <View key={reply.id} className="ml-[20px]">
+                                <ArticleDetailComment comment={reply} />
+                            </View>
+                        ))}
+                    </React.Fragment>
+                );
+            });
+    };
 
     return (
         <View className="flex-1 px-[16px] w-full h-full">
@@ -86,9 +105,7 @@ export const ArticleDetail = ({article}: {article: Article}) => {
             </View>
             <View className="h-[1px] bg-[#F3F0FF] mb-[20px]"></View>
             <View>
-                {comments.map((comment) => (
-                    <ArticleDetailComment key={comment.id} comment={comment} />
-                ))}
+                {renderComments(comments)}
             </View>
             <View className="h-[1px] bg-[#FFFFFF]"></View>
             <View className=" w-full flex-row items-center justify-between px-[16px] py-[9px] rounded-[15px] bg-[#F8F4FF]">

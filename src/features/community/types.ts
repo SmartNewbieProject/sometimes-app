@@ -1,5 +1,5 @@
 export interface Author {
-  id: number;
+  id: string;
   name: string;
   email: string;
   age: number;
@@ -12,15 +12,16 @@ export interface University {
 }
 
 export interface Comment {
-  id: number;
+  id: string;
   content: string;
   createdAt: string;
   author: Author;
-  articleId: number;
+  articleId: string;
+  repliesid?: string;
 }
 
 export interface Article {
-  id: number;
+  id: string;
   title: string;
   content: string;
   createdAt: string;

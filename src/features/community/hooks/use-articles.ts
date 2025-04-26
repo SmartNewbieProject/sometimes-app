@@ -29,7 +29,7 @@ export function useArticles(type: 'realtime' | 'popular' = 'realtime') {
   // 인기 게시글은 목업 데이터 사용
   const popularArticles = type === 'popular' ? mockPopularArticles : [];
 
-  const handleLike = useCallback((articleId: number) => {
+  const handleLike = useCallback((articleId: string) => { 
     setArticles(prevArticles =>
       prevArticles.map(article =>
         article.id === articleId
@@ -39,12 +39,12 @@ export function useArticles(type: 'realtime' | 'popular' = 'realtime') {
     );
   }, []);
 
-  const handleComment = useCallback((articleId: number) => {
+  const handleComment = useCallback((articleId: string) => {
     // 댓글 기능은 나중에 구현
     console.log('Comment on article:', articleId);
   }, []);
 
-  const handleViews = useCallback((articleId: number) => {
+  const handleViews = useCallback((articleId: string) => {
     setArticles(prevArticles =>
       prevArticles.map(article =>
         article.id === articleId

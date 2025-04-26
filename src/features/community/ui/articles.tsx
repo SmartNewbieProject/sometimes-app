@@ -21,14 +21,14 @@ export function ArticleList({ type }: ArticleListProps) {
     }))
   );
 
-  const handleArticlePress = (articleId: number) => {
+  const handleArticlePress = (articleId: string) => {
     router.push(`/community/${articleId}`);
     setArticles(prev => prev.map(article => 
       article.id === articleId 
         ? { ...article, views: (article.views || 0) + 1 }
         : article
     ));
-  };
+    };
 
   const handleTabChange = (tab: 'realtime' | 'popular' | 'review') => {
     setActiveTab(tab);

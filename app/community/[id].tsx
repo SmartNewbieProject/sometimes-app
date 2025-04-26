@@ -12,32 +12,36 @@ import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
-    const article = mockArticles.find(article => article.id === parseInt(id));
-    const comments = mockComments.filter(comment => comment.articleId === parseInt(id));
-  return (
-    <View className="flex-1">
-         <PalePurpleGradient />
-         <Header.Container>
-            <Header.LeftContent>
-            <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
-              <ChevronLeftIcon width={24} height={24} />
-            </Pressable>
-                <Header.LeftButton visible={false} />
-            </Header.LeftContent>
-            <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
-            <Header.RightContent>
-                <TouchableOpacity>
-                    <IconWrapper>
-                        <HamburgerIcon />
-                    </IconWrapper>
-                </TouchableOpacity>
-            </Header.RightContent>
-         </Header.Container>
-         <ScrollView className="flex-1 px-5">
-            <View>
-                <ArticleDetail article={article} comments={comments} />
-            </View>
-         </ScrollView>
-    </View>
-  )
+    const article = mockArticles.find(article => article.id === id);
+    const comments = mockComments.filter(comment => comment.articleId === id);
+    return (
+        <View className="flex-1">
+            <PalePurpleGradient />
+            <Header.Container>
+                <Header.LeftContent>
+                <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
+                  <ChevronLeftIcon width={24} height={24} />
+                </Pressable>
+                    <Header.LeftButton visible={false} />
+                </Header.LeftContent>
+                <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
+                <Header.RightContent>
+                    <TouchableOpacity>
+                        <IconWrapper>
+                            <HamburgerIcon />
+                        </IconWrapper>
+                    </TouchableOpacity>
+                </Header.RightContent>
+            </Header.Container>
+            <ScrollView className="flex-1 px-5">
+                <View>
+                    {article ? (
+                        <ArticleDetail article={article} />
+                    ) : (
+                        <Text>게시글을 찾을 수 없습니다.</Text>
+                    )}
+                </View>
+            </ScrollView>
+        </View>
+    )
 }
