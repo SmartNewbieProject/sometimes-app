@@ -3,9 +3,10 @@ import type React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { cn } from '../../libs/cn';
 import { Text } from '../text';
+import { ReactNode } from 'react';
 
 const buttonStyles = cva(
-	'rounded-[20] flex items-center justify-center w-fit h-[50] text-white py-2 px-6 transition-all duration-200',
+	'rounded-[20] flex items-center flex flex-row gap-x-1.5 justify-center w-fit h-[50] text-white py-2 px-6 transition-all duration-200',
 	{
 		variants: {
 			variant: {
@@ -40,6 +41,7 @@ const buttonStyles = cva(
 export type ButtonProps = VariantProps<typeof buttonStyles> & {
 	children?: React.ReactNode;
 	onPress?: () => void;
+	prefix?: ReactNode;
 	className?: string;
 };
 
@@ -49,6 +51,7 @@ export const Button: React.FC<ButtonProps> = ({
 	size = 'md',
 	disabled = false,
 	children,
+	prefix,
 	textColor = 'white',
 	className = '',
 }) => {
@@ -63,6 +66,7 @@ export const Button: React.FC<ButtonProps> = ({
 			onPress={press}
 			activeOpacity={1}
 		>
+			{prefix}
 			<Text
 				textColor={textColor}
 				size={size}

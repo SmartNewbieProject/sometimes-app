@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, ViewStyle } from 'react-native';
 
 export const PalePurpleGradient = () => {
 
@@ -32,6 +32,31 @@ export const PalePurpleGradient = () => {
           height: '100%',
         }
       }).gradient}
+    />
+  );
+}
+
+interface PurpleGradientProps {
+  style?: ViewStyle;
+}
+
+export const PurpleGradient = ({ style }: PurpleGradientProps = {}) => {
+  return (
+    <LinearGradient
+      colors={['#F3EDFF', '#E1D9FF']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      locations={[0, 1]}
+      style={[
+        StyleSheet.create({
+          gradient: {
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+          },
+        }).gradient,
+        style
+      ]}
     />
   );
 }
