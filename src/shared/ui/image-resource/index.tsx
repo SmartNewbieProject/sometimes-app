@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image as ExpoImage } from 'expo-image';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { ImageResources } from '@/src/shared/libs/image';
-import imageUtils from '@/src/shared/libs/image';
-import { Lottie } from '@/src/shared/ui/lottie';
 import Loading from '@/src/features/loading';
 
 export interface ImageResourceProps {
@@ -30,8 +28,10 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const imageUrl = imageUtils.get(resource);
+  // Get the image URL directly as a string
+  const imageUrl = resource.toString();
 
+  // Create styles outside of the render function to avoid recreation on each render
   const styles = StyleSheet.create({
     container: {
       width,
@@ -54,10 +54,19 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
     setIsLoading(false);
   };
 
-  const handleError = () => {
+  const handleError = (error: any) => {
+    console.error('Image loading error:', error);
     setIsLoading(false);
     setHasError(true);
   };
+
+  if (hasError) {
+    return (
+      <View style={[styles.container, style]} className={className}>
+        <View style={[styles.image, { backgroundColor: '#F3EDFF' }]} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, style]} className={className}>
