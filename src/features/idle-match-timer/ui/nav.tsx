@@ -7,10 +7,11 @@ import { HttpStatusCode } from "axios";
 import { Text } from '@shared/ui';
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/src/shared/config/query";
+import { router } from "expo-router";
+import { useMatchLoading } from "../hooks";
 
 type InteractionNavigationProps = {
   match: MatchDetails;
-  setRematching: (value: boolean) => void;
 };
 
 const useRematchingMutation = () =>
@@ -21,13 +22,13 @@ const useRematchingMutation = () =>
     },
   });
 
-export const InteractionNavigation = ({ match, setRematching }: InteractionNavigationProps) => {
+export const InteractionNavigation = ({ match }: InteractionNavigationProps) => {
   const hasPartner = !!match.partner;
   const { showErrorModal, showModal } = useModal();
   const { mutateAsync: rematch } = useRematchingMutation();
+  const { onLoading, finishLoading } = useMatchLoading();
 
   const onRematch = async () => {
-    setRematching(true);
     await tryCatch(async () => {
       showModal({
         children: (
@@ -40,22 +41,59 @@ export const InteractionNavigation = ({ match, setRematching }: InteractionNavig
         primaryButton: {
           text: "사용하기",
           onClick: async () => {
-            await rematch();
-            showModal({
-              title: "연인 찾기 완료",
-              children: "연인을 찾았어요! 바로 확인해보세요.",
+            await tryCatch(async () => {
+              onLoading();
+              await rematch();
+              showModal({
+                title: "연인 찾기 완료",
+                children: "연인을 찾았어요! 바로 확인해보세요.",
+                primaryButton: {
+                  text: "바로 확인하기",
+                  onClick: finishLoading,
+                },
+              });
+            
+            }, err => {
+              if (err.status === HttpStatusCode.Forbidden) {
+                showModal({
+                  title: "연인 매칭권이 없어요",
+                  children: (
+                    <View className="flex flex-col">
+                      <Text>
+                        연인매칭권이 부족해 즉시 매칭을 수행할 수 없어요
+                      </Text>
+                      <Text>
+                        매칭권을 구매하시겠어요?
+                      </Text>
+                    </View>
+                  ),
+                  primaryButton: {
+                    text: "살펴보러가기",
+                    onClick: () => {
+                      finishLoading();
+                      router.navigate('/purchase/tickets/rematch')
+                    },
+                  },
+                  secondaryButton: {
+                    text: '다음에 볼게요',
+                    onClick: finishLoading,
+                  },
+                });
+                return;
+              }
             });
           },
         },
       });
     }, err => {
+      finishLoading();
       if (err.status === HttpStatusCode.Forbidden) {
         showErrorModal("재매칭권이 없습니다.", "announcement");
         return;
       }
       showErrorModal(err.error, "error");
     });
-    setRematching(false);
+
   };
 
   return (
