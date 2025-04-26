@@ -77,10 +77,11 @@ export default function PreSignupScreen() {
 
       </View>
 
-
-
-      <View className="w-full px-4 mb-4 md:mb-16">
-        <View className="flex flex-col gap-y-1 mb-1.5 md:mb-4 items-center">
+      <View className="w-full px-4 mb-4 md:mb-16" style={{ opacity: 1 }}>
+        <View
+          className="flex flex-col gap-y-1 mb-1.5 md:mb-4 items-center"
+          style={{ opacity: 1 }} // 강제로 opacity 설정
+        >
           <Text textColor="pale-purple" weight="semibold" size="13">
             미리 회원가입을 진행하시면
           </Text>
@@ -88,16 +89,23 @@ export default function PreSignupScreen() {
             연인 즉시 매칭 티켓 을 발급해드려요!
           </Text>
         </View>
-        <Button className="text-white w-full" onPress={() => {
-          trackEventAction('signup_button_click');
-          router.navigate('/auth/signup/terms');
-        }}>
+        <Button
+          className="text-white w-full"
+          onPress={() => {
+            trackEventAction('signup_button_click');
+            router.navigate('/auth/signup/terms');
+          }}
+        >
           사전회원가입하러 가기
         </Button>
-        <Button variant="secondary" onPress={() => {
-          trackEventAction('login_button_click');
-          router.navigate('/auth/login');
-        }} className="w-full mt-1.5">
+        <Button
+          variant="secondary"
+          onPress={() => {
+            trackEventAction('login_button_click');
+            router.navigate('/auth/login');
+          }}
+          className="w-full mt-1.5"
+        >
           로그인하러 가기
         </Button>
       </View>
