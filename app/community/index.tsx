@@ -5,7 +5,8 @@ import { ArticleList } from '@/src/features/community/ui/articles';
 import { useState } from 'react';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import BellIcon from '@/assets/icons/bell.svg';
-
+import { router } from 'expo-router';
+import WriteIcon from '@/assets/icons/write.svg';
 type TabType = 'realtime' | 'popular';
 
 export default function CommunityScreen() {
@@ -41,7 +42,6 @@ export default function CommunityScreen() {
           <ArticleList type={activeTab} />
         </View>
       </ScrollView>
-
       {/* Bottom Navigation */}
       <BottomNavigation />
     </View>

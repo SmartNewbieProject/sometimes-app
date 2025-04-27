@@ -13,7 +13,6 @@ import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const article = mockArticles.find(article => article.id === id);
-    const comments = mockComments.filter(comment => comment.articleId === id);
     return (
         <View className="flex-1">
             <PalePurpleGradient />
