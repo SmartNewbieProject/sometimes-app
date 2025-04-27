@@ -20,6 +20,12 @@ export default function CommunityLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="write"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </View>
   );
