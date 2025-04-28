@@ -7,7 +7,7 @@ import { IconWrapper } from "@/src/shared/ui/icons";
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { useEffect } from 'react';
 import { TotalMatchCounter } from '@/src/features/home/ui';
-import { Button, Text } from '@shared/ui';
+import { Button, PalePurpleGradient, Text } from '@shared/ui';
 import { router } from 'expo-router';
 import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 
@@ -29,7 +29,7 @@ export default function PreSignupScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1, height: "100%" }}
     >
-      <View className="absolute w-full h-full bg-[#F8F9FA]" />
+      <PalePurpleGradient />
       <ScrollView>
         <View className={cn(
           "flex flex-col items-center gap-y-2 px-6 flex-1",
@@ -50,9 +50,12 @@ export default function PreSignupScreen() {
 
           {/* 상단 제목 */}
           <View className="w-full flex flex-col items-center mb-6 mt-2">
-            <View className="bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] p-[2px] rounded-xl mb-2 w-[90%] max-w-[320px]">
-              <View className="bg-white rounded-lg px-3 py-3">
-                <Text className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] text-[18px] md:text-[22px] text-center font-extrabold whitespace-nowrap">
+            <View className="mb-2 max-w-[360px]">
+              <View className="bg-white rounded-lg px-3 py-3 drop-shadow-md rounded-md">
+                <Text
+                  weight="bold"
+                  className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] text-[18px] md:text-[22px] text-center whitespace-nowrap"
+                >
                   우리가 너의 진짜 설렘을 찾아줄게
                 </Text>
               </View>
@@ -63,7 +66,7 @@ export default function PreSignupScreen() {
           </View>
 
           {/* 첫 번째 카드 */}
-          <View className="w-full bg-white rounded-xl shadow-md p-5 pb-6 mb-4 mt-3">
+          <View className="w-full bg-white rounded-xl drop-shadow-md p-5 pb-6 mb-4 mt-3">
             <View className="flex flex-row items-center mb-3">
               <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
                 <Ionicons name="home" size={20} color="white" />
@@ -73,14 +76,14 @@ export default function PreSignupScreen() {
               </Text>
             </View>
             <Text className="text-[#666] text-[14px] leading-6">
-            <Text className="font-bold">매번 집-학교-집</Text>이어서 주변에서{'\n'}
+              <Text className="font-bold">매번 집-학교-집</Text>이어서 주변에서{'\n'}
               이성을 만나기 어려운{'\n'}
               집순이, 집돌이를 위한
             </Text>
           </View>
 
           {/* 두 번째 카드 */}
-          <View className="w-full bg-white rounded-xl shadow-md p-5 pb-6 mb-4">
+          <View className="w-full bg-white rounded-xl drop-shadow-md p-5 pb-6 mb-4">
             <View className="flex flex-row items-center mb-3">
               <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
                 <FontAwesome5 name="user-friends" size={16} color="white" />
@@ -97,7 +100,7 @@ export default function PreSignupScreen() {
           </View>
 
           {/* 세 번째 카드 */}
-          <View className="w-full bg-white rounded-xl shadow-md p-5 pb-6 mb-4">
+          <View className="w-full bg-white rounded-xl drop-shadow-md p-5 pb-6 mb-4">
             <View className="flex flex-row items-center mb-3">
               <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
                 <MaterialIcons name="favorite" size={20} color="white" />
@@ -107,7 +110,7 @@ export default function PreSignupScreen() {
               </Text>
             </View>
             <Text className="text-[#666] text-[14px] leading-6">
-            <Text className="font-bold">한밭대 2,738명</Text>이 참여한 소개팅,{'\n'}
+              <Text className="font-bold">한밭대 2,738명</Text>이 참여한 소개팅,{'\n'}
               이제는 대전 내 11개 대학에서,{'\n'}
               당신의 이상형을 찾아드립니다!
             </Text>
