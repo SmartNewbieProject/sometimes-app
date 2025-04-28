@@ -17,3 +17,4 @@ export * from './step-slider';
 export * from './show';
 export * from './image-resource';
 export * from './university-badge';
+export * from './section';

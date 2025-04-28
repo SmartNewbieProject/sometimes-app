@@ -12,6 +12,7 @@ const textStyles = cva('text-base', {
     size: {
       sm: 'text-sm',
       md: 'text-md',
+      "18": 'text-[18px]',
       '20': 'text-[20px]',
       '13': 'text-[13px]',
       chip: 'text-[13px]',
