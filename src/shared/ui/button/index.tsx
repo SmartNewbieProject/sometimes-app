@@ -6,15 +6,17 @@ import { Text } from '../text';
 import { ReactNode } from 'react';
 
 const buttonStyles = cva(
-	'rounded-[20] flex items-center flex flex-row gap-x-1.5 justify-center w-fit h-[50] text-white py-2 px-6 transition-all duration-200',
+	'rounded-[20] flex items-center flex flex-row gap-x-1.5 justify-center w-fit h-[50] py-2 px-6 transition-all duration-200',
 	{
 		variants: {
 			variant: {
 				primary: 'bg-darkPurple hover:bg-darkPurple/80 active:bg-darkPurple/40',
 				secondary:
-					'bg-lightPurple text-primaryPurple hover:bg-darkPurple/20 active:bg-darkPurple/40',
+					'bg-lightPurple hover:bg-darkPurple/20 active:bg-darkPurple/40',
+				outline:
+					'bg-transparent hover:bg-darkPurple/20 active:bg-darkPurple/40 border border-primaryPurple',
 				white:
-					'bg-white text-primaryPurple border-primaryPurple border hover:bg-darkPurple/20 active:bg-darkPurple/40',
+					'bg-white border-primaryPurple border hover:bg-darkPurple/20 active:bg-darkPurple/40',
 			},
 			size: {
 				md: 'text-md h-[50px]',
@@ -24,10 +26,6 @@ const buttonStyles = cva(
 			disabled: {
 				true: 'opacity-50',
 				false: '',
-			},
-			textColor: {
-				white: 'text-white',
-				purple: 'text-primaryPurple',
 			},
 		},
 		defaultVariants: {
@@ -43,21 +41,36 @@ export type ButtonProps = VariantProps<typeof buttonStyles> & {
 	onPress?: () => void;
 	prefix?: ReactNode;
 	className?: string;
+	textColor?: 'white' | 'purple';
 };
 
 export const Button: React.FC<ButtonProps> = ({
 	onPress,
-	variant,
+	variant = 'primary',
 	size = 'md',
 	disabled = false,
 	children,
 	prefix,
-	textColor = 'white',
+	textColor,
 	className = '',
 }) => {
 	const press = () => {
 		if (disabled) return;
 		onPress?.();
+	};
+
+	const getTextColor = () => {
+		if (textColor) return textColor;
+		switch (variant) {
+			case 'primary':
+				return 'white';
+			case 'secondary':
+			case 'outline':
+			case 'white':
+				return 'purple';
+			default:
+				return 'white';
+		}
 	};
 
 	return (
@@ -68,7 +81,7 @@ export const Button: React.FC<ButtonProps> = ({
 		>
 			{prefix}
 			<Text
-				textColor={textColor}
+				textColor={getTextColor()}
 				size={size}
 				weight="semibold"
 				className="text-center whitespace-nowrap"

@@ -36,6 +36,14 @@ export interface UserProfile {
   preferences: PreferenceTypeGroup[];
 }
 
+export interface SimpleProfile {
+  universityName: string;
+  authenticated: boolean;
+  name: string;
+  age: number;
+  mbti: string;
+}
+
 export interface MyDetails {
   name: string;
   age: number;
