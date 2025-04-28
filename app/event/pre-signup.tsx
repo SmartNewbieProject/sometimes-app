@@ -30,7 +30,7 @@ export default function PreSignupScreen() {
       style={{ flex: 1, height: "100%" }}
     >
       <PalePurpleGradient />
-      <ScrollView>
+      <ScrollView className="flex-1">
         <View className={cn(
           "flex flex-col items-center gap-y-2 px-6 flex-1",
           platform({
@@ -83,7 +83,7 @@ export default function PreSignupScreen() {
           </View>
 
           {/* 두 번째 카드 */}
-          <View className="w-full bg-white rounded-xl drop-shadow-md p-5 pb-6 mb-4">
+          <View className="w-full bg-white rounded-xl drop-shadow-md p-5 pb-6 mb-4 flex-1">
             <View className="flex flex-row items-center mb-3">
               <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
                 <FontAwesome5 name="user-friends" size={16} color="white" />
