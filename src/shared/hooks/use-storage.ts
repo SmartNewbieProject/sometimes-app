@@ -13,12 +13,17 @@ export function useStorage<T>({ key, initialValue }: StorageProps<T>) {
 
   useEffect(() => {
     const loadStoredValue = async () => {
+      console.count('loadStoredValue()');
       try {
         const item = await storage.getItem(key);
-        const value = item ? JSON.parse(item) : initialValue;
+        const value = (() => {
+          if (typeof item === 'string') return item;
+          return item ? JSON.parse(item) : initialValue;
+        })();
         setStoredValue(value);
         setError(null);
       } catch (e) {
+        console.error(e);
         setError(e instanceof Error ? e : new Error('Failed to load value'));
       } finally {
         setLoading(false);
