@@ -1,5 +1,4 @@
-import { View, KeyboardAvoidingView, Platform } from 'react-native';
-import { PalePurpleGradient } from '@/src/shared/ui/gradient';
+import { View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import Signup from '@features/signup';
 import Event from '@features/event';
 import { platform } from '@shared/libs/platform';
@@ -7,10 +6,10 @@ import { cn } from '@shared/libs/cn';
 import { IconWrapper } from "@/src/shared/ui/icons";
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { useEffect } from 'react';
-import { Image } from "expo-image";
-import { ReviewSlide, TotalMatchCounter } from '@/src/features/home/ui';
+import { TotalMatchCounter } from '@/src/features/home/ui';
 import { Button, Text } from '@shared/ui';
 import { router } from 'expo-router';
+import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 
 const { useSignupProgress } = Signup;
 const { hooks: { useEventAnalytics } } = Event;
@@ -26,78 +25,110 @@ export default function PreSignupScreen() {
   }, []);
 
   return (
-    <View>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1, height: "100%" }}
-      >
-        <PalePurpleGradient />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1, height: "100%" }}
+    >
+      <View className="absolute w-full h-full bg-[#F8F9FA]" />
+      <ScrollView>
         <View className={cn(
-          "flex flex-col items-center gap-y-2 px-4 flex-1",
+          "flex flex-col items-center gap-y-2 px-6 flex-1",
           platform({
             ios: () => "pt-[80px]",
             android: () => "pt-[80px]",
-            web: () => "pt-[30px]",
+            web: () => "pt-[40px]",
           })
         )}>
 
-          <IconWrapper width={128} className="text-primaryPurple md:pb-[28px]">
+          <IconWrapper width={128} className="text-primaryPurple mb-6">
             <SmallTitle />
           </IconWrapper>
-          <View className="p-0 md:p-4 mt-[8px] hidden md:block">
-            <Image
-              source={require('@assets/images/paper-plane.png')}
-              style={{ width: 128, height: 128 }}
-            />
-          </View>
-          <View className="w-full mt-4">
+
+          <View className="w-full mb-6">
             <TotalMatchCounter count={1928} className="h-[64px] !min-h-[76px]" />
           </View>
 
-          <View className="flex flex-col gap-y-[8px] w-full mt-4 items-center">
-            <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
-              <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold" size="13">
-                베타 테스트에서 한밭대생 2,700명 참여한 소개팅
-              </Text>
+          {/* 상단 제목 */}
+          <View className="w-full flex flex-col items-center mb-6 mt-2">
+            <View className="bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] p-[2px] rounded-xl mb-2 w-[90%] max-w-[320px]">
+              <View className="bg-white rounded-lg px-3 py-3">
+                <Text className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] text-[18px] md:text-[22px] text-center font-extrabold whitespace-nowrap">
+                  우리가 너의 진짜 설렘을 찾아줄게
+                </Text>
+              </View>
             </View>
-            <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
-              <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold" size="13">
-                대전광역시 대학생만을 위한 소개팅 플랫폼
-              </Text>
-            </View>
-            <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
-              <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold">
-                AI를 활용한 나만의 이상형 분석 및 매칭
-              </Text>
-            </View>
-
-            <View className="mb-4 hidden md:block w-full mt-4">
-              <ReviewSlide />
-            </View>
+            <Text className="text-[#6A3EA1] text-[16px] md:text-[18px] text-center font-medium mt-2">
+              ✨ 친구가 소개하는 것처럼 진심을 다해 ✨
+            </Text>
           </View>
 
+          {/* 첫 번째 카드 */}
+          <View className="w-full bg-white rounded-xl shadow-md p-5 pb-6 mb-4 mt-3">
+            <View className="flex flex-row items-center mb-3">
+              <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
+                <Ionicons name="home" size={20} color="white" />
+              </View>
+              <Text className="text-[#333] text-[18px] font-bold">
+                집순이, 집돌이를 위한
+              </Text>
+            </View>
+            <Text className="text-[#666] text-[14px] leading-6">
+            <Text className="font-bold">매번 집-학교-집</Text>이어서 주변에서{'\n'}
+              이성을 만나기 어려운{'\n'}
+              집순이, 집돌이를 위한
+            </Text>
+          </View>
+
+          {/* 두 번째 카드 */}
+          <View className="w-full bg-white rounded-xl shadow-md p-5 pb-6 mb-4">
+            <View className="flex flex-row items-center mb-3">
+              <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
+                <FontAwesome5 name="user-friends" size={16} color="white" />
+              </View>
+              <Text className="text-[#333] text-[18px] font-bold">
+                대전 대학생을 위한 1:1 소개팅
+              </Text>
+            </View>
+            <Text className="text-[#666] text-[14px] leading-6">
+              <Text className="font-bold">과팅, 미팅은 부담스럽고,</Text>{'\n'}
+              소개 받을 곳이 없거나{'\n'}
+              이미 다 소개받은 친구들을 위한 소개팅 플랫폼
+            </Text>
+          </View>
+
+          {/* 세 번째 카드 */}
+          <View className="w-full bg-white rounded-xl shadow-md p-5 pb-6 mb-4">
+            <View className="flex flex-row items-center mb-3">
+              <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
+                <MaterialIcons name="favorite" size={20} color="white" />
+              </View>
+              <Text className="text-[#333] text-[18px] font-bold">
+                믿고 맡길 수 있는
+              </Text>
+            </View>
+            <Text className="text-[#666] text-[14px] leading-6">
+            <Text className="font-bold">한밭대 2,738명</Text>이 참여한 소개팅,{'\n'}
+              이제는 대전 내 11개 대학에서,{'\n'}
+              당신의 이상형을 찾아드립니다!
+            </Text>
+          </View>
         </View>
 
-        <View className="w-full px-4 mb-4 md:mb-16" style={{ opacity: 1 }}>
+        <View className="w-full px-6 mb-6 md:mb-16 mt-4" style={{ opacity: 1 }}>
           <View
-            className="flex flex-col gap-y-1 mb-1.5 md:mb-4 items-center"
+            className="flex flex-col gap-y-2 mb-5 md:mb-6 items-center"
             style={{ opacity: 1 }} // 강제로 opacity 설정
           >
-            <Text textColor="pale-purple" weight="semibold" size="13">
-              미리 회원가입을 진행하시면
-            </Text>
-            <Text textColor="pale-purple" weight="semibold" size="13">
-              연인 즉시 매칭 티켓 을 발급해드려요!
-            </Text>
+
           </View>
           <Button
-            className="text-white w-full"
+            className="text-white w-full py-3 rounded-lg"
             onPress={() => {
               trackEventAction('signup_button_click');
               router.navigate('/auth/signup/terms');
             }}
           >
-            사전회원가입하러 가기
+            소개팅 신청하기
           </Button>
           <Button
             variant="secondary"
@@ -105,13 +136,12 @@ export default function PreSignupScreen() {
               trackEventAction('login_button_click');
               router.navigate('/auth/login');
             }}
-            className="w-full mt-1.5"
+            className="w-full mt-3 py-3 rounded-lg"
           >
             로그인하러 가기
           </Button>
         </View>
-      </KeyboardAvoidingView>
-    </View>
-
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
