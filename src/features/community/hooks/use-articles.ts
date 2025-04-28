@@ -6,11 +6,11 @@ import { getAllArticles } from '@/src/features/community/apis/articles';
 
 const QUERY_KEYS = {
   articles: {
-    lists: (type: 'realtime' | 'popular') => ['articles', type],
+    lists: (type: 'realtime' | 'popular' | 'review' | 'counseling') => ['articles', type],
   },
 };
 
-export function useArticles(type: 'realtime' | 'popular' = 'realtime') {
+export function useArticles(type: 'realtime' | 'popular' | 'review' | 'counseling' = 'realtime') {
   const queryClient = useQueryClient();
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,8 +26,11 @@ export function useArticles(type: 'realtime' | 'popular' = 'realtime') {
     enabled: type === 'realtime',
   });
 
+
   // 인기 게시글은 목업 데이터 사용
   const popularArticles = type === 'popular' ? mockPopularArticles : [];
+  const reviewArticles = type === 'review' ? mockArticles : [];
+  const counselingArticles = type === 'counseling' ? mockArticles : [];
 
   const handleLike = useCallback((articleId: string) => { 
     setArticles(prevArticles =>
@@ -38,6 +41,7 @@ export function useArticles(type: 'realtime' | 'popular' = 'realtime') {
       )
     );
   }, []);
+
 
   const handleComment = useCallback((articleId: string) => {
     // 댓글 기능은 나중에 구현
@@ -75,7 +79,7 @@ export function useArticles(type: 'realtime' | 'popular' = 'realtime') {
   }, []);
 
   return {
-    articles: type === 'realtime' ? realtimeArticles || [] : popularArticles,
+    articles: type === 'realtime' ? mockArticles || [] : type === 'popular' ? popularArticles : type === 'review' ? reviewArticles : type === 'counseling' ? counselingArticles : [],
     isLoading: type === 'realtime' ? isRealtimeLoading : false,
     hasMore,
     loadMore,

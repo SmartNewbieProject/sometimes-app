@@ -11,12 +11,12 @@ import { router } from 'expo-router';
 import WriteIcon from '@/assets/icons/write.svg';
 
 interface ArticleListProps {
-  type: 'realtime' | 'popular';
+  type: 'realtime' | 'popular' | 'review' | 'counseling';
 }
 
 export function ArticleList({ type }: ArticleListProps) {
   const { handleLike, handleComment, handleViews } = useArticles();
-  const [activeTab, setActiveTab] = useState<'realtime' | 'popular'| 'review'>(type);
+  const [activeTab, setActiveTab] = useState<'realtime' | 'popular'| 'review' | 'counseling'>(type);
   const [articles, setArticles] = useState(() => 
     (type === 'popular' ? mockPopularArticles : mockArticles).map(article => ({
       ...article,
@@ -37,7 +37,7 @@ export function ArticleList({ type }: ArticleListProps) {
     }
   };
 
-  const handleTabChange = (tab: 'realtime' | 'popular' | 'review') => {
+  const handleTabChange = (tab: 'realtime' | 'popular' | 'review' | 'counseling') => {
     setActiveTab(tab);
     const filteredArticles = (tab === 'popular' ? mockPopularArticles : mockArticles).map(article => ({
       ...article,

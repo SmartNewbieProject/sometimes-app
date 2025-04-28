@@ -2,8 +2,6 @@ import { TouchableOpacity, View, TextInput, Pressable, ScrollView } from "react-
 import { BottomNavigation, Header, PalePurpleGradient, Text, Check } from "@/src/shared/ui";
 import { router } from "expo-router";
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
-import { IconWrapper } from "@/src/shared/ui/icons";
-import HamburgerIcon from '@/assets/icons/menu-dots-vertical.svg';
 import { useState } from "react";
 
 export default function CommunityWriteScreen() {
