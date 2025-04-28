@@ -50,9 +50,9 @@ export default function PreSignupScreen() {
 
           {/* 상단 제목 */}
           <View className="w-full flex flex-col items-center mb-6 mt-2">
-            <View className="bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] p-[2px] rounded-xl mb-2">
-              <View className="bg-white rounded-lg px-6 py-3">
-                <Text className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] text-[24px] md:text-[28px] text-center font-extrabold">
+            <View className="bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] p-[2px] rounded-xl mb-2 w-[90%] max-w-[320px]">
+              <View className="bg-white rounded-lg px-3 py-3">
+                <Text className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] text-[18px] md:text-[22px] text-center font-extrabold whitespace-nowrap">
                   우리가 너의 진짜 설렘을 찾아줄게
                 </Text>
               </View>
