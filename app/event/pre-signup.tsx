@@ -116,6 +116,8 @@ export default function PreSignupScreen() {
             </Text>
           </View>
         </View>
+      </KeyboardAvoidingView>
+    </View>
 
         <View className="w-full px-6 mb-6 md:mb-16 mt-4" style={{ opacity: 1 }}>
           <View

@@ -9,6 +9,9 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/src/shared/config/query";
 import { router } from "expo-router";
 import { useMatchLoading } from "../hooks";
+import Instagram from "../../instagram";
+
+const { ui: { InstagramContactButton } } = Instagram;
 
 type InteractionNavigationProps = {
   match: MatchDetails;
@@ -28,63 +31,78 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
   const { mutateAsync: rematch } = useRematchingMutation();
   const { onLoading, finishLoading } = useMatchLoading();
 
+  const showRematchSuccessModal = () => {
+    showModal({
+      title: "연인 찾기 완료",
+      children: "연인을 찾았어요! 바로 확인해보세요.",
+      primaryButton: {
+        text: "바로 확인하기",
+        onClick: finishLoading,
+      },
+    });
+  };
+
+  const showTicketPurchaseModal = () => {
+    showModal({
+      title: "연인 매칭권이 없어요",
+      children: (
+        <View className="flex flex-col">
+          <Text>
+            연인매칭권이 부족해 즉시 매칭을 수행할 수 없어요
+          </Text>
+          <Text>
+            매칭권을 구매하시겠어요?
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "살펴보러가기",
+        onClick: () => {
+          finishLoading();
+          router.navigate('/purchase/tickets/rematch')
+        },
+      },
+      secondaryButton: {
+        text: '다음에 볼게요',
+        onClick: finishLoading,
+      },
+    });
+  };
+
+  const performRematch = async () => {
+    await tryCatch(async () => {
+      onLoading();
+      await rematch();
+      showRematchSuccessModal();
+    }, err => {
+      if (err.status === HttpStatusCode.Forbidden) {
+        showTicketPurchaseModal();
+        return;
+      }
+      finishLoading();
+      showErrorModal(err.error, "error");
+    });
+  };
+
+  const showRematchConfirmModal = () => {
+    showModal({
+      children: (
+        <View className="w-full justify-center items-center">
+          <Text textColor="black" size="md">
+            재매칭권을 사용하시겠습니까?
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "사용하기",
+        onClick: performRematch,
+      },
+    });
+  };
+
   const onRematch = async () => {
     await tryCatch(async () => {
-      showModal({
-        children: (
-          <View className="w-full justify-center items-center">
-            <Text textColor="black" size="md">
-              재매칭권을 사용하시겠습니까?
-            </Text>
-          </View>
-        ),
-        primaryButton: {
-          text: "사용하기",
-          onClick: async () => {
-            await tryCatch(async () => {
-              onLoading();
-              await rematch();
-              showModal({
-                title: "연인 찾기 완료",
-                children: "연인을 찾았어요! 바로 확인해보세요.",
-                primaryButton: {
-                  text: "바로 확인하기",
-                  onClick: finishLoading,
-                },
-              });
-            
-            }, err => {
-              if (err.status === HttpStatusCode.Forbidden) {
-                showModal({
-                  title: "연인 매칭권이 없어요",
-                  children: (
-                    <View className="flex flex-col">
-                      <Text>
-                        연인매칭권이 부족해 즉시 매칭을 수행할 수 없어요
-                      </Text>
-                      <Text>
-                        매칭권을 구매하시겠어요?
-                      </Text>
-                    </View>
-                  ),
-                  primaryButton: {
-                    text: "살펴보러가기",
-                    onClick: () => {
-                      finishLoading();
-                      router.navigate('/purchase/tickets/rematch')
-                    },
-                  },
-                  secondaryButton: {
-                    text: '다음에 볼게요',
-                    onClick: finishLoading,
-                  },
-                });
-                return;
-              }
-            });
-          },
-        },
-      });
+      showRematchConfirmModal();
     }, err => {
       finishLoading();
       if (err.status === HttpStatusCode.Forbidden) {
@@ -93,7 +111,6 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
       }
       showErrorModal(err.error, "error");
     });
-
   };
 
   return (
@@ -107,12 +124,7 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
         재매칭권 사용하기
       </Button>
       {hasPartner && (
-        <Button
-          variant="secondary"
-          className="flex-1"
-        >
-          연락하기
-        </Button>
+        <InstagramContactButton instagramId={match.partner!.instagramId} />
       )}
     </View>
   )
