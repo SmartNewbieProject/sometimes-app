@@ -10,6 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { calculateTime } from "../services/calculate-time";
 import { dayUtils } from "@/src/shared/libs";
 import Time from "./time";
+import { router } from "expo-router";
 
 type PartnerProps = {
   match: MatchDetails;
@@ -20,6 +21,10 @@ export const Partner = ({ match }: PartnerProps) => {
 
   const { update } = useMatchingBackground();
   const { delimeter, value } = calculateTime(match.endOfView, dayUtils.create());
+
+  const onClickToPartner = () => {
+    return router.navigate(`/partner/view/${match.id}`);
+  };
 
   useEffect(() => {
     const mainProfileImageUri = match.partner?.profileImages.find(image => image.isMain)?.url;
@@ -89,6 +94,7 @@ export const Partner = ({ match }: PartnerProps) => {
           <TouchableOpacity
             className="bg-primaryPurple flex-1 flex flex-row justify-end items-center pr-1"
             style={sideStyle.previousButton}
+            onPress={onClickToPartner}
           >
             <Text className="w-[32px] text-white text-[12px]">
               더보기

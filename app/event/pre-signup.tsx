@@ -26,89 +26,92 @@ export default function PreSignupScreen() {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1, height: "100%" }}
-    >
-      <PalePurpleGradient />
-      <View className={cn(
-        "flex flex-col items-center gap-y-2 px-4 flex-1",
-        platform({
-          ios: () => "pt-[80px]",
-          android: () => "pt-[80px]",
-          web: () => "pt-[30px]",
-        })
-      )}>
+    <View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, height: "100%" }}
+      >
+        <PalePurpleGradient />
+        <View className={cn(
+          "flex flex-col items-center gap-y-2 px-4 flex-1",
+          platform({
+            ios: () => "pt-[80px]",
+            android: () => "pt-[80px]",
+            web: () => "pt-[30px]",
+          })
+        )}>
 
-        <IconWrapper width={128} className="text-primaryPurple md:pb-[28px]">
-          <SmallTitle />
-        </IconWrapper>
-        <View className="p-0 md:p-4 mt-[8px] hidden md:block">
-          <Image
-            source={require('@assets/images/paper-plane.png')}
-            style={{ width: 128, height: 128 }}
-          />
-        </View>
-        <View className="w-full mt-4">
-          <TotalMatchCounter count={1928} className="h-[64px] !min-h-[76px]" />
+          <IconWrapper width={128} className="text-primaryPurple md:pb-[28px]">
+            <SmallTitle />
+          </IconWrapper>
+          <View className="p-0 md:p-4 mt-[8px] hidden md:block">
+            <Image
+              source={require('@assets/images/paper-plane.png')}
+              style={{ width: 128, height: 128 }}
+            />
+          </View>
+          <View className="w-full mt-4">
+            <TotalMatchCounter count={1928} className="h-[64px] !min-h-[76px]" />
+          </View>
+
+          <View className="flex flex-col gap-y-[8px] w-full mt-4 items-center">
+            <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
+              <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold" size="13">
+                베타 테스트에서 한밭대생 2,700명 참여한 소개팅
+              </Text>
+            </View>
+            <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
+              <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold" size="13">
+                대전광역시 대학생만을 위한 소개팅 플랫폼
+              </Text>
+            </View>
+            <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
+              <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold">
+                AI를 활용한 나만의 이상형 분석 및 매칭
+              </Text>
+            </View>
+
+            <View className="mb-4 hidden md:block w-full mt-4">
+              <ReviewSlide />
+            </View>
+          </View>
+
         </View>
 
-        <View className="flex flex-col gap-y-[8px] w-full mt-4 items-center">
-          <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
-            <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold" size="13">
-              베타 테스트에서 한밭대생 2,700명 참여한 소개팅
+        <View className="w-full px-4 mb-4 md:mb-16" style={{ opacity: 1 }}>
+          <View
+            className="flex flex-col gap-y-1 mb-1.5 md:mb-4 items-center"
+            style={{ opacity: 1 }} // 강제로 opacity 설정
+          >
+            <Text textColor="pale-purple" weight="semibold" size="13">
+              미리 회원가입을 진행하시면
+            </Text>
+            <Text textColor="pale-purple" weight="semibold" size="13">
+              연인 즉시 매칭 티켓 을 발급해드려요!
             </Text>
           </View>
-          <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
-            <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold" size="13">
-              대전광역시 대학생만을 위한 소개팅 플랫폼
-            </Text>
-          </View>
-          <View className="w-full h-[52px] bg-[#F3EDFF] rounded-xl flex justify-center items-center mx-4">
-            <Text className="text-[#49386E] text-[13px] md:text-[16px]" weight="semibold">
-              AI를 활용한 나만의 이상형 분석 및 매칭
-            </Text>
-          </View>
-
-          <View className="mb-4 hidden md:block w-full mt-4">
-            <ReviewSlide />
-          </View>
+          <Button
+            className="text-white w-full"
+            onPress={() => {
+              trackEventAction('signup_button_click');
+              router.navigate('/auth/signup/terms');
+            }}
+          >
+            사전회원가입하러 가기
+          </Button>
+          <Button
+            variant="secondary"
+            onPress={() => {
+              trackEventAction('login_button_click');
+              router.navigate('/auth/login');
+            }}
+            className="w-full mt-1.5"
+          >
+            로그인하러 가기
+          </Button>
         </View>
+      </KeyboardAvoidingView>
+    </View>
 
-      </View>
-
-      <View className="w-full px-4 mb-4 md:mb-16" style={{ opacity: 1 }}>
-        <View
-          className="flex flex-col gap-y-1 mb-1.5 md:mb-4 items-center"
-          style={{ opacity: 1 }} // 강제로 opacity 설정
-        >
-          <Text textColor="pale-purple" weight="semibold" size="13">
-            미리 회원가입을 진행하시면
-          </Text>
-          <Text textColor="pale-purple" weight="semibold" size="13">
-            연인 즉시 매칭 티켓 을 발급해드려요!
-          </Text>
-        </View>
-        <Button
-          className="text-white w-full"
-          onPress={() => {
-            trackEventAction('signup_button_click');
-            router.navigate('/auth/signup/terms');
-          }}
-        >
-          사전회원가입하러 가기
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={() => {
-            trackEventAction('login_button_click');
-            router.navigate('/auth/login');
-          }}
-          className="w-full mt-1.5"
-        >
-          로그인하러 가기
-        </Button>
-      </View>
-    </KeyboardAvoidingView>
   );
 }
