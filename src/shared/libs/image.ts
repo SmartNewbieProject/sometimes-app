@@ -14,9 +14,12 @@ export enum ImageResources {
   DETAILS = `${S3_BASE_URL}/details.png`,
   IMAGE = `${S3_BASE_URL}/image.png`,
   PAPER_PLANE = `${S3_BASE_URL}/paper-plane.png`,
+  PAPER_PLANE_WITHOUT_BG = `${S3_BASE_URL}/paper-plane-vanila.png`,
   UNIV_BADGE = `${S3_BASE_URL}/univ-badge.png`,
   BROKEN_SANDTIMER = `${S3_BASE_URL}/broken.png`,
   SANDTIMER = `${S3_BASE_URL}/sand-clock.png`,
+  HEART = `${S3_BASE_URL}/heart.png`,
+  INSTAGRAM = `${S3_BASE_URL}/instagram.png`,
 }
 
 const imageUtils = {
