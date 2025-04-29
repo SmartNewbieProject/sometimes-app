@@ -1,16 +1,19 @@
 import { View, StyleSheet } from 'react-native';
 import { Text } from '@/src/shared/ui';
 
+type SizeType = 'sm' | 'md';
+
 interface TimeProps {
   value: string;
+  size?: SizeType;
 }
 
-export default function Time({ value }: TimeProps) {
+export default function Time({ value, size = 'md' }: TimeProps) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, styles[size]]}>
       <Text
         weight="bold"
-        className="text-[23px] text-primaryPurple font-rubik"
+        className={size === 'md' ? "text-[23px] text-primaryPurple font-rubik" : "text-[18px] text-primaryPurple font-rubik"}
       >
         {value}
       </Text>
@@ -23,9 +26,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 8,
     textAlign: 'center',
-    paddingHorizontal: 12,
     fontFamily: 'Rubik',
-    paddingVertical: 8,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -35,5 +36,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  md: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  sm: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
   },
 });

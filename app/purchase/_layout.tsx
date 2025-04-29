@@ -47,6 +47,16 @@ export default function PurchaseLayout() {
             animation: 'slide_from_right'
           }}
         />
+        <Stack.Screen
+          name="complete"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+            animation: 'slide_from_right'
+          }}
+        />
       </Stack>
     </View>
   );

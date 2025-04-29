@@ -11,7 +11,7 @@ type MyRematchingTicket = {
 
 
 const getMyRematchingTicket = async (): Promise<MyRematchingTicket[]> => {
-    return await axiosClient.get('/rematching-ticket');
+    return await axiosClient.get('/tickets/rematching');
 }
 
 const getAllRematchingTicket = async (): Promise<RematchingTicket> => {

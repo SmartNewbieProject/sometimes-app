@@ -16,6 +16,9 @@ const Lottie: React.FC<Props> = ({ title, loading, children, ...props }) => {
         <Text variant="primary" size="sm" textColor="pale-purple">
           {title}
         </Text>
+        <View className="hidden">
+          {children}
+        </View>
       </View>
     );
   }

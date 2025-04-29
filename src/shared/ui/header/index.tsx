@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { router } from 'expo-router';
-import { Container, LeftButton, LeftContent, Logo, RightContent } from './ui';
+import { Container, LeftButton, LeftContent, CenterContent, Logo, RightContent } from './ui';
 
 type HeaderProps = {
   title?: string;
@@ -36,9 +36,9 @@ export function Header({
       <LeftContent>
         <LeftButton visible={showBackButton} onPress={handleBackPress} />
       </LeftContent>
-      
+
       <Logo title={title} showLogo={showLogo} logoSize={logoSize} />
-      
+
       <RightContent>
         {rightContent}
       </RightContent>
@@ -50,5 +50,6 @@ export function Header({
 Header.Container = Container;
 Header.LeftContent = LeftContent;
 Header.LeftButton = LeftButton;
+Header.CenterContent = CenterContent;
 Header.Logo = Logo;
 Header.RightContent = RightContent;

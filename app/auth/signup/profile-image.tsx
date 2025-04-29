@@ -23,9 +23,9 @@ type ImageState = (string | null)[];
 
 const schema = z.object({
   images: z.array(z.string().nullable())
-    .min(3, { message: '3장의 사진을 올려주세요' })
+    .min(3, { message: '1장의 사진을 올려주세요' })
     .refine((images) => images.every((img) => img !== null), {
-      message: '3장의 사진을 올려주세요'
+      message: '1장의 사진을 올려주세요'
     }),
 });
 
@@ -81,7 +81,7 @@ export default function ProfilePage() {
           style={{ width: 81, height: 81 }}
         />
         <Text weight="semibold" size="20" textColor="black" className="mt-2">
-          프로필 사진 없으면 매칭이 안 돼요!
+          프로필 사진이 없으면 매칭이 안 돼요!
         </Text>
         <Text weight="semibold" size="20" textColor="black">
           지금 바로 추가해 주세요
@@ -90,7 +90,7 @@ export default function ProfilePage() {
 
       <View className="flex flex-col py-4 px-5">
         <Text weight="medium" size="sm" textColor="pale-purple">
-          매칭을 위해 3장의 프로필 사진을 모두 올려주세요
+          매칭을 위해 1장의 프로필 사진을 필수로 올려주세요
         </Text>
         <Text weight="medium" size="sm" textColor="pale-purple">
           얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)

@@ -15,16 +15,16 @@ export default function CommingSoonScreen() {
   const onClickSeeYouLater = () =>
     showModal({
       title: '꼭 다시 만나요!',
-      children: <Text>4월 27일, 꼭 다시 만나요!</Text>,
+      children: <Text>5월 6일, 꼭 다시 만나요!</Text>,
       primaryButton: {
         text: '확인',
-        onClick: () => {},
+        onClick: () => { },
       },
     });
 
   // 회원가입 데이터를 우선 확인하고, 없으면 로그인 프로필 데이터 사용
   const userName = signupForm.name || profileDetails?.name;
-  
+
   return (
     <View className="flex-1 flex flex-col w-full items-center">
       <PalePurpleGradient />
@@ -54,7 +54,7 @@ export default function CommingSoonScreen() {
             </Text>
             <Text weight="medium" size="sm" style={{ color: '#49386E' }}>
               <Text weight="medium" size="sm" textColor="dark">
-                4월 27일
+                5월 6일
               </Text>
               {', '}꼭 다시 만나요!
             </Text>
@@ -71,7 +71,7 @@ export default function CommingSoonScreen() {
           size="md"
           onPress={() => {
             onClickSeeYouLater();
-            
+
           }}
           className="mb-[14px] w-full"
         >

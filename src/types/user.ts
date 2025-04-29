@@ -28,11 +28,20 @@ export interface UserProfile {
   id: string;
   name: string;
   age: number;
+  mbti: string;
   gender: string;
   profileImages: ProfileImage[];
   instagramId: string;
   universityDetails: UniversityDetail;
   preferences: PreferenceTypeGroup[];
+}
+
+export interface SimpleProfile {
+  universityName: string;
+  authenticated: boolean;
+  name: string;
+  age: number;
+  mbti: string;
 }
 
 export interface MyDetails {
