@@ -26,7 +26,7 @@ export default function CommunityScreen() {
         </Header.CenterContent>
       </Header.Container>
 
-      <ScrollView className="flex-1 px-5">
+      <ScrollView className="flex-1">
         <CategoryList />
 
         <View>
