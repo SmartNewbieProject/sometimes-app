@@ -2,19 +2,17 @@ import { FlatList, TouchableOpacity, View, Image } from 'react-native';
 import { ArticleItem } from './article-item';
 import { mockArticles, mockPopularArticles } from '../mocks/articles';
 import { useState } from 'react';
-import { useArticles } from '../hooks/use-articles';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
 import { Text } from '@/src/shared/ui';
+import Community from '@features/community';
 
+const { useArticlesQuery } = Community;
 interface ArticleListProps {
 }
 
 export function ArticleList({ }: ArticleListProps) {
-  const { handleLike, handleComment, handleViews } = useArticles();
-
-  const handleArticlePress = (articleId: string) => {
-  };
+  const { articles, isLoading } = useArticlesQuery(1, 10);
 
   return (
     <View className="flex-1">
@@ -33,7 +31,7 @@ export function ArticleList({ }: ArticleListProps) {
       </View>
       <View className="h-[1px] bg-[#F3F0FF] mb-2" />
       <FlatList
-        data={[]}
+        data={articles}
         renderItem={({ item }) => (
           <ArticleItem
             article={item}

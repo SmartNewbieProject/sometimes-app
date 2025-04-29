@@ -6,6 +6,7 @@ import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
 import HeartIcon from '@/assets/icons/heart.svg';
 import CommentIcon from '@/assets/icons/engagement.svg';
 import EyesIcon from '@/assets/icons/ph_eyes-fill.svg';
+import { getUnivLogo, UniversityName } from '@/src/shared/libs';
 
 interface ArticleItemProps {
   article: Article;
@@ -16,29 +17,31 @@ interface ArticleItemProps {
 }
 
 export function ArticleItem({ article, onPress, onLike, onComment, onViews }: ArticleItemProps) {
+  const university = article.author.universityDetails;
+  const universityName = university.name as UniversityName;
   return (
     <View>
       <TouchableOpacity onPress={onPress} className="p-4 bg-white" activeOpacity={0.7}>
         <View className="flex-row items-center mb-2">
-          <Image 
-            source={article.author.university.image}
+          <Image
+            source={{ uri: getUnivLogo(universityName) }}
             style={{ width: 32, height: 32 }}
             className="rounded-full mr-2"
           />
           <View>
             <Text size="sm" weight="medium" textColor="black">{article.author.name}</Text>
             <Text size="13" textColor="purple" className="opacity-70">
-              {article.author.age}세 
+              {article.author.}세
               <Text> · </Text>
-              {article.author.university.name}
+              {universityName}
               <IconWrapper size={13}>
-                <ShieldNotSecuredIcon/>
+                <ShieldNotSecuredIcon />
               </IconWrapper>
             </Text>
           </View>
         </View>
 
-        <Text size="md" weight="medium" textColor="black">{article.title}</Text>
+        <Text size="md" weight="medium" textColor="black">{article?.title | '니가'}</Text>
         <Text size="sm" className="mb-4 leading-5" textColor="black">
           {article.content}
         </Text>
