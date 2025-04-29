@@ -1,5 +1,5 @@
 import { axiosClient } from "@/src/shared/libs";
-import { Article } from "../types";
+import { Article, Category } from "../types";
 
 
 
@@ -46,6 +46,9 @@ export const patchArticleLike = async (articleId: string): Promise<Article> => {
   return axiosClient.patch(`/articles/${articleId}/like`);
 };
 
+export const getCategoryList = (): Promise<Category[]> =>
+  axiosClient.get('/articles/category/list');
+
 type Service = {
   getAllArticles: (params: getArticleParams) => Promise<Article[]>;
   postArticles: (body: PostArticleBody) => Promise<Article>;
@@ -53,6 +56,7 @@ type Service = {
   patchArticle: (articleId: string, body: PatchArticleBody) => Promise<Article>;
   deleteArticle: (articleId: string) => Promise<Article>;
   patchArticleLike: (articleId: string) => Promise<Article>;
+  getCategoryList: () => Promise<Category[]>;
 }
 
 const apis: Service = {
@@ -62,6 +66,7 @@ const apis: Service = {
   patchArticle,
   deleteArticle,
   patchArticleLike,
+  getCategoryList,
 };
 
 export default apis;

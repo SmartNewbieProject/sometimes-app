@@ -28,3 +28,9 @@ export interface Comment {
   author: Author;
   updatedAt: Date;
 };
+
+export interface Category {
+  code: string;
+  displayName: string;
+  emojiUrl: string;
+}
