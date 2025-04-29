@@ -6,13 +6,21 @@ import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
 import { Text } from '@/src/shared/ui';
 import Community from '@features/community';
+import { useCategory } from '../hooks';
 
-const { useArticlesQuery } = Community;
+const { useArticles } = Community;
 interface ArticleListProps {
 }
 
 export function ArticleList({ }: ArticleListProps) {
-  const { articles, isLoading } = useArticlesQuery(1, 10);
+  const { currentCategory: categoryCode } = useCategory();
+  const { articles, isLoading } = useArticles({
+    categoryCode,
+    initialPage: 1,
+    initialSize: 5,
+  });
+
+  console.table(articles);
 
   return (
     <View className="flex-1">
@@ -35,10 +43,10 @@ export function ArticleList({ }: ArticleListProps) {
         renderItem={({ item }) => (
           <ArticleItem
             article={item}
-            onPress={() => handleArticlePress(item.id)}
-            onLike={() => handleLike(item.id)}
-            onComment={() => handleComment(item.id)}
-            onViews={() => handleViews(item.id)}
+            onPress={() => { }}
+            onLike={() => { }}
+            onComment={() => { }}
+            onViews={() => { }}
           />
         )}
         keyExtractor={(item) => item.id.toString()}

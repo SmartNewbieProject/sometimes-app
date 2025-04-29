@@ -31,7 +31,7 @@ export function ArticleItem({ article, onPress, onLike, onComment, onViews }: Ar
           <View>
             <Text size="sm" weight="medium" textColor="black">{article.author.name}</Text>
             <Text size="13" textColor="purple" className="opacity-70">
-              {article.author.}세
+              {article.author.age}세
               <Text> · </Text>
               {universityName}
               <IconWrapper size={13}>
@@ -41,7 +41,7 @@ export function ArticleItem({ article, onPress, onLike, onComment, onViews }: Ar
           </View>
         </View>
 
-        <Text size="md" weight="medium" textColor="black">{article?.title | '니가'}</Text>
+        <Text size="md" weight="medium" textColor="black">{article.title}</Text>
         <Text size="sm" className="mb-4 leading-5" textColor="black">
           {article.content}
         </Text>
@@ -52,21 +52,21 @@ export function ArticleItem({ article, onPress, onLike, onComment, onViews }: Ar
               <IconWrapper size={20}>
                 <HeartIcon stroke="#646464" />
               </IconWrapper>
-              <Text className="text-[16px] h-[24px]  text-[#646464]">{article.likes}</Text>
+              <Text className="text-[16px] h-[24px]  text-[#646464]">{article.likeCount}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity className="flex-row items-center gap-2" onPress={onComment}>
               <IconWrapper size={20}>
                 <CommentIcon stroke="#646464" />
               </IconWrapper>
-              <Text className="text-[16px] h-[24px]text-[#646464]">{article.comments?.length || 0}</Text>
+              <Text className="text-[16px] h-[24px]text-[#646464]">{article.comments.length}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity className="flex-row items-center gap-2" onPress={onViews}>
               <IconWrapper size={16} >
                 <EyesIcon stroke="#646464" />
               </IconWrapper>
-              <Text className="text-[16px] h-[24px] text-[#646464]" >{article.views || 0}</Text>
+              <Text className="text-[16px] h-[24px] text-[#646464]" >{article.readCount}</Text>
             </TouchableOpacity>
           </View>
 

@@ -9,6 +9,7 @@ export enum ArticleRequestType {
 export type Author = {
   id: string;
   name: string;
+  age: number;
   gender: Gender;
   universityDetails: UniversityDetail;
 };
@@ -16,10 +17,14 @@ export type Author = {
 export type Article = {
   id: string;
   category: ArticleRequestType;
+  title: string;
+  readCount: number;
+  likeCount: number;
   content: string;
   author: Author;
   updatedAt: Date;
   isLiked: boolean;
+  comments: Comment[];
 };
 
 export interface Comment {
