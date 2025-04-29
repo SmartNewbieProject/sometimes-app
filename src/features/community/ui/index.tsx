@@ -1,5 +1,5 @@
 export { ArticleList } from './articles';
 export { ArticleItem } from './article-item';
 export { CommunityHeader } from './community-header';
-export { FilterButton } from './filter-button';
 export { CategoryList } from './category-list';
+export { CreateArticleFAB } from './create-article-fab';
