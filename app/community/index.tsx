@@ -1,7 +1,6 @@
 import { View, ScrollView } from 'react-native';
-import { Text, PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
+import { PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
 import { ArticleList } from '@/src/features/community/ui/articles';
-import { useState } from 'react';
 import { useCategory } from '@/src/features/community/hooks';
 import Loading from '@/src/features/loading';
 import { CategoryList, CreateArticleFAB } from '@/src/features/community/ui';
