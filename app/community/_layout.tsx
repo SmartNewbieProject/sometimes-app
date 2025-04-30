@@ -12,7 +12,19 @@ export default function CommunityLayout() {
             contentStyle: {
               backgroundColor: 'transparent',
             },
-          }} 
+          }}
+        />
+        <Stack.Screen
+          name="[id]"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="write"
+          options={{
+            headerShown: false,
+          }}
         />
       </Stack>
     </View>

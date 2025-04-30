@@ -6,6 +6,7 @@ import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
 import HeartIcon from '@/assets/icons/heart.svg';
 import CommentIcon from '@/assets/icons/engagement.svg';
 import EyesIcon from '@/assets/icons/ph_eyes-fill.svg';
+import { getUnivLogo, UniversityName } from '@/src/shared/libs';
 
 interface ArticleItemProps {
   article: Article;
@@ -16,23 +17,25 @@ interface ArticleItemProps {
 }
 
 export function ArticleItem({ article, onPress, onLike, onComment, onViews }: ArticleItemProps) {
+  const university = article.author.universityDetails;
+  const universityName = university.name as UniversityName;
   return (
     <View>
       <TouchableOpacity onPress={onPress} className="p-4 bg-white" activeOpacity={0.7}>
         <View className="flex-row items-center mb-2">
-          <Image 
-            source={article.author.university.image}
+          <Image
+            source={{ uri: getUnivLogo(universityName) }}
             style={{ width: 32, height: 32 }}
             className="rounded-full mr-2"
           />
           <View>
             <Text size="sm" weight="medium" textColor="black">{article.author.name}</Text>
             <Text size="13" textColor="purple" className="opacity-70">
-              {article.author.age}세 
+              {article.author.age}세
               <Text> · </Text>
-              {article.author.university.name}
+              {universityName}
               <IconWrapper size={13}>
-                <ShieldNotSecuredIcon/>
+                <ShieldNotSecuredIcon />
               </IconWrapper>
             </Text>
           </View>
@@ -49,23 +52,24 @@ export function ArticleItem({ article, onPress, onLike, onComment, onViews }: Ar
               <IconWrapper size={20}>
                 <HeartIcon stroke="#646464" />
               </IconWrapper>
-              <Text className="text-[16px] h-[24px]  text-[#646464]">{article.likes}</Text>
+              <Text className="text-[16px] h-[24px]  text-[#646464]">{article.likeCount}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity className="flex-row items-center gap-2" onPress={onComment}>
               <IconWrapper size={20}>
                 <CommentIcon stroke="#646464" />
               </IconWrapper>
-              <Text className="text-[16px] h-[24px]text-[#646464]">{article.comments?.length || 0}</Text>
+              <Text className="text-[16px] h-[24px]text-[#646464]">{article.comments.length}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity className="flex-row items-center gap-2" onPress={onViews}>
               <IconWrapper size={16} >
                 <EyesIcon stroke="#646464" />
               </IconWrapper>
-              <Text className="text-[16px] h-[24px] text-[#646464]" >{article.views || 0}</Text>
+              <Text className="text-[16px] h-[24px] text-[#646464]" >{article.readCount}</Text>
             </TouchableOpacity>
           </View>
+
         </View>
       </TouchableOpacity>
     </View>

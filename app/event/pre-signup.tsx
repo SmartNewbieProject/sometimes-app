@@ -116,37 +116,35 @@ export default function PreSignupScreen() {
             </Text>
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </View>
-
-        <View className="w-full px-6 mb-6 md:mb-16 mt-4" style={{ opacity: 1 }}>
-          <View
-            className="flex flex-col gap-y-2 mb-5 md:mb-6 items-center"
-            style={{ opacity: 1 }} // 강제로 opacity 설정
-          >
-
-          </View>
-          <Button
-            className="text-white w-full py-3 rounded-lg"
-            onPress={() => {
-              trackEventAction('signup_button_click');
-              router.navigate('/auth/signup/terms');
-            }}
-          >
-            소개팅 신청하기
-          </Button>
-          <Button
-            variant="secondary"
-            onPress={() => {
-              trackEventAction('login_button_click');
-              router.navigate('/auth/login');
-            }}
-            className="w-full mt-3 py-3 rounded-lg"
-          >
-            로그인하러 가기
-          </Button>
-        </View>
       </ScrollView>
+
+      <View className="w-full px-6 mb-6 md:mb-16 mt-4" style={{ opacity: 1 }}>
+        <View
+          className="flex flex-col gap-y-2 mb-5 md:mb-6 items-center"
+          style={{ opacity: 1 }} // 강제로 opacity 설정
+        >
+
+        </View>
+        <Button
+          className="text-white w-full py-3 rounded-lg"
+          onPress={() => {
+            trackEventAction('signup_button_click');
+            router.navigate('/auth/signup/terms');
+          }}
+        >
+          소개팅 신청하기
+        </Button>
+        <Button
+          variant="secondary"
+          onPress={() => {
+            trackEventAction('login_button_click');
+            router.navigate('/auth/login');
+          }}
+          className="w-full mt-3 py-3 rounded-lg"
+        >
+          로그인하러 가기
+        </Button>
+      </View>
     </KeyboardAvoidingView>
   );
 }

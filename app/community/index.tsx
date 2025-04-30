@@ -1,48 +1,29 @@
-import { View, ScrollView, TouchableOpacity } from 'react-native';
-import { Text, PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
-import { CommunityHeader } from '@/src/features/community/ui/community-header';
-import { ArticleList } from '@/src/features/community/ui/articles';
-import { useState } from 'react';
-import { IconWrapper } from '@/src/shared/ui/icons';
-import BellIcon from '@/assets/icons/bell.svg';
-
-type TabType = 'realtime' | 'popular';
+import { View, ScrollView } from 'react-native';
+import { PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
+import Loading from '@/src/features/loading';
+import { CategoryList, CreateArticleFAB, InfiniteArticleList } from '@/src/features/community/ui';
 
 export default function CommunityScreen() {
-  const [activeTab, setActiveTab] = useState<TabType>('realtime');
-
-  const handleChangeTab = (tab: TabType) => {
-    setActiveTab(tab);
-  };
-
   return (
-    <View className="flex-1">
+    <View className="flex-1 relative">
       <PalePurpleGradient />
 
-      {/* Header - Compound Pattern 사용 예시 */}
       <Header.Container>
-        <Header.LeftContent>
-          <Header.LeftButton visible={false} />
-        </Header.LeftContent>
-
-        <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
-      
-        <Header.RightContent>
-          <TouchableOpacity>
-            <IconWrapper>
-              <BellIcon />
-            </IconWrapper>
-          </TouchableOpacity>
-        </Header.RightContent>
+        <Header.CenterContent>
+          <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
+        </Header.CenterContent>
       </Header.Container>
 
-      <ScrollView className="flex-1 px-5">
-        <View>
-          <ArticleList type={activeTab} />
+      <ScrollView className="flex-1">
+        <CategoryList />
+
+        <View id="ArticleListContainer">
+          <InfiniteArticleList />
         </View>
       </ScrollView>
 
-      {/* Bottom Navigation */}
+      <CreateArticleFAB />
+
       <BottomNavigation />
     </View>
   );

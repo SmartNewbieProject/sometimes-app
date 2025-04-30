@@ -27,11 +27,17 @@ const buttonStyles = cva(
 				true: 'opacity-50',
 				false: '',
 			},
+			rounded: {
+				full: 'rounded-full',
+				md: 'rounded-lg',
+				lg: 'rounded-xl'
+			},
 		},
 		defaultVariants: {
 			variant: 'primary',
 			size: 'md',
 			disabled: false,
+			rounded: 'lg',
 		},
 	},
 );

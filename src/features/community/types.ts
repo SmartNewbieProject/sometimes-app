@@ -1,31 +1,41 @@
-export interface Author {
-  id: number;
-  name: string;
-  email: string;
-  age: number;
-  university: University;
+import { Gender, UniversityDetail } from "@/src/types/user";
+
+export enum ArticleRequestType {
+  GENERAL = 'general',
+  REVIEW = 'review',
+  LOVE_CONCERNS = 'love-concerns'
 }
 
-export interface University {
+export type Author = {
+  id: string;
   name: string;
-  image: string;
-}
+  age: number;
+  gender: Gender;
+  universityDetails: UniversityDetail;
+};
+
+export type Article = {
+  id: string;
+  category: ArticleRequestType;
+  title: string;
+  readCount: number;
+  likeCount: number;
+  content: string;
+  author: Author;
+  updatedAt: Date;
+  isLiked: boolean;
+  comments: Comment[];
+};
 
 export interface Comment {
-  id: number;
+  id: string;
   content: string;
-  createdAt: string;
   author: Author;
-  articleId: number;
-}
+  updatedAt: Date;
+};
 
-export interface Article {
-  id: number;
-  title: string;
-  content: string;
-  createdAt: string;
-  author: Author;
-  likes: number;
-  views: number;
-  comments?: Comment[];
-} 
+export interface Category {
+  code: string;
+  displayName: string;
+  emojiUrl: string;
+}

@@ -1,33 +1,33 @@
-import { FlatList, TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';
 import { ArticleItem } from './article-item';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
 import { Text } from '@/src/shared/ui';
-import { useCategory, useArticles } from '../hooks';
+import { useCategory, useInfiniteArticles } from '../hooks';
+import { InfiniteScrollView } from '../../../shared/infinite-scroll';
 
-interface ArticleListProps {
+interface InfiniteArticleListProps {
   initialSize?: number;
-  infiniteScroll?: boolean;
 }
 
-export function ArticleList({ initialSize = 10, infiniteScroll = true }: ArticleListProps) {
+export function InfiniteArticleList({ initialSize = 10 }: InfiniteArticleListProps) {
   const { currentCategory: categoryCode } = useCategory();
   const {
     articles,
     isLoading,
-    isFetchingNextPage,
-    meta,
-    flatListProps,
-    fetchNextPage
-  } = useArticles({
+    isLoadingMore,
+    hasNextPage,
+    loadMore,
+    refresh,
+    scrollProps
+  } = useInfiniteArticles({
     categoryCode,
     initialPage: 1,
-    initialSize,
-    infiniteScroll,
+    pageSize: initialSize,
   });
 
   const renderFooter = () => {
-    if (!isFetchingNextPage) return null;
+    if (!isLoadingMore) return null;
 
     return (
       <View className="py-4 flex items-center justify-center">
@@ -43,6 +43,16 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
       </View>
     );
   }
+
+  const renderItem = (item: any, index: number) => (
+    <ArticleItem
+      article={item}
+      onPress={() => { }}
+      onLike={() => { }}
+      onComment={() => { }}
+      onViews={() => { }}
+    />
+  );
 
   return (
     <View className="flex-1">
@@ -61,37 +71,19 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
       </View>
       <View className="h-[1px] bg-[#F3F0FF] mb-2" />
 
-      <FlatList
+      <InfiniteScrollView
         data={articles}
-        renderItem={({ item }) => (
-          <ArticleItem
-            article={item}
-            onPress={() => { }}
-            onLike={() => { }}
-            onComment={() => { }}
-            onViews={() => { }}
-          />
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        className="flex-1 scrolling"
+        renderItem={renderItem}
+        onLoadMore={loadMore}
+        isLoading={isLoading}
+        isLoadingMore={isLoadingMore}
+        hasMore={hasNextPage}
+        onRefresh={refresh}
+        refreshing={isLoading && !isLoadingMore}
+        className="flex-1"
         ItemSeparatorComponent={() => <View className="h-[1px] bg-[#F3F0FF]" />}
         ListFooterComponent={renderFooter}
-
-        // 기존 props 확장
-        {...flatListProps}
-
-        // 스크롤 이벤트 로깅 추가
-        onEndReached={(info) => {
-          console.log('onEndReached triggered', info);
-          if (flatListProps.onEndReached) {
-            flatListProps.onEndReached(info);
-          }
-        }}
-
-        // 스크롤 모멘텀 시작 로깅
-        onMomentumScrollBegin={() => {
-          console.log('onMomentumScrollBegin triggered');
-        }}
+        {...scrollProps}
       />
     </View>
   );
