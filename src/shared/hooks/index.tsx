@@ -1,3 +1,4 @@
 export { useColorScheme } from './use-color-schema';
 export { useKeyboarding } from './use-keyboarding';
-export { usePagination } from './use-pagination';
+export { useInfiniteData } from './use-infinite-data';
+export { useInfiniteScroll } from './use-infinite-scroll';
