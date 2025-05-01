@@ -1,5 +1,5 @@
 import { FlatList, TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';
-import { ArticleItem } from './article-item';
+import { Article } from './article';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
 import { Text } from '@/src/shared/ui';
@@ -12,22 +12,23 @@ interface ArticleListProps {
 
 export function ArticleList({ initialSize = 10, infiniteScroll = true }: ArticleListProps) {
   const { currentCategory: categoryCode } = useCategory();
-  const {
-    articles,
-    isLoading,
-    isFetchingNextPage,
-    meta,
-    flatListProps,
-    fetchNextPage
-  } = useArticles({
+  const result = useArticles({
     categoryCode,
     initialPage: 1,
     initialSize,
     infiniteScroll,
   });
 
+  const {
+    articles,
+    isLoading,
+  } = result;
+
+  const isLoadingMore = infiniteScroll ? result.isLoadingMore : false;
+  const scrollProps = infiniteScroll ? result.scrollProps : {};
+
   const renderFooter = () => {
-    if (!isFetchingNextPage) return null;
+    if (!isLoadingMore) return null;
 
     return (
       <View className="py-4 flex items-center justify-center">
@@ -64,31 +65,25 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
       <FlatList
         data={articles}
         renderItem={({ item }) => (
-          <ArticleItem
-            article={item}
+          <Article
+            data={item}
             onPress={() => { }}
             onLike={() => { }}
             onComment={() => { }}
-            onViews={() => { }}
           />
         )}
         keyExtractor={(item) => item.id.toString()}
         className="flex-1 scrolling"
         ItemSeparatorComponent={() => <View className="h-[1px] bg-[#F3F0FF]" />}
         ListFooterComponent={renderFooter}
-
-        // 기존 props 확장
-        {...flatListProps}
-
-        // 스크롤 이벤트 로깅 추가
-        onEndReached={(info) => {
+        {...scrollProps}
+        onEndReached={infiniteScroll ? (info) => {
           console.log('onEndReached triggered', info);
-          if (flatListProps.onEndReached) {
-            flatListProps.onEndReached(info);
+          if (result.loadMore) {
+            result.loadMore();
           }
-        }}
+        } : undefined}
 
-        // 스크롤 모멘텀 시작 로깅
         onMomentumScrollBegin={() => {
           console.log('onMomentumScrollBegin triggered');
         }}

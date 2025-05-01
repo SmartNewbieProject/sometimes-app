@@ -18,11 +18,12 @@ export type Article = {
   id: string;
   category: ArticleRequestType;
   title: string;
+  commentCount: number;
   readCount: number;
   likeCount: number;
   content: string;
   author: Author;
-  updatedAt: Date;
+  updatedAt: string;
   isLiked: boolean;
   comments: Comment[];
 };
@@ -31,7 +32,7 @@ export interface Comment {
   id: string;
   content: string;
   author: Author;
-  updatedAt: Date;
+  updatedAt: string;
 };
 
 export interface Category {

@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';
-import { ArticleItem } from './article-item';
+import { Article } from './article';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
 import { Text } from '@/src/shared/ui';
@@ -46,12 +46,11 @@ export function InfiniteArticleList({ initialSize = 10 }: InfiniteArticleListPro
   }
 
   const renderItem = (item: any, index: number) => (
-    <ArticleItem
-      article={item}
-      onPress={() => { router.push(`/community/${item.id}`)}}
+    <Article
+      data={item}
+      onPress={() => { router.push(`/community/${item.id}`) }}
       onLike={() => { }}
       onComment={() => { }}
-      onViews={() => { }}
     />
   );
 

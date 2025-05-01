@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import { useInfiniteData, useInfiniteScroll } from '../../../shared/hooks';
 import { getArticles } from '../apis/articles';
 import { Article } from '../types';
-import { PaginationParams } from '../../../shared/infinite-scroll/types';
+import { Pagination, PaginatedResponse } from '../../../types/server';
+import { useQuery } from '@tanstack/react-query';
 
 type Props = {
   categoryCode?: string;
@@ -15,9 +16,10 @@ export const useArticles = ({
   categoryCode,
   initialPage = 1,
   initialSize = 10,
-  infiniteScroll = true
-}: Props) => {
-  const fetchArticles =
+  infiniteScroll = false
+}: Props = {}) => {
+  // 데이터 가져오는 함수
+  const fetchArticles = useCallback(
     async (pagination: Pagination): Promise<PaginatedResponse<Article>> => {
       if (!categoryCode) {
         return {
@@ -36,35 +38,71 @@ export const useArticles = ({
         code: categoryCode,
         ...pagination,
       });
-    };
-
-  const {
-    items,
-    allItems,
-    meta,
-    pagination,
-    queryResult: { isLoading, isError, error, refetch },
-    ...props
-  } = useQueryPagination<Article>({
-    queryKey: ['articles', categoryCode],
-    queryFn: fetchArticles,
-    queryOptions: {
-      enabled: !!categoryCode,
     },
-    initialPage,
-    initialSize,
-    infiniteScroll,
+    [categoryCode]
+  );
+
+  // 무한 스크롤 모드
+  if (infiniteScroll) {
+    const {
+      data: articles,
+      isLoading,
+      isLoadingMore,
+      error,
+      hasNextPage,
+      loadMore,
+      refresh,
+      meta,
+      currentPage,
+    } = useInfiniteData<Article>({
+      fetchFn: fetchArticles,
+      initialPage,
+      pageSize: initialSize,
+      autoLoad: !!categoryCode,
+      dependencies: [categoryCode],
+      getItemKey: (item) => item.id,
+    });
+
+    const { scrollProps } = useInfiniteScroll(loadMore, {
+      threshold: 0.5,
+      enabled: hasNextPage && !isLoadingMore,
+    });
+
+    return {
+      articles,
+      isLoading,
+      isLoadingMore,
+      error,
+      hasNextPage,
+      loadMore,
+      refresh,
+      meta,
+      currentPage,
+      scrollProps,
+    };
+  }
+
+  const pagination = { page: initialPage, size: initialSize };
+
+  const { data, isLoading, isError, error, refetch } = useQuery<PaginatedResponse<Article>>({
+    queryKey: ['articles', categoryCode, pagination.page, pagination.size],
+    queryFn: () => fetchArticles(pagination),
+    enabled: !!categoryCode,
   });
 
   return {
-    articles: infiniteScroll ? allItems : items,
-    meta,
+    articles: data?.items || [],
+    meta: data?.meta || {
+      currentPage: initialPage,
+      itemsPerPage: initialSize,
+      totalItems: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    },
     pagination,
     isLoading,
     isError,
     error,
     refetch,
-    ...props,
   };
-
 };
