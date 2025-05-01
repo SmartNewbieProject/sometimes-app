@@ -246,7 +246,7 @@ export default function PreSignupScreen() {
               <View className="mb-2">
                 <Text
                   weight="light"
-                  size="md"
+                  size="sm"
                   className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] whitespace-nowrap"
                 >
                   내 이상형을 찾는 가장 빠른 방법
@@ -255,7 +255,7 @@ export default function PreSignupScreen() {
 
               {/* 로고 */}
               <View className="mb-2">
-                <IconWrapper width={120} className="text-primaryPurple">
+                <IconWrapper width={200} className="text-primaryPurple">
                   <SmallTitle />
                 </IconWrapper>
               </View>
@@ -325,21 +325,22 @@ export default function PreSignupScreen() {
         </View>
 
         {/* 하단 버튼 */}
-        <View className="w-full px-4 mb-6 mt-4">
+        <View className="w-full px-4 mb-3 mt-4">
           <Button
             variant="primary"
             size="md"
-            className="w-full py-3 rounded-lg"
+            className="w-full py-3 rounded-full"
             onPress={() => {
               trackEventAction('signup_button_click');
               router.navigate('/auth/signup/terms');
             }}
           >
-            빠르게 시작하기
+            빠르게 사전 가입하기
           </Button>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            className="mt-3"
+          <Button
+            variant="outline"
+            size="md"
+            className="w-full py-3 rounded-full mt-3 bg-[#E2D9FF] border-[#E2D9FF]"
             onPress={() => {
               trackEventAction('login_button_click');
               router.navigate('/auth/login');
@@ -347,12 +348,12 @@ export default function PreSignupScreen() {
           >
             <Text
               weight="medium"
-              size="sm"
-              className="text-center text-gray-500"
+              size="md"
+              className="text-center text-white"
             >
               로그인하기
             </Text>
-          </TouchableOpacity>
+          </Button>
         </View>
       </View>
     </KeyboardAvoidingView>
