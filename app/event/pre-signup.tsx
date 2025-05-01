@@ -184,7 +184,13 @@ export default function PreSignupScreen() {
   ];
 
   // 카드 크기 계산
-  const cardWidth = Math.min(screenWidth * 0.7, 300); // 카드 너비를 화면 너비의 60%로 제한하고 최대 250px로 설정
+  const cardWidth = Math.min(screenWidth * 0.7, 300); // 카드 너비를 화면 너비의 70%로 제한하고 최대 300px로 설정
+
+  // 캐릭터 이미지 크기 계산 (화면 너비의 100%)
+  const characterSize = screenWidth * 1;
+  // 이미지 비율 유지 (원본 이미지 비율에 맞게 조정)
+  const characterWidth = characterSize;
+  const characterHeight = characterSize * 1.125; // 비율 유지 (400:450 = 8:9 = 1:1.125)
 
   // 카드 섹션 애니메이션 스타일
   const cardSectionStyle = useAnimatedStyle(() => {
@@ -266,10 +272,17 @@ export default function PreSignupScreen() {
           <View className="flex-1 justify-start items-center overflow-visible relative">
             {/* 캐릭터 이미지 */}
             <Animated.View className="w-full flex items-center justify-center" style={characterStyle}>
-              <View className="w-[300px] h-[300px] overflow-visible">
+              <View style={{
+                width: characterWidth,
+                height: characterHeight,
+                overflow: 'hidden'
+              }}>
                 <Image
                   source={preSignupCharacter}
-                  style={{ width: 300, height: 300 }}
+                  style={{
+                    width: characterWidth,
+                    height: characterHeight
+                  }}
                   resizeMode="contain"
                 />
               </View>
