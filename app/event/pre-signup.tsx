@@ -1,150 +1,363 @@
-import { View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, KeyboardAvoidingView, Platform, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
 import Signup from '@features/signup';
 import Event from '@features/event';
 import { platform } from '@shared/libs/platform';
 import { cn } from '@shared/libs/cn';
 import { IconWrapper } from "@/src/shared/ui/icons";
 import SmallTitle from '@/assets/icons/small-title.svg';
-import { useEffect } from 'react';
-import { TotalMatchCounter } from '@/src/features/home/ui';
+import { useEffect, useState, useRef } from 'react';
 import { Button, PalePurpleGradient, Text } from '@shared/ui';
 import { router } from 'expo-router';
-import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  interpolate
+} from 'react-native-reanimated';
+import { Slide } from '@/src/widgets';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+// 이미지 경로 직접 지정 (절대 경로)
+const initialCampusCard = require('../../assets/images/initial_campus_card.png');
+const initialMatchingCard = require('../../assets/images/initial_matching_card.png');
+const switchMatchingCard = require('../../assets/images/switch_matching_card.png');
+const switchCampusCard = require('../../assets/images/switch_campus_card.png');
+const initialParticipantCard = require('../../assets/images/initial_participant_card.png');
+const switchParticipantCard = require('../../assets/images/switch_participant_card.png');
+const preSignupCharacter = require('../../assets/images/pre-signup-character.png');
 
 const { useSignupProgress } = Signup;
 const { hooks: { useEventAnalytics } } = Event;
 
+interface FlippableCardProps {
+  initialImage: any; // 이미지 리소스
+  switchImage: any; // 이미지 리소스
+  onPress?: () => void;
+  isActive?: boolean; // 현재 활성화된 카드인지 여부
+}
+
+// 카드 컴포넌트
+const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage, onPress, isActive = false }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  // 애니메이션 값
+  const rotation = useSharedValue(0);
+
+  // 카드 뒤집기 애니메이션
+  const flipCard = () => {
+    // 애니메이션 실행
+    rotation.value = withSpring(isFlipped ? 0 : 180, {
+      damping: 15,
+      stiffness: 100
+    });
+
+    // 상태 업데이트
+    setIsFlipped(!isFlipped);
+    onPress && onPress();
+  };
+
+  // 3초마다 자동으로 카드 뒤집기
+  useEffect(() => {
+    const interval = setInterval(() => {
+      flipCard();
+    }, 3000);
+
+    // 컴포넌트가 언마운트될 때 인터벌 정리
+    return () => clearInterval(interval);
+  }, [isFlipped]);
+
+  // 앞면 애니메이션 스타일
+  const frontAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { perspective: 1000 },
+        { rotateY: `${rotation.value}deg` },
+        { scale: interpolate(
+            rotation.value,
+            [0, 90, 180],
+            [1, 0.9, 1]
+          )
+        }
+      ],
+      opacity: interpolate(
+        rotation.value,
+        [0, 90, 91, 180],
+        [1, 0, 0, 0]
+      ),
+      zIndex: rotation.value < 90 ? 1 : 0,
+    };
+  });
+
+  // 뒷면 애니메이션 스타일
+  const backAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { perspective: 1000 },
+        { rotateY: `${rotation.value + 180}deg` },
+        { scale: interpolate(
+            rotation.value,
+            [0, 90, 180],
+            [1, 0.9, 1]
+          )
+        }
+      ],
+      opacity: interpolate(
+        rotation.value,
+        [0, 89, 90, 180],
+        [0, 0, 1, 1]
+      ),
+      zIndex: rotation.value >= 90 ? 1 : 0,
+    };
+  });
+
+  // 카드 비율 계산: 원본 215.31x332.76 (비율 약 1:1.55)
+  return (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={flipCard}
+      className="w-full h-full"
+      style={{
+        aspectRatio: 215.31/332.76, // 원본 비율 유지
+        height: '100%',
+      }}
+    >
+      <View className="relative w-full h-full overflow-visible">
+        {/* 앞면 */}
+        <Animated.View
+          className="absolute w-full h-full rounded-xl overflow-hidden"
+          style={[
+            {
+              backgroundColor: '#ffffff',
+              borderWidth: 1,
+              borderColor: '#f0f0f0',
+            },
+            frontAnimatedStyle
+          ]}
+        >
+          <Image
+            source={initialImage}
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="cover"
+          />
+        </Animated.View>
+
+        {/* 뒷면 */}
+        <Animated.View
+          className="absolute w-full h-full rounded-xl overflow-hidden"
+          style={[
+            {
+              backgroundColor: '#ffffff',
+              borderWidth: 1,
+              borderColor: '#f0f0f0',
+            },
+            backAnimatedStyle
+          ]}
+        >
+          <Image
+            source={switchImage}
+            style={{ width: '100%', height: '100%' }}
+            resizeMode="cover"
+          />
+        </Animated.View>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 export default function PreSignupScreen() {
   const { clear } = useSignupProgress();
-
-  // 애널리틱스 추적 설정
   const { trackEventAction } = useEventAnalytics('pre-signup');
+  const { width: screenWidth } = useWindowDimensions(); // 화면 너비를 useWindowDimensions 훅으로 가져옴
+
+  // 카드 섹션 애니메이션을 위한 값
+  const cardSectionOpacity = useSharedValue(0);
+  const cardSectionTranslateY = useSharedValue(50);
+
+  // 캐릭터 이미지 애니메이션을 위한 값
+  const characterOpacity = useSharedValue(1);
+
+  // 카드 데이터 (3장만 사용)
+  const cards = [
+    { initialImage: initialCampusCard, switchImage: switchCampusCard, eventName: 'campus_card_flip', id: 0 },
+    { initialImage: initialMatchingCard, switchImage: switchMatchingCard, eventName: 'matching_card_flip', id: 1 },
+    { initialImage: initialParticipantCard, switchImage: switchParticipantCard, eventName: 'participant_card_flip', id: 2 }
+  ];
+
+  // 카드 크기 계산
+  const cardWidth = Math.min(screenWidth * 0.7, 300); // 카드 너비를 화면 너비의 60%로 제한하고 최대 250px로 설정
+
+  // 카드 섹션 애니메이션 스타일
+  const cardSectionStyle = useAnimatedStyle(() => {
+    return {
+      opacity: cardSectionOpacity.value,
+      transform: [{ translateY: cardSectionTranslateY.value }],
+      position: 'absolute',
+      top: 0, // 캐릭터 이미지 위에 위치하도록 조정
+      left: 0,
+      right: 0,
+      zIndex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      maxWidth: '100%',
+    };
+  });
+
+  // 캐릭터 이미지 애니메이션 스타일
+  const characterStyle = useAnimatedStyle(() => {
+    return {
+      opacity: characterOpacity.value,
+    };
+  });
+
+  // 초기 위치 설정
+  useEffect(() => {
+    // 1초 후에 카드 섹션 애니메이션 시작
+    setTimeout(() => {
+      cardSectionOpacity.value = withSpring(1, { damping: 15, stiffness: 100 });
+      cardSectionTranslateY.value = withSpring(0, { damping: 15, stiffness: 100 });
+    }, 1000);
+  }, []);
 
   useEffect(() => {
     clear();
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1, height: "100%" }}
-    >
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, height: "100%" }}
+      >
       <PalePurpleGradient />
-      <ScrollView className="flex-1">
+      <View className="flex-1">
         <View className={cn(
-          "flex flex-col items-center gap-y-2 px-6 flex-1",
+          "flex-1 flex-col px-4 overflow-visible",
           platform({
-            ios: () => "pt-[80px]",
-            android: () => "pt-[80px]",
+            ios: () => "pt-[50px]",
+            android: () => "pt-[50px]",
             web: () => "pt-[40px]",
           })
         )}>
-
-          <IconWrapper width={128} className="text-primaryPurple mb-6">
-            <SmallTitle />
-          </IconWrapper>
-
-          <View className="w-full mb-6">
-            <TotalMatchCounter count={1928} className="h-[64px] !min-h-[76px]" />
-          </View>
-
-          {/* 상단 제목 */}
-          <View className="w-full flex flex-col items-center mb-6 mt-2">
-            <View className="mb-2 max-w-[360px]">
-              <View className="bg-white rounded-lg px-3 py-3 drop-shadow-md rounded-md">
+          {/* 상단 섹션 (위쪽에 배치) */}
+          <View className="flex-row justify-between items-start mb-4">
+            <View className="flex-1 items-center ">
+              {/* 상단 제목 */}
+              <View className="mb-2">
                 <Text
-                  weight="bold"
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] text-[18px] md:text-[22px] text-center whitespace-nowrap"
+                  weight="light"
+                  size="md"
+                  className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] whitespace-nowrap"
                 >
-                  우리가 너의 진짜 설렘을 찾아줄게
+                  내 이상형을 찾는 가장 빠른 방법
                 </Text>
               </View>
+
+              {/* 로고 */}
+              <View className="mb-2">
+                <IconWrapper width={120} className="text-primaryPurple">
+                  <SmallTitle />
+                </IconWrapper>
+              </View>
             </View>
-            <Text className="text-[#6A3EA1] text-[16px] md:text-[18px] text-center font-medium mt-2">
-              ✨ 친구가 소개하는 것처럼 진심을 다해 ✨
-            </Text>
           </View>
 
-          {/* 첫 번째 카드 */}
-          <View className="w-full bg-white rounded-xl drop-shadow-md p-5 pb-6 mb-4 mt-3">
-            <View className="flex flex-row items-center mb-3">
-              <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
-                <Ionicons name="home" size={20} color="white" />
+          {/* 메인 컨텐츠 (아래쪽에 배치) */}
+          <View className="flex-1 justify-start items-center overflow-visible relative">
+            {/* 캐릭터 이미지 */}
+            <Animated.View className="w-full flex items-center justify-center" style={characterStyle}>
+              <View className="w-[300px] h-[300px] overflow-visible">
+                <Image
+                  source={preSignupCharacter}
+                  style={{ width: 300, height: 300 }}
+                  resizeMode="contain"
+                />
               </View>
-              <Text className="text-[#333] text-[18px] font-bold">
-                집순이, 집돌이를 위한
-              </Text>
-            </View>
-            <Text className="text-[#666] text-[14px] leading-6">
-              <Text className="font-bold">매번 집-학교-집</Text>이어서 주변에서{'\n'}
-              이성을 만나기 어려운{'\n'}
-              집순이, 집돌이를 위한
-            </Text>
-          </View>
+            </Animated.View>
 
-          {/* 두 번째 카드 */}
-          <View className="w-full bg-white rounded-xl drop-shadow-md p-5 pb-6 mb-4 flex-1">
-            <View className="flex flex-row items-center mb-3">
-              <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
-                <FontAwesome5 name="user-friends" size={16} color="white" />
-              </View>
-              <Text className="text-[#333] text-[18px] font-bold">
-                대전 대학생을 위한 1:1 소개팅
-              </Text>
-            </View>
-            <Text className="text-[#666] text-[14px] leading-6">
-              <Text className="font-bold">과팅, 미팅은 부담스럽고,</Text>{'\n'}
-              소개 받을 곳이 없거나{'\n'}
-              이미 다 소개받은 친구들을 위한 소개팅 플랫폼
-            </Text>
-          </View>
-
-          {/* 세 번째 카드 */}
-          <View className="w-full bg-white rounded-xl drop-shadow-md p-5 pb-6 mb-4">
-            <View className="flex flex-row items-center mb-3">
-              <View className="w-10 h-10 rounded-full bg-[#6A3EA1] flex items-center justify-center mr-3">
-                <MaterialIcons name="favorite" size={20} color="white" />
-              </View>
-              <Text className="text-[#333] text-[18px] font-bold">
-                믿고 맡길 수 있는
-              </Text>
-            </View>
-            <Text className="text-[#666] text-[14px] leading-6">
-              <Text className="font-bold">한밭대 2,738명</Text>이 참여한 소개팅,{'\n'}
-              이제는 대전 내 11개 대학에서,{'\n'}
-              당신의 이상형을 찾아드립니다!
-            </Text>
+            {/* 카드 섹션 - Slide 컴포넌트 사용 */}
+            <Animated.View className="w-full h-[420px] relative overflow-visible" style={cardSectionStyle}>
+              <Slide
+                autoPlay={false}
+                showIndicator={true}
+                indicatorPosition="bottom"
+                indicatorType="dot"
+                className="w-full h-full"
+                indicatorClassName="bg-lightPurple"
+                activeIndicatorClassName="bg-primaryPurple"
+                indicatorContainerClassName="mb-4"
+                animationType="slide"
+                animationDuration={400}
+                loop={true}
+                onSlideChange={(index) => {
+                  // 이전 인덱스와 현재 인덱스의 차이가 1 이상이면 한 장씩만 이동하도록 제한
+                  console.log(`슬라이드 변경: ${index}`);
+                  // 이벤트 트래킹
+                  trackEventAction(cards[index].eventName);
+                }}
+              >
+                {cards.map((card, index) => (
+                  <View key={index} className="w-full h-full flex items-center justify-center px-4">
+                    <View
+                      style={{
+                        width: cardWidth,
+                        maxWidth: 250,
+                        height: 380, // 카드 높이 증가
+                        borderRadius: 12,
+                        overflow: 'visible',
+                        marginBottom: 20, // 하단 여백 추가
+                      }}
+                    >
+                      <FlippableCard
+                        initialImage={card.initialImage}
+                        switchImage={card.switchImage}
+                        onPress={() => {
+                          // 카드를 탭하면 뒤집기만 함 (위치 이동 없음)
+                          trackEventAction(cards[index].eventName);
+                        }}
+                      />
+                    </View>
+                  </View>
+                ))}
+              </Slide>
+            </Animated.View>
           </View>
         </View>
-      </ScrollView>
 
-      <View className="w-full px-6 mb-6 md:mb-16 mt-4" style={{ opacity: 1 }}>
-        <View
-          className="flex flex-col gap-y-2 mb-5 md:mb-6 items-center"
-          style={{ opacity: 1 }} // 강제로 opacity 설정
-        >
-
+        {/* 하단 버튼 */}
+        <View className="w-full px-4 mb-6 mt-4">
+          <Button
+            variant="primary"
+            size="md"
+            className="w-full py-3 rounded-lg"
+            onPress={() => {
+              trackEventAction('signup_button_click');
+              router.navigate('/auth/signup/terms');
+            }}
+          >
+            빠르게 시작하기
+          </Button>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            className="mt-3"
+            onPress={() => {
+              trackEventAction('login_button_click');
+              router.navigate('/auth/login');
+            }}
+          >
+            <Text
+              weight="medium"
+              size="sm"
+              className="text-center text-gray-500"
+            >
+              로그인하기
+            </Text>
+          </TouchableOpacity>
         </View>
-        <Button
-          className="text-white w-full py-3 rounded-lg"
-          onPress={() => {
-            trackEventAction('signup_button_click');
-            router.navigate('/auth/signup/terms');
-          }}
-        >
-          소개팅 신청하기
-        </Button>
-        <Button
-          variant="secondary"
-          onPress={() => {
-            trackEventAction('login_button_click');
-            router.navigate('/auth/login');
-          }}
-          className="w-full mt-3 py-3 rounded-lg"
-        >
-          로그인하러 가기
-        </Button>
       </View>
     </KeyboardAvoidingView>
+    </GestureHandlerRootView>
   );
 }
+
+// 스타일 제거 - 더 이상 필요하지 않음

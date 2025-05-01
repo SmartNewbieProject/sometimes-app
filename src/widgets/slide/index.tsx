@@ -7,6 +7,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   LayoutChangeEvent,
+  useWindowDimensions,
 } from 'react-native';
 import { cn } from '@/src/shared/libs/cn';
 import { Text } from '@/src/shared/ui';
@@ -25,6 +26,7 @@ interface SlideProps {
   onSlideChange?: (index: number) => void;
   animationType?: 'slide' | 'fade' | 'slide-fade';
   animationDuration?: number;
+  loop?: boolean; // 무한 루프 활성화 여부
 }
 
 export function Slide({
@@ -41,6 +43,7 @@ export function Slide({
   onSlideChange,
   animationType = 'slide-fade',
   animationDuration = 300,
+  loop = false, // 기본값은 false
 }: SlideProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [previousIndex, setPreviousIndex] = useState(0);
@@ -48,11 +51,21 @@ export function Slide({
   const scrollViewRef = useRef<ScrollView>(null);
   const totalSlides = React.Children.count(children);
 
-  // Use container width instead of window width
+  // 화면 너비 정보 가져오기 (앱에서도 안정적으로 동작)
+  const { width: windowWidth } = useWindowDimensions();
+
+  // 컨테이너 너비 설정 (레이아웃 이벤트와 화면 너비 모두 고려)
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
     setContainerWidth(width);
   };
+
+  // 화면 너비가 변경될 때 컨테이너 너비도 업데이트
+  useEffect(() => {
+    if (containerWidth === 0) {
+      setContainerWidth(windowWidth);
+    }
+  }, [windowWidth]);
 
   // Animation values
   const slideAnimation = useRef(new Animated.Value(0)).current;
@@ -62,7 +75,18 @@ export function Slide({
     if (containerWidth === 0) return;
 
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const newIndex = Math.round(contentOffsetX / containerWidth);
+    let newIndex = Math.round(contentOffsetX / containerWidth);
+
+    // 한 번에 한 장씩만 이동하도록 제한
+    if (Math.abs(newIndex - activeIndex) > 1) {
+      // 이전 인덱스와 현재 인덱스의 차이가 1보다 크면 한 장씩만 이동하도록 제한
+      newIndex = activeIndex + (newIndex > activeIndex ? 1 : -1);
+      // 스크롤 위치 조정
+      scrollViewRef.current?.scrollTo({
+        x: newIndex * containerWidth,
+        animated: true,
+      });
+    }
 
     if (newIndex !== activeIndex) {
       setPreviousIndex(activeIndex);
@@ -95,8 +119,23 @@ export function Slide({
 
   const scrollToIndex = (index: number) => {
     if (scrollViewRef.current && containerWidth > 0) {
+      let targetIndex = index;
+
+      // 무한 루프 처리
+      if (loop && totalSlides > 1) {
+        // 인덱스가 범위를 벗어나면 조정
+        if (index >= totalSlides) {
+          targetIndex = 0;
+        } else if (index < 0) {
+          targetIndex = totalSlides - 1;
+        }
+      } else {
+        // 루프가 아닌 경우 범위 제한
+        targetIndex = Math.max(0, Math.min(index, totalSlides - 1));
+      }
+
       scrollViewRef.current.scrollTo({
-        x: index * containerWidth,
+        x: targetIndex * containerWidth,
         animated: true,
       });
     }
@@ -221,6 +260,37 @@ export function Slide({
           scrollEventThrottle={16}
           style={{ width: containerWidth }}
           contentContainerStyle={{ width: containerWidth * totalSlides }}
+          onMomentumScrollEnd={(event) => {
+            // 무한 루프 처리를 위한 추가 로직
+            if (loop && totalSlides > 1) {
+              const contentOffsetX = event.nativeEvent.contentOffset.x;
+              const currentIndex = Math.round(contentOffsetX / containerWidth);
+
+
+
+              // 마지막 슬라이드에서 첫 번째 슬라이드로 이동
+              if (currentIndex >= totalSlides - 1) {
+                // 마지막 슬라이드에서 오른쪽으로 스와이프하면 첫 번째 슬라이드로
+                setTimeout(() => {
+                  scrollViewRef.current?.scrollTo({ x: 0, animated: false });
+                  setActiveIndex(0);
+                  onSlideChange?.(0);
+                }, 300);
+              }
+              // 첫 번째 슬라이드에서 마지막 슬라이드로 이동
+              else if (currentIndex <= 0) {
+                // 첫 번째 슬라이드에서 왼쪽으로 스와이프하면 마지막 슬라이드로
+                setTimeout(() => {
+                  scrollViewRef.current?.scrollTo({
+                    x: containerWidth * (totalSlides - 1),
+                    animated: false
+                  });
+                  setActiveIndex(totalSlides - 1);
+                  onSlideChange?.(totalSlides - 1);
+                }, 300);
+              }
+            }
+          }}
         >
           {React.Children.map(children, (child, index) => {
             const wrappedChild = (
