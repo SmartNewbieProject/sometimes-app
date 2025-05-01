@@ -6,20 +6,21 @@ import HamburgerIcon from '@/assets/icons/menu-dots-vertical.svg';
 import { useQuery } from "@tanstack/react-query";
 import { getArticle } from "@/src/features/community/apis/articles";
 import { ArticleDetail } from "@/src/features/community/ui/article-detail";
-import { getComments } from "@/src/features/community/apis/comments";
-import { mockArticles , mockComments } from "@/src/features/community/mocks/articles";
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
-    const article = mockArticles.find(article => article.id === id);
+    const { data: article } = useQuery({
+        queryKey: ['article', id],
+        queryFn: () => getArticle(id),
+    });
     return (
         <View className="flex-1">
             <PalePurpleGradient />
             <Header.Container>
                 <Header.LeftContent>
                 <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
-                  <ChevronLeftIcon width={24} height={24} />
+                    <ChevronLeftIcon width={24} height={24} />
                 </Pressable>
                     <Header.LeftButton visible={false} />
                 </Header.LeftContent>

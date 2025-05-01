@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useArticleComments } from "../hooks/use-article-comments";
 import { mockComments } from '../mocks/articles';
 import React from "react";
+import { getUnivLogo, UniversityName } from "@/src/shared/libs";
 
 export const ArticleDetail = ({article}: {article: Article}) => {
     const [checked, setChecked] = useState(true);
@@ -55,7 +56,7 @@ export const ArticleDetail = ({article}: {article: Article}) => {
             <View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
             <View className="flex-row items-center mb-[12px]">
                 <Image 
-                    source={article.author.university.image}
+                    source={{ uri: getUnivLogo(article.author.universityDetails.name as UniversityName) }}
                     style={{ width: 36, height: 36 }}
                     className="rounded-full mr-2"
                 />
@@ -65,7 +66,7 @@ export const ArticleDetail = ({article}: {article: Article}) => {
                         <Text className="text-[10px] h-[12px] text-[#7A4AE2] opacity-70" style={{ }}>
                             {article.author.age}세 
                             <Text className="text-[10px] h-[12px] opacity-70"> · </Text>
-                            {article.author.university.name}
+                            {article.author.universityDetails.name}
                         </Text>
                         <IconWrapper size={11}>
                             <ShieldNotSecuredIcon/>
@@ -85,21 +86,21 @@ export const ArticleDetail = ({article}: {article: Article}) => {
                         <IconWrapper size={20}>
                             <HeartIcon stroke="#646464" />
                         </IconWrapper>
-                        <Text className="text-[16px] h-[24px] text-[#646464]">{article.likes}</Text>
+                        <Text className="text-[16px] h-[24px] text-[#646464]">{article.likeCount}</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity className="flex-row items-center gap-2" onPress={() => {}}>
                         <IconWrapper size={20}>
                             <CommentIcon stroke="#646464" />
                         </IconWrapper>
-                        <Text className="text-[16px] h-[24px] text-[#646464]">{article.comments?.length || 0}</Text>
+                        <Text className="text-[16px] h-[24px] text-[#646464]">{article.comments.length}</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity className="flex-row items-center gap-2" onPress={() => {}}>
                         <IconWrapper size={16} >
                             <EyesIcon stroke="#646464" />
                         </IconWrapper>
-                        <Text className="text-[16px] h-[24px] text-[#646464]">{article.views || 0}</Text>
+                        <Text className="text-[16px] h-[24px] text-[#646464]">{article.readCount}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -121,9 +122,7 @@ export const ArticleDetail = ({article}: {article: Article}) => {
                     />
                 </View>
                 <TouchableOpacity onPress={form.handleSubmit(handleSubmit)}>
-                    <IconWrapper>
-                        <SendIcon />
-                    </IconWrapper>
+
                 </TouchableOpacity>
             </View>
         </View>

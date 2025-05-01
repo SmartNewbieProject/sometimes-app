@@ -5,6 +5,7 @@ import VectorIcon from '@/assets/icons/Vector.svg';
 import { Text } from '@/src/shared/ui';
 import { useCategory, useInfiniteArticles } from '../hooks';
 import { InfiniteScrollView } from '../../../shared/infinite-scroll';
+import { router } from 'expo-router';
 
 interface InfiniteArticleListProps {
   initialSize?: number;
@@ -47,7 +48,7 @@ export function InfiniteArticleList({ initialSize = 10 }: InfiniteArticleListPro
   const renderItem = (item: any, index: number) => (
     <ArticleItem
       article={item}
-      onPress={() => { }}
+      onPress={() => { router.push(`/community/${item.id}`)}}
       onLike={() => { }}
       onComment={() => { }}
       onViews={() => { }}

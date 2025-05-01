@@ -10,6 +10,7 @@ import { Comment } from "../types";
 import { View } from "react-native"
 import { useEffect, useState } from 'react';
 import React from 'react';
+import { getUnivLogo, UniversityName } from "@/src/shared/libs";
 
 const formatRelativeTime = (date: string) => {
     const now = new Date();
@@ -40,7 +41,7 @@ export const ArticleDetailComment = ({comment}: {comment: Comment}) => {
                 </IconWrapper>
             )}
             <Image 
-                source={comment.author.university.image}
+                source={{ uri: getUnivLogo(comment.author.universityDetails.name as UniversityName) }}
                 style={{ width: 24, height: 24 }}
                 className="rounded-full mr-[8px]"
             />
