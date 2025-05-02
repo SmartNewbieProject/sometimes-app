@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView, Platform, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
+import { View, KeyboardAvoidingView, Platform, TouchableOpacity, Image } from 'react-native';
 import Signup from '@features/signup';
 import Event from '@features/event';
 import { platform } from '@shared/libs/platform';
@@ -33,11 +33,10 @@ interface FlippableCardProps {
   initialImage: any; // 이미지 리소스
   switchImage: any; // 이미지 리소스
   onPress?: () => void;
-  isActive?: boolean; // 현재 활성화된 카드인지 여부
 }
 
 // 카드 컴포넌트
-const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage, onPress, isActive = false }) => {
+const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage, onPress }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   // 애니메이션 값
@@ -110,14 +109,16 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
     };
   });
 
-  // 카드 비율 계산: 원본 215.31x332.76 (비율 약 1:1.55)
+  // 카드 스타일: 부모 컨테이너의 크기에 맞춤
+  // 부모 컨테이너에서 aspectRatio로 비율 관리
+
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={flipCard}
       className="w-full h-full"
       style={{
-        aspectRatio: 215.31/332.76, // 원본 비율 유지
+        width: '100%',
         height: '100%',
       }}
     >
@@ -167,7 +168,6 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
 export default function PreSignupScreen() {
   const { clear } = useSignupProgress();
   const { trackEventAction } = useEventAnalytics('pre-signup');
-  const { width: screenWidth } = useWindowDimensions(); // 화면 너비를 useWindowDimensions 훅으로 가져옴
 
   // 카드 섹션 애니메이션을 위한 값
   const cardSectionOpacity = useSharedValue(0);
@@ -176,6 +176,9 @@ export default function PreSignupScreen() {
   // 캐릭터 이미지 애니메이션을 위한 값
   const characterOpacity = useSharedValue(1);
 
+  // 현재 활성화된 슬라이드 인덱스
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+
   // 카드 데이터 (3장만 사용)
   const cards = [
     { initialImage: initialCampusCard, switchImage: switchCampusCard, eventName: 'campus_card_flip', id: 0 },
@@ -183,14 +186,9 @@ export default function PreSignupScreen() {
     { initialImage: initialParticipantCard, switchImage: switchParticipantCard, eventName: 'participant_card_flip', id: 2 }
   ];
 
-  // 카드 크기 계산
-  const cardWidth = Math.min(screenWidth * 0.7, 300); // 카드 너비를 화면 너비의 70%로 제한하고 최대 300px로 설정
+  // 카드 크기는 이제 CSS로 처리 (width: '100%', maxWidth: 250)
 
-  // 캐릭터 이미지 크기 계산 (화면 너비의 100%)
-  const characterSize = Math.min(screenWidth * 1, 400);
-  // 이미지 비율 유지 (원본 이미지 비율에 맞게 조정)
-  const characterWidth = characterSize;
-  const characterHeight = characterSize * 1.125; // 비율 유지 (400:450 = 8:9 = 1:1.125)
+  // 캐릭터 이미지 크기는 이제 CSS로 처리 (w-full + maxWidth + aspectRatio)
 
   // 카드 섹션 애니메이션 스타일
   const cardSectionStyle = useAnimatedStyle(() => {
@@ -273,15 +271,16 @@ export default function PreSignupScreen() {
             {/* 캐릭터 이미지 */}
             <Animated.View className="w-full flex items-center justify-center" style={characterStyle}>
               <View style={{
-                width: characterWidth,
-                height: characterHeight,
+                width: '100%',
+                maxWidth: 400, // Maximum width constraint
+                aspectRatio: 1/1.125, // Maintain aspect ratio
                 overflow: 'hidden'
               }}>
                 <Image
                   source={preSignupCharacter}
                   style={{
-                    width: characterWidth,
-                    height: characterHeight
+                    width: '100%',
+                    height: '100%'
                   }}
                   resizeMode="contain"
                 />
@@ -289,21 +288,17 @@ export default function PreSignupScreen() {
             </Animated.View>
 
             {/* 카드 섹션 - Slide 컴포넌트 사용 */}
-            <Animated.View className="w-full h-[420px] relative overflow-visible" style={cardSectionStyle}>
+            <Animated.View className="w-full h-[500px] relative overflow-visible" style={cardSectionStyle}>
               <Slide
                 autoPlay={false}
-                showIndicator={true}
-                indicatorPosition="bottom"
-                indicatorType="dot"
+                showIndicator={false}
                 className="w-full h-full"
-                indicatorClassName="bg-lightPurple"
-                activeIndicatorClassName="bg-primaryPurple"
-                indicatorContainerClassName="mb-4"
                 animationType="slide"
                 animationDuration={400}
                 loop={true}
                 onSlideChange={(index) => {
-                  // 이전 인덱스와 현재 인덱스의 차이가 1 이상이면 한 장씩만 이동하도록 제한
+                  // 현재 활성화된 슬라이드 인덱스 업데이트
+                  setActiveSlideIndex(index);
                   console.log(`슬라이드 변경: ${index}`);
                   // 이벤트 트래킹
                   trackEventAction(cards[index].eventName);
@@ -313,12 +308,12 @@ export default function PreSignupScreen() {
                   <View key={index} className="w-full h-full flex items-center justify-center px-4">
                     <View
                       style={{
-                        width: cardWidth,
-                        maxWidth: 250,
-                        height: 380, // 카드 높이 증가
+                        width: '70%', // 화면 너비의 70%
+                        maxWidth: 321, // 최대 너비 제한
+                        aspectRatio: 321/600, // 기본 레이아웃 비율 유지
                         borderRadius: 12,
                         overflow: 'visible',
-                        marginBottom: 20, // 하단 여백 추가
+                        marginBottom: 20, // 하단 여백
                       }}
                     >
                       <FlippableCard
@@ -335,10 +330,19 @@ export default function PreSignupScreen() {
               </Slide>
             </Animated.View>
           </View>
+          {/* 슬라이드 인디케이터 (별도로 추가) */}
+          <View className="w-full flex-row justify-center my-2">
+            {cards.map((_, index) => (
+              <View
+                key={index}
+                className={`w-2 h-2 rounded-full mx-1 ${index === activeSlideIndex ? 'bg-primaryPurple' : 'bg-lightPurple'}`}
+              />
+            ))}
+          </View>
         </View>
 
         {/* 하단 버튼 */}
-        <View className="w-full px-4 mb-3 mt-4">
+        <View className="w-full px-4 mb-3">
           <Button
             variant="primary"
             size="md"
