@@ -57,6 +57,7 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
 
   // 3초마다 자동으로 카드 뒤집기
   useEffect(() => {
+    // 카드 자동 뒤집기 간격 설정
     const interval = setInterval(() => {
       flipCard();
     }, 3000);
@@ -125,12 +126,13 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
       <View className="relative w-full h-full overflow-visible">
         {/* 앞면 */}
         <Animated.View
-          className="absolute w-full h-full rounded-xl overflow-hidden"
+          className="absolute w-full h-full overflow-hidden"
           style={[
             {
               backgroundColor: '#ffffff',
               borderWidth: 1,
               borderColor: '#f0f0f0',
+              borderRadius: 18.34,
             },
             frontAnimatedStyle
           ]}
@@ -144,12 +146,13 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
 
         {/* 뒷면 */}
         <Animated.View
-          className="absolute w-full h-full rounded-xl overflow-hidden"
+          className="absolute w-full h-full overflow-hidden"
           style={[
             {
               backgroundColor: '#ffffff',
               borderWidth: 1,
               borderColor: '#f0f0f0',
+              borderRadius: 18.34,
             },
             backAnimatedStyle
           ]}
@@ -290,7 +293,8 @@ export default function PreSignupScreen() {
             {/* 카드 섹션 - Slide 컴포넌트 사용 */}
             <Animated.View className="w-full h-[500px] relative overflow-visible" style={cardSectionStyle}>
               <Slide
-                autoPlay={false}
+                autoPlay={true}
+                autoPlayInterval={6000}
                 showIndicator={false}
                 className="w-full h-full"
                 animationType="slide"
@@ -298,20 +302,20 @@ export default function PreSignupScreen() {
                 loop={true}
                 onSlideChange={(index) => {
                   // 현재 활성화된 슬라이드 인덱스 업데이트
-                  setActiveSlideIndex(index);
-                  console.log(`슬라이드 변경: ${index}`);
+                  const safeIndex = index % cards.length; // 안전하게 인덱스 처리
+                  setActiveSlideIndex(safeIndex);
+                  console.log(`슬라이드 변경: ${safeIndex}`);
                   // 이벤트 트래킹
-                  trackEventAction(cards[index].eventName);
+                  trackEventAction(cards[safeIndex].eventName);
                 }}
               >
                 {cards.map((card, index) => (
                   <View key={index} className="w-full h-full flex items-center justify-center px-4">
                     <View
                       style={{
-                        width: '70%', // 화면 너비의 70%
-                        maxWidth: 321, // 최대 너비 제한
-                        aspectRatio: 321/600, // 기본 레이아웃 비율 유지
-                        borderRadius: 12,
+                        width: 200, // 고정 너비 200px
+                        height: 200 * (1.545), // 비율 줄임
+                        borderRadius: 18.34,
                         overflow: 'visible',
                         marginBottom: 20, // 하단 여백
                       }}
