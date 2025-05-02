@@ -187,7 +187,7 @@ export default function PreSignupScreen() {
   const cardWidth = Math.min(screenWidth * 0.7, 300); // 카드 너비를 화면 너비의 70%로 제한하고 최대 300px로 설정
 
   // 캐릭터 이미지 크기 계산 (화면 너비의 100%)
-  const characterSize = screenWidth * 1;
+  const characterSize = Math.min(screenWidth * 1, 400);
   // 이미지 비율 유지 (원본 이미지 비율에 맞게 조정)
   const characterWidth = characterSize;
   const characterHeight = characterSize * 1.125; // 비율 유지 (400:450 = 8:9 = 1:1.125)
