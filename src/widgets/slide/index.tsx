@@ -24,6 +24,7 @@ interface SlideProps {
   indicatorPosition?: 'top' | 'bottom';
   indicatorType?: 'dot' | 'line' | 'number';
   onSlideChange?: (index: number) => void;
+  onScrollStateChange?: (isScrolling: boolean) => void; // 스크롤 상태 변경 콜백 추가
   animationType?: 'slide' | 'fade' | 'slide-fade';
   animationDuration?: number;
   loop?: boolean; // 무한 루프 활성화 여부
@@ -41,6 +42,7 @@ export function Slide({
   indicatorPosition = 'bottom',
   indicatorType = 'dot',
   onSlideChange,
+  onScrollStateChange,
   animationType = 'slide-fade',
   animationDuration = 300,
   loop = false, // 기본값은 false
@@ -48,6 +50,7 @@ export function Slide({
   const [activeIndex, setActiveIndex] = useState(0);
   const [previousIndex, setPreviousIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false); // 스크롤 중인지 여부를 추적
   const scrollViewRef = useRef<ScrollView>(null);
   const totalSlides = React.Children.count(children);
 
@@ -71,8 +74,31 @@ export function Slide({
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const fadeAnimation = useRef(new Animated.Value(1)).current;
 
+  // 스크롤 타이머 ref
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (containerWidth === 0) return;
+
+    // 스크롤 시작 시 상태 업데이트
+    if (!isScrolling) {
+      setIsScrolling(true);
+      // 스크롤 상태 변경 콜백 호출
+      onScrollStateChange?.(true);
+    }
+
+    // 이전 타이머가 있으면 취소
+    if (scrollTimerRef.current) {
+      clearTimeout(scrollTimerRef.current);
+    }
+
+    // 스크롤이 끝난 후 일정 시간이 지나면 스크롤 상태 초기화
+    scrollTimerRef.current = setTimeout(() => {
+      setIsScrolling(false);
+      // 스크롤 상태 변경 콜백 호출
+      onScrollStateChange?.(false);
+      scrollTimerRef.current = null;
+    }, 500); // 스크롤이 끝난 후 0.5초 후에 상태 초기화
 
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     let newIndex = Math.round(contentOffsetX / containerWidth);
@@ -258,6 +284,17 @@ export function Slide({
           showsHorizontalScrollIndicator={false}
           onScroll={handleScroll}
           scrollEventThrottle={16}
+          onScrollBeginDrag={() => {
+            setIsScrolling(true);
+            onScrollStateChange?.(true);
+          }}
+          onScrollEndDrag={() => {
+            // 스크롤이 끝난 후 일정 시간이 지나면 스크롤 상태 초기화
+            setTimeout(() => {
+              setIsScrolling(false);
+              onScrollStateChange?.(false);
+            }, 300);
+          }}
           style={{ width: containerWidth }}
           contentContainerStyle={{ width: containerWidth * totalSlides }}
         >

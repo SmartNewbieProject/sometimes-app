@@ -33,17 +33,23 @@ interface FlippableCardProps {
   initialImage: any; // 이미지 리소스
   switchImage: any; // 이미지 리소스
   onPress?: () => void;
+  disableFlip?: boolean; // 카드 뒤집기 비활성화 여부
 }
 
 // 카드 컴포넌트
-const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage, onPress }) => {
+const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage, onPress, disableFlip = false }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  // 자동 뒤집기 타이머 ref
+  const flipTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // 애니메이션 값
   const rotation = useSharedValue(0);
 
   // 카드 뒤집기 애니메이션
   const flipCard = () => {
+    // 뒤집기가 비활성화되어 있으면 무시
+    if (disableFlip) return;
+
     // 애니메이션 실행
     rotation.value = withSpring(isFlipped ? 0 : 180, {
       damping: 15,
@@ -55,16 +61,42 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
     onPress && onPress();
   };
 
-  // 3초마다 자동으로 카드 뒤집기
-  useEffect(() => {
-    // 카드 자동 뒤집기 간격 설정
-    const interval = setInterval(() => {
+  // 자동 뒤집기 타이머 시작
+  const startAutoFlipTimer = () => {
+    // 이전 타이머가 있으면 취소
+    if (flipTimerRef.current) {
+      clearInterval(flipTimerRef.current);
+    }
+
+    // 새 타이머 설정
+    flipTimerRef.current = setInterval(() => {
       flipCard();
     }, 3000);
+  };
 
-    // 컴포넌트가 언마운트될 때 인터벌 정리
-    return () => clearInterval(interval);
-  }, [isFlipped]);
+  // 자동 뒤집기 타이머 중지
+  const stopAutoFlipTimer = () => {
+    if (flipTimerRef.current) {
+      clearInterval(flipTimerRef.current);
+      flipTimerRef.current = null;
+    }
+  };
+
+  // disableFlip 속성이 변경될 때 타이머 관리
+  useEffect(() => {
+    if (disableFlip) {
+      // 뒤집기가 비활성화되면 타이머 중지
+      stopAutoFlipTimer();
+    } else {
+      // 뒤집기가 활성화되면 타이머 시작
+      startAutoFlipTimer();
+    }
+
+    return () => {
+      // 컴포넌트가 언마운트될 때 타이머 정리
+      stopAutoFlipTimer();
+    };
+  }, [disableFlip, isFlipped]);
 
   // 앞면 애니메이션 스타일
   const frontAnimatedStyle = useAnimatedStyle(() => {
@@ -117,6 +149,7 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={flipCard}
+      disabled={disableFlip} // 뒤집기가 비활성화되어 있으면 터치 이벤트 비활성화
       className="w-full h-full"
       style={{
         width: '100%',
@@ -181,6 +214,9 @@ export default function PreSignupScreen() {
 
   // 현재 활성화된 슬라이드 인덱스
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+
+  // 슬라이드 스크롤 중인지 여부
+  const [isSlideScrolling, setIsSlideScrolling] = useState(false);
 
   // 카드 데이터 (3장만 사용)
   const cards = [
@@ -335,6 +371,11 @@ export default function PreSignupScreen() {
                     loop={true}
                     indicatorPosition="bottom"
                     indicatorContainerClassName="mb-4"
+                    onScrollStateChange={(isScrolling) => {
+                      // 슬라이드 스크롤 상태 업데이트
+                      setIsSlideScrolling(isScrolling);
+                      console.log(`슬라이드 스크롤 상태: ${isScrolling ? '스크롤 중' : '스크롤 종료'}`);
+                    }}
                     onSlideChange={(index) => {
                       // 현재 활성화된 슬라이드 인덱스 업데이트
                       const safeIndex = index % cards.length; // 안전하게 인덱스 처리
@@ -358,6 +399,7 @@ export default function PreSignupScreen() {
                           <FlippableCard
                             initialImage={card.initialImage}
                             switchImage={card.switchImage}
+                            disableFlip={isSlideScrolling} // 슬라이드 스크롤 중에는 카드 뒤집기 비활성화
                             onPress={() => {
                               // 카드를 탭하면 뒤집기만 함 (위치 이동 없음)
                               trackEventAction(cards[index].eventName);
