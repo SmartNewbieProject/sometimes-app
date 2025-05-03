@@ -33,6 +33,21 @@ const getAgeBy6Digit = (digit: string) => {
   return now.diff(day, 'year');
 };
 
+const formatRelativeTime = (stringDate: string) => {
+  const target = create(stringDate);
+  const now = create();
+  const minutesDiff = now.diff(target, 'minutes');
+  if (now.diff(target, 'second') < 60) return '방금 전';
+  if (minutesDiff < 60) return `${minutesDiff}분 전`;
+
+  const hoursDiff = now.diff(target, 'hours');
+  if (hoursDiff < 24) return `${hoursDiff}시간 전`;
+  const daysDiff = now.diff(target, 'days');
+  if (daysDiff < 8) return `${daysDiff}일 전`;
+
+  return target.format('MM/DD HH:mm');
+};
+
 const create = (config?: ConfigType) =>
   dayjs(config);
 
@@ -40,6 +55,7 @@ const dayUtils = {
   getDayBy6Digit,
   getAgeBy6Digit,
   create,
+  formatRelativeTime,
 };
 
 export default dayUtils;
