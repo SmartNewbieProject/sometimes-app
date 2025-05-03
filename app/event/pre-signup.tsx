@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView, Platform, TouchableOpacity, Image } from 'react-native';
+import { View, KeyboardAvoidingView, Platform, TouchableOpacity, Image, ScrollView } from 'react-native';
 import Signup from '@features/signup';
 import Event from '@features/event';
 import { platform } from '@shared/libs/platform';
@@ -230,160 +230,201 @@ export default function PreSignupScreen() {
     clear();
   }, []);
 
+  // 스크롤 제한을 위한 ref와 상태
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const footerRef = useRef<View>(null);
+
+  // 스크롤 이벤트 핸들러 - 푸터가 보이면 스크롤 비활성화
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const containerHeight = event.nativeEvent.layoutMeasurement.height;
+
+    // 푸터가 화면에 완전히 보이는지 확인
+    const isFooterVisible = offsetY + containerHeight >= contentHeight - 20;
+
+    if (isFooterVisible && scrollEnabled) {
+      setScrollEnabled(false);
+    } else if (!isFooterVisible && !scrollEnabled) {
+      setScrollEnabled(true);
+    }
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1, height: "100%" }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       >
-      <PalePurpleGradient />
-      <View className="flex-1">
-        <View className={cn(
-          "flex-1 flex-col px-4 overflow-visible",
-          platform({
-            ios: () => "pt-[50px]",
-            android: () => "pt-[50px]",
-            web: () => "pt-[40px]",
-          })
-        )}>
-          {/* 상단 섹션 (위쪽에 배치) */}
-          <View className="flex-row justify-between items-start mb-4">
-            <View className="flex-1 items-center ">
-              {/* 상단 제목 */}
-              <View className="mb-2">
-                <Text
-                  weight="light"
-                  size="sm"
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] whitespace-nowrap"
-                >
-                  내 이상형을 찾는 가장 빠른 방법
-                </Text>
+        <PalePurpleGradient />
+        <ScrollView
+          ref={scrollViewRef}
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1 }}
+          scrollEnabled={scrollEnabled}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
+          <View
+            className={cn(
+              "flex-col px-4 min-h-full",
+              platform({
+                ios: () => "pt-[50px]",
+                android: () => "pt-[50px]",
+                web: () => "pt-[40px]",
+              })
+            )}
+            style={{ justifyContent: 'space-between' }}
+          >
+            {/* 상단 콘텐츠 영역 */}
+            <View className="flex-1">
+              {/* 상단 섹션 (위쪽에 배치) */}
+              <View className="flex-row justify-between items-start mb-4">
+                <View className="flex-1 items-center ">
+                  {/* 상단 제목 */}
+                  <View className="mb-2">
+                    <Text
+                      weight="light"
+                      size="sm"
+                      className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] whitespace-nowrap"
+                    >
+                      내 이상형을 찾는 가장 빠른 방법
+                    </Text>
+                  </View>
+
+                  {/* 로고 */}
+                  <View className="mb-2">
+                    <IconWrapper width={200} className="text-primaryPurple">
+                      <SmallTitle />
+                    </IconWrapper>
+                  </View>
+                </View>
               </View>
 
-              {/* 로고 */}
-              <View className="mb-2">
-                <IconWrapper width={200} className="text-primaryPurple">
-                  <SmallTitle />
-                </IconWrapper>
+              {/* 메인 컨텐츠 (아래쪽에 배치) */}
+              <View className="justify-start items-center overflow-visible">
+                {/* 캐릭터 이미지 */}
+                <Animated.View className="w-full flex items-center justify-center" style={characterStyle}>
+                  <View style={{
+                    width: '100%',
+                    maxWidth: 400, // Maximum width constraint
+                    aspectRatio: 1/1.125, // Maintain aspect ratio
+                    overflow: 'hidden'
+                  }}>
+                    <Image
+                      source={preSignupCharacter}
+                      style={{
+                        width: '100%',
+                        height: '100%'
+                      }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </Animated.View>
+
+                {/* 카드 섹션 - Slide 컴포넌트 사용 */}
+                <Animated.View className="w-full h-[400px] relative overflow-visible" style={cardSectionStyle}>
+                  <Slide
+                    autoPlay={true}
+                    autoPlayInterval={6000}
+                    showIndicator={true}
+                    className="w-full h-full"
+                    animationType="slide"
+                    animationDuration={400}
+                    loop={true}
+                    indicatorPosition="bottom"
+                    indicatorContainerClassName="mb-4"
+                    onSlideChange={(index) => {
+                      // 현재 활성화된 슬라이드 인덱스 업데이트
+                      const safeIndex = index % cards.length; // 안전하게 인덱스 처리
+                      setActiveSlideIndex(safeIndex);
+                      console.log(`슬라이드 변경: ${safeIndex}`);
+                      // 이벤트 트래킹
+                      trackEventAction(cards[safeIndex].eventName);
+                    }}
+                  >
+                    {cards.map((card, index) => (
+                      <View key={index} className="w-full h-full flex items-center justify-center px-4">
+                        <View
+                          style={{
+                            width: 200, // 고정 너비 200px
+                            height: 200 * (1.545), // 비율 줄임
+                            borderRadius: 18.34,
+                            overflow: 'visible',
+                            marginBottom: 20, // 하단 여백
+                          }}
+                        >
+                          <FlippableCard
+                            initialImage={card.initialImage}
+                            switchImage={card.switchImage}
+                            onPress={() => {
+                              // 카드를 탭하면 뒤집기만 함 (위치 이동 없음)
+                              trackEventAction(cards[index].eventName);
+                            }}
+                          />
+                        </View>
+                      </View>
+                    ))}
+                  </Slide>
+                </Animated.View>
+              </View>
+            </View>
+
+            {/* 하단 섹션 - 버튼 및 푸터 */}
+            <View className="w-full mt-8">
+              {/* 하단 버튼 */}
+              <View className="w-full px-4 py-3">
+                <Button
+                  variant="primary"
+                  size="md"
+                  className="w-full py-3 rounded-full"
+                  onPress={() => {
+                    trackEventAction('signup_button_click');
+                    router.navigate('/auth/signup/terms');
+                  }}
+                >
+                  빠르게 사전 가입하기
+                </Button>
+                <Button
+                  variant="outline"
+                  size="md"
+                  className="w-full py-3 rounded-full mt-3 bg-[#E2D9FF] border-[#E2D9FF]"
+                  onPress={() => {
+                    trackEventAction('login_button_click');
+                    router.navigate('/auth/login');
+                  }}
+                >
+                  <Text
+                    weight="medium"
+                    size="md"
+                    className="text-center text-white"
+                  >
+                    로그인하기
+                  </Text>
+                </Button>
+              </View>
+
+              {/* 회사 정보 푸터 */}
+              <View
+                ref={footerRef}
+                className="w-full px-4 py-4 mt-4"
+                onLayout={() => {
+                  // 푸터가 렌더링되면 스크롤 비활성화
+                  setTimeout(() => {
+                    setScrollEnabled(false);
+                  }, 100);
+                }}
+              >
+                <Text className="text-[#888] text-[10px] text-center leading-4">
+                  상호명: 스마트 뉴비 | 사업장 소재지: 대전광역시 유성구 동서대로 125, S9동 202호 | 대표: 전준영 | 사업자 등록번호: 498-05-02914 | 통신판매업신고: 제 2025-대전유성-0530호 | 문의전화: 010-8465-2476 | 이메일: notify@smartnewb.com | 사업자정보
+                </Text>
               </View>
             </View>
           </View>
-
-          {/* 메인 컨텐츠 (아래쪽에 배치) */}
-          <View className="flex-1 justify-start items-center overflow-visible relative">
-            {/* 캐릭터 이미지 */}
-            <Animated.View className="w-full flex items-center justify-center" style={characterStyle}>
-              <View style={{
-                width: '100%',
-                maxWidth: 400, // Maximum width constraint
-                aspectRatio: 1/1.125, // Maintain aspect ratio
-                overflow: 'hidden'
-              }}>
-                <Image
-                  source={preSignupCharacter}
-                  style={{
-                    width: '100%',
-                    height: '100%'
-                  }}
-                  resizeMode="contain"
-                />
-              </View>
-            </Animated.View>
-
-            {/* 카드 섹션 - Slide 컴포넌트 사용 */}
-            <Animated.View className="w-full h-[500px] relative overflow-visible" style={cardSectionStyle}>
-              <Slide
-                autoPlay={true}
-                autoPlayInterval={6000}
-                showIndicator={false}
-                className="w-full h-full"
-                animationType="slide"
-                animationDuration={400}
-                loop={true}
-                onSlideChange={(index) => {
-                  // 현재 활성화된 슬라이드 인덱스 업데이트
-                  const safeIndex = index % cards.length; // 안전하게 인덱스 처리
-                  setActiveSlideIndex(safeIndex);
-                  console.log(`슬라이드 변경: ${safeIndex}`);
-                  // 이벤트 트래킹
-                  trackEventAction(cards[safeIndex].eventName);
-                }}
-              >
-                {cards.map((card, index) => (
-                  <View key={index} className="w-full h-full flex items-center justify-center px-4">
-                    <View
-                      style={{
-                        width: 200, // 고정 너비 200px
-                        height: 200 * (1.545), // 비율 줄임
-                        borderRadius: 18.34,
-                        overflow: 'visible',
-                        marginBottom: 20, // 하단 여백
-                      }}
-                    >
-                      <FlippableCard
-                        initialImage={card.initialImage}
-                        switchImage={card.switchImage}
-                        onPress={() => {
-                          // 카드를 탭하면 뒤집기만 함 (위치 이동 없음)
-                          trackEventAction(cards[index].eventName);
-                        }}
-                      />
-                    </View>
-                  </View>
-                ))}
-              </Slide>
-            </Animated.View>
-          </View>
-          {/* 슬라이드 인디케이터 (별도로 추가) */}
-          <View className="w-full flex-row justify-center my-2">
-            {cards.map((_, index) => (
-              <View
-                key={index}
-                className={`w-2 h-2 rounded-full mx-1 ${index === activeSlideIndex ? 'bg-primaryPurple' : 'bg-lightPurple'}`}
-              />
-            ))}
-          </View>
-        </View>
-
-        {/* 하단 버튼 */}
-        <View className="w-full px-4 mb-3">
-          <Button
-            variant="primary"
-            size="md"
-            className="w-full py-3 rounded-full"
-            onPress={() => {
-              trackEventAction('signup_button_click');
-              router.navigate('/auth/signup/terms');
-            }}
-          >
-            빠르게 사전 가입하기
-          </Button>
-          <Button
-            variant="outline"
-            size="md"
-            className="w-full py-3 rounded-full mt-3 bg-[#E2D9FF] border-[#E2D9FF]"
-            onPress={() => {
-              trackEventAction('login_button_click');
-              router.navigate('/auth/login');
-            }}
-          >
-            <Text
-              weight="medium"
-              size="md"
-              className="text-center text-white"
-            >
-              로그인하기
-            </Text>
-          </Button>
-        </View>
-        {/* 회사 정보 푸터 */}
-        <View className="w-full px-4 py-4 mt-6 sticky bottom-0 left-0">
-          <Text className="text-[#888] text-[10px] text-center leading-4">
-            상호명: 스마트 뉴비 | 사업장 소재지: 대전광역시 유성구 동서대로 125, S9동 202호 | 대표: 전준영 | 사업자 등록번호: 498-05-02914 | 통신판매업신고: 제 2025-대전유성-0530호 | 문의전화: 010-8465-2476 | 이메일: notify@smartnewb.com | 사업자정보
-          </Text>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </GestureHandlerRootView>
   );
 }
