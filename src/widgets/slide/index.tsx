@@ -260,37 +260,6 @@ export function Slide({
           scrollEventThrottle={16}
           style={{ width: containerWidth }}
           contentContainerStyle={{ width: containerWidth * totalSlides }}
-          onMomentumScrollEnd={(event) => {
-            // 무한 루프 처리를 위한 추가 로직
-            if (loop && totalSlides > 1) {
-              const contentOffsetX = event.nativeEvent.contentOffset.x;
-              const currentIndex = Math.round(contentOffsetX / containerWidth);
-
-
-
-              // 마지막 슬라이드에서 첫 번째 슬라이드로 이동
-              if (currentIndex >= totalSlides - 1) {
-                // 마지막 슬라이드에서 오른쪽으로 스와이프하면 첫 번째 슬라이드로
-                setTimeout(() => {
-                  scrollViewRef.current?.scrollTo({ x: 0, animated: false });
-                  setActiveIndex(0);
-                  onSlideChange?.(0);
-                }, 300);
-              }
-              // 첫 번째 슬라이드에서 마지막 슬라이드로 이동
-              else if (currentIndex <= 0) {
-                // 첫 번째 슬라이드에서 왼쪽으로 스와이프하면 마지막 슬라이드로
-                setTimeout(() => {
-                  scrollViewRef.current?.scrollTo({
-                    x: containerWidth * (totalSlides - 1),
-                    animated: false
-                  });
-                  setActiveIndex(totalSlides - 1);
-                  onSlideChange?.(totalSlides - 1);
-                }, 300);
-              }
-            }
-          }}
         >
           {React.Children.map(children, (child, index) => {
             const wrappedChild = (
