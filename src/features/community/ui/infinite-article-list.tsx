@@ -6,6 +6,7 @@ import { Text } from '@/src/shared/ui';
 import { useCategory, useInfiniteArticles } from '../hooks';
 import { InfiniteScrollView } from '../../../shared/infinite-scroll';
 import { router } from 'expo-router';
+import { patchArticleLike } from '../apis/articles';
 
 interface InfiniteArticleListProps {
   initialSize?: number;
@@ -49,7 +50,7 @@ export function InfiniteArticleList({ initialSize = 10 }: InfiniteArticleListPro
     <Article
       data={item}
       onPress={() => { router.push(`/community/${item.id}`) }}
-      onLike={() => { }}
+      onLike={() => { patchArticleLike(item.id) }}
       onComment={() => { }}
     />
   );

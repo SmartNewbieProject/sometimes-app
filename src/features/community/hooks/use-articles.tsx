@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useInfiniteData, useInfiniteScroll } from '../../../shared/hooks';
-import { getArticles } from '../apis/articles';
+import { getAllArticles } from '../apis/articles';
 import { Article } from '../types';
 import { Pagination, PaginatedResponse } from '../../../types/server';
 import { useQuery } from '@tanstack/react-query';
@@ -34,7 +34,7 @@ export const useArticles = ({
         };
       }
 
-      return getArticles({
+      return getAllArticles({
         code: categoryCode,
         ...pagination,
       });

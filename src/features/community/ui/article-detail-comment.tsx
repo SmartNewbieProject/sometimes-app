@@ -31,7 +31,7 @@ export const ArticleDetailComment = ({comment}: {comment: Comment}) => {
         setRelativeTime(formatRelativeTime(comment.createdAt));
     }, [comment.createdAt]);
 
-    const isReply = comment.repliesid;
+    const isReply = comment.replies.length > 0;
 
     return (
         <View key={comment.id} className="flex-row">

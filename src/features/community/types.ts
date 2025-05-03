@@ -30,9 +30,16 @@ export type Article = {
 
 export interface Comment {
   id: string;
+  articleId: string;
+  authorId: string;
   content: string;
   author: Author;
   updatedAt: string;
+  createdAt: string;
+  deletedAt: string;
+  isLiked: boolean;
+  likeCount: number;
+  replies: Comment[];
 };
 
 export interface Category {
