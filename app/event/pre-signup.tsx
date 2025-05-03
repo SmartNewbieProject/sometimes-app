@@ -230,25 +230,20 @@ export default function PreSignupScreen() {
     clear();
   }, []);
 
-  // 스크롤 제한을 위한 ref와 상태
+  // 스크롤 참조를 위한 ref
   const scrollViewRef = useRef<ScrollView>(null);
-  const [scrollEnabled, setScrollEnabled] = useState(true);
   const footerRef = useRef<View>(null);
 
-  // 스크롤 이벤트 핸들러 - 푸터가 보이면 스크롤 비활성화
+  // 스크롤 이벤트 핸들러 - 스크롤 위치 추적만 수행
   const handleScroll = (event: any) => {
+    // 스크롤 위치 추적 (필요시 사용)
     const offsetY = event.nativeEvent.contentOffset.y;
     const contentHeight = event.nativeEvent.contentSize.height;
     const containerHeight = event.nativeEvent.layoutMeasurement.height;
 
-    // 푸터가 화면에 완전히 보이는지 확인
-    const isFooterVisible = offsetY + containerHeight >= contentHeight - 20;
-
-    if (isFooterVisible && scrollEnabled) {
-      setScrollEnabled(false);
-    } else if (!isFooterVisible && !scrollEnabled) {
-      setScrollEnabled(true);
-    }
+    // 스크롤은 항상 활성화 상태로 유지
+    // 콘솔에 스크롤 정보 기록 (디버깅용)
+    console.log(`Scroll: offsetY=${offsetY}, contentHeight=${contentHeight}, containerHeight=${containerHeight}`);
   };
 
   return (
@@ -262,10 +257,14 @@ export default function PreSignupScreen() {
         <ScrollView
           ref={scrollViewRef}
           className="flex-1"
-          contentContainerStyle={{ flexGrow: 1 }}
-          scrollEnabled={scrollEnabled}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: 40 // 하단에 충분한 여백 추가
+          }}
+          scrollEnabled={true} // 항상 스크롤 가능하도록 설정
           onScroll={handleScroll}
           scrollEventThrottle={16}
+          showsVerticalScrollIndicator={true} // 스크롤바 표시
         >
           <View
             className={cn(
@@ -409,15 +408,9 @@ export default function PreSignupScreen() {
               {/* 회사 정보 푸터 */}
               <View
                 ref={footerRef}
-                className="w-full px-4 py-4 mt-4"
-                onLayout={() => {
-                  // 푸터가 렌더링되면 스크롤 비활성화
-                  setTimeout(() => {
-                    setScrollEnabled(false);
-                  }, 100);
-                }}
+                className="w-full px-4 py-6 mt-4 mb-4" // 여백 추가
               >
-                <Text className="text-[#888] text-[10px] text-center leading-4">
+                <Text className="text-[#888] text-[10px] text-center leading-5">
                   상호명: 스마트 뉴비 | 사업장 소재지: 대전광역시 유성구 동서대로 125, S9동 202호 | 대표: 전준영 | 사업자 등록번호: 498-05-02914 | 통신판매업신고: 제 2025-대전유성-0530호 | 문의전화: 010-8465-2476 | 이메일: notify@smartnewb.com | 사업자정보
                 </Text>
               </View>
