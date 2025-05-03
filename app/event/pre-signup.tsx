@@ -335,7 +335,7 @@ export default function PreSignupScreen() {
                     animationDuration={400}
                     loop={true}
                     indicatorPosition="bottom"
-                    indicatorContainerClassName="mb-4"
+                    indicatorContainerClassName="mb-16"
                     onSlideChange={(index) => {
                       // 현재 활성화된 슬라이드 인덱스 업데이트
                       const safeIndex = index % cards.length; // 안전하게 인덱스 처리
