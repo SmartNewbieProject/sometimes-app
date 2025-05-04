@@ -2,7 +2,9 @@ import { axiosClient } from "@/src/shared/libs";
 import { Article, Category } from "../types";
 import { PaginatedResponse } from "@/src/types/server";
 
-
+type Id = {
+  id: string;
+}
 
 type PostArticleBody = {
   content: string;
@@ -60,6 +62,9 @@ export const getArticles = async ({ code, ...params }: GetArticleParams): Promis
   return axiosClient.get(`/articles/${code}`, { params });
 };
 
+export const doLike = async (data: Id): Promise<void> =>
+  axiosClient.patch(`/articles/${data.id}/like`);
+
 type Service = {
   getAllArticles: (params: getArticleParams) => Promise<Article[]>;
   postArticles: (body: PostArticleBody) => Promise<Article>;
@@ -68,6 +73,7 @@ type Service = {
   deleteArticle: (articleId: string) => Promise<Article>;
   patchArticleLike: (articleId: string) => Promise<Article>;
   getCategoryList: () => Promise<Category[]>;
+  doLike: (params: Id) => Promise<void>;
 }
 
 const apis: Service = {
@@ -78,9 +84,7 @@ const apis: Service = {
   deleteArticle,
   patchArticleLike,
   getCategoryList,
+  doLike,
 };
 
 export default apis;
-
-
-
