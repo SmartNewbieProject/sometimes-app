@@ -1,65 +1,81 @@
-import { TouchableOpacity, View, TextInput, Pressable, ScrollView } from "react-native";
-import { Header, PalePurpleGradient, Text, Check } from "@/src/shared/ui";
-import { router } from "expo-router";
-import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
-import { useState } from "react";
-import { CommunityGuideline } from "@/src/features/community/ui";
+import { View } from "react-native";
+import { PalePurpleGradient, Text, Check } from "@/src/shared/ui";
+import { tryCatch } from "@/src/shared/libs";
+import Community from "@/src/features/community";
+import { router, useLocalSearchParams } from 'expo-router';
+import { ArticleRequestType } from "@/src/features/community/types";
+import { useModal } from "@/src/shared/hooks/use-modal";
+
+const { ArticleWriteFormProvider, useArticleWriteForm, ArtcileWriter, articles } = Community;
 
 export default function CommunityWriteScreen() {
-  const [checked, setChecked] = useState(false);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const { showModal } = useModal();
+  const { category } = useLocalSearchParams<{ category: string }>();
+  const form = useArticleWriteForm(category as ArticleRequestType);
+  const anonymous = form.watch('anonymous');
+  const formTest = form.watch();
+
+  const onToggleAnonymous = () => {
+    form.setValue('anonymous', !anonymous);
+  };
+
+  const onSubmitForm = form.handleSubmit(async (data) => {
+    if (data.title.length < 3 || data.content.length < 3) {
+      showModal({
+        title: '너무 짧아요',
+        children: (
+          <Text textColor="black">
+            제목과 본문은 3자 이상으로 작성해주세요.
+          </Text>
+        ),
+        primaryButton: {
+          text: '네, 확인했어요',
+          onClick: () => { },
+        },
+      });
+      return;
+    }
+
+    await tryCatch(async () => {
+      await articles.postArticles(data);
+      showModal({
+        title: '글 작성 완료',
+        children: (
+          <Text textColor="black">
+            글 작성이 완료되었습니다.
+          </Text>
+        ),
+        primaryButton: {
+          text: '확인',
+          onClick: () => {
+            router.push('/community?refresh=true');
+          },
+        },
+      });
+    });
+  });
+
+  console.table(formTest);
 
   return (
-    <View className="flex-1">
-      <PalePurpleGradient />
-      <Header.Container>
-        <Header.LeftContent>
-          <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
-            <ChevronLeftIcon width={24} height={24} />
-          </Pressable>
-        </Header.LeftContent>
-        <Header.RightContent>
-          <TouchableOpacity onPress={() => router.push('/community')}>
-            <Text textColor={'black'} weight={'bold'}>
-              완료
-            </Text>
-          </TouchableOpacity>
-        </Header.RightContent>
-      </Header.Container>
-      <ScrollView className="flex-1 ">
-        <View className="h-[1px] bg-[#E7E9EC]" />
-        <View className="px-[16px] pt-[26px]">
-          <View className="items-center justify-center">
-            <TextInput
-              placeholder="제목을 입력하세요."
-              className="w-full h-[28px] mb-[10px] font-bold placeholder:text-[#D9D9D9] text-[20px] border-b border-[#E7E9EC]"
-              value={title}
-              onChangeText={setTitle}
-            />
-            <TextInput
-              placeholder="내용을 입력하세요."
-              multiline
-              className="w-full h-[232px] text-[12px] placeholder:text-[#D9D9D9]"
-              value={content}
-              onChangeText={setContent}
-            />
-          </View>
-        </View>
-        <CommunityGuideline />
+    <ArticleWriteFormProvider form={form}>
+      <View className="flex-1">
+        <PalePurpleGradient />
+        <ArtcileWriter.Header onConfirm={onSubmitForm} />
+        <ArtcileWriter.Form />
 
-      </ScrollView>
-      <View className="bg-white border-t border-lightPurple ">
-        <View className="flex-row justify-around py-3">
-          <View />
-          <View />
-          <View />
-          <View className="flex-row items-center gap-1 mb-1">
-            <Check.Box className="" checked={checked} size={25} onChange={(checked) => setChecked(checked)} />
-            <Text className="text-[15px] text-[#000000] font-medium">익명</Text>
+        <View className="bg-white border-t border-lightPurple ">
+          <View className="flex-row justify-around py-3">
+            <View />
+            <View />
+            <View />
+            <View className="flex-row items-center gap-1 mb-1">
+              <Check.Box checked={anonymous} size={25} onChange={onToggleAnonymous} />
+              <Text className="text-[15px] text-[#000000] font-medium">익명</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </ArticleWriteFormProvider>
   );
 }
