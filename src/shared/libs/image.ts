@@ -20,6 +20,7 @@ export enum ImageResources {
   SANDTIMER = `${S3_BASE_URL}/sand-clock.png`,
   HEART = `${S3_BASE_URL}/heart.png`,
   INSTAGRAM = `${S3_BASE_URL}/instagram.png`,
+  HEART_ON = `${S3_BASE_URL}/heart-on.svg`,
 }
 
 const imageUtils = {
