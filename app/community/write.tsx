@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { PalePurpleGradient, Text, Check } from "@/src/shared/ui";
+import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { tryCatch } from "@/src/shared/libs";
 import Community from "@/src/features/community";
 import { router, useLocalSearchParams } from 'expo-router';
@@ -11,13 +11,7 @@ const { ArticleWriteFormProvider, useArticleWriteForm, ArtcileWriter, articles }
 export default function CommunityWriteScreen() {
   const { showModal } = useModal();
   const { category } = useLocalSearchParams<{ category: string }>();
-  const form = useArticleWriteForm(category as ArticleRequestType);
-  const anonymous = form.watch('anonymous');
-  const formTest = form.watch();
-
-  const onToggleAnonymous = () => {
-    form.setValue('anonymous', !anonymous);
-  };
+  const form = useArticleWriteForm({ type: category as ArticleRequestType });
 
   const onSubmitForm = form.handleSubmit(async (data) => {
     if (data.title.length < 3 || data.content.length < 3) {
@@ -55,26 +49,13 @@ export default function CommunityWriteScreen() {
     });
   });
 
-  console.table(formTest);
-
   return (
     <ArticleWriteFormProvider form={form}>
       <View className="flex-1">
         <PalePurpleGradient />
         <ArtcileWriter.Header onConfirm={onSubmitForm} />
         <ArtcileWriter.Form />
-
-        <View className="bg-white border-t border-lightPurple ">
-          <View className="flex-row justify-around py-3">
-            <View />
-            <View />
-            <View />
-            <View className="flex-row items-center gap-1 mb-1">
-              <Check.Box checked={anonymous} size={25} onChange={onToggleAnonymous} />
-              <Text className="text-[15px] text-[#000000] font-medium">익명</Text>
-            </View>
-          </View>
-        </View>
+        <ArtcileWriter.Nav />
       </View>
     </ArticleWriteFormProvider>
   );

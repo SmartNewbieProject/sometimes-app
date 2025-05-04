@@ -1,4 +1,4 @@
-import  {router, useLocalSearchParams}  from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Header, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { TouchableOpacity, View, ScrollView, Pressable } from "react-native";
 import { IconWrapper } from "@/src/shared/ui/icons";
@@ -19,9 +19,9 @@ export default function ArticleDetailScreen() {
             <PalePurpleGradient />
             <Header.Container>
                 <Header.LeftContent>
-                <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
-                    <ChevronLeftIcon width={24} height={24} />
-                </Pressable>
+                    <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
+                        <ChevronLeftIcon width={24} height={24} />
+                    </Pressable>
                     <Header.LeftButton visible={false} />
                 </Header.LeftContent>
                 <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />

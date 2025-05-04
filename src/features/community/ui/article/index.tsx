@@ -10,7 +10,6 @@ import { useBoolean } from '@/src/shared/hooks/use-boolean';
 import { Comment } from '../comment';
 import { useCategory } from '../../hooks';
 import { useAuth } from '@/src/features/auth';
-import { useModal } from '@/src/shared/hooks/use-modal';
 
 interface ArticleItemProps {
   data: ArticleType;
@@ -20,9 +19,8 @@ interface ArticleItemProps {
   onDelete: (id: string) => void;
 }
 
-export function Article({ data, onPress, onLike, refresh, onDelete }: ArticleItemProps) {
+export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   const { my } = useAuth();
-  const { showModal, showErrorModal } = useModal();
   const author = data?.author;
   const comments = data.comments;
   const university = author?.universityDetails;
