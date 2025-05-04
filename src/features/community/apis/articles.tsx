@@ -1,5 +1,5 @@
 import { axiosClient } from "@/src/shared/libs";
-import { Article, Category } from "../types";
+import { Article, ArticleRequestType, Category } from "../types";
 import { PaginatedResponse } from "@/src/types/server";
 
 type Id = {
@@ -7,8 +7,10 @@ type Id = {
 }
 
 type PostArticleBody = {
+  title: string;
   content: string;
   anonymous: boolean;
+  type: ArticleRequestType;
 }
 
 type getArticleParams = {

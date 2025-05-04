@@ -45,6 +45,7 @@ export interface SimpleProfile {
 }
 
 export interface MyDetails {
+  id: string;
   name: string;
   age: number;
   gender: Gender;
