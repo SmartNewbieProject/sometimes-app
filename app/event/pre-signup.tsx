@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView, Platform, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, KeyboardAvoidingView, Platform, TouchableOpacity, ScrollView } from 'react-native';
 import Signup from '@features/signup';
 import Event from '@features/event';
 import { platform } from '@shared/libs/platform';
@@ -6,7 +6,7 @@ import { cn } from '@shared/libs/cn';
 import { IconWrapper } from "@/src/shared/ui/icons";
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { useEffect, useState, useRef } from 'react';
-import { Button, PalePurpleGradient, Text } from '@shared/ui';
+import { Button, PalePurpleGradient, Text, ImageResource } from '@shared/ui';
 import { router } from 'expo-router';
 import Animated, {
   useSharedValue,
@@ -16,15 +16,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Slide } from '@/src/widgets';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ImageResources } from '@/src/shared/libs/image';
 
-// 이미지 경로 직접 지정 (절대 경로)
-const initialCampusCard = require('../../assets/images/initial_campus_card.png');
-const initialMatchingCard = require('../../assets/images/initial_matching_card.png');
-const switchMatchingCard = require('../../assets/images/switch_matching_card.png');
-const switchCampusCard = require('../../assets/images/switch_campus_card.png');
-const initialParticipantCard = require('../../assets/images/initial_participant_card.png');
-const switchParticipantCard = require('../../assets/images/switch_participant_card.png');
-const preSignupCharacter = require('../../assets/images/pre-signup-character.png');
+// S3에서 이미지 리소스 사용
 
 const { useSignupProgress } = Signup;
 const { hooks: { useEventAnalytics } } = Event;
@@ -170,10 +164,19 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
             frontAnimatedStyle
           ]}
         >
-          <Image
-            source={initialImage}
-            style={{ width: '100%', height: '100%' }}
-            resizeMode="cover"
+          <ImageResource
+            resource={initialImage}
+            width={100} // 기본 너비 (style로 덮어씌워짐)
+            height={100} // 기본 높이 (style로 덮어씌워짐)
+            contentFit="cover"
+            loadingTitle="카드 이미지 로딩 중..."
+            style={{
+              width: '100%',
+              height: '100%',
+              maxWidth: '100%',
+              borderRadius: 18.34,
+            }}
+            className="w-full h-full"
           />
         </Animated.View>
 
@@ -190,10 +193,19 @@ const FlippableCard: React.FC<FlippableCardProps> = ({ initialImage, switchImage
             backAnimatedStyle
           ]}
         >
-          <Image
-            source={switchImage}
-            style={{ width: '100%', height: '100%' }}
-            resizeMode="cover"
+          <ImageResource
+            resource={switchImage}
+            width={100} // 기본 너비 (style로 덮어씌워짐)
+            height={100} // 기본 높이 (style로 덮어씌워짐)
+            contentFit="cover"
+            loadingTitle="카드 이미지 로딩 중..."
+            style={{
+              width: '100%',
+              height: '100%',
+              maxWidth: '100%',
+              borderRadius: 18.34,
+            }}
+            className="w-full h-full"
           />
         </Animated.View>
       </View>
@@ -212,17 +224,21 @@ export default function PreSignupScreen() {
   // 캐릭터 이미지 애니메이션을 위한 값
   const characterOpacity = useSharedValue(1);
 
-  // 현재 활성화된 슬라이드 인덱스
+  // 현재 활성화된 슬라이드 인덱스 (디버깅 및 이벤트 트래킹용)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  // 활성 슬라이드 인덱스 변경 시 콘솔에 로그 출력
+  useEffect(() => {
+    console.log(`활성 슬라이드 인덱스 변경: ${activeSlideIndex}`);
+  }, [activeSlideIndex]);
 
   // 슬라이드 스크롤 중인지 여부
   const [isSlideScrolling, setIsSlideScrolling] = useState(false);
 
   // 카드 데이터 (3장만 사용)
   const cards = [
-    { initialImage: initialCampusCard, switchImage: switchCampusCard, eventName: 'campus_card_flip', id: 0 },
-    { initialImage: initialMatchingCard, switchImage: switchMatchingCard, eventName: 'matching_card_flip', id: 1 },
-    { initialImage: initialParticipantCard, switchImage: switchParticipantCard, eventName: 'participant_card_flip', id: 2 }
+    { initialImage: ImageResources.INITIAL_CAMPUS_CARD, switchImage: ImageResources.SWITCH_CAMPUS_CARD, eventName: 'campus_card_flip', id: 0 },
+    { initialImage: ImageResources.INITIAL_MATCHING_CARD, switchImage: ImageResources.SWITCH_MATCHING_CARD, eventName: 'matching_card_flip', id: 1 },
+    { initialImage: ImageResources.INITIAL_PARTICIPANT_CARD, switchImage: ImageResources.SWITCH_PARTICIPANT_CARD, eventName: 'participant_card_flip', id: 2 }
   ];
 
   // 카드 크기는 이제 CSS로 처리 (width: '100%', maxWidth: 250)
@@ -348,13 +364,18 @@ export default function PreSignupScreen() {
                     aspectRatio: 1/1.125, // Maintain aspect ratio
                     overflow: 'hidden'
                   }}>
-                    <Image
-                      source={preSignupCharacter}
+                    <ImageResource
+                      resource={ImageResources.PRE_SIGNUP_CHARACTER}
+                      width={100} // 기본 너비 (style로 덮어씌워짐)
+                      height={100} // 기본 높이 (style로 덮어씌워짐)
+                      contentFit="contain"
+                      loadingTitle="캐릭터 이미지 로딩 중..."
                       style={{
                         width: '100%',
-                        height: '100%'
+                        height: '100%',
+                        maxWidth: '100%',
                       }}
-                      resizeMode="contain"
+                      className="w-full h-full"
                     />
                   </View>
                 </Animated.View>
@@ -379,7 +400,7 @@ export default function PreSignupScreen() {
                     onSlideChange={(index) => {
                       // 현재 활성화된 슬라이드 인덱스 업데이트
                       const safeIndex = index % cards.length; // 안전하게 인덱스 처리
-                      setActiveSlideIndex(safeIndex);
+                      setActiveSlideIndex(safeIndex); // 상태 업데이트 (UI에 반영)
                       console.log(`슬라이드 변경: ${safeIndex}`);
                       // 이벤트 트래킹
                       trackEventAction(cards[safeIndex].eventName);

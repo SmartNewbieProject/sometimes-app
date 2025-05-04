@@ -20,6 +20,15 @@ export enum ImageResources {
   SANDTIMER = `${S3_BASE_URL}/sand-clock.png`,
   HEART = `${S3_BASE_URL}/heart.png`,
   INSTAGRAM = `${S3_BASE_URL}/instagram.png`,
+
+  // Pre-signup 페이지 이미지
+  PRE_SIGNUP_CHARACTER = `${S3_BASE_URL}/pre-signup-character.png`,
+  INITIAL_CAMPUS_CARD = `${S3_BASE_URL}/initial_campus_card.png`,
+  INITIAL_MATCHING_CARD = `${S3_BASE_URL}/initial_matching_card.png`,
+  SWITCH_MATCHING_CARD = `${S3_BASE_URL}/switch_matching_card.png`,
+  SWITCH_CAMPUS_CARD = `${S3_BASE_URL}/switch_campus_card.png`,
+  INITIAL_PARTICIPANT_CARD = `${S3_BASE_URL}/initial_participant_card.png`,
+  SWITCH_PARTICIPANT_CARD = `${S3_BASE_URL}/switch_participant_card.png`,
 }
 
 const imageUtils = {
