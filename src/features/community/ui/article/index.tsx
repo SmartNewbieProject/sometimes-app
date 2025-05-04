@@ -10,6 +10,7 @@ import { useBoolean } from '@/src/shared/hooks/use-boolean';
 import { Comment } from '../comment';
 import { useCategory } from '../../hooks';
 import { useAuth } from '@/src/features/auth';
+import { router } from 'expo-router';
 
 interface ArticleItemProps {
   data: ArticleType;
@@ -57,7 +58,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
           />
           <View className="w-full relative">
             <View className="flex flex-row items-center justify-between">
-              <View>
+              <View className="flex flex-row">
                 <Text size="sm" weight="medium" textColor="black">{author.name}</Text>
                 <Show when={isOwner}>
                   <Text size="sm" className="ml-1" textColor="pale-purple">(나)</Text>
@@ -72,7 +73,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
                     e.stopPropagation();
                     toggleDropdown();
                   }}>
-                    <View>
+                    <View className="w-[48px] h-[48px] flex items-center justify-center">
                       <ImageResource resource={ImageResources.MENU} width={24} height={24} />
                     </View>
                   </TouchableWithoutFeedback>
@@ -145,6 +146,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
             onPress={(e) => {
               e.stopPropagation();
               closeDropdown();
+              router.push(`/community/update/${data.id}`);
             }}
           >
             <Text textColor="black">수정</Text>
