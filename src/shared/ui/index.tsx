@@ -18,3 +18,4 @@ export * from './show';
 export * from './image-resource';
 export * from './university-badge';
 export * from './section';
+export * from './dropdown';

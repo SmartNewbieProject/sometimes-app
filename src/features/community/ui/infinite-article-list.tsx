@@ -10,6 +10,7 @@ import { Article as ArticleType } from '../types';
 import { tryCatch } from '@/src/shared/libs';
 import apis from '../apis';
 import { forwardRef, useImperativeHandle } from 'react';
+import { useModal } from '@/src/shared/hooks/use-modal';
 
 interface InfiniteArticleListProps {
   initialSize?: number;
@@ -20,7 +21,8 @@ export interface InfiniteArticleListHandle {
 }
 
 export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, InfiniteArticleListProps>(
-  function InfiniteArticleList({ initialSize = 10 }: InfiniteArticleListProps, ref) {
+  ({ initialSize = 10 }: InfiniteArticleListProps, ref) => {
+    const { showModal, showErrorModal } = useModal();
     const { currentCategory: categoryCode } = useCategory();
     const {
       articles,
@@ -36,37 +38,6 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
       initialPage: 1,
       pageSize: initialSize,
     });
-
-    useImperativeHandle(ref, () => ({
-      refresh
-    }));
-
-    const renderFooter = () => {
-      if (!isLoadingMore) return null;
-
-      return (
-        <View className="py-4 flex items-center justify-center">
-          <ActivityIndicator size="small" color="#8C6AE3" />
-        </View>
-      );
-    };
-
-    if (isLoading && articles.length === 0) {
-      return (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#8C6AE3" />
-        </View>
-      );
-    }
-
-    const renderItem = (item: ArticleType, index: number) => (
-      <Article
-        data={item}
-        onPress={() => { router.push(`/community/${item.id}`) }}
-        onComment={() => { }}
-        onLike={() => like(item)}
-      />
-    );
 
     const toggleArticleLike = (article: ArticleType, targetId: string): ArticleType => {
       if (article.id === targetId) {
@@ -84,12 +55,57 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
         setData((prevArticles) =>
           prevArticles.map((article) => toggleArticleLike(article, item.id))
         );
-
       tryCatch(async () => {
         await apis.articles.doLike(item);
         changeLikeStatus();
       })
     };
+
+    const deleteArticle = (id: string) => {
+      showModal({
+        title: "게시글 삭제",
+        children: (
+          <View>
+            <Text size="sm" textColor="black">해당 게시글을 삭제할까요?</Text>
+          </View>
+        ),
+        primaryButton: {
+          text: "삭제하기",
+          onClick: () => tryCatch(async () => {
+            await apis.articles.deleteArticle(id);
+            await refresh();
+          }, ({ error }) => {
+            console.log({ error });
+            showErrorModal(error, "error");
+          }),
+        },
+        secondaryButton: {
+          text: "취소",
+          onClick: () => { },
+        },
+      })
+    };
+
+    const renderFooter = () => {
+      if (!isLoadingMore) return null;
+      return (
+        <View className="py-4 flex items-center justify-center">
+          <ActivityIndicator size="small" color="#8C6AE3" />
+        </View>
+      );
+    };
+
+    useImperativeHandle(ref, () => ({
+      refresh
+    }));
+
+    if (isLoading && articles.length === 0) {
+      return (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#8C6AE3" />
+        </View>
+      );
+    }
 
     return (
       <View className="flex-1">
@@ -110,7 +126,15 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
 
         <InfiniteScrollView
           data={articles}
-          renderItem={renderItem}
+          renderItem={(article: ArticleType) => (
+            <Article
+              data={article}
+              onPress={() => { router.push(`/community/${article.id}`) }}
+              onLike={() => like(article)}
+              onDelete={deleteArticle}
+              refresh={refresh}
+            />
+          )}
           onLoadMore={loadMore}
           isLoading={isLoading}
           isLoadingMore={isLoadingMore}
