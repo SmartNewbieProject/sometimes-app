@@ -3,21 +3,24 @@ import { Divider, Show, Text } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { Article as ArticleType } from '../../types';
 import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
-import { getUnivLogo, UniversityName } from '@/src/shared/libs';
+import { dayUtils, getUnivLogo, tryCatch, UniversityName } from '@/src/shared/libs';
 import Interaction from './interaction-nav';
 import { useEffect, useState } from 'react';
 import { useBoolean } from '@/src/shared/hooks/use-boolean';
 import { Comment } from '../comment';
 import { useCategory } from '../../hooks';
+import apis from '../../apis';
+
+const { articles: { doLike } } = apis;
 
 interface ArticleItemProps {
   data: ArticleType;
   onPress: () => void;
-  onLike: () => void;
   onComment: () => void;
+  onLike: () => void;
 }
 
-export function Article({ data, onPress, onLike, onComment }: ArticleItemProps) {
+export function Article({ data, onPress, onComment, onLike }: ArticleItemProps) {
   const author = data?.author;
   const comments = data.comments;
   const university = author?.universityDetails;
@@ -51,14 +54,21 @@ export function Article({ data, onPress, onLike, onComment }: ArticleItemProps) 
           </View>
         </View>
 
-        <Text size="md" weight="medium" textColor="black" className="mb-2">{data.title}</Text>
+        <Text size="md" weight="medium" textColor="black">{data.title}</Text>
+        <View className="my-1.5 w-full flex flex-row justify-end">
+          <Text size="13" textColor="pale-purple">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
+        </View>
         <Text size="sm" className="mb-4 leading-5" textColor="black">
           {data.content}
         </Text>
 
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">
-            <Interaction.Like count={data.likeCount} />
+            <Interaction.Like
+              count={data.likeCount}
+              isLiked={data.isLiked}
+              onPress={onLike}
+            />
             <Interaction.Comment
               count={data.commentCount}
               onPress={toggleShowComment}
@@ -75,13 +85,15 @@ export function Article({ data, onPress, onLike, onComment }: ArticleItemProps) 
                 <Divider.Horizontal />
               </View>
             ))}
-            <View className="w-full flex flex-row justify-end my-1">
-              <TouchableOpacity>
-                <Text size="sm">
-                  답글 더보기
-                </Text>
-              </TouchableOpacity>
-            </View>
+            {data.commentCount > 3 && (
+              <View className="w-full flex flex-row justify-end my-1">
+                <TouchableOpacity>
+                  <Text size="sm">
+                    답글 더보기
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </Show>
 

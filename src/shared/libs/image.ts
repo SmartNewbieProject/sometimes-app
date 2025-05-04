@@ -29,6 +29,7 @@ export enum ImageResources {
   SWITCH_CAMPUS_CARD = `${S3_BASE_URL}/switch_campus_card.png`,
   INITIAL_PARTICIPANT_CARD = `${S3_BASE_URL}/initial_participant_card.png`,
   SWITCH_PARTICIPANT_CARD = `${S3_BASE_URL}/switch_participant_card.png`,
+  HEART_ON = `${S3_BASE_URL}/heart-on.svg`,
 }
 
 const imageUtils = {

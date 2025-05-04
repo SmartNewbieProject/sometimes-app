@@ -1,6 +1,4 @@
 import { PaginationMeta, Pagination as PaginationParams, PaginatedResponse } from '@/src/types/server';
-
-// 서버 타입을 그대로 재내보내기
 export type { PaginationMeta, PaginatedResponse };
 export type { Pagination as PaginationParams } from '@/src/types/server';
 import { ReactNode } from 'react';
@@ -34,6 +32,7 @@ export interface UseInfiniteDataOptions<T, P = PaginationParams> {
 export interface UseInfiniteDataResult<T> {
   data: T[];
   currentPageData: T[];
+  setData: React.Dispatch<React.SetStateAction<T[]>>;
   isLoading: boolean;
   isLoadingMore: boolean;
   error: Error | null;

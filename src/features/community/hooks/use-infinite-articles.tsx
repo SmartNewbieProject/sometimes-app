@@ -17,7 +17,6 @@ export const useInfiniteArticles = ({
   pageSize = 10,
   autoLoad = true,
 }: Props = {}) => {
-  // 데이터 가져오는 함수
   const fetchArticles = useCallback(
     async (params: PaginationParams) => {
       if (!categoryCode) {
@@ -44,7 +43,6 @@ export const useInfiniteArticles = ({
     [categoryCode]
   );
 
-  // 무한 데이터 훅 사용
   const {
     data: articles,
     isLoading,
@@ -52,6 +50,7 @@ export const useInfiniteArticles = ({
     error,
     hasNextPage,
     loadMore,
+    setData,
     refresh,
     meta,
     currentPage,
@@ -64,7 +63,6 @@ export const useInfiniteArticles = ({
     getItemKey: (item) => item.id,
   });
 
-  // 무한 스크롤 훅 사용
   const { scrollProps } = useInfiniteScroll(loadMore, {
     threshold: 0.5,
     enabled: hasNextPage && !isLoadingMore,
@@ -73,6 +71,7 @@ export const useInfiniteArticles = ({
   return {
     articles,
     isLoading,
+    setData,
     isLoadingMore,
     error,
     hasNextPage,

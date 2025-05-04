@@ -6,7 +6,9 @@ import { Text } from '@/src/shared/ui';
 import { useCategory, useInfiniteArticles } from '../hooks';
 import { InfiniteScrollView } from '../../../shared/infinite-scroll';
 import { router } from 'expo-router';
-import { patchArticleLike } from '../apis/articles';
+import { Article as ArticleType } from '../types';
+import { tryCatch } from '@/src/shared/libs';
+import apis from '../apis';
 
 interface InfiniteArticleListProps {
   initialSize?: number;
@@ -19,6 +21,7 @@ export function InfiniteArticleList({ initialSize = 10 }: InfiniteArticleListPro
     isLoading,
     isLoadingMore,
     hasNextPage,
+    setData,
     loadMore,
     refresh,
     scrollProps
@@ -46,14 +49,37 @@ export function InfiniteArticleList({ initialSize = 10 }: InfiniteArticleListPro
     );
   }
 
-  const renderItem = (item: any, index: number) => (
+  const renderItem = (item: ArticleType, index: number) => (
     <Article
       data={item}
       onPress={() => { router.push(`/community/${item.id}`) }}
-      onLike={() => { patchArticleLike(item.id) }}
       onComment={() => { }}
+      onLike={() => like(item)}
     />
   );
+
+  const toggleArticleLike = (article: ArticleType, targetId: string): ArticleType => {
+    if (article.id === targetId) {
+      return {
+        ...article,
+        likeCount: article.likeCount + (article.isLiked ? -1 : 1),
+        isLiked: !article.isLiked
+      };
+    }
+    return article;
+  };
+
+  const like = (item: ArticleType) => {
+    const changeLikeStatus = () =>
+      setData((prevArticles) =>
+        prevArticles.map((article) => toggleArticleLike(article, item.id))
+      );
+
+    tryCatch(async () => {
+      await apis.articles.doLike(item);
+      changeLikeStatus();
+    })
+  };
 
   return (
     <View className="flex-1">

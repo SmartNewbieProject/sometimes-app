@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import { useInfiniteData, useInfiniteScroll } from '../../../shared/hooks';
 import { getAllArticles } from '../apis/articles';
 import { Article } from '../types';
-import { Pagination, PaginatedResponse } from '../../../types/server';
-import { useQuery } from '@tanstack/react-query';
+import { PaginationParams } from '../../../shared/infinite-scroll/types';
+import { PaginatedResponse, Pagination } from '@/src/types/server';
 
 type Props = {
   categoryCode?: string;
@@ -17,8 +17,7 @@ export const useArticles = ({
   initialPage = 1,
   initialSize = 10,
   infiniteScroll = false
-}: Props = {}) => {
-  // 데이터 가져오는 함수
+}: Props) => {
   const fetchArticles = useCallback(
     async (pagination: Pagination): Promise<PaginatedResponse<Article>> => {
       if (!categoryCode) {
@@ -42,7 +41,6 @@ export const useArticles = ({
     [categoryCode]
   );
 
-  // 무한 스크롤 모드
   if (infiniteScroll) {
     const {
       data: articles,
@@ -53,6 +51,7 @@ export const useArticles = ({
       loadMore,
       refresh,
       meta,
+      setData,
       currentPage,
     } = useInfiniteData<Article>({
       fetchFn: fetchArticles,
@@ -68,6 +67,14 @@ export const useArticles = ({
       enabled: hasNextPage && !isLoadingMore,
     });
 
+    const updateArticle = (updatedArticle: Article) => {
+      setData((prevArticles) =>
+        prevArticles.map((article) =>
+          article.id === updatedArticle.id ? updatedArticle : article
+        )
+      );
+    };
+
     return {
       articles,
       isLoading,
@@ -79,30 +86,7 @@ export const useArticles = ({
       meta,
       currentPage,
       scrollProps,
+      updateArticle,
     };
   }
-
-  const pagination = { page: initialPage, size: initialSize };
-
-  const { data, isLoading, isError, error, refetch } = useQuery<PaginatedResponse<Article>>({
-    queryKey: ['articles', categoryCode, pagination.page, pagination.size],
-    queryFn: () => fetchArticles(pagination),
-    enabled: !!categoryCode,
-  });
-
-  return {
-    articles: data?.items || [],
-    meta: data?.meta || {
-      currentPage: initialPage,
-      itemsPerPage: initialSize,
-      totalItems: 0,
-      hasNextPage: false,
-      hasPreviousPage: false,
-    },
-    pagination,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  };
-};
+}
