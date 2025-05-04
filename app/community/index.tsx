@@ -13,8 +13,8 @@ export default function CommunityScreen() {
     if (shouldRefresh === 'true') {
       if (infiniteArticleListRef.current) {
         infiniteArticleListRef.current.refresh();
+        // router.setParams({});
       }
-      router.setParams({});
     }
   }, [shouldRefresh]);
 
