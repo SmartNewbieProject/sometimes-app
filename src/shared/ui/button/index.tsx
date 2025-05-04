@@ -47,7 +47,7 @@ export type ButtonProps = VariantProps<typeof buttonStyles> & {
 	onPress?: () => void;
 	prefix?: ReactNode;
 	className?: string;
-	textColor?: 'white' | 'purple';
+	textColor?: 'white' | 'purple' | 'black';
 };
 
 export const Button: React.FC<ButtonProps> = ({

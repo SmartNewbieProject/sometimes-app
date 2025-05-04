@@ -1,9 +1,11 @@
 import { View, ScrollView } from 'react-native';
-import { PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
+import { PalePurpleGradient, BottomNavigation, Header, ImageResource } from '@/src/shared/ui';
 import { CategoryList, CreateArticleFAB, InfiniteArticleList } from '@/src/features/community/ui';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { InfiniteArticleListHandle } from '@/src/features/community/ui/infinite-article-list';
+import { IconWrapper } from '@/src/shared/ui/icons';
+import { ImageResources } from '@/src/shared/libs';
 
 export default function CommunityScreen() {
   const { refresh: shouldRefresh } = useLocalSearchParams<{ refresh: string }>();
@@ -13,7 +15,6 @@ export default function CommunityScreen() {
     if (shouldRefresh === 'true') {
       if (infiniteArticleListRef.current) {
         infiniteArticleListRef.current.refresh();
-        // router.setParams({});
       }
     }
   }, [shouldRefresh]);
@@ -22,13 +23,13 @@ export default function CommunityScreen() {
     <View className="flex-1 relative">
       <PalePurpleGradient />
 
-      <Header.Container>
+      <Header.Container className="mt-2">
         <Header.CenterContent>
-          <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
+          <ImageResource resource={ImageResources.COMMUNITY_LOGO} width={152} height={18} />
         </Header.CenterContent>
       </Header.Container>
 
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1 mt-[14px]">
         <CategoryList />
 
         <View id="ArticleListContainer">

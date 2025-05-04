@@ -15,10 +15,11 @@ export const CategoryList = () => {
         title="카테고리를 불러오고 있어요"
         loading={isLoading}
       >
-        <View className="flex flex-row w-full gap-x-[10px]">
+        <View className="flex flex-row w-full gap-x-[10px] mb-2">
           {categories.map((category) => (
             <Button
               size="sm"
+              textColor={currentCategory === category.code ? 'white' : 'black'}
               variant={currentCategory === category.code ? 'primary' : 'outline'}
               key={category.code}
               onPress={() => {

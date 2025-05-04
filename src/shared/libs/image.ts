@@ -22,6 +22,7 @@ export enum ImageResources {
   INSTAGRAM = `${S3_BASE_URL}/instagram.png`,
   HEART_ON = `${S3_BASE_URL}/heart-on.svg`,
   MENU = `${S3_BASE_URL}/menu.svg`,
+  COMMUNITY_LOGO = `${S3_BASE_URL}/community.png`,
 
   // Pre-signup 페이지 이미지
   PRE_SIGNUP_CHARACTER = `${S3_BASE_URL}/pre-signup-character.png`,
