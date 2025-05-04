@@ -19,20 +19,17 @@ export function useAuth() {
   });
 
   useEffect(() => {
-    // 토큰 갱신 이벤트 구독
     const unsubscribeTokens = eventBus.on('auth:tokensUpdated',
       async ({ accessToken, refreshToken }) => {
         await setToken(accessToken);
         await setRefreshToken(refreshToken);
       });
 
-    // 로그아웃 이벤트 구독
     const unsubscribeLogout = eventBus.on('auth:logout', async () => {
       await setToken(null);
       await setRefreshToken(null);
     });
 
-    // cleanup
     return () => {
       unsubscribeTokens();
       unsubscribeLogout();

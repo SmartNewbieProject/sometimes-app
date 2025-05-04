@@ -3,15 +3,13 @@ import { Divider, Show, Text } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { Article as ArticleType } from '../../types';
 import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
-import { dayUtils, getUnivLogo, tryCatch, UniversityName } from '@/src/shared/libs';
+import { dayUtils, getUnivLogo, UniversityName } from '@/src/shared/libs';
 import Interaction from './interaction-nav';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useBoolean } from '@/src/shared/hooks/use-boolean';
 import { Comment } from '../comment';
 import { useCategory } from '../../hooks';
-import apis from '../../apis';
-
-const { articles: { doLike } } = apis;
+import { useAuth } from '@/src/features/auth';
 
 interface ArticleItemProps {
   data: ArticleType;
@@ -21,12 +19,18 @@ interface ArticleItemProps {
 }
 
 export function Article({ data, onPress, onComment, onLike }: ArticleItemProps) {
+  const { my } = useAuth();
   const author = data?.author;
   const comments = data.comments;
   const university = author?.universityDetails;
   const universityName = university?.name as UniversityName;
   const { value: showComment, toggle: toggleShowComment, setFalse } = useBoolean();
   const { currentCategory } = useCategory();
+
+  const isOwner = (() => {
+    if (!my) return false;
+    return my.id === author.id;
+  })();
 
   useEffect(() => {
     setFalse();
@@ -42,7 +46,12 @@ export function Article({ data, onPress, onComment, onLike }: ArticleItemProps) 
             className="rounded-full mr-2"
           />
           <View>
-            <Text size="sm" weight="medium" textColor="black">{author.name}</Text>
+            <View className="flex flex-row items-center">
+              <Text size="sm" weight="medium" textColor="black">{author.name}</Text>
+              <Show when={isOwner}>
+                <Text size="sm" className="ml-1" textColor="pale-purple">(나)</Text>
+              </Show>
+            </View>
             <Text size="13" textColor="purple" className="opacity-70">
               {author.age}세
               <Text> · </Text>
