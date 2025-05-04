@@ -14,7 +14,9 @@ type PatchCommentBody = {
   content: string;
 }
 
-
+type Id = {
+  id: string;
+}
 
 export const getComments = async (params: CommentParams): Promise<Comment[]> => {
   return axiosClient.get(`/articles/${params.articleId}/comments`, { params });
@@ -31,6 +33,7 @@ export const patchComments = async (articleId: string, commentId: string, body: 
 export const deleteComments = async (articleId: string, commentId: string): Promise<Comment> => {
   return axiosClient.delete(`/articles/${articleId}/comments/${commentId}`);
 };
+
 
 type Service = {
   getComments: (params: CommentParams) => Promise<Comment[]>;

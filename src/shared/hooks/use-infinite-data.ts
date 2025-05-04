@@ -102,6 +102,7 @@ export function useInfiniteData<T, P extends PaginationParams = PaginationParams
   return {
     data,
     currentPageData,
+    setData,
     isLoading,
     isLoadingMore,
     error,
