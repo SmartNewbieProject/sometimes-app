@@ -3,7 +3,7 @@ export const QUERY_KEYS = {
     all: ['articles'],
     lists: () => [...QUERY_KEYS.articles.all, 'list'],
     list: (page: number, size: number) => [...QUERY_KEYS.articles.lists(), { page, size }],
-    detail: (id: number) => [...QUERY_KEYS.articles.all, 'detail', id],
+    detail: (id: string) => [...QUERY_KEYS.articles.all, 'detail', id],
   },
   comments: {
     all: ['comments'],
