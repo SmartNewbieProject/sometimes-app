@@ -25,8 +25,10 @@ export default function ArticleDetailScreen() {
         },
     });
 
+    const content = form.watch('content');
     const handleSubmit = (data: { content: string }) => {
         console.log(data);
+        form.reset();
     }
 
     return (
@@ -57,23 +59,22 @@ export default function ArticleDetailScreen() {
                     )}
                 </View>
             </ScrollView>
-                        <View className="flex-row w-[361px] h-[50px] items-center gap-[5px] ml-[16px] rounded-[16px] bg-[#F8F4FF]">
+            <View className="flex-row w-[361px] h-[50px] items-center gap-[5px] ml-[16px] rounded-[16px] bg-[#F8F4FF]">
                 <Check.Box className="pl-[12px] h-[25px]" checked={checked} size={25} onChange={(checked) => setChecked(checked)} />
                 <Text className="mr-1 text-black text-[15px] h-[25px] flex items-center">익명</Text>
                 <Form.LabelInput
                     name="content"
                     control={form.control}
-                    className="w-full h-[25px] pl-[5px] border-b-0 text-xs text-[#A892D7]"
+                    className="w-[251px] h-[25px] pl-[5px] border-b-0 text-xs text-[#A892D7]"
                     placeholder="댓글을 입력하세요"
                     label=""
                 />
-            <TouchableOpacity onPress={form.handleSubmit(handleSubmit)}>
-                <IconWrapper>
-                    <SendIcon />
-                </IconWrapper>
-            </TouchableOpacity> 
+                <TouchableOpacity onPress={form.handleSubmit(handleSubmit)} disabled={!content}>
+                    <IconWrapper size={18}>
+                        <SendIcon />
+                    </IconWrapper>
+                </TouchableOpacity>
             </View>
-
         </View>
     )
 }
