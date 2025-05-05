@@ -59,7 +59,7 @@ export default function ArticleDetailScreen() {
                     )}
                 </View>
             </ScrollView>
-            <View className="flex-row w-[361px] h-[50px] items-center gap-[5px] ml-[16px] rounded-[16px] bg-[#F8F4FF]">
+            <View className="flex-row w-[361px] h-[50px] items-center gap-[5px] ml-[16px] mb-[32px] rounded-[16px] bg-[#F8F4FF]">
                 <Check.Box className="pl-[12px] h-[25px]" checked={checked} size={25} onChange={(checked) => setChecked(checked)} />
                 <Text className="mr-1 text-black text-[15px] h-[25px] flex items-center">익명</Text>
                 <Form.LabelInput
