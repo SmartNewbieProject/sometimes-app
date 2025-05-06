@@ -1,18 +1,20 @@
 import { View, TouchableOpacity, ScrollView } from 'react-native';
-import { PalePurpleGradient, BottomNavigation, Header } from '@/src/shared/ui';
+import { PalePurpleGradient, BottomNavigation, Header, Show, AnnounceCard } from '@/src/shared/ui';
 import { Image } from 'expo-image';
 import Home from "@features/home";
 import IdleMatchTimer from '@features/idle-match-timer';
 import Loading from '@/src/features/loading';
 import { router } from 'expo-router';
+import { ImageResources } from '@/src/shared/libs';
 
-const { ui, queries } = Home;
+const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
 const { useTotalMatchCountQuery } = queries;
+const { useRedirectPreferences } = hooks;
 
 export default function HomeScreen() {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } = useTotalMatchCountQuery();
-
+  const { isPreferenceFill } = useRedirectPreferences();
 
   return (
     <View className="flex-1">
@@ -45,7 +47,18 @@ export default function HomeScreen() {
           </Loading.Lottie>
         </View>
 
-        <View className="mt-[25px]">
+        <Show when={!isPreferenceFill}>
+          <View className="mt-[18px]">
+            <AnnounceCard
+              emoji={ImageResources.DETAILS}
+              emojiSize={{ width: 31, height: 28 }}
+              text="나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
+              onPress={() => router.navigate('/interest')}
+            />
+          </View>
+        </Show>
+
+        <View className="mt-[14px]">
           <IdleMatchTimer />
         </View>
 

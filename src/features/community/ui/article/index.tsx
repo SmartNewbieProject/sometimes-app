@@ -65,21 +65,6 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
                 </Show>
               </View>
 
-              <Show when={isOwner}>
-                <View className="mr-8" onTouchEnd={(e) => {
-                  e.stopPropagation();
-                }}>
-                  <TouchableWithoutFeedback onPress={(e) => {
-                    e.stopPropagation();
-                    toggleDropdown();
-                  }}>
-                    <View className="w-[48px] h-[48px] flex items-center justify-center">
-                      <ImageResource resource={ImageResources.MENU} width={24} height={24} />
-                    </View>
-                  </TouchableWithoutFeedback>
-                </View>
-              </Show>
-
             </View>
             <Text size="13" textColor="purple" className="opacity-70">
               {author.age}세
@@ -137,6 +122,20 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
 
       </TouchableOpacity>
 
+      <Show when={isOwner}>
+        <View className="absolute right-0 top-[12px]" onTouchEnd={(e) => {
+          e.stopPropagation();
+        }}>
+          <TouchableOpacity onPress={(e) => {
+            e.stopPropagation();
+            toggleDropdown();
+          }}>
+            <View className="w-[48px] h-[48px] flex items-center justify-center">
+              <ImageResource resource={ImageResources.MENU} width={24} height={24} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Show>
       <Show when={isDropdownOpen}>
         <View
           style={dropdownStyles.dropdownContainer}

@@ -24,6 +24,9 @@ export enum ImageResources {
   MENU = `${S3_BASE_URL}/menu.svg`,
   COMMUNITY_LOGO = `${S3_BASE_URL}/community.png`,
 
+  DATING_STYLE = `${S3_BASE_URL}/dating-style.png`,
+  MILITARY = `${S3_BASE_URL}/military.png`,
+
   // Pre-signup 페이지 이미지
   PRE_SIGNUP_CHARACTER = `${S3_BASE_URL}/pre-signup-character.png`,
   INITIAL_CAMPUS_CARD = `${S3_BASE_URL}/initial_campus_card.png`,

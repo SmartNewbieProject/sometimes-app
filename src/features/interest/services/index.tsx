@@ -6,8 +6,10 @@ export enum InterestSteps {
   AGE = 1,
   DRIKNING = 2,
   INTEREST = 3,
-  SMOKING = 4,
-  TATTOO = 5,
+  DATING_STYLE = 4,
+  MILITARY = 5,
+  SMOKING = 6,
+  TATTOO = 7,
 }
 
 export const phaseCount = Object.keys(InterestSteps).length / 2;
@@ -20,7 +22,7 @@ export type Properties = {
   tattoo: string;
 }
 
-export const savePreferences = async (props: Properties)  => {
+export const savePreferences = async (props: Properties) => {
   const body: PreferenceSaveBody = {
     data: [
       {
@@ -40,7 +42,7 @@ export const savePreferences = async (props: Properties)  => {
         optionIds: [props.smoking],
       },
       {
-        typeName: PreferenceKeys.TATTOO, 
+        typeName: PreferenceKeys.TATTOO,
         optionIds: [props.tattoo]
       }
     ],

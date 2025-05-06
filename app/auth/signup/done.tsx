@@ -11,7 +11,6 @@ const { useSignupProgress, useSignupAnalytics } = Signup;
 export default function SignupDoneScreen() {
   const { clear, form } = useSignupProgress();
 
-  // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics('done');
 
   const onNext = () => {
@@ -67,12 +66,12 @@ export default function SignupDoneScreen() {
         </View>
       </View>
 
-      <View className="w-full px-5">
+      <View className="w-full px-5 mb-[14px] md:mb-[58px]">
         <Button
           variant="primary"
           size="md"
           onPress={onNext}
-          className="mb-[14px] w-full"
+          className="w-full"
         >
           이상형 찾으러 가기 →
         </Button>

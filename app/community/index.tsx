@@ -29,7 +29,7 @@ export default function CommunityScreen() {
         </Header.CenterContent>
       </Header.Container>
 
-      <ScrollView className="flex-1 mt-[14px]">
+      <ScrollView className="flex-1 mt-[14px]" id="CommunityScrollView">
         <CategoryList />
 
         <View id="ArticleListContainer">
