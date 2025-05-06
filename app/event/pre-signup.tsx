@@ -1,5 +1,4 @@
 import { View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import Signup from '@features/signup';
 import Event from '@features/event';
 import { platform } from '@shared/libs/platform';
 import { cn } from '@shared/libs/cn';
