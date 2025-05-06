@@ -1,12 +1,8 @@
 import { View, TextInput, ScrollView } from "react-native";
-import { Header, Text } from "@shared/ui";
 import { CommunityGuideline } from "@/src/features/community/ui";
-import { Controller, useFormContext } from "react-hook-form";
-import { ArticleWriterForm } from "../../../hooks/article-writer";
+import { Controller } from "react-hook-form";
 
 export const ArticleWriteForm = () => {
-  const { formState, register } = useFormContext<ArticleWriterForm>();
-
   return (
     <ScrollView className="flex-1 ">
       <View className="h-[1px] bg-[#E7E9EC]" />
@@ -17,7 +13,7 @@ export const ArticleWriteForm = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 placeholder="제목을 입력하세요."
-                className="w-full h-[28px] p-2 mb-[10px] font-bold placeholder:text-[#D9D9D9] text-[20px] border-b border-[#E7E9EC] outline-none pb-2"
+                className="w-full p-2 mb-[10px] font-bold placeholder:text-[#D9D9D9] text-[20px] border-b border-[#E7E9EC] outline-none pb-2"
                 onChangeText={onChange}
                 value={value}
               />
@@ -38,7 +34,6 @@ export const ArticleWriteForm = () => {
         </View>
       </View>
       <CommunityGuideline />
-
     </ScrollView>
   );
 };

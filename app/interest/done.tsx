@@ -3,23 +3,11 @@ import { View } from "react-native";
 import SmallTitle from '@/assets/icons/small-title.svg';
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from 'expo-image';
-import { router, useFocusEffect } from "expo-router";
-import Signup from "@features/signup";
-import { useCallback, useEffect } from "react";
+import { router } from "expo-router";
 import { useAuth } from "@features/auth";
 
-const { useSignupProgress } = Signup;
-
 export default function InterestDoneScreen() {
-  const { clear } = useSignupProgress();
   const { profileDetails } = useAuth();
-
-  // development 환경에서만 회원가입 데이터 초기화
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      clear();
-    }
-  }, []);
 
   return (
     <View className="flex-1 flex flex-col w-full items-center">

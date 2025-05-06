@@ -1,30 +1,33 @@
-import { View, TouchableOpacity, Image } from 'react-native';
-import { Divider, Show, Text } from '@/src/shared/ui';
+import { View, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
+import { Divider, Show, Text, Dropdown, ImageResource, dropdownStyles } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { Article as ArticleType } from '../../types';
 import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
-import { dayUtils, getUnivLogo, UniversityName } from '@/src/shared/libs';
+import { dayUtils, getUnivLogo, UniversityName, ImageResources, tryCatch } from '@/src/shared/libs';
 import Interaction from './interaction-nav';
 import { useEffect } from 'react';
 import { useBoolean } from '@/src/shared/hooks/use-boolean';
 import { Comment } from '../comment';
 import { useCategory } from '../../hooks';
 import { useAuth } from '@/src/features/auth';
+import { router } from 'expo-router';
 
 interface ArticleItemProps {
   data: ArticleType;
   onPress: () => void;
-  onComment: () => void;
   onLike: () => void;
+  refresh: () => Promise<void>;
+  onDelete: (id: string) => void;
 }
 
-export function Article({ data, onPress, onComment, onLike }: ArticleItemProps) {
+export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   const { my } = useAuth();
   const author = data?.author;
   const comments = data.comments;
   const university = author?.universityDetails;
   const universityName = university?.name as UniversityName;
   const { value: showComment, toggle: toggleShowComment, setFalse } = useBoolean();
+  const { value: isDropdownOpen, toggle: toggleDropdown, setFalse: closeDropdown } = useBoolean();
   const { currentCategory } = useCategory();
 
   const isOwner = (() => {
@@ -32,25 +35,36 @@ export function Article({ data, onPress, onComment, onLike }: ArticleItemProps) 
     return my.id === author.id;
   })();
 
+  const handleArticlePress = () => {
+    if (!isDropdownOpen) {
+      onPress();
+    }
+  };
+
   useEffect(() => {
     setFalse();
+    closeDropdown();
   }, [currentCategory]);
 
   return (
-    <View>
-      <TouchableOpacity onPress={onPress} className="p-4 bg-white" activeOpacity={0.7}>
-        <View className="flex-row items-center mb-2">
+    <View className="w-full relative">
+      <TouchableOpacity onPress={handleArticlePress} className="p-4 bg-white" activeOpacity={0.7}>
+
+        <View className="flex-row items-center mb-2 relative">
           <Image
             source={{ uri: getUnivLogo(universityName) }}
             style={{ width: 32, height: 32 }}
             className="rounded-full mr-2"
           />
-          <View>
-            <View className="flex flex-row items-center">
-              <Text size="sm" weight="medium" textColor="black">{author.name}</Text>
-              <Show when={isOwner}>
-                <Text size="sm" className="ml-1" textColor="pale-purple">(나)</Text>
-              </Show>
+          <View className="w-full relative">
+            <View className="flex flex-row items-center justify-between">
+              <View className="flex flex-row">
+                <Text size="sm" weight="medium" textColor="black">{author.name}</Text>
+                <Show when={isOwner}>
+                  <Text size="sm" className="ml-1" textColor="pale-purple">(나)</Text>
+                </Show>
+              </View>
+
             </View>
             <Text size="13" textColor="purple" className="opacity-70">
               {author.age}세
@@ -107,6 +121,47 @@ export function Article({ data, onPress, onComment, onLike }: ArticleItemProps) 
         </Show>
 
       </TouchableOpacity>
+
+      <Show when={isOwner}>
+        <View className="absolute right-0 top-[12px]" onTouchEnd={(e) => {
+          e.stopPropagation();
+        }}>
+          <TouchableOpacity onPress={(e) => {
+            e.stopPropagation();
+            toggleDropdown();
+          }}>
+            <View className="w-[48px] h-[48px] flex items-center justify-center">
+              <ImageResource resource={ImageResources.MENU} width={24} height={24} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Show>
+      <Show when={isDropdownOpen}>
+        <View
+          style={dropdownStyles.dropdownContainer}
+        >
+          <TouchableOpacity
+            style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' }}
+            onPress={(e) => {
+              e.stopPropagation();
+              closeDropdown();
+              router.push(`/community/update/${data.id}`);
+            }}
+          >
+            <Text textColor="black">수정</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ padding: 10 }}
+            onPress={(e) => {
+              e.stopPropagation();
+              onDelete(data.id);
+              closeDropdown();
+            }}
+          >
+            <Text textColor="black">삭제</Text>
+          </TouchableOpacity>
+        </View>
+      </Show>
     </View>
   );
-} 
+}

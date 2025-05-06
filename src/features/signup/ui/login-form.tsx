@@ -8,14 +8,17 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../auth";
 import { router } from "expo-router";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
+import { Admin } from "../../admin";
 
 type Form = {
   email: string;
   password: string;
 }
 
-// const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$/;
-const passwordRegex = /.*/;
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$/;
+// const passwordRegex = /.*/;
 
 const loginSchema = z.object({
   email: z.string({ required_error: "이메일을 입력해주세요" }).email({ message: "이메일을 입력해주세요" }),
@@ -38,10 +41,7 @@ export default function LoginForm() {
       await login(email, password);
       environmentStrategy({
         production: () => {
-          if (email === 'billing-test@gmail.com') {
-            return router.navigate('/home');
-          }
-          router.navigate('/commingsoon');
+          Admin.services.loginProduction(email);
         },
         development: () => {
           router.navigate('/home');
@@ -54,12 +54,11 @@ export default function LoginForm() {
     });
   });
 
-  // 테스트 목적으로 주석..해제하면 로그인상태면 다시 홈으로 리다이렉션
-  // useFocusEffect(useCallback(
-  //   () => {
-  //     if (isAuthorized) router.push('/');
-  //   }, [isAuthorized]
-  // ));
+  useFocusEffect(useCallback(
+    () => {
+      if (isAuthorized) router.push('/');
+    }, [isAuthorized]
+  ));
 
   return (
     <View className="flex flex-col flex-1 h-full">

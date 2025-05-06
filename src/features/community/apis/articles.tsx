@@ -9,7 +9,6 @@ type Id = {
 type PostArticleBody = {
   title: string;
   content: string;
-  anonymous: boolean;
   type: ArticleRequestType;
 }
 
@@ -24,7 +23,7 @@ type GetArticleParams = getArticleParams & {
 
 type PatchArticleBody = {
   content: string;
-  anonymous: boolean;
+  title: string;
 }
 
 type DeleteArticle = {
@@ -42,7 +41,7 @@ export const postArticles = async (body: PostArticleBody): Promise<Article> => {
 };
 
 export const getArticle = async (articleId: string): Promise<Article> => {
-  return axiosClient.get(`/articles/${articleId}`);
+  return axiosClient.get(`/articles/details/${articleId}`);
 };
 
 export const patchArticle = async (articleId: string, body: PatchArticleBody): Promise<Article> => {

@@ -20,6 +20,12 @@ export enum ImageResources {
   SANDTIMER = `${S3_BASE_URL}/sand-clock.png`,
   HEART = `${S3_BASE_URL}/heart.png`,
   INSTAGRAM = `${S3_BASE_URL}/instagram.png`,
+  HEART_ON = `${S3_BASE_URL}/heart-on.svg`,
+  MENU = `${S3_BASE_URL}/menu.svg`,
+  COMMUNITY_LOGO = `${S3_BASE_URL}/community.png`,
+
+  DATING_STYLE = `${S3_BASE_URL}/dating-style.png`,
+  MILITARY = `${S3_BASE_URL}/military.png`,
 
   // Pre-signup 페이지 이미지
   PRE_SIGNUP_CHARACTER = `${S3_BASE_URL}/pre-signup-character.png`,
@@ -29,7 +35,6 @@ export enum ImageResources {
   SWITCH_CAMPUS_CARD = `${S3_BASE_URL}/switch_campus_card.png`,
   INITIAL_PARTICIPANT_CARD = `${S3_BASE_URL}/initial_participant_card.png`,
   SWITCH_PARTICIPANT_CARD = `${S3_BASE_URL}/switch_participant_card.png`,
-  HEART_ON = `${S3_BASE_URL}/heart-on.svg`,
 }
 
 const imageUtils = {

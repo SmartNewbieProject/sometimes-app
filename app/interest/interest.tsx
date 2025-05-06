@@ -2,12 +2,12 @@ import Layout from "@/src/features/layout";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import Interest from "@features/interest";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { View, Image } from "react-native";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import Loading from "@/src/features/loading";
 
-const { ui, hooks, services, queries } = Interest;
+const { hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
@@ -88,7 +88,7 @@ export default function InterestSelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.navigate('/interest/smoking')}
+        onClickNext={() => router.navigate('/interest/dating-style')}
         onClickPrevious={() => router.navigate("/interest/drinking")}
       />
     </Layout.Default>

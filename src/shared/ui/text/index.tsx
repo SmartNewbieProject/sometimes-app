@@ -2,6 +2,7 @@ import React from 'react';
 import { Text as RNText, TextStyle } from 'react-native';
 import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '../../libs/cn';
+import colors from '../../constants/colors';
 
 const textStyles = cva('text-base', {
   variants: {
@@ -32,6 +33,7 @@ const textStyles = cva('text-base', {
       black: 'text-black',
       light: 'text-lightPurple',
       'pale-purple': 'text-[#9B94AB]',
+      deepPurple: 'text-strongPurple',
     },
   },
   defaultVariants: {

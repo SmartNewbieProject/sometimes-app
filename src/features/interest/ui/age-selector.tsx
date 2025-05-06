@@ -92,7 +92,7 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
       activeOpacity={0.8}
       onPress={onSelect}
       className={cn(
-        'rounded-[20px] overflow-hidden border-2 min-w-[138px] min-h-[138px] flex flex-row items-center',
+        'rounded-[20px] overflow-hidden border-2 min-w-[128px] min-h-[128px] flex flex-row items-center',
         isSelected ? 'border-primaryPurple' : 'border-[#E2D5FF]',
       )}
     >

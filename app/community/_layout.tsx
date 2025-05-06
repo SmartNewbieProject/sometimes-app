@@ -5,9 +5,9 @@ export default function CommunityLayout() {
   return (
     <View className="flex-1">
       <Stack>
-        <Stack.Screen 
-          name="index" 
-          options={{ 
+        <Stack.Screen
+          name="index"
+          options={{
             headerShown: false,
             contentStyle: {
               backgroundColor: 'transparent',
@@ -22,6 +22,12 @@ export default function CommunityLayout() {
         />
         <Stack.Screen
           name="write"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="update/[id]"
           options={{
             headerShown: false,
           }}

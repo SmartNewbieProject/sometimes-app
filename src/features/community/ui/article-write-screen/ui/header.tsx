@@ -5,9 +5,10 @@ import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 
 type ArticleWriteHeaderProps = {
   onConfirm: () => void;
+  mode: 'create' | 'update';
 };
 
-export const ArticleWriteHeader = ({ onConfirm }: ArticleWriteHeaderProps) => {
+export const ArticleWriteHeader = ({ onConfirm, mode }: ArticleWriteHeaderProps) => {
   return (
     <Header.Container>
       <Header.LeftContent>
@@ -18,7 +19,7 @@ export const ArticleWriteHeader = ({ onConfirm }: ArticleWriteHeaderProps) => {
 
       <Header.CenterContent>
         <Text textColor="black" weight="bold" size="18">
-          글 쓰기
+          {mode === 'create' ? '글 쓰기' : '글 수정'}
         </Text>
       </Header.CenterContent>
 

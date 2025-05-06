@@ -1,5 +1,5 @@
-import { useForm } from "react-hook-form";
-import { ArticleRequestType } from "../../types";
+import { useForm } from 'react-hook-form';
+import { ArticleRequestType } from '../../types';
 
 export type ArticleWriterForm = {
   title: string;
@@ -8,13 +8,13 @@ export type ArticleWriterForm = {
   type: ArticleRequestType;
 };
 
-export const useArticleWriteForm = (category: ArticleRequestType) => {
+export const useArticleWriteForm = (data: Partial<ArticleWriterForm>) => {
   const form = useForm<ArticleWriterForm>({
     defaultValues: {
-      title: '',
-      content: '',
-      anonymous: true,
-      type: category,
+      anonymous: data?.anonymous || true,
+      content: data?.content || '',
+      title: data?.title || '',
+      type: data?.type || ArticleRequestType.GENERAL,
     },
   });
 
