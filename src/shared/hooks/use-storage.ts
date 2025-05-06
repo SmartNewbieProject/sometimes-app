@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { storage } from '../libs';
 
 interface StorageProps<T> {
@@ -7,19 +7,20 @@ interface StorageProps<T> {
 }
 
 export function useStorage<T>({ key, initialValue }: StorageProps<T>) {
+  const initialValueRef = useRef(initialValue);
   const [storedValue, setStoredValue] = useState<T | undefined>(initialValue);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const loadStoredValue = async () => {
-      console.count('loadStoredValue()');
       try {
+        setLoading(true);
         const item = await storage.getItem(key);
         const value = (() => {
-          if (typeof item === 'string') return item;
-          return item ? JSON.parse(item) : initialValue;
+          return item ? JSON.parse(item) : initialValueRef.current;
         })();
+        // console.log({ value });
         setStoredValue(value);
         setError(null);
       } catch (e) {
@@ -31,13 +32,17 @@ export function useStorage<T>({ key, initialValue }: StorageProps<T>) {
     };
 
     loadStoredValue();
-  }, [key, initialValue]);
+  }, [key]);
 
   const setValue = useCallback(async (value: T) => {
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       await storage.setItem(key, JSON.stringify(valueToStore));
-      setStoredValue(valueToStore);
+
+      setStoredValue(prevValue => {
+        const isSameValue = JSON.stringify(prevValue) === JSON.stringify(valueToStore);
+        return isSameValue ? prevValue : valueToStore;
+      });
       setError(null);
     } catch (e) {
       setError(e instanceof Error ? e : new Error('Failed to save value'));
@@ -61,4 +66,4 @@ export function useStorage<T>({ key, initialValue }: StorageProps<T>) {
     loading,
     error,
   };
-} 
+}
