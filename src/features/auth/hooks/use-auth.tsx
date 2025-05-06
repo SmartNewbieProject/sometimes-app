@@ -18,24 +18,6 @@ export function useAuth() {
     initialValue: null,
   });
 
-  useEffect(() => {
-    const unsubscribeTokens = eventBus.on('auth:tokensUpdated',
-      async ({ accessToken, refreshToken }) => {
-        await setToken(accessToken);
-        await setRefreshToken(refreshToken);
-      });
-
-    const unsubscribeLogout = eventBus.on('auth:logout', async () => {
-      await setToken(null);
-      await setRefreshToken(null);
-    });
-
-    return () => {
-      unsubscribeTokens();
-      unsubscribeLogout();
-    };
-  }, [setToken, setRefreshToken]);
-
   const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
   const { my, ...myQueryProps } = useMyDetailsQuery(!!accessToken);
   const { showModal } = useModal();
@@ -70,6 +52,24 @@ export function useAuth() {
       router.push('/auth/login');
     });
   };
+
+  useEffect(() => {
+    const unsubscribeTokens = eventBus.on('auth:tokensUpdated',
+      async ({ accessToken, refreshToken }) => {
+        await setToken(accessToken);
+        await setRefreshToken(refreshToken);
+      });
+
+    const unsubscribeLogout = eventBus.on('auth:logout', async () => {
+      await setToken(null);
+      await setRefreshToken(null);
+    });
+
+    return () => {
+      unsubscribeTokens();
+      unsubscribeLogout();
+    };
+  }, [setToken, setRefreshToken]);
 
   return {
     login,
