@@ -18,9 +18,17 @@ export function useStorage<T>({ key, initialValue }: StorageProps<T>) {
         setLoading(true);
         const item = await storage.getItem(key);
         const value = (() => {
-          return item ? JSON.parse(item) : initialValueRef.current;
+          try {
+            return item ? JSON.parse(item) : initialValueRef.current;
+          } catch (error: unknown) {
+            const message = (error as any).message;
+            if (message === 'not valid JSON') {
+              return item ? item : initialValueRef.current;
+            }
+            // TODO: 다양한 타입에 대한 예외처리
+            return item ? item : initialValueRef.current;
+          }
         })();
-        // console.log({ value });
         setStoredValue(value);
         setError(null);
       } catch (e) {
