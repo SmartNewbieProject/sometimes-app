@@ -67,7 +67,7 @@ export default function SmokingSelectionScreen() {
           classNames="px-0"
           disabledNext={!smoking}
           onClickNext={() => router.navigate("/interest/tattoo")}
-          onClickPrevious={() => router.navigate("/interest/interest")}
+          onClickPrevious={() => router.navigate("/interest/military")}
         />
       </View>
     </Layout.Default>

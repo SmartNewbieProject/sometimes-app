@@ -9,6 +9,7 @@ import Loading from "@/src/features/loading";
 import { tryCatch } from "@/src/shared/libs";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Properties, savePreferences } from "@/src/features/interest/services";
+import { queryClient } from "@/src/shared/config/query";
 
 const { ui, hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
@@ -38,6 +39,9 @@ export default function TattooSelectionScreen() {
         interestIds: form.interestIds as string[],
         smoking: form.smoking?.id as string,
         tattoo: form.tattoo?.id as string,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['check-preference-fill'],
       });
       router.navigate("/interest/done");
       setFormSubmitLoading(false);

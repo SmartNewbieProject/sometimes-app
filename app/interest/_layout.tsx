@@ -65,6 +65,24 @@ export default function InterestLayout() {
           }}
         />
         <Stack.Screen
+          name="dating-style"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="military"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
+        <Stack.Screen
           name="smoking"
           options={{
             headerShown: false,
