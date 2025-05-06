@@ -89,8 +89,15 @@ export function useInfiniteData<T, P extends PaginationParams = PaginationParams
   }, [meta.hasNextPage, currentPage, fetchData]);
 
   const refresh = useCallback(async () => {
-    setCurrentPage(initialPage);
-    await fetchData(initialPage, false);
+    try {
+      setIsLoading(true);
+      setCurrentPage(initialPage);
+      await fetchData(initialPage, false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [initialPage, fetchData]);
 
   useEffect(() => {
