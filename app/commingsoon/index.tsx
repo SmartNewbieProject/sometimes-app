@@ -15,7 +15,7 @@ export default function CommingSoonScreen() {
   const onClickSeeYouLater = () =>
     showModal({
       title: '꼭 다시 만나요!',
-      children: <Text>5월 6일, 꼭 다시 만나요!</Text>,
+      children: <Text>5월 9일, 꼭 다시 만나요!</Text>,
       primaryButton: {
         text: '확인',
         onClick: () => { },
@@ -54,7 +54,7 @@ export default function CommingSoonScreen() {
             </Text>
             <Text weight="medium" size="sm" style={{ color: '#49386E' }}>
               <Text weight="medium" size="sm" textColor="dark">
-                5월 6일
+                5월 9일
               </Text>
               {', '}꼭 다시 만나요!
             </Text>
