@@ -20,15 +20,18 @@ export const useRedirectPreferences = () => {
   const { showModal } = useModal();
 
   const checkShowAgain = useCallback(() => {
-    if (loading || !latest) return false;
-    const { isLater, latestDate } = latest;
-    if (!isLater && !isPreferenceFill) {
+    if (loading) return false;
+    if (!latest && isPreferenceFill) {
+      return true;
+    }
+
+    if (!latest?.isLater && !isPreferenceFill) {
       return true;
     }
     const now = dayUtils.create();
-    const diff = now.diff(latestDate, 'day');
+    const diff = now.diff(latest?.latestDate, 'day');
     return diff > 1;
-  }, [latest, isPreferenceFill]);
+  }, [latest, isPreferenceFill, loading]);
 
   const confirm = useCallback(() =>
     setValue({
