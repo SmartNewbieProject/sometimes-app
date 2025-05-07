@@ -13,13 +13,24 @@ import { Comment } from "@/src/features/community/types";
 import apis from "@/src/features/community/apis";
 import Interaction from "@/src/features/community/ui/article/interaction-nav";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { useLocalSearchParams } from "expo-router";
+import { Check } from "@/src/shared/ui";
+import SendIcon from '@/assets/icons/send.svg';
+import { Form } from "@/src/widgets/form";
 
-export const ArticleDetail = ({article, comments, onUpdate, isEditing}: {article: Article, comments: Comment[], onUpdate: (id: string) => void, isEditing: boolean}) => {
+
+export const ArticleDetail = ({article, }: {article: Article}) => {
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const [checked, setChecked] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+    const [editingContent, setEditingContent] = useState<string>('');
     const form = useForm({
         defaultValues: {
             content: '',
         },
     });
+    const [comments, setComments] = useState<Comment[]>([]);
     const [likeCount, setLikeCount] = useState(article.likeCount);
     const [isLiked, setIsLiked] = useState(article.isLiked);
     const { my } = useAuth();
@@ -27,15 +38,61 @@ export const ArticleDetail = ({article, comments, onUpdate, isEditing}: {article
         if (!my) return false;
         return my.id === article.author.id;
     })();
-    const [refreshComment, setRefreshComment] = useState(comments);
-    const fetchComments = async () => {
-        const data = await apis.comments.getComments({articleId: article.id});
-        setRefreshComment(data);
-    };
 
     useEffect(() => {
         fetchComments();
     }, []);
+
+
+    const fetchComments = async () => {
+        const data = await apis.comments.getComments({articleId: article.id});
+        setComments(data);
+    };
+
+    const handleSubmit = async (data: { content: string }) => {
+        try {
+            await apis.comments.postComments(id, {
+                content: data.content,
+                anonymous: checked,
+            });
+            console.log('댓글 작성 성공');
+            form.reset();
+            if (article) {
+                article.commentCount += 1;
+            }
+            await fetchComments();
+        } catch (error) {
+            console.error('댓글 작성 실패:', error);
+        }
+    }
+
+    const handleUpdate = (id: string, content: string) => {
+        setEditingCommentId(id);
+        setEditingContent(content);
+        setIsEditing(true);
+    }
+
+    const handleSubmitUpdate = async () => {
+        if (editingCommentId) {
+            try {
+                await apis.comments.patchComments(id, editingCommentId, { content: editingContent });
+                setEditingCommentId(null);
+                setEditingContent('');
+            } catch (error) {
+                console.error('댓글 수정 실패:', error);
+            } finally {
+                form.reset();
+                setIsEditing(false);
+                await fetchComments();
+            }
+        }
+    }
+
+    const handleCancelEdit = () => {
+        setEditingCommentId(null);
+        setEditingContent('');
+    }
+
 
     const like = (item: Article) => {
       tryCatch(async () => {
@@ -61,7 +118,7 @@ export const ArticleDetail = ({article, comments, onUpdate, isEditing}: {article
             .map((comment: Comment) => {
                 return (
                     <React.Fragment key={comment.id}>
-                        <ArticleDetailComment comment={comment} onDelete={handleDelete} onUpdate={onUpdate} />
+                        <ArticleDetailComment comment={comment} onDelete={handleDelete} onUpdate={handleUpdate} />
                     </React.Fragment>
                 );
             });
@@ -108,10 +165,36 @@ export const ArticleDetail = ({article, comments, onUpdate, isEditing}: {article
                 </View>
             </View>
             <View className="h-[1px] bg-[#F3F0FF] mb-[20px]"/>
-            <View>
-                {renderComments(refreshComment)}
-            </View>
+            <ScrollView>
+                <View>
+                    {renderComments(comments)}
+                </View>
+            </ScrollView>
             <View className="h-[1px] bg-[#FFFFFF]"/>
+            <View className="flex-row w-full h-[50px] items-center gap-[5px] ml-[16px] mb-[32px] rounded-[16px] bg-[#F8F4FF]">
+                <View className="flex-row items-center gap-[5px]">    
+                    {editingCommentId && (
+                        <TouchableOpacity className="pl-[12px]  pb-[1px]" onPress={handleCancelEdit}>
+                            <Text>취소</Text>
+                        </TouchableOpacity>
+                    )}
+                    <Check.Box className="pl-[12px] h-[25px]" checked={checked} size={25} onChange={(checked) => setChecked(checked)} />
+                    <Text className="mr-1 text-black text-[15px] h-[25px] flex items-center">익명</Text>
+                </View>
+                <Form.LabelInput
+                    name="content"
+                    control={form.control}
+                    className="flex-1 h-[25px] pl-[10px] pr-[10px] border-b-0 text-xs text-[#A892D7] mt-[-5px]"
+                    placeholder={editingCommentId ? editingContent : "댓글을 입력하세요"}
+                    label=""
+                    onChange={(e) => setEditingContent(e.target.value)}
+                />
+                <TouchableOpacity className="pr-[10px]" onPress={editingCommentId ? handleSubmitUpdate : form.handleSubmit(handleSubmit)} disabled={!editingContent}>
+                    <IconWrapper size={18} className="">
+                        <SendIcon />
+                    </IconWrapper>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
