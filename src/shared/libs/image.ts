@@ -27,6 +27,9 @@ export enum ImageResources {
   DATING_STYLE = `${S3_BASE_URL}/dating-style.png`,
   MILITARY = `${S3_BASE_URL}/military.png`,
 
+  DISAPPEAR_FOX = `${S3_BASE_URL}/disappear_fox.png`,
+  PLITE_FOX = `${S3_BASE_URL}/polite_fox.png`,
+
   // Pre-signup 페이지 이미지
   PRE_SIGNUP_CHARACTER = `${S3_BASE_URL}/pre-signup-character.png`,
   INITIAL_CAMPUS_CARD = `${S3_BASE_URL}/initial_campus_card.png`,

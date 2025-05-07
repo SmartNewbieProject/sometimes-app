@@ -9,6 +9,7 @@ import { Container } from './ui/container';
 import { InteractionNavigation } from './ui/nav';
 import { RematchLoading } from './ui/rematching';
 import { useMatchLoading } from './hooks';
+import { PreOpening } from './ui/pre-open';
 
 export default function IdleMatchTimer() {
   const { match, isLoading: matchLoading, refetch } = useLatestMatching();
@@ -31,6 +32,16 @@ export default function IdleMatchTimer() {
       </View>
     );
   }
+
+  return (
+    <View>
+      <View style={styles.container}>
+        <Container gradientMode>
+          <PreOpening />
+        </Container>
+      </View>
+    </View>
+  );
 
   return (
     <View>

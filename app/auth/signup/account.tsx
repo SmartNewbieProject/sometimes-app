@@ -25,7 +25,6 @@ export default function AccountScreen() {
   const { isKeyboardVisible } = useKeyboarding();
   const { updateForm, form: { email, password } } = useSignupProgress();
 
-  // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics('account');
 
   const form = useForm<FormState>({

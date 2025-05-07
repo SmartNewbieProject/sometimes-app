@@ -5,7 +5,8 @@ import Home from "@features/home";
 import IdleMatchTimer from '@features/idle-match-timer';
 import Loading from '@/src/features/loading';
 import { router } from 'expo-router';
-import { ImageResources } from '@/src/shared/libs';
+import { environmentStrategy, ImageResources } from '@/src/shared/libs';
+import { useCommingSoon } from '@/src/features/admin/hooks';
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
@@ -15,6 +16,18 @@ const { useRedirectPreferences } = hooks;
 export default function HomeScreen() {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } = useTotalMatchCountQuery();
   const { isPreferenceFill } = useRedirectPreferences();
+  const showCommingSoon = useCommingSoon();
+
+  const onRedirectTicketPurChase = () => {
+    environmentStrategy({
+      production: () => {
+        showCommingSoon();
+      },
+      development: () => {
+        router.navigate('/purchase/tickets/rematch');
+      }
+    })
+  };
 
   return (
     <View className="flex-1">
@@ -27,7 +40,7 @@ export default function HomeScreen() {
         rightContent={
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => router.navigate('/purchase/tickets/rematch')}
+            onPress={onRedirectTicketPurChase}
           >
             <Image
               source={require('@assets/images/ticket.png')}
