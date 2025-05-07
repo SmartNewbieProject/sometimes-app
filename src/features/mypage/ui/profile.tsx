@@ -10,6 +10,7 @@ import NotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/src/features/auth';
 import MyPage from '@/src/features/mypage';
+import { useCommingSoon } from '@/src/features/admin/hooks';
 
 export const Profile = () => {
   const { profileDetails } = useAuth();
@@ -35,13 +36,16 @@ export const Profile = () => {
     grade: profileDetails?.universityDetails?.grade || '19학번',
     domatching: domatching,
     university: profileDetails?.universityDetails?.name || '한밭대학교',
-    profileImage: profileDetails?.profileImages[0] || require('@/assets/images/profile.png'),
+    profileImage: profileDetails?.profileImages[0].url || require('@/assets/images/profile.png'),
     totalRematchingTickets: reMatchingTicketCount,
   }
 
   const handleProfileEdit = () => {
     router.push('/profile-edit');
   }
+
+  const showCommingSoon = useCommingSoon();
+
 
   return (
     <View style={styles.container}>
@@ -65,13 +69,16 @@ export const Profile = () => {
                             <NotSecuredIcon/>
                         </IconWrapper>
                     </View>
-                    <View className='flex-colum items-center'>
+                    {/* TODO: 정식 오픈 시 주석 해제 필요 */}
+                    {/* <View className='flex-colum items-center'>
                         <CustomSwitch value={domatching} onChange={setDomatching} />
                         <Text className='text-[10px] pt-[8px] text-[#FFFFFF]'>매칭 쉬기</Text>
-                    </View>
+                    </View> */}
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', transform: [{ translateY: -60 }] }}>
-                    <TouchableOpacity onPress={handleProfileEdit}>
+                    {/* TODO: 정식 오픈 시 주석 해제 필요 */}
+                    {/* <TouchableOpacity onPress={handleProfileEdit}> */}
+                    <TouchableOpacity onPress={() =>showCommingSoon()}> {/* TODO: 정식 오픈 시 삭제 필요 */}
                         <View style={styles.leftRect} />
                         <View style={styles.leftRadius} />
                         <View style={[styles.previousButton]}>
