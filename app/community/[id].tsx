@@ -3,41 +3,70 @@ import { Header, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { TouchableOpacity, View, ScrollView, Pressable } from "react-native";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import HamburgerIcon from '@/assets/icons/menu-dots-vertical.svg';
-import { useQuery } from "@tanstack/react-query";
-import { getArticle } from "@/src/features/community/apis/articles";
-import { ArticleDetail } from "@/src/features/community/ui/article-detail";
+import { ArticleDetail } from "@/src/features/community/ui/article-detail/article-detail";
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import { useArticleComments, useArticleDetail } from "@/src/features/community/hooks/";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check } from "@/src/shared/ui";
 import SendIcon from '@/assets/icons/send.svg';
 import { Form } from "@/src/widgets/form";
-import apis from '@/src/features/community/apis/comments';
+import apis from '@/src/features/community/apis';
 
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { article } = useArticleDetail(id);
-    const { comments, refetch: refetchComments } = useArticleComments(id);
+    const { comments } = useArticleComments(id);
+    const [refreshComment, setRefreshComment] = useState(comments);
+    console.log(refreshComment)
     const [checked, setChecked] = useState(false);
+    const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+    const [editingContent, setEditingContent] = useState<string>('');
     const form = useForm({
         defaultValues: {
             content: '',
         },
     });
-    const content = form.watch('content');
+    const fetchComments = async () => {
+        const data = await apis.comments.getComments({articleId: id});
+        setRefreshComment(data);
+    };
+
+    useEffect(() => {
+        fetchComments();
+    }, []);
+
     const handleSubmit = async (data: { content: string }) => {
         try {
-            await apis.postComments(id, {
-                
+            await apis.comments.postComments(id, {
                 content: data.content,
                 anonymous: checked,
             });
             console.log('댓글 작성 성공');
             form.reset();
-            refetchComments();
+            fetchComments();
+            if (article) {
+                article.commentCount += 1; // 댓글 수 증가
+            }
         } catch (error) {
             console.error('댓글 작성 실패:', error);
+        }
+    }
+
+    const handleUpdate = (id: string, content: string) => {
+        setEditingCommentId(id);
+        setEditingContent(content);
+    }
+
+    const handleSubmitUpdate = async () => {
+        if (editingCommentId) {
+            try {
+                await apis.comments.patchComments(id, editingCommentId, { content: editingContent });
+                setEditingCommentId(null);
+                fetchComments();
+            } catch (error) {
+                console.error('댓글 수정 실패:', error);
+            }
         }
     }
 
@@ -62,7 +91,7 @@ export default function ArticleDetailScreen() {
             <ScrollView className="flex-1 px-5">
                 <View>
                     {article ? (
-                        <ArticleDetail article={article} comments={comments} />
+                        <ArticleDetail article={article} comments={refreshComment} onUpdate={handleUpdate}/>
                     ) : (
                         <Text>게시글을 찾을 수 없습니다.</Text>
                     )}
@@ -75,10 +104,11 @@ export default function ArticleDetailScreen() {
                     name="content"
                     control={form.control}
                     className="w-[241px] h-[25px] pl-[5px] border-b-0 text-xs text-[#A892D7] mt-[-5px]"
-                    placeholder="댓글을 입력하세요"
+                    placeholder={editingCommentId ? editingContent : "댓글을 입력하세요"}
                     label=""
+                    onChange={(e) => setEditingContent(e.target.value)}
                 />
-                <TouchableOpacity onPress={form.handleSubmit(handleSubmit)} disabled={!content}>
+                <TouchableOpacity onPress={editingCommentId ? handleSubmitUpdate : form.handleSubmit(handleSubmit)} disabled={!editingContent}>
                     <IconWrapper size={18} className="">
                         <SendIcon />
                     </IconWrapper>

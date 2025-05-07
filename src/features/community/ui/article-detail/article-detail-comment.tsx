@@ -4,13 +4,10 @@ import { Show, Text, ImageResource, dropdownStyles } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import CommentIcon from '@/assets/icons/engagement.svg';
 import HeartIcon from '@/assets/icons/heart.svg';
-import HambergIcon from '@/assets/icons/menu-dots-vertical-purple.svg';
-import { Comment } from "../types";
+import { Comment } from "../../types";
 import { useEffect, useState, useRef } from 'react';
-import React from 'react';
 import { getUnivLogo, UniversityName, ImageResources } from "@/src/shared/libs";
-import { useAuth } from "../../auth";
-import { router } from "expo-router";
+import { useAuth } from "../../../auth";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 
 const formatRelativeTime = (date: string) => {
@@ -28,7 +25,6 @@ const formatRelativeTime = (date: string) => {
 export const ArticleDetailComment = ({ comment, onDelete, onUpdate }: { comment: Comment, onDelete: (id: string) => void , onUpdate: (id: string) => void }) => {
     const [relativeTime, setRelativeTime] = useState('');
     const { value: isDropdownOpen, toggle: toggleDropdown, setFalse: closeDropdown } = useBoolean()
-
     useEffect(() => {
         setRelativeTime(formatRelativeTime(comment.createdAt));
     }, [comment.createdAt]);
@@ -56,18 +52,6 @@ export const ArticleDetailComment = ({ comment, onDelete, onUpdate }: { comment:
                         <Text className="text-[10px] text-[#646464]">{relativeTime}</Text>
                     </View>
                     <View className="bg-[#F3EDFF] px-[5px] py-[2px] rounded-[1px] gap-[4px] flex-row items-center text-#A892D7">
-                        <TouchableOpacity className="flex-row items-center gap-2" onPress={() => {}}>
-                            <IconWrapper size={12}>
-                                <CommentIcon stroke="#A892D7" />
-                            </IconWrapper>
-                        </TouchableOpacity>
-                        <Text className="opacity-70 text-[6px]">|</Text>
-                        <TouchableOpacity className="flex-row items-center gap-2" onPress={() => {}}>
-                            <IconWrapper size={12}>
-                                <HeartIcon stroke="#A892D7" />
-                            </IconWrapper>
-                        </TouchableOpacity>
-                        <Text className="opacity-70 text-[6px]">|</Text>
                         <Show when={!isAuthor}>
                             <TouchableOpacity className="flex-row items-center gap-2" onPress={() => {}}>
                                 <Text className="text-[10px] text-[#A892D7]">신고</Text>

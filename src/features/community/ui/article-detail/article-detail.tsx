@@ -9,17 +9,17 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import React from "react";
 import { getUnivLogo, tryCatch, UniversityName } from "@/src/shared/libs";
-import { Comment } from "../types";
-import apis from "../apis";
-import Interaction from "./article/interaction-nav";
+import { Comment } from "@/src/features/community/types";
+import apis from "@/src/features/community/apis";
+import Interaction from "@/src/features/community/ui/article/interaction-nav";
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
 
-export const ArticleDetail = ({article, comments}: {article: Article, comments: Comment[]}) => {
+export const ArticleDetail = ({article, comments, onUpdate, isEditing}: {article: Article, comments: Comment[], onUpdate: (id: string) => void, isEditing: boolean}) => {
     const form = useForm({
         defaultValues: {
             content: '',
         },
     });
-    console.log(article.isLiked)
     const [likeCount, setLikeCount] = useState(article.likeCount);
     const [isLiked, setIsLiked] = useState(article.isLiked);
     const { my } = useAuth();
@@ -30,7 +30,6 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
     const [refreshComment, setRefreshComment] = useState(comments);
     const fetchComments = async () => {
         const data = await apis.comments.getComments({articleId: article.id});
-        console.log(data)
         setRefreshComment(data);
     };
 
@@ -62,14 +61,13 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
             .map((comment: Comment) => {
                 return (
                     <React.Fragment key={comment.id}>
-                        <ArticleDetailComment comment={comment} onDelete={handleDelete} onUpdate={() => {}} />
+                        <ArticleDetailComment comment={comment} onDelete={handleDelete} onUpdate={onUpdate} />
                     </React.Fragment>
                 );
             });
     };
-
     return (
-        <View className="flex-1 px-[16px] w-full h-full">
+        <View className="flex-1 px-[16px] relative">
             <View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
             <View className="flex-row items-center mb-[12px]">
                 <Image 
@@ -97,8 +95,8 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
                 </View>
             </View>
             <View>
-                <Text weight="medium" className="text-[12px] mb-[5px]" textColor="black">{article.title}</Text>
-                <Text className=" text-[12px] h-[full] mb-[9px] leading-5" textColor="black">
+                <Text size="md" weight="medium" className="text-[12px] mb-[5px]" textColor="black">{article.title}</Text>
+                <Text size="sm" className="h-[full] mb-[9px] leading-5" textColor="black">
                     {article.content}
                 </Text>
             </View>
