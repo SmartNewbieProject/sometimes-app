@@ -35,7 +35,7 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
         animationDuration={400}
         loop={true}
         indicatorPosition="bottom"
-        indicatorContainerClassName="mb-12"
+        indicatorContainerClassName=""
         onScrollStateChange={(isScrolling) => {
           setIsSlideScrolling(isScrolling);
         }}
@@ -49,8 +49,8 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
           <View key={index} className="w-full h-full flex items-center justify-center px-4">
             <View
               style={{
-                width: 200,
-                height: 200 * (1.545),
+                width: 250,
+                height: 250 * (1.545),
                 borderRadius: 18.34,
                 overflow: 'visible',
                 marginBottom: 20,
