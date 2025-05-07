@@ -13,9 +13,10 @@ import FillHeartIcon from '@/assets/icons/fill-heart.svg';
 import { Check } from '@/src/shared/ui/check';
 import { useState } from "react";
 import React from "react";
-import { getUnivLogo, UniversityName } from "@/src/shared/libs";
+import { getUnivLogo, tryCatch, UniversityName } from "@/src/shared/libs";
 import { Comment } from "../types";
-
+import apis from "../apis";
+import Interaction from "./article/interaction-nav";
 
 export const ArticleDetail = ({article, comments}: {article: Article, comments: Comment[]}) => {
     const [checked, setChecked] = useState(true);
@@ -25,7 +26,14 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
         },
     });
     
-    
+    const like = (item: Article) => {
+      tryCatch(async () => {
+        await apis.articles.doLike(item);
+      }, (error) => {
+        console.error('좋아요 업데이트 실패:', error);
+      });
+    };
+
     const handleSubmit = (data: { content: string }) => {
         console.log(data);
     }
@@ -71,32 +79,17 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
                 </Text>
             </View>
             <View className="w-[300px] px-[31px] justify-between">
-                <View className="flex-row items-center justify-between gap-4">
-                    <TouchableOpacity className="flex-row items-center gap-2" onPress={() => {}}>
-                        <IconWrapper size={20}>
-                            {article.isLiked ? <FillHeartIcon /> : <HeartIcon stroke="#646464" />}
-                        </IconWrapper>
-                        <Text className="text-[16px] h-[24px] text-[#646464]">{article.likeCount}</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity className="flex-row items-center gap-2" onPress={() => {}}>
-                        <IconWrapper size={20}>
-                            <CommentIcon stroke="#646464" />
-                        </IconWrapper>
-                        <Text className="text-[16px] h-[24px] text-[#646464]">{article.comments.length}</Text>
-                    </TouchableOpacity>
-                    <IconWrapper size={16} >
-                        <EyesIcon stroke="#646464" />
-                    </IconWrapper>
-                    <Text className="text-[16px] h-[24px] text-[#646464]">{article.readCount}</Text>
+                <View className="flex-row items-center justify-between gap-4 pb-[10px]">
+                    <Interaction.Like count={article.likeCount} isLiked={article.isLiked} onPress={() => like(article)} />
+                    <Interaction.Comment count={article.comments.length} />
+                    <Interaction.View count={article.readCount} />
                 </View>
             </View>
-            <View className="h-[1px] bg-[#F3F0FF] mb-[20px]"></View>
+            <View className="h-[1px] bg-[#F3F0FF] mb-[20px]"/>
             <View>
                 {renderComments(comments)}
             </View>
-            <View className="h-[1px] bg-[#FFFFFF]"></View>
-
+            <View className="h-[1px] bg-[#FFFFFF]"/>
         </View>
     )
 }

@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Check } from "@/src/shared/ui";
 import SendIcon from '@/assets/icons/send.svg';
 import { Form } from "@/src/widgets/form";
+import apis from '@/src/features/community/apis/comments';
 
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,16 +25,22 @@ export default function ArticleDetailScreen() {
             content: '',
         },
     });
-
     const content = form.watch('content');
-    const handleSubmit = (data: { content: string }) => {
-        console.log(data);
-        form.reset();
+    const handleSubmit = async (data: { content: string }) => {
+        try {
+            await apis.postComments(id, {
+                content: data.content,
+                anonymous: checked,
+            });
+            console.log('댓글 작성 성공');
+            form.reset();
+        } catch (error) {
+            console.error('댓글 작성 실패:', error);
+        }
     }
 
     return (
-        <View className="flex-1">
-            <PalePurpleGradient />
+        <View className="flex-1 bg-white">
             <Header.Container>
                 <Header.LeftContent>
                     <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
@@ -65,12 +72,12 @@ export default function ArticleDetailScreen() {
                 <Form.LabelInput
                     name="content"
                     control={form.control}
-                    className="w-[251px] h-[25px] pl-[5px] border-b-0 text-xs text-[#A892D7]"
+                    className="w-[240px] h-[25px] pl-[5px] border-b-0 text-xs text-[#A892D7] mt-[-5px]"
                     placeholder="댓글을 입력하세요"
                     label=""
                 />
                 <TouchableOpacity onPress={form.handleSubmit(handleSubmit)} disabled={!content}>
-                    <IconWrapper size={18}>
+                    <IconWrapper size={18} className="">
                         <SendIcon />
                     </IconWrapper>
                 </TouchableOpacity>
