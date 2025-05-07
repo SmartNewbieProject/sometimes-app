@@ -2,16 +2,11 @@ import { TouchableOpacity, View, Image, Button, ScrollView } from "react-native"
 import { Text } from "@/src/shared/ui"
 import { Article } from "@/src/features/community/types"
 import { IconWrapper } from "@/src/shared/ui/icons"
-import HeartIcon from '@/assets/icons/heart.svg';
-import CommentIcon from '@/assets/icons/engagement.svg';
-import EyesIcon from '@/assets/icons/ph_eyes-fill.svg';
 import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
+import { Show } from "@/src/shared/ui/show";
 import { ArticleDetailComment } from "./article-detail-comment";
-import { Form } from "@/src/widgets/form";
 import { useForm } from "react-hook-form";
-import FillHeartIcon from '@/assets/icons/fill-heart.svg';
-import { Check } from '@/src/shared/ui/check';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import { getUnivLogo, tryCatch, UniversityName } from "@/src/shared/libs";
 import { Comment } from "../types";
@@ -32,6 +27,17 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
         if (!my) return false;
         return my.id === article.author.id;
     })();
+    const [refreshComment, setRefreshComment] = useState(comments);
+    const fetchComments = async () => {
+        const data = await apis.comments.getComments({articleId: article.id});
+        console.log(data)
+        setRefreshComment(data);
+    };
+
+    useEffect(() => {
+        fetchComments();
+    }, []);
+
     const like = (item: Article) => {
       tryCatch(async () => {
         await apis.articles.doLike(item);
@@ -41,13 +47,22 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
         console.error('좋아요 업데이트 실패:', error);
       });
     };
+    
+    const handleDelete = async (id: string) => {
+        tryCatch(async () => {
+            await apis.comments.deleteComments(article.id, id);
+            fetchComments();
+        }, (error) => {
+            console.error('댓글 삭제 실패:', error);
+        });
+    };
 
     const renderComments = (comments: Comment[]) => {
         return comments
             .map((comment: Comment) => {
                 return (
                     <React.Fragment key={comment.id}>
-                        <ArticleDetailComment comment={comment} />
+                        <ArticleDetailComment comment={comment} onDelete={handleDelete} onUpdate={() => {}} />
                     </React.Fragment>
                 );
             });
@@ -96,7 +111,7 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
             </View>
             <View className="h-[1px] bg-[#F3F0FF] mb-[20px]"/>
             <View>
-                {renderComments(comments)}
+                {renderComments(refreshComment)}
             </View>
             <View className="h-[1px] bg-[#FFFFFF]"/>
         </View>
