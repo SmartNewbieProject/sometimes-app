@@ -30,6 +30,10 @@ export const ArticleDetailComment = ({comment}: {comment: Comment}) => {
         setRelativeTime(formatRelativeTime(comment.createdAt));
     }, [comment.createdAt]);
 
+    const { my } = useAuth();
+    const isOwner = comment.author.id === my?.id;
+    
+
     return (
         <View key={comment.id} className="flex-row">
             <Image 
@@ -40,7 +44,12 @@ export const ArticleDetailComment = ({comment}: {comment: Comment}) => {
             <View className="flex-1 ">
                 <View className="pb-[6px] flex-row items-center justify-between">
                     <View className="flex-row items-center mb-[6px ]">
-                        <Text className="text-[12px] mr-[6px] text-black">{comment.author.name}</Text>
+                        <Text className="text-[12px] text-black">
+                            {comment.author.name}
+                        </Text>
+                        <Show when={isOwner}>
+                            <Text className="text-[8px] text-[#646464] mr-[10px]">(나)</Text>
+                        </Show>
                         <Text className="text-[10px] text-[#646464]">{relativeTime}</Text>
                     </View>
                     <View className="bg-[#F3EDFF] px-[5px] py-[2px] rounded-[1px] gap-[4px] flex-row items-center text-#A892D7">

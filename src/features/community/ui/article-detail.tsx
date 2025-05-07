@@ -27,7 +27,11 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
     console.log(article.isLiked)
     const [likeCount, setLikeCount] = useState(article.likeCount);
     const [isLiked, setIsLiked] = useState(article.isLiked);
-
+    const { my } = useAuth();
+    const isOwner = (() => {
+        if (!my) return false;
+        return my.id === article.author.id;
+    })();
     const like = (item: Article) => {
       tryCatch(async () => {
         await apis.articles.doLike(item);
@@ -59,7 +63,12 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
                     className="rounded-full mr-2"
                 />
                 <View>
-                    <Text size="sm" weight="medium" textColor="black">{article.author.name}</Text>
+                    <View className="flex-row items-center">
+                        <Text size="sm" weight="medium" textColor="black">{article.author.name}</Text>
+                        <Show when={isOwner}>
+                        <Text className="ml-1 text-[10px]" textColor="pale-purple">(나)</Text>
+                        </Show>
+                    </View>
                     <View className="flex-row items-center" style={{ alignItems: 'center'}}>
                         <Text className="text-[10px] h-[12px] text-[#7A4AE2] opacity-70" style={{ }}>
                             {article.author.age}세 
