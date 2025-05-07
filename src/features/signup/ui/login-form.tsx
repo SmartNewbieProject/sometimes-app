@@ -56,7 +56,7 @@ export default function LoginForm() {
 
   useFocusEffect(useCallback(
     () => {
-      if (isAuthorized) router.push('/');
+      if (isAuthorized) router.push('/home');
     }, [isAuthorized]
   ));
 
