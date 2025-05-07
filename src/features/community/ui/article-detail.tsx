@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Image, Button } from "react-native"   
+import { TouchableOpacity, View, Image, Button, ScrollView } from "react-native"   
 import { Text } from "@/src/shared/ui"
 import { Article } from "@/src/features/community/types"
 import { IconWrapper } from "@/src/shared/ui/icons"
@@ -72,14 +72,16 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
                     </View>
                 </View>
             </View>
-            <View>
-                <Text weight="medium" className="text-[12px] mb-[5px]" textColor="black">{article.title}</Text>
-                <Text className=" text-[12px] h-[28px] mb-[9px] leading-5" textColor="black">
-                    {article.content}
-                </Text>
-            </View>
-            <View className="w-[300px] px-[31px] justify-between">
-                <View className="flex-row items-center justify-between gap-4 pb-[10px]">
+            <ScrollView>
+                <View>
+                    <Text weight="medium" className="text-[12px] mb-[5px]" textColor="black">{article.title}</Text>
+                    <Text className=" text-[12px] h-[28px] mb-[9px] leading-5" textColor="black">
+                        {article.content}
+                    </Text>
+                </View>
+            </ScrollView>
+                <View className="w-[300px] px-[31px] justify-between">
+                    <View className="flex-row items-center justify-between gap-4 pb-[10px]">
                     <Interaction.Like count={likeCount} isLiked={isLiked} onPress={() => like(article)} />
                     <Interaction.Comment count={article.comments.length} />
                     <Interaction.View count={article.readCount} />
