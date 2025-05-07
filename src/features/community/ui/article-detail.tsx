@@ -72,14 +72,12 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
                     </View>
                 </View>
             </View>
-            <ScrollView>
-                <View>
-                    <Text weight="medium" className="text-[12px] mb-[5px]" textColor="black">{article.title}</Text>
-                    <Text className=" text-[12px] h-[28px] mb-[9px] leading-5" textColor="black">
-                        {article.content}
-                    </Text>
-                </View>
-            </ScrollView>
+            <View>
+                <Text weight="medium" className="text-[12px] mb-[5px]" textColor="black">{article.title}</Text>
+                <Text className=" text-[12px] h-[full] mb-[9px] leading-5" textColor="black">
+                    {article.content}
+                </Text>
+            </View>
                 <View className="w-[300px] px-[31px] justify-between">
                     <View className="flex-row items-center justify-between gap-4 pb-[10px]">
                     <Interaction.Like count={likeCount} isLiked={isLiked} onPress={() => like(article)} />
