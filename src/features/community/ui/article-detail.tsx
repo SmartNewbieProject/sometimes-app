@@ -19,24 +19,24 @@ import apis from "../apis";
 import Interaction from "./article/interaction-nav";
 
 export const ArticleDetail = ({article, comments}: {article: Article, comments: Comment[]}) => {
-    const [checked, setChecked] = useState(true);
     const form = useForm({
         defaultValues: {
             content: '',
         },
     });
-    
+    console.log(article.isLiked)
+    const [likeCount, setLikeCount] = useState(article.likeCount);
+    const [isLiked, setIsLiked] = useState(article.isLiked);
+
     const like = (item: Article) => {
       tryCatch(async () => {
         await apis.articles.doLike(item);
+        setLikeCount(prevCount => isLiked ? prevCount - 1 : prevCount + 1);
+        setIsLiked(!isLiked);
       }, (error) => {
         console.error('좋아요 업데이트 실패:', error);
       });
     };
-
-    const handleSubmit = (data: { content: string }) => {
-        console.log(data);
-    }
 
     const renderComments = (comments: Comment[]) => {
         return comments
@@ -80,7 +80,7 @@ export const ArticleDetail = ({article, comments}: {article: Article, comments: 
             </View>
             <View className="w-[300px] px-[31px] justify-between">
                 <View className="flex-row items-center justify-between gap-4 pb-[10px]">
-                    <Interaction.Like count={article.likeCount} isLiked={article.isLiked} onPress={() => like(article)} />
+                    <Interaction.Like count={likeCount} isLiked={isLiked} onPress={() => like(article)} />
                     <Interaction.Comment count={article.comments.length} />
                     <Interaction.View count={article.readCount} />
                 </View>
