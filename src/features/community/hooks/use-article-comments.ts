@@ -8,7 +8,7 @@ const QUERY_KEYS = {
 };
 
 export function useArticleComments(articleId: string) {
-  const { data: comments = [], isLoading } = useQuery({
+  const { data: comments = [], isLoading, refetch } = useQuery({
     queryKey: QUERY_KEYS.comments.lists(articleId),
     queryFn: async () => {
       const response = await getComments({ articleId });
@@ -19,5 +19,6 @@ export function useArticleComments(articleId: string) {
   return {
     comments,
     isLoading,
+    refetch,
   };
 }

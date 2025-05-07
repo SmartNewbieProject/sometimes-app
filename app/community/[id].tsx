@@ -18,7 +18,7 @@ import apis from '@/src/features/community/apis/comments';
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { article } = useArticleDetail(id);
-    const { comments } = useArticleComments(id);
+    const { comments, refetch: refetchComments } = useArticleComments(id);
     const [checked, setChecked] = useState(false);
     const form = useForm({
         defaultValues: {
@@ -29,11 +29,13 @@ export default function ArticleDetailScreen() {
     const handleSubmit = async (data: { content: string }) => {
         try {
             await apis.postComments(id, {
+                
                 content: data.content,
                 anonymous: checked,
             });
             console.log('댓글 작성 성공');
             form.reset();
+            refetchComments();
         } catch (error) {
             console.error('댓글 작성 실패:', error);
         }
@@ -72,7 +74,7 @@ export default function ArticleDetailScreen() {
                 <Form.LabelInput
                     name="content"
                     control={form.control}
-                    className="w-[240px] h-[25px] pl-[5px] border-b-0 text-xs text-[#A892D7] mt-[-5px]"
+                    className="w-[241px] h-[25px] pl-[5px] border-b-0 text-xs text-[#A892D7] mt-[-5px]"
                     placeholder="댓글을 입력하세요"
                     label=""
                 />
