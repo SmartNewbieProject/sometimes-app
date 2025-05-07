@@ -34,6 +34,7 @@ const textStyles = cva('text-base', {
       light: 'text-lightPurple',
       'pale-purple': 'text-[#9B94AB]',
       deepPurple: 'text-strongPurple',
+      gray: 'text-gray',
     },
   },
   defaultVariants: {
