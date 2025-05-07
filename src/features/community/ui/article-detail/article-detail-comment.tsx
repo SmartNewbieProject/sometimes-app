@@ -23,11 +23,7 @@ const formatRelativeTime = (date: string) => {
 }
 
 export const ArticleDetailComment = ({ comment, onDelete, onUpdate }: { comment: Comment, onDelete: (id: string) => void , onUpdate: (id: string) => void }) => {
-    const [relativeTime, setRelativeTime] = useState('');
     const { value: isDropdownOpen, toggle: toggleDropdown, setFalse: closeDropdown } = useBoolean()
-    useEffect(() => {
-        setRelativeTime(formatRelativeTime(comment.createdAt));
-    }, [comment.createdAt]);
 
     const { my } = useAuth();
     const isAuthor = comment.author.id === my?.id;
@@ -49,7 +45,7 @@ export const ArticleDetailComment = ({ comment, onDelete, onUpdate }: { comment:
                         <Show when={isAuthor}>
                             <Text className="text-[8px] text-[#646464] mr-[10px]">(나)</Text>
                         </Show>
-                        <Text className="text-[10px] text-[#646464]">{relativeTime}</Text>
+                        <Text className="text-[10px] text-[#646464]">{formatRelativeTime(comment.updatedAt)}</Text>
                     </View>
                     <View className="bg-[#F3EDFF] px-[5px] py-[2px] rounded-[1px] gap-[4px] flex-row items-center text-#A892D7">
                         <Show when={!isAuthor}>
