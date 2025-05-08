@@ -171,7 +171,7 @@ export const ArticleDetail = ({article, }: {article: Article}) => {
                 </View>
             </ScrollView>
             <View className="h-[1px] bg-[#FFFFFF]"/>
-            <View className="flex-row w-full h-[50px] items-center gap-[5px] ml-[16px] mb-[32px] rounded-[16px] bg-[#F8F4FF]">
+            <View className="flex-row flex-x h-[50px] items-center gap-[5px] ml-[16px] mb-[32px] rounded-[16px] bg-[#F8F4FF]">
                 <View className="flex-row items-center gap-[5px]">    
                     {editingCommentId && (
                         <TouchableOpacity className="pl-[12px]  pb-[1px]" onPress={handleCancelEdit}>
@@ -184,12 +184,12 @@ export const ArticleDetail = ({article, }: {article: Article}) => {
                 <Form.LabelInput
                     name="content"
                     control={form.control}
-                    className="flex-1 h-[25px] pl-[10px] pr-[10px] border-b-0 text-xs text-[#A892D7] mt-[-5px]"
+                    className="w-full  ml-[10px] mr-[20px] border-b-0 text-xs text-[#A892D7] mt-[-4px]"
                     placeholder={editingCommentId ? editingContent : "댓글을 입력하세요"}
                     label=""
                     onChange={(e) => setEditingContent(e.target.value)}
                 />
-                <TouchableOpacity className="pr-[10px]" onPress={editingCommentId ? handleSubmitUpdate : form.handleSubmit(handleSubmit)} disabled={!editingContent}>
+                <TouchableOpacity onPress={editingCommentId ? handleSubmitUpdate : form.handleSubmit(handleSubmit)} disabled={!editingContent}>
                     <IconWrapper size={18} className="">
                         <SendIcon />
                     </IconWrapper>
