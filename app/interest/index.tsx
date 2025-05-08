@@ -2,7 +2,7 @@ import Layout from "@/src/features/layout";
 import { View, Image } from "react-native";
 import SmallTitle from '@assets/icons/small-title.svg';
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { PalePurpleGradient, Text, ProgressBar } from "@/src/shared/ui";
+import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { router } from "expo-router";
 import { useAuth } from "@/src/features/auth";

@@ -7,7 +7,7 @@ import { Platform, View } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
 
-import { QueryProvider } from '@/src/shared/config';
+import { QueryProvider, RouteTracker } from '@/src/shared/config';
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
 import { cn } from '@/src/shared/libs/cn';
 import { ModalProvider, AnalyticsProvider } from '@/src/shared/providers';
@@ -51,7 +51,9 @@ export default function RootLayout() {
         <QueryProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <AnalyticsProvider>
-              <Slot />
+              <RouteTracker>
+                <Slot />
+              </RouteTracker>
             </AnalyticsProvider>
           </ThemeProvider>
         </QueryProvider>

@@ -7,6 +7,9 @@ import { eventBus } from './event-bus';
 
 let refreshTokenPromise: Promise<string> | null = null;
 const detach = (token: string) => token.replaceAll('\"', '');
+const TokenErrorExceptPaths = [
+  '/community',
+];
 
 const refresh = async () => {
   if (refreshTokenPromise) {
@@ -84,12 +87,21 @@ axiosClient.interceptors.response.use(
           console.log({ refreshError: error })
           storage.removeItem('access-token');
           storage.removeItem('refresh-token');
-          // 로그아웃 이벤트 발생
           eventBus.emit('auth:logout');
           console.error(error);
           router.push('/auth/login');
         });
       } catch (refreshError) {
+        const currentPath = await storage.getItem('current-path');
+        console.table({
+          currentPath,
+        });
+
+        const justPropagateError = TokenErrorExceptPaths.some(path => currentPath?.includes(path));
+        if (justPropagateError) {
+          return Promise.reject(refreshError);
+        }
+
         storage.removeItem('access-token');
         storage.removeItem('refresh-token');
         // 로그아웃 이벤트 발생
