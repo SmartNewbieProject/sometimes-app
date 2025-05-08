@@ -5,6 +5,7 @@ import { Show } from "../show";
 import { useState, useEffect } from "react";
 
 export type DropdownItem = {
+  key: string;
   content: React.ReactNode;
   onPress: () => void;
 }
@@ -53,9 +54,9 @@ export const Dropdown = ({ open: _open, items }: DropdownProps) => {
             style={styles.dropdownContainer}
             className="dropdown-container"
           >
-            {items.map((item, index) => (
+            {items.map((item) => (
               <Pressable
-                key={index}
+                key={item.key}
                 style={styles.dropdownItem}
                 onPress={(e) => {
                   e.preventDefault();
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: 32,
     height: 32,
+    zIndex: 10,
   },
   dropdownContainer: {
     width: 140,
@@ -88,14 +90,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 48,
     right: 15,
-    elevation: 5,
+    elevation: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
     zIndex: 10,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: '#eee',
   },
   dropdownItem: {
     padding: 10,
