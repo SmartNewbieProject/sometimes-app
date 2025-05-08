@@ -9,27 +9,14 @@ import Signup from '@/src/features/signup';
 const { useSignupProgress, useSignupAnalytics } = Signup;
 
 export default function SignupDoneScreen() {
-  const { clear, form } = useSignupProgress();
+  const { clear } = useSignupProgress();
 
   const { trackSignupEvent } = useSignupAnalytics('done');
 
   const onNext = () => {
     trackSignupEvent('completion_button_click');
-    const email = form.email;
     clear();
-
-    environmentStrategy({
-      production: () => {
-        if (email === 'billing-test@gmail.com') {
-          return router.push('/auth/login');
-        }
-
-        router.push('/commingsoon');
-      },
-      development: () => {
-        router.push('/auth/login');
-      },
-    });
+    router.push('/auth/login');
   };
 
   return (

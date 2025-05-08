@@ -45,8 +45,7 @@ export default function InterestDoneScreen() {
           variant="primary"
           size="md"
           onPress={() => {
-            const redirectPath = process.env.NODE_ENV === 'production' ? '/commingsoon' : '/home';
-            router.push(redirectPath);
+            router.push('/home');
           }}
           className="mb-[14px] w-full"
         >
