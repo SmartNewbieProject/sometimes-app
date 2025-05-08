@@ -58,8 +58,7 @@ export const ArticleDetailComment = ({
 				</View>
 			</View>
 		</View>
-
-		<Divider.Horizontal className="mt-2" />
+		<Divider.Horizontal className="mt-2 z-[-1]" />
 		</View>
 	);
 };
