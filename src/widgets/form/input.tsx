@@ -1,9 +1,11 @@
-import { useController, Control } from 'react-hook-form';
+import { useController, type Control } from 'react-hook-form';
 import { Input, type InputProps } from '@/src/shared/ui';
 
 interface FormInputProps extends Omit<InputProps, 'value' | 'onChangeText'> {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   control: Control<any>;
   name: string;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   rules?: Record<string, any>;
 }
 
