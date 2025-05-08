@@ -1,9 +1,9 @@
 import { View, TouchableOpacity, Image } from 'react-native';
 import { Divider, Show, Text, ImageResource, dropdownStyles } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
-import { Article as ArticleType } from '../../types';
+import type { Article as ArticleType } from '../../types';
 import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
-import { dayUtils, getUnivLogo, UniversityName, ImageResources } from '@/src/shared/libs';
+import { dayUtils, getUnivLogo, type UniversityName, ImageResources } from '@/src/shared/libs';
 import Interaction from './interaction-nav';
 import { useEffect } from 'react';
 import { useBoolean } from '@/src/shared/hooks/use-boolean';
@@ -41,6 +41,8 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
       onPress();
     }
   };
+
+  const redirectDetails = () => router.push(`/community/${data.id}`);
 
   useEffect(() => {
     setFalse();
@@ -89,10 +91,14 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
             ))}
             {data.commentCount > 3 && (
               <View className="w-full flex flex-row justify-end my-1">
-                <TouchableOpacity>
+                <TouchableOpacity 
+                  className="flex-row items-center gap-x-1"
+                  onPress={redirectDetails}
+                >
                   <Text size="sm">
                     답글 더보기
                   </Text>
+                  <ImageResource resource={ImageResources.PURPLE_ARROW_RIGHT} width={16} height={16} />
                 </TouchableOpacity>
               </View>
             )}
