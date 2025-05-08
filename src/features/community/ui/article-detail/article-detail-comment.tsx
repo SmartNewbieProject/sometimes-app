@@ -29,7 +29,6 @@ export const ArticleDetailComment = ({
 				/>
 			</View>
 
-
 			<View className="flex-row items-center justify-between">
 				<View className="px-[5px] py-[2px] rounded-[1px] gap-[4px] flex-row items-center">
 					{/* TODO: 신고 추후 연동 */}
@@ -41,6 +40,7 @@ export const ArticleDetailComment = ({
 					<Show when={isAuthor}>
 						<Dropdown
 							open={false}
+							dropdownStyle={{ top: 20, right: 18 }}
 							items={[
 								{
 									key: 'edit',
