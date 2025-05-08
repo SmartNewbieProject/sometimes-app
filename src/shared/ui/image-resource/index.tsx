@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Image as ExpoImage } from 'expo-image';
-import { StyleSheet, View, ViewStyle } from 'react-native';
-import { ImageResources } from '@/src/shared/libs/image';
+import { StyleSheet, View, type ViewStyle } from 'react-native';
+import type { ImageResources } from '@/src/shared/libs/image';
 import Loading from '@/src/features/loading';
 
 export interface ImageResourceProps {
@@ -28,10 +28,8 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  // Get the image URL directly as a string
   const imageUrl = resource.toString();
 
-  // Create styles outside of the render function to avoid recreation on each render
   const styles = StyleSheet.create({
     container: {
       width,
