@@ -2,6 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Button, Text } from '@shared/ui';
 import { router } from 'expo-router';
+import { Feedback } from "@features/feedback";
 
 interface FooterProps {
   trackEventAction?: (eventName: string) => void;
@@ -10,6 +11,9 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) => {
   return (
     <View className="w-full mt-8">
+      <View className="my-1.5">
+        <Feedback.WallaFeedbackBanner textContent="연애에서 바라는 점, 소통 방식을 알려주세요!" />
+      </View>
       <View className="w-full px-4 py-3">
         <Button
           variant="primary"

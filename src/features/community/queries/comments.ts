@@ -2,14 +2,14 @@ import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import apis_comments from '../apis/comments';
 import { QUERY_KEYS } from './keys';
 
-export function useCommentsQuery(articleId: number) {
+export function useCommentsQuery(articleId: string) {
   return useSuspenseQuery({
     queryKey: QUERY_KEYS.comments.lists(articleId),
     queryFn: () => apis_comments.getComments({ articleId }),
   });
 }
 
-export function useCreateCommentMutation(articleId: number) {
+export function useCreateCommentMutation(articleId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -21,11 +21,11 @@ export function useCreateCommentMutation(articleId: number) {
   });
 }
 
-export function useUpdateCommentMutation(articleId: number) {
+export function useUpdateCommentMutation(articleId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ commentId, content }: { commentId: number; content: string }) => 
+    mutationFn: ({ commentId, content }: { commentId: string; content: string }) => 
       apis_comments.patchComments(articleId, commentId, { content }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.comments.lists(articleId) });
@@ -33,11 +33,11 @@ export function useUpdateCommentMutation(articleId: number) {
   });
 }
 
-export function useDeleteCommentMutation(articleId: number) {
+export function useDeleteCommentMutation(articleId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (commentId: number) => 
+    mutationFn: (commentId: string) => 
       apis_comments.deleteComments(articleId, commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.comments.lists(articleId) });

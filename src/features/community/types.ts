@@ -1,4 +1,4 @@
-import { Gender, UniversityDetail } from "@/src/types/user";
+import type { Gender, UniversityDetail } from "@/src/types/user";
 
 export enum ArticleRequestType {
   GENERAL = 'general',
@@ -46,4 +46,9 @@ export interface Category {
   code: string;
   displayName: string;
   emojiUrl: string;
+}
+
+export interface CommentForm {
+  content: string;
+  anonymous: boolean;
 }

@@ -7,7 +7,7 @@ export const QUERY_KEYS = {
   },
   comments: {
     all: ['comments'],
-    lists: (articleId: number) => [...QUERY_KEYS.comments.all, 'list', articleId],
-    detail: (articleId: number, commentId: number) => [...QUERY_KEYS.comments.all, 'detail', articleId, commentId],
+    lists: (articleId: string) => [...QUERY_KEYS.comments.all, 'list', articleId],
+    detail: (articleId: string, commentId: string) => [...QUERY_KEYS.comments.all, 'detail', articleId, commentId],
   },
 } as const; 

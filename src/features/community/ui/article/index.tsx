@@ -1,9 +1,9 @@
-import { View, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native';
-import { Divider, Show, Text, Dropdown, ImageResource, dropdownStyles } from '@/src/shared/ui';
+import { View, TouchableOpacity, Image } from 'react-native';
+import { Divider, Show, Text, ImageResource, dropdownStyles } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
-import { Article as ArticleType } from '../../types';
+import type { Article as ArticleType } from '../../types';
 import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
-import { dayUtils, getUnivLogo, UniversityName, ImageResources, tryCatch } from '@/src/shared/libs';
+import { dayUtils, getUnivLogo, type UniversityName, ImageResources } from '@/src/shared/libs';
 import Interaction from './interaction-nav';
 import { useEffect } from 'react';
 import { useBoolean } from '@/src/shared/hooks/use-boolean';
@@ -11,6 +11,7 @@ import { Comment } from '../comment';
 import { useCategory } from '../../hooks';
 import { useAuth } from '@/src/features/auth';
 import { router } from 'expo-router';
+import { UserProfile } from '../user-profile';
 
 interface ArticleItemProps {
   data: ArticleType;
@@ -41,6 +42,8 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
     }
   };
 
+  const redirectDetails = () => router.push(`/community/${data.id}`);
+
   useEffect(() => {
     setFalse();
     closeDropdown();
@@ -50,33 +53,11 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
     <View className="w-full relative">
       <TouchableOpacity onPress={handleArticlePress} className="p-4 bg-white" activeOpacity={0.7}>
 
-        <View className="flex-row items-center mb-2 relative">
-          <Image
-            source={{ uri: getUnivLogo(universityName) }}
-            style={{ width: 32, height: 32 }}
-            className="rounded-full mr-2"
-          />
-          <View className="w-full relative">
-            <View className="flex flex-row items-center justify-between">
-              <View className="flex flex-row">
-                <Text size="sm" weight="medium" textColor="black">{author.name}</Text>
-                <Show when={isOwner}>
-                  <Text size="sm" className="ml-1" textColor="pale-purple">(나)</Text>
-                </Show>
-              </View>
-
-            </View>
-            <Text size="13" textColor="purple" className="opacity-70">
-              {author.age}세
-              <Text> · </Text>
-              {universityName}
-              <IconWrapper size={13}>
-                <ShieldNotSecuredIcon />
-              </IconWrapper>
-            </Text>
-          </View>
-        </View>
-
+        <UserProfile 
+          author={author}
+          universityName={universityName} 
+          isOwner={isOwner}
+        />
         <Text size="md" weight="medium" textColor="black">{data.title}</Text>
         <View className="my-1.5 w-full flex flex-row justify-end">
           <Text size="13" textColor="pale-purple">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
@@ -110,10 +91,14 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
             ))}
             {data.commentCount > 3 && (
               <View className="w-full flex flex-row justify-end my-1">
-                <TouchableOpacity>
+                <TouchableOpacity 
+                  className="flex-row items-center gap-x-1"
+                  onPress={redirectDetails}
+                >
                   <Text size="sm">
                     답글 더보기
                   </Text>
+                  <ImageResource resource={ImageResources.PURPLE_ARROW_RIGHT} width={16} height={16} />
                 </TouchableOpacity>
               </View>
             )}

@@ -5,6 +5,8 @@ import Home from "@features/home";
 import IdleMatchTimer from '@features/idle-match-timer';
 import Loading from '@/src/features/loading';
 import { router } from 'expo-router';
+import { ImageResources } from '@/src/shared/libs';
+import { Feedback } from "@features/feedback";
 import { environmentStrategy, ImageResources } from '@/src/shared/libs';
 import { useCommingSoon } from '@/src/features/admin/hooks';
 
@@ -60,16 +62,17 @@ export default function HomeScreen() {
           </Loading.Lottie>
         </View>
 
-        <Show when={!isPreferenceFill}>
-          <View className="mt-[18px]">
-            <AnnounceCard
-              emoji={ImageResources.DETAILS}
-              emojiSize={{ width: 31, height: 28 }}
-              text="나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
-              onPress={() => router.navigate('/interest')}
-            />
-          </View>
-        </Show>
+        <View className="mt-[18px] flex flex-col gap-y-1.5">
+          <Feedback.WallaFeedbackBanner />
+          <Show when={!isPreferenceFill}>
+              <AnnounceCard
+                emoji={ImageResources.DETAILS}
+                emojiSize={{ width: 31, height: 28 }}
+                text="나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
+                onPress={() => router.navigate('/interest')}
+              />
+          </Show>
+        </View>
 
         <View className="mt-[14px]">
           <IdleMatchTimer />
