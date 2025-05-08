@@ -5,7 +5,6 @@ import Home from "@features/home";
 import IdleMatchTimer from '@features/idle-match-timer';
 import Loading from '@/src/features/loading';
 import { router } from 'expo-router';
-import { ImageResources } from '@/src/shared/libs';
 import { Feedback } from "@features/feedback";
 import { environmentStrategy, ImageResources } from '@/src/shared/libs';
 import { useCommingSoon } from '@/src/features/admin/hooks';
