@@ -1,24 +1,18 @@
-import { TouchableOpacity, View, Image, Button, ScrollView } from "react-native"   
+import { View, ScrollView } from "react-native"   
 import { Text } from "@/src/shared/ui"
-import { Article } from "@/src/features/community/types"
-import { IconWrapper } from "@/src/shared/ui/icons"
-import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
-import { Show } from "@/src/shared/ui/show";
 import { ArticleDetailComment } from "./article-detail-comment";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import React from "react";
-import { getUnivLogo, tryCatch, UniversityName } from "@/src/shared/libs";
-import { Comment } from "@/src/features/community/types";
+import { tryCatch } from "@shared/libs";
+import type { UniversityName } from '@shared/libs';
 import apis from "@/src/features/community/apis";
 import Interaction from "@/src/features/community/ui/article/interaction-nav";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { useLocalSearchParams } from "expo-router";
-import { Check } from "@/src/shared/ui";
-import SendIcon from '@/assets/icons/send.svg';
-import { Form } from "@/src/widgets/form";
 import { UserProfile } from "../user-profile";
-
+import type { Article, Comment, CommentForm } from "../../types";
+import { InputForm } from '../comment/input-form';
 
 export const ArticleDetail = ({article, }: {article: Article}) => {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,10 +20,11 @@ export const ArticleDetail = ({article, }: {article: Article}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
     const [editingContent, setEditingContent] = useState<string>('');
-    const form = useForm({
-        defaultValues: {
-            content: '',
-        },
+    const form = useForm<CommentForm>({
+			defaultValues: {
+				content: '',
+				anonymous: true,
+			},
     });
     const [comments, setComments] = useState<Comment[]>([]);
     const [likeCount, setLikeCount] = useState(article.likeCount);
@@ -74,26 +69,25 @@ export const ArticleDetail = ({article, }: {article: Article}) => {
     }
 
     const handleSubmitUpdate = async () => {
-        if (editingCommentId) {
-            try {
-                await apis.comments.patchComments(id, editingCommentId, { content: editingContent });
-                setEditingCommentId(null);
-                setEditingContent('');
-            } catch (error) {
-                console.error('댓글 수정 실패:', error);
-            } finally {
-                form.reset();
-                setIsEditing(false);
-                await fetchComments();
-            }
-        }
+			if (editingCommentId) {
+				try {
+					await apis.comments.patchComments(id, editingCommentId, { content: editingContent });
+					setEditingCommentId(null);
+					setEditingContent('');
+				} catch (error) {
+						console.error('댓글 수정 실패:', error);
+				} finally {
+					form.reset();
+					setIsEditing(false);
+					await fetchComments();
+				}
+			}
     }
 
     const handleCancelEdit = () => {
-        setEditingCommentId(null);
-        setEditingContent('');
+			setEditingCommentId(null);
+			setEditingContent('');
     }
-
 
     const like = (item: Article) => {
       tryCatch(async () => {
@@ -107,76 +101,62 @@ export const ArticleDetail = ({article, }: {article: Article}) => {
     
     const handleDelete = async (id: string) => {
         tryCatch(async () => {
-            await apis.comments.deleteComments(article.id, id);
-            fetchComments();
+					await apis.comments.deleteComments(article.id, id);
+					fetchComments();
         }, (error) => {
-            console.error('댓글 삭제 실패:', error);
+					console.error('댓글 삭제 실패:', error);
         });
     };
 
     const renderComments = (comments: Comment[]) => {
-        return comments
-            .map((comment: Comment) => {
-                return (
-                    <React.Fragment key={comment.id}>
-                        <ArticleDetailComment comment={comment} onDelete={handleDelete} onUpdate={handleUpdate} />
-                    </React.Fragment>
-                );
-            });
-    };
+			return comments
+				.map((comment: Comment) => (
+						<React.Fragment key={comment.id}>
+							<ArticleDetailComment comment={comment} onDelete={handleDelete} onUpdate={handleUpdate} />
+						</React.Fragment>
+					));
+		};
+
     return (
         <View className="flex-1 px-[16px] relative">
-            <View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
-						<UserProfile 
-							author={article.author}
-							universityName={article.author.universityDetails.name as UniversityName}
-							isOwner={isOwner}
-						/>
+					<View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
+					<UserProfile 
+						author={article.author}
+						universityName={article.author.universityDetails.name as UniversityName}
+						isOwner={isOwner}
+					/>
+					<View>
+						<Text weight="medium" className="text-md md:text-[18px] mb-[5px]" textColor="black">{article.title}</Text>
+						<Text className="text-sm md:text-md h-[full] mb-[9px] leading-5" textColor="black">
+								{article.content}
+						</Text>
+					</View>
+						<View className="w-full mt-[10px">
+							<View className="flex-row items-center justify-around gap-4 pb-[10px]">
+							<Interaction.Like count={likeCount} isLiked={isLiked} onPress={() => like(article)} />
+							<Interaction.Comment count={article.comments.length} />
+							<Interaction.View count={article.readCount} />
+						</View>
+					</View>
+					<View className="h-[1px] bg-[#F3F0FF] mb-[20px]"/>
+					<ScrollView>
+						<View>
+								{renderComments(comments)}
+						</View>
+					</ScrollView>
+					<View className="h-[1px] bg-[#FFFFFF]"/>
 
-            <View>
-                <Text weight="medium" className="text-md md:text-[18px] mb-[5px]" textColor="black">{article.title}</Text>
-                <Text className="text-sm md:text-md h-[full] mb-[9px] leading-5" textColor="black">
-                    {article.content}
-                </Text>
-            </View>
-							<View className="w-[300px] px-[31px] justify-between">
-								<View className="flex-row items-center justify-between gap-4 pb-[10px]">
-								<Interaction.Like count={likeCount} isLiked={isLiked} onPress={() => like(article)} />
-								<Interaction.Comment count={article.comments.length} />
-								<Interaction.View count={article.readCount} />
-							</View>
-            </View>
-            <View className="h-[1px] bg-[#F3F0FF] mb-[20px]"/>
-            <ScrollView>
-                <View>
-                    {renderComments(comments)}
-                </View>
-            </ScrollView>
-            <View className="h-[1px] bg-[#FFFFFF]"/>
-            <View className="flex-row flex-x h-[50px] items-center gap-[5px] ml-[16px] mb-[32px] rounded-[16px] bg-[#F8F4FF]">
-                <View className="flex-row items-center gap-[5px]">    
-                    {editingCommentId && (
-                        <TouchableOpacity className="pl-[12px]  pb-[1px]" onPress={handleCancelEdit}>
-                            <Text>취소</Text>
-                        </TouchableOpacity>
-                    )}
-                    <Check.Box className="pl-[12px] h-[25px]" checked={checked} size={25} onChange={(checked) => setChecked(checked)} />
-                    <Text className="mr-1 text-black text-[15px] h-[25px] flex items-center">익명</Text>
-                </View>
-                <Form.LabelInput
-                    name="content"
-                    control={form.control}
-                    className="w-full  ml-[10px] mr-[20px] border-b-0 text-xs text-[#A892D7] mt-[-4px]"
-                    placeholder={editingCommentId ? editingContent : "댓글을 입력하세요"}
-                    label=""
-                    onChange={(e) => setEditingContent(e.target.value)}
-                />
-                <TouchableOpacity onPress={editingCommentId ? handleSubmitUpdate : form.handleSubmit(handleSubmit)} disabled={!editingContent}>
-                    <IconWrapper size={18} className="">
-                        <SendIcon />
-                    </IconWrapper>
-                </TouchableOpacity>
-            </View>
+					<InputForm
+						checked={checked}
+						setChecked={setChecked}
+						editingCommentId={editingCommentId}
+						handleCancelEdit={handleCancelEdit}
+						editingContent={editingContent}
+						setEditingContent={setEditingContent}
+						form={form}
+						handleSubmitUpdate={handleSubmitUpdate}
+						handleSubmit={handleSubmit}
+					/>
         </View>
     )
 }
