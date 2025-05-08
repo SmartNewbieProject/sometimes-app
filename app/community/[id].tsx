@@ -46,19 +46,19 @@ export default function ArticleDetailScreen() {
                 <Header.RightContent>
                     <Show when={isOwner}>
                         <Dropdown
-                            open={isDropdownOpen}
-                            items={[
-															{
-																key: 'edit',
-																content: <Text textColor="black">수정</Text>,
-																onPress: () => router.push(`/community/update/${id}`),
-															},
-															{
-																key: 'delete',
-																content: <Text textColor="black">삭제</Text>,
-																onPress: handleDelete,
-															},
-                            ]}
+													open={isDropdownOpen}
+													items={[
+														{
+															key: 'edit',
+															content: <Text textColor="black">수정</Text>,
+															onPress: () => router.push(`/community/update/${id}`),
+														},
+														{
+															key: 'delete',
+															content: <Text textColor="black">삭제</Text>,
+															onPress: handleDelete,
+														},
+													]}
                         />
                     </Show>
                 </Header.RightContent>

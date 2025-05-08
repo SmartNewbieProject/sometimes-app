@@ -20,7 +20,7 @@ interface InputFormProps {
   handleSubmit: (data: { content: string }) => void;
 }
 
-export const InputForm = ({
+export const InputForm = ({ 
   checked,
   setChecked,
   editingCommentId,
