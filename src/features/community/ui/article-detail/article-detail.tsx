@@ -55,6 +55,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
             onSuccess: () => {
                 form.reset();
                 setEditingContent('');
+                article.comments.length += 1;
             },
         });
     };
@@ -98,6 +99,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     
     const handleDelete = async (commentId: string) => {
 			deleteCommentMutation.mutate(commentId);
+            article.comments.length -= 1;
     };
 
     const renderComments = (comments: Comment[]) => {
