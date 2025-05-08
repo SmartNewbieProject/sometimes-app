@@ -9,48 +9,49 @@ import { ImageResources } from "@/src/shared/libs";
 import { useAuth } from "@/src/features/auth";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import apis from "@/src/features/community/apis";
+import Loading from "@/src/features/loading";
 
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
-    const { article } = useArticleDetail(id);
+    const { article, isLoading } = useArticleDetail(id);
     const { value: isDropdownOpen, toggle: toggleDropdown, setFalse: closeDropdown } = useBoolean();
-    const form = useForm({
-        defaultValues: {
-            content: '',
-        },
-    });
     const { my } = useAuth();
     const isOwner = (() => {
-        if (!my) return false;
-        return my.id === article?.author.id;
+			if (!my) return false;
+			return my.id === article?.author.id;
     })();
 
     const handleDelete = async () => {
-        try {
-            await apis.articles.deleteArticle(id);
-            router.push('/community');
-        } catch (error) {
-            console.error(error);
-        }
+			try {
+				await apis.articles.deleteArticle(id);
+				router.push('/community');
+			} catch (error) {
+					console.error(error);
+			}
     }
+
+		if (isLoading || !article) {
+			return <Loading.Page title="게시글을 불러오고 있어요" />;
+		}
 
     return (
         <View className="flex-1 bg-white">
             <Header.Container>
-                <Header.LeftContent>
-                    <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
-                        <ChevronLeftIcon width={24} height={24} />
-                    </Pressable>
-                    <Header.LeftButton visible={false} />
+							<Header.LeftContent>
+									<Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
+										<ChevronLeftIcon width={24} height={24} />
+									</Pressable>
+									<Header.LeftButton visible={false} />
                 </Header.LeftContent>
                 <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
                 <Header.RightContent>
                     <TouchableOpacity>
-                        <Show when={!isOwner}>
+											{/* TODO: 신고기능 추후 연동 */}
+                        {/* <Show when={!isOwner}>
                             <View className="">
                                 <Text>신고</Text>
                             </View>
-                        </Show>
+                        </Show> */}
                         <Show when={isOwner}>
                             <View className="" onTouchEnd={(e) => {
                                 e.stopPropagation();
@@ -91,14 +92,11 @@ export default function ArticleDetailScreen() {
                         </Show>
                     </TouchableOpacity>
                 </Header.RightContent>
+
             </Header.Container>
-            <View className="flex-1">
-                {article ? (
-                    <ArticleDetail article={article} />
-                ) : (
-                    <Text>게시글을 찾을 수 없습니다.</Text>
-                )}
-            </View>
+							<View className="flex-1">
+								<ArticleDetail article={article}/>
+							</View>
         </View>
     )
 }

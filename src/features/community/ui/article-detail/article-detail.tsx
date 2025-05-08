@@ -17,6 +17,7 @@ import { useLocalSearchParams } from "expo-router";
 import { Check } from "@/src/shared/ui";
 import SendIcon from '@/assets/icons/send.svg';
 import { Form } from "@/src/widgets/form";
+import { UserProfile } from "../user-profile";
 
 
 export const ArticleDetail = ({article, }: {article: Article}) => {
@@ -126,43 +127,24 @@ export const ArticleDetail = ({article, }: {article: Article}) => {
     return (
         <View className="flex-1 px-[16px] relative">
             <View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
-            <View className="flex-row items-center mb-[12px]">
-                <Image 
-                    source={{ uri: getUnivLogo(article.author.universityDetails.name as UniversityName) }}
-                    style={{ width: 36, height: 36 }}
-                    className="rounded-full mr-2"
-                />
-                <View>
-                    <View className="flex-row items-center">
-                        <Text size="sm" weight="medium" textColor="black">{article.author.name}</Text>
-                        <Show when={isOwner}>
-                        <Text className="ml-1 text-[10px]" textColor="pale-purple">(나)</Text>
-                        </Show>
-                    </View>
-                    <View className="flex-row items-center" style={{ alignItems: 'center'}}>
-                        <Text className="text-[10px] h-[12px] text-[#7A4AE2] opacity-70" style={{ }}>
-                            {article.author.age}세 
-                            <Text className="text-[10px] h-[12px] opacity-70"> · </Text>
-                            {article.author.universityDetails.name}
-                        </Text>
-                        <IconWrapper size={11}>
-                            <ShieldNotSecuredIcon/>
-                        </IconWrapper>
-                    </View>
-                </View>
-            </View>
+						<UserProfile 
+							author={article.author}
+							universityName={article.author.universityDetails.name as UniversityName}
+							isOwner={isOwner}
+						/>
+
             <View>
-                <Text size="md" weight="medium" className="text-[12px] mb-[5px]" textColor="black">{article.title}</Text>
-                <Text size="sm" className="h-[full] mb-[9px] leading-5" textColor="black">
+                <Text weight="medium" className="text-md md:text-[18px] mb-[5px]" textColor="black">{article.title}</Text>
+                <Text className="text-sm md:text-md h-[full] mb-[9px] leading-5" textColor="black">
                     {article.content}
                 </Text>
             </View>
-                <View className="w-[300px] px-[31px] justify-between">
-                    <View className="flex-row items-center justify-between gap-4 pb-[10px]">
-                    <Interaction.Like count={likeCount} isLiked={isLiked} onPress={() => like(article)} />
-                    <Interaction.Comment count={article.comments.length} />
-                    <Interaction.View count={article.readCount} />
-                </View>
+							<View className="w-[300px] px-[31px] justify-between">
+								<View className="flex-row items-center justify-between gap-4 pb-[10px]">
+								<Interaction.Like count={likeCount} isLiked={isLiked} onPress={() => like(article)} />
+								<Interaction.Comment count={article.comments.length} />
+								<Interaction.View count={article.readCount} />
+							</View>
             </View>
             <View className="h-[1px] bg-[#F3F0FF] mb-[20px]"/>
             <ScrollView>
