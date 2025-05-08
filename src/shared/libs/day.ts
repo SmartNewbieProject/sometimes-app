@@ -1,4 +1,4 @@
-import dayjs, { ConfigType } from 'dayjs';
+import dayjs, { type ConfigType } from 'dayjs';
 import 'dayjs/locale/ko';
 
 dayjs.locale('ko');
@@ -36,23 +36,15 @@ const getAgeBy6Digit = (digit: string) => {
 const formatRelativeTime = (stringDate: string) => {
   const target = create(stringDate);
   const now = create();
-  const minutesDiff = target.diff(now, 'minutes');
-  const secondsDiff = target.diff(now, 'seconds');
-  // console.log({
-  //   target: target.format('YYYY-MM-DD HH:mm:ss'),
-  //   now: now.format('YYYY-MM-DD HH:mm:ss'),
-  //   minutesDiff,
-  //   secondsDiff,
-  // })
+  const secondsDiff = now.diff(target, 'seconds');
+  const minutesDiff = now.diff(target, 'minutes');
+  const hoursDiff = now.diff(target, 'hours');
+  const daysDiff = now.diff(target, 'days');
 
-  if (secondsDiff >= 0 && secondsDiff < 60) return '방금 전';
-  if (minutesDiff > 0 && minutesDiff < 60) return `${minutesDiff}분 전`;
-
-  const hoursDiff = target.diff(now, 'hours');
-  if (hoursDiff > 0 && hoursDiff < 24) return `${hoursDiff}시간 전`;
-  const daysDiff = target.diff(now, 'days');
-  if (daysDiff > 0 && daysDiff < 8) return `${daysDiff}일 전`;
-
+  if (secondsDiff < 60) return `${secondsDiff}초 전`;
+  if (minutesDiff < 60) return `${minutesDiff}분 전`;
+  if (hoursDiff < 24) return `${hoursDiff}시간 전`;
+  if (daysDiff < 8) return `${daysDiff}일 전`;
   return target.format('MM/DD HH:mm');
 };
 
