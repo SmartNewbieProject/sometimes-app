@@ -63,7 +63,7 @@ export default function HomeScreen() {
             title="몇 명이 매칭을 신청했을까요?"
             loading={isLoading}
           >
-            <TotalMatchCounter count={totalMatchCount + totalUserCount} />
+            <TotalMatchCounter count={totalMatchCount + totalUserCount + 1000} />
           </Loading.Lottie>
         </View>
 

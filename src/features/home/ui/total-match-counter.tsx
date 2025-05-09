@@ -27,7 +27,6 @@ export default function TotalMatchCounter({
   const formattedCount = formatNumber(displayValue);
 
   useEffect(() => {
-    // Update the final count reference
     finalCountRef.current = count;
 
     // Set up listener for animated value changes
