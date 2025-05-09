@@ -24,6 +24,7 @@ export type Article = {
   content: string;
   author: Author;
   updatedAt: string;
+  createdAt: string;
   isLiked: boolean;
   comments: Comment[];
 };

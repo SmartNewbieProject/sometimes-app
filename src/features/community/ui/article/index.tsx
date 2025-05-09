@@ -60,7 +60,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
         />
         <Text size="md" weight="medium" textColor="black">{data.title}</Text>
         <View className="my-1.5 w-full flex flex-row justify-end">
-          <Text size="13" textColor="pale-purple">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
+          <Text size="13" textColor="pale-purple">{dayUtils.formatRelativeTime(data.createdAt)}</Text>
         </View>
         <Text size="sm" className="mb-4 leading-5" textColor="black">
           {data.content}

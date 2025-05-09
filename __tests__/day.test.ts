@@ -12,4 +12,9 @@ describe('DayUtils 테스트', () => {
     const test = day.format('YYYY-MM-DD');
     expect(test).toBe('1970-01-01');
   });
+
+  test('relativeFomrat 에서 시간을 정상적으로 파싱한다.', () => {
+    const test = dayUtils.formatRelativeTime('2025-05-09T11:11:29.578Z');
+    console.log({ test });
+  });
 });
