@@ -5,9 +5,18 @@ import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from 'expo-image';
 import { router } from "expo-router";
 import { useAuth } from "@features/auth";
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from "react";
 
 export default function InterestDoneScreen() {
   const { profileDetails } = useAuth();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: ['check-preference-fill'],
+    });
+  }, []);
 
   return (
     <View className="flex-1 flex flex-col w-full items-center">

@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { Feedback } from "@features/feedback";
 import { environmentStrategy, ImageResources } from '@/src/shared/libs';
 import { useCommingSoon } from '@/src/features/admin/hooks';
+import { useEffect } from "react";
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
@@ -16,7 +17,7 @@ const { useRedirectPreferences } = hooks;
 
 export default function HomeScreen() {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } = useTotalMatchCountQuery();
-  const { isPreferenceFill } = useRedirectPreferences();
+  const { isPreferenceFill, refetchPreferenceFill } = useRedirectPreferences();
   const showCommingSoon = useCommingSoon();
 
   const onRedirectTicketPurChase = () => {
@@ -29,6 +30,10 @@ export default function HomeScreen() {
       }
     })
   };
+
+  useEffect(() => {
+    refetchPreferenceFill();
+  }, []);
 
   return (
     <View className="flex-1">

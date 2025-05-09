@@ -13,7 +13,7 @@ type CheckPreferences = {
 };
 
 export const useRedirectPreferences = () => {
-  const { data: isPreferenceFill = true } = useCheckPreferenceFillQuery();
+  const { data: isPreferenceFill = true, refetch } = useCheckPreferenceFillQuery();
   const { value: latest, setValue, loading } = useStorage<CheckPreferences>({
     key: 'redirect-preferences',
   });
@@ -82,5 +82,6 @@ export const useRedirectPreferences = () => {
   return {
     ...latest,
     isPreferenceFill,
+    refetchPreferenceFill: refetch,
   };
 }
