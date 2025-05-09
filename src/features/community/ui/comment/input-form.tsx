@@ -39,7 +39,7 @@ export const InputForm = ({
     ])}>
       <View className="flex-row items-center gap-[5px]">
         {editingCommentId && <CancelEditButton onCancel={handleCancelEdit} />}
-        <AnonymousToggle checked={checked} setChecked={setChecked} />
+        {!editingCommentId &&<AnonymousToggle checked={checked} setChecked={setChecked} />}
       </View>
       <View className="flex-1">
         <CommentInput
