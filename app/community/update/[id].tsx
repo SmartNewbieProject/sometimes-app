@@ -59,7 +59,7 @@ export default function CommunityUpdateScreen() {
         <PalePurpleGradient />
         <ArtcileWriter.Header mode="update" onConfirm={onSubmit} />
         <ArtcileWriter.Form />
-        <ArtcileWriter.Nav />
+        <ArtcileWriter.Nav mode="update" />
       </View>
     </ArticleWriteFormProvider>
   );

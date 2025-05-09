@@ -55,7 +55,7 @@ export default function CommunityWriteScreen() {
         <PalePurpleGradient />
         <ArtcileWriter.Header onConfirm={onSubmitForm} mode="create" />
         <ArtcileWriter.Form />
-        <ArtcileWriter.Nav />
+        <ArtcileWriter.Nav mode="create" />
       </View>
     </ArticleWriteFormProvider>
   );
