@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { dropdownStyles, Header, ImageResource, Show, Text } from "@/src/shared/ui";
-import { TouchableOpacity, View, Pressable } from "react-native";
+import { TouchableOpacity, View, Pressable, Modal } from "react-native";
 import { ArticleDetail } from "@/src/features/community/ui/article-detail/article-detail";
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import { useArticleDetail } from "@/src/features/community/hooks/";
@@ -9,6 +9,7 @@ import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import apis from "@/src/features/community/apis";
 import Loading from "@/src/features/loading";
 import { Dropdown } from '@/src/shared/ui/dropdown';
+import { ImageResources } from "@/src/shared/libs";
 
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -45,28 +46,66 @@ export default function ArticleDetailScreen() {
                 <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
                 <Header.RightContent>
                     <Show when={isOwner}>
-                        <Dropdown
-													open={isDropdownOpen}
-													items={[
-														{
-															key: 'edit',
-															content: <Text textColor="black">수정</Text>,
-															onPress: () => router.push(`/community/update/${id}`),
-														},
-														{
-															key: 'delete',
-															content: <Text textColor="black">삭제</Text>,
-															onPress: handleDelete,
-														},
-													]}
-                        />
+                        <View>
+                            <TouchableOpacity onPress={(e) => {
+                                e.stopPropagation();
+                                toggleDropdown();
+                            }}>
+                                <View className="w-[48px] h-[48px] flex items-center justify-center">
+                                    <ImageResource resource={ImageResources.MENU} width={24} height={24} />
+                                </View>
+                            </TouchableOpacity>
+                        </View>
                     </Show>
                 </Header.RightContent>
 
             </Header.Container>
-							<View className="flex-1">
-								<ArticleDetail article={article}/>
-							</View>
+            <Modal
+                visible={isDropdownOpen}
+                transparent
+                onRequestClose={closeDropdown}
+            >
+                <TouchableOpacity 
+                    style={{ 
+                        flex: 1,
+                        backgroundColor: 'transparent'
+                    }} 
+                    activeOpacity={1} 
+                    onPress={closeDropdown}
+                >
+                    <View style={[dropdownStyles.dropdownContainer, { 
+                        top: 60,
+                        right: 50,
+                        width: 160,
+                        zIndex: 9999
+                    }]}>
+                        <TouchableOpacity
+                            style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' }}
+                            onPress={(e) => {
+                                e.stopPropagation();
+                                closeDropdown();
+                                router.push(`/community/update/${id}`);
+                            }}
+                        >
+                            <Text textColor="black">수정</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ padding: 10 }}
+                            onPress={(e) => {
+                                e.stopPropagation();
+                                handleDelete();
+                                closeDropdown();
+                            }}
+                        >
+                            <Text textColor="black">삭제</Text>
+                        </TouchableOpacity>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+
+            <View className="flex-1">
+                <ArticleDetail article={article}/>
+            </View>
         </View>
     )
 }
