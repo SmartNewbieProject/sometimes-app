@@ -10,6 +10,7 @@ import apis from "@/src/features/community/apis";
 import Loading from "@/src/features/loading";
 import { Dropdown } from '@/src/shared/ui/dropdown';
 import { ImageResources } from "@/src/shared/libs";
+import React, { useRef, useState } from "react";
 
 export default function ArticleDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,6 +21,8 @@ export default function ArticleDetailScreen() {
 			if (!my) return false;
 			return my.id === article?.author.id;
     })();
+    const buttonRef = useRef(null);
+    const [dropdownPos, setDropdownPos] = useState({ x: 0, y: 0 });
 
     const handleDelete = async () => {
 			try {
@@ -29,6 +32,15 @@ export default function ArticleDetailScreen() {
 					console.error(error);
 			}
     }
+
+    const handleMenuPress = () => {
+        if (buttonRef.current) {
+            buttonRef.current.measure((fx, fy, width, height, px, py) => {
+                setDropdownPos({ x: px, y: py + height });
+                toggleDropdown();
+            });
+        }
+    };
 
 		if (isLoading || !article) {
 			return <Loading.Page title="게시글을 불러오고 있어요" />;
@@ -47,10 +59,10 @@ export default function ArticleDetailScreen() {
                 <Header.RightContent>
                     <Show when={isOwner}>
                         <View>
-                            <TouchableOpacity onPress={(e) => {
-                                e.stopPropagation();
-                                toggleDropdown();
-                            }}>
+                            <TouchableOpacity
+                                ref={buttonRef}
+                                onPress={handleMenuPress}
+                            >
                                 <View className="w-[48px] h-[48px] flex items-center justify-center">
                                     <ImageResource resource={ImageResources.MENU} width={24} height={24} />
                                 </View>
@@ -73,12 +85,16 @@ export default function ArticleDetailScreen() {
                     activeOpacity={1} 
                     onPress={closeDropdown}
                 >
-                    <View style={[dropdownStyles.dropdownContainer, { 
-                        top: 60,
-                        right: 50,
-                        width: 160,
-                        zIndex: 9999
-                    }]}>
+                    <View style={[
+                        dropdownStyles.dropdownContainer,
+                        {
+                            position: 'absolute',
+                            top: dropdownPos.y,
+                            left: dropdownPos.x-160,
+                            width: 160,
+                            zIndex: 9999
+                        }
+                    ]}>
                         <TouchableOpacity
                             style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' }}
                             onPress={(e) => {

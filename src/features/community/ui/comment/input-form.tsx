@@ -34,7 +34,6 @@ export const InputForm = ({
   return (
     <View className={cn([
       'flex-row flex items-center gap-[5px]',
-      'mb-[32px]',
       'rounded-[16px] bg-[#F8F4FF] h-[50px] w-full',
     ])}>
       <View className="flex-row items-center gap-[5px]">
