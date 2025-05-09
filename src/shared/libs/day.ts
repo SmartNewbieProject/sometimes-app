@@ -24,7 +24,7 @@ const getDayBy6Digit = (digit: string) => {
     const dayOfMonths = d.endOf('month').date();
     return dayOfMonths < Number(day);
   })();
-``
+
   if (isOverDayOfMonth) {
     throw new Error("날짜가 존재하지 않습니다.");
   }

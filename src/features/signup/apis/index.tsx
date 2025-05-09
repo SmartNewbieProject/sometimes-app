@@ -17,8 +17,6 @@ export const signup = (form: SignupForm): Promise<void> => {
     .map(blob => fileUtils.toFile(blob, `${form.email}-${nanoid(6)}.png`));
   const birthday = dayUtils.getDayBy6Digit(form.birthday);
 
-  console.log({ form });
-
   const formData = new FormData();
   formData.append('email', form.email);
   formData.append('password', form.password);

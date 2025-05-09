@@ -12,11 +12,12 @@ import { useEffect } from "react";
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
-const { useTotalMatchCountQuery } = queries;
+const { useTotalMatchCountQuery, useTotalUserCountQuery } = queries;
 const { useRedirectPreferences } = hooks;
 
 export default function HomeScreen() {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } = useTotalMatchCountQuery();
+  const { data: totalUserCount = 0 } = useTotalUserCountQuery();
   const { isPreferenceFill, refetchPreferenceFill } = useRedirectPreferences();
   const showCommingSoon = useCommingSoon();
 
@@ -62,7 +63,7 @@ export default function HomeScreen() {
             title="몇 명이 매칭을 신청했을까요?"
             loading={isLoading}
           >
-            <TotalMatchCounter count={totalMatchCount} />
+            <TotalMatchCounter count={totalMatchCount + totalUserCount} />
           </Loading.Lottie>
         </View>
 

@@ -7,8 +7,15 @@ export const useTotalMatchCountQuery = () =>
     queryFn: apis.getTotalMatchCount,
   });
 
+export const useTotalUserCountQuery = () =>
+  useQuery({
+    queryKey: ['total-user-count'],
+    queryFn: apis.getTotalUserCount,
+  });
+
 export const useCheckPreferenceFillQuery = () =>
   useQuery({
     queryKey: ['check-preference-fill'],
     queryFn: apis.checkPreferenceFill,
   });
+
