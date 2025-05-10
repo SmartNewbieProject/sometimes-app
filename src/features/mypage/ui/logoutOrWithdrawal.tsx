@@ -12,9 +12,9 @@ const LogoutOrWithdrawal = () => {
         <TouchableOpacity onPress={logout}>
             <Text className="text-[15px] font-medium text-black">로그아웃</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
             <Text className="text-[15px] font-medium text-[#FF0000]">회원탈퇴</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
     </View>
     </View>
   );
