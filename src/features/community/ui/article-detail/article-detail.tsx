@@ -115,7 +115,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     };
 
     return (
-			<View className="flex-1 px-[16px] relative">
+			<View className="flex-1 relative">
 					<View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
 					<UserProfile 
 						author={article.author}
@@ -123,8 +123,8 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 						isOwner={isOwner}
 					/>
 					<View>
-						<Text weight="medium" className="text-md md:text-[18px] mb-[5px]" textColor="black">{article.title}</Text>
-						<Text className="text-sm md:text-md h-[full] mb-[9px] leading-5" textColor="black">
+						<Text weight="medium" className="ml-[8px] text-md md:text-[18px] mb-[5px]" textColor="black">{article.title}</Text>
+						<Text className="text-sm ml-[8px] md:text-md h-[full] mb-[9px] leading-5" textColor="black">
 							{article.content}
 						</Text>
 					</View>
@@ -136,7 +136,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 						</View>
 					</View>
 					<View className="h-[1px] bg-[#F3F0FF] mb-[20px]"/>
-					<ScrollView>
+					<ScrollView className="">
 						<Loading.Lottie title="댓글을 불러오고 있어요" loading={isCommentLoading}>
 							<View className="flex flex-col gap-y-[8px] mt-2">
 							{renderComments(comments)}

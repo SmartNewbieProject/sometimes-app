@@ -47,7 +47,7 @@ export default function ArticleDetailScreen() {
 		}
 
     return (
-        <View className="flex-1 bg-white">
+        <View className="flex-1 relative bg-white">
             <Header.Container>
 							<Header.LeftContent>
 									<Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">

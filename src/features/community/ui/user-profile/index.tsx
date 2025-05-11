@@ -15,13 +15,13 @@ interface UserProfileProps {
 
 export const UserProfile = ({ author, universityName, isOwner, comment, updatedAt, hideUniv = false }: UserProfileProps) => {
   return (
-    <View className="flex flex-row items-center mb-2 relative">
+    <View className="flex flex-row items-center ml-[8px] mb-2 relative">
       <Image
         source={{ uri: getUnivLogo(universityName) }}
         style={{ width: 32, height: 32 }}
         className="rounded-full mr-2"
       />
-      <View className="w-full relative">
+      <View className="flex-1 relative">
         <View className="flex flex-row items-center justify-between">
 
           <View className="flex flex-col">
