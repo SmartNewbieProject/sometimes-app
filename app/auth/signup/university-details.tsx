@@ -40,10 +40,11 @@ const schema = z.object({
   departmentName: z.string().min(1),
   grade: z.string().min(1),
   studentNumber: z.string().min(1),
-  instagramId: z.string({ required_error: '인스타그램 아이디를 입력해주세요.' })
-    .regex(/^[a-zA-Z0-9._]{5,30}$/, {
-      message: '올바른 인스타그램 아이디를 입력해주세요.',
-    })
+  // instagramId: z.string({ required_error: '인스타그램 아이디를 입력해주세요.' })
+    // .regex(/^[a-zA-Z0-9._]{5,30}$/, {
+      // message: '올바른 인스타그램 아이디를 입력해주세요.',
+    // }),
+  instagramId: z.string(),
 });
 
 export default function UniversityDetailsPage() {
