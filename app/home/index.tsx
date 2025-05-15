@@ -9,6 +9,8 @@ import { Feedback } from "@features/feedback";
 import { environmentStrategy, ImageResources } from '@/src/shared/libs';
 import { useCommingSoon } from '@/src/features/admin/hooks';
 import { useEffect } from "react";
+import { PreSignup } from '@/src/features/pre-signup';
+import Event from '@features/event';
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
@@ -20,6 +22,7 @@ export default function HomeScreen() {
   const { data: totalUserCount = 0 } = useTotalUserCountQuery();
   const { isPreferenceFill, refetchPreferenceFill } = useRedirectPreferences();
   const showCommingSoon = useCommingSoon();
+  const { trackEventAction } = Event.hooks.useEventAnalytics('home');
 
   const onRedirectTicketPurChase = () => {
     environmentStrategy({
@@ -90,6 +93,9 @@ export default function HomeScreen() {
         <View className="my-[25px]">
           <TipAnnouncement />
         </View>
+
+        {/* PreSignup 푸터 컴포넌트 사용 */}
+        <PreSignup.Footer trackEventAction={trackEventAction} />
       </ScrollView>
 
       <BottomNavigation />
