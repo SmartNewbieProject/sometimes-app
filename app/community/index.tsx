@@ -3,9 +3,9 @@ import { PalePurpleGradient, BottomNavigation, Header, ImageResource } from '@/s
 import { CategoryList, CreateArticleFAB, InfiniteArticleList } from '@/src/features/community/ui';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { InfiniteArticleListHandle } from '@/src/features/community/ui/infinite-article-list';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { ImageResources } from '@/src/shared/libs';
+import type { InfiniteArticleListHandle } from '@/src/features/community/ui/infinite-article-list';
 
 export default function CommunityScreen() {
   const { refresh: shouldRefresh } = useLocalSearchParams<{ refresh: string }>();
@@ -38,7 +38,6 @@ export default function CommunityScreen() {
       </ScrollView>
 
       <CreateArticleFAB />
-
       <BottomNavigation />
     </View>
   );

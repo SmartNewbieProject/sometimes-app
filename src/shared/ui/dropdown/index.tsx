@@ -4,12 +4,13 @@ import {
 	View,
 	Pressable,
 	Platform,
+	Modal,
 	type ViewStyle,
 } from 'react-native';
 import { ImageResources } from '../../libs';
 import { ImageResource } from '../image-resource';
 import { Show } from '../show';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export type DropdownItem = {
 	key: string;
@@ -25,6 +26,12 @@ type DropdownProps = {
 
 export const Dropdown = ({ open: _open, items, dropdownStyle }: DropdownProps) => {
 	const [open, setOpen] = useState(_open);
+	const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
+	const containerRef = useRef<View>(null);
+
+	useEffect(() => {
+		setOpen(_open);
+	}, [_open]);
 
 	useEffect(() => {
 		if (Platform.OS === 'web' && typeof document !== 'undefined') {
@@ -43,39 +50,70 @@ export const Dropdown = ({ open: _open, items, dropdownStyle }: DropdownProps) =
 		}
 	}, [open]);
 
+	const handleToggle = () => {
+		if (!open && containerRef.current) {
+			containerRef.current.measure((fx, fy, width, height, px, py) => {
+				setDropdownPosition({
+					top: py + height + 4,
+					right: px + width - 140,
+				});
+			});
+		}
+		setOpen(!open);
+	};
+
 	return (
 		<View style={styles.container}>
-			<TouchableWithoutFeedback
-				onPress={(e) => {
-					e.stopPropagation();
-					setOpen(!open);
-				}}
-			>
-				<View>
+			<TouchableWithoutFeedback onPress={handleToggle}>
+				<View ref={containerRef} style={styles.triggerContainer}>
 					<ImageResource resource={ImageResources.MENU} width={24} height={24} />
 				</View>
 			</TouchableWithoutFeedback>
 
-			<Show when={open}>
-				<TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-					<View style={[styles.dropdownContainer, dropdownStyle]} className="dropdown-container">
-						{items.map((item) => (
-							<Pressable
-								key={item.key}
-								style={styles.dropdownItem}
-								onPress={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									item.onPress();
-									setOpen(false);
-								}}
+			<Modal
+				visible={open}
+				transparent
+				animationType="fade"
+				style={{ position: 'absolute' }}
+				onRequestClose={() => setOpen(false)}
+			>
+				<TouchableWithoutFeedback onPress={() => setOpen(false)}>
+					<View style={styles.overlay}>
+						<TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+							<View 
+								style={[
+									styles.dropdownContainer, 
+									dropdownStyle,
+									{
+										position: 'absolute',
+										top: dropdownPosition.top,
+										left: dropdownPosition.right,
+									}
+								]} 
+								className="dropdown-container"
 							>
-								{item.content}
-							</Pressable>
-						))}
+								{items.map((item, index) => (
+									<Pressable
+										key={item.key}
+										style={[
+											styles.dropdownItem,
+											index === items.length - 1 && { borderBottomWidth: 0 }
+										]}
+										onPress={(e) => {
+											e.preventDefault();
+											e.stopPropagation();
+											item.onPress();
+											setOpen(false);
+										}}
+									>
+										{item.content}
+									</Pressable>
+								))}
+							</View>
+						</TouchableWithoutFeedback>
 					</View>
 				</TouchableWithoutFeedback>
-			</Show>
+			</Modal>
 		</View>
 	);
 };
@@ -85,28 +123,36 @@ const styles = StyleSheet.create({
 		position: 'relative',
 		width: 32,
 		height: 32,
+		cursor: 'pointer',
+	},
+	triggerContainer: {
+		width: 32,
+		height: 32,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	overlay: {
+		flex: 1,
+		backgroundColor: 'transparent',
 	},
 	dropdownContainer: {
 		width: 140,
-		padding: 2,
+		paddingVertical: 4,
 		borderRadius: 8,
 		backgroundColor: 'white',
-		position: 'absolute',
-		top: 48,
-		right: 15,
-		elevation: 10,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
-		shadowOpacity: 0.3,
+		shadowOpacity: 0.1,
 		shadowRadius: 8,
-		zIndex: 10,
+		elevation: 8,
 		borderWidth: 1,
-		borderColor: '#eee',
+		borderColor: '#e0e0e0',
 	},
 	dropdownItem: {
-		padding: 10,
+		paddingHorizontal: 16,
+		paddingVertical: 12,
 		borderBottomWidth: 1,
-		borderBottomColor: '#f0f0f0',
+		borderBottomColor: '#f5f5f5',
 		backgroundColor: 'white',
 	},
 });

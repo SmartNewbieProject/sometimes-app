@@ -1,11 +1,11 @@
-import { TouchableOpacity, View, Image, FlatList, Platform } from 'react-native';
+import { TouchableOpacity, View, Image, type FlatList, Platform } from 'react-native';
 import { Article } from './article';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
 import { Lottie, Text } from '@/src/shared/ui';
 import { useCategory } from '../hooks';
 import { router } from 'expo-router';
-import { Article as ArticleType } from '../types';
+import type { Article as ArticleType } from '../types';
 import { tryCatch } from '@/src/shared/libs';
 import apis from '../apis';
 import { forwardRef, useImperativeHandle, useRef, useEffect, useCallback } from 'react';

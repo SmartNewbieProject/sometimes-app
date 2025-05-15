@@ -15,17 +15,17 @@ interface UserProfileProps {
 
 export const UserProfile = ({ author, universityName, isOwner, comment, updatedAt, hideUniv = false }: UserProfileProps) => {
   return (
-    <View className="flex flex-row items-center ml-[8px] mb-2 relative">
+    <View className="flex flex-row w-full items-center ml-[8px] mb-2 relative">
       <Image
         source={{ uri: getUnivLogo(universityName) }}
         style={{ width: 32, height: 32 }}
-        className="rounded-full mr-2"
+        className="rounded-full mr-2 self-start"
       />
+
       <View className="flex-1 relative">
         <View className="flex flex-row items-center justify-between">
-
-          <View className="flex flex-col">
-            <View className="flex flex-row">
+          <View className="flex flex-col flex-1">
+            <View className="flex flex-row flex-wrap">
               <Text size="sm" weight="medium" textColor="black">{author.name}</Text>
               <Show when={isOwner}>
                 <Text size="sm" className="ml-1" textColor="pale-purple">(나)</Text>
@@ -36,14 +36,15 @@ export const UserProfile = ({ author, universityName, isOwner, comment, updatedA
                 </View>
               </Show>
             </View>
+  
             <Show when={!!comment}>
-              <View className="pt-1.5">
+              <View className="pt-1.5 flex-wrap max-w-[calc(100%-16px)] break-all overflow-wrap-anywhere">
                 {comment}
               </View>
             </Show>
           </View>
-
         </View>
+    
         <Show when={!hideUniv}>
           <Text size="13" textColor="purple" className="opacity-70">
             {author.age}세

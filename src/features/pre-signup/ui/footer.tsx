@@ -1,6 +1,5 @@
-import React from 'react';
 import { View } from 'react-native';
-import { Button, Text } from '@shared/ui';
+import { Button, Text, BusinessInfo } from '@shared/ui';
 import { router } from 'expo-router';
 import { Feedback } from "@features/feedback";
 
@@ -44,12 +43,7 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
           </Text>
         </Button>
       </View>
-
-      <View className="w-full px-4 py-6 mt-4 mb-4">
-        <Text className="text-[#888] text-[10px] text-center leading-5">
-          상호명: 스마트 뉴비 | 사업장 소재지: 대전광역시 유성구 동서대로 125, S9동 202호 | 대표: 전준영 | 사업자 등록번호: 498-05-02914 | 통신판매업신고: 제 2025-대전유성-0530호 | 문의전화: 010-8465-2476 | 이메일: notify@smartnewb.com | 사업자정보
-        </Text>
-      </View>
+      <BusinessInfo />
     </View>
   );
 };

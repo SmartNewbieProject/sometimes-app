@@ -1,5 +1,5 @@
 import { View, Image } from "react-native";
-import { Comment as CommentType } from "../../types";
+import type { Comment as CommentType } from "../../types";
 import { dayUtils, getUnivLogo, UniversityName } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
 import { useState } from "react";
