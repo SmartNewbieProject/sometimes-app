@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, ScrollView } from 'react-native';
-import { PalePurpleGradient, BottomNavigation, Header, Show, AnnounceCard } from '@/src/shared/ui';
+import { PalePurpleGradient, BottomNavigation, Header, Show, AnnounceCard, BusinessInfo } from '@/src/shared/ui';
 import { Image } from 'expo-image';
 import Home from "@features/home";
 import IdleMatchTimer from '@features/idle-match-timer';
@@ -94,8 +94,7 @@ export default function HomeScreen() {
           <TipAnnouncement />
         </View>
 
-        {/* PreSignup 푸터 컴포넌트 사용 */}
-        <PreSignup.Footer trackEventAction={trackEventAction} />
+        <BusinessInfo />
       </ScrollView>
 
       <BottomNavigation />

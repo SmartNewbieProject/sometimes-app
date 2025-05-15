@@ -20,3 +20,4 @@ export * from './university-badge';
 export * from './section';
 export * from './dropdown';
 export * from './announce-card';
+export * from './business-info';
