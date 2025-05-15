@@ -22,6 +22,9 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"correctness": {
+				"useExhaustiveDependencies": "warn"
+			},
 			"style": {
 				"useLiteralEnumMembers": "off"
 			}
