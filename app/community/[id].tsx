@@ -1,7 +1,7 @@
 import type React from "react";
-import { useRef, useMemo, useCallback } from "react";
-import { router, useLocalSearchParams } from "expo-router";
-import { TouchableOpacity, View, Pressable } from "react-native";
+import { useMemo, useCallback } from "react";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
+import { View, Pressable } from "react-native";
 import { Header, Show, Text } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { ArticleDetail } from "@/src/features/community/ui/article-detail/article-detail";
@@ -51,7 +51,10 @@ export default function ArticleDetailScreen() {
     toggle: toggleDropdown,
     setFalse: closeDropdown,
   } = useBoolean();
-  const { my } = useAuth();
+  const { my , isAuthorized } = useAuth();
+  if (!isAuthorized) {
+    return <Redirect href="/auth/login" />
+  }
 
   const isValidArticle = (article: Article | undefined): article is Article => {
     return !!article && !!article.author;
