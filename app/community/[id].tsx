@@ -51,10 +51,8 @@ export default function ArticleDetailScreen() {
     toggle: toggleDropdown,
     setFalse: closeDropdown,
   } = useBoolean();
-  const { my , isAuthorized } = useAuth();
-  if (!isAuthorized) {
-    return <Redirect href="/auth/login" />
-  }
+  const { my  } = useAuth();
+
 
   const isValidArticle = (article: Article | undefined): article is Article => {
     return !!article && !!article.author;
