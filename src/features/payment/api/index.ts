@@ -1,5 +1,5 @@
 import { axiosClient } from "@/src/shared/libs";
-import { PaymentBeforeHistory, PortOnePayment } from "../types";
+import type { PaymentBeforeHistory, PortOnePayment } from "../types";
 
 
 const savePaymentHistory = async (paymentHistory: PaymentBeforeHistory) =>

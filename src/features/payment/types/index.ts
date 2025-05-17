@@ -35,3 +35,11 @@ export type PaymentSuccessStates = {
   merchant_uid: string;
   productType: Product;
 };
+
+
+export interface CustomData {
+  orderName: string;
+  amount: number;
+  productType: Product;
+  productCount: number;
+}

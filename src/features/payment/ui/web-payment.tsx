@@ -4,8 +4,9 @@ import webPayment, { initializeIMP, resetIMP } from "../web";
 import paymentApis from "../api";
 import { useAuth } from "../../auth";
 import Loading from "../../loading";
-import { PaymentResponse } from "@/src/types/payment";
-import { Product } from "../types";
+import type { PaymentResponse } from "@/src/types/payment";
+import type { Product } from "../types";
+import { usePortoneStore } from "../hooks/use-portone-store";
 
 export interface WebPaymentProps {
   paymentId: string;
@@ -15,7 +16,7 @@ export interface WebPaymentProps {
   productName?: string;
   productCount: number;
   onComplete?: (result: PaymentResponse) => void;
-  onError?: (error: any) => void;
+  onError?: (error: unknown) => void;
   onCancel?: () => void;
 }
 
@@ -26,7 +27,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
   const { paymentId, orderName, productCount, totalAmount, productName, productType, onComplete, onError, onCancel } = props;
   const [isProcessing, setIsProcessing] = useState(true);
   const { my } = useAuth();
-  console.log({ my });
+  const { setCustomData } = usePortoneStore();
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
@@ -43,42 +44,43 @@ export const WebPaymentView = (props: WebPaymentProps) => {
       }
 
       try {
-        // 결제 전 IMP 초기화 상태 리셋
-        resetIMP();
-        initializeIMP(process.env.EXPO_PUBLIC_IMP as string);
-
-        // 결제 내역 저장
         await paymentApis.saveHistory({
           orderId: paymentId,
           amount: totalAmount,
           orderName: productName || orderName,
         });
 
-        // 결제 파라미터 설정
+        const customData = {
+          orderName: productName || orderName,
+          amount: totalAmount,
+          productType,
+          productCount,
+        };
+
+        setCustomData(customData);
+        
         const paymentParams: IMP.RequestPayParams = {
-          channelKey: process.env.EXPO_PUBLIC_CHANNEL_KEY || '',
+          pg: process.env.EXPO_PUBLIC_PG_PROVIDER,
+          channelKey: process.env.EXPO_PUBLIC_CHANNEL_KEY as string,
           pay_method: 'card',
           merchant_uid: paymentId,
           name: productName || orderName,
           amount: totalAmount,
           buyer_name: my.name,
           buyer_tel: my.phoneNumber,
-          m_redirect_url: window.location.origin + '/purchase/complete',
-          custom_data: {
-            orderName: productName || orderName,
-            amount: totalAmount,
-            productType,
-            productCount,
-          },
+          buyer_email: 'notify@smartnewb.com', // 웰컴페이먼츠 PC 결제시 필수
+          m_redirect_url: `${window.location.origin}/purchase/complete`,
+          custom_data: JSON.stringify(customData),
         };
 
-        // 결제 요청
+        console.table(paymentParams);
+
         const response = await webPayment.requestPay(paymentParams) as PaymentResponse;
         console.log('결제 응답:', response);
         onComplete?.(response);
-      } catch (error: any) {
+      } catch (error) {
         console.error('결제 오류:', error);
-        Alert.alert("결제 실패", error.message || '결제 처리 중 오류가 발생했습니다.');
+        Alert.alert("결제 실패", error instanceof Error ? error.message : '결제 처리 중 오류가 발생했습니다.');
         onError?.(error);
       } finally {
         setIsProcessing(false);

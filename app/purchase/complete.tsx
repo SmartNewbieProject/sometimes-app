@@ -1,40 +1,43 @@
 import { useEffect } from "react";
 import Payment from "@features/payment";
 import { router, useGlobalSearchParams } from 'expo-router';
-import { Alert, View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { Text } from "@shared/ui";
+import { usePortone } from "@/src/features/payment/hooks";
 
 const { apis } = Payment;
 
 export default function PaymentComplete() {
   const { imp_uid, merchant_uid, custom_data: customData } = useGlobalSearchParams();
+  const { handlePaymentComplete } = usePortone();
 
   useEffect(() => {
     const processPaymentComplete = async () => {
       try {
-        if (customData) {
-          const paymentInfo = JSON.parse(customData as string);
-          console.log("Payment info:", paymentInfo);
-        }
-
-        await apis.pay({
-          impUid: imp_uid as string,
-          merchantUid: merchant_uid as string,
-        });
-
-        // Redirect to home after successful payment processing
-        setTimeout(() => {
-          router.push('/home');
-        }, 1500);
+        const paymentInfo = customData ? JSON.parse(customData as string) : null;
+        console.log({ paymentInfo });
+        
+        await handlePaymentComplete(
+          { 
+            imp_uid: imp_uid as string, 
+            merchant_uid: merchant_uid as string 
+          },
+          {
+            productCount: paymentInfo?.productCount,
+            onError: (error) => {
+              console.error("Payment error:", error);
+              router.push('/home');
+            }
+          }
+        );
       } catch (error) {
         console.error("Payment error:", error);
-        Alert.alert("결제에 오류가 발생했습니다.");
         router.push('/home');
       }
     };
 
     processPaymentComplete();
-  }, [customData, imp_uid, merchant_uid]);
+  }, [customData, imp_uid, merchant_uid, handlePaymentComplete]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

@@ -1,9 +1,9 @@
 import { Platform } from "react-native";
-import { createRef, forwardRef, ForwardedRef } from "react";
-import { PortOneController } from "@portone/react-native-sdk";
-import { PortOnePaymentView, PortOnePaymentProps } from "./port-one-payment";
+import { createRef, forwardRef, type ForwardedRef } from "react";
+import type { PortOneController } from "@portone/react-native-sdk";
+import { PortOnePaymentView, type PortOnePaymentProps } from "./port-one-payment";
 import { WebPaymentView } from "./web-payment";
-import { Product } from "../types";
+import type { Product } from "../types";
 
 export interface PaymentViewProps {
   paymentId: string;
@@ -17,25 +17,6 @@ export interface PaymentViewProps {
   onCancel?: () => void;
 }
 
-/**
- * 플랫폼에 따라 결제 로직을 분기 처리하는 통합 결제 컴포넌트
- * 
- * @example
- * ```tsx
- * const controller = createRef<PortOneController>();
- * 
- * <PaymentView
- *   ref={controller}
- *   paymentId="payment-id"
- *   orderName="상품명 x 1"
- *   totalAmount={10000}
- *   productName="상품명"
- *   onComplete={(result) => console.log(result)}
- *   onError={(error) => console.error(error)}
- *   onCancel={() => console.log("취소됨")}
- * />
- * ```
- */
 export const PaymentView = forwardRef(
   (props: PaymentViewProps, ref: ForwardedRef<PortOneController>) => {
     const { paymentId, orderName, totalAmount, productCount, productType, productName, onComplete, onError, onCancel } = props;

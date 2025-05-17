@@ -14,7 +14,7 @@ export const requestPay = (params: IMP.RequestPayParams): Promise<IMP.RequestPay
       return;
     }
 
-    window.IMP.request_pay(params, (response) => {
+    window.IMP.request_pay(params, (response: IMP.RequestPayResponse) => {
       resolve(response);
     });
   });
