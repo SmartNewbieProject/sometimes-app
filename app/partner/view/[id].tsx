@@ -3,9 +3,13 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { Text, Button, PalePurpleGradient, Header, Section, ImageResource } from '@shared/ui';
 import Loading from '@features/loading';
 import Match from '@features/match';
-import { ImageResources, parser } from '@shared/libs';
+import { ImageResources, parser, tryCatch, axiosClient } from '@shared/libs';
 import { ChipSelector } from '@/src/widgets';
 import Instagram from '@/src/features/instagram';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { useMutation } from '@tanstack/react-query';
+import { queryClient } from '@/src/shared/config/query';
+import { HttpStatusCode } from 'axios';
 
 const { queries, ui } = Match;
 const { ui: { InstagramContactButton } } = Instagram;
@@ -14,13 +18,110 @@ const { PartnerImage } = ui;
 
 export default function PartnerDetailScreen() {
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
-  const { data: partner, isLoading, error } = useMatchPartnerQuery(matchId);
+  const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
+  const { showModal, showErrorModal } = useModal();
+
+  // 재매칭 API 호출을 위한 mutation 설정
+  const useRematchingMutation = () =>
+    useMutation({
+      mutationFn: () => axiosClient.post('/matching/rematch'),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
+      },
+    });
+
+  const { mutateAsync: rematch } = useRematchingMutation();
 
   const loading = (() => {
     if (!partner) return true;
     if (isLoading) return true;
     return false;
   })();
+
+  // 재매칭 성공 모달
+  const showRematchSuccessModal = () => {
+    showModal({
+      title: "연인 찾기 완료",
+      children: "연인을 찾았어요! 바로 확인해보세요.",
+      primaryButton: {
+        text: "바로 확인하기",
+        onClick: () => {
+          router.navigate('/home');
+        },
+      },
+    });
+  };
+
+  // 티켓 구매 모달
+  const showTicketPurchaseModal = () => {
+    showModal({
+      title: "연인 매칭권이 없어요",
+      children: (
+        <View className="flex flex-col">
+          <Text>
+            연인매칭권이 부족해 즉시 매칭을 수행할 수 없어요
+          </Text>
+          <Text>
+            매칭권을 구매하시겠어요?
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "살펴보러가기",
+        onClick: () => {
+          router.navigate('/purchase/tickets/rematch');
+        },
+      },
+      secondaryButton: {
+        text: '다음에 볼게요',
+        onClick: () => {},
+      },
+    });
+  };
+
+  // 재매칭 실행 함수
+  const performRematch = async () => {
+    await tryCatch(async () => {
+      await rematch();
+      showRematchSuccessModal();
+    }, err => {
+      if (err.status === HttpStatusCode.Forbidden) {
+        showTicketPurchaseModal();
+        return;
+      }
+      showErrorModal(err.error, "error");
+    });
+  };
+
+  // 재매칭 확인 모달
+  const showRematchConfirmModal = () => {
+    showModal({
+      children: (
+        <View className="w-full justify-center items-center">
+          <Text textColor="black" size="md">
+            재매칭권을 사용하시겠습니까?
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "사용하기",
+        onClick: performRematch,
+      },
+    });
+  };
+
+  // 재매칭 버튼 클릭 핸들러
+  const onRematch = async () => {
+    await tryCatch(async () => {
+      showRematchConfirmModal();
+    }, err => {
+      if (err.status === HttpStatusCode.Forbidden) {
+        showErrorModal("재매칭권이 없습니다.", "announcement");
+        return;
+      }
+      showErrorModal(err.error, "error");
+    });
+  };
 
   if (loading) {
     return <Loading.Page title="파트너 정보를 불러오고 있어요" />;
@@ -133,6 +234,7 @@ export default function PartnerDetailScreen() {
       <View className="flex flex-col md:flex-row gap-x-4 gap-y-2 mb-4 md:mb-12 px-4">
         <Button
           className="flex-1 w-full"
+          onPress={onRematch}
           prefix={<ImageResource resource={ImageResources.TICKET}
             width={32}
             height={32}
