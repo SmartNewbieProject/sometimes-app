@@ -13,6 +13,7 @@ import { PreSignup } from '@/src/features/pre-signup';
 import Event from '@features/event';
 import { Admin } from '@/src/features/admin';
 import { Button } from '@/src/shared/ui';
+import { useAuth } from '@/src/features/auth';
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
@@ -25,16 +26,18 @@ const HomeScreen = () => {
   const { isPreferenceFill, refetchPreferenceFill } = useRedirectPreferences();
   const showCommingSoon = useCommingSoon();
   const { trackEventAction } = Event.hooks.useEventAnalytics('home');
+  const { my } = useAuth();
 
-  const handleNavigateToRematch = useCallback(() => {
+  const handleNavigateToRematch = () => {
     if (process.env.NODE_ENV === 'production') {
-      Admin.services.doAdmin(() => {
+      if (!my?.email) return;
+      Admin.services.doAdmin(my?.email, () => {
         router.navigate('/purchase/tickets/rematch');
       }, showCommingSoon);
     } else {
       router.navigate('/purchase/tickets/rematch');
     }
-  }, [showCommingSoon]);
+  };
 
   useEffect(() => {
     refetchPreferenceFill();
@@ -50,14 +53,15 @@ const HomeScreen = () => {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <Button
+          <TouchableOpacity
+            activeOpacity={0.8}
             onPress={handleNavigateToRematch}
           >
             <Image
               source={require('@assets/images/ticket.png')}
               style={{ width: 40, height: 40 }}
             />
-          </Button>
+          </TouchableOpacity>
         }
       />
 
