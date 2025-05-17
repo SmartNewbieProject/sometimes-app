@@ -11,11 +11,13 @@ import { useCommingSoon } from '@/src/features/admin/hooks';
 import { useEffect } from "react";
 import { PreSignup } from '@/src/features/pre-signup';
 import Event from '@features/event';
+import { Admin } from '@/src/features/admin';
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
 const { useTotalMatchCountQuery, useTotalUserCountQuery } = queries;
 const { useRedirectPreferences } = hooks;
+
 
 export default function HomeScreen() {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } = useTotalMatchCountQuery();
@@ -28,6 +30,9 @@ export default function HomeScreen() {
     environmentStrategy({
       production: () => {
         showCommingSoon();
+        Admin.services.doAdmin(() => {
+          router.navigate('/purchase/tickets/rematch');
+        }, showCommingSoon);
       },
       development: () => {
         router.navigate('/purchase/tickets/rematch');
@@ -37,6 +42,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     refetchPreferenceFill();
+    trackEventAction('home_view');
   }, []);
 
   return (

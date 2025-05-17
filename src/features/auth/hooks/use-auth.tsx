@@ -1,7 +1,7 @@
 import { axiosClient, tryCatch } from "@/src/shared/libs";
 import { useStorage } from "@shared/hooks/use-storage";
 import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
-import { TokenResponse } from "@/src/types/auth";
+import type { TokenResponse } from "@/src/types/auth";
 import { useModal } from "@hooks/use-modal";
 import { router } from "expo-router";
 import { eventBus } from '@/src/shared/libs/event-bus';

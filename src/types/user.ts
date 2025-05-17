@@ -48,6 +48,7 @@ export interface MyDetails {
   id: string;
   name: string;
   age: number;
+  email: string;
   gender: Gender;
   phoneNumber: string;
   profileImages: ProfileImage[];

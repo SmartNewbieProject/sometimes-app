@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import { useAuth } from "../../auth";
 
 export const excludeEmails = [
   'billing-test@gmail.com',
@@ -16,3 +17,12 @@ export const loginProduction = (email: string) => {
   }
   router.navigate('/commingsoon');
 };
+
+export const doAdmin = (callback:() => void, noAdminCallback?:() => void) => {
+  const { my } = useAuth();
+  if (my?.email && excludeEmails.includes(my.email)) {
+    callback();
+  } else {
+    noAdminCallback?.();
+  }
+}
