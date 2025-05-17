@@ -14,6 +14,7 @@ import Event from '@features/event';
 import { Admin } from '@/src/features/admin';
 import { Button } from '@/src/shared/ui';
 import { useAuth } from '@/src/features/auth';
+import { excludeEmails } from '@/src/features/admin/services';
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
@@ -31,9 +32,11 @@ const HomeScreen = () => {
   const handleNavigateToRematch = () => {
     if (process.env.NODE_ENV === 'production') {
       if (!my?.email) return;
-      Admin.services.doAdmin(my?.email, () => {
+      if (excludeEmails.includes(my.email)) {
         router.navigate('/purchase/tickets/rematch');
-      }, showCommingSoon);
+      } else {
+        showCommingSoon();
+      }
     } else {
       router.navigate('/purchase/tickets/rematch');
     }
