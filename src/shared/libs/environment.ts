@@ -7,7 +7,7 @@ interface Callbacks {
   defaultCallback?: () => void;
 }
 
-export const environmentStrategy = ({ production, development, defaultCallback: defaultCallback }: Callbacks) => {
+export const environmentStrategy = ({ production, development, defaultCallback }: Callbacks) => {
   defaultCallback?.();
   if (isProduction && production) {
     production();

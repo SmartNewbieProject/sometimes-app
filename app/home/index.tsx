@@ -8,36 +8,33 @@ import { router } from 'expo-router';
 import { Feedback } from "@features/feedback";
 import { environmentStrategy, ImageResources } from '@/src/shared/libs';
 import { useCommingSoon } from '@/src/features/admin/hooks';
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { PreSignup } from '@/src/features/pre-signup';
 import Event from '@features/event';
 import { Admin } from '@/src/features/admin';
+import { Button } from '@/src/shared/ui';
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
 const { useTotalMatchCountQuery, useTotalUserCountQuery } = queries;
 const { useRedirectPreferences } = hooks;
 
-
-export default function HomeScreen() {
+const HomeScreen = () => {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } = useTotalMatchCountQuery();
   const { data: totalUserCount = 0 } = useTotalUserCountQuery();
   const { isPreferenceFill, refetchPreferenceFill } = useRedirectPreferences();
   const showCommingSoon = useCommingSoon();
   const { trackEventAction } = Event.hooks.useEventAnalytics('home');
 
-  const onRedirectTicketPurChase = () => {
-    environmentStrategy({
-      production: () => {
-        Admin.services.doAdmin(() => {
-          router.navigate('/purchase/tickets/rematch');
-        }, showCommingSoon);
-      },
-      development: () => {
+  const handleNavigateToRematch = useCallback(() => {
+    if (process.env.NODE_ENV === 'production') {
+      Admin.services.doAdmin(() => {
         router.navigate('/purchase/tickets/rematch');
-      }
-    })
-  };
+      }, showCommingSoon);
+    } else {
+      router.navigate('/purchase/tickets/rematch');
+    }
+  }, [showCommingSoon]);
 
   useEffect(() => {
     refetchPreferenceFill();
@@ -53,15 +50,14 @@ export default function HomeScreen() {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={onRedirectTicketPurChase}
+          <Button
+            onPress={handleNavigateToRematch}
           >
             <Image
               source={require('@assets/images/ticket.png')}
               style={{ width: 40, height: 40 }}
             />
-          </TouchableOpacity>
+          </Button>
         }
       />
 
@@ -105,4 +101,6 @@ export default function HomeScreen() {
       <BottomNavigation />
     </View>
   );
-}
+};
+
+export default HomeScreen;
