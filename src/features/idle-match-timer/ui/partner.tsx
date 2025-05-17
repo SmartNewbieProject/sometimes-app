@@ -8,7 +8,7 @@ import ArrowRight from '@assets/icons/right-white-arrow.svg';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { calculateTime } from "../services/calculate-time";
-import { dayUtils } from "@/src/shared/libs";
+import { dayUtils, ImageResources } from "@/src/shared/libs";
 import Time from "./time";
 import { router } from "expo-router";
 
@@ -27,8 +27,13 @@ export const Partner = ({ match }: PartnerProps) => {
   };
 
   useEffect(() => {
+    // 프로필 이미지가 없을 경우 기본 이미지 사용
     const mainProfileImageUri = match.partner?.profileImages.find(image => image.isMain)?.url;
-    if (!mainProfileImageUri) return;
+    if (!mainProfileImageUri) {
+      // 기본 이미지로 TIME_CARD_BG 사용
+      update(ImageResources.TIME_CARD_BG);
+      return;
+    }
     update(mainProfileImageUri);
   }, []);
 

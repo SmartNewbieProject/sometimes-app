@@ -27,6 +27,11 @@ const useRematchingMutation = () =>
 
 export const InteractionNavigation = ({ match }: InteractionNavigationProps) => {
   const hasPartner = !!match.partner;
+
+  // 인스타그램 ID 디버깅
+  if (hasPartner) {
+    console.log('매칭 파트너 인스타그램 ID:', match.partner?.instagramId)
+  }
   const { showErrorModal, showModal } = useModal();
   const { mutateAsync: rematch } = useRematchingMutation();
   const { onLoading, finishLoading } = useMatchLoading();
@@ -124,7 +129,7 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
         재매칭권 사용하기
       </Button>
       {hasPartner && (
-        <InstagramContactButton instagramId={match.partner!.instagramId} />
+        <InstagramContactButton instagramId={match.partner!.instagramId || ''} />
       )}
     </View>
   )

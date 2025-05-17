@@ -24,6 +24,9 @@ export const PartnerImage = ({ uri, profile }: PartnerImageProps) => {
             source={{ uri }}
             style={styles.image}
             contentFit="cover"
+            onError={() => {
+              console.log('Image loading error, using default image');
+            }}
           />
 
           {/* Shadow gradient inside the container to avoid covering the border */}

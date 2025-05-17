@@ -28,6 +28,9 @@ export default function PartnerDetailScreen() {
 
   const p = partner!;
 
+  // 인스타그램 ID 디버깅
+  console.log('파트너 인스타그램 ID:', p.instagramId);
+
   const preferenceOptions = parser.getMultiplePreferenceOptions(
     ['성격 유형', '연애 스타일', '관심사', '라이프스타일'],
     p.preferences
@@ -53,7 +56,9 @@ export default function PartnerDetailScreen() {
       <ScrollView className="flex-1 px-4">
         <View className="w-full flex justify-center items-center">
           <PartnerImage
-            uri={p.profileImages[0].url}
+            uri={p.profileImages && p.profileImages.length > 0 && p.profileImages[0].url
+              ? p.profileImages[0].url
+              : ImageResources.TIME_CARD_BG}
             profile={{
               age: p.age,
               universityName: p.universityDetails?.name || '',
@@ -134,7 +139,7 @@ export default function PartnerDetailScreen() {
           />}>
           재매칭권 사용하기
         </Button>
-        <InstagramContactButton instagramId={p.instagramId} />
+        <InstagramContactButton instagramId={p.instagramId || ''} />
       </View>
 
     </View>
