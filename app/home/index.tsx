@@ -29,7 +29,6 @@ export default function HomeScreen() {
   const onRedirectTicketPurChase = () => {
     environmentStrategy({
       production: () => {
-        showCommingSoon();
         Admin.services.doAdmin(() => {
           router.navigate('/purchase/tickets/rematch');
         }, showCommingSoon);
