@@ -68,15 +68,14 @@ export const WebPaymentView = (props: WebPaymentProps) => {
           amount: totalAmount,
           buyer_name: my.name,
           buyer_tel: my.phoneNumber,
-          buyer_email: 'notify@smartnewb.com', // 웰컴페이먼츠 PC 결제시 필수
+          buyer_email: my.email,
           m_redirect_url: `${window.location.origin}/purchase/complete`,
           custom_data: JSON.stringify(customData),
         };
 
-        console.table(paymentParams);
-
+        // console.table(paymentParams);
         const response = await webPayment.requestPay(paymentParams) as PaymentResponse;
-        console.log('결제 응답:', response);
+        // console.log('결제 응답:', response);
         onComplete?.(response);
       } catch (error) {
         console.error('결제 오류:', error);
