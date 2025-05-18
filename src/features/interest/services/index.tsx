@@ -1,4 +1,4 @@
-import { PreferenceSaveBody, savePreferencesApi } from "../apis";
+import { type PreferenceSaveBody, savePreferencesApi } from "../apis";
 import { useInterestForm } from "../hooks";
 import { PreferenceKeys } from "../queries";
 
@@ -18,9 +18,12 @@ export type Properties = {
   age: string;
   drinking: string;
   interestIds: string[];
+  datingStyleIds: string[];
+  militaryPreference?: string;
+  militaryStatus?: string;
   smoking: string;
   tattoo: string;
-}
+};
 
 export const savePreferences = async (props: Properties) => {
   const body: PreferenceSaveBody = {
@@ -44,9 +47,28 @@ export const savePreferences = async (props: Properties) => {
       {
         typeName: PreferenceKeys.TATTOO,
         optionIds: [props.tattoo]
-      }
+      },
+      {
+        typeName: PreferenceKeys.DATING_STYLE,
+        optionIds: props.datingStyleIds,
+      },
     ],
   };
+
+  if (props.militaryPreference) {
+    body.data.push({
+      typeName: PreferenceKeys.MILITARY_PREFERENCE,
+      optionIds: [props.militaryPreference],
+    });
+  }
+
+  if (props.militaryStatus) {
+    body.data.push({
+      typeName: PreferenceKeys.MILITARY_STATUS,
+      optionIds: [props.militaryStatus],
+    });
+  }
+
 
   await savePreferencesApi(body);
   useInterestForm.getState().clear();

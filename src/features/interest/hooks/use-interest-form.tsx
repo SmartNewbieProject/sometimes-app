@@ -1,5 +1,5 @@
-import { PreferenceOption } from "@/src/types/user";
-import { AgeOption } from "../ui"
+import type { PreferenceOption } from "@/src/types/user";
+import type { AgeOption } from "../ui"
 import { create } from "zustand";
 
 type StoreStates = {

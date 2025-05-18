@@ -39,6 +39,9 @@ export default function TattooSelectionScreen() {
         interestIds: form.interestIds as string[],
         smoking: form.smoking?.id as string,
         tattoo: form.tattoo?.id as string,
+        datingStyleIds: form.datingStyleIds as string[],
+        militaryPreference: form.militaryPreference?.id as string,
+        militaryStatus: form.militaryStatus?.id as string,
       });
       await queryClient.invalidateQueries({
         queryKey: ['check-preference-fill'],

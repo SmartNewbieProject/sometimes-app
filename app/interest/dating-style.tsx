@@ -18,12 +18,9 @@ export default function DatingStyleSelectionScreen() {
   const { data: preferences, isLoading } = usePreferenceOptionsQuery(PreferenceKeys.DATING_STYLE);
 
   const onChangeOption = (values: string[]) => {
-    if (values.length > 3) {
-      return;
-    }
     updateForm("datingStyleIds", values);
   };
-
+  
   const nextMessage = (() => {
     if (datingStyleIds.length < 1) {
       return `${1 - datingStyleIds.length} 개만 더 선택해주세요`;
