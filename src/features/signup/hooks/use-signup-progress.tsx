@@ -43,7 +43,7 @@ const AGREEMENTS: Agreement[] = [
   {
     id: 'location',
     label: '(필수) 개인정보 처리방침 동의',
-    link: 'https://www.notion.so/1cd1bbec5ba180a3a4bbdf9301683145',
+    link: 'https://ruby-composer-6d2.notion.site/1cd1bbec5ba180a3a4bbdf9301683145?pvs=73',
     required: true,
     checked: false
   },
