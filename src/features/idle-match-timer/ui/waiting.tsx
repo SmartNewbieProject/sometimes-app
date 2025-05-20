@@ -5,9 +5,9 @@ import { useAuth } from "../../auth";
 import ArrowRight from '@assets/icons/right-white-arrow.svg';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { dayUtils } from '@/src/shared/libs';
-import { calculateTime } from '../services/calculate-time';
-import { useCallback, useEffect, useState } from 'react';
-import { MatchDetails } from "../types";
+import { calculateTime, type TimeResult } from '../services/calculate-time';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type  { MatchDetails } from "../types";
 import { sideStyle } from "./constants";
 
 interface WaitingProps {
@@ -18,22 +18,44 @@ interface WaitingProps {
 export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
   const { my } = useAuth();
   const [currentTime, setCurrentTime] = useState(() => dayUtils.create());
+  const trigger = useRef(false);
+  const [timeSet, setTimeSet] = useState<TimeResult | null>(
+    () => {
+      if (!match || !match.untilNext) return null;
+      const test = dayUtils.create().add(1, 'minute');
+      // return calculateTime(test, currentTime);
+      const nextMatchingDate = dayUtils.create(match.untilNext);
+      return calculateTime(nextMatchingDate, currentTime);
+    }
+  );
 
-  const time = calculateTime(null, currentTime);
+  // const time = calculateTime(dayUtils.create(match.untilNext), currentTime);
+
+  const fire = () => {
+    trigger.current = true;
+    onTimeEnd?.();
+  };
 
   const updateTime = useCallback(() => {
-    if (!match || !match.endOfView) return;
-    const { endOfView } = match;
-
-    if (currentTime.isSame(endOfView, 'second')) {
+    if (trigger.current) return;
+    if (!match || !match.untilNext) return;
+    const { untilNext } = match;
+    const nextMatchingDate = dayUtils.create(untilNext);
+    if (currentTime.isSame(nextMatchingDate, 'second')) {
+      fire();
       return;
     }
 
     const now = dayUtils.create();
     setCurrentTime(now);
-    const { shouldTriggerCallback } = calculateTime(endOfView, now);
+    const { shouldTriggerCallback, value, delimeter } = calculateTime(nextMatchingDate, now);
+    setTimeSet({
+      shouldTriggerCallback,
+      value,
+      delimeter,
+    });
     if (shouldTriggerCallback && onTimeEnd) {
-      onTimeEnd();
+      fire();
     }
   }, [match, onTimeEnd]);
 
@@ -61,10 +83,10 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
       </View>
 
       <View className="flex flex-row gap-x-1 mb-[8px]">
-        <Time value={time.delimeter} />
+        <Time value={timeSet?.delimeter} />
         <Time value="-" />
-        {time.value?.toString().split('').map((value, index) => (
-          <Time key={index} value={value} />
+        {timeSet?.value?.toString().split('').map((value) => (
+          <Time key={value} value={value} />
         ))}
       </View>
 

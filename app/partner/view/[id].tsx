@@ -35,7 +35,7 @@ export default function PartnerDetailScreen() {
 
   const personal = preferenceOptions['성격 유형'];
   const loveStyles = preferenceOptions['연애 스타일'];
-  const interests = preferenceOptions['관심사'];
+  const interests = preferenceOptions.관심사;
 
   return (
     <View className="flex-1">
@@ -45,9 +45,6 @@ export default function PartnerDetailScreen() {
         <Header.LeftContent>
           <Header.LeftButton onPress={router.back} visible />
         </Header.LeftContent>
-        <Header.CenterContent>
-          <Text weight="semibold" textColor="black" className="mr-8 text-[19px]">{p.name}</Text>
-        </Header.CenterContent>
       </Header.Container>
 
       <ScrollView className="flex-1 px-4">

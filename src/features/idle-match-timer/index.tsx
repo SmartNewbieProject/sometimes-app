@@ -33,15 +33,15 @@ export default function IdleMatchTimer() {
     );
   }
 
-  return (
-    <View>
-      <View style={styles.container}>
-        <Container gradientMode>
-          <PreOpening />
-        </Container>
-      </View>
-    </View>
-  );
+  // return (
+  //   <View>
+  //     <View style={styles.container}>
+  //       <Container gradientMode>
+  //         <PreOpening />
+  //       </Container>
+  //     </View>
+  //   </View>
+  // );
 
   return (
     <View>
@@ -55,7 +55,7 @@ export default function IdleMatchTimer() {
           >
             {match?.type === 'not-found' && <NotFound />}
             {isOpen && <Partner match={match!} />}
-            {match?.type === 'waiting' && <Waiting match={match!} onTimeEnd={refetch} />}
+            {match?.type === 'waiting' && <Waiting match={match} onTimeEnd={refetch} />}
             {/* <Waiting match={match!} onTimeEnd={onTimeEnd} /> */}
           </Container>
         </Loading.Lottie>

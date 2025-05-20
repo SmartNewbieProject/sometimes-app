@@ -8,6 +8,7 @@ export type MatchDetails = {
   type: MatchViewType;
   endOfView: Dayjs | null;
   partner: UserProfile | null;
+  untilNext: string | null;
 };
 
 export type ServerMatchDetails = Omit<MatchDetails, 'endOfView'> & {

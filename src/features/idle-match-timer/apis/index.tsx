@@ -1,5 +1,5 @@
 import { axiosClient, dayUtils } from "@/src/shared/libs";
-import { MatchDetails, ServerMatchDetails } from "../types";
+import type { MatchDetails, ServerMatchDetails } from "../types";
 
 export const getNextMatchingDate = () =>
   axiosClient.get('/matching/next-date')

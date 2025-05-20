@@ -1,12 +1,14 @@
-import { Dayjs } from 'dayjs';
+import { dayUtils } from '@/src/shared/libs';
+import type { Dayjs } from 'dayjs';
 
-interface TimeResult {
+export interface TimeResult {
   delimeter: 'D' | 'H' | 'M' | 'S';
   value: number;
   shouldTriggerCallback?: boolean;
 }
 
 export function calculateTime(nextMatchingDate: Dayjs | null, now: Dayjs): TimeResult {
+
   if (!nextMatchingDate) {
     return {
       delimeter: 'D',
@@ -44,8 +46,8 @@ export function calculateTime(nextMatchingDate: Dayjs | null, now: Dayjs): TimeR
     }
   }
 
-  // 시간이 0이 되었을 때 콜백 트리거
-  const shouldTriggerCallback = seconds === 0;
+  const shouldTriggerCallback = seconds <= 0;
+  console.table({ shouldTriggerCallback });
 
   return {
     delimeter: 'S',
