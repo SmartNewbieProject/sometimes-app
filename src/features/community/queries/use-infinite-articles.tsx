@@ -2,7 +2,7 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { getArticles } from '../apis/articles';
 import { Article } from '../types';
 import { QUERY_KEYS } from './keys';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 type UseInfiniteArticlesProps = {
   categoryCode?: string;
@@ -73,12 +73,17 @@ export const useInfiniteArticlesQuery = ({
 
 
   const updateArticleLike = useCallback((articleId: string) => {
+    const article = articles.find(a => a.id === articleId);
+    if (!article) return articles;
+
+    const newIsLiked = !article.isLiked;
+    const newLikeCount = article.likeCount + (article.isLiked ? -1 : 1);
+
     queryClient.setQueryData(
       [...QUERY_KEYS.articles.lists(), { categoryCode }],
       (oldData: any) => {
         if (!oldData) return oldData;
 
-        // 무한 쿼리 데이터 구조에 맞게 업데이트
         return {
           ...oldData,
           pages: oldData.pages.map((page: any) => ({
@@ -87,8 +92,8 @@ export const useInfiniteArticlesQuery = ({
               if (article.id === articleId) {
                 return {
                   ...article,
-                  likeCount: article.likeCount + (article.isLiked ? -1 : 1),
-                  isLiked: !article.isLiked,
+                  likeCount: newLikeCount,
+                  isLiked: newIsLiked,
                 };
               }
               return article;
@@ -98,12 +103,24 @@ export const useInfiniteArticlesQuery = ({
       }
     );
 
+    queryClient.setQueryData(
+      QUERY_KEYS.articles.detail(articleId),
+      (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          likeCount: newLikeCount,
+          isLiked: newIsLiked,
+        };
+      }
+    );
+
     return articles.map((article) => {
       if (article.id === articleId) {
         return {
           ...article,
-          likeCount: article.likeCount + (article.isLiked ? -1 : 1),
-          isLiked: !article.isLiked,
+          likeCount: newLikeCount,
+          isLiked: newIsLiked,
         };
       }
       return article;

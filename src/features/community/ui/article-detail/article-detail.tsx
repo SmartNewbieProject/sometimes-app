@@ -1,8 +1,8 @@
-import { View, ScrollView } from "react-native"   
+import { View, ScrollView } from "react-native"
 import { Text } from "@/src/shared/ui"
 import { ArticleDetailComment } from "./article-detail-comment";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import { tryCatch } from "@shared/libs";
 import type { UniversityName } from '@shared/libs';
@@ -19,12 +19,13 @@ import {
   useUpdateCommentMutation,
   useDeleteCommentMutation
 } from '@/src/features/community/queries/comments';
+import { useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/src/features/community/queries/keys';
 import Loading from "@/src/features/loading";
 
 export const ArticleDetail = ({ article }: { article: Article }) => {
     const { id } = useLocalSearchParams<{ id: string }>();
     const [checked, setChecked] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
     const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
     const [editingContent, setEditingContent] = useState<string>('');
     const form = useForm<CommentForm>({
@@ -46,6 +47,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     const createCommentMutation = useCreateCommentMutation(articleId);
     const updateCommentMutation = useUpdateCommentMutation(articleId);
     const deleteCommentMutation = useDeleteCommentMutation(articleId);
+    const queryClient = useQueryClient();
 
     const handleSubmit = async (data: { content: string }) => {
         createCommentMutation.mutate({
@@ -60,10 +62,12 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         });
     };
 
-    const handleUpdate = (id: string, content: string) => {
-        setEditingCommentId(id);
-        setEditingContent(content);
-        setIsEditing(true);
+    const handleUpdate = (id: string) => {
+        const comment = comments.find(c => c.id === id);
+        if (comment) {
+            setEditingCommentId(id);
+            setEditingContent(comment.content);
+        }
     };
 
     const handleSubmitUpdate = async () => {
@@ -75,7 +79,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
                 onSuccess: () => {
                     setEditingCommentId(null);
                     setEditingContent('');
-                    setIsEditing(false);
                     form.reset();
                 },
             });
@@ -87,16 +90,63 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         setEditingContent('');
     };
 
+    useEffect(() => {
+        if (article) {
+            setLikeCount(article.likeCount);
+            setIsLiked(article.isLiked);
+        }
+    }, [article]);
+
     const like = (item: Article) => {
       tryCatch(async () => {
+        const newIsLiked = !isLiked;
+        const newLikeCount = isLiked ? likeCount - 1 : likeCount + 1;
+
+        setLikeCount(newLikeCount);
+        setIsLiked(newIsLiked);
+
+        queryClient.setQueryData(
+          QUERY_KEYS.articles.detail(articleId),
+          (oldData: any) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              likeCount: newLikeCount,
+              isLiked: newIsLiked,
+            };
+          }
+        );
+
+        queryClient.setQueriesData(
+          { queryKey: QUERY_KEYS.articles.lists() },
+          (oldData: any) => {
+            if (!oldData) return oldData;
+
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page: any) => ({
+                ...page,
+                items: page.items.map((article: Article) => {
+                  if (article.id === articleId) {
+                    return {
+                      ...article,
+                      likeCount: newLikeCount,
+                      isLiked: newIsLiked,
+                    };
+                  }
+                  return article;
+                }),
+              })),
+            };
+          }
+        );
+
         await apis.articles.doLike(item);
-        setLikeCount(prevCount => isLiked ? prevCount - 1 : prevCount + 1);
-        setIsLiked(!isLiked);
       }, (error) => {
         console.error('좋아요 업데이트 실패:', error);
       });
     };
-    
+
     const handleDelete = async (commentId: string) => {
 			deleteCommentMutation.mutate(commentId);
             article.comments.length -= 1;
@@ -108,7 +158,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 					<ArticleDetailComment
 						key={comment.id}
 						comment={comment}
-						onDelete={handleDelete} 
+						onDelete={handleDelete}
 						onUpdate={handleUpdate}
 					/>
 				));
@@ -117,7 +167,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     return (
 			<View className="flex-1 relative">
 					<View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
-					<UserProfile 
+					<UserProfile
 						author={article.author}
 						universityName={article.author.universityDetails.name as UniversityName}
 						isOwner={isOwner}
