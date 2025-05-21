@@ -28,7 +28,7 @@ export function MbtiSelector({ onChange, onBlur, value }: Props) {
 
   return (
     <View>
-      <View className="flex flex-row justify-center gap-x-[30px]">
+      <View className="flex flex-row justify-center gap-x-[24px]">
         <View className="flex flex-col justify-center items-center gap-x-1">
         <Text size="sm" textColor="purple" className="mb-2">
             외향
