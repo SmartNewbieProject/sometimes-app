@@ -31,6 +31,8 @@ export enum ImageResources {
   DISAPPEAR_FOX = `${S3_BASE_URL}/disappear_fox.png`,
   PLITE_FOX = `${S3_BASE_URL}/polite_fox.png`,
 
+  ANNOUNCEMENT_ALERT = `${S3_BASE_URL}/announcement-alert.png`,
+
   // Pre-signup 페이지 이미지
   PRE_SIGNUP_CHARACTER = `${S3_BASE_URL}/pre-signup-character.png`,
   INITIAL_CAMPUS_CARD = `${S3_BASE_URL}/initial_campus_card.png`,
