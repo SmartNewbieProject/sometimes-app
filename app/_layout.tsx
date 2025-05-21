@@ -41,23 +41,23 @@ export default function RootLayout() {
   }
 
   return (
-    <ModalProvider>
-      <View
-        className={cn(
-          'flex-1 font-extralight',
-          Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
-        )}
-      >
-        <QueryProvider>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <AnalyticsProvider>
-              <RouteTracker>
-                <Slot />
-              </RouteTracker>
-            </AnalyticsProvider>
-          </ThemeProvider>
-        </QueryProvider>
-      </View>
-    </ModalProvider>
+    <QueryProvider>
+      <ModalProvider>
+        <View
+          className={cn(
+            'flex-1 font-extralight',
+            Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
+          )}
+        >
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <AnalyticsProvider>
+                <RouteTracker>
+                  <Slot />
+                </RouteTracker>
+              </AnalyticsProvider>
+            </ThemeProvider>
+        </View>
+      </ModalProvider>
+    </QueryProvider>
   );
 }
