@@ -1,5 +1,5 @@
-import { UserProfile } from "@/src/types/user";
-import { Dayjs } from "dayjs";
+import type { UserProfile } from "@/src/types/user";
+import type { Dayjs } from "dayjs";
 
 export type MatchViewType = 'open' | 'waiting' | 'not-found' | 'rematching';
 
