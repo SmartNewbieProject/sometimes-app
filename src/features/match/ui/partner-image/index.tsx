@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { View, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { SimpleProfile, UserProfile } from "@/src/types/user";
+import type { SimpleProfile } from "@/src/types/user";
 import { ImageResource, Text, UniversityBadge } from '@shared/ui';
 import { ImageResources } from "@/src/shared/libs";
 
@@ -36,31 +36,17 @@ export const PartnerImage = ({ uri, profile }: PartnerImageProps) => {
 
       <View style={styles.textContainer}>
         <Text textColor="white" weight="semibold" className="text-[20px]">
-          {profile.name}, {profile.age}
+          {profile.age}
         </Text>
         <View className="flex flex-row items-center">
           <Text textColor="white" weight="light" size="sm">
             #{profile.mbti}
             &nbsp;#{profile.universityName}
           </Text>
-          &nbsp;<UniversityBadge authenticated={profile.authenticated} />
+          {/* &nbsp;<UniversityBadge authenticated={profile.authenticated} /> */}
         </View>
       </View>
 
-      <View style={styles.paperPlane}>
-        <ImageResource
-          resource={ImageResources.PAPER_PLANE_WITHOUT_BG}
-          width={76}
-          height={76}
-        />
-      </View>
-      <View style={styles.heart}>
-        <ImageResource
-          resource={ImageResources.HEART}
-          width={64}
-          height={64}
-        />
-      </View>
 
     </View>
   );
