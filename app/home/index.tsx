@@ -6,19 +6,19 @@ import IdleMatchTimer from '@features/idle-match-timer';
 import Loading from '@/src/features/loading';
 import { router } from 'expo-router';
 import { Feedback } from "@features/feedback";
-import { environmentStrategy, ImageResources } from '@/src/shared/libs';
+import { ImageResources } from '@/src/shared/libs';
 import { useCommingSoon } from '@/src/features/admin/hooks';
-import { useEffect, useCallback } from "react";
-import { PreSignup } from '@/src/features/pre-signup';
+import { useEffect } from "react";
 import Event from '@features/event';
-import { Admin } from '@/src/features/admin';
-import { Button } from '@/src/shared/ui';
+import { Button, Text } from '@/src/shared/ui';
 import { useAuth } from '@/src/features/auth';
 import { excludeEmails } from '@/src/features/admin/services';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import type { Notification } from '@/src/features/home/apis';
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
-const { useTotalMatchCountQuery, useTotalUserCountQuery } = queries;
+const { useTotalMatchCountQuery, useTotalUserCountQuery, useNotificationQuery } = queries;
 const { useRedirectPreferences } = hooks;
 
 const HomeScreen = () => {
@@ -28,6 +28,8 @@ const HomeScreen = () => {
   const showCommingSoon = useCommingSoon();
   const { trackEventAction } = Event.hooks.useEventAnalytics('home');
   const { my } = useAuth();
+  const { data: notifications } = useNotificationQuery();
+  const { showModal } = useModal();
 
   const handleNavigateToRematch = () => {
     if (process.env.NODE_ENV === 'production') {
@@ -40,6 +42,23 @@ const HomeScreen = () => {
     } else {
       router.navigate('/purchase/tickets/rematch');
     }
+  };
+
+  const onClickAlert = (notification: Notification) => {
+    showModal({
+      title: notification.title,
+      children: (
+        <View>
+          <Text textColor="black">{notification.content}</Text>
+        </View>
+      ),
+      primaryButton: {
+        text: notification.okMessage,
+        onClick: () => {
+          router.navigate(notification.redirectUrl as '/');
+        },
+      },
+    });
   };
 
   useEffect(() => {
@@ -88,6 +107,15 @@ const HomeScreen = () => {
                 onPress={() => router.navigate('/interest')}
               />
           </Show>
+          {notifications?.map((notification) => (
+            <AnnounceCard
+              theme="alert"
+              key={notification.title}
+              emojiSize={{ width: 31, height: 28 }}
+              text={notification.announcement}
+              onPress={() => onClickAlert(notification)}
+            />
+          ))}
         </View>
 
         <View className="mt-[14px]">

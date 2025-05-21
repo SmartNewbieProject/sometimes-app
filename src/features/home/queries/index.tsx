@@ -19,3 +19,8 @@ export const useCheckPreferenceFillQuery = () =>
     queryFn: apis.checkPreferenceFill,
   });
 
+export const useNotificationQuery = () =>
+  useQuery({
+    queryKey: ['notification'],
+    queryFn: apis.getNotification,
+  });

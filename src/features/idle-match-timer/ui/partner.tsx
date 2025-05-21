@@ -66,7 +66,7 @@ export const Partner = ({ match }: PartnerProps) => {
 						&nbsp;#{partner?.universityDetails?.name}
 					</Text>
 					&nbsp;
-					<UniversityBadge authenticated={partner?.universityDetails?.authentication ?? false} />
+					{/* <UniversityBadge authenticated={partner?.universityDetails?.authentication ?? false} /> */}
 				</View>
 			</View>
 

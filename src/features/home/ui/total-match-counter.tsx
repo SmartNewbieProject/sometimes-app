@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
+    width: "95%",
   },
   leftContent: {
     flex: 1,

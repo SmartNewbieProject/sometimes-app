@@ -1,6 +1,6 @@
 import { View, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Text, PalePurpleGradient, BottomNavigation, Header, Button } from '@/src/shared/ui';
-import { Notice, Profile, LogoutOrWithdrawal } from '@/src/features/mypage/ui';
+import { Notice, Profile, LogoutOrWithdrawal, ProfileMenu } from '@/src/features/mypage/ui';
 import { Image } from 'expo-image';
 
 export default function MyScreen() {
@@ -40,7 +40,8 @@ export default function MyScreen() {
           {/* TODO: 정식 오픈 시 주석 해제 필요 */}
           {/* <Notice />
         <View className="py-10 items-center justify-center"> */}
-        <View className="items-center justify-center"> {/* TODO: 정식 오픈 시 주석 해제 필요 */}
+        <View className="items-center flex flex-col gap-y-4 justify-center"> {/* TODO: 정식 오픈 시 주석 해제 필요 */}
+          <ProfileMenu />
           <LogoutOrWithdrawal/>
         </View>
       </ScrollView>
