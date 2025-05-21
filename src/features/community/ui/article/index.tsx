@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, Image } from 'react-native';
-import { Divider, Show, Text, ImageResource, dropdownStyles } from '@/src/shared/ui';
+import { Divider, Show, Text, ImageResource, dropdownStyles, Dropdown } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import type { Article as ArticleType } from '../../types';
 import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
@@ -111,42 +111,30 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
         <View className="absolute right-0 top-[12px]" onTouchEnd={(e) => {
           e.stopPropagation();
         }}>
-          <TouchableOpacity onPress={(e) => {
-            e.stopPropagation();
-            toggleDropdown();
-          }}>
-            <View className="w-[48px] h-[48px] flex items-center justify-center">
-              <ImageResource resource={ImageResources.MENU} width={24} height={24} />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </Show>
-      <Show when={isDropdownOpen}>
-        <View
-          style={dropdownStyles.dropdownContainer}
-        >
-          <TouchableOpacity
-            style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' }}
-            onPress={(e) => {
-              e.stopPropagation();
-              closeDropdown();
+                <Dropdown
+        open={isDropdownOpen}
+        items={[
+          {
+            key: 'update',
+            content: '수정',
+            onPress: () => {
               router.push(`/community/update/${data.id}`);
-            }}
-          >
-            <Text textColor="black">수정</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ padding: 10 }}
-            onPress={(e) => {
-              e.stopPropagation();
+            },
+          },
+          {
+            key: 'delete',
+            content: '삭제',
+            onPress: () => {
               onDelete(data.id);
               closeDropdown();
-            }}
-          >
-            <Text textColor="black">삭제</Text>
-          </TouchableOpacity>
+            },
+          },
+        ]}
+      />
         </View>
+        
       </Show>
+
     </View>
   );
 }
