@@ -16,7 +16,7 @@ const {
 } = Instagram;
 
 type InteractionNavigationProps = {
-	match: MatchDetails;
+	match?: MatchDetails;
 };
 
 const useRematchingMutation = () =>
@@ -28,7 +28,7 @@ const useRematchingMutation = () =>
 	});
 
 export const InteractionNavigation = ({ match }: InteractionNavigationProps) => {
-	const hasPartner = !!match.partner;
+	const hasPartner = !!match?.partner;
 	const { showErrorModal, showModal } = useModal();
 	const { mutateAsync: rematch } = useRematchingMutation();
 	const { onLoading, finishLoading } = useMatchLoading();
@@ -131,7 +131,7 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
 			>
 				재매칭권 사용하기
 			</Button>
-			{hasPartner && <InstagramContactButton instagramId={match.partner!.instagramId} />}
+			{hasPartner && <InstagramContactButton instagramId={match?.partner?.instagramId as string} />}
 		</View>
 	);
 };

@@ -60,7 +60,7 @@ export default function IdleMatchTimer() {
           </Container>
         </Loading.Lottie>
       </View>
-      {match && <InteractionNavigation match={match} />}
+      <InteractionNavigation match={match} />
     </View>
   );
 }
