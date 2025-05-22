@@ -9,6 +9,7 @@ import { calculateTime, type TimeResult } from '../services/calculate-time';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type  { MatchDetails } from "../types";
 import { sideStyle } from "./constants";
+import { useCommingSoon } from "@/src/features/admin/hooks";
 
 interface WaitingProps {
   onTimeEnd?: () => void;
@@ -28,6 +29,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
       return calculateTime(nextMatchingDate, currentTime);
     }
   );
+  const showCommingSoon = useCommingSoon();
 
   // const time = calculateTime(dayUtils.create(match.untilNext), currentTime);
 
@@ -108,6 +110,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           <TouchableOpacity
             className="bg-primaryPurple flex-1 flex flex-row justify-end items-center pr-1"
             style={sideStyle.previousButton}
+            onPress={showCommingSoon}
           >
             <Text className="w-[24px] text-white text-[12px]">
               이전
