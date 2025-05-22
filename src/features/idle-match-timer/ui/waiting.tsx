@@ -83,10 +83,11 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
       </View>
 
       <View className="flex flex-row gap-x-1 mb-[8px]">
-        <Time value={timeSet?.delimeter} />
+        <Time value={timeSet?.delimeter || ''} />
         <Time value="-" />
-        {timeSet?.value?.toString().split('').map((value) => (
-          <Time key={value} value={value} />
+        {timeSet?.value?.toString().split('').map((value, key) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+          <Time key={value + key} value={value} />
         ))}
       </View>
 

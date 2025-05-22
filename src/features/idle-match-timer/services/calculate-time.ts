@@ -21,14 +21,14 @@ export function calculateTime(nextMatchingDate: Dayjs | null, now: Dayjs): TimeR
   const minutes = nextMatchingDate.diff(now, 'minute');
   const seconds = nextMatchingDate.diff(now, 'second');
   const dayDiff = nextMatchingDate.startOf('day').diff(now.startOf('day'), 'day');
-  console.group('calculateTime');
-  console.log('nextMatchingDate', nextMatchingDate?.format('YYYY-MM-DD HH:mm:ss'));
-  console.log('now', now?.format('YYYY-MM-DD HH:mm:ss'));
-  console.log('dayDiff', dayDiff);
-  console.log('hours', hours);
-  console.log('minutes', minutes);
-  console.log('seconds', seconds);
-  console.groupEnd();
+  // console.group('calculateTime');
+  // console.log('nextMatchingDate', nextMatchingDate?.format('YYYY-MM-DD HH:mm:ss'));
+  // console.log('now', now?.format('YYYY-MM-DD HH:mm:ss'));
+  // console.log('dayDiff', dayDiff);
+  // console.log('hours', hours);
+  // console.log('minutes', minutes);
+  // console.log('seconds', seconds);
+  // console.groupEnd();
 
   if (dayDiff > 0) {
     return {
