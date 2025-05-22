@@ -60,7 +60,7 @@ export default function PartnerDetailScreen() {
 
       <ScrollView className="flex-1 px-4">
         <View className="w-full flex justify-center items-center">
-          
+
         <View style={styles.outerContainer}>
           <LinearGradient
             colors={['#F3EDFF', '#9747FF']}
@@ -85,7 +85,7 @@ export default function PartnerDetailScreen() {
 
           <View style={styles.textContainer}>
             <Text textColor="white" weight="semibold" className="text-[20px]">
-              {partner.age}
+              만 {partner.age}세
             </Text>
             <View className="flex flex-row items-center">
               <Text textColor="white" weight="light" size="sm">

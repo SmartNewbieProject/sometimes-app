@@ -36,7 +36,7 @@ export const PartnerImage = ({ uri, profile }: PartnerImageProps) => {
 
       <View style={styles.textContainer}>
         <Text textColor="white" weight="semibold" className="text-[20px]">
-          {profile.age}
+          만 {profile.age}세
         </Text>
         <View className="flex flex-row items-center">
           <Text textColor="white" weight="light" size="sm">

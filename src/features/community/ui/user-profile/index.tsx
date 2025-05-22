@@ -36,7 +36,7 @@ export const UserProfile = ({ author, universityName, isOwner, comment, updatedA
                 </View>
               </Show>
             </View>
-  
+
             <Show when={!!comment}>
               <View className="pt-1.5 flex-wrap max-w-[calc(100%-16px)] break-all overflow-wrap-anywhere">
                 {comment}
@@ -44,10 +44,10 @@ export const UserProfile = ({ author, universityName, isOwner, comment, updatedA
             </Show>
           </View>
         </View>
-    
+
         <Show when={!hideUniv}>
           <Text size="13" textColor="purple" className="opacity-70">
-            {author.age}세
+            만 {author.age}세
             <Text> · </Text>
             {universityName}
           </Text>

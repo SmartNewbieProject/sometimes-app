@@ -58,7 +58,7 @@ export const Partner = ({ match }: PartnerProps) => {
 				}}
 			>
 				<Text textColor="white" weight="semibold" size="lg">
-					{partner?.age}
+					만 {partner?.age}세
 				</Text>
 				<View className="flex flex-row items-center">
 					<Text textColor="white" weight="light" size="md">
