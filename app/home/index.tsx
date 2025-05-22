@@ -7,12 +7,9 @@ import Loading from '@/src/features/loading';
 import { router } from 'expo-router';
 import { Feedback } from "@features/feedback";
 import { ImageResources } from '@/src/shared/libs';
-import { useCommingSoon } from '@/src/features/admin/hooks';
+import { Text } from '@shared/ui';
 import { useEffect } from "react";
 import Event from '@features/event';
-import { Button, Text } from '@/src/shared/ui';
-import { useAuth } from '@/src/features/auth';
-import { excludeEmails } from '@/src/features/admin/services';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import type { Notification } from '@/src/features/home/apis';
 
@@ -25,23 +22,12 @@ const HomeScreen = () => {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } = useTotalMatchCountQuery();
   const { data: totalUserCount = 0 } = useTotalUserCountQuery();
   const { isPreferenceFill, refetchPreferenceFill } = useRedirectPreferences();
-  const showCommingSoon = useCommingSoon();
   const { trackEventAction } = Event.hooks.useEventAnalytics('home');
-  const { my } = useAuth();
   const { data: notifications } = useNotificationQuery();
   const { showModal } = useModal();
 
   const handleNavigateToRematch = () => {
-    if (process.env.NODE_ENV === 'production') {
-      if (!my?.email) return;
-      if (excludeEmails.includes(my.email)) {
-        router.navigate('/purchase/tickets/rematch');
-      } else {
-        showCommingSoon();
-      }
-    } else {
-      router.navigate('/purchase/tickets/rematch');
-    }
+    router.navigate('/purchase/tickets/rematch');
   };
 
   const onClickAlert = (notification: Notification) => {

@@ -1,6 +1,6 @@
-import { Alert, Platform, View } from "react-native";
+import { Platform } from "react-native";
 import { useEffect, useState } from "react";
-import webPayment, { initializeIMP, resetIMP } from "../web";
+import webPayment from "../web";
 import paymentApis from "../api";
 import { useAuth } from "../../auth";
 import Loading from "../../loading";

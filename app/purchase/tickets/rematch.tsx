@@ -1,9 +1,9 @@
 import { Button, Header, PalePurpleGradient, Text } from '@shared/ui';
 import Layout from '@features/layout';
-import { Alert, BackHandler, Image, Platform, TouchableOpacity, View } from 'react-native';
-import { ImageResources, imageUtils, tryCatch } from '@/src/shared/libs';
+import { Alert, BackHandler, Image, View } from 'react-native';
+import { ImageResources, imageUtils } from '@/src/shared/libs';
 import { Selector } from '@/src/widgets/selector';
-import { createRef, useEffect, useMemo, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import Payment from '@features/payment';
 import type { PortOneController } from '@portone/react-native-sdk';
 import type { PaymentResponse } from '@/src/types/payment';
