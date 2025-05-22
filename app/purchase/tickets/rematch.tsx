@@ -25,7 +25,11 @@ export default function RematchingTicketSellingScreen() {
 	const controller = createRef<PortOneController>();
 	const rawPrice = productCount ? productCount * PRICE : 0;
 	const { showErrorModal, showModal } = useModal();
-	const paymentId = useMemo(() => Date.now().toString(16), []);
+	const [paymentId, setPaymentId] = useState<string>(() => {
+		const { nanoid } = require('nanoid');
+		return nanoid();
+	});
+
   const { initialize, handlePaymentComplete } = usePortone();
 
 	const calculateDiscount = (count: number): number => {
@@ -63,8 +67,12 @@ export default function RematchingTicketSellingScreen() {
 		setShowPayment(false);
 		handlePaymentComplete(result, {
 			productCount,
-			onError: (error) => {
+			onError: async (error) => {
 				console.error('결제 오류:', error);
+				const { nanoid } = await import('nanoid');
+				const id = nanoid();
+				console.debug('결제 오류 발생 시 새로운 orderId 생성:', id);
+				setPaymentId(id);
 				showErrorModal(error instanceof Error ? error.message : '결제 처리 중 오류가 발생했습니다.', 'error');
 			}
 		});

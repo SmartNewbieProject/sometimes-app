@@ -20,6 +20,7 @@ export interface WebPaymentProps {
   onCancel?: () => void;
 }
 
+
 /**
  * 웹 환경에서 I'mport.js를 사용한 결제 컴포넌트
  */
@@ -78,8 +79,6 @@ export const WebPaymentView = (props: WebPaymentProps) => {
         // console.log('결제 응답:', response);
         onComplete?.(response);
       } catch (error) {
-        console.error('결제 오류:', error);
-        Alert.alert("결제 실패", error instanceof Error ? error.message : '결제 처리 중 오류가 발생했습니다.');
         onError?.(error);
       } finally {
         setIsProcessing(false);
