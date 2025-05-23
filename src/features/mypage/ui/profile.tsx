@@ -36,7 +36,7 @@ export const Profile = () => {
     grade: profileDetails?.universityDetails?.grade || '19학번',
     domatching: domatching,
     university: profileDetails?.universityDetails?.name || '한밭대학교',
-    profileImage: profileDetails?.profileImages[0].url || require('@/assets/images/profile.png'),
+    profileImage: profileDetails?.profileImages?.[0]?.url || require('@/assets/images/profile.png'),
     totalRematchingTickets: reMatchingTicketCount,
   }
 
@@ -99,7 +99,7 @@ export const Profile = () => {
           <Image source={require('@/assets/images/ticket.png')} style={{ width: 30, height: 30 }} />
           <View className='pl-[10px] flex-row'>
             <Text className='text-[13px] text-[#FFFFFF]'>
-              재매칭 티켓이  
+              재매칭 티켓이
             </Text>
             <Text className='text-[13px] text-[#9747FF]'>
               &nbsp;{profileData.totalRematchingTickets}장
