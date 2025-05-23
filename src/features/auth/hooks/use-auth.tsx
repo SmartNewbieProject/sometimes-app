@@ -29,16 +29,22 @@ export function useAuth() {
     await setRefreshToken(refreshToken);
   };
 
+  const logoutOnly = async () => {
+    if (!refreshToken) {
+      router.push('/auth/login');
+      await setToken(null);
+      await setRefreshToken(null);
+      return;
+    }
+
+    await logoutApi(refreshToken);
+    await setToken(null);
+    await setRefreshToken(null);
+  }
+
   const logout = () => {
     tryCatch(async () => {
-      if (!refreshToken) {
-        router.push('/auth/login');
-        await setToken(null);
-        await setRefreshToken(null);
-        return;
-      }
-      await logoutApi(refreshToken);
-      await setToken(null);
+      logoutOnly();
       showModal({
         title: '로그아웃',
         children: '로그아웃 되었습니다.',
@@ -76,6 +82,7 @@ export function useAuth() {
     profileDetails,
     isAuthorized: !!accessToken,
     logout,
+    logoutOnly,
     my,
     queryProps: {
       my: myQueryProps,

@@ -1,6 +1,7 @@
 import { TouchableOpacity, View } from "react-native";
 import { Text } from "@/src/shared/ui";
 import { useAuth } from "@/src/features/auth";
+import { router } from "expo-router";
 
 const LogoutOrWithdrawal = () => {
   const { logout } = useAuth();
@@ -12,10 +13,14 @@ const LogoutOrWithdrawal = () => {
         <TouchableOpacity onPress={logout}>
             <Text className="text-[15px] font-medium text-black">로그아웃</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity>
-            <Text className="text-[15px] font-medium text-[#FF0000]">회원탈퇴</Text>
-        </TouchableOpacity> */}
     </View>
+
+    <TouchableOpacity
+      activeOpacity={0.5}
+      onPress={() => router.navigate('/my/withdrawal')}
+    className="mt-[36px] mb-[64px] w-full flex justify-center flex-row">
+      <Text className="text-[14px] font-light underline underline-offset-1 text-gray-300">회원을 탈퇴하고 싶어요.</Text>
+    </TouchableOpacity>
     </View>
   );
 };

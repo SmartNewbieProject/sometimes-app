@@ -127,5 +127,5 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
         </View>
       </View>
     </View>
-  )
+  );
 };

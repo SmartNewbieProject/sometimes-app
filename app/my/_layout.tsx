@@ -14,6 +14,15 @@ export default function MyLayout() {
             },
           }} 
         />
+        <Stack.Screen 
+          name="withdrawal" 
+          options={{ 
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }} 
+        />
       </Stack>
     </View>
   );

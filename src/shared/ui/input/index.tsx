@@ -1,4 +1,4 @@
-import { Button, TextInput, TextInputProps, View, TouchableOpacity } from 'react-native';
+import { TextInput, type TextInputProps, View, TouchableOpacity } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { useState } from 'react';
 import EyeOn from '@assets/icons/eye-on.svg';
