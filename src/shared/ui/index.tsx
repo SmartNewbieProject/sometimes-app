@@ -22,4 +22,5 @@ export * from './dropdown';
 export * from './announce-card';
 export * from './business-info';
 export * from './carousel';
+export * from './text-area';
 

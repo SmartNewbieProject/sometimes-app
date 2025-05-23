@@ -11,3 +11,5 @@ export const Form = {
   ContentSelector: FormContentSelector,
   Select: FormSelect,
 }
+
+export * from './text-area';
