@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, ScrollView } from 'react-native';
 import { Text, Button, ImageSelector } from '@/src/shared/ui';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
@@ -13,6 +13,9 @@ export const ChangeProfileImageModal = () => {
 
   const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validImages = images.filter(img => img !== null);
+  const isAllImagesSelected = validImages.length === 3;
 
   useEffect(() => {
     if (profileDetails) {
@@ -34,10 +37,10 @@ export const ChangeProfileImageModal = () => {
       return;
     }
 
-    // 최소 1개 이상의 이미지가 있는지 확인
+    // 최소 3개 이상의 이미지가 있는지 확인
     const validImages = images.filter(img => img !== null);
-    if (validImages.length === 0) {
-      showErrorModal('최소 1개 이상의 프로필 이미지가 필요합니다.', 'announcement');
+    if (validImages.length !== 3) {
+      showErrorModal('프로필 이미지 3장을 모두 등록해주세요.', 'announcement');
       return;
     }
 
@@ -123,22 +126,37 @@ export const ChangeProfileImageModal = () => {
       </Text>
 
       <Text className="mb-4 text-center" textColor="black">
-        매칭을 위해 최소 1장의 프로필 사진이 필요합니다.
+        매칭을 위해 프로필 사진 3장을 모두 등록해주세요.
       </Text>
 
       <View className="mb-6">
-        <View className="flex flex-row justify-center gap-x-4 mb-4">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            gap: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: '100%'
+          }}
+          className="mb-4"
+        >
           {images.map((image, index) => (
-            <ImageSelector
-              key={index}
-              size="sm"
-              value={image ?? undefined}
-              onChange={(value) => handleImageChange(index, value)}
-            />
+            <View key={index} style={{ width: 120, height: 120 }}>
+              <ImageSelector
+                size="sm"
+                value={image ?? undefined}
+                onChange={(value) => handleImageChange(index, value)}
+              />
+            </View>
           ))}
-        </View>
+        </ScrollView>
         <Text className="text-xs text-center" textColor="gray">
           얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+        </Text>
+        <Text className="text-xs text-center mt-1" textColor="gray">
+          좌우로 스크롤하여 이미지를 추가해주세요.
         </Text>
       </View>
 
@@ -155,7 +173,7 @@ export const ChangeProfileImageModal = () => {
           variant="primary"
           onPress={handleSubmit}
           className="flex-1"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !isAllImagesSelected}
         >
           {isSubmitting ? '변경 중...' : '변경 완료'}
         </Button>
