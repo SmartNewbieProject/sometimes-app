@@ -1,5 +1,5 @@
 import { axiosClient } from "@/src/shared/libs";
-import { PreferenceOption } from "@/src/types/user";
+import type { PreferenceOption } from "@/src/types/user";
 
 export type Preferences = {
   typeId: string;
@@ -7,4 +7,4 @@ export type Preferences = {
 };
 
 export const getPreferenceOptions = (name: string): Promise<Preferences> =>
-  axiosClient.get('/preferences/options?name=' + name);
+  axiosClient.get(`/preferences/options?name=${name}`);

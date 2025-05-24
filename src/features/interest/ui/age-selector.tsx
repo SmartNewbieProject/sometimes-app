@@ -3,37 +3,30 @@ import { View, Image, TouchableOpacity } from 'react-native';
 import { Text } from "@/src/shared/ui";
 import { cn } from '@/src/shared/libs/cn';
 import { cva, type VariantProps } from 'class-variance-authority';
+import type { AgeOption, AgeOptionData } from '../types';
 
-export type AgeOption = 'SAME_AGE' | 'YOUNGER' | 'OLDER' | 'NO_PREFERENCE';
-
-interface AgeOptionData {
-  value: AgeOption;
-  label: string;
-  image: any;
-}
-
-const ageOptions: AgeOptionData[] = [
-  {
-    value: 'SAME_AGE',
-    label: '동갑',
-    image: require('@assets/images/age/same.png'),
-  },
-  {
-    value: 'YOUNGER',
-    label: '연하',
-    image: require('@assets/images/age/under.png'),
-  },
-  {
-    value: 'OLDER',
-    label: '연상',
-    image: require('@assets/images/age/high.png'),
-  },
-  {
-    value: 'NO_PREFERENCE',
-    label: '상관없음',
-    image: require('@assets/images/age/nothing.png'),
-  },
-];
+// const ageOptions: AgeOptionData[] = [
+//   {
+//     value: 'SAME_AGE',
+//     label: '동갑',
+//     image: require('@assets/images/age/same.png'),
+//   },
+//   {
+//     value: 'YOUNGER',
+//     label: '연하',
+//     image: require('@assets/images/age/under.png'),
+//   },
+//   {
+//     value: 'OLDER',
+//     label: '연상',
+//     image: require('@assets/images/age/high.png'),
+//   },
+//   {
+//     value: 'NO_PREFERENCE',
+//     label: '상관없음',
+//     image: require('@assets/images/age/nothing.png'),
+//   },
+// ];
 
 const ageSelector = cva('flex flex-row w-full justify-center flex-wrap gap-4', {
   variants: {
@@ -50,6 +43,7 @@ const ageSelector = cva('flex flex-row w-full justify-center flex-wrap gap-4', {
 
 export interface AgeSelectorProps extends VariantProps<typeof ageSelector> {
   value?: AgeOption;
+  options: AgeOptionData[];
   onChange: (value: AgeOption) => void;
   className?: string;
 }
@@ -58,6 +52,7 @@ export function AgeSelector({
   value,
   onChange,
   size,
+  options,
   className,
 }: AgeSelectorProps) {
   return (
@@ -68,7 +63,7 @@ export function AgeSelector({
         flexWrap: "wrap",
       }}
     >
-      {ageOptions.map((option) => (
+      {options.map((option) => (
         <AgeCard
           key={option.value}
           option={option}
@@ -121,6 +116,7 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
 
 export interface FormAgeSelectorProps extends Omit<AgeSelectorProps, 'value' | 'onChange'> {
   name: string;
+  options: AgeOptionData[];
   control: any;
   rules?: any;
 }
@@ -131,6 +127,7 @@ export function FormAgeSelector({
   rules,
   size,
   className,
+  options,
 }: FormAgeSelectorProps) {
   const { useController } = require('react-hook-form');
 
@@ -148,6 +145,7 @@ export function FormAgeSelector({
       onChange={onChange}
       size={size}
       className={className}
+      options={options}
     />
   );
 }
