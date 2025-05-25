@@ -7,8 +7,8 @@ export const NotFound = () => {
     <View className="w-full h-full flex justify-center items-center">
       <ImageResource
         resource={ImageResources.BROKEN_SANDTIMER}
-        width={246}
-        height={246}
+        width={214}
+        height={214}
       />
       <Text textColor="purple" weight="semibold">
         매칭에 실패했어요
