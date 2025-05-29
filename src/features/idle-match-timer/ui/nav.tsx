@@ -80,7 +80,15 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
 					return;
 				}
 				finishLoading();
-				showErrorModal(err.error, 'error');
+				showModal({
+					title: "아직 추천드릴 상대가 없어요",
+					children: (
+						<View className="flex flex-col">
+							<Text>지금은 조건에 맞는 상대가 잠시 없어요.</Text>
+							<Text>곧 더 많은 분들이 참여할 예정이니, 잠시 후 다시 시도해 주세요!</Text>
+						</View>
+					)
+				})
 			},
 		);
 	};
