@@ -20,7 +20,7 @@ export function PortoneProvider({ children }: PortoneProviderProps) {
 	const [error, setError] = useState<Error | null>(null);
 
 	useEffect(() => {
-		if (typeof window === 'undefined') return;
+		if (typeof window === 'undefined' || window.document === undefined) return;
 		if (window.IMP) {
 			setLoaded(true);
 			return;

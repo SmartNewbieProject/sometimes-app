@@ -3,15 +3,6 @@ import { Payment as PortOnePayment, type PortOneController } from '@portone/reac
 import { type ForwardedRef, forwardRef } from 'react';
 import paymentApis from '../api';
 
-export interface PortOnePaymentRequest {
-	storeId: string;
-	channelKey: string;
-	paymentId: string;
-	orderName: string;
-	totalAmount: number;
-	currency: string;
-	payMethod: string;
-}
 
 export interface PortOnePaymentCompleteResult {
 	txId?: string;
@@ -24,7 +15,7 @@ export interface PortOnePaymentErrorResult {
 }
 
 export interface PortOnePaymentProps {
-	request: PortOnePaymentRequest;
+	request: any;
 	onComplete?: (result: PortOnePaymentCompleteResult) => void;
 	onError?: (error: PortOnePaymentErrorResult) => void;
 	onCancel?: () => void;
@@ -59,6 +50,8 @@ export interface PortOnePaymentProps {
 export const PortOnePaymentView = forwardRef(
 	(props: PortOnePaymentProps, ref: ForwardedRef<PortOneController>) => {
 		const { request, onComplete, onError, onCancel, productName } = props;
+
+		console.log({ request });
 
 		const handleComplete = async (complete: PortOnePaymentCompleteResult) => {
 			Alert.alert('완료', '결제가 완료되었습니다.');
