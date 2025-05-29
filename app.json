@@ -9,14 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smartnewb.sometimes"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/favicon-logo.png",
         "backgroundColor": "#ffffff"
       },
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.smartnewb.sometimes"
     },
     "web": {
       "bundler": "metro",
@@ -27,8 +29,8 @@
       },
       "viewport": {
         "width": "device-width",
-        "initialScale": 1.0,
-        "maximumScale": 1.0,
+        "initialScale": 1,
+        "maximumScale": 1,
         "userScalable": false
       }
     },
@@ -47,52 +49,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "fonts": [
-      {
-        "asset": "assets/fonts/Pretendard-Thin.ttf",
-        "family": "Pretendard-Thin"
-      },
-      {
-        "asset": "assets/fonts/Pretendard-ExtraLight.ttf",
-        "family": "Pretendard-ExtraLight"
-      },
-      {
-        "asset": "assets/fonts/Pretendard-SemiBold.ttf",
-        "family": "Pretendard-SemiBold"
-      },
-      {
-        "asset": "assets/fonts/Pretendard-ExtraBold.ttf",
-        "family": "Pretendard-ExtraBold"
-      },
-      {
-        "asset": "assets/fonts/Pretendard-Bold.ttf",
-        "family": "Pretendard-Bold"
-      },
-      {
-        "asset": "assets/fonts/Pretendard-Black.ttf",
-        "family": "Pretendard-Black"
-      },
-      {
-        "asset": "assets/fonts/Rubik-Regular.ttf",
-        "family": "Rubik"
-      },
-      {
-        "asset": "assets/fonts/Rubik-Medium.ttf",
-        "family": "Rubik-Medium"
-      },
-      {
-        "asset": "assets/fonts/Rubik-Bold.ttf",
-        "family": "Rubik-Bold"
-      },
-      {
-        "asset": "assets/fonts/Rubik-Light.ttf",
-        "family": "Rubik-Light"
-      },
-      {
-        "asset": "assets/fonts/Rubik-SemiBold.ttf",
-        "family": "Rubik-SemiBold"
-      }
-    ]
+    }
   }
 }
