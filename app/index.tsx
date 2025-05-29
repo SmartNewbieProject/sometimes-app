@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useAuth } from '@/src/features/auth';
 import { useEffect } from 'react';
 import Loading from '@/src/features/loading';
+import 'react-native-get-random-values';
 
 export default function Home() {
   const { isAuthorized } = useAuth();
