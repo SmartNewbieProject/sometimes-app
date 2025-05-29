@@ -1,7 +1,10 @@
-import { Alert, SafeAreaView } from 'react-native';
+import { Alert, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Payment as PortOnePayment, type PortOneController } from '@portone/react-native-sdk';
 import { type ForwardedRef, forwardRef } from 'react';
 import paymentApis from '../api';
+import { Button, Header } from '@/src/shared/ui';
+import { router } from 'expo-router';
+import { ImageResources } from '@/src/shared/libs/image';
 
 
 export interface PortOnePaymentCompleteResult {
@@ -86,9 +89,22 @@ export const PortOnePaymentView = forwardRef(
 
 		return (
 			<SafeAreaView style={{ flex: 1 }}>
+				<Header.Container>
+					<Header.LeftContent>
+						<TouchableOpacity onPress={() => {
+							onCancel?.();
+							router.back();
+						}}>
+							<Button>
+								뒤로가기
+							</Button>
+						</TouchableOpacity>
+					</Header.LeftContent>
+				</Header.Container>
+
 				<PortOnePayment
 					ref={ref}
-					request={request as any}
+					request={request}
 					onError={handleError}
 					onComplete={handleComplete}
 				/>

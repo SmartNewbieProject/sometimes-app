@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start --port 3000",
+    "start": "expo start --port 3000 --tunnel",
     "start:prod": "NODE_ENV=production expo start --port 3000",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
@@ -68,7 +68,8 @@
     "tailwindcss": "^3.4.17",
     "tw-merge": "^0.0.1-alpha.3",
     "zod": "^3.24.2",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.3",
+    "expo-dev-client": "~5.1.8"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

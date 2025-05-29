@@ -106,8 +106,8 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
 
 
     useEffect(() => {
-      if (isWeb && typeof window !== 'undefined') {
-        const scrollContainer = document.getElementById('CommunityScrollView') as HTMLElement;
+      if (isWeb) {
+        const scrollContainer = document?.getElementById('CommunityScrollView') as HTMLElement;
         if (!scrollContainer) return;
         const handleWebScroll = () => {
           console.log('handleWebScroll()');
@@ -126,6 +126,7 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
     }, [isWeb, saveScrollPosition]);
 
     useEffect(() => {
+      if (!isWeb) return;
       const position = getScrollPosition();
       const scrollContainer = document.getElementById('CommunityScrollView') as HTMLElement;
       if (!scrollContainer) return;
@@ -157,7 +158,7 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
     }
 
     return (
-      <ScrollView className="flex-1">
+      <View className="flex-1">
         <View className="h-[1px] bg-[#F3F0FF]" />
         <View className="bg-lightPurple/20 px-4 py-2 mt-2 flex-row items-center">
           <Image
@@ -201,7 +202,7 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
           scrollEventThrottle={16}
           flatListRef={flatListRef}
         />
-      </ScrollView>
+      </View>
     );
   }
 );

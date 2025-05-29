@@ -10,7 +10,24 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.smartnewb.sometimes"
+      "bundleIdentifier": "com.smartnewb.sometimes",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "kakaotalk",
+          "naversearchapp",
+          "naverapp",
+          "payco",
+          "supertoss",
+          "instagram",
+          "fb",
+          "storylink",
+          "line",
+          "paypal",
+          "spay"
+        ],
+        "NSCameraUsageDescription": "카메라 권한 확인",
+        "NSPhotoLibraryUsageDescription": "사진 권한 확인"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -49,6 +66,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f6df6d86-2504-4574-8bf2-e069c6e76316"
+      }
     }
   }
 }

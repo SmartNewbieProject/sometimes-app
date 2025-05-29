@@ -11,6 +11,7 @@ import { QueryProvider, RouteTracker } from '@/src/shared/config';
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
 import { cn } from '@/src/shared/libs/cn';
 import { ModalProvider, AnalyticsProvider } from '@/src/shared/providers';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,23 +42,25 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryProvider>
-      <ModalProvider>
-        <View
-          className={cn(
-            'flex-1 font-extralight',
-            Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
-          )}
-        >
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <AnalyticsProvider>
-                <RouteTracker>
-                  <Slot />
-                </RouteTracker>
-              </AnalyticsProvider>
-            </ThemeProvider>
-        </View>
-      </ModalProvider>
-    </QueryProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryProvider>
+        <ModalProvider>
+          <View
+            className={cn(
+              'flex-1 font-extralight',
+              Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
+            )}
+          >
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <AnalyticsProvider>
+                  <RouteTracker>
+                    <Slot />
+                  </RouteTracker>
+                </AnalyticsProvider>
+              </ThemeProvider>
+          </View>
+        </ModalProvider>
+      </QueryProvider>      
+    </GestureHandlerRootView>
   );
 }

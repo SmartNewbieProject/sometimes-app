@@ -1,6 +1,6 @@
-import { useCallback, RefObject } from 'react';
+import { useCallback, type RefObject } from 'react';
 import { ActivityIndicator, FlatList, Platform, StyleSheet, Text, View } from 'react-native';
-import { InfiniteScrollViewProps } from './types';
+import type { InfiniteScrollViewProps } from './types';
 import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
 
 interface CustomInfiniteScrollViewProps<T> extends InfiniteScrollViewProps<T> {
