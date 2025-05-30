@@ -22,8 +22,11 @@ const useRematchingMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => axiosClient.post('/matching/rematch'),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
+    onSuccess: async () => {
+      // 쿼리 무효화를 확실히 처리하기 위해 await 사용
+      await queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
+      // 추가로 쿼리를 강제로 다시 가져오기
+      await queryClient.refetchQueries({ queryKey: ['latest-matching'] });
     },
   });
 };
@@ -54,7 +57,12 @@ export default function PartnerDetailScreen() {
       children: '연인을 찾았어요! 바로 확인해보세요.',
       primaryButton: {
         text: '바로 확인하기',
-        onClick: () => router.back(),
+        onClick: () => {
+          // 메인 화면으로 돌아가기 전에 쿼리 무효화가 완료되도록 약간의 지연 추가
+          setTimeout(() => {
+            router.back();
+          }, 100);
+        },
       },
     });
   };
@@ -85,6 +93,7 @@ export default function PartnerDetailScreen() {
     await tryCatch(
       async () => {
         await rematch();
+        // 재매칭 성공 후 모달 표시
         showRematchSuccessModal();
       },
       (err) => {
