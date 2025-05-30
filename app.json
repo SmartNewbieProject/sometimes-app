@@ -75,8 +75,9 @@
           "paypal",
           "spay"
         ],
-        "NSCameraUsageDescription": "카메라 권한 확인",
-        "NSPhotoLibraryUsageDescription": "사진 권한 확인",
+        "NSCameraUsageDescription": "프로필 사진 촬영을 위해 카메라 접근이 필요합니다",
+        "NSPhotoLibraryUsageDescription": "프로필 사진 선택을 위해 사진 라이브러리 접근이 필요합니다",
+        "NSUserNotificationUsageDescription": "매칭 결과 및 중요한 알림을 받기 위해 알림 권한이 필요합니다",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -89,7 +90,10 @@
       "package": "com.smartnewb.sometimes",
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
       ]
     },
     "web": {
