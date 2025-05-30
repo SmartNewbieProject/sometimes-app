@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import { router } from 'expo-router';
 import { Container, LeftButton, LeftContent, CenterContent, Logo, RightContent } from './ui';
 
@@ -46,7 +46,6 @@ export function Header({
   );
 }
 
-// Compound Pattern 구현
 Header.Container = Container;
 Header.LeftContent = LeftContent;
 Header.LeftButton = LeftButton;

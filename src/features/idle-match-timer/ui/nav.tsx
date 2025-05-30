@@ -22,8 +22,11 @@ type InteractionNavigationProps = {
 const useRematchingMutation = () =>
 	useMutation({
 		mutationFn: () => axiosClient.post('/matching/rematch'),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
+		onSuccess: async () => {
+			// 쿼리 무효화를 확실히 처리하기 위해 await 사용
+			await queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
+			// 추가로 쿼리를 강제로 다시 가져오기
+			await queryClient.refetchQueries({ queryKey: ['latest-matching'] });
 		},
 	});
 
@@ -80,7 +83,15 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
 					return;
 				}
 				finishLoading();
-				showErrorModal(err.error, 'error');
+				showModal({
+					title: "아직 추천드릴 상대가 없어요",
+					children: (
+						<View className="flex flex-col">
+							<Text>지금은 조건에 맞는 상대가 잠시 없어요.</Text>
+							<Text>곧 더 많은 분들이 참여할 예정이니, 잠시 후 다시 시도해 주세요!</Text>
+						</View>
+					)
+				})
 			},
 		);
 	};

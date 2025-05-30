@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, Image } from 'react-native';
-import { Divider, Show, Text, ImageResource, dropdownStyles, Dropdown } from '@/src/shared/ui';
+import { Divider, Show, Text, ImageResource, dropdownStyles, Dropdown, DropdownItem } from '@/src/shared/ui';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import type { Article as ArticleType } from '../../types';
 import ShieldNotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
@@ -35,6 +35,43 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
     if (!my) return false;
     return my.id === author.id;
   })();
+
+  const dropdownMenus: DropdownItem[] = (() => {
+    const menus: DropdownItem[] = [];
+    if (isOwner) {
+      const ownerMenus: DropdownItem[] = [
+        {
+          key: 'update',
+          content: '수정',
+          onPress: () => {
+            router.push(`/community/update/${data.id}`);
+          },
+        },
+        {
+          key: 'delete',
+          content: '삭제',
+          onPress: () => {
+            onDelete(data.id);
+            closeDropdown();
+          },
+        },
+      ];
+      menus.push(...ownerMenus);
+    }
+
+    if (!isOwner) {
+      menus.push({
+        key: 'report',
+        content: '신고',
+        onPress: () => {
+          router.push(`/community/report/${data.id}`);
+        },
+      });
+    }
+
+    return menus;
+  })();
+
 
   const handleArticlePress = () => {
     if (!isDropdownOpen) {
@@ -106,35 +143,14 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
         </Show>
 
       </TouchableOpacity>
-
-      <Show when={isOwner}>
         <View className="absolute right-0 top-[12px]" onTouchEnd={(e) => {
           e.stopPropagation();
         }}>
-                <Dropdown
-        open={isDropdownOpen}
-        items={[
-          {
-            key: 'update',
-            content: '수정',
-            onPress: () => {
-              router.push(`/community/update/${data.id}`);
-            },
-          },
-          {
-            key: 'delete',
-            content: '삭제',
-            onPress: () => {
-              onDelete(data.id);
-              closeDropdown();
-            },
-          },
-        ]}
-      />
-        </View>
-        
-      </Show>
-
+        <Dropdown
+          open={isDropdownOpen}
+          items={dropdownMenus}
+        />
+      </View>
     </View>
   );
 }

@@ -1,10 +1,9 @@
-import React from 'react';
-import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { TouchableOpacity, type TouchableOpacityProps, View } from 'react-native';
 import { ImageResource, Text } from '@/src/shared/ui';
 import HeartIcon from '@/assets/icons/heart.svg';
 import CommentIcon from '@/assets/icons/engagement.svg';
 import EyesIcon from '@/assets/icons/ph_eyes-fill.svg';
-import { Article } from '../../types';
+import type { Article } from '../../types';
 import { IconWrapper } from '@shared/ui/icons';
 import { ImageResources } from '@/src/shared/libs';
 
