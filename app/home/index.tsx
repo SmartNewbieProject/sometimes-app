@@ -4,14 +4,15 @@ import { Image } from 'expo-image';
 import Home from "@features/home";
 import IdleMatchTimer from '@features/idle-match-timer';
 import Loading from '@/src/features/loading';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Feedback } from "@features/feedback";
 import { ImageResources } from '@/src/shared/libs';
 import { Text } from '@shared/ui';
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import Event from '@features/event';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import type { Notification } from '@/src/features/home/apis';
+import { useQueryClient } from '@tanstack/react-query';
 
 const { ui, queries, hooks } = Home;
 const { TotalMatchCounter, CommunityAnnouncement, ReviewSlide, TipAnnouncement } = ui;
@@ -25,6 +26,7 @@ const HomeScreen = () => {
   const { trackEventAction } = Event.hooks.useEventAnalytics('home');
   const { data: notifications } = useNotificationQuery();
   const { showModal } = useModal();
+  const queryClient = useQueryClient();
 
   const handleNavigateToRematch = () => {
     router.navigate('/purchase/tickets/rematch');
@@ -51,6 +53,13 @@ const HomeScreen = () => {
     refetchPreferenceFill();
     trackEventAction('home_view');
   }, []);
+
+  // 화면이 포커스될 때마다 매칭 데이터 리프레시
+  useFocusEffect(
+    useCallback(() => {
+      queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
+    }, [queryClient])
+  );
 
   return (
     <View className="flex-1">

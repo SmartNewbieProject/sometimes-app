@@ -58,10 +58,7 @@ export default function PartnerDetailScreen() {
       primaryButton: {
         text: '바로 확인하기',
         onClick: () => {
-          // 메인 화면으로 돌아가기 전에 쿼리 무효화가 완료되도록 약간의 지연 추가
-          setTimeout(() => {
-            router.back();
-          }, 100);
+          router.back();
         },
       },
     });
