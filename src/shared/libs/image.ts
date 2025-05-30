@@ -23,7 +23,8 @@ export enum ImageResources {
   HEART_ON = `${S3_BASE_URL}/heart-on.svg`,
   MENU = `${S3_BASE_URL}/menu.svg`,
   COMMUNITY_LOGO = `${S3_BASE_URL}/community.png`,
-  PURPLE_ARROW_RIGHT = `${S3_BASE_URL}/purple-arrow-right.svg`,
+  PURPLE_ARROW_RIGHT = `${S3_BASE_URL}/purple-arrow-right.png`,
+  REPORT = `${S3_BASE_URL}/report.png`,
 
   DATING_STYLE = `${S3_BASE_URL}/dating-style.png`,
   MILITARY = `${S3_BASE_URL}/military.png`,
