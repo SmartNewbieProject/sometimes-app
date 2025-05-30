@@ -13,20 +13,71 @@
       "bundleIdentifier": "com.smartnewb.sometimes",
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
+          "kftc-bankpay",
+          "ispmobile",
+          "hdcardappcardansimclick",
+          "smhyundaiansimclick",
+          "hyundaicardappcardid",
+          "shinhan-sr-ansimclick",
+          "shinhan-sr-ansimclick-naverpay",
+          "shinhan-sr-ansimclick-payco",
+          "shinhan-sr-ansimclick-lpay",
+          "shinhan-sr-ansimclick-mola",
+          "smshinhanansimclick",
+          "smailapp",
+          "kb-acp",
+          "kb-auth",
+          "kb-screen",
+          "kbbank",
+          "liivbank",
+          "newliiv",
+          "mpocket.online.ansimclick",
+          "ansimclickscard",
+          "ansimclickipcollect",
+          "vguardstart",
+          "samsungpay",
+          "scardcertiapp",
+          "monimopay",
+          "monimopayauth",
+          "lottesmartpay",
+          "lotteappcard",
+          "lmslpay",
+          "lpayapp",
+          "cloudpay",
+          "hanawalletmembers",
+          "nhappcardansimclick",
+          "nonghyupcardansimclick",
+          "nhallonepayansimclick",
+          "citispay",
+          "citicardappkr",
+          "citimobileapp",
+          "kakaotalk",
+          "payco",
+          "com.wooricard.wcard",
+          "newsmartpib",
+          "NewSmartPib",
+          "supertoss",
+          "naversearchthirdlogin",
+          "kakaobank",
+          "v3mobileplusweb",
+          "line",
+          "alipays",
+          "weixin",
+          "tauthlink",
+          "ktauthexternalcall",
+          "upluscorporation",
           "kakaotalk",
           "naversearchapp",
           "naverapp",
-          "payco",
-          "supertoss",
           "instagram",
           "fb",
           "storylink",
-          "line",
           "paypal",
           "spay"
         ],
         "NSCameraUsageDescription": "카메라 권한 확인",
-        "NSPhotoLibraryUsageDescription": "사진 권한 확인"
+        "NSPhotoLibraryUsageDescription": "사진 권한 확인",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -35,7 +86,11 @@
         "backgroundColor": "#ffffff"
       },
       "softwareKeyboardLayoutMode": "pan",
-      "package": "com.smartnewb.sometimes"
+      "package": "com.smartnewb.sometimes",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -62,7 +117,19 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "@portone/react-native-sdk/plugin"
+      "@portone/react-native-sdk/plugin",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "카메라 접근을 허용하시겠습니까?"
+        }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "캘린더 접근을 허용하시겠습니까?"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
