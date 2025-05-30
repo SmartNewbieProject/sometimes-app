@@ -16,19 +16,7 @@ export const Profile = () => {
   const { profileDetails } = useAuth();
   const [domatching, setDomatching] = useState(false);
   const [reMatchingTicketCount, setReMatchingTicketCount] = useState(0);
-
-    useEffect(() => {
-    const fetchRematchingTickets = async () => {
-      try {
-        const reMatchingTicket = await MyPage.getAllRematchingTicket();
-        setReMatchingTicketCount(reMatchingTicket.total || 0);
-      } catch (error) {
-        console.error('Failed to fetch rematching tickets:', error);
-      }
-    };
-
-    fetchRematchingTickets();
-  }, []);
+  const showCommingSoon = useCommingSoon();
 
   const profileData = {
     name: profileDetails?.name || '이름',
@@ -44,8 +32,17 @@ export const Profile = () => {
     router.push('/profile-edit');
   }
 
-  const showCommingSoon = useCommingSoon();
-
+  useEffect(() => {
+    const fetchRematchingTickets = async () => {
+      try {
+        const reMatchingTicket = await MyPage.getAllRematchingTicket();
+        setReMatchingTicketCount(reMatchingTicket.total || 0);
+      } catch (error) {
+        console.error('Failed to fetch rematching tickets:', error);
+      }
+    };
+    fetchRematchingTickets();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -102,10 +99,10 @@ export const Profile = () => {
               재매칭 티켓이
             </Text>
             <Text className='text-[13px] text-[#9747FF]'>
-              &nbsp;{profileData.totalRematchingTickets}장
+              {' '}{profileData.totalRematchingTickets}장
             </Text>
             <Text className='text-[13px] text-[#FFFFFF]'>
-              &nbsp;남았어요
+              {' '}남았어요
             </Text>
           </View>
         </View>

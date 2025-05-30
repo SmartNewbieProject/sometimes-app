@@ -1,6 +1,6 @@
 import { Alert, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Payment as PortOnePayment, type PortOneController } from '@portone/react-native-sdk';
-import { type ForwardedRef, forwardRef } from 'react';
+import { type ForwardedRef, forwardRef, useEffect } from 'react';
 import paymentApis from '../api';
 import { Button, Header } from '@/src/shared/ui';
 import { router } from 'expo-router';
@@ -20,7 +20,7 @@ export interface PortOnePaymentErrorResult {
 export interface PortOnePaymentProps {
 	request: any;
 	onComplete?: (result: PortOnePaymentCompleteResult) => void;
-	onError?: (error: PortOnePaymentErrorResult) => void;
+	onError?: (error: unknown) => void;
 	onCancel?: () => void;
 	productName?: string; // 결제 후 저장할 상품명 (orderName과 다를 수 있음)
 }
@@ -57,51 +57,33 @@ export const PortOnePaymentView = forwardRef(
 		console.log({ request });
 
 		const handleComplete = async (complete: PortOnePaymentCompleteResult) => {
-			Alert.alert('완료', '결제가 완료되었습니다.');
-
 			try {
-				// 결제 내역 저장
-				await paymentApis.saveHistory({
-					orderId: request.paymentId,
-					amount: request.totalAmount,
-					orderName: productName || request.orderName,
-				});
-
-				// 결제 확인 처리
+				console.log('native complete: ');
+				console.log(complete);
+				console.log(`paymentId: ${complete.paymentId}`);
 				if (complete.txId) {
 					await paymentApis.pay({
-						impUid: process.env.EXPO_PUBLIC_IMP as string,
-						merchantUid: process.env.EXPO_PUBLIC_MERCHANT_ID as string,
+						txId: complete.txId,
+						merchantUid: complete.paymentId,
 					});
 				}
-
-				// 완료 콜백 호출
 				onComplete?.(complete);
 			} catch (error) {
-				Alert.alert('오류', '결제 후 처리 중 오류가 발생했습니다.');
+				onError?.(error);
 			}
 		};
 
 		const handleError = (error: PortOnePaymentErrorResult) => {
-			Alert.alert('실패', error.message);
+			console.log('실패', error.message);
 			onError?.(error);
 		};
 
+		useEffect(() => {
+
+		}, []);
+
 		return (
 			<SafeAreaView style={{ flex: 1 }}>
-				<Header.Container>
-					<Header.LeftContent>
-						<TouchableOpacity onPress={() => {
-							onCancel?.();
-							router.back();
-						}}>
-							<Button>
-								뒤로가기
-							</Button>
-						</TouchableOpacity>
-					</Header.LeftContent>
-				</Header.Container>
-
 				<PortOnePayment
 					ref={ref}
 					request={request}

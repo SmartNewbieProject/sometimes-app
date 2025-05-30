@@ -11,8 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
-import { KeyboardAvoidingView, View, Keyboard, Platform } from 'react-native';
-import { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, View, Platform } from 'react-native';
 import { useKeyboarding } from '@/src/shared/hooks';
 
 const { SignupSteps, useChangePhase, schemas, useSignupProgress, useSignupAnalytics } = Signup;
@@ -107,13 +106,12 @@ export default function ProfilePage() {
             label="생년월일"
             size="sm"
             placeholder="생년월일6자리"
-            className="w-[146px]"
             maxLength={6}
             inputMode="numeric"
-            wrapperClassName="flex-1"
+            wrapperClassName="flex-[0.5]"
             onBlur={() => form.trigger('birthday')}
           />
-          <View className="flex flex-col gap-y-1">
+          <View className="flex flex-col gap-y-1" style={{ flex: 0.5 }}>
             <Label label="성별" size="sm" />
             <Selector
               value={gender}
@@ -125,9 +123,8 @@ export default function ProfilePage() {
                 form.setValue('gender', value as Gender);
                 form.trigger('gender');
               }}
-              className="w-fit"
               buttonProps={{
-                className: 'w-fit h-[38px] !text-sm',
+                width: 'full',
               }}
             />
           </View>

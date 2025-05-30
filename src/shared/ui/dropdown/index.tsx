@@ -11,6 +11,7 @@ import { ImageResources } from '../../libs';
 import { ImageResource } from '../image-resource';
 import { Show } from '../show';
 import { useState, useEffect, useRef } from 'react';
+import { Text } from '../text';
 
 export type DropdownItem = {
 	key: string;
@@ -55,7 +56,7 @@ export const Dropdown = ({ open: _open, items, dropdownStyle }: DropdownProps) =
 			containerRef.current.measure((fx, fy, width, height, px, py) => {
 				setDropdownPosition({
 					top: py + height + 4,
-					right: px + width - 140,
+					right: px + width - 158,
 				});
 			});
 		}
@@ -106,7 +107,9 @@ export const Dropdown = ({ open: _open, items, dropdownStyle }: DropdownProps) =
 											setOpen(false);
 										}}
 									>
-										{item.content}
+										<Text className="text-[18px]" textColor="black">
+											{item.content}
+										</Text>
 									</Pressable>
 								))}
 							</View>

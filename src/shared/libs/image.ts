@@ -21,7 +21,7 @@ export enum ImageResources {
   HEART = `${S3_BASE_URL}/heart.png`,
   INSTAGRAM = `${S3_BASE_URL}/instagram.png`,
   HEART_ON = `${S3_BASE_URL}/heart-on.png`,
-  MENU = `${S3_BASE_URL}/menu.svg`,
+  MENU = `${S3_BASE_URL}/menu.png`,
   COMMUNITY_LOGO = `${S3_BASE_URL}/community.png`,
   PURPLE_ARROW_RIGHT = `${S3_BASE_URL}/purple-arrow-right.png`,
 

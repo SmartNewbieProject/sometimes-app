@@ -77,6 +77,8 @@ export function CustomInfiniteScrollView<T>({
       ListFooterComponent={ListFooterComponent}
       onRefresh={onRefresh}
       refreshing={refreshing}
+      nestedScrollEnabled={true}
+      showsVerticalScrollIndicator={false}
       {...scrollProps}
       {...restProps}
     />

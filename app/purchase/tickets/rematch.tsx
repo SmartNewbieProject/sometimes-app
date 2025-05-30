@@ -53,7 +53,6 @@ export default function RematchingTicketSellingScreen() {
 
 	const onPurchase = async () => {
 		if (!totalPrice || !productCount) return;
-
 		try {
 			setShowPayment(true);
 		} catch (error) {
@@ -62,19 +61,21 @@ export default function RematchingTicketSellingScreen() {
 		}
 	};
 
+	const onError = async (error: unknown) => {
+		console.error('결제 오류:', error);
+		const { nanoid } = await import('nanoid');
+		const id = nanoid();
+		console.debug('결제 오류 발생 시 새로운 orderId 생성:', id);
+		setPaymentId(id);
+		setShowPayment(false);
+		showErrorModal(error instanceof Error ? error.message : '결제 처리 중 오류가 발생했습니다.', 'error');
+	}
+
 	const onCompletePayment = (result: PaymentResponse) => {
-		console.log({ result });
 		setShowPayment(false);
 		handlePaymentComplete(result, {
 			productCount,
-			onError: async (error) => {
-				console.error('결제 오류:', error);
-				const { nanoid } = await import('nanoid');
-				const id = nanoid();
-				console.debug('결제 오류 발생 시 새로운 orderId 생성:', id);
-				setPaymentId(id);
-				showErrorModal(error instanceof Error ? error.message : '결제 처리 중 오류가 발생했습니다.', 'error');
-			}
+			onError,
 		});
 	};
 
@@ -110,11 +111,7 @@ export default function RematchingTicketSellingScreen() {
 				orderName={productCount ? `연인 재매칭권 x${productCount}` : '연인 재매칭권'}
 				totalAmount={totalPrice ?? 0}
 				productName="연인 재매칭권"
-				onError={(error) => {
-					console.error(error);
-					console.log('onError Payment');
-					setShowPayment(false);
-				}}
+				onError={onError}
 				onComplete={onCompletePayment}
 				onCancel={() => {
 					console.log('onCancel Payment');
@@ -163,9 +160,12 @@ export default function RematchingTicketSellingScreen() {
 						options={purchaseOptions}
 						onChange={onChangeItem}
 						direction="vertical"
-						buttonClassName="w-[300px]"
 						buttonProps={{
-							size: 'sm',
+							size: 'md',
+						}}
+						buttonStyle={{
+							width: '100%',
+							flexDirection: 'row',
 						}}
 					/>
 				</View>

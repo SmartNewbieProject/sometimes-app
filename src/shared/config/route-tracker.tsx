@@ -1,6 +1,7 @@
-import { useEffect, ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { usePathname, useSegments } from 'expo-router';
 import { storage } from '@/src/shared/libs/store';
+import { Text } from '../ui';
 
 interface RouteTrackerProps {
   children: ReactNode;
@@ -21,6 +22,10 @@ export function RouteTracker({ children }: RouteTrackerProps) {
 
     saveCurrentPath();
   }, [pathname, segments]);
+
+  if (typeof children === 'string') {
+    return <Text>{children}</Text>;
+  }
 
   return children;
 }

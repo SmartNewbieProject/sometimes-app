@@ -44,7 +44,8 @@ export const Partner = ({ match }: PartnerProps) => {
 					?.toString()
 					.split('')
 					.map((value, index) => (
-						<Time size="sm" key={index} value={value} />
+						<Time size="sm" key={`${value}-${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+index}`} value={value} />
 					))}
 			</View>
 
@@ -53,6 +54,7 @@ export const Partner = ({ match }: PartnerProps) => {
 					position: 'absolute',
 					display: 'flex',
 					flexDirection: 'column',
+					left: 12,
 					bottom: 28,
 					zIndex: 10,
 				}}
@@ -62,10 +64,8 @@ export const Partner = ({ match }: PartnerProps) => {
 				</Text>
 				<View className="flex flex-row items-center">
 					<Text textColor="white" weight="light" size="md">
-						#{partner?.mbti}
-						&nbsp;#{partner?.universityDetails?.name}
+						#{partner?.mbti}{' '}#{partner?.universityDetails?.name}
 					</Text>
-					&nbsp;
 					{/* <UniversityBadge authenticated={partner?.universityDetails?.authentication ?? false} /> */}
 				</View>
 			</View>

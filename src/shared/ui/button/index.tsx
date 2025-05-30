@@ -3,7 +3,8 @@ import type React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { cn } from '../../libs/cn';
 import { Text } from '../text';
-import { ReactNode } from 'react';
+import type { ViewStyle } from 'react-native';
+import type { ReactNode } from 'react';
 
 const buttonStyles = cva(
 	'rounded-[20] flex items-center flex flex-row gap-x-1.5 justify-center w-fit h-[50] py-2 px-6 transition-all duration-200',
@@ -27,6 +28,10 @@ const buttonStyles = cva(
 				true: 'opacity-50',
 				false: '',
 			},
+			width: {
+				full: 'w-full',
+				fit: 'w-fit',
+			},
 			rounded: {
 				full: 'rounded-full',
 				md: 'rounded-lg',
@@ -48,6 +53,7 @@ export type ButtonProps = VariantProps<typeof buttonStyles> & {
 	prefix?: ReactNode;
 	className?: string;
 	textColor?: 'white' | 'purple' | 'black';
+	styles?: ViewStyle;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -59,6 +65,7 @@ export const Button: React.FC<ButtonProps> = ({
 	prefix,
 	textColor,
 	className = '',
+	styles,
 }) => {
 	const press = () => {
 		if (disabled) return;
@@ -84,6 +91,7 @@ export const Button: React.FC<ButtonProps> = ({
 			className={cn(buttonStyles({ variant, size, disabled }), className)}
 			onPress={press}
 			activeOpacity={1}
+			style={styles}
 		>
 			{prefix}
 			<Text

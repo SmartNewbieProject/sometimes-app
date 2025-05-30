@@ -7,6 +7,7 @@ import type { Product } from "../types";
 import { useAuth } from "../../auth";
 import { usePortoneStore } from "../hooks/use-portone-store";
 import type { PaymentResponse } from "@/src/types/payment";
+import paymentApis from "../api";
 
 export interface PaymentViewProps {
   paymentId: string;
@@ -50,6 +51,11 @@ export const PaymentView = forwardRef(
 
     useEffect(() => {
       setCustomData(customData);
+      paymentApis.saveHistory({
+        orderId: paymentId,
+        amount: totalAmount,
+        orderName: productName || orderName,
+      });
     }, []);
 
     // 웹 환경인 경우

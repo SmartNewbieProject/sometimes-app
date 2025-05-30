@@ -1,100 +1,122 @@
-import { Button, ButtonProps } from "@/src/shared/ui/button";
-import { View } from "react-native";
-import { cn } from "@shared/libs/cn";
-import { cva, type VariantProps } from "class-variance-authority";
-import { Text } from "@/src/shared/ui";
-const selector = cva("flex gap-2", {
-  variants: {
-    direction: {
-      horizontal: "flex-row",
-      vertical: "flex-col",
-    },
-    variant: {
-      default: "",
-      circle: "rounded-full aspect-square",
-    },
-  },
-  defaultVariants: {
-    direction: "horizontal",
-    variant: "default",
-  },
-});
+import { Button, type ButtonProps } from '@/src/shared/ui/button';
+import { View, StyleSheet, type ViewStyle } from 'react-native';
+import { Text } from '@/src/shared/ui';
 
 interface Option {
-  label: string;
-  value: string;
+	label: string;
+	value: string;
 }
 
 interface TopDownText {
-  top: string;
-  bottom: string;
+	top: string;
 }
 
-interface SelectorProps extends VariantProps<typeof selector> {
-  options: Option[];
-  value?: string;
-  onChange: (value: string) => void;
-  onBlur?: () => void;
-  className?: string;
-  variant?: "default" | "circle";
-  buttonClassName?: string;
-  topDownText?: TopDownText;
-  buttonProps?: Pick<ButtonProps, 'variant' | 'textColor' | 'className' | 'size'>;
+interface SelectorProps {
+	options: Option[];
+	value?: string;
+	onChange: (value: string) => void;
+	onBlur?: () => void;
+	direction?: 'horizontal' | 'vertical';
+	variant?: 'default' | 'circle';
+	topDownText?: TopDownText;
+	buttonProps?: Pick<ButtonProps, 'variant' | 'textColor' | 'size' | 'width'>;
+	buttonStyle?: ViewStyle;
 }
 
 export function Selector({
-  options,
-  value,
-  onChange,
-  onBlur,
-  direction,
-  variant,
-  className,
-  buttonClassName,
-  topDownText,
-  buttonProps,
+	options,
+	value,
+	onChange,
+	onBlur,
+	direction = 'horizontal',
+	variant = 'default',
+	topDownText,
+	buttonProps,
+	buttonStyle,
 }: SelectorProps) {
-  return (
-    <View className="flex flex-col items-center">
-      {topDownText && (
-        <Text size="md" textColor="purple" className="mb-2">
-          {topDownText.top}
-        </Text>
-      )}
-      
-      <View className={cn(
-        selector({ direction, variant }),
-        "flex-shrink-0",
-        className
-      )}>
-        {options.map((option) => (
-          <Button
-            key={option.value}
-            variant={value === option.value ? "primary" : "white"}
-            textColor={value === option.value ? "white" : "purple"}
-            onPress={() => {
-              onChange(option.value);
-              onBlur?.();
-            }}
-            className={cn(
-              direction === "horizontal" ? "flex-1" : "w-full",
-              variant === "circle" && "h-[48px] w-[48px] border border-primaryPurple",
-              buttonClassName,
-            )}
-            {...buttonProps}
-          >
-            {option.label}
-          </Button>
-        ))}
-      </View>
+	const isHorizontal = direction === 'horizontal';
+	const isCircle = variant === 'circle';
 
-      {topDownText && (
-        <View>
-          <Text size="md" textColor="purple" className="mt-2">
-            {topDownText.bottom}
-          </Text>
-        </View>
-      )}
-    </View>
-  );
+	return (
+		<View style={StyleSheet.flatten([styles.container])}>
+			{topDownText && <Text style={StyleSheet.flatten([styles.topLabel])}>{topDownText.top}</Text>}
+			<View
+				style={StyleSheet.flatten([
+					styles.selector,
+					isHorizontal ? styles.horizontal : styles.vertical,
+				])}
+			>
+				{options.map((option, idx) => (
+					<View
+						key={option.value}
+						style={StyleSheet.flatten([
+							isHorizontal ? styles.buttonHorizontal : styles.buttonVertical,
+							isCircle && styles.circle,
+							isCircle && styles.circleBorder,
+							isHorizontal && idx !== options.length - 1 && styles.buttonGapHorizontal,
+							!isHorizontal && idx !== options.length - 1 && styles.buttonGapVertical,
+						])}
+					>
+						<Button
+							variant={value === option.value ? 'primary' : 'white'}
+							textColor={value === option.value ? 'white' : 'purple'}
+							onPress={() => {
+								onChange(option.value);
+								onBlur?.();
+							}}
+							{...buttonProps}
+							styles={buttonStyle}
+						>
+							{option.label}
+						</Button>
+					</View>
+				))}
+			</View>
+		</View>
+	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		alignItems: 'center',
+		flexDirection: 'column',
+	},
+	topLabel: {
+		fontSize: 16,
+		color: '#8B5CF6',
+		marginBottom: 8,
+	},
+	selector: {
+		flexShrink: 0,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	horizontal: {
+		flexDirection: 'row',
+	},
+	vertical: {
+		flexDirection: 'column',
+	},
+	buttonHorizontal: {
+		flex: 1,
+	},
+	buttonVertical: {
+		width: '100%',
+	},
+	circle: {
+		borderRadius: 999,
+		aspectRatio: 1,
+		height: 52,
+		width: 52,
+	},
+	circleBorder: {
+		borderWidth: 1,
+		borderColor: '#8B5CF6',
+	},
+	buttonGapHorizontal: {
+		marginRight: 8,
+	},
+	buttonGapVertical: {
+		marginBottom: 8,
+	},
+});

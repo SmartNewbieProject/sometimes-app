@@ -45,12 +45,6 @@ export const WebPaymentView = (props: WebPaymentProps) => {
       }
 
       try {
-        await paymentApis.saveHistory({
-          orderId: paymentId,
-          amount: totalAmount,
-          orderName: productName || orderName,
-        });
-
         const customData = {
           orderName: productName || orderName,
           amount: totalAmount,

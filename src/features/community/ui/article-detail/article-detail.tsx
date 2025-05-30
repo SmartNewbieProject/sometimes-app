@@ -165,7 +165,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     };
 
     return (
-			<View className="flex-1 relative">
+			<View className="flex-1 relative mb-12 px-5">
 					<View className="h-[1px] bg-[#F3F0FF] mb-[15px]"/>
 					<UserProfile
 						author={article.author}

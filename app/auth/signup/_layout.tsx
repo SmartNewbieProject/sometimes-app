@@ -25,9 +25,6 @@ export default function SignupLayout() {
   useFocusEffect(
     useCallback(() => {
       BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-      return () => {
-        BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-      };
     }, [handleBackPress])
   );
 

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
 import { router, usePathname } from 'expo-router';
@@ -11,86 +11,86 @@ import CommunityUnselected from '@/assets/icons/nav/community-unselected.svg';
 import MySelected from '@/assets/icons/nav/my-selected.svg';
 import MyUnselected from '@/assets/icons/nav/my-unselected.svg';
 
-type NavItem = "home" | "community" | "my";
+type NavItem = 'home' | 'community' | 'my';
 
-const NavIcons: Record<NavItem, {
-  selected: ReactNode;
-  unSelected: ReactNode;
-}> = {
-  home: {
-    selected: <HomeSelected />,
-    unSelected: <HomeUnselected />,
-  },
-  community: {
-    selected: <CommunitySelected />,
-    unSelected: <CommunityUnselected />,
-  },
-  my: {
-    selected: <MySelected />,
-    unSelected: <MyUnselected />,
-  },
+const NavIcons: Record<
+	NavItem,
+	{
+		selected: ReactNode;
+		unSelected: ReactNode;
+	}
+> = {
+	home: {
+		selected: <HomeSelected />,
+		unSelected: <HomeUnselected />,
+	},
+	community: {
+		selected: <CommunitySelected />,
+		unSelected: <CommunityUnselected />,
+	},
+	my: {
+		selected: <MySelected />,
+		unSelected: <MyUnselected />,
+	},
 };
 
 type NavigationItem = {
-  name: string;
-  label: string;
-  path: string;
-  icon: typeof NavIcons[NavItem];
+	name: string;
+	label: string;
+	path: string;
+	icon: (typeof NavIcons)[NavItem];
 };
 
 const navigationItems: NavigationItem[] = [
-  {
-    name: 'home',
-    label: '홈',
-    path: '/home',
-    icon: NavIcons.home,
-  },
-  {
-    name: 'community',
-    label: '커뮤니티',
-    path: '/community',
-    icon: NavIcons.community,
-  },
-  {
-    name: 'my',
-    label: 'MY',
-    path: '/my',
-    icon: NavIcons.my,
-  },
+	{
+		name: 'home',
+		label: '홈',
+		path: '/home',
+		icon: NavIcons.home,
+	},
+	{
+		name: 'community',
+		label: '커뮤니티',
+		path: '/community',
+		icon: NavIcons.community,
+	},
+	{
+		name: 'my',
+		label: 'MY',
+		path: '/my',
+		icon: NavIcons.my,
+	},
 ];
 
 export function BottomNavigation() {
-  const pathname = usePathname();
+	const pathname = usePathname();
 
-  const isActive = (path: string) => {
-    return pathname.startsWith(path);
-  };
+	const isActive = (path: string) => {
+		return pathname.startsWith(path);
+	};
 
-  return (
-    <View className="bg-white border-t border-lightPurple">
-      <View className="flex-row justify-around py-3">
-        {navigationItems.map((item) => (
-          <TouchableOpacity
-            key={item.name}
-            className="items-center"
-            onPress={() => router.push(item.path as any)}
-          >
-            <IconWrapper width={24} height={24} className="mb-1">
-              {isActive(item.path)
-                ? item.icon.selected
-                : item.icon.unSelected
-              }
-            </IconWrapper>
-            <Text
-              size="sm"
-              weight={isActive(item.path) ? "semibold" : "normal"}
-              textColor={isActive(item.path) ? "purple" : "pale-purple"}
-            >
-              {item.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
-  );
+	return (
+		<View className="bg-white border-t border-lightPurple pb-4">
+			<View className="flex-row justify-around py-3">
+				{navigationItems.map((item) => (
+					<TouchableOpacity
+						key={item.name}
+						className="items-center"
+						onPress={() => router.push(item.path as any)}
+					>
+						<IconWrapper width={24} height={24} className="mb-1">
+							{isActive(item.path) ? item.icon.selected : item.icon.unSelected}
+						</IconWrapper>
+						<Text
+							size="sm"
+							weight={isActive(item.path) ? 'semibold' : 'normal'}
+							textColor={isActive(item.path) ? 'purple' : 'pale-purple'}
+						>
+							{item.label}
+						</Text>
+					</TouchableOpacity>
+				))}
+			</View>
+		</View>
+	);
 }

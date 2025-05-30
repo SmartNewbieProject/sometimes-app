@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Image as ExpoImage } from 'expo-image';
+import { Image as ExpoImage, useImage } from 'expo-image';
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 import type { ImageResources } from '@/src/shared/libs/image';
 import Loading from '@/src/features/loading';
-import { WebView } from 'react-native-webview';
 
 export interface ImageResourceProps {
   resource: ImageResources;
@@ -28,8 +27,13 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-
-  const imageUrl = resource.toString();
+  const image = useImage(resource, {
+    onError: (error) => {
+      console.error('Image loading error:', error);
+      setIsLoading(false);
+      setHasError(true);
+    },
+  });
 
   const styles = StyleSheet.create({
     container: {
@@ -69,14 +73,15 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
 
   return (
     <View style={[styles.container, style]} className={className}>
-      <Loading.Lottie title={loadingTitle} loading={isLoading}>
-        <WebView
-          source={{ uri: imageUrl }}
+      <Loading.Lottie title={loadingTitle} loading={!image}>
+        <ExpoImage
+          source={image}
           style={styles.image}
           contentFit={contentFit}
           onLoadStart={handleLoadStart} 
           onLoad={handleLoadEnd}
           onError={handleError}
+          transition={300}
         />
       </Loading.Lottie>
     </View>

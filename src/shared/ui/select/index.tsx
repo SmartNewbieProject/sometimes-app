@@ -1,8 +1,10 @@
 import { cn } from '@/src/shared/libs/cn';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { useState } from 'react';
-import { Modal, TouchableOpacity, View } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from '../text';
+import colors from '../../constants/colors';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const select = cva(
   'w-full flex flex-col justify-center bg-transparent border-b border-[#E7E9EC]', 
@@ -81,14 +83,9 @@ export function Select({
         onRequestClose={() => setIsOpen(false)}
       >
         <View className="flex-1 bg-black/30 justify-center items-center">
-          <View 
-            className="bg-white border border-lightPurple rounded-lg max-h-[200px] overflow-scroll"
-            style={{ 
-              width: 300,
-              maxWidth: '90%',
-              position: 'absolute',
-              top: 150,
-            }}
+          <ScrollView 
+            style={styles.modalContainer}
+            contentContainerStyle={styles.modalContent}
           >
             {options.map((option) => (
               <TouchableOpacity
@@ -101,18 +98,42 @@ export function Select({
                   "py-3 px-4",
                   value === option.value && "bg-lightPurple"
                 )}
+                style={{
+                  width: '100%',
+                }}
               >
                 <Text
-                  size={size}
                   textColor={value === option.value ? 'purple' : 'black'}
+                  className="text-[18px]"
                 >
                   {option.label}
                 </Text>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
         </View>
       </Modal>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    overflowY: 'scroll',
+    backgroundColor: 'white',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: colors.lightPurple,
+    borderRadius: 10,
+    maxHeight: 500,
+    width: 300,
+    position: 'absolute',
+    top: 150,
+    overflow: 'hidden',
+  },
+  modalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

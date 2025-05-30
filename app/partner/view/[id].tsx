@@ -16,7 +16,6 @@ import { HttpStatusCode } from 'axios';
 const { queries, ui } = Match;
 const { ui: { InstagramContactButton } } = Instagram;
 const { useMatchPartnerQuery } = queries;
-const { PartnerImage } = ui;
 
 const useRematchingMutation = () => {
   const queryClient = useQueryClient();
@@ -289,16 +288,12 @@ export default function PartnerDetailScreen() {
 
       </ScrollView>
 
-      <View className="flex flex-col md:flex-row gap-x-4 gap-y-2 mb-4 md:mb-12 px-4">
-        <Button
-          className="flex-1 w-full"
-          onPress={onRematch}
-          prefix={<ImageResource resource={ImageResources.TICKET}
-            width={32}
-            height={32}
-          />}>
-          재매칭권 사용하기
-        </Button>
+      <View style={{
+        marginBottom: 36,
+        height: 48,
+        marginLeft: 16,
+        marginRight: 16,
+      }}>
         <InstagramContactButton instagramId={partner.instagramId} />
       </View>
 

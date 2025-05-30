@@ -9,7 +9,11 @@ type InstagramContactButtonProps = {
 export const InstagramContactButton = ({ instagramId }: InstagramContactButtonProps) => (
   <Button
     variant="outline"
-    className="flex-1 w-full"
+    styles={{
+      flex: 1,
+      width: '100%',
+      height: 50,
+    }}
     onPress={() => openInstagram(instagramId)}
     prefix={<ImageResource resource={ImageResources.INSTAGRAM}
       width={32}

@@ -11,12 +11,13 @@ export const useCommingSoon = () => {
         <Text textColor="purple" weight="semibold" className="text-[18px] pb-2">
           준비중인 기능입니다.
         </Text>,
-      children:
-        <View>
+      children: (
+        <View> 
           <Text size="md" textColor="black" weight="light">
             완성되면 더 편리하게 이용하실 수 있어요!
           </Text>
-        </View>,
+        </View>
+      ),
       primaryButton: {
         text: "확인",
         onClick: () => { },

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { usePortoneStore } from './use-portone-store';
 import { usePortoneScript } from './PortoneProvider';
 import { router } from 'expo-router';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { Text } from '@shared/ui';
 import Payment from '@features/payment';
 import { useModal } from '@shared/hooks/use-modal';
@@ -52,10 +52,12 @@ export function usePortone(accountID?: string): UsePortone {
         return;
       }
 
-      await apis.pay({ 
-        impUid: result.imp_uid, 
-        merchantUid: result.merchant_uid 
-      });
+      if (Platform.OS === 'web') {
+        await apis.pay({ 
+          impUid: result.imp_uid, 
+          merchantUid: result.merchant_uid 
+        });
+      }
 
       if (showSuccessModal) {
         showModal({

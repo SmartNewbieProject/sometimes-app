@@ -13,7 +13,8 @@ export type PaymentDetails = {
 };
 
 export type PortOnePayment = {
-  impUid: string;
+  impUid?: string;
+  txId?: string;
   merchantUid: string;
 }
 

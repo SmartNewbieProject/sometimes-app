@@ -22,23 +22,28 @@ export default function CommunityScreen() {
   return (
     <View className="flex-1 relative">
       <PalePurpleGradient />
+      <ListHeaderComponent />
 
-      <Header.Container className="mt-2">
-        <Header.CenterContent>
-          <ImageResource resource={ImageResources.COMMUNITY_LOGO} width={152} height={18} />
-        </Header.CenterContent>
-      </Header.Container>
-
-      <ScrollView className="flex-1 mt-[14px]" id="CommunityScrollView">
-        <CategoryList />
-
-        <View id="ArticleListContainer">
-          <InfiniteArticleList ref={infiniteArticleListRef} />
-        </View>
-      </ScrollView>
+      <View id="ArticleListContainer" className="flex-1">
+        <InfiniteArticleList ref={infiniteArticleListRef} />
+      </View>
 
       <CreateArticleFAB />
       <BottomNavigation />
     </View>
   );
 }
+
+const ListHeaderComponent = () => (
+  <>
+    <Header.Container className="mt-2">
+      <Header.CenterContent>
+        <ImageResource resource={ImageResources.COMMUNITY_LOGO} width={152} height={18} />
+      </Header.CenterContent>
+    </Header.Container>
+    
+    <View className="mt-[14px]">
+      <CategoryList />
+    </View>
+  </>
+);
