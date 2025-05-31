@@ -3,7 +3,7 @@ import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { tryCatch } from "@/src/shared/libs";
 import Community from "@/src/features/community";
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArticleRequestType } from "@/src/features/community/types";
+import type { ArticleRequestType } from "@/src/features/community/types";
 import { useModal } from "@/src/shared/hooks/use-modal";
 
 const { ArticleWriteFormProvider, useArticleWriteForm, ArtcileWriter, articles } = Community;

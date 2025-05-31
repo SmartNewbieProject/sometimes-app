@@ -32,6 +32,12 @@ export default function CommunityLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="report"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </View>
   );
