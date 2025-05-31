@@ -14,9 +14,9 @@
     "production": {
       "autoIncrement": true,
       "ios": {
-        "buildConfiguration": "Release",
         "distribution": "store",
-        "developmentClient": false
+        "developmentClient": false,
+        "buildConfiguration": "Release"
       }
     },
     "production-debug": {
