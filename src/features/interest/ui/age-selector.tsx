@@ -90,6 +90,10 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
         'rounded-[20px] overflow-hidden border-2 min-w-[128px] min-h-[128px] flex flex-row items-center',
         isSelected ? 'border-primaryPurple' : 'border-[#E2D5FF]',
       )}
+      style={{
+        width: 128,
+        height: 128,
+      }}
     >
       <View className="relative w-full h-full flex flex-col justify-center items-center">
         <Image
