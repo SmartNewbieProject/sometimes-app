@@ -12,7 +12,18 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "ios": {
+        "buildConfiguration": "Release",
+        "distribution": "store",
+        "developmentClient": false
+      }
+    },
+    "production-debug": {
+      "extends": "production",
+      "ios": {
+        "buildConfiguration": "Debug"
+      }
     }
   },
   "submit": {

@@ -10,8 +10,19 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.smartnewb.sometimes",
+      "bundleIdentifier": "com.some-in-univ",
+      "capabilities": [
+        "push-notifications",
+        "sign-in-with-apple", 
+        "associated-domains",
+        "app-groups",
+        "maps"
+      ],
       "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification",
+          "background-fetch"
+        ],
         "LSApplicationQueriesSchemes": [
           "kftc-bankpay",
           "ispmobile",
@@ -78,7 +89,19 @@
         "NSCameraUsageDescription": "프로필 사진 촬영을 위해 카메라 접근이 필요합니다",
         "NSPhotoLibraryUsageDescription": "프로필 사진 선택을 위해 사진 라이브러리 접근이 필요합니다",
         "NSUserNotificationUsageDescription": "매칭 결과 및 중요한 알림을 받기 위해 알림 권한이 필요합니다",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "com.apple.developer.associated-domains": [
+          "applinks:yourdomain.com",
+          "applinks:*.yourdomain.com"
+        ],
+        "com.apple.security.application-groups": [
+          "group.com.some-in-univ.shared"
+        ],
+        "UNUserNotificationCenter": true,
+        "NSFileProtectionComplete": true,
+        "NSLocationWhenInUseUsageDescription": "위치 정보를 사용하여 지도 서비스를 제공합니다.",
+        "NSLocationAlwaysUsageDescription": "백그라운드에서 위치 기반 서비스를 제공합니다.",
+        "aps-environment": "development"
       }
     },
     "android": {
@@ -142,7 +165,8 @@
       "router": {},
       "eas": {
         "projectId": "f6df6d86-2504-4574-8bf2-e069c6e76316"
-      }
+      },
+      "enableRemoteLogging": true
     }
   }
 }

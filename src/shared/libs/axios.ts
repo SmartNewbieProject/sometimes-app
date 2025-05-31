@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { storage } from './store';
-import { TokenResponse } from '@/src/types/auth';
+import type { TokenResponse } from '@/src/types/auth';
 import { tryCatch } from './try-catch';
 import { router } from 'expo-router';
 import { eventBus } from './event-bus';
@@ -44,7 +44,7 @@ const axiosClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json'    
   },
 });
 
@@ -81,7 +81,6 @@ axiosClient.interceptors.response.use(
 
         return await tryCatch(async () => {
           const result = await temporaryAxiosClient(error.config);
-          console.log('twice tryCatch');
           return result.data;
         }, (error) => {
           console.log({ refreshError: error })
