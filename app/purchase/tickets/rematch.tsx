@@ -6,9 +6,8 @@ import { Selector } from '@/src/widgets/selector';
 import { createRef, useEffect, useState } from 'react';
 import Payment from '@features/payment';
 import type { PortOneController } from '@portone/react-native-sdk';
-import type { PaymentResponse } from '@/src/types/payment';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { Product } from '@/src/features/payment/types';
+import { PaymentResponse, Product } from '@/src/features/payment/types';
 import { router } from 'expo-router';
 import { usePortone } from '@/src/features/payment/hooks/use-portone';
 

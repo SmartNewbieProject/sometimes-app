@@ -13,17 +13,9 @@ export type PaymentDetails = {
 };
 
 export type PortOnePayment = {
-  impUid?: string;
-  txId?: string;
+  txId: string;
   merchantUid: string;
 }
-
-export type PaymentRequest = {
-  paymentId: string;
-  totalAmount: number;
-  orderName: string;  
-  payMethod: 'CARD';
-};
 
 export enum Product {
   REMATCHING = '연인 재매칭권',
@@ -43,4 +35,48 @@ export interface CustomData {
   amount: number;
   productType: Product;
   productCount: number;
+}
+
+export interface PaymentRequestCustomer {
+  fullName?: string;
+  customerId?: string;
+  phoneNumber?: string;
+  email?: string;
+}
+
+export type Currency =
+  | 'CURRENCY_KRW'
+  | 'CURRENCY_USD'
+  | 'CURRENCY_EUR'
+  | 'CURRENCY_JPY'
+  | 'CURRENCY_CNY'
+  | 'CURRENCY_VND'
+  | 'CURRENCY_THB'
+  | 'CURRENCY_SGD'
+  | 'CURRENCY_AUD'
+  | 'CURRENCY_HKD';
+
+
+export interface PaymentRequest {
+storeId: string;
+channelKey?: string;
+paymentId: string;
+orderName: string;
+totalAmount: number;
+currency: Currency;
+payMethod: 'CARD';
+customer?: PaymentRequestCustomer;
+customData?: Record<string, unknown>;
+// 기타 필요한 필드 확장 가능
+}
+
+// 관련 문서 -  https://developers.portone.io/sdk/ko/v2-sdk/payment-response?v=v2
+export interface PaymentResponse {
+  txId: string;
+  paymentId: string;
+  transactionType: 'PAYMENT';
+  code?: string;
+  message?: string;
+  pgCode?: string;
+  pgMessage?: string;
 }

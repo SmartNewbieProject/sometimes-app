@@ -1,34 +1,30 @@
 import { Platform } from "react-native";
 import { useEffect, useState } from "react";
-import webPayment from "../web";
-import paymentApis from "../api";
-import { useAuth } from "../../auth";
 import Loading from "../../loading";
-import type { PaymentResponse } from "@/src/types/payment";
-import type { Product } from "../types";
 import { usePortoneStore } from "../hooks/use-portone-store";
+import type { CustomData, PaymentRequest } from "../types";
+
 
 export interface WebPaymentProps {
-  paymentId: string;
-  orderName: string;
-  totalAmount: number;
-  productType: Product;
-  productName?: string;
-  productCount: number;
+  paymentParams: PaymentRequest;
   onComplete?: (result: PaymentResponse) => void;
   onError?: (error: unknown) => void;
   onCancel?: () => void;
 }
 
-
 /**
  * 웹 환경에서 I'mport.js를 사용한 결제 컴포넌트
  */
 export const WebPaymentView = (props: WebPaymentProps) => {
-  const { paymentId, orderName, productCount, totalAmount, productName, productType, onComplete, onError, onCancel } = props;
+  const { paymentParams, onComplete, onError, onCancel } = props;
   const [isProcessing, setIsProcessing] = useState(true);
-  const { my } = useAuth();
   const { setCustomData } = usePortoneStore();
+
+  if (!paymentParams.storeId || !paymentParams.channelKey) {
+    return (
+      <Loading.Page title="결제 환경변수가 누락되었습니다." />
+    );
+  }
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
@@ -38,40 +34,29 @@ export const WebPaymentView = (props: WebPaymentProps) => {
     }
 
     const processPayment = async () => {
-      if (!my) {
-        console.debug("로그인 사용자가 조회되지 않습니다.");
+      if (!paymentParams.customer?.fullName) {
         setIsProcessing(false);
         return;
       }
 
       try {
-        const customData = {
-          orderName: productName || orderName,
-          amount: totalAmount,
-          productType,
-          productCount,
-        };
+        if (isCustomData(paymentParams.customData)) {
+          setCustomData(paymentParams.customData);
+        }
 
-        setCustomData(customData);
-        
-        const paymentParams: IMP.RequestPayParams = {
-          pg: process.env.EXPO_PUBLIC_PG_PROVIDER,
-          channelKey: process.env.EXPO_PUBLIC_CHANNEL_KEY as string,
-          pay_method: 'card',
-          merchant_uid: paymentId,
-          name: productName || orderName,
-          amount: totalAmount,
-          buyer_name: my.name,
-          buyer_tel: my.phoneNumber,
-          buyer_email: my.email,
-          m_redirect_url: `${window.location.origin}/purchase/complete`,
-          custom_data: JSON.stringify(customData),
-        };
+        const PortOne = await import("@portone/browser-sdk/v2");
+        const response = await PortOne.requestPayment(paymentParams) as unknown as PaymentResponse;
 
-        // console.table(paymentParams);
-        const response = await webPayment.requestPay(paymentParams) as PaymentResponse;
-        // console.log('결제 응답:', response);
-        onComplete?.(response);
+        if (!response) {
+          onError?.({ message: '결제 결과를 받아오지 못했습니다.' });
+          return;
+        } 
+        if (PortOne.isPortOneError(response)) {
+          onError?.(response);
+          return;
+        } 
+
+      onComplete?.(response);
       } catch (error) {
         onError?.(error);
       } finally {
@@ -80,7 +65,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
     };
 
     processPayment();
-  }, [my]);
+  }, []);
 
   if (isProcessing) {
     return (
@@ -92,3 +77,15 @@ export const WebPaymentView = (props: WebPaymentProps) => {
 
   return null;
 };
+
+// CustomData 타입 가드
+function isCustomData(data: unknown): data is CustomData {
+  if (!data || typeof data !== 'object') return false;
+  const d = data as CustomData;
+  return (
+    typeof d.orderName === 'string' &&
+    typeof d.amount === 'number' &&
+    typeof d.productType !== 'undefined' &&
+    typeof d.productCount === 'number'
+  );
+}
