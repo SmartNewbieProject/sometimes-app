@@ -10,13 +10,6 @@ config.transformer = {
   babelTransformerPath: require.resolve('react-native-svg-transformer'),
 };
 
-config.transformer.minifierConfig = {
-  keep_frames: true,
-  mangle: {
-    keep_frames: true,
-  }
-}
-
 config.resolver = {
   ...resolver,
   assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
