@@ -11,14 +11,10 @@ import type { PaymentResponse } from '../types';
 const { apis } = Payment;
 
 interface UsePortone {
-	isInitialized: boolean;
-	initialize: (accountID: string) => boolean;
-	requestPay: (params: IMP.RequestPayParams, accountID?: string) => Promise<IMP.RequestPayResponse>;
 	handlePaymentComplete: (
 		result: PaymentResponse,
 		options?: HandlePaymentCompleteOptions,
 	) => Promise<void>;
-	reset: () => void;
 }
 
 interface HandlePaymentCompleteOptions {
@@ -28,19 +24,9 @@ interface HandlePaymentCompleteOptions {
 	onError?: (error: unknown) => void;
 }
 
-export function usePortone(accountID?: string): UsePortone {
-	const { isInitialized, initialize, reset } = usePortoneStore();
+export function usePortone(): UsePortone {
 	const { loaded, error } = usePortoneScript();
 	const { showModal, showErrorModal } = useModal();
-
-	const safeInitialize = useCallback(
-		(id: string) => {
-			if (!loaded) return false;
-			if (error) return false;
-			return initialize(id);
-		},
-		[loaded, error, initialize],
-	);
 
 	const handlePaymentComplete = useCallback(
 		async (result: PaymentResponse, options: HandlePaymentCompleteOptions = {}) => {
@@ -95,30 +81,7 @@ export function usePortone(accountID?: string): UsePortone {
 		[showModal, showErrorModal],
 	);
 
-	const requestPay = useCallback(
-		(params: IMP.RequestPayParams, id?: string): Promise<IMP.RequestPayResponse> => {
-			const targetId = id || accountID;
-			if (!isInitialized && targetId) {
-				safeInitialize(targetId);
-			}
-			return new Promise<IMP.RequestPayResponse>((resolve, reject) => {
-				if (typeof window === 'undefined' || !window.IMP) {
-					reject(new Error('IMP 객체가 없습니다.'));
-					return;
-				}
-				window.IMP.request_pay(params, (response: IMP.RequestPayResponse) => {
-					resolve(response);
-				});
-			});
-		},
-		[isInitialized, safeInitialize, accountID],
-	);
-
 	return {
-		isInitialized,
-		initialize: safeInitialize,
-		requestPay,
 		handlePaymentComplete,
-		reset,
 	};
 }

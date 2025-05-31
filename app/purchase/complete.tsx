@@ -8,7 +8,7 @@ import { usePortone } from "@/src/features/payment/hooks";
 const { apis } = Payment;
 
 export default function PaymentComplete() {
-  const { imp_uid, merchant_uid, custom_data: customData } = useGlobalSearchParams();
+  const { txId, paymentId, custom_data: customData } = useGlobalSearchParams();
   const { handlePaymentComplete } = usePortone();
 
   useEffect(() => {
@@ -19,8 +19,9 @@ export default function PaymentComplete() {
         
         await handlePaymentComplete(
           { 
-            imp_uid: imp_uid as string, 
-            merchant_uid: merchant_uid as string 
+            txId: txId as string,
+            paymentId: paymentId as string,
+            transactionType: 'PAYMENT',
           },
           {
             productCount: paymentInfo?.productCount,
@@ -37,7 +38,7 @@ export default function PaymentComplete() {
     };
 
     processPaymentComplete();
-  }, [customData, imp_uid, merchant_uid, handlePaymentComplete]);
+  }, [customData, txId, paymentId, handlePaymentComplete]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

@@ -7,7 +7,7 @@ import { createRef, useEffect, useState } from 'react';
 import Payment from '@features/payment';
 import type { PortOneController } from '@portone/react-native-sdk';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { PaymentResponse, Product } from '@/src/features/payment/types';
+import { type PaymentResponse, Product } from '@/src/features/payment/types';
 import { router } from 'expo-router';
 import { usePortone } from '@/src/features/payment/hooks/use-portone';
 
@@ -29,7 +29,7 @@ export default function RematchingTicketSellingScreen() {
 		return nanoid();
 	});
 
-  const { initialize, handlePaymentComplete } = usePortone();
+	const { handlePaymentComplete } = usePortone();
 
 	const calculateDiscount = (count: number): number => {
 		if (count === 3) return 10;
@@ -67,8 +67,11 @@ export default function RematchingTicketSellingScreen() {
 		console.debug('결제 오류 발생 시 새로운 orderId 생성:', id);
 		setPaymentId(id);
 		setShowPayment(false);
-		showErrorModal(error instanceof Error ? error.message : '결제 처리 중 오류가 발생했습니다.', 'error');
-	}
+		showErrorModal(
+			error instanceof Error ? error.message : '결제 처리 중 오류가 발생했습니다.',
+			'error',
+		);
+	};
 
 	const onCompletePayment = (result: PaymentResponse) => {
 		setShowPayment(false);
@@ -78,7 +81,7 @@ export default function RematchingTicketSellingScreen() {
 		});
 	};
 
-  useEffect(() => {
+	useEffect(() => {
 		const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
 			if (controller.current?.canGoBack) {
 				controller.current.webview?.goBack();
@@ -95,10 +98,6 @@ export default function RematchingTicketSellingScreen() {
 			setTotalPrice(undefined);
 		}
 	}, [showPayment]);
-
-  useEffect(() => {
-    initialize(process.env.EXPO_PUBLIC_IMP as string);
-  }, []);
 
 	if (showPayment) {
 		return (
