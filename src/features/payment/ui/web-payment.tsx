@@ -47,7 +47,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
         const PortOne = await import("@portone/browser-sdk/v2");
         const response = await PortOne.requestPayment({
           ...paymentParams,
-          redirectUrl: `${window.location.href}/purchase/complete`,
+          redirectUrl: `${location.origin}/purchase/complete`,
         }) as unknown as PaymentResponse;
 
         if (!response) {
