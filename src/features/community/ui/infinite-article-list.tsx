@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Image, type FlatList, Platform } from 'react-native';
+import { TouchableOpacity, View, Image, type FlatList, Platform, Linking } from 'react-native';
 import { Article } from './article';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
@@ -160,18 +160,20 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
     return (
       <View className="flex-1">
         <View className="h-[1px] bg-[#F3F0FF]" />
-        <View className="bg-lightPurple/20 px-4 py-2 mt-2 flex-row items-center">
+        <TouchableOpacity 
+          onPress={() => Linking.openURL('https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link')}
+          className="bg-lightPurple/20 px-4 py-2 mt-2 gap-x-2 flex-row items-center">
           <Image
             source={require('@/assets/images/fireIcon.png')}
             style={{ width: 22, height: 22 }}
           />
-          <Text size="sm">토끼는 급해. 그래서 급사.</Text>
+          <Text size="sm" weight="bold">[FAQ] 자주묻는 질문</Text>
           <TouchableOpacity className="ml-auto">
             <IconWrapper>
               <VectorIcon className=" h-[12px] w-[9px]" color="black" />
             </IconWrapper>
           </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
         <View className="h-[1px] bg-[#F3F0FF] mb-2" />
 
         <CustomInfiniteScrollView

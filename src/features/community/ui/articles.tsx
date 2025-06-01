@@ -48,18 +48,18 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
   return (
     <View className="flex-1">
       <View className="h-[1px] bg-[#F3F0FF]" />
-      <View className="bg-lightPurple/20 px-4 py-2 mt-2 flex-row items-center">
+      <TouchableOpacity className="bg-lightPurple/20 px-4 py-2 mt-2 flex-row items-center">
         <Image
           source={require('@/assets/images/fireIcon.png')}
           style={{ width: 22, height: 22 }}
         />
-        <Text size="sm">토끼는 급해. 그래서 급사.</Text>
+        <Text size="sm">[FAQ] 자주묻는 질문</Text>
         <TouchableOpacity className="ml-auto">
           <IconWrapper>
             <VectorIcon className=" h-[12px] w-[9px]" color="black" />
           </IconWrapper>
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
       <View className="h-[1px] bg-[#F3F0FF] mb-2" />
 
       <FlatList
