@@ -41,7 +41,6 @@ export const PaymentView = forwardRef(
       totalAmount,
       currency: "CURRENCY_KRW",
       payMethod: "CARD",
-      redirectUrl: '/purchase/complete',
       customer: {
         fullName: my?.name,
         customerId: my?.id,

@@ -45,7 +45,10 @@ export const WebPaymentView = (props: WebPaymentProps) => {
         }
 
         const PortOne = await import("@portone/browser-sdk/v2");
-        const response = await PortOne.requestPayment(paymentParams) as unknown as PaymentResponse;
+        const response = await PortOne.requestPayment({
+          ...paymentParams,
+          redirectUrl: `${window.location.href}/purchase/complete`,
+        }) as unknown as PaymentResponse;
 
         if (!response) {
           onError?.({ message: '결제 결과를 받아오지 못했습니다.' });
