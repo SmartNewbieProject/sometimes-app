@@ -59,6 +59,7 @@ export type Currency =
 
 export interface PaymentRequest {
 storeId: string;
+redirectUrl?: string;
 channelKey?: string;
 paymentId: string;
 orderName: string;
