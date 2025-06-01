@@ -22,7 +22,7 @@ const { useRedirectPreferences } = hooks;
 const HomeScreen = () => {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } = useTotalMatchCountQuery();
   const { data: totalUserCount = 0 } = useTotalUserCountQuery();
-  const { isPreferenceFill, refetchPreferenceFill } = useRedirectPreferences();
+  const { isPreferenceFill } = useRedirectPreferences();
   const { trackEventAction } = Event.hooks.useEventAnalytics('home');
   const { data: notifications } = useNotificationQuery();
   const { showModal } = useModal();
@@ -50,14 +50,20 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    refetchPreferenceFill();
     trackEventAction('home_view');
   }, []);
 
   // 화면이 포커스될 때마다 매칭 데이터 리프레시
   useFocusEffect(
     useCallback(() => {
-      queryClient.invalidateQueries({ queryKey: ['latest-matching'] });
+    queryClient.invalidateQueries({ 
+      queryKey: [
+        'notification',
+        'check-preference-fill',
+        'latest-matching',
+      ],
+      refetchType: 'active',
+    });
     }, [queryClient])
   );
 

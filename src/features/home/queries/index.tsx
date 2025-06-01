@@ -17,10 +17,12 @@ export const useCheckPreferenceFillQuery = () =>
   useQuery({
     queryKey: ['check-preference-fill'],
     queryFn: apis.checkPreferenceFill,
+    staleTime: 0,
   });
 
 export const useNotificationQuery = () =>
   useQuery({
     queryKey: ['notification'],
     queryFn: apis.getNotification,
+    staleTime: 0,
   });
