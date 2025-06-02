@@ -3,3 +3,4 @@ export { useKeyboarding } from './use-keyboarding';
 export { useInfiniteData } from './use-infinite-data';
 export { useInfiniteScroll } from './use-infinite-scroll';
 export { useBoolean } from './use-boolean';
+export { usePathHistory } from './use-path-history';

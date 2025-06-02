@@ -14,6 +14,8 @@ export function RouteTracker({ children }: RouteTrackerProps) {
   useEffect(() => {
     const saveCurrentPath = async () => {
       try {
+        const current = await storage.getItem('current-path');
+        await storage.setItem('previous-path', current ?? '/');
         await storage.setItem('current-path', pathname);
       } catch (error) {
         console.error('Failed to save current path:', error);
