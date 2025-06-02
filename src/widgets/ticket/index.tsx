@@ -1,8 +1,9 @@
 import { TouchableOpacity, View, StyleSheet } from "react-native";
-import { Text } from "@shared/ui";
+import { Show, Text } from "@shared/ui";
 import { createContext, useContext } from "react";
 import { Image } from "expo-image";
 import { calculateDiscount, toKRW } from "./utils";
+import colors from "@/src/shared/constants/colors";
 
 type Metadata = {
   totalPrice: number;
@@ -46,7 +47,10 @@ const TicketComponent = ({ count, hot, discount, onOpenPayment }: TicketDetails)
 
   return (
     <TouchableOpacity 
-      style={styles.container}
+      style={[
+        styles.container,
+        hot && styles.hot,
+      ]}
       onPress={() => onOpenPayment({ totalPrice: discountedPrice, count })}
       activeOpacity={0.7}
     >
@@ -78,6 +82,11 @@ const TicketComponent = ({ count, hot, discount, onOpenPayment }: TicketDetails)
         >{toKRW(discountedPrice)}원</Text>
       </View>
 
+      <Show when={!!hot}>
+        <View style={styles.hotCard}>
+          <Text textColor="white" size="13" weight="semibold">인기</Text>
+        </View>
+      </Show>
     </TouchableOpacity>
   );
 };
@@ -89,6 +98,7 @@ export const Ticket = {
 
 const styles = StyleSheet.create({
   container: {
+    position: 'relative',
     backgroundColor: 'white',
     paddingHorizontal: 21,
     paddingVertical: 11,
@@ -98,7 +108,22 @@ const styles = StyleSheet.create({
     gap: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 53,
+    height: 58,
+  },
+  hot: {
+    borderColor: colors.primaryPurple,
+  },
+  hotCard: {
+    width: 40,
+    height: 22,
+    backgroundColor: colors.primaryPurple,
+    borderRadius: 6,
+    position: 'absolute',
+    left: 20,
+    top: -10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ticket: {
     width: 40,

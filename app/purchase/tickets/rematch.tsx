@@ -126,11 +126,11 @@ export default function RematchingTicketSellingScreen() {
 					</Text>
 				</View>
 
-				<View className="flex flex-col gap-y-2 justify-center mb-auto">
+				<View className="flex flex-col gap-y-4 justify-center mb-auto">
 					<Ticket.Provider name={OPTIONS.name} price={OPTIONS.price}>
 						<Ticket.Item count={1} onOpenPayment={onPurchase} />
 						<Ticket.Item count={2} discount={16} onOpenPayment={onPurchase} />
-						<Ticket.Item count={3} discount={27} onOpenPayment={onPurchase} />
+						<Ticket.Item count={3} discount={27} onOpenPayment={onPurchase} hot />
 						<Ticket.Item count={5} discount={29} onOpenPayment={onPurchase} />
 						<Ticket.Item count={10} discount={37} onOpenPayment={onPurchase} />
 					</Ticket.Provider>
