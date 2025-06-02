@@ -1,0 +1,124 @@
+import { TouchableOpacity, View, StyleSheet } from "react-native";
+import { Text } from "@shared/ui";
+import { createContext, useContext } from "react";
+import { Image } from "expo-image";
+import { calculateDiscount, toKRW } from "./utils";
+
+type Metadata = {
+  totalPrice: number;
+  count: number;
+}
+
+export type TicketDetails = {
+  onOpenPayment: (metadata: Metadata) => void;
+  hot?: boolean,
+  count: number,
+  discount?: number;
+};
+
+export type TicketContextProps = {
+  name: string;
+  price: number;
+}
+
+const Context = createContext<TicketContextProps>({} as TicketContextProps);
+
+const useTicketContext = () => {
+  const context = useContext(Context);
+  if (!context) {
+    throw new Error('TicketContext not found');
+  }
+  return context;
+}
+
+const TicketProvider = ({ children, ...props }: { children: React.ReactNode } & TicketContextProps) => {
+  return (
+    <Context.Provider value={props}>
+      {children}
+    </Context.Provider>
+  );
+}
+
+const TicketComponent = ({ count, hot, discount, onOpenPayment }: TicketDetails) => {
+  const { name, price } = useTicketContext();
+  const totalOriginPrice = price * count;
+  const discountedPrice = calculateDiscount(totalOriginPrice, discount);
+
+  return (
+    <TouchableOpacity 
+      style={styles.container}
+      onPress={() => onOpenPayment({ totalPrice: discountedPrice, count })}
+      activeOpacity={0.7}
+    >
+      <Image 
+        source={require('@assets/images/ticket.png')}
+        style={styles.ticket}
+      />
+      <View style={styles.details}>
+        <Text textColor="black" size="13" weight="semibold">{name}</Text>
+        <Text textColor="black" size="13" weight="semibold">{count}회권</Text>
+      </View>
+
+      <View style={styles.price}>
+        <View style={styles.sales}>
+          {discount && (
+            <>
+              <Text textColor="gray" className="text-[10px] line-through">{totalOriginPrice}원</Text>
+              <Text className="text-[10px]">{discount}% 할인</Text>
+            </>
+          )}
+        </View>
+        <Text 
+          textColor="black"
+          size="13" 
+          weight="semibold"
+          style={{
+            textAlign: 'right',
+          }}
+        >{toKRW(discountedPrice)}원</Text>
+      </View>
+
+    </TouchableOpacity>
+  );
+};
+
+export const Ticket = {
+  Provider: TicketProvider,
+  Item: TicketComponent,
+};
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+    paddingHorizontal: 21,
+    paddingVertical: 11,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#E6DBFF',
+    gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 53,
+  },
+  ticket: {
+    width: 40,
+    height: 40,
+  },
+  details: {
+    flexDirection: 'row',
+    flex: 1,
+    gap: 4,
+    alignItems: 'center',
+  },
+  price: {
+    flexDirection: 'column',
+    height: '100%',
+    justifyContent: 'space-between',
+    gap: 4,
+  },
+  sales: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  }
+});
