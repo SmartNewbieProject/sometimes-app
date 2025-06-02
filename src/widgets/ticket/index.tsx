@@ -68,7 +68,7 @@ const TicketComponent = ({ count, hot, discount, onOpenPayment }: TicketDetails)
           {discount && (
             <>
               <Text textColor="gray" className="text-[12px] line-through">{totalOriginPrice}원</Text>
-              <Text className="text-[12px]">{discount}% 할인</Text>
+              <Text className="text-[12px]">{discount.toFixed(0)}% 할인</Text>
             </>
           )}
         </View>
