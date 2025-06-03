@@ -12,6 +12,10 @@ export enum UniversityName {
   고려대학교세종캠퍼스 = "고려대학교 세종캠퍼스",
   홍익대학교세종캠퍼스 = "홍익대학교 세종캠퍼스",
   한국교원대학교 = "한국교원대학교",
+  공주대학교 = "공주대학교",
+  공주교육대학교 = "공주교육대학교",
+  충북대학교 = "충북대학교",
+  청주교육대학교 = "청주교육대학교",
 }
 
 const UniversityImage: Record<UniversityName, string> = {
@@ -28,6 +32,10 @@ const UniversityImage: Record<UniversityName, string> = {
   [UniversityName.고려대학교세종캠퍼스]: "kau.png",
   [UniversityName.홍익대학교세종캠퍼스]: "hiu.png",
   [UniversityName.한국교원대학교]: "knu.png",
+  [UniversityName.공주대학교]: "kgu.png",
+  [UniversityName.공주교육대학교]: "keu.png",
+  [UniversityName.충북대학교]: "cbu.png",
+  [UniversityName.청주교육대학교]: "ceu.png",
 };
 
 const baseUrl = 'https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/univ/';
