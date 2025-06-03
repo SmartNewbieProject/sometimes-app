@@ -2,22 +2,24 @@ import { View, ScrollView } from 'react-native';
 import { PalePurpleGradient, BottomNavigation, Header, ImageResource } from '@/src/shared/ui';
 import { CategoryList, CreateArticleFAB, InfiniteArticleList } from '@/src/features/community/ui';
 import { useLocalSearchParams, router } from 'expo-router';
-import { useEffect, useRef } from 'react';
-import { IconWrapper } from '@/src/shared/ui/icons';
+import { useEffect } from 'react';
 import { ImageResources } from '@/src/shared/libs';
-import type { InfiniteArticleListHandle } from '@/src/features/community/ui/infinite-article-list';
+import { useInfiniteArticlesQuery } from '@/src/features/community/queries/use-infinite-articles';
+import { useCategory } from '@/src/features/community/hooks';
 
 export default function CommunityScreen() {
   const { refresh: shouldRefresh } = useLocalSearchParams<{ refresh: string }>();
-  const infiniteArticleListRef = useRef<InfiniteArticleListHandle>(null);
+  const { currentCategory: categoryCode } = useCategory();
+  const { refetch } = useInfiniteArticlesQuery({
+    categoryCode,
+    pageSize: 10,
+  });
 
-  useEffect(() => {
-    if (shouldRefresh === 'true') {
-      if (infiniteArticleListRef.current) {
-        infiniteArticleListRef.current.refresh();
-      }
-    }
-  }, [shouldRefresh]);
+	useEffect(() => {
+		if (shouldRefresh === 'true') {
+      refetch();
+		}
+	}, [shouldRefresh]);
 
   return (
     <View className="flex-1 relative">
@@ -25,7 +27,7 @@ export default function CommunityScreen() {
       <ListHeaderComponent />
 
       <View id="ArticleListContainer" className="flex-1">
-        <InfiniteArticleList ref={infiniteArticleListRef} />
+        <InfiniteArticleList />
       </View>
 
       <CreateArticleFAB />

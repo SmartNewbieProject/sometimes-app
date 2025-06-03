@@ -1,4 +1,4 @@
-import { Pressable, View, Alert } from "react-native";
+import { Pressable, View, Alert, Platform } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { Button, Header, PalePurpleGradient, Text } from "@/src/shared/ui";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
@@ -10,6 +10,9 @@ import { Form } from "@/src/widgets";
 import { reportArticle } from "@/src/features/community/apis/articles";
 import { tryCatch } from "@/src/shared/libs";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { createArticlesQueryKey } from "@/src/features/community/queries/use-infinite-articles";  
+import { queryClient } from "@/src/shared/config/query";
+import { useCategory } from "@/src/features/community/hooks";
 
 type ReportForm = {
   reason: string;
@@ -21,12 +24,18 @@ export default function ReportScreen() {
     mode: 'onTouched',
   });
   const { showErrorModal } = useModal();
+  const { currentCategory: categoryCode } = useCategory();
 
   const onSubmit = form.handleSubmit(async (data) => {
     await tryCatch(async () => {
       await reportArticle(id, data.reason);
-      Alert.alert('신고가 완료되었어요.', '관리자가 검토 후 적절한 조치를 취하겠습니다.');
-      router.back();
+      await queryClient.invalidateQueries({ queryKey: createArticlesQueryKey(categoryCode) });
+      if (Platform.OS === 'web') {
+        window.alert('신고가 완료되었어요.\n관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다.');
+      } else {
+        Alert.alert('신고가 완료되었어요.', '관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다.');
+      }
+      router.navigate('/community?refresh=true');
     }, ({ error }) => {
       showErrorModal(error, 'error');
     });

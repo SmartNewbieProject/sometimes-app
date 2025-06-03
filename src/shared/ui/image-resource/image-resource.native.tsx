@@ -3,6 +3,8 @@ import { Image as ExpoImage, useImage } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import type { ImageResourceProps } from './index';
 import Loading from '@/src/features/loading';
+import { Text } from '@/src/shared/ui';
+import { CustomInfiniteScrollView } from '../../infinite-scroll/custom-infinite-scroll-view';
 
 export const ImageResource: React.FC<ImageResourceProps> = ({
   resource,
@@ -17,6 +19,7 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   const [hasError, setHasError] = useState(false);
   const image = useImage(resource, {
     onError: (error) => {
+      console.error(error);
       setHasError(true);
     },
   });
@@ -45,7 +48,9 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   if (hasError) {
     return (
       <View style={[styles.container, style]} className={className}>
-        <View style={[styles.image, { backgroundColor: '#F3EDFF' }]} />
+        <View style={[styles.image, { backgroundColor: '#F3EDFF' }]}>
+          <Text>이미지 로드 실패</Text>
+        </View>
       </View>
     );
   }
