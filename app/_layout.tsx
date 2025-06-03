@@ -12,10 +12,12 @@ import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
 import { cn } from '@/src/shared/libs/cn';
 import { ModalProvider, AnalyticsProvider } from '@/src/shared/providers';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useAtt } from '@/src/shared/hooks';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { request: requestAtt } = useAtt();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     'Pretendard-Thin': require('../assets/fonts/Pretendard-Thin.ttf'),
@@ -36,6 +38,10 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    requestAtt();
+  }, []);
 
   if (!loaded) {
     return null;
