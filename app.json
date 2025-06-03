@@ -155,7 +155,13 @@
         {
           "calendarPermission": "캘린더 접근을 허용하시겠습니까?"
         }
-      ]
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "썸타임은 사용자에게 맞춤 광고를 위해 추적 권한을 요청합니다."
+        }
+      ]    
     ],
     "experiments": {
       "typedRoutes": true
