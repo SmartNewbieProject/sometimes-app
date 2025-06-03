@@ -23,9 +23,6 @@ export const useAtt = () => {
     if (allowRequestAtt === ATTRequestStatus.ALLOWED) {
       const { status } = await requestTrackingPermissionsAsync();
       match(status)
-        .with(PermissionStatus.GRANTED, () => {
-          setAllowRequestAtt(ATTRequestStatus.ALLOWED);
-        })
         .with(PermissionStatus.DENIED, () => {
           setAllowRequestAtt(ATTRequestStatus.DENIED);
         })

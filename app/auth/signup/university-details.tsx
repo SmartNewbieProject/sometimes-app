@@ -9,13 +9,13 @@ import { Image } from 'expo-image';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { KeyboardAvoidingView, View, Keyboard, Platform } from 'react-native';
+import { KeyboardAvoidingView, View, Platform } from 'react-native';
 import { z } from 'zod';
-import { SignupForm } from '@/src/features/signup/hooks';
+import type { SignupForm } from '@/src/features/signup/hooks';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { environmentStrategy, tryCatch } from '@/src/shared/libs';
+import { tryCatch } from '@/src/shared/libs';
 import Loading from "@features/loading";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { checkExistsInstagram } from '@/src/features/auth';
 import { useKeyboarding } from '@/src/shared/hooks';
 
