@@ -5,11 +5,16 @@ import { useModal } from '@/src/shared/hooks/use-modal';
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import apis from '@/src/features/mypage/apis';
 import { useQueryClient } from '@tanstack/react-query';
+import { useStorage } from '@/src/shared/hooks/use-storage';
 
 export const ChangeProfileImageModal = () => {
   const { hideModal, showErrorModal } = useModal();
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
+  const { value: accessToken } = useStorage<string | null>({
+    key: 'access-token',
+    initialValue: null,
+  });
 
   const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,12 +23,12 @@ export const ChangeProfileImageModal = () => {
   const isAllImagesSelected = validImages.length === 3;
 
   useEffect(() => {
-    if (profileDetails) {
-      const currentImages = profileDetails.profileImages.map(img => img.url);
-      const initialImages = [...currentImages, ...Array(3 - currentImages.length).fill(null)];
-      setImages(initialImages.slice(0, 3));
-    }
+    setImages([null, null, null]);
   }, [profileDetails]);
+
+  useEffect(() => {
+    setIsSubmitting(false);
+  }, []);
 
   const handleImageChange = (index: number, value: string) => {
     const newImages = [...images];
@@ -37,7 +42,6 @@ export const ChangeProfileImageModal = () => {
       return;
     }
 
-    // 최소 3개 이상의 이미지가 있는지 확인
     const validImages = images.filter(img => img !== null);
     if (validImages.length !== 3) {
       showErrorModal('프로필 이미지 3장을 모두 등록해주세요.', 'announcement');
@@ -92,7 +96,9 @@ export const ChangeProfileImageModal = () => {
         }
       }
 
-      await queryClient.invalidateQueries({ queryKey: ['my-profile-details'] });
+      await queryClient.invalidateQueries({
+        queryKey: ['my-profile-details', accessToken]
+      });
 
       hideModal();
       showErrorModal('프로필 이미지가 성공적으로 변경되었습니다.', 'announcement');
