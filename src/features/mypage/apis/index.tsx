@@ -37,57 +37,45 @@ const deleteProfileImage = async (imageId: string): Promise<void> => {
     return await axiosClient.delete(`/profile/images/${imageId}`);
 };
 
-// 프로필 이미지 업로드 (단일 이미지)
-const uploadProfileImage = async (image: string, isMain: number): Promise<void> => {
-    const formData = new FormData();
-
+const createProfileFileObject = (imageUri: string, fileName: string) =>
     platform({
         web: () => {
-            // 웹에서는 기존 방식 사용
-            const blob = fileUtils.dataURLtoBlob(image);
-            const file = fileUtils.toFile(blob, `profile-${nanoid(6)}.png`);
-            formData.append('files', file);
+            const blob = fileUtils.dataURLtoBlob(imageUri);
+            return fileUtils.toFile(blob, fileName);
         },
-        default: () => {
-            // React Native에서는 URI를 직접 사용
-            const fileObject = {
-                uri: image,
-                name: `profile-${nanoid(6)}.png`,
-                type: 'image/png'
-            };
-            formData.append('files', fileObject as any);
-        }
+        default: () => ({
+            uri: imageUri,
+            name: fileName,
+            type: 'image/png'
+        } as any)
     });
 
+const uploadProfileImage = async (image: string, isMain: number): Promise<void> => {
+    const formData = new FormData();
+    const file = createProfileFileObject(image, `profile-${nanoid(6)}.png`);
+
+    formData.append('files', file);
     formData.append('isMain', isMain.toString());
 
     return axiosClient.post('/profile/images', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
     });
 };
 
-// 프로필 이미지 업로드 (여러 이미지) - 기존 호환성을 위해 유지
 const uploadProfileImages = async (images: string[]): Promise<void> => {
     const formData = new FormData();
 
-    const files = images
+    images
         .filter(image => image !== null)
-        .map(fileUtils.dataURLtoBlob)
-        .map(blob => fileUtils.toFile(blob, `profile-${nanoid(6)}.png`));
+        .forEach(imageUri => {
+            const file = createProfileFileObject(imageUri, `profile-${nanoid(6)}.png`);
+            formData.append('files', file);
+        });
 
-    for (const file of files) {
-        formData.append('files', file);
-    }
-
-    // 첫 번째 이미지를 메인으로 설정
     formData.append('isMain', '0');
 
     return axiosClient.post('/profile/images', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
     });
 };
 

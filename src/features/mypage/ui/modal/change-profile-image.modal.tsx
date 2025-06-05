@@ -36,13 +36,35 @@ export const ChangeProfileImageModal = () => {
     setImages(newImages);
   };
 
+  const replaceExistingImage = async (newImage: string, oldImages: any[]) => {
+    if (oldImages[0]) {
+      await apis.deleteProfileImage(oldImages[0].id);
+      oldImages.shift();
+    }
+    await apis.uploadProfileImage(newImage, 2);
+  };
+
+  const addNewImage = async (newImage: string, index: number) => {
+    await apis.uploadProfileImage(newImage, index);
+  };
+
+  const cleanupRemainingImages = async (oldImages: any[], startIndex: number) => {
+    for (let i = startIndex; i < oldImages.length; i++) {
+      await apis.deleteProfileImage(oldImages[i].id).catch(() => {});
+    }
+  };
+
+  const getErrorMessage = (error: any) => {
+    return error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.';
+  };
+
   const handleSubmit = async () => {
     if (!profileDetails) {
       showErrorModal('프로필 정보를 불러올 수 없습니다.', 'error');
       return;
     }
 
-    const validImages = images.filter(img => img !== null);
+    const validImages = images.filter(img => img !== null) as string[];
     if (validImages.length !== 3) {
       showErrorModal('프로필 이미지 3장을 모두 등록해주세요.', 'announcement');
       return;
@@ -51,66 +73,28 @@ export const ChangeProfileImageModal = () => {
     setIsSubmitting(true);
 
     try {
-      const validImagesArray = validImages as string[];
-      const oldImages = profileDetails.profileImages || [];
+      const oldImages = [...(profileDetails.profileImages || [])];
       const hasExistingImages = oldImages.length > 0;
 
       if (hasExistingImages) {
-        for (let i = 0; i < validImagesArray.length; i++) {
-          const newImage = validImagesArray[i];
-
-          try {
-            if (oldImages[0]) {
-              try {
-                await apis.deleteProfileImage(oldImages[0].id);
-                oldImages.shift();
-              } catch (deleteError) {
-                throw new Error(`기존 이미지 삭제 실패: ${deleteError}`);
-              }
-            }
-
-            await apis.uploadProfileImage(newImage, 2);
-
-          } catch (uploadError) {
-            throw new Error(`${i + 1}번째 이미지 교체 실패: ${uploadError}`);
-          }
+        for (let i = 0; i < validImages.length; i++) {
+          await replaceExistingImage(validImages[i], oldImages);
         }
       } else {
-        for (let i = 0; i < validImagesArray.length; i++) {
-          const newImage = validImagesArray[i];
-
-          try {
-            await apis.uploadProfileImage(newImage, i);
-          } catch (uploadError) {
-            throw new Error(`${i + 1}번째 이미지 추가 실패: ${uploadError}`);
-          }
+        for (let i = 0; i < validImages.length; i++) {
+          await addNewImage(validImages[i], i);
         }
       }
 
-      if (oldImages.length > validImagesArray.length) {
-        for (let i = validImagesArray.length; i < oldImages.length; i++) {
-          try {
-            await apis.deleteProfileImage(oldImages[i].id);
-          } catch (deleteError) {
-          }
-        }
+      if (oldImages.length > validImages.length) {
+        await cleanupRemainingImages(oldImages, validImages.length);
       }
 
-      await queryClient.invalidateQueries({
-        queryKey: ['my-profile-details', accessToken]
-      });
-
+      await queryClient.invalidateQueries({ queryKey: ['my-profile-details'] });
       hideModal();
       showErrorModal('프로필 이미지가 성공적으로 변경되었습니다.', 'announcement');
     } catch (error: any) {
-      let errorMessage = '알 수 없는 오류가 발생했습니다.';
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error?.message) {
-        errorMessage = error.message;
-      }
-
-      showErrorModal(`프로필 이미지 변경 중 오류가 발생했습니다: ${errorMessage}`, 'error');
+      showErrorModal(`프로필 이미지 변경 중 오류가 발생했습니다: ${getErrorMessage(error)}`, 'error');
     } finally {
       setIsSubmitting(false);
     }
