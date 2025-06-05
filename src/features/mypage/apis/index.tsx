@@ -1,4 +1,4 @@
-import { axiosClient, fileUtils } from "@/src/shared/libs";
+import { axiosClient, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from 'nanoid';
 
 type RematchingTicket = {
@@ -41,10 +41,24 @@ const deleteProfileImage = async (imageId: string): Promise<void> => {
 const uploadProfileImage = async (image: string, isMain: number): Promise<void> => {
     const formData = new FormData();
 
-    const blob = fileUtils.dataURLtoBlob(image);
-    const file = fileUtils.toFile(blob, `profile-${nanoid(6)}.png`);
+    platform({
+        web: () => {
+            // 웹에서는 기존 방식 사용
+            const blob = fileUtils.dataURLtoBlob(image);
+            const file = fileUtils.toFile(blob, `profile-${nanoid(6)}.png`);
+            formData.append('files', file);
+        },
+        default: () => {
+            // React Native에서는 URI를 직접 사용
+            const fileObject = {
+                uri: image,
+                name: `profile-${nanoid(6)}.png`,
+                type: 'image/png'
+            };
+            formData.append('files', fileObject as any);
+        }
+    });
 
-    formData.append('files', file);
     formData.append('isMain', isMain.toString());
 
     return axiosClient.post('/profile/images', formData, {

@@ -16,7 +16,8 @@ function dataURLtoBlob(dataURL: string): Blob {
       return new Blob([uInt8Array], { type: contentType });
     },
     default: () => {
-      return new Blob([], { type: 'application/octet-stream' });
+      // React Native에서는 Blob을 사용하지 않고 URI를 직접 사용
+      throw new Error('dataURLtoBlob should not be used in React Native');
     }
   });
 }
@@ -30,17 +31,26 @@ function createFileFromBlob(blob: Blob, fileName: string): File {
       });
     },
     default: () => {
-      return new File([], fileName, {
-        type: 'application/octet-stream',
-        lastModified: Date.now()
-      });
+      // React Native에서는 File 객체를 사용하지 않고 URI를 직접 사용
+      throw new Error('createFileFromBlob should not be used in React Native');
     }
   });
+}
+
+// React Native용 파일 객체 생성 함수
+function createNativeFileObject(uri: string, fileName: string, type: string = 'image/png') {
+  // React Native FormData는 이 형식을 요구합니다
+  return {
+    uri,
+    name: fileName,
+    type
+  } as any;
 }
 
 const fileUtils = {
   dataURLtoBlob,
   toFile: createFileFromBlob,
+  createNativeFileObject,
 }
 
 export default fileUtils;

@@ -1,4 +1,4 @@
-import { axiosClient, dayUtils, fileUtils } from "@/src/shared/libs";
+import { axiosClient, dayUtils, fileUtils, platform } from "@/src/shared/libs";
 import type { SignupForm } from "../hooks";
 import { nanoid } from 'nanoid';
 import { AuthorizeSmsCode } from "@/app/auth/signup/types";
@@ -12,12 +12,10 @@ export const getDepartments = async (univ: string): Promise<string[]> => {
 };
 
 export const signup = (form: SignupForm): Promise<void> => {
-  const files = form.profileImages
-    .map(fileUtils.dataURLtoBlob)
-    .map(blob => fileUtils.toFile(blob, `${form.email}-${nanoid(6)}.png`));
   const birthday = dayUtils.getDayBy6Digit(form.birthday);
-
   const formData = new FormData();
+
+  // 기본 폼 데이터 추가
   formData.append('email', form.email);
   formData.append('password', form.password);
   formData.append('phoneNumber', form.phoneNumber);
@@ -32,9 +30,32 @@ export const signup = (form: SignupForm): Promise<void> => {
   formData.append('studentNumber', form.studentNumber);
   formData.append('instagramId', form.instagramId);
 
-  for (const file of files) {
-    formData.append('profileImages', file);
-  }
+  // 플랫폼별 이미지 처리
+  platform({
+    web: () => {
+      // 웹에서는 기존 방식 사용
+      const files = form.profileImages
+        .map(fileUtils.dataURLtoBlob)
+        .map(blob => fileUtils.toFile(blob, `${form.email}-${nanoid(6)}.png`));
+
+      for (const file of files) {
+        formData.append('profileImages', file);
+      }
+    },
+    default: () => {
+      // React Native에서는 URI를 직접 사용
+      console.log('React Native 이미지 업로드:', form.profileImages);
+      form.profileImages.forEach((imageUri, index) => {
+        const fileObject = {
+          uri: imageUri,
+          name: `${form.email}-${nanoid(6)}.png`,
+          type: 'image/png'
+        };
+        console.log(`이미지 ${index + 1} 파일 객체:`, fileObject);
+        formData.append('profileImages', fileObject as any);
+      });
+    }
+  });
 
   return axiosClient.post('/auth/signup', formData, {
     headers: {
