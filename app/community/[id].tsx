@@ -1,7 +1,8 @@
 import type React from "react";
 import { useMemo, useCallback } from "react";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
-import { View, Pressable } from "react-native";
+import { View, Pressable, KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Header, Show, Text } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { ArticleDetail } from "@/src/features/community/ui/article-detail/article-detail";
@@ -110,16 +111,24 @@ export default function ArticleDetailScreen() {
   }
 
   return (
-    <View className="flex-1 relative bg-white">
-      <ArticleHeader
-        isOwner={isOwner}
-        dropdownOpen={isDropdownOpen}
-        dropdownItems={dropdownItems}
-      />
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <View className="flex-1 relative bg-white">
+          <ArticleHeader
+            isOwner={isOwner}
+            dropdownOpen={isDropdownOpen}
+            dropdownItems={dropdownItems}
+          />
 
-      <View className="flex-1">
-        <ArticleDetail article={article} />
-      </View>
-    </View>
+          <View className="flex-1">
+            <ArticleDetail article={article} />
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

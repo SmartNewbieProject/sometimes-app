@@ -97,6 +97,9 @@ const CommentInput = ({
     ])}
     placeholder={editingCommentId ? editingContent : '댓글을 입력하세요'}
     onChange={(e) => setEditingContent(e.nativeEvent.text)}
+    returnKeyType="send"
+    blurOnSubmit={false}
+    multiline={false}
   />
 );
 

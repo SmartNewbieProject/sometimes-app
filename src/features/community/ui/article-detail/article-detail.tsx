@@ -186,26 +186,31 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 						</View>
 					</View>
 					<View className="h-[1px] bg-[#F3F0FF] mb-[20px]"/>
-					<ScrollView className="">
+					<ScrollView
+						className="flex-1"
+						contentContainerStyle={{ paddingBottom: 20 }}
+						keyboardShouldPersistTaps="handled"
+					>
 						<Loading.Lottie title="댓글을 불러오고 있어요" loading={isCommentLoading}>
 							<View className="flex flex-col gap-y-[8px] mt-2">
 							{renderComments(comments)}
 							</View>
 						</Loading.Lottie>
 					</ScrollView>
-					<View className="h-[1px] bg-[#FFFFFF]"/>
 
-					<InputForm
-						checked={checked}
-						setChecked={setChecked}
-						editingCommentId={editingCommentId}
-						handleCancelEdit={handleCancelEdit}
-						editingContent={editingContent}
-						setEditingContent={setEditingContent}
-						form={form}
-						handleSubmitUpdate={handleSubmitUpdate}
-						handleSubmit={handleSubmit}
-					/>
+					<View className="border-t border-[#F3F0FF] pt-3 pb-2 px-4 bg-white">
+						<InputForm
+							checked={checked}
+							setChecked={setChecked}
+							editingCommentId={editingCommentId}
+							handleCancelEdit={handleCancelEdit}
+							editingContent={editingContent}
+							setEditingContent={setEditingContent}
+							form={form}
+							handleSubmitUpdate={handleSubmitUpdate}
+							handleSubmit={handleSubmit}
+						/>
+					</View>
 			</View>
     );
 }
