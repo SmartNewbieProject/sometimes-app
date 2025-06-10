@@ -18,6 +18,7 @@
     "@expo/config-plugins": "^10.0.2",
     "@expo/vector-icons": "^14.0.2",
     "@hookform/resolvers": "^5.0.1",
+    "@hotjar/browser": "^1.0.9",
     "@lottiefiles/dotlottie-react": "^0.13.5",
     "@portone/browser-sdk": "^0.0.17",
     "@portone/react-native-sdk": "^0.5.0",

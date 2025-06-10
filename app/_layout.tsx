@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { Platform, View } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
+import Hotjar from '@hotjar/browser';
 
 import { QueryProvider, RouteTracker } from '@/src/shared/config';
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
@@ -41,6 +42,22 @@ export default function RootLayout() {
 
   useEffect(() => {
     requestAtt();
+  }, []);
+
+  useEffect(() => {
+    // Hotjar Site ID와 Version
+    const siteId = 6430952;
+    const hotjarVersion = 6;
+
+    // Hotjar 초기화 (웹 플랫폼에서만)
+    if (Platform.OS === 'web') {
+      Hotjar.init(siteId, hotjarVersion);
+
+      // 개발 환경에서 디버그 로그
+      if (__DEV__) {
+        console.log("Hotjar initialized in development mode.");
+      }
+    }
   }, []);
 
   if (!loaded) {
