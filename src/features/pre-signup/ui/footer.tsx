@@ -23,7 +23,7 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
             router.navigate('/auth/signup/terms');
           }}
         >
-          빠르게 사전 가입하기
+          소개팅 시작하기
         </Button>
         <Button
           variant="outline"
