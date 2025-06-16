@@ -1,7 +1,7 @@
 import { cn } from '@/src/shared/libs/cn';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { useState } from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Modal, StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
 import { Text } from '../text';
 import colors from '../../constants/colors';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -58,6 +58,7 @@ export function Select({
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectedOption = options.find(option => option.value === value);
+  const modalWidth = 300;
 
   return (
     <View className={cn(className)} style={width ? { width } : undefined}>
@@ -83,9 +84,11 @@ export function Select({
         onRequestClose={() => setIsOpen(false)}
       >
         <View className="flex-1 bg-black/30 justify-center items-center">
-          <ScrollView 
-            style={styles.modalContainer}
+          <ScrollView
+            style={[styles.modalContainer, { width: modalWidth }]}
             contentContainerStyle={styles.modalContent}
+            showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
           >
             {options.map((option) => (
               <TouchableOpacity
@@ -119,21 +122,16 @@ export function Select({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    overflowY: 'scroll',
     backgroundColor: 'white',
     borderStyle: 'solid',
     borderWidth: 1,
     borderColor: colors.lightPurple,
     borderRadius: 10,
     maxHeight: 500,
-    width: 300,
     position: 'absolute',
     top: 150,
-    overflow: 'hidden',
   },
   modalContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexGrow: 1,
   },
 });
