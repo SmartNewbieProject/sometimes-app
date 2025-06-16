@@ -16,7 +16,7 @@ const { PaymentView } = ui;
 
 const OPTIONS = {
 	name: '연인 즉시 매칭권',
-	price: 5900,
+	price: 4800,
 };
 
 export default function RematchingTicketSellingScreen() {
@@ -129,10 +129,10 @@ export default function RematchingTicketSellingScreen() {
 				<View className="flex flex-col gap-y-4 justify-center mb-auto">
 					<Ticket.Provider name={OPTIONS.name} price={OPTIONS.price}>
 						<Ticket.Item count={1} onOpenPayment={onPurchase} />
-						<Ticket.Item count={2} discount={16} onOpenPayment={onPurchase} />
-						<Ticket.Item count={3} discount={27} onOpenPayment={onPurchase} hot />
-						<Ticket.Item count={5} discount={29} onOpenPayment={onPurchase} />
-						<Ticket.Item count={10} discount={37.4} onOpenPayment={onPurchase} />
+						<Ticket.Item count={2} discount={21.8} onOpenPayment={onPurchase} />
+						<Ticket.Item count={3} discount={27.1} onOpenPayment={onPurchase} hot />
+						<Ticket.Item count={5} discount={32.9} onOpenPayment={onPurchase} />
+						<Ticket.Item count={10} discount={40.8} onOpenPayment={onPurchase} />
 					</Ticket.Provider>
 				</View>
 
