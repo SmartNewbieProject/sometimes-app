@@ -6,7 +6,7 @@ export const calculateDiscount = (totalPrice: number, discount?: number) => {
 
 
 const roundToHundred = (value: number): number => {
-  return Math.floor(value / 100) * 100;
+  return Math.ceil(value / 100) * 100;
 };
 
 export const toKRW = (value: number): string => value.toLocaleString('ko-KR');
