@@ -2,6 +2,7 @@ import { axiosClient, tryCatch } from "@/src/shared/libs";
 import { useStorage } from "@shared/hooks/use-storage";
 import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
 import type { TokenResponse } from "@/src/types/auth";
+import { passLogin } from "../apis";
 import { useModal } from "@hooks/use-modal";
 import { router } from "expo-router";
 import { eventBus } from '@/src/shared/libs/event-bus';
@@ -27,6 +28,27 @@ export function useAuth() {
 
     await setToken(accessToken);
     await setRefreshToken(refreshToken);
+  };
+
+  const loginWithPass = async (impUid: string) => {
+    const response = await passLogin(impUid);
+    const data = response.data;
+
+    if (data.isNewUser) {
+      // 신규 사용자인 경우 회원가입 페이지로 이동하면서 본인인증 정보 전달
+      router.push({
+        pathname: '/auth/signup/terms',
+        params: {
+          certificationInfo: JSON.stringify(data.certificationInfo),
+        },
+      });
+      return { isNewUser: true, certificationInfo: data.certificationInfo };
+    } else {
+      // 기존 사용자인 경우 로그인 처리
+      await setToken(data.accessToken);
+      await setRefreshToken(data.refreshToken);
+      return { isNewUser: false };
+    }
   };
 
   const logoutOnly = async () => {
@@ -79,6 +101,7 @@ export function useAuth() {
 
   return {
     login,
+    loginWithPass,
     profileDetails,
     isAuthorized: !!accessToken,
     logout,

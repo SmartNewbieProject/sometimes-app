@@ -102,9 +102,25 @@ declare namespace IMP {
     };
   }
 
+  interface CertificationParams {
+    merchant_uid: string;
+    pg?: string;
+    company?: string;
+    carrier?: string;
+    name?: string;
+    phone?: string;
+  }
+
+  interface CertificationResponse {
+    success: boolean;
+    imp_uid?: string;
+    error_msg?: string;
+  }
+
   interface IMP {
     init: (accountID: string) => void;
     request_pay: (params: RequestPayParams, callback: (response: RequestPayResponse) => void) => void;
+    certification: (params: CertificationParams, callback?: (response: CertificationResponse) => void) => void;
   }
 }
 

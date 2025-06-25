@@ -53,6 +53,7 @@
     "expo-system-ui": "~5.0.7",
     "expo-tracking-transparency": "~5.2.4",
     "expo-web-browser": "~14.1.6",
+    "iamport": "^0.3.4",
     "metro-react-native-babel-transformer": "^0.76.9",
     "nanoid": "^5.1.5",
     "nativewind": "^4.1.23",

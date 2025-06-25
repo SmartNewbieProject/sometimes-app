@@ -14,6 +14,7 @@ import { cn } from '@/src/shared/libs/cn';
 import { ModalProvider, AnalyticsProvider } from '@/src/shared/providers';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useAtt } from '@/src/shared/hooks';
+import { PortoneProvider } from '@/src/features/payment/hooks/PortoneProvider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -68,22 +69,24 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryProvider>
         <ModalProvider>
-          <View
-            className={cn(
-              'flex-1 font-extralight',
-              Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
-            )}
-          >
-              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <AnalyticsProvider>
-                  <RouteTracker>
-                    <Slot />
-                  </RouteTracker>
-                </AnalyticsProvider>
-              </ThemeProvider>
-          </View>
+          <PortoneProvider>
+            <View
+              className={cn(
+                'flex-1 font-extralight',
+                Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
+              )}
+            >
+                <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                  <AnalyticsProvider>
+                    <RouteTracker>
+                      <Slot />
+                    </RouteTracker>
+                  </AnalyticsProvider>
+                </ThemeProvider>
+            </View>
+          </PortoneProvider>
         </ModalProvider>
-      </QueryProvider>      
+      </QueryProvider>
     </GestureHandlerRootView>
   );
 }

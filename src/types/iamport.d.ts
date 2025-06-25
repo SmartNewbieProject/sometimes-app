@@ -182,13 +182,27 @@ declare namespace IMP {
     (response: RequestPayResponse): void;
   }
 
+  interface CertificationParams {
+    merchant_uid: string;
+    company?: string;
+    carrier?: string;
+    name?: string;
+    phone?: string;
+  }
+
+  interface CertificationResponse {
+    success: boolean;
+    imp_uid?: string;
+    error_msg?: string;
+  }
+
   interface IamportInstance {
     /** I'mport 초기화 */
     init(accountID: string): void;
     /** 결제 요청 */
     request_pay(params: RequestPayParams, callback?: RequestPayResponseCallback): void;
     /** 본인인증 요청 */
-    certification(params: any, callback?: Function): void;
+    certification(params: CertificationParams, callback?: (response: CertificationResponse) => void): void;
   }
 }
 

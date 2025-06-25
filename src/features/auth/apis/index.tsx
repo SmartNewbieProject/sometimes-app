@@ -8,3 +8,6 @@ export const checkExistsInstagram = (instagramId: string): Promise<{ exists: boo
 
 export const getMyDetails = (): Promise<MyDetails> =>
   axiosClient.get('/user/details');
+
+export const passLogin = (impUid: string) =>
+  axiosClient.post('/auth/pass-login', { impUid });
