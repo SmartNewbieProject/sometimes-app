@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { PalePurpleGradient, BottomNavigation, Header, Show, AnnounceCard, BusinessInfo } from '@/src/shared/ui';
 import { Image } from 'expo-image';
 import Home from "@features/home";
@@ -88,7 +88,7 @@ const HomeScreen = () => {
         }
       />
 
-      <ScrollView className="flex-1 px-5 flex flex-col gap-y-[14px] pb-14">
+      <ScrollView className={`flex-1 px-5 flex flex-col gap-y-[14px] ${Platform.OS === 'android' ? 'pb-40' : 'pb-14'}`}>
         <View>
           <Loading.Lottie
             title="몇 명이 매칭을 신청했을까요?"

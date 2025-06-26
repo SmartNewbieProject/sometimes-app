@@ -32,14 +32,14 @@ export const UserProfile = ({ author, universityName, isOwner, comment, updatedA
               </Show>
               <Show when={!!updatedAt}>
                 <View className="pl-1.5">
-                  {updatedAt}
+                  <Text size="sm" textColor="pale-purple">{updatedAt}</Text>
                 </View>
               </Show>
             </View>
 
             <Show when={!!comment}>
               <View className="pt-1.5 flex-wrap max-w-[calc(100%-16px)] break-all overflow-wrap-anywhere">
-                {comment}
+                <Text size="sm" textColor="black">{comment}</Text>
               </View>
             </Show>
           </View>

@@ -11,8 +11,9 @@ import { usePortone } from '@/src/features/payment/hooks/use-portone';
 import { RematchingTicket } from '@/src/features/payment/ui/rematching-ticket';
 import { Ticket, TicketDetails } from '@/src/widgets';
 
-const { ui } = Payment;
+const { ui, services } = Payment;
 const { PaymentView } = ui;
+const { createUniqueId } = services;
 
 const OPTIONS = {
 	name: '연인 즉시 매칭권',
@@ -26,8 +27,7 @@ export default function RematchingTicketSellingScreen() {
 	const controller = createRef<PortOneController>();
 	const { showErrorModal } = useModal();
 	const [paymentId, setPaymentId] = useState<string>(() => {
-		const { nanoid } = require('nanoid');
-		return nanoid();
+		return createUniqueId();
 	});
 
 	const { handlePaymentComplete } = usePortone();
@@ -45,8 +45,7 @@ export default function RematchingTicketSellingScreen() {
 
 	const onError = async (error: unknown) => {
 		console.error('결제 오류:', error);
-		const { nanoid } = await import('nanoid');
-		const id = nanoid();
+		const id = createUniqueId();
 		console.debug('결제 오류 발생 시 새로운 orderId 생성:', id);
 		setPaymentId(id);
 		setShowPayment(false);
@@ -105,6 +104,7 @@ export default function RematchingTicketSellingScreen() {
 	return (
 		<Layout.Default className="flex h-full flex-col" style={{ backgroundColor: '#DECDF9' }}>
 			{Platform.OS === 'ios' && <View style={{ marginTop: 56 }} />}
+			{Platform.OS === 'android' && <View style={{ marginTop: 0 }} />}
 			<PalePurpleGradient />
 			<RematchingTicket.Header />
 			<RematchingTicket.Banner />

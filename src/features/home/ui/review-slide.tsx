@@ -1,4 +1,4 @@
-import { View, Image } from "react-native";
+import { View, Image, Platform } from "react-native";
 import { Slide } from "@/src/widgets";
 import { getUnivLogo, UniversityName } from "@/src/shared/libs";
 import { Text } from '@shared/ui';
@@ -16,7 +16,7 @@ export const ReviewSlide = () => {
     <Slide
       autoPlayInterval={6000}
       indicatorType="dot"
-      className="w-full"
+      className={`w-full ${Platform.OS === 'android' ? 'h-40' : ''}`}
       autoPlay
     >
       {reviews.map(review => (
@@ -39,7 +39,7 @@ export const ReviewSlide = () => {
             </View>
           </View>
 
-          <View className="mx-2 mt-2 h-full flex flex-col ml-2">
+          <View className="mx-2 mt-2 flex flex-col ml-2">
             <Text size="sm" textColor="black">
               {review.content}
             </Text>

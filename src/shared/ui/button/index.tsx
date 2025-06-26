@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 import type React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import { cn } from '../../libs/cn';
 import { Text } from '../text';
 import type { ViewStyle } from 'react-native';
@@ -22,7 +22,7 @@ const buttonStyles = cva(
 			size: {
 				md: 'text-md h-[50px]',
 				sm: 'text-sm h-[40px]',
-				chip: 'text-xs h-[28px] px-2',
+				chip: Platform.OS === 'web' ? 'text-xs h-[28px] px-2' : 'text-xs h-[32px] px-2',
 			},
 			disabled: {
 				true: 'opacity-50',

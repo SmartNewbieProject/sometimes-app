@@ -10,6 +10,7 @@ import { useAuth } from "../../auth";
 import { router } from "expo-router";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
+import { platform } from "@/src/shared/libs/platform";
 
 type Form = {
   email: string;
@@ -33,6 +34,13 @@ export default function LoginForm() {
       password: '',
     },
     mode: 'onBlur',
+  });
+
+  // 플랫폼별 플레이스홀더 텍스트
+  const passwordPlaceholder = platform({
+    ios: () => "영문, 숫자, 특수문자 8자리 이상",
+    android: () => "영문, 숫자, 특수문자 8자리 이상",
+    web: () => "영문, 숫자, 특수문자 조합 8자리 이상"
   });
 
   const onPressLogin = form.handleSubmit(async ({ email, password }) => {
@@ -67,7 +75,7 @@ export default function LoginForm() {
           control={form.control}
           label="비밀번호"
           size="sm"
-          placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
+          placeholder={passwordPlaceholder}
           isPassword
         />
 

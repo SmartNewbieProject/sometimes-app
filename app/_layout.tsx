@@ -71,7 +71,7 @@ export default function RootLayout() {
           <View
             className={cn(
               'flex-1 font-extralight',
-              Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
+              Platform.OS === 'web' ? 'max-w-[468px] w-full self-center' : ''
             )}
           >
               <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

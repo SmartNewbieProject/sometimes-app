@@ -40,6 +40,13 @@ export default function AccountScreen() {
 
   const isPasswordMatch = form.watch('password') === form.watch('passwordConfirm');
 
+  // 플랫폼별 플레이스홀더 텍스트
+  const passwordPlaceholder = platform({
+    ios: () => "영문, 숫자, 특수문자 8자리 이상",
+    android: () => "영문, 숫자, 특수문자 8자리 이상",
+    web: () => "영문, 숫자, 특수문자 조합 8자리 이상"
+  });
+
   const onNext = handleSubmit((data) => {
     trackSignupEvent('next_button_click', 'to_phone');
     updateForm({
@@ -96,7 +103,7 @@ export default function AccountScreen() {
             size="sm"
             control={form.control}
             label="비밀번호"
-            placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
+            placeholder={passwordPlaceholder}
             isPassword
           />
           <Form.LabelInput
@@ -104,7 +111,7 @@ export default function AccountScreen() {
             size="sm"
             control={form.control}
             label="비밀번호 확인"
-            placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
+            placeholder={passwordPlaceholder}
             isPassword
           />
         </View>

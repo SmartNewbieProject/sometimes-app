@@ -13,7 +13,7 @@
       "bundleIdentifier": "com.some-in-univ",
       "capabilities": [
         "push-notifications",
-        "sign-in-with-apple", 
+        "sign-in-with-apple",
         "associated-domains",
         "app-groups",
         "maps"
@@ -161,7 +161,8 @@
         {
           "userTrackingPermission": "썸타임은 사용자에게 맞춤 광고를 위해 추적 권한을 요청합니다."
         }
-      ]    
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
