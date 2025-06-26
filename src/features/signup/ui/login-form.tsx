@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../auth";
 import { router } from "expo-router";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { platform } from "@shared/libs/platform";
 
 type Form = {
@@ -77,9 +77,18 @@ export default function LoginForm() {
 
         // 본인인증 성공 - imp_uid 대신 identityVerificationId 사용
         tryCatch(async () => {
+          console.log('패스 로그인 시작:', response.identityVerificationId);
           const result = await loginWithPass(response.identityVerificationId);
+          console.log('패스 로그인 결과:', result);
+
           if (!result.isNewUser) {
-            router.navigate('/home');
+            console.log('기존 사용자 로그인 성공, 홈으로 이동');
+            // 토큰 저장이 완료될 때까지 잠시 대기 후 홈으로 이동
+            setTimeout(() => {
+              router.replace('/home');
+            }, 100);
+          } else {
+            console.log('신규 사용자, 회원가입 페이지로 이동');
           }
         }, (error) => {
           console.error('PASS 로그인 실패:', error);
@@ -99,6 +108,14 @@ export default function LoginForm() {
       if (isAuthorized) router.push('/home');
     }, [isAuthorized]
   ));
+
+  // 토큰 저장 후 즉시 홈으로 이동하도록 감지
+  useEffect(() => {
+    if (isAuthorized) {
+      console.log('인증 상태 변화 감지, 홈으로 이동');
+      router.replace('/home');
+    }
+  }, [isAuthorized]);
 
   return (
     <View className="flex flex-col flex-1 h-full">

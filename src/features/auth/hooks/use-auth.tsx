@@ -31,9 +31,7 @@ export function useAuth() {
   };
 
   const loginWithPass = async (impUid: string) => {
-    const response = await passLogin(impUid);
-    const data = response.data;
-
+    const data = await passLogin(impUid);
     if (data.isNewUser) {
       // 신규 사용자인 경우 회원가입 페이지로 이동하면서 본인인증 정보 전달
       router.push({
