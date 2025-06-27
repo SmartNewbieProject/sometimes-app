@@ -17,6 +17,11 @@
         "distribution": "store",
         "developmentClient": false,
         "buildConfiguration": "Release"
+      },
+      "android": {
+        "distribution": "store",
+        "developmentClient": false,
+        "buildType": "apk"
       }
     },
     "production-debug": {

@@ -38,8 +38,18 @@ export const UserProfile = ({ author, universityName, isOwner, comment, updatedA
             </View>
 
             <Show when={!!comment}>
-              <View className="pt-1.5 flex-wrap max-w-[calc(100%-16px)] break-all overflow-wrap-anywhere">
-                <Text size="sm" textColor="black">{comment}</Text>
+              <View className="pt-1.5" style={{ flex: 1, flexDirection: 'row' }}>
+                <Text
+                  size="sm"
+                  textColor="black"
+                  style={{
+                    flex: 1,
+                    flexWrap: 'wrap',
+                    flexShrink: 1
+                  }}
+                >
+                  {comment}
+                </Text>
               </View>
             </Show>
           </View>
