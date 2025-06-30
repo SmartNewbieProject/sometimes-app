@@ -1,35 +1,35 @@
-import VectorIcon from '@/assets/icons/Vector.svg';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import { tryCatch } from '@/src/shared/libs';
-import { Lottie, Text } from '@/src/shared/ui';
-import { IconWrapper } from '@/src/shared/ui/icons';
-import { useQueryClient } from '@tanstack/react-query';
-import { router } from 'expo-router';
 import {
-	type RefObject,
-	forwardRef,
-	useCallback,
-	useEffect,
-	useImperativeHandle,
-	useRef,
-} from 'react';
-import {
-	type FlatList,
-	Image,
-	Linking,
-	type NativeScrollEvent,
-	type NativeSyntheticEvent,
-	Platform,
 	TouchableOpacity,
 	View,
+	Image,
+	type FlatList,
+	Platform,
+	Linking,
+	type NativeSyntheticEvent,
+	type NativeScrollEvent,
 } from 'react-native';
-import { CustomInfiniteScrollView } from '../../../shared/infinite-scroll/custom-infinite-scroll-view';
-import apis from '../apis';
-import { useCategory } from '../hooks';
-import { useInfiniteArticlesQuery } from '../queries/use-infinite-articles';
-import { createArticlesQueryKey } from '../queries/use-infinite-articles';
-import type { Article as ArticleType } from '../types';
 import { Article } from './article';
+import { IconWrapper } from '@/src/shared/ui/icons';
+import VectorIcon from '@/assets/icons/Vector.svg';
+import { Lottie, Text } from '@/src/shared/ui';
+import { useCategory } from '../hooks';
+import { router } from 'expo-router';
+import type { Article as ArticleType } from '../types';
+import { tryCatch } from '@/src/shared/libs';
+import apis from '../apis';
+import {
+	forwardRef,
+	useImperativeHandle,
+	useRef,
+	useEffect,
+	useCallback,
+	type RefObject,
+} from 'react';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { useInfiniteArticlesQuery } from '../queries/use-infinite-articles';
+import { CustomInfiniteScrollView } from '../../../shared/infinite-scroll/custom-infinite-scroll-view';
+import { useQueryClient } from '@tanstack/react-query';
+import { createArticlesQueryKey } from '../queries/use-infinite-articles';
 
 interface InfiniteArticleListProps {
 	initialSize?: number;

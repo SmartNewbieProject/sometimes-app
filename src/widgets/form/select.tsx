@@ -1,6 +1,10 @@
 import { Select as BaseSelect } from '@/src/shared/ui';
 import type { SelectProps } from '@/src/shared/ui/select';
-import { type FieldValues, type UseControllerProps, useController } from 'react-hook-form';
+import {
+	type FieldValues,
+	type UseControllerProps,
+	useController
+} from 'react-hook-form';
 
 interface Option {
 	label: string;

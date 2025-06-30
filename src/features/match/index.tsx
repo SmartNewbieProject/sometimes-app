@@ -1,15 +1,17 @@
-import { matchHistoryApis } from './apis';
-import { useMatchPartnerQuery } from './queries';
+import { matchHistoryApis } from "./apis";
+import { useMatchPartnerQuery } from "./queries";
 import * as ui from './ui';
 
 const Match = {
-	apis: {
-		history: matchHistoryApis,
-	},
-	queries: {
-		useMatchPartnerQuery,
-	},
-	ui,
+  apis: {
+    history: matchHistoryApis,
+  },
+  queries: {
+    useMatchPartnerQuery,
+  },
+  ui,
 };
 
+
 export default Match;
+

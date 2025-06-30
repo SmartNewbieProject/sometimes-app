@@ -16,11 +16,16 @@ type Form = {
   email: string;
   password: string;
 }
+  email: string;
+  password: string;
+}
 
 const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$/;
 // const passwordRegex = /.*/;
 
 const loginSchema = z.object({
+  email: z.string({ required_error: "이메일을 입력해주세요" }).email({ message: "이메일을 입력해주세요" }),
+  password: z.string({ required_error: '비밀번호를 입력해주세요.' }).regex(passwordRegex, { message: '올바른 비밀번호를 입력해주세요' }),
   email: z.string({ required_error: "이메일을 입력해주세요" }).email({ message: "이메일을 입력해주세요" }),
   password: z.string({ required_error: '비밀번호를 입력해주세요.' }).regex(passwordRegex, { message: '올바른 비밀번호를 입력해주세요' }),
 });
@@ -53,6 +58,16 @@ export default function LoginForm() {
       }
     });
   });
+  const onPressLogin = form.handleSubmit(async ({ email, password }) => {
+    tryCatch(async () => {
+      await login(email, password);
+      router.navigate('/home');
+    }, (error) => {
+      if (error.status === 401) {
+        form.setError('password', { message: '아이디가 존재하지 않거나 비밀번호가 일치하지 않습니다' });
+      }
+    });
+  });
 
 const onPressPassLogin = async () => {
     clearError(); // 이전 에러 메시지 제거
@@ -65,6 +80,13 @@ const onPressPassLogin = async () => {
     }, [isAuthorized]
   ));
 
+  // 토큰 저장 후 즉시 홈으로 이동하도록 감지
+  useEffect(() => {
+    if (isAuthorized) {
+      console.log('인증 상태 변화 감지, 홈으로 이동');
+      router.replace('/home');
+    }
+  }, [isAuthorized]);
   // 토큰 저장 후 즉시 홈으로 이동하도록 감지
   useEffect(() => {
     if (isAuthorized) {

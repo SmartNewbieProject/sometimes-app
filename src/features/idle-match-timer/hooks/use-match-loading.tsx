@@ -1,13 +1,13 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 type StoreStates = {
-	loading: boolean;
-	onLoading: () => void;
-	finishLoading: () => void;
-};
+  loading: boolean;
+  onLoading: () => void;
+  finishLoading: () => void;
+}
 
-export const useMatchLoading = create<StoreStates>((set) => ({
-	loading: false,
-	onLoading: () => set({ loading: true }),
-	finishLoading: () => set({ loading: false }),
+export const useMatchLoading = create<StoreStates>(set => ({
+  loading: false,
+  onLoading: () => set({ loading: true }),
+  finishLoading: () => set({ loading: false }),
 }));

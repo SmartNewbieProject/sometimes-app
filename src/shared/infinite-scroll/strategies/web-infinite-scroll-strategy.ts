@@ -1,105 +1,105 @@
 import { useRef } from 'react';
-import type { InfiniteScrollOptions } from '../types';
-import type { InfiniteScrollStrategy } from './infinite-scroll-strategy';
+import { InfiniteScrollOptions } from '../types';
+import { InfiniteScrollStrategy } from './infinite-scroll-strategy';
 
 export class WebInfiniteScrollStrategy implements InfiniteScrollStrategy {
-	private observer: IntersectionObserver | null = null;
-	private callback: (() => void) | null = null;
-	private options: InfiniteScrollOptions = {};
-	private lastItemRef: React.RefObject<HTMLElement> | null = null;
-	private isCallbackCalled = false;
-	private callbackTimeout: NodeJS.Timeout | null = null;
-	private observerUpdateTimeout: NodeJS.Timeout | null = null;
+  private observer: IntersectionObserver | null = null;
+  private callback: (() => void) | null = null;
+  private options: InfiniteScrollOptions = {};
+  private lastItemRef: React.RefObject<HTMLElement> | null = null;
+  private isCallbackCalled = false;
+  private callbackTimeout: NodeJS.Timeout | null = null;
+  private observerUpdateTimeout: NodeJS.Timeout | null = null;
 
-	setupScroll(callback: () => void, options: InfiniteScrollOptions) {
-		this.callback = callback;
-		this.options = options;
-		this.lastItemRef = options.lastItemRef || null;
+  setupScroll(callback: () => void, options: InfiniteScrollOptions) {
+    this.callback = callback;
+    this.options = options;
+    this.lastItemRef = options.lastItemRef || null;
 
-		this.cleanupScroll();
+    this.cleanupScroll();
 
-		if (options.enabled === false) {
-			return;
-		}
+    if (options.enabled === false) {
+      return;
+    }
 
-		const threshold = options.threshold || 0.5;
+    const threshold = options.threshold || 0.5;
 
-		this.observer = new IntersectionObserver(
-			(entries) => {
-				const lastEntry = entries[0];
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        const lastEntry = entries[0];
 
-				const intersection = lastEntry?.isIntersecting && !this.isCallbackCalled;
-				if (!intersection) {
-					return;
-				}
+        const intersection = lastEntry && lastEntry.isIntersecting && !this.isCallbackCalled;
+        if (!intersection) {
+          return;
+        }
 
-				this.isCallbackCalled = true;
+        this.isCallbackCalled = true;
 
-				if (this.callbackTimeout) {
-					clearTimeout(this.callbackTimeout);
-				}
+        if (this.callbackTimeout) {
+          clearTimeout(this.callbackTimeout);
+        }
 
-				this.callbackTimeout = setTimeout(() => {
-					if (this.callback) {
-						this.callback();
-						if (this.observerUpdateTimeout) {
-							clearTimeout(this.observerUpdateTimeout);
-						}
-						this.observerUpdateTimeout = setTimeout(() => {
-							this.updateObserver();
-							this.isCallbackCalled = false;
-						}, 1000);
-					}
-				}, 100);
-			},
-			{
-				root: null,
-				rootMargin: '200px',
-				threshold,
-			},
-		);
+        this.callbackTimeout = setTimeout(() => {
+          if (this.callback) {
+            this.callback();
+            if (this.observerUpdateTimeout) {
+              clearTimeout(this.observerUpdateTimeout);
+            }
+            this.observerUpdateTimeout = setTimeout(() => {
+              this.updateObserver();
+              this.isCallbackCalled = false;
+            }, 1000);
+          }
+        }, 100);
+      },
+      {
+        root: null,
+        rootMargin: '200px',
+        threshold,
+      }
+    );
 
-		this.updateObserver();
-	}
+    this.updateObserver();
+  };
 
-	cleanupScroll = (): void => {
-		if (this.observer) {
-			this.observer.disconnect();
-			this.observer = null;
-		}
+  cleanupScroll = (): void => {
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
 
-		if (this.callbackTimeout) {
-			clearTimeout(this.callbackTimeout);
-			this.callbackTimeout = null;
-		}
+    if (this.callbackTimeout) {
+      clearTimeout(this.callbackTimeout);
+      this.callbackTimeout = null;
+    }
 
-		if (this.observerUpdateTimeout) {
-			clearTimeout(this.observerUpdateTimeout);
-			this.observerUpdateTimeout = null;
-		}
-	};
+    if (this.observerUpdateTimeout) {
+      clearTimeout(this.observerUpdateTimeout);
+      this.observerUpdateTimeout = null;
+    }
+  };
 
-	updateObserver = (): void => {
-		if (!this.observer || !this.lastItemRef?.current) {
-			setTimeout(() => {
-				if (this.isCallbackCalled) {
-					this.isCallbackCalled = false;
-				}
-			}, 3000);
+  updateObserver = (): void => {
+    if (!this.observer || !this.lastItemRef?.current) {
+      setTimeout(() => {
+        if (this.isCallbackCalled) {
+          this.isCallbackCalled = false;
+        }
+      }, 3000);
 
-			return;
-		}
+      return;
+    }
 
-		this.observer.disconnect();
-		this.observer.observe(this.lastItemRef.current);
-		this.isCallbackCalled = false;
-	};
+    this.observer.disconnect();
+    this.observer.observe(this.lastItemRef.current);
+    this.isCallbackCalled = false;
+  };
 
-	getScrollProps = (): any => {
-		return {};
-	};
+  getScrollProps = (): any => {
+    return {};
+  };
 }
 
 export const useLastItemRef = () => {
-	return useRef<HTMLDivElement>(null);
+  return useRef<HTMLDivElement>(null);
 };

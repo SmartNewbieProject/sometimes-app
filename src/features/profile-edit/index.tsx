@@ -1,7 +1,7 @@
 import * as queries from './queries';
 
 const ProfileEdit = {
-	queries,
+  queries,
 };
 
 export default ProfileEdit;

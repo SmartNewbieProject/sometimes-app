@@ -1,102 +1,102 @@
-import { axiosClient, fileUtils, platform } from '@/src/shared/libs';
+import { axiosClient, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from 'nanoid';
 
 type RematchingTicket = {
-	total: number;
-};
+    total: number;
+}
 
 type MyRematchingTicket = {
-	id: number;
-	name: string;
-};
+    id: number;
+    name: string;
+}
 
 export type Mbti = {
-	mbti: string | null;
-};
+    mbti: string | null;
+}
+
 
 const getMyRematchingTicket = async (): Promise<MyRematchingTicket[]> => {
-	return await axiosClient.get('/tickets/rematching');
-};
+    return await axiosClient.get('/tickets/rematching');
+}
 
 const getAllRematchingTicket = async (): Promise<RematchingTicket> => {
-	const myRematchingTickets = await getMyRematchingTicket();
-	return { total: myRematchingTickets.length };
-};
+    const myRematchingTickets = await getMyRematchingTicket();
+    return { total: myRematchingTickets.length };
+}
 
 const getMbti = async (): Promise<Mbti> => {
-	return await axiosClient.get('/profile/mbti');
+    return await axiosClient.get('/profile/mbti');
 };
 
 const updateMbti = async (mbti: string): Promise<void> => {
-	return await axiosClient.patch('/profile/mbti', { mbti });
+    return await axiosClient.patch('/profile/mbti', { mbti });
 };
 
 // 프로필 이미지 삭제
 const deleteProfileImage = async (imageId: string): Promise<void> => {
-	return await axiosClient.delete(`/profile/images/${imageId}`);
+    return await axiosClient.delete(`/profile/images/${imageId}`);
 };
 
 const createProfileFileObject = (imageUri: string, fileName: string) =>
-	platform({
-		web: () => {
-			const blob = fileUtils.dataURLtoBlob(imageUri);
-			return fileUtils.toFile(blob, fileName);
-		},
-		default: () =>
-			({
-				uri: imageUri,
-				name: fileName,
-				type: 'image/png',
-			}) as any,
-	});
+    platform({
+        web: () => {
+            const blob = fileUtils.dataURLtoBlob(imageUri);
+            return fileUtils.toFile(blob, fileName);
+        },
+        default: () => ({
+            uri: imageUri,
+            name: fileName,
+            type: 'image/png'
+        } as any)
+    });
 
 const uploadProfileImage = async (image: string, isMain: number): Promise<void> => {
-	const formData = new FormData();
-	const file = createProfileFileObject(image, `profile-${nanoid(6)}.png`);
+    const formData = new FormData();
+    const file = createProfileFileObject(image, `profile-${nanoid(6)}.png`);
 
-	formData.append('files', file);
-	formData.append('isMain', isMain.toString());
+    formData.append('files', file);
+    formData.append('isMain', isMain.toString());
 
-	return axiosClient.post('/profile/images', formData, {
-		headers: { 'Content-Type': 'multipart/form-data' },
-	});
+    return axiosClient.post('/profile/images', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
 };
 
 const uploadProfileImages = async (images: string[]): Promise<void> => {
-	const formData = new FormData();
+    const formData = new FormData();
 
-	images
-		.filter((image) => image !== null)
-		.forEach((imageUri) => {
-			const file = createProfileFileObject(imageUri, `profile-${nanoid(6)}.png`);
-			formData.append('files', file);
-		});
+    images
+        .filter(image => image !== null)
+        .forEach(imageUri => {
+            const file = createProfileFileObject(imageUri, `profile-${nanoid(6)}.png`);
+            formData.append('files', file);
+        });
 
-	formData.append('isMain', '0');
+    formData.append('isMain', '0');
 
-	return axiosClient.post('/profile/images', formData, {
-		headers: { 'Content-Type': 'multipart/form-data' },
-	});
+    return axiosClient.post('/profile/images', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
 };
 
 type Service = {
-	getMyRematchingTicket: () => Promise<MyRematchingTicket[]>;
-	getAllRematchingTicket: () => Promise<RematchingTicket>;
-	getMbti: () => Promise<Mbti>;
-	updateMbti: (mbti: string) => Promise<void>;
-	deleteProfileImage: (imageId: string) => Promise<void>;
-	uploadProfileImage: (image: string, isMain: number) => Promise<void>;
-	uploadProfileImages: (images: string[]) => Promise<void>;
-};
+    getMyRematchingTicket: () => Promise<MyRematchingTicket[]>;
+    getAllRematchingTicket: () => Promise<RematchingTicket>;
+    getMbti: () => Promise<Mbti>;
+    updateMbti: (mbti: string) => Promise<void>;
+    deleteProfileImage: (imageId: string) => Promise<void>;
+    uploadProfileImage: (image: string, isMain: number) => Promise<void>;
+    uploadProfileImages: (images: string[]) => Promise<void>;
+}
 
 const apis: Service = {
-	getMyRematchingTicket,
-	getAllRematchingTicket,
-	getMbti,
-	updateMbti,
-	deleteProfileImage,
-	uploadProfileImage,
-	uploadProfileImages,
-};
+    getMyRematchingTicket,
+    getAllRematchingTicket,
+    getMbti,
+    updateMbti,
+    deleteProfileImage,
+    uploadProfileImage,
+    uploadProfileImages,
+}
 
 export default apis;

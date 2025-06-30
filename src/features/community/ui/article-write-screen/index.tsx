@@ -1,7 +1,7 @@
-import { ArticleWriteForm, ArticleWriteHeader, ArticleWriteNav } from './ui';
+import { ArticleWriteHeader, ArticleWriteForm, ArticleWriteNav } from './ui';
 
 export const ArtcileWriter = {
-	Header: ArticleWriteHeader,
-	Form: ArticleWriteForm,
-	Nav: ArticleWriteNav,
+  Header: ArticleWriteHeader,
+  Form: ArticleWriteForm,
+  Nav: ArticleWriteNav,
 };

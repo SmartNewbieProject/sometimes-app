@@ -1,7 +1,10 @@
 import apis from './apis';
 
 const MyPage = {
-	...apis,
-};
+    ...apis,
+}
+
 
 export default MyPage;
+
+

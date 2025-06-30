@@ -4,16 +4,20 @@ import * as types from './types';
 import * as ui from './ui';
 import webPayment from './web';
 
-const createUniqueId = () => nanoid().replaceAll(/-/g, '').replaceAll(/_/g, '');
+const createUniqueId = () =>
+  nanoid()
+    .replaceAll(/-/g, '')
+    .replaceAll(/_/g, '');
+
 
 const Payment = {
-	ui,
-	apis: paymentApis,
-	types,
-	services: {
-		createUniqueId,
-	},
-	web: webPayment,
+  ui,
+  apis: paymentApis,
+  types,
+  services: {
+    createUniqueId,
+  },
+  web: webPayment,
 };
 
 export default Payment;

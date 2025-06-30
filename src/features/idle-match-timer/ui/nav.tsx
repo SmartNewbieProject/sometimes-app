@@ -1,15 +1,15 @@
-import { queryClient } from '@/src/shared/config/query';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import { ImageResources, axiosClient, tryCatch } from '@/src/shared/libs';
+import { View } from 'react-native';
+import type { MatchDetails } from '../types';
 import { Button, ImageResource } from '@/src/shared/ui';
+import { axiosClient, ImageResources, tryCatch } from '@/src/shared/libs';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { HttpStatusCode } from 'axios';
 import { Text } from '@shared/ui';
 import { useMutation } from '@tanstack/react-query';
-import { HttpStatusCode } from 'axios';
+import { queryClient } from '@/src/shared/config/query';
 import { router } from 'expo-router';
-import { View } from 'react-native';
-import Instagram from '../../instagram';
 import { useMatchLoading } from '../hooks';
-import type { MatchDetails } from '../types';
+import Instagram from '../../instagram';
 
 const {
 	ui: { InstagramContactButton },
@@ -84,14 +84,14 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
 				}
 				finishLoading();
 				showModal({
-					title: '아직 추천드릴 상대가 없어요',
+					title: "아직 추천드릴 상대가 없어요",
 					children: (
 						<View className="flex flex-col">
 							<Text>지금은 조건에 맞는 상대가 잠시 없어요.</Text>
 							<Text>곧 더 많은 분들이 참여할 예정이니, 잠시 후 다시 시도해 주세요!</Text>
 						</View>
-					),
-				});
+					)
+				})
 			},
 		);
 	};

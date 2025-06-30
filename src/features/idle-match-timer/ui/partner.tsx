@@ -1,16 +1,16 @@
-import { dayUtils } from '@/src/shared/libs';
-import { IconWrapper } from '@/src/shared/ui/icons';
-import ArrowRight from '@assets/icons/right-white-arrow.svg';
-import { Text, UniversityBadge } from '@shared/ui';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useMatchingBackground } from '../hooks';
-import { calculateTime } from '../services/calculate-time';
 import type { MatchDetails } from '../types';
+import { useMatchingBackground } from '../hooks';
+import { View, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
 import { sideStyle } from './constants';
+import { Text, UniversityBadge } from '@shared/ui';
+import ArrowRight from '@assets/icons/right-white-arrow.svg';
+import { IconWrapper } from '@/src/shared/ui/icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { calculateTime } from '../services/calculate-time';
+import { dayUtils } from '@/src/shared/libs';
 import Time from './time';
+import { router } from 'expo-router';
 
 type PartnerProps = {
 	match: MatchDetails;
@@ -44,14 +44,8 @@ export const Partner = ({ match }: PartnerProps) => {
 					?.toString()
 					.split('')
 					.map((value, index) => (
-						<Time
-							size="sm"
-							key={`${value}-${
-								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-								index
-							}`}
-							value={value}
-						/>
+						<Time size="sm" key={`${value}-${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+index}`} value={value} />
 					))}
 			</View>
 
@@ -70,7 +64,7 @@ export const Partner = ({ match }: PartnerProps) => {
 				</Text>
 				<View className="flex flex-row items-center">
 					<Text textColor="white" weight="light" size="md">
-						#{partner?.mbti} #{partner?.universityDetails?.name}
+						#{partner?.mbti}{' '}#{partner?.universityDetails?.name}
 					</Text>
 					{/* <UniversityBadge authenticated={partner?.universityDetails?.authentication ?? false} /> */}
 				</View>

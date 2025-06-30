@@ -1,9 +1,9 @@
-import ErrorFace from '@assets/icons/error-face.svg';
 import type React from 'react';
-import { type ReactNode, createContext, useCallback, useContext, useState } from 'react';
-import { Modal, View } from 'react-native';
-import { Button } from '../ui/button';
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { View, Modal } from 'react-native';
 import { Text } from '../ui/text';
+import { Button } from '../ui/button';
+import ErrorFace from '@assets/icons/error-face.svg';
 
 type ModalOptions = {
 	title?: ReactNode;

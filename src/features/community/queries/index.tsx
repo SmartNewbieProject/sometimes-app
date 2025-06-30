@@ -1,2 +1,2 @@
-export { useCommentsQuery } from './comments';
+export { useCommentsQuery } from "./comments";
 export * from './articles';

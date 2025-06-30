@@ -1,47 +1,49 @@
-import { router } from 'expo-router';
 import React, { type ReactNode } from 'react';
-import { CenterContent, Container, LeftButton, LeftContent, Logo, RightContent } from './ui';
+import { router } from 'expo-router';
+import { Container, LeftButton, LeftContent, CenterContent, Logo, RightContent } from './ui';
 
 type HeaderProps = {
-	title?: string;
-	showLogo?: boolean;
-	showBackButton?: boolean;
-	rightContent?: ReactNode;
-	onBackPress?: () => void;
-	className?: string;
-	centered?: boolean;
-	logoSize?: number;
+  title?: string;
+  showLogo?: boolean;
+  showBackButton?: boolean;
+  rightContent?: ReactNode;
+  onBackPress?: () => void;
+  className?: string;
+  centered?: boolean;
+  logoSize?: number;
 };
 
 export function Header({
-	title,
-	showLogo = true,
-	showBackButton = false,
-	rightContent,
-	onBackPress,
-	className,
-	centered = false,
-	logoSize = 32,
+  title,
+  showLogo = true,
+  showBackButton = false,
+  rightContent,
+  onBackPress,
+  className,
+  centered = false,
+  logoSize = 32,
 }: HeaderProps) {
-	const handleBackPress = () => {
-		if (onBackPress) {
-			onBackPress();
-		} else {
-			router.back();
-		}
-	};
+  const handleBackPress = () => {
+    if (onBackPress) {
+      onBackPress();
+    } else {
+      router.back();
+    }
+  };
 
-	return (
-		<Container className={className} centered={centered}>
-			<LeftContent>
-				<LeftButton visible={showBackButton} onPress={handleBackPress} />
-			</LeftContent>
+  return (
+    <Container className={className} centered={centered}>
+      <LeftContent>
+        <LeftButton visible={showBackButton} onPress={handleBackPress} />
+      </LeftContent>
 
-			<Logo title={title} showLogo={showLogo} logoSize={logoSize} />
+      <Logo title={title} showLogo={showLogo} logoSize={logoSize} />
 
-			<RightContent>{rightContent}</RightContent>
-		</Container>
-	);
+      <RightContent>
+        {rightContent}
+      </RightContent>
+    </Container>
+  );
 }
 
 Header.Container = Container;

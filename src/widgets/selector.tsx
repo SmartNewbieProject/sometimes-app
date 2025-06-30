@@ -1,6 +1,6 @@
-import { Text } from '@/src/shared/ui';
 import { Button, type ButtonProps } from '@/src/shared/ui/button';
-import { StyleSheet, View, type ViewStyle } from 'react-native';
+import { View, StyleSheet, type ViewStyle } from 'react-native';
+import { Text } from '@/src/shared/ui';
 
 interface Option {
 	label: string;

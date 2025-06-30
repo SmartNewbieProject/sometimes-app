@@ -1,9 +1,9 @@
-import * as services from './services';
 import * as ui from './ui';
+import * as services from './services';
 
 const Instagram = {
-	ui,
-	services,
+  ui,
+  services,
 };
 
 export default Instagram;

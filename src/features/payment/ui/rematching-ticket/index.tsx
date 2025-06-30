@@ -1,9 +1,9 @@
-import { Banner } from './banner';
-import { ContentLayout } from './content-layout';
-import { Header } from './header';
+import { Header } from "./header";
+import { Banner } from "./banner";
+import { ContentLayout } from "./content-layout";
 
 export const RematchingTicket = {
-	Header,
-	Banner,
-	ContentLayout,
+  Header,
+  Banner,
+  ContentLayout,
 };

@@ -1,13 +1,13 @@
 import apis from './apis';
-import * as hooks from './hooks';
-import * as queries from './queries';
 import * as UI from './ui';
+import * as queries from './queries';
+import * as hooks from './hooks';
 
 const Home = {
-	ui: UI,
-	apis,
-	queries,
-	hooks,
+  ui: UI,
+  apis,
+  queries,
+  hooks,
 };
 
 export default Home;

@@ -1,16 +1,10 @@
 import type { ReactNode } from 'react';
-import {
-	KeyboardAvoidingView,
-	Platform,
-	type StyleProp,
-	StyleSheet,
-	type ViewStyle,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, type StyleProp, StyleSheet, type ViewStyle } from 'react-native';
 
 type Props = {
 	children: ReactNode;
 	className?: string;
-	style?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const DefaultLayout = ({ children, className, style }: Props) => {
@@ -18,14 +12,14 @@ export const DefaultLayout = ({ children, className, style }: Props) => {
 	const keyboardVerticalOffset = Platform.OS === 'ios' ? 100 : 20;
 
 	return (
-		<KeyboardAvoidingView
-			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-			keyboardVerticalOffset={keyboardVerticalOffset}
-			style={[styles.container, style]}
-			className={className}
-		>
-			{children}
-		</KeyboardAvoidingView>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={keyboardVerticalOffset}
+      style={[styles.container, style]}
+      className={className}
+    >
+      {children}
+    </KeyboardAvoidingView>
 	);
 };
 
