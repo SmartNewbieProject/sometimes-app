@@ -40,17 +40,14 @@ export function useAuth() {
           certificationInfo: JSON.stringify(data.certificationInfo),
         },
       });
+
       return { isNewUser: true, certificationInfo: data.certificationInfo };
-    } else {
-      // 기존 사용자인 경우 로그인 처리
-      if (data.accessToken && data.refreshToken) {
-        await setToken(data.accessToken);
-        await setRefreshToken(data.refreshToken);
-      } else {
-        throw new Error('로그인 응답에 토큰이 없습니다.');
-      }
-      return { isNewUser: false };
     }
+
+    // 기존 사용자인 경우 로그인 처리
+    await setToken(data.accessToken);
+    await setRefreshToken(data.refreshToken);
+    return { isNewUser: false };
   };
 
   const logoutOnly = async () => {
