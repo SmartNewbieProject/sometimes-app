@@ -1,13 +1,13 @@
-import React, { type ReactNode } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { IconWrapper } from '@/src/shared/ui/icons';
 import { Text } from '@/src/shared/ui/text';
 import { router, usePathname } from 'expo-router';
-import { IconWrapper } from '@/src/shared/ui/icons';
+import React, { type ReactNode } from 'react';
+import { TouchableOpacity, View } from 'react-native';
 
-import HomeSelected from '@/assets/icons/nav/home-selected.svg';
-import HomeUnselected from '@/assets/icons/nav/home-unselected.svg';
 import CommunitySelected from '@/assets/icons/nav/community-selected.svg';
 import CommunityUnselected from '@/assets/icons/nav/community-unselected.svg';
+import HomeSelected from '@/assets/icons/nav/home-selected.svg';
+import HomeUnselected from '@/assets/icons/nav/home-unselected.svg';
 import MySelected from '@/assets/icons/nav/my-selected.svg';
 import MyUnselected from '@/assets/icons/nav/my-unselected.svg';
 

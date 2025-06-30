@@ -1,12 +1,12 @@
-import { useCallback } from 'react';
-import { usePortoneStore } from './use-portone-store';
-import { usePortoneScript } from './PortoneProvider';
-import { router } from 'expo-router';
-import { Platform, View } from 'react-native';
-import { Text } from '@shared/ui';
 import Payment from '@features/payment';
 import { useModal } from '@shared/hooks/use-modal';
+import { Text } from '@shared/ui';
+import { router } from 'expo-router';
+import { useCallback } from 'react';
+import { Platform, View } from 'react-native';
 import type { PaymentResponse } from '../types';
+import { usePortoneScript } from './PortoneProvider';
+import { usePortoneStore } from './use-portone-store';
 
 const { apis } = Payment;
 

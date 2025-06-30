@@ -1,9 +1,9 @@
-import PageLoading from "./ui/page";
-import Lottie from "./ui/lottie";
+import Lottie from './ui/lottie';
+import PageLoading from './ui/page';
 
 const Loading = {
-    Page: PageLoading,
-    Lottie,
+	Page: PageLoading,
+	Lottie,
 };
 
 export default Loading;

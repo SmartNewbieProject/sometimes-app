@@ -1,8 +1,8 @@
-import { DefaultLayout, TwoButtons } from "./ui";
+import { DefaultLayout, TwoButtons } from './ui';
 
 const Layout = {
-  Default: DefaultLayout,
-  TwoButtons,
+	Default: DefaultLayout,
+	TwoButtons,
 };
 
 export default Layout;

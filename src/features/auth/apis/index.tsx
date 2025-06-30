@@ -1,6 +1,6 @@
 import type { MyDetails } from "@/src/types/user";
+import type { PassLoginResponse } from "@/src/types/auth";
 import { axiosClient } from "@shared/libs";
-import type { PassLoginResponse } from "@/src/auth/dto/pass-login.dto";
 
 export const getMySimpleDetails = () => axiosClient.get('/user');
 

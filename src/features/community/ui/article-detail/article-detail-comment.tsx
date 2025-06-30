@@ -1,14 +1,14 @@
+import { useBoolean } from '@/src/shared/hooks/use-boolean';
+import { dayUtils } from '@/src/shared/libs';
+import type { UniversityName } from '@/src/shared/libs/univ';
+import { Divider, Show, Text } from '@/src/shared/ui';
+import { Dropdown, type DropdownItem } from '@/src/shared/ui/dropdown';
 import type React from 'react';
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import { Divider, Show, Text } from '@/src/shared/ui';
-import { Dropdown, type DropdownItem } from '@/src/shared/ui/dropdown';
-import type { Comment } from '../../types';
-import { dayUtils } from '@/src/shared/libs';
 import { useAuth } from '../../../auth';
+import type { Comment } from '../../types';
 import { UserProfile } from '../user-profile';
-import type { UniversityName } from '@/src/shared/libs/univ';
-import { useBoolean } from '@/src/shared/hooks/use-boolean';
 
 interface ArticleDetailCommentProps {
 	comment: Comment;
@@ -25,18 +25,21 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 	const isAuthor = comment.author.id === my?.id;
 	const { value: isDropdownOpen, toggle: toggleDropdown } = useBoolean();
 
-	const dropdownItems: DropdownItem[] = useMemo(() => [
-		{
-			key: 'update',
-			content: <Text textColor="black">수정</Text>,
-			onPress: () => onUpdate(comment.id),
-		},
-		{
-			key: 'delete',
-			content: <Text textColor="black">삭제</Text>,
-			onPress: () => onDelete(comment.id),
-		},
-	], [comment.id, onUpdate, onDelete]);
+	const dropdownItems: DropdownItem[] = useMemo(
+		() => [
+			{
+				key: 'update',
+				content: <Text textColor="black">수정</Text>,
+				onPress: () => onUpdate(comment.id),
+			},
+			{
+				key: 'delete',
+				content: <Text textColor="black">삭제</Text>,
+				onPress: () => onDelete(comment.id),
+			},
+		],
+		[comment.id, onUpdate, onDelete],
+	);
 
 	return (
 		<View key={comment.id} className="flex flex-col w-full">
@@ -63,10 +66,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 				<View className="flex-row items-center justify-between">
 					<View className="px-[5px] py-[2px] rounded-[1px] gap-[4px] flex-row items-center">
 						<Show when={isAuthor}>
-							<Dropdown
-								open={isDropdownOpen}
-								items={dropdownItems}
-							/>
+							<Dropdown open={isDropdownOpen} items={dropdownItems} />
 						</Show>
 					</View>
 				</View>

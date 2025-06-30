@@ -1,10 +1,10 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 import type React from 'react';
+import type { ReactNode } from 'react';
 import { TouchableOpacity } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import { cn } from '../../libs/cn';
 import { Text } from '../text';
-import type { ViewStyle } from 'react-native';
-import type { ReactNode } from 'react';
 
 const buttonStyles = cva(
 	'rounded-[20] flex items-center flex flex-row gap-x-1.5 justify-center w-fit h-[50] py-2 px-6 transition-all duration-200',
@@ -12,8 +12,7 @@ const buttonStyles = cva(
 		variants: {
 			variant: {
 				primary: 'bg-darkPurple hover:bg-darkPurple/80 active:bg-darkPurple/40',
-				secondary:
-					'bg-lightPurple hover:bg-darkPurple/20 active:bg-darkPurple/40',
+				secondary: 'bg-lightPurple hover:bg-darkPurple/20 active:bg-darkPurple/40',
 				outline:
 					'bg-transparent hover:bg-darkPurple/20 active:bg-darkPurple/40 border border-primaryPurple',
 				white:
@@ -35,7 +34,7 @@ const buttonStyles = cva(
 			rounded: {
 				full: 'rounded-full',
 				md: 'rounded-lg',
-				lg: 'rounded-xl'
+				lg: 'rounded-xl',
 			},
 		},
 		defaultVariants: {

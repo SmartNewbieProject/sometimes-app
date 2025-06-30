@@ -35,9 +35,7 @@ export const Lottie = ({ classNames, size = 80, style }: LottieProps) => {
         loop
         style={styles.lottie}
       /> */}
-			<Text>
-				로딩중...
-			</Text>
+			<Text>로딩중...</Text>
 		</View>
 	);
 };

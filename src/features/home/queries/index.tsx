@@ -1,28 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
-import apis from "../apis";
+import { useQuery } from '@tanstack/react-query';
+import apis from '../apis';
 
 export const useTotalMatchCountQuery = () =>
-  useQuery({
-    queryKey: ['total-match-count'],
-    queryFn: apis.getTotalMatchCount,
-  });
+	useQuery({
+		queryKey: ['total-match-count'],
+		queryFn: apis.getTotalMatchCount,
+	});
 
 export const useTotalUserCountQuery = () =>
-  useQuery({
-    queryKey: ['total-user-count'],
-    queryFn: apis.getTotalUserCount,
-  });
+	useQuery({
+		queryKey: ['total-user-count'],
+		queryFn: apis.getTotalUserCount,
+	});
 
 export const useCheckPreferenceFillQuery = () =>
-  useQuery({
-    queryKey: ['check-preference-fill'],
-    queryFn: apis.checkPreferenceFill,
-    staleTime: 0,
-  });
+	useQuery({
+		queryKey: ['check-preference-fill'],
+		queryFn: apis.checkPreferenceFill,
+		staleTime: 0,
+	});
 
 export const useNotificationQuery = () =>
-  useQuery({
-    queryKey: ['notification'],
-    queryFn: apis.getNotification,
-    staleTime: 0,
-  });
+	useQuery({
+		queryKey: ['notification'],
+		queryFn: apis.getNotification,
+		staleTime: 0,
+	});

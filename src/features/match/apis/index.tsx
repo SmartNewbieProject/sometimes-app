@@ -1,12 +1,11 @@
-import { axiosClient } from "@/src/shared/libs";
-import { UserProfile } from "@/src/types/user";
+import { axiosClient } from '@/src/shared/libs';
+import type { UserProfile } from '@/src/types/user';
 
 const getPartnerByMatchId = async (matchId: string): Promise<UserProfile> =>
-  axiosClient.get(`/matching/history/${matchId}`);
-
+	axiosClient.get(`/matching/history/${matchId}`);
 
 const matchHistoryApis = {
-  getPartnerByMatchId,
+	getPartnerByMatchId,
 };
 
 export { matchHistoryApis };

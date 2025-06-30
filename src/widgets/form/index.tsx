@@ -1,15 +1,15 @@
-import { FormImageSelector } from "./image-selector";
-import { FormInput } from "./input";
-import { FormLabelInput } from "./label-input";
-import { FormSelect } from "./select";
-import { FormContentSelector } from "./content-selector";
+import { FormContentSelector } from './content-selector';
+import { FormImageSelector } from './image-selector';
+import { FormInput } from './input';
+import { FormLabelInput } from './label-input';
+import { FormSelect } from './select';
 
 export const Form = {
-  Input: FormInput,
-  LabelInput: FormLabelInput,
-  ImageSelector: FormImageSelector,
-  ContentSelector: FormContentSelector,
-  Select: FormSelect,
-}
+	Input: FormInput,
+	LabelInput: FormLabelInput,
+	ImageSelector: FormImageSelector,
+	ContentSelector: FormContentSelector,
+	Select: FormSelect,
+};
 
 export * from './text-area';

@@ -1,12 +1,12 @@
-import { useStorage } from "./use-storage";
+import { useStorage } from './use-storage';
 
 export const usePathHistory = () => {
-  const { value } = useStorage({
-    key: 'previous-path',
-    initialValue: '/',
-  });
+	const { value } = useStorage({
+		key: 'previous-path',
+		initialValue: '/',
+	});
 
-  const getPreviousPath = (): string => value ?? '/';
+	const getPreviousPath = (): string => value ?? '/';
 
-  return { getPreviousPath };
+	return { getPreviousPath };
 };

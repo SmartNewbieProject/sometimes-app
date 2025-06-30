@@ -1,8 +1,8 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { getArticles } from '../apis/articles';
 import type { Article } from '../types';
 import { QUERY_KEYS } from './keys';
-import { useCallback } from 'react';
 
 type UseInfiniteArticlesProps = {
 	categoryCode?: string;

@@ -1,16 +1,16 @@
+import { useEffect, useRef, useState } from 'react';
 import {
+	Modal,
+	Platform,
+	Pressable,
 	StyleSheet,
 	TouchableWithoutFeedback,
 	View,
-	Pressable,
-	Platform,
-	Modal,
 	type ViewStyle,
 } from 'react-native';
 import { ImageResources } from '../../libs';
 import { ImageResource } from '../image-resource';
 import { Show } from '../show';
-import { useState, useEffect, useRef } from 'react';
 import { Text } from '../text';
 
 export type DropdownItem = {
@@ -81,16 +81,16 @@ export const Dropdown = ({ open: _open, items, dropdownStyle }: DropdownProps) =
 				<TouchableWithoutFeedback onPress={() => setOpen(false)}>
 					<View style={styles.overlay}>
 						<TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-							<View 
+							<View
 								style={[
-									styles.dropdownContainer, 
+									styles.dropdownContainer,
 									dropdownStyle,
 									{
 										position: 'absolute',
 										top: dropdownPosition.top,
 										left: dropdownPosition.right,
-									}
-								]} 
+									},
+								]}
 								className="dropdown-container"
 							>
 								{items.map((item, index) => (
@@ -98,7 +98,7 @@ export const Dropdown = ({ open: _open, items, dropdownStyle }: DropdownProps) =
 										key={item.key}
 										style={[
 											styles.dropdownItem,
-											index === items.length - 1 && { borderBottomWidth: 0 }
+											index === items.length - 1 && { borderBottomWidth: 0 },
 										]}
 										onPress={(e) => {
 											e.preventDefault();

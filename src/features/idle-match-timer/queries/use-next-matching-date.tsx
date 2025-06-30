@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { getNextMatchingDate } from "../apis";
+import { useQuery } from '@tanstack/react-query';
+import { getNextMatchingDate } from '../apis';
 
 export const useNextMatchingDate = () =>
-  useQuery({
-    queryKey: ['next-matching-date'],
-    queryFn: getNextMatchingDate,
-  });
+	useQuery({
+		queryKey: ['next-matching-date'],
+		queryFn: getNextMatchingDate,
+	});

@@ -1,7 +1,7 @@
 import * as hooks from './hooks';
 
 const Event = {
-  hooks,
+	hooks,
 };
 
 export default Event;

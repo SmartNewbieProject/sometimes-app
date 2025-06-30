@@ -1,4 +1,4 @@
 export type ServerError = {
-  error: string;
-  status: number;
+	error: string;
+	status: number;
 };
