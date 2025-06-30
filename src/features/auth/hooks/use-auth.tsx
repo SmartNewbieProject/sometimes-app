@@ -48,12 +48,7 @@ export function useAuth() {
     await setToken(data.accessToken);
     await setRefreshToken(data.refreshToken);
     return { isNewUser: false };
-    } else {
-      // 기존 사용자인 경우 로그인 처리
-      await setToken(data.accessToken);
-      await setRefreshToken(data.refreshToken);
-      return { isNewUser: false };
-    }
+    
   };
 
   const logoutOnly = async () => {
