@@ -1,0 +1,41 @@
+name: Build and Submit iOS App
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-submit-ios:
+    name: Build and Submit iOS
+    runs-on: macos-latest
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 🏗️ Setup Expo and EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EAS_ACCESS_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🔑 Decode App Store Connect API Key
+        run: echo "${{ secrets.IOS_ENCODED_KEY }}" | base64 --decode >./AuthKey.p8
+
+      - name: 🚀 Build iOS App
+        run: eas build --platform ios --profile production --non-interactive
+
+      - name: 📤 Submit to App Store
+        env:
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_API_ISSUER_ID: ${{ secrets.ASC_API_ISSUER_ID }}
+        run: eas submit --platform ios --profile production --latest --non-interactive
