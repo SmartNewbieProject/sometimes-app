@@ -38,6 +38,10 @@
         "ascApiKeyPath": "./AuthKey.p8",
         "ascApiKeyId": "${ASC_API_KEY_ID}",
         "ascApiKeyIssuerId": "${ASC_API_ISSUER_ID}"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
       }
     }
   }
