@@ -103,7 +103,6 @@ export default function UniversityPage() {
         <Loading.Lottie
           title="학교를 검색중이에요"
           loading={isLoading}
-          size={10}
         >
           <View className="w-full">
             <ChipSelector
