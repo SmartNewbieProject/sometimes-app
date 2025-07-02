@@ -59,7 +59,7 @@ export const usePortOneLogin = ({
 
       if (loginResult.isNewUser) {
         router.push({
-          pathname: '/auth/signup/terms',
+          pathname: '/auth/signup/university',
           params: {
             certificationInfo: JSON.stringify(loginResult.certificationInfo),
           },

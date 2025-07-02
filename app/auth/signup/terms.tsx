@@ -37,9 +37,9 @@ export default function TermsScreen() {
 
   const onNext = () => {
     if (!isNext) return;
-    trackSignupEvent('next_button_click', 'to_account');
-    updateStep(SignupSteps.ACCOUNT);
-    router.push('/auth/signup/account');
+    trackSignupEvent('next_button_click', 'to_university');
+    updateStep(SignupSteps.UNIVERSITY);
+    router.push('/auth/signup/university');
   }
 
   const handleAgreement = debounce((id: string, value: boolean) => {

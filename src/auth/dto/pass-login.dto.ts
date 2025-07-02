@@ -2,16 +2,17 @@
  * PASS 로그인 API 응답 타입
  */
 export interface PassLoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
+  role: string;
   isNewUser: boolean;
-  accessToken?: string;
-  refreshToken?: string;
-  certificationInfo?: {
+  certificationInfo: {
     name: string;
-    phoneNumber: string;
-    birthDate: string;
+    phone: string;
     gender: 'MALE' | 'FEMALE';
-    ci: string;
-    di: string;
+    birthday: string;
   };
 }
 
