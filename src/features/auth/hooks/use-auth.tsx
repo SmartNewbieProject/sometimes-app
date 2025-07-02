@@ -32,15 +32,9 @@ export function useAuth() {
 
   const loginWithPass = async (impUid: string) => {
     const data = await passLogin(impUid);
-    if (data.isNewUser) {
-      // 신규 사용자인 경우 회원가입 페이지로 이동하면서 본인인증 정보 전달
-      router.push({
-        pathname: '/auth/signup/terms',
-        params: {
-          certificationInfo: JSON.stringify(data.certificationInfo),
-        },
-      });
 
+    if (data.isNewUser) {
+      // 신규 사용자인 경우 본인인증 정보 전달
       return { isNewUser: true, certificationInfo: data.certificationInfo };
     }
 
@@ -48,7 +42,6 @@ export function useAuth() {
     await setToken(data.accessToken);
     await setRefreshToken(data.refreshToken);
     return { isNewUser: false };
-    
   };
 
   const logoutOnly = async () => {

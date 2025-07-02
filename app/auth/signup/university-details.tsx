@@ -103,9 +103,9 @@ export default function UniversityDetailsPage() {
     await tryCatch(async () => {
       const signupForm = { ...userForm, ...data };
       updateForm(signupForm);
-      await apis.signup(signupForm as SignupForm);
       setSignupLoading(false);
-      router.push('/auth/signup/done');
+      trackSignupEvent('next_button_click', 'to_profile_image');
+      router.push('/auth/signup/profile-image');
     }, (error) => {
       setSignupLoading(false);
       console.log(error);
