@@ -33,6 +33,7 @@
   },
   "submit": {
     "production": {
+      "autoIncrement": true,
       "ios": {
         "ascAppId": "6746120889",
         "ascApiKeyPath": "./AuthKey.p8",
