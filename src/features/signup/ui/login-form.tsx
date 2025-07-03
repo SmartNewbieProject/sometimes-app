@@ -45,11 +45,11 @@ export default function LoginForm() {
   return (
     <View className="flex flex-col flex-1 items-center">
       {/* 대학교 로고 애니메이션 */}
-      <UniversityLogos logoSize={48} />
+      <UniversityLogos logoSize={64} />
 
       {/* 회원가입 및 로그인 버튼 */}
       <View className="flex flex-col">
-        <View className="w-full max-w-xs">
+        <View className="w-full max-w-xs mt-6">
           <Button
             variant="primary"
             width="full"
@@ -57,7 +57,7 @@ export default function LoginForm() {
             disabled={isLoading}
             className="py-4 rounded-full min-w-[280px] min-h-[60px]"
           >
-            <Text className="text-white text-center text-md h-[40px]">
+            <Text className="text-white text-center text-[18px] h-[40px]">
               {isLoading ? 'PASS 인증 중...' : '회원가입 및 로그인'}
             </Text>
           </Button>
@@ -78,7 +78,7 @@ export default function LoginForm() {
       )}
 
       {/* 약관 동의 안내 */}
-      <View className="w-full px-6 mt-6">
+      <View className="w-full px-6 mt-12">
         <PrivacyNotice />
       </View>
     </View>

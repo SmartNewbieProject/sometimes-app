@@ -14,11 +14,11 @@ export default function Logo() {
       "flex flex-col items-center gap-y-2",
       platform({
         ios: () => "pt-[80px]",
-        android: () => "pt-[80px]",
+        android: () => "pt-[5px]",
         web: () => "",
       })
     )}>
-      <View className="p-0 md:p-12">
+      <View className="p-0 md:p-18 mb-8">
         <Image
           source={require('@assets/images/paper-plane.png')}
           style={{ width: 128, height: 128 }}
