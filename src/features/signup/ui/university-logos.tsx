@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { View, Animated, Easing } from 'react-native';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const universityLogos = [
   require('@/assets/images/univ/bju.png'),
@@ -102,9 +103,41 @@ export default function UniversityLogos({ logoSize = 48 }: UniversityLogosProps)
   };
 
   return (
-    <View style={{ width: '100%', paddingVertical: 16 }}>
+    <View style={{ width: '100%', paddingVertical: 16, position: 'relative' }}>
       {renderLogoRow(firstRowLogos, firstRowAnim)}
       {renderLogoRow(secondRowLogos, secondRowAnim)}
+
+      {/* 왼쪽 페이드 오버레이 */}
+      <LinearGradient
+        colors={['rgba(247, 243, 255, 1)', 'rgba(247, 243, 255, 0)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 16,
+          bottom: 16,
+          width: 40,
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
+
+      {/* 오른쪽 페이드 오버레이 */}
+      <LinearGradient
+        colors={['rgba(247, 243, 255, 0)', 'rgba(247, 243, 255, 1)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 16,
+          bottom: 16,
+          width: 40,
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
     </View>
   );
 }
