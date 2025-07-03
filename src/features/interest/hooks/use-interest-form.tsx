@@ -36,6 +36,7 @@ export const useInterestForm = create<StoreProps>((set) => ({
       tattoo: undefined,
       smoking: undefined,
       goodMbti: undefined,
+      datingStyleIds: [],
       badMbti: undefined,
     }),
 }));

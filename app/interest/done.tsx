@@ -1,4 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
+import { useInterestForm } from "@/src/features/interest/hooks";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { useAuth } from "@features/auth";
@@ -6,13 +7,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Platform, StyleSheet, View } from "react-native";
 
 export default function InterestDoneScreen() {
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
-  const insets = useSafeAreaInsets();
+  const { updateForm, clear, tattoo, ...form } = useInterestForm();
+
   useEffect(() => {
     queryClient.invalidateQueries({
       queryKey: ["check-preference-fill"],
@@ -56,6 +57,7 @@ export default function InterestDoneScreen() {
             variant="primary"
             size="md"
             onPress={() => {
+              clear();
               router.push("/home");
             }}
             styles={styles.button}
@@ -102,7 +104,17 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     paddingHorizontal: 32,
-    marginBottom: 68,
+    ...Platform.select({
+      web: {
+        marginBottom: 14, // md:mb-[72px] 은 무시
+      },
+      ios: {
+        marginBottom: 58,
+      },
+      android: {
+        marginBottom: 58,
+      },
+    }),
     flexDirection: "row",
   },
   button: {

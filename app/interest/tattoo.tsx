@@ -80,12 +80,12 @@ export default function TattooSelectionScreen() {
   return (
     <Layout.Default>
       <PalePurpleGradient />
-      <View className="flex-1 px-5 pt-4">
+      <View style={styles.contentContainer}>
         <Image
           source={require("@assets/images/loved.png")}
-          style={{ width: 81, height: 81 }}
+          style={{ width: 81, height: 81, marginLeft: 28 }}
         />
-        <View className="flex flex-col my-2 mb-4">
+        <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
             문신에 대해
           </Text>
@@ -93,8 +93,8 @@ export default function TattooSelectionScreen() {
             어떻게 생각하시나요?
           </Text>
         </View>
-
-        <View className="flex-1 w-full items-center pt-2">
+        <View style={styles.bar} />
+        <View style={styles.wrapper}>
           <Loading.Lottie
             title="선호도를 불러오고 있어요"
             loading={optionsLoading}
