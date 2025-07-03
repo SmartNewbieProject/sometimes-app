@@ -1,19 +1,32 @@
 name: Claude Assistant
 on:
   issue_comment:
-    types: [created]
+    types: [ created ]
   pull_request_review_comment:
-    types: [created, edited]
+    types: [ created, edited ]
   issues:
-    types: [opened, assigned, labeled]
+    types: [ opened, assigned, labeled ]
   pull_request_review:
-    types: [submitted]
+    types: [ submitted ]
 
 jobs:
   claude-response:
     runs-on: ubuntu-latest
+    permissions: # 추가: 필요한 권한 설정
+      contents: read
+      pull-requests: write
+      issues: write
     steps:
-      - uses: anthropics/claude-code-action@beta
+      # 필수 추가: Repository 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # PR 컨텍스트에서 올바른 브랜치 체크아웃
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0  # 전체 히스토리 가져오기 (필요시)
+
+      - name: Run Claude Code Action
+        uses: anthropics/claude-code-action@beta
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
