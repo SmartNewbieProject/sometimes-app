@@ -1,75 +1,128 @@
-import { Text, PalePurpleGradient, StepSlider } from "@shared/ui";
-import Layout from "@features/layout";
-import { View, Image } from "react-native";
-import { router, useFocusEffect } from "expo-router";
-import Interest from '@features/interest';
-import { useCallback, useEffect, useState } from "react";
-import { Selector } from "@/src/widgets/selector";
 import Loading from "@/src/features/loading";
 import { PreferenceOption } from "@/src/types/user";
+import { Selector } from "@/src/widgets/selector";
+import Interest from "@features/interest";
+import Layout from "@features/layout";
+import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
 
 const { ui, hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-
 export default function SmokingSelectionScreen() {
   const { updateStep } = useInterestStep();
   const { smoking, updateForm } = useInterestForm();
 
-  const { data: preferences = {
-    id: '',
-    options: [],
-  }, isLoading: optionsLoading } = usePreferenceOptionsQuery(Keys.SMOKING);
+  const {
+    data: preferences = {
+      id: "",
+      options: [],
+    },
+    isLoading: optionsLoading,
+  } = usePreferenceOptionsQuery(Keys.SMOKING);
+  const index = preferences?.options.findIndex(
+    (item) => item.id === smoking?.id
+  );
 
-  useFocusEffect(useCallback(() => updateStep(InterestSteps.SMOKING), []));
+  const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  const onChangeSmoking = (value: number) => {
+    if (preferences?.options && preferences.options.length > value) {
+      updateForm("smoking", preferences.options[value]);
+    }
+  };
+
+  const handleNextButton = () => {
+    if (!smoking) {
+      updateForm("smoking", preferences.options[currentIndex]);
+    }
+    router.navigate("/interest/tattoo");
+  };
+  useFocusEffect(
+    useCallback(() => updateStep(InterestSteps.SMOKING), [updateStep])
+  );
 
   return (
     <Layout.Default>
       <PalePurpleGradient />
-      <View className="flex-1 px-5 pt-4">
+      <View style={styles.contentContainer}>
         <Image
-          source={require('@assets/images/loved.png')}
-          style={{ width: 81, height: 81 }}
+          source={require("@assets/images/loved.png")}
+          style={{ width: 81, height: 81, marginLeft: 28 }}
         />
-        <View className="flex flex-col my-2 mb-4">
+        <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            담배에 대해
+            흡연에 대해
           </Text>
           <Text weight="semibold" size="20" textColor="black">
             어떻게 생각하시나요?
           </Text>
         </View>
 
-        <View className="flex-1 w-full items-center pt-2">
+        <View style={styles.bar} />
+        <View style={styles.wrapper}>
           <Loading.Lottie
             title="선호도를 불러오고 있어요"
             loading={optionsLoading}
           >
-            <Selector
-              value={smoking?.id}
-              direction="vertical"
-              options={preferences.options.map((option) => ({ label: option.displayName, value: option.id }))}
-              onChange={value => {
-                const target = preferences.options.find(o => o.id === value);
-                updateForm('smoking', target);
-              }}
-              buttonProps={{
-                className: 'min-w-[180px] w-full h-[52px]',
-              }}
+            <StepSlider
+              min={0}
+              max={(preferences?.options.length ?? 1) - 1}
+              step={1}
+              showMiddle={true}
+              defaultValue={2}
+              value={currentIndex}
+              onChange={onChangeSmoking}
+              options={
+                preferences?.options.map((option) => ({
+                  label: option.displayName,
+                  value: option.id,
+                })) || []
+              }
             />
           </Loading.Lottie>
-
         </View>
 
         <Layout.TwoButtons
-          classNames="px-0"
-          disabledNext={!smoking}
-          onClickNext={() => router.navigate("/interest/tattoo")}
-          onClickPrevious={() => router.navigate("/interest/military")}
+          style={{ paddingHorizontal: 32 }}
+          disabledNext={false}
+          onClickNext={handleNextButton}
+          onClickPrevious={() => router.navigate("/interest/drinking")}
         />
       </View>
     </Layout.Default>
   );
 }
+
+const styles = StyleSheet.create({
+  topContainer: {
+    marginHorizontal: 32,
+    marginTop: 15,
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  ageContainer: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+  },
+  bar: {
+    marginHorizontal: 32,
+
+    height: 0.5,
+    backgroundColor: "#E7E9EC",
+    marginTop: 39,
+    marginBottom: 30,
+  },
+  wrapper: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    paddingTop: 32,
+    paddingHorizontal: 32,
+  },
+});

@@ -1,11 +1,12 @@
-import { Text, PalePurpleGradient } from "@shared/ui";
-import Layout from "@features/layout";
-import { View, Image } from "react-native";
-import { router, useFocusEffect } from "expo-router";
-import Interest from '@features/interest';
-import { useCallback } from "react";
-import { Selector } from "@/src/widgets/selector";
+import { useAuth } from "@/src/features/auth";
 import Loading from "@/src/features/loading";
+import { Selector } from "@/src/widgets/selector";
+import Interest from "@features/interest";
+import Layout from "@features/layout";
+import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback } from "react";
+import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
@@ -16,28 +17,53 @@ const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 export default function DrinkingSelectionScreen() {
   const { updateStep } = useInterestStep();
   const { drinking, updateForm } = useInterestForm();
+  const { my } = useAuth();
+  const {
+    data: preferences = {
+      id: "",
+      options: [],
+    },
+    isLoading: optionsLoading,
+  } = usePreferenceOptionsQuery(Keys.DRINKING);
+  const index = preferences?.options.findIndex(
+    (item) => item.id === drinking?.id
+  );
 
-  const { data: preferences = {
-    id: '',
-    options: [],
-  }, isLoading: optionsLoading } = usePreferenceOptionsQuery(Keys.DRINKING);
-
-  const onChangeDrinking = (value: string) => {
-    const target = preferences.options.find(o => o.id === value);
-    updateForm('drinking', target);
+  const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  const onChangeDrinking = (value: number) => {
+    if (preferences?.options && preferences.options.length > value) {
+      updateForm("drinking", preferences.options[value]);
+    }
   };
 
-  useFocusEffect(useCallback(() => updateStep(InterestSteps.DRIKNING), []));
+  const handleNextButton = () => {
+    if (!drinking) {
+      updateForm("drinking", preferences.options[currentIndex]);
+    }
+    router.navigate("/interest/smoking");
+  };
+
+  useFocusEffect(
+    useCallback(() => updateStep(InterestSteps.DRIKNING), [updateStep])
+  );
+
+  const handleBackButton = () => {
+    if (my?.gender === "MALE") {
+      router.navigate("/interest/dating-style");
+    } else {
+      router.navigate("/interest/military");
+    }
+  };
 
   return (
     <Layout.Default>
       <PalePurpleGradient />
-      <View className="flex-1 px-5 pt-4">
+      <View style={styles.contentContainer}>
         <Image
-          source={require('@assets/images/drink.png')}
-          style={{ width: 81, height: 81 }}
+          source={require("@assets/images/drink.png")}
+          style={{ width: 81, height: 81, marginLeft: 28 }}
         />
-        <View className="flex flex-col my-2 mb-4">
+        <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
             음주는 만남에서 중요한 부분이죠
           </Text>
@@ -45,32 +71,66 @@ export default function DrinkingSelectionScreen() {
             음주 선호도를 알려주세요!
           </Text>
         </View>
-
-        <View className="flex-1 w-full items-center pt-2">
+        <View style={styles.bar} />
+        <View style={styles.wrapper}>
           <Loading.Lottie
             title="선호도를 불러오고 있어요"
             loading={optionsLoading}
           >
-            <Selector
-              value={drinking?.id}
-              direction="vertical"
-              options={preferences.options.map((option) => ({ label: option.displayName, value: option.id }))}
+            <StepSlider
+              min={0}
+              max={(preferences?.options.length ?? 1) - 1}
+              step={1}
+              showMiddle={false}
+              defaultValue={2}
+              value={currentIndex}
               onChange={onChangeDrinking}
-              buttonProps={{
-                className: 'min-w-[180px] w-full h-[52px]',
-              }}
+              options={
+                preferences?.options.map((option) => ({
+                  label: option.displayName,
+                  value: option.id,
+                })) || []
+              }
             />
           </Loading.Lottie>
-
         </View>
-
-        <Layout.TwoButtons
-          classNames="px-0"
-          disabledNext={!drinking}
-          onClickNext={() => router.navigate("/interest/interest")}
-          onClickPrevious={() => router.navigate("/interest/age")}
-        />
       </View>
+      <Layout.TwoButtons
+        style={{ paddingHorizontal: 32 }}
+        disabledNext={false}
+        onClickNext={handleNextButton}
+        onClickPrevious={handleBackButton}
+      />
     </Layout.Default>
   );
 }
+
+const styles = StyleSheet.create({
+  topContainer: {
+    marginHorizontal: 32,
+    marginTop: 15,
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  ageContainer: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+  },
+  bar: {
+    marginHorizontal: 32,
+
+    height: 0.5,
+    backgroundColor: "#E7E9EC",
+    marginTop: 39,
+    marginBottom: 30,
+  },
+  wrapper: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    paddingTop: 32,
+    paddingHorizontal: 32,
+  },
+});

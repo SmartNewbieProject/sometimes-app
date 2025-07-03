@@ -4,12 +4,13 @@ import { PreferenceKeys } from "../queries";
 
 export enum InterestSteps {
   AGE = 1,
-  DRIKNING = 2,
-  INTEREST = 3,
+  GOODMBTI = 2,
+  BADMBTI = 3,
   DATING_STYLE = 4,
   MILITARY = 5,
-  SMOKING = 6,
-  TATTOO = 7,
+  DRIKNING = 6,
+  SMOKING = 7,
+  TATTOO = 8,
 }
 
 export const phaseCount = Object.keys(InterestSteps).length / 2;
@@ -17,11 +18,13 @@ export const phaseCount = Object.keys(InterestSteps).length / 2;
 export type Properties = {
   age: string;
   drinking: string;
-  interestIds: string[];
+
   datingStyleIds: string[];
   militaryPreference?: string;
   militaryStatus?: string;
   smoking: string;
+  goodMbti: string;
+  badMbti: string;
   tattoo: string;
 };
 
@@ -36,17 +39,22 @@ export const savePreferences = async (props: Properties) => {
         typeName: PreferenceKeys.DRINKING,
         optionIds: [props.drinking],
       },
-      {
-        typeName: PreferenceKeys.INTEREST,
-        optionIds: props.interestIds,
-      },
+
       {
         typeName: PreferenceKeys.SMOKING,
         optionIds: [props.smoking],
       },
       {
         typeName: PreferenceKeys.TATTOO,
-        optionIds: [props.tattoo]
+        optionIds: [props.tattoo],
+      },
+      {
+        typeName: PreferenceKeys.GOOD_MBTI,
+        optionIds: [props.goodMbti],
+      },
+      {
+        typeName: PreferenceKeys.BAD_MBTI,
+        optionIds: [props.badMbti],
       },
       {
         typeName: PreferenceKeys.DATING_STYLE,
@@ -61,14 +69,6 @@ export const savePreferences = async (props: Properties) => {
       optionIds: [props.militaryPreference],
     });
   }
-
-  if (props.militaryStatus) {
-    body.data.push({
-      typeName: PreferenceKeys.MILITARY_STATUS,
-      optionIds: [props.militaryStatus],
-    });
-  }
-
 
   await savePreferencesApi(body);
   useInterestForm.getState().clear();

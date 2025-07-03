@@ -1,21 +1,36 @@
-import { View, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
-import { Text, PalePurpleGradient, BottomNavigation, Header, Button } from '@/src/shared/ui';
-import { Notice, Profile, LogoutOrWithdrawal, ProfileMenu } from '@/src/features/mypage/ui';
-import { Image } from 'expo-image';
+import {
+  LogoutOrWithdrawal,
+  Notice,
+  Profile,
+  ProfileMenu,
+} from "@/src/features/mypage/ui";
+import {
+  BottomNavigation,
+  Button,
+  Header,
+  PalePurpleGradient,
+  Text,
+} from "@/src/shared/ui";
+import { Image } from "expo-image";
+import {
+  ScrollView,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from "react-native";
 
 export default function MyScreen() {
-
   return (
     <View className="flex-1">
       <PalePurpleGradient />
 
-      <Header.Container className='mt-2'>
+      <Header.Container className="mt-2">
         <Header.LeftContent>
           <Header.LeftButton visible={false} />
         </Header.LeftContent>
         <Header.CenterContent>
           <Image
-            source={require('@assets/images/MY_LOGO.png')}
+            source={require("@assets/images/MY_LOGO.png")}
             style={{ width: 40, height: 20 }}
             contentFit="contain"
           />
@@ -37,12 +52,13 @@ export default function MyScreen() {
             <Profile />
           </View>
         </View>
-          {/* TODO: 정식 오픈 시 주석 해제 필요 */}
-          {/* <Notice />
+        {/* TODO: 정식 오픈 시 주석 해제 필요 */}
+        {/* <Notice />
         <View className="py-10 items-center justify-center"> */}
-        <View className="items-center flex flex-col gap-y-4 justify-center"> {/* TODO: 정식 오픈 시 주석 해제 필요 */}
+        <View className="items-center flex flex-col gap-y-4 justify-center">
+          {/* TODO: 정식 오픈 시 주석 해제 필요 */}
           <ProfileMenu />
-          <LogoutOrWithdrawal/>
+          <LogoutOrWithdrawal />
         </View>
       </ScrollView>
 

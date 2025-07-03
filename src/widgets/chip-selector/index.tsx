@@ -1,7 +1,13 @@
 import { Button } from "@/src/shared/ui";
 import { cn } from "@shared/libs/cn";
 import { type VariantProps, cva } from "class-variance-authority";
-import { View, Image, Platform } from "react-native";
+import {
+  Image,
+  Platform,
+  type StyleProp,
+  View,
+  type ViewStyle,
+} from "react-native";
 
 const chipSelector = cva("flex flex-row flex-wrap gap-2", {
   variants: {
@@ -29,14 +35,18 @@ interface ChipSelectorProps<T> extends VariantProps<typeof chipSelector> {
   multiple?: false;
   className?: string;
   buttonClassName?: string;
+  style?: StyleProp<ViewStyle>;
 }
 
-interface MultipleChipSelectorProps<T> extends Omit<ChipSelectorProps<T>, 'onChange' | 'multiple'> {
+interface MultipleChipSelectorProps<T>
+  extends Omit<ChipSelectorProps<T>, "onChange" | "multiple"> {
   onChange: (value: T[]) => void;
   multiple: true;
 }
 
-export function ChipSelector<T>(props: ChipSelectorProps<T> | MultipleChipSelectorProps<T>) {
+export function ChipSelector<T>(
+  props: ChipSelectorProps<T> | MultipleChipSelectorProps<T>
+) {
   const isSelected = (optionValue: T) => {
     if (props.multiple) {
       return (props.value as T[])?.includes(optionValue);
@@ -57,7 +67,10 @@ export function ChipSelector<T>(props: ChipSelectorProps<T> | MultipleChipSelect
   };
 
   return (
-    <View className={cn(chipSelector({ align: props.align }), props.className)}>
+    <View
+      style={props.style ?? {}}
+      className={cn(chipSelector({ align: props.align }), props.className)}
+    >
       {props.options.map((option) => (
         <Button
           key={String(option.value)}
@@ -65,17 +78,18 @@ export function ChipSelector<T>(props: ChipSelectorProps<T> | MultipleChipSelect
           textColor={isSelected(option.value) ? "white" : "purple"}
           onPress={() => handleSelect(option.value)}
           className={cn(
-            Platform.OS === 'web' ? "py-1 px-3" : "py-2 px-4",
+            Platform.OS === "web" ? "py-1 px-3" : "py-2 px-4",
             "rounded-xl flex flex-row items-center gap-x-2 justify-center",
             props.buttonClassName
           )}
           size="chip"
         >
-          {option?.imageUrl &&
+          {option?.imageUrl && (
             <Image
               source={{ uri: option.imageUrl }}
               style={{ width: 16, height: 16, marginRight: 4 }}
-            />}
+            />
+          )}
           {option.label}
         </Button>
       ))}
