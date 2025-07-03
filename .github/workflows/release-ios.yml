@@ -45,6 +45,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: custom
+          channel: '썸타임-github-알림'
           custom_payload: |
             {
               "text": ":white_check_mark: iOS 앱 빌드 및 배포가 완료되었습니다!",
@@ -84,6 +85,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: custom
+          channel: '썸타임-github-알림'
           custom_payload: |
             {
               "text": ":x: iOS 앱 빌드 또는 배포에 실패했습니다.",
