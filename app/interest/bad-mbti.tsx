@@ -22,7 +22,6 @@ function BadMbti() {
     useCallback(() => updateStep(InterestSteps.BADMBTI), [updateStep])
   );
   const onUpdateMbti = (mbti: string) => {
-    console.log("mbti", mbti);
     updateForm("badMbti", mbti);
   };
 

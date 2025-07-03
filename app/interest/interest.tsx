@@ -1,11 +1,11 @@
 import Layout from "@/src/features/layout";
-import { Divider, PalePurpleGradient, Text } from "@shared/ui";
+import Loading from "@/src/features/loading";
+import { ChipSelector, StepIndicator } from "@/src/widgets";
 import Interest from "@features/interest";
+import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
-import { View, Image } from "react-native";
-import { ChipSelector, StepIndicator } from "@/src/widgets";
-import Loading from "@/src/features/loading";
+import { Image, View } from "react-native";
 
 const { hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
@@ -15,7 +15,9 @@ const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 export default function InterestSelectionScreen() {
   const { updateStep } = useInterestStep();
   const { interestIds, updateForm } = useInterestForm();
-  const { data: preferences, isLoading } = usePreferenceOptionsQuery(PreferenceKeys.INTEREST);
+  const { data: preferences, isLoading } = usePreferenceOptionsQuery(
+    PreferenceKeys.INTEREST
+  );
 
   const onChangeOption = (values: string[]) => {
     if (values.length > 5) {
@@ -30,17 +32,17 @@ export default function InterestSelectionScreen() {
     if (interestIds.length < 3) {
       return `${3 - interestIds.length} 개만 더 선택해주세요`;
     }
-    return '다음으로';
+    return "다음으로";
   })();
 
-  useFocusEffect(useCallback(() => updateStep(InterestSteps.INTEREST), []));
+  // useFocusEffect(useCallback(() => updateStep(InterestSteps.INTEREST), []));
 
   return (
     <Layout.Default>
       <PalePurpleGradient />
       <View className="px-5 pt-4 mb-4">
         <Image
-          source={require('@assets/images/loved.png')}
+          source={require("@assets/images/loved.png")}
           style={{ width: 81, height: 81 }}
         />
         <View className="flex flex-col my-2 mb-4">
@@ -65,15 +67,15 @@ export default function InterestSelectionScreen() {
       </View>
 
       <View className="flex-1 w-full flex px-4">
-        <Loading.Lottie
-          title="관심사를 불러오고 있어요"
-          loading={isLoading}
-        >
+        <Loading.Lottie title="관심사를 불러오고 있어요" loading={isLoading}>
           <ChipSelector
             value={interestIds}
             options={
-              preferences?.
-                options.map((option) => ({ label: option.displayName, value: option.id, imageUrl: option?.imageUrl })) || []
+              preferences?.options.map((option) => ({
+                label: option.displayName,
+                value: option.id,
+                imageUrl: option?.imageUrl,
+              })) || []
             }
             onChange={onChangeOption}
             multiple
@@ -88,7 +90,7 @@ export default function InterestSelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.navigate('/interest/dating-style')}
+        onClickNext={() => router.navigate("/interest/dating-style")}
         onClickPrevious={() => router.navigate("/interest/drinking")}
       />
     </Layout.Default>

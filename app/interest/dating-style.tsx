@@ -25,7 +25,6 @@ export default function DatingStyleSelectionScreen() {
     if (values.length > 5) {
       return;
     }
-    console.log(values, "values");
     updateForm("datingStyleIds", values);
   };
 

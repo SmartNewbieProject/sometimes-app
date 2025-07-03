@@ -31,7 +31,6 @@ export default function AgeSelectionScreen() {
     if (preferences.typeId === "") {
       return;
     }
-    console.log("preferences", preferences);
     const loaded = preferences.options.map((option) => ({
       value: option.id,
       label: option.displayName,
