@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/src/features/auth';
 import { PortOneAuthService } from '../services/portone-auth.service';
+import { isAdult } from '../utils';
 import type { PortOneIdentityVerificationRequest, PortOneIdentityVerificationResponse } from '../types';
 
 
@@ -61,6 +62,18 @@ export const usePortOneLogin = ({
     const loginResult = await loginWithPass(identityVerificationId);
 
     if (loginResult.isNewUser) {
+      // 신규 사용자인 경우 나이 체크
+      if (loginResult.certificationInfo?.birthday) {
+        const { birthday } = loginResult.certificationInfo;
+
+        if (!isAdult(birthday)) {
+          // 만 18세 미만인 경우 나이 제한 페이지로 이동
+          router.push({ pathname: '/auth/age-restriction' as any });
+          return;
+        }
+      }
+
+      // 만 18세 이상인 경우 회원가입 진행
       router.push({
         pathname: '/auth/signup/university',
         params: {

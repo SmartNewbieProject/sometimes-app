@@ -106,3 +106,31 @@ export const formatBirthDate = (birthDate: string): string => {
   }
   return birthDate;
 };
+
+/**
+ * 생년월일로부터 만나이 계산
+ * @param birthDate YYYY-MM-DD 형식의 생년월일
+ * @returns 만나이
+ */
+export const calculateAge = (birthDate: string): number => {
+  const today = new Date();
+  const birth = new Date(birthDate);
+
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age;
+};
+
+/**
+ * 만 18세 이상인지 확인
+ * @param birthDate YYYY-MM-DD 형식의 생년월일
+ * @returns 만 18세 이상이면 true, 미만이면 false
+ */
+export const isAdult = (birthDate: string): boolean => {
+  return calculateAge(birthDate) >= 18;
+};
