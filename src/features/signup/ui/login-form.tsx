@@ -1,46 +1,36 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Platform } from "react-native";
 import { Text, Button } from "@/src/shared/ui";
-import { usePortOneLogin } from "@/src/features/pass";
-import { useAuth } from "../../auth";
-import { router } from "expo-router";
-import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect } from "react";
+import { usePortOneLogin, MobileIdentityVerification } from "@/src/features/pass";
 import UniversityLogos from "./university-logos";
 import { PrivacyNotice } from "../../auth/ui/privacy-notice";
 
 export default function LoginForm() {
-  const { isAuthorized } = useAuth();
-
-  const { startPortOneLogin, isLoading, error, clearError } = usePortOneLogin({
-    onSuccess: (isNewUser) => console.log(isNewUser ? 'New user flow' : 'Existing user'),
-    onError: (error) => console.error('Login failed', error),
-  });
+  const {
+    startPortOneLogin,
+    isLoading,
+    error,
+    clearError,
+    showMobileAuth,
+    mobileAuthRequest,
+    handleMobileAuthComplete,
+    handleMobileAuthError,
+  } = usePortOneLogin();
 
   const onPressPassLogin = async () => {
-    clearError(); // 이전 에러 메시지 제거
+    clearError();
     await startPortOneLogin();
   };
 
-  useFocusEffect(useCallback(
-    () => {
-      if (isAuthorized) router.push('/home');
-    }, [isAuthorized]
-  ));
-
-  // 토큰 저장 후 즉시 홈으로 이동하도록 감지
-  useEffect(() => {
-    if (isAuthorized) {
-      console.log('인증 상태 변화 감지, 홈으로 이동');
-      router.replace('/home');
-    }
-  }, [isAuthorized]);
-  // 토큰 저장 후 즉시 홈으로 이동하도록 감지
-  useEffect(() => {
-    if (isAuthorized) {
-      console.log('인증 상태 변화 감지, 홈으로 이동');
-      router.replace('/home');
-    }
-  }, [isAuthorized]);
+  // 모바일에서 PASS 인증 화면 표시
+  if (showMobileAuth && mobileAuthRequest && Platform.OS !== 'web') {
+    return (
+      <MobileIdentityVerification
+        request={mobileAuthRequest}
+        onComplete={handleMobileAuthComplete}
+        onError={handleMobileAuthError}
+      />
+    );
+  }
 
   return (
     <View className="flex flex-col flex-1 items-center">

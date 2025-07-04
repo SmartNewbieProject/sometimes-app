@@ -2,7 +2,10 @@
 export { usePortOneLogin } from './hooks/use-portone-login';
 
 // Services
-export { PortOneAuthService, PortOneLoginService } from './services';
+export { PortOneAuthService } from './services';
+
+// Components
+export { MobileIdentityVerification } from './ui/mobile-identity-verification';
 
 // Types
 export type {

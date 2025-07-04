@@ -1,5 +1,4 @@
-import { platform } from "@shared/libs/platform";
-import {
+import type {
   PortOneIdentityVerificationRequest,
   PortOneIdentityVerificationResponse,
 } from '../types';
@@ -10,36 +9,33 @@ import {
  */
 export class PortOneAuthService {
   private readonly storeId: string;
-  private readonly channelKey: string;
-  private readonly merchantId: string;
-  private readonly impUid: string;
-  private readonly pgProvider: string;
   private readonly passChannelKey: string;
 
   constructor() {
-    // 환경변수에서 직접 초기화
     this.storeId = process.env.EXPO_PUBLIC_STORE_ID as string;
-    this.channelKey = process.env.EXPO_PUBLIC_CHANNEL_KEY as string;
-    this.merchantId = process.env.EXPO_PUBLIC_MERCHANT_ID as string;
-    this.impUid = process.env.EXPO_PUBLIC_IMP as string;
-    this.pgProvider = process.env.EXPO_PUBLIC_PG_PROVIDER as string;
     this.passChannelKey = process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY as string;
 
-    if (!this.storeId) {
-      throw new Error('EXPO_PUBLIC_STORE_ID 환경변수가 설정되지 않았습니다.');
-    }
-    if (!this.passChannelKey) {
-      throw new Error('EXPO_PUBLIC_PASS_CHANNEL_KEY 환경변수가 설정되지 않았습니다.');
+    this.validateEnvironmentVariables();
+  }
+
+  private validateEnvironmentVariables() {
+    const requiredEnvVars = [
+      { key: 'EXPO_PUBLIC_STORE_ID', value: this.storeId },
+      { key: 'EXPO_PUBLIC_PASS_CHANNEL_KEY', value: this.passChannelKey },
+    ];
+
+    for (const { key, value } of requiredEnvVars) {
+      if (!value) {
+        throw new Error(`${key} 환경변수가 설정되지 않았습니다.`);
+      }
     }
   }
 
   async requestIdentityVerification(
     options: Partial<PortOneIdentityVerificationRequest> = {}
   ): Promise<PortOneIdentityVerificationResponse> {
-    return platform({
-      web: () => this.requestWebAuth(options),
-      default: () => this.requestMobileAuth(options),
-    });
+    // 웹에서만 사용됨 (모바일은 MobileIdentityVerification 컴포넌트에서 처리)
+    return this.requestWebAuth(options);
   }
 
   // 웹 환경에서 PortOne V2 SDK를 사용한 본인인증
@@ -81,10 +77,5 @@ export class PortOneAuthService {
     }
   }
 
-  private async requestMobileAuth(
-    options: Partial<PortOneIdentityVerificationRequest>
-  ): Promise<PortOneIdentityVerificationResponse> {
-    // TODO: 모바일 환경에서의 본인인증 구현
-    throw new Error('모바일 PASS 인증은 추후 구현 예정입니다.');
-  }
+
 }
