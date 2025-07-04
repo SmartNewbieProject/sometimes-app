@@ -1,11 +1,11 @@
 import { type PreferenceSaveBody, savePreferencesApi } from "../apis";
-import { useInterestForm } from "../hooks";
+import { useMyInfoForm } from "../hooks/use-my-info-form";
 import { PreferenceKeys } from "../queries";
 
-export enum InterestSteps {
-  AGE = 1,
-  GOODMBTI = 2,
-  BADMBTI = 3,
+export enum MyInfoSteps {
+  INTEREST = 1,
+  MBTI = 2,
+  PERSONALITY = 3,
   DATING_STYLE = 4,
   DRIKNING = 5,
   SMOKING = 6,
@@ -13,28 +13,21 @@ export enum InterestSteps {
   MILITARY = 8,
 }
 
-export const phaseCount = Object.keys(InterestSteps).length / 2;
+export const phaseCount = Object.keys(MyInfoSteps).length / 2;
 
 export type Properties = {
-  age: string;
   drinking: string;
-
+  mbti: string;
   datingStyleIds: string[];
-  militaryPreference?: string;
+  personalityIds: string[];
   militaryStatus?: string;
   smoking: string;
-  goodMbti: string;
-  badMbti: string;
   tattoo: string;
 };
 
 export const savePreferences = async (props: Properties) => {
   const body: PreferenceSaveBody = {
     data: [
-      {
-        typeName: PreferenceKeys.AGE,
-        optionIds: [props.age],
-      },
       {
         typeName: PreferenceKeys.DRINKING,
         optionIds: [props.drinking],
@@ -49,13 +42,15 @@ export const savePreferences = async (props: Properties) => {
         optionIds: [props.tattoo],
       },
       {
-        typeName: PreferenceKeys.GOOD_MBTI,
-        optionIds: [props.goodMbti],
+        typeName: PreferenceKeys.MBTI,
+        optionIds: [props.mbti],
       },
+
       {
-        typeName: PreferenceKeys.BAD_MBTI,
-        optionIds: [props.badMbti],
+        typeName: PreferenceKeys.PERSONALITY,
+        optionIds: props.personalityIds,
       },
+
       {
         typeName: PreferenceKeys.DATING_STYLE,
         optionIds: props.datingStyleIds,
@@ -63,13 +58,13 @@ export const savePreferences = async (props: Properties) => {
     ],
   };
 
-  if (props.militaryPreference) {
+  if (props.militaryStatus) {
     body.data.push({
-      typeName: PreferenceKeys.MILITARY_PREFERENCE,
-      optionIds: [props.militaryPreference],
+      typeName: PreferenceKeys.MILITARY_STATUS,
+      optionIds: [props.militaryStatus],
     });
   }
 
   await savePreferencesApi(body);
-  useInterestForm.getState().clear();
+  useMyInfoForm.getState().clear();
 };

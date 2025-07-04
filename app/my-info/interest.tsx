@@ -1,74 +1,67 @@
-import { useAuth } from "@/src/features/auth";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
-import { ImageResources } from "@/src/shared/libs";
-import { Divider, PalePurpleGradient, Text } from "@/src/shared/ui";
+import MyInfo from "@/src/features/my-info";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import Interest from "@features/interest";
+import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
-const { hooks, services, queries } = Interest;
-const { useInterestStep, useInterestForm } = hooks;
-const { InterestSteps } = services;
+const { hooks, services, queries } = MyInfo;
+const { MyInfoSteps } = services;
+const { useMyInfoForm, useMyInfoStep } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
-export default function DatingStyleSelectionScreen() {
-  const { my } = useAuth();
-  const { datingStyleIds, updateForm } = useInterestForm();
-  const { data: preferences, isLoading } = usePreferenceOptionsQuery(
-    PreferenceKeys.DATING_STYLE
+export default function InterestSelectionScreen() {
+  const { updateStep } = useMyInfoStep();
+  const { interestIds, updateForm } = useMyInfoForm();
+  const { data, isLoading } = usePreferenceOptionsQuery();
+  const preferences = data?.find(
+    (item) => item.typeId === PreferenceKeys.INTEREST
   );
 
   const onChangeOption = (values: string[]) => {
     if (values.length > 5) {
       return;
     }
-    updateForm("datingStyleIds", values);
+    updateForm("interestIds", values);
   };
 
+  const disabled = interestIds.length < 3;
+
   const nextMessage = (() => {
-    if (datingStyleIds.length < 1) {
-      return `${1 - datingStyleIds.length} 개만 더!`;
+    if (interestIds.length < 3) {
+      return `${3 - interestIds.length} 개만 더!`;
     }
     return "다음으로";
   })();
 
-  const disabled = datingStyleIds.length < 1;
-
   useFocusEffect(
-    useCallback(
-      () => useInterestStep.getState().updateStep(InterestSteps.DATING_STYLE),
-      []
-    )
+    useCallback(() => updateStep(MyInfoSteps.DRIKNING), [updateStep])
   );
-
-  const handleNextButton = () => {
-    router.navigate("/interest/drinking");
-  };
 
   return (
     <Layout.Default>
       <PalePurpleGradient />
       <View style={styles.contentContainer}>
         <Image
-          source={{ uri: ImageResources.DATING_STYLE }}
+          source={require("@assets/images/loved.png")}
           style={{ width: 81, height: 81, marginLeft: 28 }}
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            당신이 원하는
+            최근에 관심이 가는
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            이상형의 성격은 어떤가요?
+            활동이나 일이 있나요?
           </Text>
         </View>
 
         <View style={styles.indicatorContainer}>
           <StepIndicator
-            length={3}
-            step={datingStyleIds.length}
+            length={5}
+            step={interestIds.length}
             dotGap={4}
             dotSize={16}
             className="self-end"
@@ -76,10 +69,10 @@ export default function DatingStyleSelectionScreen() {
           <Divider.Horizontal />
         </View>
 
-        <View className="flex-1 w-full flex px-4 mt-2">
+        <View className="flex-1 w-full flex px-4">
           <Loading.Lottie title="관심사를 불러오고 있어요" loading={isLoading}>
             <ChipSelector
-              value={datingStyleIds}
+              value={interestIds}
               options={
                 preferences?.options.map((option) => ({
                   label: option.displayName,
@@ -89,20 +82,19 @@ export default function DatingStyleSelectionScreen() {
               }
               onChange={onChangeOption}
               multiple
-              align="center"
               style={styles.chipSelector}
+              align="center"
             />
           </Loading.Lottie>
         </View>
       </View>
-
       <Layout.TwoButtons
         disabledNext={disabled}
         content={{
           next: nextMessage,
         }}
-        onClickNext={handleNextButton}
-        onClickPrevious={() => router.navigate("/interest/dating-style")}
+        onClickNext={() => router.navigate("/my-info/dating-style")}
+        onClickPrevious={() => router.navigate("/my-info")}
       />
     </Layout.Default>
   );

@@ -87,7 +87,7 @@ export function ChipSelector<T>(
           {option?.imageUrl && (
             <Image
               source={{ uri: option.imageUrl }}
-              style={{ width: 16, height: 16, marginRight: 4 }}
+              style={{ width: 16, height: 16, paddingRight: 4, paddingTop: 2 }}
             />
           )}
           {option.label}
