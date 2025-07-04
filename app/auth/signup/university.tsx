@@ -4,8 +4,8 @@ import { platform } from '@shared/libs/platform';
 import { Text, PalePurpleGradient, Button, Show, Divider } from '@shared/ui';
 import { ChipSelector, LabelInput } from '@/src/widgets';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useState, useEffect, useRef } from 'react';
 import { KeyboardAvoidingView, View } from 'react-native';
 import Loading from "@features/loading";
 import { useKeyboarding } from '@shared/hooks';
@@ -20,10 +20,30 @@ export default function UniversityPage() {
   const { isKeyboardVisible } = useKeyboarding();
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityName);
   const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
+  const params = useLocalSearchParams();
+  const hasProcessedPassInfo = useRef(false);
+
   useChangePhase(SignupSteps.UNIVERSITY);
 
   // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics('university');
+
+  // PASS 인증 정보 처리 (useRef로 한 번만 실행되도록 제어)
+  useEffect(() => {
+    if (params.certificationInfo && !hasProcessedPassInfo.current) {
+      hasProcessedPassInfo.current = true;
+      const certInfo = JSON.parse(params.certificationInfo as string);
+      updateForm({
+        ...userForm,
+        passVerified: true,
+        name: certInfo.name,
+        phone: certInfo.phone,
+        gender: certInfo.gender,
+        birthday: certInfo.birthday,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.certificationInfo]);
 
   const onNext = () => {
     if (!selectedUniv) {
@@ -83,7 +103,6 @@ export default function UniversityPage() {
         <Loading.Lottie
           title="학교를 검색중이에요"
           loading={isLoading}
-          size={10}
         >
           <View className="w-full">
             <ChipSelector

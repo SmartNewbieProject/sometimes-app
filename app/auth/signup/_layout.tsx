@@ -54,18 +54,9 @@ export default function SignupLayout() {
           }}
         >
           <Stack.Screen name="terms" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="account"
-            options={{
-              headerShown: false,
-              headerBackVisible: false,
-            }}
-          />
-          <Stack.Screen name="phone" options={{ headerShown: false }} />
-          <Stack.Screen name="profile" options={{ headerShown: false }} />
-          <Stack.Screen name="profile-image" options={{ headerShown: false }} />
           <Stack.Screen name="university" options={{ headerShown: false }} />
           <Stack.Screen name="university-details" options={{ headerShown: false }} />
+          <Stack.Screen name="profile-image" options={{ headerShown: false }} />
           <Stack.Screen name="done" options={{ headerShown: false }} />
         </Stack>
       </Suspense>
