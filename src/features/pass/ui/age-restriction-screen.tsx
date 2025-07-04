@@ -22,7 +22,6 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
     if (onGoBack) {
       onGoBack();
     } else {
-      // 기본적으로 로그인 화면으로 돌아가기
       router.replace('/auth/login');
     }
   };
