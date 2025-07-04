@@ -18,17 +18,24 @@ export const useAtt = () => {
       return;
     }
 
-    const { requestTrackingPermissionsAsync, PermissionStatus } = await import('expo-tracking-transparency');
+    try {
+      // 네이티브 환경에서만 expo-tracking-transparency 사용
+      const ExpoTrackingTransparency = require('expo-tracking-transparency');
+      const { requestTrackingPermissionsAsync, PermissionStatus } = ExpoTrackingTransparency;
 
-    if (allowRequestAtt === ATTRequestStatus.ALLOWED) {
-      const { status } = await requestTrackingPermissionsAsync();
-      match(status)
-        .with(PermissionStatus.DENIED, () => {
-          setAllowRequestAtt(ATTRequestStatus.DENIED);
-        })
-        .otherwise(() => {
-          setAllowRequestAtt(ATTRequestStatus.ALLOWED);
-        });
+      if (allowRequestAtt === ATTRequestStatus.ALLOWED) {
+        const { status } = await requestTrackingPermissionsAsync();
+        match(status)
+          .with(PermissionStatus.DENIED, () => {
+            setAllowRequestAtt(ATTRequestStatus.DENIED);
+          })
+          .otherwise(() => {
+            setAllowRequestAtt(ATTRequestStatus.ALLOWED);
+          });
+      }
+    } catch (error) {
+      // 모듈 로드 실패 시 무시 (웹 환경에서는 정상적인 상황)
+      console.warn('expo-tracking-transparency module not available:', error);
     }
   };
 

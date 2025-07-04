@@ -1,0 +1,119 @@
+name: Build and Submit Android App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-submit-android:
+    name: Build and Submit Android
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 🏗️ Setup Expo and EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EAS_ACCESS_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🔑 Decode Google Service Account Key
+        run: echo "${{ secrets.ANDROID_ENCODED_KEY }}" | base64 --decode >./google-service-account.json
+
+      - name: 🚀 Build Android App
+        run: eas build --platform android --profile production --non-interactive
+
+      - name: 📤 Submit to Google Play Store
+        run: eas submit --platform android --profile production --latest --non-interactive
+
+      - name: 📢 Notify Slack on Success
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          channel: '썸타임-github-알림'
+          custom_payload: |
+            {
+              "text": ":white_check_mark: Android 앱 빌드 및 배포가 완료되었습니다!",
+              "attachments": [
+                {
+                  "color": "good",
+                  "fields": [
+                    {
+                      "title": "플랫폼",
+                      "value": "Android",
+                      "short": true
+                    },
+                    {
+                      "title": "상태",
+                      "value": "성공",
+                      "short": true
+                    },
+                    {
+                      "title": "커밋",
+                      "value": "${{ github.sha }}",
+                      "short": true
+                    },
+                    {
+                      "title": "브랜치",
+                      "value": "${{ github.ref_name }}",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
+
+      - name: 📢 Notify Slack on Failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          channel: '썸타임-github-알림'
+          custom_payload: |
+            {
+              "text": ":x: Android 앱 빌드 또는 배포에 실패했습니다.",
+              "attachments": [
+                {
+                  "color": "danger",
+                  "fields": [
+                    {
+                      "title": "플랫폼",
+                      "value": "Android",
+                      "short": true
+                    },
+                    {
+                      "title": "상태",
+                      "value": "실패",
+                      "short": true
+                    },
+                    {
+                      "title": "커밋",
+                      "value": "${{ github.sha }}",
+                      "short": true
+                    },
+                    {
+                      "title": "브랜치",
+                      "value": "${{ github.ref_name }}",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}

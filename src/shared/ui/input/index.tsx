@@ -1,17 +1,17 @@
-import { TextInput, type TextInputProps, View, TouchableOpacity } from 'react-native';
+import { TextInput, type TextInputProps, View, TouchableOpacity, Platform } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { useState } from 'react';
 import EyeOn from '@assets/icons/eye-on.svg';
 import EyeOff from '@assets/icons/eye-off.svg';
 
 const input = cva(
-  'w-full bg-transparent border-b border-[#E7E9EC]', 
+  'w-full bg-transparent border-b border-[#E7E9EC]',
   {
     variants: {
       size: {
-        sm: 'h-10 text-sm',
-        md: 'h-12 text-md',
-        lg: 'h-14 text-lg',
+        sm: 'h-10',
+        md: 'h-12',
+        lg: 'h-14',
       },
       status: {
         default: 'border-lightPurple',
@@ -48,6 +48,26 @@ export function Input({
 }: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  // 플랫폼별 폰트 크기 설정 (플레이스홀더와 입력 텍스트 모두 적용)
+  const getFontSize = () => {
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      switch (size) {
+        case 'sm': return 12;
+        case 'md': return 14;
+        case 'lg': return 18;
+        default: return 14;
+      }
+    } else {
+      // 웹에서는 기존 크기 유지
+      switch (size) {
+        case 'sm': return 13;
+        case 'md': return 16;
+        case 'lg': return 23;
+        default: return 16;
+      }
+    }
+  };
+
   return (
     <View className={containerClassName}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }} className={input({ size, status, isDisabled, className })}>
@@ -56,7 +76,7 @@ export function Input({
           placeholderTextColor={placeholderTextColor}
           editable={!isDisabled && editable}
           secureTextEntry={isPassword && !isPasswordVisible}
-          style={{ flex: 1 }}
+          style={{ flex: 1, fontSize: getFontSize() }}
           autoCapitalize="none"
           autoCorrect={false}
           {...props}

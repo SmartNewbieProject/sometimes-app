@@ -17,6 +17,11 @@
         "distribution": "store",
         "developmentClient": false,
         "buildConfiguration": "Release"
+      },
+      "android": {
+        "distribution": "store",
+        "developmentClient": false,
+        "buildType": "app-bundle"
       }
     },
     "production-debug": {
@@ -27,6 +32,18 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "autoIncrement": true,
+      "ios": {
+        "ascAppId": "6746120889",
+        "ascApiKeyPath": "./AuthKey.p8",
+        "ascApiKeyId": "${ASC_API_KEY_ID}",
+        "ascApiKeyIssuerId": "${ASC_API_ISSUER_ID}"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
+      }
+    }
   }
 }

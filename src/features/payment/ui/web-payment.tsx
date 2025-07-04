@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Loading from "../../loading";
 import { usePortoneStore } from "../hooks/use-portone-store";
 import type { CustomData, PaymentRequest } from "../types";
+import * as PortOne from "@portone/browser-sdk/v2";
 
 
 export interface WebPaymentProps {
@@ -44,7 +45,6 @@ export const WebPaymentView = (props: WebPaymentProps) => {
           setCustomData(paymentParams.customData);
         }
 
-        const PortOne = await import("@portone/browser-sdk/v2");
         const response = await PortOne.requestPayment({
           ...paymentParams,
           redirectUrl: `${location.origin}/purchase/complete`,

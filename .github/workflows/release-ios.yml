@@ -1,0 +1,121 @@
+name: Build and Submit iOS App
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-submit-ios:
+    name: Build and Submit iOS
+    runs-on: macos-latest
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 🏗️ Setup Expo and EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EAS_ACCESS_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🔑 Decode App Store Connect API Key
+        run: echo "${{ secrets.IOS_ENCODED_KEY }}" | base64 --decode >./AuthKey.p8
+
+      - name: 🚀 Build iOS App
+        run: eas build --platform ios --profile production --non-interactive
+
+      - name: 📤 Submit to App Store
+        env:
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_API_ISSUER_ID: ${{ secrets.ASC_API_ISSUER_ID }}
+        run: eas submit --platform ios --profile production --latest --non-interactive
+
+      - name: 📢 Notify Slack on Success
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          channel: '썸타임-github-알림'
+          custom_payload: |
+            {
+              "text": ":white_check_mark: iOS 앱 빌드 및 배포가 완료되었습니다!",
+              "attachments": [
+                {
+                  "color": "good",
+                  "fields": [
+                    {
+                      "title": "플랫폼",
+                      "value": "iOS",
+                      "short": true
+                    },
+                    {
+                      "title": "상태",
+                      "value": "성공",
+                      "short": true
+                    },
+                    {
+                      "title": "커밋",
+                      "value": "${{ github.sha }}",
+                      "short": true
+                    },
+                    {
+                      "title": "브랜치",
+                      "value": "${{ github.ref_name }}",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
+
+      - name: 📢 Notify Slack on Failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          channel: '썸타임-github-알림'
+          custom_payload: |
+            {
+              "text": ":x: iOS 앱 빌드 또는 배포에 실패했습니다.",
+              "attachments": [
+                {
+                  "color": "danger",
+                  "fields": [
+                    {
+                      "title": "플랫폼",
+                      "value": "iOS",
+                      "short": true
+                    },
+                    {
+                      "title": "상태",
+                      "value": "실패",
+                      "short": true
+                    },
+                    {
+                      "title": "커밋",
+                      "value": "${{ github.sha }}",
+                      "short": true
+                    },
+                    {
+                      "title": "브랜치",
+                      "value": "${{ github.ref_name }}",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}

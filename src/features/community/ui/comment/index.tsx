@@ -1,4 +1,4 @@
-import { View, Image } from "react-native";
+import { View, Image, Platform } from "react-native";
 import type { Comment as CommentType } from "../../types";
 import { dayUtils, getUnivLogo, UniversityName } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
@@ -31,15 +31,20 @@ export const Comment = ({ data, className }: CommentProps) => {
             <Text size="13" textColor="black">{author.name}</Text>
             <Text size="sm" className="text-[#646464]">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
           </View>
-          <View className="pt-1.5">
+          <View className="pt-1.5 flex-1">
             <Text
-            size="sm"
-            textColor="black"
-            style={{ flexShrink: 1 }}
+              size="sm"
+              textColor="black"
+              className="flex-1"
+              style={{
+                flexWrap: 'wrap',
+                flexShrink: 1,
+                lineHeight: Platform.OS === 'ios' ? 18 : 20
+              }}
             >
-                {data.content}
-          </Text>
-        </View>
+              {data.content}
+            </Text>
+          </View>
       </View>
     </View>
     

@@ -1,9 +1,4 @@
-import { Linking, Alert, Platform } from "react-native";
-
-const INSTAGRAM_PACKAGE = Platform.OS === 'ios' ? 'instagram://' : 'intent://';
-const INSTAGRAM_FALLBACK_URL = Platform.OS === 'ios'
-  ? 'https://apps.apple.com/app/instagram/id389801252'
-  : 'https://play.google.com/store/apps/details?id=com.instagram.android';
+import { Linking, Alert } from "react-native";
 
 export const openInstagram = async (instagramId: string) => {
   if (!instagramId) {
@@ -15,21 +10,9 @@ export const openInstagram = async (instagramId: string) => {
   const instagramProfileUrl = `https://www.instagram.com/${username}`;
 
   try {
-    if (Platform.OS === 'web') {
-      await Linking.openURL(instagramProfileUrl);
-    } else {
-      let appUrl = '';
-      if (Platform.OS === 'ios') {
-        appUrl = `instagram://user?username=${username}`;
-      } else {
-        appUrl = `intent://www.instagram.com/${username}/#Intent;package=com.instagram.android;scheme=https;end`;
-      }
-      try {
-        await Linking.openURL(appUrl);
-      } catch {
-        await Linking.openURL(INSTAGRAM_FALLBACK_URL);
-      }
-    }
+    // 모든 플랫폼에서 웹 링크로 열기
+    // 브라우저에서 자동으로 앱으로 리다이렉트됨
+    await Linking.openURL(instagramProfileUrl);
   } catch (error) {
     console.error('인스타그램 연결 오류:', error);
     Alert.alert('오류', '인스타그램에 연결할 수 없습니다.');

@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Divider, Show, Text } from '@/src/shared/ui';
 import { Dropdown, type DropdownItem } from '@/src/shared/ui/dropdown';
 import type { Comment } from '../../types';
@@ -47,9 +47,19 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 						universityName={comment.author.universityDetails.name as UniversityName}
 						isOwner={isAuthor}
 						comment={
-							<Text className="text-sm" textColor="black">
-								{comment.content}
-							</Text>
+							<View style={{ flex: 1, flexDirection: 'row' }}>
+								<Text
+									className="text-sm flex-1"
+									textColor="black"
+									style={{
+										flexWrap: 'wrap',
+										flexShrink: 1,
+										lineHeight: Platform.OS === 'ios' ? 18 : 20
+									}}
+								>
+									{comment.content}
+								</Text>
+							</View>
 						}
 						updatedAt={
 							<Text className="text-sm" textColor="pale-purple">

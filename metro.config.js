@@ -16,4 +16,8 @@ config.resolver = {
   sourceExts: [...resolver.sourceExts, 'svg'],
 };
 
+config.server = {
+  port: 3000,
+};
+
 module.exports = withNativeWind(config, { input: './global.css' })
