@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/src/features/auth';
 import { PortOneAuthService } from '../services/portone-auth.service';
+import { isAdult } from '../utils';
 import type { PortOneIdentityVerificationRequest, PortOneIdentityVerificationResponse } from '../types';
 
 
@@ -61,6 +62,15 @@ export const usePortOneLogin = ({
     const loginResult = await loginWithPass(identityVerificationId);
 
     if (loginResult.isNewUser) {
+      if (loginResult.certificationInfo?.birthday) {
+        const { birthday } = loginResult.certificationInfo;
+
+        if (!isAdult(birthday)) {
+          router.push({ pathname: '/auth/age-restriction' as any });
+          return;
+        }
+      }
+
       router.push({
         pathname: '/auth/signup/university',
         params: {

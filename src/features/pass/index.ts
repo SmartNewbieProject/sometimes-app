@@ -6,6 +6,7 @@ export { PortOneAuthService } from './services';
 
 // Components
 export { MobileIdentityVerification } from './ui/mobile-identity-verification';
+export { AgeRestrictionScreen } from './ui/age-restriction-screen';
 
 // Types
 export type {
@@ -30,4 +31,6 @@ export {
   getPassErrorMessage,
   formatPhoneNumber,
   formatBirthDate,
+  calculateAge,
+  isAdult,
 } from './utils';
