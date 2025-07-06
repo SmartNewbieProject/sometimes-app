@@ -14,22 +14,21 @@ export default function Logo() {
       "flex flex-col items-center gap-y-2",
       platform({
         ios: () => "pt-[80px]",
-        android: () => "pt-[80px]",
+        android: () => "pt-[5px]",
         web: () => "",
       })
     )}>
-      <IconWrapper width={128} className="text-primaryPurple md:pb-[58px]">
-        <SmallTitle />
-      </IconWrapper>
-      <View className="p-0 md:p-12 mt-[8px]">
+      <View className="p-0 md:p-18 mb-8">
         <Image
           source={require('@assets/images/paper-plane.png')}
           style={{ width: 128, height: 128 }}
         />
       </View>
+      <IconWrapper width={400} className="text-primaryPurple">
+        <SmallTitle />
+      </IconWrapper>
       <View className="items-center pt-[8px] flex flex-col gap-y-[6px]">
-        <Text className="text-[25px] font-semibold text-black">익숙한 하루에 설렘 하나,</Text>
-        <Text className="text-[15px] text-[#4F4F4F]">SOMETIME에서</Text>
+        <Text className="text-[15px] text-primaryPurple">익숙한 하루에 설렘 하나</Text>
       </View>
     </View>
   );

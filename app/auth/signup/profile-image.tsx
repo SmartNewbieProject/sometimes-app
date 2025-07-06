@@ -5,21 +5,22 @@ import { Image } from 'expo-image';
 import { Button, ImageSelector } from '@/src/shared/ui';
 import { router } from 'expo-router';
 import Signup from '@/src/features/signup';
-import { Form } from '@/src/widgets';
+import type { SignupForm } from '@/src/features/signup/hooks';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
+import { tryCatch } from '@/src/shared/libs';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import Loading from '@/src/features/loading';
 
-const { SignupSteps, useChangePhase, useSignupProgress, useSignupAnalytics } = Signup;
+const { SignupSteps, useChangePhase, useSignupProgress, apis, useSignupAnalytics } = Signup;
 
 type FormState = {
   images: (string | null)[];
 }
-
-type ImageState = (string | null)[];
 
 const schema = z.object({
   images: z.array(z.string().nullable())
@@ -32,8 +33,8 @@ const schema = z.object({
 export default function ProfilePage() {
   const { updateForm, form: userForm } = useSignupProgress();
   const [images, setImages] = useState<(string | null)[]>(userForm.profileImages ?? [null, null, null]);
-
-  // 애널리틱스 추적 설정
+  const { showErrorModal } = useModal();
+  const [signupLoading, setSignupLoading] = useState(false);
   const { trackSignupEvent } = useSignupAnalytics('profile_image');
 
   const form = useForm<FormState>({
@@ -44,33 +45,49 @@ export default function ProfilePage() {
     },
   });
 
-  const formImages = form.watch('images');
-  console.log({ formImages });
-
-  const onNext = () => {
-    trackSignupEvent('next_button_click', 'to_university');
-    updateForm({
+  const onNext = async () => {
+    const signupForm = {
       ...userForm,
-      profileImages: images as string[],
-    });
-    router.push('/auth/signup/university');
+      profileImages: images.filter(Boolean) as string[],
+    };
+
+    updateForm(signupForm);
+    setSignupLoading(true);
+
+    await tryCatch(
+      async () => {
+        await apis.signup(signupForm as SignupForm);
+        trackSignupEvent('signup_complete');
+        router.push('/auth/signup/done');
+      },
+      (error) => {
+        console.error('Signup error:', error);
+        trackSignupEvent('signup_error', error.error);
+        showErrorModal(error.error, "announcement");
+      }
+    );
+
+    setSignupLoading(false);
   };
 
   const nextable = images.every((image) => image !== null);
+  const nextButtonMessage = nextable ? '다음으로' : '조금만 더 알려주세요';
 
-  const nextButtonMessage = (() => {
-    if (!nextable) return '조금만 더 알려주세요';
-    return '다음으로';
-  })();
-
-  const uploadImage = (index: number, value: string) =>
-    setImages([...images.slice(0, index), value, ...images.slice(index + 1)]);
+  const uploadImage = (index: number, value: string) => {
+    const newImages = [...images];
+    newImages[index] = value;
+    setImages(newImages);
+  };
 
   useChangePhase(SignupSteps.PROFILE_IMAGE);
 
   useEffect(() => {
     form.setValue('images', images);
-  }, [images]);
+  }, [images, form]);
+
+  if (signupLoading) {
+    return <Loading.Page />;
+  }
 
   return (
     <View className="flex-1 flex flex-col">
@@ -141,8 +158,8 @@ export default function ProfilePage() {
         })
       )}>
         <Button variant="secondary" onPress={() => {
-          trackSignupEvent('back_button_click', 'to_profile');
-          router.push('/auth/signup/profile');
+          trackSignupEvent('back_button_click', 'to_university_details');
+          router.push('/auth/signup/university-details');
         }} className="flex-[0.3]">
           뒤로
         </Button>

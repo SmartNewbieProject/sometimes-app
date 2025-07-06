@@ -1,7 +1,14 @@
 import { axiosClient, dayUtils, fileUtils, platform } from "@/src/shared/libs";
 import type { SignupForm } from "../hooks";
 import { nanoid } from 'nanoid';
-import { AuthorizeSmsCode } from "@/app/auth/signup/types";
+import type { AuthorizeSmsCode } from "@/app/auth/signup/types";
+
+// YYYY-MM-DD 형식의 생년월일로부터 만나이 계산
+const calculateAge = (birthday: string): number => {
+  const today = dayUtils.create();
+  const birthDate = dayUtils.create(birthday);
+  return today.diff(birthDate, 'year');
+};
 
 export const getUnivs = async (): Promise<string[]> => {
   return axiosClient.get('/universities');
@@ -25,25 +32,21 @@ const createFileObject = (imageUri: string, fileName: string) =>
   });
 
 export const signup = (form: SignupForm): Promise<void> => {
-  const birthday = dayUtils.getDayBy6Digit(form.birthday);
   const formData = new FormData();
-
-  formData.append('email', form.email);
-  formData.append('password', form.password);
-  formData.append('phoneNumber', form.phoneNumber);
+  formData.append('phoneNumber', form.phone);
   formData.append('name', form.name);
-  formData.append('birthday', birthday.format('YYYY-MM-DD'));
+  formData.append('birthday', form.birthday);
   formData.append('gender', form.gender);
-  formData.append('mbti', form.mbti);
+  const age = calculateAge(form.birthday);
+  formData.append('age', age.toString());
   formData.append('universityName', form.universityName);
-  formData.append('age', dayUtils.getAgeBy6Digit(form.birthday).toString());
   formData.append('departmentName', form.departmentName);
   formData.append('grade', form.grade);
   formData.append('studentNumber', form.studentNumber);
   formData.append('instagramId', form.instagramId);
 
   form.profileImages.forEach(imageUri => {
-    const file = createFileObject(imageUri, `${form.email}-${nanoid(6)}.png`);
+    const file = createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`);
     formData.append('profileImages', file);
   });
 

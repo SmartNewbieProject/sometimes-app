@@ -1,20 +1,17 @@
 import { create } from 'zustand';
 
 export type SignupForm = {
-  email: string;
-  password: string;
   name: string;
+  phone: string;
   birthday: string;
-  gender: 'FEMALE' | 'MALE';
+  gender: 'MALE' | 'FEMALE';
   universityName: string;
-  mbti: string;
-  phoneNumber: string;
-  profileImages: string[];
   departmentName: string;
   grade: string;
   studentNumber: string;
   instagramId: string;
-  smsUniqueKey: string;
+  profileImages: string[];
+  passVerified: boolean;
 }
 
 type Agreement = {
@@ -78,12 +75,9 @@ type StoreProps = {
 
 export enum SignupSteps {
   TERMS = 1,
-  ACCOUNT = 2,
-  PHONE = 3,
-  PERSONAL_INFO = 4,
-  PROFILE_IMAGE = 5,
-  UNIVERSITY = 6,
-  UNIVERSITY_DETAIL = 7,
+  UNIVERSITY = 2,
+  UNIVERSITY_DETAIL = 3,
+  PROFILE_IMAGE = 4,
 }
 
 const phaseCount = Object.keys(SignupSteps).length / 2;
