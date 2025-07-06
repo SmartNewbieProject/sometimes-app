@@ -1,16 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { cn } from "@/src/shared/libs/cn";
+import { Text } from "@/src/shared/ui";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
-  View,
-  ScrollView,
-  TouchableOpacity,
   Animated,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  LayoutChangeEvent,
+  type LayoutChangeEvent,
+  PanResponder,
+  TouchableOpacity,
+  View,
   useWindowDimensions,
-} from 'react-native';
-import { cn } from '@/src/shared/libs/cn';
-import { Text } from '@/src/shared/ui';
+} from "react-native";
 
 interface SlideProps {
   children: React.ReactNode[];
@@ -21,189 +19,296 @@ interface SlideProps {
   autoPlay?: boolean;
   autoPlayInterval?: number;
   showIndicator?: boolean;
-  indicatorPosition?: 'top' | 'bottom';
-  indicatorType?: 'dot' | 'line' | 'number';
+  indicatorPosition?: "top" | "bottom";
+  indicatorType?: "dot" | "line" | "number";
   onSlideChange?: (index: number) => void;
-  onScrollStateChange?: (isScrolling: boolean) => void; // 스크롤 상태 변경 콜백 추가
-  animationType?: 'slide' | 'fade' | 'slide-fade';
+  onScrollStateChange?: (isScrolling: boolean) => void;
   animationDuration?: number;
-  loop?: boolean; // 무한 루프 활성화 여부
 }
 
 export function Slide({
   children,
-  className = '',
-  indicatorClassName = '',
-  activeIndicatorClassName = '',
-  indicatorContainerClassName = '',
+  className = "",
+  indicatorClassName = "",
+  activeIndicatorClassName = "",
+  indicatorContainerClassName = "",
   autoPlay = false,
   autoPlayInterval = 3000,
   showIndicator = true,
-  indicatorPosition = 'bottom',
-  indicatorType = 'dot',
+  indicatorPosition = "bottom",
+  indicatorType = "dot",
   onSlideChange,
   onScrollStateChange,
-  animationType = 'slide-fade',
   animationDuration = 300,
-  loop = false, // 기본값은 false
 }: SlideProps) {
+  const loop = false;
   const [activeIndex, setActiveIndex] = useState(0);
-  const [previousIndex, setPreviousIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false); // 스크롤 중인지 여부를 추적
-  const scrollViewRef = useRef<ScrollView>(null);
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const translateX = useRef(new Animated.Value(0)).current;
+  const autoPlayTimer = useRef<NodeJS.Timeout | null>(null);
   const totalSlides = React.Children.count(children);
 
-  // 화면 너비 정보 가져오기 (앱에서도 안정적으로 동작)
   const { width: windowWidth } = useWindowDimensions();
 
-  // 컨테이너 너비 설정 (레이아웃 이벤트와 화면 너비 모두 고려)
+  const dragStartX = useRef(0);
+  const currentVirtualIndex = useRef(0);
+
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
     setContainerWidth(width);
+
+    if (loop && totalSlides > 1) {
+      translateX.setValue(-width);
+      currentVirtualIndex.current = 1;
+    } else {
+      translateX.setValue(0);
+      currentVirtualIndex.current = 0;
+    }
   };
 
-  // 화면 너비가 변경될 때 컨테이너 너비도 업데이트
   useEffect(() => {
     if (containerWidth === 0) {
       setContainerWidth(windowWidth);
     }
   }, [windowWidth]);
 
-  // Animation values
-  const slideAnimation = useRef(new Animated.Value(0)).current;
-  const fadeAnimation = useRef(new Animated.Value(1)).current;
+  // 슬라이드 이동 함수 - 현재 실제 위치 기준으로 계산
+  const moveToSlide = useCallback(
+    (targetIndex: number, animated = true, direction?: "next" | "prev") => {
+      if (containerWidth === 0) return;
 
-  // 스크롤 타이머 ref
-  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+      let targetVirtualIndex: number;
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (containerWidth === 0) return;
-
-    // 스크롤 시작 시 상태 업데이트
-    if (!isScrolling) {
-      setIsScrolling(true);
-      // 스크롤 상태 변경 콜백 호출
-      onScrollStateChange?.(true);
-    }
-
-    // 이전 타이머가 있으면 취소
-    if (scrollTimerRef.current) {
-      clearTimeout(scrollTimerRef.current);
-    }
-
-    // 스크롤이 끝난 후 일정 시간이 지나면 스크롤 상태 초기화
-    scrollTimerRef.current = setTimeout(() => {
-      setIsScrolling(false);
-      // 스크롤 상태 변경 콜백 호출
-      onScrollStateChange?.(false);
-      scrollTimerRef.current = null;
-    }, 500); // 스크롤이 끝난 후 0.5초 후에 상태 초기화
-
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    let newIndex = Math.round(contentOffsetX / containerWidth);
-
-    // 한 번에 한 장씩만 이동하도록 제한
-    if (Math.abs(newIndex - activeIndex) > 1) {
-      // 이전 인덱스와 현재 인덱스의 차이가 1보다 크면 한 장씩만 이동하도록 제한
-      newIndex = activeIndex + (newIndex > activeIndex ? 1 : -1);
-      // 스크롤 위치 조정
-      scrollViewRef.current?.scrollTo({
-        x: newIndex * containerWidth,
-        animated: true,
-      });
-    }
-
-    if (newIndex !== activeIndex) {
-      setPreviousIndex(activeIndex);
-      setActiveIndex(newIndex);
-      onSlideChange?.(newIndex);
-    }
-  };
-
-  useEffect(() => {
-    if (previousIndex !== activeIndex && containerWidth > 0) {
-      // Reset animations
-      slideAnimation.setValue(previousIndex < activeIndex ? containerWidth : -containerWidth);
-      fadeAnimation.setValue(0);
-
-      // Start animations
-      Animated.parallel([
-        Animated.timing(slideAnimation, {
-          toValue: 0,
-          duration: animationDuration,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnimation, {
-          toValue: 1,
-          duration: animationDuration,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [activeIndex, previousIndex, animationDuration, containerWidth]);
-
-  const scrollToIndex = (index: number) => {
-    if (scrollViewRef.current && containerWidth > 0) {
-      let targetIndex = index;
-
-      // 무한 루프 처리
       if (loop && totalSlides > 1) {
-        // 인덱스가 범위를 벗어나면 조정
-        if (index >= totalSlides) {
-          targetIndex = 0;
-        } else if (index < 0) {
-          targetIndex = totalSlides - 1;
+        if (
+          direction === "next" &&
+          activeIndex === totalSlides - 1 &&
+          targetIndex === 0
+        ) {
+          // 마지막에서 첫번째로: 현재 위치에서 +1
+          targetVirtualIndex = currentVirtualIndex.current + 1;
+        } else if (
+          direction === "prev" &&
+          activeIndex === 0 &&
+          targetIndex === totalSlides - 1
+        ) {
+          // 첫번째에서 마지막으로: 현재 위치에서 -1
+          targetVirtualIndex = currentVirtualIndex.current - 1;
+        } else {
+          // 일반적인 경우: 현재 위치에서 상대적 이동
+          const diff = targetIndex - activeIndex;
+          targetVirtualIndex = currentVirtualIndex.current + diff;
         }
       } else {
-        // 루프가 아닌 경우 범위 제한
-        targetIndex = Math.max(0, Math.min(index, totalSlides - 1));
+        targetVirtualIndex = targetIndex;
       }
 
-      scrollViewRef.current.scrollTo({
-        x: targetIndex * containerWidth,
-        animated: true,
-      });
-    }
-  };
+      const targetX = -targetVirtualIndex * containerWidth;
+
+      if (animated) {
+        Animated.timing(translateX, {
+          toValue: targetX,
+          duration: animationDuration,
+          useNativeDriver: true,
+        }).start(() => {
+          // 애니메이션 완료 후 위치 업데이트
+          currentVirtualIndex.current = targetVirtualIndex;
+
+          // 경계 점프 처리
+          if (loop && totalSlides > 1) {
+            if (targetVirtualIndex === 0) {
+              // 가짜 마지막에서 진짜 마지막으로
+              const newVirtualIndex = totalSlides;
+              const newX = -newVirtualIndex * containerWidth;
+              translateX.setValue(newX);
+              currentVirtualIndex.current = newVirtualIndex;
+            } else if (targetVirtualIndex === totalSlides + 1) {
+              // 가짜 첫번째에서 진짜 첫번째로
+              const newVirtualIndex = 1;
+              const newX = -newVirtualIndex * containerWidth;
+              translateX.setValue(newX);
+              currentVirtualIndex.current = newVirtualIndex;
+            }
+          }
+        });
+      } else {
+        translateX.setValue(targetX);
+        currentVirtualIndex.current = targetVirtualIndex;
+      }
+    },
+    [
+      containerWidth,
+      loop,
+      totalSlides,
+      animationDuration,
+      translateX,
+      activeIndex,
+    ]
+  );
+
+  // PanResponder 설정
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+    },
+
+    onPanResponderGrant: () => {
+      setIsScrolling(true);
+      onScrollStateChange?.(true);
+
+      dragStartX.current = (translateX as any)._value;
+
+      if (autoPlayTimer.current) {
+        clearTimeout(autoPlayTimer.current);
+        autoPlayTimer.current = null;
+      }
+    },
+
+    onPanResponderMove: (_, gestureState) => {
+      if (containerWidth === 0) return;
+
+      const newX = dragStartX.current + gestureState.dx;
+      translateX.setValue(newX);
+    },
+
+    onPanResponderRelease: (_, gestureState) => {
+      if (containerWidth === 0) return;
+
+      const threshold = containerWidth * 0.3;
+      const velocity = gestureState.vx;
+
+      let newIndex = activeIndex;
+      let direction: "next" | "prev" | undefined;
+
+      if (gestureState.dx > threshold || velocity > 0.5) {
+        direction = "prev";
+        if (loop) {
+          newIndex = activeIndex === 0 ? totalSlides - 1 : activeIndex - 1;
+        } else {
+          newIndex = Math.max(0, activeIndex - 1);
+        }
+      } else if (gestureState.dx < -threshold || velocity < -0.5) {
+        direction = "next";
+        if (loop) {
+          newIndex = activeIndex === totalSlides - 1 ? 0 : activeIndex + 1;
+        } else {
+          newIndex = Math.min(totalSlides - 1, activeIndex + 1);
+        }
+      }
+
+      setActiveIndex(newIndex);
+      onSlideChange?.(newIndex);
+      moveToSlide(newIndex, true, direction);
+
+      setTimeout(() => {
+        setIsScrolling(false);
+        onScrollStateChange?.(false);
+      }, animationDuration + 50);
+    },
+  });
+
+  const scrollToIndex = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < totalSlides) {
+        let direction: "next" | "prev" | undefined;
+        if (loop) {
+          if (activeIndex === totalSlides - 1 && index === 0) {
+            direction = "next";
+          } else if (activeIndex === 0 && index === totalSlides - 1) {
+            direction = "prev";
+          }
+        }
+
+        setActiveIndex(index);
+        onSlideChange?.(index);
+        moveToSlide(index, true, direction);
+      }
+    },
+    [totalSlides, onSlideChange, moveToSlide, activeIndex, loop]
+  );
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    if (autoPlay && totalSlides > 1 && !isScrolling) {
+      autoPlayTimer.current = setTimeout(() => {
+        const nextIndex = loop
+          ? (activeIndex + 1) % totalSlides
+          : Math.min(totalSlides - 1, activeIndex + 1);
 
-    if (autoPlay && totalSlides > 1) {
-      interval = setInterval(() => {
-        const nextIndex = (activeIndex + 1) % totalSlides;
-        scrollToIndex(nextIndex);
+        if (
+          nextIndex !== activeIndex ||
+          (loop && activeIndex === totalSlides - 1)
+        ) {
+          const direction =
+            loop && activeIndex === totalSlides - 1 && nextIndex === 0
+              ? "next"
+              : undefined;
+
+          setActiveIndex(nextIndex);
+          onSlideChange?.(nextIndex);
+          moveToSlide(nextIndex, true, direction);
+        }
       }, autoPlayInterval);
     }
 
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (autoPlayTimer.current) {
+        clearTimeout(autoPlayTimer.current);
       }
     };
-  }, [activeIndex, autoPlay, autoPlayInterval, totalSlides]);
+  }, [
+    activeIndex,
+    autoPlay,
+    autoPlayInterval,
+    totalSlides,
+    isScrolling,
+    loop,
+    onSlideChange,
+    moveToSlide,
+  ]);
+
+  const renderSlides = () => {
+    const childrenArray = React.Children.toArray(children);
+
+    if (loop && totalSlides > 1) {
+      return [
+        childrenArray[totalSlides - 1],
+        ...childrenArray,
+        childrenArray[0],
+      ];
+    }
+    return childrenArray;
+  };
+
+  const slides = renderSlides();
+  const slideWidth = containerWidth * slides.length;
 
   const renderIndicator = () => {
     switch (indicatorType) {
-      case 'number':
+      case "number":
         return (
-          <View className={cn(
-            "px-2 py-1 bg-primaryPurple rounded-full",
-            indicatorContainerClassName
-          )}>
+          <View
+            className={cn(
+              "px-2 py-1 bg-primaryPurple rounded-full",
+              indicatorContainerClassName
+            )}
+          >
             <Text size="sm" textColor="white">
               {activeIndex + 1} / {totalSlides}
             </Text>
           </View>
         );
 
-      case 'line':
+      case "line":
         return (
-          <View className={cn(
-            "flex-row items-center justify-center gap-1",
-            indicatorContainerClassName
-          )}>
+          <View
+            className={cn(
+              "flex-row items-center justify-center gap-1",
+              indicatorContainerClassName
+            )}
+          >
             {Array.from({ length: totalSlides }).map((_, index) => (
               <TouchableOpacity
                 key={index}
@@ -219,13 +324,14 @@ export function Slide({
           </View>
         );
 
-      case 'dot':
-      default:
+      case "dot":
         return (
-          <View className={cn(
-            "flex-row items-center justify-center gap-2",
-            indicatorContainerClassName
-          )}>
+          <View
+            className={cn(
+              "flex-row items-center justify-center gap-2",
+              indicatorContainerClassName
+            )}
+          >
             {Array.from({ length: totalSlides }).map((_, index) => (
               <TouchableOpacity
                 key={index}
@@ -240,28 +346,8 @@ export function Slide({
             ))}
           </View>
         );
-    }
-  };
-
-  // Create animated slide styles based on animation type
-  const getAnimatedStyles = (index: number) => {
-    if (index !== activeIndex) return {};
-
-    switch (animationType) {
-      case 'fade':
-        return {
-          opacity: fadeAnimation,
-        };
-      case 'slide':
-        return {
-          transform: [{ translateX: slideAnimation }],
-        };
-      case 'slide-fade':
       default:
-        return {
-          opacity: fadeAnimation,
-          transform: [{ translateX: slideAnimation }],
-        };
+        return null;
     }
   };
 
@@ -270,57 +356,35 @@ export function Slide({
       className={cn("relative flex flex-col", className)}
       onLayout={handleLayout}
     >
-      {showIndicator && indicatorPosition === 'top' && (
+      {showIndicator && indicatorPosition === "top" && (
         <View className="absolute top-4 z-10 w-full items-center">
           {renderIndicator()}
         </View>
       )}
 
-      {containerWidth > 0 ? (
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-          onScrollBeginDrag={() => {
-            setIsScrolling(true);
-            onScrollStateChange?.(true);
-          }}
-          onScrollEndDrag={() => {
-            // 스크롤이 끝난 후 일정 시간이 지나면 스크롤 상태 초기화
-            setTimeout(() => {
-              setIsScrolling(false);
-              onScrollStateChange?.(false);
-            }, 300);
-          }}
-          style={{ width: containerWidth }}
-          contentContainerStyle={{ width: containerWidth * totalSlides }}
+      {containerWidth > 0 && (
+        <View
+          style={{ width: containerWidth, overflow: "hidden" }}
+          {...panResponder.panHandlers}
         >
-          {React.Children.map(children, (child, index) => {
-            const wrappedChild = (
-              <View style={{ width: '100%', maxWidth: containerWidth }}>
+          <Animated.View
+            style={{
+              flexDirection: "row",
+              width: slideWidth,
+              transform: [{ translateX }],
+            }}
+          >
+            {slides.map((child, index) => (
+              <View key={`slide-${index}`} style={{ width: containerWidth }}>
                 {child}
               </View>
-            );
-
-            return (
-              <Animated.View
-                key={index}
-                style={[{ width: containerWidth }, getAnimatedStyles(index)]}
-              >
-                {wrappedChild}
-              </Animated.View>
-            );
-          })}
-        </ScrollView>
-      ) : null}
-
-      {showIndicator && indicatorPosition === 'bottom' && (
-        <View className="pt-2 w-full items-center">
-          {renderIndicator()}
+            ))}
+          </Animated.View>
         </View>
+      )}
+
+      {showIndicator && indicatorPosition === "bottom" && (
+        <View className="pt-2 w-full items-center">{renderIndicator()}</View>
       )}
     </View>
   );
