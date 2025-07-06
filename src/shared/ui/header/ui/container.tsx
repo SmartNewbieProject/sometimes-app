@@ -16,7 +16,7 @@ export function Container({ children, className, centered = false }: ContainerPr
         'w-full flex-row justify-between items-center px-3',
         platform({
           ios: () => 'pt-16 pb-4',
-          android: () => 'pt-12 pb-4',
+          android: () => 'pt-0 pb-4',
           web: () => 'pt-3 pb-4',
         }),
         className

@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import { Platform, View } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
-import Hotjar from '@hotjar/browser';
 
 import { QueryProvider, RouteTracker } from '@/src/shared/config';
 import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
@@ -46,17 +45,27 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    // Hotjar Site ID와 Version
-    const siteId = 6430952;
-    const hotjarVersion = 6;
-
-    // Hotjar 초기화 (웹 플랫폼에서만)
+    // Hotjar는 웹에서만 초기화 (Android 빌드 문제 방지)
     if (Platform.OS === 'web') {
-      Hotjar.init(siteId, hotjarVersion);
+      try {
+        const script = document.createElement('script');
+        script.innerHTML = `
+          (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:6430952,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+          })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+        `;
+        document.head.appendChild(script);
 
-      // 개발 환경에서 디버그 로그
-      if (__DEV__) {
-        console.log("Hotjar initialized in development mode.");
+        if (__DEV__) {
+          console.log("Hotjar script loaded in development mode.");
+        }
+      } catch (error) {
+        console.warn("Failed to load Hotjar:", error);
       }
     }
   }, []);
