@@ -3,15 +3,36 @@ import Signup from '@features/signup';
 import { platform } from '@shared/libs/platform';
 import { useEffect } from 'react';
 import { BusinessInfo } from '@/src/shared/ui/business-info/business-info';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
 
 const { useSignupProgress } = Signup;
 
 export default function LoginScreen() {
   const { clear } = useSignupProgress();
+  const params = useLocalSearchParams();
+  const router = useRouter();
+  const { loginWithPass } = useAuth();
 
   useEffect(() => {
     clear();
   }, [clear]);
+
+  useEffect(() => {
+    const identityVerificationId = params.identityVerificationId as string;
+    if (identityVerificationId) {
+      loginWithPass(identityVerificationId).then(result => {
+        if (result.isNewUser) {
+          router.replace({
+            pathname: '/auth/signup/university',
+            params: { certificationInfo: JSON.stringify(result.certificationInfo) },
+          });
+        } else {
+          router.replace('/home');
+        }
+      }).catch(() => router.replace('/auth/login'));
+    }
+  }, [params, loginWithPass, router]);
 
   return (
     <View className="flex-1" style={{ backgroundColor: '#F7F3FF' }}>
