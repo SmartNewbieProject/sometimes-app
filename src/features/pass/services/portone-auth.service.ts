@@ -62,14 +62,17 @@ export class PortOneAuthService {
       }
       const PortOne = await this.loadPortOneSDK();
 
+      const identityVerificationId = `cert_${new Date().getTime()}`;
+
       const request: PortOneIdentityVerificationRequest = {
         storeId: this.storeId,
         channelKey: this.passChannelKey, // PASS 인증용 채널키 사용
-        identityVerificationId: `cert_${new Date().getTime()}`,
+        identityVerificationId,
         windowType: {
           pc: "POPUP",
-          mobile: "REDIRECTION"
+          mobile: "REDIRECTION",
         },
+        redirectUrl: `${window.location.origin}/auth/login?identityVerificationId=${identityVerificationId}`,
         ...options,
       };
 
