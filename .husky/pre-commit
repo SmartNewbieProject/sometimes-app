@@ -1,0 +1,12 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Check if we're on main branch or merging to main
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+TARGET_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+
+if [ "$BRANCH" = "main" ] || [ "$TARGET_BRANCH" = "main" ]; then
+  echo "Bumping version for main branch..."
+  node scripts/bump-version.js
+  git add app.json
+fi
