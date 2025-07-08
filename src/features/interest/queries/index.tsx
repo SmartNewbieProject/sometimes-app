@@ -16,9 +16,9 @@ export enum PreferenceKeys {
   TATTOO = "문신 선호도",
 }
 
-export const usePreferenceOptionsQuery = (name: PreferenceKeys) =>
+export const usePreferenceOptionsQuery = () =>
   useQuery<Preferences[]>({
-    queryKey: ["preference-options", name],
+    queryKey: ["preference-options"],
     queryFn: () => getPreferenceOptions(),
 
     placeholderData: [

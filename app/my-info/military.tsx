@@ -1,68 +1,78 @@
 import { useAuth } from "@/src/features/auth";
-import { savePreferences } from "@/src/features/interest/services";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
+import MyInfo from "@/src/features/my-info";
+import type { Preferences } from "@/src/features/my-info/api";
+import { savePreferences } from "@/src/features/my-info/services";
 import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ImageResources, tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, StepSlider, Text } from "@/src/shared/ui";
-import type { PreferenceOption } from "@/src/types/user";
-import Interest from "@features/interest";
+
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
-const { hooks, services, queries } = Interest;
-const { useInterestStep, useInterestForm } = hooks;
-const { InterestSteps } = services;
+const { hooks, services, queries } = MyInfo;
+const { useMyInfoForm, useMyInfoStep } = hooks;
+const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function MilitarySelectionScreen() {
-  const {
-    updateForm,
-    clear: _,
-    militaryPreference,
-    ...form
-  } = useInterestForm();
+  const { updateForm, clear: _, militaryStatus, ...form } = useMyInfoForm();
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { my } = useAuth();
   const { showErrorModal } = useModal();
-  const { data: preferences, isLoading: optionsLoading } =
-    usePreferenceOptionsQuery(PreferenceKeys.MILITARY_PREFERENCE);
+  const {
+    data: preferencesArray = [{ typeName: "", options: [] }],
+    isLoading: optionsLoading,
+  } = usePreferenceOptionsQuery();
+
+  console.log(
+    "result",
+    preferencesArray?.find(
+      (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
+    )
+  );
+  const preferences: Preferences =
+    preferencesArray?.find(
+      (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
+    ) ?? preferencesArray[0];
   const index = preferences?.options.findIndex(
-    (item) => item.id === militaryPreference?.id
+    (item) => item.id === militaryStatus?.id
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  console.log(militaryPreference, "mili");
+  console.log(militaryStatus, "mili");
   useFocusEffect(
     useCallback(
-      () => useInterestStep.getState().updateStep(InterestSteps.MILITARY),
+      () => useMyInfoStep.getState().updateStep(MyInfoSteps.MILITARY),
       []
     )
   );
 
   const onFinish = async () => {
     setFormSubmitLoading(true);
-    updateForm("militaryPreference", preferences?.options[currentIndex]);
+    updateForm("militaryStatus", preferences?.options[currentIndex]);
     await tryCatch(
       async () => {
         const validation = Object.values(form).every((v) => v !== null);
         if (!validation) throw new Error("비어있는 양식이 존재합니다.");
         await savePreferences({
-          age: form.age as string,
+          datingStyleIds: form.datingStyleIds,
+          interestIds: form.interestIds,
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
           tattoo: preferences?.options[currentIndex].id as string,
-          datingStyleIds: form.datingStyleIds as string[],
-          militaryPreference: preferences?.options[currentIndex]?.id ?? "",
-          goodMbti: form.goodMbti as string,
-          badMbti: form.badMbti as string,
+          personality: form.personality as string,
+          militaryStatus: preferences?.options[currentIndex]?.id ?? "",
+
+          mbti: form.mbti as string,
         });
         await queryClient.invalidateQueries({
-          queryKey: ["check-preference-fill"],
+          queryKey: ["preference-self"],
         });
-        router.navigate("/interest/done");
+        router.navigate("/my-info/done");
         setFormSubmitLoading(false);
       },
       ({ error }) => {
@@ -73,7 +83,7 @@ export default function MilitarySelectionScreen() {
   };
   const onChangeOption = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
-      updateForm("militaryPreference", preferences.options[value]);
+      updateForm("militaryStatus", preferences.options[value]);
     }
   };
 
@@ -87,10 +97,7 @@ export default function MilitarySelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            군필에 대해
-          </Text>
-          <Text weight="semibold" size="20" textColor="black">
-            어떻게 생각하시나요?
+            군대는 다녀 오셨나요?
           </Text>
         </View>
 
@@ -122,7 +129,7 @@ export default function MilitarySelectionScreen() {
       <Layout.TwoButtons
         disabledNext={false}
         onClickNext={onFinish}
-        onClickPrevious={() => router.navigate("/interest/tattoo")}
+        onClickPrevious={() => router.navigate("/my-info/tattoo")}
       />
     </Layout.Default>
   );

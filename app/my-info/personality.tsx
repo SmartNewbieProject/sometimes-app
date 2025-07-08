@@ -1,21 +1,22 @@
 import type { Preferences } from "@/src/features/interest/api";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
-import { ChipSelector } from "@/src/widgets";
+import MyInfo from "@/src/features/my-info";
+import { ChipSelector, StepIndicator } from "@/src/widgets";
 import Interest from "@features/interest";
-import { PalePurpleGradient, Text } from "@shared/ui";
+import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
-const { hooks, services, queries } = Interest;
-const { useInterestForm, useInterestStep } = hooks;
-const { InterestSteps } = services;
+const { hooks, services, queries } = MyInfo;
+const { useMyInfoForm, useMyInfoStep } = hooks;
+const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function PersonalitySelectionScreen() {
-  const { updateStep } = useInterestStep();
-  const { personality, updateForm } = useInterestForm();
+  const { updateStep } = useMyInfoStep();
+  const { personality, updateForm } = useMyInfoForm();
   const {
     data: preferencesArray = [
       {
@@ -49,7 +50,7 @@ export default function PersonalitySelectionScreen() {
   })();
 
   useFocusEffect(
-    useCallback(() => updateStep(InterestSteps.PERSONALITY), [updateStep])
+    useCallback(() => updateStep(MyInfoSteps.PERSONALITY), [updateStep])
   );
   return (
     <Layout.Default>
@@ -61,10 +62,10 @@ export default function PersonalitySelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            당신이 원하는
+            당신의 성격을
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            이상형의 성격은 어떤가요?
+            말씀해주세요!
           </Text>
         </View>
 
@@ -96,8 +97,8 @@ export default function PersonalitySelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.navigate("/interest/drinking")}
-        onClickPrevious={() => router.navigate("/interest/bad-mbti")}
+        onClickNext={() => router.navigate("/my-info/dating-style")}
+        onClickPrevious={() => router.navigate("/my-info/mbti")}
       />
     </Layout.Default>
   );

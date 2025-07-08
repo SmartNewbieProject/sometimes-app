@@ -59,7 +59,7 @@ export default function TattooSelectionScreen() {
       },
     ],
     isLoading: optionsLoading,
-  } = usePreferenceOptionsQuery(Keys.TATTOO);
+  } = usePreferenceOptionsQuery();
   const { showErrorModal } = useModal();
 
   console.log(

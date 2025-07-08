@@ -1,63 +1,69 @@
 import { useAuth } from "@/src/features/auth";
-import { Properties, savePreferences } from "@/src/features/interest/services";
 import Loading from "@/src/features/loading";
+import MyInfo from "@/src/features/my-info";
+import type { Preferences } from "@/src/features/my-info/api";
+import { Properties, savePreferences } from "@/src/features/my-info/services";
 import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import Tooltip from "@/src/shared/ui/tooltip";
-import { Selector } from "@/src/widgets/selector";
-import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
-const { ui, hooks, services, queries } = Interest;
-const { useInterestStep, useInterestForm } = hooks;
-const { InterestSteps } = services;
+const { hooks, services, queries } = MyInfo;
+const { useMyInfoForm, useMyInfoStep } = hooks;
+const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 const tooltips = [
   {
     title: "문신 X",
+    description: ["문신이 전혀 없어요", "향후에도 할 계획이 없어요"],
+  },
+  {
+    title: "작은 문신",
     description: [
-      "문신이 전혀 없는 사람을 선호해요",
-      "문신에 대해 보수적인 가치관을 가지고 있어요",
+      "눈에 잘 뜨지 않는 곳에 작은 문신이 있어요",
+      "손목, 발목, 어깨 등에 1-2개 정도의 작은 문신",
+      "평소엔 옷으로 가려지는 은근한 포인트 문신",
     ],
   },
   {
-    title: "상관없음",
+    title: "문신 O",
     description: [
-      "문신 유무는 중요한 기준이 아니에요",
-      "작은 문신이든 큰 문신이든 개의치 않아요",
-      "문신보다 다른 가치관이나 성격이 더 좋요해요",
-      "문신을 개인의 표현 방식으로 존중해요",
-    ],
-  },
-  {
-    title: "문신 있는 사람이 좋아요",
-    description: [
-      "문신이 있는 사람에게 호감이 있어요",
-      "문신을 예술적 표현이나 매력적인 요소로 생각해요",
-      "함께 문신에 관한 이야기를 나누고 싶어요",
+      "눈에 띄는 문신이 있어요",
+      "다수의 문신이 있거나 큰 사이즈의 문신",
+      "문신을 패션/자기 표현의 일부로 생각해요",
     ],
   },
 ];
 
 export default function TattooSelectionScreen() {
-  const { updateStep } = useInterestStep();
-  const { updateForm, clear: _, tattoo, ...form } = useInterestForm();
+  const { updateStep } = useMyInfoStep();
+  const { updateForm, clear: _, tattoo, ...form } = useMyInfoForm();
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { my } = useAuth();
   const {
-    data: preferences = {
-      id: "",
-      options: [],
-    },
+    data: preferencesArray = [
+      {
+        typeName: "",
+        options: [],
+      },
+    ],
     isLoading: optionsLoading,
-  } = usePreferenceOptionsQuery(Keys.TATTOO);
+  } = usePreferenceOptionsQuery();
   const { showErrorModal } = useModal();
+
+  console.log(
+    "result",
+    preferencesArray?.find((item) => item.typeName === Keys.TATTOO)
+  );
+  const preferences: Preferences =
+    preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
+    preferencesArray[0];
   const index = preferences?.options.findIndex(
     (item) => item.id === tattoo?.id
   );
@@ -76,19 +82,18 @@ export default function TattooSelectionScreen() {
         const validation = Object.values(form).every((v) => v !== null);
         if (!validation) throw new Error("비어있는 양식이 존재합니다.");
         await savePreferences({
-          age: form.age as string,
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
+          personality: form.personality as string,
           tattoo: preferences.options[currentIndex].id,
-          datingStyleIds: form.datingStyleIds as string[],
-          militaryPreference: form.militaryPreference?.id ?? "",
-          goodMbti: form.goodMbti as string,
-          badMbti: form.badMbti as string,
+          datingStyleIds: form.datingStyleIds,
+          interestIds: form.interestIds,
+          mbti: form.mbti as string,
         });
         await queryClient.invalidateQueries({
-          queryKey: ["check-preference-fill"],
+          queryKey: ["preference-self"],
         });
-        router.navigate("/interest/done");
+        router.navigate("/my-info/done");
         setFormSubmitLoading(false);
       },
       ({ error }) => {
@@ -99,11 +104,11 @@ export default function TattooSelectionScreen() {
   };
 
   const handleNextButton = () => {
-    router.navigate("/interest/military");
+    router.navigate("/my-info/military");
   };
 
   useFocusEffect(
-    useCallback(() => updateStep(InterestSteps.TATTOO), [updateStep])
+    useCallback(() => updateStep(MyInfoSteps.TATTOO), [updateStep])
   );
 
   if (formSubmitLoading) {
@@ -120,10 +125,7 @@ export default function TattooSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            문신에 대해
-          </Text>
-          <Text weight="semibold" size="20" textColor="black">
-            어떻게 생각하시나요?
+            문신이 있으신가요?
           </Text>
         </View>
         <View style={styles.bar} />
@@ -139,6 +141,7 @@ export default function TattooSelectionScreen() {
               showMiddle={true}
               defaultValue={2}
               value={currentIndex}
+              middleLabelLeft={-10}
               onChange={onChangeTattoo}
               options={
                 preferences?.options.map((option) => ({
@@ -159,8 +162,8 @@ export default function TattooSelectionScreen() {
       <Layout.TwoButtons
         style={{ paddingHorizontal: 32 }}
         disabledNext={false}
-        onClickNext={my?.gender === "MALE" ? onFinish : handleNextButton}
-        onClickPrevious={() => router.navigate("/interest/smoking")}
+        onClickNext={my?.gender === "FEMALE" ? onFinish : handleNextButton}
+        onClickPrevious={() => router.navigate("/my-info/smoking")}
       />
     </Layout.Default>
   );

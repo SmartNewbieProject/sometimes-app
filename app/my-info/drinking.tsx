@@ -1,7 +1,8 @@
 import { useAuth } from "@/src/features/auth";
 import Loading from "@/src/features/loading";
+import MyInfo from "@/src/features/my-info";
+import type { Preferences } from "@/src/features/my-info/api";
 import Tooltip from "@/src/shared/ui/tooltip";
-import { Selector } from "@/src/widgets/selector";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -9,15 +10,15 @@ import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
-const { hooks, services, queries } = Interest;
-const { useInterestStep, useInterestForm } = hooks;
+const { hooks, services, queries } = MyInfo;
+const { useMyInfoForm, useMyInfoStep } = hooks;
 
-const { InterestSteps } = services;
+const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 const tooltips = [
   {
-    title: "안 마시면 좋겠어요.",
+    title: "전혀 안 마셔요",
     description: [
       "비음주자를 선호해요",
       "술자리에 가지 않는 사람이 좋아요",
@@ -25,50 +26,52 @@ const tooltips = [
     ],
   },
   {
-    title: "가끔만 마셨으면 해요",
+    title: "술은 거의 못 마셔요",
     description: [
-      "특별한 날에만 가볍게 마시는 정도가 좋아요",
-      "술에 크게 의존하지 않는 사람이 좋아요",
-      "월 1-2회 정도만 마시는 분이 좋아요",
+      "학기에 1-2번 특별한 자리에서만",
+      "맥주 반잔도 얼굴 빨개지는 수준",
     ],
   },
   {
-    title: "적당히 마시는 정도가 좋아요",
+    title: "적당히 마셔요",
     description: [
-      "사교적으로 적절히 마실 줄 아는 사람이 좋아요",
-      "음주는 하지만 과하지 않는 분이 좋아요",
-      "월 2-3회 정도 마시는 것은 괜찮아요",
+      "월 2-3회 정도 과모임이나 친구 만날 때",
+      "소주 한두 잔 정도는 괜찮아요",
     ],
   },
   {
-    title: "술자리를 즐기는 사람이 좋아요",
+    title: "자주 마시는 편이에요",
     description: [
-      "함께 술자리를 즐길 수 있는 사람이 좋아요",
-      "주말 술자리에 잘 참여하는 분이 좋아요",
-      "술게임도 재밌게 할 줄 아는 분이 좋아요",
+      "주말마다 한 번씩은 마셔요",
+      "월 4-5회 정도, 소주 반병~한병 정도",
     ],
   },
   {
-    title: "자주 마셔도 괜찮아요",
-    description: [
-      "술을 즐기는 사람도 전혀 상관없어요",
-      "함께 술 문화를 즐기고 싶어요",
-      "주 2-3회 이상 마셔도 괜찮아요",
-    ],
+    title: "술자리 빠지면 섭섭해요",
+    description: ["주 2-3회 이상 마셔요", "MT나 뒤풀이에서 항상 끝까지 남아요"],
   },
 ];
 
 export default function DrinkingSelectionScreen() {
-  const { updateStep } = useInterestStep();
-  const { drinking, updateForm } = useInterestForm();
+  const { updateStep } = useMyInfoStep();
+  const { drinking, updateForm } = useMyInfoForm();
   const { my } = useAuth();
   const {
-    data: preferences = {
-      id: "",
-      options: [],
-    },
+    data: preferencesArray = [
+      {
+        typeName: "",
+        options: [],
+      },
+    ],
     isLoading: optionsLoading,
-  } = usePreferenceOptionsQuery(Keys.DRINKING);
+  } = usePreferenceOptionsQuery();
+  console.log(
+    "result",
+    preferencesArray?.find((item) => item.typeName === Keys.DRINKING)
+  );
+  const preferences: Preferences =
+    preferencesArray?.find((item) => item.typeName === Keys.DRINKING) ??
+    preferencesArray[0];
   const index = preferences?.options.findIndex(
     (item) => item.id === drinking?.id
   );
@@ -84,15 +87,15 @@ export default function DrinkingSelectionScreen() {
     if (!drinking) {
       updateForm("drinking", preferences.options[currentIndex]);
     }
-    router.navigate("/interest/smoking");
+    router.navigate("/my-info/smoking");
   };
 
   useFocusEffect(
-    useCallback(() => updateStep(InterestSteps.DRIKNING), [updateStep])
+    useCallback(() => updateStep(MyInfoSteps.DRINKING), [updateStep])
   );
 
   const handleBackButton = () => {
-    router.navigate("/interest/dating-style");
+    router.navigate("/my-info/dating-style");
   };
 
   return (
@@ -125,6 +128,7 @@ export default function DrinkingSelectionScreen() {
               defaultValue={2}
               value={currentIndex}
               onChange={onChangeDrinking}
+              lastLabelLeft={-85}
               options={
                 preferences?.options.map((option) => ({
                   label: option.displayName,

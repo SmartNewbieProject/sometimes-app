@@ -2,7 +2,6 @@ import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
-import Interest from "@features/interest";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
@@ -16,9 +15,17 @@ const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 export default function InterestSelectionScreen() {
   const { updateStep } = useMyInfoStep();
   const { interestIds, updateForm } = useMyInfoForm();
-  const { data, isLoading } = usePreferenceOptionsQuery();
-  const preferences = data?.find(
-    (item) => item.typeId === PreferenceKeys.INTEREST
+  const {
+    data: preferencesArray = [
+      {
+        typeName: "",
+        options: [],
+      },
+    ],
+    isLoading,
+  } = usePreferenceOptionsQuery();
+  const preferences = preferencesArray?.find(
+    (item) => item.typeName === PreferenceKeys.INTEREST
   );
 
   const onChangeOption = (values: string[]) => {
@@ -38,7 +45,7 @@ export default function InterestSelectionScreen() {
   })();
 
   useFocusEffect(
-    useCallback(() => updateStep(MyInfoSteps.DRIKNING), [updateStep])
+    useCallback(() => updateStep(MyInfoSteps.INTEREST), [updateStep])
   );
 
   return (
@@ -93,7 +100,7 @@ export default function InterestSelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.navigate("/my-info/dating-style")}
+        onClickNext={() => router.navigate("/my-info/mbti")}
         onClickPrevious={() => router.navigate("/my-info")}
       />
     </Layout.Default>

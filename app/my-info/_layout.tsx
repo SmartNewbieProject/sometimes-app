@@ -1,18 +1,19 @@
+import MyInfo from "@/src/features/my-info";
+import { useMyInfoStep } from "@/src/features/my-info/hooks";
 import { cn } from "@/src/shared/libs";
 import { platform } from "@/src/shared/libs/platform";
 import { ProgressBar } from "@/src/shared/ui";
-import Interest from "@features/interest";
 import { Stack, usePathname } from "expo-router";
 import { Platform, StyleSheet, View, type ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const { hooks } = Interest;
-const { useInterestStep } = hooks;
+const { hooks } = MyInfo;
+const { useMyInfoForm } = hooks;
 
 export default function InterestLayout() {
   const pathname = usePathname();
   const renderProgress = !["/my-info", "/my-info/done"].includes(pathname);
-  const { progress } = useInterestStep();
+  const { progress } = useMyInfoStep();
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -35,8 +36,9 @@ export default function InterestLayout() {
               },
             }}
           />
+
           <Stack.Screen
-            name="age"
+            name="mbti"
             options={{
               headerShown: false,
               contentStyle: {
@@ -45,16 +47,7 @@ export default function InterestLayout() {
             }}
           />
           <Stack.Screen
-            name="like-mbti"
-            options={{
-              headerShown: false,
-              contentStyle: {
-                backgroundColor: "transparent",
-              },
-            }}
-          />
-          <Stack.Screen
-            name="bad-mbti"
+            name="personality"
             options={{
               headerShown: false,
               contentStyle: {

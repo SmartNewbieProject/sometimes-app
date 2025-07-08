@@ -6,8 +6,8 @@ type Body = {
 };
 
 export type PreferenceSaveBody = {
-	data: Body[];
+	preferences: Body[];
 };
 
 export const savePreferencesApi = async (body: PreferenceSaveBody) =>
-	axiosClient.patch('/profile/preferences/self', body);
+	axiosClient.patch('/preferences/self', body);

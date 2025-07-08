@@ -1,25 +1,43 @@
 import { useAuth } from "@/src/features/auth";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
+import MyInfo from "@/src/features/my-info";
+import type { Preferences } from "@/src/features/my-info/api";
 import { ImageResources } from "@/src/shared/libs";
 import { Divider, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
-import Interest from "@features/interest";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
-const { hooks, services, queries } = Interest;
-const { useInterestStep, useInterestForm } = hooks;
-const { InterestSteps } = services;
+const { hooks, services, queries } = MyInfo;
+const { useMyInfoForm, useMyInfoStep } = hooks;
+const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function DatingStyleSelectionScreen() {
   const { my } = useAuth();
-  const { datingStyleIds, updateForm } = useInterestForm();
-  const { data: preferences, isLoading } = usePreferenceOptionsQuery(
-    PreferenceKeys.DATING_STYLE
+  const { datingStyleIds, updateForm } = useMyInfoForm();
+  const {
+    data: preferencesArray = [
+      {
+        typeName: "",
+        options: [],
+      },
+    ],
+    isLoading,
+  } = usePreferenceOptionsQuery();
+
+  console.log(
+    "result",
+    preferencesArray?.find(
+      (item) => item.typeName === PreferenceKeys.DATING_STYLE
+    )
   );
+  const preferences: Preferences =
+    preferencesArray?.find(
+      (item) => item.typeName === PreferenceKeys.DATING_STYLE
+    ) ?? preferencesArray[0];
 
   const onChangeOption = (values: string[]) => {
     if (values.length > 5) {
@@ -39,13 +57,13 @@ export default function DatingStyleSelectionScreen() {
 
   useFocusEffect(
     useCallback(
-      () => useInterestStep.getState().updateStep(InterestSteps.DATING_STYLE),
+      () => useMyInfoStep.getState().updateStep(MyInfoSteps.DATING_STYLE),
       []
     )
   );
 
   const handleNextButton = () => {
-    router.navigate("/interest/drinking");
+    router.navigate("/my-info/drinking");
   };
 
   return (
@@ -58,10 +76,10 @@ export default function DatingStyleSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            당신이 원하는
+            당신에게 가장 잘 맞는
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            이상형의 성격은 어떤가요?
+            연애 스타일은 무엇인가요?
           </Text>
         </View>
 
@@ -102,7 +120,7 @@ export default function DatingStyleSelectionScreen() {
           next: nextMessage,
         }}
         onClickNext={handleNextButton}
-        onClickPrevious={() => router.navigate("/interest/dating-style")}
+        onClickPrevious={() => router.navigate("/my-info/personality")}
       />
     </Layout.Default>
   );

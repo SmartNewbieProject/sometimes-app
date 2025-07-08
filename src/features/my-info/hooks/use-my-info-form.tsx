@@ -8,7 +8,7 @@ type StoreStates = {
   interestIds: string[];
   datingStyleIds: string[];
   militaryStatus?: PreferenceOption;
-  personalityIds: string[];
+  personality?: string;
   smoking?: PreferenceOption;
   tattoo?: PreferenceOption;
 };
@@ -24,7 +24,6 @@ type StoreProps = {
 export const useMyInfoForm = create<StoreProps>((set) => ({
   interestIds: [],
   datingStyleIds: [],
-  personalityIds: [],
   updateForm: (propertyName, data) => set({ [propertyName]: data }),
   clear: () =>
     set({
@@ -33,6 +32,7 @@ export const useMyInfoForm = create<StoreProps>((set) => ({
       drinking: undefined,
       tattoo: undefined,
       smoking: undefined,
+      personality: undefined,
       mbti: undefined,
       datingStyleIds: [],
     }),

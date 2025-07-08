@@ -28,7 +28,7 @@ const tooltips = [
     title: "상관없어요",
     description: [
       "흡연 여부는 중요한 기준이 아니에요",
-      "흡연자든 비흡연자든 괜ㅊ낳아요",
+      "흡연자든 비흡연자든 괜찮아요",
       "다른 가치관이나 성격이 더 중요해요",
       "전자담배나 간헐적 흡연도 허용할 수 있어요",
     ],
@@ -55,7 +55,7 @@ export default function SmokingSelectionScreen() {
       },
     ],
     isLoading: optionsLoading,
-  } = usePreferenceOptionsQuery(Keys.SMOKING);
+  } = usePreferenceOptionsQuery();
 
   console.log(
     "result",
@@ -116,6 +116,7 @@ export default function SmokingSelectionScreen() {
               showMiddle={true}
               defaultValue={2}
               value={currentIndex}
+              middleLabelLeft={-5}
               onChange={onChangeSmoking}
               options={
                 preferences?.options.map((option) => ({

@@ -31,7 +31,7 @@ export default function MilitarySelectionScreen() {
   const {
     data: preferencesArray = [{ typeName: "", options: [] }],
     isLoading: optionsLoading,
-  } = usePreferenceOptionsQuery(PreferenceKeys.MILITARY_PREFERENCE);
+  } = usePreferenceOptionsQuery();
 
   console.log(
     "result",
@@ -121,6 +121,7 @@ export default function MilitarySelectionScreen() {
               step={1}
               defaultValue={1}
               value={currentIndex}
+              middleLabelLeft={-5}
               onChange={onChangeOption}
               options={
                 preferences?.options.map((option) => ({

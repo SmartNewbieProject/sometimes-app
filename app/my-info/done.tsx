@@ -16,7 +16,7 @@ export default function InterestDoneScreen() {
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: ["check-preference-fill"],
+      queryKey: ["preference-self"],
     });
   }, [queryClient]);
 
@@ -38,10 +38,10 @@ export default function InterestDoneScreen() {
 
           <View style={styles.titleWrapper}>
             <Text size="lg" textColor="black" weight="semibold">
-              이상형 정보를 확인했어요
+              당신의 정보를 확인했어요
             </Text>
             <Text size="lg" textColor="black" weight="semibold">
-              이제 이상형을 찾아드릴게요
+              이제는 설레는 만남을 시작해요
             </Text>
           </View>
 

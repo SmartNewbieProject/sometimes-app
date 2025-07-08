@@ -28,7 +28,7 @@ export default function AgeSelectionScreen() {
       },
     ],
     isLoading: optionsLoading,
-  } = usePreferenceOptionsQuery(PreferenceKeys.AGE);
+  } = usePreferenceOptionsQuery();
   console.log(
     "result",
     preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE)

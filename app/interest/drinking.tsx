@@ -71,7 +71,7 @@ export default function DrinkingSelectionScreen() {
       },
     ],
     isLoading: optionsLoading,
-  } = usePreferenceOptionsQuery(Keys.DRINKING);
+  } = usePreferenceOptionsQuery();
   console.log(
     "result",
     preferencesArray?.find((item) => item.typeName === Keys.DRINKING)
@@ -102,7 +102,7 @@ export default function DrinkingSelectionScreen() {
   );
 
   const handleBackButton = () => {
-    router.navigate("/interest/dating-style");
+    router.navigate("/interest/personality");
   };
 
   return (
@@ -135,7 +135,7 @@ export default function DrinkingSelectionScreen() {
               defaultValue={2}
               value={currentIndex}
               onChange={onChangeDrinking}
-              lastLabelLeft={-85}
+              lastLabelLeft={-70}
               options={
                 preferences?.options.map((option) => ({
                   label: option.displayName,

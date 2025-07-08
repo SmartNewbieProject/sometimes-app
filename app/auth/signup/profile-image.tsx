@@ -56,6 +56,22 @@ export default function ProfilePage() {
 
     await tryCatch(
       async () => {
+        if (!signupForm.phone) {
+          showErrorModal('휴대폰 번호가 없습니다', 'announcement');
+          trackSignupEvent('signup_error', 'missing_phone');
+          router.push('/auth/login');
+          return;
+        }
+
+        const { exists } = await apis.checkPhoneNumberExists(signupForm.phone);
+
+        if (exists) {
+          showErrorModal('이미 가입된 사용자입니다', 'announcement');
+          trackSignupEvent('signup_error', 'phone_already_exists');
+          router.push('/auth/login');
+          return;
+        }
+
         await apis.signup(signupForm as SignupForm);
         trackSignupEvent('signup_complete');
         router.push('/auth/signup/done');

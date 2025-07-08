@@ -7,7 +7,7 @@ export enum MyInfoSteps {
   MBTI = 2,
   PERSONALITY = 3,
   DATING_STYLE = 4,
-  DRIKNING = 5,
+  DRINKING = 5,
   SMOKING = 6,
   TATTOO = 7,
   MILITARY = 8,
@@ -19,7 +19,8 @@ export type Properties = {
   drinking: string;
   mbti: string;
   datingStyleIds: string[];
-  personalityIds: string[];
+  personality: string;
+  interestIds: string[];
   militaryStatus?: string;
   smoking: string;
   tattoo: string;
@@ -27,7 +28,7 @@ export type Properties = {
 
 export const savePreferences = async (props: Properties) => {
   const body: PreferenceSaveBody = {
-    data: [
+    preferences: [
       {
         typeName: PreferenceKeys.DRINKING,
         optionIds: [props.drinking],
@@ -45,10 +46,14 @@ export const savePreferences = async (props: Properties) => {
         typeName: PreferenceKeys.MBTI,
         optionIds: [props.mbti],
       },
+      {
+        typeName: PreferenceKeys.INTEREST,
+        optionIds: props.interestIds,
+      },
 
       {
         typeName: PreferenceKeys.PERSONALITY,
-        optionIds: props.personalityIds,
+        optionIds: [props.personality],
       },
 
       {
@@ -59,7 +64,7 @@ export const savePreferences = async (props: Properties) => {
   };
 
   if (props.militaryStatus) {
-    body.data.push({
+    body.preferences.push({
       typeName: PreferenceKeys.MILITARY_STATUS,
       optionIds: [props.militaryStatus],
     });
