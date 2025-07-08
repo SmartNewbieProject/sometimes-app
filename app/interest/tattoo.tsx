@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import type { Preferences } from "@/src/features/interest/api";
 import { Properties, savePreferences } from "@/src/features/interest/services";
 import Loading from "@/src/features/loading";
 import { queryClient } from "@/src/shared/config/query";
@@ -51,13 +52,23 @@ export default function TattooSelectionScreen() {
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { my } = useAuth();
   const {
-    data: preferences = {
-      id: "",
-      options: [],
-    },
+    data: preferencesArray = [
+      {
+        typeName: "",
+        options: [],
+      },
+    ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery(Keys.TATTOO);
   const { showErrorModal } = useModal();
+
+  console.log(
+    "result",
+    preferencesArray?.find((item) => item.typeName === Keys.TATTOO)
+  );
+  const preferences: Preferences =
+    preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
+    preferencesArray[0];
   const index = preferences?.options.findIndex(
     (item) => item.id === tattoo?.id
   );
@@ -79,8 +90,8 @@ export default function TattooSelectionScreen() {
           age: form.age as string,
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
+          personality: form.personality as string,
           tattoo: preferences.options[currentIndex].id,
-          datingStyleIds: form.datingStyleIds as string[],
           militaryPreference: form.militaryPreference?.id ?? "",
           goodMbti: form.goodMbti as string,
           badMbti: form.badMbti as string,
@@ -139,6 +150,7 @@ export default function TattooSelectionScreen() {
               showMiddle={true}
               defaultValue={2}
               value={currentIndex}
+              middleLabelLeft={-10}
               onChange={onChangeTattoo}
               options={
                 preferences?.options.map((option) => ({

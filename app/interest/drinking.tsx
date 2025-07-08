@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { Selector } from "@/src/widgets/selector";
@@ -63,12 +64,21 @@ export default function DrinkingSelectionScreen() {
   const { drinking, updateForm } = useInterestForm();
   const { my } = useAuth();
   const {
-    data: preferences = {
-      id: "",
-      options: [],
-    },
+    data: preferencesArray = [
+      {
+        typeName: "",
+        options: [],
+      },
+    ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery(Keys.DRINKING);
+  console.log(
+    "result",
+    preferencesArray?.find((item) => item.typeName === Keys.DRINKING)
+  );
+  const preferences: Preferences =
+    preferencesArray?.find((item) => item.typeName === Keys.DRINKING) ??
+    preferencesArray[0];
   const index = preferences?.options.findIndex(
     (item) => item.id === drinking?.id
   );
@@ -88,7 +98,7 @@ export default function DrinkingSelectionScreen() {
   };
 
   useFocusEffect(
-    useCallback(() => updateStep(InterestSteps.DRIKNING), [updateStep])
+    useCallback(() => updateStep(InterestSteps.DRINKING), [updateStep])
   );
 
   const handleBackButton = () => {
@@ -125,6 +135,7 @@ export default function DrinkingSelectionScreen() {
               defaultValue={2}
               value={currentIndex}
               onChange={onChangeDrinking}
+              lastLabelLeft={-85}
               options={
                 preferences?.options.map((option) => ({
                   label: option.displayName,

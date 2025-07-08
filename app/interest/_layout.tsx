@@ -63,6 +63,15 @@ export default function InterestLayout() {
             }}
           />
           <Stack.Screen
+            name="personality"
+            options={{
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: "transparent",
+              },
+            }}
+          />
+          <Stack.Screen
             name="drinking"
             options={{
               headerShown: false,

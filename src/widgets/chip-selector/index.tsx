@@ -79,7 +79,7 @@ export function ChipSelector<T>(
           onPress={() => handleSelect(option.value)}
           className={cn(
             Platform.OS === "web" ? "py-1 px-3" : "py-2 px-4",
-            "rounded-xl flex flex-row items-center gap-x-2 justify-center",
+            "rounded-xl flex flex-row  items-center gap-x-2 justify-center",
             props.buttonClassName
           )}
           size="chip"

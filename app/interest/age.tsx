@@ -1,3 +1,4 @@
+import type { Preferences } from "@/src/features/interest/api";
 import { PreferenceKeys } from "@/src/features/interest/queries";
 import { usePreferenceOptionsQuery } from "@/src/features/interest/queries";
 import type { AgeOptionData } from "@/src/features/interest/types";
@@ -20,15 +21,25 @@ export default function AgeSelectionScreen() {
   const { updateStep } = useInterestStep();
   const [options, setOptions] = useState<AgeOptionData[]>([]);
   const {
-    data: preferences = {
-      typeId: "",
-      options: [],
-    },
+    data: preferencesArray = [
+      {
+        typeName: "",
+        options: [],
+      },
+    ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery(PreferenceKeys.AGE);
+  console.log(
+    "result",
+    preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE)
+  );
+  const preferences: Preferences =
+    preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE) ??
+    preferencesArray[0];
 
+  console.log("preferneces", preferences);
   useEffect(() => {
-    if (preferences.typeId === "") {
+    if (preferences.typeName === "") {
       return;
     }
     const loaded = preferences.options.map((option) => ({

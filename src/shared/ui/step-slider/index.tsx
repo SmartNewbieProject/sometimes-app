@@ -35,6 +35,9 @@ interface StepSliderProps {
   options?: Option[];
   value?: number;
   showMiddle?: boolean;
+  lastLabelLeft?: number;
+  firstLabelLeft?: number;
+  middleLabelLeft?: number;
   onChange?: (value: number) => void;
   className?: string;
   showSelectedValue?: boolean;
@@ -47,6 +50,9 @@ export function StepSlider({
   max,
   step,
   defaultValue = min,
+  firstLabelLeft,
+  lastLabelLeft,
+  middleLabelLeft,
   value: controlledValue,
   onChange,
   showMiddle = true,
@@ -229,10 +235,10 @@ export function StepSlider({
                     position: "absolute",
                     left:
                       options[0].label === label.label
-                        ? left + 5
+                        ? left + (firstLabelLeft ?? 5)
                         : options.at(-1)?.label === label.label
-                        ? left - 15
-                        : left - 20,
+                        ? left + (lastLabelLeft ?? -15)
+                        : left + (middleLabelLeft ?? -30),
                   }}
                 >
                   <Text size="13" textColor="dark">

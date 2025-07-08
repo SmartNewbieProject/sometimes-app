@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import type { Preferences } from "@/src/features/interest/api";
 import { savePreferences } from "@/src/features/interest/services";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
@@ -27,8 +28,21 @@ export default function MilitarySelectionScreen() {
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { my } = useAuth();
   const { showErrorModal } = useModal();
-  const { data: preferences, isLoading: optionsLoading } =
-    usePreferenceOptionsQuery(PreferenceKeys.MILITARY_PREFERENCE);
+  const {
+    data: preferencesArray = [{ typeName: "", options: [] }],
+    isLoading: optionsLoading,
+  } = usePreferenceOptionsQuery(PreferenceKeys.MILITARY_PREFERENCE);
+
+  console.log(
+    "result",
+    preferencesArray?.find(
+      (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
+    )
+  );
+  const preferences: Preferences =
+    preferencesArray?.find(
+      (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
+    ) ?? preferencesArray[0];
   const index = preferences?.options.findIndex(
     (item) => item.id === militaryPreference?.id
   );
@@ -54,7 +68,7 @@ export default function MilitarySelectionScreen() {
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
           tattoo: preferences?.options[currentIndex].id as string,
-          datingStyleIds: form.datingStyleIds as string[],
+          personality: form.personality as string,
           militaryPreference: preferences?.options[currentIndex]?.id ?? "",
           goodMbti: form.goodMbti as string,
           badMbti: form.badMbti as string,

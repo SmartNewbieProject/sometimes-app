@@ -6,8 +6,8 @@ export enum InterestSteps {
   AGE = 1,
   GOODMBTI = 2,
   BADMBTI = 3,
-  DATING_STYLE = 4,
-  DRIKNING = 5,
+  PERSONALITY = 4,
+  DRINKING = 5,
   SMOKING = 6,
   TATTOO = 7,
   MILITARY = 8,
@@ -18,8 +18,8 @@ export const phaseCount = Object.keys(InterestSteps).length / 2;
 export type Properties = {
   age: string;
   drinking: string;
-
-  datingStyleIds: string[];
+  personality: string;
+  // datingStyleIds: string[];
   militaryPreference?: string;
   militaryStatus?: string;
   smoking: string;
@@ -30,7 +30,11 @@ export type Properties = {
 
 export const savePreferences = async (props: Properties) => {
   const body: PreferenceSaveBody = {
-    data: [
+    additional: {
+      goodMbti: props.goodMbti,
+      badMbti: props.badMbti,
+    },
+    preferences: [
       {
         typeName: PreferenceKeys.AGE,
         optionIds: [props.age],
@@ -48,23 +52,16 @@ export const savePreferences = async (props: Properties) => {
         typeName: PreferenceKeys.TATTOO,
         optionIds: [props.tattoo],
       },
+
       {
-        typeName: PreferenceKeys.GOOD_MBTI,
-        optionIds: [props.goodMbti],
-      },
-      {
-        typeName: PreferenceKeys.BAD_MBTI,
-        optionIds: [props.badMbti],
-      },
-      {
-        typeName: PreferenceKeys.DATING_STYLE,
-        optionIds: props.datingStyleIds,
+        typeName: "성격 유형",
+        optionIds: [props.personality],
       },
     ],
   };
 
   if (props.militaryPreference) {
-    body.data.push({
+    body.preferences.push({
       typeName: PreferenceKeys.MILITARY_PREFERENCE,
       optionIds: [props.militaryPreference],
     });

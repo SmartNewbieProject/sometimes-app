@@ -1,3 +1,4 @@
+import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { PreferenceOption } from "@/src/types/user";
@@ -47,12 +48,23 @@ export default function SmokingSelectionScreen() {
   const { smoking, updateForm } = useInterestForm();
 
   const {
-    data: preferences = {
-      id: "",
-      options: [],
-    },
+    data: preferencesArray = [
+      {
+        typeName: "",
+        options: [],
+      },
+    ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery(Keys.SMOKING);
+
+  console.log(
+    "result",
+    preferencesArray?.find((item) => item.typeName === Keys.SMOKING)
+  );
+  const preferences: Preferences =
+    preferencesArray?.find((item) => item.typeName === Keys.SMOKING) ??
+    preferencesArray[0];
+
   const index = preferences?.options.findIndex(
     (item) => item.id === smoking?.id
   );
