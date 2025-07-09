@@ -148,9 +148,9 @@ export default function TattooSelectionScreen() {
               max={(preferences?.options.length ?? 1) - 1}
               step={1}
               showMiddle={true}
-              defaultValue={2}
+              defaultValue={1}
               value={currentIndex}
-              middleLabelLeft={-10}
+              middleLabelLeft={-15}
               onChange={onChangeTattoo}
               options={
                 preferences?.options.map((option) => ({

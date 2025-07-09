@@ -30,6 +30,7 @@ export default function MilitarySelectionScreen() {
 
   console.log(
     "result",
+    preferencesArray,
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
     )
@@ -115,6 +116,7 @@ export default function MilitarySelectionScreen() {
               defaultValue={1}
               value={currentIndex}
               onChange={onChangeOption}
+              middleLabelLeft={-15}
               options={
                 preferences?.options.map((option) => ({
                   label: option.displayName,

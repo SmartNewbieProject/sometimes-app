@@ -128,7 +128,7 @@ export default function DrinkingSelectionScreen() {
               defaultValue={2}
               value={currentIndex}
               onChange={onChangeDrinking}
-              lastLabelLeft={-85}
+              lastLabelLeft={-50}
               options={
                 preferences?.options.map((option) => ({
                   label: option.displayName,

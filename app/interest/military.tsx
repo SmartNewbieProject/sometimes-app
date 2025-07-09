@@ -121,8 +121,9 @@ export default function MilitarySelectionScreen() {
               step={1}
               defaultValue={1}
               value={currentIndex}
-              middleLabelLeft={-5}
+              middleLabelLeft={-15}
               onChange={onChangeOption}
+              lastLabelLeft={-3}
               options={
                 preferences?.options.map((option) => ({
                   label: option.displayName,

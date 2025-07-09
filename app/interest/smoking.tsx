@@ -114,9 +114,9 @@ export default function SmokingSelectionScreen() {
               max={(preferences?.options.length ?? 1) - 1}
               step={1}
               showMiddle={true}
-              defaultValue={2}
+              defaultValue={1}
               value={currentIndex}
-              middleLabelLeft={-5}
+              middleLabelLeft={-15}
               onChange={onChangeSmoking}
               options={
                 preferences?.options.map((option) => ({

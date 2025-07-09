@@ -5,8 +5,8 @@ import type { AgeOption } from "../types";
 type StoreStates = {
   age?: AgeOption;
   drinking?: PreferenceOption;
-  goodMbti?: string;
-  badMbti?: string;
+  goodMbti?: string | null;
+  badMbti?: string | null;
   personality?: string;
   // interestIds: string[];
   // datingStyleIds: string[];
@@ -25,6 +25,8 @@ type StoreProps = {
 } & StoreStates;
 
 export const useInterestForm = create<StoreProps>((set) => ({
+  goodMbti: null,
+  badMbti: null,
   updateForm: (propertyName, data) => set({ [propertyName]: data }),
   clear: () =>
     set({
@@ -32,8 +34,8 @@ export const useInterestForm = create<StoreProps>((set) => ({
       drinking: undefined,
       tattoo: undefined,
       smoking: undefined,
-      goodMbti: undefined,
+      goodMbti: null,
       personality: undefined,
-      badMbti: undefined,
+      badMbti: null,
     }),
 }));

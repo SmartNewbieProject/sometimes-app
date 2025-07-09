@@ -139,7 +139,7 @@ export default function TattooSelectionScreen() {
               max={(preferences?.options.length ?? 1) - 1}
               step={1}
               showMiddle={true}
-              defaultValue={2}
+              defaultValue={0}
               value={currentIndex}
               middleLabelLeft={-10}
               onChange={onChangeTattoo}

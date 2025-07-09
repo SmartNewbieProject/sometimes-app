@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   chipSelector: {
     marginTop: 12,
     paddingLeft: 24,
-    paddingRight: 26,
+    paddingRight: 28,
     flexDirection: "row",
     justifyContent: "flex-start",
   },
