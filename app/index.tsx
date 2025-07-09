@@ -7,7 +7,7 @@ import 'react-native-get-random-values';
 export default function Home() {
   const { isAuthorized } = useAuth();
   const redirectPath = '/home';
-  const loginPath = process.env.NODE_ENV === 'production' ? '/event/pre-signup' : '/auth/login';
+  const loginPath = '/auth/login';
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -1,77 +1,39 @@
-import React from 'react';
-import { View, Image, TouchableOpacity } from 'react-native';
 import { Text } from "@/src/shared/ui";
-import { cn } from '@/src/shared/libs/cn';
-import { cva, type VariantProps } from 'class-variance-authority';
-import type { AgeOption, AgeOptionData } from '../types';
+import React from "react";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import type { AgeOption, AgeOptionData } from "../types";
 
-// const ageOptions: AgeOptionData[] = [
-//   {
-//     value: 'SAME_AGE',
-//     label: '동갑',
-//     image: require('@assets/images/age/same.png'),
-//   },
-//   {
-//     value: 'YOUNGER',
-//     label: '연하',
-//     image: require('@assets/images/age/under.png'),
-//   },
-//   {
-//     value: 'OLDER',
-//     label: '연상',
-//     image: require('@assets/images/age/high.png'),
-//   },
-//   {
-//     value: 'NO_PREFERENCE',
-//     label: '상관없음',
-//     image: require('@assets/images/age/nothing.png'),
-//   },
-// ];
-
-const ageSelector = cva('flex flex-row w-full justify-center flex-wrap gap-4', {
-  variants: {
-    size: {
-      sm: 'max-w-[300px]',
-      md: 'max-w-[400px]',
-      lg: 'max-w-[500px]',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-  },
-});
-
-export interface AgeSelectorProps extends VariantProps<typeof ageSelector> {
+interface AgeSelectorProps {
   value?: AgeOption;
   options: AgeOptionData[];
   onChange: (value: AgeOption) => void;
-  className?: string;
 }
 
-export function AgeSelector({
-  value,
-  onChange,
-  size,
-  options,
-  className,
-}: AgeSelectorProps) {
+export function AgeSelector({ value, onChange, options }: AgeSelectorProps) {
+  const renderItem = ({ item }: { item: AgeOptionData }) => (
+    <AgeCard
+      option={item}
+      isSelected={value === item.value}
+      onSelect={() => onChange(item.value)}
+    />
+  );
+
   return (
-    <View
-      className={cn(ageSelector({ size }), className)}
-      style={{
-        width: "100%",
-        flexWrap: "wrap",
-      }}
-    >
-      {options.map((option) => (
-        <AgeCard
-          key={option.value}
-          option={option}
-          isSelected={value === option.value}
-          onSelect={() => onChange(option.value)}
-        />
-      ))}
-    </View>
+    <FlatList
+      data={options}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.value}
+      numColumns={2}
+      columnWrapperStyle={styles.row}
+      contentContainerStyle={styles.list}
+    />
   );
 }
 
@@ -84,31 +46,25 @@ interface AgeCardProps {
 function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
       onPress={onSelect}
-      className={cn(
-        'rounded-[20px] overflow-hidden border-2 min-w-[128px] min-h-[128px] flex flex-row items-center',
-        isSelected ? 'border-primaryPurple' : 'border-[#E2D5FF]',
-      )}
-      style={{
-        width: 128,
-        height: 128,
-      }}
+      style={[
+        styles.card,
+        isSelected ? styles.cardSelected : styles.cardUnselected,
+      ]}
+      activeOpacity={0.8}
     >
-      <View className="relative w-full h-full flex flex-col justify-center items-center">
-        <Image
-          source={option.image}
-          style={{ width: 81, height: 81, aspectRatio: 1 }}
-          resizeMode="cover"
-        />
+      <View style={styles.cardInner}>
+        <Image source={option.image} style={styles.image} resizeMode="cover" />
         <Text variant="primary" size="md" weight="semibold">
           {option.label}
         </Text>
 
-        <View className={cn(
-          "absolute top-0 right-0 px-2.5 py-1 rounded-bl-lg",
-          isSelected ? 'bg-primaryPurple' : 'bg-[#E2D5FF]',
-        )}>
+        <View
+          style={[
+            styles.badge,
+            isSelected ? styles.badgePrimary : styles.badgeGray,
+          ]}
+        >
           <Text size="sm" textColor="white">
             선택
           </Text>
@@ -118,38 +74,55 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
   );
 }
 
-export interface FormAgeSelectorProps extends Omit<AgeSelectorProps, 'value' | 'onChange'> {
-  name: string;
-  options: AgeOptionData[];
-  control: any;
-  rules?: any;
-}
+const screenWidth = Dimensions.get("window").width;
+const cardSize = screenWidth / 2 - 54; // 2열 그리드
 
-export function FormAgeSelector({
-  name,
-  control,
-  rules,
-  size,
-  className,
-  options,
-}: FormAgeSelectorProps) {
-  const { useController } = require('react-hook-form');
-
-  const {
-    field: { value, onChange },
-  } = useController({
-    name,
-    control,
-    rules,
-  });
-
-  return (
-    <AgeSelector
-      value={value}
-      onChange={onChange}
-      size={size}
-      className={className}
-      options={options}
-    />
-  );
-}
+const styles = StyleSheet.create({
+  list: {
+    paddingHorizontal: 0,
+    gap: 29,
+  },
+  row: {
+    justifyContent: "space-between",
+    gap: 29,
+  },
+  card: {
+    width: cardSize,
+    height: cardSize,
+    borderRadius: 20,
+    borderWidth: 2,
+    overflow: "hidden",
+  },
+  cardSelected: {
+    borderColor: "#9747FF",
+  },
+  cardUnselected: {
+    borderColor: "#E2D5FF",
+  },
+  cardInner: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  image: {
+    width: 81,
+    height: 81,
+    aspectRatio: 1,
+  },
+  badge: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    paddingHorizontal: 11,
+    paddingVertical: 6,
+    borderBottomLeftRadius: 8,
+  },
+  badgePrimary: {
+    backgroundColor: "#9747FF",
+  },
+  badgeGray: {
+    backgroundColor: "#E2D5FF",
+  },
+});

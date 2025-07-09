@@ -42,80 +42,80 @@ jobs:
 
       - name: 📢 Notify Slack on Success
         if: success()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          channel: '썸타임-github-알림'
-          custom_payload: |
-            {
-              "text": ":white_check_mark: iOS 앱 빌드 및 배포가 완료되었습니다!",
-              "attachments": [
-                {
-                  "color": "good",
-                  "fields": [
-                    {
-                      "title": "플랫폼",
-                      "value": "iOS",
-                      "short": true
-                    },
-                    {
-                      "title": "상태",
-                      "value": "성공",
-                      "short": true
-                    },
-                    {
-                      "title": "커밋",
-                      "value": "${{ github.sha }}",
-                      "short": true
-                    },
-                    {
-                      "title": "브랜치",
-                      "value": "${{ github.ref_name }}",
-                      "short": true
-                    }
-                  ]
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
+        run: |
+          curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+          -H "Content-type: application/json" \
+          --data '{
+            "channel": "#개발-전체",
+            "text": ":white_check_mark: iOS 앱 빌드 및 배포가 완료되었습니다!",
+            "username": "GitHub Bot",
+            "attachments": [
+              {
+                "color": "good",
+                "fields": [
+                  {
+                    "title": "플랫폼",
+                    "value": "iOS",
+                    "short": true
+                  },
+                  {
+                    "title": "상태",
+                    "value": "성공",
+                    "short": true
+                  },
+                  {
+                    "title": "커밋",
+                    "value": "${{ github.sha }}",
+                    "short": true
+                  },
+                  {
+                    "title": "브랜치",
+                    "value": "${{ github.ref_name }}",
+                    "short": true
+                  }
+                ]
+              }
+            ]
+          }' \
+          https://slack.com/api/chat.postMessage
 
       - name: 📢 Notify Slack on Failure
         if: failure()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          channel: '썸타임-github-알림'
-          custom_payload: |
-            {
-              "text": ":x: iOS 앱 빌드 또는 배포에 실패했습니다.",
-              "attachments": [
-                {
-                  "color": "danger",
-                  "fields": [
-                    {
-                      "title": "플랫폼",
-                      "value": "iOS",
-                      "short": true
-                    },
-                    {
-                      "title": "상태",
-                      "value": "실패",
-                      "short": true
-                    },
-                    {
-                      "title": "커밋",
-                      "value": "${{ github.sha }}",
-                      "short": true
-                    },
-                    {
-                      "title": "브랜치",
-                      "value": "${{ github.ref_name }}",
-                      "short": true
-                    }
-                  ]
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
+        run: |
+          curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+          -H "Content-type: application/json" \
+          --data '{
+            "channel": "#개발-전체",
+            "text": ":x: iOS 앱 빌드 또는 배포에 실패했습니다.",
+            "username": "GitHub Bot",
+            "attachments": [
+              {
+                "color": "danger",
+                "fields": [
+                  {
+                    "title": "플랫폼",
+                    "value": "iOS",
+                    "short": true
+                  },
+                  {
+                    "title": "상태",
+                    "value": "실패",
+                    "short": true
+                  },
+                  {
+                    "title": "커밋",
+                    "value": "${{ github.sha }}",
+                    "short": true
+                  },
+                  {
+                    "title": "브랜치",
+                    "value": "${{ github.ref_name }}",
+                    "short": true
+                  }
+                ]
+              }
+            ]
+          }' \
+          https://slack.com/api/chat.postMessage

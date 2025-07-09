@@ -45,7 +45,6 @@ export const PaymentView = forwardRef(
         fullName: my?.name,
         customerId: my?.id,
         phoneNumber: my?.phoneNumber,
-        email: my?.email,
       },
       customData,
     };

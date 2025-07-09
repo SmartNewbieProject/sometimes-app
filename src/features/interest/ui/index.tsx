@@ -1,1 +1,1 @@
-export { AgeSelector, AgeOption } from './age-selector';
+export { AgeSelector } from "./age-selector";
