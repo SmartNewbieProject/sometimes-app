@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import type {
 	PortOneIdentityVerificationRequest,
 	PortOneIdentityVerificationResponse,
@@ -16,6 +17,19 @@ export class PortOneAuthService {
 		this.passChannelKey = process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY as string;
 
 		this.validateEnvironmentVariables();
+	}
+
+	private async loadPortOneSDK() {
+		if (Platform.OS !== 'web') {
+			throw new Error('웹 환경에서만 사용 가능합니다.');
+		}
+
+		try {
+			const module = await import('@portone/browser-sdk/v2');
+			return module;
+		} catch (error) {
+			throw new Error('PortOne SDK 로드에 실패했습니다.');
+		}
 	}
 
 	private validateEnvironmentVariables() {
@@ -43,16 +57,22 @@ export class PortOneAuthService {
 		options: Partial<PortOneIdentityVerificationRequest>,
 	): Promise<PortOneIdentityVerificationResponse> {
 		try {
-			const PortOne = await import('@portone/browser-sdk/v2');
+			if (typeof window === 'undefined' || Platform.OS !== 'web') {
+				throw new Error('웹 환경에서만 사용 가능합니다.');
+			}
+			const PortOne = await this.loadPortOneSDK();
+
+			const identityVerificationId = `cert_${new Date().getTime()}`;
 
 			const request: PortOneIdentityVerificationRequest = {
 				storeId: this.storeId,
 				channelKey: this.passChannelKey, // PASS 인증용 채널키 사용
-				identityVerificationId: `cert_${new Date().getTime()}`,
+				identityVerificationId,
 				windowType: {
 					pc: 'POPUP',
 					mobile: 'REDIRECTION',
 				},
+				redirectUrl: `${window.location.origin}/auth/login?identityVerificationId=${identityVerificationId}`,
 				...options,
 			};
 
