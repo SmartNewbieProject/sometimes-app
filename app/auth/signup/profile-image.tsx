@@ -1,20 +1,20 @@
-import { View } from 'react-native';
-import { Text } from '@/src/shared/ui/text';
-import { PalePurpleGradient } from '@/src/shared/ui/gradient';
-import { Image } from 'expo-image';
-import { Button, ImageSelector } from '@/src/shared/ui';
-import { router } from 'expo-router';
+import Loading from '@/src/features/loading';
 import Signup from '@/src/features/signup';
 import type { SignupForm } from '@/src/features/signup/hooks';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { tryCatch } from '@/src/shared/libs';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
-import { z } from 'zod';
+import { Button, ImageSelector } from '@/src/shared/ui';
+import { PalePurpleGradient } from '@/src/shared/ui/gradient';
+import { Text } from '@/src/shared/ui/text';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Image } from 'expo-image';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { tryCatch } from '@/src/shared/libs';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import Loading from '@/src/features/loading';
+import { useForm } from 'react-hook-form';
+import { View } from 'react-native';
+import { z } from 'zod';
 
 const { SignupSteps, useChangePhase, useSignupProgress, apis, useSignupAnalytics } = Signup;
 
@@ -56,22 +56,6 @@ export default function ProfilePage() {
 
     await tryCatch(
       async () => {
-        if (!signupForm.phone) {
-          showErrorModal('휴대폰 번호가 없습니다', 'announcement');
-          trackSignupEvent('signup_error', 'missing_phone');
-          router.push('/auth/login');
-          return;
-        }
-
-        const { exists } = await apis.checkPhoneNumberExists(signupForm.phone);
-
-        if (exists) {
-          showErrorModal('이미 가입된 사용자입니다', 'announcement');
-          trackSignupEvent('signup_error', 'phone_already_exists');
-          router.push('/auth/login');
-          return;
-        }
-
         await apis.signup(signupForm as SignupForm);
         trackSignupEvent('signup_complete');
         router.push('/auth/signup/done');
