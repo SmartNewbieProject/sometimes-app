@@ -1,6 +1,8 @@
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { BusinessInfo } from "@/src/shared/ui/business-info/business-info";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -15,6 +17,26 @@ export default function LoginScreen() {
   useEffect(() => {
     clear();
   }, [clear]);
+
+  useEffect(() => {
+    const identityVerificationId = params.identityVerificationId as string;
+    if (identityVerificationId) {
+      loginWithPass(identityVerificationId)
+        .then((result) => {
+          if (result.isNewUser) {
+            router.replace({
+              pathname: "/auth/signup/university",
+              params: {
+                certificationInfo: JSON.stringify(result.certificationInfo),
+              },
+            });
+          } else {
+            router.replace("/home");
+          }
+        })
+        .catch(() => router.replace("/auth/login"));
+    }
+  }, [params, loginWithPass, router]);
 
   return (
     <View className="flex-1" style={{ backgroundColor: "#F7F3FF" }}>
