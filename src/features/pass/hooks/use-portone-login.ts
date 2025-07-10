@@ -1,11 +1,10 @@
-import { useState, useCallback } from 'react';
-import { Platform } from 'react-native';
-import { router } from 'expo-router';
-import { useAuth } from '@/src/features/auth';
-import { PortOneAuthService } from '../services/portone-auth.service';
-import { isAdult } from '../utils';
-import type { PortOneIdentityVerificationRequest, PortOneIdentityVerificationResponse } from '../types';
-
+import {useState, useCallback} from 'react';
+import {Platform} from 'react-native';
+import {router} from 'expo-router';
+import {PortOneAuthService} from '../services/portone-auth.service';
+import {isAdult} from '../utils';
+import type {PortOneIdentityVerificationRequest, PortOneIdentityVerificationResponse} from '../types';
+import {useAuth} from '@/src/features/auth/hooks/use-auth';
 
 interface UsePortOneLoginOptions {
   onError?: (error: Error) => void;
@@ -42,15 +41,15 @@ const validateEnvironmentVariables = () => {
  * PortOne 본인인증을 통한 로그인 플로우를 관리하는 커스텀 훅
  */
 export const usePortOneLogin = ({
-  onError,
-  onSuccess,
-}: UsePortOneLoginOptions = {}): UsePortOneLoginReturn => {
+                                  onError,
+                                  onSuccess,
+                                }: UsePortOneLoginOptions = {}): UsePortOneLoginReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showMobileAuth, setShowMobileAuth] = useState(false);
   const [mobileAuthRequest, setMobileAuthRequest] = useState<PortOneIdentityVerificationRequest | null>(null);
 
-  const { loginWithPass } = useAuth();
+  const {loginWithPass} = useAuth();
   const authService = new PortOneAuthService();
 
   const clearError = useCallback(() => {
@@ -63,10 +62,10 @@ export const usePortOneLogin = ({
 
     if (loginResult.isNewUser) {
       if (loginResult.certificationInfo?.birthday) {
-        const { birthday } = loginResult.certificationInfo;
+        const {birthday} = loginResult.certificationInfo;
 
         if (!isAdult(birthday)) {
-          router.push({ pathname: '/auth/age-restriction' as any });
+          router.push({pathname: '/auth/age-restriction' as any});
           return;
         }
       }
