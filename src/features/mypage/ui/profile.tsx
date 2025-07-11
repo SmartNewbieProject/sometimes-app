@@ -99,6 +99,20 @@ export const Profile = () => {
                   <NotSecuredIcon />
                 </IconWrapper>
               </View>
+              <TouchableOpacity
+                onPress={() => router.push("/university-verification")}
+                style={{
+                  borderRadius: 20,
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  alignSelf: "flex-start",
+                }}
+              >
+                <Image
+                  source={require("@/assets/images/verification.png")}
+                  style={{ width: 64, height: 20 }}
+                />
+              </TouchableOpacity>
               {/* TODO: 정식 오픈 시 주석 해제 필요 */}
               {/* <View className='flex-colum items-center'>
                         <CustomSwitch value={domatching} onChange={setDomatching} />
