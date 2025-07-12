@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import type { AgeOption, AgeOptionData } from "../types";
+import type { AgeOptionData } from "../types";
 
 interface AgeSelectorProps {
-  value?: AgeOption;
+  value?: string;
   options: AgeOptionData[];
-  onChange: (value: AgeOption) => void;
+  onChange: (value: string) => void;
 }
 
 export function AgeSelector({ value, onChange, options }: AgeSelectorProps) {

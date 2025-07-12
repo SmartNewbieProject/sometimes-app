@@ -13,7 +13,7 @@ import { Selector } from "../selector";
 type Props = {
   onChange: (mbti: string) => void;
   onBlur: () => void;
-  value?: string;
+  value?: string | null;
   justifyContent?: "center" | "flex-start" | "flex-end";
 };
 

@@ -3,7 +3,7 @@ import { create } from "zustand";
 import type { AgeOption } from "../types";
 
 type StoreStates = {
-  age?: AgeOption;
+  age?: string;
   drinking?: PreferenceOption;
   goodMbti?: string | null;
   badMbti?: string | null;
