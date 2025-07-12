@@ -84,6 +84,7 @@ const uploadProfileImages = async (images: string[]): Promise<void> => {
 
   return axiosClient.post("/profile/images", formData, {
     headers: { "Content-Type": "multipart/form-data" },
+    timeout: 30000,
   });
 };
 

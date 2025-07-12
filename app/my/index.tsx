@@ -1,9 +1,10 @@
 import Layout from "@/src/features/layout";
 import {
   LogoutOrWithdrawal,
+  MatchingMenu,
+  MyActivityMenu,
   Notice,
   Profile,
-  ProfileMenu,
 } from "@/src/features/mypage/ui";
 import {
   BottomNavigation,
@@ -26,10 +27,12 @@ export default function MyScreen() {
   const insets = useSafeAreaInsets();
   return (
     <Layout.Default
-      style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+      style={{
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        backgroundColor: "#fff",
+      }}
     >
-      <PalePurpleGradient />
-
       <Header.Container className="items-center !pt-[21px] ">
         <Header.LeftContent>
           <Header.LeftButton visible={false} />
@@ -56,13 +59,10 @@ export default function MyScreen() {
         <View style={styles.profileContainer}>
           <Profile />
         </View>
-        {/* TODO: 정식 오픈 시 주석 해제 필요 */}
-        {/* <Notice />
-        <View className="py-10 items-center justify-center"> */}
-        <View className="items-center flex flex-col gap-y-4 justify-center">
-          {/* TODO: 정식 오픈 시 주석 해제 필요 */}
-          <ProfileMenu />
-          <LogoutOrWithdrawal />
+
+        <View style={styles.menuContainer}>
+          <MatchingMenu />
+          <MyActivityMenu />
         </View>
       </ScrollView>
 
@@ -89,5 +89,8 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     paddingHorizontal: 16,
+  },
+  menuContainer: {
+    paddingHorizontal: 10,
   },
 });

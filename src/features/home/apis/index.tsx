@@ -1,5 +1,5 @@
 import { axiosClient } from "@/src/shared/libs";
-import type { Preferences } from "../../my-info/api";
+import type { Preferences, SelectedPreferences } from "../../my-info/api";
 
 interface TotalMatchCountResponse {
   count: number;
@@ -25,7 +25,7 @@ export const checkPreferenceFill = async (): Promise<boolean> =>
 export const getTotalUserCount = (): Promise<number> =>
   axiosClient.get("/stats/total-user-count");
 
-export const getPreferencesSelf = async (): Promise<Preferences[]> =>
+export const getPreferencesSelf = async (): Promise<SelectedPreferences[]> =>
   axiosClient.get("/preferences/self");
 
 type HomeApiService = {
@@ -33,7 +33,7 @@ type HomeApiService = {
   checkPreferenceFill: () => Promise<boolean>;
   getTotalUserCount: () => Promise<number>;
   getNotification: () => Promise<Notification[]>;
-  getPreferencesSelf: () => Promise<Preferences[]>;
+  getPreferencesSelf: () => Promise<SelectedPreferences[]>;
 };
 
 const apis: HomeApiService = {

@@ -31,7 +31,7 @@ export const Profile = () => {
   };
 
   const handleProfileEdit = () => {
-    router.push("/profile-edit");
+    router.push("/profile-edit/profile");
   };
 
   return (
@@ -60,31 +60,13 @@ export const Profile = () => {
                 style={{ borderRadius: 10, width: 120, height: 120 }}
               />
             </View>
-            <View
-              style={{
-                marginLeft: 10,
-                justifyContent: "center",
-                alignItems: "flex-start",
-              }}
-            >
-              <Text className="text-[25px] text-[#FFFFFF]">
-                {profileData.name}
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingBottom: 20,
-                }}
-              >
-                <Text className="text-[13px] text-[#E6DBFF]">
-                  {profileData.grade}
-                </Text>
-                <Text className="text-[13px] text-[#E6DBFF]"> · </Text>
-                <Text className="text-[13px] text-[#E6DBFF]">
-                  {profileData.university}
-                </Text>
-                <IconWrapper size={14}>
+            <View style={styles.profileInfoContainer}>
+              <Text style={styles.name}>{profileData.name}</Text>
+              <View style={styles.subInfo}>
+                <Text style={styles.subInfoText}>{profileData.grade}</Text>
+                <Text style={styles.subInfoText}> · </Text>
+                <Text style={styles.subInfoText}>{profileData.university}</Text>
+                <IconWrapper style={{ marginLeft: 3 }} size={14}>
                   <NotSecuredIcon />
                 </IconWrapper>
               </View>
@@ -95,23 +77,21 @@ export const Profile = () => {
                 alignItems: "center",
                 zIndex: 30,
                 position: "absolute",
-                right: 0,
-
-                transform: [{ translateY: -60 }],
+                top: -15,
+                right: 15,
               }}
             >
               <TouchableOpacity onPress={handleProfileEdit}>
                 <View style={styles.leftRect} />
                 <View style={styles.leftRadius} />
                 <View style={[styles.previousButton]}>
-                  <View className="pt-[10px] flex-col items-center justify-center">
-                    <IconWrapper width={18}>
-                      <Image
-                        source={require("@/assets/images/arrow-up.png")}
-                        style={{ width: 20, height: 8 }}
-                      />
-                    </IconWrapper>
-                    <Text className="text-[12px] text-[#9747FF]">
+                  <View style={styles.updateContainer}>
+                    <Image
+                      source={require("@/assets/images/arrow-up.png")}
+                      style={{ width: 20, height: 8 }}
+                    />
+
+                    <Text className="text-[10px] text-[#9747FF]">
                       프로필 수정
                     </Text>
                   </View>
@@ -155,6 +135,7 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   overlapWrapper: {
+    position: "relative",
     marginTop: -185,
     zIndex: 1,
   },
@@ -164,7 +145,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#9747FF",
     paddingRight: 15,
-    position: "relative",
     paddingTop: 10,
     overflow: "hidden",
   },
@@ -208,6 +188,32 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 5,
     right: -18,
+  },
+  updateContainer: {
+    paddingTop: 8,
+    alignItems: "center",
+    gap: 4,
+  },
+  name: {
+    fontSize: 26,
+    fontWeight: 400,
+    lineHeight: 30,
+    color: "#fff",
+  },
+  profileInfoContainer: {
+    marginLeft: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  subInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingBottom: 20,
+  },
+  subInfoText: {
+    fontSize: 14,
+    color: "#E6DBFF",
+    lineHeight: 15.6,
   },
 });
 
