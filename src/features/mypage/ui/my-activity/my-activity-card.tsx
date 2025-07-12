@@ -1,19 +1,19 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface MyActivityCardProps {
   title: string;
-  link: string;
+  onPress: () => void;
 }
 
-function MyActivityCard({ title, link }: MyActivityCardProps) {
+function MyActivityCard({ title, onPress }: MyActivityCardProps) {
   return (
-    <View style={styles.container}>
+    <Pressable onPress={onPress} style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.arrowContainer}>
         <View style={styles.arrow} />
       </View>
-    </View>
+    </Pressable>
   );
 }
 

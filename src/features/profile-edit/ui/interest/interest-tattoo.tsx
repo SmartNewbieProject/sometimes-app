@@ -54,10 +54,16 @@ function InterestTattoo() {
             middleLabelLeft={-10}
             onChange={onChangeTattoo}
             options={
-              preferences?.options.map((option) => ({
-                label: option.displayName,
-                value: option.id,
-              })) || []
+              preferences?.options
+                .map((option) =>
+                  option.displayName === "문신 없음"
+                    ? { ...option, displayName: "작은 문신" }
+                    : option
+                )
+                .map((option) => ({
+                  label: option.displayName,
+                  value: option.id,
+                })) || []
             }
           />
         </Loading.Lottie>
