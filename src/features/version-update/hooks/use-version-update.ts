@@ -17,8 +17,7 @@ export const useVersionUpdate = () => {
     key: SKIPPED_VERSION_KEY,
   });
   const serverVersion = latestVersionData?.version;
-  // const currentVersion = Application.nativeApplicationVersion || Constants.expoConfig?.version || '1.0.0';
-  const currentVersion = Constants.expoConfig?.version || '1.0.0';
+  const currentVersion = Application.nativeApplicationVersion || Constants.expoConfig?.version || '1.0.0';
 
   const checkForUpdate = useCallback(async () => {
     if (!latestVersionData || !serverVersion) return;
