@@ -1,0 +1,1 @@
+export { useVersionUpdate } from './use-version-update';
