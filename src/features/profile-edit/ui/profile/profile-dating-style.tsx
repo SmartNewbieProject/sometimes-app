@@ -43,7 +43,7 @@ function ProfileDatingStyle() {
           <Text style={styles.title}>관심사</Text>
           <StepIndicator
             length={5}
-            step={datingStyleIds.length}
+            step={datingStyleIds?.length ?? 0}
             dotGap={4}
             dotSize={16}
             className="self-end"

@@ -35,21 +35,22 @@ function Profile() {
   const { profileDetails } = useAuth();
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { showErrorModal } = useModal();
-  const { data: preferenceSelf } = usePreferenceSelfQuery();
+  const { data: preferenceSelf = [] } = usePreferenceSelfQuery();
 
   const disabled = !!(
-    form.datingStyleIds.length === 0 ||
+    !form ||
     !form.datingStyleIds ||
-    !form.mbti ||
     !form.personality ||
+    !form.interestIds ||
+    !form.mbti ||
+    form.datingStyleIds?.length === 0 ||
     form.personality.length === 0 ||
-    form.interestIds.length === 0 ||
-    !form.interestIds
+    form.interestIds.length === 0
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (profileDetails?.id) {
+    if (profileDetails?.id && preferenceSelf) {
       updateForm(
         "drinking",
         preferenceSelf?.find(
