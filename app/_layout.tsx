@@ -14,6 +14,7 @@ import { ModalProvider, AnalyticsProvider } from '@/src/shared/providers';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useAtt } from '@/src/shared/hooks';
 import { PortoneProvider } from '@/src/features/payment/hooks/PortoneProvider';
+import { VersionUpdateChecker } from '@/src/features/version-update';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -89,6 +90,7 @@ export default function RootLayout() {
                   <AnalyticsProvider>
                     <RouteTracker>
                       <Slot />
+                      <VersionUpdateChecker />
                     </RouteTracker>
                   </AnalyticsProvider>
                 </ThemeProvider>
