@@ -1,10 +1,16 @@
-import { useController, UseControllerProps } from 'react-hook-form';
-import { ContentSelector, type ContentSelectorProps } from '@/src/shared/ui/content-selector';
-import type { ReactNode } from 'react';
+import {
+  ContentSelector,
+  type ContentSelectorProps,
+} from "@/src/shared/ui/content-selector";
+import type { ReactNode } from "react";
+import { type UseControllerProps, useController } from "react-hook-form";
+import { Pressable } from "react-native";
 
-export interface FormContentSelectorProps extends UseControllerProps, Omit<ContentSelectorProps, 'value' | 'onChange'> {
+export interface FormContentSelectorProps
+  extends UseControllerProps,
+    Omit<ContentSelectorProps, "value" | "onChange"> {
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   renderContent?: (value: string | null) => ReactNode;
   renderPlaceholder?: () => ReactNode;
   onPress?: () => Promise<string | null>;
@@ -34,18 +40,26 @@ export function FormContentSelector({
     rules,
   });
 
+  const handlePress = async () => {
+    if (onPress) {
+      const result = await onPress();
+      if (result) {
+        onChange(result);
+      }
+    }
+  };
   return (
-    <ContentSelector
-      value={value}
-      onChange={onChange}
-      size={size}
-      className={className}
-      renderContent={renderContent}
-      renderPlaceholder={renderPlaceholder}
-      onPress={onPress}
-      actionLabel={actionLabel}
-      activeColor={activeColor}
-      inactiveColor={inactiveColor}
-    />
+    <Pressable onPress={handlePress}>
+      <ContentSelector
+        value={value}
+        size={size}
+        className={className}
+        renderContent={renderContent}
+        renderPlaceholder={renderPlaceholder}
+        actionLabel={actionLabel}
+        activeColor={activeColor}
+        inactiveColor={inactiveColor}
+      />
+    </Pressable>
   );
 }

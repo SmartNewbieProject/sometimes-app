@@ -1,7 +1,7 @@
-import type { Preferences } from "@/src/features/interest/api";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
+import type { Preferences } from "@/src/features/my-info/api";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import Interest from "@features/interest";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
