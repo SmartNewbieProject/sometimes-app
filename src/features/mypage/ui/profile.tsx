@@ -1,10 +1,8 @@
-import ArrowUp from "@/assets/icons/Vector-up.svg";
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
+
 import { useCommingSoon } from "@/src/features/admin/hooks";
 import { useAuth } from "@/src/features/auth";
 import MyPage from "@/src/features/mypage";
-import { getProfileId, getUniversityVerificationStatus } from "@/src/features/university-verification";
-import { getUnivLogo, type UniversityName } from "@/src/shared/libs/univ";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { Image } from "expo-image";
@@ -12,69 +10,32 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Layout from "../../layout";
+import { useRematchingTickets } from "../queries";
 import CustomSwitch from "./custom-switch";
 
 export const Profile = () => {
   const { profileDetails } = useAuth();
-  const [domatching, setDomatching] = useState(false);
-  const [reMatchingTicketCount, setReMatchingTicketCount] = useState(0);
-  const [showUniversityVerificationButton, setShowUniversityVerificationButton] = useState(false);
-  const [isUniversityVerified, setIsUniversityVerified] = useState(false);
-  const showCommingSoon = useCommingSoon();
-
+  console.log("prefileDetails", profileDetails);
+  const { data: reMatchingTicketCount } = useRematchingTickets();
   const profileData = {
     name: profileDetails?.name || "이름",
     age: profileDetails?.age || "20",
     grade: profileDetails?.universityDetails?.grade || "19학번",
-    domatching: domatching,
     university: profileDetails?.universityDetails?.name || "한밭대학교",
     profileImage:
       profileDetails?.profileImages?.[0]?.url ||
       require("@/assets/images/profile.png"),
-    totalRematchingTickets: reMatchingTicketCount,
+    totalRematchingTickets: reMatchingTicketCount?.total ?? 0,
   };
 
   const handleProfileEdit = () => {
-    router.push("/profile-edit");
+    router.push("/profile-edit/profile");
   };
 
-  useEffect(() => {
-    const fetchRematchingTickets = async () => {
-      try {
-        const reMatchingTicket = await MyPage.getAllRematchingTicket();
-        setReMatchingTicketCount(reMatchingTicket.total || 0);
-      } catch (error) {
-        console.error("Failed to fetch rematching tickets:", error);
-      }
-    };
-
-    const checkUniversityVerificationStatus = async () => {
-      try {
-        const profileId = await getProfileId();
-        const verificationStatus = await getUniversityVerificationStatus(profileId);
-
-        if (verificationStatus.verifiedAt) {
-          const verifiedYear = new Date(verificationStatus.verifiedAt).getFullYear();
-          const currentYear = new Date().getFullYear();
-          setShowUniversityVerificationButton(verifiedYear !== currentYear);
-          setIsUniversityVerified(true);
-        } else {
-          setShowUniversityVerificationButton(true);
-          setIsUniversityVerified(false);
-        }
-      } catch (error) {
-        console.error("Failed to check university verification status:", error);
-        setShowUniversityVerificationButton(true);
-        setIsUniversityVerified(false);
-      }
-    };
-
-    fetchRematchingTickets();
-    checkUniversityVerificationStatus();
-  }, []);
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <LinearGradient
         colors={["#E9D9FF", "#D6B6FF"]}
         style={styles.baseRectangle}
@@ -87,6 +48,7 @@ export const Profile = () => {
                 width: 130,
                 height: 130,
                 marginLeft: 10,
+
                 borderRadius: 10,
                 backgroundColor: "white",
                 justifyContent: "center",
@@ -98,89 +60,38 @@ export const Profile = () => {
                 style={{ borderRadius: 10, width: 120, height: 120 }}
               />
             </View>
-            <View
-              style={{
-                marginLeft: 10,
-                justifyContent: "center",
-                alignItems: "flex-start",
-              }}
-            >
-              <Text className="text-[25px] text-[#FFFFFF]">
-                {profileData.name}
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingBottom: 20,
-                }}
-              >
-                <Text className="text-[13px] text-[#E6DBFF]">
-                  {profileData.grade}
-                </Text>
-                <Text className="text-[13px] text-[#E6DBFF]"> · </Text>
-                <Text className="text-[13px] text-[#E6DBFF]">
-                  {profileData.university}{" "}
-                </Text>
-                <IconWrapper size={14}>
-                  {isUniversityVerified && profileDetails?.universityDetails?.name ? (
-                    <Image
-                      source={{ uri: getUnivLogo(profileDetails.universityDetails.name as UniversityName) }}
-                      style={{ width: 14, height: 14 }}
-                      contentFit="contain"
-                    />
-                  ) : (
-                    <NotSecuredIcon />
-                  )}
+            <View style={styles.profileInfoContainer}>
+              <Text style={styles.name}>{profileData.name}</Text>
+              <View style={styles.subInfo}>
+                <Text style={styles.subInfoText}>{profileData.grade}</Text>
+                <Text style={styles.subInfoText}> · </Text>
+                <Text style={styles.subInfoText}>{profileData.university}</Text>
+                <IconWrapper style={{ marginLeft: 3 }} size={14}>
+                  <NotSecuredIcon />
                 </IconWrapper>
               </View>
-              {showUniversityVerificationButton && (
-                <TouchableOpacity
-                  onPress={() => router.push("/university-verification")}
-                  className="bg-white rounded-lg px-2 py-1 flex-row items-center self-start"
-                  style={{
-                    shadowColor: "#000",
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 3.84,
-                    elevation: 5,
-                  }}
-                >
-                  <Image
-                    source={require("@/assets/images/icon_change.png")}
-                    style={{ width: 16, height: 16, marginRight: 8 }}
-                  />
-                  <Text className="text-sm font-medium text-[#8B5CF6]">학교인증</Text>
-                </TouchableOpacity>
-              )}
-              {/* TODO: 정식 오픈 시 주석 해제 필요 */}
-              {/* <View className='flex-colum items-center'>
-                        <CustomSwitch value={domatching} onChange={setDomatching} />
-                        <Text className='text-[10px] pt-[8px] text-[#FFFFFF]'>매칭 쉬기</Text>
-                    </View> */}
             </View>
             <View
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                transform: [{ translateY: -60 }],
+                zIndex: 30,
+                position: "absolute",
+                top: -15,
+                right: 15,
               }}
             >
-              {/* TODO: 정식 오픈 시 주석 해제 필요 */}
-              {/* <TouchableOpacity onPress={handleProfileEdit}> */}
-              <TouchableOpacity onPress={() => showCommingSoon()}>
-                {/* TODO: 정식 오픈 시 삭제 필요 */}
+              <TouchableOpacity onPress={handleProfileEdit}>
                 <View style={styles.leftRect} />
                 <View style={styles.leftRadius} />
                 <View style={[styles.previousButton]}>
-                  <View className="pt-[10px] flex-col items-center justify-center">
-                    <IconWrapper width={18}>
-                      <ArrowUp />
-                    </IconWrapper>
-                    <Text className="text-[8px] text-[#9747FF]">
+                  <View style={styles.updateContainer}>
+                    <Image
+                      source={require("@/assets/images/arrow-up.png")}
+                      style={{ width: 20, height: 8 }}
+                    />
+
+                    <Text className="text-[10px] text-[#9747FF]">
                       프로필 수정
                     </Text>
                   </View>
@@ -215,7 +126,6 @@ export const Profile = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 40,
     alignItems: "center",
   },
   baseRectangle: {
@@ -225,6 +135,7 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   overlapWrapper: {
+    position: "relative",
     marginTop: -185,
     zIndex: 1,
   },
@@ -277,6 +188,32 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 5,
     right: -18,
+  },
+  updateContainer: {
+    paddingTop: 8,
+    alignItems: "center",
+    gap: 4,
+  },
+  name: {
+    fontSize: 26,
+    fontWeight: 400,
+    lineHeight: 30,
+    color: "#fff",
+  },
+  profileInfoContainer: {
+    marginLeft: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  subInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingBottom: 20,
+  },
+  subInfoText: {
+    fontSize: 14,
+    color: "#E6DBFF",
+    lineHeight: 15.6,
   },
 });
 

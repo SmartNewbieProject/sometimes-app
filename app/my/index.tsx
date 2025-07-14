@@ -1,8 +1,10 @@
+import Layout from "@/src/features/layout";
 import {
   LogoutOrWithdrawal,
+  MatchingMenu,
+  MyActivityMenu,
   Notice,
   Profile,
-  ProfileMenu,
 } from "@/src/features/mypage/ui";
 import {
   BottomNavigation,
@@ -14,17 +16,24 @@ import {
 import { Image } from "expo-image";
 import {
   ScrollView,
+  StyleSheet,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function MyScreen() {
+  const insets = useSafeAreaInsets();
   return (
-    <View className="flex-1">
-      <PalePurpleGradient />
-
-      <Header.Container className="mt-2">
+    <Layout.Default
+      style={{
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        backgroundColor: "#fff",
+      }}
+    >
+      <Header.Container className="items-center !pt-[21px] ">
         <Header.LeftContent>
           <Header.LeftButton visible={false} />
         </Header.LeftContent>
@@ -38,32 +47,50 @@ export default function MyScreen() {
 
         <Header.RightContent>
           <TouchableOpacity>
-            {/* TODO: 정식 오픈 시 주석 해제 필요 */}
-            {/* <View className="w-10 h-10 bg-lightPurple rounded-full items-center justify-center">
-              <Text size="sm" weight="bold" textColor="purple">🔒</Text>
-            </View> */}
+            <View style={styles.iconContainer}>
+              <View style={styles.iconPlace} />
+              <View style={styles.iconPlace} />
+            </View>
           </TouchableOpacity>
         </Header.RightContent>
       </Header.Container>
 
-      <ScrollView className="flex-1 px-5">
-        <View className="pb-20 items-center justify-center">
-          <View>
-            <Profile />
-          </View>
+      <ScrollView style={styles.scrollViewContainer}>
+        <View style={styles.profileContainer}>
+          <Profile />
         </View>
-        {/* TODO: 정식 오픈 시 주석 해제 필요 */}
-        {/* <Notice />
-        <View className="py-10 items-center justify-center"> */}
-        <View className="items-center flex flex-col gap-y-4 justify-center">
-          {/* TODO: 정식 오픈 시 주석 해제 필요 */}
-          <ProfileMenu />
-          <LogoutOrWithdrawal />
+
+        <View style={styles.menuContainer}>
+          <MatchingMenu />
+          <MyActivityMenu />
         </View>
       </ScrollView>
 
       {/* Bottom Navigation */}
       <BottomNavigation />
-    </View>
+    </Layout.Default>
   );
 }
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  profileContainer: {
+    paddingTop: 0,
+    paddingBottom: 16,
+  },
+  iconPlace: {
+    width: 40,
+    height: 40,
+  },
+  scrollViewContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  menuContainer: {
+    paddingHorizontal: 10,
+  },
+});

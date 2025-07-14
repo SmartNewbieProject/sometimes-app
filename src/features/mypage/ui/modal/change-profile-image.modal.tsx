@@ -1,34 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator, ScrollView } from 'react-native';
-import { Text, Button, ImageSelector } from '@/src/shared/ui';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import apis from '@/src/features/mypage/apis';
-import { useQueryClient } from '@tanstack/react-query';
-import { useStorage } from '@/src/shared/hooks/use-storage';
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import apis from "@/src/features/mypage/apis";
+import { platform } from "@/src/shared/libs/platform";
 
-export const ChangeProfileImageModal = () => {
+import Layout from "@/src/features/layout";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { useStorage } from "@/src/shared/hooks/use-storage";
+import { cn } from "@/src/shared/libs";
+import {
+  Button,
+  ImageSelector,
+  PalePurpleGradient,
+  Text,
+} from "@/src/shared/ui";
+import { useQueryClient } from "@tanstack/react-query";
+import { Image } from "expo-image";
+import React, { useState, useEffect } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+interface ChangeProfileImageModalProps {
+  onCloseModal: () => void;
+}
+
+export const ChangeProfileImageModal = ({
+  onCloseModal,
+}: ChangeProfileImageModalProps) => {
   const { hideModal, showErrorModal } = useModal();
+  const insets = useSafeAreaInsets();
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
-  const { value: accessToken } = useStorage<string | null>({
-    key: 'access-token',
-    initialValue: null,
-  });
 
   const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validImages = images.filter(img => img !== null);
-  const isAllImagesSelected = validImages.length === 3;
-
   useEffect(() => {
-    setImages([null, null, null]);
+    if (profileDetails?.profileImages) {
+      const sortedPorifleImages = profileDetails?.profileImages.sort((a, b) => {
+        if (a.isMain && !b.isMain) return -1;
+        if (!a.isMain && b.isMain) return 1;
+        return 0;
+      });
+      setImages(sortedPorifleImages.map((item) => item.url));
+    }
   }, [profileDetails]);
-
-  useEffect(() => {
-    setIsSubmitting(false);
-  }, []);
 
   const handleImageChange = (index: number, value: string) => {
     const newImages = [...images];
@@ -36,140 +50,193 @@ export const ChangeProfileImageModal = () => {
     setImages(newImages);
   };
 
-  const replaceExistingImage = async (newImage: string, oldImages: any[]) => {
-    if (oldImages[0]) {
-      await apis.deleteProfileImage(oldImages[0].id);
-      oldImages.shift();
-    }
-    await apis.uploadProfileImage(newImage, 2);
+  const addNewImage = async (newImage: string[]) => {
+    await apis.uploadProfileImages(newImage);
   };
 
-  const addNewImage = async (newImage: string, index: number) => {
-    await apis.uploadProfileImage(newImage, index);
-  };
-
-  const cleanupRemainingImages = async (oldImages: any[], startIndex: number) => {
-    for (let i = startIndex; i < oldImages.length; i++) {
+  const cleanupRemainingImages = async (
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    oldImages: any[]
+  ) => {
+    for (let i = 0; i < oldImages.length; i++) {
       await apis.deleteProfileImage(oldImages[i].id).catch(() => {});
     }
   };
 
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const getErrorMessage = (error: any) => {
-    return error?.response?.data?.message || error?.message || '알 수 없는 오류가 발생했습니다.';
+    console.log("error", error);
+    return (
+      error?.response?.data?.message ||
+      error?.message ||
+      error?.error ||
+      "알 수 없는 오류가 발생했습니다."
+    );
   };
 
   const handleSubmit = async () => {
     if (!profileDetails) {
-      showErrorModal('프로필 정보를 불러올 수 없습니다.', 'error');
+      showErrorModal("프로필 정보를 불러올 수 없습니다.", "error");
       return;
     }
 
-    const validImages = images.filter(img => img !== null) as string[];
+    const validImages = images.filter((img) => img !== null) as string[];
     if (validImages.length !== 3) {
-      showErrorModal('프로필 이미지 3장을 모두 등록해주세요.', 'announcement');
+      showErrorModal("프로필 이미지 3장을 모두 등록해주세요.", "announcement");
       return;
     }
-
-    setIsSubmitting(true);
 
     try {
+      setIsSubmitting(true);
       const oldImages = [...(profileDetails.profileImages || [])];
-      const hasExistingImages = oldImages.length > 0;
+      console.log("validFilter", validImages);
 
-      if (hasExistingImages) {
-        for (let i = 0; i < validImages.length; i++) {
-          await replaceExistingImage(validImages[i], oldImages);
-        }
-      } else {
-        for (let i = 0; i < validImages.length; i++) {
-          await addNewImage(validImages[i], i);
-        }
-      }
+      await cleanupRemainingImages(oldImages);
 
-      if (oldImages.length > validImages.length) {
-        await cleanupRemainingImages(oldImages, validImages.length);
-      }
+      await addNewImage(validImages);
 
-      await queryClient.invalidateQueries({ queryKey: ['my-profile-details'] });
+      await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
       hideModal();
-      showErrorModal('프로필 이미지가 성공적으로 변경되었습니다.', 'announcement');
+      showErrorModal(
+        "프로필 이미지가 성공적으로 변경되었습니다.",
+        "announcement"
+      );
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
-      showErrorModal(`프로필 이미지 변경 중 오류가 발생했습니다: ${getErrorMessage(error)}`, 'error');
+      showErrorModal(
+        `프로필 이미지 변경 중 오류가 발생했습니다: ${getErrorMessage(error)}`,
+        "error"
+      );
     } finally {
       setIsSubmitting(false);
+      onCloseModal();
     }
   };
+
+  console.log("images", images);
 
   if (!profileDetails) {
     return (
       <View className="items-center justify-center p-4">
         <ActivityIndicator size="large" color="#6A3EA1" />
-        <Text className="mt-2 text-center" textColor="black">프로필 정보를 불러오는 중...</Text>
+        <Text className="mt-2 text-center" textColor="black">
+          프로필 정보를 불러오는 중...
+        </Text>
       </View>
     );
   }
 
   return (
-    <View className="w-full">
-      <Text className="text-lg font-semibold mb-4 text-center" textColor="black">
-        프로필 이미지 변경
-      </Text>
+    <View style={{ position: "relative", flex: 1, marginTop: insets.top }}>
+      <PalePurpleGradient />
+      <View style={[styles.container]}>
+        <View style={styles.titleContainer}>
+          <Image
+            source={require("@assets/images/profile-image.png")}
+            style={{ width: 102, height: 102 }}
+          />
+          <Text weight="semibold" size="20" textColor="black" className="mt-2">
+            프로필 사진이 없으면 매칭이 안 돼요!
+          </Text>
+          <Text weight="semibold" size="20" textColor="black">
+            지금 바로 추가해 주세요
+          </Text>
+        </View>
 
-      <Text className="mb-4 text-center" textColor="black">
-        매칭을 위해 프로필 사진 3장을 모두 등록해주세요.
-      </Text>
+        <View style={styles.descriptioncontianer}>
+          <Text weight="medium" size="sm" textColor="pale-purple">
+            매칭을 위해 1장의 프로필 사진을 필수로 올려주세요
+          </Text>
+          <Text weight="medium" size="sm" textColor="pale-purple">
+            얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+          </Text>
+        </View>
 
-      <View className="mb-6">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 20,
-            gap: 16,
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: '100%'
-          }}
-          className="mb-4"
-        >
-          {images.map((image, index) => (
-            <View key={index} style={{ width: 120, height: 120 }}>
+        <View className="flex-1 flex flex-col gap-y-4">
+          <View className="flex w-full justify-center items-center">
+            {images[0] ? (
               <ImageSelector
                 size="sm"
-                value={image ?? undefined}
-                onChange={(value) => handleImageChange(index, value)}
+                actionLabel="대표"
+                value={images[0]}
+                onChange={(value) => {
+                  handleImageChange(0, value);
+                }}
               />
-            </View>
-          ))}
-        </ScrollView>
-        <Text className="text-xs text-center" textColor="gray">
-          얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
-        </Text>
-        <Text className="text-xs text-center mt-1" textColor="gray">
-          좌우로 스크롤하여 이미지를 추가해주세요.
-        </Text>
-      </View>
+            ) : (
+              <ImageSelector
+                size="sm"
+                actionLabel="대표"
+                value={undefined}
+                onChange={(value) => {
+                  handleImageChange(0, value);
+                }}
+              />
+            )}
+          </View>
 
-      <View className="flex flex-row gap-x-2">
-        <Button
-          variant="secondary"
-          onPress={hideModal}
-          className="flex-1"
-          disabled={isSubmitting}
-        >
-          취소
-        </Button>
-        <Button
-          variant="primary"
-          onPress={handleSubmit}
-          className="flex-1"
-          disabled={isSubmitting || !isAllImagesSelected}
-        >
-          {isSubmitting ? '변경 중...' : '변경 완료'}
-        </Button>
+          <View className="flex flex-row justify-center gap-x-4">
+            {images[1] ? (
+              <ImageSelector
+                size="sm"
+                value={images[1]}
+                onChange={(value) => {
+                  handleImageChange(1, value);
+                }}
+              />
+            ) : (
+              <ImageSelector
+                size="sm"
+                value={undefined}
+                onChange={(value) => {
+                  handleImageChange(1, value);
+                }}
+              />
+            )}
+            {images[2] ? (
+              <ImageSelector
+                size="sm"
+                value={images[2]}
+                onChange={(value) => {
+                  handleImageChange(2, value);
+                }}
+              />
+            ) : (
+              <ImageSelector
+                size="sm"
+                value={undefined}
+                onChange={(value) => {
+                  handleImageChange(2, value);
+                }}
+              />
+            )}
+          </View>
+        </View>
       </View>
+      <Layout.TwoButtons
+        disabledNext={isSubmitting}
+        content={{
+          next: isSubmitting ? "저장 중.." : "저장하기",
+        }}
+        onClickNext={handleSubmit}
+        onClickPrevious={onCloseModal}
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  titleContainer: {
+    paddingHorizontal: 28,
+  },
+  descriptioncontianer: {
+    paddingTop: 16,
+    paddingBottom: 64,
+    paddingHorizontal: 28,
+  },
+});
 
 export default ChangeProfileImageModal;

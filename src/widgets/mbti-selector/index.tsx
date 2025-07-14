@@ -13,11 +13,17 @@ import { Selector } from "../selector";
 type Props = {
   onChange: (mbti: string) => void;
   onBlur: () => void;
-  value?: string;
+  value?: string | null;
+  justifyContent?: "center" | "flex-start" | "flex-end";
 };
 
 const parse = (mbti: string, index: number) => mbti.charAt(index);
-export function MbtiSelector({ onChange, onBlur, value }: Props) {
+export function MbtiSelector({
+  onChange,
+  onBlur,
+  value,
+  justifyContent = "center",
+}: Props) {
   const [_value, setValue] = useState<string>(value ?? "");
 
   const [first, setFirst] = useState<string>(parse(_value, 0));
@@ -36,7 +42,10 @@ export function MbtiSelector({ onChange, onBlur, value }: Props) {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={styles.scrollContent}
+      contentContainerStyle={[
+        styles.scrollContent,
+        { justifyContent: justifyContent },
+      ]}
       horizontal
       showsHorizontalScrollIndicator={false}
     >
@@ -114,7 +123,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexDirection: "row",
     width: "100%",
-    justifyContent: "center",
+
     columnGap: 24,
     alignItems: "flex-start",
   },

@@ -55,7 +55,7 @@ const tooltips = [
 export default function DrinkingSelectionScreen() {
   const { updateStep } = useMyInfoStep();
   const { drinking, updateForm } = useMyInfoForm();
-  const { my } = useAuth();
+
   const {
     data: preferencesArray = [
       {
