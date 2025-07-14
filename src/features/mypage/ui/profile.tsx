@@ -3,6 +3,8 @@ import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
 import { useCommingSoon } from "@/src/features/admin/hooks";
 import { useAuth } from "@/src/features/auth";
 import MyPage from "@/src/features/mypage";
+import { getProfileId, getUniversityVerificationStatus } from "@/src/features/university-verification";
+import { getUnivLogo, type UniversityName } from "@/src/shared/libs/univ";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { Image } from "expo-image";
@@ -16,6 +18,8 @@ export const Profile = () => {
   const { profileDetails } = useAuth();
   const [domatching, setDomatching] = useState(false);
   const [reMatchingTicketCount, setReMatchingTicketCount] = useState(0);
+  const [showUniversityVerificationButton, setShowUniversityVerificationButton] = useState(false);
+  const [isUniversityVerified, setIsUniversityVerified] = useState(false);
   const showCommingSoon = useCommingSoon();
 
   const profileData = {
@@ -43,7 +47,30 @@ export const Profile = () => {
         console.error("Failed to fetch rematching tickets:", error);
       }
     };
+
+    const checkUniversityVerificationStatus = async () => {
+      try {
+        const profileId = await getProfileId();
+        const verificationStatus = await getUniversityVerificationStatus(profileId);
+
+        if (verificationStatus.verifiedAt) {
+          const verifiedYear = new Date(verificationStatus.verifiedAt).getFullYear();
+          const currentYear = new Date().getFullYear();
+          setShowUniversityVerificationButton(verifiedYear !== currentYear);
+          setIsUniversityVerified(true);
+        } else {
+          setShowUniversityVerificationButton(true);
+          setIsUniversityVerified(false);
+        }
+      } catch (error) {
+        console.error("Failed to check university verification status:", error);
+        setShowUniversityVerificationButton(true);
+        setIsUniversityVerified(false);
+      }
+    };
+
     fetchRematchingTickets();
+    checkUniversityVerificationStatus();
   }, []);
 
   return (
@@ -96,23 +123,39 @@ export const Profile = () => {
                   {profileData.university}{" "}
                 </Text>
                 <IconWrapper size={14}>
-                  <NotSecuredIcon />
+                  {isUniversityVerified && profileDetails?.universityDetails?.name ? (
+                    <Image
+                      source={{ uri: getUnivLogo(profileDetails.universityDetails.name as UniversityName) }}
+                      style={{ width: 14, height: 14 }}
+                      contentFit="contain"
+                    />
+                  ) : (
+                    <NotSecuredIcon />
+                  )}
                 </IconWrapper>
               </View>
-              <TouchableOpacity
-                onPress={() => router.push("/university-verification")}
-                style={{
-                  borderRadius: 20,
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                  alignSelf: "flex-start",
-                }}
-              >
-                <Image
-                  source={require("@/assets/images/verification.png")}
-                  style={{ width: 64, height: 20 }}
-                />
-              </TouchableOpacity>
+              {showUniversityVerificationButton && (
+                <TouchableOpacity
+                  onPress={() => router.push("/university-verification")}
+                  className="bg-white rounded-lg px-2 py-1 flex-row items-center self-start"
+                  style={{
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 2,
+                    },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                  }}
+                >
+                  <Image
+                    source={require("@/assets/images/icon_change.png")}
+                    style={{ width: 16, height: 16, marginRight: 8 }}
+                  />
+                  <Text className="text-sm font-medium text-[#8B5CF6]">학교인증</Text>
+                </TouchableOpacity>
+              )}
               {/* TODO: 정식 오픈 시 주석 해제 필요 */}
               {/* <View className='flex-colum items-center'>
                         <CustomSwitch value={domatching} onChange={setDomatching} />

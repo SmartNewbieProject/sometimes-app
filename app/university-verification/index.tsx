@@ -123,7 +123,7 @@ export default function UniversityVerificationScreen() {
       return;
     }
 
-    router.back();
+    router.push("/university-verification/success");
   };
 
   return (
@@ -162,7 +162,7 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleEmailVerification}
                   disabled={isLoading}
-                  className={`bg-white border border-purple-400 rounded-2xl py-3 px-2 w-24 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
+                  className={`bg-white border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
                 >
                   <Text size="sm" weight="medium" textColor="purple" className="text-center">
                     {isLoading ? "전송중..." : "인증번호 전송"}
@@ -187,7 +187,7 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleCodeVerification}
                   disabled={isLoading}
-                  className={`bg-white border border-purple-400 rounded-2xl py-3 px-2 w-24 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
+                  className={`bg-white border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
                 >
                   <Text size="sm" weight="medium" textColor="purple" className="text-center">
                     {isLoading ? "확인중..." : "확인"}

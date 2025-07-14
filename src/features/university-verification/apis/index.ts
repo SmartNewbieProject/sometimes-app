@@ -15,3 +15,7 @@ export const getProfileId = async (): Promise<string> => {
   const userInfo = await axiosClient.get('/user') as User;
   return userInfo.profileId;
 };
+
+export const getUniversityVerificationStatus = async (profileId: string): Promise<{ verifiedAt: string | null }> => {
+  return axiosClient.get(`/profile/university-verification/${profileId}`);
+};

@@ -16,6 +16,15 @@ export default function UniversityVerificationLayout() {
             },
           }}
         />
+        <Stack.Screen
+          name="success"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
       </Stack>
     </View>
   );
