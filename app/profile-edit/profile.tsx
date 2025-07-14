@@ -119,6 +119,9 @@ function Profile() {
         await queryClient.invalidateQueries({
           queryKey: ["preference-self"],
         });
+        await queryClient.invalidateQueries({
+          queryKey: ["my-profile-details"],
+        });
         router.navigate("/my");
         setFormSubmitLoading(false);
       },

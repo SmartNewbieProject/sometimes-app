@@ -40,7 +40,7 @@ export default function DatingStyleSelectionScreen() {
     ) ?? preferencesArray[0];
 
   const onChangeOption = (values: string[]) => {
-    if (values.length > 5) {
+    if (values.length > 3) {
       return;
     }
     updateForm("datingStyleIds", values);
@@ -95,7 +95,10 @@ export default function DatingStyleSelectionScreen() {
         </View>
 
         <View className="flex-1 w-full flex px-4 mt-2">
-          <Loading.Lottie title="관심사를 불러오고 있어요" loading={isLoading}>
+          <Loading.Lottie
+            title="연애 스타일 옵션 불러오고 있어요"
+            loading={isLoading}
+          >
             <ChipSelector
               value={datingStyleIds}
               options={

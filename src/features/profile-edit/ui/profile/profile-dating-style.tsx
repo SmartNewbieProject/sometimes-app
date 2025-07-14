@@ -30,7 +30,7 @@ function ProfileDatingStyle() {
     ) ?? preferencesArray[0];
 
   const onChangeOption = (values: string[]) => {
-    if (values.length > 5) {
+    if (values.length > 3) {
       return;
     }
     updateForm("datingStyleIds", values);
@@ -40,9 +40,9 @@ function ProfileDatingStyle() {
     <View style={styles.container}>
       <View style={styles.indicatorContainer}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>관심사</Text>
+          <Text style={styles.title}>연애 스타일</Text>
           <StepIndicator
-            length={5}
+            length={3}
             step={datingStyleIds?.length ?? 0}
             dotGap={4}
             dotSize={16}
