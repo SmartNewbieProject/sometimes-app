@@ -27,13 +27,11 @@ function ProfileInterest() {
   );
 
   const onChangeOption = (values: string[]) => {
-    if (values.length > 5) {
+    if (values?.length > 5) {
       return;
     }
     updateForm("interestIds", values);
   };
-
-  const disabled = interestIds.length < 3;
 
   return (
     <View style={styles.container}>
@@ -42,7 +40,7 @@ function ProfileInterest() {
           <Text style={styles.title}>관심사</Text>
           <StepIndicator
             length={5}
-            step={interestIds.length}
+            step={interestIds?.length ?? 0}
             dotGap={4}
             dotSize={16}
             className="self-end"
