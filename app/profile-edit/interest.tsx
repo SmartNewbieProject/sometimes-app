@@ -49,6 +49,7 @@ function InterestSection() {
   useEffect(() => {
     if (profileDetails?.preferences) {
       const preferences = profileDetails.preferences;
+      const additionalPreferences = profileDetails.additionalPreferences;
       updateForm(
         "drinking",
         preferences?.find((item) => item.typeName === PreferenceKeys.DRINKING)
@@ -59,16 +60,8 @@ function InterestSection() {
         preferences?.find((item) => item.typeName === PreferenceKeys.AGE)
           ?.selectedOptions[0].id
       );
-      updateForm(
-        "goodMbti",
-        preferences?.find((item) => item.typeName === PreferenceKeys.GOOD_MBTI)
-          ?.selectedOptions[0].id
-      );
-      updateForm(
-        "badMbti",
-        preferences?.find((item) => item.typeName === PreferenceKeys.GOOD_MBTI)
-          ?.selectedOptions[0].id
-      );
+      updateForm("goodMbti", additionalPreferences?.goodMbti);
+      updateForm("badMbti", additionalPreferences?.badMbti);
 
       if (profileDetails.gender === "MALE") {
         updateForm(
