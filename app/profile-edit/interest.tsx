@@ -3,10 +3,6 @@ import { usePreferenceSelfQuery } from "@/src/features/home/queries";
 import Interest from "@/src/features/interest";
 import { PreferenceKeys } from "@/src/features/interest/queries";
 import { savePreferences } from "@/src/features/interest/services";
-import Layout from "@/src/features/layout";
-import MyInfo from "@/src/features/my-info";
-
-import { useMbti } from "@/src/features/mypage/hooks";
 import InterestAge from "@/src/features/profile-edit/ui/interest/interest-age";
 import InterestBadMbti from "@/src/features/profile-edit/ui/interest/interest-bad-mbti";
 import InterestDrinking from "@/src/features/profile-edit/ui/interest/interest-drinking";
@@ -39,8 +35,6 @@ function InterestSection() {
 
   const disabled = !!(
     !form.age ||
-    !form.goodMbti ||
-    !form.badMbti ||
     !form.personality ||
     form.personality.length === 0
   );

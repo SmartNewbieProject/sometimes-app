@@ -25,7 +25,7 @@ export const Profile = () => {
     grade: profileDetails?.universityDetails?.grade || "19학번",
     university: profileDetails?.universityDetails?.name || "한밭대학교",
     profileImage:
-      profileDetails?.profileImages?.[0]?.url ||
+      profileDetails?.profileImages?.find((image) => image.isMain)?.url ||
       require("@/assets/images/profile.png"),
     totalRematchingTickets: reMatchingTicketCount?.total ?? 0,
   };
@@ -56,6 +56,7 @@ export const Profile = () => {
               }}
             >
               <Image
+                key={profileData.profileImage || ""}
                 source={profileData.profileImage}
                 style={{ borderRadius: 10, width: 120, height: 120 }}
               />
