@@ -61,7 +61,7 @@ const ListHeaderComponent = () => {
         </Header.CenterContent>
       </Header.Container>
 
-      <View className="pt-[14px]">
+      <View className="pt-[14px] bg-white">
         <CategoryList />
       </View>
     </View>

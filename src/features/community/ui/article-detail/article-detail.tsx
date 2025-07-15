@@ -190,7 +190,11 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   };
 
   return (
-    <View className="flex-1 relative  px-5">
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 20 }}
+      keyboardShouldPersistTaps="handled"
+      className="flex-1 relative  px-5"
+    >
       <View className="h-[1px] bg-[#F3F0FF] mb-[15px]" />
 
       <UserProfile
@@ -222,11 +226,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         </View>
       </View>
       <View className="h-[1px] bg-[#F3F0FF] " />
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ paddingBottom: 20 }}
-        keyboardShouldPersistTaps="handled"
-      >
+      <View className="flex-1">
         <Loading.Lottie
           title="댓글을 불러오고 있어요"
           loading={isCommentLoading}
@@ -235,7 +235,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
             {renderComments(comments, editingCommentId)}
           </View>
         </Loading.Lottie>
-      </ScrollView>
+      </View>
 
       <View className="border-t border-[#F3F0FF] mb-8 pt-3 pb-2 px-4 bg-white">
         <InputForm
@@ -250,6 +250,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           handleSubmit={handleSubmit}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
