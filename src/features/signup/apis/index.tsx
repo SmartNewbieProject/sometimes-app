@@ -34,6 +34,9 @@ const createFileObject = (imageUri: string, fileName: string) =>
 export const checkPhoneNumberExists = (phoneNumber: string): Promise<{ exists: boolean }> =>
   axiosClient.post('/auth/check/phone-number', { phoneNumber });
 
+export const checkPhoneNumberBlacklist = (phoneNumber: string): Promise<{ isBlacklisted: boolean }> =>
+  axiosClient.post('/auth/check/phone-number/blacklist', { phoneNumber });
+
 export const signup = (form: SignupForm): Promise<void> => {
   const formData = new FormData();
   formData.append('phoneNumber', form.phone);
@@ -65,6 +68,7 @@ type Service = {
   getUnivs: () => Promise<string[]>;
   getDepartments: (univ: string) => Promise<string[]>;
   checkPhoneNumberExists: (phoneNumber: string) => Promise<{ exists: boolean }>;
+  checkPhoneNumberBlacklist: (phoneNumber: string) => Promise<{ isBlacklisted: boolean }>;
   signup: (form: SignupForm) => Promise<void>;
   sendVerificationCode: (phoneNumber: string) => Promise<{ uniqueKey: string }>;
   authenticateSmsCode: (smsCode: AuthorizeSmsCode) => Promise<void>;
@@ -78,6 +82,7 @@ const apis: Service = {
   getUnivs,
   getDepartments,
   checkPhoneNumberExists,
+  checkPhoneNumberBlacklist,
   signup,
   sendVerificationCode,
   authenticateSmsCode,

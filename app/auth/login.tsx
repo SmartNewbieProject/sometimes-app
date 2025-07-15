@@ -4,6 +4,9 @@ import {platform} from '@shared/libs/platform';
 import {useEffect} from 'react';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {useAuth} from '@/src/features/auth/hooks/use-auth';
+import {checkPhoneNumberBlacklist} from '@/src/features/signup/apis';
+import {useModal} from '@/src/shared/hooks/use-modal';
+import {isAdult} from '@/src/features/pass/utils';
 
 const {useSignupProgress} = Signup;
 
@@ -12,6 +15,7 @@ export default function LoginScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const {loginWithPass} = useAuth();
+  const {showModal} = useModal();
 
   useEffect(() => {
     clear();
@@ -20,8 +24,39 @@ export default function LoginScreen() {
   useEffect(() => {
     const identityVerificationId = params.identityVerificationId as string;
     if (identityVerificationId) {
-      loginWithPass(identityVerificationId).then(result => {
+      loginWithPass(identityVerificationId).then(async result => {
         if (result.isNewUser) {
+          if (result.certificationInfo?.birthday) {
+            const {birthday} = result.certificationInfo;
+
+            if (!isAdult(birthday)) {
+              router.replace('/auth/age-restriction');
+              return;
+            }
+          }
+
+          if (result.certificationInfo?.phone) {
+            try {
+              const {isBlacklisted} = await checkPhoneNumberBlacklist(result.certificationInfo.phone);
+
+              if (isBlacklisted) {
+                showModal({
+                  title: "가입 제한",
+                  children: "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
+                  primaryButton: {
+                    text: "확인",
+                    onClick: () => {
+                      router.replace('/');
+                    }
+                  }
+                });
+                return;
+              }
+            } catch (error) {
+              console.error('블랙리스트 체크 실패:', error);
+            }
+          }
+
           router.replace({
             pathname: '/auth/signup/university',
             params: {certificationInfo: JSON.stringify(result.certificationInfo)},
@@ -31,7 +66,7 @@ export default function LoginScreen() {
         }
       }).catch(() => router.replace('/auth/login'));
     }
-  }, [params, loginWithPass, router]);
+  }, [params, loginWithPass, router, showModal]);
 
   return (
       <View className="flex-1" style={{backgroundColor: '#F7F3FF'}}>

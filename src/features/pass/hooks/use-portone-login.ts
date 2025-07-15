@@ -5,6 +5,8 @@ import {PortOneAuthService} from '../services/portone-auth.service';
 import {isAdult} from '../utils';
 import type {PortOneIdentityVerificationRequest, PortOneIdentityVerificationResponse} from '../types';
 import {useAuth} from '@/src/features/auth/hooks/use-auth';
+import {checkPhoneNumberBlacklist} from '@/src/features/signup/apis';
+import {useModal} from '@/src/shared/hooks/use-modal';
 
 interface UsePortOneLoginOptions {
   onError?: (error: Error) => void;
@@ -51,6 +53,7 @@ export const usePortOneLogin = ({
 
   const {loginWithPass} = useAuth();
   const authService = new PortOneAuthService();
+  const {showModal} = useModal();
 
   const clearError = useCallback(() => {
     setError(null);
@@ -65,7 +68,40 @@ export const usePortOneLogin = ({
         const {birthday} = loginResult.certificationInfo;
 
         if (!isAdult(birthday)) {
-          router.push({pathname: '/auth/age-restriction' as any});
+          router.push('/auth/age-restriction');
+          return;
+        }
+      }
+
+      if (loginResult.certificationInfo?.phone) {
+        try {
+          const {isBlacklisted} = await checkPhoneNumberBlacklist(loginResult.certificationInfo.phone);
+
+          if (isBlacklisted) {
+            showModal({
+              title: "가입 제한",
+              children: "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
+              primaryButton: {
+                text: "확인",
+                onClick: () => {
+                  router.replace('/');
+                }
+              }
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('블랙리스트 체크 실패:', error);
+          showModal({
+            title: "오류",
+            children: "가입 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+            primaryButton: {
+              text: "확인",
+              onClick: () => {
+                router.replace('/');
+              }
+            }
+          });
           return;
         }
       }
@@ -81,7 +117,7 @@ export const usePortOneLogin = ({
       router.replace('/home');
       onSuccess?.(false);
     }
-  }, [loginWithPass, onSuccess]);
+  }, [loginWithPass, onSuccess, showModal]);
 
   // 모바일 PASS 인증 완료 핸들러
   const handleMobileAuthComplete = useCallback(async (response: PortOneIdentityVerificationResponse) => {
