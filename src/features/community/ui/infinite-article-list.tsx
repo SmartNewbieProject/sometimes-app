@@ -194,7 +194,7 @@ export const InfiniteArticleList = forwardRef<
 
   if (isLoading && articles.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center">
+      <View className="flex-1 bg-white items-center justify-center">
         <Lottie size={128} />
       </View>
     );

@@ -18,12 +18,14 @@ import { useEffect, useState } from "react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
 import { InputForm } from "../comment/input-form";
 import { UserProfile } from "../user-profile";
 import { ArticleDetailComment } from "./article-detail-comment";
 
 export const ArticleDetail = ({ article }: { article: Article }) => {
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [checked, setChecked] = useState(true);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
@@ -190,54 +192,68 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{ paddingBottom: 20 }}
-      keyboardShouldPersistTaps="handled"
-      className="flex-1 relative  px-5"
-    >
-      <View className="h-[1px] bg-[#F3F0FF] mb-[15px]" />
+    <View className="flex-1 relative bg-white">
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 100 }}
+        keyboardShouldPersistTaps="handled"
+        className="flex-1 relative  px-5"
+      >
+        <View className="h-[1px] bg-[#F3F0FF] mb-[15px]" />
 
-      <UserProfile
-        author={article.author}
-        universityName={article.author.universityDetails.name as UniversityName}
-        isOwner={isOwner}
-      />
+        <UserProfile
+          author={article.author}
+          universityName={
+            article.author.universityDetails.name as UniversityName
+          }
+          isOwner={isOwner}
+        />
 
-      <View className="my-3 mb-6 mx-[8px]  flex flex-row justify-between">
-        <Text numberofLine={1} size="md" weight="medium" textColor="black">
-          {article.title}
-        </Text>
-        <Text size="13" textColor="pale-purple">
-          {dayUtils.formatRelativeTime(article.createdAt)}
-        </Text>
-      </View>
-      <Text size="sm" className="mb-4 mx-[8px] leading-5" textColor="black">
-        {article.content}
-      </Text>
-      <View className="w-full mt-[10px]">
-        <View className="flex-row items-center justify-around gap-4 pb-[10px]">
-          <Interaction.Like
-            count={likeCount}
-            isLiked={isLiked}
-            onPress={() => like(article)}
-          />
-          <Interaction.Comment count={article.comments.length} />
-          <Interaction.View count={article.readCount} />
+        <View className="my-3 mb-6 mx-[8px]  flex flex-row justify-between">
+          <Text numberofLine={1} size="md" weight="medium" textColor="black">
+            {article.title}
+          </Text>
+          <Text size="13" textColor="pale-purple">
+            {dayUtils.formatRelativeTime(article.createdAt)}
+          </Text>
         </View>
-      </View>
-      <View className="h-[1px] bg-[#F3F0FF] " />
-      <View className="flex-1">
-        <Loading.Lottie
-          title="댓글을 불러오고 있어요"
-          loading={isCommentLoading}
-        >
-          <View className="flex flex-col  py-4 ">
-            {renderComments(comments, editingCommentId)}
+        <Text size="sm" className="mb-4 mx-[8px] leading-5" textColor="black">
+          {article.content}
+        </Text>
+        <View className="w-full mt-[10px]">
+          <View className="flex-row items-center justify-around gap-4 pb-[10px]">
+            <Interaction.Like
+              count={likeCount}
+              isLiked={isLiked}
+              onPress={() => like(article)}
+            />
+            <Interaction.Comment count={article.comments.length} />
+            <Interaction.View count={article.readCount} />
           </View>
-        </Loading.Lottie>
-      </View>
-
-      <View className="border-t border-[#F3F0FF] mb-8 pt-3 pb-2 px-4 bg-white">
+        </View>
+        <View className="h-[1px] bg-[#F3F0FF] " />
+        <View className="flex-1">
+          <Loading.Lottie
+            title="댓글을 불러오고 있어요"
+            loading={isCommentLoading}
+          >
+            <View className="flex flex-col  py-4 ">
+              {renderComments(comments, editingCommentId)}
+            </View>
+          </Loading.Lottie>
+        </View>
+      </ScrollView>
+      <View
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "white",
+          paddingBottom: insets.bottom,
+          // 기존 mb-8 대신 insets.bottom(홈 인디케이터 높이) 사용
+        }}
+        className="border-t border-[#F3F0FF] pt-3  px-4"
+      >
         <InputForm
           checked={checked}
           setChecked={setChecked}
@@ -250,6 +266,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           handleSubmit={handleSubmit}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 };
