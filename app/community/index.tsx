@@ -51,7 +51,7 @@ const ListHeaderComponent = () => {
   const insets = useSafeAreaInsets();
   return (
     <View style={{ paddingTop: insets.top }}>
-      <Header.Container className="items-center !pt-[21px]">
+      <Header.Container className="items-center bg-white !pt-[21px]">
         <Header.CenterContent>
           <ImageResource
             resource={ImageResources.COMMUNITY_LOGO}

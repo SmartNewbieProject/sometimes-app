@@ -9,7 +9,7 @@ export const CategoryList = () => {
     useCategory();
 
   return (
-    <View className="w-full px-[16px] overflow-hidden">
+    <View className="w-full px-[16px] bg-white overflow-hidden">
       <ScrollView horizontal>
         <Loading.Lottie title="카테고리를 불러오고 있어요" loading={isLoading}>
           <View className="flex flex-row w-full gap-x-[10px] mb-2 ">

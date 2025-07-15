@@ -201,7 +201,7 @@ export const InfiniteArticleList = forwardRef<
   }
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-white">
       <View className="h-[1px] bg-[#F3F0FF]" />
       <TouchableOpacity
         onPress={() =>
