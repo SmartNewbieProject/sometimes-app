@@ -1,8 +1,6 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
 
-import { useCommingSoon } from "@/src/features/admin/hooks";
 import { useAuth } from "@/src/features/auth";
-import MyPage from "@/src/features/mypage";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { Image } from "expo-image";
@@ -10,15 +8,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Layout from "../../layout";
 import { useRematchingTickets } from "../queries";
-import CustomSwitch from "./custom-switch";
+import { getUniversityVerificationStatus, getProfileId } from "@/src/features/university-verification/apis";
+import { getUnivLogo, UniversityName } from "@/src/shared/libs/univ";
 
 export const Profile = () => {
   const { profileDetails } = useAuth();
   console.log("prefileDetails", profileDetails);
   const { data: reMatchingTicketCount } = useRematchingTickets();
+  const [isUniversityVerified, setIsUniversityVerified] = useState<boolean>(false);
+  const [isLoadingVerification, setIsLoadingVerification] = useState<boolean>(true);
   const profileData = {
     name: profileDetails?.name || "이름",
     age: profileDetails?.age || "20",
@@ -30,8 +29,48 @@ export const Profile = () => {
     totalRematchingTickets: reMatchingTicketCount?.total ?? 0,
   };
 
+  useEffect(() => {
+    const checkUniversityVerification = async () => {
+      try {
+        const profileId = await getProfileId();
+        const verificationStatus = await getUniversityVerificationStatus(profileId);
+
+        if (verificationStatus.verifiedAt) {
+          const verifiedYear = new Date(verificationStatus.verifiedAt).getFullYear();
+          const currentYear = new Date().getFullYear();
+          setIsUniversityVerified(verifiedYear === currentYear);
+        } else {
+          setIsUniversityVerified(false);
+        }
+      } catch (error) {
+        console.error('대학교 인증 상태 확인 실패:', error);
+        setIsUniversityVerified(false);
+      } finally {
+        setIsLoadingVerification(false);
+      }
+    };
+
+    checkUniversityVerification();
+  }, []);
+
   const handleProfileEdit = () => {
     router.push("/profile-edit/profile");
+  };
+
+  const handleUniversityVerification = () => {
+    if (!isUniversityVerified) {
+      router.push("/university-verification");
+    }
+  };
+
+  const getUniversityLogoUrl = () => {
+    if (isUniversityVerified && profileData.university) {
+      const univName = profileData.university as UniversityName;
+      if (Object.values(UniversityName).includes(univName)) {
+        return getUnivLogo(univName);
+      }
+    }
+    return null;
   };
 
   return (
@@ -67,10 +106,35 @@ export const Profile = () => {
                 <Text style={styles.subInfoText}>{profileData.grade}</Text>
                 <Text style={styles.subInfoText}> · </Text>
                 <Text style={styles.subInfoText}>{profileData.university}</Text>
-                <IconWrapper style={{ marginLeft: 3 }} size={14}>
-                  <NotSecuredIcon />
-                </IconWrapper>
+                {(() => {
+                  const logoUrl = getUniversityLogoUrl();
+                  return isUniversityVerified && logoUrl ? (
+                    <Image
+                      source={{ uri: logoUrl }}
+                      style={{ width: 14, height: 14, marginLeft: 3 }}
+                    />
+                  ) : (
+                    <IconWrapper style={{ marginLeft: 3 }} size={14}>
+                      <NotSecuredIcon />
+                    </IconWrapper>
+                  );
+                })()}
               </View>
+              {/* 대학교 인증 버튼 - 인증 완료 시 숨김 */}
+              {!isUniversityVerified && (
+                <TouchableOpacity
+                  onPress={handleUniversityVerification}
+                  style={styles.universityVerificationButton}
+                >
+                  <Image
+                    source={require("@/assets/images/icon_change.png")}
+                    style={{ width: 16, height: 16, marginRight: 4 }}
+                  />
+                  <Text style={styles.universityVerificationButtonText}>
+                    학교인증
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
             <View
               style={{
@@ -215,6 +279,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#E6DBFF",
     lineHeight: 15.6,
+  },
+  universityVerificationButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 20,
+    marginTop: 8,
+    alignSelf: "flex-start",
+  },
+  universityVerificationButtonText: {
+    fontSize:12,
+    color: "#9747FF",
+    fontWeight: "500",
   },
 });
 
