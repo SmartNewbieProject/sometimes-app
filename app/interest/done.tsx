@@ -52,11 +52,11 @@ export default function InterestDoneScreen() {
             </Text>
           </View>
         </View>
-
         <View style={styles.buttonContainer}>
           <Button
+            width="full"
+            flex="flex-1"
             variant="primary"
-            size="md"
             onPress={() => {
               clear();
               router.push("/home");
@@ -74,7 +74,6 @@ export default function InterestDoneScreen() {
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
   },
   titleLogoWrapper: {
@@ -91,7 +90,7 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flex: 1,
-
+    alignItems: "center",
     width: "100%",
   },
   descriptionWrapper: {
@@ -99,7 +98,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: "100%",
-    paddingHorizontal: 32,
+    paddingHorizontal: 31,
+    gap: 14,
     ...Platform.select({
       web: {
         marginBottom: 14, // md:mb-[72px] 은 무시

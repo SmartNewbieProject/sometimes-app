@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flex: 1,
-
+    alignItems: "center",
     width: "100%",
   },
   descriptionWrapper: {

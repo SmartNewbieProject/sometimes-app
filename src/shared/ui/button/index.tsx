@@ -27,6 +27,10 @@ const buttonStyles = cva(
             ? "text-xs h-[28px] px-2"
             : "text-xs h-[34px] px-2",
       },
+      flex: {
+        "flex-1": "flex-1",
+        "flex-0": "flex-0",
+      },
       disabled: {
         true: "opacity-50",
         false: "",

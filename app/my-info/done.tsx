@@ -55,6 +55,7 @@ export default function InterestDoneScreen() {
 
         <View style={styles.buttonContainer}>
           <Button
+            flex="flex-1"
             variant="primary"
             size="md"
             onPress={() => {
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flex: 1,
-
+    alignItems: "center",
     width: "100%",
   },
   descriptionWrapper: {
