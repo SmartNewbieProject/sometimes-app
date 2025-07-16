@@ -71,6 +71,7 @@ export const ToggleTab = ({
         {tabs.map((tab) => {
           return (
             <Text
+              numberOfLines={1}
               style={[
                 styles.text,
                 { color: activeTab === tab.id ? "#fff" : "#7A4AE2" },
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 600,
     lineHeight: 18,
   },
