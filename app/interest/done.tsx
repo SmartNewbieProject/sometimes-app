@@ -1,38 +1,42 @@
-import { IconWrapper } from "@/src/shared/ui/icons";
-import { View } from "react-native";
-import SmallTitle from '@/assets/icons/small-title.svg';
+import SmallTitle from "@/assets/icons/small-title.svg";
+import { useInterestForm } from "@/src/features/interest/hooks";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
-import { Image } from 'expo-image';
-import { router } from "expo-router";
+import { IconWrapper } from "@/src/shared/ui/icons";
 import { useAuth } from "@features/auth";
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
+import { Image } from "expo-image";
+import { router } from "expo-router";
 import { useEffect } from "react";
+import { Platform, StyleSheet, View } from "react-native";
 
 export default function InterestDoneScreen() {
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
+  const { updateForm, clear, tattoo, ...form } = useInterestForm();
 
   useEffect(() => {
     queryClient.invalidateQueries({
-      queryKey: ['check-preference-fill'],
+      queryKey: ["check-preference-fill"],
     });
-  }, []);
+  }, [queryClient]);
 
   return (
-    <View className="flex-1 flex flex-col w-full items-center">
-      <PalePurpleGradient />
-      <IconWrapper width={128} className="text-primaryPurple md:pb-[58px] py-8">
-        <SmallTitle />
-      </IconWrapper>
+    <View style={styles.container}>
+      <View style={[styles.contentContainer]}>
+        <PalePurpleGradient />
+        <View style={styles.titleLogoWrapper}>
+          <IconWrapper width={128} style={styles.titleLogoIcon}>
+            <SmallTitle />
+          </IconWrapper>
+        </View>
 
-      <View className="flex flex-col flex-1">
-        <Image
-          source={require('@assets/images/interest-done.png')}
-          style={{ width: 248, height: 290, aspectRatio: 1 }}
-        />
+        <View style={styles.textWrapper}>
+          <Image
+            source={require("@assets/images/interest.png")}
+            style={{ width: 248, height: 323 }}
+          />
 
-        <View className="flex flex-col">
-          <View className="mt-4">
+          <View style={styles.titleWrapper}>
             <Text size="lg" textColor="black" weight="semibold">
               이상형 정보를 확인했어요
             </Text>
@@ -41,26 +45,81 @@ export default function InterestDoneScreen() {
             </Text>
           </View>
 
-          <View className="mt-2">
+          <View style={styles.descriptionWrapper}>
             <Text size="sm" textColor="pale-purple" weight="light">
               썸타임이 {profileDetails?.name}님의 이상형을 찾아드릴게요
             </Text>
           </View>
         </View>
-      </View>
 
-      <View className="w-full px-5">
-        <Button
-          variant="primary"
-          size="md"
-          onPress={() => {
-            router.push('/home');
-          }}
-          className="mb-[14px] w-full"
-        >
-          이상형 찾으러 가기 →
-        </Button>
+        <View style={styles.buttonContainer}>
+          <Button
+            variant="primary"
+            size="md"
+            onPress={() => {
+              clear();
+              router.push("/home");
+            }}
+            styles={styles.button}
+          >
+            이상형 찾으러 가기 →
+          </Button>
+        </View>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+  },
+  contentContainer: {
+    flex: 1,
+
+    alignItems: "center",
+  },
+  titleLogoWrapper: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  titleLogoIcon: {
+    paddingBottom: 52.85,
+    paddingTop: 21,
+  },
+  titleWrapper: {
+    marginTop: 20,
+  },
+  textWrapper: {
+    flex: 1,
+
+    width: "100%",
+  },
+  descriptionWrapper: {
+    marginTop: 16,
+  },
+  buttonContainer: {
+    width: "100%",
+    paddingHorizontal: 32,
+    ...Platform.select({
+      web: {
+        marginBottom: 14, // md:mb-[72px] 은 무시
+      },
+      ios: {
+        marginBottom: 58,
+      },
+      android: {
+        marginBottom: 58,
+      },
+    }),
+    flexDirection: "row",
+  },
+  button: {
+    width: "100%",
+
+    justifyContent: "center",
+  },
+});

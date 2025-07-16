@@ -1,17 +1,30 @@
+import colors from "@/src/shared/constants/colors";
 import { Text } from "@/src/shared/ui";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import {
+  ScrollView,
+  type StyleProp,
+  StyleSheet,
+  View,
+  type ViewStyle,
+} from "react-native";
 import { Selector } from "../selector";
 
 type Props = {
   onChange: (mbti: string) => void;
   onBlur: () => void;
-  value?: string;
-}
+  value?: string | null;
+  justifyContent?: "center" | "flex-start" | "flex-end";
+};
 
 const parse = (mbti: string, index: number) => mbti.charAt(index);
-export function MbtiSelector({ onChange, onBlur, value }: Props) {
-  const [_value, setValue] = useState<string>(value ?? '');
+export function MbtiSelector({
+  onChange,
+  onBlur,
+  value,
+  justifyContent = "center",
+}: Props) {
+  const [_value, setValue] = useState<string>(value ?? "");
 
   const [first, setFirst] = useState<string>(parse(_value, 0));
   const [second, setSecond] = useState<string>(parse(_value, 1));
@@ -29,7 +42,10 @@ export function MbtiSelector({ onChange, onBlur, value }: Props) {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={styles.scrollContent}
+      contentContainerStyle={[
+        styles.scrollContent,
+        { justifyContent: justifyContent },
+      ]}
       horizontal
       showsHorizontalScrollIndicator={false}
     >
@@ -39,8 +55,8 @@ export function MbtiSelector({ onChange, onBlur, value }: Props) {
           value={first}
           direction="vertical"
           options={[
-            { label: 'E', value: 'E' },
-            { label: 'I', value: 'I' },
+            { label: "E", value: "E" },
+            { label: "I", value: "I" },
           ]}
           onChange={(value) => setFirst(value as string)}
           onBlur={onBlur}
@@ -54,8 +70,8 @@ export function MbtiSelector({ onChange, onBlur, value }: Props) {
           value={second}
           direction="vertical"
           options={[
-            { label: 'N', value: 'N' },
-            { label: 'S', value: 'S' },
+            { label: "N", value: "N" },
+            { label: "S", value: "S" },
           ]}
           onChange={(value) => setSecond(value as string)}
           onBlur={onBlur}
@@ -69,8 +85,8 @@ export function MbtiSelector({ onChange, onBlur, value }: Props) {
           value={third}
           direction="vertical"
           options={[
-            { label: 'F', value: 'F' },
-            { label: 'T', value: 'T' },
+            { label: "F", value: "F" },
+            { label: "T", value: "T" },
           ]}
           onChange={(value) => setThird(value as string)}
           onBlur={onBlur}
@@ -84,8 +100,8 @@ export function MbtiSelector({ onChange, onBlur, value }: Props) {
           value={fourth}
           direction="vertical"
           options={[
-            { label: 'P', value: 'P' },
-            { label: 'J', value: 'J' },
+            { label: "P", value: "P" },
+            { label: "J", value: "J" },
           ]}
           onChange={(value) => setFourth(value as string)}
           onBlur={onBlur}
@@ -99,34 +115,34 @@ export function MbtiSelector({ onChange, onBlur, value }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    flexDirection: 'row',
+    width: "100%",
+    flexDirection: "row",
     rowGap: 16,
     columnGap: 16,
   },
   scrollContent: {
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'center',
-    columnGap: 8,
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    width: "100%",
+
+    columnGap: 24,
+    alignItems: "flex-start",
   },
   mbtiColumn: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   marginRight: {
     marginRight: 0,
   },
   label: {
     fontSize: 14,
-    color: '#8B5CF6',
+    color: "#8B5CF6",
     marginBottom: 8,
   },
   bottomLabel: {
     fontSize: 14,
-    color: '#8B5CF6',
+    color: "#8B5CF6",
     marginTop: 16,
   },
   selector: {

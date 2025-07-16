@@ -1,24 +1,26 @@
-import React, {useEffect} from 'react';
-import {useModal} from '@/src/shared/hooks/use-modal';
-import {useVersionUpdate} from '../hooks';
-import {UpdateModalContent} from './update-modal-content';
+import { useModal } from "@/src/shared/hooks/use-modal";
+import type React from "react";
+import { useEffect } from "react";
+import { useVersionUpdate } from "../hooks";
+import { UpdateModalContent } from "./update-modal-content";
 
-export const VersionUpdateChecker: React.FC = () => {
-  const {showModal, hideModal} = useModal();
+export const VersionUpdateChecker = () => {
+  const { showModal, hideModal } = useModal();
   const {
     showUpdateModal,
     updateData,
     skipVersion,
     closeModal,
     serverVersion,
-    currentVersion
+    currentVersion,
   } = useVersionUpdate();
 
   useEffect(() => {
     if (showUpdateModal && updateData) {
       const canSkip = !updateData.shouldUpdate;
       showModal({
-        children: <UpdateModalContent
+        children: (
+          <UpdateModalContent
             updateData={updateData}
             serverVersion={serverVersion}
             currentVersion={currentVersion}
@@ -28,7 +30,8 @@ export const VersionUpdateChecker: React.FC = () => {
               closeModal();
               hideModal();
             }}
-        />,
+          />
+        ),
       });
     }
   }, [showUpdateModal, updateData, skipVersion]);

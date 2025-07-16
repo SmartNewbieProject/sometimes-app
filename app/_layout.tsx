@@ -1,20 +1,25 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Slot } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { Platform, View } from 'react-native';
-import 'react-native-reanimated';
-import '../global.css';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Slot } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import { Platform, View } from "react-native";
+import "react-native-reanimated";
+import "../global.css";
 
-import { QueryProvider, RouteTracker } from '@/src/shared/config';
-import { useColorScheme } from '@/src/shared/hooks/use-color-schema';
-import { cn } from '@/src/shared/libs/cn';
-import { ModalProvider, AnalyticsProvider } from '@/src/shared/providers';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useAtt } from '@/src/shared/hooks';
-import { PortoneProvider } from '@/src/features/payment/hooks/PortoneProvider';
-import { VersionUpdateChecker } from '@/src/features/version-update';
+import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
+import ProfileDrinking from "@/src/features/profile-edit/ui/profile/profile-drinking";
+import { VersionUpdateChecker } from "@/src/features/version-update";
+import { QueryProvider, RouteTracker } from "@/src/shared/config";
+import { useAtt } from "@/src/shared/hooks";
+import { useColorScheme } from "@/src/shared/hooks/use-color-schema";
+import { cn } from "@/src/shared/libs/cn";
+import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,17 +27,17 @@ export default function RootLayout() {
   const { request: requestAtt } = useAtt();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    'Pretendard-Thin': require('../assets/fonts/Pretendard-Thin.ttf'),
-    'Pretendard-ExtraLight': require('../assets/fonts/Pretendard-ExtraLight.ttf'),
-    'Pretendard-SemiBold': require('../assets/fonts/Pretendard-SemiBold.ttf'),
-    'Pretendard-ExtraBold': require('../assets/fonts/Pretendard-ExtraBold.ttf'),
-    'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.ttf'),
-    'Pretendard-Black': require('../assets/fonts/Pretendard-Black.ttf'),
-    'Rubik': require('../assets/fonts/Rubik-Regular.ttf'),
-    'Rubik-Medium': require('../assets/fonts/Rubik-Medium.ttf'),
-    'Rubik-Bold': require('../assets/fonts/Rubik-Bold.ttf'),
-    'Rubik-Light': require('../assets/fonts/Rubik-Light.ttf'),
-    'Rubik-SemiBold': require('../assets/fonts/Rubik-SemiBold.ttf'),
+    "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
+    "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
+    "Pretendard-SemiBold": require("../assets/fonts/Pretendard-SemiBold.ttf"),
+    "Pretendard-ExtraBold": require("../assets/fonts/Pretendard-ExtraBold.ttf"),
+    "Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.ttf"),
+    "Pretendard-Black": require("../assets/fonts/Pretendard-Black.ttf"),
+    Rubik: require("../assets/fonts/Rubik-Regular.ttf"),
+    "Rubik-Medium": require("../assets/fonts/Rubik-Medium.ttf"),
+    "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
+    "Rubik-Light": require("../assets/fonts/Rubik-Light.ttf"),
+    "Rubik-SemiBold": require("../assets/fonts/Rubik-SemiBold.ttf"),
   });
 
   useEffect(() => {
@@ -47,9 +52,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     // Hotjar는 웹에서만 초기화 (Android 빌드 문제 방지)
-    if (Platform.OS === 'web') {
+    if (Platform.OS === "web") {
       try {
-        const script = document.createElement('script');
+        const script = document.createElement("script");
         script.innerHTML = `
           (function(h,o,t,j,a,r){
             h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
@@ -82,18 +87,22 @@ export default function RootLayout() {
           <PortoneProvider>
             <View
               className={cn(
-                'flex-1 font-extralight',
-                Platform.OS === 'web' && 'max-w-[468px] w-full self-center'
+                "flex-1 font-extralight",
+                Platform.OS === "web" && "max-w-[468px] w-full self-center"
               )}
             >
-                <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                  <AnalyticsProvider>
-                    <RouteTracker>
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              >
+                <AnalyticsProvider>
+                  <RouteTracker>
+                    <>
                       <Slot />
                       <VersionUpdateChecker />
-                    </RouteTracker>
-                  </AnalyticsProvider>
-                </ThemeProvider>
+                    </>
+                  </RouteTracker>
+                </AnalyticsProvider>
+              </ThemeProvider>
             </View>
           </PortoneProvider>
         </ModalProvider>

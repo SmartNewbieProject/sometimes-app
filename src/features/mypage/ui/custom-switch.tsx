@@ -1,5 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useRef, useState } from "react";
+import {
+  Animated,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface CustomSwitchProps {
   value: boolean;
@@ -8,75 +17,78 @@ interface CustomSwitchProps {
 
 const CustomSwitch = ({ value, onChange }: CustomSwitchProps) => {
   const [isOn, setIsOn] = useState(value);
-
+  const switchLeftValue = useRef(new Animated.Value(value ? 3 : 33)).current;
+  console.log(switchLeftValue, "value");
   const toggleSwitch = () => {
-    setIsOn(!isOn);
-    onChange(!isOn);
+    const newValue = !isOn;
+    setIsOn(newValue);
+    onChange(newValue);
+    console.log("1", switchLeftValue);
+    Animated.timing(switchLeftValue, {
+      toValue: newValue ? 4 : 32,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
   };
 
   return (
-    <TouchableOpacity onPress={toggleSwitch} style={styles.switchContainer}>
-      <View
-        style={[
-          styles.switch,
-          isOn ? styles.switchOn : styles.switchOff,
-        ]}
-      >
-        <View
+    <Pressable onPress={toggleSwitch} style={styles.switchContainer}>
+      <View style={[styles.switch]}>
+        <LinearGradient
+          colors={["rgba(0,0,0,0.15)", "transparent"]}
+          style={styles.fakeInnerShadow}
+          pointerEvents="none"
+        />
+
+        <Animated.View
           style={[
             styles.switchButton,
-            isOn ? styles.switchButtonOn : styles.switchButtonOff,
+            { transform: [{ translateX: switchLeftValue }] },
           ]}
         />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   switchContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   switch: {
     width: 60,
     height: 30,
     borderRadius: 20,
-    padding: 3,
-    
-    flexDirection: 'row',
-    shadowColor: '#00000040',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
+    position: "relative",
+    padding: 4,
+    overflow: "hidden",
+    backgroundColor: "#F3EDFF",
+    flexDirection: "row",
   },
-  switchOn: {
-    backgroundColor: '#F3EDFF',
-  },
-  switchOff: {
-    backgroundColor: '#F3EDFF',
+  fakeInnerShadow: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 10,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    zIndex: 1,
   },
   switchButton: {
-    shadowColor: '#00000040',
+    shadowColor: "#00000040",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 2,
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#7A4AE2',
-    position: 'absolute',
+    backgroundColor: "#7A4AE2",
+    position: "absolute",
     top: 3,
-    left: 3,
-    transition: 'all 0.3s ease', // 부드러운 애니메이션
+    zIndex: 2,
   },
-  switchButtonOn: {
-    left: 33, // 스위치 오른쪽으로 이동
-  },
-  switchButtonOff: {
-    left: 3, // 스위치 왼쪽으로 이동    
-  },
-
 });
 
 export default CustomSwitch;

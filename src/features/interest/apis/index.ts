@@ -1,13 +1,17 @@
-import { axiosClient } from "@shared/libs";
+import { axiosClient } from '@shared/libs';
 
 type Body = {
-  typeName: string;
-  optionIds: string[];
-}
-
-export type PreferenceSaveBody = {
-  data: Body[];
+	typeName: string;
+	optionIds: string[];
 };
 
-export const savePreferencesApi = async (body: PreferenceSaveBody) => 
-  axiosClient.patch('/profile/preferences', body);
+export type PreferenceSaveBody = {
+	preferences: Body[];
+	additional: {
+		goodMbti: string;
+		badMbti: string;
+	};
+};
+
+export const savePreferencesApi = async (body: PreferenceSaveBody) =>
+	axiosClient.patch('/preferences/partner', body);

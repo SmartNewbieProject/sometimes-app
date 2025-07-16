@@ -1,221 +1,319 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Pressable, LayoutChangeEvent } from 'react-native';
-import { Text } from '@/src/shared/ui';
-import { cn } from '@/src/shared/libs/cn';
+import { cn } from "@/src/shared/libs/cn";
+import { Text } from "@/src/shared/ui";
+import { throttle } from "lodash";
+import {
+  type GestureResponderEvent,
+  PanResponder,
+  type PanResponderGestureState,
+} from "react-native";
+
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
+import {
+  type LayoutChangeEvent,
+  Pressable,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+interface Option {
+  label: string;
+  value: string;
+  imageUrl?: string;
+}
 
 interface StepSliderProps {
   min: number;
   max: number;
   step: number;
   defaultValue?: number;
+  options?: Option[];
   value?: number;
+  showMiddle?: boolean;
+  lastLabelLeft?: number;
+  firstLabelLeft?: number;
+  middleLabelLeft?: number;
   onChange?: (value: number) => void;
-  startLabel?: string;
-  endLabel?: string;
   className?: string;
   showSelectedValue?: boolean;
-  valueFormatter?: (value: number) => string;
+  touchAreaHeight?: number; // 터치 영역 높이 (기본값: 44)
 }
 
 export function StepSlider({
   min,
+  options,
   max,
   step,
   defaultValue = min,
+  firstLabelLeft,
+  lastLabelLeft,
+  middleLabelLeft,
   value: controlledValue,
   onChange,
-  startLabel,
-  endLabel,
+  showMiddle = true,
   className,
-  showSelectedValue = true,
-  valueFormatter = (value) => `${value}`,
+  touchAreaHeight = 48, // 터치 영역 높이
 }: StepSliderProps) {
-  // Internal state for uncontrolled component
   const [internalValue, setInternalValue] = useState(defaultValue);
-  
-  // Track slider dimensions
+  const [draggingValue, setDraggingValue] = useState<number | null>(
+    defaultValue
+  );
+  const [isDragging, setIsDragging] = useState(false);
+
   const [sliderWidth, setSliderWidth] = useState(0);
-  
-  // Determine if component is controlled or uncontrolled
+  const [sliderX, setSliderX] = useState(0);
+  const sliderRef = useRef<View>(null);
+
   const isControlled = controlledValue !== undefined;
   const value = isControlled ? controlledValue : internalValue;
-  
-  // Calculate the percentage for the thumb position
-  const percentage = ((value - min) / (max - min)) * 100;
-  
-  // Update internal value when controlled value changes
+
+  const thumbValue = draggingValue ?? value;
+  const percentage = ((thumbValue - min) / (max - min)) * 100;
+  console.log(percentage, draggingValue, "percentage");
   useEffect(() => {
     if (isControlled) {
       setInternalValue(controlledValue);
     }
   }, [isControlled, controlledValue]);
 
-  // Handle value changes with step alignment
-  const handleValueChange = (newValue: number) => {
-    console.log('handleValueChange', newValue);
-    
-    // Ensure the value is within bounds
-    const clampedValue = Math.max(min, Math.min(max, newValue));
-    
-    // Calculate steps from min
-    const steps = Math.round((clampedValue - min) / step);
-    
-    // Calculate the value aligned to steps
-    const steppedValue = min + (steps * step);
-    
-    // Final clamping to ensure we're within bounds
-    const finalValue = Math.max(min, Math.min(max, steppedValue));
-    
-    console.log('finalValue', finalValue);
-    
-    // Update internal state if uncontrolled
-    if (!isControlled) {
-      setInternalValue(finalValue);
+  // 값을 step에 맞게 정렬하는 함수
+  const snapToStep = useCallback(
+    (rawValue: number) => {
+      const clampedValue = Math.max(min, Math.min(max, rawValue));
+      const steps = Math.round((clampedValue - min) / step);
+      const steppedValue = min + steps * step;
+      return Math.max(min, Math.min(max, steppedValue));
+    },
+    [min, max, step]
+  );
+
+  const handleValueChange = useCallback(
+    (newValue: number) => {
+      const finalValue = snapToStep(newValue);
+      console.log("finalValue", finalValue, isControlled);
+      if (!isControlled) {
+        setInternalValue(finalValue);
+      }
+
+      if (onChange) {
+        console.log(finalValue, "onChange value");
+        onChange(finalValue);
+      }
+    },
+    [snapToStep, isControlled, onChange]
+  );
+
+  // 레이아웃 변경 시 슬라이더 위치와 크기 측정
+  const handleLayout = useCallback((event: LayoutChangeEvent) => {
+    const { width } = event.nativeEvent.layout;
+    setSliderWidth(width);
+
+    // 슬라이더의 절대 위치 측정
+    if (sliderRef.current) {
+      sliderRef.current.measure((x, y, width, height, pageX, pageY) => {
+        setSliderX(pageX);
+      });
     }
-    
-    // Call onChange callback
-    if (onChange) {
-      onChange(finalValue);
+  }, []);
+
+  // 터치 좌표에서 값을 계산하는 함수 (pageX 사용)
+  const calculateValueFromTouch = useCallback(
+    (pageX: number) => {
+      if (!sliderWidth || !sliderX) return null;
+
+      // 슬라이더 상대 위치 계산
+      const relativeX = pageX - sliderX;
+
+      const clampedX = Math.max(0, Math.min(sliderWidth, relativeX));
+      const percentage = clampedX / sliderWidth;
+      const rawValue = min + percentage * (max - min);
+
+      return rawValue;
+    },
+    [sliderWidth, sliderX, min, max]
+  );
+
+  // 드래그 시작 핸들러 - 클릭한 위치부터 시작
+  const handleDragStart = useCallback(
+    (event: GestureResponderEvent) => {
+      const pageX = event.nativeEvent.pageX;
+      const newValue = calculateValueFromTouch(pageX);
+
+      if (newValue !== null) {
+        setIsDragging(true);
+        setDraggingValue(newValue);
+
+        // 즉시 값 업데이트 (클릭한 위치로 바로 이동)
+        handleValueChange(newValue);
+      }
+    },
+    [calculateValueFromTouch, handleValueChange]
+  );
+
+  // 스로틀된 드래그 중 핸들러
+  const throttledDragMove = useMemo(() => {
+    return throttle((pageX: number) => {
+      const newValue = calculateValueFromTouch(pageX);
+
+      if (newValue !== null) {
+        setDraggingValue(newValue);
+      }
+    }, 16);
+  }, [calculateValueFromTouch]);
+
+  // 드래그 중 핸들러
+  const handleDragMove = useCallback(
+    (event: GestureResponderEvent) => {
+      if (!isDragging) return;
+
+      const pageX = event.nativeEvent.pageX;
+      throttledDragMove(pageX);
+    },
+    [isDragging, throttledDragMove]
+  );
+
+  // 드래그 종료 핸들러
+  const handleDragEnd = useCallback(() => {
+    throttledDragMove.cancel();
+    console.log("draggingValue", draggingValue);
+    if (draggingValue !== null) {
+      handleValueChange(draggingValue);
     }
-  };
+    setIsDragging(false);
+    setDraggingValue(null);
+  }, [draggingValue, handleValueChange, throttledDragMove]);
 
-  // Handle step button clicks
-  const handleStepClick = (direction: 'prev' | 'next') => {
-    console.log('handleStepClick', direction, value, step);
-    
-    const newValue = direction === 'next' 
-      ? Math.min(max, value + step)
-      : Math.max(min, value - step);
-    
-    console.log('newValue', newValue);
-    handleValueChange(newValue);
-  };
+  // panResponder를 메모화
+  const panResponder = useMemo(() => {
+    if (!sliderWidth || !sliderX) return null;
 
-  // Handle slider track clicks
-  const handleSliderPress = (event: any) => {
-    if (!sliderWidth) return;
-    
-    // Get the touch position relative to the slider
-    const touchX = event.nativeEvent.locationX;
-    
-    // Calculate the new value based on the touch position
-    const newPercentage = (touchX / sliderWidth) * 100;
-    const newValue = min + (newPercentage / 100) * (max - min);
-    
-    // Update value
-    handleValueChange(newValue);
-  };
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: handleDragStart,
+      onPanResponderMove: handleDragMove,
+      onPanResponderRelease: handleDragEnd,
+      onPanResponderTerminate: handleDragEnd,
+    });
+  }, [sliderWidth, sliderX, handleDragStart, handleDragMove, handleDragEnd]);
 
-  // Handle layout changes to get slider width
-  const handleLayout = (event: LayoutChangeEvent) => {
-    setSliderWidth(event.nativeEvent.layout.width);
-  };
+  // 컴포넌트 언마운트 시 스로틀 정리
+  useEffect(() => {
+    return () => {
+      throttledDragMove.cancel();
+    };
+  }, [throttledDragMove]);
 
   return (
-    <View className={cn("w-full", className)}>
+    <View className={cn("w-full ", className)}>
       {/* Labels */}
-      <View className="flex-row justify-between items-center mb-2">
-        {startLabel && (
-          <Text size="sm" textColor="dark" className="text-left">
-            {startLabel}
-          </Text>
-        )}
-        {endLabel && (
-          <Text size="sm" textColor="dark" className="text-right">
-            {endLabel}
-          </Text>
-        )}
-      </View>
-      
-      {/* Slider container */}
-      <View className="flex-row justify-between items-center">
-        {/* Decrease button */}
-        <TouchableOpacity 
-          onPress={() => handleStepClick('prev')}
-          disabled={value <= min}
-          className={cn(
-            "w-8 h-8 rounded-full bg-lightPurple flex items-center justify-center",
-            value <= min && "opacity-50"
-          )}
+      {options && sliderWidth > 0 && (
+        <View
+          pointerEvents="none"
+          className="absolute top-[-16px] left-0 w-full flex-row justify-between px-2"
         >
-          <Text size="md" weight="bold" textColor="purple">-</Text>
-        </TouchableOpacity>
-        
-        {/* Slider track */}
-        <View className="flex-1 mx-2 h-12 justify-center">
-          <Pressable 
-            onLayout={handleLayout}
-            onPress={handleSliderPress}
-            className="w-full h-3 bg-lightPurple rounded-full overflow-hidden"
-          >
-            {/* Active track */}
-            <View 
-              className="absolute top-0 left-0 h-full bg-primaryPurple rounded-full"
-              style={{ width: `${percentage}%` }}
-            />
-            
-            {/* Thumb */}
-            <View 
-              className="absolute top-0 w-8 h-8 bg-primaryPurple rounded-full -mt-2.5 items-center justify-center"
-              style={{ left: `${percentage}%`, marginLeft: -16 }}
-            >
-              <View className="w-2 h-2 rounded-full bg-white" />
-            </View>
-          </Pressable>
-        </View>
-        
-        {/* Increase button */}
-        <TouchableOpacity 
-          onPress={() => handleStepClick('next')}
-          disabled={value >= max}
-          className={cn(
-            "w-8 h-8 rounded-full bg-lightPurple flex items-center justify-center",
-            value >= max && "opacity-50"
-          )}
-        >
-          <Text size="md" weight="bold" textColor="purple">+</Text>
-        </TouchableOpacity>
-      </View>
-      
-      {/* Selected value display */}
-      {showSelectedValue && (
-        <View className="mt-4 items-center">
-          <Text size="md" weight="semibold" textColor="dark">
-            {valueFormatter(value)}
-          </Text>
+          {options.map((label, index) => {
+            const totalSteps = options.length - 1;
+            const left = (index / totalSteps) * sliderWidth;
+            if (
+              index === 0 ||
+              index === totalSteps ||
+              (showMiddle &&
+                options.length % 2 === 1 &&
+                index !== Math.ceil(options.length / 2))
+            ) {
+              return (
+                <View
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                  key={index}
+                  style={{
+                    position: "absolute",
+                    left:
+                      options[0].label === label.label
+                        ? left + (firstLabelLeft ?? 5)
+                        : options.at(-1)?.label === label.label
+                        ? left + (lastLabelLeft ?? -15)
+                        : left + (middleLabelLeft ?? -30),
+                  }}
+                >
+                  <Text size="13" textColor="dark">
+                    {label.label}
+                  </Text>
+                </View>
+              );
+            }
+
+            return <React.Fragment key={label.label} />;
+          })}
         </View>
       )}
+
+      {/* Slider container */}
+      <View className="flex-row justify-between items-center">
+        {/* Slider track */}
+        <View className="flex-1 mx-2 justify-center">
+          {/* 확장된 터치 영역 */}
+          <View
+            ref={sliderRef}
+            onLayout={handleLayout}
+            {...(panResponder?.panHandlers ?? {})}
+            className="w-full bg-transparent"
+            style={{
+              height: touchAreaHeight,
+              justifyContent: "center",
+              // 디버깅을 위해 배경색 추가 (나중에 제거)
+              // backgroundColor: 'rgba(255, 0, 0, 0.1)'
+            }}
+          >
+            {/* 실제 슬라이더 트랙 */}
+            <View className="w-full h-3 bg-[#F3EDFF] rounded-full">
+              {/* Active track */}
+              <View
+                className="absolute z-20 top-0 left-0 h-full bg-primaryPurple rounded-full"
+                style={{ width: `${percentage}%` }}
+              />
+              {/* pointer */}
+              {options ? (
+                options?.map((label, index) => {
+                  const totalSteps = options.length - 1;
+                  const left = (index / totalSteps) * sliderWidth;
+                  return (
+                    <View
+                      key={label.label}
+                      className="absolute z-10 top-[9px] w-[10px] h-[10px] bg-[#E1D9FF] rounded-full -mt-2.5 items-center justify-center"
+                      style={{
+                        left:
+                          options[0].label === label.label
+                            ? left
+                            : options.at(-1)?.label === label.label
+                            ? left
+                            : left,
+                      }}
+                    />
+                  );
+                })
+              ) : (
+                <></>
+              )}
+              {/* Thumb */}
+              <View
+                className="absolute z-30 top-0 w-8 h-8 bg-primaryPurple rounded-full -mt-2.5 items-center justify-center"
+                style={{
+                  left: `${percentage}%`,
+                  transform: [{ translateX: -16 }],
+                }}
+              >
+                <View className="w-[30px] h-[30px] rounded-full bg-primaryPurple drop-shadow-[0px,4px,8px,rgba(0,0,0,0.17)]" />
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
     </View>
-  );
-}
-
-export interface FormStepSliderProps extends Omit<StepSliderProps, 'value' | 'onChange'> {
-  name: string;
-  control: any;
-  rules?: any;
-}
-
-export function FormStepSlider({
-  name,
-  control,
-  rules,
-  ...props
-}: FormStepSliderProps) {
-  const { useController } = require('react-hook-form');
-
-  const {
-    field: { value, onChange },
-  } = useController({
-    name,
-    control,
-    rules,
-  });
-
-  return (
-    <StepSlider
-      value={value}
-      onChange={onChange}
-      {...props}
-    />
   );
 }
