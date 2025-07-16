@@ -11,7 +11,7 @@ export const WallaFeedbackBanner = ({
 }: WallaFeedbackBannerProps) => (
   <AnnounceCard
     emoji={ImageResources.PAPER_PLANE_WITHOUT_BG}
-    textSize={"10"}
+    textSize={"12"}
     text={
       textContent || "여러분의 소중한 의견이 썸타임을 더 특별하게 만듭니다!"
     }
