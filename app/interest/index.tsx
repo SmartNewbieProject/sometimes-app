@@ -92,8 +92,6 @@ export default function InterestIntroScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-    alignItems: "center",
   },
   contentContainer: {
     flex: 1,
