@@ -74,7 +74,7 @@ export default function InterestDoneScreen() {
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
-
+    justifyContent: "center",
     alignItems: "center",
   },
   titleLogoWrapper: {
