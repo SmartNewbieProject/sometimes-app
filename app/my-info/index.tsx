@@ -42,7 +42,7 @@ export default function InterestIntroScreen() {
     });
 
   return (
-    <Layout.Default className="w-full items-center flex-1 ">
+    <Layout.Default className="items-center flex-1 ">
       <View style={styles.contentContainer}>
         <PalePurpleGradient />
         <View style={styles.titleLogoWrapper}>

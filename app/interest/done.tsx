@@ -21,7 +21,7 @@ export default function InterestDoneScreen() {
   }, [queryClient]);
 
   return (
-    <View style={styles.container}>
+    <View className=" items-center flex-1 ">
       <View style={[styles.contentContainer]}>
         <PalePurpleGradient />
         <View style={styles.titleLogoWrapper}>
@@ -71,11 +71,6 @@ export default function InterestDoneScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-  },
   contentContainer: {
     flex: 1,
 
