@@ -42,7 +42,7 @@ export default function InterestIntroScreen() {
     });
 
   return (
-    <Layout.Default style={[styles.container]}>
+    <Layout.Default className="w-full items-center flex-1 ">
       <View style={styles.contentContainer}>
         <PalePurpleGradient />
         <View style={styles.titleLogoWrapper}>
@@ -90,9 +90,6 @@ export default function InterestIntroScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   contentContainer: {
     flex: 1,
 
