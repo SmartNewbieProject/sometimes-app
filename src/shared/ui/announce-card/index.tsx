@@ -10,6 +10,18 @@ type AnnounceCardProps = {
     width: number;
     height: number;
   };
+  textSize?:
+    | "10"
+    | "13"
+    | "sm"
+    | "md"
+    | "18"
+    | "20"
+    | "12"
+    | "chip"
+    | "lg"
+    | null
+    | undefined;
   text: string;
   onPress: () => void;
   theme?: "default" | "alert";
@@ -51,6 +63,7 @@ export const AnnounceCard = ({
   emoji,
   emojiSize,
   text,
+  textSize = "13",
   onPress,
   theme = "default",
 }: AnnounceCardProps) => {
@@ -74,7 +87,7 @@ export const AnnounceCard = ({
           height={emojiSize?.height || 24}
         />
       )}
-      <Text size="12" weight="bold" className={textClass({ theme })}>
+      <Text size={textSize} weight="bold" className={textClass({ theme })}>
         {text}
       </Text>
     </TouchableOpacity>
