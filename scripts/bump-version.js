@@ -10,10 +10,23 @@ try {
   
   const currentVersion = appJson.expo.version;
   const versionParts = currentVersion.split('.');
-  const majorMinor = versionParts.slice(0, 2).join('.');
-  const patch = parseInt(versionParts[2] || '0', 10);
+  let major = parseInt(versionParts[0] || '0', 10);
+  let minor = parseInt(versionParts[1] || '0', 10);
+  let patch = parseInt(versionParts[2] || '0', 10);
   
-  const newVersion = `${majorMinor}.${patch + 1}`;
+  patch += 1;
+  
+  if (patch >= 10) {
+    patch = 0;
+    minor += 1;
+    
+    if (minor >= 10) {
+      minor = 0;
+      major += 1;
+    }
+  }
+  
+  const newVersion = `${major}.${minor}.${patch}`;
   appJson.expo.version = newVersion;
   
   fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2) + '\n');
