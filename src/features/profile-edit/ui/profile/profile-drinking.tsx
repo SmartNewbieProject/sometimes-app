@@ -57,10 +57,16 @@ function ProfileDrinking() {
             onChange={onChangeDrinking}
             lastLabelLeft={-50}
             options={
-              preferences?.options.map((option) => ({
-                label: option.displayName,
-                value: option.id,
-              })) || []
+              preferences?.options
+                .map((option) =>
+                  option.displayName === "전혀 안마시지 않음"
+                    ? { ...option, displayName: "전혀 마시지 않음" }
+                    : option
+                )
+                .map((option) => ({
+                  label: option.displayName,
+                  value: option.id,
+                })) || []
             }
           />
         </Loading.Lottie>
