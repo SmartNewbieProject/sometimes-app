@@ -57,6 +57,7 @@ function ProfileSmoking() {
             showMiddle={true}
             key={`smoking-${currentIndex || "none"}`}
             defaultValue={currentIndex}
+            middleLabelLeft={-10}
             value={currentIndex}
             onChange={onChangeSmoking}
             options={

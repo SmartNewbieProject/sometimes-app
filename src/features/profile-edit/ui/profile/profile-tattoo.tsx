@@ -52,7 +52,7 @@ function ProfileTattoo() {
             key={`tattoo-${currentIndex || "none"}`}
             defaultValue={currentIndex}
             value={currentIndex}
-            middleLabelLeft={-10}
+            middleLabelLeft={-8}
             onChange={onChangeTattoo}
             options={
               preferences?.options.map((option) => ({

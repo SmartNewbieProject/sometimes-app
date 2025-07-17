@@ -1,3 +1,4 @@
+import { useCommingSoon } from "@/src/features/admin/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ImageResources } from "@/src/shared/libs";
 import { AnnounceCard, Button, Text } from "@/src/shared/ui";
@@ -9,6 +10,7 @@ import { ChangeMbtiModal } from "../modal/change-mbti.modal";
 import MatchingCard from "./matching-card";
 
 const MatchingMenu = () => {
+  const showCommingSoon = useCommingSoon();
   const [department, setDepartment] = useState(false);
   const [univ, setUniv] = useState(false);
   return (
@@ -19,12 +21,12 @@ const MatchingMenu = () => {
         <MatchingCard
           title="같은 학과 매칭 제외"
           isOn={department}
-          toggle={() => setDepartment((prev) => !prev)}
+          toggle={showCommingSoon}
         />
         <MatchingCard
           title="같은 학교 매칭 제외"
           isOn={univ}
-          toggle={() => setUniv((prev) => !prev)}
+          toggle={showCommingSoon}
         />
       </View>
     </View>

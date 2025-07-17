@@ -46,7 +46,7 @@ function ProfileMilitary() {
             step={1}
             value={currentIndex}
             onChange={onChangeOption}
-            middleLabelLeft={-15}
+            middleLabelLeft={-10}
             options={
               preferences?.options.map((option) => ({
                 label: option.displayName,
