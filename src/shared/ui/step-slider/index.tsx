@@ -241,7 +241,7 @@ export function StepSlider({
                         : left + (middleLabelLeft ?? -30),
                   }}
                 >
-                  <Text size="13" textColor="dark">
+                  <Text size="13" numberofLine={1} textColor="dark">
                     {label.label}
                   </Text>
                 </View>

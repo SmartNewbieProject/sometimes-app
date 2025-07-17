@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     gap: 14,
     ...Platform.select({
       web: {
-        marginBottom: 14, // md:mb-[72px] 은 무시
+        marginBottom: 14,
       },
       ios: {
         marginBottom: 58,

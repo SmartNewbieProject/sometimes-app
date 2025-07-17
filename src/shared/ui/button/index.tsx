@@ -73,6 +73,7 @@ export const Button: React.FC<ButtonProps> = ({
   textColor,
   className = "",
   styles,
+  flex = undefined,
 }) => {
   const press = () => {
     if (disabled) return;
@@ -95,7 +96,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <TouchableOpacity
-      className={cn(buttonStyles({ variant, size, disabled }), className)}
+      className={cn(buttonStyles({ variant, size, disabled, flex }), className)}
       onPress={press}
       activeOpacity={1}
       style={styles}
