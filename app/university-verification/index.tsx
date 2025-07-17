@@ -1,7 +1,7 @@
 import { Header, Text, PalePurpleGradient } from "@/src/shared/ui";
 import { LabelInput } from "@/src/widgets/label-input";
 import { router } from "expo-router";
-import { ScrollView, TouchableOpacity, View, Pressable } from "react-native";
+import { ScrollView, TouchableOpacity, View, Pressable, Linking } from "react-native";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
@@ -110,6 +110,10 @@ export default function UniversityVerificationScreen() {
     setIsLoading(false);
   };
 
+  const handleDMClick = () => {
+    Linking.openURL("https://www.instagram.com/sometime.in.univ?igsh=MTdxMWJjYmFrdGc3Ng==");
+  };
+
   const handleConfirm = () => {
     if (!isVerified) {
       showModal({
@@ -197,6 +201,23 @@ export default function UniversityVerificationScreen() {
             </View>
           </View>
         </ScrollView>
+
+        {/* DM 인증 안내 */}
+        <View className="px-5 mb-4">
+          <Text size="sm" weight="normal" className="text-gray">
+            학교 이메일이 없는 경우
+          </Text>
+          <View className="flex-row flex-wrap">
+            <TouchableOpacity onPress={handleDMClick}>
+              <Text size="sm" weight="bold" className="text-gray-500">
+                DM
+              </Text>
+            </TouchableOpacity>
+            <Text size="sm" weight="normal" className="text-gray">
+              으로 문의 주시면 다른 인증 방법을 알려드립니다.
+            </Text>
+          </View>
+        </View>
 
         {/* 하단 완료 버튼 */}
         <View className="px-5 pb-8">
