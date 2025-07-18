@@ -101,7 +101,10 @@ export function useAuth() {
     isAuthorized: !!accessToken,
     logout,
     logoutOnly,
-    my,
+    my: {
+      ...my,
+      universityDetails: profileDetails?.universityDetails
+    },
     updateToken,
     queryProps: {
       my: myQueryProps,
