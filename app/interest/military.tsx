@@ -51,10 +51,11 @@ export default function MilitarySelectionScreen() {
   console.log(militaryPreference, "mili");
 
   useEffect(() => {
-    if (preferences.options[currentIndex]) {
+    if (optionsLoading) return;
+    if (!militaryPreference && preferences.options[currentIndex]) {
       updateForm("militaryPreference", preferences.options[currentIndex]);
     }
-  }, [currentIndex, updateForm, preferences]);
+  }, [optionsLoading, preferences.options, currentIndex, militaryPreference]);
   useFocusEffect(
     useCallback(
       () => useInterestStep.getState().updateStep(InterestSteps.MILITARY),

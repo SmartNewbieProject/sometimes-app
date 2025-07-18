@@ -27,12 +27,12 @@ function ProfileMilitary() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   console.log("mili status", currentIndex);
-
   useEffect(() => {
-    if (preferences.options[currentIndex]) {
+    if (optionsLoading) return;
+    if (!militaryStatus && preferences.options[currentIndex]) {
       updateForm("militaryStatus", preferences.options[currentIndex]);
     }
-  }, [currentIndex, updateForm, preferences]);
+  }, [optionsLoading, preferences.options, currentIndex, militaryStatus]);
   const onChangeOption = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("militaryStatus", preferences.options[value]);

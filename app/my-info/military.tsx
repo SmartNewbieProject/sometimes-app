@@ -45,10 +45,11 @@ export default function MilitarySelectionScreen() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    if (preferences.options[currentIndex]) {
+    if (optionsLoading) return;
+    if (!militaryStatus && preferences.options[currentIndex]) {
       updateForm("militaryStatus", preferences.options[currentIndex]);
     }
-  }, [currentIndex, updateForm, preferences]);
+  }, [optionsLoading, preferences.options, currentIndex, militaryStatus]);
   console.log(militaryStatus, "mili");
   useFocusEffect(
     useCallback(
