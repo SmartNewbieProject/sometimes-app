@@ -33,3 +33,6 @@ export const useNotificationQuery = () =>
     queryFn: apis.getNotification,
     staleTime: 0,
   });
+
+export { useExistsUniversityQuery } from './use-exists-university';
+export { useCheckBusanQuery } from './use-check-busan';

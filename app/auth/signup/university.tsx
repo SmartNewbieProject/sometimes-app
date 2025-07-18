@@ -6,7 +6,7 @@ import { ChipSelector, LabelInput } from '@/src/widgets';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
-import { KeyboardAvoidingView, View } from 'react-native';
+import { KeyboardAvoidingView, View, ScrollView, StyleSheet } from 'react-native';
 import Loading from "@features/loading";
 import { useKeyboarding } from '@shared/hooks';
 
@@ -104,14 +104,14 @@ export default function UniversityPage() {
           title="학교를 검색중이에요"
           loading={isLoading}
         >
-          <View className="w-full">
+          <ScrollView style={styles.chipContainer} contentContainerStyle={styles.chipScrollContent}>
             <ChipSelector
               value={selectedUniv}
               options={filteredUnivs.map((univ) => ({ label: univ, value: univ }))}
               onChange={setSelectedUniv}
               className="w-full"
             />
-          </View>
+          </ScrollView>
         </Loading.Lottie>
       </View>
 
@@ -139,3 +139,14 @@ export default function UniversityPage() {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  chipContainer: {
+    marginTop: 4,
+    width: '100%',
+    maxHeight: 400,
+  },
+  chipScrollContent: {
+    flexGrow: 1,
+  },
+});

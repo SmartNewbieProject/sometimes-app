@@ -1,5 +1,5 @@
-import { axiosClient } from "@/src/shared/libs";
-import type { Preferences, SelectedPreferences } from "../../my-info/api";
+import {axiosClient} from "@/src/shared/libs";
+import type {Preferences, SelectedPreferences} from "../../my-info/api";
 
 interface TotalMatchCountResponse {
   count: number;
@@ -13,20 +13,37 @@ export type Notification = {
   okMessage: string;
 };
 
+export interface UniversityUpdateRequest {
+  university: string,
+  department: string;
+  studentNumber: string,
+  grade: string;
+}
+
 export const getTotalMatchCount = (): Promise<TotalMatchCountResponse> =>
-  axiosClient.get("/matching/total-count");
+    axiosClient.get("/matching/total-count");
 
 export const getNotification = (): Promise<Notification[]> =>
-  axiosClient.get("/profile/notifications");
+    axiosClient.get("/profile/notifications");
 
 export const checkPreferenceFill = async (): Promise<boolean> =>
-  axiosClient.get("/preferences/check/fill");
+    axiosClient.get("/preferences/check/fill");
 
 export const getTotalUserCount = (): Promise<number> =>
-  axiosClient.get("/stats/total-user-count");
+    axiosClient.get("/stats/total-user-count");
 
 export const getPreferencesSelf = async (): Promise<SelectedPreferences[]> =>
-  axiosClient.get("/preferences/self");
+    axiosClient.get("/preferences/self");
+
+export const checkExistsUniversity = (): Promise<boolean> =>
+    axiosClient.get("/temporal/university/none");
+
+export const updateUniversity = async (body: UniversityUpdateRequest) => {
+  await axiosClient.put("/temporal/university", {...body})
+};
+
+export const checkBusan = (): Promise<boolean> =>
+    axiosClient.get('/temporal/is-busan');
 
 type HomeApiService = {
   getTotalMatchCount: () => Promise<TotalMatchCountResponse>;
@@ -34,6 +51,9 @@ type HomeApiService = {
   getTotalUserCount: () => Promise<number>;
   getNotification: () => Promise<Notification[]>;
   getPreferencesSelf: () => Promise<SelectedPreferences[]>;
+  checkExistsUniversity: () => Promise<boolean>;
+  updateUniversity: (body: UniversityUpdateRequest) => Promise<void>;
+  checkBusan: () => Promise<boolean>;
 };
 
 const apis: HomeApiService = {
@@ -42,6 +62,9 @@ const apis: HomeApiService = {
   getTotalUserCount,
   getNotification,
   getPreferencesSelf,
+  checkExistsUniversity,
+  updateUniversity,
+  checkBusan,
 };
 
 export default apis;
