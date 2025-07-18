@@ -3,7 +3,7 @@ import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -33,6 +33,10 @@ function ProfileDrinking() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  useEffect(() => {
+    updateForm("drinking", preferences.options[currentIndex]);
+  }, [currentIndex, updateForm, preferences]);
+
   const onChangeDrinking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("drinking", preferences.options[value]);

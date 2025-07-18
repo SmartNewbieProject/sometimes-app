@@ -5,6 +5,7 @@ import {
   type GestureResponderEvent,
   PanResponder,
   type PanResponderGestureState,
+  Platform,
 } from "react-native";
 
 import React, {
@@ -14,12 +15,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import {
-  type LayoutChangeEvent,
-  Pressable,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { type LayoutChangeEvent, View } from "react-native";
 
 interface Option {
   label: string;
@@ -111,7 +107,7 @@ export function StepSlider({
   // 레이아웃 변경 시 슬라이더 위치와 크기 측정
   const handleLayout = useCallback((event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
-    setSliderWidth(width);
+    setSliderWidth(Platform.OS === "web" ? width - 10 : width);
 
     // 슬라이더의 절대 위치 측정
     if (sliderRef.current) {
@@ -285,8 +281,9 @@ export function StepSlider({
                   return (
                     <View
                       key={label.label}
-                      className="absolute z-10 top-[9px] w-[10px] h-[10px] bg-[#E1D9FF] rounded-full -mt-2.5 items-center justify-center"
+                      className="absolute z-10  w-[10px] h-[10px] bg-[#E1D9FF] rounded-full -mt-2.5 items-center justify-center"
                       style={{
+                        top: Platform.OS === "web" ? 11 : 9,
                         left:
                           options[0].label === label.label
                             ? left

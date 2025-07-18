@@ -3,7 +3,7 @@ import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = Interest;
@@ -36,6 +36,10 @@ function InterestSmoking() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+
+  useEffect(() => {
+    updateForm("smoking", preferences.options[currentIndex]);
+  }, [currentIndex, updateForm, preferences]);
   const onChangeSmoking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("smoking", preferences.options[value]);

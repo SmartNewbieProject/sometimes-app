@@ -7,7 +7,7 @@ import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -77,6 +77,9 @@ export default function DrinkingSelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  useEffect(() => {
+    updateForm("drinking", preferences.options[currentIndex]);
+  }, [currentIndex, updateForm, preferences]);
   const onChangeDrinking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("drinking", preferences.options[value]);
