@@ -124,7 +124,7 @@ export const Profile = () => {
                 <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
                   {profileData.university}
                 </Text>
-                {(() => {
+                {!isLoadingVerification && (() => {
                   const logoUrl = getUniversityLogoUrl();
                   return isUniversityVerified && logoUrl ? (
                     <Image
@@ -138,8 +138,8 @@ export const Profile = () => {
                   );
                 })()}
               </View>
-              {/* 대학교 인증 버튼 - 인증 완료 시 숨김 */}
-              {!isUniversityVerified && (
+              {/* 대학교 인증 버튼 - 로딩 완료 후 인증 미완료 시에만 표시 */}
+              {!isLoadingVerification && !isUniversityVerified && (
                 <TouchableOpacity
                   onPress={handleUniversityVerification}
                   style={styles.universityVerificationButton}
