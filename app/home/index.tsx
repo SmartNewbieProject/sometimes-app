@@ -2,7 +2,7 @@ import type {Notification} from "@/src/features/home/apis";
 import HomeInfoSection from "@/src/features/home/ui/home-info/home-info-section";
 import MatchingStatus from "@/src/features/home/ui/matching-status";
 import Loading from "@/src/features/loading";
-import {VersionUpdateChecker} from "@/src/features/version-update";
+import {useVersionUpdate, VersionUpdateChecker} from "@/src/features/version-update";
 import {useModal} from "@/src/shared/hooks/use-modal";
 import {ImageResources} from "@/src/shared/libs";
 import {
@@ -78,7 +78,8 @@ const HomeScreen = () => {
   }, []);
 
   useRedirectBusan();
-  useTemporalUniversity()
+  useTemporalUniversity();
+  useVersionUpdate();
 
   // 화면이 포커스될 때마다 매칭 데이터 리프레시
   useFocusEffect(

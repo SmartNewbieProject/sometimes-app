@@ -51,7 +51,6 @@ export const useVersionUpdate = () => {
     if (skippedVersionLoading || isLoading) return;
     if (skippedVersion && skippedVersion === serverVersion) return;
 
-    console.log({skippedVersion, serverVersion});
     if (serverVersion) {
       checkForUpdate();
     }
