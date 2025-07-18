@@ -10,7 +10,7 @@ import Tooltip from "@/src/shared/ui/tooltip";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -69,6 +69,9 @@ export default function TattooSelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  useEffect(() => {
+    updateForm("tattoo", preferences.options[currentIndex]);
+  }, [currentIndex, updateForm, preferences]);
   const onChangeTattoo = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("tattoo", preferences.options[value]);

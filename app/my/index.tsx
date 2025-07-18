@@ -64,6 +64,9 @@ export default function MyScreen() {
           <MatchingMenu />
           <MyActivityMenu />
         </View>
+        <View style={[styles.menuContainer, { marginTop: 40 }]}>
+          <LogoutOrWithdrawal />
+        </View>
       </ScrollView>
 
       {/* Bottom Navigation */}
@@ -89,6 +92,7 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     paddingHorizontal: 16,
+    paddingBottom: 24,
   },
   menuContainer: {
     paddingHorizontal: 10,

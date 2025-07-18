@@ -10,7 +10,7 @@ import { ImageResources, tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, StepSlider, Text } from "@/src/shared/ui";
 
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -44,6 +44,9 @@ export default function MilitarySelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  useEffect(() => {
+    updateForm("militaryStatus", preferences.options[currentIndex]);
+  }, [currentIndex, updateForm, preferences]);
   console.log(militaryStatus, "mili");
   useFocusEffect(
     useCallback(
