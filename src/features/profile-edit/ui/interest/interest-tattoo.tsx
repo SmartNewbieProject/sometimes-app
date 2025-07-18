@@ -31,7 +31,9 @@ function InterestTattoo() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    updateForm("tattoo", preferences.options[currentIndex]);
+    if (preferences.options[currentIndex]) {
+      updateForm("tattoo", preferences.options[currentIndex]);
+    }
   }, [currentIndex, updateForm, preferences]);
   const onChangeTattoo = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {

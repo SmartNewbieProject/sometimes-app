@@ -38,7 +38,9 @@ function InterestSmoking() {
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
 
   useEffect(() => {
-    updateForm("smoking", preferences.options[currentIndex]);
+    if (preferences.options[currentIndex]) {
+      updateForm("smoking", preferences.options[currentIndex]);
+    }
   }, [currentIndex, updateForm, preferences]);
   const onChangeSmoking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {

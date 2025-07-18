@@ -33,7 +33,9 @@ function InterestMilitary() {
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   console.log("mili status", currentIndex);
   useEffect(() => {
-    updateForm("militaryPreference", preferences.options[currentIndex]);
+    if (preferences.options[currentIndex]) {
+      updateForm("militaryPreference", preferences.options[currentIndex]);
+    }
   }, [currentIndex, updateForm, preferences]);
   const onChangeOption = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {

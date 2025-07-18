@@ -36,7 +36,9 @@ function ProfileTattoo() {
     preferences.options[currentIndex]
   );
   useEffect(() => {
-    updateForm("tattoo", preferences.options[currentIndex]);
+    if (preferences.options[currentIndex]) {
+      updateForm("tattoo", preferences.options[currentIndex]);
+    }
   }, [currentIndex, updateForm, preferences]);
 
   const onChangeTattoo = (value: number) => {

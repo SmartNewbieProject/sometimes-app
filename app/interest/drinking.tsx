@@ -85,7 +85,9 @@ export default function DrinkingSelectionScreen() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    updateForm("drinking", preferences.options[currentIndex]);
+    if (preferences.options[currentIndex]) {
+      updateForm("drinking", preferences.options[currentIndex]);
+    }
   }, [currentIndex, updateForm, preferences]);
   const onChangeDrinking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
