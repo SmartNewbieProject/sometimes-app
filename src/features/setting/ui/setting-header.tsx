@@ -15,7 +15,7 @@ function SettingHeader() {
       <Header.LeftContent>
         <Pressable
           onPress={() => {
-            router.navigate("/my");
+            router.back();
           }}
           style={styles.arrowContainer}
         >
