@@ -23,8 +23,8 @@ export type Properties = {
   militaryPreference?: string;
   militaryStatus?: string;
   smoking: string;
-  goodMbti: string;
-  badMbti: string;
+  goodMbti: string | null;
+  badMbti: string | null;
   tattoo: string;
 };
 

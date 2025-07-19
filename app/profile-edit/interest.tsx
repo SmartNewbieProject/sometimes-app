@@ -97,8 +97,8 @@ function InterestSection() {
           personality: form.personality as string,
           tattoo: form.tattoo?.id as string,
           militaryPreference: form.militaryPreference?.id ?? "",
-          goodMbti: form.goodMbti as string,
-          badMbti: form.badMbti as string,
+          goodMbti: form.goodMbti ?? null,
+          badMbti: form.badMbti ?? null,
         });
         await queryClient.invalidateQueries({
           queryKey: ["check-preference-fill"],
