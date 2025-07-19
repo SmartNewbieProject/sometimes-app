@@ -83,7 +83,7 @@ export default function ProfilePage() {
 
         await apis.signup(signupForm as SignupForm);
         trackSignupEvent("signup_complete");
-        router.push("/auth/approval-pending");
+        router.push("/auth/signup/done");
       },
       (error) => {
         console.error("Signup error:", error);

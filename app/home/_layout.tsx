@@ -3,15 +3,23 @@ import { View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { getUserStatus } from '@/src/features/auth/apis';
+import { useCheckBusanQuery } from '@/src/features/home/queries';
 import Loading from '@/src/features/loading';
 
 export default function HomeLayout() {
   const { my } = useAuth();
   const [statusChecked, setStatusChecked] = useState(false);
+  // TODO: 부산 유저 임시 체크라 나중에 제거해야함
+  const shouldCheckBusan = !!my?.phoneNumber;
+  const { data: isBusan = false, isLoading: isBusanLoading } = useCheckBusanQuery(shouldCheckBusan);
 
   useEffect(() => {
     const checkApprovalStatus = async () => {
-      if (!my?.phoneNumber || statusChecked) return;
+      if (!my?.phoneNumber || statusChecked || isBusanLoading) return;
+      if (isBusan) {
+        router.replace('/commingsoon');
+        return;
+      }
 
       try {
         const statusData = await getUserStatus(my.phoneNumber);
@@ -39,9 +47,9 @@ export default function HomeLayout() {
     };
 
     checkApprovalStatus();
-  }, [my?.phoneNumber, statusChecked]);
+  }, [my?.phoneNumber, statusChecked, isBusan, isBusanLoading]);
 
-  if (!statusChecked) {
+  if (!statusChecked || isBusanLoading) {
     return <Loading.Page title="사용자 정보를 확인하고 있어요..." />;
   }
 
