@@ -1,6 +1,11 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
 
 import { useAuth } from "@/src/features/auth";
+import {
+  getProfileId,
+  getUniversityVerificationStatus,
+} from "@/src/features/university-verification/apis";
+import { UniversityName, getUnivLogo } from "@/src/shared/libs/univ";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { Image } from "expo-image";
@@ -9,15 +14,15 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRematchingTickets } from "../queries";
-import { getUniversityVerificationStatus, getProfileId } from "@/src/features/university-verification/apis";
-import { getUnivLogo, UniversityName } from "@/src/shared/libs/univ";
 
 export const Profile = () => {
   const { profileDetails } = useAuth();
   console.log("prefileDetails", profileDetails);
   const { data: reMatchingTicketCount } = useRematchingTickets();
-  const [isUniversityVerified, setIsUniversityVerified] = useState<boolean>(false);
-  const [isLoadingVerification, setIsLoadingVerification] = useState<boolean>(true);
+  const [isUniversityVerified, setIsUniversityVerified] =
+    useState<boolean>(false);
+  const [isLoadingVerification, setIsLoadingVerification] =
+    useState<boolean>(true);
   const profileData = {
     name: profileDetails?.name || "이름",
     age: profileDetails?.age || "20",
@@ -33,17 +38,21 @@ export const Profile = () => {
     const checkUniversityVerification = async () => {
       try {
         const profileId = await getProfileId();
-        const verificationStatus = await getUniversityVerificationStatus(profileId);
+        const verificationStatus = await getUniversityVerificationStatus(
+          profileId
+        );
 
         if (verificationStatus.verifiedAt) {
-          const verifiedYear = new Date(verificationStatus.verifiedAt).getFullYear();
+          const verifiedYear = new Date(
+            verificationStatus.verifiedAt
+          ).getFullYear();
           const currentYear = new Date().getFullYear();
           setIsUniversityVerified(verifiedYear === currentYear);
         } else {
           setIsUniversityVerified(false);
         }
       } catch (error) {
-        console.error('대학교 인증 상태 확인 실패:', error);
+        console.error("대학교 인증 상태 확인 실패:", error);
         setIsUniversityVerified(false);
       } finally {
         setIsLoadingVerification(false);
@@ -101,12 +110,21 @@ export const Profile = () => {
               />
             </View>
             <View style={styles.profileInfoContainer}>
-              <Text style={styles.name}>{profileData.name}</Text>
+              <Text className="text-white " style={styles.name}>
+                {profileData.name}
+              </Text>
               <View style={styles.subInfo}>
-                <Text style={styles.subInfoText}>{profileData.grade}</Text>
-                <Text style={styles.subInfoText}> · </Text>
-                <Text style={styles.subInfoText}>{profileData.university}</Text>
-                {(() => {
+                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                  {profileData.grade}
+                </Text>
+                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                  {" "}
+                  ·{" "}
+                </Text>
+                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                  {profileData.university}
+                </Text>
+                {!isLoadingVerification && (() => {
                   const logoUrl = getUniversityLogoUrl();
                   return isUniversityVerified && logoUrl ? (
                     <Image
@@ -120,8 +138,8 @@ export const Profile = () => {
                   );
                 })()}
               </View>
-              {/* 대학교 인증 버튼 - 인증 완료 시 숨김 */}
-              {!isUniversityVerified && (
+              {/* 대학교 인증 버튼 - 로딩 완료 후 인증 미완료 시에만 표시 */}
+              {!isLoadingVerification && !isUniversityVerified && (
                 <TouchableOpacity
                   onPress={handleUniversityVerification}
                   style={styles.universityVerificationButton}
@@ -291,7 +309,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   universityVerificationButtonText: {
-    fontSize:12,
+    fontSize: 12,
     color: "#9747FF",
     fontWeight: "500",
   },

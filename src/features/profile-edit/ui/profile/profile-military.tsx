@@ -3,7 +3,7 @@ import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -27,7 +27,12 @@ function ProfileMilitary() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   console.log("mili status", currentIndex);
-
+  useEffect(() => {
+    if (optionsLoading) return;
+    if (!militaryStatus && preferences.options[currentIndex]) {
+      updateForm("militaryStatus", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, militaryStatus]);
   const onChangeOption = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("militaryStatus", preferences.options[value]);
@@ -46,7 +51,7 @@ function ProfileMilitary() {
             step={1}
             value={currentIndex}
             onChange={onChangeOption}
-            middleLabelLeft={-15}
+            middleLabelLeft={-10}
             options={
               preferences?.options.map((option) => ({
                 label: option.displayName,

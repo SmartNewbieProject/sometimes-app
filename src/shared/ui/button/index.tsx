@@ -27,6 +27,10 @@ const buttonStyles = cva(
             ? "text-xs h-[28px] px-2"
             : "text-xs h-[34px] px-2",
       },
+      flex: {
+        "flex-1": "flex-1",
+        "flex-0": "flex-0",
+      },
       disabled: {
         true: "opacity-50",
         false: "",
@@ -69,6 +73,7 @@ export const Button: React.FC<ButtonProps> = ({
   textColor,
   className = "",
   styles,
+  flex = undefined,
 }) => {
   const press = () => {
     if (disabled) return;
@@ -91,7 +96,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <TouchableOpacity
-      className={cn(buttonStyles({ variant, size, disabled }), className)}
+      className={cn(buttonStyles({ variant, size, disabled, flex }), className)}
       onPress={press}
       activeOpacity={1}
       style={styles}

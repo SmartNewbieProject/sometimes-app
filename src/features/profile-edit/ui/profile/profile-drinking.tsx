@@ -3,7 +3,7 @@ import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -33,6 +33,13 @@ function ProfileDrinking() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  useEffect(() => {
+    if (optionsLoading) return;
+    if (!drinking && preferences.options[currentIndex]) {
+      updateForm("drinking", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, drinking]);
+
   const onChangeDrinking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("drinking", preferences.options[value]);
@@ -57,10 +64,16 @@ function ProfileDrinking() {
             onChange={onChangeDrinking}
             lastLabelLeft={-50}
             options={
-              preferences?.options.map((option) => ({
-                label: option.displayName,
-                value: option.id,
-              })) || []
+              preferences?.options
+                .map((option) =>
+                  option.displayName === "전혀 안마시지 않음"
+                    ? { ...option, displayName: "전혀 마시지 않음" }
+                    : option
+                )
+                .map((option) => ({
+                  label: option.displayName,
+                  value: option.id,
+                })) || []
             }
           />
         </Loading.Lottie>

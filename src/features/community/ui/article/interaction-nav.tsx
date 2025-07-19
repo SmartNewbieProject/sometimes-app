@@ -1,11 +1,15 @@
-import { TouchableOpacity, type TouchableOpacityProps, View } from 'react-native';
-import { ImageResource, Text } from '@/src/shared/ui';
-import HeartIcon from '@/assets/icons/heart.svg';
-import CommentIcon from '@/assets/icons/engagement.svg';
-import EyesIcon from '@/assets/icons/ph_eyes-fill.svg';
-import type { Article } from '../../types';
-import { IconWrapper } from '@shared/ui/icons';
-import { ImageResources } from '@/src/shared/libs';
+import CommentIcon from "@/assets/icons/engagement.svg";
+import HeartIcon from "@/assets/icons/heart.svg";
+import EyesIcon from "@/assets/icons/ph_eyes-fill.svg";
+import { ImageResources } from "@/src/shared/libs";
+import { ImageResource, Text } from "@/src/shared/ui";
+import { IconWrapper } from "@shared/ui/icons";
+import {
+  TouchableOpacity,
+  type TouchableOpacityProps,
+  View,
+} from "react-native";
+import type { Article } from "../../types";
 
 interface InteractionProps {
   data: Article;
@@ -30,7 +34,11 @@ const Interaction: React.FC<InteractionComponentProps> & {
   return (
     <View className="flex-row items-center justify-between">
       <View className="flex-row items-center gap-4">
-        <Interaction.Like count={data.likeCount} onPress={onLike} isLiked={data.isLiked} />
+        <Interaction.Like
+          count={data.likeCount}
+          onPress={onLike}
+          isLiked={data.isLiked}
+        />
         <Interaction.Comment count={data.comments.length} onPress={onComment} />
         <Interaction.View count={data.readCount} onPress={onViews} />
       </View>
@@ -38,7 +46,7 @@ const Interaction: React.FC<InteractionComponentProps> & {
   );
 };
 
-type LikeProps = InteractionItemProps & { isLiked: boolean }
+type LikeProps = InteractionItemProps & { isLiked: boolean };
 
 Interaction.Like = ({ count, iconSize = 24, isLiked, ...props }: LikeProps) => {
   return (
@@ -50,29 +58,43 @@ Interaction.Like = ({ count, iconSize = 24, isLiked, ...props }: LikeProps) => {
           <HeartIcon stroke="#646464" />
         )}
       </IconWrapper>
-      <Text size="13" className="text-[#646464]">{count}</Text>
+      <Text size="13" className="text-[#646464]">
+        {count}
+      </Text>
     </TouchableOpacity>
   );
 };
 
-Interaction.Comment = ({ count, iconSize = 24, ...props }: InteractionItemProps) => {
+Interaction.Comment = ({
+  count,
+  iconSize = 24,
+  ...props
+}: InteractionItemProps) => {
   return (
     <TouchableOpacity className="flex-row items-center gap-2" {...props}>
       <IconWrapper size={iconSize}>
-        <CommentIcon stroke="#646464" />
+        <CommentIcon strokeWidth={1} stroke="#646464" />
       </IconWrapper>
-      <Text size="13" className="text-[#646464]">{count}</Text>
+      <Text size="13" className="text-[#646464]">
+        {count}
+      </Text>
     </TouchableOpacity>
   );
 };
 
-Interaction.View = ({ count, iconSize = 24, ...props }: InteractionItemProps) => {
+Interaction.View = ({
+  count,
+  iconSize = 24,
+  ...props
+}: InteractionItemProps) => {
   return (
     <TouchableOpacity className="flex-row items-center gap-2" {...props}>
       <IconWrapper size={iconSize}>
         <EyesIcon stroke="#646464" />
       </IconWrapper>
-      <Text size="13" className="text-[#646464]">{count}</Text>
+      <Text size="13" className="text-[#646464]">
+        {count}
+      </Text>
     </TouchableOpacity>
   );
 };

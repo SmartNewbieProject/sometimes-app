@@ -38,7 +38,7 @@ function InterestSection() {
     !form.personality ||
     form.personality.length === 0
   );
-
+  console.log("check point", profileDetails);
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (profileDetails?.preferences) {

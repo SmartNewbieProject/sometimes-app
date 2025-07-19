@@ -1,3 +1,4 @@
+import { useModal } from "@/src/shared/hooks/use-modal";
 import { Header } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -7,13 +8,31 @@ import { useMyInfoForm } from "../../my-info/hooks";
 function ProfileEditHeader() {
   const router = useRouter();
   const { clear } = useMyInfoForm();
+  const { showModal } = useModal();
+
   return (
     <Header.Container className="items-center !pt-[21px] ">
       <Header.LeftContent>
         <Pressable
           onPress={() => {
-            clear();
-            router.navigate("/my");
+            showModal({
+              title: "수정 중인 내용이 있어요",
+              children:
+                "지금 나가면 작성 중인 수정 내용이 모두 사라져요.\n정말 나가시겠어요?",
+              primaryButton: {
+                text: "계속 수정하기",
+                onClick: () => {
+                  return;
+                },
+              },
+              secondaryButton: {
+                text: "나가기",
+                onClick: () => {
+                  router.navigate("/my");
+                  clear();
+                },
+              },
+            });
           }}
           style={styles.arrowContainer}
         >

@@ -47,7 +47,7 @@ function Profile() {
     form.personality.length === 0 ||
     form.interestIds.length === 0
   );
-
+  console.log("check point", profileDetails, preferenceSelf);
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (profileDetails?.id && preferenceSelf) {

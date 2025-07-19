@@ -1,9 +1,11 @@
+import { cn } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
 import React from "react";
 import {
   Dimensions,
   FlatList,
   Image,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -53,7 +55,13 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
       ]}
       activeOpacity={0.8}
     >
-      <View style={styles.cardInner}>
+      <View
+        style={styles.cardInner}
+        className={cn(
+          "flex-1 font-extralight",
+          Platform.OS === "web" && "max-w-[468px] w-full self-center"
+        )}
+      >
         <Image source={option.image} style={styles.image} resizeMode="cover" />
         <Text variant="primary" size="md" weight="semibold">
           {option.label}
@@ -75,7 +83,7 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
 }
 
 const screenWidth = Dimensions.get("window").width;
-const cardSize = screenWidth / 2 - 54; // 2열 그리드
+const cardSize = (Platform.OS === "web" ? 468 : screenWidth) / 2 - 54; // 2열 그리드
 
 const styles = StyleSheet.create({
   list: {

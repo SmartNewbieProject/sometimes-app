@@ -1,29 +1,40 @@
-import { View, ScrollView } from 'react-native';
-import { PalePurpleGradient, BottomNavigation, Header, ImageResource } from '@/src/shared/ui';
-import { CategoryList, CreateArticleFAB, InfiniteArticleList } from '@/src/features/community/ui';
-import { useLocalSearchParams, router } from 'expo-router';
-import { useEffect } from 'react';
-import { ImageResources } from '@/src/shared/libs';
-import { useInfiniteArticlesQuery } from '@/src/features/community/queries/use-infinite-articles';
-import { useCategory } from '@/src/features/community/hooks';
+import { useCategory } from "@/src/features/community/hooks";
+import { useInfiniteArticlesQuery } from "@/src/features/community/queries/use-infinite-articles";
+import {
+  CategoryList,
+  CreateArticleFAB,
+  InfiniteArticleList,
+} from "@/src/features/community/ui";
+import { ImageResources } from "@/src/shared/libs";
+import {
+  BottomNavigation,
+  Header,
+  ImageResource,
+  PalePurpleGradient,
+} from "@/src/shared/ui";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+import { ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CommunityScreen() {
-  const { refresh: shouldRefresh } = useLocalSearchParams<{ refresh: string }>();
+  const { refresh: shouldRefresh } = useLocalSearchParams<{
+    refresh: string;
+  }>();
   const { currentCategory: categoryCode } = useCategory();
   const { refetch } = useInfiniteArticlesQuery({
     categoryCode,
     pageSize: 10,
   });
 
-	useEffect(() => {
-		if (shouldRefresh === 'true') {
+  useEffect(() => {
+    if (shouldRefresh === "true") {
       refetch();
-		}
-	}, [shouldRefresh]);
+    }
+  }, [shouldRefresh]);
 
   return (
     <View className="flex-1 relative">
-      <PalePurpleGradient />
       <ListHeaderComponent />
 
       <View id="ArticleListContainer" className="flex-1">
@@ -36,16 +47,23 @@ export default function CommunityScreen() {
   );
 }
 
-const ListHeaderComponent = () => (
-  <>
-    <Header.Container className="mt-2">
-      <Header.CenterContent>
-        <ImageResource resource={ImageResources.COMMUNITY_LOGO} width={152} height={18} />
-      </Header.CenterContent>
-    </Header.Container>
-    
-    <View className="mt-[14px]">
-      <CategoryList />
+const ListHeaderComponent = () => {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={{ paddingTop: insets.top }}>
+      <Header.Container className="items-center bg-white !pt-[21px]">
+        <Header.CenterContent>
+          <ImageResource
+            resource={ImageResources.COMMUNITY_LOGO}
+            width={152}
+            height={18}
+          />
+        </Header.CenterContent>
+      </Header.Container>
+
+      <View className="pt-[14px] bg-white">
+        <CategoryList />
+      </View>
     </View>
-  </>
-);
+  );
+};

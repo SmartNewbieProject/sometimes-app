@@ -13,19 +13,34 @@ import {
 interface CustomSwitchProps {
   value: boolean;
   onChange: (value: boolean) => void;
+  disabled?: boolean;
 }
 
-const CustomSwitch = ({ value, onChange }: CustomSwitchProps) => {
+const CustomSwitch = ({
+  value,
+  onChange,
+  disabled = false,
+}: CustomSwitchProps) => {
   const [isOn, setIsOn] = useState(value);
-  const switchLeftValue = useRef(new Animated.Value(value ? 3 : 33)).current;
+  const initValue = Platform.OS === "web" ? 0 : 3;
+  const lastVavlue = Platform.OS === "web" ? 30 : 33;
+  const switchLeftValue = useRef(
+    new Animated.Value(value ? lastVavlue : initValue)
+  ).current;
   console.log(switchLeftValue, "value");
   const toggleSwitch = () => {
+    console.log(value, isOn, "check");
     const newValue = !isOn;
+    if (disabled) {
+      onChange(newValue);
+      return;
+    }
+
     setIsOn(newValue);
     onChange(newValue);
     console.log("1", switchLeftValue);
     Animated.timing(switchLeftValue, {
-      toValue: newValue ? 4 : 32,
+      toValue: newValue ? lastVavlue : initValue,
       duration: 200,
       useNativeDriver: true,
     }).start();
@@ -33,7 +48,12 @@ const CustomSwitch = ({ value, onChange }: CustomSwitchProps) => {
 
   return (
     <Pressable onPress={toggleSwitch} style={styles.switchContainer}>
-      <View style={[styles.switch]}>
+      <View
+        style={[
+          styles.switch,
+          { backgroundColor: isOn ? "#F3EDFF" : "#E5E0F1" }, // 더 흐린 색
+        ]}
+      >
         <LinearGradient
           colors={["rgba(0,0,0,0.15)", "transparent"]}
           style={styles.fakeInnerShadow}
@@ -43,7 +63,10 @@ const CustomSwitch = ({ value, onChange }: CustomSwitchProps) => {
         <Animated.View
           style={[
             styles.switchButton,
-            { transform: [{ translateX: switchLeftValue }] },
+            {
+              transform: [{ translateX: switchLeftValue }],
+              backgroundColor: isOn ? "#7A4AE2" : "#B7A8E7", // 버튼 색도 다운톤으로
+            },
           ]}
         />
       </View>
@@ -63,7 +86,7 @@ const styles = StyleSheet.create({
     position: "relative",
     padding: 4,
     overflow: "hidden",
-    backgroundColor: "#F3EDFF",
+
     flexDirection: "row",
   },
   fakeInnerShadow: {
@@ -84,7 +107,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#7A4AE2",
+
     position: "absolute",
     top: 3,
     zIndex: 2,

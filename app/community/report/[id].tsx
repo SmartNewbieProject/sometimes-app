@@ -1,18 +1,18 @@
-import { Pressable, View, Alert, Platform } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
-import { Button, Header, PalePurpleGradient, Text } from "@/src/shared/ui";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
-import { ImageResources } from "@/src/shared/libs/image";
-import { ImageResource } from "@/src/shared/ui/image-resource";
-import Layout from "@/src/features/layout";
-import { FormProvider, useForm } from "react-hook-form";
-import { Form } from "@/src/widgets";
 import { reportArticle } from "@/src/features/community/apis/articles";
-import { tryCatch } from "@/src/shared/libs";
-import { useModal } from "@/src/shared/hooks/use-modal";
-import { createArticlesQueryKey } from "@/src/features/community/queries/use-infinite-articles";  
-import { queryClient } from "@/src/shared/config/query";
 import { useCategory } from "@/src/features/community/hooks";
+import { createArticlesQueryKey } from "@/src/features/community/queries/use-infinite-articles";
+import Layout from "@/src/features/layout";
+import { queryClient } from "@/src/shared/config/query";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { tryCatch } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs/image";
+import { Button, Header, PalePurpleGradient, Text } from "@/src/shared/ui";
+import { ImageResource } from "@/src/shared/ui/image-resource";
+import { Form } from "@/src/widgets";
+import { router, useLocalSearchParams } from "expo-router";
+import { FormProvider, useForm } from "react-hook-form";
+import { Alert, Platform, Pressable, View } from "react-native";
 
 type ReportForm = {
   reason: string;
@@ -21,32 +21,62 @@ type ReportForm = {
 export default function ReportScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const form = useForm<ReportForm>({
-    mode: 'onTouched',
+    mode: "onTouched",
   });
   const { showErrorModal } = useModal();
   const { currentCategory: categoryCode } = useCategory();
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await tryCatch(async () => {
-      await reportArticle(id, data.reason);
-      await queryClient.invalidateQueries({ queryKey: createArticlesQueryKey(categoryCode) });
-      if (Platform.OS === 'web') {
-        window.alert('신고가 완료되었어요.\n관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다.');
-      } else {
-        Alert.alert('신고가 완료되었어요.', '관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다.');
+    await tryCatch(
+      async () => {
+        await reportArticle(id, data.reason);
+        await queryClient.invalidateQueries({
+          queryKey: createArticlesQueryKey(categoryCode),
+        });
+        if (Platform.OS === "web") {
+          window.alert(
+            "신고가 완료되었어요.\n관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다."
+          );
+        } else {
+          Alert.alert(
+            "신고가 완료되었어요.",
+            "관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다."
+          );
+        }
+        router.navigate("/community?refresh=true");
+      },
+      ({ error }) => {
+        showErrorModal(error, "error");
       }
-      router.navigate('/community?refresh=true');
-    }, ({ error }) => {
-      showErrorModal(error, 'error');
-    });
+    );
   });
 
   return (
     <Layout.Default>
+      <Header.Container className="!pt-[0px]">
+        <Header.LeftContent>
+          <Pressable
+            onPress={() => router.push("/community")}
+            className="p-2 -ml-2"
+          >
+            <ChevronLeftIcon width={24} height={24} />
+          </Pressable>
+        </Header.LeftContent>
+
+        <Header.CenterContent>
+          <Text textColor="black" weight="bold" size="18">
+            신고하기
+          </Text>
+        </Header.CenterContent>
+      </Header.Container>
       <PalePurpleGradient />
       <HeaderComponent />
       <View className="flex-1 px-5">
-        <ImageResource resource={ImageResources.REPORT} width={152} height={182} />
+        <ImageResource
+          resource={ImageResources.REPORT}
+          width={152}
+          height={182}
+        />
         <Text textColor="deepPurple" size="20" weight="bold">
           부적절한 게시글을 발견하셨나요?
         </Text>
@@ -56,18 +86,19 @@ export default function ReportScreen() {
 
         <View className="flex-1 mt-4 mr-4">
           <FormProvider {...form}>
-            <Form.Select name="reason" options={
-              reportReasons.map((reason) => ({
+            <Form.Select
+              name="reason"
+              options={reportReasons.map((reason) => ({
                 label: reason,
                 value: reason,
-              }))
-            } />
+              }))}
+            />
           </FormProvider>
         </View>
       </View>
 
       <View className="mb-14 px-5">
-        <Button 
+        <Button
           className="w-full"
           disabled={!form.formState.isValid}
           onPress={onSubmit}
@@ -76,11 +107,11 @@ export default function ReportScreen() {
         </Button>
       </View>
     </Layout.Default>
-  )
+  );
 }
 
 const HeaderComponent = () => (
-  <Header.Container>
+  <Header.Container className="items-center !pt-[21px]">
     <Header.LeftContent>
       <Pressable onPress={() => router.back()}>
         <ChevronLeftIcon width={24} height={24} />
@@ -98,7 +129,7 @@ const HeaderComponent = () => (
 const reportReasons = [
   "스팸/도배성 게시글",
   "욕설/혐오표현",
-  "성적/선정적 내용", 
+  "성적/선정적 내용",
   "개인정보 노출/사생활 침해",
   "상업적 광고/홍보",
   "부적절한 이미지",

@@ -12,7 +12,7 @@ function MatchingCard({ title, isOn, toggle }: MatchingCardProps) {
   return (
     <View style={styles.container}>
       <Text>{title}</Text>
-      <CustomSwitch value={isOn} onChange={toggle} />
+      <CustomSwitch disabled value={isOn} onChange={toggle} />
     </View>
   );
 }

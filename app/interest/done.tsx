@@ -1,5 +1,6 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
 import { useInterestForm } from "@/src/features/interest/hooks";
+import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { useAuth } from "@features/auth";
@@ -21,7 +22,7 @@ export default function InterestDoneScreen() {
   }, [queryClient]);
 
   return (
-    <View style={styles.container}>
+    <Layout.Default>
       <View style={[styles.contentContainer]}>
         <PalePurpleGradient />
         <View style={styles.titleLogoWrapper}>
@@ -51,11 +52,11 @@ export default function InterestDoneScreen() {
             </Text>
           </View>
         </View>
-
         <View style={styles.buttonContainer}>
           <Button
+            width="full"
+            flex="flex-1"
             variant="primary"
-            size="md"
             onPress={() => {
               clear();
               router.push("/home");
@@ -66,19 +67,13 @@ export default function InterestDoneScreen() {
           </Button>
         </View>
       </View>
-    </View>
+    </Layout.Default>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-  },
   contentContainer: {
     flex: 1,
-
     alignItems: "center",
   },
   titleLogoWrapper: {
@@ -95,7 +90,7 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flex: 1,
-
+    alignItems: "center",
     width: "100%",
   },
   descriptionWrapper: {
@@ -103,10 +98,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: "100%",
-    paddingHorizontal: 32,
+    paddingHorizontal: 31,
+    gap: 14,
     ...Platform.select({
       web: {
-        marginBottom: 14, // md:mb-[72px] 은 무시
+        marginBottom: 14,
       },
       ios: {
         marginBottom: 58,
