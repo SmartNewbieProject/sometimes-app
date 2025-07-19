@@ -25,13 +25,13 @@ export default function HomeLayout() {
         const statusData = await getUserStatus(my.phoneNumber);
 
         if (statusData.status === 'pending') {
-          router.replace('/auth/approval-pending' as any);
+          router.replace('/auth/approval-pending');
           return;
         }
 
         if (statusData.status === 'rejected') {
           router.replace({
-            pathname: '/auth/approval-rejected' as any,
+            pathname: '/auth/approval-rejected',
             params: {
               phoneNumber: my.phoneNumber,
               rejectionReason: statusData.rejectionReason || '승인이 거절되었습니다.'
