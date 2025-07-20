@@ -5,8 +5,6 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 function Setting() {
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
   return (
     <View style={styles.container}>
       <AccountMenu />
@@ -16,9 +14,7 @@ function Setting() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingHorizontal: 24,
-    backgroundColor: "#fff",
   },
 });
 
