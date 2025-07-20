@@ -69,6 +69,11 @@ export function BottomNavigation() {
     return pathname.startsWith(path);
   };
 
+  const handleNavClick = (path: string) => {
+    if (isActive(path)) return;
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    router.push(path as any);
+  };
   return (
     <View className="bg-white border-t border-lightPurple pb-4">
       <View className="flex-row justify-around py-3">
@@ -76,8 +81,7 @@ export function BottomNavigation() {
           <TouchableOpacity
             key={item.name}
             className="items-center"
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            onPress={() => router.push(item.path as any)}
+            onPress={() => handleNavClick(item.path)}
           >
             <IconWrapper width={24} height={24} className="mb-1">
               {isActive(item.path) ? item.icon.selected : item.icon.unSelected}

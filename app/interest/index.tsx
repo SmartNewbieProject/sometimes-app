@@ -42,7 +42,7 @@ export default function InterestIntroScreen() {
     });
 
   return (
-    <Layout.Default style={[styles.container]}>
+    <Layout.Default>
       <View style={styles.contentContainer}>
         <PalePurpleGradient />
         <View style={styles.titleLogoWrapper}>
@@ -90,14 +90,10 @@ export default function InterestIntroScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-  },
   contentContainer: {
+    width: "100%",
     flex: 1,
-
+    justifyContent: "center",
     alignItems: "center",
   },
   titleLogoWrapper: {
@@ -114,7 +110,7 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flex: 1,
-
+    alignItems: "center",
     width: "100%",
   },
   descriptionWrapper: {

@@ -1,6 +1,5 @@
 import Layout from "@/src/features/layout";
 import {
-  LogoutOrWithdrawal,
   MatchingMenu,
   MyActivityMenu,
   Notice,
@@ -13,17 +12,22 @@ import {
   PalePurpleGradient,
   Text,
 } from "@/src/shared/ui";
+import SettingIcon from "@assets/icons/setting.svg";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import {
+  Pressable,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from "react-native";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function MyScreen() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   return (
     <Layout.Default
@@ -48,8 +52,9 @@ export default function MyScreen() {
         <Header.RightContent>
           <TouchableOpacity>
             <View style={styles.iconContainer}>
-              <View style={styles.iconPlace} />
-              <View style={styles.iconPlace} />
+              <Pressable onPress={() => router.navigate("/setting")}>
+                <SettingIcon width={24} height={24} />
+              </Pressable>
             </View>
           </TouchableOpacity>
         </Header.RightContent>
@@ -89,6 +94,7 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flex: 1,
     paddingHorizontal: 16,
+    paddingBottom: 24,
   },
   menuContainer: {
     paddingHorizontal: 10,

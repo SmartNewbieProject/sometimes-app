@@ -11,7 +11,7 @@ import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
 const { ui, hooks, services, queries } = Interest;
@@ -74,6 +74,12 @@ export default function TattooSelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+  useEffect(() => {
+    if (optionsLoading) return;
+    if (!tattoo && preferences.options[currentIndex]) {
+      updateForm("tattoo", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, tattoo]);
   const onChangeTattoo = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("tattoo", preferences.options[value]);

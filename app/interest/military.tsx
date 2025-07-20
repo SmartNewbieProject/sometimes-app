@@ -10,7 +10,7 @@ import { PalePurpleGradient, StepSlider, Text } from "@/src/shared/ui";
 import type { PreferenceOption } from "@/src/types/user";
 import Interest from "@features/interest";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = Interest;
@@ -49,6 +49,13 @@ export default function MilitarySelectionScreen() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   console.log(militaryPreference, "mili");
+
+  useEffect(() => {
+    if (optionsLoading) return;
+    if (!militaryPreference && preferences.options[currentIndex]) {
+      updateForm("militaryPreference", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, militaryPreference]);
   useFocusEffect(
     useCallback(
       () => useInterestStep.getState().updateStep(InterestSteps.MILITARY),

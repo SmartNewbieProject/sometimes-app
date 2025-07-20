@@ -1,33 +1,45 @@
-import { axiosClient, tryCatch } from "@/src/shared/libs";
-import { useStorage } from "@shared/hooks/use-storage";
-import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
-import type { TokenResponse } from "@/src/types/auth";
-import { passLogin } from "../apis";
-import { useModal } from "@hooks/use-modal";
-import { router } from "expo-router";
-import { eventBus } from '@/src/shared/libs/event-bus';
-import { useEffect } from 'react';
+import {axiosClient, tryCatch} from "@/src/shared/libs";
+import {useStorage} from "@shared/hooks/use-storage";
+import {useMyDetailsQuery, useProfileDetailsQuery} from "../queries";
+import type {TokenResponse} from "@/src/types/auth";
+import {useModal} from "@hooks/use-modal";
+import {router} from "expo-router";
+import {eventBus} from '@/src/shared/libs/event-bus';
+import {useEffect} from 'react';
+import {passLogin} from "@features/auth/apis/index";
 
 export function useAuth() {
-  const { value: accessToken, setValue: setToken } = useStorage<string | null>({
+  const {value: accessToken, setValue: setToken} = useStorage<string | null>({
     key: 'access-token',
     initialValue: null,
   });
 
-  const { value: refreshToken, setValue: setRefreshToken } = useStorage<string | null>({
+  const {value: refreshToken, setValue: setRefreshToken} = useStorage<string | null>({
     key: 'refresh-token',
     initialValue: null,
   });
 
-  const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
-  const { my, ...myQueryProps } = useMyDetailsQuery(!!accessToken);
-  const { showModal } = useModal();
+  const {value: approvalStatus, setValue: setApprovalStatus} = useStorage<{
+    status: 'pending' | 'rejected';
+    phoneNumber?: string;
+    rejectionReason?: string;
+  } | null>({
+    key: 'approval-status',
+    initialValue: null,
+  });
 
-  const login = async (email: string, password: string) => {
-    const { accessToken, refreshToken } = await loginApi(email, password);
+  const {data: profileDetails} = useProfileDetailsQuery(accessToken ?? null);
+  const {my, ...myQueryProps} = useMyDetailsQuery(!!accessToken);
+  const {showModal} = useModal();
 
+  const updateToken = async (accessToken: string, refreshToken: string) => {
     await setToken(accessToken);
     await setRefreshToken(refreshToken);
+  };
+
+  const login = async (email: string, password: string) => {
+    const {accessToken, refreshToken} = await loginApi(email, password);
+    await updateToken(accessToken, refreshToken);
   };
 
   const loginWithPass = async (impUid: string) => {
@@ -35,13 +47,11 @@ export function useAuth() {
 
     if (data.isNewUser) {
       // 신규 사용자인 경우 본인인증 정보 전달
-      return { isNewUser: true, certificationInfo: data.certificationInfo };
+      return {isNewUser: true, certificationInfo: data.certificationInfo};
     }
 
-    // 기존 사용자인 경우 로그인 처리
-    await setToken(data.accessToken);
-    await setRefreshToken(data.refreshToken);
-    return { isNewUser: false };
+    await updateToken(data.accessToken, data.refreshToken);
+    return {isNewUser: false};
   };
 
   const logoutOnly = async () => {
@@ -49,12 +59,14 @@ export function useAuth() {
       router.push('/auth/login');
       await setToken(null);
       await setRefreshToken(null);
+      await setApprovalStatus(null);
       return;
     }
 
     await logoutApi(refreshToken);
     await setToken(null);
     await setRefreshToken(null);
+    await setApprovalStatus(null);
   }
 
   const logout = () => {
@@ -76,10 +88,10 @@ export function useAuth() {
 
   useEffect(() => {
     const unsubscribeTokens = eventBus.on('auth:tokensUpdated',
-      async ({ accessToken, refreshToken }) => {
-        await setToken(accessToken);
-        await setRefreshToken(refreshToken);
-      });
+        async ({accessToken, refreshToken}) => {
+          await setToken(accessToken);
+          await setRefreshToken(refreshToken);
+        });
 
     const unsubscribeLogout = eventBus.on('auth:logout', async () => {
       await setToken(null);
@@ -92,14 +104,24 @@ export function useAuth() {
     };
   }, [setToken, setRefreshToken]);
 
+  const clearApprovalStatus = async () => {
+    await setApprovalStatus(null);
+  };
+
   return {
     login,
     loginWithPass,
     profileDetails,
     isAuthorized: !!accessToken,
+    approvalStatus,
+    clearApprovalStatus,
     logout,
     logoutOnly,
-    my,
+    my: {
+      ...my,
+      universityDetails: profileDetails?.universityDetails
+    },
+    updateToken,
     queryProps: {
       my: myQueryProps,
     },
@@ -107,9 +129,9 @@ export function useAuth() {
 }
 
 const loginApi = (email: string, password: string) =>
-  axiosClient.post('/auth/login', {
-    email, password,
-  }) as unknown as Promise<TokenResponse>;
+    axiosClient.post('/auth/login', {
+      email, password,
+    }) as unknown as Promise<TokenResponse>;
 
 const logoutApi = (refreshToken: string) => axiosClient.post('/auth/logout', {
   refreshToken,

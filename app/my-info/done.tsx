@@ -1,5 +1,6 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
 import { useInterestForm } from "@/src/features/interest/hooks";
+import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { useAuth } from "@features/auth";
@@ -21,7 +22,7 @@ export default function InterestDoneScreen() {
   }, [queryClient]);
 
   return (
-    <View style={styles.container}>
+    <Layout.Default>
       <View style={[styles.contentContainer]}>
         <PalePurpleGradient />
         <View style={styles.titleLogoWrapper}>
@@ -54,6 +55,7 @@ export default function InterestDoneScreen() {
 
         <View style={styles.buttonContainer}>
           <Button
+            flex="flex-1"
             variant="primary"
             size="md"
             onPress={() => {
@@ -66,19 +68,14 @@ export default function InterestDoneScreen() {
           </Button>
         </View>
       </View>
-    </View>
+    </Layout.Default>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-  },
   contentContainer: {
     flex: 1,
-
+    justifyContent: "center",
     alignItems: "center",
   },
   titleLogoWrapper: {
@@ -95,7 +92,7 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flex: 1,
-
+    alignItems: "center",
     width: "100%",
   },
   descriptionWrapper: {

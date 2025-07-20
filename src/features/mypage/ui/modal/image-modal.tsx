@@ -1,6 +1,14 @@
 import colors from "@/src/shared/constants/colors";
+import { cn } from "@/src/shared/libs";
 import React from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface PhotoPickerModalProps {
@@ -25,7 +33,7 @@ const PhotoPickerModal = ({
       onRequestClose={onClose}
     >
       <View style={[styles.overlay, { paddingBottom: insets.bottom }]}>
-        <View style={[styles.info, { bottom: insets.bottom + 160 }]}>
+        <View style={[styles.info, { bottom: insets.bottom + 180 }]}>
           <Text style={[styles.infoText]}>
             모든 사진은 안전하게 보관됩니다.
           </Text>

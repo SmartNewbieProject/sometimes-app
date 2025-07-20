@@ -6,13 +6,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 
-const { useSignupProgress } = Signup;
+const {useSignupProgress} = Signup;
 
 export default function LoginScreen() {
-  const { clear } = useSignupProgress();
+  const {clear} = useSignupProgress();
   const params = useLocalSearchParams();
   const router = useRouter();
-  const { loginWithPass } = useAuth();
+  const {loginWithPass} = useAuth();
 
   useEffect(() => {
     clear();
@@ -27,8 +27,8 @@ export default function LoginScreen() {
             router.replace({
               pathname: "/auth/signup/university",
               params: {
-                certificationInfo: JSON.stringify(result.certificationInfo),
-              },
+               certificationInfo: JSON.stringify(result.certificationInfo),
+             },
             });
           } else {
             router.replace("/home");
@@ -69,12 +69,12 @@ export default function LoginScreen() {
             <Signup.Logo />
           </View>
 
-          {/* 메인 콘텐츠 */}
-          <View className="flex-1 w-full max-w-sm">
-            <Signup.LoginForm />
+            {/* 메인 콘텐츠 */}
+            <View className="flex-1 w-full max-w-sm">
+              <Signup.LoginForm/>
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
   );
 }
