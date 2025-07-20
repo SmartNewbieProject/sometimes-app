@@ -17,13 +17,12 @@ import Event from "@features/event";
 import {Feedback} from "@features/feedback";
 import Home from "@features/home";
 import IdleMatchTimer from "@features/idle-match-timer";
-import {Text} from "@shared/ui";
-import {useQueryClient} from "@tanstack/react-query";
-import {Image} from "expo-image";
-import {router, useFocusEffect} from "expo-router";
-import {useCallback, useEffect} from "react";
-import {Platform, ScrollView, TouchableOpacity, View} from "react-native";
-
+import { Text } from "@shared/ui";
+import { useQueryClient } from "@tanstack/react-query";
+import { Image } from "expo-image";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect } from "react";
+import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
 
 const {ui, queries, hooks} = Home;
 const {

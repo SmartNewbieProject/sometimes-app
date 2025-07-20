@@ -68,7 +68,9 @@ export default function MilitarySelectionScreen() {
     updateForm("militaryPreference", preferences?.options[currentIndex]);
     await tryCatch(
       async () => {
-        const validation = Object.values(form).every((v) => v !== null);
+        const validation = Object.entries(form)
+          .filter(([key]) => key !== "goodMbti" && key !== "badMbti")
+          .every(([_, value]) => value !== null);
         if (!validation) throw new Error("비어있는 양식이 존재합니다.");
         await savePreferences({
           age: form.age as string,

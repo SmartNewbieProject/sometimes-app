@@ -8,8 +8,8 @@ type Body = {
 export type PreferenceSaveBody = {
 	preferences: Body[];
 	additional: {
-		goodMbti: string;
-		badMbti: string;
+		goodMbti: string | null;
+		badMbti: string | null;
 	};
 };
 

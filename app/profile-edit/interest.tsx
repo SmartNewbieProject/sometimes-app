@@ -88,7 +88,9 @@ function InterestSection() {
     setFormSubmitLoading(true);
     await tryCatch(
       async () => {
-        const validation = Object.values(form).every((v) => v !== null);
+        const validation = Object.entries(form)
+          .filter(([key]) => key !== "goodMbti" && key !== "badMbti")
+          .every(([_, value]) => value !== null);
         if (!validation) throw new Error("비어있는 양식이 존재합니다.");
         await savePreferences({
           age: form.age as string,
@@ -97,9 +99,10 @@ function InterestSection() {
           personality: form.personality as string,
           tattoo: form.tattoo?.id as string,
           militaryPreference: form.militaryPreference?.id ?? "",
-          goodMbti: form.goodMbti as string,
-          badMbti: form.badMbti as string,
+          goodMbti: form.goodMbti ?? null,
+          badMbti: form.badMbti ?? null,
         });
+
         await queryClient.invalidateQueries({
           queryKey: ["check-preference-fill"],
         });
@@ -113,6 +116,7 @@ function InterestSection() {
         setFormSubmitLoading(false);
       },
       ({ error }) => {
+        console.log("error", error);
         showErrorModal(error, "error");
         setFormSubmitLoading(false);
       }
