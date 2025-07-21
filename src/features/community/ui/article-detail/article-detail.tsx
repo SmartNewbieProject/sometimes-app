@@ -129,6 +129,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 
         queryClient.setQueryData(
           QUERY_KEYS.articles.detail(articleId),
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           (oldData: any) => {
             if (!oldData) return oldData;
             return {
@@ -141,11 +142,13 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 
         queryClient.setQueriesData(
           { queryKey: QUERY_KEYS.articles.lists() },
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           (oldData: any) => {
             if (!oldData) return oldData;
 
             return {
               ...oldData,
+              // biome-ignore lint/suspicious/noExplicitAny: <explanation>
               pages: oldData.pages.map((page: any) => ({
                 ...page,
                 items: page.items.map((article: Article) => {

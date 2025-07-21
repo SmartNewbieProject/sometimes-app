@@ -1,9 +1,9 @@
-import { ImageBackground } from "expo-image";
-import { ReactNode, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { useMatchingBackground } from "../hooks";
-import { LayoutChangeEvent } from "react-native";
 import { PurpleGradient } from "@/src/shared/ui";
+import { ImageBackground } from "expo-image";
+import { type ReactNode, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import type { LayoutChangeEvent } from "react-native";
+import { useMatchingBackground } from "../hooks";
 
 type ContainerProps = {
   children: ReactNode;
@@ -11,21 +11,11 @@ type ContainerProps = {
 };
 
 export const Container = ({ children, gradientMode }: ContainerProps) => {
-  const [width, setWidth] = useState(0);
   const { uri: backgroundUri } = useMatchingBackground();
-
-  const onLayout = (event: LayoutChangeEvent) => {
-    const { width: layoutWidth } = event.nativeEvent.layout;
-    setWidth(layoutWidth);
-  };
 
   if (gradientMode) {
     return (
-      <View
-        onLayout={onLayout}
-        style={[styles.imageBackground, { height: width }]}
-        className="w-full flex flex-col"
-      >
+      <View style={[styles.imageBackground, { height: 580 }]}>
         <PurpleGradient />
         {children}
       </View>
@@ -35,28 +25,26 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
   return (
     <ImageBackground
       source={{ uri: backgroundUri }}
-      onLayout={onLayout}
-      style={[styles.imageBackground, { height: width }]}
-      className="w-full flex flex-col"
+      style={[styles.imageBackground, { height: 580 }]}
     >
       {children}
     </ImageBackground>
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 1,
-    alignSelf: 'center',
-    position: 'relative',
-    overflow: 'hidden',
+    alignSelf: "center",
+    position: "relative",
+    overflow: "hidden",
     borderRadius: 20,
   },
   imageBackground: {
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
+    overflow: "hidden",
+    width: "100%",
+    height: "100%",
+    borderRadius: 20,
   },
 });
