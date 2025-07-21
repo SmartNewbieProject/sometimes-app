@@ -33,7 +33,7 @@ export default function InterestIntroScreen() {
       ),
       primaryButton: {
         text: "등록할게요!",
-        onClick: () => router.navigate("/interest/age"),
+        onClick: () => router.push("/interest/age"),
       },
       secondaryButton: {
         text: "다음에 할게요",
@@ -76,7 +76,7 @@ export default function InterestIntroScreen() {
         </View>
 
         <Layout.TwoButtons
-          onClickNext={() => router.navigate("/interest/age")}
+          onClickNext={() => router.push("/interest/age")}
           disabledNext={false}
           onClickPrevious={showPreviousModal}
           content={{

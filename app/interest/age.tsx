@@ -97,8 +97,10 @@ export default function AgeSelectionScreen() {
 
         <Layout.TwoButtons
           disabledNext={!age}
-          onClickNext={() => router.navigate("/interest/like-mbti")}
-          onClickPrevious={() => router.navigate("/interest")}
+          onClickNext={() => router.push("/interest/like-mbti")}
+          onClickPrevious={() => {
+            router.navigate("/interest");
+          }}
         />
       </View>
     </Layout.Default>

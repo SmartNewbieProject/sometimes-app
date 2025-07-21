@@ -31,7 +31,6 @@ function InterestMilitary() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  console.log("mili status", currentIndex);
   useEffect(() => {
     if (optionsLoading) return;
     if (!militaryPreference && preferences.options[currentIndex]) {

@@ -76,7 +76,7 @@ export default function InterestIntroScreen() {
         </View>
 
         <Layout.TwoButtons
-          onClickNext={() => router.navigate("/my-info/interest")}
+          onClickNext={() => router.push("/my-info/interest")}
           disabledNext={false}
           onClickPrevious={showPreviousModal}
           content={{
