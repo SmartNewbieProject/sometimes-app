@@ -19,6 +19,15 @@ export function useAuth() {
     initialValue: null,
   });
 
+  const {value: approvalStatus, setValue: setApprovalStatus} = useStorage<{
+    status: 'pending' | 'rejected';
+    phoneNumber?: string;
+    rejectionReason?: string;
+  } | null>({
+    key: 'approval-status',
+    initialValue: null,
+  });
+
   const {data: profileDetails} = useProfileDetailsQuery(accessToken ?? null);
   const {my, ...myQueryProps} = useMyDetailsQuery(!!accessToken);
   const {showModal} = useModal();
@@ -41,7 +50,6 @@ export function useAuth() {
       return {isNewUser: true, certificationInfo: data.certificationInfo};
     }
 
-    // 기존 사용자인 경우 로그인 처리
     await updateToken(data.accessToken, data.refreshToken);
     return {isNewUser: false};
   };
@@ -51,12 +59,14 @@ export function useAuth() {
       router.push('/auth/login');
       await setToken(null);
       await setRefreshToken(null);
+      await setApprovalStatus(null);
       return;
     }
 
     await logoutApi(refreshToken);
     await setToken(null);
     await setRefreshToken(null);
+    await setApprovalStatus(null);
   }
 
   const logout = () => {
@@ -94,11 +104,17 @@ export function useAuth() {
     };
   }, [setToken, setRefreshToken]);
 
+  const clearApprovalStatus = async () => {
+    await setApprovalStatus(null);
+  };
+
   return {
     login,
     loginWithPass,
     profileDetails,
     isAuthorized: !!accessToken,
+    approvalStatus,
+    clearApprovalStatus,
     logout,
     logoutOnly,
     my: {
