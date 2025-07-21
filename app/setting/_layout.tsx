@@ -31,6 +31,7 @@ export default function ProfileEditLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   editContainer: {
     flex: 1,

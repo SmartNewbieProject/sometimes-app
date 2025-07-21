@@ -1,8 +1,3 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -25,7 +20,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { request: requestAtt } = useAtt();
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
@@ -91,18 +85,14 @@ export default function RootLayout() {
                 Platform.OS === "web" && "max-w-[468px] w-full self-center"
               )}
             >
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-              >
-                <AnalyticsProvider>
-                  <RouteTracker>
-                    <>
-                      <Slot />
-                      <VersionUpdateChecker />
-                    </>
-                  </RouteTracker>
-                </AnalyticsProvider>
-              </ThemeProvider>
+              <AnalyticsProvider>
+                <RouteTracker>
+                  <>
+                    <Slot />
+                    <VersionUpdateChecker />
+                  </>
+                </RouteTracker>
+              </AnalyticsProvider>
             </View>
           </PortoneProvider>
         </ModalProvider>
