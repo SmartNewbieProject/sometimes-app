@@ -1,7 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { Text } from "@/src/shared/ui";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import Menu from "./menu";
 
 const AccountManagementMenu = () => {

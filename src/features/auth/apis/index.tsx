@@ -14,3 +14,9 @@ export const getMyDetails = (): Promise<MyDetails> =>
 
 export const passLogin = (impUid: string): Promise<PassLoginResponse> =>
     axiosClient.post('/auth/pass-login', {impUid});
+
+export const getUserStatus = (phoneNumber: string): Promise<{ status: string; rejectionReason?: string }> =>
+    axiosClient.get(`/auth/status?phoneNumber=${phoneNumber}`);
+
+export const reapplySignup = (data: { phoneNumber: string }): Promise<{ success: boolean; message: string }> =>
+    axiosClient.post('/auth/status/reapply', data);
