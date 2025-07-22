@@ -25,7 +25,7 @@ export const InteractionNavigation = ({
       <Button
         onPress={onRematch}
         variant="primary"
-        className="flex-1"
+        className="flex-1 items-center"
         prefix={
           <ImageResource
             resource={ImageResources.TICKET}
@@ -34,7 +34,7 @@ export const InteractionNavigation = ({
           />
         }
       >
-        재매칭권 사용하기
+        재매칭권 사용
       </Button>
       {hasPartner && (
         <InstagramContactButton

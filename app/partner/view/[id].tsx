@@ -28,7 +28,7 @@ import { HttpStatusCode } from "axios";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   Dimensions,
   Platform,
@@ -47,7 +47,11 @@ const { useMatchPartnerQuery } = queries;
 export default function PartnerDetailScreen() {
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading, error } = useMatchPartnerQuery(matchId);
+  const [isSlideScrolling, setSlideScrolling] = useState(false);
 
+  const onScrollStateChange = (bool: boolean) => {
+    setSlideScrolling(bool);
+  };
   console.log("partner", partner);
 
   const loading = (() => {
@@ -81,7 +85,10 @@ export default function PartnerDetailScreen() {
         </Header.LeftContent>
       </Header.Container>
 
-      <ScrollView className="flex-1 px-4 border-t border-t-[#E7E9EC] pt-[22px]">
+      <ScrollView
+        scrollEnabled={!isSlideScrolling}
+        className="flex-1 px-4 border-t border-t-[#E7E9EC] pt-[22px]"
+      >
         <View className="w-full flex justify-center items-center">
           <View style={styles.outerContainer}>
             <View style={{ width: 255, height: 255, overflow: "hidden" }}>
@@ -110,6 +117,7 @@ export default function PartnerDetailScreen() {
                 autoPlayInterval={6000}
                 className={"w-full absolute  "}
                 autoPlay
+                onScrollStateChange={onScrollStateChange}
               >
                 {partner.profileImages.map((img) => (
                   <View

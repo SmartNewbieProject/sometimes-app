@@ -1,6 +1,12 @@
 import { cn } from "@/src/shared/libs/cn";
 import { Text } from "@/src/shared/ui";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  SetStateAction,
+} from "react";
 import {
   Animated,
   type LayoutChangeEvent,
@@ -157,6 +163,7 @@ export function Slide({
 
     onPanResponderGrant: () => {
       setIsScrolling(true);
+
       onScrollStateChange?.(true);
 
       dragStartX.current = (translateX as any)._value;
@@ -183,14 +190,14 @@ export function Slide({
       let newIndex = activeIndex;
       let direction: "next" | "prev" | undefined;
 
-      if (gestureState.dx > threshold || velocity > 0.5) {
+      if (gestureState.dx > threshold || velocity > 0.3) {
         direction = "prev";
         if (loop) {
           newIndex = activeIndex === 0 ? totalSlides - 1 : activeIndex - 1;
         } else {
           newIndex = Math.max(0, activeIndex - 1);
         }
-      } else if (gestureState.dx < -threshold || velocity < -0.5) {
+      } else if (gestureState.dx < -threshold || velocity < -0.3) {
         direction = "next";
         if (loop) {
           newIndex = activeIndex === totalSlides - 1 ? 0 : activeIndex + 1;
