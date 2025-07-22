@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 600,
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 24,
     color: "#000",
   },

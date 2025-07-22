@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: "white",
-    fontWeight: "bold",
+    fontFamily: "Pretendard-Bold",
     fontSize: 16,
   },
   info: {},
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     color: "#EEE8FA",
     textAlign: "center",
     fontSize: 15,
-    fontWeight: 300,
+    fontFamily: "Pretendard-Light",
     lineHeight: 18,
   },
 });

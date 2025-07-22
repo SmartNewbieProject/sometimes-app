@@ -18,7 +18,7 @@ function ProfileEditHeader() {
             showModal({
               title: "수정 중인 내용이 있어요",
               children:
-                "지금 나가면 작성 중인 수정 내용이 모두 사라져요.\n정말 나가시겠어요?",
+                "지금 나가면 작성 중인 \n수정 내용이 모두 사라져요.\n정말 나가시겠어요?",
               primaryButton: {
                 text: "계속 수정하기",
                 onClick: () => {
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#000",
     fontSize: 20,
-    fontWeight: 800,
+    fontFamily: "Pretendard-ExtraBold",
     lineHeight: 22,
   },
   backArrow: {

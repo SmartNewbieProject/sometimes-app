@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    fontWeight: 600,
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 18,
   },
 });
