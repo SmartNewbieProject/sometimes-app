@@ -100,7 +100,7 @@ export default function InterestSelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.navigate("/my-info/mbti")}
+        onClickNext={() => router.push("/my-info/mbti")}
         onClickPrevious={() => router.navigate("/my-info")}
       />
     </Layout.Default>

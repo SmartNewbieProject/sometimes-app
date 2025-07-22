@@ -96,7 +96,7 @@ export default function PersonalitySelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.navigate("/interest/drinking")}
+        onClickNext={() => router.push("/interest/drinking")}
         onClickPrevious={() => router.navigate("/interest/bad-mbti")}
       />
     </Layout.Default>

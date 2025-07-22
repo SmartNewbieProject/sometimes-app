@@ -4,12 +4,13 @@ import { usePreferenceOptionsQuery } from "@/src/features/interest/queries";
 import type { AgeOptionData } from "@/src/features/interest/types";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
+import { environmentStrategy, platform } from "@/src/shared/libs";
 import { PalePurpleGradient } from "@/src/shared/ui";
 import Interest from "@features/interest";
 import { Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Platform, StyleSheet, View } from "react-native";
 
 const { ui, hooks, services } = Interest;
 const { AgeSelector } = ui;
@@ -87,7 +88,7 @@ export default function AgeSelectionScreen() {
           </Text>
         </View>
         <View style={styles.bar} />
-        <View style={styles.ageContainer}>
+        <View style={[styles.ageContainer]}>
           <AgeSelector
             options={options}
             value={age}
@@ -97,8 +98,10 @@ export default function AgeSelectionScreen() {
 
         <Layout.TwoButtons
           disabledNext={!age}
-          onClickNext={() => router.navigate("/interest/like-mbti")}
-          onClickPrevious={() => router.navigate("/interest")}
+          onClickNext={() => router.push("/interest/like-mbti")}
+          onClickPrevious={() => {
+            router.navigate("/interest");
+          }}
         />
       </View>
     </Layout.Default>

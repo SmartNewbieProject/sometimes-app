@@ -63,7 +63,7 @@ export default function DatingStyleSelectionScreen() {
   );
 
   const handleNextButton = () => {
-    router.navigate("/my-info/drinking");
+    router.push("/my-info/drinking");
   };
 
   return (
@@ -72,7 +72,7 @@ export default function DatingStyleSelectionScreen() {
       <View style={styles.contentContainer}>
         <Image
           source={{ uri: ImageResources.DATING_STYLE }}
-          style={{ width: 81, height: 81, marginLeft: 28 }}
+          style={{ width: 81, height: 100, marginLeft: 28 }}
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">

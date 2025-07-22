@@ -38,7 +38,7 @@ function ProfileDrinking() {
     if (!drinking && preferences.options[currentIndex]) {
       updateForm("drinking", preferences.options[currentIndex]);
     }
-  }, [optionsLoading, preferences.options, currentIndex, drinking]);
+  }, [optionsLoading, preferences.options, currentIndex, drinking, updateForm]);
 
   const onChangeDrinking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
