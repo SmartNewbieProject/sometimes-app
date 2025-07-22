@@ -1,10 +1,12 @@
 import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
+import { Slot, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { Platform, View } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
+import * as Notifications from 'expo-notifications';
+import { handleNotificationTap, type NotificationData } from "@/src/shared/libs/notifications";
 
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import ProfileDrinking from "@/src/features/profile-edit/ui/profile/profile-drinking";
@@ -20,6 +22,9 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { request: requestAtt } = useAtt();
+  const notificationListener = useRef<{ remove(): void } | null>(null);
+  const responseListener = useRef<{ remove(): void } | null>(null);
+
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
@@ -43,6 +48,50 @@ export default function RootLayout() {
   useEffect(() => {
     requestAtt();
   }, []);
+
+  const isValidNotificationData = useCallback((data: unknown): data is NotificationData => {
+    if (!data || typeof data !== 'object') return false;
+
+    const obj = data as Record<string, unknown>;
+    return (
+      typeof obj.type === 'string' &&
+      typeof obj.title === 'string' &&
+      typeof obj.body === 'string' &&
+      ['comment', 'like', 'general'].includes(obj.type)
+    );
+  }, []);
+
+  useEffect(() => {
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('알림 수신:', notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      const rawData = response.notification.request.content.data;
+      console.log('알림 탭:', rawData);
+
+      try {
+        if (isValidNotificationData(rawData)) {
+          handleNotificationTap(rawData as NotificationData, router);
+        } else {
+          console.warn('유효하지 않은 알림 데이터:', rawData);
+          router.push('/home');
+        }
+      } catch (error) {
+        console.error('알림 처리 중 오류:', error);
+        router.push('/home');
+      }
+    });
+
+    return () => {
+      if (notificationListener.current) {
+        notificationListener.current.remove();
+      }
+      if (responseListener.current) {
+        responseListener.current.remove();
+      }
+    };
+  }, [isValidNotificationData]);
 
   useEffect(() => {
     // Hotjar는 웹에서만 초기화 (Android 빌드 문제 방지)
