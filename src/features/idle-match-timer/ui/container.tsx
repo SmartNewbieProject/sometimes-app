@@ -29,7 +29,14 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
         onLayout={onLayout}
         style={[
           styles.imageBackground,
-          { height: match?.type === "not-found" ? 600 : width },
+          {
+            height:
+              match?.type === "not-found"
+                ? 600
+                : match?.type === "rematching"
+                ? 380
+                : width,
+          },
         ]}
       >
         <PurpleGradient />
