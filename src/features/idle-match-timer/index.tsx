@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Loading from "../loading";
 import { useMatchLoading } from "./hooks";
@@ -14,7 +15,7 @@ export default function IdleMatchTimer() {
   const { match, isLoading: matchLoading, refetch } = useLatestMatching();
   const { my } = useAuth();
   const { loading: isRematching } = useMatchLoading();
-
+  const [showRematchLoading, setShowRematchingLoading] = useState(false);
   const isOpen = match?.type
     ? ["open", "rematching"].includes(match.type)
     : false;
@@ -24,7 +25,21 @@ export default function IdleMatchTimer() {
     return false;
   })();
 
-  if (isRematching) {
+  useEffect(() => {
+    if (isRematching && match?.type === "rematching") {
+      setShowRematchingLoading(true);
+    }
+  }, [isRematching, match]);
+
+  useEffect(() => {
+    if (showRematchLoading) {
+      setTimeout(() => {
+        setShowRematchingLoading(false);
+      }, 4000);
+    }
+  }, [showRematchLoading]);
+
+  if (showRematchLoading) {
     return (
       <View style={styles.container}>
         <Container gradientMode>
@@ -53,11 +68,13 @@ export default function IdleMatchTimer() {
               match?.type as string
             )}
           >
-            <NotFound />
-            {/* {match?.type === "not-found" && <NotFound />} */}
-            {/* {isOpen && <Partner match={match!}/>}
-              {match?.type === 'waiting' && <Waiting match={match} onTimeEnd={refetch}/>} */}
-            {/* <Waiting match={match!} onTimeEnd={onTimeEnd} /> */}
+            {match?.type === "not-found" && <NotFound />}
+            {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
+            {isOpen && <Partner match={match!} />}
+            {match?.type === "waiting" && (
+              <Waiting match={match} onTimeEnd={refetch} />
+            )}
+            {/* <Waiting match={match!} onTimeEnd={onTimeEnd} />  */}
           </Container>
         </Loading.Lottie>
       </View>

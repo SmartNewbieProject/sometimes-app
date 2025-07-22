@@ -4,6 +4,7 @@ import { type ReactNode, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import type { LayoutChangeEvent } from "react-native";
 import { useMatchingBackground } from "../hooks";
+import { useLatestMatching } from "../queries";
 
 type ContainerProps = {
   children: ReactNode;
@@ -11,11 +12,26 @@ type ContainerProps = {
 };
 
 export const Container = ({ children, gradientMode }: ContainerProps) => {
+  const { match, isLoading: matchLoading, refetch } = useLatestMatching();
+
+  const [width, setWidth] = useState(0);
   const { uri: backgroundUri } = useMatchingBackground();
+  const onLayout = (event: LayoutChangeEvent) => {
+    const { width: layoutWidth } = event.nativeEvent.layout;
+
+    setWidth(layoutWidth);
+  };
+  console.log("width", width, match);
 
   if (gradientMode) {
     return (
-      <View style={[styles.imageBackground, { height: 600 }]}>
+      <View
+        onLayout={onLayout}
+        style={[
+          styles.imageBackground,
+          { height: match?.type === "not-found" ? 600 : width },
+        ]}
+      >
         <PurpleGradient />
         {children}
       </View>
@@ -25,7 +41,11 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
   return (
     <ImageBackground
       source={{ uri: backgroundUri }}
-      style={[styles.imageBackground, { height: 600 }]}
+      onLayout={onLayout}
+      style={[
+        styles.imageBackground,
+        { height: match?.type === "not-found" ? 600 : width },
+      ]}
     >
       {children}
     </ImageBackground>

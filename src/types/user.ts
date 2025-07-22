@@ -29,9 +29,11 @@ export interface UserProfile {
 	name: string;
 	age: number;
 	mbti: string;
+	characteristics: PreferenceTypeGroup[];
 	additionalPreferences: {
 		[key: string]: string;
 	};
+
 	gender: string;
 	profileImages: ProfileImage[];
 	instagramId: string;

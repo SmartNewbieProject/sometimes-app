@@ -24,17 +24,6 @@ function useRematch() {
   const { mutateAsync: rematch } = useRematchingMutation();
   const { onLoading, finishLoading } = useMatchLoading();
 
-  const showRematchSuccessModal = () => {
-    showModal({
-      title: "연인 찾기 완료",
-      children: "연인을 찾았어요! 바로 확인해보세요.",
-      primaryButton: {
-        text: "바로 확인하기",
-        onClick: finishLoading,
-      },
-    });
-  };
-
   const showTicketPurchaseModal = () => {
     showModal({
       title: "연인 매칭권이 없어요",
@@ -63,7 +52,7 @@ function useRematch() {
       async () => {
         onLoading();
         await rematch();
-        showRematchSuccessModal();
+        finishLoading();
       },
       (err) => {
         if (err.status === HttpStatusCode.Forbidden) {
