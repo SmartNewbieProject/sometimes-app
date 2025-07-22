@@ -9,9 +9,14 @@ import { useLatestMatching } from "../queries";
 type ContainerProps = {
   children: ReactNode;
   gradientMode: boolean;
+  isShowRematching?: boolean;
 };
 
-export const Container = ({ children, gradientMode }: ContainerProps) => {
+export const Container = ({
+  children,
+  gradientMode,
+  isShowRematching = false,
+}: ContainerProps) => {
   const { match, isLoading: matchLoading, refetch } = useLatestMatching();
 
   const [width, setWidth] = useState(0);
@@ -21,7 +26,7 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
 
     setWidth(layoutWidth);
   };
-  console.log("width", width, match);
+  console.log("width", width, match?.type);
 
   if (gradientMode) {
     return (
@@ -33,7 +38,7 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
             height:
               match?.type === "not-found"
                 ? 600
-                : match?.type === "rematching"
+                : isShowRematching
                 ? 380
                 : width,
           },
@@ -51,7 +56,10 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
       onLayout={onLayout}
       style={[
         styles.imageBackground,
-        { height: match?.type === "not-found" ? 600 : width },
+        {
+          height:
+            match?.type === "not-found" ? 600 : isShowRematching ? 380 : width,
+        },
       ]}
     >
       {children}
