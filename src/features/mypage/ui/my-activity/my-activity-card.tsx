@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: 400,
+    fontFamily: "Pretendard-Regular",
     lineHeight: 21,
     letterSpacing: -0.045,
   },
