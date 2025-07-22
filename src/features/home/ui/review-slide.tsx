@@ -1,7 +1,7 @@
-import { View, Image, Platform } from "react-native";
+import { UniversityName, getUnivLogo } from "@/src/shared/libs";
 import { Slide } from "@/src/widgets";
-import { getUnivLogo, UniversityName } from "@/src/shared/libs";
-import { Text } from '@shared/ui';
+import { Text } from "@shared/ui";
+import { Image, Platform, View } from "react-native";
 
 type Review = {
   name: string;
@@ -11,15 +11,20 @@ type Review = {
   date: string;
 };
 
-export const ReviewSlide = () => {
+interface ReviewSlideProps {
+  onScrollStateChange: (bool: boolean) => void;
+}
+
+export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
   return (
     <Slide
       autoPlayInterval={6000}
       indicatorType="dot"
-      className={`w-full ${Platform.OS === 'android' ? 'h-40' : ''}`}
+      className={`w-full ${Platform.OS === "android" ? "h-40" : ""}`}
       autoPlay
+      onScrollStateChange={onScrollStateChange}
     >
-      {reviews.map(review => (
+      {reviews.map((review) => (
         <View
           key={review.name}
           className="flex flex-col gap-y-2 w-full bg-moreLightPurple p-2.5 rounded-xl"
@@ -59,14 +64,16 @@ const reviews: Review[] = [
     name: "익명",
     universityName: UniversityName.한밭대학교,
     universityImageUrl: getUnivLogo(UniversityName.한밭대학교),
-    content: "인스타그램을 알수없다는 점에서 좋다 연락을 편하게 할 수 있어서 좋은 것 같아요",
+    content:
+      "인스타그램을 알수없다는 점에서 좋다 연락을 편하게 할 수 있어서 좋은 것 같아요",
     date: "25.03.10",
   },
   {
     name: "익명",
     universityName: UniversityName.한밭대학교,
     universityImageUrl: getUnivLogo(UniversityName.한밭대학교),
-    content: "소개팅… 해주시는 것만으로도 큰절 올리겠습니다. 사람 만나기가 쉽지 않더라구요ㅠㅠ",
+    content:
+      "소개팅… 해주시는 것만으로도 큰절 올리겠습니다. 사람 만나기가 쉽지 않더라구요ㅠㅠ",
     date: "25.03.11",
   },
   {
@@ -89,5 +96,5 @@ const reviews: Review[] = [
     universityImageUrl: getUnivLogo(UniversityName.한밭대학교),
     content: "잘생기고 성격도 좋아요",
     date: "25.03.10",
-  }
+  },
 ];
