@@ -375,7 +375,13 @@ export function Slide({
             }}
           >
             {slides.map((child, index) => (
-              <View key={`slide-${index}`} style={{ width: containerWidth }}>
+              <View
+                key={`slide-${
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                  index
+                }`}
+                style={{ width: containerWidth, overflow: "hidden" }}
+              >
                 {child}
               </View>
             ))}
@@ -384,7 +390,7 @@ export function Slide({
       )}
 
       {showIndicator && indicatorPosition === "bottom" && (
-        <View className="pt-2 w-full items-center">{renderIndicator()}</View>
+        <View className="pt-3 w-full items-center">{renderIndicator()}</View>
       )}
     </View>
   );

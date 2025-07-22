@@ -1,34 +1,51 @@
-import {View, StyleSheet} from 'react-native';
-import {useLatestMatching} from './queries';
-import Loading from '../loading';
-import {Waiting} from './ui';
-import {Partner} from './ui/partner';
-import {NotFound} from './ui/not-found';
-import {Container} from './ui/container';
-import {InteractionNavigation} from './ui/nav';
-import {RematchLoading} from './ui/rematching';
-import {useMatchLoading} from './hooks';
-import {useAuth} from '@/src/features/auth/hooks/use-auth';
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import Loading from "../loading";
+import { useMatchLoading } from "./hooks";
+import { useLatestMatching } from "./queries";
+import { Waiting } from "./ui";
+import { Container } from "./ui/container";
+import { InteractionNavigation } from "./ui/nav";
+import { NotFound } from "./ui/not-found";
+import { Partner } from "./ui/partner";
+import { RematchLoading } from "./ui/rematching";
 
 export default function IdleMatchTimer() {
-  const {match, isLoading: matchLoading, refetch} = useLatestMatching();
-  const {my} = useAuth();
-  const {loading: isRematching} = useMatchLoading();
-
-  const isOpen = match?.type ? ['open', 'rematching'].includes(match.type) : false;
+  const { match, isLoading: matchLoading, refetch } = useLatestMatching();
+  const { my } = useAuth();
+  const { loading: isRematching } = useMatchLoading();
+  const [showRematchLoading, setShowRematchingLoading] = useState(false);
+  const isOpen = match?.type
+    ? ["open", "rematching"].includes(match.type)
+    : false;
 
   const loading = (() => {
     if (!my || !match || matchLoading) return true;
     return false;
   })();
 
-  if (isRematching) {
+  useEffect(() => {
+    if (isRematching && match?.type === "rematching") {
+      setShowRematchingLoading(true);
+    }
+  }, [isRematching, match]);
+
+  useEffect(() => {
+    if (showRematchLoading) {
+      setTimeout(() => {
+        setShowRematchingLoading(false);
+      }, 4000);
+    }
+  }, [showRematchLoading]);
+
+  if (showRematchLoading) {
     return (
-        <View style={styles.container}>
-          <Container gradientMode>
-            <RematchLoading/>
-          </Container>
-        </View>
+      <View style={styles.container}>
+        <Container gradientMode>
+          <RematchLoading />
+        </Container>
+      </View>
     );
   }
 
@@ -43,36 +60,38 @@ export default function IdleMatchTimer() {
   // );
 
   return (
-      <View>
-        <View style={styles.container}>
-          <Loading.Lottie
-              title="불러오고 있어요"
-              loading={loading}
+    <View>
+      <View style={styles.container}>
+        <Loading.Lottie title="불러오고 있어요" loading={loading}>
+          <Container
+            gradientMode={["not-found", "waiting"].includes(
+              match?.type as string
+            )}
           >
-            <Container
-                gradientMode={['not-found', 'waiting'].includes(match?.type as string)}
-            >
-              {match?.type === 'not-found' && <NotFound/>}
-              {isOpen && <Partner match={match!}/>}
-              {match?.type === 'waiting' && <Waiting match={match} onTimeEnd={refetch}/>}
-              {/* <Waiting match={match!} onTimeEnd={onTimeEnd} /> */}
-            </Container>
-          </Loading.Lottie>
-        </View>
-        <InteractionNavigation match={match}/>
+            {match?.type === "not-found" && <NotFound />}
+            {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
+            {isOpen && <Partner match={match!} />}
+            {match?.type === "waiting" && (
+              <Waiting match={match} onTimeEnd={refetch} />
+            )}
+            {/* <Waiting match={match!} onTimeEnd={onTimeEnd} />  */}
+          </Container>
+        </Loading.Lottie>
       </View>
+      <InteractionNavigation match={match} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    aspectRatio: 1,
-    alignSelf: 'center',
-    position: 'relative',
-    overflow: 'hidden',
+    width: "100%",
+
+    alignSelf: "center",
+
+    flex: 1,
     borderRadius: 20,
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
   },
 });
