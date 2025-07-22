@@ -31,6 +31,7 @@ export default function InterestLayout() {
             name="index"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -41,6 +42,7 @@ export default function InterestLayout() {
             name="mbti"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -50,6 +52,7 @@ export default function InterestLayout() {
             name="personality"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -59,6 +62,7 @@ export default function InterestLayout() {
             name="drinking"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -68,6 +72,7 @@ export default function InterestLayout() {
             name="interest"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -77,6 +82,7 @@ export default function InterestLayout() {
             name="dating-style"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -86,6 +92,7 @@ export default function InterestLayout() {
             name="military"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -95,6 +102,7 @@ export default function InterestLayout() {
             name="smoking"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -104,6 +112,7 @@ export default function InterestLayout() {
             name="tattoo"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },
@@ -113,6 +122,7 @@ export default function InterestLayout() {
             name="done"
             options={{
               headerShown: false,
+              animation: "none",
               contentStyle: {
                 backgroundColor: "transparent",
               },

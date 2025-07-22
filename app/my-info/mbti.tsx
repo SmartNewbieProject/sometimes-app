@@ -25,7 +25,7 @@ function MbtiSectionScreen() {
 
   const handleNextButton = () => {
     updateMbti(mbti as string);
-    router.navigate("/my-info/personality");
+    router.push("/my-info/personality");
   };
 
   return (

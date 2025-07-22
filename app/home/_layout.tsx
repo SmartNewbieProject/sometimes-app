@@ -10,7 +10,7 @@ export default function HomeLayout() {
   const { my } = useAuth();
   const [statusChecked, setStatusChecked] = useState(false);
   // TODO: 부산 유저 임시 체크라 나중에 제거해야함
-  const shouldCheckBusan = !!my?.phoneNumber;
+  const shouldCheckBusan = !!my;
   const { data: isBusan = false, isLoading: isBusanLoading } = useCheckBusanQuery(shouldCheckBusan);
 
   useEffect(() => {

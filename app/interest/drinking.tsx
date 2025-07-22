@@ -100,7 +100,7 @@ export default function DrinkingSelectionScreen() {
     if (!drinking) {
       updateForm("drinking", preferences.options[currentIndex]);
     }
-    router.navigate("/interest/smoking");
+    router.push("/interest/smoking");
   };
 
   useFocusEffect(

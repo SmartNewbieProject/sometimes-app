@@ -76,7 +76,7 @@ export default function SmokingSelectionScreen() {
     if (!smoking) {
       updateForm("smoking", preferences.options[currentIndex]);
     }
-    router.navigate("/my-info/tattoo");
+    router.push("/my-info/tattoo");
   };
   useFocusEffect(
     useCallback(() => updateStep(MyInfoSteps.SMOKING), [updateStep])

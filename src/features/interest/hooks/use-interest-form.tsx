@@ -11,7 +11,7 @@ type StoreStates = {
   // interestIds: string[];
   // datingStyleIds: string[];
   militaryPreference?: PreferenceOption;
-
+  init: boolean;
   smoking?: PreferenceOption;
   tattoo?: PreferenceOption;
 };
@@ -21,18 +21,21 @@ type StoreProps = {
     propertyName: T,
     data: StoreStates[T]
   ) => void;
+  init: boolean;
   clear: () => void;
 } & StoreStates;
 
 export const useInterestForm = create<StoreProps>((set) => ({
   goodMbti: null,
   badMbti: null,
+  init: false,
   updateForm: (propertyName, data) => set({ [propertyName]: data }),
   clear: () =>
     set({
       age: undefined,
       drinking: undefined,
       tattoo: undefined,
+      init: false,
       smoking: undefined,
       goodMbti: null,
       personality: undefined,

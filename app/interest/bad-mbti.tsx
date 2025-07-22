@@ -57,7 +57,7 @@ function BadMbti() {
           content={{
             next: nextMessage,
           }}
-          onClickNext={() => router.navigate("/interest/personality")}
+          onClickNext={() => router.push("/interest/personality")}
           onClickPrevious={() => router.navigate("/interest/like-mbti")}
         />
       </View>

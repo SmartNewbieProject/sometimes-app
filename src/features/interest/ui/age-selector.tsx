@@ -59,7 +59,7 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
         style={styles.cardInner}
         className={cn(
           "flex-1 font-extralight",
-          Platform.OS === "web" && "max-w-[468px] w-full self-center"
+          Platform.OS === "web" && "max-w-[468px]  w-full self-center"
         )}
       >
         <Image source={option.image} style={styles.image} resizeMode="cover" />
@@ -83,7 +83,7 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
 }
 
 const screenWidth = Dimensions.get("window").width;
-const cardSize = (Platform.OS === "web" ? 468 : screenWidth) / 2 - 54; // 2열 그리드
+const cardSize = (Platform.OS === "web" ? 440 : screenWidth) / 2 - 54; // 2열 그리드
 
 const styles = StyleSheet.create({
   list: {

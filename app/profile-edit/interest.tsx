@@ -44,6 +44,30 @@ function InterestSection() {
     if (profileDetails?.preferences) {
       const preferences = profileDetails.preferences;
       const additionalPreferences = profileDetails.additionalPreferences;
+      const drinking = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.DRINKING
+      )?.selectedOptions[0];
+      const militaryPreference = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
+      )?.selectedOptions[0];
+      const smoking = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.SMOKING
+      )?.selectedOptions[0];
+      const tattoo = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.TATTOO
+      )?.selectedOptions[0];
+      if (drinking) {
+        updateForm("drinking", drinking);
+      }
+      if (militaryPreference && profileDetails.gender === "FEMALE") {
+        updateForm("militaryPreference", militaryPreference);
+      }
+      if (smoking) {
+        updateForm("smoking", smoking);
+      }
+      if (tattoo) {
+        updateForm("tattoo", tattoo);
+      }
       updateForm(
         "drinking",
         preferences?.find((item) => item.typeName === PreferenceKeys.DRINKING)
@@ -57,29 +81,11 @@ function InterestSection() {
       updateForm("goodMbti", additionalPreferences?.goodMbti);
       updateForm("badMbti", additionalPreferences?.badMbti);
 
-      if (profileDetails.gender === "MALE") {
-        updateForm(
-          "militaryPreference",
-          preferences?.find(
-            (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
-          )?.selectedOptions[0]
-        );
-      }
       updateForm(
         "personality",
         preferences?.find(
           (item) => item.typeName === PreferenceKeys.PERSONALITY
         )?.selectedOptions[0].id
-      );
-      updateForm(
-        "smoking",
-        preferences?.find((item) => item.typeName === PreferenceKeys.SMOKING)
-          ?.selectedOptions[0]
-      );
-      updateForm(
-        "tattoo",
-        preferences?.find((item) => item.typeName === PreferenceKeys.TATTOO)
-          ?.selectedOptions[0]
       );
     }
   }, [JSON.stringify(profileDetails), updateForm]);
