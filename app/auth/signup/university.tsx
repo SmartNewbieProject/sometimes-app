@@ -124,10 +124,12 @@ export default function UniversityPage() {
             default: () => ""
           })
         )}>
-          <Button variant="secondary" onPress={() => {
-            trackSignupEvent('back_button_click', 'to_profile_image');
-            router.push('/auth/signup/profile-image');
-          }} className="flex-[0.3]">
+          <Button
+            variant="secondary"
+            onPress={() => {}}
+            className="flex-[0.3]"
+            disabled={true}
+          >
             뒤로
           </Button>
           <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
