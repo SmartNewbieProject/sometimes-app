@@ -59,7 +59,7 @@ export type ButtonProps = VariantProps<typeof buttonStyles> & {
   onPress?: () => void;
   prefix?: ReactNode;
   className?: string;
-  textColor?: "white" | "purple" | "black";
+  textColor?: "white" | "purple" | "black" | "gray" | "dark";
   styles?: ViewStyle;
 };
 

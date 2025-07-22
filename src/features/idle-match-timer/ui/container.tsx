@@ -15,7 +15,7 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
 
   if (gradientMode) {
     return (
-      <View style={[styles.imageBackground, { height: 580 }]}>
+      <View style={[styles.imageBackground, { height: 600 }]}>
         <PurpleGradient />
         {children}
       </View>
@@ -25,7 +25,7 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
   return (
     <ImageBackground
       source={{ uri: backgroundUri }}
-      style={[styles.imageBackground, { height: 580 }]}
+      style={[styles.imageBackground, { height: 600 }]}
     >
       {children}
     </ImageBackground>

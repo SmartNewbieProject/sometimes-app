@@ -7,12 +7,21 @@ interface NotFoundCardProps {
   description: string;
   button: React.ReactNode;
   icon: React.ReactNode;
+  iconPadding?: number;
 }
 
-function NotFoundCard({ title, description, button, icon }: NotFoundCardProps) {
+function NotFoundCard({
+  title,
+  description,
+  button,
+  icon,
+  iconPadding = 7,
+}: NotFoundCardProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.iconContainer}>{icon}</View>
+      <View style={[styles.iconContainer, { padding: iconPadding }]}>
+        {icon}
+      </View>
 
       <View style={styles.textContainer}>
         <Text size="13" weight={"semibold"} textColor={"black"}>
@@ -42,7 +51,6 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   iconContainer: {
-    padding: 7,
     borderRadius: "50%",
     backgroundColor: "#fff",
   },
