@@ -16,6 +16,7 @@ export type MatchingDetail = {
 export type MatchingHistoryDetails = {
   matchId: string;
   blinded: boolean;
+  partnerId: string;
   imageUrl: string;
   age: number;
   mbti: string;
