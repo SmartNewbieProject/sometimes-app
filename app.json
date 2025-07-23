@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "1.4.6",
+    "version": "1.4.7",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -186,3 +186,4 @@
       "enableRemoteLogging": true
     }
   }
+}
