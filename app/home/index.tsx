@@ -78,7 +78,6 @@ const HomeScreen = () => {
       },
     });
   };
-
   useEffect(() => {
     trackEventAction("home_view");
   }, []);
