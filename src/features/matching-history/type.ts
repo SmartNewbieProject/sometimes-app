@@ -38,4 +38,5 @@ export type MatchHistoryDetailsResponse = {
  */
 export type PreviewMatchingHistory = {
   imageUrls: string[];
+  countOfPartner: number;
 }
