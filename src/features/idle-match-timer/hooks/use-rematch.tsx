@@ -22,7 +22,7 @@ const useRematchingMutation = () =>
 function useRematch() {
   const { showErrorModal, showModal } = useModal();
   const { mutateAsync: rematch } = useRematchingMutation();
-  const { onLoading, finishLoading } = useMatchLoading();
+  const { onLoading, finishLoading, finishRematching } = useMatchLoading();
 
   const showTicketPurchaseModal = () => {
     showModal({
@@ -37,12 +37,16 @@ function useRematch() {
         text: "살펴보러가기",
         onClick: () => {
           finishLoading();
+          finishRematching();
           router.navigate("/purchase/tickets/rematch");
         },
       },
       secondaryButton: {
         text: "다음에 볼게요",
-        onClick: finishLoading,
+        onClick: () => {
+          finishLoading();
+          finishRematching();
+        },
       },
     });
   };
@@ -51,15 +55,17 @@ function useRematch() {
     await tryCatch(
       async () => {
         onLoading();
+
         await rematch();
         finishLoading();
       },
       (err) => {
+        finishLoading();
+        finishRematching();
         if (err.status === HttpStatusCode.Forbidden) {
           showTicketPurchaseModal();
           return;
         }
-        finishLoading();
         showModal({
           title: "아직 추천드릴 상대가 없어요",
           children: (
@@ -70,6 +76,10 @@ function useRematch() {
               </Text>
             </View>
           ),
+          primaryButton: {
+            text: "확인",
+            onClick: () => {},
+          },
         });
       }
     );
@@ -90,7 +100,10 @@ function useRematch() {
       },
       secondaryButton: {
         text: "나중에",
-        onClick: finishLoading,
+        onClick: () => {
+          finishLoading();
+          finishRematching();
+        },
       },
     });
   };
@@ -98,10 +111,11 @@ function useRematch() {
   const onRematch = async () => {
     await tryCatch(
       async () => {
-        showRematchConfirmModal();
+        performRematch();
       },
       (err) => {
         finishLoading();
+        finishRematching();
         if (err.status === HttpStatusCode.Forbidden) {
           showErrorModal("재매칭권이 없습니다.", "announcement");
           return;

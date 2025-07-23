@@ -3,22 +3,17 @@ import { ImageBackground } from "expo-image";
 import { type ReactNode, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import type { LayoutChangeEvent } from "react-native";
-import { useMatchingBackground } from "../hooks";
+import { useMatchLoading, useMatchingBackground } from "../hooks";
 import { useLatestMatching } from "../queries";
 
 type ContainerProps = {
   children: ReactNode;
   gradientMode: boolean;
-  isShowRematching?: boolean;
 };
 
-export const Container = ({
-  children,
-  gradientMode,
-  isShowRematching = false,
-}: ContainerProps) => {
+export const Container = ({ children, gradientMode }: ContainerProps) => {
   const { match, isLoading: matchLoading, refetch } = useLatestMatching();
-
+  const { rematchingLoading } = useMatchLoading();
   const [width, setWidth] = useState(0);
   const { uri: backgroundUri } = useMatchingBackground();
   const onLayout = (event: LayoutChangeEvent) => {
@@ -26,7 +21,7 @@ export const Container = ({
 
     setWidth(layoutWidth);
   };
-  console.log("width", width, match?.type);
+  console.log("width", width, match?.type, rematchingLoading);
 
   if (gradientMode) {
     return (
@@ -38,8 +33,8 @@ export const Container = ({
             height:
               match?.type === "not-found"
                 ? 600
-                : isShowRematching
-                ? 380
+                : rematchingLoading
+                ? 400
                 : width,
           },
         ]}
@@ -58,7 +53,7 @@ export const Container = ({
         styles.imageBackground,
         {
           height:
-            match?.type === "not-found" ? 600 : isShowRematching ? 380 : width,
+            match?.type === "not-found" ? 600 : rematchingLoading ? 400 : width,
         },
       ]}
     >
