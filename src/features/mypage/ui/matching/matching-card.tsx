@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     color: "#4C4854",
     fontSize: 16,
 
-    fontWeight: 500,
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 18,
   },
 });

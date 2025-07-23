@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   title: {
     color: "#000",
     fontSize: 18,
-    fontWeight: 500,
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 21.6,
   },
   bar: {

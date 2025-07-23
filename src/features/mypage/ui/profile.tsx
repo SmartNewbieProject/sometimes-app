@@ -124,19 +124,20 @@ export const Profile = () => {
                 <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
                   {profileData.university}
                 </Text>
-                {!isLoadingVerification && (() => {
-                  const logoUrl = getUniversityLogoUrl();
-                  return isUniversityVerified && logoUrl ? (
-                    <Image
-                      source={{ uri: logoUrl }}
-                      style={{ width: 14, height: 14, marginLeft: 3 }}
-                    />
-                  ) : (
-                    <IconWrapper style={{ marginLeft: 3 }} size={14}>
-                      <NotSecuredIcon />
-                    </IconWrapper>
-                  );
-                })()}
+                {!isLoadingVerification &&
+                  (() => {
+                    const logoUrl = getUniversityLogoUrl();
+                    return isUniversityVerified && logoUrl ? (
+                      <Image
+                        source={{ uri: logoUrl }}
+                        style={{ width: 14, height: 14, marginLeft: 3 }}
+                      />
+                    ) : (
+                      <IconWrapper style={{ marginLeft: 3 }} size={14}>
+                        <NotSecuredIcon />
+                      </IconWrapper>
+                    );
+                  })()}
               </View>
               {/* 대학교 인증 버튼 - 로딩 완료 후 인증 미완료 시에만 표시 */}
               {!isLoadingVerification && !isUniversityVerified && (
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 26,
-    fontWeight: 400,
+    fontFamily: "Pretendard-Regular",
     lineHeight: 30,
     color: "#fff",
   },
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
   universityVerificationButtonText: {
     fontSize: 12,
     color: "#9747FF",
-    fontWeight: "500",
+    fontFamily: "Pretendard-SemiBold",
   },
 });
 

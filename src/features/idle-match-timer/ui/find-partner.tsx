@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
   seeMoreText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "Pretendard-Bold",
     fontSize: 16,
   },
 });
