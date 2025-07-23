@@ -7,6 +7,7 @@ import {router} from "expo-router";
 import {eventBus} from '@/src/shared/libs/event-bus';
 import {useEffect} from 'react';
 import {passLogin} from "@features/auth/apis/index";
+import {registerForPushNotificationsAsync} from "@/src/shared/libs/notifications";
 
 export function useAuth() {
   const {value: accessToken, setValue: setToken} = useStorage<string | null>({
@@ -51,6 +52,10 @@ export function useAuth() {
     }
 
     await updateToken(data.accessToken, data.refreshToken);
+    registerForPushNotificationsAsync().catch(error => {
+      console.error('푸시 토큰 등록 중 오류:', error);
+    });
+
     return {isNewUser: false};
   };
 

@@ -11,3 +11,4 @@ export * from './univ';
 export { default as imageUtils, ImageResources } from './image';
 export * from './environment';
 export * from './parser';
+export * from './notifications';
