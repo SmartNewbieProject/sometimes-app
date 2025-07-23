@@ -78,7 +78,7 @@ const HomeScreen = () => {
       },
     });
   };
-
+  console.log(isPreferenceFill, preferencesSelf, "check 1");
   useEffect(() => {
     trackEventAction("home_view");
   }, []);
