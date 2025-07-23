@@ -57,10 +57,6 @@ export default function TattooSelectionScreen() {
   } = usePreferenceOptionsQuery();
   const { showErrorModal } = useModal();
 
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.TATTOO)
-  );
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
     preferencesArray[0];

@@ -26,7 +26,6 @@ function ProfileMilitary() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  console.log("mili status", currentIndex);
   useEffect(() => {
     if (optionsLoading) return;
     if (!militaryStatus && preferences.options[currentIndex]) {

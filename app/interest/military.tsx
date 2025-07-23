@@ -33,12 +33,6 @@ export default function MilitarySelectionScreen() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
@@ -48,7 +42,6 @@ export default function MilitarySelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  console.log(militaryPreference, "mili");
 
   useEffect(() => {
     if (optionsLoading) return;

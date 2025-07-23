@@ -26,7 +26,6 @@ type PartnerProps = {
 
 export const Partner = ({ match }: PartnerProps) => {
   const { partner } = match;
-  console.log("partner", partner);
   const { update } = useMatchingBackground();
   const { delimeter, value } = calculateTime(
     match.endOfView,

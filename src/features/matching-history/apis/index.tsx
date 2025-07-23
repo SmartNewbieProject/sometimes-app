@@ -1,8 +1,14 @@
 import { axiosClient } from "@shared/libs";
+import type {
+  MatchingDetail,
+  MatchingHistoryList,
+  PreviewMatchingHistory,
+} from "../type";
+export const getMatchingHistory = (): Promise<MatchingHistoryList> => {
+  // 임시 경로 (변경 가능)
+  return axiosClient.get("/matching-history");
+};
 
-// export const getMatchingHistory = () : Promise<MatchingHistory> => {
-//     // 임시 경로
-//     axiosClient.get("/matching-history");
-// }
-
-// export const getLikeHistory = () : Promise<
+export const getPreviewHistory = (): Promise<PreviewMatchingHistory> => {
+  return axiosClient.get("/matching/history/previews");
+};

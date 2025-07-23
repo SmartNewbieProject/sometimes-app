@@ -15,7 +15,6 @@ function InterestGoodMbti() {
   const onClickButton = () => {
     updateForm("goodMbti", null);
   };
-  console.log("mbti22", goodMbti);
 
   return (
     <View style={styles.container}>
