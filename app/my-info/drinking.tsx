@@ -65,10 +65,7 @@ export default function DrinkingSelectionScreen() {
     ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.DRINKING)
-  );
+
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.DRINKING) ??
     preferencesArray[0];

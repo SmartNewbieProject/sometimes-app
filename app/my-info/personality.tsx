@@ -27,12 +27,6 @@ export default function PersonalitySelectionScreen() {
     isLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.PERSONALITY
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.PERSONALITY

@@ -22,10 +22,7 @@ function InterestAge() {
     ],
     isLoading,
   } = usePreferenceOptionsQuery();
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE)
-  );
+
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE) ??
     preferencesArray[0];

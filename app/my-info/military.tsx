@@ -28,13 +28,6 @@ export default function MilitarySelectionScreen() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray,
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
@@ -50,7 +43,7 @@ export default function MilitarySelectionScreen() {
       updateForm("militaryStatus", preferences.options[currentIndex]);
     }
   }, [optionsLoading, preferences.options, currentIndex, militaryStatus]);
-  console.log(militaryStatus, "mili");
+
   useFocusEffect(
     useCallback(
       () => useMyInfoStep.getState().updateStep(MyInfoSteps.MILITARY),

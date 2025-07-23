@@ -12,7 +12,6 @@ const { useRedirectPreferences } = hooks;
 function HomeInfoSection() {
   const { isPreferenceFill } = useRedirectPreferences();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
-  console.log("check point1", isPreferenceFill, preferencesSelf);
   const router = useRouter();
   return (
     <View style={styles.container}>

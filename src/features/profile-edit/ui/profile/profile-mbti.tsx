@@ -10,7 +10,6 @@ function ProfileMbti() {
   const onUpdateMbti = (mbti: string) => {
     updateForm("mbti", mbti);
   };
-  console.log("mbti22", mbti);
 
   return (
     <View style={styles.container}>

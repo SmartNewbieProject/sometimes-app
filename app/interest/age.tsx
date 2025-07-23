@@ -30,15 +30,11 @@ export default function AgeSelectionScreen() {
     ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE)
-  );
+
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE) ??
     preferencesArray[0];
 
-  console.log("preferneces", preferences);
   useEffect(() => {
     if (preferences.typeName === "") {
       return;

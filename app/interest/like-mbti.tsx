@@ -22,7 +22,6 @@ function LikeMbti() {
     useCallback(() => updateStep(InterestSteps.GOODMBTI), [updateStep])
   );
   const onUpdateMbti = (mbti: string) => {
-    console.log("mbti", mbti);
     updateForm("goodMbti", mbti);
   };
 

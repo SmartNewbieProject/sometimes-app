@@ -19,7 +19,6 @@ function MbtiSectionScreen() {
 
   useFocusEffect(useCallback(() => updateStep(MyInfoSteps.MBTI), [updateStep]));
   const onUpdateMbti = (mbti: string) => {
-    console.log("mbti", mbti);
     updateForm("mbti", mbti);
   };
 

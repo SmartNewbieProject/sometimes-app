@@ -52,7 +52,6 @@ export default function PartnerDetailScreen() {
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
   };
-  console.log("partner", partner);
 
   const loading = (() => {
     if (!partner) return true;

@@ -47,10 +47,6 @@ export default function SmokingSelectionScreen() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.SMOKING)
-  );
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.SMOKING) ??
     preferencesArray[0];

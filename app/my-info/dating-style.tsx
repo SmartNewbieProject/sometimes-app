@@ -28,12 +28,6 @@ export default function DatingStyleSelectionScreen() {
     isLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.DATING_STYLE
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.DATING_STYLE

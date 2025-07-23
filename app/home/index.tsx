@@ -2,6 +2,7 @@ import type { Notification } from "@/src/features/home/apis";
 import HomeInfoSection from "@/src/features/home/ui/home-info/home-info-section";
 import MatchingStatus from "@/src/features/home/ui/matching-status";
 import Loading from "@/src/features/loading";
+import HistoryCollapse from "@/src/features/matching-history/ui/history-collapse";
 import {
   VersionUpdateChecker,
   useVersionUpdate,
@@ -134,6 +135,7 @@ const HomeScreen = () => {
             />
           </Loading.Lottie>
         </View>
+        <HistoryCollapse />
 
         <View className="mt-[18px] flex flex-col gap-y-1.5">
           <Feedback.WallaFeedbackBanner />
