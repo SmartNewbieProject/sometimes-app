@@ -14,8 +14,8 @@ import { RematchLoading } from "./ui/rematching";
 export default function IdleMatchTimer() {
   const { match, isLoading: matchLoading, refetch } = useLatestMatching();
   const { my } = useAuth();
-  const { loading: isRematching } = useMatchLoading();
-  const [showRematchLoading, setShowRematchingLoading] = useState(false);
+  const { rematchingLoading, finishRematching } = useMatchLoading();
+
   const isOpen = match?.type
     ? ["open", "rematching"].includes(match.type)
     : false;
@@ -26,20 +26,15 @@ export default function IdleMatchTimer() {
   })();
 
   useEffect(() => {
-    if (isRematching && match?.type === "rematching") {
-      setShowRematchingLoading(true);
-    }
-  }, [isRematching, match]);
-
-  useEffect(() => {
-    if (showRematchLoading) {
+    if (rematchingLoading) {
       setTimeout(() => {
-        setShowRematchingLoading(false);
+        finishRematching();
       }, 4000);
     }
-  }, [showRematchLoading]);
+  }, [rematchingLoading]);
 
-  if (showRematchLoading) {
+  console.log("loading", match?.type);
+  if (rematchingLoading) {
     return (
       <View style={styles.container}>
         <Container gradientMode>
