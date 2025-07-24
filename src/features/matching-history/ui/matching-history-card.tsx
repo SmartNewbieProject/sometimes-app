@@ -210,8 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 20,
     overflow: "hidden",
-    marginVertical: 8,
-    marginHorizontal: 6,
+    margin: 8,
   },
   lock: {
     position: "absolute",
