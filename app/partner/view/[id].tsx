@@ -78,7 +78,7 @@ export default function PartnerDetailScreen() {
 
       <Header.Container>
         <Header.LeftContent>
-          <Pressable onPress={() => router.push("/")} className="pt-2 -ml-2">
+          <Pressable onPress={() => router.back()} className="pt-2 -ml-2">
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>

@@ -17,7 +17,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { ScrollView, View } from "react-native";
+import { Keyboard, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
 import { InputForm } from "../comment/input-form";
@@ -63,6 +63,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           form.reset();
           setEditingContent("");
           article.comments.length += 1;
+          Keyboard.dismiss();
         },
       }
     );
@@ -77,6 +78,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         content: comment.content,
         anonymous: true,
       });
+
       form.setFocus("content");
     }
   };
@@ -96,6 +98,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
               content: "",
               anonymous: true,
             });
+            Keyboard.dismiss();
           },
         }
       );
@@ -109,6 +112,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
       content: "",
       anonymous: true,
     });
+    Keyboard.dismiss();
   };
 
   useEffect(() => {

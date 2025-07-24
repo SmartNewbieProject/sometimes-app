@@ -15,11 +15,17 @@ interface ExplodingParticlesProps {
   particleCount?: number;
   top: number;
   left: number;
+  delay: number;
+  handleEnd: () => void;
+  startTiming: boolean;
 }
 
 function ExplodingParticles({
   particleCount = 16,
   top,
+  handleEnd,
+  delay,
+  startTiming,
   left,
 }: ExplodingParticlesProps) {
   const particles = Array.from({ length: particleCount }).map(() => ({
@@ -29,39 +35,43 @@ function ExplodingParticles({
     scale: useSharedValue(1),
   }));
 
-  useFocusEffect(() => {
-    particles.forEach((p, i) => {
-      const baseAngle = 2 * Math.PI * (Math.floor(Math.random() * 16) / 16); // 8등분
-      const jitter = (Math.random() - 0.5) * (Math.PI / 12);
-      const angle = baseAngle + jitter;
-      const distance = 30 + Math.random() * 15;
+  useEffect(() => {
+    console.log("startTiming", startTiming);
+    if (startTiming) {
+      particles.forEach((p, i) => {
+        const baseAngle = 2 * Math.PI * (Math.floor(Math.random() * 16) / 16); // 8등분
+        const jitter = (Math.random() - 0.5) * (Math.PI / 12);
+        const angle = baseAngle + jitter;
+        const distance = 30 + Math.random() * 15;
 
-      p.translateX.value = withDelay(
-        800,
-        withTiming(Math.cos(angle) * distance, {
-          duration: 500,
-          easing: Easing.out(Easing.exp),
-        })
-      );
-      p.translateY.value = withDelay(
-        800,
-        withTiming(Math.sin(angle) * distance, {
-          duration: 500,
-          easing: Easing.out(Easing.exp),
-        })
-      );
-      p.opacity.value = withDelay(
-        800,
-        withTiming(1, {}, (finished) => {
-          if (finished) {
-            p.opacity.value = withTiming(0, { duration: 500 });
-          }
-        })
-      );
+        p.translateX.value = withDelay(
+          delay,
+          withTiming(Math.cos(angle) * distance, {
+            duration: 500,
+            easing: Easing.out(Easing.exp),
+          })
+        );
+        p.translateY.value = withDelay(
+          delay,
+          withTiming(Math.sin(angle) * distance, {
+            duration: 500,
+            easing: Easing.out(Easing.exp),
+          })
+        );
+        p.opacity.value = withDelay(
+          delay,
+          withTiming(1, {}, (finished) => {
+            if (finished) {
+              p.opacity.value = withTiming(0, { duration: 500 });
+            }
+          })
+        );
 
-      p.scale.value = withDelay(800, withTiming(0, { duration: 500 }));
-    });
-  });
+        p.scale.value = withDelay(delay, withTiming(0, { duration: 500 }));
+      });
+      handleEnd();
+    }
+  }, [startTiming]);
 
   return (
     <>
