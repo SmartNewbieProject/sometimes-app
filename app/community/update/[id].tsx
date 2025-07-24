@@ -1,5 +1,6 @@
 import Community from "@/src/features/community";
 import { QUERY_KEYS } from "@/src/features/community/queries/keys";
+import { DefaultLayout } from "@/src/features/layout/ui";
 import Loading from "@/src/features/loading";
 import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -9,7 +10,14 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 
-const { ArticleWriteFormProvider, useArticleWriteForm, ArtcileWriter, articles, ArticleRequestType, useArticleDetailsQuery } = Community;
+const {
+  ArticleWriteFormProvider,
+  useArticleWriteForm,
+  ArtcileWriter,
+  articles,
+  ArticleRequestType,
+  useArticleDetailsQuery,
+} = Community;
 
 export default function CommunityUpdateScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,28 +27,35 @@ export default function CommunityUpdateScreen() {
 
   const onSubmit = form.handleSubmit(async (data) => {
     await tryCatch(async () => {
-      await articles.patchArticle(id, { content: data.content, title: data.title });
+      await articles.patchArticle(id, {
+        content: data.content,
+        title: data.title,
+      });
       await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.articles.detail(id),
       });
       showModal({
-        title: '완료',
+        title: "완료",
         children: (
           <View className="flex flex-col gap-y-1">
-            <Text textColor="black" size="sm">게시글이 수정되었어요!</Text>
-            <Text textColor="black" size="sm">게시글로 이동할게요.</Text>
+            <Text textColor="black" size="sm">
+              게시글이 수정되었어요!
+            </Text>
+            <Text textColor="black" size="sm">
+              게시글로 이동할게요.
+            </Text>
           </View>
         ),
         primaryButton: {
           text: "네, 이동할게요",
           onClick: () => router.push(`/community/${id}`),
-        }
+        },
       });
     });
   });
 
   useEffect(() => {
-    if (status !== 'success' || !isFetched || !article) return;
+    if (status !== "success" || !isFetched || !article) return;
     form.reset({
       anonymous: true,
       content: article.content,
@@ -55,12 +70,12 @@ export default function CommunityUpdateScreen() {
 
   return (
     <ArticleWriteFormProvider form={form}>
-      <View className="flex-1">
+      <DefaultLayout className="flex-1">
         <PalePurpleGradient />
         <ArtcileWriter.Header mode="update" onConfirm={onSubmit} />
         <ArtcileWriter.Form />
         <ArtcileWriter.Nav mode="update" />
-      </View>
+      </DefaultLayout>
     </ArticleWriteFormProvider>
   );
 }

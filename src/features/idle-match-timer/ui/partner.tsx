@@ -157,7 +157,6 @@ export const Partner = ({ match }: PartnerProps) => {
               <ArrowRight />
             </IconWrapper>
           </TouchableOpacity>
-          {/* <View className="w-[16px] bg-[#fcfaff] h-full" /> */}
         </View>
         <View
           className="w-full relative"

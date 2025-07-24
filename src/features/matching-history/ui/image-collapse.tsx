@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
   Easing,
@@ -12,25 +12,19 @@ import Animated, {
 
 interface ImageCollapseProps {
   imageUrls: string[];
+  handleAllImagesLoaded: () => void;
+  collapseValues: SharedValue<number>[];
 }
 
-function ImageCollapse({ imageUrls }: ImageCollapseProps) {
-  const collapseValues = useRef<SharedValue<number>[]>(
-    imageUrls.map(() => useSharedValue(0))
-  );
+function ImageCollapse({
+  imageUrls,
+  handleAllImagesLoaded,
+  collapseValues,
+}: ImageCollapseProps) {
+  const loadedCount = useRef(0);
 
   useEffect(() => {
-    if (imageUrls.length > 0) {
-      imageUrls.forEach((_, index) => {
-        collapseValues.current[index].value = withDelay(
-          index * 150,
-          withTiming(1, {
-            duration: 150,
-            easing: Easing.inOut(Easing.ease),
-          })
-        );
-      });
-    }
+    loadedCount.current = 0;
   }, [imageUrls]);
 
   return (
@@ -41,20 +35,34 @@ function ImageCollapse({ imageUrls }: ImageCollapseProps) {
           key={index}
           index={index}
           url={url}
-          item={collapseValues.current[index]}
+          item={collapseValues[index]}
+          onImageLoaded={() => {
+            loadedCount.current += 1;
+            if (loadedCount.current === imageUrls.length) {
+              handleAllImagesLoaded();
+            }
+          }}
         />
       ))}
     </View>
   );
 }
 
+// AnimatedImage 컴포넌트는 그대로 유지
+
 interface AnimatedImageProps {
   url: string;
   index: number;
   item: SharedValue<number>;
+  onImageLoaded: () => void;
 }
 
-function AnimatedImage({ url, index, item }: AnimatedImageProps) {
+function AnimatedImage({
+  url,
+  index,
+  item,
+  onImageLoaded,
+}: AnimatedImageProps) {
   const animatedStyle = useAnimatedStyle(() => {
     const translateX = interpolate(
       item.value,
@@ -72,6 +80,7 @@ function AnimatedImage({ url, index, item }: AnimatedImageProps) {
     <Animated.Image
       source={{ uri: url }}
       style={[styles.image, { zIndex: 5 - index }, animatedStyle]}
+      onLoadEnd={onImageLoaded}
     />
   );
 }

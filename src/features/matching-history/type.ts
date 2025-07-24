@@ -21,14 +21,15 @@ export type MatchingHistoryDetails = {
 	mbti: string;
 	universityName: string;
 	universityAuthentication: boolean;
+	someReceived: boolean;
 };
 
 /**
  * 이전내역 매칭 조회 API 응답 구조
  */
-export type MatchHistoryDetailsResponse = {
-	histories: MatchingHistoryDetails[];
-};
+// export type MatchHistoryDetailsResponse = {
+// 	 MatchingHistoryDetails[];
+// };
 
 /**
  * @figma https://www.figma.com/design/utH1DTiDrKT9rymvBPUIJ6/SMART-NEWBIE?node-id=5242-20925&t=72UgNC4PhzF20wST-4
