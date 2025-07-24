@@ -51,7 +51,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const updateCommentMutation = useUpdateCommentMutation(articleId);
   const deleteCommentMutation = useDeleteCommentMutation(articleId);
   const queryClient = useQueryClient();
-  console.log("content", form.getValues());
   const handleSubmit = async (data: { content: string }) => {
     createCommentMutation.mutate(
       {
@@ -215,15 +214,15 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           isOwner={isOwner}
         />
 
-        <View className="my-3 mb-6 mx-[8px]  flex flex-row justify-between">
+        <View className="my-3 mb-6 mx-[8px]  flex flex-row  items-center justify-between">
           <Text numberofLine={1} size="md" weight="medium" textColor="black">
             {article.title}
           </Text>
-          <Text size="13" textColor="pale-purple">
+          <Text size="12" textColor="pale-purple">
             {dayUtils.formatRelativeTime(article.createdAt)}
           </Text>
         </View>
-        <Text size="sm" className="mb-4 mx-[8px] leading-5" textColor="black">
+        <Text className="mb-4 text-[14px] mx-[8px] leading-5" textColor="black">
           {article.content}
         </Text>
         <View className="w-full mt-[10px]">
@@ -243,7 +242,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
             title="댓글을 불러오고 있어요"
             loading={isCommentLoading}
           >
-            <View className="flex flex-col  py-4 ">
+            <View className="flex flex-col  pb-4 ">
               {renderComments(comments, editingCommentId)}
             </View>
           </Loading.Lottie>

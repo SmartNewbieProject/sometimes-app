@@ -50,7 +50,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
       style={{
         backgroundColor: isEditing ? colors.moreLightPurple : colors.white,
       }}
-      className="flex py-4 flex-col w-full border-b border-[#E7E9EC]"
+      className="flex py-3 flex-col  w-full border-b border-[#E7E9EC]"
     >
       <View className="relative px-2">
         <UserProfile
@@ -60,7 +60,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
           }
           isOwner={isAuthor}
           updatedAt={
-            <Text className="text-sm" textColor="pale-purple">
+            <Text size={"sm"} textColor="pale-purple">
               {dayUtils.formatRelativeTime(comment.updatedAt)}
             </Text>
           }
@@ -83,7 +83,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
         }}
       >
         <Text
-          className="text-sm flex-1"
+          className="text-[14px] flex-1"
           textColor="black"
           style={{
             flexWrap: "wrap",

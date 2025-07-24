@@ -4,7 +4,6 @@ import { ScrollView, Text, TextInput, View } from "react-native";
 
 export const ArticleWriteForm = () => {
   const content = useWatch({ name: "content" });
-  console.log("content", content);
   return (
     <ScrollView className="flex-1 ">
       <View className="h-[1px] bg-[#E7E9EC]" />

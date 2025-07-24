@@ -28,7 +28,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const size =
     Dimensions.get("window").width / 2 > 300
       ? 220
-      : Dimensions.get("window").width / 2 < 180
+      : Dimensions.get("window").width / 2 < 170
       ? 140
       : 180;
 
@@ -210,7 +210,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 20,
     overflow: "hidden",
-    margin: 10,
+    marginVertical: 8,
+    marginHorizontal: 6,
   },
   lock: {
     position: "absolute",
