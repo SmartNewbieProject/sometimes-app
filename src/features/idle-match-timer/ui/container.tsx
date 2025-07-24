@@ -21,7 +21,6 @@ export const Container = ({ children, gradientMode }: ContainerProps) => {
 
     setWidth(layoutWidth);
   };
-  console.log("width", width, match?.type, rematchingLoading);
 
   if (gradientMode) {
     return (
