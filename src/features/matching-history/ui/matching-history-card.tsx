@@ -27,7 +27,7 @@ interface MatchingHistoryCardProps {
 function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const size =
     Dimensions.get("window").width / 2 > 300
-      ? 280
+      ? 220
       : Dimensions.get("window").width / 2 < 180
       ? 140
       : 180;
@@ -38,7 +38,6 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const onClickToPartner = () => {
     return router.navigate(`/partner/view/${item.matchId}`);
   };
-  console.log("size", Dimensions.get("window").width, size);
   useEffect(() => {
     if (!item.imageUrl) return;
     update(item.imageUrl);

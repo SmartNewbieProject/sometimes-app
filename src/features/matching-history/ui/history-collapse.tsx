@@ -35,9 +35,7 @@ function HistoryCollapse() {
   );
 
   const handleAllImagesLoaded = () => {
-    console.log(123);
     collapseValues.forEach((_, index) => {
-      console.log(collapseValues[0].value, "collapse");
       collapseValues[index].value = withDelay(
         index * 150,
         withTiming(1, {

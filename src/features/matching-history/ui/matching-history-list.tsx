@@ -1,4 +1,4 @@
-import { Text } from "@/src/shared/ui";
+import { Show, Text } from "@/src/shared/ui";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
@@ -20,9 +20,12 @@ function MatchingHistoryList() {
         />
       )}
 
-      {matchingHistoryList && matchingHistoryList.length < 3 && (
+      <Show when={!!matchingHistoryList && matchingHistoryList.length < 3}>
         <View style={[styles.info, { flex: 1 }]}>
-          <Image source={require("@assets/images/love-letter.png")} />
+          <Image
+            style={styles.image}
+            source={require("@assets/images/love-letter.png")}
+          />
           <Text size="md" textColor={"purple"} style={styles.infoText}>
             더 많은 매칭을 원하시나요?
           </Text>
@@ -30,7 +33,7 @@ function MatchingHistoryList() {
             지금 재매칭권을 사용해 새로운 인연을만나보세요!"
           </Text>
         </View>
-      )}
+      </Show>
     </View>
   );
 }
