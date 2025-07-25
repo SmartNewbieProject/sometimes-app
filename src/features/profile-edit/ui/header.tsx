@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#000",
     fontSize: 20,
-    fontFamily: "Pretendard-ExtraBold",
+    fontFamily: "Pretendard-Bold",
     lineHeight: 22,
   },
   backArrow: {

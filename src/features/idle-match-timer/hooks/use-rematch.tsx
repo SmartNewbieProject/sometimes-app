@@ -15,8 +15,11 @@ const useRematchingMutation = () =>
     onSuccess: async () => {
       // 쿼리 무효화를 확실히 처리하기 위해 await 사용
       await queryClient.invalidateQueries({ queryKey: ["latest-matching"] });
+      await queryClient.invalidateQueries({ queryKey: ["rematching-tickets"] });
+
       // 추가로 쿼리를 강제로 다시 가져오기
       await queryClient.refetchQueries({ queryKey: ["latest-matching"] });
+      await queryClient.refetchQueries({ queryKey: ["rematching-tickets"] });
     },
   });
 function useRematch() {

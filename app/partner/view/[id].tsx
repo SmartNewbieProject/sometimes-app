@@ -139,7 +139,7 @@ export default function PartnerDetailScreen() {
 
             <View pointerEvents="none" style={styles.textContainer}>
               <Text textColor="white" weight="semibold" className="text-[20px]">
-                만 {partner.age}세
+                {partner.age}
               </Text>
               <View className="flex flex-row items-center">
                 <Text textColor="white" weight="light" size="sm">
