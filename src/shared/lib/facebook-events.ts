@@ -1,8 +1,6 @@
 import { Platform } from 'react-native';
 
 type Params = Record<string, string | number>;
-
-// 네이티브 플랫폼에서만 Facebook SDK import
 let AppEventsLogger: any = null;
 let Settings: any = null;
 let isSDKLoaded = false;
@@ -13,7 +11,6 @@ if (Platform.OS !== 'web') {
     AppEventsLogger = fbsdk.AppEventsLogger;
     Settings = fbsdk.Settings;
 
-    // SDK 객체들이 실제로 존재하는지 확인
     if (AppEventsLogger && Settings && typeof Settings.initializeSDK === 'function') {
       isSDKLoaded = true;
       console.log('✅ Facebook SDK 로드 성공');
@@ -71,7 +68,6 @@ export function checkFacebookConnection(): Promise<boolean> {
 
   try {
     if (typeof AppEventsLogger.logEvent === 'function') {
-      // 테스트 이벤트 전송
       AppEventsLogger.logEvent('connection_test', {
         timestamp: Date.now(),
         platform: 'react-native',

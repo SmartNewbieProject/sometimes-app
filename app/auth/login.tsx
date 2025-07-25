@@ -72,17 +72,6 @@ export default function LoginScreen() {
             {/* 메인 콘텐츠 */}
             <View className="flex-1 w-full max-w-sm">
               <Signup.LoginForm/>
-
-              {/* Facebook Events 테스트 버튼 */}
-              <View className="mt-6">
-                <Button
-                  variant="outline"
-                  onPress={() => router.push('/facebook-events-test')}
-                  className="w-full"
-                >
-                  📊 Facebook Events 테스트
-                </Button>
-              </View>
             </View>
           </View>
         </ScrollView>

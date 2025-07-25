@@ -18,8 +18,6 @@ import { useAtt } from '@/src/shared/hooks';
  */
 export const FacebookEventsExample = () => {
   const { request: requestAtt, allowRequestAtt } = useAtt();
-
-  // ATT 권한 확인 및 요청
   const handleCheckATTPermission = async () => {
     if (Platform.OS === 'web') {
       Alert.alert('⚠️ ATT 권한은 iOS에서만 필요합니다');
@@ -37,26 +35,22 @@ export const FacebookEventsExample = () => {
     }
   };
 
-  // Facebook SDK 초기화 및 연결 테스트
   const handleInitializeAndTest = async () => {
     initializeFacebookSDK();
     const isConnected = await checkFacebookConnection();
     Alert.alert(isConnected ? '✅ Facebook SDK 연결 성공!' : '❌ Facebook SDK 연결 실패!');
   };
 
-  // 회원가입 이벤트 테스트
   const handleSignUpEvent = () => {
     logSignUp('pass');
     Alert.alert('회원가입 이벤트가 Facebook에 전송되었습니다.');
   };
 
-  // 로그인 이벤트 테스트
   const handleLoginEvent = () => {
     logLogin('pass');
     Alert.alert('로그인 이벤트가 Facebook에 전송되었습니다.');
   };
 
-  // 구매 이벤트 테스트 (매칭권)
   const handlePurchaseEvent = () => {
     logPurchase(5000, 'KRW', {
       item_name: '매칭권 1개',
@@ -65,19 +59,16 @@ export const FacebookEventsExample = () => {
     Alert.alert('구매 이벤트가 Facebook에 전송되었습니다.');
   };
 
-  // 콘텐츠 조회 이벤트 테스트
   const handleViewContentEvent = () => {
     logViewContent('profile', 'user_profile_123');
     Alert.alert('콘텐츠 조회 이벤트가 Facebook에 전송되었습니다.');
   };
 
-  // 검색 이벤트 테스트
   const handleSearchEvent = () => {
     logSearch('서울대학교', 'university');
     Alert.alert('검색 이벤트가 Facebook에 전송되었습니다.');
   };
 
-  // 사용자 정보 설정 테스트
   const handleSetUserData = () => {
     setUserID('user_12345');
     setUserData({
@@ -90,7 +81,6 @@ export const FacebookEventsExample = () => {
     Alert.alert('사용자 정보가 Facebook에 설정되었습니다.');
   };
 
-  // 이벤트 즉시 전송
   const handleFlushEvents = () => {
     flushEvents();
     Alert.alert('모든 이벤트가 Facebook에 즉시 전송되었습니다.');
