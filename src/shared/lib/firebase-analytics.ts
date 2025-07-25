@@ -6,15 +6,12 @@ import firebase from '@react-native-firebase/app';
  */
 export async function checkFirebaseConnection(): Promise<boolean> {
   try {
-    // Firebase 앱이 초기화되었는지 확인
     const app = firebase.app();
     console.log('Firebase 앱 초기화됨:', app.name);
     
-    // Analytics 인스턴스 ID 가져오기 (연결 테스트)
     const instanceId = await analytics().getAppInstanceId();
     console.log('Analytics 인스턴스 ID:', instanceId);
     
-    // 테스트 이벤트 전송
     await analytics().logEvent('connection_test', {
       timestamp: Date.now(),
       platform: 'react-native',
