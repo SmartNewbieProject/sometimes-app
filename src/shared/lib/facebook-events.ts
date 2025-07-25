@@ -5,14 +5,27 @@ type Params = Record<string, string | number>;
 // 네이티브 플랫폼에서만 Facebook SDK import
 let AppEventsLogger: any = null;
 let Settings: any = null;
+let isSDKLoaded = false;
 
 if (Platform.OS !== 'web') {
   try {
     const fbsdk = require('react-native-fbsdk-next');
     AppEventsLogger = fbsdk.AppEventsLogger;
     Settings = fbsdk.Settings;
+
+    // SDK 객체들이 실제로 존재하는지 확인
+    if (AppEventsLogger && Settings && typeof Settings.initializeSDK === 'function') {
+      isSDKLoaded = true;
+      console.log('✅ Facebook SDK 로드 성공');
+    } else {
+      console.warn('❌ Facebook SDK 객체가 올바르지 않습니다');
+      AppEventsLogger = null;
+      Settings = null;
+    }
   } catch (error) {
-    console.warn('Facebook SDK not available:', error);
+    console.warn('❌ Facebook SDK 로드 실패:', error);
+    AppEventsLogger = null;
+    Settings = null;
   }
 }
 
@@ -25,14 +38,18 @@ export function initializeFacebookSDK() {
     return;
   }
 
-  if (!Settings) {
+  if (!isSDKLoaded || !Settings) {
     console.warn('❌ Facebook SDK가 로드되지 않았습니다');
     return;
   }
 
   try {
-    Settings.initializeSDK();
-    console.log('✅ Facebook SDK 초기화 완료');
+    if (typeof Settings.initializeSDK === 'function') {
+      Settings.initializeSDK();
+      console.log('✅ Facebook SDK 초기화 완료');
+    } else {
+      console.error('❌ Settings.initializeSDK가 함수가 아닙니다');
+    }
   } catch (error) {
     console.error('❌ Facebook SDK 초기화 실패:', error);
   }
@@ -47,20 +64,25 @@ export function checkFacebookConnection(): Promise<boolean> {
     return Promise.resolve(false);
   }
 
-  if (!AppEventsLogger) {
+  if (!isSDKLoaded || !AppEventsLogger) {
     console.warn('❌ Facebook SDK가 로드되지 않았습니다');
     return Promise.resolve(false);
   }
 
   try {
-    // 테스트 이벤트 전송
-    AppEventsLogger.logEvent('connection_test', {
-      timestamp: Date.now(),
-      platform: 'react-native',
-    });
+    if (typeof AppEventsLogger.logEvent === 'function') {
+      // 테스트 이벤트 전송
+      AppEventsLogger.logEvent('connection_test', {
+        timestamp: Date.now(),
+        platform: 'react-native',
+      });
 
-    console.log('✅ Facebook App Events 연결 성공!');
-    return Promise.resolve(true);
+      console.log('✅ Facebook App Events 연결 성공!');
+      return Promise.resolve(true);
+    } else {
+      console.error('❌ AppEventsLogger.logEvent가 함수가 아닙니다');
+      return Promise.resolve(false);
+    }
   } catch (error) {
     console.error('❌ Facebook App Events 연결 실패:', error);
     return Promise.resolve(false);
@@ -76,8 +98,8 @@ function isFacebookSDKAvailable(): boolean {
     return false;
   }
 
-  if (!AppEventsLogger) {
-    console.warn('❌ Facebook SDK가 로드되지 않았습니다');
+  if (!isSDKLoaded || !AppEventsLogger || typeof AppEventsLogger.logEvent !== 'function') {
+    console.warn('❌ Facebook SDK가 로드되지 않았거나 사용할 수 없습니다');
     return false;
   }
 
