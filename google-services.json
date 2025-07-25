@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "677618401597",
-    "project_id": "sometime-push-notification",
-    "storage_bucket": "sometime-push-notification.firebasestorage.app"
+    "project_number": "1080146163533",
+    "project_id": "sometime-dc1e4",
+    "storage_bucket": "sometime-dc1e4.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:677618401597:android:c628e9f24161a64fa10554",
+        "mobilesdk_app_id": "1:1080146163533:android:d3c72977bd2f7bd14d2904",
         "android_client_info": {
           "package_name": "com.smartnewb.sometimes"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC61IyBl0P2O7GcK4B0BV1EEZpdkGCEtoE"
+          "current_key": "AIzaSyCOAIlkH3c1S2I8FtJPqRQuk5ond8l6Z1o"
         }
       ],
       "services": {
