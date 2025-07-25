@@ -1,21 +1,22 @@
-import Loading from '@features/loading';
-import { cn } from '@shared/libs/cn';
-import { platform } from '@shared/libs/platform';
-import { PalePurpleGradient } from '@shared/ui/gradient';
-import { ProgressBar } from '@shared/ui/progress-bar';
-import Signup from '@features/signup';
-import { useFocusEffect } from '@react-navigation/native';
-import { Stack, router, usePathname } from 'expo-router';
-import { Suspense, useCallback } from 'react';
-import { View } from 'react-native';
-import { BackHandler } from 'react-native';
+import Loading from "@features/loading";
+import Signup from "@features/signup";
+import { useFocusEffect } from "@react-navigation/native";
+import { cn } from "@shared/libs/cn";
+import { platform } from "@shared/libs/platform";
+import { PalePurpleGradient } from "@shared/ui/gradient";
+import { ProgressBar } from "@shared/ui/progress-bar";
+import { Stack, router, usePathname } from "expo-router";
+import { Suspense, useCallback } from "react";
+import { View } from "react-native";
+import { BackHandler } from "react-native";
 
 const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
   const { progress, updateStep } = useSignupProgress();
   const pathname = usePathname();
-  const renderProgress = pathname !== '/auth/signup/done';
+  const renderProgress =
+    pathname !== "/auth/signup/done" && pathname !== "/auth/signup/area";
 
   const handleBackPress = useCallback(() => {
     updateStep(SignupSteps.TERMS);
@@ -24,7 +25,7 @@ export default function SignupLayout() {
 
   useFocusEffect(
     useCallback(() => {
-      BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
     }, [handleBackPress])
   );
 
@@ -32,14 +33,16 @@ export default function SignupLayout() {
     <View className="flex-1">
       <PalePurpleGradient />
       {renderProgress && (
-        <View className={cn(
-          "px-5 pb-[30px] items-center bg-white",
-          platform({
-            ios: () => "pt-[80px]",
-            android: () => "pt-[80px]",
-            web: () => "pt-[14px] !pb-[8px]",
-          })
-        )}>
+        <View
+          className={cn(
+            "px-5 pb-[30px] items-center bg-white",
+            platform({
+              ios: () => "pt-[80px]",
+              android: () => "pt-[80px]",
+              web: () => "pt-[14px] !pb-[8px]",
+            })
+          )}
+        >
           <ProgressBar progress={progress} />
         </View>
       )}
@@ -48,9 +51,9 @@ export default function SignupLayout() {
           screenOptions={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
-            animation: 'slide_from_right',
+            animation: "slide_from_right",
           }}
         >
           <Stack.Screen name="terms" options={{ headerShown: false }} />
@@ -61,9 +64,13 @@ export default function SignupLayout() {
               gestureEnabled: false,
             }}
           />
-          <Stack.Screen name="university-details" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="university-details"
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="profile-image" options={{ headerShown: false }} />
           <Stack.Screen name="done" options={{ headerShown: false }} />
+          <Stack.Screen name="area" options={{ headerShown: false }} />
         </Stack>
       </Suspense>
     </View>
