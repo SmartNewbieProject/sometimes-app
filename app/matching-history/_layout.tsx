@@ -7,7 +7,6 @@ import { Pressable, StyleSheet, View } from "react-native";
 export default function MatchingHistoryLayoutScreen() {
   const router = useRouter();
   const { data: rematching } = useRematchingTickets();
-  console.log("rematching", rematching);
   return (
     <View className="flex-1">
       <Header.Container className="border-b items-center border-b-[#E7E9EC]">
