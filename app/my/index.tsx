@@ -32,12 +32,11 @@ export default function MyScreen() {
   return (
     <Layout.Default
       style={{
-        paddingTop: insets.top,
         paddingBottom: insets.bottom,
         backgroundColor: "#fff",
       }}
     >
-      <Header.Container className="items-center !pt-[21px] ">
+      <Header.Container className="items-center ">
         <Header.LeftContent>
           <Header.LeftButton visible={false} />
         </Header.LeftContent>

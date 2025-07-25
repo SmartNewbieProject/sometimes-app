@@ -111,7 +111,7 @@ export default function ReportScreen() {
 }
 
 const HeaderComponent = () => (
-  <Header.Container className="items-center !pt-[21px]">
+  <Header.Container className="items-center ">
     <Header.LeftContent>
       <Pressable onPress={() => router.back()}>
         <ChevronLeftIcon width={24} height={24} />

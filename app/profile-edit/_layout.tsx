@@ -26,10 +26,7 @@ export default function ProfileEditLayout() {
   );
   return (
     <Layout.Default
-      style={[
-        styles.container,
-        { paddingTop: insets.top, paddingBottom: insets.top },
-      ]}
+      style={[styles.container, { paddingBottom: insets.bottom }]}
     >
       <ProfileEditHeader />
       <ScrollView style={styles.editContainer}>

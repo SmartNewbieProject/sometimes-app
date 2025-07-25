@@ -119,7 +119,7 @@ export default function ArticleDetailScreen() {
 
   return (
     <DefaultLayout
-      style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+      style={{ paddingBottom: insets.bottom }}
       className="flex-1 bg-white "
     >
       <ArticleHeader
