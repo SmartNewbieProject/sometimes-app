@@ -1,4 +1,4 @@
-import { View, Button, Alert } from 'react-native';
+import { View, Button, Alert, Platform } from 'react-native';
 import {
   initializeFacebookSDK,
   checkFacebookConnection,
@@ -11,11 +11,32 @@ import {
   setUserData,
   flushEvents
 } from './facebook-events';
+import { useAtt } from '@/src/shared/hooks';
 
 /**
  * Facebook App Events 테스트 컴포넌트
  */
 export const FacebookEventsExample = () => {
+  const { request: requestAtt, allowRequestAtt } = useAtt();
+
+  // ATT 권한 확인 및 요청
+  const handleCheckATTPermission = async () => {
+    if (Platform.OS === 'web') {
+      Alert.alert('⚠️ ATT 권한은 iOS에서만 필요합니다');
+      return;
+    }
+
+    try {
+      await requestAtt();
+      Alert.alert(
+        'ATT 권한 상태',
+        `현재 상태: ${allowRequestAtt}\n\niOS 14.5+에서 Facebook 이벤트 추적을 위해 필요합니다.`
+      );
+    } catch (error) {
+      Alert.alert('ATT 권한 확인 실패', String(error));
+    }
+  };
+
   // Facebook SDK 초기화 및 연결 테스트
   const handleInitializeAndTest = async () => {
     initializeFacebookSDK();
@@ -77,6 +98,7 @@ export const FacebookEventsExample = () => {
 
   return (
     <View style={{ padding: 20, gap: 10 }}>
+      <Button title="🛡️ ATT 권한 확인 (iOS 14.5+)" onPress={handleCheckATTPermission} />
       <Button title="🔗 Facebook SDK 초기화 & 연결 테스트" onPress={handleInitializeAndTest} />
       <Button title="👤 회원가입 이벤트" onPress={handleSignUpEvent} />
       <Button title="🔑 로그인 이벤트" onPress={handleLoginEvent} />
