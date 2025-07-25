@@ -27,8 +27,9 @@ export const ArticleWriteForm = () => {
               <TextInput
                 placeholder="내용을 입력하세요."
                 multiline
+                textAlignVertical="top"
                 maxLength={255}
-                className="w-full p-2 min-h-[232px] text-[12px] md:text-md placeholder:text-[#D9D9D9]"
+                className="w-full p-2 min-h-[232px] text-[14px] md:text-md placeholder:text-[#D9D9D9]"
                 onChangeText={onChange}
                 value={value}
               />
