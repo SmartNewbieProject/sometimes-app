@@ -1,12 +1,15 @@
 import { useFonts } from "expo-font";
 import { Slot, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Platform, View } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
-import * as Notifications from 'expo-notifications';
-import { handleNotificationTap, type NotificationData } from "@/src/shared/libs/notifications";
+import {
+  type NotificationData,
+  handleNotificationTap,
+} from "@/src/shared/libs/notifications";
+import * as Notifications from "expo-notifications";
 
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import ProfileDrinking from "@/src/features/profile-edit/ui/profile/profile-drinking";
@@ -49,39 +52,44 @@ export default function RootLayout() {
     requestAtt();
   }, []);
 
-  const isValidNotificationData = useCallback((data: unknown): data is NotificationData => {
-    if (!data || typeof data !== 'object') return false;
+  const isValidNotificationData = useCallback(
+    (data: unknown): data is NotificationData => {
+      if (!data || typeof data !== "object") return false;
 
-    const obj = data as Record<string, unknown>;
-    return (
-      typeof obj.type === 'string' &&
-      typeof obj.title === 'string' &&
-      typeof obj.body === 'string' &&
-      ['comment', 'like', 'general'].includes(obj.type)
-    );
-  }, []);
+      const obj = data as Record<string, unknown>;
+      return (
+        typeof obj.type === "string" &&
+        typeof obj.title === "string" &&
+        typeof obj.body === "string" &&
+        ["comment", "like", "general"].includes(obj.type)
+      );
+    },
+    []
+  );
 
   useEffect(() => {
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('알림 수신:', notification);
-    });
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("알림 수신:", notification);
+      });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      const rawData = response.notification.request.content.data;
-      console.log('알림 탭:', rawData);
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const rawData = response.notification.request.content.data;
+        console.log("알림 탭:", rawData);
 
-      try {
-        if (isValidNotificationData(rawData)) {
-          handleNotificationTap(rawData as NotificationData, router);
-        } else {
-          console.warn('유효하지 않은 알림 데이터:', rawData);
-          router.push('/home');
+        try {
+          if (isValidNotificationData(rawData)) {
+            handleNotificationTap(rawData as NotificationData, router);
+          } else {
+            console.warn("유효하지 않은 알림 데이터:", rawData);
+            router.push("/home");
+          }
+        } catch (error) {
+          console.error("알림 처리 중 오류:", error);
+          router.push("/home");
         }
-      } catch (error) {
-        console.error('알림 처리 중 오류:', error);
-        router.push('/home');
-      }
-    });
+      });
 
     return () => {
       if (notificationListener.current) {

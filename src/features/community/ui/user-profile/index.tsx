@@ -52,7 +52,8 @@ export const UserProfile = ({
 
         <Show when={!hideUniv}>
           <Text size="13" textColor="purple" className="opacity-70">
-            만 {author.age}세<Text> · </Text>
+            {author.age}
+            <Text> · </Text>
             {universityName}
           </Text>
         </Show>

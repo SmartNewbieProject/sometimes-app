@@ -8,3 +8,7 @@ export const getPreviewHistory = (): Promise<PreviewMatchingHistory> => {
 export const getMatchingHistoryList = (): Promise<MatchingHistoryDetails[]> => {
   return axiosClient.get("/matching/history/list");
 };
+
+export const postUnlockProfile = (matchId: string) => {
+  return axiosClient.post("/matching/history/unlock", { matchId });
+};

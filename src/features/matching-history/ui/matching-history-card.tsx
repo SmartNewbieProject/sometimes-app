@@ -1,4 +1,5 @@
 import colors from "@/src/shared/constants/colors";
+import { useModal } from "@/src/shared/hooks/use-modal";
 import { UniversityName, getUnivLogo } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
@@ -18,6 +19,7 @@ import {
 } from "react-native";
 import { useCommingSoon } from "../../admin/hooks";
 import { useMatchingBackground } from "../../idle-match-timer/hooks";
+import { useUnlockProfile } from "../queries/use-unlock-profile";
 import type { MatchingHistoryDetails } from "../type";
 
 interface MatchingHistoryCardProps {
@@ -25,6 +27,7 @@ interface MatchingHistoryCardProps {
 }
 
 function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
+  const { showModal } = useModal();
   const size =
     Dimensions.get("window").width / 2 > 300
       ? 220
@@ -33,7 +36,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
       : 180;
 
   const { update } = useMatchingBackground();
-  const showCommingSoonModal = useCommingSoon();
+  const unlockProfile = useUnlockProfile(item.matchId);
   const router = useRouter();
   const onClickToPartner = () => {
     return router.navigate(`/partner/view/${item.matchId}`);
@@ -54,7 +57,23 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   };
   const onClickMoreButton = () => {
     if (item.blinded) {
-      showCommingSoonModal();
+      showModal({
+        children: (
+          <View className="w-full justify-center items-center">
+            <Text textColor="black" size="md">
+              재매칭권을 사용하시겠습니까?
+            </Text>
+          </View>
+        ),
+        primaryButton: {
+          text: "사용하기",
+          onClick: unlockProfile.mutateAsync,
+        },
+        secondaryButton: {
+          text: "취소",
+          onClick: () => {},
+        },
+      });
     } else {
       router.push(`/partner/view/${item.matchId}`);
     }
@@ -82,7 +101,9 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
           )}
 
           <View style={styles.someReceivedBadge}>
-            <RNText style={styles.someReceivedText}>
+            <RNText
+              style={[styles.someReceivedText, { fontFamily: "Pretendard" }]}
+            >
               {item.someReceived ? "들어온 썸" : "보낸 썸"}
             </RNText>
           </View>
@@ -97,7 +118,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
             }}
           >
             <Text textColor="white" weight="semibold" size="20">
-              만 {item.age}세
+              {item.age}
             </Text>
             <View className="flex flex-row items-center">
               <Text textColor="white" weight="light" size="10">
@@ -242,7 +263,7 @@ const styles = StyleSheet.create({
     lineHeight: 10,
     fontWeight: 700,
     fontSize: 10,
-    fontFamily: "Pretendard-ExtraBold",
+    fontFamily: "Pretendard-Bold",
     color: colors.primaryPurple,
   },
 });
