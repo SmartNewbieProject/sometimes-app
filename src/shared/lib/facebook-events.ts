@@ -1,11 +1,35 @@
-import { AppEventsLogger, Settings } from 'react-native-fbsdk-next';
+import { Platform } from 'react-native';
 
 type Params = Record<string, string | number>;
+
+// 네이티브 플랫폼에서만 Facebook SDK import
+let AppEventsLogger: any = null;
+let Settings: any = null;
+
+if (Platform.OS !== 'web') {
+  try {
+    const fbsdk = require('react-native-fbsdk-next');
+    AppEventsLogger = fbsdk.AppEventsLogger;
+    Settings = fbsdk.Settings;
+  } catch (error) {
+    console.warn('Facebook SDK not available:', error);
+  }
+}
 
 /**
  * Facebook SDK 초기화
  */
 export function initializeFacebookSDK() {
+  if (Platform.OS === 'web') {
+    console.log('⚠️ Facebook SDK는 웹에서 지원되지 않습니다');
+    return;
+  }
+
+  if (!Settings) {
+    console.warn('❌ Facebook SDK가 로드되지 않았습니다');
+    return;
+  }
+
   try {
     Settings.initializeSDK();
     console.log('✅ Facebook SDK 초기화 완료');
@@ -18,13 +42,23 @@ export function initializeFacebookSDK() {
  * Facebook SDK 연결 상태 확인
  */
 export function checkFacebookConnection(): Promise<boolean> {
+  if (Platform.OS === 'web') {
+    console.log('⚠️ Facebook SDK는 웹에서 지원되지 않습니다');
+    return Promise.resolve(false);
+  }
+
+  if (!AppEventsLogger) {
+    console.warn('❌ Facebook SDK가 로드되지 않았습니다');
+    return Promise.resolve(false);
+  }
+
   try {
     // 테스트 이벤트 전송
     AppEventsLogger.logEvent('connection_test', {
       timestamp: Date.now(),
       platform: 'react-native',
     });
-    
+
     console.log('✅ Facebook App Events 연결 성공!');
     return Promise.resolve(true);
   } catch (error) {
@@ -34,9 +68,28 @@ export function checkFacebookConnection(): Promise<boolean> {
 }
 
 /**
+ * Facebook SDK 사용 가능 여부 확인
+ */
+function isFacebookSDKAvailable(): boolean {
+  if (Platform.OS === 'web') {
+    console.log('⚠️ Facebook SDK는 웹에서 지원되지 않습니다');
+    return false;
+  }
+
+  if (!AppEventsLogger) {
+    console.warn('❌ Facebook SDK가 로드되지 않았습니다');
+    return false;
+  }
+
+  return true;
+}
+
+/**
  * 앱 실행 이벤트
  */
 export function logAppLaunch() {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.logEvent('fb_mobile_activate_app');
     console.log('앱 실행 이벤트 추적됨');
@@ -49,6 +102,8 @@ export function logAppLaunch() {
  * 회원가입 이벤트
  */
 export function logSignUp(method = 'pass') {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.logEvent(AppEventsLogger.AppEvents.CompletedRegistration, {
       [AppEventsLogger.AppEventParams.RegistrationMethod]: method,
@@ -63,6 +118,8 @@ export function logSignUp(method = 'pass') {
  * 로그인 이벤트
  */
 export function logLogin(method = 'pass') {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.logEvent('fb_mobile_login', {
       method,
@@ -77,6 +134,8 @@ export function logLogin(method = 'pass') {
  * 구매 이벤트 (매칭권 등)
  */
 export function logPurchase(amount: number, currency = 'KRW', parameters?: Params) {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.logPurchase(amount, currency, parameters);
     console.log('구매 이벤트 추적됨:', amount, currency);
@@ -89,6 +148,8 @@ export function logPurchase(amount: number, currency = 'KRW', parameters?: Param
  * 콘텐츠 조회 이벤트
  */
 export function logViewContent(contentType: string, contentId?: string) {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.logEvent(AppEventsLogger.AppEvents.ViewedContent, {
       [AppEventsLogger.AppEventParams.ContentType]: contentType,
@@ -104,6 +165,8 @@ export function logViewContent(contentType: string, contentId?: string) {
  * 검색 이벤트
  */
 export function logSearch(searchString: string, contentType?: string) {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.logEvent(AppEventsLogger.AppEvents.Searched, {
       [AppEventsLogger.AppEventParams.SearchString]: searchString,
@@ -119,6 +182,8 @@ export function logSearch(searchString: string, contentType?: string) {
  * 커스텀 이벤트
  */
 export function logCustomEvent(eventName: string, parameters?: Params) {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.logEvent(eventName, parameters);
     console.log('커스텀 이벤트 추적됨:', eventName, parameters);
@@ -142,6 +207,8 @@ export function setUserData(userData: {
   zip?: string;
   country?: string;
 }) {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.setUserData(userData);
     console.log('사용자 데이터 설정됨:', userData);
@@ -154,6 +221,8 @@ export function setUserData(userData: {
  * 사용자 ID 설정
  */
 export function setUserID(userID: string) {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.setUserID(userID);
     console.log('사용자 ID 설정됨:', userID);
@@ -166,6 +235,8 @@ export function setUserID(userID: string) {
  * 이벤트 즉시 전송 (플러시)
  */
 export function flushEvents() {
+  if (!isFacebookSDKAvailable()) return;
+
   try {
     AppEventsLogger.flush();
     console.log('Facebook 이벤트 플러시 완료');
@@ -178,6 +249,8 @@ export function flushEvents() {
  * 광고 추적 활성화/비활성화 (iOS)
  */
 export function setAdvertiserTrackingEnabled(enabled: boolean) {
+  if (!isFacebookSDKAvailable() || !Settings) return;
+
   try {
     Settings.setAdvertiserTrackingEnabled(enabled);
     console.log('광고 추적 상태 변경됨:', enabled);

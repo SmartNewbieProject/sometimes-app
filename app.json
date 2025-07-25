@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -157,7 +157,8 @@
           "scheme": "fb638240219304867",
           "advertiserIDCollectionEnabled": true,
           "autoLogAppEventsEnabled": true,
-          "isAutoInitEnabled": true
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ],
       [
