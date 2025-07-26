@@ -17,6 +17,17 @@ export enum UniversityName {
   공주교육대학교 = "공주교육대학교",
   충북대학교 = "충북대학교",
   청주교육대학교 = "청주교육대학교",
+  경성대학교 = "경성대학교",
+  고신대학교 = "고신대학교",
+  부경대학교 = "부경대학교",
+  한국해양대학교 = "한국해양대학교",
+  동명대학교 = "동명대학교",
+  동서대학교 = "동서대학교",
+  동아대학교 = "동아대학교",
+  동의대학교 = "동의대학교",
+  부산가톨릭대학교 = "부산가톨릭대학교",
+  부산교육대학교 = "부산교육대학교",
+  부산대학교 = "부산대학교",
 }
 
 const UniversityImage: Record<UniversityName, string> = {
@@ -38,6 +49,17 @@ const UniversityImage: Record<UniversityName, string> = {
   [UniversityName.공주교육대학교]: "keu.png",
   [UniversityName.충북대학교]: "cbu.png",
   [UniversityName.청주교육대학교]: "ceu.png",
+  [UniversityName.경성대학교]: "ks.png",
+  [UniversityName.고신대학교]: "kosin.png",
+  [UniversityName.부경대학교]: "pukyong.png",
+  [UniversityName.한국해양대학교]: "kmou.png",
+  [UniversityName.동명대학교]: "tu.png",
+  [UniversityName.동서대학교]: "dongseo.png",
+  [UniversityName.동아대학교]: "donga.png",
+  [UniversityName.동의대학교]: "deu.png",
+  [UniversityName.부산가톨릭대학교]: "cup.png",
+  [UniversityName.부산교육대학교]: "bnue.png",
+  [UniversityName.부산대학교]: "pusan.png",
 };
 
 const baseUrl = 'https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/univ/';
