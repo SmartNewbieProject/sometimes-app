@@ -53,24 +53,9 @@ export default function ReportScreen() {
 
   return (
     <Layout.Default>
-      <Header.Container className="!pt-[0px]">
-        <Header.LeftContent>
-          <Pressable
-            onPress={() => router.push("/community")}
-            className="p-2 -ml-2"
-          >
-            <ChevronLeftIcon width={24} height={24} />
-          </Pressable>
-        </Header.LeftContent>
-
-        <Header.CenterContent>
-          <Text textColor="black" weight="bold" size="18">
-            신고하기
-          </Text>
-        </Header.CenterContent>
-      </Header.Container>
       <PalePurpleGradient />
       <HeaderComponent />
+
       <View className="flex-1 px-5">
         <ImageResource
           resource={ImageResources.REPORT}
@@ -111,7 +96,7 @@ export default function ReportScreen() {
 }
 
 const HeaderComponent = () => (
-  <Header.Container className="items-center ">
+  <Header.Container>
     <Header.LeftContent>
       <Pressable onPress={() => router.back()}>
         <ChevronLeftIcon width={24} height={24} />

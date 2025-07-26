@@ -29,7 +29,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
   dropdownOpen,
   dropdownItems,
 }) => (
-  <Header.Container className="!pt-[12px] items-center">
+  <Header.Container className=" items-center">
     <Header.LeftContent>
       <Pressable
         onPress={() => router.push("/community")}
