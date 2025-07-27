@@ -94,7 +94,7 @@ export default function ApprovalRejectedScreen() {
           <View className="flex-row items-center justify-center">
             <Text size="md" textColor="white" weight="semibold" className="mr-2">↻</Text>
             <Text size="md" textColor="white" weight="semibold">
-              다시 신청하기
+              다시 입력하기
             </Text>
           </View>
         </Button>
