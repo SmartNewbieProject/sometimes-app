@@ -107,3 +107,5 @@ const baseUrl = 'https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/uni
 const createImageUrl = (univ: UniversityName) => `${baseUrl}${UniversityImage[univ]}`;
 
 export const getUnivLogo = (univ: UniversityName) => createImageUrl(univ);
+
+export const getSmartUnivLogoUrl = (univCode: string) => `${baseUrl}${univCode.toLowerCase()}.png`;

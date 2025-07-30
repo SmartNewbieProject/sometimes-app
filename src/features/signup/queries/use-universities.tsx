@@ -2,6 +2,7 @@ import type { RegionCode } from "@/src/shared/constants/region";
 import {
   UniversityImage,
   type UniversityName,
+  getSmartUnivLogoUrl,
   getUnivLogo,
 } from "@/src/shared/libs";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -24,7 +25,7 @@ export default function useUniversities() {
   });
   const mappedData = data?.map((item) => ({
     ...item,
-    logoUrl: getUnivLogo(item.name as UniversityName),
+    logoUrl: getSmartUnivLogoUrl(item.code),
     universityType: getUniversityType(item.name),
     area: getRegionsByRegionCode(item.region as RegionCode),
   }));
@@ -35,6 +36,7 @@ export default function useUniversities() {
 export type UniversitiesByRegion = {
   id: string;
   name: string;
+  code: string;
   region: string;
 }[];
 
@@ -44,5 +46,6 @@ export type UniversityCard = {
   area: UIRegion | undefined;
   id: string;
   name: string;
+  code: string;
   region: string;
 };
