@@ -86,10 +86,6 @@ function Area() {
     router.push("/auth/signup/university");
   };
 
-  console.log(
-    "qwe",
-    show && !!areaMap.find((area) => area.area === show && area.open === "open")
-  );
   return (
     <DefaultLayout
       style={{

@@ -64,9 +64,9 @@ export function getUniversityType(name: string): UniversityType {
 
 	const ISTUniversities = ['KAIST'];
 
-	if (nationalUniversities.includes(name)) return '국립';
-	if (privateUniversities.includes(name)) return '사립';
-	if (ISTUniversities.includes(name)) return '과학기술원';
+	if (nationalUniversities?.includes(name)) return '국립';
+	if (privateUniversities?.includes(name)) return '사립';
+	if (ISTUniversities?.includes(name)) return '과학기술원';
 	return '알 수 없음';
 }
 

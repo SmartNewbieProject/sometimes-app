@@ -30,7 +30,7 @@ const { useUnivQuery } = queries;
 
 export default function UniversityPage() {
   const [searchText, setSearchText] = useState("");
-  const { updateForm, form: userForm } = useSignupProgress();
+  const { updateForm, form: userForm, regions } = useSignupProgress();
   const { isLoading, data: univs } = useUniversities();
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
     userForm.universityName
@@ -39,6 +39,11 @@ export default function UniversityPage() {
   const insets = useSafeAreaInsets();
   useChangePhase(SignupSteps.UNIVERSITY);
 
+  useEffect(() => {
+    if (regions.length) {
+      router.navigate("/auth/signup/area");
+    }
+  }, [regions.length]);
   // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics("university");
 
@@ -71,7 +76,7 @@ export default function UniversityPage() {
         : filtered;
     setFilteredUniv(merged);
   }, [searchText, JSON.stringify(univs), selectedUniv]);
-  console.log("filtered", filteredUniv);
+
   return (
     <KeyboardAvoidingView className="flex-1">
       <View style={styles.container}>
