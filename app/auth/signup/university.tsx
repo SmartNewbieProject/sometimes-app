@@ -1,143 +1,118 @@
-import Signup from '@features/signup';
-import { cn } from '@shared/libs/cn';
-import { platform } from '@shared/libs/platform';
-import { Text, PalePurpleGradient, Button, Show, Divider } from '@shared/ui';
-import { ChipSelector, LabelInput } from '@/src/widgets';
-import { Image } from 'expo-image';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect, useRef } from 'react';
-import { KeyboardAvoidingView, View, ScrollView, StyleSheet } from 'react-native';
-import Loading from "@features/loading";
-import { useKeyboarding } from '@shared/hooks';
+import { TwoButtons } from "@/src/features/layout/ui";
+import { filterUniversities } from "@/src/features/signup/lib";
+import useUniversities from "@/src/features/signup/queries/use-universities";
+import SearchUniversity from "@/src/features/signup/ui/university/search-university";
+import UniversityCard from "@/src/features/signup/ui/university/university-card";
 
-const { SignupSteps, useChangePhase, useSignupProgress, queries, useSignupAnalytics } = Signup;
+import HelpIcon from "@assets/icons/help.svg";
+import Loading from "@features/loading";
+import Signup from "@features/signup";
+
+import { FlashList } from "@shopify/flash-list";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Text as RNText,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+const {
+  SignupSteps,
+  useChangePhase,
+  useSignupProgress,
+  queries,
+  useSignupAnalytics,
+} = Signup;
 const { useUnivQuery } = queries;
 
-
 export default function UniversityPage() {
+  const [searchText, setSearchText] = useState("");
   const { updateForm, form: userForm } = useSignupProgress();
-  const { data: univs = [], isLoading } = useUnivQuery();
-  const { isKeyboardVisible } = useKeyboarding();
-  const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityName);
-  const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
-  const params = useLocalSearchParams();
-  const hasProcessedPassInfo = useRef(false);
-
+  const { isLoading, data: univs } = useUniversities();
+  const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
+    userForm.universityName
+  );
+  const [filteredUniv, setFilteredUniv] = useState(univs);
+  const insets = useSafeAreaInsets();
   useChangePhase(SignupSteps.UNIVERSITY);
 
   // 애널리틱스 추적 설정
-  const { trackSignupEvent } = useSignupAnalytics('university');
-
-  // PASS 인증 정보 처리 (useRef로 한 번만 실행되도록 제어)
-  useEffect(() => {
-    if (params.certificationInfo && !hasProcessedPassInfo.current) {
-      hasProcessedPassInfo.current = true;
-      const certInfo = JSON.parse(params.certificationInfo as string);
-      updateForm({
-        ...userForm,
-        passVerified: true,
-        name: certInfo.name,
-        phone: certInfo.phone,
-        gender: certInfo.gender,
-        birthday: certInfo.birthday,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.certificationInfo]);
+  const { trackSignupEvent } = useSignupAnalytics("university");
 
   const onNext = () => {
     if (!selectedUniv) {
       return;
     }
-    trackSignupEvent('next_button_click', 'to_university_details');
+    trackSignupEvent("next_button_click", "to_university_details");
     updateForm({
       ...userForm,
       universityName: selectedUniv,
     });
-    router.push(`/auth/signup/university-details?universityName=${selectedUniv}`);
+    router.push(
+      `/auth/signup/university-details?universityName=${selectedUniv}`
+    );
   };
 
-  const nextable = (() => {
-    if (!selectedUniv) {
-      return false;
-    }
-    return univs.includes(selectedUniv);
-  })();
+  const handleClickUniv = (univ: string) => () => {
+    setSelectedUniv((prev) => (prev === univ ? undefined : univ));
+  };
 
-  const nextButtonMessage = (() => {
-    if (!nextable) {
-      return '조금만 더 알려주세요';
-    }
-    return '다음으로';
-  })();
+  useEffect(() => {
+    if (!univs) return;
 
-
+    const filtered = filterUniversities(univs, searchText);
+    const selected = univs.find((u) => u.name === selectedUniv);
+    const merged =
+      selected && !filtered.some((u) => u.name === selected.name)
+        ? [selected, ...filtered]
+        : filtered;
+    setFilteredUniv(merged);
+  }, [searchText, JSON.stringify(univs), selectedUniv]);
+  console.log("filtered", filteredUniv);
   return (
-    <KeyboardAvoidingView
-      className="flex-1 flex flex-col">
-      <PalePurpleGradient />
-      <View className="px-5">
-        <Image
-          source={require('@assets/images/university.png')}
-          style={{ width: 81, height: 81 }}
-          className="mb-4"
+    <KeyboardAvoidingView className="flex-1">
+      <View style={styles.container}>
+        <SearchUniversity
+          searchText={searchText}
+          setSearchText={setSearchText}
         />
-        <Text weight="semibold" size="20" textColor="black">
-          다니고 있는
-        </Text>
-        <Text weight="semibold" size="20" textColor="black">
-          대학교 이름을 입력해 주세요
-        </Text>
-
-        <Divider.Horizontal className="my-4" />
-      </View>
-
-      <View className="px-5 flex flex-col gap-y-[14px] mt-[8px] flex-1">
-        <LabelInput
-          label="대학교"
-          size="sm"
-          value={selectedUniv}
-          placeholder="대학교를 입력하세요"
-          onChangeText={setSelectedUniv}
-        />
-        <Loading.Lottie
-          title="학교를 검색중이에요"
-          loading={isLoading}
-        >
-          <ScrollView style={styles.chipContainer} contentContainerStyle={styles.chipScrollContent}>
-            <ChipSelector
-              value={selectedUniv}
-              options={filteredUnivs.map((univ) => ({ label: univ, value: univ }))}
-              onChange={setSelectedUniv}
-              className="w-full"
-            />
-          </ScrollView>
+        <Loading.Lottie title="대학 목록을 로딩중입니다.." loading={isLoading}>
+          <FlashList
+            extraData={selectedUniv}
+            data={filteredUniv}
+            renderItem={({ item }) => (
+              <UniversityCard
+                onClick={handleClickUniv(item.name)}
+                isSelected={item.name === selectedUniv}
+                item={item}
+              />
+            )}
+            estimatedItemSize={90}
+            ListFooterComponentStyle={{ paddingBottom: 160 }}
+          />
         </Loading.Lottie>
       </View>
-
-      <Show when={!isKeyboardVisible}>
-        <View className={cn(
-          platform({
-            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            default: () => ""
-          })
-        )}>
-          <Button
-            variant="secondary"
-            onPress={() => {}}
-            className="flex-[0.3]"
-            disabled={true}
-          >
-            뒤로
-          </Button>
-          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
-            {nextButtonMessage}
-          </Button>
+      <View
+        style={[styles.bottomContainer, { paddingBottom: 34 + insets.bottom }]}
+        className="w-[calc(100%)]"
+      >
+        <View style={styles.tipConatainer}>
+          <HelpIcon width={20} height={20} />
+          <RNText style={styles.tip}>
+            학교 인증을 통해 안전하게 이용할 수 있습니다.
+          </RNText>
         </View>
-      </Show>
-
+        <TwoButtons
+          disabledNext={!selectedUniv}
+          onClickNext={onNext}
+          onClickPrevious={() => {
+            router.navigate("/auth/signup/area");
+          }}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -145,10 +120,37 @@ export default function UniversityPage() {
 const styles = StyleSheet.create({
   chipContainer: {
     marginTop: 4,
-    width: '100%',
+    width: "100%",
     maxHeight: 400,
   },
   chipScrollContent: {
     flexGrow: 1,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    backgroundColor: "#fff",
+  },
+  bottomContainer: {
+    position: "absolute",
+    bottom: 0,
+    paddingTop: 16,
+    paddingHorizontal: 0,
+    backgroundColor: "#fff",
+  },
+  tipConatainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    marginBottom: 16,
+  },
+  tip: {
+    color: "#9B94AB",
+    fontWeight: 300,
+    fontFamily: "Pretendard-Thin",
+    fontSize: 13,
+
+    lineHeight: 20,
   },
 });

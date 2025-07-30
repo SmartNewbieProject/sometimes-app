@@ -1,9 +1,9 @@
 import apis from "./apis";
 import * as hooks from "./hooks";
+import * as lib from "./lib/index";
 import * as queries from "./queries";
 import { accountSchema, phoneSchema, profileSchema } from "./services/schema";
 import { LoginForm, Logo } from "./ui";
-
 const Signup = {
   Logo,
   LoginForm,
@@ -14,6 +14,7 @@ const Signup = {
   },
   ...hooks,
   apis,
+  lib,
   queries,
 };
 

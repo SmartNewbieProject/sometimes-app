@@ -11,7 +11,7 @@ function ProfileEditHeader() {
   const { showModal } = useModal();
 
   return (
-    <Header.Container className="items-center !pt-[21px] ">
+    <Header.Container className="items-center  ">
       <Header.LeftContent>
         <Pressable
           onPress={() => {

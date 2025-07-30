@@ -11,7 +11,7 @@ function SettingHeader() {
   const title = path === "/setting" ? "설정" : "계정관리";
 
   return (
-    <Header.Container className="items-center !pt-[21px] ">
+    <Header.Container className="items-center  ">
       <Header.LeftContent>
         <Pressable
           onPress={() => {

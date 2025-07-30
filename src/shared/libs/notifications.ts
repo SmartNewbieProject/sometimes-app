@@ -137,6 +137,99 @@ async function registerPushToken(pushToken: string): Promise<void> {
 }
 
 /**
+ * 푸시 토큰 API 응답 타입
+ */
+interface PushTokenResponse {
+  data: Array<{
+    id: string;
+    pushToken: string;
+    deviceId: string;
+    platform: string;
+    userId: string;
+    isActive: string;
+    createdAt: string;
+    updatedAt: string;
+    lastUsedAt: string;
+    deletedAt: string | null;
+  }>;
+  success: boolean;
+  message: string;
+}
+
+/**
+ * 백엔드에서 현재 사용자의 푸시 토큰 등록 여부를 확인합니다.
+ */
+export async function checkPushTokenRegistered(): Promise<boolean> {
+  try {
+    const response = await axiosClient.get('/push-notifications/tokens') as PushTokenResponse;
+
+    return response?.success === true &&
+           Array.isArray(response?.data) &&
+           response.data.length > 0;
+  } catch (error) {
+    console.error('푸시 토큰 조회 실패:', error);
+    return false;
+  }
+}
+
+/**
+ * 모달 옵션 타입
+ */
+interface ModalOptions {
+  title: string;
+  children: string;
+  primaryButton: { text: string; onClick: () => void };
+  secondaryButton?: { text: string; onClick: () => void };
+}
+
+/**
+ * 푸시 토큰 등록 여부를 확인하고 등록되지 않은 경우 사용자에게 알림 허용 여부를 확인한 후 등록을 시도합니다.
+ * 기존 로그인된 사용자들을 위한 함수입니다.
+ * 로그인 시점이 아닌 홈 화면 진입 시에만 호출되어야 합니다.
+ */
+export async function ensurePushTokenRegistered(
+  showModal?: (options: ModalOptions) => void
+): Promise<void> {
+  if (!Device.isDevice) {
+    return;
+  }
+
+  if (!showModal) {
+    console.warn('showModal 함수가 제공되지 않아 푸시 토큰 등록을 건너뜁니다.');
+    return;
+  }
+
+  try {
+    const isRegistered = await checkPushTokenRegistered();
+
+    if (!isRegistered) {
+      showModal({
+        title: '알림 허용',
+        children: '매칭 결과, 댓글 등의 알림을 받으시겠습니까?',
+        primaryButton: {
+          text: '허용',
+          onClick: async () => {
+            try {
+              await registerForPushNotificationsAsync();
+            } catch (error) {
+              console.error('푸시 토큰 등록 실패:', error);
+            }
+          }
+        },
+        secondaryButton: {
+          text: '나중에',
+          onClick: () => {
+            // 사용자가 알림을 거부한 경우 아무 작업 안 함
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.error('푸시 토큰 등록 확인 중 오류:', error);
+  }
+}
+
+/**
  * 알림 권한 상태를 확인합니다.
  */
 export async function getNotificationPermissionStatus(): Promise<Notifications.PermissionStatus> {

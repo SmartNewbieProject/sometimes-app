@@ -50,8 +50,8 @@ export default function CommunityScreen() {
 const ListHeaderComponent = () => {
   const insets = useSafeAreaInsets();
   return (
-    <View style={{ paddingTop: insets.top }}>
-      <Header.Container className="items-center bg-white !pt-[21px]">
+    <View>
+      <Header.Container className="items-center bg-white ">
         <Header.CenterContent>
           <ImageResource
             resource={ImageResources.COMMUNITY_LOGO}

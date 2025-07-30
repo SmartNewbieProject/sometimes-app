@@ -9,6 +9,7 @@ import {
 } from "@/src/features/version-update";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ImageResources } from "@/src/shared/libs";
+import { ensurePushTokenRegistered } from "@/src/shared/libs/notifications";
 import {
   AnnounceCard,
   BottomNavigation,
@@ -44,6 +45,7 @@ const {
 const { useRedirectPreferences, useTemporalUniversity } = hooks;
 
 const HomeScreen = () => {
+  const { showModal } = useModal();
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } =
     useTotalMatchCountQuery();
   const { data: totalUserCount = 0 } = useTotalUserCountQuery();
@@ -52,7 +54,6 @@ const HomeScreen = () => {
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
   const { data: notifications } = useNotificationQuery();
-  const { showModal } = useModal();
   const queryClient = useQueryClient();
   const [isSlideScrolling, setSlideScrolling] = useState(false);
 
@@ -81,7 +82,8 @@ const HomeScreen = () => {
   };
   useEffect(() => {
     trackEventAction("home_view");
-  }, []);
+    ensurePushTokenRegistered(showModal);
+  }, [showModal]);
 
   useTemporalUniversity();
   useVersionUpdate();

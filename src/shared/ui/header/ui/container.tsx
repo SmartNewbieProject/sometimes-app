@@ -2,6 +2,7 @@ import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
 import React, { type ReactNode } from "react";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ContainerProps {
   children: ReactNode;
@@ -14,17 +15,19 @@ export function Container({
   className,
   centered = false,
 }: ContainerProps) {
+  const insets = useSafeAreaInsets();
   return (
     <View
       className={cn(
         "w-full flex-row justify-between items-center px-3 bg-white",
         platform({
-          ios: () => "pt-16 pb-4",
-          android: () => "pt-12 pb-4",
-          web: () => "pt-3 pb-4",
+          ios: () => "pb-4",
+          android: () => " pb-4",
+          web: () => " pb-4",
         }),
         className
       )}
+      style={{ paddingTop: insets.top + 12 }}
     >
       {children}
     </View>

@@ -1,10 +1,10 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { BusinessInfo } from "@/src/shared/ui/business-info/business-info";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
+import { Button } from "@/src/shared/ui/button";
 
 const {useSignupProgress} = Signup;
 

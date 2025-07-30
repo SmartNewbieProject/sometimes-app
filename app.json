@@ -2,7 +2,7 @@
 	"expo": {
 		"name": "sometimes",
 		"slug": "sometimes",
-		"version": "1.5.1",
+		"version": "1.5.8",
 		"orientation": "portrait",
 		"icon": "./assets/icons/app.png",
 		"scheme": "myapp",
@@ -145,7 +145,28 @@
 				}
 			],
 			"@react-native-firebase/app",
+			[
+				"expo-build-properties",
+				{
+					"ios": {
+						"useFrameworks": "static"
+					}
+				}
+			],
 			"@portone/react-native-sdk/plugin",
+			[
+				"react-native-fbsdk-next",
+				{
+					"appID": "638240219304867",
+					"clientToken": "451c9dd6de265d20d05657eca3fbba9d",
+					"displayName": "SOMETIME",
+					"scheme": "fb638240219304867",
+					"advertiserIDCollectionEnabled": true,
+					"autoLogAppEventsEnabled": true,
+					"isAutoInitEnabled": true,
+					"iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+				}
+			],
 			[
 				"expo-camera",
 				{
@@ -171,7 +192,8 @@
 					"color": "#ffffff"
 				}
 			],
-			"expo-web-browser"
+			"expo-web-browser",
+			"expo-build-properties"
 		],
 		"experiments": {
 			"typedRoutes": true
