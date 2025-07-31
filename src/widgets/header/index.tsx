@@ -92,7 +92,6 @@ const styles = StyleSheet.create({
   },
   centerContent: {
     alignItems: 'center',
-    marginRight: 32,
   },
   rightContent: {
     width: 48,
