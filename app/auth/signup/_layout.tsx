@@ -34,27 +34,30 @@ export default function SignupLayout() {
   return (
     <DefaultLayout className="flex-1">
       <PalePurpleGradient />
-      <View
-        style={[
-          styles.titleContainer,
-          { paddingTop: insets.top + 10, paddingBottom: 10 },
-        ]}
-      >
-        <Text style={styles.title}>{title}</Text>
-      </View>
       {renderProgress && (
-        <View
-          className={cn(
-            " pb-[30px] items-center bg-white",
-            platform({
-              ios: () => "",
-              android: () => "",
-              web: () => "",
-            })
-          )}
-        >
-          <ProgressBar progress={progress} width={progressWidth} />
-        </View>
+        <>
+          <View
+            style={[
+              styles.titleContainer,
+              { paddingTop: insets.top + 10, paddingBottom: 10 },
+            ]}
+          >
+            <Text style={styles.title}>{title}</Text>
+          </View>
+
+          <View
+            className={cn(
+              " pb-[30px] items-center bg-white",
+              platform({
+                ios: () => "",
+                android: () => "",
+                web: () => "",
+              })
+            )}
+          >
+            <ProgressBar progress={progress} width={progressWidth} />
+          </View>
+        </>
       )}
       <Suspense fallback={<Loading.Page />}>
         <Stack
