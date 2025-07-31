@@ -1,6 +1,7 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { track } from '@amplitude/analytics-react-native';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Platform } from 'react-native';
@@ -27,7 +28,6 @@ interface UsePortOneLoginReturn {
 	handleMobileAuthError: (error: Error) => void;
 }
 
-// 환경변수 검증을 모듈 레벨에서 수행
 const validateEnvironmentVariables = () => {
 	const requiredEnvVars = {
 		EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
@@ -42,9 +42,6 @@ const validateEnvironmentVariables = () => {
 	}
 };
 
-/**
- * PortOne 본인인증을 통한 로그인 플로우를 관리하는 커스텀 훅
- */
 export const usePortOneLogin = ({
 	onError,
 	onSuccess,
@@ -63,28 +60,27 @@ export const usePortOneLogin = ({
 		setError(null);
 	}, []);
 
-	// 공통 로그인 처리 함수
 	const processLoginResult = useCallback(
 		async (identityVerificationId: string) => {
 			const loginResult = await loginWithPass(identityVerificationId);
 
 			if (loginResult.isNewUser) {
-				if (loginResult.certificationInfo?.birthday) {
-					const { birthday } = loginResult.certificationInfo;
+				const birthday = loginResult.certificationInfo?.birthday;
+				const phone = loginResult.certificationInfo?.phone;
 
-					if (!isAdult(birthday)) {
-						router.push({ pathname: '/auth/age-restriction' as any });
-						return;
-					}
+				if (birthday && !isAdult(birthday)) {
+					track('Signup_AgeCheck_Failed', { birthday });
+					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+					router.push({ pathname: '/auth/age-restriction' as any });
+					return;
 				}
 
-				if (loginResult.certificationInfo?.phone) {
+				if (phone) {
 					try {
-						const { isBlacklisted } = await checkPhoneNumberBlacklist(
-							loginResult.certificationInfo.phone,
-						);
+						const { isBlacklisted } = await checkPhoneNumberBlacklist(phone);
 
 						if (isBlacklisted) {
+							track('Signup_PhoneBlacklist_Failed', { phone });
 							showModal({
 								title: '가입 제한',
 								children: '신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.',
@@ -99,10 +95,16 @@ export const usePortOneLogin = ({
 						}
 					} catch (error) {
 						console.error('블랙리스트 체크 오류:', error);
+						track('Signup_Error', {
+							stage: 'PhoneBlacklistCheck',
+							message: error instanceof Error ? error.message : String(error),
+						});
 						router.replace('/');
+						return;
 					}
 				}
 
+				track('Signup_Route_Entered', { screen: 'AreaSelect' });
 				router.push({
 					pathname: '/auth/signup/area',
 					params: {
@@ -118,7 +120,6 @@ export const usePortOneLogin = ({
 		[loginWithPass, onSuccess, showModal],
 	);
 
-	// 모바일 PASS 인증 완료 핸들러
 	const handleMobileAuthComplete = useCallback(
 		async (response: PortOneIdentityVerificationResponse) => {
 			try {
@@ -126,13 +127,19 @@ export const usePortOneLogin = ({
 					throw new Error('본인인증 ID를 받지 못했습니다.');
 				}
 
+				track('Signup_IdentityVerification_Completed');
+
 				await processLoginResult(response.identityVerificationId);
 				setShowMobileAuth(false);
 				setMobileAuthRequest(null);
 			} catch (error) {
-				console.error('모바일 본인인증 완료 처리 중 오류:', error);
 				const errorMessage =
 					error instanceof Error ? error.message : '로그인 처리 중 오류가 발생했습니다.';
+				console.error('모바일 본인인증 완료 처리 중 오류:', errorMessage);
+				track('Signup_Error', {
+					stage: 'handleMobileAuthComplete',
+					message: errorMessage,
+				});
 				setError(errorMessage);
 				onError?.(new Error(errorMessage));
 			} finally {
@@ -142,10 +149,12 @@ export const usePortOneLogin = ({
 		[processLoginResult, onError],
 	);
 
-	// 모바일 PASS 인증 오류 핸들러
 	const handleMobileAuthError = useCallback(
 		(error: Error) => {
 			console.error('모바일 본인인증 오류:', error);
+			track('Signup_IdentityVerification_Failed', {
+				reason: error.message,
+			});
 			setError(error.message);
 			setShowMobileAuth(false);
 			setMobileAuthRequest(null);
@@ -166,7 +175,6 @@ export const usePortOneLogin = ({
 	}, [authService, processLoginResult]);
 
 	const handleMobileAuth = useCallback(() => {
-		// 모바일에서는 컴포넌트 방식으로 PASS 인증 표시
 		const request: PortOneIdentityVerificationRequest = {
 			storeId: process.env.EXPO_PUBLIC_STORE_ID as string,
 			channelKey: process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY as string,
@@ -181,8 +189,11 @@ export const usePortOneLogin = ({
 		try {
 			setIsLoading(true);
 			setError(null);
-
 			validateEnvironmentVariables();
+
+			track('Signup_IdentityVerification_Started', {
+				platform: Platform.OS,
+			});
 
 			if (Platform.OS === 'web') {
 				await handleWebAuth();
@@ -192,6 +203,10 @@ export const usePortOneLogin = ({
 		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : '로그인 처리 중 오류가 발생했습니다.';
+			track('Signup_Error', {
+				stage: 'startPortOneLogin',
+				message: errorMessage,
+			});
 			setError(errorMessage);
 			onError?.(new Error(errorMessage));
 			setIsLoading(false);

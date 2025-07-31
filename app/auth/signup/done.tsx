@@ -3,6 +3,7 @@ import Signup from "@/src/features/signup";
 import { environmentStrategy } from "@/src/shared/libs";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
+import { track } from "@amplitude/analytics-react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { View } from "react-native";
@@ -15,6 +16,7 @@ export default function SignupDoneScreen() {
 
   const onNext = () => {
     trackSignupEvent("completion_button_click");
+    track("Signup_done");
     clear();
     router.push("/auth/login");
   };
@@ -53,7 +55,7 @@ export default function SignupDoneScreen() {
         </View>
       </View>
 
-      <View className="w-full px-5 mb-[14px] md:mb-[58px]">
+      <View className="w-full px-5 mb-[18px] md:mb-[58px]">
         <Button variant="primary" size="md" onPress={onNext} className="w-full">
           이상형 찾으러 가기 →
         </Button>

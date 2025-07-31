@@ -5,6 +5,7 @@ import { areaMap } from "@/src/features/signup/lib";
 import Heart from "@/src/features/signup/ui/area/heart";
 import AreaModal from "@/src/features/signup/ui/area/modal";
 import { Button, Header, Text } from "@/src/shared/ui";
+import { track } from "@amplitude/analytics-react-native";
 import AreaFillHeart from "@assets/icons/area-fill-heart.svg";
 import DokdoIcon from "@assets/icons/dokdo.svg";
 import { Image } from "expo-image";
@@ -25,6 +26,7 @@ function Area() {
 
   const handleNext = () => {
     onNext(() => {
+      track("Signup_area", { area: show });
       router.push("/auth/signup/university");
     });
   };
