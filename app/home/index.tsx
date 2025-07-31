@@ -28,6 +28,7 @@ import { Image } from "expo-image";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
+import {ImageResource} from "@ui/image-resource";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -60,8 +61,8 @@ const HomeScreen = () => {
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
   };
-  const handleNavigateToRematch = () => {
-    router.navigate("/purchase/tickets/rematch");
+  const handleNavigateGemStore = () => {
+    router.navigate("/purchase/gem-store");
   };
 
   const onClickAlert = (notification: Notification) => {
@@ -110,12 +111,9 @@ const HomeScreen = () => {
         rightContent={
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={handleNavigateToRematch}
+            onPress={handleNavigateGemStore}
           >
-            <Image
-              source={require("@assets/images/ticket.png")}
-              style={{ width: 40, height: 40 }}
-            />
+            <ImageResource resource={ImageResources.GEM} width={40} height={40}  />
           </TouchableOpacity>
         }
       />
@@ -126,7 +124,6 @@ const HomeScreen = () => {
           Platform.OS === "android" ? "pb-40" : "pb-14"
         }`}
       >
-        <Link href="/auth/signup/area">지역선택</Link>
         <View>
           <Loading.Lottie
             title="몇 명이 매칭을 신청했을까요?"
