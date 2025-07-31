@@ -25,7 +25,7 @@ import IdleMatchTimer from "@features/idle-match-timer";
 import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import { router, useFocusEffect } from "expo-router";
+import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
 
@@ -126,6 +126,7 @@ const HomeScreen = () => {
           Platform.OS === "android" ? "pb-40" : "pb-14"
         }`}
       >
+        <Link href="/auth/signup/area">지역선택</Link>
         <View>
           <Loading.Lottie
             title="몇 명이 매칭을 신청했을까요?"

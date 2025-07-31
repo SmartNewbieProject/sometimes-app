@@ -1,3 +1,4 @@
+import { DefaultLayout } from "@/src/features/layout/ui";
 import Loading from "@/src/features/loading";
 import Signup from "@/src/features/signup";
 import type { SignupForm } from "@/src/features/signup/hooks";
@@ -115,7 +116,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <View className="flex-1 flex flex-col">
+    <DefaultLayout>
       <PalePurpleGradient />
       <View className="px-5">
         <Image
@@ -198,6 +199,6 @@ export default function ProfilePage() {
           {nextButtonMessage}
         </Button>
       </View>
-    </View>
+    </DefaultLayout>
   );
 }
