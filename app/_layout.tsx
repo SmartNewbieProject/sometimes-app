@@ -12,15 +12,15 @@ import {
 import * as Notifications from "expo-notifications";
 
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
-import ProfileDrinking from "@/src/features/profile-edit/ui/profile/profile-drinking";
 import { VersionUpdateChecker } from "@/src/features/version-update";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
-import { useColorScheme } from "@/src/shared/hooks/use-color-schema";
 import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as amplitude from '@amplitude/analytics-react-native';
 
+amplitude.init('a5f2116e8a27e8403373bb06bc56f49c');
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
