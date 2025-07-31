@@ -11,6 +11,7 @@ import { Button, Label, Show } from "@/src/shared/ui";
 import { PalePurpleGradient } from "@/src/shared/ui/gradient";
 import { Text } from "@/src/shared/ui/text";
 import { Form } from "@/src/widgets";
+import { track } from "@amplitude/analytics-react-native";
 import Loading from "@features/loading";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
@@ -125,6 +126,12 @@ export default function UniversityDetailsPage() {
 
   const onNext = handleSubmit(async (data) => {
     trackSignupEvent("next_button_click", "to_done");
+    track("Singup_university_details", {
+      instagramId: data.instagramId,
+      grade: data.grade,
+      department: data.departmentName,
+      studentNumber: data.studentNumber,
+    });
     setSignupLoading(true);
     await tryCatch(
       async () => {
@@ -135,6 +142,9 @@ export default function UniversityDetailsPage() {
         router.push("/auth/signup/profile-image");
       },
       (error) => {
+        track("Singup_university_details_error", {
+          error: "에러 발생",
+        });
         setSignupLoading(false);
         console.log(error);
         trackSignupEvent("signup_error", error.error);

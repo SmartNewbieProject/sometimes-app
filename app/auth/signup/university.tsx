@@ -5,6 +5,7 @@ import { filterUniversities } from "@/src/features/signup/lib";
 import useUniversities from "@/src/features/signup/queries/use-universities";
 import SearchUniversity from "@/src/features/signup/ui/university/search-university";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
+import { track } from "@amplitude/analytics-react-native";
 
 import HelpIcon from "@assets/icons/help.svg";
 import Loading from "@features/loading";
@@ -35,6 +36,7 @@ export default function UniversityPage() {
 
   const handleNext = () => {
     onNext(() => {
+      track("Signup_university", { test: true, university: selectedUniv });
       router.push(
         `/auth/signup/university-details?universityName=${selectedUniv}`
       );
