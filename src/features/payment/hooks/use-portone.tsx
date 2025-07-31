@@ -4,11 +4,9 @@ import { usePortoneScript } from './PortoneProvider';
 import { router } from 'expo-router';
 import { Platform, View } from 'react-native';
 import { Text } from '@shared/ui';
-import Payment from '@features/payment';
+import paymentApis from '../api';
 import { useModal } from '@shared/hooks/use-modal';
 import type { PaymentResponse } from '../types';
-
-const { apis } = Payment;
 
 interface UsePortone {
 	handlePaymentComplete: (
@@ -40,7 +38,7 @@ export function usePortone(): UsePortone {
 				}
 
 				if (Platform.OS === 'web') {
-					await apis.pay({
+					await paymentApis.pay({
 						txId: result.txId,
 						merchantUid: result.paymentId,
 					});
