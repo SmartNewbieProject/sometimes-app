@@ -12,11 +12,8 @@ interface HeartProps {
 
 function Heart({ isPick, onClick, open }: HeartProps) {
   const scaleAnimation = useRef(new Animated.Value(1)).current;
-  const [isFill, setFill] = useState(true);
-  console.log("isPick", isFill, isPick);
   useEffect(() => {
     if (isPick) {
-      setFill(true);
       scaleAnimation.setValue(0);
       Animated.spring(scaleAnimation, {
         toValue: 1,

@@ -1,4 +1,5 @@
 import { TwoButtons } from "@/src/features/layout/ui";
+import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
 import { filterUniversities } from "@/src/features/signup/lib";
 import useUniversities from "@/src/features/signup/queries/use-universities";
 import SearchUniversity from "@/src/features/signup/ui/university/search-university";
@@ -6,10 +7,9 @@ import UniversityCard from "@/src/features/signup/ui/university/university-card"
 
 import HelpIcon from "@assets/icons/help.svg";
 import Loading from "@features/loading";
-import Signup from "@features/signup";
 
 import { FlashList } from "@shopify/flash-list";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -19,64 +19,35 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-const {
-  SignupSteps,
-  useChangePhase,
-  useSignupProgress,
-  queries,
-  useSignupAnalytics,
-} = Signup;
-const { useUnivQuery } = queries;
 
 export default function UniversityPage() {
-  const [searchText, setSearchText] = useState("");
-  const { updateForm, form: userForm, regions } = useSignupProgress();
-  const { isLoading, data: univs } = useUniversities();
-  const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
-    userForm.universityName
-  );
-  const [filteredUniv, setFilteredUniv] = useState(univs);
   const insets = useSafeAreaInsets();
-  useChangePhase(SignupSteps.UNIVERSITY);
+  const router = useRouter();
+  const {
+    searchText,
+    setSearchText,
+    filteredUniv,
+    handleClickUniv,
+    onNext,
+    selectedUniv,
+    isLoading,
+    regions,
+  } = useUniversityHook();
 
   useEffect(() => {
-    if (regions.length) {
+    if (regions.length === 0) {
       router.navigate("/auth/signup/area");
     }
   }, [regions.length]);
-  // 애널리틱스 추적 설정
-  const { trackSignupEvent } = useSignupAnalytics("university");
-
-  const onNext = () => {
-    if (!selectedUniv) {
-      return;
-    }
-    trackSignupEvent("next_button_click", "to_university_details");
-    updateForm({
-      ...userForm,
-      universityName: selectedUniv,
+  console.log("2222");
+  const handleNext = () => {
+    console.log(123);
+    onNext(() => {
+      router.push(
+        `/auth/signup/university-details?universityName=${selectedUniv}`
+      );
     });
-    router.push(
-      `/auth/signup/university-details?universityName=${selectedUniv}`
-    );
   };
-
-  const handleClickUniv = (univ: string) => () => {
-    setSelectedUniv((prev) => (prev === univ ? undefined : univ));
-  };
-
-  useEffect(() => {
-    if (!univs) return;
-
-    const filtered = filterUniversities(univs, searchText);
-    const selected = univs.find((u) => u.name === selectedUniv);
-    const merged =
-      selected && !filtered.some((u) => u.name === selected.name)
-        ? [selected, ...filtered]
-        : filtered;
-    setFilteredUniv(merged);
-  }, [searchText, JSON.stringify(univs), selectedUniv]);
-
   return (
     <KeyboardAvoidingView className="flex-1">
       <View style={styles.container}>
@@ -112,7 +83,7 @@ export default function UniversityPage() {
         </View>
         <TwoButtons
           disabledNext={!selectedUniv}
-          onClickNext={onNext}
+          onClickNext={handleNext}
           onClickPrevious={() => {
             router.navigate("/auth/signup/area");
           }}

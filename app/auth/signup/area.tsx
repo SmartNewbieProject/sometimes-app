@@ -1,91 +1,27 @@
 import { DefaultLayout } from "@/src/features/layout/ui";
-import {
-  SignupSteps,
-  useChangePhase,
-  useSignupAnalytics,
-  useSignupProgress,
-} from "@/src/features/signup/hooks";
+
+import useAreaHook from "@/src/features/signup/hooks/use-area-hook";
 import { areaMap } from "@/src/features/signup/lib";
-import { getRegionList } from "@/src/features/signup/lib/area";
 import Heart from "@/src/features/signup/ui/area/heart";
 import AreaModal from "@/src/features/signup/ui/area/modal";
 import { Button, Header, Text } from "@/src/shared/ui";
 import AreaFillHeart from "@assets/icons/area-fill-heart.svg";
-import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
 import DokdoIcon from "@assets/icons/dokdo.svg";
 import { Image } from "expo-image";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  Linking,
-  Pressable,
-  Text as RNText,
-  StyleSheet,
-  View,
-} from "react-native";
+import { useRouter } from "expo-router";
+
+import { Text as RNText, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 function Area() {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [show, setShow] = useState<null | string>(null);
-  const [initDisabled, setInitDisabled] = useState(true);
-  const params = useLocalSearchParams();
-  const hasProcessedPassInfo = useRef(false);
-  const {
-    updateForm,
-    form: userForm,
-    updateUnivTitle,
-    updateRegions,
-  } = useSignupProgress();
-  useChangePhase(SignupSteps.AREA);
+  const { onNext, show, initDisabled, handleChangeShow } = useAreaHook();
+  const router = useRouter();
 
-  // 애널리틱스 추적 설정
-  const { trackSignupEvent } = useSignupAnalytics("area");
-
-  useEffect(() => {
-    updateRegions([]);
-  }, []);
-
-  // PASS 인증 정보 처리 (useRef로 한 번만 실행되도록 제어)
-  useEffect(() => {
-    if (params.certificationInfo && !hasProcessedPassInfo.current) {
-      hasProcessedPassInfo.current = true;
-      const certInfo = JSON.parse(params.certificationInfo as string);
-      updateForm({
-        ...userForm,
-        passVerified: true,
-        name: certInfo.name,
-        phone: certInfo.phone,
-        gender: certInfo.gender,
-        birthday: certInfo.birthday,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.certificationInfo]);
-
-  useEffect(() => {
-    setShow("대전");
-
-    setTimeout(() => {
-      setShow("부산");
-    }, 1000);
-    setTimeout(() => {
-      setShow(null);
-      setInitDisabled(false);
-    }, 2000);
-  }, []);
-
-  const onNext = () => {
-    if (!show) {
-      return;
-    }
-    trackSignupEvent("next_button_click", "to_university");
-    updateUnivTitle(`${show} 대학`);
-    updateRegions(getRegionList(show));
-    router.push("/auth/signup/university");
+  const handleNext = () => {
+    onNext(() => {
+      router.push("/auth/signup/university");
+    });
   };
-
   return (
     <DefaultLayout
       style={{
@@ -159,7 +95,7 @@ function Area() {
               <Heart
                 open={open}
                 isPick={show === area}
-                onClick={() => setShow((prev) => (prev === area ? null : area))}
+                onClick={() => handleChangeShow(area)}
               />
             </View>
           ))}
@@ -196,7 +132,7 @@ function Area() {
           </RNText>
         </View>
         <Button
-          onPress={onNext}
+          onPress={handleNext}
           disabled={
             initDisabled ||
             !(
