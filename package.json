@@ -78,6 +78,7 @@
 		"react-hook-form": "^7.55.0",
 		"react-native": "0.79.4",
 		"react-native-css-interop": "^0.1.22",
+		"react-native-dotenv": "^3.4.11",
 		"react-native-fbsdk-next": "^13.4.1",
 		"react-native-gesture-handler": "~2.24.0",
 		"react-native-get-random-values": "^1.11.0",
