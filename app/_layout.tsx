@@ -20,7 +20,7 @@ import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as amplitude from '@amplitude/analytics-react-native';
 
-amplitude.init('a5f2116e8a27e8403373bb06bc56f49c');
+// amplitude.init('a5f2116e8a27e8403373bb06bc56f49c');
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -100,32 +100,6 @@ export default function RootLayout() {
       }
     };
   }, [isValidNotificationData]);
-
-  useEffect(() => {
-    // Hotjar는 웹에서만 초기화 (Android 빌드 문제 방지)
-    if (Platform.OS === "web") {
-      try {
-        const script = document.createElement("script");
-        script.innerHTML = `
-          (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:6430952,hjsv:6};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-            a.appendChild(r);
-          })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-        `;
-        document.head.appendChild(script);
-
-        if (__DEV__) {
-          console.log("Hotjar script loaded in development mode.");
-        }
-      } catch (error) {
-        console.warn("Failed to load Hotjar:", error);
-      }
-    }
-  }, []);
 
   if (!loaded) {
     return null;
