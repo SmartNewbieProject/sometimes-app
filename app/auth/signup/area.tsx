@@ -10,7 +10,13 @@ import DokdoIcon from "@assets/icons/dokdo.svg";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 
-import { Platform, Text as RNText, StyleSheet, View } from "react-native";
+import {
+  Platform,
+  Text as RNText,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 function Area() {
   const insets = useSafeAreaInsets();
@@ -41,83 +47,85 @@ function Area() {
           현재 거주하거나 학교가 있는 지역을 선택해주세요
         </Text>
       </View>
-      <View style={styles.contentContainer}>
-        <View style={styles.mapContainer}>
-          <Image
-            source={require("@assets/images/heart-balloon.png")}
-            style={{
-              width: 57,
-              height: 54,
-              position: "absolute",
-              top: -10,
-              left: -18,
-            }}
-          />
-          <Image
-            source={require("@assets/images/heart-arrow.png")}
-            style={{
-              width: 72,
-              height: 72,
-              position: "absolute",
-              bottom: 20,
-              right: -10,
-              transform: [
-                {
-                  rotate: "13deg",
-                },
-              ],
-            }}
-          />
-          <DokdoIcon
-            width={10}
-            height={10}
-            style={{ position: "absolute", right: -16, top: 86 }}
-          />
-
-          <Image
-            source={require("@assets/images/korea-map.png")}
-            style={{ width: 280, height: 438 }}
-          />
-
-          {areaMap.map(({ id, area, location, open }) => (
-            <View
-              key={`heart-${id}`}
+      <ScrollView>
+        <View style={styles.contentContainer}>
+          <View style={styles.mapContainer}>
+            <Image
+              source={require("@assets/images/heart-balloon.png")}
               style={{
+                width: 57,
+                height: 54,
                 position: "absolute",
-                alignItems: "center",
-                gap: 10,
-                zIndex: 1,
-                ...location,
+                top: -10,
+                left: -18,
               }}
-            >
-              <Heart
-                open={open}
-                isPick={show === area}
-                onClick={() => handleChangeShow(area)}
-              />
-            </View>
-          ))}
-          {show !== null &&
-            areaMap.map(({ id, area, modalLocation, description, open }) => (
+            />
+            <Image
+              source={require("@assets/images/heart-arrow.png")}
+              style={{
+                width: 72,
+                height: 72,
+                position: "absolute",
+                bottom: 20,
+                right: -10,
+                transform: [
+                  {
+                    rotate: "13deg",
+                  },
+                ],
+              }}
+            />
+            <DokdoIcon
+              width={10}
+              height={10}
+              style={{ position: "absolute", right: -16, top: 86 }}
+            />
+
+            <Image
+              source={require("@assets/images/korea-map.png")}
+              style={{ width: 280, height: 438 }}
+            />
+
+            {areaMap.map(({ id, area, location, open }) => (
               <View
-                key={`modal-${id}`}
+                key={`heart-${id}`}
                 style={{
                   position: "absolute",
                   alignItems: "center",
-                  zIndex: 2,
-                  ...modalLocation,
+                  gap: 10,
+                  zIndex: 1,
+                  ...location,
                 }}
               >
-                <AreaModal
+                <Heart
                   open={open}
-                  area={area}
-                  description={description}
-                  isShow={show === area}
+                  isPick={show === area}
+                  onClick={() => handleChangeShow(area)}
                 />
               </View>
             ))}
+            {show !== null &&
+              areaMap.map(({ id, area, modalLocation, description, open }) => (
+                <View
+                  key={`modal-${id}`}
+                  style={{
+                    position: "absolute",
+                    alignItems: "center",
+                    zIndex: 2,
+                    ...modalLocation,
+                  }}
+                >
+                  <AreaModal
+                    open={open}
+                    area={area}
+                    description={description}
+                    isShow={show === area}
+                  />
+                </View>
+              ))}
+          </View>
         </View>
-      </View>
+      </ScrollView>
       <View
         style={[
           styles.bottomContainer,
@@ -174,10 +182,10 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    paddingBottom: 60,
+    paddingBottom: 120,
     position: "relative",
     alignItems: "center",
-    marginTop: 34,
+    marginTop: 10,
   },
   bottomContainer: {
     position: "absolute",

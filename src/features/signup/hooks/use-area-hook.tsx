@@ -44,7 +44,9 @@ function useAreaHook() {
   }, [params.certificationInfo]);
 
   useEffect(() => {
-    setShow("대전");
+    setTimeout(() => {
+      setShow("대전");
+    }, 200);
 
     setTimeout(() => {
       setShow("부산");
@@ -52,7 +54,7 @@ function useAreaHook() {
     setTimeout(() => {
       setShow(null);
       setInitDisabled(false);
-    }, 2000);
+    }, 1800);
   }, []);
 
   const onNext = (fallback: () => void) => {

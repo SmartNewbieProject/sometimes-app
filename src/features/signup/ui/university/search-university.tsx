@@ -1,13 +1,19 @@
 import SearchIcon from "@assets/icons/search.svg";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import {
-  Animated,
   Easing,
+  Platform,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useWindowWidth } from "../../hooks";
 
 interface SearchUniversityProps {
@@ -21,16 +27,20 @@ function SearchUniversity({
 }: SearchUniversityProps) {
   const [expanded, setExpanded] = useState(false);
 
-  const animatedWidth = React.useRef(new Animated.Value(32)).current;
+  const animatedWidth = useSharedValue(32);
   const width = useWindowWidth();
   const searchWidth = width > 480 ? 436 : width - 32;
+
+  const widthStyle = useAnimatedStyle(() => {
+    return {
+      width: animatedWidth.value,
+    };
+  });
+
   const handleToggle = () => {
-    Animated.timing(animatedWidth, {
-      toValue: expanded ? 32 : searchWidth,
+    animatedWidth.value = withTiming(expanded ? 32 : searchWidth, {
       duration: 300,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
-    }).start();
+    });
     setExpanded(!expanded);
   };
 
@@ -39,8 +49,8 @@ function SearchUniversity({
       <Animated.View
         style={[
           styles.searchContainer,
+          widthStyle,
           {
-            width: animatedWidth,
             backgroundColor: expanded ? "#FFFFFF" : "#F3EDFF",
             borderColor: "#F3EDFF",
             flexDirection: "row",
@@ -56,7 +66,7 @@ function SearchUniversity({
             placeholder="대학교 검색"
             placeholderTextColor="#999"
             style={styles.input}
-            underlineColorAndroid="transparent" // Android용
+            underlineColorAndroid="transparent"
             autoFocus
           />
         )}

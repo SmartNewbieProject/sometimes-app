@@ -8,6 +8,7 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   onClickPrevious: () => void;
@@ -27,8 +28,12 @@ export const TwoButtons = ({
   style,
   disabledNext,
 }: Props) => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={[styles.container, style]}>
+    <View
+      style={[styles.container, style, { paddingBottom: insets.bottom + 16 }]}
+    >
       <Button
         variant="secondary"
         className="flex-[0.3]"
@@ -55,17 +60,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 31,
     gap: 14,
-    ...Platform.select({
-      web: {
-        marginBottom: 14, // md:mb-[72px] 은 무시
-      },
-      ios: {
-        marginBottom: 58,
-      },
-      android: {
-        marginBottom: 58,
-      },
-    }),
   },
   rightButton: {
     borderRadius: 20,

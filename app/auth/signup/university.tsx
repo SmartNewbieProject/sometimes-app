@@ -19,10 +19,8 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function UniversityPage() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const {
     searchText,
@@ -35,11 +33,6 @@ export default function UniversityPage() {
     regions,
   } = useUniversityHook();
 
-  useEffect(() => {
-    if (regions.length === 0) {
-      router.navigate("/auth/signup/area");
-    }
-  }, [regions.length]);
   const handleNext = () => {
     onNext(() => {
       router.push(

@@ -32,7 +32,6 @@ export default function MyScreen() {
   return (
     <Layout.Default
       style={{
-        paddingBottom: insets.bottom,
         backgroundColor: "#fff",
       }}
     >
