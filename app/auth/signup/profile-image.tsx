@@ -117,7 +117,6 @@ export default function ProfilePage() {
 
   return (
     <DefaultLayout>
-      <PalePurpleGradient />
       <View className="px-5">
         <Image
           source={require("@assets/images/profile-image.png")}

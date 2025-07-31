@@ -23,14 +23,13 @@ function SearchUniversity({
 
   const animatedWidth = React.useRef(new Animated.Value(32)).current;
   const width = useWindowWidth();
-  console.log("width", width);
   const searchWidth = width > 480 ? 436 : width - 32;
   const handleToggle = () => {
     Animated.timing(animatedWidth, {
       toValue: expanded ? 32 : searchWidth,
       duration: 300,
       easing: Easing.out(Easing.ease),
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
     setExpanded(!expanded);
   };

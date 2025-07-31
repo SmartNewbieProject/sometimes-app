@@ -1,8 +1,8 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { View, StyleSheet, Animated, Easing } from "react-native";
-import { useEffect, useState, useRef } from "react";
-import { Image } from "expo-image";
 import { Text } from "@/src/shared/ui";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 
 interface TotalMatchCounterProps {
   count: number;
@@ -49,7 +49,7 @@ export default function TotalMatchCounter({
         toValue: count,
         duration: 1500,
         easing: Easing.out(Easing.ease),
-        useNativeDriver: false,
+        useNativeDriver: true,
       }).start(({ finished }) => {
         if (finished) {
           setDisplayValue(finalCountRef.current);
@@ -74,11 +74,30 @@ export default function TotalMatchCounter({
     >
       <View style={styles.contentContainer} className="whitespace-nowrap">
         <View style={styles.leftContent} className="w-full flex flex-row">
-          <Text textColor="white" className="mb-1 whitespace-nowrap text-sm md:text-md pt-5 pr-1">지금까지</Text>
-          <View style={styles.counterContainer} className="self-center flex justify-center">
-            <Text weight="bold" textColor="white" className="text-[34px] tracking-wide font-rubik">{formattedCount}</Text>
+          <Text
+            textColor="white"
+            className="mb-1 whitespace-nowrap text-sm md:text-md pt-5 pr-1"
+          >
+            지금까지
+          </Text>
+          <View
+            style={styles.counterContainer}
+            className="self-center flex justify-center"
+          >
+            <Text
+              weight="bold"
+              textColor="white"
+              className="text-[34px] tracking-wide font-rubik"
+            >
+              {formattedCount}
+            </Text>
           </View>
-          <Text textColor="white" className="self-end text-sm md:text-md pb-[19px]">명이 신청했어요!</Text>
+          <Text
+            textColor="white"
+            className="self-end text-sm md:text-md pb-[19px]"
+          >
+            명이 신청했어요!
+          </Text>
         </View>
       </View>
     </LinearGradient>
@@ -128,5 +147,5 @@ const styles = StyleSheet.create({
   heartIcon: {
     width: 40,
     height: 40,
-  }
+  },
 });

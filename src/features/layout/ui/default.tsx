@@ -17,15 +17,20 @@ type Props = {
 
 export const DefaultLayout = ({ children, className, style }: Props) => {
   const pathname = usePathname();
-  // 키보드가 나타날 때 컨텐츠가 더 많이 위로 이동하도록 offset 설정
+  const insets = useSafeAreaInsets();
+
   const keyboardVerticalOffset =
-    Platform.OS === "ios" ? (pathname.startsWith("/community") ? 0 : 100) : 20;
+    Platform.OS === "ios"
+      ? pathname.startsWith("/community") || pathname.startsWith("/auth/signup")
+        ? 0
+        : 60
+      : 0;
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={keyboardVerticalOffset}
-      style={[styles.container, style]}
+      style={[styles.container, { backgroundColor: "#fff" }, style]}
       className={className}
     >
       {children}

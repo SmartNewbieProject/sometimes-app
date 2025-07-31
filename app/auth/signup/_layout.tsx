@@ -21,7 +21,6 @@ export default function SignupLayout() {
   const pathname = usePathname();
   const renderProgress = pathname !== "/auth/signup/done";
   const width = useWindowWidth();
-  console.log("width", width);
   const progressWidth = width > 480 ? 448 : width - 32;
   const insets = useSafeAreaInsets();
   const titleMap = {

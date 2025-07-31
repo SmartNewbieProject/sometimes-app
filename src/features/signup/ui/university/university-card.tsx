@@ -32,7 +32,7 @@ function UniversityCard({
       Animated.timing(bgColor, {
         toValue: 1,
         duration: 150,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }),
     ]).start();
   };
@@ -47,10 +47,9 @@ function UniversityCard({
       Animated.timing(bgColor, {
         toValue: 0,
         duration: 150,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }),
     ]).start();
-    onClick();
   };
   const interpolatedBg = bgColor.interpolate({
     inputRange: [0, 1],
@@ -58,7 +57,7 @@ function UniversityCard({
   });
 
   return (
-    <Pressable onPressIn={onPressIn} onPressOut={onPressOut}>
+    <Pressable onPress={onClick} onPressIn={onPressIn} onPressOut={onPressOut}>
       <Animated.View
         style={[
           styles.container,

@@ -1,4 +1,5 @@
 import { TwoButtons } from "@/src/features/layout/ui";
+import { DefaultLayout } from "@/src/features/layout/ui";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
 import { filterUniversities } from "@/src/features/signup/lib";
 import useUniversities from "@/src/features/signup/queries/use-universities";
@@ -39,9 +40,7 @@ export default function UniversityPage() {
       router.navigate("/auth/signup/area");
     }
   }, [regions.length]);
-  console.log("2222");
   const handleNext = () => {
-    console.log(123);
     onNext(() => {
       router.push(
         `/auth/signup/university-details?universityName=${selectedUniv}`
@@ -49,7 +48,7 @@ export default function UniversityPage() {
     });
   };
   return (
-    <KeyboardAvoidingView className="flex-1">
+    <DefaultLayout className="flex-1">
       <View style={styles.container}>
         <SearchUniversity
           searchText={searchText}
@@ -71,10 +70,7 @@ export default function UniversityPage() {
           />
         </Loading.Lottie>
       </View>
-      <View
-        style={[styles.bottomContainer, { paddingBottom: 34 + insets.bottom }]}
-        className="w-[calc(100%)]"
-      >
+      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
         <View style={styles.tipConatainer}>
           <HelpIcon width={20} height={20} />
           <RNText style={styles.tip}>
@@ -89,7 +85,7 @@ export default function UniversityPage() {
           }}
         />
       </View>
-    </KeyboardAvoidingView>
+    </DefaultLayout>
   );
 }
 

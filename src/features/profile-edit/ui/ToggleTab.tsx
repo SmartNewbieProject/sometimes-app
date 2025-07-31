@@ -37,12 +37,12 @@ export const ToggleTab = ({
   ).current;
   const handleTabChange = () => {
     const anim1 = Animated.timing(widthAnim, {
-      useNativeDriver: false,
+      useNativeDriver: true,
       delay: 30,
       toValue: activeTab === "profile" ? 57 : 87,
     });
     const anim2 = Animated.timing(leftAnim, {
-      useNativeDriver: false,
+      useNativeDriver: true,
       delay: 30,
       toValue: activeTab === "profile" ? 100 : 5,
     });

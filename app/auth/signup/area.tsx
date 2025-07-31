@@ -10,7 +10,7 @@ import DokdoIcon from "@assets/icons/dokdo.svg";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 
-import { Text as RNText, StyleSheet, View } from "react-native";
+import { Platform, Text as RNText, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 function Area() {
   const insets = useSafeAreaInsets();
@@ -25,12 +25,10 @@ function Area() {
   return (
     <DefaultLayout
       style={{
-        paddingTop: insets.top,
         backgroundColor: "#fff",
-        paddingHorizontal: 16,
       }}
     >
-      <View>
+      <View style={{ paddingHorizontal: 16 }}>
         <Text
           size="20"
           weight="semibold"
@@ -121,8 +119,13 @@ function Area() {
         </View>
       </View>
       <View
-        style={[styles.bottomContainer, { paddingBottom: 34 + insets.bottom }]}
-        className="w-[calc(100%-32px)]"
+        style={[
+          styles.bottomContainer,
+          {
+            paddingBottom:
+              Platform.OS === "web" ? 18 + insets.bottom : 6 + insets.bottom,
+          },
+        ]}
       >
         <View style={styles.tipConatainer}>
           <AreaFillHeart width={20} height={20} />
@@ -143,7 +146,6 @@ function Area() {
             )
           }
           className="w-full"
-          variant={"primary"}
           size="md"
         >
           이 지역으로 시작하기
@@ -172,7 +174,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-
+    paddingBottom: 60,
     position: "relative",
     alignItems: "center",
     marginTop: 34,
@@ -180,8 +182,10 @@ const styles = StyleSheet.create({
   bottomContainer: {
     position: "absolute",
     bottom: 0,
-    backgroundColor: "#fff",
     paddingTop: 16,
+    width: "100%",
+    paddingHorizontal: 16,
+    backgroundColor: "#fff",
   },
   tipConatainer: {
     flexDirection: "row",
