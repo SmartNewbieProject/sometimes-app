@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
 
     fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
     lineHeight: 18,
   },
 });

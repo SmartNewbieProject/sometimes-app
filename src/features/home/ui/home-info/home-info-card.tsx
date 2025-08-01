@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
     lineHeight: 21.6,
   },
   description: {
@@ -75,6 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 11,
     fontFamily: "Pretendard-Light",
+    fontWeight: 300,
     lineHeight: 13.4,
   },
   button: {
@@ -93,6 +95,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
     lineHeight: 18,
     color: "#8638E5",
   },

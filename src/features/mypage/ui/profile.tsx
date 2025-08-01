@@ -281,6 +281,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 26,
     fontFamily: "Pretendard-Regular",
+    fontWeight: 400,
     lineHeight: 30,
     color: "#fff",
   },
@@ -313,6 +314,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#9747FF",
     fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
   },
 });
 
