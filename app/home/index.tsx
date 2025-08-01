@@ -126,7 +126,6 @@ const HomeScreen = () => {
           Platform.OS === "android" ? "pb-40" : "pb-14"
         }`}
       >
-        <Link href="/auth/signup/area">지역선택</Link>
         <View>
           <Loading.Lottie
             title="몇 명이 매칭을 신청했을까요?"

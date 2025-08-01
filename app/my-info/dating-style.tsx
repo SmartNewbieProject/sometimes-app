@@ -6,6 +6,7 @@ import type { Preferences } from "@/src/features/my-info/api";
 import { ImageResources } from "@/src/shared/libs";
 import { Divider, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
+import { track } from "@amplitude/analytics-react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -57,6 +58,7 @@ export default function DatingStyleSelectionScreen() {
   );
 
   const handleNextButton = () => {
+    track("Profile_DatingStyle");
     router.push("/my-info/drinking");
   };
 

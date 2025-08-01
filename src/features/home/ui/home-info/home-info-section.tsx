@@ -1,3 +1,4 @@
+import { track } from "@amplitude/analytics-react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -13,13 +14,21 @@ function HomeInfoSection() {
   const { isPreferenceFill } = useRedirectPreferences();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const router = useRouter();
-  console.log("test", preferencesSelf, isPreferenceFill);
+  const handleClickButton = (to: "my-info" | "interest") => {
+    if (to === "my-info") {
+      track("Profile_Started");
+      router.navigate("/my-info");
+    } else {
+      track("Interest_Started", { type: "home" });
+      router.navigate("/interest");
+    }
+  };
   return (
     <View style={styles.container}>
       <HomeInfoCard
         buttonMessage={preferencesSelf?.length !== 0 ? "완료" : "입력 하기"}
         buttonDisabled={preferencesSelf?.length !== 0}
-        onClick={() => router.navigate("/my-info")}
+        onClick={() => handleClickButton("my-info")}
         imageUri={require("@assets/images/my-info.png")}
         title={"나의 정보"}
         description="성격, 취미, 연애 스타일 등"
@@ -27,7 +36,7 @@ function HomeInfoSection() {
       <HomeInfoCard
         buttonMessage={isPreferenceFill ? "완료" : "입력 하기"}
         buttonDisabled={isPreferenceFill}
-        onClick={() => router.navigate("/interest")}
+        onClick={() => handleClickButton("interest")}
         imageUri={require("@assets/images/interest-info.png")}
         title={"이상형 정보"}
         description="선호하는 성격, 취향, 음주 등"

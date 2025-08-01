@@ -6,6 +6,7 @@ import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { environmentStrategy, platform } from "@/src/shared/libs";
 import { PalePurpleGradient } from "@/src/shared/ui";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import { Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
@@ -63,6 +64,11 @@ export default function AgeSelectionScreen() {
     useCallback(() => updateStep(InterestSteps.AGE), [updateStep])
   );
 
+  const onNext = () => {
+    track("Interest_Age");
+    router.push("/interest/like-mbti");
+  };
+
   if (optionsLoading) {
     return <Loading.Page title="나이대 선호도를 불러오고 있어요" />;
   }
@@ -94,7 +100,7 @@ export default function AgeSelectionScreen() {
 
         <Layout.TwoButtons
           disabledNext={!age}
-          onClickNext={() => router.push("/interest/like-mbti")}
+          onClickNext={onNext}
           onClickPrevious={() => {
             router.navigate("/interest");
           }}

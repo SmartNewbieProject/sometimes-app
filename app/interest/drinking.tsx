@@ -3,6 +3,7 @@ import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { Selector } from "@/src/widgets/selector";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -97,6 +98,7 @@ export default function DrinkingSelectionScreen() {
     if (!drinking) {
       updateForm("drinking", preferences.options[currentIndex]);
     }
+    track("Interest_Drinking");
     router.push("/interest/smoking");
   };
 

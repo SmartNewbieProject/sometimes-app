@@ -3,6 +3,7 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
@@ -42,6 +43,11 @@ export default function PersonalitySelectionScreen() {
     }
     return "다음으로";
   })();
+
+  const onNext = () => {
+    track("Profile_personality");
+    router.push("/my-info/dating-style");
+  };
 
   useFocusEffect(
     useCallback(() => updateStep(MyInfoSteps.PERSONALITY), [updateStep])
@@ -91,7 +97,7 @@ export default function PersonalitySelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.push("/my-info/dating-style")}
+        onClickNext={onNext}
         onClickPrevious={() => router.navigate("/my-info/mbti")}
       />
     </Layout.Default>

@@ -201,6 +201,7 @@ export async function ensurePushTokenRegistered(
 
   try {
     const isRegistered = await checkPushTokenRegistered();
+    if (Platform.OS === 'web') return;
 
     if (!isRegistered) {
       showModal({

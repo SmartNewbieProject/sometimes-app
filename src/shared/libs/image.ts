@@ -26,6 +26,8 @@ export enum ImageResources {
   PURPLE_ARROW_RIGHT = `${S3_BASE_URL}/purple-arrow-right.png`,
   REPORT = `${S3_BASE_URL}/report.png`,
   REMATCHING_TICKET_BANNER = `${S3_BASE_URL}/payment-bg.png`,
+  GEM_STORE_BANNER = `${S3_BASE_URL}/gem-store-preview.png`,
+  GEM = `${S3_BASE_URL}/gem.png`,
 
   DATING_STYLE = `${S3_BASE_URL}/dating-style.png`,
   MILITARY = `${S3_BASE_URL}/military.png`,

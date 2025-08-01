@@ -7,6 +7,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { Selector } from "@/src/widgets/selector";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -103,6 +104,7 @@ export default function TattooSelectionScreen() {
         await queryClient.invalidateQueries({
           queryKey: ["check-preference-fill"],
         });
+        track("Interest_Tattoo");
         router.navigate("/interest/done");
         setFormSubmitLoading(false);
       },

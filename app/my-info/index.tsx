@@ -3,6 +3,7 @@ import Layout from "@/src/features/layout";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
+import { track } from "@amplitude/analytics-react-native";
 import SmallTitle from "@assets/icons/small-title.svg";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
@@ -41,6 +42,11 @@ export default function InterestIntroScreen() {
       },
     });
 
+  const onNext = () => {
+    track("Profile_Intro");
+    router.push("/my-info/interest");
+  };
+
   return (
     <Layout.Default>
       <View style={styles.contentContainer}>
@@ -76,7 +82,7 @@ export default function InterestIntroScreen() {
         </View>
 
         <Layout.TwoButtons
-          onClickNext={() => router.push("/my-info/interest")}
+          onClickNext={onNext}
           disabledNext={false}
           onClickPrevious={showPreviousModal}
           content={{
