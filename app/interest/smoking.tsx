@@ -3,6 +3,7 @@ import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { PreferenceOption } from "@/src/types/user";
 import { Selector } from "@/src/widgets/selector";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -82,6 +83,7 @@ export default function SmokingSelectionScreen() {
     if (!smoking) {
       updateForm("smoking", preferences.options[currentIndex]);
     }
+    track("Interest_Smoking");
     router.push("/interest/tattoo");
   };
   useFocusEffect(

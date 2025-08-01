@@ -2,6 +2,7 @@ import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
+import { track } from "@amplitude/analytics-react-native";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
@@ -47,6 +48,11 @@ export default function InterestSelectionScreen() {
   useFocusEffect(
     useCallback(() => updateStep(MyInfoSteps.INTEREST), [updateStep])
   );
+
+  const onNext = () => {
+    track("Profile_Interest");
+    router.push("/my-info/mbti");
+  };
 
   return (
     <Layout.Default>
@@ -100,7 +106,7 @@ export default function InterestSelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.push("/my-info/mbti")}
+        onClickNext={onNext}
         onClickPrevious={() => router.navigate("/my-info")}
       />
     </Layout.Default>

@@ -2,6 +2,7 @@ import type { Preferences } from "@/src/features/interest/api";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { ChipSelector } from "@/src/widgets";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import { PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
@@ -41,6 +42,11 @@ export default function PersonalitySelectionScreen() {
     }
     return "다음으로";
   })();
+
+  const onNext = () => {
+    track("Interest_Personality");
+    router.push("/interest/drinking");
+  };
 
   useFocusEffect(
     useCallback(() => updateStep(InterestSteps.PERSONALITY), [updateStep])
@@ -90,7 +96,7 @@ export default function PersonalitySelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.push("/interest/drinking")}
+        onClickNext={onNext}
         onClickPrevious={() => router.navigate("/interest/bad-mbti")}
       />
     </Layout.Default>

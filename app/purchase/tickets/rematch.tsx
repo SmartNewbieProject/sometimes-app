@@ -4,6 +4,7 @@ import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Ticket, TicketDetails } from "@/src/widgets";
 import { Selector } from "@/src/widgets/selector";
+import { track } from "@amplitude/analytics-react-native";
 import Layout from "@features/layout";
 import Payment from "@features/payment";
 import type { PortOneController } from "@portone/react-native-sdk";
@@ -42,6 +43,7 @@ export default function RematchingTicketSellingScreen() {
       setTotalPrice(metadata.totalPrice);
       setProductCount(metadata.count);
       setShowPayment(true);
+      track("Purchase_Count", { count: metadata.count });
     } catch (error) {
       Alert.alert("오류", "결제 처리 중 오류가 발생했습니다.");
       setShowPayment(false);
@@ -64,6 +66,7 @@ export default function RematchingTicketSellingScreen() {
 
   const onCompletePayment = (result: PaymentResponse) => {
     setShowPayment(false);
+    track("Purchase_Done");
     handlePaymentComplete(result, {
       productCount,
       onError,
