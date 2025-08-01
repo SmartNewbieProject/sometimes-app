@@ -18,7 +18,7 @@ export function Logo({ title, showLogo = true, logoSize = 32 }: LogoProps) {
           <SmallTitle />
         </IconWrapper>
       ) : (
-        <Text size="lg" weight="bold" textColor="purple">
+        <Text size="20" weight="bold" textColor="black">
           {title || 'SOMETIME'}
         </Text>
       )}

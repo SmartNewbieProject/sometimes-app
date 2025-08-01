@@ -8,6 +8,16 @@ export default function PurchaseLayout() {
       <View className="flex-1">
         <Stack>
           <Stack.Screen
+              name="gem-store"
+              options={{
+                headerShown: false,
+                contentStyle: {
+                  backgroundColor: 'transparent',
+                },
+                animation: 'slide_from_right'
+              }}
+          />
+          <Stack.Screen
             name="tickets"
             options={{
               headerShown: false,
