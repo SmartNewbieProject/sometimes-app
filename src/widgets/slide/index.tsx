@@ -166,6 +166,7 @@ export function Slide({
 
       onScrollStateChange?.(true);
 
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       dragStartX.current = (translateX as any)._value;
 
       if (autoPlayTimer.current) {
@@ -318,6 +319,7 @@ export function Slide({
           >
             {Array.from({ length: totalSlides }).map((_, index) => (
               <TouchableOpacity
+                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                 key={index}
                 onPress={() => scrollToIndex(index)}
                 className={cn(
@@ -341,6 +343,7 @@ export function Slide({
           >
             {Array.from({ length: totalSlides }).map((_, index) => (
               <TouchableOpacity
+                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                 key={index}
                 onPress={() => scrollToIndex(index)}
                 className={cn(
