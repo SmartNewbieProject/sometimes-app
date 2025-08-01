@@ -4,6 +4,7 @@ import Layout from "@/src/features/layout";
 import { useMbti } from "@/src/features/mypage/hooks";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
+import { track } from "@amplitude/analytics-react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -23,6 +24,11 @@ function LikeMbti() {
   );
   const onUpdateMbti = (mbti: string) => {
     updateForm("goodMbti", mbti);
+  };
+
+  const onNext = () => {
+    track("Interest_likeMbti");
+    router.push("/interest/bad-mbti");
   };
 
   const nextMessage = (() => {
@@ -57,7 +63,7 @@ function LikeMbti() {
           content={{
             next: nextMessage,
           }}
-          onClickNext={() => router.push("/interest/bad-mbti")}
+          onClickNext={onNext}
           onClickPrevious={() => router.navigate("/interest/age")}
         />
       </View>

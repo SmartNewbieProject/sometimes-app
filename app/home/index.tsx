@@ -28,7 +28,6 @@ import { Image } from "expo-image";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
-import {ImageResource} from "@ui/image-resource";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -61,8 +60,8 @@ const HomeScreen = () => {
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
   };
-  const handleNavigateGemStore = () => {
-    router.navigate("/purchase/gem-store");
+  const handleNavigateToRematch = () => {
+    router.navigate("/purchase/tickets/rematch");
   };
 
   const onClickAlert = (notification: Notification) => {
@@ -111,9 +110,12 @@ const HomeScreen = () => {
         rightContent={
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={handleNavigateGemStore}
+            onPress={handleNavigateToRematch}
           >
-            <ImageResource resource={ImageResources.GEM} width={40} height={40}  />
+            <Image
+              source={require("@assets/images/ticket.png")}
+              style={{ width: 40, height: 40 }}
+            />
           </TouchableOpacity>
         }
       />
