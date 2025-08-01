@@ -1,26 +1,23 @@
-import ShieldNotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
 import { useAuth } from "@/src/features/auth";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import {
   ImageResources,
   type UniversityName,
   dayUtils,
-  getUnivLogo,
 } from "@/src/shared/libs";
 import {
   Divider,
   Dropdown,
   type DropdownItem,
   ImageResource,
+  LinkifiedText,
   Show,
   Text,
-  dropdownStyles,
 } from "@/src/shared/ui";
-import { IconWrapper } from "@/src/shared/ui/icons";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
-import { useCategory } from "../../hooks";
+import { TouchableOpacity, View } from "react-native";
+
 import type { Article as ArticleType } from "../../types";
 import { Comment } from "../comment";
 import { UserProfile } from "../user-profile";
@@ -47,10 +44,9 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   } = useBoolean();
   const {
     value: isDropdownOpen,
-    toggle: toggleDropdown,
     setFalse: closeDropdown,
   } = useBoolean();
-  const { currentCategory } = useCategory();
+
 
   const isOwner = (() => {
     if (!my) return false;
@@ -104,7 +100,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   useEffect(() => {
     setFalse();
     closeDropdown();
-  }, [currentCategory]);
+  }, [setFalse, closeDropdown]);
 
   return (
     <View className="w-full relative">
@@ -127,9 +123,14 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
             {dayUtils.formatRelativeTime(data.createdAt)}
           </Text>
         </View>
-        <Text size="sm" className="mb-4 mx-[8px] leading-5" textColor="black">
+        <LinkifiedText
+          size="sm"
+          className="mb-4 mx-[8px] leading-5"
+          textColor="black"
+          style={{ flexWrap: 'wrap', flexShrink: 1 }}
+        >
           {data.content}
-        </Text>
+        </LinkifiedText>
 
         <View className="flex-row items-center  mx-[8px]   justify-between">
           <Interaction.Like

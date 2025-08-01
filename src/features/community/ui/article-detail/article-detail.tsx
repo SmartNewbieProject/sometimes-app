@@ -9,7 +9,7 @@ import {
 import { QUERY_KEYS } from "@/src/features/community/queries/keys";
 import Interaction from "@/src/features/community/ui/article/interaction-nav";
 import Loading from "@/src/features/loading";
-import { Text } from "@/src/shared/ui";
+import { LinkifiedText, Text } from "@/src/shared/ui";
 import { dayUtils, tryCatch } from "@shared/libs";
 import type { UniversityName } from "@shared/libs";
 import { useQueryClient } from "@tanstack/react-query";
@@ -222,9 +222,9 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
             {dayUtils.formatRelativeTime(article.createdAt)}
           </Text>
         </View>
-        <Text className="mb-4 text-[14px] mx-[8px] leading-5" textColor="black">
+        <LinkifiedText className="mb-4 text-[14px] mx-[8px] leading-5" textColor="black">
           {article.content}
-        </Text>
+        </LinkifiedText>
         <View className="w-full mt-[10px]">
           <View className="flex-row items-center justify-around gap-4 pb-[10px]">
             <Interaction.Like
