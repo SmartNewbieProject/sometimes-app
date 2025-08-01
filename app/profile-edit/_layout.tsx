@@ -39,7 +39,6 @@ export default function ProfileEditLayout() {
               setActiveTab(next);
               router.navigate(`/profile-edit/${next}`);
             }}
-            style={{ width: 180 }}
           />
         </View>
         <View>

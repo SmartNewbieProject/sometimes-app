@@ -13,6 +13,7 @@ function HomeInfoSection() {
   const { isPreferenceFill } = useRedirectPreferences();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const router = useRouter();
+  console.log("test", preferencesSelf, isPreferenceFill);
   return (
     <View style={styles.container}>
       <HomeInfoCard
