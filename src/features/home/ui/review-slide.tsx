@@ -1,5 +1,5 @@
 import { UniversityName, getUnivLogo } from "@/src/shared/libs";
-import { Slide } from "@/src/widgets";
+import Slide from "@/src/widgets/slide";
 import { Text } from "@shared/ui";
 import { Image, Platform, View } from "react-native";
 
@@ -16,13 +16,12 @@ interface ReviewSlideProps {
 }
 
 export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
+  console.log("review", reviews);
   return (
     <Slide
       autoPlayInterval={6000}
-      indicatorType="dot"
       className={`w-full ${Platform.OS === "android" ? "h-40" : ""}`}
       autoPlay
-      onScrollStateChange={onScrollStateChange}
     >
       {reviews.map((review) => (
         <View
