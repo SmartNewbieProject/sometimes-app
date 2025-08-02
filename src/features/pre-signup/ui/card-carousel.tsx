@@ -1,5 +1,5 @@
 import { ImageResources } from "@/src/shared/libs/image";
-import { Slide } from "@/src/widgets";
+import Slider from "@/src/widgets/slide";
 import type React from "react";
 import { useState } from "react";
 import { View } from "react-native";
@@ -45,7 +45,7 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
       className="w-full h-[400px] relative overflow-visible"
       style={style}
     >
-      <Slide
+      <Slider
         autoPlay={true}
         autoPlayInterval={6000}
         showIndicator={true}
@@ -53,9 +53,6 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
         animationDuration={400}
         indicatorPosition="bottom"
         indicatorContainerClassName=""
-        onScrollStateChange={(isScrolling) => {
-          setIsSlideScrolling(isScrolling);
-        }}
         onSlideChange={(index) => {
           const safeIndex = index % cards.length;
           onSlideChange?.(safeIndex);
@@ -87,7 +84,7 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
             </View>
           </View>
         ))}
-      </Slide>
+      </Slider>
     </Animated.View>
   );
 };
