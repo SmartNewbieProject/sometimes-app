@@ -28,6 +28,8 @@ import { Image } from "expo-image";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
+import { track } from "@amplitude/analytics-react-native";
+import {useAuth} from "@features/auth";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -54,6 +56,7 @@ const HomeScreen = () => {
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
   const { data: notifications } = useNotificationQuery();
+  const { my } = useAuth();
   const queryClient = useQueryClient();
   const [isSlideScrolling, setSlideScrolling] = useState(false);
 
@@ -61,6 +64,7 @@ const HomeScreen = () => {
     setSlideScrolling(bool);
   };
   const handleNavigateToRematch = () => {
+    track("Home_RedirectTicketStore", my);
     router.navigate("/purchase/tickets/rematch");
   };
 
