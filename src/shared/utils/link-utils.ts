@@ -7,7 +7,7 @@ export interface TextSegment {
   content: string;
 }
 
-const URL_REGEX = /(https?:\/\/[^\s]+)/gi;
+const URL_REGEX = /(https:\/\/[^\s]+)/gi;
 
 /**
  * 텍스트에서 URL이 포함되어 있는지 확인
