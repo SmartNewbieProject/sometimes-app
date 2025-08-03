@@ -2,7 +2,7 @@ import colors from "@/src/shared/constants/colors";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import { dayUtils } from "@/src/shared/libs";
 import type { UniversityName } from "@/src/shared/libs/univ";
-import { Divider, Show, Text } from "@/src/shared/ui";
+import { Divider, LinkifiedText, Show, Text } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import type React from "react";
 import { useMemo } from "react";
@@ -82,7 +82,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
           paddingRight: 16,
         }}
       >
-        <Text
+        <LinkifiedText
           className="text-[14px] flex-1"
           textColor="black"
           style={{
@@ -92,7 +92,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
           }}
         >
           {comment.content}
-        </Text>
+        </LinkifiedText>
       </View>
     </View>
   );
