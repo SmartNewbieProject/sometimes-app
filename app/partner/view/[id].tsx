@@ -1,7 +1,8 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import Instagram from "@/src/features/instagram";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { ChipSelector, Slide } from "@/src/widgets";
+import { ChipSelector } from "@/src/widgets";
+import Slider from "@/src/widgets/slide";
 import Loading from "@features/loading";
 import Match from "@features/match";
 import { useCarousel } from "@shared/hooks/use-carousel";
@@ -110,13 +111,11 @@ export default function PartnerDetailScreen() {
                 left: 5,
               }}
             >
-              <Slide
+              <Slider
                 showIndicator={true}
-                indicatorType="dot"
                 autoPlayInterval={6000}
                 className={"w-full absolute  "}
                 autoPlay
-                onScrollStateChange={onScrollStateChange}
               >
                 {partner.profileImages.map((img) => (
                   <View
@@ -134,7 +133,7 @@ export default function PartnerDetailScreen() {
                     />
                   </View>
                 ))}
-              </Slide>
+              </Slider>
             </View>
 
             <View pointerEvents="none" style={styles.textContainer}>
