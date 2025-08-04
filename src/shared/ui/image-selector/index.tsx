@@ -79,8 +79,8 @@ export function ImageSelector({
     });
     console.log("image result", result);
     if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      const extension = uri.split(".").pop()?.toLowerCase();
+      const type = result.assets[0].type;
+      const extension = type?.split(".").pop()?.toLowerCase();
 
       const allowedExtensions = ["jpg", "jpeg", "png"];
       if (!extension || !allowedExtensions.includes(extension)) {
@@ -122,8 +122,8 @@ export function ImageSelector({
     }
 
     if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      const extension = uri.split(".").pop()?.toLowerCase();
+      const type = result.assets[0].type;
+      const extension = type?.split(".").pop()?.toLowerCase();
 
       const allowedExtensions = ["jpg", "jpeg", "png"];
       if (!extension || !allowedExtensions.includes(extension)) {
