@@ -13,6 +13,25 @@ export default function LoginScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const { loginWithPass } = useAuth();
+  useEffect(() => {
+    const identityVerificationId = params.identityVerificationId as string;
+    if (identityVerificationId) {
+      loginWithPass(identityVerificationId)
+        .then((result) => {
+          if (result.isNewUser) {
+            router.replace({
+              pathname: "/auth/signup/area",
+              params: {
+                certificationInfo: JSON.stringify(result.certificationInfo),
+              },
+            });
+          } else {
+            router.replace("/home");
+          }
+        })
+        .catch(() => router.replace("/auth/login"));
+    }
+  }, [params, loginWithPass, router]);
 
   useEffect(() => {
     clear();
