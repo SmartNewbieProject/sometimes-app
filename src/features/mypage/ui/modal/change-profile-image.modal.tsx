@@ -94,12 +94,30 @@ export const ChangeProfileImageModal = ({
 
     try {
       setIsSubmitting(true);
+
       const oldImages = [...(profileDetails.profileImages || [])];
-      console.log("validFilter", validImages);
+      const changedIndexes: number[] = [];
 
-      await cleanupRemainingImages(oldImages);
+      images.forEach((img, idx) => {
+        const oldImage = oldImages[idx]?.url ?? null;
+        if (img !== oldImage) {
+          changedIndexes.push(idx);
+        }
+      });
 
-      await addNewImage(validImages);
+      for (const index of changedIndexes) {
+        const oldImage = oldImages[index];
+        if (oldImage) {
+          await apis.deleteProfileImage(oldImage.id).catch(() => {});
+        }
+      }
+
+      for (const index of changedIndexes) {
+        const newImage = images[index];
+        if (newImage && !newImage.includes("http")) {
+          await apis.uploadProfileImage(newImage, index);
+        }
+      }
 
       await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
       hideModal();
