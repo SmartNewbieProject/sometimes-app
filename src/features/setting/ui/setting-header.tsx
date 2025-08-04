@@ -38,6 +38,8 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 20,
     fontFamily: "Pretendard-Bold",
+    fontWeight: 600,
+
     lineHeight: 22,
   },
   backArrow: {

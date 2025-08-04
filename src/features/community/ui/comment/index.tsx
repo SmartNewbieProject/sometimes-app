@@ -1,7 +1,7 @@
 import { View, Image, Platform } from "react-native";
 import type { Comment as CommentType } from "../../types";
 import { dayUtils, getUnivLogo, UniversityName } from "@/src/shared/libs";
-import { Text } from "@/src/shared/ui";
+import { LinkifiedText, Text } from "@/src/shared/ui";
 import { useState } from "react";
 
 type CommentProps = {
@@ -19,7 +19,7 @@ export const Comment = ({ data, className }: CommentProps) => {
         <Image
           source={{ uri: imageUri }}
           style={{ width: 36, height: 36 }}
-          onError={err => {
+          onError={() => {
             setImageUri(getUnivLogo(UniversityName.한밭대학교));
           }}
           className="rounded-full"
@@ -32,7 +32,7 @@ export const Comment = ({ data, className }: CommentProps) => {
             <Text size="sm" className="text-[#646464]">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
           </View>
           <View className="pt-1.5 flex-1">
-            <Text
+            <LinkifiedText
               size="sm"
               textColor="black"
               className="flex-1"
@@ -43,7 +43,7 @@ export const Comment = ({ data, className }: CommentProps) => {
               }}
             >
               {data.content}
-            </Text>
+            </LinkifiedText>
           </View>
       </View>
     </View>

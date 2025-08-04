@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
     lineHeight: 21.6,
   },
   bar: {
