@@ -1,4 +1,5 @@
 import VectorIcon from "@/assets/icons/Vector.svg";
+import { useAuth } from "@/src/features/auth";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import { Lottie, Text } from "@/src/shared/ui";
@@ -45,6 +46,7 @@ export const InfiniteArticleList = forwardRef<
 >(({ initialSize = 10 }: InfiniteArticleListProps, ref) => {
   const { showModal, showErrorModal } = useModal();
   const { currentCategory: categoryCode } = useCategory();
+  const { my } = useAuth();
   const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<
     FlatList<ArticleType>
   >;
@@ -85,6 +87,11 @@ export const InfiniteArticleList = forwardRef<
   );
 
   const like = (item: ArticleType) => {
+    if (!my?.id) {
+      Linking.openURL("https://info.some-in-univ.com");
+      return;
+    }
+
     tryCatch(
       async () => {
         updateArticleLike(item.id);

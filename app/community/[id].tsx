@@ -9,7 +9,8 @@ import Loading from "@/src/features/loading";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import { Header, Show, Text } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
-import { Redirect, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { Linking } from "react-native";
 import type React from "react";
 import { useCallback, useMemo } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
@@ -58,6 +59,11 @@ export default function ArticleDetailScreen() {
     setFalse: closeDropdown,
   } = useBoolean();
   const { my } = useAuth();
+
+  if (!my?.id) {
+    Linking.openURL("https://info.some-in-univ.com");
+    return;
+  }
 
   const isValidArticle = (article: Article | undefined): article is Article => {
     return !!article && !!article.author;
