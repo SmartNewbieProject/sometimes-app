@@ -79,19 +79,6 @@ export function ImageSelector({
     });
     console.log("image result", result);
     if (!result.canceled) {
-      const type = result.assets[0].type;
-      const extension = type?.split(".").pop()?.toLowerCase();
-
-      const allowedExtensions = ["jpg", "jpeg", "png"];
-      if (!extension || !allowedExtensions.includes(extension)) {
-        Alert.alert(
-          "지원하지 않는 형식",
-          "jpg, jpeg, png 형식만 업로드 가능해요"
-        );
-        setImageModal(false);
-        return null;
-      }
-
       onChange(result.assets[0].uri);
     }
     setImageModal(false);
@@ -122,19 +109,6 @@ export function ImageSelector({
     }
 
     if (!result.canceled) {
-      const type = result.assets[0].type;
-      const extension = type?.split(".").pop()?.toLowerCase();
-
-      const allowedExtensions = ["jpg", "jpeg", "png"];
-      if (!extension || !allowedExtensions.includes(extension)) {
-        Alert.alert(
-          "지원하지 않는 형식",
-          "jpg, jpeg, png 형식만 업로드 가능해요."
-        );
-        setImageModal(false);
-        return null;
-      }
-
       onChange(result.assets[0].uri);
     }
     setImageModal(false);
