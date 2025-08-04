@@ -1,13 +1,17 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useRef } from "react";
+import React from "react";
 import {
-  Animated,
   Pressable,
   StyleSheet,
   Text,
   View,
   type ViewStyle,
 } from "react-native";
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
 export interface Tab {
   id: "profile" | "interest";
@@ -18,7 +22,6 @@ interface ToggleTabProps {
   tabs: Tab[];
   activeTab: string;
   onTabClick: () => void;
-
   style?: ViewStyle;
 }
 
@@ -26,62 +29,53 @@ export const ToggleTab = ({
   tabs,
   activeTab,
   onTabClick,
-
   style,
 }: ToggleTabProps) => {
-  const leftAnim = useRef(
-    new Animated.Value(activeTab === "profile" ? 5 : 100)
-  ).current;
-  const widthAnim = useRef(
-    new Animated.Value(activeTab === "profile" ? 87 : 57)
-  ).current;
-  const handleTabChange = () => {
-    const anim1 = Animated.timing(widthAnim, {
-      useNativeDriver: true,
-      delay: 30,
-      toValue: activeTab === "profile" ? 57 : 87,
-    });
-    const anim2 = Animated.timing(leftAnim, {
-      useNativeDriver: true,
-      delay: 30,
-      toValue: activeTab === "profile" ? 100 : 5,
-    });
+  const left = useSharedValue(activeTab === "profile" ? 5 : 100);
+  const width = useSharedValue(activeTab === "profile" ? 87 : 57);
 
-    Animated.parallel([anim1, anim2]).start();
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: left.value }],
+      width: width.value,
+    };
+  });
+
+  const handleTabChange = () => {
+    if (activeTab === "profile") {
+      left.value = withTiming(100, { duration: 300 });
+      width.value = withTiming(57, { duration: 300 });
+    } else {
+      left.value = withTiming(5, { duration: 300 });
+      width.value = withTiming(87, { duration: 300 });
+    }
+
     setTimeout(() => {
       onTabClick();
     }, 400);
   };
-  console.log("active", activeTab);
+
   return (
-    <Pressable style={styles.container} onPress={() => handleTabChange()}>
+    <Pressable style={[styles.container, style]} onPress={handleTabChange}>
       <LinearGradient
         colors={["rgba(0,0,0,0.15)", "transparent"]}
         style={styles.fakeInnerShadow}
         pointerEvents="none"
       />
-      <Animated.View
-        style={[
-          styles.toggle,
-          { width: widthAnim },
-          { transform: [{ translateX: leftAnim }] },
-        ]}
-      />
+      <Animated.View style={[styles.toggle, animatedStyle]} />
       <View style={styles.textContainer}>
-        {tabs.map((tab) => {
-          return (
-            <Text
-              numberOfLines={1}
-              style={[
-                styles.text,
-                { color: activeTab === tab.id ? "#fff" : "#7A4AE2" },
-              ]}
-              key={tab.id}
-            >
-              {tab.label}
-            </Text>
-          );
-        })}
+        {tabs.map((tab) => (
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.text,
+              { color: activeTab === tab.id ? "#fff" : "#7A4AE2" },
+            ]}
+            key={tab.id}
+          >
+            {tab.label}
+          </Text>
+        ))}
       </View>
     </Pressable>
   );
@@ -109,7 +103,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   toggle: {
-    width: 87,
     height: 40,
     alignItems: "center",
     position: "absolute",
@@ -128,6 +121,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
     lineHeight: 18,
   },
 });

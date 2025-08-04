@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
 
     fontFamily: "Pretendard-Semibold",
+    fontWeight: 600,
   },
   contentContainer: {
     position: "absolute",

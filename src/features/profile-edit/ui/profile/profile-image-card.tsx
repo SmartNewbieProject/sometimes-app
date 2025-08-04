@@ -76,6 +76,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 15.6,
+    fontWeight: 600,
+
     color: "#fff",
   },
   edit: {
@@ -111,6 +113,8 @@ const styles = StyleSheet.create({
     color: "#9B94AB",
     fontSize: 13,
     fontFamily: "Pretendard-Light",
+    fontWeight: 300,
+
     lineHeight: 15.6,
   },
 });

@@ -12,6 +12,7 @@ import { Button, PalePurpleGradient, Text } from "@shared/ui";
 import { createRef, useEffect, useState } from "react";
 import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {useAuth} from "@features/auth";
 
 const { ui, services } = Payment;
 const { PaymentView } = ui;
@@ -32,6 +33,7 @@ export default function RematchingTicketSellingScreen() {
   const [paymentId, setPaymentId] = useState<string>(() => {
     return createUniqueId();
   });
+  const { my } = useAuth();
 
   const { handlePaymentComplete } = usePortone();
 
@@ -43,7 +45,7 @@ export default function RematchingTicketSellingScreen() {
       setTotalPrice(metadata.totalPrice);
       setProductCount(metadata.count);
       setShowPayment(true);
-      track("Purchase_Count", { count: metadata.count });
+      track("Purchase_Count", { count: metadata.count, who: my });
     } catch (error) {
       Alert.alert("오류", "결제 처리 중 오류가 발생했습니다.");
       setShowPayment(false);
@@ -66,7 +68,7 @@ export default function RematchingTicketSellingScreen() {
 
   const onCompletePayment = (result: PaymentResponse) => {
     setShowPayment(false);
-    track("Purchase_Done");
+    track("Purchase_Done", { who: my });
     handlePaymentComplete(result, {
       productCount,
       onError,

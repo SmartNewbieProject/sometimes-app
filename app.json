@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "1.7.3",
+    "version": "1.7.4",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -174,13 +174,13 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "카메라 접근을 허용하시겠습니까?"
+          "cameraPermission": "프로필 사진 촬영을 위해 카메라 권한이 필요합니다."
         }
       ],
       [
         "expo-calendar",
         {
-          "calendarPermission": "캘린더 접근을 허용하시겠습니까?"
+          "calendarPermission": "데이트 일정 관리를 위해 캘린더 접근 권한이 필요합니다."
         }
       ],
       [
