@@ -18,26 +18,6 @@ export default function LoginScreen() {
     clear();
   }, [clear]);
 
-  useEffect(() => {
-    const identityVerificationId = params.identityVerificationId as string;
-    if (identityVerificationId) {
-      loginWithPass(identityVerificationId)
-        .then((result) => {
-          if (result.isNewUser) {
-            router.replace({
-              pathname: "/auth/signup/area",
-              params: {
-                certificationInfo: JSON.stringify(result.certificationInfo),
-              },
-            });
-          } else {
-            router.replace("/home");
-          }
-        })
-        .catch(() => router.replace("/auth/login"));
-    }
-  }, [params, loginWithPass, router]);
-
   return (
     <View className="flex-1" style={{ backgroundColor: "#F7F3FF" }}>
       <ScrollView
