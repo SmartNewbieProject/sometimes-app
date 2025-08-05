@@ -7,7 +7,8 @@ const PRIVACY_LINK =
 const SERVICE_LINK =
   "https://ruby-composer-6d2.notion.site/1cd1bbec5ba1805dbafbc9426a0aaa80";
 const ENTERPIRSE_LINK = "http://www.ftc.go.kr/bizCommPop.do?wrkr_no=4980502914";
-
+const PRIVACY_POLICY_LINK =
+  "https://ruby-composer-6d2.notion.site/1cd1bbec5ba180c6b987ff2dcd75fa15";
 export const PrivacyNotice = () => (
   <View className="flex flex-col w-full items-center">
     <Text textColor="gray" className="text-[12px]">
@@ -27,13 +28,15 @@ export const PrivacyNotice = () => (
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => Linking.openURL(SERVICE_LINK)}>
-        <Text style={{ ...styles.link }}>서비스 이용약관</Text>
+        <Text style={{ ...styles.link, marginRight: 2 }}>서비스 이용약관,</Text>
       </TouchableOpacity>
-
-      <Text textColor="gray" className="text-[12px]">
-        에 동의하게 됩니다.
-      </Text>
+      <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_POLICY_LINK)}>
+        <Text style={{ ...styles.link }}>개인정보 수집 및 이용동의</Text>
+      </TouchableOpacity>
     </View>
+    <Text textColor="gray" className="text-[12px]">
+      에 동의하게 됩니다.
+    </Text>
 
     <TouchableOpacity onPress={() => Linking.openURL(ENTERPIRSE_LINK)}>
       <Text
