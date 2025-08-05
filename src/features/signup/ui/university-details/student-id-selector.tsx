@@ -25,7 +25,7 @@ const NUMBER_LIST = [
 function StudentIdSelector() {
   const inputRef = useRef<null | TextInput>(null);
   const {
-    form: { studentNumber },
+    form: { studentNumber, grade },
     updateForm,
   } = useSignupProgress();
 
@@ -84,7 +84,24 @@ function StudentIdSelector() {
       closeOptions();
       return;
     }
-    updateForm({ studentNumber: number });
+
+    // 학번 숫자 추출
+    const yearPrefix = number.slice(0, 2);
+    const yearNumber = Number.parseInt(yearPrefix, 10);
+    const currentFullYear = new Date().getFullYear();
+    const entryYear = 2000 + yearNumber;
+    const calculatedGrade = Math.min(
+      Math.max(currentFullYear - entryYear + 1, 1),
+      6
+    );
+
+    updateForm({
+      studentNumber: number,
+      ...(grade === undefined && !Number.isNaN(calculatedGrade)
+        ? { grade: `${calculatedGrade}학년` }
+        : {}),
+    });
+
     setInput(false);
     closeOptions();
   };
