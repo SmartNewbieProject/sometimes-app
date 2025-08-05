@@ -28,6 +28,7 @@ export enum ImageResources {
   REMATCHING_TICKET_BANNER = `${S3_BASE_URL}/payment-bg.png`,
   GEM_STORE_BANNER = `${S3_BASE_URL}/gem-store-preview.png`,
   GEM = `${S3_BASE_URL}/gem.png`,
+  WHITE_HEART = `${S3_BASE_URL}/white_heart.png`,
 
   DATING_STYLE = `${S3_BASE_URL}/dating-style.png`,
   MILITARY = `${S3_BASE_URL}/military.png`,
