@@ -25,6 +25,9 @@ const savePaymentHistory = async (paymentHistory: PaymentBeforeHistory) =>
 const pay = (paymentDetails: PortOnePayment) =>
   axiosClient.post('/payments/confirm', paymentDetails);
 
+const payGem = (paymentDetails: PortOnePayment) =>
+    axiosClient.post('/v1/gem/confirm', paymentDetails);
+
 const getCurrentGem = () => axiosClient.get('/v1/gem/current') as Promise<CurrentGem>;
 
 const getAllGemProducts = () => axiosClient.get('/v1/gem/products') as Promise<GemDetailsResponse>;
@@ -34,6 +37,7 @@ const paymentApis = {
   pay,
   getCurrentGem,
   getAllGemProducts,
+  payGem,
 };
 
 export default paymentApis;

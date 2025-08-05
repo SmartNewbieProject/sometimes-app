@@ -20,15 +20,12 @@ import {
   PalePurpleGradient,
   Show,
 } from "@/src/shared/ui";
-import { track } from "@amplitude/analytics-react-native";
-import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
 import Home from "@features/home";
 import IdleMatchTimer from "@features/idle-match-timer";
 import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { Image } from "expo-image";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
@@ -182,6 +179,5 @@ const HomeScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({});
 
 export default HomeScreen;
