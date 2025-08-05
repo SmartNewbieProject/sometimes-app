@@ -22,6 +22,7 @@ export const getDepartments = async (univ: string): Promise<string[]> => {
 const createFileObject = (imageUri: string, fileName: string) =>
   platform({
     web: () => {
+      console.log("test", imageUri, fileName);
       const blob = fileUtils.dataURLtoBlob(imageUri);
       return fileUtils.toFile(blob, fileName);
     },

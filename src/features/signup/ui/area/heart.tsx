@@ -35,7 +35,12 @@ function Heart({ isPick, onClick, open }: HeartProps) {
         zIndex: 0,
       }}
     >
-      <Pressable onPress={onClick}>
+      <Pressable
+        onPress={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+      >
         {open === "close" ? (
           <AreaDisabledHeart />
         ) : isPick ? (

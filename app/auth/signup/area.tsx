@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 
 import {
   Platform,
+  Pressable,
   Text as RNText,
   ScrollView,
   StyleSheet,
@@ -21,10 +22,11 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 function Area() {
   const insets = useSafeAreaInsets();
-  const { onNext, show, initDisabled, handleChangeShow } = useAreaHook();
+  const { onNext, show, initDisabled, handleChangeShow, handleShowNull } =
+    useAreaHook();
   const router = useRouter();
 
-  const handleNext = () => {
+  const handleNext = (e: React.Touch) => {
     onNext(() => {
       track("Signup_area", { area: show });
       router.push("/auth/signup/university");
@@ -50,7 +52,7 @@ function Area() {
         </Text>
       </View>
       <ScrollView>
-        <View style={styles.contentContainer}>
+        <Pressable onPress={handleShowNull} style={styles.contentContainer}>
           <View style={styles.mapContainer}>
             <Image
               source={require("@assets/images/heart-balloon.png")}
@@ -126,7 +128,7 @@ function Area() {
                 </View>
               ))}
           </View>
-        </View>
+        </Pressable>
       </ScrollView>
       <View
         style={[
