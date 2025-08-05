@@ -1,4 +1,6 @@
 import type { Notification } from "@/src/features/home/apis";
+import BannerSlide from "@/src/features/home/ui/banner-slide";
+import FirstPurchaseEvent from "@/src/features/home/ui/first-purchase-event-banner";
 import HomeInfoSection from "@/src/features/home/ui/home-info/home-info-section";
 import MatchingStatus from "@/src/features/home/ui/matching-status";
 import Loading from "@/src/features/loading";
@@ -18,6 +20,8 @@ import {
   PalePurpleGradient,
   Show,
 } from "@/src/shared/ui";
+import { track } from "@amplitude/analytics-react-native";
+import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
 import Home from "@features/home";
@@ -49,9 +53,6 @@ const { useRedirectPreferences, useTemporalUniversity } = hooks;
 
 const HomeScreen = () => {
   const { showModal } = useModal();
-  const { data: { count: totalMatchCount } = { count: 0 }, isLoading } =
-    useTotalMatchCountQuery();
-  const { data: totalUserCount = 0 } = useTotalUserCountQuery();
 
   const { isPreferenceFill } = useRedirectPreferences();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
@@ -104,7 +105,7 @@ const HomeScreen = () => {
   );
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 ">
       <PalePurpleGradient />
       <VersionUpdateChecker />
 
@@ -128,15 +129,8 @@ const HomeScreen = () => {
           Platform.OS === "android" ? "pb-40" : "pb-14"
         }`}
       >
-        <View>
-          <Loading.Lottie
-            title="몇 명이 매칭을 신청했을까요?"
-            loading={isLoading}
-          >
-            <TotalMatchCounter
-              count={totalMatchCount + totalUserCount + 1000}
-            />
-          </Loading.Lottie>
+        <View style={{ paddingBottom: 4, marginTop: 2 }}>
+          <BannerSlide />
         </View>
 
         <HistoryCollapse />
@@ -187,5 +181,7 @@ const HomeScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({});
 
 export default HomeScreen;

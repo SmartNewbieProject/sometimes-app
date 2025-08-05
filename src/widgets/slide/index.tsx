@@ -17,6 +17,7 @@ interface SlideProps {
   indicatorContainerClassName?: string;
   autoPlay?: boolean;
   autoPlayInterval?: number;
+  contentContainerClassName?: string;
   showIndicator?: boolean;
   indicatorPosition?: "top" | "bottom";
   onSlideChange?: (index: number) => void;
@@ -32,6 +33,7 @@ function Slider({
   onSlideChange,
   animationDuration = 500,
   indicatorClassName,
+  contentContainerClassName,
   activeIndicatorClassName,
   indicatorContainerClassName,
   className,
@@ -42,7 +44,6 @@ function Slider({
   const [containerWidth, setContainerWidth] = useState(0);
   const bannerAnim = useRef(new Animated.Value(0)).current;
   const pendingRef = useRef(true);
-
   useEffect(() => {
     if (containerWidth > 0) {
       bannerAnim.setValue(-containerWidth);
@@ -117,15 +118,9 @@ function Slider({
         width: "100%",
       }}
     >
-      <Animated.View
-        {...panResponder.panHandlers}
-        style={{
-          width: containerWidth,
-
-          overflow: "hidden",
-        }}
-      >
+      <View style={{ width: containerWidth, overflow: "hidden" }}>
         <Animated.View
+          {...panResponder.panHandlers}
           style={{
             flexDirection: "row",
             transform: [{ translateX: bannerAnim }],
@@ -137,7 +132,6 @@ function Slider({
               key={index}
               style={{
                 width: containerWidth,
-
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -146,7 +140,7 @@ function Slider({
             </View>
           ))}
         </Animated.View>
-      </Animated.View>
+      </View>
 
       {showIndicator && (
         <View

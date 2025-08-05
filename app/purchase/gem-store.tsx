@@ -67,6 +67,7 @@ export default function GemStoreScreen() {
     handlePaymentComplete(result, {
       productCount,
       onError,
+      type: 'gem'
     });
   };
 
@@ -94,13 +95,12 @@ export default function GemStoreScreen() {
   if (showPayment) {
     return (
         <PaymentView
+            payMode="gem"
             productType={Product.REMATCHING}
             ref={controller}
             productCount={productCount ?? 0}
             paymentId={paymentId}
-            orderName={
-              "구슬"
-            }
+            orderName="구슬"
             totalAmount={totalPrice ?? 0}
             productName="구슬"
             onError={onError}

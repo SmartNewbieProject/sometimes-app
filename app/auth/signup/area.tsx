@@ -26,7 +26,7 @@ function Area() {
     useAreaHook();
   const router = useRouter();
 
-  const handleNext = (e: React.Touch) => {
+  const handleNext = () => {
     onNext(() => {
       track("Signup_area", { area: show });
       router.push("/auth/signup/university");
