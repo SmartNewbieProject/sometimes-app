@@ -29,7 +29,7 @@ export default function GemStoreScreen() {
   const controller = createRef<PortOneController>();
   const {showErrorModal} = useModal();
   const [paymentId, setPaymentId] = useState<string>(createUniqueId());
-  const { setGemCount, gemCount } = usePortoneStore();
+  const { setGemCount } = usePortoneStore();
 
   const {handlePaymentComplete} = usePortone();
 

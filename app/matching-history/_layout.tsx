@@ -4,9 +4,13 @@ import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
+import {useCurrentGem} from "@features/payment/hooks";
+import {ImageResource} from "@ui/image-resource";
+import {ImageResources} from "@shared/libs";
+
 export default function MatchingHistoryLayoutScreen() {
   const router = useRouter();
-  const { data: rematching } = useRematchingTickets();
+  const { data: gem } = useCurrentGem();
   return (
     <View className="flex-1">
       <Header.Container className="border-b items-center border-b-[#E7E9EC]">
@@ -25,7 +29,7 @@ export default function MatchingHistoryLayoutScreen() {
         </Header.CenterContent>
         <Header.RightContent>
           <Pressable
-            onPress={() => router.push("/purchase/tickets/rematch")}
+            onPress={() => router.push("/purchase/gem-store")}
             style={styles.rematchingContainer}
           >
             <Text
@@ -34,12 +38,9 @@ export default function MatchingHistoryLayoutScreen() {
               size={"13"}
               style={styles.rematchingCount}
             >
-              {rematching?.total ?? 0}개
+              {gem?.totalGem ?? 0}개
             </Text>
-            <Image
-              source={require("@assets/icons/rematching.png")}
-              style={{ width: 24, height: 24 }}
-            />
+            <ImageResource resource={ImageResources.GEM} width={28} height={28} />
           </Pressable>
         </Header.RightContent>
       </Header.Container>
