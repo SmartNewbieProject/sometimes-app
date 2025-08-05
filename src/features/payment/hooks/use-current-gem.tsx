@@ -5,8 +5,5 @@ export const useCurrentGem = () => {
   return useQuery({
     queryKey: ['gem', 'current'],
     queryFn: paymentApis.getCurrentGem,
-    initialData: {
-      totalGem: 0,
-    }
   });
 };
