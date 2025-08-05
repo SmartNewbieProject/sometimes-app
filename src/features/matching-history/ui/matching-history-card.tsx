@@ -22,6 +22,7 @@ import { useMatchingBackground } from "../../idle-match-timer/hooks";
 import { useUnlockProfile } from "../queries/use-unlock-profile";
 import type { MatchingHistoryDetails } from "../type";
 import {ModalStyles} from "@shared/hooks";
+import {useFeatureCost} from "@features/payment/hooks";
 
 interface MatchingHistoryCardProps {
   item: MatchingHistoryDetails;
@@ -29,6 +30,7 @@ interface MatchingHistoryCardProps {
 
 function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const { showModal, hideModal } = useModal();
+  const { featureCosts } = useFeatureCost();
   const size =
     Dimensions.get("window").width / 2 > 300
       ? 220
@@ -63,7 +65,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
         customTitle: (
             <View style={ModalStyles.title}>
               <Text textColor="black" size="20" weight="bold">
-                이전에 만났던 분께 다시 연락하기 위해 구슬 6개를 사용할까요?
+                이전에 만났던 분께 다시 연락하기 위해 구슬 {featureCosts?.PROFILE_OPEN}개를 사용할까요?
               </Text>
             </View>
         ),

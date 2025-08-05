@@ -7,6 +7,7 @@ import { Text } from '@shared/ui';
 import Instagram from "../../instagram";
 import useRematch from "../hooks/use-rematch";
 import {useModal} from "@hooks/use-modal";
+import {useFeatureCost} from "@features/payment/hooks";
 
 const {
   ui: { InstagramContactButton },
@@ -22,6 +23,7 @@ export const InteractionNavigation = ({
   const hasPartner = !!match?.partner;
   const { onRematch } = useRematch();
   const { showModal, hideModal } = useModal();
+  const { featureCosts } = useFeatureCost();
 
   const showPartnerFindAnnouncement = () => {
     showModal({
@@ -31,7 +33,7 @@ export const InteractionNavigation = ({
               마음에 드는 이성에게
             </Text>
               <Text textColor="black" weight="bold" size="20">
-              구슬 3개로 관심을 표현할까요?
+              구슬 {featureCosts?.OLD_REMATCHING}개로 관심을 표현할까요?
             </Text>
           </View>
       ),
@@ -54,14 +56,12 @@ export const InteractionNavigation = ({
         onClick: hideModal
       }
     })
-
   };
-
 
   return (
     <View className="w-full flex flex-row gap-x-[5px] mt-4">
       <Button
-        onPress={onRematch}
+        onPress={showPartnerFindAnnouncement}
         variant="primary"
         className="flex-1 items-center"
         prefix={
