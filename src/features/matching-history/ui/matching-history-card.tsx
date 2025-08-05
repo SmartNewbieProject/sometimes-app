@@ -102,7 +102,10 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
 
           <View style={styles.someReceivedBadge}>
             <RNText
-              style={[styles.someReceivedText, { fontFamily: "Pretendard" }]}
+              style={[
+                styles.someReceivedText,
+                { fontFamily: "Pretendard", fontWeight: 400 },
+              ]}
             >
               {item.someReceived ? "들어온 썸" : "보낸 썸"}
             </RNText>

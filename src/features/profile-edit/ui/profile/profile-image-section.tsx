@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 21.6,
+    fontWeight: 600,
+
     marginBottom: 12,
   },
   cardContainer: {

@@ -17,10 +17,10 @@ import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
 import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
+import * as amplitude from "@amplitude/analytics-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import * as amplitude from '@amplitude/analytics-react-native';
 
-// amplitude.init('a5f2116e8a27e8403373bb06bc56f49c');
+amplitude.init(process.env.EXPO_AMPLITUDE_KEY);
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {

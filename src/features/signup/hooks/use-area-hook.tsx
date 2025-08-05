@@ -70,6 +70,10 @@ function useAreaHook() {
     return;
   };
 
+  const handleShowNull = () => {
+    setShow(null);
+  };
+
   const handleChangeShow = (area: string) =>
     setShow((prev) => (prev === area ? null : area));
 
@@ -78,9 +82,8 @@ function useAreaHook() {
     show,
     initDisabled,
     handleChangeShow,
+    handleShowNull,
   };
 }
-
-const styles = StyleSheet.create({});
 
 export default useAreaHook;

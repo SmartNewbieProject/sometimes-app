@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: 300,
     fontFamily: "Pretendard-Thin",
+
     lineHeight: 15.6,
     opacity: 0.7,
   },

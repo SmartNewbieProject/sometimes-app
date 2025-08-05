@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 18,
     fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
   },
   image: {
     width: 166,

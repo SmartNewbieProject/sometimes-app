@@ -55,5 +55,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors["gray-600"],
     fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
   },
 });

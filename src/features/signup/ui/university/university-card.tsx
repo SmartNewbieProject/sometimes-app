@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     color: "#9B94AB",
     fontFamily: "Pretendard-Thin",
     lineHeight: 22,
+    fontWeight: 100,
     fontSize: 13,
   },
   englishName: {
