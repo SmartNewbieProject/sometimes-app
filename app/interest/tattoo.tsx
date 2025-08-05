@@ -116,6 +116,7 @@ export default function TattooSelectionScreen() {
   };
 
   const handleNextButton = () => {
+    track("Interest_Tattoo");
     updateForm("tattoo", preferences.options[currentIndex]);
     router.push("/interest/military");
   };

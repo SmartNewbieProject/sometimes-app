@@ -109,7 +109,7 @@ export default function TattooSelectionScreen() {
 
   const handleNextButton = () => {
     updateForm("tattoo", preferences.options[currentIndex]);
-
+    track("Profile_Tattoo");
     router.push("/my-info/military");
   };
 

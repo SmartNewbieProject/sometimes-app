@@ -16,9 +16,15 @@ import Loading from "@features/loading";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import {
+  BackHandler,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { z } from "zod";
 
