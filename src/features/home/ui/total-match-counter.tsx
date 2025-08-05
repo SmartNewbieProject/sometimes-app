@@ -106,14 +106,22 @@ export default function TotalMatchCounter({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 16,
-    width: "100%",
+    borderRadius: 20,
+    width: "99%",
     minHeight: 90,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    flex: 1,
+    borderWidth: 1.5,
+    borderColor: "#FFF",
+
+    shadowColor: "#F2ECFF",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 3, // Android에서 그림자
+
     flexDirection: "row",
   },
   contentContainer: {

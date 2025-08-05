@@ -27,6 +27,7 @@ export default function SignupLayout() {
     [SignupSteps.AREA]: "지역 선택하기",
     [SignupSteps.UNIVERSITY]: univTitle,
     [SignupSteps.UNIVERSITY_DETAIL]: "추가 정보 입력하기",
+    [SignupSteps.INSTAGRAM]: "인스타그램 아이디 입력하기",
     [SignupSteps.PROFILE_IMAGE]: "프로필 사진 추가하기",
   };
 
@@ -81,6 +82,7 @@ export default function SignupLayout() {
             name="university-details"
             options={{ headerShown: false }}
           />
+          <Stack.Screen name="instagram" options={{ headerShown: false }} />
           <Stack.Screen name="profile-image" options={{ headerShown: false }} />
           <Stack.Screen name="done" options={{ headerShown: false }} />
           <Stack.Screen name="area" options={{ headerShown: false }} />

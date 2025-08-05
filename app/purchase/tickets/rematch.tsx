@@ -5,6 +5,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { Ticket, TicketDetails } from "@/src/widgets";
 import { Selector } from "@/src/widgets/selector";
 import { track } from "@amplitude/analytics-react-native";
+import { useAuth } from "@features/auth";
 import Layout from "@features/layout";
 import Payment from "@features/payment";
 import type { PortOneController } from "@portone/react-native-sdk";
@@ -12,7 +13,6 @@ import { Button, PalePurpleGradient, Text } from "@shared/ui";
 import { createRef, useEffect, useState } from "react";
 import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {useAuth} from "@features/auth";
 
 const { ui, services } = Payment;
 const { PaymentView } = ui;

@@ -13,6 +13,7 @@ export type SignupForm = {
   instagramId: string;
   profileImages: string[];
   passVerified: boolean;
+  kakaoId?: string;
 };
 
 type Agreement = {
@@ -82,7 +83,8 @@ export enum SignupSteps {
   AREA = 1,
   UNIVERSITY = 2,
   UNIVERSITY_DETAIL = 3,
-  PROFILE_IMAGE = 4,
+  INSTAGRAM = 4,
+  PROFILE_IMAGE = 5,
 }
 
 const phaseCount = Object.keys(SignupSteps).length / 2;
@@ -101,7 +103,13 @@ const useSignupProgress = create<StoreProps>((set) => ({
   regions: [],
   updateRegions: (regions) => set({ regions }),
   form: {},
-  updateForm: (form) => set({ form }),
+  updateForm: (form) =>
+    set((state) => ({
+      form: {
+        ...state.form,
+        ...form,
+      },
+    })),
   clear: () =>
     set({
       form: {},
