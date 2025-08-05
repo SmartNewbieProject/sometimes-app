@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { useSignupProgress } from "@/src/features/signup/hooks";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
@@ -6,10 +7,11 @@ import { StyleSheet, View } from "react-native";
 function KakaoLoginRedirect() {
   const params = useLocalSearchParams();
   const router = useRouter();
+  const { form } = useSignupProgress();
   const { loginWithKakao } = useAuth();
   useEffect(() => {
     const code = params.code as string;
-    if (code) {
+    if (code && !form.kakaoId) {
       loginWithKakao(code)
         .then((result) => {
           if (result.isNewUser) {
@@ -25,7 +27,7 @@ function KakaoLoginRedirect() {
         })
         .catch(() => router.replace("/auth/login"));
     }
-  }, [params, router]);
+  }, [params?.code, form.kakaoId]);
 
   return null;
 }

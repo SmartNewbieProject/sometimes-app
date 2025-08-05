@@ -64,7 +64,9 @@ export const signup = (form: SignupForm): Promise<void> => {
   formData.append("grade", form.grade);
   formData.append("studentNumber", form.studentNumber);
   formData.append("instagramId", form.instagramId);
-
+  if (form.kakaoId) {
+    formData.append("kakaoId", form.kakaoId);
+  }
   // biome-ignore lint/complexity/noForEach: <explanation>
   form.profileImages.forEach((imageUri) => {
     const file = createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`);

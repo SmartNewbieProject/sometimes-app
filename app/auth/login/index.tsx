@@ -49,11 +49,11 @@ export default function LoginScreen() {
           style={{
             ...platform({
               ios: () => ({
-                paddingTop: 80,
+                paddingTop: 20,
                 paddingBottom: 40,
               }),
               android: () => ({
-                paddingTop: 80,
+                paddingTop: 20,
                 paddingBottom: 40,
               }),
               web: () => ({

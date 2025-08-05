@@ -18,13 +18,12 @@ export const passLogin = (impUid: string): Promise<PassLoginResponse> =>
   axiosClient.post("/auth/pass-login", { impUid });
 
 export const passKakao = (code: string): Promise<PassLoginResponse> =>
-  axiosClient.post("/auth/kakao-login", { code });
+  axiosClient.post("/auth/oauth/kakao", { code });
 
 export const getUserStatus = (
   phoneNumber: string
 ): Promise<{ status: string; rejectionReason?: string }> =>
   axiosClient.get(`/auth/status?phoneNumber=${phoneNumber}`);
-
 export const reapplySignup = (data: {
   phoneNumber: string;
 }): Promise<{

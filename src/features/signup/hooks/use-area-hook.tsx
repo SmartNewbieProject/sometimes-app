@@ -38,6 +38,7 @@ function useAreaHook() {
         phone: certInfo.phone,
         gender: certInfo.gender,
         birthday: certInfo.birthday,
+        kakaoId: certInfo?.externalId,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

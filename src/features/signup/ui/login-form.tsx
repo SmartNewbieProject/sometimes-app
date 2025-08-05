@@ -46,8 +46,8 @@ export default function LoginForm() {
       <UniversityLogos logoSize={64} />
 
       {/* 회원가입 및 로그인 버튼 */}
-      <View className="flex flex-col">
-        <View className="w-full max-w-xs mb-[10px] mt-6">
+      <View className="flex flex-col  " style={{ marginBottom: 10 }}>
+        <View className="w-full max-w-xs  mt-2">
           <Button
             variant="primary"
             width="full"
@@ -64,7 +64,7 @@ export default function LoginForm() {
       <KakaoLogin />
 
       {/* 에러 메시지 */}
-      {error && (
+      {/* {error && (
         <TouchableOpacity className="w-full px-6 mt-4" onPress={clearError}>
           <View className="w-full px-4 py-2 bg-red-50 rounded-md">
             <Text className="text-red-600 text-sm text-center">{error}</Text>
@@ -73,17 +73,15 @@ export default function LoginForm() {
             </Text>
           </View>
         </TouchableOpacity>
-      )}
+      )} */}
 
       {/* 약관 동의 안내 */}
-      <View className="w-full px-6 mt-12">
+      <View className="w-full px-6 mt-10">
         <PrivacyNotice />
       </View>
     </View>
   );
 }
-
-const KAKAO_CLIENT_ID = process.env.EXPO_KAKAO_LOGIN_API_KEY as string;
 
 const discovery = {
   authorizationEndpoint: "https://kauth.kakao.com/oauth/authorize",
@@ -91,20 +89,20 @@ const discovery = {
 };
 
 function KakaoLogin() {
-  // 플랫폼별 redirectUri 설정
+  const KAKAO_CLIENT_ID = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY as string;
+
   const redirectUri = useMemo(() => {
     if (Platform.OS === "web") {
-      // 웹용 리다이렉트 URI (실제 배포 도메인 또는 개발용 로컬 주소)
       return "http://localhost:3000/auth/login/redirect";
     }
-    // 모바일용 (iOS/Android)
+
     return AuthSession.makeRedirectUri({
-      scheme: "myapp", // app.json 에 설정한 scheme
-      path: "auth/login/redirect", // 원하면 경로도 지정 가능
+      scheme: "myapp",
+      path: "auth/login/redirect",
     });
   }, []);
 
-  // AuthRequest 생성
+  console.log("kakao", KAKAO_CLIENT_ID);
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: KAKAO_CLIENT_ID,
@@ -115,14 +113,6 @@ function KakaoLogin() {
     },
     discovery
   );
-
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { code } = response.params;
-      console.log("Authorization code:", code);
-      // TODO: 백엔드에 code 보내서 access token 교환 처리
-    }
-  }, [response]);
 
   return (
     <View className="flex flex-col">
