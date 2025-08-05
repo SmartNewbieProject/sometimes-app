@@ -1,23 +1,18 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { Button } from "@/src/shared/ui/button";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { Button } from "@/src/shared/ui/button";
 
-const {useSignupProgress} = Signup;
+const { useSignupProgress } = Signup;
 
 export default function LoginScreen() {
-  const {clear} = useSignupProgress();
+  const { clear } = useSignupProgress();
   const params = useLocalSearchParams();
   const router = useRouter();
-  const {loginWithPass} = useAuth();
-
-  useEffect(() => {
-    clear();
-  }, [clear]);
-
+  const { loginWithPass } = useAuth();
   useEffect(() => {
     const identityVerificationId = params.identityVerificationId as string;
     if (identityVerificationId) {
@@ -25,10 +20,10 @@ export default function LoginScreen() {
         .then((result) => {
           if (result.isNewUser) {
             router.replace({
-              pathname: "/auth/signup/university",
+              pathname: "/auth/signup/area",
               params: {
-               certificationInfo: JSON.stringify(result.certificationInfo),
-             },
+                certificationInfo: JSON.stringify(result.certificationInfo),
+              },
             });
           } else {
             router.replace("/home");
@@ -37,6 +32,10 @@ export default function LoginScreen() {
         .catch(() => router.replace("/auth/login"));
     }
   }, [params, loginWithPass, router]);
+
+  useEffect(() => {
+    clear();
+  }, [clear]);
 
   return (
     <View className="flex-1" style={{ backgroundColor: "#F7F3FF" }}>
@@ -69,12 +68,12 @@ export default function LoginScreen() {
             <Signup.Logo />
           </View>
 
-            {/* 메인 콘텐츠 */}
-            <View className="flex-1 w-full max-w-sm">
-              <Signup.LoginForm/>
-            </View>
+          {/* 메인 콘텐츠 */}
+          <View className="flex-1 w-full max-w-sm">
+            <Signup.LoginForm />
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 }

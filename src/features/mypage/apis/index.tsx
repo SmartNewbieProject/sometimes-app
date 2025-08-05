@@ -68,7 +68,7 @@ const uploadProfileImage = async (
 
 const uploadProfileImages = async (images: string[]): Promise<void> => {
   const formData = new FormData();
-
+  console.log("images check", images);
   // biome-ignore lint/complexity/noForEach: <explanation>
   images
     .filter((image) => image !== null)
