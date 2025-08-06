@@ -6,6 +6,7 @@ import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 
 import {
+  BackHandler,
   Keyboard,
   Platform,
   ScrollView,
@@ -43,6 +44,22 @@ export default function SignupInstagram() {
 
     router.push("/auth/signup/profile-image");
   };
+
+  useEffect(() => {
+    const onBackPress = () => {
+      router.navigate("/auth/signup/university-details");
+      return true;
+    };
+
+    // 이벤트 리스너 등록
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     const showEvent =

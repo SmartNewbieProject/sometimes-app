@@ -1,23 +1,42 @@
-import { View, ScrollView } from "react-native";
-import { Text, Button, PalePurpleGradient } from "@/src/shared/ui";
-import { router } from "expo-router";
-import { Image } from 'expo-image';
-import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import { useEffect } from "react";
+import { BackHandler, ScrollView, View } from "react-native";
 
 export default function ApprovalPendingScreen() {
   const { logoutOnly } = useAuth();
 
   const handleGoToLogin = async () => {
     await logoutOnly();
-    router.push('/auth/login');
+    router.push("/auth/login");
   };
+  useEffect(() => {
+    const onBackPress = () => {
+      router.navigate("/auth/login");
+      return true;
+    };
+
+    // 이벤트 리스너 등록
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => subscription.remove();
+  }, []);
 
   return (
     <View className="flex-1 flex flex-col w-full items-center">
       <PalePurpleGradient />
 
-      <ScrollView className="flex-1 w-full" contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        className="flex-1 w-full"
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <View className="flex-1 justify-center items-center px-6 py-12">
           {/* SOMETIME 로고 */}
           <View className="mb-8">
@@ -26,27 +45,46 @@ export default function ApprovalPendingScreen() {
 
           {/* 메인 이미지 */}
           <View className="mb-8 relative">
-              <Image
-                source={require('@/assets/images/signup-pending.png')}
-                style={{ width: 280, height: 280 }}
-                contentFit="contain"
-                className="rounded-full"
-              />
+            <Image
+              source={require("@/assets/images/signup-pending.png")}
+              style={{ width: 280, height: 280 }}
+              contentFit="contain"
+              className="rounded-full"
+            />
           </View>
 
           {/* 제목 */}
           <View className="w-full mb-4 items-center">
-            <Text size="lg" textColor="black" weight="semibold" className="text-center">
+            <Text
+              size="lg"
+              textColor="black"
+              weight="semibold"
+              className="text-center"
+            >
               회원가입 완료!
             </Text>
-            <Text size="lg" textColor="black" weight="normal" className="text-center mt-1">
-              관리자 <Text size='lg' textColor="purple" weight="semibold">승인</Text>을 기다리고 있어요
+            <Text
+              size="lg"
+              textColor="black"
+              weight="normal"
+              className="text-center mt-1"
+            >
+              관리자{" "}
+              <Text size="lg" textColor="purple" weight="semibold">
+                승인
+              </Text>
+              을 기다리고 있어요
             </Text>
           </View>
 
           {/* 설명 */}
           <View className="w-full mb-8 items-center">
-            <Text size="sm" textColor="pale-purple" weight="light" className="text-center">
+            <Text
+              size="sm"
+              textColor="pale-purple"
+              weight="light"
+              className="text-center"
+            >
               승인되면 푸시로 알려드릴게요
             </Text>
           </View>
@@ -56,10 +94,17 @@ export default function ApprovalPendingScreen() {
             <View className="bg-purple-50 border border-purple-200 rounded-xl p-4">
               <View className="flex-row items-center">
                 <View className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center mr-3">
-                  <Text size="12" textColor="white" weight="bold">⏱</Text>
+                  <Text size="12" textColor="white" weight="bold">
+                    ⏱
+                  </Text>
                 </View>
                 <View className="flex-1">
-                  <Text size="md" textColor="dark" weight="semibold" className="mb-1">
+                  <Text
+                    size="md"
+                    textColor="dark"
+                    weight="semibold"
+                    className="mb-1"
+                  >
                     승인 대기
                   </Text>
                   <Text size="sm" textColor="gray" weight="light">

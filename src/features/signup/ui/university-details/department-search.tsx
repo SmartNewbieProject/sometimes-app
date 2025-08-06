@@ -102,6 +102,7 @@ function DepartmentSearch() {
         <ScrollView
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="none"
+          nestedScrollEnabled={true}
           style={[styles.searchResult]}
         >
           {filteredDepartment.map((department, index) => (
