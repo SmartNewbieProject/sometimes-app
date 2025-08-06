@@ -98,7 +98,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       )}
     >
       {modalContent?.showLogo && (
-        <View className="absolute top-[-18px] left-1/2 -translate-x-1/2 rounded-full bg-white p-[5.7px] ">
+        <View className="absolute top-[-18px] left-1/2 -translate-x-1/2 rounded-full bg-white p-[5.7px]">
           <Letter width={68} height={68} />
         </View>
       )}

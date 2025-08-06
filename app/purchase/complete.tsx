@@ -25,6 +25,9 @@ export default function PaymentComplete() {
           },
           {
             productCount: paymentInfo?.productCount,
+            gem: paymentInfo?.gemCount ? {
+              count: paymentInfo.gemCount,
+            } : undefined,
             onError: (error) => {
               console.error("Payment error:", error);
               router.push('/home');

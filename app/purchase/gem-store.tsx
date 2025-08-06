@@ -12,6 +12,7 @@ import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {GemStore} from "@features/payment/ui";
 import {useCurrentGem, useGemProducts} from "@features/payment/hooks";
 import {GemStoreWidget} from "@/src/widgets";
+import {usePortoneStore} from "@features/payment/hooks/use-portone-store";
 
 const {ui, services} = Payment;
 const {PaymentView} = ui;
@@ -27,9 +28,8 @@ export default function GemStoreScreen() {
   const [showPayment, setShowPayment] = useState<boolean>(false);
   const controller = createRef<PortOneController>();
   const {showErrorModal} = useModal();
-  const [paymentId, setPaymentId] = useState<string>(() => {
-    return createUniqueId();
-  });
+  const [paymentId, setPaymentId] = useState<string>(createUniqueId());
+  const { setGemCount } = usePortoneStore();
 
   const {handlePaymentComplete} = usePortone();
 
@@ -67,7 +67,9 @@ export default function GemStoreScreen() {
     handlePaymentComplete(result, {
       productCount,
       onError,
+      showSuccessModal: true,
     });
+    setPaymentId(createUniqueId());
   };
 
   useEffect(() => {
@@ -94,13 +96,12 @@ export default function GemStoreScreen() {
   if (showPayment) {
     return (
         <PaymentView
+            payMode="gem"
             productType={Product.REMATCHING}
             ref={controller}
             productCount={productCount ?? 0}
             paymentId={paymentId}
-            orderName={
-              "구슬"
-            }
+            orderName="구슬"
             totalAmount={totalPrice ?? 0}
             productName="구슬"
             onError={onError}
@@ -151,6 +152,7 @@ export default function GemStoreScreen() {
                                 key={product.id}
                                 gemProduct={product}
                                 onOpenPayment={(metadata) => {
+                                  setGemCount(product.totalGems);
                                   onPurchase({
                                     totalPrice: metadata.totalPrice,
                                     count: 1
