@@ -1,6 +1,7 @@
-import { axiosClient } from "@/src/shared/libs";
+import { axiosClient, fileUtils, platform } from "@/src/shared/libs";
 import type { Article, ArticleRequestType, Category } from "../types";
 import type { PaginatedResponse } from "@/src/types/server";
+import { nanoid } from "nanoid";
 
 type Id = {
   id: string;
@@ -10,6 +11,8 @@ type PostArticleBody = {
   title: string;
   content: string;
   type: ArticleRequestType;
+  anonymous: boolean;
+  images?: string[];
 }
 
 type getArticleParams = {
@@ -24,11 +27,23 @@ type GetArticleParams = getArticleParams & {
 type PatchArticleBody = {
   content: string;
   title: string;
+  images?: string[];
+  deleteImageIds?: string[];
 }
 
-type DeleteArticle = {
-  id: string;
-}
+const createImageFileObject = (imageUri: string, fileName: string) =>
+  platform({
+    web: () => {
+      const blob = fileUtils.dataURLtoBlob(imageUri);
+      return fileUtils.toFile(blob, fileName);
+    },
+    default: () =>
+      ({
+        uri: imageUri,
+        name: fileName,
+        type: "image/png",
+      } as any),
+  });
 
 export const reportArticle = async (articleId: string, reason: string): Promise<void> =>
    axiosClient.post(`/articles/${articleId}/reports`, { reason });
@@ -40,7 +55,24 @@ export const getAllArticles = async (params: getArticleParams): Promise<Article[
 };
 
 export const postArticles = async (body: PostArticleBody): Promise<Article> => {
-  return axiosClient.post('/articles', body);
+  if (body.images && body.images.length > 0) {
+    const formData = new FormData();
+    formData.append("content", body.content);
+    formData.append("title", body.title);
+    formData.append("type", body.type);
+    formData.append("anonymous", body.anonymous.toString());
+
+    body.images.forEach((imageUri) => {
+      const file = createImageFileObject(imageUri, `article-${nanoid(6)}.png`);
+      formData.append("images", file);
+    });
+
+    return axiosClient.post('/articles', formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  } else {
+    return axiosClient.post('/articles', body);
+  }
 };
 
 export const getArticle = async (articleId: string): Promise<Article> => {
@@ -48,6 +80,27 @@ export const getArticle = async (articleId: string): Promise<Article> => {
 };
 
 export const patchArticle = async (articleId: string, body: PatchArticleBody): Promise<Article> => {
+  if (body.images && body.images.length > 0) {
+    const formData = new FormData();
+    formData.append("content", body.content);
+    formData.append("title", body.title);
+
+    body.images.forEach((imageUri) => {
+      const file = createImageFileObject(imageUri, `article-${nanoid(6)}.png`);
+      formData.append("images", file);
+    });
+
+    if (body.deleteImageIds && body.deleteImageIds.length > 0) {
+      body.deleteImageIds.forEach((imageId) => {
+        formData.append("deleteImageIds", imageId);
+      });
+    }
+
+    return axiosClient.patch(`/articles/${articleId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  }
+
   return axiosClient.patch(`/articles/${articleId}`, body);
 };
 

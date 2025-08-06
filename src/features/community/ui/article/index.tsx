@@ -16,7 +16,7 @@ import {
 } from "@/src/shared/ui";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, ScrollView, Image } from "react-native";
 
 import type { Article as ArticleType } from "../../types";
 import { Comment } from "../comment";
@@ -131,6 +131,31 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
         >
           {data.content}
         </LinkifiedText>
+
+        {data.images && data.images.length > 0 && (
+          <View className="mx-[8px] mb-4">
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View className="flex-row gap-2">
+                {data.images
+                  .sort((a, b) => a.displayOrder - b.displayOrder)
+                  .slice(0, 3)
+                  .map((image) => (
+                  <Image
+                    key={`preview-image-${image.id}`}
+                    source={{ uri: image.imageUrl }}
+                    className="w-20 h-20 rounded-lg"
+                    resizeMode="cover"
+                  />
+                ))}
+                {data.images.length > 3 && (
+                  <View className="w-20 h-20 rounded-lg bg-gray-200 items-center justify-center">
+                    <Text className="text-gray-600 text-xs">+{data.images.length - 3}</Text>
+                  </View>
+                )}
+              </View>
+            </ScrollView>
+          </View>
+        )}
 
         <View className="flex-row items-center  mx-[8px]   justify-between">
           <Interaction.Like

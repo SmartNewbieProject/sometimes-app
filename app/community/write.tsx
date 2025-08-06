@@ -36,6 +36,22 @@ export default function CommunityWriteScreen() {
       return;
     }
 
+    if (data.content.length > 2000) {
+      showModal({
+        title: "글자수 초과",
+        children: (
+          <Text textColor="black">
+            본문은 2000자 이하로 작성해주세요.
+          </Text>
+        ),
+        primaryButton: {
+          text: "네, 확인했어요",
+          onClick: () => {},
+        },
+      });
+      return;
+    }
+
     await tryCatch(async () => {
       await articles.postArticles(data);
       showModal({

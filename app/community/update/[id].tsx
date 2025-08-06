@@ -26,10 +26,48 @@ export default function CommunityUpdateScreen() {
   const form = useArticleWriteForm({});
 
   const onSubmit = form.handleSubmit(async (data) => {
+    if (data.title.length < 3 || data.content.length < 3) {
+      showModal({
+        title: "너무 짧아요",
+        children: (
+          <Text textColor="black">
+            제목과 본문은 3자 이상으로 작성해주세요.
+          </Text>
+        ),
+        primaryButton: {
+          text: "네, 확인했어요",
+          onClick: () => {},
+        },
+      });
+      return;
+    }
+
+    if (data.content.length > 2000) {
+      showModal({
+        title: "글자수 초과",
+        children: (
+          <Text textColor="black">
+            본문은 2000자 이하로 작성해주세요.
+          </Text>
+        ),
+        primaryButton: {
+          text: "네, 확인했어요",
+          onClick: () => {},
+        },
+      });
+      return;
+    }
+
     await tryCatch(async () => {
+      const newImages = data.images?.filter(img => 
+        !data.originalImages?.some(orig => orig.imageUrl === img)
+      ) || [];
+      
       await articles.patchArticle(id, {
         content: data.content,
         title: data.title,
+        images: newImages,
+        deleteImageIds: data.deleteImageIds,
       });
       await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.articles.detail(id),
@@ -61,8 +99,11 @@ export default function CommunityUpdateScreen() {
       content: article.content,
       title: article.title,
       type: article.category,
+      images: article.images?.map(img => img.imageUrl) || [],
+      originalImages: article.images || [],
+      deleteImageIds: [],
     });
-  }, [status, isFetched]);
+  }, [status, isFetched, article, form]);
 
   if (isLoading) {
     return <Loading.Page title="게시글을 불러오고 있어요." />;

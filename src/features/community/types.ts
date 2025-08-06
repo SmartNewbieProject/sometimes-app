@@ -14,6 +14,12 @@ export type Author = {
   universityDetails: UniversityDetail;
 };
 
+export type ArticleImage = {
+  id: string;
+  imageUrl: string;
+  displayOrder: number;
+};
+
 export type Article = {
   id: string;
   category: ArticleRequestType;
@@ -27,6 +33,7 @@ export type Article = {
   createdAt: string;
   isLiked: boolean;
   comments: Comment[];
+  images?: ArticleImage[];
 };
 
 export interface Comment {
