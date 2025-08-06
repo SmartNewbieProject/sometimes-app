@@ -92,7 +92,7 @@ export default function UniversityLogos({
     const singleSetWidth = logos.length * logoWithMargin;
 
     return (
-      <View style={{ height: logoSize, marginBottom: 16, overflow: "hidden" }}>
+      <View style={{ height: logoSize, marginBottom: 12, overflow: "hidden" }}>
         <Animated.View
           style={{
             flexDirection: "row",

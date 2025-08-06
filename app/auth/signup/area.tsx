@@ -12,6 +12,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 
 import {
+  BackHandler,
   Platform,
   Pressable,
   Text as RNText,
@@ -32,6 +33,7 @@ function Area() {
       router.push("/auth/signup/university");
     });
   };
+
   return (
     <DefaultLayout
       style={{
