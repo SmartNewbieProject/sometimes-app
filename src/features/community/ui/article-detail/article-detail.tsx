@@ -17,7 +17,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Keyboard, ScrollView, View } from "react-native";
+import { Keyboard, ScrollView, View, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
 import { InputForm } from "../comment/input-form";
@@ -225,6 +225,26 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         <LinkifiedText className="mb-4 text-[14px] mx-[8px] leading-5" textColor="black">
           {article.content}
         </LinkifiedText>
+
+        {article.images && article.images.length > 0 && (
+          <View className="mx-[8px] mb-4">
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View className="flex-row gap-2">
+                {article.images
+                  .sort((a, b) => a.displayOrder - b.displayOrder)
+                  .map((image) => (
+                  <Image
+                    key={`article-image-${image.id}`}
+                    source={{ uri: image.imageUrl }}
+                    className="w-32 h-32 rounded-lg"
+                    resizeMode="cover"
+                  />
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        )}
+
         <View className="w-full mt-[10px]">
           <View className="flex-row items-center justify-around gap-4 pb-[10px]">
             <Interaction.Like
