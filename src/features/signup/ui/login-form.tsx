@@ -63,7 +63,7 @@ export default function LoginForm() {
             className="py-4 rounded-full min-w-[280px] min-h-[60px]"
           >
             <Text className="text-white text-center text-[18px] h-[40px]">
-              {isLoading ? "PASS 인증 중..." : "회원가입 및 로그인"}
+              {isLoading ? "PASS 인증 중..." : "PASS 로그인"}
             </Text>
           </Button>
         </View>
