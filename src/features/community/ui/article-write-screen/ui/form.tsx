@@ -22,13 +22,13 @@ export const ArticleWriteForm = () => {
           />
           <Controller
             name="content"
-            rules={{ maxLength: 255 }}
+            rules={{ maxLength: 2000 }}
             render={({ field: { onChange, value } }) => (
               <TextInput
                 placeholder="내용을 입력하세요."
                 multiline
                 textAlignVertical="top"
-                maxLength={255}
+                maxLength={2000}
                 className="w-full p-2 min-h-[232px] text-[14px] md:text-md placeholder:text-[#D9D9D9]"
                 onChangeText={onChange}
                 value={value}
