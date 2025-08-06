@@ -10,5 +10,5 @@ export const getMatchingHistoryList = (): Promise<MatchingHistoryDetails[]> => {
 };
 
 export const postUnlockProfile = (matchId: string) => {
-  return axiosClient.post("/matching/history/unlock", { matchId });
+  return axiosClient.post("/v2/matching/history/unlock", { matchId });
 };

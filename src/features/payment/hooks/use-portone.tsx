@@ -20,15 +20,21 @@ interface HandlePaymentCompleteOptions {
 	showSuccessModal?: boolean;
 	onSuccess?: () => void;
 	onError?: (error: unknown) => void;
+	gem?: {
+		count: number;
+	}
 }
 
 export function usePortone(): UsePortone {
 	const { loaded, error } = usePortoneScript();
-	const { showModal, showErrorModal } = useModal();
+	const { showModal, showErrorModal, hideModal } = useModal();
+	const { gemCount } = usePortoneStore();
 
 	const handlePaymentComplete = useCallback(
 		async (result: PaymentResponse, options: HandlePaymentCompleteOptions = {}) => {
 			const { productCount, showSuccessModal = true, onSuccess, onError } = options;
+
+			console.log({ options });
 
 			try {
 				if (result?.message) {
@@ -45,25 +51,60 @@ export function usePortone(): UsePortone {
 				}
 
 				if (showSuccessModal) {
-					showModal({
-						title: '구매 완료',
-						children: (
-							<View className="flex flex-col gap-y-1">
-								{productCount && (
-									<Text textColor="pale-purple" weight="semibold">
-										연인 재매칭권 {productCount} 개 구매를 완료했어요
-									</Text>
-								)}
-								<Text textColor="pale-purple" weight="semibold">
-									결제가 완료되었으니 홈으로 이동할게요
-								</Text>
-							</View>
-						),
-						primaryButton: {
-							text: '홈으로 이동',
-							onClick: () => router.push('/home'),
-						},
-					});
+					if (gemCount) {
+						showModal({
+							showLogo: true,
+							customTitle: (
+									<View className="w-full flex flex-row justify-center pb-[5px]">
+										<Text size="20" weight="bold" textColor="black">
+											❤️ 구매 완료
+										</Text>
+									</View>
+							),
+							children: (
+									<View className="flex flex-col gap-y-1 items-center">
+											<Text textColor="black" weight="semibold">
+												구슬 {gemCount} 개 구매를 완료했어요
+											</Text>
+										<Text textColor="pale-purple" weight="semibold">
+											결제가 완료되었으니 홈으로 이동할게요
+										</Text>
+									</View>
+							),
+							primaryButton: {
+								text: '네 이동할게요',
+								onClick: () => router.push('/home'),
+							},
+							secondaryButton: {
+								text: '좀 더 구경할게요',
+								onClick: hideModal,
+							}
+						});
+					}
+
+					if (!gemCount) {
+						showModal({
+							showLogo: true,
+							title: '❤️ 구매 완료',
+							children: (
+									<View className="flex flex-col gap-y-1">
+										{productCount && (
+												<Text textColor="black" weight="semibold">
+													연인 재매칭권 {productCount} 개 구매를 완료했어요
+												</Text>
+										)}
+										<Text textColor="black" weight="semibold">
+											결제가 완료되었으니 홈으로 이동할게요
+										</Text>
+									</View>
+							),
+							primaryButton: {
+								text: '홈으로 이동',
+								onClick: () => router.push('/home'),
+							},
+						});
+					}
+
 				}
 
 				onSuccess?.();
@@ -76,7 +117,7 @@ export function usePortone(): UsePortone {
 				onError?.(error);
 			}
 		},
-		[showModal, showErrorModal],
+		[showModal, showErrorModal, gemCount],
 	);
 
 	return {

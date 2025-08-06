@@ -3,6 +3,7 @@ import SearchIcon from "@assets/icons/search.svg";
 import { useGlobalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -63,7 +64,13 @@ function DepartmentSearch() {
           style={styles.input}
           ref={inputRef}
           onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onBlur={() => {
+            if (Platform.OS === "web") {
+              setTimeout(() => setFocused(false), 100);
+              return;
+            }
+            setFocused(false);
+          }}
           underlineColorAndroid="transparent"
         />
 
@@ -77,7 +84,11 @@ function DepartmentSearch() {
       <View style={styles.popularContainer}>
         {departments.slice(0, 3).map((department, index) => (
           <Pressable
-            onPress={() => updateForm({ departmentName: department })}
+            onPress={(e) => {
+              e.stopPropagation();
+              console.log("click", department);
+              updateForm({ departmentName: department });
+            }}
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             key={index}
             style={styles.tag}
@@ -91,18 +102,21 @@ function DepartmentSearch() {
         <ScrollView
           keyboardShouldPersistTaps="always"
           keyboardDismissMode="none"
-          style={styles.searchResult}
+          nestedScrollEnabled={true}
+          style={[styles.searchResult]}
         >
           {filteredDepartment.map((department, index) => (
             <Pressable
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               key={index}
               onPress={() => {
+                console.log("click", department);
                 updateForm({ departmentName: department });
                 if (inputRef?.current) {
                   inputRef?.current.blur();
                 }
               }}
+              style={{ paddingVertical: 4 }}
             >
               <Text style={styles.searchResultText}>{department}</Text>
             </Pressable>
@@ -160,11 +174,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     zIndex: 10,
   },
+
   searchResultText: {
     fontSize: 13,
     backgroundColor: "#fff",
     fontWeight: 400,
-    paddingVertical: 4,
+
     lineHeight: 15.6,
     color: "#BAB0D0",
   },
@@ -173,13 +188,13 @@ const styles = StyleSheet.create({
     gap: 7,
     marginTop: 7,
     alignItems: "center",
+    flexWrap: "wrap",
   },
   tag: {
     paddingVertical: 7,
     paddingHorizontal: 16,
     borderRadius: 20,
     backgroundColor: "#E2D9FF",
-    flexWrap: "wrap",
   },
   tagText: {
     color: "#fff",

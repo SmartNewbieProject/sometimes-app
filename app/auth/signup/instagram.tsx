@@ -6,6 +6,7 @@ import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 
 import {
+  BackHandler,
   Keyboard,
   Platform,
   ScrollView,
@@ -38,11 +39,27 @@ export default function SignupInstagram() {
     if (instagramId === "") {
       return;
     }
-    updateForm({ instagramId: `@${instagramId}` });
+    updateForm({ instagramId: `${instagramId}` });
     trackSignupEvent("next_button_click", "to_profile_image");
 
     router.push("/auth/signup/profile-image");
   };
+
+  useEffect(() => {
+    const onBackPress = () => {
+      router.navigate("/auth/signup/university-details");
+      return true;
+    };
+
+    // 이벤트 리스너 등록
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     const showEvent =
@@ -136,7 +153,7 @@ export default function SignupInstagram() {
           <View style={styles.tipConatainer}>
             <HeartIcon width={20} height={20} />
             <Text style={styles.tip}>
-              학교 인증을 통해 안전하게 이용할 수 있습니다.
+              인스타그램은 매칭된 상대에게만 공개됩니다
             </Text>
           </View>
           <TwoButtons
@@ -180,6 +197,8 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Thin",
     fontWeight: 300,
     lineHeight: 22,
+    textAlignVertical: "center",
+    paddingVertical: 0,
     fontSize: 15,
     marginLeft: 1,
   },

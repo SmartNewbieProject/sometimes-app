@@ -1,33 +1,23 @@
-import { checkExistsInstagram } from "@/src/features/auth";
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
-import type { SignupForm } from "@/src/features/signup/hooks";
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
-import { useKeyboarding } from "@/src/shared/hooks";
-import { useModal } from "@/src/shared/hooks/use-modal";
+
 import { tryCatch } from "@/src/shared/libs";
-import { cn } from "@/src/shared/libs/cn";
-import { platform } from "@/src/shared/libs/platform";
-import { Button, Label, Show } from "@/src/shared/ui";
-import { PalePurpleGradient } from "@/src/shared/ui/gradient";
 import { Text } from "@/src/shared/ui/text";
 import { Form } from "@/src/widgets";
 import { track } from "@amplitude/analytics-react-native";
 import Loading from "@features/loading";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import {
+  BackHandler,
   Keyboard,
-  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -92,14 +82,7 @@ export default function UniversityDetailsPage() {
     const isValidStudentNumber =
       /^([0][1-9]|1[0-9]|2[0-5])학번$/.test(studentNumber) ||
       /^([0][1-9]|1[0-9]|2[0-5])$/.test(studentNumber);
-    console.log(
-      "valid",
-      isValidDepartment,
-      isValidGrade,
-      isValidStudentNumber,
-      departments,
-      form.departmentName
-    );
+
     return isValidGrade && isValidDepartment && isValidStudentNumber;
   };
   const nextable = validateUniversityForm();
@@ -115,9 +98,31 @@ export default function UniversityDetailsPage() {
     return <Loading.Page title="잠시만 기다려주세요.." />;
   }
 
+  useEffect(() => {
+    const onBackPress = () => {
+      updateForm({
+        departmentName: undefined,
+        grade: undefined,
+        studentNumber: undefined,
+      });
+      router.navigate("/auth/signup/university");
+      return true;
+    };
+
+    // 이벤트 리스너 등록
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => subscription.remove();
+  }, []);
+
   return (
     <DefaultLayout>
       <ScrollView
+        nestedScrollEnabled={true}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="none"
         contentContainerStyle={{
@@ -127,11 +132,11 @@ export default function UniversityDetailsPage() {
         }}
       >
         <Pressable
-          onPress={() => {
-            if (Platform.OS === "web") {
-              return;
+          onPress={(e) => {
+            console.log("click");
+            if (Platform.OS !== "web") {
+              Keyboard.dismiss();
             }
-            Keyboard.dismiss();
           }}
         >
           <View className="px-[5px]">

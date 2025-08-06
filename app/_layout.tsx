@@ -20,7 +20,7 @@ import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import * as amplitude from "@amplitude/analytics-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-amplitude.init(process.env.EXPO_AMPLITUDE_KEY as string);
+amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_KEY as string);
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {

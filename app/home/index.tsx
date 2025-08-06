@@ -20,24 +20,18 @@ import {
   PalePurpleGradient,
   Show,
 } from "@/src/shared/ui";
-import { track } from "@amplitude/analytics-react-native";
-import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
 import Home from "@features/home";
 import IdleMatchTimer from "@features/idle-match-timer";
 import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { Image } from "expo-image";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
+import { track } from "@amplitude/analytics-react-native";
+import {useAuth} from "@features/auth";
+import {ImageResource} from "@ui/image-resource";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -68,9 +62,9 @@ const HomeScreen = () => {
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
   };
-  const handleNavigateToRematch = () => {
-    track("Home_RedirectTicketStore", my);
-    router.navigate("/purchase/tickets/rematch");
+  const onNavigateGemStore = () => {
+    track("onNavigateGemStore", my);
+    router.navigate("/purchase/gem-store");
   };
 
   const onClickAlert = (notification: Notification) => {
@@ -119,12 +113,9 @@ const HomeScreen = () => {
         rightContent={
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={handleNavigateToRematch}
+            onPress={onNavigateGemStore}
           >
-            <Image
-              source={require("@assets/images/ticket.png")}
-              style={{ width: 40, height: 40 }}
-            />
+            <ImageResource resource={ImageResources.GEM} width={41} height={41} />
           </TouchableOpacity>
         }
       />
@@ -188,6 +179,5 @@ const HomeScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({});
 
 export default HomeScreen;

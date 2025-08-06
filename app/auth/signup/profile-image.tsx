@@ -15,7 +15,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { View } from "react-native";
+import { BackHandler, View } from "react-native";
 import { z } from "zod";
 
 const {
@@ -120,6 +120,22 @@ export default function ProfilePage() {
   useEffect(() => {
     form.setValue("images", images);
   }, [images, form]);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      router.navigate("/auth/signup/instagram");
+      return true;
+    };
+
+    // 이벤트 리스너 등록
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => subscription.remove();
+  }, []);
 
   if (signupLoading) {
     return <Loading.Page />;
