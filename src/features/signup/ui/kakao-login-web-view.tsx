@@ -30,8 +30,10 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
   const KAKAO_CLIENT_ID = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY as string;
   const redirectUri =
     Platform.OS === "web"
-      ? "http://localhost:3000/auth/login/redirect"
-      : "http://localhost:3000/auth/login/redirect";
+      ? process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI ??
+        "https://some-in-univ.com/auth/login/redirect"
+      : process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI ??
+        "https://some-in-univ.com/auth/login/redirect";
 
   const scope = [
     "name",
