@@ -121,10 +121,6 @@ export default function ProfilePage() {
     form.setValue("images", images);
   }, [images, form]);
 
-  if (signupLoading) {
-    return <Loading.Page />;
-  }
-
   useEffect(() => {
     const onBackPress = () => {
       router.navigate("/auth/signup/instagram");
@@ -140,6 +136,11 @@ export default function ProfilePage() {
     // 컴포넌트 언마운트 시 리스너 제거
     return () => subscription.remove();
   }, []);
+
+  if (signupLoading) {
+    return <Loading.Page />;
+  }
+
   return (
     <DefaultLayout>
       <View className="px-5">
