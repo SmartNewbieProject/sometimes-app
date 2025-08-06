@@ -14,6 +14,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
+  BackHandler,
   KeyboardAvoidingView,
   Text as RNText,
   ScrollView,
@@ -42,6 +43,22 @@ export default function UniversityPage() {
       );
     });
   };
+  useEffect(() => {
+    const onBackPress = () => {
+      router.navigate("/auth/signup/area");
+      return true;
+    };
+
+    // 이벤트 리스너 등록
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => subscription.remove();
+  }, []);
+
   return (
     <DefaultLayout className="flex-1">
       <View style={styles.container}>
@@ -69,7 +86,7 @@ export default function UniversityPage() {
         <View style={styles.tipConatainer}>
           <HelpIcon width={20} height={20} />
           <RNText style={styles.tip}>
-            학교 인증을 통해 안전하게 이용할 수 있습니다.
+            학교 인증을 통해 안전하게 이용할 수 있습니다
           </RNText>
         </View>
         <TwoButtons

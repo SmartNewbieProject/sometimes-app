@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { Stack } from "expo-router";
+import { View } from "react-native";
 
 export default function AuthLayout() {
   return (
@@ -10,18 +10,28 @@ export default function AuthLayout() {
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
           }}
         />
         <Stack.Screen
-          name="login"
+          name="login/index"
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
-            animation: 'fade',
+            animation: "fade",
+          }}
+        />
+        <Stack.Screen
+          name="login/redirect"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+            animation: "fade",
           }}
         />
         <Stack.Screen
@@ -29,7 +39,7 @@ export default function AuthLayout() {
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
           }}
         />
@@ -38,7 +48,7 @@ export default function AuthLayout() {
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
           }}
         />
@@ -47,11 +57,10 @@ export default function AuthLayout() {
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
           }}
         />
-
       </Stack>
     </View>
   );
