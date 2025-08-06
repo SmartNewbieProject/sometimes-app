@@ -40,7 +40,7 @@ export const PaymentView = forwardRef(
       channelKey: process.env.EXPO_PUBLIC_CHANNEL_KEY,
       paymentId,
       orderName: productName || orderName,
-      totalAmount: gemCount || totalAmount,
+      totalAmount: totalAmount,
       currency: "CURRENCY_KRW",
       payMethod: "CARD",
       customer: {
