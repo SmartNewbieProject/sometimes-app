@@ -86,7 +86,7 @@ export default function UniversityPage() {
         <View style={styles.tipConatainer}>
           <HelpIcon width={20} height={20} />
           <RNText style={styles.tip}>
-            학교 인증을 통해 안전하게 이용할 수 있습니다.
+            학교 인증을 통해 안전하게 이용할 수 있습니다
           </RNText>
         </View>
         <TwoButtons

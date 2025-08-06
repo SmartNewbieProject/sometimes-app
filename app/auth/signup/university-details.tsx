@@ -92,14 +92,7 @@ export default function UniversityDetailsPage() {
     const isValidStudentNumber =
       /^([0][1-9]|1[0-9]|2[0-5])학번$/.test(studentNumber) ||
       /^([0][1-9]|1[0-9]|2[0-5])$/.test(studentNumber);
-    console.log(
-      "valid",
-      isValidDepartment,
-      isValidGrade,
-      isValidStudentNumber,
-      departments,
-      form.departmentName
-    );
+
     return isValidGrade && isValidDepartment && isValidStudentNumber;
   };
   const nextable = validateUniversityForm();
@@ -127,11 +120,11 @@ export default function UniversityDetailsPage() {
         }}
       >
         <Pressable
-          onPress={() => {
-            if (Platform.OS === "web") {
-              return;
+          onPress={(e) => {
+            console.log("click");
+            if (Platform.OS !== "web") {
+              Keyboard.dismiss();
             }
-            Keyboard.dismiss();
           }}
         >
           <View className="px-[5px]">

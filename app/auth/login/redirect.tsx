@@ -1,19 +1,30 @@
 import { useAuth } from "@/src/features/auth";
-import { useSignupProgress } from "@/src/features/signup/hooks";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 
 function KakaoLoginRedirect() {
   const params = useLocalSearchParams();
   const router = useRouter();
-  const { form } = useSignupProgress();
   const { loginWithKakao } = useAuth();
+
   useEffect(() => {
     const code = params.code as string;
-    if (code && !form.kakaoId) {
+    const error = params.error as string;
+
+    if (error) {
+      console.log("카카오 로그인 에러:", error);
+      router.replace("/auth/login");
+      return;
+    }
+
+    if (code) {
+      console.log("카카오 인증 코드 받음:", code);
+
       loginWithKakao(code)
         .then((result) => {
+          console.log("로그인 성공:", result);
+
           if (result.isNewUser) {
             router.replace({
               pathname: "/auth/signup/area",
@@ -25,13 +36,52 @@ function KakaoLoginRedirect() {
             router.replace("/home");
           }
         })
-        .catch(() => router.replace("/auth/login"));
+        .catch((error) => {
+          console.log("로그인 처리 에러:", error);
+
+          // 에러 상세 로그
+          console.log("Error details:", {
+            status: error.status,
+            message: error.message,
+            response: error.response?.data,
+          });
+
+          // 로그인 페이지로 복귀
+          router.replace({
+            pathname: "/auth/login",
+            params: {
+              error: "카카오 로그인에 실패했습니다. 다시 시도해주세요.",
+            },
+          });
+        });
+    } else {
+      console.log("인증 코드가 없습니다.");
+      router.replace("/auth/login");
     }
-  }, [params?.code, form.kakaoId]);
+  }, [params?.code, params?.error]);
 
-  return null;
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#ffffff",
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 16,
+          textAlign: "center",
+          color: "#333333",
+        }}
+      >
+        로그인 처리 중입니다...
+        {"\n\n"}
+        잠시만 기다려주세요.
+      </Text>
+    </View>
+  );
 }
-
-const styles = StyleSheet.create({});
 
 export default KakaoLoginRedirect;
