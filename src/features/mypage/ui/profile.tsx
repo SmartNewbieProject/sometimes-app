@@ -203,7 +203,7 @@ export const Profile = () => {
             <Text className="text-[13px] text-[#FFFFFF]">구슬이 </Text>
             <Text className="text-[13px] text-[#9747FF]">
               {" "}
-              {gem.totalGem}개
+              {gem?.totalGem ?? 0}개
             </Text>
             <Text className="text-[13px] text-[#FFFFFF]"> 남았어요</Text>
           </View>
