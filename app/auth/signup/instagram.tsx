@@ -38,7 +38,7 @@ export default function SignupInstagram() {
     if (instagramId === "") {
       return;
     }
-    updateForm({ instagramId: `@${instagramId}` });
+    updateForm({ instagramId: `${instagramId}` });
     trackSignupEvent("next_button_click", "to_profile_image");
 
     router.push("/auth/signup/profile-image");
