@@ -35,6 +35,7 @@ export interface CustomData {
   amount: number;
   productType: Product;
   productCount: number;
+  gemCount?: number;
 }
 
 export type Currency =

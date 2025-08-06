@@ -8,6 +8,7 @@ import * as PortOne from "@portone/browser-sdk/v2";
 
 export interface WebPaymentProps {
   paymentParams: PaymentRequest;
+  gemCount?: number;
   onComplete?: (result: PaymentResponse) => void;
   onError?: (error: unknown) => void;
   onCancel?: () => void;
@@ -17,7 +18,7 @@ export interface WebPaymentProps {
  * 웹 환경에서 I'mport.js를 사용한 결제 컴포넌트
  */
 export const WebPaymentView = (props: WebPaymentProps) => {
-  const { paymentParams, onComplete, onError, onCancel } = props;
+  const { paymentParams, onComplete, onError, onCancel, gemCount } = props;
   const [isProcessing, setIsProcessing] = useState(true);
   const { setCustomData } = usePortoneStore();
 
@@ -42,7 +43,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
 
       try {
         if (isCustomData(paymentParams.customData)) {
-          setCustomData(paymentParams.customData);
+          setCustomData({ ...paymentParams.customData, gemCount });
         }
 
         const response = await PortOne.requestPayment({
@@ -81,7 +82,6 @@ export const WebPaymentView = (props: WebPaymentProps) => {
   return null;
 };
 
-// CustomData 타입 가드
 function isCustomData(data: unknown): data is CustomData {
   if (!data || typeof data !== 'object') return false;
   const d = data as CustomData;

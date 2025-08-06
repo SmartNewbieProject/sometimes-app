@@ -21,13 +21,16 @@ import { useCommingSoon } from "../../admin/hooks";
 import { useMatchingBackground } from "../../idle-match-timer/hooks";
 import { useUnlockProfile } from "../queries/use-unlock-profile";
 import type { MatchingHistoryDetails } from "../type";
+import {ModalStyles} from "@shared/hooks";
+import {useFeatureCost} from "@features/payment/hooks";
 
 interface MatchingHistoryCardProps {
   item: MatchingHistoryDetails;
 }
 
 function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
-  const { showModal } = useModal();
+  const { showModal, hideModal } = useModal();
+  const { featureCosts } = useFeatureCost();
   const size =
     Dimensions.get("window").width / 2 > 300
       ? 220
@@ -58,20 +61,28 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const onClickMoreButton = () => {
     if (item.blinded) {
       showModal({
+        showLogo: true,
+        customTitle: (
+            <View style={ModalStyles.title}>
+              <Text textColor="black" size="20" weight="bold">
+                이전에 만났던 분께 다시 연락하기 위해 구슬 {featureCosts?.PROFILE_OPEN}개를 사용할까요?
+              </Text>
+            </View>
+        ),
         children: (
-          <View className="w-full justify-center items-center">
-            <Text textColor="black" size="md">
-              재매칭권을 사용하시겠습니까?
+          <View style={ModalStyles.content}>
+              <Text style={ModalStyles.description} className="text-[#AEAEAE]">
+                시간이 지났지만 다시 인연을 이어가고 싶다면, 용기 내어 먼저 다가가 보세요.
             </Text>
           </View>
         ),
         primaryButton: {
-          text: "사용하기",
+          text: "네, 해볼래요",
           onClick: unlockProfile.mutateAsync,
         },
         secondaryButton: {
-          text: "취소",
-          onClick: () => {},
+          text: "아니요",
+          onClick: hideModal,
         },
       });
     } else {

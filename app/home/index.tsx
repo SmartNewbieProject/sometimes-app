@@ -1,4 +1,6 @@
 import type { Notification } from "@/src/features/home/apis";
+import BannerSlide from "@/src/features/home/ui/banner-slide";
+import FirstPurchaseEvent from "@/src/features/home/ui/first-purchase-event-banner";
 import HomeInfoSection from "@/src/features/home/ui/home-info/home-info-section";
 import MatchingStatus from "@/src/features/home/ui/matching-status";
 import Loading from "@/src/features/loading";
@@ -24,12 +26,12 @@ import Home from "@features/home";
 import IdleMatchTimer from "@features/idle-match-timer";
 import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { Image } from "expo-image";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
 import { track } from "@amplitude/analytics-react-native";
 import {useAuth} from "@features/auth";
+import {ImageResource} from "@ui/image-resource";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -48,9 +50,6 @@ const { useRedirectPreferences, useTemporalUniversity } = hooks;
 
 const HomeScreen = () => {
   const { showModal } = useModal();
-  const { data: { count: totalMatchCount } = { count: 0 }, isLoading } =
-    useTotalMatchCountQuery();
-  const { data: totalUserCount = 0 } = useTotalUserCountQuery();
 
   const { isPreferenceFill } = useRedirectPreferences();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
@@ -63,9 +62,9 @@ const HomeScreen = () => {
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
   };
-  const handleNavigateToRematch = () => {
-    track("Home_RedirectTicketStore", my);
-    router.navigate("/purchase/tickets/rematch");
+  const onNavigateGemStore = () => {
+    track("onNavigateGemStore", my);
+    router.navigate("/purchase/gem-store");
   };
 
   const onClickAlert = (notification: Notification) => {
@@ -103,7 +102,7 @@ const HomeScreen = () => {
   );
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 ">
       <PalePurpleGradient />
       <VersionUpdateChecker />
 
@@ -114,12 +113,9 @@ const HomeScreen = () => {
         rightContent={
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={handleNavigateToRematch}
+            onPress={onNavigateGemStore}
           >
-            <Image
-              source={require("@assets/images/ticket.png")}
-              style={{ width: 40, height: 40 }}
-            />
+            <ImageResource resource={ImageResources.GEM} width={41} height={41} />
           </TouchableOpacity>
         }
       />
@@ -130,18 +126,11 @@ const HomeScreen = () => {
           Platform.OS === "android" ? "pb-40" : "pb-14"
         }`}
       >
-        <View>
-          <Loading.Lottie
-            title="몇 명이 매칭을 신청했을까요?"
-            loading={isLoading}
-          >
-            <TotalMatchCounter
-              count={totalMatchCount + totalUserCount + 1000}
-            />
-          </Loading.Lottie>
+        <View style={{ paddingBottom: 4, marginTop: 2 }}>
+          <BannerSlide />
         </View>
-        <HistoryCollapse />
 
+        <HistoryCollapse />
         <View className="mt-[18px] flex flex-col gap-y-1.5">
           <Feedback.WallaFeedbackBanner />
           <Show when={!isPreferenceFill}>
@@ -189,5 +178,6 @@ const HomeScreen = () => {
     </View>
   );
 };
+
 
 export default HomeScreen;

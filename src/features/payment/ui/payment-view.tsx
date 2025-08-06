@@ -13,18 +13,20 @@ export interface PaymentViewProps {
   orderName: string;
   totalAmount: number;
   productName?: string;
-  productType: Product; 
+  productType: Product;
+  gemCount?: number;
   productCount: number;
   onComplete?: (result: unknown) => void;
   onError?: (error: unknown) => void;
   onCancel?: () => void;
+  payMode: 'rematching' | 'gem';
 }
 
 export const PaymentView = forwardRef(
   (props: PaymentViewProps, ref: ForwardedRef<PortOneController>) => {
-    const { paymentId, orderName, totalAmount, productCount, productType, productName, onComplete, onError, onCancel } = props;
+    const { paymentId, orderName, totalAmount, productCount, productType, productName, onComplete, onError, onCancel, payMode } = props;
     const { my } = useAuth();
-    const { setCustomData } = usePortoneStore();
+    const { setCustomData, gemCount } = usePortoneStore();
 
     const customData = {
       orderName: productName || orderName,
@@ -38,7 +40,7 @@ export const PaymentView = forwardRef(
       channelKey: process.env.EXPO_PUBLIC_CHANNEL_KEY,
       paymentId,
       orderName: productName || orderName,
-      totalAmount,
+      totalAmount: totalAmount,
       currency: "CURRENCY_KRW",
       payMethod: "CARD",
       customer: {
@@ -71,6 +73,7 @@ export const PaymentView = forwardRef(
 
     return (
       <PortOnePaymentView
+        payMode={payMode}
         ref={ref}
         request={basePaymentParams}
         productName={productName}

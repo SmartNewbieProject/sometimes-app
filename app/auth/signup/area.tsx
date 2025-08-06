@@ -12,6 +12,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 
 import {
+  BackHandler,
   Platform,
   Pressable,
   Text as RNText,
@@ -26,12 +27,13 @@ function Area() {
     useAreaHook();
   const router = useRouter();
 
-  const handleNext = (e: React.Touch) => {
+  const handleNext = () => {
     onNext(() => {
       track("Signup_area", { area: show });
       router.push("/auth/signup/university");
     });
   };
+
   return (
     <DefaultLayout
       style={{

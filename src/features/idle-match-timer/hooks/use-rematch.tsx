@@ -8,51 +8,26 @@ import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../hooks";
+import {useCashableModal} from "@shared/hooks";
 
 const useRematchingMutation = () =>
   useMutation({
-    mutationFn: () => axiosClient.post("/matching/rematch"),
+    mutationFn: () => axiosClient.post("/v2/matching/rematch"),
     onSuccess: async () => {
       // 쿼리 무효화를 확실히 처리하기 위해 await 사용
       await queryClient.invalidateQueries({ queryKey: ["latest-matching"] });
-      await queryClient.invalidateQueries({ queryKey: ["rematching-tickets"] });
 
       // 추가로 쿼리를 강제로 다시 가져오기
       await queryClient.refetchQueries({ queryKey: ["latest-matching"] });
-      await queryClient.refetchQueries({ queryKey: ["rematching-tickets"] });
+      await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
     },
   });
+
 function useRematch() {
   const { showErrorModal, showModal } = useModal();
   const { mutateAsync: rematch } = useRematchingMutation();
   const { onLoading, finishLoading, finishRematching } = useMatchLoading();
-
-  const showTicketPurchaseModal = () => {
-    showModal({
-      title: "연인 매칭권이 없어요",
-      children: (
-        <View className="flex flex-col">
-          <Text>연인매칭권이 부족해 즉시 매칭을 수행할 수 없어요</Text>
-          <Text>매칭권을 구매하시겠어요?</Text>
-        </View>
-      ),
-      primaryButton: {
-        text: "살펴보러가기",
-        onClick: () => {
-          finishLoading();
-          finishRematching();
-          router.navigate("/purchase/tickets/rematch");
-        },
-      },
-      secondaryButton: {
-        text: "다음에 볼게요",
-        onClick: () => {
-          finishLoading();
-          finishRematching();
-        },
-      },
-    });
-  };
+  const { show: showCashable } = useCashableModal();
 
   const performRematch = async () => {
     await tryCatch(
@@ -66,9 +41,12 @@ function useRematch() {
         finishLoading();
         finishRematching();
         if (err.status === HttpStatusCode.Forbidden) {
-          showTicketPurchaseModal();
+          showCashable({
+            textContent: '지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!',
+          });
           return;
         }
+
         showModal({
           title: "아직 추천드릴 상대가 없어요",
           children: (
@@ -86,29 +64,6 @@ function useRematch() {
         });
       }
     );
-  };
-
-  const showRematchConfirmModal = () => {
-    showModal({
-      children: (
-        <View className="w-full justify-center items-center">
-          <Text textColor="black" size="md">
-            재매칭권을 사용하시겠습니까?
-          </Text>
-        </View>
-      ),
-      primaryButton: {
-        text: "사용하기",
-        onClick: performRematch,
-      },
-      secondaryButton: {
-        text: "나중에",
-        onClick: () => {
-          finishLoading();
-          finishRematching();
-        },
-      },
-    });
   };
 
   const onRematch = async () => {

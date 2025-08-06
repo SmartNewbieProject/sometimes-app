@@ -2,7 +2,7 @@ import { axiosClient, tryCatch } from "@/src/shared/libs";
 import { eventBus } from "@/src/shared/libs/event-bus";
 import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
 import type { TokenResponse } from "@/src/types/auth";
-import { passLogin } from "@features/auth/apis/index";
+import { passKakao, passLogin } from "@features/auth/apis/index";
 import { useModal } from "@hooks/use-modal";
 import { useStorage } from "@shared/hooks/use-storage";
 import { router } from "expo-router";
@@ -47,6 +47,22 @@ export function useAuth() {
 
   const loginWithPass = async (impUid: string) => {
     const data = await passLogin(impUid);
+
+    if (data.isNewUser) {
+      // 신규 사용자인 경우 본인인증 정보 전달
+      return { isNewUser: true, certificationInfo: data.certificationInfo };
+    }
+
+    await updateToken(data.accessToken, data.refreshToken);
+    registerForPushNotificationsAsync().catch((error) => {
+      console.error("푸시 토큰 등록 중 오류:", error);
+    });
+
+    return { isNewUser: false };
+  };
+
+  const loginWithKakao = async (code: string) => {
+    const data = await passKakao(code);
 
     if (data.isNewUser) {
       // 신규 사용자인 경우 본인인증 정보 전달
@@ -127,6 +143,7 @@ export function useAuth() {
     isAuthorized: !!accessToken,
     approvalStatus,
     clearApprovalStatus,
+    loginWithKakao,
     logout,
     logoutOnly,
     my: {

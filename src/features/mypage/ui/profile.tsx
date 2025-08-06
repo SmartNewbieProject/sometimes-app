@@ -14,6 +14,9 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRematchingTickets } from "../queries";
+import {ImageResource} from "@ui/image-resource";
+import {ImageResources} from "@shared/libs";
+import {useCurrentGem} from "@features/payment/hooks";
 
 export const Profile = () => {
   const { profileDetails } = useAuth();
@@ -23,6 +26,7 @@ export const Profile = () => {
     useState<boolean>(false);
   const [isLoadingVerification, setIsLoadingVerification] =
     useState<boolean>(true);
+  const { data: gem } = useCurrentGem();
   const profileData = {
     name: profileDetails?.name || "이름",
     age: profileDetails?.age || "20",
@@ -190,15 +194,16 @@ export const Profile = () => {
           className="pt-[5px] pl-[32px] flex-row"
           style={{ alignItems: "center" }}
         >
-          <Image
-            source={require("@/assets/images/ticket.png")}
-            style={{ width: 30, height: 30 }}
+          <ImageResource
+            resource={ImageResources.GEM}
+            width={28}
+            height={28}
           />
           <View className="pl-[10px] flex-row">
-            <Text className="text-[13px] text-[#FFFFFF]">재매칭 티켓이</Text>
+            <Text className="text-[13px] text-[#FFFFFF]">구슬이 </Text>
             <Text className="text-[13px] text-[#9747FF]">
               {" "}
-              {profileData.totalRematchingTickets}장
+              {gem?.totalGem ?? 0}개
             </Text>
             <Text className="text-[13px] text-[#FFFFFF]"> 남았어요</Text>
           </View>
