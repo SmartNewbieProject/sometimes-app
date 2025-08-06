@@ -1,6 +1,7 @@
 import {ImageResources} from "@shared/libs/image";
 import {ImageResource, Text } from "@shared/ui";
 import {Dimensions, Pressable, StyleSheet, View} from "react-native";
+import { router } from 'expo-router';
 
 export const Banner = () => {
   const width = Dimensions.get("window").width;
@@ -17,7 +18,7 @@ export const Banner = () => {
             resource={ImageResources.GEM_STORE_BANNER}
             style={{width: "100%", height}}
         />
-        <Pressable style={styles.guideButton}>
+        <Pressable style={styles.guideButton} onPress={() => router.push('/community/01987e8f-7a3f-70c0-9489-d63922ed14aa')}>
           <ImageResource
             resource={ImageResources.TICKET}
             width={36}
