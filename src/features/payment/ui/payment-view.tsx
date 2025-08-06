@@ -16,6 +16,7 @@ export interface PaymentViewProps {
   productType: Product;
   gemCount?: number;
   productCount: number;
+  customData?: Record<string, any>;
   onComplete?: (result: unknown) => void;
   onError?: (error: unknown) => void;
   onCancel?: () => void;
@@ -24,7 +25,7 @@ export interface PaymentViewProps {
 
 export const PaymentView = forwardRef(
   (props: PaymentViewProps, ref: ForwardedRef<PortOneController>) => {
-    const { paymentId, orderName, totalAmount, productCount, productType, productName, onComplete, onError, onCancel, payMode } = props;
+    const { paymentId, orderName, totalAmount, productCount, productType, productName, customData: propsCustomData, onComplete, onError, onCancel, payMode } = props;
     const { my } = useAuth();
     const { setCustomData, gemCount } = usePortoneStore();
 
@@ -33,6 +34,8 @@ export const PaymentView = forwardRef(
       amount: totalAmount,
       productType,
       productCount,
+      gemCount,
+      ...propsCustomData,
     };
 
     const basePaymentParams: PaymentRequest = {

@@ -7,9 +7,10 @@ import {
   createContext,
   useCallback,
   useContext,
+  useRef,
   useState,
 } from "react";
-import { Modal, View } from "react-native";
+import { Modal, StyleSheet, View } from "react-native";
 import { cn } from "../libs";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
@@ -90,68 +91,93 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     </View>
   );
 
-  const renderCustomModal = () => (
-    <View
-      className={cn(
-        "bg-white w-[300px] md:w-[468px] rounded-2xl p-5 relative",
-        modalContent?.showLogo && "pt-[70px]"
-      )}
-    >
-      {modalContent?.showLogo && (
-        <View className="absolute top-[-18px] left-1/2 -translate-x-1/2 rounded-full bg-white p-[5.7px]">
-          <Letter width={68} height={68} />
-        </View>
-      )}
-      {!!modalContent?.customTitle && modalContent.customTitle}
-      {!modalContent?.customTitle && modalContent?.title && (
+  const renderCustomModal = () => {
+    const isClicked = useRef(false);
+
+    const handleButtonClick = (callback?: () => void) => {
+      if (isClicked.current) return;
+      isClicked.current = true;
+
+      callback?.();
+      hideModal();
+
+      setTimeout(() => {
+        isClicked.current = false;
+      }, 300);
+    };
+
+    return (
+      <View
+        className={cn(
+          "bg-white w-[300px] md:w-[468px] rounded-2xl p-5 relative",
+          modalContent?.showLogo && "pt-[70px]"
+        )}
+      >
+        {modalContent?.showLogo && (
+          <View style={styles.logoStyle}>
+            <View
+              style={{
+                width: "100%",
+                height: "100%",
+                borderRadius: "50%",
+                backgroundColor: "#7A4AE2",
+              }}
+            >
+              <Image
+                source={require("@assets/images/letter.png")}
+                style={{ width: 60, height: 60 }}
+              />
+            </View>
+          </View>
+        )}
+        {!!modalContent?.customTitle && modalContent.customTitle}
+        {!modalContent?.customTitle && modalContent?.title && (
+          <View className="mb-4">
+            {typeof modalContent.title === "string" ? (
+              <Text size="18" weight="semibold" textColor="black">
+                {modalContent.title}
+              </Text>
+            ) : (
+              modalContent.title
+            )}
+          </View>
+        )}
         <View className="mb-4">
-          {typeof modalContent.title === "string" ? (
-            <Text size="18" weight="semibold" textColor="black">
-              {modalContent.title}
+          {typeof modalContent?.children === "string" ? (
+            <Text className="text-center" weight="medium" textColor="black">
+              {modalContent.children}
             </Text>
           ) : (
-            modalContent.title
+            modalContent?.children
           )}
         </View>
-      )}
-      <View className="mb-4">
-        {typeof modalContent?.children === "string" ? (
-          <Text className="text-center" weight="medium" textColor="black">
-            {modalContent.children}
-          </Text>
-        ) : (
-          modalContent?.children
-        )}
+        <View className="flex flex-row gap-x-2">
+          {modalContent?.secondaryButton && (
+            <Button
+              variant="secondary"
+              onPress={() =>
+                handleButtonClick(modalContent.secondaryButton?.onClick)
+              }
+              className="flex-1"
+            >
+              {modalContent.secondaryButton.text}
+            </Button>
+          )}
+          {modalContent?.primaryButton && (
+            <Button
+              variant="primary"
+              onPress={() =>
+                handleButtonClick(modalContent.primaryButton?.onClick)
+              }
+              className="flex-1"
+            >
+              {modalContent.primaryButton.text}
+            </Button>
+          )}
+        </View>
       </View>
-      <View className="flex flex-row gap-x-2">
-        {modalContent?.secondaryButton && (
-          <Button
-            variant="secondary"
-            onPress={() => {
-              modalContent.secondaryButton?.onClick();
-              hideModal();
-            }}
-            className="flex-1"
-          >
-            {modalContent.secondaryButton.text}
-          </Button>
-        )}
-        {modalContent?.primaryButton && (
-          <Button
-            variant="primary"
-            onPress={() => {
-              modalContent.primaryButton?.onClick();
-              hideModal();
-            }}
-            className="flex-1"
-          >
-            {modalContent.primaryButton.text}
-          </Button>
-        )}
-      </View>
-    </View>
-  );
-
+    );
+  };
   return (
     <ModalContext.Provider value={{ showModal, showErrorModal, hideModal }}>
       {children}
@@ -168,3 +194,14 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     </ModalContext.Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  logoStyle: {
+    position: "absolute",
+    top: -18,
+    alignSelf: "center",
+    borderRadius: 999,
+    backgroundColor: "#fff",
+    padding: 5.7,
+  },
+});

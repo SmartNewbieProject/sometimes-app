@@ -95,7 +95,6 @@ export default function RematchingTicketSellingScreen() {
       setTotalPrice(undefined);
     }
   }, [showPayment]);
-
   if (showPayment) {
     return (
       <PaymentView
