@@ -31,7 +31,7 @@ export const ContentLayout = ({ children }: Props) => {
 const styles = StyleSheet.create({
   shadowWrapper: {
     width: "100%",
-    backgroundColor: "transparent",
+    backgroundColor: "#F3EDFF",
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     top: -32,
