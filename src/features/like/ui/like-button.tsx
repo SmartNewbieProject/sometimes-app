@@ -2,32 +2,27 @@ import { ImageResources } from "@/src/shared/libs";
 import { Button, ImageResource } from "@/src/shared/ui";
 import { Text } from "@shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
-import type { MatchDetails } from "../types";
+import type { MatchDetails } from "../../idle-match-timer/types";
 
 import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
-import useILiked from "../../like/hooks/use-liked";
-import { LikeButton } from "../../like/ui/like-button";
-import useRematch from "../hooks/use-rematch";
+import { useAuth } from "../../auth";
+import useLike from "../hooks/use-like";
 
-type InteractionNavigationProps = {
+type LikeButtonProps = {
   match?: MatchDetails;
 };
 
-export const InteractionNavigation = ({
-  match,
-}: InteractionNavigationProps) => {
-  const hasPartner = !!match?.partner;
-  const { onRematch } = useRematch();
+export const LikeButton = ({ match }: LikeButtonProps) => {
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
-  const { isLikedPartner } = useILiked();
-  const isLiked = isLikedPartner(match?.connectionId ?? "");
-  console.log("isdata", isLikedPartner(match?.connectionId ?? ""));
-  const showPartnerFindAnnouncement = () => {
+  const { onLike } = useLike();
+  const showPartnerLikeAnnouncement = () => {
+    if (!match?.connectionId) {
+      return;
+    }
     showModal({
       showLogo: true,
-
       customTitle: (
         <View
           style={{
@@ -38,15 +33,15 @@ export const InteractionNavigation = ({
           }}
         >
           <Text textColor="black" weight="bold" size="20">
-            마음에 드는 이성을 찾기 위해
+            마음에 드는 이성에게
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 {featureCosts?.REMATCHING}개를 사용할게요!
+            구슬 {featureCosts?.LIKE_MESSAGE}개로 관심을 표현할까요?
           </Text>
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[8px]">
+        <View className="flex flex-col w-full items-center mt-[5px]">
           <Text className="text-[#AEAEAE] text-[12px]">
             이성에게 간단히 관심을 표현하고,
           </Text>
@@ -57,7 +52,8 @@ export const InteractionNavigation = ({
       ),
       primaryButton: {
         text: "네, 해볼래요",
-        onClick: onRematch,
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        onClick: () => onLike(match?.connectionId!),
       },
       secondaryButton: {
         text: "아니요",
@@ -67,30 +63,16 @@ export const InteractionNavigation = ({
   };
 
   return (
-    <View className="w-fulsl flex flex-row gap-x-[5px] mt-4">
-      <Button
-        onPress={showPartnerFindAnnouncement}
-        variant="outline"
-        className="flex-1 items-center"
-        prefix={
-          <ImageResource resource={ImageResources.GEM} width={23} height={23} />
-        }
-      >
-        <RNText style={styles.subText}>x2</RNText>더 찾아보기
-      </Button>
-      {isLiked ? (
-        <Button
-          onPress={() => {}}
-          className="flex-1 items-center !bg-[#E1D9FF] !text-white"
-        >
-          썸 보내기 완료!
-        </Button>
-      ) : hasPartner ? (
-        <LikeButton match={match} />
-      ) : (
-        <></>
-      )}
-    </View>
+    <Button
+      onPress={showPartnerLikeAnnouncement}
+      variant="primary"
+      className="flex-1 items-center"
+      prefix={
+        <ImageResource resource={ImageResources.GEM} width={23} height={23} />
+      }
+    >
+      <RNText style={styles.subText}>x2</RNText>좋아요
+    </Button>
   );
 };
 

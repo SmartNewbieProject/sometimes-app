@@ -14,7 +14,6 @@ export function useAuth() {
     key: "access-token",
     initialValue: null,
   });
-
   const { value: refreshToken, setValue: setRefreshToken } = useStorage<
     string | null
   >({

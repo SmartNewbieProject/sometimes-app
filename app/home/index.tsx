@@ -3,8 +3,9 @@ import BannerSlide from "@/src/features/home/ui/banner-slide";
 import FirstPurchaseEvent from "@/src/features/home/ui/first-purchase-event-banner";
 import HomeInfoSection from "@/src/features/home/ui/home-info/home-info-section";
 import MatchingStatus from "@/src/features/home/ui/matching-status";
+import useLiked from "@/src/features/like/hooks/use-liked";
+import LikeCollapse from "@/src/features/like/ui/like-collapse";
 import Loading from "@/src/features/loading";
-import HistoryCollapse from "@/src/features/matching-history/ui/history-collapse";
 import {
   VersionUpdateChecker,
   useVersionUpdate,
@@ -20,18 +21,18 @@ import {
   PalePurpleGradient,
   Show,
 } from "@/src/shared/ui";
+import { track } from "@amplitude/analytics-react-native";
+import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
 import Home from "@features/home";
 import IdleMatchTimer from "@features/idle-match-timer";
 import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
+import { ImageResource } from "@ui/image-resource";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
-import { track } from "@amplitude/analytics-react-native";
-import {useAuth} from "@features/auth";
-import {ImageResource} from "@ui/image-resource";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -58,7 +59,8 @@ const HomeScreen = () => {
   const { my } = useAuth();
   const queryClient = useQueryClient();
   const [isSlideScrolling, setSlideScrolling] = useState(false);
-
+  const { showCollapse } = useLiked();
+  const collapse = showCollapse();
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
   };
@@ -111,11 +113,12 @@ const HomeScreen = () => {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={onNavigateGemStore}
-          >
-            <ImageResource resource={ImageResources.GEM} width={41} height={41} />
+          <TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
+            <ImageResource
+              resource={ImageResources.GEM}
+              width={41}
+              height={41}
+            />
           </TouchableOpacity>
         }
       />
@@ -130,7 +133,9 @@ const HomeScreen = () => {
           <BannerSlide />
         </View>
 
-        <HistoryCollapse />
+        {!!collapse && (
+          <LikeCollapse collapse={collapse.data} type={collapse.type} />
+        )}
         <View className="mt-[18px] flex flex-col gap-y-1.5">
           <Feedback.WallaFeedbackBanner />
           <Show when={!isPreferenceFill}>
@@ -178,6 +183,5 @@ const HomeScreen = () => {
     </View>
   );
 };
-
 
 export default HomeScreen;
