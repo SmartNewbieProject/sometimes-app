@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { track } from "@amplitude/analytics-react-native";
 import { useRouter } from "expo-router";
 // KakaoLoginWebView.tsx
 import type React from "react";
@@ -77,6 +78,10 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
     try {
       onClose();
       const result = await loginWithKakao(code);
+      track("Signup_Route_Entered", {
+        screen: "AreaSelect",
+        platform: "kakao",
+      });
 
       if (result.isNewUser) {
         router.push({
