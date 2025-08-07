@@ -19,7 +19,7 @@ function BannerSlide() {
         autoPlayInterval={5000}
         className="w-full !min-h-[92px] "
       >
-        <FirstPurchaseEvent />
+        {/*<FirstPurchaseEvent />*/}
         <TotalMatchCounter count={totalMatchCount + totalUserCount + 1000} />
       </Slider>
     </Loading.Lottie>
