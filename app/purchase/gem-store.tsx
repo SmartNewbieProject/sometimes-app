@@ -117,7 +117,7 @@ export default function GemStoreScreen() {
   return (
       <Layout.Default
           className="flex flex-1 flex-col"
-          style={{backgroundColor: "#F3EEFC", paddingTop: insets.top}}
+          style={{backgroundColor: "white", paddingTop: insets.top }}
       >
         <GemStore.Header gemCount={gem?.totalGem ?? 0} />
         <ScrollView>
@@ -163,8 +163,6 @@ export default function GemStoreScreen() {
                         ))}
                   </GemStoreWidget.Provider>
                 </Show>
-
-
               </View>
             </View>
           </RematchingTicket.ContentLayout>
