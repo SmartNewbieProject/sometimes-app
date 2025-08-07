@@ -44,8 +44,12 @@ export const ModalContext = createContext<ModalContextType | null>(null);
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [visible, setVisible] = useState(false);
+  const isClicked = useRef(false);
   const [modalContent, setModalContent] = useState<ModalOptions | null>(null);
   const [errorContent, setErrorContent] = useState<ErrorModalOptions | null>(
+    null
+  );
+  const [queuedError, setQueuedError] = useState<ErrorModalOptions | null>(
     null
   );
 
@@ -57,13 +61,17 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
   const showErrorModal = useCallback(
     (message: string, type: "announcement" | "error") => {
-      setErrorContent({ message, type });
-      setModalContent(null);
-      setVisible(true);
+      if (visible) {
+        setQueuedError({ message, type });
+        setVisible(false); // 먼저 닫기
+      } else {
+        setErrorContent({ message, type });
+        setModalContent(null);
+        setVisible(true);
+      }
     },
-    []
+    [visible]
   );
-
   const hideModal = useCallback(() => {
     setVisible(false);
     setModalContent(null);
@@ -92,8 +100,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   );
 
   const renderCustomModal = () => {
-    const isClicked = useRef(false);
-
     const handleButtonClick = (callback?: () => void) => {
       if (isClicked.current) return;
       isClicked.current = true;
@@ -186,6 +192,13 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         transparent
         animationType="fade"
         onRequestClose={hideModal}
+        onDismiss={() => {
+          if (queuedError) {
+            setErrorContent(queuedError);
+            setQueuedError(null);
+            setVisible(true);
+          }
+        }}
       >
         <View className="flex-1 bg-black/50 justify-center items-center px-5">
           {errorContent ? renderErrorModal() : renderCustomModal()}
