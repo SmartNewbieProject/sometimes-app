@@ -61,12 +61,19 @@ function Slider({
   }, [focusIndex, autoPlay, autoPlayInterval, containerWidth]);
 
   const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: (_, gestureState) => {
-      if (!pendingRef.current || containerWidth === 0) return;
+    onStartShouldSetPanResponder: () => true,
 
-      const toRight = gestureState.dx < -80;
-      const toLeft = gestureState.dx > 80;
+    onMoveShouldSetPanResponder: (_, gestureState) => {
+      return Math.abs(gestureState.dx) > 10;
+    },
+
+    onPanResponderGrant: () => {},
+
+    onPanResponderRelease: (_, gestureState) => {
+      if (containerWidth === 0 || !pendingRef.current) return;
+
+      const toRight = gestureState.dx < -60;
+      const toLeft = gestureState.dx > 60;
 
       if (toRight) {
         moveToIndex(focusIndex + 1);
@@ -75,6 +82,7 @@ function Slider({
       }
     },
   });
+
   const moveToIndex = (nextIndex: number) => {
     if (containerWidth === 0) return;
 

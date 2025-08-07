@@ -22,6 +22,7 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
       autoPlayInterval={6000}
       className={`w-full ${Platform.OS === "android" ? "h-40" : ""}`}
       autoPlay
+      indicatorContainerClassName="!bottom-[-28px] "
     >
       {reviews.map((review) => (
         <View
