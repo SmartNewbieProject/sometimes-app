@@ -114,6 +114,7 @@ export default function PartnerDetailScreen() {
               <Slider
                 showIndicator={true}
                 autoPlayInterval={6000}
+                animationDuration={250}
                 className={"w-full absolute  "}
                 autoPlay
               >

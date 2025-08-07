@@ -35,6 +35,7 @@ function FirstPurchaseEvent() {
   });
 
   const handleStore = () => {
+    console.log("123");
     router.push("/purchase/gem-store");
   };
 
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 53,
     backgroundColor: "#fff",
-    marginRight: 20,
+    marginRight: 12,
   },
 });
 
