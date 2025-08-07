@@ -13,6 +13,8 @@ import {GemStore} from "@features/payment/ui";
 import {useCurrentGem, useGemProducts} from "@features/payment/hooks";
 import {GemStoreWidget} from "@/src/widgets";
 import {usePortoneStore} from "@features/payment/hooks/use-portone-store";
+import { track } from "@amplitude/analytics-react-native";
+import { useAuth } from "@/src/features/auth";
 
 const {ui, services} = Payment;
 const {PaymentView} = ui;
@@ -30,6 +32,7 @@ export default function GemStoreScreen() {
   const {showErrorModal} = useModal();
   const [paymentId, setPaymentId] = useState<string>(createUniqueId());
   const { setGemCount } = usePortoneStore();
+  const { my } = useAuth();
 
   const {handlePaymentComplete} = usePortone();
 
@@ -114,6 +117,14 @@ export default function GemStoreScreen() {
     );
   }
 
+  useEffect(() => {
+    track("GemStore_Entered", {  who: my });
+
+    return () => {
+      track("GemStore_Exited", {  who: my });
+    }
+  }, []);
+
   return (
       <Layout.Default
           className="flex flex-1 flex-col"
@@ -152,6 +163,7 @@ export default function GemStoreScreen() {
                                 key={product.id}
                                 gemProduct={product}
                                 onOpenPayment={(metadata) => {
+                                  track("GemStore_Product_Clicked", {  who: my, product: metadata  });
                                   setGemCount(product.totalGems);
                                   onPurchase({
                                     totalPrice: metadata.totalPrice,

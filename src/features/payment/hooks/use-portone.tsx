@@ -7,6 +7,7 @@ import { Text } from '@shared/ui';
 import paymentApis from '../api';
 import { useModal } from '@shared/hooks/use-modal';
 import type { PaymentResponse } from '../types';
+import { track } from '@amplitude/analytics-react-native';
 
 interface UsePortone {
 	handlePaymentComplete: (
@@ -34,8 +35,6 @@ export function usePortone(): UsePortone {
 		async (result: PaymentResponse, options: HandlePaymentCompleteOptions = {}) => {
 			const { productCount, showSuccessModal = true, onSuccess, onError } = options;
 
-			console.log({ options });
-
 			try {
 				if (result?.message) {
 					showErrorModal(result.message, 'error');
@@ -49,6 +48,8 @@ export function usePortone(): UsePortone {
 						merchantUid: result.paymentId,
 					});
 				}
+
+				track("GemStore_Payment_Success", {  result  });
 
 				if (showSuccessModal) {
 					if (gemCount) {
