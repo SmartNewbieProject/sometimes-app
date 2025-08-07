@@ -6,6 +6,7 @@ import type { MatchDetails } from "../../idle-match-timer/types";
 
 import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
+import { useAuth } from "../../auth";
 import useLike from "../hooks/use-like";
 
 type LikeButtonProps = {

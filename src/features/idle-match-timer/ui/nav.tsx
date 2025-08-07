@@ -6,7 +6,7 @@ import type { MatchDetails } from "../types";
 
 import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
-import useILiked from "../../like/hooks/use-i-liked";
+import useILiked from "../../like/hooks/use-liked";
 import { LikeButton } from "../../like/ui/like-button";
 import useRematch from "../hooks/use-rematch";
 

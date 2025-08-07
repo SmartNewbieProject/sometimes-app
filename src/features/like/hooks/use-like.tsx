@@ -71,7 +71,7 @@ export default function useLike() {
                 상대방도 관심을 보이면,
               </Text>
               <Text className="text-[#AEAEAE] text-[12px]">
-                바로 대화가 열려요
+                인스타그램으로 연락할 수 있어요
               </Text>
             </View>
           ),
