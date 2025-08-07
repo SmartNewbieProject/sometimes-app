@@ -15,6 +15,9 @@ import { PreSignup } from '@/src/features/pre-signup';
 const { hooks: { useEventAnalytics } } = Event;
 
 export default function PreSignupScreen() {
+  useEffect(() => {
+    window.location.href = 'https://info.some-in-univ.com/';
+  }, []);
   const { trackEventAction } = useEventAnalytics('pre-signup');
 
   const cardSectionOpacity = useSharedValue(0);
