@@ -104,7 +104,7 @@ export const usePortOneLogin = ({
 					}
 				}
 
-				track('Signup_Route_Entered', { screen: 'AreaSelect' });
+				track('Signup_Route_Entered', { screen: 'AreaSelect', platform: 'pass' });
 				router.push({
 					pathname: '/auth/signup/area',
 					params: {
@@ -193,6 +193,7 @@ export const usePortOneLogin = ({
 
 			track('Signup_IdentityVerification_Started', {
 				platform: Platform.OS,
+				type: 'pass',
 			});
 
 			if (Platform.OS === 'web') {
