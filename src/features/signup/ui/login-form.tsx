@@ -27,7 +27,10 @@ export default function LoginForm() {
   } = usePortOneLogin();
 
   const onPressPassLogin = async () => {
-    track("Signup_Init", { platform: "pass" });
+    track("Signup_Init", {
+      platform: "pass",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
 
     clearError();
     await startPortOneLogin();
@@ -89,7 +92,10 @@ function KakaoLogin() {
   const redirectUri = process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI as string;
 
   const handleKakaoLogin = () => {
-    track("Signup_Init", { platform: "kakao" });
+    track("Signup_Init", {
+      platform: "kakao",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
 
     if (Platform.OS === "web") {
       // 웹에서는 기존 방식 유지

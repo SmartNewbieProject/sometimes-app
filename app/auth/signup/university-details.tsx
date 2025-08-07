@@ -62,6 +62,7 @@ export default function UniversityDetailsPage() {
       grade: form.grade,
       department: form.departmentName,
       studentNumber: `${form.studentNumber}`,
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
 
     setSignupLoading(true);

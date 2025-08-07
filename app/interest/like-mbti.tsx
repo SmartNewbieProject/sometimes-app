@@ -27,7 +27,7 @@ function LikeMbti() {
   };
 
   const onNext = () => {
-    track("Interest_likeMbti");
+    track("Interest_likeMbti", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/bad-mbti");
   };
 

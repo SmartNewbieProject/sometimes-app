@@ -20,18 +20,18 @@ import {
   PalePurpleGradient,
   Show,
 } from "@/src/shared/ui";
+import { track } from "@amplitude/analytics-react-native";
+import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
 import Home from "@features/home";
 import IdleMatchTimer from "@features/idle-match-timer";
 import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
+import { ImageResource } from "@ui/image-resource";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
-import { track } from "@amplitude/analytics-react-native";
-import {useAuth} from "@features/auth";
-import {ImageResource} from "@ui/image-resource";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -63,7 +63,10 @@ const HomeScreen = () => {
     setSlideScrolling(bool);
   };
   const onNavigateGemStore = () => {
-    track("onNavigateGemStore", my);
+    track("onNavigateGemStore", {
+      ...my,
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     router.navigate("/purchase/gem-store");
   };
 
@@ -111,11 +114,12 @@ const HomeScreen = () => {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={onNavigateGemStore}
-          >
-            <ImageResource resource={ImageResources.GEM} width={41} height={41} />
+          <TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
+            <ImageResource
+              resource={ImageResources.GEM}
+              width={41}
+              height={41}
+            />
           </TouchableOpacity>
         }
       />
@@ -178,6 +182,5 @@ const HomeScreen = () => {
     </View>
   );
 };
-
 
 export default HomeScreen;

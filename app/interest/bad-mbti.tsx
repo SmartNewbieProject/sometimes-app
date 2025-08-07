@@ -34,7 +34,7 @@ function BadMbti() {
   })();
 
   const onNext = () => {
-    track("Interest_hateMbti");
+    track("Interest_hateMbti", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/personality");
   };
 

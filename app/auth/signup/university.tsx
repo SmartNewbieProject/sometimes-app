@@ -37,7 +37,11 @@ export default function UniversityPage() {
 
   const handleNext = () => {
     onNext(() => {
-      track("Signup_university", { test: true, university: selectedUniv });
+      track("Signup_university", {
+        test: true,
+        university: selectedUniv,
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
       router.push(
         `/auth/signup/university-details?universityName=${selectedUniv}`
       );

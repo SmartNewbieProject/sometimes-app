@@ -16,10 +16,13 @@ function HomeInfoSection() {
   const router = useRouter();
   const handleClickButton = (to: "my-info" | "interest") => {
     if (to === "my-info") {
-      track("Profile_Started");
+      track("Profile_Started", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
       router.navigate("/my-info");
     } else {
-      track("Interest_Started", { type: "home" });
+      track("Interest_Started", {
+        type: "home",
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
       router.navigate("/interest");
     }
   };

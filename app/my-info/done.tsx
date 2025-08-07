@@ -60,7 +60,9 @@ export default function InterestDoneScreen() {
             variant="primary"
             size="md"
             onPress={() => {
-              track("Profile_Done");
+              track("Profile_Done", {
+                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+              });
               clear();
               router.push("/home");
             }}
