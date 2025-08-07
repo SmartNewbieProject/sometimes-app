@@ -96,6 +96,15 @@ export default function GemStoreScreen() {
     }
   }, [showPayment]);
 
+  useEffect(() => {
+    track("GemStore_Entered", {  who: my });
+
+    return () => {
+      track("GemStore_Exited", {  who: my });
+    }
+  }, []);
+
+
   if (showPayment) {
     return (
         <PaymentView
@@ -116,14 +125,6 @@ export default function GemStoreScreen() {
         />
     );
   }
-
-  useEffect(() => {
-    track("GemStore_Entered", {  who: my });
-
-    return () => {
-      track("GemStore_Exited", {  who: my });
-    }
-  }, []);
 
   return (
       <Layout.Default
@@ -163,7 +164,7 @@ export default function GemStoreScreen() {
                                 key={product.id}
                                 gemProduct={product}
                                 onOpenPayment={(metadata) => {
-                                  track("GemStore_Product_Clicked", {  who: my, product: metadata  });
+                                  track("GemStore_Product_Clicked", {  who: my, product: metadata,   });
                                   setGemCount(product.totalGems);
                                   onPurchase({
                                     totalPrice: metadata.totalPrice,
