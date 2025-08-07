@@ -53,7 +53,8 @@ export default function CommunityWriteScreen() {
     }
 
     await tryCatch(async () => {
-      await articles.postArticles(data);
+      const { originalImages, deleteImageIds, ...articleData } = data;
+      await articles.postArticles(articleData);
       showModal({
         title: "글 작성 완료",
         children: <Text textColor="black">글 작성이 완료되었습니다.</Text>,
