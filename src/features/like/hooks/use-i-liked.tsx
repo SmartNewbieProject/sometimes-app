@@ -5,8 +5,11 @@ import useILikedQuery from "../queries/use-i-liked-query";
 function useILiked() {
   const { data, isLoading } = useILikedQuery();
 
-  const isLikedPartner = () => {
-    return data;
+  const isLikedPartner = (connectionId: string) => {
+    if (isLoading) {
+      return false;
+    }
+    return !!data?.find((matching) => matching.connectionId === connectionId);
   };
 
   return {

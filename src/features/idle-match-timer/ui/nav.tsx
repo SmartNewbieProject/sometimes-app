@@ -22,10 +22,12 @@ export const InteractionNavigation = ({
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const { isLikedPartner } = useILiked();
-  console.log("isdata", isLikedPartner());
+  const isLiked = isLikedPartner(match?.connectionId ?? "");
+  console.log("isdata", isLikedPartner(match?.connectionId ?? ""));
   const showPartnerFindAnnouncement = () => {
     showModal({
       showLogo: true,
+
       customTitle: (
         <View
           style={{
@@ -44,7 +46,7 @@ export const InteractionNavigation = ({
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center">
+        <View className="flex flex-col w-full items-center mt-[8px]">
           <Text className="text-[#AEAEAE] text-[12px]">
             이성에게 간단히 관심을 표현하고,
           </Text>
@@ -76,7 +78,18 @@ export const InteractionNavigation = ({
       >
         <RNText style={styles.subText}>x2</RNText>더 찾아보기
       </Button>
-      {hasPartner && <LikeButton match={match} />}
+      {isLiked ? (
+        <Button
+          onPress={() => {}}
+          className="flex-1 items-center !bg-[#E1D9FF] !text-white"
+        >
+          썸 보내기 완료!
+        </Button>
+      ) : hasPartner ? (
+        <LikeButton match={match} />
+      ) : (
+        <></>
+      )}
     </View>
   );
 };

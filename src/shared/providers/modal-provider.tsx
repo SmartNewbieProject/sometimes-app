@@ -1,3 +1,4 @@
+import ModalParticle from "@/src/widgets/particle/modal-particle";
 import ErrorFace from "@assets/icons/error-face.svg";
 import Letter from "@assets/icons/letter.svg";
 import { Image } from "expo-image";
@@ -10,7 +11,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Modal, StyleSheet, View } from "react-native";
+import { type LayoutChangeEvent, Modal, StyleSheet, View } from "react-native";
 import { cn } from "../libs";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
@@ -22,6 +23,7 @@ type ModalOptions = {
     text: string;
     onClick: () => void;
   };
+  showParticle?: boolean;
   showLogo?: boolean;
   secondaryButton?: {
     text: string;
@@ -48,6 +50,87 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [errorContent, setErrorContent] = useState<ErrorModalOptions | null>(
     null
   );
+  const [size, setSize] = useState({ width: 0, height: 0 });
+  const onLayout = (event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout;
+    setSize({
+      width: width,
+      height: height,
+    });
+  };
+
+  const PARTICLE_IMAGE = [
+    {
+      source: require("@assets/images/particle2.png"),
+      style: {
+        width: 52,
+        height: 49,
+        marginLeft: -52 / 2,
+        marginTop: -49 / 2,
+      },
+      angle: 40,
+    },
+    {
+      source: require("@assets/images/particle3.png"),
+      style: {
+        width: 105,
+        height: 52,
+        marginLeft: -105 / 2,
+        marginTop: -52 / 2,
+      },
+      angle: 70,
+    },
+    {
+      source: require("@assets/images/particle1.png"),
+      style: {
+        width: 105,
+        height: 52,
+        marginLeft: -105 / 2,
+        marginTop: -52 / 2,
+      },
+      angle: 70,
+    },
+    {
+      source: require("@assets/images/particle2.png"),
+      style: {
+        width: 66,
+        height: 34,
+        marginLeft: -66 / 2,
+        marginTop: -34 / 2,
+      },
+      angle: 90,
+    },
+    {
+      source: require("@assets/images/particle1.png"),
+      style: {
+        width: 52,
+        height: 49,
+        marginLeft: -52 / 2,
+        marginTop: -49 / 2,
+      },
+      angle: 110,
+    },
+    {
+      source: require("@assets/images/particle2.png"),
+      style: {
+        width: 105,
+        height: 52,
+        marginLeft: -105 / 2,
+        marginTop: -52 / 2,
+      },
+      angle: 130,
+    },
+    {
+      source: require("@assets/images/particle3.png"),
+      style: {
+        width: 66,
+        height: 34,
+        marginLeft: -66 / 2,
+        marginTop: -34 / 2,
+      },
+      angle: 150,
+    },
+  ];
 
   const showModal = useCallback((options: ModalOptions) => {
     setModalContent(options);
@@ -108,11 +191,24 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
     return (
       <View
+        onLayout={onLayout}
         className={cn(
           "bg-white w-[300px] md:w-[468px] rounded-2xl p-5 relative",
-          modalContent?.showLogo && "pt-[70px]"
+          modalContent?.showLogo && "pt-[60px]"
         )}
       >
+        {modalContent?.showParticle &&
+          PARTICLE_IMAGE.map((item, index) => (
+            <ModalParticle
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              key={index}
+              angle={item.angle}
+              source={item.source}
+              width={size.width}
+              height={size.height}
+              style={item.style}
+            />
+          ))}
         {modalContent?.showLogo && (
           <View style={styles.logoStyle}>
             <View

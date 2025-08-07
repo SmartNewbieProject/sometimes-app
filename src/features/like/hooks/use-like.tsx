@@ -34,12 +34,50 @@ export default function useLike() {
     await tryCatch(
       async () => {
         await like(connectionId);
+        showModal({
+          showLogo: true,
+          showParticle: true,
+          customTitle: (
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Text textColor="black" weight="bold" size="20">
+                썸을 보냈어요!
+              </Text>
+            </View>
+          ),
+          children: (
+            <View className="flex flex-col w-full items-center">
+              <Text className="text-[#AEAEAE] text-[12px]">
+                상대방도 관심을 보이면,
+              </Text>
+              <Text className="text-[#AEAEAE] text-[12px]">
+                바로 대화가 열려요
+              </Text>
+            </View>
+          ),
+          primaryButton: {
+            text: "확인했어요",
+            onClick: () => {},
+          },
+        });
       },
       (err) => {
         if (err.status === HttpStatusCode.Forbidden) {
           showCashable({
             textContent:
               "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
+          });
+          return;
+        }
+        if (err.status === HttpStatusCode.Conflict) {
+          showCashable({
+            textContent: "중복된 좋아요 요청이에요!",
           });
           return;
         }
