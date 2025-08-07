@@ -35,12 +35,12 @@ export const LikeButton = ({ match }: LikeButtonProps) => {
             마음에 드는 이성에게
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 {featureCosts?.LIKE_MESSAGE}로 관심을 표현할까요?
+            구슬 {featureCosts?.LIKE_MESSAGE}개로 관심을 표현할까요?
           </Text>
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center">
+        <View className="flex flex-col w-full items-center mt-[5px]">
           <Text className="text-[#AEAEAE] text-[12px]">
             이성에게 간단히 관심을 표현하고,
           </Text>

@@ -37,7 +37,7 @@ const ModalParticle = ({
   const CENTER = { x: width / 2, y: height / 2 };
   // 시간(t)의 흐름을 나타내는 Shared Value (0 -> 1)
   const time = useSharedValue(0);
-
+  const opacity = useSharedValue(0);
   // 각도를 라디안으로 변환
   const angleRad = (angle * Math.PI) / 180;
 
@@ -45,6 +45,10 @@ const ModalParticle = ({
     time.value = withTiming(1, {
       duration: ANIMATION_DURATION,
       easing: Easing.linear,
+    });
+    opacity.value = withTiming(1, {
+      duration: ANIMATION_DURATION,
+      easing: Easing.in(Easing.ease),
     });
   }, [time]);
 
@@ -61,7 +65,7 @@ const ModalParticle = ({
 
     return {
       transform: [{ translateX }, { translateY }],
-      opacity: 1 - time.value,
+      opacity: 1 - opacity.value,
     };
   });
 

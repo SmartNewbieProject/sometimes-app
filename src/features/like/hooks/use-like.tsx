@@ -5,6 +5,7 @@ import { Text } from "@/src/shared/ui";
 import { useCashableModal } from "@shared/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { HttpStatusCode } from "axios";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -44,15 +45,28 @@ export default function useLike() {
                 flexDirection: "column",
                 alignItems: "center",
                 width: "100%",
+                position: "relative",
               }}
             >
+              <Image
+                style={styles.particle1}
+                source={require("@assets/images/particle1.png")}
+              />
+              <Image
+                style={styles.particle2}
+                source={require("@assets/images/particle2.png")}
+              />
+              <Image
+                style={styles.particle3}
+                source={require("@assets/images/particle3.png")}
+              />
               <Text textColor="black" weight="bold" size="20">
                 썸을 보냈어요!
               </Text>
             </View>
           ),
           children: (
-            <View className="flex flex-col w-full items-center">
+            <View className="flex flex-col w-full items-center mt-[5px]">
               <Text className="text-[#AEAEAE] text-[12px]">
                 상대방도 관심을 보이면,
               </Text>
@@ -104,4 +118,26 @@ export default function useLike() {
   };
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  particle1: {
+    position: "absolute",
+    left: -6,
+    bottom: -36,
+    width: 66,
+    height: 34,
+  },
+  particle2: {
+    position: "absolute",
+    left: 10,
+    top: -48,
+    width: 52,
+    height: 49,
+  },
+  particle3: {
+    position: "absolute",
+    right: -20,
+    top: -40,
+    width: 105,
+    height: 80,
+  },
+});

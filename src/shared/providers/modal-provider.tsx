@@ -74,31 +74,51 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       source: require("@assets/images/particle3.png"),
       style: {
         width: 105,
-        height: 52,
+        height: 80,
         marginLeft: -105 / 2,
-        marginTop: -52 / 2,
+        marginTop: -80 / 2,
       },
       angle: 70,
     },
     {
       source: require("@assets/images/particle1.png"),
       style: {
-        width: 105,
-        height: 52,
-        marginLeft: -105 / 2,
-        marginTop: -52 / 2,
+        width: 66,
+        height: 34,
+        marginLeft: -66 / 2,
+        marginTop: -34 / 2,
       },
       angle: 70,
     },
     {
       source: require("@assets/images/particle2.png"),
       style: {
+        width: 52,
+        height: 49,
+        marginLeft: -52 / 2,
+        marginTop: -49 / 2,
+      },
+      angle: 90,
+    },
+    {
+      source: require("@assets/images/particle1.png"),
+      style: {
         width: 66,
         height: 34,
         marginLeft: -66 / 2,
         marginTop: -34 / 2,
       },
-      angle: 90,
+      angle: 110,
+    },
+    {
+      source: require("@assets/images/particle2.png"),
+      style: {
+        width: 52,
+        height: 49,
+        marginLeft: -52 / 2,
+        marginTop: -49 / 2,
+      },
+      angle: 130,
     },
     {
       source: require("@assets/images/particle1.png"),
@@ -107,26 +127,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         height: 49,
         marginLeft: -52 / 2,
         marginTop: -49 / 2,
-      },
-      angle: 110,
-    },
-    {
-      source: require("@assets/images/particle2.png"),
-      style: {
-        width: 105,
-        height: 52,
-        marginLeft: -105 / 2,
-        marginTop: -52 / 2,
-      },
-      angle: 130,
-    },
-    {
-      source: require("@assets/images/particle3.png"),
-      style: {
-        width: 66,
-        height: 34,
-        marginLeft: -66 / 2,
-        marginTop: -34 / 2,
       },
       angle: 150,
     },
@@ -209,6 +209,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
               style={item.style}
             />
           ))}
+
         {modalContent?.showLogo && (
           <View style={styles.logoStyle}>
             <View
