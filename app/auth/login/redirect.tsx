@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { track } from "@amplitude/analytics-react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform, Text, View } from "react-native";
@@ -23,6 +24,11 @@ function KakaoLoginRedirect() {
 
       loginWithKakao(code)
         .then((result) => {
+          track("Signup_Route_Entered", {
+            screen: "AreaSelect",
+            platform: "kakao",
+          });
+
           console.log("로그인 성공:", result);
 
           if (result.isNewUser) {
