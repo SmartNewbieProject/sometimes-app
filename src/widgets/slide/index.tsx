@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 interface SlideProps {
-  children: React.ReactNode[];
+  children: React.ReactNode[] | React.ReactNode;
   className?: string;
   indicatorClassName?: string;
   activeIndicatorClassName?: string;
@@ -38,7 +38,12 @@ function Slider({
   indicatorContainerClassName,
   className,
 }: SlideProps) {
-  const array = [children[children.length - 1], ...children, children[0]];
+  const arrayChildren = Array.isArray(children) ? children : [children];
+  const array = [
+    arrayChildren[arrayChildren.length - 1],
+    ...arrayChildren,
+    arrayChildren[0],
+  ];
 
   const [focusIndex, setFocusIndex] = useState(1);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -156,7 +161,7 @@ function Slider({
           ]}
           className={indicatorContainerClassName}
         >
-          {children.map((_, index) => (
+          {arrayChildren.map((_, index) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             <Pressable key={index} onPress={() => onButtonNavigation(index)}>
               <View
