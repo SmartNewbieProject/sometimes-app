@@ -6,7 +6,6 @@ import useLikedMeQuery from "../queries/use-liked-me-query";
 function useLiked() {
   const { data: iLiked, isLoading: isILoading } = useILikedQuery();
   const { data: likedMe, isLoading: isMeLoading } = useLikedMeQuery();
-
   const isLikedPartner = (connectionId: string) => {
     if (isILoading) {
       return false;

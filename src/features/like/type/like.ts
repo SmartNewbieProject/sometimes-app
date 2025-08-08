@@ -6,16 +6,19 @@ export type ILiked = {
 	likedAt: string;
 	mainProfileUrl: string;
 	nickname: string;
-	status: 'PENDING' | 'OPEN';
+	universityName: string;
+
+	status: string;
 };
 
 export type LikedMe = {
 	status: string;
 	likedAt: string;
-	instagram: string;
+	instagram: string | null;
 	mainProfileUrl: string;
 	nickname: string;
+	universityName: string;
 	age: number;
-	connectionId: number;
+	connectionId: string;
 	isMutualLike: boolean;
 };

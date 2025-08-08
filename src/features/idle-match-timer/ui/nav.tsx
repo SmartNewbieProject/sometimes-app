@@ -86,7 +86,8 @@ export const InteractionNavigation = ({
           썸 보내기 완료!
         </Button>
       ) : hasPartner ? (
-        <LikeButton match={match} />
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        <LikeButton connectionId={match.connectionId!} />
       ) : (
         <></>
       )}

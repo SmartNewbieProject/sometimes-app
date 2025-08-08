@@ -64,7 +64,14 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
           ? `${name}님께서 관심을 가지신 분들이에요`
           : `${name}님께 관심을 가졌어요`}
       </Text>
-      <Pressable style={styles.container} onPress={() => router.push("/home")}>
+      <Pressable
+        style={styles.container}
+        onPress={() => {
+          type === "iLiked"
+            ? router.push("/post-box/i-liked")
+            : router.push("/post-box/liked-me");
+        }}
+      >
         <LinearGradient
           start={[0, 1]}
           end={[1, 0]}
