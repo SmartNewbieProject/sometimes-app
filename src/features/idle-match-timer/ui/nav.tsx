@@ -76,7 +76,12 @@ export const InteractionNavigation = ({
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />
         }
       >
-        <RNText style={styles.subText}>x2</RNText>더 찾아보기
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <RNText style={styles.subText}>x2</RNText>
+          <RNText className="text-md text-primaryPurple whitespace-nowrap">
+            더 찾아보기
+          </RNText>
+        </View>
       </Button>
       {isLiked ? (
         <Button
@@ -99,10 +104,9 @@ const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
     fontFamily: "Pretendard-Thin",
-    fontWeight: 300,
+    fontWeight: "300",
+    paddingRight: 5,
     lineHeight: 18,
     color: "#BEACFF",
-    marginLeft: -6,
-    marginRight: 5,
   },
 });

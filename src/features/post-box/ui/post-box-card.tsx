@@ -9,6 +9,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
+import useByeLike from "../queries/useByeLike";
 import useRejectLike from "../queries/useRejectLike";
 interface PostBoxCardProps {
   status: string;
@@ -18,6 +19,7 @@ interface PostBoxCardProps {
   nickname: string;
   universityName: string;
   age: number;
+  viewedAt: string | null;
   connectionId: string;
   isMutualLike: boolean;
   type: "liked-me" | "i-liked";
@@ -31,6 +33,7 @@ function PostBoxCard({
   nickname,
   age,
   connectionId,
+  viewedAt,
   universityName,
   isMutualLike,
   type,
@@ -57,6 +60,7 @@ function PostBoxCard({
 
   return (
     <View style={styles.container}>
+      <View style={[styles.viewPoint, !viewedAt && styles.viewYet]} />
       <Image source={mainProfileUrl} style={styles.profileImage} />
       <View style={styles.contentContainer}>
         <View style={styles.topText}>
@@ -74,7 +78,7 @@ function PostBoxCard({
             type === "i-liked" && status === "OPEN" && styles.open,
           ]}
         >
-          {statusMessage}{" "}
+          {statusMessage}
         </Text>
         {renderBottomButton}
       </View>
@@ -100,7 +104,7 @@ function LikedMePendingButton({ connectionId }: { connectionId: string }) {
         onPress={handleReject}
         variant="outline"
         className="flex-1 items-center !h-[40px]"
-        prefix={<XIcon width={17} height={17} />}
+        prefix={<XIcon width={21} height={21} />}
       >
         괜찮아요
       </Button>
@@ -168,6 +172,7 @@ function LikedMeOpenButton({ instagramId }: { instagramId: string }) {
 
 function ILikedRejectedButton({ connectionId }: { connectionId: string }) {
   const { showModal, hideModal } = useModal();
+  const mutation = useByeLike();
   const handleBye = () => {
     showModal({
       showLogo: true,
@@ -194,11 +199,13 @@ function ILikedRejectedButton({ connectionId }: { connectionId: string }) {
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
-        onClick: () => {},
+        text: "확인",
+        onClick: async () => {
+          await mutation.mutateAsync(connectionId);
+        },
       },
       secondaryButton: {
-        text: "아니요",
+        text: "닫기",
         onClick: hideModal,
       },
     });
@@ -207,10 +214,10 @@ function ILikedRejectedButton({ connectionId }: { connectionId: string }) {
     <View className="w-full flex flex-row">
       <Button
         onPress={handleBye}
-        variant="primary"
+        variant="outline"
         size="md"
         className="flex-1 items-center !h-[40px]"
-        prefix={<XIcon width={17} height={17} />}
+        prefix={<XIcon width={21} height={21} />}
       >
         인연이 아니었나봐요
       </Button>
@@ -220,6 +227,7 @@ function ILikedRejectedButton({ connectionId }: { connectionId: string }) {
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
     width: "100%",
     paddingTop: 16,
     paddingBottom: 20,
@@ -236,6 +244,18 @@ const styles = StyleSheet.create({
     width: 68,
     height: 68,
     borderRadius: 68,
+  },
+  viewPoint: {
+    width: 12,
+    height: 12,
+    borderRadius: 9999,
+    backgroundColor: "#F3EDFF",
+    position: "absolute",
+    right: 13,
+    top: 13,
+  },
+  viewYet: {
+    backgroundColor: "#7A4AE2",
   },
   contentContainer: {
     flex: 1,

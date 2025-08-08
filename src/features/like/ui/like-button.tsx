@@ -72,7 +72,10 @@ export const LikeButton = ({
         <ImageResource resource={ImageResources.GEM} width={23} height={23} />
       }
     >
-      <RNText style={styles.subText}>x3</RNText>좋아요
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <RNText style={styles.subText}>x3</RNText>
+        <RNText className="text-md text-white whitespace-nowrap">좋아요</RNText>
+      </View>
     </Button>
   );
 };
@@ -83,8 +86,8 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Thin",
     fontWeight: 300,
     lineHeight: 18,
+    marginLeft: -5,
+    marginRight: 6,
     color: "#BEACFF",
-    marginLeft: -6,
-    marginRight: 5,
   },
 });
