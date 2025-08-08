@@ -2,7 +2,7 @@ import {
   MobileIdentityVerification,
   usePortOneLogin,
 } from "@/src/features/pass";
-import { Button, Text } from "@/src/shared/ui";
+import { Button, Show, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import { useRouter } from "expo-router";
@@ -70,7 +70,9 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <KakaoLogin />
+        <Show when={Platform.OS !== "ios"}>
+          <KakaoLogin />
+        </Show>
       </View>
       {/* 에러 메시지 */}
 
