@@ -25,8 +25,10 @@ type FirstSaleCardProps = {
 }
 
 export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
-  const { totalExpiredAt, show, event6, event20, event40, event6Expired, event20Expired, event40Expied } = useFirstSaleEvents();
-  const { seconds } = useTimer(totalExpiredAt, { autoStart: !!totalExpiredAt });
+  const { totalExpiredAt, show, setShow, event6Expired, event20Expired, event40Expied } = useFirstSaleEvents();
+  const { seconds } = useTimer(totalExpiredAt, { autoStart: !!totalExpiredAt, onComplete: () => {
+    setShow(false);
+  } });
   const { setCustomData, setGemCount, setEventType } = usePortoneStore();
   
   const translateYAnim = useSharedValue(0);

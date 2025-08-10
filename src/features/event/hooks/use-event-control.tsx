@@ -17,6 +17,12 @@ export const useEventControl = ({ type, onError, onSuccess }: UseEventOptions) =
     queryFn: () => getEventByType(type),
     gcTime: 0,
     staleTime: 0,
+    select: (data) => {
+      return {
+        ...data,
+        expiredAt: dayUtils.create(data.expiredAt).add(9, 'hours'),
+      }
+    }
   });
   const { mutateAsync } = useMutation({
     mutationFn: () => participateEvent(type),
