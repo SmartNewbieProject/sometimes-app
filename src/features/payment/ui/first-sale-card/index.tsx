@@ -19,6 +19,8 @@ import { useEffect } from "react";
 import { useFirstSaleEvents } from "../../hooks/useFirstSaleEvents";
 import { GemMetadata } from "../../types";
 import { usePortoneStore } from "../../hooks/use-portone-store";
+import { track } from "@amplitude/analytics-react-native";
+import { useAuth } from "@/src/features/auth";
 
 type FirstSaleCardProps = {
   onOpenPayment: (gemProduct: GemMetadata) => void;
@@ -29,8 +31,9 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
   const { seconds } = useTimer(totalExpiredAt, { autoStart: !!totalExpiredAt, onComplete: () => {
     setShow(false);
   } });
-  const { setCustomData, setGemCount, setEventType } = usePortoneStore();
-  
+  const { setEventType } = usePortoneStore();
+  const { my } = useAuth();
+
   const translateYAnim = useSharedValue(0);
 
   useEffect(() => {
@@ -92,6 +95,10 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             gemAmount: 0,
             productName: '최초 세일 6개',
           }} onOpenPayment={(metadata) => {
+            track('GemStore_FirstSale_6', {
+              who: my,
+              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+            })
             setEventType(EventType.FIRST_SALE_6);
             onOpenPayment(metadata);
           }} hot={false} />
@@ -107,6 +114,10 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             gemAmount: 0,
             productName: '최초 세일 6개',
           }} onOpenPayment={(metadata) => {
+            track('GemStore_FirstSale_20', {
+              who: my,
+              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+            })
             setEventType(EventType.FIRST_SALE_20);
             onOpenPayment(metadata);
           }} hot={false} />
@@ -122,6 +133,10 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             gemAmount: 0,
             productName: '최초 세일 6개',
           }} onOpenPayment={(metadata) => {
+            track('GemStore_FirstSale_40', {
+              who: my,
+              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+            })
             setEventType(EventType.FIRST_SALE_40);
             onOpenPayment(metadata);
           }} hot={false} />
