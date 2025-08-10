@@ -46,6 +46,9 @@ export enum ImageResources {
   SWITCH_CAMPUS_CARD = `${S3_BASE_URL}/switch_campus_card.png`,
   INITIAL_PARTICIPANT_CARD = `${S3_BASE_URL}/initial_participant_card.png`,
   SWITCH_PARTICIPANT_CARD = `${S3_BASE_URL}/switch_participant_card.png`,
+
+  SALE_MIHO = `${S3_BASE_URL}/miho-with-gem.png`,
+  FIRST_SALE = `${S3_BASE_URL}/first_sale.png`,
 }
 
 const imageUtils = {

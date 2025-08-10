@@ -3,3 +3,4 @@ export * from './port-one-payment';
 export * from './web-payment';
 export * from './payment-view';
 export * from './gem-store';
+export * from './first-sale-card';

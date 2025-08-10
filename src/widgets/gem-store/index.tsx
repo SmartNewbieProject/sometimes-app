@@ -5,11 +5,7 @@ import colors from "@/src/shared/constants/colors";
 import type { GemDetails } from "@/src/features/payment/api";
 import {ImageResource} from "@ui/image-resource";
 import {ImageResources} from "@shared/libs";
-
-type GemMetadata = {
-  totalPrice: number;
-  gemProduct: GemDetails;
-}
+import { GemMetadata } from "@/src/features/payment/types";
 
 export type GemItemProps = {
   onOpenPayment: (metadata: GemMetadata) => void;
