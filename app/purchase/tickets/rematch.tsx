@@ -45,7 +45,11 @@ export default function RematchingTicketSellingScreen() {
       setTotalPrice(metadata.totalPrice);
       setProductCount(metadata.count);
       setShowPayment(true);
-      track("Purchase_Count", { count: metadata.count, who: my });
+      track("Purchase_Count", {
+        count: metadata.count,
+        who: my,
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
     } catch (error) {
       Alert.alert("오류", "결제 처리 중 오류가 발생했습니다.");
       setShowPayment(false);
@@ -68,7 +72,10 @@ export default function RematchingTicketSellingScreen() {
 
   const onCompletePayment = (result: PaymentResponse) => {
     setShowPayment(false);
-    track("Purchase_Done", { who: my });
+    track("Purchase_Done", {
+      who: my,
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     handlePaymentComplete(result, {
       productCount,
       onError,

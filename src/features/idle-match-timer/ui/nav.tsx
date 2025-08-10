@@ -38,20 +38,20 @@ export const InteractionNavigation = ({
           }}
         >
           <Text textColor="black" weight="bold" size="20">
-            마음에 드는 이성을 찾기 위해
+            마음에 드는 이성을 찾기위해
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 {featureCosts?.REMATCHING}개를 사용할게요!
+            구슬 {featureCosts?.OLD_REMATCHING}개를 사용할게요!
           </Text>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px]">
           <Text className="text-[#AEAEAE] text-[12px]">
-            이성에게 간단히 관심을 표현하고,
+            성격과 소통 스타일을 바탕으로,
           </Text>
           <Text className="text-[#AEAEAE] text-[12px]">
-            그 다음 단계로 자연스럽게 나아가 보세요.
+            자연스럽게 연결될 수 있는 인연을 추천해드릴게요.
           </Text>
         </View>
       ),
@@ -76,7 +76,12 @@ export const InteractionNavigation = ({
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />
         }
       >
-        <RNText style={styles.subText}>x2</RNText>더 찾아보기
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <RNText style={styles.subText}>x2</RNText>
+          <RNText className="text-md text-primaryPurple whitespace-nowrap">
+            더 찾아보기
+          </RNText>
+        </View>
       </Button>
       {isLiked ? (
         <Button
@@ -86,7 +91,8 @@ export const InteractionNavigation = ({
           썸 보내기 완료!
         </Button>
       ) : hasPartner ? (
-        <LikeButton match={match} />
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        <LikeButton connectionId={match.connectionId!} />
       ) : (
         <></>
       )}
@@ -98,10 +104,9 @@ const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
     fontFamily: "Pretendard-Thin",
-    fontWeight: 300,
+    fontWeight: "300",
+    paddingRight: 5,
     lineHeight: 18,
     color: "#BEACFF",
-    marginLeft: -6,
-    marginRight: 5,
   },
 });

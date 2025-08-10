@@ -39,7 +39,7 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
   }
 
   return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1 }}>
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
       {segments.map((segment, index) => {
         const key = `${segment.type}-${index}-${segment.content.slice(0, 10)}`;
 

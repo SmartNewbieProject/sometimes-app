@@ -1,3 +1,6 @@
+import { GemDetails } from "../api";
+import { EventType } from "@/src/features/event/types";
+
 export type PaymentBeforeHistory = {
   orderId: string;
   amount: number;
@@ -15,6 +18,7 @@ export type PaymentDetails = {
 export type PortOnePayment = {
   txId: string;
   merchantUid: string;
+  eventType?: EventType;
 }
 
 export enum Product {
@@ -151,4 +155,10 @@ export interface PaymentResponse {
   message?: string;
   pgCode?: string;
   pgMessage?: string;
+}
+
+export type GemMetadata = {
+  totalPrice: number;
+  gemProduct: GemDetails;
+  eventType?: EventType;
 }

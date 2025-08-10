@@ -2,7 +2,7 @@ import {
   MobileIdentityVerification,
   usePortOneLogin,
 } from "@/src/features/pass";
-import { Button, Text } from "@/src/shared/ui";
+import { Button, Show, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import { useRouter } from "expo-router";
@@ -27,7 +27,10 @@ export default function LoginForm() {
   } = usePortOneLogin();
 
   const onPressPassLogin = async () => {
-    track("Signup_Init", { platform: "pass" });
+    track("Signup_Init", {
+      platform: "pass",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
 
     clearError();
     await startPortOneLogin();
@@ -67,7 +70,9 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <KakaoLogin />
+        <Show when={Platform.OS !== "ios"}>
+          <KakaoLogin />
+        </Show>
       </View>
       {/* 에러 메시지 */}
 
@@ -89,7 +94,10 @@ function KakaoLogin() {
   const redirectUri = process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI as string;
 
   const handleKakaoLogin = () => {
-    track("Signup_Init", { platform: "kakao" });
+    track("Signup_Init", {
+      platform: "kakao",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
 
     if (Platform.OS === "web") {
       // 웹에서는 기존 방식 유지

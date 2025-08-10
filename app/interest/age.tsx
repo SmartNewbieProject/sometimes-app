@@ -65,7 +65,7 @@ export default function AgeSelectionScreen() {
   );
 
   const onNext = () => {
-    track("Interest_Age");
+    track("Interest_Age", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/like-mbti");
   };
 

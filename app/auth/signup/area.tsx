@@ -29,7 +29,10 @@ function Area() {
 
   const handleNext = () => {
     onNext(() => {
-      track("Signup_area", { area: show });
+      track("Signup_area", {
+        area: show,
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
       router.push("/auth/signup/university");
     });
   };

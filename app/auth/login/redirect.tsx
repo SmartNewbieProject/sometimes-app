@@ -1,4 +1,6 @@
 import { useAuth } from "@/src/features/auth";
+import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
+import { useModal } from "@/src/shared/hooks/use-modal";
 import { track } from "@amplitude/analytics-react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
@@ -8,7 +10,7 @@ function KakaoLoginRedirect() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const { loginWithKakao } = useAuth();
-
+  const { showModal } = useModal();
   useEffect(() => {
     const code = params.code as string;
     const error = params.error as string;
@@ -23,15 +25,50 @@ function KakaoLoginRedirect() {
       console.log("카카오 인증 코드 받음:", code);
 
       loginWithKakao(code)
-        .then((result) => {
+        .then(async (result) => {
           track("Signup_Route_Entered", {
             screen: "AreaSelect",
             platform: "kakao",
+            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
           });
 
           console.log("로그인 성공:", result);
 
           if (result.isNewUser) {
+            if (result.certificationInfo?.phone) {
+              try {
+                const { isBlacklisted } = await checkPhoneNumberBlacklist(
+                  result.certificationInfo?.phone
+                );
+
+                if (isBlacklisted) {
+                  track("Signup_PhoneBlacklist_Failed", {
+                    phone: result.certificationInfo?.phone,
+                  });
+                  showModal({
+                    title: "가입 제한",
+                    children:
+                      "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
+                    primaryButton: {
+                      text: "확인",
+                      onClick: () => {
+                        router.replace("/");
+                      },
+                    },
+                  });
+                  return;
+                }
+              } catch (error) {
+                console.error("블랙리스트 체크 오류:", error);
+                track("Signup_Error", {
+                  stage: "PhoneBlacklistCheck",
+                  message:
+                    error instanceof Error ? error.message : String(error),
+                });
+                router.replace("/");
+                return;
+              }
+            }
             router.replace({
               pathname: "/auth/signup/area",
               params: {

@@ -43,7 +43,7 @@ export default function InterestIntroScreen() {
     });
 
   const onNext = () => {
-    track("Profile_Intro");
+    track("Profile_Intro", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/my-info/interest");
   };
 

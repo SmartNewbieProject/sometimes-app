@@ -1,4 +1,4 @@
-import { ImageResources } from "@/src/shared/libs";
+import { ImageResources, cn } from "@/src/shared/libs";
 import { Button, ImageResource } from "@/src/shared/ui";
 import { Text } from "@shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
@@ -10,17 +10,18 @@ import { useAuth } from "../../auth";
 import useLike from "../hooks/use-like";
 
 type LikeButtonProps = {
-  match?: MatchDetails;
+  connectionId: string;
+  clasName?: string;
 };
 
-export const LikeButton = ({ match }: LikeButtonProps) => {
+export const LikeButton = ({
+  connectionId,
+  clasName = "",
+}: LikeButtonProps) => {
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const { onLike } = useLike();
   const showPartnerLikeAnnouncement = () => {
-    if (!match?.connectionId) {
-      return;
-    }
     showModal({
       showLogo: true,
       customTitle: (
@@ -53,7 +54,7 @@ export const LikeButton = ({ match }: LikeButtonProps) => {
       primaryButton: {
         text: "네, 해볼래요",
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        onClick: () => onLike(match?.connectionId!),
+        onClick: () => onLike(connectionId!),
       },
       secondaryButton: {
         text: "아니요",
@@ -66,12 +67,15 @@ export const LikeButton = ({ match }: LikeButtonProps) => {
     <Button
       onPress={showPartnerLikeAnnouncement}
       variant="primary"
-      className="flex-1 items-center"
+      className={cn("flex-1 items-center", clasName)}
       prefix={
         <ImageResource resource={ImageResources.GEM} width={23} height={23} />
       }
     >
-      <RNText style={styles.subText}>x2</RNText>좋아요
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <RNText style={styles.subText}>x3</RNText>
+        <RNText className="text-md text-white whitespace-nowrap">좋아요</RNText>
+      </View>
     </Button>
   );
 };
@@ -82,8 +86,8 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Thin",
     fontWeight: 300,
     lineHeight: 18,
+    marginLeft: -5,
+    marginRight: 6,
     color: "#BEACFF",
-    marginLeft: -6,
-    marginRight: 5,
   },
 });

@@ -121,10 +121,12 @@ export const ChangeProfileImageModal = ({
 
       await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
       hideModal();
-      showErrorModal(
-        "프로필 이미지가 성공적으로 변경되었습니다.",
-        "announcement"
-      );
+      setTimeout(() => {
+        showErrorModal(
+          "프로필 이미지가 성공적으로 변경되었습니다.",
+          "announcement"
+        );
+      }, 100);
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       showErrorModal(

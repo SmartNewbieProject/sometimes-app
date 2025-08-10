@@ -5,6 +5,7 @@ import HomeInfoSection from "@/src/features/home/ui/home-info/home-info-section"
 import MatchingStatus from "@/src/features/home/ui/matching-status";
 import useLiked from "@/src/features/like/hooks/use-liked";
 import LikeCollapse from "@/src/features/like/ui/like-collapse";
+import NoneLikeBanner from "@/src/features/like/ui/none-like-banner";
 import Loading from "@/src/features/loading";
 import {
   VersionUpdateChecker,
@@ -41,12 +42,7 @@ const {
   ReviewSlide,
   TipAnnouncement,
 } = ui;
-const {
-  useTotalMatchCountQuery,
-  useTotalUserCountQuery,
-  useNotificationQuery,
-  usePreferenceSelfQuery,
-} = queries;
+const { usePreferenceSelfQuery } = queries;
 const { useRedirectPreferences, useTemporalUniversity } = hooks;
 
 const HomeScreen = () => {
@@ -55,7 +51,6 @@ const HomeScreen = () => {
   const { isPreferenceFill } = useRedirectPreferences();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
-  const { data: notifications } = useNotificationQuery();
   const { my } = useAuth();
   const queryClient = useQueryClient();
   const [isSlideScrolling, setSlideScrolling] = useState(false);
@@ -65,7 +60,10 @@ const HomeScreen = () => {
     setSlideScrolling(bool);
   };
   const onNavigateGemStore = () => {
-    track("onNavigateGemStore", my);
+    track("onNavigateGemStore", {
+      ...my,
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     router.navigate("/purchase/gem-store");
   };
 
@@ -133,9 +131,12 @@ const HomeScreen = () => {
           <BannerSlide />
         </View>
 
-        {!!collapse && (
+        {collapse ? (
           <LikeCollapse collapse={collapse.data} type={collapse.type} />
+        ) : (
+          <NoneLikeBanner />
         )}
+
         <View className="mt-[18px] flex flex-col gap-y-1.5">
           <Feedback.WallaFeedbackBanner />
           <Show when={!isPreferenceFill}>
@@ -146,15 +147,6 @@ const HomeScreen = () => {
               onPress={() => router.navigate("/interest")}
             />
           </Show>
-          {notifications?.map((notification) => (
-            <AnnounceCard
-              theme="alert"
-              key={notification.title}
-              emojiSize={{ width: 31, height: 28 }}
-              text={notification.announcement}
-              onPress={() => onClickAlert(notification)}
-            />
-          ))}
         </View>
 
         {!isPreferenceFill || preferencesSelf?.length === 0 ? (

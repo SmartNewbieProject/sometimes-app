@@ -44,7 +44,9 @@ export default function PersonalitySelectionScreen() {
   })();
 
   const onNext = () => {
-    track("Interest_Personality");
+    track("Interest_Personality", {
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     router.push("/interest/drinking");
   };
 
