@@ -35,7 +35,6 @@ function FirstPurchaseEvent() {
   });
 
   const handleStore = () => {
-    console.log("123");
     router.push("/purchase/gem-store");
   };
 

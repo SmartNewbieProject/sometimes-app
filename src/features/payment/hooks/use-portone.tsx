@@ -8,6 +8,7 @@ import paymentApis from "../api";
 import type { PaymentResponse } from "../types";
 import { usePortoneScript } from "./PortoneProvider";
 import { usePortoneStore } from "./use-portone-store";
+import {queryClient} from "@shared/config/query";
 
 interface UsePortone {
   handlePaymentComplete: (
@@ -49,6 +50,10 @@ export function usePortone(): UsePortone {
           onError?.(result);
           return;
         }
+        await queryClient.invalidateQueries({
+          queryKey: ["gem", "current"],
+          exact: true,
+        })
 
         if (Platform.OS === "web") {
           await paymentApis.pay({

@@ -9,9 +9,10 @@ import Layout from "@features/layout";
 import Payment from "@features/payment";
 import { useCurrentGem, useGemProducts } from "@features/payment/hooks";
 import { usePortoneStore } from "@features/payment/hooks/use-portone-store";
-import { GemStore } from "@features/payment/ui";
+import { FirstSaleCard, GemStore } from "@features/payment/ui";
 import type { PortOneController } from "@portone/react-native-sdk";
-import { Show, Text } from "@shared/ui";
+import { ScrollDownIndicator, Show, Text } from "@shared/ui";
+import { useScrollIndicator } from "@/src/shared/hooks";
 import { createRef, useEffect, useState } from "react";
 import { Alert, BackHandler, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -29,9 +30,11 @@ export default function GemStoreScreen() {
   const [showPayment, setShowPayment] = useState<boolean>(false);
   const controller = createRef<PortOneController>();
   const { showErrorModal } = useModal();
-  const [paymentId, setPaymentId] = useState<string>(createUniqueId());
+  const [paymentId, setPaymentId] = useState<string>(() => createUniqueId());
   const { setGemCount } = usePortoneStore();
   const { my } = useAuth();
+  const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
+  
 
   const { handlePaymentComplete } = usePortone();
 
@@ -137,12 +140,23 @@ export default function GemStoreScreen() {
       style={{ backgroundColor: "white", paddingTop: insets.top }}
     >
       <GemStore.Header gemCount={gem?.totalGem ?? 0} />
-      <ScrollView>
+      <ScrollView ref={scrollViewRef} onScroll={handleScroll} scrollEventThrottle={16}>
         <GemStore.Banner />
-
         <RematchingTicket.ContentLayout>
           <View className="flex-1 flex flex-col px-[16px] mt-4">
+      
             <View className="flex flex-col mb-2">
+
+            <View style={{ marginBottom: 30 }}>
+              <FirstSaleCard onOpenPayment={metadata => {
+                setGemCount(metadata.gemProduct.totalGems);
+                onPurchase({
+                  totalPrice: metadata.totalPrice,
+                  count: 1,
+                });
+              }} />
+            </View>         
+
               <Text weight="semibold" size="20" textColor="black">
                 구슬 구매
               </Text>
@@ -159,7 +173,6 @@ export default function GemStoreScreen() {
                   <Text>젬 상품을 불러오는데 실패했습니다.</Text>
                 </View>
               </Show>
-
               <Show when={!isLoading}>
                 <GemStoreWidget.Provider>
                   {gemProducts
@@ -189,6 +202,7 @@ export default function GemStoreScreen() {
           </View>
         </RematchingTicket.ContentLayout>
       </ScrollView>
+      <ScrollDownIndicator visible={showIndicator} />
     </Layout.Default>
   );
 }
