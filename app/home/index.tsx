@@ -41,9 +41,6 @@ const {
   TipAnnouncement,
 } = ui;
 const {
-  useTotalMatchCountQuery,
-  useTotalUserCountQuery,
-  useNotificationQuery,
   usePreferenceSelfQuery,
 } = queries;
 const { useRedirectPreferences, useTemporalUniversity } = hooks;
@@ -54,7 +51,6 @@ const HomeScreen = () => {
   const { isPreferenceFill } = useRedirectPreferences();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
-  const { data: notifications } = useNotificationQuery();
   const { my } = useAuth();
   const queryClient = useQueryClient();
   const [isSlideScrolling, setSlideScrolling] = useState(false);
@@ -145,15 +141,6 @@ const HomeScreen = () => {
               onPress={() => router.navigate("/interest")}
             />
           </Show>
-          {notifications?.map((notification) => (
-            <AnnounceCard
-              theme="alert"
-              key={notification.title}
-              emojiSize={{ width: 31, height: 28 }}
-              text={notification.announcement}
-              onPress={() => onClickAlert(notification)}
-            />
-          ))}
         </View>
 
         {!isPreferenceFill || preferencesSelf?.length === 0 ? (
