@@ -7,6 +7,7 @@ import useLiked from "@/src/features/like/hooks/use-liked";
 import LikeCollapse from "@/src/features/like/ui/like-collapse";
 import NoneLikeBanner from "@/src/features/like/ui/none-like-banner";
 import Loading from "@/src/features/loading";
+import HistoryCollapse from "@/src/features/matching-history/ui/history-collapse";
 import {
   VersionUpdateChecker,
   useVersionUpdate,
@@ -159,7 +160,7 @@ const HomeScreen = () => {
             <IdleMatchTimer />
           </View>
         )}
-
+        <HistoryCollapse />
         <View>
           <CommunityAnnouncement />
           <ReviewSlide onScrollStateChange={onScrollStateChange} />
