@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import dayUtils from '@/src/shared/libs/day';
 import type { ConfigType } from 'dayjs';
 
@@ -23,6 +23,11 @@ export const useTimer = (
   const [isRunning, setIsRunning] = useState<boolean>(autoStart);
   const intervalRef = useRef<number | null>(null);
   const onCompleteRef = useRef(onComplete);
+  
+  const endTimeString = useMemo(() => {
+    if (!endTime) return null;
+    return typeof endTime === 'string' ? endTime : dayUtils.create(endTime).toISOString();
+  }, [endTime]);
 
   onCompleteRef.current = onComplete;
 
@@ -51,16 +56,19 @@ export const useTimer = (
   };
 
   useEffect(() => {
+    console.log('useTimer - autoStart', options.autoStart);
     if (options.autoStart) {
       start();
     }
-  }, [seconds, options.autoStart]);
+  }, [options.autoStart]);
 
   useEffect(() => {
+    console.log('useTimer - endTime', endTime);
     setSeconds(calculateSeconds());
-  }, [endTime]);
+  }, [endTimeString]);
 
   useEffect(() => {
+    console.log('useTimer - isRunning', isRunning);
     if (!isRunning) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
