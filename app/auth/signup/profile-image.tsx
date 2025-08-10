@@ -72,6 +72,7 @@ export default function ProfilePage() {
           trackSignupEvent("signup_error", "missing_phone");
           track("Signup_profile_image_error", {
             error: "휴대폰 번호가 없습니다.",
+            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
           });
           router.push("/auth/login");
           return;
@@ -83,6 +84,7 @@ export default function ProfilePage() {
           showErrorModal("이미 가입된 사용자입니다", "announcement");
           track("Signup_profile_image_error", {
             error: "이미 가입된 사용자입니다",
+            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
           });
           trackSignupEvent("signup_error", "phone_already_exists");
 
@@ -91,13 +93,19 @@ export default function ProfilePage() {
         }
 
         await apis.signup(signupForm as SignupForm);
-        track("Signup_profile_image", { success: true });
+        track("Signup_profile_image", {
+          success: true,
+          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+        });
         trackSignupEvent("signup_complete");
         router.push("/auth/signup/done");
       },
       (error) => {
         console.error("Signup error:", error);
-        track("Signup_profile_image_error", { error: error });
+        track("Signup_profile_image_error", {
+          error: error,
+          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+        });
         trackSignupEvent("signup_error", error.error);
         showErrorModal(error.error, "announcement");
       }
@@ -172,7 +180,9 @@ export default function ProfilePage() {
             value={images[0] ?? undefined}
             onChange={(value) => {
               trackSignupEvent("image_upload", "image_1");
-              track("Signup_profile_image_1");
+              track("Signup_profile_image_1", {
+                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+              });
               uploadImage(0, value);
               form.trigger("images");
             }}
@@ -185,7 +195,9 @@ export default function ProfilePage() {
             value={images[1] ?? undefined}
             onChange={(value) => {
               trackSignupEvent("image_upload", "image_2");
-              track("Signup_profile_image_2");
+              track("Signup_profile_image_2", {
+                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+              });
               uploadImage(1, value);
               form.trigger("images");
             }}
@@ -195,7 +207,9 @@ export default function ProfilePage() {
             value={images[2] ?? undefined}
             onChange={(value) => {
               trackSignupEvent("image_upload", "image_3");
-              track("Signup_profile_image_3");
+              track("Signup_profile_image_3", {
+                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+              });
               uploadImage(2, value);
               form.trigger("images");
             }}

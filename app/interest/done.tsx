@@ -59,7 +59,9 @@ export default function InterestDoneScreen() {
             flex="flex-1"
             variant="primary"
             onPress={() => {
-              track("Interest_Done");
+              track("Interest_Done", {
+                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+              });
               clear();
               router.push("/home");
             }}

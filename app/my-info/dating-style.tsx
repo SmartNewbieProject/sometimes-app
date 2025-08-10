@@ -58,7 +58,9 @@ export default function DatingStyleSelectionScreen() {
   );
 
   const handleNextButton = () => {
-    track("Profile_DatingStyle");
+    track("Profile_DatingStyle", {
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     router.push("/my-info/drinking");
   };
 

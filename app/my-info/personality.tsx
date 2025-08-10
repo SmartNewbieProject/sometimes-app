@@ -45,7 +45,9 @@ export default function PersonalitySelectionScreen() {
   })();
 
   const onNext = () => {
-    track("Profile_personality");
+    track("Profile_personality", {
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     router.push("/my-info/dating-style");
   };
 

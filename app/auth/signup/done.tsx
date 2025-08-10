@@ -16,7 +16,7 @@ export default function SignupDoneScreen() {
 
   const onNext = () => {
     trackSignupEvent("completion_button_click");
-    track("Signup_done");
+    track("Signup_done", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     clear();
     router.push("/auth/login");
   };

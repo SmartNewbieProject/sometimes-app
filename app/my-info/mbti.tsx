@@ -25,7 +25,10 @@ function MbtiSectionScreen() {
 
   const handleNextButton = () => {
     updateMbti(mbti as string);
-    track("Profile_Mbti", { mbti: mbti });
+    track("Profile_Mbti", {
+      mbti: mbti,
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     router.push("/my-info/personality");
   };
 

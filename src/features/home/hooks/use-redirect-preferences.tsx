@@ -29,7 +29,7 @@ export const useRedirectPreferences = () => {
   const { showModal } = useModal();
 
   const confirm = useCallback(() => {
-    track("Interest_Hold");
+    track("Interest_Hold", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     setValue({
       isLater: true,
       latestDate: dayUtils.create().format("YYYY-MM-DD HH:mm:ss"),
@@ -38,7 +38,10 @@ export const useRedirectPreferences = () => {
 
   const onRedirect = useCallback(() => {
     confirm();
-    track("Interest_Started", { type: "modal" });
+    track("Interest_Started", {
+      type: "modal",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     router.navigate("/interest");
   }, [confirm]);
 

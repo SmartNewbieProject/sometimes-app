@@ -43,7 +43,7 @@ export default function InterestIntroScreen() {
     });
 
   const onNext = () => {
-    track("Interest_Intro");
+    track("Interest_Intro", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/age");
   };
 

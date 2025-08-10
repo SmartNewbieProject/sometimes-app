@@ -83,6 +83,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
       track("Signup_Route_Entered", {
         screen: "AreaSelect",
         platform: "kakao",
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
 
       if (result.isNewUser) {

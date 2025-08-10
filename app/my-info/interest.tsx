@@ -50,7 +50,7 @@ export default function InterestSelectionScreen() {
   );
 
   const onNext = () => {
-    track("Profile_Interest");
+    track("Profile_Interest", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/my-info/mbti");
   };
 

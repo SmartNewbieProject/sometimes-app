@@ -91,7 +91,7 @@ export default function DrinkingSelectionScreen() {
     if (!drinking) {
       updateForm("drinking", preferences.options[currentIndex]);
     }
-    track("Profile_Drinking");
+    track("Profile_Drinking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/my-info/smoking");
   };
 

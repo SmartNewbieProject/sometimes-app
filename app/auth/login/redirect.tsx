@@ -29,6 +29,7 @@ function KakaoLoginRedirect() {
           track("Signup_Route_Entered", {
             screen: "AreaSelect",
             platform: "kakao",
+            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
           });
 
           console.log("로그인 성공:", result);

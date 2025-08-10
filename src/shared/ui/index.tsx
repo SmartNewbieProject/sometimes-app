@@ -24,4 +24,6 @@ export * from './business-info';
 export * from './carousel';
 export * from './text-area';
 export * from './linkified-text';
-
+export * from './card';
+export * from './scroll-down-indicator';
+export * from './floating-tooltip';

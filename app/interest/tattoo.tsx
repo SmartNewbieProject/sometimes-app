@@ -104,7 +104,9 @@ export default function TattooSelectionScreen() {
         await queryClient.invalidateQueries({
           queryKey: ["check-preference-fill"],
         });
-        track("Interest_Tattoo");
+        track("Interest_Tattoo", {
+          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+        });
         router.navigate("/interest/done");
         setFormSubmitLoading(false);
       },
@@ -116,7 +118,7 @@ export default function TattooSelectionScreen() {
   };
 
   const handleNextButton = () => {
-    track("Interest_Tattoo");
+    track("Interest_Tattoo", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     updateForm("tattoo", preferences.options[currentIndex]);
     router.push("/interest/military");
   };

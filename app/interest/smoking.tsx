@@ -83,7 +83,7 @@ export default function SmokingSelectionScreen() {
     if (!smoking) {
       updateForm("smoking", preferences.options[currentIndex]);
     }
-    track("Interest_Smoking");
+    track("Interest_Smoking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/tattoo");
   };
   useFocusEffect(
