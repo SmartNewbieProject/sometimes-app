@@ -26,9 +26,24 @@ function useLiked() {
     return false;
   };
 
+  const isOpen = (connectionId: string) => {
+    if (isILoading) {
+      return false;
+    }
+    console.log(
+      "check",
+      iLiked?.find((matching) => matching.connectionId === connectionId)?.status
+    );
+    return (
+      iLiked?.find((matching) => matching.connectionId === connectionId)
+        ?.status === "OPEN"
+    );
+  };
+
   return {
     isLikedPartner,
     showCollapse,
+    isOpen,
   };
 }
 
