@@ -5,6 +5,7 @@ import {
   useCreateCommentMutation,
   useDeleteCommentMutation,
   useUpdateCommentMutation,
+  useCommentLikeMutation,
 } from "@/src/features/community/queries/comments";
 import { QUERY_KEYS } from "@/src/features/community/queries/keys";
 import Interaction from "@/src/features/community/ui/article/interaction-nav";
@@ -30,6 +31,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const [checked, setChecked] = useState(true);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState<string>("");
+  const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
   const form = useForm<CommentForm>({
     defaultValues: {
       content: editingCommentId ? editingContent : "",
@@ -50,18 +52,25 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const createCommentMutation = useCreateCommentMutation(articleId);
   const updateCommentMutation = useUpdateCommentMutation(articleId);
   const deleteCommentMutation = useDeleteCommentMutation(articleId);
+  const commentLikeMutation = useCommentLikeMutation(articleId);
   const queryClient = useQueryClient();
+
+  // 전체 댓글 개수 계산 (최상위 댓글 + 대댓글)
+  const totalCommentCount = comments.reduce((total, comment) => {
+    return total + 1 + (comment.replies ? comment.replies.length : 0);
+  }, 0);
   const handleSubmit = async (data: { content: string }) => {
     createCommentMutation.mutate(
       {
         content: data.content,
         anonymous: checked,
+        parentId: replyingToCommentId || undefined,
       },
       {
         onSuccess: () => {
           form.reset();
           setEditingContent("");
-          article.comments.length += 1;
+          setReplyingToCommentId(null);
           Keyboard.dismiss();
         },
       }
@@ -69,10 +78,23 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   };
 
   const handleUpdate = (id: string) => {
-    const comment = comments.find((c) => c.id === id);
+    // 최상위 댓글에서 찾기
+    let comment = comments.find((c) => c.id === id);
+
+    // 대댓글에서 찾기
+    if (!comment) {
+      for (const parentComment of comments) {
+        if (parentComment.replies) {
+          comment = parentComment.replies.find((reply) => reply.id === id);
+          if (comment) break;
+        }
+      }
+    }
+
     if (comment) {
       setEditingCommentId(id);
       setEditingContent(comment.content);
+      setReplyingToCommentId(null); // 수정 모드일 때는 답글 모드 해제
       form.reset({
         content: comment.content,
         anonymous: true,
@@ -107,6 +129,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const handleCancelEdit = () => {
     setEditingCommentId(null);
     setEditingContent("");
+    setReplyingToCommentId(null); // 수정 취소 시 답글 모드도 해제
     form.reset({
       content: "",
       anonymous: true,
@@ -179,22 +202,64 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 
   const handleDelete = async (commentId: string) => {
     deleteCommentMutation.mutate(commentId);
-    article.comments.length -= 1;
+  };
+
+  const handleReply = (parentId: string) => {
+    setReplyingToCommentId(parentId);
+    setEditingCommentId(null);
+    setEditingContent("");
+    form.reset({ content: "", anonymous: true });
+  };
+
+  const handleCancelReply = () => {
+    setReplyingToCommentId(null);
+    form.reset({ content: "", anonymous: true });
+  };
+
+  const handleCommentLike = (commentId: string) => {
+    commentLikeMutation.mutate(commentId);
   };
 
   const renderComments = (
     comments: Comment[],
     editingCommentId: null | string
   ) => {
-    return comments.map((comment: Comment) => (
-      <ArticleDetailComment
-        key={comment.id}
-        isEditing={comment.id === editingCommentId}
-        comment={comment}
-        onDelete={handleDelete}
-        onUpdate={handleUpdate}
-      />
-    ));
+    const result: React.ReactElement[] = [];
+
+    comments.forEach((comment: Comment) => {
+      // 최상위 댓글 렌더링
+      result.push(
+        <ArticleDetailComment
+          key={comment.id}
+          isEditing={comment.id === editingCommentId}
+          comment={comment}
+          onDelete={handleDelete}
+          onUpdate={handleUpdate}
+          onReply={handleReply}
+          onLike={handleCommentLike}
+          isReply={false}
+        />
+      );
+
+      // 대댓글들 렌더링
+      if (comment.replies && comment.replies.length > 0) {
+        comment.replies.forEach((reply: Comment) => {
+          result.push(
+            <ArticleDetailComment
+              key={reply.id}
+              isEditing={reply.id === editingCommentId}
+              comment={reply}
+              onDelete={handleDelete}
+              onUpdate={handleUpdate}
+              onLike={handleCommentLike}
+              isReply={true}
+            />
+          );
+        });
+      }
+    });
+
+    return result;
   };
 
   return (
@@ -252,7 +317,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
               isLiked={isLiked}
               onPress={() => like(article)}
             />
-            <Interaction.Comment count={article.comments.length} />
+            <Interaction.Comment count={totalCommentCount} />
             <Interaction.View count={article.readCount} />
           </View>
         </View>
@@ -290,6 +355,8 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           form={form}
           handleSubmitUpdate={handleSubmitUpdate}
           handleSubmit={handleSubmit}
+          replyingToCommentId={replyingToCommentId}
+          handleCancelReply={handleCancelReply}
         />
       </View>
     </View>
