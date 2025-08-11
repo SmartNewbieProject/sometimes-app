@@ -17,6 +17,7 @@ function useLiked() {
     if (isILoading || isMeLoading) {
       return false;
     }
+
     if (likedMe && likedMe?.length > 0) {
       return { data: likedMe, type: "likedMe" };
     }
