@@ -51,11 +51,17 @@ function useAreaHook() {
 
     setTimeout(() => {
       setShow("부산");
-    }, 1000);
+    }, 700);
+    setTimeout(() => {
+      setShow("대구");
+    }, 1200);
+    setTimeout(() => {
+      setShow("충청/세종");
+    }, 1700);
     setTimeout(() => {
       setShow(null);
       setInitDisabled(false);
-    }, 1800);
+    }, 2200);
   }, []);
 
   const onNext = (fallback: () => void) => {

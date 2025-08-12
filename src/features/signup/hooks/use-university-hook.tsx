@@ -1,5 +1,5 @@
 import Signup from "@features/signup";
-import { useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { filterUniversities } from "../lib";
@@ -14,6 +14,7 @@ const {
 const { useUnivQuery } = queries;
 function useUniversityHook() {
   const [searchText, setSearchText] = useState("");
+
   const { updateForm, form: userForm, regions } = useSignupProgress();
   const { isLoading, data: univs } = useUniversities();
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
