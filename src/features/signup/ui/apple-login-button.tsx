@@ -137,7 +137,7 @@ const AppleLoginButton: React.FC = () => {
   const sendToBackend = async (data: BackendAppleData): Promise<void> => {
     try {
       setIsLoading(true);
-
+      console.log("data", data);
       mutation.mutateAsync(data.identityToken ?? "");
 
       // }
