@@ -54,7 +54,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const deleteCommentMutation = useDeleteCommentMutation(articleId);
   const queryClient = useQueryClient();
 
-  // 전체 댓글 개수 계산 (최상위 댓글 + 대댓글)
   const totalCommentCount = comments.reduce((total, comment) => {
     return total + 1 + (comment.replies ? comment.replies.length : 0);
   }, 0);
@@ -77,10 +76,8 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   };
 
   const handleUpdate = (id: string) => {
-    // 최상위 댓글에서 찾기
     let comment = comments.find((c) => c.id === id);
 
-    // 대댓글에서 찾기
     if (!comment) {
       for (const parentComment of comments) {
         if (parentComment.replies) {
@@ -93,7 +90,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     if (comment) {
       setEditingCommentId(id);
       setEditingContent(comment.content);
-      setReplyingToCommentId(null); // 수정 모드일 때는 답글 모드 해제
+      setReplyingToCommentId(null);
       form.reset({
         content: comment.content,
         anonymous: true,
@@ -128,7 +125,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const handleCancelEdit = () => {
     setEditingCommentId(null);
     setEditingContent("");
-    setReplyingToCommentId(null); // 수정 취소 시 답글 모드도 해제
+    setReplyingToCommentId(null);
     form.reset({
       content: "",
       anonymous: true,
@@ -185,7 +182,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
                     };
                   }
                   return article;
-                }),
+                }), 
               })),
             };
           }
@@ -218,7 +215,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const handleCommentLike = (commentId: string) => {
     tryCatch(
       async () => {
-        // 현재 댓글 찾기
         const findComment = (comments: Comment[]): Comment | null => {
           for (const comment of comments) {
             if (comment.id === commentId) return comment;
@@ -248,7 +244,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           newLikeCount
         });
 
-        // 즉시 UI 업데이트
         queryClient.setQueryData(
           QUERY_KEYS.comments.lists(articleId),
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -278,7 +273,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           }
         );
 
-        // 서버 호출
         const serverResponse = await apis_comments.patchCommentLike(articleId, commentId);
         console.log('서버 응답:', serverResponse);
       },
@@ -295,7 +289,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     const result: React.ReactElement[] = [];
 
     comments.forEach((comment: Comment) => {
-      // 최상위 댓글 렌더링
       result.push(
         <ArticleDetailComment
           key={comment.id}
@@ -309,7 +302,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         />
       );
 
-      // 대댓글들 렌더링
       if (comment.replies && comment.replies.length > 0) {
         comment.replies.forEach((reply: Comment) => {
           result.push(
