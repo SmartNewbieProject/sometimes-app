@@ -70,6 +70,7 @@ export default function LoginForm() {
               {isLoading ? "PASS 인증 중..." : "PASS 로그인"}
             </Text>
           </Button>
+          <AppleLoginButton />
         </View>
 
         <Show when={Platform.OS !== "ios"}>
