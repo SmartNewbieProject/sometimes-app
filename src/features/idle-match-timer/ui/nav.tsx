@@ -41,7 +41,7 @@ export const InteractionNavigation = ({
             마음에 드는 이성을 찾기위해
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 {featureCosts?.OLD_REMATCHING}개를 사용할게요!
+            구슬 {featureCosts?.REMATCHING}개를 사용할게요!
           </Text>
         </View>
       ),
@@ -77,7 +77,9 @@ export const InteractionNavigation = ({
         }
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {hasPartner && <RNText style={styles.subText}>x2</RNText>}
+          {hasPartner && (
+            <RNText style={styles.subText}>x{featureCosts?.REMATCHING}</RNText>
+          )}
           <RNText
             className={cn(
               "text-md text-primaryPurple whitespace-nowrap",
