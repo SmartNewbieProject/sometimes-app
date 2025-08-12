@@ -102,11 +102,7 @@ const sendVerificationCode = (
 
 const postAppleLogin = (identityToken: string): Promise<AppleLoginResponse> => {
   return axiosClient.post("/auth/login/apple", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ appleId: identityToken }),
+    appleId: identityToken,
   });
 };
 
