@@ -8,6 +8,10 @@ export interface AppleLoginResponse {
   expiresIn: number;
   role: string;
   isNewUser: boolean;
+  certificationInfo: {
+    externalId: string;
+    provider: string;
+  };
 }
 export const useAppleLogin = () => {
   const router = useRouter();

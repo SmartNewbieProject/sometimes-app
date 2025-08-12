@@ -106,7 +106,7 @@ const postAppleLogin = (identityToken: string): Promise<AppleLoginResponse> => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ identityToken }),
+    body: JSON.stringify({ appleId: identityToken }),
   });
 };
 
