@@ -23,6 +23,7 @@ export default function useUniversities() {
     queryFn: () => getUniversitiesByRegion(regions),
     queryKey: ["universities", ...regions],
   });
+  console.log("universities", data);
   const mappedData = data?.map((item) => ({
     ...item,
     logoUrl: getSmartUnivLogoUrl(item.code),

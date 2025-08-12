@@ -12,7 +12,7 @@ export const areaMap = [
 			top: 178,
 			left: 124,
 		},
-		description: '11개 대학 오픈 완료!',
+		description: '20개 대학 오픈 완료!',
 		open: 'open',
 	},
 	{
@@ -26,7 +26,7 @@ export const areaMap = [
 			top: 274,
 			right: 45,
 		},
-		description: '16개 대학 오픈 완료!',
+		description: '28개 대학 오픈 완료!',
 		open: 'open',
 	},
 	{
@@ -40,9 +40,9 @@ export const areaMap = [
 			top: 220,
 			right: 82,
 		},
-		description: '오픈 준비 중',
+		description: '28개 대학 오픈 완료!',
 
-		open: 'close',
+		open: 'open',
 	},
 	{
 		id: 4,
@@ -165,6 +165,8 @@ export function getRegionList(area: string) {
 			return [getRegionCodeByName('대전광역시')];
 		case '부산':
 			return [getRegionCodeByName('부산광역시'), getRegionCodeByName('김해시')];
+		case '대구':
+			return [getRegionCodeByName('대구광역시')];
 		default:
 			return [];
 	}

@@ -5,15 +5,16 @@ export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	BSN: '부산',
 	DJN: '대전',
 	GHE: '김해',
+	DAG: '대구',
 };
 
-export type UIRegion = '부산' | '대전' | '김해';
+export type UIRegion = '부산' | '대전' | '김해' | '대구';
 
 export const getRegionsByRegionCode = (code: RegionCode) => {
 	return regionCodeMap[code];
 };
 
-export type UniversityType = '국립' | '사립' | '과학기술원' | '알 수 없음';
+export type UniversityType = '국립' | '사립' | '과학기술원' | '도립' | '알 수 없음';
 
 export function getUniversityType(name: string): UniversityType {
 	const nationalUniversities = [
@@ -23,8 +24,13 @@ export function getUniversityType(name: string): UniversityType {
 		'부산대학교',
 		'한국방송통신대학교',
 		'충남대학교',
+		'한국폴리텍',
 		'한밭대학교',
+		'한국폴리텍 VII 대학 부산캠퍼스',
+		'한국폴리텍 VII 대학 동부산캠퍼스',
 	];
+
+	const provincialUniversities = ['충북도립대학교'];
 
 	const privateUniversities = [
 		'부산여자대학교',
@@ -32,8 +38,7 @@ export function getUniversityType(name: string): UniversityType {
 		'부산과학기술대학교',
 		'부산보건대학교',
 		'부산예술대학교',
-		'한국폴리텍 VII 대학 부산캠퍼스',
-		'한국폴리텍 VII 대학 동부산캠퍼스',
+
 		'경남정보대학교',
 		'김해대학교',
 		'동원과학기술대학교',
@@ -60,12 +65,21 @@ export function getUniversityType(name: string): UniversityType {
 		'을지대학교',
 		'대전보건대학교',
 		'인제대학교',
+		'우송정보대',
+		'대전신학대학교',
+		'중부대학교',
+
+		'한국침례신학대학교',
+		'대덕대학교',
+		'금강대학교',
+		'대전과학기술대학교',
 	];
 
 	const ISTUniversities = ['KAIST'];
 
 	if (nationalUniversities?.includes(name)) return '국립';
 	if (privateUniversities?.includes(name)) return '사립';
+	if (provincialUniversities?.includes(name)) return '도립';
 	if (ISTUniversities?.includes(name)) return '과학기술원';
 	return '알 수 없음';
 }
@@ -77,6 +91,8 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 		case 'BSN':
 		case 'GHE':
 			return 'busan';
+		case 'DAG':
+			return 'daegu';
 		default:
 			return '';
 	}

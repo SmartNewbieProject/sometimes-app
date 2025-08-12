@@ -15,6 +15,7 @@ export enum UniversityName {
 	고려대학교세종캠퍼스 = '고려대학교 세종캠퍼스',
 	홍익대학교세종캠퍼스 = '홍익대학교 세종캠퍼스',
 	한국교원대학교 = '한국교원대학교',
+
 	공주대학교 = '공주대학교',
 	공주교육대학교 = '공주교육대학교',
 	충북대학교 = '충북대학교',
@@ -49,6 +50,15 @@ export enum UniversityName {
 	대동대학교 = '대동대학교',
 	'한국폴리텍 VII 대학 부산캠퍼스' = '한국폴리텍 VII 대학 부산캠퍼스',
 	'한국폴리텍 VII 대학 동부산캠퍼스' = '한국폴리텍 VII 대학 동부산캠퍼스',
+	우송정보대 = '우송정보대',
+	대전신학대학교 = '대전신학대학교',
+	중부대학교 = '중부대학교',
+	충북도립대학교 = '충북도립대학교',
+	한국폴리텍 = '한국폴리텍',
+	한국침례신학대학교 = '한국침례신학대학교',
+	대덕대학교 = '대덕대학교',
+	금강대학교 = '금강대학교',
+	대전과학기술대학교 = '대전과학기술대학교',
 }
 
 export const UniversityImage: Record<UniversityName, string> = {
@@ -72,6 +82,16 @@ export const UniversityImage: Record<UniversityName, string> = {
 	[UniversityName.공주교육대학교]: 'keu.png',
 	[UniversityName.충북대학교]: 'cbu.png',
 	[UniversityName.청주교육대학교]: 'ceu.png',
+	[UniversityName.우송정보대]: 'wsit.png',
+	[UniversityName.대전신학대학교]: 'djts.png',
+	[UniversityName.중부대학교]: 'jobu.png',
+	[UniversityName.충북도립대학교]: 'cptu.png',
+	[UniversityName.한국폴리텍]: 'kptu.png',
+	[UniversityName.한국침례신학대학교]: 'kbts.png',
+	[UniversityName.대덕대학교]: 'dddu.png',
+	[UniversityName.금강대학교]: 'dgru.png',
+	[UniversityName.대전과학기술대학교]: 'dkiu.png',
+
 	[UniversityName.경성대학교]: 'ks.png',
 	[UniversityName.고신대학교]: 'kosin.png',
 	[UniversityName.부경대학교]: 'pukyong.png',
@@ -127,6 +147,15 @@ export const UniversityEnglishName: Record<UniversityName, string> = {
 	[UniversityName.공주교육대학교]: 'keu.png',
 	[UniversityName.충북대학교]: 'cbu.png',
 	[UniversityName.청주교육대학교]: 'ceu.png',
+	[UniversityName.우송정보대]: 'Woosong College',
+	[UniversityName.대전신학대학교]: 'Daejeon Theological University',
+	[UniversityName.중부대학교]: 'Joongbu University',
+	[UniversityName.충북도립대학교]: 'Chungbuk Provincial University',
+	[UniversityName.한국폴리텍]: 'Korea Polytechnics',
+	[UniversityName.한국침례신학대학교]: 'Korea Baptist Theological University and Seminary',
+	[UniversityName.대덕대학교]: 'Daeduk University',
+	[UniversityName.금강대학교]: 'Geumgang University',
+	[UniversityName.대전과학기술대학교]: 'Daejeon Institute of Science and Technology',
 
 	//부산
 	[UniversityName.경성대학교]: 'Kyungsung University ',
