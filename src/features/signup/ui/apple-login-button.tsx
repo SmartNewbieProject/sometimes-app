@@ -138,7 +138,11 @@ const AppleLoginButton: React.FC = () => {
     try {
       setIsLoading(true);
       console.log("data", data);
-      mutation.mutateAsync(data.identityToken ?? "");
+      const identityToken =
+        data.platform === "web"
+          ? data.authorization?.id_token
+          : data.identityToken;
+      mutation.mutateAsync(identityToken ?? "");
 
       // }
     } catch (error) {
