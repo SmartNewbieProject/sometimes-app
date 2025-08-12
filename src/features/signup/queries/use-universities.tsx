@@ -6,13 +6,13 @@ import {
   getUnivLogo,
 } from "@/src/shared/libs";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useGlobalSearchParams } from "expo-router";
 import { getUniversitiesByRegion } from "../apis";
 import { useSignupProgress } from "../hooks";
 import {
   type UIRegion,
   type UniversityType,
   getRegionsByRegionCode,
-  getUniversityLogoFolderName,
   getUniversityType,
 } from "../lib";
 

@@ -33,7 +33,7 @@ function Area() {
         area: show,
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
-      router.push("/auth/signup/university");
+      router.push(`/auth/signup/university?area=${show}`);
     });
   };
 
