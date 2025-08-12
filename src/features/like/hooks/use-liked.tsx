@@ -31,20 +31,26 @@ function useLiked() {
     if (isILoading) {
       return false;
     }
-    console.log(
-      "check",
-      iLiked?.find((matching) => matching.connectionId === connectionId)?.status
-    );
+
     return (
       iLiked?.find((matching) => matching.connectionId === connectionId)
         ?.status === "OPEN"
     );
   };
 
+  const isLiked = (connectionId: string) => {
+    if (isILoading) {
+      return false;
+    }
+
+    return iLiked?.find((matching) => matching.connectionId === connectionId);
+  };
+
   return {
     isLikedPartner,
     showCollapse,
     isOpen,
+    isLiked,
   };
 }
 

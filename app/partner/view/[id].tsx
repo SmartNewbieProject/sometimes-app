@@ -55,7 +55,7 @@ export default function PartnerDetailScreen() {
   const { data: partner, isLoading, error } = useMatchPartnerQuery(matchId);
   const [isSlideScrolling, setSlideScrolling] = useState(false);
   const [isZoomVisible, setZoomVisible] = useState(false);
-  const { isOpen } = useLiked();
+  const { isOpen, isLiked } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const onZoomClose = () => {
     setZoomVisible(false);
@@ -315,7 +315,7 @@ export default function PartnerDetailScreen() {
         <Show
           when={
             !isOpen(partner?.connectionId ?? "") &&
-            !partner?.isLikeSended &&
+            !isLiked(partner?.connectionId ?? "") &&
             !!partner?.connectionId
           }
         >

@@ -91,9 +91,7 @@ export default function useLike() {
           return;
         }
         if (err.status === HttpStatusCode.Conflict) {
-          showCashable({
-            textContent: "중복된 좋아요 요청이에요!",
-          });
+          showErrorModal("중복된 좋아요 요청이에요!", "announcement");
           return;
         }
       }
