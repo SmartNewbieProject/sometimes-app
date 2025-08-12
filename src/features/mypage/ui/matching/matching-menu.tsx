@@ -1,4 +1,5 @@
 import { useCommingSoon } from "@/src/features/admin/hooks";
+import { useMatchingFilters } from "@/src/features/mypage/hooks/use-matching-filter";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ImageResources } from "@/src/shared/libs";
 import { AnnounceCard, Button, Text } from "@/src/shared/ui";
@@ -8,7 +9,6 @@ import { StyleSheet, View } from "react-native";
 import CustomSwitch from "../custom-switch";
 import { ChangeMbtiModal } from "../modal/change-mbti.modal";
 import MatchingCard from "./matching-card";
-import { useMatchingFilters } from "@/src/features/mypage/hooks/use-matching-filter";
 
 const MatchingMenu = () => {
   const showCommingSoon = useCommingSoon();
@@ -19,11 +19,7 @@ const MatchingMenu = () => {
     toggleAvoidDepartment,
     toggleAvoidUniversity,
   } = useMatchingFilters();
-
-  if (isLoading) {
-    return <Text>매칭 설정 불러오는 중...</Text>;
-  }
-
+  console.log("toggle", filters?.avoidDepartment, filters?.avoidUniversity);
   if (error) {
     return <Text>오류 발생: {error.message}</Text>;
   }

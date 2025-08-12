@@ -23,6 +23,7 @@ const useLikeMutation = () =>
       await queryClient.refetchQueries({ queryKey: ["latest-matching"] });
       await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
       await queryClient.refetchQueries({ queryKey: ["liked", "of-me"] });
+      await queryClient.refetchQueries({ queryKey: ["liked", "to-me"] });
     },
   });
 
