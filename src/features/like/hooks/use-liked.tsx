@@ -17,6 +17,7 @@ function useLiked() {
     if (isILoading || isMeLoading) {
       return false;
     }
+
     if (likedMe && likedMe?.length > 0) {
       return { data: likedMe, type: "likedMe" };
     }
@@ -26,9 +27,24 @@ function useLiked() {
     return false;
   };
 
+  const isOpen = (connectionId: string) => {
+    if (isILoading) {
+      return false;
+    }
+    console.log(
+      "check",
+      iLiked?.find((matching) => matching.connectionId === connectionId)?.status
+    );
+    return (
+      iLiked?.find((matching) => matching.connectionId === connectionId)
+        ?.status === "OPEN"
+    );
+  };
+
   return {
     isLikedPartner,
     showCollapse,
+    isOpen,
   };
 }
 

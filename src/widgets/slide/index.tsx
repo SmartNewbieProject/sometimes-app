@@ -39,103 +39,139 @@ function Slider({
   className,
 }: SlideProps) {
   const arrayChildren = Array.isArray(children) ? children : [children];
-  const array = [
-    arrayChildren[arrayChildren.length - 1],
-    ...arrayChildren,
-    arrayChildren[0],
-  ];
+  const realCount = arrayChildren.length;
+  const isSingle = realCount <= 1;
 
-  const [focusIndex, setFocusIndex] = useState(1);
-  const [containerWidth, setContainerWidth] = useState(0);
+  const array = isSingle
+    ? [...arrayChildren]
+    : [arrayChildren[realCount - 1], ...arrayChildren, arrayChildren[0]];
+
+  const initialFocus = isSingle ? 0 : 1;
+  const [focusIndex, setFocusIndex] = useState<number>(initialFocus);
+  const focusRef = useRef<number>(initialFocus);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
   const bannerAnim = useRef(new Animated.Value(0)).current;
-  const pendingRef = useRef(true);
+  const pendingRef = useRef<boolean>(true);
+  const autoPlayRef = useRef<NodeJS.Timer | number | null>(null);
+
+  useEffect(() => {
+    focusRef.current = focusIndex;
+  }, [focusIndex]);
+
   useEffect(() => {
     if (containerWidth > 0) {
-      bannerAnim.setValue(-containerWidth);
+      bannerAnim.setValue(-focusIndex * containerWidth);
+      pendingRef.current = true;
     }
-  }, [containerWidth]);
+  }, [containerWidth, bannerAnim, focusIndex]);
 
   useEffect(() => {
-    if (!autoPlay || containerWidth === 0) return;
-
-    const interval = setInterval(() => {
-      moveToIndex(focusIndex + 1);
+    if (!autoPlay || containerWidth === 0 || isSingle) return;
+    if (autoPlayRef.current) {
+      if (typeof autoPlayRef.current === "number")
+        clearInterval(autoPlayRef.current);
+      else clearInterval(autoPlayRef.current as NodeJS.Timer);
+    }
+    const id = setInterval(() => {
+      moveToIndex(focusRef.current + 1);
     }, autoPlayInterval);
+    autoPlayRef.current = id;
+    return () => {
+      if (id) clearInterval(id);
+      autoPlayRef.current = null;
+    };
+  }, [autoPlay, autoPlayInterval, containerWidth, isSingle]);
 
-    return () => clearInterval(interval);
-  }, [focusIndex, autoPlay, autoPlayInterval, containerWidth]);
+  const clampIndex = (idx: number) => {
+    return Math.max(0, Math.min(idx, array.length - 1));
+  };
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-
-    onMoveShouldSetPanResponder: (_, gestureState) => {
-      return Math.abs(gestureState.dx) > 10;
-    },
-
-    onPanResponderGrant: () => {},
-
-    onPanResponderRelease: (_, gestureState) => {
-      if (containerWidth === 0 || !pendingRef.current) return;
-
-      const toRight = gestureState.dx < -60;
-      const toLeft = gestureState.dx > 60;
-
-      if (toRight) {
-        moveToIndex(focusIndex + 1);
-      } else if (toLeft) {
-        moveToIndex(focusIndex - 1);
-      }
-    },
-  });
-
-  const moveToIndex = (nextIndex: number) => {
-    if (containerWidth === 0) return;
-
+  const moveToIndex = (nextIndexRaw: number) => {
+    if (containerWidth === 0 || !pendingRef.current) return;
     pendingRef.current = false;
-
+    const nextIndex = clampIndex(nextIndexRaw);
     Animated.timing(bannerAnim, {
       toValue: -nextIndex * containerWidth,
       useNativeDriver: true,
       duration: animationDuration,
     }).start(({ finished }) => {
-      if (!finished) return;
-
+      if (!finished) {
+        pendingRef.current = true;
+        return;
+      }
       let finalIndex = nextIndex;
-
-      if (nextIndex === array.length - 1) {
+      if (!isSingle && nextIndex === array.length - 1) {
         finalIndex = 1;
-        bannerAnim.setValue(-containerWidth);
-      } else if (nextIndex === 0) {
+        bannerAnim.setValue(-finalIndex * containerWidth);
+      } else if (!isSingle && nextIndex === 0) {
         finalIndex = array.length - 2;
         bannerAnim.setValue(-finalIndex * containerWidth);
       }
-
       setFocusIndex(finalIndex);
       pendingRef.current = true;
-      onSlideChange?.(finalIndex - 1);
+      onSlideChange?.(isSingle ? 0 : finalIndex - 1);
     });
   };
 
   const onButtonNavigation = (index: number) => {
+    if (isSingle) return;
     moveToIndex(index + 1);
   };
+
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => !isSingle,
+    onMoveShouldSetPanResponder: (_e, gestureState) => {
+      if (isSingle) return false;
+      return (
+        Math.abs(gestureState.dx) > 10 &&
+        Math.abs(gestureState.dx) > Math.abs(gestureState.dy)
+      );
+    },
+    onPanResponderGrant: () => {},
+    onPanResponderMove: () => {},
+    onPanResponderRelease: (_e, gestureState) => {
+      if (containerWidth === 0 || !pendingRef.current) return;
+      const dx = gestureState.dx;
+      const threshold = Math.max(60, containerWidth * 0.12);
+      const isNext = dx < -threshold;
+      const isPrev = dx > threshold;
+      if (isNext) {
+        moveToIndex(focusRef.current + 1);
+      } else if (isPrev) {
+        moveToIndex(focusRef.current - 1);
+      } else {
+        pendingRef.current = false;
+        Animated.timing(bannerAnim, {
+          toValue: -focusRef.current * containerWidth,
+          duration: Math.min(200, animationDuration),
+          useNativeDriver: true,
+        }).start(() => {
+          pendingRef.current = true;
+        });
+      }
+    },
+  });
 
   return (
     <View
       className={className}
       onLayout={(e) => {
-        const width = e.nativeEvent.layout.width;
-        setContainerWidth(width);
+        const w = e.nativeEvent.layout.width;
+        if (w && w !== containerWidth) {
+          setContainerWidth(w);
+        }
       }}
-      style={{
-        width: "100%",
-      }}
+      style={{ width: "100%" as ViewStyle["width"] }}
     >
-      <View style={{ width: containerWidth, overflow: "hidden" }}>
+      <View
+        style={{ width: containerWidth || 0, overflow: "hidden" }}
+        className={contentContainerClassName}
+      >
         <Animated.View
-          {...panResponder.panHandlers}
+          {...(!isSingle ? panResponder.panHandlers : {})}
           style={{
             flexDirection: "row",
+            width: (containerWidth || 0) * array.length,
             transform: [{ translateX: bannerAnim }],
           }}
         >
@@ -144,7 +180,7 @@ function Slider({
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               key={index}
               style={{
-                width: containerWidth,
+                width: containerWidth || 0,
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -155,23 +191,28 @@ function Slider({
         </Animated.View>
       </View>
 
-      {showIndicator && (
+      {showIndicator && realCount > 0 && (
         <View
           style={[
             {
               flexDirection: "row",
-              gap: 8,
               justifyContent: "center",
               position: "absolute",
+              left: 0,
+              right: 0,
               [indicatorPosition]: -16,
-              width: "100%",
-            },
+              paddingHorizontal: 8,
+            } as ViewStyle,
           ]}
           className={indicatorContainerClassName}
         >
           {arrayChildren.map((_, index) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            <Pressable key={index} onPress={() => onButtonNavigation(index)}>
+            <Pressable
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              key={index}
+              onPress={() => onButtonNavigation(index)}
+              style={{ padding: 6 }}
+            >
               <View
                 style={{
                   width: 8,

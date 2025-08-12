@@ -86,21 +86,21 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
               imagesUrls.length > 5 ? imagesUrls.slice(0, 5) : imagesUrls
             }
           />
-          {imagesUrls.length > 5 && (
-            <View style={styles.more}>
-              <Animated.Text
-                style={[styles.moreText, textOpacityStyle]}
-              >{`+${Math.abs(5 - imagesUrls.length)}`}</Animated.Text>
-              <ExplodingParticles
-                delay={800}
-                startTiming={startTiming}
-                handleEnd={() => setStartTiming(false)}
-                top={24}
-                left={24}
-              />
-            </View>
-          )}
         </View>
+        {imagesUrls.length > 5 && (
+          <View style={styles.more}>
+            <Animated.Text
+              style={[styles.moreText, textOpacityStyle]}
+            >{`+${Math.abs(5 - imagesUrls.length)}`}</Animated.Text>
+            <ExplodingParticles
+              delay={800}
+              startTiming={startTiming}
+              handleEnd={() => setStartTiming(false)}
+              top={24}
+              left={24}
+            />
+          </View>
+        )}
       </Pressable>
     </View>
   ) : (
@@ -111,7 +111,8 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-
+    alignItems: "center",
+    flexDirection: "row",
     width: "100%",
     height: 72,
     overflow: "hidden",
@@ -121,11 +122,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#A892D7",
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
+    position: "absolute",
+    right: 20,
     width: 48,
+
     height: 48,
     borderRadius: "50%",
-    transform: [{ translateX: -48 }],
   },
   moreText: {
     color: "#fff",

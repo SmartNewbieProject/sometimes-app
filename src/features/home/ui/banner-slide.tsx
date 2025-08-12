@@ -14,7 +14,7 @@ function BannerSlide() {
   return (
     <Loading.Lottie title="몇 명이 매칭을 신청했을까요?" loading={isLoading}>
       <Slider
-        indicatorContainerClassName="!bottom-[-14px] "
+        indicatorContainerClassName="!bottom-[-16px] "
         autoPlay
         autoPlayInterval={5000}
         className="w-full !min-h-[92px] "
