@@ -5,7 +5,16 @@ import { QUERY_KEYS } from './keys';
 export function useCommentsQuery(articleId: string) {
   return useSuspenseQuery({
     queryKey: QUERY_KEYS.comments.lists(articleId),
-    queryFn: () => apis_comments.getComments({ articleId }),
+    queryFn: async () => {
+      const comments = await apis_comments.getComments({ articleId });
+      console.log('댓글 데이터 가져옴:', comments.map(c => ({
+        id: c.id,
+        isLiked: c.isLiked,
+        likeCount: c.likeCount,
+        likeCountType: typeof c.likeCount
+      })));
+      return comments;
+    },
   });
 }
 
@@ -49,6 +58,5 @@ export function useCommentLikeMutation(articleId: string) {
   return useMutation({
     mutationFn: (commentId: string) =>
       apis_comments.patchCommentLike(articleId, commentId),
-    // 게시글처럼 로컬 상태 유지 - invalidateQueries 제거
   });
 }

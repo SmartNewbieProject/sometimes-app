@@ -240,7 +240,8 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         });
 
         const newIsLiked = !currentComment.isLiked;
-        const newLikeCount = currentComment.isLiked ? currentComment.likeCount - 1 : currentComment.likeCount + 1;
+        const currentLikeCount = Number(currentComment.likeCount) || 0;
+        const newLikeCount = currentComment.isLiked ? currentLikeCount - 1 : currentLikeCount + 1;
 
         console.log('새로운 상태:', {
           newIsLiked,
@@ -318,8 +319,10 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
               comment={reply}
               onDelete={handleDelete}
               onUpdate={handleUpdate}
+              onReply={handleReply}
               onLike={handleCommentLike}
               isReply={true}
+              rootParentId={comment.id}
             />
           );
         });
