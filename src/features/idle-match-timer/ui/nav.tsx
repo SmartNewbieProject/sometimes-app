@@ -1,4 +1,4 @@
-import { ImageResources } from "@/src/shared/libs";
+import { ImageResources, cn } from "@/src/shared/libs";
 import { Button, ImageResource } from "@/src/shared/ui";
 import { Text } from "@shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
@@ -41,7 +41,7 @@ export const InteractionNavigation = ({
             마음에 드는 이성을 찾기위해
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 {featureCosts?.OLD_REMATCHING}개를 사용할게요!
+            구슬 {featureCosts?.REMATCHING}개를 사용할게요!
           </Text>
         </View>
       ),
@@ -70,15 +70,22 @@ export const InteractionNavigation = ({
     <View className="w-fulsl flex flex-row gap-x-[5px] mt-4">
       <Button
         onPress={showPartnerFindAnnouncement}
-        variant="outline"
+        variant={hasPartner ? "outline" : "primary"}
         className="flex-1 items-center"
         prefix={
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />
         }
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <RNText style={styles.subText}>x2</RNText>
-          <RNText className="text-md text-primaryPurple whitespace-nowrap">
+          {hasPartner && (
+            <RNText style={styles.subText}>x{featureCosts?.REMATCHING}</RNText>
+          )}
+          <RNText
+            className={cn(
+              "text-md text-primaryPurple whitespace-nowrap",
+              !hasPartner && "text-white"
+            )}
+          >
             더 찾아보기
           </RNText>
         </View>

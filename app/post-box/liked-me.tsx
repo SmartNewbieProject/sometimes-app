@@ -7,7 +7,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 function LikedMe() {
   const { data: likedMeList, isLoading } = useLikedMeQuery();
-
+  console.log("liked-me", likedMeList);
   return (
     <View>
       <Loading.Lottie

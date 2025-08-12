@@ -73,7 +73,7 @@ export const LikeButton = ({
       }
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <RNText style={styles.subText}>x3</RNText>
+        <RNText style={styles.subText}>x{featureCosts?.LIKE_MESSAGE}</RNText>
         <RNText className="text-md text-white whitespace-nowrap">좋아요</RNText>
       </View>
     </Button>

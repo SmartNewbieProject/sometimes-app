@@ -1,8 +1,12 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import Instagram from "@/src/features/instagram";
+import useLiked from "@/src/features/like/hooks/use-liked";
+import { LikeButton } from "@/src/features/like/ui/like-button";
+import { LikedMeOpenButton } from "@/src/features/post-box/ui/post-box-card";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ChipSelector } from "@/src/widgets";
 import Slider from "@/src/widgets/slide";
+import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import Loading from "@features/loading";
 import Match from "@features/match";
 import { useCarousel } from "@shared/hooks/use-carousel";
@@ -22,6 +26,7 @@ import {
   ImageResource,
   PalePurpleGradient,
   Section,
+  Show,
   Text,
 } from "@shared/ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -49,9 +54,11 @@ export default function PartnerDetailScreen() {
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading, error } = useMatchPartnerQuery(matchId);
   const [isSlideScrolling, setSlideScrolling] = useState(false);
-
-  const onScrollStateChange = (bool: boolean) => {
-    setSlideScrolling(bool);
+  const [isZoomVisible, setZoomVisible] = useState(false);
+  const { isOpen, isLiked } = useLiked();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const onZoomClose = () => {
+    setZoomVisible(false);
   };
 
   const loading = (() => {
@@ -65,6 +72,7 @@ export default function PartnerDetailScreen() {
     partner?.characteristics ?? []
   );
 
+  console.log("partner", partner);
   const personal = characteristicsOptions.성격;
   const loveStyles = characteristicsOptions["연애 스타일"];
   const interests = characteristicsOptions.관심사;
@@ -75,11 +83,20 @@ export default function PartnerDetailScreen() {
 
   return (
     <View className="flex-1">
+      <PhotoSlider
+        images={partner?.profileImages.map((item) => item.url) ?? []}
+        onClose={onZoomClose}
+        initialIndex={selectedIndex}
+        visible={isZoomVisible}
+      />
       <PalePurpleGradient />
 
       <Header.Container>
         <Header.LeftContent>
-          <Pressable onPress={() => router.back()} className="pt-2 -ml-2">
+          <Pressable
+            onPress={() => router.navigate("/home")}
+            className="pt-2 -ml-2"
+          >
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
@@ -115,11 +132,16 @@ export default function PartnerDetailScreen() {
                 showIndicator={true}
                 autoPlayInterval={6000}
                 animationDuration={250}
+                indicatorContainerClassName="!bottom-[-20px] "
                 className={"w-full absolute  "}
                 autoPlay
               >
-                {partner.profileImages.map((img) => (
-                  <View
+                {partner.profileImages.map((img, index) => (
+                  <Pressable
+                    onPress={() => {
+                      setSelectedIndex(index);
+                      setZoomVisible(true);
+                    }}
                     key={img.id}
                     style={[styles.itemContainer, { height: 245, width: 245 }]}
                   >
@@ -132,7 +154,7 @@ export default function PartnerDetailScreen() {
                       }}
                       contentFit="cover"
                     />
-                  </View>
+                  </Pressable>
                 ))}
               </Slider>
             </View>
@@ -283,7 +305,26 @@ export default function PartnerDetailScreen() {
           marginRight: 16,
         }}
       >
-        <InstagramContactButton instagramId={partner.instagramId} />
+        <Show when={isOpen(partner?.connectionId ?? "")}>
+          <View
+            style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
+          >
+            <LikedMeOpenButton height={48} instagramId={partner.instagramId} />
+          </View>
+        </Show>
+        <Show
+          when={
+            !isOpen(partner?.connectionId ?? "") &&
+            !isLiked(partner?.connectionId ?? "") &&
+            !!partner?.connectionId
+          }
+        >
+          <View
+            style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
+          >
+            <LikeButton connectionId={partner.connectionId ?? ""} />
+          </View>
+        </Show>
       </View>
     </View>
   );

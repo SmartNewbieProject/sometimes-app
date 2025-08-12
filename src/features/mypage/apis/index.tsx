@@ -10,6 +10,11 @@ type MyRematchingTicket = {
   name: string;
 };
 
+export type MatchingFilters = {
+  avoidUniversity: boolean;
+  avoidDepartment: boolean;
+};
+
 export type Mbti = {
   mbti: string | null;
 };
@@ -29,6 +34,19 @@ const getMbti = async (): Promise<Mbti> => {
 
 const updateMbti = async (mbti: string): Promise<void> => {
   return await axiosClient.patch("/profile/mbti", { mbti });
+};
+
+// 매칭 필터
+const getCurrentMatchingFilters = async (): Promise<MatchingFilters> => {
+  return await axiosClient.get("/profile/filter");
+};
+
+const updateAvoidUniversityFilter = async (flag: boolean): Promise<void> => {
+  return await axiosClient.patch("/profile/filter/avoid-university", { flag });
+};
+
+const updateAvoidDepartmentFilter = async (flag: boolean): Promise<void> => {
+  return await axiosClient.patch("/profile/filter/avoid-department", { flag });
 };
 
 // 프로필 이미지 삭제
@@ -96,6 +114,9 @@ type Service = {
   deleteProfileImage: (imageId: string) => Promise<void>;
   uploadProfileImage: (image: string, isMain: number) => Promise<void>;
   uploadProfileImages: (images: string[]) => Promise<void>;
+  getCurrentMatchingFilters: () => Promise<MatchingFilters>;
+  updateAvoidUniversityFilter: (flag: boolean) => Promise<void>;
+  updateAvoidDepartmentFilter: (flag: boolean) => Promise<void>;
 };
 
 const apis: Service = {
@@ -106,6 +127,9 @@ const apis: Service = {
   deleteProfileImage,
   uploadProfileImage,
   uploadProfileImages,
+  getCurrentMatchingFilters,
+  updateAvoidUniversityFilter,
+  updateAvoidDepartmentFilter,
 };
 
 export default apis;

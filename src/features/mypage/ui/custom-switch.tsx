@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Platform,
@@ -22,12 +22,12 @@ const CustomSwitch = ({
   disabled = false,
 }: CustomSwitchProps) => {
   const [isOn, setIsOn] = useState(value);
+  console.log("isOn", isOn);
   const initValue = Platform.OS === "web" ? 0 : 3;
-  const lastVavlue = Platform.OS === "web" ? 30 : 33;
+  const lastValue = Platform.OS === "web" ? 30 : 33;
   const switchLeftValue = useRef(
-    new Animated.Value(value ? lastVavlue : initValue)
+    new Animated.Value(value ? lastValue : initValue)
   ).current;
-  console.log(switchLeftValue, "value");
   const toggleSwitch = () => {
     console.log(value, isOn, "check");
     const newValue = !isOn;
@@ -38,13 +38,21 @@ const CustomSwitch = ({
 
     setIsOn(newValue);
     onChange(newValue);
-    console.log("1", switchLeftValue);
     Animated.timing(switchLeftValue, {
-      toValue: newValue ? lastVavlue : initValue,
+      toValue: newValue ? lastValue : initValue,
       duration: 200,
       useNativeDriver: true,
     }).start();
   };
+
+  useEffect(() => {
+    setIsOn(value);
+    Animated.timing(switchLeftValue, {
+      toValue: value ? lastValue : initValue,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [value]);
 
   return (
     <Pressable onPress={toggleSwitch} style={styles.switchContainer}>

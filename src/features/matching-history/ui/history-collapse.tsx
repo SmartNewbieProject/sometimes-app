@@ -92,23 +92,23 @@ function HistoryCollapse() {
                   : previewMatchingHistory.imageUrls
               }
             />
-            {previewMatchingHistory.imageUrls.length > 5 && (
-              <View style={styles.more}>
-                <Animated.Text
-                  style={[styles.moreText, textOpacityStyle]}
-                >{`+${Math.abs(
-                  5 - previewMatchingHistory.countOfPartner
-                )}`}</Animated.Text>
-                <ExplodingParticles
-                  delay={800}
-                  startTiming={startTiming}
-                  handleEnd={() => setStartTiming(false)}
-                  top={24}
-                  left={24}
-                />
-              </View>
-            )}
           </View>
+          {previewMatchingHistory.imageUrls.length > 5 && (
+            <View style={styles.more}>
+              <Animated.Text
+                style={[styles.moreText, textOpacityStyle]}
+              >{`+${Math.abs(
+                5 - previewMatchingHistory.countOfPartner
+              )}`}</Animated.Text>
+              <ExplodingParticles
+                delay={800}
+                startTiming={startTiming}
+                handleEnd={() => setStartTiming(false)}
+                top={24}
+                left={24}
+              />
+            </View>
+          )}
         </View>
       </Pressable>
     </View>
@@ -130,6 +130,8 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "relative",
     marginTop: 2,
+    alignItems: "center",
+    flexDirection: "row",
     minHeight: 72,
   },
   content: {
@@ -162,11 +164,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#A892D7",
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
+    position: "absolute",
+    right: 0,
     width: 48,
     height: 48,
     borderRadius: "50%",
-    transform: [{ translateX: -20 }],
   },
   moreText: {
     color: "#fff",

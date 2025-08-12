@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { dayUtils, tryCatch } from "@/src/shared/libs";
+import { cn, dayUtils, tryCatch } from "@/src/shared/libs";
 import { Button, ImageResource, TextArea } from "@/src/shared/ui";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
@@ -114,7 +114,13 @@ function LikedMePendingButton({ connectionId }: { connectionId: string }) {
   );
 }
 
-function LikedMeOpenButton({ instagramId }: { instagramId: string }) {
+export function LikedMeOpenButton({
+  instagramId,
+  height = 40,
+}: {
+  instagramId: string;
+  height?: number;
+}) {
   const { showModal, hideModal } = useModal();
   const handleStartInstagram = () => {
     showModal({
@@ -161,7 +167,7 @@ function LikedMeOpenButton({ instagramId }: { instagramId: string }) {
         onPress={handleStartInstagram}
         variant="primary"
         size="md"
-        className="flex-1 items-center !h-[40px]"
+        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
         prefix={<ChatIcon width={20} height={20} />}
       >
         대화 시작하기

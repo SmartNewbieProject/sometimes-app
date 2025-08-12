@@ -23,6 +23,7 @@ const useLikeMutation = () =>
       await queryClient.refetchQueries({ queryKey: ["latest-matching"] });
       await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
       await queryClient.refetchQueries({ queryKey: ["liked", "of-me"] });
+      await queryClient.refetchQueries({ queryKey: ["liked", "to-me"] });
     },
   });
 
@@ -90,9 +91,7 @@ export default function useLike() {
           return;
         }
         if (err.status === HttpStatusCode.Conflict) {
-          showCashable({
-            textContent: "중복된 좋아요 요청이에요!",
-          });
+          showErrorModal("중복된 좋아요 요청이에요!", "announcement");
           return;
         }
       }
