@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../auth";
 import { PrivacyNotice } from "../../auth/ui/privacy-notice";
+import AppleLoginButton from "./apple-login-button";
 import KakaoLoginWebView from "./kakao-login-web-view";
 import UniversityLogos from "./university-logos";
 
@@ -70,6 +71,7 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
+
         <Show when={Platform.OS !== "ios"}>
           <KakaoLogin />
         </Show>

@@ -1,20 +1,80 @@
-import { useModal } from "@/src/shared/hooks/use-modal";
-import Slider from "@/src/widgets/slide";
-import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import AppleLoginButton from "@/src/features/signup/ui/apple-login-button";
+import { Button } from "@/src/shared/ui/button";
+import Signup from "@features/signup";
+import { platform } from "@shared/libs/platform";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect } from "react";
+import { ScrollView, View } from "react-native";
 
-function Test() {
-  const { showModal } = useModal();
+const { useSignupProgress } = Signup;
+
+export default function LoginScreen() {
+  const { clear } = useSignupProgress();
+  const params = useLocalSearchParams();
+  const router = useRouter();
+  const { loginWithPass } = useAuth();
+  useEffect(() => {
+    const identityVerificationId = params.identityVerificationId as string;
+    if (identityVerificationId) {
+      loginWithPass(identityVerificationId)
+        .then((result) => {
+          if (result.isNewUser) {
+            router.replace({
+              pathname: "/auth/signup/area",
+              params: {
+                certificationInfo: JSON.stringify(result.certificationInfo),
+              },
+            });
+          } else {
+            router.replace("/home");
+          }
+        })
+        .catch(() => router.replace("/auth/login"));
+    }
+  }, [params, loginWithPass, router]);
 
   useEffect(() => {
-    showModal({
-      showLogo: true,
-      title: "인증번호가 메일로 전송됐어요",
-      children: "메일을 확인해 주세요",
-    });
-  }, []);
+    clear();
+  }, [clear]);
+
+  return (
+    <View className="flex-1" style={{ backgroundColor: "#F7F3FF" }}>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View
+          className="flex-1 justify-center items-center px-4"
+          style={{
+            ...platform({
+              ios: () => ({
+                paddingTop: 20,
+                paddingBottom: 40,
+              }),
+              android: () => ({
+                paddingTop: 20,
+                paddingBottom: 40,
+              }),
+              web: () => ({
+                paddingTop: 40,
+                paddingBottom: 40,
+              }),
+            }),
+          }}
+        >
+          {/* 로고 섹션 */}
+          <View className="items-center mb-8">
+            <Signup.Logo />
+          </View>
+          <AppleLoginButton />
+          {/* 메인 콘텐츠 */}
+          <View className="flex-1 w-full max-w-sm">
+            <Signup.LoginForm />
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+  );
 }
-
-const styles = StyleSheet.create({});
-
-export default Test;
