@@ -1,4 +1,5 @@
 import * as AppleAuthentication from "expo-apple-authentication";
+import { useRouter } from "expo-router";
 import type React from "react";
 import { useEffect, useState } from "react";
 import {
@@ -8,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { AppleLoginResponse, useAppleLogin } from "../queries/use-apple-login";
 
 declare global {
   interface Window {
@@ -80,9 +82,8 @@ interface BackendResponse {
 
 const AppleLoginButton: React.FC = () => {
   const [isAppleJSLoaded, setIsAppleJSLoaded] = useState<boolean>(false);
-
+  const mutation = useAppleLogin();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   useEffect(() => {
     initializeAppleLogin();
   }, []);
@@ -100,7 +101,6 @@ const AppleLoginButton: React.FC = () => {
     }
   };
 
-  // 웹용 Apple JS 로드
   const loadAppleJS = (): void => {
     if (typeof window !== "undefined" && window.AppleID) {
       setIsAppleJSLoaded(true);
@@ -134,29 +134,13 @@ const AppleLoginButton: React.FC = () => {
     }
   };
 
-  // 공통 백엔드 처리 함수
   const sendToBackend = async (data: BackendAppleData): Promise<void> => {
     try {
       setIsLoading(true);
 
-      const response = await fetch("/api/auth/apple", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      mutation.mutateAsync(data.identityToken ?? "");
 
-      const result: BackendResponse = await response.json();
-
-      if (result.success && result.token) {
-        // JWT 토큰 저장
-        // await AsyncStorage.setItem('authToken', result.token);
-        console.log("로그인 성공:", result);
-        // 화면 이동 등...
-      } else {
-        throw new Error(result.error || "로그인 실패");
-      }
+      // }
     } catch (error) {
       console.error("백엔드 요청 실패:", error);
       alert("로그인에 실패했습니다. 다시 시도해주세요.");
@@ -165,7 +149,6 @@ const AppleLoginButton: React.FC = () => {
     }
   };
 
-  // 웹용 Apple 로그인
   const handleWebAppleLogin = async (): Promise<void> => {
     if (!window.AppleID || isLoading) return;
 
@@ -188,7 +171,6 @@ const AppleLoginButton: React.FC = () => {
     }
   };
 
-  // iOS용 Apple 로그인
   const handleIOSAppleLogin = async (): Promise<void> => {
     if (isLoading) return;
 
@@ -220,7 +202,6 @@ const AppleLoginButton: React.FC = () => {
     }
   };
 
-  // 플랫폼별 렌더링
   if (Platform.OS === "web") {
     if (!isAppleJSLoaded) {
       return (
@@ -259,7 +240,6 @@ const AppleLoginButton: React.FC = () => {
     );
   }
 
-  // Apple 로그인 지원 안 하는 경우
   return null;
 };
 

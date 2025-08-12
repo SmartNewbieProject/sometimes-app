@@ -2,6 +2,7 @@ import type { AuthorizeSmsCode } from "@/app/auth/signup/types";
 import { axiosClient, dayUtils, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from "nanoid";
 import type { SignupForm } from "../hooks";
+import type { AppleLoginResponse } from "../queries/use-apple-login";
 import type { UniversitiesByRegion } from "../queries/use-universities";
 
 // YYYY-MM-DD 형식의 생년월일로부터 만나이 계산
@@ -91,12 +92,23 @@ type Service = {
   signup: (form: SignupForm) => Promise<void>;
   sendVerificationCode: (phoneNumber: string) => Promise<{ uniqueKey: string }>;
   authenticateSmsCode: (smsCode: AuthorizeSmsCode) => Promise<void>;
+  postAppleLogin: (identityToken: string) => Promise<AppleLoginResponse>;
 };
 
 const sendVerificationCode = (
   phoneNumber: string
 ): Promise<{ uniqueKey: string }> =>
   axiosClient.post("/auth/sms/send", { phoneNumber });
+
+const postAppleLogin = (identityToken: string): Promise<AppleLoginResponse> => {
+  return axiosClient.post("/auth/apple", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ identityToken }),
+  });
+};
 
 const apis: Service = {
   getUnivs,
@@ -106,6 +118,7 @@ const apis: Service = {
   signup,
   sendVerificationCode,
   authenticateSmsCode,
+  postAppleLogin,
 };
 
 export default apis;
