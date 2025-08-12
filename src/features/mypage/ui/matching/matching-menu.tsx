@@ -3,16 +3,31 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { ImageResources } from "@/src/shared/libs";
 import { AnnounceCard, Button, Text } from "@/src/shared/ui";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import CustomSwitch from "../custom-switch";
 import { ChangeMbtiModal } from "../modal/change-mbti.modal";
 import MatchingCard from "./matching-card";
+import { useMatchingFilters } from "@/src/features/mypage/hooks/use-matching-filter";
 
 const MatchingMenu = () => {
   const showCommingSoon = useCommingSoon();
-  const [department, setDepartment] = useState(false);
-  const [univ, setUniv] = useState(false);
+  const {
+    filters,
+    isLoading,
+    error,
+    toggleAvoidDepartment,
+    toggleAvoidUniversity,
+  } = useMatchingFilters();
+
+  if (isLoading) {
+    return <Text>매칭 설정 불러오는 중...</Text>;
+  }
+
+  if (error) {
+    return <Text>오류 발생: {error.message}</Text>;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>매칭 설정</Text>
@@ -20,13 +35,13 @@ const MatchingMenu = () => {
       <View style={styles.contentContainer}>
         <MatchingCard
           title="같은 학과 매칭 제외"
-          isOn={department}
-          toggle={showCommingSoon}
+          isOn={filters?.avoidDepartment || false}
+          toggle={toggleAvoidDepartment}
         />
         <MatchingCard
           title="같은 학교 매칭 제외"
-          isOn={univ}
-          toggle={showCommingSoon}
+          isOn={filters?.avoidUniversity || false}
+          toggle={toggleAvoidUniversity}
         />
       </View>
     </View>
