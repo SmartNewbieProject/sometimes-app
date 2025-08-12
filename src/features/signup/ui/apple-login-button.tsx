@@ -127,7 +127,7 @@ const AppleLoginButton: React.FC = () => {
       window.AppleID.auth.init({
         clientId: "someinuniv.web.login", // 웹용 Service ID
         scope: "name email",
-        redirectURI: window.location.origin,
+        redirectURI: "https://some-in-univ.com/test",
         state: "web-login",
         usePopup: true,
       });
