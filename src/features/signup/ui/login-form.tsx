@@ -71,7 +71,7 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <AppleLoginButton />
+
         <Show when={Platform.OS !== "ios"}>
           <KakaoLogin />
         </Show>
