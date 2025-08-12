@@ -46,13 +46,9 @@ export function useDeleteCommentMutation(articleId: string) {
 }
 
 export function useCommentLikeMutation(articleId: string) {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (commentId: string) =>
       apis_comments.patchCommentLike(articleId, commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.comments.lists(articleId) });
-    },
+    // 게시글처럼 로컬 상태 유지 - invalidateQueries 제거
   });
 }

@@ -1,11 +1,11 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import apis from "@/src/features/community/apis";
+import apis_comments from "@/src/features/community/apis/comments";
 import {
   useCommentsQuery,
   useCreateCommentMutation,
   useDeleteCommentMutation,
   useUpdateCommentMutation,
-  useCommentLikeMutation,
 } from "@/src/features/community/queries/comments";
 import { QUERY_KEYS } from "@/src/features/community/queries/keys";
 import Interaction from "@/src/features/community/ui/article/interaction-nav";
@@ -52,7 +52,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const createCommentMutation = useCreateCommentMutation(articleId);
   const updateCommentMutation = useUpdateCommentMutation(articleId);
   const deleteCommentMutation = useDeleteCommentMutation(articleId);
-  const commentLikeMutation = useCommentLikeMutation(articleId);
   const queryClient = useQueryClient();
 
   // 전체 댓글 개수 계산 (최상위 댓글 + 대댓글)
@@ -217,7 +216,75 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   };
 
   const handleCommentLike = (commentId: string) => {
-    commentLikeMutation.mutate(commentId);
+    tryCatch(
+      async () => {
+        // 현재 댓글 찾기
+        const findComment = (comments: Comment[]): Comment | null => {
+          for (const comment of comments) {
+            if (comment.id === commentId) return comment;
+            if (comment.replies) {
+              const found = findComment(comment.replies);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+
+        const currentComment = findComment(comments);
+        if (!currentComment) return;
+
+        console.log('댓글 좋아요 클릭:', {
+          commentId,
+          currentIsLiked: currentComment.isLiked,
+          currentLikeCount: currentComment.likeCount
+        });
+
+        const newIsLiked = !currentComment.isLiked;
+        const newLikeCount = currentComment.isLiked ? currentComment.likeCount - 1 : currentComment.likeCount + 1;
+
+        console.log('새로운 상태:', {
+          newIsLiked,
+          newLikeCount
+        });
+
+        // 즉시 UI 업데이트
+        queryClient.setQueryData(
+          QUERY_KEYS.comments.lists(articleId),
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          (oldData: any) => {
+            if (!oldData) return oldData;
+
+            const updateComment = (comments: Comment[]): Comment[] => {
+              return comments.map((comment) => {
+                if (comment.id === commentId) {
+                  return {
+                    ...comment,
+                    isLiked: newIsLiked,
+                    likeCount: newLikeCount,
+                  };
+                }
+                if (comment.replies) {
+                  return {
+                    ...comment,
+                    replies: updateComment(comment.replies),
+                  };
+                }
+                return comment;
+              });
+            };
+
+            return updateComment(oldData);
+          }
+        );
+
+        // 서버 호출
+        const serverResponse = await apis_comments.patchCommentLike(articleId, commentId);
+        console.log('서버 응답:', serverResponse);
+      },
+      (error) => {
+        console.error("댓글 좋아요 업데이트 실패:", error);
+      }
+    );
   };
 
   const renderComments = (

@@ -1,14 +1,14 @@
 import colors from "@/src/shared/constants/colors";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import { dayUtils } from "@/src/shared/libs";
-import { ImageResources } from "@/src/shared/libs";
 import type { UniversityName } from "@/src/shared/libs/univ";
-import { LinkifiedText, Show, Text, ImageResource } from "@/src/shared/ui";
+import { LinkifiedText, Show, Text } from "@/src/shared/ui";
 import type React from "react";
 import { Platform, View, TouchableOpacity, Image, Modal, Pressable } from "react-native";
 import { useAuth } from "../../../auth";
 import type { Comment } from "../../types";
 import { UserProfile } from "../user-profile";
+import AreaFillHeart from "@/assets/icons/area-fill-heart.svg";
 
 interface ArticleDetailCommentProps {
   comment: Comment;
@@ -77,25 +77,13 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
                     {dayUtils.formatRelativeTime(comment.updatedAt)}
                   </Text>
 
-                  {/* 좋아요 수 표시 */}
+                  {/* 좋아요 수 표시 - 좋아요가 있을 때만 */}
                   {comment.likeCount > 0 && (
                     <View className="flex-row items-center gap-x-1">
-                      {comment.isLiked ? (
-                        <ImageResource
-                          resource={ImageResources.HEART_ON}
-                          width={12}
-                          height={12}
-                        />
-                      ) : (
-                        <Image
-                          source={require("@/assets/icons/heart.png")}
-                          style={{
-                            width: 12,
-                            height: 12,
-                            tintColor: "#A892D7"
-                          }}
-                        />
-                      )}
+                      <AreaFillHeart
+                        width={12}
+                        height={12}
+                      />
                       <Text size={"sm"} textColor="pale-purple">
                         {comment.likeCount}
                       </Text>
@@ -125,17 +113,16 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
                 {/* 좋아요 버튼 */}
                 <TouchableOpacity onPress={() => onLike(comment.id)}>
                   {comment.isLiked ? (
-                    <ImageResource
-                      resource={ImageResources.HEART_ON}
+                    <AreaFillHeart
                       width={12}
-                      height={12}
+                      height={10}
                     />
                   ) : (
                     <Image
                       source={require("@/assets/icons/heart.png")}
                       style={{
                         width: 12,
-                        height: 12,
+                        height: 10,
                         tintColor: "#A892D7"
                       }}
                     />
