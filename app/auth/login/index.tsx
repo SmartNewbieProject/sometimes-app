@@ -64,7 +64,7 @@ export default function LoginScreen() {
           }}
         >
           {/* 로고 섹션 */}
-          <View className="items-center mb-8">
+          <View className="items-center mb-[54px]">
             <Signup.Logo />
           </View>
 
