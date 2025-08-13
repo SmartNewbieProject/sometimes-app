@@ -131,7 +131,7 @@ const AppleLoginButton: React.FC = () => {
         scope: "name email",
         redirectURI: "https://some-in-univ.com/test",
         state: "web-login",
-        usePopup: false,
+        usePopup: true,
       });
     }
   };
