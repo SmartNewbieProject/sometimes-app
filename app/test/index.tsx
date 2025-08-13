@@ -1,5 +1,4 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import AppleLoginButton from "@/src/features/signup/ui/apple-login-button";
 import { Button } from "@/src/shared/ui/button";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
@@ -65,10 +64,10 @@ export default function LoginScreen() {
           }}
         >
           {/* 로고 섹션 */}
-          <View className="items-center mb-8">
+          <View className="items-center mb-[54px]">
             <Signup.Logo />
           </View>
-          <AppleLoginButton />
+
           {/* 메인 콘텐츠 */}
           <View className="flex-1 w-full max-w-sm">
             <Signup.LoginForm />

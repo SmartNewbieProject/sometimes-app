@@ -1,9 +1,11 @@
+import { track } from "@amplitude/analytics-react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
 import type React from "react";
 import { useEffect, useState } from "react";
 import {
   Platform,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -129,7 +131,7 @@ const AppleLoginButton: React.FC = () => {
         scope: "name email",
         redirectURI: "https://some-in-univ.com/test",
         state: "web-login",
-        usePopup: true,
+        usePopup: false,
       });
     }
   };
@@ -138,13 +140,18 @@ const AppleLoginButton: React.FC = () => {
     try {
       setIsLoading(true);
       console.log("data", data);
+
       const identityToken =
         data.platform === "web"
           ? data.authorization?.id_token
           : data.identityToken;
-      mutation.mutateAsync(identityToken ?? "");
 
-      // }
+      mutation.mutateAsync(identityToken ?? "");
+      track("Signup_Route_Entered", {
+        screen: "AreaSelect",
+        platform: "apple",
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
     } catch (error) {
       console.error("백엔드 요청 실패:", error);
       alert("로그인에 실패했습니다. 다시 시도해주세요.");
@@ -154,6 +161,7 @@ const AppleLoginButton: React.FC = () => {
   };
 
   const handleWebAppleLogin = async (): Promise<void> => {
+    console.log("Button clicked", { AppleID: window.AppleID, isLoading });
     if (!window.AppleID || isLoading) return;
 
     try {
@@ -170,7 +178,6 @@ const AppleLoginButton: React.FC = () => {
         console.log("사용자가 팝업을 닫았습니다");
       } else {
         console.error("웹 Apple 로그인 실패:", error);
-        alert("Apple 로그인에 실패했습니다.");
       }
     }
   };
@@ -216,15 +223,18 @@ const AppleLoginButton: React.FC = () => {
     }
 
     return (
-      <TouchableOpacity
-        style={[styles.webAppleButton, isLoading && styles.disabled]}
-        onPress={handleWebAppleLogin}
-        disabled={isLoading}
-      >
-        <Text style={styles.webButtonText}>
-          {isLoading ? "로그인 중..." : "🍎 Sign in with Apple"}
-        </Text>
-      </TouchableOpacity>
+      <View className="w-full max-w-xs">
+        <Pressable
+          onPress={handleWebAppleLogin}
+          disabled={isLoading}
+          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[309px] !h-[60px] !bg-[#000] border  !border-[#4D4D4D]"
+        >
+          <Text style={styles.appleLogo}></Text>
+          <View>
+            <Text className="text-[#fff] text-[18px]">Apple 로그인</Text>
+          </View>
+        </Pressable>
+      </View>
     );
   }
 
@@ -232,14 +242,18 @@ const AppleLoginButton: React.FC = () => {
   if (Platform.OS === "ios") {
     return (
       <View style={styles.iosContainer}>
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-          cornerRadius={8}
-          style={[styles.iosAppleButton, isLoading && styles.disabled]}
-          onPress={handleIOSAppleLogin}
-        />
-        {isLoading && <Text style={styles.loadingText}>로그인 중...</Text>}
+        <View className="w-full max-w-xs">
+          <Pressable
+            onPress={handleIOSAppleLogin}
+            disabled={isLoading}
+            className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[309px] !containerh-[60px] !bg-[#000] border  !border-[#4D4D4D]"
+          >
+            <Text style={styles.appleLogo}></Text>
+            <View>
+              <Text className="text-[#fff] text-[18px]">Apple 로그인</Text>
+            </View>
+          </Pressable>
+        </View>
       </View>
     );
   }
@@ -279,6 +293,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     color: "#666",
+  },
+  appleLogo: {
+    color: "#FFF",
+    textAlign: "center",
+
+    fontFamily: "SF Pro",
+    fontSize: 26,
+    fontWeight: 600,
   },
 });
 

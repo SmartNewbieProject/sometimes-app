@@ -5,7 +5,7 @@ import {
 import { Button, Show, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
-import { useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, TouchableOpacity, View } from "react-native";
@@ -26,6 +26,7 @@ export default function LoginForm() {
     handleMobileAuthComplete,
     handleMobileAuthError,
   } = usePortOneLogin();
+  const pathname = usePathname();
 
   const onPressPassLogin = async () => {
     track("Signup_Init", {
@@ -54,7 +55,7 @@ export default function LoginForm() {
       <UniversityLogos logoSize={64} />
 
       {/* 회원가입 및 로그인 버튼 */}
-      <View className="flex flex-col ]">
+      <View className="flex flex-col ">
         <View
           className="w-full max-w-xs "
           style={{ marginBottom: Platform.OS === "web" ? 10 : 20 }}
@@ -64,17 +65,18 @@ export default function LoginForm() {
             width="full"
             onPress={onPressPassLogin}
             disabled={isLoading}
-            className="py-4 rounded-full min-w-[280px] min-h-[60px]"
+            className="py-4 rounded-full min-w-[309px] min-h-[60px]"
           >
             <Text className="text-white text-center text-[18px] h-[40px]">
               {isLoading ? "PASS 인증 중..." : "PASS 로그인"}
             </Text>
           </Button>
-          <AppleLoginButton />
         </View>
-
-        <Show when={Platform.OS !== "ios"}>
+        <View style={{ marginBottom: 10 }}>
           <KakaoLogin />
+        </View>
+        <Show when={Platform.OS !== "android" && pathname === "/test"}>
+          <AppleLoginButton />
         </Show>
       </View>
       {/* 에러 메시지 */}
@@ -128,7 +130,7 @@ function KakaoLogin() {
       <View className="w-full max-w-xs">
         <Pressable
           onPress={handleKakaoLogin}
-          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[280px] h-[60] !bg-[#FEE500]"
+          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[309px] !h-[60px] !bg-[#FEE500]"
         >
           <View style={{ width: 34, height: 34 }}>
             <KakaoLogo width={34} height={34} />

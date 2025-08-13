@@ -6,27 +6,35 @@ import { Animated, Easing, View } from "react-native";
 const universityLogos = [
   require("@/assets/images/univ/daejeon/bju.png"),
   require("@/assets/images/univ/busan/pnu.png"),
+  require("@/assets/images/univ/daegu/dgcau.png"),
 
   require("@/assets/images/univ/daejeon/cnu.png"),
   require("@/assets/images/univ/busan/kmou.png"),
+  require("@/assets/images/univ/daegu/dgdart.png"),
 
   require("@/assets/images/univ/daejeon/dbu.png"),
   require("@/assets/images/univ/busan/dau.png"),
+  require("@/assets/images/univ/daegu/dgdau.png"),
 
   require("@/assets/images/univ/daejeon/ddu.png"),
   require("@/assets/images/univ/busan/ksu.png"),
+  require("@/assets/images/univ/daegu/dgdhu.png"),
 
   require("@/assets/images/univ/daejeon/hbu.png"),
   require("@/assets/images/univ/busan/deu.png"),
+  require("@/assets/images/univ/daegu/dgkit.png"),
 
   require("@/assets/images/univ/daejeon/hnu.png"),
   require("@/assets/images/univ/busan/ku.png"),
+  require("@/assets/images/univ/daegu/dgkmu.png"),
 
   require("@/assets/images/univ/daejeon/kaist.png"),
   require("@/assets/images/univ/busan/dsu.png"),
+  require("@/assets/images/univ/daegu/dgknu.png"),
 
   require("@/assets/images/univ/daejeon/kyu.png"),
   require("@/assets/images/univ/busan/tmu.png"),
+  require("@/assets/images/univ/daegu/dgynu.png"),
 
   require("@/assets/images/univ/daejeon/mwu.png"),
   require("@/assets/images/univ/busan/cup.png"),
@@ -104,6 +112,7 @@ export default function UniversityLogos({
         >
           {[...logos, ...logos].map((logo, index) => (
             <View
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               key={index}
               style={{
                 width: logoSize,
@@ -126,7 +135,7 @@ export default function UniversityLogos({
   };
 
   return (
-    <View style={{ width: "100%", paddingVertical: 16, position: "relative" }}>
+    <View style={{ width: "100%", paddingBottom: 46, position: "relative" }}>
       {renderLogoRow(firstRowLogos, firstRowAnim)}
       {renderLogoRow(secondRowLogos, secondRowAnim)}
 

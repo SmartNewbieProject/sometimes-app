@@ -23,6 +23,9 @@ export const useAppleLogin = () => {
       if (result.isNewUser) {
         router.replace({
           pathname: "/auth/signup/area",
+          params: {
+            certificationInfo: JSON.stringify(result.certificationInfo),
+          },
         });
       } else {
         router.replace("/home");
