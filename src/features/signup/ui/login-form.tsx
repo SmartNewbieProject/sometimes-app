@@ -5,6 +5,7 @@ import {
 import { Button, Show, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
+import * as Localization from "expo-localization";
 import { usePathname, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect, useMemo, useState } from "react";
@@ -27,6 +28,8 @@ export default function LoginForm() {
     handleMobileAuthError,
   } = usePortOneLogin();
   const pathname = usePathname();
+  const { regionCode } = Localization.getLocales()[0];
+  const isUS = regionCode === "US";
 
   const onPressPassLogin = async () => {
     track("Signup_Init", {
@@ -72,9 +75,12 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <View style={{ marginBottom: 10 }}>
-          <KakaoLogin />
-        </View>
+        <Show when={!isUS}>
+          <View style={{ marginBottom: 10 }}>
+            <KakaoLogin />
+          </View>
+        </Show>
+
         <Show when={Platform.OS !== "android" && pathname === "/test"}>
           <AppleLoginButton />
         </Show>
