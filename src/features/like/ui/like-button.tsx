@@ -18,6 +18,7 @@ export const LikeButton = ({
   connectionId,
   clasName = "",
 }: LikeButtonProps) => {
+  const { profileDetails } = useAuth();
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const { onLike } = useLike();
@@ -37,7 +38,9 @@ export const LikeButton = ({
             마음에 드는 이성에게
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 {featureCosts?.LIKE_MESSAGE}개로 관심을 표현할까요?
+            {profileDetails?.gender === "MAIL"
+              ? `구슬 ${featureCosts?.LIKE_MESSAGE}개로 관심을 표현할까요?`
+              : "관심을 표현할까요?"}
           </Text>
         </View>
       ),
@@ -69,11 +72,19 @@ export const LikeButton = ({
       variant="primary"
       className={cn("flex-1 items-center", clasName)}
       prefix={
-        <ImageResource resource={ImageResources.GEM} width={23} height={23} />
+        profileDetails?.gender === "MALE" ? (
+          <ImageResource resource={ImageResources.GEM} width={23} height={23} />
+        ) : (
+          <></>
+        )
       }
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <RNText style={styles.subText}>x{featureCosts?.LIKE_MESSAGE}</RNText>
+        {profileDetails?.gender === "MALE" ? (
+          <RNText style={styles.subText}>x{featureCosts?.LIKE_MESSAGE}</RNText>
+        ) : (
+          <></>
+        )}
         <RNText className="text-md text-white whitespace-nowrap">좋아요</RNText>
       </View>
     </Button>

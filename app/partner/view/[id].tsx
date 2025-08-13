@@ -2,7 +2,10 @@ import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import Instagram from "@/src/features/instagram";
 import useLiked from "@/src/features/like/hooks/use-liked";
 import { LikeButton } from "@/src/features/like/ui/like-button";
-import { LikedMeOpenButton } from "@/src/features/post-box/ui/post-box-card";
+import {
+  ILikedRejectedButton,
+  LikedMeOpenButton,
+} from "@/src/features/post-box/ui/post-box-card";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ChipSelector } from "@/src/widgets";
 import Slider from "@/src/widgets/slide";
@@ -55,12 +58,13 @@ export default function PartnerDetailScreen() {
   const { data: partner, isLoading, error } = useMatchPartnerQuery(matchId);
   const [isSlideScrolling, setSlideScrolling] = useState(false);
   const [isZoomVisible, setZoomVisible] = useState(false);
-  const { isOpen, isLiked } = useLiked();
+  const { isStatus, isLiked } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const onZoomClose = () => {
     setZoomVisible(false);
   };
 
+  console.log(isStatus(partner?.connectionId ?? ""));
   const loading = (() => {
     if (!partner) return true;
     if (isLoading) return true;
@@ -305,7 +309,7 @@ export default function PartnerDetailScreen() {
           marginRight: 16,
         }}
       >
-        <Show when={isOpen(partner?.connectionId ?? "")}>
+        <Show when={isStatus(partner?.connectionId ?? "") === "OPEN"}>
           <View
             style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
           >
@@ -314,7 +318,7 @@ export default function PartnerDetailScreen() {
         </Show>
         <Show
           when={
-            !isOpen(partner?.connectionId ?? "") &&
+            !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
             !isLiked(partner?.connectionId ?? "") &&
             !!partner?.connectionId
           }
@@ -324,6 +328,24 @@ export default function PartnerDetailScreen() {
           >
             <LikeButton connectionId={partner.connectionId ?? ""} />
           </View>
+        </Show>
+        <Show when={isStatus(partner?.connectionId ?? "") === "PENDING"}>
+          <View className="w-full flex flex-row">
+            <Button
+              variant="outline"
+              disabled={true}
+              size="md"
+              className={cn("flex-1 items-center ", `!h-[${20}px]`)}
+            >
+              <Text>상대방 응답을 기다리는 중..</Text>
+            </Button>
+          </View>
+        </Show>
+        <Show when={isStatus(partner?.connectionId ?? "") === "REJECTED"}>
+          <ILikedRejectedButton
+            height={48}
+            connectionId={partner?.connectionId ?? ""}
+          />
         </Show>
       </View>
     </View>
