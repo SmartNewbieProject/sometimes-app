@@ -22,7 +22,7 @@ export const useAppleLogin = () => {
     onSuccess: (result: AppleLoginResponse) => {
       if (result.isNewUser) {
         router.replace({
-          pathname: "/auth/signup/area",
+          pathname: "/auth/login/apple-info",
           params: {
             certificationInfo: JSON.stringify(result.certificationInfo),
           },
