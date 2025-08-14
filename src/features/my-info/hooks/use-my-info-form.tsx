@@ -8,7 +8,7 @@ type StoreStates = {
   interestIds: string[];
   datingStyleIds: string[];
   militaryStatus?: PreferenceOption;
-  personality?: string;
+  personality?: string[];
   smoking?: PreferenceOption;
   tattoo?: PreferenceOption;
 };
