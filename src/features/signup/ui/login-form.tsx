@@ -60,7 +60,7 @@ export default function LoginForm() {
       {/* 회원가입 및 로그인 버튼 */}
       <View className="flex flex-col ">
         <View
-          className="w-full max-w-xs "
+          className="w-full  "
           style={{ marginBottom: Platform.OS === "web" ? 10 : 20 }}
         >
           <Button
