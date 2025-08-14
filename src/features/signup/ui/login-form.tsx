@@ -68,7 +68,7 @@ export default function LoginForm() {
             width="full"
             onPress={onPressPassLogin}
             disabled={isLoading}
-            className="py-4 rounded-full min-w-[309px] min-h-[60px]"
+            className="py-4 rounded-full min-w-[330px] min-h-[60px]"
           >
             <Text className="text-white text-center text-[18px] h-[40px]">
               {isLoading ? "PASS 인증 중..." : "PASS 로그인"}
@@ -136,7 +136,7 @@ function KakaoLogin() {
       <View className="w-full max-w-xs">
         <Pressable
           onPress={handleKakaoLogin}
-          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[309px] !h-[60px] !bg-[#FEE500]"
+          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-[#FEE500]"
         >
           <View style={{ width: 34, height: 34 }}>
             <KakaoLogo width={34} height={34} />

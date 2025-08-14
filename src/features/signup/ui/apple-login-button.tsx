@@ -226,7 +226,7 @@ const AppleLoginButton: React.FC = () => {
         <Pressable
           onPress={handleWebAppleLogin}
           disabled={isLoading}
-          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[309px] !h-[60px] !bg-[#000] border  !border-[#4D4D4D]"
+          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-[#000] border  !border-[#4D4D4D]"
         >
           <Text style={styles.appleLogo}></Text>
           <View>
@@ -245,7 +245,7 @@ const AppleLoginButton: React.FC = () => {
           <Pressable
             onPress={handleIOSAppleLogin}
             disabled={isLoading}
-            className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[309px] !containerh-[60px] !bg-[#000] border  !border-[#4D4D4D]"
+            className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !containerh-[60px] !bg-[#000] border  !border-[#4D4D4D]"
           >
             <Text style={styles.appleLogo}></Text>
             <View>
