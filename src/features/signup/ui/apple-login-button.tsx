@@ -128,7 +128,7 @@ const AppleLoginButton: React.FC = () => {
     if (typeof window !== "undefined" && window.AppleID) {
       window.AppleID.auth.init({
         clientId: "com.some-in-univ.web", // 웹용 Service ID
-        scope: "name email",
+        scope: "name",
         redirectURI: "https://some-in-univ.com/test",
         state: "web-login",
         usePopup: true,
@@ -190,7 +190,6 @@ const AppleLoginButton: React.FC = () => {
         await AppleAuthentication.signInAsync({
           requestedScopes: [
             AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-            AppleAuthentication.AppleAuthenticationScope.EMAIL,
           ],
         });
 
