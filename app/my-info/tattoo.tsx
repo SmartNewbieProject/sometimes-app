@@ -87,7 +87,7 @@ export default function TattooSelectionScreen() {
         await savePreferences({
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           tattoo: preferences.options[currentIndex].id,
           datingStyleIds: form.datingStyleIds,
           interestIds: form.interestIds,

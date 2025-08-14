@@ -2,13 +2,13 @@ import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { axiosClient, tryCatch } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
+import { useCashableModal } from "@shared/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { HttpStatusCode } from "axios";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../hooks";
-import {useCashableModal} from "@shared/hooks";
 
 const useRematchingMutation = () =>
   useMutation({
@@ -42,7 +42,8 @@ function useRematch() {
         finishRematching();
         if (err.status === HttpStatusCode.Forbidden) {
           showCashable({
-            textContent: '지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!',
+            textContent:
+              "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
           });
           return;
         }

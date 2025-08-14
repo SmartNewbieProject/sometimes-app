@@ -64,7 +64,7 @@ export default function MilitarySelectionScreen() {
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
           tattoo: form.tattoo?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           militaryStatus: preferences?.options[currentIndex]?.id ?? "",
 
           mbti: form.mbti as string,

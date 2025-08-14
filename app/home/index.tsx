@@ -40,9 +40,7 @@ const {
   ReviewSlide,
   TipAnnouncement,
 } = ui;
-const {
-  usePreferenceSelfQuery,
-} = queries;
+const { usePreferenceSelfQuery } = queries;
 const { useRedirectPreferences, useTemporalUniversity } = hooks;
 
 const HomeScreen = () => {

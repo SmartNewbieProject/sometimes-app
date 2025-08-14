@@ -32,7 +32,7 @@ export default function ApprovalPendingScreen() {
   }, []);
 
   return (
-    <DefaultLayout className="flex-1">
+    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
       <PalePurpleGradient />
 
       <ScrollView

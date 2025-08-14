@@ -1,4 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
+import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
 import { environmentStrategy } from "@/src/shared/libs";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
@@ -22,9 +23,12 @@ export default function SignupDoneScreen() {
   };
 
   return (
-    <View className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
       <PalePurpleGradient />
-      <IconWrapper width={128} className="text-primaryPurple md:pb-[58px] py-8">
+      <IconWrapper
+        width={128}
+        className="text-primaryPurple md:pb-[58px] py-12"
+      >
         <SmallTitle />
       </IconWrapper>
 
@@ -55,11 +59,11 @@ export default function SignupDoneScreen() {
         </View>
       </View>
 
-      <View className="w-full px-5 mb-[18px] md:mb-[58px]">
+      <View className="w-full px-5 mb-[24px] md:mb-[58px]">
         <Button variant="primary" size="md" onPress={onNext} className="w-full">
           이상형 찾으러 가기 →
         </Button>
       </View>
-    </View>
+    </DefaultLayout>
   );
 }

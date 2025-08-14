@@ -15,6 +15,8 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useMatchLoading } from "../hooks";
+import { useLatestMatching } from "../queries";
 
 const processStep = [
   "프로필 분석 완료",
@@ -24,7 +26,10 @@ const processStep = [
 ];
 export const RematchLoading = () => {
   const [stepCheck, setStepCheck] = useState(processStep.map((_) => false));
+  const { loading: realRematchingLoading } = useMatchLoading();
   const [displayPercent, setDisplayPercent] = useState(0);
+  console.log("check", realRematchingLoading, Math.floor(displayPercent));
+
   const animations = useRef(
     processStep.map(() => ({
       opacity: new EssetionAnimated.Value(0),
@@ -191,7 +196,10 @@ export const RematchLoading = () => {
         />
       </View>
       <Text size="sm" textColor={"gray"}>
-        {Math.floor(displayPercent)}% 완료
+        {Math.floor(displayPercent) > 99 && realRematchingLoading
+          ? 99
+          : Math.floor(displayPercent)}
+        % 완료
       </Text>
     </View>
   );

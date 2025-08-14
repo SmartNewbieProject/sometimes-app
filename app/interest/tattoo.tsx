@@ -95,7 +95,7 @@ export default function TattooSelectionScreen() {
           age: form.age as string,
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           tattoo: preferences.options[currentIndex].id,
           militaryPreference: form.militaryPreference?.id ?? "",
           goodMbti: form.goodMbti as string,

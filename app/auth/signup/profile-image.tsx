@@ -7,7 +7,6 @@ import { tryCatch } from "@/src/shared/libs";
 import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
 import { Button, ImageSelector } from "@/src/shared/ui";
-import { PalePurpleGradient } from "@/src/shared/ui/gradient";
 import { Text } from "@/src/shared/ui/text";
 import { track } from "@amplitude/analytics-react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
