@@ -88,6 +88,7 @@ export const InfiniteArticleList = forwardRef<
   );
   const like = (item: ArticleType) => {
     if (!my?.id) {
+      Linking.openURL("https://info.some-in-univ.com");
       return;
     }
 

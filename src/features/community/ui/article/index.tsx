@@ -15,7 +15,7 @@ import {
   Text,
 } from "@/src/shared/ui";
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 
 import type { Article as ArticleType } from "../../types";
@@ -48,6 +48,12 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
     if (!my) return false;
     return my.id === author.id;
   })();
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  const handleLike = useCallback((e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    onLike();
+  }, []);
 
   const dropdownMenus: DropdownItem[] = (() => {
     const menus: DropdownItem[] = [];
@@ -160,10 +166,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
             count={data.likeCount}
             isLiked={data.isLiked}
             iconSize={24}
-            onPress={(e) => {
-              e.stopPropagation();
-              onLike();
-            }}
+            onPress={handleLike}
           />
           <Interaction.Comment
             count={data.commentCount}
