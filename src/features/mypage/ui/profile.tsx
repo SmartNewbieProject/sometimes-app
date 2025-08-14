@@ -8,19 +8,18 @@ import {
 import { UniversityName, getUnivLogo } from "@/src/shared/libs/univ";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
+import { useCurrentGem } from "@features/payment/hooks";
+import { ImageResources } from "@shared/libs";
+import { ImageResource } from "@ui/image-resource";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRematchingTickets } from "../queries";
-import {ImageResource} from "@ui/image-resource";
-import {ImageResources} from "@shared/libs";
-import {useCurrentGem} from "@features/payment/hooks";
 
 export const Profile = () => {
   const { profileDetails } = useAuth();
-  console.log("prefileDetails", profileDetails);
   const { data: reMatchingTicketCount } = useRematchingTickets();
   const [isUniversityVerified, setIsUniversityVerified] =
     useState<boolean>(false);
@@ -194,11 +193,7 @@ export const Profile = () => {
           className="pt-[5px] pl-[32px] flex-row"
           style={{ alignItems: "center" }}
         >
-          <ImageResource
-            resource={ImageResources.GEM}
-            width={28}
-            height={28}
-          />
+          <ImageResource resource={ImageResources.GEM} width={28} height={28} />
           <View className="pl-[10px] flex-row">
             <Text className="text-[13px] text-[#FFFFFF]">구슬이 </Text>
             <Text className="text-[13px] text-[#9747FF]">

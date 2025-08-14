@@ -1,14 +1,16 @@
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { BackHandler, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ApprovalPendingScreen() {
   const { logoutOnly } = useAuth();
-
+  const insets = useSafeAreaInsets();
   const handleGoToLogin = async () => {
     await logoutOnly();
     router.push("/auth/login");
@@ -30,7 +32,7 @@ export default function ApprovalPendingScreen() {
   }, []);
 
   return (
-    <View className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout className="flex-1">
       <PalePurpleGradient />
 
       <ScrollView
@@ -128,6 +130,6 @@ export default function ApprovalPendingScreen() {
           로그인 화면으로 돌아가기
         </Button>
       </View>
-    </View>
+    </DefaultLayout>
   );
 }

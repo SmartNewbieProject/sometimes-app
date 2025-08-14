@@ -6,7 +6,7 @@ import { Button, Show, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import * as Localization from "expo-localization";
-import { usePathname, useRouter } from "expo-router";
+import { Link, usePathname, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, TouchableOpacity, View } from "react-native";
