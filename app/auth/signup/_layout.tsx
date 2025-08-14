@@ -71,11 +71,11 @@ export default function SignupLayout() {
           }}
         >
           <Stack.Screen name="terms" options={{ headerShown: false }} />
+          <Stack.Screen name="area" options={{ headerShown: false }} />
           <Stack.Screen
             name="university"
             options={{
               headerShown: false,
-              gestureEnabled: false,
             }}
           />
           <Stack.Screen
@@ -85,7 +85,6 @@ export default function SignupLayout() {
           <Stack.Screen name="instagram" options={{ headerShown: false }} />
           <Stack.Screen name="profile-image" options={{ headerShown: false }} />
           <Stack.Screen name="done" options={{ headerShown: false }} />
-          <Stack.Screen name="area" options={{ headerShown: false }} />
         </Stack>
       </Suspense>
     </DefaultLayout>

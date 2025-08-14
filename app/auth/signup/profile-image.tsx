@@ -231,7 +231,7 @@ export default function ProfilePage() {
           variant="secondary"
           onPress={() => {
             trackSignupEvent("back_button_click", "to_university_details");
-            router.push("/auth/signup/university-details");
+            router.push("/auth/signup/instagram");
           }}
           className="flex-[0.3]"
         >
