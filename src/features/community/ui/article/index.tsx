@@ -16,7 +16,7 @@ import {
 } from "@/src/shared/ui";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { TouchableOpacity, View, ScrollView, Image } from "react-native";
+import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 
 import type { Article as ArticleType } from "../../types";
 import { Comment } from "../comment";
@@ -42,11 +42,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
     toggle: toggleShowComment,
     setFalse,
   } = useBoolean();
-  const {
-    value: isDropdownOpen,
-    setFalse: closeDropdown,
-  } = useBoolean();
-
+  const { value: isDropdownOpen, setFalse: closeDropdown } = useBoolean();
 
   const isOwner = (() => {
     if (!my) return false;
@@ -127,7 +123,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
           size="sm"
           className="mb-4 mx-[8px] leading-5"
           textColor="black"
-          style={{ flexWrap: 'wrap', flexShrink: 1 }}
+          style={{ flexWrap: "wrap", flexShrink: 1 }}
         >
           {data.content}
         </LinkifiedText>
@@ -140,16 +136,18 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
                   .sort((a, b) => a.displayOrder - b.displayOrder)
                   .slice(0, 3)
                   .map((image) => (
-                  <Image
-                    key={`preview-image-${image.id}`}
-                    source={{ uri: image.imageUrl }}
-                    className="w-20 h-20 rounded-lg"
-                    resizeMode="cover"
-                  />
-                ))}
+                    <Image
+                      key={`preview-image-${image.id}`}
+                      source={{ uri: image.imageUrl }}
+                      className="w-20 h-20 rounded-lg"
+                      resizeMode="cover"
+                    />
+                  ))}
                 {data.images.length > 3 && (
                   <View className="w-20 h-20 rounded-lg bg-gray-200 items-center justify-center">
-                    <Text className="text-gray-600 text-xs">+{data.images.length - 3}</Text>
+                    <Text className="text-gray-600 text-xs">
+                      +{data.images.length - 3}
+                    </Text>
                   </View>
                 )}
               </View>
@@ -162,7 +160,10 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
             count={data.likeCount}
             isLiked={data.isLiked}
             iconSize={24}
-            onPress={onLike}
+            onPress={(e) => {
+              e.stopPropagation();
+              onLike();
+            }}
           />
           <Interaction.Comment
             count={data.commentCount}

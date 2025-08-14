@@ -47,6 +47,7 @@ export const InfiniteArticleList = forwardRef<
   const { showModal, showErrorModal } = useModal();
   const { currentCategory: categoryCode } = useCategory();
   const { my } = useAuth();
+
   const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<
     FlatList<ArticleType>
   >;
@@ -85,10 +86,8 @@ export const InfiniteArticleList = forwardRef<
     },
     [isWeb, saveScrollPosition]
   );
-
   const like = (item: ArticleType) => {
     if (!my?.id) {
-      Linking.openURL("https://info.some-in-univ.com");
       return;
     }
 
