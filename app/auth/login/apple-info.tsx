@@ -20,23 +20,6 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-const HeartIcon = ({ width = 20, height = 20, color = "#7A4AE2" }) => (
-  <View style={{ width, height }}>
-    <svg
-      width={width}
-      height={height}
-      viewBox="0 0 24 24"
-      fill="#7A4AE2"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-    </svg>
-  </View>
-);
-
 const { useSignupProgress } = Signup;
 
 export default function UserInfoPage() {
@@ -73,155 +56,158 @@ export default function UserInfoPage() {
 
   return (
     <DefaultLayout>
-      <SafeAreaView>
-        <View style={styles.topBar}>
-          <Text style={styles.topBarTitle}>Apple 로그인</Text>
+      <View style={styles.topBar}>
+        <Text style={styles.topBarTitle}>Apple 로그인</Text>
+      </View>
+      <ScrollView
+        nestedScrollEnabled={true}
+        keyboardShouldPersistTaps="always"
+        keyboardDismissMode="on-drag"
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 20,
+          paddingBottom: 140,
+        }}
+      >
+        <View className="px-[5px]">
+          <Image
+            source={require("@assets/images/details.png")}
+            style={{ width: 81, height: 81, marginTop: 30 }}
+            className="mb-4"
+          />
         </View>
-        <ScrollView
-          nestedScrollEnabled={true}
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="on-drag"
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingHorizontal: 20,
-            paddingBottom: 140,
-          }}
-        >
-          <View className="px-[5px]">
-            <Image
-              source={require("@assets/images/details.png")}
-              style={{ width: 81, height: 81, marginTop: 30 }}
-              className="mb-4"
-            />
-          </View>
 
-          <View style={styles.contentWrapper}>
-            <Text style={styles.title}>성별을 선택해주세요</Text>
-            <View style={styles.genderButtonContainer}>
-              <Pressable
-                style={[
-                  styles.genderButton,
-                  gender === "MALE" && styles.genderButtonSelected,
-                ]}
-                onPress={() => setGender("MALE")}
-              >
-                <Text
-                  style={
-                    gender === "MALE"
-                      ? styles.genderButtonTextSelected
-                      : styles.genderButtonText
-                  }
-                >
-                  남성
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.genderButton,
-                  gender === "FEMALE" && styles.genderButtonSelected,
-                ]}
-                onPress={() => setGender("FEMALE")}
-              >
-                <Text
-                  style={
-                    gender === "FEMALE"
-                      ? styles.genderButtonTextSelected
-                      : styles.genderButtonText
-                  }
-                >
-                  여성
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-
-          <View style={styles.contentWrapper}>
-            <Text style={styles.title}>생년월일을 입력해주세요</Text>
-            <View style={styles.dateInputContainer}>
-              <TextInput
-                style={styles.dateInput}
-                placeholder="YYYY"
-                keyboardType="number-pad"
-                maxLength={4}
-                value={year}
-                onChangeText={(text) => {
-                  setYear(text);
-                  if (text.length === 4 && monthRef.current) {
-                    monthRef.current.focus();
-                  }
-                }}
-              />
-              <TextInput
-                ref={monthRef}
-                style={styles.dateInput}
-                placeholder="MM"
-                keyboardType="number-pad"
-                maxLength={2}
-                value={month}
-                onChangeText={(text) => {
-                  setMonth(text);
-                  if (text.length === 2 && dayRef.current) {
-                    dayRef.current.focus();
-                  }
-                }}
-              />
-              <TextInput
-                ref={dayRef}
-                style={styles.dateInput}
-                placeholder="DD"
-                keyboardType="number-pad"
-                maxLength={2}
-                value={day}
-                onChangeText={(text) => {
-                  setDay(text);
-                  if (text.length === 2 && phoneRef.current) {
-                    phoneRef.current.focus();
-                  }
-                }}
-              />
-            </View>
-          </View>
-
-          <View style={styles.contentWrapper}>
-            <Text style={styles.title}>전화번호를 입력해주세요</Text>
-            <TextInput
-              ref={phoneRef}
-              style={styles.phoneInput}
-              placeholder="휴대폰 번호 입력('-' 제외 11자리 입력)"
-              keyboardType="number-pad"
-              maxLength={11}
-              value={phone}
-              onChangeText={setPhone}
-            />
-          </View>
-        </ScrollView>
-
-        <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
-          <View style={styles.messageContainer}>
-            <HeartIcon width={16} height={16} color="#7A4AE2" />
-            <Text style={styles.msg}>회원가입을 위해 정보를 입력해주세요!</Text>
-          </View>
-          <Pressable
-            style={[
-              styles.startButton,
-              isFormComplete && styles.startButtonActive,
-            ]}
-            onPress={onNext}
-            disabled={!isFormComplete}
-          >
-            <Text
+        <View style={styles.contentWrapper}>
+          <Text style={styles.title}>성별을 선택해주세요</Text>
+          <View style={styles.genderButtonContainer}>
+            <Pressable
               style={[
-                styles.startButtonText,
-                isFormComplete
-                  ? styles.startButtonTextActive
-                  : styles.startButtonTextDisabled,
+                styles.genderButton,
+                gender === "MALE" && styles.genderButtonSelected,
               ]}
+              onPress={() => setGender("MALE")}
             >
-              {isFormComplete ? "썸타임 시작하기" : "내가 누구인지 알려주세요!"}
-            </Text>
-          </Pressable>
+              <Text
+                style={
+                  gender === "MALE"
+                    ? styles.genderButtonTextSelected
+                    : styles.genderButtonText
+                }
+              >
+                남성
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[
+                styles.genderButton,
+                gender === "FEMALE" && styles.genderButtonSelected,
+              ]}
+              onPress={() => setGender("FEMALE")}
+            >
+              <Text
+                style={
+                  gender === "FEMALE"
+                    ? styles.genderButtonTextSelected
+                    : styles.genderButtonText
+                }
+              >
+                여성
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </SafeAreaView>
+
+        <View style={styles.contentWrapper}>
+          <Text style={styles.title}>생년월일을 입력해주세요</Text>
+          <View style={styles.dateInputContainer}>
+            <TextInput
+              style={styles.dateInput}
+              placeholder="YYYY"
+              keyboardType="number-pad"
+              maxLength={4}
+              value={year}
+              onChangeText={(text) => {
+                setYear(text);
+                if (text.length === 4 && monthRef.current) {
+                  monthRef.current.focus();
+                }
+              }}
+            />
+            <TextInput
+              ref={monthRef}
+              style={styles.dateInput}
+              placeholder="MM"
+              keyboardType="number-pad"
+              maxLength={2}
+              value={month}
+              onChangeText={(text) => {
+                setMonth(text);
+                if (text.length === 2 && dayRef.current) {
+                  dayRef.current.focus();
+                }
+              }}
+            />
+            <TextInput
+              ref={dayRef}
+              style={styles.dateInput}
+              placeholder="DD"
+              keyboardType="number-pad"
+              maxLength={2}
+              value={day}
+              onChangeText={(text) => {
+                setDay(text);
+                if (text.length === 2 && phoneRef.current) {
+                  phoneRef.current.focus();
+                }
+              }}
+            />
+          </View>
+        </View>
+
+        <View style={styles.contentWrapper}>
+          <Text style={styles.title}>전화번호를 입력해주세요</Text>
+          <TextInput
+            ref={phoneRef}
+            style={styles.phoneInput}
+            placeholder="휴대폰 번호 입력('-' 제외 11자리 입력)"
+            keyboardType="number-pad"
+            maxLength={11}
+            value={phone}
+            onChangeText={setPhone}
+          />
+        </View>
+      </ScrollView>
+
+      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+        <View style={styles.messageContainer}>
+          <Image
+            source={require("@assets/images/favorite.png")}
+            style={styles.heartIcon}
+          />
+          <Text style={styles.msg}>회원가입을 위해 정보를 입력해주세요!</Text>
+        </View>
+        <Pressable
+          style={[
+            styles.startButton,
+            isFormComplete
+              ? styles.startButtonActive
+              : styles.startButtonDisabled,
+          ]}
+          onPress={onNext}
+          disabled={!isFormComplete}
+        >
+          <Text
+            style={[
+              styles.startButtonText,
+              isFormComplete
+                ? styles.startButtonTextActive
+                : styles.startButtonTextDisabled,
+            ]}
+          >
+            {isFormComplete ? "썸타임 시작하기" : "내가 누구인지 알려주세요!"}
+          </Text>
+        </Pressable>
+      </View>
     </DefaultLayout>
   );
 }
@@ -314,6 +300,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
+  },
+  heartIcon: {
+    width: 16,
+    height: 16,
+    marginRight: 2,
   },
   msg: {
     fontSize: 13,
