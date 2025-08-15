@@ -7,6 +7,7 @@ import { tryCatch } from "@/src/shared/libs";
 import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
 import { Button, ImageSelector } from "@/src/shared/ui";
+import Guide from "@/src/shared/ui/guide/guide";
 import { Text } from "@/src/shared/ui/text";
 import { track } from "@amplitude/analytics-react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,6 +44,7 @@ export default function ProfilePage() {
   const [images, setImages] = useState<(string | null)[]>(
     userForm.profileImages ?? [null, null, null]
   );
+  const [isVisible, setVisible] = useState(false);
   const { showErrorModal } = useModal();
   const [signupLoading, setSignupLoading] = useState(false);
   const { trackSignupEvent } = useSignupAnalytics("profile_image");
@@ -150,6 +152,30 @@ export default function ProfilePage() {
 
   return (
     <DefaultLayout>
+      {/* <Guide height={176} isVisible handleClose={() => setVisible(false)}>
+        <>
+          <Text
+            className="mb-2"
+            weight={"semibold"}
+            size={"18"}
+            textColor={"black"}
+          >
+            나를 보여주는 사진을 부탁드려요
+          </Text>
+
+          <Text textColor={"black"} weight={"semibold"}>
+            이목구비가 잘 보이는 사진 <Text textColor={"purple"}>필수</Text>에요
+          </Text>
+
+          <Text textColor={"black"} className="mt-2">
+            눈, 코, 입이 잘 보이는 사진이라면 {"\n"}어떤 각도든 좋아요
+          </Text>
+          <Text textColor={"black"} className="mt-2">
+            기준에 맞지 않는 사진은 아쉽지만{"\n"}
+            <Text textColor={"purple"}>승인되지 않을 수 있어요</Text>
+          </Text>
+        </>
+      </Guide> */}
       <View className="px-5">
         <Image
           source={require("@assets/images/profile-image.png")}

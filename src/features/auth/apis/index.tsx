@@ -1,6 +1,6 @@
 import type { PassLoginResponse } from "@/src/auth/dto/pass-login.dto";
 import { axiosClient } from "@shared/libs";
-import type { MyDetails } from "@types/user";
+import type { MyDetails } from "../../../types/user";
 
 export { appleReviewLogin } from "./apple-review-login";
 
