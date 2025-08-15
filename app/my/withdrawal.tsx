@@ -82,7 +82,7 @@ export default function WithdrawalScreen() {
   });
   const [otherReason, setOtherReason] = useState('');
   const { showErrorModal, showModal } = useModal();
-  const { logoutOnly } = useAuth();
+  const { clearTokensOnly } = useAuth();
   const isOther = watch('reason') === 'OTHER';
 
   const onSubmitWithdrawal = handleSubmit(async (data) => {
@@ -92,7 +92,7 @@ export default function WithdrawalScreen() {
 
     await tryCatch(async () => {
       await withdraw(reason);
-      await logoutOnly();
+      await clearTokensOnly();
   
       showModal({
         title: '다음에 다시봐요',
