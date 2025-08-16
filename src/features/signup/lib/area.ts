@@ -167,7 +167,7 @@ export function getRegionList(area: string) {
 			return [getRegionCodeByName('부산광역시'), getRegionCodeByName('김해시')];
 		case '대구':
 			return [getRegionCodeByName('대구광역시')];
-		case '충청/세종':
+		case '충북/세종':
 			return [getRegionCodeByName('청주시'), getRegionCodeByName('세종특별자치시')];
 		default:
 			return [];
