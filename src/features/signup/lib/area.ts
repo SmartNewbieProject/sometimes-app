@@ -5,14 +5,14 @@ export const areaMap = [
 		id: 1,
 		area: '대전',
 		location: {
-			top: 178,
-			left: 100,
+			top: 184,
+			left: 88,
 		},
 		modalLocation: {
-			top: 178,
-			left: 124,
+			top: 184,
+			left: 112,
 		},
-		description: '20개 대학 오픈 완료!',
+		description: '22개 대학 오픈 완료!',
 		open: 'open',
 	},
 	{
@@ -46,14 +46,14 @@ export const areaMap = [
 	},
 	{
 		id: 4,
-		area: '충청/세종',
+		area: '충북/세종',
 		location: {
 			top: 153,
-			left: 65,
+			left: 100,
 		},
 		modalLocation: {
 			top: 153,
-			left: 89,
+			left: 124,
 		},
 		open: 'open',
 		description: '11개 대학 오픈 완료!',

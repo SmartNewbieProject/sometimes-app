@@ -41,6 +41,8 @@ export function getUniversityType(name: string): UniversityType {
 		'충북대학교',
 		'청주교육대학교',
 		'한국교원대학교',
+		'공주교육대학교',
+		'공주대학교',
 	];
 
 	const provincialUniversities = ['충북도립대학교'];
