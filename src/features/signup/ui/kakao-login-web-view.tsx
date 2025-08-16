@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { isAdult } from "@/src/features/pass/utils";
 import { track } from "@amplitude/analytics-react-native";
 import { useRouter } from "expo-router";
 // KakaoLoginWebView.tsx
@@ -85,6 +86,18 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
       });
 
       if (result.isNewUser) {
+        const birthday = result.certificationInfo?.birthday;
+
+        if (birthday && !isAdult(birthday)) {
+          track('Signup_AgeCheck_Failed', {
+            birthday,
+            platform: 'kakao',
+            env: process.env.EXPO_PUBLIC_TRACKING_MODE
+          });
+          router.push("/auth/age-restriction");
+          return;
+        }
+
         router.push({
           pathname: "/auth/signup/area",
           params: {
