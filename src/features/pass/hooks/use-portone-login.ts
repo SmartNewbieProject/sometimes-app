@@ -71,7 +71,7 @@ export const usePortOneLogin = ({
 				if (birthday && !isAdult(birthday)) {
 					track('Signup_AgeCheck_Failed', { birthday, env: process.env.EXPO_PUBLIC_TRACKING_MODE });
 					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-					router.push({ pathname: '/auth/age-restriction' as any });
+					router.push('/auth/age-restriction' as any);
 					return;
 				}
 

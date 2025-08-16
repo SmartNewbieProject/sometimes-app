@@ -8,12 +8,13 @@ import { IconWrapper } from '@/src/shared/ui/icons';
 import { router } from 'expo-router';
 import SmallTitle from '@/assets/icons/small-title.svg';
 
+
 interface AgeRestrictionScreenProps {
   onGoBack?: () => void;
 }
 
 /**
- * 만 18세 미만 사용자에게 표시되는 나이 제한 안내 화면
+ * 가입 불가능한 연령 사용자에게 표시되는 나이 제한 안내 화면 (만 18세 미만 또는 28세 이상)
  */
 export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
   onGoBack
@@ -24,6 +25,12 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
     } else {
       router.replace('/auth/login');
     }
+  };
+
+  const ageMessage = {
+    title: '가입 가능 연령이 아니에요',
+    subtitle: '안전하고 건전한 만남을 위해 만 18세 이상 27세 이하만 가입 가능해요.',
+    bottomText: '가입 가능 연령이 되면 다시 찾아주세요!'
   };
 
   return (
@@ -55,10 +62,10 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
         {/* 메인 텍스트 */}
         <View className="mb-8">
           <Text weight="semibold" size="20" textColor="black" className="text-center mb-2">
-            만 18세 미만은 가입이 불가능해요
+            {ageMessage.title}
           </Text>
           <Text size="md" textColor="pale-purple" className="text-center leading-6 px-4">
-            안전하고 건전한 만남을 위해 만 18세 이상만 가입 가능해요.
+            {ageMessage.subtitle}
           </Text>
         </View>
 
@@ -77,7 +84,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
             <View className="flex-row items-start">
               <Text size="sm" textColor="pale-purple" className="mr-2 mt-0.5">•</Text>
               <Text size="sm" textColor="black" className="flex-1">
-                만 18세 이상
+                만 18세 이상 27세 이하
               </Text>
             </View>
             <View className="flex-row items-start">
@@ -98,7 +105,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
         {/* 하단 텍스트 */}
         <View className="mb-8">
           <Text weight="semibold" size="18" textColor="black" className="text-center mb-2">
-            만 18세가 되면 다시 찾아주세요!
+            {ageMessage.bottomText}
           </Text>
           <Text size="sm" textColor="pale-purple" className="text-center px-4">
             생년월일 기준으로 가입 가능 여부를 확인해요
