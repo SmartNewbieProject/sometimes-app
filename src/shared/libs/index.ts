@@ -13,3 +13,4 @@ export * from './environment';
 export * from './parser';
 export * from './notifications';
 export * from './time';
+export { default as logger } from './logger';

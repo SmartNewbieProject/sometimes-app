@@ -68,22 +68,6 @@ const HomeScreen = () => {
     router.navigate("/purchase/gem-store");
   };
 
-  const onClickAlert = (notification: Notification) => {
-    showModal({
-      title: notification.title,
-      children: (
-        <View>
-          <Text textColor="black">{notification.content}</Text>
-        </View>
-      ),
-      primaryButton: {
-        text: notification.okMessage,
-        onClick: () => {
-          router.navigate(notification.redirectUrl as "/");
-        },
-      },
-    });
-  };
   useEffect(() => {
     trackEventAction("home_view");
     ensurePushTokenRegistered(showModal);
