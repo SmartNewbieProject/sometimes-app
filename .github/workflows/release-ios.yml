@@ -1,14 +1,14 @@
-name: Build and Submit Android App
-
+name: Build and Submit iOS App
 on:
   push:
     branches:
-      - main
+      - deploy/ios
+      - deploy
 
 jobs:
-  build-and-submit-android:
-    name: Build and Submit Android
-    runs-on: ubuntu-latest
+  build-and-submit-ios:
+    name: Build and Submit iOS
+    runs-on: macos-latest
 
     steps:
       - name: ⬇️ Checkout repository
@@ -29,14 +29,17 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: 🔑 Decode Google Service Account Key
-        run: echo "${{ secrets.ANDROID_ENCODED_KEY }}" | base64 --decode >./google-service-account.json
+      - name: 🔑 Decode App Store Connect API Key
+        run: echo "${{ secrets.IOS_ENCODED_KEY }}" | base64 --decode >./AuthKey.p8
 
-      - name: 🚀 Build Android App
-        run: eas build --platform android --profile production --non-interactive
+      - name: 🚀 Build iOS App
+        run: eas build --platform ios --profile production --non-interactive
 
-      - name: 📤 Submit to Google Play Store
-        run: eas submit --platform android --profile production --latest --non-interactive
+      - name: 📤 Submit to App Store
+        env:
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_API_ISSUER_ID: ${{ secrets.ASC_API_ISSUER_ID }}
+        run: eas submit --platform ios --profile production --latest --non-interactive
 
       - name: 📢 Notify Slack on Success
         if: success()
@@ -46,7 +49,7 @@ jobs:
           -H "Content-type: application/json" \
           --data '{
             "channel": "#썸타임-github-알림",
-            "text": ":white_check_mark: Android 앱 빌드 및 배포가 완료되었습니다!",
+            "text": ":white_check_mark: iOS 앱 빌드 및 배포가 완료되었습니다!",
             "username": "GitHub Bot",
             "attachments": [
               {
@@ -54,7 +57,7 @@ jobs:
                 "fields": [
                   {
                     "title": "플랫폼",
-                    "value": "Android",
+                    "value": "iOS",
                     "short": true
                   },
                   {
@@ -86,7 +89,7 @@ jobs:
           -H "Content-type: application/json" \
           --data '{
             "channel": "#썸타임-github-알림",
-            "text": ":x: Android 앱 빌드 또는 배포에 실패했습니다.",
+            "text": ":x: iOS 앱 빌드 또는 배포에 실패했습니다.",
             "username": "GitHub Bot",
             "attachments": [
               {
@@ -94,7 +97,7 @@ jobs:
                 "fields": [
                   {
                     "title": "플랫폼",
-                    "value": "Android",
+                    "value": "iOS",
                     "short": true
                   },
                   {
