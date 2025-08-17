@@ -81,9 +81,9 @@ export default function LoginForm() {
           </View>
         </Show>
 
-        <Show when={Platform.OS !== "android" && pathname === "/test"}>
+        {/* <Show when={Platform.OS !== "android" && pathname === "/test"}>
           <AppleLoginButton />
-        </Show>
+        </Show> */}
       </View>
       {/* 에러 메시지 */}
 

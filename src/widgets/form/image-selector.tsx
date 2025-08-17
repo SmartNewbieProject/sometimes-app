@@ -4,6 +4,7 @@ import {
   type contentSelector,
 } from "@/src/shared/ui/content-selector";
 import { renderImage, renderPlaceholder } from "@/src/shared/ui/image-selector";
+import { convertToJpeg } from "@/src/shared/utils/image";
 import type { VariantProps } from "class-variance-authority";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
@@ -59,7 +60,9 @@ export function FormImageSelector({
     });
     console.log("image result", result);
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      const pickedUri = result.assets[0].uri;
+      const jpegUri = await convertToJpeg(pickedUri);
+      onChange(jpegUri);
     }
     setImageModal(false);
     return null;
@@ -89,7 +92,9 @@ export function FormImageSelector({
     }
 
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      const pickedUri = result.assets[0].uri;
+      const jpegUri = await convertToJpeg(pickedUri);
+      onChange(jpegUri);
     }
     setImageModal(false);
     return null;

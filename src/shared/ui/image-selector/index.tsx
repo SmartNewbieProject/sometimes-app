@@ -6,6 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import React, { useState } from "react";
 import { Alert, Linking, Pressable, View } from "react-native";
+import { convertToJpeg } from "../../utils/image";
 import { ContentSelector, type contentSelector } from "../content-selector";
 import { Text } from "../text";
 
@@ -79,7 +80,9 @@ export function ImageSelector({
     });
     console.log("image result", result);
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      const pickedUri = result.assets[0].uri;
+      const jpegUri = await convertToJpeg(pickedUri);
+      onChange(jpegUri);
     }
     setImageModal(false);
     return null;
@@ -109,7 +112,9 @@ export function ImageSelector({
     }
 
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      const pickedUri = result.assets[0].uri;
+      const jpegUri = await convertToJpeg(pickedUri);
+      onChange(jpegUri);
     }
     setImageModal(false);
     return null;
