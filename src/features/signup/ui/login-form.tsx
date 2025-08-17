@@ -13,6 +13,7 @@ import { useAuth } from "../../auth";
 import { PrivacyNotice } from "../../auth/ui/privacy-notice";
 import KakaoLoginWebView from "./kakao-login-web-view";
 import UniversityLogos from "./university-logos";
+import {checkAppEnvironment} from "@shared/libs";
 
 export default function LoginForm() {
   const {
