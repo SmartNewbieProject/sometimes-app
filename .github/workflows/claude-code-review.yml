@@ -42,6 +42,7 @@ jobs:
 
           # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
+            Please answer in Korean.
             Please review this pull request and provide feedback on:
             - Code quality and best practices
             - Potential bugs or issues
