@@ -8,7 +8,7 @@ export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	DGU: '대구',
 	CJU: '청주',
 	SJG: '세종',
-	CA: '천안',
+	CAN: '천안',
 	ICN: '인천',
 };
 
@@ -171,7 +171,7 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 			return 'chungcheong';
 		case 'ICN':
 			return 'incheon';
-		case 'CA':
+		case 'CAN':
 			return 'cheonan';
 		default:
 			return '';

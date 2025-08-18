@@ -54,8 +54,6 @@ function useAreaHook() {
     }, 700);
     setTimeout(() => {
       setShow("천안");
-      setShow(null);
-      setInitDisabled(false);
     }, 1200);
     setTimeout(() => {
       setShow(null);

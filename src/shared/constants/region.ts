@@ -31,7 +31,7 @@ export enum RegionCode {
 	CJU = 'CJU', // 청주시
 	CGJ = 'CGJ', // 충주시
 	JCN = 'JCN', // 제천시
-	CA = 'CA', // 천안시
+	CAN = 'CAN', // 천안시
 	GJJ = 'GJJ', // 공주시
 	ASA = 'ASA', // 아산시
 	SSN = 'SSN', // 서산시
@@ -172,7 +172,7 @@ const regionMap: Record<KoreanRegionName, RegionCode> = {
 	청주시: RegionCode.CJU,
 	충주시: RegionCode.CGJ,
 	제천시: RegionCode.JCN,
-	천안시: RegionCode.CA,
+	천안시: RegionCode.CAN,
 	공주시: RegionCode.GJJ,
 	아산시: RegionCode.ASA,
 	서산시: RegionCode.SSN,

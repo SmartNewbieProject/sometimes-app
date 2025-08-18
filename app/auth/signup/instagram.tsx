@@ -267,10 +267,11 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   infoWrapper: {
-    bottom: 223,
+    bottom: 240,
     position: "absolute",
 
     right: 90,
+
     marginHorizontal: "auto",
     paddingHorizontal: 28,
     paddingVertical: 19,
