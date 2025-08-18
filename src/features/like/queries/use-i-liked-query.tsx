@@ -7,6 +7,8 @@ function useILikedQuery() {
   const { data, ...props } = useQuery({
     queryKey: ["liked", "of-me"],
     queryFn: getILiked,
+    refetchInterval: 1 * 60 * 1000,
+    refetchIntervalInBackground: true,
   });
   return { data, ...props };
 }

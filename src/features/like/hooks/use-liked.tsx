@@ -45,11 +45,21 @@ function useLiked() {
     return iLiked?.find((matching) => matching.connectionId === connectionId);
   };
 
+  const isExpired = (connectionId: string) => {
+    if (isILoading) {
+      return false;
+    }
+
+    return !!iLiked?.find((matching) => matching.connectionId === connectionId)
+      ?.isExpired;
+  };
+
   return {
     isLikedPartner,
     showCollapse,
     isStatus,
     isLiked,
+    isExpired,
   };
 }
 
