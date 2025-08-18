@@ -8,7 +8,7 @@ export type ILiked = {
 	nickname: string;
 	universityName: string;
 	viewedAt: string | null;
-
+	deletedAt: string | null;
 	status: string;
 };
 
@@ -21,7 +21,7 @@ export type LikedMe = {
 	universityName: string;
 	age: number;
 	viewedAt: string | null;
-
+	deletedAt: string | null;
 	connectionId: string;
 	isMutualLike: boolean;
 };

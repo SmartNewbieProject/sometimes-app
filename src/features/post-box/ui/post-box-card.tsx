@@ -1,6 +1,6 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { cn, dayUtils, tryCatch } from "@/src/shared/libs";
-import { Button, ImageResource, TextArea } from "@/src/shared/ui";
+import { Button, Show } from "@/src/shared/ui";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
 import { Text as CustomText } from "@shared/ui/text";
@@ -12,6 +12,7 @@ import { LikeButton } from "../../like/ui/like-button";
 import { useFeatureCost } from "../../payment/hooks";
 import useByeLike from "../queries/useByeLike";
 import useRejectLike from "../queries/useRejectLike";
+
 interface PostBoxCardProps {
   status: string;
   likedAt: string;
@@ -23,6 +24,7 @@ interface PostBoxCardProps {
   viewedAt: string | null;
   connectionId: string;
   isMutualLike: boolean;
+  deletedAt: string | null;
   type: "liked-me" | "i-liked";
 }
 
@@ -37,6 +39,7 @@ function PostBoxCard({
   viewedAt,
   universityName,
   isMutualLike,
+  deletedAt,
   type,
 }: PostBoxCardProps) {
   const statusMessage =
@@ -47,6 +50,7 @@ function PostBoxCard({
       : status === "REJECTED"
       ? "상대방이 거절했어요"
       : "상대방의 응답을 기다리고 있어요";
+  const userWithdrawal = !!deletedAt;
 
   const renderBottomButton =
     status === "OPEN" && instagram ? (
@@ -81,7 +85,14 @@ function PostBoxCard({
         >
           {statusMessage}
         </Text>
-        {renderBottomButton}
+        <Show when={userWithdrawal}>
+          <CustomText textColor="gray" size="13" weight="light">
+            서비스를 탈퇴한 유저에요
+          </CustomText>
+        </Show>
+        <Show when={!userWithdrawal}>
+          {renderBottomButton}
+        </Show>
       </View>
     </View>
   );

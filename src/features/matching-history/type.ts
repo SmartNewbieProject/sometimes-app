@@ -17,6 +17,7 @@ export type MatchingHistoryDetails = {
 	matchId: string;
 	blinded: boolean;
 	imageUrl: string;
+	deletedAt: string | null;
 	age: number;
 	mbti: string;
 	universityName: string;

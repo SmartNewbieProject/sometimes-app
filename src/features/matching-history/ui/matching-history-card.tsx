@@ -44,6 +44,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const onClickToPartner = () => {
     return router.navigate(`/partner/view/${item.matchId}`);
   };
+
   useEffect(() => {
     if (!item.imageUrl) return;
     update(item.imageUrl);
