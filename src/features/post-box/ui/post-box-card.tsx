@@ -9,6 +9,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
+import { useFeatureCost } from "../../payment/hooks";
 import useByeLike from "../queries/useByeLike";
 import useRejectLike from "../queries/useRejectLike";
 interface PostBoxCardProps {
@@ -122,6 +123,7 @@ export function LikedMeOpenButton({
   height?: number;
 }) {
   const { showModal, hideModal } = useModal();
+  const { featureCosts } = useFeatureCost();
   const handleStartInstagram = () => {
     showModal({
       showLogo: true,
@@ -176,7 +178,13 @@ export function LikedMeOpenButton({
   );
 }
 
-function ILikedRejectedButton({ connectionId }: { connectionId: string }) {
+export function ILikedRejectedButton({
+  connectionId,
+  height = 40,
+}: {
+  connectionId: string;
+  height?: number;
+}) {
   const { showModal, hideModal } = useModal();
   const mutation = useByeLike();
   const handleBye = () => {
@@ -222,7 +230,7 @@ function ILikedRejectedButton({ connectionId }: { connectionId: string }) {
         onPress={handleBye}
         variant="outline"
         size="md"
-        className="flex-1 items-center !h-[40px]"
+        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
         prefix={<XIcon width={21} height={21} />}
       >
         인연이 아니었나봐요

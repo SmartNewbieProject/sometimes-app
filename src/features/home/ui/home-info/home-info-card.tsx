@@ -48,7 +48,7 @@ function HomeInfoCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: 200,
+    minHeight: 200,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "rgba(134, 56, 229, 0.5)",

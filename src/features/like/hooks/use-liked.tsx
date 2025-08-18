@@ -27,15 +27,13 @@ function useLiked() {
     return false;
   };
 
-  const isOpen = (connectionId: string) => {
+  const isStatus = (connectionId: string) => {
     if (isILoading) {
       return false;
     }
 
-    return (
-      iLiked?.find((matching) => matching.connectionId === connectionId)
-        ?.status === "OPEN"
-    );
+    return iLiked?.find((matching) => matching.connectionId === connectionId)
+      ?.status;
   };
 
   const isLiked = (connectionId: string) => {
@@ -49,7 +47,7 @@ function useLiked() {
   return {
     isLikedPartner,
     showCollapse,
-    isOpen,
+    isStatus,
     isLiked,
   };
 }
