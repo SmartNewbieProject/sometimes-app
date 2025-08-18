@@ -33,7 +33,7 @@ const PhotoPickerModal = ({
       onRequestClose={onClose}
     >
       <View style={[styles.overlay, { paddingBottom: insets.bottom }]}>
-        <View style={[styles.info, { bottom: insets.bottom + 180 }]}>
+        <View style={[styles.info, { bottom: insets.bottom + 192 }]}>
           <Text style={[styles.infoText]}>
             모든 사진은 안전하게 보관됩니다.
           </Text>
@@ -46,7 +46,7 @@ const PhotoPickerModal = ({
             본인의 사진이 아닌 경우에는 매칭이 제한됩니다.
           </Text>
         </View>
-        <View style={[styles.modalContainer, { bottom: insets.bottom + 60 }]}>
+        <View style={[styles.modalContainer, { bottom: insets.bottom + 74 }]}>
           <TouchableOpacity onPress={onTakePhoto} style={styles.option}>
             <Text style={styles.optionText}>사진 찍기</Text>
           </TouchableOpacity>
@@ -65,7 +65,7 @@ const PhotoPickerModal = ({
         </View>
         <TouchableOpacity
           onPress={onClose}
-          style={[styles.closeButton, { bottom: insets.bottom }]}
+          style={[styles.closeButton, { bottom: insets.bottom + 12 }]}
         >
           <Text style={styles.closeText}>닫기</Text>
         </TouchableOpacity>

@@ -9,7 +9,7 @@ import ProfileImageCard from "./profile-image-card";
 function ProfileImageSection() {
   const { profileDetails } = useAuth();
   const [isProfileImageOpen, setProfileOpen] = useState(false);
-  console.log(profileDetails, "profileDetails");
+
   const sortedPorifleImages = profileDetails?.profileImages.sort((a, b) => {
     if (a.isMain && !b.isMain) return -1;
     if (!a.isMain && b.isMain) return 1;

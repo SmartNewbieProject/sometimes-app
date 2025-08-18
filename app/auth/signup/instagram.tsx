@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    outline: "none",
+
     color: "#000",
     fontFamily: "Pretendard-Thin",
     fontWeight: 300,

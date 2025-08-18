@@ -127,10 +127,11 @@ export const calculateAge = (birthDate: string): number => {
 };
 
 /**
- * 만 18세 이상인지 확인
+ * 가입 가능한 연령인지 확인 (만 18세 이상 27세 이하)
  * @param birthDate YYYY-MM-DD 형식의 생년월일
- * @returns 만 18세 이상이면 true, 미만이면 false
+ * @returns 만 18세 이상 27세 이하이면 true, 그 외는 false
  */
 export const isAdult = (birthDate: string): boolean => {
-  return calculateAge(birthDate) >= 18;
+  const age = calculateAge(birthDate);
+  return age >= 18 && age <= 27;
 };

@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     fontWeight: 300,
     fontFamily: "Pretendard-Thin",
     flex: 1,
-    outline: "none",
+
     borderWidth: 0,
     lineHeight: 18.9,
     marginLeft: 12,

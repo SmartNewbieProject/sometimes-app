@@ -54,6 +54,7 @@ export const checkPhoneNumberBlacklist = (
 
 export const signup = (form: SignupForm): Promise<void> => {
   const formData = new FormData();
+
   formData.append("phoneNumber", form.phone);
   formData.append("name", form.name);
   formData.append("birthday", form.birthday);
@@ -68,6 +69,7 @@ export const signup = (form: SignupForm): Promise<void> => {
   if (form.kakaoId) {
     formData.append("kakaoId", form.kakaoId);
   }
+
   // biome-ignore lint/complexity/noForEach: <explanation>
   form.profileImages.forEach((imageUri) => {
     const file = createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`);

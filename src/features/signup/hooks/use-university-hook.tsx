@@ -46,7 +46,7 @@ function useUniversityHook() {
   useEffect(() => {
     if (!univs) return;
 
-    const filtered = filterUniversities(univs, searchText);
+    const filtered = filterUniversities(univs ?? [], searchText);
     const selected = univs.find((u) => u.name === selectedUniv);
     const merged =
       selected && !filtered.some((u) => u.name === selected.name)

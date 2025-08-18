@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { isAdult } from "@/src/features/pass/utils";
 import { track } from "@amplitude/analytics-react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
@@ -33,6 +34,18 @@ function KakaoLoginRedirect() {
           console.log("로그인 성공:", result);
 
           if (result.isNewUser) {
+            const birthday = result.certificationInfo?.birthday;
+
+            if (birthday && !isAdult(birthday)) {
+              track('Signup_AgeCheck_Failed', {
+                birthday,
+                platform: 'kakao',
+                env: process.env.EXPO_PUBLIC_TRACKING_MODE
+              });
+              router.replace("/auth/age-restriction");
+              return;
+            }
+
             router.replace({
               pathname: "/auth/signup/area",
               params: {

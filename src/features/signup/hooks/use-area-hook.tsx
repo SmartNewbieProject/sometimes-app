@@ -56,7 +56,7 @@ function useAreaHook() {
       setShow("대구");
     }, 1200);
     setTimeout(() => {
-      setShow("충청/세종");
+      setShow("충북/세종");
     }, 1700);
     setTimeout(() => {
       setShow(null);
