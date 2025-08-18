@@ -68,6 +68,8 @@ const HomeScreen = () => {
     router.navigate("/purchase/gem-store");
   };
 
+  console.log("collapse", collapse);
+
   useEffect(() => {
     trackEventAction("home_view");
     ensurePushTokenRegistered(showModal);

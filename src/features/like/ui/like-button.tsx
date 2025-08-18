@@ -38,7 +38,7 @@ export const LikeButton = ({
             마음에 드는 이성에게
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            {profileDetails?.gender === "MAIL"
+            {profileDetails?.gender === "MALE"
               ? `구슬 ${featureCosts?.LIKE_MESSAGE}개로 관심을 표현할까요?`
               : "관심을 표현할까요?"}
           </Text>
