@@ -8,9 +8,11 @@ export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	DGU: '대구',
 	CJU: '청주',
 	SJG: '세종',
+	CA: '천안',
+	ICN: '인천',
 };
 
-export type UIRegion = '부산' | '대전' | '김해' | '대구' | '세종' | '청주';
+export type UIRegion = '부산' | '대전' | '김해' | '대구' | '세종' | '청주' | '천안' | '인천';
 
 export const getRegionsByRegionCode = (code: RegionCode) => {
 	return regionCodeMap[code];
@@ -43,6 +45,11 @@ export function getUniversityType(name: string): UniversityType {
 		'한국교원대학교',
 		'공주교육대학교',
 		'공주대학교',
+		'국립공주대학교',
+		'한국폴리텍 IV 대학 아산캠퍼스',
+		'경인교육대학교',
+		'인천대학교',
+		'한국폴리텍 II 대학 인천캠퍼스',
 	];
 
 	const provincialUniversities = ['충북도립대학교'];
@@ -117,6 +124,27 @@ export function getUniversityType(name: string): UniversityType {
 		'영진전문대학교',
 		'호산대학교',
 		'경운대학교',
+
+		'한국기술교육대학교',
+		'연암대학교',
+		'나사렛대학교',
+		'남서울대학교',
+		'단국대학교',
+		'백석대학교',
+		'상명대학교',
+		'순천향대학교',
+		'유원대학교',
+		'호서대학교',
+
+		'가천대학교',
+		'안양대학교',
+		'인천가톨릭대학교',
+		'인하대학교',
+		'청운대학교',
+		'경인여자대학교',
+		'인하공업전문대학',
+		'재능대학교',
+		'한국공학대학교',
 	];
 
 	const ISTUniversities = ['KAIST', '대구경북과학기술원'];
@@ -140,6 +168,10 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 		case 'CJU':
 		case 'SJG':
 			return 'chungcheong';
+		case 'ICN':
+			return 'incheon';
+		case 'CA':
+			return 'cheonan';
 		default:
 			return '';
 	}
