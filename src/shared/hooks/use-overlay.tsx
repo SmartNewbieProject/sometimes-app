@@ -6,7 +6,15 @@ import {
   useRef,
   useState,
 } from "react";
-import { Animated, Easing, Pressable, StyleSheet } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
 interface OverlayContextType {
   showOverlay: (children: ReactNode) => void;
@@ -29,7 +37,6 @@ export const OverlayProvider = ({ children }: { children: ReactNode }) => {
   const [overlayChildren, setOverlayChildren] = useState<ReactNode>(null);
 
   const animation = useRef(new Animated.Value(0)).current;
-
   const showOverlay = useCallback(
     (content: ReactNode) => {
       setOverlayChildren(content);
@@ -62,11 +69,15 @@ export const OverlayProvider = ({ children }: { children: ReactNode }) => {
     outputRange: ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.6)"],
   });
 
+  const handleCloseOverlay = () => {
+    hideOverlay();
+  };
+
   return (
     <OverlayContext.Provider value={{ showOverlay, hideOverlay, visible }}>
       {children}
       {visible && (
-        <Pressable onPress={hideOverlay} style={styles.container}>
+        <Pressable onPress={handleCloseOverlay} style={styles.container}>
           <Animated.View
             style={[styles.container, { backgroundColor: backgroundOpacity }]}
           >
@@ -81,11 +92,21 @@ export const OverlayProvider = ({ children }: { children: ReactNode }) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
+
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-
     zIndex: 999,
   },
 });
+const { height } = Dimensions.get("window");
+
+export const guideHeight = 860;
+
+export const GuideView = ({ children }: { children: React.ReactNode }) =>
+  height > guideHeight ? (
+    <View style={{ flex: 1 }}>{children}</View>
+  ) : (
+    <ScrollView>{children}</ScrollView>
+  );

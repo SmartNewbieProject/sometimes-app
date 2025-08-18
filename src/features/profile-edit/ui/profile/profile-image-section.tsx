@@ -1,5 +1,6 @@
 import { useAuth } from "@/src/features/auth";
 import ChangeProfileImageModal from "@/src/features/mypage/ui/modal/change-profile-image.modal";
+import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import React, { useState } from "react";
 import { Modal, Text } from "react-native";
 import { StyleSheet, View } from "react-native";
@@ -54,12 +55,16 @@ function ProfileImageSection() {
         </ScrollView>
         <View style={styles.bar} />
       </View>
+
       <Modal
         visible={isProfileImageOpen}
         transparent={true}
         animationType="slide"
+        style={{ position: "relative" }}
       >
-        <ChangeProfileImageModal onCloseModal={handleProfileImageClose} />
+        <OverlayProvider>
+          <ChangeProfileImageModal onCloseModal={handleProfileImageClose} />
+        </OverlayProvider>
       </Modal>
     </>
   );

@@ -55,7 +55,7 @@ export function ImageSelector({
   onChange,
   size,
   className,
-  actionLabel = "선택",
+  actionLabel = undefined,
 }: ImageSelectorProps) {
   const [isImageModal, setImageModal] = useState(false);
   const handlePress = async () => {

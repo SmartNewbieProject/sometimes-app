@@ -3,7 +3,11 @@ import Loading from "@/src/features/loading";
 import Signup from "@/src/features/signup";
 import type { SignupForm } from "@/src/features/signup/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { useOverlay } from "@/src/shared/hooks/use-overlay";
+import {
+  GuideView,
+  guideHeight,
+  useOverlay,
+} from "@/src/shared/hooks/use-overlay";
 import { tryCatch } from "@/src/shared/libs";
 import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
@@ -14,11 +18,12 @@ import { track } from "@amplitude/analytics-react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Animated,
   BackHandler,
+  Dimensions,
   Easing,
   Text as RNText,
   ScrollView,
@@ -34,6 +39,8 @@ const {
   apis,
   useSignupAnalytics,
 } = Signup;
+
+const { height } = Dimensions.get("window");
 
 type FormState = {
   images: (string | null)[];
@@ -68,6 +75,19 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
+    if (visible) {
+      Animated.sequence([
+        Animated.delay(height <= guideHeight ? 500 : 0),
+        Animated.timing(animation, {
+          toValue: 1,
+          duration: height <= guideHeight ? 500 : 0,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [visible]);
+  useEffect(() => {
     showOverlay(
       <View style={styles.infoOverlayWrapper}>
         <RNText style={styles.infoTitle}>
@@ -100,21 +120,6 @@ export default function ProfilePage() {
         />
       </View>
     );
-
-    const timer = setTimeout(() => {
-      hideOverlay();
-      Animated.sequence([
-        Animated.delay(300),
-        Animated.timing(animation, {
-          toValue: 1,
-          duration: 500,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }, 3000);
-
-    return () => clearTimeout(timer);
   }, []);
 
   const onNext = async () => {
@@ -180,7 +185,6 @@ export default function ProfilePage() {
   };
 
   const nextable = images.every((image) => image !== null);
-  const nextButtonMessage = nextable ? "다음으로" : "조금만 더 알려주세요";
 
   const uploadImage = (index: number, value: string) => {
     const newImages = [...images];
@@ -215,8 +219,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <DefaultLayout className="flex-1">
-      <ScrollView>
+    <DefaultLayout className="flex-1 relative">
+      <GuideView>
         <View className="px-5 ">
           <Image
             source={require("@assets/images/profile-image.png")}
@@ -230,7 +234,7 @@ export default function ProfilePage() {
           </Text>
         </View>
 
-        <View className="flex flex-col py-4 px-5">
+        <View className="flex flex-col pb-[18px] pt-4 px-5">
           <Text weight="medium" size="sm" textColor="pale-purple">
             매칭을 위해 1장의 프로필 사진을 필수로 올려주세요
           </Text>
@@ -239,10 +243,10 @@ export default function ProfilePage() {
           </Text>
         </View>
 
-        <View className=" flex flex-col gap-y-4">
-          <View className="flex w-full justify-center items-center">
+        <View className="flex-row justify-center   w-full gap-[16px]">
+          <View className="flex  justify-center items-center">
             <ImageSelector
-              size="sm"
+              size="lg"
               value={images[0] ?? undefined}
               onChange={(value) => {
                 trackSignupEvent("image_upload", "image_1");
@@ -255,7 +259,7 @@ export default function ProfilePage() {
             />
           </View>
 
-          <View className="flex flex-row justify-center gap-x-4">
+          <View className="flex flex-col justify-center gap-y-[12px]">
             <ImageSelector
               size="sm"
               value={images[1] ?? undefined}
@@ -282,9 +286,15 @@ export default function ProfilePage() {
             />
           </View>
         </View>
+
         {!visible && (
           <Animated.View
-            style={[styles.infoWrapper, { marginTop: 40, opacity: animation }]}
+            style={[
+              height < guideHeight
+                ? styles.infoWrapper
+                : styles.infoOverlayWrapper,
+              { marginTop: 40, opacity: animation },
+            ]}
           >
             <RNText style={styles.infoTitle}>
               이목구비가 잘 보이는 사진 필수에요
@@ -316,12 +326,13 @@ export default function ProfilePage() {
             />
           </Animated.View>
         )}
-      </ScrollView>
+      </GuideView>
+
       <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={onNext}
-          content={{ next: nextButtonMessage }}
+          content={{ next: "완료하기" }}
           onClickPrevious={() => {
             trackSignupEvent("back_button_click", "to_university_details");
             router.push("/auth/signup/instagram");
@@ -334,7 +345,7 @@ export default function ProfilePage() {
 
 const styles = StyleSheet.create({
   infoOverlayWrapper: {
-    bottom: 139,
+    bottom: 200,
     position: "absolute",
 
     right: 90,
@@ -363,7 +374,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F2ECFF",
     borderWidth: 1,
     borderColor: "#FFF",
-
+    marginBottom: 223,
     shadowColor: "#F2ECFF",
     shadowOffset: {
       width: 0,

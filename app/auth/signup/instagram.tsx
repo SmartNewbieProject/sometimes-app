@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 
 import {
   BackHandler,
+  Dimensions,
   Keyboard,
   Platform,
   StyleSheet,

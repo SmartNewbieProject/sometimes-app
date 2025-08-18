@@ -78,8 +78,10 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "flex-end",
-    position: "relative",
+
+    maxWidth: 468,
+    left: "50%",
+    transform: [{ translateX: "-50%" }],
   },
   modalContainer: {
     backgroundColor: "white",
