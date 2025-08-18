@@ -6,12 +6,13 @@ import XIcon from "@assets/icons/x-icon.svg";
 import { Text as CustomText } from "@shared/ui/text";
 import { Image } from "expo-image";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {Pressable, StyleSheet, Text, View} from "react-native";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
 import { useFeatureCost } from "../../payment/hooks";
 import useByeLike from "../queries/useByeLike";
 import useRejectLike from "../queries/useRejectLike";
+import {router} from "expo-router";
 
 interface PostBoxCardProps {
   status: string;
@@ -19,6 +20,7 @@ interface PostBoxCardProps {
   instagram: string | null;
   mainProfileUrl: string;
   nickname: string;
+  matchId: string;
   universityName: string;
   age: number;
   viewedAt: string | null;
@@ -35,6 +37,7 @@ function PostBoxCard({
   mainProfileUrl,
   nickname,
   age,
+  matchId,
   connectionId,
   viewedAt,
   universityName,
@@ -64,37 +67,45 @@ function PostBoxCard({
     );
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.viewPoint, !viewedAt && styles.viewYet]} />
-      <Image source={mainProfileUrl} style={styles.profileImage} />
-      <View style={styles.contentContainer}>
-        <View style={styles.topText}>
-          <Text style={styles.name} className="font-medium">
-            {nickname}
-          </Text>
-          <Text style={styles.age}>만 {age}세</Text>
+      <Pressable
+        onPress={() => {
+          if (userWithdrawal) return;
+          router.push(`/partner/view/${matchId}`);
+        }}
+      >
+        <View style={styles.container}>
+          <View style={[styles.viewPoint, !viewedAt && styles.viewYet]} />
+          <Image source={mainProfileUrl} style={styles.profileImage} />
+          <View style={styles.contentContainer}>
+            <View style={styles.topText}>
+              <Text style={styles.name} className="font-medium">
+                {nickname}
+              </Text>
+              <Text style={styles.age}>만 {age}세</Text>
+            </View>
+            <Text style={styles.university}>{universityName}</Text>
+            <Text
+                style={[
+                  styles.status,
+                  styles.pending,
+                  type === "i-liked" && status === "REJECTED" && styles.reject,
+                  type === "i-liked" && status === "OPEN" && styles.open,
+                ]}
+            >
+              {statusMessage}
+            </Text>
+            <Show when={userWithdrawal}>
+              <CustomText textColor="gray" size="13" weight="light">
+                서비스를 탈퇴한 유저에요
+              </CustomText>
+            </Show>
+            <Show when={!userWithdrawal}>
+              {renderBottomButton}
+            </Show>
+          </View>
         </View>
-        <Text style={styles.university}>{universityName}</Text>
-        <Text
-          style={[
-            styles.status,
-            styles.pending,
-            type === "i-liked" && status === "REJECTED" && styles.reject,
-            type === "i-liked" && status === "OPEN" && styles.open,
-          ]}
-        >
-          {statusMessage}
-        </Text>
-        <Show when={userWithdrawal}>
-          <CustomText textColor="gray" size="13" weight="light">
-            서비스를 탈퇴한 유저에요
-          </CustomText>
-        </Show>
-        <Show when={!userWithdrawal}>
-          {renderBottomButton}
-        </Show>
-      </View>
-    </View>
+      </Pressable>
+
   );
 }
 
