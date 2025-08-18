@@ -110,17 +110,6 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
               <LockProfileIcon width={40} height={60} />
             </View>
           )}
-
-          <View style={styles.someReceivedBadge}>
-            <RNText
-              style={[
-                styles.someReceivedText,
-                { fontFamily: "Pretendard", fontWeight: 400 },
-              ]}
-            >
-              {item.someReceived ? "들어온 썸" : "보낸 썸"}
-            </RNText>
-          </View>
           <View
             style={{
               position: "absolute",
