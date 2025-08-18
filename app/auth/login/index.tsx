@@ -2,7 +2,7 @@ import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { Button } from "@/src/shared/ui/button";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 
@@ -67,7 +67,7 @@ export default function LoginScreen() {
           <View className="items-center mb-[54px]">
             <Signup.Logo />
           </View>
-
+          <Link href="/auth/signup/instagram">인스타그램</Link>
           {/* 메인 콘텐츠 */}
           <View className="flex-1 w-full max-w-sm">
             <Signup.LoginForm />
