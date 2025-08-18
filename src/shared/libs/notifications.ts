@@ -29,12 +29,13 @@ Notifications.setNotificationHandler({
  * 알림 데이터 타입 정의
  */
 export interface NotificationData {
-  type: 'comment' | 'like' | 'general';
+  type: 'comment' | 'like' | 'general' | 'match_like' | 'match_connection' | 'reply' | 'comment_like';
   articleId?: string;
   commentId?: string;
   userId?: string;
-  title: string;
-  body: string;
+  title?: string;
+  body?: string;
+  data?: unknown;
 }
 
 /**
@@ -246,31 +247,50 @@ export async function requestNotificationPermission(): Promise<Notifications.Per
   return status;
 }
 
-/**
- * 알림 탭 시 적절한 화면으로 이동하는 핸들러
- */
 export function handleNotificationTap(data: NotificationData, router: Router): void {
+  const navigateWithDelay = (path: string) => {
+    setTimeout(() => {
+      try {
+        router.push(path as any);
+      } catch (error) {
+        router.push('/home');
+      }
+    }, 100);
+  };
+
   try {
     switch (data.type) {
       case 'comment':
         if (data.articleId) {
-          router.push(`/community/article/${data.articleId}`);
+          navigateWithDelay(`/community/${data.articleId}`);
         }
         break;
       case 'like':
         if (data.articleId) {
-          router.push(`/community/article/${data.articleId}`);
+          navigateWithDelay(`/community/${data.articleId}`);
         }
         break;
+      case 'reply':
+        if (data.articleId) {
+          navigateWithDelay(`/community/${data.articleId}`);
+        }
+        break;
+      case 'comment_like':
+        if (data.articleId) {
+          navigateWithDelay(`/community/${data.articleId}`);
+        }
+        break;
+      case 'match_like':
+      case 'match_connection':
+        navigateWithDelay('/post-box/liked-me');
+        break;
       case 'general':
-        router.push('/home');
+        navigateWithDelay('/home');
         break;
       default:
-        console.warn('알 수 없는 알림 타입:', data.type);
-        router.push('/home');
+        navigateWithDelay('/home');
     }
   } catch (error) {
-    console.error('알림 탭 처리 중 오류:', error);
-    router.push('/home');
+    navigateWithDelay('/home');
   }
 }

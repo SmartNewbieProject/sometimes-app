@@ -57,11 +57,11 @@ export default function RootLayout() {
       if (!data || typeof data !== "object") return false;
 
       const obj = data as Record<string, unknown>;
+      const validTypes = ["comment", "like", "general", "match_like", "match_connection", "reply", "comment_like"];
+
       return (
         typeof obj.type === "string" &&
-        typeof obj.title === "string" &&
-        typeof obj.body === "string" &&
-        ["comment", "like", "general"].includes(obj.type)
+        validTypes.includes(obj.type)
       );
     },
     []
@@ -76,17 +76,14 @@ export default function RootLayout() {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         const rawData = response.notification.request.content.data;
-        console.log("알림 탭:", rawData);
 
         try {
           if (isValidNotificationData(rawData)) {
             handleNotificationTap(rawData as NotificationData, router);
           } else {
-            console.warn("유효하지 않은 알림 데이터:", rawData);
             router.push("/home");
           }
         } catch (error) {
-          console.error("알림 처리 중 오류:", error);
           router.push("/home");
         }
       });
