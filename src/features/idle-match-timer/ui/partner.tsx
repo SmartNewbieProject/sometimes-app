@@ -42,7 +42,7 @@ export const Partner = ({ match }: PartnerProps) => {
     )?.url;
     if (!mainProfileImageUri) return;
     update(mainProfileImageUri);
-  }, []);
+  }, [JSON.stringify(match.partner?.profileImages)]);
 
   const getUniversityLogoUrl = () => {
     if (partner?.universityDetails?.authentication) {

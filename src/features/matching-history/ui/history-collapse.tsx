@@ -57,28 +57,42 @@ function HistoryCollapse() {
   return !isLoading &&
     previewMatchingHistory &&
     previewMatchingHistory?.imageUrls.length > 0 ? (
-    <View style={{ marginTop: 20 }}>
-      <Text style={styles.text}>{name}님과 매칭된 상대를 확인해보세요!</Text>
+    <View style={{ marginTop: 20, overflow: "hidden", borderRadius: 20 }}>
+      <LinearGradient
+        start={[0, 0]}
+        end={[0, 1]}
+        colors={["rgba(255, 255, 255, 0.80)", "rgba(230, 218, 255, 0.80)"]}
+        style={styles.background}
+      />
       <Pressable
         style={styles.container}
         onPress={() => router.push("/matching-history")}
       >
-        <LinearGradient
-          start={[0, 1]}
-          end={[1, 0]}
-          colors={["rgba(177, 144, 249, 1)", "rgba(177, 144, 249, 0)"]}
-          style={styles.background}
-        />
-        <View style={styles.contentContainer}>
-          <ImageCollapse
-            collapseValues={collapseValues}
-            handleAllImagesLoaded={handleAllImagesLoaded}
-            imageUrls={
-              previewMatchingHistory.imageUrls.length > 5
-                ? previewMatchingHistory.imageUrls.slice(0, 5)
-                : previewMatchingHistory.imageUrls
-            }
-          />
+        <View style={styles.content}>
+          <Text style={[styles.title, { fontSize: 18 }]}>
+            혹시 놓친 <Text style={styles.titleStrong}>인연</Text>이 있을지도
+            몰라요
+          </Text>
+          <Text style={styles.description}>
+            스쳐간 인연 중 아직 연결되지 않은 사람들이에요.
+          </Text>
+          <Text style={styles.description}>
+            지금 다시 보면, 더 잘 맞을 수도 있어요.
+          </Text>
+        </View>
+
+        <View style={styles.bottomContainer}>
+          <View style={styles.contentContainer}>
+            <ImageCollapse
+              collapseValues={collapseValues}
+              handleAllImagesLoaded={handleAllImagesLoaded}
+              imageUrls={
+                previewMatchingHistory.imageUrls.length > 5
+                  ? previewMatchingHistory.imageUrls.slice(0, 5)
+                  : previewMatchingHistory.imageUrls
+              }
+            />
+          </View>
           {previewMatchingHistory.imageUrls.length > 5 && (
             <View style={styles.more}>
               <Animated.Text
@@ -105,22 +119,56 @@ function HistoryCollapse() {
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
+    borderWidth: 1,
 
-    width: "100%",
-    height: 72,
-    overflow: "hidden",
-    borderRadius: 36,
+    borderColor: "#E1D9FF",
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
+  bottomContainer: {
+    width: "100%",
+    position: "relative",
+    marginTop: 2,
+    alignItems: "center",
+    flexDirection: "row",
+    minHeight: 72,
+  },
+  content: {
+    gap: 4,
+    flex: 1,
+    paddingLeft: 4,
+    paddingRight: 8,
+  },
+  title: {
+    fontWeight: 600,
+
+    fontFamily: "Pretendard-SemiBold",
+    lineHeight: 21.6,
+    color: "#4A4A4A",
+  },
+  titleStrong: {
+    fontWeight: 800,
+    fontFamily: "Pretendard-ExtraBold",
+    color: "#7A4AE2",
+  },
+  description: {
+    fontSize: 12,
+    fontWeight: 500,
+    fontFamily: "Pretendard-Medium",
+    lineHeight: 14.4,
+    color: "#A892D7",
+  },
+
   more: {
     backgroundColor: "#A892D7",
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
+    position: "absolute",
+    right: 0,
     width: 48,
     height: 48,
     borderRadius: "50%",
-    transform: [{ translateX: -48 }],
   },
   moreText: {
     color: "#fff",
@@ -134,20 +182,11 @@ const styles = StyleSheet.create({
     right: 0,
     position: "absolute",
   },
-  text: {
-    marginBottom: 5,
-    marginLeft: 14,
-    color: "#5A269A",
-    fontSize: 12,
 
-    fontFamily: "Pretendard-Semibold",
-    fontWeight: 600,
-  },
   contentContainer: {
     position: "absolute",
     top: 0,
-    left: 12,
-    right: 24,
+
     bottom: 0,
     flexDirection: "row",
     alignItems: "center",

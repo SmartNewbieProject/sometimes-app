@@ -11,6 +11,7 @@ import { Animated, Easing, Pressable, StyleSheet } from "react-native";
 interface OverlayContextType {
   showOverlay: (children: ReactNode) => void;
   hideOverlay: () => void;
+  visible: boolean;
 }
 
 const OverlayContext = createContext<OverlayContextType | null>(null);
@@ -62,7 +63,7 @@ export const OverlayProvider = ({ children }: { children: ReactNode }) => {
   });
 
   return (
-    <OverlayContext.Provider value={{ showOverlay, hideOverlay }}>
+    <OverlayContext.Provider value={{ showOverlay, hideOverlay, visible }}>
       {children}
       {visible && (
         <Pressable onPress={hideOverlay} style={styles.container}>

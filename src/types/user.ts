@@ -33,12 +33,14 @@ export interface UserProfile {
 	additionalPreferences: {
 		[key: string]: string;
 	};
-
+	connectionId?: string;
+	isLikeSended?: number;
 	gender: string;
 	profileImages: ProfileImage[];
 	instagramId: string;
 	universityDetails: UniversityDetail;
 	preferences: PreferenceTypeGroup[];
+	deletedAt: string | null;
 }
 
 export interface SimpleProfile {

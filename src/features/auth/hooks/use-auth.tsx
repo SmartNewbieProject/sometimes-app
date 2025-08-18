@@ -8,13 +8,13 @@ import { useStorage } from "@shared/hooks/use-storage";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
+import {loginByPass} from "@features/auth/utils/login-utils";
 
 export function useAuth() {
   const { value: accessToken, setValue: setToken } = useStorage<string | null>({
     key: "access-token",
     initialValue: null,
   });
-
   const { value: refreshToken, setValue: setRefreshToken } = useStorage<
     string | null
   >({
@@ -46,7 +46,7 @@ export function useAuth() {
   };
 
   const loginWithPass = async (impUid: string) => {
-    const data = await passLogin(impUid);
+    const data = await loginByPass(impUid);
 
     if (data.isNewUser) {
       // 신규 사용자인 경우 본인인증 정보 전달

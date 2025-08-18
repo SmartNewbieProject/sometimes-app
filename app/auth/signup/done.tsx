@@ -35,11 +35,11 @@ export default function SignupDoneScreen() {
       <View className="flex flex-col flex-1">
         <Image
           source={require("@assets/images/signup-done.png")}
-          style={{ width: 290, height: 380 }}
+          style={{ width: 298, height: 296, marginTop: 50 }}
         />
 
         <View className="flex flex-col">
-          <View className="mt-4">
+          <View className="mt-[42px]">
             <Text size="lg" textColor="black" weight="semibold">
               축하드려요!
             </Text>
@@ -50,10 +50,10 @@ export default function SignupDoneScreen() {
 
           <View className="mt-2">
             <Text size="sm" textColor="pale-purple" weight="light">
-              회원가입이 완료되었어요!
+              설레는 인연, 시작해볼까요?
             </Text>
             <Text size="sm" textColor="pale-purple" weight="light">
-              이제 당신의 이상형을 만나보세요
+              어울리는 사람을 썸타임이 찾아드릴게요 :)
             </Text>
           </View>
         </View>

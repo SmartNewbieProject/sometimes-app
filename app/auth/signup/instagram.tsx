@@ -7,17 +7,12 @@ import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 
 import {
-  Animated,
   BackHandler,
-  Easing,
   Keyboard,
-  LayoutAnimation,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  UIManager,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,13 +25,6 @@ const {
   apis,
   useSignupAnalytics,
 } = Signup;
-
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 export default function SignupInstagram() {
   const { updateForm, form } = useSignupProgress();
@@ -80,7 +68,7 @@ export default function SignupInstagram() {
 
     const timer = setTimeout(() => {
       hideOverlay();
-    }, 5500);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);

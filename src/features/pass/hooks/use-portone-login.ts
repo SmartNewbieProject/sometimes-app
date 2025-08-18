@@ -11,6 +11,7 @@ import type {
 	PortOneIdentityVerificationResponse,
 } from '../types';
 import { isAdult } from '../utils';
+import {checkAppEnvironment, logger} from "@shared/libs";
 
 interface UsePortOneLoginOptions {
 	onError?: (error: Error) => void;
@@ -64,7 +65,7 @@ export const usePortOneLogin = ({
 		async (identityVerificationId: string) => {
 			const loginResult = await loginWithPass(identityVerificationId);
 
-			if (loginResult.isNewUser) {
+			if (checkAppEnvironment('development') || loginResult.isNewUser) {
 				const birthday = loginResult.certificationInfo?.birthday;
 				const phone = loginResult.certificationInfo?.phone;
 
@@ -201,6 +202,19 @@ export const usePortOneLogin = ({
 		try {
 			setIsLoading(true);
 			setError(null);
+
+			// development 환경에서는 외부 인증 창을 띄우지 않고 바로 다음 프로세스로
+			if (checkAppEnvironment('development')) {
+				track('Signup_IdentityVerification_Started', {
+					platform: Platform.OS,
+					type: 'pass',
+					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+				});
+				logger.debug('개발 환경에서는 가짜 본인인증 ID로 바로 처리합니다.');
+				await processLoginResult(`dev_mock_${Date.now()}`);
+				return;
+			}
+
 			validateEnvironmentVariables();
 
 			track('Signup_IdentityVerification_Started', {
@@ -226,7 +240,7 @@ export const usePortOneLogin = ({
 			onError?.(new Error(errorMessage));
 			setIsLoading(false);
 		}
-	}, [handleWebAuth, handleMobileAuth, onError]);
+	}, [handleWebAuth, handleMobileAuth, onError, processLoginResult]);
 
 	return {
 		isLoading,

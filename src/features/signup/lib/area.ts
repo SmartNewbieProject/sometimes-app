@@ -5,11 +5,11 @@ export const areaMap = [
 		id: 1,
 		area: '대전',
 		location: {
-			top: 184,
+			top: 194,
 			left: 88,
 		},
 		modalLocation: {
-			top: 184,
+			top: 194,
 			left: 112,
 		},
 		description: '22개 대학 오픈 완료!',
@@ -48,11 +48,11 @@ export const areaMap = [
 		id: 4,
 		area: '충북/세종',
 		location: {
-			top: 153,
+			top: 158,
 			left: 100,
 		},
 		modalLocation: {
-			top: 153,
+			top: 158,
 			left: 124,
 		},
 		open: 'open',
@@ -120,11 +120,11 @@ export const areaMap = [
 		area: '서울',
 		location: {
 			top: 80,
-			left: 72,
+			left: 77,
 		},
 		modalLocation: {
 			top: 80,
-			left: 96,
+			left: 101,
 		},
 		open: 'close',
 		description: '오픈 준비 중',
@@ -157,6 +157,34 @@ export const areaMap = [
 		open: 'close',
 		description: '오픈 준비 중',
 	},
+	{
+		id: 12,
+		area: '인천',
+		location: {
+			top: 80,
+			left: 42,
+		},
+		modalLocation: {
+			top: 80,
+			left: 76,
+		},
+		open: 'open',
+		description: '13개 대학 오픈 완료!',
+	},
+	{
+		id: 13,
+		area: '천안',
+		location: {
+			top: 148,
+			left: 60,
+		},
+		modalLocation: {
+			top: 148,
+			left: 84,
+		},
+		open: 'open',
+		description: '12개 대학 오픈 완료!',
+	},
 ] as const;
 
 export function getRegionList(area: string) {
@@ -169,6 +197,10 @@ export function getRegionList(area: string) {
 			return [getRegionCodeByName('대구광역시')];
 		case '충북/세종':
 			return [getRegionCodeByName('청주시'), getRegionCodeByName('세종특별자치시')];
+		case '천안':
+			return [getRegionCodeByName('천안시')];
+		case '인천':
+			return [getRegionCodeByName('인천광역시')];
 		default:
 			return [];
 	}

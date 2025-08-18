@@ -1,5 +1,6 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import apis from "@/src/features/community/apis";
+import apis_comments from "@/src/features/community/apis/comments";
 import {
   useCommentsQuery,
   useCreateCommentMutation,
@@ -30,6 +31,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const [checked, setChecked] = useState(true);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState<string>("");
+  const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
   const form = useForm<CommentForm>({
     defaultValues: {
       content: editingCommentId ? editingContent : "",
@@ -51,17 +53,22 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const updateCommentMutation = useUpdateCommentMutation(articleId);
   const deleteCommentMutation = useDeleteCommentMutation(articleId);
   const queryClient = useQueryClient();
+
+  const totalCommentCount = comments.reduce((total, comment) => {
+    return total + 1 + (comment.replies ? comment.replies.length : 0);
+  }, 0);
   const handleSubmit = async (data: { content: string }) => {
     createCommentMutation.mutate(
       {
         content: data.content,
         anonymous: checked,
+        parentId: replyingToCommentId || undefined,
       },
       {
         onSuccess: () => {
           form.reset();
           setEditingContent("");
-          article.comments.length += 1;
+          setReplyingToCommentId(null);
           Keyboard.dismiss();
         },
       }
@@ -69,10 +76,21 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   };
 
   const handleUpdate = (id: string) => {
-    const comment = comments.find((c) => c.id === id);
+    let comment = comments.find((c) => c.id === id);
+
+    if (!comment) {
+      for (const parentComment of comments) {
+        if (parentComment.replies) {
+          comment = parentComment.replies.find((reply) => reply.id === id);
+          if (comment) break;
+        }
+      }
+    }
+
     if (comment) {
       setEditingCommentId(id);
       setEditingContent(comment.content);
+      setReplyingToCommentId(null);
       form.reset({
         content: comment.content,
         anonymous: true,
@@ -107,6 +125,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const handleCancelEdit = () => {
     setEditingCommentId(null);
     setEditingContent("");
+    setReplyingToCommentId(null);
     form.reset({
       content: "",
       anonymous: true,
@@ -163,7 +182,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
                     };
                   }
                   return article;
-                }),
+                }), 
               })),
             };
           }
@@ -179,22 +198,130 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 
   const handleDelete = async (commentId: string) => {
     deleteCommentMutation.mutate(commentId);
-    article.comments.length -= 1;
+  };
+
+  const handleReply = (parentId: string) => {
+    setReplyingToCommentId(parentId);
+    setEditingCommentId(null);
+    setEditingContent("");
+    form.reset({ content: "", anonymous: true });
+  };
+
+  const handleCancelReply = () => {
+    setReplyingToCommentId(null);
+    form.reset({ content: "", anonymous: true });
+  };
+
+  const handleCommentLike = (commentId: string) => {
+    tryCatch(
+      async () => {
+        const findComment = (comments: Comment[]): Comment | null => {
+          for (const comment of comments) {
+            if (comment.id === commentId) return comment;
+            if (comment.replies) {
+              const found = findComment(comment.replies);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+
+        const currentComment = findComment(comments);
+        if (!currentComment) return;
+
+        console.log('댓글 좋아요 클릭:', {
+          commentId,
+          currentIsLiked: currentComment.isLiked,
+          currentLikeCount: currentComment.likeCount
+        });
+
+        const newIsLiked = !currentComment.isLiked;
+        const currentLikeCount = Number(currentComment.likeCount) || 0;
+        const newLikeCount = currentComment.isLiked ? currentLikeCount - 1 : currentLikeCount + 1;
+
+        console.log('새로운 상태:', {
+          newIsLiked,
+          newLikeCount
+        });
+
+        queryClient.setQueryData(
+          QUERY_KEYS.comments.lists(articleId),
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          (oldData: any) => {
+            if (!oldData) return oldData;
+
+            const updateComment = (comments: Comment[]): Comment[] => {
+              return comments.map((comment) => {
+                if (comment.id === commentId) {
+                  return {
+                    ...comment,
+                    isLiked: newIsLiked,
+                    likeCount: newLikeCount,
+                  };
+                }
+                if (comment.replies) {
+                  return {
+                    ...comment,
+                    replies: updateComment(comment.replies),
+                  };
+                }
+                return comment;
+              });
+            };
+
+            return updateComment(oldData);
+          }
+        );
+
+        const serverResponse = await apis_comments.patchCommentLike(articleId, commentId);
+        console.log('서버 응답:', serverResponse);
+      },
+      (error) => {
+        console.error("댓글 좋아요 업데이트 실패:", error);
+      }
+    );
   };
 
   const renderComments = (
     comments: Comment[],
     editingCommentId: null | string
   ) => {
-    return comments.map((comment: Comment) => (
-      <ArticleDetailComment
-        key={comment.id}
-        isEditing={comment.id === editingCommentId}
-        comment={comment}
-        onDelete={handleDelete}
-        onUpdate={handleUpdate}
-      />
-    ));
+    const result: React.ReactElement[] = [];
+
+    comments.forEach((comment: Comment) => {
+      result.push(
+        <ArticleDetailComment
+          key={comment.id}
+          isEditing={comment.id === editingCommentId}
+          comment={comment}
+          onDelete={handleDelete}
+          onUpdate={handleUpdate}
+          onReply={handleReply}
+          onLike={handleCommentLike}
+          isReply={false}
+        />
+      );
+
+      if (comment.replies && comment.replies.length > 0) {
+        comment.replies.forEach((reply: Comment) => {
+          result.push(
+            <ArticleDetailComment
+              key={reply.id}
+              isEditing={reply.id === editingCommentId}
+              comment={reply}
+              onDelete={handleDelete}
+              onUpdate={handleUpdate}
+              onReply={handleReply}
+              onLike={handleCommentLike}
+              isReply={true}
+              rootParentId={comment.id}
+            />
+          );
+        });
+      }
+    });
+
+    return result;
   };
 
   return (
@@ -252,7 +379,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
               isLiked={isLiked}
               onPress={() => like(article)}
             />
-            <Interaction.Comment count={article.comments.length} />
+            <Interaction.Comment count={totalCommentCount} />
             <Interaction.View count={article.readCount} />
           </View>
         </View>
@@ -290,6 +417,8 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           form={form}
           handleSubmitUpdate={handleSubmitUpdate}
           handleSubmit={handleSubmit}
+          replyingToCommentId={replyingToCommentId}
+          handleCancelReply={handleCancelReply}
         />
       </View>
     </View>

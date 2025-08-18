@@ -47,7 +47,9 @@ export interface Comment {
   deletedAt: string;
   isLiked: boolean;
   likeCount: number;
+  parentId: string | null;
   replies: Comment[];
+  replyCount: number;
 };
 
 export interface Category {
