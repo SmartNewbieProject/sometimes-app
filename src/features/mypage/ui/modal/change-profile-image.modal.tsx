@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
   infoOverlayWrapper: {
-    bottom: 160,
+    bottom: 200,
     position: "absolute",
 
     right: 90,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F2ECFF",
     borderWidth: 1,
     borderColor: "#FFF",
-    marginBottom: 200,
+    marginBottom: 230,
     shadowColor: "#F2ECFF",
     shadowOffset: {
       width: 0,

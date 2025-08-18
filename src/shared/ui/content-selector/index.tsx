@@ -9,9 +9,9 @@ export const contentSelector = cva(
   {
     variants: {
       size: {
-        sm: "w-[112px] h-[112px]",
+        sm: "w-[105px] h-[105px]",
         md: "w-[160px] h-[160px]",
-        lg: "w-[233px] h-[233px]",
+        lg: "w-[220px] h-[220px]",
       },
     },
     defaultVariants: {

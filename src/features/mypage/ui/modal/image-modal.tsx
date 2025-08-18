@@ -48,7 +48,7 @@ const PhotoPickerModal = ({
         </View>
         <View style={[styles.modalContainer, { bottom: insets.bottom + 74 }]}>
           <TouchableOpacity onPress={onTakePhoto} style={styles.option}>
-            <Text style={styles.optionText}>사진 찍기</Text>
+            <Text style={styles.optionText}>📷 사진 찍기</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={onPickFromGallery}
@@ -60,7 +60,7 @@ const PhotoPickerModal = ({
               },
             ]}
           >
-            <Text style={styles.optionText}>앨범에서 가져오기</Text>
+            <Text style={styles.optionText}>🖼 앨범에서 가져오기</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -78,10 +78,12 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
-
-    maxWidth: 468,
-    left: "50%",
-    transform: [{ translateX: "-50%" }],
+    position: "relative",
+    ...(Platform.OS === "web" && {
+      maxWidth: 468,
+      left: "50%",
+      transform: [{ translateX: "-50%" }],
+    }),
   },
   modalContainer: {
     backgroundColor: "white",
@@ -118,7 +120,13 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     fontSize: 16,
   },
-  info: {},
+  info: {
+    position: "absolute",
+    zIndex: 1000,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
   infoText: {
     color: "#EEE8FA",
     textAlign: "center",
