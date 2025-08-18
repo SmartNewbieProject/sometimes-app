@@ -145,6 +145,7 @@ export function getUniversityType(name: string): UniversityType {
 		'인하공업전문대학',
 		'재능대학교',
 		'한국공학대학교',
+		'연세대학교국제캠퍼스',
 	];
 
 	const ISTUniversities = ['KAIST', '대구경북과학기술원'];
