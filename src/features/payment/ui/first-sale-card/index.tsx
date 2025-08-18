@@ -17,7 +17,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useEffect } from "react";
 import { useFirstSaleEvents } from "../../hooks/useFirstSaleEvents";
-import { GemMetadata } from "../../types";
+import type { GemMetadata } from "../../types";
 import { usePortoneStore } from "../../hooks/use-portone-store";
 import { track } from "@amplitude/analytics-react-native";
 import { useAuth } from "@/src/features/auth";

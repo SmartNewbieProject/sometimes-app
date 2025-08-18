@@ -23,7 +23,7 @@ export const useEventControl = ({ type, onError, onSuccess }: UseEventOptions) =
     if (!rawEvent) return rawEvent;
     return {
       ...rawEvent,
-      expiredAt: dayUtils.create(rawEvent.expiredAt).add(9, 'hours'),
+      expiredAt: dayUtils.create(rawEvent.expiredAt),
     }
   }, [rawEvent]);
   const { mutateAsync } = useMutation({
