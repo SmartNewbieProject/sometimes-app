@@ -91,9 +91,9 @@ function Profile() {
 
       updateForm(
         "personality",
-        preferenceSelf?.find(
-          (item) => item.typeName === PreferenceKeys.PERSONALITY
-        )?.selectedOptions[0].id
+        preferenceSelf
+          ?.find((item) => item.typeName === PreferenceKeys.PERSONALITY)
+          ?.selectedOptions?.map((item) => item.id) as string[]
       );
     }
   }, [preferenceSelf?.length, JSON.stringify(profileDetails), updateForm]);
@@ -111,7 +111,7 @@ function Profile() {
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
           tattoo: form.tattoo?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           militaryStatus: form.militaryStatus?.id as string,
 
           mbti: form.mbti as string,

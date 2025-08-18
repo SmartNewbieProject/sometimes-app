@@ -26,8 +26,11 @@ export const passKakao = (code: string): Promise<PassLoginResponse> =>
 
 export const getUserStatus = (
   phoneNumber: string
-): Promise<{ status: string; rejectionReason?: string }> =>
-  axiosClient.get(`/auth/status?phoneNumber=${phoneNumber}`);
+): Promise<{
+  status: string;
+  rejectionReason?: string;
+  profileImage?: string;
+}> => axiosClient.get(`/auth/status?phoneNumber=${phoneNumber}`);
 export const reapplySignup = (data: {
   phoneNumber: string;
 }): Promise<{

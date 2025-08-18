@@ -91,6 +91,11 @@ export function useAuth() {
     await setRefreshToken(null);
     await setApprovalStatus(null);
   };
+  const clearTokensOnly = async () => {
+    await setToken(null);
+    await setRefreshToken(null);
+    await setApprovalStatus(null);
+  };
 
   const logout = () => {
     tryCatch(
@@ -146,6 +151,7 @@ export function useAuth() {
     loginWithKakao,
     logout,
     logoutOnly,
+    clearTokensOnly,
     my: {
       ...my,
       universityDetails: profileDetails?.universityDetails,

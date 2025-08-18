@@ -1,15 +1,17 @@
 import PhotoPickerModal from "@/src/features/mypage/ui/modal/image-modal";
+import { useModal } from "@/src/shared/hooks/use-modal";
 import {
   ContentSelector,
   type contentSelector,
 } from "@/src/shared/ui/content-selector";
 import { renderImage, renderPlaceholder } from "@/src/shared/ui/image-selector";
+import { convertToJpeg, isHeicBase64 } from "@/src/shared/utils/image";
 import type { VariantProps } from "class-variance-authority";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { useState } from "react";
 import { type UseControllerProps, useController } from "react-hook-form";
-import { Alert, Linking, Pressable } from "react-native";
+import { Alert, Linking, Platform, Pressable } from "react-native";
 import { FormContentSelector } from "./content-selector";
 
 interface FormImageSelectorProps
@@ -35,6 +37,7 @@ export function FormImageSelector({
     control,
     rules,
   });
+  const { showErrorModal } = useModal();
   const [isImageModal, setImageModal] = useState(false);
   const handlePress = async () => {
     setImageModal(true);
@@ -53,13 +56,24 @@ export function FormImageSelector({
       return null;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "livePhotos"],
+      mediaTypes: ["images"],
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
-    console.log("image result", result);
+
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      const pickedUri = result.assets[0].uri;
+      if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
+        showErrorModal(
+          "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+          "announcement"
+        );
+        setImageModal(false);
+        return null;
+      }
+      const jpegUri = await convertToJpeg(pickedUri);
+
+      onChange(jpegUri);
     }
     setImageModal(false);
     return null;
@@ -78,7 +92,7 @@ export function FormImageSelector({
       return null;
     }
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images", "livePhotos"],
+      mediaTypes: ["images"],
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
@@ -89,7 +103,17 @@ export function FormImageSelector({
     }
 
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      const pickedUri = result.assets[0].uri;
+      if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
+        showErrorModal(
+          "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+          "announcement"
+        );
+        setImageModal(false);
+        return null;
+      }
+      const jpegUri = await convertToJpeg(pickedUri);
+      onChange(jpegUri);
     }
     setImageModal(false);
     return null;

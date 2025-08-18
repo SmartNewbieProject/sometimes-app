@@ -5,12 +5,14 @@ import {
 import { Button, Show, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
-import { useRouter } from "expo-router";
+import * as Localization from "expo-localization";
+import { Link, usePathname, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../auth";
 import { PrivacyNotice } from "../../auth/ui/privacy-notice";
+import AppleLoginButton from "./apple-login-button";
 import KakaoLoginWebView from "./kakao-login-web-view";
 import UniversityLogos from "./university-logos";
 import {checkAppEnvironment} from "@shared/libs";
@@ -26,6 +28,9 @@ export default function LoginForm() {
     handleMobileAuthComplete,
     handleMobileAuthError,
   } = usePortOneLogin();
+  const pathname = usePathname();
+  const { regionCode } = Localization.getLocales()[0];
+  const isUS = regionCode === "US";
 
   const onPressPassLogin = async () => {
     track("Signup_Init", {
@@ -54,9 +59,9 @@ export default function LoginForm() {
       <UniversityLogos logoSize={64} />
 
       {/* 회원가입 및 로그인 버튼 */}
-      <View className="flex flex-col ]">
+      <View className="flex flex-col ">
         <View
-          className="w-full max-w-xs "
+          className="w-full  "
           style={{ marginBottom: Platform.OS === "web" ? 10 : 20 }}
         >
           <Button
@@ -64,16 +69,22 @@ export default function LoginForm() {
             width="full"
             onPress={onPressPassLogin}
             disabled={isLoading}
-            className="py-4 rounded-full min-w-[280px] min-h-[60px]"
+            className="py-4 rounded-full min-w-[330px] min-h-[60px]"
           >
             <Text className="text-white text-center text-[18px] h-[40px]">
               {isLoading ? "PASS 인증 중..." : "PASS 로그인"}
             </Text>
           </Button>
         </View>
-        <Show when={Platform.OS !== "ios"}>
-          <KakaoLogin />
+        <Show when={!isUS}>
+          <View style={{ marginBottom: 10 }}>
+            <KakaoLogin />
+          </View>
         </Show>
+
+        {/* <Show when={Platform.OS !== "android" && pathname === "/test"}>
+          <AppleLoginButton />
+        </Show> */}
       </View>
       {/* 에러 메시지 */}
 
@@ -126,7 +137,7 @@ function KakaoLogin() {
       <View className="w-full max-w-xs">
         <Pressable
           onPress={handleKakaoLogin}
-          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[280px] h-[60] !bg-[#FEE500]"
+          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-[#FEE500]"
         >
           <View style={{ width: 34, height: 34 }}>
             <KakaoLogo width={34} height={34} />

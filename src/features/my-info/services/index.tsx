@@ -19,7 +19,7 @@ export type Properties = {
   drinking: string;
   mbti: string;
   datingStyleIds: string[];
-  personality: string;
+  personality: string[];
   interestIds: string[];
   militaryStatus?: string;
   smoking: string;
@@ -53,7 +53,7 @@ export const savePreferences = async (props: Properties) => {
 
       {
         typeName: PreferenceKeys.PERSONALITY,
-        optionIds: [props.personality],
+        optionIds: props.personality,
       },
 
       {

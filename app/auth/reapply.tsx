@@ -1,22 +1,30 @@
-import { View, ScrollView } from "react-native";
-import { Text, Button, PalePurpleGradient, ImageSelector } from "@/src/shared/ui";
-import { router, useLocalSearchParams } from "expo-router";
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Form } from "@/src/widgets";
-import { reapplySignup } from "@/src/features/auth/apis";
-import { useModal } from "@/src/shared/hooks/use-modal";
-import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { Image } from 'expo-image';
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
-import { axiosClient } from "@/src/shared/libs";
+import { reapplySignup } from "@/src/features/auth/apis";
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { DefaultLayout } from "@/src/features/layout/ui";
 import mypageApis from "@/src/features/mypage/apis";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { axiosClient } from "@/src/shared/libs";
+import {
+  Button,
+  ImageSelector,
+  PalePurpleGradient,
+  Text,
+} from "@/src/shared/ui";
+import { Form } from "@/src/widgets";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Image } from "expo-image";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { ScrollView, View } from "react-native";
+import { z } from "zod";
 
 const schema = z.object({
   instagramId: z.string().min(1, "인스타그램 ID를 입력해주세요"),
-  images: z.array(z.string().nullable()).min(3, "3장의 프로필 사진이 필요합니다"),
+  images: z
+    .array(z.string().nullable())
+    .min(3, "3장의 프로필 사진이 필요합니다"),
 });
 
 type FormState = z.infer<typeof schema>;
@@ -39,7 +47,10 @@ export default function ReapplyScreen() {
     },
   });
 
-  const { handleSubmit, formState: { isValid } } = form;
+  const {
+    handleSubmit,
+    formState: { isValid },
+  } = form;
 
   const uploadImage = (index: number, value: string) => {
     const newImages = [...images];
@@ -83,8 +94,8 @@ export default function ReapplyScreen() {
         children: "3장의 프로필 사진이 필요합니다",
         primaryButton: {
           text: "확인",
-          onClick: () => {}
-        }
+          onClick: () => {},
+        },
       });
       return;
     }
@@ -107,19 +118,22 @@ export default function ReapplyScreen() {
           primaryButton: {
             text: "확인",
             onClick: () => {
-              router.push('/auth/approval-pending');
-            }
-          }
+              router.push("/auth/approval-pending");
+            },
+          },
         });
       } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : "재신청 중 오류가 발생했습니다.";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "재신청 중 오류가 발생했습니다.";
         showModal({
           title: "재신청 실패",
           children: errorMessage,
           primaryButton: {
             text: "확인",
-            onClick: () => {}
-          }
+            onClick: () => {},
+          },
         });
       } finally {
         setIsLoading(false);
@@ -128,20 +142,25 @@ export default function ReapplyScreen() {
   };
 
   return (
-    <View className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
       <PalePurpleGradient />
 
-      <ScrollView className="flex-1 w-full" contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        className="flex-1 w-full"
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <View className="flex-1 px-6 py-8">
           {/* SOMETIME 로고 */}
-          <View className="items-center mb-8">
+          <View className="items-center mb-8 mt-4">
             <SmallTitleIcon width={160} height={40} />
           </View>
 
           {/* 인스타그램 아이디 섹션 */}
           <View className="mb-8">
             <View className="flex-row items-center mb-4">
-              <Text size="md" textColor="purple" weight="semibold">인스타그램 아이디</Text>
+              <Text size="md" textColor="purple" weight="semibold">
+                인스타그램 아이디
+              </Text>
             </View>
             <Form.LabelInput
               label=""
@@ -163,10 +182,17 @@ export default function ReapplyScreen() {
           {/* 프로필 사진 섹션 */}
           <View className="mb-8">
             <View className="flex-row items-center mb-4">
-              <Text size="md" textColor="purple" weight="semibold">프로필 사진이 없으면 매칭이 안 돼요!</Text>
+              <Text size="md" textColor="purple" weight="semibold">
+                프로필 사진이 없으면 매칭이 안 돼요!
+              </Text>
             </View>
-            <Text size="sm" textColor="pale-purple" weight="light" className="mb-6">
-              매칭을 위해 3장의 프로필 사진을 모두 올려주세요.{'\n'}
+            <Text
+              size="sm"
+              textColor="pale-purple"
+              weight="light"
+              className="mb-6"
+            >
+              매칭을 위해 3장의 프로필 사진을 모두 올려주세요.{"\n"}
               얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
             </Text>
 
@@ -216,6 +242,6 @@ export default function ReapplyScreen() {
           {isLoading ? "재신청 중..." : "다음으로"}
         </Button>
       </View>
-    </View>
+    </DefaultLayout>
   );
 }

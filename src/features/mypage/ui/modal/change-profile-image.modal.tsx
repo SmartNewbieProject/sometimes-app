@@ -114,13 +114,14 @@ export const ChangeProfileImageModal = ({
 
       for (const index of changedIndexes) {
         const newImage = images[index];
-        if (newImage && !newImage.includes("http")) {
+        if (newImage) {
           await apis.uploadProfileImage(newImage, index);
         }
       }
 
       await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
       hideModal();
+
       setTimeout(() => {
         showErrorModal(
           "프로필 이미지가 성공적으로 변경되었습니다.",
@@ -138,8 +139,6 @@ export const ChangeProfileImageModal = ({
       onCloseModal();
     }
   };
-
-  console.log("images", images);
 
   if (!profileDetails) {
     return (

@@ -7,7 +7,7 @@ type StoreStates = {
   drinking?: PreferenceOption;
   goodMbti?: string | null;
   badMbti?: string | null;
-  personality?: string;
+  personality?: string[];
   // interestIds: string[];
   // datingStyleIds: string[];
   militaryPreference?: PreferenceOption;

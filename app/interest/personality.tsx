@@ -32,13 +32,22 @@ export default function PersonalitySelectionScreen() {
       (item) => item.typeName === PreferenceKeys.PERSONALITY
     ) ?? preferencesArray[0];
 
-  const onChangeOption = (values: string) => {
-    updateForm("personality", values);
+  const onChangeOption = (values: string[]) => {
+    if (values.length > 3) {
+      return;
+    }
+
+    console.log("values", values);
+    if (values.length === 0) {
+      updateForm("personality", undefined);
+    } else {
+      updateForm("personality", values);
+    }
   };
 
   const nextMessage = (() => {
     if (!personality) {
-      return `${1} 개만 더!`;
+      return "최대 3개 선택 가능";
     }
     return "다음으로";
   })();
@@ -86,7 +95,7 @@ export default function PersonalitySelectionScreen() {
                   imageUrl: option?.imageUrl,
                 })) || []
               }
-              multiple={false}
+              multiple={true}
               onChange={onChangeOption}
               className="w-full"
             />

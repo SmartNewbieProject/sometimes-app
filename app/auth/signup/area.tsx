@@ -33,7 +33,7 @@ function Area() {
         area: show,
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
-      router.push("/auth/signup/university");
+      router.push(`/auth/signup/university?area=${show}`);
     });
   };
 
@@ -114,24 +114,26 @@ function Area() {
               </View>
             ))}
             {show !== null &&
-              areaMap.map(({ id, area, modalLocation, description, open }) => (
-                <View
-                  key={`modal-${id}`}
-                  style={{
-                    position: "absolute",
-                    alignItems: "center",
-                    zIndex: 2,
-                    ...modalLocation,
-                  }}
-                >
-                  <AreaModal
-                    open={open}
-                    area={area}
-                    description={description}
-                    isShow={show === area}
-                  />
-                </View>
-              ))}
+              (areaMap ?? []).map(
+                ({ id, area, modalLocation, description, open }) => (
+                  <View
+                    key={`modal-${id}`}
+                    style={{
+                      position: "absolute",
+                      alignItems: "center",
+                      zIndex: 2,
+                      ...modalLocation,
+                    }}
+                  >
+                    <AreaModal
+                      open={open}
+                      area={area}
+                      description={description}
+                      isShow={show === area}
+                    />
+                  </View>
+                )
+              )}
           </View>
         </Pressable>
       </ScrollView>

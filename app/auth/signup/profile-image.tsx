@@ -7,7 +7,6 @@ import { tryCatch } from "@/src/shared/libs";
 import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
 import { Button, ImageSelector } from "@/src/shared/ui";
-import { PalePurpleGradient } from "@/src/shared/ui/gradient";
 import { Text } from "@/src/shared/ui/text";
 import { track } from "@amplitude/analytics-react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -91,7 +90,11 @@ export default function ProfilePage() {
           router.push("/auth/login");
           return;
         }
-
+        if (!signupForm.universityName || !signupForm.departmentName) {
+          showErrorModal("학교와 학과 정보가 필요해요.", "announcement");
+          router.navigate("/auth/signup/area");
+          return;
+        }
         await apis.signup(signupForm as SignupForm);
         track("Signup_profile_image", {
           success: true,
@@ -231,7 +234,7 @@ export default function ProfilePage() {
           variant="secondary"
           onPress={() => {
             trackSignupEvent("back_button_click", "to_university_details");
-            router.push("/auth/signup/university-details");
+            router.push("/auth/signup/instagram");
           }}
           className="flex-[0.3]"
         >

@@ -1,14 +1,18 @@
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import useUserStatus from "@/src/features/auth/queries/use-user-status";
+import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { BackHandler, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ApprovalPendingScreen() {
   const { logoutOnly } = useAuth();
-
+  const { my } = useAuth();
+  const { data: statusData } = useUserStatus(my.phoneNumber);
   const handleGoToLogin = async () => {
     await logoutOnly();
     router.push("/auth/login");
@@ -30,7 +34,7 @@ export default function ApprovalPendingScreen() {
   }, []);
 
   return (
-    <View className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
       <PalePurpleGradient />
 
       <ScrollView
@@ -44,12 +48,24 @@ export default function ApprovalPendingScreen() {
           </View>
 
           {/* 메인 이미지 */}
-          <View className="mb-8 relative">
+          <View className="mb-8 relative w-[284px] h-[284px] ">
+            <View className="bg-[#8638E563] rounded-full blur-[2px] w-[284px] h-[284px] absolute top-0 left-0 bottom-0 right-0" />
+            <View className="bg-[#8638E5] rounded-full blur-[2px] w-[254px] h-[254px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            <View className="bg-[#fff] rounded-full  w-[242px] h-[242px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             <Image
-              source={require("@/assets/images/signup-pending.png")}
-              style={{ width: 280, height: 280 }}
+              source={
+                statusData?.profileImage ??
+                require("@/assets/images/signup-pending.png")
+              }
+              style={{
+                width: 242,
+                height: 242,
+                position: "absolute",
+                top: 21,
+                left: 21,
+              }}
               contentFit="contain"
-              className="rounded-full"
+              className="rounded-full "
             />
           </View>
 
@@ -128,6 +144,6 @@ export default function ApprovalPendingScreen() {
           로그인 화면으로 돌아가기
         </Button>
       </View>
-    </View>
+    </DefaultLayout>
   );
 }

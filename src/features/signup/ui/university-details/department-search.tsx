@@ -86,7 +86,6 @@ function DepartmentSearch() {
           <Pressable
             onPress={(e) => {
               e.stopPropagation();
-              console.log("click", department);
               updateForm({ departmentName: department });
             }}
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
@@ -110,7 +109,6 @@ function DepartmentSearch() {
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               key={index}
               onPress={() => {
-                console.log("click", department);
                 updateForm({ departmentName: department });
                 if (inputRef?.current) {
                   inputRef?.current.blur();

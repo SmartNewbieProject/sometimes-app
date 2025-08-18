@@ -1,5 +1,5 @@
 import Signup from "@features/signup";
-import { useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { filterUniversities } from "../lib";
@@ -14,6 +14,7 @@ const {
 const { useUnivQuery } = queries;
 function useUniversityHook() {
   const [searchText, setSearchText] = useState("");
+
   const { updateForm, form: userForm, regions } = useSignupProgress();
   const { isLoading, data: univs } = useUniversities();
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
@@ -45,7 +46,7 @@ function useUniversityHook() {
   useEffect(() => {
     if (!univs) return;
 
-    const filtered = filterUniversities(univs, searchText);
+    const filtered = filterUniversities(univs ?? [], searchText);
     const selected = univs.find((u) => u.name === selectedUniv);
     const merged =
       selected && !filtered.some((u) => u.name === selected.name)

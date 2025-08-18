@@ -10,9 +10,9 @@ import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import { Header, Show, Text } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
-import { Linking } from "react-native";
 import type React from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { Linking } from "react-native";
 import { KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
 import {
   SafeAreaView,
@@ -60,11 +60,13 @@ export default function ArticleDetailScreen() {
   } = useBoolean();
   const { my } = useAuth();
 
-  if (!my?.id) {
-    Linking.openURL("https://info.some-in-univ.com");
-    return;
-  }
-
+  useEffect(() => {
+    if (!my?.id) {
+      Linking.openURL("https://info.some-in-univ.com");
+      router.navigate("/community");
+      return;
+    }
+  }, [my?.id]);
   const isValidArticle = (article: Article | undefined): article is Article => {
     return !!article && !!article.author;
   };

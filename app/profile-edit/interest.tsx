@@ -82,9 +82,9 @@ function InterestSection() {
 
       updateForm(
         "personality",
-        preferences?.find(
-          (item) => item.typeName === PreferenceKeys.PERSONALITY
-        )?.selectedOptions[0].id
+        preferences
+          ?.find((item) => item.typeName === PreferenceKeys.PERSONALITY)
+          ?.selectedOptions.map((item) => item.id) as string[]
       );
     }
   }, [JSON.stringify(profileDetails), updateForm]);
@@ -101,7 +101,7 @@ function InterestSection() {
           age: form.age as string,
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           tattoo: form.tattoo?.id as string,
           militaryPreference: form.militaryPreference?.id ?? "",
           goodMbti: form.goodMbti ?? null,

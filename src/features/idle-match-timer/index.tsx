@@ -14,7 +14,11 @@ import { RematchLoading } from "./ui/rematching";
 export default function IdleMatchTimer() {
   const { match, isLoading: matchLoading, refetch } = useLatestMatching();
   const { my } = useAuth();
-  const { rematchingLoading, finishRematching } = useMatchLoading();
+  const {
+    rematchingLoading,
+    finishRematching,
+    loading: realRematchingLoading,
+  } = useMatchLoading();
 
   const isOpen = match?.type
     ? ["open", "rematching"].includes(match.type)
@@ -27,13 +31,23 @@ export default function IdleMatchTimer() {
 
   useEffect(() => {
     if (rematchingLoading) {
-      setTimeout(() => {
-        finishRematching();
+      const timer = setTimeout(() => {
+        if (realRematchingLoading) {
+          const interval = setInterval(() => {
+            if (!realRematchingLoading) {
+              clearInterval(interval);
+              finishRematching();
+            }
+          }, 100);
+        } else {
+          finishRematching();
+        }
       }, 4000);
-    }
-  }, [rematchingLoading]);
 
-  console.log("loading", match?.type);
+      return () => clearTimeout(timer);
+    }
+  }, [rematchingLoading, realRematchingLoading]);
+
   if (rematchingLoading) {
     return (
       <View style={styles.container}>

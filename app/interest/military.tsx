@@ -70,7 +70,7 @@ export default function MilitarySelectionScreen() {
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
           tattoo: form.tattoo?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           militaryPreference: preferences?.options[currentIndex]?.id ?? "",
           goodMbti: form.goodMbti as string,
           badMbti: form.badMbti as string,
