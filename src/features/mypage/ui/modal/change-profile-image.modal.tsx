@@ -3,6 +3,7 @@ import apis from "@/src/features/mypage/apis";
 import { platform } from "@/src/shared/libs/platform";
 
 import Layout from "@/src/features/layout";
+import { DefaultLayout } from "@/src/features/layout/ui";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import {
   GuideView,
@@ -216,14 +217,13 @@ export const ChangeProfileImageModal = ({
   }
 
   return (
-    <View
+    <DefaultLayout
       className={cn(
-        "flex-1 font-extralight",
+        "flex-1 ",
         Platform.OS === "web" && "max-w-[468px] relative w-full self-center"
       )}
     >
-      <View style={{ flex: 1, marginTop: insets.top }}>
-        <PalePurpleGradient />
+      <View style={{ flex: 1 }}>
         <GuideView>
           <View style={[styles.container]}>
             <View style={styles.titleContainer}>
@@ -253,7 +253,7 @@ export const ChangeProfileImageModal = ({
               </Text>
             </View>
 
-            <View className="flex-row justify-center   w-full gap-[16px]">
+            <View className="flex-row justify-center px-[8px]  w-full gap-[16px]">
               <View className="flex  justify-center items-center">
                 {images[0] ? (
                   <ImageSelector
@@ -365,7 +365,7 @@ export const ChangeProfileImageModal = ({
           />
         </View>
       </View>
-    </View>
+    </DefaultLayout>
   );
 };
 
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
 
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "transparent",
+    backgroundColor: "#fff",
   },
   infoTitle: {
     color: "#9F84D8",

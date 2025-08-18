@@ -67,10 +67,6 @@ export default function SignupInstagram() {
       </View>
     );
 
-    const timer = setTimeout(() => {
-      hideOverlay();
-    }, 3000);
-
     return () => clearTimeout(timer);
   }, []);
   useChangePhase(SignupSteps.INSTAGRAM);
