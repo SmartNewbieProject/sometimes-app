@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     paddingBottom: 120,
+    paddingTop: 20,
     position: "relative",
     alignItems: "center",
     marginTop: 10,

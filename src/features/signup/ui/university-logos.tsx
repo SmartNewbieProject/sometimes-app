@@ -4,21 +4,21 @@ import { useEffect, useRef } from "react";
 import { Animated, Easing, View } from "react-native";
 
 const universityLogos = [
-  require("@/assets/images/univ/daejeon/bju.png"),
+  require("@/assets/images/univ/cheonan/caschu.png"),
   require("@/assets/images/univ/busan/pnu.png"),
   require("@/assets/images/univ/daegu/dgcau.png"),
 
-  require("@/assets/images/univ/daejeon/cnu.png"),
   require("@/assets/images/univ/busan/kmou.png"),
   require("@/assets/images/univ/daegu/dgdart.png"),
+  require("@/assets/images/univ/incheon/icninu.png"),
 
-  require("@/assets/images/univ/daejeon/dbu.png"),
   require("@/assets/images/univ/busan/dau.png"),
   require("@/assets/images/univ/daegu/dgdau.png"),
+  require("@/assets/images/univ/incheon/icninu.png"),
 
-  require("@/assets/images/univ/daejeon/ddu.png"),
   require("@/assets/images/univ/busan/ksu.png"),
   require("@/assets/images/univ/daegu/dgdhu.png"),
+  require("@/assets/images/univ/incheon/icninha.png"),
 
   require("@/assets/images/univ/daejeon/hbu.png"),
   require("@/assets/images/univ/busan/deu.png"),
@@ -36,14 +36,17 @@ const universityLogos = [
   require("@/assets/images/univ/busan/tmu.png"),
   require("@/assets/images/univ/daegu/dgynu.png"),
 
-  require("@/assets/images/univ/daejeon/mwu.png"),
+  require("@/assets/images/univ/incheon/icngcu.png"),
   require("@/assets/images/univ/busan/cup.png"),
+  require("@/assets/images/univ/cheonan/cabu.png"),
 
   require("@/assets/images/univ/daejeon/uju.png"),
   require("@/assets/images/univ/busan/pknu.png"),
+  require("@/assets/images/univ/cheonan/cabu.png"),
 
   require("@/assets/images/univ/daejeon/wsu.png"),
   require("@/assets/images/univ/busan/pnue.png"),
+  require("@/assets/images/univ/cheonan/caknu.png"),
 ];
 
 const firstRowLogos = universityLogos.slice(0, 12);

@@ -46,22 +46,21 @@ function useAreaHook() {
 
   useEffect(() => {
     setTimeout(() => {
-      setShow("대전");
+      setShow("대구");
     }, 200);
 
     setTimeout(() => {
-      setShow("부산");
+      setShow("인천");
     }, 700);
     setTimeout(() => {
-      setShow("대구");
+      setShow("천안");
+      setShow(null);
+      setInitDisabled(false);
     }, 1200);
-    setTimeout(() => {
-      setShow("충북/세종");
-    }, 1700);
     setTimeout(() => {
       setShow(null);
       setInitDisabled(false);
-    }, 2200);
+    }, 1700);
   }, []);
 
   const onNext = (fallback: () => void) => {

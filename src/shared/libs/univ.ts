@@ -98,6 +98,35 @@ export enum UniversityName {
 	'한국폴리텍대학교 대구캠퍼스' = '한국폴리텍대학교 대구캠퍼스',
 	'한국폴리텍대학교 영남융합기술캠퍼스' = '한국폴리텍대학교 영남융합기술캠퍼스',
 	'한국폴리텍대학교 영주캠퍼스' = '한국폴리텍대학교 영주캠퍼스',
+
+	// 천안
+	국립공주대학교 = '국립공주대학교',
+	나사렛대학교 = '나사렛대학교',
+	남서울대학교 = '남서울대학교',
+	단국대학교 = '단국대학교',
+	백석대학교 = '백석대학교',
+	상명대학교 = '상명대학교',
+	순천향대학교 = '순천향대학교',
+	한국기술교육대학교 = '한국기술교육대학교',
+	유원대학교 = '유원대학교',
+	호서대학교 = '호서대학교',
+	연암대학교 = '연암대학교',
+	'한국폴리텍 IV 대학 아산캠퍼스' = '한국폴리텍 IV 대학 아산캠퍼스',
+
+	//인천
+	가천대학교 = '가천대학교',
+	경인교육대학교 = '경인교육대학교',
+	안양대학교 = '안양대학교',
+	인천가톨릭대학교 = '인천가톨릭대학교',
+	인천대학교 = '인천대학교',
+	인하대학교 = '인하대학교',
+	청운대학교 = '청운대학교',
+	경인여자대학교 = '경인여자대학교',
+	인하공업전문대학 = '인하공업전문대학',
+	재능대학교 = '재능대학교',
+	'한국폴리텍 II 대학 인천캠퍼스' = '한국폴리텍 II 대학 인천캠퍼스',
+	한국공학대학교 = '한국공학대학교',
+	연세대학교국제캠퍼스 = '연세대학교국제캠퍼스',
 }
 
 export const UniversityImage: Record<UniversityName, string> = {
@@ -203,6 +232,35 @@ export const UniversityImage: Record<UniversityName, string> = {
 	[UniversityName['한국폴리텍대학교 대구캠퍼스']]: 'dgkpud.png',
 	[UniversityName['한국폴리텍대학교 영남융합기술캠퍼스']]: 'dgkpuy.png',
 	[UniversityName['한국폴리텍대학교 영주캠퍼스']]: 'dgkpuyj.png',
+
+	// 천안
+	[UniversityName.국립공주대학교]: 'caknu.png',
+	[UniversityName.나사렛대학교]: 'canu.png',
+	[UniversityName.남서울대학교]: 'cansu.png',
+	[UniversityName.단국대학교]: 'cadku.png',
+	[UniversityName.백석대학교]: 'cabu.png',
+	[UniversityName.상명대학교]: 'casmu.png',
+	[UniversityName.순천향대학교]: 'caschu.png',
+	[UniversityName.한국기술교육대학교]: 'cakut.png',
+	[UniversityName.유원대학교]: 'cauu.png',
+	[UniversityName.호서대학교]: 'cahu.png',
+	[UniversityName.연암대학교]: 'cayu.png',
+	[UniversityName['한국폴리텍 IV 대학 아산캠퍼스']]: 'cakpau.png',
+
+	//인천
+	[UniversityName.가천대학교]: 'icngcu.png',
+	[UniversityName.경인교육대학교]: 'icnginue.png',
+	[UniversityName.안양대학교]: 'icnayu.png',
+	[UniversityName.인천가톨릭대학교]: 'icniccu.png',
+	[UniversityName.인천대학교]: 'icninu.png',
+	[UniversityName.인하대학교]: 'icninha.png',
+	[UniversityName.청운대학교]: 'icncwu.png',
+	[UniversityName.경인여자대학교]: 'icngwu.png',
+	[UniversityName.인하공업전문대학]: 'icnitc.png',
+	[UniversityName.재능대학교]: 'icnjei.png',
+	[UniversityName['한국폴리텍 II 대학 인천캠퍼스']]: 'icnkopo.png',
+	[UniversityName.한국공학대학교]: 'icnkoreatech.png',
+	[UniversityName.연세대학교국제캠퍼스]: 'icnyonsei-ic.png',
 };
 
 export const UniversityEnglishName: Record<UniversityName, string> = {
@@ -308,6 +366,35 @@ export const UniversityEnglishName: Record<UniversityName, string> = {
 	[UniversityName['한국폴리텍대학교 대구캠퍼스']]: 'Korea Polytechnics',
 	[UniversityName['한국폴리텍대학교 영남융합기술캠퍼스']]: 'Korea Polytechnics',
 	[UniversityName['한국폴리텍대학교 영주캠퍼스']]: 'Korea Polytechnics',
+
+	//천안
+	[UniversityName.국립공주대학교]: 'Kongju National University',
+	[UniversityName.나사렛대학교]: 'Korea Nazarene University',
+	[UniversityName.남서울대학교]: 'Namseoul University',
+	[UniversityName.단국대학교]: 'Dankook University',
+	[UniversityName.백석대학교]: 'Baekseok University',
+	[UniversityName.상명대학교]: 'Sangmyung University',
+	[UniversityName.순천향대학교]: 'Soonchunhyang University',
+	[UniversityName.한국기술교육대학교]: 'Korea University of Technology and Education',
+	[UniversityName.유원대학교]: 'U1 University',
+	[UniversityName.호서대학교]: 'Hoseo University',
+	[UniversityName.연암대학교]: 'Yonam Collegeg',
+	[UniversityName['한국폴리텍 IV 대학 아산캠퍼스']]: 'Korea Polytechnics',
+
+	//인천
+	[UniversityName.가천대학교]: 'Gachon University',
+	[UniversityName.경인교육대학교]: 'Gyeongin National University of Education',
+	[UniversityName.안양대학교]: 'Anyang University',
+	[UniversityName.인천가톨릭대학교]: 'Incheon Catholic University',
+	[UniversityName.인천대학교]: 'Incheon National University',
+	[UniversityName.인하대학교]: 'Inha University',
+	[UniversityName.청운대학교]: 'Chungwoon University',
+	[UniversityName.경인여자대학교]: "Kyung-in Women's University",
+	[UniversityName.인하공업전문대학]: 'Inha Technical College',
+	[UniversityName.재능대학교]: 'JEI University',
+	[UniversityName['한국폴리텍 II 대학 인천캠퍼스']]: 'Korea Polytechnics',
+	[UniversityName.한국공학대학교]: 'Tech University of Korea',
+	[UniversityName.연세대학교국제캠퍼스]: 'Yonsei University',
 };
 
 const baseUrl = 'https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/univ/';
