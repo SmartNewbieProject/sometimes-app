@@ -1,4 +1,4 @@
-import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
 import { Text } from "react-native";
 import { track } from "@amplitude/analytics-react-native";
@@ -24,6 +24,8 @@ const { useSignupProgress } = Signup;
 
 export default function UserInfoPage() {
   const { updateForm, form } = useSignupProgress();
+
+  const insets = useSafeAreaInsets();
 
   const [gender, setGender] = useState(form.gender || null);
   const [year, setYear] = useState("");
@@ -56,17 +58,22 @@ export default function UserInfoPage() {
 
   return (
     <DefaultLayout>
-      <View style={styles.topBar}>
+      <View style={[styles.topBar, { paddingTop: insets.top }]}>
         <Text style={styles.topBarTitle}>Apple 로그인</Text>
       </View>
+
       <ScrollView
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
+        style={{
+          paddingTop: 50 + insets.top,
+          paddingBottom: 140 + insets.bottom,
+          flex: 1,
+        }}
         contentContainerStyle={{
           flexGrow: 1,
           paddingHorizontal: 20,
-          paddingBottom: 140,
         }}
       >
         <View className="px-[5px]">
@@ -178,7 +185,10 @@ export default function UserInfoPage() {
         </View>
       </ScrollView>
 
-      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+      <View
+        style={[styles.bottomContainer, { bottom: insets.bottom }]}
+        className="w-[calc(100%)]"
+      >
         <View style={styles.messageContainer}>
           <Image
             source={require("@assets/images/favorite.png")}
@@ -218,6 +228,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
+    position: "absolute",
+    width: "100%",
+    zIndex: 10,
   },
   topBarTitle: {
     fontSize: 17,
@@ -288,13 +301,11 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     position: "absolute",
-    bottom: 0,
     paddingTop: 16,
     paddingHorizontal: 20,
     backgroundColor: "#fff",
     alignItems: "center",
     width: "100%",
-    marginTop: 20,
   },
   messageContainer: {
     flexDirection: "row",
