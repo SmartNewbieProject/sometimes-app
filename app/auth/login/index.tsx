@@ -67,7 +67,7 @@ export default function LoginScreen() {
           <View className="items-center mb-[54px]">
             <Signup.Logo />
           </View>
-          <Link href="/auth/signup/instagram">인스타그램</Link>
+
           {/* 메인 콘텐츠 */}
           <View className="flex-1 w-full max-w-sm">
             <Signup.LoginForm />
