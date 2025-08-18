@@ -6,6 +6,7 @@ export type ILiked = {
 	likedAt: string;
 	mainProfileUrl: string;
 	nickname: string;
+	matchId: string;
 	universityName: string;
 	viewedAt: string | null;
 	deletedAt: string | null;
@@ -18,6 +19,7 @@ export type LikedMe = {
 	instagram: string | null;
 	mainProfileUrl: string;
 	nickname: string;
+	matchId: string;
 	universityName: string;
 	age: number;
 	viewedAt: string | null;

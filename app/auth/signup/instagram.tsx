@@ -4,13 +4,13 @@ import { useOverlay } from "@/src/shared/hooks/use-overlay";
 import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   BackHandler,
-  Dimensions,
   Keyboard,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -66,8 +66,6 @@ export default function SignupInstagram() {
         />
       </View>
     );
-
-    return () => clearTimeout(timer);
   }, []);
   useChangePhase(SignupSteps.INSTAGRAM);
   const [keyboardVisible, setKeyboardVisible] = useState(false);

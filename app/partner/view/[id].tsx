@@ -55,7 +55,7 @@ const { useMatchPartnerQuery } = queries;
 
 export default function PartnerDetailScreen() {
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
-  const { data: partner, isLoading, error } = useMatchPartnerQuery(matchId);
+  const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
   const [isSlideScrolling, setSlideScrolling] = useState(false);
   const [isZoomVisible, setZoomVisible] = useState(false);
   const { isStatus, isLiked } = useLiked();
@@ -99,7 +99,7 @@ export default function PartnerDetailScreen() {
       <Header.Container>
         <Header.LeftContent>
           <Pressable
-            onPress={() => router.navigate("/home")}
+            onPress={router.back}
             className="pt-2 -ml-2"
           >
             <ChevronLeftIcon width={24} height={24} />
