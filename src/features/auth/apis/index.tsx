@@ -1,7 +1,7 @@
 import type { PassLoginResponse } from "@/src/auth/dto/pass-login.dto";
+import { axiosClient } from "@shared/libs";
 // @ts-ignore
 import type { MyDetails } from "@types/user";
-import { axiosClient } from "@shared/libs";
 
 export { appleReviewLogin } from "./apple-review-login";
 
@@ -19,7 +19,7 @@ export const passLogin = (impUid: string): Promise<PassLoginResponse> =>
   axiosClient.post("/auth/pass-login", { impUid });
 
 export const passDevLogin = (): Promise<PassLoginResponse> =>
-    axiosClient.post("/auth/pass-login/dev");
+  axiosClient.post("/auth/pass-login/dev");
 
 export const passKakao = (code: string): Promise<PassLoginResponse> =>
   axiosClient.post("/auth/oauth/kakao", { code });
