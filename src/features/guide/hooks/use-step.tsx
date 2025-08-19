@@ -1,4 +1,3 @@
-import type { PreferenceOption } from "@/src/types/user";
 import { create } from "zustand";
 
 type StoreStates = {

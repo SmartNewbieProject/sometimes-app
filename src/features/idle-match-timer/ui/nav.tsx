@@ -67,7 +67,7 @@ export const InteractionNavigation = ({
   };
 
   return (
-    <View className="w-fulsl flex flex-row gap-x-[5px] mt-4">
+    <View className=" flex flex-row gap-x-[5px] mt-4">
       <Button
         onPress={showPartnerFindAnnouncement}
         variant={hasPartner ? "outline" : "primary"}
