@@ -55,12 +55,13 @@ function LikeGuide() {
           <Pressable
             pointerEvents="none"
             style={{
-              ...commonStyle,
               top: insets.top + 46,
-
+              position: "absolute" as const,
               alignSelf: "center",
-              justifyContent: "center",
               alignItems: "center",
+              zIndex: 300,
+              marginTop: 20,
+              borderRadius: 24,
             }}
           >
             <ToggleTab
@@ -68,7 +69,7 @@ function LikeGuide() {
               activeTab={activeTab}
               onTabClick={() => {}}
             />
-            <View style={styles.highlightBorder} />
+            <View style={[styles.highlightBorder, { borderRadius: 24 }]} />
           </Pressable>
         );
       case 5:
@@ -148,7 +149,10 @@ function LikeGuide() {
           <>
             <RNText style={styles.infoTitle}>보낸 썸</RNText>
             <RNText style={styles.infoDescription}>
-              누가 나에게 호감을 보냈는지 바로 확인해요
+              내가 먼저 마음을 표현한
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              사람들을 볼 수 있어요
             </RNText>
           </>
         );
@@ -157,7 +161,7 @@ function LikeGuide() {
           <>
             <RNText style={styles.infoTitle}>도착한 썸</RNText>
             <RNText style={styles.infoDescription}>
-              내가 먼저 마음을 표현한 사람들을 볼 수 있어요
+              보냈는지 바로 확인해요
             </RNText>
           </>
         );
