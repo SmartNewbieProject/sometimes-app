@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     zIndex: 300,
     bottom: 100,
     position: "absolute",
-    right: 90,
+    right: 72,
     marginHorizontal: "auto",
     paddingHorizontal: 28,
     paddingVertical: 19,

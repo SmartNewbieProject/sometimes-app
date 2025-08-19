@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     bottom: 100,
     position: "absolute",
     alignSelf: "center",
-    right: 90,
+    right: 72,
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,

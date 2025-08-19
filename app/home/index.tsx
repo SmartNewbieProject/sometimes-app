@@ -72,8 +72,7 @@ const HomeScreen = () => {
     fetchTutorialStatus();
   }, []);
 
-  const visibleLikeGuide =
-    step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
+  const visibleLikeGuide = step < 11 && !hasFirstLoading && hasFirst;
 
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
