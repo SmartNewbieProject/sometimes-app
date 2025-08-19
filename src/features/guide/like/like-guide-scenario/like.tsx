@@ -161,7 +161,7 @@ function LikeGuide() {
           <>
             <RNText style={styles.infoTitle}>도착한 썸</RNText>
             <RNText style={styles.infoDescription}>
-              보냈는지 바로 확인해요
+              누가 나에게 호감을 보냈는지 바로 확인해요
             </RNText>
           </>
         );
