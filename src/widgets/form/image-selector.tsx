@@ -96,7 +96,6 @@ export function FormImageSelector({
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
-    console.log("camera result", result);
     status = (await MediaLibrary.requestPermissionsAsync()).status;
     if (status === "granted" && result.assets?.[0].uri) {
       MediaLibrary.saveToLibraryAsync(result.assets[0].uri);

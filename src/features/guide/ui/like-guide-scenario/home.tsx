@@ -115,9 +115,21 @@ function HomeGuide() {
             <View className="mt-[14px]">
               <MockPartner />
             </View>
+            <View style={{ marginTop: 20 }}>
+              <HistoryCollapse />
+            </View>
+            <View>
+              <CommunityAnnouncement />
+              <ReviewSlide onScrollStateChange={() => {}} />
+            </View>
 
-            <HistoryCollapse />
+            <View className="my-[25px]">
+              <TipAnnouncement />
+            </View>
+
+            <BusinessInfo />
           </ScrollView>
+          <BottomNavigation />
         </>
       )}
 

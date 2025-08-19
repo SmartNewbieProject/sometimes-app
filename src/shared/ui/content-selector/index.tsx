@@ -45,7 +45,6 @@ export function ContentSelector({
   activeColor = "#7A4AE2",
   inactiveColor = "#E2D5FF",
 }: ContentSelectorProps) {
-  console.log("value", `bg-[${inactiveColor}]`);
   return (
     <View>
       <View

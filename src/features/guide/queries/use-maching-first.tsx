@@ -7,6 +7,7 @@ function useMatchingFirst() {
   return useQuery({
     queryKey: ["matching-first"],
     queryFn: () => getMatchingHasFirst(),
+    staleTime: 0,
   });
 }
 

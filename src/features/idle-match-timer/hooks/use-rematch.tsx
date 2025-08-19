@@ -20,6 +20,7 @@ const useRematchingMutation = () =>
       // 추가로 쿼리를 강제로 다시 가져오기
       await queryClient.refetchQueries({ queryKey: ["latest-matching"] });
       await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
+      await queryClient.invalidateQueries({ queryKey: ["matching-first"] });
     },
   });
 

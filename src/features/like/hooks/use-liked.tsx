@@ -14,7 +14,6 @@ function useLiked() {
   };
 
   const showCollapse = () => {
-    console.log("showCollapse", likedMe, iLiked);
     if (isILoading || isMeLoading) {
       return false;
     }

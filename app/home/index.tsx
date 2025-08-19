@@ -1,6 +1,6 @@
 import { useStep } from "@/src/features/guide/hooks/use-step";
-import LikeGuideScenario from "@/src/features/guide/like/like-guide-scenario";
 import useMatchingFirst from "@/src/features/guide/queries/use-maching-first";
+import LikeGuideScenario from "@/src/features/guide/ui/like-guide-scenario";
 import type { Notification } from "@/src/features/home/apis";
 import BannerSlide from "@/src/features/home/ui/banner-slide";
 import FirstPurchaseEvent from "@/src/features/home/ui/first-purchase-event-banner";
@@ -62,17 +62,17 @@ const HomeScreen = () => {
   const collapse = showCollapse();
   const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
   const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
-
   useEffect(() => {
     const fetchTutorialStatus = async () => {
       const finished = await storage.getItem("like-guide");
-      console.log("finished", finished);
+
       setTutorialFinished(finished === "true");
     };
     fetchTutorialStatus();
   }, []);
 
-  const visibleLikeGuide = step < 11 && !hasFirstLoading && hasFirst;
+  const visibleLikeGuide =
+    step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
 
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
@@ -85,8 +85,6 @@ const HomeScreen = () => {
     });
     router.navigate("/purchase/gem-store");
   };
-
-  console.log("collapse", collapse);
 
   useEffect(() => {
     trackEventAction("home_view");
