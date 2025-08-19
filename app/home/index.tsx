@@ -1,3 +1,6 @@
+import { useStep } from "@/src/features/guide/hooks/use-step";
+import useMatchingFirst from "@/src/features/guide/queries/use-maching-first";
+import LikeGuideScenario from "@/src/features/guide/ui/like-guide-scenario";
 import type { Notification } from "@/src/features/home/apis";
 import BannerSlide from "@/src/features/home/ui/banner-slide";
 import FirstPurchaseEvent from "@/src/features/home/ui/first-purchase-event-banner";
@@ -13,7 +16,7 @@ import {
   useVersionUpdate,
 } from "@/src/features/version-update";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { ImageResources } from "@/src/shared/libs";
+import { ImageResources, storage } from "@/src/shared/libs";
 import { ensurePushTokenRegistered } from "@/src/shared/libs/notifications";
 import {
   AnnounceCard,
@@ -48,7 +51,7 @@ const { useRedirectPreferences, useTemporalUniversity } = hooks;
 
 const HomeScreen = () => {
   const { showModal } = useModal();
-
+  const { step } = useStep();
   const { isPreferenceFill } = useRedirectPreferences();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
@@ -57,9 +60,24 @@ const HomeScreen = () => {
   const [isSlideScrolling, setSlideScrolling] = useState(false);
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
+  const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
+  const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
+  useEffect(() => {
+    const fetchTutorialStatus = async () => {
+      const finished = await storage.getItem("like-guide");
+
+      setTutorialFinished(finished === "true");
+    };
+    fetchTutorialStatus();
+  }, []);
+
+  const visibleLikeGuide =
+    step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
+
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
   };
+
   const onNavigateGemStore = () => {
     track("onNavigateGemStore", {
       ...my,
@@ -67,8 +85,6 @@ const HomeScreen = () => {
     });
     router.navigate("/purchase/gem-store");
   };
-
-  console.log("collapse", collapse);
 
   useEffect(() => {
     trackEventAction("home_view");
@@ -87,12 +103,11 @@ const HomeScreen = () => {
       });
     }, [queryClient])
   );
-
   return (
     <View className="flex-1 ">
       <PalePurpleGradient />
       <VersionUpdateChecker />
-
+      <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} />
       <Header
         centered={true}
         logoSize={128}
@@ -117,12 +132,13 @@ const HomeScreen = () => {
         <View style={{ paddingBottom: 4, marginTop: 2 }}>
           <BannerSlide />
         </View>
-
-        {collapse ? (
-          <LikeCollapse collapse={collapse.data} type={collapse.type} />
-        ) : (
-          <NoneLikeBanner />
-        )}
+        <View style={{ marginTop: 20 }}>
+          {collapse ? (
+            <LikeCollapse collapse={collapse.data} type={collapse.type} />
+          ) : (
+            <NoneLikeBanner />
+          )}
+        </View>
 
         <View className="mt-[18px] flex flex-col gap-y-1.5">
           <Feedback.WallaFeedbackBanner />
@@ -146,7 +162,9 @@ const HomeScreen = () => {
             <IdleMatchTimer />
           </View>
         )}
-        <HistoryCollapse />
+        <View style={{ marginTop: 20 }}>
+          <HistoryCollapse />
+        </View>
         <View>
           <CommunityAnnouncement />
           <ReviewSlide onScrollStateChange={onScrollStateChange} />

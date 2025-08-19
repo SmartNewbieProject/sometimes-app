@@ -18,7 +18,6 @@ function ProfileImageSection() {
   });
 
   const handleProfileImageOpen = () => {
-    console.log("profile open");
     setProfileOpen(true);
   };
   const handleProfileImageClose = () => {

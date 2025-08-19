@@ -28,7 +28,6 @@ export const RematchLoading = () => {
   const [stepCheck, setStepCheck] = useState(processStep.map((_) => false));
   const { loading: realRematchingLoading } = useMatchLoading();
   const [displayPercent, setDisplayPercent] = useState(0);
-  console.log("check", realRematchingLoading, Math.floor(displayPercent));
 
   const animations = useRef(
     processStep.map(() => ({

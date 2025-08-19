@@ -34,17 +34,22 @@ function HistoryCollapse() {
     imagesUrls.length > 5 ? 5 : imagesUrls.length
   );
 
+  useEffect(() => {
+    if (startTiming) {
+      collapseValues.forEach((_, index) => {
+        collapseValues[index].value = withDelay(
+          index * 150,
+          withTiming(1, {
+            duration: 150,
+            easing: Easing.inOut(Easing.ease),
+          })
+        );
+      });
+      textOpacity.value = withDelay(800, withTiming(1, { duration: 100 }));
+    }
+  }, [startTiming]);
+
   const handleAllImagesLoaded = () => {
-    collapseValues.forEach((_, index) => {
-      collapseValues[index].value = withDelay(
-        index * 150,
-        withTiming(1, {
-          duration: 150,
-          easing: Easing.inOut(Easing.ease),
-        })
-      );
-    });
-    textOpacity.value = withDelay(800, withTiming(1, { duration: 100 }));
     setStartTiming(true);
   };
 
@@ -57,7 +62,7 @@ function HistoryCollapse() {
   return !isLoading &&
     previewMatchingHistory &&
     previewMatchingHistory?.imageUrls.length > 0 ? (
-    <View style={{ marginTop: 20, overflow: "hidden", borderRadius: 20 }}>
+    <View style={{ overflow: "hidden", borderRadius: 20 }}>
       <LinearGradient
         start={[0, 0]}
         end={[0, 1]}
@@ -85,6 +90,7 @@ function HistoryCollapse() {
           <View style={styles.contentContainer}>
             <ImageCollapse
               collapseValues={collapseValues}
+              startTiming={startTiming}
               handleAllImagesLoaded={handleAllImagesLoaded}
               imageUrls={
                 previewMatchingHistory.imageUrls.length > 5

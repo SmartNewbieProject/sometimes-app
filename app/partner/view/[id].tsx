@@ -77,7 +77,6 @@ export default function PartnerDetailScreen() {
     partner?.characteristics ?? []
   );
 
-  console.log("partner", partner);
   const personal = characteristicsOptions.성격;
   const loveStyles = characteristicsOptions["연애 스타일"];
   const interests = characteristicsOptions.관심사;

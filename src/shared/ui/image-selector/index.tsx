@@ -22,7 +22,6 @@ export interface ImageSelectorProps
 // Static method for rendering an image
 export function renderImage(value: string | null, isPlaceHolder?: boolean) {
   if (!value) return null;
-  console.log(value, "value");
   return (
     <Image
       source={isPlaceHolder ? value : { uri: value }}
@@ -79,7 +78,6 @@ export function ImageSelector({
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
-    console.log("image result", result);
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
@@ -91,7 +89,6 @@ export function ImageSelector({
         return null;
       }
       const jpegUri = await convertToJpeg(pickedUri);
-      console.log("jpegUri", jpegUri);
       onChange(jpegUri);
     }
     setImageModal(false);
@@ -115,7 +112,6 @@ export function ImageSelector({
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
-    console.log("camera result", result);
     status = (await MediaLibrary.requestPermissionsAsync()).status;
     if (status === "granted" && result.assets?.[0].uri) {
       MediaLibrary.saveToLibraryAsync(result.assets[0].uri);

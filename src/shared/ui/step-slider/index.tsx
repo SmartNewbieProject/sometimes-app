@@ -70,7 +70,6 @@ export function StepSlider({
 
   const thumbValue = draggingValue ?? value;
   const percentage = ((thumbValue - min) / (max - min)) * 100;
-  console.log(percentage, draggingValue, "percentage");
   useEffect(() => {
     if (isControlled) {
       setInternalValue(controlledValue);
@@ -91,13 +90,11 @@ export function StepSlider({
   const handleValueChange = useCallback(
     (newValue: number) => {
       const finalValue = snapToStep(newValue);
-      console.log("finalValue", finalValue, isControlled);
       if (!isControlled) {
         setInternalValue(finalValue);
       }
 
       if (onChange) {
-        console.log(finalValue, "onChange value");
         onChange(finalValue);
       }
     },
@@ -176,7 +173,6 @@ export function StepSlider({
   // 드래그 종료 핸들러
   const handleDragEnd = useCallback(() => {
     throttledDragMove.cancel();
-    console.log("draggingValue", draggingValue);
     if (draggingValue !== null) {
       handleValueChange(draggingValue);
     }

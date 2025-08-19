@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -31,8 +31,8 @@ export const ToggleTab = ({
   onTabClick,
   style,
 }: ToggleTabProps) => {
-  const left = useSharedValue(activeTab === "liked-me" ? 5 : 86);
-  const width = useSharedValue(activeTab === "liked-me" ? 74 : 58);
+  const left = useSharedValue(activeTab === "liked-me" ? 5 : 88);
+  const width = useSharedValue(activeTab === "liked-me" ? 76 : 60);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -42,18 +42,20 @@ export const ToggleTab = ({
   });
 
   const handleTabChange = () => {
-    if (activeTab === "liked-me") {
-      left.value = withTiming(86, { duration: 300 });
-      width.value = withTiming(58, { duration: 300 });
-    } else {
-      left.value = withTiming(5, { duration: 300 });
-      width.value = withTiming(74, { duration: 300 });
-    }
-
     setTimeout(() => {
       onTabClick();
     }, 400);
   };
+
+  useEffect(() => {
+    if (activeTab === "liked-me") {
+      left.value = withTiming(5, { duration: 300 });
+      width.value = withTiming(74, { duration: 300 });
+    } else {
+      left.value = withTiming(86, { duration: 300 });
+      width.value = withTiming(58, { duration: 300 });
+    }
+  }, [activeTab]);
 
   return (
     <Pressable style={[styles.container, style]} onPress={handleTabChange}>
@@ -83,7 +85,7 @@ export const ToggleTab = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: 149,
+    width: 151,
     height: 50,
     borderRadius: 20,
     position: "relative",

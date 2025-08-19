@@ -14,18 +14,20 @@ interface ImageCollapseProps {
   imageUrls: string[];
   handleAllImagesLoaded: () => void;
   collapseValues: SharedValue<number>[];
+  startTiming: boolean;
 }
 
 function ImageCollapse({
   imageUrls,
   handleAllImagesLoaded,
   collapseValues,
+  startTiming,
 }: ImageCollapseProps) {
   const loadedCount = useRef(0);
-
+  const length = imageUrls.length;
   useEffect(() => {
     loadedCount.current = 0;
-  }, [imageUrls]);
+  }, [JSON.stringify(imageUrls)]);
 
   return (
     <View style={styles.container}>
@@ -38,7 +40,7 @@ function ImageCollapse({
           item={collapseValues[index]}
           onImageLoaded={() => {
             loadedCount.current += 1;
-            if (loadedCount.current === imageUrls.length) {
+            if (loadedCount.current === length && !startTiming) {
               handleAllImagesLoaded();
             }
           }}

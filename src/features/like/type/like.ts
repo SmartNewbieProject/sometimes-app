@@ -10,7 +10,7 @@ export type ILiked = {
 	universityName: string;
 	viewedAt: string | null;
 	matchExpiredAt: string;
-	isExpired: string;
+	isExpired: boolean;
 	deletedAt: string | null;
 	status: string;
 };
@@ -20,7 +20,7 @@ export type LikedMe = {
 	likedAt: string;
 	instagram: string | null;
 	matchExpiredAt: string;
-	isExpired: string;
+	isExpired: boolean;
 	mainProfileUrl: string;
 	nickname: string;
 	matchId: string;

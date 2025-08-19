@@ -29,7 +29,7 @@ interface PostBoxCardProps {
   age: number;
   viewedAt: string | null;
   matchExpiredAt: string;
-  isExpired: string;
+  isExpired: boolean;
   connectionId: string;
   isMutualLike: boolean;
   deletedAt: string | null;
@@ -149,7 +149,11 @@ function PostBoxCard({
   );
 }
 
-function LikedMePendingButton({ connectionId }: { connectionId: string }) {
+export function LikedMePendingButton({
+  connectionId,
+}: {
+  connectionId: string;
+}) {
   const mutation = useRejectLike();
   const handleReject = () => {
     tryCatch(
