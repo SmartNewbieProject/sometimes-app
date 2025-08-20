@@ -15,7 +15,7 @@ import { PrivacyNotice } from "../../auth/ui/privacy-notice";
 import AppleLoginButton from "./apple-login-button";
 import KakaoLoginWebView from "./kakao-login-web-view";
 import UniversityLogos from "./university-logos";
-import {checkAppEnvironment} from "@shared/libs";
+import { checkAppEnvironment } from "@shared/libs";
 
 export default function LoginForm() {
   const {
@@ -82,9 +82,11 @@ export default function LoginForm() {
           </View>
         </Show>
 
-        {/* <Show when={Platform.OS !== "android" && pathname === "/test"}>
-          <AppleLoginButton />
-        </Show> */}
+        <Show when={Platform.OS !== "android"}>
+          <View style={{ marginRight: 48 }}>
+            <AppleLoginButton />
+          </View>
+        </Show>
       </View>
       {/* 에러 메시지 */}
 
