@@ -76,15 +76,14 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <Show when={!isUS}>
-          <View style={{ marginBottom: 10 }}>
-            <KakaoLogin />
-          </View>
-        </Show>
 
-        <Show when={Platform.OS !== "android"}>
+        <View style={{ marginBottom: 10 }}>
+          <KakaoLogin />
+        </View>
+
+        {/* <Show when={Platform.OS !== "android"}>
           <AppleLoginButton />
-        </Show>
+        </Show> */}
       </View>
       {/* 에러 메시지 */}
 

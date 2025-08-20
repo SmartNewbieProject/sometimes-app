@@ -48,9 +48,9 @@ type FormState = {
 const schema = z.object({
   images: z
     .array(z.string().nullable())
-    .min(3, { message: "1장의 사진을 올려주세요" })
+    .min(3, { message: "3장의 사진을 올려주세요" })
     .refine((images) => images.every((img) => img !== null), {
-      message: "1장의 사진을 올려주세요",
+      message: "3장의 사진을 올려주세요",
     }),
 });
 
