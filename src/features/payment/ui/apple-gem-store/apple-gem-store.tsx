@@ -1,3 +1,8 @@
+import { useIAP } from "expo-iap";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import Layout from "@/src/features/layout";
 import { useScrollIndicator } from "@/src/shared/hooks";
 import { ScrollDownIndicator, Show, Text } from "@/src/shared/ui";
@@ -6,14 +11,9 @@ import {
   type ExtendedProductPurchase,
   splitAndSortProducts,
 } from "@/src/widgets/gem-store/utils/apple";
-import { useIAP } from "expo-iap";
-import type { Product } from "expo-iap";
-import React, { useEffect } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import paymentApis from "../../api";
 import { useCurrentGem } from "../../hooks";
-import { FirstSaleCard } from "../first-sale-card";
 import { AppleFirstSaleCard } from "../first-sale-card/apple";
 import { GemStore } from "../gem-store";
 import { RematchingTicket } from "../rematching-ticket";
@@ -22,6 +22,7 @@ function AppleGemStore() {
   const insets = useSafeAreaInsets();
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
   const { data: gem } = useCurrentGem();
+  const [purchasing, setPurchasing] = useState(false);
 
   const {
     connected,
@@ -48,55 +49,58 @@ function AppleGemStore() {
     "gem_800",
     "gem_8",
   ];
+
   const { sale, normal } = products
     ? splitAndSortProducts(products)
     : { sale: [], normal: [] };
-  console.log("product", sale);
+
   useEffect(() => {
     if (connected) {
       requestProducts({ skus: productIds, type: "inapp" });
     }
   }, [connected]);
-  useEffect(() => {
-    if (currentPurchase) {
-      const completePurchase = async () => {
-        try {
-          console.log("Purchase completed:", currentPurchase.id);
 
-          console.log("Receipt:", currentPurchase);
-          const res = await paymentApis.postAppleVerifyPurchase(
-            purchase?.jwsRepresentationIOS ?? ""
-          );
-          console.log("res", res);
-          const result = await finishTransaction({
-            purchase: currentPurchase,
-            isConsumable: true,
-          });
-          console.log("result", result);
-        } catch (error) {
-          console.error("Failed to complete purchase:", error);
-        }
-      };
-      completePurchase();
-    }
+  useEffect(() => {
+    if (!currentPurchase) return;
+    const completePurchase = async () => {
+      setPurchasing(true);
+      try {
+        console.log("Receipt:", purchase?.jwsRepresentationIOS);
+        const res = await paymentApis.postAppleVerifyPurchase(
+          purchase?.jwsRepresentationIOS ?? ""
+        );
+        console.log("서버 검증 결과:", res);
+
+        const result = await finishTransaction({
+          purchase: currentPurchase,
+          isConsumable: true,
+        });
+        console.log("finishTransaction 결과:", result);
+      } catch (error) {
+        console.error("Failed to complete purchase:", error);
+      } finally {
+        setPurchasing(false);
+      }
+    };
+    completePurchase();
   }, [currentPurchase]);
 
   const handlePurchase = async (productId: string) => {
+    if (purchasing) return;
+    setPurchasing(true);
     try {
       await requestPurchase({
         request: {
-          ios: {
-            sku: productId,
-          },
-          android: {
-            skus: [productId],
-          },
+          ios: { sku: productId },
+          android: { skus: [productId] },
         },
       });
     } catch (error) {
       console.error("Purchase failed:", error);
+      setPurchasing(false);
     }
   };
+
   return (
     <Layout.Default
       className="flex flex-1 flex-col"
@@ -135,7 +139,7 @@ function AppleGemStore() {
 
               <Show when={normal && normal?.length > 0}>
                 <AppleGemStoreWidget.Provider>
-                  {normal.map((product: Product, index: number) => (
+                  {normal.map((product, index) => (
                     <AppleGemStoreWidget.Item
                       key={product.id}
                       gemProduct={product}
@@ -150,10 +154,25 @@ function AppleGemStore() {
         </RematchingTicket.ContentLayout>
       </ScrollView>
       <ScrollDownIndicator visible={showIndicator} />
+
+      {/* 화면 전체 로딩 UI */}
+      <Show when={purchasing}>
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      </Show>
     </Layout.Default>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
+});
 
 export default AppleGemStore;
