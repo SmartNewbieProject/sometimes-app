@@ -27,17 +27,19 @@ export default function UserInfoPage() {
 
   const insets = useSafeAreaInsets();
 
+  const [name, setName] = useState(form.name || "");
   const [gender, setGender] = useState(form.gender || null);
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(form.phone || "010");
 
   const monthRef = useRef<TextInput>(null);
   const dayRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
 
   const isFormComplete =
+    !!name &&
     !!gender &&
     year.length === 4 &&
     month.length === 2 &&
@@ -47,13 +49,76 @@ export default function UserInfoPage() {
   const onNext = async () => {
     if (!isFormComplete) return;
 
+    const formattedPhoneNumberForServer = formatDisplayedPhoneNumber(phone);
+
     updateForm({
+      name,
       gender,
       birthday: `${year}-${month}-${day}`,
-      phone,
+      phone: formattedPhoneNumberForServer,
     });
 
     router.push("/auth/signup/area");
+  };
+
+  /**
+   * @param {string} rawPhoneNumber The raw phone number (e.g., "01012345678").
+   * @returns {string}
+   */
+  const formatDisplayedPhoneNumber = (rawPhoneNumber: string): string => {
+    // Added type annotation
+    // If no raw phone number, display "010-" as a starting point for input
+    if (!rawPhoneNumber) return "010-";
+
+    const digits = rawPhoneNumber.replace(/\D/g, ""); // Ensure only digits are processed
+
+    // Format based on the number of digits
+    if (digits.length <= 3) {
+      return digits; // e.g., "010"
+    } else if (digits.length <= 7) {
+      return `${digits.substring(0, 3)}-${digits.substring(3)}`; // e.g., "010-1234"
+    } else if (digits.length <= 11) {
+      return `${digits.substring(0, 3)}-${digits.substring(
+        3,
+        7
+      )}-${digits.substring(7, 11)}`; // e.g., "010-1234-5678"
+    }
+    return digits.substring(0, 11);
+  };
+
+  /**
+   * Handles changes to the phone number TextInput, ensuring '010' prefix and 11-digit format.
+   * @param {string} inputText The current text from the TextInput.
+   */
+  const handlePhoneNumberChange = (inputText: string) => {
+    // Added type annotation
+    // Remove all non-digit characters from the input text
+    let digitsOnly = inputText.replace(/\D/g, "");
+
+    // Ensure the phone number always starts with '010'
+    if (!digitsOnly.startsWith("010")) {
+      if (digitsOnly.length === 0) {
+        // If the input is completely cleared, reset to '010'
+        digitsOnly = "010";
+      } else {
+        // If user types other digits, prepend '010' to those digits
+        // and take up to 8 of the user's new digits
+        digitsOnly = "010" + digitsOnly.substring(0, 8);
+      }
+    }
+
+    // Limit the total number of digits to 11 (e.g., '010' + 8 digits)
+    if (digitsOnly.length > 11) {
+      digitsOnly = digitsOnly.substring(0, 11);
+    }
+
+    // If after processing, the digits are less than 3 (meaning '010' might have been partially deleted),
+    // ensure it snaps back to '010'. This handles backspacing over the '010' prefix.
+    if (digitsOnly.length < 3 && inputText.length < 3) {
+      setPhone("010");
+    } else {
+      setPhone(digitsOnly);
+    }
   };
 
   return (
@@ -81,6 +146,17 @@ export default function UserInfoPage() {
             source={require("@assets/images/details.png")}
             style={{ width: 81, height: 81, marginTop: 30 }}
             className="mb-4"
+          />
+        </View>
+
+        <View style={styles.contentWrapper}>
+          <Text style={styles.title}>이름을 입력해주세요</Text>
+          <TextInput
+            style={styles.nameInput}
+            placeholder="구미호"
+            value={name}
+            onChangeText={setName}
+            maxLength={20}
           />
         </View>
 
@@ -176,11 +252,11 @@ export default function UserInfoPage() {
           <TextInput
             ref={phoneRef}
             style={styles.phoneInput}
-            placeholder="휴대폰 번호 입력('-' 제외 11자리 입력)"
+            placeholder="010-0000-0000"
             keyboardType="number-pad"
-            maxLength={11}
-            value={phone}
-            onChangeText={setPhone}
+            maxLength={13}
+            value={formatDisplayedPhoneNumber(phone)}
+            onChangeText={handlePhoneNumberChange}
           />
         </View>
       </ScrollView>
@@ -249,6 +325,17 @@ const styles = StyleSheet.create({
     marginTop: 34,
     paddingHorizontal: 10,
   },
+  nameInput: {
+    width: 305.45,
+    height: 37,
+    color: "#BAB0D0",
+    borderRadius: 15,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: "#E2D9FF",
+    backgroundColor: "#FFFFFF",
+    textAlign: "left",
+  },
   genderButtonContainer: {
     flexDirection: "row",
     gap: 10,
@@ -293,11 +380,12 @@ const styles = StyleSheet.create({
     width: 305.45,
     height: 37,
     color: "#BAB0D0",
-    borderRadius: 1,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#E2D9FF",
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E2D9FF",
     backgroundColor: "#FFFFFF",
+    textAlign: "left",
   },
   bottomContainer: {
     position: "absolute",
