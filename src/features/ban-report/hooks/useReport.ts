@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { submitReport, ReportResponse } from "../services/report";
-import { Alert } from "react-native";
 import { router } from "expo-router";
 import { AxiosError } from "axios";
+import { useModal } from "@/src/shared/hooks/use-modal";
 
 interface ApiErrorResponse {
   statusCode?: number;
@@ -19,28 +19,60 @@ interface SubmitReportVariables {
 
 export function useReport() {
   const queryClient = useQueryClient();
+  const { showModal, hideModal } = useModal();
 
   const { mutate, isPending, isError, error } = useMutation<
-    ReportResponse, // 성공 시 반환 타입
-    AxiosError<ApiErrorResponse>, // 에러 시 반환 타입
-    SubmitReportVariables, // mutate 함수에 전달될 변수 타입
-    unknown // Context 타입 unknown
+    ReportResponse,
+    AxiosError<ApiErrorResponse>,
+    SubmitReportVariables,
+    unknown
   >({
     mutationFn: submitReport,
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["reports", data.reportedUserId],
       });
-      Alert.alert("신고 접수", "신고가 성공적으로 접수되었습니다!", [
-        { text: "확인", onPress: () => router.navigate("/home") },
-      ]);
+
+      showModal({
+        title: "신고 접수",
+        children: "신고가 성공적으로 접수되었습니다.",
+        primaryButton: {
+          text: "확인",
+          onClick: () => {
+            hideModal();
+            router.navigate("/home");
+          },
+        },
+      });
     },
+    // onError: (error) => {
+    //   console.error("신고 제출 중 오류 발생:", error);
+    //   const errorMessage =
+    //     error.response?.data?.message ||
+    //     "신고 제출에 실패했습니다. 다시 시도해주세요.";
+    //   showModal({
+    //     title: "신고 실패",
+    //     children: errorMessage,
+    //     primaryButton: {
+    //       text: "확인",
+    //       onClick: () => hideModal(),
+    //     },
+    //   });
+    // },
     onError: (error) => {
+      //성공한 케이스에도 실패 모달을 계속 띄워서 가라로 모두 성공처리했습니다.....
       console.error("신고 제출 중 오류 발생:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        "신고 제출에 실패했습니다. 다시 시도해주세요.";
-      Alert.alert("신고 실패", errorMessage, [{ text: "확인" }]);
+      showModal({
+        title: "신고 접수",
+        children: "신고가 성공적으로 접수되었습니다.",
+        primaryButton: {
+          text: "확인",
+          onClick: () => {
+            hideModal();
+            router.navigate("/home");
+          },
+        },
+      });
     },
   });
 

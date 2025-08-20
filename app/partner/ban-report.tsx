@@ -7,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 
 import { Header } from "@shared/ui";
 import { useReport } from "@/src/features/ban-report/hooks/useReport";
+import { useModal } from "@/src/shared/hooks/use-modal";
 
 const { width } = Dimensions.get("window");
 
@@ -37,12 +37,13 @@ export default function ReportScreen() {
   }>();
 
   const { mutate, isLoading, isError, error } = useReport();
+  const { showModal, hideModal } = useModal();
 
   const [profile, setProfile] = useState({
     name: "알 수 없는 사용자",
     age: 0,
     university: "알 수 없음",
-    profileImage: "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG",
+    profileImage: "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG", // 기본 이미지
   });
 
   useEffect(() => {
@@ -73,11 +74,9 @@ export default function ReportScreen() {
 
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [detailedContent, setDetailedContent] = useState("");
-  // 여러 이미지 미리보기
   const [selectedImageUris, setSelectedImageUris] = useState<string[]>([]);
-  const [selectedImageFiles, setSelectedImageFiles] = useState<any[]>([]); // FormData에 전송할 파일 객체 배열
+  const [selectedImageFiles, setSelectedImageFiles] = useState<any[]>([]);
 
-  // 신고 사유 단일 선택 핸들러
   const handleReasonSelect = (id: string) => {
     setSelectedReasons((prev) => (prev.includes(id) ? [] : [id]));
   };
@@ -85,17 +84,27 @@ export default function ReportScreen() {
   // 신고 제출 핸들러
   const handleSubmitReport = () => {
     if (!partnerId) {
-      Alert.alert("오류", "신고 대상을 찾을 수 없습니다.", [{ text: "확인" }]);
+      showModal({
+        title: "오류",
+        children: "신고 대상을 찾을 수 없습니다.",
+        primaryButton: {
+          text: "확인",
+          onClick: () => hideModal(),
+        },
+      });
       return;
     }
 
     const isOtherReasonSelected = selectedReasons.includes("6");
     if (isOtherReasonSelected && detailedContent.trim() === "") {
-      Alert.alert(
-        "필수 입력",
-        "'기타' 사유 선택 시 상세 내용을 입력해주세요.",
-        [{ text: "확인" }]
-      );
+      showModal({
+        title: "필수 입력",
+        children: "상세 내용을 입력해주세요!",
+        primaryButton: {
+          text: "확인",
+          onClick: () => hideModal(),
+        },
+      });
       return;
     }
 
@@ -105,28 +114,35 @@ export default function ReportScreen() {
         .map((id) => reportReasons.find((r) => r.id === id)?.text || "")
         .join(", "),
       description: detailedContent.trim() === "" ? undefined : detailedContent,
-      evidenceImages: selectedImageFiles, // 선택된 파일 배열 전송
+      evidenceImages: selectedImageFiles,
     });
   };
 
-  // 증거 자료 첨부 핸들러
   const handleAttachEvidence = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert(
-        "권한 필요",
-        "사진을 선택하려면 미디어 라이브러리 접근 권한이 필요합니다.",
-        [{ text: "확인" }]
-      );
+      showModal({
+        title: "권한 필요",
+        children: "사진을 선택하려면 미디어 라이브러리 접근 권한이 필요합니다.",
+        primaryButton: {
+          text: "확인",
+          onClick: () => hideModal(),
+        },
+      });
       return;
     }
 
     try {
       const remainingSelectionLimit = 3 - selectedImageUris.length;
       if (remainingSelectionLimit <= 0) {
-        Alert.alert("알림", "최대 3장의 이미지만 첨부할 수 있습니다.", [
-          { text: "확인" },
-        ]);
+        showModal({
+          title: "알림",
+          children: "최대 3장의 이미지만 첨부할 수 있습니다.",
+          primaryButton: {
+            text: "확인",
+            onClick: () => hideModal(),
+          },
+        });
         return;
       }
 
@@ -142,6 +158,7 @@ export default function ReportScreen() {
         const newSelectedFiles: any[] = [];
 
         for (const asset of result.assets) {
+          // 허용된 MIME 타입 (jpg, jpeg, png) 검사
           if (
             asset.mimeType === "image/jpeg" ||
             asset.mimeType === "image/png"
@@ -155,15 +172,17 @@ export default function ReportScreen() {
               type: asset.mimeType,
             });
           } else {
-            Alert.alert(
-              "알림",
-              `허용되지 않는 이미지 형식입니다: ${asset.mimeType}\njpg, jpeg, png 형식만 가능합니다.`,
-              [{ text: "확인" }]
-            );
+            showModal({
+              title: "알림",
+              children: `허용되지 않는 이미지 형식입니다: ${asset.mimeType}\njpg, jpeg, png 형식만 가능합니다.`,
+              primaryButton: {
+                text: "확인",
+                onClick: () => hideModal(),
+              },
+            });
           }
         }
 
-        // 유효한 이미지만 기존 이미지에 추가
         setSelectedImageUris([...selectedImageUris, ...newSelectedUris]);
         setSelectedImageFiles([...selectedImageFiles, ...newSelectedFiles]);
       } else {
@@ -171,9 +190,14 @@ export default function ReportScreen() {
       }
     } catch (error) {
       console.error("이미지 선택 중 오류 발생:", error);
-      Alert.alert("오류", "이미지 선택 중 오류가 발생했습니다.", [
-        { text: "확인" },
-      ]);
+      showModal({
+        title: "오류",
+        children: "이미지 선택 중 오류가 발생했습니다.",
+        primaryButton: {
+          text: "확인",
+          onClick: () => hideModal(), // 모달 닫기
+        },
+      });
     }
   };
 
@@ -185,7 +209,7 @@ export default function ReportScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.headerBackButton}
-          disabled={isLoading}
+          disabled={isLoading} // 로딩 중에는 뒤로가기 버튼 비활성화
         >
           <Feather name="chevron-left" size={24} color="#000" />
         </TouchableOpacity>
@@ -226,7 +250,7 @@ export default function ReportScreen() {
                     styles.reasonButtonSelected,
                 ]}
                 onPress={() => handleReasonSelect(reason.id)}
-                disabled={isLoading}
+                disabled={isLoading} // 로딩 중에는 선택 불가
               >
                 <View style={styles.radioCircle}>
                   {selectedReasons.includes(reason.id) && (
@@ -251,14 +275,14 @@ export default function ReportScreen() {
             value={detailedContent}
             onChangeText={setDetailedContent}
             placeholderTextColor="#9CA3AF"
-            editable={!isLoading}
+            editable={!isLoading} // 로딩 중에는 입력 불가
           />
         </View>
 
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>증거 자료 첨부 (선택사항)</Text>
           <View style={styles.evidenceContainer}>
-            {selectedImageUris.length === 0 && (
+            {selectedImageUris.length === 0 ? (
               <TouchableOpacity
                 style={styles.attachEvidenceButtonPlaceholder}
                 onPress={handleAttachEvidence}
@@ -270,9 +294,7 @@ export default function ReportScreen() {
                 </Text>
                 <Text style={styles.attachFileButton}>파일 선택</Text>
               </TouchableOpacity>
-            )}
-
-            {selectedImageUris.length > 0 && (
+            ) : (
               <View style={styles.selectedImagesPreviewContainer}>
                 {selectedImageUris.map((uri, index) => (
                   <View key={index} style={styles.previewImageWrapper}>
@@ -289,7 +311,7 @@ export default function ReportScreen() {
                         setSelectedImageUris(newUris);
                         setSelectedImageFiles(newFiles);
                       }}
-                      disabled={isLoading} // 로딩 중에는 삭제 불가
+                      disabled={isLoading}
                     >
                       <Feather name="x-circle" size={20} color="white" />
                     </TouchableOpacity>
