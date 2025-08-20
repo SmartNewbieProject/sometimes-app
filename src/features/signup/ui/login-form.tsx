@@ -5,6 +5,7 @@ import {
 import { Button, Show, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
+import { checkAppEnvironment } from "@shared/libs";
 import * as Localization from "expo-localization";
 import { Link, usePathname, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
@@ -16,6 +17,7 @@ import AppleLoginButton from "./apple-login-button";
 import KakaoLoginWebView from "./kakao-login-web-view";
 import UniversityLogos from "./university-logos";
 import { checkAppEnvironment } from "@shared/libs";
+
 
 export default function LoginForm() {
   const {
@@ -76,17 +78,16 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <Show when={!isUS}>
-          <View style={{ marginBottom: 10 }}>
-            <KakaoLogin />
-          </View>
-        </Show>
+                <View style={{ marginBottom: 10 }}>
+          <KakaoLogin />
+        </View>
 
         <Show when={Platform.OS !== "android"}>
           <View style={{ marginRight: 48 }}>
             <AppleLoginButton />
           </View>
         </Show>
+
       </View>
       {/* 에러 메시지 */}
 

@@ -1,28 +1,38 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { cn, dayUtils, tryCatch } from "@/src/shared/libs";
-import { Button, ImageResource, TextArea } from "@/src/shared/ui";
+import { Button, Show } from "@/src/shared/ui";
+import {
+  getRemainingTimeFormatted,
+  getRemainingTimeLimit,
+} from "@/src/shared/utils/like";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
 import { Text as CustomText } from "@shared/ui/text";
 import { Image } from "expo-image";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import React, { useEffect, useRef } from "react";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
 import { useFeatureCost } from "../../payment/hooks";
 import useByeLike from "../queries/useByeLike";
 import useRejectLike from "../queries/useRejectLike";
+
 interface PostBoxCardProps {
   status: string;
   likedAt: string;
   instagram: string | null;
   mainProfileUrl: string;
   nickname: string;
+  matchId: string;
   universityName: string;
   age: number;
   viewedAt: string | null;
+  matchExpiredAt: string;
+  isExpired: boolean;
   connectionId: string;
   isMutualLike: boolean;
+  deletedAt: string | null;
   type: "liked-me" | "i-liked";
 }
 
@@ -33,12 +43,17 @@ function PostBoxCard({
   mainProfileUrl,
   nickname,
   age,
+  matchId,
   connectionId,
   viewedAt,
+  isExpired,
+  matchExpiredAt,
   universityName,
   isMutualLike,
+  deletedAt,
   type,
 }: PostBoxCardProps) {
+  const opacity = useRef(new Animated.Value(1)).current;
   const statusMessage =
     type === "liked-me"
       ? `${dayUtils.formatRelativeTime(likedAt)} 좋아요를 눌렀어요`
@@ -47,47 +62,98 @@ function PostBoxCard({
       : status === "REJECTED"
       ? "상대방이 거절했어요"
       : "상대방의 응답을 기다리고 있어요";
+  const userWithdrawal = !!deletedAt;
 
-  const renderBottomButton =
-    status === "OPEN" && instagram ? (
-      <LikedMeOpenButton instagramId={instagram} />
-    ) : type === "liked-me" ? (
-      <LikedMePendingButton connectionId={connectionId} />
-    ) : type === "i-liked" && status === "REJECTED" ? (
-      <ILikedRejectedButton connectionId={connectionId} />
-    ) : (
-      <></>
+  const renderBottomButton = isExpired ? (
+    <ILikedRejectedButton connectionId={connectionId} />
+  ) : status === "OPEN" && instagram ? (
+    <LikedMeOpenButton instagramId={instagram} />
+  ) : type === "liked-me" ? (
+    <LikedMePendingButton connectionId={connectionId} />
+  ) : type === "i-liked" && status === "REJECTED" ? (
+    <ILikedRejectedButton connectionId={connectionId} />
+  ) : (
+    <></>
+  );
+
+  useEffect(() => {
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 0.6,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ])
     );
+    anim.start();
+
+    return () => anim.stop();
+  }, [opacity]);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.viewPoint, !viewedAt && styles.viewYet]} />
-      <Image source={mainProfileUrl} style={styles.profileImage} />
-      <View style={styles.contentContainer}>
-        <View style={styles.topText}>
-          <Text style={styles.name} className="font-medium">
-            {nickname}
+    <Pressable
+      onPress={() => {
+        if (userWithdrawal) return;
+        router.push(`/partner/view/${matchId}`);
+      }}
+    >
+      <View style={styles.container}>
+        <View style={[styles.viewPoint, !viewedAt && styles.viewYet]} />
+        <Image source={mainProfileUrl} style={styles.profileImage} />
+        <View style={styles.contentContainer}>
+          <View style={styles.topText}>
+            <Text style={styles.name} className="font-medium">
+              {nickname}
+            </Text>
+            <Text style={styles.age}>만 {age}세</Text>
+          </View>
+          <Text style={styles.university}>{universityName}</Text>
+          <Text
+            style={[
+              styles.status,
+              styles.pending,
+              type === "i-liked" && status === "REJECTED" && styles.reject,
+              type === "i-liked" && status === "OPEN" && styles.open,
+            ]}
+          >
+            {statusMessage}
           </Text>
-          <Text style={styles.age}>만 {age}세</Text>
+          <Animated.Text
+            style={[
+              styles.status,
+              styles.timeText,
+              getRemainingTimeLimit(matchExpiredAt) && {
+                color: "#EF4444",
+                opacity,
+              },
+            ]}
+          >
+            {getRemainingTimeFormatted(matchExpiredAt)}
+          </Animated.Text>
+
+          <Show when={userWithdrawal}>
+            <CustomText textColor="gray" size="13" weight="light">
+              서비스를 탈퇴한 유저에요
+            </CustomText>
+          </Show>
+          <Show when={!userWithdrawal}>{renderBottomButton}</Show>
         </View>
-        <Text style={styles.university}>{universityName}</Text>
-        <Text
-          style={[
-            styles.status,
-            styles.pending,
-            type === "i-liked" && status === "REJECTED" && styles.reject,
-            type === "i-liked" && status === "OPEN" && styles.open,
-          ]}
-        >
-          {statusMessage}
-        </Text>
-        {renderBottomButton}
       </View>
-    </View>
+    </Pressable>
   );
 }
 
-function LikedMePendingButton({ connectionId }: { connectionId: string }) {
+export function LikedMePendingButton({
+  connectionId,
+}: {
+  connectionId: string;
+}) {
   const mutation = useRejectLike();
   const handleReject = () => {
     tryCatch(
@@ -259,6 +325,13 @@ const styles = StyleSheet.create({
     height: 68,
     borderRadius: 68,
   },
+  timeText: {
+    fontSize: 11,
+    color: "#9CA3AF",
+    lineHeight: 14,
+    marginTop: 2,
+    fontWeight: "500",
+  },
   viewPoint: {
     width: 12,
     height: 12,
@@ -298,7 +371,7 @@ const styles = StyleSheet.create({
   },
   status: {
     lineHeight: 16,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   pending: {
     fontSize: 12,

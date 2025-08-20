@@ -2,7 +2,7 @@ import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { Button } from "@/src/shared/ui/button";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 

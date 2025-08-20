@@ -55,16 +55,17 @@ const { useMatchPartnerQuery } = queries;
 
 export default function PartnerDetailScreen() {
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
-  const { data: partner, isLoading, error } = useMatchPartnerQuery(matchId);
+  const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
   const [isSlideScrolling, setSlideScrolling] = useState(false);
   const [isZoomVisible, setZoomVisible] = useState(false);
-  const { isStatus, isLiked } = useLiked();
+  const { isStatus, isLiked, isExpired } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const onZoomClose = () => {
     setZoomVisible(false);
   };
 
-  console.log(isStatus(partner?.connectionId ?? ""));
+  const userWithdrawal = !!partner?.deletedAt;
+
   const loading = (() => {
     if (!partner) return true;
     if (isLoading) return true;
@@ -76,7 +77,6 @@ export default function PartnerDetailScreen() {
     partner?.characteristics ?? []
   );
 
-  console.log("partner", partner);
   const personal = characteristicsOptions.성격;
   const loveStyles = characteristicsOptions["연애 스타일"];
   const interests = characteristicsOptions.관심사;
@@ -97,10 +97,7 @@ export default function PartnerDetailScreen() {
 
       <Header.Container>
         <Header.LeftContent>
-          <Pressable
-            onPress={() => router.navigate("/home")}
-            className="pt-2 -ml-2"
-          >
+          <Pressable onPress={router.back} className="pt-2 -ml-2">
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
@@ -316,36 +313,60 @@ export default function PartnerDetailScreen() {
             <LikedMeOpenButton height={48} instagramId={partner.instagramId} />
           </View>
         </Show>
-        <Show
-          when={
-            !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
-            !isLiked(partner?.connectionId ?? "") &&
-            !!partner?.connectionId
-          }
-        >
-          <View
-            style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
+
+        <Show when={userWithdrawal}>
+          <Text textColor="gray" className="text-center">
+            서비스를 탈퇴한 유저에요
+          </Text>
+        </Show>
+
+        <Show when={!userWithdrawal}>
+          <Show
+            when={
+              !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
+              !isLiked(partner?.connectionId ?? "") &&
+              !!partner?.connectionId
+            }
           >
-            <LikeButton connectionId={partner.connectionId ?? ""} />
-          </View>
-        </Show>
-        <Show when={isStatus(partner?.connectionId ?? "") === "PENDING"}>
-          <View className="w-full flex flex-row">
-            <Button
-              variant="outline"
-              disabled={true}
-              size="md"
-              className={cn("flex-1 items-center ", `!h-[${20}px]`)}
+            <View
+              style={{
+                width: "100%",
+                flex: 1,
+                flexDirection: "row",
+                height: 48,
+              }}
             >
-              <Text>상대방 응답을 기다리는 중..</Text>
-            </Button>
-          </View>
-        </Show>
-        <Show when={isStatus(partner?.connectionId ?? "") === "REJECTED"}>
-          <ILikedRejectedButton
-            height={48}
-            connectionId={partner?.connectionId ?? ""}
-          />
+              <LikeButton connectionId={partner.connectionId ?? ""} />
+            </View>
+          </Show>
+          <Show
+            when={
+              !isExpired(partner?.connectionId ?? "") &&
+              isStatus(partner?.connectionId ?? "") === "PENDING"
+            }
+          >
+            <View className="w-full flex flex-row">
+              <Button
+                variant="outline"
+                disabled={true}
+                size="md"
+                className={cn("flex-1 items-center ", `!h-[${20}px]`)}
+              >
+                <Text>상대방 응답을 기다리는 중..</Text>
+              </Button>
+            </View>
+          </Show>
+          <Show
+            when={
+              isExpired(partner?.connectionId ?? "") ||
+              isStatus(partner?.connectionId ?? "") === "REJECTED"
+            }
+          >
+            <ILikedRejectedButton
+              height={48}
+              connectionId={partner?.connectionId ?? ""}
+            />
+          </Show>
         </Show>
       </View>
     </View>

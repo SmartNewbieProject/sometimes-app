@@ -40,6 +40,7 @@ export interface UserProfile {
 	instagramId: string;
 	universityDetails: UniversityDetail;
 	preferences: PreferenceTypeGroup[];
+	deletedAt: string | null;
 }
 
 export interface SimpleProfile {

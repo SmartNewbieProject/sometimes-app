@@ -1,8 +1,13 @@
-import { DefaultLayout } from "@/src/features/layout/ui";
+import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Loading from "@/src/features/loading";
 import Signup from "@/src/features/signup";
 import type { SignupForm } from "@/src/features/signup/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import {
+  GuideView,
+  guideHeight,
+  useOverlay,
+} from "@/src/shared/hooks/use-overlay";
 import { tryCatch } from "@/src/shared/libs";
 import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
@@ -12,9 +17,18 @@ import { track } from "@amplitude/analytics-react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { BackHandler, View } from "react-native";
+import {
+  Animated,
+  BackHandler,
+  Dimensions,
+  Easing,
+  Text as RNText,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { z } from "zod";
 
 const {
@@ -25,6 +39,8 @@ const {
   useSignupAnalytics,
 } = Signup;
 
+const { height } = Dimensions.get("window");
+
 type FormState = {
   images: (string | null)[];
 };
@@ -32,9 +48,9 @@ type FormState = {
 const schema = z.object({
   images: z
     .array(z.string().nullable())
-    .min(3, { message: "1장의 사진을 올려주세요" })
+    .min(3, { message: "3장의 사진을 올려주세요" })
     .refine((images) => images.every((img) => img !== null), {
-      message: "1장의 사진을 올려주세요",
+      message: "3장의 사진을 올려주세요",
     }),
 });
 
@@ -46,6 +62,8 @@ export default function ProfilePage() {
   const { showErrorModal } = useModal();
   const [signupLoading, setSignupLoading] = useState(false);
   const { trackSignupEvent } = useSignupAnalytics("profile_image");
+  const { showOverlay, hideOverlay, visible } = useOverlay();
+  const animation = useRef(new Animated.Value(0)).current;
 
   const form = useForm<FormState>({
     resolver: zodResolver(schema),
@@ -54,6 +72,54 @@ export default function ProfilePage() {
       images: userForm.profileImages ?? [null, null, null],
     },
   });
+
+  useEffect(() => {
+    if (visible) {
+      Animated.sequence([
+        Animated.delay(height <= guideHeight ? 500 : 0),
+        Animated.timing(animation, {
+          toValue: 1,
+          duration: height <= guideHeight ? 500 : 0,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [visible]);
+  useEffect(() => {
+    showOverlay(
+      <View style={styles.infoOverlayWrapper}>
+        <RNText style={styles.infoTitle}>
+          이목구비가 잘 보이는 사진 필수에요
+        </RNText>
+        <RNText style={styles.infoDescription}>
+          눈, 코, 입이 잘 보이는 사진이라면
+        </RNText>
+        <RNText style={styles.infoDescription}>어떤 각도든 좋아요</RNText>
+        <Image
+          source={require("@assets/images/instagram-some.png")}
+          style={{
+            width: 116,
+            height: 175,
+            position: "absolute",
+            top: 20,
+            right: -66,
+          }}
+        />
+        <Image
+          source={require("@assets/images/instagram-lock.png")}
+          style={{
+            width: 52,
+            height: 52,
+            position: "absolute",
+            top: -30,
+            left: -30,
+            transform: [{ rotate: "-10deg" }],
+          }}
+        />
+      </View>
+    );
+  }, []);
 
   const onNext = async () => {
     const signupForm = {
@@ -118,7 +184,6 @@ export default function ProfilePage() {
   };
 
   const nextable = images.every((image) => image !== null);
-  const nextButtonMessage = nextable ? "다음으로" : "조금만 더 알려주세요";
 
   const uploadImage = (index: number, value: string) => {
     const newImages = [...images];
@@ -153,97 +218,189 @@ export default function ProfilePage() {
   }
 
   return (
-    <DefaultLayout>
-      <View className="px-5">
-        <Image
-          source={require("@assets/images/profile-image.png")}
-          style={{ width: 81, height: 81 }}
-        />
-        <Text weight="semibold" size="20" textColor="black" className="mt-2">
-          프로필 사진이 없으면 매칭이 안 돼요!
-        </Text>
-        <Text weight="semibold" size="20" textColor="black">
-          지금 바로 추가해 주세요
-        </Text>
-      </View>
-
-      <View className="flex flex-col py-4 px-5">
-        <Text weight="medium" size="sm" textColor="pale-purple">
-          매칭을 위해 1장의 프로필 사진을 필수로 올려주세요
-        </Text>
-        <Text weight="medium" size="sm" textColor="pale-purple">
-          얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
-        </Text>
-      </View>
-
-      <View className="flex-1 flex flex-col gap-y-4">
-        <View className="flex w-full justify-center items-center">
-          <ImageSelector
-            size="sm"
-            value={images[0] ?? undefined}
-            onChange={(value) => {
-              trackSignupEvent("image_upload", "image_1");
-              track("Signup_profile_image_1", {
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
-              uploadImage(0, value);
-              form.trigger("images");
-            }}
+    <DefaultLayout className="flex-1 relative">
+      <GuideView>
+        <View className="px-5 ">
+          <Image
+            source={require("@assets/images/profile-image.png")}
+            style={{ width: 81, height: 81 }}
           />
+          <Text weight="semibold" size="20" textColor="black" className="mt-2">
+            프로필 사진이 없으면 매칭이 안 돼요!
+          </Text>
+          <Text weight="semibold" size="20" textColor="black">
+            지금 바로 추가해 주세요
+          </Text>
         </View>
 
-        <View className="flex flex-row justify-center gap-x-4">
-          <ImageSelector
-            size="sm"
-            value={images[1] ?? undefined}
-            onChange={(value) => {
-              trackSignupEvent("image_upload", "image_2");
-              track("Signup_profile_image_2", {
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
-              uploadImage(1, value);
-              form.trigger("images");
-            }}
-          />
-          <ImageSelector
-            size="sm"
-            value={images[2] ?? undefined}
-            onChange={(value) => {
-              trackSignupEvent("image_upload", "image_3");
-              track("Signup_profile_image_3", {
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
-              uploadImage(2, value);
-              form.trigger("images");
-            }}
-          />
+        <View className="flex flex-col pb-[18px] pt-4 px-5">
+          <Text weight="medium" size="sm" textColor="pale-purple">
+            매칭을 위해 1장의 프로필 사진을 필수로 올려주세요
+          </Text>
+          <Text weight="medium" size="sm" textColor="pale-purple">
+            얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+          </Text>
         </View>
-      </View>
 
-      <View
-        className={cn(
-          platform({
-            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            default: () => "",
-          })
+        <View className="flex-row justify-center   w-full gap-[16px]">
+          <View className="flex  justify-center items-center">
+            <ImageSelector
+              size="lg"
+              value={images[0] ?? undefined}
+              onChange={(value) => {
+                trackSignupEvent("image_upload", "image_1");
+                track("Signup_profile_image_1", {
+                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+                });
+                uploadImage(0, value);
+                form.trigger("images");
+              }}
+            />
+          </View>
+
+          <View className="flex flex-col justify-center gap-y-[12px]">
+            <ImageSelector
+              size="sm"
+              value={images[1] ?? undefined}
+              onChange={(value) => {
+                trackSignupEvent("image_upload", "image_2");
+                track("Signup_profile_image_2", {
+                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+                });
+                uploadImage(1, value);
+                form.trigger("images");
+              }}
+            />
+            <ImageSelector
+              size="sm"
+              value={images[2] ?? undefined}
+              onChange={(value) => {
+                trackSignupEvent("image_upload", "image_3");
+                track("Signup_profile_image_3", {
+                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+                });
+                uploadImage(2, value);
+                form.trigger("images");
+              }}
+            />
+          </View>
+        </View>
+
+        {!visible && (
+          <Animated.View
+            style={[
+              height < guideHeight
+                ? styles.infoWrapper
+                : styles.infoOverlayWrapper,
+              { marginTop: 40, opacity: animation },
+            ]}
+          >
+            <RNText style={styles.infoTitle}>
+              이목구비가 잘 보이는 사진 필수에요
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              눈, 코, 입이 잘 보이는 사진이라면
+            </RNText>
+            <RNText style={styles.infoDescription}>어떤 각도든 좋아요</RNText>
+            <Image
+              source={require("@assets/images/instagram-some.png")}
+              style={{
+                width: 116,
+                height: 175,
+                position: "absolute",
+                top: 20,
+                right: -66,
+              }}
+            />
+            <Image
+              source={require("@assets/images/instagram-lock.png")}
+              style={{
+                width: 52,
+                height: 52,
+                position: "absolute",
+                top: -30,
+                left: -30,
+                transform: [{ rotate: "-10deg" }],
+              }}
+            />
+          </Animated.View>
         )}
-      >
-        <Button
-          variant="secondary"
-          onPress={() => {
+      </GuideView>
+
+      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+        <TwoButtons
+          disabledNext={!nextable}
+          onClickNext={onNext}
+          content={{ next: "완료하기" }}
+          onClickPrevious={() => {
             trackSignupEvent("back_button_click", "to_university_details");
             router.push("/auth/signup/instagram");
           }}
-          className="flex-[0.3]"
-        >
-          뒤로
-        </Button>
-        <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
-          {nextButtonMessage}
-        </Button>
+        />
       </View>
     </DefaultLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  infoOverlayWrapper: {
+    bottom: 200,
+    position: "absolute",
+
+    right: 90,
+    marginHorizontal: "auto",
+    paddingHorizontal: 28,
+    paddingVertical: 19,
+    borderRadius: 20,
+    backgroundColor: "#F2ECFF",
+    borderWidth: 1,
+    borderColor: "#FFF",
+
+    shadowColor: "#F2ECFF",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 3, // Android에서 그림자
+  },
+  infoWrapper: {
+    marginHorizontal: "auto",
+    paddingHorizontal: 28,
+    paddingVertical: 19,
+    borderRadius: 20,
+    backgroundColor: "#F2ECFF",
+    borderWidth: 1,
+    borderColor: "#FFF",
+    marginBottom: 223,
+    shadowColor: "#F2ECFF",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 3, // Android에서 그림자
+  },
+  infoTitle: {
+    color: "#9F84D8",
+    fontWeight: 600,
+    fontFamily: "Pretendard-SemiBold",
+    lineHeight: 16.8,
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  infoDescription: {
+    fontSize: 11,
+    lineHeight: 13.2,
+    color: "#BAB0D0",
+  },
+  bottomContainer: {
+    position: "absolute",
+    bottom: 0,
+    paddingTop: 16,
+    paddingHorizontal: 0,
+    backgroundColor: "#fff",
+  },
+});

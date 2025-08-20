@@ -38,7 +38,6 @@ export default function PersonalitySelectionScreen() {
       return;
     }
 
-    console.log("values", values);
     if (values.length === 0) {
       updateForm("personality", undefined);
     } else {

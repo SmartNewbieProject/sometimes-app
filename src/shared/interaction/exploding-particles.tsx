@@ -36,7 +36,6 @@ function ExplodingParticles({
   }));
 
   useEffect(() => {
-    console.log("startTiming", startTiming);
     if (startTiming) {
       particles.forEach((p, i) => {
         const baseAngle = 2 * Math.PI * (Math.floor(Math.random() * 16) / 16); // 8등분

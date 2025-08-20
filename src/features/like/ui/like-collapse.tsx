@@ -37,17 +37,22 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
     imagesUrls.length > 5 ? 5 : imagesUrls.length
   );
 
+  useEffect(() => {
+    if (startTiming) {
+      collapseValues.forEach((_, index) => {
+        collapseValues[index].value = withDelay(
+          index * 150,
+          withTiming(1, {
+            duration: 150,
+            easing: Easing.inOut(Easing.ease),
+          })
+        );
+      });
+      textOpacity.value = withDelay(800, withTiming(1, { duration: 100 }));
+    }
+  }, [startTiming]);
+
   const handleAllImagesLoaded = () => {
-    collapseValues.forEach((_, index) => {
-      collapseValues[index].value = withDelay(
-        index * 150,
-        withTiming(1, {
-          duration: 150,
-          easing: Easing.inOut(Easing.ease),
-        })
-      );
-    });
-    textOpacity.value = withDelay(800, withTiming(1, { duration: 100 }));
     setStartTiming(true);
   };
 
@@ -58,7 +63,7 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
   const { profileDetails } = useAuth();
   const name = profileDetails?.name ?? "";
   return imagesUrls && imagesUrls?.length > 0 ? (
-    <View style={{ marginTop: 20 }}>
+    <View>
       <Text style={styles.text}>
         {type === "iLiked"
           ? `${name}님께서 관심을 가지신 분들이에요`
@@ -81,6 +86,7 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
         <View style={styles.contentContainer}>
           <ImageCollapse
             collapseValues={collapseValues}
+            startTiming={startTiming}
             handleAllImagesLoaded={handleAllImagesLoaded}
             imageUrls={
               imagesUrls.length > 5 ? imagesUrls.slice(0, 5) : imagesUrls

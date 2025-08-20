@@ -1,5 +1,6 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
+import { useOverlay } from "@/src/shared/hooks/use-overlay";
 import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
@@ -31,6 +32,41 @@ export default function SignupInstagram() {
   const [instagramId, setInstagramId] = useState("");
   const insets = useSafeAreaInsets();
 
+  const { showOverlay, hideOverlay } = useOverlay();
+
+  useEffect(() => {
+    // 처음에 오버레이 띄우기
+    showOverlay(
+      <View style={styles.infoWrapper}>
+        <Text style={styles.infoTitle}>프로필을 매력적으로 보여주세요!</Text>
+        <Text style={styles.infoDescription}>
+          사진을 업로드하고 계정을 공개로 설정하면
+        </Text>
+        <Text style={styles.infoDescription}>매칭 확률이 더 높아져요</Text>
+        <Image
+          source={require("@assets/images/instagram-some.png")}
+          style={{
+            width: 116,
+            height: 175,
+            position: "absolute",
+            top: 20,
+            right: -66,
+          }}
+        />
+        <Image
+          source={require("@assets/images/instagram-lock.png")}
+          style={{
+            width: 52,
+            height: 52,
+            position: "absolute",
+            top: -30,
+            left: -30,
+            transform: [{ rotate: "-10deg" }],
+          }}
+        />
+      </View>
+    );
+  }, []);
   useChangePhase(SignupSteps.INSTAGRAM);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const { trackSignupEvent } = useSignupAnalytics("university_details");
@@ -87,8 +123,6 @@ export default function SignupInstagram() {
           style={{
             flex: 1,
             paddingHorizontal: 20,
-
-            position: "relative",
           }}
         >
           <View>
@@ -114,7 +148,7 @@ export default function SignupInstagram() {
           </View>
 
           {!keyboardVisible && (
-            <View style={styles.infoWrapper}>
+            <View style={[styles.infoWrapper]}>
               <Text style={styles.infoTitle}>
                 프로필을 매력적으로 보여주세요!
               </Text>
@@ -233,9 +267,11 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   infoWrapper: {
-    bottom: 223,
+    bottom: 240,
     position: "absolute",
-    marginLeft: 30,
+
+    right: 90,
+
     marginHorizontal: "auto",
     paddingHorizontal: 28,
     paddingVertical: 19,
