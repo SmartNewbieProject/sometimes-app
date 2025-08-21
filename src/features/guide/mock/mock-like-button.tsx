@@ -10,10 +10,10 @@ import { Image } from "expo-image";
 import { useAuth } from "../../auth";
 
 type MockLikeButtonProps = {
-  clasName?: string;
+  className?: string;
 };
 
-export const MockLikeButton = ({ clasName = "" }: MockLikeButtonProps) => {
+export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
   const { profileDetails } = useAuth();
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
@@ -114,7 +114,7 @@ export const MockLikeButton = ({ clasName = "" }: MockLikeButtonProps) => {
     <Button
       onPress={showPartnerLikeAnnouncement}
       variant="primary"
-      className={cn("flex-1 items-center", clasName)}
+      className={cn("flex-1 items-center", className)}
       prefix={
         profileDetails?.gender === "MALE" ? (
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />

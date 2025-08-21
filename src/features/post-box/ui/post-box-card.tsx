@@ -176,7 +176,7 @@ export function LikedMePendingButton({
         괜찮아요
       </Button>
 
-      <LikeButton clasName="!h-[40px]" connectionId={connectionId} />
+      <LikeButton className="!h-[40px]" connectionId={connectionId} />
     </View>
   );
 }

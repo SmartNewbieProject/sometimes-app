@@ -59,11 +59,8 @@ export default function LoginForm() {
       <UniversityLogos logoSize={64} />
 
       {/* 회원가입 및 로그인 버튼 */}
-      <View className="flex flex-col ">
-        <View
-          className="w-full  "
-          style={{ marginBottom: Platform.OS === "web" ? 10 : 20 }}
-        >
+      <View className="flex w-full items-center flex-col ">
+        <View style={{ marginBottom: 15 }}>
           <Button
             variant="primary"
             width="full"
@@ -76,12 +73,12 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <View style={{ marginBottom: 10 }}>
+        <View style={{ marginBottom: 15 }}>
           <KakaoLogin />
         </View>
 
         <Show when={Platform.OS !== "android"}>
-          <View style={{ marginRight: 48 }}>
+          <View>
             <AppleLoginButton />
           </View>
         </Show>
@@ -134,7 +131,7 @@ function KakaoLogin() {
 
   return (
     <>
-      <View className="w-full max-w-xs">
+      <View className="w-full ">
         <Pressable
           onPress={handleKakaoLogin}
           className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-[#FEE500]"
