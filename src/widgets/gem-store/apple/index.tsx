@@ -80,10 +80,10 @@ const AppleGemStoreItem = ({
               style={{ display: "flex", flexDirection: "row", columnGap: 6 }}
             >
               <Text className="text-[10px] text-[#969696] line-through">
-                {getPriceAndDiscount(gemProduct.title)?.price}원
+                {toKRW(getPriceAndDiscount(gemProduct.id)?.price ?? 0)}원
               </Text>
               <Text className="text-[10px]">
-                {getPriceAndDiscount(gemProduct.title)?.discountRate}% 할인
+                {getPriceAndDiscount(gemProduct.id)?.discountRate}% 할인
               </Text>
             </View>
           </Show>

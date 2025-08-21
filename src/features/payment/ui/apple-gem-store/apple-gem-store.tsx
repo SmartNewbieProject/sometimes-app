@@ -12,8 +12,10 @@ import {
   splitAndSortProducts,
 } from "@/src/widgets/gem-store/utils/apple";
 
+import { useModal } from "@/src/shared/hooks/use-modal";
 import paymentApis from "../../api";
 import { useCurrentGem } from "../../hooks";
+import { useAppleInApp } from "../../hooks/use-apple-in-app";
 import { AppleFirstSaleCard } from "../first-sale-card/apple";
 import { GemStore } from "../gem-store";
 import { RematchingTicket } from "../rematching-ticket";
@@ -23,7 +25,8 @@ function AppleGemStore() {
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
   const { data: gem } = useCurrentGem();
   const [purchasing, setPurchasing] = useState(false);
-
+  const appleInAppMutation = useAppleInApp();
+  const { showErrorModal } = useModal();
   const {
     connected,
     products,
@@ -66,25 +69,34 @@ function AppleGemStore() {
       setPurchasing(true);
       try {
         console.log("Receipt:", purchase?.jwsRepresentationIOS);
-        const res = await paymentApis.postAppleVerifyPurchase(
+
+        // 1. 백엔드에 영수증 검증 요청
+        const serverResponse = await appleInAppMutation.mutateAsync(
           purchase?.jwsRepresentationIOS ?? ""
         );
-        console.log("서버 검증 결과:", res);
+        console.log("서버 검증 결과:", serverResponse);
 
-        const result = await finishTransaction({
-          purchase: currentPurchase,
-          isConsumable: true,
-        });
-        console.log("finishTransaction 결과:", result);
+        // 2. 백엔드가 '성공'이라고 응답했을 때만 트랜잭션 완료
+        if (serverResponse.success) {
+          const result = await finishTransaction({
+            purchase: currentPurchase,
+            isConsumable: true,
+          });
+          console.log("finishTransaction 성공:", result);
+        } else {
+          // 3. 백엔드가 '실패'라고 응답한 경우
+          console.error("서버 검증 실패");
+          // 사용자에게 "결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요." 알림 표시
+        }
       } catch (error) {
         console.error("Failed to complete purchase:", error);
+        showErrorModal("결제 처리 중 오류가 발생했습니다", "announcement");
       } finally {
         setPurchasing(false);
       }
     };
     completePurchase();
   }, [currentPurchase]);
-
   const handlePurchase = async (productId: string) => {
     if (purchasing) return;
     setPurchasing(true);

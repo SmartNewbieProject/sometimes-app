@@ -77,22 +77,22 @@ export const getPriceAndDiscount = (
 	text: string,
 ): { price: number; discountRate: number } | null => {
 	const mapping: Record<string, { price: number; discountRate: number }> = {
-		'6개': { price: 6000, discountRate: 84 },
-		'15개': { price: 11000, discountRate: 21 },
-		'20개': { price: 4800, discountRate: 68 },
-		'30개': { price: 22000, discountRate: 37 },
-		'40개': { price: 12900, discountRate: 57 },
-		'60개': { price: 44000, discountRate: 51 },
-		'130개': { price: 95000, discountRate: 60 },
-		'200개': { price: 147000, discountRate: 61 },
-		'400개': { price: 295000, discountRate: 64 },
-		'500개': { price: 368000, discountRate: 66 },
-		'800개': { price: 590000, discountRate: 67 },
+		gem_sale_6: { price: 6000, discountRate: 84 },
+		gem_15: { price: 11000, discountRate: 21 },
+		gem_sale_20: { price: 4800, discountRate: 68 },
+		gem_30: { price: 22000, discountRate: 37 },
+		gem_sale_40: { price: 12900, discountRate: 57 },
+		gem_60: { price: 44000, discountRate: 51 },
+		gem_130: { price: 95000, discountRate: 60 },
+		gem_200: { price: 147000, discountRate: 61 },
+		gem_400: { price: 295000, discountRate: 64 },
+		gem_500: { price: 368000, discountRate: 66 },
+		gem_800: { price: 590000, discountRate: 67 },
 	};
 
 	// 문자열 안에 key가 포함되어 있으면 반환
 	for (const key in mapping) {
-		if (text.includes(key)) {
+		if (text === key) {
 			return mapping[key];
 		}
 	}
