@@ -46,6 +46,8 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+// Feather 아이콘 임포트
+import Feather from "@expo/vector-icons/Feather";
 
 const { queries, ui } = Match;
 const {
@@ -85,6 +87,10 @@ export default function PartnerDetailScreen() {
     return <Loading.Page title="파트너 정보를 불러오고 있어요" />;
   }
 
+  const mainProfileImageUrl = partner.profileImages.find(
+    (img) => img.isMain
+  )?.url;
+
   return (
     <View className="flex-1">
       <PhotoSlider
@@ -101,6 +107,25 @@ export default function PartnerDetailScreen() {
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
+        <Header.RightContent>
+          <Pressable // 신고하기 버튼
+            onPress={() =>
+              router.navigate({
+                pathname: "/partner/ban-report",
+                params: {
+                  partnerId: partner.id,
+                  partnerName: partner.name,
+                  partnerAge: partner.age,
+                  partnerUniv: partner.universityDetails.name,
+                  partnerProfileImage: mainProfileImageUrl,
+                },
+              })
+            }
+            className="pt-2 -ml-2"
+          >
+            <Feather name="alert-triangle" size={24} color="#000" />
+          </Pressable>
+        </Header.RightContent>
       </Header.Container>
 
       <ScrollView

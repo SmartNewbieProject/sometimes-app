@@ -1,6 +1,13 @@
-import React, { type ReactNode } from 'react';
-import { router } from 'expo-router';
-import { Container, LeftButton, LeftContent, CenterContent, Logo, RightContent } from './ui';
+import React, { type ReactNode } from "react";
+import { router } from "expo-router";
+import {
+  Container,
+  LeftButton,
+  LeftContent,
+  CenterContent,
+  Logo,
+  RightContent,
+} from "./ui";
 
 type HeaderProps = {
   title?: string;
@@ -39,9 +46,7 @@ export function Header({
 
       <Logo title={title} showLogo={showLogo} logoSize={logoSize} />
 
-      <RightContent>
-        {rightContent}
-      </RightContent>
+      <RightContent>{rightContent}</RightContent>
     </Container>
   );
 }

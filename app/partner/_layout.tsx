@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { Stack } from "expo-router";
+import { View } from "react-native";
 
 export default function PartnerLayoutScreen() {
   return (
@@ -10,9 +10,19 @@ export default function PartnerLayoutScreen() {
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
-            animation: 'slide_from_right',
+            animation: "slide_from_right",
+          }}
+        />
+        <Stack.Screen
+          name="ban-report"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+            animation: "slide_from_right",
           }}
         />
       </Stack>
