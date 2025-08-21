@@ -1,10 +1,15 @@
 import React from "react";
-import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 
-// function Input() {
-//   return <KeyboardAvoidingView></KeyboardAvoidingView>;
-// }
+function ChatInput() {
+  return <TextInput />;
+}
 
 const styles = StyleSheet.create({});
 
-// export default Input;
+export default ChatInput;
