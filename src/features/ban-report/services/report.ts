@@ -52,7 +52,7 @@ export async function submitReport(
   }
 
   try {
-    const response = await axiosClient.post<ReportResponse>(
+    const { data } = await axiosClient.post<ReportResponse>(
       `/users/${payload.userId}/reports`,
       formData,
       {
@@ -62,7 +62,7 @@ export async function submitReport(
         },
       }
     );
-    return response.data;
+    return data;
   } catch (error) {
     console.error("신고 제출 실패:", error);
     throw error;
