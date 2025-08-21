@@ -241,7 +241,7 @@ const AppleLoginButton: React.FC = () => {
   if (Platform.OS === "ios") {
     return (
       <View style={styles.iosContainer}>
-        <View className="w-full max-w-xs">
+        <View className="w-full">
           <Pressable
             onPress={handleIOSAppleLogin}
             disabled={isLoading}

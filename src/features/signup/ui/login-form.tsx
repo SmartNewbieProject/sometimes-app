@@ -60,7 +60,7 @@ export default function LoginForm() {
 
       {/* 회원가입 및 로그인 버튼 */}
       <View className="flex w-full items-center flex-col ">
-        <View style={{ marginBottom: Platform.OS === "web" ? 10 : 20 }}>
+        <View style={{ marginBottom: 15 }}>
           <Button
             variant="primary"
             width="full"
@@ -73,7 +73,7 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <View style={{ marginBottom: 10 }}>
+        <View style={{ marginBottom: 15 }}>
           <KakaoLogin />
         </View>
 
