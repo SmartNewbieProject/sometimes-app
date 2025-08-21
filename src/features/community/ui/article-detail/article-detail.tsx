@@ -17,13 +17,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import React from "react";
-import { useForm } from "react-hook-form";
-import { Keyboard, ScrollView, View, Image } from "react-native";
+import { Keyboard, ScrollView, View, Image, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
 import { InputForm } from "../comment/input-form";
 import { UserProfile } from "../user-profile";
 import { ArticleDetailComment } from "./article-detail-comment";
+
+import PhotoSlider from "@/src/widgets/slide/photo-slider";
+import { useForm } from "react-hook-form";
 
 export const ArticleDetail = ({ article }: { article: Article }) => {
   const insets = useSafeAreaInsets();
@@ -31,7 +33,9 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const [checked, setChecked] = useState(true);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState<string>("");
-  const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(null);
+  const [replyingToCommentId, setReplyingToCommentId] = useState<string | null>(
+    null
+  );
   const form = useForm<CommentForm>({
     defaultValues: {
       content: editingCommentId ? editingContent : "",
@@ -45,6 +49,13 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     if (!my) return false;
     return my.id === article.author.id;
   })();
+
+  const [isZoomVisible, setZoomVisible] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onZoomClose = () => {
+    setZoomVisible(false);
+  };
 
   const articleId = id as string;
   const { data: comments = [], isLoading: isCommentLoading } =
@@ -182,7 +193,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
                     };
                   }
                   return article;
-                }), 
+                }),
               })),
             };
           }
@@ -229,19 +240,21 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         const currentComment = findComment(comments);
         if (!currentComment) return;
 
-        console.log('댓글 좋아요 클릭:', {
+        console.log("댓글 좋아요 클릭:", {
           commentId,
           currentIsLiked: currentComment.isLiked,
-          currentLikeCount: currentComment.likeCount
+          currentLikeCount: currentComment.likeCount,
         });
 
         const newIsLiked = !currentComment.isLiked;
         const currentLikeCount = Number(currentComment.likeCount) || 0;
-        const newLikeCount = currentComment.isLiked ? currentLikeCount - 1 : currentLikeCount + 1;
+        const newLikeCount = currentComment.isLiked
+          ? currentLikeCount - 1
+          : currentLikeCount + 1;
 
-        console.log('새로운 상태:', {
+        console.log("새로운 상태:", {
           newIsLiked,
-          newLikeCount
+          newLikeCount,
         });
 
         queryClient.setQueryData(
@@ -273,8 +286,11 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           }
         );
 
-        const serverResponse = await apis_comments.patchCommentLike(articleId, commentId);
-        console.log('서버 응답:', serverResponse);
+        const serverResponse = await apis_comments.patchCommentLike(
+          articleId,
+          commentId
+        );
+        console.log("서버 응답:", serverResponse);
       },
       (error) => {
         console.error("댓글 좋아요 업데이트 실패:", error);
@@ -324,8 +340,17 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     return result;
   };
 
+  const imageUrls = article.images?.map((img) => img.imageUrl) || [];
+
   return (
     <View className="flex-1 relative bg-white">
+      <PhotoSlider
+        images={imageUrls}
+        onClose={onZoomClose}
+        initialIndex={selectedIndex}
+        visible={isZoomVisible}
+      />
+
       <ScrollView
         contentContainerStyle={{ paddingBottom: 100 }}
         keyboardShouldPersistTaps="handled"
@@ -349,7 +374,10 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
             {dayUtils.formatRelativeTime(article.createdAt)}
           </Text>
         </View>
-        <LinkifiedText className="mb-4 text-[14px] mx-[8px] leading-5" textColor="black">
+        <LinkifiedText
+          className="mb-4 text-[14px] mx-[8px] leading-5"
+          textColor="black"
+        >
           {article.content}
         </LinkifiedText>
 
@@ -359,14 +387,21 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
               <View className="flex-row gap-2">
                 {article.images
                   .sort((a, b) => a.displayOrder - b.displayOrder)
-                  .map((image) => (
-                  <Image
-                    key={`article-image-${image.id}`}
-                    source={{ uri: image.imageUrl }}
-                    className="w-32 h-32 rounded-lg"
-                    resizeMode="cover"
-                  />
-                ))}
+                  .map((image, index) => (
+                    <Pressable
+                      key={`article-image-${image.id}`}
+                      onPress={() => {
+                        setSelectedIndex(index);
+                        setZoomVisible(true);
+                      }}
+                    >
+                      <Image
+                        source={{ uri: image.imageUrl }}
+                        className="w-32 h-32 rounded-lg"
+                        resizeMode="cover"
+                      />
+                    </Pressable>
+                  ))}
               </View>
             </ScrollView>
           </View>
@@ -403,7 +438,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           bottom: 0,
           backgroundColor: "white",
           paddingBottom: insets.bottom,
-          // 기존 mb-8 대신 insets.bottom(홈 인디케이터 높이) 사용
         }}
         className="border-t border-[#F3F0FF] pt-3  px-4"
       >
