@@ -68,13 +68,10 @@ function AppleGemStore() {
     const completePurchase = async () => {
       setPurchasing(true);
       try {
-        console.log("Receipt:", purchase?.jwsRepresentationIOS);
-
         // 1. 백엔드에 영수증 검증 요청
         const serverResponse = await appleInAppMutation.mutateAsync(
           purchase?.jwsRepresentationIOS ?? ""
         );
-        console.log("서버 검증 결과:", serverResponse);
 
         // 2. 백엔드가 '성공'이라고 응답했을 때만 트랜잭션 완료
         if (serverResponse.success) {
@@ -82,7 +79,6 @@ function AppleGemStore() {
             purchase: currentPurchase,
             isConsumable: true,
           });
-          console.log("finishTransaction 성공:", result);
         } else {
           // 3. 백엔드가 '실패'라고 응답한 경우
           console.error("서버 검증 실패");
