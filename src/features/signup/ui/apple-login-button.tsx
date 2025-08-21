@@ -222,7 +222,7 @@ const AppleLoginButton: React.FC = () => {
     }
 
     return (
-      <View className="w-full max-w-xs">
+      <View>
         <Pressable
           onPress={handleWebAppleLogin}
           disabled={isLoading}

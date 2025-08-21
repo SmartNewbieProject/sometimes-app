@@ -38,7 +38,7 @@ function useLiked() {
 
   const isLiked = (connectionId: string) => {
     if (isILoading) {
-      return false;
+      return true;
     }
 
     return iLiked?.find((matching) => matching.connectionId === connectionId);
