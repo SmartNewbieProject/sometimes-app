@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.2.8",
+    "version": "2.2.9",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -97,6 +97,11 @@
         "com.apple.security.application-groups": [
           "group.com.some-in-univ.shared"
         ],
+        "entitlements": {
+          "com.apple.developer.applesignin": [
+            "Default"
+          ]
+        },
         "UNUserNotificationCenter": true,
         "NSFileProtectionComplete": true,
         "NSLocationWhenInUseUsageDescription": "위치 정보를 사용하여 지도 서비스를 제공합니다.",
