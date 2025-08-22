@@ -1,7 +1,6 @@
 import { useAuth } from "@/src/features/auth";
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
-import AppleGemStore from "@/src/features/payment/ui/apple-gem-store/apple-gem-store";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -14,7 +13,7 @@ import { usePortoneStore } from "@features/payment/hooks/use-portone-store";
 import { FirstSaleCard, GemStore } from "@features/payment/ui";
 import type { PortOneController } from "@portone/react-native-sdk";
 import { ScrollDownIndicator, Show, Text } from "@shared/ui";
-import { createRef, useEffect, useState } from "react";
+import { createRef, lazy, useEffect, useState } from "react";
 import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -135,6 +134,8 @@ export default function GemStoreScreen() {
   }
 
   if (Platform.OS === "ios") {
+    const AppleGemStore =
+      require("@/src/features/payment/ui/apple-gem-store/apple-gem-store").default;
     return <AppleGemStore />;
   }
   return (

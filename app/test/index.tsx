@@ -1,7 +1,6 @@
 import { useAuth } from "@/src/features/auth";
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
-import AppleGemStore from "@/src/features/payment/ui/apple-gem-store/apple-gem-store";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -134,9 +133,6 @@ export default function GemStoreScreen() {
     );
   }
 
-  if (Platform.OS === "ios") {
-    return <AppleGemStore />;
-  }
   return (
     <Layout.Default
       className="flex flex-1 flex-col"
