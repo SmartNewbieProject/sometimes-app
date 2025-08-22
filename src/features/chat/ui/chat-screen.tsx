@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
+  FlatList,
+  InputAccessoryView,
   Keyboard,
   KeyboardAvoidingView,
   type KeyboardEventListener,
@@ -8,25 +10,20 @@ import {
   type NativeSyntheticEvent,
   Platform,
   Pressable,
-  ScrollView,
+  type ScrollView,
   Text,
   View,
 } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  PADDING_BOTTOM,
-  useGradualAnimation,
-} from "../hooks/use-gradual-animation";
+
 import ChatInput from "./input";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("screen");
 
 function ChatScreen() {
-  const { height } = useGradualAnimation();
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
-  const [test, setTest] = useState(SCREEN_HEIGHT);
   const scrollToEnd = () => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   };
@@ -35,100 +32,77 @@ function ChatScreen() {
     scrollToEnd();
   }, []);
 
-  const fakeView = useAnimatedStyle(() => {
-    return {
-      height: Math.abs(height.value),
-      marginBottom: height.value > 0 ? 0 : PADDING_BOTTOM,
-    };
-  });
-
-  const chatScreen = useAnimatedStyle(() => {
-    console.log("bottom", SCREEN_HEIGHT - height.value);
-
-    return {
-      height: SCREEN_HEIGHT - Math.abs(height.value),
-      marginBottom: height.value > 0 ? 0 : PADDING_BOTTOM,
-    };
-  });
-
   return (
     <View
       style={{
         flex: 1,
-        position: "relative",
         paddingTop: insets.top,
-        padding: 16,
-        height: SCREEN_HEIGHT,
         paddingBottom: insets.bottom,
       }}
     >
-      <Animated.View
-        style={[
-          {
-            position: "absolute",
-            top: insets.top,
-            left: 0,
-            right: 0,
-            height: test,
-          },
-        ]}
-      >
-        <ScrollView
-          ref={scrollViewRef}
-          style={{ flex: 1 }}
-          scrollEventThrottle={16}
-        >
-          <Pressable onPress={() => setTest()}>버튼</Pressable>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>
-            안녕하세요 감사해요 잘있어요 다시만나요
-          </Text>
-          <Text style={{ height: 80 }}>잘있어요 다시만나요1</Text>
-          <Text style={{ height: 80 }}>잘있어요 다시만나요2</Text>
-          <Text style={{ height: 80 }}>잘있어요 다시만나요3</Text>
-          <Text style={{ height: 80 }}>잘있어요 다시만나요4</Text>
-          <Text style={{ height: 80 }}>잘있어요 다시만나요5</Text>
-          <Text style={{ height: 80 }}>잘있어요 다시만나요6</Text>
-          <Text style={{ height: 80 }}>잘있어요 다시만나요7</Text>
-        </ScrollView>
-      </Animated.View>
       <View
-        style={[
-          fakeView,
-          { position: "absolute", bottom: 0, left: 0, right: 0 },
-        ]}
+        style={{ flex: 1, alignContent: "center", justifyContent: "center" }}
       >
-        <ChatInput />
-        <Animated.View style={fakeView} />
+        <MyFlatList />
+        {Platform.OS === "ios" ? (
+          <InputAccessoryView>
+            <ChatInput />
+          </InputAccessoryView>
+        ) : (
+          <ChatInput />
+        )}
       </View>
     </View>
   );
 }
 
 export default ChatScreen;
+
+const data = [
+  { id: "1", text: "안녕하세요 감사해요 잘있어요 다시만나요1" },
+  { id: "2", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "3", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "4", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "5", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "6", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "7", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "8", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "9", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "10", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
+  { id: "11", text: "잘있어요 다시만나요1" },
+  { id: "12", text: "잘있어요 다시만나요2" },
+  { id: "13", text: "잘있어요 다시만나요3" },
+  { id: "14", text: "잘있어요 다시만나요4" },
+  { id: "15", text: "잘있어요 다시만나요5" },
+  { id: "16", text: "잘있어요 다시만나요6" },
+  { id: "17", text: "잘있어요 다시만나요7" },
+];
+
+const renderItem = ({ item }: { item: { text: string } }) => (
+  <Text style={{ height: 80 }}>{item.text}</Text>
+);
+
+// FlatList 컴포넌트
+const MyFlatList = () => {
+  return (
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={{
+        paddingHorizontal: 10,
+        gap: 10,
+      }}
+      automaticallyAdjustContentInsets={false}
+      inverted={true}
+      keyboardDismissMode="interactive"
+      keyboardShouldPersistTaps="handled"
+      contentInsetAdjustmentBehavior="never"
+      maintainVisibleContentPosition={{
+        minIndexForVisible: 0,
+        autoscrollToTopThreshold: 80,
+      }}
+      automaticallyAdjustKeyboardInsets={true}
+    />
+  );
+};
