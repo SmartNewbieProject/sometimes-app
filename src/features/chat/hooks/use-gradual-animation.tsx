@@ -1,6 +1,7 @@
+import { Platform } from "react-native";
 import { useKeyboardHandler } from "react-native-keyboard-controller";
 import { useSharedValue } from "react-native-reanimated";
-export const PADDING_BOTTOM = 20;
+export const PADDING_BOTTOM = Platform.OS === "ios" ? 0 : 20;
 
 export const useGradualAnimation = () => {
   const height = useSharedValue(PADDING_BOTTOM);

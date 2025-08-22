@@ -19,19 +19,12 @@ import {
 } from "../hooks/use-gradual-animation";
 import ChatInput from "./input";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("screen");
 
 function ChatScreen() {
   const { height } = useGradualAnimation();
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
-  const [currentOffsetY, setCurrentOffsetY] = useState(0);
-  const [contentHeight, setContentHeight] = useState(0);
-  const [scrollViewHeight, setScrollViewHeight] = useState(0);
-
-  const scrollToTop = () => {
-    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-  };
 
   const scrollToEnd = () => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -41,54 +34,18 @@ function ChatScreen() {
     scrollToEnd();
   }, []);
 
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener(
-      "keyboardDidShow",
-      handleKeyboardShow
-    );
-
-    const hideSubscription = Keyboard.addListener(
-      "keyboardDidHide",
-      handleKeyboardHide
-    );
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, [currentOffsetY, contentHeight, scrollViewHeight]);
-
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
-    setCurrentOffsetY(contentOffset.y);
-    setContentHeight(contentSize.height);
-    setScrollViewHeight(layoutMeasurement.height);
-  };
-
-  const handleKeyboardHide: KeyboardEventListener = (event) => {
-    const keyboardHeight = event?.endCoordinates?.height || 0;
-    const newY = Math.max(0, currentOffsetY - keyboardHeight);
-    scrollViewRef.current?.scrollTo({ y: newY, animated: false });
-  };
-
-  const handleKeyboardShow: KeyboardEventListener = (event) => {
-    const keyboardHeight = event.endCoordinates.height;
-
-    console.log(
-      "check",
-      currentOffsetY + keyboardHeight,
-      contentHeight - scrollViewHeight
-    );
-    const newY = currentOffsetY + keyboardHeight;
-
-    scrollViewRef.current?.scrollTo({
-      y: newY,
-      animated: false,
-    });
-  };
-
   const fakeView = useAnimatedStyle(() => {
     return {
       height: Math.abs(height.value),
+      marginBottom: height.value > 0 ? 0 : PADDING_BOTTOM,
+    };
+  });
+
+  const chatScreen = useAnimatedStyle(() => {
+    console.log("bottom", SCREEN_HEIGHT - height.value);
+
+    return {
+      height: SCREEN_HEIGHT - Math.abs(height.value),
       marginBottom: height.value > 0 ? 0 : PADDING_BOTTOM,
     };
   });
@@ -100,59 +57,74 @@ function ChatScreen() {
         position: "relative",
         paddingTop: insets.top,
         padding: 16,
+        height: SCREEN_HEIGHT,
         paddingBottom: insets.bottom,
       }}
     >
-      <ScrollView
-        ref={scrollViewRef}
-        style={{ flex: 1 }}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        onContentSizeChange={() => {
-          setTimeout(() => scrollToEnd(), 50);
-        }}
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            top: insets.top,
+            left: 0,
+            right: 0,
+          },
+          chatScreen,
+        ]}
       >
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>
-          안녕하세요 감사해요 잘있어요 다시만나요
-        </Text>
-        <Text style={{ height: 80 }}>잘있어요 다시만나요1</Text>
-        <Text style={{ height: 80 }}>잘있어요 다시만나요2</Text>
-        <Text style={{ height: 80 }}>잘있어요 다시만나요3</Text>
-        <Text style={{ height: 80 }}>잘있어요 다시만나요4</Text>
-        <Text style={{ height: 80 }}>잘있어요 다시만나요5</Text>
-        <Text style={{ height: 80 }}>잘있어요 다시만나요6</Text>
-        <Text style={{ height: 80 }}>잘있어요 다시만나요7</Text>
-
+        <ScrollView
+          ref={scrollViewRef}
+          style={{ flex: 1 }}
+          scrollEventThrottle={16}
+        >
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>
+            안녕하세요 감사해요 잘있어요 다시만나요
+          </Text>
+          <Text style={{ height: 80 }}>잘있어요 다시만나요1</Text>
+          <Text style={{ height: 80 }}>잘있어요 다시만나요2</Text>
+          <Text style={{ height: 80 }}>잘있어요 다시만나요3</Text>
+          <Text style={{ height: 80 }}>잘있어요 다시만나요4</Text>
+          <Text style={{ height: 80 }}>잘있어요 다시만나요5</Text>
+          <Text style={{ height: 80 }}>잘있어요 다시만나요6</Text>
+          <Text style={{ height: 80 }}>잘있어요 다시만나요7</Text>
+        </ScrollView>
+      </Animated.View>
+      <View
+        style={[
+          fakeView,
+          { position: "absolute", bottom: 0, left: 0, right: 0 },
+        ]}
+      >
         <ChatInput />
-      </ScrollView>
-      <Animated.View style={fakeView} />
+        <Animated.View style={fakeView} />
+      </View>
     </View>
   );
 }
