@@ -47,6 +47,14 @@ export default function ReportScreen() {
   });
 
   useEffect(() => {
+    showModal({
+      title: "주의",
+      children: `신고하기 기능은 일시적으로\n상대방과의 매칭을 차단합니다.\n관리자 검토 후 확정 여부가 결정됩니다.`,
+      primaryButton: {
+        text: "이해했어요",
+        onClick: () => hideModal(),
+      },
+    });
     if (partnerId) {
       setProfile({
         name: partnerName || "알 수 없는 사용자",
