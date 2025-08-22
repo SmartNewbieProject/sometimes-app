@@ -78,6 +78,7 @@ export const useRedirectPreferences = () => {
   );
 
   useEffect(() => {
+    // 이상형 정보 모달 비활성화
     // 로딩 중이거나 이상형이 이미 등록된 경우 모달을 보여주지 않음
     if (loading || isLoading || isPreferenceFill) {
       console.log("Modal not shown - loading or preference filled:", {
@@ -88,25 +89,23 @@ export const useRedirectPreferences = () => {
       return;
     }
 
-    if (isPreferenceFill === false) {
-      if (!latest || !latest.isLater) {
-        showPreferenceModal("no preference and no later flag");
-        return;
-      }
+    // 모달 표시 로직 제거됨
+    // if (isPreferenceFill === false) {
+    //   if (!latest || !latest.isLater) {
+    //     showPreferenceModal("no preference and no later flag");
+    //     return;
+    //   }
 
-      const now = dayUtils.create();
-      const diff = now.diff(latest?.latestDate, "day");
-      if (diff > 1) {
-        showPreferenceModal("later flag expired");
-      }
-    }
+    //   const now = dayUtils.create();
+    //   const diff = now.diff(latest?.latestDate, "day");
+    //   if (diff > 1) {
+    //     showPreferenceModal("later flag expired");
+    //   }
+    // }
   }, [
     loading,
     isLoading,
     isPreferenceFill,
-    latest?.isLater,
-    latest?.latestDate,
-    showPreferenceModal,
   ]);
 
   return {
