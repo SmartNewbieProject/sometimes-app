@@ -40,7 +40,12 @@ export function useReport() {
           },
         },
       });
-      queryClient.invalidateQueries({ queryKey: ["liked"], exact: true },);
+
+      Promise.allSettled([
+        queryClient.invalidateQueries({ queryKey: ["preview-history"] }),
+        queryClient.invalidateQueries({ queryKey: ["liked", "to-me"] }),
+        queryClient.invalidateQueries({ queryKey: ["liked", "of-me"] }),
+      ]);
     },
     onError: (error) => {
       console.error("신고 제출 중 오류 발생:", error);
