@@ -2,11 +2,23 @@ import useLikedMeQuery from "@/src/features/like/queries/use-liked-me-query";
 import Loading from "@/src/features/loading";
 import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
 import { FlashList } from "@shopify/flash-list";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, {useEffect} from "react";
+import { StyleSheet, View } from "react-native";
+import {useQueryClient} from "@tanstack/react-query";
 
 function LikedMe() {
   const { data: likedMeList, isLoading } = useLikedMeQuery();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    return () => {
+      queryClient.invalidateQueries({
+        queryKey: ["liked", "preview-history"],
+        exact: true,
+      });
+    }
+  }, []);
+
   return (
     <View>
       <Loading.Lottie
