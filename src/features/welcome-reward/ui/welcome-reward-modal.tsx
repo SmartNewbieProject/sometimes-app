@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Image,
+  Text as RNText,
 } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -20,11 +21,6 @@ import Animated, {
 
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
-const isSmallScreen = screenHeight < 700;
-const mihoSize = isSmallScreen ? 120 : 140;
-const mihoBottom = isSmallScreen ? screenHeight * 0.18 : screenHeight * 0.15;
-const speechBubbleBottom = mihoBottom + mihoSize + 30;
 
 interface WelcomeRewardModalProps {
   visible: boolean;
@@ -103,7 +99,34 @@ const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
     >
       <Animated.View style={[styles.overlay, modalAnimatedStyle]}>
         <TouchableWithoutFeedback onPress={handleClose}>
-          <View style={styles.container}>
+          <View style={{ flex: 1 }} />
+        </TouchableWithoutFeedback>
+
+        <Animated.View style={[styles.container, speechBubbleAnimatedStyle]}>
+          {/* 말풍선 */}
+          <TouchableWithoutFeedback onPress={handleClose}>
+            <View style={styles.speechBubbleContainer}>
+              <View style={styles.speechBubble}>
+                <Text style={styles.speechText}>
+                  환영해요! 🎉
+                </Text>
+                <Text style={styles.subText}>
+                  가입 축하 선물로{"\n"}
+                  특별한 선물을 준비했어요
+                </Text>
+                <View style={styles.gemReward}>
+                  <Text style={styles.gemText}>구슬 10개</Text>
+                  <Text style={styles.rewardText}>를 드려요!</Text>
+                </View>
+                <View style={styles.closeButtonContainer}>
+                  <RNText style={styles.closeButtonText} onPress={handleClose}>
+                    터치해서 닫기
+                  </RNText>
+                </View>
+              </View>
+              <View style={styles.speechTail} />
+            </View>
+          </TouchableWithoutFeedback>
 
           {/* 미호 캐릭터 */}
           <Animated.View style={[styles.mihoContainer, mihoAnimatedStyle]}>
@@ -113,27 +136,7 @@ const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
               resizeMode="contain"
             />
           </Animated.View>
-
-          {/* 말풍선 */}
-          <Animated.View style={[styles.speechBubbleContainer, speechBubbleAnimatedStyle]}>
-            <View style={styles.speechBubble}>
-              <Text style={styles.speechText}>
-                환영해요! 🎉
-              </Text>
-              <Text style={styles.subText}>
-                가입 축하 선물로{"\n"}
-                특별한 선물을 준비했어요
-              </Text>
-              <View style={styles.gemReward}>
-                <Text style={styles.gemText}>구슬 10개</Text>
-                <Text style={styles.rewardText}>를 드려요!</Text>
-              </View>
-            </View>
-            <View style={styles.speechTail} />
-          </Animated.View>
-
-          </View>
-        </TouchableWithoutFeedback>
+        </Animated.View>
       </Animated.View>
     </Modal>
   );
@@ -143,38 +146,36 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.6)",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
+    paddingBottom: 100,
   },
   container: {
-    width: screenWidth,
-    height: screenHeight,
-    justifyContent: "center",
-    alignItems: "center",
+    width: screenWidth * 0.9,
+    maxWidth: 400,
     position: "relative",
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   mihoContainer: {
     position: "absolute",
-    bottom: mihoBottom,
-    right: screenWidth * 0.05,
+    bottom: -10,
+    right: -20,
     zIndex: 2,
   },
   mihoImage: {
-    width: mihoSize,
-    height: mihoSize,
+    width: 80,
+    height: 80,
   },
   speechBubbleContainer: {
-    position: "absolute",
-    bottom: speechBubbleBottom,
-    left: screenWidth * 0.1,
-    right: screenWidth * 0.1,
     zIndex: 3,
+    marginRight: 60,
   },
   speechBubble: {
     backgroundColor: "#F3EDFF",
     borderRadius: 16,
-    padding: isSmallScreen ? 16 : 18,
-    minHeight: isSmallScreen ? 100 : 120,
+    padding: 18,
+    minHeight: 120,
     justifyContent: "space-between",
     shadowColor: "#000",
     shadowOffset: {
@@ -187,29 +188,29 @@ const styles = StyleSheet.create({
   },
   speechTail: {
     position: "absolute",
-    bottom: -8,
-    right: 30,
+    bottom: 20,
+    right: -8,
     width: 0,
     height: 0,
-    borderLeftWidth: 12,
-    borderRightWidth: 12,
     borderTopWidth: 12,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-    borderTopColor: "#F3EDFF",
+    borderBottomWidth: 12,
+    borderLeftWidth: 12,
+    borderTopColor: "transparent",
+    borderBottomColor: "transparent",
+    borderLeftColor: "#F3EDFF",
   },
   speechText: {
-    fontSize: isSmallScreen ? 16 : 18,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#6B46C1",
     marginBottom: 6,
     textAlign: "left",
   },
   subText: {
-    fontSize: isSmallScreen ? 13 : 14,
+    fontSize: 14,
     color: "#6B46C1",
-    lineHeight: isSmallScreen ? 18 : 20,
-    marginBottom: isSmallScreen ? 12 : 14,
+    lineHeight: 20,
+    marginBottom: 14,
     textAlign: "left",
   },
   gemReward: {
@@ -222,14 +223,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   gemText: {
-    fontSize: isSmallScreen ? 15 : 16,
+    fontSize: 16,
     fontWeight: "bold",
-    color: "#8B5CF6",
+    color: "#FF6B6B",
   },
   rewardText: {
-    fontSize: isSmallScreen ? 15 : 16,
+    fontSize: 16,
     color: "#6B46C1",
     fontWeight: "600",
+  },
+  closeButtonContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginTop: 12,
+  },
+  closeButtonText: {
+    fontSize: 14,
+    color: "#6B46C1",
+    fontWeight: "600",
+    textAlign: "center",
   },
 
 
