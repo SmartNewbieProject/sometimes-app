@@ -7,6 +7,7 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   View,
@@ -25,7 +26,7 @@ function ChatScreen() {
   const { height } = useGradualAnimation();
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
-
+  const [test, setTest] = useState(SCREEN_HEIGHT);
   const scrollToEnd = () => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   };
@@ -68,8 +69,8 @@ function ChatScreen() {
             top: insets.top,
             left: 0,
             right: 0,
+            height: test,
           },
-          chatScreen,
         ]}
       >
         <ScrollView
@@ -77,6 +78,7 @@ function ChatScreen() {
           style={{ flex: 1 }}
           scrollEventThrottle={16}
         >
+          <Pressable onPress={() => setTest()}>버튼</Pressable>
           <Text style={{ height: 80 }}>
             안녕하세요 감사해요 잘있어요 다시만나요
           </Text>
