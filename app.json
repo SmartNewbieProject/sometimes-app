@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.2.9",
+    "version": "2.3.0",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -11,6 +11,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
+      "entitlements": {
+        "com.apple.developer.applesignin": [
+          "Default"
+        ]
+      },
       "googleServicesFile": "./GoogleService-Info.plist",
       "capabilities": [
         "push-notifications",
@@ -97,11 +102,6 @@
         "com.apple.security.application-groups": [
           "group.com.some-in-univ.shared"
         ],
-        "entitlements": {
-          "com.apple.developer.applesignin": [
-            "Default"
-          ]
-        },
         "UNUserNotificationCenter": true,
         "NSFileProtectionComplete": true,
         "NSLocationWhenInUseUsageDescription": "위치 정보를 사용하여 지도 서비스를 제공합니다.",
