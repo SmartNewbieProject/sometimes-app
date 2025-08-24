@@ -99,7 +99,7 @@ function PostBoxCard({
   return (
     <Pressable
       onPress={() => {
-        if (userWithdrawal) return;
+        if (userWithdrawal || isExpired) return;
         router.push(`/partner/view/${matchId}`);
       }}
     >
