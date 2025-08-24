@@ -77,11 +77,11 @@ export const getPriceAndDiscount = (
 	text: string,
 ): { price: number; discountRate: number } | null => {
 	const mapping: Record<string, { price: number; discountRate: number }> = {
-		gem_sale_6: { price: 6000, discountRate: 84 },
+		gem_sale_6: { price: 6000, discountRate: 50.9 },
 		gem_15: { price: 11000, discountRate: 21 },
-		gem_sale_20: { price: 4800, discountRate: 68 },
+		gem_sale_20: { price: 14700, discountRate: 53.2 },
 		gem_30: { price: 22000, discountRate: 37 },
-		gem_sale_40: { price: 12900, discountRate: 57 },
+		gem_sale_40: { price: 29400, discountRate: 56.2 },
 		gem_60: { price: 44000, discountRate: 51 },
 		gem_130: { price: 95000, discountRate: 60 },
 		gem_200: { price: 147000, discountRate: 61 },
