@@ -40,6 +40,7 @@ export function useReport() {
           },
         },
       });
+      queryClient.invalidateQueries({ queryKey: ["liked"], exact: true },);
     },
     onError: (error) => {
       console.error("신고 제출 중 오류 발생:", error);
