@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import Animated, {
   KeyboardState,
+  Layout,
+  LinearTransition,
   runOnJS,
   useAnimatedKeyboard,
   useAnimatedReaction,
@@ -42,26 +44,12 @@ export default function GalleryList() {
   }, []);
 
   const keyboard = useAnimatedKeyboard();
-  const height = useSharedValue(300);
-
-  // 키보드 열림/닫힘에 따라 최종 height만 애니메이션
-  useAnimatedReaction(
-    () => keyboard.state.value,
-    (state) => {
-      if (state === KeyboardState.OPEN) {
-        height.value = withTiming(keyboard.height.value, { duration: 500 });
-      } else if (state === KeyboardState.CLOSED) {
-        height.value = withTiming(300, { duration: 500 });
-      }
-    },
-    [keyboard.height.value]
-  );
 
   const animatedStyle = useAnimatedStyle(() => {
-    return {
-      height: height.value,
-    };
+    const target = keyboard.height.value > 0 ? keyboard.height.value : 300;
+    return { height: target };
   });
+
   const requestPermission = async () => {
     try {
       const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -151,6 +139,7 @@ export default function GalleryList() {
 
   return (
     <Animated.View
+      layout={LinearTransition}
       style={[
         {
           backgroundColor: "#fff",
