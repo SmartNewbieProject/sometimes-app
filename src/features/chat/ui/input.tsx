@@ -1,58 +1,114 @@
 import PlusIcon from "@assets/icons/plus.svg";
 import SendChatIcon from "@assets/icons/send-chat.svg";
-import React from "react";
+import type React from "react";
+import { useState } from "react";
 import {
+  Keyboard,
+  Platform,
   Pressable,
   StyleSheet,
   TextInput,
   View,
   useWindowDimensions,
 } from "react-native";
-function ChatInput() {
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+
+interface ChatInputProps {
+  isPhotoClicked: boolean;
+  setPhotoClicked: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { width } = useWindowDimensions();
+  const [chat, setChat] = useState("");
+  const rotate = useSharedValue(0);
+  const handlePhotoButton = () => {
+    setTimeout(() => {
+      setPhotoClicked((prev) => !prev);
+    }, 400);
+    Keyboard.dismiss();
+    rotate.value = withTiming(rotate.value === 45 ? 0 : 45, { duration: 150 });
+  };
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotate.value}deg` }],
+  }));
+  const keyboard = useAnimatedKeyboard();
+
+  const animatedKeyboardStyles = useAnimatedStyle(() => ({
+    paddingBottom:
+      Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
+  }));
 
   return (
-    <View style={[styles.container, { width: width }]}>
-      <View style={styles.photoButton}>
-        <PlusIcon />
-      </View>
-      <TextInput
-        multiline={true}
-        numberOfLines={3}
-        style={styles.textInput}
-        placeholder="메세지를 입력하세요"
-      />
-      <Pressable style={styles.send}>
-        <SendChatIcon />
+    <Animated.View
+      style={[styles.container, { width: width }, animatedKeyboardStyles]}
+    >
+      <Pressable onPress={handlePhotoButton} style={styles.photoButton}>
+        <Animated.View style={animatedStyles}>
+          <PlusIcon />
+        </Animated.View>
       </Pressable>
-    </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          multiline={true}
+          value={chat}
+          editable={!isPhotoClicked}
+          onChangeText={(text) => setChat(text)}
+          style={styles.textInput}
+          placeholder="메세지를 입력하세요"
+          numberOfLines={3}
+        />
+        <Pressable style={styles.send}>
+          <SendChatIcon width={28} height={28} />
+        </Pressable>
+      </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   textInput: {
     flex: 1,
-    minHeight: 47,
-    maxHeight: 83,
-    borderRadius: 24,
-    marginLeft: 12,
-    marginRight: 4,
+
+    alignSelf: "center",
     paddingVertical: 14,
     fontSize: 14,
-    lineHeight: 21,
+    lineHeight: 16,
+
     letterSpacing: -0.042,
+    paddingHorizontal: 8,
+    ...(Platform.OS === "android"
+      ? { textAlignVertical: "center" }
+      : { paddingVertical: 0 }),
     color: "#1E2229",
+  },
+  inputContainer: {
+    flex: 1,
+    minHeight: 39,
+    marginLeft: 12,
+    marginRight: 4,
+    position: "relative",
+    flexDirection: "row",
+
+    alignItems: "center",
+    borderRadius: 24,
     backgroundColor: "#F8F9FA",
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
   },
   container: {
     minHeight: 70,
+    alignItems: "center",
     backgroundColor: "#fff",
     flexDirection: "row",
     paddingVertical: 12,
 
     paddingHorizontal: 16,
-    alignItems: "center",
   },
   photoButton: {
     width: 32,
@@ -63,11 +119,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3EDFF",
   },
   send: {
-    width: 40,
-    height: 40,
+    width: 32,
+    marginVertical: 8,
+    height: 32,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 9999,
+    alignSelf: "flex-end",
     textAlignVertical: "top",
     backgroundColor: "#7A4AE1",
   },

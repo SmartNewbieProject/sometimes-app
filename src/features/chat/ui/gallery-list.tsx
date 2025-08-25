@@ -1,3 +1,4 @@
+import { LegendList } from "@legendapp/list";
 import { Image } from "expo-image";
 import * as MediaLibrary from "expo-media-library";
 import React, { useCallback, useEffect, useState } from "react";
@@ -9,6 +10,17 @@ import {
   Text,
   View,
 } from "react-native";
+import Animated, {
+  KeyboardState,
+  runOnJS,
+  useAnimatedKeyboard,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function GalleryList() {
   const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([]);
@@ -16,19 +28,45 @@ export default function GalleryList() {
   const [hasNextPage, setHasNextPage] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const insets = useSafeAreaInsets();
   const [permissionGranted, setPermissionGranted] = useState(false);
+  useEffect(() => {
+    if (permissionGranted && photos.length === 0) {
+      loadPhotos();
+    }
+  }, [permissionGranted]);
 
   useEffect(() => {
     requestPermission();
   }, []);
 
+  const keyboard = useAnimatedKeyboard();
+  const height = useSharedValue(300);
+
+  // 키보드 열림/닫힘에 따라 최종 height만 애니메이션
+  useAnimatedReaction(
+    () => keyboard.state.value,
+    (state) => {
+      if (state === KeyboardState.OPEN) {
+        height.value = withTiming(keyboard.height.value, { duration: 500 });
+      } else if (state === KeyboardState.CLOSED) {
+        height.value = withTiming(300, { duration: 500 });
+      }
+    },
+    [keyboard.height.value]
+  );
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      height: height.value,
+    };
+  });
   const requestPermission = async () => {
     try {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status === "granted") {
         setPermissionGranted(true);
-        console.log("check point1");
-        await loadPhotos();
       } else {
         Alert.alert("권한 필요", "갤러리 접근 권한이 필요합니다.", [
           { text: "확인" },
@@ -40,21 +78,32 @@ export default function GalleryList() {
   };
 
   const loadPhotos = async () => {
-    if (!hasNextPage || loading || !permissionGranted) return;
+    console.log("check", hasNextPage, loading, permissionGranted, endCursor);
+    if (loading || !hasNextPage) {
+      return;
+    }
 
     setLoading(true);
     try {
       console.log("check point 1.5");
       const result = await MediaLibrary.getAssetsAsync({
-        first: 30,
         mediaType: "photo",
         after: endCursor ?? undefined,
         sortBy: [MediaLibrary.SortBy.creationTime],
       });
-      console.log("check point2");
+      console.log("check point2", result.totalCount);
 
-      setPhotos((prev) => [...prev, ...result.assets]);
+      setPhotos((prevPhotos) => {
+        const existingIds = new Set(prevPhotos.map((p) => p.id));
+
+        const newPhotos = result.assets.filter(
+          (asset) => !existingIds.has(asset.id)
+        );
+
+        return [...prevPhotos, ...newPhotos];
+      });
       setEndCursor(result.endCursor);
+      console.log("result", result.endCursor);
       setHasNextPage(result.hasNextPage);
     } catch (error) {
       console.error("Failed to load photos:", error);
@@ -69,14 +118,14 @@ export default function GalleryList() {
       prev.includes(uri) ? prev.filter((i) => i !== uri) : [...prev, uri]
     );
   }, []);
-
-  const renderItem = useCallback(
-    ({ item }: { item: MediaLibrary.Asset }) => (
+  console.log("photo", photos.length);
+  const renderItem = ({ item }: { item: MediaLibrary.Asset }) => {
+    return (
       <Pressable onPress={() => toggleSelect(item.uri)} style={styles.imageBox}>
         <Image
           source={{ uri: item.uri }}
           style={styles.image}
-          resizeMode="cover" // 이미지가 박스에 맞게 조정
+          resizeMode="cover"
         />
         {selected.includes(item.uri) && (
           <View style={styles.overlay}>
@@ -84,13 +133,13 @@ export default function GalleryList() {
           </View>
         )}
       </Pressable>
-    ),
-    [selected, toggleSelect]
-  );
+    );
+  };
 
-  const handleEndReached = useCallback(() => {
+  const handleEndReached = () => {
+    console.log("test point");
     loadPhotos();
-  }, [hasNextPage, loading, permissionGranted]);
+  };
 
   if (!permissionGranted) {
     return (
@@ -101,23 +150,27 @@ export default function GalleryList() {
   }
 
   return (
-    <FlatList
-      data={photos}
-      numColumns={3}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      onEndReached={handleEndReached}
-      onEndReachedThreshold={0.5}
-      getItemLayout={(data, index) => ({
-        length: 120, // 예상 아이템 높이 (화면 너비 / 3)
-        offset: Math.floor(index / 3) * 120,
-        index,
-      })}
-      removeClippedSubviews={true} // 성능 최적화
-      maxToRenderPerBatch={18} // 한 번에 렌더링할 최대 아이템 수 (6줄)
-      windowSize={10} // 렌더링 윈도우 크기
-      initialNumToRender={18} // 초기 렌더링 아이템 수
-    />
+    <Animated.View
+      style={[
+        {
+          backgroundColor: "#fff",
+        },
+        animatedStyle,
+      ]}
+    >
+      {photos.length > 0 && (
+        <LegendList
+          data={photos}
+          numColumns={3}
+          onEndReachedThreshold={0.3}
+          onEndReached={handleEndReached}
+          estimatedItemSize={120}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => renderItem({ item })}
+          recycleItems
+        />
+      )}
+    </Animated.View>
   );
 }
 

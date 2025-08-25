@@ -1,32 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Dimensions,
-  FlatList,
-  InputAccessoryView,
-  Keyboard,
-  KeyboardAvoidingView,
-  type KeyboardEventListener,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-  Platform,
-  Pressable,
-  type ScrollView,
-  Text,
-  View,
-} from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { FlatList, Platform, type ScrollView, Text, View } from "react-native";
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedReaction,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import GalleryList from "./gallery-list";
 import ChatInput from "./input";
-
-const { height: SCREEN_HEIGHT } = Dimensions.get("screen");
+import WebChatInput from "./input.web";
 
 function ChatScreen() {
   const insets = useSafeAreaInsets();
+  const [isPhotoClicked, setPhotoClicked] = useState(false);
+
   const scrollViewRef = useRef<ScrollView>(null);
   const scrollToEnd = () => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   };
+  const keyboard = useAnimatedKeyboard();
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: Platform.OS === "android" ? 0 : -keyboard.height.value },
+    ],
+  }));
 
   useEffect(() => {
     scrollToEnd();
@@ -36,22 +35,29 @@ function ChatScreen() {
     <View
       style={{
         flex: 1,
+        backgroundColor: "#fff",
         paddingTop: insets.top,
         paddingBottom: insets.bottom,
       }}
     >
-      <View
-        style={{ flex: 1, alignContent: "center", justifyContent: "center" }}
+      <Animated.View
+        style={[
+          { flex: 1, alignContent: "center", justifyContent: "center" },
+          animatedStyles,
+        ]}
       >
         <MyFlatList />
-        {Platform.OS === "ios" ? (
-          <InputAccessoryView>
-            <ChatInput />
-          </InputAccessoryView>
+
+        {Platform.OS === "web" ? (
+          <WebChatInput />
         ) : (
-          <ChatInput />
+          <ChatInput
+            isPhotoClicked={isPhotoClicked}
+            setPhotoClicked={setPhotoClicked}
+          />
         )}
-      </View>
+        {isPhotoClicked && <GalleryList />}
+      </Animated.View>
     </View>
   );
 }
