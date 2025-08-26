@@ -37,7 +37,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
 
   useEffect(() => {
     if (isPhotoClicked) {
-      heightAnim.value = withTiming(760, { duration: 300 });
+      heightAnim.value = withTiming(360, { duration: 300 });
     } else {
       heightAnim.value = withTiming(0, { duration: 1000 });
     }
@@ -89,7 +89,6 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
         return [...prevPhotos, ...newPhotos];
       });
       setEndCursor(result.endCursor);
-      console.log("result", result);
       setHasNextPage(result.hasNextPage);
     } catch (error) {
       console.error("Failed to load photos:", error);
@@ -123,7 +122,6 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   };
 
   const handleEndReached = () => {
-    console.log("test point");
     loadPhotos();
   };
 
@@ -142,7 +140,6 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
         {
           backgroundColor: "#fff",
           paddingTop: 12,
-          paddingBottom: insets.bottom,
         },
         animatedStyle,
       ]}

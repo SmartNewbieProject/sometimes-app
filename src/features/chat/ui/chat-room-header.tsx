@@ -12,17 +12,12 @@ function ChatRoomHeader() {
       <Pressable onPress={() => router.back()}>
         <ChevronLeft width={20} height={20} />
       </Pressable>
-      <Image
-        source={
-          "https://i.pinimg.com/736x/7b/04/b1/7b04b1f4d147f8951aa39ff976d9c209.jpg"
-        }
-        style={styles.profileImage}
-      />
+      <Image source={""} style={styles.profileImage} />
       <View style={styles.profileContainer}>
         <Text style={styles.name}>맹구</Text>
         <View style={styles.schoolContainer}>
-          <Text style={styles.school}>서울과학기술대학교</Text>
-          <Text style={styles.school}>[계약학과]건축기계설비공학과</Text>
+          <Text style={styles.school}>떡잎유치원</Text>
+          <Text style={styles.school}>해바라기반</Text>
         </View>
       </View>
       <Link

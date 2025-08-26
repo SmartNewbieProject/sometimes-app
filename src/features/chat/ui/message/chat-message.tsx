@@ -21,9 +21,7 @@ function ChatMessage({ item }: ChatMessageProps) {
         },
       ]}
     >
-      {!item.isMe && (
-        <ChatProfileImage imageUri="https://i.pinimg.com/736x/7b/04/b1/7b04b1f4d147f8951aa39ff976d9c209.jpg" />
-      )}
+      {!item.isMe && <ChatProfileImage imageUri="" />}
       <View
         style={[
           styles.balloonContainer,
