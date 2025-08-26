@@ -1,5 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-import { FlatList, Platform, type ScrollView, Text, View } from "react-native";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  FlatList,
+  Keyboard,
+  Platform,
+  Pressable,
+  type ScrollView,
+  Text,
+  View,
+} from "react-native";
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedReaction,
@@ -7,6 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import ChatList from "./chat-list";
 import GalleryList from "./gallery-list";
 import ChatInput from "./input";
 import WebChatInput from "./input.web";
@@ -37,7 +47,7 @@ function ChatScreen() {
         flex: 1,
         backgroundColor: "#fff",
         paddingTop: insets.top,
-        paddingBottom: insets.bottom,
+        paddingBottom: insets.bottom + 14,
       }}
     >
       <Animated.View
@@ -46,7 +56,7 @@ function ChatScreen() {
           animatedStyles,
         ]}
       >
-        <MyFlatList />
+        <ChatList setPhotoClicked={setPhotoClicked} />
 
         {Platform.OS === "web" ? (
           <WebChatInput />
@@ -56,59 +66,10 @@ function ChatScreen() {
             setPhotoClicked={setPhotoClicked}
           />
         )}
-        {isPhotoClicked && <GalleryList />}
+        {isPhotoClicked && <GalleryList isPhotoClicked={isPhotoClicked} />}
       </Animated.View>
     </View>
   );
 }
 
 export default ChatScreen;
-
-const data = [
-  { id: "1", text: "안녕하세요 감사해요 잘있어요 다시만나요1" },
-  { id: "2", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "3", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "4", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "5", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "6", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "7", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "8", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "9", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "10", text: "안녕하세요 감사해요 잘있어요 다시만나요" },
-  { id: "11", text: "잘있어요 다시만나요1" },
-  { id: "12", text: "잘있어요 다시만나요2" },
-  { id: "13", text: "잘있어요 다시만나요3" },
-  { id: "14", text: "잘있어요 다시만나요4" },
-  { id: "15", text: "잘있어요 다시만나요5" },
-  { id: "16", text: "잘있어요 다시만나요6" },
-  { id: "17", text: "잘있어요 다시만나요7" },
-];
-
-const renderItem = ({ item }: { item: { text: string } }) => (
-  <Text style={{ height: 80 }}>{item.text}</Text>
-);
-
-// FlatList 컴포넌트
-const MyFlatList = () => {
-  return (
-    <FlatList
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={{
-        paddingHorizontal: 10,
-        gap: 10,
-      }}
-      automaticallyAdjustContentInsets={false}
-      inverted={true}
-      keyboardDismissMode="interactive"
-      keyboardShouldPersistTaps="handled"
-      contentInsetAdjustmentBehavior="never"
-      maintainVisibleContentPosition={{
-        minIndexForVisible: 0,
-        autoscrollToTopThreshold: 80,
-      }}
-      automaticallyAdjustKeyboardInsets={true}
-    />
-  );
-};

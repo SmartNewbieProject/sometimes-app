@@ -1,7 +1,7 @@
 import PlusIcon from "@assets/icons/plus.svg";
 import SendChatIcon from "@assets/icons/send-chat.svg";
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Keyboard,
   Platform,
@@ -32,8 +32,19 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       setPhotoClicked((prev) => !prev);
     }, 400);
     Keyboard.dismiss();
-    rotate.value = withTiming(rotate.value === 45 ? 0 : 45, { duration: 150 });
   };
+
+  useEffect(() => {
+    if (isPhotoClicked) {
+      rotate.value = withTiming(45, {
+        duration: 150,
+      });
+    } else {
+      rotate.value = withTiming(0, {
+        duration: 150,
+      });
+    }
+  }, [isPhotoClicked]);
 
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [{ rotate: `${rotate.value}deg` }],

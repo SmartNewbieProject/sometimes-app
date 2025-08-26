@@ -2,36 +2,28 @@ import { LegendList } from "@legendapp/list";
 import { Image } from "expo-image";
 import * as MediaLibrary from "expo-media-library";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
-  KeyboardState,
-  Layout,
-  LinearTransition,
-  runOnJS,
-  useAnimatedKeyboard,
-  useAnimatedReaction,
+  SlideOutDown,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ChatCamera from "./camera";
 
-export default function GalleryList() {
-  const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([]);
+interface GalleryListProps {
+  isPhotoClicked: boolean;
+}
+
+export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
+  const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([firstDummy]);
   const [endCursor, setEndCursor] = useState<string | null>(null);
+  const insets = useSafeAreaInsets();
   const [hasNextPage, setHasNextPage] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const insets = useSafeAreaInsets();
+  const heightAnim = useSharedValue(0);
   const [permissionGranted, setPermissionGranted] = useState(false);
   useEffect(() => {
     if (permissionGranted && photos.length === 0) {
@@ -43,16 +35,24 @@ export default function GalleryList() {
     requestPermission();
   }, []);
 
-  const keyboard = useAnimatedKeyboard();
+  useEffect(() => {
+    if (isPhotoClicked) {
+      heightAnim.value = withTiming(760, { duration: 300 });
+    } else {
+      heightAnim.value = withTiming(0, { duration: 1000 });
+    }
+  }, [isPhotoClicked]);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const target = keyboard.height.value > 0 ? keyboard.height.value : 300;
-    return { height: target };
+    return { height: heightAnim.value };
   });
 
   const requestPermission = async () => {
     try {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
+      const { status } = await MediaLibrary.requestPermissionsAsync(false, [
+        "photo",
+      ]);
+      console.log("status", status);
       if (status === "granted") {
         setPermissionGranted(true);
       } else {
@@ -66,20 +66,18 @@ export default function GalleryList() {
   };
 
   const loadPhotos = async () => {
-    console.log("check", hasNextPage, loading, permissionGranted, endCursor);
     if (loading || !hasNextPage) {
       return;
     }
 
     setLoading(true);
     try {
-      console.log("check point 1.5");
       const result = await MediaLibrary.getAssetsAsync({
         mediaType: "photo",
+        first: 20,
         after: endCursor ?? undefined,
         sortBy: [MediaLibrary.SortBy.creationTime],
       });
-      console.log("check point2", result.totalCount);
 
       setPhotos((prevPhotos) => {
         const existingIds = new Set(prevPhotos.map((p) => p.id));
@@ -91,7 +89,7 @@ export default function GalleryList() {
         return [...prevPhotos, ...newPhotos];
       });
       setEndCursor(result.endCursor);
-      console.log("result", result.endCursor);
+      console.log("result", result);
       setHasNextPage(result.hasNextPage);
     } catch (error) {
       console.error("Failed to load photos:", error);
@@ -139,10 +137,12 @@ export default function GalleryList() {
 
   return (
     <Animated.View
-      layout={LinearTransition}
+      exiting={SlideOutDown.duration(300)}
       style={[
         {
           backgroundColor: "#fff",
+          paddingTop: 12,
+          paddingBottom: insets.bottom,
         },
         animatedStyle,
       ]}
@@ -155,7 +155,9 @@ export default function GalleryList() {
           onEndReached={handleEndReached}
           estimatedItemSize={120}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => renderItem({ item })}
+          renderItem={({ item, index }) =>
+            index === 0 ? <ChatCamera /> : renderItem({ item })
+          }
           recycleItems
         />
       )}
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)", // 좀 더 진한 오버레이
+    backgroundColor: "rgba(0,0,0,0.5)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -196,3 +198,17 @@ const styles = StyleSheet.create({
     color: "#666",
   },
 });
+
+const firstDummy = {
+  id: "하나_둘_셋_야!",
+  filename: "천방지축_어리둥절_빙글빙글_",
+  uri: "돌아가는_짱구의_하루",
+  mediaType: MediaLibrary.MediaType.photo,
+  mediaSubtypes: ["hdr" as MediaLibrary.MediaSubtype],
+  width: 4032,
+  height: 3024,
+  creationTime: 1724644800000,
+  modificationTime: 1724644860000,
+  duration: 0,
+  albumId: "우리의_짱구는_정말_못말려",
+};
