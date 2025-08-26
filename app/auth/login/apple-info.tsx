@@ -1,3 +1,4 @@
+// UserInfoPage.tsx
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
 import { Text } from "react-native";
@@ -19,6 +20,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 
 const { useSignupProgress } = Signup;
 
@@ -26,6 +28,10 @@ export default function UserInfoPage() {
   const { updateForm, form } = useSignupProgress();
 
   const insets = useSafeAreaInsets();
+
+  const { value: appleUserFullName, loading: fullNameLoading } = useStorage<
+    string | null
+  >({ key: "appleUserFullName" });
 
   const [name, setName] = useState(form.name || "");
   const [gender, setGender] = useState(form.gender || null);
@@ -38,8 +44,16 @@ export default function UserInfoPage() {
   const dayRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
 
+  useEffect(() => {
+    if (appleUserFullName) {
+      setName(appleUserFullName);
+      updateForm({ name: appleUserFullName });
+    }
+  }, [appleUserFullName]);
+
+  // 이름이 useStorage 값으로 채워진 경우, 이름을 필수 입력 조건에서 제외.
   const isFormComplete =
-    !!name &&
+    (!!name || !!appleUserFullName) &&
     !!gender &&
     year.length === 4 &&
     month.length === 2 &&
@@ -121,6 +135,12 @@ export default function UserInfoPage() {
     }
   };
 
+  if (fullNameLoading) {
+    return null;
+  }
+
+  const shouldHideNameInput = !!appleUserFullName;
+
   return (
     <DefaultLayout>
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
@@ -149,16 +169,18 @@ export default function UserInfoPage() {
           />
         </View>
 
-        <View style={styles.contentWrapper}>
-          <Text style={styles.title}>이름을 입력해주세요</Text>
-          <TextInput
-            style={styles.nameInput}
-            placeholder="구미호"
-            value={name}
-            onChangeText={setName}
-            maxLength={20}
-          />
-        </View>
+        {!shouldHideNameInput && (
+          <View style={styles.contentWrapper}>
+            <Text style={styles.title}>이름을 입력해주세요</Text>
+            <TextInput
+              style={styles.nameInput}
+              placeholder="구미호"
+              value={name}
+              onChangeText={setName}
+              maxLength={20}
+            />
+          </View>
+        )}
 
         <View style={styles.contentWrapper}>
           <Text style={styles.title}>성별을 선택해주세요</Text>
@@ -393,7 +415,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#fff",
     alignItems: "center",
-    width: "100%",
   },
   messageContainer: {
     flexDirection: "row",
