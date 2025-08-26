@@ -22,6 +22,7 @@ declare global {
         signIn: () => Promise<AppleWebResponse>;
       };
     };
+    sessionStorage: Storage;
   }
 }
 
@@ -88,6 +89,10 @@ const AppleLoginButton: React.FC = () => {
   const { setValue: setLoginType } = useStorage<string | null>({
     key: "loginType",
   });
+  const {
+    setValue: setAppleUserFullName,
+    removeValue: removeAppleUserFullName,
+  } = useStorage<string | null>({ key: "appleUserFullName" });
   const [isAppleJSLoaded, setIsAppleJSLoaded] = useState<boolean>(false);
   const mutation = useAppleLogin();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -151,7 +156,16 @@ const AppleLoginButton: React.FC = () => {
           ? data.authorization?.id_token
           : data.identityToken;
 
-      mutation.mutateAsync(identityToken ?? "");
+      await mutation.mutateAsync(identityToken ?? "");
+
+      if (Platform.OS === "web") {
+        window.sessionStorage.removeItem("appleUserId");
+        window.sessionStorage.removeItem("appleUserFullName");
+      } else if (Platform.OS === "ios") {
+        await removeAppleUserId();
+        await removeAppleUserFullName();
+      }
+
       track("Signup_Route_Entered", {
         screen: "AreaSelect",
         platform: "apple",
@@ -170,7 +184,9 @@ const AppleLoginButton: React.FC = () => {
     if (!window.AppleID || isLoading) return;
 
     try {
-      sessionStorage.removeItem("appleUserId");
+      window.sessionStorage.removeItem("appleUserId");
+      window.sessionStorage.removeItem("appleUserFullName");
+
       const data: AppleWebResponse = await window.AppleID.auth.signIn();
 
       await sendToBackend({
@@ -179,7 +195,6 @@ const AppleLoginButton: React.FC = () => {
         user: data.user,
       });
       setLoginType("apple");
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       if (error.error === "popup_closed_by_user") {
         console.log("사용자가 팝업을 닫았습니다");
@@ -194,12 +209,25 @@ const AppleLoginButton: React.FC = () => {
 
     try {
       await removeAppleUserId();
+      await removeAppleUserFullName();
+
       const credential: AppleAuthentication.AppleAuthenticationCredential =
         await AppleAuthentication.signInAsync({
           requestedScopes: [
             AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+            AppleAuthentication.AppleAuthenticationScope.EMAIL,
           ],
         });
+
+      const fullName = credential.fullName;
+      if (fullName) {
+        const fullDisplayName = `${fullName.familyName || ""}${
+          fullName.givenName || ""
+        }`;
+        await setAppleUserFullName(fullDisplayName);
+      } else {
+        await removeAppleUserFullName();
+      }
 
       await sendToBackend({
         platform: "ios",
@@ -209,8 +237,7 @@ const AppleLoginButton: React.FC = () => {
         fullName: credential.fullName,
         authorizationCode: credential.authorizationCode,
       });
-      sessionStorage.setItem("loginType", "apple");
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      setLoginType("apple");
     } catch (error: any) {
       if (error.code === "ERR_CANCELED") {
         console.log("사용자가 로그인을 취소했습니다");
