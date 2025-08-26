@@ -3,6 +3,7 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import {
   Platform,
   Pressable,
@@ -83,6 +84,10 @@ interface BackendResponse {
 }
 
 const AppleLoginButton: React.FC = () => {
+  const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
+  const { setValue: setLoginType } = useStorage<string | null>({
+    key: "loginType",
+  });
   const [isAppleJSLoaded, setIsAppleJSLoaded] = useState<boolean>(false);
   const mutation = useAppleLogin();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -165,6 +170,7 @@ const AppleLoginButton: React.FC = () => {
     if (!window.AppleID || isLoading) return;
 
     try {
+      sessionStorage.removeItem("appleUserId");
       const data: AppleWebResponse = await window.AppleID.auth.signIn();
 
       await sendToBackend({
@@ -172,6 +178,7 @@ const AppleLoginButton: React.FC = () => {
         authorization: data.authorization,
         user: data.user,
       });
+      setLoginType("apple");
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       if (error.error === "popup_closed_by_user") {
@@ -186,6 +193,7 @@ const AppleLoginButton: React.FC = () => {
     if (isLoading) return;
 
     try {
+      await removeAppleUserId();
       const credential: AppleAuthentication.AppleAuthenticationCredential =
         await AppleAuthentication.signInAsync({
           requestedScopes: [
@@ -201,13 +209,13 @@ const AppleLoginButton: React.FC = () => {
         fullName: credential.fullName,
         authorizationCode: credential.authorizationCode,
       });
+      sessionStorage.setItem("loginType", "apple");
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       if (error.code === "ERR_CANCELED") {
         console.log("사용자가 로그인을 취소했습니다");
       } else {
         console.error("iOS Apple 로그인 실패:", error);
-        alert("Apple 로그인에 실패했습니다.");
       }
     }
   };
