@@ -17,6 +17,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ChatList from "./chat-list";
+import ChatRoomHeader from "./chat-room-header";
 import GalleryList from "./gallery-list";
 import ChatInput from "./input";
 import WebChatInput from "./input.web";
@@ -25,10 +26,6 @@ function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [isPhotoClicked, setPhotoClicked] = useState(false);
 
-  const scrollViewRef = useRef<ScrollView>(null);
-  const scrollToEnd = () => {
-    scrollViewRef.current?.scrollToEnd({ animated: true });
-  };
   const keyboard = useAnimatedKeyboard();
 
   const animatedStyles = useAnimatedStyle(() => ({
@@ -37,22 +34,25 @@ function ChatScreen() {
     ],
   }));
 
-  useEffect(() => {
-    scrollToEnd();
-  }, []);
-
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: "#fff",
         paddingTop: insets.top,
+        width: "100%",
         paddingBottom: insets.bottom + 14,
       }}
     >
+      <ChatRoomHeader />
       <Animated.View
         style={[
-          { flex: 1, alignContent: "center", justifyContent: "center" },
+          {
+            flex: 1,
+            width: "100%",
+            alignContent: "center",
+            justifyContent: "center",
+          },
           animatedStyles,
         ]}
       >
