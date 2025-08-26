@@ -35,10 +35,8 @@ export default function ReportScreen() {
     partnerUniv?: string;
     partnerProfileImage?: string;
   }>();
-
   const { mutate, isLoading, isError, error } = useReport();
   const { showModal, hideModal } = useModal();
-
   const [profile, setProfile] = useState({
     name: "알 수 없는 사용자",
     age: 0,
@@ -46,42 +44,16 @@ export default function ReportScreen() {
     profileImage: "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG", // 기본 이미지
   });
 
-  useEffect(() => {
-    if (partnerId) {
-      setProfile({
-        name: partnerName || "알 수 없는 사용자",
-        age: partnerAge ? parseInt(partnerAge, 10) : 0,
-        university: partnerUniv || "알 수 없음",
-        profileImage:
-          partnerProfileImage ||
-          "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG",
-      });
-    }
-  }, [partnerId, partnerName, partnerAge, partnerUniv, partnerProfileImage]);
-
-  const reportReasons = [
-    { id: "1", text: "부적절한 언어 사용", subText: "욕설, 비하 발언 등" },
-    { id: "2", text: "허위 프로필", subText: "가짜 사진, 거짓 정보 등" },
-    {
-      id: "3",
-      text: "성희롱 또는 괴롭힘",
-      subText: "원치 않는 성적 메시지 등",
-    },
-    { id: "4", text: "스팸 또는 광고", subText: "홍보, 영리목적 메시지 등" },
-    { id: "5", text: "미성년자", subText: "18세 미만으로 의심됨" },
-    { id: "6", text: "기타", subText: "위에 해당하지 않는 않는 사유" },
-  ];
-
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [detailedContent, setDetailedContent] = useState("");
   const [selectedImageUris, setSelectedImageUris] = useState<string[]>([]);
   const [selectedImageFiles, setSelectedImageFiles] = useState<any[]>([]);
+  const isSubmitButtonEnabled = selectedReasons.length > 0 && !isLoading;
 
   const handleReasonSelect = (id: string) => {
     setSelectedReasons((prev) => (prev.includes(id) ? [] : [id]));
   };
 
-  // 신고 제출 핸들러
   const handleSubmitReport = () => {
     if (!partnerId) {
       showModal({
@@ -201,7 +173,27 @@ export default function ReportScreen() {
     }
   };
 
-  const isSubmitButtonEnabled = selectedReasons.length > 0 && !isLoading;
+
+  useEffect(() => {
+    showModal({
+      title: "주의",
+      children: `신고하기 기능은 일시적으로\n상대방과의 매칭을 차단합니다.\n관리자 검토 후 확정 여부가 결정됩니다.`,
+      primaryButton: {
+        text: "이해했어요",
+        onClick: () => hideModal(),
+      },
+    });
+    if (partnerId) {
+      setProfile({
+        name: partnerName || "알 수 없는 사용자",
+        age: partnerAge ? parseInt(partnerAge, 10) : 0,
+        university: partnerUniv || "알 수 없음",
+        profileImage:
+            partnerProfileImage ||
+            "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG",
+      });
+    }
+  }, [partnerId, partnerName, partnerAge, partnerUniv, partnerProfileImage]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -648,3 +640,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+const reportReasons = [
+  { id: "1", text: "부적절한 언어 사용", subText: "욕설, 비하 발언 등" },
+  { id: "2", text: "허위 프로필", subText: "가짜 사진, 거짓 정보 등" },
+  {
+    id: "3",
+    text: "성희롱 또는 괴롭힘",
+    subText: "원치 않는 성적 메시지 등",
+  },
+  { id: "4", text: "스팸 또는 광고", subText: "홍보, 영리목적 메시지 등" },
+  { id: "5", text: "미성년자", subText: "18세 미만으로 의심됨" },
+  { id: "6", text: "기타", subText: "위에 해당하지 않는 않는 사유" },
+];

@@ -40,6 +40,11 @@ export function useReport() {
           },
         },
       });
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["liked", "of-me"] }),
+        queryClient.invalidateQueries({ queryKey: ["preview-history"] }),
+        queryClient.invalidateQueries({ queryKey: ["liked", "to-me"] }),
+      ]);
     },
     onError: (error) => {
       console.error("신고 제출 중 오류 발생:", error);

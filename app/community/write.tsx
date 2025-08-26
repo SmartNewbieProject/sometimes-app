@@ -5,7 +5,6 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router, useLocalSearchParams } from "expo-router";
-import { View } from "react-native";
 
 const {
   ArticleWriteFormProvider,
@@ -52,20 +51,33 @@ export default function CommunityWriteScreen() {
       return;
     }
 
-    await tryCatch(async () => {
-      const { originalImages, deleteImageIds, ...articleData } = data;
-      await articles.postArticles(articleData);
-      showModal({
-        title: "글 작성 완료",
-        children: <Text textColor="black">글 작성이 완료되었습니다.</Text>,
-        primaryButton: {
-          text: "확인",
-          onClick: () => {
-            router.push("/community?refresh=true");
+    await tryCatch(
+      async () => {
+        const { originalImages, deleteImageIds, ...articleData } = data;
+        await articles.postArticles(articleData);
+        showModal({
+          title: "글 작성 완료",
+          children: <Text textColor="black">글 작성이 완료되었습니다.</Text>,
+          primaryButton: {
+            text: "확인",
+            onClick: () => {
+              router.push("/community?refresh=true");
+            },
           },
-        },
-      });
-    });
+        });
+      },
+      (error) => {
+        const errorMessage = error?.error || "글 작성 중 오류가 발생했습니다.";
+        showModal({
+          title: "글 작성 실패",
+          children: <Text textColor="black">{errorMessage}</Text>,
+          primaryButton: {
+            text: "확인",
+            onClick: () => {},
+          },
+        });
+      }
+    );
   });
 
   return (

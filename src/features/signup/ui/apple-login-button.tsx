@@ -129,7 +129,7 @@ const AppleLoginButton: React.FC = () => {
       window.AppleID.auth.init({
         clientId: "com.some-in-univ.web", // 웹용 Service ID
         scope: "name",
-        redirectURI: "https://some-in-univ.com/test",
+        redirectURI: "https://some-in-univ.com/auth/login",
         state: "web-login",
         usePopup: true,
       });
@@ -154,7 +154,6 @@ const AppleLoginButton: React.FC = () => {
       });
     } catch (error) {
       console.error("백엔드 요청 실패:", error);
-      alert("로그인에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsLoading(false);
     }
@@ -222,7 +221,7 @@ const AppleLoginButton: React.FC = () => {
     }
 
     return (
-      <View className="w-full max-w-xs">
+      <View>
         <Pressable
           onPress={handleWebAppleLogin}
           disabled={isLoading}
@@ -241,7 +240,7 @@ const AppleLoginButton: React.FC = () => {
   if (Platform.OS === "ios") {
     return (
       <View style={styles.iosContainer}>
-        <View className="w-full max-w-xs">
+        <View className="w-full">
           <Pressable
             onPress={handleIOSAppleLogin}
             disabled={isLoading}

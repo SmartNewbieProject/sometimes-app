@@ -91,6 +91,10 @@ export default function useLike() {
           return;
         }
         if (err.status === HttpStatusCode.Conflict) {
+          if (err.error.includes('소통이 제한')) {
+            showErrorModal(err.error, "announcement");
+            return;
+          }
           showErrorModal("중복된 좋아요 요청이에요!", "announcement");
           return;
         }

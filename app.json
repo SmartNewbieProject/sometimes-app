@@ -2,7 +2,7 @@
 	"expo": {
 		"name": "sometimes",
 		"slug": "sometimes",
-		"version": "2.2.3",
+		"version": "2.3.6",
 		"orientation": "portrait",
 		"icon": "./assets/icons/app.png",
 		"scheme": "myapp",
@@ -11,6 +11,9 @@
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "com.some-in-univ",
+			"entitlements": {
+				"com.apple.developer.applesignin": ["Default"]
+			},
 			"googleServicesFile": "./GoogleService-Info.plist",
 			"capabilities": [
 				"push-notifications",
@@ -116,12 +119,8 @@
 				"android.permission.ACCESS_NETWORK_STATE",
 				"android.permission.RECEIVE_BOOT_COMPLETED",
 				"android.permission.VIBRATE",
-				"READ_MEDIA_IMAGES",
-				"READ_MEDIA_VIDEO",
-				"READ_MEDIA_VISUAL_USER_SELECTED",
 				"android.permission.WAKE_LOCK"
-			],
-			"requestLegacyExternalStorage": true
+			]
 		},
 		"web": {
 			"bundler": "metro",
@@ -198,7 +197,16 @@
 			],
 			"expo-web-browser",
 			"expo-build-properties",
-			"expo-localization"
+			"expo-localization",
+			"expo-iap",
+			[
+				"expo-build-properties",
+				{
+					"android": {
+						"kotlinVersion": "2.0.21"
+					}
+				}
+			]
 		],
 		"experiments": {
 			"typedRoutes": true
