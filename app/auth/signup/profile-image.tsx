@@ -24,11 +24,11 @@ import {
   BackHandler,
   Dimensions,
   Easing,
+  Platform,
   Text as RNText,
   ScrollView,
   StyleSheet,
   View,
-  Platform,
 } from "react-native";
 import { z } from "zod";
 
@@ -206,7 +206,7 @@ export default function ProfilePage() {
           router.navigate("/auth/signup/area");
           return;
         }
-
+        console.log("signupForm check1", signupForm);
         await apis.signup(signupForm as SignupForm);
         track("Signup_profile_image", {
           success: true,
