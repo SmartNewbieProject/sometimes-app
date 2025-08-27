@@ -1,9 +1,9 @@
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import { track } from "@amplitude/analytics-react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useStorage } from "@/src/shared/hooks/use-storage";
 import {
   Platform,
   Pressable,
@@ -193,7 +193,7 @@ const AppleLoginButton: React.FC = () => {
         authorization: data.authorization,
         user: data.user,
       });
-      setLoginType("apple");
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       if (error.error === "popup_closed_by_user") {
         console.log("사용자가 팝업을 닫았습니다");
@@ -236,7 +236,7 @@ const AppleLoginButton: React.FC = () => {
         fullName: credential.fullName,
         authorizationCode: credential.authorizationCode,
       });
-      setLoginType("apple");
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       if (error.code === "ERR_CANCELED") {
         console.log("사용자가 로그인을 취소했습니다");
