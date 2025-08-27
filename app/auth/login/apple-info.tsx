@@ -43,17 +43,28 @@ export default function UserInfoPage() {
   const monthRef = useRef<TextInput>(null);
   const dayRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
+  let appleUserName = null;
+
+  if (Platform.OS === "web") {
+    if (sessionStorage.getItem("appleUserName")) {
+      appleUserName = sessionStorage.getItem("appleUserName");
+    }
+  } else if (Platform.OS === "ios") {
+    if (appleUserFullName) {
+      appleUserName = appleUserFullName;
+    }
+  }
 
   useEffect(() => {
-    if (appleUserFullName) {
-      setName(appleUserFullName);
-      updateForm({ name: appleUserFullName });
+    if (appleUserName) {
+      setName(appleUserName);
+      updateForm({ name: appleUserName });
     }
-  }, [appleUserFullName]);
+  }, [appleUserName]);
 
   // 이름이 useStorage 값으로 채워진 경우, 이름을 필수 입력 조건에서 제외.
   const isFormComplete =
-    (!!name || !!appleUserFullName) &&
+    (!!name || !!appleUserName) &&
     !!gender &&
     year.length === 4 &&
     month.length === 2 &&
