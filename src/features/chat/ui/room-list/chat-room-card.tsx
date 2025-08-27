@@ -1,6 +1,13 @@
 import { dayUtils } from "@/src/shared/libs";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useRef } from "react";
+import {
+  Animated,
+  Dimensions,
+  PanResponder,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import type { ChatRoom } from "../../types/chat";
 import ChatProfileImage from "../message/chat-profile-image";
 
@@ -9,43 +16,108 @@ interface ChatRoomCardProps {
 }
 
 function ChatRoomCard({ item }: ChatRoomCardProps) {
+  const screenWidth =
+    Dimensions.get("window").width > 468 ? 468 : Dimensions.get("window").width;
+  const buttonWidth = screenWidth * 0.25;
+  const threshold = buttonWidth / 2;
+
+  const translateX = useRef(new Animated.Value(0)).current;
+  const offsetX = useRef(0);
+  const pan = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+
+      onPanResponderGrant: () => {
+        translateX.stopAnimation((value) => {
+          offsetX.current = value;
+        });
+      },
+
+      onPanResponderMove: (evt, g) => {
+        let newX = offsetX.current + g.dx;
+
+        newX = Math.min(0, Math.max(-buttonWidth, newX));
+        translateX.setValue(newX);
+      },
+
+      onPanResponderRelease: () => {
+        translateX.stopAnimation((value) => {
+          if (value <= -threshold) {
+            Animated.spring(translateX, {
+              toValue: -buttonWidth,
+              useNativeDriver: false,
+            }).start(() => {
+              offsetX.current = -buttonWidth;
+            });
+          } else {
+            Animated.spring(translateX, {
+              toValue: 0,
+              useNativeDriver: false,
+            }).start(() => {
+              offsetX.current = 0;
+            });
+          }
+        });
+      },
+
+      onPanResponderTerminate: () => {
+        Animated.spring(translateX, {
+          toValue: 0,
+          useNativeDriver: false,
+        }).start(() => {
+          offsetX.current = 0;
+        });
+      },
+    })
+  ).current;
   return (
-    <View style={styles.container}>
-      <ChatProfileImage size={55} imageUri={item.partner.profileImage} />
-      <View style={styles.rightContainer}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.nameText} numberOfLines={1}>
-            {item.partner.name}
-          </Text>
-          <Text style={styles.lastMessageText} numberOfLines={1}>
-            {item.lastMessage}
-          </Text>
-        </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.timeText}>
-            {dayUtils.formatRelativeTime(item.lastMessageAt)}
-          </Text>
-          {item.unreadCount > 0 ? (
-            <View style={styles.unreadCount}>
-              <Text style={styles.unreadCountText}>{item.unreadCount}</Text>
-            </View>
-          ) : (
-            <View
-              style={[styles.unreadCount, { backgroundColor: "transparent" }]}
-            />
-          )}
-        </View>
+    <View style={{ flex: 1, alignItems: "flex-end" }}>
+      <View style={[styles.deleteButton, { width: buttonWidth }]}>
+        <Text style={styles.buttonText}>나가기</Text>
       </View>
+      <Animated.View
+        style={[
+          styles.roomContainer,
+          { width: screenWidth, transform: [{ translateX }] },
+        ]}
+      >
+        <ChatProfileImage size={55} imageUri={item.partner.profileImage} />
+        <View style={styles.rightContainer}>
+          <View style={styles.contentContainer}>
+            <Text style={styles.nameText} numberOfLines={1}>
+              {item.partner.name}
+            </Text>
+            <Text style={styles.lastMessageText} numberOfLines={1}>
+              {item.lastMessage}
+            </Text>
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.timeText}>
+              {dayUtils.formatRelativeTime(item.lastMessageAt)}
+            </Text>
+            {item.unreadCount > 0 ? (
+              <View style={styles.unreadCount}>
+                <Text style={styles.unreadCountText}>{item.unreadCount}</Text>
+              </View>
+            ) : (
+              <View
+                style={[styles.unreadCount, { backgroundColor: "transparent" }]}
+              />
+            )}
+          </View>
+        </View>
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  roomContainer: {
     flexDirection: "row",
-
+    paddingHorizontal: 16,
     paddingTop: 8,
-
+    backgroundColor: "#fff",
     gap: 8,
   },
   contentContainer: {
@@ -101,6 +173,19 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F0F0F0",
     borderBottomWidth: 1,
     paddingBottom: 12,
+  },
+  deleteButton: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
 

@@ -1,14 +1,16 @@
 import ChevronLeft from "@assets/icons/chevron-left.svg";
+import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ChatMenuModal from "./menu-modal";
 function ChatRoomHeader() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const [isVisible, setVisible] = useState(false);
   return (
     <View style={[styles.container]}>
+      <ChatMenuModal visible={isVisible} onClose={() => setVisible(false)} />
       <Pressable onPress={() => router.back()}>
         <ChevronLeft width={20} height={20} />
       </Pressable>
@@ -20,19 +22,17 @@ function ChatRoomHeader() {
           <Text style={styles.school}>해바라기반</Text>
         </View>
       </View>
-      <Link
+      <Pressable
         style={{
-          display: "flex",
+          width: 36,
+          height: 36,
           justifyContent: "center",
           alignItems: "center",
         }}
-        href="/partner/ban-report"
+        onPress={() => setVisible(true)}
       >
-        <Image
-          source={require("@/assets/icons/emergency.png")}
-          style={styles.headerIcon}
-        />
-      </Link>
+        <VerticalEllipsisIcon />
+      </Pressable>
     </View>
   );
 }
@@ -60,10 +60,9 @@ const styles = StyleSheet.create({
     tintColor: "#000",
   },
   profileContainer: {
-    flexDirection: "row",
     flex: 1,
-    alignItems: "center",
-    gap: 10,
+
+    gap: 2,
   },
   name: {
     color: "#000",

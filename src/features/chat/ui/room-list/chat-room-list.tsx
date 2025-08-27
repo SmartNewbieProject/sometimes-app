@@ -5,20 +5,24 @@ import { Platform, StyleSheet, Text, View } from "react-native";
 import type { ChatRoom } from "../../types/chat";
 import ChatRoomCard from "./chat-room-card";
 
-function ChatRoomList() {
+interface ChatRoomListProps {
+  data: ChatRoom[];
+}
+
+function ChatRoomList({ data }: ChatRoomListProps) {
   return (
-    <View style={{ paddingHorizontal: 16 }}>
-      {dummyChatRooms.length > 0 &&
+    <View>
+      {data.length > 0 &&
         (Platform.OS === "web" ? (
           <FlashList
-            data={dummyChatRooms}
+            data={data}
             estimatedItemSize={80}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <ChatRoomCard item={item} />}
           />
         ) : (
           <LegendList
-            data={dummyChatRooms}
+            data={data}
             estimatedItemSize={80}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <ChatRoomCard item={item} />}
@@ -28,8 +32,6 @@ function ChatRoomList() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export const dummyChatRooms: ChatRoom[] = [
   {
@@ -153,5 +155,7 @@ export const dummyChatRooms: ChatRoom[] = [
     },
   },
 ];
+
+const styles = StyleSheet.create({});
 
 export default ChatRoomList;
