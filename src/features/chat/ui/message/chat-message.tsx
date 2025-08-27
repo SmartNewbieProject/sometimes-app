@@ -21,7 +21,7 @@ function ChatMessage({ item }: ChatMessageProps) {
         },
       ]}
     >
-      {!item.isMe && <ChatProfileImage imageUri="" />}
+      {!item.isMe && <ChatProfileImage imageUri="" size={32} />}
       <View
         style={[
           styles.balloonContainer,

@@ -10,3 +10,18 @@ export interface Chat {
 	isMe: boolean;
 	updatedAt: string;
 }
+
+interface Partner {
+	profileImage: string;
+	name: string;
+	university: string;
+	department: string;
+}
+
+export interface ChatRoom {
+	id: string;
+	lastMessage: string;
+	lastMessageAt: string;
+	unreadCount: number;
+	partner: Partner;
+}

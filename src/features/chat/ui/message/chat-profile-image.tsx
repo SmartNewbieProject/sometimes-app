@@ -4,16 +4,20 @@ import { StyleSheet, View } from "react-native";
 
 interface ChatProfileImageProps {
   imageUri: string;
+  size: number;
 }
 
-function ChatProfileImage({ imageUri }: ChatProfileImageProps) {
-  return <Image style={styles.profileImage} source={imageUri} />;
+function ChatProfileImage({ imageUri, size }: ChatProfileImageProps) {
+  return (
+    <Image
+      style={[styles.profileImage, { width: size, height: size }]}
+      source={imageUri}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
   profileImage: {
-    width: 32,
-    height: 32,
     borderRadius: 9999,
   },
 });
