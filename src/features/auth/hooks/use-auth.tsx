@@ -86,13 +86,13 @@ export function useAuth() {
       await setToken(null);
       await setRefreshToken(null);
       await setApprovalStatus(null);
-      if (Platform.OS === "ios") {
-        await removeAppleUserId();
-        console.log("iOS: appleUserId를 삭제합니다.");
-      } else {
-        sessionStorage.removeItem("appleUserId");
-        console.log("Web: appleUserId를 삭제합니다.");
-      }
+      // if (Platform.OS === "ios") {
+      //   await removeAppleUserId();
+      //   console.log("iOS: appleUserId를 삭제합니다.");
+      // } else {
+      //   sessionStorage.removeItem("appleUserId");
+      //   console.log("Web: appleUserId를 삭제합니다.");
+      // }
       return;
     }
 

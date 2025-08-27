@@ -71,9 +71,11 @@ export default function ProfilePage() {
   const { value: appleUserIdFromStorage, loading: storageLoading } = useStorage<
     string | null
   >({ key: "appleUserId" });
+  const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
   const { value: loginTypeStorage } = useStorage<string | null>({
     key: "loginType",
   });
+  const { removeValue: removeLoginType } = useStorage({ key: "loginType" });
 
   const form = useForm<FormState>({
     resolver: zodResolver(schema),
@@ -142,20 +144,28 @@ export default function ProfilePage() {
 
     await tryCatch(
       async () => {
-        if (
-          (Platform.OS === "web" &&
-            sessionStorage.getItem("loginType") === "apple") ||
-          (Platform.OS == "ios" && loginTypeStorage === "apple")
+        if (Platform.OS === "ios" && loginTypeStorage === "apple") {
+          if (appleUserIdFromStorage) {
+            signupForm.appleId = appleUserIdFromStorage;
+          } else {
+            await removeAppleUserId();
+            await removeLoginType();
+            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
+            router.push("/auth/login");
+            return;
+          }
+        } else if (
+          Platform.OS === "web" &&
+          sessionStorage.getItem("loginType") === "apple"
         ) {
           const appleIdFromSession = sessionStorage.getItem("appleUserId");
-          const appleIdFromAnyStorage =
-            appleIdFromSession || appleUserIdFromStorage;
 
-          if (appleIdFromAnyStorage) {
-            signupForm.appleId = appleIdFromAnyStorage;
+          if (appleIdFromSession) {
+            signupForm.appleId = appleIdFromSession;
           } else {
-            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
+            sessionStorage.removeItem("appleUserId");
             sessionStorage.removeItem("loginType");
+            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
             router.push("/auth/login");
             return;
           }
@@ -182,6 +192,12 @@ export default function ProfilePage() {
           });
           trackSignupEvent("signup_error", "phone_already_exists");
 
+          if (Platform.OS === "ios") {
+            await removeLoginType();
+          } else if (Platform.OS === "web") {
+            sessionStorage.removeItem("loginType");
+          }
+
           router.push("/auth/login");
           return;
         }
@@ -197,6 +213,13 @@ export default function ProfilePage() {
           env: process.env.EXPO_PUBLIC_TRACKING_MODE,
         });
         trackSignupEvent("signup_complete");
+
+        if (Platform.OS === "ios") {
+          await removeLoginType();
+        } else if (Platform.OS === "web") {
+          sessionStorage.removeItem("loginType");
+        }
+
         router.push("/auth/signup/done");
       },
       (error) => {
