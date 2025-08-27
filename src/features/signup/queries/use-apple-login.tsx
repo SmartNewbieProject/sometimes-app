@@ -33,7 +33,7 @@ export const useAppleLogin = () => {
     onSuccess: (result: AppleLoginResponse) => {
       if (result.isNewUser) {
         setLoginType("apple");
-        sessionStorage.setItem("loginType", "apple");
+
         if (Platform.OS === "ios") {
           setAppleUserId(result.appleId);
           console.log(
@@ -43,6 +43,8 @@ export const useAppleLogin = () => {
         } else if (Platform.OS === "web") {
           if (typeof sessionStorage !== "undefined") {
             sessionStorage.setItem("appleUserId", result.appleId);
+            sessionStorage.setItem("loginType", "apple");
+            sessionStorage.getItem("appleUserId");
             console.log(
               "Web: appleId를 localStorage에 직접 저장했습니다.",
               result.appleId
