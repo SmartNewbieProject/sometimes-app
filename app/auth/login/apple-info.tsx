@@ -46,8 +46,8 @@ export default function UserInfoPage() {
   let appleUserName = null;
 
   if (Platform.OS === "web") {
-    if (sessionStorage.getItem("appleUserName")) {
-      appleUserName = sessionStorage.getItem("appleUserName");
+    if (sessionStorage.getItem("appleUserFullName")) {
+      appleUserName = sessionStorage.getItem("appleUserFullName");
     }
   } else if (Platform.OS === "ios") {
     if (appleUserFullName) {
