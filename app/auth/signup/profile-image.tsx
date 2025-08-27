@@ -143,9 +143,9 @@ export default function ProfilePage() {
     await tryCatch(
       async () => {
         if (
-          Platform.OS !== "android" &&
-          (sessionStorage.getItem("loginType") === "apple" ||
-            loginTypeStorage === "apple")
+          (Platform.OS === "web" &&
+            sessionStorage.getItem("loginType") === "apple") ||
+          (Platform.OS == "ios" && loginTypeStorage === "apple")
         ) {
           const appleIdFromSession = sessionStorage.getItem("appleUserId");
           const appleIdFromAnyStorage =
