@@ -68,6 +68,9 @@ export const signup = (form: SignupForm): Promise<void> => {
   if (form.kakaoId) {
     formData.append("kakaoId", form.kakaoId);
   }
+  if (form.appleId) {
+    formData.append("appleId", form.appleId);
+  }
 
   // biome-ignore lint/complexity/noForEach: <explanation>
   form.profileImages.forEach((imageUri) => {

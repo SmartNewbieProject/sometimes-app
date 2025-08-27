@@ -1,8 +1,8 @@
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import apis from "../apis";
-import { useStorage } from "@/src/shared/hooks/use-storage";
 import { Platform } from "react-native";
+import apis from "../apis";
 
 export interface AppleLoginResponse {
   accessToken: string;
@@ -22,6 +22,9 @@ export const useAppleLogin = () => {
   const { setValue: setAppleUserId } = useStorage<string | null>({
     key: "appleUserId",
   });
+  const { setValue: setLoginType } = useStorage<string | null>({
+    key: "loginType",
+  });
 
   return useMutation({
     mutationFn: (identityToken: string) => {
@@ -29,6 +32,7 @@ export const useAppleLogin = () => {
     },
     onSuccess: (result: AppleLoginResponse) => {
       if (result.isNewUser) {
+        setLoginType("apple");
         if (Platform.OS === "ios") {
           setAppleUserId(result.appleId);
           console.log(
