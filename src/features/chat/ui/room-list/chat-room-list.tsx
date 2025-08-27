@@ -1,21 +1,30 @@
 import { LegendList } from "@legendapp/list";
+import { FlashList } from "@shopify/flash-list";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import type { ChatRoom } from "../../types/chat";
 import ChatRoomCard from "./chat-room-card";
 
 function ChatRoomList() {
   return (
-    <View>
-      {dummyChatRooms.length > 0 && (
-        <LegendList
-          data={dummyChatRooms}
-          estimatedItemSize={80}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => <ChatRoomCard item={item} />}
-          recycleItems
-        />
-      )}
+    <View style={{ paddingHorizontal: 16 }}>
+      {dummyChatRooms.length > 0 &&
+        (Platform.OS === "web" ? (
+          <FlashList
+            data={dummyChatRooms}
+            estimatedItemSize={80}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <ChatRoomCard item={item} />}
+          />
+        ) : (
+          <LegendList
+            data={dummyChatRooms}
+            estimatedItemSize={80}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <ChatRoomCard item={item} />}
+            recycleItems
+          />
+        ))}
     </View>
   );
 }

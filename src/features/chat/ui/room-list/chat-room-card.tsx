@@ -12,20 +12,28 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
   return (
     <View style={styles.container}>
       <ChatProfileImage size={55} imageUri={item.partner.profileImage} />
-      <View style={styles.contentContainer}>
-        <Text style={styles.nameText} numberOfLines={1}>
-          {item.partner.name}
-        </Text>
-        <Text style={styles.lastMessageText} numberOfLines={1}>
-          {item.lastMessage}
-        </Text>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.timeText}>
-          {dayUtils.formatRelativeTime(item.lastMessageAt)}
-        </Text>
-        <View style={styles.unreadCount}>
-          <Text style={styles.unreadCountText}>{item.unreadCount}</Text>
+      <View style={styles.rightContainer}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.nameText} numberOfLines={1}>
+            {item.partner.name}
+          </Text>
+          <Text style={styles.lastMessageText} numberOfLines={1}>
+            {item.lastMessage}
+          </Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.timeText}>
+            {dayUtils.formatRelativeTime(item.lastMessageAt)}
+          </Text>
+          {item.unreadCount > 0 ? (
+            <View style={styles.unreadCount}>
+              <Text style={styles.unreadCountText}>{item.unreadCount}</Text>
+            </View>
+          ) : (
+            <View
+              style={[styles.unreadCount, { backgroundColor: "transparent" }]}
+            />
+          )}
         </View>
       </View>
     </View>
@@ -35,9 +43,9 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    alignItems: "center",
+
     paddingTop: 8,
-    paddingBottom: 12,
+
     gap: 8,
   },
   contentContainer: {
@@ -58,6 +66,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     gap: 2,
+    alignItems: "flex-end",
   },
   timeText: {
     color: "#A2A2A2",
@@ -65,19 +74,33 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   unreadCount: {
-    width: 24,
     height: 24,
+    minWidth: 24,
+
+    borderRadius: 12,
+
+    paddingHorizontal: 8,
+
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#7A4AE2",
-    borderRadius: 24,
   },
   unreadCountText: {
     fontSize: 12,
-    fontWeight: 700,
+    fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    lineHeight: 18,
+    height: 12,
     color: "#fff",
+  },
+  rightContainer: {
+    flexDirection: "row",
+    paddingTop: 2,
+    flex: 1,
+    alignItems: "center",
+    gap: 8,
+    borderBottomColor: "#F0F0F0",
+    borderBottomWidth: 1,
+    paddingBottom: 12,
   },
 });
 
