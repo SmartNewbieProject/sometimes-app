@@ -27,8 +27,8 @@ export const useAppleLogin = () => {
   });
 
   return useMutation({
-    mutationFn: (identityToken: string) => {
-      return apis.postAppleLogin(identityToken);
+    mutationFn: (appleId: string) => {
+      return apis.postAppleLogin(appleId);
     },
     onSuccess: (result: AppleLoginResponse) => {
       if (result.isNewUser) {

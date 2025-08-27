@@ -151,12 +151,9 @@ const AppleLoginButton: React.FC = () => {
       setIsLoading(true);
       console.log("data", data);
 
-      const identityToken =
-        data.platform === "web"
-          ? data.authorization?.id_token
-          : data.identityToken;
+      const userId = data.platform === "web" ? data.userId : data.userId;
 
-      await mutation.mutateAsync(identityToken ?? "");
+      await mutation.mutateAsync(userId ?? "");
 
       track("Signup_Route_Entered", {
         screen: "AreaSelect",
@@ -179,7 +176,15 @@ const AppleLoginButton: React.FC = () => {
       window.sessionStorage.removeItem("appleUserFullName");
 
       const data: AppleWebResponse = await window.AppleID.auth.signIn();
-
+      const fullName = data.user?.name;
+      if (fullName) {
+        const fullDisplayName = `${fullName.lastName || ""}${
+          fullName.firstName || ""
+        }`;
+        window.sessionStorage.setItem("appleUserFullName", fullDisplayName);
+      } else {
+        window.sessionStorage.removeItem("appleUserFullName");
+      }
       await sendToBackend({
         platform: "web",
         authorization: data.authorization,
@@ -219,7 +224,7 @@ const AppleLoginButton: React.FC = () => {
       } else {
         await removeAppleUserFullName();
       }
-
+      console.log("token", credential);
       await sendToBackend({
         platform: "ios",
         identityToken: credential.identityToken,

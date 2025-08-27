@@ -105,9 +105,9 @@ const sendVerificationCode = (
 ): Promise<{ uniqueKey: string }> =>
   axiosClient.post("/auth/sms/send", { phoneNumber });
 
-const postAppleLogin = (identityToken: string): Promise<AppleLoginResponse> => {
+const postAppleLogin = (appleId: string): Promise<AppleLoginResponse> => {
   return axiosClient.post("/auth/oauth/apple", {
-    appleId: identityToken,
+    appleId: appleId,
   });
 };
 
