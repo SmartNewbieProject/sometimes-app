@@ -33,6 +33,7 @@ export const useAppleLogin = () => {
     onSuccess: (result: AppleLoginResponse) => {
       if (result.isNewUser) {
         setLoginType("apple");
+        sessionStorage.setItem("loginType", "apple");
         if (Platform.OS === "ios") {
           setAppleUserId(result.appleId);
           console.log(
