@@ -1,11 +1,12 @@
 // UserInfoPage.tsx
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
-import { Text } from "react-native";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import { track } from "@amplitude/analytics-react-native";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Text } from "react-native";
 import {
   BackHandler,
   Keyboard,
@@ -13,14 +14,13 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  View,
   TextInput,
+  View,
 } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { useStorage } from "@/src/shared/hooks/use-storage";
 
 const { useSignupProgress } = Signup;
 
@@ -89,9 +89,11 @@ export default function UserInfoPage() {
     // Format based on the number of digits
     if (digits.length <= 3) {
       return digits; // e.g., "010"
-    } else if (digits.length <= 7) {
+    }
+    if (digits.length <= 7) {
       return `${digits.substring(0, 3)}-${digits.substring(3)}`; // e.g., "010-1234"
-    } else if (digits.length <= 11) {
+    }
+    if (digits.length <= 11) {
       return `${digits.substring(0, 3)}-${digits.substring(
         3,
         7
@@ -117,7 +119,7 @@ export default function UserInfoPage() {
       } else {
         // If user types other digits, prepend '010' to those digits
         // and take up to 8 of the user's new digits
-        digitsOnly = "010" + digitsOnly.substring(0, 8);
+        digitsOnly = `010${digitsOnly.substring(0, 8)}`;
       }
     }
 

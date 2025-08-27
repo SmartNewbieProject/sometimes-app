@@ -149,7 +149,6 @@ const AppleLoginButton: React.FC = () => {
   const sendToBackend = async (data: BackendAppleData): Promise<void> => {
     try {
       setIsLoading(true);
-      console.log("data", data);
 
       const userId = data.platform === "web" ? data.userId : data.userId;
 
@@ -176,6 +175,7 @@ const AppleLoginButton: React.FC = () => {
       window.sessionStorage.removeItem("appleUserFullName");
 
       const data: AppleWebResponse = await window.AppleID.auth.signIn();
+
       const fullName = data.user?.name;
       if (fullName) {
         const fullDisplayName = `${fullName.lastName || ""}${
@@ -224,7 +224,7 @@ const AppleLoginButton: React.FC = () => {
       } else {
         await removeAppleUserFullName();
       }
-      console.log("token", credential);
+
       await sendToBackend({
         platform: "ios",
         identityToken: credential.identityToken,

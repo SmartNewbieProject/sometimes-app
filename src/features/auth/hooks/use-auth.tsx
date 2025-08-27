@@ -3,13 +3,13 @@ import { eventBus } from "@/src/shared/libs/event-bus";
 import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
 import type { TokenResponse } from "@/src/types/auth";
 import { passKakao, passLogin } from "@features/auth/apis/index";
+import { loginByPass } from "@features/auth/utils/login-utils";
 import { useModal } from "@hooks/use-modal";
 import { useStorage } from "@shared/hooks/use-storage";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
-import { loginByPass } from "@features/auth/utils/login-utils";
 import { Platform } from "react-native";
+import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
 
 export function useAuth() {
   const { value: accessToken, setValue: setToken } = useStorage<string | null>({
@@ -31,6 +31,7 @@ export function useAuth() {
     key: "approval-status",
     initialValue: null,
   });
+  console.log("accessToken", accessToken);
 
   const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
 
