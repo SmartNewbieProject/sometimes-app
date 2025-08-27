@@ -28,8 +28,11 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Platform,
 } from "react-native";
 import { z } from "zod";
+
+import { useStorage } from "@/src/shared/hooks/use-storage";
 
 const {
   SignupSteps,
@@ -64,6 +67,13 @@ export default function ProfilePage() {
   const { trackSignupEvent } = useSignupAnalytics("profile_image");
   const { showOverlay, hideOverlay, visible } = useOverlay();
   const animation = useRef(new Animated.Value(0)).current;
+
+  const { value: appleUserIdFromStorage, loading: storageLoading } = useStorage<
+    string | null
+  >({ key: "appleUserId" });
+  const { value: loginTypeStorage } = useStorage<string | null>({
+    key: "loginType",
+  });
 
   const form = useForm<FormState>({
     resolver: zodResolver(schema),
@@ -132,6 +142,25 @@ export default function ProfilePage() {
 
     await tryCatch(
       async () => {
+        if (
+          Platform.OS !== "android" &&
+          (sessionStorage.getItem("loginType") === "apple" ||
+            loginTypeStorage === "apple")
+        ) {
+          const appleIdFromSession = sessionStorage.getItem("appleUserId");
+          const appleIdFromAnyStorage =
+            appleIdFromSession || appleUserIdFromStorage;
+
+          if (appleIdFromAnyStorage) {
+            signupForm.appleId = appleIdFromAnyStorage;
+          } else {
+            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
+            sessionStorage.removeItem("loginType");
+            router.push("/auth/login");
+            return;
+          }
+        }
+
         if (!signupForm.phone) {
           showErrorModal("휴대폰 번호가 없습니다", "announcement");
           trackSignupEvent("signup_error", "missing_phone");
@@ -161,6 +190,7 @@ export default function ProfilePage() {
           router.navigate("/auth/signup/area");
           return;
         }
+
         await apis.signup(signupForm as SignupForm);
         track("Signup_profile_image", {
           success: true,
@@ -213,7 +243,7 @@ export default function ProfilePage() {
     return () => subscription.remove();
   }, []);
 
-  if (signupLoading) {
+  if (signupLoading || storageLoading) {
     return <Loading.Page />;
   }
 

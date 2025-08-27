@@ -3,6 +3,7 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import {
   Platform,
   Pressable,
@@ -21,6 +22,7 @@ declare global {
         signIn: () => Promise<AppleWebResponse>;
       };
     };
+    sessionStorage: Storage;
   }
 }
 
@@ -83,6 +85,14 @@ interface BackendResponse {
 }
 
 const AppleLoginButton: React.FC = () => {
+  const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
+  const { setValue: setLoginType } = useStorage<string | null>({
+    key: "loginType",
+  });
+  const {
+    setValue: setAppleUserFullName,
+    removeValue: removeAppleUserFullName,
+  } = useStorage<string | null>({ key: "appleUserFullName" });
   const [isAppleJSLoaded, setIsAppleJSLoaded] = useState<boolean>(false);
   const mutation = useAppleLogin();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -146,7 +156,16 @@ const AppleLoginButton: React.FC = () => {
           ? data.authorization?.id_token
           : data.identityToken;
 
-      mutation.mutateAsync(identityToken ?? "");
+      await mutation.mutateAsync(identityToken ?? "");
+
+      if (Platform.OS === "web") {
+        window.sessionStorage.removeItem("appleUserId");
+        window.sessionStorage.removeItem("appleUserFullName");
+      } else if (Platform.OS === "ios") {
+        await removeAppleUserId();
+        await removeAppleUserFullName();
+      }
+
       track("Signup_Route_Entered", {
         screen: "AreaSelect",
         platform: "apple",
@@ -164,6 +183,9 @@ const AppleLoginButton: React.FC = () => {
     if (!window.AppleID || isLoading) return;
 
     try {
+      window.sessionStorage.removeItem("appleUserId");
+      window.sessionStorage.removeItem("appleUserFullName");
+
       const data: AppleWebResponse = await window.AppleID.auth.signIn();
 
       await sendToBackend({
@@ -171,7 +193,7 @@ const AppleLoginButton: React.FC = () => {
         authorization: data.authorization,
         user: data.user,
       });
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      setLoginType("apple");
     } catch (error: any) {
       if (error.error === "popup_closed_by_user") {
         console.log("사용자가 팝업을 닫았습니다");
@@ -185,12 +207,26 @@ const AppleLoginButton: React.FC = () => {
     if (isLoading) return;
 
     try {
+      await removeAppleUserId();
+      await removeAppleUserFullName();
+
       const credential: AppleAuthentication.AppleAuthenticationCredential =
         await AppleAuthentication.signInAsync({
           requestedScopes: [
             AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+            AppleAuthentication.AppleAuthenticationScope.EMAIL,
           ],
         });
+
+      const fullName = credential.fullName;
+      if (fullName) {
+        const fullDisplayName = `${fullName.familyName || ""}${
+          fullName.givenName || ""
+        }`;
+        await setAppleUserFullName(fullDisplayName);
+      } else {
+        await removeAppleUserFullName();
+      }
 
       await sendToBackend({
         platform: "ios",
@@ -200,13 +236,12 @@ const AppleLoginButton: React.FC = () => {
         fullName: credential.fullName,
         authorizationCode: credential.authorizationCode,
       });
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      setLoginType("apple");
     } catch (error: any) {
       if (error.code === "ERR_CANCELED") {
         console.log("사용자가 로그인을 취소했습니다");
       } else {
         console.error("iOS Apple 로그인 실패:", error);
-        alert("Apple 로그인에 실패했습니다.");
       }
     }
   };
