@@ -1,10 +1,18 @@
-import { useCallback, type RefObject } from 'react';
-import { ActivityIndicator, FlatList, Platform, StyleSheet, Text, View } from 'react-native';
-import type { InfiniteScrollViewProps } from './types';
-import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
+import { useCallback, type RefObject, useMemo } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import type { InfiniteScrollViewProps } from "./types";
+import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 
 interface CustomInfiniteScrollViewProps<T> extends InfiniteScrollViewProps<T> {
   flatListRef?: RefObject<FlatList<T>>;
+  getItemKey?: (item: T, index: number) => string;
 }
 
 export function CustomInfiniteScrollView<T>({
@@ -21,59 +29,59 @@ export function CustomInfiniteScrollView<T>({
   ErrorComponent,
   threshold = 0.5,
   flatListRef,
+  getItemKey,
   ...restProps
 }: CustomInfiniteScrollViewProps<T>) {
-  const { scrollProps, getLastItemProps } = useInfiniteScroll<T>(
-    onLoadMore,
-    {
+  const { scrollProps, lastItemRef, getLastItemProps, ensureFillTriggersLoad } =
+    useInfiniteScroll<T>(onLoadMore, {
       threshold,
       enabled: hasMore && !isLoadingMore,
-    }
-  );
+    });
+
+  ensureFillTriggersLoad?.(data, hasMore, isLoadingMore);
 
   const renderItemInternal = useCallback(
     ({ item, index }: { item: T; index: number }) => {
-      if (Platform.OS === 'web' && index === data.length - 1) {
-        const props = getLastItemProps();
-
-        return (
-          <View style={props.style} key={`last-item-${data.length}-${index}-${Date.now()}`}>
-            {renderItem(item, index)}
-            <View
-              ref={props.ref}
-              style={{
-                height: 6,
-                backgroundColor: 'transparent',
-                marginTop: 10,
-                width: '100%'
-              }}
-              id={`infinite-scroll-marker-${data.length}`}
-            />
-          </View>
-        );
-      }
       return renderItem(item, index);
     },
-    [data, renderItem, getLastItemProps]
+    [renderItem]
   );
 
   const ListFooterComponent = useCallback(() => {
-    if (isLoadingMore) {
-      return <LoadingIndicator />;
+    if (Platform.OS === "web") {
+      const props = getLastItemProps();
+      return (
+        <View style={{ paddingVertical: 8 }}>
+          <View
+            ref={props.ref as any}
+            style={{ height: 24, width: "100%" }}
+            id="infinite-scroll-footer-sentinel"
+          />
+          {isLoadingMore ? <LoadingIndicator /> : null}
+        </View>
+      );
     }
-    return null;
-  }, [isLoadingMore, LoadingIndicator]);
+    return isLoadingMore ? <LoadingIndicator /> : null;
+  }, [isLoadingMore, getLastItemProps, LoadingIndicator]);
 
   if (data.length === 0 && !isLoading) {
     return <EmptyComponent />;
   }
+
+  const keyExtractor = useCallback(
+    (item: T, index: number) => {
+      if (getItemKey) return getItemKey(item, index);
+      return `item-${index}`;
+    },
+    [getItemKey]
+  );
 
   return (
     <FlatList
       ref={flatListRef}
       data={data}
       renderItem={renderItemInternal}
-      keyExtractor={(_, index) => `item-${index}`}
+      keyExtractor={keyExtractor}
       ListFooterComponent={ListFooterComponent}
       onRefresh={onRefresh}
       refreshing={refreshing}
@@ -104,17 +112,17 @@ function DefaultEmptyComponent() {
 const styles = StyleSheet.create({
   loadingContainer: {
     padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 16,
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
 });
