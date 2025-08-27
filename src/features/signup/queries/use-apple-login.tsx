@@ -32,9 +32,8 @@ export const useAppleLogin = () => {
     },
     onSuccess: (result: AppleLoginResponse) => {
       if (result.isNewUser) {
-        setLoginType("apple");
-
         if (Platform.OS === "ios") {
+          setLoginType("apple");
           setAppleUserId(result.appleId);
           console.log(
             "iOS: appleId를 useStorage에 저장했습니다.",

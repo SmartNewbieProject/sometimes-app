@@ -158,14 +158,6 @@ const AppleLoginButton: React.FC = () => {
 
       await mutation.mutateAsync(identityToken ?? "");
 
-      if (Platform.OS === "web") {
-        window.sessionStorage.removeItem("appleUserId");
-        window.sessionStorage.removeItem("appleUserFullName");
-      } else if (Platform.OS === "ios") {
-        await removeAppleUserId();
-        await removeAppleUserFullName();
-      }
-
       track("Signup_Route_Entered", {
         screen: "AreaSelect",
         platform: "apple",
