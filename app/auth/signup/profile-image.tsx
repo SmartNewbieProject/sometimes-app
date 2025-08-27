@@ -145,6 +145,7 @@ export default function ProfilePage() {
     await tryCatch(
       async () => {
         if (Platform.OS === "ios" && loginTypeStorage === "apple") {
+          console.log("check", appleUserIdFromStorage);
           if (appleUserIdFromStorage) {
             signupForm.appleId = appleUserIdFromStorage;
           } else {
@@ -159,7 +160,7 @@ export default function ProfilePage() {
           sessionStorage.getItem("loginType") === "apple"
         ) {
           const appleIdFromSession = sessionStorage.getItem("appleUserId");
-
+          console.log("check", appleIdFromSession);
           if (appleIdFromSession) {
             signupForm.appleId = appleIdFromSession;
           } else {

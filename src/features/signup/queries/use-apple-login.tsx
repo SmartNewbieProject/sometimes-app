@@ -44,10 +44,10 @@ export const useAppleLogin = () => {
           if (typeof sessionStorage !== "undefined") {
             sessionStorage.setItem("appleUserId", result.appleId);
             sessionStorage.setItem("loginType", "apple");
-            sessionStorage.getItem("appleUserId");
+
             console.log(
               "Web: appleId를 localStorage에 직접 저장했습니다.",
-              result.appleId
+              sessionStorage.getItem("appleUserId")
             );
           } else {
             console.warn("Web 환경이지만 localStorage에 저장하지 못했습니다.");
