@@ -1,4 +1,4 @@
-import { useCallback, type RefObject, useMemo } from "react";
+import { useCallback, type RefObject } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -32,7 +32,7 @@ export function CustomInfiniteScrollView<T>({
   getItemKey,
   ...restProps
 }: CustomInfiniteScrollViewProps<T>) {
-  const { scrollProps, lastItemRef, getLastItemProps, ensureFillTriggersLoad } =
+  const { scrollProps, getLastItemProps, ensureFillTriggersLoad } =
     useInfiniteScroll<T>(onLoadMore, {
       threshold,
       enabled: hasMore && !isLoadingMore,
@@ -41,40 +41,32 @@ export function CustomInfiniteScrollView<T>({
   ensureFillTriggersLoad?.(data, hasMore, isLoadingMore);
 
   const renderItemInternal = useCallback(
-    ({ item, index }: { item: T; index: number }) => {
-      return renderItem(item, index);
-    },
+    ({ item, index }: { item: T; index: number }) => renderItem(item, index),
     [renderItem]
   );
 
   const ListFooterComponent = useCallback(() => {
-    if (Platform.OS === "web") {
-      const props = getLastItemProps();
-      return (
-        <View style={{ paddingVertical: 8 }}>
+    const props = getLastItemProps(); // web: { ref }, native: {}
+    return (
+      <View style={{ paddingTop: Platform.OS === "web" ? 8 : 0 }}>
+        {Platform.OS === "web" && (
           <View
             ref={props.ref as any}
             style={{ height: 24, width: "100%" }}
             id="infinite-scroll-footer-sentinel"
           />
-          {isLoadingMore ? <LoadingIndicator /> : null}
-        </View>
-      );
-    }
-    return isLoadingMore ? <LoadingIndicator /> : null;
-  }, [isLoadingMore, getLastItemProps, LoadingIndicator]);
+        )}
+        {isLoadingMore ? <LoadingIndicator /> : null}
+      </View>
+    );
+  }, [getLastItemProps, isLoadingMore, LoadingIndicator]);
 
-  if (data.length === 0 && !isLoading) {
-    return <EmptyComponent />;
-  }
+  const listEmpty = !isLoading ? <EmptyComponent /> : null;
 
-  const keyExtractor = useCallback(
-    (item: T, index: number) => {
-      if (getItemKey) return getItemKey(item, index);
-      return `item-${index}`;
-    },
-    [getItemKey]
-  );
+  const keyExtractor =
+    restProps.keyExtractor ??
+    ((item: T, index: number) =>
+      (getItemKey && getItemKey(item, index)) ?? `item-${index}`);
 
   return (
     <FlatList
@@ -83,6 +75,7 @@ export function CustomInfiniteScrollView<T>({
       renderItem={renderItemInternal}
       keyExtractor={keyExtractor}
       ListFooterComponent={ListFooterComponent}
+      ListEmptyComponent={listEmpty}
       onRefresh={onRefresh}
       refreshing={refreshing}
       nestedScrollEnabled={true}
