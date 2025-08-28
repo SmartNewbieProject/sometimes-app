@@ -27,7 +27,9 @@ function ChatSearch({ keyword, setKeyword }: ChatSearchProps) {
             <WhiteXIcon />
           </Pressable>
         ) : (
-          <View style={{ width: 18, height: 18 }} />
+          <View
+            style={[{ backgroundColor: "transparent", width: 20, height: 20 }]}
+          />
         )}
       </View>
     </View>
@@ -55,7 +57,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     outlineWidth: 0,
     flex: 1,
-
+    lineHeight: 20,
     color: "#000",
   },
   reset: {

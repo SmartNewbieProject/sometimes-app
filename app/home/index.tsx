@@ -151,7 +151,7 @@ const HomeScreen = () => {
             <NoneLikeBanner />
           )}
         </View>
-
+        <Link href={"/chat"}>채팅 그랜드 캐니언</Link>
         <View className="mt-[18px] flex flex-col gap-y-1.5">
           <Feedback.WallaFeedbackBanner />
           <Show when={!isPreferenceFill}>

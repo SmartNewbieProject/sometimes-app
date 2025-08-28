@@ -1,13 +1,18 @@
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
 import {
   Dimensions,
   FlatList,
   Keyboard,
   Pressable,
+  ScrollView,
   Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useAuth } from "../../auth";
+import { useChatEvent } from "../hooks/use-chat-event";
+import useChatList from "../queries/use-chat-list";
 import type { Chat } from "../types/chat";
 import ChatMessage from "./message/chat-message";
 
@@ -16,6 +21,13 @@ interface ChatListProps {
 }
 
 const ChatList = ({ setPhotoClicked }: ChatListProps) => {
+  const { accessToken } = useAuth();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useChatList(id);
+
+  console.log("data", data);
+
   const handlePress = () => {
     setTimeout(() => {
       setPhotoClicked(false);
@@ -25,38 +37,39 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const scrollViewRef = useRef<FlatList<Chat>>(null);
 
   return (
-    <View
+    <FlatList
+      data={[...[]].reverse()}
+      renderItem={({ item }) => <ChatMessage item={item} />}
+      keyExtractor={(item) => item.id}
+      onTouchStart={handlePress}
+      inverted
       style={{
+        paddingHorizontal: 16,
+        width: "100%",
         flex: 1,
-        backgroundColor: "#FAFAFA",
       }}
-    >
-      <FlatList
-        data={data.reverse()}
-        renderItem={({ item }) => <ChatMessage item={item} />}
-        keyExtractor={(item) => item.id}
-        onTouchStart={handlePress}
-        inverted
-        style={{
-          paddingHorizontal: 16,
-          width: "100%",
-        }}
-        contentContainerStyle={{
-          gap: 10,
-        }}
-        ref={scrollViewRef}
-        ListFooterComponent={<View style={{ height: 20 }} />}
-        ListHeaderComponent={<View style={{ height: 20 }} />}
-        automaticallyAdjustContentInsets={false}
-        keyboardShouldPersistTaps="handled"
-        contentInsetAdjustmentBehavior="never"
-        maintainVisibleContentPosition={{
-          minIndexForVisible: 0,
-          autoscrollToTopThreshold: 80,
-        }}
-        automaticallyAdjustKeyboardInsets={true}
-      />
-    </View>
+      contentContainerStyle={{
+        gap: 10,
+        flexGrow: 1,
+      }}
+      onEndReached={() => {
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }}
+      onEndReachedThreshold={0.7}
+      ref={scrollViewRef}
+      ListFooterComponent={<View style={{ height: 20 }} />}
+      ListHeaderComponent={<View style={{ height: 20 }} />}
+      automaticallyAdjustContentInsets={false}
+      keyboardShouldPersistTaps="handled"
+      contentInsetAdjustmentBehavior="never"
+      maintainVisibleContentPosition={{
+        minIndexForVisible: 0,
+        autoscrollToTopThreshold: 80,
+      }}
+      automaticallyAdjustKeyboardInsets={true}
+    />
   );
 };
 const data = [

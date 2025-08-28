@@ -18,10 +18,19 @@ interface Partner {
 	department: string;
 }
 
-export interface ChatRoom {
+export interface ChatRoomList {
 	id: string;
-	lastMessage: string;
-	lastMessageAt: string;
 	unreadCount: number;
-	partner: Partner;
+	matchId: string;
+	matchStatus: 'OPEN' | 'CLOSED' | 'PENDING';
+	nickName: string;
+	recentMessage: string;
+	profileImages: string;
+	recentDate: string;
+}
+
+export interface ChatRoomListResponse {
+	chatRooms: ChatRoomList[];
+	nextCursor: string | null;
+	hasMore: boolean;
 }

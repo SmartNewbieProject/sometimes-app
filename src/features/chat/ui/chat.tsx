@@ -1,31 +1,29 @@
+import { BottomNavigation } from "@/src/shared/ui";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import useLiked from "../../like/hooks/use-liked";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChatHeader from "./chat-header";
-import ChatSearch from "./chat-search";
-import ChatLikeCollapse from "./room-list/chat-like-collapse";
-import ChatRoomList, { dummyChatRooms } from "./room-list/chat-room-list";
+import ChatRoomList from "./room-list/chat-room-list";
 
 function Chat() {
-  const { showCollapse } = useLiked();
-  const [keyword, setKeyword] = useState("");
-  const collapse = showCollapse();
+  const insets = useSafeAreaInsets();
 
-  const filteredData = dummyChatRooms.filter((item) => {
-    return item.partner.name.includes(keyword);
-  });
   return (
-    <>
+    <View
+      style={{
+        backgroundColor: "#fff",
+        flex: 1,
+        paddingTop: insets.top,
+        position: "relative",
+      }}
+    >
       <ChatHeader />
-      <ScrollView>
-        {collapse && (
-          <ChatLikeCollapse type={collapse.type} collapse={collapse.data} />
-        )}
-        <View style={{ height: 18 }} />
-        <ChatSearch keyword={keyword} setKeyword={setKeyword} />
-        <ChatRoomList data={filteredData} />
-      </ScrollView>
-    </>
+
+      <View style={{ flex: 1 }}>
+        <ChatRoomList />
+      </View>
+      <BottomNavigation />
+    </View>
   );
 }
 

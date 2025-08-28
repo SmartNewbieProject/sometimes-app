@@ -5,6 +5,7 @@ import {
   getRemainingTimeFormatted,
   getRemainingTimeLimit,
 } from "@/src/shared/utils/like";
+import type { UserProfile } from "@/src/types/user";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
 import { Text as CustomText } from "@shared/ui/text";
@@ -12,6 +13,8 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { useAuth } from "../../auth";
+import useCreateChatRoom from "../../chat/queries/use-create-chat-room";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
 import { useFeatureCost } from "../../payment/hooks";
@@ -67,7 +70,7 @@ function PostBoxCard({
   const renderBottomButton = isExpired ? (
     <ILikedRejectedButton connectionId={connectionId} />
   ) : status === "OPEN" && instagram ? (
-    <LikedMeOpenButton instagramId={instagram} />
+    <LikedMeOpenButton matchId={matchId} />
   ) : type === "liked-me" ? (
     <LikedMePendingButton connectionId={connectionId} />
   ) : type === "i-liked" && status === "REJECTED" ? (
@@ -182,15 +185,18 @@ export function LikedMePendingButton({
 }
 
 export function LikedMeOpenButton({
-  instagramId,
+  matchId,
   height = 40,
 }: {
-  instagramId: string;
+  matchId: string;
   height?: number;
 }) {
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
-  const handleStartInstagram = () => {
+  const { my } = useAuth();
+  const mutation = useCreateChatRoom();
+
+  const handleCreateChat = () => {
     showModal({
       showLogo: true,
 
@@ -221,7 +227,9 @@ export function LikedMeOpenButton({
       ),
       primaryButton: {
         text: "네, 해볼래요",
-        onClick: () => openInstagram(instagramId),
+        onClick: () => {
+          mutation.mutateAsync({ matchId });
+        },
       },
       secondaryButton: {
         text: "아니요",
@@ -232,7 +240,7 @@ export function LikedMeOpenButton({
   return (
     <View className="w-full flex flex-row">
       <Button
-        onPress={handleStartInstagram}
+        onPress={handleCreateChat}
         variant="primary"
         size="md"
         className={cn("flex-1 items-center ", `!h-[${height}px]`)}

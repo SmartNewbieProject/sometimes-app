@@ -1,26 +1,29 @@
 import { dayUtils } from "@/src/shared/libs";
+import { useRouter } from "expo-router";
 import React, { useRef } from "react";
 import {
   Animated,
   Dimensions,
   PanResponder,
+  Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import type { ChatRoom } from "../../types/chat";
+import type { ChatRoomList } from "../../types/chat";
 import ChatProfileImage from "../message/chat-profile-image";
 
 interface ChatRoomCardProps {
-  item: ChatRoom;
+  item: ChatRoomList;
 }
 
 function ChatRoomCard({ item }: ChatRoomCardProps) {
   const screenWidth =
     Dimensions.get("window").width > 468 ? 468 : Dimensions.get("window").width;
   const buttonWidth = screenWidth * 0.25;
+  const router = useRouter();
   const threshold = buttonWidth / 2;
-
+  console.log("items", item);
   const translateX = useRef(new Animated.Value(0)).current;
   const offsetX = useRef(0);
   const pan = useRef(
@@ -72,7 +75,10 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
     })
   ).current;
   return (
-    <View style={{ flex: 1, alignItems: "flex-end" }}>
+    <Pressable
+      onPress={() => router.push(`/chat/${item.id}`)}
+      style={{ flex: 1, alignItems: "flex-end" }}
+    >
       <View style={[styles.deleteButton, { width: buttonWidth }]}>
         <Text style={styles.buttonText}>나가기</Text>
       </View>
@@ -82,19 +88,19 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
           { width: screenWidth, transform: [{ translateX }] },
         ]}
       >
-        <ChatProfileImage size={55} imageUri={item.partner.profileImage} />
+        <ChatProfileImage size={55} imageUri={item.profileImages} />
         <View style={styles.rightContainer}>
           <View style={styles.contentContainer}>
             <Text style={styles.nameText} numberOfLines={1}>
-              {item.partner.name}
+              {item.nickName}
             </Text>
             <Text style={styles.lastMessageText} numberOfLines={1}>
-              {item.lastMessage}
+              {item.recentMessage}
             </Text>
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.timeText}>
-              {dayUtils.formatRelativeTime(item.lastMessageAt)}
+              {dayUtils.formatRelativeTime(item.recentDate)}
             </Text>
             {item.unreadCount > 0 ? (
               <View style={styles.unreadCount}>
@@ -108,7 +114,7 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
           </View>
         </View>
       </Animated.View>
-    </View>
+    </Pressable>
   );
 }
 

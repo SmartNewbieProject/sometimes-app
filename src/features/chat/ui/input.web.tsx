@@ -3,6 +3,7 @@ import { convertToJpeg, isHeicBase64 } from "@/src/shared/utils/image";
 import SendChatIcon from "@assets/icons/send-chat.svg";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
+import { useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useRef, useState } from "react";
 import {
@@ -16,8 +17,18 @@ import {
   useWindowDimensions,
 } from "react-native";
 import PhotoPickerModal from "../../mypage/ui/modal/image-modal";
+import { useChatEvent } from "../hooks/use-chat-event";
 function WebChatInput() {
   const [chat, setChat] = useState("");
+  const { id } = useLocalSearchParams<{ id: string }>();
+
+  const { actions } = useChatEvent({
+    baseUrl:
+      process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
+    autoConnect: true,
+    onConnected: ({ userId }) => console.log("연결됨:", userId),
+    onNewMessage: (msg) => console.log("새 메시지:", msg),
+  });
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
@@ -146,7 +157,14 @@ function WebChatInput() {
         {chat !== "" ? (
           <button
             type="button"
-            onClick={() => {}}
+            onClick={() => {
+              console.log("chat", chat);
+              actions.sendMessage({
+                chatRoomId: id,
+                content: chat,
+                to: "0198c660-3c02-7e88-ad50-7e1e70d94421",
+              });
+            }}
             className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-[#7A4AE1] text-white hover:bg-purple-700 transition-colors focus:outline-none "
             aria-label="Send message"
             disabled={!chat.trim()}

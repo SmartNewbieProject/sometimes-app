@@ -21,6 +21,8 @@ import {
   tryCatch,
 } from "@shared/libs";
 
+// Feather 아이콘 임포트
+import Feather from "@expo/vector-icons/Feather";
 import {
   Button,
   Carousel,
@@ -46,8 +48,6 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-// Feather 아이콘 임포트
-import Feather from "@expo/vector-icons/Feather";
 
 const { queries, ui } = Match;
 const {
@@ -338,7 +338,7 @@ export default function PartnerDetailScreen() {
           <View
             style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
           >
-            <LikedMeOpenButton height={48} instagramId={partner.instagramId} />
+            <LikedMeOpenButton height={48} matchId={matchId} />
           </View>
         </Show>
 

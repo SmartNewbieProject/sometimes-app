@@ -1,21 +1,22 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { io, type Socket } from 'socket.io-client';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type Socket, io } from "socket.io-client";
+import { useAuth } from "../../auth";
+import { createChatEventActions } from "../domain/chat-event-actions";
+import { buildChatSocketUrl } from "../domain/utils/build-socket-url";
 import type {
   ChatClientToServerEvents,
-  ChatServerToClientEvents,
   ChatMessage,
-} from '../types/chat-socket.types';
-import { buildChatSocketUrl } from '../domain/utils/build-socket-url';
-import { createChatEventActions } from '../domain/chat-event-actions';
+  ChatServerToClientEvents,
+} from "../types/chat-socket.types";
 
 export type ChatSocketCallbacks = {
-  onConnected?: (payload: { status: 'success'; userId: string }) => void;
+  onConnected?: (payload: { status: "success"; userId: string }) => void;
   onError?: (payload: { message: string }) => void;
   onNewMessage?: (payload: {
     messageId: string;
     from: string;
     content: string;
-    messageType: 'text' | 'image' | 'emoji';
+    messageType: "text" | "image" | "emoji";
     mediaUrl?: string;
     chatRoomId: string;
     timestamp: string;
@@ -25,7 +26,10 @@ export type ChatSocketCallbacks = {
     matchId: string;
     timestamp?: string;
   }) => void;
-  onChatHistory?: (payload: { chatRoomId: string; messages: ChatMessage[] }) => void;
+  onChatHistory?: (payload: {
+    chatRoomId: string;
+    messages: ChatMessage[];
+  }) => void;
   onChatRoomLeft?: (payload: { chatRoomId: string }) => void;
   onUserTyping?: (payload: { from: string; chatRoomId: string }) => void;
   onUserStoppedTyping?: (payload: { from: string; chatRoomId: string }) => void;
@@ -34,71 +38,76 @@ export type ChatSocketCallbacks = {
 
 export interface UseChatSocketOptions extends ChatSocketCallbacks {
   baseUrl: string;
-  token: string;
+
   namespace?: string;
   autoConnect?: boolean;
 }
 
 export const useChatEvent = ({
-                                baseUrl,
-                                token,
-                                namespace = '/chat',
-                                autoConnect = true,
-                                onConnected,
-                                onError,
-                                onNewMessage,
-                                onChatRoomCreated,
-                                onChatHistory,
-                                onChatRoomLeft,
-                                onUserTyping,
-                                onUserStoppedTyping,
-                                onMessagesRead,
-                              }: UseChatSocketOptions) => {
+  baseUrl,
+  namespace = "/chat",
+  autoConnect = true,
+  onConnected,
+  onError,
+  onNewMessage,
+  onChatRoomCreated,
+  onChatHistory,
+  onChatRoomLeft,
+  onUserTyping,
+  onUserStoppedTyping,
+  onMessagesRead,
+}: UseChatSocketOptions) => {
+  const { accessToken } = useAuth();
+  const token = accessToken;
   const [connected, setConnected] = useState(false);
-  const socketRef = useRef<
-      Socket<ChatServerToClientEvents, ChatClientToServerEvents> | null
-  >(null);
+  const socketRef = useRef<Socket<
+    ChatServerToClientEvents,
+    ChatClientToServerEvents
+  > | null>(null);
 
-  const url = useMemo(() => buildChatSocketUrl(baseUrl, namespace, token), [baseUrl, namespace, token]);
+  const url = useMemo(
+    () => buildChatSocketUrl(baseUrl, namespace, token),
+    [baseUrl, namespace, token]
+  );
 
   const attachListeners = useCallback(
-      (sock: Socket<ChatServerToClientEvents, ChatClientToServerEvents>) => {
-        sock.on('connected', (p) => {
-          setConnected(true);
-          onConnected?.(p);
-        });
+    (sock: Socket<ChatServerToClientEvents, ChatClientToServerEvents>) => {
+      sock.on("connected", (p) => {
+        setConnected(true);
+        onConnected?.(p);
+      });
 
-        sock.on('newMessage', (p) => onNewMessage?.(p));
-        sock.on('chatRoomCreated', (p) => onChatRoomCreated?.(p));
-        sock.on('chatHistory', (p) => onChatHistory?.(p));
-        sock.on('chatRoomLeft', (p) => onChatRoomLeft?.(p));
-        sock.on('userTyping', (p) => onUserTyping?.(p));
-        sock.on('userStoppedTyping', (p) => onUserStoppedTyping?.(p));
-        sock.on('messagesRead', (p) => onMessagesRead?.(p));
-        sock.on('error', (p) => onError?.(p));
+      sock.on("newMessage", (p) => onNewMessage?.(p));
+      sock.on("chatRoomCreated", (p) => onChatRoomCreated?.(p));
+      sock.on("chatHistory", (p) => onChatHistory?.(p));
+      sock.on("chatRoomLeft", (p) => onChatRoomLeft?.(p));
+      sock.on("userTyping", (p) => onUserTyping?.(p));
+      sock.on("userStoppedTyping", (p) => onUserStoppedTyping?.(p));
+      sock.on("messagesRead", (p) => onMessagesRead?.(p));
+      sock.on("error", (p) => onError?.(p));
 
-        sock.io.on('reconnect', () => setConnected(true));
-        sock.io.on('reconnect_attempt', () => setConnected(false));
-        sock.io.on('error', () => setConnected(false));
-        sock.on('disconnect', () => setConnected(false));
-      },
-      [
-        onConnected,
-        onNewMessage,
-        onChatRoomCreated,
-        onChatHistory,
-        onChatRoomLeft,
-        onUserTyping,
-        onUserStoppedTyping,
-        onMessagesRead,
-        onError,
-      ],
+      sock.io.on("reconnect", () => setConnected(true));
+      sock.io.on("reconnect_attempt", () => setConnected(false));
+      sock.io.on("error", () => setConnected(false));
+      sock.on("disconnect", () => setConnected(false));
+    },
+    [
+      onConnected,
+      onNewMessage,
+      onChatRoomCreated,
+      onChatHistory,
+      onChatRoomLeft,
+      onUserTyping,
+      onUserStoppedTyping,
+      onMessagesRead,
+      onError,
+    ]
   );
 
   const connect = useCallback(() => {
     if (socketRef.current) return socketRef.current;
     const sock = io(url, {
-      transports: ['websocket'],
+      transports: ["websocket"],
       withCredentials: true,
     });
     attachListeners(sock);
@@ -123,7 +132,7 @@ export const useChatEvent = ({
 
   const chatEventActions = useMemo(
     () => createChatEventActions(() => socketRef.current),
-    [],
+    []
   );
 
   return {
