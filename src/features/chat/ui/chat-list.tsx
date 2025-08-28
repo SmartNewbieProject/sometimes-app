@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -15,6 +15,7 @@ import { useChatEvent } from "../hooks/use-chat-event";
 import useChatList from "../queries/use-chat-list";
 import type { Chat } from "../types/chat";
 import ChatMessage from "./message/chat-message";
+import NewMatchBanner from "./new-match-banner";
 
 interface ChatListProps {
   setPhotoClicked: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,9 +23,49 @@ interface ChatListProps {
 
 const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { accessToken } = useAuth();
+  const [chatLists, setChatLists] = useState<Chat[]>([]);
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useChatList(id);
+  const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
+
+  const onConnected = useCallback(({ userId }: { userId: string }) => {
+    console.log("연결됨:", userId);
+  }, []);
+
+  useEffect(() => {
+    setChatLists((prev) => {
+      const existingIds = new Set(prev.map((chat) => chat.id));
+      const newUniqueChats = chatList.filter(
+        (chat) => !existingIds.has(chat.id)
+      );
+
+      return [...prev, ...newUniqueChats];
+    });
+  }, [chatList.length]);
+
+  const onNewMessage = useCallback((msg: Chat) => {
+    console.log("새 메시지:", msg);
+    setChatLists((prevChatLists) => {
+      const isDuplicate = prevChatLists.some((chat) => chat.id === msg.id);
+      if (isDuplicate) {
+        console.log("이미 존재하는 아이템입니다.");
+        return prevChatLists;
+      }
+      return [...prevChatLists, msg];
+    });
+  }, []);
+
+  const chatOptions = useMemo(
+    () => ({
+      baseUrl:
+        process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
+      autoConnect: true,
+      onConnected: onConnected,
+      onNewMessage: onNewMessage,
+    }),
+    [onConnected, onNewMessage]
+  );
 
   console.log("data", data);
 
@@ -38,7 +79,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
   return (
     <FlatList
-      data={[...[]].reverse()}
+      data={[...chatList].reverse()}
       renderItem={({ item }) => <ChatMessage item={item} />}
       keyExtractor={(item) => item.id}
       onTouchStart={handlePress}
@@ -59,7 +100,12 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
       }}
       onEndReachedThreshold={0.7}
       ref={scrollViewRef}
-      ListFooterComponent={<View style={{ height: 20 }} />}
+      ListFooterComponent={
+        <>
+          <View style={{ height: 20 }} />
+          <NewMatchBanner />
+        </>
+      }
       ListHeaderComponent={<View style={{ height: 20 }} />}
       automaticallyAdjustContentInsets={false}
       keyboardShouldPersistTaps="handled"
@@ -72,568 +118,5 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     />
   );
 };
-const data = [
-  {
-    id: "chat-001",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "맹구야, 안녕? 여기서 뭐해?",
-    createdAt: "2025-08-26T16:50:10Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:50:10Z",
-  },
-  {
-    id: "chat-002",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...돌.",
-    createdAt: "2025-08-26T16:50:13Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:13Z",
-  },
-  {
-    id: "chat-003",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "아, 또 멋진 돌 찾고 있구나?",
-    createdAt: "2025-08-26T16:50:15Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:50:15Z",
-  },
-  {
-    id: "chat-004",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "응.",
-    createdAt: "2025-08-26T16:50:17Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:17Z",
-  },
-  {
-    id: "chat-005",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "오늘은 어떤 돌을 찾았어?",
-    createdAt: "2025-08-26T16:50:20Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:50:20Z",
-  },
-  {
-    id: "chat-0065",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    mediaUrl: "",
-    content: "... 돌.",
-    createdAt: "2025-08-26T16:50:23Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:23Z",
-  },
-  {
-    id: "chat-006",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...동그란 돌.",
-    createdAt: "2025-08-26T16:50:23Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:23Z",
-  },
-  {
-    id: "chat-007",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "와, 정말 동글동글하다. 꼭 목성 같네.",
-    createdAt: "2025-08-26T16:50:26Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:50:26Z",
-  },
-  {
-    id: "chat-008",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...이름은 '목성이'.",
-    createdAt: "2025-08-26T16:50:30Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:30Z",
-  },
-  {
-    id: "chat-009",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "이름도 지어줬어? 좋은 이름이다!",
-    createdAt: "2025-08-26T16:50:33Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:50:33Z",
-  },
-  {
-    id: "chat-010",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...고마워.",
-    createdAt: "2025-08-26T16:50:36Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:36Z",
-  },
-  {
-    id: "chat-011",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "맹구야, 잠깐만. 코...",
-    createdAt: "2025-08-26T16:50:40Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:50:40Z",
-  },
-  {
-    id: "chat-012",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "(스윽) ...괜찮아.",
-    createdAt: "2025-08-26T16:50:43Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:43Z",
-  },
-  {
-    id: "chat-013",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "맹구는 돌의 어떤 점이 그렇게 좋아?",
-    createdAt: "2025-08-26T16:50:48Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:50:48Z",
-  },
-  {
-    id: "chat-014",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...가만히 있어.",
-    createdAt: "2025-08-26T16:50:52Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:52Z",
-  },
-  {
-    id: "chat-015",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "가만히 있는 게 좋아?",
-    createdAt: "2025-08-26T16:50:54Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:50:54Z",
-  },
-  {
-    id: "chat-016",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...응. 조용해.",
-    createdAt: "2025-08-26T16:50:58Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:50:58Z",
-  },
-  {
-    id: "chat-017",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "하긴, 돌은 시끄럽게 하지 않으니까.",
-    createdAt: "2025-08-26T16:51:01Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:01Z",
-  },
-  {
-    id: "chat-018",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...내 얘기를 들어줘.",
-    createdAt: "2025-08-26T16:51:05Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:51:05Z",
-  },
-  {
-    id: "chat-019",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "돌이 맹구 얘기를 들어준다고?",
-    createdAt: "2025-08-26T16:51:08Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:08Z",
-  },
-  {
-    id: "chat-020",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...응. 항상.",
-    createdAt: "2025-08-26T16:51:12Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:51:12Z",
-  },
-  {
-    id: "chat-021",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "와, 그럼 최고의 친구네!",
-    createdAt: "2025-08-26T16:51:15Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:15Z",
-  },
-  {
-    id: "chat-022",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...보물이야.",
-    createdAt: "2025-08-26T16:51:18Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:51:18Z",
-  },
-  {
-    id: "chat-023",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "이 돌은 표면이 매끈매끈하다.",
-    createdAt: "2025-08-26T16:51:22Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:22Z",
-  },
-  {
-    id: "chat-024",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...강에 있었어.",
-    createdAt: "2025-08-26T16:51:25Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:51:25Z",
-  },
-  {
-    id: "chat-025",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "강물에 씻겨서 이렇게 예뻐졌구나?",
-    createdAt: "2025-08-26T16:51:28Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:28Z",
-  },
-  {
-    id: "chat-026",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...오래 걸렸을 거야.",
-    createdAt: "2025-08-26T16:51:32Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:51:32Z",
-  },
-  {
-    id: "chat-027",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "이 돌은 무슨 이야기를 가지고 있을까?",
-    createdAt: "2025-08-26T16:51:36Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:36Z",
-  },
-  {
-    id: "chat-028",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...졸려.",
-    createdAt: "2025-08-26T16:51:40Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:51:40Z",
-  },
-  {
-    id: "chat-029",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "돌이 졸리다고? 하하.",
-    createdAt: "2025-08-26T16:51:42Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:42Z",
-  },
-  {
-    id: "chat-030",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...낮잠 자는 중.",
-    createdAt: "2025-08-26T16:51:46Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:51:46Z",
-  },
-  {
-    id: "chat-031",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "그럼 깨우면 안 되겠다. 조용히 해야지.",
-    createdAt: "2025-08-26T16:51:49Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:49Z",
-  },
-  {
-    id: "chat-032",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...쉿.",
-    createdAt: "2025-08-26T16:51:52Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:51:52Z",
-  },
-  {
-    id: "chat-033",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "맹구 컬렉션에 새로 추가될 돌이야?",
-    createdAt: "2025-08-26T16:51:56Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:51:56Z",
-  },
-  {
-    id: "chat-034",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...응. '동글이' 옆자리.",
-    createdAt: "2025-08-26T16:52:00Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:00Z",
-  },
-  {
-    id: "chat-035",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "돌들도 자리가 정해져 있구나.",
-    createdAt: "2025-08-26T16:52:03Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:52:03Z",
-  },
-  {
-    id: "chat-036",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...가족이야.",
-    createdAt: "2025-08-26T16:52:07Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:07Z",
-  },
-  {
-    id: "chat-037",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "맹구한테는 정말 소중하구나.",
-    createdAt: "2025-08-26T16:52:10Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:52:10Z",
-  },
-  {
-    id: "chat-038",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...가장.",
-    createdAt: "2025-08-26T16:52:13Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:13Z",
-  },
-  {
-    id: "chat-039",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "저기 저 돌은 어때? 뾰족뾰족한데.",
-    createdAt: "2025-08-26T16:52:17Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:52:17Z",
-  },
-  {
-    id: "chat-040",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...아직 아기야.",
-    createdAt: "2025-08-26T16:52:21Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:21Z",
-  },
-  {
-    id: "chat-041",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "돌도 아기가 있어?",
-    createdAt: "2025-08-26T16:52:23Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:52:23Z",
-  },
-  {
-    id: "chat-042",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...더 커야 돼.",
-    createdAt: "2025-08-26T16:52:27Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:27Z",
-  },
-  {
-    id: "chat-043",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "맹구는 돌 박사님 같아.",
-    createdAt: "2025-08-26T16:52:30Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:52:30Z",
-  },
-  {
-    id: "chat-044",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...그냥 친구.",
-    createdAt: "2025-08-26T16:52:34Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:34Z",
-  },
-  {
-    id: "chat-045",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "나도 돌이랑 친구가 될 수 있을까?",
-    createdAt: "2025-08-26T16:52:38Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:52:38Z",
-  },
-  {
-    id: "chat-046",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...말을 걸어봐.",
-    createdAt: "2025-08-26T16:52:42Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:42Z",
-  },
-  {
-    id: "chat-047",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: true,
-    content: "(돌멩이를 들고) 안녕, 돌멩이야?",
-    createdAt: "2025-08-26T16:52:45Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:52:45Z",
-  },
-  {
-    id: "chat-048",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...대답은?",
-    createdAt: "2025-08-26T16:52:49Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:49Z",
-  },
-  {
-    id: "chat-049",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "me",
-    messageType: "text",
-    isRead: false,
-    content: "음... 아직은 없는 것 같아.",
-    createdAt: "2025-08-26T16:52:52Z",
-    isMe: true,
-    updatedAt: "2025-08-26T16:52:52Z",
-  },
-  {
-    id: "chat-050",
-    chatRoomId: "chatroom-maenggu-01",
-    senderId: "maenggu",
-    messageType: "text",
-    isRead: true,
-    content: "...기다려줘.",
-    createdAt: "2025-08-26T16:52:56Z",
-    isMe: false,
-    updatedAt: "2025-08-26T16:52:56Z",
-  },
-] as Chat[];
+
 export default ChatList;

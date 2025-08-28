@@ -1,25 +1,33 @@
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
 import { Image } from "expo-image";
-import { Link, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import useChatRoomDetail from "../queries/use-chat-room-detail";
 import ChatMenuModal from "./menu-modal";
 function ChatRoomHeader() {
   const router = useRouter();
   const [isVisible, setVisible] = useState(false);
+  const { id } = useLocalSearchParams<{ id: string }>();
+
+  const { data: partner } = useChatRoomDetail(id);
+
   return (
     <View style={[styles.container]}>
       <ChatMenuModal visible={isVisible} onClose={() => setVisible(false)} />
-      <Pressable onPress={() => router.back()}>
+      <Pressable onPress={() => router.navigate("/chat")}>
         <ChevronLeft width={20} height={20} />
       </Pressable>
-      <Image source={""} style={styles.profileImage} />
+      <Image
+        source={partner?.partner.mainProfileImageUrl ?? ""}
+        style={styles.profileImage}
+      />
       <View style={styles.profileContainer}>
-        <Text style={styles.name}>맹구</Text>
+        <Text style={styles.name}>{partner?.partner.name}</Text>
         <View style={styles.schoolContainer}>
-          <Text style={styles.school}>떡잎유치원</Text>
-          <Text style={styles.school}>해바라기반</Text>
+          <Text style={styles.school}>{partner?.partner.university}</Text>
+          <Text style={styles.school}>{partner?.partner.department}</Text>
         </View>
       </View>
       <Pressable

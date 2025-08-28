@@ -3,7 +3,7 @@ import { LegendList } from "@legendapp/list";
 import { FlashList } from "@shopify/flash-list";
 import type React from "react";
 import { useState } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useChatRoomList } from "../../queries/use-chat-room-list";
 import type { ChatRoomList as ChatRoomListType } from "../../types/chat";
@@ -19,13 +19,18 @@ function ChatRoomList() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useChatRoomList();
   const chatRooms = data?.pages.flatMap((page) => page.chatRooms) ?? [];
-
+  console.log("chatRooms");
   console.log("data", data);
   const filteredData = chatRooms.filter((item) => {
     return item.nickName.includes(keyword);
   });
   return (
-    <View>
+    <ScrollView>
+      {collapse && (
+        <ChatLikeCollapse type={collapse.type} collapse={collapse.data} />
+      )}
+      <View style={{ height: 18 }} />
+      <ChatSearch keyword={keyword} setKeyword={setKeyword} />
       {filteredData.length > 0 &&
         (Platform.OS === "web" ? (
           <FlashList
@@ -38,18 +43,6 @@ function ChatRoomList() {
               }
             }}
             ListFooterComponent={<View style={{ height: 12 }} />}
-            ListHeaderComponent={
-              <>
-                {collapse && (
-                  <ChatLikeCollapse
-                    type={collapse.type}
-                    collapse={collapse.data}
-                  />
-                )}
-                <View style={{ height: 18 }} />
-                <ChatSearch keyword={keyword} setKeyword={setKeyword} />
-              </>
-            }
             onEndReachedThreshold={0.5}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <ChatRoomCard item={item} />}
@@ -63,18 +56,6 @@ function ChatRoomList() {
                 fetchNextPage();
               }
             }}
-            ListHeaderComponent={
-              <>
-                {collapse && (
-                  <ChatLikeCollapse
-                    type={collapse.type}
-                    collapse={collapse.data}
-                  />
-                )}
-                <View style={{ height: 18 }} />
-                <ChatSearch keyword={keyword} setKeyword={setKeyword} />
-              </>
-            }
             ListFooterComponent={<View style={{ height: 12 }} />}
             onEndReachedThreshold={0.5}
             keyExtractor={(item) => item.id}
@@ -82,7 +63,7 @@ function ChatRoomList() {
             recycleItems
           />
         ))}
-    </View>
+    </ScrollView>
   );
 }
 

@@ -1,5 +1,5 @@
 import { axiosClient } from '@/src/shared/libs';
-import type { ChatRoomListResponse } from '../types/chat';
+import type { Chat, ChatResponse, ChatRoomDetail, ChatRoomListResponse } from '../types/chat';
 
 export const getChatRooms = ({
 	pageParam,
@@ -23,8 +23,12 @@ export const getChatList = ({
 }: {
 	pageParam?: string;
 	chatRoomId: string;
-}): Promise<ChatRoomListResponse> => {
+}): Promise<ChatResponse> => {
 	return axiosClient.get(
 		`/chat/rooms/${chatRoomId}/messages/cursor${pageParam ? `?cursor=${pageParam}` : ''}`,
 	);
+};
+
+export const getChatRoomDetail = (chatRoomId: string): Promise<ChatRoomDetail> => {
+	return axiosClient.get(`/chat/rooms/${chatRoomId}/details`);
 };

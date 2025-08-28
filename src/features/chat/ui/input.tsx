@@ -1,7 +1,7 @@
 import PlusIcon from "@assets/icons/plus.svg";
 import SendChatIcon from "@assets/icons/send-chat.svg";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Keyboard,
   Platform,
@@ -17,6 +17,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useChatEvent } from "../hooks/use-chat-event";
 
 interface ChatInputProps {
   isPhotoClicked: boolean;
@@ -24,6 +25,28 @@ interface ChatInputProps {
 }
 
 function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
+  const onConnected = useCallback(({ userId }: { userId: string }) => {
+    console.log("연결됨:", userId);
+  }, []);
+
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const onNewMessage = useCallback((msg: any) => {
+    console.log("새 메시지:", msg);
+  }, []);
+
+  const chatOptions = useMemo(
+    () => ({
+      baseUrl:
+        process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
+      autoConnect: true,
+      onConnected: onConnected,
+      onNewMessage: onNewMessage,
+    }),
+    [onConnected, onNewMessage]
+  );
+
+  const { actions } = useChatEvent(chatOptions);
+
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
   const rotate = useSharedValue(0);

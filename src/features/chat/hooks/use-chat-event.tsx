@@ -3,6 +3,7 @@ import { type Socket, io } from "socket.io-client";
 import { useAuth } from "../../auth";
 import { createChatEventActions } from "../domain/chat-event-actions";
 import { buildChatSocketUrl } from "../domain/utils/build-socket-url";
+import type { Chat } from "../types/chat";
 import type {
   ChatClientToServerEvents,
   ChatMessage,
@@ -12,15 +13,7 @@ import type {
 export type ChatSocketCallbacks = {
   onConnected?: (payload: { status: "success"; userId: string }) => void;
   onError?: (payload: { message: string }) => void;
-  onNewMessage?: (payload: {
-    messageId: string;
-    from: string;
-    content: string;
-    messageType: "text" | "image" | "emoji";
-    mediaUrl?: string;
-    chatRoomId: string;
-    timestamp: string;
-  }) => void;
+  onNewMessage?: (payload: Chat) => void;
   onChatRoomCreated?: (payload: {
     chatRoomId: string;
     matchId: string;

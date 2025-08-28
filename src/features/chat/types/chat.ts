@@ -11,8 +11,14 @@ export interface Chat {
 	updatedAt: string;
 }
 
+export interface ChatRoomDetail {
+	partnerId: string;
+	createdAt: string;
+	partner: Partner;
+}
+
 interface Partner {
-	profileImage: string;
+	mainProfileImageUrl: string;
 	name: string;
 	university: string;
 	department: string;
@@ -33,4 +39,10 @@ export interface ChatRoomListResponse {
 	chatRooms: ChatRoomList[];
 	nextCursor: string | null;
 	hasMore: boolean;
+}
+
+export interface ChatResponse {
+	messages: Chat[];
+	hasMore: boolean;
+	nextCursor: string | null;
 }
