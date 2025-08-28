@@ -1,4 +1,3 @@
-import { UniversityEnglishName, type UniversityName } from "@/src/shared/libs";
 import { Image } from "expo-image";
 import React, { useRef } from "react";
 import {
@@ -12,7 +11,7 @@ import {
 import type { UniversityCard as UniversityCardProps } from "../../queries/use-universities";
 
 function UniversityCard({
-  item: { name, region, universityType, area, logoUrl },
+  item: { name, region, universityType, area, logoUrl, en },
   onClick,
   isSelected,
 }: {
@@ -73,7 +72,7 @@ function UniversityCard({
             {name}
           </Text>
           <Text style={styles.englishName}>
-            {UniversityEnglishName[name as UniversityName]}
+            {en}
           </Text>
           <View style={styles.bottomContainer}>
             <View style={styles.area}>

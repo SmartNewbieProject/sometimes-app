@@ -182,12 +182,12 @@ export function filterUniversities(universities: UniversityCard[], searchText: s
 	const lowerText = searchText.toLowerCase();
 
 	return (
-		universities?.filter(({ name, area, region, universityType }) => {
+		universities?.filter(({ name, area, region, universityType, en }) => {
 			return (
 				name.toLowerCase().includes(lowerText) ||
 				(area?.toLowerCase?.().includes(lowerText) ?? false) ||
 				region.toLowerCase().includes(lowerText) ||
-				universityType.toLowerCase().includes(lowerText)
+				en.toLowerCase().includes(lowerText)
 			);
 		}) ?? []
 	);

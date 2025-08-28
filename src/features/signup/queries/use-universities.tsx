@@ -39,6 +39,7 @@ export type UniversitiesByRegion = {
   name: string;
   code: string;
   region: string;
+  en: string;
 }[];
 
 export type UniversityCard = {
@@ -49,4 +50,5 @@ export type UniversityCard = {
   name: string;
   code: string;
   region: string;
+  en: string;
 };
