@@ -1,12 +1,12 @@
-import { View } from "react-native";
-import { Lottie, PalePurpleGradient, Text } from '@shared/ui';
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { Lottie, PalePurpleGradient, Text } from "@shared/ui";
 import { ReactNode } from "react";
 
 type Props = {
   title?: string;
   children?: ReactNode;
   size?: number;
-}
+};
 
 export default function PageLoading({ title, children, size = 96 }: Props) {
   return (
@@ -14,9 +14,28 @@ export default function PageLoading({ title, children, size = 96 }: Props) {
       <PalePurpleGradient />
       <Lottie size={size} />
       {!!children && children}
-      {!children && <Text variant="primary" weight="normal" textColor="black" size="md" className="text-center mt-4">
-        {title}
-      </Text>}
+      {!children && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#8C6AE3" />
+          <Text
+            variant="primary"
+            weight="normal"
+            textColor="black"
+            size="md"
+            className="text-center mt-2"
+          >
+            {title}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    padding: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
