@@ -15,6 +15,7 @@ import {
   VersionUpdateChecker,
   useVersionUpdate,
 } from "@/src/features/version-update";
+import WelcomeReward from "@/src/features/welcome-reward";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ImageResources, storage } from "@/src/shared/libs";
 import { ensurePushTokenRegistered } from "@/src/shared/libs/notifications";
@@ -49,6 +50,10 @@ const {
 const { usePreferenceSelfQuery } = queries;
 const { useRedirectPreferences, useTemporalUniversity } = hooks;
 
+const { ui: welcomeRewardUI, hooks: welcomeRewardHooks } = WelcomeReward;
+const { WelcomeRewardModal } = welcomeRewardUI;
+const { useWelcomeReward } = welcomeRewardHooks;
+
 const HomeScreen = () => {
   const { showModal } = useModal();
   const { step } = useStep();
@@ -62,6 +67,9 @@ const HomeScreen = () => {
   const collapse = showCollapse();
   const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
   const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
+
+  // 환영 보상 관련
+  const { shouldShowReward, markRewardAsReceived } = useWelcomeReward();
   useEffect(() => {
     const fetchTutorialStatus = async () => {
       const finished = await storage.getItem("like-guide");
@@ -108,6 +116,10 @@ const HomeScreen = () => {
       <PalePurpleGradient />
       <VersionUpdateChecker />
       <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} />
+      <WelcomeRewardModal
+        visible={shouldShowReward}
+        onClose={markRewardAsReceived}
+      />
       <Header
         centered={true}
         logoSize={128}
