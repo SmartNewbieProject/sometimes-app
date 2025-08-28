@@ -53,7 +53,7 @@ export const checkPhoneNumberBlacklist = (
 
 export const signup = (form: SignupForm): Promise<void> => {
   const formData = new FormData();
-
+  console.log("checkpoint2", form);
   formData.append("phoneNumber", form.phone);
   formData.append("name", form.name);
   formData.append("birthday", form.birthday);
@@ -68,6 +68,9 @@ export const signup = (form: SignupForm): Promise<void> => {
   if (form.kakaoId) {
     formData.append("kakaoId", form.kakaoId);
   }
+  if (form.appleId) {
+    formData.append("appleId", form.appleId);
+  }
 
   // biome-ignore lint/complexity/noForEach: <explanation>
   form.profileImages.forEach((imageUri) => {
@@ -75,6 +78,7 @@ export const signup = (form: SignupForm): Promise<void> => {
     formData.append("profileImages", file);
   });
 
+  console.log("checkpoint3", formData);
   return axiosClient.post("/auth/signup", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
@@ -101,9 +105,9 @@ const sendVerificationCode = (
 ): Promise<{ uniqueKey: string }> =>
   axiosClient.post("/auth/sms/send", { phoneNumber });
 
-const postAppleLogin = (identityToken: string): Promise<AppleLoginResponse> => {
+const postAppleLogin = (appleId: string): Promise<AppleLoginResponse> => {
   return axiosClient.post("/auth/oauth/apple", {
-    appleId: identityToken,
+    appleId: appleId,
   });
 };
 

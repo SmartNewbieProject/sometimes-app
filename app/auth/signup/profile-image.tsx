@@ -24,12 +24,15 @@ import {
   BackHandler,
   Dimensions,
   Easing,
+  Platform,
   Text as RNText,
   ScrollView,
   StyleSheet,
   View,
 } from "react-native";
 import { z } from "zod";
+
+import { useStorage } from "@/src/shared/hooks/use-storage";
 
 const {
   SignupSteps,
@@ -64,6 +67,15 @@ export default function ProfilePage() {
   const { trackSignupEvent } = useSignupAnalytics("profile_image");
   const { showOverlay, hideOverlay, visible } = useOverlay();
   const animation = useRef(new Animated.Value(0)).current;
+
+  const { value: appleUserIdFromStorage, loading: storageLoading } = useStorage<
+    string | null
+  >({ key: "appleUserId" });
+  const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
+  const { value: loginTypeStorage } = useStorage<string | null>({
+    key: "loginType",
+  });
+  const { removeValue: removeLoginType } = useStorage({ key: "loginType" });
 
   const form = useForm<FormState>({
     resolver: zodResolver(schema),
@@ -132,6 +144,32 @@ export default function ProfilePage() {
 
     await tryCatch(
       async () => {
+        if (Platform.OS === "ios" && loginTypeStorage === "apple") {
+          if (appleUserIdFromStorage) {
+            signupForm.appleId = appleUserIdFromStorage;
+          } else {
+            await removeAppleUserId();
+            await removeLoginType();
+            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
+            router.push("/auth/login");
+            return;
+          }
+        } else if (
+          Platform.OS === "web" &&
+          sessionStorage.getItem("loginType") === "apple"
+        ) {
+          const appleIdFromSession = sessionStorage.getItem("appleUserId");
+          if (appleIdFromSession) {
+            signupForm.appleId = appleIdFromSession;
+          } else {
+            sessionStorage.removeItem("appleUserId");
+            sessionStorage.removeItem("loginType");
+            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
+            router.push("/auth/login");
+            return;
+          }
+        }
+
         if (!signupForm.phone) {
           showErrorModal("휴대폰 번호가 없습니다", "announcement");
           trackSignupEvent("signup_error", "missing_phone");
@@ -153,6 +191,12 @@ export default function ProfilePage() {
           });
           trackSignupEvent("signup_error", "phone_already_exists");
 
+          if (Platform.OS === "ios") {
+            await removeLoginType();
+          } else if (Platform.OS === "web") {
+            sessionStorage.removeItem("loginType");
+          }
+
           router.push("/auth/login");
           return;
         }
@@ -167,6 +211,13 @@ export default function ProfilePage() {
           env: process.env.EXPO_PUBLIC_TRACKING_MODE,
         });
         trackSignupEvent("signup_complete");
+
+        if (Platform.OS === "ios") {
+          await removeLoginType();
+        } else if (Platform.OS === "web") {
+          sessionStorage.removeItem("loginType");
+        }
+
         router.push("/auth/signup/done");
       },
       (error) => {
@@ -213,7 +264,7 @@ export default function ProfilePage() {
     return () => subscription.remove();
   }, []);
 
-  if (signupLoading) {
+  if (signupLoading || storageLoading) {
     return <Loading.Page />;
   }
 

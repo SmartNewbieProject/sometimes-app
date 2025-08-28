@@ -13,6 +13,7 @@ export default function HomeLayout() {
   const { data: statusData, isLoading } = useUserStatus(my.phoneNumber);
   useEffect(() => {
     const checkApprovalStatus = async () => {
+      console.log("statusData", my, statusData);
       if (!my?.phoneNumber || statusChecked || isLoading) return;
 
       try {

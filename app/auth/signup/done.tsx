@@ -7,14 +7,21 @@ import { IconWrapper } from "@/src/shared/ui/icons";
 import { track } from "@amplitude/analytics-react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 const { useSignupProgress, useSignupAnalytics } = Signup;
 
 export default function SignupDoneScreen() {
   const { clear } = useSignupProgress();
-
+  const [loading, setLoading] = useState(true);
   const { trackSignupEvent } = useSignupAnalytics("done");
-
+  useEffect(() => {
+    if (loading) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+  }, [loading]);
   const onNext = () => {
     trackSignupEvent("completion_button_click");
     track("Signup_done", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
@@ -60,8 +67,29 @@ export default function SignupDoneScreen() {
       </View>
 
       <View className="w-full px-5 mb-[24px] md:mb-[58px]">
-        <Button variant="primary" size="md" onPress={onNext} className="w-full">
-          이상형 찾으러 가기 →
+        <Button
+          disabled={loading}
+          variant="primary"
+          size="md"
+          onPress={onNext}
+          className="w-full items-center "
+        >
+          {loading ? (
+            <>
+              <Text textColor={"white"} className="text-md white">
+                잠시만요...
+              </Text>
+              <ActivityIndicator
+                size="small"
+                color="#0000ff"
+                className="ml-6"
+              />
+            </>
+          ) : (
+            <Text textColor={"white"} className="text-md white">
+              로그인하러 가기 →
+            </Text>
+          )}
         </Button>
       </View>
     </DefaultLayout>

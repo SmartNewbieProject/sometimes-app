@@ -1,10 +1,12 @@
+// UserInfoPage.tsx
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
-import { Text } from "react-native";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import { track } from "@amplitude/analytics-react-native";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Text } from "react-native";
 import {
   BackHandler,
   Keyboard,
@@ -12,8 +14,8 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  View,
   TextInput,
+  View,
 } from "react-native";
 import {
   SafeAreaView,
@@ -27,6 +29,10 @@ export default function UserInfoPage() {
 
   const insets = useSafeAreaInsets();
 
+  const { value: appleUserFullName, loading: fullNameLoading } = useStorage<
+    string | null
+  >({ key: "appleUserFullName" });
+
   const [name, setName] = useState(form.name || "");
   const [gender, setGender] = useState(form.gender || null);
   const [year, setYear] = useState("");
@@ -37,9 +43,28 @@ export default function UserInfoPage() {
   const monthRef = useRef<TextInput>(null);
   const dayRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
+  let appleUserName = null;
 
+  if (Platform.OS === "web") {
+    if (sessionStorage.getItem("appleUserFullName")) {
+      appleUserName = sessionStorage.getItem("appleUserFullName");
+    }
+  } else if (Platform.OS === "ios") {
+    if (appleUserFullName) {
+      appleUserName = appleUserFullName;
+    }
+  }
+
+  useEffect(() => {
+    if (appleUserName) {
+      setName(appleUserName);
+      updateForm({ name: appleUserName });
+    }
+  }, [appleUserName]);
+
+  // 이름이 useStorage 값으로 채워진 경우, 이름을 필수 입력 조건에서 제외.
   const isFormComplete =
-    !!name &&
+    (!!name || !!appleUserName) &&
     !!gender &&
     year.length === 4 &&
     month.length === 2 &&
@@ -75,9 +100,11 @@ export default function UserInfoPage() {
     // Format based on the number of digits
     if (digits.length <= 3) {
       return digits; // e.g., "010"
-    } else if (digits.length <= 7) {
+    }
+    if (digits.length <= 7) {
       return `${digits.substring(0, 3)}-${digits.substring(3)}`; // e.g., "010-1234"
-    } else if (digits.length <= 11) {
+    }
+    if (digits.length <= 11) {
       return `${digits.substring(0, 3)}-${digits.substring(
         3,
         7
@@ -103,7 +130,7 @@ export default function UserInfoPage() {
       } else {
         // If user types other digits, prepend '010' to those digits
         // and take up to 8 of the user's new digits
-        digitsOnly = "010" + digitsOnly.substring(0, 8);
+        digitsOnly = `010${digitsOnly.substring(0, 8)}`;
       }
     }
 
@@ -120,6 +147,12 @@ export default function UserInfoPage() {
       setPhone(digitsOnly);
     }
   };
+
+  if (fullNameLoading) {
+    return null;
+  }
+
+  const shouldHideNameInput = !!appleUserFullName;
 
   return (
     <DefaultLayout>
@@ -149,16 +182,18 @@ export default function UserInfoPage() {
           />
         </View>
 
-        <View style={styles.contentWrapper}>
-          <Text style={styles.title}>이름을 입력해주세요</Text>
-          <TextInput
-            style={styles.nameInput}
-            placeholder="구미호"
-            value={name}
-            onChangeText={setName}
-            maxLength={20}
-          />
-        </View>
+        {!shouldHideNameInput && (
+          <View style={styles.contentWrapper}>
+            <Text style={styles.title}>이름을 입력해주세요</Text>
+            <TextInput
+              style={styles.nameInput}
+              placeholder="구미호"
+              value={name}
+              onChangeText={setName}
+              maxLength={20}
+            />
+          </View>
+        )}
 
         <View style={styles.contentWrapper}>
           <Text style={styles.title}>성별을 선택해주세요</Text>
@@ -393,7 +428,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#fff",
     alignItems: "center",
-    width: "100%",
   },
   messageContainer: {
     flexDirection: "row",

@@ -191,8 +191,11 @@ export default function PartnerDetailScreen() {
               </Text>
               <View className="flex flex-row items-center">
                 <Text textColor="white" weight="light" size="sm">
-                  #{partner.mbti}
-                  &nbsp;#{partner.universityDetails?.name || ""}
+                  {partner.mbti
+                    ? `#${partner.mbti} #${
+                        partner.universityDetails?.name || ""
+                      }`
+                    : `#${partner.universityDetails?.name || ""}`}
                 </Text>
                 {/* &nbsp;<UniversityBadge authenticated={profile.authenticated} /> */}
               </View>

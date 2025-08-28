@@ -2,7 +2,9 @@
 	"expo": {
 		"name": "sometimes",
 		"slug": "sometimes",
-		"version": "2.3.6",
+
+		"version": "2.4.7",
+
 		"orientation": "portrait",
 		"icon": "./assets/icons/app.png",
 		"scheme": "myapp",
