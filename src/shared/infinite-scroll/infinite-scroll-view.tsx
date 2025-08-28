@@ -1,7 +1,14 @@
-import { useCallback } from 'react';
-import { ActivityIndicator, FlatList, Platform, StyleSheet, Text, View } from 'react-native';
-import { InfiniteScrollViewProps } from './types';
-import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
+import { useCallback } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { InfiniteScrollViewProps } from "./types";
+import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 
 export function InfiniteScrollView<T>({
   data,
@@ -18,46 +25,34 @@ export function InfiniteScrollView<T>({
   threshold = 0.5,
   ...restProps
 }: InfiniteScrollViewProps<T>) {
-  const { scrollProps, flatListRef, getLastItemProps } = useInfiniteScroll<T>(
-    onLoadMore,
-    {
+  const { scrollProps, flatListRef, getLastItemProps, ensureFillTriggersLoad } =
+    useInfiniteScroll<T>(onLoadMore, {
       threshold,
       enabled: hasMore && !isLoadingMore,
-    }
-  );
+    });
+
+  ensureFillTriggersLoad?.(data, hasMore, isLoadingMore);
 
   const renderItemInternal = useCallback(
-    ({ item, index }: { item: T; index: number }) => {
-      if (Platform.OS === 'web' && index === data.length - 1) {
-        const props = getLastItemProps();
-
-        return (
-          <View style={props.style} key={`last-item-${data.length}-${index}-${Date.now()}`}>
-            {renderItem(item, index)}
-            <View
-              ref={props.ref}
-              style={{
-                height: 6,
-                backgroundColor: 'transparent',
-                marginTop: 10,
-                width: '100%'
-              }}
-              id={`infinite-scroll-marker-${data.length}`}
-            />
-          </View>
-        );
-      }
-      return renderItem(item, index);
-    },
-    [data, renderItem, getLastItemProps]
+    ({ item, index }: { item: T; index: number }) => renderItem(item, index),
+    [renderItem]
   );
 
   const ListFooterComponent = useCallback(() => {
-    if (isLoadingMore) {
-      return <LoadingIndicator />;
-    }
-    return null;
-  }, [isLoadingMore, LoadingIndicator]);
+    const props = getLastItemProps(); // web: { ref }, native: {}
+    return (
+      <View style={{ paddingTop: Platform.OS === "web" ? 8 : 0 }}>
+        {Platform.OS === "web" && (
+          <View
+            ref={props.ref as any}
+            style={{ height: 24, width: "100%" }}
+            id="infinite-scroll-footer-sentinel"
+          />
+        )}
+        {isLoadingMore ? <LoadingIndicator /> : null}
+      </View>
+    );
+  }, [getLastItemProps, isLoadingMore, LoadingIndicator]);
 
   if (data.length === 0 && !isLoading) {
     return <EmptyComponent />;
@@ -72,6 +67,7 @@ export function InfiniteScrollView<T>({
       ListFooterComponent={ListFooterComponent}
       onRefresh={onRefresh}
       refreshing={refreshing}
+      showsVerticalScrollIndicator={false}
       {...scrollProps}
       {...restProps}
     />
@@ -97,17 +93,19 @@ function DefaultEmptyComponent() {
 const styles = StyleSheet.create({
   loadingContainer: {
     padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 16,
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
 });
+
+export default InfiniteScrollView;

@@ -2,6 +2,7 @@ import { useAuth } from "@/src/features/auth";
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
+import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { GemStoreWidget } from "@/src/widgets";
 import { track } from "@amplitude/analytics-react-native";
@@ -12,9 +13,8 @@ import { usePortoneStore } from "@features/payment/hooks/use-portone-store";
 import { FirstSaleCard, GemStore } from "@features/payment/ui";
 import type { PortOneController } from "@portone/react-native-sdk";
 import { ScrollDownIndicator, Show, Text } from "@shared/ui";
-import { useScrollIndicator } from "@/src/shared/hooks";
-import { createRef, useEffect, useState } from "react";
-import { Alert, BackHandler, ScrollView, View } from "react-native";
+import { createRef, lazy, useEffect, useState } from "react";
+import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { ui, services } = Payment;
@@ -34,7 +34,6 @@ export default function GemStoreScreen() {
   const { setGemCount } = usePortoneStore();
   const { my } = useAuth();
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
-  
 
   const { handlePaymentComplete } = usePortone();
 
@@ -134,28 +133,37 @@ export default function GemStoreScreen() {
     );
   }
 
+  if (Platform.OS === "ios") {
+    const AppleGemStore =
+      require("@/src/features/payment/ui/apple-gem-store/apple-gem-store").default;
+    return <AppleGemStore />;
+  }
   return (
     <Layout.Default
       className="flex flex-1 flex-col"
       style={{ backgroundColor: "white", paddingTop: insets.top }}
     >
       <GemStore.Header gemCount={gem?.totalGem ?? 0} />
-      <ScrollView ref={scrollViewRef} onScroll={handleScroll} scrollEventThrottle={16}>
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
         <GemStore.Banner />
         <RematchingTicket.ContentLayout>
           <View className="flex-1 flex flex-col px-[16px] mt-4">
-      
             <View className="flex flex-col mb-2">
-
-            <View style={{ marginBottom: 30 }}>
-              <FirstSaleCard onOpenPayment={metadata => {
-                setGemCount(metadata.gemProduct.totalGems);
-                onPurchase({
-                  totalPrice: metadata.totalPrice,
-                  count: 1,
-                });
-              }} />
-            </View>         
+              <View style={{ marginBottom: 30 }}>
+                <FirstSaleCard
+                  onOpenPayment={(metadata) => {
+                    setGemCount(metadata.gemProduct.totalGems);
+                    onPurchase({
+                      totalPrice: metadata.totalPrice,
+                      count: 1,
+                    });
+                  }}
+                />
+              </View>
 
               <Text weight="semibold" size="20" textColor="black">
                 구슬 구매

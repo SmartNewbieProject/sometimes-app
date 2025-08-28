@@ -5,6 +5,7 @@ import {
 import { Button, Show, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
+import { checkAppEnvironment } from "@shared/libs";
 import * as Localization from "expo-localization";
 import { Link, usePathname, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
@@ -15,7 +16,6 @@ import { PrivacyNotice } from "../../auth/ui/privacy-notice";
 import AppleLoginButton from "./apple-login-button";
 import KakaoLoginWebView from "./kakao-login-web-view";
 import UniversityLogos from "./university-logos";
-import {checkAppEnvironment} from "@shared/libs";
 
 export default function LoginForm() {
   const {
@@ -59,11 +59,8 @@ export default function LoginForm() {
       <UniversityLogos logoSize={64} />
 
       {/* 회원가입 및 로그인 버튼 */}
-      <View className="flex flex-col ">
-        <View
-          className="w-full  "
-          style={{ marginBottom: Platform.OS === "web" ? 10 : 20 }}
-        >
+      <View className="flex w-full items-center flex-col ">
+        <View style={{ marginBottom: 15 }}>
           <Button
             variant="primary"
             width="full"
@@ -76,15 +73,15 @@ export default function LoginForm() {
             </Text>
           </Button>
         </View>
-        <Show when={!isUS}>
-          <View style={{ marginBottom: 10 }}>
-            <KakaoLogin />
+        <View style={{ marginBottom: 15 }}>
+          <KakaoLogin />
+        </View>
+
+        <Show when={Platform.OS === "ios"}>
+          <View>
+            <AppleLoginButton />
           </View>
         </Show>
-
-        {/* <Show when={Platform.OS !== "android" && pathname === "/test"}>
-          <AppleLoginButton />
-        </Show> */}
       </View>
       {/* 에러 메시지 */}
 
@@ -134,7 +131,7 @@ function KakaoLogin() {
 
   return (
     <>
-      <View className="w-full max-w-xs">
+      <View className="w-full ">
         <Pressable
           onPress={handleKakaoLogin}
           className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-[#FEE500]"

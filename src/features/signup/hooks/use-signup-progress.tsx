@@ -14,6 +14,7 @@ export type SignupForm = {
   profileImages: string[];
   passVerified: boolean;
   kakaoId?: string;
+  appleId?: string;
 };
 
 type Agreement = {

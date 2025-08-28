@@ -9,6 +9,7 @@ function useLikedMeQuery() {
     queryFn: getLIkedMe,
     refetchInterval: 1 * 60 * 1000,
     refetchIntervalInBackground: true,
+    refetchOnMount: true,
   });
   return { data, ...props };
 }

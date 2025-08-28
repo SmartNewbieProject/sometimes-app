@@ -11,12 +11,12 @@ import useLike from "../hooks/use-like";
 
 type LikeButtonProps = {
   connectionId: string;
-  clasName?: string;
+  className?: string;
 };
 
 export const LikeButton = ({
   connectionId,
-  clasName = "",
+  className = "",
 }: LikeButtonProps) => {
   const { profileDetails } = useAuth();
   const { showModal, hideModal } = useModal();
@@ -70,7 +70,7 @@ export const LikeButton = ({
     <Button
       onPress={showPartnerLikeAnnouncement}
       variant="primary"
-      className={cn("flex-1 items-center", clasName)}
+      className={cn("flex-1 items-center", className)}
       prefix={
         profileDetails?.gender === "MALE" ? (
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />

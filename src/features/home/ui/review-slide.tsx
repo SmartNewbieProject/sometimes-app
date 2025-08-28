@@ -16,7 +16,6 @@ interface ReviewSlideProps {
 }
 
 export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
-  console.log("review", reviews);
   return (
     <Slide
       autoPlayInterval={6000}
