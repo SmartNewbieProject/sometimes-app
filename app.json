@@ -1,224 +1,228 @@
 {
-	"expo": {
-		"name": "sometimes",
-		"slug": "sometimes",
-
-		"version": "2.4.7",
-
-		"orientation": "portrait",
-		"icon": "./assets/icons/app.png",
-		"scheme": "myapp",
-		"userInterfaceStyle": "automatic",
-		"newArchEnabled": true,
-		"ios": {
-			"supportsTablet": true,
-			"bundleIdentifier": "com.some-in-univ",
-			"entitlements": {
-				"com.apple.developer.applesignin": ["Default"]
-			},
-			"googleServicesFile": "./GoogleService-Info.plist",
-			"capabilities": [
-				"push-notifications",
-				"sign-in-with-apple",
-				"associated-domains",
-				"app-groups",
-				"maps"
-			],
-			"infoPlist": {
-				"UIBackgroundModes": ["remote-notification"],
-				"LSApplicationQueriesSchemes": [
-					"kftc-bankpay",
-					"ispmobile",
-					"hdcardappcardansimclick",
-					"smhyundaiansimclick",
-					"hyundaicardappcardid",
-					"shinhan-sr-ansimclick",
-					"shinhan-sr-ansimclick-naverpay",
-					"shinhan-sr-ansimclick-payco",
-					"shinhan-sr-ansimclick-lpay",
-					"shinhan-sr-ansimclick-mola",
-					"smshinhanansimclick",
-					"smailapp",
-					"kb-acp",
-					"kb-auth",
-					"kb-screen",
-					"kbbank",
-					"liivbank",
-					"newliiv",
-					"mpocket.online.ansimclick",
-					"ansimclickscard",
-					"ansimclickipcollect",
-					"vguardstart",
-					"samsungpay",
-					"scardcertiapp",
-					"monimopay",
-					"monimopayauth",
-					"lottesmartpay",
-					"lotteappcard",
-					"lmslpay",
-					"lpayapp",
-					"cloudpay",
-					"hanawalletmembers",
-					"nhappcardansimclick",
-					"nonghyupcardansimclick",
-					"nhallonepayansimclick",
-					"citispay",
-					"citicardappkr",
-					"citimobileapp",
-					"kakaotalk",
-					"payco",
-					"com.wooricard.wcard",
-					"newsmartpib",
-					"NewSmartPib",
-					"supertoss",
-					"naversearchthirdlogin",
-					"kakaobank",
-					"v3mobileplusweb",
-					"line",
-					"alipays",
-					"weixin",
-					"tauthlink",
-					"ktauthexternalcall",
-					"upluscorporation",
-					"kakaotalk",
-					"naversearchapp",
-					"naverapp",
-					"instagram",
-					"fb",
-					"storylink",
-					"paypal",
-					"spay"
-				],
-				"NSCameraUsageDescription": "프로필 사진 촬영을 위해 카메라 접근이 필요합니다",
-				"NSPhotoLibraryUsageDescription": "프로필 사진 선택을 위해 사진 라이브러리 접근이 필요합니다",
-				"NSUserNotificationUsageDescription": "매칭 결과 및 중요한 알림을 받기 위해 알림 권한이 필요합니다",
-				"ITSAppUsesNonExemptEncryption": false,
-				"com.apple.developer.associated-domains": [
-					"applinks:yourdomain.com",
-					"applinks:*.yourdomain.com"
-				],
-				"com.apple.security.application-groups": ["group.com.some-in-univ.shared"],
-				"UNUserNotificationCenter": true,
-				"NSFileProtectionComplete": true,
-				"NSLocationWhenInUseUsageDescription": "위치 정보를 사용하여 지도 서비스를 제공합니다.",
-				"NSLocationAlwaysUsageDescription": "백그라운드에서 위치 기반 서비스를 제공합니다.",
-				"aps-environment": "development"
-			}
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/images/favicon-logo.png",
-				"backgroundColor": "#ffffff"
-			},
-			"softwareKeyboardLayoutMode": "pan",
-			"package": "com.smartnewb.sometimes",
-			"googleServicesFile": "./google-services.json",
-			"permissions": [
-				"android.permission.CAMERA",
-				"android.permission.READ_EXTERNAL_STORAGE",
-				"android.permission.WRITE_EXTERNAL_STORAGE",
-				"android.permission.INTERNET",
-				"android.permission.ACCESS_NETWORK_STATE",
-				"android.permission.RECEIVE_BOOT_COMPLETED",
-				"android.permission.VIBRATE",
-				"android.permission.WAKE_LOCK"
-			]
-		},
-		"web": {
-			"bundler": "metro",
-			"output": "static",
-			"favicon": "./assets/images/favicon-logo.png",
-			"meta": {
-				"viewport": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-			},
-			"viewport": {
-				"width": "device-width",
-				"initialScale": 1,
-				"maximumScale": 1,
-				"userScalable": false
-			}
-		},
-		"plugins": [
-			"expo-router",
-			[
-				"expo-splash-screen",
-				{
-					"image": "./assets/images/splash-icon.png",
-					"imageWidth": 200,
-					"resizeMode": "contain",
-					"backgroundColor": "#ffffff"
-				}
-			],
-			"@react-native-firebase/app",
-			[
-				"expo-build-properties",
-				{
-					"ios": {
-						"useFrameworks": "static"
-					}
-				}
-			],
-			"@portone/react-native-sdk/plugin",
-			[
-				"react-native-fbsdk-next",
-				{
-					"appID": "638240219304867",
-					"clientToken": "451c9dd6de265d20d05657eca3fbba9d",
-					"displayName": "SOMETIME",
-					"scheme": "fb638240219304867",
-					"advertiserIDCollectionEnabled": true,
-					"autoLogAppEventsEnabled": true,
-					"isAutoInitEnabled": true,
-					"iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
-				}
-			],
-			[
-				"expo-camera",
-				{
-					"cameraPermission": "프로필 사진 촬영을 위해 카메라 권한이 필요합니다."
-				}
-			],
-			[
-				"expo-calendar",
-				{
-					"calendarPermission": "데이트 일정 관리를 위해 캘린더 접근 권한이 필요합니다."
-				}
-			],
-			[
-				"expo-tracking-transparency",
-				{
-					"userTrackingPermission": "썸타임은 사용자에게 맞춤 광고를 위해 추적 권한을 요청합니다."
-				}
-			],
-			[
-				"expo-notifications",
-				{
-					"icon": "./assets/icons/app.png",
-					"color": "#ffffff"
-				}
-			],
-			"expo-web-browser",
-			"expo-build-properties",
-			"expo-localization",
-			"expo-iap",
-			[
-				"expo-build-properties",
-				{
-					"android": {
-						"kotlinVersion": "2.0.21"
-					}
-				}
-			]
-		],
-		"experiments": {
-			"typedRoutes": true
-		},
-		"extra": {
-			"router": {},
-			"eas": {
-				"projectId": "f6df6d86-2504-4574-8bf2-e069c6e76316"
-			},
-			"enableRemoteLogging": true
-		}
-	}
+  "expo": {
+    "name": "sometimes",
+    "slug": "sometimes",
+    "version": "2.4.8",
+    "orientation": "portrait",
+    "icon": "./assets/icons/app.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.some-in-univ",
+      "entitlements": {
+        "com.apple.developer.applesignin": [
+          "Default"
+        ]
+      },
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "capabilities": [
+        "push-notifications",
+        "sign-in-with-apple",
+        "associated-domains",
+        "app-groups",
+        "maps"
+      ],
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "LSApplicationQueriesSchemes": [
+          "kftc-bankpay",
+          "ispmobile",
+          "hdcardappcardansimclick",
+          "smhyundaiansimclick",
+          "hyundaicardappcardid",
+          "shinhan-sr-ansimclick",
+          "shinhan-sr-ansimclick-naverpay",
+          "shinhan-sr-ansimclick-payco",
+          "shinhan-sr-ansimclick-lpay",
+          "shinhan-sr-ansimclick-mola",
+          "smshinhanansimclick",
+          "smailapp",
+          "kb-acp",
+          "kb-auth",
+          "kb-screen",
+          "kbbank",
+          "liivbank",
+          "newliiv",
+          "mpocket.online.ansimclick",
+          "ansimclickscard",
+          "ansimclickipcollect",
+          "vguardstart",
+          "samsungpay",
+          "scardcertiapp",
+          "monimopay",
+          "monimopayauth",
+          "lottesmartpay",
+          "lotteappcard",
+          "lmslpay",
+          "lpayapp",
+          "cloudpay",
+          "hanawalletmembers",
+          "nhappcardansimclick",
+          "nonghyupcardansimclick",
+          "nhallonepayansimclick",
+          "citispay",
+          "citicardappkr",
+          "citimobileapp",
+          "kakaotalk",
+          "payco",
+          "com.wooricard.wcard",
+          "newsmartpib",
+          "NewSmartPib",
+          "supertoss",
+          "naversearchthirdlogin",
+          "kakaobank",
+          "v3mobileplusweb",
+          "line",
+          "alipays",
+          "weixin",
+          "tauthlink",
+          "ktauthexternalcall",
+          "upluscorporation",
+          "kakaotalk",
+          "naversearchapp",
+          "naverapp",
+          "instagram",
+          "fb",
+          "storylink",
+          "paypal",
+          "spay"
+        ],
+        "NSCameraUsageDescription": "프로필 사진 촬영을 위해 카메라 접근이 필요합니다",
+        "NSPhotoLibraryUsageDescription": "프로필 사진 선택을 위해 사진 라이브러리 접근이 필요합니다",
+        "NSUserNotificationUsageDescription": "매칭 결과 및 중요한 알림을 받기 위해 알림 권한이 필요합니다",
+        "ITSAppUsesNonExemptEncryption": false,
+        "com.apple.developer.associated-domains": [
+          "applinks:yourdomain.com",
+          "applinks:*.yourdomain.com"
+        ],
+        "com.apple.security.application-groups": [
+          "group.com.some-in-univ.shared"
+        ],
+        "UNUserNotificationCenter": true,
+        "NSFileProtectionComplete": true,
+        "NSLocationWhenInUseUsageDescription": "위치 정보를 사용하여 지도 서비스를 제공합니다.",
+        "NSLocationAlwaysUsageDescription": "백그라운드에서 위치 기반 서비스를 제공합니다.",
+        "aps-environment": "development"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/favicon-logo.png",
+        "backgroundColor": "#ffffff"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.smartnewb.sometimes",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon-logo.png",
+      "meta": {
+        "viewport": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+      },
+      "viewport": {
+        "width": "device-width",
+        "initialScale": 1,
+        "maximumScale": 1,
+        "userScalable": false
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      "@portone/react-native-sdk/plugin",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "638240219304867",
+          "clientToken": "451c9dd6de265d20d05657eca3fbba9d",
+          "displayName": "SOMETIME",
+          "scheme": "fb638240219304867",
+          "advertiserIDCollectionEnabled": true,
+          "autoLogAppEventsEnabled": true,
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "프로필 사진 촬영을 위해 카메라 권한이 필요합니다."
+        }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "데이트 일정 관리를 위해 캘린더 접근 권한이 필요합니다."
+        }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "썸타임은 사용자에게 맞춤 광고를 위해 추적 권한을 요청합니다."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icons/app.png",
+          "color": "#ffffff"
+        }
+      ],
+      "expo-web-browser",
+      "expo-build-properties",
+      "expo-localization",
+      "expo-iap",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.0.21"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f6df6d86-2504-4574-8bf2-e069c6e76316"
+      },
+      "enableRemoteLogging": true
+    }
+  }
 }

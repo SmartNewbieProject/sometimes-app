@@ -10,7 +10,9 @@ import type {
 import {
   createChatRoomAction,
   getChatHistoryAction,
+  joinRoomAction,
   leaveChatRoomAction,
+  leaveRoomAction,
   readMessagesAction,
   sendMessageAction,
   stopTypingAction,
@@ -28,6 +30,8 @@ export type ChatEventActions = {
   createChatRoom: (payload: CreateChatRoomPayload) => void;
   getChatHistory: (payload: GetChatHistoryPayload) => void;
   leaveChatRoom: (chatRoomId: string) => void;
+  joinRoom: (chatRoomId: string) => void;
+  leaveRoom: (chatRoomId: string) => void;
   typing: (to: string, chatRoomId: string) => void;
   stopTyping: (to: string, chatRoomId: string) => void;
   uploadImage: (to: string, chatRoomId: string, file: File | Blob | string) => Promise<void>;
@@ -41,6 +45,8 @@ export const createChatEventActions = (
   createChatRoom: (payload) => createChatRoomAction(getSocket(), payload),
   getChatHistory: (payload) => getChatHistoryAction(getSocket(), payload),
   leaveChatRoom: (chatRoomId) => leaveChatRoomAction(getSocket(), chatRoomId),
+  joinRoom: (chatRoomId) => joinRoomAction(getSocket(), chatRoomId),
+  leaveRoom: (chatRoomId) => leaveRoomAction(getSocket(), chatRoomId),
   typing: (to, chatRoomId) => typingAction(getSocket(), to, chatRoomId),
   stopTyping: (to, chatRoomId) => stopTypingAction(getSocket(), to, chatRoomId),
   uploadImage: async (to, chatRoomId, file) => {
@@ -48,4 +54,3 @@ export const createChatEventActions = (
   },
   readMessages: (chatRoomId) => readMessagesAction(getSocket(), chatRoomId),
 });
-
