@@ -6,9 +6,17 @@ type Props = {
   title?: string;
   children?: ReactNode;
   size?: number;
+  spinnerSize?: "small" | "large";
+  spinnerColor?: string;
 };
 
-export default function PageLoading({ title, children, size = 96 }: Props) {
+export default function PageLoading({
+  title,
+  children,
+  size = 96,
+  spinnerSize = "large",
+  spinnerColor = "#8C6AE3",
+}: Props) {
   return (
     <View className="flex-1 flex flex-col h-screen items-center justify-center">
       <PalePurpleGradient />
@@ -16,16 +24,18 @@ export default function PageLoading({ title, children, size = 96 }: Props) {
       {!!children && children}
       {!children && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#8C6AE3" />
-          <Text
-            variant="primary"
-            weight="normal"
-            textColor="black"
-            size="md"
-            className="text-center mt-2"
-          >
-            {title}
-          </Text>
+          <ActivityIndicator size={spinnerSize} color={spinnerColor} />
+          {title && (
+            <Text
+              variant="primary"
+              weight="normal"
+              textColor="black"
+              size="md"
+              className="text-center mt-2"
+            >
+              {title}
+            </Text>
+          )}
         </View>
       )}
     </View>
