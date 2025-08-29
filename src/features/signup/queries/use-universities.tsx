@@ -11,9 +11,7 @@ import { getUniversitiesByRegion } from "../apis";
 import { useSignupProgress } from "../hooks";
 import {
   type UIRegion,
-  type UniversityType,
   getRegionsByRegionCode,
-  getUniversityType,
 } from "../lib";
 
 export default function useUniversities() {
@@ -27,7 +25,7 @@ export default function useUniversities() {
   const mappedData = data?.map((item) => ({
     ...item,
     logoUrl: getSmartUnivLogoUrl(item.code),
-    universityType: getUniversityType(item.name),
+    universityType: item.foundation,
     area: getRegionsByRegionCode(item.region as RegionCode),
   }));
 
@@ -40,15 +38,17 @@ export type UniversitiesByRegion = {
   code: string;
   region: string;
   en: string;
+  foundation: string;
 }[];
 
 export type UniversityCard = {
   logoUrl: string;
-  universityType: UniversityType;
+  universityType: string;
   area: UIRegion | undefined;
   id: string;
   name: string;
   code: string;
   region: string;
   en: string;
+  foundation: string;
 };

@@ -7,6 +7,7 @@ export enum RegionCode {
 	DJN = 'DJN', // 대전광역시
 	ULS = 'ULS', // 울산광역시
 	SJG = 'SJG', // 세종특별자치시
+	KYG = 'KYG', // 경기도
 	SWN = 'SWN', // 수원시
 	YGN = 'YGN', // 용인시
 	SGN = 'SGN', // 성남시
