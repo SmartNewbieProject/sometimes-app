@@ -88,7 +88,13 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
   return (
     <FlatList
-      data={[...chatLists].reverse()}
+      data={[
+        ...chatLists.sort((a, b) => {
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        }),
+      ].reverse()}
       renderItem={({ item }) => <ChatMessage item={item} />}
       keyExtractor={(item) => item.id}
       onTouchStart={handlePress}
