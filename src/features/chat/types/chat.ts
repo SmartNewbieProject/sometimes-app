@@ -13,6 +13,7 @@ export interface Chat {
 
 export interface ChatRoomDetail {
 	partnerId: string;
+	roomActivation: boolean;
 	createdAt: string;
 	partner: Partner;
 }

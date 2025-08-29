@@ -22,7 +22,8 @@ function WebChatInput() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
   const [chat, setChat] = useState("");
-  const { data: partner } = useChatRoomDetail(id);
+  const { data: roomDetail } = useChatRoomDetail(id);
+
   const onConnected = useCallback(({ userId }: { userId: string }) => {
     console.log("연결됨:", userId);
   }, []);
@@ -80,7 +81,7 @@ function WebChatInput() {
         return null;
       }
 
-      actions.uploadImage(partner?.partnerId ?? "", id, pickedUri);
+      actions.uploadImage(roomDetail?.partnerId ?? "", id, pickedUri);
       console.log("jpegUri", pickedUri);
     }
     setImageModal(false);
@@ -121,7 +122,7 @@ function WebChatInput() {
         setImageModal(false);
         return null;
       }
-      actions.uploadImage(partner?.partnerId ?? "", id, pickedUri);
+      actions.uploadImage(roomDetail?.partnerId ?? "", id, pickedUri);
       console.log("jpegUri", pickedUri);
     }
     setImageModal(false);
@@ -142,14 +143,14 @@ function WebChatInput() {
 
   const handleSend = () => {
     console.log("chat", chat);
-    if (!textareaRef.current || chat === "" || !partner?.partnerId) {
+    if (!textareaRef.current || chat === "" || !roomDetail?.partnerId) {
       return;
     }
 
     actions.sendMessage({
       chatRoomId: id,
       content: chat ?? "",
-      to: partner?.partnerId,
+      to: roomDetail?.partnerId,
     });
     setChat("");
     queryClient.refetchQueries({ queryKey: ["chat-list", id] });

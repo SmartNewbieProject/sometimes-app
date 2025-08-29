@@ -10,6 +10,7 @@ import useChatRoomDetail from "../queries/use-chat-room-detail";
 import type { Chat } from "../types/chat";
 import ChatMessage from "./message/chat-message";
 import DateDivider from "./message/date-divider";
+import SystemMessage from "./message/system-message";
 import NewMatchBanner from "./new-match-banner";
 
 // useChatList 훅의 반환 타입 (가정)
@@ -140,7 +141,9 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     if (item.type === "date") {
       return <DateDivider date={item.data.date} />;
     }
-
+    if (item.data.messageType === "system") {
+      return <SystemMessage item={item.data} />;
+    }
     return (
       <ChatMessage
         profileImage={roomDetail?.partner.mainProfileImageUrl ?? ""}

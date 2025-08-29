@@ -1,7 +1,9 @@
+import { convertToJpeg } from "@/src/shared/utils/image";
 import { LegendList } from "@legendapp/list";
 import { Image } from "expo-image";
 import * as MediaLibrary from "expo-media-library";
-import React, { useCallback, useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   SlideOutDown,
@@ -10,6 +12,10 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { fileToBase64Payload } from "../domain/utils/file-to-base64";
+import { useChatEvent } from "../hooks/use-chat-event";
+import useChatRoomDetail from "../queries/use-chat-room-detail";
+import type { Chat } from "../types/chat";
 import ChatCamera from "./camera";
 
 interface GalleryListProps {
@@ -19,12 +25,34 @@ interface GalleryListProps {
 export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([firstDummy]);
   const [endCursor, setEndCursor] = useState<string | null>(null);
-  const insets = useSafeAreaInsets();
+  const { id } = useLocalSearchParams<{ id: string }>();
+
   const [hasNextPage, setHasNextPage] = useState(true);
-  const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const heightAnim = useSharedValue(0);
   const [permissionGranted, setPermissionGranted] = useState(false);
+  const { data: partner } = useChatRoomDetail(id);
+  const onConnected = useCallback(({ userId }: { userId: string }) => {
+    console.log("연결됨:", userId);
+  }, []);
+
+  const onNewMessage = useCallback((msg: Chat) => {
+    console.log("새 메시지:", msg);
+  }, []);
+
+  const chatOptions = useMemo(
+    () => ({
+      baseUrl:
+        process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
+      autoConnect: true,
+      onConnected: onConnected,
+      onNewMessage: onNewMessage,
+    }),
+    [onConnected, onNewMessage]
+  );
+
+  const { actions, socket } = useChatEvent(chatOptions);
+
   useEffect(() => {
     if (permissionGranted && photos.length === 0) {
       loadPhotos();
@@ -98,10 +126,10 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
     }
   };
 
-  const toggleSelect = useCallback((uri: string) => {
-    setSelected((prev) =>
-      prev.includes(uri) ? prev.filter((i) => i !== uri) : [...prev, uri]
-    );
+  const toggleSelect = useCallback(async (uri: string) => {
+    actions.uploadImage(partner?.partnerId ?? "", id, uri);
+    const jpegUri = await fileToBase64Payload(uri);
+    console.log("jpegUri", jpegUri);
   }, []);
   console.log("photo", photos.length);
   const renderItem = ({ item }: { item: MediaLibrary.Asset }) => {
@@ -112,11 +140,6 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
           style={styles.image}
           resizeMode="cover"
         />
-        {selected.includes(item.uri) && (
-          <View style={styles.overlay}>
-            <Text style={styles.check}>✓</Text>
-          </View>
-        )}
       </Pressable>
     );
   };

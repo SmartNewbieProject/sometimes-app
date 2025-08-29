@@ -1,4 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { Text } from "@/src/shared/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -6,11 +7,21 @@ import { leaveChatRoom } from "../apis";
 
 function useLeaveChatRoom() {
   const router = useRouter();
-  const { showErrorModal } = useModal();
+  const { showErrorModal, showModal, hideModal } = useModal();
   return useMutation({
     mutationFn: leaveChatRoom,
     onSuccess: () => {
-      router.push("/chat");
+      showModal({
+        title: "안내",
+        children: <Text textColor="black">채팅방을 나갔습니다.</Text>,
+        primaryButton: {
+          text: "확인",
+          onClick: () => {
+            hideModal();
+            router.push("/chat");
+          },
+        },
+      });
     },
     onError: () => {
       showErrorModal(
