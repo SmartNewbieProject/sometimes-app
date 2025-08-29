@@ -34,15 +34,21 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   }, []);
 
   useEffect(() => {
+    console.log("chatList", chatList);
     setChatLists((prev) => {
       const existingIds = new Set(prev.map((chat) => chat.id));
       const newUniqueChats = chatList.filter(
         (chat) => !existingIds.has(chat.id)
       );
 
-      return [...newUniqueChats, ...prev];
+      console.log("check", newUniqueChats, prev);
+      return [...prev, ...newUniqueChats];
     });
   }, [JSON.stringify(chatList)]);
+
+  useEffect(() => {
+    actions.readMessages(id);
+  }, [JSON.stringify(chatLists), id]);
 
   const onNewMessage = useCallback((msg: Chat) => {
     console.log("새 메시지2:", msg);
@@ -52,10 +58,13 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
         console.log("이미 존재하는 아이템입니다.");
         return prevChatLists;
       }
-      console.log("pick", [...prevChatLists, msg]);
+
       return [...prevChatLists, msg];
     });
+    actions.readMessages(id);
   }, []);
+
+  console.log("check2", chatLists);
 
   const chatOptions = useMemo(
     () => ({
