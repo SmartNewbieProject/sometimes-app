@@ -30,7 +30,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
 
   const onConnected = useCallback(({ userId }: { userId: string }) => {
-    console.log("연결됨:", userId);
+    console.log("연결됨2  :", userId);
   }, []);
 
   useEffect(() => {
@@ -61,16 +61,13 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     () => ({
       baseUrl:
         process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
-      autoConnect: true,
       onConnected: onConnected,
       onNewMessage: onNewMessage,
     }),
     [onConnected, onNewMessage]
   );
 
-  const { actions } = useChatEvent(chatOptions);
-
-  console.log("data", chatLists);
+  const { actions, socket } = useChatEvent(chatOptions);
 
   const handlePress = () => {
     setTimeout(() => {

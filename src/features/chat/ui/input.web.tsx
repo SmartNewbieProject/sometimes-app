@@ -36,8 +36,7 @@ function WebChatInput() {
     [onConnected, onNewMessage]
   );
 
-  const { actions } = useChatEvent(chatOptions);
-
+  const { actions, socket } = useChatEvent(chatOptions);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
   const { showErrorModal } = useModal();
