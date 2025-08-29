@@ -53,7 +53,7 @@ export const useChatEvent = ({
 }: UseChatSocketOptions) => {
   const { accessToken } = useAuth();
   const token = accessToken;
-  const { initSocket, socket, setConnected } = useChatStore();
+  const { initSocket, socket, setConnected, disconnectSocket } = useChatStore();
   const url = useMemo(
     () => buildChatSocketUrl(baseUrl, namespace, token),
     [baseUrl, namespace, token]
@@ -113,7 +113,7 @@ export const useChatEvent = ({
 
   const disconnect = useCallback(() => {
     socket?.disconnect();
-
+    disconnectSocket();
     setConnected(false);
   }, [socket]);
 

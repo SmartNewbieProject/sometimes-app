@@ -9,6 +9,7 @@ import type {
 interface ChatState {
 	socket: Socket<ChatServerToClientEvents, ChatClientToServerEvents> | null;
 	connected: boolean;
+	disconnectSocket: () => void;
 	initSocket: (
 		url: string,
 		token: string,
@@ -28,6 +29,9 @@ export const useChatStore = create<ChatState>((set) => ({
 			set({ socket: s });
 		}
 		return s;
+	},
+	disconnectSocket: () => {
+		set({ socket: null });
 	},
 }));
 

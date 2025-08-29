@@ -32,3 +32,11 @@ export const getChatList = ({
 export const getChatRoomDetail = (chatRoomId: string): Promise<ChatRoomDetail> => {
 	return axiosClient.get(`/chat/rooms/${chatRoomId}/details`);
 };
+
+export const leaveChatRoom = ({
+	chatRoomId,
+}: {
+	chatRoomId: string;
+}): Promise<{ message: string }> => {
+	return axiosClient.delete(`/chat/rooms/${chatRoomId}/leave`);
+};

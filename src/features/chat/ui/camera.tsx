@@ -1,10 +1,39 @@
 import { convertToJpeg } from "@/src/shared/utils/image";
 import ChatCameraIcon from "@assets/icons/chat-camera.svg";
+import { useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-import React from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useCallback, useMemo } from "react";
 import { Alert, Linking, Pressable, StyleSheet, View } from "react-native";
+import { useChatEvent } from "../hooks/use-chat-event";
+import useChatRoomDetail from "../queries/use-chat-room-detail";
+import type { Chat } from "../types/chat";
 function ChatCamera() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const queryClient = useQueryClient();
+
+  const { data: partner } = useChatRoomDetail(id);
+  const onConnected = useCallback(({ userId }: { userId: string }) => {
+    console.log("연결됨:", userId);
+  }, []);
+
+  const onNewMessage = useCallback((msg: Chat) => {
+    console.log("새 메시지:", msg);
+  }, []);
+
+  const chatOptions = useMemo(
+    () => ({
+      baseUrl:
+        process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
+      autoConnect: true,
+      onConnected: onConnected,
+      onNewMessage: onNewMessage,
+    }),
+    [onConnected, onNewMessage]
+  );
+
+  const { actions, socket } = useChatEvent(chatOptions);
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -30,7 +59,8 @@ function ChatCamera() {
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
 
-      const jpegUri = await convertToJpeg(pickedUri);
+      actions.uploadImage(partner?.partnerId ?? "", id, pickedUri);
+      queryClient.refetchQueries({ queryKey: ["chat-list", id] });
     }
 
     return null;

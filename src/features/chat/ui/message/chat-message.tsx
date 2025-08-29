@@ -1,5 +1,6 @@
 import ReadCheckIcon from "@assets/icons/read-check.svg";
 import UnreadCheckIcon from "@assets/icons/unread-check.svg";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Chat } from "../../types/chat";
@@ -9,9 +10,10 @@ import ChatProfileImage from "./chat-profile-image";
 
 interface ChatMessageProps {
   item: Chat;
+  profileImage: string;
 }
 
-function ChatMessage({ item }: ChatMessageProps) {
+function ChatMessage({ item, profileImage }: ChatMessageProps) {
   return (
     <View
       style={[
@@ -21,7 +23,7 @@ function ChatMessage({ item }: ChatMessageProps) {
         },
       ]}
     >
-      {!item.isMe && <ChatProfileImage imageUri="" size={32} />}
+      {!item.isMe && <ChatProfileImage imageUri={profileImage} size={32} />}
       <View
         style={[
           styles.balloonContainer,

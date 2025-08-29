@@ -16,21 +16,40 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useQueryClient } from "@tanstack/react-query";
+import { useLocalSearchParams } from "expo-router";
+import useChatList from "../queries/use-chat-list";
+import ChatGuideBanner from "./chat-guide-banner";
 import ChatList from "./chat-list";
 import ChatRoomHeader from "./chat-room-header";
 import GalleryList from "./gallery-list";
 import ChatInput from "./input";
 import WebChatInput from "./input.web";
+import DateDivider from "./message/date-divider";
+import NewMatchBanner from "./new-match-banner";
 
 function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [isPhotoClicked, setPhotoClicked] = useState(false);
+  const { id } = useLocalSearchParams<{ id: string }>();
 
+  const { data, isLoading } = useChatList(id);
+
+  const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth() + 1;
+  const day = new Date().getDate();
+  const date = `${year}년 ${month}월 ${day}일`;
   const keyboard = useAnimatedKeyboard();
 
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
-      { translateY: Platform.OS === "android" ? 0 : -keyboard.height.value },
+      {
+        translateY:
+          Platform.OS === "android"
+            ? 0
+            : -keyboard.height.value + insets.bottom - 10,
+      },
     ],
   }));
 
@@ -50,13 +69,27 @@ function ChatScreen() {
           {
             flex: 1,
             width: "100%",
-            backgroundColor: "#fff",
+            backgroundColor: "#FAFAFA",
             alignContent: "center",
             justifyContent: "center",
           },
           animatedStyles,
         ]}
       >
+        {chatList.length < 3 && !isLoading && (
+          <>
+            {chatList.length < 1 && !isLoading && (
+              <>
+                <View style={{ height: 15 }} />
+                <DateDivider date={date} />
+              </>
+            )}
+            <View style={{ height: 15 }} />
+            <NewMatchBanner />
+            <View style={{ height: 15 }} />
+            <ChatGuideBanner />
+          </>
+        )}
         <ChatList setPhotoClicked={setPhotoClicked} />
 
         {Platform.OS === "web" ? (

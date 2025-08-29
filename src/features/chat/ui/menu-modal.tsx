@@ -2,7 +2,7 @@ import colors from "@/src/shared/constants/colors";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { cn } from "@/src/shared/libs";
 import { Text as CustomText } from "@/src/shared/ui";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
   Modal,
@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useLeaveChatRoom from "../queries/use-leave-chat-room";
 
 interface ChatMenuModalProps {
   visible: boolean;
@@ -22,7 +23,10 @@ interface ChatMenuModalProps {
 const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
+
   const { showModal, hideModal } = useModal();
+  const mutate = useLeaveChatRoom();
   const handleOutChat = () => {
     onClose();
     showModal({
@@ -52,12 +56,14 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
-        onClick: () => {},
+        text: "취소",
+        onClick: hideModal,
       },
       secondaryButton: {
-        text: "아니요",
-        onClick: hideModal,
+        text: "나가기",
+        onClick: () => {
+          mutate.mutateAsync({ chatRoomId: id });
+        },
       },
     });
   };

@@ -119,9 +119,13 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
           placeholder="메세지를 입력하세요"
           numberOfLines={3}
         />
-        <Pressable onPress={handleSend} style={styles.send}>
-          <SendChatIcon width={28} height={28} />
-        </Pressable>
+        {chat !== "" ? (
+          <Pressable onPress={handleSend} style={styles.send}>
+            <SendChatIcon width={32} height={32} />
+          </Pressable>
+        ) : (
+          <View style={{ width: 32, height: 32 }} />
+        )}
       </View>
     </Animated.View>
   );
@@ -132,12 +136,12 @@ const styles = StyleSheet.create({
     flex: 1,
 
     alignSelf: "center",
-    paddingVertical: 14,
-    fontSize: 14,
-    lineHeight: 16,
 
+    fontSize: 16,
+    lineHeight: 18,
+    marginVertical: 14,
     letterSpacing: -0.042,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     ...(Platform.OS === "android"
       ? { textAlignVertical: "center" }
       : { paddingVertical: 0 }),
@@ -145,7 +149,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    minHeight: 39,
+    minHeight: 47,
     marginLeft: 12,
     marginRight: 4,
     position: "relative",

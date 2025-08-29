@@ -4,9 +4,12 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { FlatList, Keyboard, View } from "react-native";
 import { useAuth } from "../../auth";
 import { useChatEvent } from "../hooks/use-chat-event";
+import { useChatRoomLifecycle } from "../hooks/use-chat-room-lifecycle";
 import useChatList from "../queries/use-chat-list";
+import useChatRoomDetail from "../queries/use-chat-room-detail";
 import type { Chat } from "../types/chat";
 import ChatMessage from "./message/chat-message";
+import DateDivider from "./message/date-divider";
 import NewMatchBanner from "./new-match-banner";
 
 // useChatList 훅의 반환 타입 (가정)
@@ -16,6 +19,9 @@ interface PaginatedChatData {
   pageParams: any[];
 }
 
+type ChatListItem =
+  | { type: "message"; data: Chat }
+  | { type: "date"; data: { date: string; id: string } };
 interface ChatListProps {
   setPhotoClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -26,6 +32,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useChatList(id);
+  const { data: roomDetail } = useChatRoomDetail(id);
 
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
 
@@ -79,7 +86,13 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     [onConnected, onNewMessage]
   );
 
-  const { actions } = useChatEvent(chatOptions);
+  const { actions, disconnect } = useChatEvent(chatOptions);
+
+  useChatRoomLifecycle({
+    chatRoomId: id,
+    actions: actions,
+    disconnect: disconnect,
+  });
 
   useEffect(() => {
     actions.readMessages(id);
@@ -94,18 +107,61 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
       .reverse();
   }, [chatList]);
 
+  const chatListWithDateDividers = useMemo(() => {
+    const items: ChatListItem[] = [];
+
+    for (let i = 0; i < sortedChatList.length; i++) {
+      const currentMessage = sortedChatList[i];
+      const nextMessage = sortedChatList[i + 1];
+
+      const currentDate = new Date(currentMessage.createdAt);
+      const nextDate = nextMessage ? new Date(nextMessage.createdAt) : null;
+
+      items.push({
+        type: "message",
+        data: currentMessage,
+      });
+
+      if (!nextDate || !isSameDay(currentDate, nextDate)) {
+        items.push({
+          type: "date",
+          data: {
+            date: formatDate(currentDate),
+            id: `date-${currentDate.toDateString()}`,
+          },
+        });
+      }
+    }
+
+    return items;
+  }, [sortedChatList]);
+
+  const renderItem = ({ item }: { item: ChatListItem }) => {
+    if (item.type === "date") {
+      return <DateDivider date={item.data.date} />;
+    }
+
+    return (
+      <ChatMessage
+        profileImage={roomDetail?.partner.mainProfileImageUrl ?? ""}
+        item={item.data}
+      />
+    );
+  };
+
   const handlePress = () => {
     setTimeout(() => setPhotoClicked(false), 400);
     Keyboard.dismiss();
   };
 
-  const scrollViewRef = useRef<FlatList<Chat>>(null);
+  const scrollViewRef = useRef<FlatList<ChatListItem>>(null);
 
+  console.log("check", chatListWithDateDividers);
   return (
     <FlatList
-      data={sortedChatList}
-      renderItem={({ item }) => <ChatMessage item={item} />}
-      keyExtractor={(item) => item.id}
+      data={chatListWithDateDividers}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.data.id}
       onTouchStart={handlePress}
       inverted
       style={{
@@ -124,12 +180,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
       }}
       onEndReachedThreshold={0.7}
       ref={scrollViewRef}
-      ListFooterComponent={
-        <>
-          <View style={{ height: 20 }} />
-          <NewMatchBanner />
-        </>
-      }
+      ListFooterComponent={<View style={{ height: 20 }} />}
       ListHeaderComponent={<View style={{ height: 20 }} />}
       automaticallyAdjustContentInsets={false}
       keyboardShouldPersistTaps="handled"
@@ -141,6 +192,28 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
       automaticallyAdjustKeyboardInsets={true}
     />
   );
+};
+
+const isSameDay = (date1: Date, date2: Date): boolean => {
+  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+  return d1.getTime() === d2.getTime();
+};
+const formatDate = (date: Date): string => {
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  if (isSameDay(date, today)) {
+    return "오늘";
+  }
+  if (isSameDay(date, yesterday)) {
+    return "어제";
+  }
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}년 ${month}월 ${day}일`;
 };
 
 export default ChatList;

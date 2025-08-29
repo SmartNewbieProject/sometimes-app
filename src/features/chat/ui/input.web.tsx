@@ -6,7 +6,13 @@ import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
 import type React from "react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  type ChangeEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Alert, Linking, Platform } from "react-native";
 import PhotoPickerModal from "../../mypage/ui/modal/image-modal";
 import { useChatEvent } from "../hooks/use-chat-event";
@@ -15,7 +21,7 @@ import type { Chat } from "../types/chat";
 function WebChatInput() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
-
+  const [chat, setChat] = useState("");
   const { data: partner } = useChatRoomDetail(id);
   const onConnected = useCallback(({ userId }: { userId: string }) => {
     console.log("연결됨:", userId);
@@ -81,7 +87,7 @@ function WebChatInput() {
     return null;
   };
 
-  console.log("value", textareaRef.current?.value);
+  console.log("value", chat);
 
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -121,7 +127,8 @@ function WebChatInput() {
     setImageModal(false);
     return null;
   };
-  const handleChange = () => {
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setChat(e.target.value);
     const elem = textareaRef.current;
     const cloneElem = cloneRef.current;
     if (!elem || !cloneElem) return;
@@ -134,23 +141,17 @@ function WebChatInput() {
   };
 
   const handleSend = () => {
-    console.log("chat", textareaRef.current?.value);
-    if (
-      !textareaRef.current ||
-      textareaRef.current?.value === "" ||
-      !partner?.partnerId
-    ) {
+    console.log("chat", chat);
+    if (!textareaRef.current || chat === "" || !partner?.partnerId) {
       return;
     }
 
     actions.sendMessage({
       chatRoomId: id,
-      content: textareaRef.current?.value ?? "",
+      content: chat ?? "",
       to: partner?.partnerId,
     });
-    if (textareaRef.current) {
-      textareaRef.current.value = "";
-    }
+    setChat("");
     queryClient.refetchQueries({ queryKey: ["chat-list", id] });
   };
 
@@ -174,26 +175,31 @@ function WebChatInput() {
       <div className="relative ml-3 flex flex-1 items-center rounded-full bg-[#F8F9FA] py-[8px] px-2 pl-4">
         <textarea
           ref={textareaRef}
+          value={chat}
           onChange={handleChange}
           rows={1}
           placeholder="메세지를 입력하세요"
-          className="flex-1 leading-[16px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-[#1E2229] placeholder-gray-500 focus:outline-none "
+          className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-[#1E2229] placeholder-gray-500 focus:outline-none "
         />
         <textarea
-          className="leading-[16px] box-border w-full resize-none overflow-y-scroll m-0 p-0 absolute -top-[9999px] -left-[9999px] -z-10"
+          className="leading-[18px] box-border  w-full resize-none overflow-y-scroll m-0 p-0 absolute -top-[9999px] -left-[9999px] -z-10"
           readOnly
           ref={cloneRef}
           rows={1}
         />
 
-        <button
-          type="button"
-          onClick={handleSend}
-          className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-[#7A4AE1] text-white hover:bg-purple-700 transition-colors focus:outline-none "
-          aria-label="Send message"
-        >
-          <SendChatIcon width={20} height={20} />
-        </button>
+        {chat !== "" ? (
+          <button
+            type="button"
+            onClick={handleSend}
+            className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-[#7A4AE1] text-white hover:bg-purple-700 transition-colors focus:outline-none "
+            aria-label="Send message"
+          >
+            <SendChatIcon width={20} height={20} />
+          </button>
+        ) : (
+          <div className="h-8 w-8" />
+        )}
       </div>
     </div>
   );

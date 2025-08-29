@@ -11,6 +11,7 @@ import HomeUnselected from "@/assets/icons/nav/home-unselected.svg";
 import MySelected from "@/assets/icons/nav/my-selected.svg";
 import MyUnselected from "@/assets/icons/nav/my-unselected.svg";
 import ChatSeleted from "@assets/icons/nav/chat-selected.svg";
+import ChatUnseleted from "@assets/icons/nav/chat-unselected.svg";
 
 type NavItem = "home" | "community" | "chat" | "my";
 
@@ -35,7 +36,7 @@ const NavIcons: Record<
   },
   chat: {
     selected: <ChatSeleted />,
-    unSelected: <ChatSeleted />,
+    unSelected: <ChatUnseleted />,
   },
 };
 
