@@ -40,9 +40,9 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
         (chat) => !existingIds.has(chat.id)
       );
 
-      return [...prev, ...newUniqueChats];
+      return [...newUniqueChats, ...prev];
     });
-  }, [chatList.length]);
+  }, [JSON.stringify(chatList)]);
 
   const onNewMessage = useCallback((msg: Chat) => {
     console.log("새 메시지2:", msg);

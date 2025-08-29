@@ -54,7 +54,7 @@ export const useChatEvent = ({
   const { accessToken } = useAuth();
   const token = accessToken;
   const { initSocket, socket, setConnected } = useChatStore();
-
+  console.log("token", token);
   const url = useMemo(
     () => buildChatSocketUrl(baseUrl, namespace, token),
     [baseUrl, namespace, token]
@@ -62,10 +62,7 @@ export const useChatEvent = ({
 
   const attachListeners = useCallback(
     (sock: Socket<ChatServerToClientEvents, ChatClientToServerEvents>) => {
-      console.log("123");
-      console.log(sock, "sock");
       sock.on("connected", (p) => {
-        console.log("왜 연결이 안되냐고!!");
         setConnected(true);
         onConnected?.(p);
       });
@@ -101,14 +98,13 @@ export const useChatEvent = ({
   );
   const connect = useCallback(() => {
     console.log("socket", socket, token);
-    if (!token) return socket;
-    if (socket) return socket;
+    if (!token || socket) return socket;
 
     initSocket(url, token ?? "");
     console.log("socket2", socket);
 
     return socket;
-  }, [attachListeners, url, socket]);
+  }, [attachListeners, url, socket, token]);
 
   useEffect(() => {
     if (socket) {
@@ -129,7 +125,7 @@ export const useChatEvent = ({
     return () => {
       socket?.disconnect();
     };
-  }, [autoConnect, socket]);
+  }, [autoConnect, socket, token]);
 
   const chatEventActions = useMemo(
     () => createChatEventActions(() => socket),
