@@ -45,13 +45,14 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   }, [chatList.length]);
 
   const onNewMessage = useCallback((msg: Chat) => {
-    console.log("새 메시지:", msg);
+    console.log("새 메시지2:", msg);
     setChatLists((prevChatLists) => {
       const isDuplicate = prevChatLists.some((chat) => chat.id === msg.id);
       if (isDuplicate) {
         console.log("이미 존재하는 아이템입니다.");
         return prevChatLists;
       }
+      console.log("pick", [...prevChatLists, msg]);
       return [...prevChatLists, msg];
     });
   }, []);
@@ -67,7 +68,9 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     [onConnected, onNewMessage]
   );
 
-  console.log("data", data);
+  const { actions } = useChatEvent(chatOptions);
+
+  console.log("data", chatLists);
 
   const handlePress = () => {
     setTimeout(() => {
@@ -79,7 +82,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
   return (
     <FlatList
-      data={[...chatList].reverse()}
+      data={[...chatLists].reverse()}
       renderItem={({ item }) => <ChatMessage item={item} />}
       keyExtractor={(item) => item.id}
       onTouchStart={handlePress}

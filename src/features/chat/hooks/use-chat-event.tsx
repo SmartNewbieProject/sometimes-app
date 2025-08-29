@@ -35,66 +35,48 @@ export interface UseChatSocketOptions extends ChatSocketCallbacks {
   namespace?: string;
   autoConnect?: boolean;
 }
-
 export const useChatEvent = ({
   baseUrl,
   namespace = "/chat",
   autoConnect = true,
-  onConnected,
-  onError,
-  onNewMessage,
-  onChatRoomCreated,
-  onChatHistory,
-  onChatRoomLeft,
-  onUserTyping,
-  onUserStoppedTyping,
-  onMessagesRead,
+  ...callbacks
 }: UseChatSocketOptions) => {
   const { accessToken } = useAuth();
-  const token = accessToken;
   const [connected, setConnected] = useState(false);
   const socketRef = useRef<Socket<
     ChatServerToClientEvents,
     ChatClientToServerEvents
   > | null>(null);
 
+  const callbacksRef = useRef(callbacks);
+
+  useEffect(() => {
+    callbacksRef.current = callbacks;
+  }, [callbacks]);
+
   const url = useMemo(
-    () => buildChatSocketUrl(baseUrl, namespace, token),
-    [baseUrl, namespace, token]
+    () => buildChatSocketUrl(baseUrl, namespace, accessToken),
+    [baseUrl, namespace, accessToken]
   );
 
   const attachListeners = useCallback(
     (sock: Socket<ChatServerToClientEvents, ChatClientToServerEvents>) => {
       sock.on("connected", (p) => {
         setConnected(true);
-        onConnected?.(p);
+        callbacksRef.current.onConnected?.(p);
       });
-
-      sock.on("newMessage", (p) => onNewMessage?.(p));
-      sock.on("chatRoomCreated", (p) => onChatRoomCreated?.(p));
-      sock.on("chatHistory", (p) => onChatHistory?.(p));
-      sock.on("chatRoomLeft", (p) => onChatRoomLeft?.(p));
-      sock.on("userTyping", (p) => onUserTyping?.(p));
-      sock.on("userStoppedTyping", (p) => onUserStoppedTyping?.(p));
-      sock.on("messagesRead", (p) => onMessagesRead?.(p));
-      sock.on("error", (p) => onError?.(p));
+      sock.on("newMessage", (p) => callbacksRef.current.onNewMessage?.(p));
+      sock.on("chatRoomCreated", (p) =>
+        callbacksRef.current.onChatRoomCreated?.(p)
+      );
+      sock.on("error", (p) => callbacksRef.current.onError?.(p));
 
       sock.io.on("reconnect", () => setConnected(true));
       sock.io.on("reconnect_attempt", () => setConnected(false));
       sock.io.on("error", () => setConnected(false));
       sock.on("disconnect", () => setConnected(false));
     },
-    [
-      onConnected,
-      onNewMessage,
-      onChatRoomCreated,
-      onChatHistory,
-      onChatRoomLeft,
-      onUserTyping,
-      onUserStoppedTyping,
-      onMessagesRead,
-      onError,
-    ]
+    []
   );
 
   const connect = useCallback(() => {
