@@ -21,7 +21,7 @@ export const useChatStore = create<ChatState>((set) => ({
 	connected: false,
 	setConnected: (v) => set({ connected: v }),
 	initSocket: (url, token) => {
-		let s = get().socket;
+		let s = get().socket as Socket<ChatServerToClientEvents, ChatClientToServerEvents>;
 
 		if (!s) {
 			s = io(url, { transports: ['websocket'], withCredentials: true, auth: { token } });

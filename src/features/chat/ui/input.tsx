@@ -1,5 +1,7 @@
 import PlusIcon from "@assets/icons/plus.svg";
 import SendChatIcon from "@assets/icons/send-chat.svg";
+import { useQueryClient } from "@tanstack/react-query";
+import { useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -18,6 +20,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useChatEvent } from "../hooks/use-chat-event";
+import useChatRoomDetail from "../queries/use-chat-room-detail";
+import type { Chat } from "../types/chat";
 
 interface ChatInputProps {
   isPhotoClicked: boolean;
@@ -25,12 +29,15 @@ interface ChatInputProps {
 }
 
 function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const { data: partner } = useChatRoomDetail(id);
+  const queryClient = useQueryClient();
+
   const onConnected = useCallback(({ userId }: { userId: string }) => {
     console.log("연결됨:", userId);
   }, []);
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const onNewMessage = useCallback((msg: any) => {
+  const onNewMessage = useCallback((msg: Chat) => {
     console.log("새 메시지:", msg);
   }, []);
 
@@ -45,7 +52,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
     [onConnected, onNewMessage]
   );
 
-  const { actions } = useChatEvent(chatOptions);
+  const { actions, socket } = useChatEvent(chatOptions);
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -79,6 +86,20 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
   }));
 
+  const handleSend = () => {
+    if (chat === "" || !partner?.partnerId) {
+      return;
+    }
+
+    actions.sendMessage({
+      chatRoomId: id,
+      content: chat ?? "",
+      to: partner?.partnerId,
+    });
+    setChat("");
+    queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+  };
+
   return (
     <Animated.View
       style={[styles.container, { width: width }, animatedKeyboardStyles]}
@@ -98,7 +119,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
           placeholder="메세지를 입력하세요"
           numberOfLines={3}
         />
-        <Pressable style={styles.send}>
+        <Pressable onPress={handleSend} style={styles.send}>
           <SendChatIcon width={28} height={28} />
         </Pressable>
       </View>

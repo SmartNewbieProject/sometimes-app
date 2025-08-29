@@ -73,9 +73,9 @@ function WebChatInput() {
         setImageModal(false);
         return null;
       }
-      const jpegUri = await convertToJpeg(pickedUri);
 
-      // onChange(jpegUri);
+      actions.uploadImage(partner?.partnerId ?? "", id, pickedUri);
+      console.log("jpegUri", pickedUri);
     }
     setImageModal(false);
     return null;
@@ -115,7 +115,8 @@ function WebChatInput() {
         setImageModal(false);
         return null;
       }
-      const jpegUri = await convertToJpeg(pickedUri);
+      actions.uploadImage(partner?.partnerId ?? "", id, pickedUri);
+      console.log("jpegUri", pickedUri);
     }
     setImageModal(false);
     return null;

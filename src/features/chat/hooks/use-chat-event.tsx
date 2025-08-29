@@ -54,7 +54,6 @@ export const useChatEvent = ({
   const { accessToken } = useAuth();
   const token = accessToken;
   const { initSocket, socket, setConnected } = useChatStore();
-  console.log("token", token);
   const url = useMemo(
     () => buildChatSocketUrl(baseUrl, namespace, token),
     [baseUrl, namespace, token]
@@ -62,6 +61,7 @@ export const useChatEvent = ({
 
   const attachListeners = useCallback(
     (sock: Socket<ChatServerToClientEvents, ChatClientToServerEvents>) => {
+      console.log(sock, "sock");
       sock.on("connected", (p) => {
         setConnected(true);
         onConnected?.(p);
@@ -77,7 +77,6 @@ export const useChatEvent = ({
       sock.on("userStoppedTyping", (p) => onUserStoppedTyping?.(p));
       sock.on("messagesRead", (p) => onMessagesRead?.(p));
       sock.on("error", (p) => onError?.(p));
-
       sock.io.on("reconnect", () => setConnected(true));
       sock.io.on("reconnect_attempt", () => setConnected(false));
       sock.io.on("error", () => setConnected(false));
@@ -97,7 +96,6 @@ export const useChatEvent = ({
     ]
   );
   const connect = useCallback(() => {
-    console.log("socket", socket, token);
     if (!token || socket) return socket;
 
     initSocket(url, token ?? "");

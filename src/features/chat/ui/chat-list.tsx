@@ -1,15 +1,7 @@
+import { useQueryClient } from "@tanstack/react-query"; // React Query v5 기준
 import { useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Dimensions,
-  FlatList,
-  Keyboard,
-  Pressable,
-  ScrollView,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { FlatList, Keyboard, View } from "react-native";
 import { useAuth } from "../../auth";
 import { useChatEvent } from "../hooks/use-chat-event";
 import useChatList from "../queries/use-chat-list";
@@ -17,54 +9,65 @@ import type { Chat } from "../types/chat";
 import ChatMessage from "./message/chat-message";
 import NewMatchBanner from "./new-match-banner";
 
+// useChatList 훅의 반환 타입 (가정)
+interface PaginatedChatData {
+  pages: { messages: Chat[] }[];
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  pageParams: any[];
+}
+
 interface ChatListProps {
   setPhotoClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ChatList = ({ setPhotoClicked }: ChatListProps) => {
-  const { accessToken } = useAuth();
-  const [chatLists, setChatLists] = useState<Chat[]>([]);
   const { id } = useLocalSearchParams<{ id: string }>();
+  const queryClient = useQueryClient();
+
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useChatList(id);
+
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
 
   const onConnected = useCallback(({ userId }: { userId: string }) => {
-    console.log("연결됨2  :", userId);
+    console.log("연결됨2:", userId);
   }, []);
 
-  useEffect(() => {
-    console.log("chatList", chatList);
-    setChatLists((prev) => {
-      const existingIds = new Set(prev.map((chat) => chat.id));
-      const newUniqueChats = chatList.filter(
-        (chat) => !existingIds.has(chat.id)
-      );
+  const onNewMessage = useCallback(
+    (newMessage: Chat) => {
+      console.log("새 메시지2:", newMessage);
+      const queryKey = ["chat", id];
 
-      console.log("check", newUniqueChats, prev);
-      return [...prev, ...newUniqueChats];
-    });
-  }, [JSON.stringify(chatList)]);
-
-  useEffect(() => {
-    actions.readMessages(id);
-  }, [JSON.stringify(chatLists), id]);
-
-  const onNewMessage = useCallback((msg: Chat) => {
-    console.log("새 메시지2:", msg);
-    setChatLists((prevChatLists) => {
-      const isDuplicate = prevChatLists.some((chat) => chat.id === msg.id);
-      if (isDuplicate) {
+      const currentData = queryClient.getQueryData<PaginatedChatData>(queryKey);
+      if (
+        currentData?.pages[0]?.messages.some((msg) => msg.id === newMessage.id)
+      ) {
         console.log("이미 존재하는 아이템입니다.");
-        return prevChatLists;
+        return;
       }
 
-      return [...prevChatLists, msg];
-    });
-    actions.readMessages(id);
-  }, []);
+      queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => {
+        if (!oldData) {
+          return {
+            pages: [{ messages: [newMessage] }],
+            pageParams: [undefined],
+          };
+        }
 
-  console.log("check2", chatLists);
+        const newData = { ...oldData };
+
+        newData.pages[0] = {
+          ...newData.pages[0],
+          messages: [newMessage, ...newData.pages[0].messages],
+        };
+
+        return newData;
+      });
+
+      actions.readMessages(id);
+    },
+    [queryClient, id]
+  );
 
   const chatOptions = useMemo(
     () => ({
@@ -76,25 +79,31 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     [onConnected, onNewMessage]
   );
 
-  const { actions, socket } = useChatEvent(chatOptions);
+  const { actions } = useChatEvent(chatOptions);
+
+  useEffect(() => {
+    actions.readMessages(id);
+  }, [id]);
+
+  const sortedChatList = useMemo(() => {
+    return [...chatList]
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      )
+      .reverse();
+  }, [chatList]);
 
   const handlePress = () => {
-    setTimeout(() => {
-      setPhotoClicked(false);
-    }, 400);
+    setTimeout(() => setPhotoClicked(false), 400);
     Keyboard.dismiss();
   };
+
   const scrollViewRef = useRef<FlatList<Chat>>(null);
 
   return (
     <FlatList
-      data={[
-        ...chatLists.sort((a, b) => {
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        }),
-      ].reverse()}
+      data={sortedChatList}
       renderItem={({ item }) => <ChatMessage item={item} />}
       keyExtractor={(item) => item.id}
       onTouchStart={handlePress}
