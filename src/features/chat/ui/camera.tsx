@@ -58,8 +58,10 @@ function ChatCamera() {
 
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
+      const jpegUri = await convertToJpeg(pickedUri);
+      actions.uploadImage(partner?.partnerId ?? "", id, jpegUri);
 
-      actions.uploadImage(partner?.partnerId ?? "", id, pickedUri);
+      console.log("jpegUri", jpegUri);
       queryClient.refetchQueries({ queryKey: ["chat-list", id] });
     }
 

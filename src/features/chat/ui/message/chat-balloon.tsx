@@ -9,6 +9,7 @@ interface ChatBalloonProps {
 }
 
 function ChatBalloon({ message, mediaUrl, isMe }: ChatBalloonProps) {
+  console.log("mediaUrl", mediaUrl);
   return (
     <View
       style={[

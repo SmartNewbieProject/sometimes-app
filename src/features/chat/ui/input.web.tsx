@@ -82,6 +82,7 @@ function WebChatInput() {
       }
 
       actions.uploadImage(roomDetail?.partnerId ?? "", id, pickedUri);
+      queryClient.refetchQueries({ queryKey: ["chat-list", id] });
       console.log("jpegUri", pickedUri);
     }
     setImageModal(false);
@@ -124,6 +125,7 @@ function WebChatInput() {
       }
       actions.uploadImage(roomDetail?.partnerId ?? "", id, pickedUri);
       console.log("jpegUri", pickedUri);
+      queryClient.refetchQueries({ queryKey: ["chat-list", id] });
     }
     setImageModal(false);
     return null;
@@ -179,7 +181,12 @@ function WebChatInput() {
           value={chat}
           onChange={handleChange}
           rows={1}
-          placeholder="메세지를 입력하세요"
+          readOnly={roomDetail?.roomActivation}
+          placeholder={
+            roomDetail?.roomActivation
+              ? "메세지를 입력하세요"
+              : "대화가 종료되었어요"
+          }
           className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-[#1E2229] placeholder-gray-500 focus:outline-none "
         />
         <textarea

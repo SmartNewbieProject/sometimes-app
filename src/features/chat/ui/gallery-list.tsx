@@ -1,5 +1,6 @@
 import { convertToJpeg } from "@/src/shared/utils/image";
 import { LegendList } from "@legendapp/list";
+import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
@@ -26,7 +27,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([firstDummy]);
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const { id } = useLocalSearchParams<{ id: string }>();
-
+  const queryClient = useQueryClient();
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(false);
   const heightAnim = useSharedValue(0);
@@ -126,11 +127,13 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
     }
   };
 
-  const toggleSelect = useCallback(async (uri: string) => {
-    actions.uploadImage(partner?.partnerId ?? "", id, uri);
-    const jpegUri = await fileToBase64Payload(uri);
+  const toggleSelect = async (uri: string) => {
+    const jpegUri = await convertToJpeg(uri);
+    actions.uploadImage(partner?.partnerId ?? "", id, jpegUri);
+
     console.log("jpegUri", jpegUri);
-  }, []);
+    queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+  };
   console.log("photo", photos.length);
   const renderItem = ({ item }: { item: MediaLibrary.Asset }) => {
     return (
