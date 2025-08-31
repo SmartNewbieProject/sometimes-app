@@ -1,17 +1,20 @@
 import { useQueryClient } from "@tanstack/react-query"; // React Query v5 기준
 import { useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Keyboard, View } from "react-native";
 import { useAuth } from "../../auth";
 import { useChatEvent } from "../hooks/use-chat-event";
 import { useChatRoomLifecycle } from "../hooks/use-chat-room-lifecycle";
+import { useChatRoomRead } from "../hooks/use-chat-room-read";
 import useChatList from "../queries/use-chat-list";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
+import { useChatStore } from "../store/chat";
 import type { Chat } from "../types/chat";
 import ChatMessage from "./message/chat-message";
 import DateDivider from "./message/date-divider";
 import SystemMessage from "./message/system-message";
 import NewMatchBanner from "./new-match-banner";
+import {logger} from "@shared/libs";
 
 // useChatList 훅의 반환 타입 (가정)
 interface PaginatedChatData {
@@ -28,15 +31,17 @@ interface ChatListProps {
 }
 
 const ChatList = ({ setPhotoClicked }: ChatListProps) => {
+  const { accessToken } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useChatList(id);
   const { data: roomDetail } = useChatRoomDetail(id);
 
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
-
+  
   const onConnected = useCallback(({ userId }: { userId: string }) => {
     console.log("연결됨2:", userId);
   }, []);
@@ -44,16 +49,13 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const onNewMessage = useCallback(
     (newMessage: Chat) => {
       console.log("새 메시지2:", newMessage);
-      const queryKey = ["chat", id];
-
+      const queryKey = ["chat-list", id];
       const currentData = queryClient.getQueryData<PaginatedChatData>(queryKey);
       if (
         currentData?.pages[0]?.messages.some((msg) => msg.id === newMessage.id)
       ) {
-        console.log("이미 존재하는 아이템입니다.");
         return;
       }
-
       queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => {
         if (!oldData) {
           return {
@@ -61,18 +63,42 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
             pageParams: [undefined],
           };
         }
-
-        const newData = { ...oldData };
-
-        newData.pages[0] = {
-          ...newData.pages[0],
-          messages: [newMessage, ...newData.pages[0].messages],
+        const newData = {
+          pages: oldData.pages.map((page, index) => 
+            index === 0 
+              ? { ...page, messages: [newMessage, ...page.messages] }
+              : page
+          ),
+          pageParams: [...oldData.pageParams],
         };
-
         return newData;
       });
 
-      actions.readMessages(id);
+      setForceUpdate(prev => prev + 1);
+      const { connected } = useChatStore.getState();
+      if (connected) {
+        actions.readMessages(id);
+      }
+    },
+    [queryClient, id]
+  );
+
+  const onImageUploadStatus = useCallback(
+    (payload: { id: string; chatRoomId: string; uploadStatus: 'uploading' | 'completed' | 'failed'; mediaUrl?: string }) => {
+      const queryKey = ["chat-list", id];
+      queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => {
+        if (!oldData) return oldData;
+        const newData = { ...oldData };
+        newData.pages = newData.pages.map(page => ({
+          ...page,
+          messages: page.messages.map(msg => 
+            msg.id === payload.id 
+              ? { ...msg, uploadStatus: payload.uploadStatus, ...(payload.mediaUrl && { mediaUrl: payload.mediaUrl }) }
+              : msg
+          )
+        }));
+        return newData;
+      });
     },
     [queryClient, id]
   );
@@ -80,33 +106,41 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const chatOptions = useMemo(
     () => ({
       baseUrl:
-        process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
+        'http://localhost:8044' ?? "https://api.some-in-univ.com/api",
       onConnected: onConnected,
       onNewMessage: onNewMessage,
+      onImageUploadStatus: onImageUploadStatus,
     }),
-    [onConnected, onNewMessage]
+    [onConnected, onNewMessage, onImageUploadStatus]
   );
 
   const { actions, disconnect } = useChatEvent(chatOptions);
+  const { connected } = useChatStore();
+  const { markRoomAsRead } = useChatRoomRead();
 
   useChatRoomLifecycle({
     chatRoomId: id,
-    actions: actions,
-    disconnect: disconnect,
+    actions,
+    connected,
+    disconnect,
   });
 
   useEffect(() => {
-    actions.readMessages(id);
-  }, [id]);
+    if (connected) {
+      actions.readMessages(id);
+      markRoomAsRead(id);
+    }
+  }, [id, connected, markRoomAsRead]);
 
   const sortedChatList = useMemo(() => {
-    return [...chatList]
+    const sorted = [...chatList]
       .sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       )
       .reverse();
-  }, [chatList]);
+    return sorted;
+  }, [chatList, forceUpdate]);
 
   const chatListWithDateDividers = useMemo(() => {
     const items: ChatListItem[] = [];
