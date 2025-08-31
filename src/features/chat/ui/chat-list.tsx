@@ -10,6 +10,7 @@ import useChatList from "../queries/use-chat-list";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { useChatStore } from "../store/chat";
 import type { Chat } from "../types/chat";
+import { addMessageToChatList } from "../utils/update-chat-list-cache";
 import ChatMessage from "./message/chat-message";
 import DateDivider from "./message/date-divider";
 import SystemMessage from "./message/system-message";
@@ -56,23 +57,9 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
       ) {
         return;
       }
-      queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => {
-        if (!oldData) {
-          return {
-            pages: [{ messages: [newMessage] }],
-            pageParams: [undefined],
-          };
-        }
-        const newData = {
-          pages: oldData.pages.map((page, index) => 
-            index === 0 
-              ? { ...page, messages: [newMessage, ...page.messages] }
-              : page
-          ),
-          pageParams: [...oldData.pageParams],
-        };
-        return newData;
-      });
+      queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => 
+        addMessageToChatList(oldData, newMessage)
+      );
 
       setForceUpdate(prev => prev + 1);
       const { connected } = useChatStore.getState();

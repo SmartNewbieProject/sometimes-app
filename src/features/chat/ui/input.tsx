@@ -22,6 +22,14 @@ import Animated, {
 import { useChatEvent } from "../hooks/use-chat-event";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import type { Chat } from "../types/chat";
+import { createOptimisticMessage } from "../utils/create-optimistic-message";
+
+// useChatList 훅의 반환 타입 (가정)
+interface PaginatedChatData {
+  pages: { messages: Chat[] }[];
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  pageParams: any[];
+}
 
 interface ChatInputProps {
   isPhotoClicked: boolean;
@@ -92,13 +100,19 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       return;
     }
 
+    const tempMessage = createOptimisticMessage(id, chat);
+
+    const queryKey = ["chat-list", id];
+    queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => 
+      addMessageToChatList(oldData, tempMessage)
+    );
+
     actions.sendMessage({
       chatRoomId: id,
       content: chat ?? "",
       to: partner?.partnerId,
     });
     setChat("");
-    queryClient.refetchQueries({ queryKey: ["chat-list", id] });
   };
 
   return (
