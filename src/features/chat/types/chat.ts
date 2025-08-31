@@ -4,6 +4,7 @@ export interface Chat {
 	senderId: string;
 	messageType: string;
 	mediaUrl?: string;
+	uploadStatus?: 'uploading' | 'completed' | 'failed';
 	isRead: boolean;
 	content: string;
 	createdAt: string;

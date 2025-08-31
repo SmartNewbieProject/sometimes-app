@@ -34,6 +34,7 @@ function ChatMessage({ item, profileImage }: ChatMessageProps) {
           mediaUrl={item.mediaUrl}
           isMe={item.isMe}
           message={item.content}
+          uploadStatus={item.uploadStatus}
         />
         <View
           style={[

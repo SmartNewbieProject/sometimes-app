@@ -11,12 +11,9 @@ import {
 } from "react-native";
 import Animated, {
   useAnimatedKeyboard,
-  useAnimatedReaction,
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import useChatList from "../queries/use-chat-list";
 import ChatGuideBanner from "./chat-guide-banner";

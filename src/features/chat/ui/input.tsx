@@ -54,6 +54,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
 
   const { actions, socket } = useChatEvent(chatOptions);
 
+
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
   const rotate = useSharedValue(0);

@@ -28,11 +28,16 @@ export type ChatSocketCallbacks = {
   onUserTyping?: (payload: { from: string; chatRoomId: string }) => void;
   onUserStoppedTyping?: (payload: { from: string; chatRoomId: string }) => void;
   onMessagesRead?: (payload: { chatRoomId: string; readerId: string }) => void;
+  onImageUploadStatus?: (payload: {
+    id: string;
+    chatRoomId: string;
+    uploadStatus: 'uploading' | 'completed' | 'failed';
+    mediaUrl?: string;
+  }) => void;
 };
 
 export interface UseChatSocketOptions extends ChatSocketCallbacks {
   baseUrl: string;
-
   namespace?: string;
   autoConnect?: boolean;
 }
@@ -50,6 +55,7 @@ export const useChatEvent = ({
   onUserTyping,
   onUserStoppedTyping,
   onMessagesRead,
+  onImageUploadStatus,
 }: UseChatSocketOptions) => {
   const { accessToken } = useAuth();
   const token = accessToken;
@@ -76,6 +82,7 @@ export const useChatEvent = ({
       sock.on("userTyping", (p) => onUserTyping?.(p));
       sock.on("userStoppedTyping", (p) => onUserStoppedTyping?.(p));
       sock.on("messagesRead", (p) => onMessagesRead?.(p));
+      sock.on("imageUploadStatus", (p) => onImageUploadStatus?.(p));
       sock.on("error", (p) => onError?.(p));
       sock.io.on("reconnect", () => setConnected(true));
       sock.io.on("reconnect_attempt", () => setConnected(false));
@@ -91,6 +98,7 @@ export const useChatEvent = ({
       onUserTyping,
       onUserStoppedTyping,
       onMessagesRead,
+      onImageUploadStatus,
       onError,
       socket,
     ]

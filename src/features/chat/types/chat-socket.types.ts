@@ -44,6 +44,12 @@ export interface ChatServerToClientEvents {
 	userStoppedTyping: (payload: { from: string; chatRoomId: string }) => void;
 
 	messagesRead: (payload: { chatRoomId: string; readerId: string }) => void;
+	imageUploadStatus: (payload: {
+		id: string;
+		chatRoomId: string;
+		uploadStatus: 'uploading' | 'completed' | 'failed';
+		mediaUrl?: string;
+	}) => void;
 }
 
 export interface ChatClientToServerEvents {
