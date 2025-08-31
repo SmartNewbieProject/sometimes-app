@@ -4,6 +4,7 @@ import useLiked from "@/src/features/like/hooks/use-liked";
 import { LikeButton } from "@/src/features/like/ui/like-button";
 import {
   ILikedRejectedButton,
+  InChatButton,
   LikedMeOpenButton,
 } from "@/src/features/post-box/ui/post-box-card";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -334,7 +335,12 @@ export default function PartnerDetailScreen() {
           marginRight: 16,
         }}
       >
-        <Show when={isStatus(partner?.connectionId ?? "") === "OPEN"}>
+        <Show
+          when={
+            isStatus(partner?.connectionId ?? "") === "OPEN" &&
+            isStatus(partner?.connectionId ?? "") !== "OPEN"
+          }
+        >
           <View
             style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
           >
@@ -353,7 +359,8 @@ export default function PartnerDetailScreen() {
             when={
               !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
               !isLiked(partner?.connectionId ?? "") &&
-              !!partner?.connectionId
+              !!partner?.connectionId &&
+              !(isStatus(partner?.connectionId ?? "") !== "IN_CHAT")
             }
           >
             <View
@@ -394,6 +401,9 @@ export default function PartnerDetailScreen() {
               height={48}
               connectionId={partner?.connectionId ?? ""}
             />
+          </Show>
+          <Show when={isStatus(partner?.connectionId ?? "") === "IN_CHAT"}>
+            <InChatButton height={48} />
           </Show>
         </Show>
       </View>

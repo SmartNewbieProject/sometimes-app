@@ -10,7 +10,7 @@ import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
 import { Text as CustomText } from "@shared/ui/text";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../auth";
@@ -67,17 +67,20 @@ function PostBoxCard({
       : "상대방의 응답을 기다리고 있어요";
   const userWithdrawal = !!deletedAt;
 
-  const renderBottomButton = isExpired ? (
-    <ILikedRejectedButton connectionId={connectionId} />
-  ) : status === "OPEN" && instagram ? (
-    <LikedMeOpenButton matchId={matchId} />
-  ) : type === "liked-me" ? (
-    <LikedMePendingButton connectionId={connectionId} />
-  ) : type === "i-liked" && status === "REJECTED" ? (
-    <ILikedRejectedButton connectionId={connectionId} />
-  ) : (
-    <></>
-  );
+  const renderBottomButton =
+    status === "IN_CHAT" ? (
+      <InChatButton />
+    ) : isExpired ? (
+      <ILikedRejectedButton connectionId={connectionId} />
+    ) : status === "OPEN" && instagram ? (
+      <LikedMeOpenButton matchId={matchId} />
+    ) : type === "liked-me" ? (
+      <LikedMePendingButton connectionId={connectionId} />
+    ) : type === "i-liked" && status === "REJECTED" ? (
+      <ILikedRejectedButton connectionId={connectionId} />
+    ) : (
+      <></>
+    );
 
   useEffect(() => {
     const anim = Animated.loop(
@@ -137,7 +140,9 @@ function PostBoxCard({
               },
             ]}
           >
-            {getRemainingTimeFormatted(matchExpiredAt)}
+            {status === "IN_CHAT"
+              ? ""
+              : getRemainingTimeFormatted(matchExpiredAt)}
           </Animated.Text>
 
           <Show when={userWithdrawal}>
@@ -308,6 +313,26 @@ export function ILikedRejectedButton({
         prefix={<XIcon width={21} height={21} />}
       >
         인연이 아니었나봐요
+      </Button>
+    </View>
+  );
+}
+
+export function InChatButton({ height = 40 }: { height?: number }) {
+  const router = useRouter();
+  const handleCreateChat = () => {
+    router.push("/chat");
+  };
+  return (
+    <View className="w-full flex flex-row">
+      <Button
+        onPress={handleCreateChat}
+        variant="primary"
+        size="md"
+        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
+        prefix={<ChatIcon width={20} height={20} />}
+      >
+        대화가 이어지고 있어요
       </Button>
     </View>
   );
