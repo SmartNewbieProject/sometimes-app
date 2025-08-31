@@ -62,7 +62,7 @@ export default function UniversityPage() {
     // 컴포넌트 언마운트 시 리스너 제거
     return () => subscription.remove();
   }, []);
-
+  console.log("test", filteredUniv);
   return (
     <DefaultLayout className="flex-1">
       <View style={styles.container}>
