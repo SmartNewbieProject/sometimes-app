@@ -181,7 +181,7 @@ function WebChatInput() {
           value={chat}
           onChange={handleChange}
           rows={1}
-          readOnly={roomDetail?.roomActivation}
+          readOnly={!roomDetail?.roomActivation}
           placeholder={
             roomDetail?.roomActivation
               ? "메세지를 입력하세요"
