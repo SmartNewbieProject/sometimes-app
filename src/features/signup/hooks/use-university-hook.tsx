@@ -52,7 +52,11 @@ function useUniversityHook() {
       selected && !filtered.some((u) => u.name === selected.name)
         ? [selected, ...filtered]
         : filtered;
-    setFilteredUniv(merged);
+    const sorted = [...merged].sort((a, b) =>
+      a.name.localeCompare(b.name, "ko")
+    );
+
+    setFilteredUniv(sorted);
   }, [searchText, JSON.stringify(univs), selectedUniv]);
 
   return {

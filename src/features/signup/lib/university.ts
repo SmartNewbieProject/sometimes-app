@@ -14,7 +14,17 @@ export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	KYG: '경기',
 };
 
-export type UIRegion = '부산' | '대전' | '김해' | '대구' | '세종' | '청주' | '천안' | '인천' | '서울' | '경기';
+export type UIRegion =
+	| '부산'
+	| '대전'
+	| '김해'
+	| '대구'
+	| '세종'
+	| '청주'
+	| '천안'
+	| '인천'
+	| '서울'
+	| '경기';
 
 export const getRegionsByRegionCode = (code: RegionCode) => {
 	return regionCodeMap[code];

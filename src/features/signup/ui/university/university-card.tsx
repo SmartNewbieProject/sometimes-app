@@ -11,7 +11,7 @@ import {
 import type { UniversityCard as UniversityCardProps } from "../../queries/use-universities";
 
 function UniversityCard({
-  item: { name, region, universityType, area, logoUrl, en },
+  item: { name, region, area, logoUrl, en },
   onClick,
   isSelected,
 }: {
@@ -71,15 +71,11 @@ function UniversityCard({
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
             {name}
           </Text>
-          <Text style={styles.englishName}>
-            {en}
-          </Text>
+          <Text style={styles.englishName}>{en}</Text>
           <View style={styles.bottomContainer}>
             <View style={styles.area}>
               <Text style={styles.areaText}>{area}</Text>
             </View>
-
-            <Text style={styles.universityType}>{universityType}</Text>
           </View>
         </View>
       </Animated.View>
