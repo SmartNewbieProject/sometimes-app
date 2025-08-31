@@ -5,6 +5,7 @@ interface UseChatRoomLifecycleProps {
   chatRoomId: string;
   actions: ChatEventActions;
   isActive?: boolean;
+  connected: boolean;
   disconnect: () => void;
 }
 
@@ -12,6 +13,7 @@ export const useChatRoomLifecycle = ({
   chatRoomId,
   actions,
   isActive = true,
+  connected,
   disconnect,
 }: UseChatRoomLifecycleProps) => {
   const hasJoinedRef = useRef(false);
@@ -24,17 +26,14 @@ export const useChatRoomLifecycle = ({
   });
 
   useEffect(() => {
-    if (!isActive || !chatRoomId || hasJoinedRef.current) return;
-
-    console.log("방 입장:", chatRoomId);
+    if (!isActive || !chatRoomId || !connected || hasJoinedRef.current) return;
     actionsRef.current.joinRoom(chatRoomId);
     hasJoinedRef.current = true;
 
     return () => {
-      console.log("cleanup 실행 - 방 나가기:", chatRoomId);
       actionsRef.current.leaveRoom(chatRoomId);
       disconnectRef.current();
       hasJoinedRef.current = false;
     };
-  }, [chatRoomId, isActive]);
+  }, [chatRoomId, isActive, connected]);
 };
