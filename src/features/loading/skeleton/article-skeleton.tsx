@@ -14,8 +14,8 @@ export function ArticleSkeleton({ reservedHeight, variant = "medium" }: Props) {
 
   const conf = {
     short: { lines: 1, withImage: false },
-    medium: { lines: 3, withImage: Math.random() < 0.3 },
-    long: { lines: 5, withImage: Math.random() < 0.6 },
+    medium: { lines: 2, withImage: Math.random() < 0.3 },
+    long: { lines: 3, withImage: Math.random() < 0.6 },
   }[variant];
 
   return (
