@@ -338,7 +338,7 @@ export default function PartnerDetailScreen() {
         <Show
           when={
             isStatus(partner?.connectionId ?? "") === "OPEN" &&
-            isStatus(partner?.connectionId ?? "") !== "OPEN"
+            isStatus(partner?.connectionId ?? "") !== "IN_CHAT"
           }
         >
           <View
@@ -360,7 +360,7 @@ export default function PartnerDetailScreen() {
               !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
               !isLiked(partner?.connectionId ?? "") &&
               !!partner?.connectionId &&
-              !(isStatus(partner?.connectionId ?? "") !== "IN_CHAT")
+              !(isStatus(partner?.connectionId ?? "") === "IN_CHAT")
             }
           >
             <View
