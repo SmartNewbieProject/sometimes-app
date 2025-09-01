@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { UserProfileSkeleton } from "./user-profile-skeleton";
 import { SkeletonBlock } from "@/src/shared/skeleton/block";
 
@@ -13,49 +13,93 @@ export function ArticleSkeleton({ reservedHeight, variant = "medium" }: Props) {
   }
 
   const conf = {
-    short: { lines: 3, withImage: false },
-    medium: { lines: 5, withImage: Math.random() < 0.3 },
-    long: { lines: 6, withImage: Math.random() < 0.6 },
+    short: { lines: 1, withImage: false },
+    medium: { lines: 3, withImage: Math.random() < 0.3 },
+    long: { lines: 5, withImage: Math.random() < 0.6 },
   }[variant];
 
   return (
-    <View className="w-full p-4 bg-white" accessibilityRole="progressbar">
+    <View style={styles.container} accessibilityRole="progressbar">
       <UserProfileSkeleton />
 
-      <View className="my-3 mb-4 mx-[8px] flex flex-row justify-between items-center">
+      <View style={styles.headerRow}>
         <SkeletonBlock w={"55%"} h={16} />
         <SkeletonBlock w={60} h={10} />
       </View>
 
-      <View className="mx-[8px] mb-4">
+      <View style={styles.body}>
         {Array.from({ length: conf.lines }).map((_, i) => (
           <SkeletonBlock
             key={i}
             h={14}
-            style={{ marginBottom: 8 }}
+            style={styles.bodyLine}
             w={i === conf.lines - 1 ? "70%" : `${80 - (i % 3) * 5}%`}
           />
         ))}
       </View>
 
       {conf.withImage && (
-        <View className="mx-[8px] mb-4 flex-row gap-2">
+        <View style={styles.thumbRow}>
           {Array.from({ length: Math.ceil(Math.random() * 3) }).map((_, i) => (
             <SkeletonBlock key={i} w={80} h={80} r={10} />
           ))}
         </View>
       )}
 
-      <View className="flex-row items-center mx-[8px] justify-between">
+      <View style={styles.actionsRow}>
         {[0, 1, 2].map((i) => (
-          <View className="flex-row items-center" key={i} style={{ gap: 6 }}>
+          <View key={i} style={styles.actionItem}>
             <SkeletonBlock w={16} h={16} r={8} />
             <SkeletonBlock w={32} h={10} />
           </View>
         ))}
       </View>
 
-      <View className="h-[1px] bg-[#F3F0FF] mt-3" />
+      <View style={styles.divider} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    padding: 16, // p-4
+    backgroundColor: "#FFFFFF",
+  },
+  headerRow: {
+    marginTop: 12, // my-3 (top)
+    marginBottom: 16, // mb-4 overrides bottom of my-3
+    marginHorizontal: 8, // mx-[8px]
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  body: {
+    marginHorizontal: 8, // mx-[8px]
+    marginBottom: 16, // mb-4
+  },
+  bodyLine: {
+    marginBottom: 8,
+  },
+  thumbRow: {
+    marginHorizontal: 8, // mx-[8px]
+    marginBottom: 16, // mb-4
+    flexDirection: "row",
+    // If your RN version supports gap, you can add: columnGap: 8
+  },
+  actionsRow: {
+    marginHorizontal: 8, // mx-[8px]
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  actionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#F3F0FF",
+    marginTop: 12, // mt-3
+  },
+});
