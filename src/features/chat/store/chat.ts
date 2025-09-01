@@ -26,18 +26,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
 	initSocket: (url, token) => {
 		const state = get();
 		
-		// 이미 초기화된 소켓이 있으면 재사용
 		if (state.isInitialized && state.socket) {
 			return state.socket;
 		}
 		
-		// 기존 소켓 정리
 		if (state.socket) {
 			state.socket.disconnect();
 		}
 
-		// 새로운 소켓 생성
-		const newSocket = io(url, { 
+		const newSocket = io(url, {
 			transports: ['websocket'], 
 			withCredentials: true, 
 			auth: { token } 
