@@ -10,12 +10,24 @@ export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	SJG: '세종',
 	CAN: '천안',
 	ICN: '인천',
+	SEL: '서울',
+	KYG: '경기',
 };
 
-export type UIRegion = '부산' | '대전' | '김해' | '대구' | '세종' | '청주' | '천안' | '인천';
+export type UIRegion =
+	| '부산'
+	| '대전'
+	| '김해'
+	| '대구'
+	| '세종'
+	| '청주'
+	| '천안'
+	| '인천'
+	| '서울'
+	| '경기';
 
-export const getRegionsByRegionCode = (code: RegionCode) => {
-	return regionCodeMap[code];
+export const getRegionsByRegionCode = (code: RegionCode[]) => {
+	return code.length === 1 ? regionCodeMap[code[0]] : code.map((c) => regionCodeMap[c]).join('/');
 };
 
 export type UniversityType = '국립' | '사립' | '과학기술원' | '도립' | '알 수 없음';
@@ -173,6 +185,10 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 			return 'incheon';
 		case 'CAN':
 			return 'cheonan';
+		case 'SEL':
+			return 'seoul';
+		case 'KYG':
+			return 'gyeonggi';
 		default:
 			return '';
 	}
@@ -182,12 +198,12 @@ export function filterUniversities(universities: UniversityCard[], searchText: s
 	const lowerText = searchText.toLowerCase();
 
 	return (
-		universities?.filter(({ name, area, region, universityType }) => {
+		universities?.filter(({ name, area, region, en }) => {
 			return (
 				name.toLowerCase().includes(lowerText) ||
 				(area?.toLowerCase?.().includes(lowerText) ?? false) ||
 				region.toLowerCase().includes(lowerText) ||
-				universityType.toLowerCase().includes(lowerText)
+				en.toLowerCase().includes(lowerText)
 			);
 		}) ?? []
 	);

@@ -117,7 +117,7 @@ export const areaMap = [
 	},
 	{
 		id: 9,
-		area: '서울',
+		area: '서울/인천/경기',
 		location: {
 			top: 80,
 			left: 77,
@@ -126,23 +126,10 @@ export const areaMap = [
 			top: 80,
 			left: 101,
 		},
-		open: 'close',
-		description: '오픈 준비 중',
+		open: 'open',
+		description: '105개 대학 오픈 완료!',
 	},
-	{
-		id: 10,
-		area: '경기',
-		location: {
-			top: 110,
-			left: 88,
-		},
-		modalLocation: {
-			top: 100,
-			left: 112,
-		},
-		open: 'close',
-		description: '오픈 준비 중',
-	},
+
 	{
 		id: 11,
 		area: '강원',
@@ -157,20 +144,7 @@ export const areaMap = [
 		open: 'close',
 		description: '오픈 준비 중',
 	},
-	{
-		id: 12,
-		area: '인천',
-		location: {
-			top: 80,
-			left: 42,
-		},
-		modalLocation: {
-			top: 80,
-			left: 76,
-		},
-		open: 'open',
-		description: '13개 대학 오픈 완료!',
-	},
+
 	{
 		id: 13,
 		area: '천안',
@@ -199,8 +173,8 @@ export function getRegionList(area: string) {
 			return [getRegionCodeByName('청주시'), getRegionCodeByName('세종특별자치시')];
 		case '천안':
 			return [getRegionCodeByName('천안시')];
-		case '인천':
-			return [getRegionCodeByName('인천광역시')];
+		case '서울/인천/경기':
+			return [getRegionCodeByName('인천광역시'), getRegionCodeByName('서울특별시'), 'KYG'];
 		default:
 			return [];
 	}

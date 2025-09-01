@@ -378,7 +378,7 @@ export const UniversityEnglishName: Record<UniversityName, string> = {
 	[UniversityName.한국기술교육대학교]: 'Korea University of Technology and Education',
 	[UniversityName.유원대학교]: 'U1 University',
 	[UniversityName.호서대학교]: 'Hoseo University',
-	[UniversityName.연암대학교]: 'Yonam Collegeg',
+	[UniversityName.연암대학교]: 'Yonam College',
 	[UniversityName['한국폴리텍 IV 대학 아산캠퍼스']]: 'Korea Polytechnics',
 
 	//인천
