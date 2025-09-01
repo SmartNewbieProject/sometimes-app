@@ -7,6 +7,7 @@ import { useAuth } from "../../auth";
 import { useChatEvent } from "../hooks/use-chat-event";
 import { useChatRoomLifecycle } from "../hooks/use-chat-room-lifecycle";
 import { useChatRoomRead } from "../hooks/use-chat-room-read";
+import { useSocketEventManager } from "../hooks/use-socket-event-manager";
 import useChatList from "../queries/use-chat-list";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { useChatStore } from "../store/chat";
@@ -41,83 +42,17 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { data: roomDetail } = useChatRoomDetail(id);
 
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
-
-  const onConnected = useCallback(({ userId }: { userId: string }) => {
-    console.log("연결됨2:", userId);
-  }, []);
-
-  const onNewMessage = useCallback(
-    (newMessage: Chat) => {
-      console.log("새 메시지2:", newMessage);
-      const queryKey = ["chat-list", id];
-      const currentData = queryClient.getQueryData<PaginatedChatData>(queryKey);
-      if (
-        currentData?.pages[0]?.messages.some((msg) => msg.id === newMessage.id)
-      ) {
-        return;
-      }
-      queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) =>
-        addMessageToChatList(oldData, newMessage)
-      );
-
-      setForceUpdate((prev) => prev + 1);
-      const { connected } = useChatStore.getState();
-      if (connected) {
-        actions.readMessages(id);
-      }
-    },
-    [queryClient, id]
-  );
-
-  const onImageUploadStatus = useCallback(
-    (payload: {
-      id: string;
-      chatRoomId: string;
-      uploadStatus: "uploading" | "completed" | "failed";
-      mediaUrl?: string;
-    }) => {
-      const queryKey = ["chat-list", id];
-      queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => {
-        if (!oldData) return oldData;
-        const newData = { ...oldData };
-        newData.pages = newData.pages.map((page) => ({
-          ...page,
-          messages: page.messages.map((msg) =>
-            msg.id === payload.id
-              ? {
-                  ...msg,
-                  uploadStatus: payload.uploadStatus,
-                  ...(payload.mediaUrl && { mediaUrl: payload.mediaUrl }),
-                }
-              : msg
-          ),
-        }));
-        return newData;
-      });
-    },
-    [queryClient, id]
-  );
-
-  const chatOptions = useMemo(
-    () => ({
-      baseUrl:
-        process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
-      onConnected: onConnected,
-      onNewMessage: onNewMessage,
-      onImageUploadStatus: onImageUploadStatus,
-    }),
-    [onConnected, onNewMessage, onImageUploadStatus]
-  );
-
-  const { actions, disconnect } = useChatEvent(chatOptions);
+  
+  const { actions } = useChatEvent();
   const { connected } = useChatStore();
   const { markRoomAsRead } = useChatRoomRead();
+  const { subscribe } = useSocketEventManager();
 
   useChatRoomLifecycle({
     chatRoomId: id,
     actions,
     connected,
-    disconnect,
+    disconnect: () => {}, // 전역 소켓이므로 로컬에서 disconnect 불필요
   });
 
   useEffect(() => {
@@ -126,6 +61,72 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
       markRoomAsRead(id);
     }
   }, [id, connected, markRoomAsRead]);
+
+  // 채팅방 내부에서 새 메시지 수신 처리
+  useEffect(() => {
+    const unsubscribe = subscribe('newMessage', (chat: Chat) => {
+      // 현재 채팅방의 메시지인 경우에만 채팅 리스트에 추가
+      if (chat.chatRoomId === id) {
+        queryClient.setQueryData(['chat-list', id], (oldData: any) => {
+          if (!oldData) return oldData;
+          
+          const updatedPages = oldData.pages.map((page: any, index: number) => {
+            // 첫 번째 페이지(최신 메시지 페이지)에 새 메시지 추가
+            if (index === 0) {
+              return {
+                ...page,
+                messages: [chat, ...page.messages]
+              };
+            }
+            return page;
+          });
+          
+          return {
+            ...oldData,
+            pages: updatedPages,
+          };
+        });
+      }
+    });
+
+    return unsubscribe;
+  }, [subscribe, id, queryClient]);
+
+  // 이미지 업로드 상태 처리
+  useEffect(() => {
+    const unsubscribe = subscribe('imageUploadStatus', (uploadData: {
+      id: string;
+      chatRoomId: string;
+      mediaUrl: string;
+      uploadStatus: 'uploading' | 'completed' | 'failed';
+    }) => {
+      if (uploadData.chatRoomId === id && uploadData.uploadStatus === 'completed') {
+        queryClient.setQueryData(['chat-list', id], (oldData: any) => {
+          if (!oldData) return oldData;
+          
+          const updatedPages = oldData.pages.map((page: any) => ({
+            ...page,
+            messages: page.messages.map((message: Chat) => 
+              message.id === uploadData.id
+                ? { 
+                    ...message, 
+                    mediaUrl: uploadData.mediaUrl,
+                    uploadStatus: 'completed'
+                  }
+                : message
+            )
+          }));
+          
+          return {
+            ...oldData,
+            pages: updatedPages,
+          };
+        });
+      }
+    });
+
+    return unsubscribe;
+  }, [subscribe, id, queryClient]);
 
   const sortedChatList = useMemo(() => {
     const sorted = [...chatList]

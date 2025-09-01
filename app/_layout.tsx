@@ -13,6 +13,7 @@ import * as Notifications from "expo-notifications";
 
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import { VersionUpdateChecker } from "@/src/features/version-update";
+import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
 import { cn } from "@/src/shared/libs/cn";
@@ -106,6 +107,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryProvider>
         <ModalProvider>
+          <GlobalChatProvider>
           <PortoneProvider>
             <View
               className={cn(
@@ -123,6 +125,7 @@ export default function RootLayout() {
               </AnalyticsProvider>
             </View>
           </PortoneProvider>
+          </GlobalChatProvider>
         </ModalProvider>
       </QueryProvider>
     </GestureHandlerRootView>
