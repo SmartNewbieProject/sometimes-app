@@ -23,6 +23,7 @@ import { useChatEvent } from "../hooks/use-chat-event";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import type { Chat } from "../types/chat";
 import { createOptimisticMessage } from "../utils/create-optimistic-message";
+import { addMessageToChatList } from "../utils/update-chat-list-cache";
 
 // useChatList 훅의 반환 타입 (가정)
 interface PaginatedChatData {
@@ -60,8 +61,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
     [onConnected, onNewMessage]
   );
 
-  const { actions, socket } = useChatEvent(chatOptions);
-
+  const { actions } = useChatEvent(chatOptions);
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -103,7 +103,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
     const tempMessage = createOptimisticMessage(id, chat);
 
     const queryKey = ["chat-list", id];
-    queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => 
+    queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) =>
       addMessageToChatList(oldData, tempMessage)
     );
 

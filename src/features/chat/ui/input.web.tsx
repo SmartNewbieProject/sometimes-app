@@ -22,7 +22,8 @@ function WebChatInput() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
   const [chat, setChat] = useState("");
-  const { data: roomDetail } = useChatRoomDetail(id);
+  const { data: roomDetail, isError } = useChatRoomDetail(id);
+  console.log("roomDetail", roomDetail);
 
   const onConnected = useCallback(({ userId }: { userId: string }) => {
     console.log("연결됨:", userId);
@@ -88,8 +89,6 @@ function WebChatInput() {
     setImageModal(false);
     return null;
   };
-
-  console.log("value", chat);
 
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -181,12 +180,8 @@ function WebChatInput() {
           value={chat}
           onChange={handleChange}
           rows={1}
-          readOnly={!roomDetail?.roomActivation}
-          placeholder={
-            roomDetail?.roomActivation
-              ? "메세지를 입력하세요"
-              : "대화가 종료되었어요"
-          }
+          readOnly={isError}
+          placeholder={isError ? "대화가 종료되었어요" : "메세지를 입력하세요"}
           className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-[#1E2229] placeholder-gray-500 focus:outline-none "
         />
         <textarea

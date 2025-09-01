@@ -95,7 +95,11 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
               {item.nickName}
             </Text>
             <Text style={styles.lastMessageText} numberOfLines={1}>
-              {item.recentMessage ?? "대화를 시작해볼까요?"}
+              {item.recentMessage === ""
+                ? "사진"
+                : item.recentMessage
+                ? item.recentMessage
+                : "대화를 시작해볼까요?"}
             </Text>
           </View>
           <View style={styles.infoContainer}>

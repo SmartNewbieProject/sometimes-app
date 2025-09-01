@@ -1,3 +1,4 @@
+import { logger } from "@shared/libs";
 import { useQueryClient } from "@tanstack/react-query"; // React Query v5 기준
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -14,8 +15,6 @@ import { addMessageToChatList } from "../utils/update-chat-list-cache";
 import ChatMessage from "./message/chat-message";
 import DateDivider from "./message/date-divider";
 import SystemMessage from "./message/system-message";
-import NewMatchBanner from "./new-match-banner";
-import {logger} from "@shared/libs";
 
 // useChatList 훅의 반환 타입 (가정)
 interface PaginatedChatData {
@@ -42,7 +41,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { data: roomDetail } = useChatRoomDetail(id);
 
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
-  
+
   const onConnected = useCallback(({ userId }: { userId: string }) => {
     console.log("연결됨2:", userId);
   }, []);
@@ -57,11 +56,11 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
       ) {
         return;
       }
-      queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => 
+      queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) =>
         addMessageToChatList(oldData, newMessage)
       );
 
-      setForceUpdate(prev => prev + 1);
+      setForceUpdate((prev) => prev + 1);
       const { connected } = useChatStore.getState();
       if (connected) {
         actions.readMessages(id);
@@ -71,18 +70,27 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   );
 
   const onImageUploadStatus = useCallback(
-    (payload: { id: string; chatRoomId: string; uploadStatus: 'uploading' | 'completed' | 'failed'; mediaUrl?: string }) => {
+    (payload: {
+      id: string;
+      chatRoomId: string;
+      uploadStatus: "uploading" | "completed" | "failed";
+      mediaUrl?: string;
+    }) => {
       const queryKey = ["chat-list", id];
       queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) => {
         if (!oldData) return oldData;
         const newData = { ...oldData };
-        newData.pages = newData.pages.map(page => ({
+        newData.pages = newData.pages.map((page) => ({
           ...page,
-          messages: page.messages.map(msg => 
-            msg.id === payload.id 
-              ? { ...msg, uploadStatus: payload.uploadStatus, ...(payload.mediaUrl && { mediaUrl: payload.mediaUrl }) }
+          messages: page.messages.map((msg) =>
+            msg.id === payload.id
+              ? {
+                  ...msg,
+                  uploadStatus: payload.uploadStatus,
+                  ...(payload.mediaUrl && { mediaUrl: payload.mediaUrl }),
+                }
               : msg
-          )
+          ),
         }));
         return newData;
       });
@@ -93,7 +101,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const chatOptions = useMemo(
     () => ({
       baseUrl:
-        'http://localhost:8044' ?? "https://api.some-in-univ.com/api",
+        process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
       onConnected: onConnected,
       onNewMessage: onNewMessage,
       onImageUploadStatus: onImageUploadStatus,
@@ -159,10 +167,11 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   }, [sortedChatList]);
 
   const renderItem = ({ item }: { item: ChatListItem }) => {
+    console.log("data", item);
     if (item.type === "date") {
       return <DateDivider date={item.data.date} />;
     }
-    if (item.data.messageType === "system") {
+    if (item.data.senderId === "system") {
       return <SystemMessage item={item.data} />;
     }
     return (
