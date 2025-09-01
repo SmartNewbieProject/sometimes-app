@@ -9,6 +9,7 @@ import type {
 interface ChatState {
 	socket: Socket<ChatServerToClientEvents, ChatClientToServerEvents> | null;
 	connected: boolean;
+	isInitialized: boolean;
 	disconnectSocket: () => void;
 	initSocket: (
 		url: string,
@@ -17,23 +18,38 @@ interface ChatState {
 	setConnected: (v: boolean) => void;
 }
 
-export const useChatStore = create<ChatState>((set) => ({
+export const useChatStore = create<ChatState>((set, get) => ({
 	socket: null,
 	connected: false,
+	isInitialized: false,
 	setConnected: (v) => set({ connected: v }),
 	initSocket: (url, token) => {
-		let s = get().socket as Socket<ChatServerToClientEvents, ChatClientToServerEvents>;
-
-		if (!s) {
-			s = io(url, { transports: ['websocket'], withCredentials: true, auth: { token } });
-			set({ socket: s });
+		const state = get();
+		
+		if (state.isInitialized && state.socket) {
+			return state.socket;
 		}
-		return s;
+		
+		if (state.socket) {
+			state.socket.disconnect();
+		}
+
+		const newSocket = io(url, {
+			transports: ['websocket'], 
+			withCredentials: true, 
+			auth: { token } 
+		});
+		
+		set({ socket: newSocket, isInitialized: true });
+		return newSocket;
 	},
 	disconnectSocket: () => {
-		set({ socket: null });
+		const currentSocket = get().socket;
+		if (currentSocket) {
+			currentSocket.disconnect();
+		}
+		set({ socket: null, connected: false, isInitialized: false });
 	},
 }));
 
-// getter for current store state (for internal use)
-const get = () => useChatStore.getState();
+

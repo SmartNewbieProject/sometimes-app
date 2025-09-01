@@ -1,11 +1,15 @@
 import useLiked from "@/src/features/like/hooks/use-liked";
+import { useQueryClient } from "@tanstack/react-query";
 import { LegendList } from "@legendapp/list";
 import { FlashList } from "@shopify/flash-list";
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useChatRoomList } from "../../queries/use-chat-room-list";
+import { useSocketEventManager } from "../../hooks/use-socket-event-manager";
+import type { Chat } from "../../types/chat";
+import { updateChatRoomOnNewMessage } from "../../utils/update-chat-room-cache";
 import type { ChatRoomList as ChatRoomListType } from "../../types/chat";
 import ChatSearch from "../chat-search";
 import ChatLikeCollapse from "./chat-like-collapse";
@@ -18,12 +22,25 @@ function ChatRoomList() {
   const [keyword, setKeyword] = useState("");
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useChatRoomList();
+  const { subscribe } = useSocketEventManager();
+  const queryClient = useQueryClient();
   const chatRooms = data?.pages.flatMap((page) => page.chatRooms) ?? [];
   console.log("chatRooms");
   console.log("data", data);
   const filteredData = chatRooms.filter((item) => {
     return item.nickName.includes(keyword);
   });
+
+  useEffect(() => {
+    const unsubscribe = subscribe('newMessage', (chat: Chat) => {
+      queryClient.setQueryData(['chat-room'], (oldData: any) => 
+        updateChatRoomOnNewMessage(oldData, chat)
+      );
+    });
+
+    return unsubscribe;
+  }, [subscribe, queryClient]);
+
   return (
     <ScrollView>
       {collapse && (
