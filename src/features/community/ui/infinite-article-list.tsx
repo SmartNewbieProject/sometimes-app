@@ -32,6 +32,8 @@ import { createArticlesQueryKey } from "../queries/use-infinite-articles";
 import type { Article as ArticleType } from "../types";
 import { Article } from "./article";
 
+import { ArticleSkeleton } from "../../loading/skeleton/article-skeleton";
+
 interface InfiniteArticleListProps {
   initialSize?: number;
 }
@@ -134,14 +136,24 @@ export const InfiniteArticleList = forwardRef<
     });
   };
 
-  const renderFooter = () => {
+  //스켈레톤 버킷
+  const pickVariant = useCallback((): "short" | "medium" | "long" => {
+    const r = Math.random();
+    if (r < 0.33) return "short";
+    if (r < 0.66) return "medium";
+    return "long";
+  }, []);
+
+  const renderFooter = useCallback(() => {
     if (!isLoadingMore) return null;
     return (
-      <View className="py-4 flex items-center justify-center">
-        <Lottie size={48} />
+      <View className="py-2">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <ArticleSkeleton key={`skel-more-${i}`} variant={pickVariant()} />
+        ))}
       </View>
     );
-  };
+  }, [isLoadingMore, pickVariant]);
 
   useImperativeHandle(ref, () => ({
     refresh: () => {
@@ -201,8 +213,34 @@ export const InfiniteArticleList = forwardRef<
 
   if (isLoading && articles.length === 0) {
     return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <Lottie size={128} />
+      <View className="flex-1 bg-white">
+        <View className="h-[1px] bg-[#F3F0FF]" />
+        //FAQ 블록
+        <TouchableOpacity
+          onPress={() =>
+            Linking.openURL(
+              "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
+            )
+          }
+          className="bg-[#F3EDFF] rounded-[5px] mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+        >
+          <Image
+            source={require("@/assets/images/fireIcon.png")}
+            style={{ width: 16, height: 16 }}
+          />
+          <Text size="sm" weight="bold">
+            [FAQ] 자주묻는 질문
+          </Text>
+          <TouchableOpacity className="ml-auto">
+            <IconWrapper>
+              <VectorIcon className="h-[12px] w-[9px]" color="black" />
+            </IconWrapper>
+          </TouchableOpacity>
+        </TouchableOpacity>
+        <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+        {Array.from({ length: initialSize }).map((_, i) => (
+          <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
+        ))}
       </View>
     );
   }
