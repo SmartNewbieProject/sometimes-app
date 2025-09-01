@@ -363,6 +363,7 @@ export default function PartnerDetailScreen() {
               !(isStatus(partner?.connectionId ?? "") === "IN_CHAT")
             }
           >
+            `{" "}
             <View
               style={{
                 width: "100%",
@@ -371,6 +372,7 @@ export default function PartnerDetailScreen() {
                 height: 48,
               }}
             >
+              `
               <LikeButton connectionId={partner.connectionId ?? ""} />
             </View>
           </Show>
