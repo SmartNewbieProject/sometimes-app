@@ -7,6 +7,8 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import type React from "react";
 import { SafeAreaView, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DefaultLayout } from "../../layout/ui";
 
 interface AgeRestrictionScreenProps {
   onGoBack?: () => void;
@@ -18,6 +20,7 @@ interface AgeRestrictionScreenProps {
 export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
   onGoBack,
 }) => {
+  const insets = useSafeAreaInsets();
   const handleGoBack = () => {
     if (onGoBack) {
       onGoBack();
@@ -34,24 +37,25 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
   };
 
   return (
-    <SafeAreaView className="flex-1" style={{ backgroundColor: "#F7F3FF" }}>
+    <DefaultLayout className="flex-1" style={{ backgroundColor: "#F7F3FF" }}>
       <PalePurpleGradient />
 
       <ScrollView
         className="flex-1"
         contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: 40,
           alignItems: "center",
+          width: "100%",
+          paddingTop: insets.top,
         }}
         showsVerticalScrollIndicator={false}
       >
         {/* 상단 로고 */}
-        <View className="mt-[20px] mb-[28px]">
+        <View className="mt-[20px] mb-[38px]">
           <SmallTitleIcon width={160} height={40} />
         </View>
 
-        <View className="flex-1 px-5 min-h-screen items-center">
+        <View className="flex-1 px-5 min-h-screen w-full items-center">
           {/* 상단 이미지 */}
           <View className="items-center  relative ">
             <View style={{ position: "absolute", top: -30, left: 0 }}>
@@ -123,7 +127,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
           </View>
 
           {/* 안내 정보 */}
-          <View className="bg-white rounded-2xl p-6 mb-8 w-full shadow-sm mx-2">
+          <View className="bg-white rounded-2xl p-6 mb-8 w-full  shadow-sm mx-2">
             <View className="flex-row items-center mb-4">
               <View className="w-6 h-6 bg-lightPurple rounded-full items-center justify-center mr-3">
                 <Text size="sm" textColor="purple" weight="semibold">
@@ -195,6 +199,6 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </DefaultLayout>
   );
 };
