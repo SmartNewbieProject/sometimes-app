@@ -25,26 +25,7 @@ function WebChatInput() {
   const { data: roomDetail, isError } = useChatRoomDetail(id);
   console.log("roomDetail", roomDetail);
 
-  const onConnected = useCallback(({ userId }: { userId: string }) => {
-    console.log("연결됨:", userId);
-  }, []);
-
-  const onNewMessage = useCallback((msg: Chat) => {
-    console.log("새 메시지:", msg);
-  }, []);
-
-  const chatOptions = useMemo(
-    () => ({
-      baseUrl:
-        process.env.EXPO_PUBLIC_API_URL ?? "https://api.some-in-univ.com/api",
-      autoConnect: true,
-      onConnected: onConnected,
-      onNewMessage: onNewMessage,
-    }),
-    [onConnected, onNewMessage]
-  );
-
-  const { actions, socket } = useChatEvent(chatOptions);
+  const { actions, socket } = useChatEvent();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
   const { showErrorModal } = useModal();
