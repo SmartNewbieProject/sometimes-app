@@ -1,4 +1,4 @@
-import { convertToJpeg } from "@/src/shared/utils/image";
+import { convertToJpeg, uriToBase64 } from "@/src/shared/utils/image";
 import ChatCameraIcon from "@assets/icons/chat-camera.svg";
 import { useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
@@ -41,9 +41,12 @@ function ChatCamera() {
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
       const jpegUri = await convertToJpeg(pickedUri);
-      actions.uploadImage(partner?.partnerId ?? "", id, jpegUri);
+      const imageUri = await uriToBase64(jpegUri);
+      if (imageUri) {
+        actions.uploadImage(partner?.partnerId ?? "", id, imageUri);
+      }
 
-      console.log("jpegUri", jpegUri);
+      console.log("jpegUri", imageUri);
       queryClient.refetchQueries({ queryKey: ["chat-list", id] });
     }
 

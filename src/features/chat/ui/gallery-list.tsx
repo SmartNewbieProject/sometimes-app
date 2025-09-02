@@ -1,4 +1,4 @@
-import { convertToJpeg } from "@/src/shared/utils/image";
+import { convertToJpeg, uriToBase64 } from "@/src/shared/utils/image";
 import { LegendList } from "@legendapp/list";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
@@ -111,9 +111,10 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
 
   const toggleSelect = async (uri: string) => {
     const jpegUri = await convertToJpeg(uri);
-    actions.uploadImage(partner?.partnerId ?? "", id, jpegUri);
-
-    console.log("jpegUri", jpegUri);
+    const imageUri = await uriToBase64(jpegUri);
+    if (imageUri) {
+      actions.uploadImage(partner?.partnerId ?? "", id, imageUri);
+    }
     queryClient.refetchQueries({ queryKey: ["chat-list", id] });
   };
   console.log("photo", photos.length);
