@@ -179,3 +179,18 @@ export function getRegionList(area: string) {
 			return [];
 	}
 }
+
+export function getAllRegionList() {
+	return [
+		getRegionCodeByName('대전광역시'),
+		getRegionCodeByName('부산광역시'),
+		getRegionCodeByName('김해시'),
+		getRegionCodeByName('대구광역시'),
+		getRegionCodeByName('청주시'),
+		getRegionCodeByName('세종특별자치시'),
+		getRegionCodeByName('천안시'),
+		getRegionCodeByName('인천광역시'),
+		getRegionCodeByName('서울특별시'),
+		'KYG',
+	];
+}

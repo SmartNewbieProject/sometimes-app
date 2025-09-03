@@ -11,22 +11,21 @@ import { getUniversitiesByRegion } from "../apis";
 import { useSignupProgress } from "../hooks";
 import {
   type UIRegion,
+  getAllRegionList,
   getRegionsByRegionCode,
 } from "../lib";
 
 export default function useUniversities() {
-  const { regions } = useSignupProgress();
-
   const { data, isLoading } = useQuery({
-    queryFn: () => getUniversitiesByRegion(regions),
-    queryKey: ["universities", ...regions],
+    queryFn: () => getUniversitiesByRegion(getAllRegionList()),
+    queryKey: ["universities", "all"],
   });
   console.log("universities", data);
   const mappedData = data?.map((item) => ({
     ...item,
     logoUrl: getSmartUnivLogoUrl(item.code),
     universityType: item.foundation,
-    area: getRegionsByRegionCode(item.region as RegionCode),
+    area: getRegionsByRegionCode(item.region as RegionCode[]),
   }));
 
   return { data: mappedData, isLoading };
@@ -36,7 +35,7 @@ export type UniversitiesByRegion = {
   id: string;
   name: string;
   code: string;
-  region: string;
+  region: string[];
   en: string;
   foundation: string;
 }[];
@@ -44,11 +43,11 @@ export type UniversitiesByRegion = {
 export type UniversityCard = {
   logoUrl: string;
   universityType: string;
-  area: UIRegion | undefined;
+  area: string | undefined;
   id: string;
   name: string;
   code: string;
-  region: string;
+  region: string[];
   en: string;
   foundation: string;
 };

@@ -21,7 +21,7 @@ function useUniversityHook() {
     userForm.universityName
   );
   const [filteredUniv, setFilteredUniv] = useState(univs);
-  const router = useRouter();
+
   useChangePhase(SignupSteps.UNIVERSITY);
 
   // 애널리틱스 추적 설정

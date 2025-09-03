@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
-  const { progress, updateStep, univTitle, step } = useSignupProgress();
+  const { progress, updateStep, step } = useSignupProgress();
 
   const pathname = usePathname();
   const renderProgress = pathname !== "/auth/signup/done";
@@ -28,7 +28,7 @@ export default function SignupLayout() {
   const insets = useSafeAreaInsets();
   const titleMap = {
     [SignupSteps.AREA]: "지역 선택하기",
-    [SignupSteps.UNIVERSITY]: univTitle,
+    [SignupSteps.UNIVERSITY]: "대학선택",
     [SignupSteps.UNIVERSITY_DETAIL]: "추가 정보 입력하기",
     [SignupSteps.INSTAGRAM]: "인스타그램 아이디 입력하기",
     [SignupSteps.PROFILE_IMAGE]: "프로필 사진 추가하기",
