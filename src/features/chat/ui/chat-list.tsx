@@ -42,7 +42,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { data: roomDetail } = useChatRoomDetail(id);
 
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
-  
+
   const { actions } = useChatEvent();
   const { connected } = useChatStore();
   const { markRoomAsRead } = useChatRoomRead();
@@ -64,23 +64,23 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
   // 채팅방 내부에서 새 메시지 수신 처리
   useEffect(() => {
-    const unsubscribe = subscribe('newMessage', (chat: Chat) => {
+    const unsubscribe = subscribe("newMessage", (chat: Chat) => {
       // 현재 채팅방의 메시지인 경우에만 채팅 리스트에 추가
       if (chat.chatRoomId === id) {
-        queryClient.setQueryData(['chat-list', id], (oldData: any) => {
+        queryClient.setQueryData(["chat-list", id], (oldData: any) => {
           if (!oldData) return oldData;
-          
+
           const updatedPages = oldData.pages.map((page: any, index: number) => {
             // 첫 번째 페이지(최신 메시지 페이지)에 새 메시지 추가
             if (index === 0) {
               return {
                 ...page,
-                messages: [chat, ...page.messages]
+                messages: [chat, ...page.messages],
               };
             }
             return page;
           });
-          
+
           return {
             ...oldData,
             pages: updatedPages,
@@ -94,36 +94,42 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
   // 이미지 업로드 상태 처리
   useEffect(() => {
-    const unsubscribe = subscribe('imageUploadStatus', (uploadData: {
-      id: string;
-      chatRoomId: string;
-      mediaUrl: string;
-      uploadStatus: 'uploading' | 'completed' | 'failed';
-    }) => {
-      if (uploadData.chatRoomId === id && uploadData.uploadStatus === 'completed') {
-        queryClient.setQueryData(['chat-list', id], (oldData: any) => {
-          if (!oldData) return oldData;
-          
-          const updatedPages = oldData.pages.map((page: any) => ({
-            ...page,
-            messages: page.messages.map((message: Chat) => 
-              message.id === uploadData.id
-                ? { 
-                    ...message, 
-                    mediaUrl: uploadData.mediaUrl,
-                    uploadStatus: 'completed'
-                  }
-                : message
-            )
-          }));
-          
-          return {
-            ...oldData,
-            pages: updatedPages,
-          };
-        });
+    const unsubscribe = subscribe(
+      "imageUploadStatus",
+      (uploadData: {
+        id: string;
+        chatRoomId: string;
+        mediaUrl: string;
+        uploadStatus: "uploading" | "completed" | "failed";
+      }) => {
+        if (
+          uploadData.chatRoomId === id &&
+          uploadData.uploadStatus === "completed"
+        ) {
+          queryClient.setQueryData(["chat-list", id], (oldData: any) => {
+            if (!oldData) return oldData;
+
+            const updatedPages = oldData.pages.map((page: any) => ({
+              ...page,
+              messages: page.messages.map((message: Chat) =>
+                message.id === uploadData.id
+                  ? {
+                      ...message,
+                      mediaUrl: uploadData.mediaUrl,
+                      uploadStatus: "completed",
+                    }
+                  : message
+              ),
+            }));
+
+            return {
+              ...oldData,
+              pages: updatedPages,
+            };
+          });
+        }
       }
-    });
+    );
 
     return unsubscribe;
   }, [subscribe, id, queryClient]);
@@ -190,7 +196,6 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
   const scrollViewRef = useRef<FlatList<ChatListItem>>(null);
 
-  console.log("check", chatListWithDateDividers);
   return (
     <FlatList
       data={chatListWithDateDividers}

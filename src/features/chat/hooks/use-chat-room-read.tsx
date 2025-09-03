@@ -8,27 +8,25 @@ export const useChatRoomRead = () => {
   const markRoomAsRead = useCallback(
     (chatRoomId: string) => {
       const chatRoomQueryKey = ["chat-room"];
-      
-      queryClient.setQueryData<{ pages: ChatRoomListResponse[]; pageParams: any[] }>(
-        chatRoomQueryKey,
-        (oldData) => {
-          if (!oldData) return oldData;
 
-          const updatedPages = oldData.pages.map((page) => ({
-            ...page,
-            chatRooms: page.chatRooms.map((room) =>
-              room.id === chatRoomId
-                ? { ...room, unreadCount: 0 }
-                : room
-            ),
-          }));
+      queryClient.setQueryData<{
+        pages: ChatRoomListResponse[];
+        pageParams: any[];
+      }>(chatRoomQueryKey, (oldData) => {
+        if (!oldData) return oldData;
+        console.log("oldData", oldData, chatRoomId);
+        const updatedPages = oldData.pages.map((page) => ({
+          ...page,
+          chatRooms: page.chatRooms.map((room) =>
+            room.id === chatRoomId ? { ...room, unreadCount: 0 } : room
+          ),
+        }));
 
-          return {
-            ...oldData,
-            pages: updatedPages,
-          };
-        }
-      );
+        return {
+          ...oldData,
+          pages: updatedPages,
+        };
+      });
     },
     [queryClient]
   );

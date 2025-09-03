@@ -25,21 +25,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
 	setConnected: (v) => set({ connected: v }),
 	initSocket: (url, token) => {
 		const state = get();
-		
+
 		if (state.isInitialized && state.socket) {
 			return state.socket;
 		}
-		
+
 		if (state.socket) {
 			state.socket.disconnect();
 		}
 
 		const newSocket = io(url, {
-			transports: ['websocket'], 
-			withCredentials: true, 
-			auth: { token } 
+			transports: ['websocket'],
+			withCredentials: true,
+			auth: { token },
 		});
-		
+		console.log('check store', newSocket);
 		set({ socket: newSocket, isInitialized: true });
 		return newSocket;
 	},
@@ -51,5 +51,3 @@ export const useChatStore = create<ChatState>((set, get) => ({
 		set({ socket: null, connected: false, isInitialized: false });
 	},
 }));
-
-
