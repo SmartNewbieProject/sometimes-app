@@ -1,3 +1,5 @@
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { Text } from "@/src/shared/ui";
 import { convertToJpeg, uriToBase64 } from "@/src/shared/utils/image";
 import ChatCameraIcon from "@assets/icons/chat-camera.svg";
 import { useQueryClient } from "@tanstack/react-query";
@@ -12,7 +14,7 @@ import type { Chat } from "../types/chat";
 function ChatCamera() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
-
+  const { showModal, hideModal } = useModal();
   const { data: partner } = useChatRoomDetail(id);
 
   const { actions, socket } = useChatEvent();
@@ -42,16 +44,32 @@ function ChatCamera() {
       const pickedUri = result.assets[0].uri;
       const jpegUri = await convertToJpeg(pickedUri);
       const imageUri = await uriToBase64(jpegUri);
-      if (imageUri) {
-        actions.uploadImage(partner?.partnerId ?? "", id, imageUri);
-      }
 
-      console.log("jpegUri", imageUri);
-      queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+      showModal({
+        title: "이미지 전송",
+        children: (
+          <Text textColor="black">선택하신 이미지를 전송하시겠어요?</Text>
+        ),
+        primaryButton: {
+          text: "전송",
+          onClick: () => {
+            if (imageUri) {
+              actions.uploadImage(partner?.partnerId ?? "", id, imageUri);
+            }
+
+            queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+          },
+        },
+        secondaryButton: {
+          text: "취소",
+          onClick: hideModal,
+        },
+      });
     }
 
     return null;
   };
+
   return (
     <Pressable onPress={takePhoto} style={styles.container}>
       <ChatCameraIcon />

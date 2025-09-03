@@ -1,3 +1,5 @@
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { Text as CustomText } from "@/src/shared/ui";
 import { convertToJpeg, uriToBase64 } from "@/src/shared/utils/image";
 import { LegendList } from "@legendapp/list";
 import { useQueryClient } from "@tanstack/react-query";
@@ -30,6 +32,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   const queryClient = useQueryClient();
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(false);
+  const { showModal, hideModal } = useModal();
   const heightAnim = useSharedValue(0);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const { data: partner } = useChatRoomDetail(id);
@@ -110,6 +113,27 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   };
 
   const toggleSelect = async (uri: string) => {
+    showModal({
+      title: "이미지 전송",
+      children: (
+        <CustomText textColor="black">
+          선택하신 이미지를 전송하시겠어요?
+        </CustomText>
+      ),
+      primaryButton: {
+        text: "전송",
+        onClick: () => {
+          sendImage(uri);
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: hideModal,
+      },
+    });
+  };
+
+  const sendImage = async (uri: string) => {
     const jpegUri = await convertToJpeg(uri);
     const imageUri = await uriToBase64(jpegUri);
     if (imageUri) {
@@ -117,7 +141,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
     }
     queryClient.refetchQueries({ queryKey: ["chat-list", id] });
   };
-  console.log("photo", photos.length);
+
   const renderItem = ({ item }: { item: MediaLibrary.Asset }) => {
     return (
       <Pressable onPress={() => toggleSelect(item.uri)} style={styles.imageBox}>
