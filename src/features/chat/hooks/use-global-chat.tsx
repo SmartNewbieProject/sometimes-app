@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '../../auth';
-import { buildChatSocketUrl } from '../domain/utils/build-socket-url';
-import { useChatStore } from '../store/chat';
-import type { Chat } from '../types/chat';
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect } from "react";
+import { useAuth } from "../../auth";
+import { buildChatSocketUrl } from "../domain/utils/build-socket-url";
+import { useChatStore } from "../store/chat";
+import type { Chat } from "../types/chat";
 
 interface UseGlobalChatOptions {
   baseUrl: string;
@@ -12,7 +12,7 @@ interface UseGlobalChatOptions {
 
 export const useGlobalChat = ({
   baseUrl,
-  namespace = '/chat',
+  namespace = "/chat",
 }: UseGlobalChatOptions) => {
   const { accessToken } = useAuth();
   const { initSocket, socket, setConnected, isInitialized } = useChatStore();
@@ -23,28 +23,27 @@ export const useGlobalChat = ({
     if (!accessToken || isInitialized) return;
 
     const globalSocket = initSocket(url, accessToken);
-    
-    globalSocket.on('connected', () => {
+    globalSocket.on("connected", () => {
+      console.log("check connect!!");
       setConnected(true);
     });
 
-    globalSocket.on('disconnect', () => {
+    globalSocket.on("disconnect", () => {
       setConnected(false);
     });
 
-    globalSocket.on('error', (error) => {
-      console.error('Global socket error:', error);
+    globalSocket.on("error", (error) => {
+      console.error("Global socket error:", error);
       setConnected(false);
     });
 
-    globalSocket.io.on('reconnect', () => {
+    globalSocket.io.on("reconnect", () => {
       setConnected(true);
     });
 
-    globalSocket.io.on('reconnect_attempt', () => {
+    globalSocket.io.on("reconnect_attempt", () => {
       setConnected(false);
     });
-
   }, [accessToken, isInitialized, url, initSocket, setConnected]);
 
   useEffect(() => {

@@ -64,6 +64,8 @@ function PostBoxCard({
       ? "서로 좋아요를 눌렀어요!"
       : status === "REJECTED"
       ? "상대방이 거절했어요"
+      : status === "IN_CHAT"
+      ? "상대방과 대화중이에요"
       : "상대방의 응답을 기다리고 있어요";
   const userWithdrawal = !!deletedAt;
 
