@@ -66,6 +66,7 @@ const AGREEMENTS: Agreement[] = [
 type StoreProps = {
   progress: number;
   step: SignupSteps;
+  showHeader: boolean;
   updateStep: (step: SignupSteps) => void;
   form: Partial<SignupForm>;
   regions: string[];
@@ -78,6 +79,7 @@ type StoreProps = {
   clear: () => void;
   smsComplete: boolean;
   completeSms: () => void;
+  updateShowHeader: (bool: boolean) => void;
 };
 
 export enum SignupSteps {
@@ -120,6 +122,10 @@ const useSignupProgress = create<StoreProps>((set) => ({
       univTitle: "",
     }),
 
+  updateShowHeader: (bool) => {
+    set({ showHeader: bool });
+  },
+  showHeader: false,
   univTitle: "",
   updateUnivTitle: (area: string) => set({ univTitle: area }),
   agreements: AGREEMENTS,

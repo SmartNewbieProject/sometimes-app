@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
-  const { progress, updateStep, step } = useSignupProgress();
+  const { progress, updateStep, step, showHeader } = useSignupProgress();
 
   const pathname = usePathname();
   const renderProgress = pathname !== "/auth/signup/done";
@@ -39,7 +39,7 @@ export default function SignupLayout() {
     <DefaultLayout className="flex-1 relative">
       <OverlayProvider>
         <PalePurpleGradient />
-        {renderProgress && (
+        {renderProgress && showHeader && (
           <>
             <View
               style={[

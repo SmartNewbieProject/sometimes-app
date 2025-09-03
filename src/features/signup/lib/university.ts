@@ -1,7 +1,7 @@
 import type { RegionCode } from '@/src/shared/constants/region';
 import type { UniversityCard } from '../queries/use-universities';
 
-export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
+export const regionCodeMap: Partial<Record<RegionCode, string>> = {
 	BSN: '부산',
 	DJN: '대전',
 	GHE: '김해',
@@ -26,8 +26,8 @@ export type UIRegion =
 	| '서울'
 	| '경기';
 
-export const getRegionsByRegionCode = (code: RegionCode[]) => {
-	return code.length === 1 ? regionCodeMap[code[0]] : code.map((c) => regionCodeMap[c]).join('/');
+export const getRegionsByRegionCode = (code: RegionCode) => {
+	return regionCodeMap[code];
 };
 
 export type UniversityType = '국립' | '사립' | '과학기술원' | '도립' | '알 수 없음';
