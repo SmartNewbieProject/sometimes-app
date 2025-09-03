@@ -202,6 +202,7 @@ export function LikedMeOpenButton({
   const { featureCosts } = useFeatureCost();
   const { my } = useAuth();
   const mutation = useCreateChatRoom();
+  const { profileDetails } = useAuth();
 
   const handleCreateChat = () => {
     showModal({
@@ -226,9 +227,14 @@ export function LikedMeOpenButton({
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-[#AEAEAE] text-[12px]">인스타그램을 통해</Text>
           <Text className="text-[#AEAEAE] text-[12px]">
-            자연스럽게 대화를 시작해보세요
+            {profileDetails?.gender === "MALE"
+              ? `구슬 ${featureCosts?.CHAT_START}개로`
+              : "지금 바로"}
+            로 채팅방을 열 수 있어요.
+          </Text>
+          <Text className="text-[#AEAEAE] text-[12px]">
+            지금 바로 첫 메시지를 보내보세요!
           </Text>
         </View>
       ),

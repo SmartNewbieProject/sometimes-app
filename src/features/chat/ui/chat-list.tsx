@@ -42,6 +42,25 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { data: roomDetail } = useChatRoomDetail(id);
 
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
+  const formattedChatList = chatList.map((chat) => {
+    const date = new Date(chat.createdAt);
+
+    date.setHours(date.getHours() - 9);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    return {
+      ...chat,
+      createdAt: formattedDate,
+    };
+  });
 
   const { actions } = useChatEvent();
   const { connected } = useChatStore();
@@ -135,14 +154,14 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   }, [subscribe, id, queryClient]);
 
   const sortedChatList = useMemo(() => {
-    const sorted = [...chatList]
+    const sorted = [...formattedChatList]
       .sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       )
       .reverse();
     return sorted;
-  }, [chatList, forceUpdate]);
+  }, [formattedChatList, forceUpdate]);
 
   const chatListWithDateDividers = useMemo(() => {
     const items: ChatListItem[] = [];
