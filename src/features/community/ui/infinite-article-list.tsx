@@ -13,6 +13,7 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from "react";
 import {
   type FlatList,
@@ -36,6 +37,8 @@ import { ArticleSkeleton } from "../../loading/skeleton/article-skeleton";
 
 interface InfiniteArticleListProps {
   initialSize?: number;
+  categoryCode?: string;
+  preferSkeletonOnCategoryChange?: boolean;
 }
 
 export interface InfiniteArticleListHandle {
@@ -45,184 +48,229 @@ export interface InfiniteArticleListHandle {
 export const InfiniteArticleList = forwardRef<
   InfiniteArticleListHandle,
   InfiniteArticleListProps
->(({ initialSize = 10 }: InfiniteArticleListProps, ref) => {
-  const { showModal, showErrorModal } = useModal();
-  const { currentCategory: categoryCode } = useCategory();
-  const { my } = useAuth();
+>(
+  (
+    {
+      initialSize = 10,
+      categoryCode: categoryCodeOverride,
+      preferSkeletonOnCategoryChange = true,
+    }: InfiniteArticleListProps,
+    ref
+  ) => {
+    const { showModal, showErrorModal } = useModal();
+    const { currentCategory: currentFromContext } = useCategory();
+    const categoryCode = categoryCodeOverride ?? currentFromContext;
+    const { my } = useAuth();
 
-  const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<
-    FlatList<ArticleType>
-  >;
-  const queryClient = useQueryClient();
+    const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<
+      FlatList<ArticleType>
+    >;
+    const queryClient = useQueryClient();
 
-  const {
-    articles,
-    isLoading,
-    isLoadingMore,
-    hasNextPage,
-    loadMore,
-    updateArticleLike,
-    saveScrollPosition,
-    getScrollPosition,
-    refetch,
-  } = useInfiniteArticlesQuery({
-    categoryCode,
-    pageSize: initialSize,
-  });
-
-  const isWeb = Platform.OS === "web";
-
-  const invalidateAndRefetch = async () => {
-    await queryClient.invalidateQueries({
-      queryKey: createArticlesQueryKey(categoryCode),
+    const {
+      articles,
+      isLoading,
+      isLoadingMore,
+      hasNextPage,
+      loadMore,
+      updateArticleLike,
+      saveScrollPosition,
+      getScrollPosition,
+      refetch,
+    } = useInfiniteArticlesQuery({
+      categoryCode,
+      pageSize: initialSize,
     });
-    await refetch();
-  };
 
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (!isWeb) {
-        const position = event.nativeEvent.contentOffset.y;
-        saveScrollPosition(position);
+    const prevCategoryRef = useRef<string | undefined>(categoryCode);
+    const [forceSkeleton, setForceSkeleton] = useState<boolean>(false);
+
+    useEffect(() => {
+      if (!preferSkeletonOnCategoryChange) return;
+
+      // 카테고리가 바뀌면 → 데이터 준비 전까지 스켈레톤 고정
+      if (prevCategoryRef.current !== categoryCode) {
+        prevCategoryRef.current = categoryCode;
+        setForceSkeleton(true);
       }
-    },
-    [isWeb, saveScrollPosition]
-  );
-  const like = (item: ArticleType) => {
-    if (!my?.id) {
-      Linking.openURL("https://info.some-in-univ.com");
-      return;
-    }
+    }, [categoryCode, preferSkeletonOnCategoryChange]);
 
-    tryCatch(
-      async () => {
-        updateArticleLike(item.id);
-        await apis.articles.doLike(item);
+    useEffect(() => {
+      if (!preferSkeletonOnCategoryChange) return;
+
+      // 새 데이터가 도착했거나, 로딩이 끝났다면 스켈레톤 해제
+      if ((articles && articles.length > 0) || (!isLoading && !isLoadingMore)) {
+        setForceSkeleton(false);
+      }
+    }, [articles, isLoading, isLoadingMore, preferSkeletonOnCategoryChange]);
+
+    const isWeb = Platform.OS === "web";
+
+    const invalidateAndRefetch = async () => {
+      await queryClient.invalidateQueries({
+        queryKey: createArticlesQueryKey(categoryCode),
+      });
+      await refetch();
+    };
+
+    const handleScroll = useCallback(
+      (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        if (!isWeb) {
+          const position = event.nativeEvent.contentOffset.y;
+          saveScrollPosition(position);
+        }
       },
-      (error) => {
-        console.error("좋아요 업데이트 실패:", error);
-      }
+      [isWeb, saveScrollPosition]
     );
-  };
+    const like = (item: ArticleType) => {
+      if (!my?.id) {
+        Linking.openURL("https://info.some-in-univ.com");
+        return;
+      }
 
-  const deleteArticle = (id: string) => {
-    showModal({
-      title: "게시글 삭제",
-      children: (
-        <View>
-          <Text size="sm" textColor="black">
-            해당 게시글을 삭제할까요?
-          </Text>
+      tryCatch(
+        async () => {
+          updateArticleLike(item.id);
+          await apis.articles.doLike(item);
+        },
+        (error) => {
+          console.error("좋아요 업데이트 실패:", error);
+        }
+      );
+    };
+
+    const deleteArticle = (id: string) => {
+      showModal({
+        title: "게시글 삭제",
+        children: (
+          <View>
+            <Text size="sm" textColor="black">
+              해당 게시글을 삭제할까요?
+            </Text>
+          </View>
+        ),
+        primaryButton: {
+          text: "삭제하기",
+          onClick: () =>
+            tryCatch(
+              async () => {
+                await apis.articles.deleteArticle(id);
+                await invalidateAndRefetch();
+              },
+              ({ error }) => {
+                console.log({ error });
+                showErrorModal(error, "error");
+              }
+            ),
+        },
+        secondaryButton: {
+          text: "취소",
+          onClick: () => {},
+        },
+      });
+    };
+
+    //스켈레톤 버킷
+    const pickVariant = useCallback((): "short" | "medium" | "long" => {
+      const r = Math.random();
+      if (r < 0.33) return "short";
+      if (r < 0.66) return "medium";
+      return "long";
+    }, []);
+
+    const renderFooter = useCallback(() => {
+      if (!isLoadingMore) return null;
+      return (
+        <View className="py-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <ArticleSkeleton key={`skel-more-${i}`} variant={pickVariant()} />
+          ))}
         </View>
-      ),
-      primaryButton: {
-        text: "삭제하기",
-        onClick: () =>
-          tryCatch(
-            async () => {
-              await apis.articles.deleteArticle(id);
-              await invalidateAndRefetch();
-            },
-            ({ error }) => {
-              console.log({ error });
-              showErrorModal(error, "error");
-            }
-          ),
+      );
+    }, [isLoadingMore, pickVariant]);
+
+    useImperativeHandle(ref, () => ({
+      refresh: () => {
+        return invalidateAndRefetch();
       },
-      secondaryButton: {
-        text: "취소",
-        onClick: () => {},
-      },
-    });
-  };
+    }));
 
-  //스켈레톤 버킷
-  const pickVariant = useCallback((): "short" | "medium" | "long" => {
-    const r = Math.random();
-    if (r < 0.33) return "short";
-    if (r < 0.66) return "medium";
-    return "long";
-  }, []);
+    useEffect(() => {
+      if (isWeb) {
+        const scrollContainer = document?.getElementById(
+          "CommunityScrollView"
+        ) as HTMLElement;
+        if (!scrollContainer) return;
+        const handleWebScroll = () => {
+          console.log("handleWebScroll()");
+          console.dir(scrollContainer);
+          const position = scrollContainer.scrollTop;
+          console.log({ position });
+          saveScrollPosition(position);
+        };
 
-  const renderFooter = useCallback(() => {
-    if (!isLoadingMore) return null;
-    return (
-      <View className="py-2">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <ArticleSkeleton key={`skel-more-${i}`} variant={pickVariant()} />
-        ))}
-      </View>
-    );
-  }, [isLoadingMore, pickVariant]);
+        scrollContainer.addEventListener("scroll", handleWebScroll, {
+          passive: true,
+        });
 
-  useImperativeHandle(ref, () => ({
-    refresh: () => {
-      return invalidateAndRefetch();
-    },
-  }));
+        return () => {
+          scrollContainer.removeEventListener("scroll", handleWebScroll);
+        };
+      }
+    }, [isWeb, saveScrollPosition]);
 
-  useEffect(() => {
-    if (isWeb) {
-      const scrollContainer = document?.getElementById(
+    useEffect(() => {
+      if (!isWeb) return;
+      const position = getScrollPosition();
+      const scrollContainer = document.getElementById(
         "CommunityScrollView"
       ) as HTMLElement;
       if (!scrollContainer) return;
-      const handleWebScroll = () => {
-        console.log("handleWebScroll()");
-        console.dir(scrollContainer);
-        const position = scrollContainer.scrollTop;
-        console.log({ position });
-        saveScrollPosition(position);
-      };
 
-      scrollContainer.addEventListener("scroll", handleWebScroll, {
-        passive: true,
-      });
+      if (position > 0) {
+        setTimeout(() => {
+          if (isWeb && typeof window !== "undefined") {
+            console.debug(`scroll To ${position}`);
+            scrollContainer.scrollTo({
+              top: position,
+              behavior: "auto",
+            });
+          } else if (flatListRef.current) {
+            flatListRef.current.scrollToOffset({
+              offset: position,
+              animated: false,
+            });
+          }
+        }, 100);
+      }
+    }, [getScrollPosition, isWeb]);
 
-      return () => {
-        scrollContainer.removeEventListener("scroll", handleWebScroll);
-      };
+    if (
+      (preferSkeletonOnCategoryChange && forceSkeleton) ||
+      (isLoading && articles.length === 0)
+    ) {
+      return (
+        <View className="flex-1 bg-white">
+          <View className="h-[1px] bg-[#F3F0FF]" />
+
+          <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+          {Array.from({ length: initialSize }).map((_, i) => (
+            <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
+          ))}
+        </View>
+      );
     }
-  }, [isWeb, saveScrollPosition]);
 
-  useEffect(() => {
-    if (!isWeb) return;
-    const position = getScrollPosition();
-    const scrollContainer = document.getElementById(
-      "CommunityScrollView"
-    ) as HTMLElement;
-    if (!scrollContainer) return;
-
-    if (position > 0) {
-      setTimeout(() => {
-        if (isWeb && typeof window !== "undefined") {
-          console.debug(`scroll To ${position}`);
-          scrollContainer.scrollTo({
-            top: position,
-            behavior: "auto",
-          });
-        } else if (flatListRef.current) {
-          flatListRef.current.scrollToOffset({
-            offset: position,
-            animated: false,
-          });
-        }
-      }, 100);
-    }
-  }, [getScrollPosition, isWeb]);
-
-  if (isLoading && articles.length === 0) {
     return (
       <View className="flex-1 bg-white">
         <View className="h-[1px] bg-[#F3F0FF]" />
-        //FAQ 블록
         <TouchableOpacity
           onPress={() =>
             Linking.openURL(
               "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
             )
           }
-          className="bg-[#F3EDFF] rounded-[5px] mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+          className="bg-[#F3EDFF] rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
         >
           <Image
             source={require("@/assets/images/fireIcon.png")}
@@ -233,72 +281,41 @@ export const InfiniteArticleList = forwardRef<
           </Text>
           <TouchableOpacity className="ml-auto">
             <IconWrapper>
-              <VectorIcon className="h-[12px] w-[9px]" color="black" />
+              <VectorIcon className=" h-[12px] w-[9px]" color="black" />
             </IconWrapper>
           </TouchableOpacity>
         </TouchableOpacity>
         <View className="h-[1px] bg-[#F3F0FF] mb-2" />
-        {Array.from({ length: initialSize }).map((_, i) => (
-          <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
-        ))}
+
+        <CustomInfiniteScrollView
+          data={articles}
+          id="ArticleListContainer"
+          renderItem={(article: ArticleType) => (
+            <Article
+              data={article}
+              onPress={() => {
+                router.push(`/community/${article.id}`);
+              }}
+              onLike={() => like(article)}
+              onDelete={deleteArticle}
+              refresh={() => {
+                return invalidateAndRefetch();
+              }}
+            />
+          )}
+          onLoadMore={loadMore}
+          isLoading={isLoading}
+          isLoadingMore={isLoadingMore}
+          hasMore={hasNextPage}
+          onRefresh={invalidateAndRefetch}
+          refreshing={isLoading && !isLoadingMore}
+          className="flex-1"
+          ListFooterComponent={renderFooter}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          flatListRef={flatListRef}
+        />
       </View>
     );
   }
-
-  return (
-    <View className="flex-1 bg-white">
-      <View className="h-[1px] bg-[#F3F0FF]" />
-      <TouchableOpacity
-        onPress={() =>
-          Linking.openURL(
-            "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
-          )
-        }
-        className="bg-[#F3EDFF] rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
-      >
-        <Image
-          source={require("@/assets/images/fireIcon.png")}
-          style={{ width: 16, height: 16 }}
-        />
-        <Text size="sm" weight="bold">
-          [FAQ] 자주묻는 질문
-        </Text>
-        <TouchableOpacity className="ml-auto">
-          <IconWrapper>
-            <VectorIcon className=" h-[12px] w-[9px]" color="black" />
-          </IconWrapper>
-        </TouchableOpacity>
-      </TouchableOpacity>
-      <View className="h-[1px] bg-[#F3F0FF] mb-2" />
-
-      <CustomInfiniteScrollView
-        data={articles}
-        id="ArticleListContainer"
-        renderItem={(article: ArticleType) => (
-          <Article
-            data={article}
-            onPress={() => {
-              router.push(`/community/${article.id}`);
-            }}
-            onLike={() => like(article)}
-            onDelete={deleteArticle}
-            refresh={() => {
-              return invalidateAndRefetch();
-            }}
-          />
-        )}
-        onLoadMore={loadMore}
-        isLoading={isLoading}
-        isLoadingMore={isLoadingMore}
-        hasMore={hasNextPage}
-        onRefresh={invalidateAndRefetch}
-        refreshing={isLoading && !isLoadingMore}
-        className="flex-1"
-        ListFooterComponent={renderFooter}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        flatListRef={flatListRef}
-      />
-    </View>
-  );
-});
+);

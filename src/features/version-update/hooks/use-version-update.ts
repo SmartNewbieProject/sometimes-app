@@ -1,24 +1,33 @@
-import {useState, useEffect, useCallback} from 'react';
-import {useLatestVersionQuery} from '../queries';
-import {compareVersions} from '@/src/shared/libs/version-utils';
-import {VersionSupportPlatform, VersionUpdateResponse} from '../types';
-import Constants from 'expo-constants';
-import * as Application from 'expo-application';
-import {useStorage} from '@/src/shared/hooks/use-storage';
-import { Platform } from 'react-native';
+import { useState, useEffect, useCallback } from "react";
+import { useLatestVersionQuery } from "../queries";
+import { compareVersions } from "@/src/shared/libs/version-utils";
+import { VersionSupportPlatform, VersionUpdateResponse } from "../types";
+import Constants from "expo-constants";
+import * as Application from "expo-application";
+import { useStorage } from "@/src/shared/hooks/use-storage";
+import { Platform } from "react-native";
 
-const SKIPPED_VERSION_KEY = 'skipped_version';
+const SKIPPED_VERSION_KEY = "skipped_version";
 
 export const useVersionUpdate = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [updateData, setUpdateData] = useState<VersionUpdateResponse | null>(null);
+  const [updateData, setUpdateData] = useState<VersionUpdateResponse | null>(
+    null
+  );
 
-  const {data: latestVersionData, isLoading} = useLatestVersionQuery();
-  const {value: skippedVersion, setValue: setSkippedVersion, loading: skippedVersionLoading} = useStorage<string>({
+  const { data: latestVersionData, isLoading } = useLatestVersionQuery();
+  const {
+    value: skippedVersion,
+    setValue: setSkippedVersion,
+    loading: skippedVersionLoading,
+  } = useStorage<string>({
     key: SKIPPED_VERSION_KEY,
   });
   const serverVersion = latestVersionData?.version;
-  const currentVersion = Application.nativeApplicationVersion || Constants.expoConfig?.version || '1.0.0';
+  const currentVersion =
+    Application.nativeApplicationVersion ||
+    Constants.expoConfig?.version ||
+    "1.0.0";
 
   const checkForUpdate = useCallback(async () => {
     if (!latestVersionData || !serverVersion) return;
@@ -26,7 +35,9 @@ export const useVersionUpdate = () => {
       return;
     }
     const needsUpdate = compareVersions(currentVersion, serverVersion);
-    const supportedPlatform = latestVersionData.metadata.supports.includes(Platform.OS as VersionSupportPlatform);
+    const supportedPlatform = latestVersionData.metadata.supports?.includes(
+      Platform.OS as VersionSupportPlatform
+    );
 
     if (needsUpdate && supportedPlatform) {
       setUpdateData(latestVersionData);
@@ -56,7 +67,13 @@ export const useVersionUpdate = () => {
     if (serverVersion) {
       checkForUpdate();
     }
-  }, [isLoading, skippedVersionLoading, latestVersionData, skippedVersion, serverVersion]);
+  }, [
+    isLoading,
+    skippedVersionLoading,
+    latestVersionData,
+    skippedVersion,
+    serverVersion,
+  ]);
 
   return {
     showUpdateModal,
