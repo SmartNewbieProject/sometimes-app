@@ -48,7 +48,7 @@ export default function UniversityDone() {
   const handleNext = () => {
     onNext(() => {
       router.push(
-        `/auth/signup/university-details?universityName=${selectedUniv}`
+        `/auth/signup/university-details?universityId=${selectedUniv}`
       );
     });
   };

@@ -59,7 +59,7 @@ export const signup = (form: SignupForm): Promise<void> => {
   formData.append("gender", form.gender);
   const age = calculateAge(form.birthday);
   formData.append("age", age.toString());
-  formData.append("universityName", form.universityName);
+  formData.append("universityName", form.universityId);
   formData.append("departmentName", form.departmentName);
   formData.append("grade", form.grade);
   formData.append("studentNumber", form.studentNumber);

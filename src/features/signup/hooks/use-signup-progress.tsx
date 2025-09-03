@@ -5,7 +5,7 @@ export type SignupForm = {
   phone: string;
   birthday: string;
   gender: "MALE" | "FEMALE";
-  universityName: string;
+  universityId: string;
   area: string;
   departmentName: string;
   grade: string;

@@ -18,7 +18,7 @@ function useUniversityHook() {
   const { updateForm, form: userForm, regions } = useSignupProgress();
   const { isLoading, data: univs } = useUniversities();
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
-    userForm.universityName
+    userForm.universityId
   );
   const [filteredUniv, setFilteredUniv] = useState(univs);
 
@@ -34,7 +34,7 @@ function useUniversityHook() {
     trackSignupEvent("next_button_click", "to_university_details");
     updateForm({
       ...userForm,
-      universityName: selectedUniv,
+      universityId: selectedUniv,
     });
     fallback();
   };

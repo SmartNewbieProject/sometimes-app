@@ -65,7 +65,7 @@ export default function UniversityPage() {
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
       router.push(
-        `/auth/signup/university-details?universityName=${selectedUniv}`
+        `/auth/signup/university-details?universityId=${selectedUniv}`
       );
     });
   };
@@ -158,7 +158,7 @@ export default function UniversityPage() {
               data={filteredUniv}
               renderItem={({ item }) => (
                 <UniversityCard
-                  onClick={handleClickUniv(item.name)}
+                  onClick={handleClickUniv(item.id)}
                   isSelected={item.name === selectedUniv}
                   item={item}
                 />

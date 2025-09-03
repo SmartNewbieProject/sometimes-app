@@ -200,7 +200,7 @@ export default function ProfilePage() {
           router.push("/auth/login");
           return;
         }
-        if (!signupForm.universityName || !signupForm.departmentName) {
+        if (!signupForm.universityId || !signupForm.departmentName) {
           showErrorModal("학교와 학과 정보가 필요해요.", "announcement");
           router.navigate("/auth/signup/area");
           return;

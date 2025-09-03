@@ -1,7 +1,6 @@
 import type { RegionCode } from "@/src/shared/constants/region";
 import {
   UniversityImage,
-  type UniversityName,
   getSmartUnivLogoUrl,
   getUnivLogo,
 } from "@/src/shared/libs";
