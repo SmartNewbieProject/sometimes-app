@@ -44,7 +44,6 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
 
   const { actions } = useChatEvent();
 
-
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
   const rotate = useSharedValue(0);
@@ -82,19 +81,14 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       return;
     }
 
-    const tempMessage = createOptimisticMessage(id, chat);
-
-    const queryKey = ["chat-list", id];
-    queryClient.setQueryData<PaginatedChatData>(queryKey, (oldData) =>
-      addMessageToChatList(oldData, tempMessage)
-    );
-
     actions.sendMessage({
       chatRoomId: id,
       content: chat ?? "",
       to: partner?.partnerId,
     });
+
     setChat("");
+    queryClient.refetchQueries({ queryKey: ["chat-list", id] });
   };
 
   return (
