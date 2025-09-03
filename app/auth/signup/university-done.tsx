@@ -29,7 +29,7 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 
-export default function UniversityPage() {
+export default function UniversityDone() {
   const router = useRouter();
   const {
     searchText,
@@ -45,25 +45,8 @@ export default function UniversityPage() {
   const animationProgress = useSharedValue(0);
   const animationTitle = useSharedValue(1);
 
-  const handleFocus = () => {
-    if (!isFocused) {
-      setIsFocused(true);
-      updateShowHeader(true);
-      animationProgress.value = withTiming(1, { duration: 350 });
-      animationTitle.value = withTiming(0, { duration: 0 });
-    }
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
-
   const handleNext = () => {
     onNext(() => {
-      track("Signup_university", {
-        university: selectedUniv,
-        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-      });
       router.push(
         `/auth/signup/university-details?universityName=${selectedUniv}`
       );
@@ -92,63 +75,11 @@ export default function UniversityPage() {
     return () => subscription.remove();
   }, []);
 
-  const animatedContainerStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(animationProgress.value, [0, 1], [60, 0]);
-    return {
-      transform: [{ translateY }],
-    };
-  });
-
-  const animatedTitleStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(animationTitle.value, [1, 0], [1, 0]);
-
-    return {
-      opacity,
-    };
-  });
-
-  const animatedListStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(animationProgress.value, [0, 1], [0, 1]);
-    const translateY = interpolate(animationProgress.value, [0, 1], [50, 0]);
-    return {
-      opacity,
-      transform: [{ translateY }],
-      display: animationProgress.value === 0 ? "none" : "flex",
-    };
-  });
-
   return (
     <DefaultLayout className="flex-1 ">
-      {!showHeader && <PalePurpleGradient />}
+      <PalePurpleGradient />
       <View style={[styles.container]}>
-        {!showHeader && <UniversityLogos logoSize={64} />}
-
-        <Animated.View style={[styles.titleContainer, animatedTitleStyle]}>
-          <RNText style={styles.welcome}>
-            대학생만 모인 곳, 당신의 이상형을 찾아드려요
-          </RNText>
-          <RNText style={styles.title}>지금 다니는 학교를 검색해보세요</RNText>
-        </Animated.View>
-        <Animated.View
-          style={[animatedContainerStyle, { width: "100%", zIndex: 10 }]}
-        >
-          <View style={styles.searchWrapper}>
-            <SearchIcon width={16} height={16} style={{ marginRight: 8 }} />
-            <TextInput
-              value={searchText}
-              onBlur={handleBlur}
-              onChangeText={setSearchText}
-              placeholder="대학교 이름을 검색해주세요"
-              placeholderTextColor="#9B94AB"
-              style={styles.input}
-              onFocus={handleFocus}
-            />
-          </View>
-        </Animated.View>
-
-        <Animated.View
-          style={[styles.listAndBottomContainer, animatedListStyle]}
-        >
+        <Animated.View style={[styles.listAndBottomContainer]}>
           <Loading.Lottie
             title="대학 목록을 로딩중입니다.."
             loading={isLoading}
