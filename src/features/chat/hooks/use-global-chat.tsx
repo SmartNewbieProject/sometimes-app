@@ -24,7 +24,6 @@ export const useGlobalChat = ({
 
     const globalSocket = initSocket(url, accessToken);
     globalSocket.on("connected", () => {
-      console.log("check connect!!");
       setConnected(true);
     });
 

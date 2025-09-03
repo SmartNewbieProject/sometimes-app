@@ -56,7 +56,6 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   });
 
   useEffect(() => {
-    console.log("check connect", connected, id);
     if (connected) {
       actions.readMessages(id);
       markRoomAsRead(id);
@@ -197,7 +196,6 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
   const scrollViewRef = useRef<FlatList<ChatListItem>>(null);
 
-  console.log("check", chatListWithDateDividers);
   return (
     <FlatList
       data={chatListWithDateDividers}
