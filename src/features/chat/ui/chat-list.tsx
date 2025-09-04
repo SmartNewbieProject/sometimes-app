@@ -86,15 +86,31 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     const unsubscribe = subscribe("newMessage", (chat: Chat) => {
       // 현재 채팅방의 메시지인 경우에만 채팅 리스트에 추가
       if (chat.chatRoomId === id) {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         queryClient.setQueryData(["chat-list", id], (oldData: any) => {
           if (!oldData) return oldData;
 
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           const updatedPages = oldData.pages.map((page: any, index: number) => {
-            // 첫 번째 페이지(최신 메시지 페이지)에 새 메시지 추가
+            const date = new Date(chat.createdAt);
+
+            date.setHours(date.getHours() + 9);
+
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            const hours = String(date.getHours()).padStart(2, "0");
+            const minutes = String(date.getMinutes()).padStart(2, "0");
+            const seconds = String(date.getSeconds()).padStart(2, "0");
+            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
             if (index === 0) {
               return {
                 ...page,
-                messages: [chat, ...page.messages],
+                messages: [
+                  { ...chat, createdAt: formattedDate },
+                  ...page.messages,
+                ],
               };
             }
             return page;
