@@ -103,7 +103,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
         <TextInput
           multiline={true}
           value={chat}
-          editable={!isPhotoClicked || partner?.hasLeft}
+          editable={!isPhotoClicked || !partner?.hasLeft}
           onChangeText={(text) => setChat(text)}
           style={styles.textInput}
           placeholder={
