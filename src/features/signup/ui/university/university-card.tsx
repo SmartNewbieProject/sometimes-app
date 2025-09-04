@@ -11,7 +11,7 @@ import {
 import type { UniversityCard as UniversityCardProps } from "../../queries/use-universities";
 
 function UniversityCard({
-  item: { name, region, area, logoUrl, en },
+  item: { name, area, logoUrl, en },
   onClick,
   isSelected,
 }: {

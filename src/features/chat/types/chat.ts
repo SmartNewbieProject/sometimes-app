@@ -16,6 +16,7 @@ export interface ChatRoomDetail {
 	partnerId: string;
 	roomActivation: boolean;
 	createdAt: string;
+	hasLeft?: boolean;
 	partner: Partner;
 }
 

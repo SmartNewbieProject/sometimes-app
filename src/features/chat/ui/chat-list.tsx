@@ -86,6 +86,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     const unsubscribe = subscribe("newMessage", (chat: Chat) => {
       // 현재 채팅방의 메시지인 경우에만 채팅 리스트에 추가
       if (chat.chatRoomId === id) {
+        actions.readMessages(id);
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         queryClient.setQueryData(["chat-list", id], (oldData: any) => {
           if (!oldData) return oldData;
@@ -134,16 +135,18 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
       (uploadData: {
         id: string;
         chatRoomId: string;
-        mediaUrl: string;
+        mediaUrl?: string;
         uploadStatus: "uploading" | "completed" | "failed";
       }) => {
         if (
           uploadData.chatRoomId === id &&
           uploadData.uploadStatus === "completed"
         ) {
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           queryClient.setQueryData(["chat-list", id], (oldData: any) => {
             if (!oldData) return oldData;
 
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
             const updatedPages = oldData.pages.map((page: any) => ({
               ...page,
               messages: page.messages.map((message: Chat) =>
