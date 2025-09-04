@@ -1,7 +1,9 @@
 import useLiked from "@/src/features/like/hooks/use-liked";
+import { Show } from "@/src/shared/ui";
 import { LegendList } from "@legendapp/list";
 import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from "@tanstack/react-query";
+import { Image } from "expo-image";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -19,7 +21,7 @@ function ChatRoomList() {
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
   const [keyword, setKeyword] = useState("");
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useChatRoomList();
   const { subscribe } = useSocketEventManager();
   const queryClient = useQueryClient();
@@ -51,8 +53,28 @@ function ChatRoomList() {
       )}
       <View style={{ height: 18 }} />
       <ChatSearch keyword={keyword} setKeyword={setKeyword} />
-      {filteredData.length > 0 &&
-        (Platform.OS === "web" ? (
+
+      <Show when={!isLoading && data?.pages.length === 0}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 36,
+          }}
+        >
+          <Image
+            style={{ width: 260, height: 260, marginBottom: 20 }}
+            source={require("@assets/images/limit-age.png")}
+          />
+          <Text style={styles.infoText}>아직 열린 채팅방이 없어요</Text>
+          <Text style={styles.infoText}>
+            서로 좋아요가 되면 대화가 시작돼요
+          </Text>
+        </View>
+      </Show>
+      <Show when={filteredData.length > 0}>
+        {Platform.OS === "web" ? (
           <FlashList
             data={filteredData}
             style={{ flex: 1 }}
@@ -82,9 +104,18 @@ function ChatRoomList() {
             renderItem={({ item }) => <ChatRoomCard item={item} />}
             recycleItems
           />
-        ))}
+        )}
+      </Show>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  infoText: {
+    color: "#353C46",
+    fontSize: 14,
+    marginTop: 4,
+  },
+});
 
 export default ChatRoomList;
