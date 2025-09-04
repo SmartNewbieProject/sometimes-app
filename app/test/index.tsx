@@ -1,15 +1,14 @@
-import Chat from "@/src/features/chat/ui/chat";
-import ChatScreen from "@/src/features/chat/ui/chat-screen";
-import GalleryList from "@/src/features/chat/ui/gallery-list";
-import ChatRoomList from "@/src/features/chat/ui/room-list/chat-room-list";
-import { DefaultLayout } from "@/src/features/layout/ui";
+import { AgeRestrictionScreen } from "@/src/features/pass";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-function Test() {
-  return <Chat />;
-}
+import { StyleSheet, View } from "react-native";
+import ApprovalRejectedScreen from "../auth/approval-rejected";
+import SignupDoneScreen from "../auth/signup/done";
+import InterestIntroScreen from "../interest";
+import InterestDoneScreen from "../interest/done";
+import MyInfoIntroScreen from "../my-info";
 
-const styles = StyleSheet.create({});
+function Test() {
+  return <AgeRestrictionScreen />;
+}
 
 export default Test;

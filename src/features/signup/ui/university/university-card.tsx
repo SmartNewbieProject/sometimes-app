@@ -74,7 +74,7 @@ function UniversityCard({
           <Text style={styles.englishName}>{en}</Text>
           <View style={styles.bottomContainer}>
             <View style={styles.area}>
-              <Text style={styles.areaText}>{area}</Text>
+              <Text style={styles.areaText}>{}</Text>
             </View>
           </View>
         </View>

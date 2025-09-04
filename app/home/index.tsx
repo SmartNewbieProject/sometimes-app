@@ -151,7 +151,6 @@ const HomeScreen = () => {
             <NoneLikeBanner />
           )}
         </View>
-
         <View className="mt-[18px] flex flex-col gap-y-1.5">
           <Feedback.WallaFeedbackBanner />
           <Show when={!isPreferenceFill}>
