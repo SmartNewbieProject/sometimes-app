@@ -11,6 +11,7 @@ export const useChatRoomRead = () => {
 
       queryClient.setQueryData<{
         pages: ChatRoomListResponse[];
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         pageParams: any[];
       }>(chatRoomQueryKey, (oldData) => {
         if (!oldData) return oldData;

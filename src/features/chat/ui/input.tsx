@@ -41,7 +41,6 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: partner } = useChatRoomDetail(id);
   const queryClient = useQueryClient();
-
   const { actions } = useChatEvent();
 
   const { width } = useWindowDimensions();
@@ -104,10 +103,12 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
         <TextInput
           multiline={true}
           value={chat}
-          editable={!isPhotoClicked}
+          editable={!isPhotoClicked || partner?.hasLeft}
           onChangeText={(text) => setChat(text)}
           style={styles.textInput}
-          placeholder="메세지를 입력하세요"
+          placeholder={
+            partner?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
+          }
           numberOfLines={3}
         />
         {chat !== "" ? (
@@ -125,9 +126,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
 const styles = StyleSheet.create({
   textInput: {
     flex: 1,
-
     alignSelf: "center",
-
     fontSize: 16,
     lineHeight: 18,
     marginVertical: 14,

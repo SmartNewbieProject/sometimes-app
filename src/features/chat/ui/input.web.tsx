@@ -161,8 +161,10 @@ function WebChatInput() {
           value={chat}
           onChange={handleChange}
           rows={1}
-          readOnly={isError}
-          placeholder={isError ? "대화가 종료되었어요" : "메세지를 입력하세요"}
+          readOnly={roomDetail?.hasLeft}
+          placeholder={
+            roomDetail?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
+          }
           className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-[#1E2229] placeholder-gray-500 focus:outline-none "
         />
         <textarea
