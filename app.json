@@ -105,8 +105,8 @@
 		},
 		"android": {
 			"adaptiveIcon": {
-				"foregroundImage": "./assets/images/sometimelogo.png",
-				"backgroundColor": "#ffffff"
+				"foregroundImage": "./assets/images/android-adaptive-icon.png",
+				"backgroundColor": "#8B7BFF"
 			},
 			"softwareKeyboardLayoutMode": "pan",
 			"package": "com.smartnewb.sometimes",
