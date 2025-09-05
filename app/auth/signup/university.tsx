@@ -159,7 +159,7 @@ export default function UniversityPage() {
               renderItem={({ item }) => (
                 <UniversityCard
                   onClick={handleClickUniv(item.id)}
-                  isSelected={item.name === selectedUniv}
+                  isSelected={item.id === selectedUniv}
                   item={item}
                 />
               )}
