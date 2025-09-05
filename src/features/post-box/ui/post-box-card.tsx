@@ -70,7 +70,9 @@ function PostBoxCard({
   const userWithdrawal = !!deletedAt;
 
   const renderBottomButton =
-    status === "IN_CHAT" ? (
+    (type === "i-liked" && status === "REJECTED") || userWithdrawal ? (
+      <ILikedRejectedButton connectionId={connectionId} />
+    ) : status === "IN_CHAT" ? (
       <InChatButton />
     ) : isExpired ? (
       <ILikedRejectedButton connectionId={connectionId} />
@@ -78,8 +80,6 @@ function PostBoxCard({
       <LikedMeOpenButton matchId={matchId} />
     ) : type === "liked-me" ? (
       <LikedMePendingButton connectionId={connectionId} />
-    ) : type === "i-liked" && status === "REJECTED" ? (
-      <ILikedRejectedButton connectionId={connectionId} />
     ) : (
       <></>
     );
@@ -122,16 +122,19 @@ function PostBoxCard({
             <Text style={styles.age}>만 {age}세</Text>
           </View>
           <Text style={styles.university}>{universityName}</Text>
-          <Text
-            style={[
-              styles.status,
-              styles.pending,
-              type === "i-liked" && status === "REJECTED" && styles.reject,
-              type === "i-liked" && status === "OPEN" && styles.open,
-            ]}
-          >
-            {statusMessage}
-          </Text>
+          <Show when={!userWithdrawal}>
+            <Text
+              style={[
+                styles.status,
+                styles.pending,
+                type === "i-liked" && status === "REJECTED" && styles.reject,
+                type === "i-liked" && status === "OPEN" && styles.open,
+              ]}
+            >
+              {statusMessage}
+            </Text>
+          </Show>
+
           <Animated.Text
             style={[
               styles.status,
@@ -147,12 +150,7 @@ function PostBoxCard({
               : getRemainingTimeFormatted(matchExpiredAt)}
           </Animated.Text>
 
-          <Show when={userWithdrawal}>
-            <CustomText textColor="gray" size="13" weight="light">
-              서비스를 탈퇴한 유저에요
-            </CustomText>
-          </Show>
-          <Show when={!userWithdrawal}>{renderBottomButton}</Show>
+          {renderBottomButton}
         </View>
       </View>
     </Pressable>
