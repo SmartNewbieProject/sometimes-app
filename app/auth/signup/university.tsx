@@ -40,11 +40,14 @@ export default function UniversityPage() {
     selectedUniv,
     isLoading,
   } = useUniversityHook();
-  const { updateShowHeader, showHeader } = useSignupProgress();
+  const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } =
+    useSignupProgress();
   const [isFocused, setIsFocused] = useState(false);
   const animationProgress = useSharedValue(0);
   const animationTitle = useSharedValue(1);
-
+  const selectedUnivObj = filteredUniv?.find(
+    (item) => item.id === selectedUniv
+  );
   const handleFocus = () => {
     if (!isFocused) {
       setIsFocused(true);
@@ -64,9 +67,14 @@ export default function UniversityPage() {
         university: selectedUniv,
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
-      router.push(
-        `/auth/signup/university-details?universityId=${selectedUniv}`
-      );
+      if (selectedUnivObj) {
+        updateRegions(selectedUnivObj.region);
+        updateUnivTitle(selectedUnivObj.name);
+        // TODO : showErrorModal 넣어야함
+        router.push(
+          `/auth/signup/university-cluster?universityId=${selectedUniv}`
+        );
+      }
     });
   };
 

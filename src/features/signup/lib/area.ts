@@ -180,6 +180,52 @@ export function getRegionList(area: string) {
 	}
 }
 
+export function getRegionListByCode(regionCode: string) {
+	switch (regionCode) {
+		case 'DJN':
+			return [getRegionCodeByName('대전광역시')];
+		case 'BSN':
+		case 'GHE':
+			return [getRegionCodeByName('부산광역시'), getRegionCodeByName('김해시')];
+		case 'DGU':
+			return [getRegionCodeByName('대구광역시')];
+		case 'SJG':
+		case 'CJU':
+			return [getRegionCodeByName('청주시'), getRegionCodeByName('세종특별자치시')];
+		case 'CAN':
+			return [getRegionCodeByName('천안시')];
+		case 'ICN':
+		case 'SEL':
+		case 'KYG':
+			return [getRegionCodeByName('인천광역시'), getRegionCodeByName('서울특별시'), 'KYG'];
+		default:
+			return [];
+	}
+}
+
+export function getAreaByCode(regionCode: string) {
+	switch (regionCode) {
+		case 'DJN':
+			return ['대전'];
+		case 'BSN':
+		case 'GHE':
+			return ['부산', '김해'];
+		case 'DGU':
+			return ['대구'];
+		case 'SJG':
+		case 'CJU':
+			return ['청주', '세종'];
+		case 'CAN':
+			return ['천안'];
+		case 'ICN':
+		case 'SEL':
+		case 'KYG':
+			return ['서울', '인천', '경기'];
+		default:
+			return [];
+	}
+}
+
 export function getAllRegionList() {
 	return [
 		getRegionCodeByName('대전광역시'),

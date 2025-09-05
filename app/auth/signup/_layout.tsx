@@ -83,6 +83,10 @@ export default function SignupLayout() {
               }}
             />
             <Stack.Screen
+              name="university-cluster"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
               name="university-details"
               options={{ headerShown: false }}
             />
