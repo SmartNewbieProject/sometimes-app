@@ -4,6 +4,7 @@ import colors from "@/src/shared/constants/colors";
 import { ImageResources } from "@shared/libs";
 import { Show, Text } from "@shared/ui";
 import { ImageResource } from "@ui/image-resource";
+import type { Product } from "expo-iap";
 import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { calculateDiscount, dropHundred, toKRW } from "../utils";
 import {
@@ -15,7 +16,7 @@ import {
 export type GemItemProps = {
   onOpenPurchase: (productId: string) => void;
   hot?: boolean;
-  gemProduct: AppleGemDetails;
+  gemProduct: Product;
 };
 
 const AppleGemStoreProvider = ({ children }: { children: React.ReactNode }) => {
@@ -75,7 +76,7 @@ const AppleGemStoreItem = ({
         </View>
 
         <View style={{ display: "flex", flexDirection: "column", rowGap: 6 }}>
-          <Show when={gemProduct.id !== "gem_8"}>
+          <Show when={gemProduct.id !== "gem_12"}>
             <View
               style={{ display: "flex", flexDirection: "row", columnGap: 6 }}
             >
