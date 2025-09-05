@@ -1,7 +1,13 @@
 import { Header, Text, PalePurpleGradient } from "@/src/shared/ui";
 import { LabelInput } from "@/src/widgets/label-input";
 import { router } from "expo-router";
-import { ScrollView, TouchableOpacity, View, Pressable, Linking } from "react-native";
+import {
+  ScrollView,
+  TouchableOpacity,
+  View,
+  Pressable,
+  Linking,
+} from "react-native";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
@@ -11,7 +17,7 @@ import {
   verifyEmailCode,
   getProfileId,
   MESSAGES,
-  UI_CONSTANTS
+  UI_CONSTANTS,
 } from "@/src/features/university-verification";
 
 export default function UniversityVerificationScreen() {
@@ -29,8 +35,8 @@ export default function UniversityVerificationScreen() {
         children: MESSAGES.EMAIL_REQUIRED,
         primaryButton: {
           text: "확인",
-          onClick: () => {}
-        }
+          onClick: () => {},
+        },
       });
       return;
     }
@@ -44,8 +50,8 @@ export default function UniversityVerificationScreen() {
           children: MESSAGES.CODE_SENT,
           primaryButton: {
             text: "확인",
-            onClick: () => {}
-          }
+            onClick: () => {},
+          },
         });
       },
       (error) => {
@@ -54,8 +60,8 @@ export default function UniversityVerificationScreen() {
           children: error.error,
           primaryButton: {
             text: "확인",
-            onClick: () => {}
-          }
+            onClick: () => {},
+          },
         });
       }
     );
@@ -69,8 +75,8 @@ export default function UniversityVerificationScreen() {
         children: MESSAGES.FIELDS_REQUIRED,
         primaryButton: {
           text: "확인",
-          onClick: () => {}
-        }
+          onClick: () => {},
+        },
       });
       return;
     }
@@ -92,8 +98,8 @@ export default function UniversityVerificationScreen() {
           children: MESSAGES.VERIFICATION_SUCCESS,
           primaryButton: {
             text: "확인",
-            onClick: () => {}
-          }
+            onClick: () => {},
+          },
         });
       },
       (error) => {
@@ -102,8 +108,8 @@ export default function UniversityVerificationScreen() {
           children: error.error || MESSAGES.VERIFICATION_FAILED,
           primaryButton: {
             text: "확인",
-            onClick: () => {}
-          }
+            onClick: () => {},
+          },
         });
       }
     );
@@ -111,7 +117,13 @@ export default function UniversityVerificationScreen() {
   };
 
   const handleDMClick = () => {
-    Linking.openURL("https://www.instagram.com/sometime.in.univ?igsh=MTdxMWJjYmFrdGc3Ng==");
+    Linking.openURL(
+      "https://www.instagram.com/sometime.in.univ?igsh=MTdxMWJjYmFrdGc3Ng=="
+    );
+  };
+
+  const handleIDcardCertification = () => {
+    router.push("/university-verification/idcard");
   };
 
   const handleConfirm = () => {
@@ -121,8 +133,8 @@ export default function UniversityVerificationScreen() {
         children: MESSAGES.NOT_VERIFIED,
         primaryButton: {
           text: "확인",
-          onClick: () => {}
-        }
+          onClick: () => {},
+        },
       });
       return;
     }
@@ -144,8 +156,7 @@ export default function UniversityVerificationScreen() {
             대학 인증
           </Text>
         </Header.CenterContent>
-        <Header.RightContent>
-        </Header.RightContent>
+        <Header.RightContent></Header.RightContent>
       </Header.Container>
 
       <View className="flex-1">
@@ -166,9 +177,16 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleEmailVerification}
                   disabled={isLoading}
-                  className={`bg-white border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
+                  className={`bg-white border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${
+                    isLoading ? "opacity-50" : ""
+                  }`}
                 >
-                  <Text size="sm" weight="medium" textColor="purple" className="text-center">
+                  <Text
+                    size="sm"
+                    weight="medium"
+                    textColor="purple"
+                    className="text-center"
+                  >
                     {isLoading ? "전송중..." : "인증번호 전송"}
                   </Text>
                 </TouchableOpacity>
@@ -191,9 +209,16 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleCodeVerification}
                   disabled={isLoading}
-                  className={`bg-white border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
+                  className={`bg-white border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${
+                    isLoading ? "opacity-50" : ""
+                  }`}
                 >
-                  <Text size="sm" weight="medium" textColor="purple" className="text-center">
+                  <Text
+                    size="sm"
+                    weight="medium"
+                    textColor="purple"
+                    className="text-center"
+                  >
                     {isLoading ? "확인중..." : "확인"}
                   </Text>
                 </TouchableOpacity>
@@ -202,20 +227,34 @@ export default function UniversityVerificationScreen() {
           </View>
         </ScrollView>
 
-        {/* DM 인증 안내 */}
         <View className="px-5 mb-4">
           <Text size="sm" weight="normal" className="text-gray">
             학교 이메일이 없는 경우
           </Text>
           <View className="flex-row flex-wrap">
-            <TouchableOpacity onPress={handleDMClick}>
-              <Text size="sm" weight="bold" className="text-gray-500">
-                DM
+            <TouchableOpacity onPress={handleIDcardCertification}>
+              <Text size="sm" weight="normal" className="text-gray underline">
+                학생증 및 재학증명 제출
               </Text>
             </TouchableOpacity>
             <Text size="sm" weight="normal" className="text-gray">
-              으로 문의 주시면 다른 인증 방법을 알려드립니다.
+              을 통해 재학 정보를 인증 받을 수 있어요.
             </Text>
+          </View>
+          <View className="mt-4">
+            <Text size="sm" weight="normal" className="text-gray">
+              재학 인증에 어려움이 있는 경우
+            </Text>
+            <View className="flex-row flex-wrap">
+              <TouchableOpacity onPress={handleDMClick}>
+                <Text size="sm" weight="normal" className="text-gray underline">
+                  DM
+                </Text>
+              </TouchableOpacity>
+              <Text size="sm" weight="normal" className="text-gray">
+                으로 문의 주시면 확인 후 도와드립니다.
+              </Text>
+            </View>
           </View>
         </View>
 
