@@ -50,15 +50,13 @@ function useAreaHook() {
     }, 200);
 
     setTimeout(() => {
-      setShow("인천");
+      setShow("서울/인천/경기");
     }, 700);
-    setTimeout(() => {
-      setShow("천안");
-    }, 1200);
+
     setTimeout(() => {
       setShow(null);
       setInitDisabled(false);
-    }, 1700);
+    }, 1200);
   }, []);
 
   const onNext = (fallback: () => void) => {

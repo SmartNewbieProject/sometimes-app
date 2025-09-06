@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
   },
   image: {
     marginLeft: 4,
-    width: 94,
-    height: 90,
+    width: 90,
+    height: 81,
   },
   content: {
     gap: 4,

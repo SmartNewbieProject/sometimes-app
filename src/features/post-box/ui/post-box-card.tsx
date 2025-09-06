@@ -5,13 +5,16 @@ import {
   getRemainingTimeFormatted,
   getRemainingTimeLimit,
 } from "@/src/shared/utils/like";
+import type { UserProfile } from "@/src/types/user";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
 import { Text as CustomText } from "@shared/ui/text";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { useAuth } from "../../auth";
+import useCreateChatRoom from "../../chat/queries/use-create-chat-room";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
 import { useFeatureCost } from "../../payment/hooks";
@@ -34,6 +37,7 @@ interface PostBoxCardProps {
   isMutualLike: boolean;
   deletedAt: string | null;
   type: "liked-me" | "i-liked";
+  likeId?: string;
 }
 
 function PostBoxCard({
@@ -52,6 +56,7 @@ function PostBoxCard({
   isMutualLike,
   deletedAt,
   type,
+  likeId,
 }: PostBoxCardProps) {
   const opacity = useRef(new Animated.Value(1)).current;
   const statusMessage =
@@ -61,20 +66,25 @@ function PostBoxCard({
       ? "서로 좋아요를 눌렀어요!"
       : status === "REJECTED"
       ? "상대방이 거절했어요"
+      : status === "IN_CHAT"
+      ? "상대방과 대화중이에요"
       : "상대방의 응답을 기다리고 있어요";
   const userWithdrawal = !!deletedAt;
 
-  const renderBottomButton = isExpired ? (
-    <ILikedRejectedButton connectionId={connectionId} />
-  ) : status === "OPEN" && instagram ? (
-    <LikedMeOpenButton instagramId={instagram} />
-  ) : type === "liked-me" ? (
-    <LikedMePendingButton connectionId={connectionId} />
-  ) : type === "i-liked" && status === "REJECTED" ? (
-    <ILikedRejectedButton connectionId={connectionId} />
-  ) : (
-    <></>
-  );
+  const renderBottomButton =
+    (type === "i-liked" && status === "REJECTED") || userWithdrawal ? (
+      <ILikedRejectedButton connectionId={connectionId} />
+    ) : status === "IN_CHAT" ? (
+      <InChatButton />
+    ) : isExpired ? (
+      <ILikedRejectedButton connectionId={connectionId} />
+    ) : status === "OPEN" && instagram ? (
+      <LikedMeOpenButton matchId={matchId} likeId={likeId} />
+    ) : type === "liked-me" ? (
+      <LikedMePendingButton connectionId={connectionId} />
+    ) : (
+      <></>
+    );
 
   useEffect(() => {
     const anim = Animated.loop(
@@ -114,16 +124,19 @@ function PostBoxCard({
             <Text style={styles.age}>만 {age}세</Text>
           </View>
           <Text style={styles.university}>{universityName}</Text>
-          <Text
-            style={[
-              styles.status,
-              styles.pending,
-              type === "i-liked" && status === "REJECTED" && styles.reject,
-              type === "i-liked" && status === "OPEN" && styles.open,
-            ]}
-          >
-            {statusMessage}
-          </Text>
+          <Show when={!userWithdrawal}>
+            <Text
+              style={[
+                styles.status,
+                styles.pending,
+                type === "i-liked" && status === "REJECTED" && styles.reject,
+                type === "i-liked" && status === "OPEN" && styles.open,
+              ]}
+            >
+              {statusMessage}
+            </Text>
+          </Show>
+
           <Animated.Text
             style={[
               styles.status,
@@ -134,15 +147,12 @@ function PostBoxCard({
               },
             ]}
           >
-            {getRemainingTimeFormatted(matchExpiredAt)}
+            {status === "IN_CHAT"
+              ? ""
+              : getRemainingTimeFormatted(matchExpiredAt)}
           </Animated.Text>
 
-          <Show when={userWithdrawal}>
-            <CustomText textColor="gray" size="13" weight="light">
-              서비스를 탈퇴한 유저에요
-            </CustomText>
-          </Show>
-          <Show when={!userWithdrawal}>{renderBottomButton}</Show>
+          {renderBottomButton}
         </View>
       </View>
     </Pressable>
@@ -182,15 +192,21 @@ export function LikedMePendingButton({
 }
 
 export function LikedMeOpenButton({
-  instagramId,
+  matchId,
+  likeId,
   height = 40,
 }: {
-  instagramId: string;
+  matchId: string;
+  likeId?: string;
   height?: number;
 }) {
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
-  const handleStartInstagram = () => {
+  const { my } = useAuth();
+  const mutation = useCreateChatRoom();
+  const { profileDetails } = useAuth();
+
+  const handleCreateChat = () => {
     showModal({
       showLogo: true,
 
@@ -213,15 +229,22 @@ export function LikedMeOpenButton({
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-[#AEAEAE] text-[12px]">인스타그램을 통해</Text>
           <Text className="text-[#AEAEAE] text-[12px]">
-            자연스럽게 대화를 시작해보세요
+            {profileDetails?.gender === "MALE"
+              ? `구슬 ${featureCosts?.CHAT_START}개로`
+              : "지금 바로"}
+            로 채팅방을 열 수 있어요.
+          </Text>
+          <Text className="text-[#AEAEAE] text-[12px]">
+            지금 바로 첫 메시지를 보내보세요!
           </Text>
         </View>
       ),
       primaryButton: {
         text: "네, 해볼래요",
-        onClick: () => openInstagram(instagramId),
+        onClick: () => {
+          mutation.mutateAsync({ matchId, matchLikeId: likeId });
+        },
       },
       secondaryButton: {
         text: "아니요",
@@ -232,7 +255,7 @@ export function LikedMeOpenButton({
   return (
     <View className="w-full flex flex-row">
       <Button
-        onPress={handleStartInstagram}
+        onPress={handleCreateChat}
         variant="primary"
         size="md"
         className={cn("flex-1 items-center ", `!h-[${height}px]`)}
@@ -300,6 +323,26 @@ export function ILikedRejectedButton({
         prefix={<XIcon width={21} height={21} />}
       >
         인연이 아니었나봐요
+      </Button>
+    </View>
+  );
+}
+
+export function InChatButton({ height = 40 }: { height?: number }) {
+  const router = useRouter();
+  const handleCreateChat = () => {
+    router.push("/chat");
+  };
+  return (
+    <View className="w-full flex flex-row">
+      <Button
+        onPress={handleCreateChat}
+        variant="primary"
+        size="md"
+        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
+        prefix={<ChatIcon width={20} height={20} />}
+      >
+        대화가 이어지고 있어요
       </Button>
     </View>
   );

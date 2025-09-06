@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.5.1",
+    "version": "2.6.5",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -111,8 +111,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon-logo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/android-adaptive-icon.png",
+        "backgroundColor": "#8B7BFF"
       },
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.smartnewb.sometimes",

@@ -32,13 +32,14 @@ export const AppleFirstSaleCard = ({
   onOpenPurchase,
   gemProducts,
 }: AppleFirstSaleCardProps) => {
+  console.log("gemProducts", gemProducts);
   const {
     totalExpiredAt,
     show,
     setShow,
-    event6Expired,
-    event20Expired,
-    event40Expied,
+    event7Expired,
+    event16Expired,
+    event27Expired,
   } = useFirstSaleEvents();
   const { seconds } = useTimer(totalExpiredAt, {
     autoStart: !!totalExpiredAt,
@@ -69,7 +70,7 @@ export const AppleFirstSaleCard = ({
     };
   });
 
-  if (!show) return null;
+  // if (!show) return null;
 
   return (
     <GlowingCard>
@@ -116,43 +117,43 @@ export const AppleFirstSaleCard = ({
           </View>
         </View>
 
-        <Show when={!event6Expired}>
+        <Show when={!event7Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[0]}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_6", {
+              track("GemStore_FirstSale_7", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
-              setEventType(EventType.FIRST_SALE_6);
+              setEventType(EventType.FIRST_SALE_7);
               onOpenPurchase(gemProducts[0].id);
             }}
             hot={false}
           />
         </Show>
-        <Show when={!event20Expired}>
+        <Show when={!event16Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[1]}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_6", {
+              track("GemStore_FirstSale_16", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
-              setEventType(EventType.FIRST_SALE_6);
+              setEventType(EventType.FIRST_SALE_16);
               onOpenPurchase(gemProducts[1].id);
             }}
             hot={false}
           />
         </Show>
-        <Show when={!event40Expied}>
+        <Show when={!event27Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[2]}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_6", {
+              track("GemStore_FirstSale_27", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
-              setEventType(EventType.FIRST_SALE_6);
+              setEventType(EventType.FIRST_SALE_27);
               onOpenPurchase(gemProducts[2].id);
             }}
             hot={false}

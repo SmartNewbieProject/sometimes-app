@@ -10,12 +10,13 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function InterestDoneScreen() {
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
   const { updateForm, clear, tattoo, ...form } = useInterestForm();
-
+  const insets = useSafeAreaInsets();
   useEffect(() => {
     queryClient.invalidateQueries({
       queryKey: ["check-preference-fill"],
@@ -26,31 +27,44 @@ export default function InterestDoneScreen() {
     <Layout.Default>
       <View style={[styles.contentContainer]}>
         <PalePurpleGradient />
-        <View style={styles.titleLogoWrapper}>
+        <View style={[styles.titleLogoWrapper, { paddingTop: insets.top }]}>
           <IconWrapper width={128} style={styles.titleLogoIcon}>
             <SmallTitle />
           </IconWrapper>
         </View>
 
         <View style={styles.textWrapper}>
-          <Image
-            source={require("@assets/images/interest.png")}
-            style={{ width: 248, height: 323 }}
-          />
-
-          <View style={styles.titleWrapper}>
-            <Text size="lg" textColor="black" weight="semibold">
-              이상형 정보를 확인했어요
-            </Text>
-            <Text size="lg" textColor="black" weight="semibold">
-              이제 이상형을 찾아드릴게요
-            </Text>
+          <View
+            style={{
+              width: 280,
+              height: 280,
+              borderRadius: 280,
+              overflow: "hidden",
+              marginBottom: 50,
+              backgroundColor: "#7A4AE2",
+              position: "relative",
+            }}
+          >
+            <Image
+              source={require("@assets/images/info-miho.png")}
+              style={{ width: 255, height: 259, top: 20, position: "absolute" }}
+            />
           </View>
+          <View>
+            <View style={styles.titleWrapper}>
+              <Text size="lg" textColor="black" weight="semibold">
+                이상형 정보를 확인했어요
+              </Text>
+              <Text size="lg" textColor="black" weight="semibold">
+                이제 이상형을 찾아드릴게요
+              </Text>
+            </View>
 
-          <View style={styles.descriptionWrapper}>
-            <Text size="sm" textColor="pale-purple" weight="light">
-              썸타임이 {profileDetails?.name}님의 이상형을 찾아드릴게요
-            </Text>
+            <View style={styles.descriptionWrapper}>
+              <Text size="sm" textColor="pale-purple" weight="light">
+                썸타임이 {profileDetails?.name}님의 이상형을 찾아드릴게요
+              </Text>
+            </View>
           </View>
         </View>
         <View style={styles.buttonContainer}>

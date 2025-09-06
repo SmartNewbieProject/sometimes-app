@@ -1,7 +1,7 @@
-import { Header, Text, PalePurpleGradient } from "@/src/shared/ui";
-import { router } from "expo-router";
-import { View, Pressable, Image, TouchableOpacity } from "react-native";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
+import { Header, PalePurpleGradient, Text } from "@/src/shared/ui";
+import { router } from "expo-router";
+import { Image, Pressable, TouchableOpacity, View } from "react-native";
 
 export default function UniversityVerificationSuccess() {
   const handleGoToProfile = () => {
@@ -22,15 +22,14 @@ export default function UniversityVerificationSuccess() {
             대학 인증
           </Text>
         </Header.CenterContent>
-        <Header.RightContent>
-        </Header.RightContent>
+        <Header.RightContent />
       </Header.Container>
 
       <View className="flex-1 px-5 justify-center items-center relative">
         {/* 메인 이미지 */}
-        <View className="mb-16 mt-8">
+        <View className="mb-16 mt-8 items-center ml-6">
           <Image
-            source={require("@/assets/images/verification_done.png")}
+            source={require("@/assets/images/verification-done.png")}
             style={{ width: 320, height: 320 }}
             resizeMode="contain"
           />
@@ -46,10 +45,10 @@ export default function UniversityVerificationSuccess() {
           </Text>
 
           <Text size="sm" weight="normal" className="mb-1 text-[#9B94AB]">
-            대학 인증이 완료되었어요!
+            이제 안심하고 시작해볼까요?
           </Text>
           <Text size="sm" weight="normal" className="text-[#9B94AB]">
-            이제 당신의 이상형을 만나보게 만나보세요
+            내가 있는 지역에서 이상형을 안전하게 만나보세요!
           </Text>
         </View>
 
