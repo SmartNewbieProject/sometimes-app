@@ -10,6 +10,7 @@ interface PortoneStore {
   setGemCount: (gemCount: number) => void;
   eventType?: EventType;
   setEventType: (eventType: EventType) => void;
+  clearEventType: () => void;
 }
 
 export const usePortoneStore = create<PortoneStore>((set, get) => ({
@@ -17,4 +18,5 @@ export const usePortoneStore = create<PortoneStore>((set, get) => ({
   setCustomData: (customData: CustomData) => set({ customData }),
   setGemCount: (gemCount: number) => set({ gemCount }),
   setEventType: (eventType: EventType) => set({ eventType }),
+  clearEventType: () => set({ eventType: undefined }),
 }));
