@@ -14,7 +14,6 @@ export enum ProductID {
 	GEM_400 = 'gem_400',
 	GEM_500 = 'gem_500',
 	GEM_800 = 'gem_800',
-	// 세일 상품들은 DB 이름과 직접 매핑되지 않으므로, 이 함수에서는 반환되지 않습니다.
 	GEM_SALE_6 = 'gem_sale_6',
 	GEM_SALE_20 = 'gem_sale_20',
 	GEM_SALE_40 = 'gem_sale_40',
@@ -51,24 +50,6 @@ const packNameToProductIdMap: Record<DbPackName, ProductID> = {
 	맥시멈팩: ProductID.GEM_800,
 };
 
-/**
- * 백엔드 API로부터 받은 상품 이름(name)을 기반으로
- * 대응하는 ProductID enum 값을 찾아 반환하는 함수.
- *
- * @param dbProductName - 백엔드 DB의 상품 이름 (예: '라이트팩')
- * @returns 대응하는 ProductID enum 값. 만약 매핑되는 ID가 없으면 null을 반환합니다.
- */
-export function getProductIdByName(dbProductName: string): ProductID | null {
-	// packNameToProductIdMap에 dbProductName이 키로 존재하는지 확인
-	if (dbProductName in packNameToProductIdMap) {
-		// 존재한다면, 해당 키로 ProductID 값을 반환 (타입 단언 사용)
-		return packNameToProductIdMap[dbProductName as DbPackName];
-	}
-
-	// 매핑되는 ID를 찾지 못한 경우 null 반환
-	return null;
-}
-
 export const containsSale = (text: string): boolean => {
 	return text.includes('세일');
 };
@@ -77,24 +58,30 @@ export const getPriceAndDiscount = (
 	text: string,
 ): { price: number; discountRate: number } | null => {
 	const mapping: Record<string, { price: number; discountRate: number }> = {
-		gem_sale_7: { price: 7500, discountRate: 36.2 },
-		gem_12: { price: 12900, discountRate: 0 },
-		gem_sale_16: { price: 17000, discountRate: 43 },
-		gem_27: { price: 29000, discountRate: 14.2 },
-		gem_sale_27: { price: 29000, discountRate: 31.8 },
-		gem_39: { price: 42000, discountRate: 12 },
-		gem_54: { price: 58000, discountRate: 15.8 },
-		gem_67: { price: 72000, discountRate: 61 },
+		gem_15: { price: 11000, discountRate: 21 },
+		gem_30: { price: 22000, discountRate: 37 },
+		gem_60: { price: 44000, discountRate: 51 },
+		gem_130: { price: 95000, discountRate: 60 },
+		gem_200: { price: 147000, discountRate: 61 },
+		gem_400: { price: 295000, discountRate: 64 },
+		gem_500: { price: 368000, discountRate: 66 },
+		gem_800: { price: 590000, discountRate: 67 },
+
+		gem_sale_7: { price: 5250, discountRate: 37.2 },
+		gem_sale_16: { price: 12000, discountRate: 43.3 },
+		gem_sale_27: { price: 20250, discountRate: 31.9 },
+		gem_sale_6: { price: 6000, discountRate: 50.9 },
+		gem_sale_20: { price: 14700, discountRate: 53.2 },
+		gem_sale_40: { price: 29400, discountRate: 56.2 },
 	};
 
-	// 문자열 안에 key가 포함되어 있으면 반환
 	for (const key in mapping) {
 		if (text === key) {
 			return mapping[key];
 		}
 	}
 
-	return null; // 일치하는 항목 없으면 null
+	return null;
 };
 
 export function splitAndSortProducts(products: Product[]): {

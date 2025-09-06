@@ -25,15 +25,13 @@ export const useVersionUpdate = () => {
 	const currentVersion =
 		Application.nativeApplicationVersion || Constants.expoConfig?.version || '1.0.0';
 
-	const checkForUpdate = useCallback(async () => {
-		if (!latestVersionData || !serverVersion) return;
-		if (skippedVersion === serverVersion && !latestVersionData.shouldUpdate) {
-			return;
-		}
-		const needsUpdate = compareVersions(currentVersion, serverVersion);
-		const supportedPlatform = latestVersionData?.metadata?.supports?.includes(
-			Platform.OS as VersionSupportPlatform,
-		);
+  const checkForUpdate = useCallback(async () => {
+    if (!latestVersionData || !serverVersion) return;
+    if (skippedVersion === serverVersion && !latestVersionData.shouldUpdate) {
+      return;
+    }
+    const needsUpdate = compareVersions(currentVersion, serverVersion);
+    const supportedPlatform = latestVersionData.metadata.supports?.includes(Platform.OS as VersionSupportPlatform);
 
 		if (needsUpdate && supportedPlatform) {
 			setUpdateData(latestVersionData);

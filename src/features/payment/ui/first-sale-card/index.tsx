@@ -21,26 +21,21 @@ import Animated, {
 import { usePortoneStore } from "../../hooks/use-portone-store";
 import { useFirstSaleEvents } from "../../hooks/useFirstSaleEvents";
 import type { GemMetadata } from "../../types";
+import { usePortoneStore } from "../../hooks/use-portone-store";
+import { track } from "@amplitude/analytics-react-native";
+import { useAuth } from "@/src/features/auth";
+import { TRACKING_EVENTS } from "../../constants";
+import { FIRST_SALE_PRODUCTS } from "../../constants/first-sale-products";
 
 type FirstSaleCardProps = {
   onOpenPayment: (gemProduct: GemMetadata) => void;
 };
 
 export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
-  const {
-    totalExpiredAt,
-    show,
-    setShow,
-    event7Expired,
-    event16Expired,
-    event27Expied,
-  } = useFirstSaleEvents();
-  const { seconds } = useTimer(totalExpiredAt, {
-    autoStart: !!totalExpiredAt,
-    onComplete: () => {
-      setShow(false);
-    },
-  });
+  const { totalExpiredAt, show, setShow, event7Expired, event16Expired, event27Expired } = useFirstSaleEvents();
+  const { seconds } = useTimer(totalExpiredAt, { autoStart: !!totalExpiredAt, onComplete: () => {
+    setShow(false);
+  } });
   const { setEventType } = usePortoneStore();
   const { my } = useAuth();
 
@@ -112,73 +107,34 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
         </View>
 
         <Show when={!event7Expired}>
-          <GemStoreWidget.Item
-            gemProduct={{
-              id: "sale-7",
-              sortOrder: 0,
-              price: 5300,
-              discountRate: 37.2,
-              totalGems: 7,
-              bonusGems: 0,
-              gemAmount: 0,
-              productName: "최초 세일 7개",
-            }}
-            onOpenPayment={(metadata) => {
-              track("GemStore_FirstSale_7", {
-                who: my,
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
-              setEventType(EventType.FIRST_SALE_7);
-              onOpenPayment(metadata);
-            }}
-            hot={false}
-          />
+          <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_7} onOpenPayment={(metadata) => {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_7, {
+              who: my,
+              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+            })
+            setEventType(EventType.FIRST_SALE_7);
+            onOpenPayment(metadata);
+          }} hot={false} />
         </Show>
         <Show when={!event16Expired}>
-          <GemStoreWidget.Item
-            gemProduct={{
-              id: "sale-16",
-              sortOrder: 1,
-              price: 12000,
-              discountRate: 43.3,
-              totalGems: 16,
-              bonusGems: 0,
-              gemAmount: 0,
-              productName: "최초 세일 16개",
-            }}
-            onOpenPayment={(metadata) => {
-              track("GemStore_FirstSale_16", {
-                who: my,
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
-              setEventType(EventType.FIRST_SALE_16);
-              onOpenPayment(metadata);
-            }}
-            hot={false}
-          />
+          <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_16} onOpenPayment={(metadata) => {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_16, {
+              who: my,
+              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+            })
+            setEventType(EventType.FIRST_SALE_16);
+            onOpenPayment(metadata);
+          }} hot={false} />
         </Show>
-        <Show when={!event27Expied}>
-          <GemStoreWidget.Item
-            gemProduct={{
-              id: "sale-27",
-              sortOrder: 2,
-              price: 20300,
-              discountRate: 31.9,
-              totalGems: 27,
-              bonusGems: 0,
-              gemAmount: 0,
-              productName: "최초 세일 27개",
-            }}
-            onOpenPayment={(metadata) => {
-              track("GemStore_FirstSale_27", {
-                who: my,
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
-              setEventType(EventType.FIRST_SALE_27);
-              onOpenPayment(metadata);
-            }}
-            hot={false}
-          />
+         <Show when={!event27Expired}>
+          <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_27} onOpenPayment={(metadata) => {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_27, {
+              who: my,
+              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+            })
+            setEventType(EventType.FIRST_SALE_27);
+            onOpenPayment(metadata);
+          }} hot={false} />
         </Show>
       </View>
     </GlowingCard>

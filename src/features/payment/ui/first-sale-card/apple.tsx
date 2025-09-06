@@ -39,7 +39,7 @@ export const AppleFirstSaleCard = ({
     setShow,
     event7Expired,
     event16Expired,
-    event27Expied,
+    event27Expired,
   } = useFirstSaleEvents();
   const { seconds } = useTimer(totalExpiredAt, {
     autoStart: !!totalExpiredAt,
@@ -145,7 +145,7 @@ export const AppleFirstSaleCard = ({
             hot={false}
           />
         </Show>
-        <Show when={!event27Expied}>
+        <Show when={!event27Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[2]}
             onOpenPurchase={() => {
