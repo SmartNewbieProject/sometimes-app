@@ -1,13 +1,9 @@
-import { useAuth } from "@/src/features/auth";
-import { useEventControl } from "@/src/features/event/hooks";
 import { EventType } from "@/src/features/event/types";
 import colors from "@/src/shared/constants/colors";
 import { useTimer } from "@/src/shared/hooks/use-timer";
 import { ImageResources, formatTime } from "@/src/shared/libs";
 import { GlowingCard, ImageResource, Show, Text } from "@/src/shared/ui";
 import { GemStoreWidget } from "@/src/widgets";
-import { GemItemProps } from "@/src/widgets/gem-store";
-import { track } from "@amplitude/analytics-react-native";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
@@ -18,7 +14,6 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import { usePortoneStore } from "../../hooks/use-portone-store";
 import { useFirstSaleEvents } from "../../hooks/useFirstSaleEvents";
 import type { GemMetadata } from "../../types";
 import { usePortoneStore } from "../../hooks/use-portone-store";
