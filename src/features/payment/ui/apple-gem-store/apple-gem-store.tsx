@@ -39,18 +39,14 @@ function AppleGemStore() {
     currentPurchase as ExtendedProductPurchase;
 
   const productIds = [
-    "gem_sale_20",
-    "gem_sale_40",
-    "gem_sale_6",
-    "gem_130",
-    "gem_15",
-    "gem_200",
-    "gem_30",
-    "gem_400",
-    "gem_500",
-    "gem_60",
-    "gem_800",
-    "gem_8",
+    "gem_sale_7",
+    "gem_sale_16",
+    "gem_sale_27",
+    "gem_12",
+    "gem_27",
+    "gem_39",
+    "gem_54",
+    "gem_67",
   ];
 
   const { sale, normal } = products

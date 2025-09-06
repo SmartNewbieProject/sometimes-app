@@ -86,16 +86,16 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
 
         <Show when={!event6Expired}>
           <GemStoreWidget.Item gemProduct={{
-            id: 'sale-6',
+            id: 'sale-7',
             sortOrder: 0,
-            price: 5900,
-            discountRate: 50.9,
-            totalGems: 6,
+            price: 4800,
+            discountRate: 36.2,
+            totalGems: 7,
             bonusGems: 0,
             gemAmount: 0,
-            productName: '최초 세일 6개',
+            productName: '최초 세일 7개',
           }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_6', {
+            track('GemStore_FirstSale_7', {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
@@ -105,16 +105,16 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
         </Show>
         <Show when={!event20Expired}>
           <GemStoreWidget.Item gemProduct={{
-            id: 'sale-20',
+            id: 'sale-16',
             sortOrder: 1,
-            price: 14700,
-            discountRate: 53.2,
-            totalGems: 20,
+            price: 9800,
+            discountRate: 43,
+            totalGems: 16,
             bonusGems: 0,
             gemAmount: 0,
-            productName: '최초 세일 6개',
+            productName: '최초 세일 16개',
           }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_20', {
+            track('GemStore_FirstSale_16', {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
@@ -124,16 +124,16 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
         </Show>
          <Show when={!event40Expied}>
           <GemStoreWidget.Item gemProduct={{
-            id: 'sale-40',
+            id: 'sale-27',
             sortOrder: 2,
-            price: 29400,
-            discountRate: 56.2,
-            totalGems: 40,
+            price: 19800,
+            discountRate: 31.8,
+            totalGems: 27,
             bonusGems: 0,
             gemAmount: 0,
-            productName: '최초 세일 6개',
+            productName: '최초 세일 27개',
           }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_40', {
+            track('GemStore_FirstSale_27', {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
