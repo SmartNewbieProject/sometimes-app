@@ -37,6 +37,7 @@ interface PostBoxCardProps {
   isMutualLike: boolean;
   deletedAt: string | null;
   type: "liked-me" | "i-liked";
+  likeId?: string;
 }
 
 function PostBoxCard({
@@ -55,6 +56,7 @@ function PostBoxCard({
   isMutualLike,
   deletedAt,
   type,
+  likeId,
 }: PostBoxCardProps) {
   const opacity = useRef(new Animated.Value(1)).current;
   const statusMessage =
@@ -77,7 +79,7 @@ function PostBoxCard({
     ) : isExpired ? (
       <ILikedRejectedButton connectionId={connectionId} />
     ) : status === "OPEN" && instagram ? (
-      <LikedMeOpenButton matchId={matchId} />
+      <LikedMeOpenButton matchId={matchId} likeId={likeId} />
     ) : type === "liked-me" ? (
       <LikedMePendingButton connectionId={connectionId} />
     ) : (
@@ -191,9 +193,11 @@ export function LikedMePendingButton({
 
 export function LikedMeOpenButton({
   matchId,
+  likeId,
   height = 40,
 }: {
   matchId: string;
+  likeId?: string;
   height?: number;
 }) {
   const { showModal, hideModal } = useModal();
@@ -239,7 +243,7 @@ export function LikedMeOpenButton({
       primaryButton: {
         text: "네, 해볼래요",
         onClick: () => {
-          mutation.mutateAsync({ matchId });
+          mutation.mutateAsync({ matchId, matchLikeId: likeId });
         },
       },
       secondaryButton: {
