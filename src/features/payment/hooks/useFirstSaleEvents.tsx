@@ -7,23 +7,22 @@ export const useFirstSaleEvents = () => {
   const { event: event16, eventExpired: eventExpired16, eventOverParticipated: eventOverParticipated16, participate: participateFirstSale16 } = useEventControl({ type: EventType.FIRST_SALE_16 });
   const { event: event27, eventExpired: eventExpired27, eventOverParticipated: eventOverParticipated27, participate: participateFirstSale27 } = useEventControl({ type: EventType.FIRST_SALE_27 });
 
-  const [event7Expired, event16Expired, event27Expied] = (() => {
+  const [event7Expired, event16Expired, event27Expired] = (() => {
     const event7Expired = eventOverParticipated7 || eventExpired7;
     const event16Expired = eventOverParticipated16 || eventExpired16;
-    const event27Expied = eventOverParticipated27 || eventExpired27;
-    return [event7Expired, event16Expired, event27Expied];
+    const event27Expired = eventOverParticipated27 || eventExpired27;
+    return [event7Expired, event16Expired, event27Expired];
   })();
 
-  const shouldShow = event7 && event16 && event27 ? (!event7Expired || !event16Expired || !event27Expied) : false;
+  const shouldShow = event7 && event16 && event27 ? (!event7Expired || !event16Expired || !event27Expired) : false;
   const [show, setShow] = useState(shouldShow);
 
   const totalExpiredAt = event7?.expiredAt;
 
   useEffect(() => {
-    console.log('useFirstSaleEvents', event7Expired, event16Expired, event27Expied);
-    const newShow = event7 && event16 && event27 ? (!event7Expired || !event16Expired || !event27Expied) : false;
+    const newShow = event7 && event16 && event27 ? (!event7Expired || !event16Expired || !event27Expired) : false;
     setShow(newShow);
-  }, [event7, event16, event27, event7Expired, event16Expired, event27Expied]);
+  }, [event7, event16, event27, event7Expired, event16Expired, event27Expired]);
 
 
   return {
@@ -36,16 +35,16 @@ export const useFirstSaleEvents = () => {
     eventOverParticipated16,
     participateFirstSale16,
     event27, 
-    event27Expied,
+    event27Expired,
     eventOverParticipated27,
     participateFirstSale27,
     show,
     setShow,
     totalExpiredAt,
 
-    // 이전버전 호환
+    // 이전버전 호환 (deprecated)
     event6Expired: event7Expired,
     event20Expired: event16Expired,
-    event40Expied: event27Expied,
+    event40Expied: event27Expired,
   };
 };
