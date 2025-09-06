@@ -1,8 +1,17 @@
 import { CommunityGuideline } from "@/src/features/community/ui";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { ScrollView, Text, TextInput, View, TouchableOpacity, Image, Alert } from "react-native";
-import * as ImagePicker from 'expo-image-picker';
-import { useEffect } from "react";
+import {
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Image,
+  Alert,
+  Platform,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
 
 export const ArticleWriteForm = () => {
   const { setValue } = useFormContext();
@@ -11,45 +20,49 @@ export const ArticleWriteForm = () => {
   const originalImages = useWatch({ name: "originalImages" }) || [];
   const deleteImageIds = useWatch({ name: "deleteImageIds" }) || [];
 
+  const [outerScrollEnabled, setOuterScrollEnabled] = useState(true);
+
   const pickImage = async () => {
     if (images.length >= 5) {
       Alert.alert("알림", "이미지는 최대 5개까지 선택할 수 있습니다.");
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       allowsMultipleSelection: true,
       quality: 1,
     });
-
     if (!result.canceled && result.assets) {
       const newImages = result.assets.slice(0, 5 - images.length);
-      const imageUris = newImages.map(asset => asset.uri);
+      const imageUris = newImages.map((asset) => asset.uri);
       setValue("images", [...images, ...imageUris]);
     }
   };
 
   const removeImage = (index: number) => {
     const imageToRemove = images[index];
-    
-    // 기존 이미지인지 확인 (originalImages에서 찾기)
-    const originalImage = originalImages.find((orig: { id: string; imageUrl: string; displayOrder: number }) => orig.imageUrl === imageToRemove);
-    
+    const originalImage = originalImages.find(
+      (orig: { id: string; imageUrl: string; displayOrder: number }) =>
+        orig.imageUrl === imageToRemove
+    );
     if (originalImage) {
-      // 기존 이미지라면 deleteImageIds에 추가
       const updatedDeleteIds = [...deleteImageIds, originalImage.id];
       setValue("deleteImageIds", updatedDeleteIds);
     }
-    
-    // images 배열에서 제거
     const updatedImages = images.filter((_: string, i: number) => i !== index);
     setValue("images", updatedImages);
   };
 
   return (
-    <ScrollView className="flex-1 ">
+    <ScrollView
+      className="flex-1"
+      nestedScrollEnabled
+      keyboardShouldPersistTaps="handled"
+      scrollEnabled={outerScrollEnabled}
+      contentContainerStyle={{ paddingBottom: 16 }}
+      showsVerticalScrollIndicator
+    >
       <View className="h-[1px] bg-[#E7E9EC]" />
       <View className="px-[16px] pt-[26px]">
         <View className="items-center justify-center">
@@ -61,9 +74,11 @@ export const ArticleWriteForm = () => {
                 className="w-full p-2 mb-[10px] font-bold placeholder:text-[#d9d9d9] text-[20px] border-b border-[#E7E9EC] outline-none pb-2"
                 onChangeText={onChange}
                 value={value}
+                blurOnSubmit={false}
               />
             )}
           />
+
           <Controller
             name="content"
             rules={{ maxLength: 2000 }}
@@ -71,14 +86,23 @@ export const ArticleWriteForm = () => {
               <TextInput
                 placeholder="내용을 입력하세요."
                 multiline
+                scrollEnabled
                 textAlignVertical="top"
                 maxLength={2000}
-                className="w-full p-2 min-h-[232px] text-[14px] md:text-md placeholder:text-[#D9D9D9]"
+                className="w-full p-2 text-[14px] md:text-md placeholder:text-[#D9D9D9]"
                 onChangeText={onChange}
                 value={value}
+                style={{ minHeight: 232, maxHeight: 400 }}
+                underlineColorAndroid="transparent"
+                blurOnSubmit={false}
+                onFocus={() => setOuterScrollEnabled(false)}
+                onBlur={() => setOuterScrollEnabled(true)}
+                onTouchStart={() => setOuterScrollEnabled(false)}
+                onTouchEnd={() => setOuterScrollEnabled(true)}
               />
             )}
           />
+
           <View className="flex-row items-center justify-between w-full mt-1 mb-2">
             <TouchableOpacity
               onPress={pickImage}
@@ -89,7 +113,9 @@ export const ArticleWriteForm = () => {
                 style={{ width: 30, height: 30, marginRight: 8 }}
                 resizeMode="contain"
               />
-              <Text className="text-gray-600 text-sm">이미지 추가 ({images.length}/5)</Text>
+              <Text className="text-gray-600 text-sm">
+                이미지 추가 ({images.length}/5)
+              </Text>
             </TouchableOpacity>
             <Text className="text-gray-500">x {content?.length ?? 0}/2000</Text>
           </View>
@@ -119,6 +145,7 @@ export const ArticleWriteForm = () => {
           )}
         </View>
       </View>
+
       <View className="h-[1px] bg-[#E7E9EC] mb-4" />
       <CommunityGuideline />
     </ScrollView>

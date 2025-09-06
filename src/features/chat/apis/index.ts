@@ -11,10 +11,12 @@ export const getChatRooms = ({
 
 export const createChatRoom = ({
 	matchId,
+	matchLikeId,
 }: {
 	matchId: string;
+	matchLikeId?: string;
 }): Promise<{ chatRoomId: string }> => {
-	return axiosClient.post('/chat/rooms', { matchId });
+	return axiosClient.post('/chat/rooms', { matchId, matchLikeId });
 };
 
 export const getChatList = ({

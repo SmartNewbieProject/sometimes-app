@@ -37,6 +37,7 @@ interface PostBoxCardProps {
   isMutualLike: boolean;
   deletedAt: string | null;
   type: "liked-me" | "i-liked";
+  likeId?: string;
 }
 
 function PostBoxCard({
@@ -55,6 +56,7 @@ function PostBoxCard({
   isMutualLike,
   deletedAt,
   type,
+  likeId,
 }: PostBoxCardProps) {
   const opacity = useRef(new Animated.Value(1)).current;
   const statusMessage =
@@ -70,16 +72,16 @@ function PostBoxCard({
   const userWithdrawal = !!deletedAt;
 
   const renderBottomButton =
-    status === "IN_CHAT" ? (
+    (type === "i-liked" && status === "REJECTED") || userWithdrawal ? (
+      <ILikedRejectedButton connectionId={connectionId} />
+    ) : status === "IN_CHAT" ? (
       <InChatButton />
     ) : isExpired ? (
       <ILikedRejectedButton connectionId={connectionId} />
     ) : status === "OPEN" && instagram ? (
-      <LikedMeOpenButton matchId={matchId} />
+      <LikedMeOpenButton matchId={matchId} likeId={likeId} />
     ) : type === "liked-me" ? (
       <LikedMePendingButton connectionId={connectionId} />
-    ) : type === "i-liked" && status === "REJECTED" ? (
-      <ILikedRejectedButton connectionId={connectionId} />
     ) : (
       <></>
     );
@@ -122,16 +124,19 @@ function PostBoxCard({
             <Text style={styles.age}>만 {age}세</Text>
           </View>
           <Text style={styles.university}>{universityName}</Text>
-          <Text
-            style={[
-              styles.status,
-              styles.pending,
-              type === "i-liked" && status === "REJECTED" && styles.reject,
-              type === "i-liked" && status === "OPEN" && styles.open,
-            ]}
-          >
-            {statusMessage}
-          </Text>
+          <Show when={!userWithdrawal}>
+            <Text
+              style={[
+                styles.status,
+                styles.pending,
+                type === "i-liked" && status === "REJECTED" && styles.reject,
+                type === "i-liked" && status === "OPEN" && styles.open,
+              ]}
+            >
+              {statusMessage}
+            </Text>
+          </Show>
+
           <Animated.Text
             style={[
               styles.status,
@@ -147,12 +152,7 @@ function PostBoxCard({
               : getRemainingTimeFormatted(matchExpiredAt)}
           </Animated.Text>
 
-          <Show when={userWithdrawal}>
-            <CustomText textColor="gray" size="13" weight="light">
-              서비스를 탈퇴한 유저에요
-            </CustomText>
-          </Show>
-          <Show when={!userWithdrawal}>{renderBottomButton}</Show>
+          {renderBottomButton}
         </View>
       </View>
     </Pressable>
@@ -193,9 +193,11 @@ export function LikedMePendingButton({
 
 export function LikedMeOpenButton({
   matchId,
+  likeId,
   height = 40,
 }: {
   matchId: string;
+  likeId?: string;
   height?: number;
 }) {
   const { showModal, hideModal } = useModal();
@@ -241,7 +243,7 @@ export function LikedMeOpenButton({
       primaryButton: {
         text: "네, 해볼래요",
         onClick: () => {
-          mutation.mutateAsync({ matchId });
+          mutation.mutateAsync({ matchId, matchLikeId: likeId });
         },
       },
       secondaryButton: {
