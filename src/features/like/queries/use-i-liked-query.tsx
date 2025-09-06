@@ -9,6 +9,8 @@ function useILikedQuery() {
     queryFn: getILiked,
     refetchInterval: 1 * 60 * 1000,
     refetchIntervalInBackground: true,
+    staleTime: 0,
+    gcTime: 0,
   });
   return { data, ...props };
 }

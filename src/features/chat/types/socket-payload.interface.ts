@@ -8,6 +8,7 @@ export interface CreateChatRoomPayload {
   maleId: string;
   femaleId: string;
   matchId: string;
+  matchLikeId?: string;
 }
 
 export interface GetChatHistoryPayload {

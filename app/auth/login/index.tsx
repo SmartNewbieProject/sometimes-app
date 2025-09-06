@@ -118,7 +118,6 @@ export default function LoginScreen() {
           <View className="items-center mb-[54px]">
             <Signup.Logo />
           </View>
-
           {/* 메인 콘텐츠 */}
           <View className="flex-1 w-full max-w-sm">
             <Signup.LoginForm />

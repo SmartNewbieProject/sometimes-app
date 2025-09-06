@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
@@ -12,6 +13,7 @@ import Animated, {
 
 interface ImageCollapseProps {
   imageUrls: string[];
+  isAnimated?: boolean;
   handleAllImagesLoaded: () => void;
   collapseValues: SharedValue<number>[];
   startTiming: boolean;
@@ -21,6 +23,7 @@ function ImageCollapse({
   imageUrls,
   handleAllImagesLoaded,
   collapseValues,
+  isAnimated = true,
   startTiming,
 }: ImageCollapseProps) {
   const loadedCount = useRef(0);
@@ -31,21 +34,35 @@ function ImageCollapse({
 
   return (
     <View style={styles.container}>
-      {imageUrls.map((url, index) => (
-        <AnimatedImage
-          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-          key={index}
-          index={index}
-          url={url}
-          item={collapseValues[index]}
-          onImageLoaded={() => {
-            loadedCount.current += 1;
-            if (loadedCount.current === length && !startTiming) {
-              handleAllImagesLoaded();
-            }
-          }}
-        />
-      ))}
+      {imageUrls.map((url, index) =>
+        isAnimated ? (
+          <AnimatedImage
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            key={index}
+            index={index}
+            url={url}
+            item={collapseValues[index]}
+            onImageLoaded={() => {
+              loadedCount.current += 1;
+              if (loadedCount.current === length && !startTiming) {
+                handleAllImagesLoaded();
+              }
+            }}
+          />
+        ) : (
+          <Image
+            style={[
+              styles.image,
+              {
+                transform: [{ translateX: -16 * index }],
+              },
+            ]}
+            source={url}
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            key={index}
+          />
+        )
+      )}
     </View>
   );
 }

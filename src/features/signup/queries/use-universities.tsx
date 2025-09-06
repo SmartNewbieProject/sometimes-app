@@ -9,10 +9,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams } from "expo-router";
 import { getUniversitiesByRegion } from "../apis";
 import { useSignupProgress } from "../hooks";
-import {
-  type UIRegion,
-  getRegionsByRegionCode,
-} from "../lib";
+import { type UIRegion, getRegionsByRegionCode } from "../lib";
 
 export default function useUniversities() {
   const { regions } = useSignupProgress();
@@ -26,7 +23,7 @@ export default function useUniversities() {
     ...item,
     logoUrl: getSmartUnivLogoUrl(item.code),
     universityType: item.foundation,
-    area: getRegionsByRegionCode(item.region as RegionCode),
+    area: getRegionsByRegionCode(item.region as RegionCode[]),
   }));
 
   return { data: mappedData, isLoading };
@@ -36,7 +33,7 @@ export type UniversitiesByRegion = {
   id: string;
   name: string;
   code: string;
-  region: string;
+  region: string[];
   en: string;
   foundation: string;
 }[];
@@ -44,7 +41,7 @@ export type UniversitiesByRegion = {
 export type UniversityCard = {
   logoUrl: string;
   universityType: string;
-  area: UIRegion | undefined;
+  area: UIRegion | string | undefined;
   id: string;
   name: string;
   code: string;

@@ -4,6 +4,7 @@ import useLiked from "@/src/features/like/hooks/use-liked";
 import { LikeButton } from "@/src/features/like/ui/like-button";
 import {
   ILikedRejectedButton,
+  InChatButton,
   LikedMeOpenButton,
 } from "@/src/features/post-box/ui/post-box-card";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -21,6 +22,8 @@ import {
   tryCatch,
 } from "@shared/libs";
 
+// Feather 아이콘 임포트
+import Feather from "@expo/vector-icons/Feather";
 import {
   Button,
   Carousel,
@@ -46,8 +49,6 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-// Feather 아이콘 임포트
-import Feather from "@expo/vector-icons/Feather";
 
 const { queries, ui } = Match;
 const {
@@ -334,67 +335,69 @@ export default function PartnerDetailScreen() {
           marginRight: 16,
         }}
       >
-        <Show when={isStatus(partner?.connectionId ?? "") === "OPEN"}>
+        <Show
+          when={
+            isStatus(partner?.connectionId ?? "") === "OPEN" &&
+            isStatus(partner?.connectionId ?? "") !== "IN_CHAT"
+          }
+        >
           <View
             style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
           >
-            <LikedMeOpenButton height={48} instagramId={partner.instagramId} />
+            <LikedMeOpenButton height={48} matchId={matchId} likeId={partner?.matchLikeId} />
           </View>
         </Show>
 
-        <Show when={userWithdrawal}>
-          <Text textColor="gray" className="text-center">
-            서비스를 탈퇴한 유저에요
-          </Text>
+        <Show
+          when={
+            !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
+            !isLiked(partner?.connectionId ?? "") &&
+            !!partner?.connectionId &&
+            !(isStatus(partner?.connectionId ?? "") === "IN_CHAT")
+          }
+        >
+          <View
+            style={{
+              width: "100%",
+              flex: 1,
+              flexDirection: "row",
+              height: 48,
+            }}
+          >
+            <LikeButton connectionId={partner.connectionId ?? ""} />
+          </View>
         </Show>
-
-        <Show when={!userWithdrawal}>
-          <Show
-            when={
-              !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
-              !isLiked(partner?.connectionId ?? "") &&
-              !!partner?.connectionId
-            }
-          >
-            <View
-              style={{
-                width: "100%",
-                flex: 1,
-                flexDirection: "row",
-                height: 48,
-              }}
+        <Show
+          when={
+            !isExpired(partner?.connectionId ?? "") &&
+            isStatus(partner?.connectionId ?? "") === "PENDING"
+          }
+        >
+          <View className="w-full flex flex-row">
+            <Button
+              variant="outline"
+              disabled={true}
+              size="md"
+              className={cn("flex-1 items-center ", `!h-[${20}px]`)}
             >
-              <LikeButton connectionId={partner.connectionId ?? ""} />
-            </View>
-          </Show>
-          <Show
-            when={
-              !isExpired(partner?.connectionId ?? "") &&
-              isStatus(partner?.connectionId ?? "") === "PENDING"
-            }
-          >
-            <View className="w-full flex flex-row">
-              <Button
-                variant="outline"
-                disabled={true}
-                size="md"
-                className={cn("flex-1 items-center ", `!h-[${20}px]`)}
-              >
-                <Text>상대방 응답을 기다리는 중..</Text>
-              </Button>
-            </View>
-          </Show>
-          <Show
-            when={
-              isExpired(partner?.connectionId ?? "") ||
-              isStatus(partner?.connectionId ?? "") === "REJECTED"
-            }
-          >
-            <ILikedRejectedButton
-              height={48}
-              connectionId={partner?.connectionId ?? ""}
-            />
-          </Show>
+              <Text>상대방 응답을 기다리는 중..</Text>
+            </Button>
+          </View>
+        </Show>
+        <Show
+          when={
+            isExpired(partner?.connectionId ?? "") ||
+            isStatus(partner?.connectionId ?? "") === "REJECTED" ||
+            userWithdrawal
+          }
+        >
+          <ILikedRejectedButton
+            height={48}
+            connectionId={partner?.connectionId ?? ""}
+          />
+        </Show>
+        <Show when={isStatus(partner?.connectionId ?? "") === "IN_CHAT"}>
+          <InChatButton height={48} />
         </Show>
       </View>
     </View>

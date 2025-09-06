@@ -32,6 +32,7 @@ export const AppleFirstSaleCard = ({
   onOpenPurchase,
   gemProducts,
 }: AppleFirstSaleCardProps) => {
+  console.log("gemProducts", gemProducts);
   const {
     totalExpiredAt,
     show,
@@ -69,7 +70,7 @@ export const AppleFirstSaleCard = ({
     };
   });
 
-  if (!show) return null;
+  // if (!show) return null;
 
   return (
     <GlowingCard>
