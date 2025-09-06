@@ -3,44 +3,49 @@ import { EventType } from "@/src/features/event/types";
 import { useEffect, useState } from "react";
 
 export const useFirstSaleEvents = () => {
-  const { event: event6, eventExpired: eventExpired6, eventOverParticipated: eventOverParticipated6, participate: participateFirstSale6 } = useEventControl({ type: EventType.FIRST_SALE_6 });
-  const { event: event20, eventExpired: eventExpired20, eventOverParticipated: eventOverParticipated20, participate: participateFirstSale20 } = useEventControl({ type: EventType.FIRST_SALE_20 });
-  const { event: event40, eventExpired: eventExpired40, eventOverParticipated: eventOverParticipated40, participate: participateFirstSale40 } = useEventControl({ type: EventType.FIRST_SALE_40 });
+  const { event: event7, eventExpired: eventExpired7, eventOverParticipated: eventOverParticipated7, participate: participateFirstSale7 } = useEventControl({ type: EventType.FIRST_SALE_7 });
+  const { event: event16, eventExpired: eventExpired16, eventOverParticipated: eventOverParticipated16, participate: participateFirstSale16 } = useEventControl({ type: EventType.FIRST_SALE_16 });
+  const { event: event27, eventExpired: eventExpired27, eventOverParticipated: eventOverParticipated27, participate: participateFirstSale27 } = useEventControl({ type: EventType.FIRST_SALE_27 });
 
-  const [event6Expired, event20Expired, event40Expied] = (() => {
-    const event6Expired = eventOverParticipated6 || eventExpired6;
-    const event20Expired = eventOverParticipated20 || eventExpired20;
-    const event40Expied = eventOverParticipated40 || eventExpired40;
-    return [event6Expired, event20Expired, event40Expied];
+  const [event7Expired, event16Expired, event27Expied] = (() => {
+    const event7Expired = eventOverParticipated7 || eventExpired7;
+    const event16Expired = eventOverParticipated16 || eventExpired16;
+    const event27Expied = eventOverParticipated27 || eventExpired27;
+    return [event7Expired, event16Expired, event27Expied];
   })();
 
-  const shouldShow = event6 && event20 && event40 ? (!event6Expired || !event20Expired || !event40Expied) : false;
+  const shouldShow = event7 && event16 && event27 ? (!event7Expired || !event16Expired || !event27Expied) : false;
   const [show, setShow] = useState(shouldShow);
 
-  const totalExpiredAt = event6?.expiredAt;
+  const totalExpiredAt = event7?.expiredAt;
 
   useEffect(() => {
-    console.log('useFirstSaleEvents', event6Expired, event20Expired, event40Expied);
-    const newShow = event6 && event20 && event40 ? (!event6Expired || !event20Expired || !event40Expied) : false;
+    console.log('useFirstSaleEvents', event7Expired, event16Expired, event27Expied);
+    const newShow = event7 && event16 && event27 ? (!event7Expired || !event16Expired || !event27Expied) : false;
     setShow(newShow);
-  }, [event6, event20, event40, event6Expired, event20Expired, event40Expied]);
+  }, [event7, event16, event27, event7Expired, event16Expired, event27Expied]);
 
 
   return {
-    event6,
-    event6Expired,
-    eventOverParticipated6,
-    participateFirstSale6,
-    event20,
-    event20Expired,
-    eventOverParticipated20,
-    participateFirstSale20,
-    event40, 
-    event40Expied,
-    eventOverParticipated40,
-    participateFirstSale40,
+    event7,
+    event7Expired,
+    eventOverParticipated7,
+    participateFirstSale7,
+    event16,
+    event16Expired,
+    eventOverParticipated16,
+    participateFirstSale16,
+    event27, 
+    event27Expied,
+    eventOverParticipated27,
+    participateFirstSale27,
     show,
     setShow,
     totalExpiredAt,
+
+    // 이전버전 호환
+    event6Expired: event7Expired,
+    event20Expired: event16Expired,
+    event40Expied: event27Expied,
   };
 };

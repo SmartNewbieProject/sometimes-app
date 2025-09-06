@@ -21,6 +21,7 @@ import type { GemMetadata } from "../../types";
 import { usePortoneStore } from "../../hooks/use-portone-store";
 import { track } from "@amplitude/analytics-react-native";
 import { useAuth } from "@/src/features/auth";
+import { TRACKING_EVENTS } from "../../constants";
 
 type FirstSaleCardProps = {
   onOpenPayment: (gemProduct: GemMetadata) => void;
@@ -95,11 +96,11 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             gemAmount: 0,
             productName: '최초 세일 7개',
           }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_7', {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_7, {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
-            setEventType(EventType.FIRST_SALE_6);
+            setEventType(EventType.FIRST_SALE_7);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>
@@ -114,11 +115,11 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             gemAmount: 0,
             productName: '최초 세일 16개',
           }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_16', {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_16, {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
-            setEventType(EventType.FIRST_SALE_20);
+            setEventType(EventType.FIRST_SALE_16);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>
@@ -133,11 +134,11 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             gemAmount: 0,
             productName: '최초 세일 27개',
           }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_27', {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_27, {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
-            setEventType(EventType.FIRST_SALE_40);
+            setEventType(EventType.FIRST_SALE_27);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>
