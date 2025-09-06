@@ -120,11 +120,11 @@ export const AppleFirstSaleCard = ({
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[0]}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_6", {
+              track("GemStore_FirstSale_7", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
-              setEventType(EventType.FIRST_SALE_6);
+              setEventType(EventType.FIRST_SALE_7);
               onOpenPurchase(gemProducts[0].id);
             }}
             hot={false}
@@ -138,7 +138,7 @@ export const AppleFirstSaleCard = ({
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
-              setEventType(EventType.FIRST_SALE_6);
+              setEventType(EventType.FIRST_SALE_16);
               onOpenPurchase(gemProducts[1].id);
             }}
             hot={false}
@@ -152,7 +152,7 @@ export const AppleFirstSaleCard = ({
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
-              setEventType(EventType.FIRST_SALE_6);
+              setEventType(EventType.FIRST_SALE_27);
               onOpenPurchase(gemProducts[2].id);
             }}
             hot={false}

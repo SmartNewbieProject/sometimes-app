@@ -89,8 +89,8 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
           <GemStoreWidget.Item gemProduct={{
             id: 'sale-7',
             sortOrder: 0,
-            price: 4800,
-            discountRate: 36.2,
+            price: 5250,
+            discountRate: 37.2,
             totalGems: 7,
             bonusGems: 0,
             gemAmount: 0,
@@ -108,8 +108,8 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
           <GemStoreWidget.Item gemProduct={{
             id: 'sale-16',
             sortOrder: 1,
-            price: 9800,
-            discountRate: 43,
+            price: 12000,
+            discountRate: 43.5,
             totalGems: 16,
             bonusGems: 0,
             gemAmount: 0,
@@ -127,8 +127,8 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
           <GemStoreWidget.Item gemProduct={{
             id: 'sale-27',
             sortOrder: 2,
-            price: 19800,
-            discountRate: 31.8,
+            price: 20250,
+            discountRate: 31.9,
             totalGems: 27,
             bonusGems: 0,
             gemAmount: 0,
