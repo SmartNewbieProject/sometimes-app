@@ -45,6 +45,6 @@ export const useFirstSaleEvents = () => {
     // 이전버전 호환 (deprecated)
     event6Expired: event7Expired,
     event20Expired: event16Expired,
-    event40Expied: event27Expired,
+    event40Expired: event27Expired,
   };
 };

@@ -134,7 +134,7 @@ export const AppleFirstSaleCard = ({
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[1]}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_6", {
+              track("GemStore_FirstSale_16", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
@@ -148,7 +148,7 @@ export const AppleFirstSaleCard = ({
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[2]}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_6", {
+              track("GemStore_FirstSale_27", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
