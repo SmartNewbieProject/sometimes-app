@@ -21,13 +21,15 @@ import type { GemMetadata } from "../../types";
 import { usePortoneStore } from "../../hooks/use-portone-store";
 import { track } from "@amplitude/analytics-react-native";
 import { useAuth } from "@/src/features/auth";
+import { TRACKING_EVENTS } from "../../constants";
+import { FIRST_SALE_PRODUCTS } from "../../constants/first-sale-products";
 
 type FirstSaleCardProps = {
   onOpenPayment: (gemProduct: GemMetadata) => void;
 }
 
 export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
-  const { totalExpiredAt, show, setShow, event6Expired, event20Expired, event40Expied } = useFirstSaleEvents();
+  const { totalExpiredAt, show, setShow, event7Expired, event16Expired, event27Expired } = useFirstSaleEvents();
   const { seconds } = useTimer(totalExpiredAt, { autoStart: !!totalExpiredAt, onComplete: () => {
     setShow(false);
   } });
@@ -84,60 +86,33 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
           </View>
         </View>
 
-        <Show when={!event6Expired}>
-          <GemStoreWidget.Item gemProduct={{
-            id: 'sale-6',
-            sortOrder: 0,
-            price: 5900,
-            discountRate: 50.9,
-            totalGems: 6,
-            bonusGems: 0,
-            gemAmount: 0,
-            productName: '최초 세일 6개',
-          }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_6', {
+        <Show when={!event7Expired}>
+          <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_7} onOpenPayment={(metadata) => {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_7, {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
-            setEventType(EventType.FIRST_SALE_6);
+            setEventType(EventType.FIRST_SALE_7);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>
-        <Show when={!event20Expired}>
-          <GemStoreWidget.Item gemProduct={{
-            id: 'sale-20',
-            sortOrder: 1,
-            price: 14700,
-            discountRate: 53.2,
-            totalGems: 20,
-            bonusGems: 0,
-            gemAmount: 0,
-            productName: '최초 세일 6개',
-          }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_20', {
+        <Show when={!event16Expired}>
+          <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_16} onOpenPayment={(metadata) => {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_16, {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
-            setEventType(EventType.FIRST_SALE_20);
+            setEventType(EventType.FIRST_SALE_16);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>
-         <Show when={!event40Expied}>
-          <GemStoreWidget.Item gemProduct={{
-            id: 'sale-40',
-            sortOrder: 2,
-            price: 29400,
-            discountRate: 56.2,
-            totalGems: 40,
-            bonusGems: 0,
-            gemAmount: 0,
-            productName: '최초 세일 6개',
-          }} onOpenPayment={(metadata) => {
-            track('GemStore_FirstSale_40', {
+         <Show when={!event27Expired}>
+          <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_27} onOpenPayment={(metadata) => {
+            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_27, {
               who: my,
               env: process.env.EXPO_PUBLIC_TRACKING_MODE,
             })
-            setEventType(EventType.FIRST_SALE_40);
+            setEventType(EventType.FIRST_SALE_27);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>
