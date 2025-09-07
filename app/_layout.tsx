@@ -11,6 +11,9 @@ import {
 } from "@/src/shared/libs/notifications";
 import * as Notifications from "expo-notifications";
 
+import { I18nextProvider } from "react-i18next";
+import i18n from "@/src/shared/libs/i18n";
+
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import { VersionUpdateChecker } from "@/src/features/version-update";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
@@ -106,23 +109,25 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryProvider>
         <ModalProvider>
-          <PortoneProvider>
-            <View
-              className={cn(
-                "flex-1 font-extralight",
-                Platform.OS === "web" && "max-w-[468px] w-full self-center"
-              )}
-            >
-              <AnalyticsProvider>
-                <RouteTracker>
-                  <>
-                    <Slot />
-                    <VersionUpdateChecker />
-                  </>
-                </RouteTracker>
-              </AnalyticsProvider>
-            </View>
-          </PortoneProvider>
+          <I18nextProvider i18n={i18n}>
+            <PortoneProvider>
+              <View
+                className={cn(
+                  "flex-1 font-extralight",
+                  Platform.OS === "web" && "max-w-[468px] w-full self-center"
+                )}
+              >
+                <AnalyticsProvider>
+                  <RouteTracker>
+                    <>
+                      <Slot />
+                      <VersionUpdateChecker />
+                    </>
+                  </RouteTracker>
+                </AnalyticsProvider>
+              </View>
+            </PortoneProvider>
+          </I18nextProvider>
         </ModalProvider>
       </QueryProvider>
     </GestureHandlerRootView>

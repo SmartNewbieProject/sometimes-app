@@ -15,3 +15,4 @@ export * from './notifications';
 export * from './time';
 export { default as logger } from './logger';
 export * from './local'
+export * from './i18n';
