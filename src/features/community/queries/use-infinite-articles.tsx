@@ -73,26 +73,23 @@ export const useInfiniteArticlesQuery = ({
           },
         };
       }
-
       return getArticles({
         code: categoryCode,
         page: pageParam,
         size: pageSize,
       });
     },
-
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       if (!lastPage.meta?.hasNextPage) return undefined;
       return (lastPage.meta.currentPage ?? 1) + 1;
     },
-
     enabled: enabled && !!categoryCode,
-
     staleTime: 30_000,
     gcTime: 10 * 60 * 1000,
   });
 
+  const pagesCount = data?.pages?.length ?? 0; // ✅ 추가
   const articles = data?.pages.flatMap((page) => page.items) || [];
 
   const saveScrollPosition = useCallback((position: number) => {
@@ -111,26 +108,19 @@ export const useInfiniteArticlesQuery = ({
       const newIsLiked = !article.isLiked;
       const newLikeCount = article.likeCount + (article.isLiked ? -1 : 1);
 
-      // 리스트 캐시 업데이트
       queryClient.setQueryData(
         [...QUERY_KEYS.articles.lists(), { categoryCode }],
         (oldData: any) => {
           if (!oldData) return oldData;
-
           return {
             ...oldData,
             pages: oldData.pages.map((page: any) => ({
               ...page,
-              items: page.items.map((a: Article) => {
-                if (a.id === articleId) {
-                  return {
-                    ...a,
-                    likeCount: newLikeCount,
-                    isLiked: newIsLiked,
-                  };
-                }
-                return a;
-              }),
+              items: page.items.map((a: Article) =>
+                a.id === articleId
+                  ? { ...a, likeCount: newLikeCount, isLiked: newIsLiked }
+                  : a
+              ),
             })),
           };
         }
@@ -140,30 +130,22 @@ export const useInfiniteArticlesQuery = ({
         QUERY_KEYS.articles.detail(articleId),
         (oldData: any) => {
           if (!oldData) return oldData;
-          return {
-            ...oldData,
-            likeCount: newLikeCount,
-            isLiked: newIsLiked,
-          };
+          return { ...oldData, likeCount: newLikeCount, isLiked: newIsLiked };
         }
       );
 
-      return articles.map((a) => {
-        if (a.id === articleId) {
-          return {
-            ...a,
-            likeCount: newLikeCount,
-            isLiked: newIsLiked,
-          };
-        }
-        return a;
-      });
+      return articles.map((a) =>
+        a.id === articleId
+          ? { ...a, likeCount: newLikeCount, isLiked: newIsLiked }
+          : a
+      );
     },
     [articles, queryClient, categoryCode]
   );
 
   return {
     articles,
+    pagesCount,
     isLoading,
     isLoadingMore: isFetchingNextPage,
     hasNextPage: !!hasNextPage,

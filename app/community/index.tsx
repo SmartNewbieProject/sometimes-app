@@ -14,27 +14,21 @@ export default function CommunityScreen() {
   const { refresh: shouldRefresh } = useLocalSearchParams<{
     refresh: string;
   }>();
-  const {
-    currentCategory: categoryCode,
-  } = useCategory();
+  const { currentCategory: categoryCode } = useCategory();
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    if (!categoryCode) return;
     prefetchArticlesFirstPage(queryClient, categoryCode, 10).catch(() => {});
   }, [categoryCode, queryClient]);
 
   const { refetch } = useInfiniteArticlesQuery({ categoryCode, pageSize: 10 });
+
   useEffect(() => {
     if (shouldRefresh === "true") {
       refetch();
     }
   }, [shouldRefresh, refetch]);
-
-
-
-
-
-
 
   return (
     <View className="flex-1 relative">
@@ -43,7 +37,7 @@ export default function CommunityScreen() {
       <View className="flex-1 bg-white">
         <View style={{ height: 1, backgroundColor: "#F3F0FF" }} />
         <InfiniteArticleList
-          key={`list-${categoryCode}`}
+          key={`list-${categoryCode ?? "none"}`}
           initialSize={10}
           categoryCode={categoryCode}
           preferSkeletonOnCategoryChange
