@@ -109,12 +109,12 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
         }
         return page;
       });
-
       return {
         ...oldData,
         pages: updatedPages,
       };
     });
+    queryClient.invalidateQueries({ queryKey: ['chat-list', chatRoomId] });
   }, [chatRoomId, queryClient]);
 
   const updateImageUrl = useCallback((messageId: string, mediaUrl: string) => {
