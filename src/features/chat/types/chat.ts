@@ -10,6 +10,9 @@ export interface Chat {
 	createdAt: string;
 	isMe: boolean;
 	updatedAt: string;
+	tempId?: string; // 임시 ID (서버 응답 전까지 사용)
+	sendingStatus?: 'sending' | 'sent' | 'failed';
+	optimistic?: boolean; // 낙관적으로 추가된 메시지 여부
 }
 
 export interface ChatRoomDetail {

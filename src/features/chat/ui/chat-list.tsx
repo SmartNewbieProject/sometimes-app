@@ -1,28 +1,18 @@
-import { logger } from "@shared/libs";
-import { useQueryClient } from "@tanstack/react-query"; // React Query v5 기준
 import { useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Keyboard, View } from "react-native";
-import { useAuth } from "../../auth";
 import { useChatEvent } from "../hooks/use-chat-event";
 import { useChatRoomLifecycle } from "../hooks/use-chat-room-lifecycle";
 import { useChatRoomRead } from "../hooks/use-chat-room-read";
 import { useSocketEventManager } from "../hooks/use-socket-event-manager";
+import { useOptimisticChat } from "../hooks/use-optimistic-chat";
 import useChatList from "../queries/use-chat-list";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { useChatStore } from "../store/chat";
 import type { Chat } from "../types/chat";
-import { addMessageToChatList } from "../utils/update-chat-list-cache";
 import ChatMessage from "./message/chat-message";
 import DateDivider from "./message/date-divider";
 import SystemMessage from "./message/system-message";
-
-// useChatList 훅의 반환 타입 (가정)
-interface PaginatedChatData {
-  pages: { messages: Chat[] }[];
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  pageParams: any[];
-}
 
 type ChatListItem =
   | { type: "message"; data: Chat }
@@ -32,9 +22,7 @@ interface ChatListProps {
 }
 
 const ChatList = ({ setPhotoClicked }: ChatListProps) => {
-  const { accessToken } = useAuth();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const queryClient = useQueryClient();
   const [forceUpdate, setForceUpdate] = useState(0);
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
@@ -66,6 +54,7 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { connected } = useChatStore();
   const { markRoomAsRead } = useChatRoomRead();
   const { subscribe } = useSocketEventManager();
+  const { addReceivedMessage, updateImageUrl } = useOptimisticChat({ chatRoomId: id });
 
   useChatRoomLifecycle({
     chatRoomId: id,
@@ -81,54 +70,17 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     }
   }, [id, connected, markRoomAsRead]);
 
-  // 채팅방 내부에서 새 메시지 수신 처리
   useEffect(() => {
     const unsubscribe = subscribe("newMessage", (chat: Chat) => {
-      // 현재 채팅방의 메시지인 경우에만 채팅 리스트에 추가
       if (chat.chatRoomId === id) {
         actions.readMessages(id);
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        queryClient.setQueryData(["chat-list", id], (oldData: any) => {
-          if (!oldData) return oldData;
-
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          const updatedPages = oldData.pages.map((page: any, index: number) => {
-            const date = new Date(chat.createdAt);
-
-            date.setHours(date.getHours() + 9);
-
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-            const hours = String(date.getHours()).padStart(2, "0");
-            const minutes = String(date.getMinutes()).padStart(2, "0");
-            const seconds = String(date.getSeconds()).padStart(2, "0");
-            const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-            if (index === 0) {
-              return {
-                ...page,
-                messages: [
-                  { ...chat, createdAt: formattedDate },
-                  ...page.messages,
-                ],
-              };
-            }
-            return page;
-          });
-
-          return {
-            ...oldData,
-            pages: updatedPages,
-          };
-        });
+        addReceivedMessage(chat);
       }
     });
 
     return unsubscribe;
-  }, [subscribe, id, queryClient]);
+  }, [subscribe, id, addReceivedMessage, actions]);
 
-  // 이미지 업로드 상태 처리
   useEffect(() => {
     const unsubscribe = subscribe(
       "imageUploadStatus",
@@ -138,39 +90,14 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
         mediaUrl?: string;
         uploadStatus: "uploading" | "completed" | "failed";
       }) => {
-        if (
-          uploadData.chatRoomId === id &&
-          uploadData.uploadStatus === "completed"
-        ) {
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          queryClient.setQueryData(["chat-list", id], (oldData: any) => {
-            if (!oldData) return oldData;
-
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            const updatedPages = oldData.pages.map((page: any) => ({
-              ...page,
-              messages: page.messages.map((message: Chat) =>
-                message.id === uploadData.id
-                  ? {
-                      ...message,
-                      mediaUrl: uploadData.mediaUrl,
-                      uploadStatus: "completed",
-                    }
-                  : message
-              ),
-            }));
-
-            return {
-              ...oldData,
-              pages: updatedPages,
-            };
-          });
+        if (uploadData.chatRoomId === id && uploadData.uploadStatus === "completed" && uploadData.mediaUrl) {
+          updateImageUrl(uploadData.id, uploadData.mediaUrl);
         }
       }
     );
 
     return unsubscribe;
-  }, [subscribe, id, queryClient]);
+  }, [subscribe, id, updateImageUrl]);
 
   const sortedChatList = useMemo(() => {
     const sorted = [...formattedChatList]

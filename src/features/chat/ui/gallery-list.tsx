@@ -2,7 +2,6 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { Text as CustomText } from "@/src/shared/ui";
 import { convertToJpeg, uriToBase64 } from "@/src/shared/utils/image";
 import { LegendList } from "@legendapp/list";
-import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
@@ -14,11 +13,10 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { fileToBase64Payload } from "../domain/utils/file-to-base64";
 import { useChatEvent } from "../hooks/use-chat-event";
+import { useOptimisticChat } from "../hooks/use-optimistic-chat";
+import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
-import type { Chat } from "../types/chat";
 import ChatCamera from "./camera";
 
 interface GalleryListProps {
@@ -29,15 +27,15 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([firstDummy]);
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const { id } = useLocalSearchParams<{ id: string }>();
-  const queryClient = useQueryClient();
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(false);
   const { showModal, hideModal } = useModal();
   const heightAnim = useSharedValue(0);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const { data: partner } = useChatRoomDetail(id);
-
-  const { actions, socket } = useChatEvent();
+  const { my: user } = useAuth();
+  const { actions } = useChatEvent();
+  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
 
   useEffect(() => {
     if (permissionGranted && photos.length === 0) {
@@ -133,14 +131,36 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
     });
   };
 
-  const sendImage = async (uri: string) => {
-    const jpegUri = await convertToJpeg(uri);
-    const imageUri = await uriToBase64(jpegUri);
-    if (imageUri) {
-      actions.uploadImage(partner?.partnerId ?? "", id, imageUri);
+  const sendImage = useCallback(async (uri: string) => {
+    if (!partner?.partnerId || !user?.id) {
+      return;
     }
-    queryClient.refetchQueries({ queryKey: ["chat-list", id] });
-  };
+
+    try {
+      const jpegUri = await convertToJpeg(uri);
+      const base64Image = await uriToBase64(jpegUri);
+      
+      const { optimisticMessage, promise } = await actions.uploadImage({
+        to: partner.partnerId,
+        chatRoomId: id,
+        senderId: user.id,
+        file: base64Image
+      });
+
+      addOptimisticMessage(optimisticMessage);
+      hideModal();
+      const result = await promise;
+      
+      if (result.success && result.serverMessage) {
+        replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
+      } else {
+        markMessageAsFailed(optimisticMessage.tempId!, result.error);
+      }
+    } catch (error) {
+      console.error('Image upload error:', error);
+      hideModal();
+    }
+  }, [partner, user, id, actions, addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed, hideModal]);
 
   const renderItem = ({ item }: { item: MediaLibrary.Asset }) => {
     return (

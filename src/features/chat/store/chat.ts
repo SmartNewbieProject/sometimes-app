@@ -55,7 +55,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
 			reconnectionDelay: 1000,
 			timeout: 20000,
 
-			// 중복 연결 방지를 위한 고유 식별자
 			forceNew: !!state.socket,
 		});
 

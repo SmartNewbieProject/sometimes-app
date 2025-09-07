@@ -1,4 +1,4 @@
-import { useCallback, type RefObject } from "react";
+import { useCallback, type RefObject, useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -13,6 +13,8 @@ import { useInfiniteScroll } from "../hooks/use-infinite-scroll";
 interface CustomInfiniteScrollViewProps<T> extends InfiniteScrollViewProps<T> {
   flatListRef?: RefObject<FlatList<T>>;
   getItemKey?: (item: T, index: number) => string;
+  autoFillMaxPages?: number;
+  observerEnabled?: boolean;
 }
 
 export function CustomInfiniteScrollView<T>({
@@ -30,15 +32,50 @@ export function CustomInfiniteScrollView<T>({
   threshold = 0.5,
   flatListRef,
   getItemKey,
+  autoFillMaxPages = 0,
+  observerEnabled = false,
   ...restProps
 }: CustomInfiniteScrollViewProps<T>) {
-  const { scrollProps, getLastItemProps, ensureFillTriggersLoad } =
-    useInfiniteScroll<T>(onLoadMore, {
-      threshold,
-      enabled: hasMore && !isLoadingMore,
+  const { scrollProps, getLastItemProps } = useInfiniteScroll<T>(onLoadMore, {
+    threshold,
+    enabled: observerEnabled && hasMore && !isLoadingMore,
+  });
+
+  const autoFillCountRef = useRef(0);
+  useEffect(() => {
+    if (!observerEnabled) return;
+    if (Platform.OS !== "web") return;
+    if (autoFillMaxPages <= 0) return;
+    if (!hasMore || isLoadingMore) return;
+    if (autoFillCountRef.current >= autoFillMaxPages) return;
+
+    const rAF = requestAnimationFrame(() => {
+      const doc = document.documentElement;
+      const body = document.body;
+      const scrollHeight = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        doc.clientHeight,
+        doc.scrollHeight,
+        doc.offsetHeight
+      );
+      const viewport = window.innerHeight || doc.clientHeight;
+
+      if (scrollHeight <= viewport + 4) {
+        autoFillCountRef.current += 1;
+        onLoadMore();
+      }
     });
 
-  ensureFillTriggersLoad?.(data, hasMore, isLoadingMore);
+    return () => cancelAnimationFrame(rAF);
+  }, [
+    data.length,
+    hasMore,
+    isLoadingMore,
+    onLoadMore,
+    autoFillMaxPages,
+    observerEnabled,
+  ]);
 
   const renderItemInternal = useCallback(
     ({ item, index }: { item: T; index: number }) => renderItem(item, index),
@@ -49,7 +86,7 @@ export function CustomInfiniteScrollView<T>({
     const props = getLastItemProps(); // web: { ref }, native: {}
     return (
       <View style={{ paddingTop: Platform.OS === "web" ? 8 : 0 }}>
-        {Platform.OS === "web" && (
+        {Platform.OS === "web" && observerEnabled && (
           <View
             ref={props.ref as any}
             style={{ height: 24, width: "100%" }}
@@ -59,7 +96,7 @@ export function CustomInfiniteScrollView<T>({
         {isLoadingMore ? <LoadingIndicator /> : null}
       </View>
     );
-  }, [getLastItemProps, isLoadingMore, LoadingIndicator]);
+  }, [getLastItemProps, isLoadingMore, LoadingIndicator, observerEnabled]);
 
   const listEmpty = !isLoading ? <EmptyComponent /> : null;
 

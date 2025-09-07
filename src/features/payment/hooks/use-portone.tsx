@@ -99,6 +99,9 @@ export function usePortone(): UsePortone {
 
         if (eventType) {
           await handleEventParticipation(eventType);
+          await queryClient.invalidateQueries({
+            queryKey: ["event"],
+          });
           clearEventType();
         }
 
