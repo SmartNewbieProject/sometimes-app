@@ -53,13 +53,13 @@ export interface ChatServerToClientEvents {
 }
 
 export interface ChatClientToServerEvents {
-	sendMessage: (payload: SendMessagePayload) => void;
+	sendMessage: (payload: SendMessagePayload, callback: (response: { success: boolean; serverMessage?: Chat; error?: string }) => void) => void;
 	createChatRoom: (payload: CreateChatRoomPayload) => void;
 	getChatHistory: (payload: GetChatHistoryPayload) => void;
 	leaveChatRoom: (payload: LeaveChatRoomPayload) => void;
 	typing: (payload: TypingPayload) => void;
 	stopTyping: (payload: TypingPayload) => void;
-	uploadImage: (payload: UploadImagePayload) => void;
+	uploadImage: (payload: UploadImagePayload, callback: (response: { success: boolean; serverMessage?: Chat; error?: string }) => void) => void;
 	remoteMessage: (payload: RemoteMessagePayload) => void;
 	readMessages: (payload: ReadMessagesPayload) => void;
 }

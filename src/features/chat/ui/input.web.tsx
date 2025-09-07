@@ -8,24 +8,24 @@ import { useLocalSearchParams } from "expo-router";
 import type React from "react";
 import {
   type ChangeEvent,
-  useCallback,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { Alert, Linking, Platform } from "react-native";
 import PhotoPickerModal from "../../mypage/ui/modal/image-modal";
 import { useChatEvent } from "../hooks/use-chat-event";
+import { useOptimisticChat } from "../hooks/use-optimistic-chat";
+import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
-import type { Chat } from "../types/chat";
+
 function WebChatInput() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const queryClient = useQueryClient();
   const [chat, setChat] = useState("");
   const { data: roomDetail, isError } = useChatRoomDetail(id);
-  console.log("roomDetail", roomDetail);
-
-  const { actions, socket } = useChatEvent();
+  const queryClient = useQueryClient();
+  const { my: user } = useAuth();
+  const { actions } = useChatEvent();
+  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
   const { showErrorModal } = useModal();
@@ -63,8 +63,27 @@ function WebChatInput() {
         return null;
       }
 
-      actions.uploadImage(roomDetail?.partnerId ?? "", id, pickedUri);
-      queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+      if (roomDetail?.partnerId && user?.id) {
+        try {
+          const { optimisticMessage, promise } = await actions.uploadImage({
+            to: roomDetail.partnerId,
+            chatRoomId: id,
+            senderId: user.id,
+            file: pickedUri
+          });
+
+          addOptimisticMessage(optimisticMessage);
+
+          const result = await promise;
+          if (result.success && result.serverMessage) {
+            replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
+          } else {
+            markMessageAsFailed(optimisticMessage.tempId!, result.error);
+          }
+        } catch (error) {
+          console.error('Web image upload error:', error);
+        }
+      }
       console.log("jpegUri", pickedUri);
     }
     setImageModal(false);
@@ -103,7 +122,27 @@ function WebChatInput() {
         setImageModal(false);
         return null;
       }
-      actions.uploadImage(roomDetail?.partnerId ?? "", id, pickedUri);
+      if (roomDetail?.partnerId && user?.id) {
+        try {
+          const { optimisticMessage, promise } = await actions.uploadImage({
+            to: roomDetail.partnerId,
+            chatRoomId: id,
+            senderId: user.id,
+            file: pickedUri
+          });
+
+          addOptimisticMessage(optimisticMessage);
+
+          const result = await promise;
+          if (result.success && result.serverMessage) {
+            replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
+          } else {
+            markMessageAsFailed(optimisticMessage.tempId!, result.error);
+          }
+        } catch (error) {
+          console.error('Web camera upload error:', error);
+        }
+      }
       console.log("jpegUri", pickedUri);
       queryClient.refetchQueries({ queryKey: ["chat-list", id] });
     }
@@ -131,6 +170,7 @@ function WebChatInput() {
 
     actions.sendMessage({
       chatRoomId: id,
+      senderId: user?.id as string,
       content: chat ?? "",
       to: roomDetail?.partnerId,
     });

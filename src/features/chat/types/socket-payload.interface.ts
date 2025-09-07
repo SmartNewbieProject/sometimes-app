@@ -2,6 +2,7 @@ export interface SendMessagePayload {
   to: string;
   content: string;
   chatRoomId: string;
+  tempId: string;
 }
 
 export interface CreateChatRoomPayload {
@@ -31,6 +32,7 @@ export interface UploadImagePayload {
   chatRoomId: string;
   imageData: string;
   mimeType: string;
+  tempId: string;
 }
 
 export interface RemoteMessagePayload {
