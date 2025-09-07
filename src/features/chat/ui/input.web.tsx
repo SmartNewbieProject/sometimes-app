@@ -52,6 +52,8 @@ function WebChatInput() {
       selectionLimit: 1,
     });
 
+    console.log(result);
+
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
@@ -64,18 +66,25 @@ function WebChatInput() {
       }
 
       if (roomDetail?.partnerId && user?.id) {
+        console.warn({ roomDetail, user });
         try {
+          setImageModal(false);
           const { optimisticMessage, promise } = await actions.uploadImage({
             to: roomDetail.partnerId,
             chatRoomId: id,
             senderId: user.id,
             file: pickedUri
           });
-
+          console.log({ optimisticMessage, promise });
           addOptimisticMessage(optimisticMessage);
+          
+          const timeoutPromise = new Promise<{success: boolean, error: string}>((resolve) => {
+            setTimeout(() => resolve({success: false, error: 'Upload timeout after 15 seconds'}), 15000);
+          });
+          
+          const result = await Promise.race([promise, timeoutPromise]);
 
-          const result = await promise;
-          if (result.success && result.serverMessage) {
+          if (result.success && 'serverMessage' in result && result.serverMessage) {
             replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
           } else {
             markMessageAsFailed(optimisticMessage.tempId!, result.error);
@@ -84,8 +93,10 @@ function WebChatInput() {
           console.error('Web image upload error:', error);
         }
       }
+      setImageModal(false);
       console.log("jpegUri", pickedUri);
     }
+
     setImageModal(false);
     return null;
   };
@@ -133,20 +144,31 @@ function WebChatInput() {
 
           addOptimisticMessage(optimisticMessage);
 
-          const result = await promise;
-          if (result.success && result.serverMessage) {
+          // 타임아웃 추가
+          const timeoutPromise = new Promise<{success: boolean, error: string}>((resolve) => {
+            setTimeout(() => resolve({success: false, error: 'Upload timeout after 15 seconds'}), 15000);
+          });
+          
+          const result = await Promise.race([promise, timeoutPromise]);
+          
+          if (result.success && 'serverMessage' in result && result.serverMessage) {
             replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
           } else {
             markMessageAsFailed(optimisticMessage.tempId!, result.error);
           }
+          setImageModal(false);
         } catch (error) {
           console.error('Web camera upload error:', error);
+          setImageModal(false);
         }
+      } else {
+        setImageModal(false);
       }
       console.log("jpegUri", pickedUri);
       queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+    } else {
+      setImageModal(false);
     }
-    setImageModal(false);
     return null;
   };
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
