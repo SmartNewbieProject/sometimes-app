@@ -37,13 +37,26 @@ function ChatRoomList() {
 
   useEffect(() => {
     const unsubscribe = subscribe("newMessage", (chat: Chat) => {
+      if (!chat.chatRoomId || !chat.content) {
+        console.warn("Invalid chat message received:", chat);
+        return;
+      }
+
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      queryClient.setQueryData(["chat-room"], (oldData: any) =>
-        updateChatRoomOnNewMessage(oldData, chat)
-      );
+      queryClient.setQueryData(["chat-room"], (oldData: any) => {
+        if (!oldData) {
+          return oldData;
+        }
+
+        return updateChatRoomOnNewMessage(oldData, chat);
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["chat-room"] });
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+    };
   }, [subscribe, queryClient]);
 
   return (
