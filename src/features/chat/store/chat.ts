@@ -37,6 +37,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 		const newSocket = io(url, {
 			transports: ['websocket'],
 			withCredentials: true,
+			secure: process.env.NODE_ENV === 'production',
+			rejectUnauthorized: true,
 			auth: { token },
 		});
 		console.log('check store', newSocket);
