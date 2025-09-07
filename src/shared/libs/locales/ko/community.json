@@ -1,0 +1,22 @@
+{
+  "id":{
+    "header_title": "커뮤니티",
+    "dropdown_edit": "수정",
+    "dropdown_delete": "삭제",
+    "error_invalid": "잘못된 요청입니다",
+    "error_loading": "게시글을 불러오는 중 오류가 발생했습니다.",
+    "loading": "게시글을 불러오고 있어요"
+  },
+  "write":{
+    "modal_short_title": "너무 짧아요",
+    "modal_short_desc": "제목과 본문은 3자 이상으로 작성해주세요.",
+    "modal_overflow_title": "글자수 초과",
+    "modal_overflow_desc": "본문은 2000자 이하로 작성해주세요.",
+    "modal_success_title": "글 작성 완료",
+    "modal_success_desc": "글 작성이 완료되었습니다.",
+    "modal_fail_title": "글 작성 실패",
+    "modal_fail_desc_default": "글 작성 중 오류가 발생했습니다.",
+    "modal_confirm": "확인",
+    "modal_confirm_checked": "네, 확인했어요"
+  }
+}
