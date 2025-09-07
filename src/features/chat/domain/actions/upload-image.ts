@@ -6,6 +6,7 @@ import { uriToBase64 } from '@/src/shared/utils/image';
 import { compressImage, isImageTooLarge } from '../../utils/image-compression';
 import { generateTempId } from '../../utils/generate-temp-id';
 import day from "@shared/libs/day";
+import {dayUtils} from "@shared/libs";
 
 interface UploadImageOptions {
   to: string;
@@ -31,7 +32,7 @@ export const uploadImageAction = async (
 }> => {
   const { to, chatRoomId, senderId, file } = options;
   const tempId = generateTempId();
-  const now = day.create().format();
+  const now = dayUtils.create().format();
 
   const optimisticMessage: Chat = {
     id: tempId,

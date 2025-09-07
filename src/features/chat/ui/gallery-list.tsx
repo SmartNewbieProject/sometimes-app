@@ -148,9 +148,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
       });
 
       addOptimisticMessage(optimisticMessage);
-      hideModal();
       const result = await promise;
-      
       if (result.success && result.serverMessage) {
         replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
       } else {
@@ -158,6 +156,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
       }
     } catch (error) {
       console.error('Image upload error:', error);
+    } finally {
       hideModal();
     }
   }, [partner, user, id, actions, addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed, hideModal]);

@@ -95,6 +95,14 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
         }
       }
     );
+    return unsubscribe;
+  }, [subscribe, id, updateImageUrl]);
+
+  useEffect(() => {
+    const unsubscribe = subscribe("messageUpdated", uploadData => {
+      console.log('messageUpdated event received:', uploadData);
+      updateImageUrl(uploadData.id, uploadData.mediaUrl ?? "");
+    });
 
     return unsubscribe;
   }, [subscribe, id, updateImageUrl]);
