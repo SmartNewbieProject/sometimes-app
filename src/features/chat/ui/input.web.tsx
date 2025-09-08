@@ -6,16 +6,13 @@ import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
 import type React from "react";
-import {
-  type ChangeEvent,
-  useRef,
-  useState,
-} from "react";
+import { type ChangeEvent, useRef, useState } from "react";
 import { Alert, Linking, Platform } from "react-native";
+import { useAuth } from "../../auth";
 import PhotoPickerModal from "../../mypage/ui/modal/image-modal";
 import { useChatEvent } from "../hooks/use-chat-event";
+import useKeyboardResizeEffect from "../hooks/use-keyboard-resize-effect";
 import { useOptimisticChat } from "../hooks/use-optimistic-chat";
-import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 
 function WebChatInput() {
@@ -25,7 +22,11 @@ function WebChatInput() {
   const queryClient = useQueryClient();
   const { my: user } = useAuth();
   const { actions } = useChatEvent();
-  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
+  const {
+    addOptimisticMessage,
+    replaceOptimisticMessage,
+    markMessageAsFailed,
+  } = useOptimisticChat({ chatRoomId: id });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
   const { showErrorModal } = useModal();
@@ -33,7 +34,7 @@ function WebChatInput() {
   const handlePress = async () => {
     setImageModal(true);
   };
-
+  useKeyboardResizeEffect();
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -69,19 +70,22 @@ function WebChatInput() {
             to: roomDetail.partnerId,
             chatRoomId: id,
             senderId: user.id,
-            file: pickedUri
+            file: pickedUri,
           });
 
           addOptimisticMessage(optimisticMessage);
 
           const result = await promise;
           if (result.success && result.serverMessage) {
-            replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
+            replaceOptimisticMessage(
+              optimisticMessage.tempId!,
+              result.serverMessage
+            );
           } else {
             markMessageAsFailed(optimisticMessage.tempId!, result.error);
           }
         } catch (error) {
-          console.error('Web image upload error:', error);
+          console.error("Web image upload error:", error);
         }
       }
       console.log("jpegUri", pickedUri);
@@ -128,19 +132,22 @@ function WebChatInput() {
             to: roomDetail.partnerId,
             chatRoomId: id,
             senderId: user.id,
-            file: pickedUri
+            file: pickedUri,
           });
 
           addOptimisticMessage(optimisticMessage);
 
           const result = await promise;
           if (result.success && result.serverMessage) {
-            replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
+            replaceOptimisticMessage(
+              optimisticMessage.tempId!,
+              result.serverMessage
+            );
           } else {
             markMessageAsFailed(optimisticMessage.tempId!, result.error);
           }
         } catch (error) {
-          console.error('Web camera upload error:', error);
+          console.error("Web camera upload error:", error);
         }
       }
       console.log("jpegUri", pickedUri);
