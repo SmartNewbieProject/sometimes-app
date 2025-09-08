@@ -22,7 +22,7 @@ function UniversityCluster() {
   const insets = useSafeAreaInsets();
   const { data } = useUniversitiesByArea(regions);
 
-  const areaList = getAreaByCode(regions[0]);
+  const areaList = regions.length > 0 ? getAreaByCode(regions[0]) : [];
   const sortedData = data
     ? [...data.sort((a, b) => a.name.localeCompare(b.name, "ko"))]
     : [];
