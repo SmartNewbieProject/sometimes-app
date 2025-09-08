@@ -31,7 +31,7 @@ export default function GemStoreScreen() {
   const controller = createRef<PortOneController>();
   const { showErrorModal } = useModal();
   const [paymentId, setPaymentId] = useState<string>(() => createUniqueId());
-  const { setGemCount } = usePortoneStore();
+  const { setGemCount, clearEventType } = usePortoneStore();
   const { my } = useAuth();
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
 
@@ -196,6 +196,7 @@ export default function GemStoreScreen() {
                             env: process.env.EXPO_PUBLIC_TRACKING_MODE,
                           });
                           setGemCount(product.totalGems);
+                          clearEventType();
                           onPurchase({
                             totalPrice: metadata.totalPrice,
                             count: 1,

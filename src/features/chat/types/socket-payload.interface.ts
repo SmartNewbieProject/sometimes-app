@@ -2,12 +2,14 @@ export interface SendMessagePayload {
   to: string;
   content: string;
   chatRoomId: string;
+  tempId: string;
 }
 
 export interface CreateChatRoomPayload {
   maleId: string;
   femaleId: string;
   matchId: string;
+  matchLikeId?: string;
 }
 
 export interface GetChatHistoryPayload {
@@ -30,6 +32,7 @@ export interface UploadImagePayload {
   chatRoomId: string;
   imageData: string;
   mimeType: string;
+  tempId: string;
 }
 
 export interface RemoteMessagePayload {

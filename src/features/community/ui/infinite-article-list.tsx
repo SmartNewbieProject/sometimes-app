@@ -13,6 +13,7 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from "react";
 import {
   type FlatList,
@@ -23,6 +24,8 @@ import {
   Platform,
   TouchableOpacity,
   View,
+  type ViewToken,
+  type ViewabilityConfig,
 } from "react-native";
 import { CustomInfiniteScrollView } from "../../../shared/infinite-scroll/custom-infinite-scroll-view";
 import apis from "../apis";
@@ -32,8 +35,12 @@ import { createArticlesQueryKey } from "../queries/use-infinite-articles";
 import type { Article as ArticleType } from "../types";
 import { Article } from "./article";
 
+import { ArticleSkeleton } from "../../loading/skeleton/article-skeleton";
+
 interface InfiniteArticleListProps {
   initialSize?: number;
+  categoryCode?: string;
+  preferSkeletonOnCategoryChange?: boolean;
 }
 
 export interface InfiniteArticleListHandle {
@@ -43,224 +50,316 @@ export interface InfiniteArticleListHandle {
 export const InfiniteArticleList = forwardRef<
   InfiniteArticleListHandle,
   InfiniteArticleListProps
->(({ initialSize = 10 }: InfiniteArticleListProps, ref) => {
-  const { showModal, showErrorModal } = useModal();
-  const { currentCategory: categoryCode } = useCategory();
-  const { my } = useAuth();
+>(
+  (
+    {
+      initialSize = 10,
+      categoryCode: categoryCodeOverride,
+      preferSkeletonOnCategoryChange = true,
+    }: InfiniteArticleListProps,
+    ref
+  ) => {
+    const { showModal, showErrorModal } = useModal();
+    const { currentCategory: currentFromContext } = useCategory();
+    const categoryCode = categoryCodeOverride ?? currentFromContext;
+    const { my } = useAuth();
 
-  const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<
-    FlatList<ArticleType>
-  >;
-  const queryClient = useQueryClient();
+    const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<
+      FlatList<ArticleType>
+    >;
+    const queryClient = useQueryClient();
 
-  const {
-    articles,
-    isLoading,
-    isLoadingMore,
-    hasNextPage,
-    loadMore,
-    updateArticleLike,
-    saveScrollPosition,
-    getScrollPosition,
-    refetch,
-  } = useInfiniteArticlesQuery({
-    categoryCode,
-    pageSize: initialSize,
-  });
-
-  const isWeb = Platform.OS === "web";
-
-  const invalidateAndRefetch = async () => {
-    await queryClient.invalidateQueries({
-      queryKey: createArticlesQueryKey(categoryCode),
+    const {
+      articles,
+      pagesCount,
+      isLoading,
+      isLoadingMore,
+      hasNextPage,
+      loadMore,
+      updateArticleLike,
+      saveScrollPosition,
+      getScrollPosition,
+      refetch,
+    } = useInfiniteArticlesQuery({
+      categoryCode,
+      pageSize: initialSize,
     });
-    await refetch();
-  };
 
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (!isWeb) {
-        const position = event.nativeEvent.contentOffset.y;
-        saveScrollPosition(position);
+    const prevCategoryRef = useRef<string | undefined>(categoryCode);
+    const [forceSkeleton, setForceSkeleton] = useState<boolean>(false);
+
+    useEffect(() => {
+      if (!preferSkeletonOnCategoryChange) return;
+      if (prevCategoryRef.current !== categoryCode) {
+        prevCategoryRef.current = categoryCode;
+        setForceSkeleton(true);
+        // 페이지 보장/프리패치 락도 리셋
+        didEnsureTwoPagesRef.current = false;
+        lastEnsuredTargetRef.current = null;
       }
-    },
-    [isWeb, saveScrollPosition]
-  );
-  const like = (item: ArticleType) => {
-    if (!my?.id) {
-      Linking.openURL("https://info.some-in-univ.com");
-      return;
-    }
+    }, [categoryCode, preferSkeletonOnCategoryChange]);
 
-    tryCatch(
-      async () => {
-        updateArticleLike(item.id);
-        await apis.articles.doLike(item);
-      },
-      (error) => {
-        console.error("좋아요 업데이트 실패:", error);
+    useEffect(() => {
+      if (!preferSkeletonOnCategoryChange) return;
+      if ((articles && articles.length > 0) || (!isLoading && !isLoadingMore)) {
+        setForceSkeleton(false);
       }
-    );
-  };
+    }, [articles, isLoading, isLoadingMore, preferSkeletonOnCategoryChange]);
 
-  const deleteArticle = (id: string) => {
-    showModal({
-      title: "게시글 삭제",
-      children: (
-        <View>
-          <Text size="sm" textColor="black">
-            해당 게시글을 삭제할까요?
-          </Text>
-        </View>
-      ),
-      primaryButton: {
-        text: "삭제하기",
-        onClick: () =>
-          tryCatch(
-            async () => {
-              await apis.articles.deleteArticle(id);
-              await invalidateAndRefetch();
-            },
-            ({ error }) => {
-              console.log({ error });
-              showErrorModal(error, "error");
-            }
-          ),
-      },
-      secondaryButton: {
-        text: "취소",
-        onClick: () => {},
-      },
-    });
-  };
+    const isWeb = Platform.OS === "web";
 
-  const renderFooter = () => {
-    if (!isLoadingMore) return null;
-    return (
-      <View className="py-4 flex items-center justify-center">
-        <Lottie size={48} />
-      </View>
-    );
-  };
-
-  useImperativeHandle(ref, () => ({
-    refresh: () => {
-      return invalidateAndRefetch();
-    },
-  }));
-
-  useEffect(() => {
-    if (isWeb) {
-      const scrollContainer = document?.getElementById(
-        "CommunityScrollView"
-      ) as HTMLElement;
-      if (!scrollContainer) return;
-      const handleWebScroll = () => {
-        console.log("handleWebScroll()");
-        console.dir(scrollContainer);
-        const position = scrollContainer.scrollTop;
-        console.log({ position });
-        saveScrollPosition(position);
-      };
-
-      scrollContainer.addEventListener("scroll", handleWebScroll, {
-        passive: true,
+    const invalidateAndRefetch = async () => {
+      await queryClient.invalidateQueries({
+        queryKey: createArticlesQueryKey(categoryCode),
       });
+      await refetch();
+    };
 
-      return () => {
-        scrollContainer.removeEventListener("scroll", handleWebScroll);
-      };
-    }
-  }, [isWeb, saveScrollPosition]);
-
-  useEffect(() => {
-    if (!isWeb) return;
-    const position = getScrollPosition();
-    const scrollContainer = document.getElementById(
-      "CommunityScrollView"
-    ) as HTMLElement;
-    if (!scrollContainer) return;
-
-    if (position > 0) {
-      setTimeout(() => {
-        if (isWeb && typeof window !== "undefined") {
-          console.debug(`scroll To ${position}`);
-          scrollContainer.scrollTo({
-            top: position,
-            behavior: "auto",
-          });
-        } else if (flatListRef.current) {
-          flatListRef.current.scrollToOffset({
-            offset: position,
-            animated: false,
-          });
+    const handleScroll = useCallback(
+      (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        if (!isWeb) {
+          const position = event.nativeEvent.contentOffset.y;
+          saveScrollPosition(position);
         }
-      }, 100);
-    }
-  }, [getScrollPosition, isWeb]);
+      },
+      [isWeb, saveScrollPosition]
+    );
 
-  if (isLoading && articles.length === 0) {
+    const like = (item: ArticleType) => {
+      if (!my?.id) {
+        Linking.openURL("https://info.some-in-univ.com");
+        return;
+      }
+      tryCatch(
+        async () => {
+          updateArticleLike(item.id);
+          await apis.articles.doLike(item);
+        },
+        (error) => {
+          console.error("좋아요 업데이트 실패:", error);
+        }
+      );
+    };
+
+    const deleteArticle = (id: string) => {
+      showModal({
+        title: "게시글 삭제",
+        children: (
+          <View>
+            <Text size="sm" textColor="black">
+              해당 게시글을 삭제할까요?
+            </Text>
+          </View>
+        ),
+        primaryButton: {
+          text: "삭제하기",
+          onClick: () =>
+            tryCatch(
+              async () => {
+                await apis.articles.deleteArticle(id);
+                await invalidateAndRefetch();
+              },
+              ({ error }) => {
+                console.log({ error });
+                showErrorModal(error, "error");
+              }
+            ),
+        },
+        secondaryButton: {
+          text: "취소",
+          onClick: () => {},
+        },
+      });
+    };
+
+    // 스켈레톤 버킷
+    const pickVariant = useCallback((): "short" | "medium" | "long" => {
+      const r = Math.random();
+      if (r < 0.33) return "short";
+      if (r < 0.66) return "medium";
+      return "long";
+    }, []);
+
+    const renderFooter = useCallback(() => {
+      if (!isLoadingMore) return null;
+      return (
+        <View className="py-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <ArticleSkeleton key={`skel-more-${i}`} variant={pickVariant()} />
+          ))}
+        </View>
+      );
+    }, [isLoadingMore, pickVariant]);
+
+    useImperativeHandle(ref, () => ({
+      refresh: () => invalidateAndRefetch(),
+    }));
+
+    const didEnsureTwoPagesRef = useRef(false);
+    useEffect(() => {
+      if (didEnsureTwoPagesRef.current) return;
+      if (isLoading) return;
+      if (isLoadingMore) return;
+      if (pagesCount >= 2) {
+        didEnsureTwoPagesRef.current = true;
+        return;
+      }
+      if (hasNextPage) {
+        didEnsureTwoPagesRef.current = true;
+        loadMore();
+      }
+    }, [isLoading, isLoadingMore, pagesCount, hasNextPage, loadMore]);
+
+    const lastEnsuredTargetRef = useRef<number | null>(null);
+
+    const pageSizeRef = useRef(initialSize);
+    const pagesCountRef = useRef(pagesCount);
+    const hasNextPageRef = useRef(hasNextPage);
+    const isLoadingMoreRef = useRef(isLoadingMore);
+    useEffect(() => {
+      pageSizeRef.current = initialSize;
+    }, [initialSize]);
+    useEffect(() => {
+      pagesCountRef.current = pagesCount;
+    }, [pagesCount]);
+    useEffect(() => {
+      hasNextPageRef.current = hasNextPage;
+    }, [hasNextPage]);
+    useEffect(() => {
+      isLoadingMoreRef.current = isLoadingMore;
+    }, [isLoadingMore]);
+
+    const viewabilityConfigRef = useRef<ViewabilityConfig>({
+      itemVisiblePercentThreshold: 10,
+      minimumViewTime: 80,
+    });
+
+    const onViewableItemsChangedRef = useRef(
+      ({ viewableItems }: { viewableItems: Array<ViewToken> }) => {
+        if (!viewableItems || viewableItems.length === 0) return;
+
+        const firstIdx = viewableItems.reduce((min, v) => {
+          return typeof v.index === "number" ? Math.min(min, v.index) : min;
+        }, Number.POSITIVE_INFINITY);
+        if (!Number.isFinite(firstIdx)) return;
+
+        const size = Math.max(1, pageSizeRef.current);
+        const currentPage = Math.floor(firstIdx / size) + 1;
+        const targetPages = currentPage + 1;
+
+        if (pagesCountRef.current >= targetPages) return;
+        if (!hasNextPageRef.current) return;
+        if (lastEnsuredTargetRef.current === targetPages) return;
+        if (isLoadingMoreRef.current) return;
+
+        lastEnsuredTargetRef.current = targetPages;
+        loadMore().catch(() => {
+          lastEnsuredTargetRef.current = null;
+        });
+      }
+    );
+
+    useEffect(() => {
+      if (!isWeb) return;
+      const el = document?.getElementById(
+        "CommunityScrollView"
+      ) as HTMLElement | null;
+      if (!el) return;
+
+      const handleWebScroll = () => {
+        saveScrollPosition(el.scrollTop);
+      };
+      el.addEventListener("scroll", handleWebScroll, { passive: true });
+      return () => el.removeEventListener("scroll", handleWebScroll);
+    }, [isWeb, saveScrollPosition]);
+
+    useEffect(() => {
+      if (!isWeb) return;
+      const position = getScrollPosition();
+      const el = document.getElementById(
+        "CommunityScrollView"
+      ) as HTMLElement | null;
+      if (!el) return;
+
+      if (position > 0) {
+        setTimeout(() => {
+          el.scrollTo({ top: position, behavior: "auto" });
+        }, 100);
+      }
+    }, [getScrollPosition, isWeb]);
+
+    if (
+      (preferSkeletonOnCategoryChange && forceSkeleton) ||
+      (isLoading && articles.length === 0)
+    ) {
+      return (
+        <View className="flex-1 bg-white">
+          <View className="h-[1px] bg-[#F3F0FF]" />
+          <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+          {Array.from({ length: initialSize }).map((_, i) => (
+            <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
+          ))}
+        </View>
+      );
+    }
+
     return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <Lottie size={128} />
+      <View className="flex-1 bg-white">
+        <View className="h-[1px] bg-[#F3F0FF]" />
+        <TouchableOpacity
+          onPress={() =>
+            Linking.openURL(
+              "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
+            )
+          }
+          className="bg-[#F3EDFF] rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+        >
+          <Image
+            source={require("@/assets/images/fireIcon.png")}
+            style={{ width: 16, height: 16 }}
+          />
+          <Text size="sm" weight="bold">
+            [FAQ] 자주묻는 질문
+          </Text>
+          <TouchableOpacity className="ml-auto">
+            <IconWrapper>
+              <VectorIcon className=" h-[12px] w-[9px]" color="black" />
+            </IconWrapper>
+          </TouchableOpacity>
+        </TouchableOpacity>
+        <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+
+        <CustomInfiniteScrollView
+          data={articles}
+          id="ArticleListContainer"
+          renderItem={(article: ArticleType) => (
+            <Article
+              data={article}
+              onPress={() => {
+                router.push(`/community/${article.id}`);
+              }}
+              onLike={() => like(article)}
+              onDelete={deleteArticle}
+              refresh={() => invalidateAndRefetch()}
+            />
+          )}
+          onLoadMore={loadMore}
+          isLoading={isLoading}
+          isLoadingMore={isLoadingMore}
+          hasMore={hasNextPage}
+          onRefresh={invalidateAndRefetch}
+          refreshing={isLoading && !isLoadingMore}
+          className="flex-1"
+          ListFooterComponent={renderFooter}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          flatListRef={flatListRef}
+          observerEnabled={false}
+          autoFillMaxPages={0}
+          onViewableItemsChanged={onViewableItemsChangedRef.current}
+          viewabilityConfig={viewabilityConfigRef.current}
+        />
       </View>
     );
   }
-
-  return (
-    <View className="flex-1 bg-white">
-      <View className="h-[1px] bg-[#F3F0FF]" />
-      <TouchableOpacity
-        onPress={() =>
-          Linking.openURL(
-            "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
-          )
-        }
-        className="bg-[#F3EDFF] rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
-      >
-        <Image
-          source={require("@/assets/images/fireIcon.png")}
-          style={{ width: 16, height: 16 }}
-        />
-        <Text size="sm" weight="bold">
-          [FAQ] 자주묻는 질문
-        </Text>
-        <TouchableOpacity className="ml-auto">
-          <IconWrapper>
-            <VectorIcon className=" h-[12px] w-[9px]" color="black" />
-          </IconWrapper>
-        </TouchableOpacity>
-      </TouchableOpacity>
-      <View className="h-[1px] bg-[#F3F0FF] mb-2" />
-
-      <CustomInfiniteScrollView
-        data={articles}
-        id="ArticleListContainer"
-        renderItem={(article: ArticleType) => (
-          <Article
-            data={article}
-            onPress={() => {
-              router.push(`/community/${article.id}`);
-            }}
-            onLike={() => like(article)}
-            onDelete={deleteArticle}
-            refresh={() => {
-              return invalidateAndRefetch();
-            }}
-          />
-        )}
-        onLoadMore={loadMore}
-        isLoading={isLoading}
-        isLoadingMore={isLoadingMore}
-        hasMore={hasNextPage}
-        onRefresh={invalidateAndRefetch}
-        refreshing={isLoading && !isLoadingMore}
-        className="flex-1"
-        ListFooterComponent={renderFooter}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        flatListRef={flatListRef}
-      />
-    </View>
-  );
-});
+);
