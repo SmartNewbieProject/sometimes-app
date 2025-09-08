@@ -202,7 +202,7 @@ export default function ProfilePage() {
         }
         if (!signupForm.universityId || !signupForm.departmentName) {
           showErrorModal("학교와 학과 정보가 필요해요.", "announcement");
-          router.navigate("/auth/signup/area");
+          router.navigate("/auth/signup/university");
           return;
         }
         await apis.signup(signupForm as SignupForm);

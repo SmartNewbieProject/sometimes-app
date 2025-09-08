@@ -201,8 +201,7 @@ export function filterUniversities(universities: UniversityCard[], searchText: s
 		universities?.filter(({ name, area, region, en }) => {
 			return (
 				name.toLowerCase().includes(lowerText) ||
-				(area?.toLowerCase?.().includes(lowerText) ?? false) ||
-				en.toLowerCase().includes(lowerText)
+				(area?.toLowerCase?.().includes(lowerText) ?? false)
 			);
 		}) ?? []
 	);

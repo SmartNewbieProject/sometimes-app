@@ -93,6 +93,12 @@ export default function UniversityPage() {
   };
 
   useEffect(() => {
+    animationProgress.value = withTiming(0, { duration: 0 });
+    updateShowHeader(false);
+    animationTitle.value = withTiming(1, { duration: 0 });
+  }, []);
+
+  useEffect(() => {
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       onBackPress

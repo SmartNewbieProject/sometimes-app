@@ -134,7 +134,6 @@ export default function UniversityDetailsPage() {
       >
         <Pressable
           onPress={(e) => {
-            console.log("click");
             if (Platform.OS !== "web") {
               Keyboard.dismiss();
             }

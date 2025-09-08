@@ -1,6 +1,10 @@
 import Signup from "@features/signup";
-import { useGlobalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import {
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { filterUniversities } from "../lib";
 import useUniversities from "../queries/use-universities";
@@ -20,9 +24,29 @@ function useUniversityHook() {
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
     userForm.universityId
   );
+  const params = useLocalSearchParams();
+  const hasProcessedPassInfo = useRef(false);
+
   const [filteredUniv, setFilteredUniv] = useState(univs);
 
   useChangePhase(SignupSteps.UNIVERSITY);
+
+  useEffect(() => {
+    if (params.certificationInfo && !hasProcessedPassInfo.current) {
+      hasProcessedPassInfo.current = true;
+      const certInfo = JSON.parse(params.certificationInfo as string);
+      updateForm({
+        ...userForm,
+        passVerified: true,
+        name: certInfo.name,
+        phone: certInfo.phone,
+        gender: certInfo.gender,
+        birthday: certInfo.birthday,
+        kakaoId: certInfo?.externalId,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.certificationInfo]);
 
   // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics("university");

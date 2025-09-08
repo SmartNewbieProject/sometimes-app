@@ -22,7 +22,9 @@ export default function SignupLayout() {
   const { progress, updateStep, step, showHeader } = useSignupProgress();
 
   const pathname = usePathname();
-  const renderProgress = pathname !== "/auth/signup/done";
+  const renderProgress =
+    pathname !== "/auth/signup/done" &&
+    pathname !== "/auth/signup/university-cluster";
   const width = useWindowWidth();
   const progressWidth = width > 480 ? 448 : width - 32;
   const insets = useSafeAreaInsets();

@@ -83,7 +83,7 @@ export default function UserInfoPage() {
       phone: formattedPhoneNumberForServer,
     });
 
-    router.push("/auth/signup/area");
+    router.push("/auth/signup/university");
   };
 
   /**
