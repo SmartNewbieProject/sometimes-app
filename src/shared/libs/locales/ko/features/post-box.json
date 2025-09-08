@@ -1,0 +1,33 @@
+{
+  "ui": {
+    "header": {
+      "title": "썸 우편함"
+    },
+    "card": {
+      "status_messages": {
+        "liked_me_relative": "{time} 좋아요를 눌렀어요",
+        "mutual_like": "서로 좋아요를 눌렀어요!",
+        "rejected": "상대방이 거절했어요",
+        "waiting_response": "상대방의 응답을 기다리고 있어요"
+      },
+      "buttons": {
+        "ok": "괜찮아요",
+        "start_chat": "대화 시작하기",
+        "yes_try": "네, 해볼래요",
+        "no": "아니요",
+        "confirm": "확인",
+        "close": "닫기",
+        "not_a_match": "인연이 아니었나봐요"
+      },
+      "modal_texts": {
+        "start_instagram_title_line1": "마음에 드는 이성과",
+        "start_instagram_title_line2": "대화를 시작해볼까요?",
+        "start_instagram_subline1": "인스타그램을 통해",
+        "start_instagram_subline2": "자연스럽게 대화를 시작해보세요",
+        "bye_title": "이번엔 인연이 닿지 않았어요",
+        "bye_subline": "괜찮아요 더 멋진 만남이 곧 찾아올 거예요."
+      },
+      "withdrawn_text": "서비스를 탈퇴한 유저에요"
+    }
+  }
+}

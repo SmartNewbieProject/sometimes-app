@@ -1,0 +1,25 @@
+{
+  "ui": {
+    "none_like_banner": {
+      "title_female": "‘좋아요'를 보내보셨나요?",
+      "title_male": "잠시 ‘프로필'을 검색해 볼까요?",
+      "description_female_part1": "마음에 드는 상대에게 '좋아요'를 보내고,",
+      "description_female_part2": "설렘은 반으로 나눠보세요!",
+      "description_male_part1": "챙김나 관심사를 추가해서, 공통점 찾고",
+      "description_male_part2": "나만의 매력을 어필해 보세요!",
+      "cta_locked": ""
+    },
+    "like_button": {
+      "modal": {
+        "title_line1": "마음에 드는 이성에게",
+        "title_line2_male": "구슬 {cost}개로 관심을 표현할까요?",
+        "title_line2_default": "관심을 표현할까요?",
+        "body_line1": "이성에게 간단히 관심을 표현하고,",
+        "body_line2": "그 다음 단계로 자연스럽게 나아가 보세요.",
+        "primary_button": "네, 해볼래요",
+        "secondary_button": "아니요"
+      },
+      "button_label": "좋아요"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "ui": {
+    "header": {
+      "subtitle": "내 이상형을 찾는 가장 빠른 방법"
+    },
+    "footer": {
+      "start_intro_button": "소개팅 시작하기",
+      "login_button": "로그인하기",
+      "feedback_banner": "연애에서 바라는 점, 소통 방식을 알려주세요!"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "ui": {
+    "logo": {
+      "tagline": "대학생을 위한 진짜 설렘의 시작"
+    },
+    "login_form": {
+      "pass_loading": "PASS 인증 중...",
+      "pass_login": "PASS 로그인",
+      "kakao_login": "카카오 로그인",
+      "kakao_button_label": "카카오 로그인"
+    }
+  }
+}

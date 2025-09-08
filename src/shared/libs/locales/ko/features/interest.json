@@ -1,0 +1,8 @@
+{
+  "ui": {
+    "age_selector": {
+      "select_label": "선택",
+      "age_option_selected": "선택"
+    }
+  }
+}

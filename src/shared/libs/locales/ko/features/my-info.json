@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "use_my_info_form": {
+      "clear_action": "초기화"
+    }
+  }
+}

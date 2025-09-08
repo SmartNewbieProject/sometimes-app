@@ -1,0 +1,14 @@
+{
+  "ui": {
+    "menu": {
+      "account": "계정",
+      "account_management": "계정 관리",
+      "logout": "로그아웃",
+      "member_withdrawal": "회원 탈퇴"
+    },
+    "header": {
+      "setting_title": "설정",
+      "account_title": "계정관리"
+    }
+  }
+}
