@@ -10,6 +10,7 @@ export type ChatSocketEventName =
   | 'userTyping'
   | 'userStoppedTyping'
   | 'messagesRead'
+  | 'messageUpdated'
   | 'imageUploadStatus';
 
 export interface ChatSocketEventPayloads {
@@ -29,6 +30,13 @@ export interface ChatSocketEventPayloads {
   userTyping: { from: string; chatRoomId: string };
   userStoppedTyping: { from: string; chatRoomId: string };
   messagesRead: { chatRoomId: string; readerId: string };
+  messageUpdated: {
+    chatRoomId: string;
+    id: string;
+    mediaUrl: string;
+    updatedAt: string;
+    uploadStatus: 'uploading' | 'completed' | 'failed';
+  };
   imageUploadStatus: {
     id: string;
     chatRoomId: string;

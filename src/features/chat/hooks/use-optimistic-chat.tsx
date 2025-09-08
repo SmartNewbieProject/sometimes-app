@@ -14,10 +14,12 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
   const addOptimisticMessage = useCallback((message: Chat) => {
     queryClient.setQueryData(['chat-list', chatRoomId], (oldData: any) => {
       if (!oldData) {
-        return {
+        const newData = {
           pages: [{ messages: [message] }],
           pageParams: [undefined],
         };
+        console.log('Creating new data structure:', newData);
+        return newData;
       }
 
       const updatedPages = oldData.pages.map((page: any, index: number) => {
@@ -30,14 +32,16 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
         return page;
       });
 
-      return {
+      const newData = {
         ...oldData,
         pages: updatedPages,
       };
+      return newData;
     });
+    
+    queryClient.invalidateQueries({ queryKey: ['chat-list', chatRoomId] });
   }, [chatRoomId, queryClient]);
 
-  // 임시 메시지를 서버 메시지로 교체
   const replaceOptimisticMessage = useCallback((tempId: string, serverMessage: Chat) => {
     queryClient.setQueryData(['chat-list', chatRoomId], (oldData: any) => {
       if (!oldData) return oldData;
@@ -96,50 +100,60 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
 
       if (messageExists) return oldData;
 
-      const adjustedMessage = {
-        ...message,
-        createdAt: adjustTimezone(message.createdAt),
-      };
-
       const updatedPages = oldData.pages.map((page: any, index: number) => {
         if (index === 0) {
           return {
             ...page,
-            messages: [adjustedMessage, ...page.messages],
+            messages: [message, ...page.messages],
           };
         }
         return page;
       });
-
       return {
         ...oldData,
         pages: updatedPages,
       };
     });
+    queryClient.invalidateQueries({ queryKey: ['chat-list', chatRoomId] });
   }, [chatRoomId, queryClient]);
 
   const updateImageUrl = useCallback((messageId: string, mediaUrl: string) => {
+    console.log('updateImageUrl called:', { messageId, mediaUrl, chatRoomId });
     queryClient.setQueryData(['chat-list', chatRoomId], (oldData: any) => {
-      if (!oldData) return oldData;
+      if (!oldData) {
+        return oldData;
+      }
 
       const updatedPages = oldData.pages.map((page: any) => ({
         ...page,
-        messages: page.messages.map((message: Chat) => 
-          message.id === messageId
-            ? { 
-                ...message, 
-                mediaUrl,
-                uploadStatus: 'completed' as const
-              }
-            : message
-        ),
+        messages: page.messages.map((message: Chat) => {
+          if (message.id === messageId) {
+            console.log('Found matching message, updating:', { 
+              oldMediaUrl: message.mediaUrl, 
+              newMediaUrl: mediaUrl,
+              oldUploadStatus: message.uploadStatus 
+            });
+            return { 
+              ...message, 
+              mediaUrl,
+              uploadStatus: 'completed' as const
+            };
+          }
+          return message;
+        }),
       }));
 
-      return {
+      console.log('Updated pages:', updatedPages);
+      
+      const newData = {
         ...oldData,
         pages: updatedPages,
       };
+      
+      return newData;
     });
+    
+    queryClient.invalidateQueries({ queryKey: ['chat-list', chatRoomId] });
   }, [chatRoomId, queryClient]);
 
   return {
@@ -150,8 +164,3 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
     updateImageUrl,
   };
 };
-
-const adjustTimezone = (dateString: string): string =>
-  dayUtils.create(dateString)
-      .add(9, 'hour')
-      .format('YYYY-MM-DD HH:mm:ss');
