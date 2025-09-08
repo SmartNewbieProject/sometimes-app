@@ -65,7 +65,6 @@ function useAreaHook() {
     }
     trackSignupEvent("next_button_click", "to_university");
     updateUnivTitle(`${show} 대학`);
-    updateRegions(getRegionList(show));
 
     fallback();
 

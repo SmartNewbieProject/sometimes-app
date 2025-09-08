@@ -24,7 +24,7 @@ export default function useUniversitiesByArea(regions: string[]) {
     ...item,
     logoUrl: getSmartUnivLogoUrl(item.code),
     universityType: item.foundation,
-    area: getRegionsByRegionCode(item.region as RegionCode[]),
+    area: getRegionsByRegionCode(item.region as RegionCode),
   }));
 
   return { data: mappedData, isLoading };

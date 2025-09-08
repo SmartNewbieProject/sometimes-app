@@ -286,7 +286,7 @@ export default function ProfilePage() {
 
         <View className="flex flex-col pb-[18px] pt-4 px-5">
           <Text weight="medium" size="sm" textColor="pale-purple">
-            매칭을 위해 1장의 프로필 사진을 필수로 올려주세요
+            매칭을 위해 3장의 프로필 사진을 필수로 올려주세요
           </Text>
           <Text weight="medium" size="sm" textColor="pale-purple">
             얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)

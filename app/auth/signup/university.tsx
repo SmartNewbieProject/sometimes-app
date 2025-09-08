@@ -68,7 +68,7 @@ export default function UniversityPage() {
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
       if (selectedUnivObj) {
-        updateRegions(selectedUnivObj.region);
+        updateRegions([selectedUnivObj.region]);
         updateUnivTitle(selectedUnivObj.name);
         // TODO : showErrorModal 넣어야함
         router.push(

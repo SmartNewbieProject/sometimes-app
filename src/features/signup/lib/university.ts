@@ -26,8 +26,8 @@ export type UIRegion =
 	| '서울'
 	| '경기';
 
-export const getRegionsByRegionCode = (code: RegionCode[]) => {
-	return code.length === 1 ? regionCodeMap[code[0]] : code.map((c) => regionCodeMap[c]).join('/');
+export const getRegionsByRegionCode = (code: RegionCode): string | undefined => {
+	return regionCodeMap[code];
 };
 
 export type UniversityType = '국립' | '사립' | '과학기술원' | '도립' | '알 수 없음';

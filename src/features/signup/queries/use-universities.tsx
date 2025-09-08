@@ -20,7 +20,7 @@ export default function useUniversities() {
     ...item,
     logoUrl: getSmartUnivLogoUrl(item.code),
     universityType: item.foundation,
-    area: getRegionsByRegionCode(item.region as RegionCode[]),
+    area: getRegionsByRegionCode(item.region as RegionCode),
   }));
 
   return { data: mappedData, isLoading };
@@ -30,7 +30,7 @@ export type UniversitiesByRegion = {
   id: string;
   name: string;
   code: string;
-  region: string[];
+  region: RegionCode;
   en: string;
   foundation: string;
 }[];
@@ -42,7 +42,7 @@ export type UniversityCard = {
   id: string;
   name: string;
   code: string;
-  region: string[];
+  region: RegionCode;
   en: string;
   foundation: string;
 };
