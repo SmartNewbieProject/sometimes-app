@@ -11,14 +11,85 @@ import {
   Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { useCategory } from "@/src/features/community/hooks";
+import { useAuth } from "@/src/features/auth";
+import { useQuery } from "@tanstack/react-query";
+import { getMySimpleDetails } from "@/src/features/auth/apis";
+
+type MySimpleDetails = {
+  role: string;
+  id: string;
+  profileId: string;
+  name: string;
+};
+
+const isNoticeCategory = (code?: string) => {
+  if (!code) return false;
+  return code === "notice";
+};
+const isPopularCategory = (code?: string) => {
+  if (!code) return false;
+  return code === "hot";
+};
+
+const isAllowedCategory = (code?: string, isAdmin?: boolean) => {
+  if (!code) return false;
+  if (isPopularCategory(code)) return false;
+  if (isNoticeCategory(code) && !isAdmin) return false;
+  return true;
+};
 
 export const ArticleWriteForm = () => {
-  const { setValue } = useFormContext();
-  const content = useWatch({ name: "content" });
-  const images = useWatch({ name: "images" }) || [];
-  const originalImages = useWatch({ name: "originalImages" }) || [];
-  const deleteImageIds = useWatch({ name: "deleteImageIds" }) || [];
+  const { control, setValue } = useFormContext();
+
+  const content = useWatch({ control, name: "content" });
+  const images = useWatch({ control, name: "images" }) || [];
+  const originalImages = useWatch({ control, name: "originalImages" }) || [];
+  const deleteImageIds = useWatch({ control, name: "deleteImageIds" }) || [];
+
+  const { categories, changeCategory } = useCategory();
+  const { profileDetails } = useAuth();
+  const { data: me } = useQuery<MySimpleDetails>({
+    queryKey: ["my-simple-details"],
+    queryFn: async () => (await getMySimpleDetails()).data,
+    enabled: !!profileDetails,
+    staleTime: 5 * 60 * 1000,
+  });
+  const isAdmin = me?.role === "admin";
+
+  const selectedCategory: string | undefined = useWatch({
+    control,
+    name: "type",
+  });
+
+  const allowedCategories = useMemo(
+    () => categories.filter((c) => isAllowedCategory(c.code, isAdmin)),
+    [categories, isAdmin]
+  );
+
+  useEffect(() => {
+    if (!selectedCategory || !isAllowedCategory(selectedCategory, isAdmin)) {
+      const fallback = allowedCategories[0]?.code;
+      if (fallback) {
+        setValue("type", fallback as any, { shouldDirty: true });
+        changeCategory(fallback);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allowedCategories, isAdmin]);
+
+  const displayName = useMemo(() => {
+    const found = categories.find((c) => c.code === selectedCategory);
+    return found?.displayName ?? "카테고리";
+  }, [categories, selectedCategory]);
+
+  const pickCategory = (code: string) => {
+    if (!isAllowedCategory(code, isAdmin)) return;
+    setValue("type", code as any, { shouldDirty: true, shouldValidate: true });
+    changeCategory(code);
+  };
 
   const [outerScrollEnabled, setOuterScrollEnabled] = useState(true);
 
@@ -54,6 +125,8 @@ export const ArticleWriteForm = () => {
     setValue("images", updatedImages);
   };
 
+  const [openDropdown, setOpenDropdown] = useState(false);
+
   return (
     <ScrollView
       className="flex-1"
@@ -64,22 +137,67 @@ export const ArticleWriteForm = () => {
       showsVerticalScrollIndicator
     >
       <View className="h-[1px] bg-[#E7E9EC]" />
+
       <View className="px-[16px] pt-[26px]">
+        <View className="flex-row items-center gap-3 mb-[10px]">
+          {allowedCategories.length > 0 && (
+            <View>
+              <TouchableOpacity
+                onPress={() => setOpenDropdown((p) => !p)}
+                className="px-3 py-2 rounded-md bg-[#F3F0FF] items-center justify-center"
+              >
+                <Text className="text-[#6D28D9] font-bold text-sm">
+                  {displayName} ▼
+                </Text>
+              </TouchableOpacity>
+
+              {openDropdown && (
+                <View className="absolute top-[44px] left-0 z-10 bg-white rounded-md shadow-md border border-[#E7E9EC] w-[160px]">
+                  {allowedCategories.map((c) => (
+                    <TouchableOpacity
+                      key={c.code}
+                      className="px-3 py-2"
+                      onPress={() => {
+                        pickCategory(c.code);
+                        setOpenDropdown(false);
+                      }}
+                    >
+                      <Text
+                        className={
+                          c.code === selectedCategory
+                            ? "text-[#6D28D9] font-bold"
+                            : "text-black"
+                        }
+                      >
+                        {c.displayName}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+
+          <View style={{ flex: 1 }}>
+            <Controller
+              control={control}
+              name="title"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  placeholder="제목을 입력하세요."
+                  className="w-full p-2 font-bold placeholder:text-[#d9d9d9] text-[18px] border-b border-[#E7E9EC] pb-2"
+                  onChangeText={onChange}
+                  value={value}
+                  blurOnSubmit={false}
+                />
+              )}
+            />
+          </View>
+        </View>
+
         <View className="items-center justify-center">
           <Controller
-            name="title"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                placeholder="제목을 입력하세요."
-                className="w-full p-2 mb-[10px] font-bold placeholder:text-[#d9d9d9] text-[20px] border-b border-[#E7E9EC] outline-none pb-2"
-                onChangeText={onChange}
-                value={value}
-                blurOnSubmit={false}
-              />
-            )}
-          />
-
-          <Controller
+            control={control}
             name="content"
             rules={{ maxLength: 2000 }}
             render={({ field: { onChange, value } }) => (
