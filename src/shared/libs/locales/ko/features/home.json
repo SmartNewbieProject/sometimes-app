@@ -1,19 +1,13 @@
 {
-  "hooks": {
-    "use_temporal_university": {
-      "modal_title": "대학교정보를 다시 입력해주세요",
-      "alert_success": "대학 정보가 갱신되었습니다"
-    },
-    "use_redirect_preferences": {
-      "modal_title": "회원님의 이상형 정보가 없어요!",
-      "modal_text": "나에게 맞는 연인 매칭을 위해",
-      "primary_button": "등록할게요!",
-      "secondary_button": "나중에 할게요"
-    }
-  },
   "ui": {
+    "layout": {
+      "loading_user_info": "사용자 정보를 확인하고 있어요..."
+    },
     "banner_slide": {
       "loading_title": "몇 명이 매칭을 신청했을까요?"
+    },
+    "announce_card": {
+      "text": "나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
     },
     "community_announcement": {
       "greeting": "{name}님도 가능해요",

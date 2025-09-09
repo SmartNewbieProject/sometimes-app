@@ -46,7 +46,11 @@
       "dropdown_modal_comment": "드롭다운 메뉴 Modal",
       "edit_button": "수정",
       "delete_button": "삭제",
-      "loading_comments": "댓글을 불러오고 있어요"
+      "loading_comments": "댓글을 불러오고 있어요",
+      "header_title": "커뮤니티",
+      "invalid_request": "잘못된 요청입니다",
+      "loading_error": "게시글을 불러오는 중 오류가 발생했습니다.",
+      "loading_article": "게시글을 불러오고 있어요"
     },
     "article_write_screen": {
       "form": {
@@ -56,6 +60,26 @@
         "content_placeholder": "내용을 입력하세요.",
         "add_image_button": "이미지 추가"
       },
+      "modal": {
+        "short_content": {
+          "title": "너무 짧아요",
+          "desc": "제목과 본문은 3자 이상으로 작성해주세요."
+        },
+        "overflow": {
+          "title": "글자수 초과",
+          "desc": "본문은 2000자 이하로 작성해주세요."
+        },
+        "success": {
+          "title": "글 작성 완료",
+          "desc": "글 작성이 완료되었습니다."
+        },
+        "fail": {
+          "title": "글 작성 실패",
+          "desc": "글 작성 중 오류가 발생했습니다."
+        },
+        "confirm": "확인",
+        "confirm_checked": "네, 확인했어요"
+      },
       "header": {
         "write_post": "글 쓰기",
         "edit_post": "글 수정",
@@ -63,6 +87,46 @@
       },
       "nav": {
         "anonymous": "익명"
+      }
+    },
+    "article_edit_screen": {
+      "loading": "게시글을 불러오고 있어요.",
+      "modal": {
+        "short_content": {
+          "title": "너무 짧아요",
+          "desc": "제목과 본문은 3자 이상으로 작성해주세요."
+        },
+        "overflow": {
+          "title": "글자수 초과",
+          "desc": "본문은 2000자 이하로 작성해주세요."
+        },
+        "success": {
+          "title": "완료",
+          "desc_1": "게시글이 수정되었어요!",
+          "desc_2": "게시글로 이동할게요."
+        },
+        "confirm_checked": "네, 확인했어요",
+        "confirm_move": "네, 이동할게요"
+      }
+    },
+    "report": {
+      "alert": {
+        "title": "신고가 완료되었어요.",
+        "desc": "관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다."
+      },
+      "title": "부적절한 게시글을 발견하셨나요?",
+      "desc": "신고해주신 내용은 관리자가 검토 후 적절한 조치를 취하겠습니다.",
+      "button": "신고하기",
+      "header": "신고하기",
+      "reasons": {
+        "spam": "스팸/도배성 게시글",
+        "abuse": "욕설/혐오표현",
+        "sexual": "성적/선정적 내용",
+        "privacy": "개인정보 노출/사생활 침해",
+        "ad": "상업적 광고/홍보",
+        "image": "부적절한 이미지",
+        "bullying": "괴롭힘/협박",
+        "rule": "커뮤니티 규칙 위반"
       }
     },
     "category_list": {

@@ -1,5 +1,7 @@
 {
   "ui": {
+    "header_title": "이전매칭",
+    "gem_unit": "개",
     "matching_history_list": {
       "more_matches_prompt": "더 많은 매칭을 원하시나요?",
       "use_rematch_hint": "지금 재매칭권을 사용해 새로운 인연을 만나보세요!"

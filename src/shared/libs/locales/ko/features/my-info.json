@@ -3,5 +3,20 @@
     "use_my_info_form": {
       "clear_action": "초기화"
     }
+  },
+  "ui": {
+    "dating_style": {
+      "title_1": "당신에게 가장 잘 맞는",
+      "title_2": "연애 스타일은 무엇인가요?",
+      "loading": "연애 스타일 옵션 불러오고 있어요",
+      "next_count": "{count} 개만 더!",
+      "next": "다음으로"
+    },
+    "done": {
+      "title_1": "당신의 정보를 확인했어요",
+      "title_2": "이제는 설레는 만남을 시작해요",
+      "desc": "썸타임이 {name}님의 이상형을 찾아드릴게요",
+      "button": "이상형 찾으러 가기 →"
+    }
   }
 }
