@@ -66,7 +66,6 @@ export default function InterestIntroScreen() {
               borderRadius: 280,
               overflow: "hidden",
               marginBottom: 50,
-
               backgroundColor: "#7A4AE2",
               position: "relative",
             }}

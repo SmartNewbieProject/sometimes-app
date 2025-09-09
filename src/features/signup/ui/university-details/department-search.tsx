@@ -23,11 +23,11 @@ function DepartmentSearch() {
   } = useSignupProgress();
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
-  const { universityName } = useGlobalSearchParams<{
-    universityName: string;
+  const { universityId } = useGlobalSearchParams<{
+    universityId: string;
   }>();
   const { data: departments = [], isLoading } =
-    useDepartmentQuery(universityName);
+    useDepartmentQuery(universityId);
   const [filteredDepartment, setFilteredDepartment] = useState(departments);
 
   useEffect(() => {

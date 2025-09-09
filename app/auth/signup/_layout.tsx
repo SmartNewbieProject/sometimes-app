@@ -19,16 +19,18 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
-  const { progress, updateStep, univTitle, step } = useSignupProgress();
+  const { progress, updateStep, step, showHeader } = useSignupProgress();
 
   const pathname = usePathname();
-  const renderProgress = pathname !== "/auth/signup/done";
+  const renderProgress =
+    pathname !== "/auth/signup/done" &&
+    pathname !== "/auth/signup/university-cluster";
   const width = useWindowWidth();
   const progressWidth = width > 480 ? 448 : width - 32;
   const insets = useSafeAreaInsets();
   const titleMap = {
     [SignupSteps.AREA]: "지역 선택하기",
-    [SignupSteps.UNIVERSITY]: univTitle,
+    [SignupSteps.UNIVERSITY]: "대학선택",
     [SignupSteps.UNIVERSITY_DETAIL]: "추가 정보 입력하기",
     [SignupSteps.INSTAGRAM]: "인스타그램 아이디 입력하기",
     [SignupSteps.PROFILE_IMAGE]: "프로필 사진 추가하기",
@@ -39,7 +41,7 @@ export default function SignupLayout() {
     <DefaultLayout className="flex-1 relative">
       <OverlayProvider>
         <PalePurpleGradient />
-        {renderProgress && (
+        {renderProgress && showHeader && (
           <>
             <View
               style={[
@@ -81,6 +83,10 @@ export default function SignupLayout() {
               options={{
                 headerShown: false,
               }}
+            />
+            <Stack.Screen
+              name="university-cluster"
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="university-details"

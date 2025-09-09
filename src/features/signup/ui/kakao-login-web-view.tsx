@@ -136,7 +136,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
         }
 
         router.push({
-          pathname: "/auth/signup/area",
+          pathname: "/auth/signup/university",
           params: {
             certificationInfo: JSON.stringify(result.certificationInfo),
           },

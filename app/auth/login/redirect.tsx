@@ -83,7 +83,7 @@ function KakaoLoginRedirect() {
               }
             }
             router.replace({
-              pathname: "/auth/signup/area",
+              pathname: "/auth/signup/university",
               params: {
                 certificationInfo: JSON.stringify(result.certificationInfo),
               },
