@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  Platform,
+  Keyboard,
+  Pressable,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useMemo, useState } from "react";
@@ -17,6 +18,7 @@ import { useCategory } from "@/src/features/community/hooks";
 import { useAuth } from "@/src/features/auth";
 import { useQuery } from "@tanstack/react-query";
 import { getMySimpleDetails } from "@/src/features/auth/apis";
+import { useModal } from "@/src/shared/hooks/use-modal";
 
 type MySimpleDetails = {
   role: string;
@@ -25,24 +27,14 @@ type MySimpleDetails = {
   name: string;
 };
 
-const isNoticeCategory = (code?: string) => {
-  if (!code) return false;
-  return code === "notice";
-};
-const isPopularCategory = (code?: string) => {
-  if (!code) return false;
-  return code === "hot";
-};
-
-const isAllowedCategory = (code?: string, isAdmin?: boolean) => {
-  if (!code) return false;
-  if (isPopularCategory(code)) return false;
-  if (isNoticeCategory(code) && !isAdmin) return false;
-  return true;
-};
+const isNoticeCategory = (code?: string) => !!code && code === "notice";
+const isPopularCategory = (code?: string) => !!code && code === "hot";
+const isAllowedCategory = (code?: string, isAdmin?: boolean) =>
+  !!code && !isPopularCategory(code) && !(isNoticeCategory(code) && !isAdmin);
 
 export const ArticleWriteForm = () => {
   const { control, setValue } = useFormContext();
+  const { showModal, hideModal } = useModal();
 
   const content = useWatch({ control, name: "content" });
   const images = useWatch({ control, name: "images" }) || [];
@@ -93,6 +85,73 @@ export const ArticleWriteForm = () => {
 
   const [outerScrollEnabled, setOuterScrollEnabled] = useState(true);
 
+  const openCategoryModal = () => {
+    Keyboard.dismiss();
+    showModal({
+      title: "카테고리 선택",
+      children: (
+        <Pressable
+          onPress={hideModal}
+          style={{ width: "100%" }}
+          android_disableSound
+          accessibilityRole="button"
+          accessibilityLabel="모달 닫기 영역"
+        >
+          <Pressable
+            onPress={() => {}}
+            style={{
+              paddingVertical: 8,
+            }}
+          >
+            {allowedCategories.length > 0 ? (
+              allowedCategories.map((c) => {
+                const selected = c.code === selectedCategory;
+                return (
+                  <TouchableOpacity
+                    key={c.code}
+                    onPress={() => {
+                      pickCategory(c.code);
+                      hideModal?.();
+                    }}
+                    className="mb-2"
+                    accessibilityRole="button"
+                    accessibilityLabel={`${c.displayName} 카테고리 선택`}
+                  >
+                    <View
+                      className="px-3 py-4 rounded-lg"
+                      style={{
+                        backgroundColor: selected ? "#F3F0FF" : "#F7F8FA",
+                        borderWidth: selected ? 1 : 0,
+                        borderColor: selected ? "#6D28D9" : "transparent",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontWeight: selected ? "700" : "500",
+                          color: selected ? "#6D28D9" : "#111827",
+                          fontSize: 15,
+                          textAlign: "center",
+                        }}
+                      >
+                        {c.displayName}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <View className="px-4 py-12 rounded-lg bg-[#F7F8FA]">
+                <Text className="text-gray-500 text-center">
+                  선택 가능한 카테고리가 없습니다.
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Pressable>
+      ),
+    });
+  };
+
   const pickImage = async () => {
     if (images.length >= 5) {
       Alert.alert("알림", "이미지는 최대 5개까지 선택할 수 있습니다.");
@@ -125,8 +184,6 @@ export const ArticleWriteForm = () => {
     setValue("images", updatedImages);
   };
 
-  const [openDropdown, setOpenDropdown] = useState(false);
-
   return (
     <ScrollView
       className="flex-1"
@@ -141,41 +198,14 @@ export const ArticleWriteForm = () => {
       <View className="px-[16px] pt-[26px]">
         <View className="flex-row items-center gap-3 mb-[10px]">
           {allowedCategories.length > 0 && (
-            <View>
-              <TouchableOpacity
-                onPress={() => setOpenDropdown((p) => !p)}
-                className="px-3 py-2 rounded-md bg-[#F3F0FF] items-center justify-center"
-              >
-                <Text className="text-[#6D28D9] font-bold text-sm">
-                  {displayName} ▼
-                </Text>
-              </TouchableOpacity>
-
-              {openDropdown && (
-                <View className="absolute top-[44px] left-0 z-10 bg-white rounded-md shadow-md border border-[#E7E9EC] w-[160px]">
-                  {allowedCategories.map((c) => (
-                    <TouchableOpacity
-                      key={c.code}
-                      className="px-3 py-2"
-                      onPress={() => {
-                        pickCategory(c.code);
-                        setOpenDropdown(false);
-                      }}
-                    >
-                      <Text
-                        className={
-                          c.code === selectedCategory
-                            ? "text-[#6D28D9] font-bold"
-                            : "text-black"
-                        }
-                      >
-                        {c.displayName}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-            </View>
+            <TouchableOpacity
+              onPress={openCategoryModal}
+              className="px-3 py-2 rounded-md bg-[#F3F0FF] items-center justify-center"
+            >
+              <Text className="text-[#6D28D9] font-bold text-sm">
+                {displayName} ▼
+              </Text>
+            </TouchableOpacity>
           )}
 
           <View style={{ flex: 1 }}>
