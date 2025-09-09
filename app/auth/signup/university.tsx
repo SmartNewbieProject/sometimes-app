@@ -141,7 +141,9 @@ export default function UniversityPage() {
           <RNText style={styles.welcome}>
             대학생만 모인 곳, 당신의 이상형을 찾아드려요
           </RNText>
-          <RNText style={styles.title}>지금 다니는 학교를 검색해보세요</RNText>
+          <RNText style={styles.title}>
+            지금 다니시는 학교를 검색해보세요
+          </RNText>
         </Animated.View>
         <Animated.View
           style={[animatedContainerStyle, { width: "100%", zIndex: 10 }]}
