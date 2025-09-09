@@ -15,7 +15,7 @@ import { type LayoutChangeEvent, Modal, StyleSheet, View } from "react-native";
 import { cn } from "../libs";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-type ModalOptions = {
+export type ModalOptions = {
   title?: ReactNode;
   customTitle?: ReactNode;
   children: ReactNode;
@@ -31,7 +31,7 @@ type ModalOptions = {
   };
 };
 
-type ErrorModalOptions = {
+export type ErrorModalOptions = {
   message: string;
   type: "announcement" | "error";
 };

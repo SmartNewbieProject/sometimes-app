@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import { leaveChatRoom } from "../apis";
+import { chatLeaveErrorHandlers } from "../services/chat-leave-error-handler";
 
 function useLeaveChatRoom() {
   const router = useRouter();
@@ -23,11 +24,20 @@ function useLeaveChatRoom() {
         },
       });
     },
-    onError: () => {
-      showErrorModal(
-        "채팅방 나가기에 실패하였습니다. 관리자에게 문의 바랍니다.",
-        "announcement"
-      );
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    onError: (error: any) => {
+      console.error("채팅방 생성 실패:", error);
+
+      if (!error.response) {
+        showErrorModal("네트워크 연결을 확인해주세요.", "announcement");
+        return;
+      }
+
+      const status = error.response.status;
+      const handler =
+        chatLeaveErrorHandlers[status] || chatLeaveErrorHandlers.default;
+
+      handler.handle(error, { router, showModal, showErrorModal });
     },
   });
 }
