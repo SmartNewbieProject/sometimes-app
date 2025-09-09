@@ -32,7 +32,9 @@ const isPopularCategory = (code?: string) => !!code && code === "hot";
 const isAllowedCategory = (code?: string, isAdmin?: boolean) =>
   !!code && !isPopularCategory(code) && !(isNoticeCategory(code) && !isAdmin);
 
-export const ArticleWriteForm = () => {
+export const ArticleWriteForm = ({
+  mode = "create" as "create" | "update",
+}) => {
   const { control, setValue } = useFormContext();
   const { showModal, hideModal } = useModal();
 
@@ -62,6 +64,7 @@ export const ArticleWriteForm = () => {
   );
 
   useEffect(() => {
+    if (mode !== "create") return;
     if (!selectedCategory || !isAllowedCategory(selectedCategory, isAdmin)) {
       const fallback = allowedCategories[0]?.code;
       if (fallback) {
@@ -70,7 +73,7 @@ export const ArticleWriteForm = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowedCategories, isAdmin]);
+  }, [allowedCategories, isAdmin, mode]);
 
   const displayName = useMemo(() => {
     const found = categories.find((c) => c.code === selectedCategory);
@@ -78,6 +81,7 @@ export const ArticleWriteForm = () => {
   }, [categories, selectedCategory]);
 
   const pickCategory = (code: string) => {
+    if (mode !== "create") return;
     if (!isAllowedCategory(code, isAdmin)) return;
     setValue("type", code as any, { shouldDirty: true, shouldValidate: true });
     changeCategory(code);
@@ -86,6 +90,7 @@ export const ArticleWriteForm = () => {
   const [outerScrollEnabled, setOuterScrollEnabled] = useState(true);
 
   const openCategoryModal = () => {
+    if (mode !== "create") return;
     Keyboard.dismiss();
     showModal({
       title: "카테고리 선택",
@@ -97,12 +102,7 @@ export const ArticleWriteForm = () => {
           accessibilityRole="button"
           accessibilityLabel="모달 닫기 영역"
         >
-          <Pressable
-            onPress={() => {}}
-            style={{
-              paddingVertical: 8,
-            }}
-          >
+          <Pressable onPress={() => {}} style={{ paddingVertical: 8 }}>
             {allowedCategories.length > 0 ? (
               allowedCategories.map((c) => {
                 const selected = c.code === selectedCategory;
@@ -199,8 +199,11 @@ export const ArticleWriteForm = () => {
         <View className="flex-row items-center gap-3 mb-[10px]">
           {allowedCategories.length > 0 && (
             <TouchableOpacity
-              onPress={openCategoryModal}
+              onPress={mode === "create" ? openCategoryModal : undefined}
               className="px-3 py-2 rounded-md bg-[#F3F0FF] items-center justify-center"
+              // update일 때 약간 투명하게
+              style={{ opacity: mode === "create" ? 1 : 0.6 }}
+              disabled={mode !== "create"}
             >
               <Text className="text-[#6D28D9] font-bold text-sm">
                 {displayName} ▼

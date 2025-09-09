@@ -94,7 +94,7 @@ export default function CommunityWriteScreen() {
 
         <View className="bg-white px-4 pt-3" />
 
-        <ArtcileWriter.Form />
+        <ArtcileWriter.Form mode="create" />
         <ArtcileWriter.Nav mode="create" />
       </DefaultLayout>
     </ArticleWriteFormProvider>
