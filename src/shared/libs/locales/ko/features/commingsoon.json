@@ -1,4 +1,4 @@
- {
+{
   "ui": {
     "greeting": "{name}님!",
     "title": "빨리 보고싶어요!",
@@ -8,8 +8,7 @@
     "cta_button": "출시일에 다시 볼게요.",
     "modal": {
       "title": "꼭 다시 만나요!",
-      "message": "7월 27일, 꼭 다시 만나요!",
-      "confirm_button": "확인"
+      "message": "7월 27일, 꼭 다시 만나요!"
     }
   }
 }

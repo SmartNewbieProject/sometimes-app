@@ -9,8 +9,7 @@
       "title_1": "당신에게 가장 잘 맞는",
       "title_2": "연애 스타일은 무엇인가요?",
       "loading": "연애 스타일 옵션 불러오고 있어요",
-      "next_count": "{count} 개만 더!",
-      "next": "다음으로"
+      "next_count": "{count} 개만 더!"
     },
     "done": {
       "title_1": "당신의 정보를 확인했어요",

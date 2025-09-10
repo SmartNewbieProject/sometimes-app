@@ -1,6 +1,5 @@
 {
   "gem_store": {
-    "error_alert_title": "오류",
     "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
     "payment_error_console": "결제 오류:",
     "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:"
@@ -10,21 +9,19 @@
   },
   "rematch": {
     "rematch_ticket_name": "연인 매칭권",
-    "error_alert_title": "오류",
     "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
     "purchase_count_tracking": "Purchase_Count"
   },
-  "tickets":{
+  "tickets": {
     "rematch": {
-    "rematch_ticket_name": "연인 매칭권",
-    "rematch_ticket_name_repeat": "연인 재매칭권",
-    "error_alert_title": "오류",
-    "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
-    "payment_error_console": "결제 오류:",
-    "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:",
-    "payment_error_modal": "결제 처리 중 오류가 발생했습니다.",
-    "order_name_single": "연인 재매칭권",
-    "order_name_multiple": "연인 재매칭권 x{productCount}"
+      "rematch_ticket_name": "연인 매칭권",
+      "rematch_ticket_name_repeat": "연인 재매칭권",
+      "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
+      "payment_error_console": "결제 오류:",
+      "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:",
+      "payment_error_modal": "결제 처리 중 오류가 발생했습니다.",
+      "order_name_single": "연인 재매칭권",
+      "order_name_multiple": "연인 재매칭권 x{productCount}"
     }
-  } 
+  }
 }

@@ -2,19 +2,15 @@
   "use_auth": {
     "logout_modal_title": "로그아웃",
     "comment_new_user": "신규 사용자인 경우 본인인증 정보 전달",
-    "logout_modal_message": "로그아웃 되었습니다.",
-    "logout_modal_button": "확인",
-    "common_confirm": "확인"
+    "logout_modal_message": "로그아웃 되었습니다."
   },
   "use_comming_soon": {
     "modal_title": "준비중인 기능입니다.",
-    "modal_body": "완성되면 더 편리하게 이용하실 수 있어요!",
-    "primary_button": "확인"
+    "modal_body": "완성되면 더 편리하게 이용하실 수 있어요!"
   },
   "use_report": {
     "modal_title_success": "신고 접수",
     "modal_message_success": "신고가 성공적으로 접수되었습니다.",
-    "modal_button_confirm": "확인",
     "modal_title_error": "신고 실패",
     "default_error_message": "신고 제출에 실패했습니다. 다시 시도해주세요."
   },
@@ -35,7 +31,6 @@
   "use_cashable_modal": {
     "title": "💔 구슬이 부족해요!",
     "description": "이 기능을 사용하려면 구슬이 더 필요해요",
-    "charge_button": "구슬 충전",
-    "cancel_button": "아니요"
+    "charge_button": "구슬 충전"
   }
 }

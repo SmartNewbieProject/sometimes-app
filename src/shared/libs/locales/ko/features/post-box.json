@@ -16,9 +16,6 @@
         "ok": "괜찮아요",
         "start_chat": "대화 시작하기",
         "yes_try": "네, 해볼래요",
-        "no": "아니요",
-        "confirm": "확인",
-        "close": "닫기",
         "not_a_match": "인연이 아니었나봐요"
       },
       "modal_texts": {

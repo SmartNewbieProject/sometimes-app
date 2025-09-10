@@ -1,5 +1,5 @@
 {
-  "id":{
+  "id": {
     "header_title": "커뮤니티",
     "dropdown_edit": "수정",
     "dropdown_delete": "삭제",
@@ -7,7 +7,7 @@
     "error_loading": "게시글을 불러오는 중 오류가 발생했습니다.",
     "loading": "게시글을 불러오고 있어요"
   },
-  "write":{
+  "write": {
     "modal_short_title": "너무 짧아요",
     "modal_short_desc": "제목과 본문은 3자 이상으로 작성해주세요.",
     "modal_overflow_title": "글자수 초과",
@@ -16,35 +16,33 @@
     "modal_success_desc": "글 작성이 완료되었습니다.",
     "modal_fail_title": "글 작성 실패",
     "modal_fail_desc_default": "글 작성 중 오류가 발생했습니다.",
-    "modal_confirm": "확인",
     "modal_confirm_checked": "네, 확인했어요"
   },
-  "update":{
-  "modal_short_title": "너무 짧아요",
-  "modal_short_desc": "제목과 본문은 3자 이상으로 작성해주세요.",
-  "modal_overflow_title": "글자수 초과",
-  "modal_overflow_desc": "본문은 2000자 이하로 작성해주세요.",
-  "modal_success_title": "완료",
-  "modal_success_desc_1": "게시글이 수정되었어요!",
-  "modal_success_desc_2": "게시글로 이동할게요.",
-  "modal_confirm_checked": "네, 확인했어요",
-  "modal_confirm_move": "네, 이동할게요",
-  "loading": "게시글을 불러오고 있어요."
+  "update": {
+    "modal_short_title": "너무 짧아요",
+    "modal_short_desc": "제목과 본문은 3자 이상으로 작성해주세요.",
+    "modal_overflow_title": "글자수 초과",
+    "modal_overflow_desc": "본문은 2000자 이하로 작성해주세요.",
+    "modal_success_desc_1": "게시글이 수정되었어요!",
+    "modal_success_desc_2": "게시글로 이동할게요.",
+    "modal_confirm_checked": "네, 확인했어요",
+    "modal_confirm_move": "네, 이동할게요",
+    "loading": "게시글을 불러오고 있어요."
   },
-  "report":{
-  "alert_title": "신고가 완료되었어요.",
-  "alert_desc": "관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다.",
-  "title": "부적절한 게시글을 발견하셨나요?",
-  "desc": "신고해주신 내용은 관리자가 검토 후 적절한 조치를 취하겠습니다.",
-  "button": "신고하기",
-  "header": "신고하기",
-  "reason_spam": "스팸/도배성 게시글",
-  "reason_abuse": "욕설/혐오표현",
-  "reason_sexual": "성적/선정적 내용",
-  "reason_privacy": "개인정보 노출/사생활 침해",
-  "reason_ad": "상업적 광고/홍보",
-  "reason_image": "부적절한 이미지",
-  "reason_bullying": "괴롭힘/협박",
-  "reason_rule": "커뮤니티 규칙 위반"
-}
+  "report": {
+    "alert_title": "신고가 완료되었어요.",
+    "alert_desc": "관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다.",
+    "title": "부적절한 게시글을 발견하셨나요?",
+    "desc": "신고해주신 내용은 관리자가 검토 후 적절한 조치를 취하겠습니다.",
+    "button": "신고하기",
+    "header": "신고하기",
+    "reason_spam": "스팸/도배성 게시글",
+    "reason_abuse": "욕설/혐오표현",
+    "reason_sexual": "성적/선정적 내용",
+    "reason_privacy": "개인정보 노출/사생활 침해",
+    "reason_ad": "상업적 광고/홍보",
+    "reason_image": "부적절한 이미지",
+    "reason_bullying": "괴롭힘/협박",
+    "reason_rule": "커뮤니미 규칙 위반"
+  }
 }

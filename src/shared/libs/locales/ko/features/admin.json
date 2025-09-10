@@ -2,8 +2,7 @@
   "hooks": {
     "use_comming_soon": {
       "modal_title": "준비중인 기능입니다.",
-      "modal_body": "완성되면 더 편리하게 이용하실 수 있어요!",
-      "primary_button": "확인"
+      "modal_body": "완성되면 더 편리하게 이용하실 수 있어요!"
     }
   }
 }

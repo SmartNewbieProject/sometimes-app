@@ -1,5 +1,4 @@
 {
-  "modal_error_title": "오류",
   "modal_error_desc": "신고 대상을 찾을 수 없습니다.",
   "modal_required_title": "필수 입력",
   "modal_required_desc": "상세 내용을 입력해주세요!",
@@ -39,7 +38,7 @@
   "info_1": "신고 접수 후 검토까지 1-3일 소요됩니다.",
   "info_2": "허위 신고 시 계정 제재를 받을 수 있습니다.",
   "button_submit": "신고 접수하기",
-	"view":{
+  "view": {
     "loading": "파트너 정보를 불러오고 있어요",
     "header_report": "신고하기",
     "section_basic": "기본 정보",
@@ -58,5 +57,5 @@
     "profile_interest": "관심사",
     "withdrawal_user": "서비스를 탈퇴한 유저에요",
     "button_waiting": "상대방 응답을 기다리는 중.."
-	}
+  }
 }

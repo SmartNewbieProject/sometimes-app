@@ -27,7 +27,6 @@
       "delete_article_title": "게시글 삭제",
       "delete_article_confirm": "해당 게시글을 삭제할까요?",
       "delete_button": "삭제하기",
-      "cancel_button": "취소",
       "faq_title": "[FAQ] 자주묻는 질문"
     },
     "article": {
@@ -77,7 +76,6 @@
           "title": "글 작성 실패",
           "desc": "글 작성 중 오류가 발생했습니다."
         },
-        "confirm": "확인",
         "confirm_checked": "네, 확인했어요"
       },
       "header": {
@@ -139,7 +137,6 @@
       "input_form": {
         "comment_edit_reply_mode_comment": "수정 모드 또는 대댓글 작성 모드 표시",
         "editing_comment": "댓글 수정 중...",
-        "cancel_button": "취소",
         "replying_comment": "답글 작성 중...",
         "anonymous": "익명",
         "comment_placeholder": "댓글을 입력하세요"

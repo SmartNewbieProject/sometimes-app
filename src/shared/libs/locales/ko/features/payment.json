@@ -4,7 +4,6 @@
       "banner": {
         "guide_button_text": "기존 재매칭권은 어떻게 되나요?"
       },
-      "error_alert_title": "오류",
       "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
       "payment_error_console": "결제 오류:",
       "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:"
@@ -14,7 +13,6 @@
     },
     "rematch": {
       "rematch_ticket_name": "연인 매칭권",
-      "error_alert_title": "오류",
       "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
       "purchase_count_tracking": "Purchase_Count"
     },
@@ -22,7 +20,6 @@
       "rematch": {
         "rematch_ticket_name": "연인 매칭권",
         "rematch_ticket_name_repeat": "연인 재매칭권",
-        "error_alert_title": "오류",
         "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
         "payment_error_console": "결제 오류:",
         "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:",

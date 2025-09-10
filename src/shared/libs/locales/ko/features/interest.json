@@ -3,14 +3,11 @@
     "age_selector": {
       "loading": "나이대 선호도를 불러오고 있어요",
       "title_1": "선호하는 나이대를",
-      "title_2": "선택해 주세요!",
-      "select_label": "선택",
-      "age_option_selected": "선택"
+      "title_2": "선택해 주세요!"
     },
     "bad_mbti": {
       "title": "당신이 싫어하는 MBTI 유형은?",
-      "next_none": "상관없어요",
-      "next": "다음으로"
+      "next_none": "상관없어요"
     },
     "done": {
       "title_1": "이상형 정보를 확인했어요",
@@ -45,15 +42,13 @@
     },
     "like_mbti": {
       "title": "당신이 좋아하는 MBTI 유형은?",
-      "next_none": "상관없어요",
-      "next": "다음으로"
+      "next_none": "상관없어요"
     },
     "personality": {
       "title_1": "당신이 원하는",
       "title_2": "이상형의 성격은 어떤가요?",
       "loading": "성격 유형을 불러오고 있어요",
-      "next_none": "최대 3개 선택 가능",
-      "next": "다음으로"
+      "next_none": "최대 3개 선택 가능"
     },
     "smoke": {
       "tooltip_0_title": "비흡연자였으면 좋겠어요",
