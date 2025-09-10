@@ -1,20 +1,11 @@
-import type React from "react";
-import { useEffect, useRef, useState } from "react";
-import {
-  FlatList,
-  Keyboard,
-  Platform,
-  Pressable,
-  type ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { useState } from "react";
+import { Platform, View } from "react-native";
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import useRefinedChatList from "../hooks/use-chat-list";
 import useChatList from "../queries/use-chat-list";
 import ChatGuideBanner from "./chat-guide-banner";
 import ChatList from "./chat-list";
@@ -28,11 +19,8 @@ import NewMatchBanner from "./new-match-banner";
 function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [isPhotoClicked, setPhotoClicked] = useState(false);
-  const { id } = useLocalSearchParams<{ id: string }>();
 
-  const { data, isLoading } = useChatList(id);
-
-  const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
+  const { chatList } = useRefinedChatList();
   const year = new Date().getFullYear();
   const month = new Date().getMonth() + 1;
   const day = new Date().getDate();
@@ -73,9 +61,9 @@ function ChatScreen() {
           animatedStyles,
         ]}
       >
-        {chatList.length < 3 && !isLoading && (
+        {chatList.length < 3 && (
           <>
-            {chatList.length < 1 && !isLoading && (
+            {chatList.length < 1 && (
               <>
                 <View style={{ height: 15 }} />
                 <DateDivider date={date} />

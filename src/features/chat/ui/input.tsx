@@ -18,9 +18,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useAuth } from "../../auth";
 import { useChatEvent } from "../hooks/use-chat-event";
 import { useOptimisticChat } from "../hooks/use-optimistic-chat";
-import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import type { Chat } from "../types/chat";
 
@@ -34,7 +34,11 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
   const { actions } = useChatEvent();
-  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
+  const {
+    addOptimisticMessage,
+    replaceOptimisticMessage,
+    markMessageAsFailed,
+  } = useOptimisticChat({ chatRoomId: id });
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -86,14 +90,28 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       addOptimisticMessage(optimisticMessage);
       const result = await promise;
       if (result.success && result.serverMessage) {
-        replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
+        replaceOptimisticMessage(
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          optimisticMessage.tempId!,
+          result.serverMessage
+        );
       } else {
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
         markMessageAsFailed(optimisticMessage.tempId!, result.error);
       }
     } catch (error) {
-      console.error('Message send error:', error);
+      console.error("Message send error:", error);
     }
-  }, [chat, partner, user, id, actions, addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed]);
+  }, [
+    chat,
+    partner,
+    user,
+    id,
+    actions,
+    addOptimisticMessage,
+    replaceOptimisticMessage,
+    markMessageAsFailed,
+  ]);
 
   return (
     <Animated.View

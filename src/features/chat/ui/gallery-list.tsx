@@ -13,9 +13,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useChatEvent } from "../hooks/use-chat-event";
-import { useOptimisticChat } from "../hooks/use-optimistic-chat";
-import { useAuth } from "../../auth";
+import { useAuth./../au..aut..auth
+import { useChatEvent./hooks/use-chat-chatechatevent
+import { useOptimisticChatmisticChatmihooksiuse-optimistic-chatt }hooksruse-optimistic-chat../hooks/use-optimistic-chat";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import ChatCamera from "./camera";
 
