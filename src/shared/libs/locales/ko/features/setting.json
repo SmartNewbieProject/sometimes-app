@@ -24,11 +24,5 @@
     "textarea_placeholder": "기타 이유를 입력해주세요",
     "button_prev": "돌아기기",
     "button_next": "서비스 떠나기"
-  },
-  "ui": {
-    "header": {
-      "setting_title": "설정",
-      "account_title": "계정관리"
-    }
   }
 }
