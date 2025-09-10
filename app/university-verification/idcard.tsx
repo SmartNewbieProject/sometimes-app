@@ -1,3 +1,4 @@
+import { Header, Text, PalePurpleGradient } from "@/src/shared/ui";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -7,12 +8,13 @@ import {
   StyleSheet,
   Text as RNText,
   View,
+  Pressable,
 } from "react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, ImageSelector } from "@/src/shared/ui";
-import { Text } from "@/src/shared/ui/text";
+import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import {
   GuideView,
@@ -98,6 +100,20 @@ export default function StudentVerifyPage() {
 
   return (
     <DefaultLayout className="flex-1 relative">
+      <PalePurpleGradient />
+      <Header.Container>
+        <Header.LeftContent>
+          <Pressable onPress={() => router.back()} className="p-2 -ml-2">
+            <ChevronLeftIcon width={24} height={24} />
+          </Pressable>
+        </Header.LeftContent>
+        <Header.CenterContent>
+          <Text size="lg" weight="normal" textColor="black">
+            대학 인증
+          </Text>
+        </Header.CenterContent>
+        <Header.RightContent></Header.RightContent>
+      </Header.Container>
       <GuideView>
         <View className="px-5">
           <Image
@@ -108,11 +124,14 @@ export default function StudentVerifyPage() {
             재학 인증을 진행해 주세요
           </Text>
           <Text weight="medium" size="sm" textColor="pale-purple">
-            학생증 또는 재학증명서 이미지 1장만 업로드해주세요. (최대 5MB)
+            학생증 또는 재학증명서 이미지 1장만 업로드해주세요.
+          </Text>
+          <Text weight="medium" size="sm" textColor="pale-purple">
+            (JPG, JPEG, PNG, 10MB 이하)
           </Text>
         </View>
 
-        <View className="px-5 mt-6">
+        <View className="px-5 mt-6 items-center">
           <ImageSelector
             size="lg"
             value={image ?? undefined}
