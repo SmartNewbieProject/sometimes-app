@@ -1,0 +1,13 @@
+{
+  "ui": {
+    "logo": {
+      "tagline": ""
+    },
+    "login_form": {
+      "pass_loading": "",
+      "pass_login": "",
+      "kakao_login": "",
+      "kakao_button_label": ""
+    }
+  }
+}

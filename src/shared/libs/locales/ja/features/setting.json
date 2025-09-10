@@ -1,0 +1,34 @@
+{
+  "ui": {
+    "menu": {
+      "account": "",
+      "account_management": "",
+      "logout": "",
+      "member_withdrawal": ""
+    }
+  },
+  "withdrawal": {
+    "reason_partner": "",
+    "reason_matching": "",
+    "reason_privacy": "",
+    "reason_safety": "",
+    "reason_technical": "",
+    "reason_inactive": "",
+    "reason_dissatisfied": "",
+    "reason_other": "",
+    "reason_select_error": "",
+    "modal_title": "",
+    "modal_desc_1": "",
+    "modal_desc_2": "",
+    "title": "",
+    "textarea_placeholder": "",
+    "button_prev": "",
+    "button_next": ""
+  },
+  "ui": {
+    "header": {
+      "setting_title": "",
+      "account_title": ""
+    }
+  }
+}

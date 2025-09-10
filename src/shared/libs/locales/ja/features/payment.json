@@ -1,0 +1,32 @@
+{
+  "ui": {
+    "gem_store": {
+      "banner": {
+        "guide_button_text": ""
+      },
+      "error_alert_message": "",
+      "payment_error_console": "",
+      "payment_error_debug": ""
+    },
+    "complete": {
+      "processing_payment": ""
+    },
+    "rematch": {
+      "rematch_ticket_name": "",
+      "error_alert_message": "",
+      "purchase_count_tracking": ""
+    },
+    "tickets": {
+      "rematch": {
+        "rematch_ticket_name": "",
+        "rematch_ticket_name_repeat": "",
+        "error_alert_message": "",
+        "payment_error_console": "",
+        "payment_error_debug": "",
+        "payment_error_modal": "",
+        "order_name_single": "",
+        "order_name_multiple": ""
+      }
+    }
+  }
+}

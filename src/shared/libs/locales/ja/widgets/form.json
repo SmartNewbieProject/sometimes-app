@@ -1,0 +1,9 @@
+{
+  "image_selector": {
+    "permission_needed_title": "",
+    "gallery_permission_message": "",
+    "open_settings": "",
+    "unsupported_format": "",
+    "camera_permission_message": ""
+  }
+}

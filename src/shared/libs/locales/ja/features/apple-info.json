@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "top_bar": {
+      "title": ""
+    },
+    "name_input": {
+      "title": "",
+      "placeholder": ""
+    },
+    "gender_selector": {
+      "title": "",
+      "male": "",
+      "female": ""
+    },
+    "birth_input": {
+      "title": ""
+    },
+    "phone_input": {
+      "title": ""
+    },
+    "bottom_cta": {
+      "message": "",
+      "button_complete": "",
+      "button_incomplete": ""
+    }
+  }
+}

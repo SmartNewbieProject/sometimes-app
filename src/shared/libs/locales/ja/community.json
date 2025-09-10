@@ -1,0 +1,48 @@
+{
+  "id": {
+    "header_title": "",
+    "dropdown_edit": "",
+    "dropdown_delete": "",
+    "error_invalid": "",
+    "error_loading": "",
+    "loading": ""
+  },
+  "write": {
+    "modal_short_title": "",
+    "modal_short_desc": "",
+    "modal_overflow_title": "",
+    "modal_overflow_desc": "",
+    "modal_success_title": "",
+    "modal_success_desc": "",
+    "modal_fail_title": "",
+    "modal_fail_desc_default": "",
+    "modal_confirm_checked": ""
+  },
+  "update": {
+    "modal_short_title": "",
+    "modal_short_desc": "",
+    "modal_overflow_title": "",
+    "modal_overflow_desc": "",
+    "modal_success_desc_1": "",
+    "modal_success_desc_2": "",
+    "modal_confirm_checked": "",
+    "modal_confirm_move": "",
+    "loading": ""
+  },
+  "report": {
+    "alert_title": "",
+    "alert_desc": "",
+    "title": "",
+    "desc": "",
+    "button": "",
+    "header": "",
+    "reason_spam": "",
+    "reason_abuse": "",
+    "reason_sexual": "",
+    "reason_privacy": "",
+    "reason_ad": "",
+    "reason_image": "",
+    "reason_bullying": "",
+    "reason_rule": ""
+  }
+}

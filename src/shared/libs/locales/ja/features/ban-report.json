@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "use_report": {
+      "modal_title_success": "",
+      "modal_message_success": "",
+      "modal_title_error": "",
+      "default_error_message": ""
+    }
+  },
+  "services": {
+    "report": {
+      "param_payload_comment": "",
+      "returns_comment": "",
+      "add_images_comment": "",
+      "create_blob_comment": "",
+      "auth_interceptor_comment": ""
+    }
+  }
+}

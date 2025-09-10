@@ -1,0 +1,10 @@
+{
+  "ui": {
+    "header_title": "",
+    "gem_unit": "",
+    "matching_history_list": {
+      "more_matches_prompt": "",
+      "use_rematch_hint": ""
+    }
+  }
+}

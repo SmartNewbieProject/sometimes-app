@@ -1,0 +1,150 @@
+{
+  "ui": {
+    "articles": {
+      "faq_title": ""
+    },
+    "guideline": {
+      "title": "",
+      "welcome_message": "",
+      "guideline_purpose": "",
+      "basic_rules_title": "",
+      "rule_1": "",
+      "rule_2": "",
+      "rule_3": "",
+      "rule_4": "",
+      "writing_tips_title": "",
+      "tip_1": "",
+      "tip_2": "",
+      "tip_3": "",
+      "tip_4": "",
+      "report_and_sanction_title": "",
+      "sanction_message_1": "",
+      "sanction_message_2": ""
+    },
+    "infinite_article_list": {
+      "comment_category_change": "",
+      "comment_data_loaded": "",
+      "delete_article_title": "",
+      "delete_article_confirm": "",
+      "delete_button": "",
+      "faq_title": ""
+    },
+    "article": {
+      "edit_button": "",
+      "delete_button": "",
+      "report_button": "",
+      "view_more_replies": ""
+    },
+    "article_detail": {
+      "comment_arrow_indent_comment": "",
+      "like_count_comment": "",
+      "action_buttons_comment": "",
+      "reply_button_comment": "",
+      "like_button_comment": "",
+      "more_button_comment": "",
+      "dropdown_modal_comment": "",
+      "edit_button": "",
+      "delete_button": "",
+      "loading_comments": "",
+      "header_title": "",
+      "invalid_request": "",
+      "loading_error": "",
+      "loading_article": ""
+    },
+    "article_write_screen": {
+      "form": {
+        "alert_title": "",
+        "alert_image_limit": "",
+        "title_placeholder": "",
+        "content_placeholder": "",
+        "add_image_button": ""
+      },
+      "modal": {
+        "short_content": {
+          "title": "",
+          "desc": ""
+        },
+        "overflow": {
+          "title": "",
+          "desc": ""
+        },
+        "success": {
+          "title": "",
+          "desc": ""
+        },
+        "fail": {
+          "title": "",
+          "desc": ""
+        },
+        "confirm_checked": ""
+      },
+      "header": {
+        "write_post": "",
+        "edit_post": "",
+        "complete_button": ""
+      },
+      "nav": {
+        "anonymous": ""
+      }
+    },
+    "article_edit_screen": {
+      "loading": "",
+      "modal": {
+        "short_content": {
+          "title": "",
+          "desc": ""
+        },
+        "overflow": {
+          "title": "",
+          "desc": ""
+        },
+        "success": {
+          "title": "",
+          "desc_1": "",
+          "desc_2": ""
+        },
+        "confirm_checked": "",
+        "confirm_move": ""
+      }
+    },
+    "report": {
+      "alert": {
+        "title": "",
+        "desc": ""
+      },
+      "title": "",
+      "desc": "",
+      "button": "",
+      "header": "",
+      "reasons": {
+        "spam": "",
+        "abuse": "",
+        "sexual": "",
+        "privacy": "",
+        "ad": "",
+        "image": "",
+        "bullying": "",
+        "rule": ""
+      }
+    },
+    "category_list": {
+      "comment_category_change_cache_reset": "",
+      "comment_button_wrapper_layout_save": "",
+      "loading_categories": ""
+    },
+    "comment": {
+      "university_name": "",
+      "input_form": {
+        "comment_edit_reply_mode_comment": "",
+        "editing_comment": "",
+        "replying_comment": "",
+        "anonymous": "",
+        "comment_placeholder": ""
+      }
+    },
+    "user_profile": {
+      "me_indicator": "",
+      "separator": ""
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "use_my_info_form": {
+      "clear_action": ""
+    }
+  },
+  "ui": {
+    "dating_style": {
+      "title_1": "",
+      "title_2": "",
+      "loading": "",
+      "next_count": ""
+    },
+    "done": {
+      "title_1": "",
+      "title_2": "",
+      "desc": "",
+      "button": ""
+    }
+  }
+}

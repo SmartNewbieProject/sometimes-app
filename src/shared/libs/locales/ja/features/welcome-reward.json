@@ -1,0 +1,11 @@
+{
+  "ui": {
+    "modal": {
+      "title": "",
+      "subline": "",
+      "gem_reward_label": "",
+      "reward_text": "",
+      "close_hint": ""
+    }
+  }
+}

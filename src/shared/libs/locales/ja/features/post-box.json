@@ -1,0 +1,32 @@
+{
+  "ui": {
+    "i_liked_loading": "",
+    "liked_me_loading": "",
+    "header": {
+      "title": ""
+    },
+    "card": {
+      "status_messages": {
+        "liked_me_relative": "",
+        "mutual_like": "",
+        "rejected": "",
+        "waiting_response": ""
+      },
+      "buttons": {
+        "ok": "",
+        "start_chat": "",
+        "yes_try": "",
+        "not_a_match": ""
+      },
+      "modal_texts": {
+        "start_instagram_title_line1": "",
+        "start_instagram_title_line2": "",
+        "start_instagram_subline1": "",
+        "start_instagram_subline2": "",
+        "bye_title": "",
+        "bye_subline": ""
+      },
+      "withdrawn_text": ""
+    }
+  }
+}

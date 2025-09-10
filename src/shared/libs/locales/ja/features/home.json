@@ -1,0 +1,75 @@
+{
+  "ui": {
+    "layout": {
+      "loading_user_info": ""
+    },
+    "banner_slide": {
+      "loading_title": ""
+    },
+    "announce_card": {
+      "text": ""
+    },
+    "community_announcement": {
+      "greeting": "",
+      "default_user": "",
+      "success_story_prompt": ""
+    },
+    "first_purchase_event_banner": {
+      "title": "",
+      "brand_name": "",
+      "description_1": "",
+      "description_2": "",
+      "special_match": "",
+      "comment_android_shadow": ""
+    },
+    "matching_status": {
+      "title": "",
+      "success_rate": "",
+      "new_matches_this_week": "",
+      "comment_color": ""
+    },
+    "review_slide": {
+      "anonymous": "",
+      "review_1": "",
+      "review_2": "",
+      "review_3": "",
+      "review_4": "",
+      "review_5": ""
+    },
+    "tip_announcement": {
+      "title": "",
+      "tip": ""
+    },
+    "total_match_counter": {
+      "count_prefix": "",
+      "count_suffix": ""
+    },
+    "university_form": {
+      "grade": "",
+      "student_number": "",
+      "error_university_name": "",
+      "error_department_name": "",
+      "error_grade": "",
+      "error_student_number": "",
+      "submit_button": "",
+      "university_label": "",
+      "university_placeholder": "",
+      "department_label": "",
+      "department_placeholder": "",
+      "student_number_placeholder": "",
+      "grade_placeholder": ""
+    },
+    "home_info": {
+      "home_info_section": {
+        "status_complete": "",
+        "status_incomplete": "",
+        "my_info_title": "",
+        "my_info_description": "",
+        "my_info_tooltip": "",
+        "preference_info_title": "",
+        "preference_info_description": "",
+        "preference_info_tooltip": ""
+      }
+    }
+  }
+}

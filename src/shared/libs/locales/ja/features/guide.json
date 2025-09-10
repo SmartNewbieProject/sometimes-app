@@ -1,0 +1,90 @@
+{
+  "mock": {
+    "mock_like_button": {
+      "modal_title": "",
+      "modal_text_1": "",
+      "modal_text_2": "",
+      "primary_button": "",
+      "partner_modal_title_1": "",
+      "partner_modal_title_2_male": "",
+      "partner_modal_title_2_female": "",
+      "partner_modal_text_1": "",
+      "partner_modal_text_2": "",
+      "partner_primary_button": "",
+      "main_button": ""
+    },
+    "mock_interaction_navigation": {
+      "modal_title_1": "",
+      "modal_title_2": "",
+      "modal_text_1": "",
+      "modal_text_2": "",
+      "primary_button": "",
+      "secondary_button": "",
+      "main_button": "",
+      "complete_button": ""
+    },
+    "mock_partner": {
+      "mbti_tag": "",
+      "button_more": ""
+    }
+  },
+  "ui": {
+    "like_guide_scenario": {
+      "like": {
+        "tab_liked_me": "",
+        "tab_i_liked": "",
+        "info": {
+          "step3_title": "",
+          "step3_desc1": "",
+          "step3_desc2": "",
+          "step4_title": "",
+          "step4_desc1": "",
+          "step5_title": "",
+          "step5_desc1": "",
+          "step5_desc2": "",
+          "step6_title": "",
+          "step6_desc1": "",
+          "step6_desc2": "",
+          "step6_desc3": "",
+          "step7_title": "",
+          "step7_desc1": "",
+          "step7_desc2": "",
+          "step7_desc3": "",
+          "step8_title": "",
+          "step8_desc1": "",
+          "step8_desc2": "",
+          "step9_title": "",
+          "step9_desc1": "",
+          "step9_desc2": "",
+          "step10_title": "",
+          "step10_desc1": "",
+          "close_hint": ""
+        }
+      }
+    },
+    "home": {
+      "info_title_1": "",
+      "info_description_1": "",
+      "info_description_2": "",
+      "info_title_2": "",
+      "info_description_3": "",
+      "info_description_4": "",
+      "info_title_3": "",
+      "info_description_5": "",
+      "info_description_6": "",
+      "info_next_hint": ""
+    }
+  },
+  "utils": {
+    "mock_data": {
+      "nickname_1": "",
+      "university_1": "",
+      "nickname_2_male": "",
+      "nickname_2_female": "",
+      "university_2": "",
+      "nickname_3_male": "",
+      "nickname_3_female": "",
+      "university_3": ""
+    }
+  }
+}

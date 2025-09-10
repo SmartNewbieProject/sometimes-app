@@ -1,0 +1,8 @@
+{
+  "hooks": {
+    "use_event_control": {
+      "event_expired_comment": "",
+      "event_over_participated_comment": ""
+    }
+  }
+}

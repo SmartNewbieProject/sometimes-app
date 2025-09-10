@@ -1,0 +1,36 @@
+{
+  "use_auth": {
+    "logout_modal_title": "",
+    "comment_new_user": "",
+    "logout_modal_message": ""
+  },
+  "use_comming_soon": {
+    "modal_title": "",
+    "modal_body": ""
+  },
+  "use_report": {
+    "modal_title_success": "",
+    "modal_message_success": "",
+    "modal_title_error": "",
+    "default_error_message": ""
+  },
+  "use_chat_event": {
+    "connected_status": "",
+    "disconnected_status": ""
+  },
+  "use_my_info_form": {
+    "clear_action": ""
+  },
+  "use_event_control": {
+    "event_expired_comment": "",
+    "event_over_participated_comment": ""
+  },
+  "use_apple_review_login": {
+    "comment": ""
+  },
+  "use_cashable_modal": {
+    "title": "",
+    "description": "",
+    "charge_button": ""
+  }
+}

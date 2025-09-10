@@ -1,0 +1,12 @@
+{
+  "ui": {
+    "header": {
+      "subtitle": ""
+    },
+    "footer": {
+      "start_intro_button": "",
+      "login_button": "",
+      "feedback_banner": ""
+    }
+  }
+}

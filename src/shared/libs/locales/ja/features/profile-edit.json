@@ -1,0 +1,12 @@
+{
+  "tabs": {
+    "profile": "",
+    "interest": ""
+  },
+  "ui": {
+    "save_button": "",
+    "validation": {
+      "empty_form": ""
+    }
+  }
+}
