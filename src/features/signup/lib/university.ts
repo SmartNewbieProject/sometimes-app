@@ -12,6 +12,7 @@ export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	ICN: '인천',
 	SEL: '서울',
 	KYG: '경기',
+	GWJ: '광주',
 };
 
 export type UIRegion =
@@ -24,10 +25,11 @@ export type UIRegion =
 	| '천안'
 	| '인천'
 	| '서울'
+	| '광주'
 	| '경기';
 
-export const getRegionsByRegionCode = (code: RegionCode[]) => {
-	return code.length === 1 ? regionCodeMap[code[0]] : code.map((c) => regionCodeMap[c]).join('/');
+export const getRegionsByRegionCode = (code: RegionCode): string | undefined => {
+	return regionCodeMap[code];
 };
 
 export type UniversityType = '국립' | '사립' | '과학기술원' | '도립' | '알 수 없음';
@@ -189,6 +191,8 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 			return 'seoul';
 		case 'KYG':
 			return 'gyeonggi';
+		case 'GWJ':
+			return 'gwangju';
 		default:
 			return '';
 	}
@@ -201,8 +205,7 @@ export function filterUniversities(universities: UniversityCard[], searchText: s
 		universities?.filter(({ name, area, region, en }) => {
 			return (
 				name.toLowerCase().includes(lowerText) ||
-				(area?.toLowerCase?.().includes(lowerText) ?? false) ||
-				en.toLowerCase().includes(lowerText)
+				(area?.toLowerCase?.().includes(lowerText) ?? false)
 			);
 		}) ?? []
 	);
