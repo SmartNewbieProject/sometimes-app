@@ -1,5 +1,4 @@
 import { getRegionCodeByName } from '@/src/shared/constants/region';
-
 export const areaMap = [
 	{
 		id: 1,
@@ -41,7 +40,6 @@ export const areaMap = [
 			right: 82,
 		},
 		description: '32개 대학 오픈 완료!',
-
 		open: 'open',
 	},
 	{
@@ -112,7 +110,6 @@ export const areaMap = [
 			left: 82,
 		},
 		description: '오픈 준비 중',
-
 		open: 'close',
 	},
 	{
@@ -129,7 +126,6 @@ export const areaMap = [
 		open: 'open',
 		description: '105개 대학 오픈 완료!',
 	},
-
 	{
 		id: 11,
 		area: '강원',
@@ -144,7 +140,6 @@ export const areaMap = [
 		open: 'close',
 		description: '오픈 준비 중',
 	},
-
 	{
 		id: 13,
 		area: '천안',
@@ -160,7 +155,6 @@ export const areaMap = [
 		description: '12개 대학 오픈 완료!',
 	},
 ] as const;
-
 export function getRegionList(area: string) {
 	switch (area) {
 		case '대전':
@@ -175,11 +169,12 @@ export function getRegionList(area: string) {
 			return [getRegionCodeByName('천안시')];
 		case '서울/인천/경기':
 			return [getRegionCodeByName('인천광역시'), getRegionCodeByName('서울특별시'), 'KYG'];
+		case '광주':
+			return [getRegionCodeByName('광주광역시')];
 		default:
 			return [];
 	}
 }
-
 export function getRegionListByCode(regionCode: string) {
 	switch (regionCode) {
 		case 'DJN':
@@ -198,11 +193,12 @@ export function getRegionListByCode(regionCode: string) {
 		case 'SEL':
 		case 'KYG':
 			return [getRegionCodeByName('인천광역시'), getRegionCodeByName('서울특별시'), 'KYG'];
+		case 'GWJ':
+			return [getRegionCodeByName('광주광역시')];
 		default:
 			return [];
 	}
 }
-
 export function getAreaByCode(regionCode: string) {
 	switch (regionCode) {
 		case 'DJN':
@@ -221,11 +217,12 @@ export function getAreaByCode(regionCode: string) {
 		case 'SEL':
 		case 'KYG':
 			return ['서울', '인천', '경기'];
+		case 'GWJ':
+			return ['광주'];
 		default:
 			return [];
 	}
 }
-
 export function getAllRegionList() {
 	return [
 		getRegionCodeByName('대전광역시'),
@@ -237,6 +234,7 @@ export function getAllRegionList() {
 		getRegionCodeByName('천안시'),
 		getRegionCodeByName('인천광역시'),
 		getRegionCodeByName('서울특별시'),
+		getRegionCodeByName('광주광역시'),
 		'KYG',
 	];
 }

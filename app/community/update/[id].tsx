@@ -46,9 +46,7 @@ export default function CommunityUpdateScreen() {
       showModal({
         title: "글자수 초과",
         children: (
-          <Text textColor="black">
-            본문은 2000자 이하로 작성해주세요.
-          </Text>
+          <Text textColor="black">본문은 2000자 이하로 작성해주세요.</Text>
         ),
         primaryButton: {
           text: "네, 확인했어요",
@@ -59,10 +57,11 @@ export default function CommunityUpdateScreen() {
     }
 
     await tryCatch(async () => {
-      const newImages = data.images?.filter(img => 
-        !data.originalImages?.some(orig => orig.imageUrl === img)
-      ) || [];
-      
+      const newImages =
+        data.images?.filter(
+          (img) => !data.originalImages?.some((orig) => orig.imageUrl === img)
+        ) || [];
+
       await articles.patchArticle(id, {
         content: data.content,
         title: data.title,
@@ -99,7 +98,7 @@ export default function CommunityUpdateScreen() {
       content: article.content,
       title: article.title,
       type: article.category,
-      images: article.images?.map(img => img.imageUrl) || [],
+      images: article.images?.map((img) => img.imageUrl) || [],
       originalImages: article.images || [],
       deleteImageIds: [],
     });
@@ -114,7 +113,7 @@ export default function CommunityUpdateScreen() {
       <DefaultLayout className="flex-1">
         <PalePurpleGradient />
         <ArtcileWriter.Header mode="update" onConfirm={onSubmit} />
-        <ArtcileWriter.Form />
+        <ArtcileWriter.Form mode="update" />
         <ArtcileWriter.Nav mode="update" />
       </DefaultLayout>
     </ArticleWriteFormProvider>
