@@ -34,15 +34,15 @@ const { useDepartmentQuery } = queries;
 
 export default function UniversityDetailsPage() {
   const { updateForm, form } = useSignupProgress();
-  const { universityName } = useGlobalSearchParams<{
-    universityName: string;
+  const { universityId } = useGlobalSearchParams<{
+    universityId: string;
   }>();
   const insets = useSafeAreaInsets();
 
   const [signupLoading, setSignupLoading] = useState(false);
 
   const { data: departments = [], isLoading } = useDepartmentQuery(
-    universityName ?? form.universityName
+    universityId ?? form.universityId
   );
 
   useChangePhase(SignupSteps.UNIVERSITY_DETAIL);
@@ -134,7 +134,6 @@ export default function UniversityDetailsPage() {
       >
         <Pressable
           onPress={(e) => {
-            console.log("click");
             if (Platform.OS !== "web") {
               Keyboard.dismiss();
             }

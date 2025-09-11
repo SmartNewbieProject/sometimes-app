@@ -73,6 +73,8 @@
 		"expo-tracking-transparency": "~5.2.4",
 		"expo-web-browser": "~14.2.0",
 		"iamport": "^0.3.4",
+		"lottie-react": "^2.4.1",
+		"lottie-react-native": "^7.3.4",
 		"metro-react-native-babel-transformer": "^0.76.9",
 		"nanoid": "^5.1.5",
 		"nativewind": "^4.1.23",

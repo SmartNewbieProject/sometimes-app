@@ -8,12 +8,16 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams } from "expo-router";
 import { getUniversitiesByRegion } from "../apis";
 import { useSignupProgress } from "../hooks";
-import { getAllRegionList, getRegionsByRegionCode } from "../lib";
+import {
+  getAllRegionList,
+  getRegionListByCode,
+  getRegionsByRegionCode,
+} from "../lib";
 
-export default function useUniversities() {
+export default function useUniversitiesByArea(regions: string[]) {
   const { data, isLoading } = useQuery({
-    queryFn: () => getUniversitiesByRegion(getAllRegionList()),
-    queryKey: ["universities", "all"],
+    queryFn: () => getUniversitiesByRegion(getRegionListByCode(regions[0])),
+    queryKey: ["universities", [...regions]],
   });
   console.log("universities", data);
   const mappedData = data?.map((item) => ({
@@ -25,24 +29,3 @@ export default function useUniversities() {
 
   return { data: mappedData, isLoading };
 }
-
-export type UniversitiesByRegion = {
-  id: string;
-  name: string;
-  code: string;
-  region: RegionCode;
-  en: string;
-  foundation: string;
-}[];
-
-export type UniversityCard = {
-  logoUrl: string;
-  universityType: string;
-  area: string | undefined;
-  id: string;
-  name: string;
-  code: string;
-  region: RegionCode;
-  en: string;
-  foundation: string;
-};
