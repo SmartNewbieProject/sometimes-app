@@ -1,15 +1,15 @@
 {
   "index": {
-    "title": "",
-    "subtitle": "",
-    "subtitle_2": "",
-    "email": "",
-    "email_placeholder": "",
-    "password": "",
-    "password_placeholder": "",
-    "login": "",
-    "register": "",
-    "find_id": "",
-    "find_password": ""
+    "title": "SOMETIME",
+    "subtitle": "慣れた一日にときめきを一つ、",
+    "subtitle_2": "SOMETIMEで",
+    "email": "メールアドレス",
+    "email_placeholder": "メールアドレスを入力",
+    "password": "パスワード",
+    "password_placeholder": "英字・数字・記号を含む8文字以上",
+    "login": "ログイン",
+    "register": "新規登録",
+    "find_id": "IDを探す",
+    "find_password": "パスワードを探す"
   }
 }

@@ -1,27 +1,27 @@
 {
   "gem_store": {
-    "error_alert_message": "",
-    "payment_error_console": "",
-    "payment_error_debug": ""
+    "error_alert_message": "決済処理中にエラーが発生しました。",
+    "payment_error_console": "決済エラー:",
+    "payment_error_debug": "決済エラー発生時に新しいorderIdを生成:"
   },
   "complete": {
-    "processing_payment": ""
+    "processing_payment": "決済を処理中です..."
   },
   "rematch": {
-    "rematch_ticket_name": "",
-    "error_alert_message": "",
-    "purchase_count_tracking": ""
+    "rematch_ticket_name": "恋人マッチング券",
+    "error_alert_message": "決済処理中にエラーが発生しました。",
+    "purchase_count_tracking": "Purchase_Count"
   },
   "tickets": {
     "rematch": {
-      "rematch_ticket_name": "",
-      "rematch_ticket_name_repeat": "",
-      "error_alert_message": "",
-      "payment_error_console": "",
-      "payment_error_debug": "",
-      "payment_error_modal": "",
-      "order_name_single": "",
-      "order_name_multiple": ""
+      "rematch_ticket_name": "恋人マッチング券",
+      "rematch_ticket_name_repeat": "恋人再マッチング券",
+      "error_alert_message": "決済処理中にエラーが発生しました。",
+      "payment_error_console": "決済エラー:",
+      "payment_error_debug": "決済エラー発生時に新しいorderIdを生成:",
+      "payment_error_modal": "決済処理中にエラーが発生しました。",
+      "order_name_single": "恋人再マッチング券",
+      "order_name_multiple": "恋人再マッチング券 x{productCount}"
     }
   }
 }
