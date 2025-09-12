@@ -1,12 +1,12 @@
 {
-  "loading": "",
-  "canclel": "",
-  "confirm": "",
-  "close": "",
-  "error": "",
-  "success": "",
-  "select": "",
-  "next": "",
-  "ok": "",
-  "no": ""
+  "loading": "読み込み中…",
+  "canclel": "キャンセル",
+  "confirm": "確認",
+  "close": "閉じる",
+  "error": "エラー",
+  "success": "成功",
+  "select": "選択",
+  "next": "次へ",
+  "ok": "はい",
+  "no": "いいえ"
 }
