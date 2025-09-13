@@ -1,90 +1,90 @@
 {
   "mock": {
     "mock_like_button": {
-      "modal_title": "",
-      "modal_text_1": "",
-      "modal_text_2": "",
-      "primary_button": "",
-      "partner_modal_title_1": "",
-      "partner_modal_title_2_male": "",
-      "partner_modal_title_2_female": "",
-      "partner_modal_text_1": "",
-      "partner_modal_text_2": "",
-      "partner_primary_button": "",
-      "main_button": ""
+      "modal_title": "サムを送りました！",
+      "modal_text_1": "相手も関心を示したら、",
+      "modal_text_2": "インスタで連絡できます。",
+      "primary_button": "確認しました",
+      "partner_modal_title_1": "気になる相手に",
+      "partner_modal_title_2_male": "ビー玉 {count}個で気持ちを伝えますか？",
+      "partner_modal_title_2_female": "気持ちを伝えますか？",
+      "partner_modal_text_1": "相手に簡単に関心を示して、",
+      "partner_modal_text_2": "その次のステップへ自然に進んでみましょう。",
+      "partner_primary_button": "はい、やってみます",
+      "main_button": "いいね"
     },
     "mock_interaction_navigation": {
-      "modal_title_1": "",
-      "modal_title_2": "",
-      "modal_text_1": "",
-      "modal_text_2": "",
-      "primary_button": "",
-      "secondary_button": "",
-      "main_button": "",
-      "complete_button": ""
+      "modal_title_1": "気になる相手を見つけるために",
+      "modal_title_2": "ビー玉 {count}個を使います！",
+      "modal_text_1": "性格やコミュニケーションスタイルをもとに、",
+      "modal_text_2": "自然につながれるご縁をおすすめします。",
+      "primary_button": "はい、やってみます",
+      "secondary_button": "いいえ",
+      "main_button": "もっと探す",
+      "complete_button": "サム送信完了！"
     },
     "mock_partner": {
-      "mbti_tag": "",
-      "button_more": ""
+      "mbti_tag": "#ISTJ #{name}",
+      "button_more": "もっと見る"
     }
   },
   "ui": {
     "like_guide_scenario": {
       "like": {
-        "tab_liked_me": "",
-        "tab_i_liked": "",
+        "tab_liked_me": "届いたサム",
+        "tab_i_liked": "送ったサム",
         "info": {
-          "step3_title": "",
-          "step3_desc1": "",
-          "step3_desc2": "",
-          "step4_title": "",
-          "step4_desc1": "",
-          "step5_title": "",
-          "step5_desc1": "",
-          "step5_desc2": "",
-          "step6_title": "",
-          "step6_desc1": "",
-          "step6_desc2": "",
-          "step6_desc3": "",
-          "step7_title": "",
-          "step7_desc1": "",
-          "step7_desc2": "",
-          "step7_desc3": "",
-          "step8_title": "",
-          "step8_desc1": "",
-          "step8_desc2": "",
-          "step9_title": "",
-          "step9_desc1": "",
-          "step9_desc2": "",
-          "step10_title": "",
-          "step10_desc1": "",
-          "close_hint": ""
+          "step3_title": "送ったサム",
+          "step3_desc1": "自分から気持ちを伝えた",
+          "step3_desc2": "相手を確認できます",
+          "step4_title": "届いたサム",
+          "step4_desc1": "誰が自分に好意を示したかすぐ確認できます",
+          "step5_title": "プロフィールプレビュー",
+          "step5_desc1": "ここでプロフィールを事前に確認できます",
+          "step5_desc2": "カードをタップすると詳細プロフィールへ移動します",
+          "step6_title": "いいね",
+          "step6_desc1": "いいねを押すとお互いにマッチします！",
+          "step6_desc2": "マッチするとインスタで",
+          "step6_desc3": "会話を始められます",
+          "step7_title": "大丈夫です",
+          "step7_desc1": "興味がなければ「大丈夫です」を押してください",
+          "step7_desc2": "今回のご縁は残念ながら終了し、",
+          "step7_desc3": "カードが消えます",
+          "step8_title": "ご縁ではなかったようです",
+          "step8_desc1": "カードが消えて、",
+          "step8_desc2": "次のご縁を確認できます",
+          "step9_title": "期限切れ案内",
+          "step9_desc1": "表示された時間が過ぎると自動的に",
+          "step9_desc2": "「ご縁ではなかったようです」と処理されます。",
+          "step10_title": "チュートリアル終了！",
+          "step10_desc1": "さあ、自分だけの理想の相手に会いに行きましょう！",
+          "close_hint": "👉 チュートリアルを閉じる"
         }
       }
     },
     "home": {
-      "info_title_1": "",
-      "info_description_1": "",
-      "info_description_2": "",
-      "info_title_2": "",
-      "info_description_3": "",
-      "info_description_4": "",
-      "info_title_3": "",
-      "info_description_5": "",
-      "info_description_6": "",
-      "info_next_hint": ""
+      "info_title_1": "いいね機能が新しく追加されました ✨️",
+      "info_description_1": "ここで自分がいいねした人と、",
+      "info_description_2": "自分にいいねしてくれた人を確認できます。",
+      "info_title_2": "以前のマッチングはここに移動しました",
+      "info_description_3": "マッチングカードの下で確認できます",
+      "info_description_4": "見逃さずチェックしてください",
+      "info_title_3": "いいね、もっと詳しく見てみますか？",
+      "info_description_5": "上のボタンを押すとすぐに",
+      "info_description_6": "サム受信箱に入れます",
+      "info_next_hint": "👉 タップして次へ"
     }
   },
   "utils": {
     "mock_data": {
-      "nickname_1": "",
-      "university_1": "",
-      "nickname_2_male": "",
-      "nickname_2_female": "",
-      "university_2": "",
-      "nickname_3_male": "",
-      "nickname_3_female": "",
-      "university_3": ""
+      "nickname_1": "ダウンジェ",
+      "university_1": "ハンビッ大学",
+      "nickname_2_male": "キム・ソヒ",
+      "nickname_2_female": "キム・ゴヌ",
+      "university_2": "ソウル大学",
+      "nickname_3_male": "イ・ジヘ",
+      "nickname_3_female": "パク・ミンソク",
+      "university_3": "漢陽大学"
     }
   }
 }
