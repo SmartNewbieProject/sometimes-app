@@ -1,5 +1,6 @@
 import { axiosClient } from "@/src/shared/libs";
 import type { User } from "../types";
+import { Platform } from "react-native";
 
 export const sendEmailVerification = async (email: string) => {
   const { data } = await axiosClient.post<{ success: boolean }>(
@@ -41,15 +42,21 @@ export const uploadUniversityVerificationImage = async (file: {
   type?: string;
 }): Promise<{ url: string }> => {
   const form = new FormData();
-  // @ts-ignore RN FormData 타입 보정
-  form.append("file", {
-    uri: file.uri,
-    name: file.name ?? "university_document.jpg",
-    type: file.type ?? "image/jpeg",
-  });
+
+  if (Platform.OS === "web") {
+    const response = await fetch(file.uri);
+    const blob = await response.blob();
+    form.append("image", blob, file.name || "university_document.jpg");
+  } else {
+    form.append("image", {
+      uri: file.uri,
+      type: file.type || "image/jpeg",
+      name: file.name || "university_document.jpg",
+    } as any);
+  }
 
   const { data } = await axiosClient.post<{ url: string }>(
-    "/profile/university-verification/upload",
+    "/universities/certificate-image",
     form,
     { headers: { "Content-Type": "multipart/form-data" } }
   );

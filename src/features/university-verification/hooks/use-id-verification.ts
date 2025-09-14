@@ -1,9 +1,6 @@
 import { useState, useCallback } from "react";
-import {
-  getProfileId,
-  uploadUniversityVerificationImage,
-  requestUniversityVerification,
-} from "../apis";
+import * as FileSystem from "expo-file-system";
+import { uploadUniversityVerificationImage } from "../apis";
 
 function guessName(uri: string, fallback = "university_document.jpg") {
   const last = uri.split(/[\\/]/).pop();
@@ -23,7 +20,7 @@ export function useVerification() {
   const submitOne = useCallback(async (uri: string, note?: string) => {
     setSubmitting(true);
     try {
-      const profileId = await getProfileId();
+      // const fileData = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
 
       const uploaded = await uploadUniversityVerificationImage({
         uri,
@@ -31,12 +28,7 @@ export function useVerification() {
         type: guessMime(uri),
       });
 
-      const req = await requestUniversityVerification({
-        profileId,
-        fileUrl: uploaded.url,
-        note,
-      });
-      return req;
+      return uploaded;
     } finally {
       setSubmitting(false);
     }

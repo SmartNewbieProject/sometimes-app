@@ -9,6 +9,7 @@ import {
   Text as RNText,
   View,
   Pressable,
+  Platform,
 } from "react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -79,6 +80,7 @@ export default function StudentVerifyPage() {
 
   const onSubmit = async () => {
     if (!image) return;
+
     try {
       await submitOne(image);
       Alert.alert(
