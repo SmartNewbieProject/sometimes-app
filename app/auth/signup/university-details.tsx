@@ -1,8 +1,10 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
+import { SignupSteps } from "@/src/features/signup/hooks";
 import useUniversityDetails from "@/src/features/signup/hooks/use-university-details";
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 
 import { tryCatch } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui/text";
@@ -22,7 +24,7 @@ import {
   View,
 } from "react-native";
 
-export default function UniversityDetailsPage() {
+function UniversityDetailsPage() {
   const { onBackPress, onNext, signupLoading, nextable } =
     useUniversityDetails();
   const router = useRouter();
@@ -107,6 +109,11 @@ export default function UniversityDetailsPage() {
     </DefaultLayout>
   );
 }
+
+export default withSignupValidation(
+  UniversityDetailsPage,
+  SignupSteps.UNIVERSITY_DETAIL
+);
 
 const styles = StyleSheet.create({
   title: {

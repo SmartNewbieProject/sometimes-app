@@ -1,16 +1,21 @@
 import { track } from "@amplitude/analytics-react-native";
 import Signup from "@features/signup";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, StyleSheet } from "react-native";
-import { useAnimation } from "reanimated-composer";
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { filterUniversities } from "../lib";
 import useUniversities from "../queries/use-universities";
+
 const { SignupSteps, useChangePhase, useSignupProgress, useSignupAnalytics } =
   Signup;
+
 function useUniversityHook() {
   const [searchText, setSearchText] = useState("");
-
   const { updateForm, form: userForm, regions } = useSignupProgress();
   const { isLoading, data: univs } = useUniversities();
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
@@ -18,78 +23,71 @@ function useUniversityHook() {
   );
   const params = useLocalSearchParams();
   const hasProcessedPassInfo = useRef(false);
-
+  const [trigger, setTrigger] = useState(false);
   const [filteredUniv, setFilteredUniv] = useState(univs);
   const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } =
     useSignupProgress();
   const [isFocused, setIsFocused] = useState(false);
-  const { animatedStyle: animatedTitleStyle } = useAnimation({
-    trigger: isFocused,
 
-    animations: {
-      opacity: {
-        initial: 1,
-        to: 0,
-        enter: { duration: 0 },
-        exit: { duration: 0, delay: 350 },
-      },
-    },
-  });
+  const titleOpacity = useSharedValue(1);
+  const containerTranslateY = useSharedValue(60);
+  const listOpacity = useSharedValue(0);
+  const listTranslateY = useSharedValue(50);
 
-  const { animatedStyle: animatedContainerStyle } = useAnimation({
-    trigger: isFocused,
-    animations: {
-      translateY: {
-        initial: 60,
-        to: 0,
-        enter: { duration: 350 },
-        exit: { duration: 0 },
-      },
-    },
-  });
+  const animatedTitleStyle = useAnimatedStyle(() => ({
+    opacity: titleOpacity.value,
+  }));
 
-  const { animatedStyle: animatedListStyle } = useAnimation({
-    trigger: isFocused,
-    animations: {
-      opacity: {
-        initial: 0,
-        to: 1,
-        enter: { duration: 350 },
-        exit: { duration: 0 },
-      },
-      translateY: {
-        initial: 50,
-        to: 0,
-        enter: { duration: 350 },
-        exit: { duration: 0 },
-      },
-    },
-  });
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: containerTranslateY.value }],
+  }));
+
+  const animatedListStyle = useAnimatedStyle(() => ({
+    opacity: listOpacity.value,
+    transform: [{ translateY: listTranslateY.value }],
+  }));
+
   const selectedUnivObj = filteredUniv?.find(
     (item) => item.id === selectedUniv
   );
+
   const handleFocus = () => {
     if (!isFocused) {
+      setTrigger(true);
       setIsFocused(true);
       updateShowHeader(true);
+
+      titleOpacity.value = withTiming(0, { duration: 0 });
+      containerTranslateY.value = withTiming(0, { duration: 350 });
+      listOpacity.value = withTiming(1, { duration: 350 });
+      listTranslateY.value = withTiming(0, { duration: 350 });
     }
   };
 
   const onBackPress = (fallback: () => void) => {
     if (isFocused) {
+      setTrigger(false);
       setIsFocused(false);
       setSearchText("");
       Keyboard.dismiss();
       updateShowHeader(false);
+
+      titleOpacity.value = withTiming(1, { duration: 0 });
+      containerTranslateY.value = withTiming(60, { duration: 0 });
+      listOpacity.value = withTiming(0, { duration: 0 });
+      listTranslateY.value = withTiming(50, { duration: 0 });
     } else {
       fallback();
     }
     return true;
   };
 
+  const handleChange = useCallback((text: string) => {
+    setSearchText(text);
+  }, []);
+
   const handleBlur = () => {
     setIsFocused(false);
-    updateShowHeader(false);
     Keyboard.dismiss();
   };
 
@@ -115,7 +113,13 @@ function useUniversityHook() {
 
   useEffect(() => {
     updateShowHeader(false);
-    setIsFocused;
+    setIsFocused(false);
+    setTrigger(false);
+
+    titleOpacity.value = 1;
+    containerTranslateY.value = 60;
+    listOpacity.value = 0;
+    listTranslateY.value = 50;
   }, []);
 
   useChangePhase(SignupSteps.UNIVERSITY);
@@ -134,15 +138,16 @@ function useUniversityHook() {
         kakaoId: certInfo?.externalId,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.certificationInfo]);
 
-  // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics("university");
 
-  const handleClickUniv = (univ: string) => () => {
-    setSelectedUniv((prev) => (prev === univ ? undefined : univ));
-  };
+  const handleClickUniv = useCallback(
+    (univ: string) => () => {
+      setSelectedUniv((prev) => (prev === univ ? undefined : univ));
+    },
+    []
+  );
 
   useEffect(() => {
     if (!univs) return;
@@ -165,7 +170,6 @@ function useUniversityHook() {
     filteredUniv,
     searchText,
     setSearchText,
-
     handleClickUniv,
     selectedUniv,
     regions,
@@ -173,11 +177,13 @@ function useUniversityHook() {
     animatedContainerStyle,
     animatedListStyle,
     showHeader,
+    trigger,
     handleFocus,
     handleBlur,
     onNext,
     onBackPress,
     isFocused,
+    handleChange,
   };
 }
 

@@ -1,8 +1,10 @@
 import { TwoButtons } from "@/src/features/layout/ui";
 import { DefaultLayout } from "@/src/features/layout/ui";
+import { SignupSteps } from "@/src/features/signup/hooks";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
 import UniversityLogos from "@/src/features/signup/ui/university-logos";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { PalePurpleGradient, Show } from "@/src/shared/ui";
 import HelpIcon from "@assets/icons/help.svg";
 import SearchIcon from "@assets/icons/search.svg";
@@ -19,14 +21,14 @@ import {
 } from "react-native";
 import Animated from "react-native-reanimated";
 
-export default function UniversityPage() {
+function UniversityPage() {
   const router = useRouter();
   const {
     searchText,
     setSearchText,
     filteredUniv,
     handleClickUniv,
-    isFocused,
+    trigger,
     onNext,
     selectedUniv,
     handleBlur,
@@ -37,6 +39,7 @@ export default function UniversityPage() {
     animatedTitleStyle,
     animatedContainerStyle,
     animatedListStyle,
+    handleChange,
   } = useUniversityHook();
 
   const handleBackPress = () => {
@@ -59,12 +62,12 @@ export default function UniversityPage() {
       })
     );
     return () => subscription.remove();
-  }, [isFocused]);
+  }, []);
   return (
     <DefaultLayout className="flex-1 ">
       {!showHeader && <PalePurpleGradient />}
       <View style={[styles.container]}>
-        {!showHeader && <UniversityLogos logoSize={64} />}
+        {!trigger && <UniversityLogos logoSize={64} />}
 
         <Animated.View style={[styles.titleContainer, animatedTitleStyle]}>
           <RNText style={styles.welcome}>
@@ -82,7 +85,7 @@ export default function UniversityPage() {
             <TextInput
               value={searchText}
               onBlur={handleBlur}
-              onChangeText={setSearchText}
+              onChangeText={handleChange}
               placeholder="대학교 이름을 검색해주세요"
               placeholderTextColor="#9B94AB"
               style={styles.input}
@@ -90,7 +93,7 @@ export default function UniversityPage() {
             />
           </View>
         </Animated.View>
-        <Show when={isFocused}>
+        <Show when={trigger}>
           <Animated.View
             style={[styles.listAndBottomContainer, animatedListStyle]}
           >
@@ -132,6 +135,8 @@ export default function UniversityPage() {
     </DefaultLayout>
   );
 }
+
+export default withSignupValidation(UniversityPage, SignupSteps.UNIVERSITY);
 
 const styles = StyleSheet.create({
   container: {

@@ -5,6 +5,7 @@ import { tryCatch } from "@/src/shared/libs";
 import { track } from "@amplitude/analytics-react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -17,9 +18,15 @@ import {
   Text,
   View,
 } from "react-native";
-import { useAnimation } from "reanimated-composer";
 import { z } from "zod";
 import Signup from "..";
+import {
+  buildSignupForm,
+  ensureAppleId,
+  processSignup,
+  validatePhone,
+  validateUniversity,
+} from "../services/signup-validator";
 import type { SignupForm } from "./use-signup-progress";
 
 const {
@@ -46,6 +53,7 @@ const schema = z.object({
 const { height } = Dimensions.get("window");
 
 function useProfileImage() {
+  const router = useRouter();
   const { updateForm, form: userForm } = useSignupProgress();
   const [images, setImages] = useState<(string | null)[]>(
     userForm.profileImages ?? [null, null, null]
@@ -58,23 +66,7 @@ function useProfileImage() {
   const getImaages = (index: number) => {
     return images[index] ?? undefined;
   };
-  const { animatedStyle } = useAnimation({
-    trigger: visible,
-    animations: {
-      opacity: {
-        initial: 0,
-        to: 1,
-        duration: height <= guideHeight ? 500 : 0,
-        delay: height <= guideHeight ? 500 : 0,
-      },
-      translateY: {
-        initial: 20,
-        to: 0,
-        duration: height <= guideHeight ? 500 : 0,
-        delay: height <= guideHeight ? 500 : 0,
-      },
-    },
-  });
+
   const { value: appleUserIdFromStorage, loading: storageLoading } = useStorage<
     string | null
   >({
@@ -130,96 +122,51 @@ function useProfileImage() {
   }, []);
 
   const onNext = async () => {
-    const signupForm = {
-      ...userForm,
-      profileImages: images.filter(Boolean) as string[],
-    };
-
-    updateForm(signupForm);
     setSignupLoading(true);
+
+    const signupForm = buildSignupForm(userForm, images);
+    updateForm(signupForm);
 
     await tryCatch(
       async () => {
-        if (Platform.OS === "ios" && loginTypeStorage === "apple") {
-          if (appleUserIdFromStorage) {
-            signupForm.appleId = appleUserIdFromStorage;
-          } else {
-            await removeAppleUserId();
-            await removeLoginType();
-            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
-            //    router.push("/auth/login");
-            return;
-          }
-        } else if (
-          Platform.OS === "web" &&
-          sessionStorage.getItem("loginType") === "apple"
-        ) {
-          const appleIdFromSession = sessionStorage.getItem("appleUserId");
-          if (appleIdFromSession) {
-            signupForm.appleId = appleIdFromSession;
-          } else {
-            sessionStorage.removeItem("appleUserId");
-            sessionStorage.removeItem("loginType");
-            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
-            //   router.push("/auth/login");
-            return;
-          }
-        }
-
-        if (!signupForm.phone) {
-          showErrorModal("휴대폰 번호가 없습니다", "announcement");
-          trackSignupEvent("signup_error", "missing_phone");
-          track("Signup_profile_image_error", {
-            error: "휴대폰 번호가 없습니다.",
-            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-          });
-          //  router.push("/auth/login");
-          return;
-        }
-
-        const { exists } = await apis.checkPhoneNumberExists(signupForm.phone);
-
-        if (exists) {
-          showErrorModal("이미 가입된 사용자입니다", "announcement");
-          track("Signup_profile_image_error", {
-            error: "이미 가입된 사용자입니다",
-            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-          });
-          trackSignupEvent("signup_error", "phone_already_exists");
-
-          if (Platform.OS === "ios") {
-            await removeLoginType();
-          } else if (Platform.OS === "web") {
-            sessionStorage.removeItem("loginType");
-          }
-
-          //router.push("/auth/login");
-          return;
-        }
-        if (!signupForm.universityId || !signupForm.departmentName) {
-          showErrorModal("학교와 학과 정보가 필요해요.", "announcement");
-          //router.navigate("/auth/signup/university");
-          return;
-        }
-        await apis.signup(signupForm as SignupForm);
-        track("Signup_profile_image", {
-          success: true,
-          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+        const appleOk = await ensureAppleId(signupForm, {
+          router,
+          loginTypeStorage,
+          appleUserIdFromStorage,
+          removeAppleUserId,
+          removeLoginType,
+          showErrorModal,
         });
-        trackSignupEvent("signup_complete");
+        if (!appleOk) return;
 
-        if (Platform.OS === "ios") {
-          await removeLoginType();
-        } else if (Platform.OS === "web") {
-          sessionStorage.removeItem("loginType");
-        }
+        const phoneOk = await validatePhone(signupForm, {
+          router,
+          apis,
+          trackSignupEvent,
+          track,
+          showErrorModal,
+          removeLoginType,
+        });
+        if (!phoneOk) return;
 
-        //router.push("/auth/signup/done");
+        const universityOk = validateUniversity(signupForm, {
+          router,
+          showErrorModal,
+        });
+        if (!universityOk) return;
+
+        await processSignup(signupForm, {
+          router,
+          apis,
+          track,
+          trackSignupEvent,
+          removeLoginType,
+        });
       },
       (error) => {
         console.error("Signup error:", error);
         track("Signup_profile_image_error", {
-          error: error,
+          error,
           env: process.env.EXPO_PUBLIC_TRACKING_MODE,
         });
         trackSignupEvent("signup_error", error.error);
@@ -233,9 +180,19 @@ function useProfileImage() {
   const nextable = images.every((image) => image !== null);
 
   const uploadImage = (index: number, value: string) => {
+    trackSignupEvent("image_upload", `image_${index + 1}`);
+    track(`Signup_profile_image_${index + 1}`, {
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     const newImages = [...images];
     newImages[index] = value;
     setImages(newImages);
+    form.trigger("images");
+  };
+
+  const onBackPress = () => {
+    router.push("/auth/signup/instagram");
+    return true;
   };
 
   useChangePhase(SignupSteps.PROFILE_IMAGE);
@@ -245,11 +202,6 @@ function useProfileImage() {
   }, [images, form]);
 
   useEffect(() => {
-    const onBackPress = () => {
-      //router.navigate("/auth/signup/instagram");
-      return true;
-    };
-
     // 이벤트 리스너 등록
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -261,9 +213,14 @@ function useProfileImage() {
   }, []);
 
   return {
-    animatedStyle,
     getImaages,
     visible,
+    nextable,
+    signupLoading,
+    storageLoading,
+    uploadImage,
+    onNext,
+    onBackPress,
   };
 }
 

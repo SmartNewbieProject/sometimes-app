@@ -1,7 +1,7 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Loading from "@/src/features/loading";
 import Signup from "@/src/features/signup";
-import type { SignupForm } from "@/src/features/signup/hooks";
+import { type SignupForm, SignupSteps } from "@/src/features/signup/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import {
   GuideView,
@@ -32,13 +32,23 @@ import {
 import { z } from "zod";
 
 import useProfileImage from "@/src/features/signup/hooks/use-profile-image";
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import Animated from "react-native-reanimated";
 
 const { height } = Dimensions.get("window");
 
-export default function ProfilePage() {
-  const { getImaages, visible, animatedStyle } = useProfileImage();
+function ProfilePage() {
+  const {
+    getImaages,
+    visible,
+    nextable,
+    signupLoading,
+    storageLoading,
+    uploadImage,
+    onNext,
+    onBackPress,
+  } = useProfileImage();
 
   if (signupLoading || storageLoading) {
     return <Loading.Page />;
@@ -75,12 +85,7 @@ export default function ProfilePage() {
               size="lg"
               value={getImaages(0)}
               onChange={(value) => {
-                trackSignupEvent("image_upload", "image_1");
-                track("Signup_profile_image_1", {
-                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-                });
                 uploadImage(0, value);
-                form.trigger("images");
               }}
             />
           </View>
@@ -90,24 +95,14 @@ export default function ProfilePage() {
               size="sm"
               value={getImaages(1)}
               onChange={(value) => {
-                trackSignupEvent("image_upload", "image_2");
-                track("Signup_profile_image_2", {
-                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-                });
                 uploadImage(1, value);
-                form.trigger("images");
               }}
             />
             <ImageSelector
               size="sm"
               value={getImaages(2)}
               onChange={(value) => {
-                trackSignupEvent("image_upload", "image_3");
-                track("Signup_profile_image_3", {
-                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-                });
                 uploadImage(2, value);
-                form.trigger("images");
               }}
             />
           </View>
@@ -119,7 +114,7 @@ export default function ProfilePage() {
               height < guideHeight
                 ? styles.infoWrapper
                 : styles.infoOverlayWrapper,
-              { marginTop: 40, opacity: animation },
+              { marginTop: 40 },
             ]}
           >
             <RNText style={styles.infoTitle}>
@@ -159,15 +154,14 @@ export default function ProfilePage() {
           disabledNext={!nextable}
           onClickNext={onNext}
           content={{ next: "완료하기" }}
-          onClickPrevious={() => {
-            trackSignupEvent("back_button_click", "to_university_details");
-            router.push("/auth/signup/instagram");
-          }}
+          onClickPrevious={onBackPress}
         />
       </View>
     </DefaultLayout>
   );
 }
+
+export default withSignupValidation(ProfilePage, SignupSteps.PROFILE_IMAGE);
 
 const styles = StyleSheet.create({
   infoOverlayWrapper: {
@@ -201,6 +195,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#FFF",
     marginBottom: 223,
+
     shadowColor: "#F2ECFF",
     shadowOffset: {
       width: 0,
