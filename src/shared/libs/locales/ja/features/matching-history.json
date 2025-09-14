@@ -1,10 +1,10 @@
 {
   "ui": {
-    "header_title": "",
-    "gem_unit": "",
+    "header_title": "以前のマッチング",
+    "gem_unit": "個",
     "matching_history_list": {
-      "more_matches_prompt": "",
-      "use_rematch_hint": ""
+      "more_matches_prompt": "もっと多くのマッチングをお望みですか？",
+      "use_rematch_hint": "今すぐリマッチ権を使って新しい出会いを見つけましょう！"
     }
   }
 }

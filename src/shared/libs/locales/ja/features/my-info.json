@@ -1,21 +1,21 @@
 {
   "hooks": {
     "use_my_info_form": {
-      "clear_action": ""
+      "clear_action": "リセット"
     }
   },
   "ui": {
     "dating_style": {
-      "title_1": "",
-      "title_2": "",
-      "loading": "",
-      "next_count": ""
+      "title_1": "あなたに一番合う",
+      "title_2": "恋愛スタイルは何ですか？",
+      "loading": "恋愛スタイルのオプションを読み込み中です",
+      "next_count": "あと {count} 個！"
     },
     "done": {
-      "title_1": "",
-      "title_2": "",
-      "desc": "",
-      "button": ""
+      "title_1": "あなたの情報を確認しました",
+      "title_2": "さあ、ときめく出会いを始めましょう",
+      "desc": "SOMETIMEが {name} さんの理想の相手を見つけます",
+      "button": "理想の相手を探しに行く →"
     }
   }
 }
