@@ -1,13 +1,13 @@
 {
   "ui": {
     "logo": {
-      "tagline": ""
+      "tagline": "大学生のための本当のときめきの始まり"
     },
     "login_form": {
-      "pass_loading": "",
-      "pass_login": "",
-      "kakao_login": "",
-      "kakao_button_label": ""
+      "pass_loading": "PASS認証中...",
+      "pass_login": "PASSログイン",
+      "kakao_login": "カカオログイン",
+      "kakao_button_label": "カカオログイン"
     }
   }
 }

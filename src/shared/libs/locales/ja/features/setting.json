@@ -1,34 +1,28 @@
 {
   "ui": {
     "menu": {
-      "account": "",
-      "account_management": "",
-      "logout": "",
-      "member_withdrawal": ""
+      "account": "アカウント",
+      "account_management": "アカウント管理",
+      "logout": "ログアウト",
+      "member_withdrawal": "退会"
     }
   },
   "withdrawal": {
-    "reason_partner": "",
-    "reason_matching": "",
-    "reason_privacy": "",
-    "reason_safety": "",
-    "reason_technical": "",
-    "reason_inactive": "",
-    "reason_dissatisfied": "",
-    "reason_other": "",
-    "reason_select_error": "",
-    "modal_title": "",
-    "modal_desc_1": "",
-    "modal_desc_2": "",
-    "title": "",
-    "textarea_placeholder": "",
-    "button_prev": "",
-    "button_next": ""
-  },
-  "ui": {
-    "header": {
-      "setting_title": "",
-      "account_title": ""
-    }
+    "reason_partner": "パートナーが見つかりました",
+    "reason_matching": "マッチングが正確ではありません",
+    "reason_privacy": "個人情報の保護が心配です",
+    "reason_safety": "安全性に問題があります",
+    "reason_technical": "技術的な問題があります",
+    "reason_inactive": "サービスの利用が不便です",
+    "reason_dissatisfied": "サービスの満足度が低いです",
+    "reason_other": "その他",
+    "reason_select_error": "理由を選択してください",
+    "modal_title": "またお会いしましょう",
+    "modal_desc_1": "退会が完了しました。",
+    "modal_desc_2": "またお会いできるのを楽しみにしています。",
+    "title": "またお会いしましょう",
+    "textarea_placeholder": "その他の理由を入力してください",
+    "button_prev": "戻る",
+    "button_next": "サービスを退会する"
   }
 }

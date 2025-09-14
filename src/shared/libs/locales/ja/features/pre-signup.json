@@ -1,12 +1,12 @@
 {
   "ui": {
     "header": {
-      "subtitle": ""
+      "subtitle": "理想の相手を見つける一番早い方法"
     },
     "footer": {
-      "start_intro_button": "",
-      "login_button": "",
-      "feedback_banner": ""
+      "start_intro_button": "お見合いを始める",
+      "login_button": "ログインする",
+      "feedback_banner": "恋愛で望むことや、コミュニケーションのスタイルを教えてください！"
     }
   }
 }
