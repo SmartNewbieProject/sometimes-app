@@ -1,5 +1,6 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
+import useUniversityDetails from "@/src/features/signup/hooks/use-university-details";
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
 
@@ -9,7 +10,7 @@ import { Form } from "@/src/widgets";
 import { track } from "@amplitude/analytics-react-native";
 import Loading from "@features/loading";
 import { Image } from "expo-image";
-import { router, useGlobalSearchParams } from "expo-router";
+import { router, useGlobalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   BackHandler,
@@ -20,105 +21,38 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const {
-  SignupSteps,
-  useChangePhase,
-  useSignupProgress,
-  queries,
-  apis,
-  useSignupAnalytics,
-} = Signup;
-const { useDepartmentQuery } = queries;
 
 export default function UniversityDetailsPage() {
-  const { updateForm, form } = useSignupProgress();
-  const { universityId } = useGlobalSearchParams<{
-    universityId: string;
-  }>();
-  const insets = useSafeAreaInsets();
-
-  const [signupLoading, setSignupLoading] = useState(false);
-
-  const { data: departments = [], isLoading } = useDepartmentQuery(
-    universityId ?? form.universityId
-  );
-
-  useChangePhase(SignupSteps.UNIVERSITY_DETAIL);
-
-  // 애널리틱스 추적 설정
-  const { trackSignupEvent } = useSignupAnalytics("university_details");
-
-  const onNext = async () => {
-    const rawNumber = form.studentNumber ?? "";
-
-    if (/^([0][1-9]|1[0-9]|2[0-5])$/.test(rawNumber)) {
-      updateForm({ studentNumber: `${rawNumber}학번` });
-    }
-
-    trackSignupEvent("next_button_click", "to_done");
-    track("Singup_university_details", {
-      grade: form.grade,
-      department: form.departmentName,
-      studentNumber: `${form.studentNumber}`,
-      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-    });
-
-    setSignupLoading(true);
-    await tryCatch(async () => {
-      setSignupLoading(false);
-      trackSignupEvent("next_button_click", "to_instagram_id");
-      router.push("/auth/signup/instagram");
-    });
-  };
-
-  const validateUniversityForm = (): boolean => {
-    const isValidGrade = !!form.grade;
-    const isValidDepartment = departments.includes(
-      form?.departmentName ?? "없음"
-    );
-    const studentNumber = form.studentNumber ?? "";
-
-    const isValidStudentNumber =
-      /^([0][1-9]|1[0-9]|2[0-5])학번$/.test(studentNumber) ||
-      /^([0][1-9]|1[0-9]|2[0-5])$/.test(studentNumber);
-
-    return isValidGrade && isValidDepartment && isValidStudentNumber;
-  };
-  const nextable = validateUniversityForm();
-
-  const nextButtonMessage = (() => {
-    if (!validateUniversityForm()) {
-      return "조금만 더 알려주세요";
-    }
-    return "다음으로";
-  })();
-
-  if (signupLoading) {
-    return <Loading.Page title="잠시만 기다려주세요.." />;
-  }
-
+  const { onBackPress, onNext, signupLoading, nextable } =
+    useUniversityDetails();
+  const router = useRouter();
   useEffect(() => {
-    const onBackPress = () => {
-      updateForm({
-        departmentName: undefined,
-        grade: undefined,
-        studentNumber: undefined,
-      });
-      router.navigate("/auth/signup/university");
-      return true;
-    };
-
     // 이벤트 리스너 등록
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      onBackPress
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () =>
+      onBackPress(() => {
+        router.navigate("/auth/signup/university");
+      })
     );
 
     // 컴포넌트 언마운트 시 리스너 제거
     return () => subscription.remove();
   }, []);
+
+  const handleBackPress = () => {
+    onBackPress(() => {
+      router.navigate("/auth/signup/university");
+    });
+  };
+
+  const handleNext = () => {
+    onNext(() => {
+      router.push("/auth/signup/instagram");
+    });
+  };
+
+  if (signupLoading) {
+    return <Loading.Page title="잠시만 기다려주세요.." />;
+  }
 
   return (
     <DefaultLayout>
@@ -166,15 +100,8 @@ export default function UniversityDetailsPage() {
       <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
         <TwoButtons
           disabledNext={!nextable}
-          onClickNext={onNext}
-          onClickPrevious={() => {
-            router.navigate("/auth/signup/university");
-            updateForm({
-              departmentName: undefined,
-              grade: undefined,
-              studentNumber: undefined,
-            });
-          }}
+          onClickNext={handleNext}
+          onClickPrevious={handleBackPress}
         />
       </View>
     </DefaultLayout>

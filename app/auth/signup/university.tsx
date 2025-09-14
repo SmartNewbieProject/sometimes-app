@@ -1,33 +1,23 @@
 import { TwoButtons } from "@/src/features/layout/ui";
 import { DefaultLayout } from "@/src/features/layout/ui";
-import { useSignupProgress } from "@/src/features/signup/hooks";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
 import UniversityLogos from "@/src/features/signup/ui/university-logos";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
-import { PalePurpleGradient } from "@/src/shared/ui";
-import { track } from "@amplitude/analytics-react-native";
+import { PalePurpleGradient, Show } from "@/src/shared/ui";
 import HelpIcon from "@assets/icons/help.svg";
 import SearchIcon from "@assets/icons/search.svg";
 import Loading from "@features/loading";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   BackHandler,
-  Keyboard,
   Text as RNText,
   StyleSheet,
   TextInput,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-  interpolate,
-  withDelay,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 export default function UniversityPage() {
   const router = useRouter();
@@ -36,101 +26,40 @@ export default function UniversityPage() {
     setSearchText,
     filteredUniv,
     handleClickUniv,
+    isFocused,
     onNext,
     selectedUniv,
+    handleBlur,
+    handleFocus,
     isLoading,
+    onBackPress,
+    showHeader,
+    animatedTitleStyle,
+    animatedContainerStyle,
+    animatedListStyle,
   } = useUniversityHook();
-  const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } =
-    useSignupProgress();
-  const [isFocused, setIsFocused] = useState(false);
-  const animationProgress = useSharedValue(0);
-  const animationTitle = useSharedValue(1);
-  const selectedUnivObj = filteredUniv?.find(
-    (item) => item.id === selectedUniv
-  );
-  const handleFocus = () => {
-    if (!isFocused) {
-      setIsFocused(true);
-      updateShowHeader(true);
-      animationProgress.value = withTiming(1, { duration: 350 });
-      animationTitle.value = withTiming(0, { duration: 0 });
-    }
-  };
 
-  const handleBlur = () => {
-    setIsFocused(false);
+  const handleBackPress = () => {
+    onBackPress(() => {
+      router.navigate("/auth/login");
+    });
   };
-
   const handleNext = () => {
     onNext(() => {
-      track("Signup_university", {
-        university: selectedUniv,
-        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-      });
-      if (selectedUnivObj) {
-        updateRegions([selectedUnivObj.region]);
-        updateUnivTitle(selectedUnivObj.name);
-        // TODO : showErrorModal 넣어야함
-        router.push(
-          `/auth/signup/university-cluster?universityId=${selectedUniv}`
-        );
-      }
+      router.push(
+        `/auth/signup/university-cluster?universityId=${selectedUniv}`
+      );
     });
   };
 
-  const onBackPress = () => {
-    if (isFocused) {
-      setIsFocused(false);
-      setSearchText("");
-      animationProgress.value = withTiming(0, { duration: 0 });
-      animationTitle.value = withDelay(350, withTiming(1, { duration: 0 }));
-      Keyboard.dismiss();
-
-      updateShowHeader(false);
-    }
-    router.navigate("/auth/login");
-    return true;
-  };
-
   useEffect(() => {
-    animationProgress.value = withTiming(0, { duration: 0 });
-    updateShowHeader(false);
-    animationTitle.value = withTiming(1, { duration: 0 });
-  }, []);
-
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      onBackPress
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () =>
+      onBackPress(() => {
+        router.navigate("/auth/login");
+      })
     );
     return () => subscription.remove();
-  }, []);
-
-  const animatedContainerStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(animationProgress.value, [0, 1], [60, 0]);
-    return {
-      transform: [{ translateY }],
-    };
-  });
-
-  const animatedTitleStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(animationTitle.value, [1, 0], [1, 0]);
-
-    return {
-      opacity,
-    };
-  });
-
-  const animatedListStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(animationProgress.value, [0, 1], [0, 1]);
-    const translateY = interpolate(animationProgress.value, [0, 1], [50, 0]);
-    return {
-      opacity,
-      transform: [{ translateY }],
-      display: animationProgress.value === 0 ? "none" : "flex",
-    };
-  });
-
+  }, [isFocused]);
   return (
     <DefaultLayout className="flex-1 ">
       {!showHeader && <PalePurpleGradient />}
@@ -161,45 +90,44 @@ export default function UniversityPage() {
             />
           </View>
         </Animated.View>
-
-        <Animated.View
-          style={[styles.listAndBottomContainer, animatedListStyle]}
-        >
-          <Loading.Lottie
-            title="대학 목록을 로딩중입니다.."
-            loading={isLoading}
+        <Show when={isFocused}>
+          <Animated.View
+            style={[styles.listAndBottomContainer, animatedListStyle]}
           >
-            <FlashList
-              extraData={selectedUniv}
-              data={filteredUniv}
-              renderItem={({ item }) => (
-                <UniversityCard
-                  onClick={handleClickUniv(item.id)}
-                  isSelected={item.id === selectedUniv}
-                  item={item}
-                />
-              )}
-              estimatedItemSize={90}
-              contentContainerStyle={{ paddingBottom: 160 }}
-            />
-          </Loading.Lottie>
+            <Loading.Lottie
+              title="대학 목록을 로딩중입니다.."
+              loading={isLoading}
+            >
+              <FlashList
+                extraData={selectedUniv}
+                data={filteredUniv}
+                renderItem={({ item }) => (
+                  <UniversityCard
+                    onClick={handleClickUniv(item.id)}
+                    isSelected={item.id === selectedUniv}
+                    item={item}
+                  />
+                )}
+                estimatedItemSize={90}
+                contentContainerStyle={{ paddingBottom: 160 }}
+              />
+            </Loading.Lottie>
 
-          <View style={styles.bottomContainer}>
-            <View style={styles.tipContainer}>
-              <HelpIcon width={20} height={20} />
-              <RNText style={styles.tip}>
-                학교 인증을 통해 안전하게 이용할 수 있습니다
-              </RNText>
+            <View style={styles.bottomContainer}>
+              <View style={styles.tipContainer}>
+                <HelpIcon width={20} height={20} />
+                <RNText style={styles.tip}>
+                  학교 인증을 통해 안전하게 이용할 수 있습니다
+                </RNText>
+              </View>
+              <TwoButtons
+                disabledNext={!selectedUniv}
+                onClickNext={handleNext}
+                onClickPrevious={handleBackPress}
+              />
             </View>
-            <TwoButtons
-              disabledNext={!selectedUniv}
-              onClickNext={handleNext}
-              onClickPrevious={() => {
-                onBackPress();
-              }}
-            />
-          </View>
-        </Animated.View>
+          </Animated.View>
+        </Show>
       </View>
     </DefaultLayout>
   );

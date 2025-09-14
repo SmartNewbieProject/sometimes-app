@@ -29,7 +29,7 @@ export default function SignupLayout() {
   const progressWidth = width > 480 ? 448 : width - 32;
   const insets = useSafeAreaInsets();
   const titleMap = {
-    [SignupSteps.AREA]: "지역 선택하기",
+    // [SignupSteps.AREA]: "지역 선택하기",
     [SignupSteps.UNIVERSITY]: "대학선택",
     [SignupSteps.UNIVERSITY_DETAIL]: "추가 정보 입력하기",
     [SignupSteps.INSTAGRAM]: "인스타그램 아이디 입력하기",

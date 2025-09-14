@@ -1,21 +1,13 @@
+import { track } from "@amplitude/analytics-react-native";
 import Signup from "@features/signup";
-import {
-  useGlobalSearchParams,
-  useLocalSearchParams,
-  useRouter,
-} from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet } from "react-native";
+import { useAnimation } from "reanimated-composer";
 import { filterUniversities } from "../lib";
 import useUniversities from "../queries/use-universities";
-const {
-  SignupSteps,
-  useChangePhase,
-  useSignupProgress,
-  queries,
-  useSignupAnalytics,
-} = Signup;
-const { useUnivQuery } = queries;
+const { SignupSteps, useChangePhase, useSignupProgress, useSignupAnalytics } =
+  Signup;
 function useUniversityHook() {
   const [searchText, setSearchText] = useState("");
 
@@ -28,6 +20,103 @@ function useUniversityHook() {
   const hasProcessedPassInfo = useRef(false);
 
   const [filteredUniv, setFilteredUniv] = useState(univs);
+  const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } =
+    useSignupProgress();
+  const [isFocused, setIsFocused] = useState(false);
+  const { animatedStyle: animatedTitleStyle } = useAnimation({
+    trigger: isFocused,
+
+    animations: {
+      opacity: {
+        initial: 1,
+        to: 0,
+        enter: { duration: 0 },
+        exit: { duration: 0, delay: 350 },
+      },
+    },
+  });
+
+  const { animatedStyle: animatedContainerStyle } = useAnimation({
+    trigger: isFocused,
+    animations: {
+      translateY: {
+        initial: 60,
+        to: 0,
+        enter: { duration: 350 },
+        exit: { duration: 0 },
+      },
+    },
+  });
+
+  const { animatedStyle: animatedListStyle } = useAnimation({
+    trigger: isFocused,
+    animations: {
+      opacity: {
+        initial: 0,
+        to: 1,
+        enter: { duration: 350 },
+        exit: { duration: 0 },
+      },
+      translateY: {
+        initial: 50,
+        to: 0,
+        enter: { duration: 350 },
+        exit: { duration: 0 },
+      },
+    },
+  });
+  const selectedUnivObj = filteredUniv?.find(
+    (item) => item.id === selectedUniv
+  );
+  const handleFocus = () => {
+    if (!isFocused) {
+      setIsFocused(true);
+      updateShowHeader(true);
+    }
+  };
+
+  const onBackPress = (fallback: () => void) => {
+    if (isFocused) {
+      setIsFocused(false);
+      setSearchText("");
+      Keyboard.dismiss();
+      updateShowHeader(false);
+    } else {
+      fallback();
+    }
+    return true;
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    updateShowHeader(false);
+    Keyboard.dismiss();
+  };
+
+  const onNext = (fallback: () => void) => {
+    if (!selectedUniv) {
+      return;
+    }
+    trackSignupEvent("next_button_click", "to_university_details");
+    updateForm({
+      ...userForm,
+      universityId: selectedUniv,
+    });
+    track("Signup_university", {
+      university: selectedUniv,
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
+    if (selectedUnivObj) {
+      updateRegions([selectedUnivObj.region]);
+      updateUnivTitle(selectedUnivObj.name);
+      fallback();
+    }
+  };
+
+  useEffect(() => {
+    updateShowHeader(false);
+    setIsFocused;
+  }, []);
 
   useChangePhase(SignupSteps.UNIVERSITY);
 
@@ -50,18 +139,6 @@ function useUniversityHook() {
 
   // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics("university");
-
-  const onNext = (fallback: () => void) => {
-    if (!selectedUniv) {
-      return;
-    }
-    trackSignupEvent("next_button_click", "to_university_details");
-    updateForm({
-      ...userForm,
-      universityId: selectedUniv,
-    });
-    fallback();
-  };
 
   const handleClickUniv = (univ: string) => () => {
     setSelectedUniv((prev) => (prev === univ ? undefined : univ));
@@ -88,10 +165,19 @@ function useUniversityHook() {
     filteredUniv,
     searchText,
     setSearchText,
-    onNext,
+
     handleClickUniv,
     selectedUniv,
     regions,
+    animatedTitleStyle,
+    animatedContainerStyle,
+    animatedListStyle,
+    showHeader,
+    handleFocus,
+    handleBlur,
+    onNext,
+    onBackPress,
+    isFocused,
   };
 }
 
