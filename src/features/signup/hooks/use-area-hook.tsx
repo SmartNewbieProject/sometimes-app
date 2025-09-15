@@ -17,7 +17,7 @@ function useAreaHook() {
     updateUnivTitle,
     updateRegions,
   } = useSignupProgress();
-  useChangePhase(SignupSteps.AREA);
+  // useChangePhase(SignupSteps.AREA);
 
   // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics("area");
