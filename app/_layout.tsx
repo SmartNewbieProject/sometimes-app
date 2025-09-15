@@ -8,7 +8,6 @@ import "../global.css";
 import {
   type NotificationData,
   handleNotificationTap,
-  registerForPushNotificationsAsync,
 } from "@/src/shared/libs/notifications";
 import * as Notifications from "expo-notifications";
 
@@ -69,22 +68,7 @@ export default function RootLayout() {
     []
   );
 
-  useEffect(() => {
-    if (!loaded) return;
 
-    const initializePushNotifications = async () => {
-      try {
-        const token = await registerForPushNotificationsAsync();
-        if (token) {
-          console.log('푸시 토큰 등록 완료:', token);
-        }
-      } catch (error) {
-        console.error('푸시알림 초기화 오류:', error);
-      }
-    };
-
-    initializePushNotifications();
-  }, [loaded]);
 
   useEffect(() => {
     if (!loaded) return;
