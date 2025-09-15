@@ -40,7 +40,7 @@ export const uploadUniversityVerificationImage = async (file: {
   uri: string;
   name?: string;
   type?: string;
-}): Promise<{ url: string }> => {
+}): Promise<{ imageUrl: string; message: string }> => {
   const form = new FormData();
 
   if (Platform.OS === "web") {
@@ -55,11 +55,12 @@ export const uploadUniversityVerificationImage = async (file: {
     } as any);
   }
 
-  const { data } = await axiosClient.post<{ url: string }>(
-    "/universities/certificate-image",
-    form,
-    { headers: { "Content-Type": "multipart/form-data" } }
-  );
+  const { data } = await axiosClient.post<{
+    imageUrl: string;
+    message: string;
+  }>("/universities/certificate-image", form, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 
   return data;
 };

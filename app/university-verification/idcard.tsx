@@ -30,6 +30,7 @@ const { height } = Dimensions.get("window");
 
 export default function StudentVerifyPage() {
   const { showErrorModal } = useModal();
+  const { showModal } = useModal();
   const { showOverlay, visible } = useOverlay();
   const animation = useRef(new Animated.Value(0)).current;
 
@@ -82,13 +83,19 @@ export default function StudentVerifyPage() {
     if (!image) return;
 
     try {
-      await submitOne(image);
-      Alert.alert(
-        "제출 완료",
-        "관리자 검토 중입니다. 결과는 알림으로 알려드릴게요.",
-        [{ text: "확인", onPress: () => router.replace("/") }],
-        { cancelable: false }
-      );
+      const response = await submitOne(image);
+      const successMessage =
+        response?.message ||
+        "파일이 성공적으로 제출되었습니다.\n관리자 검토 후 승인됩니다.";
+
+      showModal({
+        title: "제출 완료",
+        children: successMessage,
+        primaryButton: {
+          text: "확인",
+          onClick: () => router.replace("/"),
+        },
+      });
     } catch (e: any) {
       showErrorModal(
         e?.message ||

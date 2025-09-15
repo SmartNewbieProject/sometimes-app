@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import * as FileSystem from "expo-file-system";
+// import * as FileSystem from "expo-file-system";
 import { uploadUniversityVerificationImage } from "../apis";
 
 function guessName(uri: string, fallback = "university_document.jpg") {
@@ -20,8 +20,6 @@ export function useVerification() {
   const submitOne = useCallback(async (uri: string, note?: string) => {
     setSubmitting(true);
     try {
-      // const fileData = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-
       const uploaded = await uploadUniversityVerificationImage({
         uri,
         name: guessName(uri),
