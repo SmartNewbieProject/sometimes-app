@@ -1,6 +1,5 @@
 import PlusIcon from "@assets/icons/plus.svg";
 import SendChatIcon from "@assets/icons/send-chat.svg";
-import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -20,17 +19,10 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useChatEvent } from "../hooks/use-chat-event";
+import { useOptimisticChat } from "../hooks/use-optimistic-chat";
+import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import type { Chat } from "../types/chat";
-import { createOptimisticMessage } from "../utils/create-optimistic-message";
-import { addMessageToChatList } from "../utils/update-chat-list-cache";
-
-// useChatList 훅의 반환 타입 (가정)
-interface PaginatedChatData {
-  pages: { messages: Chat[] }[];
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  pageParams: any[];
-}
 
 interface ChatInputProps {
   isPhotoClicked: boolean;
@@ -40,8 +32,9 @@ interface ChatInputProps {
 function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: partner } = useChatRoomDetail(id);
-  const queryClient = useQueryClient();
+  const { my: user } = useAuth();
   const { actions } = useChatEvent();
+  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -75,20 +68,32 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
   }));
 
-  const handleSend = () => {
-    if (chat === "" || !partner?.partnerId) {
+  const handleSend = useCallback(async () => {
+    if (chat === "" || !partner?.partnerId || !user?.id) {
       return;
     }
 
-    actions.sendMessage({
-      chatRoomId: id,
-      content: chat ?? "",
-      to: partner?.partnerId,
-    });
-
+    const messageContent = chat.trim();
     setChat("");
-    queryClient.refetchQueries({ queryKey: ["chat-list", id] });
-  };
+
+    try {
+      const { optimisticMessage, promise } = actions.sendMessage({
+        chatRoomId: id,
+        content: messageContent,
+        to: partner.partnerId,
+        senderId: user.id,
+      });
+      addOptimisticMessage(optimisticMessage);
+      const result = await promise;
+      if (result.success && result.serverMessage) {
+        replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
+      } else {
+        markMessageAsFailed(optimisticMessage.tempId!, result.error);
+      }
+    } catch (error) {
+      console.error('Message send error:', error);
+    }
+  }, [chat, partner, user, id, actions, addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed]);
 
   return (
     <Animated.View

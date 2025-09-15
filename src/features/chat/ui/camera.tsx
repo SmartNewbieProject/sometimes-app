@@ -9,15 +9,17 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { Alert, Linking, Pressable, StyleSheet, View } from "react-native";
 import { useChatEvent } from "../hooks/use-chat-event";
+import { useOptimisticChat } from "../hooks/use-optimistic-chat";
+import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import type { Chat } from "../types/chat";
 function ChatCamera() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const queryClient = useQueryClient();
   const { showModal, hideModal } = useModal();
   const { data: partner } = useChatRoomDetail(id);
-
-  const { actions, socket } = useChatEvent();
+  const { my: user } = useAuth();
+  const { actions } = useChatEvent();
+  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -52,12 +54,32 @@ function ChatCamera() {
         ),
         primaryButton: {
           text: "전송",
-          onClick: () => {
-            if (imageUri) {
-              actions.uploadImage(partner?.partnerId ?? "", id, imageUri);
+          onClick: async () => {
+            if (!imageUri || !partner?.partnerId || !user?.id) {
+              hideModal();
+              return;
             }
 
-            queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+            try {
+              const { optimisticMessage, promise } = await actions.uploadImage({
+                to: partner.partnerId,
+                chatRoomId: id,
+                senderId: user.id,
+                file: imageUri
+              });
+
+              addOptimisticMessage(optimisticMessage);
+              hideModal();
+              const result = await promise;
+              if (result.success && result.serverMessage) {
+                replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
+              } else {
+                markMessageAsFailed(optimisticMessage.tempId!, result.error);
+              }
+            } catch (error) {
+              console.error('Camera upload error:', error);
+              hideModal();
+            }
           },
         },
         secondaryButton: {

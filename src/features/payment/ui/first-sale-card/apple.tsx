@@ -70,7 +70,7 @@ export const AppleFirstSaleCard = ({
     };
   });
 
-  // if (!show) return null;
+  if (!show) return null;
 
   return (
     <GlowingCard>

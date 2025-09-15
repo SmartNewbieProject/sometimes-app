@@ -12,19 +12,22 @@ import {
   splitAndSortProducts,
 } from "@/src/widgets/gem-store/utils/apple";
 
+import { useEventControl } from "@/src/features/event/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { usePathname, useRouter } from "expo-router";
 import paymentApis from "../../api";
 import { useCurrentGem } from "../../hooks";
 import { useAppleInApp } from "../../hooks/use-apple-in-app";
 import { usePortoneStore } from "../../hooks/use-portone-store";
-import { useEventControl } from "@/src/features/event/hooks";
 import { AppleFirstSaleCard } from "../first-sale-card/apple";
 import { GemStore } from "../gem-store";
 import { RematchingTicket } from "../rematching-ticket";
 
 function AppleGemStore() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
+  const pathname = usePathname();
   const { data: gem } = useCurrentGem();
   const [purchasing, setPurchasing] = useState(false);
   const appleInAppMutation = useAppleInApp();
@@ -77,16 +80,18 @@ function AppleGemStore() {
             purchase: currentPurchase,
             isConsumable: true,
           });
-          
+
           if (eventType) {
             try {
               await participate();
-              console.log('이벤트 참여 완료:', eventType);
+              console.log("이벤트 참여 완료:", eventType);
             } catch (error) {
-              console.error('이벤트 참여 실패:', error);
+              console.error("이벤트 참여 실패:", error);
             }
             const { clearEventType } = usePortoneStore.getState();
             clearEventType();
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            router.replace(pathname as any);
           }
         } else {
           console.error("서버 검증 실패");

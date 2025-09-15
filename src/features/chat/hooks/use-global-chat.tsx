@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../auth";
 import { buildChatSocketUrl } from "../domain/utils/build-socket-url";
 import { useChatStore } from "../store/chat";
@@ -15,47 +15,69 @@ export const useGlobalChat = ({
   namespace = "/chat",
 }: UseGlobalChatOptions) => {
   const { accessToken } = useAuth();
-  const { initSocket, socket, setConnected, isInitialized } = useChatStore();
+  const { initSocket, socket, setConnected, isInitialized, disconnectSocket } = useChatStore();
+  const [currentToken, setCurrentToken] = useState<string | null>(null);
 
   const url = buildChatSocketUrl(baseUrl, namespace, accessToken);
 
   const initializeGlobalSocket = useCallback(() => {
-    if (!accessToken || isInitialized) return;
+    if (!accessToken) return;
+
+    const { socket, isInitialized, initSocket, currentUrl } = useChatStore.getState();
+
+    const needsReconnection = currentToken !== accessToken;
+    if (needsReconnection) {
+      setCurrentToken(accessToken);
+    }
+
+    // 이미 같은 URL로 연결되어 있고 연결 상태라면 재사용
+    if (isInitialized && socket?.connected && currentUrl === url) {
+      return;
+    }
 
     const globalSocket = initSocket(url, accessToken);
-    globalSocket.on("connected", () => {
-      setConnected(true);
+    
+    globalSocket.once("connected", () => {
+      useChatStore.getState().setConnected(true);
     });
 
-    globalSocket.on("disconnect", () => {
-      setConnected(false);
+    globalSocket.on("disconnect", (reason) => {
+      useChatStore.getState().setConnected(false);
     });
 
     globalSocket.on("error", (error) => {
       console.error("Global socket error:", error);
-      setConnected(false);
+      useChatStore.getState().setConnected(false);
     });
 
     globalSocket.io.on("reconnect", () => {
-      setConnected(true);
+      useChatStore.getState().setConnected(true);
+    });
+
+    globalSocket.io.on("reconnect_failed", () => {
+      useChatStore.getState().setConnected(false);
+      console.warn("Socket reconnection failed - token might be expired");
     });
 
     globalSocket.io.on("reconnect_attempt", () => {
-      setConnected(false);
+      useChatStore.getState().setConnected(false);
     });
-  }, [accessToken, isInitialized, url, initSocket, setConnected]);
+  }, [accessToken, url, currentToken]);
 
   useEffect(() => {
     if (accessToken) {
       initializeGlobalSocket();
     }
+  }, [accessToken, initializeGlobalSocket]);
 
+  useEffect(() => {
     return () => {
-      if (socket) {
-        socket.disconnect();
+      const currentSocket = useChatStore.getState().socket;
+      if (currentSocket) {
+        useChatStore.getState().disconnectSocket();
       }
     };
-  }, [accessToken, initializeGlobalSocket]);
+  }, []);
 
   return {
     connected: socket?.connected || false,
