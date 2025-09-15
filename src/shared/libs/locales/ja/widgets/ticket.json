@@ -1,8 +1,8 @@
 {
   "ticket": {
-    "ticket_unit": "",
-    "currency_unit": "",
-    "discount_suffix": "",
-    "popular_badge": ""
+    "ticket_unit": "回券",
+    "currency_unit": "円",
+    "discount_suffix": "% オフ",
+    "popular_badge": "人気"
   }
 }

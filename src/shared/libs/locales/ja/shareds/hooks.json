@@ -1,36 +1,36 @@
 {
   "use_auth": {
-    "logout_modal_title": "",
-    "comment_new_user": "",
-    "logout_modal_message": ""
+    "logout_modal_title": "ログアウト",
+    "comment_new_user": "新規ユーザーの場合は本人確認情報を入力してください",
+    "logout_modal_message": "ログアウトしました。"
   },
   "use_comming_soon": {
-    "modal_title": "",
-    "modal_body": ""
+    "modal_title": "準備中の機能です",
+    "modal_body": "完成後、より便利にご利用いただけます！"
   },
   "use_report": {
-    "modal_title_success": "",
-    "modal_message_success": "",
-    "modal_title_error": "",
-    "default_error_message": ""
+    "modal_title_success": "通報受付",
+    "modal_message_success": "通報が正常に受け付けられました。",
+    "modal_title_error": "通報失敗",
+    "default_error_message": "通報の送信に失敗しました。もう一度お試しください。"
   },
   "use_chat_event": {
-    "connected_status": "",
-    "disconnected_status": ""
+    "connected_status": "接続中",
+    "disconnected_status": "切断されました"
   },
   "use_my_info_form": {
-    "clear_action": ""
+    "clear_action": "リセット"
   },
   "use_event_control": {
-    "event_expired_comment": "",
-    "event_over_participated_comment": ""
+    "event_expired_comment": "イベント終了",
+    "event_over_participated_comment": "参加回数を超えました"
   },
   "use_apple_review_login": {
-    "comment": ""
+    "comment": "トークン保存や追加処理が必要な場合はここに追加してください"
   },
   "use_cashable_modal": {
-    "title": "",
-    "description": "",
-    "charge_button": ""
+    "title": "💔 ジュエルが不足しています！",
+    "description": "この機能を利用するには、ジュエルがもっと必要です",
+    "charge_button": "ジュエルをチャージ"
   }
 }

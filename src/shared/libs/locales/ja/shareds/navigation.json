@@ -1,6 +1,7 @@
 {
   "bottom_navigation": {
-    "home": "",
-    "community": ""
+    "home": "ホーム",
+    "community": "コミュニティ",
+    "my": "マイページ"
   }
 }
