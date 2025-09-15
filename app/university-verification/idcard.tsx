@@ -37,46 +37,6 @@ export default function StudentVerifyPage() {
   const [image, setImage] = useState<string | null>(null);
   const { submitOne, submitting } = useVerification();
 
-  useEffect(() => {
-    if (visible) {
-      Animated.sequence([
-        Animated.delay(height <= guideHeight ? 500 : 0),
-        Animated.timing(animation, {
-          toValue: 1,
-          duration: height <= guideHeight ? 500 : 0,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [visible]);
-
-  useEffect(() => {
-    showOverlay(
-      <View style={styles.infoOverlay}>
-        <RNText style={styles.infoTitle}>
-          재학 증빙 이미지 1장을 업로드해 주세요
-        </RNText>
-        <RNText style={styles.infoDesc}>
-          학생증 또는 재학증명서 중 하나면 충분합니다.
-        </RNText>
-        <RNText style={styles.infoDesc}>
-          이름/학과/학교명 외 불필요 정보는 가려서 올려주세요.
-        </RNText>
-        <Image
-          source={require("@assets/images/instagram-lock.png")}
-          style={{
-            width: 48,
-            height: 48,
-            position: "absolute",
-            top: -28,
-            left: -28,
-          }}
-        />
-      </View>
-    );
-  }, []);
-
   const nextable = !!image;
 
   const onSubmit = async () => {
@@ -147,20 +107,6 @@ export default function StudentVerifyPage() {
             onChange={(v: string) => setImage(v)}
           />
         </View>
-
-        {!visible && (
-          <Animated.View
-            style={[styles.infoInline, { opacity: animation, marginTop: 24 }]}
-          >
-            <RNText style={styles.infoTitle}>이미지 업로드 안내</RNText>
-            <RNText style={styles.infoDesc}>
-              이름/학과/학교명 정보가 식별 가능해야 승인이 빨라져요.
-            </RNText>
-            <RNText style={styles.infoDesc}>
-              사진인증은 최대 12시간 이내 관리자가 승인해요.
-            </RNText>
-          </Animated.View>
-        )}
       </GuideView>
 
       <View style={styles.bottom}>
@@ -225,6 +171,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 16,
-    backgroundColor: "#fff",
   },
 });
