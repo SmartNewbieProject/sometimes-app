@@ -8,6 +8,7 @@ import "../global.css";
 import {
   type NotificationData,
   handleNotificationTap,
+  registerForPushNotificationsAsync,
 } from "@/src/shared/libs/notifications";
 import * as Notifications from "expo-notifications";
 
@@ -68,6 +69,46 @@ export default function RootLayout() {
     []
   );
 
+  useEffect(() => {
+    if (!loaded) return;
+
+    const initializePushNotifications = async () => {
+      try {
+        const token = await registerForPushNotificationsAsync();
+        if (token) {
+          console.log('푸시 토큰 등록 완료:', token);
+        }
+      } catch (error) {
+        console.error('푸시알림 초기화 오류:', error);
+      }
+    };
+
+    initializePushNotifications();
+  }, [loaded]);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    const handleColdStartNotification = () => {
+      try {
+        const lastNotificationResponse = Notifications.getLastNotificationResponse();
+
+        if (lastNotificationResponse?.notification) {
+          const rawData = lastNotificationResponse.notification.request.content.data;
+
+          if (isValidNotificationData(rawData)) {
+            setTimeout(() => {
+              handleNotificationTap(rawData as NotificationData, router);
+            }, 500);
+          }
+        }
+      } catch (error) {
+        console.error('콜드 스타트 알림 처리 중 오류:', error);
+      }
+    };
+
+    handleColdStartNotification();
+  }, [loaded, isValidNotificationData]);
   useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
