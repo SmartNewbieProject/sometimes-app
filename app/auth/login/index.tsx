@@ -1,14 +1,14 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { isAdult } from "@/src/features/pass/utils";
+import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
+import { useModal } from "@/src/shared/hooks/use-modal";
 import { Button } from "@/src/shared/ui/button";
+import { track } from "@amplitude/analytics-react-native";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
-import { isAdult } from "@/src/features/pass/utils";
-import { track } from "@amplitude/analytics-react-native";
-import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
-import { useModal } from "@/src/shared/hooks/use-modal";
 
 const { useSignupProgress } = Signup;
 
@@ -37,7 +37,9 @@ export default function LoginScreen() {
             }
             if (phone) {
               try {
-                const { isBlacklisted } = await checkPhoneNumberBlacklist(phone);
+                const { isBlacklisted } = await checkPhoneNumberBlacklist(
+                  phone
+                );
 
                 if (isBlacklisted) {
                   track("Signup_PhoneBlacklist_Failed", {
@@ -47,7 +49,8 @@ export default function LoginScreen() {
                   });
                   showModal({
                     title: "가입 제한",
-                    children: "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
+                    children:
+                      "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
                     primaryButton: {
                       text: "확인",
                       onClick: () => {
@@ -62,7 +65,8 @@ export default function LoginScreen() {
                 track("Signup_Error", {
                   stage: "PhoneBlacklistCheck",
                   platform: "pass",
-                  message: error instanceof Error ? error.message : String(error),
+                  message:
+                    error instanceof Error ? error.message : String(error),
                   env: process.env.EXPO_PUBLIC_TRACKING_MODE,
                 });
                 router.replace("/auth/login");
@@ -71,7 +75,7 @@ export default function LoginScreen() {
             }
 
             router.replace({
-              pathname: "/auth/signup/area",
+              pathname: "/auth/signup/university",
               params: {
                 certificationInfo: JSON.stringify(result.certificationInfo),
               },
@@ -118,6 +122,7 @@ export default function LoginScreen() {
           <View className="items-center mb-[54px]">
             <Signup.Logo />
           </View>
+
           {/* 메인 콘텐츠 */}
           <View className="flex-1 w-full max-w-sm">
             <Signup.LoginForm />

@@ -65,7 +65,7 @@ function ChatRoomList() {
       <View style={{ height: 18 }} />
       <ChatSearch keyword={keyword} setKeyword={setKeyword} />
 
-      <Show when={!isLoading && data?.pages.length === 0}>
+      <Show when={!isLoading && data?.pages[0]?.chatRooms?.length === 0}>
         <View
           style={{
             flex: 1,

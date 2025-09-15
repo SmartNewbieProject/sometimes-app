@@ -208,6 +208,28 @@ export enum UniversityName {
 	한신대학교 = '한신대학교',
 	'한양대학교(ERICA)' = '한양대학교(ERICA)',
 	순천향대학교 = '순천향대학교',
+
+	// 광주광역시
+	광신대학교 = '광신대학교',
+	광주과학기술원 = '광주과학기술원',
+	광주교육대학교 = '광주교육대학교',
+	광주대학교 = '광주대학교',
+	광주여자대학교 = '광주여자대학교',
+	남부대학교 = '남부대학교',
+	송원대학교 = '송원대학교',
+	전남대학교 = '전남대학교',
+	조선대학교 = '조선대학교',
+	호남대학교 = '호남대학교',
+	호남신학대학교 = '호남신학대학교',
+	광주보건대학교 = '광주보건대학교',
+	기독간호대학교 = '기독간호대학교',
+	동강대학교 = '동강대학교',
+	서영대학교 = '서영대학교',
+	조선간호대학교 = '조선간호대학교',
+	조선이공대학교 = '조선이공대학교',
+	'한국폴리텍 V 대학 광주캠퍼스' = '한국폴리텍 V 대학 광주캠퍼스',
+	동신대학교 = '동신대학교',
+	나주대학교 = '나주대학교',
 }
 
 export const UniversityImage: Record<UniversityName, string> = {
@@ -437,6 +459,28 @@ export const UniversityImage: Record<UniversityName, string> = {
 	[UniversityName.한세대학교]: 'kyghsu.png',
 	[UniversityName.한신대학교]: 'kyghan.png',
 	[UniversityName['한양대학교(ERICA)']]: 'kyghyeu.png',
+
+	// 광주광역시
+	[UniversityName.광신대학교]: 'gwjksu.png',
+	[UniversityName.광주과학기술원]: 'gwjgist.png',
+	[UniversityName.광주교육대학교]: 'gwjgnue.png',
+	[UniversityName.광주대학교]: 'gwjgu.png',
+	[UniversityName.광주여자대학교]: 'gwjgwu.png',
+	[UniversityName.남부대학교]: 'gwjnbu.png',
+	[UniversityName.송원대학교]: 'gwjswu.png',
+	[UniversityName.전남대학교]: 'gwjgnu.png',
+	[UniversityName.조선대학교]: 'gwjcau.png',
+	[UniversityName.호남대학교]: 'gwjhu.png',
+	[UniversityName.호남신학대학교]: 'gwjhstu.png',
+	[UniversityName.광주보건대학교]: 'gwjghu.png',
+	[UniversityName.기독간호대학교]: 'gwjcc.png',
+	[UniversityName.동강대학교]: 'gwjdku.png',
+	[UniversityName.서영대학교]: 'gwjsyu.png',
+	[UniversityName.조선간호대학교]: 'gwjcn.png',
+	[UniversityName.조선이공대학교]: 'gwjcst.png',
+	[UniversityName['한국폴리텍 V 대학 광주캠퍼스']]: 'gwjkpu.png',
+	[UniversityName.동신대학교]: 'gwjdsu.png',
+	[UniversityName.나주대학교]: 'gwjnu.png',
 };
 
 export const UniversityEnglishName: Partial<Record<UniversityName, string>> = {

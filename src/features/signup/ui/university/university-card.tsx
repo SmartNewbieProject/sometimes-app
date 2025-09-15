@@ -74,7 +74,7 @@ function UniversityCard({
           <Text style={styles.englishName}>{en}</Text>
           <View style={styles.bottomContainer}>
             <View style={styles.area}>
-              <Text style={styles.areaText}>{}</Text>
+              <Text style={styles.areaText}>{area}</Text>
             </View>
           </View>
         </View>
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
   },
   area: {
     paddingHorizontal: 11,
+    paddingVertical: 4,
     backgroundColor: "#7A4AE2",
     borderRadius: 14,
     alignItems: "center",
@@ -116,8 +117,8 @@ const styles = StyleSheet.create({
   },
   areaText: {
     color: "#fff",
-    fontSize: 10,
-    lineHeight: 12,
+    fontSize: 13,
+    lineHeight: 13,
   },
   universityType: {
     color: "#9B94AB",
