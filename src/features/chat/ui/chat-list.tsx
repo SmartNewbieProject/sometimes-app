@@ -4,8 +4,8 @@ import { FlatList, Keyboard, View } from "react-native";
 import { useChatEvent } from "../hooks/use-chat-event";
 import { useChatRoomLifecycle } from "../hooks/use-chat-room-lifecycle";
 import { useChatRoomRead } from "../hooks/use-chat-room-read";
-import { useSocketEventManager } from "../hooks/use-socket-event-manager";
 import { useOptimisticChat } from "../hooks/use-optimistic-chat";
+import { useSocketEventManager } from "../hooks/use-socket-event-manager";
 import useChatList from "../queries/use-chat-list";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { useChatStore } from "../store/chat";
@@ -54,7 +54,9 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { connected } = useChatStore();
   const { markRoomAsRead } = useChatRoomRead();
   const { subscribe } = useSocketEventManager();
-  const { addReceivedMessage, updateImageUrl } = useOptimisticChat({ chatRoomId: id });
+  const { addReceivedMessage, updateImageUrl } = useOptimisticChat({
+    chatRoomId: id,
+  });
 
   useChatRoomLifecycle({
     chatRoomId: id,
@@ -90,7 +92,11 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
         mediaUrl?: string;
         uploadStatus: "uploading" | "completed" | "failed";
       }) => {
-        if (uploadData.chatRoomId === id && uploadData.uploadStatus === "completed" && uploadData.mediaUrl) {
+        if (
+          uploadData.chatRoomId === id &&
+          uploadData.uploadStatus === "completed" &&
+          uploadData.mediaUrl
+        ) {
           updateImageUrl(uploadData.id, uploadData.mediaUrl);
         }
       }
@@ -99,8 +105,8 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   }, [subscribe, id, updateImageUrl]);
 
   useEffect(() => {
-    const unsubscribe = subscribe("messageUpdated", uploadData => {
-      console.log('messageUpdated event received:', uploadData);
+    const unsubscribe = subscribe("messageUpdated", (uploadData) => {
+      console.log("messageUpdated event received:", uploadData);
       updateImageUrl(uploadData.id, uploadData.mediaUrl ?? "");
     });
 
@@ -145,6 +151,8 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
 
     return items;
   }, [sortedChatList]);
+
+  console.log("chatList", chatListWithDateDividers);
 
   const renderItem = ({ item }: { item: ChatListItem }) => {
     console.log("data", item);

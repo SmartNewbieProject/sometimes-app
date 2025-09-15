@@ -4,8 +4,7 @@ import { Text } from "react-native";
 
 const handleChatRoomForbidden: ErrorHandler = {
   handle: (error, { showModal, router }) => {
-    const errorMessage =
-      error.response?.data?.message || "채팅방 접근 권한이 존재하지 않습니다.";
+    const errorMessage = error.error || "채팅방 접근 권한이 존재하지 않습니다.";
     showModal({
       title: "알림",
       children: <Text>{errorMessage}</Text>,
@@ -16,8 +15,7 @@ const handleChatRoomForbidden: ErrorHandler = {
 
 const handlerChatRoomNotFound: ErrorHandler = {
   handle: (error, { router, showModal }) => {
-    const errorMessage =
-      error.response?.data?.message || "채팅방을 찾을 수 없습니다.";
+    const errorMessage = error.error || "채팅방을 찾을 수 없습니다.";
     showModal({
       title: "권한 오류",
       children: <Text>{errorMessage}</Text>,

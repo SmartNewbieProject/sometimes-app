@@ -3,7 +3,7 @@ import { Text } from "react-native";
 
 const handleBadRequest: ErrorHandler = {
   handle: (error, { showModal }) => {
-    const errorMessage = error.response?.data?.message || "잘못된 요청입니다.";
+    const errorMessage = error.error || "잘못된 요청입니다.";
     showModal({
       title: "알림",
       children: <Text>{errorMessage}</Text>,

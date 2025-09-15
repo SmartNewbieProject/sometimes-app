@@ -8,7 +8,7 @@ import type { ErrorHandler } from "../../../types/error-handler";
 const handleConflict: ErrorHandler = {
   handle: (error, { router, showModal }) => {
     const errorMessage =
-      error.response?.data?.message || "이미 상대방과 채팅방이 개설되었습니다.";
+      error.error || "이미 상대방과 채팅방이 개설되었습니다.";
     showModal({
       title: "알림",
       children: <Text>{errorMessage}</Text>,
@@ -20,7 +20,22 @@ const handleConflict: ErrorHandler = {
   },
 };
 
+const handleFobbiden: ErrorHandler = {
+  handle: (error, { router, showModal }) => {
+    const errorMessage = error.error || "문제가 발생하였습니다.";
+    showModal({
+      title: "알림",
+      children: <Text>{errorMessage}</Text>,
+      primaryButton: {
+        text: "확인",
+        onClick: () => {},
+      },
+    });
+  },
+};
+
 export const errorHandlers: Record<number | string, ErrorHandler> = {
   ...commonHandlers,
+  403: handleFobbiden,
   409: handleConflict,
 };
