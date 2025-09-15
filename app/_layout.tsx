@@ -28,6 +28,7 @@ export default function RootLayout() {
   const { request: requestAtt } = useAtt();
   const notificationListener = useRef<{ remove(): void } | null>(null);
   const responseListener = useRef<{ remove(): void } | null>(null);
+  const processedNotificationIds = useRef<Set<string>>(new Set());
 
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
@@ -69,7 +70,6 @@ export default function RootLayout() {
   );
 
 
-
   useEffect(() => {
     if (!loaded) return;
 
@@ -78,12 +78,18 @@ export default function RootLayout() {
         const lastNotificationResponse = Notifications.getLastNotificationResponse();
 
         if (lastNotificationResponse?.notification) {
+          const notificationId = lastNotificationResponse.notification.request.identifier;
           const rawData = lastNotificationResponse.notification.request.content.data;
 
-          if (isValidNotificationData(rawData)) {
-            setTimeout(() => {
-              handleNotificationTap(rawData as NotificationData, router);
-            }, 500);
+          if (!processedNotificationIds.current.has(notificationId)) {
+            if (isValidNotificationData(rawData)) {
+              processedNotificationIds.current.add(notificationId);
+              Notifications.clearLastNotificationResponse();
+
+              setTimeout(() => {
+                handleNotificationTap(rawData as NotificationData, router);
+              }, 500);
+            }
           }
         }
       } catch (error) {
@@ -92,8 +98,6 @@ export default function RootLayout() {
     };
 
     handleColdStartNotification();
-  }, [loaded, isValidNotificationData]);
-  useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         console.log("알림 수신:", notification);
@@ -101,10 +105,18 @@ export default function RootLayout() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
+        const notificationId = response.notification.request.identifier;
         const rawData = response.notification.request.content.data;
+
+        console.log('일반 알림 응답:', notificationId);
+        if (processedNotificationIds.current.has(notificationId)) {
+          console.log('이미 처리된 알림, 무시:', notificationId);
+          return;
+        }
 
         try {
           if (isValidNotificationData(rawData)) {
+            processedNotificationIds.current.add(notificationId);
             handleNotificationTap(rawData as NotificationData, router);
           } else {
             router.push("/home");
@@ -122,7 +134,7 @@ export default function RootLayout() {
         responseListener.current.remove();
       }
     };
-  }, [isValidNotificationData]);
+  }, [loaded, isValidNotificationData]);
 
   if (!loaded) {
     return null;
