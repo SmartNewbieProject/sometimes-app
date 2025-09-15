@@ -8,7 +8,16 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-portrait.png",
+      "backgroundColor": "#7A4AE2",
+      "resizeMode": "cover"
+    },
     "ios": {
+      "splash": {
+        "image": "./assets/images/splash-portrait.png",
+        "resizeMode": "cover"
+      },
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
       "entitlements": {
@@ -110,6 +119,11 @@
       }
     },
     "android": {
+      "splash": {
+        "image": "./assets/images/splash-portrait.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#0A0A0A"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-adaptive-icon.png",
         "backgroundColor": "#8B7BFF"
@@ -212,7 +226,8 @@
             "kotlinVersion": "2.0.21"
           }
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true
