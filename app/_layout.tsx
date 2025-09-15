@@ -1,7 +1,7 @@
 import { useFonts } from "expo-font";
 import { Slot, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
@@ -29,6 +29,7 @@ export default function RootLayout() {
   const notificationListener = useRef<{ remove(): void } | null>(null);
   const responseListener = useRef<{ remove(): void } | null>(null);
   const processedNotificationIds = useRef<Set<string>>(new Set());
+  const [coldStartProcessed, setColdStartProcessed] = useState(false);
 
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
@@ -73,7 +74,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (!loaded) return;
 
-    const handleColdStartNotification = () => {
+    const handleColdStartNotification = async () => {
       try {
         const lastNotificationResponse = Notifications.getLastNotificationResponse();
 
@@ -94,10 +95,17 @@ export default function RootLayout() {
         }
       } catch (error) {
         console.error('콜드 스타트 알림 처리 중 오류:', error);
+      } finally {
+        setColdStartProcessed(true);
       }
     };
 
     handleColdStartNotification();
+  }, [loaded, isValidNotificationData]);
+
+  useEffect(() => {
+    if (!loaded || !coldStartProcessed) return;
+
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         console.log("알림 수신:", notification);
@@ -108,9 +116,7 @@ export default function RootLayout() {
         const notificationId = response.notification.request.identifier;
         const rawData = response.notification.request.content.data;
 
-        console.log('일반 알림 응답:', notificationId);
         if (processedNotificationIds.current.has(notificationId)) {
-          console.log('이미 처리된 알림, 무시:', notificationId);
           return;
         }
 
@@ -134,7 +140,7 @@ export default function RootLayout() {
         responseListener.current.remove();
       }
     };
-  }, [loaded, isValidNotificationData]);
+  }, [loaded, coldStartProcessed, isValidNotificationData]);
 
   if (!loaded) {
     return null;
