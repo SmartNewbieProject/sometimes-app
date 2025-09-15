@@ -1,3 +1,4 @@
+import type { Router } from "expo-router";
 // src/features/signup/utils/signup-validators.ts
 import { Platform } from "react-native";
 import type { SignupForm } from "../hooks/use-signup-progress";
@@ -23,8 +24,7 @@ export async function ensureAppleId(
     removeLoginType,
     showErrorModal,
   }: {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    router: any;
+    router: Router;
     loginTypeStorage: string | null | undefined;
     appleUserIdFromStorage: string | null | undefined;
     removeAppleUserId: () => Promise<void>;
@@ -73,8 +73,7 @@ export async function validatePhone(
     showErrorModal,
     removeLoginType,
   }: {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    router: any;
+    router: Router;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     apis: any;
     trackSignupEvent: (event: string, detail?: string) => void;
@@ -114,8 +113,7 @@ export function validateUniversity(
     router,
     showErrorModal,
   }: {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    router: any;
+    router: Router;
     showErrorModal: (message: string, type: "announcement" | "error") => void;
   }
 ): boolean {
@@ -136,8 +134,7 @@ export async function processSignup(
     trackSignupEvent,
     removeLoginType,
   }: {
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    router: any;
+    router: Router;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     apis: any;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>

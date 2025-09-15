@@ -13,7 +13,7 @@ interface PageValidation {
 
 const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
   [SignupSteps.UNIVERSITY]: {
-    requiredFields: ["name", "phone", "birthday", "gender"],
+    requiredFields: [],
     redirectTo: "/auth/login" as const,
 
     message: "대학 선택을 위해 먼저 기본 정보를 입력해주세요",

@@ -76,7 +76,6 @@ export default function SignupLayout() {
               animation: "slide_from_right",
             }}
           >
-            <Stack.Screen name="terms" options={{ headerShown: false }} />
             <Stack.Screen name="area" options={{ headerShown: false }} />
             <Stack.Screen
               name="university"
