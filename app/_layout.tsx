@@ -74,7 +74,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (!loaded) return;
 
-    const handleColdStartNotification = async () => {
+    const handleColdStartNotification = () => {
       try {
         const lastNotificationResponse = Notifications.getLastNotificationResponse();
 
