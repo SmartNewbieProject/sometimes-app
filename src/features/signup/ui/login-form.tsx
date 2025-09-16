@@ -16,6 +16,10 @@ import { PrivacyNotice } from "../../auth/ui/privacy-notice";
 import AppleLoginButton from "./apple-login-button";
 import KakaoLoginWebView from "./kakao-login-web-view";
 import UniversityLogos from "./university-logos";
+import { useTranslation } from "react-i18next";
+import i18n from "@/src/shared/libs/i18n";
+
+
 
 export default function LoginForm() {
   const {
@@ -31,6 +35,7 @@ export default function LoginForm() {
   const pathname = usePathname();
   const { regionCode } = Localization.getLocales()[0];
   const isUS = regionCode === "US";
+  const {t} = useTranslation();
 
   const onPressPassLogin = async () => {
     track("Signup_Init", {
@@ -69,7 +74,7 @@ export default function LoginForm() {
             className="py-4 rounded-full min-w-[330px] min-h-[60px]"
           >
             <Text className="text-white text-center text-[18px] h-[40px]">
-              {isLoading ? "PASS 인증 중..." : "PASS 로그인"}
+              {isLoading ? t("features.signup.ui.login_form.pass_loading"): t("features.signup.ui.login_form.pass_login")}
             </Text>
           </Button>
         </View>
@@ -140,7 +145,7 @@ function KakaoLogin() {
             <KakaoLogo width={34} height={34} />
           </View>
           <View>
-            <Text className="text-[#00000085] text-[18px]">카카오 로그인</Text>
+            <Text className="text-[#00000085] text-[18px]">{i18n.t("features.signup.ui.login_form.kakao_login")}</Text>
           </View>
         </Pressable>
       </View>

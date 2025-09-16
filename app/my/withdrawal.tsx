@@ -12,6 +12,8 @@ import { Form } from "@/src/widgets";
 import { useState } from "react";
 import z from "zod";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { useTranslation } from "react-i18next";
+import i18n from "@/src/shared/libs/i18n";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 export enum WithdrawalReason {
   FOUND_PARTNER = 'FOUND_PARTNER',
@@ -26,35 +28,35 @@ export enum WithdrawalReason {
 
 const withdrawalReasons = [
   {
-    label: '파트너를 찾았어요',
+    label: i18n.t("apps.my.withdrawal.reason_partner"),
     value: WithdrawalReason.FOUND_PARTNER,
   },
   {
-    label: '매칭이 부정확해요',
+    label: i18n.t("apps.my.withdrawal.reason_poor_matching"),
     value: WithdrawalReason.POOR_MATCHING,
   },
   {
-    label: '개인정보 보호가 걱정돼요',
+    label: i18n.t("apps.my.withdrawal.reason_privacy"),
     value: WithdrawalReason.PRIVACY_CONCERN,
   },
   {
-    label: '안전성 문제가 있어요',
+    label: i18n.t("apps.my.withdrawal.reason_safety"),
     value: WithdrawalReason.SAFETY_CONCERN,
   },
   {
-    label: '기술적인 문제가 있어요',
+    label: i18n.t("apps.my.withdrawal.reason_technical"),
     value: WithdrawalReason.TECHNICAL_ISSUES,
   },
   {
-    label: '서비스 사용이 불편해요',
+    label:i18n.t("apps.my.withdrawal.reason_inactive"),
     value: WithdrawalReason.INACTIVE_USAGE,
   },
   {
-    label: '서비스 만족도가 낮아요',
+    label:i18n.t("apps.my.withdrawal.reason_dissatisfied"),
     value: WithdrawalReason.DISSATISFIED_SERVICE,
   },
   {
-    label: '기타',
+    label: i18n.t("apps.my.withdrawal.reason_other"),
     value: WithdrawalReason.OTHER,
   },
 ];
@@ -64,7 +66,7 @@ type WithdrawalForm = {
 };
 
 const schema = z.object({
-  reason: z.string().min(3, { message: '이유를 선택해주세요' }),
+  reason: z.string().min(3, { message: i18n.t("apps.my.withdrawal.reason_select_error") }),
 });
 
 const withdraw = async (reason: string) =>
@@ -73,6 +75,7 @@ const withdraw = async (reason: string) =>
   });
 
 export default function WithdrawalScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { control, handleSubmit, formState: { isValid }, watch } = useForm<WithdrawalForm>({
     defaultValues: {
@@ -95,19 +98,19 @@ export default function WithdrawalScreen() {
       await clearTokensOnly();
   
       showModal({
-        title: '다음에 다시봐요',
+        title: t("apps.my.withdrawal.complete_title"),
         children: (
           <View className="flex flex-col gap-y-2">
             <Text textColor="black">
-              회원 탈퇴가 완료되었습니다.
+              {t("apps.my.withdrawal.complete_desc_1")}
             </Text>
             <Text textColor="black">
-              다음에 다시 만나요
+              {t("apps.my.withdrawal.complete_desc_2")}
             </Text>
           </View>
         ),
         primaryButton: {
-          text: '확인',
+          text: t("global.confirm"),
           onClick: () => router.navigate('/auth/login'),
         }
       });
@@ -135,7 +138,7 @@ export default function WithdrawalScreen() {
           />
         </View>
         <Text size="lg" textColor="purple" weight="bold">
-          다음에 다시 만나요
+          {t("apps.my.withdrawal.title")}
         </Text>
       </View>
 
@@ -149,15 +152,15 @@ export default function WithdrawalScreen() {
           <TextArea
             value={otherReason}
             onChangeText={setOtherReason}
-            placeholder="기타 이유를 입력해주세요"
+            placeholder={t("apps.my.withdrawal.textarea_placeholder")}
           />
         </Show>
       </View>
 
       <TwoButtons
         content={{
-          prev: '돌아기기',
-          next: '서비스 떠나기',
+          prev: t("apps.my.withdrawal.button_prev"),
+          next: t("apps.my.withdrawal.button_next"),
         }}
         onClickPrevious={() => router.navigate('/my')}
         onClickNext={onSubmitWithdrawal}

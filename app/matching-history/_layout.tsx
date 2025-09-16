@@ -7,10 +7,12 @@ import { Pressable, StyleSheet, View } from "react-native";
 import {useCurrentGem} from "@features/payment/hooks";
 import {ImageResource} from "@ui/image-resource";
 import {ImageResources} from "@shared/libs";
+import { useTranslation } from "react-i18next";
 
 export default function MatchingHistoryLayoutScreen() {
   const router = useRouter();
   const { data: gem } = useCurrentGem();
+  const {t} = useTranslation();
   return (
     <View className="flex-1">
       <Header.Container className="border-b items-center border-b-[#E7E9EC]">
@@ -24,7 +26,7 @@ export default function MatchingHistoryLayoutScreen() {
         </Header.LeftContent>
         <Header.CenterContent className=" pt-2">
           <Text textColor="black" size="20" weight="bold">
-            이전매칭
+            {t("apps.matching_history.header_title")}
           </Text>
         </Header.CenterContent>
         <Header.RightContent>
@@ -38,7 +40,7 @@ export default function MatchingHistoryLayoutScreen() {
               size={"13"}
               style={styles.rematchingCount}
             >
-              {gem?.totalGem ?? 0}개
+              {gem?.totalGem ?? 0}{t("apps.matching_history.gem_unit")}
             </Text>
             <ImageResource resource={ImageResources.GEM} width={28} height={28} />
           </Pressable>
