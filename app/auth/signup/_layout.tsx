@@ -15,23 +15,23 @@ import { StyleSheet, Text, View } from "react-native";
 import { BackHandler } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { useTranslation } from "react-i18next";
 const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
   const { progress, updateStep, univTitle, step } = useSignupProgress();
-
+  const { t } = useTranslation();
   const pathname = usePathname();
   const renderProgress = pathname !== "/auth/signup/done";
   const width = useWindowWidth();
   const progressWidth = width > 480 ? 448 : width - 32;
   const insets = useSafeAreaInsets();
   const titleMap = {
-    [SignupSteps.AREA]: "지역 선택하기",
+    [SignupSteps.AREA]: t("apps.auth.sign_up.select_area"),
     [SignupSteps.UNIVERSITY]: univTitle,
-    [SignupSteps.UNIVERSITY_DETAIL]: "추가 정보 입력하기",
-    [SignupSteps.INSTAGRAM]: "인스타그램 아이디 입력하기",
-    [SignupSteps.PROFILE_IMAGE]: "프로필 사진 추가하기",
+    [SignupSteps.UNIVERSITY_DETAIL]: t("apps.auth.sign_up.select_university_detail"),
+    [SignupSteps.INSTAGRAM]: t("apps.auth.sign_up.instageam"),
+    [SignupSteps.PROFILE_IMAGE]: t("apps.auth.sign_up.Profile_image"),
   };
 
   const title = titleMap[step];

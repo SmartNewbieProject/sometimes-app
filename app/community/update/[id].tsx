@@ -9,6 +9,7 @@ import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const {
   ArticleWriteFormProvider,
@@ -24,18 +25,19 @@ export default function CommunityUpdateScreen() {
   const { showModal } = useModal();
   const { article, isLoading, status, isFetched } = useArticleDetailsQuery(id);
   const form = useArticleWriteForm({});
+  const { t } = useTranslation();
 
   const onSubmit = form.handleSubmit(async (data) => {
     if (data.title.length < 3 || data.content.length < 3) {
       showModal({
-        title: "너무 짧아요",
+        title: t("community.update.too_short_title"),
         children: (
           <Text textColor="black">
-            제목과 본문은 3자 이상으로 작성해주세요.
+            {t("community.update.too_short_desc")}
           </Text>
         ),
         primaryButton: {
-          text: "네, 확인했어요",
+          text: t("global.confirm_checked"),
           onClick: () => {},
         },
       });
@@ -44,14 +46,14 @@ export default function CommunityUpdateScreen() {
 
     if (data.content.length > 2000) {
       showModal({
-        title: "글자수 초과",
+        title: t("community.update.content_too_long_title"),
         children: (
           <Text textColor="black">
-            본문은 2000자 이하로 작성해주세요.
+            {t("community.update.content_too_long_desc")}
           </Text>
         ),
         primaryButton: {
-          text: "네, 확인했어요",
+          text: t("global.confirm_checked"),
           onClick: () => {},
         },
       });
@@ -73,19 +75,19 @@ export default function CommunityUpdateScreen() {
         queryKey: QUERY_KEYS.articles.detail(id),
       });
       showModal({
-        title: "완료",
+        title: t("global.complete"),
         children: (
           <View className="flex flex-col gap-y-1">
             <Text textColor="black" size="sm">
-              게시글이 수정되었어요!
+              {t("community.update.complete_message_1")}
             </Text>
             <Text textColor="black" size="sm">
-              게시글로 이동할게요.
+              {t("community.update.complete_message_2")}
             </Text>
           </View>
         ),
         primaryButton: {
-          text: "네, 이동할게요",
+          text: t("global.confirm_button"),
           onClick: () => router.push(`/community/${id}`),
         },
       });
@@ -106,7 +108,7 @@ export default function CommunityUpdateScreen() {
   }, [status, isFetched, article, form]);
 
   if (isLoading) {
-    return <Loading.Page title="게시글을 불러오고 있어요." />;
+    return <Loading.Page title={t("community.update.loading_article")} />;
   }
 
   return (

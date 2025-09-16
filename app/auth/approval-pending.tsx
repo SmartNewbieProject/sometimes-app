@@ -7,9 +7,11 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { BackHandler, ScrollView, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ApprovalPendingScreen() {
+  const { t } = useTranslation();
   const { logoutOnly } = useAuth();
   const { my } = useAuth();
   const { data: statusData } = useUserStatus(my.phoneNumber);
@@ -76,8 +78,7 @@ export default function ApprovalPendingScreen() {
               textColor="black"
               weight="semibold"
               className="text-center"
-            >
-              회원가입 완료!
+            >{t("apps.auth.approval-pending.title")}
             </Text>
             <Text
               size="lg"
@@ -85,11 +86,7 @@ export default function ApprovalPendingScreen() {
               weight="normal"
               className="text-center mt-1"
             >
-              관리자{" "}
-              <Text size="lg" textColor="purple" weight="semibold">
-                승인
-              </Text>
-              을 기다리고 있어요
+              {t("apps.auth.approval-pending.waiting_approval")}
             </Text>
           </View>
 
@@ -100,8 +97,7 @@ export default function ApprovalPendingScreen() {
               textColor="pale-purple"
               weight="light"
               className="text-center"
-            >
-              승인되면 푸시로 알려드릴게요
+            >{t("apps.auth.approval-pending.notify_push")}
             </Text>
           </View>
 
@@ -120,11 +116,9 @@ export default function ApprovalPendingScreen() {
                     textColor="dark"
                     weight="semibold"
                     className="mb-1"
-                  >
-                    승인 대기
+                  >{t("apps.auth.approval-pending.card_title")}
                   </Text>
-                  <Text size="sm" textColor="gray" weight="light">
-                    관리자 승인까지 2~12시간 소요됩니다
+                  <Text size="sm" textColor="gray" weight="light">{t("apps.auth.approval-pending.card_desc")}
                   </Text>
                 </View>
               </View>
@@ -140,8 +134,7 @@ export default function ApprovalPendingScreen() {
           size="md"
           onPress={handleGoToLogin}
           className="w-full py-4 rounded-2xl"
-        >
-          로그인 화면으로 돌아가기
+        >{t("apps.auth.approval-pending.button")}
         </Button>
       </View>
     </DefaultLayout>

@@ -17,6 +17,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -25,6 +26,7 @@ import {
 const { useSignupProgress } = Signup;
 
 export default function UserInfoPage() {
+  const { t } = useTranslation();
   const { updateForm, form } = useSignupProgress();
 
   const insets = useSafeAreaInsets();
@@ -157,7 +159,7 @@ export default function UserInfoPage() {
   return (
     <DefaultLayout>
       <View style={[styles.topBar, { paddingTop: insets.top }]}>
-        <Text style={styles.topBarTitle}>Apple 로그인</Text>
+        <Text style={styles.topBarTitle}>{t("apps.auth.login.apple_login_title")}</Text>
       </View>
 
       <ScrollView
@@ -184,10 +186,10 @@ export default function UserInfoPage() {
 
         {!shouldHideNameInput && (
           <View style={styles.contentWrapper}>
-            <Text style={styles.title}>이름을 입력해주세요</Text>
+            <Text style={styles.title}>{t("apps.auth.register.input_name")}</Text>
             <TextInput
               style={styles.nameInput}
-              placeholder="구미호"
+              placeholder={t("apps.auth.register.miho")}
               value={name}
               onChangeText={setName}
               maxLength={20}
@@ -196,7 +198,7 @@ export default function UserInfoPage() {
         )}
 
         <View style={styles.contentWrapper}>
-          <Text style={styles.title}>성별을 선택해주세요</Text>
+          <Text style={styles.title}>{t("apps.auth.register.input_sex")}</Text>
           <View style={styles.genderButtonContainer}>
             <Pressable
               style={[
@@ -212,7 +214,7 @@ export default function UserInfoPage() {
                     : styles.genderButtonText
                 }
               >
-                남성
+                {t("apps.auth.register.male")}
               </Text>
             </Pressable>
             <Pressable
@@ -229,14 +231,14 @@ export default function UserInfoPage() {
                     : styles.genderButtonText
                 }
               >
-                여성
+                {t("apps.auth.register.female")}
               </Text>
             </Pressable>
           </View>
         </View>
 
         <View style={styles.contentWrapper}>
-          <Text style={styles.title}>생년월일을 입력해주세요</Text>
+          <Text style={styles.title}>{t("apps.auth.register.input_birth")}</Text>
           <View style={styles.dateInputContainer}>
             <TextInput
               style={styles.dateInput}
@@ -283,11 +285,11 @@ export default function UserInfoPage() {
         </View>
 
         <View style={styles.contentWrapper}>
-          <Text style={styles.title}>전화번호를 입력해주세요</Text>
+          <Text style={styles.title}>{t("apps.auth.register.input_phone")}</Text>
           <TextInput
             ref={phoneRef}
             style={styles.phoneInput}
-            placeholder="010-0000-0000"
+            placeholder={t("apps.auth.register.phone_placeholder")}
             keyboardType="number-pad"
             maxLength={13}
             value={formatDisplayedPhoneNumber(phone)}
@@ -305,7 +307,7 @@ export default function UserInfoPage() {
             source={require("@assets/images/favorite.png")}
             style={styles.heartIcon}
           />
-          <Text style={styles.msg}>회원가입을 위해 정보를 입력해주세요!</Text>
+          <Text style={styles.msg}>{t("apps.auth.register.please_input")}!</Text>
         </View>
         <Pressable
           style={[
@@ -325,7 +327,7 @@ export default function UserInfoPage() {
                 : styles.startButtonTextDisabled,
             ]}
           >
-            {isFormComplete ? "썸타임 시작하기" : "내가 누구인지 알려주세요!"}
+            {isFormComplete ? t("apps.auth.register.start_sometime") : t("apps.auth.register.who_am_i")}
           </Text>
         </Pressable>
       </View>

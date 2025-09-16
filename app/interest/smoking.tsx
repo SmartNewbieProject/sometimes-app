@@ -3,6 +3,7 @@ import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { PreferenceOption } from "@/src/types/user";
 import { Selector } from "@/src/widgets/selector";
+import { useTranslation } from 'react-i18next';
 import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
@@ -15,36 +16,39 @@ const { ui, hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
-
+import i18n from "@/src/shared/libs/i18n";
+// TODO: The 't' function might not be in scope here.
+// Consider moving this array definition inside the component or passing 't' as a prop.
 const tooltips = [
   {
-    title: "비흡연자였으면 좋겠어요",
+    title: i18n.t("apps.interest.smoke.tooltip_0_title"),
     description: [
-      "담배를 전혀 피우지 않는 사람을 선호해요",
-      "담배 냄새에 민감하거나 간접흡연이 싫어요",
-      "건강에 관심이 많은 사람이 좋아요",
+      i18n.t("apps.interest.smoke.tooltip_0_desc_1"),
+      i18n.t("apps.interest.smoke.tooltip_0_desc_2"),
+      i18n.t("apps.interest.smoke.tooltip_0_desc_3"),
     ],
   },
   {
-    title: "상관없어요",
+    title: i18n.t("apps.interest.smoke.tooltip_1_title"),
     description: [
-      "흡연 여부는 중요한 기준이 아니에요",
-      "흡연자든 비흡연자든 괜찮아요",
-      "다른 가치관이나 성격이 더 중요해요",
-      "전자담배나 간헐적 흡연도 허용할 수 있어요",
+      i18n.t("apps.interest.smoke.tooltip_1_desc_1"),
+      i18n.t("apps.interest.smoke.tooltip_1_desc_2"),
+      i18n.t("apps.interest.smoke.tooltip_1_desc_3"),
+      i18n.t("apps.interest.smoke.tooltip_1_desc_4"),
     ],
   },
   {
-    title: "흡연자여도 좋아요",
+    title: i18n.t("apps.interest.smoke.tooltip_2_title"),
     description: [
-      "흡연자를 선호하거나 흡연에 거부감이 없어요",
-      "함께 담배 피우는 시간을 공유하고 싶어요",
-      "흡연을 개인의 취향으로 존중해요",
+      i18n.t("apps.interest.smoke.tooltip_2_desc_1"),
+      i18n.t("apps.interest.smoke.tooltip_2_desc_2"),
+      i18n.t("apps.interest.smoke.tooltip_2_desc_3"),
     ],
   },
 ];
 
 export default function SmokingSelectionScreen() {
+  const { t } = useTranslation();
   const { updateStep } = useInterestStep();
   const { smoking, updateForm } = useInterestForm();
 
@@ -100,17 +104,17 @@ export default function SmokingSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            흡연에 대해
+            {t("apps.interest.smoke.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            어떻게 생각하시나요?
+            {t("apps.interest.smoke.title_2")}
           </Text>
         </View>
 
         <View style={styles.bar} />
         <View style={styles.wrapper}>
           <Loading.Lottie
-            title="선호도를 불러오고 있어요"
+            title={t("apps.interest.smoke.loading")}
             loading={optionsLoading}
           >
             <StepSlider

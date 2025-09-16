@@ -50,10 +50,12 @@ function Area() {
           textColor={"black"}
           style={styles.title}
         >
-          어느 지역에서 만남을 시작할까요?
+          {t("apps.auth.sign_up.area.title")}
         </Text>
         <Text size="13" weight="light" textColor={"light"} style={styles.desc}>
-          현재 거주하거나 학교가 있는 지역을 선택해주세요
+          <Text size="13" weight="light" textColor={"light"} style={styles.desc}>
+          {t("apps.auth.sign_up.area.desc")}
+        </Text>
         </Text>
       </View>
       <ScrollView>
@@ -150,7 +152,7 @@ function Area() {
           <AreaFillHeart width={20} height={20} />
 
           <RNText style={styles.tip}>
-            하트를 눌러 지역을 선택하고 오픈 현황을 확인하세요!
+            {t("apps.auth.sign_up.area.tip")}
           </RNText>
         </View>
         <Button
@@ -167,7 +169,7 @@ function Area() {
           className="w-full"
           size="md"
         >
-          이 지역으로 시작하기
+          {t("apps.auth.sign_up.area.button")}
         </Button>
       </View>
     </DefaultLayout>

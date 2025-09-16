@@ -90,13 +90,13 @@ export default function UniversityDetailsPage() {
 
   const nextButtonMessage = (() => {
     if (!validateUniversityForm()) {
-      return "조금만 더 알려주세요";
+      return t("apps.auth.sign_up.university_detail.next_button_incomplete");
     }
-    return "다음으로";
+    return t("apps.auth.reapply.button_next");
   })();
 
   if (signupLoading) {
-    return <Loading.Page title="잠시만 기다려주세요.." />;
+    return <Loading.Page title={t("apps.auth.sign_up.university_detail.next_button_wait")} />;
   }
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function UniversityDetailsPage() {
           </View>
 
           <View style={[styles.contentWrapper, { zIndex: 10 }]}>
-            <Text style={styles.title}>어떤 과에 다니고 있나요?</Text>
+            <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_department")}</Text>
             <DepartmentSearch />
           </View>
 
@@ -159,7 +159,7 @@ export default function UniversityDetailsPage() {
               { marginTop: 40, paddingBottom: 214 },
             ]}
           >
-            <Text style={styles.title}>학번과 학년은 어떻게 되시나요?</Text>
+            <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_academic")}</Text>
             <AcademicInfoSelector />
           </View>
         </Pressable>

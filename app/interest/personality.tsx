@@ -2,6 +2,7 @@ import type { Preferences } from "@/src/features/interest/api";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { ChipSelector } from "@/src/widgets";
+import { useTranslation } from 'react-i18next';
 import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import { PalePurpleGradient, Text } from "@shared/ui";
@@ -15,6 +16,7 @@ const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function PersonalitySelectionScreen() {
+  const { t } = useTranslation();
   const { updateStep } = useInterestStep();
   const { personality, updateForm } = useInterestForm();
   const {
@@ -47,7 +49,7 @@ export default function PersonalitySelectionScreen() {
 
   const nextMessage = (() => {
     if (!personality) {
-      return "최대 3개 선택 가능";
+      return t("apps.interest.personality.next_none");
     }
     return "다음으로";
   })();
@@ -72,10 +74,10 @@ export default function PersonalitySelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            당신이 원하는
+            {t("apps.interest.personality.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            이상형의 성격은 어떤가요?
+            {t("apps.interest.personality.title_2")}
           </Text>
         </View>
 
@@ -83,7 +85,7 @@ export default function PersonalitySelectionScreen() {
 
         <View style={styles.chipSelector}>
           <Loading.Lottie
-            title="성격 유형을 불러오고 있어요"
+            title={t("apps.interest.personality.loading")}
             loading={isLoading}
           >
             <ChipSelector

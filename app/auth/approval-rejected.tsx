@@ -6,13 +6,15 @@ import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, View } from "react-native";
 import { Linking } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ApprovalRejectedScreen() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const rejectionReason =
-    (params.rejectionReason as string) || "승인이 거절되었습니다.";
+    (params.rejectionReason as string) || t("apps.auth.approval-rejected.card_reason_default");
   const phoneNumber = params.phoneNumber as string;
   const { logoutOnly } = useAuth();
 
@@ -59,7 +61,7 @@ export default function ApprovalRejectedScreen() {
               weight="normal"
               className="text-left"
             >
-              승인이 거절되었어요
+              {t("apps.auth.approval-rejected.title")}
             </Text>
           </View>
 
@@ -71,8 +73,7 @@ export default function ApprovalRejectedScreen() {
               weight="light"
               className="text-left leading-6"
             >
-              아래 사유를 확인하고 정보를 수정한 후{"\n"}
-              다시 신청해주세요
+              {t("apps.auth.approval-rejected.desc")}
             </Text>
           </View>
 
@@ -92,7 +93,7 @@ export default function ApprovalRejectedScreen() {
                     weight="semibold"
                     className="mb-1"
                   >
-                    거절 사유
+                    {t("apps.auth.approval-rejected.card_title")}
                   </Text>
                   <Text size="sm" textColor="gray" weight="light">
                     {rejectionReason}
@@ -109,7 +110,7 @@ export default function ApprovalRejectedScreen() {
             weight="light"
             className="text-center mt-8"
           >
-            정보를 수정하신 후 언제든지 다시 신청하실 수 있어요
+            {t("apps.auth.approval-rejected.guide")}
           </Text>
         </View>
       </ScrollView>
@@ -132,7 +133,7 @@ export default function ApprovalRejectedScreen() {
               ↻
             </Text>
             <Text size="md" textColor="white" weight="semibold">
-              다시 입력하기
+              {t("apps.auth.approval-rejected.button_reapply")}
             </Text>
           </View>
         </Button>
@@ -148,7 +149,7 @@ export default function ApprovalRejectedScreen() {
               🎧
             </Text>
             <Text size="md" textColor="gray" weight="medium">
-              고객센터 문의
+              {t("apps.auth.approval-rejected.button_support")}
             </Text>
           </View>
         </Button>

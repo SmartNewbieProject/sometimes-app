@@ -38,11 +38,11 @@ export default function SignupInstagram() {
     // 처음에 오버레이 띄우기
     showOverlay(
       <View style={styles.infoWrapper}>
-        <Text style={styles.infoTitle}>프로필을 매력적으로 보여주세요!</Text>
+        <Text style={styles.infoTitle}>{t("apps.auth.sign_up.instagram.info_title")}</Text>
         <Text style={styles.infoDescription}>
-          사진을 업로드하고 계정을 공개로 설정하면
+          {t("apps.auth.sign_up.instagram.info_desc_1")}
         </Text>
-        <Text style={styles.infoDescription}>매칭 확률이 더 높아져요</Text>
+        <Text style={styles.infoDescription}>{t("apps.auth.sign_up.instagram.info_desc_2")}</Text>
         <Image
           source={require("@assets/images/instagram-some.png")}
           style={{
@@ -135,7 +135,7 @@ export default function SignupInstagram() {
             </View>
 
             <View style={[styles.contentWrapper, { zIndex: 10 }]}>
-              <Text style={styles.title}>인스타그램 아이디를 알려주세요</Text>
+              <Text style={styles.title}>{t("apps.auth.sign_up.instagram.title")}</Text>
               <View style={styles.inputWrapper}>
                 <Text style={styles.instagramText}>@</Text>
                 <TextInput
@@ -153,10 +153,10 @@ export default function SignupInstagram() {
                 프로필을 매력적으로 보여주세요!
               </Text>
               <Text style={styles.infoDescription}>
-                사진을 업로드하고 계정을 공개로 설정하면
+                {t("apps.auth.sign_up.instagram.info_desc_2")}
               </Text>
               <Text style={styles.infoDescription}>
-                매칭 확률이 더 높아져요
+                {t("apps.auth.sign_up.instagram.info_desc_2")}
               </Text>
               <Image
                 source={require("@assets/images/instagram-some.png")}
@@ -187,7 +187,7 @@ export default function SignupInstagram() {
           <View style={styles.tipConatainer}>
             <HeartIcon width={20} height={20} />
             <Text style={styles.tip}>
-              인스타그램은 매칭된 상대에게만 공개됩니다
+              {t("apps.auth.sign_up.instagram.tip")}
             </Text>
           </View>
           <TwoButtons

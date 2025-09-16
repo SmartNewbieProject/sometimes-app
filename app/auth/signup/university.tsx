@@ -70,7 +70,7 @@ export default function UniversityPage() {
           searchText={searchText}
           setSearchText={setSearchText}
         />
-        <Loading.Lottie title="대학 목록을 로딩중입니다.." loading={isLoading}>
+        <Loading.Lottie title={t("apps.auth.sign_up.university.loading")} loading={isLoading}>
           <FlashList
             extraData={selectedUniv}
             data={filteredUniv}
@@ -90,7 +90,9 @@ export default function UniversityPage() {
         <View style={styles.tipConatainer}>
           <HelpIcon width={20} height={20} />
           <RNText style={styles.tip}>
-            학교 인증을 통해 안전하게 이용할 수 있습니다
+            <RNText style={styles.tip}>
+            {t("apps.auth.sign_up.university.tip")}
+          </RNText>
           </RNText>
         </View>
         <TwoButtons

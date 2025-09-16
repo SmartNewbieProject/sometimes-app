@@ -3,6 +3,7 @@ import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { Selector } from "@/src/widgets/selector";
+import { useTranslation } from 'react-i18next';
 import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
@@ -16,51 +17,54 @@ const { useInterestStep, useInterestForm } = hooks;
 
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
-
+import i18n from "@/src/shared/libs/i18n";
+// TODO: The 't' function might not be in scope here.
+// Consider moving this array definition inside the component or passing 't' as a prop.
 const tooltips = [
   {
-    title: "안 마시면 좋겠어요.",
+    title: i18n.t("apps.interest.drink.tooltip_0_title"),
     description: [
-      "비음주자를 선호해요",
-      "술자리에 가지 않는 사람이 좋아요",
-      "음주에 대해 부정적인 생각을 가진 분이 좋아요",
+      i18n.t("apps.interest.drink.tooltip_0_desc_1"),
+      i18n.t("apps.interest.drink.tooltip_0_desc_2"),
+      i18n.t("apps.interest.drink.tooltip_0_desc_3"),
     ],
   },
   {
-    title: "가끔만 마셨으면 해요",
+    title: i18n.t("apps.interest.drink.tooltip_1_title"),
     description: [
-      "특별한 날에만 가볍게 마시는 정도가 좋아요",
-      "술에 크게 의존하지 않는 사람이 좋아요",
-      "월 1-2회 정도만 마시는 분이 좋아요",
+      i18n.t("apps.interest.drink.tooltip_1_desc_1"),
+      i18n.t("apps.interest.drink.tooltip_1_desc_2"),
+      i18n.t("apps.interest.drink.tooltip_1_desc_3"),
     ],
   },
   {
-    title: "적당히 마시는 정도가 좋아요",
+    title: i18n.t("apps.interest.drink.tooltip_2_title"),
     description: [
-      "사교적으로 적절히 마실 줄 아는 사람이 좋아요",
-      "음주는 하지만 과하지 않는 분이 좋아요",
-      "월 2-3회 정도 마시는 것은 괜찮아요",
+      i18n.t("apps.interest.drink.tooltip_2_desc_1"),
+      i18n.t("apps.interest.drink.tooltip_2_desc_2"),
+      i18n.t("apps.interest.drink.tooltip_2_desc_3"),
     ],
   },
   {
-    title: "술자리를 즐기는 사람이 좋아요",
+    title: i18n.t("apps.interest.drink.tooltip_3_title"),
     description: [
-      "함께 술자리를 즐길 수 있는 사람이 좋아요",
-      "주말 술자리에 잘 참여하는 분이 좋아요",
-      "술게임도 재밌게 할 줄 아는 분이 좋아요",
+      i18n.t("apps.interest.drink.tooltip_3_desc_1"),
+      i18n.t("apps.interest.drink.tooltip_3_desc_2"),
+      i18n.t("apps.interest.drink.tooltip_3_desc_3"),
     ],
   },
   {
-    title: "자주 마셔도 괜찮아요",
+    title: i18n.t("apps.interest.drink.tooltip_4_title"),
     description: [
-      "술을 즐기는 사람도 전혀 상관없어요",
-      "함께 술 문화를 즐기고 싶어요",
-      "주 2-3회 이상 마셔도 괜찮아요",
+      i18n.t("apps.interest.drink.tooltip_4_desc_1"),
+      i18n.t("apps.interest.drink.tooltip_4_desc_2"),
+      i18n.t("apps.interest.drink.tooltip_4_desc_3"),
     ],
   },
 ];
 
 export default function DrinkingSelectionScreen() {
+  const { t } = useTranslation();
   const { updateStep } = useInterestStep();
   const { drinking, updateForm } = useInterestForm();
   const { my } = useAuth();
@@ -120,16 +124,16 @@ export default function DrinkingSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            음주는 만남에서 중요한 부분이죠
+            {t("apps.interest.drink.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            음주 선호도를 알려주세요!
+            {t("apps.interest.drink.title_2")}
           </Text>
         </View>
         <View style={styles.bar} />
         <View style={styles.wrapper}>
           <Loading.Lottie
-            title="선호도를 불러오고 있어요"
+            title={t("apps.interest.drink.loading")}
             loading={optionsLoading}
           >
             <StepSlider

@@ -9,10 +9,12 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { useTranslation } from "react-i18next";
 const { useSignupProgress, useSignupAnalytics } = Signup;
 
 export default function SignupDoneScreen() {
   const { clear } = useSignupProgress();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const { trackSignupEvent } = useSignupAnalytics("done");
   useEffect(() => {
@@ -48,19 +50,19 @@ export default function SignupDoneScreen() {
         <View className="flex flex-col">
           <View className="mt-[42px]">
             <Text size="lg" textColor="black" weight="semibold">
-              축하드려요!
+              {t("apps.auth.sign_up.done.congrats")}
             </Text>
             <Text size="lg" textColor="black" weight="semibold">
-              회원가입이 완료되었어요!
+              {t("apps.auth.sign_up.done.signup_complete")}
             </Text>
           </View>
 
           <View className="mt-2">
             <Text size="sm" textColor="pale-purple" weight="light">
-              설레는 인연, 시작해볼까요?
+              {t("apps.auth.sign_up.done.start_love")}
             </Text>
             <Text size="sm" textColor="pale-purple" weight="light">
-              어울리는 사람을 썸타임이 찾아드릴게요 :)
+              {t("apps.auth.sign_up.done.find_match")}
             </Text>
           </View>
         </View>
@@ -77,7 +79,7 @@ export default function SignupDoneScreen() {
           {loading ? (
             <>
               <Text textColor={"white"} className="text-md white">
-                잠시만요...
+                {t("apps.auth.sign_up.done.loading")}
               </Text>
               <ActivityIndicator
                 size="small"
@@ -87,7 +89,9 @@ export default function SignupDoneScreen() {
             </>
           ) : (
             <Text textColor={"white"} className="text-md white">
-              로그인하러 가기 →
+              <Text textColor={"white"} className="text-md white">
+              {t("apps.auth.sign_up.done.go_login")}
+            </Text>
             </Text>
           )}
         </Button>

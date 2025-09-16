@@ -2,7 +2,10 @@
   "age": {
     "loading": "나이대 선호도를 불러오고 있어요",
     "title_1": "선호하는 나이대를",
-    "title_2": "선택해 주세요!"
+    "title_2": "선택해 주세요!",
+    "same_age": "동갑",
+    "upper_age": "연상",
+    "lower_age": "연하"
   },
   "bad_mbti": {
     "title": "당신이 싫어하는 MBTI 유형은?",
@@ -40,7 +43,7 @@
     "loading": "선호도를 불러오고 있어요"
   },
   "like_mbti": {
-    "title": "당신이 좋아하는 MBTI 유형은?",
+    "title": "당신이 만나고 싶은 MBTI 유형은?",
     "next_none": "상관없어요"
   },
   "personality": {
@@ -82,6 +85,8 @@
     "tooltip_2_desc_3": "함께 문신에 관한 이야기를 나누고 싶어요",
     "title_1": "문신에 대해",
     "title_2": "어떻게 생각하시나요?",
-    "loading": "선호도를 불러오고 있어요"
+    "loading": "선호도를 불러오고 있어요",
+    "nothing_tattoo": "문신 없음",
+    "small_tattoo": "작은 문신"
   }
 }

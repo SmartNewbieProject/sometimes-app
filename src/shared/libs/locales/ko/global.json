@@ -8,5 +8,7 @@
   "select": "선택",
   "next": "다음으로",
   "ok":"네",
-  "no": "아니요"
+  "no": "아니요",
+  "confirm_button": "네, 이동할게요",
+  "confirm_checked": "네, 확인했어요"
 }

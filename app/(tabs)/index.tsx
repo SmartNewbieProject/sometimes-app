@@ -3,8 +3,11 @@ import { Text } from '@/src/shared/ui/text';
 import { Button } from '@/src/shared/ui/button';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import SmallTitle from '@/assets/icons/paper-plane.svg'
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
+  const {t} = useTranslation();
+  
   return (
     <View className="flex-1 purple-gradient-bg px-5 pt-10">
       {/* 로고 섹션 */}
@@ -16,29 +19,29 @@ export default function LoginScreen() {
           </IconWrapper>
         </View>
         <View className="items-center space-y-1">
-          <Text className="text-xl font-bold">익숙한 하루에 설렘 하나,</Text>
-          <Text className="text-lg text-gray">SOMETIME에서</Text>
+          <Text className="text-xl font-bold">{t("apps.tabs.index.subtitle")}</Text>
+          <Text className="text-lg text-gray">{t("apps.tabs.index.subtitle_2")}</Text>
         </View>
       </View>
 
       {/* 입력 폼 섹션 */}
       <View className="space-y-6">
         {/* 이메일 입력 */}
-        <View className="space-y-2">
-          <Text className="text-lg text-primaryPurple">이메일</Text>
+                <View className="space-y-2">
+          <Text className="text-lg text-primaryPurple">{t("apps.tabs.index.email")}</Text>
           <TextInput
             className="w-full h-12 px-4 rounded-xl bg-white border border-lightPurple"
-            placeholder="이메일 주소"
+            placeholder={t("apps.tabs.index.email_placeholder")}
             placeholderTextColor="#9CA3AF"
           />
         </View>
 
         {/* 비밀번호 입력 */}
         <View className="space-y-2">
-          <Text className="text-lg text-primaryPurple">비밀번호</Text>
+          <Text className="text-lg text-primaryPurple">{t("apps.tabs.index.password")}</Text>
           <TextInput
             className="w-full h-12 px-4 rounded-xl bg-white border border-lightPurple"
-            placeholder="영문, 숫자, 특수문자 조합 8자리 이상"
+            placeholder={t("apps.tabs.index.password_placeholder")}
             placeholderTextColor="#9CA3AF"
             secureTextEntry
           />
@@ -46,8 +49,8 @@ export default function LoginScreen() {
 
         {/* 아이디/비밀번호 찾기 */}
         <View className="flex-row justify-center space-x-4">
-          <Text className="text-gray">아이디 찾기</Text>
-          <Text className="text-gray">비밀번호 찾기</Text>
+          <Text className="text-gray">{t("apps.tabs.index.find_id")}</Text>
+          <Text className="text-gray">{t("apps.tabs.index.find_password")}</Text>
         </View>
       </View>
 
@@ -58,14 +61,14 @@ export default function LoginScreen() {
           onPress={() => {}}
           className="w-full"
         >
-          로그인
+          {t("apps.tabs.index.login")}
         </Button>
         <Button 
           variant="secondary" 
           onPress={() => {}}
           className="w-full"
         >
-          회원가입
+          {t("apps.tabs.index.register")}
         </Button>
       </View>
     </View>

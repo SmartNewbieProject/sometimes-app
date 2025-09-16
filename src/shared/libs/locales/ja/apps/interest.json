@@ -2,7 +2,10 @@
   "age": {
     "loading": "年代の選好を読み込んでいます",
     "title_1": "希望する年代を",
-    "title_2": "選択してください！"
+    "title_2": "選択してください！",
+    "same_age": "同い年",
+    "upper_age": "年上",
+    "lower_age": "年下"
   },
   "bad_mbti": {
     "title": "苦手なMBTIタイプは？",
@@ -82,6 +85,8 @@
     "tooltip_2_desc_3": "一緒にタトゥーについて語り合いたいです",
     "title_1": "タトゥーについて",
     "title_2": "どう思いますか？",
-    "loading": "選好を読み込んでいます"
+    "loading": "選好を読み込んでいます",
+    "nothing_tattoo": "タトゥーなし",
+    "small_tattoo": "小さなタトゥー"
   }
 }

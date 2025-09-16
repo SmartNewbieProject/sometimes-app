@@ -33,6 +33,7 @@ import {
 import { z } from "zod";
 
 import { useStorage } from "@/src/shared/hooks/use-storage";
+import { useTranslation } from "react-i18next";
 
 const {
   SignupSteps,
@@ -85,6 +86,8 @@ export default function ProfilePage() {
     },
   });
 
+  const {t} = useTranslation();
+
   useEffect(() => {
     if (visible) {
       Animated.sequence([
@@ -102,12 +105,12 @@ export default function ProfilePage() {
     showOverlay(
       <View style={styles.infoOverlayWrapper}>
         <RNText style={styles.infoTitle}>
-          이목구비가 잘 보이는 사진 필수에요
+          {t("apps.auth.sign_up.profile_image.info_title")}
         </RNText>
         <RNText style={styles.infoDescription}>
-          눈, 코, 입이 잘 보이는 사진이라면
+          {t("apps.auth.sign_up.profile_image.info_desc_1")}
         </RNText>
-        <RNText style={styles.infoDescription}>어떤 각도든 좋아요</RNText>
+        <RNText style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
         <Image
           source={require("@assets/images/instagram-some.png")}
           style={{
@@ -277,19 +280,19 @@ export default function ProfilePage() {
             style={{ width: 81, height: 81 }}
           />
           <Text weight="semibold" size="20" textColor="black" className="mt-2">
-            프로필 사진이 없으면 매칭이 안 돼요!
+            {t("apps.auth.sign_up.profile_image.main_title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            지금 바로 추가해 주세요
+            {t("apps.auth.sign_up.profile_image.main_title_2")} 
           </Text>
         </View>
 
         <View className="flex flex-col pb-[18px] pt-4 px-5">
           <Text weight="medium" size="sm" textColor="pale-purple">
-            매칭을 위해 1장의 프로필 사진을 필수로 올려주세요
+            {t("apps.auth.sign_up.profile_image.guide_1")}
           </Text>
           <Text weight="medium" size="sm" textColor="pale-purple">
-            얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+            {t("apps.auth.sign_up.profile_image.guide_2")}
           </Text>
         </View>
 
@@ -347,12 +350,12 @@ export default function ProfilePage() {
             ]}
           >
             <RNText style={styles.infoTitle}>
-              이목구비가 잘 보이는 사진 필수에요
+              {t("apps.auth.sign_up.profile_image.info_title")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              눈, 코, 입이 잘 보이는 사진이라면
+              {t("apps.auth.sign_up.profile_image.info_desc_1")}
             </RNText>
-            <RNText style={styles.infoDescription}>어떤 각도든 좋아요</RNText>
+            <RNText style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
             <Image
               source={require("@assets/images/instagram-some.png")}
               style={{

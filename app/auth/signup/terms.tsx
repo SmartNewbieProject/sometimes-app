@@ -11,7 +11,7 @@ import Signup from '@/src/features/signup';
 import { cn } from '@/src/shared/libs/cn';
 import { platform } from '@/src/shared/libs/platform';
 import { environmentStrategy } from '@/src/shared/libs';
-
+import { useTranslation } from 'react-i18next';
 
 const { useSignupProgress, SignupSteps, useChangePhase, useSignupAnalytics } = Signup;
 
@@ -20,6 +20,7 @@ export default function TermsScreen() {
   const allAgreement = agreements.every(agreement => agreement.checked);
   useChangePhase(SignupSteps.TERMS);
 
+  const { t } = useTranslation();
   // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics('terms');
 
@@ -65,10 +66,10 @@ export default function TermsScreen() {
           style={{ width: 81, height: 81 }}
         />
         <Text weight="semibold" size="20" textColor="black">
-          서비스 이용을 위해
+          {t("apps.auth.sign_up.terms.main_title_1")}
         </Text>
         <Text weight="semibold" size="20" textColor="black">
-          약관 동의가 필요해요
+          {t("apps.auth.sign_up.terms.main_title_2")}
         </Text>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -81,16 +82,16 @@ export default function TermsScreen() {
               onChange={handleAllAgreement}
             />
             <Text weight="semibold" size="20" textColor="black">
-              모두 동의합니다.
+              {t("apps.auth.sign_up.terms.agree_all")}
             </Text>
           </View>
         </TouchableOpacity>
         <View className="mb-[10px] flex flex-col ml-[35px]">
           <Text weight="light" size="13" textColor="pale-purple">
-            "모두 동의"는 필수 및 선택 약관에 전부 동의하는 거예요.
+            {t("apps.auth.sign_up.terms.agree_all_desc_1")} 
           </Text>
           <Text weight="light" size="13" textColor="pale-purple">
-            개별적으로 선택해서 동의하실 수도 있어요.
+            {t("apps.auth.sign_up.terms.agree_all_desc_2")}
           </Text>
         </View>
 
@@ -126,10 +127,10 @@ export default function TermsScreen() {
         })
       )}>
         <Button variant="secondary" onPress={onBack} className="flex-[0.3]">
-          뒤로
+          {t("apps.auth.sign_up.terms.back")}
         </Button>
         <Button onPress={onNext} className="flex-[0.7]" disabled={!isNext}>
-          동의하고 계속하기
+          {t("apps.auth.sign_up.terms.next")}
         </Button>
       </View>
     </View>

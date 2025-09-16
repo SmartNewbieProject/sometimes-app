@@ -19,6 +19,7 @@ import WelcomeReward from "@/src/features/welcome-reward";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ImageResources, storage } from "@/src/shared/libs";
 import { ensurePushTokenRegistered } from "@/src/shared/libs/notifications";
+import { useTranslation } from 'react-i18next';
 import {
   AnnounceCard,
   BottomNavigation,
@@ -55,6 +56,7 @@ const { WelcomeRewardModal } = welcomeRewardUI;
 const { useWelcomeReward } = welcomeRewardHooks;
 
 const HomeScreen = () => {
+  const { t } = useTranslation();
   const { showModal } = useModal();
   const { step } = useStep();
   const { isPreferenceFill } = useRedirectPreferences();
@@ -158,7 +160,7 @@ const HomeScreen = () => {
             <AnnounceCard
               emoji={ImageResources.DETAILS}
               emojiSize={{ width: 31, height: 28 }}
-              text="나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
+              text={t("announce_card_text")}
               onPress={() => router.navigate("/interest")}
             />
           </Show>
