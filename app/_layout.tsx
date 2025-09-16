@@ -1,3 +1,4 @@
+import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
 import { Slot, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -11,9 +12,10 @@ import {
 } from "@/src/shared/libs/notifications";
 import * as Notifications from "expo-notifications";
 
+import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
+import LogProvider from "@/src/features/logger/ui/provider/log-provider";
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import { VersionUpdateChecker } from "@/src/features/version-update";
-import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
 import { cn } from "@/src/shared/libs/cn";
@@ -58,12 +60,17 @@ export default function RootLayout() {
       if (!data || typeof data !== "object") return false;
 
       const obj = data as Record<string, unknown>;
-      const validTypes = ["comment", "like", "general", "match_like", "match_connection", "reply", "comment_like"];
+      const validTypes = [
+        "comment",
+        "like",
+        "general",
+        "match_like",
+        "match_connection",
+        "reply",
+        "comment_like",
+      ];
 
-      return (
-        typeof obj.type === "string" &&
-        validTypes.includes(obj.type)
-      );
+      return typeof obj.type === "string" && validTypes.includes(obj.type);
     },
     []
   );
@@ -105,29 +112,31 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryProvider>
-        <ModalProvider>
-          <GlobalChatProvider>
-          <PortoneProvider>
-            <View
-              className={cn(
-                "flex-1 font-extralight",
-                Platform.OS === "web" && "max-w-[468px] w-full self-center"
-              )}
-            >
-              <AnalyticsProvider>
-                <RouteTracker>
-                  <>
-                    <Slot />
-                    <VersionUpdateChecker />
-                  </>
-                </RouteTracker>
-              </AnalyticsProvider>
-            </View>
-          </PortoneProvider>
-          </GlobalChatProvider>
-        </ModalProvider>
-      </QueryProvider>
+      <LogProvider>
+        <QueryProvider>
+          <ModalProvider>
+            <GlobalChatProvider>
+              <PortoneProvider>
+                <View
+                  className={cn(
+                    "flex-1 font-extralight",
+                    Platform.OS === "web" && "max-w-[468px] w-full self-center"
+                  )}
+                >
+                  <AnalyticsProvider>
+                    <RouteTracker>
+                      <>
+                        <Slot />
+                        <VersionUpdateChecker />
+                      </>
+                    </RouteTracker>
+                  </AnalyticsProvider>
+                </View>
+              </PortoneProvider>
+            </GlobalChatProvider>
+          </ModalProvider>
+        </QueryProvider>
+      </LogProvider>
     </GestureHandlerRootView>
   );
 }
