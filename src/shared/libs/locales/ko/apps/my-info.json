@@ -1,0 +1,105 @@
+{
+  "dating_style": {
+    "more": "{count} 개만 더!",
+    "next": "다음으로",
+    "title_1": "당신에게 가장 잘 맞는",
+    "title_2": "연애 스타일은 무엇인가요?",
+    "loading": "연애 스타일 옵션 불러오고 있어요"
+  },
+  "done": {
+    "title_1": "당신의 정보를 확인했어요",
+    "title_2": "이제는 설레는 만남을 시작해요",
+    "desc": "썸타임이 {name}님의 이상형을 찾아드릴게요",
+    "button": "이상형 찾으러 가기 →"
+  },
+  "drinking": {
+    "tooltip_0_title": "전혀 안 마셔요",
+    "tooltip_0_desc_1": "비음주자를 선호해요",
+    "tooltip_0_desc_2": "술자리에 가지 않는 사람이 좋아요",
+    "tooltip_0_desc_3": "음주에 대해 부정적인 생각을 가진 분이 좋아요",
+    "tooltip_1_title": "술은 거의 못 마셔요",
+    "tooltip_1_desc_1": "학기에 1-2번 특별한 자리에서만",
+    "tooltip_1_desc_2": "맥주 반잔도 얼굴 빨개지는 수준",
+    "tooltip_2_title": "적당히 마셔요",
+    "tooltip_2_desc_1": "월 2-3회 정도 과모임이나 친구 만날 때",
+    "tooltip_2_desc_2": "소주 한두 잔 정도는 괜찮아요",
+    "tooltip_3_title": "자주 마시는 편이에요",
+    "tooltip_3_desc_1": "주말마다 한 번씩은 마셔요",
+    "tooltip_3_desc_2": "월 4-5회 정도, 소주 반병~한병 정도",
+    "tooltip_4_title": "술자리 빠지면 섭섭해요",
+    "tooltip_4_desc_1": "주 2-3회 이상 마셔요",
+    "tooltip_4_desc_2": "MT나 뒤풀이에서 항상 끝까지 남아요",
+    "title_1": "음주는 만남에서 중요한 부분이죠",
+    "title_2": "음주 선호도를 알려주세요!",
+    "loading": "선호도를 불러오고 있어요",
+    "option_not_drink_at_all": "전혀 안마시지 않음",
+    "option_not_drink": "전혀 마시지 않음"
+  },
+  "entry": {
+    "title_1": "{name}님의 프로필을 만들어요",
+    "title_2": "기본 정보를 알려주세요",
+    "desc_1": "프로필에 쓸 기본 정보를 알려주세요",
+    "desc_2": "나중에 수정할 수 있으니 편하게 골라주세요",
+    "modal_title": "나중에 등록할까요?",
+    "modal_desc_1": "원활한 이상형 매칭을 위해",
+    "modal_desc_2": "{name} 님의 정보를 등록해주세요!",
+    "modal_primary_button": "등록할게요!",
+    "modal_secondary_button": "다음에 할게요",
+    "match_title_1": "매칭을 위해",
+    "match_title_2": "당신의 정보를 꼭 알려주세요!",
+    "match_desc_1": "당신의 정보를 정확하게 입력할수록",
+    "match_desc_2": "매칭 성공 확률이 높아져요",
+    "prev_button": "뒤로",
+    "next_button": "다음으로"
+  },
+  "interest": {
+    "more": "{count} 개만 더!",
+    "next": "다음으로",
+    "title_1": "최근에 관심이 가는",
+    "title_2": "활동이나 일이 있나요?",
+    "loading": "관심사를 불러오고 있어요"
+  },
+  "mbti": {
+    "title": "당신의 MBTI 유형은 무엇인가요?"
+  },
+  "military": {
+    "empty_form": "비어있는 양식이 존재합니다.",
+    "title": "군대는 다녀 오셨나요?",
+    "loading": "옵션을 불러오고 있어요"
+  },
+  "personality": {
+    "max_3": "최대 3개 선택 가능",
+    "next": "다음으로",
+    "title_1": "당신의 성격을",
+    "title_2": "말씀해주세요!",
+    "loading": "성격 유형을 불러오고 있어요"
+  },
+  "smoking": {
+    "tooltip_0_title": "비흡연자",
+    "tooltip_0_desc_1": "담배를 전혀 피우지 않아요",
+    "tooltip_0_desc_2": "간접흡연도 불편해요",
+    "tooltip_0_desc_3": "금연한 지 오래됐어요",
+    "tooltip_1_title": "전자담배",
+    "tooltip_1_desc_1": "일반 담배 대신 전자담배만 사용해요",
+    "tooltip_2_title": "흡연자",
+    "tooltip_2_desc_1": "일반 담배를 피워요",
+    "title": "흡연은 하시나요?",
+    "loading": "선호도를 불러오고 있어요"
+  },
+  "tattoo": {
+    "tooltip_0_title": "문신 X",
+    "tooltip_0_desc_1": "문신이 전혀 없어요",
+    "tooltip_0_desc_2": "향후에도 할 계획이 없어요",
+    "tooltip_1_title": "작은 문신",
+    "tooltip_1_desc_1": "눈에 잘 뜨지 않는 곳에 작은 문신이 있어요",
+    "tooltip_1_desc_2": "손목, 발목, 어깨 등에 1-2개 정도의 작은 문신",
+    "tooltip_1_desc_3": "평소엔 옷으로 가려지는 은근한 포인트 문신",
+    "tooltip_2_title": "문신 O",
+    "tooltip_2_desc_1": "눈에 띄는 문신이 있어요",
+    "tooltip_2_desc_2": "다수의 문신이 있거나 큰 사이즈의 문신",
+    "tooltip_2_desc_3": "문신을 패션/자기 표현의 일부로 생각해요",
+    "empty_form": "비어있는 양식이 존재합니다.",
+    "title": "문신이 있으신가요?",
+    "loading": "선호도를 불러오고 있어요"
+  }
+}

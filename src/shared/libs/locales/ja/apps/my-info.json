@@ -1,0 +1,105 @@
+{
+  "dating_style": {
+    "more": "あと{count}個！",
+    "next": "次へ",
+    "title_1": "あなたに一番合う",
+    "title_2": "恋愛スタイルは？",
+    "loading": "恋愛スタイルの選択肢を読み込み中です"
+  },
+  "done": {
+    "title_1": "プロフィールを確認しました",
+    "title_2": "ここからはときめく出会いを始めましょう",
+    "desc": "Sometimeが{name}さんの理想の相手を見つけます",
+    "button": "理想の相手を探しに行く →"
+  },
+  "drinking": {
+    "tooltip_0_title": "全く飲まない",
+    "tooltip_0_desc_1": "お酒を飲まない人が好き",
+    "tooltip_0_desc_2": "飲み会に行かない人がいい",
+    "tooltip_0_desc_3": "お酒に対してネガティブな考えを持つ人が好き",
+    "tooltip_1_title": "ほとんど飲めない",
+    "tooltip_1_desc_1": "学期に1〜2回の特別な場だけ",
+    "tooltip_1_desc_2": "ビール半杯でも顔が赤くなる程度",
+    "tooltip_2_title": "ほどほどに飲む",
+    "tooltip_2_desc_1": "月2〜3回ほど友達やサークルで",
+    "tooltip_2_desc_2": "焼酎1〜2杯くらいならOK",
+    "tooltip_3_title": "よく飲む方",
+    "tooltip_3_desc_1": "週末は必ず飲む",
+    "tooltip_3_desc_2": "月4〜5回、焼酎半本〜1本くらい",
+    "tooltip_4_title": "飲み会大好き",
+    "tooltip_4_desc_1": "週2〜3回以上飲む",
+    "tooltip_4_desc_2": "飲み会や打ち上げではいつも最後まで残る",
+    "title_1": "お酒は出会いで大事なポイント",
+    "title_2": "飲酒スタイルを教えてください！",
+    "loading": "選択肢を読み込み中です",
+    "option_not_drink_at_all": "全く飲まない",
+    "option_not_drink": "一切飲まない"
+  },
+  "entry": {
+    "title_1": "{name}さんのプロフィールを作成します",
+    "title_2": "基本情報を入力してください",
+    "desc_1": "プロフィールに表示する基本情報を入力してください",
+    "desc_2": "後から変更できるので気軽に選んでください",
+    "modal_title": "後で登録しますか？",
+    "modal_desc_1": "スムーズなマッチングのために",
+    "modal_desc_2": "{name}さんの情報を登録してください！",
+    "modal_primary_button": "今すぐ登録する",
+    "modal_secondary_button": "後で登録する",
+    "match_title_1": "マッチングのために",
+    "match_title_2": "あなたの情報が必要です！",
+    "match_desc_1": "情報を正確に入力すればするほど",
+    "match_desc_2": "マッチング成功率が上がります",
+    "prev_button": "戻る",
+    "next_button": "次へ"
+  },
+  "interest": {
+    "more": "あと{count}個！",
+    "next": "次へ",
+    "title_1": "最近気になっている",
+    "title_2": "趣味や関心はありますか？",
+    "loading": "関心事項を読み込み中です"
+  },
+  "mbti": {
+    "title": "あなたのMBTIタイプは？"
+  },
+  "military": {
+    "empty_form": "未入力の項目があります",
+    "title": "兵役は済ませましたか？",
+    "loading": "選択肢を読み込み中です"
+  },
+  "personality": {
+    "max_3": "最大3つまで選択可能",
+    "next": "次へ",
+    "title_1": "あなたの性格を",
+    "title_2": "教えてください！",
+    "loading": "性格タイプを読み込み中です"
+  },
+  "smoking": {
+    "tooltip_0_title": "非喫煙者",
+    "tooltip_0_desc_1": "全く吸わない",
+    "tooltip_0_desc_2": "受動喫煙も苦手",
+    "tooltip_0_desc_3": "禁煙して長い",
+    "tooltip_1_title": "電子タバコ",
+    "tooltip_1_desc_1": "紙タバコは吸わず電子タバコのみ",
+    "tooltip_2_title": "喫煙者",
+    "tooltip_2_desc_1": "紙タバコを吸う",
+    "title": "喫煙はしますか？",
+    "loading": "選択肢を読み込み中です"
+  },
+  "tattoo": {
+    "tooltip_0_title": "タトゥーなし",
+    "tooltip_0_desc_1": "タトゥーはありません",
+    "tooltip_0_desc_2": "今後も入れる予定はありません",
+    "tooltip_1_title": "小さなタトゥー",
+    "tooltip_1_desc_1": "目立たない場所に小さなタトゥー",
+    "tooltip_1_desc_2": "手首・足首・肩などに1〜2個程度",
+    "tooltip_1_desc_3": "普段は服で隠れるワンポイント",
+    "tooltip_2_title": "タトゥーあり",
+    "tooltip_2_desc_1": "目立つタトゥーがある",
+    "tooltip_2_desc_2": "複数または大きなサイズのタトゥー",
+    "tooltip_2_desc_3": "ファッションや自己表現の一部として考えている",
+    "empty_form": "未入力の項目があります",
+    "title": "タトゥーはありますか？",
+    "loading": "選択肢を読み込み中です"
+  }
+}
