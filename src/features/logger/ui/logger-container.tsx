@@ -16,22 +16,24 @@ interface LoggerContainerProps {
 function LoggerContainer({ children }: LoggerContainerProps) {
   const [isVisible, setVisible] = useState(false);
 
-  const handleClose = () => {
+  const handleVisible = () => {
     setVisible(false);
   };
-  const secretGesture = Gesture.Tap()
-    .minPointers(3)
-    .onEnd(() => {
+  const secretGesture = Gesture.LongPress()
+    .numberOfPointers(3)
+
+    .minDuration(1000)
+    .onStart(() => {
       runOnJS(setVisible)(true);
     });
 
   return (
-    <GestureDetector gesture={secretGesture}>
-      <View style={{ flex: 1 }}>
-        {children}
-        <LoggerOverlay isVisible={isVisible} onClose={handleClose} />
-      </View>
-    </GestureDetector>
+    <View style={{ flex: 1 }}>
+      <GestureDetector gesture={secretGesture}>
+        <View style={{ flex: 1 }}>{children}</View>
+      </GestureDetector>
+      <LoggerOverlay isVisible={isVisible} onClose={handleVisible} />
+    </View>
   );
 }
 

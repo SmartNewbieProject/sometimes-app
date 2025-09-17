@@ -1,6 +1,7 @@
 import React from "react";
 import {
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,6 +13,7 @@ import Animated from "react-native-reanimated";
 import { useDragToClose } from "../hooks/use-drag-to-close";
 import { type Tab, useLoggerTabs } from "../hooks/use-logger-tabs";
 
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useLogs from "../hooks/use-logs";
 import type { Log } from "../types/log";
 import { LogItem } from "./log-item";
@@ -26,29 +28,32 @@ export default function LoggerOverlay({
   onClose,
 }: LoggerOverlayProps) {
   const { logs } = useLogs();
-  const { activeTab, filteredLogs, handleTabChange } = useLoggerTabs(logs);
-  const { gesture, animatedStyle } = useDragToClose({ onClose });
-
+  const { activeTab, filteredLogs, handleTabChange, sendLogsToSlack } =
+    useLoggerTabs(logs);
+  const { gesture, animatedStyle } = useDragToClose({ onClose, isVisible });
+  const insets = useSafeAreaInsets();
   if (!isVisible) {
     return null;
   }
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[styles.container, animatedStyle]}>
+      <Animated.View
+        style={[styles.container, animatedStyle, { top: insets.top }]}
+      >
         <View style={styles.handleContainer}>
           <View style={styles.handle} />
         </View>
 
         <View style={styles.tabContainer}>
           <TabButton
-            title={`All (${logs.length})`}
+            title={`A (${logs.length})`}
             tabName="all"
             activeTab={activeTab}
             onPress={handleTabChange}
           />
           <TabButton
-            title={`Console (${
+            title={`C (${
               logs.filter((l: Log) => l.type === "console").length
             })`}
             tabName="console"
@@ -56,13 +61,16 @@ export default function LoggerOverlay({
             onPress={handleTabChange}
           />
           <TabButton
-            title={`Network (${
+            title={`N (${
               logs.filter((l: Log) => l.type === "network").length
             })`}
             tabName="network"
             activeTab={activeTab}
             onPress={handleTabChange}
           />
+          <Pressable style={styles.tabButton} onPress={sendLogsToSlack}>
+            <Text style={styles.tabText}>Slack</Text>
+          </Pressable>
         </View>
 
         <FlatList

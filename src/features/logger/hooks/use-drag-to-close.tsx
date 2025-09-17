@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Dimensions } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
 import Animated, {
@@ -5,15 +6,17 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   runOnJS,
+  withTiming,
 } from "react-native-reanimated";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 interface UseDragToCloseProps {
   onClose: () => void;
+  isVisible: boolean;
 }
 
-export const useDragToClose = ({ onClose }: UseDragToCloseProps) => {
+export const useDragToClose = ({ onClose, isVisible }: UseDragToCloseProps) => {
   const translateY = useSharedValue(0);
   const context = useSharedValue({ y: 0 });
 
@@ -36,6 +39,12 @@ export const useDragToClose = ({ onClose }: UseDragToCloseProps) => {
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));
+
+  useEffect(() => {
+    if (isVisible) {
+      translateY.value = withTiming(0, { duration: 0 });
+    }
+  }, [isVisible]);
 
   return { gesture, animatedStyle };
 };
