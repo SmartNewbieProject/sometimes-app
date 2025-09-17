@@ -6,26 +6,27 @@ import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
 import type React from "react";
-import {
-  type ChangeEvent,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ChangeEvent, useRef, useState } from "react";
 import { Alert, Linking, Platform } from "react-native";
+import { useAuth } from "../../auth";
 import PhotoPickerModal from "../../mypage/ui/modal/image-modal";
 import { useChatEvent } from "../hooks/use-chat-event";
+import useKeyboardResizeEffect from "../hooks/use-keyboard-resize-effect";
+import { useOptimisticChat } from "../hooks/use-optimistic-chat";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
-import type { Chat } from "../types/chat";
+
 function WebChatInput() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const queryClient = useQueryClient();
   const [chat, setChat] = useState("");
   const { data: roomDetail, isError } = useChatRoomDetail(id);
-  console.log("roomDetail", roomDetail);
-
-  const { actions, socket } = useChatEvent();
+  const queryClient = useQueryClient();
+  const { my: user } = useAuth();
+  const { actions } = useChatEvent();
+  const {
+    addOptimisticMessage,
+    replaceOptimisticMessage,
+    markMessageAsFailed,
+  } = useOptimisticChat({ chatRoomId: id });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
   const { showErrorModal } = useModal();
@@ -33,7 +34,7 @@ function WebChatInput() {
   const handlePress = async () => {
     setImageModal(true);
   };
-
+  useKeyboardResizeEffect();
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -52,6 +53,8 @@ function WebChatInput() {
       selectionLimit: 1,
     });
 
+    console.log(result);
+
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
@@ -63,10 +66,55 @@ function WebChatInput() {
         return null;
       }
 
-      actions.uploadImage(roomDetail?.partnerId ?? "", id, pickedUri);
-      queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+      if (roomDetail?.partnerId && user?.id) {
+        console.warn({ roomDetail, user });
+        try {
+          setImageModal(false);
+          const { optimisticMessage, promise } = await actions.uploadImage({
+            to: roomDetail.partnerId,
+            chatRoomId: id,
+            senderId: user.id,
+            file: pickedUri,
+          });
+          console.log({ optimisticMessage, promise });
+          addOptimisticMessage(optimisticMessage);
+
+          const timeoutPromise = new Promise<{
+            success: boolean;
+            error: string;
+          }>((resolve) => {
+            setTimeout(
+              () =>
+                resolve({
+                  success: false,
+                  error: "Upload timeout after 15 seconds",
+                }),
+              15000
+            );
+          });
+
+          const result = await Promise.race([promise, timeoutPromise]);
+
+          if (
+            result.success &&
+            "serverMessage" in result &&
+            result.serverMessage
+          ) {
+            replaceOptimisticMessage(
+              optimisticMessage.tempId!,
+              result.serverMessage
+            );
+          } else {
+            markMessageAsFailed(optimisticMessage.tempId!, result.error);
+          }
+        } catch (error) {
+          console.error("Web image upload error:", error);
+        }
+      }
+      setImageModal(false);
       console.log("jpegUri", pickedUri);
     }
+
     setImageModal(false);
     return null;
   };
@@ -103,11 +151,59 @@ function WebChatInput() {
         setImageModal(false);
         return null;
       }
-      actions.uploadImage(roomDetail?.partnerId ?? "", id, pickedUri);
+      if (roomDetail?.partnerId && user?.id) {
+        try {
+          const { optimisticMessage, promise } = await actions.uploadImage({
+            to: roomDetail.partnerId,
+            chatRoomId: id,
+            senderId: user.id,
+            file: pickedUri,
+          });
+
+          addOptimisticMessage(optimisticMessage);
+
+          // 타임아웃 추가
+          const timeoutPromise = new Promise<{
+            success: boolean;
+            error: string;
+          }>((resolve) => {
+            setTimeout(
+              () =>
+                resolve({
+                  success: false,
+                  error: "Upload timeout after 15 seconds",
+                }),
+              15000
+            );
+          });
+
+          const result = await Promise.race([promise, timeoutPromise]);
+
+          if (
+            result.success &&
+            "serverMessage" in result &&
+            result.serverMessage
+          ) {
+            replaceOptimisticMessage(
+              optimisticMessage.tempId!,
+              result.serverMessage
+            );
+          } else {
+            markMessageAsFailed(optimisticMessage.tempId!, result.error);
+          }
+          setImageModal(false);
+        } catch (error) {
+          console.error("Web camera upload error:", error);
+          setImageModal(false);
+        }
+      } else {
+        setImageModal(false);
+      }
       console.log("jpegUri", pickedUri);
       queryClient.refetchQueries({ queryKey: ["chat-list", id] });
+    } else {
+      setImageModal(false);
     }
-    setImageModal(false);
     return null;
   };
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -131,6 +227,7 @@ function WebChatInput() {
 
     actions.sendMessage({
       chatRoomId: id,
+      senderId: user?.id as string,
       content: chat ?? "",
       to: roomDetail?.partnerId,
     });

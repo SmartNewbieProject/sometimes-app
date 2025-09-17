@@ -18,7 +18,12 @@ class SocketEventManager {
   private registeredEvents = new Set<string>();
 
   setSocket(socket: any) {
-    this.socket = socket;
+    // 소켓 변경 시 기존 이벤트 정리 후 재등록
+    if (this.socket !== socket) {
+      this.cleanup();
+      this.socket = socket;
+      this.initializeEvents();
+    }
   }
 
   subscribe<T extends ChatSocketEventName>(
@@ -58,12 +63,23 @@ class SocketEventManager {
   }
 
   private registerSocketListener(eventName: string) {
-    if (!this.socket) return;
+    if (!this.socket) {
+      return;
+    }
+    
+    // 기존 리스너 정리
+    this.socket.off(eventName);
     
     this.socket.on(eventName, (data: any) => {
       const subs = this.subscriptions.get(eventName);
       if (subs) {
-        subs.forEach(sub => sub.callback(data));
+        subs.forEach(sub => {
+          try {
+            sub.callback(data);
+          } catch (error) {
+            console.error(`Error in ${eventName} callback:`, error);
+          }
+        });
       }
     });
     
@@ -81,7 +97,11 @@ class SocketEventManager {
   }
 
   cleanup() {
-    this.subscriptions.clear();
+    if (this.socket) {
+      for (const eventName of this.registeredEvents) {
+        this.socket.off(eventName);
+      }
+    }
     this.registeredEvents.clear();
   }
 }

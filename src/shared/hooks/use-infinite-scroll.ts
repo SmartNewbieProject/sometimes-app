@@ -50,6 +50,8 @@ export function useInfiniteScroll<T>(
   const cooldownRef = useRef<number>(0);
   const rAFRef = useRef<number | null>(null);
   const removeScrollFallbackRef = useRef<(() => void) | undefined>(undefined);
+  const lastFillCheckRef = useRef<number>(0);
+  const fillAttemptCountRef = useRef<number>(0);
 
   const lastItemRefValueRef = useRef<any>(null);
   useEffect(() => {
@@ -57,6 +59,7 @@ export function useInfiniteScroll<T>(
 
     if (lastItemRef.current !== lastItemRefValueRef.current) {
       lastItemRefValueRef.current = lastItemRef.current;
+      fillAttemptCountRef.current = 0;
       const strategy = providerRef.current?.getStrategy() as any;
       if (strategy && "updateObserver" in strategy) {
         strategy.updateObserver?.();
@@ -167,18 +170,17 @@ export function useInfiniteScroll<T>(
       if (Platform.OS !== "web") return;
       if (!hasMore || isLoadingMore) return;
 
+      const now = Date.now();
+      if (now - lastFillCheckRef.current < 1000) return;
+      if (fillAttemptCountRef.current >= 3) return;
+
       requestAnimationFrame(() => {
-        const doc = document.documentElement;
-        const body = document.body;
-        const scrollHeight = Math.max(
-          body.scrollHeight,
-          body.offsetHeight,
-          doc.clientHeight,
-          doc.scrollHeight,
-          doc.offsetHeight
-        );
+        const scrollHeight = document.documentElement.scrollHeight;
         const viewport = window.innerHeight;
-        if (scrollHeight <= viewport + 4) {
+        
+        if (scrollHeight <= viewport + 20 && data.length < 30) {
+          lastFillCheckRef.current = now;
+          fillAttemptCountRef.current++;
           onLoadMore();
         }
       });
