@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 export default function AuthLayout() {
   return (
-    <View className="flex-1">
+    <View style={{ flex: 1 }}>
       <Stack>
         <Stack.Screen
           name="signup"

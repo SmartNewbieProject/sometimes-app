@@ -1,13 +1,12 @@
-import { Subject, debounceTime } from 'rxjs';
+import { Subject, debounceTime, map } from 'rxjs';
+import type { Log } from '../types/log';
 
 const createObserver = () => {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	let observers: any[] = [];
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	let logs: any[] = [];
+	let logs: Log[] = [];
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const logSubject = new Subject<any[]>();
+	const logSubject = new Subject<Log[]>();
 
 	logSubject.pipe(debounceTime(100)).subscribe((debouncedLogs) => {
 		// biome-ignore lint/complexity/noForEach: <explanation>
@@ -28,8 +27,7 @@ const createObserver = () => {
 			};
 		},
 
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		addLogs: (log: any) => {
+		addLogs: (log: Log) => {
 			logs.push(log);
 			notify();
 		},

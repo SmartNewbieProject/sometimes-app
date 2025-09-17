@@ -13,7 +13,7 @@ import {
 import * as Notifications from "expo-notifications";
 
 import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
-import LogProvider from "@/src/features/logger/ui/provider/log-provider";
+import LoggerContainer from "@/src/features/logger/ui/logger-container";
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import { VersionUpdateChecker } from "@/src/features/version-update";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
@@ -112,7 +112,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <LogProvider>
+      <LoggerContainer>
         <QueryProvider>
           <ModalProvider>
             <GlobalChatProvider>
@@ -136,7 +136,7 @@ export default function RootLayout() {
             </GlobalChatProvider>
           </ModalProvider>
         </QueryProvider>
-      </LogProvider>
+      </LoggerContainer>
     </GestureHandlerRootView>
   );
 }

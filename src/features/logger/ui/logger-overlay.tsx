@@ -1,21 +1,124 @@
-import React, { memo } from "react";
-import { StyleSheet, View } from "react-native";
+import React from "react";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { GestureDetector } from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
+
+import { useDragToClose } from "../hooks/use-drag-to-close";
+import { type Tab, useLoggerTabs } from "../hooks/use-logger-tabs";
+
+import useLogs from "../hooks/use-logs";
+import type { Log } from "../types/log";
+import { LogItem } from "./log-item";
 
 interface LoggerOverlayProps {
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  logs: any[];
+  isVisible: boolean;
+  onClose: () => void;
 }
 
-function LoggerOverlay({ logs }: LoggerOverlayProps) {
-  return <View style={styles.container}>{JSON.stringify(logs)}</View>;
+export default function LoggerOverlay({
+  isVisible,
+  onClose,
+}: LoggerOverlayProps) {
+  const { logs } = useLogs();
+  const { activeTab, filteredLogs, handleTabChange } = useLoggerTabs(logs);
+  const { gesture, animatedStyle } = useDragToClose({ onClose });
+
+  if (!isVisible) {
+    return null;
+  }
+
+  return (
+    <GestureDetector gesture={gesture}>
+      <Animated.View style={[styles.container, animatedStyle]}>
+        <View style={styles.handleContainer}>
+          <View style={styles.handle} />
+        </View>
+
+        <View style={styles.tabContainer}>
+          <TabButton
+            title={`All (${logs.length})`}
+            tabName="all"
+            activeTab={activeTab}
+            onPress={handleTabChange}
+          />
+          <TabButton
+            title={`Console (${
+              logs.filter((l: Log) => l.type === "console").length
+            })`}
+            tabName="console"
+            activeTab={activeTab}
+            onPress={handleTabChange}
+          />
+          <TabButton
+            title={`Network (${
+              logs.filter((l: Log) => l.type === "network").length
+            })`}
+            tabName="network"
+            activeTab={activeTab}
+            onPress={handleTabChange}
+          />
+        </View>
+
+        <FlatList
+          data={filteredLogs}
+          renderItem={({ item }) => <LogItem log={item} />}
+          keyExtractor={(item) => item.id.toString()}
+          style={styles.logList}
+        />
+      </Animated.View>
+    </GestureDetector>
+  );
 }
+
+const TabButton = ({
+  title,
+  tabName,
+  activeTab,
+  onPress,
+}: {
+  title: string;
+  tabName: Tab;
+  activeTab: string;
+  onPress: (tab: Tab) => void;
+}) => (
+  <TouchableOpacity
+    style={[styles.tabButton, activeTab === tabName && styles.activeTab]}
+    onPress={() => onPress(tabName)}
+  >
+    <Text style={styles.tabText}>{title}</Text>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    minHeight: "100%",
-    overflowY: "auto",
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#222",
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
   },
+  handleContainer: { alignItems: "center", paddingVertical: 10 },
+  handle: { width: 40, height: 5, backgroundColor: "#555", borderRadius: 3 },
+  tabContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 8,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#444",
+  },
+  tabButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    backgroundColor: "#555",
+    marginHorizontal: 4,
+  },
+  activeTab: { backgroundColor: "#80c0ff" },
+  tabText: { color: "white", fontWeight: "bold" },
+  logList: { flex: 1, paddingHorizontal: 8 },
 });
-
-export default memo(LoggerOverlay);

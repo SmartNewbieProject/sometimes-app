@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid/non-secure';
 import { logObserver } from './log-store-observer';
 
 export const originalConsoles = { ...console };
@@ -17,7 +18,7 @@ levels.forEach((label) => {
 	console[label] = (...args) => {
 		logObserver.addLogs({
 			data: args,
-			id: Date.now() + Math.random(),
+			id: nanoid(),
 			level: label,
 			type: 'console',
 			timestamp: new Date().toISOString(),
@@ -40,15 +41,24 @@ if (typeof XMLHttpRequest !== 'undefined') {
 			if (this?._requestInfo) {
 				const { method, url, startTime } = this._requestInfo;
 				const duration = Date.now() - startTime;
-
+				// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+				let responseBody;
+				if (this.responseType === 'blob') {
+					// responseType이 blob이면 responseText에 접근하지 않음
+					responseBody = '[Binary Blob Data]';
+				} else {
+					// 그 외의 경우에는 responseText를 사용
+					responseBody = this.responseText;
+				}
 				logObserver.addLogs({
 					type: 'network',
+					id: nanoid(),
 					method,
 					url,
 					status: this.status,
 					duration: `${duration}ms`,
 					requestBody: body,
-					responseBody: this.responseText,
+					responseBody: responseBody,
 					timestamp: new Date().toISOString(),
 				});
 			}
