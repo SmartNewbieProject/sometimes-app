@@ -5,6 +5,7 @@ import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { tryCatch } from "@/src/shared/libs";
 import { router } from "expo-router";
 import colors from "@constants/colors";
+import { useTranslation } from "react-i18next";
 
 interface EmailLoginModalProps {
   isVisible: boolean;

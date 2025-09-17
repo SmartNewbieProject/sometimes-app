@@ -20,10 +20,12 @@ type LayoutMap = Record<
   }
 >;
 
+import { useTranslation } from "react-i18next";
+
 export const CategoryList = () => {
   const { categories, changeCategory, currentCategory, isLoading } =
     useCategory();
-
+  const { t } = useTranslation();
   const scrollRef = useRef<ScrollView>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const itemLayoutsRef = useRef<LayoutMap>({});

@@ -10,8 +10,11 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
+import { useTranslation } from "react-i18next";
 
 export function useAuth() {
+  const { t } = useTranslation();
+
   const { value: accessToken, setValue: setToken } = useStorage<string | null>({
     key: "access-token",
     initialValue: null,
