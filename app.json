@@ -10,20 +10,13 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-portrait.png",
-      "backgroundColor": "#7A4AE2",
-      "resizeMode": "cover"
+      "resizeMode": "contain"
     },
     "ios": {
-      "splash": {
-        "image": "./assets/images/splash-portrait.png",
-        "resizeMode": "cover"
-      },
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
       "entitlements": {
-        "com.apple.developer.applesignin": [
-          "Default"
-        ]
+        "com.apple.developer.applesignin": ["Default"]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "capabilities": [
@@ -34,9 +27,7 @@
         "maps"
       ],
       "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification"
-        ],
+        "UIBackgroundModes": ["remote-notification"],
         "LSApplicationQueriesSchemes": [
           "kftc-bankpay",
           "ispmobile",
@@ -119,11 +110,6 @@
       }
     },
     "android": {
-      "splash": {
-        "image": "./assets/images/splash-portrait.png",
-        "resizeMode": "cover",
-        "backgroundColor": "#0A0A0A"
-      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-adaptive-icon.png",
         "backgroundColor": "#8B7BFF"
@@ -161,10 +147,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "image": "./assets/images/splash-portrait.png",
+          "imageWidth": 400,
+          "resizeMode": "contain"
         }
       ],
       "@react-native-firebase/app",
