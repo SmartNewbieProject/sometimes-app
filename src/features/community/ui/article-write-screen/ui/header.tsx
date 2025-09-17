@@ -2,6 +2,7 @@ import { TouchableOpacity, Pressable } from "react-native";
 import { Header, Text } from "@shared/ui";
 import { router } from "expo-router";
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
+import { useTranslation } from "react-i18next";
 
 type ArticleWriteHeaderProps = {
   onConfirm: () => void;

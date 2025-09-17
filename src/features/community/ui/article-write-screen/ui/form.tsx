@@ -3,6 +3,7 @@ import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { ScrollView, Text, TextInput, View, TouchableOpacity, Image, Alert } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export const ArticleWriteForm = () => {
   const { setValue } = useFormContext();
