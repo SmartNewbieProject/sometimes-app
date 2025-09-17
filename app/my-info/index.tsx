@@ -7,8 +7,10 @@ import { track } from "@amplitude/analytics-react-native";
 import SmallTitle from "@assets/icons/small-title.svg";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 export default function InterestIntroScreen() {
+  const { t } = useTranslation();
   const { showModal } = useModal();
   const { profileDetails } = useAuth();
   const showPreviousModal = () =>
@@ -19,25 +21,27 @@ export default function InterestIntroScreen() {
           weight="semibold"
           style={{ paddingBottom: 8, fontSize: 18 }}
         >
-          나중에 등록할까요?
+          {t("apps.my-info.entry.modal_title")}
         </Text>
       ),
       children: (
         <View>
           <Text size="md" textColor="black" weight="light">
-            원활한 이상형 매칭을 위해
+            {t("apps.my-info.entry.modal_desc_1")}
           </Text>
           <Text size="md" textColor="black" weight="light">
-            {profileDetails?.name} 님의 정보를 등록해주세요!
+            {t("apps.my-info.entry.modal_desc_2", {
+              name: profileDetails?.name,
+            })}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "등록할게요!",
+        text: t("apps.my-info.entry.modal_primary_button"),
         onClick: () => router.navigate("/interest/age"),
       },
       secondaryButton: {
-        text: "다음에 할게요",
+        text: t("apps.my-info.entry.modal_secondary_button"),
         onClick: () => router.navigate("/"),
       },
     });
@@ -64,19 +68,19 @@ export default function InterestIntroScreen() {
 
           <View style={styles.titleWrapper}>
             <Text size="lg" textColor="black" weight="semibold">
-              매칭을 위해
+              {t("apps.my-info.entry.match_title_1")}
             </Text>
             <Text size="lg" textColor="black" weight="semibold">
-              당신의 정보를 꼭 알려주세요!
+              {t("apps.my-info.entry.match_title_2")}
             </Text>
           </View>
 
           <View style={styles.descriptionWrapper}>
             <Text size="sm" textColor="pale-purple" weight="light">
-              당신의 정보를 정확하게 입력할수록
+              {t("apps.my-info.entry.match_desc_1")}
             </Text>
             <Text size="sm" textColor="pale-purple" weight="light">
-              매칭 성공 확률이 높아져요
+              {t("apps.my-info.entry.match_desc_2")}
             </Text>
           </View>
         </View>
@@ -86,8 +90,8 @@ export default function InterestIntroScreen() {
           disabledNext={false}
           onClickPrevious={showPreviousModal}
           content={{
-            prev: "뒤로",
-            next: "다음으로",
+            prev: t("apps.my-info.entry.prev_button"),
+            next: t("apps.my-info.entry.next_button"),
           }}
         />
       </View>

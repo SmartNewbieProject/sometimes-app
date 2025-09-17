@@ -6,6 +6,7 @@ import { track } from "@amplitude/analytics-react-native";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -14,6 +15,7 @@ const { useMyInfoForm, useMyInfoStep } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function InterestSelectionScreen() {
+  const { t } = useTranslation();
   const { updateStep } = useMyInfoStep();
   const { interestIds, updateForm } = useMyInfoForm();
   const {
@@ -40,9 +42,9 @@ export default function InterestSelectionScreen() {
 
   const nextMessage = (() => {
     if (interestIds.length < 3) {
-      return `${3 - interestIds.length} 개만 더!`;
+      return t("apps.my-info.interest.more", { count: 3 - interestIds.length });
     }
-    return "다음으로";
+    return t("apps.my-info.interest.next");
   })();
 
   useFocusEffect(
@@ -64,10 +66,10 @@ export default function InterestSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            최근에 관심이 가는
+            {t("apps.my-info.interest.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            활동이나 일이 있나요?
+            {t("apps.my-info.interest.title_2")}
           </Text>
         </View>
 
@@ -83,7 +85,10 @@ export default function InterestSelectionScreen() {
         </View>
 
         <View className="flex-1 w-full flex px-4">
-          <Loading.Lottie title="관심사를 불러오고 있어요" loading={isLoading}>
+          <Loading.Lottie
+            title={t("apps.my-info.interest.loading")}
+            loading={isLoading}
+          >
             <ChipSelector
               value={interestIds}
               options={

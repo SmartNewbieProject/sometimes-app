@@ -20,6 +20,7 @@ import { tryCatch } from "@/src/shared/libs";
 import { Button } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -27,6 +28,7 @@ const { hooks } = MyInfo;
 const { useMyInfoForm } = hooks;
 
 function Profile() {
+  const { t } = useTranslation();
   const { updateForm, ...form } = useMyInfoForm();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -103,7 +105,7 @@ function Profile() {
     await tryCatch(
       async () => {
         const validation = Object.values(form).every((v) => v !== null);
-        if (!validation) throw new Error("비어있는 양식이 존재합니다.");
+        if (!validation) throw new Error(t("apps.profile-edit.ui.validation.empty_form"));
         console.log("submitform", form);
         await savePreferences({
           datingStyleIds: form.datingStyleIds,
@@ -157,7 +159,7 @@ function Profile() {
           right: 28,
         }}
       >
-        저장
+        {t("apps.profile-edit.ui.save_button")}
       </Button>
     </View>
   );

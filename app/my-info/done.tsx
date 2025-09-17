@@ -9,9 +9,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Platform, StyleSheet, View } from "react-native";
 
 export default function InterestDoneScreen() {
+  const { t } = useTranslation();
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
   const { updateForm, clear, tattoo, ...form } = useInterestForm();
@@ -40,16 +42,16 @@ export default function InterestDoneScreen() {
 
           <View style={styles.titleWrapper}>
             <Text size="lg" textColor="black" weight="semibold">
-              당신의 정보를 확인했어요
+              {t("apps.my-info.done.title_1")}
             </Text>
             <Text size="lg" textColor="black" weight="semibold">
-              이제는 설레는 만남을 시작해요
+              {t("apps.my-info.done.title_2")}
             </Text>
           </View>
 
           <View style={styles.descriptionWrapper}>
             <Text size="sm" textColor="pale-purple" weight="light">
-              썸타임이 {profileDetails?.name}님의 이상형을 찾아드릴게요
+              {t("apps.my-info.done.desc", { name: profileDetails?.name })}
             </Text>
           </View>
         </View>
@@ -68,7 +70,7 @@ export default function InterestDoneScreen() {
             }}
             styles={styles.button}
           >
-            이상형 찾으러 가기 →
+            {t("apps.my-info.done.button")}
           </Button>
         </View>
       </View>

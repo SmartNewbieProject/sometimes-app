@@ -10,11 +10,12 @@ import {
   sendEmailVerification,
   verifyEmailCode,
   getProfileId,
-  MESSAGES,
   UI_CONSTANTS
 } from "@/src/features/university-verification";
+import { useTranslation } from "react-i18next";
 
 export default function UniversityVerificationScreen() {
+  const { t } = useTranslation();
   const { showModal } = useModal();
 
   const [email, setEmail] = useState("");
@@ -25,12 +26,12 @@ export default function UniversityVerificationScreen() {
   const handleEmailVerification = async () => {
     if (!email.trim()) {
       showModal({
-        title: "알림",
-        children: MESSAGES.EMAIL_REQUIRED,
+        title: t("apps.university-verification.confirm_button"),
+        children: t("apps.university-verification.messages.email_required"),
         primaryButton: {
-          text: "확인",
-          onClick: () => {}
-        }
+          text: t("apps.university-verification.confirm_button"),
+          onClick: () => {},
+        },
       });
       return;
     }
@@ -40,22 +41,22 @@ export default function UniversityVerificationScreen() {
       async () => {
         await sendEmailVerification(email);
         showModal({
-          title: "인증번호 전송",
-          children: MESSAGES.CODE_SENT,
+          title: t("apps.university-verification.send_code_button"),
+          children: t("apps.university-verification.messages.code_sent"),
           primaryButton: {
-            text: "확인",
-            onClick: () => {}
-          }
+            text: t("apps.university-verification.confirm_button"),
+            onClick: () => {},
+          },
         });
       },
       (error) => {
         showModal({
-          title: "오류",
+          title: t("apps.university-verification.confirm_button"),
           children: error.error,
           primaryButton: {
-            text: "확인",
-            onClick: () => {}
-          }
+            text: t("apps.university-verification.confirm_button"),
+            onClick: () => {},
+          },
         });
       }
     );
@@ -65,12 +66,12 @@ export default function UniversityVerificationScreen() {
   const handleCodeVerification = async () => {
     if (!email.trim() || !verificationCode.trim()) {
       showModal({
-        title: "알림",
-        children: MESSAGES.FIELDS_REQUIRED,
+        title: t("apps.university-verification.confirm_button"),
+        children: t("apps.university-verification.messages.fields_required"),
         primaryButton: {
-          text: "확인",
-          onClick: () => {}
-        }
+          text: t("apps.university-verification.confirm_button"),
+          onClick: () => {},
+        },
       });
       return;
     }
@@ -81,29 +82,33 @@ export default function UniversityVerificationScreen() {
         const profileId = await getProfileId();
 
         if (!profileId) {
-          throw new Error(MESSAGES.USER_INFO_ERROR);
+          throw new Error(
+            t("apps.university-verification.messages.user_info_error")
+          );
         }
 
         await verifyEmailCode(email, verificationCode, profileId);
 
         setIsVerified(true);
         showModal({
-          title: "인증 완료",
-          children: MESSAGES.VERIFICATION_SUCCESS,
+          title: t("apps.university-verification.confirm_button"),
+          children: t("apps.university-verification.messages.verification_success"),
           primaryButton: {
-            text: "확인",
-            onClick: () => {}
-          }
+            text: t("apps.university-verification.confirm_button"),
+            onClick: () => {},
+          },
         });
       },
       (error) => {
         showModal({
-          title: "인증 실패",
-          children: error.error || MESSAGES.VERIFICATION_FAILED,
+          title: t("apps.university-verification.confirm_button"),
+          children:
+            error.error ||
+            t("apps.university-verification.messages.verification_failed"),
           primaryButton: {
-            text: "확인",
-            onClick: () => {}
-          }
+            text: t("apps.university-verification.confirm_button"),
+            onClick: () => {},
+          },
         });
       }
     );
@@ -111,18 +116,20 @@ export default function UniversityVerificationScreen() {
   };
 
   const handleDMClick = () => {
-    Linking.openURL("https://www.instagram.com/sometime.in.univ?igsh=MTdxMWJjYmFrdGc3Ng==");
+    Linking.openURL(
+      "https://www.instagram.com/sometime.in.univ?igsh=MTdxMWJjYmFrdGc3Ng=="
+    );
   };
 
   const handleConfirm = () => {
     if (!isVerified) {
       showModal({
-        title: "알림",
-        children: MESSAGES.NOT_VERIFIED,
+        title: t("apps.university-verification.confirm_button"),
+        children: t("apps.university-verification.messages.not_verified"),
         primaryButton: {
-          text: "확인",
-          onClick: () => {}
-        }
+          text: t("apps.university-verification.confirm_button"),
+          onClick: () => {},
+        },
       });
       return;
     }
@@ -141,11 +148,10 @@ export default function UniversityVerificationScreen() {
         </Header.LeftContent>
         <Header.CenterContent>
           <Text size="lg" weight="normal" textColor="black">
-            대학 인증
+            {t("apps.university-verification.header_title")}
           </Text>
         </Header.CenterContent>
-        <Header.RightContent>
-        </Header.RightContent>
+        <Header.RightContent></Header.RightContent>
       </Header.Container>
 
       <View className="flex-1">
@@ -157,7 +163,9 @@ export default function UniversityVerificationScreen() {
                 <View className="flex-1">
                   <LabelInput
                     label=""
-                    placeholder="학교 이메일 주소"
+                    placeholder={t(
+                      "apps.university-verification.email_input_placeholder"
+                    )}
                     size="sm"
                     value={email}
                     onChangeText={setEmail}
@@ -168,8 +176,15 @@ export default function UniversityVerificationScreen() {
                   disabled={isLoading}
                   className={`bg-white border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
                 >
-                  <Text size="sm" weight="medium" textColor="purple" className="text-center">
-                    {isLoading ? "전송중..." : "인증번호 전송"}
+                  <Text
+                    size="sm"
+                    weight="medium"
+                    textColor="purple"
+                    className="text-center"
+                  >
+                    {isLoading
+                      ? t("apps.university-verification.sending_code")
+                      : t("apps.university-verification.send_code_button")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -181,7 +196,9 @@ export default function UniversityVerificationScreen() {
                 <View className="flex-1">
                   <LabelInput
                     label=""
-                    placeholder="인증번호 입력"
+                    placeholder={t(
+                      "apps.university-verification.code_input_placeholder"
+                    )}
                     size="sm"
                     maxLength={UI_CONSTANTS.VERIFICATION_CODE_MAX_LENGTH}
                     value={verificationCode}
@@ -193,8 +210,15 @@ export default function UniversityVerificationScreen() {
                   disabled={isLoading}
                   className={`bg-white border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
                 >
-                  <Text size="sm" weight="medium" textColor="purple" className="text-center">
-                    {isLoading ? "확인중..." : "확인"}
+                  <Text
+                    size="sm"
+                    weight="medium"
+                    textColor="purple"
+                    className="text-center"
+                  >
+                    {isLoading
+                      ? t("apps.university-verification.verifying_code")
+                      : t("apps.university-verification.confirm_button")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -205,16 +229,16 @@ export default function UniversityVerificationScreen() {
         {/* DM 인증 안내 */}
         <View className="px-5 mb-4">
           <Text size="sm" weight="normal" className="text-gray">
-            학교 이메일이 없는 경우
+            {t("apps.university-verification.no_email_guide_1")}
           </Text>
           <View className="flex-row flex-wrap">
             <TouchableOpacity onPress={handleDMClick}>
               <Text size="sm" weight="bold" className="text-gray-500">
-                DM
+                {t("apps.university-verification.no_email_guide_2")}
               </Text>
             </TouchableOpacity>
             <Text size="sm" weight="normal" className="text-gray">
-              으로 문의 주시면 다른 인증 방법을 알려드립니다.
+              {t("apps.university-verification.no_email_guide_3")}
             </Text>
           </View>
         </View>
@@ -226,7 +250,7 @@ export default function UniversityVerificationScreen() {
             className="w-full bg-darkPurple rounded-2xl h-[50px] justify-center items-center"
           >
             <Text size="md" weight="normal" textColor="white">
-              대학 인증 완료하기
+              {t("apps.university-verification.complete_verification_button")}
             </Text>
           </TouchableOpacity>
         </View>

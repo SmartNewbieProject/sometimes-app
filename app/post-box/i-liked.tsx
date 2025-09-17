@@ -3,15 +3,17 @@ import Loading from "@/src/features/loading";
 import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
 import { FlashList } from "@shopify/flash-list";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 
 function ILiked() {
+  const { t } = useTranslation();
   const { data: iLikedList, isLoading } = useILikedQuery();
 
   return (
     <View>
       <Loading.Lottie
-        title={"보낸 썸 리스트를 불러오는 중이에요!"}
+        title={t("apps.post-box.i_liked_loading")}
         loading={isLoading}
       >
         <FlashList

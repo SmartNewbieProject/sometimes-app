@@ -9,6 +9,7 @@ import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -17,45 +18,49 @@ const { useMyInfoForm, useMyInfoStep } = hooks;
 const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-const tooltips = [
-  {
-    title: "전혀 안 마셔요",
-    description: [
-      "비음주자를 선호해요",
-      "술자리에 가지 않는 사람이 좋아요",
-      "음주에 대해 부정적인 생각을 가진 분이 좋아요",
-    ],
-  },
-  {
-    title: "술은 거의 못 마셔요",
-    description: [
-      "학기에 1-2번 특별한 자리에서만",
-      "맥주 반잔도 얼굴 빨개지는 수준",
-    ],
-  },
-  {
-    title: "적당히 마셔요",
-    description: [
-      "월 2-3회 정도 과모임이나 친구 만날 때",
-      "소주 한두 잔 정도는 괜찮아요",
-    ],
-  },
-  {
-    title: "자주 마시는 편이에요",
-    description: [
-      "주말마다 한 번씩은 마셔요",
-      "월 4-5회 정도, 소주 반병~한병 정도",
-    ],
-  },
-  {
-    title: "술자리 빠지면 섭섭해요",
-    description: ["주 2-3회 이상 마셔요", "MT나 뒤풀이에서 항상 끝까지 남아요"],
-  },
-];
-
 export default function DrinkingSelectionScreen() {
+  const { t } = useTranslation();
   const { updateStep } = useMyInfoStep();
   const { drinking, updateForm } = useMyInfoForm();
+
+  const tooltips = [
+    {
+      title: t("apps.my-info.drinking.tooltip_0_title"),
+      description: [
+        t("apps.my-info.drinking.tooltip_0_desc_1"),
+        t("apps.my-info.drinking.tooltip_0_desc_2"),
+        t("apps.my-info.drinking.tooltip_0_desc_3"),
+      ],
+    },
+    {
+      title: t("apps.my-info.drinking.tooltip_1_title"),
+      description: [
+        t("apps.my-info.drinking.tooltip_1_desc_1"),
+        t("apps.my-info.drinking.tooltip_1_desc_2"),
+      ],
+    },
+    {
+      title: t("apps.my-info.drinking.tooltip_2_title"),
+      description: [
+        t("apps.my-info.drinking.tooltip_2_desc_1"),
+        t("apps.my-info.drinking.tooltip_2_desc_2"),
+      ],
+    },
+    {
+      title: t("apps.my-info.drinking.tooltip_3_title"),
+      description: [
+        t("apps.my-info.drinking.tooltip_3_desc_1"),
+        t("apps.my-info.drinking.tooltip_3_desc_2"),
+      ],
+    },
+    {
+      title: t("apps.my-info.drinking.tooltip_4_title"),
+      description: [
+        t("apps.my-info.drinking.tooltip_4_desc_1"),
+        t("apps.my-info.drinking.tooltip_4_desc_2"),
+      ],
+    },
+  ];
 
   const {
     data: preferencesArray = [
@@ -113,16 +118,16 @@ export default function DrinkingSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            음주는 만남에서 중요한 부분이죠
+            {t("apps.my-info.drinking.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            음주 선호도를 알려주세요!
+            {t("apps.my-info.drinking.title_2")}
           </Text>
         </View>
         <View style={styles.bar} />
         <View style={styles.wrapper}>
           <Loading.Lottie
-            title="선호도를 불러오고 있어요"
+            title={t("apps.my-info.drinking.loading")}
             loading={optionsLoading}
           >
             <StepSlider
@@ -137,8 +142,14 @@ export default function DrinkingSelectionScreen() {
               options={
                 preferences?.options
                   .map((option) =>
-                    option.displayName === "전혀 안마시지 않음"
-                      ? { ...option, displayName: "전혀 마시지 않음" }
+                    option.displayName ===
+                    t("apps.my-info.drinking.option_not_drink_at_all")
+                      ? {
+                          ...option,
+                          displayName: t(
+                            "apps.my-info.drinking.option_not_drink"
+                          ),
+                        }
                       : option
                   )
                   .map((option) => ({

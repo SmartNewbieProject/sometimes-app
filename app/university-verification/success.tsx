@@ -2,8 +2,10 @@ import { Header, Text, PalePurpleGradient } from "@/src/shared/ui";
 import { router } from "expo-router";
 import { View, Pressable, Image, TouchableOpacity } from "react-native";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
+import { useTranslation } from "react-i18next";
 
 export default function UniversityVerificationSuccess() {
+  const { t } = useTranslation();
   const handleGoToProfile = () => {
     router.push("/home");
   };
@@ -19,11 +21,10 @@ export default function UniversityVerificationSuccess() {
         </Header.LeftContent>
         <Header.CenterContent>
           <Text size="lg" weight="normal" textColor="black">
-            대학 인증
+            {t("apps.university-verification.header_title")}
           </Text>
         </Header.CenterContent>
-        <Header.RightContent>
-        </Header.RightContent>
+        <Header.RightContent></Header.RightContent>
       </Header.Container>
 
       <View className="flex-1 px-5 justify-center items-center relative">
@@ -39,17 +40,17 @@ export default function UniversityVerificationSuccess() {
         {/* 메인 텍스트 */}
         <View className="mb-20 w-[80%] items-start">
           <Text size="lg" weight="normal" textColor="black" className="mb-1">
-            축하드려요!
+            {t("apps.university-verification.success.congratulations")}
           </Text>
           <Text size="lg" weight="normal" textColor="black" className="mb-2">
-            대학 인증이 완료되었어요!
+            {t("apps.university-verification.success.verification_complete")}
           </Text>
 
           <Text size="sm" weight="normal" className="mb-1 text-[#9B94AB]">
-            대학 인증이 완료되었어요!
+            {t("apps.university-verification.success.verification_complete")}
           </Text>
           <Text size="sm" weight="normal" className="text-[#9B94AB]">
-            이제 당신의 이상형을 만나보게 만나보세요
+            {t("apps.university-verification.success.find_ideal_type")}
           </Text>
         </View>
 
@@ -60,7 +61,7 @@ export default function UniversityVerificationSuccess() {
             className="bg-[#8B5CF6] rounded-2xl py-4 items-center"
           >
             <Text size="md" weight="semibold" textColor="white">
-              이상형 찾으러 가기 →
+              {t("apps.university-verification.success.go_to_find_ideal_type")}
             </Text>
           </TouchableOpacity>
         </View>

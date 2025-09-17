@@ -18,6 +18,7 @@ import { tryCatch } from "@/src/shared/libs";
 import { Button } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -25,6 +26,7 @@ const { hooks } = Interest;
 const { useInterestForm } = hooks;
 
 function InterestSection() {
+  const { t } = useTranslation();
   const { updateForm, clear: _, ...form } = useInterestForm();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -96,7 +98,10 @@ function InterestSection() {
         const validation = Object.entries(form)
           .filter(([key]) => key !== "goodMbti" && key !== "badMbti")
           .every(([_, value]) => value !== null);
-        if (!validation) throw new Error("비어있는 양식이 존재합니다.");
+        if (!validation)
+          throw new Error(
+            t("apps.profile-edit.ui.validation.empty_form")
+          );
         await savePreferences({
           age: form.age as string,
           drinking: form.drinking?.id as string,
@@ -151,7 +156,7 @@ function InterestSection() {
           right: 28,
         }}
       >
-        저장
+        {t("apps.profile-edit.ui.save_button")}
       </Button>
     </View>
   );

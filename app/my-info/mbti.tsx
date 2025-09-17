@@ -6,6 +6,7 @@ import { MbtiSelector } from "@/src/widgets/mbti-selector";
 import { track } from "@amplitude/analytics-react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -13,6 +14,7 @@ const { useMyInfoForm, useMyInfoStep } = hooks;
 const { MyInfoSteps } = services;
 
 function MbtiSectionScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { mbti, updateForm } = useMyInfoForm();
   const { updateStep } = useMyInfoStep();
@@ -42,7 +44,7 @@ function MbtiSectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            당신의 MBTI 유형은 무엇인가요?
+            {t("apps.my-info.mbti.title")}
           </Text>
         </View>
         <View style={styles.bar} />

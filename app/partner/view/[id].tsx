@@ -38,6 +38,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   Platform,
@@ -56,6 +57,7 @@ const {
 const { useMatchPartnerQuery } = queries;
 
 export default function PartnerDetailScreen() {
+  const { t } = useTranslation();
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
   const [isSlideScrolling, setSlideScrolling] = useState(false);
@@ -75,16 +77,21 @@ export default function PartnerDetailScreen() {
   })();
 
   const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
-    ["성격", "연애 스타일", "관심사"],
+    [
+      t("apps.partner.view.profile_personality_type"),
+      t("apps.partner.view.profile_love_style"),
+      t("apps.partner.view.profile_interest"),
+    ],
     partner?.characteristics ?? []
   );
 
-  const personal = characteristicsOptions.성격;
-  const loveStyles = characteristicsOptions["연애 스타일"];
-  const interests = characteristicsOptions.관심사;
+  const personal = characteristicsOptions[t("apps.partner.view.profile_personality_type")];
+  const loveStyles =
+    characteristicsOptions[t("apps.partner.view.profile_love_style")];
+  const interests = characteristicsOptions[t("apps.partner.view.profile_interest")];
 
   if (loading || !partner) {
-    return <Loading.Page title="파트너 정보를 불러오고 있어요" />;
+    return <Loading.Page title={t("apps.partner.view.loading")} />;
   }
 
   const mainProfileImageUrl = partner.profileImages.find(
@@ -219,22 +226,22 @@ export default function PartnerDetailScreen() {
         </View>
 
         <View className="flex flex-col gap-y-[30px] mt-[24px] mb-[48px]">
-          <Section.Container title="기본 정보">
-            <Section.Profile title="성별">
+          <Section.Container title={t("apps.partner.view.section_basic")}>
+            <Section.Profile title={t("apps.partner.view.profile_gender")}>
               <Text size="md">{parser.gender(partner.gender)}</Text>
             </Section.Profile>
-            <Section.Profile title="선호 나이대">
+            <Section.Profile title={t("apps.partner.view.profile_age_pref")}>
               <Text size="md">
                 {parser.getSingleOption(
-                  "선호 나이대",
+                  t("apps.partner.view.profile_age_pref"),
                   partner.characteristics
                 ) ?? "상관없음"}
               </Text>
             </Section.Profile>
           </Section.Container>
 
-          <Section.Container title="연애 성향">
-            <Section.Profile title="음주">
+          <Section.Container title={t("apps.partner.view.section_love_style")}>
+            <Section.Profile title={t("apps.partner.view.profile_drinking")}>
               <Text size="md">
                 {parser.getSingleOption(
                   "음주 선호도",
@@ -242,7 +249,7 @@ export default function PartnerDetailScreen() {
                 ) ?? ""}
               </Text>
             </Section.Profile>
-            <Section.Profile title="흡연">
+            <Section.Profile title={t("apps.partner.view.profile_smoking")}>
               <Text size="md">
                 {parser.getSingleOption(
                   "흡연 선호도",
@@ -250,7 +257,7 @@ export default function PartnerDetailScreen() {
                 ) ?? ""}
               </Text>
             </Section.Profile>
-            <Section.Profile title="문신">
+            <Section.Profile title={t("apps.partner.view.profile_tattoo")}>
               <Text size="md">
                 {parser.getSingleOption(
                   "문신 선호도",
@@ -259,7 +266,7 @@ export default function PartnerDetailScreen() {
               </Text>
             </Section.Profile>
             {partner.gender === "MALE" && (
-              <Section.Profile title="군복무">
+              <Section.Profile title={t("apps.partner.view.profile_military")}>
                 <Text size="md">
                   {parser.getSingleOption(
                     "군필 여부",
@@ -281,7 +288,7 @@ export default function PartnerDetailScreen() {
               ]}
             >
               <Text size="md" textColor="black" className="mb-[10px] ">
-                연애 스타일
+                {t("apps.partner.view.profile_love_style")}
               </Text>
               <ChipSelector
                 value={[]}
@@ -295,13 +302,13 @@ export default function PartnerDetailScreen() {
             </View>
           </Section.Container>
 
-          <Section.Container title="성격/기질">
-            <Section.Profile title="MBTI">
+          <Section.Container title={t("apps.partner.view.section_personality")}>
+            <Section.Profile title={t("apps.partner.view.profile_mbti")}>
               <Text size="md">{partner.mbti}</Text>
             </Section.Profile>
             <View className="flex flex-col w-full">
               <Text size="md" textColor="black" className="mb-[10px]">
-                성격 유형
+                {t("apps.partner.view.profile_personality_type")}
               </Text>
               <ChipSelector
                 value={[]}
@@ -312,7 +319,7 @@ export default function PartnerDetailScreen() {
             </View>
           </Section.Container>
 
-          <Section.Container title="라이프스타일">
+          <Section.Container title={t("apps.partner.view.section_lifestyle")}>
             <View className="flex flex-col w-full">
               <ChipSelector
                 value={[]}
@@ -344,7 +351,7 @@ export default function PartnerDetailScreen() {
 
         <Show when={userWithdrawal}>
           <Text textColor="gray" className="text-center">
-            서비스를 탈퇴한 유저에요
+            {t("apps.partner.view.withdrawal_user")}
           </Text>
         </Show>
 
@@ -380,7 +387,7 @@ export default function PartnerDetailScreen() {
                 size="md"
                 className={cn("flex-1 items-center ", `!h-[${20}px]`)}
               >
-                <Text>상대방 응답을 기다리는 중..</Text>
+                <Text>{t("apps.partner.view.button_waiting")}</Text>
               </Button>
             </View>
           </Show>

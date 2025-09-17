@@ -1,0 +1,28 @@
+{
+  "header_title": "大学認証",
+  "email_input_placeholder": "学校メールアドレス",
+  "sending_code": "送信中...",
+  "send_code_button": "認証コードを送信",
+  "code_input_placeholder": "認証コードを入力",
+  "verifying_code": "確認中...",
+  "confirm_button": "確認",
+  "no_email_guide_1": "学校メールがない場合は",
+  "no_email_guide_2": "DM",
+  "no_email_guide_3": "でお問い合わせいただければ、別の認証方法をご案内します。",
+  "complete_verification_button": "大学認証を完了する",
+  "messages": {
+    "email_required": "メールアドレスを入力してください。",
+    "fields_required": "メールアドレスと認証コードを両方入力してください。",
+    "code_sent": "認証コードを送信しました。",
+    "verification_success": "メール認証が完了しました。",
+    "verification_failed": "認証コードが一致しません。",
+    "user_info_error": "ユーザー情報を読み込めませんでした。",
+    "not_verified": "まだ認証が完了していません。まずメール認証を済ませてください。"
+  },
+  "success": {
+    "congratulations": "おめでとうございます！",
+    "verification_complete": "大学認証が完了しました！",
+    "find_ideal_type": "これから理想のお相手を探しましょう",
+    "go_to_find_ideal_type": "理想の相手を探しに行く →"
+  }
+}
