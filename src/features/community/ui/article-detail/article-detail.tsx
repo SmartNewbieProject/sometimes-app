@@ -15,6 +15,7 @@ import { dayUtils, tryCatch } from "@shared/libs";
 import type { UniversityName } from "@shared/libs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import React from "react";
 import { Keyboard, ScrollView, View, Image, Pressable } from "react-native";
@@ -30,6 +31,7 @@ import { useForm } from "react-hook-form";
 export const ArticleDetail = ({ article }: { article: Article }) => {
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t } = useTranslation();
   const [checked, setChecked] = useState(true);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState<string>("");
@@ -421,7 +423,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         <View className="h-[1px] bg-[#F3F0FF] " />
         <View className="flex-1">
           <Loading.Lottie
-            title="댓글을 불러오고 있어요"
+            title={t("features.community.ui.article_detail.loading_comments")}
             loading={isCommentLoading}
           >
             <View className="flex flex-col  pb-4 ">

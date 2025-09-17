@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 export const ArticleWriteForm = () => {
   const { setValue } = useFormContext();
+  const { t } = useTranslation();
   const content = useWatch({ name: "content" });
   const images = useWatch({ name: "images" }) || [];
   const originalImages = useWatch({ name: "originalImages" }) || [];
@@ -13,7 +14,7 @@ export const ArticleWriteForm = () => {
 
   const pickImage = async () => {
     if (images.length >= 5) {
-      Alert.alert("알림", "이미지는 최대 5개까지 선택할 수 있습니다.");
+      Alert.alert(t("features.community.ui.article_write_screen.form.alert_title"), t("features.community.ui.article_write_screen.form.alert_image_limit"));
       return;
     }
 
@@ -57,7 +58,7 @@ export const ArticleWriteForm = () => {
             name="title"
             render={({ field: { onChange, value } }) => (
               <TextInput
-                placeholder="제목을 입력하세요."
+                placeholder={t("features.community.ui.article_write_screen.form.title_placeholder")}
                 className="w-full p-2 mb-[10px] font-bold placeholder:text-[#d9d9d9] text-[20px] border-b border-[#E7E9EC] outline-none pb-2"
                 onChangeText={onChange}
                 value={value}
@@ -69,7 +70,7 @@ export const ArticleWriteForm = () => {
             rules={{ maxLength: 2000 }}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                placeholder="내용을 입력하세요."
+                placeholder={t("features.community.ui.article_write_screen.form.content_placeholder")}
                 multiline
                 textAlignVertical="top"
                 maxLength={2000}
@@ -89,7 +90,7 @@ export const ArticleWriteForm = () => {
                 style={{ width: 30, height: 30, marginRight: 8 }}
                 resizeMode="contain"
               />
-              <Text className="text-gray-600 text-sm">이미지 추가 ({images.length}/5)</Text>
+              <Text className="text-gray-600 text-sm">{t("features.community.ui.article_write_screen.form.add_image_button")} ({images.length}/5)</Text>
             </TouchableOpacity>
             <Text className="text-gray-500">x {content?.length ?? 0}/2000</Text>
           </View>

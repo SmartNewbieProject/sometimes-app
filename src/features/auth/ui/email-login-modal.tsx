@@ -13,6 +13,7 @@ interface EmailLoginModalProps {
 
 export function EmailLoginModal({ isVisible, onClose }: EmailLoginModalProps) {
   const [email, setEmail] = useState("");
+  const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -52,11 +53,11 @@ export function EmailLoginModal({ isVisible, onClose }: EmailLoginModalProps) {
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>이메일 로그인</Text>
+          <Text style={styles.title}>{t("features.auth.ui.email_login_modal.title")}</Text>
 
           <View style={styles.inputContainer}>
             <Input
-              placeholder="이메일"
+              placeholder={t("features.auth.ui.email_login_modal.email_placeholder")}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -65,7 +66,7 @@ export function EmailLoginModal({ isVisible, onClose }: EmailLoginModalProps) {
             />
 
             <Input
-              placeholder="비밀번호"
+              placeholder={t("features.auth.ui.email_login_modal.password_placeholder")}
               value={password}
               onChangeText={setPassword}
               isPassword
@@ -79,14 +80,14 @@ export function EmailLoginModal({ isVisible, onClose }: EmailLoginModalProps) {
               styles={styles.button}
               disabled={isLoading}
             >
-              취소
+              {t("features.auth.ui.email_login_modal.cancel_button")}
             </Button>
             <Button
               onPress={handleLogin}
               styles={styles.loginButton}
               disabled={isLoading || !email.trim() || !password.trim()}
             >
-              {isLoading ? "로그인 중..." : "로그인"}
+              {isLoading ? t("features.auth.ui.email_login_modal.login_button_loading") : t("features.auth.ui.email_login_modal.login_button")}
             </Button>
           </View>
         </View>
