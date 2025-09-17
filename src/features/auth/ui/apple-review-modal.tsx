@@ -4,6 +4,7 @@ import {Text, Button, TextArea} from "@/src/shared/ui";
 import {useAppleReviewLogin} from "../hooks/use-apple-review-login";
 import {useAuth} from "../hooks/use-auth";
 import {router} from "expo-router";
+import { useTranslation } from "react-i18next";
 
 interface AppleReviewModalProps {
   isVisible: boolean;
@@ -26,7 +27,6 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
                 await updateToken(data.accessToken, data.refreshToken);
                 Alert.alert(t("features.auth.ui.apple_review_modal.alert_success_title"), t("features.auth.ui.apple_review_modal.alert_success_message"), [
                   {
-                                      {
                     text: t("features.auth.ui.apple_review_modal.alert_confirm_button"),
                     onPress: () => {
                       onClose();
@@ -41,6 +41,8 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
             },
             onError: (error) => {
               Alert.alert(t("features.auth.ui.apple_review_modal.alert_error_title"), t("features.auth.ui.apple_review_modal.alert_error_login_failed"));
+            },
+          }
       );
     } else {
       Alert.alert(t("features.auth.ui.apple_review_modal.alert_error_title"), t("features.auth.ui.apple_review_modal.alert_error_invalid_code"));
@@ -85,7 +87,6 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
                   className="flex-1"
                   disabled={isPending}
               >
-                              >
                 {t("features.auth.ui.apple_review_modal.cancel_button")}
               </Button>
               <Button
