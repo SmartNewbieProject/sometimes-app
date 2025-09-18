@@ -93,13 +93,13 @@ function HistoryCollapse() {
               startTiming={startTiming}
               handleAllImagesLoaded={handleAllImagesLoaded}
               imageUrls={
-                previewMatchingHistory.imageUrls.length > 5
+                previewMatchingHistory.countOfPartner > 5
                   ? previewMatchingHistory.imageUrls.slice(0, 5)
                   : previewMatchingHistory.imageUrls
               }
             />
           </View>
-          {previewMatchingHistory.imageUrls.length > 5 && (
+          {previewMatchingHistory.countOfPartner > 5 && (
             <View style={styles.more}>
               <Animated.Text
                 style={[styles.moreText, textOpacityStyle]}

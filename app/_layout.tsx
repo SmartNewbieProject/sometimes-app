@@ -2,7 +2,7 @@ import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
 import { Slot, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
@@ -30,6 +30,8 @@ export default function RootLayout() {
   const { request: requestAtt } = useAtt();
   const notificationListener = useRef<{ remove(): void } | null>(null);
   const responseListener = useRef<{ remove(): void } | null>(null);
+  const processedNotificationIds = useRef<Set<string>>(new Set());
+  const [coldStartProcessed, setColdStartProcessed] = useState(false);
 
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
@@ -75,7 +77,42 @@ export default function RootLayout() {
     []
   );
 
+
   useEffect(() => {
+    if (!loaded) return;
+
+    const handleColdStartNotification = () => {
+      try {
+        const lastNotificationResponse = Notifications.getLastNotificationResponse();
+
+        if (lastNotificationResponse?.notification) {
+          const notificationId = lastNotificationResponse.notification.request.identifier;
+          const rawData = lastNotificationResponse.notification.request.content.data;
+
+          if (!processedNotificationIds.current.has(notificationId)) {
+            if (isValidNotificationData(rawData)) {
+              processedNotificationIds.current.add(notificationId);
+              Notifications.clearLastNotificationResponse();
+
+              setTimeout(() => {
+                handleNotificationTap(rawData as NotificationData, router);
+              }, 500);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('콜드 스타트 알림 처리 중 오류:', error);
+      } finally {
+        setColdStartProcessed(true);
+      }
+    };
+
+    handleColdStartNotification();
+  }, [loaded, isValidNotificationData]);
+
+  useEffect(() => {
+    if (!loaded || !coldStartProcessed) return;
+
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         console.log("알림 수신:", notification);
@@ -83,10 +120,16 @@ export default function RootLayout() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
+        const notificationId = response.notification.request.identifier;
         const rawData = response.notification.request.content.data;
+
+        if (processedNotificationIds.current.has(notificationId)) {
+          return;
+        }
 
         try {
           if (isValidNotificationData(rawData)) {
+            processedNotificationIds.current.add(notificationId);
             handleNotificationTap(rawData as NotificationData, router);
           } else {
             router.push("/home");
@@ -104,7 +147,7 @@ export default function RootLayout() {
         responseListener.current.remove();
       }
     };
-  }, [isValidNotificationData]);
+  }, [loaded, coldStartProcessed, isValidNotificationData]);
 
   if (!loaded) {
     return null;

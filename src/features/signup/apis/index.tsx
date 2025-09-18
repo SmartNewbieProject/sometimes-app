@@ -17,7 +17,7 @@ export const getUnivs = async (): Promise<string[]> => {
 };
 
 export const getDepartments = async (univ: string): Promise<string[]> => {
-  return axiosClient.get(`/universities/departments?university=${univ}`);
+  return axiosClient.get(`/universities/departments?universityId=${univ}`);
 };
 
 const createFileObject = (imageUri: string, fileName: string) =>
@@ -59,7 +59,7 @@ export const signup = (form: SignupForm): Promise<void> => {
   formData.append("gender", form.gender);
   const age = calculateAge(form.birthday);
   formData.append("age", age.toString());
-  formData.append("universityName", form.universityName);
+  formData.append("universityId", form.universityId);
   formData.append("departmentName", form.departmentName);
   formData.append("grade", form.grade);
   formData.append("studentNumber", form.studentNumber);
