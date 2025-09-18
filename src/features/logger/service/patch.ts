@@ -1,6 +1,49 @@
 import { nanoid } from 'nanoid/non-secure';
 import { logObserver } from './log-store-observer';
 
+const SENSITIVE_KEYS = [
+	'password',
+	'token',
+	'secret',
+	'apiKey',
+	'authorization',
+	'session',
+	'credential',
+];
+
+type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
+
+export const filterSensitiveData = (data: JsonValue): JsonValue => {
+	if (typeof data !== 'object' || data === null) {
+		return data;
+	}
+
+	if (Array.isArray(data)) {
+		return data.map((item) => filterSensitiveData(item));
+	}
+
+	const newObj: { [key: string]: JsonValue } = {};
+
+	for (const key in data) {
+		if (Object.prototype.hasOwnProperty.call(data, key)) {
+			if (SENSITIVE_KEYS.some((sensitiveKey) => key.toLowerCase().includes(sensitiveKey))) {
+				newObj[key] = '[FILTERED]';
+			} else {
+				newObj[key] = filterSensitiveData(data[key]);
+			}
+		}
+	}
+
+	return newObj;
+};
+
+const formatDataForLogging = (data: unknown): string => {
+	if (typeof data === 'string') {
+		return data;
+	}
+	return JSON.stringify(data, null, 2);
+};
+
 export const originalConsoles = { ...console };
 
 const levels = ['error', 'log', 'warn', 'trace', 'debug'] as const;
@@ -26,7 +69,6 @@ levels.forEach((label) => {
 		originalConsoles[label](...args);
 	};
 });
-
 if (typeof XMLHttpRequest !== 'undefined') {
 	const originalRequestOpen = XMLHttpRequest.prototype.open;
 	const originalRequestSend = XMLHttpRequest.prototype.send;
@@ -41,15 +83,27 @@ if (typeof XMLHttpRequest !== 'undefined') {
 			if (this?._requestInfo) {
 				const { method, url, startTime } = this._requestInfo;
 				const duration = Date.now() - startTime;
-				// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-				let responseBody;
-				if (this.responseType === 'blob') {
-					// responseType이 blob이면 responseText에 접근하지 않음
-					responseBody = '[Binary Blob Data]';
+
+				let safeResponseBody: unknown;
+				if (this.responseType === 'blob' || !this.responseText) {
+					safeResponseBody = this.responseType === 'blob' ? '[Binary Blob Data]' : '';
 				} else {
-					// 그 외의 경우에는 responseText를 사용
-					responseBody = this.responseText;
+					try {
+						const parsedResponse = JSON.parse(this.responseText);
+						safeResponseBody = filterSensitiveData(parsedResponse);
+					} catch (e) {
+						safeResponseBody = this.responseText;
+					}
 				}
+
+				let safeRequestBody: unknown;
+				try {
+					const parsedRequest = typeof body === 'string' ? JSON.parse(body) : body;
+					safeRequestBody = filterSensitiveData(parsedRequest);
+				} catch (e) {
+					safeRequestBody = body;
+				}
+
 				logObserver.addLogs({
 					type: 'network',
 					id: nanoid(),
@@ -57,8 +111,8 @@ if (typeof XMLHttpRequest !== 'undefined') {
 					url,
 					status: this.status,
 					duration: `${duration}ms`,
-					requestBody: body,
-					responseBody: responseBody,
+					requestBody: formatDataForLogging(safeRequestBody),
+					responseBody: formatDataForLogging(safeResponseBody),
 					timestamp: new Date().toISOString(),
 				});
 			}
