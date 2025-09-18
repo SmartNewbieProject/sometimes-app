@@ -21,8 +21,15 @@ import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import * as amplitude from "@amplitude/analytics-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+if (Platform.OS !== "web") {
+  SplashScreen.preventAutoHideAsync()
+    .then(() => console.log("[Splash] prevent OK"))
+    .catch((e) => console.log("[Splash] prevent ERR", e));
+}
+
+const MIN_SPLASH_MS = 2000;
+const START_AT = Date.now();
 amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_KEY as string);
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { request: requestAtt } = useAtt();
@@ -46,26 +53,50 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    //폰트가 로드되지 않았다면 아무것도 하지 않음
+    if (!loaded) {
+      return;
     }
+
+    if (Platform.OS === "web") {
+      console.log("[Splash] web platform -> no native splash");
+      return;
+    }
+
+    const hideSplashScreen = async () => {
+      const elapsed = Date.now() - START_AT;
+      const remain = Math.max(0, MIN_SPLASH_MS - elapsed);
+      console.log("[Splash] elapsed:", elapsed, "remain:", remain);
+
+      await new Promise((resolve) => setTimeout(resolve, remain));
+      await SplashScreen.hideAsync().catch((e) =>
+        console.log("[Splash] hide ERR", e)
+      );
+    };
+
+    hideSplashScreen();
   }, [loaded]);
 
   useEffect(() => {
     requestAtt();
-  }, []);
+  }, [requestAtt]);
 
   const isValidNotificationData = useCallback(
     (data: unknown): data is NotificationData => {
       if (!data || typeof data !== "object") return false;
 
       const obj = data as Record<string, unknown>;
-      const validTypes = ["comment", "like", "general", "match_like", "match_connection", "reply", "comment_like"];
+      const validTypes = [
+        "comment",
+        "like",
+        "general",
+        "match_like",
+        "match_connection",
+        "reply",
+        "comment_like",
+      ];
 
-      return (
-        typeof obj.type === "string" &&
-        validTypes.includes(obj.type)
-      );
+      return typeof obj.type === "string" && validTypes.includes(obj.type);
     },
     []
   );
@@ -151,23 +182,23 @@ export default function RootLayout() {
       <QueryProvider>
         <ModalProvider>
           <GlobalChatProvider>
-          <PortoneProvider>
-            <View
-              className={cn(
-                "flex-1 font-extralight",
-                Platform.OS === "web" && "max-w-[468px] w-full self-center"
-              )}
-            >
-              <AnalyticsProvider>
-                <RouteTracker>
-                  <>
-                    <Slot />
-                    <VersionUpdateChecker />
-                  </>
-                </RouteTracker>
-              </AnalyticsProvider>
-            </View>
-          </PortoneProvider>
+            <PortoneProvider>
+              <View
+                className={cn(
+                  "flex-1 font-extralight",
+                  Platform.OS === "web" && "max-w-[468px] w-full self-center"
+                )}
+              >
+                <AnalyticsProvider>
+                  <RouteTracker>
+                    <>
+                      <Slot />
+                      <VersionUpdateChecker />
+                    </>
+                  </RouteTracker>
+                </AnalyticsProvider>
+              </View>
+            </PortoneProvider>
           </GlobalChatProvider>
         </ModalProvider>
       </QueryProvider>
