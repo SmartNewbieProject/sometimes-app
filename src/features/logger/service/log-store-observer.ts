@@ -1,6 +1,8 @@
 import { Subject, debounceTime, map } from 'rxjs';
 import type { Log } from '../types/log';
 
+const MAX_LOGS_COUNT = 100;
+
 const createObserver = () => {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	let observers: any[] = [];
@@ -28,6 +30,9 @@ const createObserver = () => {
 		},
 
 		addLogs: (log: Log) => {
+			if (logs.length >= MAX_LOGS_COUNT) {
+				logs.shift();
+			}
 			logs.push(log);
 			notify();
 		},
