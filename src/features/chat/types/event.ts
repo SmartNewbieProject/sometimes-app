@@ -17,8 +17,14 @@ export type ChatDomainEvent =
 
 			payload: UploadImageOptions & { tempId: string };
 	  }
-	| { type: 'IMAGE_OPTIMISTIC_ADDED'; payload: Chat }
-	| { type: 'IMAGE_UPLOAD_SUCCESS'; payload: { tempId: string; serverMessage: Chat } }
+	| {
+			type: 'IMAGE_OPTIMISTIC_ADDED';
+			payload: { optimisticMessage: Chat; options: UploadImageOptions };
+	  }
+	| {
+			type: 'IMAGE_UPLOAD_SUCCESS';
+			payload: { success: boolean; tempId: string; serverMessage: Chat };
+	  }
 	| { type: 'IMAGE_UPLOAD_FAILED'; payload: { success: boolean; error: string; tempId: string } }
 	| { type: 'IMAGE_URL_UPDATED'; payload: { messageId: string; mediaUrl: string } }
 

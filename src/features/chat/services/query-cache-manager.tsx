@@ -34,22 +34,16 @@ class QueryCacheManager {
       this.addReceivedMessageToCache(payload.chatRoomId, payload);
     });
 
-    chatEventBus.on("IMAGE_UPLOAD_STATUS_CHANGED").subscribe(({ payload }) => {
-      if (
-        payload.uploadStatus === "completed" &&
-        payload.mediaUrl &&
-        payload.id
-      ) {
-        this.updateImageUrlInCache(
-          payload.chatRoomId,
-          payload.id,
-          payload.mediaUrl
-        );
-      }
-    });
-
     chatEventBus.on("IMAGE_UPLOAD_FAILED").subscribe(({ payload }) => {
       this.markMessageAsFailedInCache(payload.tempId, payload.error);
+    });
+
+    chatEventBus.on("IMAGE_UPLOAD_SUCCESS").subscribe(({ payload }) => {
+      console.log("image success");
+      this.replaceOptimisticMessageInCache(
+        payload.tempId,
+        payload.serverMessage
+      );
     });
   }
 
@@ -171,7 +165,7 @@ class QueryCacheManager {
     });
 
     if (error) {
-      console.error("Message send failed:", error);
+      console.error("Message send failed2:", error);
     }
   }
 
@@ -265,48 +259,6 @@ class QueryCacheManager {
     this.queryClient?.invalidateQueries({ queryKey: ["chat-room"] });
   }
 
-  private updateImageUrlInCache(
-    chatRoomId: string,
-    messageId: string,
-    mediaUrl: string
-  ) {
-    this.queryClient?.setQueryData(
-      ["chat-list", chatRoomId],
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      (oldData: any) => {
-        if (!oldData) {
-          return oldData;
-        }
-
-        const updatedPages = oldData.pages.map(
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-          (page: any) => ({
-            ...page,
-            messages: page.messages.map((message: Chat) => {
-              if (message.id === messageId) {
-                return {
-                  ...message,
-                  mediaUrl,
-                  uploadStatus: "completed" as const,
-                };
-              }
-              return message;
-            }),
-          })
-        );
-
-        return {
-          ...oldData,
-          pages: updatedPages,
-        };
-      }
-    );
-
-    this.queryClient?.invalidateQueries({
-      queryKey: ["chat-list", chatRoomId],
-    });
-  }
-
   private markRoomAsReadInCache(chatRoomId: string) {
     const chatRoomQueryKey = ["chat-room"];
 
@@ -329,6 +281,31 @@ class QueryCacheManager {
         pages: updatedPages,
       };
     });
+  }
+
+  private replaceOptimisticMessageInCache(tempId: string, serverMessage: Chat) {
+    this.queryClient?.setQueryData(
+      ["chat-list", serverMessage.chatRoomId],
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      (oldData: any) => {
+        if (!oldData) return oldData;
+
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        const updatedPages = oldData.pages.map((page: any) => ({
+          ...page,
+          messages: page.messages.map((message: Chat) =>
+            message.tempId === tempId || message.id === tempId
+              ? { ...serverMessage, optimistic: false, sendingStatus: "sent" }
+              : message
+          ),
+        }));
+
+        return {
+          ...oldData,
+          pages: updatedPages,
+        };
+      }
+    );
   }
 }
 

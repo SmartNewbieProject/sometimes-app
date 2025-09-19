@@ -12,6 +12,40 @@ class SocketConnectionManager {
 	private socket: Socket | null = null;
 	private currentUrl: string | null = null;
 
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	private uploadImagePromise(payload: any): Promise<Chat> {
+		return new Promise((resolve, reject) => {
+			if (!this.socket) {
+				return reject(new Error('Socket not connected'));
+			}
+			console.log('check 1', payload);
+			this.socket.emit(
+				'uploadImage',
+				payload,
+				(response: {
+					success: boolean;
+					serverMessage: Chat;
+					error?: string;
+				}) => {
+					console.log('check2');
+					if (response?.success) {
+						resolve(response.serverMessage);
+					} else {
+						reject(new Error(response?.error || 'Upload failed'));
+					}
+				},
+			);
+		});
+	}
+
+	private timeoutPromise(ms: number, message: string): Promise<never> {
+		return new Promise((_, reject) => {
+			setTimeout(() => {
+				reject(new Error(message));
+			}, ms);
+		});
+	}
+
 	initialize() {
 		chatEventBus.on('CONNECTION_REQUESTED').subscribe(({ payload }) => {
 			this.connect(payload.url, payload.token);
@@ -61,90 +95,71 @@ class SocketConnectionManager {
 			this.socket?.emit('leaveRoom', { chatRoomId: payload.chatRoomId });
 		});
 
-		chatEventBus.on('IMAGE_UPLOAD_REQUESTED').subscribe(async ({ payload }) => {
+		chatEventBus.on('IMAGE_OPTIMISTIC_ADDED').subscribe(async ({ payload }) => {
+			const { options, optimisticMessage } = payload;
+			const { tempId } = optimisticMessage;
+
 			if (!this.socket) {
 				chatEventBus.emit({
 					type: 'IMAGE_UPLOAD_FAILED',
-					payload: { success: false, error: 'Socket not connected', tempId: payload.tempId },
+					// biome-ignore lint/style/noNonNullAssertion: <explanation>
+					payload: { success: false, error: 'Socket not connected', tempId: tempId! },
 				});
 				return;
 			}
 
-			const { file } = payload;
-			let base64: string;
-			let mimeType = 'image/jpeg';
+			try {
+				const { file } = options;
+				let base64: string;
+				let mimeType = 'image/jpeg';
 
-			if (typeof file === 'object' && 'uri' in file) {
-				const base64Result = await uriToBase64(file.uri);
-				base64 = base64Result || '';
-				mimeType = 'image/jpeg'; // 기본값
-			} else if (typeof file === 'string') {
-				base64 = file;
-				mimeType = 'image/jpeg';
-			} else {
-				const result = await fileToBase64Payload(file as RNFileLike);
-				base64 = result.base64;
-				mimeType = result.mimeType;
-			}
+				if (typeof file === 'object' && 'uri' in file) {
+					const base64Result = await uriToBase64(file.uri);
+					base64 = base64Result || '';
+				} else if (typeof file === 'string') {
+					base64 = file;
+				} else {
+					const result = await fileToBase64Payload(file as RNFileLike);
+					base64 = result.base64;
+					mimeType = result.mimeType;
+				}
 
-			let finalImageData = base64;
-
-			if (isImageTooLarge(base64, 5 * 1024 * 1024)) {
-				try {
+				let finalImageData = base64;
+				if (isImageTooLarge(base64, 5 * 1024 * 1024)) {
 					finalImageData = await compressImage(base64, {
 						maxWidth: 800,
 						maxHeight: 800,
 						quality: 0.7,
 						format: 'jpeg',
+					}).catch((compressionError) => {
+						console.warn('이미지 압축 실패, 원본 사용:', compressionError);
+						return base64; // 압축 실패 시 원본 사용
 					});
-				} catch (compressionError) {
-					console.warn('이미지 압축 실패, 원본 사용:', compressionError);
 				}
-			}
-			const timeout = setTimeout(() => {
+
+				const serverMessage = await Promise.race([
+					this.uploadImagePromise({
+						to: options.to,
+						chatRoomId: options.chatRoomId,
+						imageData: finalImageData,
+						mimeType,
+						tempId,
+					}),
+					this.timeoutPromise(30000, 'Upload timeout'),
+				]);
+
+				chatEventBus.emit({
+					type: 'IMAGE_UPLOAD_SUCCESS',
+					// biome-ignore lint/style/noNonNullAssertion: <explanation>
+					payload: { success: true, serverMessage, tempId: tempId! },
+				});
+			} catch (error) {
 				chatEventBus.emit({
 					type: 'IMAGE_UPLOAD_FAILED',
-					payload: { success: false, error: 'Upload timeout', tempId: payload.tempId },
+					// biome-ignore lint/style/noNonNullAssertion: <explanation>
+					payload: { success: false, error: (error as Error).message, tempId: tempId! },
 				});
-				return;
-			}, 30000);
-
-			this.socket?.emit(
-				'uploadImage',
-				{
-					to: payload.to,
-					chatRoomId: payload.chatRoomId,
-					imageData: finalImageData,
-					mimeType,
-					tempId: payload.tempId,
-				},
-				(response: {
-					success: boolean;
-					serverMessage: Chat;
-					error?: string;
-				}) => {
-					clearTimeout(timeout);
-					if (response?.success) {
-						chatEventBus.emit({
-							type: 'IMQGE_UPLOAD_SUCCESS',
-							payload: {
-								success: true,
-								serverMessage: response.serverMessage,
-								tempId: payload.tempId,
-							},
-						});
-					} else {
-						chatEventBus.emit({
-							type: 'IMAGE_UPLOAD_FAILED',
-							payload: {
-								success: false,
-								error: response?.error || 'Upload failed',
-								tempId: payload.tempId,
-							},
-						});
-					}
-				},
-			);
+			}
 		});
 	}
 

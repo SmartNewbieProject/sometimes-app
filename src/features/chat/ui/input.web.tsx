@@ -64,7 +64,6 @@ function WebChatInput() {
       }
 
       if (roomDetail?.partnerId && user?.id) {
-        console.warn({ roomDetail, user });
         chatEventBus.emit({
           type: "IMAGE_UPLOAD_REQUESTED",
           payload: {
@@ -77,7 +76,6 @@ function WebChatInput() {
         });
       }
       setImageModal(false);
-      console.log("jpegUri", pickedUri);
     }
 
     setImageModal(false);
@@ -132,7 +130,6 @@ function WebChatInput() {
       } else {
         setImageModal(false);
       }
-      console.log("jpegUri", pickedUri);
       queryClient.refetchQueries({ queryKey: ["chat-list", id] });
     } else {
       setImageModal(false);

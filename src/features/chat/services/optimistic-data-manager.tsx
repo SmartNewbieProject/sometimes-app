@@ -52,7 +52,7 @@ class OptimisticDataManager {
 
       chatEventBus.emit({
         type: "IMAGE_OPTIMISTIC_ADDED",
-        payload: optimisticMessage,
+        payload: { optimisticMessage: optimisticMessage, options: payload },
       });
     });
   }
