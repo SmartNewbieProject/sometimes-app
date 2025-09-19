@@ -212,6 +212,10 @@ class SocketConnectionManager {
 		this.socket.on('readMessages', (chatRoomId) => {
 			chatEventBus.emit({ type: 'MESSAGES_READ', payload: chatRoomId });
 		});
+
+		this.socket.on('messageUpdated', (payload) => {
+			chatEventBus.emit({ type: 'IMAGE_UPLOAD_STATUS_CHANGED', payload });
+		});
 	}
 }
 
