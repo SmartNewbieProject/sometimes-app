@@ -19,7 +19,7 @@ export const GlobalChatProvider = ({
       chatEventBus.emit({
         type: "CONNECTION_REQUESTED",
         payload: {
-          url: process.env.EXPO_PUBLIC_SERVER_URL || "",
+          url: `${process.env.EXPO_PUBLIC_SERVER_URL}/chat` || "",
           token: accessToken,
         },
       });
