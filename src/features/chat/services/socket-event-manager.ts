@@ -1,6 +1,7 @@
 import { uriToBase64 } from '@/src/shared/utils/image';
 import { fromEvent } from 'rxjs';
 import { type Socket, io } from 'socket.io-client';
+import { buildChatSocketUrl } from '../domain/utils/build-socket-url';
 import { type RNFileLike, fileToBase64Payload } from '../domain/utils/file-to-base64';
 import type { Chat } from '../types/chat';
 import { generateTempId } from '../utils/generate-temp-id';
@@ -20,10 +21,13 @@ class SocketConnectionManager {
 			this.socket?.emit('readMessages', { chatRoomId: payload.chatRoomId });
 		});
 		chatEventBus.on('MESSAGE_SEND_REQUESTED').subscribe(({ payload }) => {
+			console.log('payload1', payload);
 			this.socket?.emit(
 				'sendMessage',
 				payload,
 				(response: { success: boolean; serverMessage: Chat; error?: string }) => {
+					console.log('payload2', payload, response);
+
 					if (response?.success) {
 						chatEventBus.emit({
 							type: 'MESSAGE_SEND_SUCCESS',
@@ -139,14 +143,15 @@ class SocketConnectionManager {
 	}
 
 	private connect(url: string, token: string) {
-		if (this.socket && this.currentUrl !== url) {
+		const socketUrl = buildChatSocketUrl(url, '/chat', token);
+		if (this.socket && this.currentUrl !== socketUrl) {
 			this.socket.removeAllListeners();
 			this.socket.disconnect();
 			this.socket = null;
 			this.currentUrl = null;
 		}
 
-		if (this.socket && this.currentUrl === url && this.socket.connected) {
+		if (this.socket && this.currentUrl === socketUrl && this.socket.connected) {
 			return this.socket;
 		}
 
@@ -154,7 +159,7 @@ class SocketConnectionManager {
 			this.socket.removeAllListeners();
 			this.socket.disconnect();
 		}
-		this.socket = io(url, {
+		this.socket = io(socketUrl, {
 			transports: ['websocket', 'polling'],
 			withCredentials: true,
 			secure: process.env.NODE_ENV === 'production',
@@ -168,9 +173,9 @@ class SocketConnectionManager {
 
 			forceNew: !!this.socket,
 		});
-		this.currentUrl = url;
+		this.currentUrl = socketUrl;
 
-		this.registerSocketListeners(url, token);
+		this.registerSocketListeners(socketUrl, token);
 	}
 
 	private registerSocketListeners(url: string, token: string) {
