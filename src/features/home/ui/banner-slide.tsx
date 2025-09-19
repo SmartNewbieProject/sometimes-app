@@ -1,5 +1,6 @@
 import Slider from "@/src/widgets/slide";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import Loading from "../../loading";
 import { useTotalMatchCountQuery, useTotalUserCountQuery } from "../queries";
@@ -10,9 +11,13 @@ function BannerSlide() {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } =
     useTotalMatchCountQuery();
   const { data: totalUserCount = 0 } = useTotalUserCountQuery();
+  const { t } = useTranslation();
 
   return (
-    <Loading.Lottie title="몇 명이 매칭을 신청했을까요?" loading={isLoading}>
+    <Loading.Lottie
+      title={t("features.home.ui.banner_slide.loading_title")}
+      loading={isLoading}
+    >
       <Slider
         indicatorContainerClassName="!bottom-[-16px] "
         autoPlay

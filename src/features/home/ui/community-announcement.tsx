@@ -3,9 +3,11 @@ import { Text } from "@/src/shared/ui";
 import { useAuth } from "../../auth";
 import PurpleRightArrow from '@assets/icons/purple-arrow.svg';
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 export const CommunityAnnouncement = () => {
   const { profileDetails } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -14,10 +16,14 @@ export const CommunityAnnouncement = () => {
     >
       <View className="my-[25px]">
         <Text textColor="black" className="font-bold text-[18px]" weight="medium">
-          {profileDetails?.name || '회원'}님도 가능해요
+          {t("features.home.ui.community_announcement.greeting", {
+            name:
+              profileDetails?.name ||
+              t("features.home.ui.community_announcement.default_user"),
+          })}
         </Text>
         <Text textColor="black" className="font-bold text-[18px]" weight="medium">
-          연애 성공 후기, 한번 확인해 보세요!
+          {t("features.home.ui.community_announcement.success_story_prompt")}
         </Text>
       </View>
       <View className="mt-4">

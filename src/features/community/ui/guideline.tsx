@@ -24,3 +24,4 @@ export const CommunityGuideline = () => {
     <Text className="text-[12px] text-[#7C7C7C] opacity-60 pb-[8px] ">{t("features.community.ui.guideline.sanction_message_2")}</Text>
   </View>
 );
+}

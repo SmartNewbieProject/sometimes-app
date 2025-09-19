@@ -96,7 +96,7 @@ export default function ReapplyScreen() {
         title: t("apps.auth.reapply.modal_need_images_title"),
         children: t("apps.auth.reapply.modal_need_images_desc"),
         primaryButton: {
-          text: "확인",
+          text: t("apps.auth.reapply.button_confirm"),
           onClick: () => {},
         },
       });
@@ -119,7 +119,7 @@ export default function ReapplyScreen() {
           title: t("apps.auth.reapply.modal_reapply_success_title"),
           children: response.message,
           primaryButton: {
-            text: "확인",
+            text: t("apps.auth.reapply.button_confirm"),
             onClick: () => {
               router.push("/auth/approval-pending");
             },
@@ -134,7 +134,7 @@ export default function ReapplyScreen() {
           title: t("apps.auth.reapply.modal_reapply_fail_title"),
           children: errorMessage,
           primaryButton: {
-            text: "확인",
+            text: t("apps.auth.reapply.button_confirm"),
             onClick: () => {},
           },
         });

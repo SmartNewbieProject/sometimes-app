@@ -1,6 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   Easing,
@@ -22,6 +23,7 @@ interface LikeCollapseProps {
 function LikeCollapse({ collapse, type }: LikeCollapseProps) {
   const textOpacity = useSharedValue(0);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [startTiming, setStartTiming] = useState(false);
   const imagesUrls = collapse.map((item) => item.mainProfileUrl);
@@ -66,8 +68,8 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
     <View>
       <Text style={styles.text}>
         {type === "iLiked"
-          ? `${name}님께서 관심을 가지신 분들이에요`
-          : `${name}님께 관심을 가졌어요`}
+          ? t("features.like.ui.like_collapse.i_liked_title", { name })
+          : t("features.like.ui.like_collapse.liked_me_title", { name })}
       </Text>
       <Pressable
         style={styles.container}
@@ -89,7 +91,7 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
             startTiming={startTiming}
             handleAllImagesLoaded={handleAllImagesLoaded}
             imageUrls={
-              imagesUrls.length > 5 ? imagesUrls.slice(0, 5) : imagesUrls
+              imagesUrls.length > 5 ? imageUrls.slice(0, 5) : imageUrls
             }
           />
         </View>
@@ -97,7 +99,7 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
           <View style={styles.more}>
             <Animated.Text
               style={[styles.moreText, textOpacityStyle]}
-            >{`+${Math.abs(5 - imagesUrls.length)}`}</Animated.Text>
+            >{`+${Math.abs(5 - imageUrls.length)}`}</Animated.Text>
             <ExplodingParticles
               delay={800}
               startTiming={startTiming}
