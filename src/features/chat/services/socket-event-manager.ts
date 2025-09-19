@@ -154,13 +154,12 @@ class SocketConnectionManager {
 			this.socket.removeAllListeners();
 			this.socket.disconnect();
 		}
-
 		this.socket = io(url, {
 			transports: ['websocket', 'polling'],
 			withCredentials: true,
 			secure: process.env.NODE_ENV === 'production',
 			rejectUnauthorized: true,
-			auth: { token },
+			auth: { token: `Bearer ${token}` },
 
 			reconnection: true,
 			reconnectionAttempts: 5,
