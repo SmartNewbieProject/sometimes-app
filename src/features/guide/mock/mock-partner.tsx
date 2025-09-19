@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { IconWrapper } from "../../../shared/ui/icons";
 import { Text } from "../../../shared/ui/text";
 import { useAuth } from "../../auth";
@@ -19,6 +20,7 @@ import MockInteractionNavigation from "./mock-interaction-navigation";
 function MockPartner() {
   const [width, setWidth] = useState(0);
   const { my } = useAuth();
+  const { t } = useTranslation();
   const onLayout = (event: LayoutChangeEvent) => {
     const { width: layoutWidth } = event.nativeEvent.layout;
 
@@ -129,7 +131,9 @@ function MockPartner() {
                 style={sideStyle.previousButton}
                 onPress={() => {}}
               >
-                <Text className="w-[32px] text-white text-[12px]">더보기</Text>
+                <Text className="w-[32px] text-white text-[12px]">
+                  {t("features.guide.mock.mock_partner.button_more")}
+                </Text>
                 <IconWrapper width={12} height={12}>
                   <ArrowRight />
                 </IconWrapper>

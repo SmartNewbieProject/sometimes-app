@@ -7,6 +7,8 @@ import React from "react";
 import type { Control, UseFormReturn } from "react-hook-form";
 import { TouchableOpacity, View } from "react-native";
 import type { CommentForm } from "../../types";
+import { useTranslation } from "react-i18next";
+import i18n from "@/src/shared/libs/i18n";
 
 interface InputFormProps {
   checked: boolean;
@@ -35,17 +37,18 @@ export const InputForm = ({
   replyingToCommentId,
   handleCancelReply,
 }: InputFormProps) => {
+  const { t } = useTranslation();
   return (
     <View>
       {/* 수정 모드 또는 대댓글 작성 모드 표시 */}
       {editingCommentId && (
         <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
           <Text size="sm" className="text-[#A892D7]">
-            댓글 수정 중...
+            {t("features.community.ui.comment.input_form.editing_comment")}
           </Text>
           <TouchableOpacity onPress={handleCancelEdit}>
             <Text size="sm" className="text-[#A892D7]">
-              취소
+              {t("global.cancel")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -53,12 +56,12 @@ export const InputForm = ({
       {!editingCommentId && replyingToCommentId && (
         <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
           <Text size="sm" className="text-[#A892D7]">
-            답글 작성 중...
+            {t("features.community.ui.comment.input_form.replying_comment")}
           </Text>
           {handleCancelReply && (
             <TouchableOpacity onPress={handleCancelReply}>
               <Text size="sm" className="text-[#A892D7]">
-                취소
+                {t("global.cancel")}
               </Text>
             </TouchableOpacity>
           )}
@@ -120,7 +123,7 @@ const AnonymousToggle = ({
       onChange={setChecked}
     >
       <Text className="mr-1 text-black text-[15px] h-[25px] leading-[25px] flex items-center">
-        익명
+        {i18n.t("features.community.ui.comment.input_form.anonymous")}
       </Text>
     </Check.Box>
   </>
@@ -145,7 +148,7 @@ const CommentInput = ({
       "text-sm md:text-md",
       "text-[#A892D7] border-b-0 outline-none",
     ])}
-    placeholder="댓글을 입력하세요"
+    placeholder={i18n.t("features.community.ui.comment.input_form.comment_placeholder")}
     onChange={(e) => setEditingContent(e.nativeEvent.text)}
     returnKeyType="send"
     multiline={false}

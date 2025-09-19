@@ -7,6 +7,7 @@ import type { MatchDetails } from "../../idle-match-timer/types";
 import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import useILiked from "../../like/hooks/use-liked";
 import { LikeButton } from "../../like/ui/like-button";
 import MockLikeButton from "./mock-like-button";
@@ -15,6 +16,7 @@ const MockInteractionNavigation = () => {
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const [isLiked, setLiked] = useState(false);
+  const { t } = useTranslation();
   const showPartnerFindAnnouncement = () => {
     showModal({
       showLogo: true,
@@ -29,31 +31,33 @@ const MockInteractionNavigation = () => {
           }}
         >
           <Text textColor="black" weight="bold" size="20">
-            마음에 드는 이성을 찾기위해
+            {t("features.guide.mock.mock_interaction_navigation.modal_title_1")}
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 {featureCosts?.REMATCHING}개를 사용할게요!
+            {t("features.guide.mock.mock_interaction_navigation.modal_title_2", {
+              count: featureCosts?.REMATCHING,
+            })}
           </Text>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px]">
           <Text className="text-[#AEAEAE] text-[12px]">
-            성격과 소통 스타일을 바탕으로,
+            {t("features.guide.mock.mock_interaction_navigation.modal_text_1")}
           </Text>
           <Text className="text-[#AEAEAE] text-[12px]">
-            자연스럽게 연결될 수 있는 인연을 추천해드릴게요.
+            {t("features.guide.mock.mock_interaction_navigation.modal_text_2")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
+        text: t("features.guide.mock.mock_interaction_navigation.primary_button"),
         onClick: () => {
           setLiked(true);
         },
       },
       secondaryButton: {
-        text: "아니요",
+        text: t("features.guide.mock.mock_interaction_navigation.secondary_button"),
         onClick: hideModal,
       },
     });
@@ -74,7 +78,7 @@ const MockInteractionNavigation = () => {
           <RNText
             className={cn("text-md text-primaryPurple whitespace-nowrap")}
           >
-            더 찾아보기
+            {t("features.guide.mock.mock_interaction_navigation.main_button")}
           </RNText>
         </View>
       </Button>
@@ -83,7 +87,7 @@ const MockInteractionNavigation = () => {
           onPress={() => {}}
           className="flex-1 items-center !bg-[#E1D9FF] !text-white"
         >
-          썸 보내기 완료!
+          {t("features.guide.mock.mock_interaction_navigation.complete_button")}
         </Button>
       ) : (
         <MockLikeButton />
