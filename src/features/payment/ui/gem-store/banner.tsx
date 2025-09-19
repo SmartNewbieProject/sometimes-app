@@ -2,6 +2,7 @@ import {ImageResources} from "@shared/libs/image";
 import {ImageResource, Text } from "@shared/ui";
 import {Dimensions, Pressable, StyleSheet, View} from "react-native";
 import { router } from 'expo-router';
+import { useTranslation } from "react-i18next";
 
 export const Banner = () => {
   const width = Dimensions.get("window").width;
@@ -11,7 +12,7 @@ export const Banner = () => {
     }
     return 260;
   })();
-
+  const { t } = useTranslation();
   return (
       <View style={styles.container}>
         <ImageResource
@@ -25,7 +26,7 @@ export const Banner = () => {
             height={36}
           />
           <Text weight="bold" textColor="black" size="12">
-            기존 재매칭권은 어떻게 되나요?
+            {t("ui.gem_store.banner.guide_button_text")}
           </Text>
         </Pressable>
       </View>

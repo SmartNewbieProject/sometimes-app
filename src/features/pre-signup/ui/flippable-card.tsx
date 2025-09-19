@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { ImageResource } from '@shared/ui';
 import { ImageResources } from '@/src/shared/libs/image';
+import i18n from '@/src/shared/libs/i18n';
 
 interface FlippableCardProps {
   initialImage: ImageResources;
@@ -134,7 +135,7 @@ export const FlippableCard: React.FC<FlippableCardProps> = ({
           <ImageResource
             resource={initialImage}
             contentFit="cover"
-            loadingTitle="카드 이미지 로딩 중..."
+            loadingTitle={i18n.t("features.pre-signup.ui.common.loading_card_image")}
             style={{
               width: '100%',
               height: '100%',
@@ -152,7 +153,7 @@ export const FlippableCard: React.FC<FlippableCardProps> = ({
           <ImageResource
             resource={switchImage}
             contentFit="cover"
-            loadingTitle="카드 이미지 로딩 중..."
+            loadingTitle={i18n.t("features.pre-signup.ui.common.loading_card_image")}
             style={{
               width: '100%',
               height: '100%',

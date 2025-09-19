@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface PortoneContextValue {
 	loaded: boolean;
@@ -18,6 +19,7 @@ interface PortoneProviderProps {
 export function PortoneProvider({ children }: PortoneProviderProps) {
 	const [loaded, setLoaded] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		if (typeof window === 'undefined' || window.document === undefined) return;
@@ -29,7 +31,7 @@ export function PortoneProvider({ children }: PortoneProviderProps) {
 		script.src = 'https://cdn.iamport.kr/v1/iamport.js';
 		script.async = true;
 		script.onload = () => setLoaded(true);
-		script.onerror = () => setError(new Error('Portone(아임포트) 스크립트 로드 실패'));
+		script.onerror = () => setError(new Error(t('ui.portone.script_load_failure')));
 		document.body.appendChild(script);
 		return () => {
 			document.body.removeChild(script);

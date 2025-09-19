@@ -2,10 +2,13 @@ import { Header } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+
+
 
 function PostBoxHeaders() {
   const router = useRouter();
-
+  const { t } = useTranslation();
   return (
     <Header.Container className="items-center  ">
       <Header.LeftContent>
@@ -19,7 +22,7 @@ function PostBoxHeaders() {
         </Pressable>
       </Header.LeftContent>
       <Header.CenterContent>
-        <Text style={styles.headerTitle}>썸 우편함</Text>
+        <Text style={styles.headerTitle}>{t("features.post-box.ui.header.title")}</Text>
       </Header.CenterContent>
 
       <Header.RightContent>

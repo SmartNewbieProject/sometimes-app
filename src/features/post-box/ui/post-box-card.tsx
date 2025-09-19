@@ -12,11 +12,13 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
 import { useFeatureCost } from "../../payment/hooks";
 import useByeLike from "../queries/useByeLike";
 import useRejectLike from "../queries/useRejectLike";
+import i18n from "@/src/shared/libs/i18n";
 
 interface PostBoxCardProps {
   status: string;
@@ -53,15 +55,16 @@ function PostBoxCard({
   deletedAt,
   type,
 }: PostBoxCardProps) {
+  const { t } = useTranslation();
   const opacity = useRef(new Animated.Value(1)).current;
   const statusMessage =
     type === "liked-me"
-      ? `${dayUtils.formatRelativeTime(likedAt)} 좋아요를 눌렀어요`
+      ? t("features.post-box.ui.card.status_messages.liked_me_relative", { time: dayUtils.formatRelativeTime(likedAt) })
       : status === "OPEN"
-      ? "서로 좋아요를 눌렀어요!"
+      ? t("features.post-box.ui.card.status_messages.mutual_like")
       : status === "REJECTED"
-      ? "상대방이 거절했어요"
-      : "상대방의 응답을 기다리고 있어요";
+      ? t("features.post-box.ui.card.status_messages.rejected")
+      : t("features.post-box.ui.card.status_messages.waiting_response");
   const userWithdrawal = !!deletedAt;
 
   const renderBottomButton = isExpired ? (
@@ -111,7 +114,7 @@ function PostBoxCard({
             <Text style={styles.name} className="font-medium">
               {nickname}
             </Text>
-            <Text style={styles.age}>만 {age}세</Text>
+            <Text style={styles.age}>{t("apps.post_box.age_display", { age })}</Text>
           </View>
           <Text style={styles.university}>{universityName}</Text>
           <Text
@@ -139,7 +142,7 @@ function PostBoxCard({
 
           <Show when={userWithdrawal}>
             <CustomText textColor="gray" size="13" weight="light">
-              서비스를 탈퇴한 유저에요
+              {t("features.post-box.ui.card.withdrawn_text")}
             </CustomText>
           </Show>
           <Show when={!userWithdrawal}>{renderBottomButton}</Show>
@@ -154,6 +157,7 @@ export function LikedMePendingButton({
 }: {
   connectionId: string;
 }) {
+  const { t } = useTranslation();
   const mutation = useRejectLike();
   const handleReject = () => {
     tryCatch(
@@ -173,7 +177,7 @@ export function LikedMePendingButton({
         className="flex-1 items-center !h-[40px]"
         prefix={<XIcon width={21} height={21} />}
       >
-        괜찮아요
+        {t("features.post-box.ui.card.buttons.ok")}
       </Button>
 
       <LikeButton className="!h-[40px]" connectionId={connectionId} />
@@ -188,6 +192,7 @@ export function LikedMeOpenButton({
   instagramId: string;
   height?: number;
 }) {
+  const { t } = useTranslation();
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const handleStartInstagram = () => {
@@ -204,27 +209,27 @@ export function LikedMeOpenButton({
           }}
         >
           <CustomText textColor="black" weight="bold" size="20">
-            마음에 드는 이성과
+            {t("features.post-box.ui.card.modal_texts.start_instagram_title_line1")}
           </CustomText>
           <CustomText textColor="black" weight="bold" size="20">
-            대화를 시작해볼까요?
+            {t("features.post-box.ui.card.modal_texts.start_instagram_title_line2")}
           </CustomText>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-[#AEAEAE] text-[12px]">인스타그램을 통해</Text>
+          <Text className="text-[#AEAEAE] text-[12px]">{t("features.post-box.ui.card.modal_texts.start_instagram_subline1")}</Text>
           <Text className="text-[#AEAEAE] text-[12px]">
-            자연스럽게 대화를 시작해보세요
+            {t("features.post-box.ui.card.modal_texts.start_instagram_subline2")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
+        text: t("features.post-box.ui.card.buttons.yes_try"),
         onClick: () => openInstagram(instagramId),
       },
       secondaryButton: {
-        text: "아니요",
+        text: t("apps.post_box.buttons.no"),
         onClick: hideModal,
       },
     });
@@ -238,7 +243,7 @@ export function LikedMeOpenButton({
         className={cn("flex-1 items-center ", `!h-[${height}px]`)}
         prefix={<ChatIcon width={20} height={20} />}
       >
-        대화 시작하기
+        {t("features.post-box.ui.card.buttons.start_chat")}
       </Button>
     </View>
   );
@@ -267,25 +272,25 @@ export function ILikedRejectedButton({
           }}
         >
           <CustomText textColor="black" weight="bold" size="20">
-            이번엔 인연이 닿지 않았어요
+            {i18n.t("features.post-box.ui.card.modal_texts.bye_title")}
           </CustomText>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
           <Text className="text-[#AEAEAE] text-[12px]">
-            괜찮아요 더 멋진 만남이 곧 찾아올 거예요.
+            {i18n.t("features.post-box.ui.card.modal_texts.bye_subline")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "확인",
+        text: i18n.t("features.post-box.ui.card.buttons.confirm"),
         onClick: async () => {
           await mutation.mutateAsync(connectionId);
         },
       },
       secondaryButton: {
-        text: "닫기",
+        text: i18n.t("features.post-box.ui.card.buttons.close"),
         onClick: hideModal,
       },
     });
@@ -299,7 +304,7 @@ export function ILikedRejectedButton({
         className={cn("flex-1 items-center ", `!h-[${height}px]`)}
         prefix={<XIcon width={21} height={21} />}
       >
-        인연이 아니었나봐요
+        {i18n.t("features.post-box.ui.card.buttons.not_a_match")}
       </Button>
     </View>
   );

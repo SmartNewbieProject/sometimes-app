@@ -2,16 +2,18 @@ import { View } from 'react-native';
 import { Button, Text, BusinessInfo } from '@shared/ui';
 import { router } from 'expo-router';
 import { Feedback } from "@features/feedback";
+import { useTranslation } from 'react-i18next';
 
 interface FooterProps {
   trackEventAction?: (eventName: string) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) => {
+  const { t } = useTranslation();
   return (
     <View className="w-full mt-8">
       <View className="my-1.5">
-        <Feedback.WallaFeedbackBanner textContent="연애에서 바라는 점, 소통 방식을 알려주세요!" />
+        <Feedback.WallaFeedbackBanner textContent={t("features.pre-signup.ui.footer.feedback_banner")} />
       </View>
       <View className="w-full px-4 py-3">
         <Button
@@ -23,7 +25,7 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
             router.navigate('/auth/signup/terms');
           }}
         >
-          소개팅 시작하기
+          {t("features.pre-signup.ui.footer.start_intro_button")}
         </Button>
         <Button
           variant="outline"
@@ -39,7 +41,7 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
             size="md"
             className="text-center text-white"
           >
-            로그인하기
+            {t("features.pre-signup.ui.footer.login_button")}
           </Text>
         </Button>
       </View>

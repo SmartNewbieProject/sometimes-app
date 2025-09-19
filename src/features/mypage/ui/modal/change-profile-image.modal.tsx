@@ -147,7 +147,7 @@ export const ChangeProfileImageModal = ({
 
   const handleSubmit = async () => {
     if (!profileDetails) {
-      showErrorModal("프로필 정보를 불러올 수 없습니다.", "error");
+      showErrorModal(t("features.mypage.profile_image_error_load"), "error");
       return;
     }
 

@@ -4,6 +4,7 @@ import Loading from "../../loading";
 import { usePortoneStore } from "../hooks/use-portone-store";
 import type { CustomData, PaymentRequest } from "../types";
 import * as PortOne from "@portone/browser-sdk/v2";
+import { useTranslation } from "react-i18next";
 
 
 export interface WebPaymentProps {
@@ -21,16 +22,17 @@ export const WebPaymentView = (props: WebPaymentProps) => {
   const { paymentParams, onComplete, onError, onCancel, gemCount } = props;
   const [isProcessing, setIsProcessing] = useState(true);
   const { setCustomData } = usePortoneStore();
+  const { t } = useTranslation();
 
   if (!paymentParams.storeId || !paymentParams.channelKey) {
     return (
-      <Loading.Page title="결제 환경변수가 누락되었습니다." />
+      <Loading.Page title={t("ui.web_payment.missing_env_vars")} />
     );
   }
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
-      onError?.({ message: '웹 환경에서만 사용 가능합니다.' });
+      onError?.({ message: t("ui.web_payment.web_only_error") });
       setIsProcessing(false);
       return;
     }
@@ -52,7 +54,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
         }) as unknown as PaymentResponse;
 
         if (!response) {
-          onError?.({ message: '결제 결과를 받아오지 못했습니다.' });
+          onError?.({ message: t("ui.web_payment.no_payment_result") });
           return;
         } 
         if (PortOne.isPortOneError(response)) {
@@ -74,7 +76,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
   if (isProcessing) {
     return (
       <Loading.Page
-        title="결제를 처리 중입니다. 잠시만 기다려주세요..."
+        title={t("ui.web_payment.processing_payment_wait")}
       />
     );
   }

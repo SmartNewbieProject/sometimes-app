@@ -23,7 +23,7 @@ export const useCommingSoon = () => {
         </View>
       ),
       primaryButton: {
-        text: "확인",
+        text: t("global.confirm"),
         onClick: () => { },
       },
     });

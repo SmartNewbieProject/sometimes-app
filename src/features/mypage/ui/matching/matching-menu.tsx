@@ -9,9 +9,13 @@ import { StyleSheet, View } from "react-native";
 import CustomSwitch from "../custom-switch";
 import { ChangeMbtiModal } from "../modal/change-mbti.modal";
 import MatchingCard from "./matching-card";
+import { useTranslation } from "react-i18next";
+
+
 
 const MatchingMenu = () => {
   const showCommingSoon = useCommingSoon();
+  const { t } = useTranslation();
   const {
     filters,
     isLoading,
@@ -21,21 +25,21 @@ const MatchingMenu = () => {
   } = useMatchingFilters();
   console.log("toggle", filters?.avoidDepartment, filters?.avoidUniversity);
   if (error) {
-    return <Text>오류 발생: {error.message}</Text>;
+    return <Text>{t('features.mypage.error')}{error.message}</Text>;
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>매칭 설정</Text>
+      <Text style={styles.title}>{t('features.mypage.matching_setting')}</Text>
       <View style={styles.bar} />
       <View style={styles.contentContainer}>
         <MatchingCard
-          title="같은 학과 매칭 제외"
+          title={t('features.mypage.ex_same_class')}
           isOn={filters?.avoidDepartment || false}
           toggle={toggleAvoidDepartment}
         />
         <MatchingCard
-          title="같은 학교 매칭 제외"
+          title={t('features.mypage.ex_same_school')}
           isOn={filters?.avoidUniversity || false}
           toggle={toggleAvoidUniversity}
         />
