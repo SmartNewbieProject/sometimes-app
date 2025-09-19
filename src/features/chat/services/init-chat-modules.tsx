@@ -3,14 +3,18 @@ import { optimisticDataManager } from "./optimistic-data-manager";
 import { queryCacheManager } from "./query-cache-manager";
 import { socketConnectionManager } from "./socket-event-manager";
 
-let isInitialized = false;
+const globalWithChat = global as typeof global & {
+  isChatInitialized?: boolean;
+};
 
 export function initializeChatModules() {
-  if (isInitialized) return;
+  if (globalWithChat.isChatInitialized) {
+    return;
+  }
 
   socketConnectionManager.initialize();
   optimisticDataManager.initialize();
   queryCacheManager.initialize(queryClient);
 
-  isInitialized = true;
+  globalWithChat.isChatInitialized = true;
 }
