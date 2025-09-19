@@ -176,6 +176,41 @@ class QueryCacheManager {
   }
 
   private addReceivedMessageToCache(chatRoomId: string, message: Chat) {
+    this.queryClient?.setQueryData(
+      ["chat-list", chatRoomId],
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      (oldData: any) => {
+        if (!oldData) return oldData;
+
+        const messageExists = oldData.pages.some(
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          (page: any) =>
+            page.messages.some((msg: Chat) => msg.id === message.id)
+        );
+        if (messageExists) return oldData;
+
+        const updatedPages = oldData.pages.map(
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          (page: any, index: number) => {
+            if (index === 0) {
+              return {
+                ...page,
+                messages: [message, ...page.messages],
+              };
+            }
+            return page;
+          }
+        );
+        return {
+          ...oldData,
+          pages: updatedPages,
+        };
+      }
+    );
+    this.queryClient?.invalidateQueries({
+      queryKey: ["chat-list", chatRoomId],
+    });
+
     if (!chatRoomId || !message) {
       console.warn("Invalid chat message received");
       return;

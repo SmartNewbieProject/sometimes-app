@@ -126,7 +126,7 @@ class SocketConnectionManager {
 					clearTimeout(timeout);
 					if (response?.success) {
 						chatEventBus.emit({
-							type: 'MESSAGE_SEND_SUCCESS',
+							type: 'IMQGE_UPLOAD_SUCCESS',
 							payload: {
 								success: true,
 								serverMessage: response.serverMessage,
@@ -190,7 +190,6 @@ class SocketConnectionManager {
 		this.socket.on('connect', () => chatEventBus.emit({ type: 'SOCKET_CONNECTED', payload: {} }));
 		this.socket.on('disconnect', (reason) => {
 			chatEventBus.emit({ type: 'SOCKET_DISCONNECTED', payload: { reason } });
-			chatEventBus.emit({ type: 'CONNECTION_REQUESTED', payload: { url, token } });
 		});
 		this.socket.on('newMessage', (chat) =>
 			chatEventBus.emit({ type: 'MESSAGE_RECEIVED', payload: chat }),
