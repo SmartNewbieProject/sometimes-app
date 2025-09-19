@@ -6,16 +6,115 @@
   },
   "ui": {
     "dating_style": {
-      "title_1": "あなたに一番合う",
+      "title_1": "あなたにぴったりの",
       "title_2": "恋愛スタイルは何ですか？",
-      "loading": "恋愛スタイルのオプションを読み込み中です",
-      "next_count": "あと {count} 個！"
+      "loading": "恋愛スタイルのオプションを読み込み中…",
+      "next_count": "あと{count}個選んでください！",
+      "next": "次へ"
+    },
+    "drinking": {
+      "tooltip_0_title": "まったく飲まない",
+      "tooltip_0_desc_1": "お酒を全く飲まない方のための選択肢です。",
+      "tooltip_0_desc_2": "お酒の席を楽しめない方や、",
+      "tooltip_0_desc_3": "健康上の理由などで避ける場合に該当します。",
+      "tooltip_1_title": "たまに飲む",
+      "tooltip_1_desc_1": "特別な日や雰囲気を楽しむために軽く1〜2杯飲む方の選択肢です。",
+      "tooltip_1_desc_2": "お酒は楽しむけど頻繁には飲まない場合に該当します。",
+      "tooltip_2_title": "ほどほどに飲む",
+      "tooltip_2_desc_1": "週1〜2回程度お酒の席を楽しむ方の選択肢です。",
+      "tooltip_2_desc_2": "お酒を楽しみ、翌日に影響がない程度に飲む場合に該当します。",
+      "tooltip_3_title": "よく飲む",
+      "tooltip_3_desc_1": "週3回以上お酒の席を楽しむ方の選択肢です。",
+      "tooltip_3_desc_2": "お酒の席が好きで、いろいろなお酒を楽しむ場合に該当します。",
+      "tooltip_4_title": "毎日飲む",
+      "tooltip_4_desc_1": "ほぼ毎日お酒を飲む方の選択肢です。",
+      "tooltip_4_desc_2": "お酒が日常生活の一部であり、楽しむ時間を大切にする場合に該当します。",
+      "title_1": "お酒の席はどのくらい楽しみますか？",
+      "title_2": "正直に教えてください！",
+      "loading": "飲酒嗜好のオプションを読み込み中…",
+      "option_not_drink_at_all": "まったく飲まない",
+      "option_not_drink": "飲まない"
+    },
+    "entry": {
+      "modal_title": "前のステップに戻りますか？",
+      "modal_desc_1": "前のステップに戻ると、これまで入力した情報は",
+      "modal_desc_2": "保存されません。{name}さんの情報が失われます。",
+      "modal_primary_button": "続ける",
+      "modal_secondary_button": "前のステップに戻る",
+      "match_title_1": "自分にぴったりの理想の相手を見つけるために",
+      "match_title_2": "いくつか質問に答えてください！",
+      "match_desc_1": "正直に答えるほど、より正確に理想のタイプを見つけられます。",
+      "match_desc_2": "これからSometimeが{name}さんの理想のタイプを探します。",
+      "prev_button": "前へ",
+      "next_button": "次へ"
+    },
+    "interest": {
+      "more": "あと{count}個選んでください！",
+      "next": "次へ",
+      "title_1": "どんなことに興味がありますか？",
+      "title_2": "最低3つ以上選んでください！",
+      "loading": "興味のオプションを読み込み中…"
+    },
+    "mbti": {
+      "title": "あなたのMBTIは何ですか？"
+    },
+    "military": {
+      "title": "兵役経験を教えてください",
+      "empty_form": "すべての情報を入力してください。",
+      "loading": "兵役経験のオプションを読み込み中…"
+    },
+    "personality": {
+      "max_3": "最大3つまで選択可能！",
+      "next": "次へ",
+      "title_1": "あなたはどんな性格ですか？",
+      "title_2": "最大3つまで選択してください！",
+      "loading": "性格オプションを読み込み中…"
+    },
+    "smoking": {
+      "tooltip_0_title": "非喫煙者",
+      "tooltip_0_desc_1": "タバコを全く吸わない方の選択肢です。",
+      "tooltip_0_desc_2": "煙が苦手だったり、",
+      "tooltip_0_desc_3": "健康上の理由で吸わない場合に該当します。",
+      "tooltip_1_title": "たまに吸う",
+      "tooltip_1_desc_1": "たまにタバコを吸う方の選択肢です（例：お酒の席でのみ）。",
+      "tooltip_2_title": "喫煙者",
+      "tooltip_2_desc_1": "日常的にタバコを吸う方の選択肢です。",
+      "title": "喫煙習慣を教えてください",
+      "loading": "喫煙オプションを読み込み中…"
+    },
+    "tattoo": {
+      "tooltip_0_title": "タトゥーなし",
+      "tooltip_0_desc_1": "タトゥーがない方の選択肢です。",
+      "tooltip_0_desc_2": "清潔感のあるイメージを好む場合や、タトゥーに抵抗がない場合に該当します。",
+      "tooltip_1_title": "小さなタトゥー",
+      "tooltip_1_desc_1": "小さなタトゥーがある方の選択肢です。",
+      "tooltip_1_desc_2": "ファッションや意味のある小さなタトゥーを好む場合、",
+      "tooltip_1_desc_3": "目立たない場所にある場合に該当します。",
+      "tooltip_2_title": "大きなタトゥー",
+      "tooltip_2_desc_1": "大きなタトゥーがある方の選択肢です。",
+      "tooltip_2_desc_2": "自己表現の手段としてタトゥーを重視する場合、",
+      "tooltip_2_desc_3": "目立つ場所にある場合に該当します。",
+      "title": "タトゥーの有無を教えてください",
+      "empty_form": "すべての情報を入力してください。",
+      "loading": "タトゥーオプションを読み込み中…"
     },
     "done": {
-      "title_1": "あなたの情報を確認しました",
+      "title_1": "情報を確認しました",
       "title_2": "さあ、ときめく出会いを始めましょう",
-      "desc": "SOMETIMEが {name} さんの理想の相手を見つけます",
+      "desc": "Sometimeが{name}さんの理想のタイプを探します",
       "button": "理想の相手を探しに行く →"
+    },
+    "enums": {
+      "preference_keys": {
+        "drinking": "飲酒嗜好",
+        "smoking": "喫煙嗜好",
+        "interest": "興味・関心",
+        "dating_style": "恋愛スタイル",
+        "mbti": "MBTIタイプ",
+        "military_status": "兵役経験",
+        "personality": "性格",
+        "tattoo": "タトゥー嗜好"
+      }
     }
   }
 }

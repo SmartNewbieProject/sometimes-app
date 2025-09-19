@@ -16,7 +16,9 @@
         "ok": "괜찮아요",
         "start_chat": "대화 시작하기",
         "yes_try": "네, 해볼래요",
-        "not_a_match": "인연이 아니었나봐요"
+        "not_a_match": "인연이 아니었나봐요",
+        "confirm": "확인",
+        "close": "닫기"
       },
       "modal_texts": {
         "start_instagram_title_line1": "마음에 드는 이성과",
@@ -27,6 +29,14 @@
         "bye_subline": "괜찮아요 더 멋진 만남이 곧 찾아올 거예요."
       },
       "withdrawn_text": "서비스를 탈퇴한 유저에요"
+    }
+  },
+  "apps": {
+    "post_box": {
+      "age_display": "만 {age}세",
+      "buttons": {
+        "no": "아니요"
+      }
     }
   }
 }

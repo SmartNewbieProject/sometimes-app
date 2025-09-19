@@ -1,32 +1,42 @@
 {
   "ui": {
-    "i_liked_loading": "送ったサムリストを読み込んでいます！",
-    "liked_me_loading": "届いたサムリストを読み込んでいます！",
+    "i_liked_loading": "送ったサムリストを読み込み中…",
+    "liked_me_loading": "届いたサムリストを読み込み中…",
     "header": {
-      "title": "サムメールボックス"
+      "title": "サムボックス"
     },
     "card": {
       "status_messages": {
-        "liked_me_relative": "{time} にいいねしました",
+        "liked_me_relative": "{time} にいいねされました",
         "mutual_like": "お互いにいいねしました！",
         "rejected": "相手に拒否されました",
-        "waiting_response": "相手の返事を待っています"
+        "waiting_response": "相手の返信を待っています"
       },
       "buttons": {
-        "ok": "大丈夫です",
+        "ok": "OK",
         "start_chat": "チャットを始める",
         "yes_try": "はい、やってみます",
-        "not_a_match": "ご縁がなかったようです"
+        "not_a_match": "ご縁がなかったようです",
+        "confirm": "確認",
+        "close": "閉じる"
       },
       "modal_texts": {
         "start_instagram_title_line1": "気になる相手と",
         "start_instagram_title_line2": "会話を始めてみませんか？",
-        "start_instagram_subline1": "インスタを通して",
-        "start_instagram_subline2": "自然に会話を始めましょう",
+        "start_instagram_subline1": "Instagramを通じて",
+        "start_instagram_subline2": "自然に会話をスタートできます",
         "bye_title": "今回はご縁がありませんでした",
-        "bye_subline": "大丈夫です、もっと素敵な出会いがすぐに訪れますよ。"
+        "bye_subline": "大丈夫、もっと素敵な出会いがすぐに訪れます。"
       },
-      "withdrawn_text": "サービスを退会したユーザーです"
+      "withdrawn_text": "退会済みユーザーです"
+    }
+  },
+  "apps": {
+    "post_box": {
+      "age_display": "満 {age}歳",
+      "buttons": {
+        "no": "いいえ"
+      }
     }
   }
 }

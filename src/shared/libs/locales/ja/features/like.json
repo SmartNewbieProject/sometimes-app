@@ -1,24 +1,28 @@
 {
   "ui": {
     "none_like_banner": {
-      "title_female": "「いいね！」を送ってみましたか？",
-      "title_male": "ちょっと「プロフィール」を見てみませんか？",
-      "description_female_part1": "気になる相手に「いいね！」を送って、",
+      "title_female": "「いいね」を送ってみましたか？",
+      "title_male": "まずはプロフィールをチェックしてみませんか？",
+      "description_female_part1": "気になる相手に「いいね」を送り、",
       "description_female_part2": "ときめきをシェアしましょう！",
-      "description_male_part1": "趣味や関心を追加して共通点を見つけ、",
-      "description_male_part2": "自分だけの魅力をアピールしてみましょう！",
+      "description_male_part1": "プロフィールや関心を追加して共通点を見つけ、",
+      "description_male_part2": "自分の魅力をアピールしてみましょう！",
       "cta_locked": ""
     },
     "like_button": {
       "modal": {
-        "title_line1": "気になる異性に",
-        "title_line2_male": "ビー玉{cost}個で気持ちを伝えますか？",
-        "title_line2_default": "気持ちを伝えますか？",
-        "body_line1": "簡単に関心を示して、",
+        "title_line1": "気になる相手に",
+        "title_line2_male": "ジェム{cost}個で関心を伝えますか？",
+        "title_line2_default": "関心を伝えますか？",
+        "body_line1": "簡単に気持ちを伝えて、",
         "body_line2": "次のステップへ自然に進んでみましょう。",
-        "primary_button": "はい、やってみます"
+        "primary_button": "はい、やってみる"
       },
-      "button_label": "いいね！"
+      "button_label": "いいね"
+    },
+    "like_collapse": {
+      "i_liked_title": "{name}さんが気になった人です",
+      "liked_me_title": "{name}さんに気にされました"
     }
   }
 }

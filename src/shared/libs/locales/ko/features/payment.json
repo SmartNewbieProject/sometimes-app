@@ -6,15 +6,16 @@
       },
       "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
       "payment_error_console": "결제 오류:",
-      "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:"
-    },
-    "complete": {
-      "processing_payment": "결제를 처리중입니다..."
+      "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:",
+      "failed_to_load_gem_products": "젬 상품을 불러오는데 실패했습니다.",
+      "store_name": "젬 상점",
+      "header_title": "구슬 스토어"
     },
     "rematch": {
       "rematch_ticket_name": "연인 매칭권",
       "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
-      "purchase_count_tracking": "Purchase_Count"
+      "purchase_count_tracking": "Purchase_Count",
+      "header_title": "매칭권"
     },
     "tickets": {
       "rematch": {
@@ -26,6 +27,54 @@
         "payment_error_modal": "결제 처리 중 오류가 발생했습니다.",
         "order_name_single": "연인 재매칭권",
         "order_name_multiple": "연인 재매칭권 x{productCount}"
+      }
+    },
+    "portone": {
+      "script_load_failure": "Portone(아임포트) 스크립트 로드 실패",
+      "payment_failure": "실패"
+    },
+    "payment_modal": {
+      "purchase_complete_title": "❤️ 구매 완료",
+      "gem_purchase_complete": "구슬 {gemCount} 개 구매를 완료했어요",
+      "payment_complete_redirect": "결제가 완료되었으니 홈으로 이동할게요",
+      "confirm_redirect_button": "네 이동할게요",
+      "browse_more_button": "좀 더 구경할게요",
+      "rematch_ticket_purchase_complete": "연인 재매칭권 {productCount} 개 구매를 완료했어요",
+      "go_home_button": "홈으로 이동"
+    },
+    "payment_error": {
+      "processing_error_console": "결제 처리 오류:",
+      "processing_error_message": "결제 처리 중 오류가 발생했습니다."
+    },
+    "apple_gem_store": {
+      "server_verification_failed": "서버 검증 실패",
+      "gem_purchase_title": "구슬 구매",
+      "loading_gem_products": "젬 상품을 불러오는 중."
+    },
+    "apple_first_sale_card": {
+      "time_sale_title": "🔥 타임 특가! 지금만 이 가격!",
+      "cheer_message": "💜 썸타임이 첫 만남을 응원해요!",
+      "new_member_discount": "신규 회원 첫 구슬팩 특별 할인"
+    },
+    "first_sale_card": {
+      "product_name_6_gems": "최초 세일 6개"
+    },
+    "price_display": {
+      "total_prefix": "총",
+      "currency_suffix": "원",
+      "discount_suffix": "% 할인"
+    },
+    "web_payment": {
+      "missing_env_vars": "결제 환경변수가 누락되었습니다.",
+      "web_only_error": "웹 환경에서만 사용 가능합니다.",
+      "no_payment_result": "결제 결과를 받아오지 못했습니다.",
+      "processing_payment_wait": "결제를 처리 중입니다. 잠시만 기다려주세요."
+    }
+  },
+  "apps": {
+    "purchase": {
+      "complete": {
+        "processing_payment": "결제를 처리중입니다..."
       }
     }
   }

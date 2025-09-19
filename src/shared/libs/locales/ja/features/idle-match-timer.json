@@ -1,0 +1,13 @@
+{
+  "ui": {
+    "nav": {
+      "modal_title_1": "気になる相手を探すために",
+      "modal_title_2": "ジェム{count}個を使います！",
+      "modal_text_1": "性格やコミュニケーションスタイルに基づき、",
+      "modal_text_2": "自然につながれるご縁をおすすめします。",
+      "primary_button": "はい、やってみる",
+      "main_button": "もっと探す",
+      "complete_button": "Sometime送信完了！"
+    }
+  }
+}

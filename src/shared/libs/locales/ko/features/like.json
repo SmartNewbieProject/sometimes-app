@@ -19,6 +19,10 @@
         "primary_button": "네, 해볼래요"
       },
       "button_label": "좋아요"
+    },
+    "like_collapse": {
+      "i_liked_title": "{name}님께서 관심을 가지신 분들이에요",
+      "liked_me_title": "{name}님께 관심을 가졌어요"
     }
   }
 }
