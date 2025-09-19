@@ -1,4 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { eventBus } from "@/src/shared/libs/event-bus";
 import { Text } from "@/src/shared/ui";
 import { convertToJpeg, uriToBase64 } from "@/src/shared/utils/image";
 import ChatCameraIcon from "@assets/icons/chat-camera.svg";
@@ -8,18 +9,24 @@ import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { Alert, Linking, Pressable, StyleSheet, View } from "react-native";
+import { useAuth } from "../../auth";
 import { useChatEvent } from "../hooks/use-chat-event";
 import { useOptimisticChat } from "../hooks/use-optimistic-chat";
-import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
+import { chatEventBus } from "../services/chat-event-bus";
 import type { Chat } from "../types/chat";
+import { generateTempId } from "../utils/generate-temp-id";
 function ChatCamera() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { showModal, hideModal } = useModal();
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
   const { actions } = useChatEvent();
-  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
+  const {
+    addOptimisticMessage,
+    replaceOptimisticMessage,
+    markMessageAsFailed,
+  } = useOptimisticChat({ chatRoomId: id });
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -60,26 +67,16 @@ function ChatCamera() {
               return;
             }
 
-            try {
-              const { optimisticMessage, promise } = await actions.uploadImage({
+            chatEventBus.emit({
+              type: "IMAGE_UPLOAD_REQUESTED",
+              payload: {
                 to: partner.partnerId,
                 chatRoomId: id,
                 senderId: user.id,
-                file: imageUri
-              });
-
-              addOptimisticMessage(optimisticMessage);
-              hideModal();
-              const result = await promise;
-              if (result.success && result.serverMessage) {
-                replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
-              } else {
-                markMessageAsFailed(optimisticMessage.tempId!, result.error);
-              }
-            } catch (error) {
-              console.error('Camera upload error:', error);
-              hideModal();
-            }
+                file: imageUri,
+                tempId: generateTempId(),
+              },
+            });
           },
         },
         secondaryButton: {
