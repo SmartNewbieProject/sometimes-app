@@ -111,7 +111,13 @@ class SocketConnectionManager {
 
 			this.socket?.emit(
 				'uploadImage',
-				payload,
+				{
+					to: payload.to,
+					chatRoomId: payload.chatRoomId,
+					imageData: finalImageData,
+					mimeType,
+					tempId: payload.tempId,
+				},
 				(response: {
 					success: boolean;
 					serverMessage: Chat;
