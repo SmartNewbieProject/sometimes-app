@@ -2,13 +2,15 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { Header } from "@/src/shared/ui";
 import { usePathname, useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useMyInfoForm } from "../../my-info/hooks";
 
 function SettingHeader() {
+  const { t } = useTranslation();
   const router = useRouter();
   const path = usePathname();
-  const title = path === "/setting" ? "설정" : "계정관리";
+  const title = path === "/setting" ? t("features.setting.ui.header.title") : t("features.setting.ui.menu.account_management");
 
   return (
     <Header.Container className="items-center  ">

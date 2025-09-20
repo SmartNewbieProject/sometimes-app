@@ -5,7 +5,9 @@
       "subline": "가입 축하 선물로\n특별한 선물을 준비했어요",
       "gem_reward_label": "구슬 10개",
       "reward_text": "를 드려요!",
-      "close_hint": "터치해서 닫기"
+      "close_hint": "터치해서 닫기",
+      "status_check_error": "환영 보상 상태 확인 오류:",
+      "receive_error": "환영 보상 수령 오류:"
     }
   }
 }

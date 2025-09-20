@@ -5,23 +5,26 @@
       "account_management": "アカウント管理",
       "logout": "ログアウト",
       "member_withdrawal": "退会"
+    },
+    "header": {
+      "title": "設定"
     }
   },
   "withdrawal": {
     "reason_partner": "パートナーが見つかりました",
-    "reason_matching": "マッチングが正確ではありません",
+    "reason_matching": "マッチングが正確ではない",
     "reason_privacy": "個人情報の保護が心配です",
     "reason_safety": "安全性に問題があります",
     "reason_technical": "技術的な問題があります",
     "reason_inactive": "サービスの利用が不便です",
-    "reason_dissatisfied": "サービスの満足度が低いです",
+    "reason_dissatisfied": "サービスに満足していません",
     "reason_other": "その他",
     "reason_select_error": "理由を選択してください",
     "modal_title": "またお会いしましょう",
-    "modal_desc_1": "退会が完了しました。",
-    "modal_desc_2": "またお会いできるのを楽しみにしています。",
+    "modal_desc_1": "退会手続きが完了しました。",
+    "modal_desc_2": "また次回お会いしましょう",
     "title": "またお会いしましょう",
-    "textarea_placeholder": "その他の理由を入力してください",
+    "textarea_placeholder": "その他の理由をご入力ください",
     "button_prev": "戻る",
     "button_next": "サービスを退会する"
   }

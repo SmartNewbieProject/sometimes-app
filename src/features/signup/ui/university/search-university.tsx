@@ -14,6 +14,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import { useWindowWidth } from "../../hooks";
 
 interface SearchUniversityProps {
@@ -25,6 +26,7 @@ function SearchUniversity({
   searchText,
   setSearchText,
 }: SearchUniversityProps) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   const animatedWidth = useSharedValue(32);
@@ -63,7 +65,7 @@ function SearchUniversity({
             className="outline-none"
             value={searchText}
             onChangeText={setSearchText}
-            placeholder="대학교 검색"
+            placeholder={t("features.signup.ui.university_search_placeholder")}
             placeholderTextColor="#999"
             style={styles.input}
             underlineColorAndroid="transparent"

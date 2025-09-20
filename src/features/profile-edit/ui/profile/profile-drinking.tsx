@@ -4,6 +4,7 @@ import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
 import React, { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -14,6 +15,7 @@ const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 function ProfileDrinking() {
   const { drinking, updateForm } = useMyInfoForm();
+  const { t } = useTranslation();
 
   const {
     data: preferencesArray = [
@@ -47,10 +49,10 @@ function ProfileDrinking() {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>음주 빈도</Text>
+      <Text style={styles.title}>{t("features.profile-edit.ui.profile.drinking.title")}</Text>
       <View style={styles.wrapper}>
         <Loading.Lottie
-          title="음주 여부를 불러오고 있어요"
+          title={t("features.profile-edit.ui.profile.drinking.loading")}
           loading={optionsLoading}
         >
           <StepSlider
@@ -66,8 +68,8 @@ function ProfileDrinking() {
             options={
               preferences?.options
                 .map((option) =>
-                  option.displayName === "전혀 안마시지 않음"
-                    ? { ...option, displayName: "전혀 마시지 않음" }
+                  option.displayName === t("features.profile-edit.ui.profile.drinking.not_drinking_at_all_old")
+                    ? { ...option, displayName: t("features.profile-edit.ui.profile.drinking.not_drinking_at_all") }
                     : option
                 )
                 .map((option) => ({

@@ -2,13 +2,13 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { Header } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useMyInfoForm } from "../../my-info/hooks";
 
 function ProfileEditHeader() {
   const router = useRouter();
-  const { clear } = useMyInfoForm();
-  const { showModal } = useModal();
+  const { t } = useTranslation();
 
   return (
     <Header.Container className="items-center  ">
@@ -16,17 +16,17 @@ function ProfileEditHeader() {
         <Pressable
           onPress={() => {
             showModal({
-              title: "수정 중인 내용이 있어요",
+              title: t("features.profile-edit.ui.header.modal_title"),
               children:
-                "지금 나가면 작성 중인 \n수정 내용이 모두 사라져요.\n정말 나가시겠어요?",
+                t("features.profile-edit.ui.header.modal_description"),
               primaryButton: {
-                text: "계속 수정하기",
+                text: t("features.profile-edit.ui.header.modal_primary_button"),
                 onClick: () => {
                   return;
                 },
               },
               secondaryButton: {
-                text: "나가기",
+                text: t("features.profile-edit.ui.header.modal_secondary_button"),
                 onClick: () => {
                   router.navigate("/my");
                   clear();
@@ -40,7 +40,7 @@ function ProfileEditHeader() {
         </Pressable>
       </Header.LeftContent>
       <Header.CenterContent>
-        <Text style={styles.headerTitle}>프로필 수정</Text>
+        <Text style={styles.headerTitle}>{t("features.profile-edit.ui.header.title")}</Text>
       </Header.CenterContent>
 
       <Header.RightContent>

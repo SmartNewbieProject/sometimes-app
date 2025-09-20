@@ -2,6 +2,7 @@ import { useAuth } from "@/src/features/auth";
 import ChangeProfileImageModal from "@/src/features/mypage/ui/modal/change-profile-image.modal";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { Modal, Text } from "react-native";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -10,6 +11,7 @@ import ProfileImageCard from "./profile-image-card";
 function ProfileImageSection() {
   const { profileDetails } = useAuth();
   const [isProfileImageOpen, setProfileOpen] = useState(false);
+  const { t } = useTranslation();
 
   const sortedPorifleImages = profileDetails?.profileImages.sort((a, b) => {
     if (a.isMain && !b.isMain) return -1;
@@ -26,7 +28,7 @@ function ProfileImageSection() {
   return (
     <>
       <View style={styles.container}>
-        <Text style={styles.title}>프로필 사진</Text>
+        <Text style={styles.title}>{t("features.profile-edit.ui.profile.image_section.title")}</Text>
         <ScrollView
           style={styles.cardContainer}
           horizontal={true}

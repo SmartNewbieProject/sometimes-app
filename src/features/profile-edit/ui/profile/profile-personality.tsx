@@ -4,9 +4,10 @@ import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import React from "react";
-
+import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 
+const { t } = useTranslation();
 const { hooks, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
@@ -41,7 +42,7 @@ function ProfilePersonality() {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>성격 유형</Text>
+        <Text style={styles.title}>{t("features.profile-edit.ui.profile.personality.title")}</Text>
         <StepIndicator
           length={3}
           step={personality?.length ?? 0}
@@ -53,7 +54,7 @@ function ProfilePersonality() {
 
       <View style={styles.bar} />
       <View style={styles.chipSelector}>
-        <Loading.Lottie title="성격 유형을 불러오고 있어요" loading={isLoading}>
+        <Loading.Lottie title={t("features.profile-edit.ui.profile.personality.loading")} loading={isLoading}>
           <ChipSelector
             value={personality}
             options={

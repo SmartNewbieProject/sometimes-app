@@ -4,6 +4,7 @@ import colors from "@/src/shared/constants/colors";
 import { Divider } from "@/src/shared/ui";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -13,6 +14,7 @@ const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 function ProfileInterest() {
   const { interestIds, updateForm } = useMyInfoForm();
+  const { t } = useTranslation();
   const {
     data: preferencesArray = [
       {
@@ -37,7 +39,7 @@ function ProfileInterest() {
     <View style={styles.container}>
       <View style={styles.indicatorContainer}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>관심사</Text>
+          <Text style={styles.title}>{t("features.profile-edit.ui.profile.interest.title")}</Text>
           <StepIndicator
             length={5}
             step={interestIds?.length ?? 0}
@@ -51,7 +53,7 @@ function ProfileInterest() {
       </View>
 
       <View className="flex-1 w-full flex ">
-        <Loading.Lottie title="관심사를 불러오고 있어요" loading={isLoading}>
+        <Loading.Lottie title={t("features.profile-edit.ui.profile.interest.loading")} loading={isLoading}>
           <ChipSelector
             value={interestIds}
             options={

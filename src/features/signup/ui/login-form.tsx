@@ -102,6 +102,7 @@ export default function LoginForm() {
   );
 }
 function KakaoLogin() {
+  const { t } = useTranslation();
   const [showWebView, setShowWebView] = useState(false);
 
   const KAKAO_CLIENT_ID = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY as string;
@@ -145,7 +146,7 @@ function KakaoLogin() {
             <KakaoLogo width={34} height={34} />
           </View>
           <View>
-            <Text className="text-[#00000085] text-[18px]">{i18n.t("features.signup.ui.login_form.kakao_login")}</Text>
+            <Text className="text-[#00000085] text-[18px]">{t("features.signup.ui.login_form.kakao_login")}</Text>
           </View>
         </Pressable>
       </View>

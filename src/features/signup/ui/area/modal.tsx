@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface AreaModalProps {
   open: "open" | "preOpen" | "close";
@@ -9,8 +10,9 @@ interface AreaModalProps {
 }
 
 function AreaModal({ open, area, description, isShow }: AreaModalProps) {
+  const { t } = useTranslation();
   const scaleAnim = useRef(new Animated.Value(0)).current;
-  const desc = description ?? "오픈 준비 중";
+  const desc = description ?? t("features.signup.ui.area.descriptions.coming_soon");
   const bgColor =
     open === "open" ? "#7A4AE2" : open === "preOpen" ? "#fff" : "#E5E7EB";
   const textColor =

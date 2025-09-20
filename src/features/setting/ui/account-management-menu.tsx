@@ -1,20 +1,22 @@
 import { useAuth } from "@/src/features/auth";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import Menu from "./menu";
 
 const AccountManagementMenu = () => {
+  const { t } = useTranslation();
   const { logout } = useAuth();
   const options = [
     {
-      text: "로그아웃",
+      text: t("features.setting.ui.menu.logout"),
       onClick: logout,
     },
     {
-      text: "회원 탈퇴",
+      text: t("features.setting.ui.menu.member_withdrawal"),
       onClick: () => router.navigate("/my/withdrawal"),
     },
   ];
-  return <Menu title="계정 관리" options={options} />;
+  return <Menu title={t("features.setting.ui.menu.account_management")} options={options} />;
 };
 
 export default AccountManagementMenu;

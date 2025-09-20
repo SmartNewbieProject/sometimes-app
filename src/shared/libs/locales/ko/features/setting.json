@@ -5,6 +5,9 @@
       "account_management": "계정 관리",
       "logout": "로그아웃",
       "member_withdrawal": "회원 탈퇴"
+    },
+    "header": {
+      "title": "설정"
     }
   },
   "withdrawal": {

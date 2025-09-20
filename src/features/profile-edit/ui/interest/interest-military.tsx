@@ -3,20 +3,14 @@ import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React, { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
-function InterestMilitary() {
-  const {
-    updateForm,
-    clear: _,
-    militaryPreference,
-    ...form
-  } = useInterestForm();
+  const { t } = useTranslation();
 
   const {
     data: preferencesArray = [{ typeName: "", options: [] }],
@@ -44,9 +38,9 @@ function InterestMilitary() {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>군필 선호도</Text>
+      <Text style={styles.title}>{t("features.profile-edit.ui.interest.military.title")}</Text>
       <View style={styles.wrapper}>
-        <Loading.Lottie title="옵션을 불러오고 있어요" loading={optionsLoading}>
+        <Loading.Lottie title={t("features.profile-edit.ui.interest.military.loading")} loading={optionsLoading}>
           <StepSlider
             key={`military-${currentIndex || "none"}`}
             min={0}

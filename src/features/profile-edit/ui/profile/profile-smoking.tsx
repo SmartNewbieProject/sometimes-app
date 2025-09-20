@@ -4,6 +4,7 @@ import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
 import React, { useEffect, useMemo } from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -12,6 +13,7 @@ const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 function ProfileSmoking() {
+  const { t } = useTranslation();
   const { updateForm, smoking, ...form } = useMyInfoForm();
   const {
     data: preferencesArray = [
@@ -46,10 +48,10 @@ function ProfileSmoking() {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>흡연 여부</Text>
+      <Text style={styles.title}>{t("features.profile-edit.ui.profile.smoking.title")}</Text>
       <View style={styles.wrapper}>
         <Loading.Lottie
-          title="흡연 여부를 불러오고 있어요"
+          title={t("features.profile-edit.ui.profile.smoking.loading")}
           loading={optionsLoading}
         >
           <StepSlider

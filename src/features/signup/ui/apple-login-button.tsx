@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { AppleLoginResponse, useAppleLogin } from "../queries/use-apple-login";
 
 declare global {
@@ -85,6 +86,7 @@ interface BackendResponse {
 }
 
 const AppleLoginButton: React.FC = () => {
+  const { t } = useTranslation();
   const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
   const { setValue: setLoginType } = useStorage<string | null>({
     key: "loginType",
@@ -247,7 +249,7 @@ const AppleLoginButton: React.FC = () => {
     if (!isAppleJSLoaded) {
       return (
         <View style={styles.loadingContainer}>
-          <Text>Apple 로그인 준비 중...</Text>
+          <Text>{t("features.signup.ui.login_form.apple_login_preparing")}</Text>
         </View>
       );
     }
@@ -261,7 +263,7 @@ const AppleLoginButton: React.FC = () => {
         >
           <Text style={styles.appleLogo}></Text>
           <View>
-            <Text className="text-[#fff] text-[18px]">Apple 로그인</Text>
+            <Text className="text-[#fff] text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
           </View>
         </Pressable>
       </View>
@@ -278,9 +280,9 @@ const AppleLoginButton: React.FC = () => {
             disabled={isLoading}
             className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !containerh-[60px] !bg-[#000] border  !border-[#4D4D4D]"
           >
-            <Text style={styles.appleLogo}></Text>
+            <Text style={styles.appleLogo}></r
             <View>
-              <Text className="text-[#fff] text-[18px]">Apple 로그인</Text>
+              <Text className="text-[#fff] text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
             </View>
           </Pressable>
         </View>

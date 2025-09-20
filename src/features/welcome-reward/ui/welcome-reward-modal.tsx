@@ -17,7 +17,7 @@ import Animated, {
   Easing,
   withSpring,
 } from "react-native-reanimated";
-
+import { useTranslation } from "react-i18next";
 
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -31,6 +31,7 @@ const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
   visible,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const modalOpacity = useSharedValue(0);
   const mihoScale = useSharedValue(0);
   const speechBubbleScale = useSharedValue(0);
@@ -105,22 +106,20 @@ const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
         <Animated.View style={[styles.container, speechBubbleAnimatedStyle]}>
           {/* 말풍선 */}
           <TouchableWithoutFeedback onPress={handleClose}>
-            <View style={styles.speechBubbleContainer}>
-              <View style={styles.speechBubble}>
+            <View style={styles.speechBubble}>
                 <Text style={styles.speechText}>
-                  환영해요! 🎉
+                  {t("features.welcome-reward.ui.modal.title")}
                 </Text>
                 <Text style={styles.subText}>
-                  가입 축하 선물로{"\n"}
-                  특별한 선물을 준비했어요
+                  {t("features.welcome-reward.ui.modal.subline")}
                 </Text>
                 <View style={styles.gemReward}>
-                  <Text style={styles.gemText}>구슬 10개</Text>
-                  <Text style={styles.rewardText}>를 드려요!</Text>
+                  <Text style={styles.gemText}>{t("features.welcome-reward.ui.modal.gem_reward_label")}</Text>
+                  <Text style={styles.rewardText}>{t("features.welcome-reward.ui.modal.reward_text")}</Text>
                 </View>
                 <View style={styles.closeButtonContainer}>
                   <RNText style={styles.closeButtonText} onPress={handleClose}>
-                    터치해서 닫기
+                    {t("features.welcome-reward.ui.modal.close_hint")}
                   </RNText>
                 </View>
               </View>
