@@ -5,11 +5,12 @@ import { ChipSelector, StepIndicator } from "@/src/widgets";
 import { useTranslation } from 'react-i18next';
 import Interest from "@/src/features/interest";
 import { StyleSheet, Text, View } from "react-native";
-
+import React, { useEffect } from "react";
 const { hooks, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
-
+function InterestPersonality() {
+  const { personality, updateForm } = useInterestForm();
   const { t } = useTranslation();
   const {
     data: preferencesArray = [

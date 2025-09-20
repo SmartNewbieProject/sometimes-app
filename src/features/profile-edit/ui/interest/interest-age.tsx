@@ -12,6 +12,8 @@ const { ui, hooks, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
+function InterestAge() {
+  const { age, updateForm } = useInterestForm();
   const { t } = useTranslation();
   const {
     data: preferencesArray = [

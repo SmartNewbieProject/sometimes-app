@@ -5,11 +5,13 @@ import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
-
+import React, { useEffect } from "react";
 const { hooks, services, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
+function InterestTattoo() {
+  const { updateForm, clear: _, tattoo } = useInterestForm();
   const { t } = useTranslation();
   const {
     data: preferencesArray = [

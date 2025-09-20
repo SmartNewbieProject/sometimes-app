@@ -1,11 +1,13 @@
 import { useInterestForm } from "@/src/features/interest/hooks";
-
+import React from "react";
 import colors from "@/src/shared/constants/colors";
 import { Button } from "@/src/shared/ui";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
+function InterestGoodMbti() {
+  const { goodMbti, updateForm } = useInterestForm();
   const { t } = useTranslation();
   const onUpdateMbti = (mbti: string) => {
     updateForm("goodMbti", mbti);

@@ -1,6 +1,6 @@
 import Interest from "@/src/features/interest";
 import Loading from "@/src/features/loading";
-
+import React, {useEffect} from "react";
 import type { Preferences } from "@/src/features/interest/api";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
@@ -11,7 +11,8 @@ const { hooks, queries } = Interest;
 const { useInterestForm } = hooks;
 
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
-
+function InterestDrinking() {
+  const { drinking, updateForm } = useInterestForm();
   const { t } = useTranslation();
 
   const {

@@ -1,6 +1,7 @@
 import Interest from "@/src/features/interest";
 import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
+import React, { useEffect } from "react";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
@@ -9,7 +10,13 @@ import { StyleSheet, Text, View } from "react-native";
 const { hooks, services, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
-
+function InterestMilitary() {
+  const {
+    updateForm,
+    clear: _,
+    militaryPreference,
+    ...form
+  } = useInterestForm();
   const { t } = useTranslation();
 
   const {
