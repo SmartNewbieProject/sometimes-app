@@ -9,20 +9,23 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSignupProgress } from "../../hooks";
+import i18n from "@/src/shared/libs/i18n";
 
 const NUMBER_LIST = [
-  "25학번",
-  "24학번",
-  "23학번",
-  "22학번",
-  "21학번",
-  "20학번",
-  "19학번",
-  "직접 입력하기",
+  i18n.t("features.signup.ui.student_id_25"),
+  i18n.t("features.signup.ui.student_id_24"),
+  i18n.t("features.signup.ui.student_id_23"),
+  i18n.t("features.signup.ui.student_id_22"),
+  i18n.t("features.signup.ui.student_id_21"),
+  i18n.t("features.signup.ui.student_id_20"),
+  i18n.t("features.signup.ui.student_id_19"),
+  i18n.t("features.signup.ui.student_id_enter_directly"),
 ];
-
 function StudentIdSelector() {
+  const { t } = useTranslation();
+
   const inputRef = useRef<null | TextInput>(null);
   const {
     form: { studentNumber, grade },
@@ -78,7 +81,7 @@ function StudentIdSelector() {
   };
 
   const handleSelect = (number: string) => {
-    if (number === "직접 입력하기") {
+    if (number === t("features.signup.ui.student_id_enter_directly")) {
       setInput(true);
       inputRef?.current?.focus();
       closeOptions();
@@ -98,7 +101,7 @@ function StudentIdSelector() {
     updateForm({
       studentNumber: number,
       ...(grade === undefined && !Number.isNaN(calculatedGrade)
-        ? { grade: `${calculatedGrade}학년` }
+        ? { grade: `${calculatedGrade}${t("features.signup.ui.grade_suffix")}` }
         : {}),
     });
 
@@ -112,14 +115,14 @@ function StudentIdSelector() {
         {isInput ? (
           <TextInput
             ref={inputRef}
-            placeholder="학번 선택"
+            placeholder={t("features.signup.ui.student_id_select_placeholder")}
             value={studentNumber}
             onChangeText={(text: string) => updateForm({ studentNumber: text })}
             style={[styles.selectorText, { maxWidth: 60 }]}
           />
         ) : (
           <Text style={styles.selectorText}>
-            {studentNumber ?? "학번 선택"}
+            {studentNumber ?? t("features.signup.ui.student_id_select_placeholder")}
           </Text>
         )}
         <View style={styles.checkBox}>

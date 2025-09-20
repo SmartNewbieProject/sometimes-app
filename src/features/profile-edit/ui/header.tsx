@@ -8,6 +8,8 @@ import { useMyInfoForm } from "../../my-info/hooks";
 
 function ProfileEditHeader() {
   const router = useRouter();
+  const { clear } = useMyInfoForm();
+  const { showModal } = useModal();
   const { t } = useTranslation();
 
   return (
