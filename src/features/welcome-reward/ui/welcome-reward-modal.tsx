@@ -106,6 +106,7 @@ const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
         <Animated.View style={[styles.container, speechBubbleAnimatedStyle]}>
           {/* 말풍선 */}
           <TouchableWithoutFeedback onPress={handleClose}>
+            <View style={styles.speechBubbleContainer}>
             <View style={styles.speechBubble}>
                 <Text style={styles.speechText}>
                   {t("features.welcome-reward.ui.modal.title")}
