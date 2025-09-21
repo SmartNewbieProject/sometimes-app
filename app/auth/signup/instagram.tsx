@@ -1,5 +1,6 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { useOverlay } from "@/src/shared/hooks/use-overlay";
 import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
@@ -26,8 +27,7 @@ const {
   apis,
   useSignupAnalytics,
 } = Signup;
-
-export default function SignupInstagram() {
+function SignupInstagram() {
   const { updateForm, form } = useSignupProgress();
   const [instagramId, setInstagramId] = useState("");
   const insets = useSafeAreaInsets();
@@ -202,6 +202,8 @@ export default function SignupInstagram() {
     </>
   );
 }
+
+export default withSignupValidation(SignupInstagram, SignupSteps.INSTAGRAM);
 
 const styles = StyleSheet.create({
   title: {
