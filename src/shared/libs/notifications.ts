@@ -1,5 +1,5 @@
 import * as Notifications from 'expo-notifications';
-import *n as Device from 'expo-device';
+import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import type { Router } from 'expo-router';
