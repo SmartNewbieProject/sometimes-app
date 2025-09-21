@@ -1,9 +1,10 @@
 {
   "image_selector": {
     "permission_needed_title": "権限が必要です",
-    "gallery_permission_message": "写真を取得するには権限が必要です。",
-    "open_settings": "設定を開く",
-    "unsupported_format": "画像形式は jpeg、jpg、png のみ利用できます。",
-    "camera_permission_message": "カメラを使用するには権限が必要です。"
+    "gallery_permission_message": "写真を選択するにはアクセス権限が必要です。",
+    "camera_permission_message": "カメラを使用するにはアクセス権限が必要です。",
+    "open_settings_button": "設定を開く",
+    "close_button": "閉じる",
+    "invalid_image_format": "画像形式は jpeg / jpg / png のみ対応しています。"
   }
 }

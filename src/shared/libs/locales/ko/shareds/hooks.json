@@ -31,6 +31,49 @@
   "use_cashable_modal": {
     "title": "💔 구슬이 부족해요!",
     "description": "이 기능을 사용하려면 구슬이 더 필요해요",
-    "charge_button": "구슬 충전"
+    "charge_button": "구슬 충전",
+    "cancel_button": "아니요"
+  },
+  "day": {
+    "date_not_exist": "날짜가 존재하지 않습니다.",
+    "just_now": "방금 전",
+    "seconds_ago": "{seconds}초 전",
+    "minutes_ago": "{minutes}분 전",
+    "hours_ago": "{hours}시간 전",
+    "days_ago": "{days}일 전"
+  },
+  "environment": {
+    "current_environment": "현재 환경: {env}"
+  },
+  "file": {
+    "data_url_to_blob_error": "dataURLtoBlob should not be used in React Native",
+    "create_file_from_blob_error": "createFileFromBlob should not be used in React Native"
+  },
+  "gps": {
+    "permission_denied": "위치 권한이 거부되었습니다.",
+    "cannot_get_location": "위치 정보를 가져올 수 없습니다:"
+  },
+  "notifications": {
+    "channel_community_name": "커뮤니티 알림",
+    "channel_community_description": "댓글, 좋아요 등 커뮤니티 활동 알림",
+    "error_eas_project_id_not_set": "EAS 프로젝트 ID가 설정되지 않았습니다.",
+    "warning_push_only_on_device": "실제 기기에서만 푸시 알림을 사용할 수 있습니다.",
+    "warning_permission_denied": "푸시 알림 권한이 거부되었습니다.",
+    "success_token_registration": "푸시 토큰 등록 성공:",
+    "error_token_registration": "푸시 토큰 등록 실패:",
+    "success_token_backend_registration": "푸시 토큰 백엔드 등록 성공",
+    "error_token_lookup": "푸시 토큰 조회 실패:",
+    "warning_show_modal_not_provided": "showModal 함수가 제공되지 않아 푸시 토큰 등록을 건너뜁니다.",
+    "modal_title_allow_notifications": "알림 허용",
+    "modal_body_allow_notifications": "매칭 결과, 댓글 등의 알림을 받으시겠습니까?",
+    "button_allow": "허용",
+    "button_later": "나중에",
+    "error_checking_token_registration": "푸시 토큰 등록 확인 중 오류:"
+  },
+  "parser": {
+    "gender": {
+      "female": "여성",
+      "male": "남성"
+    }
   }
 }
