@@ -15,14 +15,7 @@ const SystemMessage = ({ item }: { item: Chat }) => {
     <View style={styles.dateDividerContainer}>
       <Text style={[styles.dateText, { fontSize: 14 }]}>안내</Text>
       <Text style={[styles.dateText, { paddingVertical: 2 }]}>
-        상대방이 채팅방을 나갔어요.
-      </Text>
-      <Text style={[styles.dateText, { paddingVertical: 2 }]}>
-        서로의 선택을 존중하며 대화를 마무리할게요.
-      </Text>
-
-      <Text style={[styles.dateText, { paddingVertical: 2 }]}>
-        새로운 인연을 만나보는 건 어떨까요?
+        {item.content}
       </Text>
     </View>
   );

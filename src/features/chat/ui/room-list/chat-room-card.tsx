@@ -23,7 +23,6 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
   const buttonWidth = screenWidth * 0.25;
   const router = useRouter();
   const threshold = buttonWidth / 2;
-  console.log("items", item);
   const translateX = useRef(new Animated.Value(0)).current;
   const offsetX = useRef(0);
   const pan = useRef(

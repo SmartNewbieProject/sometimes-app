@@ -7,8 +7,7 @@ type ModalHook = (options: ModalOptions) => void;
 type ErrorModalHook = (message: string, type: 'announcement' | 'error') => void;
 
 interface ApiErrorResponse {
-	statusCode: number;
-	message: string;
+	status: number;
 	error: string;
 }
 
@@ -20,5 +19,5 @@ interface HandlerContext {
 }
 
 export interface ErrorHandler {
-	handle: (error: AxiosError<ApiErrorResponse>, context: HandlerContext) => void;
+	handle: (error: ApiErrorResponse, context: HandlerContext) => void;
 }
