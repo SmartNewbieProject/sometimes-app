@@ -1,4 +1,5 @@
 import * as Location from 'expo-location';
+import i18n from "@/src/shared/libs/i18n";
 
 const BUSAN = { lat: 35.1796, lon: 129.0756 };
 const DAEJEON = { lat: 36.3504, lon: 127.3845 };
@@ -22,7 +23,7 @@ export const getNearestCity = async (): Promise<'부산' | '대전' | null> => {
 	try {
 		const { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== 'granted') {
-			console.error('위치 권한이 거부되었습니다.');
+			console.error(i18n.t('shareds.hooks.gps.permission_denied'));
 			return null;
 		}
 
@@ -37,7 +38,7 @@ export const getNearestCity = async (): Promise<'부산' | '대전' | null> => {
 
 		return distToBusan < distToDaejeon ? '부산' : '대전';
 	} catch (error) {
-		console.error('위치 정보를 가져올 수 없습니다:', error);
+		console.error(i18n.t('shareds.hooks.gps.cannot_get_location'), error);
 		return null;
 	}
 };

@@ -13,6 +13,7 @@ import { useState } from "react";
 import { type UseControllerProps, useController } from "react-hook-form";
 import { Alert, Linking, Platform, Pressable } from "react-native";
 import { FormContentSelector } from "./content-selector";
+import i18n from "@/src/shared/libs/i18n";
 
 interface FormImageSelectorProps
   extends UseControllerProps,
@@ -46,7 +47,7 @@ export function FormImageSelector({
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("권한 필요", "사진을 가져오기 위해서는 권한이 필요합니다.", [
+      Alert.alert(i18n.t('widgets.form.image_selector.permission_needed_title'), i18n.t('widgets.form.image_selector.gallery_permission_message'), [
         { text: "설정 열기", onPress: () => Linking.openSettings() },
         {
           text: "닫기",

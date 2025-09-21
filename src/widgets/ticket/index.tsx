@@ -4,6 +4,7 @@ import { createContext, useContext } from "react";
 import { Image } from "expo-image";
 import { calculateDiscount, toKRW } from "./utils";
 import colors from "@/src/shared/constants/colors";
+import i18n from "@/src/shared/libs/i18n";
 
 type Metadata = {
   totalPrice: number;
@@ -60,15 +61,15 @@ const TicketComponent = ({ count, hot, discount, onOpenPayment }: TicketDetails)
       />
       <View style={styles.details}>
         <Text textColor="black" size="13" weight="semibold">{name}</Text>
-        <Text textColor="black" size="13" weight="semibold">{count}회권</Text>
+        <Text textColor="black" size="13" weight="semibold">{count}{i18n.t('widgets.ticket.ticket_unit')}</Text>
       </View>
 
       <View style={styles.price}>
         <View style={styles.sales}>
           {discount && (
             <>
-              <Text textColor="gray" className="text-[12px] line-through">{totalOriginPrice}원</Text>
-              <Text className="text-[12px]">{discount.toFixed(0)}% 할인</Text>
+              <Text textColor="gray" className="text-[12px] line-through">{totalOriginPrice}{i18n.t('widgets.ticket.currency_unit')}</Text>
+              <Text className="text-[12px]">{discount.toFixed(0)}{i18n.t('widgets.ticket.discount_suffix')}</Text>
             </>
           )}
         </View>
@@ -79,12 +80,12 @@ const TicketComponent = ({ count, hot, discount, onOpenPayment }: TicketDetails)
           style={{
             textAlign: 'right',
           }}
-        >{toKRW(discountedPrice)}원</Text>
+        >{toKRW(discountedPrice)}{i18n.t('widgets.ticket.currency_unit')}</Text>
       </View>
 
       <Show when={!!hot}>
         <View style={styles.hotCard}>
-          <Text textColor="white" size="13" weight="semibold">인기</Text>
+          <Text textColor="white" size="13" weight="semibold">{i18n.t('widgets.ticket.popular_badge')}</Text>
         </View>
       </Show>
     </TouchableOpacity>

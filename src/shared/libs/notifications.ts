@@ -1,9 +1,10 @@
 import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
+import *n as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import type { Router } from 'expo-router';
 import axiosClient from './axios';
+import i18n from "@/src/shared/libs/i18n";
 
 // 상수 정의
 const NOTIFICATION_CHANNELS = {
@@ -53,12 +54,12 @@ async function setupAndroidNotificationChannels(): Promise<void> {
       sound: 'default',
     }),
     Notifications.setNotificationChannelAsync(NOTIFICATION_CHANNELS.COMMUNITY, {
-      name: '커뮤니티 알림',
+      name: i18n.t('shareds.hooks.notifications.channel_community_name'),
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: VIBRATION_PATTERN,
       lightColor: LIGHT_COLOR,
       sound: 'default',
-      description: '댓글, 좋아요 등 커뮤니티 활동 알림',
+      description: i18n.t('shareds.hooks.notifications.channel_community_description'),
     }),
   ]);
 }
@@ -83,7 +84,7 @@ async function requestNotificationPermissionIfNeeded(): Promise<Notifications.Pe
 async function getExpoPushToken(): Promise<string | null> {
   const projectId = Constants.expoConfig?.extra?.eas?.projectId;
   if (!projectId) {
-    console.error('EAS 프로젝트 ID가 설정되지 않았습니다.');
+    console.error(i18n.t('shareds.hooks.notifications.error_eas_project_id_not_set'));
     return null;
   }
 
@@ -97,7 +98,7 @@ async function getExpoPushToken(): Promise<string | null> {
  */
 export async function registerForPushNotificationsAsync(): Promise<string | null> {
   if (!Device.isDevice) {
-    console.warn('실제 기기에서만 푸시 알림을 사용할 수 있습니다.');
+    console.warn(i18n.t('shareds.hooks.notifications.warning_push_only_on_device'));
     return null;
   }
 
@@ -106,7 +107,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
 
     const permission = await requestNotificationPermissionIfNeeded();
     if (permission !== 'granted') {
-      console.warn('푸시 알림 권한이 거부되었습니다.');
+      console.warn(i18n.t('shareds.hooks.notifications.warning_permission_denied'));
       return null;
     }
 
@@ -114,7 +115,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
     if (!token) return null;
 
     await registerPushToken(token);
-    console.log('푸시 토큰 등록 성공:', token);
+    console.log(i18n.t('shareds.hooks.notifications.success_token_registration'), token);
 
     return token;
   } catch (error) {
@@ -214,7 +215,7 @@ export async function ensurePushTokenRegistered(
             try {
               await registerForPushNotificationsAsync();
             } catch (error) {
-              console.error('푸시 토큰 등록 실패:', error);
+      console.error(i18n.t('shareds.hooks.notifications.error_token_registration'), error);
             }
           }
         },
