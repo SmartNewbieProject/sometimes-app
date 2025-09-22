@@ -45,8 +45,8 @@ function ChatRoomList() {
           }}
         >
           <Image
-            style={{ width: 260, height: 260, marginBottom: 20 }}
-            source={require("@assets/images/no_message.png")}
+            style={{ width: 216, height: 216, marginBottom: 20 }}
+            source={require("@assets/images/no-chat-miho.png")}
           />
           <Text style={styles.infoText}>아직 채팅을 시작하지 않았어요</Text>
           <Text style={styles.infoText}>
@@ -130,8 +130,9 @@ function ChatRoomList() {
 
 const styles = StyleSheet.create({
   infoText: {
-    color: "#353C46",
-    fontSize: 14,
+    color: "#E1D9FF",
+    fontSize: 18,
+    lineHeight: 23,
     marginTop: 4,
   },
   lockTitleText: {
