@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useAuth } from "../../auth";
-import { useGlobalChat } from "../hooks/use-global-chat";
 import { chatEventBus } from "../services/chat-event-bus";
 import { initializeChatModules } from "../services/init-chat-modules";
 

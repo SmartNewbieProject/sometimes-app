@@ -14,8 +14,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useAuth } from "../../auth";
-import { useChatEvent } from "../hooks/use-chat-event";
-import { useOptimisticChat } from "../hooks/use-optimistic-chat";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
@@ -36,12 +34,6 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   const [permissionGranted, setPermissionGranted] = useState(false);
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
-  const { actions } = useChatEvent();
-  const {
-    addOptimisticMessage,
-    replaceOptimisticMessage,
-    markMessageAsFailed,
-  } = useOptimisticChat({ chatRoomId: id });
 
   useEffect(() => {
     if (permissionGranted && photos.length === 0) {
@@ -159,16 +151,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
 
       hideModal();
     },
-    [
-      partner,
-      user,
-      id,
-      actions,
-      addOptimisticMessage,
-      replaceOptimisticMessage,
-      markMessageAsFailed,
-      hideModal,
-    ]
+    [partner, user, id, hideModal]
   );
 
   const renderItem = ({ item }: { item: MediaLibrary.Asset }) => {

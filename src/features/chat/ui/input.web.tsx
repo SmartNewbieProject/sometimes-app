@@ -10,9 +10,7 @@ import { type ChangeEvent, useRef, useState } from "react";
 import { Alert, Linking, Platform } from "react-native";
 import { useAuth } from "../../auth";
 import PhotoPickerModal from "../../mypage/ui/modal/image-modal";
-import { useChatEvent } from "../hooks/use-chat-event";
 import useKeyboardResizeEffect from "../hooks/use-keyboard-resize-effect";
-import { useOptimisticChat } from "../hooks/use-optimistic-chat";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
@@ -23,7 +21,6 @@ function WebChatInput() {
   const { data: roomDetail, isError } = useChatRoomDetail(id);
   const queryClient = useQueryClient();
   const { my: user } = useAuth();
-  const { actions } = useChatEvent();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
   const { showErrorModal } = useModal();

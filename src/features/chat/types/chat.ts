@@ -48,6 +48,7 @@ export interface ChatRoomList {
 	recentMessage: string;
 	profileImages: string;
 	recentDate: string;
+	paymentConfirm: boolean;
 }
 
 export interface ChatRoomListResponse {

@@ -19,11 +19,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useAuth } from "../../auth";
-import { useChatEvent } from "../hooks/use-chat-event";
-import { useOptimisticChat } from "../hooks/use-optimistic-chat";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { chatEventBus } from "../services/chat-event-bus";
-import type { Chat } from "../types/chat";
 import { generateTempId } from "../utils/generate-temp-id";
 
 interface ChatInputProps {
@@ -35,12 +32,6 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
-  const { actions } = useChatEvent();
-  const {
-    addOptimisticMessage,
-    replaceOptimisticMessage,
-    markMessageAsFailed,
-  } = useOptimisticChat({ chatRoomId: id });
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -92,16 +83,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
         tempId: generateTempId(),
       },
     });
-  }, [
-    chat,
-    partner,
-    user,
-    id,
-    actions,
-    addOptimisticMessage,
-    replaceOptimisticMessage,
-    markMessageAsFailed,
-  ]);
+  }, [chat, partner, user, id]);
 
   return (
     <Animated.View

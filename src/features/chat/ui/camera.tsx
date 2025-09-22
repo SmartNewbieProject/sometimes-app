@@ -10,23 +10,15 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { Alert, Linking, Pressable, StyleSheet, View } from "react-native";
 import { useAuth } from "../../auth";
-import { useChatEvent } from "../hooks/use-chat-event";
-import { useOptimisticChat } from "../hooks/use-optimistic-chat";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { chatEventBus } from "../services/chat-event-bus";
-import type { Chat } from "../types/chat";
 import { generateTempId } from "../utils/generate-temp-id";
 function ChatCamera() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { showModal, hideModal } = useModal();
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
-  const { actions } = useChatEvent();
-  const {
-    addOptimisticMessage,
-    replaceOptimisticMessage,
-    markMessageAsFailed,
-  } = useOptimisticChat({ chatRoomId: id });
+
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {

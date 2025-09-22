@@ -4,10 +4,7 @@ import { FlatList, Keyboard, View } from "react-native";
 
 import useChatList from "../queries/use-chat-list";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
-// ✨ 1. 의존성 변경: 필요한 훅과 서비스만 가져옵니다.
 import { chatEventBus } from "../services/chat-event-bus";
-
-// ⛔ 삭제: useChatEvent, useOptimisticChat 등 대부분의 훅이 필요 없어집니다.
 
 import { useChatStore } from "../store/chat-store";
 import type { Chat } from "../types/chat";
