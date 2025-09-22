@@ -1,7 +1,7 @@
 {
   "index": {
     "title": "SOMETIME",
-    "subtitle": "慣れた一日にときめきを一つ、",
+    "subtitle": "慣れた一日にときめきを一つ",
     "subtitle_2": "SOMETIMEで",
     "email": "メールアドレス",
     "email_placeholder": "メールアドレスを入力",
@@ -10,6 +10,6 @@
     "login": "ログイン",
     "register": "新規登録",
     "find_id": "IDを探す",
-    "find_password": "パスワードを探す"
+    "find_password": "パスワードを忘れた場合はこちら"
   }
 }

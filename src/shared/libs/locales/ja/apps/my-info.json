@@ -9,8 +9,8 @@
   "done": {
     "title_1": "プロフィールを確認しました",
     "title_2": "ここからはときめく出会いを始めましょう",
-    "desc": "Sometimeが{name}さんの理想の相手を見つけます",
-    "button": "理想の相手を探しに行く →"
+    "desc": "Sometimeが{name}さんの好みの相手を見つけます",
+    "button": "好みの相手を探しに行く →"
   },
   "drinking": {
     "tooltip_0_title": "全く飲まない",
@@ -19,7 +19,7 @@
     "tooltip_0_desc_3": "お酒に対してネガティブな考えを持つ人が好き",
     "tooltip_1_title": "ほとんど飲めない",
     "tooltip_1_desc_1": "学期に1〜2回の特別な場だけ",
-    "tooltip_1_desc_2": "ビール半杯でも顔が赤くなる程度",
+    "tooltip_1_desc_2": "ビール半分でも顔が赤くなる程度",
     "tooltip_2_title": "ほどほどに飲む",
     "tooltip_2_desc_1": "月2〜3回ほど友達やサークルで",
     "tooltip_2_desc_2": "焼酎1〜2杯くらいならOK",
@@ -48,7 +48,7 @@
     "match_title_1": "マッチングのために",
     "match_title_2": "あなたの情報が必要です！",
     "match_desc_1": "情報を正確に入力すればするほど",
-    "match_desc_2": "マッチング成功率が上がります",
+    "match_desc_2": "マッチング成功率がアップします",
     "prev_button": "戻る",
     "next_button": "次へ"
   },
