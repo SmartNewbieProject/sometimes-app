@@ -76,11 +76,11 @@ function ChatRoomList() {
         >
           <Image
             style={{ width: 260, height: 260, marginBottom: 20 }}
-            source={require("@assets/images/limit-age.png")}
+            source={require("@assets/images/no_message.png")}
           />
-          <Text style={styles.infoText}>아직 열린 채팅방이 없어요</Text>
+          <Text style={styles.infoText}>아직 채팅을 시작하지 않았어요</Text>
           <Text style={styles.infoText}>
-            서로 좋아요가 되면 대화가 시작돼요
+            좋아요를 보내 채팅을 시작해 보세요
           </Text>
         </View>
       </Show>
