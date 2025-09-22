@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSocketEventManager } from "../../hooks/use-socket-event-manager";
 import { useChatRoomList } from "../../queries/use-chat-room-list";
+import { chatEventBus } from "../../services/chat-event-bus";
+import { useChatStore } from "../../store/chat-store";
 import type { Chat } from "../../types/chat";
 import { updateChatRoomOnNewMessage } from "../../utils/update-chat-room-cache";
 import ChatSearch from "../chat-search";
@@ -21,8 +23,6 @@ function ChatRoomList() {
   const [keyword, setKeyword] = useState("");
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useChatRoomList();
-  const { subscribe } = useSocketEventManager();
-  const queryClient = useQueryClient();
   const chatRooms = data?.pages.flatMap((page) => page.chatRooms) ?? [];
 
   const sortedChatRooms = [...chatRooms].sort((a, b) => {
@@ -32,30 +32,6 @@ function ChatRoomList() {
   const filteredData = sortedChatRooms.filter((item) => {
     return item.nickName.includes(keyword);
   });
-
-  useEffect(() => {
-    const unsubscribe = subscribe("newMessage", (chat: Chat) => {
-      if (!chat.chatRoomId || !chat.content) {
-        console.warn("Invalid chat message received:", chat);
-        return;
-      }
-
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      queryClient.setQueryData(["chat-room"], (oldData: any) => {
-        if (!oldData) {
-          return oldData;
-        }
-
-        return updateChatRoomOnNewMessage(oldData, chat);
-      });
-
-      queryClient.invalidateQueries({ queryKey: ["chat-room"] });
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [subscribe, queryClient]);
 
   return (
     <ScrollView>

@@ -18,11 +18,13 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useAuth } from "../../auth";
 import { useChatEvent } from "../hooks/use-chat-event";
 import { useOptimisticChat } from "../hooks/use-optimistic-chat";
-import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
+import { chatEventBus } from "../services/chat-event-bus";
 import type { Chat } from "../types/chat";
+import { generateTempId } from "../utils/generate-temp-id";
 
 interface ChatInputProps {
   isPhotoClicked: boolean;
@@ -34,7 +36,11 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
   const { actions } = useChatEvent();
-  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
+  const {
+    addOptimisticMessage,
+    replaceOptimisticMessage,
+    markMessageAsFailed,
+  } = useOptimisticChat({ chatRoomId: id });
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -76,24 +82,26 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
     const messageContent = chat.trim();
     setChat("");
 
-    try {
-      const { optimisticMessage, promise } = actions.sendMessage({
-        chatRoomId: id,
-        content: messageContent,
+    chatEventBus.emit({
+      type: "MESSAGE_SEND_REQUESTED",
+      payload: {
         to: partner.partnerId,
+        chatRoomId: id,
         senderId: user.id,
-      });
-      addOptimisticMessage(optimisticMessage);
-      const result = await promise;
-      if (result.success && result.serverMessage) {
-        replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
-      } else {
-        markMessageAsFailed(optimisticMessage.tempId!, result.error);
-      }
-    } catch (error) {
-      console.error('Message send error:', error);
-    }
-  }, [chat, partner, user, id, actions, addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed]);
+        content: messageContent,
+        tempId: generateTempId(),
+      },
+    });
+  }, [
+    chat,
+    partner,
+    user,
+    id,
+    actions,
+    addOptimisticMessage,
+    replaceOptimisticMessage,
+    markMessageAsFailed,
+  ]);
 
   return (
     <Animated.View
