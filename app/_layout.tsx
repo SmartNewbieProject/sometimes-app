@@ -1,3 +1,4 @@
+import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
 import { Slot, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -11,9 +12,10 @@ import {
 } from "@/src/shared/libs/notifications";
 import * as Notifications from "expo-notifications";
 
+import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
+import LoggerContainer from "@/src/features/logger/ui/logger-container";
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import { VersionUpdateChecker } from "@/src/features/version-update";
-import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
 import { cn } from "@/src/shared/libs/cn";
@@ -179,29 +181,31 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryProvider>
-        <ModalProvider>
-          <GlobalChatProvider>
-            <PortoneProvider>
-              <View
-                className={cn(
-                  "flex-1 font-extralight",
-                  Platform.OS === "web" && "max-w-[468px] w-full self-center"
-                )}
-              >
-                <AnalyticsProvider>
-                  <RouteTracker>
-                    <>
-                      <Slot />
-                      <VersionUpdateChecker />
-                    </>
-                  </RouteTracker>
-                </AnalyticsProvider>
-              </View>
-            </PortoneProvider>
-          </GlobalChatProvider>
-        </ModalProvider>
-      </QueryProvider>
+      <LoggerContainer>
+        <QueryProvider>
+          <ModalProvider>
+            <GlobalChatProvider>
+              <PortoneProvider>
+                <View
+                  className={cn(
+                    "flex-1 font-extralight",
+                    Platform.OS === "web" && "max-w-[468px] w-full self-center"
+                  )}
+                >
+                  <AnalyticsProvider>
+                    <RouteTracker>
+                      <>
+                        <Slot />
+                        <VersionUpdateChecker />
+                      </>
+                    </RouteTracker>
+                  </AnalyticsProvider>
+                </View>
+              </PortoneProvider>
+            </GlobalChatProvider>
+          </ModalProvider>
+        </QueryProvider>
+      </LoggerContainer>
     </GestureHandlerRootView>
   );
 }
