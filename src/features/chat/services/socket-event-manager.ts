@@ -18,7 +18,6 @@ class SocketConnectionManager {
 			if (!this.socket) {
 				return reject(new Error('Socket not connected'));
 			}
-			console.log('check 1', payload);
 			this.socket.emit(
 				'uploadImage',
 				payload,

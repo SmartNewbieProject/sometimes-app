@@ -22,6 +22,7 @@ export interface ChatRoomDetail {
 	roomActivation: boolean;
 	createdAt: string;
 	hasLeft?: boolean;
+	snooze: boolean;
 	partner: Partner;
 }
 
@@ -32,9 +33,11 @@ export interface UploadImageOptions {
 	file: RNFileLike | { uri: string };
 }
 
-interface Partner {
+export interface Partner {
 	mainProfileImageUrl: string;
 	name: string;
+	id: string;
+	age: number;
 	university: string;
 	department: string;
 }

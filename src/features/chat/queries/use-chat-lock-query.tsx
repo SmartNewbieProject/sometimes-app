@@ -18,12 +18,12 @@ function useChatRockQuery(chatRoomId: string) {
     onError: (error: any) => {
       console.error("채팅방 결제 실패:", error);
 
-      if (!error.response) {
+      if (!error) {
         showErrorModal("네트워크 연결을 확인해주세요.", "announcement");
         return;
       }
 
-      const status = error.response.status;
+      const status = error.status;
       const handler =
         chatEnterErrorHandlers[status] || chatEnterErrorHandlers.default;
 

@@ -50,3 +50,15 @@ export const enterChatRoom = ({
 }): Promise<{ paymentConfirm: boolean }> => {
 	return axiosClient.post(`/chat/rooms/${chatRoomId}/enter`, {});
 };
+
+export const snoozeChatRoom = ({
+	snooze,
+	chatRoomId,
+}: {
+	snooze: boolean;
+	chatRoomId: string;
+}): Promise<{ message: string }> => {
+	return axiosClient.patch(`/chat/rooms/${chatRoomId}/snooze`, {
+		snooze,
+	});
+};

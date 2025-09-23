@@ -40,7 +40,7 @@ const useDevRematchingMutation = () =>
 
 function useRematch() {
   const { showErrorModal, showModal } = useModal();
-  const { mutateAsync: rematch } = useDevRematchingMutation();
+  const { mutateAsync: rematch } = useRematchingMutation();
   const { onLoading, finishLoading, finishRematching } = useMatchLoading();
   const { show: showCashable } = useCashableModal();
 
