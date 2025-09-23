@@ -2,19 +2,21 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.7.5",
+    "version": "2.7.4",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-portrait.png",
+      "resizeMode": "contain"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
       "entitlements": {
-        "com.apple.developer.applesignin": [
-          "Default"
-        ]
+        "com.apple.developer.applesignin": ["Default"]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "capabilities": [
@@ -25,9 +27,7 @@
         "maps"
       ],
       "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification"
-        ],
+        "UIBackgroundModes": ["remote-notification"],
         "LSApplicationQueriesSchemes": [
           "kftc-bankpay",
           "ispmobile",
@@ -147,10 +147,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "image": "./assets/images/splash-portrait.png",
+          "imageWidth": 400,
+          "resizeMode": "contain"
         }
       ],
       "@react-native-firebase/app",
@@ -212,7 +211,8 @@
             "kotlinVersion": "2.0.21"
           }
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true
