@@ -6,7 +6,7 @@ import { snoozeChatRoom } from "../apis";
 import { chatSnoozeErrorHandlers } from "../services/chat-snooze-error-handler";
 
 function useChatSnoozeQuery() {
-  const { showErrorModal, showModal } = useModal();
+  const { showErrorModal, showModal, hideModal } = useModal();
   const router = useRouter();
   return useMutation({
     mutationFn: snoozeChatRoom,
@@ -14,6 +14,7 @@ function useChatSnoozeQuery() {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     onError: (error: any) => {
       console.error("채팅방 알림 제어 실패:", error);
+      hideModal();
 
       if (!error) {
         showErrorModal("네트워크 연결을 확인해주세요.", "announcement");
