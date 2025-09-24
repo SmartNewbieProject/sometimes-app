@@ -17,6 +17,7 @@ import {
 } from "@/src/features/version-update";
 import WelcomeReward from "@/src/features/welcome-reward";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import { ImageResources, storage } from "@/src/shared/libs";
 import { ensurePushTokenRegistered } from "@/src/shared/libs/notifications";
 import {
@@ -67,7 +68,9 @@ const HomeScreen = () => {
   const collapse = showCollapse();
   const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
   const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
-
+  const { value, setValue, loading } = useStorage<string | null>({
+    key: "show-push-token-modal",
+  });
   // 환영 보상 관련
   const { shouldShowReward, markRewardAsReceived } = useWelcomeReward();
   useEffect(() => {
@@ -96,7 +99,10 @@ const HomeScreen = () => {
 
   useEffect(() => {
     trackEventAction("home_view");
-    ensurePushTokenRegistered(showModal);
+    if (!loading && value !== "true") {
+      ensurePushTokenRegistered(showModal);
+      setValue("true");
+    }
   }, [showModal]);
 
   useTemporalUniversity();
