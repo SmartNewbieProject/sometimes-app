@@ -96,6 +96,8 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
     return items;
   }, [sortedChatList]);
 
+  console.log("chatList", chatListWithDateDividers);
+
   const renderItem = ({ item }: { item: ChatListItem }) => {
     if (item.type === "date") {
       return <DateDivider date={item.data.date} />;

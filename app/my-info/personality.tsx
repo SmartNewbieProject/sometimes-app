@@ -4,7 +4,6 @@ import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import { track } from "@amplitude/analytics-react-native";
-import Interest from "@features/interest";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
@@ -79,7 +78,16 @@ export default function PersonalitySelectionScreen() {
           </Text>
         </View>
 
-        <View style={styles.bar} />
+        <View style={styles.indicatorContainer}>
+          <StepIndicator
+            length={3}
+            step={personality?.length ?? 0}
+            dotGap={4}
+            dotSize={16}
+            className="self-end"
+          />
+          <Divider.Horizontal />
+        </View>
 
         <View style={styles.chipSelector}>
           <Loading.Lottie
