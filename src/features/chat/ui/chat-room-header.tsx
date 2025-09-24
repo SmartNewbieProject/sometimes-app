@@ -2,46 +2,50 @@ import ChevronLeft from "@assets/icons/chevron-left.svg";
 import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
 import { Image } from "expo-image";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
-import ChatMenuModal from "./menu-modal";
+import ChatInfoModalContainer from "./modal/info-modal-container";
 function ChatRoomHeader() {
   const router = useRouter();
   const [isVisible, setVisible] = useState(false);
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { data: partner } = useChatRoomDetail(id);
-
+  const handleClose = useCallback(() => {
+    setVisible(false);
+  }, []);
   return (
-    <View style={[styles.container]}>
-      <ChatMenuModal visible={isVisible} onClose={() => setVisible(false)} />
-      <Pressable onPress={() => router.navigate("/chat")}>
-        <ChevronLeft width={20} height={20} />
-      </Pressable>
-      <Image
-        source={partner?.partner.mainProfileImageUrl ?? ""}
-        style={styles.profileImage}
-      />
-      <View style={styles.profileContainer}>
-        <Text style={styles.name}>{partner?.partner.name}</Text>
-        <View style={styles.schoolContainer}>
-          <Text style={styles.school}>{partner?.partner.university}</Text>
-          <Text style={styles.school}>{partner?.partner.department}</Text>
+    <>
+      <ChatInfoModalContainer visible={isVisible} onClose={handleClose} />
+      <View style={[styles.container]}>
+        <Pressable onPress={() => router.navigate("/chat")}>
+          <ChevronLeft width={20} height={20} />
+        </Pressable>
+        <Image
+          source={partner?.partner.mainProfileImageUrl ?? ""}
+          style={styles.profileImage}
+        />
+        <View style={styles.profileContainer}>
+          <Text style={styles.name}>{partner?.partner.name}</Text>
+          <View style={styles.schoolContainer}>
+            <Text style={styles.school}>{partner?.partner.university}</Text>
+            <Text style={styles.school}>{partner?.partner.department}</Text>
+          </View>
         </View>
+        <Pressable
+          style={{
+            width: 36,
+            height: 36,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onPress={() => setVisible(true)}
+        >
+          <VerticalEllipsisIcon />
+        </Pressable>
       </View>
-      <Pressable
-        style={{
-          width: 36,
-          height: 36,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        onPress={() => setVisible(true)}
-      >
-        <VerticalEllipsisIcon />
-      </Pressable>
-    </View>
+    </>
   );
 }
 

@@ -1,23 +1,24 @@
+import Feather from "@expo/vector-icons/Feather";
+import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState, useRef, useEffect } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
   ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  Dimensions,
-  ActivityIndicator,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-import { router, useLocalSearchParams } from "expo-router";
-import Feather from "@expo/vector-icons/Feather";
-import * as ImagePicker from "expo-image-picker";
 
-import { Header } from "@shared/ui";
 import { useReport } from "@/src/features/ban-report/hooks/useReport";
+import useLeaveChatRoom from "@/src/features/chat/queries/use-leave-chat-room";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { Header } from "@shared/ui";
 
 const { width } = Dimensions.get("window");
 
@@ -28,12 +29,14 @@ export default function ReportScreen() {
     partnerAge,
     partnerUniv,
     partnerProfileImage,
+    chatRoomId,
   } = useLocalSearchParams<{
     partnerId?: string;
     partnerName?: string;
     partnerAge?: string;
     partnerUniv?: string;
     partnerProfileImage?: string;
+    chatRoomId?: string;
   }>();
   const { mutate, isLoading, isError, error } = useReport();
   const { showModal, hideModal } = useModal();
@@ -49,6 +52,8 @@ export default function ReportScreen() {
   const [selectedImageUris, setSelectedImageUris] = useState<string[]>([]);
   const [selectedImageFiles, setSelectedImageFiles] = useState<any[]>([]);
   const isSubmitButtonEnabled = selectedReasons.length > 0 && !isLoading;
+
+  const chatLeaveMutate = useLeaveChatRoom();
 
   const handleReasonSelect = (id: string) => {
     setSelectedReasons((prev) => (prev.includes(id) ? [] : [id]));
@@ -79,15 +84,43 @@ export default function ReportScreen() {
       });
       return;
     }
-
-    mutate({
-      userId: partnerId,
-      reason: selectedReasons
-        .map((id) => reportReasons.find((r) => r.id === id)?.text || "")
-        .join(", "),
-      description: detailedContent.trim() === "" ? undefined : detailedContent,
-      evidenceImages: selectedImageFiles,
-    });
+    if (chatRoomId) {
+      mutate(
+        {
+          userId: partnerId,
+          reason: selectedReasons
+            .map((id) => reportReasons.find((r) => r.id === id)?.text || "")
+            .join(", "),
+          description:
+            detailedContent.trim() === "" ? undefined : detailedContent,
+          evidenceImages: selectedImageFiles,
+        },
+        {
+          onSuccess: () => {
+            if (chatRoomId) {
+              chatLeaveMutate.mutateAsync(
+                { chatRoomId: chatRoomId },
+                {
+                  onSuccess: () => {
+                    router.navigate("/chat");
+                  },
+                }
+              );
+            }
+          },
+        }
+      );
+    } else {
+      mutate({
+        userId: partnerId,
+        reason: selectedReasons
+          .map((id) => reportReasons.find((r) => r.id === id)?.text || "")
+          .join(", "),
+        description:
+          detailedContent.trim() === "" ? undefined : detailedContent,
+        evidenceImages: selectedImageFiles,
+      });
+    }
   };
 
   const handleAttachEvidence = async () => {
@@ -173,7 +206,6 @@ export default function ReportScreen() {
     }
   };
 
-
   useEffect(() => {
     showModal({
       title: "주의",
@@ -186,11 +218,11 @@ export default function ReportScreen() {
     if (partnerId) {
       setProfile({
         name: partnerName || "알 수 없는 사용자",
-        age: partnerAge ? parseInt(partnerAge, 10) : 0,
+        age: partnerAge ? Number.parseInt(partnerAge, 10) : 0,
         university: partnerUniv || "알 수 없음",
         profileImage:
-            partnerProfileImage ||
-            "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG",
+          partnerProfileImage ||
+          "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG",
       });
     }
   }, [partnerId, partnerName, partnerAge, partnerUniv, partnerProfileImage]);

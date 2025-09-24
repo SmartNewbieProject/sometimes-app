@@ -2,6 +2,7 @@ import colors from "@/src/shared/constants/colors";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { cn } from "@/src/shared/libs";
 import { Text as CustomText } from "@/src/shared/ui";
+import RedEmergencyIcon from "@assets/icons/red-emergency.svg";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -13,7 +14,8 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import useLeaveChatRoom from "../queries/use-leave-chat-room";
+import useChatRoomDetail from "../../queries/use-chat-room-detail";
+import useLeaveChatRoom from "../../queries/use-leave-chat-room";
 
 interface ChatMenuModalProps {
   visible: boolean;
@@ -24,6 +26,7 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { data: roomDetail } = useChatRoomDetail(id);
 
   const { showModal, hideModal } = useModal();
   const mutate = useLeaveChatRoom();
@@ -67,6 +70,20 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
       },
     });
   };
+
+  const handleReport = () => {
+    router.navigate({
+      pathname: "/partner/ban-report",
+      params: {
+        partnerId: roomDetail?.partnerId,
+        partnerName: roomDetail?.partner.name,
+        partnerAge: roomDetail?.partner.age,
+        partnerUniv: roomDetail?.partner.university,
+        partnerProfileImage: roomDetail?.partner.mainProfileImageUrl,
+        chatRoomId: id,
+      },
+    });
+  };
   return (
     <Modal
       visible={visible}
@@ -76,13 +93,11 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
     >
       <View style={[styles.overlay, { paddingBottom: insets.bottom }]}>
         <View style={[styles.modalContainer, { bottom: insets.bottom + 74 }]}>
-          <TouchableOpacity
-            onPress={() => {
-              router.push("/partner/ban-report");
-            }}
-            style={styles.option}
-          >
-            <Text style={[styles.optionText, { color: "#F00" }]}>신고하기</Text>
+          <TouchableOpacity onPress={handleReport} style={styles.option}>
+            <RedEmergencyIcon />
+            <Text style={[styles.optionText, { color: "#F00" }]}>
+              신고 후 나가기
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleOutChat}
@@ -135,10 +150,15 @@ const styles = StyleSheet.create({
   option: {
     paddingVertical: 16,
     alignItems: "center",
+    flexDirection: "row",
+    gap: 10,
+    justifyContent: "center",
   },
   optionText: {
     fontSize: 20,
     fontWeight: 500,
+    lineHeight: 20,
+    marginTop: 4,
     fontFamily: "Pretendard-Medium",
   },
   closeButton: {
