@@ -65,7 +65,7 @@ export default function MyScreen() {
 
         <View style={styles.menuContainer}>
           <MatchingMenu />
-          {/* <MyActivityMenu /> */}
+          <MyActivityMenu />
         </View>
       </ScrollView>
 

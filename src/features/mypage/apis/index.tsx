@@ -1,26 +1,37 @@
 import { axiosClient, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from "nanoid";
+import type { Article as ArticleType } from "@/src/features/community/types";
 
-type RematchingTicket = {
-  total: number;
-};
-
-type MyRematchingTicket = {
-  id: number;
-  name: string;
-};
+type RematchingTicket = { total: number };
+type MyRematchingTicket = { id: number; name: string };
+export type MyArticle = ArticleType;
 
 export type MatchingFilters = {
   avoidUniversity: boolean;
   avoidDepartment: boolean;
 };
 
-export type Mbti = {
-  mbti: string | null;
+export type Mbti = { mbti: string | null };
+
+export type MyComment = {
+  id: string;
+  content: string;
+  createdAt: string;
+  article: ArticleType;
 };
 
+export interface PageResp<T> {
+  content: T[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
+
 const getMyRematchingTicket = async (): Promise<MyRematchingTicket[]> => {
-  return await axiosClient.get("/tickets/rematching");
+  const { data } = await axiosClient.get<MyRematchingTicket[]>(
+    "/tickets/rematching"
+  );
+  return data;
 };
 
 const getAllRematchingTicket = async (): Promise<RematchingTicket> => {
@@ -29,29 +40,29 @@ const getAllRematchingTicket = async (): Promise<RematchingTicket> => {
 };
 
 const getMbti = async (): Promise<Mbti> => {
-  return await axiosClient.get("/profile/mbti");
+  const { data } = await axiosClient.get<Mbti>("/profile/mbti");
+  return data;
 };
 
 const updateMbti = async (mbti: string): Promise<void> => {
-  return await axiosClient.patch("/profile/mbti", { mbti });
+  await axiosClient.patch("/profile/mbti", { mbti });
 };
 
-// 매칭 필터
 const getCurrentMatchingFilters = async (): Promise<MatchingFilters> => {
-  return await axiosClient.get("/profile/filter");
+  const { data } = await axiosClient.get<MatchingFilters>("/profile/filter");
+  return data;
 };
 
 const updateAvoidUniversityFilter = async (flag: boolean): Promise<void> => {
-  return await axiosClient.patch("/profile/filter/avoid-university", { flag });
+  await axiosClient.patch("/profile/filter/avoid-university", { flag });
 };
 
 const updateAvoidDepartmentFilter = async (flag: boolean): Promise<void> => {
-  return await axiosClient.patch("/profile/filter/avoid-department", { flag });
+  await axiosClient.patch("/profile/filter/avoid-department", { flag });
 };
 
-// 프로필 이미지 삭제
 const deleteProfileImage = async (imageId: string): Promise<void> => {
-  return await axiosClient.delete(`/profile/images/${imageId}`);
+  await axiosClient.delete(`/profile/images/${imageId}`);
 };
 
 const createProfileFileObject = (imageUri: string, fileName: string) =>
@@ -65,7 +76,6 @@ const createProfileFileObject = (imageUri: string, fileName: string) =>
         uri: imageUri,
         name: fileName,
         type: "image/png",
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } as any),
   });
 
@@ -77,19 +87,18 @@ const uploadProfileImage = async (
   const file = createProfileFileObject(image, `profile-${nanoid(6)}.png`);
 
   formData.append("files", file);
-  formData.append("isMain", isMain.toString());
+  formData.append("isMain", String(isMain));
 
-  return axiosClient.post("/profile/images", formData, {
+  await axiosClient.post("/profile/images", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 const uploadProfileImages = async (images: string[]): Promise<void> => {
   const formData = new FormData();
-  console.log("images check", images);
-  // biome-ignore lint/complexity/noForEach: <explanation>
+
   images
-    .filter((image) => image !== null)
+    .filter((image): image is string => !!image)
     .forEach((imageUri) => {
       const file = createProfileFileObject(
         imageUri,
@@ -100,13 +109,42 @@ const uploadProfileImages = async (images: string[]): Promise<void> => {
 
   formData.append("isMain", "0");
 
-  return axiosClient.post("/profile/images", formData, {
+  await axiosClient.post("/profile/images", formData, {
     headers: { "Content-Type": "multipart/form-data" },
     timeout: 30000,
   });
 };
 
+export type MyPageApis = {
+  getMyArticles: (args: {
+    page: number;
+    size: number;
+  }) => Promise<PageResp<MyArticle>>;
+  getMyComments: (args: {
+    page: number;
+    size: number;
+  }) => Promise<PageResp<MyComment>>;
+};
+
+const mypageApis: MyPageApis = {
+  async getMyArticles({ page, size }) {
+    const { data } = await axiosClient.get<PageResp<MyArticle>>(
+      "/articles/my-articles",
+      { params: { page, size } }
+    );
+    return data;
+  },
+  async getMyComments({ page, size }) {
+    const { data } = await axiosClient.get<PageResp<MyComment>>(
+      "/articles/my-commented-articles",
+      { params: { page, size } }
+    );
+    return data;
+  },
+};
+
 type Service = {
+  [x: string]: any;
   getMyRematchingTicket: () => Promise<MyRematchingTicket[]>;
   getAllRematchingTicket: () => Promise<RematchingTicket>;
   getMbti: () => Promise<Mbti>;
@@ -117,6 +155,7 @@ type Service = {
   getCurrentMatchingFilters: () => Promise<MatchingFilters>;
   updateAvoidUniversityFilter: (flag: boolean) => Promise<void>;
   updateAvoidDepartmentFilter: (flag: boolean) => Promise<void>;
+  mypageApis: MyPageApis;
 };
 
 const apis: Service = {
@@ -130,6 +169,7 @@ const apis: Service = {
   getCurrentMatchingFilters,
   updateAvoidUniversityFilter,
   updateAvoidDepartmentFilter,
+  mypageApis,
 };
 
 export default apis;

@@ -1,27 +1,45 @@
-import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { Stack } from "expo-router";
+import { View } from "react-native";
 
 export default function MyLayout() {
   return (
     <View className="flex-1">
       <Stack>
-        <Stack.Screen 
-          name="index" 
-          options={{ 
+        <Stack.Screen
+          name="index"
+          options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name="withdrawal" 
-          options={{ 
+        <Stack.Screen
+          name="withdrawal"
+          options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
-          }} 
+          }}
+        />
+        <Stack.Screen
+          name="my-articles"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="my-comments"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
         />
       </Stack>
     </View>
