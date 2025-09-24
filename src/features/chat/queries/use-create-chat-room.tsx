@@ -9,7 +9,7 @@ import { errorHandlers } from "../services/chat-create-error-handler";
 
 function useCreateChatRoom() {
   const router = useRouter();
-  const { showModal, showErrorModal } = useModal();
+  const { showModal, showErrorModal, hideModal } = useModal();
   return useMutation({
     mutationFn: createChatRoom,
     onSuccess: ({ chatRoomId }: { chatRoomId: string }) => {
@@ -18,6 +18,7 @@ function useCreateChatRoom() {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     onError: (error: any) => {
       console.error("채팅방 생성 실패:", error);
+      hideModal();
 
       if (!error) {
         showErrorModal("네트워크 연결을 확인해주세요.", "announcement");

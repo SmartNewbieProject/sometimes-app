@@ -108,7 +108,7 @@ if (typeof XMLHttpRequest !== 'undefined') {
 					type: 'network',
 					id: nanoid(),
 					method,
-					url,
+					url: url.slice(25),
 					status: this.status,
 					duration: `${duration}ms`,
 					requestBody: formatDataForLogging(safeRequestBody),
