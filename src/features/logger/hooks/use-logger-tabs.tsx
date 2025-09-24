@@ -51,7 +51,7 @@ export const useLoggerTabs = (logs: Log[]) => {
       return;
     }
 
-    const blocks = logs.flatMap((log) => {
+    const blocks = [...logs.slice(0, 20)].flatMap((log) => {
       if (log.type === "console") {
         const { level, data } = log;
         const emoji = getConsoleEmoji(level);
