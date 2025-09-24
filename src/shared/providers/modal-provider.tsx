@@ -29,6 +29,7 @@ export type ModalOptions = {
     text: string;
     onClick: () => void;
   };
+  reverse?: boolean;
 };
 
 export type ErrorModalOptions = {
@@ -254,7 +255,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             modalContent?.children
           )}
         </View>
-        <View className="flex flex-row gap-x-2">
+        <View
+          style={{
+            flexDirection: modalContent?.reverse ? "row-reverse" : "row",
+          }}
+          className="flex flex-row gap-x-2"
+        >
           {modalContent?.secondaryButton && (
             <Button
               variant="secondary"

@@ -42,3 +42,23 @@ export const leaveChatRoom = ({
 }): Promise<{ message: string }> => {
 	return axiosClient.delete(`/chat/rooms/${chatRoomId}/leave`);
 };
+
+export const enterChatRoom = ({
+	chatRoomId,
+}: {
+	chatRoomId: string;
+}): Promise<{ paymentConfirm: boolean }> => {
+	return axiosClient.post(`/chat/rooms/${chatRoomId}/enter`, {});
+};
+
+export const snoozeChatRoom = ({
+	snooze,
+	chatRoomId,
+}: {
+	snooze: boolean;
+	chatRoomId: string;
+}): Promise<{ message: string }> => {
+	return axiosClient.patch(`/chat/rooms/${chatRoomId}/snooze`, {
+		snooze,
+	});
+};

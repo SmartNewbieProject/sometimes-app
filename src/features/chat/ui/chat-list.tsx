@@ -1,14 +1,12 @@
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { FlatList, Keyboard, View } from "react-native";
-import { useChatEvent } from "../hooks/use-chat-event";
-import { useChatRoomLifecycle } from "../hooks/use-chat-room-lifecycle";
-import { useChatRoomRead } from "../hooks/use-chat-room-read";
-import { useOptimisticChat } from "../hooks/use-optimistic-chat";
-import { useSocketEventManager } from "../hooks/use-socket-event-manager";
+
 import useChatList from "../queries/use-chat-list";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
-import { useChatStore } from "../store/chat";
+import { chatEventBus } from "../services/chat-event-bus";
+
+import { useChatStore } from "../store/chat-store";
 import type { Chat } from "../types/chat";
 import ChatMessage from "./message/chat-message";
 import DateDivider from "./message/date-divider";
@@ -17,127 +15,74 @@ import SystemMessage from "./message/system-message";
 type ChatListItem =
   | { type: "message"; data: Chat }
   | { type: "date"; data: { date: string; id: string } };
+
 interface ChatListProps {
   setPhotoClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [forceUpdate, setForceUpdate] = useState(0);
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useChatList(id);
   const { data: roomDetail } = useChatRoomDetail(id);
 
-  const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
-  const formattedChatList = chatList.map((chat) => {
-    const date = new Date(chat.createdAt);
-
-    date.setHours(date.getHours() - 9);
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-
-    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-
-    return {
-      ...chat,
-      createdAt: formattedDate,
-    };
-  });
-
-  const { actions } = useChatEvent();
-  const { connected } = useChatStore();
-  const { markRoomAsRead } = useChatRoomRead();
-  const { subscribe } = useSocketEventManager();
-  const { addReceivedMessage, updateImageUrl } = useOptimisticChat({
-    chatRoomId: id,
-  });
-
-  useChatRoomLifecycle({
-    chatRoomId: id,
-    actions,
-    connected,
-    disconnect: () => {}, // 전역 소켓이므로 로컬에서 disconnect 불필요
-  });
+  const { connectionStatus } = useChatStore();
 
   useEffect(() => {
-    if (connected) {
-      actions.readMessages(id);
-      markRoomAsRead(id);
+    const isConnected = connectionStatus === "connected";
+
+    if (id && isConnected) {
+      chatEventBus.emit({
+        type: "CHAT_ROOM_JOIN_REQUESTED",
+        payload: { chatRoomId: id },
+      });
+      chatEventBus.emit({
+        type: "MESSAGES_READ_REQUESTED",
+        payload: { chatRoomId: id },
+      });
+
+      return () => {
+        chatEventBus.emit({
+          type: "CHAT_ROOM_LEAVE_REQUESTED",
+          payload: { chatRoomId: id },
+        });
+      };
     }
-  }, [id, connected, markRoomAsRead]);
+  }, [id, connectionStatus]);
 
-  useEffect(() => {
-    const unsubscribe = subscribe("newMessage", (chat: Chat) => {
-      if (chat.chatRoomId === id) {
-        actions.readMessages(id);
-        addReceivedMessage(chat);
-      }
-    });
+  const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
 
-    return unsubscribe;
-  }, [subscribe, id, addReceivedMessage, actions]);
-
-  useEffect(() => {
-    const unsubscribe = subscribe(
-      "imageUploadStatus",
-      (uploadData: {
-        id: string;
-        chatRoomId: string;
-        mediaUrl?: string;
-        uploadStatus: "uploading" | "completed" | "failed";
-      }) => {
-        if (
-          uploadData.chatRoomId === id &&
-          uploadData.uploadStatus === "completed" &&
-          uploadData.mediaUrl
-        ) {
-          updateImageUrl(uploadData.id, uploadData.mediaUrl);
-        }
-      }
-    );
-    return unsubscribe;
-  }, [subscribe, id, updateImageUrl]);
-
-  useEffect(() => {
-    const unsubscribe = subscribe("messageUpdated", (uploadData) => {
-      console.log("messageUpdated event received:", uploadData);
-      updateImageUrl(uploadData.id, uploadData.mediaUrl ?? "");
-    });
-
-    return unsubscribe;
-  }, [subscribe, id, updateImageUrl]);
+  // const formattedChatList = chatList.map((chat) => {
+  //   const date = new Date(chat.createdAt);
+  //   date.setHours(date.getHours() - 9);
+  //   const year = date.getFullYear();
+  //   const month = String(date.getMonth() + 1).padStart(2, "0");
+  //   const day = String(date.getDate()).padStart(2, "0");
+  //   const hours = String(date.getHours()).padStart(2, "0");
+  //   const minutes = String(date.getMinutes()).padStart(2, "0");
+  //   const seconds = String(date.getSeconds()).padStart(2, "0");
+  //   const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  //   return { ...chat, createdAt: formattedDate };
+  // });
 
   const sortedChatList = useMemo(() => {
-    const sorted = [...formattedChatList]
+    return [...chatList]
       .sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       )
       .reverse();
-    return sorted;
-  }, [formattedChatList, forceUpdate]);
+  }, [JSON.stringify(chatList)]);
 
   const chatListWithDateDividers = useMemo(() => {
     const items: ChatListItem[] = [];
-
     for (let i = 0; i < sortedChatList.length; i++) {
       const currentMessage = sortedChatList[i];
       const nextMessage = sortedChatList[i + 1];
-
       const currentDate = new Date(currentMessage.createdAt);
       const nextDate = nextMessage ? new Date(nextMessage.createdAt) : null;
-
-      items.push({
-        type: "message",
-        data: currentMessage,
-      });
-
+      items.push({ type: "message", data: currentMessage });
       if (!nextDate || !isSameDay(currentDate, nextDate)) {
         items.push({
           type: "date",
@@ -148,14 +93,12 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
         });
       }
     }
-
     return items;
   }, [sortedChatList]);
 
   console.log("chatList", chatListWithDateDividers);
 
   const renderItem = ({ item }: { item: ChatListItem }) => {
-    console.log("data", item);
     if (item.type === "date") {
       return <DateDivider date={item.data.date} />;
     }
@@ -219,17 +162,15 @@ const isSameDay = (date1: Date, date2: Date): boolean => {
   const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
   return d1.getTime() === d2.getTime();
 };
+
 const formatDate = (date: Date): string => {
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(today.getDate() - 1);
 
-  if (isSameDay(date, today)) {
-    return "오늘";
-  }
-  if (isSameDay(date, yesterday)) {
-    return "어제";
-  }
+  if (isSameDay(date, today)) return "오늘";
+  if (isSameDay(date, yesterday)) return "어제";
+
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();

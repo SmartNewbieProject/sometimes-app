@@ -13,10 +13,10 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useChatEvent } from "../hooks/use-chat-event";
-import { useOptimisticChat } from "../hooks/use-optimistic-chat";
 import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
+import { chatEventBus } from "../services/chat-event-bus";
+import { generateTempId } from "../utils/generate-temp-id";
 import ChatCamera from "./camera";
 
 interface GalleryListProps {
@@ -34,8 +34,6 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   const [permissionGranted, setPermissionGranted] = useState(false);
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
-  const { actions } = useChatEvent();
-  const { addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed } = useOptimisticChat({ chatRoomId: id });
 
   useEffect(() => {
     if (permissionGranted && photos.length === 0) {
@@ -131,35 +129,30 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
     });
   };
 
-  const sendImage = useCallback(async (uri: string) => {
-    if (!partner?.partnerId || !user?.id) {
-      return;
-    }
+  const sendImage = useCallback(
+    async (uri: string) => {
+      if (!partner?.partnerId || !user?.id) {
+        return;
+      }
 
-    try {
       const jpegUri = await convertToJpeg(uri);
       const base64Image = await uriToBase64(jpegUri);
-      
-      const { optimisticMessage, promise } = await actions.uploadImage({
-        to: partner.partnerId,
-        chatRoomId: id,
-        senderId: user.id,
-        file: base64Image
+
+      chatEventBus.emit({
+        type: "IMAGE_UPLOAD_REQUESTED",
+        payload: {
+          to: partner.partnerId,
+          chatRoomId: id,
+          senderId: user.id,
+          file: base64Image ?? jpegUri,
+          tempId: generateTempId(),
+        },
       });
 
-      addOptimisticMessage(optimisticMessage);
-      const result = await promise;
-      if (result.success && result.serverMessage) {
-        replaceOptimisticMessage(optimisticMessage.tempId!, result.serverMessage);
-      } else {
-        markMessageAsFailed(optimisticMessage.tempId!, result.error);
-      }
-    } catch (error) {
-      console.error('Image upload error:', error);
-    } finally {
       hideModal();
-    }
-  }, [partner, user, id, actions, addOptimisticMessage, replaceOptimisticMessage, markMessageAsFailed, hideModal]);
+    },
+    [partner, user, id, hideModal]
+  );
 
   const renderItem = ({ item }: { item: MediaLibrary.Asset }) => {
     return (

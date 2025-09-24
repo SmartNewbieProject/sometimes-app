@@ -1,3 +1,5 @@
+import type { RNFileLike } from '../domain/utils/file-to-base64';
+
 export interface Chat {
 	id: string;
 	chatRoomId: string;
@@ -20,12 +22,22 @@ export interface ChatRoomDetail {
 	roomActivation: boolean;
 	createdAt: string;
 	hasLeft?: boolean;
+	snooze: boolean;
 	partner: Partner;
 }
 
-interface Partner {
+export interface UploadImageOptions {
+	to: string;
+	chatRoomId: string;
+	senderId: string;
+	file: RNFileLike | { uri: string };
+}
+
+export interface Partner {
 	mainProfileImageUrl: string;
 	name: string;
+	id: string;
+	age: number;
 	university: string;
 	department: string;
 }
@@ -39,6 +51,7 @@ export interface ChatRoomList {
 	recentMessage: string;
 	profileImages: string;
 	recentDate: string;
+	paymentConfirm: boolean;
 }
 
 export interface ChatRoomListResponse {

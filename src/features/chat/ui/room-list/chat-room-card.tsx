@@ -1,4 +1,5 @@
 import { dayUtils } from "@/src/shared/libs";
+import LockChatIcon from "@assets/icons/lock-chat.svg";
 import { useRouter } from "expo-router";
 import React, { useRef } from "react";
 import {
@@ -10,6 +11,7 @@ import {
   Text,
   View,
 } from "react-native";
+import useChatLock from "../../hooks/use-chat-lock";
 import type { ChatRoomList } from "../../types/chat";
 import ChatProfileImage from "../message/chat-profile-image";
 
@@ -18,6 +20,35 @@ interface ChatRoomCardProps {
 }
 
 function ChatRoomCard({ item }: ChatRoomCardProps) {
+  if (item.paymentConfirm) {
+    return <OpenVariant item={item} />;
+  }
+  return <Lockariant item={item} />;
+}
+
+function Lockariant({ item }: ChatRoomCardProps) {
+  const { handleRemove, handleUnlock } = useChatLock(item.id);
+
+  return (
+    <View style={{ flex: 1, marginBottom: 8 }}>
+      <RenderContent item={item} />
+      <View style={styles.blurContainer}>
+        <View style={styles.lockIconContainer}>
+          <LockChatIcon />
+        </View>
+
+        <Pressable onPress={handleRemove} style={styles.removeButton}>
+          <Text style={styles.removeButtonText}>삭제</Text>
+        </Pressable>
+        <Pressable onPress={handleUnlock} style={styles.approveButton}>
+          <Text style={styles.approveButtonText}>수락</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+function OpenVariant({ item }: ChatRoomCardProps) {
   const screenWidth =
     Dimensions.get("window").width > 468 ? 468 : Dimensions.get("window").width;
   const buttonWidth = screenWidth * 0.25;
@@ -81,45 +112,51 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
       <View style={[styles.deleteButton, { width: buttonWidth }]}>
         <Text style={styles.buttonText}>나가기</Text>
       </View>
-      <Animated.View
-        style={[
-          styles.roomContainer,
-          { width: screenWidth, transform: [{ translateX }] },
-        ]}
-      >
-        <ChatProfileImage size={55} imageUri={item.profileImages} />
-        <View style={styles.rightContainer}>
-          <View style={styles.contentContainer}>
-            <Text style={styles.nameText} numberOfLines={1}>
-              {item.nickName}
-            </Text>
-            <Text style={styles.lastMessageText} numberOfLines={1}>
-              {item.recentMessage === ""
-                ? "사진"
-                : item.recentMessage
-                ? item.recentMessage
-                : "대화를 시작해볼까요?"}
-            </Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.timeText}>
-              {dayUtils.formatRelativeTime(item.recentDate)}
-            </Text>
-            {item.unreadCount > 0 ? (
-              <View style={styles.unreadCount}>
-                <Text style={styles.unreadCountText}>{item.unreadCount}</Text>
-              </View>
-            ) : (
-              <View
-                style={[styles.unreadCount, { backgroundColor: "transparent" }]}
-              />
-            )}
-          </View>
-        </View>
-      </Animated.View>
+      <RenderContent item={item} />
     </Pressable>
   );
 }
+
+const RenderContent = ({ item }: ChatRoomCardProps) => {
+  const screenWidth =
+    Dimensions.get("window").width > 468 ? 468 : Dimensions.get("window").width;
+
+  return (
+    <Animated.View style={[styles.roomContainer, { width: screenWidth }]}>
+      <ChatProfileImage size={55} imageUri={item.profileImages} />
+      <View style={styles.rightContainer}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.nameText} numberOfLines={1}>
+            {item.nickName}
+          </Text>
+          <Text style={styles.lastMessageText} numberOfLines={1}>
+            {item.recentMessage === ""
+              ? "사진"
+              : item.recentMessage
+              ? item.recentMessage
+              : "대화를 시작해볼까요?"}
+          </Text>
+        </View>
+        <View style={styles.infoContainer}>
+          {item.paymentConfirm && (
+            <Text style={styles.timeText}>
+              {dayUtils.formatRelativeTime(item.recentDate)}
+            </Text>
+          )}
+          {item.unreadCount > 0 && item.paymentConfirm ? (
+            <View style={styles.unreadCount}>
+              <Text style={styles.unreadCountText}>{item.unreadCount}</Text>
+            </View>
+          ) : (
+            <View
+              style={[styles.unreadCount, { backgroundColor: "transparent" }]}
+            />
+          )}
+        </View>
+      </View>
+    </Animated.View>
+  );
+};
 
 const styles = StyleSheet.create({
   roomContainer: {
@@ -195,6 +232,52 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  blurContainer: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 12,
+    right: 12,
+    backgroundColor: "#0000004D",
+    borderRadius: 20,
+    flexDirection: "row",
+    gap: 4,
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingHorizontal: 16,
+  },
+  removeButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    backgroundColor: "#EFEFEF",
+  },
+  approveButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    backgroundColor: "#7A4AE2",
+  },
+  removeButtonText: {
+    color: "#8E8E8E",
+    fontSize: 13,
+    fontWeight: 600,
+    fontFamily: "Pretendard-SemiBold",
+    lineHeight: 16,
+  },
+  approveButtonText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: 600,
+    fontFamily: "Pretendard-SemiBold",
+    lineHeight: 16,
+  },
+  lockIconContainer: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: [{ translateX: "-50%" }, { translateY: "-50%" }],
   },
 });
 

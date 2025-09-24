@@ -18,6 +18,7 @@ function useCreateChatRoom() {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     onError: (error: any) => {
       console.error("채팅방 생성 실패:", error);
+
       if (!error) {
         showErrorModal("네트워크 연결을 확인해주세요.", "announcement");
         return;
