@@ -11,7 +11,7 @@ import profileEdit from './apps/profile-edit.json';
 import purchase from './apps/purchase.json';
 import tabs from './apps/tabs.json';
 import test from './apps/test.json';
-
+import index from './apps/index.json';
 import featuresAdmin from './features/admin.json';
 import featuresAppleInfo from './features/apple-info.json';
 import featuresAuth from './features/auth.json';
@@ -68,6 +68,7 @@ const apps = {
   purchase: purchase,
   tabs: tabs,
   test: test,
+  index: index,
 }
 
 const features = {
