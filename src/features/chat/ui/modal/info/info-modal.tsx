@@ -63,16 +63,15 @@ export function Body() {
   );
 }
 
-export function Footer() {
-  const [isVisible, setVisible] = useState(false);
+export function Footer({
+  handleOpenMenuModal,
+}: {
+  handleOpenMenuModal: () => void;
+}) {
   const insets = useSafeAreaInsets();
 
-  const handleOpenMenuModal = () => {
-    setVisible(true);
-  };
   return (
     <>
-      <ChatMenuModal visible={isVisible} onClose={() => setVisible(false)} />
       <Pressable
         onPress={handleOpenMenuModal}
         style={[styles.footerContainer, { paddingBottom: insets.bottom }]}
