@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useState } from "react";
 import {
   type GestureResponderEvent,
   Modal,
@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAnimation } from "reanimated-composer";
 import useChatRoomDetail from "../../queries/use-chat-room-detail";
 import ChatInfoModal from "./info/info-modal";
+import ChatMenuModal from "./menu-modal";
 
 interface ChatInfoModalContainerProps {
   visible: boolean;
@@ -24,6 +25,12 @@ function ChatInfoModalContainer({
   visible,
   onClose,
 }: ChatInfoModalContainerProps) {
+  const [isVisible, setVisible] = useState(false);
+
+  const handleOpenMenuModal = () => {
+    onClose();
+    setVisible(true);
+  };
   const { animatedStyle, sharedValues } = useAnimation({
     trigger: visible,
     animateOnMount: false,
@@ -45,22 +52,25 @@ function ChatInfoModalContainer({
   console.log("animation", animatedStyle, sharedValues, visible);
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <Pressable onPress={handleClose} style={[styles.overlay]}>
-        <Animated.View style={[styles.infoContainer, animatedStyle]}>
-          <ChatInfoModal>
-            <ChatInfoModal.Header />
-            <ChatInfoModal.Body />
-            <ChatInfoModal.Footer />
-          </ChatInfoModal>
-        </Animated.View>
-      </Pressable>
-    </Modal>
+    <>
+      <ChatMenuModal visible={isVisible} onClose={() => setVisible(false)} />
+      <Modal
+        visible={visible}
+        transparent
+        animationType="fade"
+        onRequestClose={onClose}
+      >
+        <Pressable onPress={handleClose} style={[styles.overlay]}>
+          <Animated.View style={[styles.infoContainer, animatedStyle]}>
+            <ChatInfoModal>
+              <ChatInfoModal.Header />
+              <ChatInfoModal.Body />
+              <ChatInfoModal.Footer handleOpenMenuModal={handleOpenMenuModal} />
+            </ChatInfoModal>
+          </Animated.View>
+        </Pressable>
+      </Modal>
+    </>
   );
 }
 

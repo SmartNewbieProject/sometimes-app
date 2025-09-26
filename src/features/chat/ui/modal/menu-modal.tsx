@@ -66,6 +66,7 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
         text: "나가기",
         onClick: () => {
           mutate.mutateAsync({ chatRoomId: id });
+          router.navigate("/chat");
         },
       },
     });
