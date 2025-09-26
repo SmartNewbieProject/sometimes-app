@@ -15,7 +15,7 @@ import type {
 function useCurrentModal() {
   const [currentModal, setCurrentModal] = useState<ModalOptionOrNull>(null);
 
-  const modalSagaRef = useRef(modalSaga(currentModal, setCurrentModal));
+  const modalSagaRef = useRef(modalSaga(setCurrentModal));
 
   useEffect(() => {
     modalSagaRef.current.next();
@@ -45,7 +45,6 @@ function useCurrentModal() {
   };
 }
 function* modalSaga(
-  currentModal: ModalOptionOrNull,
   setCurrentModal: Dispatch<SetStateAction<ModalOptionOrNull>>
 ) {
   const queueModal: ModalOption[] = [];

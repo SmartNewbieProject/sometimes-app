@@ -30,6 +30,4 @@ function useNestedModal() {
   };
 }
 
-const styles = StyleSheet.create({});
-
 export default useNestedModal;
