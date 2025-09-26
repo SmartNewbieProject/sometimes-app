@@ -66,24 +66,24 @@ const HomeScreen = () => {
   const [isSlideScrolling, setSlideScrolling] = useState(false);
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
-  const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
+  // const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
   const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
   const { value, setValue, loading } = useStorage<string | null>({
     key: "show-push-token-modal",
   });
   // 환영 보상 관련
   const { shouldShowReward, markRewardAsReceived } = useWelcomeReward();
-  useEffect(() => {
-    const fetchTutorialStatus = async () => {
-      const finished = await storage.getItem("like-guide");
+  // useEffect(() => {
+  //   const fetchTutorialStatus = async () => {
+  //     const finished = await storage.getItem("like-guide");
 
-      setTutorialFinished(finished === "true");
-    };
-    fetchTutorialStatus();
-  }, []);
+  //     setTutorialFinished(finished === "true");
+  //   };
+  //   fetchTutorialStatus();
+  // }, []);
 
-  const visibleLikeGuide =
-    step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
+  // const visibleLikeGuide =
+  //   step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
 
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
@@ -121,7 +121,7 @@ const HomeScreen = () => {
     <View className="flex-1 ">
       <PalePurpleGradient />
       <VersionUpdateChecker />
-      <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} />
+      {/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
       <WelcomeRewardModal
         visible={shouldShowReward}
         onClose={markRewardAsReceived}

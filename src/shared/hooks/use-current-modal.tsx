@@ -6,9 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { StyleSheet, View } from "react-native";
 import type {
-  ErrorModalOptions,
   ModalOption,
   ModalOptionOrNull,
   ModalOptions,
@@ -20,12 +18,10 @@ function useCurrentModal() {
   const modalSagaRef = useRef(modalSaga(currentModal, setCurrentModal));
 
   useEffect(() => {
-    console.log(modalSagaRef.current);
     modalSagaRef.current.next();
   }, []);
 
   const showModal = useCallback((options: ModalOptions) => {
-    console.log(options, "options");
     setTimeout(() => {
       modalSagaRef.current.next(options);
     }, 0);
