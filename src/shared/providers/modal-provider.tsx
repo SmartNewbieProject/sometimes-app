@@ -61,7 +61,6 @@ export type ModalOptionOrNull = null | ModalOptions | ErrorModalOptions;
 export const ModalContext = createContext<ModalContextType | null>(null);
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
-  const isClicked = useRef(false);
   const { showModal, hideModal, showErrorModal, currentModal } =
     useCurrentModal();
   const {
@@ -108,19 +107,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     type: "mono" | "nested"
   ) => {
     const handleButtonClick = (callback?: () => void) => {
-      if (isClicked.current) return;
-      isClicked.current = true;
-
       callback?.();
       if (type === "mono") {
         hideModal();
       } else {
         hideNestedModal();
       }
-
-      setTimeout(() => {
-        isClicked.current = false;
-      }, 300);
     };
 
     return (

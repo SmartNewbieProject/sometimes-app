@@ -29,7 +29,9 @@ function useCurrentModal() {
 
   const showErrorModal = useCallback(
     (message: string, type: "announcement" | "error") => {
-      modalSagaRef.current.next({ message, type });
+      setTimeout(() => {
+        modalSagaRef.current.next({ message, type });
+      }, 0);
     },
     []
   );

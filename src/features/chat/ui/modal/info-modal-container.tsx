@@ -49,8 +49,6 @@ function ChatInfoModalContainer({
     if (e.currentTarget === e.target) onClose();
   }, []);
 
-  console.log("animation", animatedStyle, sharedValues, visible);
-
   return (
     <>
       <ChatMenuModal visible={isVisible} onClose={() => setVisible(false)} />
