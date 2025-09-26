@@ -1,13 +1,12 @@
 import React from "react";
 import {
-  FlatList,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { GestureDetector } from "react-native-gesture-handler";
+import { FlatList, GestureDetector } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 
 import { useDragToClose } from "../hooks/use-drag-to-close";
