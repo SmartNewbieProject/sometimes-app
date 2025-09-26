@@ -6,6 +6,8 @@ import { IconWrapper } from "@/src/shared/ui/icons";
 import LockProfileIcon from "@assets/icons/lock-profile.svg";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import NotSecuredIcon from "@assets/icons/shield-not-secured.svg";
+import { useFeatureCost } from "@features/payment/hooks";
+import { ModalStyles } from "@shared/hooks";
 import { Image, ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -21,8 +23,6 @@ import { useCommingSoon } from "../../admin/hooks";
 import { useMatchingBackground } from "../../idle-match-timer/hooks";
 import { useUnlockProfile } from "../queries/use-unlock-profile";
 import type { MatchingHistoryDetails } from "../type";
-import {ModalStyles} from "@shared/hooks";
-import {useFeatureCost} from "@features/payment/hooks";
 
 interface MatchingHistoryCardProps {
   item: MatchingHistoryDetails;
@@ -32,11 +32,9 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const size =
-    Dimensions.get("window").width / 2 > 300
-      ? 220
-      : Dimensions.get("window").width / 2 < 170
-      ? 140
-      : 180;
+    Dimensions.get("window").width > 468
+      ? 218
+      : (Dimensions.get("window").width - 32) / 2;
 
   const { update } = useMatchingBackground();
   const unlockProfile = useUnlockProfile(item.matchId);
@@ -64,16 +62,18 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
       showModal({
         showLogo: true,
         customTitle: (
-            <View style={ModalStyles.title}>
-              <Text textColor="black" size="20" weight="bold">
-                이전에 만났던 분께 다시 연락하기 위해 구슬 {featureCosts?.PROFILE_OPEN}개를 사용할까요?
-              </Text>
-            </View>
+          <View style={ModalStyles.title}>
+            <Text textColor="black" size="20" weight="bold">
+              이전에 만났던 분께 다시 연락하기 위해 구슬{" "}
+              {featureCosts?.PROFILE_OPEN}개를 사용할까요?
+            </Text>
+          </View>
         ),
         children: (
           <View style={ModalStyles.content}>
-              <Text style={ModalStyles.description} className="text-[#AEAEAE]">
-                시간이 지났지만 다시 인연을 이어가고 싶다면, 용기 내어 먼저 다가가 보세요.
+            <Text style={ModalStyles.description} className="text-[#AEAEAE]">
+              시간이 지났지만 다시 인연을 이어가고 싶다면, 용기 내어 먼저 다가가
+              보세요.
             </Text>
           </View>
         ),
@@ -102,6 +102,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
             width: size,
             height: size,
             padding: 14,
+            boxSizing: "border-box",
             borderRadius: 30,
           }}
           className="flex flex-col justify-between"
