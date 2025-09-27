@@ -114,7 +114,7 @@ export default function ArticleDetailScreen() {
   );
 
   if (!id) {
-    return <Loading.Page title="잘못된 요청입니다" />;
+    return <Loading.Page title={t("apps.community.id.error_invalid")} />;
   }
 
   if (error) {

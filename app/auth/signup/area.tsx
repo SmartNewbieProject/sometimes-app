@@ -10,6 +10,7 @@ import AreaFillHeart from "@assets/icons/area-fill-heart.svg";
 import DokdoIcon from "@assets/icons/dokdo.svg";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 import {
   BackHandler,
@@ -22,6 +23,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 function Area() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { onNext, show, initDisabled, handleChangeShow, handleShowNull } =
     useAreaHook();

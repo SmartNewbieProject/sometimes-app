@@ -13,8 +13,10 @@ import {
   type UIRegion,
   getRegionsByRegionCode,
 } from "../lib";
+import { useTranslation } from "react-i18next";
 
 export default function useUniversities() {
+  const { t } = useTranslation();
   const { regions } = useSignupProgress();
 
   const { data, isLoading } = useQuery({

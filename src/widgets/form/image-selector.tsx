@@ -48,9 +48,9 @@ export function FormImageSelector({
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(i18n.t('widgets.form.image_selector.permission_needed_title'), i18n.t('widgets.form.image_selector.gallery_permission_message'), [
-        { text: "설정 열기", onPress: () => Linking.openSettings() },
+        { text: i18n.t('widgets.form.image_selector.open_settings_button'), onPress: () => Linking.openSettings() },
         {
-          text: "닫기",
+          text: i18n.t('widgets.form.image_selector.close_button'),
         },
       ]);
       setImageModal(false);
@@ -66,7 +66,7 @@ export function FormImageSelector({
       const pickedUri = result.assets[0].uri;
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
         showErrorModal(
-          "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+          i18n.t('widgets.form.image_selector.invalid_image_format'),
           "announcement"
         );
         setImageModal(false);
@@ -83,10 +83,10 @@ export function FormImageSelector({
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("권한 필요", "카메라 사용을 위해서 권한이 필요합니다", [
-        { text: "설정 열기", onPress: () => Linking.openSettings() },
+      Alert.alert(i18n.t('widgets.form.image_selector.permission_needed_title'), i18n.t('widgets.form.image_selector.camera_permission_message'), [
+        { text: i18n.t('widgets.form.image_selector.open_settings_button'), onPress: () => Linking.openSettings() },
         {
-          text: "닫기",
+          text: i18n.t('widgets.form.image_selector.close_button'),
         },
       ]);
       setImageModal(false);
@@ -106,7 +106,7 @@ export function FormImageSelector({
       const pickedUri = result.assets[0].uri;
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
         showErrorModal(
-          "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+          i18n.t('widgets.form.image_selector.invalid_image_format'),
           "announcement"
         );
         setImageModal(false);
