@@ -17,6 +17,19 @@
     "desc": "Sometimeが{name}さんの好みの相手を見つけます",
     "button": "好みの相手を探しに行く →"
   },
+  "index": {
+    "next_time": "後で登録しますか？",
+    "children_1": "スムーズなマッチングのために",
+    "children_2": "{name} さんの好みを登録してください！",
+    "button_submit": "登録します！",
+    "button_nexttime": "後でにします",
+    "title_1": "マッチングのために",
+    "title_2": "あなたの好みをぜひ教えてください！",
+    "title_3": "好みを正確に入力すればするほど",
+    "title_4": "マッチング成功率が高まります",
+    "button_prev": "戻る",
+    "button_next": "次へ"
+  },
   "drink": {
     "tooltip_0_title": "飲まない方がいいです",
     "tooltip_0_desc_1": "お酒を飲まない人を希望します",

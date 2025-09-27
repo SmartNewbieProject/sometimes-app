@@ -17,6 +17,19 @@
     "desc": "썸타임이 {name}님의 이상형을 찾아드릴게요",
     "button": "이상형 찾으러 가기 →"
   },
+  "index":{
+    "next_time":"나중에 등록할까요?",
+    "children_1":"원활한 이상형 매칭을 위해",
+    "children_2":"{name} 님의 이상형 정보를 등록해주세요!",
+    "button_submit":"등록할게요!",
+    "button_nexttime":"다음에 할께요",
+    "title_1":"매칭을 위해",
+    "title_2":"이상형 정보를 꼭 알려주세요!",
+    "title_3":"이상형 정보를 정확하게 입력할수록",
+    "title_4":"매칭 성공 확률이 높아져요",
+    "button_prev":"뒤로",
+    "button_next":"다음으로"
+  },
   "drink": {
     "tooltip_0_title": "안 마시면 좋겠어요.",
     "tooltip_0_desc_1": "비음주자를 선호해요",
