@@ -2,7 +2,7 @@
   "hooks": {
     "use_event_control": {
       "event_expired_comment": "イベント期限切れ",
-      "event_over_participated_comment": "イベント参加回数超過"
+      "event_over_participated_comment": "イベント参加回数オーバー"
     }
   }
 }

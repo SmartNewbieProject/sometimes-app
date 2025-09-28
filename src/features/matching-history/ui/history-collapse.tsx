@@ -1,8 +1,9 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, {
+import Animated,{
   Easing,
   useAnimatedStyle,
   useSharedValue,
@@ -17,6 +18,7 @@ import ImageCollapse from "./image-collapse";
 function HistoryCollapse() {
   const textOpacity = useSharedValue(0);
   const router = useRouter();
+  const { t } = useTranslation();
   const { previewHistory = { imageUrls: [], countOfPartner: 0 }, isLoading } =
     usePreviewHistory();
   const [startTiming, setStartTiming] = useState(false);
@@ -79,10 +81,10 @@ function HistoryCollapse() {
             몰라요
           </Text>
           <Text style={styles.description}>
-            스쳐간 인연 중 아직 연결되지 않은 사람들이에요.
+            {t("features.matching-history.ui.history_collapse.description_1")}
           </Text>
           <Text style={styles.description}>
-            지금 다시 보면, 더 잘 맞을 수도 있어요.
+            {t("features.matching-history.ui.history_collapse.description_2")}
           </Text>
         </View>
 
@@ -173,6 +175,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     width: 48,
+
     height: 48,
     borderRadius: "50%",
   },

@@ -6,14 +6,5 @@
       "modal_title_error": "報告失敗",
       "default_error_message": "報告提出に失敗しました。もう一度お試しください。"
     }
-  },
-  "services": {
-    "report": {
-      "param_payload_comment": "신고에 필요한 데이터 (userId, reason, description, evidenceImages)",
-      "returns_comment": "서버 응답 데이터",
-      "add_images_comment": "evidenceImages가 존재하면 FormData에 추가",
-      "create_blob_comment": "이미지 URI로부터 Blob 객체 생성",
-      "auth_interceptor_comment": "Bearer Token은 axiosClient 인터셉터에서 추가."
-    }
   }
 }

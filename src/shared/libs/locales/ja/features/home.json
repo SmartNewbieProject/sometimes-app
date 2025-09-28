@@ -7,12 +7,12 @@
       "loading_title": "何人がマッチングを申請したのでしょうか？"
     },
     "announce_card": {
-      "text": "理想のタイプを教えていただければ、もっと正確にマッチングをお手伝いします！"
+      "text": "好みのタイプを教えていただければ、もっと正確にマッチングをお手伝いします！"
     },
     "community_announcement": {
       "greeting": "{name}さんも参加できます",
       "default_user": "会員",
-      "success_story_prompt": "恋愛成功ストーリー、ぜひチェックしてみてください！"
+      "success_story_prompt": "恋愛経験、ぜひチェックしてみてください！"
     },
     "first_purchase_event_banner": {
       "title": "{brand}は初めてですか？",

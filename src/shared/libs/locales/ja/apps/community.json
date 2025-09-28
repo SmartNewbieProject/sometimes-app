@@ -10,7 +10,7 @@
   "write": {
     "modal_short_title": "短すぎます",
     "modal_short_desc": "タイトルと本文は3文字以上で作成してください",
-    "modal_overflow_title": "文字数超過",
+    "modal_overflow_title": "文字数オーバー",
     "modal_overflow_desc": "本文は2000文字以内で作成してください",
     "modal_success_title": "投稿作成完了",
     "modal_success_desc": "投稿の作成が完了しました",
@@ -21,7 +21,7 @@
   "update": {
     "modal_short_title": "短すぎます",
     "modal_short_desc": "タイトルと本文は3文字以上で作成してください",
-    "modal_overflow_title": "文字数超過",
+    "modal_overflow_title": "文字数オーバー",
     "modal_overflow_desc": "本文は2000文字以内で作成してください",
     "modal_success_desc_1": "投稿が修正されました！",
     "modal_success_desc_2": "投稿に戻ります",

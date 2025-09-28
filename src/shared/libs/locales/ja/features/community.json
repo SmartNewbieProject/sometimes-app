@@ -38,10 +38,10 @@
     "article_detail": {
       "comment_arrow_indent_comment": "返信の場合は矢印アイコンとインデント",
       "like_count_comment": "いいね数表示 - いいねがある場合のみ",
-      "action_buttons_comment": "アクションボタン群",
-      "reply_button_comment": "返信ボタン",
-      "like_button_comment": "いいねボタン",
-      "more_button_comment": "その他ボタン（投稿者のみ）",
+      "action_buttons_comment": "アクション",
+      "reply_button_comment": "返信",
+      "like_button_comment": "いいね",
+      "more_button_comment": "その他（投稿者のみ）",
       "dropdown_modal_comment": "ドロップダウンメニューModal",
       "edit_button": "編集",
       "delete_button": "削除",
@@ -65,7 +65,7 @@
           "desc": "タイトルと本文は3文字以上で入力してください。"
         },
         "overflow": {
-          "title": "文字数超過",
+          "title": "文字数オーバー",
           "desc": "本文は2000文字以内で入力してください。"
         },
         "success": {
@@ -95,7 +95,7 @@
           "desc": "タイトルと本文は3文字以上で入力してください。"
         },
         "overflow": {
-          "title": "文字数超過",
+          "title": "文字数オーバー",
           "desc": "本文は2000文字以内で入力してください。"
         },
         "success": {
@@ -123,13 +123,13 @@
         "privacy": "個人情報の公開/プライバシー侵害",
         "ad": "商業的広告/宣伝",
         "image": "不適切な画像",
-        "bullying": "いじめ/脅迫",
+        "bullying": "嫌がらせ/脅迫",
         "rule": "コミュニティ規則違反"
       }
     },
     "category_list": {
       "comment_category_change_cache_reset": "カテゴリ数（またはコード構成）が変わったら、以前のレイアウトキャッシュを初期化",
-      "comment_button_wrapper_layout_save": "各ボタンラッパーのレイアウト保存",
+      "comment_button_wrapper_layout_save": "各コンテナのレイアウト保存",
       "loading_categories": "カテゴリを読み込んでいます"
     },
     "comment": {
