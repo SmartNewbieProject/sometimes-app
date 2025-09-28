@@ -4,7 +4,6 @@ import Loading from '@/src/features/loading';
 import 'react-native-get-random-values';
 import 'react-native-get-random-values';
 import {useAuth} from '@/src/features/auth/hooks/use-auth';
-import { useTranslation } from 'react-i18next';
 import i18n from '@/src/shared/libs/i18n';
 
 export default function Home() {
@@ -24,5 +23,5 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [isAuthorized, redirectPath]);
 
-  return <Loading.Page title={i18n.t("apps.locding")}/>
+  return <Loading.Page title={i18n.t("apps.index.loading")}/>
 }
