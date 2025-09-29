@@ -20,6 +20,7 @@ import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
 import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
+import ErrorProvider from "@/src/shared/providers/error-provider";
 import * as amplitude from "@amplitude/analytics-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -39,7 +40,6 @@ export default function RootLayout() {
   const responseListener = useRef<{ remove(): void } | null>(null);
   const processedNotificationIds = useRef<Set<string>>(new Set());
   const [coldStartProcessed, setColdStartProcessed] = useState(false);
-
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
@@ -103,17 +103,19 @@ export default function RootLayout() {
     []
   );
 
-
   useEffect(() => {
     if (!loaded) return;
 
     const handleColdStartNotification = () => {
       try {
-        const lastNotificationResponse = Notifications.getLastNotificationResponse();
+        const lastNotificationResponse =
+          Notifications.getLastNotificationResponse();
 
         if (lastNotificationResponse?.notification) {
-          const notificationId = lastNotificationResponse.notification.request.identifier;
-          const rawData = lastNotificationResponse.notification.request.content.data;
+          const notificationId =
+            lastNotificationResponse.notification.request.identifier;
+          const rawData =
+            lastNotificationResponse.notification.request.content.data;
 
           if (!processedNotificationIds.current.has(notificationId)) {
             if (isValidNotificationData(rawData)) {
@@ -127,7 +129,7 @@ export default function RootLayout() {
           }
         }
       } catch (error) {
-        console.error('콜드 스타트 알림 처리 중 오류:', error);
+        console.error("콜드 스타트 알림 처리 중 오류:", error);
       } finally {
         setColdStartProcessed(true);
       }
@@ -182,29 +184,32 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <LoggerContainer>
-        <QueryProvider>
-          <ModalProvider>
-            <GlobalChatProvider>
-              <PortoneProvider>
-                <View
-                  className={cn(
-                    "flex-1 font-extralight",
-                    Platform.OS === "web" && "max-w-[468px] w-full self-center"
-                  )}
-                >
-                  <AnalyticsProvider>
-                    <RouteTracker>
-                      <>
-                        <Slot />
-                        <VersionUpdateChecker />
-                      </>
-                    </RouteTracker>
-                  </AnalyticsProvider>
-                </View>
-              </PortoneProvider>
-            </GlobalChatProvider>
-          </ModalProvider>
-        </QueryProvider>
+        <ModalProvider>
+          <ErrorProvider>
+            <QueryProvider>
+              <GlobalChatProvider>
+                <PortoneProvider>
+                  <View
+                    className={cn(
+                      "flex-1 font-extralight",
+                      Platform.OS === "web" &&
+                        "max-w-[468px] w-full self-center"
+                    )}
+                  >
+                    <AnalyticsProvider>
+                      <RouteTracker>
+                        <>
+                          <Slot />
+                          <VersionUpdateChecker />
+                        </>
+                      </RouteTracker>
+                    </AnalyticsProvider>
+                  </View>
+                </PortoneProvider>
+              </GlobalChatProvider>
+            </QueryProvider>
+          </ErrorProvider>
+        </ModalProvider>
       </LoggerContainer>
     </GestureHandlerRootView>
   );

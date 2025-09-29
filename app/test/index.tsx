@@ -1,38 +1,30 @@
-import { useModal } from "@/src/shared/hooks/use-modal";
+import { axiosClient } from "@/src/shared/libs";
+import type { UserProfile } from "@/src/types/user";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 function Test() {
-  const { showModal, showNestedModal } = useModal();
-  useEffect(() => {
-    showModal({
-      title: "태스트1",
-      children: "테스트1",
-      primaryButton: {
-        text: "확인",
-        onClick: () => {},
+  const router = useRouter();
+  const mutate = useMutation({
+    mutationFn: () => axiosClient.post("/v2/matching/rematch"),
+    onSuccess: async () => {},
+    meta: {
+      onError: {
+        fallback: {
+          ui: "FULL_SCREEN",
+          message: "로그인 정보 확인",
+        },
       },
-    });
-    showModal({
-      title: "태스트2",
-      children: "테스트2",
-      primaryButton: {
-        text: "확인",
-        onClick: () => {},
-      },
-    });
-    showNestedModal({
-      title: "태스트3",
-      children: "테스트3",
-      primaryButton: {
-        text: "확인",
-        onClick: () => {},
-      },
-    });
-  }, []);
+    },
+  });
+
   return (
     <View>
-      <Text>hi</Text>
+      <Pressable onPress={() => mutate.mutate()}>
+        <Text>rematch test</Text>
+      </Pressable>
     </View>
   );
 }

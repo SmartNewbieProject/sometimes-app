@@ -36,6 +36,7 @@
 		"@react-navigation/material-top-tabs": "^7.3.2",
 		"@react-navigation/native": "^7.0.14",
 		"@shopify/flash-list": "1.7.6",
+		"@SmartNewbieProject/sometime-error": "^0.1.11",
 		"@tanstack/react-query": "^5.73.3",
 		"autoprefixer": "^10.4.21",
 		"axios": "^1.8.4",
