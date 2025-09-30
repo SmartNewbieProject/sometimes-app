@@ -23,7 +23,7 @@ import { Text } from "../ui/text";
 export type ModalOptions = {
   title?: ReactNode;
   customTitle?: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
   primaryButton?: {
     text: string;
     onClick: () => void;
@@ -35,6 +35,7 @@ export type ModalOptions = {
     onClick: () => void;
   };
   reverse?: boolean;
+  custom?: React.ElementType;
 };
 
 export type ErrorModalOptions = {
@@ -114,6 +115,10 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         hideNestedModal();
       }
     };
+    const Custom = options?.custom;
+    if (Custom) {
+      return <Custom />;
+    }
 
     return (
       <View
