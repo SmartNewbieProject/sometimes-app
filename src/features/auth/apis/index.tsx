@@ -2,10 +2,17 @@ import type { PassLoginResponse } from "@/src/auth/dto/pass-login.dto";
 import { axiosClient } from "@shared/libs";
 // @ts-ignore
 import type { MyDetails } from "@types/user";
+type MySimpleDetails = {
+  role: "admin" | "user";
+  id: string;
+  profileId: string;
+  name: string;
+};
 
 export { appleReviewLogin } from "./apple-review-login";
 
-export const getMySimpleDetails = () => axiosClient.get("/user");
+export const getMySimpleDetails = (): Promise<MySimpleDetails> =>
+  axiosClient.get("/user");
 
 export const checkExistsInstagram = (
   instagramId: string
