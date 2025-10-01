@@ -1,7 +1,6 @@
 import { axiosClient, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from "nanoid";
 import type { Article as ArticleType } from "@/src/features/community/types";
-
 type RematchingTicket = { total: number };
 type MyRematchingTicket = { id: number; name: string };
 export type MyArticle = ArticleType;
@@ -27,20 +26,34 @@ export interface PageResp<T> {
   hasNext: boolean;
 }
 
+export type ItemsMetaPage<T> = {
+  items: T[];
+  meta: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+};
+
 const getMyRematchingTicket = async (): Promise<MyRematchingTicket[]> => {
   const { data } = await axiosClient.get<MyRematchingTicket[]>(
     "/tickets/rematching"
   );
+
   return data;
 };
 
 const getAllRematchingTicket = async (): Promise<RematchingTicket> => {
   const myRematchingTickets = await getMyRematchingTicket();
+
   return { total: myRematchingTickets.length };
 };
 
 const getMbti = async (): Promise<Mbti> => {
   const { data } = await axiosClient.get<Mbti>("/profile/mbti");
+
   return data;
 };
 
@@ -50,6 +63,7 @@ const updateMbti = async (mbti: string): Promise<void> => {
 
 const getCurrentMatchingFilters = async (): Promise<MatchingFilters> => {
   const { data } = await axiosClient.get<MatchingFilters>("/profile/filter");
+
   return data;
 };
 
@@ -119,11 +133,12 @@ export type MyPageApis = {
   getMyArticles: (args: {
     page: number;
     size: number;
-  }) => Promise<PageResp<MyArticle>>;
+  }) => Promise<ItemsMetaPage<MyArticle>>;
+
   getMyComments: (args: {
     page: number;
     size: number;
-  }) => Promise<PageResp<MyComment>>;
+  }) => Promise<ItemsMetaPage<MyComment>>;
 };
 
 const mypageApis: MyPageApis = {
@@ -132,14 +147,57 @@ const mypageApis: MyPageApis = {
       "/articles/my-articles",
       { params: { page, size } }
     );
-    return data;
+
+    const items = Array.isArray(data.content) ? data.content : [];
+
+    const meta = {
+      currentPage: Number(data.page ?? page),
+
+      itemsPerPage: Number(data.size ?? size),
+
+      totalItems: Number((data as any).totalItems ?? items.length),
+
+      hasNextPage: Boolean(
+        (data as any).hasNext ?? items.length >= (data.size ?? size)
+      ),
+
+      hasPreviousPage: Boolean(
+        (data as any).hasPreviousPage ?? Number(data.page ?? page) > 1
+      ),
+    };
+
+    const normalized: ItemsMetaPage<MyArticle> = { items, meta };
+
+    return normalized;
   },
+
   async getMyComments({ page, size }) {
     const { data } = await axiosClient.get<PageResp<MyComment>>(
       "/articles/my-commented-articles",
       { params: { page, size } }
     );
-    return data;
+
+    const items = Array.isArray(data.content) ? data.content : [];
+
+    const meta = {
+      currentPage: Number(data.page ?? page),
+
+      itemsPerPage: Number(data.size ?? size),
+
+      totalItems: Number((data as any).totalItems ?? items.length),
+
+      hasNextPage: Boolean(
+        (data as any).hasNext ?? items.length >= (data.size ?? size)
+      ),
+
+      hasPreviousPage: Boolean(
+        (data as any).hasPreviousPage ?? Number(data.page ?? page) > 1
+      ),
+    };
+
+    const normalized: ItemsMetaPage<MyComment> = { items, meta };
+
+    return normalized;
   },
 };
 

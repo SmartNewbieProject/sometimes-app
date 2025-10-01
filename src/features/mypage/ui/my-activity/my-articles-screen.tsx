@@ -13,15 +13,9 @@ import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 
 export default function MyArticlesScreen() {
-  const {
-    articles,
-    isLoading,
-    isLoadingMore,
-    hasNextPage,
-    loadMore,
-    refetch,
-    invalidate,
-  } = useInfiniteMyArticlesQuery(10);
+  const { articles, isLoading, isLoadingMore, hasNextPage, loadMore, refetch } =
+    useInfiniteMyArticlesQuery(10);
+
   const { showModal, showErrorModal } = useModal();
 
   useFocusEffect(
@@ -31,7 +25,6 @@ export default function MyArticlesScreen() {
   );
 
   const invalidateAndRefetch = async () => {
-    await invalidate();
     await refetch();
   };
 
@@ -91,6 +84,7 @@ export default function MyArticlesScreen() {
       </Text>
       <CustomInfiniteScrollView
         data={articles}
+        getItemKey={(a: ArticleType) => String(a.id)}
         renderItem={(article: ArticleType) => (
           <Article
             data={article}

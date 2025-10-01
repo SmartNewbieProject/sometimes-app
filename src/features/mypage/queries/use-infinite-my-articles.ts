@@ -1,37 +1,78 @@
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useQueryClient,
+  type QueryClient,
+} from "@tanstack/react-query";
 import apis from "../apis";
-import type { MyArticle, PageResp } from "../apis";
+import type { MyArticle } from "../apis";
 
 export const createMyArticlesQueryKey = () => ["mypage", "my-articles"];
 
-export function useInfiniteMyArticlesQuery(pageSize: number) {
-  const queryKey = createMyArticlesQueryKey();
-  const qc = useQueryClient();
+export function prefetchMyArticlesFirstPage(
+  queryClient: QueryClient,
 
-  const query = useInfiniteQuery<PageResp<MyArticle>>({
-    queryKey,
+  pageSize = 10
+) {
+  return queryClient.prefetchInfiniteQuery({
+    queryKey: createMyArticlesQueryKey(),
+
+    queryFn: async ({ pageParam = 1 }) => {
+      return apis.mypageApis.getMyArticles({ page: pageParam, size: pageSize });
+    },
+
     initialPageParam: 1,
+
+    getNextPageParam: (lastPage: {
+      meta: { hasNextPage: any; currentPage: any };
+    }) =>
+      lastPage?.meta?.hasNextPage
+        ? (lastPage.meta.currentPage ?? 1) + 1
+        : undefined,
+    staleTime: 30_000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
+export function useInfiniteMyArticlesQuery(pageSize = 10) {
+  const queryClient = useQueryClient();
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isPending,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: createMyArticlesQueryKey(),
+
+    queryFn: async ({ pageParam = 1 }) =>
+      apis.mypageApis.getMyArticles({ page: pageParam, size: pageSize }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage?.meta?.hasNextPage
+        ? (lastPage.meta.currentPage ?? 1) + 1
+        : undefined,
     enabled: true,
+    staleTime: 30_000,
+    gcTime: 10 * 60 * 1000,
     refetchOnMount: "always",
     refetchOnWindowFocus: "always",
-    queryFn: ({ pageParam }) =>
-      apis.mypageApis.getMyArticles({
-        page: pageParam as number,
-        size: pageSize,
-      }),
-    getNextPageParam: (last) => (last.hasNext ? last.page + 1 : undefined),
   });
 
-  const articles = (query.data?.pages ?? []).flatMap((p) => p.content);
+  const articles = data?.pages?.flatMap((p) => p.items) || [];
+  const pagesCount = data?.pages?.length ?? 0;
 
   return {
     articles,
-    pagesCount: query.data?.pages?.length ?? 0,
-    isLoading: query.isLoading || query.isPending,
-    isLoadingMore: query.isFetchingNextPage,
-    hasNextPage: !!query.hasNextPage,
-    loadMore: () => query.fetchNextPage(),
-    refetch: () => query.refetch(),
-    invalidate: async () => qc.invalidateQueries({ queryKey }),
+    pagesCount,
+    isLoading: isLoading || isPending,
+    isLoadingMore: isFetchingNextPage,
+    hasNextPage: !!hasNextPage,
+    loadMore: fetchNextPage,
+    refetch,
+    invalidate: () =>
+      queryClient.invalidateQueries({ queryKey: createMyArticlesQueryKey() }),
   };
 }
