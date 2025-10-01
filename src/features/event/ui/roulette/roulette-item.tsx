@@ -21,7 +21,7 @@ function RouletteItem() {
         style={styles.gradientContainer}
       >
         <LinearGradient
-          colors={["rgba(122, 74, 226, 0.25)", "transparent"]}
+          colors={["rgba(122, 74, 226, 0.25)", "rgba(0, 0, 0, 0)"]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 0.4 }}
           style={styles.insetShadow}
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   shadowButtonContainer: {
     width: 76,
     height: 76,
-    borderRadius: "50%",
+    borderRadius: 999,
     shadowColor: "#6938CF",
     shadowOffset: {
       width: 0,

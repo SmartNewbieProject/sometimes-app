@@ -1,4 +1,6 @@
+import { useModal } from "@/src/shared/hooks/use-modal";
 import { useEffect, useRef, useState } from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 import {
   Easing,
   cancelAnimation,
@@ -8,6 +10,8 @@ import {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
+import { rouletteModalStrategy } from "../../service/roulette-modal-strategy";
+import Banner from "../../ui/roulette/banner";
 
 // 전체 칸 숫자
 const NUMBER_OF_SLICES = 12;
@@ -41,7 +45,8 @@ const mockApiCall = (shouldFail = false) => {
 export function useRoulette() {
   const rouletteValue = useSharedValue(0);
   const [isSpinning, setIsSpinning] = useState(false);
-
+  const { showNestedModal, hideModal, hideNestedModal, showNestedErrorModal } =
+    useModal();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const minTimeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -55,6 +60,14 @@ export function useRoulette() {
       cancelAnimation(rouletteValue);
     };
   }, []);
+
+  const showModalForPrize = (prizeValue: number) => {
+    const modalStrategy = rouletteModalStrategy(showNestedModal, () => {
+      hideModal();
+      hideNestedModal();
+    });
+    modalStrategy[prizeValue as keyof typeof modalStrategy]();
+  };
 
   // 룰렛을 멈출 때 사용
   const settleRoulette = (prizeValue: number) => {
@@ -94,6 +107,8 @@ export function useRoulette() {
       (isFinished) => {
         if (isFinished) {
           runOnJS(setIsSpinning)(false);
+          runOnJS(showNestedErrorModal)("hi", "announcement");
+          runOnJS(showModalForPrize)(prizeValue);
         }
       }
     );

@@ -16,14 +16,14 @@ import Animated, {
 } from "react-native-reanimated";
 
 function Test() {
-  const { showModal } = useModal();
+  const { showModal, showNestedErrorModal } = useModal();
   useEffect(() => {
     showModal({ custom: RouletteModal });
   }, []);
   return (
-    <>
+    <View style={{ backgroundColor: "#fff", flex: 1 }}>
       <Text>hello</Text>
-    </>
+    </View>
   );
 }
 
