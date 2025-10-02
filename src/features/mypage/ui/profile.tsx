@@ -17,7 +17,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRematchingTickets } from "../queries";
-
+import { useTranslation } from "react-i18next";
 export const Profile = () => {
   const { profileDetails } = useAuth();
   const { data: reMatchingTicketCount } = useRematchingTickets();
@@ -36,7 +36,7 @@ export const Profile = () => {
       require("@/assets/images/profile.png"),
     totalRematchingTickets: reMatchingTicketCount?.total ?? 0,
   };
-
+  const { t } = useTranslation();
   useEffect(() => {
     const checkUniversityVerification = async () => {
       try {
@@ -153,7 +153,7 @@ export const Profile = () => {
                     style={{ width: 16, height: 16, marginRight: 4 }}
                   />
                   <Text style={styles.universityVerificationButtonText}>
-                    학교인증
+                    {t("features.profile-edit.ui.header.university_verification")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -179,7 +179,7 @@ export const Profile = () => {
                     />
 
                     <Text className="text-[10px] text-[#9747FF]">
-                      프로필 수정
+                      {t("features.profile-edit.ui.header.title")}
                     </Text>
                   </View>
                 </View>
@@ -195,12 +195,12 @@ export const Profile = () => {
         >
           <ImageResource resource={ImageResources.GEM} width={28} height={28} />
           <View className="pl-[10px] flex-row">
-            <Text className="text-[13px] text-[#FFFFFF]">구슬이 </Text>
+            <Text className="text-[13px] text-[#FFFFFF]">{t("features.profile-edit.ui.header.gem")} </Text>
             <Text className="text-[13px] text-[#9747FF]">
               {" "}
-              {gem?.totalGem ?? 0}개
+              {t("features.profile-edit.ui.header.gem_unit",{count:gem?.totalGem ?? 0})}
             </Text>
-            <Text className="text-[13px] text-[#FFFFFF]"> 남았어요</Text>
+            <Text className="text-[13px] text-[#FFFFFF]"> {t("features.profile-edit.ui.header.gem_left")}</Text>
           </View>
         </View>
       </View>

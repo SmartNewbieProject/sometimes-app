@@ -125,7 +125,7 @@ const shareds = {
 };
 
 export default {
-  ...global,
+  global,
   apps,
   features,
   widgets,

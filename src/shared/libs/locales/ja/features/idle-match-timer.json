@@ -8,6 +8,14 @@
       "primary_button": "はい、やってみる",
       "main_button": "もっと探す",
       "complete_button": "Sometime送信完了！"
+    },
+    "waiting":{
+      "title_1": "{{name}}さん",
+      "title_2": "マッチングまで",
+      "description_2": "残っています",
+      "description_3": "毎週月・金21時にマッチングが開始されます！",
+      "previous_button": "前のマッチング",
+      "previous_button_text": "前のマッチング"
     }
   }
 }

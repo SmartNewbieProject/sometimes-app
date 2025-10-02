@@ -4,13 +4,16 @@ import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text } from "@shared/ui";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { Time } from ".";
 import { useAuth } from "../../auth";
 import { type TimeResult, calculateTime } from "../services/calculate-time";
 import type { MatchDetails } from "../types";
 import { sideStyle } from "./constants";
+import { useTranslation } from "react-i18next";
+import i18n from "@/src/shared/libs/i18n";
+
 
 interface WaitingProps {
   onTimeEnd?: () => void;
@@ -20,6 +23,7 @@ interface WaitingProps {
 export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
   const { my } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
   const [currentTime, setCurrentTime] = useState(() => dayUtils.create());
   const trigger = useRef(false);
   const [timeSet, setTimeSet] = useState<TimeResult | null>(() => {
@@ -80,10 +84,10 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
       />
       <View className="my-[8px]">
         <Text size="md" textColor="black" weight="semibold">
-          {my?.name}님
+          {t("features.idle-match-timer.ui.waiting.title_1",{name:my?.name})}
         </Text>
         <Text size="md" textColor="black" weight="semibold">
-          이상형 매칭까지
+          {t("features.idle-match-timer.ui.waiting.title_2")}
         </Text>
       </View>
 
@@ -101,7 +105,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
 
       <View>
         <Text size="md" textColor="black" weight="semibold">
-          남았어요
+          {t("features.idle-match-timer.ui.waiting.description_2")}
         </Text>
         <Text
           size="sm"
@@ -109,7 +113,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           weight="light"
           className="mt-[8px]"
         >
-          매주 목·일 21시에 매칭이 시작돼요!
+          {t("features.idle-match-timer.ui.waiting.description_3")}
         </Text>
       </View>
 

@@ -1,11 +1,15 @@
 {
   "ui": {
     "none_like_banner": {
-      "title_female": "「いいね」を送ってみましたか？",
-      "title_male": "まずはプロフィールをチェックしてみませんか？",
+      "title_female": "「いいね",
+      "title_female_1": "を送ってみましたか？",
+      "title_male": "まずは",
+      "title_male_profile": "プロフィール",
+      "title_male_1": "をチェックしてみませんか？",
+      "nothing_like":"いいねをした相手がまだいません",
       "description_female_part1": "気になる相手に「いいね」を送り、",
       "description_female_part2": "気持ちをシェアしましょう！",
-      "description_male_part1": "プロフィールや興味を追加して共通点を見つけ、",
+      "description_male_part1": "趣味や興味を追加して共通点を見つけ、",
       "description_male_part2": "自分の魅力をアピールしてみましょう！",
       "cta_locked": ""
     },

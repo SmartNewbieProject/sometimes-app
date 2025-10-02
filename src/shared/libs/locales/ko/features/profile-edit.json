@@ -13,7 +13,11 @@
       "modal_description": "지금 나가면 작성 중인 수정 내용이 모두 사라져요.정말 나가시겠어요?",
       "modal_primary_button": "계속 수정하기",
       "modal_secondary_button": "나가기",
-      "title": "프로필 수정"
+      "title": "프로필 수정",
+      "gem":"구슬이",
+      "gem_unit":"{{count}}개",
+      "gem_left":"남았어요",
+      "university_verification":"학교인증"
     },
     "interest": {
       "age": {

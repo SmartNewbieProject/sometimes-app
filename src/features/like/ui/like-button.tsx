@@ -64,7 +64,7 @@ export const LikeButton = ({
         onClick: () => onLike(connectionId!),
       },
       secondaryButton: {
-        text: t("global.no"),
+        text: t("globals.no"),
         onClick: hideModal,
       },
     });

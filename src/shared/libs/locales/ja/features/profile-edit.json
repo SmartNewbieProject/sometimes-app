@@ -13,7 +13,11 @@
       "modal_description": "今離れると入力中の内容はすべて失われます。本当に退出しますか？",
       "modal_primary_button": "編集を続ける",
       "modal_secondary_button": "退出する",
-      "title": "プロフィール編集"
+      "title": "プロフィール編集",
+      "gem":"ジェムが",
+      "gem_unit":"{{count}}個",
+      "gem_left":"残っています",
+      "university_verification":"学校認証"
     },
     "interest": {
       "age": {

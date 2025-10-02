@@ -1,11 +1,15 @@
 {
   "ui": {
     "none_like_banner": {
-      "title_female": "‘좋아요'를 보내보셨나요?",
-      "title_male": "잠시 ‘프로필'을 검색해 볼까요?",
+      "title_female": "‘좋아요'",
+      "title_femail_1": "를 보내보셨나요?",
+      "title_male": "잠시",
+      "title_male_profile":"‘프로필'",
+      "title_male_1":"을 검색해 볼까요?",
+      "nothing_like":"관심을 가진 사람이 아직 없어요",
       "description_female_part1": "마음에 드는 상대에게 '좋아요'를 보내고,",
       "description_female_part2": "설렘은 반으로 나눠보세요!",
-      "description_male_part1": "챙김나 관심사를 추가해서, 공통점 찾고",
+      "description_male_part1": "취미나 관심사를 추가해서, 공통점 찾고",
       "description_male_part2": "나만의 매력을 어필해 보세요!",
       "cta_locked": ""
     },

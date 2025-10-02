@@ -56,7 +56,7 @@ function FirstPurchaseEvent() {
         </Text>
         {/* i18n: The following text has nested styling and requires manual translation using the <Trans> component or another method. */}
         <Text style={styles.description}>
-          <Text style={styles.descriptionStrong}>{t("features.home.ui.first_purchase_event_banner.special_match")}</Text>이
+          <Text style={styles.descriptionStrong}>{t("features.home.ui.first_purchase_event_banner.special_match")}</Text>
           {t("features.home.ui.first_purchase_event_banner.description_2")}
         </Text>
       </View>
