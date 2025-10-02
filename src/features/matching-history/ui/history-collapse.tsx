@@ -77,8 +77,8 @@ function HistoryCollapse() {
       >
         <View style={styles.content}>
           <Text style={[styles.title, { fontSize: 18 }]}>
-            혹시 놓친 <Text style={styles.titleStrong}>인연</Text>이 있을지도
-            몰라요
+          {t("features.matching-history.ui.history_collapse.title")} <Text style={styles.titleStrong}>{t("features.matching-history.ui.history_collapse.title_2")}</Text>
+          {t("features.matching-history.ui.history_collapse.title_3")}
           </Text>
           <Text style={styles.description}>
             {t("features.matching-history.ui.history_collapse.description_1")}

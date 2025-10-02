@@ -6,7 +6,7 @@
       "modal_text_2": "インスタで連絡できます。",
       "primary_button": "確認しました",
       "partner_modal_title_1": "気になる相手に",
-      "partner_modal_title_2_male": "ジェム {count}個で気持ちを伝えますか？",
+      "partner_modal_title_2_male": "ジェム {{count}}個で気持ちを伝えますか？",
       "partner_modal_title_2_female": "気持ちを伝えますか？",
       "partner_modal_text_1": "相手に簡単に興味を示して、",
       "partner_modal_text_2": "その次のステップへ自然に進んでみましょう。",
@@ -15,7 +15,7 @@
     },
     "mock_interaction_navigation": {
       "modal_title_1": "気になる相手を見つけるために",
-      "modal_title_2": "ジェム {count}個を使います！",
+      "modal_title_2": "ジェム {{count}}個を使います！",
       "modal_text_1": "性格やコミュニケーションスタイルをもとに、",
       "modal_text_2": "自然につながれる相手をご紹介いたします。",
       "primary_button": "はい、やってみます",

@@ -10,15 +10,15 @@
       "text": "好みのタイプを教えていただければ、もっと正確にマッチングをお手伝いします！"
     },
     "community_announcement": {
-      "greeting": "{name}さんも参加できます",
+      "greeting": "{{name}}さんも参加できます",
       "default_user": "会員",
       "success_story_prompt": "恋愛成功体験、ぜひチェックしてみてください！"
     },
     "first_purchase_event_banner": {
-      "title": "{brand}は初めてですか？",
+      "title": "は初めてですか？",
       "brand_name": "サムタイム",
       "description_1": "あなたのためだけの",
-      "description_2": "{special_match}をご用意しました！",
+      "description_2": "をご用意しました！",
       "special_match": "特別なマッチング",
       "comment_android_shadow": "Androidでのシャドウ"
     },

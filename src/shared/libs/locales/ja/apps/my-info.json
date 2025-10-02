@@ -1,6 +1,6 @@
 {
   "dating_style": {
-    "more": "あと{count}個！",
+    "more": "あと{{count}}個！",
     "next": "次へ",
     "title_1": "あなたに一番合う",
     "title_2": "恋愛スタイルは？",
@@ -53,7 +53,7 @@
     "next_button": "次へ"
   },
   "interest": {
-    "more": "あと{count}個！",
+    "more": "あと{{count}個！",
     "next": "次へ",
     "title_1": "最近気になっている",
     "title_2": "趣味や関心はありますか？",

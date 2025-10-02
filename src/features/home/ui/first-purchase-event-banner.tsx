@@ -49,15 +49,15 @@ function FirstPurchaseEvent() {
       <View style={styles.content}>
         {/* i18n: The following text has nested styling and requires manual translation using the <Trans> component or another method. */}
         <Text style={[styles.title, { fontSize: width >= 490 ? 18 : 15 }]}>
-          <Text style={styles.titleStrong}>썸타임</Text>이 처음이신가요?
+          <Text style={styles.titleStrong}>{t("features.home.ui.first_purchase_event_banner.brand_name")}</Text>{t("features.home.ui.first_purchase_event_banner.title")}
         </Text>
         <Text style={styles.description}>
           {t("features.home.ui.first_purchase_event_banner.description_1")}
         </Text>
         {/* i18n: The following text has nested styling and requires manual translation using the <Trans> component or another method. */}
         <Text style={styles.description}>
-          <Text style={styles.descriptionStrong}>특별한 매칭</Text>이
-          준비되었어요!
+          <Text style={styles.descriptionStrong}>{t("features.home.ui.first_purchase_event_banner.special_match")}</Text>이
+          {t("features.home.ui.first_purchase_event_banner.description_2")}
         </Text>
       </View>
       <View style={styles.button}>

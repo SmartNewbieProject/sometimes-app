@@ -10,7 +10,7 @@
       "text": "나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
     },
     "community_announcement": {
-      "greeting": "{name}님도 가능해요",
+      "greeting": "{{name}}님도 가능해요",
       "default_user": "회원",
       "success_story_prompt": "연애 성공 후기, 한번 확인해 보세요!"
     },

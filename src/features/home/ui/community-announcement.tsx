@@ -16,11 +16,7 @@ export const CommunityAnnouncement = () => {
     >
       <View className="my-[25px]">
         <Text textColor="black" className="font-bold text-[18px]" weight="medium">
-          {t("features.home.ui.community_announcement.greeting", {
-            name:
-              profileDetails?.name ||
-              t("features.home.ui.community_announcement.default_user"),
-          })}
+          {t("features.home.ui.community_announcement.greeting", {name:profileDetails?.name|| t("features.home.ui.community_announcement.default_user")})}
         </Text>
         <Text textColor="black" className="font-bold text-[18px]" weight="medium">
           {t("features.home.ui.community_announcement.success_story_prompt")}

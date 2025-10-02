@@ -6,7 +6,7 @@
       "modal_text_2": "인스타그램으로 연락할 수 있어요",
       "primary_button": "확인했어요",
       "partner_modal_title_1": "마음에 드는 이성에게",
-      "partner_modal_title_2_male": "구슬 {count}개로 관심을 표현할까요?",
+      "partner_modal_title_2_male": "구슬 {{count}}개로 관심을 표현할까요?",
       "partner_modal_title_2_female": "관심을 표현할까요?",
       "partner_modal_text_1": "이성에게 간단히 관심을 표현하고,",
       "partner_modal_text_2": "그 다음 단계로 자연스럽게 나아가 보세요.",
@@ -15,7 +15,7 @@
     },
     "mock_interaction_navigation": {
       "modal_title_1": "마음에 드는 이성을 찾기위해",
-      "modal_title_2": "구슬 {count}개를 사용할게요!",
+      "modal_title_2": "구슬 {{count}}개를 사용할게요!",
       "modal_text_1": "성격과 소통 스타일을 바탕으로,",
       "modal_text_2": "자연스럽게 연결될 수 있는 인연을 추천해드릴게요.",
       "primary_button": "네, 해볼래요",

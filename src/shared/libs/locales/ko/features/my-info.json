@@ -9,7 +9,7 @@
       "title_1": "당신에게 가장 잘 맞는",
       "title_2": "연애 스타일은 무엇인가요?",
       "loading": "연애 스타일 옵션 불러오고 있어요",
-      "next_count": "{count} 개만 더!",
+      "next_count": "{{count}} 개만 더!",
       "next": "다음"
     },
     "drinking": {
@@ -49,7 +49,7 @@
       "next_button": "다음"
     },
     "interest": {
-      "more": "{count}개 더 선택해주세요!",
+      "more": "{{count}}개 더 선택해주세요!",
       "next": "다음",
       "title_1": "어떤 것에 관심이 많으신가요?",
       "title_2": "최소 3개 이상 선택해주세요!",

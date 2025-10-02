@@ -18,16 +18,16 @@ export const BusinessInfo: React.FC = () => {
       }`}
     >
       <Text className="text-[#888] text-[10px] text-center leading-5">
-        {t("shareds.business_info.company_info")}{" "}
+        {t("shareds.business-info.business_info.company_info")}{" "}
         <TouchableOpacity
           onPress={() => onClickLink(businessRegistrationLink)}
           className="underline inderline-offset-1"
         >
           <Text className="text-[#888] text-[10px]">
-            {t("shareds.business_info.registration_number")}
+            {t("shareds.business-info.business_info.registration_number")}
           </Text>
         </TouchableOpacity>{" "}
-        {t("shareds.business_info.sales_report")}
+        {t("shareds.business-info.business_info.sales_report")}
       </Text>
       <View className="flex flex-row gap-x-2 items-center justify-center w-full">
         <TouchableOpacity
@@ -38,7 +38,7 @@ export const BusinessInfo: React.FC = () => {
           }
         >
           <Text className="text-[#888] text-[10px] text-center leading-5  underline underline-offset-1">
-            {t("shareds.business_info.privacy_policy")}
+            {t("shareds.business-info.business_info.privacy_policy")}
           </Text>
         </TouchableOpacity>
 
@@ -50,7 +50,7 @@ export const BusinessInfo: React.FC = () => {
           }
         >
           <Text className="text-[#888] text-[10px] text-center leading-5  underline underline-offset-1">
-            {t("shareds.business_info.data_consent")}
+            {t("shareds.business-info.business_info.data_consent")}
           </Text>
         </TouchableOpacity>
 
@@ -62,7 +62,7 @@ export const BusinessInfo: React.FC = () => {
           }
         >
           <Text className="text-[#888] text-[10px] text-center leading-5  underline underline-offset-1">
-            {t("shareds.business_info.terms_of_service")}
+            {t("shareds.business-info.business_info.terms_of_service")}
           </Text>
         </TouchableOpacity>
       </View>

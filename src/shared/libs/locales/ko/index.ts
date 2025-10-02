@@ -37,6 +37,9 @@ import featuresProfileEdit from './features/profile-edit.json';
 import featuresSetting from './features/setting.json';
 import featuresSignup from './features/signup.json';
 import featuresWelcomeReward from './features/welcome-reward.json';
+import featuresIdleMatchTimer from './features/idle-match-timer.json';
+import featureMypage from './features/mypage.json';
+
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
 import widgetsForm from './widgets/form.json';
@@ -72,51 +75,53 @@ const apps = {
 }
 
 const features = {
-  admin: featuresAdmin,
+  'admin': featuresAdmin,
   'apple-info': featuresAppleInfo,
-  auth: featuresAuth,
+  'auth': featuresAuth,
   'ban-report': featuresBanReport,
-  chat: featuresChat,
-  commingsoon: featuresCommingsoon,
-  community: featuresCommunity,
-  event: featuresEvent,
-  feedback: featuresFeedback,
-  guide: featuresGuide,
-  home: featuresHome,
-  interest: featuresInterest,
-  like: featuresLike,
-  loading: featuresLoading,
-  match: featuresMatch,
+  'chat': featuresChat,
+  'commingsoon': featuresCommingsoon,
+  'community': featuresCommunity,
+  'event': featuresEvent,
+  'feedback': featuresFeedback,
+  'guide': featuresGuide,
+  'home': featuresHome,
+  'interest': featuresInterest,
+  'like': featuresLike,
+  'loading': featuresLoading,
+  'match': featuresMatch,
   'matching-history': featuresMatchingHistory,
   'my-info': featuresMyInfo,
-  partner: featuresPartner,
-  payment: featuresPayment,
+  'mypage': featureMypage,
+  'partner': featuresPartner,
+  'payment': featuresPayment,
   'post-box': featuresPostBox,
   'pre-signup': featuresPreSignup,
   'profile-edit': featuresProfileEdit,
-  setting: featuresSetting,
-  signup: featuresSignup,
+  'setting': featuresSetting,
+  'signup': featuresSignup,
   'welcome-reward': featuresWelcomeReward,
+  'idle-match-timer': featuresIdleMatchTimer,
 };
 
 const widgets = {
   'checkbox-label': widgetsCheckboxLabel,
-  form: widgetsForm,
+  'form': widgetsForm,
   'gem-store': widgetsGemStore,
   'mbti-selector': widgetsMbtiSelector,
-  ticket: widgetsTicket,
+  'ticket': widgetsTicket,
 };
 
 const shareds = {
   'business-info': sharedsBusinessInfo,
-  constants: sharedsConstants,
+  'constants': sharedsConstants,
   'content-selector': sharedsContentSelector,
-  hooks: sharedsHooks,
+  'hooks': sharedsHooks,
   'image-selector': sharedsImageSelector,
   'linkified-text': sharedsLinkifiedText,
-  navigation: sharedsNavigation,
-  providers: sharedsProviders,
-  select: sharedsSelect,
+  'navigation': sharedsNavigation,
+  'providers': sharedsProviders,
+  'select': sharedsSelect,
 };
 
 export default {

@@ -2,7 +2,7 @@
   "ui": {
     "nav": {
       "modal_title_1": "気になる相手を探すために",
-      "modal_title_2": "ジェム{count}個を使います！",
+      "modal_title_2": "ジェム{{count}}個を使います！",
       "modal_text_1": "性格やコミュニケーションスタイルに基づき、",
       "modal_text_2": "自然につながれる相手をご紹介いたします",
       "primary_button": "はい、やってみる",
