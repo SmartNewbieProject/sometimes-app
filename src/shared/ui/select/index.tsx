@@ -5,6 +5,8 @@ import { Modal, StyleSheet, TouchableOpacity, View, Dimensions } from 'react-nat
 import { Text } from '../text';
 import colors from '../../constants/colors';
 import { ScrollView } from 'react-native-gesture-handler';
+import i18n from '@/src/shared/libs/i18n';
+
 
 const select = cva(
   'w-full flex flex-col justify-center bg-transparent border-b border-[#E7E9EC]', 
@@ -52,7 +54,7 @@ export function Select({
   size,
   status,
   isDisabled,
-  placeholder = '선택해주세요',
+  placeholder = i18n.t("shareds.select.select.placeholder"),
   className,
   width,
 }: SelectProps) {

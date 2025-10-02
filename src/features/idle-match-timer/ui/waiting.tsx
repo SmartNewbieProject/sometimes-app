@@ -127,7 +127,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
             style={sideStyle.previousButton}
             onPress={() => router.push("/matching-history")}
           >
-            <Text className="w-[24px] text-white text-[12px]">이전 매칭</Text>
+            <Text className="w-[24px] text-white text-[12px]">{t("features.idle-match-timer.ui.waiting.previous_button")}</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>

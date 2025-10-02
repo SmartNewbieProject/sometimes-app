@@ -23,7 +23,7 @@ export const Header = ({ gemCount }: HeaderProps) => {
       backgroundColor: 'white' 
     }}>
       <SharedHeader.LeftButton visible={true} onPress={() => router.back()} />
-      <Text size="20" weight="bold" textColor="black">{t("ui.gem_store.header_title")}</Text>
+      <Text size="20" weight="bold" textColor="black">{t("features.payment.ui.gem_store.header_title")}</Text>
       <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
         <ImageResource resource={ImageResources.GEM} width={28} height={28} />
         <Text className="text-[#1B1B1B] text-[15px]">

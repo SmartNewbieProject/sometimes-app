@@ -28,7 +28,7 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
   if (error) {
     return (
       <View style={styles.errorContainer}>
-        <Text>{t("ui.gem_store.failed_to_load_gem_products")}</Text>
+        <Text>{t("features.payment.ui.gem_store.failed_to_load_gem_products")}</Text>
       </View>
     );
   }
@@ -37,7 +37,7 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
 
   return (
     <View style={styles.content}>
-      <GemStoreWidget.Provider storeName={t("ui.gem_store.store_name")}>
+      <GemStoreWidget.Provider storeName={t("features.payment .ui.gem_store.store_name")}>
         {gemProducts
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((product, index) => (

@@ -51,7 +51,7 @@ export function MbtiSelector({
       showsHorizontalScrollIndicator={false}
     >
       <View style={[styles.mbtiColumn, styles.marginRight]}>
-        <Text style={styles.label}>{i18n.t('widgets.mbti_selector.extroversion')}</Text>
+        <Text style={styles.label}>{i18n.t('widgets.mbti-selector.mbti_selector.extroversion')}</Text>
         <Selector
           value={first}
           direction="vertical"
@@ -63,10 +63,10 @@ export function MbtiSelector({
           onBlur={onBlur}
           variant="default"
         />
-        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti_selector.introversion')}</Text>
+        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti-selector.mbti_selector.introversion')}</Text>
       </View>
       <View style={[styles.mbtiColumn, styles.marginRight]}>
-        <Text style={styles.label}>{i18n.t('widgets.mbti_selector.intuition')}</Text>
+        <Text style={styles.label}>{i18n.t('widgets.mbti-selector.mbti_selector.intuition')}</Text>
         <Selector
           value={second}
           direction="vertical"
@@ -78,10 +78,10 @@ export function MbtiSelector({
           onBlur={onBlur}
           variant="default"
         />
-        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti_selector.sensing')}</Text>
+        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti-selector.mbti_selector.sensing')}</Text>
       </View>
       <View style={[styles.mbtiColumn, styles.marginRight]}>
-        <Text style={styles.label}>{i18n.t('widgets.mbti_selector.feeling')}</Text>
+        <Text style={styles.label}>{i18n.t('widgets.mbti-selector.mbti_selector.feeling')}</Text>
         <Selector
           value={third}
           direction="vertical"
@@ -93,10 +93,10 @@ export function MbtiSelector({
           onBlur={onBlur}
           variant="default"
         />
-        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti_selector.thinking')}</Text>
+        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti-selector.mbti_selector.thinking')}</Text>
       </View>
       <View style={styles.mbtiColumn}>
-        <Text style={styles.label}>{i18n.t('widgets.mbti_selector.prospecting')}</Text>
+        <Text style={styles.label}>{i18n.t('widgets.mbti-selector.mbti_selector.prospecting')}</Text>
         <Selector
           value={fourth}
           direction="vertical"
@@ -108,7 +108,7 @@ export function MbtiSelector({
           onBlur={onBlur}
           variant="default"
         />
-        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti_selector.judging')}</Text>
+        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti-selector.mbti_selector.judging')}</Text>
       </View>
     </ScrollView>
   );

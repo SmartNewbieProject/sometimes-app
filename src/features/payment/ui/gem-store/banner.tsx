@@ -26,7 +26,7 @@ export const Banner = () => {
             height={36}
           />
           <Text weight="bold" textColor="black" size="12">
-            {t("ui.gem_store.banner.guide_button_text")}
+            {t("features.payment.ui.gem_store.banner.guide_button_text")}
           </Text>
         </Pressable>
       </View>

@@ -22,7 +22,7 @@ import type { Article as ArticleType } from "../../types";
 import { Comment } from "../comment";
 import { UserProfile } from "../user-profile";
 import Interaction from "./interaction-nav";
-
+import { useTranslation } from "react-i18next";
 interface ArticleItemProps {
   data: ArticleType;
   onPress: () => void;
@@ -33,6 +33,7 @@ interface ArticleItemProps {
 
 export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   const { my } = useAuth();
+  const { t } = useTranslation();
   const author = data?.author;
   const comments = data.comments;
   const university = author?.universityDetails;
@@ -81,7 +82,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
     if (!isOwner) {
       menus.push({
         key: "report",
-        content: "신고",
+        content: t("features.community.ui.article.report_button"),
         onPress: () => {
           router.push(`/community/report/${data.id}`);
         },

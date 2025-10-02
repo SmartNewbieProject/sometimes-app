@@ -120,6 +120,6 @@ const reportReasons = [
   i18n.t("apps.community.report.reason_sexual"),
   i18n.t("apps.community.report.reason_privacy"),
   i18n.t("apps.community.report.reason_ad"),
-  i18n.t("apps.community.report.bullying"),
-  i18n.t("apps.community.report.rule"),
+  i18n.t("apps.community.report.reason_bullying"),
+  i18n.t("apps.community.report.reason_rule"),
 ];

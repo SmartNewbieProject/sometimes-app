@@ -156,7 +156,7 @@ function InterestSection() {
           right: 28,
         }}
       >
-        {t("apps.profile-edit.ui.save_button")}
+        {t("apps.profile_edit.ui.save_button")}
       </Button>
     </View>
   );

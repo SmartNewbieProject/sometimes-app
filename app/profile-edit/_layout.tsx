@@ -16,8 +16,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function ProfileEditLayout() {
   const { t } = useTranslation();
   const TABS: Tab[] = [
-    { id: "profile", label: t("apps.profile-edit.tabs.profile") },
-    { id: "interest", label: t("apps.profile-edit.tabs.interest") },
+    { id: "profile", label: t("apps.profile_edit.tabs.profile") },
+    { id: "interest", label: t("apps.profile_edit.tabs.interest") },
   ];
 
   const insets = useSafeAreaInsets();

@@ -7,7 +7,7 @@ import matching_history from './apps/matching_history.json';
 import my from './apps/my.json';
 import partner from './apps/partner.json';
 import postBox from './apps/post-box.json';
-import profileEdit from './apps/profile-edit.json';
+import profile_edit from './apps/profile-edit.json';
 import purchase from './apps/purchase.json';
 import tabs from './apps/tabs.json';
 import test from './apps/test.json';
@@ -66,7 +66,7 @@ const apps = {
   my: my,
   partner: partner,
   postBox: postBox,
-  profileEdit: profileEdit,
+  profile_edit: profile_edit,
   purchase: purchase,
   tabs: tabs,
   test: test,
