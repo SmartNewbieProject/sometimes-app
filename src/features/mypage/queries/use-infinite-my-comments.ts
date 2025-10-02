@@ -1,29 +1,69 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import mypageApis, { MyComment } from "../apis";
+import {
+  useInfiniteQuery,
+  useQueryClient,
+  type QueryClient,
+} from "@tanstack/react-query";
+import apis from "../apis";
 
 export const createMyCommentsQueryKey = () => ["mypage", "my-comments"];
 
-export function useInfiniteMyCommentsQuery(pageSize: number) {
-  const query = useInfiniteQuery({
+export function prefetchMyCommentsFirstPage(
+  queryClient: QueryClient,
+  pageSize = 10
+) {
+  return queryClient.prefetchInfiniteQuery({
     queryKey: createMyCommentsQueryKey(),
-    queryFn: ({ pageParam = 1 }) =>
-      mypageApis.getMyComments({ page: pageParam, size: pageSize }),
-    getNextPageParam: (last) => (last.hasNext ? last.page + 1 : undefined),
+    queryFn: async ({ pageParam = 1 }) =>
+      apis.mypageApis.getMyComments({ page: pageParam, size: pageSize }),
     initialPageParam: 1,
+    getNextPageParam: (lastPage: any) =>
+      lastPage?.meta?.hasNextPage
+        ? (lastPage.meta.currentPage ?? 1) + 1
+        : undefined,
+    staleTime: 30_000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
+export function useInfiniteMyCommentsQuery(pageSize = 10) {
+  const queryClient = useQueryClient();
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isPending,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: createMyCommentsQueryKey(),
+    queryFn: async ({ pageParam = 1 }) =>
+      apis.mypageApis.getMyComments({ page: pageParam, size: pageSize }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any) =>
+      lastPage?.meta?.hasNextPage
+        ? (lastPage.meta.currentPage ?? 1) + 1
+        : undefined,
+    enabled: true,
+    staleTime: 30_000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: "always",
   });
 
-  const comments: MyComment[] = (query.data?.pages ?? []).flatMap(
-    (p) => p.content
-  );
-  const pagesCount = query.data?.pages?.length ?? 0;
+  const articles = data?.pages?.flatMap((p: any) => p.items) || [];
+  const pagesCount = data?.pages?.length ?? 0;
 
   return {
-    comments,
+    articles,
     pagesCount,
-    isLoading: query.isLoading || query.isPending,
-    isLoadingMore: query.isFetchingNextPage,
-    hasNextPage: !!query.hasNextPage,
-    loadMore: () => query.fetchNextPage(),
-    refetch: () => query.refetch(),
+    isLoading: isLoading || isPending,
+    isLoadingMore: isFetchingNextPage,
+    hasNextPage: !!hasNextPage,
+    loadMore: fetchNextPage,
+    refetch,
+    invalidate: () =>
+      queryClient.invalidateQueries({ queryKey: createMyCommentsQueryKey() }),
   };
 }

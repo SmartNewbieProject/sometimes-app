@@ -1,78 +1,107 @@
-import {
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  Text as RNText,
-} from "react-native";
-import { Text as SText } from "@/src/shared/ui";
+import { View } from "react-native";
+import { Text } from "@/src/shared/ui";
 import { router } from "expo-router";
 import { useInfiniteMyCommentsQuery } from "../../queries/use-infinite-my-comments";
 import { CustomInfiniteScrollView } from "@/src/shared/infinite-scroll/custom-infinite-scroll-view";
-import type { MyComment } from "../../apis";
-
-function CommentRow({ item }: { item: MyComment }) {
-  return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => router.push(`/community/${item.article.id}`)}
-      activeOpacity={0.8}
-    >
-      <SText size="12" className="opacity-60">
-        원글 · {item.article.title ?? "제목 없음"}
-      </SText>
-
-      <RNText numberOfLines={3} ellipsizeMode="tail" style={styles.comment}>
-        {item.content}
-      </RNText>
-
-      <SText size="12" className="opacity-60 mt-6">
-        {new Date(item.createdAt).toLocaleString()}
-      </SText>
-    </TouchableOpacity>
-  );
-}
+import type { Article as ArticleType } from "@/src/features/community/types";
+import { Article } from "@/src/features/community/ui/article";
+import apis from "@/src/features/community/apis";
+import { tryCatch } from "@/src/shared/libs";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { ArticleSkeleton } from "@/src/features/loading/skeleton/article-skeleton";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 
 export default function MyCommentsScreen() {
-  const { comments, isLoading, isLoadingMore, hasNextPage, loadMore, refetch } =
-    useInfiniteMyCommentsQuery(15);
+  const { articles, isLoading, isLoadingMore, hasNextPage, loadMore, refetch } =
+    useInfiniteMyCommentsQuery(10);
+
+  const { showModal, showErrorModal } = useModal();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  const invalidateAndRefetch = async () => {
+    await refetch();
+  };
+
+  const like = (item: ArticleType) => {
+    tryCatch(
+      async () => {
+        await apis.articles.doLike(item);
+        await invalidateAndRefetch();
+      },
+      (e) => console.error(e)
+    );
+  };
+
+  const deleteArticle = (id: string) => {
+    showModal({
+      title: "게시글 삭제",
+      children: <Text size="sm">해당 게시글을 삭제할까요?</Text>,
+      primaryButton: {
+        text: "삭제하기",
+        onClick: () =>
+          tryCatch(
+            async () => {
+              await apis.articles.deleteArticle(id);
+              await invalidateAndRefetch();
+            },
+            ({ error }) => showErrorModal(error, "error")
+          ),
+      },
+      secondaryButton: { text: "취소", onClick: () => {} },
+    });
+  };
+
+  const pickVariant = (): "short" | "medium" | "long" => {
+    const r = Math.random();
+    if (r < 0.33) return "short";
+    if (r < 0.66) return "medium";
+    return "long";
+  };
+
+  if (isLoading && articles.length === 0) {
+    return (
+      <View className="flex-1 bg-white">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <ArticleSkeleton
+            key={`skel-my-article-${i}`}
+            variant={pickVariant()}
+          />
+        ))}
+      </View>
+    );
+  }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
-      <SText className="px-4 py-3" weight="bold">
-        내가 쓴 댓글
-      </SText>
-
+    <View className="flex-1 bg-white">
+      <Text className="px-4 py-3" weight="bold">
+        댓글 단 글
+      </Text>
       <CustomInfiniteScrollView
-        data={comments}
-        renderItem={(c: MyComment) => <CommentRow item={c} />}
+        data={articles}
+        getItemKey={(a: ArticleType) => String(a.id)}
+        renderItem={(article: ArticleType) => (
+          <Article
+            data={article}
+            onPress={() => router.push(`/community/${article.id}`)}
+            onLike={() => like(article)}
+            onDelete={deleteArticle}
+            refresh={invalidateAndRefetch}
+          />
+        )}
         onLoadMore={loadMore}
         isLoading={isLoading}
         isLoadingMore={isLoadingMore}
         hasMore={hasNextPage}
-        onRefresh={refetch}
+        onRefresh={invalidateAndRefetch}
         refreshing={isLoading && !isLoadingMore}
         className="flex-1"
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    backgroundColor: "white",
-    borderRadius: 8,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#F0ECFF",
-  },
-  comment: {
-    marginTop: 4,
-    fontWeight: "700",
-    fontSize: 14,
-    lineHeight: 20,
-    color: "#111",
-  },
-});

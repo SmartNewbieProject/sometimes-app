@@ -1,4 +1,3 @@
-// use-infinite-my-articles.tsx
 import {
   useInfiniteQuery,
   useQueryClient,

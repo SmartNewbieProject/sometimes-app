@@ -77,7 +77,7 @@ export default function MyArticlesScreen() {
     );
   }
 
-  console.log("my articles items count =", articles.length, articles?.[0]);
+  //console.log("my articles items count =", articles.length, articles?.[0]);
 
   return (
     <View className="flex-1 bg-white">
