@@ -77,6 +77,8 @@ export default function MyArticlesScreen() {
     );
   }
 
+  console.log("my articles items count =", articles.length, articles?.[0]);
+
   return (
     <View className="flex-1 bg-white">
       <Text className="px-4 py-3" weight="bold">

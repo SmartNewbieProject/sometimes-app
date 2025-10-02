@@ -37,6 +37,13 @@ export type ItemsMetaPage<T> = {
   };
 };
 
+function extractPayload(raw: any) {
+  const lvl1 = raw?.data ?? raw;
+  const lvl2 =
+    lvl1 && typeof lvl1 === "object" && "data" in lvl1 ? lvl1.data : lvl1;
+  return lvl2 ?? lvl1;
+}
+
 const getMyRematchingTicket = async (): Promise<MyRematchingTicket[]> => {
   const { data } = await axiosClient.get<MyRematchingTicket[]>(
     "/tickets/rematching"
@@ -141,63 +148,73 @@ export type MyPageApis = {
   }) => Promise<ItemsMetaPage<MyComment>>;
 };
 
+function normalizeItemsMetaPage<T>(
+  data: any,
+  fallback: { page: number; size: number }
+): ItemsMetaPage<T> {
+  if (data && Array.isArray(data.items) && data.meta) {
+    const m = data.meta;
+    return {
+      items: data.items as T[],
+      meta: {
+        currentPage: Number(m.currentPage ?? fallback.page),
+        itemsPerPage: Number(m.itemsPerPage ?? fallback.size),
+        totalItems: Number(m.totalItems ?? data.items.length),
+        hasNextPage: Boolean(m.hasNextPage ?? false),
+        hasPreviousPage: Boolean(
+          m.hasPreviousPage ?? Number(m.currentPage ?? fallback.page) > 1
+        ),
+      },
+    };
+  }
+
+  if (data && Array.isArray(data.content)) {
+    const items = data.content as T[];
+    const page = Number(data.page ?? fallback.page);
+    const size = Number(data.size ?? fallback.size);
+    const hasNext = Boolean(data.hasNext ?? items.length >= size);
+    return {
+      items,
+      meta: {
+        currentPage: page,
+        itemsPerPage: size,
+        totalItems: Number(data.totalItems ?? items.length),
+        hasNextPage: hasNext,
+        hasPreviousPage: page > 1,
+      },
+    };
+  }
+
+  return {
+    items: [],
+    meta: {
+      currentPage: fallback.page,
+      itemsPerPage: fallback.size,
+      totalItems: 0,
+      hasNextPage: false,
+      hasPreviousPage: fallback.page > 1,
+    },
+  };
+}
+
 const mypageApis: MyPageApis = {
   async getMyArticles({ page, size }) {
-    const { data } = await axiosClient.get<PageResp<MyArticle>>(
-      "/articles/my-articles",
-      { params: { page, size } }
-    );
-
-    const items = Array.isArray(data.content) ? data.content : [];
-
-    const meta = {
-      currentPage: Number(data.page ?? page),
-
-      itemsPerPage: Number(data.size ?? size),
-
-      totalItems: Number((data as any).totalItems ?? items.length),
-
-      hasNextPage: Boolean(
-        (data as any).hasNext ?? items.length >= (data.size ?? size)
-      ),
-
-      hasPreviousPage: Boolean(
-        (data as any).hasPreviousPage ?? Number(data.page ?? page) > 1
-      ),
-    };
-
-    const normalized: ItemsMetaPage<MyArticle> = { items, meta };
-
-    return normalized;
+    const resp = await axiosClient.get<unknown>("/articles/my-articles", {
+      params: { page, size },
+    });
+    const payload = extractPayload(resp);
+    return normalizeItemsMetaPage<MyArticle>(payload as any, { page, size });
   },
 
   async getMyComments({ page, size }) {
-    const { data } = await axiosClient.get<PageResp<MyComment>>(
+    const resp = await axiosClient.get<unknown>(
       "/articles/my-commented-articles",
-      { params: { page, size } }
+      {
+        params: { page, size },
+      }
     );
-
-    const items = Array.isArray(data.content) ? data.content : [];
-
-    const meta = {
-      currentPage: Number(data.page ?? page),
-
-      itemsPerPage: Number(data.size ?? size),
-
-      totalItems: Number((data as any).totalItems ?? items.length),
-
-      hasNextPage: Boolean(
-        (data as any).hasNext ?? items.length >= (data.size ?? size)
-      ),
-
-      hasPreviousPage: Boolean(
-        (data as any).hasPreviousPage ?? Number(data.page ?? page) > 1
-      ),
-    };
-
-    const normalized: ItemsMetaPage<MyComment> = { items, meta };
-
-    return normalized;
+    const payload = extractPayload(resp);
+    return normalizeItemsMetaPage<MyComment>(payload as any, { page, size });
   },
 };
 

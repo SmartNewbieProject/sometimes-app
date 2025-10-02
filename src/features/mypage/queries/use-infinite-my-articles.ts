@@ -1,30 +1,23 @@
+// use-infinite-my-articles.tsx
 import {
   useInfiniteQuery,
   useQueryClient,
   type QueryClient,
 } from "@tanstack/react-query";
 import apis from "../apis";
-import type { MyArticle } from "../apis";
 
 export const createMyArticlesQueryKey = () => ["mypage", "my-articles"];
 
 export function prefetchMyArticlesFirstPage(
   queryClient: QueryClient,
-
   pageSize = 10
 ) {
   return queryClient.prefetchInfiniteQuery({
     queryKey: createMyArticlesQueryKey(),
-
-    queryFn: async ({ pageParam = 1 }) => {
-      return apis.mypageApis.getMyArticles({ page: pageParam, size: pageSize });
-    },
-
+    queryFn: async ({ pageParam = 1 }) =>
+      apis.mypageApis.getMyArticles({ page: pageParam, size: pageSize }),
     initialPageParam: 1,
-
-    getNextPageParam: (lastPage: {
-      meta: { hasNextPage: any; currentPage: any };
-    }) =>
+    getNextPageParam: (lastPage: any) =>
       lastPage?.meta?.hasNextPage
         ? (lastPage.meta.currentPage ?? 1) + 1
         : undefined,
@@ -46,11 +39,10 @@ export function useInfiniteMyArticlesQuery(pageSize = 10) {
     refetch,
   } = useInfiniteQuery({
     queryKey: createMyArticlesQueryKey(),
-
     queryFn: async ({ pageParam = 1 }) =>
       apis.mypageApis.getMyArticles({ page: pageParam, size: pageSize }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) =>
+    getNextPageParam: (lastPage: any) =>
       lastPage?.meta?.hasNextPage
         ? (lastPage.meta.currentPage ?? 1) + 1
         : undefined,
@@ -61,7 +53,7 @@ export function useInfiniteMyArticlesQuery(pageSize = 10) {
     refetchOnWindowFocus: "always",
   });
 
-  const articles = data?.pages?.flatMap((p) => p.items) || [];
+  const articles = data?.pages?.flatMap((p: any) => p.items) || [];
   const pagesCount = data?.pages?.length ?? 0;
 
   return {
