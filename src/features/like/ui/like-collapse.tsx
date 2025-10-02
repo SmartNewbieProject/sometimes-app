@@ -91,7 +91,7 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
             startTiming={startTiming}
             handleAllImagesLoaded={handleAllImagesLoaded}
             imageUrls={
-              imagesUrls.length > 5 ? imageUrls.slice(0, 5) : imageUrls
+              imagesUrls.length > 5 ? imagesUrls.slice(0, 5) : imagesUrls
             }
           />
         </View>
@@ -99,7 +99,7 @@ function LikeCollapse({ collapse, type }: LikeCollapseProps) {
           <View style={styles.more}>
             <Animated.Text
               style={[styles.moreText, textOpacityStyle]}
-            >{`+${Math.abs(5 - imageUrls.length)}`}</Animated.Text>
+            >{`+${Math.abs(5 - imagesUrls.length)}`}</Animated.Text>
             <ExplodingParticles
               delay={800}
               startTiming={startTiming}
