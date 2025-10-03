@@ -1,3 +1,4 @@
+import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -102,8 +103,9 @@ export function useRoulette() {
       );
     },
 
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       console.log(`API 성공! 결과: ${response.prizeValue}`);
+      await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
       cancelAnimation(rouletteValue);
       runOnJS(settleRoulette)(response.prizeValue);
     },
