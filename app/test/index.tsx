@@ -1,42 +1,30 @@
+import RouletteItem from "@/src/features/event/ui/roulette/roulette-item";
+import RouletteModal from "@/src/features/event/ui/roulette/roulette-modal";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  cancelAnimation,
+  Easing,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
 
 function Test() {
-  const { showModal, showNestedModal } = useModal();
+  const { showModal, showNestedErrorModal } = useModal();
   useEffect(() => {
-    showModal({
-      title: "태스트1",
-      children: "테스트1",
-      primaryButton: {
-        text: "확인",
-        onClick: () => {},
-      },
-    });
-    showModal({
-      title: "태스트2",
-      children: "테스트2",
-      primaryButton: {
-        text: "확인",
-        onClick: () => {},
-      },
-    });
-    showNestedModal({
-      title: "태스트3",
-      children: "테스트3",
-      primaryButton: {
-        text: "확인",
-        onClick: () => {},
-      },
-    });
+    showModal({ custom: RouletteModal });
   }, []);
   return (
-    <View>
-      <Text>hi</Text>
+    <View style={{ backgroundColor: "#fff", flex: 1 }}>
+      <Text>hello</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default Test;

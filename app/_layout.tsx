@@ -52,6 +52,10 @@ export default function RootLayout() {
     "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
     "Rubik-Light": require("../assets/fonts/Rubik-Light.ttf"),
     "Rubik-SemiBold": require("../assets/fonts/Rubik-SemiBold.ttf"),
+    "Gmarket-Sans-Medium": require("../assets/fonts/GmarketSansTTFMedium.ttf"),
+    "Gmarket-Sans-Bold": require("../assets/fonts/GmarketSansTTFBold.ttf"),
+    "Gmarket-Sans-Light": require("../assets/fonts/GmarketSansTTFLight.ttf"),
+    StyleScript: require("../assets/fonts/StyleScript-Regular.ttf"),
   });
 
   useEffect(() => {
@@ -103,17 +107,19 @@ export default function RootLayout() {
     []
   );
 
-
   useEffect(() => {
     if (!loaded) return;
 
     const handleColdStartNotification = () => {
       try {
-        const lastNotificationResponse = Notifications.getLastNotificationResponse();
+        const lastNotificationResponse =
+          Notifications.getLastNotificationResponse();
 
         if (lastNotificationResponse?.notification) {
-          const notificationId = lastNotificationResponse.notification.request.identifier;
-          const rawData = lastNotificationResponse.notification.request.content.data;
+          const notificationId =
+            lastNotificationResponse.notification.request.identifier;
+          const rawData =
+            lastNotificationResponse.notification.request.content.data;
 
           if (!processedNotificationIds.current.has(notificationId)) {
             if (isValidNotificationData(rawData)) {
@@ -127,7 +133,7 @@ export default function RootLayout() {
           }
         }
       } catch (error) {
-        console.error('콜드 스타트 알림 처리 중 오류:', error);
+        console.error("콜드 스타트 알림 처리 중 오류:", error);
       } finally {
         setColdStartProcessed(true);
       }

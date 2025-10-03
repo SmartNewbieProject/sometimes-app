@@ -11,3 +11,18 @@ export type EventDetails = {
 	currentAttempt: number;
 	maxAttempt: number;
 };
+
+export type RouletteResponse = {
+	prizeValue: number;
+	prizeInfo: {
+		name: string;
+		description: string;
+		imageUrl: string;
+	};
+};
+
+export type RouletteEligibility = {
+	canParticipate: boolean;
+	remainingAttempts: number;
+	nextResetTime: string;
+};

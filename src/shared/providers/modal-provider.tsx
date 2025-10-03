@@ -23,18 +23,20 @@ import { Text } from "../ui/text";
 export type ModalOptions = {
   title?: ReactNode;
   customTitle?: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
   primaryButton?: {
     text: string;
     onClick: () => void;
   };
+  banner?: React.ReactNode;
   showParticle?: boolean;
-  showLogo?: boolean;
+  showLogo?: boolean | React.ReactNode;
   secondaryButton?: {
     text: string;
     onClick: () => void;
   };
   reverse?: boolean;
+  custom?: React.ElementType;
 };
 
 export type ErrorModalOptions = {
@@ -114,6 +116,10 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         hideNestedModal();
       }
     };
+    const Custom = options?.custom;
+    if (Custom) {
+      return <Custom />;
+    }
 
     return (
       <View
@@ -146,13 +152,18 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
                 backgroundColor: "#7A4AE2",
               }}
             >
-              <Image
-                source={require("@assets/images/letter.png")}
-                style={{ width: 60, height: 60 }}
-              />
+              {typeof options.showLogo === "boolean" ? (
+                <Image
+                  source={require("@assets/images/letter.png")}
+                  style={{ width: 60, height: 60 }}
+                />
+              ) : (
+                options.showLogo
+              )}
             </View>
           </View>
         )}
+        {!!options?.banner && options?.banner}
         {!!options?.customTitle && options.customTitle}
         {!options?.customTitle && options?.title && (
           <View className="mb-4">
@@ -216,12 +227,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+
       <Modal
         visible={!!currentModal}
         transparent
         animationType="fade"
         onRequestClose={hideModal}
-        onDismiss={() => {}}
       >
         <View className="flex-1 bg-black/50 justify-center items-center px-5">
           {currentModal && "type" in currentModal
@@ -230,21 +241,17 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             ? renderCustomModal(currentModal as ModalOptions, "mono")
             : null}
         </View>
-      </Modal>
-      <Modal
-        visible={!!nestedModal}
-        transparent
-        animationType="fade"
-        onRequestClose={hideNestedModal}
-        onDismiss={() => {}}
-      >
-        <View className="flex-1 bg-black/50 justify-center items-center px-5">
-          {nestedModal && "type" in nestedModal
-            ? renderErrorModal(nestedModal as ErrorModalOptions, "nested")
-            : nestedModal
-            ? renderCustomModal(nestedModal as ModalOptions, "nested")
-            : null}
-        </View>
+
+        {nestedModal && (
+          <View
+            style={StyleSheet.absoluteFill}
+            className="bg-black/50 justify-center items-center px-5"
+          >
+            {nestedModal && "type" in nestedModal
+              ? renderErrorModal(nestedModal as ErrorModalOptions, "nested")
+              : renderCustomModal(nestedModal as ModalOptions, "nested")}
+          </View>
+        )}
       </Modal>
     </ModalContext.Provider>
   );
