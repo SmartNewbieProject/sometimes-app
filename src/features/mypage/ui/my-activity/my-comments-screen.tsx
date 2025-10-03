@@ -1,6 +1,8 @@
+import Layout from "@/src/features/layout";
 import { View } from "react-native";
-import { Text } from "@/src/shared/ui";
+import { Header, Text } from "@/src/shared/ui";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 import { useInfiniteMyCommentsQuery } from "../../queries/use-infinite-my-comments";
 import { CustomInfiniteScrollView } from "@/src/shared/infinite-scroll/custom-infinite-scroll-view";
 import type { Article as ArticleType } from "@/src/features/community/types";
@@ -78,30 +80,49 @@ export default function MyCommentsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white">
-      <Text className="px-4 py-3" weight="bold">
-        댓글 단 글
-      </Text>
-      <CustomInfiniteScrollView
-        data={articles}
-        getItemKey={(a: ArticleType) => String(a.id)}
-        renderItem={(article: ArticleType) => (
-          <Article
-            data={article}
-            onPress={() => router.push(`/community/${article.id}`)}
-            onLike={() => like(article)}
-            onDelete={deleteArticle}
-            refresh={invalidateAndRefetch}
+    <Layout.Default
+      style={{
+        backgroundColor: "#fff",
+      }}
+    >
+      <Header.Container className="items-center ">
+        <Header.LeftContent>
+          <Header.LeftButton visible={true} onPress={() => router.back()} />
+        </Header.LeftContent>
+        <Header.CenterContent>
+          <Image
+            source={require("@assets/images/MY_LOGO.png")}
+            style={{ width: 40, height: 20 }}
+            contentFit="contain"
           />
-        )}
-        onLoadMore={loadMore}
-        isLoading={isLoading}
-        isLoadingMore={isLoadingMore}
-        hasMore={hasNextPage}
-        onRefresh={invalidateAndRefetch}
-        refreshing={isLoading && !isLoadingMore}
-        className="flex-1"
-      />
-    </View>
+        </Header.CenterContent>
+        <Header.RightContent></Header.RightContent>
+      </Header.Container>
+      <View className="flex-1 bg-white">
+        <Text className="px-4 py-3" weight="bold">
+          내가 댓글을 작성한 게시글
+        </Text>
+        <CustomInfiniteScrollView
+          data={articles}
+          getItemKey={(a: ArticleType) => String(a.id)}
+          renderItem={(article: ArticleType) => (
+            <Article
+              data={article}
+              onPress={() => router.push(`/community/${article.id}`)}
+              onLike={() => like(article)}
+              onDelete={deleteArticle}
+              refresh={invalidateAndRefetch}
+            />
+          )}
+          onLoadMore={loadMore}
+          isLoading={isLoading}
+          isLoadingMore={isLoadingMore}
+          hasMore={hasNextPage}
+          onRefresh={invalidateAndRefetch}
+          refreshing={isLoading && !isLoadingMore}
+          className="flex-1"
+        />
+      </View>
+    </Layout.Default>
   );
 }

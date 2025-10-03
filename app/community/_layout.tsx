@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { Stack } from "expo-router";
+import { View } from "react-native";
 
 export default function CommunityLayout() {
   return (
@@ -10,7 +10,7 @@ export default function CommunityLayout() {
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             },
           }}
         />
@@ -36,6 +36,24 @@ export default function CommunityLayout() {
           name="report"
           options={{
             headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="my/my-articles"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="my/my-comments"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
           }}
         />
       </Stack>

@@ -23,24 +23,6 @@ export default function MyLayout() {
             },
           }}
         />
-        <Stack.Screen
-          name="my-articles"
-          options={{
-            headerShown: false,
-            contentStyle: {
-              backgroundColor: "transparent",
-            },
-          }}
-        />
-        <Stack.Screen
-          name="my-comments"
-          options={{
-            headerShown: false,
-            contentStyle: {
-              backgroundColor: "transparent",
-            },
-          }}
-        />
       </Stack>
     </View>
   );

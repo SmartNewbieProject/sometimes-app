@@ -12,11 +12,11 @@ function MyActivityMenu() {
       <View style={styles.contentContainer}>
         <MyActivityCard
           title="작성한 게시글 관리"
-          onPress={() => router.push("/my/my-articles")}
+          onPress={() => router.push("/community/my/my-articles")}
         />
         <MyActivityCard
           title="작성한 댓글 관리"
-          onPress={() => router.push("/my/my-comments")}
+          onPress={() => router.push("/community/my/my-comments")}
         />
         <MyActivityCard
           title="좋아요 누른 게시글, 댓글"
