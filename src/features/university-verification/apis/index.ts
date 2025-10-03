@@ -2,38 +2,25 @@ import { axiosClient } from "@/src/shared/libs";
 import type { User } from "../types";
 import { Platform } from "react-native";
 
-export const sendEmailVerification = async (email: string) => {
-  const { data } = await axiosClient.post<{ success: boolean }>(
-    "/auth/email-verification/send",
-    { email }
-  );
-  return data;
-};
+export const sendEmailVerification = (email: string) =>
+  axiosClient.post('/auth/email-verification/send', { email });
 
-export const verifyEmailCode = async (
-  email: string,
-  verificationCode: string,
-  profileId: string
-) => {
-  const { data } = await axiosClient.post<{ success: boolean }>(
-    "/auth/email-verification/verify",
-    { email, verificationCode, profileId }
-  );
-  return data;
-};
+export const verifyEmailCode = (email: string, verificationCode: string, profileId: string) =>
+  axiosClient.post('/auth/email-verification/verify', {
+    email,
+    verificationCode,
+    profileId
+  });
 
 export const getProfileId = async (): Promise<string> => {
-  const { data } = await axiosClient.get<User>("/user");
-  return data.profileId;
+  const userInfo = await axiosClient.get('/user') as User;
+  return userInfo.profileId;
 };
 
 export const getUniversityVerificationStatus = async (
   profileId: string
 ): Promise<{ verifiedAt: string | null }> => {
-  const { data } = await axiosClient.get<{ verifiedAt: string | null }>(
-    `/profile/university-verification/${profileId}`
-  );
-  return data;
+  return axiosClient.get(`/profile/university-verification/${profileId}`);
 };
 
 export const uploadUniversityVerificationImage = async (file: {
@@ -55,14 +42,9 @@ export const uploadUniversityVerificationImage = async (file: {
     } as any);
   }
 
-  const { data } = await axiosClient.post<{
-    imageUrl: string;
-    message: string;
-  }>("/universities/certificate-image", form, {
+  return axiosClient.post("/universities/certificate-image", form, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-
-  return data;
 };
 
 export const requestUniversityVerification = async (params: {
