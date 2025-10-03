@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMySimpleDetails } from "@/src/features/auth/apis";
 
 type MySimpleDetails = {
-  role: string; // 'admin' | 'user'?? 서버 회원 구분을 잘 모르겠다.... 파악되면 그때 정의
+  role: "admin" | "user";
   id: string;
   profileId: string;
   name: string;
@@ -29,7 +29,7 @@ export const CreateArticleFAB = () => {
 
   const { data: me } = useQuery<MySimpleDetails>({
     queryKey: ["my-simple-details"],
-    queryFn: async () => (await getMySimpleDetails()).data,
+    queryFn: async () => await getMySimpleDetails(),
     enabled: !!profileDetails,
     staleTime: 5 * 60 * 1000,
   });
