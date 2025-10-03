@@ -1,3 +1,5 @@
+import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
+import RouletteModal from "@/src/features/event/ui/roulette/roulette-modal";
 import { useStep } from "@/src/features/guide/hooks/use-step";
 import useMatchingFirst from "@/src/features/guide/queries/use-maching-first";
 import LikeGuideScenario from "@/src/features/guide/ui/like-guide-scenario";
@@ -68,6 +70,7 @@ const HomeScreen = () => {
   const collapse = showCollapse();
   // const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
   const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
+
   const { value, setValue, loading } = useStorage<string | null>({
     key: "show-push-token-modal",
   });
@@ -81,6 +84,14 @@ const HomeScreen = () => {
   //   };
   //   fetchTutorialStatus();
   // }, []);
+
+  const { data, isLoading, isError, error } = useRouletteEligibility();
+
+  useEffect(() => {
+    if (data?.canParticipate) {
+      showModal({ custom: RouletteModal });
+    }
+  }, [data?.canParticipate]);
 
   // const visibleLikeGuide =
   //   step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
