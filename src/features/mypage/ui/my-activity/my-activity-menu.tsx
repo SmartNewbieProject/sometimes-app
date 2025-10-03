@@ -11,16 +11,16 @@ function MyActivityMenu() {
       <Text style={styles.title}>My 활동</Text>
       <View style={styles.contentContainer}>
         <MyActivityCard
-          title="작성한 게시글 관리"
+          title="내가 쓴 글"
           onPress={() => router.push("/community/my/my-articles")}
         />
         <MyActivityCard
-          title="작성한 댓글 관리"
+          title="댓글 단 글"
           onPress={() => router.push("/community/my/my-comments")}
         />
         <MyActivityCard
-          title="좋아요 누른 게시글, 댓글"
-          onPress={showCommingSoon}
+          title="좋아요한 글"
+          onPress={() => router.push("/community/my/my-liked")}
         />
         <MyActivityCard title="리뷰 내역" onPress={showCommingSoon} />
       </View>

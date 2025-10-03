@@ -1,9 +1,10 @@
 import { axiosClient, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from "nanoid";
-import type { Article as ArticleType } from "@/src/features/community/types";
+import type { Article as MyArticle } from "@/src/features/community/types";
+import type { MyComment as MyComment } from "@/src/features/community/types";
+import type { MyLike as MyLike } from "@/src/features/community/types";
 type RematchingTicket = { total: number };
 type MyRematchingTicket = { id: number; name: string };
-export type MyArticle = ArticleType;
 
 export type MatchingFilters = {
   avoidUniversity: boolean;
@@ -11,13 +12,6 @@ export type MatchingFilters = {
 };
 
 export type Mbti = { mbti: string | null };
-
-export type MyComment = {
-  id: string;
-  content: string;
-  createdAt: string;
-  article: ArticleType;
-};
 
 export interface PageResp<T> {
   content: T[];
@@ -146,6 +140,11 @@ export type MyPageApis = {
     page: number;
     size: number;
   }) => Promise<ItemsMetaPage<MyComment>>;
+
+  getMyLike: (args: {
+    page: number;
+    size: number;
+  }) => Promise<ItemsMetaPage<MyLike>>;
 };
 
 function normalizeItemsMetaPage<T>(
@@ -215,6 +214,14 @@ const mypageApis: MyPageApis = {
     );
     const payload = extractPayload(resp);
     return normalizeItemsMetaPage<MyComment>(payload as any, { page, size });
+  },
+
+  async getMyLike({ page, size }) {
+    const resp = await axiosClient.get<unknown>("/articles/my-liked-articles", {
+      params: { page, size },
+    });
+    const payload = extractPayload(resp);
+    return normalizeItemsMetaPage<MyLike>(payload as any, { page, size });
   },
 };
 

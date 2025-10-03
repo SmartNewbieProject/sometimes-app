@@ -56,6 +56,15 @@ export default function CommunityLayout() {
             },
           }}
         />
+        <Stack.Screen
+          name="my/my-liked"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
       </Stack>
     </View>
   );
