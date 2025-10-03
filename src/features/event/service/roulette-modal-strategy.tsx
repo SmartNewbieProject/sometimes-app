@@ -33,7 +33,7 @@ export const rouletteModalStrategy = (
           style={{
             padding: 5,
             borderRadius: 999,
-            backgroundColor: "7A4AE2",
+            backgroundColor: "#7A4AE2",
           }}
         >
           <Image
@@ -270,7 +270,7 @@ const flyweight = (onClick: () => void) => ({
       style={{
         padding: 5,
         borderRadius: 999,
-        backgroundColor: "7A4AE2",
+        backgroundColor: "#7A4AE2",
       }}
     >
       <Image
