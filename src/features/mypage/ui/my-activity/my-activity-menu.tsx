@@ -2,6 +2,7 @@ import { useCommingSoon } from "@/src/features/admin/hooks";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MyActivityCard from "./my-activity-card";
+import { router } from "expo-router";
 
 function MyActivityMenu() {
   const showCommingSoon = useCommingSoon();
@@ -10,14 +11,17 @@ function MyActivityMenu() {
       <Text style={styles.title}>My 활동</Text>
       <View style={styles.contentContainer}>
         <MyActivityCard
-          title="작성한 게시글, 댓글 관리"
-          onPress={showCommingSoon}
+          title="내가 쓴 글"
+          onPress={() => router.push("/community/my/my-articles")}
         />
         <MyActivityCard
-          title="좋아요 누른 게시글, 댓글"
-          onPress={showCommingSoon}
+          title="댓글 단 글"
+          onPress={() => router.push("/community/my/my-comments")}
         />
-
+        <MyActivityCard
+          title="좋아요한 글"
+          onPress={() => router.push("/community/my/my-liked")}
+        />
         <MyActivityCard title="리뷰 내역" onPress={showCommingSoon} />
       </View>
     </View>
@@ -25,13 +29,11 @@ function MyActivityMenu() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 28,
-  },
+  container: { marginTop: 28 },
   title: {
     fontSize: 14,
     fontFamily: "Pretendard-Bold",
-    fontWeight: 700,
+    fontWeight: "700" as any,
     lineHeight: 20,
     letterSpacing: -0.042,
   },

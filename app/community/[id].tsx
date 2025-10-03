@@ -32,10 +32,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
 }) => (
   <Header.Container className=" items-center">
     <Header.LeftContent>
-      <Pressable
-        onPress={() => router.push("/community")}
-        className="p-2 -ml-2"
-      >
+      <Pressable onPress={() => router.back()} className="p-2 -ml-2">
         <ChevronLeftIcon width={24} height={24} />
       </Pressable>
       <Header.LeftButton visible={false} />
