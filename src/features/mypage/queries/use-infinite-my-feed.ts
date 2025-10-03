@@ -4,17 +4,32 @@ import {
   type QueryClient,
 } from "@tanstack/react-query";
 import apis from "../apis";
+import type { Article as ArticleType } from "@/src/features/community/types";
 
-export const createMyArticlesQueryKey = () => ["mypage", "my-articles"];
+export type MyFeedType = "articles" | "comments" | "likes";
 
-export function prefetchMyArticlesFirstPage(
+const KEY = (type: MyFeedType) => ["mypage", `my-${type}`] as const;
+
+const fetcher = (type: MyFeedType) => {
+  switch (type) {
+    case "articles":
+      return apis.mypageApis.getMyArticles;
+    case "comments":
+      return apis.mypageApis.getMyComments;
+    case "likes":
+      return apis.mypageApis.getMyLike;
+  }
+};
+
+export function prefetchMyFeedFirstPage(
   queryClient: QueryClient,
+  type: MyFeedType,
   pageSize = 10
 ) {
   return queryClient.prefetchInfiniteQuery({
-    queryKey: createMyArticlesQueryKey(),
+    queryKey: KEY(type),
     queryFn: async ({ pageParam = 1 }) =>
-      apis.mypageApis.getMyArticles({ page: pageParam, size: pageSize }),
+      fetcher(type)!({ page: pageParam, size: pageSize }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any) =>
       lastPage?.meta?.hasNextPage
@@ -25,7 +40,7 @@ export function prefetchMyArticlesFirstPage(
   });
 }
 
-export function useInfiniteMyArticlesQuery(pageSize = 10) {
+export function useInfiniteMyFeedQuery(type: MyFeedType, pageSize = 10) {
   const queryClient = useQueryClient();
 
   const {
@@ -37,9 +52,9 @@ export function useInfiniteMyArticlesQuery(pageSize = 10) {
     isPending,
     refetch,
   } = useInfiniteQuery({
-    queryKey: createMyArticlesQueryKey(),
+    queryKey: KEY(type),
     queryFn: async ({ pageParam = 1 }) =>
-      apis.mypageApis.getMyArticles({ page: pageParam, size: pageSize }),
+      fetcher(type)!({ page: pageParam, size: pageSize }),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any) =>
       lastPage?.meta?.hasNextPage
@@ -52,10 +67,12 @@ export function useInfiniteMyArticlesQuery(pageSize = 10) {
     refetchOnWindowFocus: "always",
   });
 
-  const articles = data?.pages?.flatMap((p: any) => p.items) || [];
+  const articles: ArticleType[] =
+    data?.pages?.flatMap((p: any) => p.items) ?? [];
   const pagesCount = data?.pages?.length ?? 0;
 
   return {
+    key: KEY(type),
     articles,
     pagesCount,
     isLoading: isLoading || isPending,
@@ -63,7 +80,6 @@ export function useInfiniteMyArticlesQuery(pageSize = 10) {
     hasNextPage: !!hasNextPage,
     loadMore: fetchNextPage,
     refetch,
-    invalidate: () =>
-      queryClient.invalidateQueries({ queryKey: createMyArticlesQueryKey() }),
+    invalidate: () => queryClient.invalidateQueries({ queryKey: KEY(type) }),
   };
 }
