@@ -5,23 +5,25 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import RoulettePizza from "@assets/images/roulette-pizza.svg";
-
 import Roulette from "@assets/images/roulette.svg";
 import { useRoulette } from "../../hooks/roulette/use-roulette";
 
 function RouletteItem() {
   const { isSpinning, rouletteAnimationStyle, handleStart } = useRoulette();
+
   return (
-    <View style={styles.shadowContainer}>
+    <View style={styles.componentContainer}>
+      <View style={styles.shadowLayer} />
+
       <LinearGradient
         colors={["#C6ADF6", "#7A4AE2"]}
         locations={[0.12, 1.7]}
         start={{ x: 0.2, y: 0.1 }}
         end={{ x: 0.8, y: 0.9 }}
-        style={styles.gradientContainer}
+        style={styles.contentLayer}
       >
         <LinearGradient
-          colors={["rgba(122, 74, 226, 0.25)", "#C6ADF600"]}
+          colors={["rgba(122, 74, 226, 0.25)", "rgba(0, 0, 0, 0)"]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 0.4 }}
           style={styles.insetShadow}
@@ -45,6 +47,7 @@ function RouletteItem() {
           </View>
         </Pressable>
       </LinearGradient>
+
       <Image
         style={styles.shadowArrowContainer}
         source={require("@assets/images/roulette-arrow.png")}
@@ -58,12 +61,17 @@ function RouletteItem() {
 }
 
 const styles = StyleSheet.create({
-  shadowContainer: {
+  componentContainer: {
     alignSelf: "center",
     marginTop: 40,
     width: 296,
     height: 296,
-    borderRadius: 296,
+  },
+  shadowLayer: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 148,
+    backgroundColor: "#C6ADF6",
     shadowColor: "rgba(122, 74, 226, 0.60)",
     shadowOffset: {
       width: 0,
@@ -73,11 +81,13 @@ const styles = StyleSheet.create({
     shadowRadius: 8.5,
     elevation: 10,
   },
-  gradientContainer: {
-    flex: 1,
-    borderRadius: 296,
+  contentLayer: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    borderRadius: 148,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#F4EFFF",
+    borderColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
@@ -110,7 +120,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     shadowOpacity: 0.5,
     shadowRadius: 6,
-
     elevation: 10,
   },
   gradient: {
@@ -118,10 +127,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 44,
-
     borderWidth: 0.5,
     borderColor: "white",
-
     justifyContent: "center",
     alignItems: "center",
   },
