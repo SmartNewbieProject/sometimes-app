@@ -17,7 +17,7 @@ function RouletteItem() {
 
       <LinearGradient
         colors={["#C6ADF6", "#7A4AE2"]}
-        locations={[0.12, 1.7]}
+        locations={[0.12, 1.0]}
         start={{ x: 0.2, y: 0.1 }}
         end={{ x: 0.8, y: 0.9 }}
         style={styles.contentLayer}
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 148,
     backgroundColor: "#C6ADF6",
+
     shadowColor: "rgba(122, 74, 226, 0.60)",
     shadowOffset: {
       width: 0,
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 148,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 1,
     borderColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
