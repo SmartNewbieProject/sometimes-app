@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 296,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#fff",
+    borderColor: "#F4EFFF",
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
