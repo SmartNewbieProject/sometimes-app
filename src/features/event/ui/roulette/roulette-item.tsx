@@ -21,7 +21,7 @@ function RouletteItem() {
         style={styles.gradientContainer}
       >
         <LinearGradient
-          colors={["rgba(122, 74, 226, 0.25)", "rgba(0, 0, 0, 0)"]}
+          colors={["rgba(122, 74, 226, 0.25)", "#C6ADF600"]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 0.4 }}
           style={styles.insetShadow}
