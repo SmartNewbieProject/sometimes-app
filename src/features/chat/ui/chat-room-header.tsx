@@ -15,6 +15,14 @@ function ChatRoomHeader() {
   const handleClose = useCallback(() => {
     setVisible(false);
   }, []);
+
+  const handleProfilePress = () => {
+    if (!partner) return;
+    const isExpired = !(partner.roomActivation || partner.hasLeft);
+    if (isExpired) return;
+    router.push(`/partner/view/${partner.matchId}`);
+  };
+
   return (
     <>
       <ChatInfoModalContainer visible={isVisible} onClose={handleClose} />
@@ -22,17 +30,19 @@ function ChatRoomHeader() {
         <Pressable onPress={() => router.navigate("/chat")}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
-        <Image
-          source={partner?.partner.mainProfileImageUrl ?? ""}
-          style={styles.profileImage}
-        />
-        <View style={styles.profileContainer}>
-          <Text style={styles.name}>{partner?.partner.name}</Text>
-          <View style={styles.schoolContainer}>
-            <Text style={styles.school}>{partner?.partner.university}</Text>
-            <Text style={styles.school}>{partner?.partner.department}</Text>
+        <Pressable onPress={handleProfilePress} style={styles.profilePressable}>
+          <Image
+            source={partner?.partner.mainProfileImageUrl ?? ""}
+            style={styles.profileImage}
+          />
+          <View style={styles.profileContainer}>
+            <Text style={styles.name}>{partner?.partner.name}</Text>
+            <View style={styles.schoolContainer}>
+              <Text style={styles.school}>{partner?.partner.university}</Text>
+              <Text style={styles.school}>{partner?.partner.department}</Text>
+            </View>
           </View>
-        </View>
+        </Pressable>
         <Pressable
           style={{
             width: 36,
@@ -57,6 +67,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 16,
     alignItems: "center",
+  },
+  profilePressable: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
   },
   profileImage: {
     width: 34,
