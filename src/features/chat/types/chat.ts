@@ -18,6 +18,7 @@ export interface Chat {
 }
 
 export interface ChatRoomDetail {
+	matchId: string;
 	partnerId: string;
 	roomActivation: boolean;
 	createdAt: string;
