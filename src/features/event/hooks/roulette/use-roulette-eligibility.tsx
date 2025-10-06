@@ -13,6 +13,6 @@ export const useRouletteEligibility = () => {
     queryKey: ROULETTE_ELIGIBILITY_QUERY_KEY,
     queryFn: getRouletteEligibility,
 
-    staleTime: 60 * 60 * 1000,
+    staleTime: 0,
   });
 };
