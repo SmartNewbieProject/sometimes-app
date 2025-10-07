@@ -62,10 +62,10 @@ export type ChatDomainEvent =
 	// biome-ignore lint/complexity/noBannedTypes: <explanation>
 	| { type: 'SOCKET_CONNECTED'; payload: {} }
 	| { type: 'SOCKET_DISCONNECTED'; payload: { reason?: string } }
-	// biome-ignore lint/complexity/noBannedTypes: <explanation>
-	| { type: 'SOCKET_RECONNECTING'; payload: {} }
+	| { type: 'SOCKET_RECONNECTING'; payload: { attempt: number } }
 	// biome-ignore lint/complexity/noBannedTypes: <explanation>
 	| { type: 'SOCKET_RECONNECTED'; payload: {} }
+	| { type: 'SOCKET_RECONNECT_FAILED'; payload: { error: string } }
 
 	// 에러 이벤트
 	| { type: 'SOCKET_ERROR'; payload: { error: string } }
