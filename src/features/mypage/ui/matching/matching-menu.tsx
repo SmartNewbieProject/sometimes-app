@@ -1,17 +1,9 @@
-import { useCommingSoon } from "@/src/features/admin/hooks";
 import { useMatchingFilters } from "@/src/features/mypage/hooks/use-matching-filter";
-import { useModal } from "@/src/shared/hooks/use-modal";
-import { ImageResources } from "@/src/shared/libs";
-import { AnnounceCard, Button, Text } from "@/src/shared/ui";
-import { router } from "expo-router";
-import { useEffect } from "react";
+import { Text } from "@/src/shared/ui";
 import { StyleSheet, View } from "react-native";
-import CustomSwitch from "../custom-switch";
-import { ChangeMbtiModal } from "../modal/change-mbti.modal";
 import MatchingCard from "./matching-card";
 
 const MatchingMenu = () => {
-  const showCommingSoon = useCommingSoon();
   const {
     filters,
     isLoading,
