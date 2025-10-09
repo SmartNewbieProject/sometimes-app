@@ -31,13 +31,13 @@
   "ui": {
     "like_guide_scenario": {
       "like": {
-        "tab_liked_me": "届いたサム",
-        "tab_i_liked": "送ったサム",
+        "tab_liked_me": "相手から",
+        "tab_i_liked": "自分から",
         "info": {
-          "step3_title": "送ったサム",
+          "step3_title": "自分から",
           "step3_desc1": "自分から気持ちを伝えた",
           "step3_desc2": "相手を確認できます",
-          "step4_title": "届いたサム",
+          "step4_title": "相手から",
           "step4_desc1": "誰が自分に好意を示したかすぐ確認できます",
           "step5_title": "プロフィールプレビュー",
           "step5_desc1": "ここでプロフィールを事前に確認できます",

@@ -7,7 +7,7 @@
     },
     "card": {
       "status_messages": {
-        "liked_me_relative": "{time} にいいねされました",
+        "liked_me_relative": "{{time}} にいいねされました",
         "mutual_like": "お互いにいいねしました！",
         "rejected": "相手に拒否されました",
         "waiting_response": "相手の返信を待っています"
@@ -33,7 +33,7 @@
   },
   "apps": {
     "post_box": {
-      "age_display": "満 {age}歳",
+      "age_display": "満 {{age}}歳",
       "buttons": {
         "no": "いいえ"
       }

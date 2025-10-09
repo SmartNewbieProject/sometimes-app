@@ -35,11 +35,11 @@
     },
     "payment_modal": {
       "purchase_complete_title": "❤️ 購入完了",
-      "gem_purchase_complete": "ジェム {gemCount} 個の購入が完了しました",
+      "gem_purchase_complete": "ジェム {{gemCount}} 個の購入が完了しました",
       "payment_complete_redirect": "決済が完了したのでホームに戻ります",
       "confirm_redirect_button": "はい、戻ります",
       "browse_more_button": "もっと見てみる",
-      "rematch_ticket_purchase_complete": "カップル再マッチングチケット {productCount} 個の購入が完了しました",
+      "rematch_ticket_purchase_complete": "カップル再マッチングチケット {{productCount}} 個の購入が完了しました",
       "go_home_button": "ホームへ戻る"
     },
     "payment_error": {

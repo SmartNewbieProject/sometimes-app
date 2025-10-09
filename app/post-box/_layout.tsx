@@ -14,8 +14,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function ProfileEditLayout() {
   const { t } = useTranslation();
   const TABS: Tab[] = [
-    { id: "liked-me", label: t("apps.post-box.tab_liked_me") },
-    { id: "i-liked", label: t("apps.post-box.tab_i_liked") },
+    { id: "liked-me", label: t("apps.postBox.tab_liked_me") },
+    { id: "i-liked", label: t("apps.postBox.tab_i_liked") },
   ];
   const insets = useSafeAreaInsets();
   const router = useRouter();

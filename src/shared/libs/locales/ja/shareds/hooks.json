@@ -37,13 +37,13 @@
   "day": {
     "date_not_exist": "存在しない日付です",
     "just_now": "たった今",
-    "seconds_ago": "{seconds}秒前",
-    "minutes_ago": "{minutes}分前",
-    "hours_ago": "{hours}時間前",
-    "days_ago": "{days}日前"
+    "seconds_ago": "{{seconds}}秒前",
+    "minutes_ago": "{{minutes}}分前",
+    "hours_ago": "{{hours}}時間前",
+    "days_ago": "{{days}}日前"
   },
   "environment": {
-    "current_environment": "現在の環境: {env}"
+    "current_environment": "現在の環境: {{env}}"
   },
   "file": {
     "data_url_to_blob_error": "dataURLtoBlobはReact Nativeでは使用できません",

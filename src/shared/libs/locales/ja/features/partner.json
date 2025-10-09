@@ -6,7 +6,7 @@
   "modal_permission_desc": "写真を選択するにはメディアライブラリへのアクセス権限が必要です。",
   "modal_alert_title": "お知らせ",
   "modal_alert_desc_max": "最大3枚の画像のみ添付できます。",
-  "modal_alert_desc_type": "許可されていない画像形式です: {type}\njpg、jpeg、png形式のみ利用可能です。",
+  "modal_alert_desc_type": "許可されていない画像形式です: {{type}}\njpg、jpeg、png形式のみ利用可能です。",
   "modal_image_error_title": "エラー",
   "modal_image_error_desc": "画像選択中にエラーが発生しました。",
   "modal_notice_title": "注意",
