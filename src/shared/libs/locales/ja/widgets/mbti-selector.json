@@ -1,12 +1,12 @@
 {
   "mbti_selector": {
-    "extroversion": "外向",
-    "introversion": "内向",
-    "intuition": "直感",
-    "sensing": "現実的",
-    "feeling": "感情的",
-    "thinking": "論理的",
-    "prospecting": "探索的",
-    "judging": "計画的"
+    "extroversion": "外向型",
+    "introversion": "内向型",
+    "intuition": "直感型",
+    "sensing": "感覚型",
+    "feeling": "感情型",
+    "thinking": "思考型",
+    "prospecting": "知覚型",
+    "judging": "判断型"
   }
 }

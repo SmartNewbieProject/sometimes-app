@@ -10,7 +10,7 @@
     },
     "header": {
       "modal_title": "編集中の内容があります",
-      "modal_description": "今離れると入力中の内容はすべて失われます。本当に退出しますか？",
+      "modal_description": "今離れると入力中の内容はすべて失われます。\n本当に退出しますか？",
       "modal_primary_button": "編集を続ける",
       "modal_secondary_button": "退出する",
       "title": "プロフィール編集",

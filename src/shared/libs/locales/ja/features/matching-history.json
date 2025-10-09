@@ -1,21 +1,21 @@
 {
   "ui": {
-    "header_title": "以前のマッチング",
+    "header_title": "すれ違い履歴",
     "gem_unit": "個",
     "matching_history_list": {
       "more_matches_prompt": "もっとマッチングをしてみませんか？",
       "use_rematch_hint": "今すぐリマッチチケットを使って、新しい出会いを見つけましょう！"
     },
     "history_collapse": {
-      "title": "もしかすると見逃した",
+      "title": "もしかすると、見逃した",
       "title_2": "相手",
       "title_3": "がいるかもしれません",
-      "description_1": "すれ違った中にも、まだご縁が残ってる人たちがいます。",
-      "description_2": "今一度見れば、もっと相性が合うかもしれません。"
+      "description_1": "すれ違った中にも、あなたにぴったりの人がいるかも",
+      "description_2": "もう一度見たら、新しい出会いが見つかるかもしれません"
     },
     "matching_history_card": {
-      "modal_title": "以前出会った方に再び連絡するために、ジェム{cost}個を使いますか？",
-      "modal_description": "時間が経ちましたが、もう一度連絡をしたいなら、勇気を出して先にアプローチしてみましょう。",
+      "modal_title": "以前出会った方に再び連絡するために、ジェム{{cost}}個を使いますか？",
+      "modal_description": "時間がたっても気になる相手には、勇気を出してメッセージを送ってみましょう。",
       "profile_unlock_button": "プロフィール\n開放",
       "messages": {
         "error_insufficient_gems": "残りのジェムが足りません",

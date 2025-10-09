@@ -9,7 +9,7 @@
       "nothing_like":"いいねをした相手がまだいません",
       "description_female_part1": "気になる相手に「いいね」を送り、",
       "description_female_part2": "気持ちをシェアしましょう！",
-      "description_male_part1": "趣味や興味を追加して共通点を見つけ、",
+      "description_male_part1": "趣味や関心を追加して共通点を見つけ、",
       "description_male_part2": "自分の魅力をアピールしてみましょう！",
       "cta_locked": ""
     },
@@ -25,8 +25,8 @@
       "button_label": "いいね"
     },
     "like_collapse": {
-      "i_liked_title": "{name}さんが気になった人です",
-      "liked_me_title": "{name}さんに興味をもたれています"
+      "i_liked_title": "{{name}}さんが気になった人です",
+      "liked_me_title": "{{name}}さんに興味をもたれています"
     }
   }
 }

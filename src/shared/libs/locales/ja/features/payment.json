@@ -2,7 +2,7 @@
   "ui": {
     "gem_store": {
       "banner": {
-        "guide_button_text": "既存の再マッチングチケットはどうなりますか？"
+        "guide_button_text": "既にある再マッチングチケットはどうなりますか？"
       },
       "error_alert_message": "決済処理中にエラーが発生しました。",
       "payment_error_console": "決済エラー:",

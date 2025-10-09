@@ -36,13 +36,13 @@
     "option_not_drink": "一切飲まない"
   },
   "entry": {
-    "title_1": "{name}さんのプロフィールを作成します",
+    "title_1": "{{name}さんのプロフィールを作成します",
     "title_2": "基本情報を入力してください",
     "desc_1": "プロフィールに表示する基本情報を入力してください",
     "desc_2": "後から変更できるので気軽に選んでください",
     "modal_title": "後で登録しますか？",
     "modal_desc_1": "スムーズなマッチングのために",
-    "modal_desc_2": "{name}さんの情報を登録してください！",
+    "modal_desc_2": "{{name}さんの情報を登録してください！",
     "modal_primary_button": "今すぐ登録する",
     "modal_secondary_button": "後で登録する",
     "match_title_1": "マッチングのために",

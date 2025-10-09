@@ -84,7 +84,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
           onClick: unlockProfile.mutateAsync,
         },
         secondaryButton: {
-          text: t("globals.no"),
+          text: t("global.no"),
           onClick: hideModal,
         },
       });
