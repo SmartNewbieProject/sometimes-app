@@ -48,7 +48,7 @@
       "loading_comments": "コメントを読み込んでいます",
       "header_title": "コミュニティ",
       "invalid_request": "不正なリクエストです",
-      "loading_error": "投稿読み込み中にエラーが発生しました。",
+      "loading_error": "投稿読み込み中にエラーが発生しました",
       "loading_article": "投稿を読み込んでいます"
     },
     "article_write_screen": {
@@ -74,7 +74,7 @@
         },
         "fail": {
           "title": "投稿失敗",
-          "desc": "投稿中にエラーが発生しました。"
+          "desc": "投稿中にエラーが発生しました"
         },
         "confirm_checked": "はい、確認しました"
       },

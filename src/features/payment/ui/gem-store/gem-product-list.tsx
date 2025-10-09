@@ -20,7 +20,7 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>{t("ui.apple_gem_store.loading_gem_products")}</Text>
+        <Text>{t("features.payment.ui.apple_gem_store.loading_gem_products")}</Text>
       </View>
     );
   }
@@ -37,7 +37,7 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
 
   return (
     <View style={styles.content}>
-      <GemStoreWidget.Provider storeName={t("features.payment .ui.gem_store.store_name")}>
+      <GemStoreWidget.Provider storeName={t("features.payment.ui.gem_store.store_name")}>
         {gemProducts
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((product, index) => (

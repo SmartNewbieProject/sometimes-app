@@ -26,13 +26,13 @@ export const WebPaymentView = (props: WebPaymentProps) => {
 
   if (!paymentParams.storeId || !paymentParams.channelKey) {
     return (
-      <Loading.Page title={t("ui.web_payment.missing_env_vars")} />
+      <Loading.Page title={t("features.payment.ui.web_payment.missing_env_vars")} />
     );
   }
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
-      onError?.({ message: t("ui.web_payment.web_only_error") });
+      onError?.({ message: t("features.payment.ui.web_payment.web_only_error") });
       setIsProcessing(false);
       return;
     }
@@ -54,7 +54,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
         }) as unknown as PaymentResponse;
 
         if (!response) {
-          onError?.({ message: t("ui.web_payment.no_payment_result") });
+          onError?.({ message: t("features.payment.ui.web_payment.no_payment_result") });
           return;
         } 
         if (PortOne.isPortOneError(response)) {
@@ -76,7 +76,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
   if (isProcessing) {
     return (
       <Loading.Page
-        title={t("ui.web_payment.processing_payment_wait")}
+        title={t("features.payment.ui.web_payment.processing_payment_wait")}
       />
     );
   }

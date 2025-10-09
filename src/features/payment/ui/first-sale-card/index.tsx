@@ -64,7 +64,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
       <Text textColor="black" weight="bold" size="20" className="text-[20px]">
-        {t("ui.apple_first_sale_card.time_sale_title")}
+        {t("features.payment.ui.apple_first_sale_card.time_sale_title")}
       </Text>
       <Text weight="bold" size="20" className="text-rose-600">
         {formatTime(seconds)}
@@ -77,10 +77,10 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             <ImageResource resource={ImageResources.SALE_MIHO} width={120} height={140} />
             <Animated.View style={[styles.bubble, animatedStyle]}>
               <Text textColor="purple" weight="semibold" className="text-[15px] mb-1">
-                {t("ui.apple_first_sale_card.cheer_message")}
+                {t("features.payment.ui.apple_first_sale_card.cheer_message")}
               </Text>
               <Text textColor="purple" weight="semibold" className="text-[15px]">
-                {t("ui.apple_first_sale_card.new_member_discount")}
+                {t("features.payment.ui.apple_first_sale_card.new_member_discount")}
               </Text>
               <View style={styles.bubbleTail} />
             </Animated.View>
@@ -96,7 +96,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             totalGems: 6,
             bonusGems: 0,
             gemAmount: 0,
-            productName: t("ui.first_sale_card.product_name_6_gems"),
+            productName: t("features.payment.ui.first_sale_card.product_name_6_gems"),
           }} onOpenPayment={(metadata) => {
             track('GemStore_FirstSale_6', {
               who: my,
@@ -115,7 +115,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             totalGems: 20,
             bonusGems: 0,
             gemAmount: 0,
-            productName: t("ui.first_sale_card.product_name_6_gems"),
+            productName: t("features.payment.ui.first_sale_card.product_name_6_gems"),
           }} onOpenPayment={(metadata) => {
             track('GemStore_FirstSale_20', {
               who: my,
@@ -134,7 +134,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
             totalGems: 40,
             bonusGems: 0,
             gemAmount: 0,
-            productName: t("ui.first_sale_card.product_name_6_gems"),
+            productName: t("features.payment.ui.first_sale_card.product_name_6_gems"),
           }} onOpenPayment={(metadata) => {
             track('GemStore_FirstSale_40', {
               who: my,

@@ -15,6 +15,7 @@ import { type LayoutChangeEvent, Modal, StyleSheet, View } from "react-native";
 import { cn } from "../libs";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
+import i18n from "@/src/shared/libs/i18n";
 type ModalOptions = {
   title?: ReactNode;
   customTitle?: ReactNode;
@@ -166,7 +167,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       <View className="flex flex-row items-center gap-x-2 mb-4">
         <ErrorFace />
         <Text size="lg" weight="semibold" textColor="black">
-          {errorContent?.type === "error" ? "오류가 발생했어요." : "안내"}
+          {errorContent?.type === "error" ? i18n.t("shareds.providers.modal_provider.error_title") : i18n.t("shareds.providers.modal_provider.announcement_title")}
         </Text>
       </View>
       <Text className="text-center mb-4" weight="medium" textColor="black">
@@ -177,7 +178,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         onPress={hideModal}
         className="w-full rounded-md"
       >
-        네, 확인했어요
+        {i18n.t("shareds.providers.modal_provider.confirm_button")}
       </Button>
     </View>
   );

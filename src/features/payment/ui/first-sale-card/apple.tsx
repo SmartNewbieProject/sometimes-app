@@ -83,7 +83,7 @@ export const AppleFirstSaleCard = ({
         }}
       >
                 <Text textColor="black" weight="bold" size="20" className="text-[20px]">
-          {t("ui.apple_first_sale_card.time_sale_title")}
+          {t("features.payment.ui.apple_first_sale_card.time_sale_title")}
         </Text>
         <Text weight="bold" size="20" className="text-rose-600">
           {formatTime(seconds)}
@@ -104,14 +104,14 @@ export const AppleFirstSaleCard = ({
                 weight="semibold"
                 className="text-[15px] mb-1"
               >
-                {t("ui.apple_first_sale_card.cheer_message")}
+                {t("features.payment.ui.apple_first_sale_card.cheer_message")}
               </Text>
               <Text
                 textColor="purple"
                 weight="semibold"
                 className="text-[15px]"
               >
-                {t("ui.apple_first_sale_card.new_member_discount")}
+                {t("features.payment.ui.apple_first_sale_card.new_member_discount")}
               </Text>
               <View style={styles.bubbleTail} />
             </Animated.View>

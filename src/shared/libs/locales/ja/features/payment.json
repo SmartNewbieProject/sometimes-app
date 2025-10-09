@@ -4,7 +4,7 @@
       "banner": {
         "guide_button_text": "既にある再マッチングチケットはどうなりますか？"
       },
-      "error_alert_message": "決済処理中にエラーが発生しました。",
+      "error_alert_message": "決済処理中にエラーが発生しました",
       "payment_error_console": "決済エラー:",
       "payment_error_debug": "決済エラー発生時に新しい orderId を生成:",
       "failed_to_load_gem_products": "ジェム商品の読み込みに失敗しました。",
@@ -13,7 +13,7 @@
     },
     "rematch": {
       "rematch_ticket_name": "カップルマッチングチケット",
-      "error_alert_message": "決済処理中にエラーが発生しました。",
+      "error_alert_message": "決済処理中にエラーが発生しました",
       "purchase_count_tracking": "Purchase_Count",
       "header_title": "マッチングチケット"
     },
@@ -21,10 +21,10 @@
       "rematch": {
         "rematch_ticket_name": "カップルマッチングチケット",
         "rematch_ticket_name_repeat": "カップル再マッチングチケット",
-        "error_alert_message": "決済処理中にエラーが発生しました。",
+        "error_alert_message": "決済処理中にエラーが発生しました",
         "payment_error_console": "決済エラー:",
         "payment_error_debug": "決済エラー発生時に新しい orderId を生成:",
-        "payment_error_modal": "決済処理中にエラーが発生しました。",
+        "payment_error_modal": "決済処理中にエラーが発生しました",
         "order_name_single": "カップル再マッチングチケット",
         "order_name_multiple": "カップル再マッチングチケット x{productCount}"
       }
@@ -44,7 +44,7 @@
     },
     "payment_error": {
       "processing_error_console": "決済処理エラー:",
-      "processing_error_message": "決済処理中にエラーが発生しました。"
+      "processing_error_message": "決済処理中にエラーが発生しました"
     },
     "apple_gem_store": {
       "server_verification_failed": "サーバー検証失敗",
