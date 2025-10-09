@@ -39,11 +39,7 @@ function extractPayload(raw: any) {
 }
 
 const getMyRematchingTicket = async (): Promise<MyRematchingTicket[]> => {
-  const { data } = await axiosClient.get<MyRematchingTicket[]>(
-    "/tickets/rematching"
-  );
-
-  return data;
+  return await axiosClient.get("/tickets/rematching");
 };
 
 const getAllRematchingTicket = async (): Promise<RematchingTicket> => {
@@ -53,9 +49,7 @@ const getAllRematchingTicket = async (): Promise<RematchingTicket> => {
 };
 
 const getMbti = async (): Promise<Mbti> => {
-  const { data } = await axiosClient.get<Mbti>("/profile/mbti");
-
-  return data;
+  return await axiosClient.get("/profile/mbti");
 };
 
 const updateMbti = async (mbti: string): Promise<void> => {
@@ -63,9 +57,7 @@ const updateMbti = async (mbti: string): Promise<void> => {
 };
 
 const getCurrentMatchingFilters = async (): Promise<MatchingFilters> => {
-  const { data } = await axiosClient.get<MatchingFilters>("/profile/filter");
-
-  return data;
+  return await axiosClient.get("/profile/filter");
 };
 
 const updateAvoidUniversityFilter = async (flag: boolean): Promise<void> => {
