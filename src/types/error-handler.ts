@@ -7,8 +7,10 @@ type ModalHook = (options: ModalOptions) => void;
 type ErrorModalHook = (message: string, type: 'announcement' | 'error') => void;
 
 interface ApiErrorResponse {
-	status: number;
+	status?: number;
 	error: string;
+	statusCode?: number;
+	message?: string;
 }
 
 type ExpoRouter = ReturnType<typeof useRouter>;

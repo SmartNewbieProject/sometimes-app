@@ -69,7 +69,7 @@ const HomeScreen = () => {
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
   // const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
-  const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
+  // const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
 
   const { value, setValue, loading } = useStorage<string | null>({
     key: "show-push-token-modal",

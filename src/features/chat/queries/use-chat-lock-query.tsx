@@ -23,7 +23,7 @@ function useChatRockQuery(chatRoomId: string) {
         showErrorModal("네트워크 연결을 확인해주세요.", "announcement");
         return;
       }
-      const status = error.status;
+      const status = error.status ?? error.statusCode;
       const handler =
         chatEnterErrorHandlers[status] || chatEnterErrorHandlers.default;
 
