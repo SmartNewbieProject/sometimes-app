@@ -88,10 +88,10 @@ const HomeScreen = () => {
   const { data, isLoading, isError, error } = useRouletteEligibility();
 
   useEffect(() => {
-    if (data?.canParticipate) {
+    if (data?.canParticipate && !isLoading) {
       showModal({ custom: RouletteModal });
     }
-  }, [data?.canParticipate]);
+  }, [data?.canParticipate, isLoading]);
 
   // const visibleLikeGuide =
   //   step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
