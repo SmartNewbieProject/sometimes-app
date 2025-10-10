@@ -16,7 +16,7 @@ const handleBadRequest: ErrorHandler = {
 const handleChatRoomForbidden: ErrorHandler = {
   handle: (error, { showModal, router }) => {
     const errorMessage =
-      error?.error || "채팅방 접근 권한이 존재하지 않습니다.";
+      error?.error || error?.message || "채팅방 접근 권한이 존재하지 않습니다.";
     showModal({
       title: "알림",
       children: <Text>{errorMessage}</Text>,

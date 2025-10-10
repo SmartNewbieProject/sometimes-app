@@ -34,7 +34,7 @@ function useLeaveChatRoom() {
         return;
       }
 
-      const status = error.status;
+      const status = error?.status ?? error?.statusCode;
       const handler =
         chatLeaveErrorHandlers[status] || chatLeaveErrorHandlers.default;
 

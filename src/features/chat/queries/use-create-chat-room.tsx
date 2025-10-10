@@ -25,7 +25,7 @@ function useCreateChatRoom() {
         return;
       }
 
-      const status = error.status;
+      const status = error?.status ?? error?.statusCode;
       const handler = errorHandlers[status] || errorHandlers.default;
 
       handler.handle(error, { router, showModal, showErrorModal });

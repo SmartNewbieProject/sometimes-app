@@ -8,6 +8,9 @@ function useMatchingFirst() {
     queryKey: ["matching-first"],
     queryFn: () => getMatchingHasFirst(),
     staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
 

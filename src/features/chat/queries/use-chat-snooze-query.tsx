@@ -21,7 +21,7 @@ function useChatSnoozeQuery() {
         return;
       }
 
-      const status = error.status;
+      const status = error?.status ?? error?.statusCode;
       const handler =
         chatSnoozeErrorHandlers[status] || chatSnoozeErrorHandlers.default;
 
