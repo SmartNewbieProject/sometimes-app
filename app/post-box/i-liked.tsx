@@ -13,7 +13,7 @@ function ILiked() {
   return (
     <View>
       <Loading.Lottie
-        title={t("apps.post-box.i_liked_loading")}
+        title={t("apps.postBox.i_liked_loading")}
         loading={isLoading}
       >
         <FlashList

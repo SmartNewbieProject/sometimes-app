@@ -1,9 +1,9 @@
 {
   "ui": {
-    "greeting": "{name}님!",
+    "greeting": "{{name}}님!",
     "title": "빨리 보고싶어요!",
     "description_1": "곧, 당신에게 꼭 맞는 사람을 소개해드릴게요.",
-    "description_2": "{date}, 꼭 다시 만나요!",
+    "description_2": "{{date}}, 꼭 다시 만나요!",
     "date": "7월 27일",
     "cta_button": "출시일에 다시 볼게요.",
     "modal": {

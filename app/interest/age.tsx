@@ -72,7 +72,7 @@ export default function AgeSelectionScreen() {
   };
 
   if (optionsLoading) {
-    return <Loading.Page title={t("age.loading")} />;
+    return <Loading.Page title={t("apps.interest.age.loading")} />;
   }
 
   return (
@@ -85,10 +85,10 @@ export default function AgeSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            {t("age.title_1")}
+            {t("apps.interest.age.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            {t("age.title_2")}
+            {t("apps.interest.age.title_2")}
           </Text>
         </View>
         <View style={styles.bar} />

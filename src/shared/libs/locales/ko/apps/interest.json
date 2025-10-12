@@ -14,13 +14,13 @@
   "done": {
     "title_1": "이상형 정보를 확인했어요",
     "title_2": "이제 이상형을 찾아드릴게요",
-    "desc": "썸타임이 {name}님의 이상형을 찾아드릴게요",
+    "desc": "썸타임이 {{name}}님의 이상형을 찾아드릴게요",
     "button": "이상형 찾으러 가기 →"
   },
   "index":{
     "next_time":"나중에 등록할까요?",
     "children_1":"원활한 이상형 매칭을 위해",
-    "children_2":"{name} 님의 이상형 정보를 등록해주세요!",
+    "children_2":"{{name}} 님의 이상형 정보를 등록해주세요!",
     "button_submit":"등록할게요!",
     "button_nexttime":"다음에 할께요",
     "title_1":"매칭을 위해",

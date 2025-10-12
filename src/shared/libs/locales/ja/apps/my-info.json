@@ -9,7 +9,7 @@
   "done": {
     "title_1": "プロフィールを確認しました",
     "title_2": "ここからはときめく出会いを始めましょう",
-    "desc": "Sometimeが{name}さんの好みの相手を見つけます",
+    "desc": "Sometimeが{{name}}さんの好みの相手を見つけます",
     "button": "好みの相手を探しに行く →"
   },
   "drinking": {

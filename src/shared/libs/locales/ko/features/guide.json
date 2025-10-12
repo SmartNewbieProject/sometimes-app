@@ -24,7 +24,7 @@
       "complete_button": "썸 보내기 완료!"
     },
     "mock_partner": {
-      "mbti_tag": "#ISTJ #{name}",
+      "mbti_tag": "#ISTJ #{{name}}",
       "button_more": "더보기"
     }
   },

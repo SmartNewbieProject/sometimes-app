@@ -114,7 +114,7 @@ function PostBoxCard({
             <Text style={styles.name} className="font-medium">
               {nickname}
             </Text>
-            <Text style={styles.age}>{t("apps.post_box.age_display", { age })}</Text>
+            <Text style={styles.age}>{t("features.post-box.apps.post_box.age_display", { age })}</Text>
           </View>
           <Text style={styles.university}>{universityName}</Text>
           <Text
@@ -229,7 +229,7 @@ export function LikedMeOpenButton({
         onClick: () => openInstagram(instagramId),
       },
       secondaryButton: {
-        text: t("apps.post_box.buttons.no"),
+        text: t("features.post-box.ui.buttons.no"),
         onClick: hideModal,
       },
     });

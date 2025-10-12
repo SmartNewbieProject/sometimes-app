@@ -38,13 +38,13 @@
     "entry": {
       "modal_title": "이전 단계로 돌아가시겠어요?",
       "modal_desc_1": "이전 단계로 돌아가면 현재까지 입력한 정보가",
-      "modal_desc_2": "저장되지 않습니다. {name}님의 정보를 잃게 됩니다.",
+      "modal_desc_2": "저장되지 않습니다. {{name}}님의 정보를 잃게 됩니다.",
       "modal_primary_button": "계속 진행하기",
       "modal_secondary_button": "이전 단계로 돌아가기",
       "match_title_1": "나와 딱 맞는 이상형을 찾기 위해",
       "match_title_2": "몇 가지 질문에 답해주세요!",
       "match_desc_1": "솔직하게 답할수록 더 정확한 이상형을 찾을 수 있어요.",
-      "match_desc_2": "지금부터 썸타임이 {name}님의 이상형을 찾아드릴게요.",
+      "match_desc_2": "지금부터 썸타임이 {{name}}님의 이상형을 찾아드릴게요.",
       "prev_button": "이전",
       "next_button": "다음"
     },
@@ -101,7 +101,7 @@
     "done": {
       "title_1": "당신의 정보를 확인했어요",
       "title_2": "이제는 설레는 만남을 시작해요",
-      "desc": "썸타임이 {name}님의 이상형을 찾아드릴게요",
+      "desc": "썸타임이 {{name}}님의 이상형을 찾아드릴게요",
       "button": "이상형 찾으러 가기 →"
     },
     "enums": {

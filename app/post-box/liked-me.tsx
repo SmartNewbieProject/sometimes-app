@@ -24,7 +24,7 @@ function LikedMe() {
   return (
     <View>
       <Loading.Lottie
-        title={t("apps.post-box.liked_me_loading")}
+        title={t("apps.postBox.liked_me_loading")}
         loading={isLoading}
       >
         <FlashList

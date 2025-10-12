@@ -14,9 +14,10 @@
       "description_2": "지금 다시 보면, 더 잘 맞을 수도 있어요."
     },
     "matching_history_card": {
-      "modal_title": "이전에 만났던 분께 다시 연락하기 위해 구슬 {cost}개를 사용할까요?",
+      "modal_title": "이전에 만났던 분께 다시 연락하기 위해 구슬 {{cost}}개를 사용할까요?",
       "modal_description": "시간이 지났지만 다시 인연을 이어가고 싶다면, 용기 내어 먼저 다가가 보세요.",
       "profile_unlock_button": "프로필\n풀기",
+      "more_button": "더보기",
       "messages": {
       "error_insufficient_gems": "남은 재화가 부족합니다",
       "modal_recharge_prompt": "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!"

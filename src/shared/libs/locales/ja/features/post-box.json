@@ -13,7 +13,7 @@
         "waiting_response": "相手の返信を待っています"
       },
       "buttons": {
-        "ok": "OK",
+        "ok": "ごめんなさい",
         "start_chat": "チャットを始める",
         "yes_try": "はい、やってみます",
         "not_a_match": "ご縁がなかったようです",
@@ -33,10 +33,15 @@
   },
   "apps": {
     "post_box": {
-      "age_display": "満 {{age}}歳",
+      "age_display": "{{age}}歳",
       "buttons": {
         "no": "いいえ"
       }
+    }
+  },
+  "queries": {
+    "use_reject_like": {
+      "error_message": "サーバー内部のエラーでいいねを拒否できませんでした"
     }
   }
 }

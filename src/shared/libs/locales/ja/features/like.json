@@ -1,7 +1,7 @@
 {
   "ui": {
     "none_like_banner": {
-      "title_female": "「いいね",
+      "title_female": "いいね",
       "title_female_1": "を送ってみましたか？",
       "title_male": "まずは",
       "title_male_profile": "プロフィール",
@@ -16,7 +16,7 @@
     "like_button": {
       "modal": {
         "title_line1": "気になる相手に",
-        "title_line2_male": "ジェム{cost}個で気持ちを伝えますか？",
+        "title_line2_male": "ジェム{{cost}}個で気持ちを伝えますか？",
         "title_line2_default": "気持ちを伝えますか？",
         "body_line1": "簡単に気持ちを伝えて、",
         "body_line2": "次のステップへ自然に進んでみましょう。",

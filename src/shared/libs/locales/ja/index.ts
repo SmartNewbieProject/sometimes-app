@@ -55,7 +55,7 @@ import sharedsLinkifiedText from './shareds/linkified-text.json';
 import sharedsNavigation from './shareds/navigation.json';
 import sharedsProviders from './shareds/providers.json';
 import sharedsSelect from './shareds/select.json';
-
+import sharedsUtils from './shareds/utils.json';
 
 const apps = {
   auth: auth,
@@ -120,6 +120,7 @@ const shareds = {
   'navigation': sharedsNavigation,
   'providers': sharedsProviders,
   'select': sharedsSelect,
+  'utils': sharedsUtils,
 };
 
 export default {

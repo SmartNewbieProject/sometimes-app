@@ -38,13 +38,13 @@
     "entry": {
       "modal_title": "前のステップに戻りますか？",
       "modal_desc_1": "前のステップに戻ると、これまで入力した情報は",
-      "modal_desc_2": "保存されません。{name}さんの情報が失われます。",
+      "modal_desc_2": "保存されません。{{name}}さんの情報が失われます。",
       "modal_primary_button": "続ける",
       "modal_secondary_button": "前のステップに戻る",
       "match_title_1": "自分にぴったりの好みの相手を見つけるために",
       "match_title_2": "いくつか質問に答えてください！",
       "match_desc_1": "正直に答えるほど、より正確に好みのタイプを見つけられます。",
-      "match_desc_2": "これからSometimeが{name}さんの好みのタイプを探します。",
+      "match_desc_2": "これからSometimeが{{name}}さんの好みのタイプを探します。",
       "prev_button": "前へ",
       "next_button": "次へ"
     },
@@ -101,7 +101,7 @@
     "done": {
       "title_1": "情報を確認しました",
       "title_2": "さあ、ときめく出会いを始めましょう",
-      "desc": "Sometimeが{name}さんの好みのタイプを探します",
+      "desc": "Sometimeが{{name}}さんの好みのタイプを探します",
       "button": "好みの相手を探しに行く →"
     },
     "enums": {

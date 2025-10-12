@@ -9,7 +9,7 @@
   "done": {
     "title_1": "당신의 정보를 확인했어요",
     "title_2": "이제는 설레는 만남을 시작해요",
-    "desc": "썸타임이 {name}님의 이상형을 찾아드릴게요",
+    "desc": "썸타임이 {{name}}님의 이상형을 찾아드릴게요",
     "button": "이상형 찾으러 가기 →"
   },
   "drinking": {
@@ -36,13 +36,13 @@
     "option_not_drink": "전혀 마시지 않음"
   },
   "entry": {
-    "title_1": "{name}님의 프로필을 만들어요",
+    "title_1": "{{name}}님의 프로필을 만들어요",
     "title_2": "기본 정보를 알려주세요",
     "desc_1": "프로필에 쓸 기본 정보를 알려주세요",
     "desc_2": "나중에 수정할 수 있으니 편하게 골라주세요",
     "modal_title": "나중에 등록할까요?",
     "modal_desc_1": "원활한 이상형 매칭을 위해",
-    "modal_desc_2": "{name} 님의 정보를 등록해주세요!",
+    "modal_desc_2": "{{name}} 님의 정보를 등록해주세요!",
     "modal_primary_button": "등록할게요!",
     "modal_secondary_button": "다음에 할게요",
     "match_title_1": "매칭을 위해",

@@ -7,7 +7,7 @@
     },
     "card": {
       "status_messages": {
-        "liked_me_relative": "{time} 좋아요를 눌렀어요",
+        "liked_me_relative": "{{time}} 좋아요를 눌렀어요",
         "mutual_like": "서로 좋아요를 눌렀어요!",
         "rejected": "상대방이 거절했어요",
         "waiting_response": "상대방의 응답을 기다리고 있어요"
@@ -33,10 +33,15 @@
   },
   "apps": {
     "post_box": {
-      "age_display": "만 {age}세",
+      "age_display": "만 {{age}}세",
       "buttons": {
         "no": "아니요"
       }
+    }
+  },
+  "queries": {
+    "use_reject_like": {
+      "error_message": "서버 내부 오류로 좋아요 거절에 실패하였습니다."
     }
   }
 }

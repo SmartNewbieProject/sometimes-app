@@ -15,10 +15,10 @@
       "success_story_prompt": "연애 성공 후기, 한번 확인해 보세요!"
     },
     "first_purchase_event_banner": {
-      "title": "{brand}이 처음이신가요?",
+      "title": "이 처음이신가요?",
       "brand_name": "썸타임",
       "description_1": "당신만을 위한",
-      "description_2": "{special_match}이 준비되었어요!",
+      "description_2": "이 준비되었어요!",
       "special_match": "특별한 매칭",
       "comment_android_shadow": "Android에서 그림자"
     },

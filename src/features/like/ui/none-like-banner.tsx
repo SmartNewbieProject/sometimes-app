@@ -14,7 +14,7 @@ function NoneLikeBanner() {
   const title =
     profileDetails?.gender === "FEMALE" ? (
       <Text style={[styles.title, { fontSize: 14 }]}>
-        <Text style={styles.titleStrong}>{t("features.like.ui.none_like_banner.title_female")}</Text>{t("features.like.ui.none_like_banner.title_female_1")}
+        <Text style={styles.titleStrong}>{t("features.like.ui.none_like_banner.title_female")}</Text>
       </Text>
     ) : (
       <Text style={[styles.title, { fontSize: 14 }]}>

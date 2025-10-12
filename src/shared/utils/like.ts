@@ -1,3 +1,5 @@
+import i18n from "@/src/shared/libs/i18n";
+
 export function getRemainingTimeFormatted(message: string): string {
 	if (!message) {
 		return '';
@@ -5,7 +7,7 @@ export function getRemainingTimeFormatted(message: string): string {
 	const match = message.match(/^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/);
 
 	if (!match) {
-		return '올바른 날짜 형식이 아닙니다.';
+		return i18n.t('shareds.utils.like.wrong_date_format');
 	}
 
 	const expirationDate = new Date(match[1]);
@@ -14,7 +16,7 @@ export function getRemainingTimeFormatted(message: string): string {
 	const diffInMillis = expirationDate.getTime() - now.getTime();
 
 	if (diffInMillis <= 0) {
-		return '이미 편지가 사라졌어요.';
+		return i18n.t('shareds.utils.like.message_expired');
 	}
 
 	const days = Math.floor(diffInMillis / (1000 * 60 * 60 * 24));
@@ -25,17 +27,17 @@ export function getRemainingTimeFormatted(message: string): string {
 	let remainingText = '';
 
 	if (days > 0) {
-		remainingText = `${days}일 ${hours}시간`;
+		remainingText = i18n.t('shareds.utils.like.remaining_text_1', { days:days, hours:hours });
 	} else if (hours > 0) {
-		remainingText = `${hours}시간 ${minutes}분`;
+		remainingText = i18n.t('shareds.utils.like.remaining_text_2', { hours:hours, minutes:minutes });
 	} else if (minutes > 0) {
-		remainingText = `${minutes}분`;
+		remainingText = i18n.t('shareds.utils.like.remaining_text_3', { minutes:minutes });
 	} else {
-		remainingText = `${seconds}초`;
+		remainingText = i18n.t('shareds.utils.like.remaining_text_4', { seconds:seconds });
 	}
 
 	// 5. 최종 형식에 맞춰 문자열 반환
-	return `${remainingText} 뒤에 편지가 사라져요!`;
+	return i18n.t('shareds.utils.like.remaining_time_formatted', { time: remainingText });
 }
 
 export function getRemainingTimeLimit(message: string): boolean {

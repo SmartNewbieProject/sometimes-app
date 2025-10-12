@@ -160,7 +160,7 @@ const HomeScreen = () => {
             <AnnounceCard
               emoji={ImageResources.DETAILS}
               emojiSize={{ width: 31, height: 28 }}
-              text={t("announce_card_text")}
+              text={t("apps.home.announce_card_text")}
               onPress={() => router.navigate("/interest")}
             />
           </Show>

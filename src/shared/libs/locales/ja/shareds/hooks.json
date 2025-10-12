@@ -57,7 +57,7 @@
     "channel_community_name": "コミュニティ通知",
     "channel_community_description": "コメント、いいね などコミュニティ関連のお知らせ",
     "error_eas_project_id_not_set": "EASプロジェクトIDが設定されていません。",
-    "warning_push_only_on_device": "プッシュ通知は実機でのみ利用可能です。",
+    "warning_push_only_on_device": "プッシュ通知は実際のデバイスのみ利用可能です。",
     "warning_permission_denied": "プッシュ通知の権限が拒否されました。",
     "success_token_registration": "プッシュトークン登録成功:",
     "error_token_registration": "プッシュトークン登録失敗:",

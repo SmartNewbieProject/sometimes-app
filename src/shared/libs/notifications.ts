@@ -207,10 +207,10 @@ export async function ensurePushTokenRegistered(
 
     if (!isRegistered) {
       showModal({
-        title: '알림 허용',
-        children: '매칭 결과, 댓글 등의 알림을 받으시겠습니까?',
+        title: i18n.t('shareds.hooks.notifications.modal_title_allow_notifications'),
+        children: i18n.t('shareds.hooks.notifications.modal_body_allow_notifications'),
         primaryButton: {
-          text: '허용',
+          text: i18n.t('shareds.hooks.notifications.button_allow'),
           onClick: async () => {
             try {
               await registerForPushNotificationsAsync();
@@ -220,7 +220,7 @@ export async function ensurePushTokenRegistered(
           }
         },
         secondaryButton: {
-          text: '나중에',
+          text: i18n.t('shareds.hooks.notifications.button_later'),
           onClick: () => {
             // 사용자가 알림을 거부한 경우 아무 작업 안 함
           }
