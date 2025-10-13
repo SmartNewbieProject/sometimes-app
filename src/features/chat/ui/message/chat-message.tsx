@@ -1,7 +1,9 @@
 import ReadCheckIcon from "@assets/icons/read-check.svg";
 import UnreadCheckIcon from "@assets/icons/unread-check.svg";
+import { Link } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import useChatRoomDetail from "../../queries/use-chat-room-detail";
 import type { Chat } from "../../types/chat";
 import { formatToAmPm } from "../../utils/time";
 import ChatBalloon from "./chat-balloon";
@@ -13,6 +15,7 @@ interface ChatMessageProps {
 }
 
 function ChatMessage({ item, profileImage }: ChatMessageProps) {
+  const { data } = useChatRoomDetail(item.chatRoomId);
   return (
     <View
       style={[
@@ -22,7 +25,11 @@ function ChatMessage({ item, profileImage }: ChatMessageProps) {
         },
       ]}
     >
-      {!item.isMe && <ChatProfileImage imageUri={profileImage} size={32} />}
+      {!item.isMe && (
+        <Link href={`/partner/view/${data?.matchId}`}>
+          <ChatProfileImage imageUri={profileImage} size={32} />
+        </Link>
+      )}
       <View
         style={[
           styles.balloonContainer,

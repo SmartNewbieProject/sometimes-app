@@ -42,7 +42,7 @@ function MockTime({ matchExpiredAt }: MockTimeProps) {
         },
       ]}
     >
-      {getRemainingTimeFormatted(matchExpiredAt)}
+      {getRemainingTimeFormatted(matchExpiredAt, true)}
     </Animated.Text>
   );
 }

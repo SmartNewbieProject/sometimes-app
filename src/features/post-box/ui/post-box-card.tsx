@@ -149,7 +149,7 @@ function PostBoxCard({
           >
             {status === "IN_CHAT"
               ? ""
-              : getRemainingTimeFormatted(matchExpiredAt)}
+              : getRemainingTimeFormatted(matchExpiredAt, isExpired)}
           </Animated.Text>
 
           {renderBottomButton}
