@@ -5,7 +5,6 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import RoulettePizza from "@assets/images/roulette-pizza.svg";
-import Roulette from "@assets/images/roulette.svg";
 import { useRoulette } from "../../hooks/roulette/use-roulette";
 
 function RouletteItem() {
@@ -30,7 +29,10 @@ function RouletteItem() {
         />
 
         <Animated.View style={[rouletteAnimationStyle, styles.roulette]}>
-          <Roulette />
+          <Image
+            source={require("@assets/images/roulette.png")}
+            style={styles.rouletteImage}
+          />
         </Animated.View>
         <RoulettePizza style={styles.pizza} />
 
@@ -161,6 +163,10 @@ const styles = StyleSheet.create({
     width: 190,
     height: 95,
     zIndex: -10,
+  },
+  rouletteImage: {
+    width: 370,
+    height: 370,
   },
 });
 
