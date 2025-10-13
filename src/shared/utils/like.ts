@@ -1,4 +1,4 @@
-export function getRemainingTimeFormatted(message: string): string {
+export function getRemainingTimeFormatted(message: string, isExpired: boolean): string {
 	if (!message) {
 		return '';
 	}
@@ -13,8 +13,11 @@ export function getRemainingTimeFormatted(message: string): string {
 
 	const diffInMillis = expirationDate.getTime() - now.getTime();
 
-	if (diffInMillis <= 0) {
+	if (diffInMillis <= 0 && isExpired) {
 		return '이미 편지가 사라졌어요.';
+	}
+	if (diffInMillis <= 0 && !isExpired) {
+		return '';
 	}
 
 	const days = Math.floor(diffInMillis / (1000 * 60 * 60 * 24));

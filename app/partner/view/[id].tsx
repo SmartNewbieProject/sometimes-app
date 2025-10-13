@@ -344,7 +344,11 @@ export default function PartnerDetailScreen() {
           <View
             style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
           >
-            <LikedMeOpenButton height={48} matchId={matchId} likeId={partner?.matchLikeId} />
+            <LikedMeOpenButton
+              height={48}
+              matchId={matchId}
+              likeId={partner?.matchLikeId ?? undefined}
+            />
           </View>
         </Show>
 
