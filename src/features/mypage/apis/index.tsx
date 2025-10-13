@@ -13,6 +13,8 @@ export type MatchingFilters = {
 
 export type Mbti = { mbti: string | null };
 
+export type ProfileReviewStatus = "none" | "approved" | "rejected" | "pending";
+
 export interface PageResp<T> {
   content: T[];
   page: number;
@@ -30,6 +32,11 @@ export type ItemsMetaPage<T> = {
     hasPreviousPage: boolean;
   };
 };
+
+export interface ProfileImageReviewStatusResp {
+  reviewStatus: ProfileReviewStatus;
+  rejectionReason?: string | null;
+}
 
 function extractPayload(raw: any) {
   const lvl1 = raw?.data ?? raw;
@@ -216,6 +223,10 @@ const mypageApis: MyPageApis = {
     return normalizeItemsMetaPage<MyLike>(payload as any, { page, size });
   },
 };
+
+export async function getProfileImageReviewStatus(): Promise<ProfileImageReviewStatusResp> {
+  return await axiosClient.get("/profile/images/review-status");
+}
 
 type Service = {
   [x: string]: any;

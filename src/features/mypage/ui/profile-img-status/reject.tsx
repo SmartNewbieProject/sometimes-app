@@ -1,5 +1,4 @@
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
-import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
@@ -13,12 +12,10 @@ export default function ProfileImgEditRejectScreen() {
   const insets = useSafeAreaInsets();
   const rejectionReason =
     (params.rejectionReason as string) || "승인이 거절되었습니다.";
-  const phoneNumber = params.phoneNumber as string;
 
   const handleReapply = () => {
     router.push({
-      pathname: "/auth/reapply",
-      params: { phoneNumber, rejectionReason },
+      pathname: "/profile-edit/profile",
     });
   };
 
@@ -42,22 +39,52 @@ export default function ProfileImgEditRejectScreen() {
             <SmallTitleIcon width={160} height={40} />
           </View>
           {/* 메인 이미지 */}
-          <View className="items-center mb-8 relative">
-            <View
-              style={{
-                width: 165,
-                height: 165,
-                borderRadius: 81,
-                top: -8,
-                left: 0,
+          <View className="items-center  relative ">
+            <View style={{ position: "absolute", left: 0 }}>
+              <View
+                style={{
+                  width: 253,
+                  height: 253,
+                  borderRadius: 253,
+                  top: 0,
+                  left: 0,
 
-                backgroundColor: "#7A4AE2",
-                position: "absolute",
-              }}
-            />
+                  backgroundColor: "#7A4AE2",
+                  position: "absolute",
+                }}
+              />
+              <View
+                style={{
+                  width: 193,
+                  height: 193,
+                  borderRadius: 223,
+
+                  backgroundColor: "#fff",
+                  top: 30,
+                  left: 30,
+                  position: "absolute",
+                }}
+              />
+              <View
+                style={{
+                  width: 30,
+                  height: 196,
+                  top: 30,
+                  left: 111.5,
+                  transform: [
+                    {
+                      rotate: "-45deg",
+                    },
+                  ],
+                  backgroundColor: "#7A4AE2",
+                  position: "absolute",
+                }}
+              />
+            </View>
+
             <Image
               source={require("@assets/images/limit-age.png")}
-              style={{ width: 160, height: 160 }}
+              style={{ width: 259, height: 259, top: 30, left: 30 }}
               className="mb-6"
             />
           </View>
@@ -67,7 +94,7 @@ export default function ProfileImgEditRejectScreen() {
             <Text
               size="lg"
               textColor="black"
-              weight="normal"
+              weight="semibold"
               className="text-left"
             >
               승인이 거절되었어요
@@ -78,7 +105,7 @@ export default function ProfileImgEditRejectScreen() {
           <View className="w-full mb-8">
             <Text
               size="md"
-              textColor="gray"
+              textColor="pale-purple"
               weight="light"
               className="text-left leading-6"
             >
@@ -126,7 +153,7 @@ export default function ProfileImgEditRejectScreen() {
       </ScrollView>
 
       {/* 하단 버튼들 */}
-      <View className="w-full px-6 pb-8 gap-3 space-y-3">
+      <View className="w-full px-6 pb-8 gap-1 space-y-3">
         <Button
           variant="primary"
           size="md"

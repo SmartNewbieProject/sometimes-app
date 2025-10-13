@@ -8,11 +8,15 @@ import { ScrollView } from "react-native-gesture-handler";
 import ProfileImageCard from "./profile-image-card";
 import ProfileImageCover from "./profile-image-cover";
 
+import { useProfileImageCover } from "@/src/features/profile-edit/hooks/use-profile-image-cover";
+
 function ProfileImageSection() {
   const { profileDetails } = useAuth();
   const [isProfileImageOpen, setProfileOpen] = useState(false);
 
-  const isApproved = true;
+  //테스트용 상수
+  // const isApproved = true;
+  const { isCoverVisible } = useProfileImageCover();
 
   const sortedPorifleImages = profileDetails?.profileImages.sort((a, b) => {
     if (a.isMain && !b.isMain) return -1;
@@ -59,7 +63,8 @@ function ProfileImageSection() {
                 ))}
           </ScrollView>
 
-          <ProfileImageCover visible={!!isApproved} />
+          <ProfileImageCover visible={isCoverVisible} />
+          {/* <ProfileImageCover visible={!!isApproved} /> */}
         </View>
 
         <View style={styles.bar} />

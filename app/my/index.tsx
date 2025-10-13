@@ -26,9 +26,14 @@ import {
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useProfileReviewRedirect } from "@/src/features/mypage/hooks/use-img-edit-status";
+
 export default function MyScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  useProfileReviewRedirect();
+
   return (
     <Layout.Default
       style={{
