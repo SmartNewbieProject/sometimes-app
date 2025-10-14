@@ -6,6 +6,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, View } from "react-native";
 import { Linking } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useConfirmProfileImageReview } from "@/src/features/mypage/hooks/use-confirm-profile-image-review";
 
 export default function ProfileImgEditRejectScreen() {
   const params = useLocalSearchParams();
@@ -13,10 +14,13 @@ export default function ProfileImgEditRejectScreen() {
   const rejectionReason =
     (params.rejectionReason as string) || "승인이 거절되었습니다.";
 
-  const handleReapply = () => {
-    router.push({
-      pathname: "/profile-edit/profile",
-    });
+  const { mutateAsync, isPending } = useConfirmProfileImageReview();
+
+  const handleReapply = async () => {
+    try {
+      await mutateAsync();
+      router.push({ pathname: "/profile-edit/profile" });
+    } catch (e) {}
   };
 
   const handleContactSupport = () => {

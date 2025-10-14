@@ -6,9 +6,12 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { useConfirmProfileImageReview } from "../../hooks/use-confirm-profile-image-review";
 
 export default function ProfileImgEditDoneScreen() {
   const [loading, setLoading] = useState(true);
+  const { mutateAsync, isPending } = useConfirmProfileImageReview();
+
   useEffect(() => {
     if (loading) {
       setTimeout(() => {
@@ -16,8 +19,12 @@ export default function ProfileImgEditDoneScreen() {
       }, 1000);
     }
   }, [loading]);
-  const onNext = () => {
-    router.push("/home");
+
+  const onNext = async () => {
+    try {
+      await mutateAsync();
+      router.push("/home");
+    } catch (e) {}
   };
 
   return (

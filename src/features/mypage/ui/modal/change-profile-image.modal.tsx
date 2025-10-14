@@ -1,6 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import apis from "@/src/features/mypage/apis";
-import { platform } from "@/src/shared/libs/platform";
 
 import Layout from "@/src/features/layout";
 import { DefaultLayout } from "@/src/features/layout/ui";
@@ -10,18 +9,12 @@ import {
   guideHeight,
   useOverlay,
 } from "@/src/shared/hooks/use-overlay";
-import { useStorage } from "@/src/shared/hooks/use-storage";
 import { cn } from "@/src/shared/libs";
 
-import {
-  Button,
-  ImageSelector,
-  PalePurpleGradient,
-  Text,
-} from "@/src/shared/ui";
+import { ImageSelector, Text } from "@/src/shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Animated,
@@ -29,11 +22,11 @@ import {
   Easing,
   Platform,
   Text as RNText,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 interface ChangeProfileImageModalProps {
   onCloseModal: () => void;
@@ -48,6 +41,7 @@ export const ChangeProfileImageModal = ({
   const insets = useSafeAreaInsets();
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -189,10 +183,11 @@ export const ChangeProfileImageModal = ({
       hideModal();
 
       setTimeout(() => {
-        showErrorModal(
-          "프로필 이미지가 성공적으로 변경되었습니다.",
-          "announcement"
-        );
+        // showErrorModal(
+        //   "프로필 이미지가 성공적으로 변경되었습니다.",
+        //   "announcement"
+        // );
+        router.push("/my/approval-step/waiting");
       }, 100);
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
