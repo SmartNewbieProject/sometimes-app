@@ -124,7 +124,7 @@ const uploadProfileImages = async (images: string[]): Promise<void> => {
 
   formData.append("isMain", "0");
 
-  await axiosClient.post("/profile/images", formData, {
+  await axiosClient.post("/v2/profile/images", formData, {
     //api/v2/profile/images 변경
     headers: { "Content-Type": "multipart/form-data" },
     timeout: 30000,

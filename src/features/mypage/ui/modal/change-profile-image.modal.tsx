@@ -165,18 +165,19 @@ export const ChangeProfileImageModal = ({
         }
       });
 
-      for (const index of changedIndexes) {
-        const oldImage = oldImages[index];
-        if (oldImage) {
-          await apis.deleteProfileImage(oldImage.id).catch(() => {});
-        }
-      }
+      // for (const index of changedIndexes) {
+      //   const oldImage = oldImages[index];
+      //   if (oldImage) {
+      //     await apis.deleteProfileImage(oldImage.id).catch(() => {});
+      //   }
+      // }
 
-      for (const index of changedIndexes) {
-        const newImage = images[index];
-        if (newImage) {
-          await apis.uploadProfileImage(newImage, index);
-        }
+      const batchImages = changedIndexes
+        .map((idx) => images[idx])
+        .filter((img): img is string => !!img);
+
+      if (batchImages.length > 0) {
+        await apis.uploadProfileImages(batchImages);
       }
 
       await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
