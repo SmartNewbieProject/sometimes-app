@@ -165,13 +165,6 @@ export const ChangeProfileImageModal = ({
         }
       });
 
-      // for (const index of changedIndexes) {
-      //   const oldImage = oldImages[index];
-      //   if (oldImage) {
-      //     await apis.deleteProfileImage(oldImage.id).catch(() => {});
-      //   }
-      // }
-
       const batchImages = changedIndexes
         .map((idx) => images[idx])
         .filter((img): img is string => !!img);
@@ -184,10 +177,6 @@ export const ChangeProfileImageModal = ({
       hideModal();
 
       setTimeout(() => {
-        // showErrorModal(
-        //   "프로필 이미지가 성공적으로 변경되었습니다.",
-        //   "announcement"
-        // );
         router.push("/my/approval-step/waiting");
       }, 100);
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -222,7 +211,7 @@ export const ChangeProfileImageModal = ({
     >
       <View style={{ flex: 1 }}>
         <GuideView>
-          <View style={[styles.container]}>
+          <View style={[styles.container, { paddingTop: insets.top }]}>
             <View style={styles.titleContainer}>
               <Image
                 source={require("@assets/images/profile-image.png")}
