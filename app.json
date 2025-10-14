@@ -8,10 +8,6 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/splash-portrait.png",
-      "resizeMode": "contain"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
@@ -147,9 +143,13 @@
       [
         "expo-splash-screen",
         {
+          "backgroundColor": "#000000",
           "image": "./assets/images/splash-portrait.png",
-          "imageWidth": 400,
-          "resizeMode": "contain"
+          "dark": {
+            "image": "./assets/images/splash-portrait.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 400
         }
       ],
       "@react-native-firebase/app",
