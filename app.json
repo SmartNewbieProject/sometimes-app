@@ -153,11 +153,30 @@
         }
       ],
       "@react-native-firebase/app",
+
+      [
+        "@react-native-kakao/core",
+        {
+          "nativeAppKey": "4d405583bea731b1c4fb26eb8a14e894",
+          "android": {
+             "authCodeHandlerActivity": true,
+            "forwardKakaoLinkIntentFilterToMainActivity": true
+          },
+          "ios": {
+             "handleKakaoOpenUrl": true
+          }
+        }
+      ],
       [
         "expo-build-properties",
         {
           "ios": {
             "useFrameworks": "static"
+          },
+          "android": {
+            "extraMavenRepos": [
+              "https://devrepo.kakao.com/nexus/content/groups/public/"
+            ]
           }
         }
       ],

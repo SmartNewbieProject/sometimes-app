@@ -9,6 +9,7 @@ export const queryClient = new QueryClient({
 			staleTime: 1000 * 60,
 			refetchInterval: false,
 			refetchIntervalInBackground: false,
+			 experimental_prefetchInRender: true,
 		},
 	},
 });

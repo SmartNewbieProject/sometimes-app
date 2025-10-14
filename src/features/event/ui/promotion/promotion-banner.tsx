@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
   },
   commonStyle: {
     position: "absolute",
-    filter: "blur(1px)",
     zIndex: -1,
   },
   title: {
@@ -146,7 +145,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "#fff",
     letterSpacing: -0.06,
-    maxWidth: 174,
+    minWidth: 178,
+    maxWidth: 178,
   },
   inviteText: {
     color: "#212121",
