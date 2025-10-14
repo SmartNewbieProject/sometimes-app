@@ -14,11 +14,6 @@ export function useProfileReviewRedirect() {
         try {
           const resp = await getProfileImageReviewStatus();
 
-          //테스트
-          //const resp = { reviewStatus: "approved" };
-          //const resp = { reviewStatus: "rejected" };
-          //const resp = { reviewStatus: "pending" };
-          //const resp = { reviewStatus: "none" };
           if (!isActive || navigatingRef.current) return;
 
           switch (resp.reviewStatus) {
@@ -32,9 +27,6 @@ export function useProfileReviewRedirect() {
               navigatingRef.current = true;
               router.replace("/my/approval-step/rejected");
               break;
-            // case "none":
-            // case "pending":
-            // none이나 pending일땐 페이지 리다이렉션 없이 default로
             default:
               console.log("reviewStatus:", resp.reviewStatus);
               break;
