@@ -5,8 +5,10 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import useShare from "../../hooks/promotion/use-share";
 
 function PromotionInviteCode() {
+  const {handleShareCode} = useShare();
   return (
     <View style={styles.container}>
       <Image
@@ -38,7 +40,7 @@ function PromotionInviteCode() {
           />
           <Text style={styles.title}>내 초대 코드</Text>
         </View>
-        <View style={styles.codeContainer}>
+        <Pressable onPress={handleShareCode} style={styles.codeContainer}>
           <LinearGradient
             colors={["#7A4AE2", "#E4D7FF"]}
             start={{ x: 0, y: 0.5 }}
@@ -47,12 +49,12 @@ function PromotionInviteCode() {
           />
           <View style={styles.code}>
             <Text style={styles.codeText}>SOME24A1</Text>
-            <Pressable style={styles.copyButton}>
+            <View style={styles.copyButton}>
               <CopyIcon />
               <Text style={styles.copyText}>복사</Text>
-            </Pressable>
+            </View>
           </View>
-        </View>
+        </Pressable>
       </View>
     </View>
   );

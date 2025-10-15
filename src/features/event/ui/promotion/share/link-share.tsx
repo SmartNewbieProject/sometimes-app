@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import useShare from "../../../hooks/promotion/use-share";
 
 function LinkShare() {
-  const { handleShareLink, isPending } = useShare();
+  const { handleShareLink } = useShare();
 
   return (
     <Pressable onPress={handleShareLink} style={styles.button}>

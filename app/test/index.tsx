@@ -1,5 +1,6 @@
 import RouletteItem from "@/src/features/event/ui/roulette/roulette-item";
 import RouletteModal from "@/src/features/event/ui/roulette/roulette-modal";
+import InvitePromotionBanner from "@/src/features/home/ui/banner/invite-promotion-banner";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -22,7 +23,7 @@ function Test() {
   }, []);
   return (
     <View style={{ backgroundColor: "#fff", flex: 1 }}>
-      <Text>hello</Text>
+     <InvitePromotionBanner />
     </View>
   );
 }

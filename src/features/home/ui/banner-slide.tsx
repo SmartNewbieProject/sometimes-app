@@ -5,6 +5,7 @@ import Loading from "../../loading";
 import { useTotalMatchCountQuery, useTotalUserCountQuery } from "../queries";
 import FirstPurchaseEvent from "./first-purchase-event-banner";
 import TotalMatchCounter from "./total-match-counter";
+import InvitePromotionBanner from "./banner/invite-promotion-banner";
 
 function BannerSlide() {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } =
@@ -20,6 +21,7 @@ function BannerSlide() {
         className="w-full !min-h-[92px] "
       >
         <FirstPurchaseEvent />
+        <InvitePromotionBanner />
         <TotalMatchCounter count={totalMatchCount + totalUserCount + 1000} />
       </Slider>
     </Loading.Lottie>

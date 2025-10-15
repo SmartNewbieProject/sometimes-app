@@ -1,10 +1,10 @@
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import useShare from "../../../hooks/promotion/use-share";
+import useShareKakao from "../../../hooks/promotion/use-share-kakao";
 
 function KakaoShare() {
-  const { handleShareKakao } = useShare();
+  const { handleShareKakao } = useShareKakao();
   return (
     <Pressable onPress={handleShareKakao} style={styles.button}>
       <View style={styles.logoContainer}>
