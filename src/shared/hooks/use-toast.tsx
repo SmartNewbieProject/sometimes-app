@@ -4,16 +4,18 @@ import { create } from 'zustand';
 
 interface ToastStore {
   toast: string | null;
-  emitToast: (toast: string) => void;
+  icon: React.ReactNode | null;
+  emitToast: (toast: string, icon?: React.ReactNode) => void;
 }
 
 export const useToast = create<ToastStore>((set) => ({
   toast: null,
-  emitToast: (toast) => {
-    set({ toast })
+  icon: null,
+  emitToast: (toast, icon) => {
+    set({ toast, icon: icon? icon: null })
     
     setTimeout(() => {
-      set({ toast: null})
+      set({ toast: null, icon: null})
     }, 2000)
 
 

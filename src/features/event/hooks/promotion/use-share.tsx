@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import useReferralCode from "./use-referral-code";
 import { useToast } from "@/src/shared/hooks/use-toast";
-
+import CopyIcon from "@assets/icons/toast/copy.svg"
 declare global {
   interface Window {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -25,7 +25,7 @@ function useShare() {
      try {
        if (referralCode) {
         await Clipboard.setStringAsync(referralCode);
-        emitToast("초대 코드가 복사되었어요")
+        emitToast("초대 코드를 복사했어요", <CopyIcon />)
 
        } else {
          throw new Error("초대코드를 불러오는 중이에요")
@@ -45,7 +45,7 @@ function useShare() {
       } else {
         throw new Error("초대코드를 불러오는 중이에요")
       }
-      emitToast("링크가 복사되었어요")
+      emitToast("링크를 복사했어요", <CopyIcon />)
     } catch (error:any) {
       console.error(error);
          emitToast(error ?? "링크 복사 실패")

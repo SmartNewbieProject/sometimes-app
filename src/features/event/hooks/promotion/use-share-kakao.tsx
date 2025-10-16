@@ -3,7 +3,7 @@ import { shareFeedTemplate } from '@react-native-kakao/share';
 import React, { useEffect, useState } from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import useReferralCode from './use-referral-code';
-
+import CopyIcon from "@assets/icons/toast/copy.svg"
 
 
 const KAKAO_JS_KEY = "2356db85eb35f5f941d0d66178e16b4e";
@@ -28,7 +28,7 @@ function useShareKakao() {
   
   const TEMPLATE = {
     content: {
-      title: "제목을 입력하세요",
+      title: "SOMETIMES",
       description: "설명을 입력하세요",
       imageUrl:
         "https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg",
@@ -66,7 +66,7 @@ const state = {
   web: () => {
     if (!kakao) {
       
-      emitToast("카카오 공유하기 기능을 불러오는데 실패했어요")
+      emitToast("공유하기 기능을 불러오는데 실패했어요" )
       return;
     }
 
@@ -74,6 +74,7 @@ const state = {
       objectType: "feed",
       ...TEMPLATE
     });
+  
   },
   ios: shareNative,
   android: shareNative,
