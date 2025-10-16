@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.8.5",
+    "version": "2.8.6",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -12,7 +12,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
       "entitlements": {
-        "com.apple.developer.applesignin": ["Default"]
+        "com.apple.developer.applesignin": [
+          "Default"
+        ]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "capabilities": [
@@ -23,7 +25,9 @@
         "maps"
       ],
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"],
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "LSApplicationQueriesSchemes": [
           "kftc-bankpay",
           "ispmobile",
@@ -153,17 +157,16 @@
         }
       ],
       "@react-native-firebase/app",
-
       [
         "@react-native-kakao/core",
         {
           "nativeAppKey": "4d405583bea731b1c4fb26eb8a14e894",
           "android": {
-             "authCodeHandlerActivity": true,
+            "authCodeHandlerActivity": true,
             "forwardKakaoLinkIntentFilterToMainActivity": true
           },
           "ios": {
-             "handleKakaoOpenUrl": true
+            "handleKakaoOpenUrl": true
           }
         }
       ],

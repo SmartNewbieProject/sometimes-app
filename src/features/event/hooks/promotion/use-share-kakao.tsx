@@ -63,28 +63,7 @@ const shareNative = () => {
       });
 }
 
-const state = {
-  web: () => {
-    if (!kakao) {
-      
-      emitToast("공유하기 기능을 불러오는데 실패했어요" )
-      return;
-    }
 
-    kakao.Share.sendDefault({
-      objectType: "feed",
-      ...TEMPLATE,
-    
-    });
-  
-  },
-  ios: shareNative,
-  android: shareNative,
-  windows: shareNative,
-  macos: shareNative 
-  
-
-}
   useEffect(() => {
     if (OS === "web") {
       if (kakao) {
@@ -131,6 +110,28 @@ const state = {
 
 
   const handleShareKakao = () => {
+    const state = {
+  web: () => {
+    if (!kakao) {
+      
+      emitToast("공유하기 기능을 불러오는데 실패했어요" )
+      return;
+    }
+
+    kakao.Share.sendDefault({
+      objectType: "feed",
+      ...TEMPLATE,
+    
+    });
+  
+  },
+  ios: shareNative,
+  android: shareNative,
+  windows: shareNative,
+  macos: shareNative 
+  
+
+}
     state[OS]()
   };
   return {
