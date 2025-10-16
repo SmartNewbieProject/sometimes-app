@@ -11,3 +11,6 @@ export const postRouletteSpin = () =>
 
 export const getRouletteEligibility = () =>
 	axiosClient.get('/events/roulette/eligibility') as Promise<RouletteEligibility>;
+
+export const getReferralCode = () =>
+	axiosClient.get('/user/referral-code') as Promise<{code: string}>

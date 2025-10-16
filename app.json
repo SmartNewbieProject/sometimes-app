@@ -143,21 +143,40 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#000000",
+          "backgroundColor": "#FFFFFF",
           "image": "./assets/images/splash-portrait.png",
           "dark": {
             "image": "./assets/images/splash-portrait.png",
-            "backgroundColor": "#000000"
+            "backgroundColor": "#FFFFFF"
           },
           "imageWidth": 400
         }
       ],
       "@react-native-firebase/app",
+
+      [
+        "@react-native-kakao/core",
+        {
+          "nativeAppKey": "4d405583bea731b1c4fb26eb8a14e894",
+          "android": {
+             "authCodeHandlerActivity": true,
+            "forwardKakaoLinkIntentFilterToMainActivity": true
+          },
+          "ios": {
+             "handleKakaoOpenUrl": true
+          }
+        }
+      ],
       [
         "expo-build-properties",
         {
           "ios": {
             "useFrameworks": "static"
+          },
+          "android": {
+            "extraMavenRepos": [
+              "https://devrepo.kakao.com/nexus/content/groups/public/"
+            ]
           }
         }
       ],

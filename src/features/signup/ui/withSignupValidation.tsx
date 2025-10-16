@@ -55,6 +55,23 @@ const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
 
     message: "프로필 사진 설정을 위해 먼저 인스타그램 계정을 연동해주세요.",
   },
+  [SignupSteps.INVITE_CODE]: {
+    requiredFields: [
+      "name",
+      "phone",
+      "birthday",
+      "gender",
+      "universityId",
+      "departmentName",
+      "grade",
+      "studentNumber",
+      "instagramId",
+      "profileImages"
+    ],
+    redirectTo: "/auth/login" as const,
+
+    message: "회원가입에 필요한 정보를 모두 입력하셔야 회원가입 신청이 가능해요.",
+  }
 };
 
 const getDetailedMessage = (
@@ -71,6 +88,7 @@ const getDetailedMessage = (
     grade: "학년",
     studentNumber: "학번",
     instagramId: "인스타그램 계정",
+    profileImage: "프로필 사진"
   };
 
   const missingFieldNames = missingFields
@@ -110,6 +128,10 @@ const getRedirectRoute = (missingFields: string[]): string => {
 
   if (missingFields.includes("instagramId")) {
     return "/auth/signup/instagram";
+  }
+
+  if (missingFields.includes("profileImages")) {
+    return "/auth/signup/profile-image"
   }
 
   return "/auth/login";
