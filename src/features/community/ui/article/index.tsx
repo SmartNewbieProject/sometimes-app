@@ -108,7 +108,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
     <View className="w-full relative">
       <TouchableOpacity
         onPress={handleArticlePress}
-        className="p-4 bg-white"
+        className="p-4 bg-transparent"
         activeOpacity={0.7}
       >
         <UserProfile
@@ -118,7 +118,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
         />
 
         <View className="my-3 mb-4 mx-[8px]  flex flex-row justify-between">
-          <Text numberofLine={1} size="md" weight="medium" textColor="black">
+          <Text numberOfLines={1} size="md" weight="medium" textColor="black">
             {data.title}
           </Text>
           <Text size="13" textColor="pale-purple">
@@ -129,7 +129,8 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
           size="sm"
           className="mb-4 mx-[8px] leading-5"
           textColor="black"
-          style={{ flexWrap: "wrap", flexShrink: 1 }}
+          numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {data.content}
         </LinkifiedText>
