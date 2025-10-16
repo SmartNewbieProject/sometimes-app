@@ -1,15 +1,10 @@
 import { useToast } from '@/src/shared/hooks/use-toast';
 import { shareFeedTemplate } from '@react-native-kakao/share';
 import React, { useEffect, useState } from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
+import { Platform } from 'react-native';
 import useReferralCode from './use-referral-code';
-import CopyIcon from "@assets/icons/toast/copy.svg"
-
 
 const KAKAO_JS_KEY = "2356db85eb35f5f941d0d66178e16b4e";
-
-
-
 
 const SCRIPT = {
   src: "https://t1.kakaocdn.net/kakao_js_sdk/2.7.6/kakao.min.js",
@@ -18,20 +13,17 @@ const SCRIPT = {
   async: true
 }
 
-
-
 function useShareKakao() {
   const { emitToast } = useToast();
-  const {referralCode} = useReferralCode()
-  const OS = Platform.OS
-    const kakao = window?.Kakao
+  const { referralCode } = useReferralCode();
+  const OS = Platform.OS;
+  const [isKakaoReady, setIsKakaoReady] = useState(false);
 
   const TEMPLATE = {
     content: {
       title: "🎉 친구 초대 이벤트 오픈!",
       description: "당신과 친구 모두에게 구슬 50개 지급 💜\n 이상형 매칭, 지금 바로 시작하세요!",
-      imageUrl:
-        "https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/resources/invitebanner.png",
+      imageUrl: "https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/resources/invitebanner.png",
       link: {
         mobileWebUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
         webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
@@ -41,103 +33,105 @@ function useShareKakao() {
       {
         title: "웹으로 이동",
         link: {
-          mobileWebUrl:`${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
+          mobileWebUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
           webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
         },
       },
       {
         title: "앱으로 이동",
         link: {
-          
-         androidExecutionParams: {},
-        iosExecutionParams: {}
+          androidExecutionParams: {
+            "invite_code": referralCode ?? "",
+          },
+          iosExecutionParams: {
+            "invite_code": referralCode ?? "",
+          },
         },
       },
     ],
-  }
-  
-
-const shareNative = () => {
-   shareFeedTemplate({
-     template: TEMPLATE
-      });
-}
-
+  };
 
   useEffect(() => {
-    if (OS === "web") {
-      if (kakao) {
-        if (!kakao.isInitialized()) {
-          kakao.init(KAKAO_JS_KEY);
-        }
-        return;
-      }
-  
-      const script = document.createElement("script");
-      script.src = SCRIPT.src;
-      script.integrity =
-        SCRIPT.integrity;
-      script.crossOrigin = SCRIPT.crossOrigin;
-      script.async = SCRIPT.async;
-  
-      script.onload = () => {
-        try {
-          if (kakao && !kakao.isInitialized()) {
-            kakao.init(KAKAO_JS_KEY);
-          }
-        } catch (error) {
-          console.error("카카오 SDK 초기화 실패:", error);
-        }
-      };
-  
-      script.onerror = (error) => {
-        console.error("카카오 SDK 로드 실패:", error);
-      };
-  
-      document.body.appendChild(script);
-  
-      return () => {
-        try {
-          if (script.parentNode) {
-            document.body.removeChild(script);
-          }
-        } catch (error) {
-          console.error("Script 제거 실패:", error);
-        }
-      };
-    }
-  }, []);
+    if (OS !== 'web') return;
 
-
-  const handleShareKakao = () => {
-    const state = {
-  web: () => {
-    if (!kakao) {
-      
-      emitToast("공유하기 기능을 불러오는데 실패했어요" )
+    if (window?.Kakao?.isInitialized?.()) {
+      setIsKakaoReady(true);
       return;
     }
 
-    kakao.Share.sendDefault({
-      objectType: "feed",
-      ...TEMPLATE,
-    
-    });
-  
-  },
-  ios: shareNative,
-  android: shareNative,
-  windows: shareNative,
-  macos: shareNative 
-  
+    const script = document.createElement("script");
+    script.src = SCRIPT.src;
+    script.integrity = SCRIPT.integrity;
+    script.crossOrigin = SCRIPT.crossOrigin;
+    script.async = SCRIPT.async;
 
-}
-    state[OS]()
+    script.onload = () => {
+      try {
+        if (!window.Kakao) {
+          throw new Error("Kakao SDK not loaded");
+        }
+        
+        if (!window.Kakao.isInitialized()) {
+          window.Kakao.init(KAKAO_JS_KEY);
+        }
+        setIsKakaoReady(true);
+      } catch (error) {
+        console.error("카카오 SDK 초기화 실패:", error);
+        emitToast("카카오 SDK 초기화에 실패했어요");
+      }
+    };
+
+    script.onerror = (error) => {
+      console.error("카카오 SDK 로드 실패:", error);
+      emitToast("카카오 SDK 로드에 실패했어요");
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      try {
+        if (script.parentNode) {
+          document.body.removeChild(script);
+        }
+      } catch (error) {
+        console.error("Script 제거 실패:", error);
+      }
+    };
+  }, [OS, emitToast]);
+
+  const handleShareKakao = () => {
+    if (OS !== 'web') {
+      shareFeedTemplate({
+        template: TEMPLATE
+      });
+      return;
+    }
+
+    if (!isKakaoReady) {
+      emitToast("공유하기 기능을 불러오는 중입니다");
+      return;
+    }
+
+    try {
+      if (!window?.Kakao) {
+        emitToast("카카오가 준비되지 않았습니다");
+        return;
+      }
+
+      window.Kakao.Share.sendDefault({
+        objectType: "feed",
+        ...TEMPLATE,
+      });
+    } catch (error) {
+      console.error("카카오 공유 실패:", error);
+      emitToast("공유하기를 실패했어요");
+    }
   };
-  return {
-    handleShareKakao
-  }
-}
 
+  return {
+    handleShareKakao,
+    isReady: isKakaoReady
+  };
+}
 
 export default useShareKakao;
