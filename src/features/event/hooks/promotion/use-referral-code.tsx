@@ -5,6 +5,8 @@ import { View} from 'react-native';
 import { getReferralCode } from '../../api';
 import { useToast } from '@/src/shared/hooks/use-toast';
 
+// 초대 코드가 바뀌는 일은 극히 드물기 때문에 1시간으로 잡음
+const STALE_TIME = 60 * 60 * 1000
 
 
 function useReferralCode() {
@@ -15,6 +17,7 @@ function useReferralCode() {
     queryFn: getReferralCode,
     enabled: !!accessToken,
     retry: !!accessToken,
+    staleTime: STALE_TIME
   })
 
   useEffect(() => {

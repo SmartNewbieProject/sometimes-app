@@ -34,13 +34,13 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   toast: {
-    height: 46,
+    minHeight: 46,
     borderRadius: 15,
     backgroundColor: "#818489",
     paddingVertical: 11,
     alignItems: 'center',
     position: "relative",
-    paddingHorizontal: 14,
+    paddingHorizontal: 70,
     width: "100%",
   },
   toastText: {

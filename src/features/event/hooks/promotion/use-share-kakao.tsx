@@ -28,8 +28,8 @@ function useShareKakao() {
   
   const TEMPLATE = {
     content: {
-      title: "SOMETIMES",
-      description: "설명을 입력하세요",
+      title: "썸타임 특별 초대장",
+      description: "새로운 인연의 시작,  썸타임에서 특별한 만남을 찾아보세요",
       imageUrl:
         "https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg",
       link: {
