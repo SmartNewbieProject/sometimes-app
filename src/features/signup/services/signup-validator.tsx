@@ -151,4 +151,5 @@ export async function processSignup(
   else if (Platform.OS === "web") sessionStorage.removeItem("loginType");
 
   router.push("/auth/signup/done");
+  return;
 }

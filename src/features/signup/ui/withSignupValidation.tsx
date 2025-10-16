@@ -158,7 +158,11 @@ export function withSignupValidation<P extends object>(
     useEffect(() => {
       const validation = PAGE_VALIDATIONS[currentStep];
       const missingFields: string[] = [];
-
+      console.log(PAGE_VALIDATIONS, currentStep, WrappedComponent)
+      if (Object.keys(form).length === 0) {
+        return;
+        
+      }
       for (const field of validation.requiredFields) {
         if (hasEmptyValue(form[field])) {
           missingFields.push(field);
@@ -184,7 +188,7 @@ export function withSignupValidation<P extends object>(
         });
         return;
       }
-    }, [form]);
+    }, [JSON.stringify(form)]);
 
     return <WrappedComponent {...props} />;
   };

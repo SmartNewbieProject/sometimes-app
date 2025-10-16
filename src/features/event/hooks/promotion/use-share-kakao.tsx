@@ -37,18 +37,17 @@ function useShareKakao() {
           webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
         },
       },
+     
       {
         title: "앱으로 이동",
         link: {
           androidExecutionParams: {
-            "invite_code": referralCode ?? "",
           },
           iosExecutionParams: {
-            "invite_code": referralCode ?? "",
           },
         },
       },
-    ],
+    ]
   };
 
   useEffect(() => {
@@ -117,6 +116,7 @@ function useShareKakao() {
         emitToast("카카오가 준비되지 않았습니다");
         return;
       }
+      console.log(window.Kakao)
 
       window.Kakao.Share.sendDefault({
         objectType: "feed",
