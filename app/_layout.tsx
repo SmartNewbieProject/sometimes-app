@@ -1,6 +1,6 @@
 import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
-import { Slot, router } from "expo-router";
+import { Slot, router, useLocalSearchParams } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
@@ -10,6 +10,7 @@ import {
   type NotificationData,
   handleNotificationTap,
 } from "@/src/shared/libs/notifications";
+import { initializeKakaoSDK } from "@react-native-kakao/core";
 import * as Notifications from "expo-notifications";
 
 import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
@@ -22,12 +23,17 @@ import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import * as amplitude from "@amplitude/analytics-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "@/src/shared/ui/toast";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 
 if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync()
     .then(() => console.log("[Splash] prevent OK"))
     .catch((e) => console.log("[Splash] prevent ERR", e));
 }
+
+
+
 
 const MIN_SPLASH_MS = 2000;
 const START_AT = Date.now();
@@ -39,7 +45,25 @@ export default function RootLayout() {
   const responseListener = useRef<{ remove(): void } | null>(null);
   const processedNotificationIds = useRef<Set<string>>(new Set());
   const [coldStartProcessed, setColdStartProcessed] = useState(false);
+useEffect(() => {
+  const initKakao = async () => {
+    try {
+      await initializeKakaoSDK("4d405583bea731b1c4fb26eb8a14e894", {
+        web: {
+          javascriptKey: "2356db85eb35f5f941d0d66178e16b4e",
+          restApiKey: "228e892bfc0e42e824d592d92f52e72e",
+        },
+      });
+    } catch (error) {
+      console.error("Kakao SDK 초기화 실패:", error);
+    }
+  };
 
+  initKakao();
+}, []);
+  
+
+  
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
@@ -203,6 +227,7 @@ export default function RootLayout() {
                       <>
                         <Slot />
                         <VersionUpdateChecker />
+                        <Toast />
                       </>
                     </RouteTracker>
                   </AnalyticsProvider>

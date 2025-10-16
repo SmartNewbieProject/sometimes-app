@@ -1,35 +1,27 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import Loading from "@/src/features/loading";
-import Signup from "@/src/features/signup";
+
 import { type SignupForm, SignupSteps } from "@/src/features/signup/hooks";
-import { useModal } from "@/src/shared/hooks/use-modal";
+
 import {
   GuideView,
   guideHeight,
   useOverlay,
 } from "@/src/shared/hooks/use-overlay";
-import { tryCatch } from "@/src/shared/libs";
-import { cn } from "@/src/shared/libs/cn";
-import { platform } from "@/src/shared/libs/platform";
+
 import { Button, ImageSelector } from "@/src/shared/ui";
 import { Text } from "@/src/shared/ui/text";
-import { track } from "@amplitude/analytics-react-native";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  BackHandler,
   Dimensions,
-  Easing,
-  Platform,
   Text as RNText,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
-import { z } from "zod";
+
 
 import useProfileImage from "@/src/features/signup/hooks/use-profile-image";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
@@ -43,16 +35,12 @@ function ProfilePage() {
     getImaages,
     visible,
     nextable,
-    signupLoading,
-    storageLoading,
     uploadImage,
     onNext,
     onBackPress,
   } = useProfileImage();
 
-  if (signupLoading || storageLoading) {
-    return <Loading.Page />;
-  }
+ 
 
   return (
     <DefaultLayout className="flex-1 relative">
@@ -153,7 +141,7 @@ function ProfilePage() {
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={onNext}
-          content={{ next: "완료하기" }}
+          content={{ next: "다음으로" }}
           onClickPrevious={onBackPress}
         />
       </View>

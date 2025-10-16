@@ -15,6 +15,7 @@ export type SignupForm = {
   passVerified: boolean;
   kakaoId?: string;
   appleId?: string;
+  referralCode?: string;
 };
 
 type StoreProps = {
@@ -40,6 +41,7 @@ export enum SignupSteps {
   UNIVERSITY_DETAIL = 2,
   INSTAGRAM = 3,
   PROFILE_IMAGE = 4,
+  INVITE_CODE = 5,
 }
 
 const phaseCount = Object.keys(SignupSteps).length / 2;

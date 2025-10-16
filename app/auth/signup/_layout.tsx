@@ -34,6 +34,7 @@ export default function SignupLayout() {
     [SignupSteps.UNIVERSITY_DETAIL]: "추가 정보 입력하기",
     [SignupSteps.INSTAGRAM]: "인스타그램 아이디 입력하기",
     [SignupSteps.PROFILE_IMAGE]: "프로필 사진 추가하기",
+    [SignupSteps.INVITE_CODE]: "초대코드를 입력해주세요"
   };
 
   const title = titleMap[step];
