@@ -28,10 +28,10 @@ function useShareKakao() {
   
   const TEMPLATE = {
     content: {
-      title: "썸타임 특별 초대장",
-      description: "새로운 인연의 시작,  썸타임에서 특별한 만남을 찾아보세요",
+      title: "🎉 친구 초대 이벤트 오픈!",
+      description: "당신과 친구 모두에게 구슬 50개 지급 💜\n 이상형 매칭, 지금 바로 시작하세요!",
       imageUrl:
-        "https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg",
+        "https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/resources/invitebanner.png",
       link: {
         mobileWebUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
         webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
