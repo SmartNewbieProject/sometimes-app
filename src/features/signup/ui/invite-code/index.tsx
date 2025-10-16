@@ -17,7 +17,7 @@ import useInviteCode from "../../hooks/use-invite-code";
 
 
 function InviteCode() {
-  const {signupLoading, storageLoading, onNext, onBackPress} = useInviteCode()
+  const {signupLoading, storageLoading, onNext, onBackPress, nextMessage} = useInviteCode()
 
    if (signupLoading || storageLoading) {
     return <Loading.Page />;
@@ -49,7 +49,7 @@ function InviteCode() {
         <TwoButtons
           disabledNext={false}
           onClickNext={onNext}
-          content={{ next: "넘어가기" }}
+          content={{ next: nextMessage }}
           onClickPrevious={onBackPress}
         />
       </View>
@@ -57,9 +57,9 @@ function InviteCode() {
   );
 }
 
-// export default withSignupValidation(InviteCode, SignupSteps.INVITE_CODE);
+export default withSignupValidation(InviteCode, SignupSteps.INVITE_CODE);
 
-export default InviteCode
+
 const styles = StyleSheet.create({
   layout: {
     flex: 1,

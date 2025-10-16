@@ -40,7 +40,7 @@ function useInviteCode() {
   const { value, removeValue } = useStorage({ key: "invite-code" })
   const initialValue: string | undefined = typeof value === "string" ? value : undefined
 
-
+  const nextMessage = signupForm?.referralCode && signupForm.referralCode !== "" ? "다음으로" : "넘어가기"
 
   useEffect(() => {
     if (initialValue) {
@@ -136,7 +136,8 @@ function useInviteCode() {
     storageLoading, 
     onBackPress,
     handleInviteCode,
-    code: signupForm?.referralCode ?? ""
+    code: signupForm?.referralCode ?? "",
+    nextMessage
   }
 }
 
