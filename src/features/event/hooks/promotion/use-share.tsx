@@ -33,7 +33,7 @@ function useShare() {
      
     } catch (error: any) {
        console.error(error);
-       emitToast(error ?? "초대 코드 복사 실패")
+       emitToast(error?.message  ?? "초대 코드 복사 실패")
     } 
   }
   
@@ -48,7 +48,7 @@ function useShare() {
       emitToast("링크를 복사했어요", <CopyIcon />)
     } catch (error:any) {
       console.error(error);
-         emitToast(error ?? "링크 복사 실패")
+         emitToast(error?.message  ?? "링크 복사 실패")
     } 
   };
 
