@@ -1,7 +1,6 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { guideHeight, useOverlay } from "@/src/shared/hooks/use-overlay";
-import { useStorage } from "@/src/shared/hooks/use-storage";
-import { tryCatch } from "@/src/shared/libs";
+
 import { track } from "@amplitude/analytics-react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
@@ -9,11 +8,10 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  Animated,
+ 
   BackHandler,
   Dimensions,
-  Easing,
-  Platform,
+
   StyleSheet,
   Text,
   View,
@@ -22,12 +20,8 @@ import { z } from "zod";
 import Signup from "..";
 import {
   buildSignupForm,
-  ensureAppleId,
-  processSignup,
-  validatePhone,
-  validateUniversity,
+
 } from "../services/signup-validator";
-import type { SignupForm } from "./use-signup-progress";
 
 const {
   SignupSteps,
@@ -50,7 +44,6 @@ const schema = z.object({
     }),
 });
 
-const { height } = Dimensions.get("window");
 
 function useProfileImage() {
   const router = useRouter();
@@ -58,27 +51,14 @@ function useProfileImage() {
   const [images, setImages] = useState<(string | null)[]>(
     userForm.profileImages ?? [null, null, null]
   );
-  const { showErrorModal } = useModal();
-  const [signupLoading, setSignupLoading] = useState(false);
   const { trackSignupEvent } = useSignupAnalytics("profile_image");
-  const { showOverlay, hideOverlay, visible } = useOverlay();
+  const { showOverlay, visible } = useOverlay();
 
   const getImaages = (index: number) => {
     return images[index] ?? undefined;
   };
 
-  const { value: appleUserIdFromStorage, loading: storageLoading } = useStorage<
-    string | null
-  >({
-    key: "appleUserId",
-  });
-  const { removeValue: removeAppleUserId } = useStorage({
-    key: "appleUserId",
-  });
-  const { value: loginTypeStorage } = useStorage<string | null>({
-    key: "loginType",
-  });
-  const { removeValue: removeLoginType } = useStorage({ key: "loginType" });
+
 
   const form = useForm<FormState>({
     resolver: zodResolver(schema),
@@ -122,59 +102,12 @@ function useProfileImage() {
   }, []);
 
   const onNext = async () => {
-    setSignupLoading(true);
-
+   
     const signupForm = buildSignupForm(userForm, images);
     updateForm(signupForm);
+    router.push('/auth/signup/invite-code')
+   
 
-    await tryCatch(
-      async () => {
-        const appleOk = await ensureAppleId(signupForm, {
-          router,
-          loginTypeStorage,
-          appleUserIdFromStorage,
-          removeAppleUserId,
-          removeLoginType,
-          showErrorModal,
-        });
-        if (!appleOk) return;
-
-        const phoneOk = await validatePhone(signupForm, {
-          router,
-          apis,
-          trackSignupEvent,
-          track,
-          showErrorModal,
-          removeLoginType,
-        });
-        if (!phoneOk) return;
-
-        const universityOk = validateUniversity(signupForm, {
-          router,
-          showErrorModal,
-        });
-        if (!universityOk) return;
-
-        await processSignup(signupForm, {
-          router,
-          apis,
-          track,
-          trackSignupEvent,
-          removeLoginType,
-        });
-      },
-      (error) => {
-        console.error("Signup error:", error);
-        track("Signup_profile_image_error", {
-          error,
-          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-        });
-        trackSignupEvent("signup_error", error.error);
-        showErrorModal(error.error, "announcement");
-      }
-    );
-
-    setSignupLoading(false);
   };
 
   const nextable = images.every((image) => image !== null);
@@ -216,8 +149,6 @@ function useProfileImage() {
     getImaages,
     visible,
     nextable,
-    signupLoading,
-    storageLoading,
     uploadImage,
     onNext,
     onBackPress,

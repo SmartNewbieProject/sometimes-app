@@ -15,6 +15,7 @@ export type SignupForm = {
   passVerified: boolean;
   kakaoId?: string;
   appleId?: string;
+  referralCode?: string;
 };
 
 type StoreProps = {

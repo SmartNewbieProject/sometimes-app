@@ -34,7 +34,7 @@ function InvitePromotionBanner() {
   });
 
   const handlePromotion = () => {
-    router.push("/purchase/gem-store");
+    router.push("/promotion");
   };
 
   return (

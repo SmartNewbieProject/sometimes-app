@@ -3,6 +3,8 @@ import { shareFeedTemplate } from "@react-native-kakao/share";
 import * as Clipboard from "expo-clipboard";
 import React, { useEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
+import useReferralCode from "./use-referral-code";
+import { useToast } from "@/src/shared/hooks/use-toast";
 
 declare global {
   interface Window {
@@ -12,44 +14,49 @@ declare global {
 }
 
 
-const LINK = "http://localhost:3000"
+const LINK = process.env.EXPO_PUBLIC_LINK
 
 function useShare() {
 
-  // 추후 백엔드 연결해서 바꿔야함 이것도 분리해야하나
-  const code = "SOME24A1"
+  const { referralCode } = useReferralCode();
+  const { emitToast } = useToast();
 
   const handleShareCode = async () => {
      try {
-      
-       await Clipboard.setStringAsync(code);
-       // TODO 토스트 필요
-    } catch (error) {
-      console.error(error);
-      // TODO 토스트 필요
-    } finally {
-      
-    }
+       if (referralCode) {
+        await Clipboard.setStringAsync(referralCode);
+        emitToast("초대 코드가 복사되었어요")
+
+       } else {
+         throw new Error("초대코드를 불러오는 중이에요")
+      }
+     
+    } catch (error: any) {
+       console.error(error);
+       emitToast(error ?? "초대 코드 복사 실패")
+    } 
   }
   
 
   const handleShareLink = async () => {
     try {
-      
-      await Clipboard.setStringAsync(LINK);
-    } catch (error) {
+      if (referralCode) {
+        await Clipboard.setStringAsync(`${LINK}?invite-code=${referralCode}`);
+      } else {
+        throw new Error("초대코드를 불러오는 중이에요")
+      }
+      emitToast("링크가 복사되었어요")
+    } catch (error:any) {
       console.error(error);
-      // TODO 토스트 필요
-    } finally {
-     
-    }
+         emitToast(error ?? "링크 복사 실패")
+    } 
   };
 
 
   return {
-handleShareCode,
+    handleShareCode,
     handleShareLink,
-    
+    referralCode
   };
 }
 

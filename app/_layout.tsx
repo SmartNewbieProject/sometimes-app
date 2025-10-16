@@ -1,6 +1,6 @@
 import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
-import { Slot, router } from "expo-router";
+import { Slot, router, useLocalSearchParams } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
@@ -23,6 +23,8 @@ import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import * as amplitude from "@amplitude/analytics-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "@/src/shared/ui/toast";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 
 if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync()
@@ -59,6 +61,9 @@ useEffect(() => {
 
   initKakao();
 }, []);
+  
+
+  
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
@@ -222,6 +227,7 @@ useEffect(() => {
                       <>
                         <Slot />
                         <VersionUpdateChecker />
+                        <Toast />
                       </>
                     </RouteTracker>
                   </AnalyticsProvider>

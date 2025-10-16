@@ -11,12 +11,17 @@ import {
 
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import CodeForm from "./code-form";
+import Loading from "@/src/features/loading";
+import useInviteCode from "../../hooks/use-invite-code";
 
 
 
 function InviteCode() {
+  const {signupLoading, storageLoading, onNext, onBackPress} = useInviteCode()
 
-
+   if (signupLoading || storageLoading) {
+    return <Loading.Page />;
+  }
   return (
     <DefaultLayout style={styles.layout}>
         <View style={styles.titleContainer}>
@@ -42,18 +47,19 @@ function InviteCode() {
 
       <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
         <TwoButtons
-          disabledNext={true}
-          onClickNext={() => {}}
+          disabledNext={false}
+          onClickNext={onNext}
           content={{ next: "넘어가기" }}
-          onClickPrevious={() => {}}
+          onClickPrevious={onBackPress}
         />
       </View>
     </DefaultLayout>
   );
 }
 
-export default withSignupValidation(InviteCode, SignupSteps.INVITE_CODE);
+// export default withSignupValidation(InviteCode, SignupSteps.INVITE_CODE);
 
+export default InviteCode
 const styles = StyleSheet.create({
   layout: {
     flex: 1,

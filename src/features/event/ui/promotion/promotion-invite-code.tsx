@@ -8,7 +8,7 @@ import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import useShare from "../../hooks/promotion/use-share";
 
 function PromotionInviteCode() {
-  const {handleShareCode} = useShare();
+  const {handleShareCode, referralCode} = useShare();
   return (
     <View style={styles.container}>
       <Image
@@ -48,7 +48,7 @@ function PromotionInviteCode() {
             style={styles.borderGradient}
           />
           <View style={styles.code}>
-            <Text style={styles.codeText}>SOME24A1</Text>
+            <Text style={styles.codeText}>{referralCode}</Text>
             <View style={styles.copyButton}>
               <CopyIcon />
               <Text style={styles.copyText}>복사</Text>

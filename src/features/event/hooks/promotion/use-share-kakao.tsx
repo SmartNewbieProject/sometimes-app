@@ -1,32 +1,15 @@
+import { useToast } from '@/src/shared/hooks/use-toast';
 import { shareFeedTemplate } from '@react-native-kakao/share';
 import React, { useEffect, useState } from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
+import useReferralCode from './use-referral-code';
 
 
 
 const KAKAO_JS_KEY = "2356db85eb35f5f941d0d66178e16b4e";
 
-const TEMPLATE = {
-  content: {
-    title: "제목을 입력하세요",
-    description: "설명을 입력하세요",
-    imageUrl:
-      "https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg",
-    link: {
-      mobileWebUrl: "https://developers.kakao.com",
-      webUrl: "https://developers.kakao.com",
-    },
-  },
-  buttons: [
-    {
-      title: "웹으로 이동",
-      link: {
-        mobileWebUrl: "https://developers.kakao.com",
-        webUrl: "https://developers.kakao.com",
-      },
-    },
-  ],
-}
+
+
 
 const SCRIPT = {
   src: "https://t1.kakaocdn.net/kakao_js_sdk/2.7.6/kakao.min.js",
@@ -38,8 +21,40 @@ const SCRIPT = {
 
 
 function useShareKakao() {
+  const { emitToast } = useToast();
+  const {referralCode} = useReferralCode()
   const OS = Platform.OS
     const kakao = window?.Kakao
+  
+  const TEMPLATE = {
+    content: {
+      title: "제목을 입력하세요",
+      description: "설명을 입력하세요",
+      imageUrl:
+        "https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg",
+      link: {
+        mobileWebUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
+        webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
+      },
+    },
+    buttons: [
+      {
+        title: "웹으로 이동",
+        link: {
+          mobileWebUrl:`${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
+          webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
+        },
+      },
+      {
+        title: "앱으로 이동",
+        link: {
+          androidExecutionParams: { "invite-code": referralCode ??"" },
+          iosExecutionParams: { "invite-code": referralCode?? "" },
+        },
+      },
+    ],
+  }
+  
 
 const shareNative = () => {
    shareFeedTemplate({
@@ -50,7 +65,8 @@ const shareNative = () => {
 const state = {
   web: () => {
     if (!kakao) {
-      //TODO: toast 추가 필요
+      
+      emitToast("카카오 공유하기 기능을 불러오는데 실패했어요")
       return;
     }
 

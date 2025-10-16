@@ -71,6 +71,9 @@ export const signup = (form: SignupForm): Promise<void> => {
     formData.append("appleId", form.appleId);
   }
 
+  if (form?.referralCode && form.referralCode !== "") {
+    formData.append("referralCode", form.referralCode);
+  }
   // biome-ignore lint/complexity/noForEach: <explanation>
   form.profileImages.forEach((imageUri) => {
     const file = createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`);

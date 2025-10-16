@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import SearchIcon from "@assets/icons/search.svg"
+import { useStorage } from '@/src/shared/hooks/use-storage';
+import useInviteCode from '../../hooks/use-invite-code';
 
 
 function CodeForm() {
+ const {code, handleInviteCode} = useInviteCode()
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>초대코드</Text>
       <View style={styles.inputContainer}>
         <TextInput
+          value={code}
+          onChangeText={handleInviteCode}
           style={styles.input}
           placeholder='초대코드를 입력하세요'
           placeholderTextColor="#BAB0D0"
