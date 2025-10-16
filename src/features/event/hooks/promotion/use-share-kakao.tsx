@@ -25,7 +25,6 @@ function useShareKakao() {
   const {referralCode} = useReferralCode()
   const OS = Platform.OS
     const kakao = window?.Kakao
-  const deepLinkUrl = `myapp://?invite-code=${referralCode}`;
 
   const TEMPLATE = {
     content: {
@@ -50,8 +49,8 @@ function useShareKakao() {
         title: "앱으로 이동",
         link: {
           
-         androidExecutionParams: {"": deepLinkUrl},
-        iosExecutionParams: {"": deepLinkUrl}
+         androidExecutionParams: {},
+        iosExecutionParams: {}
         },
       },
     ],
