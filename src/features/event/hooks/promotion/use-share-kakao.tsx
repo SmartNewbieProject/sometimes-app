@@ -93,7 +93,7 @@ const state = {
       }
   
       const script = document.createElement("script");
-      script.src = script.src;
+      script.src = SCRIPT.src;
       script.integrity =
         SCRIPT.integrity;
       script.crossOrigin = SCRIPT.crossOrigin;

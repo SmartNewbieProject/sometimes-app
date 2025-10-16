@@ -16,7 +16,7 @@ function useReferralCode() {
     queryKey: ["referral-code"],
     queryFn: getReferralCode,
     enabled: !!accessToken,
-    retry: !!accessToken,
+    retry: (failureCount, error) => !!accessToken && failureCount < 3,
     staleTime: STALE_TIME
   })
 
