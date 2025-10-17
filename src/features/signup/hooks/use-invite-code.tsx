@@ -100,12 +100,12 @@ function useInviteCode() {
         },
         (error) => {
           console.error("Signup error:", error);
-          track("Signup_profile_image_error", {
+          track("Signup_profile_invite_code_error", {
             error,
             env: process.env.EXPO_PUBLIC_TRACKING_MODE,
           });
-          trackSignupEvent("signup_error", error.error);
-          showErrorModal(error.error, "announcement");
+          trackSignupEvent("signup_error", error?.message);
+          showErrorModal(error?.message ?? "회원가입에 실패했습니다.", "announcement");
         }
       );
       
