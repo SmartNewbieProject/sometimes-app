@@ -217,7 +217,7 @@ export const ArticleWriteForm = ({
               name="title"
               render={({ field: { onChange, value } }) => (
                 <TextInput
-                  placeholder="제목을 입력하세요."
+                  placeholder="제목을 입력해주세요."
                   className="w-full p-2 font-bold placeholder:text-[#d9d9d9] text-[18px] border-b border-[#E7E9EC] pb-2"
                   onChangeText={onChange}
                   value={value}
@@ -235,7 +235,7 @@ export const ArticleWriteForm = ({
             rules={{ maxLength: 2000 }}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                placeholder="내용을 입력하세요."
+                placeholder="내용을 입력해주세요."
                 multiline
                 scrollEnabled
                 textAlignVertical="top"

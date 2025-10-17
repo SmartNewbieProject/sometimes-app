@@ -65,7 +65,7 @@ export const Text: React.FC<TextProps> = ({
   className = "",
   style,
   children,
-  ...rest // numberOfLines, ellipsizeMode, onPress 등 RN 표준 prop 그대로 전달
+  ...rest
 }) => {
   const mergedStyle = Array.isArray(style)
     ? style.filter(Boolean)
