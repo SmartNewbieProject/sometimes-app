@@ -23,7 +23,7 @@ function useShareKakao() {
     content: {
       title: "🎉 친구 초대 이벤트 오픈!",
       description: "당신과 친구 모두에게 구슬 50개 지급 💜\n 이상형 매칭, 지금 바로 시작하세요!",
-      imageUrl: "https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/resources/invitebanner.png",
+      imageUrl: getKakaoImage(),
       link: {
         mobileWebUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
         webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${referralCode}`,
@@ -132,6 +132,12 @@ function useShareKakao() {
     handleShareKakao,
     isReady: isKakaoReady
   };
+}
+
+function getKakaoImage() {
+  const BASE_URL = `https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/resources`
+  return Math.random() < 0.5 ? `${BASE_URL}/v1invitefriend.png` : `${BASE_URL}/v2invitefriend.png`;
+
 }
 
 export default useShareKakao;
