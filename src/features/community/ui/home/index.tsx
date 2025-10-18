@@ -4,22 +4,34 @@ import { View, Text, TouchableOpacity, Image, Linking } from "react-native";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import VectorIcon from "@/assets/icons/Vector.svg";
 import NotiPreView from "@/src/features/community/ui/home/notice";
+import HotPreView from "@/src/features/community/ui/home/hot";
+import { useCategory } from "@/src/features/community/hooks";
+import {
+  NOTICE_CODE,
+  HOT_CODE,
+} from "@/src/features/community/queries/use-home";
 
 export default function CommuHome() {
+  const { changeCategory } = useCategory();
+
   return (
     <View className="flex-1">
       <PalePurpleGradient />
 
       <View className="px-4 pt-3">
-        <TouchableOpacity className="flex-row items-center" onPress={() => {}}>
+        <TouchableOpacity
+          className="flex-row items-center"
+          onPress={() => changeCategory(NOTICE_CODE)}
+          accessibilityRole="button"
+        >
           <Image
-            source={require("@/assets/images/fireIcon.png")}
+            source={require("@/assets/images/loudspeaker.png")}
             style={{ width: 26, height: 26 }}
           />
-          <Text className="text-[24px] font-semibold mt-2">공지사항</Text>
+          <Text className="text-[24px] font-semibold mt-2 mx-2">공지사항</Text>
           <View className="ml-auto">
             <IconWrapper>
-              <VectorIcon className="h-[24px] w-[9px]" color="black" />
+              <VectorIcon className="h-[24px] w-[9px] mx-2" color="black" />
             </IconWrapper>
           </View>
         </TouchableOpacity>
@@ -35,7 +47,7 @@ export default function CommuHome() {
         activeOpacity={0.8}
       >
         <Image
-          source={require("@/assets/images/fireIcon.png")}
+          source={require("@/assets/images/loudspeaker.png")}
           style={{ width: 16, height: 16 }}
         />
         <Text className="text-[14px]">[FAQ] 자주묻는 질문</Text>
@@ -52,26 +64,26 @@ export default function CommuHome() {
       </View>
 
       <View className="px-4 py-3">
-        <TouchableOpacity className="flex-row items-center" onPress={() => {}}>
+        <TouchableOpacity
+          className="flex-row items-center"
+          onPress={() => changeCategory(HOT_CODE)}
+          accessibilityRole="button"
+        >
           <Image
             source={require("@/assets/images/fireIcon.png")}
             style={{ width: 26, height: 26 }}
           />
-          <Text className="text-[24px] font-semibold mt-2">인기</Text>
+          <Text className="text-[24px] font-semibold mt-2 mx-2">인기</Text>
           <View className="ml-auto">
             <IconWrapper>
-              <VectorIcon className="h-[24px] w-[9px]" color="black" />
+              <VectorIcon className="h-[24px] w-[9px] mx-2" color="black" />
             </IconWrapper>
           </View>
         </TouchableOpacity>
       </View>
 
-      <View className="mx-[16px] mb-[16px]">
-        <View className="bg-[#F6F3F6] rounded-xl p-12">
-          <Text className="text-[#474747]">
-            오늘의 인기 콘텐츠를 준비 중입니다.
-          </Text>
-        </View>
+      <View className="mx-[2px] mb-[2px]">
+        <HotPreView pageSize={5} />
       </View>
     </View>
   );

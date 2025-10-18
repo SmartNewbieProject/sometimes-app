@@ -5,7 +5,7 @@ import {
   ScrollView,
   LayoutChangeEvent,
 } from "react-native";
-import { useHomeNoticesQuery } from "../queries/use-home";
+import { useHomeNoticesQuery, useHomeHotsQuery } from "../queries/use-home";
 
 export function useHomeNotices(size = 5) {
   const { notices, isLoading, isError, error, refetch, prefetch } =
@@ -70,5 +70,19 @@ export function useHomeNotices(size = 5) {
       prefetch,
     },
     containerWidth,
+  };
+}
+
+export function useHomeHots(size = 5) {
+  const { hots, isLoading, isError, error, refetch, prefetch } =
+    useHomeHotsQuery(size);
+  const total = Math.min(hots.length, size);
+  return {
+    hots,
+    total,
+    isLoading,
+    isError,
+    error,
+    actions: { refetch, prefetch },
   };
 }
