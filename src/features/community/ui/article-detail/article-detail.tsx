@@ -367,7 +367,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         />
 
         <View className="my-3 mb-6 mx-[8px]  flex flex-row  items-center justify-between">
-          <Text numberofLine={1} size="md" weight="medium" textColor="black">
+          <Text size="md" weight="medium" textColor="black">
             {article.title}
           </Text>
           <Text size="12" textColor="pale-purple">
@@ -408,14 +408,47 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         )}
 
         <View className="w-full mt-[10px]">
-          <View className="flex-row items-center justify-around gap-4 pb-[10px]">
-            <Interaction.Like
-              count={likeCount}
-              isLiked={isLiked}
-              onPress={() => like(article)}
-            />
-            <Interaction.Comment count={totalCommentCount} />
-            <Interaction.View count={article.readCount} />
+          <View className="flex-row items-center justify-between pb-[10px] mx-[8px]">
+            <View className="flex-row items-center">
+              <Text
+                style={{
+                  color: "#676767",
+                  fontFamily: "Pretendard",
+                  fontSize: 13,
+                  fontStyle: "normal",
+                  fontWeight: "300" as any,
+                  lineHeight: 14.4,
+                  fontFeatureSettings: "'liga' off, 'clig' off",
+                }}
+              >
+                {dayUtils.formatRelativeTime(article.createdAt)}
+              </Text>
+              <Text
+                style={{
+                  color: "#676767",
+                  fontFamily: "Pretendard",
+                  fontSize: 13,
+                  fontStyle: "normal",
+                  fontWeight: "300" as any,
+                  lineHeight: 14.4,
+                  fontFeatureSettings: "'liga' off, 'clig' off",
+                  marginLeft: 8,
+                }}
+              >
+                {`·  조회 ${article.readCount}`}
+              </Text>
+            </View>
+
+            <View className="flex-row items-center">
+              <Interaction.Like
+                count={likeCount}
+                isLiked={isLiked}
+                iconSize={18}
+                onPress={() => like(article)}
+              />
+              <View style={{ width: 12 }} />
+              <Interaction.Comment count={totalCommentCount} iconSize={18} />
+            </View>
           </View>
         </View>
         <View className="h-[1px] bg-[#F3F0FF] " />

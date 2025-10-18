@@ -2,7 +2,7 @@ import VectorIcon from "@/assets/icons/Vector.svg";
 import { useAuth } from "@/src/features/auth";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
-import { Lottie, Text } from "@/src/shared/ui";
+import { Lottie, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -306,7 +306,7 @@ export const InfiniteArticleList = forwardRef<
     return (
       <View className="flex-1 bg-white">
         <View className="h-[1px] bg-[#F3F0FF]" />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() =>
             Linking.openURL(
               "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
@@ -326,8 +326,9 @@ export const InfiniteArticleList = forwardRef<
               <VectorIcon className=" h-[12px] w-[9px]" color="black" />
             </IconWrapper>
           </TouchableOpacity>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+        <PalePurpleGradient />
 
         <CustomInfiniteScrollView
           data={articles}

@@ -89,7 +89,6 @@ export default function CommunityWriteScreen() {
   return (
     <ArticleWriteFormProvider form={form}>
       <DefaultLayout className="flex-1">
-        <PalePurpleGradient />
         <ArtcileWriter.Header onConfirm={onSubmitForm} mode="create" />
 
         <View className="bg-white px-4 pt-3" />
