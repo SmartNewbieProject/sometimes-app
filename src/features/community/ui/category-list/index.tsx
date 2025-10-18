@@ -1,4 +1,4 @@
-// ui/category-list/index.tsx
+// src/features/community/ui/category-list/index.tsx
 import Loading from "@/src/features/loading";
 import { Button } from "@shared/ui";
 import { Image } from "expo-image";
@@ -11,14 +11,9 @@ import React, {
 } from "react";
 import { ScrollView, View, type LayoutChangeEvent } from "react-native";
 import { useCategory } from "../../hooks";
+import { NOTICE_CODE } from "@/src/features/community/queries/use-home";
 
-type LayoutMap = Record<
-  string,
-  {
-    x: number;
-    width: number;
-  }
->;
+type LayoutMap = Record<string, { x: number; width: number }>;
 
 const HOME_CODE = "__home__";
 
@@ -39,11 +34,16 @@ export const CategoryList = () => {
     [categories]
   );
 
-  // 카테고리 조합이 바뀌면 레이아웃 캐시 초기화
-  const routesKey = useMemo(
-    () => augmentedCategories.map((c) => c.code).join("|"),
+  const renderCategories = useMemo(
+    () => augmentedCategories.filter((c) => c.code !== NOTICE_CODE),
     [augmentedCategories]
   );
+
+  const routesKey = useMemo(
+    () => renderCategories.map((c) => c.code).join("|"),
+    [renderCategories]
+  );
+
   useEffect(() => {
     itemLayoutsRef.current = {};
   }, [routesKey]);
@@ -72,7 +72,6 @@ export const CategoryList = () => {
 
       const targetCenterX = layout.x + layout.width / 2;
       let nextScrollX = Math.max(0, targetCenterX - containerWidth / 2);
-
       const PADDING = 12;
       nextScrollX = Math.max(0, nextScrollX - PADDING);
 
@@ -102,7 +101,7 @@ export const CategoryList = () => {
       >
         <Loading.Lottie title="카테고리를 불러오고 있어요" loading={isLoading}>
           <View className="flex flex-row w-full gap-x-[10px] mb-2">
-            {augmentedCategories.map((category) => {
+            {renderCategories.map((category) => {
               const isActive = currentCategory === category.code;
               const bgClass = isActive ? "bg-[#7A4AE2]" : "bg-[#F6F3F6]";
 
@@ -119,11 +118,11 @@ export const CategoryList = () => {
                       changeCategory(category.code);
                       ensureVisible(category.code, true);
                     }}
-                    className={`px-[16px] py-[8px] rounded-full border-0 ${bgClass}`}
+                    className={`px-[12px] py-[8px] rounded-full border-0 ${bgClass}`}
                     prefix={
                       category.code !== HOME_CODE && hasEmojiUrl(category) ? (
                         <Image
-                          source={{ uri: category.emojiUrl }}
+                          source={{ uri: (category as any).emojiUrl }}
                           style={{ width: 32, height: 32 }}
                         />
                       ) : undefined
