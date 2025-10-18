@@ -23,6 +23,33 @@ export default function MyLayout() {
             },
           }}
         />
+        <Stack.Screen
+          name="approval-step/approved"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="approval-step/rejected"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="approval-step/waiting"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
       </Stack>
     </View>
   );

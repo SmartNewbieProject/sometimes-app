@@ -1,6 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import apis from "@/src/features/mypage/apis";
-import { platform } from "@/src/shared/libs/platform";
 
 import Layout from "@/src/features/layout";
 import { DefaultLayout } from "@/src/features/layout/ui";
@@ -10,18 +9,12 @@ import {
   guideHeight,
   useOverlay,
 } from "@/src/shared/hooks/use-overlay";
-import { useStorage } from "@/src/shared/hooks/use-storage";
 import { cn } from "@/src/shared/libs";
 
-import {
-  Button,
-  ImageSelector,
-  PalePurpleGradient,
-  Text,
-} from "@/src/shared/ui";
+import { ImageSelector, Text } from "@/src/shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Animated,
@@ -29,11 +22,11 @@ import {
   Easing,
   Platform,
   Text as RNText,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 interface ChangeProfileImageModalProps {
   onCloseModal: () => void;
@@ -48,6 +41,7 @@ export const ChangeProfileImageModal = ({
   const insets = useSafeAreaInsets();
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -171,28 +165,19 @@ export const ChangeProfileImageModal = ({
         }
       });
 
-      for (const index of changedIndexes) {
-        const oldImage = oldImages[index];
-        if (oldImage) {
-          await apis.deleteProfileImage(oldImage.id).catch(() => {});
-        }
-      }
+      const batchImages = changedIndexes
+        .map((idx) => images[idx])
+        .filter((img): img is string => !!img);
 
-      for (const index of changedIndexes) {
-        const newImage = images[index];
-        if (newImage) {
-          await apis.uploadProfileImage(newImage, index);
-        }
+      if (batchImages.length > 0) {
+        await apis.uploadProfileImages(batchImages);
       }
 
       await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
       hideModal();
 
       setTimeout(() => {
-        showErrorModal(
-          "프로필 이미지가 성공적으로 변경되었습니다.",
-          "announcement"
-        );
+        router.push("/my/approval-step/waiting");
       }, 100);
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
@@ -226,7 +211,7 @@ export const ChangeProfileImageModal = ({
     >
       <View style={{ flex: 1 }}>
         <GuideView>
-          <View style={[styles.container]}>
+          <View style={[styles.container, { paddingTop: insets.top }]}>
             <View style={styles.titleContainer}>
               <Image
                 source={require("@assets/images/profile-image.png")}
