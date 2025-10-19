@@ -80,7 +80,7 @@ async function requestNotificationPermissionIfNeeded(): Promise<Notifications.Pe
 /**
  * Expo 푸시 토큰을 획득합니다.
  */
-async function getExpoPushToken(): Promise<string | null> {
+export async function getExpoPushToken(): Promise<string | null> {
   const projectId = Constants.expoConfig?.extra?.eas?.projectId;
   if (!projectId) {
     console.error('EAS 프로젝트 ID가 설정되지 않았습니다.');
@@ -245,6 +245,67 @@ export async function getNotificationPermissionStatus(): Promise<Notifications.P
 export async function requestNotificationPermission(): Promise<Notifications.PermissionStatus> {
   const { status } = await Notifications.requestPermissionsAsync();
   return status;
+}
+
+/**
+ * 푸시 알림 상태 응답 타입
+ */
+export interface PushNotificationStatusResponse {
+  isEnabled: boolean;
+  tokenCount: number;
+  activeTokenCount: number;
+}
+
+/**
+ * 현재 사용자의 푸시 알림 활성화 상태를 확인합니다.
+ */
+export async function getPushNotificationStatus(): Promise<PushNotificationStatusResponse> {
+  return axiosClient.get('/push-notifications/status');
+}
+
+/**
+ * 푸시 알림을 활성화합니다.
+ * 웹: 등록된 모든 토큰을 활성화
+ * 모바일: 토큰이 없으면 새로 등록하고, 등록된 모든 토큰을 활성화
+ */
+export async function enablePushNotification(): Promise<void> {
+  if (Platform.OS !== 'web') {
+    const token = await registerForPushNotificationsAsync();
+    if (!token) {
+      throw new Error('푸시 토큰 획득 실패');
+    }
+  }
+
+  const response = await axiosClient.get('/push-notifications/tokens') as PushTokenResponse;
+
+  if (!response?.success || !Array.isArray(response?.data) || response.data.length === 0) {
+    throw new Error('등록된 푸시 토큰이 없습니다. 모바일 앱에서 먼저 알림을 허용해주세요.');
+  }
+
+  await Promise.all(
+    response.data.map((tokenData) =>
+      axiosClient.patch('/push-notifications/enable', { pushToken: tokenData.pushToken })
+    )
+  );
+}
+
+/**
+ * 푸시 알림을 비활성화합니다.
+ * 등록된 모든 푸시 토큰을 비활성화합니다.
+ */
+export async function disablePushNotification(): Promise<void> {
+  const response = await axiosClient.get('/push-notifications/tokens') as PushTokenResponse;
+
+  if (!response?.success || !Array.isArray(response?.data) || response.data.length === 0) {
+    console.warn('비활성화할 푸시 토큰이 없습니다.');
+    return;
+  }
+
+  await Promise.all(
+    response.data.map((tokenData) =>
+      axiosClient.patch('/push-notifications/disable', { pushToken: tokenData.pushToken })
+    )
+  );
 }
 
 export function handleNotificationTap(data: NotificationData, router: Router): void {
