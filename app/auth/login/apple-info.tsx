@@ -67,7 +67,7 @@ export default function UserInfoPage() {
     (!!name || !!appleUserName) &&
     !!gender &&
     year.length === 4 &&
-    month.length === 2 &&
+    month.length > 0 &&
     day.length === 2 &&
     phone.length === 11;
 
