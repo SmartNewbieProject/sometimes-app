@@ -4,6 +4,7 @@ import {
   MyActivityMenu,
   Notice,
   Profile,
+  NotificationMenu,
 } from "@/src/features/mypage/ui";
 import {
   BottomNavigation,
@@ -70,6 +71,7 @@ export default function MyScreen() {
 
         <View style={styles.menuContainer}>
           <MatchingMenu />
+          <NotificationMenu />
           <MyActivityMenu />
         </View>
       </ScrollView>
