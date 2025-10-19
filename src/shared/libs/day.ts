@@ -39,7 +39,7 @@ const getAgeBy6Digit = (digit: string) => {
 };
 
 const formatRelativeTime = (stringDate: string) => {
-  const target = create(stringDate).utc();
+  const target = create(stringDate);
   const now = create();
 
   const secondsDiff = now.diff(stringDate, 'seconds');
