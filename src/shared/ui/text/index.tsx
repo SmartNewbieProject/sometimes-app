@@ -1,7 +1,10 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import type React from "react";
-import { Text as RNText, type TextStyle } from "react-native";
-import colors from "../../constants/colors";
+import {
+  Text as RNText,
+  type TextStyle,
+  type TextProps as RNTextProps,
+} from "react-native";
 import { cn } from "../../libs/cn";
 
 const textStyles = cva("text-base", {
@@ -47,12 +50,12 @@ const textStyles = cva("text-base", {
   },
 });
 
-export type TextProps = VariantProps<typeof textStyles> & {
-  children: React.ReactNode;
-  className?: string;
-  style?: TextStyle;
-  numberofLine?: number;
-};
+export type TextProps = VariantProps<typeof textStyles> &
+  Omit<RNTextProps, "style" | "children"> & {
+    children?: React.ReactNode;
+    className?: string;
+    style?: TextStyle | TextStyle[];
+  };
 
 export const Text: React.FC<TextProps> = ({
   variant,
@@ -62,16 +65,22 @@ export const Text: React.FC<TextProps> = ({
   className = "",
   style,
   children,
-  numberofLine,
+  ...rest
 }) => {
+  const mergedStyle = Array.isArray(style)
+    ? style.filter(Boolean)
+    : style
+    ? [style]
+    : undefined;
+
   return (
     <RNText
-      numberOfLines={numberofLine}
+      {...rest}
       className={cn(
         textStyles({ variant, size, weight, textColor }),
         className
       )}
-      style={style}
+      style={mergedStyle}
     >
       {children}
     </RNText>
