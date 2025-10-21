@@ -373,9 +373,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           <Text size="md" weight="medium" textColor="black">
             {article.title}
           </Text>
-          <Text size="12" textColor="pale-purple">
-            {dayUtils.formatRelativeTime(article.createdAt)}
-          </Text>
         </View>
         <LinkifiedText
           className="mb-4 text-[14px] mx-[8px] leading-5"
