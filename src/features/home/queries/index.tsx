@@ -18,6 +18,7 @@ export const useCheckPreferenceFillQuery = () =>
     queryKey: ["check-preference-fill"],
     queryFn: apis.checkPreferenceFill,
     staleTime: 0,
+    gcTime: 0,
   });
 
 export const usePreferenceSelfQuery = () =>
@@ -34,5 +35,5 @@ export const useNotificationQuery = () =>
     staleTime: 0,
   });
 
-export { useExistsUniversityQuery } from './use-exists-university';
-export { useCheckBusanQuery } from './use-check-busan';
+export { useExistsUniversityQuery } from "./use-exists-university";
+export { useCheckBusanQuery } from "./use-check-busan";

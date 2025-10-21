@@ -31,10 +31,12 @@ function InterestMilitary() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  console.log("mili status", currentIndex);
   useEffect(() => {
-    updateForm("militaryPreference", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!militaryPreference && preferences.options[currentIndex]) {
+      updateForm("militaryPreference", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, militaryPreference]);
   const onChangeOption = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("militaryPreference", preferences.options[value]);
@@ -77,6 +79,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 22,
   },

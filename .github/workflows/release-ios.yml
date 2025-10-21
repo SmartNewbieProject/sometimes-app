@@ -2,7 +2,8 @@ name: Build and Submit iOS App
 on:
   push:
     branches:
-      - main
+      - deploy/ios
+      - deploy
 
 jobs:
   build-and-submit-ios:
@@ -47,7 +48,7 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
           -H "Content-type: application/json" \
           --data '{
-            "channel": "#개발-전체",
+            "channel": "#썸타임-github-알림",
             "text": ":white_check_mark: iOS 앱 빌드 및 배포가 완료되었습니다!",
             "username": "GitHub Bot",
             "attachments": [
@@ -87,7 +88,7 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
           -H "Content-type: application/json" \
           --data '{
-            "channel": "#개발-전체",
+            "channel": "#썸타임-github-알림",
             "text": ":x: iOS 앱 빌드 또는 배포에 실패했습니다.",
             "username": "GitHub Bot",
             "attachments": [

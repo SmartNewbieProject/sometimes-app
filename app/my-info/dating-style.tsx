@@ -6,6 +6,7 @@ import type { Preferences } from "@/src/features/my-info/api";
 import { ImageResources } from "@/src/shared/libs";
 import { Divider, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
+import { track } from "@amplitude/analytics-react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -28,12 +29,6 @@ export default function DatingStyleSelectionScreen() {
     isLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.DATING_STYLE
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.DATING_STYLE
@@ -63,7 +58,10 @@ export default function DatingStyleSelectionScreen() {
   );
 
   const handleNextButton = () => {
-    router.navigate("/my-info/drinking");
+    track("Profile_DatingStyle", {
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
+    router.push("/my-info/drinking");
   };
 
   return (
@@ -72,7 +70,7 @@ export default function DatingStyleSelectionScreen() {
       <View style={styles.contentContainer}>
         <Image
           source={{ uri: ImageResources.DATING_STYLE }}
-          style={{ width: 81, height: 81, marginLeft: 28 }}
+          style={{ width: 81, height: 100, marginLeft: 28 }}
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">

@@ -1,152 +1,213 @@
-import Signup from '@features/signup';
-import { cn } from '@shared/libs/cn';
-import { platform } from '@shared/libs/platform';
-import { Text, PalePurpleGradient, Button, Show, Divider } from '@shared/ui';
-import { ChipSelector, LabelInput } from '@/src/widgets';
-import { Image } from 'expo-image';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect, useRef } from 'react';
-import { KeyboardAvoidingView, View, ScrollView, StyleSheet } from 'react-native';
+import { TwoButtons } from "@/src/features/layout/ui";
+import { DefaultLayout } from "@/src/features/layout/ui";
+import { SignupSteps } from "@/src/features/signup/hooks";
+import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
+import UniversityLogos from "@/src/features/signup/ui/university-logos";
+import UniversityCard from "@/src/features/signup/ui/university/university-card";
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
+import { PalePurpleGradient, Show } from "@/src/shared/ui";
+import HelpIcon from "@assets/icons/help.svg";
+import SearchIcon from "@assets/icons/search.svg";
 import Loading from "@features/loading";
-import { useKeyboarding } from '@shared/hooks';
+import { FlashList } from "@shopify/flash-list";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import {
+  BackHandler,
+  Text as RNText,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
+import Animated from "react-native-reanimated";
 
-const { SignupSteps, useChangePhase, useSignupProgress, queries, useSignupAnalytics } = Signup;
-const { useUnivQuery } = queries;
+function UniversityPage() {
+  const router = useRouter();
+  const {
+    searchText,
+    setSearchText,
+    filteredUniv,
+    handleClickUniv,
+    trigger,
+    onNext,
+    selectedUniv,
+    handleBlur,
+    handleFocus,
+    isLoading,
+    onBackPress,
+    showHeader,
+    animatedTitleStyle,
+    animatedContainerStyle,
+    animatedListStyle,
+    handleChange,
+  } = useUniversityHook();
 
-
-export default function UniversityPage() {
-  const { updateForm, form: userForm } = useSignupProgress();
-  const { data: univs = [], isLoading } = useUnivQuery();
-  const { isKeyboardVisible } = useKeyboarding();
-  const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityName);
-  const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
-  const params = useLocalSearchParams();
-  const hasProcessedPassInfo = useRef(false);
-
-  useChangePhase(SignupSteps.UNIVERSITY);
-
-  // 애널리틱스 추적 설정
-  const { trackSignupEvent } = useSignupAnalytics('university');
-
-  // PASS 인증 정보 처리 (useRef로 한 번만 실행되도록 제어)
-  useEffect(() => {
-    if (params.certificationInfo && !hasProcessedPassInfo.current) {
-      hasProcessedPassInfo.current = true;
-      const certInfo = JSON.parse(params.certificationInfo as string);
-      updateForm({
-        ...userForm,
-        passVerified: true,
-        name: certInfo.name,
-        phone: certInfo.phone,
-        gender: certInfo.gender,
-        birthday: certInfo.birthday,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.certificationInfo]);
-
-  const onNext = () => {
-    if (!selectedUniv) {
-      return;
-    }
-    trackSignupEvent('next_button_click', 'to_university_details');
-    updateForm({
-      ...userForm,
-      universityName: selectedUniv,
+  const handleBackPress = () => {
+    onBackPress(() => {
+      router.navigate("/auth/login");
     });
-    router.push(`/auth/signup/university-details?universityName=${selectedUniv}`);
+  };
+  const handleNext = () => {
+    onNext(() => {
+      router.push(
+        `/auth/signup/university-cluster?universityId=${selectedUniv}`
+      );
+    });
   };
 
-  const nextable = (() => {
-    if (!selectedUniv) {
-      return false;
-    }
-    return univs.includes(selectedUniv);
-  })();
-
-  const nextButtonMessage = (() => {
-    if (!nextable) {
-      return '조금만 더 알려주세요';
-    }
-    return '다음으로';
-  })();
-
-
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () =>
+      onBackPress(() => {
+        router.navigate("/auth/login");
+      })
+    );
+    return () => subscription.remove();
+  }, []);
   return (
-    <KeyboardAvoidingView
-      className="flex-1 flex flex-col">
-      <PalePurpleGradient />
-      <View className="px-5">
-        <Image
-          source={require('@assets/images/university.png')}
-          style={{ width: 81, height: 81 }}
-          className="mb-4"
-        />
-        <Text weight="semibold" size="20" textColor="black">
-          다니고 있는
-        </Text>
-        <Text weight="semibold" size="20" textColor="black">
-          대학교 이름을 입력해 주세요
-        </Text>
+    <DefaultLayout className="flex-1 ">
+      {!showHeader && <PalePurpleGradient />}
+      <View style={[styles.container]}>
+        {!trigger && <UniversityLogos logoSize={64} />}
 
-        <Divider.Horizontal className="my-4" />
-      </View>
-
-      <View className="px-5 flex flex-col gap-y-[14px] mt-[8px] flex-1">
-        <LabelInput
-          label="대학교"
-          size="sm"
-          value={selectedUniv}
-          placeholder="대학교를 입력하세요"
-          onChangeText={setSelectedUniv}
-        />
-        <Loading.Lottie
-          title="학교를 검색중이에요"
-          loading={isLoading}
+        <Animated.View style={[styles.titleContainer, animatedTitleStyle]}>
+          <RNText style={styles.welcome}>
+            대학생만 모인 곳, 당신의 이상형을 찾아드려요
+          </RNText>
+          <RNText style={styles.title}>
+            지금 다니시는 학교를 검색해보세요
+          </RNText>
+        </Animated.View>
+        <Animated.View
+          style={[animatedContainerStyle, { width: "100%", zIndex: 10 }]}
         >
-          <ScrollView style={styles.chipContainer} contentContainerStyle={styles.chipScrollContent}>
-            <ChipSelector
-              value={selectedUniv}
-              options={filteredUnivs.map((univ) => ({ label: univ, value: univ }))}
-              onChange={setSelectedUniv}
-              className="w-full"
+          <View style={styles.searchWrapper}>
+            <SearchIcon width={16} height={16} style={{ marginRight: 8 }} />
+            <TextInput
+              value={searchText}
+              onBlur={handleBlur}
+              onChangeText={handleChange}
+              placeholder="대학교 이름을 검색해주세요"
+              placeholderTextColor="#9B94AB"
+              style={styles.input}
+              onFocus={handleFocus}
             />
-          </ScrollView>
-        </Loading.Lottie>
+          </View>
+        </Animated.View>
+        <Show when={trigger}>
+          <Animated.View
+            style={[styles.listAndBottomContainer, animatedListStyle]}
+          >
+            <Loading.Lottie
+              title="대학 목록을 로딩중입니다.."
+              loading={isLoading}
+            >
+              <FlashList
+                extraData={selectedUniv}
+                data={filteredUniv}
+                renderItem={({ item }) => (
+                  <UniversityCard
+                    onClick={handleClickUniv(item.id)}
+                    isSelected={item.id === selectedUniv}
+                    item={item}
+                  />
+                )}
+                estimatedItemSize={90}
+                contentContainerStyle={{ paddingBottom: 160 }}
+              />
+            </Loading.Lottie>
+
+            <View style={styles.bottomContainer}>
+              <View style={styles.tipContainer}>
+                <HelpIcon width={20} height={20} />
+                <RNText style={styles.tip}>
+                  학교 인증을 통해 안전하게 이용할 수 있습니다
+                </RNText>
+              </View>
+              <TwoButtons
+                disabledNext={!selectedUniv}
+                onClickNext={handleNext}
+                onClickPrevious={handleBackPress}
+              />
+            </View>
+          </Animated.View>
+        </Show>
       </View>
-
-      <Show when={!isKeyboardVisible}>
-        <View className={cn(
-          platform({
-            web: () => "px-5 mb-[14px] w-full flex flex-row gap-x-[15px]",
-            android: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            ios: () => "px-5 mb-[58px] w-full flex flex-row gap-x-[15px]",
-            default: () => ""
-          })
-        )}>
-          <Button variant="secondary" onPress={() => {
-            trackSignupEvent('back_button_click', 'to_profile_image');
-            router.push('/auth/signup/profile-image');
-          }} className="flex-[0.3]">
-            뒤로
-          </Button>
-          <Button onPress={onNext} className="flex-[0.7]" disabled={!nextable}>
-            {nextButtonMessage}
-          </Button>
-        </View>
-      </Show>
-
-    </KeyboardAvoidingView>
+    </DefaultLayout>
   );
 }
 
+export default withSignupValidation(UniversityPage, SignupSteps.UNIVERSITY);
+
 const styles = StyleSheet.create({
-  chipContainer: {
-    marginTop: 4,
-    width: '100%',
-    maxHeight: 400,
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+
+    alignItems: "center",
+    justifyContent: "center",
   },
-  chipScrollContent: {
-    flexGrow: 1,
+  titleContainer: {
+    position: "absolute",
+    alignItems: "center",
+    zIndex: 1,
+    transform: [{ translateY: 75 }],
+  },
+  logoContainer: {
+    top: -60,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#333",
+    fontFamily: "Pretendard-Bold",
+  },
+  searchWrapper: {
+    height: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 12,
+    backgroundColor: "#F7F5FC",
+    paddingHorizontal: 16,
+    width: "100%",
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: "#000",
+    fontFamily: "Pretendard-Regular",
+  },
+  listAndBottomContainer: {
+    flex: 1,
+    width: "100%",
+    marginTop: 24,
+  },
+  bottomContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingTop: 16,
+    backgroundColor: "#fff",
+  },
+  tipContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    marginBottom: 16,
+  },
+  tip: {
+    color: "#9B94AB",
+    fontWeight: "300",
+    fontFamily: "Pretendard-Thin",
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  welcome: {
+    fontSize: 18,
+    color: "#6C5CE7",
+    fontFamily: "Pretendard-Medium",
+    marginBottom: 8,
+    textAlign: "center",
   },
 });

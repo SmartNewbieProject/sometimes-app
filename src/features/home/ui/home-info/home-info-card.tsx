@@ -48,7 +48,7 @@ function HomeInfoCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: 200,
+    minHeight: 200,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "rgba(134, 56, 229, 0.5)",
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 82,
-    height: 82,
+    height: 90,
   },
   title: {
     marginTop: 8,
@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     color: "#1F1F1F",
     textAlign: "center",
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 21.6,
   },
@@ -74,6 +75,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     marginBottom: 11,
+    fontFamily: "Pretendard-Light",
     fontWeight: 300,
     lineHeight: 13.4,
   },
@@ -92,6 +94,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 18,
     color: "#8638E5",

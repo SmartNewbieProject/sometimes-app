@@ -1,4 +1,4 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack, usePathname, useRouter } from "expo-router";
 import { Slot, withLayoutContext } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
@@ -20,13 +20,13 @@ const TABS: Tab[] = [
 export default function ProfileEditLayout() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"profile" | "interest">("profile");
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState<string>(
+    pathname.split("/")[2] ?? "profile"
+  );
   return (
     <Layout.Default
-      style={[
-        styles.container,
-        { paddingTop: insets.top, paddingBottom: insets.top },
-      ]}
+      style={[styles.container, { paddingBottom: insets.bottom }]}
     >
       <ProfileEditHeader />
       <ScrollView style={styles.editContainer}>
@@ -39,7 +39,6 @@ export default function ProfileEditLayout() {
               setActiveTab(next);
               router.navigate(`/profile-edit/${next}`);
             }}
-            style={{ width: 180 }}
           />
         </View>
         <View>

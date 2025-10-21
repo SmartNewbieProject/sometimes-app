@@ -28,13 +28,6 @@ export default function MilitarySelectionScreen() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray,
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
@@ -45,9 +38,12 @@ export default function MilitarySelectionScreen() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    updateForm("militaryStatus", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
-  console.log(militaryStatus, "mili");
+    if (optionsLoading) return;
+    if (!militaryStatus && preferences.options[currentIndex]) {
+      updateForm("militaryStatus", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, militaryStatus]);
+
   useFocusEffect(
     useCallback(
       () => useMyInfoStep.getState().updateStep(MyInfoSteps.MILITARY),
@@ -68,7 +64,7 @@ export default function MilitarySelectionScreen() {
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
           tattoo: form.tattoo?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           militaryStatus: preferences?.options[currentIndex]?.id ?? "",
 
           mbti: form.mbti as string,

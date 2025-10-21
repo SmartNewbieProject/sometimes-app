@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1080146163533",
+    "project_id": "sometime-dc1e4",
+    "storage_bucket": "sometime-dc1e4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080146163533:android:d3c72977bd2f7bd14d2904",
+        "android_client_info": {
+          "package_name": "com.smartnewb.sometimes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOAIlkH3c1S2I8FtJPqRQuk5ond8l6Z1o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

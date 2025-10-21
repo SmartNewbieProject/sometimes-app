@@ -26,11 +26,12 @@ function ProfileMilitary() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  console.log("mili status", currentIndex);
-
   useEffect(() => {
-    updateForm("militaryStatus", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!militaryStatus && preferences.options[currentIndex]) {
+      updateForm("militaryStatus", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, militaryStatus]);
   const onChangeOption = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("militaryStatus", preferences.options[value]);
@@ -73,7 +74,9 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
+
     lineHeight: 22,
   },
   container: {

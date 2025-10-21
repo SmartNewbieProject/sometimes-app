@@ -11,7 +11,7 @@ function SettingHeader() {
   const title = path === "/setting" ? "설정" : "계정관리";
 
   return (
-    <Header.Container className="items-center !pt-[21px] ">
+    <Header.Container className="items-center  ">
       <Header.LeftContent>
         <Pressable
           onPress={() => {
@@ -37,7 +37,9 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#000",
     fontSize: 20,
-    fontWeight: 800,
+    fontFamily: "Pretendard-Bold",
+    fontWeight: 600,
+
     lineHeight: 22,
   },
   backArrow: {

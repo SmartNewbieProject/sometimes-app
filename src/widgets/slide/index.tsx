@@ -1,391 +1,238 @@
-import { cn } from "@/src/shared/libs/cn";
-import { Text } from "@/src/shared/ui";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import colors from "@/src/shared/constants/colors";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
-  type LayoutChangeEvent,
   PanResponder,
-  TouchableOpacity,
+  Pressable,
   View,
-  useWindowDimensions,
+  type ViewStyle,
 } from "react-native";
 
 interface SlideProps {
-  children: React.ReactNode[];
+  children: React.ReactNode[] | React.ReactNode;
   className?: string;
   indicatorClassName?: string;
   activeIndicatorClassName?: string;
   indicatorContainerClassName?: string;
   autoPlay?: boolean;
   autoPlayInterval?: number;
+  contentContainerClassName?: string;
   showIndicator?: boolean;
   indicatorPosition?: "top" | "bottom";
-  indicatorType?: "dot" | "line" | "number";
   onSlideChange?: (index: number) => void;
-  onScrollStateChange?: (isScrolling: boolean) => void;
   animationDuration?: number;
 }
 
-export function Slide({
+function Slider({
   children,
-  className = "",
-  indicatorClassName = "",
-  activeIndicatorClassName = "",
-  indicatorContainerClassName = "",
   autoPlay = false,
   autoPlayInterval = 3000,
   showIndicator = true,
   indicatorPosition = "bottom",
-  indicatorType = "dot",
   onSlideChange,
-  onScrollStateChange,
-  animationDuration = 300,
+  animationDuration = 500,
+  indicatorClassName,
+  contentContainerClassName,
+  activeIndicatorClassName,
+  indicatorContainerClassName,
+  className,
 }: SlideProps) {
-  const loop = false;
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
+  const arrayChildren = Array.isArray(children) ? children : [children];
+  const realCount = arrayChildren.length;
+  const isSingle = realCount <= 1;
 
-  const translateX = useRef(new Animated.Value(0)).current;
-  const autoPlayTimer = useRef<NodeJS.Timeout | null>(null);
-  const totalSlides = React.Children.count(children);
+  const array = isSingle
+    ? [...arrayChildren]
+    : [arrayChildren[realCount - 1], ...arrayChildren, arrayChildren[0]];
 
-  const { width: windowWidth } = useWindowDimensions();
-
-  const dragStartX = useRef(0);
-  const currentVirtualIndex = useRef(0);
-
-  const handleLayout = (event: LayoutChangeEvent) => {
-    const { width } = event.nativeEvent.layout;
-    setContainerWidth(width);
-
-    if (loop && totalSlides > 1) {
-      translateX.setValue(-width);
-      currentVirtualIndex.current = 1;
-    } else {
-      translateX.setValue(0);
-      currentVirtualIndex.current = 0;
-    }
-  };
+  const initialFocus = isSingle ? 0 : 1;
+  const [focusIndex, setFocusIndex] = useState<number>(initialFocus);
+  const focusRef = useRef<number>(initialFocus);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
+  const bannerAnim = useRef(new Animated.Value(0)).current;
+  const pendingRef = useRef<boolean>(true);
+  const autoPlayRef = useRef<NodeJS.Timer | number | null>(null);
 
   useEffect(() => {
-    if (containerWidth === 0) {
-      setContainerWidth(windowWidth);
+    focusRef.current = focusIndex;
+  }, [focusIndex]);
+
+  useEffect(() => {
+    if (containerWidth > 0) {
+      bannerAnim.setValue(-focusIndex * containerWidth);
+      pendingRef.current = true;
     }
-  }, [windowWidth]);
+  }, [containerWidth, bannerAnim, focusIndex]);
 
-  // 슬라이드 이동 함수 - 현재 실제 위치 기준으로 계산
-  const moveToSlide = useCallback(
-    (targetIndex: number, animated = true, direction?: "next" | "prev") => {
-      if (containerWidth === 0) return;
+  useEffect(() => {
+    if (!autoPlay || containerWidth === 0 || isSingle) return;
+    if (autoPlayRef.current) {
+      if (typeof autoPlayRef.current === "number")
+        clearInterval(autoPlayRef.current);
+      else clearInterval(autoPlayRef.current as NodeJS.Timer);
+    }
+    const id = setInterval(() => {
+      moveToIndex(focusRef.current + 1);
+    }, autoPlayInterval);
+    autoPlayRef.current = id;
+    return () => {
+      if (id) clearInterval(id);
+      autoPlayRef.current = null;
+    };
+  }, [autoPlay, autoPlayInterval, containerWidth, isSingle]);
 
-      let targetVirtualIndex: number;
+  const clampIndex = (idx: number) => {
+    return Math.max(0, Math.min(idx, array.length - 1));
+  };
 
-      if (loop && totalSlides > 1) {
-        if (
-          direction === "next" &&
-          activeIndex === totalSlides - 1 &&
-          targetIndex === 0
-        ) {
-          // 마지막에서 첫번째로: 현재 위치에서 +1
-          targetVirtualIndex = currentVirtualIndex.current + 1;
-        } else if (
-          direction === "prev" &&
-          activeIndex === 0 &&
-          targetIndex === totalSlides - 1
-        ) {
-          // 첫번째에서 마지막으로: 현재 위치에서 -1
-          targetVirtualIndex = currentVirtualIndex.current - 1;
-        } else {
-          // 일반적인 경우: 현재 위치에서 상대적 이동
-          const diff = targetIndex - activeIndex;
-          targetVirtualIndex = currentVirtualIndex.current + diff;
-        }
-      } else {
-        targetVirtualIndex = targetIndex;
+  const moveToIndex = (nextIndexRaw: number) => {
+    if (containerWidth === 0 || !pendingRef.current) return;
+    pendingRef.current = false;
+    const nextIndex = clampIndex(nextIndexRaw);
+    Animated.timing(bannerAnim, {
+      toValue: -nextIndex * containerWidth,
+      useNativeDriver: true,
+      duration: animationDuration,
+    }).start(({ finished }) => {
+      if (!finished) {
+        pendingRef.current = true;
+        return;
       }
+      let finalIndex = nextIndex;
+      if (!isSingle && nextIndex === array.length - 1) {
+        finalIndex = 1;
+        bannerAnim.setValue(-finalIndex * containerWidth);
+      } else if (!isSingle && nextIndex === 0) {
+        finalIndex = array.length - 2;
+        bannerAnim.setValue(-finalIndex * containerWidth);
+      }
+      setFocusIndex(finalIndex);
+      pendingRef.current = true;
+      onSlideChange?.(isSingle ? 0 : finalIndex - 1);
+    });
+  };
 
-      const targetX = -targetVirtualIndex * containerWidth;
+  const onButtonNavigation = (index: number) => {
+    if (isSingle) return;
+    moveToIndex(index + 1);
+  };
 
-      if (animated) {
-        Animated.timing(translateX, {
-          toValue: targetX,
-          duration: animationDuration,
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => !isSingle,
+    onMoveShouldSetPanResponder: (_e, gestureState) => {
+      if (isSingle) return false;
+      return (
+        Math.abs(gestureState.dx) > 10 &&
+        Math.abs(gestureState.dx) > Math.abs(gestureState.dy)
+      );
+    },
+    onPanResponderGrant: () => {},
+    onPanResponderMove: () => {},
+    onPanResponderRelease: (_e, gestureState) => {
+      if (containerWidth === 0 || !pendingRef.current) return;
+      const dx = gestureState.dx;
+      const threshold = Math.max(60, containerWidth * 0.12);
+      const isNext = dx < -threshold;
+      const isPrev = dx > threshold;
+      if (isNext) {
+        moveToIndex(focusRef.current + 1);
+      } else if (isPrev) {
+        moveToIndex(focusRef.current - 1);
+      } else {
+        pendingRef.current = false;
+        Animated.timing(bannerAnim, {
+          toValue: -focusRef.current * containerWidth,
+          duration: Math.min(200, animationDuration),
           useNativeDriver: true,
         }).start(() => {
-          // 애니메이션 완료 후 위치 업데이트
-          currentVirtualIndex.current = targetVirtualIndex;
-
-          // 경계 점프 처리
-          if (loop && totalSlides > 1) {
-            if (targetVirtualIndex === 0) {
-              // 가짜 마지막에서 진짜 마지막으로
-              const newVirtualIndex = totalSlides;
-              const newX = -newVirtualIndex * containerWidth;
-              translateX.setValue(newX);
-              currentVirtualIndex.current = newVirtualIndex;
-            } else if (targetVirtualIndex === totalSlides + 1) {
-              // 가짜 첫번째에서 진짜 첫번째로
-              const newVirtualIndex = 1;
-              const newX = -newVirtualIndex * containerWidth;
-              translateX.setValue(newX);
-              currentVirtualIndex.current = newVirtualIndex;
-            }
-          }
+          pendingRef.current = true;
         });
-      } else {
-        translateX.setValue(targetX);
-        currentVirtualIndex.current = targetVirtualIndex;
       }
-    },
-    [
-      containerWidth,
-      loop,
-      totalSlides,
-      animationDuration,
-      translateX,
-      activeIndex,
-    ]
-  );
-
-  // PanResponder 설정
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: (_, gestureState) => {
-      return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
-    },
-
-    onPanResponderGrant: () => {
-      setIsScrolling(true);
-      onScrollStateChange?.(true);
-
-      dragStartX.current = (translateX as any)._value;
-
-      if (autoPlayTimer.current) {
-        clearTimeout(autoPlayTimer.current);
-        autoPlayTimer.current = null;
-      }
-    },
-
-    onPanResponderMove: (_, gestureState) => {
-      if (containerWidth === 0) return;
-
-      const newX = dragStartX.current + gestureState.dx;
-      translateX.setValue(newX);
-    },
-
-    onPanResponderRelease: (_, gestureState) => {
-      if (containerWidth === 0) return;
-
-      const threshold = containerWidth * 0.3;
-      const velocity = gestureState.vx;
-
-      let newIndex = activeIndex;
-      let direction: "next" | "prev" | undefined;
-
-      if (gestureState.dx > threshold || velocity > 0.5) {
-        direction = "prev";
-        if (loop) {
-          newIndex = activeIndex === 0 ? totalSlides - 1 : activeIndex - 1;
-        } else {
-          newIndex = Math.max(0, activeIndex - 1);
-        }
-      } else if (gestureState.dx < -threshold || velocity < -0.5) {
-        direction = "next";
-        if (loop) {
-          newIndex = activeIndex === totalSlides - 1 ? 0 : activeIndex + 1;
-        } else {
-          newIndex = Math.min(totalSlides - 1, activeIndex + 1);
-        }
-      }
-
-      setActiveIndex(newIndex);
-      onSlideChange?.(newIndex);
-      moveToSlide(newIndex, true, direction);
-
-      setTimeout(() => {
-        setIsScrolling(false);
-        onScrollStateChange?.(false);
-      }, animationDuration + 50);
     },
   });
 
-  const scrollToIndex = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < totalSlides) {
-        let direction: "next" | "prev" | undefined;
-        if (loop) {
-          if (activeIndex === totalSlides - 1 && index === 0) {
-            direction = "next";
-          } else if (activeIndex === 0 && index === totalSlides - 1) {
-            direction = "prev";
-          }
-        }
-
-        setActiveIndex(index);
-        onSlideChange?.(index);
-        moveToSlide(index, true, direction);
-      }
-    },
-    [totalSlides, onSlideChange, moveToSlide, activeIndex, loop]
-  );
-
-  useEffect(() => {
-    if (autoPlay && totalSlides > 1 && !isScrolling) {
-      autoPlayTimer.current = setTimeout(() => {
-        const nextIndex = loop
-          ? (activeIndex + 1) % totalSlides
-          : Math.min(totalSlides - 1, activeIndex + 1);
-
-        if (
-          nextIndex !== activeIndex ||
-          (loop && activeIndex === totalSlides - 1)
-        ) {
-          const direction =
-            loop && activeIndex === totalSlides - 1 && nextIndex === 0
-              ? "next"
-              : undefined;
-
-          setActiveIndex(nextIndex);
-          onSlideChange?.(nextIndex);
-          moveToSlide(nextIndex, true, direction);
-        }
-      }, autoPlayInterval);
-    }
-
-    return () => {
-      if (autoPlayTimer.current) {
-        clearTimeout(autoPlayTimer.current);
-      }
-    };
-  }, [
-    activeIndex,
-    autoPlay,
-    autoPlayInterval,
-    totalSlides,
-    isScrolling,
-    loop,
-    onSlideChange,
-    moveToSlide,
-  ]);
-
-  const renderSlides = () => {
-    const childrenArray = React.Children.toArray(children);
-
-    if (loop && totalSlides > 1) {
-      return [
-        childrenArray[totalSlides - 1],
-        ...childrenArray,
-        childrenArray[0],
-      ];
-    }
-    return childrenArray;
-  };
-
-  const slides = renderSlides();
-  const slideWidth = containerWidth * slides.length;
-
-  const renderIndicator = () => {
-    switch (indicatorType) {
-      case "number":
-        return (
-          <View
-            className={cn(
-              "px-2 py-1 bg-primaryPurple rounded-full",
-              indicatorContainerClassName
-            )}
-          >
-            <Text size="sm" textColor="white">
-              {activeIndex + 1} / {totalSlides}
-            </Text>
-          </View>
-        );
-
-      case "line":
-        return (
-          <View
-            className={cn(
-              "flex-row items-center justify-center gap-1",
-              indicatorContainerClassName
-            )}
-          >
-            {Array.from({ length: totalSlides }).map((_, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => scrollToIndex(index)}
-                className={cn(
-                  "h-1 rounded-full",
-                  index === activeIndex
-                    ? cn("bg-primaryPurple w-6", activeIndicatorClassName)
-                    : cn("bg-lightPurple w-3", indicatorClassName)
-                )}
-              />
-            ))}
-          </View>
-        );
-
-      case "dot":
-        return (
-          <View
-            className={cn(
-              "flex-row items-center justify-center gap-2",
-              indicatorContainerClassName
-            )}
-          >
-            {Array.from({ length: totalSlides }).map((_, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => scrollToIndex(index)}
-                className={cn(
-                  "w-2 h-2 rounded-full",
-                  index === activeIndex
-                    ? cn("bg-primaryPurple", activeIndicatorClassName)
-                    : cn("bg-lightPurple", indicatorClassName)
-                )}
-              />
-            ))}
-          </View>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <View
-      className={cn("relative flex flex-col", className)}
-      onLayout={handleLayout}
+      className={className}
+      onLayout={(e) => {
+        const w = e.nativeEvent.layout.width;
+        if (w && w !== containerWidth) {
+          setContainerWidth(w);
+        }
+      }}
+      style={{ width: "100%" as ViewStyle["width"] }}
     >
-      {showIndicator && indicatorPosition === "top" && (
-        <View className="absolute top-4 z-10 w-full items-center">
-          {renderIndicator()}
-        </View>
-      )}
-
-      {containerWidth > 0 && (
-        <View
-          style={{ width: containerWidth, overflow: "hidden" }}
-          {...panResponder.panHandlers}
+      <View
+        style={{ width: containerWidth || 0, overflow: "hidden" }}
+        className={contentContainerClassName}
+      >
+        <Animated.View
+          {...(!isSingle ? panResponder.panHandlers : {})}
+          style={{
+            flexDirection: "row",
+            width: (containerWidth || 0) * array.length,
+            transform: [{ translateX: bannerAnim }],
+          }}
         >
-          <Animated.View
-            style={{
-              flexDirection: "row",
-              width: slideWidth,
-              transform: [{ translateX }],
-            }}
-          >
-            {slides.map((child, index) => (
-              <View key={`slide-${index}`} style={{ width: containerWidth }}>
-                {child}
-              </View>
-            ))}
-          </Animated.View>
-        </View>
-      )}
+          {array.map((child, index) => (
+            <View
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              key={index}
+              style={{
+                width: containerWidth || 0,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {child}
+            </View>
+          ))}
+        </Animated.View>
+      </View>
 
-      {showIndicator && indicatorPosition === "bottom" && (
-        <View className="pt-2 w-full items-center">{renderIndicator()}</View>
+      {showIndicator && realCount > 0 && (
+        <View
+          style={[
+            {
+              flexDirection: "row",
+              justifyContent: "center",
+              position: "absolute",
+              left: 0,
+              right: 0,
+              [indicatorPosition]: -16,
+              paddingHorizontal: 8,
+            } as ViewStyle,
+          ]}
+          className={indicatorContainerClassName}
+        >
+          {arrayChildren.map((_, index) => (
+            <Pressable
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              key={index}
+              onPress={() => onButtonNavigation(index)}
+              style={{ padding: 6 }}
+            >
+              <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    focusIndex === index + 1 ? "#7A4AE2" : colors.lightPurple,
+                }}
+                className={
+                  focusIndex === index + 1
+                    ? activeIndicatorClassName
+                    : indicatorClassName
+                }
+              />
+            </Pressable>
+          ))}
+        </View>
       )}
     </View>
   );
 }
+
+export default Slider;

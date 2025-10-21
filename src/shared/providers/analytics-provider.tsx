@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { usePathname, useSegments } from 'expo-router';
 import { GA_TRACKING_ID, sendPageView } from '@/src/shared/utils';
+import { initializeFacebookSDK } from '@/src/shared/lib/facebook-events';
 
 interface AnalyticsProviderProps {
   children: React.ReactNode;
@@ -15,28 +16,36 @@ export function AnalyticsProvider({ children }: AnalyticsProviderProps) {
   const segments = useSegments();
 
   useEffect(() => {
-    // 웹 환경에서만 실행
-    if (Platform.OS !== 'web') {
-      return;
+    // 웹 환경에서만 Google Analytics 실행
+    if (Platform.OS === 'web') {
+      // Google Analytics 스크립트 로드
+      if (!document.querySelector(`script[src="https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}"]`)) {
+        const script1 = document.createElement('script');
+        script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
+        script1.async = true;
+        document.head.appendChild(script1);
+
+        // gtag 초기화 스크립트
+        const script2 = document.createElement('script');
+        script2.innerHTML = `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_TRACKING_ID}');
+        `;
+        document.head.appendChild(script2);
+      }
     }
 
-    // Google Analytics 스크립트 로드
-    if (!document.querySelector(`script[src="https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}"]`)) {
-      const script1 = document.createElement('script');
-      script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
-      script1.async = true;
-      document.head.appendChild(script1);
+    // 모든 플랫폼에서 Facebook SDK 초기화 (ATT 권한 요청 후)
+    const initFacebook = async () => {
+      // ATT 권한 요청 후 약간의 지연을 두고 Facebook SDK 초기화
+      setTimeout(() => {
+        initializeFacebookSDK();
+      }, 1000);
+    };
 
-      // gtag 초기화 스크립트
-      const script2 = document.createElement('script');
-      script2.innerHTML = `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '${GA_TRACKING_ID}');
-      `;
-      document.head.appendChild(script2);
-    }
+    initFacebook();
   }, []);
 
   // 경로 변경 감지 및 페이지 뷰 전송

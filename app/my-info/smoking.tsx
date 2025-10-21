@@ -2,6 +2,7 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import Tooltip from "@/src/shared/ui/tooltip";
+import { track } from "@amplitude/analytics-react-native";
 
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -47,10 +48,6 @@ export default function SmokingSelectionScreen() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.SMOKING)
-  );
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.SMOKING) ??
     preferencesArray[0];
@@ -61,8 +58,11 @@ export default function SmokingSelectionScreen() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    updateForm("smoking", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!smoking && preferences.options[currentIndex]) {
+      updateForm("smoking", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, smoking]);
   const onChangeSmoking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("smoking", preferences.options[value]);
@@ -73,7 +73,8 @@ export default function SmokingSelectionScreen() {
     if (!smoking) {
       updateForm("smoking", preferences.options[currentIndex]);
     }
-    router.navigate("/my-info/tattoo");
+    track("Profile_Smoking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    router.push("/my-info/tattoo");
   };
   useFocusEffect(
     useCallback(() => updateStep(MyInfoSteps.SMOKING), [updateStep])

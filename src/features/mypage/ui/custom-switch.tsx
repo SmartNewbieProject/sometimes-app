@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Platform,
@@ -25,9 +25,9 @@ const CustomSwitch = ({
   const lastExternalValue = useRef(value);
   
   const initValue = Platform.OS === "web" ? 0 : 3;
-  const lastVavlue = Platform.OS === "web" ? 30 : 33;
+  const lastValue = Platform.OS === "web" ? 30 : 33;
   const switchLeftValue = useRef(
-    new Animated.Value(value ? lastVavlue : initValue)
+    new Animated.Value(value ? lastValue : initValue)
   ).current;
 
   const toggleSwitch = () => {
@@ -37,7 +37,7 @@ const CustomSwitch = ({
     
     setIsOn(newValue);
     Animated.timing(switchLeftValue, {
-      toValue: newValue ? lastVavlue : initValue,
+      toValue: newValue ? lastValue : initValue,
       duration: 200,
       useNativeDriver: true,
     }).start();

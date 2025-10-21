@@ -8,6 +8,9 @@ import {
 import { UniversityName, getUnivLogo } from "@/src/shared/libs/univ";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
+import { useCurrentGem } from "@features/payment/hooks";
+import { ImageResources } from "@shared/libs";
+import { ImageResource } from "@ui/image-resource";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -17,12 +20,12 @@ import { useRematchingTickets } from "../queries";
 
 export const Profile = () => {
   const { profileDetails } = useAuth();
-  console.log("prefileDetails", profileDetails);
   const { data: reMatchingTicketCount } = useRematchingTickets();
   const [isUniversityVerified, setIsUniversityVerified] =
     useState<boolean>(false);
   const [isLoadingVerification, setIsLoadingVerification] =
     useState<boolean>(true);
+  const { data: gem } = useCurrentGem();
   const profileData = {
     name: profileDetails?.name || "이름",
     age: profileDetails?.age || "20",
@@ -124,19 +127,20 @@ export const Profile = () => {
                 <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
                   {profileData.university}
                 </Text>
-                {!isLoadingVerification && (() => {
-                  const logoUrl = getUniversityLogoUrl();
-                  return isUniversityVerified && logoUrl ? (
-                    <Image
-                      source={{ uri: logoUrl }}
-                      style={{ width: 14, height: 14, marginLeft: 3 }}
-                    />
-                  ) : (
-                    <IconWrapper style={{ marginLeft: 3 }} size={14}>
-                      <NotSecuredIcon />
-                    </IconWrapper>
-                  );
-                })()}
+                {!isLoadingVerification &&
+                  (() => {
+                    const logoUrl = getUniversityLogoUrl();
+                    return isUniversityVerified && logoUrl ? (
+                      <Image
+                        source={{ uri: logoUrl }}
+                        style={{ width: 14, height: 14, marginLeft: 3 }}
+                      />
+                    ) : (
+                      <IconWrapper style={{ marginLeft: 3 }} size={14}>
+                        <NotSecuredIcon />
+                      </IconWrapper>
+                    );
+                  })()}
               </View>
               {/* 대학교 인증 버튼 - 로딩 완료 후 인증 미완료 시에만 표시 */}
               {!isLoadingVerification && !isUniversityVerified && (
@@ -189,15 +193,12 @@ export const Profile = () => {
           className="pt-[5px] pl-[32px] flex-row"
           style={{ alignItems: "center" }}
         >
-          <Image
-            source={require("@/assets/images/ticket.png")}
-            style={{ width: 30, height: 30 }}
-          />
+          <ImageResource resource={ImageResources.GEM} width={28} height={28} />
           <View className="pl-[10px] flex-row">
-            <Text className="text-[13px] text-[#FFFFFF]">재매칭 티켓이</Text>
+            <Text className="text-[13px] text-[#FFFFFF]">구슬이 </Text>
             <Text className="text-[13px] text-[#9747FF]">
               {" "}
-              {profileData.totalRematchingTickets}장
+              {gem?.totalGem ?? 0}개
             </Text>
             <Text className="text-[13px] text-[#FFFFFF]"> 남았어요</Text>
           </View>
@@ -279,6 +280,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 26,
+    fontFamily: "Pretendard-Regular",
     fontWeight: 400,
     lineHeight: 30,
     color: "#fff",
@@ -311,7 +313,8 @@ const styles = StyleSheet.create({
   universityVerificationButtonText: {
     fontSize: 12,
     color: "#9747FF",
-    fontWeight: "500",
+    fontFamily: "Pretendard-SemiBold",
+    fontWeight: 600,
   },
 });
 

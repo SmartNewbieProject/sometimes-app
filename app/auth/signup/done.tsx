@@ -1,39 +1,66 @@
-import { IconWrapper } from "@/src/shared/ui/icons";
-import { View } from "react-native";
-import SmallTitle from '@/assets/icons/small-title.svg';
-import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
-import { Image } from 'expo-image';
-import { router } from "expo-router";
+import SmallTitle from "@/assets/icons/small-title.svg";
+import { DefaultLayout } from "@/src/features/layout/ui";
+import Signup from "@/src/features/signup";
 import { environmentStrategy } from "@/src/shared/libs";
-import Signup from '@/src/features/signup';
+import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
+import { IconWrapper } from "@/src/shared/ui/icons";
+import { track } from "@amplitude/analytics-react-native";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 const { useSignupProgress, useSignupAnalytics } = Signup;
 
 export default function SignupDoneScreen() {
   const { clear } = useSignupProgress();
-
-  const { trackSignupEvent } = useSignupAnalytics('done');
-
+  const [loading, setLoading] = useState(true);
+  const { trackSignupEvent } = useSignupAnalytics("done");
+  useEffect(() => {
+    if (loading) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+  }, [loading]);
   const onNext = () => {
-    trackSignupEvent('completion_button_click');
+    trackSignupEvent("completion_button_click");
+    track("Signup_done", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     clear();
-    router.push('/auth/login');
+    router.push("/auth/login");
   };
 
   return (
-    <View className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
       <PalePurpleGradient />
-      <IconWrapper width={128} className="text-primaryPurple md:pb-[58px] py-8">
+      <IconWrapper
+        width={128}
+        className="text-primaryPurple md:pb-[58px] py-12"
+      >
         <SmallTitle />
       </IconWrapper>
 
       <View className="flex flex-col flex-1">
-        <Image
-          source={require('@assets/images/signup-completion.png')}
-          style={{ width: 248, height: 290 }}
-        />
+        <View style={{ position: "relative" }}>
+          <View
+            style={{
+              width: 274,
+              height: 274,
+              borderRadius: 274,
+              top: 12,
+              left: 0,
+
+              backgroundColor: "#7A4AE2",
+              position: "absolute",
+            }}
+          />
+          <Image
+            source={require("@assets/images/signup-done.png")}
+            style={{ width: 298, height: 296, marginTop: 50 }}
+          />
+        </View>
 
         <View className="flex flex-col">
-          <View className="mt-4">
+          <View className="mt-[42px]">
             <Text size="lg" textColor="black" weight="semibold">
               축하드려요!
             </Text>
@@ -44,25 +71,41 @@ export default function SignupDoneScreen() {
 
           <View className="mt-2">
             <Text size="sm" textColor="pale-purple" weight="light">
-              회원가입이 완료되었어요!
+              설레는 인연, 시작해볼까요?
             </Text>
             <Text size="sm" textColor="pale-purple" weight="light">
-              이제 당신의 이상형을 만나보세요
+              어울리는 사람을 썸타임이 찾아드릴게요 :)
             </Text>
           </View>
         </View>
       </View>
 
-      <View className="w-full px-5 mb-[14px] md:mb-[58px]">
+      <View className="w-full px-5 mb-[24px] md:mb-[58px]">
         <Button
+          disabled={loading}
           variant="primary"
           size="md"
           onPress={onNext}
-          className="w-full"
+          className="w-full items-center "
         >
-          이상형 찾으러 가기 →
+          {loading ? (
+            <>
+              <Text textColor={"white"} className="text-md white">
+                잠시만요...
+              </Text>
+              <ActivityIndicator
+                size="small"
+                color="#0000ff"
+                className="ml-6"
+              />
+            </>
+          ) : (
+            <Text textColor={"white"} className="text-md white">
+              로그인하러 가기 →
+            </Text>
+          )}
         </Button>
       </View>
-    </View>
+    </DefaultLayout>
   );
 }

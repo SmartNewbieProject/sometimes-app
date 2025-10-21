@@ -3,6 +3,7 @@ import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { Selector } from "@/src/widgets/selector";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -72,10 +73,7 @@ export default function DrinkingSelectionScreen() {
     ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.DRINKING)
-  );
+
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.DRINKING) ??
     preferencesArray[0];
@@ -85,8 +83,11 @@ export default function DrinkingSelectionScreen() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    updateForm("drinking", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!drinking && preferences.options[currentIndex]) {
+      updateForm("drinking", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, drinking]);
   const onChangeDrinking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("drinking", preferences.options[value]);
@@ -97,7 +98,8 @@ export default function DrinkingSelectionScreen() {
     if (!drinking) {
       updateForm("drinking", preferences.options[currentIndex]);
     }
-    router.navigate("/interest/smoking");
+    track("Interest_Drinking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    router.push("/interest/smoking");
   };
 
   useFocusEffect(

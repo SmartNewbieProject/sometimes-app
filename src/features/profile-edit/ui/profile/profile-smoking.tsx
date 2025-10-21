@@ -3,7 +3,7 @@ import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -12,8 +12,7 @@ const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 function ProfileSmoking() {
-  const { smoking, updateForm } = useMyInfoForm();
-
+  const { updateForm, smoking, ...form } = useMyInfoForm();
   const {
     data: preferencesArray = [
       {
@@ -24,10 +23,6 @@ function ProfileSmoking() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.SMOKING)
-  );
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.SMOKING) ??
     preferencesArray[0];
@@ -39,8 +34,11 @@ function ProfileSmoking() {
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
 
   useEffect(() => {
-    updateForm("smoking", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (preferences.options[currentIndex]) {
+      updateForm("smoking", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex]);
   const onChangeSmoking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("smoking", preferences.options[value]);
@@ -87,7 +85,9 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
+
     lineHeight: 22,
   },
   container: {

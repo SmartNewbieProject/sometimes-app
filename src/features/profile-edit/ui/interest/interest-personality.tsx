@@ -1,7 +1,7 @@
 import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import colors from "@/src/shared/constants/colors";
-import { ChipSelector } from "@/src/widgets";
+import { ChipSelector, StepIndicator } from "@/src/widgets";
 import React from "react";
 
 import Interest from "@/src/features/interest";
@@ -28,12 +28,28 @@ function InterestPersonality() {
       (item) => item.typeName === PreferenceKeys.PERSONALITY
     ) ?? preferencesArray[0];
 
-  const onChangeOption = (values: string) => {
+  const onChangeOption = (values: string[]) => {
+    if (values.length > 3) {
+      return;
+    }
+    if (values.length === 0) {
+      updateForm("personality", undefined);
+      return;
+    }
     updateForm("personality", values);
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>원하는 이상형의 성격</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>원하는 이상형의 성격</Text>
+        <StepIndicator
+          length={3}
+          step={personality?.length ?? 0}
+          dotGap={4}
+          dotSize={16}
+          className="self-end"
+        />
+      </View>
       <View style={styles.bar} />
       <View style={styles.chipSelector}>
         <Loading.Lottie title="성격 유형을 불러오고 있어요" loading={isLoading}>
@@ -46,7 +62,7 @@ function InterestPersonality() {
                 imageUrl: option?.imageUrl,
               })) || []
             }
-            multiple={false}
+            multiple={true}
             onChange={onChangeOption}
             className="w-full"
           />
@@ -64,8 +80,14 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 22,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   chipSelector: {
     marginTop: 16,

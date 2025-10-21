@@ -34,8 +34,11 @@ function InterestDrinking() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    updateForm("drinking", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!drinking && preferences.options[currentIndex]) {
+      updateForm("drinking", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, drinking]);
   const onChangeDrinking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("drinking", preferences.options[value]);
@@ -83,6 +86,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 22,
   },

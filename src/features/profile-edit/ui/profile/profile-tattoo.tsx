@@ -3,7 +3,7 @@ import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -12,7 +12,7 @@ const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 function ProfileTattoo() {
-  const { updateForm, clear: _, tattoo, ...form } = useMyInfoForm();
+  const { updateForm, tattoo, ...form } = useMyInfoForm();
   const {
     data: preferencesArray = [
       {
@@ -22,6 +22,7 @@ function ProfileTattoo() {
     ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
+
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
     preferencesArray[0];
@@ -29,15 +30,12 @@ function ProfileTattoo() {
     (item) => item.id === tattoo?.id
   );
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  console.log(
-    "options",
-    preferences.options,
-    preferences.options[currentIndex],
-    tattoo
-  );
   useEffect(() => {
-    updateForm("tattoo", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (preferences.options.length > 0) {
+      updateForm("tattoo", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options.length, currentIndex]);
 
   const onChangeTattoo = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
@@ -85,7 +83,9 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
+
     lineHeight: 22,
   },
   container: {

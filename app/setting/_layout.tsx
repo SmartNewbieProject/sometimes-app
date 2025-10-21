@@ -13,12 +13,7 @@ export default function ProfileEditLayout() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"profile" | "interest">("profile");
   return (
-    <Layout.Default
-      style={[
-        styles.container,
-        { paddingTop: insets.top, paddingBottom: insets.top },
-      ]}
-    >
+    <Layout.Default style={[styles.container]}>
       <SettingHeader />
 
       <View>
@@ -31,6 +26,7 @@ export default function ProfileEditLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   editContainer: {
     flex: 1,

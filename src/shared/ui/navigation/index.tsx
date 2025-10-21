@@ -10,8 +10,10 @@ import HomeSelected from "@/assets/icons/nav/home-selected.svg";
 import HomeUnselected from "@/assets/icons/nav/home-unselected.svg";
 import MySelected from "@/assets/icons/nav/my-selected.svg";
 import MyUnselected from "@/assets/icons/nav/my-unselected.svg";
+import ChatSeleted from "@assets/icons/nav/chat-selected.svg";
+import ChatUnseleted from "@assets/icons/nav/chat-unselected.svg";
 
-type NavItem = "home" | "community" | "my";
+type NavItem = "home" | "community" | "chat" | "my";
 
 const NavIcons: Record<
   NavItem,
@@ -31,6 +33,10 @@ const NavIcons: Record<
   my: {
     selected: <MySelected />,
     unSelected: <MyUnselected />,
+  },
+  chat: {
+    selected: <ChatSeleted />,
+    unSelected: <ChatUnseleted />,
   },
 };
 
@@ -53,6 +59,12 @@ const navigationItems: NavigationItem[] = [
     label: "커뮤니티",
     path: "/community",
     icon: NavIcons.community,
+  },
+  {
+    name: "chat",
+    label: "채팅",
+    path: "/chat",
+    icon: NavIcons.chat,
   },
   {
     name: "my",

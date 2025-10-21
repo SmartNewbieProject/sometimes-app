@@ -6,6 +6,9 @@ export type ArticleWriterForm = {
   content: string;
   anonymous: boolean;
   type: ArticleRequestType;
+  images?: string[];
+  originalImages?: { id: string; imageUrl: string; displayOrder: number; }[];
+  deleteImageIds?: string[];
 };
 
 export const useArticleWriteForm = (data: Partial<ArticleWriterForm>) => {
@@ -15,6 +18,9 @@ export const useArticleWriteForm = (data: Partial<ArticleWriterForm>) => {
       content: data?.content || '',
       title: data?.title || '',
       type: data?.type || ArticleRequestType.GENERAL,
+      images: data?.images || [],
+      originalImages: data?.originalImages || [],
+      deleteImageIds: data?.deleteImageIds || [],
     },
   });
 

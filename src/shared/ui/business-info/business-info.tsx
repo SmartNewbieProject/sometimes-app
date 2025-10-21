@@ -6,6 +6,9 @@ export const BusinessInfo: React.FC = () => {
     Linking.openURL(link);
   };
 
+  const businessRegistrationLink =
+    "https://www.ftc.go.kr/bizCommPop.do?wrkr_no=4980502914";
+
   return (
     <View
       className={`w-full flex flex-col items-center px-4 py-6 mt-4 ${
@@ -16,7 +19,13 @@ export const BusinessInfo: React.FC = () => {
         상호명: 스마트 뉴비 | 사업장 소재지: 대전광역시 서구 갈마중로 7번길 42,
         4동 407호 | 대표: 전준영 | 사업자 등록번호: 498-05-02914 |
         통신판매업신고: 제 2025-대전유성-0530호 | 문의전화: 010-8465-2476 |
-        이메일: notify@smartnewb.com | 사업자정보
+        이메일: notify@smartnewb.com |{" "}
+        <TouchableOpacity
+          onPress={() => onClickLink(businessRegistrationLink)}
+          className="inderline-offset-1"
+        >
+          <Text className="text-[#888] text-[10px]">사업자정보확인</Text>
+        </TouchableOpacity>{" "}
       </Text>
       <View className="flex flex-row gap-x-2 items-center justify-center w-full">
         <TouchableOpacity

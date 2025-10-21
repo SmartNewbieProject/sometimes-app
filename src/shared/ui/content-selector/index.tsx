@@ -5,13 +5,13 @@ import { TouchableOpacity, View } from "react-native";
 import { Text } from "../text";
 
 export const contentSelector = cva(
-  "rounded-[20px] relative overflow-hidden border-2",
+  "rounded-[20px] relative overflow-hidden border-2 ",
   {
     variants: {
       size: {
-        sm: "w-[120px] h-[120px]",
+        sm: "w-[105px] h-[105px]",
         md: "w-[160px] h-[160px]",
-        lg: "w-[200px] h-[200px]",
+        lg: "w-[220px] h-[220px]",
       },
     },
     defaultVariants: {
@@ -41,8 +41,8 @@ export function ContentSelector({
 
   renderContent,
   renderPlaceholder,
-  actionLabel = "선택",
-  activeColor = "primaryPurple",
+  actionLabel = undefined,
+  activeColor = "#7A4AE2",
   inactiveColor = "#E2D5FF",
 }: ContentSelectorProps) {
   return (
@@ -50,20 +50,28 @@ export function ContentSelector({
       <View
         className={cn(
           contentSelector({ size }),
-          value ? `border-${activeColor}` : `border-[${inactiveColor}]`,
+
           className
         )}
+        style={{
+          borderColor: value ? activeColor : inactiveColor,
+          borderWidth: 1,
+        }}
       >
-        <View
-          className={cn(
-            "absolute top-0 right-0 z-10 px-2.5 py-1 rounded-bl-lg text-white",
-            value ? `bg-${activeColor}` : `bg-[${inactiveColor}]`
-          )}
-        >
-          <Text size="sm" textColor="white">
-            {actionLabel}
-          </Text>
-        </View>
+        {!!actionLabel && (
+          <View
+            className={cn(
+              "absolute top-0  right-0 z-10 px-2.5 py-1 rounded-bl-lg  text-white"
+            )}
+            style={{
+              backgroundColor: value ? activeColor : inactiveColor,
+            }}
+          >
+            <Text size="sm" textColor="white">
+              {actionLabel}
+            </Text>
+          </View>
+        )}
 
         {value && renderContent ? renderContent(value) : null}
 

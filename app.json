@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "1.2.6",
+    "version": "2.9.0",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -11,6 +11,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
+      "entitlements": {
+        "com.apple.developer.applesignin": [
+          "Default"
+        ]
+      },
+      "googleServicesFile": "./GoogleService-Info.plist",
       "capabilities": [
         "push-notifications",
         "sign-in-with-apple",
@@ -105,17 +111,21 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon-logo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/android-adaptive-icon.png",
+        "backgroundColor": "#8B7BFF"
       },
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.smartnewb.sometimes",
+      "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.INTERNET",
-        "android.permission.ACCESS_NETWORK_STATE"
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK"
       ]
     },
     "web": {
@@ -137,23 +147,66 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#FFFFFF",
+          "image": "./assets/images/splash-portrait.png",
+          "dark": {
+            "image": "./assets/images/splash-portrait.png",
+            "backgroundColor": "#FFFFFF"
+          },
+          "imageWidth": 400
+        }
+      ],
+      "@react-native-firebase/app",
+      [
+        "@react-native-kakao/core",
+        {
+          "nativeAppKey": "4d405583bea731b1c4fb26eb8a14e894",
+          "android": {
+            "authCodeHandlerActivity": true,
+            "forwardKakaoLinkIntentFilterToMainActivity": true
+          },
+          "ios": {
+            "handleKakaoOpenUrl": true
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          },
+          "android": {
+            "extraMavenRepos": [
+              "https://devrepo.kakao.com/nexus/content/groups/public/"
+            ]
+          }
         }
       ],
       "@portone/react-native-sdk/plugin",
       [
+        "react-native-fbsdk-next",
+        {
+          "appID": "638240219304867",
+          "clientToken": "451c9dd6de265d20d05657eca3fbba9d",
+          "displayName": "SOMETIME",
+          "scheme": "fb638240219304867",
+          "advertiserIDCollectionEnabled": true,
+          "autoLogAppEventsEnabled": true,
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      [
         "expo-camera",
         {
-          "cameraPermission": "카메라 접근을 허용하시겠습니까?"
+          "cameraPermission": "프로필 사진 촬영을 위해 카메라 권한이 필요합니다."
         }
       ],
       [
         "expo-calendar",
         {
-          "calendarPermission": "캘린더 접근을 허용하시겠습니까?"
+          "calendarPermission": "데이트 일정 관리를 위해 캘린더 접근 권한이 필요합니다."
         }
       ],
       [
@@ -162,7 +215,26 @@
           "userTrackingPermission": "썸타임은 사용자에게 맞춤 광고를 위해 추적 권한을 요청합니다."
         }
       ],
-      "expo-web-browser"
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icons/app.png",
+          "color": "#ffffff"
+        }
+      ],
+      "expo-web-browser",
+      "expo-build-properties",
+      "expo-localization",
+      "expo-iap",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.0.21"
+          }
+        }
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

@@ -3,6 +3,7 @@ import MyInfo from "@/src/features/my-info";
 import { useMbti } from "@/src/features/mypage/hooks";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
+import { track } from "@amplitude/analytics-react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -19,13 +20,16 @@ function MbtiSectionScreen() {
 
   useFocusEffect(useCallback(() => updateStep(MyInfoSteps.MBTI), [updateStep]));
   const onUpdateMbti = (mbti: string) => {
-    console.log("mbti", mbti);
     updateForm("mbti", mbti);
   };
 
   const handleNextButton = () => {
     updateMbti(mbti as string);
-    router.navigate("/my-info/personality");
+    track("Profile_Mbti", {
+      mbti: mbti,
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
+    router.push("/my-info/personality");
   };
 
   return (

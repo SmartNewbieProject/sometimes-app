@@ -12,7 +12,7 @@ interface MenuProps {
 
 function Menu({ options, title }: MenuProps) {
   return (
-    <View>
+    <View style={{ backgroundColor: "#fff" }}>
       <View style={styles.titleWrapper}>
         <Text textColor={"black"} weight={"bold"} size="md">
           {title}

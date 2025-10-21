@@ -9,9 +9,10 @@ import Loading from "@/src/features/loading";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import { Header, Show, Text } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
-import { Redirect, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { Linking } from "react-native";
 import { KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
 import {
   SafeAreaView,
@@ -29,12 +30,9 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
   dropdownOpen,
   dropdownItems,
 }) => (
-  <Header.Container className="!pt-[12px] items-center">
+  <Header.Container className=" items-center">
     <Header.LeftContent>
-      <Pressable
-        onPress={() => router.push("/community")}
-        className="p-2 -ml-2"
-      >
+      <Pressable onPress={() => router.back()} className="p-2 -ml-2">
         <ChevronLeftIcon width={24} height={24} />
       </Pressable>
       <Header.LeftButton visible={false} />
@@ -59,6 +57,13 @@ export default function ArticleDetailScreen() {
   } = useBoolean();
   const { my } = useAuth();
 
+  useEffect(() => {
+    if (!my?.id) {
+      Linking.openURL("https://info.some-in-univ.com");
+      router.navigate("/community");
+      return;
+    }
+  }, [my?.id]);
   const isValidArticle = (article: Article | undefined): article is Article => {
     return !!article && !!article.author;
   };
@@ -119,7 +124,7 @@ export default function ArticleDetailScreen() {
 
   return (
     <DefaultLayout
-      style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+      style={{ paddingBottom: insets.bottom }}
       className="flex-1 bg-white "
     >
       <ArticleHeader

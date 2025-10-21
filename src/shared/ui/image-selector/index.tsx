@@ -5,7 +5,9 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import React, { useState } from "react";
-import { Alert, Linking, Pressable, View } from "react-native";
+import { Alert, Linking, Platform, Pressable, View } from "react-native";
+import { useModal } from "../../hooks/use-modal";
+import { convertToJpeg, isHeicBase64 } from "../../utils/image";
 import { ContentSelector, type contentSelector } from "../content-selector";
 import { Text } from "../text";
 
@@ -20,7 +22,6 @@ export interface ImageSelectorProps
 // Static method for rendering an image
 export function renderImage(value: string | null, isPlaceHolder?: boolean) {
   if (!value) return null;
-  console.log(value, "value");
   return (
     <Image
       source={isPlaceHolder ? value : { uri: value }}
@@ -53,13 +54,13 @@ export function ImageSelector({
   onChange,
   size,
   className,
-  actionLabel = "선택",
+  actionLabel = undefined,
 }: ImageSelectorProps) {
   const [isImageModal, setImageModal] = useState(false);
   const handlePress = async () => {
     setImageModal(true);
   };
-
+  const { showErrorModal } = useModal();
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -77,9 +78,18 @@ export function ImageSelector({
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
-    console.log("image result", result);
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      const pickedUri = result.assets[0].uri;
+      if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
+        showErrorModal(
+          "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+          "announcement"
+        );
+        setImageModal(false);
+        return null;
+      }
+      const jpegUri = await convertToJpeg(pickedUri);
+      onChange(jpegUri);
     }
     setImageModal(false);
     return null;
@@ -102,14 +112,23 @@ export function ImageSelector({
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
-    console.log("camera result", result);
     status = (await MediaLibrary.requestPermissionsAsync()).status;
     if (status === "granted" && result.assets?.[0].uri) {
       MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
     }
 
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      const pickedUri = result.assets[0].uri;
+      if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
+        showErrorModal(
+          "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+          "announcement"
+        );
+        setImageModal(false);
+        return null;
+      }
+      const jpegUri = await convertToJpeg(pickedUri);
+      onChange(jpegUri);
     }
     setImageModal(false);
     return null;

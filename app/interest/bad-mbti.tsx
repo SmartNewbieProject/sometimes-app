@@ -4,6 +4,7 @@ import Layout from "@/src/features/layout";
 import { useMbti } from "@/src/features/mypage/hooks";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
+import { track } from "@amplitude/analytics-react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -32,6 +33,11 @@ function BadMbti() {
     return "다음으로";
   })();
 
+  const onNext = () => {
+    track("Interest_hateMbti", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    router.push("/interest/personality");
+  };
+
   return (
     <Layout.Default>
       <PalePurpleGradient />
@@ -57,7 +63,7 @@ function BadMbti() {
           content={{
             next: nextMessage,
           }}
-          onClickNext={() => router.navigate("/interest/personality")}
+          onClickNext={onNext}
           onClickPrevious={() => router.navigate("/interest/like-mbti")}
         />
       </View>

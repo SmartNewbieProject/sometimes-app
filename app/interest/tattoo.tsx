@@ -7,6 +7,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { Selector } from "@/src/widgets/selector";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -62,10 +63,6 @@ export default function TattooSelectionScreen() {
   } = usePreferenceOptionsQuery();
   const { showErrorModal } = useModal();
 
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.TATTOO)
-  );
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
     preferencesArray[0];
@@ -75,8 +72,11 @@ export default function TattooSelectionScreen() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    updateForm("tattoo", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!tattoo && preferences.options[currentIndex]) {
+      updateForm("tattoo", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, tattoo]);
   const onChangeTattoo = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("tattoo", preferences.options[value]);
@@ -87,13 +87,15 @@ export default function TattooSelectionScreen() {
     updateForm("tattoo", preferences.options[currentIndex]);
     await tryCatch(
       async () => {
-        const validation = Object.values(form).every((v) => v !== null);
+        const validation = Object.entries(form)
+          .filter(([key]) => key !== "goodMbti" && key !== "badMbti")
+          .every(([_, value]) => value !== null);
         if (!validation) throw new Error("비어있는 양식이 존재합니다.");
         await savePreferences({
           age: form.age as string,
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           tattoo: preferences.options[currentIndex].id,
           militaryPreference: form.militaryPreference?.id ?? "",
           goodMbti: form.goodMbti as string,
@@ -101,6 +103,9 @@ export default function TattooSelectionScreen() {
         });
         await queryClient.invalidateQueries({
           queryKey: ["check-preference-fill"],
+        });
+        track("Interest_Tattoo", {
+          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
         });
         router.navigate("/interest/done");
         setFormSubmitLoading(false);
@@ -113,8 +118,9 @@ export default function TattooSelectionScreen() {
   };
 
   const handleNextButton = () => {
+    track("Interest_Tattoo", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     updateForm("tattoo", preferences.options[currentIndex]);
-    router.navigate("/interest/military");
+    router.push("/interest/military");
   };
 
   useFocusEffect(

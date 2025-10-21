@@ -38,12 +38,35 @@ function InterestSection() {
     !form.personality ||
     form.personality.length === 0
   );
-  console.log("check point", profileDetails);
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (profileDetails?.preferences) {
       const preferences = profileDetails.preferences;
       const additionalPreferences = profileDetails.additionalPreferences;
+      const drinking = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.DRINKING
+      )?.selectedOptions[0];
+      const militaryPreference = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
+      )?.selectedOptions[0];
+      const smoking = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.SMOKING
+      )?.selectedOptions[0];
+      const tattoo = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.TATTOO
+      )?.selectedOptions[0];
+      if (drinking) {
+        updateForm("drinking", drinking);
+      }
+      if (militaryPreference && profileDetails.gender === "FEMALE") {
+        updateForm("militaryPreference", militaryPreference);
+      }
+      if (smoking) {
+        updateForm("smoking", smoking);
+      }
+      if (tattoo) {
+        updateForm("tattoo", tattoo);
+      }
       updateForm(
         "drinking",
         preferences?.find((item) => item.typeName === PreferenceKeys.DRINKING)
@@ -57,29 +80,11 @@ function InterestSection() {
       updateForm("goodMbti", additionalPreferences?.goodMbti);
       updateForm("badMbti", additionalPreferences?.badMbti);
 
-      if (profileDetails.gender === "MALE") {
-        updateForm(
-          "militaryPreference",
-          preferences?.find(
-            (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
-          )?.selectedOptions[0]
-        );
-      }
       updateForm(
         "personality",
-        preferences?.find(
-          (item) => item.typeName === PreferenceKeys.PERSONALITY
-        )?.selectedOptions[0].id
-      );
-      updateForm(
-        "smoking",
-        preferences?.find((item) => item.typeName === PreferenceKeys.SMOKING)
-          ?.selectedOptions[0]
-      );
-      updateForm(
-        "tattoo",
-        preferences?.find((item) => item.typeName === PreferenceKeys.TATTOO)
-          ?.selectedOptions[0]
+        preferences
+          ?.find((item) => item.typeName === PreferenceKeys.PERSONALITY)
+          ?.selectedOptions.map((item) => item.id) as string[]
       );
     }
   }, [JSON.stringify(profileDetails), updateForm]);
@@ -88,18 +93,21 @@ function InterestSection() {
     setFormSubmitLoading(true);
     await tryCatch(
       async () => {
-        const validation = Object.values(form).every((v) => v !== null);
+        const validation = Object.entries(form)
+          .filter(([key]) => key !== "goodMbti" && key !== "badMbti")
+          .every(([_, value]) => value !== null);
         if (!validation) throw new Error("비어있는 양식이 존재합니다.");
         await savePreferences({
           age: form.age as string,
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           tattoo: form.tattoo?.id as string,
           militaryPreference: form.militaryPreference?.id ?? "",
-          goodMbti: form.goodMbti as string,
-          badMbti: form.badMbti as string,
+          goodMbti: form.goodMbti ?? null,
+          badMbti: form.badMbti ?? null,
         });
+
         await queryClient.invalidateQueries({
           queryKey: ["check-preference-fill"],
         });
@@ -113,6 +121,7 @@ function InterestSection() {
         setFormSubmitLoading(false);
       },
       ({ error }) => {
+        console.log("error", error);
         showErrorModal(error, "error");
         setFormSubmitLoading(false);
       }

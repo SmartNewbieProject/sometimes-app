@@ -33,12 +33,6 @@ export default function MilitarySelectionScreen() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
@@ -48,11 +42,13 @@ export default function MilitarySelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  console.log(militaryPreference, "mili");
 
   useEffect(() => {
-    updateForm("militaryPreference", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!militaryPreference && preferences.options[currentIndex]) {
+      updateForm("militaryPreference", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, militaryPreference]);
   useFocusEffect(
     useCallback(
       () => useInterestStep.getState().updateStep(InterestSteps.MILITARY),
@@ -65,14 +61,16 @@ export default function MilitarySelectionScreen() {
     updateForm("militaryPreference", preferences?.options[currentIndex]);
     await tryCatch(
       async () => {
-        const validation = Object.values(form).every((v) => v !== null);
+        const validation = Object.entries(form)
+          .filter(([key]) => key !== "goodMbti" && key !== "badMbti")
+          .every(([_, value]) => value !== null);
         if (!validation) throw new Error("비어있는 양식이 존재합니다.");
         await savePreferences({
           age: form.age as string,
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
           tattoo: form.tattoo?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           militaryPreference: preferences?.options[currentIndex]?.id ?? "",
           goodMbti: form.goodMbti as string,
           badMbti: form.badMbti as string,

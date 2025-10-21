@@ -89,7 +89,9 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
+
     lineHeight: 22,
   },
   chipSelector: {

@@ -4,6 +4,7 @@ import {
   MyActivityMenu,
   Notice,
   Profile,
+  NotificationMenu,
 } from "@/src/features/mypage/ui";
 import {
   BottomNavigation,
@@ -26,18 +27,21 @@ import {
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useProfileReviewRedirect } from "@/src/features/mypage/hooks/use-img-edit-status";
+
 export default function MyScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  useProfileReviewRedirect();
+
   return (
     <Layout.Default
       style={{
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom,
         backgroundColor: "#fff",
       }}
     >
-      <Header.Container className="items-center !pt-[21px] ">
+      <Header.Container className="items-center ">
         <Header.LeftContent>
           <Header.LeftButton visible={false} />
         </Header.LeftContent>
@@ -67,6 +71,7 @@ export default function MyScreen() {
 
         <View style={styles.menuContainer}>
           <MatchingMenu />
+          <NotificationMenu />
           <MyActivityMenu />
         </View>
       </ScrollView>

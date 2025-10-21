@@ -1,31 +1,69 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
+import { Slot, router, useLocalSearchParams } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
+import {
+  type NotificationData,
+  handleNotificationTap,
+} from "@/src/shared/libs/notifications";
+import { initializeKakaoSDK } from "@react-native-kakao/core";
+import * as Notifications from "expo-notifications";
 
+import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
+import LoggerContainer from "@/src/features/logger/ui/logger-container";
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
-import ProfileDrinking from "@/src/features/profile-edit/ui/profile/profile-drinking";
 import { VersionUpdateChecker } from "@/src/features/version-update";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
-import { useColorScheme } from "@/src/shared/hooks/use-color-schema";
 import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
+import * as amplitude from "@amplitude/analytics-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "@/src/shared/ui/toast";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 
-SplashScreen.preventAutoHideAsync();
+if (Platform.OS !== "web") {
+  SplashScreen.preventAutoHideAsync()
+    .then(() => console.log("[Splash] prevent OK"))
+    .catch((e) => console.log("[Splash] prevent ERR", e));
+}
+
+
+
+
+const MIN_SPLASH_MS = 2000;
+const START_AT = Date.now();
+amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_KEY as string);
 
 export default function RootLayout() {
   const { request: requestAtt } = useAtt();
-  const colorScheme = useColorScheme();
+  const notificationListener = useRef<{ remove(): void } | null>(null);
+  const responseListener = useRef<{ remove(): void } | null>(null);
+  const processedNotificationIds = useRef<Set<string>>(new Set());
+  const [coldStartProcessed, setColdStartProcessed] = useState(false);
+useEffect(() => {
+  const initKakao = async () => {
+    try {
+      await initializeKakaoSDK("4d405583bea731b1c4fb26eb8a14e894", {
+        web: {
+          javascriptKey: "2356db85eb35f5f941d0d66178e16b4e",
+          restApiKey: "228e892bfc0e42e824d592d92f52e72e",
+        },
+      });
+    } catch (error) {
+      console.error("Kakao SDK 초기화 실패:", error);
+    }
+  };
+
+  initKakao();
+}, []);
+  
+
+  
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
@@ -38,43 +76,134 @@ export default function RootLayout() {
     "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
     "Rubik-Light": require("../assets/fonts/Rubik-Light.ttf"),
     "Rubik-SemiBold": require("../assets/fonts/Rubik-SemiBold.ttf"),
+    "Gmarket-Sans-Medium": require("../assets/fonts/GmarketSansTTFMedium.ttf"),
+    "Gmarket-Sans-Bold": require("../assets/fonts/GmarketSansTTFBold.ttf"),
+    "Gmarket-Sans-Light": require("../assets/fonts/GmarketSansTTFLight.ttf"),
+    StyleScript: require("../assets/fonts/StyleScript-Regular.ttf"),
   });
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    //폰트가 로드되지 않았다면 아무것도 하지 않음
+    if (!loaded) {
+      return;
     }
+
+    if (Platform.OS === "web") {
+      console.log("[Splash] web platform -> no native splash");
+      return;
+    }
+
+    const hideSplashScreen = async () => {
+      const elapsed = Date.now() - START_AT;
+      const remain = Math.max(0, MIN_SPLASH_MS - elapsed);
+      console.log("[Splash] elapsed:", elapsed, "remain:", remain);
+
+      await new Promise((resolve) => setTimeout(resolve, remain));
+      await SplashScreen.hideAsync().catch((e) =>
+        console.log("[Splash] hide ERR", e)
+      );
+    };
+
+    hideSplashScreen();
   }, [loaded]);
 
   useEffect(() => {
     requestAtt();
-  }, []);
+  }, [requestAtt]);
+
+  const isValidNotificationData = useCallback(
+    (data: unknown): data is NotificationData => {
+      if (!data || typeof data !== "object") return false;
+
+      const obj = data as Record<string, unknown>;
+      const validTypes = [
+        "comment",
+        "like",
+        "general",
+        "match_like",
+        "match_connection",
+        "reply",
+        "comment_like",
+      ];
+
+      return typeof obj.type === "string" && validTypes.includes(obj.type);
+    },
+    []
+  );
 
   useEffect(() => {
-    // Hotjar는 웹에서만 초기화 (Android 빌드 문제 방지)
-    if (Platform.OS === "web") {
-      try {
-        const script = document.createElement("script");
-        script.innerHTML = `
-          (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:6430952,hjsv:6};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-            a.appendChild(r);
-          })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-        `;
-        document.head.appendChild(script);
+    if (!loaded) return;
 
-        if (__DEV__) {
-          console.log("Hotjar script loaded in development mode.");
+    const handleColdStartNotification = () => {
+      try {
+        const lastNotificationResponse =
+          Notifications.getLastNotificationResponse();
+
+        if (lastNotificationResponse?.notification) {
+          const notificationId =
+            lastNotificationResponse.notification.request.identifier;
+          const rawData =
+            lastNotificationResponse.notification.request.content.data;
+
+          if (!processedNotificationIds.current.has(notificationId)) {
+            if (isValidNotificationData(rawData)) {
+              processedNotificationIds.current.add(notificationId);
+              Notifications.clearLastNotificationResponse();
+
+              setTimeout(() => {
+                handleNotificationTap(rawData as NotificationData, router);
+              }, 500);
+            }
+          }
         }
       } catch (error) {
-        console.warn("Failed to load Hotjar:", error);
+        console.error("콜드 스타트 알림 처리 중 오류:", error);
+      } finally {
+        setColdStartProcessed(true);
       }
-    }
-  }, []);
+    };
+
+    handleColdStartNotification();
+  }, [loaded, isValidNotificationData]);
+
+  useEffect(() => {
+    if (!loaded || !coldStartProcessed) return;
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("알림 수신:", notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const notificationId = response.notification.request.identifier;
+        const rawData = response.notification.request.content.data;
+
+        if (processedNotificationIds.current.has(notificationId)) {
+          return;
+        }
+
+        try {
+          if (isValidNotificationData(rawData)) {
+            processedNotificationIds.current.add(notificationId);
+            handleNotificationTap(rawData as NotificationData, router);
+          } else {
+            router.push("/home");
+          }
+        } catch (error) {
+          router.push("/home");
+        }
+      });
+
+    return () => {
+      if (notificationListener.current) {
+        notificationListener.current.remove();
+      }
+      if (responseListener.current) {
+        responseListener.current.remove();
+      }
+    };
+  }, [loaded, coldStartProcessed, isValidNotificationData]);
 
   if (!loaded) {
     return null;
@@ -82,31 +211,32 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryProvider>
-        <ModalProvider>
-          <PortoneProvider>
-            <View
-              className={cn(
-                "flex-1 font-extralight",
-                Platform.OS === "web" && "max-w-[468px] w-full self-center"
-              )}
-            >
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-              >
-                <AnalyticsProvider>
-                  <RouteTracker>
-                    <>
-                      <Slot />
-                      <VersionUpdateChecker />
-                    </>
-                  </RouteTracker>
-                </AnalyticsProvider>
-              </ThemeProvider>
-            </View>
-          </PortoneProvider>
-        </ModalProvider>
-      </QueryProvider>
+      <LoggerContainer>
+        <QueryProvider>
+          <ModalProvider>
+            <GlobalChatProvider>
+              <PortoneProvider>
+                <View
+                  className={cn(
+                    "flex-1 font-extralight",
+                    Platform.OS === "web" && "max-w-[468px] w-full self-center"
+                  )}
+                >
+                  <AnalyticsProvider>
+                    <RouteTracker>
+                      <>
+                        <Slot />
+                        <VersionUpdateChecker />
+                        <Toast />
+                      </>
+                    </RouteTracker>
+                  </AnalyticsProvider>
+                </View>
+              </PortoneProvider>
+            </GlobalChatProvider>
+          </ModalProvider>
+        </QueryProvider>
+      </LoggerContainer>
     </GestureHandlerRootView>
   );
 }

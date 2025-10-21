@@ -3,13 +3,16 @@ import Layout from "@/src/features/layout";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
+import { track } from "@amplitude/analytics-react-native";
 import SmallTitle from "@assets/icons/small-title.svg";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function InterestIntroScreen() {
+export default function MyInfoIntroScreen() {
   const { showModal } = useModal();
   const { profileDetails } = useAuth();
+  const insets = useSafeAreaInsets();
   const showPreviousModal = () =>
     showModal({
       customTitle: (
@@ -41,42 +44,62 @@ export default function InterestIntroScreen() {
       },
     });
 
+  const onNext = () => {
+    track("Profile_Intro", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    router.push("/my-info/interest");
+  };
+
   return (
     <Layout.Default>
       <View style={styles.contentContainer}>
         <PalePurpleGradient />
-        <View style={styles.titleLogoWrapper}>
+        <View style={[styles.titleLogoWrapper, { paddingTop: insets.top }]}>
           <IconWrapper width={128} style={styles.titleLogoIcon}>
             <SmallTitle />
           </IconWrapper>
         </View>
         <View style={styles.textWrapper}>
-          <Image
-            source={require("@assets/images/interest.png")}
-            style={{ width: 248, height: 323 }}
-          />
+          <View
+            style={{
+              width: 280,
+              height: 280,
+              borderRadius: 280,
+              overflow: "hidden",
+              marginBottom: 50,
 
-          <View style={styles.titleWrapper}>
-            <Text size="lg" textColor="black" weight="semibold">
-              매칭을 위해
-            </Text>
-            <Text size="lg" textColor="black" weight="semibold">
-              당신의 정보를 꼭 알려주세요!
-            </Text>
+              backgroundColor: "#7A4AE2",
+              position: "relative",
+            }}
+          >
+            <Image
+              source={require("@assets/images/info-miho.png")}
+              style={{ width: 255, height: 259, top: 20, position: "absolute" }}
+            />
           </View>
 
-          <View style={styles.descriptionWrapper}>
-            <Text size="sm" textColor="pale-purple" weight="light">
-              당신의 정보를 정확하게 입력할수록
-            </Text>
-            <Text size="sm" textColor="pale-purple" weight="light">
-              매칭 성공 확률이 높아져요
-            </Text>
+          <View>
+            <View style={styles.titleWrapper}>
+              <Text size="lg" textColor="black" weight="semibold">
+                매칭을 위해
+              </Text>
+              <Text size="lg" textColor="black" weight="semibold">
+                이상형 정보를 꼭 알려주세요!
+              </Text>
+            </View>
+
+            <View style={styles.descriptionWrapper}>
+              <Text size="sm" textColor="pale-purple" weight="light">
+                이상형 정보를 정확하게 입력할수록
+              </Text>
+              <Text size="sm" textColor="pale-purple" weight="light">
+                매칭 성공 확률이 높아져요
+              </Text>
+            </View>
           </View>
         </View>
 
         <Layout.TwoButtons
-          onClickNext={() => router.navigate("/my-info/interest")}
+          onClickNext={onNext}
           disabledNext={false}
           onClickPrevious={showPreviousModal}
           content={{
@@ -114,6 +137,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   descriptionWrapper: {
-    marginTop: 50.53,
+    marginTop: 40,
   },
 });

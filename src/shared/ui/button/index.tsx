@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import type React from "react";
 import type { ReactNode } from "react";
-import { Platform, TouchableOpacity } from "react-native";
+import { Platform, Pressable, TouchableOpacity } from "react-native";
 import type { ViewStyle } from "react-native";
 import { cn } from "../../libs/cn";
 import { Text } from "../text";
@@ -31,10 +31,7 @@ const buttonStyles = cva(
         "flex-1": "flex-1",
         "flex-0": "flex-0",
       },
-      disabled: {
-        true: "opacity-50",
-        false: "",
-      },
+
       width: {
         full: "w-full",
         fit: "w-fit",
@@ -48,7 +45,7 @@ const buttonStyles = cva(
     defaultVariants: {
       variant: "primary",
       size: "md",
-      disabled: false,
+
       rounded: "lg",
     },
   }
@@ -59,8 +56,9 @@ export type ButtonProps = VariantProps<typeof buttonStyles> & {
   onPress?: () => void;
   prefix?: ReactNode;
   className?: string;
-  textColor?: "white" | "purple" | "black";
+  textColor?: "white" | "purple" | "black" | "gray" | "dark";
   styles?: ViewStyle;
+  disabled?: boolean;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -95,11 +93,10 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <TouchableOpacity
-      className={cn(buttonStyles({ variant, size, disabled, flex }), className)}
+    <Pressable
+      className={cn(buttonStyles({ variant, size, flex }), className)}
       onPress={press}
-      activeOpacity={1}
-      style={styles}
+      style={[styles, disabled && { opacity: 0.5 }]}
     >
       {prefix}
       <Text
@@ -110,6 +107,6 @@ export const Button: React.FC<ButtonProps> = ({
       >
         {children}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };

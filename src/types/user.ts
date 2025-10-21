@@ -29,14 +29,19 @@ export interface UserProfile {
 	name: string;
 	age: number;
 	mbti: string;
+	characteristics: PreferenceTypeGroup[];
 	additionalPreferences: {
 		[key: string]: string;
 	};
+	connectionId?: string;
+	isLikeSended?: number;
 	gender: string;
 	profileImages: ProfileImage[];
 	instagramId: string;
 	universityDetails: UniversityDetail;
 	preferences: PreferenceTypeGroup[];
+	deletedAt: string | null;
+	matchLikeId?: string | null;
 }
 
 export interface SimpleProfile {

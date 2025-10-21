@@ -27,7 +27,7 @@ const { hooks } = MyInfo;
 const { useMyInfoForm } = hooks;
 
 function Profile() {
-  const { updateForm, clear: _, ...form } = useMyInfoForm();
+  const { updateForm, ...form } = useMyInfoForm();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { isLoading, updateMbti, isUpdating } = useMbti();
@@ -47,16 +47,34 @@ function Profile() {
     form.personality.length === 0 ||
     form.interestIds.length === 0
   );
-  console.log("check point", profileDetails, preferenceSelf);
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (profileDetails?.id && preferenceSelf) {
-      updateForm(
-        "drinking",
-        preferenceSelf?.find(
-          (item) => item.typeName === PreferenceKeys.DRINKING
-        )?.selectedOptions[0]
-      );
+      const drinking = preferenceSelf?.find(
+        (item) => item.typeName === PreferenceKeys.DRINKING
+      )?.selectedOptions[0];
+
+      const militaryStatus = preferenceSelf?.find(
+        (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
+      )?.selectedOptions[0];
+      const smoking = preferenceSelf?.find(
+        (item) => item.typeName === PreferenceKeys.SMOKING
+      )?.selectedOptions[0];
+      const tattoo = preferenceSelf?.find(
+        (item) => item.typeName === PreferenceKeys.TATTOO
+      )?.selectedOptions[0];
+      if (drinking) {
+        updateForm("drinking", drinking);
+      }
+      if (militaryStatus && profileDetails.gender === "MALE") {
+        updateForm("militaryStatus", militaryStatus);
+      }
+      if (smoking) {
+        updateForm("smoking", smoking);
+      }
+      if (tattoo) {
+        updateForm("tattoo", tattoo);
+      }
       updateForm("mbti", profileDetails.mbti);
       updateForm(
         "interestIds",
@@ -70,29 +88,12 @@ function Profile() {
           ?.find((item) => item.typeName === PreferenceKeys.DATING_STYLE)
           ?.selectedOptions?.map((item) => item.id) as string[]
       );
-      if (profileDetails.gender === "MALE") {
-        updateForm(
-          "militaryStatus",
-          preferenceSelf?.find(
-            (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
-          )?.selectedOptions[0]
-        );
-      }
+
       updateForm(
         "personality",
-        preferenceSelf?.find(
-          (item) => item.typeName === PreferenceKeys.PERSONALITY
-        )?.selectedOptions[0].id
-      );
-      updateForm(
-        "smoking",
-        preferenceSelf?.find((item) => item.typeName === PreferenceKeys.SMOKING)
-          ?.selectedOptions[0]
-      );
-      updateForm(
-        "tattoo",
-        preferenceSelf?.find((item) => item.typeName === PreferenceKeys.TATTOO)
-          ?.selectedOptions[0]
+        preferenceSelf
+          ?.find((item) => item.typeName === PreferenceKeys.PERSONALITY)
+          ?.selectedOptions?.map((item) => item.id) as string[]
       );
     }
   }, [preferenceSelf?.length, JSON.stringify(profileDetails), updateForm]);
@@ -110,7 +111,7 @@ function Profile() {
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
           tattoo: form.tattoo?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           militaryStatus: form.militaryStatus?.id as string,
 
           mbti: form.mbti as string,

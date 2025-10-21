@@ -3,7 +3,7 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
-import Interest from "@features/interest";
+import { track } from "@amplitude/analytics-react-native";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
@@ -27,27 +27,36 @@ export default function PersonalitySelectionScreen() {
     isLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.PERSONALITY
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.PERSONALITY
     ) ?? preferencesArray[0];
 
-  const onChangeOption = (values: string) => {
-    updateForm("personality", values);
+  const onChangeOption = (values: string[]) => {
+    if (values.length > 3) {
+      return;
+    }
+
+    if (values.length === 0) {
+      updateForm("personality", undefined);
+    } else {
+      updateForm("personality", values);
+    }
   };
 
   const nextMessage = (() => {
     if (!personality) {
-      return `${1} 개만 더!`;
+      return "최대 3개 선택 가능";
     }
     return "다음으로";
   })();
+
+  const onNext = () => {
+    track("Profile_personality", {
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
+    router.push("/my-info/dating-style");
+  };
 
   useFocusEffect(
     useCallback(() => updateStep(MyInfoSteps.PERSONALITY), [updateStep])
@@ -69,7 +78,16 @@ export default function PersonalitySelectionScreen() {
           </Text>
         </View>
 
-        <View style={styles.bar} />
+        <View style={styles.indicatorContainer}>
+          <StepIndicator
+            length={3}
+            step={personality?.length ?? 0}
+            dotGap={4}
+            dotSize={16}
+            className="self-end"
+          />
+          <Divider.Horizontal />
+        </View>
 
         <View style={styles.chipSelector}>
           <Loading.Lottie
@@ -85,7 +103,7 @@ export default function PersonalitySelectionScreen() {
                   imageUrl: option?.imageUrl,
                 })) || []
               }
-              multiple={false}
+              multiple={true}
               onChange={onChangeOption}
               className="w-full"
             />
@@ -97,7 +115,7 @@ export default function PersonalitySelectionScreen() {
         content={{
           next: nextMessage,
         }}
-        onClickNext={() => router.navigate("/my-info/dating-style")}
+        onClickNext={onNext}
         onClickPrevious={() => router.navigate("/my-info/mbti")}
       />
     </Layout.Default>

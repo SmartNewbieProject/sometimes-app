@@ -23,10 +23,6 @@ function InterestSmoking() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.SMOKING)
-  );
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.SMOKING) ??
     preferencesArray[0];
@@ -38,8 +34,11 @@ function InterestSmoking() {
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
 
   useEffect(() => {
-    updateForm("smoking", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!smoking && preferences.options[currentIndex]) {
+      updateForm("smoking", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, smoking]);
   const onChangeSmoking = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("smoking", preferences.options[value]);
@@ -86,6 +85,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 22,
   },

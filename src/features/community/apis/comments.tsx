@@ -8,6 +8,7 @@ type CommentParams = {
 type PostCommentBody = {
   content: string;
   anonymous: boolean;
+  parentId?: string;
 }
 
 type PatchCommentBody = {
@@ -34,12 +35,17 @@ export const deleteComments = async (articleId: string, commentId: string): Prom
   return axiosClient.delete(`/articles/${articleId}/comments/${commentId}`);
 };
 
+export const patchCommentLike = async (articleId: string, commentId: string): Promise<Comment> => {
+  return axiosClient.patch(`/articles/${articleId}/comments/${commentId}/like`);
+};
+
 
 type Service = {
   getComments: (params: CommentParams) => Promise<Comment[]>;
   postComments: (articleId: string, body: PostCommentBody) => Promise<Comment>;
   patchComments: (articleId: string, commentId: string, body: PatchCommentBody) => Promise<Comment>;
   deleteComments: (articleId: string, commentId: string) => Promise<Comment>;
+  patchCommentLike: (articleId: string, commentId: string) => Promise<Comment>;
 }
 
 const apis: Service = {
@@ -47,6 +53,7 @@ const apis: Service = {
   postComments,
   patchComments,
   deleteComments,
+  patchCommentLike,
 };
 
 export default apis;

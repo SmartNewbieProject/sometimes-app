@@ -4,12 +4,14 @@ import { usePreferenceOptionsQuery } from "@/src/features/interest/queries";
 import type { AgeOptionData } from "@/src/features/interest/types";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
+import { environmentStrategy, platform } from "@/src/shared/libs";
 import { PalePurpleGradient } from "@/src/shared/ui";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import { Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Platform, StyleSheet, View } from "react-native";
 
 const { ui, hooks, services } = Interest;
 const { AgeSelector } = ui;
@@ -29,15 +31,11 @@ export default function AgeSelectionScreen() {
     ],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE)
-  );
+
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === PreferenceKeys.AGE) ??
     preferencesArray[0];
 
-  console.log("preferneces", preferences);
   useEffect(() => {
     if (preferences.typeName === "") {
       return;
@@ -66,6 +64,11 @@ export default function AgeSelectionScreen() {
     useCallback(() => updateStep(InterestSteps.AGE), [updateStep])
   );
 
+  const onNext = () => {
+    track("Interest_Age", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    router.push("/interest/like-mbti");
+  };
+
   if (optionsLoading) {
     return <Loading.Page title="나이대 선호도를 불러오고 있어요" />;
   }
@@ -87,7 +90,7 @@ export default function AgeSelectionScreen() {
           </Text>
         </View>
         <View style={styles.bar} />
-        <View style={styles.ageContainer}>
+        <View style={[styles.ageContainer]}>
           <AgeSelector
             options={options}
             value={age}
@@ -97,8 +100,10 @@ export default function AgeSelectionScreen() {
 
         <Layout.TwoButtons
           disabledNext={!age}
-          onClickNext={() => router.navigate("/interest/like-mbti")}
-          onClickPrevious={() => router.navigate("/interest")}
+          onClickNext={onNext}
+          onClickPrevious={() => {
+            router.navigate("/interest");
+          }}
         />
       </View>
     </Layout.Default>

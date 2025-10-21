@@ -26,6 +26,9 @@ export enum ImageResources {
   PURPLE_ARROW_RIGHT = `${S3_BASE_URL}/purple-arrow-right.png`,
   REPORT = `${S3_BASE_URL}/report.png`,
   REMATCHING_TICKET_BANNER = `${S3_BASE_URL}/payment-bg.png`,
+  GEM_STORE_BANNER = `${S3_BASE_URL}/gem-store-preview.png`,
+  GEM = `${S3_BASE_URL}/gem.png`,
+  WHITE_HEART = `${S3_BASE_URL}/white_heart.png`,
 
   DATING_STYLE = `${S3_BASE_URL}/dating-style.png`,
   MILITARY = `${S3_BASE_URL}/military.png`,
@@ -43,6 +46,9 @@ export enum ImageResources {
   SWITCH_CAMPUS_CARD = `${S3_BASE_URL}/switch_campus_card.png`,
   INITIAL_PARTICIPANT_CARD = `${S3_BASE_URL}/initial_participant_card.png`,
   SWITCH_PARTICIPANT_CARD = `${S3_BASE_URL}/switch_participant_card.png`,
+
+  SALE_MIHO = `${S3_BASE_URL}/miho-with-gem.png`,
+  FIRST_SALE = `${S3_BASE_URL}/first_sale.png`,
 }
 
 const imageUtils = {

@@ -18,6 +18,8 @@ interface InputFormProps {
   form: UseFormReturn<CommentForm>;
   handleSubmitUpdate: () => void;
   handleSubmit: (data: { content: string }) => void;
+  replyingToCommentId?: string | null;
+  handleCancelReply?: () => void;
 }
 
 export const InputForm = ({
@@ -30,37 +32,69 @@ export const InputForm = ({
   form,
   handleSubmitUpdate,
   handleSubmit,
+  replyingToCommentId,
+  handleCancelReply,
 }: InputFormProps) => {
   return (
-    <View
-      className={cn([
-        "flex-row flex items-center gap-[5px]",
-        "rounded-[16px] bg-[#F8F4FF] h-[50px] w-full",
-      ])}
-    >
-      <View className="flex-row items-center gap-[5px]">
-        {editingCommentId && <CancelEditButton onCancel={handleCancelEdit} />}
-        {!editingCommentId && (
-          <AnonymousToggle checked={checked} setChecked={setChecked} />
-        )}
-      </View>
-      <View className="flex-1">
-        <CommentInput
-          control={form.control}
-          editingCommentId={editingCommentId}
-          editingContent={editingContent}
-          setEditingContent={setEditingContent}
+    <View>
+      {/* 수정 모드 또는 대댓글 작성 모드 표시 */}
+      {editingCommentId && (
+        <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
+          <Text size="sm" className="text-[#A892D7]">
+            댓글 수정 중...
+          </Text>
+          <TouchableOpacity onPress={handleCancelEdit}>
+            <Text size="sm" className="text-[#A892D7]">
+              취소
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      {!editingCommentId && replyingToCommentId && (
+        <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
+          <Text size="sm" className="text-[#A892D7]">
+            답글 작성 중...
+          </Text>
+          {handleCancelReply && (
+            <TouchableOpacity onPress={handleCancelReply}>
+              <Text size="sm" className="text-[#A892D7]">
+                취소
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+
+      <View
+        className={cn([
+          "flex-row flex items-center gap-[5px]",
+          "rounded-[16px] bg-[#F8F4FF] h-[50px] w-full",
+        ])}
+      >
+        <View className="flex-row items-center gap-[5px]">
+          {editingCommentId && <CancelEditButton onCancel={handleCancelEdit} />}
+          {!editingCommentId && (
+            <AnonymousToggle checked={checked} setChecked={setChecked} />
+          )}
+        </View>
+        <View className="flex-1">
+          <CommentInput
+            control={form.control}
+            editingCommentId={editingCommentId}
+            editingContent={editingContent}
+            setEditingContent={setEditingContent}
+          />
+        </View>
+
+        <SendButton
+          onPress={
+            editingCommentId
+              ? handleSubmitUpdate
+              : form.handleSubmit(handleSubmit)
+          }
+          disabled={!editingContent}
         />
       </View>
-
-      <SendButton
-        onPress={
-          editingCommentId
-            ? handleSubmitUpdate
-            : form.handleSubmit(handleSubmit)
-        }
-        disabled={!editingContent}
-      />
     </View>
   );
 };
@@ -111,10 +145,9 @@ const CommentInput = ({
       "text-sm md:text-md",
       "text-[#A892D7] border-b-0 outline-none",
     ])}
-    placeholder={"댓글을 입력하세요"}
+    placeholder="댓글을 입력하세요"
     onChange={(e) => setEditingContent(e.nativeEvent.text)}
     returnKeyType="send"
-    blurOnSubmit={false}
     multiline={false}
   />
 );

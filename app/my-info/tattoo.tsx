@@ -7,6 +7,7 @@ import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import Tooltip from "@/src/shared/ui/tooltip";
+import { track } from "@amplitude/analytics-react-native";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
@@ -57,10 +58,6 @@ export default function TattooSelectionScreen() {
   } = usePreferenceOptionsQuery();
   const { showErrorModal } = useModal();
 
-  console.log(
-    "result",
-    preferencesArray?.find((item) => item.typeName === Keys.TATTOO)
-  );
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
     preferencesArray[0];
@@ -70,8 +67,11 @@ export default function TattooSelectionScreen() {
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
   useEffect(() => {
-    updateForm("tattoo", preferences.options[currentIndex]);
-  }, [currentIndex, updateForm, preferences]);
+    if (optionsLoading) return;
+    if (!tattoo && preferences.options[currentIndex]) {
+      updateForm("tattoo", preferences.options[currentIndex]);
+    }
+  }, [optionsLoading, preferences.options, currentIndex, tattoo]);
   const onChangeTattoo = (value: number) => {
     if (preferences?.options && preferences.options.length > value) {
       updateForm("tattoo", preferences.options[value]);
@@ -87,7 +87,7 @@ export default function TattooSelectionScreen() {
         await savePreferences({
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
-          personality: form.personality as string,
+          personality: form.personality as string[],
           tattoo: preferences.options[currentIndex].id,
           datingStyleIds: form.datingStyleIds,
           interestIds: form.interestIds,
@@ -96,6 +96,7 @@ export default function TattooSelectionScreen() {
         await queryClient.invalidateQueries({
           queryKey: ["preference-self"],
         });
+        track("Profile_Tattoo", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
         router.navigate("/my-info/done");
         setFormSubmitLoading(false);
       },
@@ -108,8 +109,8 @@ export default function TattooSelectionScreen() {
 
   const handleNextButton = () => {
     updateForm("tattoo", preferences.options[currentIndex]);
-
-    router.navigate("/my-info/military");
+    track("Profile_Tattoo", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    router.push("/my-info/military");
   };
 
   useFocusEffect(

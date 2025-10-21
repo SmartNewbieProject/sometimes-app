@@ -5,6 +5,7 @@ import paymentApis from '../api';
 import { Button, Header } from '@/src/shared/ui';
 import { router } from 'expo-router';
 import { ImageResources } from '@/src/shared/libs/image';
+import { usePortoneStore } from '../hooks/use-portone-store';
 
 
 export interface PortOnePaymentCompleteResult {
@@ -18,6 +19,7 @@ export interface PortOnePaymentErrorResult {
 }
 
 export interface PortOnePaymentProps {
+	payMode: 'rematching' | 'gem',
 	request: any;
 	onComplete?: (result: PortOnePaymentCompleteResult) => void;
 	onError?: (error: unknown) => void;
@@ -52,20 +54,21 @@ export interface PortOnePaymentProps {
  */
 export const PortOnePaymentView = forwardRef(
 	(props: PortOnePaymentProps, ref: ForwardedRef<PortOneController>) => {
-		const { request, onComplete, onError, onCancel, productName } = props;
-
-		console.log({ request });
+		const { request, onComplete, onError, onCancel, productName, payMode } = props;
+		const { eventType } = usePortoneStore();
 
 		const handleComplete = async (complete: PortOnePaymentCompleteResult) => {
 			try {
-				console.log('native complete: ');
-				console.log(complete);
-				console.log(`paymentId: ${complete.paymentId}`);
 				if (complete.txId) {
-					await paymentApis.pay({
-						txId: complete.txId,
-						merchantUid: complete.paymentId,
-					});
+					if (payMode === 'gem') {
+						await paymentApis.payGem({ txId : complete.txId, merchantUid: complete.paymentId, eventType })
+					}
+					if (payMode === 'rematching') {
+						await paymentApis.pay({
+							txId: complete.txId,
+							merchantUid: complete.paymentId,
+						});
+					}
 				}
 				onComplete?.(complete);
 			} catch (error) {
@@ -77,10 +80,6 @@ export const PortOnePaymentView = forwardRef(
 			console.log('실패', error.message);
 			onError?.(error);
 		};
-
-		useEffect(() => {
-
-		}, []);
 
 		return (
 			<SafeAreaView style={{ flex: 1 }}>

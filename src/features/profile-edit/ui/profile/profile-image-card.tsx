@@ -74,8 +74,10 @@ const styles = StyleSheet.create({
   },
   imageTagText: {
     fontSize: 13,
-    fontWeight: 500,
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 15.6,
+    fontWeight: 600,
+
     color: "#fff",
   },
   edit: {
@@ -110,7 +112,9 @@ const styles = StyleSheet.create({
   noneText: {
     color: "#9B94AB",
     fontSize: 13,
+    fontFamily: "Pretendard-Light",
     fontWeight: 300,
+
     lineHeight: 15.6,
   },
 });

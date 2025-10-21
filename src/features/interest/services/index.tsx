@@ -18,13 +18,13 @@ export const phaseCount = Object.keys(InterestSteps).length / 2;
 export type Properties = {
   age: string;
   drinking: string;
-  personality: string;
+  personality: string[];
   // datingStyleIds: string[];
   militaryPreference?: string;
   militaryStatus?: string;
   smoking: string;
-  goodMbti: string;
-  badMbti: string;
+  goodMbti: string | null;
+  badMbti: string | null;
   tattoo: string;
 };
 
@@ -55,7 +55,7 @@ export const savePreferences = async (props: Properties) => {
 
       {
         typeName: "성격 유형",
-        optionIds: [props.personality],
+        optionIds: props.personality,
       },
     ],
   };

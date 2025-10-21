@@ -15,7 +15,6 @@ function InterestGoodMbti() {
   const onClickButton = () => {
     updateForm("goodMbti", null);
   };
-  console.log("mbti22", goodMbti);
 
   return (
     <View style={styles.container}>
@@ -49,6 +48,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 22,
   },

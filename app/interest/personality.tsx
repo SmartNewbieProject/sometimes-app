@@ -1,7 +1,8 @@
 import type { Preferences } from "@/src/features/interest/api";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
-import { ChipSelector } from "@/src/widgets";
+import { ChipSelector, StepIndicator } from "@/src/widgets";
+import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import { PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
@@ -26,31 +27,37 @@ export default function PersonalitySelectionScreen() {
     isLoading,
   } = usePreferenceOptionsQuery();
 
-  console.log(
-    "result",
-    preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.PERSONALITY
-    )
-  );
   const preferences: Preferences =
     preferencesArray?.find(
       (item) => item.typeName === PreferenceKeys.PERSONALITY
     ) ?? preferencesArray[0];
 
-  const onChangeOption = (values: string) => {
-    updateForm("personality", values);
+  const onChangeOption = (values: string[]) => {
+    if (values.length > 3) return;
+
+    if (values.length === 0) {
+      updateForm("personality", undefined);
+    } else {
+      updateForm("personality", values);
+    }
   };
 
   const nextMessage = (() => {
-    if (!personality) {
-      return `${1} 개만 더!`;
-    }
+    if (!personality) return "최대 3개 선택 가능";
     return "다음으로";
   })();
+
+  const onNext = () => {
+    track("Interest_Personality", {
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
+    router.push("/interest/drinking");
+  };
 
   useFocusEffect(
     useCallback(() => updateStep(InterestSteps.PERSONALITY), [updateStep])
   );
+
   return (
     <Layout.Default>
       <PalePurpleGradient />
@@ -59,6 +66,7 @@ export default function PersonalitySelectionScreen() {
           source={require("@assets/images/loved.png")}
           style={{ width: 81, height: 81, marginLeft: 28 }}
         />
+
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
             당신이 원하는
@@ -66,6 +74,17 @@ export default function PersonalitySelectionScreen() {
           <Text weight="semibold" size="20" textColor="black">
             이상형의 성격은 어떤가요?
           </Text>
+        </View>
+
+        <View style={styles.indicatorRow}>
+          <View style={{ flex: 1 }} />
+          <StepIndicator
+            length={3}
+            step={personality?.length ?? 0}
+            dotGap={4}
+            dotSize={16}
+            className="self-end"
+          />
         </View>
 
         <View style={styles.bar} />
@@ -84,19 +103,18 @@ export default function PersonalitySelectionScreen() {
                   imageUrl: option?.imageUrl,
                 })) || []
               }
-              multiple={false}
+              multiple
               onChange={onChangeOption}
               className="w-full"
             />
           </Loading.Lottie>
         </View>
       </View>
+
       <Layout.TwoButtons
         disabledNext={!personality}
-        content={{
-          next: nextMessage,
-        }}
-        onClickNext={() => router.navigate("/interest/drinking")}
+        content={{ next: nextMessage }}
+        onClickNext={onNext}
         onClickPrevious={() => router.navigate("/interest/bad-mbti")}
       />
     </Layout.Default>
@@ -118,15 +136,17 @@ const styles = StyleSheet.create({
   },
   bar: {
     marginHorizontal: 32,
-
     height: 0.5,
     backgroundColor: "#E7E9EC",
     marginTop: 15,
   },
-  indicatorContainer: {
+  indicatorRow: {
     width: "100%",
-    rowGap: 10,
     paddingHorizontal: 32,
+    marginTop: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
   chipSelector: {
     marginTop: 12,
