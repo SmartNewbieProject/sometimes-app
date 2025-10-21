@@ -15,7 +15,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRematchingTickets } from "../queries";
 
 export const Profile = () => {
@@ -168,7 +168,7 @@ export const Profile = () => {
                 right: 15,
               }}
             >
-              <TouchableOpacity onPress={handleProfileEdit}>
+              <Pressable onPress={handleProfileEdit}>
                 <View style={styles.leftRect} />
                 <View style={styles.leftRadius} />
                 <View style={[styles.previousButton]}>
@@ -185,7 +185,7 @@ export const Profile = () => {
                 </View>
                 <View style={styles.rightRect} />
                 <View style={styles.rightRadius} />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>
