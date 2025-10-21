@@ -22,36 +22,50 @@ const CustomSwitch = ({
   disabled = false,
 }: CustomSwitchProps) => {
   const [isOn, setIsOn] = useState(value);
+  const lastExternalValue = useRef(value);
+  
   const initValue = Platform.OS === "web" ? 0 : 3;
   const lastVavlue = Platform.OS === "web" ? 30 : 33;
   const switchLeftValue = useRef(
     new Animated.Value(value ? lastVavlue : initValue)
   ).current;
-  console.log(switchLeftValue, "value");
-  const toggleSwitch = () => {
-    console.log(value, isOn, "check");
-    const newValue = !isOn;
-    if (disabled) {
-      onChange(newValue);
-      return;
-    }
 
+  const toggleSwitch = () => {
+    if (disabled) return;
+    
+    const newValue = !isOn;
+    
     setIsOn(newValue);
-    onChange(newValue);
-    console.log("1", switchLeftValue);
     Animated.timing(switchLeftValue, {
       toValue: newValue ? lastVavlue : initValue,
       duration: 200,
       useNativeDriver: true,
     }).start();
+    
+    onChange(newValue);
   };
+
+  useEffect(() => {
+    if (value !== lastExternalValue.current) {
+      lastExternalValue.current = value;
+      
+      if (value !== isOn) {
+        setIsOn(value);
+        Animated.timing(switchLeftValue, {
+          toValue: value ? lastValue : initValue,
+          duration: 200,
+          useNativeDriver: true,
+        }).start();
+      }
+    }
+  }, [value]);
 
   return (
     <Pressable onPress={toggleSwitch} style={styles.switchContainer}>
       <View
         style={[
           styles.switch,
-          { backgroundColor: isOn ? "#F3EDFF" : "#E5E0F1" }, // 더 흐린 색
+          { backgroundColor: isOn ? "#F3EDFF" : "#E5E0F1" },
         ]}
       >
         <LinearGradient
@@ -59,13 +73,12 @@ const CustomSwitch = ({
           style={styles.fakeInnerShadow}
           pointerEvents="none"
         />
-
         <Animated.View
           style={[
             styles.switchButton,
             {
               transform: [{ translateX: switchLeftValue }],
-              backgroundColor: isOn ? "#7A4AE2" : "#B7A8E7", // 버튼 색도 다운톤으로
+              backgroundColor: isOn ? "#7A4AE2" : "#B7A8E7",
             },
           ]}
         />
@@ -86,7 +99,6 @@ const styles = StyleSheet.create({
     position: "relative",
     padding: 4,
     overflow: "hidden",
-
     flexDirection: "row",
   },
   fakeInnerShadow: {
@@ -107,7 +119,6 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-
     position: "absolute",
     top: 3,
     zIndex: 2,
