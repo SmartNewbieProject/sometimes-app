@@ -77,7 +77,10 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
       },
       {
         onSuccess: () => {
-          form.reset();
+          form.reset({
+            content: "",
+            anonymous: true,
+          });
           setEditingContent("");
           setReplyingToCommentId(null);
           Keyboard.dismiss();
