@@ -19,7 +19,10 @@ function PromotionBanner() {
         <Text style={styles.description}>친구 초대 시 구슬 50개씩 지급!</Text>
         <Text style={styles.sub}>당신과 친구 모두에게</Text>
         <View style={styles.invite}>
-          <LetterIcon style={styles.letter} />
+          <Image
+            source={require("@assets/images/promotion/banner/letter.png")}
+            style={styles.letter}
+          />
           <DownArrowIcon />
           <Text style={styles.inviteText}>초대하러 가기</Text>
         </View>
@@ -157,8 +160,10 @@ const styles = StyleSheet.create({
   },
   letter: {
     position: "absolute",
-    left: -16,
-    top: -56,
+    left: -8,
+    top: -48,
+    width: 68,
+    height: 68,
   },
   couponMiho: {
     position: "absolute",
