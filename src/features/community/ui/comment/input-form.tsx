@@ -37,7 +37,6 @@ export const InputForm = ({
 }: InputFormProps) => {
   return (
     <View>
-      {/* 수정 모드 또는 대댓글 작성 모드 표시 */}
       {editingCommentId && (
         <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
           <Text size="sm" className="text-[#A892D7]">
@@ -92,7 +91,7 @@ export const InputForm = ({
               ? handleSubmitUpdate
               : form.handleSubmit(handleSubmit)
           }
-          disabled={!editingContent}
+          disabled={!editingContent.trim()}
         />
       </View>
     </View>

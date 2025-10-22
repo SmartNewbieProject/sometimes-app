@@ -77,7 +77,10 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
       },
       {
         onSuccess: () => {
-          form.reset();
+          form.reset({
+            content: "",
+            anonymous: true,
+          });
           setEditingContent("");
           setReplyingToCommentId(null);
           Keyboard.dismiss();
@@ -369,9 +372,6 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         <View className="my-3 mb-6 mx-[8px]  flex flex-row  items-center justify-between">
           <Text size="md" weight="medium" textColor="black">
             {article.title}
-          </Text>
-          <Text size="12" textColor="pale-purple">
-            {dayUtils.formatRelativeTime(article.createdAt)}
           </Text>
         </View>
         <LinkifiedText

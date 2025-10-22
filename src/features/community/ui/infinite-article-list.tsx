@@ -113,6 +113,7 @@ export const InfiniteArticleList = forwardRef<
         queryKey: createArticlesQueryKey(categoryCode),
       });
       await refetch();
+      setOpenPreviewArticleId(null);
     };
 
     const handleScroll = useCallback(
@@ -141,6 +142,14 @@ export const InfiniteArticleList = forwardRef<
       );
     };
 
+    const [openPreviewArticleId, setOpenPreviewArticleId] = useState<
+      string | null
+    >(null);
+
+    useEffect(() => {
+      setOpenPreviewArticleId(null);
+    }, [categoryCode]);
+
     const deleteArticle = (id: string) => {
       showModal({
         title: "게시글 삭제",
@@ -157,6 +166,7 @@ export const InfiniteArticleList = forwardRef<
             tryCatch(
               async () => {
                 await apis.articles.deleteArticle(id);
+                setOpenPreviewArticleId(null);
                 await invalidateAndRefetch();
               },
               ({ error }) => {
@@ -341,7 +351,12 @@ export const InfiniteArticleList = forwardRef<
               }}
               onLike={() => like(article)}
               onDelete={deleteArticle}
-              refresh={() => invalidateAndRefetch()}
+              isPreviewOpen={openPreviewArticleId === article.id}
+              onTogglePreview={() => {
+                setOpenPreviewArticleId((prev) =>
+                  prev === article.id ? null : article.id
+                );
+              }}
             />
           )}
           onLoadMore={loadMore}

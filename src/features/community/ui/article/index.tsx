@@ -27,21 +27,30 @@ interface ArticleItemProps {
   data: ArticleType;
   onPress: () => void;
   onLike: () => void;
-  refresh: () => Promise<void>;
+  refresh: () => void;
   onDelete: (id: string) => void;
+  isPreviewOpen: boolean;
+  onTogglePreview: () => void;
 }
 
-export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
+export function Article({
+  data,
+  onPress,
+  onLike,
+  onDelete,
+  isPreviewOpen,
+  onTogglePreview,
+}: ArticleItemProps) {
   const { my } = useAuth();
   const author = data?.author;
   const comments = data.comments;
   const university = author?.universityDetails;
   const universityName = university?.name as UniversityName;
-  const {
-    value: showComment,
-    toggle: toggleShowComment,
-    setFalse,
-  } = useBoolean();
+  //   const {
+  //     value: showComment,
+  //     toggle: toggleShowComment,
+  //     setFalse,
+  //   } = useBoolean();
   const { value: isDropdownOpen, setFalse: closeDropdown } = useBoolean();
 
   const isOwner = (() => {
@@ -50,10 +59,13 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   })();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  const handleLike = useCallback((e: { stopPropagation: () => void }) => {
-    e.stopPropagation();
-    onLike();
-  }, []);
+  const handleLike = useCallback(
+    (e: { stopPropagation: () => void }) => {
+      e.stopPropagation();
+      onLike();
+    },
+    [onLike]
+  );
 
   const dropdownMenus: DropdownItem[] = (() => {
     const menus: DropdownItem[] = [];
@@ -100,9 +112,8 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   const redirectDetails = () => router.push(`/community/${data.id}`);
 
   useEffect(() => {
-    setFalse();
     closeDropdown();
-  }, [setFalse, closeDropdown]);
+  }, [closeDropdown]);
 
   return (
     <View className="w-full relative">
@@ -210,12 +221,12 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
             <Interaction.Comment
               count={data.commentCount}
               iconSize={18}
-              onPress={toggleShowComment}
+              onPress={onTogglePreview}
             />
           </View>
         </View>
 
-        <Show when={showComment}>
+        <Show when={isPreviewOpen}>
           <View className="w-full flex flex-col gap-y-1.5 mt-6 px-[18px]">
             {comments.map((comment) => (
               <View className="w-full flex flex-col" key={comment.id}>
@@ -251,7 +262,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
         <Dropdown open={isDropdownOpen} items={dropdownMenus} />
       </View>
 
-      {!showComment && <View className="h-[1px] bg-[#F3F0FF]" />}
+      {!isPreviewOpen && <View className="h-[1px] bg-[#F3F0FF]" />}
     </View>
   );
 }
