@@ -1,6 +1,7 @@
+import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import { Image } from "expo-image";
-import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ChatBalloonProps {
   message: string;
@@ -10,6 +11,18 @@ interface ChatBalloonProps {
 }
 
 function ChatBalloon({ message, mediaUrl, isMe, uploadStatus = 'completed' }: ChatBalloonProps) {
+  const [isZoomVisible, setZoomVisible] = useState(false);
+
+  const handleImagePress = () => {
+    if (mediaUrl && uploadStatus === 'completed') {
+      setZoomVisible(true);
+    }
+  };
+
+  const handleZoomClose = () => {
+    setZoomVisible(false);
+  };
+
   const renderImageContent = () => {
     if (!mediaUrl) {
       return (
@@ -20,11 +33,13 @@ function ChatBalloon({ message, mediaUrl, isMe, uploadStatus = 'completed' }: Ch
     }
 
     const imageSource = mediaUrl.startsWith('data:image/') || mediaUrl.startsWith('https://')
-      ? { uri: mediaUrl } 
+      ? { uri: mediaUrl }
       : { uri: mediaUrl };
     return (
       <View style={styles.imageContainer}>
-        <Image source={imageSource} style={styles.image} />
+        <Pressable onPress={handleImagePress} disabled={uploadStatus !== 'completed'}>
+          <Image source={imageSource} style={styles.image} />
+        </Pressable>
         {uploadStatus === 'uploading' && (
           <View style={styles.uploadIndicator}>
             <Text style={styles.uploadText}>업로드 중...</Text>
@@ -42,24 +57,34 @@ function ChatBalloon({ message, mediaUrl, isMe, uploadStatus = 'completed' }: Ch
   const hasImageContent = mediaUrl || message === "";
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: hasImageContent ? "transparent" : isMe ? "#7A4AE1" : "#fff",
-          borderTopRightRadius: isMe ? 6 : 18,
-          borderTopLeftRadius: !isMe ? 6 : 18,
-        },
-      ]}
-    >
-      {hasImageContent ? (
-        renderImageContent()
-      ) : (
-        <Text style={[styles.messageText, { color: isMe ? "#fff" : "#000" }]}>
-          {message}
-        </Text>
+    <>
+      {mediaUrl && (
+        <PhotoSlider
+          images={[mediaUrl]}
+          visible={isZoomVisible}
+          onClose={handleZoomClose}
+          initialIndex={0}
+        />
       )}
-    </View>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: hasImageContent ? "transparent" : isMe ? "#7A4AE1" : "#fff",
+            borderTopRightRadius: isMe ? 6 : 18,
+            borderTopLeftRadius: !isMe ? 6 : 18,
+          },
+        ]}
+      >
+        {hasImageContent ? (
+          renderImageContent()
+        ) : (
+          <Text style={[styles.messageText, { color: isMe ? "#fff" : "#000" }]}>
+            {message}
+          </Text>
+        )}
+      </View>
+    </>
   );
 }
 
