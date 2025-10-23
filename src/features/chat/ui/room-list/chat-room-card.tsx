@@ -124,6 +124,7 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
   return (
     <Animated.View style={[styles.roomContainer, { width: screenWidth }]}>
       <ChatProfileImage size={55} imageUri={item.profileImages} />
+
       <View style={styles.rightContainer}>
         <View style={styles.contentContainer}>
           <Text style={styles.nameText} numberOfLines={1}>
@@ -143,6 +144,7 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
               {dayUtils.formatRelativeTime(item.recentDate)}
             </Text>
           )}
+
           {item.unreadCount > 0 && item.paymentConfirm ? (
             <View style={styles.unreadCount}>
               <Text style={styles.unreadCountText}>{item.unreadCount}</Text>
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
 
     paddingHorizontal: 8,
-    paddingVertical: 6,
+    paddingVertical: 4.5,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#7A4AE2",
@@ -207,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    lineHeight: 12,
+
     color: "#fff",
   },
   rightContainer: {
