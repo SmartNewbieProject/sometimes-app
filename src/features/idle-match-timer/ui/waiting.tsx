@@ -79,10 +79,15 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
         style={{ width: 72, height: 82 }}
       />
       <View className="my-[8px]">
-        <Text size="md" textColor="black" weight="semibold">
+        <Text
+          size="18"
+          textColor="black"
+          weight="semibold"
+          className="mb-[2px]"
+        >
           {my?.name}님
         </Text>
-        <Text size="md" textColor="black" weight="semibold">
+        <Text size="18" textColor="black" weight="semibold">
           이상형 매칭까지
         </Text>
       </View>
@@ -100,13 +105,18 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
       </View>
 
       <View>
-        <Text size="md" textColor="black" weight="semibold">
+        <Text
+          size="18"
+          textColor="black"
+          weight="semibold"
+          className="mt-[4px]"
+        >
           남았어요
         </Text>
         <Text
-          size="sm"
+          size="18"
           textColor="pale-purple"
-          weight="light"
+          weight="normal"
           className="mt-[8px]"
         >
           매주 목·일 21시에 매칭이 시작돼요!

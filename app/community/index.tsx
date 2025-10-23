@@ -49,7 +49,7 @@ const ListHeaderComponent = () => {
   return (
     <View>
       <Header.Container className="items-center bg-white ">
-        <Header.CenterContent>
+        <Header.CenterContent className="mt-[10px]">
           <ImageResource
             resource={ImageResources.COMMUNITY_LOGO}
             width={152}

@@ -41,7 +41,7 @@ export default function MyScreen() {
         backgroundColor: "#fff",
       }}
     >
-      <Header.Container className="items-center ">
+      <Header.Container className="items-center mt-[9px]">
         <Header.LeftContent>
           <Header.LeftButton visible={false} />
         </Header.LeftContent>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     paddingTop: 0,
-    paddingBottom: 16,
+    paddingBottom: 35,
   },
   iconPlace: {
     width: 40,
