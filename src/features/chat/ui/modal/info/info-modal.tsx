@@ -74,7 +74,7 @@ export function Footer({
     <>
       <Pressable
         onPress={handleOpenMenuModal}
-        style={[styles.footerContainer, { paddingBottom: insets.bottom }]}
+        style={[styles.footerContainer, { marginBottom: insets.bottom }]}
       >
         <Text style={styles.footerText}>채팅방 나가기</Text>
       </Pressable>
