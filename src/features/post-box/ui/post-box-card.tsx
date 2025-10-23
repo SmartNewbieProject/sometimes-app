@@ -229,7 +229,7 @@ export function LikedMeOpenButton({
         onClick: () => openInstagram(instagramId),
       },
       secondaryButton: {
-        text: t("features.post-box.ui.buttons.no"),
+        text: t("global.no"),
         onClick: hideModal,
       },
     });
