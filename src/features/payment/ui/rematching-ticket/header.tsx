@@ -10,7 +10,7 @@ export const Header = () => {
 
       <H.Center>
         <Text size="lg" textColor="black" weight="semibold">
-          {t("ui.rematch.header_title")}
+          {t("features.payment.ui.rematch.header_title")}
         </Text>
       </H.Center>
 

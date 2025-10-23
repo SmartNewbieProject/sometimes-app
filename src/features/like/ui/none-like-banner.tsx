@@ -28,7 +28,7 @@ function NoneLikeBanner() {
         <Text style={styles.description}>
           {t("features.like.ui.none_like_banner.description_female_part1")}
         </Text>
-        <Text style={styles.description}>{t("features.like.ui.none_like_banner.description_female_part2")}"</Text>
+        <Text style={styles.description}>{t("features.like.ui.none_like_banner.description_female_part2")}</Text>
       </View>
     ) : (
       <View>
