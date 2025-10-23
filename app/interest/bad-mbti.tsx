@@ -50,7 +50,7 @@ function BadMbti() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            {t("bad_mbti.title")}
+            {t("apps.interest.bad_mbti.title")}
           </Text>
         </View>
         <View style={styles.bar} />

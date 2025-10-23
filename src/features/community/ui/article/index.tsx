@@ -191,7 +191,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
                   className="flex-row items-center gap-x-1"
                   onPress={redirectDetails}
                 >
-                  <Text size="sm">답글 더보기</Text>
+                  <Text size="sm">{t("features.community.ui.article.view_more_replies")}</Text>
                   <ImageResource
                     resource={ImageResources.PURPLE_ARROW_RIGHT}
                     width={16}

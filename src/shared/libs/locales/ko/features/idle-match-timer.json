@@ -16,6 +16,12 @@
       "description_3": "매주 목・금 21시에 매칭이 시작돼요!",
       "previous_button": "이전 매칭",
       "previous_button_text": "이전 매칭"
+    },
+    "partner":{
+      "button_more": "더보기"
+    },
+    "find-partner":{
+      "button_more": "더보기"
     }
   }
 }
