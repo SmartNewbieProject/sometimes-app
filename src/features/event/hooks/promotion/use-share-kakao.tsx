@@ -42,17 +42,21 @@ function useShareKakao() {
         },
       },
 
-      {
-        title: "앱으로 이동",
-        link: {
-          androidExecutionParams: {
-            "invite-code": inviteCode,
-          },
-          iosExecutionParams: {
-            "invite-code": inviteCode,
-          },
-        },
-      },
+      ...(Platform.OS !== "web"
+        ? [
+            {
+              title: "앱으로 이동",
+              link: {
+                androidExecutionParams: {
+                  "invite-code": inviteCode,
+                },
+                iosExecutionParams: {
+                  "invite-code": inviteCode,
+                },
+              },
+            },
+          ]
+        : []),
     ],
   };
 
