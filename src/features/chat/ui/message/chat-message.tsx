@@ -48,8 +48,11 @@ function ChatMessage({ item, profileImage }: ChatMessageProps) {
             { flexDirection: item.isMe ? "row-reverse" : "row" },
           ]}
         >
-          {item.isMe && (item.isRead ? <ReadCheckIcon /> : <UnreadCheckIcon />)}
           <Text style={styles.time}>{formatToAmPm(item.createdAt)}</Text>
+
+          {item.isMe && item.isRead && (
+            <Text style={styles.readText}>읽음</Text>
+          )}
         </View>
       </View>
     </View>
@@ -76,6 +79,11 @@ const styles = StyleSheet.create({
 
     alignItems: "center",
     flexDirection: "row",
+  },
+  readText: {
+    color: "#9A93AA",
+    fontSize: 12,
+    lineHeight: 17,
   },
 });
 
