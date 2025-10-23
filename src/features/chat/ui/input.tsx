@@ -1,5 +1,6 @@
 import PlusIcon from "@assets/icons/plus.svg";
 import SendChatIcon from "@assets/icons/send-chat.svg";
+import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -91,7 +92,10 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
     >
       <Pressable onPress={handlePhotoButton} style={styles.photoButton}>
         <Animated.View style={animatedStyles}>
-          <PlusIcon />
+          <Image
+            source={require("@assets/icons/plus.png")}
+            style={{ width: 14, height: 14 }}
+          />
         </Animated.View>
       </Pressable>
       <View style={styles.inputContainer}>
@@ -159,7 +163,7 @@ const styles = StyleSheet.create({
     height: 32,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 9999,
+    borderRadius: 16,
     backgroundColor: "#F3EDFF",
   },
   send: {
