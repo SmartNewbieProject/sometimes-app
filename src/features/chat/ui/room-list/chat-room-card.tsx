@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
 
     paddingHorizontal: 8,
-
+    paddingVertical: 6,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#7A4AE2",
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    height: 12,
+    lineHeight: 12,
     color: "#fff",
   },
   rightContainer: {

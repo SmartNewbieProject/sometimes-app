@@ -1,3 +1,4 @@
+import { useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -14,7 +15,6 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
 import useChatList from "../queries/use-chat-list";
 import ChatGuideBanner from "./chat-guide-banner";
 import ChatList from "./chat-list";
@@ -45,7 +45,7 @@ function ChatScreen() {
         translateY:
           Platform.OS === "android"
             ? 0
-            : -keyboard.height.value + insets.bottom - 10,
+            : -keyboard.height.value + insets.bottom,
       },
     ],
   }));
@@ -57,7 +57,7 @@ function ChatScreen() {
         backgroundColor: "#fff",
         paddingTop: insets.top,
         width: "100%",
-        paddingBottom: insets.bottom + 14,
+        paddingBottom: insets.bottom + 4,
       }}
     >
       <ChatRoomHeader />
