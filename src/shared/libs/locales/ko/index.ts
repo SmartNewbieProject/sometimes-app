@@ -13,6 +13,7 @@ import tabs from './apps/tabs.json';
 import test from './apps/test.json';
 import index from './apps/index.json';
 import universityVerification from './apps/university-verification.json';
+import myInfo from './apps/my-info.json';
 
 import featuresAdmin from './features/admin.json';
 import featuresAppleInfo from './features/apple-info.json';
@@ -69,6 +70,7 @@ const apps = {
   matching_history: matching_history,
   my: my,
   partner: partner,
+  'my-info': myInfo,
   postBox: postBox,
   profile_edit: profile_edit,
   purchase: purchase,

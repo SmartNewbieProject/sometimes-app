@@ -10,6 +10,7 @@ import postBox from './apps/post-box.json';
 import profile_edit from './apps/profile-edit.json';
 import purchase from './apps/purchase.json';
 import tabs from './apps/tabs.json';
+import myInfo from './apps/my-info.json';
 import test from './apps/test.json';
 import index from './apps/index.json';
 import universityVerification from './apps/university-verification.json';
@@ -67,6 +68,7 @@ const apps = {
   matching_history: matching_history,
   my: my,
   partner: partner,
+  'my-info': myInfo,
   postBox: postBox,
   profile_edit: profile_edit,
   purchase: purchase,
