@@ -120,7 +120,12 @@ export const CategoryList = () => {
                     }}
                     className={`px-[12px] py-[8px] rounded-full border-0 ${bgClass}`}
                     prefix={
-                      category.code !== HOME_CODE && hasEmojiUrl(category) ? (
+                      category.code === HOME_CODE ? (
+                        <Image
+                          source={require("@/assets/images/home.png")}
+                          style={{ width: 32, height: 32 }}
+                        />
+                      ) : hasEmojiUrl(category) ? (
                         <Image
                           source={{ uri: (category as any).emojiUrl }}
                           style={{ width: 32, height: 32 }}

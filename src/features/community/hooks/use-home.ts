@@ -75,7 +75,7 @@ export function useHomeNotices(size = 5) {
 
 export function useHomeHots(size = 5) {
   const { hots, isLoading, isError, error, refetch, prefetch } =
-    useHomeHotsQuery(size);
+    useHomeHotsQuery();
   const total = Math.min(hots.length, size);
   return {
     hots,
