@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.9.4",
+    "version": "2.9.5",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -155,11 +155,13 @@
         {
           "backgroundColor": "#FFFFFF",
           "image": "./assets/images/splash-portrait.png",
-          "resizeMode": "cover",
-          "enableFullScreenImage_legacy": true,
           "dark": {
             "image": "./assets/images/splash-portrait.png",
             "backgroundColor": "#FFFFFF"
+          },
+          "imageWidth": 400,
+          "ios": {
+            "enableFullScreenImage_legacy": true
           }
         }
       ],
