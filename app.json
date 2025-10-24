@@ -2,14 +2,14 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.9.2",
+    "version": "2.9.3",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "image": "./assets/images/splash-portrait.png",
       "backgroundColor": "#FFFFFF"
     },
@@ -150,7 +150,12 @@
     "plugins": [
       "expo-router",
       [
-        "expo-splash-screen"
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFFFFF",
+          "image": "./assets/images/splash-portrait.png",
+          "resizeMode": "cover"
+        }
       ],
       "@react-native-firebase/app",
       [
