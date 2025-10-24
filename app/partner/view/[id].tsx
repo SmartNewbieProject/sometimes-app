@@ -147,7 +147,7 @@ export default function PartnerDetailScreen() {
             <View
               style={{
                 width: 245,
-                height: 265,
+                height: 275,
                 overflow: "hidden",
                 position: "absolute",
                 borderRadius: 20,
@@ -159,7 +159,7 @@ export default function PartnerDetailScreen() {
                 showIndicator={true}
                 autoPlayInterval={6000}
                 animationDuration={250}
-                indicatorContainerClassName="!bottom-[-20px] "
+                indicatorContainerClassName="!bottom-[-30px] "
                 className={"w-full absolute  "}
                 autoPlay
               >
