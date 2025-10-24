@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.9.3",
+    "version": "2.9.4",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -11,7 +11,8 @@
     "splash": {
       "resizeMode": "cover",
       "image": "./assets/images/splash-portrait.png",
-      "backgroundColor": "#FFFFFF"
+      "backgroundColor": "#FFFFFF",
+      "enableFullScreenImage_legacy": true
     },
     "ios": {
       "supportsTablet": true,
@@ -154,7 +155,12 @@
         {
           "backgroundColor": "#FFFFFF",
           "image": "./assets/images/splash-portrait.png",
-          "resizeMode": "cover"
+          "resizeMode": "cover",
+          "enableFullScreenImage_legacy": true,
+          "dark": {
+            "image": "./assets/images/splash-portrait.png",
+            "backgroundColor": "#FFFFFF"
+          }
         }
       ],
       "@react-native-firebase/app",
