@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import i18n from "@/src/shared/libs/i18n";
 
 export type SignupForm = {
   name: string;
@@ -28,35 +29,35 @@ type Agreement = {
 const AGREEMENTS: Agreement[] = [
   {
     id: "privacy",
-    label: "(필수) 개인정보 수집 및 이용 동의",
+    label: i18n.t("features.signup.agreements.privacy"),
     link: "https://ruby-composer-6d2.notion.site/1cd1bbec5ba180a3a4bbdf9301683145",
     required: true,
     checked: false,
   },
   {
     id: "terms",
-    label: "(필수) 서비스 이용약관 동의",
+    label:i18n.t("features.signup.agreements.terms"),
     link: "https://ruby-composer-6d2.notion.site/1cd1bbec5ba1805dbafbc9426a0aaa80",
     required: true,
     checked: false,
   },
   {
     id: "location",
-    label: "(필수) 개인정보 처리방침 동의",
+    label: i18n.t("features.signup.agreements.location"),
     link: "https://ruby-composer-6d2.notion.site/1cd1bbec5ba180a3a4bbdf9301683145?pvs=73",
     required: true,
     checked: false,
   },
   {
     id: "sensitive",
-    label: "(필수) 민감정보 이용 동의",
+    label: i18n.t("features.signup.agreements.sensitive"),
     link: "https://www.notion.so/1cd1bbec5ba180ae800ff36c46285274",
     required: true,
     checked: false,
   },
   {
     id: "marketing",
-    label: "(선택) 마케팅 수신 동의",
+    label: i18n.t("features.signup.agreements.marketing"),
     link: "https://www.notion.so/1cd1bbec5ba1800daa29fd7a8d01b7c9",
     required: false,
     checked: false,

@@ -22,7 +22,7 @@ export const CheckboxLabel = ({
   onChange,
   disabled = false,
   link,
-  linkText = i18n.t("widgets.checkbox-label.checkbox_label.link_text"),
+  linkText = i18n.t("widgets.checkbox-label.checkbox_label.view_link"),
   variant = 'box',
   className = '',
 }: CheckLabelProps) => {

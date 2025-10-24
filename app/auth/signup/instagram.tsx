@@ -5,7 +5,7 @@ import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import {
   BackHandler,
   Keyboard,
@@ -31,7 +31,7 @@ export default function SignupInstagram() {
   const { updateForm, form } = useSignupProgress();
   const [instagramId, setInstagramId] = useState("");
   const insets = useSafeAreaInsets();
-
+  const { t } = useTranslation();
   const { showOverlay, hideOverlay } = useOverlay();
 
   useEffect(() => {

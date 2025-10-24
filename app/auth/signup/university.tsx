@@ -6,7 +6,7 @@ import useUniversities from "@/src/features/signup/queries/use-universities";
 import SearchUniversity from "@/src/features/signup/ui/university/search-university";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
 import { track } from "@amplitude/analytics-react-native";
-
+import { useTranslation } from "react-i18next";
 import HelpIcon from "@assets/icons/help.svg";
 import Loading from "@features/loading";
 
@@ -34,6 +34,7 @@ export default function UniversityPage() {
     isLoading,
     regions,
   } = useUniversityHook();
+  const { t } = useTranslation();
 
   const handleNext = () => {
     onNext(() => {

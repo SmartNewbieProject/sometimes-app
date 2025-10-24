@@ -24,7 +24,7 @@
       "payment_error_debug": "決済エラー時に新しいorderIdを生成:",
       "payment_error_modal": "決済処理中にエラーが発生しました",
       "order_name_single": "リマッチチケット",
-      "order_name_multiple": "リマッチチケット x{productCount}",
+      "order_name_multiple": "リマッチチケット x{{productCount}}",
       "title_1": "リマッチチケットを購入すると",
       "title_2": "新しく好みの相手を探せます"
     }

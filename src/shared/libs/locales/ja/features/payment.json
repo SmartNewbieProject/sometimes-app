@@ -26,7 +26,7 @@
         "payment_error_debug": "決済エラー発生時に新しい orderId を生成:",
         "payment_error_modal": "決済処理中にエラーが発生しました",
         "order_name_single": "カップル再マッチングチケット",
-        "order_name_multiple": "カップル再マッチングチケット x{productCount}"
+        "order_name_multiple": "カップル再マッチングチケット x{{productCount}}"
       }
     },
     "portone": {

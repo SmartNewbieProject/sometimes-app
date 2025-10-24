@@ -26,7 +26,7 @@
         "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:",
         "payment_error_modal": "결제 처리 중 오류가 발생했습니다.",
         "order_name_single": "연인 재매칭권",
-        "order_name_multiple": "연인 재매칭권 x{productCount}"
+        "order_name_multiple": "연인 재매칭권 x{{productCount}}"
       }
     },
     "portone": {
@@ -35,7 +35,7 @@
     },
     "payment_modal": {
       "purchase_complete_title": "❤️ 구매 완료",
-      "gem_purchase_complete": "구슬 {gemCount} 개 구매를 완료했어요",
+      "gem_purchase_complete": "구슬 {{gemCount}} 개 구매를 완료했어요",
       "payment_complete_redirect": "결제가 완료되었으니 홈으로 이동할게요",
       "confirm_redirect_button": "네 이동할게요",
       "browse_more_button": "좀 더 구경할게요",

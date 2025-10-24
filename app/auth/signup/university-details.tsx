@@ -11,6 +11,7 @@ import Loading from "@features/loading";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   BackHandler,
   Keyboard,
@@ -38,7 +39,7 @@ export default function UniversityDetailsPage() {
     universityName: string;
   }>();
   const insets = useSafeAreaInsets();
-
+  const { t } = useTranslation();
   const [signupLoading, setSignupLoading] = useState(false);
 
   const { data: departments = [], isLoading } = useDepartmentQuery(
