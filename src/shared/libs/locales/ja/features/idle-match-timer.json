@@ -19,6 +19,9 @@
     },
     "partner":{
       "button_more": "もっと見る"
+    },
+    "find-partner":{
+      "button_more": "もっと見る"
     }
   }
 }

@@ -1,5 +1,6 @@
 import { cn, platform } from "@/src/shared/libs";
 import { Button } from "@shared/ui";
+import { useTranslation } from "react-i18next";
 import {
   Platform,
   type StyleProp,
@@ -29,7 +30,7 @@ export const TwoButtons = ({
   disabledNext,
 }: Props) => {
   const insets = useSafeAreaInsets();
-
+  const { t } = useTranslation();
   return (
     <View
       style={[styles.container, style, { paddingBottom: insets.bottom + 16 }]}
@@ -40,7 +41,7 @@ export const TwoButtons = ({
         styles={styles.rightButton}
         onPress={onClickPrevious}
       >
-        <Text style={styles.rightButtonText}> {content?.prev || "뒤로"}</Text>
+        <Text style={styles.rightButtonText}> {content?.prev || t("global.back")}</Text>
       </Button>
       <Button
         className="flex-[0.7]"
@@ -48,7 +49,7 @@ export const TwoButtons = ({
         styles={styles.leftButton}
         disabled={disabledNext}
       >
-        <Text style={styles.leftButtonText}>{content?.next || "다음으로"}</Text>
+        <Text style={styles.leftButtonText}>{content?.next || t("global.next")}</Text>
       </Button>
     </View>
   );

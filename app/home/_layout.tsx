@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-const { t } = useTranslation();
 
 export default function HomeLayout() {
+  const { t } = useTranslation();
   const { my } = useAuth();
   const [statusChecked, setStatusChecked] = useState(false);
   const { data: statusData, isLoading } = useUserStatus(my.phoneNumber);

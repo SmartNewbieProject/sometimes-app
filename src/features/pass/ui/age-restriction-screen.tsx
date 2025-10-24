@@ -7,8 +7,7 @@ import { PalePurpleGradient } from '@/src/shared/ui/gradient';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import { router } from 'expo-router';
 import SmallTitle from '@/assets/icons/small-title.svg';
-
-
+import i18n from '@/src/shared/libs/i18n';
 interface AgeRestrictionScreenProps {
   onGoBack?: () => void;
 }
@@ -28,9 +27,9 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
   };
 
   const ageMessage = {
-    title: '가입 가능 연령이 아니에요',
-    subtitle: '안전하고 건전한 만남을 위해 만 18세 이상 27세 이하만 가입 가능해요.',
-    bottomText: '가입 가능 연령이 되면 다시 찾아주세요!'
+    title: i18n.t('features.pass.ageRestriction.title'),
+    subtitle: i18n.t('features.pass.ageRestriction.subtitle'),
+    bottomText: i18n.t('features.pass.ageRestriction.bottomText'),
   };
 
   return (
@@ -76,7 +75,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
               <Text size="sm" textColor="purple" weight="semibold">ℹ</Text>
             </View>
             <Text weight="semibold" size="md" textColor="black">
-              확인된 이용 조건
+              {i18n.t('features.pass.ageRestriction.usageConditions.title')}
             </Text>
           </View>
 
@@ -84,19 +83,19 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
             <View className="flex-row items-start">
               <Text size="sm" textColor="pale-purple" className="mr-2 mt-0.5">•</Text>
               <Text size="sm" textColor="black" className="flex-1">
-                만 18세 이상 27세 이하
+                {i18n.t('features.pass.ageRestriction.usageConditions.ageRange')}
               </Text>
             </View>
             <View className="flex-row items-start">
               <Text size="sm" textColor="pale-purple" className="mr-2 mt-0.5">•</Text>
               <Text size="sm" textColor="black" className="flex-1">
-                대학교 재학 중 또는 졸업
+                {i18n.t('features.pass.ageRestriction.usageConditions.education')}
               </Text>
             </View>
             <View className="flex-row items-start">
               <Text size="sm" textColor="pale-purple" className="mr-2 mt-0.5">•</Text>
               <Text size="sm" textColor="black" className="flex-1">
-                대학 이메일 인증 필수
+                {i18n.t('features.pass.ageRestriction.usageConditions.verification')}
               </Text>
             </View>
           </View>
@@ -108,7 +107,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
             {ageMessage.bottomText}
           </Text>
           <Text size="sm" textColor="pale-purple" className="text-center px-4">
-            생년월일 기준으로 가입 가능 여부를 확인해요
+            {i18n.t('features.pass.ageRestriction.birthDateCheck')}
           </Text>
         </View>
 
@@ -120,7 +119,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
             onPress={handleGoBack}
             className="w-full"
           >
-            이상형 찾으러 가기 →
+            {i18n.t('features.pass.ageRestriction.findIdealTypeButton')}
           </Button>
         </View>
         </View>

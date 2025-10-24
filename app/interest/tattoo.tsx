@@ -144,10 +144,10 @@ export default function TattooSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            t("apps.interest.tattoo.title_1"),
+            {t("apps.interest.tattoo.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            t("apps.interest.tattoo.title_2"),
+            {t("apps.interest.tattoo.title_2")}
           </Text>
         </View>
         <View style={styles.bar} />

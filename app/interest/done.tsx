@@ -51,7 +51,7 @@ export default function InterestDoneScreen() {
 
           <View style={styles.descriptionWrapper}>
             <Text size="sm" textColor="pale-purple" weight="light">
-              {t('done.desc', { name: profileDetails?.name })}
+              {t('apps.my-info.done.desc', { name: profileDetails?.name })}
             </Text>
           </View>
         </View>

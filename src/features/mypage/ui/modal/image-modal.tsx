@@ -1,6 +1,7 @@
 import colors from "@/src/shared/constants/colors";
 import { cn } from "@/src/shared/libs";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Modal,
   Platform,
@@ -25,6 +26,7 @@ const PhotoPickerModal = ({
   onPickFromGallery,
 }: PhotoPickerModalProps) => {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   return (
     <Modal
       visible={visible}
@@ -35,20 +37,20 @@ const PhotoPickerModal = ({
       <View style={[styles.overlay, { paddingBottom: insets.bottom }]}>
         <View style={[styles.info, { bottom: insets.bottom + 192 }]}>
           <Text style={[styles.infoText]}>
-            모든 사진은 안전하게 보관됩니다.
+            {t("features.mypage.image-modal.tips_1")}
           </Text>
 
           <Text style={[styles.infoText]}>
-            프로필은 매칭 상대에게만 보여집니다.
+            {t("features.mypage.image-modal.tips_2")}
           </Text>
 
           <Text style={[styles.infoText]}>
-            본인의 사진이 아닌 경우에는 매칭이 제한됩니다.
+            {t("features.mypage.image-modal.tips_3")}
           </Text>
         </View>
         <View style={[styles.modalContainer, { bottom: insets.bottom + 74 }]}>
           <TouchableOpacity onPress={onTakePhoto} style={styles.option}>
-            <Text style={styles.optionText}>📷 사진 찍기</Text>
+            <Text style={styles.optionText}>{t("features.mypage.image-modal.take_photo")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={onPickFromGallery}
@@ -60,14 +62,14 @@ const PhotoPickerModal = ({
               },
             ]}
           >
-            <Text style={styles.optionText}>🖼 앨범에서 가져오기</Text>
+            <Text style={styles.optionText}>{t("features.mypage.image-modal.choose_from_library") }</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
           onPress={onClose}
           style={[styles.closeButton, { bottom: insets.bottom + 12 }]}
         >
-          <Text style={styles.closeText}>닫기</Text>
+          <Text style={styles.closeText}>{t("features.mypage.image-modal.close")}</Text>
         </TouchableOpacity>
       </View>
     </Modal>

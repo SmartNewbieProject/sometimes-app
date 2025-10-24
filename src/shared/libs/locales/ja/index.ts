@@ -32,6 +32,7 @@ import featuresLoading from './features/loading.json';
 import featuresMatch from './features/match.json';
 import featuresMatchingHistory from './features/matching-history.json';
 import featuresMyInfo from './features/my-info.json';
+import featuresPass from './features/pass.json';
 import featuresPartner from './features/partner.json';
 import featuresPayment from './features/payment.json';
 import featuresPostBox from './features/post-box.json';
@@ -99,6 +100,7 @@ const features = {
   'mypage': featureMypage,
   'partner': featuresPartner,
   'payment': featuresPayment,
+  'pass': featuresPass,
   'post-box': featuresPostBox,
   'pre-signup': featuresPreSignup,
   'profile-edit': featuresProfileEdit,

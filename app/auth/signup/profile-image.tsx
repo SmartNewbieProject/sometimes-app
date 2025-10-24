@@ -174,7 +174,7 @@ export default function ProfilePage() {
         }
 
         if (!signupForm.phone) {
-          showErrorModal("휴대폰 번호가 없습니다", "announcement");
+          showErrorModal(t("apps.auth.sign_up.profile_image.error_phone"), "announcement");
           trackSignupEvent("signup_error", "missing_phone");
           track("Signup_profile_image_error", {
             error: "휴대폰 번호가 없습니다.",
@@ -187,7 +187,7 @@ export default function ProfilePage() {
         const { exists } = await apis.checkPhoneNumberExists(signupForm.phone);
 
         if (exists) {
-          showErrorModal("이미 가입된 사용자입니다", "announcement");
+          showErrorModal(t("apps.auth.sign_up.profile_image.error_exists"), "announcement");
           track("Signup_profile_image_error", {
             error: "이미 가입된 사용자입니다",
             env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -204,7 +204,7 @@ export default function ProfilePage() {
           return;
         }
         if (!signupForm.universityName || !signupForm.departmentName) {
-          showErrorModal("학교와 학과 정보가 필요해요.", "announcement");
+          showErrorModal(t("apps.auth.sign_up.profile_image.error_univ"), "announcement");
           router.navigate("/auth/signup/area");
           return;
         }
@@ -385,7 +385,7 @@ export default function ProfilePage() {
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={onNext}
-          content={{ next: "완료하기" }}
+          content={{ next: t("apps.auth.sign_up.profile_image.button_complete") }}
           onClickPrevious={() => {
             trackSignupEvent("back_button_click", "to_university_details");
             router.push("/auth/signup/instagram");

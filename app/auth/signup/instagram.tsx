@@ -150,10 +150,10 @@ export default function SignupInstagram() {
           {!keyboardVisible && (
             <View style={[styles.infoWrapper]}>
               <Text style={styles.infoTitle}>
-                프로필을 매력적으로 보여주세요!
+                {t("apps.auth.sign_up.instagram.info_title")}
               </Text>
               <Text style={styles.infoDescription}>
-                {t("apps.auth.sign_up.instagram.info_desc_2")}
+                {t("apps.auth.sign_up.instagram.info_desc_1")}
               </Text>
               <Text style={styles.infoDescription}>
                 {t("apps.auth.sign_up.instagram.info_desc_2")}

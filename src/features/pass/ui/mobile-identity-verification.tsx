@@ -18,6 +18,7 @@ import type {
   PortOneIdentityVerificationResponse,
 } from "../types";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 interface MobileIdentityVerificationProps {
   request: PortOneIdentityVerificationRequest;
@@ -35,7 +36,7 @@ export const MobileIdentityVerification: React.FC<
 > = ({ request, onComplete, onError, onCancel }) => {
   const controllerRef = useRef<PortOneController>(null);
   const insets = useSafeAreaInsets();
-
+  const { t } = useTranslation();
   const handleComplete = (response: unknown) => {
     if (!response) {
       onError?.(new Error("본인인증 응답이 없습니다."));
@@ -90,7 +91,7 @@ export const MobileIdentityVerification: React.FC<
           >
             <Feather name="chevron-left" size={24} color="#000" />
           </TouchableOpacity>
-          <RNText style={modalStyles.headerTitle}>본인 인증</RNText>
+          <RNText style={modalStyles.headerTitle}>{t("features.pass.mobile-identity-verification.title")}</RNText>
           <View style={modalStyles.rightPlaceholder} />
         </View>
 

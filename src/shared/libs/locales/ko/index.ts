@@ -25,6 +25,7 @@ import featuresCommunity from './features/community.json';
 import featuresEvent from './features/event.json';
 import featuresFeedback from './features/feedback.json';
 import featuresGuide from './features/guide.json';
+import featuresPass from './features/pass.json';
 import featuresHome from './features/home.json';
 import featuresInterest from './features/interest.json';
 import featuresLike from './features/like.json';
@@ -101,6 +102,7 @@ const features = {
   'mypage': featureMypage,
   'partner': featuresPartner,
   'payment': featuresPayment,
+  'pass': featuresPass,
   'post-box': featuresPostBox,
   'pre-signup': featuresPreSignup,
   'profile-edit': featuresProfileEdit,
