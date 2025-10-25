@@ -2,22 +2,25 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.9.1",
+    "version": "2.9.5",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "image": "./assets/images/splash-portrait.png",
-      "backgroundColor": "#FFFFFF"
+      "backgroundColor": "#FFFFFF",
+      "enableFullScreenImage_legacy": true
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
       "entitlements": {
-        "com.apple.developer.applesignin": ["Default"]
+        "com.apple.developer.applesignin": [
+          "Default"
+        ]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "capabilities": [
@@ -28,7 +31,9 @@
         "maps"
       ],
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"],
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "LSApplicationQueriesSchemes": [
           "kftc-bankpay",
           "ispmobile",
@@ -146,17 +151,19 @@
     "plugins": [
       "expo-router",
       [
-        "expo-splash-screen" //,
-        // {
-        //   "backgroundColor": "#FFFFFF",
-        //   "image": "./assets/images/splash-portrait.png",
-        //   "dark": {
-        //     "image": "./assets/images/splash-portrait.png",
-        //     "backgroundColor": "#FFFFFF"
-        //   },
-        //   "imageWidth": 400,
-        //   "resizeMode": "cover"
-        // }
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FFFFFF",
+          "image": "./assets/images/splash-portrait.png",
+          "dark": {
+            "image": "./assets/images/splash-portrait.png",
+            "backgroundColor": "#FFFFFF"
+          },
+          "imageWidth": 400,
+          "ios": {
+            "enableFullScreenImage_legacy": true
+          }
+        }
       ],
       "@react-native-firebase/app",
       [

@@ -46,30 +46,52 @@ export default function Hot({ pageSize = 5 }: Props) {
       {hots.slice(0, total).map((item, idx) => {
         const isLast = idx === total - 1;
         return (
-          <TouchableOpacity
-            key={item.id}
-            activeOpacity={0.8}
-            onPress={() => router.push(`/community/${item.id}`)}
-            className={`py-2`}
-            style={{ borderColor: "#F3F0FF" }}
-          >
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                overflow: "hidden",
-                color: "#646464",
-                fontFamily: "Pretendard",
-                fontSize: 14,
-                fontStyle: "normal",
-                fontWeight: "400" as any,
-                lineHeight: 16.8,
-                fontFeatureSettings: "'liga' off, 'clig' off",
-              }}
+          <View key={item.id}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => router.push(`/community/${item.id}`)}
+              className="py-2 flex-row items-center"
             >
-              {item.title}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  flex: 1,
+                  overflow: "hidden",
+                  color: "#646464",
+                  fontFamily: "Pretendard",
+                  fontSize: 14,
+                  fontStyle: "normal",
+                  fontWeight: "400" as any,
+                  lineHeight: 16.8,
+                  fontFeatureSettings: "'liga' off, 'clig' off",
+                }}
+              >
+                {item.title}
+              </Text>
+              <Text
+                style={{
+                  marginLeft: 8,
+                  color: "#9E9E9E",
+                  fontFamily: "Pretendard",
+                  fontSize: 12,
+                  fontStyle: "normal",
+                  fontWeight: "400" as any,
+                  lineHeight: 14.4,
+                }}
+              >
+                {item.categoryName}
+              </Text>
+            </TouchableOpacity>
+            {!isLast && (
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: "#F3F0FF",
+                }}
+              />
+            )}
+          </View>
         );
       })}
     </View>

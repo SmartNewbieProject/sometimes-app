@@ -3,8 +3,8 @@ import {
   useQueryClient,
   type QueryClient,
 } from "@tanstack/react-query";
-import { getArticles } from "../apis/articles";
-import type { Article } from "../types";
+import { getArticles, getHotArticles } from "../apis/articles";
+import type { Article, HotArticle } from "../types";
 
 export const NOTICE_CODE = "notice";
 export const HOT_CODE = "hot";
@@ -51,34 +51,29 @@ export function useHomeNoticesQuery(size = 5) {
   };
 }
 
-export async function fetchHomeHots(size = 5) {
-  const res = await getArticles({
-    page: 1,
-    size,
-    code: "hot",
-  });
-  const items: Article[] = Array.isArray(res?.items) ? res.items : [];
-  return items.slice(0, size);
+export async function fetchHomeHots() {
+  const res = await getHotArticles();
+  return Array.isArray(res) ? res : [];
 }
 
-export function prefetchHomeHots(queryClient: QueryClient, size = 5) {
+export function prefetchHomeHots(queryClient: QueryClient) {
   return queryClient.prefetchQuery({
-    queryKey: [...HOME_QUERY_KEYS.hots, { size }],
-    queryFn: () => fetchHomeHots(size),
+    queryKey: HOME_QUERY_KEYS.hots,
+    queryFn: () => fetchHomeHots(),
     staleTime: 30_000,
     gcTime: 10 * 60 * 1000,
   });
 }
 
-export function useHomeHotsQuery(size = 5) {
+export function useHomeHotsQuery() {
   const queryClient = useQueryClient();
   const query = useQuery({
-    queryKey: [...HOME_QUERY_KEYS.hots, { size }],
-    queryFn: () => fetchHomeHots(size),
+    queryKey: HOME_QUERY_KEYS.hots,
+    queryFn: () => fetchHomeHots(),
     staleTime: 30_000,
     gcTime: 10 * 60 * 1000,
   });
-  const prefetch = () => prefetchHomeHots(queryClient, size);
+  const prefetch = () => prefetchHomeHots(queryClient);
 
   return {
     hots: query.data ?? [],

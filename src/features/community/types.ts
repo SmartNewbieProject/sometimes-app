@@ -76,3 +76,10 @@ export interface CommentForm {
   content: string;
   anonymous: boolean;
 }
+
+export interface HotArticle {
+  id: string;
+  title: string;
+  categoryId: string;
+  categoryName: string;
+}

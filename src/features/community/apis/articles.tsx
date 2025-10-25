@@ -133,6 +133,10 @@ export const getArticles = async ({
 export const doLike = async (data: Id): Promise<void> =>
   axiosClient.patch(`/articles/${data.id}/like`);
 
+export const getHotArticles = async (): Promise<import("../types").HotArticle[]> => {
+  return axiosClient.get("/articles/hot/latest");
+};
+
 type Service = {
   getAllArticles: (params: getArticleParams) => Promise<Article[]>;
   postArticles: (body: PostArticleBody) => Promise<Article>;
