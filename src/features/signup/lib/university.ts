@@ -12,6 +12,12 @@ export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	SEL: '서울',
 	KYG: '경기',
 	GWJ: '광주',
+	JJU: '전주',
+	GSN: '군산',
+	IKS: '익산',
+	ADG: '안동',
+	YJA: '영주',
+	MGY: '문경',
 };
 export type UIRegion =
 	| '부산'
@@ -24,7 +30,13 @@ export type UIRegion =
 	| '인천'
 	| '서울'
 	| '광주'
-	| '경기';
+	| '경기'
+	| '전주'
+	| '군산'
+	| '익산'
+	| '안동'
+	| '영주'
+	| '문경';
 export const getRegionsByRegionCode = (code: RegionCode): string | undefined => {
 	return regionCodeMap[code];
 };
@@ -166,6 +178,9 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 		case 'GHE':
 			return 'busan';
 		case 'DGU':
+		case 'ADG':
+		case 'MGY':
+		case 'YJA':
 			return 'daegu';
 		case 'CJU':
 		case 'SJG':
@@ -179,6 +194,9 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 		case 'KYG':
 			return 'gyeonggi';
 		case 'GWJ':
+		case 'JJU':
+		case 'GSN':
+		case 'IKS':
 			return 'gwangju';
 		default:
 			return '';

@@ -162,7 +162,7 @@ export function getRegionList(area: string) {
 		case '부산':
 			return [getRegionCodeByName('부산광역시'), getRegionCodeByName('김해시')];
 		case '대구':
-			return [getRegionCodeByName('대구광역시')];
+			return [getRegionCodeByName('대구광역시'), getRegionCodeByName('안동시'), getRegionCodeByName('문경시'), getRegionCodeByName('영주시')];
 		case '충북/세종':
 			return [getRegionCodeByName('청주시'), getRegionCodeByName('세종특별자치시')];
 		case '천안':
@@ -170,7 +170,7 @@ export function getRegionList(area: string) {
 		case '서울/인천/경기':
 			return [getRegionCodeByName('인천광역시'), getRegionCodeByName('서울특별시'), 'KYG'];
 		case '광주':
-			return [getRegionCodeByName('광주광역시')];
+			return [getRegionCodeByName('광주광역시'), getRegionCodeByName('전주시'), getRegionCodeByName('군산시'), getRegionCodeByName('익산시')];
 		default:
 			return [];
 	}
@@ -183,7 +183,10 @@ export function getRegionListByCode(regionCode: string) {
 		case 'GHE':
 			return [getRegionCodeByName('부산광역시'), getRegionCodeByName('김해시')];
 		case 'DGU':
-			return [getRegionCodeByName('대구광역시')];
+		case 'ADG':
+		case 'MGY':
+		case 'YJA':
+			return [getRegionCodeByName('대구광역시'), getRegionCodeByName('안동시'), getRegionCodeByName('문경시'), getRegionCodeByName('영주시')];
 		case 'SJG':
 		case 'CJU':
 			return [getRegionCodeByName('청주시'), getRegionCodeByName('세종특별자치시')];
@@ -194,7 +197,10 @@ export function getRegionListByCode(regionCode: string) {
 		case 'KYG':
 			return [getRegionCodeByName('인천광역시'), getRegionCodeByName('서울특별시'), 'KYG'];
 		case 'GWJ':
-			return [getRegionCodeByName('광주광역시')];
+		case 'JJU':
+		case 'GSN':
+		case 'IKS':
+			return [getRegionCodeByName('광주광역시'), getRegionCodeByName('전주시'), getRegionCodeByName('군산시'), getRegionCodeByName('익산시')];
 		default:
 			return [];
 	}
@@ -207,7 +213,10 @@ export function getAreaByCode(regionCode: string) {
 		case 'GHE':
 			return ['부산', '김해'];
 		case 'DGU':
-			return ['대구'];
+		case 'ADG':
+		case 'MGY':
+		case 'YJA':
+			return ['대구', '안동', '문경', '영주'];
 		case 'SJG':
 		case 'CJU':
 			return ['청주', '세종'];
@@ -218,7 +227,10 @@ export function getAreaByCode(regionCode: string) {
 		case 'KYG':
 			return ['서울', '인천', '경기'];
 		case 'GWJ':
-			return ['광주'];
+		case 'JJU':
+		case 'GSN':
+		case 'IKS':
+			return ['광주', '전주', '군산', '익산'];
 		default:
 			return [];
 	}
@@ -236,5 +248,11 @@ export function getAllRegionList() {
 		getRegionCodeByName('서울특별시'),
 		getRegionCodeByName('광주광역시'),
 		'KYG',
+		getRegionCodeByName('전주시'),
+		getRegionCodeByName('군산시'),
+		getRegionCodeByName('익산시'),
+		getRegionCodeByName('안동시'),
+		getRegionCodeByName('문경시'),
+		getRegionCodeByName('영주시'),
 	];
 }
