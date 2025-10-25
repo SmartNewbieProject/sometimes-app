@@ -9,6 +9,8 @@ import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../hooks";
+import { useTranslation } from "react-i18next";
+
 
 const useRematchingMutation = () =>
   useMutation({
@@ -29,6 +31,7 @@ function useRematch() {
   const { mutateAsync: rematch } = useRematchingMutation();
   const { onLoading, finishLoading, finishRematching } = useMatchLoading();
   const { show: showCashable } = useCashableModal();
+  const { t } = useTranslation();
 
   const performRematch = async () => {
     await tryCatch(
@@ -44,23 +47,23 @@ function useRematch() {
         if (err.status === HttpStatusCode.Forbidden) {
           showCashable({
             textContent:
-              "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
+              t("features.idle-match-timer.hooks.use-rematch.charge"),
           });
           return;
         }
 
         showModal({
-          title: "아직 추천드릴 상대가 없어요",
+          title: t("features.idle-match-timer.hooks.use-rematch.no_recommend"),
           children: (
             <View className="flex flex-col">
-              <Text>지금은 조건에 맞는 상대가 잠시 없어요.</Text>
+              <Text>{t("features.idle-match-timer.hooks.use-rematch.no_match")}</Text>
               <Text>
-                곧 더 많은 분들이 참여할 예정이니, 잠시 후 다시 시도해 주세요!
+                {t("features.idle-match-timer.hooks.use-rematch.retry_later")}
               </Text>
             </View>
           ),
           primaryButton: {
-            text: "확인",
+            text: t("global.confirm"),
             onClick: () => {},
           },
         });
@@ -77,7 +80,7 @@ function useRematch() {
         finishLoading();
         finishRematching();
         if (err.status === HttpStatusCode.Forbidden) {
-          showErrorModal("재매칭권이 없습니다.", "announcement");
+          showErrorModal(t("features.idle-match-timer.hooks.use-rematch.no_rematch_ticket"), "announcement");
           return;
         }
         showErrorModal(err.error, "error");

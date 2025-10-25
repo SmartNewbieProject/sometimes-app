@@ -17,12 +17,12 @@ import {
 } from "react-native-reanimated";
 import { useMatchLoading } from "../hooks";
 import { useLatestMatching } from "../queries";
-
+import i18n from "@/src/shared/libs/i18n";
 const processStep = [
-  "프로필 분석 완료",
-  "매칭 조건 확인 완료",
-  "새로운 프로필 검색 완료",
-  "매칭 결과 준비 완료",
+  i18n.t("features.idle-match-timer.ui.rematching.steps.profile_analysis"),
+  i18n.t("features.idle-match-timer.ui.rematching.steps.condition_check"),
+  i18n.t("features.idle-match-timer.ui.rematching.steps.profile_search"),
+  i18n.t("features.idle-match-timer.ui.rematching.steps.result_ready"),
 ];
 export const RematchLoading = () => {
   const [stepCheck, setStepCheck] = useState(processStep.map((_) => false));
@@ -144,7 +144,7 @@ export const RematchLoading = () => {
       </View>
 
       <Text style={styles.title} textColor="purple" weight="bold" size="20">
-        새로운 인연을 찾고 있어요
+        {i18n.t("features.idle-match-timer.ui.rematching.title")}
       </Text>
 
       <View style={styles.stepContainer}>
@@ -198,7 +198,7 @@ export const RematchLoading = () => {
         {Math.floor(displayPercent) > 99 && realRematchingLoading
           ? 99
           : Math.floor(displayPercent)}
-        % 완료
+        %{i18n.t("features.idle-match-timer.ui.rematching.complete_text")}
       </Text>
     </View>
   );

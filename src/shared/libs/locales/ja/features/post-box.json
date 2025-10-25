@@ -40,6 +40,9 @@
     }
   },
   "queries": {
+    "use_bye_like":{
+      "error_message": "サーバー内部エラーにより、縁の削除に失敗しました"
+    },
     "use_reject_like": {
       "error_message": "サーバー内部のエラーでいいねを拒否できませんでした"
     }

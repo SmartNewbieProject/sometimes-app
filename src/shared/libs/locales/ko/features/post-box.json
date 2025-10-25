@@ -40,6 +40,9 @@
     }
   },
   "queries": {
+    "use_bye_like":{
+      "error_message": "서버 내부 오류로 인연 삭제에 실패하였습니다."
+    },
     "use_reject_like": {
       "error_message": "서버 내부 오류로 좋아요 거절에 실패하였습니다."
     }

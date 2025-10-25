@@ -8,9 +8,11 @@ import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import useRematch from "../hooks/use-rematch";
 import NotFoundCard from "./not-found-card";
+import { useTranslation } from "react-i18next";
 export const NotFound = () => {
   const router = useRouter();
   const { onRematch } = useRematch();
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <ImageResource
@@ -20,28 +22,28 @@ export const NotFound = () => {
         height={246}
       />
       <Text textColor="black" size="20" weight={"bold"}>
-        매칭에 실패했어요
+        {t("features.idle-match-timer.ui.not-found.faild_title")}
       </Text>
 
       <View style={styles.contentContainer}>
         <NotFoundCard
-          title={"새로운 매칭 시도"}
-          description="다른 프로필들을 둘러보세요"
+          title={t("features.idle-match-timer.ui.not-found.faild_try")}
+          description={t("features.idle-match-timer.ui.not-found.look_around")}
           button={
             <Button
               size="chip"
               onPress={onRematch}
               className="!px-[7px] !h-[34px] "
             >
-              재매칭
+              {t("features.idle-match-timer.ui.not-found.rematch")}
             </Button>
           }
           icon={<ReloadingIcon />}
         />
         <NotFoundCard
           iconPadding={13}
-          title={"매칭 조건 확장"}
-          description="이상형 범위를 넓혀보세요"
+          title={t("features.idle-match-timer.ui.not-found.expand_condition")}
+          description={t("features.idle-match-timer.ui.not-found.expand_ideal_type")}
           button={
             <Button
               variant={"white"}
@@ -50,15 +52,15 @@ export const NotFound = () => {
               textColor="dark"
               className="!px-[12px] !h-[33px]  !border-[#D1D5DB]"
             >
-              수정
+              {t("features.idle-match-timer.ui.not-found.edit")}
             </Button>
           }
           icon={<FrameIcon width={24} height={24} />}
         />
         <NotFoundCard
           iconPadding={8}
-          title={"프로필 개선"}
-          description={"사진이나 자기소개를 업데이트\n해보세요"}
+          title={t("features.idle-match-timer.ui.not-found.improve_profile")}
+          description={t("features.idle-match-timer.ui.not-found.update_profile")}
           button={
             <Button
               onPress={() => router.push("/profile-edit/profile")}
@@ -67,7 +69,7 @@ export const NotFound = () => {
               textColor="dark"
               className="!px-[12px] !h-[33px]  !border-[#D1D5DB]"
             >
-              수정
+              {t("features.idle-match-timer.ui.not-found.edit")}
             </Button>
           }
           icon={<ImproveProfileIcon width={32} height={32} />}

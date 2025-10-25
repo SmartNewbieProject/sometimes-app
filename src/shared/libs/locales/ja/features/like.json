@@ -28,5 +28,16 @@
       "i_liked_title": "{{name}}さんが気になった人です",
       "liked_me_title": "{{name}}さんに興味をもたれています"
     }
+  },
+  "hooks":{
+    "use-like": {
+      "like_sent": "いいね！しました！",
+      "if_interested": "相手も興味を持ってくれたら、",
+      "can_contact": "Instagramでつながることができます。",
+      "confirm": "確認しました",
+      "charge_message": "今すぐチャージして、気になるお相手と会話を始めましょう！",
+      "duplicate_like": "すでにいいね！しています！",
+      "no_gems": "ジェムがありません。"
+    }
   }
 }

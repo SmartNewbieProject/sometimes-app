@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../../idle-match-timer/hooks";
+import { useTranslation } from "react-i18next";
 
 const useLikeMutation = () =>
   useMutation({
@@ -31,7 +32,7 @@ export default function useLike() {
   const { showErrorModal, showModal } = useModal();
   const { mutateAsync: like } = useLikeMutation();
   const { show: showCashable } = useCashableModal();
-
+  const { t } = useTranslation();
   const performLike = async (connectionId: string) => {
     await tryCatch(
       async () => {
@@ -62,22 +63,22 @@ export default function useLike() {
                 source={require("@assets/images/particle3.png")}
               />
               <Text textColor="black" weight="bold" size="20">
-                썸을 보냈어요!
+                {t("features.like.hooks.use-like.like_sent")}
               </Text>
             </View>
           ),
           children: (
             <View className="flex flex-col w-full items-center mt-[5px]">
               <Text className="text-[#AEAEAE] text-[12px]">
-                상대방도 관심을 보이면,
+                {t("features.like.hooks.use-like.if_interested")}
               </Text>
               <Text className="text-[#AEAEAE] text-[12px]">
-                인스타그램으로 연락할 수 있어요
+                {t("features.like.hooks.use-like.can_contact")}
               </Text>
             </View>
           ),
           primaryButton: {
-            text: "확인했어요",
+            text: t("features.like.hooks.use-like.confirm"),
             onClick: () => {},
           },
         });
@@ -86,7 +87,7 @@ export default function useLike() {
         if (err.status === HttpStatusCode.Forbidden) {
           showCashable({
             textContent:
-              "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
+              t("features.like.hooks.use-like.charge_message"),
           });
           return;
         }
@@ -95,7 +96,7 @@ export default function useLike() {
             showErrorModal(err.error, "announcement");
             return;
           }
-          showErrorModal("중복된 좋아요 요청이에요!", "announcement");
+          showErrorModal(t("features.like.hooks.use-like.duplicate_liked"), "announcement");
           return;
         }
       }
@@ -109,7 +110,7 @@ export default function useLike() {
       },
       (err) => {
         if (err.status === HttpStatusCode.Forbidden) {
-          showErrorModal("구슬이 없습니다.", "announcement");
+          showErrorModal(t("features.like.hooks.use-like.no_gems"), "announcement");
           return;
         }
         showErrorModal(err.error, "error");

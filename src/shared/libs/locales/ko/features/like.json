@@ -28,5 +28,16 @@
       "i_liked_title": "{{name}}님께서 관심을 가지신 분들이에요",
       "liked_me_title": "{{name}}님께 관심을 가졌어요"
     }
+  },
+  "hooks":{
+    "use-like": {
+      "like_sent": "썸을 보냈어요!",
+      "if_interested": "상대방도 관심을 보이면,",
+      "can_contact": "인스타그램으로 연락할 수 있어요",
+      "confirm": "확인했어요",
+      "charge_message": "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
+      "duplicate_like": "중복된 좋아요 요청이에요!",
+      "no_gems": "구슬이 없습니다."
+    }
   }
 }
