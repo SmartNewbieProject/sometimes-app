@@ -1,5 +1,6 @@
 import useLikedMeQuery from "@/src/features/like/queries/use-liked-me-query";
 import Loading from "@/src/features/loading";
+import NotSome from "@/src/features/post-box/ui/not-some";
 import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
 import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from "@tanstack/react-query";
@@ -37,12 +38,16 @@ function LikedMe() {
         title={"도착한 썸 리스트를 불러오는 중이에요!"}
         loading={isLoading}
       >
-        <FlashList
-          data={sortedList}
-          renderItem={({ item }) => <PostBoxCard type="liked-me" {...item} />}
-          estimatedItemSize={200}
-          contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
-        />
+        {sortedList?.length > 0 ? (
+          <FlashList
+            data={sortedList}
+            renderItem={({ item }) => <PostBoxCard type="liked-me" {...item} />}
+            estimatedItemSize={200}
+            contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
+          />
+        ) : (
+          <NotSome type="likedMe" />
+        )}
       </Loading.Lottie>
     </View>
   );

@@ -1,5 +1,6 @@
 import useILikedQuery from "@/src/features/like/queries/use-i-liked-query";
 import Loading from "@/src/features/loading";
+import NotSome from "@/src/features/post-box/ui/not-some";
 import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
 import { FlashList } from "@shopify/flash-list";
 import React, { useMemo } from "react";
@@ -24,12 +25,16 @@ function ILiked() {
         title={"보낸 썸 리스트를 불러오는 중이에요!"}
         loading={isLoading}
       >
-        <FlashList
-          data={sortedList}
-          renderItem={({ item }) => <PostBoxCard type="i-liked" {...item} />}
-          estimatedItemSize={200}
-          contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
-        />
+        {sortedList?.length > 0 ? (
+          <FlashList
+            data={sortedList}
+            renderItem={({ item }) => <PostBoxCard type="i-liked" {...item} />}
+            estimatedItemSize={200}
+            contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
+          />
+        ) : (
+          <NotSome type="iLiked" />
+        )}
       </Loading.Lottie>
     </View>
   );
