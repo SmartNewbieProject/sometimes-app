@@ -9,7 +9,11 @@ function ChatHeader() {
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.container]}>
-      <Text style={styles.headerTitleText}>채팅</Text>
+      <Image
+        source={require("@assets/images/MESSAGE_LOGO.png")}
+        style={{ width: 118, height: 18 }}
+        contentFit="contain"
+      />
     </View>
   );
 }
