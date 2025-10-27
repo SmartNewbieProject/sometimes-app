@@ -4,7 +4,7 @@
     "dropdown_edit": "編集",
     "dropdown_delete": "削除",
     "error_invalid": "無効なリクエストです",
-    "error_loading": "投稿を読み込む際にエラーが発生しました",
+    "error_loading": "読み込む際にエラーが発生しました",
     "loading": "投稿を読み込んでいます"
   },
   "write": {

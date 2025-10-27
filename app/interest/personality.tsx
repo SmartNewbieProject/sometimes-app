@@ -51,7 +51,7 @@ export default function PersonalitySelectionScreen() {
     if (!personality) {
       return t("apps.interest.personality.next_none");
     }
-    return "다음으로";
+    return t("global.next");
   })();
 
   const onNext = () => {

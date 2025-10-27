@@ -3,7 +3,7 @@
     "mock_like_button": {
       "modal_title": "サムを送りました！",
       "modal_text_1": "相手も関心を示したら、",
-      "modal_text_2": "インスタで連絡できます。",
+      "modal_text_2": "Instagramで連絡できます。",
       "primary_button": "確認しました",
       "partner_modal_title_1": "気になる相手に",
       "partner_modal_title_2_male": "ジェム {{count}}個で気持ちを伝えますか？",
@@ -35,16 +35,16 @@
         "tab_i_liked": "自分から",
         "info": {
           "step3_title": "自分から",
-          "step3_desc1": "自分から気持ちを伝えた",
+          "step3_desc1": "いいね送った",
           "step3_desc2": "相手を確認できます",
           "step4_title": "相手から",
-          "step4_desc1": "誰が自分に好意を示したかすぐ確認できます",
-          "step5_title": "プロフィールプレビュー",
+          "step4_desc1": "誰が自分にいいねを送ったかすぐ確認できます",
+          "step5_title": "プロフィール閲覧",
           "step5_desc1": "ここでプロフィールを事前に確認できます",
           "step5_desc2": "カードをタップすると詳細プロフィールへ移動します",
           "step6_title": "いいね",
           "step6_desc1": "いいねを押すとお互いにマッチします！",
-          "step6_desc2": "マッチするとインスタで",
+          "step6_desc2": "マッチするとInstagramで",
           "step6_desc3": "会話を始められます",
           "step7_title": "ごめんなさい",
           "step7_desc1": "興味がなければ「ごめんなさい」を押してください",
@@ -71,7 +71,7 @@
       "info_description_4": "見逃さずチェックしてください",
       "info_title_3": "いいね、もっと詳しく見てみますか？",
       "info_description_5": "上のボタンを押すとすぐに",
-      "info_description_6": "サム受信箱に入れます",
+      "info_description_6": "いいね欄に入れます",
       "info_next_hint": "👉 タップして次へ"
     }
   },

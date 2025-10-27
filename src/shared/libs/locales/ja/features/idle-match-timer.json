@@ -3,11 +3,11 @@
     "nav": {
       "modal_title_1": "気になる相手を探すために",
       "modal_title_2": "ジェム{{count}}個を使います！",
-      "modal_text_1": "性格やコミュニケーションスタイルに基づき、",
-      "modal_text_2": "自然につながれる相手をご紹介いたします",
-      "primary_button": "はい、やってみる",
+      "modal_text_1": "AIがあなたのタイプを分析して、",
+      "modal_text_2": "ぴったりの相手を探します",
+      "primary_button": "はい",
       "main_button": "もっと探す",
-      "complete_button": "Sometime送信完了！"
+      "complete_button": "いいね送信完了！"
     },
     "waiting":{
       "title_1": "{{name}}さん",

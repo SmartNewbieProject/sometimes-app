@@ -18,15 +18,15 @@
         "title_line1": "気になる相手に",
         "title_line2_male": "ジェム{{cost}}個で気持ちを伝えますか？",
         "title_line2_default": "気持ちを伝えますか？",
-        "body_line1": "簡単に気持ちを伝えて、",
+        "body_line1": "気持ちを伝えて、",
         "body_line2": "次のステップへ自然に進んでみましょう。",
         "primary_button": "はい、やってみる"
       },
       "button_label": "いいね"
     },
     "like_collapse": {
-      "i_liked_title": "{{name}}さんが気になった人です",
-      "liked_me_title": "{{name}}さんに興味をもたれています"
+      "i_liked_title": "{{name}}さんが送ったいいね欄",
+      "liked_me_title": "{{name}}さんが貰ったいいね欄"
     }
   },
   "hooks":{

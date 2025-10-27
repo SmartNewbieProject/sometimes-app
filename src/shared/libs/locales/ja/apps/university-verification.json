@@ -17,7 +17,7 @@
     "verification_success": "メール認証が完了しました",
     "verification_failed": "認証コードが一致しません",
     "user_info_error": "ユーザー情報を読み込めませんでした",
-    "not_verified": "まだ認証が完了していませんまずメール認証を済ませてください"
+    "not_verified": "まだ認証が完了していません\nまずはメール認証を済ませてください"
   },
   "success": {
     "congratulations": "おめでとうございます！",
