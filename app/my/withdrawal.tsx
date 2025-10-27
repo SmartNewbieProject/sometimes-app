@@ -209,10 +209,10 @@ const styles = StyleSheet.create({
         marginBottom: 34,
       },
       ios: {
-        marginBottom: 68,
+        marginBottom: 54,
       },
       android: {
-        marginBottom: 58,
+        marginBottom: 54,
       },
     }),
     flexDirection: "row",
@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingHorizontal: 30,
+    paddingBottom: 20,
   },
   container: {
     paddingBottom: 120,

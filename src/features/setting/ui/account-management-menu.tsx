@@ -11,9 +11,11 @@ const AccountManagementMenu = () => {
   const options = [
     {
       text: "로그아웃",
+
       onClick: () =>
         showModal({
           showLogo: true,
+          reverse: true,
           customTitle: (
             <View
               style={{
@@ -52,6 +54,7 @@ const AccountManagementMenu = () => {
       onClick: () =>
         showModal({
           showLogo: true,
+          reverse: true,
           customTitle: (
             <View
               style={{
@@ -78,7 +81,7 @@ const AccountManagementMenu = () => {
             onClick: () => {},
           },
           secondaryButton: {
-            text: "로그아웃",
+            text: "탈퇴",
             onClick: () => router.navigate("/my/withdrawal"),
           },
         }),
