@@ -15,7 +15,11 @@ function SettingHeader() {
       <Header.LeftContent>
         <Pressable
           onPress={() => {
-            router.back();
+            if (path === "/setting") {
+              router.navigate("/my");
+            } else {
+              router.navigate("/setting");
+            }
           }}
           style={styles.arrowContainer}
         >
