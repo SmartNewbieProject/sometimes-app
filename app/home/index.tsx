@@ -40,9 +40,28 @@ import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImageResource } from "@ui/image-resource";
 import { Link, router, useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
 
+//광고 테스트 코드
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+  useForeground,
+} from "react-native-google-mobile-ads";
+
+const adUnitId = __DEV__
+  ? TestIds.ADAPTIVE_BANNER
+  : "ca-app-pub-3940256099942544/9214589741";
+const bannerRef = useRef<BannerAd>(null);
+
+// iOS의 경우 앱이 백그라운드에서 포그라운드로 돌아왔을 때 광고 배너가 비어있는 것을 방지
+useForeground(() => {
+  Platform.OS === "ios" && bannerRef.current?.load();
+});
+
+//-----
 const { ui, queries, hooks } = Home;
 const {
   TotalMatchCounter,
@@ -200,6 +219,13 @@ const HomeScreen = () => {
         <View className="my-[25px]">
           <TipAnnouncement />
         </View>
+        <BannerAd
+          ref={bannerRef}
+          // 광고 단위 ID
+          unitId={adUnitId}
+          // 베너 광고 크기
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        />
 
         <BusinessInfo />
       </ScrollView>

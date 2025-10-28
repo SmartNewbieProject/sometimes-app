@@ -18,9 +18,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
       "entitlements": {
-        "com.apple.developer.applesignin": [
-          "Default"
-        ]
+        "com.apple.developer.applesignin": ["Default"]
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "capabilities": [
@@ -31,9 +29,7 @@
         "maps"
       ],
       "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification"
-        ],
+        "UIBackgroundModes": ["remote-notification"],
         "LSApplicationQueriesSchemes": [
           "kftc-bankpay",
           "ispmobile",
@@ -149,6 +145,13 @@
       }
     },
     "plugins": [
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-6421100966496878~4615012982",
+          "iosAppId": "ca-app-pub-6421100966496878~9675767979"
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
