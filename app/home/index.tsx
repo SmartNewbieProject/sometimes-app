@@ -42,7 +42,6 @@ import { ImageResource } from "@ui/image-resource";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
-import { Banner } from "@/src/features/ad";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -99,6 +98,19 @@ const HomeScreen = () => {
 
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
+  };
+
+  const testFunc = () => {
+    if (Platform.OS === "web") {
+      return <Text>Map not available on web</Text>;
+    } else {
+      const Banner = require("@/src/features/ad").default;
+      return (
+        <View style={{ marginTop: 12 }}>
+          <Banner placement="home_banner" />
+        </View>
+      );
+    }
   };
 
   const onNavigateGemStore = () => {
@@ -201,12 +213,7 @@ const HomeScreen = () => {
         <View className="my-[25px]">
           <TipAnnouncement />
         </View>
-        <View style={{ marginTop: 12 }}>
-          <Banner placement="home_banner_top" />
-          {/* 운영 유닛 강제 지정도 가능:
-     <Banner unitId="ca-app-pub-xxx/yyy" /> */}
-        </View>
-
+        {testFunc()}
         <BusinessInfo />
       </ScrollView>
 

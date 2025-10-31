@@ -1,12 +1,13 @@
-import React, { useRef } from "react";
-import { Platform, View, StyleProp, ViewStyle } from "react-native";
+// src/features/ad/ui/Banner.tsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Platform, View } from "react-native";
+import { isNativeApp, ADS_ENABLED } from "../core/env";
 import { BANNER_UNIT_IDS, type BannerPlacement } from "../config/placements";
 import { resolveBannerUnitId } from "../core/resolveUnitId";
 
-export type BannerProps = {
+type Props = {
   unitId?: string;
   placement?: BannerPlacement;
-  containerStyle?: StyleProp<ViewStyle>;
   size?:
     | "ANCHORED_ADAPTIVE_BANNER"
     | "ADAPTIVE_BANNER"
@@ -15,39 +16,53 @@ export type BannerProps = {
     | "FULL_BANNER"
     | "LEADERBOARD"
     | "MEDIUM_RECTANGLE";
+  containerStyle?: any;
 };
 
 export default function Banner({
   unitId,
   placement = "generic_banner",
-  containerStyle,
   size = "ANCHORED_ADAPTIVE_BANNER",
-}: BannerProps) {
-  // 웹은 광고 모듈이 없으므로 아무것도 렌더하지 않음
+  containerStyle,
+}: Props) {
   if (Platform.OS === "web") return null;
 
-  // 네이티브에서만 동적 require → 웹 번들이 이 모듈을 포함하지 않음
-  const {
-    BannerAd,
-    BannerAdSize,
-    useForeground,
-    TestIds,
-  } = require("react-native-google-mobile-ads");
+  const [gma, setGma] = useState<any | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const mod = await import("react-native-google-mobile-ads");
+        if (mounted) setGma(mod);
+      } catch (e) {
+        if (__DEV__) console.warn("[ADS][Banner] GMA import failed", e);
+        if (mounted) setGma(null);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (!gma) return null;
+
+  const { BannerAd, BannerAdSize, useForeground, TestIds } = gma;
 
   const ref = useRef<any>(null);
 
-  // 개발: TestIds / 운영: prodUnitId
-  const prodUnitId = unitId ?? BANNER_UNIT_IDS[placement];
-  const resolvedProd = resolveBannerUnitId(prodUnitId);
-  const resolvedUnitId = __DEV__
-    ? TestIds.ADAPTIVE_BANNER
-    : resolvedProd || TestIds.ADAPTIVE_BANNER;
+  const finalUnitId = useMemo(() => {
+    const prodUnitId = unitId ?? BANNER_UNIT_IDS[placement];
+    const resolved = resolveBannerUnitId(prodUnitId);
 
-  // size 매핑
+    return __DEV__ && process.env.EXPO_PUBLIC_ADS_USE_PROD_IN_DEV !== "true"
+      ? TestIds.ADAPTIVE_BANNER
+      : resolved || TestIds.ADAPTIVE_BANNER;
+  }, [unitId, placement, gma]);
+
   const mappedSize =
     BannerAdSize[size] ?? BannerAdSize.ANCHORED_ADAPTIVE_BANNER;
 
-  // iOS: 포그라운드 복귀 시 공백 방지
+  // iOS 포그라운드 복귀 시 배너 리로드
   useForeground?.(() => {
     if (Platform.OS === "ios") ref.current?.load?.();
   });
@@ -59,7 +74,7 @@ export default function Banner({
         containerStyle,
       ]}
     >
-      <BannerAd ref={ref} unitId={resolvedUnitId} size={mappedSize} />
+      <BannerAd ref={ref} unitId={finalUnitId} size={mappedSize} />
     </View>
   );
 }

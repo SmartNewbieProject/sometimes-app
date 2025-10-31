@@ -8,3 +8,7 @@ export function resolveInterstitialUnitId(prodUnitId?: string) {
 export function resolveRewardedUnitId(prodUnitId?: string) {
   return prodUnitId ?? "";
 }
+
+export function resolveNativeUnitId(prodUnitId?: string) {
+  return prodUnitId ?? "";
+}
