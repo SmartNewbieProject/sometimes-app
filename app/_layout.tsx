@@ -43,6 +43,12 @@ export default function RootLayout() {
     "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
     "Rubik-Light": require("../assets/fonts/Rubik-Light.ttf"),
     "Rubik-SemiBold": require("../assets/fonts/Rubik-SemiBold.ttf"),
+    "MPLUS1p-Thin": require("../assets/fonts/MPLUS1p-Thin.ttf"),
+    "MPLUS1p-Light": require("../assets/fonts/MPLUS1p-Light.ttf"),
+    "MPLUS1p-Medium": require("../assets/fonts/MPLUS1p-Medium.ttf"),
+    "MPLUS1p-Bold": require("../assets/fonts/MPLUS1p-Bold.ttf"),
+    "MPLUS1p-ExtraBold": require("../assets/fonts/MPLUS1p-ExtraBold.ttf"),
+    "MPLUS1p-Black": require("../assets/fonts/MPLUS1p-Black.ttf"),
   });
 
   useEffect(() => {
