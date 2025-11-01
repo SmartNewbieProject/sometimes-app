@@ -1,34 +1,44 @@
+import { useMemo } from "react";
 import i18n from "@shared/libs/i18n";
 
-
 export type FontWeight =
-  | 'thin'
-  | 'extralight'
-  | 'semibold'
-  | 'bold'
-  | 'extrabold'
-  | 'black';
+  | "thin"
+  | "extralight"
+  | "light"
+  | "regular"
+  | "medium"
+  | "semibold"
+  | "bold"
+  | "extrabold"
+  | "black";
 
-const fontMap = {
-  kr: {
-    thin: 'Pretendard-Thin',
-    extralight: 'Pretendard-ExtraLight',
-    semibold: 'Pretendard-SemiBold',
-    bold: 'Pretendard-Bold',
-    extrabold: 'Pretendard-ExtraBold',
-    black: 'Pretendard-Black',
-  },
-  ja: {
-    thin: 'MPLUS1p-Thin',
-    extralight: 'MPLUS1p-Light',
-    semibold: 'MPLUS1p-Medium',
-    bold: 'MPLUS1p-Bold',
-    extrabold: 'MPLUS1p-ExtraBold',
-    black: 'MPLUS1p-Black',
-  },
+export const useAppFont = (weight: FontWeight = "regular") => {
+  const locale = i18n.language
+  const isJapanese = locale.startsWith("ja");
+
+  const fontFamily = useMemo(() => {
+    const prefix = isJapanese ? "MPLUS1p" : "Pretendard";
+    switch (weight) {
+      case "thin":
+        return `${prefix}-Thin`;
+      case "extralight":
+        return `${prefix}-ExtraLight`;
+      case "light":
+        return `${prefix}-Light`;
+      case "medium":
+        return `${prefix}-Medium`;
+      case "semibold":
+        return `${prefix}-SemiBold`;
+      case "bold":
+        return `${prefix}-Bold`;
+      case "extrabold":
+        return `${prefix}-ExtraBold`;
+      case "black":
+        return `${prefix}-Black`;
+      default:
+        return `${prefix}-Regular`;
+    }
+  }, [isJapanese, weight]);
+
+  return fontFamily;
 };
-
-export function useAppFont(weight: FontWeight) {
-  const lang = i18n.language === 'ja' ? 'ja' : 'kr';
-  return fontMap[lang][weight];
-}

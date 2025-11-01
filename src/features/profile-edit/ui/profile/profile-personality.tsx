@@ -2,6 +2,7 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     fontWeight: 600,
 
     lineHeight: 22,

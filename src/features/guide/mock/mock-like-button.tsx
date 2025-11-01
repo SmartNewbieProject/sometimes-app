@@ -9,6 +9,7 @@ import { useModal } from "@hooks/use-modal";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 type MockLikeButtonProps = {
   className?: string;
@@ -146,7 +147,7 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
 const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     fontWeight: 300,
     lineHeight: 18,
     marginLeft: -5,

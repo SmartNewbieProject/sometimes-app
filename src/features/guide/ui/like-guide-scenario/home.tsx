@@ -28,6 +28,7 @@ import { BottomNavigation } from "../../../../shared/ui/navigation";
 import { useStep } from "../../hooks/use-step";
 import MockPartner from "../../mock/mock-partner";
 import { likedMeMock } from "../../utils/mock-data";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 function HomeGuide() {
   const { step, setStep } = useStep();
@@ -286,7 +287,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: "#9F84D8",
     fontWeight: "600",
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

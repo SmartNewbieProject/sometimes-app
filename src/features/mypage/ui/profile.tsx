@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRematchingTickets } from "../queries";
 import { useTranslation } from "react-i18next";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 export const Profile = () => {
   const { profileDetails } = useAuth();
   const { data: reMatchingTicketCount } = useRematchingTickets();
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 26,
-    fontFamily: "Pretendard-Regular",
+    fontFamily: useAppFont("regular"),
     fontWeight: 400,
     lineHeight: 30,
     color: "#fff",
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
   universityVerificationButtonText: {
     fontSize: 12,
     color: "#9747FF",
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     fontWeight: 600,
   },
 });

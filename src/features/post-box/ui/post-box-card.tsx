@@ -19,6 +19,7 @@ import { useFeatureCost } from "../../payment/hooks";
 import useByeLike from "../queries/useByeLike";
 import useRejectLike from "../queries/useRejectLike";
 import i18n from "@/src/shared/libs/i18n";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 interface PostBoxCardProps {
   status: string;
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 15,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     fontWeight: 300,
     lineHeight: 18,
     color: "#BEACFF",

@@ -6,6 +6,7 @@ import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 const { hooks, queries } = Interest;
 const { useInterestForm } = hooks;
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     fontWeight: 600,
     lineHeight: 22,
   },

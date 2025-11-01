@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 
 
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#000",
     fontSize: 20,
-    fontFamily: "Pretendard-Bold",
+    fontFamily: useAppFont("bold"),
     fontWeight: 700,
     lineHeight: 22,
   },

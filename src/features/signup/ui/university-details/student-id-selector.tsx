@@ -12,6 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSignupProgress } from "../../hooks";
 import i18n from "@/src/shared/libs/i18n";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 const NUMBER_LIST = [
   i18n.t("features.signup.ui.student_id_25"),
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     color: "BAB0D0",
     fontSize: 15,
     fontWeight: 300,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     flex: 1,
 
     borderWidth: 0,

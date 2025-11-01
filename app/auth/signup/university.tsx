@@ -21,6 +21,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 export default function UniversityPage() {
   const router = useRouter();
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
   tip: {
     color: "#9B94AB",
     fontWeight: 300,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     fontSize: 13,
 
     lineHeight: 20,

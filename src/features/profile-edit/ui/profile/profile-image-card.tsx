@@ -1,3 +1,4 @@
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 import { Image } from "expo-image";
 import React from "react";
 import { useTranslation } from 'react-i18next';
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   },
   imageTagText: {
     fontSize: 13,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     lineHeight: 15.6,
     fontWeight: 600,
 
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   noneText: {
     color: "#9B94AB",
     fontSize: 13,
-    fontFamily: "Pretendard-Light",
+    fontFamily:  useAppFont("light"),
     fontWeight: 300,
 
     lineHeight: 15.6,

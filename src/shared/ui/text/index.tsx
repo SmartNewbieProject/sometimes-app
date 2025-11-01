@@ -1,8 +1,9 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import type React from "react";
-import { Text as RNText, type TextStyle } from "react-native";
+import { Text as RNText, type TextStyle , StyleSheet } from "react-native";
 import colors from "../../constants/colors";
 import { cn } from "../../libs/cn";
+import { useAppFont, type FontWeight } from "../../hooks/use-app-font";
 
 const textStyles = cva("text-base", {
   variants: {
@@ -14,19 +15,23 @@ const textStyles = cva("text-base", {
       sm: "text-sm",
       md: "text-md",
       "10": "text-[10px]",
+      "12": "text-[12px]",
+      "13": "text-[13px]",
       "18": "text-[18px]",
       "20": "text-[20px]",
-      "13": "text-[13px]",
-      "12": "text-[12px]",
       chip: "text-[13px]",
       lg: "text-lg",
     },
     weight: {
-      normal: "font-normal",
+      thin: "font-thin",
+      extralight: "font-extralight",
+      light: "font-light",
+      regular: "font-normal",
       medium: "font-medium",
       semibold: "font-semibold",
-      light: "font-light",
       bold: "font-bold",
+      extrabold: "font-extrabold",
+      black: "font-black",
     },
     textColor: {
       white: "text-white",
@@ -42,7 +47,7 @@ const textStyles = cva("text-base", {
   defaultVariants: {
     variant: "primary",
     size: "md",
-    weight: "normal",
+    weight: "regular",
     textColor: "dark",
   },
 });
@@ -51,19 +56,25 @@ export type TextProps = VariantProps<typeof textStyles> & {
   children: React.ReactNode;
   className?: string;
   style?: TextStyle;
+  weight?: FontWeight;
   numberofLine?: number;
 };
+
 
 export const Text: React.FC<TextProps> = ({
   variant,
   size,
-  weight,
+  weight = "regular",
   textColor,
   className = "",
   style,
   children,
   numberofLine,
 }) => {
+  const fontFamily = useAppFont(weight);
+
+  const textStyle = StyleSheet.flatten([{ fontFamily }, style]);
+
   return (
     <RNText
       numberOfLines={numberofLine}
@@ -71,7 +82,7 @@ export const Text: React.FC<TextProps> = ({
         textStyles({ variant, size, weight, textColor }),
         className
       )}
-      style={style}
+      style={textStyle}
     >
       {children}
     </RNText>

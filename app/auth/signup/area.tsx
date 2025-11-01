@@ -4,6 +4,7 @@ import useAreaHook from "@/src/features/signup/hooks/use-area-hook";
 import { areaMap } from "@/src/features/signup/lib";
 import Heart from "@/src/features/signup/ui/area/heart";
 import AreaModal from "@/src/features/signup/ui/area/modal";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 import { Button, Header, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import AreaFillHeart from "@assets/icons/area-fill-heart.svg";
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
   tip: {
     color: "#9B94AB",
     fontWeight: 300,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     fontSize: 13,
 
     lineHeight: 20,

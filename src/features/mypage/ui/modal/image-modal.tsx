@@ -1,4 +1,5 @@
 import colors from "@/src/shared/constants/colors";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 import { cn } from "@/src/shared/libs";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -117,8 +118,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closeText: {
-    color: "white",
-    fontFamily: "Pretendard-Bold",
+    color: "white", 
+    fontFamily: useAppFont("bold"),
     fontWeight: 700,
     fontSize: 16,
   },
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     color: "#EEE8FA",
     textAlign: "center",
     fontSize: 15,
-    fontFamily: "Pretendard-Light",
+    fontFamily: useAppFont("light"),
     fontWeight: 300,
     lineHeight: 18,
   },

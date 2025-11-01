@@ -3,6 +3,7 @@ import type { Preferences } from "@/src/features/interest/api";
 import { AgeOptionData } from "@/src/features/interest/types";
 import Loading from "@/src/features/loading";
 import colors from "@/src/shared/constants/colors";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 import { ChipSelector } from "@/src/widgets";
 import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 18,
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     lineHeight: 22,
   },
   chipSelector: {

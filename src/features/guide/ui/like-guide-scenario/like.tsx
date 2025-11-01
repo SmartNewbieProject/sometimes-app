@@ -22,6 +22,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useStep } from "../../hooks/use-step";
 import MockTime from "../../mock/mock-time";
 import { mockILiked, mockLikedMe } from "../../utils/mock-data";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 function LikeGuide() {
   const { t } = useTranslation();
@@ -395,7 +396,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: "#9F84D8",
     fontWeight: "600",
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

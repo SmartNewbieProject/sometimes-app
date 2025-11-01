@@ -1,3 +1,4 @@
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontFamily: "Pretendard-Regular",
+    fontFamily: useAppFont("regular"),
     fontWeight: 400,
     lineHeight: 21,
     letterSpacing: -0.045,

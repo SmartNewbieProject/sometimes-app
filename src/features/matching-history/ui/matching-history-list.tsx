@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useMatchingHistoryList } from "../queries/use-matching-history-list";
 import MatchingHistoryCard from "./matching-history-card";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 function MatchingHistoryList() {
   const { matchingHistoryList } = useMatchingHistoryList();
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
   infoText: {
     textAlign: "center",
     lineHeight: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     fontWeight: 600,
   },
   image: {

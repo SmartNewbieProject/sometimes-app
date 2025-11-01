@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 function FindPartner() {
   const { t } = useTranslation();
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   },
   seeMoreText: {
     color: "#fff",
-    fontFamily: "Pretendard-Bold",
+    fontFamily: useAppFont("bold"),
     fontWeight: 700,
     fontSize: 16,
   },

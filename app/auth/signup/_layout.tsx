@@ -16,6 +16,7 @@ import { BackHandler } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.black,
-    fontFamily: "Pretendard-Bold",
+    fontFamily: useAppFont("bold"),
     fontWeight: 700,
     lineHeight: 22,
     fontSize: 20,

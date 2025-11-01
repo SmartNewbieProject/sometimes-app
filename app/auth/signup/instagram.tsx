@@ -1,5 +1,6 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 import { useOverlay } from "@/src/shared/hooks/use-overlay";
 import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
@@ -206,7 +207,7 @@ export default function SignupInstagram() {
 const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     fontSize: 18,
     lineHeight: 22,
     color: "#7A4AE2",
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
     color: "#000",
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     fontWeight: 300,
     lineHeight: 22,
     textAlignVertical: "center",
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
   },
   instagramText: {
     color: "#000",
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     fontWeight: 300,
     lineHeight: 22,
 
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
   tip: {
     color: "#9B94AB",
     fontWeight: 300,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     fontSize: 13,
 
     lineHeight: 20,
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: "#9F84D8",
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

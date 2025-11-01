@@ -2,6 +2,7 @@ import { useCommingSoon } from "@/src/features/admin/hooks";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MyActivityCard from "./my-activity-card";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 function MyActivityMenu() {
   const showCommingSoon = useCommingSoon();
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontFamily: "Pretendard-Bold",
+    fontFamily: useAppFont("bold"),
     fontWeight: 700,
     lineHeight: 20,
     letterSpacing: -0.042,

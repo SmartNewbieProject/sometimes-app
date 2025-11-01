@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import useILiked from "../../like/hooks/use-liked";
 import { LikeButton } from "../../like/ui/like-button";
 import useRematch from "../hooks/use-rematch";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 type InteractionNavigationProps = {
   match?: MatchDetails;
@@ -114,7 +115,7 @@ export const InteractionNavigation = ({
 const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: useAppFont("thin"),
     fontWeight: "300",
     paddingRight: 5,
     lineHeight: 18,

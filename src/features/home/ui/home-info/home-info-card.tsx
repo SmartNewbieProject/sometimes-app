@@ -1,4 +1,5 @@
 import colors from "@/src/shared/constants/colors";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 import { Image } from "expo-image";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     color: "#1F1F1F",
     textAlign: "center",
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     fontWeight: 600,
     lineHeight: 21.6,
   },
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     marginBottom: 11,
-    fontFamily: "Pretendard-Light",
+    fontFamily: useAppFont("light"),
     fontWeight: 300,
     lineHeight: 13.4,
   },
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: useAppFont("semibold"),
     fontWeight: 600,
     lineHeight: 18,
     color: "#8638E5",

@@ -5,6 +5,7 @@ import React from "react";
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useMyInfoForm } from "../../my-info/hooks";
+import { useAppFont } from "@/src/shared/hooks/use-app-font";
 
 function ProfileEditHeader() {
   const router = useRouter();
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#000",
     fontSize: 20,
-    fontFamily: "Pretendard-Bold",
+    fontFamily: useAppFont("bold"),
     fontWeight: 700,
     lineHeight: 22,
   },
