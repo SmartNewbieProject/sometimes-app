@@ -30,10 +30,10 @@ export default function CommunityUpdateScreen() {
   const onSubmit = form.handleSubmit(async (data) => {
     if (data.title.length < 3 || data.content.length < 3) {
       showModal({
-        title: t("community.update.too_short_title"),
+        title: t("apps.community.update.too_short_title"),
         children: (
           <Text textColor="black">
-            {t("community.update.too_short_desc")}
+            {t("apps.community.update.too_short_desc")}
           </Text>
         ),
         primaryButton: {
@@ -46,14 +46,14 @@ export default function CommunityUpdateScreen() {
 
     if (data.content.length > 2000) {
       showModal({
-        title: t("community.update.content_too_long_title"),
+        title: t("apps.community.update.content_too_long_title"),
         children: (
           <Text textColor="black">
-            {t("community.update.content_too_long_desc")}
+            {t("apps.community.update.content_too_long_desc")}
           </Text>
         ),
         primaryButton: {
-          text: t("global.confirm_checked"),
+          text: t("apps.comunity.update.modal_confirm_checked"),
           onClick: () => {},
         },
       });
@@ -75,19 +75,19 @@ export default function CommunityUpdateScreen() {
         queryKey: QUERY_KEYS.articles.detail(id),
       });
       showModal({
-        title: t("global.complete"),
+        title: t("global.success"),
         children: (
           <View className="flex flex-col gap-y-1">
             <Text textColor="black" size="sm">
-              {t("community.update.complete_message_1")}
+              {t("apps.community.update.modal_success_desc_1")}
             </Text>
             <Text textColor="black" size="sm">
-              {t("community.update.complete_message_2")}
+              {t("apps.community.update.modal_success_desc_2")}
             </Text>
           </View>
         ),
         primaryButton: {
-          text: t("global.confirm_button"),
+          text: t("apps.community.update.modal_confirm_move"),
           onClick: () => router.push(`/community/${id}`),
         },
       });
@@ -108,7 +108,7 @@ export default function CommunityUpdateScreen() {
   }, [status, isFetched, article, form]);
 
   if (isLoading) {
-    return <Loading.Page title={t("community.update.loading_article")} />;
+    return <Loading.Page title={t("apps.community.update.loading")} />;
   }
 
   return (

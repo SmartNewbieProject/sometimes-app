@@ -9,5 +9,7 @@
   "select": "選択",
   "next": "次へ",
   "ok": "はい",
-  "no": "いいえ"
+  "no": "いいえ",
+  "confirm_button": "はい、移動します",
+  "confirm_checked": "確認しました"
 }

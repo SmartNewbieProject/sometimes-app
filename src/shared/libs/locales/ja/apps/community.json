@@ -16,7 +16,7 @@
     "modal_success_desc": "投稿の作成が完了しました",
     "modal_fail_title": "投稿作成失敗",
     "modal_fail_desc_default": "投稿の作成中にエラーが発生しました",
-    "modal_confirm_checked": "はい、確認しました"
+    "modal_confirm_checked": "確認しました"
   },
   "update": {
     "modal_short_title": "短すぎます",
@@ -24,9 +24,9 @@
     "modal_overflow_title": "文字数オーバー",
     "modal_overflow_desc": "本文は2000文字以内で作成してください",
     "modal_success_desc_1": "投稿が修正されました！",
-    "modal_success_desc_2": "投稿に戻ります",
-    "modal_confirm_checked": "はい、確認しました",
-    "modal_confirm_move": "はい、戻ります",
+    "modal_success_desc_2": "コミュニティに戻ります",
+    "modal_confirm_checked": "確認しました",
+    "modal_confirm_move": "はい",
     "loading": "投稿を読み込んでいます"
   },
   "report": {

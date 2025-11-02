@@ -62,14 +62,14 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
       const ownerMenus: DropdownItem[] = [
         {
           key: "update",
-          content: "수정",
+          content: t("features.community.ui.article.edit_button"),
           onPress: () => {
             router.push(`/community/update/${data.id}`);
           },
         },
         {
           key: "delete",
-          content: "삭제",
+          content: t("features.community.ui.article.delete_button"),
           onPress: () => {
             onDelete(data.id);
             closeDropdown();

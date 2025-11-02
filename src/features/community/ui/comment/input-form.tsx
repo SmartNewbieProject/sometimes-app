@@ -104,7 +104,7 @@ export const InputForm = ({
 
 const CancelEditButton = ({ onCancel }: { onCancel: () => void }) => (
     <TouchableOpacity className="pl-[12px] pb-[1px]" onPress={onCancel}>
-    <Text>{i18n.t("features.community.ui.comment.input_form.취소_012a")}</Text>
+    <Text>{i18n.t("features.community.ui.comment.input_form.cancel")}</Text>
   </TouchableOpacity>
 );
 

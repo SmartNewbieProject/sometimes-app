@@ -32,8 +32,8 @@ export function useReport() {
     mutationFn: submitReport,
     onSuccess: (data) => {
       showModal({
-        title: t("features.ban_report.hooks.use_report.modal_title_success"),
-        children: t("features.ban_report.hooks.use_report.modal_message_success"),
+        title: t("features.ban-report.hooks.use_report.modal_title_success"),
+        children: t("features.ban-report.hooks.use_report.modal_message_success"),
         primaryButton: {
           text: t("features.auth.hooks.use_auth.common_confirm"),
           onClick: () => {
@@ -52,12 +52,12 @@ export function useReport() {
       console.error("신고 제출 중 오류 발생:", error);
       const errorMessage =
         error.response?.data?.message ||
-        t("features.ban_report.hooks.use_report.default_error_message");
+        t("features.ban-report.hooks.use_report.default_error_message");
       showModal({
-        title: t("features.ban_report.hooks.use_report.modal_title_error"),
+        title: t("features.ban-report.hooks.use_report.modal_title_error"),
         children: errorMessage,
         primaryButton: {
-          text: t("features.auth.hooks.use_auth.common_confirm"),
+          text: t("global.confirm"),
           onClick: () => hideModal(),
         },
       });

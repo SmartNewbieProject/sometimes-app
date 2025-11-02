@@ -2,6 +2,6 @@
   "modal_provider": {
     "error_title": "エラーが発生しました",
     "announcement_title": "お知らせ",
-    "confirm_button": "はい、確認しました"
+    "confirm_button": "確認しました"
   }
 }

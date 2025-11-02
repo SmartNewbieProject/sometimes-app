@@ -22,8 +22,6 @@
       "sanction_message_2": "이용이 제한될 수 있습니다. 부적절한 콘텐츠를 발견하시면 신고 기능을 통해 알려주세요.즐겁고 의미 있는 커뮤니티 활동 되세요!💕"
     },
     "infinite_article_list": {
-      "comment_category_change": "카테고리가 바뀌면 → 데이터 준비 전까지 스켈레톤 고정",
-      "comment_data_loaded": "새 데이터가 도착했거나, 로딩이 끝났다면 스켈레톤 해제",
       "delete_article_title": "게시글 삭제",
       "delete_article_confirm": "해당 게시글을 삭제할까요?",
       "delete_button": "삭제하기",
@@ -139,7 +137,8 @@
         "editing_comment": "댓글 수정 중...",
         "replying_comment": "답글 작성 중...",
         "anonymous": "익명",
-        "comment_placeholder": "댓글을 입력하세요"
+        "comment_placeholder": "댓글을 입력하세요",
+        "cancel": "취소"
       }
     },
     "user_profile": {

@@ -76,7 +76,7 @@
           "title": "投稿失敗",
           "desc": "投稿中にエラーが発生しました"
         },
-        "confirm_checked": "はい、確認しました"
+        "confirm_checked": "確認しました"
       },
       "header": {
         "write_post": "投稿する",
@@ -103,7 +103,7 @@
           "desc_1": "投稿が修正されました！",
           "desc_2": "投稿へ移動します。"
         },
-        "confirm_checked": "はい、確認しました",
+        "confirm_checked": "確認しました",
         "confirm_move": "はい、移動します"
       }
     },
@@ -139,7 +139,8 @@
         "editing_comment": "コメントを編集中...",
         "replying_comment": "返信を作成中...",
         "anonymous": "匿名",
-        "comment_placeholder": "コメントを入力してください"
+        "comment_placeholder": "コメントを入力してください",
+        "cancel": "戻る"
       }
     },
     "user_profile": {
