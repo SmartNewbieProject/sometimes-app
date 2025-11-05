@@ -258,7 +258,7 @@ export function Slide({
           onSlideChange?.(nextIndex);
           moveToSlide(nextIndex, true, direction);
         }
-      }, autoPlayInterval);
+      }, autoPlayInterval) as unknown as NodeJS.Timeout;
     }
 
     return () => {
