@@ -1,7 +1,7 @@
 import { useAuth } from "@/src/features/auth";
 import ChangeProfileImageModal from "@/src/features/mypage/ui/modal/change-profile-image.modal";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
-import React, { useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Modal, Text } from "react-native";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -14,26 +14,36 @@ function ProfileImageSection() {
   const { profileDetails } = useAuth();
   const [isProfileImageOpen, setProfileOpen] = useState(false);
 
-  //테스트용 상수
-  // const isApproved = true;
-  const { isCoverVisible } = useProfileImageCover();
+  const [refreshKey, setRefreshKey] = useState<number>(Date.now());
 
-  const sortedPorifleImages = profileDetails?.profileImages.sort((a, b) => {
-    if (a.isMain && !b.isMain) return -1;
-    if (!a.isMain && b.isMain) return 1;
-    return 0;
-  });
+  const { isCoverVisible, refetch } = useProfileImageCover();
+
+  useEffect(() => {
+    setRefreshKey(Date.now());
+    refetch();
+  }, [refetch]);
+
+  const sortedPorifleImages = useMemo(() => {
+    const list = profileDetails?.profileImages ?? [];
+    return [...list].sort((a, b) => {
+      if (a.isMain && !b.isMain) return -1;
+      if (!a.isMain && b.isMain) return 1;
+      return 0;
+    });
+  }, [profileDetails?.profileImages]);
 
   const handleProfileImageOpen = () => {
     setProfileOpen(true);
   };
   const handleProfileImageClose = () => {
     setProfileOpen(false);
+
+    refetch();
   };
 
   return (
     <>
-      <View style={styles.container}>
+      <View key={refreshKey} style={styles.container}>
         <Text style={styles.title}>프로필 사진</Text>
 
         <View style={styles.cardWrapper}>
