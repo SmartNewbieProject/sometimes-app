@@ -37,6 +37,10 @@ function Profile() {
   const { showErrorModal } = useModal();
   const { data: preferenceSelf = [] } = usePreferenceSelfQuery();
 
+  useEffect(() => {
+    queryClient.refetchQueries({ queryKey: ["my-profile-details"] });
+  }, []);
+
   const disabled = !!(
     !form ||
     !form.datingStyleIds ||

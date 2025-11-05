@@ -99,34 +99,12 @@ export const ChangeProfileImageModal = ({
     );
   }, []);
 
-  useEffect(() => {
-    if (profileDetails?.profileImages) {
-      const sortedPorifleImages = profileDetails?.profileImages.sort((a, b) => {
-        if (a.isMain && !b.isMain) return -1;
-        if (!a.isMain && b.isMain) return 1;
-        return 0;
-      });
-      setImages(sortedPorifleImages.map((item) => item.url));
-    }
-  }, [profileDetails]);
+
 
   const handleImageChange = (index: number, value: string) => {
     const newImages = [...images];
     newImages[index] = value;
     setImages(newImages);
-  };
-
-  const addNewImage = async (newImage: string[]) => {
-    await apis.uploadProfileImages(newImage);
-  };
-
-  const cleanupRemainingImages = async (
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    oldImages: any[]
-  ) => {
-    for (let i = 0; i < oldImages.length; i++) {
-      await apis.deleteProfileImage(oldImages[i].id).catch(() => {});
-    }
   };
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -155,25 +133,10 @@ export const ChangeProfileImageModal = ({
     try {
       setIsSubmitting(true);
 
-      const oldImages = [...(profileDetails.profileImages || [])];
-      const changedIndexes: number[] = [];
-
-      images.forEach((img, idx) => {
-        const oldImage = oldImages[idx]?.url ?? null;
-        if (img !== oldImage) {
-          changedIndexes.push(idx);
-        }
-      });
-
-      const batchImages = changedIndexes
-        .map((idx) => images[idx])
-        .filter((img): img is string => !!img);
-
-      if (batchImages.length > 0) {
-        await apis.uploadProfileImages(batchImages);
-      }
+      await apis.uploadProfileImages(validImages);
 
       await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
+      await queryClient.invalidateQueries({ queryKey: ["profile-image-review-status"] });
       hideModal();
 
       setTimeout(() => {
@@ -223,16 +186,16 @@ export const ChangeProfileImageModal = ({
                 textColor="black"
                 className="mt-2"
               >
-                프로필 사진이 없으면 매칭이 안 돼요!
+                프로필 사진을 변경해보세요
               </Text>
               <Text weight="semibold" size="20" textColor="black">
-                지금 바로 추가해 주세요
+                더 매력적인 나를 보여주세요!
               </Text>
             </View>
 
             <View style={styles.descriptioncontianer}>
               <Text weight="medium" size="sm" textColor="pale-purple">
-                매칭을 위해 3장의 프로필 사진을 필수로 올려주세요
+                3장의 프로필 사진을 모두 새로 등록해주세요
               </Text>
               <Text weight="medium" size="sm" textColor="pale-purple">
                 얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
@@ -342,7 +305,7 @@ export const ChangeProfileImageModal = ({
         </GuideView>
         <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
           <Layout.TwoButtons
-            disabledNext={isSubmitting}
+            disabledNext={isSubmitting || images.filter((img) => img !== null).length !== 3}
             content={{
               next: isSubmitting ? "저장 중.." : "저장하기",
             }}
