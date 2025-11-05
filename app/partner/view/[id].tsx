@@ -34,6 +34,7 @@ import {
   Section,
   Show,
   Text,
+  HeaderWithNotification,
 } from "@shared/ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { HttpStatusCode } from "axios";
@@ -102,13 +103,8 @@ export default function PartnerDetailScreen() {
       />
       <PalePurpleGradient />
 
-      <Header.Container>
-        <Header.LeftContent>
-          <Pressable onPress={router.back} className="pt-2 -ml-2">
-            <ChevronLeftIcon width={24} height={24} />
-          </Pressable>
-        </Header.LeftContent>
-        <Header.RightContent>
+      <HeaderWithNotification
+        rightContent={
           <Pressable // 신고하기 버튼
             onPress={() =>
               router.navigate({
@@ -122,12 +118,12 @@ export default function PartnerDetailScreen() {
                 },
               })
             }
-            className="pt-2 -ml-2"
+            className="pt-2 -mr-2"
           >
             <Feather name="alert-triangle" size={24} color="#000" />
           </Pressable>
-        </Header.RightContent>
-      </Header.Container>
+        }
+      />
 
       <ScrollView
         scrollEnabled={!isSlideScrolling}

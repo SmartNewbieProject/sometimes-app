@@ -6,6 +6,7 @@ export const useMatchingHistoryList = () => {
     queryKey: ["matching-history-list"],
     queryFn: getMatchingHistoryList,
     staleTime: 0,
+    gcTime: 0,
   });
 
   return { matchingHistoryList, ...queryProps };

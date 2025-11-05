@@ -30,6 +30,7 @@ import {
   PalePurpleGradient,
   Show,
 } from "@/src/shared/ui";
+import { NotificationIcon } from "@/src/features/notification/ui/notification-icon";
 import { track } from "@amplitude/analytics-react-native";
 import { useAuth } from "@features/auth";
 import Event from "@features/event";
@@ -142,13 +143,16 @@ const HomeScreen = () => {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
-            <ImageResource
-              resource={ImageResources.GEM}
-              width={41}
-              height={41}
-            />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <NotificationIcon size={41} />
+            <TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
+              <ImageResource
+                resource={ImageResources.GEM}
+                width={41}
+                height={41}
+              />
+            </TouchableOpacity>
+          </View>
         }
       />
 

@@ -2,7 +2,7 @@
 import { useCategory } from "@/src/features/community/hooks";
 import { CategoryList, CreateArticleFAB } from "@/src/features/community/ui";
 import { ImageResources } from "@/src/shared/libs";
-import { BottomNavigation, Header, ImageResource } from "@/src/shared/ui";
+import { BottomNavigation, Header, ImageResource, HeaderWithNotification } from "@/src/shared/ui";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, useWindowDimensions, ActivityIndicator } from "react-native";
@@ -186,15 +186,16 @@ export default function CommunityScreen() {
 const ListHeaderComponent = () => {
   return (
     <View>
-      <Header.Container className="items-center bg-white ">
-        <Header.CenterContent>
+      <HeaderWithNotification
+        centerContent={
           <ImageResource
             resource={ImageResources.COMMUNITY_LOGO}
             width={152}
             height={18}
           />
-        </Header.CenterContent>
-      </Header.Container>
+        }
+        showBackButton={false}
+      />
       <View className="pt-[14px] bg-white">
         <CategoryList />
       </View>

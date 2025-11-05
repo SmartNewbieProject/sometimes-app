@@ -45,7 +45,7 @@ export const FlippableCard: React.FC<FlippableCardProps> = ({
 
     flipTimerRef.current = setInterval(() => {
       flipCard();
-    }, 3000);
+    }, 3000) as unknown as NodeJS.Timeout;
   };
 
   const stopAutoFlipTimer = () => {
