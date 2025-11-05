@@ -9,9 +9,9 @@ export const mockArticles: Article[] = [
     author: {
       id: '1',
       name: '홍길동',
-      email: 'hong@example.com',
       age: 25,
-      university: { name: '서울대학교', image: require('@/assets/images/univ.png') }
+      gender: 'MALE' as const,
+      universityDetails: { name: '서울대학교', authentication: true, department: '컴퓨터공학과', grade: '3학년', studentNumber: '2021001' }
     },
     likes: 0,
     views: 0
@@ -24,9 +24,9 @@ export const mockArticles: Article[] = [
     author: {
       id: '2',
       name: '김철수',
-      email: 'kim@example.com',
-      age: 23,
-      university: { name: '연세대학교', image: require('@/assets/images/univ.png') }
+            age: 23,
+      gender: 'FEMALE' as const,
+      universityDetails: { name: '연세대학교', authentication: true, department: '경제학과', grade: '2학년', studentNumber: '2022001' }
     },
     likes: 0,
     views: 0
@@ -39,9 +39,9 @@ export const mockArticles: Article[] = [
     author: {
       id: '3',
       name: '이영희',
-      email: 'lee@example.com',
-      age: 27,
-      university: { name: '고려대학교', image: require('@/assets/images/univ.png') }
+            age: 27,
+      gender: 'MALE' as const,
+      universityDetails: { name: '고려대학교', authentication: true, department: '국문학과', grade: '4학년', studentNumber: '2020001' }
     },
     likes: 0,
     views: 0
@@ -57,8 +57,7 @@ export const mockPopularArticles: Article[] = [
     author: {
       id: '4',
       name: '토끼러버',
-      email: 'rabbit@example.com',
-      age: 22,
+            age: 22,
       university: { name: '서울대학교', image: require('@/assets/images/univ.png') }
     },
     likes: 10,
@@ -72,8 +71,7 @@ export const mockPopularArticles: Article[] = [
     author: {
       id: '5',
       name: '별덕후',
-      email: 'star@example.com',
-      age: 24,
+            age: 24,
       university: { name: '서울대학교', image: require('@/assets/images/univ.png') }
     },
     likes: 15,
@@ -90,8 +88,7 @@ export const mockComments = [
     author: {
       id: 'c9bf9e57-1685-4c89-bafb-ff5af830be8a',
       name: '김철수',
-      email: 'kim@example.com',
-      age: 20,
+            age: 20,
       university: {
         name: '서울대학교',
         image: require('@/assets/images/univ.png')
@@ -106,8 +103,7 @@ export const mockComments = [
     author: {
       id: 'b2f9e2b7-4c3b-4f2b-8f3b-2f3b4f2b3f4b',
       name: '이영희',
-      email: 'lee@example.com',
-      age: 20,
+            age: 20,
       university: {
         name: '서울대학교',
         image: require('@/assets/images/univ.png')
@@ -122,8 +118,7 @@ export const mockComments = [
     author: {
       id: 'a2b3f4b2-9e2b-7e4c-3b4f-2b8f3b2f3b4f',
       name: '홍길동',
-      email: 'hong@example.com',
-      age: 20,
+            age: 20,
       university: {
         name: '서울대학교',
         image: require('@/assets/images/univ.png')
@@ -138,8 +133,7 @@ export const mockComments = [
     author: {
       id: 'b2f3b4f2-9e2b-7e4c-3b4f-2b8f3b2f3b4f',
       name: '토끼팬',
-      email: 'rabbitfan@example.com',
-      age: 20,
+            age: 20,
       university: {
         name: '서울대학교',
         image: require('@/assets/images/univ.png')
@@ -154,8 +148,7 @@ export const mockComments = [
     author: {   
       id: 'c2f3b4f2-9e2b-7e4c-3b4f-2b8f3b2f3b4f',
       name: '별구경러',
-      email: 'stargazer@example.com',
-      age: 20,
+            age: 20,
       university: {
         name: '서울대학교',
         image: require('@/assets/images/univ.png')
@@ -170,8 +163,7 @@ export const mockComments = [
     author: {
       id: 'd2f3b4f2-9e2b-7e4c-3b4f-2b8f3b2f3b4f',
       name: '이영희',
-      email: 'lee@example.com',
-      age: 20,
+            age: 20,
       university: {
         name: '서울대학교',
         image: require('@/assets/images/univ.png')

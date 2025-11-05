@@ -54,8 +54,8 @@ export const reportArticle = async (
 type GetArticleResponse = PaginatedResponse<Article>;
 
 export const getAllArticles = async (
-  params: getArticleParams
-): Promise<Article[]> => {
+  params: GetArticleParams
+): Promise<PaginatedResponse<Article>> => {
   return axiosClient.get("/articles", { params });
 };
 
