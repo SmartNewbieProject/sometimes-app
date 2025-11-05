@@ -12,6 +12,7 @@ import {
   Header,
   PalePurpleGradient,
   Text,
+  HeaderWithNotification,
 } from "@/src/shared/ui";
 import SettingIcon from "@assets/icons/setting.svg";
 import { Image } from "expo-image";
@@ -24,7 +25,6 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useProfileReviewRedirect } from "@/src/features/mypage/hooks/use-img-edit-status";
@@ -41,19 +41,16 @@ export default function MyScreen() {
         backgroundColor: "#fff",
       }}
     >
-      <Header.Container className="items-center mt-[9px]">
-        <Header.LeftContent>
-          <Header.LeftButton visible={false} />
-        </Header.LeftContent>
-        <Header.CenterContent>
+      <HeaderWithNotification
+        centerContent={
           <Image
             source={require("@assets/images/MY_LOGO.png")}
             style={{ width: 40, height: 20 }}
             contentFit="contain"
           />
-        </Header.CenterContent>
-
-        <Header.RightContent>
+        }
+        showBackButton={false}
+        rightContent={
           <TouchableOpacity>
             <View style={styles.iconContainer}>
               <Pressable onPress={() => router.navigate("/setting")}>
@@ -61,8 +58,9 @@ export default function MyScreen() {
               </Pressable>
             </View>
           </TouchableOpacity>
-        </Header.RightContent>
-      </Header.Container>
+        }
+        style={{ marginTop: 9 }}
+      />
 
       <ScrollView style={styles.scrollViewContainer}>
         <View style={styles.profileContainer}>

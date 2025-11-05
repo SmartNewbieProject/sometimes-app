@@ -7,7 +7,7 @@ import { ArticleDetail } from "@/src/features/community/ui/article-detail/articl
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Loading from "@/src/features/loading";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
-import { Header, Show, Text } from "@/src/shared/ui";
+import { Header, Show, Text, HeaderWithNotification } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
@@ -30,20 +30,14 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
   dropdownOpen,
   dropdownItems,
 }) => (
-  <Header.Container className=" items-center">
-    <Header.LeftContent>
-      <Pressable onPress={() => router.back()} className="p-2 -ml-2">
-        <ChevronLeftIcon width={24} height={24} />
-      </Pressable>
-      <Header.LeftButton visible={false} />
-    </Header.LeftContent>
-    <Header.Logo title="커뮤니티" showLogo={true} logoSize={128} />
-    <Header.RightContent>
+  <HeaderWithNotification
+    centerContent={<Text weight="bold">커뮤니티</Text>}
+    rightContent={
       <Show when={isOwner}>
         <Dropdown open={dropdownOpen} items={dropdownItems} />
       </Show>
-    </Header.RightContent>
-  </Header.Container>
+    }
+  />
 );
 
 export default function ArticleDetailScreen() {
