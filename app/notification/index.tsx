@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PalePurpleGradient } from '@/src/shared/ui';
 import { NotificationList } from '@/src/features/notification/ui/notification-list';
 import { useMarkAllAsRead, useDeleteAllRead } from '@/src/features/notification/queries/use-notification-mutations';
@@ -14,6 +15,7 @@ export default function NotificationPage() {
   const deleteAllReadMutation = useDeleteAllRead();
   const { showModal } = useModal();
   const { data: unreadCountData } = useUnreadCount();
+  const insets = useSafeAreaInsets();
   const hasUnread = (unreadCountData?.data.unreadCount ?? 0) > 0;
 
   const handleBack = () => {
@@ -78,7 +80,7 @@ export default function NotificationPage() {
     <View style={styles.container}>
       <PalePurpleGradient />
 
-      <View style={styles.topHeader}>
+      <View style={[styles.topHeader, { paddingTop: insets.top + 16 }]}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
@@ -94,7 +96,7 @@ export default function NotificationPage() {
       </View>
 
       {showMenu && (
-        <View style={styles.dropdown}>
+        <View style={[styles.dropdown, { top: insets.top + 16 + 54 }]}>
           <TouchableOpacity style={styles.dropdownItem} onPress={handleMarkAllAsRead}>
             <Text style={[styles.dropdownItemText, hasUnread && styles.activeMenuItem]}>모두 읽기</Text>
           </TouchableOpacity>
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingBottom: 16,
     backgroundColor: 'transparent',
   },
   backButton: {
