@@ -177,7 +177,7 @@ export default function CommunityScreen() {
         )}
       </View>
 
-      {!isHome && !isNotice && <CreateArticleFAB />}
+      {!isHome && <CreateArticleFAB />}
       <BottomNavigation />
     </View>
   );
