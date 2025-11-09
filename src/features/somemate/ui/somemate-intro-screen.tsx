@@ -2,8 +2,11 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { Button, BottomNavigation } from "@/src/shared/ui";
+import { useQueryClient } from "@tanstack/react-query";
+import { ReportButton } from "./report-button";
 
 export default function SomemateIntroScreen() {
+  const queryClient = useQueryClient();
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -49,7 +52,10 @@ export default function SomemateIntroScreen() {
         <View style={styles.buttonContainer}>
           <Button
             variant="primary"
-            onPress={() => router.push("/chat/somemate-chat")}
+            onPress={() => {
+              queryClient.invalidateQueries({ queryKey: ["ai-chat"] });
+              router.push("/chat/somemate-chat");
+            }}
             className="w-full"
           >
             <View style={styles.buttonContent}>
@@ -62,17 +68,7 @@ export default function SomemateIntroScreen() {
             </View>
           </Button>
 
-          <Pressable
-            style={styles.reportButton}
-            onPress={() => router.push("/chat/somemate-report")}
-          >
-            <Image
-              source={require("@assets/images/details.png")}
-              style={styles.reportIcon}
-              contentFit="contain"
-            />
-            <Text style={styles.reportButtonText}>썸메이트 리포트 보러가기</Text>
-          </Pressable>
+          <ReportButton />
         </View>
       </ScrollView>
 
@@ -189,30 +185,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",
-    fontFamily: "Pretendard-SemiBold",
-  },
-  reportButton: {
-    width: "100%",
-    marginTop: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#7A4AE2",
-    backgroundColor: "#fff",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-  },
-  reportIcon: {
-    width: 20,
-    height: 20,
-  },
-  reportButtonText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#7A4AE2",
     fontFamily: "Pretendard-SemiBold",
   },
 });

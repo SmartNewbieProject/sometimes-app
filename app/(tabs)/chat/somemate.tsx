@@ -1,11 +1,15 @@
 import { Image } from "expo-image";
-import { router } from "expo-router";
-import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
+import { useActiveSession, useCreateSession } from "@/src/features/somemate/queries/use-ai-chat";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import type { AiChatCategory } from "@/src/features/somemate/types";
+import { ReportButton } from "@/src/features/somemate/ui/report-button";
 
-const CATEGORIES = [
+const CATEGORIES: Array<{ id: string; label: AiChatCategory }> = [
   { id: "daily", label: "일상" },
   { id: "relationship", label: "인간관계" },
   { id: "hobby", label: "진로/학교" },
@@ -14,7 +18,46 @@ const CATEGORIES = [
 
 export default function SomemateScreen() {
   const insets = useSafeAreaInsets();
-  const [selectedCategory, setSelectedCategory] = useState("daily");
+  const [selectedCategory, setSelectedCategory] = useState<AiChatCategory>("일상");
+  const { showModal } = useModal();
+
+  const { data: activeSession, isLoading: isLoadingSession, refetch } = useActiveSession();
+  const createSessionMutation = useCreateSession();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  const handleStartChat = async () => {
+    if (isLoadingSession) return;
+
+    if (activeSession) {
+      router.push(`/chat/somemate-chat?sessionId=${activeSession.id}`);
+      return;
+    }
+
+    try {
+      const response = await createSessionMutation.mutateAsync({
+        category: selectedCategory,
+      });
+      router.push(`/chat/somemate-chat?sessionId=${response.sessionId}`);
+    } catch (error: any) {
+      showModal({
+        title: "오류",
+        children: (
+          <Text style={{ textAlign: "center" }}>
+            {error?.message || "세션 생성에 실패했습니다."}
+          </Text>
+        ),
+        primaryButton: {
+          text: "확인",
+          onClick: () => {},
+        },
+      });
+    }
+  };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -43,16 +86,16 @@ export default function SomemateScreen() {
             {CATEGORIES.map((category) => (
               <Pressable
                 key={category.id}
-                onPress={() => setSelectedCategory(category.id)}
+                onPress={() => setSelectedCategory(category.label)}
                 style={[
                   styles.categoryButton,
-                  selectedCategory === category.id && styles.categoryButtonActive,
+                  selectedCategory === category.label && styles.categoryButtonActive,
                 ]}
               >
                 <Text
                   style={[
                     styles.categoryText,
-                    selectedCategory === category.id && styles.categoryTextActive,
+                    selectedCategory === category.label && styles.categoryTextActive,
                   ]}
                 >
                   {category.label}
@@ -79,27 +122,24 @@ export default function SomemateScreen() {
         <View style={styles.buttonContainer}>
           <Pressable
             style={styles.chatButton}
-            onPress={() => router.push("/chat/somemate-chat")}
+            onPress={handleStartChat}
+            disabled={isLoadingSession || createSessionMutation.isPending}
           >
-            <Image
-              source={require("@assets/images/white_heart.png")}
-              style={styles.buttonIcon}
-              contentFit="contain"
-            />
-            <Text style={styles.buttonText}>미호와 대화하기</Text>
+            {(isLoadingSession || createSessionMutation.isPending) ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <>
+                <Image
+                  source={require("@assets/images/white_heart.png")}
+                  style={styles.buttonIcon}
+                  contentFit="contain"
+                />
+                <Text style={styles.buttonText}>미호와 대화하기</Text>
+              </>
+            )}
           </Pressable>
 
-          <Pressable
-            style={styles.reportButton}
-            onPress={() => router.push("/chat/somemate-report")}
-          >
-            <Image
-              source={require("@assets/images/details.png")}
-              style={styles.reportIcon}
-              contentFit="contain"
-            />
-            <Text style={styles.reportButtonText}>썸메이트 리포트 보러가기</Text>
-          </Pressable>
+          <ReportButton />
         </View>
       </ScrollView>
 
@@ -245,30 +285,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",
-    fontFamily: "Pretendard-SemiBold",
-  },
-  reportButton: {
-    width: "100%",
-    marginTop: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#7A4AE2",
-    backgroundColor: "#fff",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-  },
-  reportIcon: {
-    width: 30,
-    height: 30,
-  },
-  reportButtonText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#7A4AE2",
     fontFamily: "Pretendard-SemiBold",
   },
 });

@@ -21,7 +21,9 @@ import { getMySimpleDetails } from "@/src/features/auth/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
 
 type MySimpleDetails = {
-  role: string;
+  /** @deprecated 하위 호환성을 위해 유지 */
+  role?: string;
+  roles: string[];
   id: string;
   profileId: string;
   name: string;
@@ -51,7 +53,7 @@ export const ArticleWriteForm = ({
     enabled: !!profileDetails,
     staleTime: 5 * 60 * 1000,
   });
-  const isAdmin = me?.role === "admin";
+  const isAdmin = me?.roles?.includes("admin") || me?.role === "admin";
 
   const selectedCategory: string | undefined = useWatch({
     control,

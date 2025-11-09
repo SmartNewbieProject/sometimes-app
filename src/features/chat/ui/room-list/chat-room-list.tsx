@@ -15,7 +15,8 @@ import ChatRoomCard from "./chat-room-card";
 import SomemateBanner from "../somemate-banner";
 
 type MySimpleDetails = {
-  role: "admin" | "user";
+  role?: "admin" | "user" | "tester";
+  roles: ("admin" | "user" | "tester")[];
   id: string;
   profileId: string;
   name: string;
@@ -35,13 +36,19 @@ function ChatRoomList() {
   const openChatRooms = data.open;
   const lockChatRooms = data.lock;
 
+  const canAccessSomemate =
+    profileDetails?.roles?.includes("tester") ||
+    profileDetails?.roles?.includes("admin") ||
+    profileDetails?.role === "tester" ||
+    profileDetails?.role === "admin";
+
   return (
     <ScrollView>
       {collapse && (
         <ChatLikeCollapse type={collapse.type} collapse={collapse.data} />
       )}
       <View style={{ height: 18 }} />
-      {profileDetails?.role === "user" && <SomemateBanner />}
+      {canAccessSomemate && <SomemateBanner />}
       <ChatSearch keyword={keyword} setKeyword={setKeyword} />
 
       <Show

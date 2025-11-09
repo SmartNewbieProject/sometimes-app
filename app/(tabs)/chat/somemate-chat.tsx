@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
-import { router } from "expo-router";
-import { Platform, StyleSheet, Text, View, Pressable, FlatList } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
@@ -9,20 +9,46 @@ import DateDivider from "@/src/features/chat/ui/message/date-divider";
 import BackgroundHeartIcon from "@assets/icons/new-chat-banner-heart.svg";
 import BulbIcon from "@assets/icons/bulb.svg";
 import { SomemateInput } from "@/src/features/somemate/ui";
+import { useActiveSession, useMessages, useAnalyzeSession, useCompleteSession, useDeleteSession } from "@/src/features/somemate/queries/use-ai-chat";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import type { AiChatMessage } from "@/src/features/somemate/types";
+import { sendMessageStream } from "@/src/features/somemate/apis/ai-chat";
+import { useState, useMemo, useRef, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { CategoryBadge } from "@/src/features/somemate/ui/category-badge";
 
 type ListItem =
   | { type: "spacer"; id: string }
   | { type: "date"; date: string }
-  | { type: "matchBanner" }
-  | { type: "guideBanner" };
+  | { type: "message"; message: AiChatMessage }
+  | { type: "analyzeButton" };
 
 export default function SomemateChatScreen() {
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{ sessionId?: string }>();
+  const { showModal } = useModal();
+  const queryClient = useQueryClient();
 
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth() + 1;
-  const day = new Date().getDate();
-  const date = `${year}년 ${month}월 ${day}일`;
+  const { data: activeSession } = useActiveSession();
+  const sessionId = params.sessionId || activeSession?.id;
+
+  const { data: messagesData, isLoading: isLoadingMessages } = useMessages(
+    sessionId || "",
+    !!sessionId
+  );
+  const completeSessionMutation = useCompleteSession();
+  const analyzeSessionMutation = useAnalyzeSession();
+  const deleteSessionMutation = useDeleteSession();
+
+  const [localMessages, setLocalMessages] = useState<AiChatMessage[]>([]);
+  const streamingContentRef = useRef<string>("");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingTrigger, setStreamingTrigger] = useState(0);
+
+  const allMessages = messagesData?.messages || [];
+  const displayMessages = useMemo(() => {
+    return isStreaming ? [...allMessages, ...localMessages] : allMessages;
+  }, [isStreaming, allMessages, localMessages]);
 
   const keyboard = useAnimatedKeyboard();
 
@@ -37,20 +63,214 @@ export default function SomemateChatScreen() {
     ],
   }));
 
-  const handleSend = (message: string) => {
-    // TODO: 메시지 전송 로직
-    console.log("Send message:", message);
+  const handleSend = useCallback(async (message: string) => {
+    if (!sessionId || isStreaming) return;
+
+    const userMessage: AiChatMessage = {
+      id: `temp-user-${Date.now()}`,
+      sessionId,
+      role: "user",
+      content: message,
+      createdAt: new Date(),
+    };
+
+    setLocalMessages([userMessage]);
+    setIsStreaming(true);
+    streamingContentRef.current = "";
+
+    try {
+      await sendMessageStream(
+        sessionId,
+        { content: message },
+        (chunk) => {
+          streamingContentRef.current += chunk;
+          setStreamingTrigger(prev => prev + 1);
+        }
+      );
+
+      setIsStreaming(false);
+      streamingContentRef.current = "";
+      setLocalMessages([]);
+
+      queryClient.invalidateQueries({
+        queryKey: ["ai-chat", "messages", sessionId]
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["ai-chat", "active-session"]
+      });
+
+    } catch (error: any) {
+      setIsStreaming(false);
+      streamingContentRef.current = "";
+      setLocalMessages([]);
+
+      showModal({
+        title: "오류",
+        children: (
+          <Text style={{ textAlign: "center" }}>
+            {error?.message || "메시지 전송에 실패했습니다."}
+          </Text>
+        ),
+        primaryButton: {
+          text: "확인",
+          onClick: () => {},
+        },
+      });
+    }
+  }, [sessionId, isStreaming, queryClient, showModal]);
+
+  const handleAnalyze = async () => {
+    if (!sessionId) return;
+
+    showModal({
+      title: "분석 요청",
+      children: (
+        <Text style={{ textAlign: "center" }}>
+          대화를 분석하여 썸타임 리포트를 생성할까요?{"\n"}
+          리포트 생성 후에는 새로운 대화를 시작할 수 있습니다.
+        </Text>
+      ),
+      primaryButton: {
+        text: "분석하기",
+        onClick: async () => {
+          try {
+            await completeSessionMutation.mutateAsync(sessionId);
+
+            await analyzeSessionMutation.mutateAsync({ sessionId });
+
+            showModal({
+              title: "분석 시작",
+              children: (
+                <Text style={{ textAlign: "center" }}>
+                  리포트 생성을 시작했습니다.{"\n"}
+                  잠시 후 리포트 목록에서 확인해주세요.
+                </Text>
+              ),
+              primaryButton: {
+                text: "리포트 보러가기",
+                onClick: () => {
+                  router.push("/chat/somemate-report");
+                },
+              },
+            });
+          } catch (error: any) {
+            showModal({
+              title: "오류",
+              children: (
+                <Text style={{ textAlign: "center" }}>
+                  {error?.message || "분석 요청에 실패했습니다."}
+                </Text>
+              ),
+              primaryButton: {
+                text: "확인",
+                onClick: () => {},
+              },
+            });
+          }
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {},
+      },
+    });
   };
 
-  const listData: ListItem[] = [
-    { type: "spacer", id: "top" },
-    { type: "date", date },
-    { type: "spacer", id: "afterDate" },
-    { type: "matchBanner" },
-    { type: "spacer", id: "afterMatch" },
-    { type: "guideBanner" },
-    { type: "spacer", id: "bottom" },
-  ];
+  const handleLeaveChat = () => {
+    if (!sessionId) return;
+
+    showModal({
+      title: "대화방 나가기",
+      children: (
+        <Text style={{ textAlign: "center" }}>
+          대화방을 나가면 현재 대화 내용이 삭제되고{"\n"}
+          리포트를 받을 수 없습니다.{"\n\n"}
+          정말 나가시겠어요?
+        </Text>
+      ),
+      primaryButton: {
+        text: "나가기",
+        onClick: async () => {
+          try {
+            await deleteSessionMutation.mutateAsync(sessionId);
+
+            // 캐시 완전히 초기화
+            queryClient.clear();
+
+            showModal({
+              title: "대화방 나가기",
+              children: (
+                <Text style={{ textAlign: "center" }}>
+                  대화방에서 나갔습니다.
+                </Text>
+              ),
+              primaryButton: {
+                text: "확인",
+                onClick: () => {
+                  router.replace("/chat/somemate");
+                },
+              },
+            });
+          } catch (error: any) {
+            showModal({
+              title: "오류",
+              children: (
+                <Text style={{ textAlign: "center" }}>
+                  {error?.message || "대화방 나가기에 실패했습니다."}
+                </Text>
+              ),
+              primaryButton: {
+                text: "확인",
+                onClick: () => {},
+              },
+            });
+          }
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {},
+      },
+    });
+  };
+
+  const dateStr = useMemo(() => {
+    const now = new Date();
+    return `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
+  }, []);
+
+  const turnCount = activeSession?.turnCount || 0;
+  const canAnalyze = turnCount >= 10;
+
+  const listData: ListItem[] = useMemo(() => {
+    const items: ListItem[] = [
+      { type: "spacer", id: "top" },
+      { type: "date", date: dateStr },
+      { type: "spacer", id: "afterDate" },
+      ...displayMessages.map((msg: AiChatMessage) => ({ type: "message" as const, message: msg })),
+    ];
+
+    if (isStreaming && streamingContentRef.current) {
+      items.push({
+        type: "message" as const,
+        message: {
+          id: "streaming-message",
+          sessionId: sessionId || "",
+          role: "assistant" as const,
+          content: streamingContentRef.current,
+          createdAt: new Date(),
+        } as AiChatMessage
+      });
+    }
+
+    if (canAnalyze) {
+      items.push({ type: "analyzeButton" as const });
+    }
+
+    items.push({ type: "spacer", id: "bottom" });
+
+    return items;
+  }, [dateStr, displayMessages, isStreaming, sessionId, canAnalyze, streamingTrigger]);
 
   const renderItem = ({ item }: { item: ListItem }) => {
     if (item.type === "spacer") {
@@ -59,43 +279,73 @@ export default function SomemateChatScreen() {
     if (item.type === "date") {
       return <DateDivider date={item.date} />;
     }
-    if (item.type === "matchBanner") {
+    if (item.type === "message") {
+      const isUser = item.message.role === "user";
       return (
-        <View style={styles.matchBanner}>
-          <View style={{ position: "relative" }}>
-            <BackgroundHeartIcon />
+        <View
+          style={[
+            styles.messageContainer,
+            isUser ? styles.userMessageContainer : styles.assistantMessageContainer,
+          ]}
+        >
+          {!isUser && (
             <Image
               source={require("@assets/images/somemate_miho.png")}
-              style={styles.bannerIcon}
+              style={styles.assistantAvatar}
               contentFit="cover"
             />
+          )}
+          <View
+            style={[
+              styles.messageBubble,
+              isUser ? styles.userBubble : styles.assistantBubble,
+            ]}
+          >
+            <Text
+              style={[
+                styles.messageText,
+                isUser ? styles.userMessageText : styles.assistantMessageText,
+              ]}
+            >
+              {item.message.content}
+            </Text>
           </View>
-          <Text style={styles.matchTitle}>
-            반가워요! <Text style={[styles.matchTitle, styles.matchName]}>미호</Text>와의 대화를 시작해볼까요?
-          </Text>
-          <Text style={styles.matchSubtext}>대화를 이어가며 나만의 인사이트를 받아보세요</Text>
         </View>
       );
     }
-    if (item.type === "guideBanner") {
+    if (item.type === "analyzeButton") {
+      const buttonText = canAnalyze
+        ? `분석받기 (${turnCount}턴)`
+        : `조금 더 대화해보세요 (${turnCount}/10턴)`;
+
+      const hintText = canAnalyze
+        ? "💡 지금 분석받거나, 더 대화하고 나중에 분석받을 수 있어요"
+        : "💬 10턴 이상 대화하면 썸타입 리포트를 받을 수 있어요";
+
       return (
-        <View style={styles.guideBanner}>
-          <View style={styles.guideHeader}>
-            <BulbIcon />
-            <Text style={styles.guideTitle}>미호는 대화를 통해 성향을 분석해요</Text>
-          </View>
-          <View style={styles.guideContent}>
-            <View style={styles.guideItem}>
-              <Text style={styles.guideText}>
-                자유롭게 이야기하면서 관심 있는 주제나 고민을 나누어 보세요!
+        <View style={styles.analyzeButtonContainer}>
+          <Text style={styles.analyzeHintText}>
+            {hintText}
+          </Text>
+          <Pressable
+            style={[
+              styles.analyzeButton,
+              !canAnalyze && styles.analyzeButtonDisabled
+            ]}
+            onPress={handleAnalyze}
+            disabled={!canAnalyze || analyzeSessionMutation.isPending}
+          >
+            {analyzeSessionMutation.isPending ? (
+              <ActivityIndicator color="#7A4AE2" />
+            ) : (
+              <Text style={[
+                styles.analyzeButtonText,
+                !canAnalyze && styles.analyzeButtonTextDisabled
+              ]}>
+                {buttonText}
               </Text>
-            </View>
-            <View style={styles.guideItem}>
-              <Text style={styles.guideText}>
-                10회 이상 대화를 나누면 분석 리포트를 받을 수 있어요
-              </Text>
-            </View>
-          </View>
+            )}
+          </Pressable>
         </View>
       );
     }
@@ -123,11 +373,16 @@ export default function SomemateChatScreen() {
             contentFit="cover"
           />
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>미호</Text>
-            <Text style={styles.subtitle}>대화 2턴</Text>
+            <View style={styles.nameRow}>
+              <Text style={styles.name}>미호</Text>
+              {activeSession?.category && (
+                <CategoryBadge category={activeSession.category} />
+              )}
+            </View>
+            <Text style={styles.subtitle}>대화 {turnCount}턴</Text>
           </View>
         </Pressable>
-        <Pressable style={styles.menuButton}>
+        <Pressable style={styles.menuButton} onPress={handleLeaveChat}>
           <VerticalEllipsisIcon />
         </Pressable>
       </View>
@@ -144,24 +399,32 @@ export default function SomemateChatScreen() {
           animatedStyles,
         ]}
       >
-        <FlatList
-          data={listData}
-          renderItem={renderItem}
-          keyExtractor={(item, index) =>
-            item.type === "spacer" ? item.id : `${item.type}-${index}`
-          }
-          style={{
-            paddingHorizontal: 16,
-            width: "100%",
-            flex: 1,
-          }}
-          contentContainerStyle={{
-            gap: 10,
-          }}
-          keyboardShouldPersistTaps="handled"
-        />
+        {isLoadingMessages ? (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <ActivityIndicator size="large" color="#7A4AE2" />
+          </View>
+        ) : (
+          <>
+            <FlatList
+              data={listData}
+              renderItem={renderItem}
+              keyExtractor={(item, index) =>
+                item.type === "spacer" ? item.id : `${item.type}-${index}`
+              }
+              style={{
+                paddingHorizontal: 16,
+                width: "100%",
+                flex: 1,
+              }}
+              contentContainerStyle={{
+                gap: 10,
+              }}
+              keyboardShouldPersistTaps="handled"
+            />
 
-        <SomemateInput onSend={handleSend} />
+            <SomemateInput onSend={handleSend} />
+          </>
+        )}
       </Animated.View>
     </View>
   );
@@ -191,6 +454,11 @@ const styles = StyleSheet.create({
   profileInfo: {
     flex: 1,
     gap: 2,
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   name: {
     color: "#000",
@@ -279,6 +547,81 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     color: "#737275",
+  },
+  messageContainer: {
+    flexDirection: "row",
+    marginVertical: 4,
+    paddingHorizontal: 16,
+  },
+  userMessageContainer: {
+    justifyContent: "flex-end",
+  },
+  assistantMessageContainer: {
+    justifyContent: "flex-start",
+  },
+  assistantAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginRight: 8,
+  },
+  messageBubble: {
+    maxWidth: "75%",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 16,
+  },
+  userBubble: {
+    backgroundColor: "#7A4AE2",
+    borderBottomRightRadius: 4,
+  },
+  assistantBubble: {
+    backgroundColor: "#FFFFFF",
+    borderBottomLeftRadius: 4,
+  },
+  messageText: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  userMessageText: {
+    color: "#FFFFFF",
+  },
+  assistantMessageText: {
+    color: "#000000",
+  },
+  analyzeButtonContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  analyzeHintText: {
+    fontSize: 13,
+    color: "#666666",
+    textAlign: "center",
+    lineHeight: 18,
+    fontFamily: "Pretendard-Regular",
+  },
+  analyzeButton: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 2,
+    borderColor: "#7A4AE2",
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    alignItems: "center",
+  },
+  analyzeButtonDisabled: {
+    backgroundColor: "#F5F5F5",
+    borderColor: "#CCCCCC",
+  },
+  analyzeButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#7A4AE2",
+    fontFamily: "Pretendard-SemiBold",
+  },
+  analyzeButtonTextDisabled: {
+    color: "#999999",
   },
 });
 

@@ -1,8 +1,8 @@
 import { Image } from "expo-image";
-import { router } from "expo-router";
-import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import Animated, {
   Easing,
   ReduceMotion,
@@ -13,6 +13,9 @@ import Animated, {
 } from "react-native-reanimated";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import { Svg, Path } from "react-native-svg";
+import { useReports } from "../queries/use-ai-chat";
+import { BottomNavigation } from "@/src/shared/ui/navigation";
+import { CategoryBadge } from "./category-badge";
 
 const ChevronRight = ({ width = 24, height = 24, color = "#7A4AE2" }) => (
   <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
@@ -29,6 +32,13 @@ const ChevronRight = ({ width = 24, height = 24, color = "#7A4AE2" }) => (
 export default function SomemateReportScreen() {
   const insets = useSafeAreaInsets();
   const translateXAnim = useSharedValue(0);
+  const { data: reportsData, isLoading, refetch } = useReports();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   useEffect(() => {
     translateXAnim.value = withRepeat(
@@ -40,7 +50,7 @@ export default function SomemateReportScreen() {
       -1,
       true
     );
-  }, []);
+  }, [translateXAnim]);
 
   const arrowAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -48,31 +58,52 @@ export default function SomemateReportScreen() {
     };
   });
 
-  const reports = [
-    {
-      id: "03",
-      title: "썸타입 #03 - 김정표현이 풍부해진 하루",
-      date: "2025년 10월 15일 오후 09:37",
-      isStarred: false,
-    },
-    {
-      id: "02",
-      title: "썸타입 #02 - 긍정형 대화 비율 상승",
-      date: "2025년 10월 13일 오후 08:21",
-      isStarred: true,
-    },
-    {
-      id: "01",
-      title: "썸타입 #01 - 새로운 목표에 대한 대화",
-      date: "2025년 10월 10일 오후 09:11",
-      isStarred: false,
-    },
-  ];
+  const reports = reportsData?.reports || [];
+  const totalCount = reportsData?.totalCount || 0;
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const period = hours >= 12 ? '오후' : '오전';
+    const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+
+    return `${year}년 ${month}월 ${day}일 ${period} ${String(displayHours).padStart(2, '0')}:${minutes}`;
+  };
+
+  const lastUpdateDate = reports.length > 0
+    ? new Date(reports[0].createdAt).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).replace(/\. /g, '. ')
+    : '-';
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.push("/chat")}>
+            <ChevronLeft width={20} height={20} />
+          </Pressable>
+          <Text style={styles.headerTitle}>나의 썸타입</Text>
+          <View style={{ width: 20 }} />
+        </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#7A4AE2" />
+        </View>
+        <BottomNavigation />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.push("/chat/somemate")}>
+        <Pressable onPress={() => router.push("/chat")}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
         <Text style={styles.headerTitle}>나의 썸타입</Text>
@@ -93,45 +124,56 @@ export default function SomemateReportScreen() {
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>생성된 썸타입 : </Text>
-              <Text style={styles.statValue}>3개</Text>
+              <Text style={styles.statValue}>{totalCount}개</Text>
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>마지막 업데이트 : </Text>
-              <Text style={styles.statValue}>2025. 10. 15</Text>
+              <Text style={styles.statValue}>{lastUpdateDate}</Text>
             </View>
           </View>
         </View>
 
-        {reports.map((report) => (
-          <Pressable
-            key={report.id}
-            style={styles.reportCard}
-            onPress={() => {
-              // TODO: 리포트 상세 페이지로 이동
-              console.log("Navigate to report detail:", report.id);
-            }}
-          >
-            <View style={styles.reportLeft}>
-              <Image
-                source={
-                  report.isStarred
-                    ? require("@assets/images/filled_kid_star.png")
-                    : require("@assets/images/kid_star.png")
-                }
-                style={styles.starIcon}
-                contentFit="contain"
-              />
-            </View>
-            <View style={styles.reportContent}>
-              <Text style={styles.reportTitle}>{report.title}</Text>
-              <Text style={styles.reportDate}>{report.date}</Text>
-            </View>
-            <Animated.View style={arrowAnimatedStyle}>
-              <ChevronRight width={20} height={20} color="#7A4AE2" />
-            </Animated.View>
-          </Pressable>
-        ))}
+        {reports.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>아직 생성된 리포트가 없어요</Text>
+            <Text style={styles.emptySubText}>미호와 대화를 나눈 후 분석을 받아보세요!</Text>
+          </View>
+        ) : (
+          reports.map((report, index) => (
+            <Pressable
+              key={report.id}
+              style={styles.reportCard}
+              onPress={() => {
+                router.push(`/chat/somemate-report-detail?reportId=${report.id}`);
+              }}
+            >
+              <View style={styles.reportLeft}>
+                <Image
+                  source={require("@assets/images/kid_star.png")}
+                  style={styles.starIcon}
+                  contentFit="contain"
+                />
+              </View>
+              <View style={styles.reportContent}>
+                <View style={styles.reportTitleRow}>
+                  <Text style={styles.reportTitle}>
+                    {report.reportData?.title || `썸타입 #${String(totalCount - index).padStart(2, '0')}`}
+                  </Text>
+                  <CategoryBadge category={report.category} />
+                </View>
+                <Text style={styles.reportDate}>{formatDate(report.createdAt)}</Text>
+                {report.status === 'processing' && (
+                  <Text style={styles.processingBadge}>분석 중</Text>
+                )}
+              </View>
+              <Animated.View style={arrowAnimatedStyle}>
+                <ChevronRight width={20} height={20} color="#7A4AE2" />
+              </Animated.View>
+            </Pressable>
+          ))
+        )}
       </ScrollView>
+      <BottomNavigation />
     </View>
   );
 }
@@ -156,6 +198,25 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
     color: "#000",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    paddingVertical: 60,
+    alignItems: "center",
+  },
+  emptyText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#666",
+    marginBottom: 8,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: "#999",
   },
   scrollView: {
     flex: 1,
@@ -239,16 +300,28 @@ const styles = StyleSheet.create({
   reportContent: {
     flex: 1,
   },
+  reportTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 6,
+  },
   reportTitle: {
     fontSize: 16,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
     color: "#7A4AE2",
-    marginBottom: 6,
+    flex: 1,
   },
   reportDate: {
     fontSize: 14,
     color: "#999",
+  },
+  processingBadge: {
+    fontSize: 12,
+    color: "#7A4AE2",
+    fontWeight: "600",
+    marginTop: 4,
   },
 });
 

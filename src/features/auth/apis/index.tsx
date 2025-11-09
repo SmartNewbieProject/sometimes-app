@@ -3,7 +3,9 @@ import { axiosClient } from "@shared/libs";
 // @ts-ignore
 import type { MyDetails } from "@types/user";
 type MySimpleDetails = {
-  role: "admin" | "user";
+  /** @deprecated 하위 호환성을 위해 유지 */
+  role?: "admin" | "user" | "tester";
+  roles: ("admin" | "user" | "tester")[];
   id: string;
   profileId: string;
   name: string;
