@@ -4,7 +4,7 @@ import NotificationCard from "./notification-card";
 import { usePushNotification } from "../../hooks/use-push-notification";
 
 const NotificationMenu = () => {
-  const { isEnabled, toggle } = usePushNotification();
+  const { isEnabled, isUpdating, toggle } = usePushNotification();
 
   return (
     <View style={styles.container}>
@@ -15,6 +15,7 @@ const NotificationMenu = () => {
           title="푸시 알림"
           isOn={isEnabled}
           toggle={toggle}
+          disabled={isUpdating}
         />
       </View>
     </View>

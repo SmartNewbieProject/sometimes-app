@@ -7,6 +7,7 @@ const MatchingMenu = () => {
   const {
     filters,
     isLoading,
+    isUpdating,
     error,
     toggleAvoidDepartment,
     toggleAvoidUniversity,
@@ -25,11 +26,13 @@ const MatchingMenu = () => {
           title="같은 학과 매칭 제외"
           isOn={filters?.avoidDepartment || false}
           toggle={toggleAvoidDepartment}
+          disabled={isUpdating}
         />
         <MatchingCard
           title="같은 학교 매칭 제외"
           isOn={filters?.avoidUniversity || false}
           toggle={toggleAvoidUniversity}
+          disabled={isUpdating}
         />
       </View>
     </View>

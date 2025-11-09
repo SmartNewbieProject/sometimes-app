@@ -11,6 +11,7 @@ import {
 export const usePushNotification = () => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { showModal } = useModal();
 
   const checkStatus = useCallback(async () => {
@@ -38,11 +39,18 @@ export const usePushNotification = () => {
   }, []);
 
   const handleEnable = useCallback(async () => {
+    if (isUpdating) return;
+
+    setIsUpdating(true);
+    const previousValue = isEnabled;
+    setIsEnabled(true);
+
     try {
       if (Platform.OS !== 'web') {
         const permission = await getNotificationPermissionStatus();
 
         if (permission !== 'granted') {
+          setIsEnabled(previousValue); // Rollback
           openAppSettings();
           return;
         }
@@ -51,6 +59,7 @@ export const usePushNotification = () => {
       await enablePushNotification();
       await checkStatus();
     } catch (error) {
+      setIsEnabled(previousValue);
       console.error('푸시 알림 활성화 실패:', error);
 
       const errorMessage = error instanceof Error ? error.message : '푸시 알림 활성화에 실패했습니다.';
@@ -68,30 +77,43 @@ export const usePushNotification = () => {
           primaryButton: { text: '확인', onClick: () => {} },
         });
       }
+    } finally {
+      setIsUpdating(false);
     }
-  }, [openAppSettings, checkStatus, showModal]);
+  }, [isUpdating, isEnabled, openAppSettings, checkStatus, showModal]);
 
   const handleDisable = useCallback(async () => {
+    if (isUpdating) return;
+
+    setIsUpdating(true);
+    const previousValue = isEnabled;
+    setIsEnabled(false);
+
     try {
       await disablePushNotification();
       await checkStatus();
     } catch (error) {
+      setIsEnabled(previousValue);
       console.error('푸시 알림 비활성화 실패:', error);
       showModal({
         title: '알림 비활성화 실패',
         children: '푸시 알림 비활성화에 실패했습니다. 다시 시도해주세요.',
         primaryButton: { text: '확인', onClick: () => {} },
       });
+    } finally {
+      setIsUpdating(false);
     }
-  }, [checkStatus, showModal]);
+  }, [isUpdating, isEnabled, checkStatus, showModal]);
 
   const toggle = useCallback(async () => {
+    if (isUpdating) return;
+
     if (isEnabled) {
       await handleDisable();
     } else {
       await handleEnable();
     }
-  }, [isEnabled, handleEnable, handleDisable]);
+  }, [isUpdating, isEnabled, handleEnable, handleDisable]);
 
   useEffect(() => {
     checkStatus();
@@ -100,6 +122,7 @@ export const usePushNotification = () => {
   return {
     isEnabled,
     isLoading,
+    isUpdating,
     toggle,
     refetch: checkStatus,
   };
