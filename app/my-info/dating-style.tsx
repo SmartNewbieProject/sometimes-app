@@ -45,7 +45,7 @@ export default function DatingStyleSelectionScreen() {
 
   const nextMessage = (() => {
     if (datingStyleIds.length < 1) {
-      return t("apps.my-info.dating_style.next_count", {
+      return t("apps.my-info.dating_style.more", {
         count: 1 - datingStyleIds.length,
       });
     }

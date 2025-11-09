@@ -42,7 +42,7 @@ export default function InterestSelectionScreen() {
 
   const nextMessage = (() => {
     if (interestIds.length < 3) {
-      return t("apps.my-info.interest.next_count", { count: 3 - interestIds.length });
+      return t("apps.my-info.interest.more", { count: 3 - interestIds.length });
     }
     return t("apps.my-info.interest.next");
   })();

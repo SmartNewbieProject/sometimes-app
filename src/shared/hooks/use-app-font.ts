@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import i18n from "@shared/libs/i18n";
+import { getUserLanguage } from "@shared/libs";
 
 export type FontWeight =
   | "thin"
@@ -13,7 +13,7 @@ export type FontWeight =
   | "black";
 
 export const useAppFont = (weight: FontWeight = "regular") => {
-  const locale = i18n.language
+  const locale = getUserLanguage();
   const isJapanese = locale.startsWith("ja");
 
   const fontFamily = useMemo(() => {
