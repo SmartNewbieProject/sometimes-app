@@ -6,13 +6,14 @@ interface MatchingCardProps {
   title: string;
   isOn: boolean;
   toggle: () => void;
+  disabled?: boolean;
 }
 
-function MatchingCard({ title, isOn, toggle }: MatchingCardProps) {
+function MatchingCard({ title, isOn, toggle, disabled }: MatchingCardProps) {
   return (
     <View style={styles.container}>
       <Text>{title}</Text>
-      <CustomSwitch disabled value={isOn} onChange={toggle} />
+      <CustomSwitch disabled={disabled} value={isOn} onChange={toggle} />
     </View>
   );
 }

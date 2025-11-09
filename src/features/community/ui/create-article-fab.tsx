@@ -8,7 +8,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getMySimpleDetails } from "@/src/features/auth/apis";
 
 type MySimpleDetails = {
-  role: "admin" | "user";
+  /** @deprecated 하위 호환성을 위해 유지 */
+  role?: "admin" | "user" | "tester";
+  roles: ("admin" | "user" | "tester")[];
   id: string;
   profileId: string;
   name: string;
@@ -34,7 +36,7 @@ export const CreateArticleFAB = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const isAdmin = me?.role === "admin";
+  const isAdmin = me?.roles?.includes("admin") || me?.role === "admin";
 
   const shouldHideForRole =
     isPopularCategory(currentCategory) ||

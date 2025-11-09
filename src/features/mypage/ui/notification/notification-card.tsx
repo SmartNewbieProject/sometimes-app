@@ -5,13 +5,14 @@ interface NotificationCardProps {
   title: string;
   isOn: boolean;
   toggle: () => void;
+  disabled?: boolean;
 }
 
-function NotificationCard({ title, isOn, toggle }: NotificationCardProps) {
+function NotificationCard({ title, isOn, toggle, disabled }: NotificationCardProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{title}</Text>
-      <CustomSwitch disabled value={isOn} onChange={toggle} />
+      <CustomSwitch disabled={disabled} value={isOn} onChange={toggle} />
     </View>
   );
 }
