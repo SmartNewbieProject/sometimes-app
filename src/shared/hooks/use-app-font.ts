@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import  React, { useMemo } from "react";
 import { getUserLanguage } from "@shared/libs";
 
 export type FontWeight =
