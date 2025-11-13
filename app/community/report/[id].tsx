@@ -39,8 +39,8 @@ export default function ReportScreen() {
           );
         } else {
           Alert.alert(
-            "신고가 완료되었어요.",
-            "관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다."
+            "사용자 차단이 완료되었어요.",
+            "해당 사용자의 모든 게시글과 댓글이 더 이상 보이지 않습니다."
           );
         }
         router.navigate("/community?refresh=true");
