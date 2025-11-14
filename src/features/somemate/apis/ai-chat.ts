@@ -156,6 +156,7 @@ const sendMessageStreamNative = async (
           messageId = parsed.messageId;
           role = parsed.role;
           createdAt = new Date(parsed.createdAt);
+          es.close();
         } else if (parsed.type === 'error') {
           es.close();
           reject(new Error(parsed.message));
