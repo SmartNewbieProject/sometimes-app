@@ -1,5 +1,7 @@
 import axiosClient from "@/src/shared/libs/axios";
 import { storage } from "@/src/shared/libs/store";
+import { Platform } from "react-native";
+import EventSourcePolyfill from "react-native-sse";
 import type {
   AiChatSession,
   CreateSessionRequest,
@@ -33,6 +35,20 @@ export const sendMessageStream = async (
   const baseURL = axiosClient.defaults.baseURL || '';
   const token = await getAuthToken();
 
+  if (Platform.OS === 'web') {
+    return sendMessageStreamWeb(baseURL, sessionId, data, token, onChunk);
+  }
+
+  return sendMessageStreamNative(baseURL, sessionId, data, token, onChunk);
+};
+
+const sendMessageStreamWeb = async (
+  baseURL: string,
+  sessionId: string,
+  data: SendMessageRequest,
+  token: string,
+  onChunk: (chunk: string) => void
+): Promise<SendMessageResponse> => {
   const response = await fetch(
     `${baseURL}${AI_CHAT_BASE_URL}/sessions/${sessionId}/messages`,
     {
@@ -87,6 +103,7 @@ export const sendMessageStream = async (
               throw new Error(parsed.message);
             }
           } catch (e) {
+            // JSON 파싱 실패는 무시
           }
         }
       }
@@ -101,6 +118,71 @@ export const sendMessageStream = async (
     role,
     createdAt,
   };
+};
+
+const sendMessageStreamNative = async (
+  baseURL: string,
+  sessionId: string,
+  data: SendMessageRequest,
+  token: string,
+  onChunk: (chunk: string) => void
+): Promise<SendMessageResponse> => {
+  return new Promise((resolve, reject) => {
+    let messageId = '';
+    let role: 'user' | 'assistant' = 'assistant';
+    let createdAt = new Date();
+
+    const es = new EventSourcePolyfill(
+      `${baseURL}${AI_CHAT_BASE_URL}/sessions/${sessionId}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    es.addEventListener('message', (event) => {
+      if (!event.data) return;
+
+      try {
+        const parsed = JSON.parse(event.data);
+
+        if (parsed.type === 'content') {
+          onChunk(parsed.content);
+        } else if (parsed.type === 'done') {
+          messageId = parsed.messageId;
+          role = parsed.role;
+          createdAt = new Date(parsed.createdAt);
+        } else if (parsed.type === 'error') {
+          es.close();
+          reject(new Error(parsed.message));
+        }
+      } catch (e) {
+        // JSON 파싱 실패는 무시
+      }
+    });
+
+    es.addEventListener('error', (error) => {
+      es.close();
+      if (error && typeof error === 'object' && 'message' in error) {
+        reject(new Error(String(error.message)));
+      } else {
+        reject(new Error('메시지 전송에 실패했습니다.'));
+      }
+    });
+
+    es.addEventListener('close', () => {
+      resolve({
+        messageId,
+        content: '',
+        role,
+        createdAt,
+      });
+    });
+  });
 };
 
 const getAuthToken = async (): Promise<string> => {
