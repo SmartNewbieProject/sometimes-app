@@ -90,7 +90,7 @@ export default function SomemateReportScreen() {
           <Pressable onPress={() => router.push("/chat")}>
             <ChevronLeft width={20} height={20} />
           </Pressable>
-          <Text style={styles.headerTitle}>나의 썸타입</Text>
+          <Text style={styles.headerTitle}>나의 썸타임</Text>
           <View style={{ width: 20 }} />
         </View>
         <View style={styles.loadingContainer}>
@@ -107,7 +107,7 @@ export default function SomemateReportScreen() {
         <Pressable onPress={() => router.push("/chat")}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
-        <Text style={styles.headerTitle}>나의 썸타입</Text>
+        <Text style={styles.headerTitle}>나의 썸타임</Text>
         <View style={{ width: 20 }} />
       </View>
 
@@ -118,13 +118,13 @@ export default function SomemateReportScreen() {
             style={styles.heartIcon}
             contentFit="contain"
           />
-          <Text style={styles.topCardTitle}>나의 썸타입 모음</Text>
+          <Text style={styles.topCardTitle}>나의 썸타임 모음</Text>
           <Text style={styles.topCardDescription}>
             지금까지 생성된 리포트를 한 눈에 볼 수 있어요!
           </Text>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>생성된 썸타입 : </Text>
+              <Text style={styles.statLabel}>생성된 썸타임 : </Text>
               <Text style={styles.statValue}>{totalCount}개</Text>
             </View>
             <View style={styles.statItem}>
@@ -158,7 +158,7 @@ export default function SomemateReportScreen() {
               <View style={styles.reportContent}>
                 <View style={styles.reportTitleRow}>
                   <Text style={styles.reportTitle}>
-                    {report.reportData?.title || `썸타입 #${String(totalCount - index).padStart(2, '0')}`}
+                    {report.reportData?.title || `썸타임 #${String(totalCount - index).padStart(2, '0')}`}
                   </Text>
                   <CategoryBadge category={report.category} />
                 </View>

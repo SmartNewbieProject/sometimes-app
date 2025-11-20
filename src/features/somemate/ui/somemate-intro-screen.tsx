@@ -38,7 +38,7 @@ export default function SomemateIntroScreen() {
 
         <View style={styles.promotionContainer}>
           <View style={styles.promotionTextContainer}>
-            <Text style={styles.promotionTitle}>썸타입은 충분한 대화가 쌓인 후에 생성돼요</Text>
+            <Text style={styles.promotionTitle}>썸타임은 충분한 대화가 쌓인 후에 생성돼요</Text>
             <Text style={styles.promotionSubtitle}>
               미호와 대화를 이어가며 나만의 패턴을{"\n"}발견해보세요!
             </Text>

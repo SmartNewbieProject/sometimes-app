@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { semanticColors } from '../../../src/shared/constants/colors';
 import { router, useFocusEffect } from "expo-router";
-import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator } from "react-native";
+import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useCallback } from "react";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
@@ -9,6 +9,8 @@ import { useActiveSession, useCreateSession } from "@/src/features/somemate/quer
 import { useModal } from "@/src/shared/hooks/use-modal";
 import type { AiChatCategory } from "@/src/features/somemate/types";
 import { ReportButton } from "@/src/features/somemate/ui/report-button";
+import { useCurrentGem } from "@/src/features/payment/hooks/use-current-gem";
+import { Text } from "@/src/shared/ui";
 
 const CATEGORIES: Array<{ id: string; label: AiChatCategory }> = [
   { id: "daily", label: "일상" },
@@ -24,6 +26,7 @@ export default function SomemateScreen() {
 
   const { data: activeSession, isLoading: isLoadingSession, refetch } = useActiveSession();
   const createSessionMutation = useCreateSession();
+  const { data: gemData } = useCurrentGem();
 
   useFocusEffect(
     useCallback(() => {
@@ -39,25 +42,82 @@ export default function SomemateScreen() {
       return;
     }
 
-    try {
-      const response = await createSessionMutation.mutateAsync({
-        category: selectedCategory,
-      });
-      router.push(`/chat/somemate-chat?sessionId=${response.sessionId}`);
-    } catch (error: any) {
+    const currentGem = gemData?.totalGem ?? 0;
+    if (currentGem < 1) {
       showModal({
-        title: "오류",
+        title: "구슬이 부족해요",
         children: (
-          <Text style={{ textAlign: "center" }}>
-            {error?.message || "세션 생성에 실패했습니다."}
-          </Text>
+          <View style={{ flexDirection: "column" }}>
+            <Text>썸메이트 대화를 시작하려면 구슬 1개가 필요해요.</Text>
+            <Text>구슬을 충전하고 미호와 대화해보세요!</Text>
+          </View>
         ),
         primaryButton: {
           text: "확인",
           onClick: () => {},
         },
       });
+      return;
     }
+
+    showModal({
+      showLogo: true,
+      customTitle: (
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <Text textColor="black" weight="bold" size="20">
+            AI 미호와 대화를 시작하기 위해
+          </Text>
+          <Text textColor="black" weight="bold" size="20">
+            구슬 1개를 사용할게요!
+          </Text>
+        </View>
+      ),
+      children: (
+        <View style={{ flexDirection: "column", width: "100%", alignItems: "center", marginTop: 8 }}>
+          <Text style={{ color: "#AEAEAE", fontSize: 12 }}>
+            🎉 오픈 할인가! 5개 → 1개
+          </Text>
+          <Text style={{ color: "#AEAEAE", fontSize: 12 }}>
+            특별 할인가로 AI 미호와 대화해보세요
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "네, 해볼래요",
+        onClick: async () => {
+          try {
+            const response = await createSessionMutation.mutateAsync({
+              category: selectedCategory,
+            });
+            router.push(`/chat/somemate-chat?sessionId=${response.sessionId}`);
+          } catch (error: unknown) {
+            showModal({
+              title: "오류",
+              children: (
+                <View style={{ flexDirection: "column" }}>
+                  <Text>{(error as Error)?.message || "세션 생성에 실패했습니다."}</Text>
+                </View>
+              ),
+              primaryButton: {
+                text: "확인",
+                onClick: () => {},
+              },
+            });
+          }
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {},
+      },
+    });
   };
 
   return (
@@ -80,8 +140,8 @@ export default function SomemateScreen() {
         </View>
 
         <View style={styles.contentContainer}>
-          <Text style={styles.title}>대화 주제 설정하기</Text>
-          <Text style={styles.subtitle}>AI 미호와 나누고 싶은 대화 주제를 골라보세요!</Text>
+          <RNText style={styles.title}>대화 주제 설정하기</RNText>
+          <RNText style={styles.subtitle}>AI 미호와 나누고 싶은 대화 주제를 골라보세요!</RNText>
 
           <View style={styles.categoryContainer}>
             {CATEGORIES.map((category) => (
@@ -93,14 +153,14 @@ export default function SomemateScreen() {
                   selectedCategory === category.label && styles.categoryButtonActive,
                 ]}
               >
-                <Text
+                <RNText
                   style={[
                     styles.categoryText,
                     selectedCategory === category.label && styles.categoryTextActive,
                   ]}
                 >
                   {category.label}
-                </Text>
+                </RNText>
               </Pressable>
             ))}
           </View>
@@ -108,10 +168,10 @@ export default function SomemateScreen() {
 
         <View style={styles.promotionContainer}>
           <View style={styles.promotionTextContainer}>
-            <Text style={styles.promotionTitle}>썸타입은 충분한 대화가 쌓인 후에 생성돼요</Text>
-            <Text style={styles.promotionSubtitle}>
+            <RNText style={styles.promotionTitle}>썸타임은 충분한 대화가 쌓인 후에 생성돼요</RNText>
+            <RNText style={styles.promotionSubtitle}>
               미호와 대화를 이어가며 나만의 패턴을{"\n"}발견해보세요!
-            </Text>
+            </RNText>
           </View>
           <Image
             source={require("@assets/images/somemate_report.png")}
@@ -135,7 +195,7 @@ export default function SomemateScreen() {
                   style={styles.buttonIcon}
                   contentFit="contain"
                 />
-                <Text style={styles.buttonText}>미호와 대화하기</Text>
+                <RNText style={styles.buttonText}>미호와 대화하기</RNText>
               </>
             )}
           </Pressable>
