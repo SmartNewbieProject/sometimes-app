@@ -1,4 +1,5 @@
 import { View, StyleSheet } from "react-native";
+import { semanticColors } from '../../../shared/constants/colors';
 import { UserProfileSkeleton } from "./user-profile-skeleton";
 import { SkeletonBlock } from "@/src/shared/skeleton/block";
 
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#F3F0FF",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 12, // mt-3
   },
 });

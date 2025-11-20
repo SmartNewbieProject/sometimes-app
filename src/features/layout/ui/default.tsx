@@ -1,4 +1,5 @@
 import { usePathname } from "expo-router";
+import { semanticColors } from '../../../shared/constants/colors';
 import type { ReactNode } from "react";
 import {
   KeyboardAvoidingView,
@@ -30,7 +31,7 @@ export const DefaultLayout = ({ children, className, style }: Props) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={keyboardVerticalOffset}
-      style={[styles.container, { backgroundColor: "#fff" }, style]}
+      style={[styles.container, { backgroundColor: semanticColors.surface.background }, style]}
       className={className}
     >
       {children}

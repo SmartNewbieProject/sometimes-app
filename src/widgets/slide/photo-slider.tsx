@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../shared/constants/colors';
 import XIcon from "@assets/icons/white-x-icon.svg";
 import { Image } from "expo-image";
 import React, { useEffect, useRef, useState } from "react";
@@ -240,7 +241,7 @@ export default function PhotoSlider({
                         style={{
                           fontSize: 20,
                           fontWeight: "700",
-                          color: "white",
+                          color: semanticColors.text.inverse,
                         }}
                       >
                         {watermarkText}
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#000",
+    backgroundColor: semanticColors.surface.inverse,
     zIndex: 0,
   },
   close: {
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   count: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 16,
     top: Platform.OS === "ios" ? 50 : 16,
     position: "absolute",

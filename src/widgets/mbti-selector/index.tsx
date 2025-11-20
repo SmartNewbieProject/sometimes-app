@@ -1,4 +1,4 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { Text } from "@/src/shared/ui";
 import { useEffect, useState } from "react";
 import {
@@ -137,12 +137,12 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: "#8B5CF6",
+    color: semanticColors.brand.primary,
     marginBottom: 8,
   },
   bottomLabel: {
     fontSize: 14,
-    color: "#8B5CF6",
+    color: semanticColors.brand.primary,
     marginTop: 16,
   },
   selector: {
