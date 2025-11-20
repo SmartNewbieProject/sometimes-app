@@ -6,8 +6,8 @@ import { twMerge } from 'tailwind-merge';
  * @param inputs - 병합할 클래스네임들
  * @returns 병합된 클래스네임 문자열
  * @example
- * cn('px-2 py-1', 'bg-red-500', { 'text-white': true })
- * // 'px-2 py-1 bg-red-500 text-white'
+ * cn('px-2 py-1', 'bg-red-500', { 'text-text-inverse': true })
+ * // 'px-2 py-1 bg-red-500 text-text-inverse'
  */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

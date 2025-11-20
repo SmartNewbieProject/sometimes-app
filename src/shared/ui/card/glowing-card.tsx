@@ -1,4 +1,5 @@
 import { View, StyleSheet } from "react-native";
+import { semanticColors } from '../../constants/colors';
 import colors from "../../constants/colors";
 
 interface GlowingCardProps {
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
     position: "relative",
     borderColor: colors.white,
     borderRadius: 16,
-    backgroundColor: "#F3EEFD",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
     boxShadow: "0 2px 10px 0 rgba(122, 74, 226, 0.78)",
     paddingVertical: 15,

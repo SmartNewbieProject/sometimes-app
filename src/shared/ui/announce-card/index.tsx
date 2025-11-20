@@ -37,7 +37,7 @@ const cardClass = cva(
     variants: {
       theme: {
         default: "bg-moreLightPurple",
-        alert: "bg-[#FFF2EB]",
+        alert: "bg-surface-background",
       },
     },
     defaultVariants: {
@@ -49,7 +49,7 @@ const cardClass = cva(
 const textClass = cva("", {
   variants: {
     theme: {
-      default: "text-[#49386E]",
+      default: "text-brand-deep",
       alert: "text-[#FF813C]",
     },
   },

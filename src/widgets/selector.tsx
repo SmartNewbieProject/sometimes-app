@@ -1,4 +1,5 @@
 import { Text } from "@/src/shared/ui";
+import { semanticColors } from '../shared/constants/colors';
 import { Button, type ButtonProps } from "@/src/shared/ui/button";
 import { StyleSheet, View, type ViewStyle } from "react-native";
 
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   },
   topLabel: {
     fontSize: 16,
-    color: "#8B5CF6",
+    color: semanticColors.brand.primary,
     marginBottom: 8,
   },
   selector: {
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   },
   circleBorder: {
     borderWidth: 1,
-    borderColor: "#8B5CF6",
+    borderColor: semanticColors.brand.primary,
   },
   buttonGapHorizontal: {
     marginRight: 8,
