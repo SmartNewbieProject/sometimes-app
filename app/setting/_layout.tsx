@@ -1,4 +1,5 @@
 import { Stack, useRouter } from "expo-router";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { Slot, withLayoutContext } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
@@ -26,11 +27,11 @@ export default function ProfileEditLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   editContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   toggleContainer: {
     alignItems: "center",

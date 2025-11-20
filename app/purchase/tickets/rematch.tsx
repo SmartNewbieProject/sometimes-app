@@ -1,4 +1,5 @@
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -127,7 +128,7 @@ export default function RematchingTicketSellingScreen() {
   return (
     <Layout.Default
       className="flex flex-1 flex-col"
-      style={{ backgroundColor: "#F3EEFC", paddingTop: insets.top }}
+      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
     >
       <RematchingTicket.Header />
       <ScrollView>

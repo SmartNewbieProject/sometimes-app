@@ -44,10 +44,10 @@ export default function UniversityVerificationSuccess() {
             대학 인증이 완료되었어요!
           </Text>
 
-          <Text size="sm" weight="normal" className="mb-1 text-[#9B94AB]">
+          <Text size="sm" weight="normal" className="mb-1 text-text-disabled">
             이제 안심하고 시작해볼까요?
           </Text>
-          <Text size="sm" weight="normal" className="text-[#9B94AB]">
+          <Text size="sm" weight="normal" className="text-text-disabled">
             내가 있는 지역에서 이상형을 안전하게 만나보세요!
           </Text>
         </View>
@@ -56,7 +56,7 @@ export default function UniversityVerificationSuccess() {
         <View className="absolute bottom-8 left-5 right-5">
           <TouchableOpacity
             onPress={handleGoToProfile}
-            className="bg-[#8B5CF6] rounded-2xl py-4 items-center"
+            className="bg-brand-primary rounded-2xl py-4 items-center"
           >
             <Text size="md" weight="semibold" textColor="white">
               이상형 찾으러 가기 →

@@ -177,7 +177,7 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleEmailVerification}
                   disabled={isLoading}
-                  className={`bg-white border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${
+                  className={`bg-surface-background border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${
                     isLoading ? "opacity-50" : ""
                   }`}
                 >
@@ -209,7 +209,7 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleCodeVerification}
                   disabled={isLoading}
-                  className={`bg-white border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${
+                  className={`bg-surface-background border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${
                     isLoading ? "opacity-50" : ""
                   }`}
                 >

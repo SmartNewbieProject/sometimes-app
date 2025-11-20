@@ -6,7 +6,7 @@ import { NotificationList } from '@/src/features/notification/ui/notification-li
 import { useMarkAllAsRead, useDeleteAllRead } from '@/src/features/notification/queries/use-notification-mutations';
 import { useUnreadCount } from '@/src/features/notification/queries/use-unread-count';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import colors from '@/src/shared/constants/colors';
+import colors , { semanticColors } from '@/src/shared/constants/colors';
 import { router } from 'expo-router';
 
 export default function NotificationPage() {
@@ -115,7 +115,7 @@ export default function NotificationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: semanticColors.surface.background,
   },
   topHeader: {
     flexDirection: 'row',
@@ -133,13 +133,13 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 24,
-    color: '#000000',
+    color: semanticColors.text.primary,
     fontWeight: 'bold',
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
+    color: semanticColors.text.primary,
   },
   menuButton: {
     width: 40,
@@ -149,13 +149,13 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 20,
-    color: '#000000',
+    color: semanticColors.text.primary,
   },
   dropdown: {
     position: 'absolute',
     top: 70,
     right: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: {
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   dropdownItemText: {
     fontSize: 14,
-    color: '#999999',
+    color: semanticColors.text.disabled,
     fontWeight: '500',
   },
   activeMenuItem: {
@@ -183,6 +183,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: semanticColors.surface.background,
   },
 });

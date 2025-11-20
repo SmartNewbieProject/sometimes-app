@@ -1,4 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { useInterestForm } from "@/src/features/interest/hooks";
 import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
@@ -41,7 +42,7 @@ export default function MyInfoDoneScreen() {
               borderRadius: 280,
               overflow: "hidden",
               marginBottom: 50,
-              backgroundColor: "#7A4AE2",
+              backgroundColor: semanticColors.brand.primary,
               position: "relative",
             }}
           >
