@@ -84,12 +84,13 @@ const navigationItems: NavigationItem[] = [
     path: "/chat",
     icon: NavIcons.chat,
   },
-  {
-    name: "moment",
-    label: "모먼트",
-    path: "/moment",
-    icon: NavIcons.moment,
-  },
+  // 모먼트 메뉴 임시 비활성화
+  // {
+  //   name: "moment",
+  //   label: "모먼트",
+  //   path: "/moment",
+  //   icon: NavIcons.moment,
+  // },
   {
     name: "my",
     label: "MY",
