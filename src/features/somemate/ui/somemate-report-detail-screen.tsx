@@ -27,7 +27,7 @@ export default function SomemateReportDetailScreen() {
           <Pressable onPress={() => router.push("/chat/somemate-report")}>
             <ChevronLeft width={20} height={20} />
           </Pressable>
-          <Text style={styles.headerTitle}>썸타입 리포트</Text>
+          <Text style={styles.headerTitle}>썸타임 리포트</Text>
           <View style={{ width: 20 }} />
         </View>
         <View style={styles.loadingContainer}>
@@ -45,7 +45,7 @@ export default function SomemateReportDetailScreen() {
           <Pressable onPress={() => router.push("/chat/somemate-report")}>
             <ChevronLeft width={20} height={20} />
           </Pressable>
-          <Text style={styles.headerTitle}>썸타입 리포트</Text>
+          <Text style={styles.headerTitle}>썸타임 리포트</Text>
           <View style={{ width: 20 }} />
         </View>
         <View style={styles.loadingContainer}>
@@ -74,7 +74,7 @@ export default function SomemateReportDetailScreen() {
           <Pressable onPress={() => router.push("/chat/somemate-report")}>
             <ChevronLeft width={20} height={20} />
           </Pressable>
-          <Text style={styles.headerTitle}>썸타입 리포트</Text>
+          <Text style={styles.headerTitle}>썸타임 리포트</Text>
           <View style={{ width: 20 }} />
         </View>
         <View style={styles.loadingContainer}>
@@ -142,7 +142,7 @@ export default function SomemateReportDetailScreen() {
         <Pressable onPress={() => router.push("/chat/somemate-report")}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
-        <Text style={styles.headerTitle}>썸타입 리포트</Text>
+        <Text style={styles.headerTitle}>썸타임 리포트</Text>
         <View style={{ width: 20 }} />
       </View>
 
