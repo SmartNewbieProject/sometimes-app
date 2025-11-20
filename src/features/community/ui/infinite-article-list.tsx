@@ -303,9 +303,9 @@ export const InfiniteArticleList = forwardRef<
       (isLoading && articles.length === 0)
     ) {
       return (
-        <View className="flex-1 bg-white">
-          <View className="h-[1px] bg-[#F3F0FF]" />
-          <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+        <View className="flex-1 bg-surface-background">
+          <View className="h-[1px] bg-surface-background" />
+          <View className="h-[1px] bg-surface-background mb-2" />
           {Array.from({ length: initialSize }).map((_, i) => (
             <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
           ))}
@@ -314,15 +314,15 @@ export const InfiniteArticleList = forwardRef<
     }
 
     return (
-      <View className="flex-1 bg-white">
-        <View className="h-[1px] bg-[#F3F0FF]" />
+      <View className="flex-1 bg-surface-background">
+        <View className="h-[1px] bg-surface-background" />
         {/* <TouchableOpacity
           onPress={() =>
             Linking.openURL(
               "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
             )
           }
-          className="bg-[#F3EDFF] rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+          className="bg-surface-background rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
         >
           <Image
             source={require("@/assets/images/fireIcon.png")}
@@ -337,7 +337,7 @@ export const InfiniteArticleList = forwardRef<
             </IconWrapper>
           </TouchableOpacity>
         </TouchableOpacity> */}
-        <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+        <View className="h-[1px] bg-surface-background mb-2" />
         <PalePurpleGradient />
 
         <CustomInfiniteScrollView

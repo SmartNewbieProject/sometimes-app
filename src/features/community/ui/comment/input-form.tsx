@@ -38,25 +38,25 @@ export const InputForm = ({
   return (
     <View>
       {editingCommentId && (
-        <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
-          <Text size="sm" className="text-[#A892D7]">
+        <View className="flex-row items-center justify-between bg-surface-background px-3 py-2 mb-2 rounded-lg">
+          <Text size="sm" className="text-brand-accent">
             댓글 수정 중...
           </Text>
           <TouchableOpacity onPress={handleCancelEdit}>
-            <Text size="sm" className="text-[#A892D7]">
+            <Text size="sm" className="text-brand-accent">
               취소
             </Text>
           </TouchableOpacity>
         </View>
       )}
       {!editingCommentId && replyingToCommentId && (
-        <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
-          <Text size="sm" className="text-[#A892D7]">
+        <View className="flex-row items-center justify-between bg-surface-background px-3 py-2 mb-2 rounded-lg">
+          <Text size="sm" className="text-brand-accent">
             답글 작성 중...
           </Text>
           {handleCancelReply && (
             <TouchableOpacity onPress={handleCancelReply}>
-              <Text size="sm" className="text-[#A892D7]">
+              <Text size="sm" className="text-brand-accent">
                 취소
               </Text>
             </TouchableOpacity>
@@ -67,7 +67,7 @@ export const InputForm = ({
       <View
         className={cn([
           "flex-row flex items-center gap-[5px]",
-          "rounded-[16px] bg-[#F8F4FF] h-[50px] w-full",
+          "rounded-[16px] bg-surface-background h-[50px] w-full",
         ])}
       >
         <View className="flex-row items-center gap-[5px]">
@@ -118,7 +118,7 @@ const AnonymousToggle = ({
       size={25}
       onChange={setChecked}
     >
-      <Text className="mr-1 text-black text-[15px] h-[25px] leading-[25px] flex items-center">
+      <Text className="mr-1 text-text-primary text-[15px] h-[25px] leading-[25px] flex items-center">
         익명
       </Text>
     </Check.Box>
@@ -142,7 +142,7 @@ const CommentInput = ({
     className={cn([
       "w-full flex-1 px-2",
       "text-sm md:text-md",
-      "text-[#A892D7] border-b-0 outline-none",
+      "text-brand-accent border-b-0 outline-none",
     ])}
     placeholder="댓글을 입력하세요"
     onChange={(e) => setEditingContent(e.nativeEvent.text)}

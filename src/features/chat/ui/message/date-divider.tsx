@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { semanticColors } from '../../../../shared/constants/colors';
 
 const DateDivider = ({ date }: { date: string }) => (
   <View style={styles.dateDividerContainer}>
@@ -13,12 +14,12 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 13,
-    color: "#898A8D",
+    color: semanticColors.text.disabled,
     fontWeight: "400",
 
     paddingHorizontal: 9,
     paddingVertical: 4,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 20,
   },
 });

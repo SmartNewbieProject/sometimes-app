@@ -33,7 +33,7 @@ export default function Notice({ pageSize = 5 }: Props) {
 
   if (isLoading) {
     return (
-      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-[#F6F3F6]">
+      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-surface-background">
         <ActivityIndicator />
       </View>
     );
@@ -41,7 +41,7 @@ export default function Notice({ pageSize = 5 }: Props) {
 
   if (isError) {
     return (
-      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-[#F6F3F6]">
+      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-surface-background">
         <Text textColor="black">공지사항을 불러오지 못했어요.</Text>
         {__DEV__ && (
           <Text size="sm" className="mt-1 opacity-60">
@@ -54,7 +54,7 @@ export default function Notice({ pageSize = 5 }: Props) {
 
   if (!notices.length) {
     return (
-      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-[#F6F3F6]">
+      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-surface-background">
         <Text textColor="black">등록된 공지가 없습니다.</Text>
       </View>
     );

@@ -13,7 +13,7 @@ interface Props {
 
 export function CommunityHeader() {
   return (
-    <View className="bg-white">
+    <View className="bg-surface-background">
       <View className="h-14 flex-row items-center px-4">
         <View className="flex-1">
           {/* Empty view for spacing */}

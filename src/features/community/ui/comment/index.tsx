@@ -29,7 +29,7 @@ export const Comment = ({ data, className }: CommentProps) => {
         <View className="flex-1 flex-col gap-y-1">
           <View className=" flex-row gap-x-1.5 w-full">
             <Text size="13" textColor="black">{author.name}</Text>
-            <Text size="sm" className="text-[#646464]">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
+            <Text size="sm" className="text-text-muted">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
           </View>
           <View className="pt-1.5 flex-1">
             <LinkifiedText

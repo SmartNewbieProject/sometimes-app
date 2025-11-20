@@ -1,4 +1,5 @@
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
@@ -124,13 +125,13 @@ const styles = StyleSheet.create({
     width: 240,
     height: 240,
     borderRadius: 12,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: semanticColors.surface.background,
     justifyContent: "center",
     alignItems: "center",
   },
   loadingText: {
     fontSize: 14,
-    color: "#9A93AA",
+    color: semanticColors.text.disabled,
     fontWeight: "400",
   },
   imageContainer: {
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   uploadText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 12,
     fontWeight: "500",
   },
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   errorText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 12,
     fontWeight: "500",
   },
