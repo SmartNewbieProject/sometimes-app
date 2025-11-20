@@ -1,4 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from '../../../shared/constants/colors';
 import { cn, dayUtils, tryCatch } from "@/src/shared/libs";
 import { Button, Show } from "@/src/shared/ui";
 import {
@@ -229,13 +230,13 @@ export function LikedMeOpenButton({
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             {profileDetails?.gender === "MALE"
               ? `구슬 ${featureCosts?.CHAT_START}개로`
               : "지금 바로"}
             로 채팅방을 열 수 있어요.
           </Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             지금 바로 첫 메시지를 보내보세요!
           </Text>
         </View>
@@ -296,7 +297,7 @@ export function ILikedRejectedButton({
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             괜찮아요 더 멋진 만남이 곧 찾아올 거예요.
           </Text>
         </View>
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     marginTop: 10,
-    borderColor: "#E1D9FF",
+    borderColor: semanticColors.border.default,
     paddingLeft: 12,
     paddingRight: 16,
     flexDirection: "row",
@@ -370,7 +371,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: semanticColors.text.disabled,
     lineHeight: 14,
     marginTop: 2,
     fontWeight: "500",
@@ -379,13 +380,13 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 9999,
-    backgroundColor: "#F3EDFF",
+    backgroundColor: semanticColors.surface.background,
     position: "absolute",
     right: 13,
     top: 13,
   },
   viewYet: {
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
   },
   contentContainer: {
     flex: 1,
@@ -399,17 +400,17 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     lineHeight: 24,
-    color: "#111827",
+    color: semanticColors.text.secondary,
   },
   age: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#6B7280",
+    color: semanticColors.text.muted,
   },
   university: {
     fontSize: 16,
     lineHeight: 20,
-    color: "#4B5563",
+    color: semanticColors.text.muted,
     marginBottom: 6,
   },
   status: {
@@ -418,23 +419,23 @@ const styles = StyleSheet.create({
   },
   pending: {
     fontSize: 12,
-    color: "#6B7280",
+    color: semanticColors.text.muted,
   },
   subText: {
     fontSize: 15,
     fontFamily: "Pretendard-Thin",
     fontWeight: 300,
     lineHeight: 18,
-    color: "#BEACFF",
+    color: semanticColors.brand.accent,
     marginLeft: -6,
     marginRight: 5,
   },
   reject: {
     fontSize: 12,
-    color: "#6B7280",
+    color: semanticColors.text.muted,
   },
   open: {
-    color: "#8638E5",
+    color: semanticColors.brand.primary,
     fontSize: 13,
   },
 });

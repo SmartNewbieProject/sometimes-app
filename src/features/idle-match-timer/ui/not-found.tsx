@@ -1,4 +1,5 @@
 import { ImageResources } from "@/src/shared/libs";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Button, ImageResource, Text } from "@/src/shared/ui";
 import FrameIcon from "@assets/icons/frame.svg";
 import ImproveProfileIcon from "@assets/icons/improve-profile.svg";
@@ -48,7 +49,7 @@ export const NotFound = () => {
               size="chip"
               onPress={() => router.push("/profile-edit/interest")}
               textColor="dark"
-              className="!px-[12px] !h-[33px]  !border-[#D1D5DB]"
+              className="!px-[12px] !h-[33px]  !border-border-default"
             >
               수정
             </Button>
@@ -65,7 +66,7 @@ export const NotFound = () => {
               variant={"white"}
               size="chip"
               textColor="dark"
-              className="!px-[12px] !h-[33px]  !border-[#D1D5DB]"
+              className="!px-[12px] !h-[33px]  !border-border-default"
             >
               수정
             </Button>
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 24,
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   contentContainer: {
     marginTop: 24,

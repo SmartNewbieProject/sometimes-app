@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../../shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { track } from "@amplitude/analytics-react-native";
@@ -198,7 +199,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: semanticColors.surface.background,
   },
   header: {
     flexDirection: "row",
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#000000",
+    color: semanticColors.text.primary,
   },
   placeholder: {
     width: 48,

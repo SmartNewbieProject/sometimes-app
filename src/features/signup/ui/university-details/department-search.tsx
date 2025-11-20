@@ -1,4 +1,5 @@
 import Loading from "@/src/features/loading";
+import { semanticColors } from '../../../../shared/constants/colors';
 import SearchIcon from "@assets/icons/search.svg";
 import { useGlobalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -48,8 +49,8 @@ function DepartmentSearch() {
           styles.searchContainer,
 
           {
-            backgroundColor: "#FFFFFF",
-            borderColor: "#7A4AE2",
+            backgroundColor: semanticColors.surface.background,
+            borderColor: semanticColors.brand.primary,
             flexDirection: "row",
             paddingHorizontal: 12,
           },
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     height: 32,
     paddingVertical: 0,
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   iconWrapper: {
     width: 32,
@@ -164,18 +165,18 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     width: 230,
     borderWidth: 1,
-    borderColor: "#7A4AE2",
+    borderColor: semanticColors.brand.primary,
 
     position: "absolute",
     top: 43,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 15,
     zIndex: 10,
   },
 
   searchResultText: {
     fontSize: 13,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     fontWeight: 400,
 
     lineHeight: 15.6,
@@ -192,10 +193,10 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     paddingHorizontal: 16,
     borderRadius: 20,
-    backgroundColor: "#E2D9FF",
+    backgroundColor: semanticColors.surface.background,
   },
   tagText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 13,
     lineHeight: 15.6,
   },

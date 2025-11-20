@@ -1,4 +1,5 @@
 import React from "react";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
 import CustomSwitch from "../custom-switch";
 
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   text: {
-    color: "#4C4854",
+    color: semanticColors.text.primary,
     fontSize: 16,
 
     fontFamily: "Pretendard-SemiBold",

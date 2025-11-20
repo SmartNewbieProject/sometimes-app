@@ -1,4 +1,5 @@
 import {ImageResources} from "@shared/libs/image";
+import { semanticColors } from '../../../../shared/constants/colors';
 import {ImageResource, Text } from "@shared/ui";
 import {Dimensions, Pressable, StyleSheet, View} from "react-native";
 import { router } from 'expo-router';
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   guideButton: {
-    backgroundColor: "white",
+    backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 8,
     width: 'auto',
     borderRadius: 8,

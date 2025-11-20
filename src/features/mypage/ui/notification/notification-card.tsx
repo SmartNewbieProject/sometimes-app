@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { semanticColors } from '../../../../shared/constants/colors';
 import CustomSwitch from "../custom-switch";
 
 interface NotificationCardProps {
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   text: {
-    color: "#4C4854",
+    color: semanticColors.text.primary,
     fontSize: 16,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,

@@ -124,7 +124,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
       </View>
 
       <View style={sideStyle.previousContainer}>
-        <View className="w-full bg-[#fcfaff] relative">
+        <View className="w-full bg-surface-background relative">
           <View style={sideStyle.topRadius} />
         </View>
         <View className="w-full flex flex-row">
@@ -133,14 +133,14 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
             style={sideStyle.previousButton}
             onPress={() => router.push("/matching-history")}
           >
-            <Text className="w-[24px] text-white text-[12px]">이전 매칭</Text>
+            <Text className="w-[24px] text-text-inverse text-[12px]">이전 매칭</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>
           </TouchableOpacity>
-          <View className="w-[16px] bg-[#fcfaff] h-full" />
+          <View className="w-[16px] bg-surface-background h-full" />
         </View>
-        <View className="w-full bg-[#fcfaff] relative">
+        <View className="w-full bg-surface-background relative">
           <View style={sideStyle.bottomRadius} />
         </View>
       </View>

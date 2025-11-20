@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../../shared/constants/colors';
 import React, { useRef } from "react";
 import {
   Animated,
@@ -91,13 +92,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 36,
     borderWidth: 1.5,
-    borderColor: "#E6DBFF",
+    borderColor: semanticColors.border.default,
     borderRadius: 10,
     marginBottom: 10,
     alignItems: "center",
   },
   title: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 20,
     fontWeight: "600",
     fontFamily: "Pretendard-SemiBold",
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
   area: {
     paddingHorizontal: 11,
     paddingVertical: 4,
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
@@ -116,19 +117,19 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   areaText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 13,
     lineHeight: 13,
   },
   universityType: {
-    color: "#9B94AB",
+    color: semanticColors.text.disabled,
     fontFamily: "Pretendard-Thin",
     lineHeight: 22,
     fontWeight: 100,
     fontSize: 13,
   },
   englishName: {
-    color: "#000",
+    color: semanticColors.text.primary,
     marginVertical: 8,
     opacity: 0.7,
     fontSize: 13,

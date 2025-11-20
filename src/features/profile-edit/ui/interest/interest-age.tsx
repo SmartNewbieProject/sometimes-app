@@ -2,7 +2,7 @@ import Interest from "@/src/features/interest";
 import type { Preferences } from "@/src/features/interest/api";
 import { AgeOptionData } from "@/src/features/interest/types";
 import Loading from "@/src/features/loading";
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { ChipSelector } from "@/src/widgets";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 10,
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
   },
 });
 

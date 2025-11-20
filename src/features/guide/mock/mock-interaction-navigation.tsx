@@ -1,4 +1,5 @@
 import { ImageResources, cn } from "@/src/shared/libs";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Button, ImageResource } from "@/src/shared/ui";
 import { Text } from "@shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
@@ -38,10 +39,10 @@ const MockInteractionNavigation = () => {
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             성격과 소통 스타일을 바탕으로,
           </Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             자연스럽게 연결될 수 있는 인연을 추천해드릴게요.
           </Text>
         </View>
@@ -81,7 +82,7 @@ const MockInteractionNavigation = () => {
       {isLiked ? (
         <Button
           onPress={() => {}}
-          className="flex-1 items-center !bg-[#E1D9FF] !text-white"
+          className="flex-1 items-center !bg-surface-background !text-text-inverse"
         >
           썸 보내기 완료!
         </Button>
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     paddingRight: 5,
     lineHeight: 18,
-    color: "#BEACFF",
+    color: semanticColors.brand.accent,
   },
 });
 

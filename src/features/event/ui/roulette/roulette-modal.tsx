@@ -1,4 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from '../../../../shared/constants/colors';
 import BlackXIcon from "@assets/icons/black-x-icon.svg";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -76,10 +77,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 50,
     borderWidth: 0.5,
-    borderColor: "#7A4AE2",
+    borderColor: semanticColors.brand.primary,
   },
   logoText: {
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontFamily: "Gmarket-Sans-Light",
     fontWeight: 300,
     fontSize: 8,
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   topTitle: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontFamily: "Gmarket-Sans-Light",
     fontWeight: 300,
     lineHeight: 42,
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   bottomTitle: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontFamily: "Gmarket-Sans-Bold",
     fontWeight: 700,
     lineHeight: 54,
@@ -127,15 +128,15 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     fontSize: 20,
     lineHeight: 26,
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   strongText: {
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontFamily: "Gmarket-Sans-Bold",
     fontWeight: 700,
   },
   freeText: {
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontFamily: "StyleScript",
     fontSize: 29,
     fontWeight: 400,
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
     left: -70,
   },
   deco4: {
-    backgroundColor: "#7A4AE21A",
+    backgroundColor: semanticColors.brand.primary,
     width: 8,
     height: 8,
     borderRadius: 8,

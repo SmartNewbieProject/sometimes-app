@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { semanticColors } from '../../../shared/constants/colors';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text } from '@/src/shared/ui';
 import { useMarkAllAsRead, useDeleteAllRead } from '../queries/use-notification-mutations';
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 60,
     right: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: {
@@ -117,11 +118,11 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 14,
-    color: '#000000',
+    color: semanticColors.text.primary,
     fontWeight: '500',
   },
   divider: {
     height: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: semanticColors.surface.background,
   },
 });
