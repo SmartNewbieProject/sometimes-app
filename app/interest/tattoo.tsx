@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../src/shared/constants/colors';
 import type { Preferences } from "@/src/features/interest/api";
 import { Properties, savePreferences } from "@/src/features/interest/services";
 import Loading from "@/src/features/loading";
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
 
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 39,
     marginBottom: 30,
   },

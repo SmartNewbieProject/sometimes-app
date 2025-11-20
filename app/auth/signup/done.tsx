@@ -1,4 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
 import { environmentStrategy } from "@/src/shared/libs";
@@ -49,7 +50,7 @@ export default function SignupDoneScreen() {
               top: 12,
               left: 0,
 
-              backgroundColor: "#7A4AE2",
+              backgroundColor: semanticColors.brand.primary,
               position: "absolute",
             }}
           />

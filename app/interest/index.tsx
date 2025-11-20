@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../src/shared/constants/colors';
 import Layout from "@/src/features/layout";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
@@ -66,7 +67,7 @@ export default function InterestIntroScreen() {
               borderRadius: 280,
               overflow: "hidden",
               marginBottom: 50,
-              backgroundColor: "#7A4AE2",
+              backgroundColor: semanticColors.brand.primary,
               position: "relative",
             }}
           >

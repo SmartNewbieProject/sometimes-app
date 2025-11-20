@@ -1,4 +1,5 @@
 import Interest from "@/src/features/interest";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { PreferenceKeys } from "@/src/features/interest/queries";
 import Layout from "@/src/features/layout";
 import { useMbti } from "@/src/features/mypage/hooks";
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
 
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 39,
     marginBottom: 30,
   },

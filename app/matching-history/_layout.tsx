@@ -1,4 +1,5 @@
 import { useRematchingTickets } from "@/src/features/mypage/queries";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { Header, Text } from "@/src/shared/ui";
 import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
 import { Image } from "expo-image";
@@ -50,7 +51,7 @@ export default function MatchingHistoryLayoutScreen() {
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: "#fff",
+              backgroundColor: semanticColors.surface.background,
             },
             animation: "slide_from_right",
           }}
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
   rematchingContainer: {
     flexDirection: "row",
     paddingHorizontal: 10,
-    backgroundColor: "#F5F1FF",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 9,
     position: "absolute",
     right: 0,

@@ -49,9 +49,9 @@ export default function ApprovalPendingScreen() {
 
           {/* 메인 이미지 */}
           <View className="mb-8 relative w-[284px] h-[284px] ">
-            <View className="bg-[#8638E563] rounded-full blur-[2px] w-[284px] h-[284px] absolute top-0 left-0 bottom-0 right-0" />
-            <View className="bg-[#8638E5] rounded-full blur-[2px] w-[254px] h-[254px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-            <View className="bg-[#fff] rounded-full  w-[242px] h-[242px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            <View className="bg-brand-primary rounded-full blur-[2px] w-[284px] h-[284px] absolute top-0 left-0 bottom-0 right-0" />
+            <View className="bg-brand-primary rounded-full blur-[2px] w-[254px] h-[254px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            <View className="bg-surface-background rounded-full  w-[242px] h-[242px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             <Image
               source={
                 statusData?.profileImage ??
