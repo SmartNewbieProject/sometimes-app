@@ -4,7 +4,7 @@ import { useNotificationList } from '../queries/use-notification-list';
 import { useMarkAsRead } from '../queries/use-notification-mutations';
 import type { Notification } from '../types/notification';
 import { ContactImage } from './contact-image';
-import colors from '@/src/shared/constants/colors';
+import colors , { semanticColors } from '@/src/shared/constants/colors';
 import dayUtils from '@/src/shared/libs/day';
 
 interface NotificationListProps {
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightPurple + '20',
   },
   evenItem: {
-    backgroundColor: '#F9F7FF',
+    backgroundColor: semanticColors.surface.background,
   },
   leftSection: {
     flex: 1,
@@ -187,16 +187,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000000',
+    color: semanticColors.text.primary,
     marginBottom: 4,
   },
   unreadTitle: {
     fontWeight: '700',
-    color: '#000000',
+    color: semanticColors.text.primary,
   },
   contentText: {
     fontSize: 14,
-    color: '#000000',
+    color: semanticColors.text.primary,
     marginBottom: 4,
     lineHeight: 20,
   },

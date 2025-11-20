@@ -1,4 +1,5 @@
 import type { Preferences } from "@/src/features/interest/api";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { PreferenceKeys } from "@/src/features/interest/queries";
 import { usePreferenceOptionsQuery } from "@/src/features/interest/queries";
 import type { AgeOptionData } from "@/src/features/interest/types";
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
 
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 15,
     marginBottom: 30,
   },

@@ -1,4 +1,5 @@
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
+import { semanticColors } from '../../../shared/constants/colors';
 import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCallback } from "react";
@@ -224,7 +225,7 @@ export default function SomemateReportDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   header: {
     width: "100%",
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   loadingContainer: {
     flex: 1,
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: "#666",
+    color: semanticColors.text.disabled,
   },
   processingImage: {
     width: 120,
@@ -261,12 +262,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     marginBottom: 12,
   },
   processingText: {
     fontSize: 15,
-    color: "#666",
+    color: semanticColors.text.disabled,
     textAlign: "center",
     lineHeight: 22,
   },
@@ -278,29 +279,29 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
   },
   headerCard: {
-    backgroundColor: "#F7F3FF",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 20,
     padding: 24,
     marginBottom: 24,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#E8DEFF",
+    borderColor: semanticColors.border.default,
   },
   reportTitle: {
     fontSize: 22,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     marginBottom: 8,
     textAlign: "center",
   },
   reportDate: {
     fontSize: 14,
-    color: "#999",
+    color: semanticColors.text.disabled,
     marginBottom: 16,
   },
   categoryBadge: {
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#fff",
+    color: semanticColors.text.inverse,
   },
   mihoImage: {
     width: 80,
@@ -331,14 +332,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: "#F0F0F0",
+    borderColor: semanticColors.border.default,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -351,35 +352,35 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 15,
     lineHeight: 24,
-    color: "#333",
+    color: semanticColors.text.secondary,
   },
   valueCard: {
-    backgroundColor: "#F7F3FF",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E8DEFF",
+    borderColor: semanticColors.border.default,
   },
   valueName: {
     fontSize: 16,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     marginBottom: 8,
   },
   valueDescription: {
     fontSize: 14,
     lineHeight: 22,
-    color: "#666",
+    color: semanticColors.text.disabled,
   },
   insightCard: {
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#F0F0F0",
+    borderColor: semanticColors.border.default,
     flexDirection: "row",
     alignItems: "flex-start",
   },
@@ -387,7 +388,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -396,13 +397,13 @@ const styles = StyleSheet.create({
   insightNumberText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#fff",
+    color: semanticColors.text.inverse,
   },
   insightText: {
     flex: 1,
     fontSize: 14,
     lineHeight: 22,
-    color: "#333",
+    color: semanticColors.text.secondary,
   },
 });
 

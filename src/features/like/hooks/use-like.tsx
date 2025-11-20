@@ -68,10 +68,10 @@ export default function useLike() {
           ),
           children: (
             <View className="flex flex-col w-full items-center mt-[5px]">
-              <Text className="text-[#AEAEAE] text-[12px]">
+              <Text className="text-text-disabled text-[12px]">
                 상대방도 관심을 보이면,
               </Text>
-              <Text className="text-[#AEAEAE] text-[12px]">
+              <Text className="text-text-disabled text-[12px]">
                 인스타그램으로 연락할 수 있어요
               </Text>
             </View>

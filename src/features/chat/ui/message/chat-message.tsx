@@ -1,4 +1,5 @@
 import ReadCheckIcon from "@assets/icons/read-check.svg";
+import { semanticColors } from '../../../../shared/constants/colors';
 import UnreadCheckIcon from "@assets/icons/unread-check.svg";
 import { Link } from "expo-router";
 import React from "react";
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   time: {
-    color: "#9A93AA",
+    color: semanticColors.text.disabled,
     fontSize: 12,
     lineHeight: 17,
   },
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   readText: {
-    color: "#9A93AA",
+    color: semanticColors.text.disabled,
     fontSize: 12,
     lineHeight: 17,
   },

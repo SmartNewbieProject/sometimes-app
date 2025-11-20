@@ -58,7 +58,7 @@ Interaction.Like = ({ count, iconSize = 24, isLiked, ...props }: LikeProps) => {
           <HeartIcon stroke="#646464" />
         )}
       </IconWrapper>
-      <Text size="13" className="text-[#646464]">
+      <Text size="13" className="text-text-muted">
         {count}
       </Text>
     </TouchableOpacity>
@@ -75,7 +75,7 @@ Interaction.Comment = ({
       <IconWrapper size={iconSize}>
         <CommentIcon strokeWidth={1} stroke="#646464" />
       </IconWrapper>
-      <Text size="13" className="text-[#646464]">
+      <Text size="13" className="text-text-muted">
         {count}
       </Text>
     </TouchableOpacity>
@@ -92,7 +92,7 @@ Interaction.View = ({
       <IconWrapper size={iconSize}>
         <EyesIcon stroke="#646464" />
       </IconWrapper>
-      <Text size="13" className="text-[#646464]">
+      <Text size="13" className="text-text-muted">
         {count}
       </Text>
     </TouchableOpacity>

@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { router, useFocusEffect } from "expo-router";
 import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -211,7 +212,7 @@ export default function SomemateScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
   },
   scrollView: {
     flex: 1,
@@ -249,13 +250,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#1A1A1A",
+    color: semanticColors.text.primary,
     marginBottom: 8,
     fontFamily: "Pretendard-Bold",
   },
   subtitle: {
     fontSize: 14,
-    color: "#A2A2A2",
+    color: semanticColors.text.disabled,
     marginBottom: 24,
     fontFamily: "Pretendard-Regular",
   },
@@ -269,25 +270,25 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#E5E5E5",
-    backgroundColor: "#FFFFFF",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.background,
   },
   categoryButtonActive: {
-    backgroundColor: "#9747FF",
-    borderColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
+    borderColor: semanticColors.brand.secondary,
   },
   categoryText: {
     fontSize: 14,
-    color: "#A2A2A2",
+    color: semanticColors.text.disabled,
     fontFamily: "Pretendard-Medium",
   },
   categoryTextActive: {
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
   },
   promotionContainer: {
     position: "relative",
     marginHorizontal: 16,
-    backgroundColor: "#F7F3FF",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 16,
     padding: 20,
     flexDirection: "row",
@@ -301,13 +302,13 @@ const styles = StyleSheet.create({
   promotionTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#9747FF",
+    color: semanticColors.brand.secondary,
     marginBottom: 8,
     fontFamily: "Pretendard-SemiBold",
   },
   promotionSubtitle: {
     fontSize: 12,
-    color: "#A2A2A2",
+    color: semanticColors.text.disabled,
     lineHeight: 18,
     fontFamily: "Pretendard-Regular",
   },
@@ -328,7 +329,7 @@ const styles = StyleSheet.create({
   },
   chatButton: {
     width: "100%",
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 20,
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
     fontFamily: "Pretendard-SemiBold",
   },
 });

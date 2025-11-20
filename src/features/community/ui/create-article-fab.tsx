@@ -50,7 +50,7 @@ export const CreateArticleFAB = () => {
       onPress={() =>
         router.push(`/community/write?category=${currentCategory}`)
       }
-      className="w-[60px] h-[60px] rounded-full bg-[#9747FF] items-center justify-center"
+      className="w-[60px] h-[60px] rounded-full bg-brand-secondary items-center justify-center"
       style={{ position: "absolute", bottom: 96, right: 24 }}
       accessibilityRole="button"
       accessibilityLabel="새 글 작성"

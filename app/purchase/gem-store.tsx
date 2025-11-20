@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
@@ -141,7 +142,7 @@ export default function GemStoreScreen() {
   return (
     <Layout.Default
       className="flex flex-1 flex-col"
-      style={{ backgroundColor: "white", paddingTop: insets.top }}
+      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
     >
       <GemStore.Header gemCount={gem?.totalGem ?? 0} />
       <ScrollView

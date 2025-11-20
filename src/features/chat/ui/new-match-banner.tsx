@@ -1,4 +1,5 @@
 import BackgroundHeartIcon from "@assets/icons/new-chat-banner-heart.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
@@ -30,14 +31,14 @@ function NewMatchBanner() {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 8,
-    backgroundColor: "#FDFBFF",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 10,
     marginHorizontal: 16,
     alignItems: "center",
     gap: 1,
 
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#7A4AE266",
+    borderColor: semanticColors.brand.primary,
   },
   letterImage: {
     width: 34,
@@ -51,17 +52,17 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 27,
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   name: {
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontWeight: "800",
     fontFamily: "Pretendard-ExtraBold",
   },
   subText: {
     fontSize: 14,
     lineHeight: 21,
-    color: "#898A8D",
+    color: semanticColors.text.disabled,
   },
 });
 

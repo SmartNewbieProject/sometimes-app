@@ -1,4 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from '../../../shared/constants/colors';
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../auth";
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   modalContentText: {
-    color: "#AEAEAE",
+    color: semanticColors.text.disabled,
     fontSize: 12,
   },
   modalTitleText: {

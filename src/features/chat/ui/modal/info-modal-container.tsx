@@ -1,4 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
+import { semanticColors } from '../../../../shared/constants/colors';
 import React, { memo, useCallback, useState } from "react";
 import {
   type GestureResponderEvent,
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     width: 191,
   },
 });

@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -122,14 +123,14 @@ function KakaoLoginRedirect() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#ffffff",
+        backgroundColor: semanticColors.surface.background,
       }}
     >
       <Text
         style={{
           fontSize: 16,
           textAlign: "center",
-          color: "#333333",
+          color: semanticColors.text.secondary,
         }}
       >
         로그인 처리 중입니다...

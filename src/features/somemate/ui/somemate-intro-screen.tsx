@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../shared/constants/colors';
 import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { Button, BottomNavigation } from "@/src/shared/ui";
@@ -80,7 +81,7 @@ export default function SomemateIntroScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   scrollView: {
     flex: 1,
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     fontFamily: "Pretendard-SemiBold",
-    color: "#000",
+    color: semanticColors.text.primary,
     marginBottom: 12,
   },
   categoryButtons: {
@@ -117,24 +118,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
-    backgroundColor: "#fff",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.background,
   },
   categoryButtonActive: {
-    borderColor: "#7A4AE2",
-    backgroundColor: "#F7F3FF",
+    borderColor: semanticColors.brand.primary,
+    backgroundColor: semanticColors.surface.background,
   },
   categoryButtonText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#666",
+    color: semanticColors.text.disabled,
   },
   categoryButtonTextActive: {
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontWeight: "600",
   },
   promotionContainer: {
-    backgroundColor: "#F7F3FF",
+    backgroundColor: semanticColors.surface.background,
     marginHorizontal: 20,
     borderRadius: 16,
     padding: 20,
@@ -151,12 +152,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
-    color: "#000",
+    color: semanticColors.text.primary,
     marginBottom: 8,
   },
   promotionSubtitle: {
     fontSize: 12,
-    color: "#666",
+    color: semanticColors.text.disabled,
     lineHeight: 18,
   },
   reportImage: {
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
     fontFamily: "Pretendard-SemiBold",
   },
 });

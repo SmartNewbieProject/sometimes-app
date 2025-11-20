@@ -1,4 +1,5 @@
 import CopyLinkIcon from "@assets/icons/promotion/invite-code/copy-link.svg";
+import { semanticColors } from '../../../../../shared/constants/colors';
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import useShare from "../../../hooks/promotion/use-share";
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     gap: 10,
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     height: 54,
     borderRadius: 9999,
     justifyContent: "center",
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   text: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 20,
     lineHeight: 22,
     fontWeight: 500,

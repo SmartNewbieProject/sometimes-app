@@ -1,4 +1,5 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import Signup from "@/src/features/signup";
 import { SignupSteps } from "@/src/features/signup/hooks";
 import useUniversityDetails from "@/src/features/signup/hooks/use-university-details";
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-SemiBold",
     fontSize: 18,
     lineHeight: 22,
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
   },
   contentWrapper: {
     gap: 15,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   tipConatainer: {
     flexDirection: "row",

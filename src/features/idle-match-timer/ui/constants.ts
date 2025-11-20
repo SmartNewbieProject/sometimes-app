@@ -28,6 +28,6 @@ export const sideStyle = StyleSheet.create({
 		borderTopEndRadius: 16,
 		height: 35,
 		width: '100%',
-		backgroundColor: '#e6ddff',
+		backgroundColor: '#ECE5FF',
 	},
 });

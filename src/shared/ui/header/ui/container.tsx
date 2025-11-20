@@ -19,7 +19,7 @@ export function Container({
   return (
     <View
       className={cn(
-        "w-full flex-row justify-between items-center px-3 py-[12px] bg-white",
+        "w-full flex-row justify-between items-center px-3 py-[12px] bg-surface-background",
         className
       )}
       style={{ paddingTop: insets.top + 12 }}

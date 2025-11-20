@@ -1,4 +1,5 @@
 import React from "react";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { View, TouchableOpacity } from "react-native";
 import { Text } from "@/src/shared/ui";
 import { useHomeHots } from "@/src/features/community/hooks/use-home";
@@ -14,7 +15,7 @@ export default function Hot({ pageSize = 5 }: Props) {
 
   if (isLoading) {
     return (
-      <View className="mx-[16px] my-[12px] py-6 items-center justify-center rounded-xl bg-[#F6F3F6]">
+      <View className="mx-[16px] my-[12px] py-6 items-center justify-center rounded-xl bg-surface-background">
         <ActivityIndicator />
       </View>
     );
@@ -22,7 +23,7 @@ export default function Hot({ pageSize = 5 }: Props) {
 
   if (isError) {
     return (
-      <View className="mx-[16px] my-[12px] py-6 items-center justify-center rounded-xl bg-[#F6F3F6]">
+      <View className="mx-[16px] my-[12px] py-6 items-center justify-center rounded-xl bg-surface-background">
         <Text textColor="black">인기 글을 불러오지 못했어요.</Text>
         {__DEV__ && (
           <Text size="sm" className="mt-1 opacity-60">
@@ -35,14 +36,14 @@ export default function Hot({ pageSize = 5 }: Props) {
 
   if (!hots.length) {
     return (
-      <View className="mx-[16px] my-[12px] py-6 items-center justify-center rounded-xl bg-[#F6F3F6]">
+      <View className="mx-[16px] my-[12px] py-6 items-center justify-center rounded-xl bg-surface-background">
         <Text textColor="black">현재 인기 글이 없습니다.</Text>
       </View>
     );
   }
 
   return (
-    <View className="mx-[16px] my-[12px] rounded-[8px] bg-white px-3 py-2">
+    <View className="mx-[16px] my-[12px] rounded-[8px] bg-surface-background px-3 py-2">
       {hots.slice(0, total).map((item, idx) => {
         const isLast = idx === total - 1;
         return (
@@ -58,7 +59,7 @@ export default function Hot({ pageSize = 5 }: Props) {
                 style={{
                   flex: 1,
                   overflow: "hidden",
-                  color: "#646464",
+                  color: semanticColors.text.muted,
                   fontFamily: "Pretendard",
                   fontSize: 14,
                   fontStyle: "normal",
@@ -72,7 +73,7 @@ export default function Hot({ pageSize = 5 }: Props) {
               <Text
                 style={{
                   marginLeft: 8,
-                  color: "#9E9E9E",
+                  color: semanticColors.text.disabled,
                   fontFamily: "Pretendard",
                   fontSize: 12,
                   fontStyle: "normal",
@@ -87,7 +88,7 @@ export default function Hot({ pageSize = 5 }: Props) {
               <View
                 style={{
                   height: 1,
-                  backgroundColor: "#F3F0FF",
+                  backgroundColor: semanticColors.surface.background,
                 }}
               />
             )}

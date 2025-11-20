@@ -1,4 +1,5 @@
 import ChevronLeft from "@assets/icons/chevron-left.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
 import React from "react";
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: 68,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     flexDirection: "row",
     paddingHorizontal: 16,
     alignItems: "center",
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 700,
     fontFamily: "Pretendard-ExtraBold",
-    color: "#000",
+    color: semanticColors.text.primary,
   },
 });
 

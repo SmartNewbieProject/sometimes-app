@@ -28,7 +28,7 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
         <Button
           variant="outline"
           size="md"
-          className="w-full py-3 rounded-full mt-3 bg-[#E2D9FF] border-[#E2D9FF]"
+          className="w-full py-3 rounded-full mt-3 bg-surface-background border-border-default"
           onPress={() => {
             trackEventAction('login_button_click');
             router.navigate('/auth/login');
@@ -37,7 +37,7 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
           <Text
             weight="medium"
             size="md"
-            className="text-center text-white"
+            className="text-center text-text-inverse"
           >
             로그인하기
           </Text>

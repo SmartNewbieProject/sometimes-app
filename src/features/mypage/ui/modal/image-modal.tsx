@@ -1,4 +1,4 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { cn } from "@/src/shared/libs";
 import React from "react";
 import {
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     }),
   },
   modalContainer: {
-    backgroundColor: "white",
+    backgroundColor: semanticColors.surface.background,
 
     marginHorizontal: 30,
     bottom: 0,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closeText: {
-    color: "white",
+    color: semanticColors.text.inverse,
     fontFamily: "Pretendard-Bold",
     fontWeight: 700,
     fontSize: 16,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoText: {
-    color: "#EEE8FA",
+    color: semanticColors.text.inverse,
     textAlign: "center",
     fontSize: 15,
     fontFamily: "Pretendard-Light",

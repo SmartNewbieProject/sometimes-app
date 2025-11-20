@@ -1,8 +1,10 @@
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { Text } from "@/src/shared/ui/text";
+import { Image } from "expo-image";
 import { router, usePathname } from "expo-router";
 import React, { type ReactNode } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import colors from "@/src/shared/constants/colors";
 
 import CommunitySelected from "@/assets/icons/nav/community-selected.svg";
 import CommunityUnselected from "@/assets/icons/nav/community-unselected.svg";
@@ -13,7 +15,7 @@ import MyUnselected from "@/assets/icons/nav/my-unselected.svg";
 import ChatSeleted from "@assets/icons/nav/chat-selected.svg";
 import ChatUnseleted from "@assets/icons/nav/chat-unselected.svg";
 
-type NavItem = "home" | "community" | "chat" | "my";
+type NavItem = "home" | "community" | "chat" | "moment" | "my";
 
 const NavIcons: Record<
   NavItem,
@@ -37,6 +39,22 @@ const NavIcons: Record<
   chat: {
     selected: <ChatSeleted />,
     unSelected: <ChatUnseleted />,
+  },
+  moment: {
+    selected: <View style={{ width: 24, height: 24, justifyContent: 'center', alignItems: 'center' }}>
+      <Image
+        source={require("@/assets/images/moment/moment-on.png")}
+        style={{ width: 20, height: 20 }}
+        contentFit="contain"
+      />
+    </View>,
+    unSelected: <View style={{ width: 24, height: 24, justifyContent: 'center', alignItems: 'center' }}>
+      <Image
+        source={require("@/assets/images/moment/moment-off.png")}
+        style={{ width: 20, height: 20 }}
+        contentFit="contain"
+      />
+    </View>,
   },
 };
 
@@ -66,6 +84,13 @@ const navigationItems: NavigationItem[] = [
     path: "/chat",
     icon: NavIcons.chat,
   },
+  // 모먼트 메뉴 임시 비활성화
+  // {
+  //   name: "moment",
+  //   label: "모먼트",
+  //   path: "/moment",
+  //   icon: NavIcons.moment,
+  // },
   {
     name: "my",
     label: "MY",
@@ -87,21 +112,21 @@ export function BottomNavigation() {
     router.push(path as any);
   };
   return (
-    <View className="bg-white border-t border-lightPurple pb-4">
-      <View className="flex-row justify-around py-3">
+    <View style={styles.container}>
+      <View style={styles.navContainer}>
         {navigationItems.map((item) => (
           <TouchableOpacity
             key={item.name}
-            className="items-center"
+            style={styles.navItem}
             onPress={() => handleNavClick(item.path)}
           >
-            <IconWrapper width={24} height={24} className="mb-1">
+            <IconWrapper width={24} height={24} style={styles.iconWrapper}>
               {isActive(item.path) ? item.icon.selected : item.icon.unSelected}
             </IconWrapper>
             <Text
               size="sm"
               weight={isActive(item.path) ? "semibold" : "normal"}
-              textColor={isActive(item.path) ? "purple" : "pale-purple"}
+              textColor={isActive(item.path) ? colors.primaryPurple : colors.lightPurple}
             >
               {item.label}
             </Text>
@@ -111,3 +136,24 @@ export function BottomNavigation() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.white,
+    borderTopColor: colors.lightPurple,
+    borderTopWidth: 1,
+    paddingBottom: 16,
+    width: '100%',
+  },
+  navContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 12,
+  },
+  navItem: {
+    alignItems: 'center',
+  },
+  iconWrapper: {
+    marginBottom: 4,
+  },
+});

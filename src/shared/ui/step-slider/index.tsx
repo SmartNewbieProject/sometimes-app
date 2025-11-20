@@ -263,7 +263,7 @@ export function StepSlider({
             }}
           >
             {/* 실제 슬라이더 트랙 */}
-            <View className="w-full h-3 bg-[#F3EDFF] rounded-full">
+            <View className="w-full h-3 bg-surface-background rounded-full">
               {/* Active track */}
               <View
                 className="absolute z-20 top-0 left-0 h-full bg-primaryPurple rounded-full"
@@ -277,7 +277,7 @@ export function StepSlider({
                   return (
                     <View
                       key={label.label}
-                      className="absolute z-10  w-[10px] h-[10px] bg-[#E1D9FF] rounded-full -mt-2.5 items-center justify-center"
+                      className="absolute z-10  w-[10px] h-[10px] bg-surface-background rounded-full -mt-2.5 items-center justify-center"
                       style={{
                         top: Platform.OS === "web" ? 11 : 9,
                         left:

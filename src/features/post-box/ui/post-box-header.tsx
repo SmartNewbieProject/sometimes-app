@@ -1,4 +1,5 @@
 import { Header } from "@/src/shared/ui";
+import { semanticColors } from '../../../shared/constants/colors';
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -31,7 +32,7 @@ function PostBoxHeaders() {
 
 const styles = StyleSheet.create({
   headerTitle: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 20,
     fontFamily: "Pretendard-Bold",
     fontWeight: 700,

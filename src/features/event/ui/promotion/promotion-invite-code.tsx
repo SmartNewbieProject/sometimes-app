@@ -1,4 +1,5 @@
 import { Button } from "@/src/shared/ui";
+import { semanticColors } from '../../../../shared/constants/colors';
 import CopyIcon from "@assets/icons/promotion/invite-code/copy.svg";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     padding: 15,
-    borderColor: "#B295F1",
+    borderColor: semanticColors.brand.accent,
   },
   colorOverlay: {
     backgroundColor: "#E7DBFF99",
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     height: 44,
   },
   title: {
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontSize: 20,
     fontWeight: 600,
     fontFamily: "Pretendard-SemiBold",
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     left: 6,
     right: 6,
     bottom: 1,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 13,
     paddingVertical: 11,
     borderRadius: 11,
@@ -122,13 +123,13 @@ const styles = StyleSheet.create({
     height: 62,
   },
   codeText: {
-    color: "#A18CD0",
+    color: semanticColors.brand.accent,
     fontSize: 30,
   },
   copyButton: {
     paddingHorizontal: 10,
     paddingVertical: 7,
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     flexDirection: "row",
     alignItems: "center",
     minHeight: 38,
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   copyText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 20,
     lineHeight: 24,
     fontWeight: 600,

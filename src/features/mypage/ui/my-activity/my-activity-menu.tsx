@@ -1,4 +1,5 @@
 import { useCommingSoon } from "@/src/features/admin/hooks";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
 import MyActivityCard from "./my-activity-card";
 import { router } from "expo-router";
@@ -31,7 +32,7 @@ function MyActivityMenu() {
 const styles = StyleSheet.create({
   container: { marginTop: 28 },
   title: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     height: 1,
     width: "100%",
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
   },
   contentContainer: {
     paddingHorizontal: 2,

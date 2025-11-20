@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../shared/constants/colors';
 import type React from "react";
 import { useEffect } from "react";
 import { Modal, StyleSheet, View } from "react-native";
@@ -25,7 +26,7 @@ function Guide({ isVisible, handleClose, children, height = 120 }: GuideProps) {
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <View className="flex-1 bg-black/50 justify-center items-center px-5 relative">
+      <View className="flex-1 bg-surface-inverse/50 justify-center items-center px-5 relative">
         <View style={[styles.boxContainer, { height }]}>
           {children}
           <Image
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     marginHorizontal: "auto",
     bottom: 140,
 
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 20,
     padding: 16,
     position: "absolute",

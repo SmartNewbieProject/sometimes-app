@@ -1,5 +1,6 @@
 
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../../shared/constants/colors';
 import {SignupSteps } from "@/src/features/signup/hooks";
 import { Text } from "@/src/shared/ui/text";
 import { Image } from "expo-image";
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   image: {
     width: 81,

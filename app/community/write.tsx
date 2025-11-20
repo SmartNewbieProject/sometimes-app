@@ -91,7 +91,7 @@ export default function CommunityWriteScreen() {
       <DefaultLayout className="flex-1">
         <ArtcileWriter.Header onConfirm={onSubmitForm} mode="create" />
 
-        <View className="bg-white px-4 pt-3" />
+        <View className="bg-surface-background px-4 pt-3" />
 
         <ArtcileWriter.Form mode="create" />
         <ArtcileWriter.Nav mode="create" />

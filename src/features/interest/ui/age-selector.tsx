@@ -1,4 +1,5 @@
 import { cn } from "@/src/shared/libs";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Text } from "@/src/shared/ui";
 import React from "react";
 import {
@@ -102,10 +103,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   cardSelected: {
-    borderColor: "#9747FF",
+    borderColor: semanticColors.brand.secondary,
   },
   cardUnselected: {
-    borderColor: "#E2D5FF",
+    borderColor: semanticColors.border.default,
   },
   cardInner: {
     width: "100%",
@@ -128,9 +129,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 8,
   },
   badgePrimary: {
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
   },
   badgeGray: {
-    backgroundColor: "#E2D5FF",
+    backgroundColor: semanticColors.surface.background,
   },
 });

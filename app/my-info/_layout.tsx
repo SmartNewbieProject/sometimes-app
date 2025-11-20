@@ -1,4 +1,5 @@
 import MyInfo from "@/src/features/my-info";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { useMyInfoStep } from "@/src/features/my-info/hooks";
 import { cn } from "@/src/shared/libs";
 import { platform } from "@/src/shared/libs/platform";
@@ -144,7 +145,7 @@ const progressStyle: ViewStyle = {
     default: 0,
   }),
   alignItems: "center",
-  backgroundColor: "#FFFFFF",
+  backgroundColor: semanticColors.surface.background,
 };
 
 const styles = StyleSheet.create({

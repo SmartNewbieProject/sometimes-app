@@ -1,4 +1,5 @@
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
@@ -52,7 +53,7 @@ export default function ApprovalRejectedScreen() {
                 top: -8,
                 left: 0,
 
-                backgroundColor: "#7A4AE2",
+                backgroundColor: semanticColors.brand.primary,
                 position: "absolute",
               }}
             />
@@ -153,7 +154,7 @@ export default function ApprovalRejectedScreen() {
           variant="secondary"
           size="md"
           onPress={handleContactSupport}
-          className="w-full py-4 rounded-2xl bg-white border border-gray-300"
+          className="w-full py-4 rounded-2xl bg-surface-background border border-gray-300"
         >
           <View className="flex-row items-center justify-center">
             <Text size="md" textColor="gray" weight="medium" className="mr-2">

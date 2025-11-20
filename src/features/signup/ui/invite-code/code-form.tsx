@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { semanticColors } from '../../../../shared/constants/colors';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import SearchIcon from "@assets/icons/search.svg"
 import { useStorage } from '@/src/shared/hooks/use-storage';
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
   
   },
   label: {
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontSize: 18,
     lineHeight: 22,
     fontWeight: 600,
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     paddingVertical: 9,
     borderWidth: 1,
-    borderColor: "#7A4AE2",
+    borderColor: semanticColors.brand.primary,
     borderRadius: 15,
   },
   input: {

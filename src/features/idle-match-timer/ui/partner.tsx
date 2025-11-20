@@ -1,4 +1,5 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import { UniversityName, dayUtils, getUnivLogo } from "@/src/shared/libs";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
@@ -141,7 +142,7 @@ export const Partner = ({ match }: PartnerProps) => {
               borderTopEndRadius: 16,
               height: 35,
               width: "100%",
-              borderColor: "#E7E9EC",
+              borderColor: semanticColors.border.default,
             }}
           />
         </View>
@@ -152,7 +153,7 @@ export const Partner = ({ match }: PartnerProps) => {
             style={sideStyle.previousButton}
             onPress={onClickToPartner}
           >
-            <Text className="w-[32px] text-white text-[12px]">더보기</Text>
+            <Text className="w-[32px] text-text-inverse text-[12px]">더보기</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>

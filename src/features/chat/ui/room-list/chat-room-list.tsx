@@ -1,4 +1,5 @@
 import useLiked from "@/src/features/like/hooks/use-liked";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { Show } from "@/src/shared/ui";
 import { LegendList } from "@legendapp/list";
 import { FlashList } from "@shopify/flash-list";
@@ -134,13 +135,13 @@ function ChatRoomList() {
 
 const styles = StyleSheet.create({
   infoText: {
-    color: "#E1D9FF",
+    color: semanticColors.text.inverse,
     fontSize: 18,
     lineHeight: 23,
     marginTop: 4,
   },
   lockTitleText: {
-    color: "#8638E5",
+    color: semanticColors.brand.primary,
     fontSize: 12,
     fontWeight: 600,
     paddingHorizontal: 16,
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   openTitleText: {
-    color: "#A2A2A2",
+    color: semanticColors.text.disabled,
     paddingHorizontal: 16,
     fontSize: 12,
     fontWeight: 600,

@@ -1,4 +1,4 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { cn } from "@/src/shared/libs";
 import { Text as CustomText } from "@/src/shared/ui";
@@ -50,10 +50,10 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             나가면 대화 내역과 목록에서 완전히 삭제되며,
           </Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             복구가 불가능합니다.
           </Text>
         </View>
@@ -96,7 +96,7 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
         <View style={[styles.modalContainer, { bottom: insets.bottom + 74 }]}>
           <TouchableOpacity onPress={handleReport} style={styles.option}>
             <RedEmergencyIcon />
-            <Text style={[styles.optionText, { color: "#F00" }]}>
+            <Text style={[styles.optionText, { color: semanticColors.state.error }]}>
               신고 후 나가기
             </Text>
           </TouchableOpacity>
@@ -110,7 +110,7 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
               },
             ]}
           >
-            <Text style={[styles.optionText, { color: "#797979" }]}>
+            <Text style={[styles.optionText, { color: semanticColors.text.disabled }]}>
               채팅방 나가기
             </Text>
           </TouchableOpacity>
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     }),
   },
   modalContainer: {
-    backgroundColor: "white",
+    backgroundColor: semanticColors.surface.background,
 
     marginHorizontal: 30,
     bottom: 0,
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closeText: {
-    color: "white",
+    color: semanticColors.text.inverse,
     fontFamily: "Pretendard-Bold",
     fontWeight: 700,
     fontSize: 16,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoText: {
-    color: "#EEE8FA",
+    color: semanticColors.text.inverse,
     textAlign: "center",
     fontSize: 15,
     fontFamily: "Pretendard-Light",

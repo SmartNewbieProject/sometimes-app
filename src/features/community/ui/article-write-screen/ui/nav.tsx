@@ -16,12 +16,12 @@ export const ArticleWriteNav = ({ mode }: { mode: "create" | "update" }) => {
   return (
     <View
       style={{ paddingBottom: insets.bottom }}
-      className="bg-white border-t border-lightPurple px-5 pt-4 flex flex-row justify-end"
+      className="bg-surface-background border-t border-lightPurple px-5 pt-4 flex flex-row justify-end"
     >
       <View className="flex-row items-center gap-x-2">
         {mode === "create" && (
           <Check.Box checked={anonymous} size={25} onChange={onToggleAnonymous}>
-            <Text className="text-[15px] text-[#000000] font-medium">익명</Text>
+            <Text className="text-[15px] text-text-primary font-medium">익명</Text>
           </Check.Box>
         )}
       </View>

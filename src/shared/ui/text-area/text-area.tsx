@@ -1,7 +1,7 @@
 import { TextInput, type TextInputProps, View } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-const textArea = cva('w-full bg-transparent border rounded-md p-2 border-[#E7E9EC]', {
+const textArea = cva('w-full bg-transparent border rounded-md p-2 border-border-default', {
 	variants: {
 		size: {
 			sm: 'min-h-[80px] text-sm',
