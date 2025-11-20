@@ -1,4 +1,5 @@
 import ChevronLeft from "@assets/icons/chevron-left.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
 import { Image } from "expo-image";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: 68,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     flexDirection: "row",
     paddingHorizontal: 16,
     alignItems: "center",
@@ -92,14 +93,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   name: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontWeight: 700,
     fontFamily: "Pretendard-ExtraBold",
     fontSize: 18,
     lineHeight: 19,
   },
   school: {
-    color: "#767676",
+    color: semanticColors.text.disabled,
     fontSize: 13,
     lineHeight: 19,
   },

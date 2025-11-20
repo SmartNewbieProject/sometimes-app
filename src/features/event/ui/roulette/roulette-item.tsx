@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 148,
-    backgroundColor: "#C6ADF6",
+    backgroundColor: semanticColors.brand.accent,
 
     shadowColor: "rgba(122, 74, 226, 0.60)",
     shadowOffset: {
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 148,
     borderWidth: 1,
-    borderColor: "#fff",
+    borderColor: semanticColors.border.default,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 44,
     borderWidth: 0.5,
-    borderColor: "white",
+    borderColor: semanticColors.border.default,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     lineHeight: 18,
     fontSize: 15,
-    color: "#fff",
+    color: semanticColors.text.inverse,
     textShadowColor: "#7A4AE2",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,

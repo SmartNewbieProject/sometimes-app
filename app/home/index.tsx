@@ -143,7 +143,7 @@ const HomeScreen = () => {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginRight: 16 }}>
             <NotificationIcon size={41} />
             <TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
               <ImageResource
@@ -158,9 +158,8 @@ const HomeScreen = () => {
 
       <ScrollView
         scrollEnabled={!isSlideScrolling}
-        className={`flex-1 px-5 flex flex-col gap-y-[14px] ${
-          Platform.OS === "android" ? "pb-40" : "pb-14"
-        }`}
+        className={`flex-1 px-5 flex flex-col gap-y-[14px] ${Platform.OS === "android" ? "pb-40" : "pb-14"
+          }`}
       >
         <View style={{ paddingBottom: 4, marginTop: 2 }}>
           <BannerSlide />

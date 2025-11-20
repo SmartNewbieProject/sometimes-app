@@ -1,4 +1,5 @@
 import BulbIcon from "@assets/icons/bulb.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -35,11 +36,11 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 8,
     paddingHorizontal: 10,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 10,
     marginHorizontal: 16,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#73727566",
+    borderColor: semanticColors.text.muted,
   },
   topContainer: {
     flexDirection: "row",
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    color: "#737275",
+    color: semanticColors.text.muted,
     fontSize: 15,
     lineHeight: 22,
   },
@@ -55,12 +56,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 10,
-    backgroundColor: "#FBF9FF",
+    backgroundColor: semanticColors.surface.background,
   },
   guideText: {
     fontSize: 13,
     lineHeight: 20,
-    color: "#737275",
+    color: semanticColors.text.muted,
   },
   bottomContainer: {
     marginTop: 12,

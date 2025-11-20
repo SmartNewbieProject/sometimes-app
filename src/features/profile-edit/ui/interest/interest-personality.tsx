@@ -1,6 +1,6 @@
 import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import React from "react";
 
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 10,
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
   },
 });
 

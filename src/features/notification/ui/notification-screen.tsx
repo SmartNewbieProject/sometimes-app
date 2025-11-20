@@ -1,4 +1,5 @@
 import React from 'react';
+import { semanticColors } from '../../../shared/constants/colors';
 import { View, StyleSheet } from 'react-native';
 import { Text } from '@/src/shared/ui';
 import { NotificationList } from './notification-list';
@@ -18,6 +19,6 @@ export const NotificationScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: semanticColors.surface.background,
   },
 });

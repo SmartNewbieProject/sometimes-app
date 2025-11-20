@@ -142,7 +142,7 @@ export const ArticleWriteForm = ({
                 );
               })
             ) : (
-              <View className="px-4 py-12 rounded-lg bg-[#F7F8FA]">
+              <View className="px-4 py-12 rounded-lg bg-surface-background">
                 <Text className="text-gray-500 text-center">
                   선택 가능한 카테고리가 없습니다.
                 </Text>
@@ -195,19 +195,19 @@ export const ArticleWriteForm = ({
       contentContainerStyle={{ paddingBottom: 16 }}
       showsVerticalScrollIndicator
     >
-      <View className="h-[1px] bg-[#E7E9EC]" />
+      <View className="h-[1px] bg-surface-background" />
 
       <View className="px-[16px] pt-[26px]">
         <View className="flex-row items-center gap-3 mb-[10px]">
           {allowedCategories.length > 0 && (
             <TouchableOpacity
               onPress={mode === "create" ? openCategoryModal : undefined}
-              className="px-3 py-2 rounded-md bg-[#F3F0FF] items-center justify-center"
+              className="px-3 py-2 rounded-md bg-surface-background items-center justify-center"
               // update일 때 약간 투명하게
               style={{ opacity: mode === "create" ? 1 : 0.6 }}
               disabled={mode !== "create"}
             >
-              <Text className="text-[#6D28D9] font-bold text-sm">
+              <Text className="text-brand-primary font-bold text-sm">
                 {displayName} ▼
               </Text>
             </TouchableOpacity>
@@ -220,7 +220,7 @@ export const ArticleWriteForm = ({
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   placeholder="제목을 입력해주세요."
-                  className="w-full p-2 font-bold placeholder:text-[#d9d9d9] text-[18px] border-b border-[#E7E9EC] pb-2"
+                  className="w-full p-2 font-bold placeholder:text-text-inverse text-[18px] border-b border-border-default pb-2"
                   onChangeText={onChange}
                   value={value}
                   blurOnSubmit={false}
@@ -242,7 +242,7 @@ export const ArticleWriteForm = ({
                 scrollEnabled
                 textAlignVertical="top"
                 maxLength={2000}
-                className="w-full p-2 text-[14px] md:text-md placeholder:text-[#D9D9D9]"
+                className="w-full p-2 text-[14px] md:text-md placeholder:text-text-inverse"
                 onChangeText={onChange}
                 value={value}
                 style={{ minHeight: 232, maxHeight: 400 }}
@@ -288,7 +288,7 @@ export const ArticleWriteForm = ({
                         onPress={() => removeImage(index)}
                         className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full items-center justify-center"
                       >
-                        <Text className="text-white text-xs font-bold">×</Text>
+                        <Text className="text-text-inverse text-xs font-bold">×</Text>
                       </TouchableOpacity>
                     </View>
                   ))}
@@ -299,7 +299,7 @@ export const ArticleWriteForm = ({
         </View>
       </View>
 
-      <View className="h-[1px] bg-[#E7E9EC] mb-4" />
+      <View className="h-[1px] bg-surface-background mb-4" />
       <CommunityGuideline />
     </ScrollView>
   );

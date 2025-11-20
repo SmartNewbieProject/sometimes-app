@@ -1,4 +1,5 @@
 import BottomArrowIcon from "@assets/icons/bottom-arrow.svg";
+import { semanticColors } from '../../../../shared/constants/colors';
 import React, { useRef, useState } from "react";
 import {
   Animated,
@@ -110,8 +111,8 @@ const styles = StyleSheet.create({
     height: 37,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#7A3AE2",
-    backgroundColor: "#fff",
+    borderColor: semanticColors.brand.primary,
+    backgroundColor: semanticColors.surface.background,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 25,
     height: 25,
-    backgroundColor: "#E2D9FF",
+    backgroundColor: semanticColors.surface.background,
   },
   optionList: {
     paddingVertical: 11,
@@ -140,8 +141,8 @@ const styles = StyleSheet.create({
     top: 44,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#7A4AE2",
-    backgroundColor: "#FFF",
+    borderColor: semanticColors.brand.primary,
+    backgroundColor: semanticColors.surface.background,
     width: 132,
     maxHeight: 214,
   },

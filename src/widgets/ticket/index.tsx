@@ -3,7 +3,7 @@ import { Show, Text } from "@shared/ui";
 import { createContext, useContext } from "react";
 import { Image } from "expo-image";
 import { calculateDiscount, toKRW } from "./utils";
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 
 type Metadata = {
   totalPrice: number;
@@ -99,12 +99,12 @@ export const Ticket = {
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    backgroundColor: 'white',
+    backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 21,
     paddingVertical: 11,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#E6DBFF',
+    borderColor: semanticColors.border.default,
     gap: 8,
     flexDirection: 'row',
     alignItems: 'center',

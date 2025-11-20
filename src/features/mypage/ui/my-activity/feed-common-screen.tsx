@@ -1,4 +1,5 @@
 import Layout from "@/src/features/layout";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { View } from "react-native";
 import { Header, Text } from "@/src/shared/ui";
 import { router } from "expo-router";
@@ -102,9 +103,9 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
 
   if (isLoading && articles.length === 0) {
     return (
-      <Layout.Default style={{ backgroundColor: "#fff" }}>
+      <Layout.Default style={{ backgroundColor: semanticColors.surface.background }}>
         {header}
-        <View className="flex-1 bg-white">
+        <View className="flex-1 bg-surface-background">
           {Array.from({ length: 10 }).map((_, i) => (
             <ArticleSkeleton
               key={`skel-${type}-${i}`}
@@ -117,9 +118,9 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
   }
 
   return (
-    <Layout.Default style={{ backgroundColor: "#fff" }}>
+    <Layout.Default style={{ backgroundColor: semanticColors.surface.background }}>
       {header}
-      <View className="flex-1 bg-white">
+      <View className="flex-1 bg-surface-background">
         <Text className="px-4 py-3" weight="bold">
           {title}
         </Text>

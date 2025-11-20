@@ -61,7 +61,7 @@ export function ContentSelector({
         {!!actionLabel && (
           <View
             className={cn(
-              "absolute top-0  right-0 z-10 px-2.5 py-1 rounded-bl-lg  text-white"
+              "absolute top-0  right-0 z-10 px-2.5 py-1 rounded-bl-lg  text-text-inverse"
             )}
             style={{
               backgroundColor: value ? activeColor : inactiveColor,
@@ -79,8 +79,8 @@ export function ContentSelector({
           renderPlaceholder()
         ) : (
           <View className="flex-1 items-center justify-center">
-            <View className="w-full h-full bg-[#F3EDFF] flex justify-center items-center">
-              <Text size="sm" className="text-[#9B94AB]">
+            <View className="w-full h-full bg-surface-background flex justify-center items-center">
+              <Text size="sm" className="text-text-disabled">
                 콘텐츠 추가하기
               </Text>
             </View>

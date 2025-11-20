@@ -90,7 +90,7 @@ export const CategoryList = () => {
 
   return (
     <View
-      className="w-full px-[16px] bg-white overflow-hidden"
+      className="w-full px-[16px] bg-surface-background overflow-hidden"
       onLayout={onContainerLayout}
     >
       <ScrollView
@@ -103,7 +103,7 @@ export const CategoryList = () => {
           <View className="flex flex-row w-full gap-x-[10px] mb-2">
             {renderCategories.map((category) => {
               const isActive = currentCategory === category.code;
-              const bgClass = isActive ? "bg-[#7A4AE2]" : "bg-[#F6F3F6]";
+              const bgClass = isActive ? "bg-brand-primary" : "bg-surface-background";
 
               return (
                 <View

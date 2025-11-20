@@ -1,4 +1,5 @@
 import DownArrowIcon from "@assets/images/promotion/banner/down-arrow.svg";
+import { semanticColors } from '../../../../shared/constants/colors';
 import LetterIcon from "@assets/images/promotion/banner/letter.svg";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -101,7 +102,7 @@ const BACKGROUND_IMAGES = [
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     width: "100%",
     height: 240,
     position: "relative",
@@ -115,14 +116,14 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 14,
     marginBottom: 3,
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontFamily: "Pretendard-Bold",
     fontWeight: 700,
     lineHeight: 45,
     fontSize: 30,
   },
   description: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 20,
     fontWeight: 700,
     fontFamily: "Pretendard-Bold",
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   sub: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontFamily: "Pretendard-Bold",
     fontWeight: 700,
     fontSize: 18,
@@ -146,13 +147,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     borderRadius: 20,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     letterSpacing: -0.06,
     minWidth: 178,
     maxWidth: 178,
   },
   inviteText: {
-    color: "#212121",
+    color: semanticColors.text.secondary,
     fontFamily: "Pretendard-Bold",
     fontSize: 20,
     fontWeight: 700,

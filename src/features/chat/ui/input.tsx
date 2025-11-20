@@ -1,4 +1,5 @@
 import PlusIcon from "@assets/icons/plus.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import SendChatIcon from "@assets/icons/send-chat.svg";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     ...(Platform.OS === "android"
       ? { textAlignVertical: "center" }
       : { paddingVertical: 0 }),
-    color: "#1E2229",
+    color: semanticColors.text.secondary,
   },
   inputContainer: {
     flex: 1,
@@ -146,13 +147,13 @@ const styles = StyleSheet.create({
 
     alignItems: "center",
     borderRadius: 24,
-    backgroundColor: "#F8F9FA",
+    backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 8,
   },
   container: {
     minHeight: 70,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     flexDirection: "row",
     paddingVertical: 12,
 
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 16,
-    backgroundColor: "#F3EDFF",
+    backgroundColor: semanticColors.surface.background,
   },
   send: {
     width: 32,
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
     alignSelf: "flex-end",
     textAlignVertical: "top",
-    backgroundColor: "#7A4AE1",
+    backgroundColor: semanticColors.brand.primary,
   },
 });
 

@@ -68,7 +68,7 @@ export default function LoginForm() {
             disabled={isLoading}
             className="py-4 rounded-full min-w-[330px] min-h-[60px]"
           >
-            <Text className="text-white text-center text-[18px] h-[40px]">
+            <Text className="text-text-inverse text-center text-[18px] h-[40px]">
               {isLoading ? "PASS 인증 중..." : "PASS 로그인"}
             </Text>
           </Button>
@@ -140,7 +140,7 @@ function KakaoLogin() {
             <KakaoLogo width={34} height={34} />
           </View>
           <View>
-            <Text className="text-[#00000085] text-[18px]">카카오 로그인</Text>
+            <Text className="text-text-primary text-[18px]">카카오 로그인</Text>
           </View>
         </Pressable>
       </View>

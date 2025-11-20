@@ -1,4 +1,5 @@
 import React from "react";
+import { semanticColors } from '../../constants/colors';
 import {
   type StyleProp,
   StyleSheet,
@@ -38,14 +39,14 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Regular",
     fontWeight: 400,
 
-    color: "#777777",
+    color: semanticColors.text.inverse,
   },
   description: {
     fontSize: 14,
     fontFamily: "Pretendard-Regular",
     fontWeight: 400,
 
-    color: "#919191",
+    color: semanticColors.text.disabled,
   },
   descriptionContainer: {
     flexDirection: "row",
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
     paddingTop: 0.5,
     width: 3.5,
     height: 3.5,
-    backgroundColor: "#919191",
+    backgroundColor: semanticColors.text.disabled,
     borderRadius: "50%",
   },
 });

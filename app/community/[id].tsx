@@ -106,7 +106,7 @@ export default function ArticleDetailScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 bg-white justify-center items-center">
+      <View className="flex-1 bg-surface-background justify-center items-center">
         <Text>게시글을 불러오는 중 오류가 발생했습니다.</Text>
       </View>
     );
@@ -119,7 +119,7 @@ export default function ArticleDetailScreen() {
   return (
     <DefaultLayout
       style={{ paddingBottom: insets.bottom }}
-      className="flex-1 bg-white "
+      className="flex-1 bg-surface-background "
     >
       <ArticleHeader
         isOwner={isOwner}

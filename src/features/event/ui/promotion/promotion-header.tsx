@@ -1,4 +1,5 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { Header } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -25,7 +26,7 @@ function PromotionHeader() {
 
 const styles = StyleSheet.create({
   titleText: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 20,
     fontWeight: 700,
     fontFamily: "Pretendard-Bold",

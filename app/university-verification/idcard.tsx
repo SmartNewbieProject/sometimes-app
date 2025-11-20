@@ -1,4 +1,5 @@
 import { Header, Text, PalePurpleGradient } from "@/src/shared/ui";
+import { semanticColors } from '../../src/shared/constants/colors';
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -133,9 +134,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
     borderRadius: 16,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
     shadowColor: "#F2ECFF",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
@@ -147,9 +148,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
     borderRadius: 16,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
     shadowColor: "#F2ECFF",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   infoTitle: {
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: "600" as any,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 16.8,

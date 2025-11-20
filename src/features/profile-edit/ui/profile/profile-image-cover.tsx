@@ -1,4 +1,5 @@
 import React from "react";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { View, Text, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
 import LockIcon from "@/assets/icons/lock-chat.svg";
@@ -56,14 +57,14 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 10,
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 22,
   },
   subtitle: {
     marginTop: 6,
-    color: "#F2F2F2",
+    color: semanticColors.text.inverse,
     fontSize: 13,
     textAlign: "center",
     lineHeight: 19,

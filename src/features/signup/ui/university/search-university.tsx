@@ -1,4 +1,5 @@
 import SearchIcon from "@assets/icons/search.svg";
+import { semanticColors } from '../../../../shared/constants/colors';
 import type React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import { useWindowWidth } from "../../hooks";
@@ -47,10 +48,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 12,
-    backgroundColor: "#F3EDFF",
+    backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: "#E0D7F5",
+    borderColor: semanticColors.border.default,
   },
   input: {
     flex: 1,
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     height: "100%",
     paddingVertical: 0,
-    color: "#000",
+    color: semanticColors.text.primary,
     marginRight: 8,
   },
   iconWrapper: {

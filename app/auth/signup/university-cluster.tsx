@@ -1,4 +1,5 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { useSignupProgress } from "@/src/features/signup/hooks";
 import { getAreaByCode } from "@/src/features/signup/lib";
 import useUniversitiesByArea from "@/src/features/signup/queries/use-universities-by-area";
@@ -107,7 +108,7 @@ function UniversityCluster() {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    backgroundColor: "#F9F7FF",
+    backgroundColor: semanticColors.surface.background,
   },
   title: {
     fontSize: 32,
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginHorizontal: 16,
     flexDirection: "row",
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 12,
     gap: 12,
   },
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
   clusterDesc: {
     fontSize: 12,
     fontWeight: 400,
-    color: "#3A3A3A",
+    color: semanticColors.text.primary,
   },
   bottomContainer: {
     position: "absolute",
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingTop: 16,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   univContainer: {
     width: "100%",

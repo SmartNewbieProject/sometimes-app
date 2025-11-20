@@ -1,4 +1,5 @@
 import {useModal} from "@hooks/use-modal";
+import { semanticColors } from '../constants/colors';
 import {StyleSheet, View} from "react-native";
 import {router} from "expo-router";
 import {Text} from "@ui/text";
@@ -27,7 +28,7 @@ export const useCashableModal = () => {
               이 기능을 사용하려면 구슬이 더 필요해요
             </Text>
 
-            <Text style={styles.description} className="text-[#AEAEAE]">
+            <Text style={styles.description} className="text-text-disabled">
               {textContent}
             </Text>
         </View>
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   description: {
-    color: '#AEAEAE',
+    color: semanticColors.text.disabled,
     marginTop: 8,
     fontSize: 12,
     textAlign: 'center'

@@ -279,7 +279,7 @@ class SocketConnectionManager {
 
 
 	private connect(url: string, token: string) {
-		const socketUrl = buildChatSocketUrl(url, '/chat', token);
+		const socketUrl = buildChatSocketUrl(url, '', token);
 
 		if (this.socket && this.currentUrl !== socketUrl) {
 			this.disconnectSocket();

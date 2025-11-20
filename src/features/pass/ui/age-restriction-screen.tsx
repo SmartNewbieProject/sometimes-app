@@ -1,4 +1,5 @@
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Button } from "@/src/shared/ui/button";
 import { PalePurpleGradient } from "@/src/shared/ui/gradient";
 import { IconWrapper } from "@/src/shared/ui/icons";
@@ -37,7 +38,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
   };
 
   return (
-    <DefaultLayout className="flex-1" style={{ backgroundColor: "#F7F3FF" }}>
+    <DefaultLayout className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
       <PalePurpleGradient />
 
       <ScrollView
@@ -67,7 +68,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
                   top: 0,
                   left: 0,
 
-                  backgroundColor: "#7A4AE2",
+                  backgroundColor: semanticColors.brand.primary,
                   position: "absolute",
                 }}
               />
@@ -77,7 +78,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
                   height: 193,
                   borderRadius: 223,
 
-                  backgroundColor: "#fff",
+                  backgroundColor: semanticColors.surface.background,
                   top: 30,
                   left: 30,
                   position: "absolute",
@@ -94,7 +95,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
                       rotate: "-45deg",
                     },
                   ],
-                  backgroundColor: "#7A4AE2",
+                  backgroundColor: semanticColors.brand.primary,
                   position: "absolute",
                 }}
               />
@@ -127,7 +128,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
           </View>
 
           {/* 안내 정보 */}
-          <View className="bg-white rounded-2xl p-6 mb-8 w-full  shadow-sm mx-2">
+          <View className="bg-surface-background rounded-2xl p-6 mb-8 w-full  shadow-sm mx-2">
             <View className="flex-row items-center mb-4">
               <View className="w-6 h-6 bg-lightPurple rounded-full items-center justify-center mr-3">
                 <Text size="sm" textColor="purple" weight="semibold">

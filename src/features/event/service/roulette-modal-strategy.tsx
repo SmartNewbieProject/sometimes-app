@@ -1,4 +1,5 @@
 import type { ModalOptions } from "@/src/shared/providers/modal-provider";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Image } from "expo-image";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -33,7 +34,7 @@ export const rouletteModalStrategy = (
           style={{
             padding: 5,
             borderRadius: 999,
-            backgroundColor: "#7A4AE2",
+            backgroundColor: semanticColors.brand.primary,
           }}
         >
           <Image
@@ -270,7 +271,7 @@ const flyweight = (onClick: () => void) => ({
       style={{
         padding: 5,
         borderRadius: 999,
-        backgroundColor: "#7A4AE2",
+        backgroundColor: semanticColors.brand.primary,
       }}
     >
       <Image
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Bold",
     fontWeight: 700,
     lineHeight: 21,
-    color: "#000000CC",
+    color: semanticColors.text.primary,
   },
   modalChildren: {
     alignItems: "center",

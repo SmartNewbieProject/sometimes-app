@@ -1,4 +1,5 @@
 import { Text } from "@/src/shared/ui";
+import { semanticColors } from '../../../shared/constants/colors';
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
@@ -12,7 +13,7 @@ interface MenuProps {
 
 function Menu({ options, title }: MenuProps) {
   return (
-    <View style={{ backgroundColor: "#fff" }}>
+    <View style={{ backgroundColor: semanticColors.surface.background }}>
       <View style={styles.titleWrapper}>
         <Text textColor={"black"} weight={"bold"} size="md">
           {title}

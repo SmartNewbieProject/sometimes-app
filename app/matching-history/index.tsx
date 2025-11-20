@@ -1,4 +1,5 @@
 import MatchingHistoryList from "@/src/features/matching-history/ui/matching-history-list";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { BottomNavigation } from "@/src/shared/ui";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -14,7 +15,7 @@ function MatchingHistory() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     flex: 1,
   },
 });

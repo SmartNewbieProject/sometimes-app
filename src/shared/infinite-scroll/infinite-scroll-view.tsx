@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { semanticColors } from '../constants/colors';
 import {
   ActivityIndicator,
   FlatList,
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#666",
+    color: semanticColors.text.disabled,
   },
 });
 

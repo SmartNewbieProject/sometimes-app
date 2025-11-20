@@ -1,4 +1,5 @@
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
+import { semanticColors } from '../../../../../shared/constants/colors';
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import useShareKakao from "../../../hooks/promotion/use-share-kakao";
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
     height: 34,
   },
   text: {
-    color: "#181600",
+    color: semanticColors.text.primary,
     fontSize: 18,
     lineHeight: 22,
     fontWeight: 500,
