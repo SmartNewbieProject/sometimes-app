@@ -1,0 +1,444 @@
+{
+  "threshold": 12,
+  "canonical": [
+    {
+      "hex": "#FFFFFF",
+      "count": 661
+    },
+    {
+      "hex": "#000000",
+      "count": 355
+    },
+    {
+      "hex": "#7A4AE2",
+      "count": 206
+    },
+    {
+      "hex": "#AEAEAE",
+      "count": 93
+    },
+    {
+      "hex": "#7C7C7C",
+      "count": 70
+    },
+    {
+      "hex": "#A892D7",
+      "count": 45
+    },
+    {
+      "hex": "#9747FF",
+      "count": 20
+    },
+    {
+      "hex": "#BAB0D0",
+      "count": 18
+    },
+    {
+      "hex": "#333333",
+      "count": 17
+    },
+    {
+      "hex": "#8C6AE3",
+      "count": 9
+    },
+    {
+      "hex": "#FF0000",
+      "count": 6
+    },
+    {
+      "hex": "#FFB02E",
+      "count": 6
+    },
+    {
+      "hex": "#49386E",
+      "count": 4
+    },
+    {
+      "hex": "#4C4854",
+      "count": 4
+    },
+    {
+      "hex": "#6B46C1",
+      "count": 4
+    },
+    {
+      "hex": "#FFC8C8",
+      "count": 4
+    },
+    {
+      "hex": "#3D2432",
+      "count": 4
+    },
+    {
+      "hex": "#5A269A",
+      "count": 3
+    },
+    {
+      "hex": "#F70A8D",
+      "count": 3
+    },
+    {
+      "hex": "#FF8080",
+      "count": 3
+    },
+    {
+      "hex": "#290E62",
+      "count": 3
+    },
+    {
+      "hex": "#0000FF",
+      "count": 2
+    },
+    {
+      "hex": "#FEE500",
+      "count": 2
+    },
+    {
+      "hex": "#EF4444",
+      "count": 2
+    },
+    {
+      "hex": "#7A6FA3",
+      "count": 2
+    },
+    {
+      "hex": "#80C0FF",
+      "count": 2
+    },
+    {
+      "hex": "#6A3EA1",
+      "count": 2
+    },
+    {
+      "hex": "#FFF478",
+      "count": 2
+    },
+    {
+      "hex": "#392108",
+      "count": 2
+    },
+    {
+      "hex": "#C87928",
+      "count": 2
+    },
+    {
+      "hex": "#553B3E",
+      "count": 2
+    },
+    {
+      "hex": "#FC6B2D",
+      "count": 2
+    },
+    {
+      "hex": "#FF7DCE",
+      "count": 2
+    },
+    {
+      "hex": "#7D6133",
+      "count": 2
+    },
+    {
+      "hex": "#FF3B30",
+      "count": 1
+    },
+    {
+      "hex": "#FFCFE5",
+      "count": 1
+    },
+    {
+      "hex": "#AB69B0",
+      "count": 1
+    },
+    {
+      "hex": "#D86B89",
+      "count": 1
+    },
+    {
+      "hex": "#FFDD80",
+      "count": 1
+    },
+    {
+      "hex": "#80FF80",
+      "count": 1
+    },
+    {
+      "hex": "#007AFF",
+      "count": 1
+    },
+    {
+      "hex": "#F2C8A2",
+      "count": 1
+    },
+    {
+      "hex": "#F2F0AA",
+      "count": 1
+    },
+    {
+      "hex": "#BFE3BF",
+      "count": 1
+    },
+    {
+      "hex": "#F59639",
+      "count": 1
+    },
+    {
+      "hex": "#89029C",
+      "count": 1
+    },
+    {
+      "hex": "#D7257D",
+      "count": 1
+    }
+  ],
+  "tokenMap": {
+    "white": "#FFFFFF",
+    "#fff": "#FFFFFF",
+    "#FFFFFF": "#FFFFFF",
+    "#E7E9EC": "#FFFFFF",
+    "#F2ECFF": "#FFFFFF",
+    "#F3EDFF": "#FFFFFF",
+    "#E1D9FF": "#FFFFFF",
+    "#F3F0FF": "#FFFFFF",
+    "#FFF": "#FFFFFF",
+    "#E2D9FF": "#FFFFFF",
+    "#E6DBFF": "#FFFFFF",
+    "#F7F3FF": "#FFFFFF",
+    "#D9D9D9": "#FFFFFF",
+    "#ffffff": "#FFFFFF",
+    "#E5E7EB": "#FFFFFF",
+    "#F0F0F0": "#FFFFFF",
+    "#E2D5FF": "#FFFFFF",
+    "#F6F3F6": "#FFFFFF",
+    "#D1D5DB": "#FFFFFF",
+    "#F8F9FA": "#FFFFFF",
+    "#BAC1CB": "#FFFFFF",
+    "#E9D9FF": "#FFFFFF",
+    "#E5E5E5": "#FFFFFF",
+    "#F9F7FF": "#FFFFFF",
+    "#F2F2F2": "#FFFFFF",
+    "#F9FAFB": "#FFFFFF",
+    "#e0e0e0": "#FFFFFF",
+    "#fcfaff": "#FFFFFF",
+    "#eee": "#FFFFFF",
+    "#E8DEFF": "#FFFFFF",
+    "#FAFAFA": "#FFFFFF",
+    "#FDFBFF": "#FFFFFF",
+    "#FBF9FF": "#FFFFFF",
+    "#F5F5F5": "#FFFFFF",
+    "#F5F1FF": "#FFFFFF",
+    "#F3EEFC": "#FFFFFF",
+    "#EEE8FA": "#FFFFFF",
+    "#f5f5f5": "#FFFFFF",
+    "#F7F8FA": "#FFFFFF",
+    "#E6DAFF": "#FFFFFF",
+    "#F6F2FF": "#FFFFFF",
+    "#ECE5FF": "#FFFFFF",
+    "#E0E0E0": "#FFFFFF",
+    "rgba(247, 243, 255, 1)": "#FFFFFF",
+    "#F8F5FF": "#FFFFFF",
+    "#CCCCCC": "#FFFFFF",
+    "#F7F5FC": "#FFFFFF",
+    "#F3F1FA": "#FFFFFF",
+    "#DCD5EA": "#FFFFFF",
+    "rgba(237, 233, 247, 1)": "#FFFFFF",
+    "#EFEFEF": "#FFFFFF",
+    "#d9d9d9": "#FFFFFF",
+    "#F8F4FF": "#FFFFFF",
+    "#F4EFFF": "#FFFFFF",
+    "#E4D7FF": "#FFFFFF",
+    "#E7DBFF99": "#FFFFFF",
+    "#DECEFF": "#FFFFFF",
+    "#F9F5FE": "#FFFFFF",
+    "#F2E7FF": "#FFFFFF",
+    "#DFC7FF": "#FFFFFF",
+    "rgba(255, 255, 255, 0.2)": "#FFFFFF",
+    "#e6ddff": "#FFFFFF",
+    "#F5F1FE": "#FFFFFF",
+    "#CEC1FF": "#FFFFFF",
+    "#DCD3FF": "#FFFFFF",
+    "#C5B2FF": "#FFFFFF",
+    "#ECECEC": "#FFFFFF",
+    "#aaa": "#FFFFFF",
+    "rgba(255, 255, 255, 0.80)": "#FFFFFF",
+    "rgba(230, 218, 255, 0.80)": "#FFFFFF",
+    "#E5E0F1": "#FFFFFF",
+    "#B7A8E7": "#FFFFFF",
+    "#D6B6FF": "#FFFFFF",
+    "rgba(186,156,238,0.40)": "#FFFFFF",
+    "rgba(186,156,238,0.2)": "#FFFFFF",
+    "#f0f0f0": "#FFFFFF",
+    "#E0D7F5": "#FFFFFF",
+    "#8B94A1": "#FFFFFF",
+    "#BFCFEA": "#FFFFFF",
+    "#D9C3E6": "#FFFFFF",
+    "#EFEFF3": "#FFFFFF",
+    "#F6F6FA": "#FFFFFF",
+    "#FFF2EB": "#FFFFFF",
+    "#F3EEFD": "#FFFFFF",
+    "#EAE0FF": "#FFFFFF",
+    "#818489": "#FFFFFF",
+    "#777777": "#FFFFFF",
+    "#D5D5D5": "#FFFFFF",
+    "#EDE9FE": "#FFFFFF",
+    "black": "#000000",
+    "#000": "#000000",
+    "#000000": "#000000",
+    "rgba(0, 0, 0, 0.7)": "#000000",
+    "rgba(0,0,0,0.5)": "#000000",
+    "rgba(0,0,0,0.4)": "#000000",
+    "rgba(0,0,0,0.15)": "#000000",
+    "rgba(0, 0, 0, 0.5)": "#000000",
+    "#00000080": "#000000",
+    "#1F1F1F": "#000000",
+    "rgba(0, 0, 0, 0.6)": "#000000",
+    "#1A1A1A": "#000000",
+    "#333333": "#000000",
+    "#3A3A3A": "#000000",
+    "#0000004D": "#000000",
+    "rgba(0,0,0,0.6)": "#000000",
+    "#000000CC": "#000000",
+    "#181600": "#000000",
+    "#313131": "#000000",
+    "#363636": "#000000",
+    "#222": "#000000",
+    "#444": "#000000",
+    "#00000040": "#000000",
+    "#1B1B1B": "#000000",
+    "rgba(0, 0, 0, 0.3)": "#000000",
+    "#00000085": "#000000",
+    "#374151": "#000000",
+    "#1F2937": "#000000",
+    "rgba(0,0,0,0.17)": "#000000",
+    "#7A4AE2": "#7A4AE2",
+    "#8B5CF6": "#7A4AE2",
+    "#8638E5": "#7A4AE2",
+    "#7A4AE1": "#7A4AE2",
+    "#6D28D9": "#7A4AE2",
+    "#7A4AE266": "#7A4AE2",
+    "#8638E563": "#7A4AE2",
+    "#7A3AE2": "#7A4AE2",
+    "#7C3AED": "#7A4AE2",
+    "#6C5CE7": "#7A4AE2",
+    "#6938CF": "#7A4AE2",
+    "rgba(122, 74, 226, 0.25)": "#7A4AE2",
+    "rgba(122, 74, 226, 0.60)": "#7A4AE2",
+    "#7A4AE21A": "#7A4AE2",
+    "rgba(134, 56, 229, 0.5)": "#7A4AE2",
+    "#9D6FFF": "#7A4AE2",
+    "rgba(122, 74, 226, 0.78)": "#7A4AE2",
+    "#8B7BFF": "#7A4AE2",
+    "#AEAEAE": "#AEAEAE",
+    "#9CA3AF": "#AEAEAE",
+    "#9B94AB": "#AEAEAE",
+    "#A2A2A2": "#AEAEAE",
+    "#999": "#AEAEAE",
+    "#898A8D": "#AEAEAE",
+    "#73727566": "#AEAEAE",
+    "#9A93AA": "#AEAEAE",
+    "#767676": "#AEAEAE",
+    "#666666": "#AEAEAE",
+    "#999999": "#AEAEAE",
+    "#4D4D4D": "#AEAEAE",
+    "#919191": "#AEAEAE",
+    "#969696": "#AEAEAE",
+    "#524049": "#AEAEAE",
+    "#797979": "#AEAEAE",
+    "#585858": "#AEAEAE",
+    "#8E8E8E": "#AEAEAE",
+    "#9E9E9E": "#AEAEAE",
+    "#717171": "#AEAEAE",
+    "#6F6F6F": "#AEAEAE",
+    "#95a5a6": "#AEAEAE",
+    "#7C7C7C": "#7C7C7C",
+    "#666": "#7C7C7C",
+    "#888": "#7C7C7C",
+    "#646464": "#7C7C7C",
+    "#737275": "#7C7C7C",
+    "#6B7280": "#7C7C7C",
+    "#676767": "#7C7C7C",
+    "#4B5563": "#7C7C7C",
+    "#4A4A4A": "#7C7C7C",
+    "#555": "#7C7C7C",
+    "#A892D7": "#A892D7",
+    "#9F84D8": "#A892D7",
+    "#BEACFF": "#A892D7",
+    "#BC9EFF": "#A892D7",
+    "rgba(177, 144, 249, 1)": "#A892D7",
+    "#C6ADF6": "#A892D7",
+    "#B295F1": "#A892D7",
+    "#A18CD0": "#A892D7",
+    "#A78BFA": "#A892D7",
+    "#9747FF": "#9747FF",
+    "#BAB0D0": "#BAB0D0",
+    "#AEA3D6": "#BAB0D0",
+    "#BFAED3": "#BAB0D0",
+    "#333": "#333333",
+    "#1E2229": "#333333",
+    "#111827": "#333333",
+    "#212121": "#333333",
+    "#8C6AE3": "#8C6AE3",
+    "#A77FFF": "#8C6AE3",
+    "#8865D4": "#8C6AE3",
+    "#c080ff": "#8C6AE3",
+    "#FF0000": "#FF0000",
+    "#F00": "#FF0000",
+    "#FF231F7C": "#FF0000",
+    "rgba(255, 0, 0, 0.1)": "#FF0000",
+    "#FFB02E": "#FFB02E",
+    "#FFB849": "#FFB02E",
+    "#FFB847": "#FFB02E",
+    "#FFA64B": "#FFB02E",
+    "#FFAE46": "#FFB02E",
+    "#49386E": "#49386E",
+    "#4C4854": "#4C4854",
+    "#6B46C1": "#6B46C1",
+    "#FFC8C833": "#FFC8C8",
+    "#F2B6B6": "#FFC8C8",
+    "#3D2432": "#3D2432",
+    "#4A2C42": "#3D2432",
+    "#5A269A": "#5A269A",
+    "#F70A8D": "#F70A8D",
+    "#ff8080": "#FF8080",
+    "#FF6B6B": "#FF8080",
+    "#290E62": "#290E62",
+    "#43297C": "#290E62",
+    "#452D79": "#290E62",
+    "#0000ff": "#0000FF",
+    "#FEE500": "#FEE500",
+    "#EF4444": "#EF4444",
+    "#7A6FA3": "#7A6FA3",
+    "#80c0ff": "#80C0FF",
+    "#6A3EA1": "#6A3EA1",
+    "#FFF478": "#FFF478",
+    "#392108": "#392108",
+    "#C87928": "#C87928",
+    "#553B3E": "#553B3E",
+    "#fc6b2d": "#FC6B2D",
+    "#FF813C": "#FC6B2D",
+    "#FF7DCE": "#FF7DCE",
+    "#F97DBD": "#FF7DCE",
+    "#7D6133": "#7D6133",
+    "#715B32": "#7D6133",
+    "#FF3B30": "#FF3B30",
+    "#FFCFE5": "#FFCFE5",
+    "#AB69B0": "#AB69B0",
+    "#D86B89": "#D86B89",
+    "#ffdd80": "#FFDD80",
+    "#80ff80": "#80FF80",
+    "#007AFF": "#007AFF",
+    "#F2C8A2": "#F2C8A2",
+    "#F2F0AA": "#F2F0AA",
+    "#BFE3BF": "#BFE3BF",
+    "#F59639": "#F59639",
+    "#89029C": "#89029C",
+    "#D7257D": "#D7257D",
+    "transparent": "transparent",
+    "rgba(237, 233, 247, 0)": "transparent",
+    "rgba(177, 144, 249, 0)": "transparent",
+    "#7A4AE200": "transparent",
+    "rgba(0, 0, 0, 0)": "transparent",
+    "#E1D9FF00": "transparent",
+    "rgba(186,156,238,0)": "transparent",
+    "rgba(247, 243, 255, 0)": "transparent"
+  }
+}
