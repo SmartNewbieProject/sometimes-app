@@ -22,7 +22,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 const { useSignupProgress } = Signup;
 
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "600",
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontSize: 18,
     lineHeight: 22,
     color: "#7A4AE2",
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   },
   genderButtonText: {
     color: "#BAB0D0",
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontSize: 15,
   },
   genderButtonTextSelected: {

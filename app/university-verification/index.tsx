@@ -147,7 +147,7 @@ export default function UniversityVerificationScreen() {
           </Pressable>
         </Header.LeftContent>
         <Header.CenterContent>
-          <Text size="lg" weight="normal" textColor="black">
+          <Text size="lg" weight="regular" textColor="black">
             {t("apps.university-verification.header_title")}
           </Text>
         </Header.CenterContent>
@@ -228,7 +228,7 @@ export default function UniversityVerificationScreen() {
 
         {/* DM 인증 안내 */}
         <View className="px-5 mb-4">
-          <Text size="sm" weight="normal" className="text-gray">
+          <Text size="sm" weight="regular" className="text-gray">
             {t("apps.university-verification.no_email_guide_1")}
           </Text>
           <View className="flex-row flex-wrap">
@@ -237,7 +237,7 @@ export default function UniversityVerificationScreen() {
                 {t("apps.university-verification.no_email_guide_2")}
               </Text>
             </TouchableOpacity>
-            <Text size="sm" weight="normal" className="text-gray">
+            <Text size="sm" weight="regular" className="text-gray">
               {t("apps.university-verification.no_email_guide_3")}
             </Text>
           </View>
@@ -249,7 +249,7 @@ export default function UniversityVerificationScreen() {
             onPress={handleConfirm}
             className="w-full bg-darkPurple rounded-2xl h-[50px] justify-center items-center"
           >
-            <Text size="md" weight="normal" textColor="white">
+            <Text size="md" weight="regular" textColor="white">
               {t("apps.university-verification.complete_verification_button")}
             </Text>
           </TouchableOpacity>

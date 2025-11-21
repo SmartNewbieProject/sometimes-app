@@ -9,7 +9,7 @@ import { StyleSheet, View } from "react-native";
 import useRematch from "../hooks/use-rematch";
 import NotFoundCard from "./not-found-card";
 import { useTranslation } from "react-i18next";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 export const NotFound = () => {
   const router = useRouter();
   const { onRematch } = useRematch();
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 24,
     color: "#000",

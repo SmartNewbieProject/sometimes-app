@@ -1,7 +1,7 @@
 import { useMyInfoForm } from "@/src/features/my-info/hooks";
 import { useMbti } from "@/src/features/mypage/hooks";
 import colors from "@/src/shared/constants/colors";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
 import React from "react";
 import { useTranslation } from 'react-i18next';
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
 
     lineHeight: 22,

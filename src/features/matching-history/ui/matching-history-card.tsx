@@ -24,7 +24,7 @@ import { useUnlockProfile } from "../queries/use-unlock-profile";
 import type { MatchingHistoryDetails } from "../type";
 import {ModalStyles} from "@shared/hooks";
 import {useFeatureCost} from "@features/payment/hooks";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 interface MatchingHistoryCardProps {
   item: MatchingHistoryDetails;
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     lineHeight: 10,
     fontWeight: 700,
     fontSize: 10,
-    fontFamily: useAppFont("bold"),
+    fontFamily: "bold",
     color: colors.primaryPurple,
   },
 });

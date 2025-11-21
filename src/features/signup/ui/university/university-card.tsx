@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import type { UniversityCard as UniversityCardProps } from "../../queries/use-universities";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 function UniversityCard({
   item: { name, region, universityType, area, logoUrl, en },
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 20,
     fontWeight: "600",
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     lineHeight: 24,
   },
   area: {
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   universityType: {
     color: "#9B94AB",
-    fontFamily: useAppFont("thin"),
+    fontFamily: "thin",
     lineHeight: 22,
     fontWeight: 100,
     fontSize: 13,

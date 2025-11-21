@@ -10,7 +10,7 @@ import CustomSwitch from "../custom-switch";
 import { ChangeMbtiModal } from "../modal/change-mbti.modal";
 import MatchingCard from "./matching-card";
 import { useTranslation } from "react-i18next";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 
 
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   title: {
     color: "#000",
     fontSize: 18,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 21.6,
   },

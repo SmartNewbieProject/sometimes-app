@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Interest from "@/src/features/interest";
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 const { hooks, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 22,
   },

@@ -34,7 +34,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 interface ChangeProfileImageModalProps {
   onCloseModal: () => void;
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: "#9F84D8",
     fontWeight: 600,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

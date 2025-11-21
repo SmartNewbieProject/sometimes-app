@@ -14,7 +14,7 @@ import ExplodingParticles from "../../../shared/interaction/exploding-particles"
 import { useAuth } from "../../auth";
 import ImageCollapse from "../../matching-history/ui/image-collapse";
 import type { ILiked, LikedMe } from "../type/like";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 interface LikeCollapseProps {
   collapse: ILiked[] | LikedMe[];
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     color: "#5A269A",
     fontSize: 12,
 
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
   },
   contentContainer: {

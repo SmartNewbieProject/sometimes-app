@@ -1,4 +1,4 @@
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 18,
   },

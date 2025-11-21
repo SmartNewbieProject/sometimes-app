@@ -13,7 +13,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useWindowWidth } from "../../signup/hooks";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 function FirstPurchaseEvent() {
   const translateXAnim = useSharedValue(0);
   const router = useRouter();
@@ -104,13 +104,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     lineHeight: 21.6,
     color: "#4A4A4A",
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: useAppFont("extrabold"),
+    fontFamily: "extrabold",
     color: "#7A4AE2",
   },
   description: {

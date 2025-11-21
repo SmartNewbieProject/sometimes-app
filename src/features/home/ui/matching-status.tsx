@@ -1,4 +1,4 @@
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 import { Image } from "expo-image";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     color: "#1F1F1F",
     textAlign: "center",
     fontSize: 18,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 21.6,
     marginBottom: 12,
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     color: "#313131",
     textAlign: "center",
     fontSize: 26,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 30,
     marginTop: 6,
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     color: "#363636",
     textAlign: "center",
     fontSize: 14,
-    fontFamily: useAppFont("light"),
+    fontFamily: "light",
 
     fontWeight: 300,
     lineHeight: 16,

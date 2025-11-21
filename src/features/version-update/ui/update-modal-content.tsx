@@ -11,7 +11,7 @@ import type React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Linking } from "react-native";
 import type { VersionUpdateResponse } from "../types";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 interface UpdateModalContentProps {
   updateData: VersionUpdateResponse;
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     color: colors.primaryPurple,
     fontWeight: 600,
 
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
   },
   descriptionContainer: {
     maxHeight: 200,

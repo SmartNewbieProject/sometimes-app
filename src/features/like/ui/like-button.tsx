@@ -9,7 +9,7 @@ import { useModal } from "@hooks/use-modal";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth";
 import useLike from "../hooks/use-like";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 type LikeButtonProps = {
   connectionId: string;
@@ -101,7 +101,7 @@ export const LikeButton = ({
 const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
-    fontFamily: useAppFont("thin"),
+    fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 18,
     marginLeft: -5,

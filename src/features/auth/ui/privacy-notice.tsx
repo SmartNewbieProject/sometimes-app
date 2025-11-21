@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppleReviewModal } from "./apple-review-modal";
 import { useTranslation } from "react-i18next";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 const PRIVACY_LINK =
   "https://ruby-composer-6d2.notion.site/1cd1bbec5ba180a3a4bbdf9301683145";
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontSize: 12,
     color: colors["gray-600"],
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
   },
 });

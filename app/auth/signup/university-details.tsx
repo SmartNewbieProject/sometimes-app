@@ -2,7 +2,7 @@ import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 import { tryCatch } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui/text";
@@ -187,7 +187,7 @@ export default function UniversityDetailsPage() {
 const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontSize: 18,
     lineHeight: 22,
     color: "#7A4AE2",

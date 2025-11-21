@@ -6,7 +6,7 @@ import React, { use, useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../auth";
 import { useTranslation } from "react-i18next";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 function NoneLikeBanner() {
   const { profileDetails } = useAuth();
@@ -96,13 +96,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     lineHeight: 17,
     color: "#4A4A4A",
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: useAppFont("extrabold"),
+    fontFamily: "extrabold",
     color: "#7A4AE2",
   },
   description: {
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     color: "#5A269A",
     fontSize: 12,
 
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
   },
   background: {

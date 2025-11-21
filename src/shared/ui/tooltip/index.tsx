@@ -6,7 +6,6 @@ import {
   type TextStyle,
   View,
 } from "react-native";
-import { useAppFont } from "@hooks/use-app-font";
 
 interface TooltipProps {
   title: string;
@@ -36,14 +35,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
 
-    fontFamily: useAppFont("regular"),
+    fontFamily: "regular",
     fontWeight: 400,
 
     color: "#777777",
   },
   description: {
     fontSize: 14,
-    fontFamily:  useAppFont("regular"),
+    fontFamily:  "regular",
     fontWeight: 400,
 
     color: "#919191",

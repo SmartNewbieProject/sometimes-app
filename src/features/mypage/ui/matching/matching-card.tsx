@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import CustomSwitch from "../custom-switch";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 interface MatchingCardProps {
   title: string;
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     color: "#4C4854",
     fontSize: 16,
 
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 18,
   },

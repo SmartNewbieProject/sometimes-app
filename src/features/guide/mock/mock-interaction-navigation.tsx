@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import useILiked from "../../like/hooks/use-liked";
 import { LikeButton } from "../../like/ui/like-button";
 import MockLikeButton from "./mock-like-button";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 const MockInteractionNavigation = () => {
   const { showModal, hideModal } = useModal();
@@ -100,7 +100,7 @@ const MockInteractionNavigation = () => {
 const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
-    fontFamily: useAppFont("thin"),
+    fontFamily: "thin",
     fontWeight: "300",
     paddingRight: 5,
     lineHeight: 18,

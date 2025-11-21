@@ -7,7 +7,7 @@ import { Modal, Text } from "react-native";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import ProfileImageCard from "./profile-image-card";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 function ProfileImageSection() {
   const { profileDetails } = useAuth();
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   title: {
     color: "#000",
     fontSize: 18,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     lineHeight: 21.6,
     fontWeight: 600,
 

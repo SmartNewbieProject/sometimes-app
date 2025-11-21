@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 interface AreaModalProps {
   open: "open" | "preOpen" | "close";
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     zIndex: 30,
   },
   area: {
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     lineHeight: 24,
     fontSize: 20,
     marginBottom: 10,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 13,
     fontWeight: 300,
-    fontFamily: useAppFont("thin"),
+    fontFamily: "thin",
 
     lineHeight: 15.6,
     opacity: 0.7,

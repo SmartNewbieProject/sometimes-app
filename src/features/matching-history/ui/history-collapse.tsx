@@ -14,7 +14,7 @@ import ExplodingParticles from "../../../shared/interaction/exploding-particles"
 import { useAuth } from "../../auth";
 import { usePreviewHistory } from "../queries/use-preview-history";
 import ImageCollapse from "./image-collapse";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 function HistoryCollapse() {
   const textOpacity = useSharedValue(0);
@@ -152,13 +152,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     lineHeight: 21.6,
     color: "#4A4A4A",
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: useAppFont("extrabold"),
+    fontFamily: "extrabold",
     color: "#7A4AE2",
   },
   description: {

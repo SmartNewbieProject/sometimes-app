@@ -34,7 +34,7 @@ import { z } from "zod";
 
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { useTranslation } from "react-i18next";
-import { useAppFont } from "@/src/shared/hooks/use-app-font";
+
 
 const {
   SignupSteps,
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: "#9F84D8",
     fontWeight: 600,
-    fontFamily: useAppFont("semibold"),
+    fontFamily: "semibold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,
