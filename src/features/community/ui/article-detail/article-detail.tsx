@@ -360,7 +360,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         keyboardShouldPersistTaps="handled"
         className="flex-1 relative  px-5"
       >
-        <View className="h-[1px] bg-surface-background mb-[15px]" />
+        <View className="h-[1px] bg-surface-other mb-[15px]" />
 
         <UserProfile
           author={article.author}
@@ -452,7 +452,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
             </View>
           </View>
         </View>
-        <View className="h-[1px] bg-surface-background " />
+        <View className="h-[1px] bg-surface-other " />
         <View className="flex-1">
           <Loading.Lottie
             title="댓글을 불러오고 있어요"

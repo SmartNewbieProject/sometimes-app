@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     paddingHorizontal: 16,
     borderRadius: 20,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
   },
   tagText: {
     color: semanticColors.text.inverse,

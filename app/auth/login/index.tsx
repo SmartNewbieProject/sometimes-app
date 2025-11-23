@@ -94,7 +94,7 @@ export default function LoginScreen() {
   }, [clear]);
 
   return (
-    <View className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
+    <View className="flex-1" style={{ backgroundColor: semanticColors.surface.secondary }}>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ flexGrow: 1 }}

@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 25,
     height: 25,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
   },
   optionList: {
     paddingVertical: 11,

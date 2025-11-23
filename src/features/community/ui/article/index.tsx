@@ -302,7 +302,7 @@ export function Article({
         />
       </View>
 
-      {!isPreviewOpen && <View className="h-[1px] bg-surface-background" />}
+      {!isPreviewOpen && <View className="h-[1px] bg-surface-other" />}
     </View>
   );
 }

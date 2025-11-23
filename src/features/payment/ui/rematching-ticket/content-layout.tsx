@@ -31,7 +31,7 @@ export const ContentLayout = ({ children }: Props) => {
 const styles = StyleSheet.create({
   shadowWrapper: {
     width: "100%",
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     top: -32,
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     flex: 1,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     flexDirection: "column",
     display: "flex",
   },

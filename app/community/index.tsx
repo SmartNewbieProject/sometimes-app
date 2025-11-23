@@ -100,14 +100,14 @@ export default function CommunityScreen() {
       if (route.isHome) {
         return (
           <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key={route.key}>
-            <View style={{ height: 1, backgroundColor: semanticColors.surface.background }} />
+            <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
             <CommuHome />
           </View>
         );
       }
       return (
         <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key={route.key}>
-          <View style={{ height: 1, backgroundColor: semanticColors.surface.background }} />
+          <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
           <InfiniteArticleList
             key={`list-${route.key}`}
             initialSize={10}
@@ -150,7 +150,7 @@ export default function CommunityScreen() {
         {/** 공지 전용: 스와이프 불가 */}
         {isNotice ? (
           <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key="__notice__">
-            <View style={{ height: 1, backgroundColor: semanticColors.surface.background }} />
+            <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
             <InfiniteArticleList
               key={`list-${NOTICE_CODE}`}
               initialSize={10}

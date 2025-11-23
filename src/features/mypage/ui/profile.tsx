@@ -238,12 +238,12 @@ const styles = StyleSheet.create({
     height: 42.75,
     borderBottomLeftRadius: 999,
     borderBottomRightRadius: 999,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: '#E9D9FF',
   },
   leftRect: {
     width: 19,
     height: 20,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
     position: "absolute",
     top: 5,
     left: -18,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   rightRect: {
     width: 19,
     height: 20,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
     position: "absolute",
     top: 5,
     right: -18,

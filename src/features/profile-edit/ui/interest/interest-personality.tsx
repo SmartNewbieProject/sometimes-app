@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 10,
     height: 0.5,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
   },
 });
 

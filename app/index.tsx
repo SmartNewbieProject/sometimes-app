@@ -2,7 +2,6 @@ import Loading from "@/src/features/loading";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import "react-native-get-random-values";
-import "react-native-get-random-values";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 

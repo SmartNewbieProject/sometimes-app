@@ -12,6 +12,8 @@ export const semanticColors = {
   surface: {
     background: '#FFFFFF',
     surface: '#FFFFFF',
+    secondary: '#F7F3FF',
+    other: '#E1D9FF',
     // Use opacity/alpha overlays for elevation if needed
     inverse: '#000000',
   },

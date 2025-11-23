@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     position: "relative",
     borderColor: colors.white,
     borderRadius: 16,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     borderWidth: 1,
     boxShadow: "0 2px 10px 0 rgba(122, 74, 226, 0.78)",
     paddingVertical: 15,

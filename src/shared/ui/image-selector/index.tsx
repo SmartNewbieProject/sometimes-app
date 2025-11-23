@@ -35,7 +35,7 @@ export function renderImage(value: string | null, isPlaceHolder?: boolean) {
 export function renderPlaceholder() {
   return (
     <View className="flex-1 items-center justify-center">
-      <View className="w-full h-full bg-surface-background flex justify-center items-center">
+      <View className="w-full h-full bg-surface-secondary flex justify-center items-center">
         <Image
           source={require("@assets/images/image.png")}
           style={{ width: 70, height: 70 }}

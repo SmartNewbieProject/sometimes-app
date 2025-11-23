@@ -108,7 +108,7 @@ function UniversityCluster() {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
   },
   title: {
     fontSize: 32,

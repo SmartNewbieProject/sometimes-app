@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   bar: {
     marginRight: 28,
     height: 0.5,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
     marginTop: 12,
   },
 });

@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     height: 216,
   },
   description: {
-    color: semanticColors.text.inverse,
+    color: semanticColors.text.disabled,
     fontWeight: 500,
     fontFamily: "Pretendard-Medium",
     fontSize: 18,

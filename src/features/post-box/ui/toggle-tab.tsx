@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     position: "relative",
     overflow: "hidden",
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     flexDirection: "row",
     alignItems: "center",
   },

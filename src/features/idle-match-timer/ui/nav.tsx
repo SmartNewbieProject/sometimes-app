@@ -94,7 +94,7 @@ export const InteractionNavigation = ({
       {isLiked ? (
         <Button
           onPress={() => {}}
-          className="flex-1 items-center !bg-surface-background !text-text-inverse"
+          className="flex-1 items-center !bg-surface-other !text-text-inverse"
         >
           썸 보내기 완료!
         </Button>

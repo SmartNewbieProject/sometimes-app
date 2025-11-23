@@ -304,8 +304,8 @@ export const InfiniteArticleList = forwardRef<
     ) {
       return (
         <View className="flex-1 bg-surface-background">
-          <View className="h-[1px] bg-surface-background" />
-          <View className="h-[1px] bg-surface-background mb-2" />
+          <View className="h-[1px] bg-surface-other" />
+          <View className="h-[1px] bg-surface-other mb-2" />
           {Array.from({ length: initialSize }).map((_, i) => (
             <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
           ))}

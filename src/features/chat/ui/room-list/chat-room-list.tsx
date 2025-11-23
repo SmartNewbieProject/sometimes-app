@@ -135,7 +135,7 @@ function ChatRoomList() {
 
 const styles = StyleSheet.create({
   infoText: {
-    color: semanticColors.text.inverse,
+    color: semanticColors.text.disabled,
     fontSize: 18,
     lineHeight: 23,
     marginTop: 4,

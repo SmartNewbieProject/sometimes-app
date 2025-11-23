@@ -621,7 +621,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     borderRadius: 8,
     padding: 15,
     marginTop: 20,
@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   submitButtonDisabled: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
   },
   submitButtonText: {
     color: semanticColors.text.inverse,

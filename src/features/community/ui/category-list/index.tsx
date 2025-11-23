@@ -103,7 +103,7 @@ export const CategoryList = () => {
           <View className="flex flex-row w-full gap-x-[10px] mb-2">
             {renderCategories.map((category) => {
               const isActive = currentCategory === category.code;
-              const bgClass = isActive ? "bg-brand-primary" : "bg-surface-background";
+              const bgClass = isActive ? "bg-brand-primary" : "bg-surface-secondary";
 
               return (
                 <View

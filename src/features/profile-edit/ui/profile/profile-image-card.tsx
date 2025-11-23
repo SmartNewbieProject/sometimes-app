@@ -99,12 +99,12 @@ const styles = StyleSheet.create({
   },
   noneCard: {
     borderColor: semanticColors.border.default,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     justifyContent: "center",
     alignItems: "center",
   },
   noneImageTag: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
   },
   noneImage: {
     height: 78,
