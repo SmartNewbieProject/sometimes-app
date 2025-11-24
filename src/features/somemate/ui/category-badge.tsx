@@ -16,7 +16,7 @@ export const CategoryBadge = ({ category }: CategoryBadgeProps) => {
 
 const styles = StyleSheet.create({
   categoryBadge: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,

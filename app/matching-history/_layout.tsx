@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   rematchingContainer: {
     flexDirection: "row",
     paddingHorizontal: 10,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     borderRadius: 9,
     position: "absolute",
     right: 0,

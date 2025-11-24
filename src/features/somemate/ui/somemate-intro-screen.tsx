@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   promotionContainer: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.surface,
     marginHorizontal: 20,
     borderRadius: 16,
     padding: 20,

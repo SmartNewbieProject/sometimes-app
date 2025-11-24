@@ -187,7 +187,7 @@ function WebChatInput() {
         <PlusIcon />
       </button>
 
-      <div className="relative ml-3 flex flex-1 items-center rounded-full bg-surface-background py-[8px] px-2 pl-4">
+      <div className="relative ml-3 flex flex-1 items-center rounded-full bg-surface-surface py-[8px] px-2 pl-4">
         <textarea
           ref={textareaRef}
           value={chat}

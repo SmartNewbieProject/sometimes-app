@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 12,
     right: 12,
-    backgroundColor: semanticColors.surface.inverse,
+    backgroundColor: '#00000040',
     borderRadius: 20,
     flexDirection: "row",
     gap: 4,

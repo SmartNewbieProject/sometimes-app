@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Regular",
     fontWeight: 400,
 
-    color: semanticColors.text.inverse,
+    color: semanticColors.text.disabled,
   },
   description: {
     fontSize: 14,

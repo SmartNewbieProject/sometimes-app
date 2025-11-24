@@ -67,7 +67,7 @@ function ChatScreen() {
           {
             flex: 1,
             width: "100%",
-            backgroundColor: semanticColors.surface.background,
+            backgroundColor: semanticColors.surface.surface,
             alignContent: "center",
             justifyContent: "center",
           },

@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   promotionContainer: {
     position: "relative",
     marginHorizontal: 16,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.surface,
     borderRadius: 16,
     padding: 20,
     flexDirection: "row",

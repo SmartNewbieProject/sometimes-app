@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   placeholder: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },

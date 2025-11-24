@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { semanticColors } from '../../../shared/constants/colors';
 import { router, useFocusEffect } from "expo-router";
-import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator } from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useCallback } from "react";
 import Animated, {
@@ -52,6 +52,20 @@ export default function SomemateReportScreen() {
       true
     );
   }, [translateXAnim]);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      router.push("/chat");
+      return true;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    return () => subscription.remove();
+  }, []);
 
   const arrowAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -227,7 +241,7 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
   },
   topCard: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     borderRadius: 20,
     padding: 24,
     marginBottom: 20,
@@ -274,7 +288,7 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Bold",
   },
   reportCard: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.surface,
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,

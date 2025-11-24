@@ -132,6 +132,6 @@ const styles = StyleSheet.create({
     backgroundColor: semanticColors.brand.secondary,
   },
   badgeGray: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
   },
 });

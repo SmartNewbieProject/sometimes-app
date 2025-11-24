@@ -1,8 +1,8 @@
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { semanticColors } from '../../../shared/constants/colors';
-import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator } from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import { useReport } from "../queries/use-ai-chat";
 import { Image } from "expo-image";
@@ -20,6 +20,20 @@ export default function SomemateReportDetailScreen() {
       refetch();
     }, [refetch])
   );
+
+  useEffect(() => {
+    const onBackPress = () => {
+      router.push("/chat/somemate-report");
+      return true;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    return () => subscription.remove();
+  }, []);
 
   if (isLoading) {
     return (
@@ -225,7 +239,7 @@ export default function SomemateReportDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
   },
   header: {
     width: "100%",

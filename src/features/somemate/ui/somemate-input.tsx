@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 24,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.surface,
     paddingHorizontal: 8,
   },
   container: {

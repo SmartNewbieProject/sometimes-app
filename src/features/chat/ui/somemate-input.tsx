@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
 
     alignItems: "center",
     borderRadius: 24,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.surface,
     paddingHorizontal: 8,
   },
   container: {

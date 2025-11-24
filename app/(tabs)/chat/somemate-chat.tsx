@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { semanticColors } from '../../../src/shared/constants/colors';
 import { router, useLocalSearchParams } from "expo-router";
-import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator } from "react-native";
+import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
@@ -14,7 +14,7 @@ import { useActiveSession, useMessages, useAnalyzeSession, useCompleteSession, u
 import { useModal } from "@/src/shared/hooks/use-modal";
 import type { AiChatMessage } from "@/src/features/somemate/types";
 import { sendMessageStream } from "@/src/features/somemate/apis/ai-chat";
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CategoryBadge } from "@/src/features/somemate/ui/category-badge";
 
@@ -235,6 +235,20 @@ export default function SomemateChatScreen() {
     });
   };
 
+  useEffect(() => {
+    const onBackPress = () => {
+      router.push("/chat/somemate");
+      return true;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    return () => subscription.remove();
+  }, []);
+
   const dateStr = useMemo(() => {
     const now = new Date();
     return `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
@@ -393,7 +407,7 @@ export default function SomemateChatScreen() {
           {
             flex: 1,
             width: "100%",
-            backgroundColor: semanticColors.surface.background,
+            backgroundColor: semanticColors.surface.surface,
             alignContent: "center",
             justifyContent: "center",
           },
