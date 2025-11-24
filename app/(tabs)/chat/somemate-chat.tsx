@@ -237,7 +237,7 @@ export default function SomemateChatScreen() {
 
   useEffect(() => {
     const onBackPress = () => {
-      router.push("/chat/somemate");
+      router.replace("/chat");
       return true;
     };
 
@@ -378,7 +378,7 @@ export default function SomemateChatScreen() {
       }}
     >
       <View style={styles.header}>
-        <Pressable onPress={() => router.push("/chat/somemate")}>
+        <Pressable onPress={() => router.replace("/chat")}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
         <Pressable style={styles.profileSection}>

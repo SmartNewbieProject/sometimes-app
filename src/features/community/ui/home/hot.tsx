@@ -88,7 +88,7 @@ export default function Hot({ pageSize = 5 }: Props) {
               <View
                 style={{
                   height: 1,
-                  backgroundColor: semanticColors.surface.background,
+                  backgroundColor: semanticColors.surface.other,
                 }}
               />
             )}
