@@ -1,9 +1,9 @@
 import { Image } from "expo-image";
 import { semanticColors } from '../../../src/shared/constants/colors';
 import { router, useFocusEffect } from "expo-router";
-import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText } from "react-native";
+import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
 import { useActiveSession, useCreateSession } from "@/src/features/somemate/queries/use-ai-chat";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -33,6 +33,20 @@ export default function SomemateScreen() {
       refetch();
     }, [refetch])
   );
+
+  useEffect(() => {
+    const onBackPress = () => {
+      router.replace("/chat");
+      return true;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    return () => subscription.remove();
+  }, []);
 
   const handleStartChat = async () => {
     if (isLoadingSession) return;
