@@ -16,6 +16,7 @@ import React, {
   useMemo,
 } from "react";
 import { type LayoutChangeEvent, View } from "react-native";
+import { semanticColors } from "@/src/shared/constants/colors";
 
 interface Option {
   label: string;
@@ -263,11 +264,17 @@ export function StepSlider({
             }}
           >
             {/* 실제 슬라이더 트랙 */}
-            <View className="w-full h-3 bg-surface-secondary rounded-full">
+            <View
+              className="w-full h-3 bg-surface-tertiary rounded-full"
+              style={{ backgroundColor: semanticColors.surface.tertiary }}
+            >
               {/* Active track */}
               <View
                 className="absolute z-20 top-0 left-0 h-full bg-primaryPurple rounded-full"
-                style={{ width: `${percentage}%` }}
+                style={{
+                  width: `${percentage}%`,
+                  backgroundColor: semanticColors.brand.primary
+                }}
               />
               {/* pointer */}
               {options ? (
@@ -286,6 +293,7 @@ export function StepSlider({
                             : options.at(-1)?.label === label.label
                             ? left
                             : left,
+                        backgroundColor: semanticColors.surface.other
                       }}
                     />
                   );
@@ -299,9 +307,13 @@ export function StepSlider({
                 style={{
                   left: `${percentage}%`,
                   transform: [{ translateX: -16 }],
+                  backgroundColor: semanticColors.brand.primary
                 }}
               >
-                <View className="w-[30px] h-[30px] rounded-full bg-primaryPurple drop-shadow-[0px,4px,8px,rgba(0,0,0,0.17)]" />
+                <View
+                  className="w-[30px] h-[30px] rounded-full bg-primaryPurple drop-shadow-[0px,4px,8px,rgba(0,0,0,0.17)]"
+                  style={{ backgroundColor: semanticColors.brand.primary }}
+                />
               </View>
             </View>
           </View>

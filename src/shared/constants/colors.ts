@@ -13,6 +13,7 @@ export const semanticColors = {
     background: '#FFFFFF',
     surface: '#F8F9FA',
     secondary: '#F7F3FF',
+    tertiary: '#F2EDFF',
     other: '#E1D9FF',
     // Use opacity/alpha overlays for elevation if needed
     inverse: '#000000',

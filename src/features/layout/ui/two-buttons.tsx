@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
   },
   rightButton: {
     borderRadius: 20,
-    backgroundColor: semanticColors.surface.background,
   },
   rightButtonText: {
     color: semanticColors.text.inverse,
