@@ -19,6 +19,8 @@ import {
   cn,
   parser,
   tryCatch,
+  formatLastLogin,
+  getSmartUnivLogoUrl,
 } from "@shared/libs";
 
 // Feather 아이콘 임포트
@@ -84,11 +86,11 @@ export default function PartnerDetailScreen() {
   })();
 
   const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
-    ["성격", "연애 스타일", "관심사"],
+    ["성격 유형", "연애 스타일", "관심사"],
     partner?.characteristics ?? []
   );
 
-  const personal = characteristicsOptions.성격;
+  const personal = characteristicsOptions["성격 유형"];
   const loveStyles = characteristicsOptions["연애 스타일"];
   const interests = characteristicsOptions.관심사;
 
@@ -116,7 +118,7 @@ export default function PartnerDetailScreen() {
     },
     {
       icon: ImageResources.AGE,
-      label: parser.getSingleOption("선호 나이대", partner.characteristics) ?? "상관없음",
+      label: parser.getSingleOption("선호 나이대", partner.preferences) ?? "상관없음",
     },
   ];
 
@@ -215,7 +217,7 @@ export default function PartnerDetailScreen() {
 
       {/* Header with Back Button and Report Button */}
       <View className="absolute top-0 left-0 right-0 z-50 flex-row justify-between items-center px-4 pt-[50px]">
-        <Pressable onPress={() => router.back()} className="p-2">
+        <Pressable onPress={() => router.push("/home")} className="p-2">
           <Feather name="chevron-left" size={28} color={semanticColors.text.inverse} />
         </Pressable>
         <Pressable
@@ -264,18 +266,30 @@ export default function PartnerDetailScreen() {
 
             {/* Overlay Info */}
             <View className="absolute bottom-8 left-5 right-5" pointerEvents="none">
-              <View style={{ backgroundColor: semanticColors.brand.primary }} className="self-start px-2 py-1 rounded-md mb-2">
-                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-bold">오늘 접속</Text>
+              <View style={{ backgroundColor: semanticColors.brand.primary }} className="self-start px-2 py-1 rounded-md mb-2 flex-row items-center gap-1">
+                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-bold">마지막 접속</Text>
+                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-light">{formatLastLogin(partner?.updatedAt)}</Text>
               </View>
               <Text style={{ color: semanticColors.text.inverse }} className="text-3xl font-bold mb-1">
                 {partner.name || "알 수 없음"}, 만 {partner.age}
               </Text>
-              <Text style={{ color: semanticColors.text.inverse }} className="text-base opacity-90 mb-1">
-                {partner.universityDetails?.name}
-              </Text>
+              <View className="flex-row items-center mb-1">
+                {partner.universityDetails?.code && (
+                  <Image
+                    source={{ uri: getSmartUnivLogoUrl(partner.universityDetails.code) }}
+                    style={{ width: 20, height: 20, marginRight: 6 }}
+                    contentFit="contain"
+                  />
+                )}
+                <Text style={{ color: semanticColors.text.inverse }} className="text-base opacity-90">
+                  {partner.universityDetails?.name}
+                </Text>
+              </View>
               <View className="flex-row items-center">
                 <Feather name="check-square" size={16} color={semanticColors.brand.accent} />
-                <Text style={{ color: semanticColors.brand.accent }} className="ml-1 text-sm">대학교 인증 전</Text>
+                <Text style={{ color: semanticColors.brand.accent }} className="ml-1 text-sm">
+                  {partner.universityDetails?.authentication ? "대학교 인증 완료" : "대학교 인증 전"}
+                </Text>
               </View>
             </View>
           </View>
@@ -296,10 +310,9 @@ export default function PartnerDetailScreen() {
           </View>
 
           {/* MBTI Section */}
-          <Text style={{ color: semanticColors.brand.primary }} className="font-bold text-sm mt-8 mb-2 underline">MBTI</Text>
-          <View className="w-full aspect-[280/160] mb-8">
+          <View className="w-full aspect-[280/160] mt-8 mb-8">
             <ImageResource
-              resource={ImageResources[partner.mbti as keyof typeof ImageResources] || ImageResources.GEM}
+              resource={ImageResources[partner.mbti as keyof typeof ImageResources]}
               width="100%"
               height="100%"
             />
