@@ -1,7 +1,6 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
 import { UniversityName, dayUtils, getUnivLogo, formatLastLogin } from "@/src/shared/libs";
 import { semanticColors } from '../../../shared/constants/colors';
-import { UniversityName, dayUtils, getUnivLogo } from "@/src/shared/libs";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text, UniversityBadge } from "@shared/ui";
