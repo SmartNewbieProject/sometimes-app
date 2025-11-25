@@ -9,7 +9,6 @@ import {
 } from "@/src/features/post-box/ui/post-box-card";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ChipSelector } from "@/src/widgets";
-import Slider from "@/src/widgets/slide";
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import Loading from "@features/loading";
 import Match from "@features/match";
@@ -26,8 +25,6 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import {
   Button,
-  Carousel,
-  type CarouselRef,
   Header,
   ImageResource,
   PalePurpleGradient,
@@ -51,19 +48,29 @@ import {
   View,
 } from "react-native";
 
+import { useAuth } from "@/src/features/auth";
+import { useFeatureCost } from "@/src/features/payment/hooks";
+import { semanticColors } from "@/src/shared/constants/colors";
+
 const { queries, ui } = Match;
 const {
   ui: { InstagramContactButton },
 } = Instagram;
 const { useMatchPartnerQuery } = queries;
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
 export default function PartnerDetailScreen() {
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
-  const [isSlideScrolling, setSlideScrolling] = useState(false);
   const [isZoomVisible, setZoomVisible] = useState(false);
   const { isStatus, isLiked, isExpired } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const { profileDetails } = useAuth();
+  const { showModal, hideModal, showErrorModal } = useModal();
+  const { featureCosts } = useFeatureCost();
+
   const onZoomClose = () => {
     setZoomVisible(false);
   };
@@ -93,235 +100,29 @@ export default function PartnerDetailScreen() {
     (img) => img.isMain
   )?.url;
 
-  return (
-    <View className="flex-1">
-      <PhotoSlider
-        images={partner?.profileImages.map((item) => item.url) ?? []}
-        onClose={onZoomClose}
-        initialIndex={selectedIndex}
-        visible={isZoomVisible}
-      />
-      <PalePurpleGradient />
+  // Basic Info Data
+  const basicInfo = [
+    {
+      icon: ImageResources.BEER,
+      label: parser.getSingleOption("음주 선호도", partner.characteristics) ?? "정보 없음",
+    },
+    {
+      icon: ImageResources.SMOKE,
+      label: parser.getSingleOption("흡연 선호도", partner.characteristics) ?? "정보 없음",
+    },
+    {
+      icon: ImageResources.TATOO,
+      label: parser.getSingleOption("문신 선호도", partner.characteristics) ?? "정보 없음",
+    },
+    {
+      icon: ImageResources.AGE,
+      label: parser.getSingleOption("선호 나이대", partner.characteristics) ?? "상관없음",
+    },
+  ];
 
-      <HeaderWithNotification
-        rightContent={
-          <Pressable // 신고하기 버튼
-            onPress={() =>
-              router.navigate({
-                pathname: "/partner/ban-report",
-                params: {
-                  partnerId: partner.id,
-                  partnerName: partner.name,
-                  partnerAge: partner.age,
-                  partnerUniv: partner.universityDetails.name,
-                  partnerProfileImage: mainProfileImageUrl,
-                },
-              })
-            }
-            className="pt-2 -mr-2"
-          >
-            <Feather name="alert-triangle" size={24} color="#000" />
-          </Pressable>
-        }
-      />
-
-      <ScrollView
-        scrollEnabled={!isSlideScrolling}
-        className="flex-1 px-4 border-t border-t-[#E7E9EC] pt-[22px]"
-      >
-        <View className="w-full flex justify-center items-center">
-          <View style={styles.outerContainer}>
-            <View style={{ width: 255, height: 255, overflow: "hidden" }}>
-              <LinearGradient
-                pointerEvents="none"
-                colors={["#F3EDFF", "#9747FF"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientBorder}
-              />
-            </View>
-            <View
-              style={{
-                width: 245,
-                height: 275,
-                overflow: "hidden",
-                position: "absolute",
-                borderRadius: 20,
-                top: 5,
-                left: 5,
-              }}
-            >
-              <Slider
-                showIndicator={true}
-                autoPlayInterval={6000}
-                animationDuration={250}
-                indicatorContainerClassName="!bottom-[-30px] "
-                className={"w-full absolute  "}
-                autoPlay
-              >
-                {partner.profileImages.map((img, index) => (
-                  <Pressable
-                    onPress={() => {
-                      setSelectedIndex(index);
-                      setZoomVisible(true);
-                    }}
-                    key={img.id}
-                    style={[styles.itemContainer, { height: 245, width: 245 }]}
-                  >
-                    <Image
-                      source={{ uri: img.url }}
-                      style={{
-                        ...styles.image,
-                        height: 245,
-                        width: 245,
-                      }}
-                      contentFit="cover"
-                    />
-                  </Pressable>
-                ))}
-              </Slider>
-            </View>
-
-            <View pointerEvents="none" style={styles.textContainer}>
-              <Text textColor="white" weight="semibold" className="text-[20px]">
-                {partner.age}
-              </Text>
-              <View className="flex flex-row items-center">
-                <Text textColor="white" weight="light" size="sm">
-                  {partner.mbti
-                    ? `#${partner.mbti} #${
-                        partner.universityDetails?.name || ""
-                      }`
-                    : `#${partner.universityDetails?.name || ""}`}
-                </Text>
-                {/* &nbsp;<UniversityBadge authenticated={profile.authenticated} /> */}
-              </View>
-            </View>
-
-            <View pointerEvents="none" style={styles.paperPlane}>
-              <ImageResource
-                resource={ImageResources.PAPER_PLANE_WITHOUT_BG}
-                width={76}
-                height={76}
-              />
-            </View>
-            <View pointerEvents="none" style={styles.heart}>
-              <ImageResource
-                resource={ImageResources.HEART}
-                width={64}
-                height={64}
-              />
-            </View>
-          </View>
-        </View>
-
-        <View className="flex flex-col gap-y-[30px] mt-[24px] mb-[48px]">
-          <Section.Container title="기본 정보">
-            <Section.Profile title="성별">
-              <Text size="md">{parser.gender(partner.gender)}</Text>
-            </Section.Profile>
-            <Section.Profile title="선호 나이대">
-              <Text size="md">
-                {parser.getSingleOption(
-                  "선호 나이대",
-                  partner.characteristics
-                ) ?? "상관없음"}
-              </Text>
-            </Section.Profile>
-          </Section.Container>
-
-          <Section.Container title="연애 성향">
-            <Section.Profile title="음주">
-              <Text size="md">
-                {parser.getSingleOption(
-                  "음주 선호도",
-                  partner.characteristics
-                ) ?? ""}
-              </Text>
-            </Section.Profile>
-            <Section.Profile title="흡연">
-              <Text size="md">
-                {parser.getSingleOption(
-                  "흡연 선호도",
-                  partner.characteristics
-                ) ?? ""}
-              </Text>
-            </Section.Profile>
-            <Section.Profile title="문신">
-              <Text size="md">
-                {parser.getSingleOption(
-                  "문신 선호도",
-                  partner.characteristics
-                ) ?? ""}
-              </Text>
-            </Section.Profile>
-            {partner.gender === "MALE" && (
-              <Section.Profile title="군복무">
-                <Text size="md">
-                  {parser.getSingleOption(
-                    "군필 여부",
-                    partner.characteristics
-                  ) ?? ""}
-                </Text>
-              </Section.Profile>
-            )}
-
-            <View
-              style={[
-                styles.datingStyleContainer,
-                {
-                  flexDirection: loveStyles.length === 1 ? "row" : "column",
-                  alignItems: loveStyles.length === 1 ? "center" : "flex-start",
-                  justifyContent:
-                    loveStyles.length === 1 ? "space-between" : "flex-start",
-                },
-              ]}
-            >
-              <Text size="md" textColor="black" className="mb-[10px] ">
-                연애 스타일
-              </Text>
-              <ChipSelector
-                value={[]}
-                options={loveStyles}
-                className={cn(
-                  "w-full flex-1 ",
-                  loveStyles.length === 1 && "justify-end"
-                )}
-                onChange={() => {}}
-              />
-            </View>
-          </Section.Container>
-
-          <Section.Container title="성격/기질">
-            <Section.Profile title="MBTI">
-              <Text size="md">{partner.mbti}</Text>
-            </Section.Profile>
-            <View className="flex flex-col w-full">
-              <Text size="md" textColor="black" className="mb-[10px]">
-                성격 유형
-              </Text>
-              <ChipSelector
-                value={[]}
-                options={personal}
-                className="w-full"
-                onChange={() => {}}
-              />
-            </View>
-          </Section.Container>
-
-          <Section.Container title="라이프스타일">
-            <View className="flex flex-col w-full">
-              <ChipSelector
-                value={[]}
-                options={interests}
-                className="w-full"
-                onChange={() => {}}
-              />
-            </View>
-          </Section.Container>
-        </View>
-      </ScrollView>
-
+  // Button Handlers - Reverted to original logic
+  const renderBottomButtons = () => {
+    return (
       <View
         style={{
           marginBottom: 36,
@@ -400,68 +201,190 @@ export default function PartnerDetailScreen() {
           <InChatButton height={48} />
         </Show>
       </View>
+    );
+  };
+
+  return (
+    <View className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
+      <PhotoSlider
+        images={partner?.profileImages.map((item) => item.url) ?? []}
+        onClose={onZoomClose}
+        initialIndex={selectedIndex}
+        visible={isZoomVisible}
+      />
+
+      {/* Header with Back Button and Report Button */}
+      <View className="absolute top-0 left-0 right-0 z-50 flex-row justify-between items-center px-4 pt-[50px]">
+        <Pressable onPress={() => router.back()} className="p-2">
+          <Feather name="chevron-left" size={28} color={semanticColors.text.inverse} />
+        </Pressable>
+        <Pressable
+          onPress={() =>
+            router.navigate({
+              pathname: "/partner/ban-report",
+              params: {
+                partnerId: partner.id,
+                partnerName: partner.name,
+                partnerAge: partner.age,
+                partnerUniv: partner.universityDetails.name,
+                partnerProfileImage: mainProfileImageUrl,
+              },
+            })
+          }
+          className="p-2"
+        >
+          <Feather name="alert-triangle" size={24} color={semanticColors.text.inverse} />
+        </Pressable>
+      </View>
+
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Image 1 (Main) */}
+        {partner.profileImages.length > 0 && (
+          <View style={{ width: "100%", aspectRatio: 1 }}>
+            <Pressable
+              onPress={() => {
+                setSelectedIndex(0);
+                setZoomVisible(true);
+              }}
+              className="w-full h-full"
+              style={{ width: "100%", height: "100%" }}
+            >
+              <Image
+                source={{ uri: partner.profileImages[0].url }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
+              <LinearGradient
+                colors={["transparent", "rgba(0,0,0,0.8)"]}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0.5, y: 0.5 }}
+                end={{ x: 0.5, y: 1 }}
+              />
+            </Pressable>
+
+            {/* Overlay Info */}
+            <View className="absolute bottom-8 left-5 right-5" pointerEvents="none">
+              <View style={{ backgroundColor: semanticColors.brand.primary }} className="self-start px-2 py-1 rounded-md mb-2">
+                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-bold">오늘 접속</Text>
+              </View>
+              <Text style={{ color: semanticColors.text.inverse }} className="text-3xl font-bold mb-1">
+                {partner.name || "알 수 없음"}, 만 {partner.age}
+              </Text>
+              <Text style={{ color: semanticColors.text.inverse }} className="text-base opacity-90 mb-1">
+                {partner.universityDetails?.name}
+              </Text>
+              <View className="flex-row items-center">
+                <Feather name="check-square" size={16} color={semanticColors.brand.accent} />
+                <Text style={{ color: semanticColors.brand.accent }} className="ml-1 text-sm">대학교 인증 전</Text>
+              </View>
+            </View>
+          </View>
+        )}
+
+        <View className="px-5 py-6">
+          {/* Basic Info Section */}
+          <Text style={{ color: semanticColors.text.muted }} className="text-sm mb-4">기본 정보</Text>
+          <View style={{ backgroundColor: semanticColors.surface.surface }} className="rounded-2xl p-5 flex-row flex-wrap justify-between">
+            {basicInfo.map((info, index) => (
+              <View key={index} className="w-[48%] flex-row items-center mb-4">
+                <ImageResource resource={info.icon} width={24} height={24} />
+                <Text style={{ color: semanticColors.text.secondary }} className="ml-2 font-medium text-sm flex-1" numberOfLines={1}>
+                  {info.label}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          {/* MBTI Section */}
+          <Text style={{ color: semanticColors.brand.primary }} className="font-bold text-sm mt-8 mb-2 underline">MBTI</Text>
+          <View className="w-full aspect-[280/160] mb-8">
+            <ImageResource
+              resource={ImageResources[partner.mbti as keyof typeof ImageResources] || ImageResources.GEM}
+              width="100%"
+              height="100%"
+            />
+          </View>
+
+          {/* Dating Style */}
+          <Text style={{ color: semanticColors.text.muted }} className="text-sm mt-8 mb-3">제 연애 스타일은</Text>
+          <View className="flex-row flex-wrap gap-2">
+            {loveStyles.map((style, index) => (
+              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
+                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{style.label}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Personality */}
+          <Text style={{ color: semanticColors.text.muted }} className="text-sm mt-8 mb-3">제 성격은</Text>
+          <View className="flex-row flex-wrap gap-2 mb-8">
+            {personal.map((item, index) => (
+              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
+                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Image 2 */}
+        {partner.profileImages.length > 1 && (
+          <View style={{ width: "100%", aspectRatio: 1, marginBottom: 32 }}>
+            <Pressable
+              onPress={() => {
+                setSelectedIndex(1);
+                setZoomVisible(true);
+              }}
+              className="w-full h-full"
+            >
+              <Image
+                source={{ uri: partner.profileImages[1].url }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
+            </Pressable>
+          </View>
+        )}
+
+        <View className="px-5 pb-6">
+          {/* Interests */}
+          <Text style={{ color: semanticColors.text.muted }} className="text-sm mb-3">제 관심사는</Text>
+          <View className="flex-row flex-wrap gap-2 mb-8">
+            {interests.map((item, index) => (
+              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2 flex-row items-center">
+                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Image 3 and others */}
+        {partner.profileImages.length > 2 && (
+          <View className="pb-10">
+            {partner.profileImages.slice(2).map((item, index) => (
+              <View key={item.id} style={{ width: "100%", aspectRatio: 1, marginBottom: 16 }}>
+                <Pressable
+                  onPress={() => {
+                    setSelectedIndex(index + 2);
+                    setZoomVisible(true);
+                  }}
+                  className="w-full h-full"
+                >
+                  <Image
+                    source={{ uri: item.url }}
+                    style={{ width: "100%", height: "100%" }}
+                    contentFit="cover"
+                  />
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Bottom Action Bar */}
+      {renderBottomButtons()}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  outerContainer: {
-    width: 255,
-
-    height: 275,
-    position: "relative",
-  },
-  gradientBorder: {
-    borderRadius: 20,
-    padding: 5,
-    width: 255,
-    height: 255,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  container: {
-    borderRadius: 15,
-    overflow: "hidden",
-    width: "100%",
-    height: "100%",
-    position: "relative",
-  },
-
-  textContainer: {
-    position: "absolute",
-    display: "flex",
-    flexDirection: "column",
-    left: 14,
-    bottom: 28,
-    zIndex: 10,
-  },
-  paperPlane: {
-    position: "absolute",
-    right: -42,
-    bottom: 16,
-  },
-  heart: {
-    position: "absolute",
-    left: -44,
-    top: 16,
-    zIndex: -1,
-  },
-
-  itemContainer: {
-    width: 245,
-
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  image: {
-    width: "100%",
-    overflow: "hidden",
-    height: "100%",
-  },
-  datingStyleContainer: {
-    width: "100%",
-  },
-});
+const styles = StyleSheet.create({});
