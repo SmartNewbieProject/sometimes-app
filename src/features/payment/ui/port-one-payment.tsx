@@ -6,6 +6,7 @@ import { Button, Header } from '@/src/shared/ui';
 import { router } from 'expo-router';
 import { ImageResources } from '@/src/shared/libs/image';
 import { usePortoneStore } from '../hooks/use-portone-store';
+import { useKpiAnalytics } from '@/src/shared/hooks/use-kpi-analytics';
 
 
 export interface PortOnePaymentCompleteResult {
@@ -56,14 +57,28 @@ export const PortOnePaymentView = forwardRef(
 	(props: PortOnePaymentProps, ref: ForwardedRef<PortOneController>) => {
 		const { request, onComplete, onError, onCancel, productName, payMode } = props;
 		const { eventType } = usePortoneStore();
+		const { conversionEvents } = useKpiAnalytics();
 
 		const handleComplete = async (complete: PortOnePaymentCompleteResult) => {
 			try {
 				if (complete.txId) {
+					// 결제 완료 이벤트 추적
+					const itemType = payMode === 'gem' ? 'gem' : 'rematch_ticket';
+					const amount = complete.amount || 0;
+
+					conversionEvents.trackPaymentCompleted(
+						complete.txId,
+						complete.paymentMethod || 'unknown',
+						amount,
+						[{ type: itemType, quantity: 1, price: amount }]
+					);
+
 					if (payMode === 'gem') {
 						await paymentApis.payGem({ txId : complete.txId, merchantUid: complete.paymentId, eventType })
 					}
 					if (payMode === 'rematching') {
+						conversionEvents.trackRematchPurchased(amount);
+
 						await paymentApis.pay({
 							txId: complete.txId,
 							merchantUid: complete.paymentId,
@@ -72,12 +87,20 @@ export const PortOnePaymentView = forwardRef(
 				}
 				onComplete?.(complete);
 			} catch (error) {
+				// 결제 실패 이벤트 추적
+				const errorMessage = error instanceof Error ? error.message : 'Unknown payment error';
+				conversionEvents.trackPaymentFailed(payMode, errorMessage);
+
 				onError?.(error);
 			}
 		};
 
 		const handleError = (error: PortOnePaymentErrorResult) => {
 			console.log('실패', error.message);
+
+			// 결제 실패 이벤트 추적
+			conversionEvents.trackPaymentFailed(payMode, error.message);
+
 			onError?.(error);
 		};
 

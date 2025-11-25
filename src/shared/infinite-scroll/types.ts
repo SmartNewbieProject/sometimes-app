@@ -1,8 +1,8 @@
 import { PaginationMeta, Pagination as PaginationParams, PaginatedResponse } from '@/src/types/server';
-export type { PaginationMeta, PaginatedResponse };
-export type { Pagination as PaginationParams } from '@/src/types/server';
 import { ReactNode } from 'react';
 import { FlatListProps } from 'react-native';
+export type { PaginationMeta, PaginatedResponse };
+export type { Pagination as PaginationParams } from '@/src/types/server';
 
 export interface InfiniteScrollStrategy {
   setupScroll: (

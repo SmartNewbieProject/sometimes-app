@@ -1,5 +1,6 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { semanticColors } from '../../../../shared/constants/colors';
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import apis from "@/src/features/community/apis";
 import apis_comments from "@/src/features/community/apis/comments";
 import {
@@ -16,8 +17,7 @@ import { dayUtils, tryCatch } from "@shared/libs";
 import type { UniversityName } from "@shared/libs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Keyboard, ScrollView, View, Image, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
@@ -44,6 +44,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     },
   });
   const [likeCount, setLikeCount] = useState(article.likeCount);
+  const { communityEvents } = useKpiAnalytics();
   const [isLiked, setIsLiked] = useState(article.isLiked);
   const { my } = useAuth();
   const isOwner = (() => {
@@ -70,6 +71,9 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     return total + 1 + (comment.replies ? comment.replies.length : 0);
   }, 0);
   const handleSubmit = async (data: { content: string }) => {
+    // KPI 이벤트: 댓글 추가
+    communityEvents.trackCommentAdded(article.id, data.content.length);
+
     createCommentMutation.mutate(
       {
         content: data.content,
@@ -160,6 +164,11 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
       async () => {
         const newIsLiked = !isLiked;
         const newLikeCount = isLiked ? likeCount - 1 : likeCount + 1;
+
+        // KPI 이벤트: 게시글 좋아요
+        if (newIsLiked) {
+          communityEvents.trackPostLiked(article.id);
+        }
 
         setLikeCount(newLikeCount);
         setIsLiked(newIsLiked);

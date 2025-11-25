@@ -86,7 +86,7 @@ export async function validatePhone(
   if (!signupForm.phone) {
     showErrorModal("휴대폰 번호가 없습니다", "announcement");
     trackSignupEvent("signup_error", "missing_phone");
-    track("Signup_profile_image_error", { error: "휴대폰 번호가 없습니다." });
+    track("Signup_profile_image_error", { error: "휴대폰 번호가 없습니다.", env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/auth/login");
     return false;
   }
@@ -95,7 +95,7 @@ export async function validatePhone(
   if (exists) {
     showErrorModal("이미 가입된 사용자입니다", "announcement");
     trackSignupEvent("signup_error", "phone_already_exists");
-    track("Signup_profile_image_error", { error: "이미 가입된 사용자입니다" });
+    track("Signup_profile_image_error", { error: "이미 가입된 사용자입니다", env: process.env.EXPO_PUBLIC_TRACKING_MODE });
 
     if (Platform.OS === "ios") await removeLoginType();
     else if (Platform.OS === "web") sessionStorage.removeItem("loginType");
@@ -132,6 +132,7 @@ export async function processSignup(
     apis,
     track,
     trackSignupEvent,
+    trackKpiEvent,
     removeLoginType,
   }: {
     router: Router;
@@ -140,11 +141,33 @@ export async function processSignup(
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     track: (event: string, data?: any) => void;
     trackSignupEvent: (event: string, detail?: string) => void;
+    trackKpiEvent?: (event: string, data?: any) => void;
     removeLoginType: () => Promise<void>;
   }
 ): Promise<void> {
   await apis.signup(signupForm);
-  track("Signup_profile_image", { success: true });
+
+  // 프로필 완성률 계산
+  const profileFields = ['phone', 'universityId', 'profileImages'];
+  const completedFields = profileFields.filter(field => {
+    if (field === 'profileImages') {
+      return signupForm.profileImages?.some(img => img !== null) || false;
+    }
+    return signupForm[field as keyof typeof signupForm] !== undefined && signupForm[field as keyof typeof signupForm] !== null;
+  });
+
+  const completionRate = Math.round((completedFields.length / profileFields.length) * 100);
+
+  // KPI 이벤트: 가입 완료
+  if (trackKpiEvent) {
+    trackKpiEvent('Signup_Completed', {
+      profile_completion_rate: completionRate,
+      total_duration: Date.now() - (signupForm.signupStartTime || Date.now())
+    });
+  }
+
+  // 기존 이벤트 호환성
+  track("Signup_profile_image", { success: true, env: process.env.EXPO_PUBLIC_TRACKING_MODE });
   trackSignupEvent("signup_complete");
 
   if (Platform.OS === "ios") await removeLoginType();
