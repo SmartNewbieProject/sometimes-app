@@ -23,6 +23,8 @@ export type MatchingHistoryDetails = {
 	universityName: string;
 	universityAuthentication: boolean;
 	someReceived: boolean;
+	connectionId: string;
+	lastLogin: string | null;
 };
 
 /**
