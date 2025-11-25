@@ -1,4 +1,5 @@
 import { cn, platform } from "@/src/shared/libs";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Button } from "@shared/ui";
 import {
   Platform,
@@ -63,10 +64,9 @@ const styles = StyleSheet.create({
   },
   rightButton: {
     borderRadius: 20,
-    backgroundColor: "#E2D9FF",
   },
   rightButtonText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 20,
   },
   leftButton: {

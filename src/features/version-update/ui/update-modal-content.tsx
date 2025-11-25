@@ -1,4 +1,4 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import {
   getAndroidStoreUrl,
   getAppStoreUrl,
@@ -53,7 +53,7 @@ export const UpdateModalContent: React.FC<UpdateModalContentProps> = ({
         <Text size="20" weight="bold" textColor="black">
           {isWeb ? "새로운 업데이트가 있어요!" : "새로운 업데이트가 있어요!"}
         </Text>
-        <Text size="sm" className="text-[#4B5563]" style={{ marginTop: 12 }}>
+        <Text size="sm" className="text-text-muted" style={{ marginTop: 12 }}>
           {isWeb
             ? "앱을 설치하셔서 이용하시면 더 빠르게 서비스를 이용가능해요!"
             : "더 나은 썸타임을 위한 새로운 기능들이 추가되었습니다."}
@@ -76,7 +76,7 @@ export const UpdateModalContent: React.FC<UpdateModalContentProps> = ({
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             <View key={index} style={styles.descriptionLayout}>
               <View style={styles.circle} />
-              <Text className="text-[#374151]">{item}</Text>
+              <Text className="text-text-primary">{item}</Text>
             </View>
           ))}
         </View>
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 99,
-    backgroundColor: "#A892D7",
+    backgroundColor: semanticColors.brand.accent,
   },
   card: {
     backgroundColor: colors.cardPurple,

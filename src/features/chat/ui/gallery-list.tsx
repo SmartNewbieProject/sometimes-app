@@ -1,4 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Text as CustomText } from "@/src/shared/ui";
 import { convertToJpeg, uriToBase64 } from "@/src/shared/utils/image";
 import { LegendList } from "@legendapp/list";
@@ -183,7 +184,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
       exiting={SlideOutDown.duration(300)}
       style={[
         {
-          backgroundColor: "#fff",
+          backgroundColor: semanticColors.surface.background,
           paddingTop: 12,
         },
         animatedStyle,
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   check: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 24,
     fontWeight: "bold",
   },
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
   permissionText: {
     fontSize: 16,
     textAlign: "center",
-    color: "#666",
+    color: semanticColors.text.disabled,
   },
 });
 

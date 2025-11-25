@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../../shared/constants/colors';
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     position: "relative",
     marginRight: 10,
     overflow: "hidden",
-    borderColor: "#7A4AE2",
+    borderColor: semanticColors.brand.primary,
   },
   image: {
     width: 150,
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
 
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     borderBottomLeftRadius: 20,
   },
   imageTagText: {
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
     lineHeight: 15.6,
     fontWeight: 600,
 
-    color: "#fff",
+    color: semanticColors.text.inverse,
   },
   edit: {
     position: "absolute",
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     overflow: "hidden",
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -97,20 +98,20 @@ const styles = StyleSheet.create({
     height: 22,
   },
   noneCard: {
-    borderColor: "#E2D5FF",
-    backgroundColor: "#F3EDFF",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.secondary,
     justifyContent: "center",
     alignItems: "center",
   },
   noneImageTag: {
-    backgroundColor: "#E2D5FF",
+    backgroundColor: semanticColors.surface.other,
   },
   noneImage: {
     height: 78,
     width: 78,
   },
   noneText: {
-    color: "#9B94AB",
+    color: semanticColors.text.disabled,
     fontSize: 13,
     fontFamily: "Pretendard-Light",
     fontWeight: 300,

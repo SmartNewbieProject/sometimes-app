@@ -1,4 +1,5 @@
 import Layout from "@/src/features/layout";
+import { semanticColors } from '../../src/shared/constants/colors';
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
 
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 15,
     marginBottom: 30,
   },

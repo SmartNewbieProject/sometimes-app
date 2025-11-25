@@ -1,4 +1,5 @@
 import { TwoButtons } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { SignupSteps } from "@/src/features/signup/hooks";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#333",
+    color: semanticColors.text.secondary,
     fontFamily: "Pretendard-Bold",
   },
   searchWrapper: {
@@ -166,14 +167,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 12,
-    backgroundColor: "#F7F5FC",
+    backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 16,
     width: "100%",
   },
   input: {
     flex: 1,
     fontSize: 16,
-    color: "#000",
+    color: semanticColors.text.primary,
     fontFamily: "Pretendard-Regular",
   },
   listAndBottomContainer: {
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingTop: 16,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   tipContainer: {
     flexDirection: "row",
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tip: {
-    color: "#9B94AB",
+    color: semanticColors.text.disabled,
     fontWeight: "300",
     fontFamily: "Pretendard-Thin",
     fontSize: 13,
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
   },
   welcome: {
     fontSize: 18,
-    color: "#6C5CE7",
+    color: semanticColors.brand.primary,
     fontFamily: "Pretendard-Medium",
     marginBottom: 8,
     textAlign: "center",

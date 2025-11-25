@@ -1,4 +1,5 @@
 import React from "react";
+import { semanticColors } from '../../../shared/constants/colors';
 import {
   Pressable,
   StyleSheet,
@@ -105,12 +106,12 @@ const TabButton = ({
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#222",
+    backgroundColor: semanticColors.surface.inverse,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },
   handleContainer: { alignItems: "center", paddingVertical: 10 },
-  handle: { width: 40, height: 5, backgroundColor: "#555", borderRadius: 3 },
+  handle: { width: 40, height: 5, backgroundColor: semanticColors.surface.inverse, borderRadius: 3 },
   tabContainer: {
     flexDirection: "row",
     paddingHorizontal: 8,
@@ -122,10 +123,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 16,
-    backgroundColor: "#555",
+    backgroundColor: semanticColors.surface.inverse,
     marginHorizontal: 4,
   },
   activeTab: { backgroundColor: "#80c0ff" },
-  tabText: { color: "white", fontWeight: "bold" },
+  tabText: { color: semanticColors.text.inverse, fontWeight: "bold" },
   logList: { flex: 1, paddingHorizontal: 8 },
 });

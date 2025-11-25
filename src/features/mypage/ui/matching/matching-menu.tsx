@@ -1,4 +1,5 @@
 import { useMatchingFilters } from "@/src/features/mypage/hooks/use-matching-filter";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { Text } from "@/src/shared/ui";
 import { StyleSheet, View } from "react-native";
 import MatchingCard from "./matching-card";
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 1,
     width: "100%",
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
   },
   contentContainer: {
     gap: 10,

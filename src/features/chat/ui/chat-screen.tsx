@@ -1,4 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
+import { semanticColors } from '../../../shared/constants/colors';
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -54,7 +55,7 @@ function ChatScreen() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: semanticColors.surface.background,
         paddingTop: insets.top,
         width: "100%",
         paddingBottom: insets.bottom + 4,
@@ -66,7 +67,7 @@ function ChatScreen() {
           {
             flex: 1,
             width: "100%",
-            backgroundColor: "#FAFAFA",
+            backgroundColor: semanticColors.surface.surface,
             alignContent: "center",
             justifyContent: "center",
           },

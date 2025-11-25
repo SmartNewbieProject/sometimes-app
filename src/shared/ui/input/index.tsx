@@ -5,7 +5,7 @@ import EyeOn from '@assets/icons/eye-on.svg';
 import EyeOff from '@assets/icons/eye-off.svg';
 
 const input = cva(
-  'w-full bg-transparent border-b border-[#E7E9EC]',
+  'w-full bg-transparent border-b border-border-default',
   {
     variants: {
       size: {

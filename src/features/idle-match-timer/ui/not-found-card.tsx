@@ -1,4 +1,5 @@
 import { Text } from "@/src/shared/ui";
+import { semanticColors } from '../../../shared/constants/colors';
 import type React from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -38,7 +39,7 @@ function NotFoundCard({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#F9FAFB",
+    backgroundColor: semanticColors.surface.background,
     padding: 12,
     flexDirection: "row",
     gap: 10,
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     borderRadius: "50%",
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
 });
 

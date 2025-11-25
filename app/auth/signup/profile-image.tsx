@@ -1,4 +1,5 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
 
 import { type SignupForm, SignupSteps } from "@/src/features/signup/hooks";
 
@@ -161,9 +162,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
 
     shadowColor: "#F2ECFF",
     shadowOffset: {
@@ -179,9 +180,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
     marginBottom: 223,
 
     shadowColor: "#F2ECFF",
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
     elevation: 3, // Android에서 그림자
   },
   infoTitle: {
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: 600,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 16.8,
@@ -211,6 +212,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
 });

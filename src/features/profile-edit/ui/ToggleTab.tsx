@@ -1,4 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { semanticColors } from '../../../shared/constants/colors';
 import React from "react";
 import {
   Pressable,
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     position: "relative",
     overflow: "hidden",
-    backgroundColor: "#F3EDFF",
+    backgroundColor: semanticColors.surface.secondary,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     position: "absolute",
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     justifyContent: "center",
     borderRadius: 16,
   },

@@ -1,4 +1,5 @@
 import type { Preferences } from "@/src/features/interest/api";
+import { semanticColors } from '../../src/shared/constants/colors';
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
   bar: {
     marginHorizontal: 32,
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 15,
   },
   indicatorRow: {

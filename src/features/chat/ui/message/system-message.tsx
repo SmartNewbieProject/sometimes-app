@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -31,11 +32,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
 
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#73727566",
+    borderColor: semanticColors.text.muted,
   },
   dateText: {
     fontSize: 13,
-    color: "#898A8D",
+    color: semanticColors.text.disabled,
     fontWeight: "400",
 
     paddingHorizontal: 9,

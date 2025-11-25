@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { semanticColors } from '../../constants/colors';
 import { Image as ExpoImage } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import type { ImageResourceProps } from './index';
@@ -47,7 +48,7 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   if (hasError) {
     return (
       <View style={[styles.container, style]} className={className}>
-        <View style={[styles.image, { backgroundColor: '#F3EDFF' }]} />
+        <View style={[styles.image, { backgroundColor: semanticColors.surface.background }]} />
       </View>
     );
   }

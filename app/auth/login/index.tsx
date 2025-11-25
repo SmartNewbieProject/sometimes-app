@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -93,7 +94,7 @@ export default function LoginScreen() {
   }, [clear]);
 
   return (
-    <View className="flex-1" style={{ backgroundColor: "#F7F3FF" }}>
+    <View className="flex-1" style={{ backgroundColor: semanticColors.surface.secondary }}>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ flexGrow: 1 }}

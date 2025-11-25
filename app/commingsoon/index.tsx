@@ -1,4 +1,5 @@
 import {View, ScrollView, TouchableOpacity} from 'react-native';
+import { semanticColors } from '../../src/shared/constants/colors';
 import {Text, PalePurpleGradient, Button} from '@/src/shared/ui';
 import {Image} from 'expo-image';
 import {IconWrapper} from '@/src/shared/ui/icons';
@@ -50,10 +51,10 @@ export default function CommingSoonScreen() {
             </View>
 
             <View className="mt-2 px-5">
-              <Text weight="medium" size="sm" style={{color: '#49386E'}}>
+              <Text weight="medium" size="sm" style={{color: semanticColors.brand.deep}}>
                 곧, 당신에게 꼭 맞는 사람을 소개해드릴게요.
               </Text>
-              <Text weight="medium" size="sm" style={{color: '#49386E'}}>
+              <Text weight="medium" size="sm" style={{color: semanticColors.brand.deep}}>
                 <Text weight="medium" size="sm" textColor="dark">
                   7월 27일
                 </Text>

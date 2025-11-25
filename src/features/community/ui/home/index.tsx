@@ -56,7 +56,7 @@ export default function CommuHome() {
               "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
             )
           }
-          className="bg-[#F3EDFF] rounded-[5px] mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+          className="bg-surface-background rounded-[5px] mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
           activeOpacity={0.8}
         >
           <Image

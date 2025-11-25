@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import { semanticColors } from '../../../shared/constants/colors';
 import type { AiChatCategory } from "../types";
 
 interface CategoryBadgeProps {
@@ -15,7 +16,7 @@ export const CategoryBadge = ({ category }: CategoryBadgeProps) => {
 
 const styles = StyleSheet.create({
   categoryBadge: {
-    backgroundColor: "#F7F3FF",
+    backgroundColor: semanticColors.surface.other,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
   categoryBadgeText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontFamily: "Pretendard-SemiBold",
   },
 });

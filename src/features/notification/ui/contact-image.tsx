@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
-import colors from '@/src/shared/constants/colors';
+import colors , { semanticColors } from '@/src/shared/constants/colors';
 
 interface ContactImageProps {
   imageUrl?: string;
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   placeholder: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: semanticColors.surface.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,4 +1,5 @@
 import { Show } from "@/src/shared/ui";
+import { semanticColors } from '../../../shared/constants/colors';
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { ConsoleLog, Log, NetworkLog } from "../types/log";
@@ -86,13 +87,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 8,
     marginVertical: 4,
-    backgroundColor: "#333",
+    backgroundColor: semanticColors.text.secondary,
     borderLeftWidth: 4,
     borderRadius: 4,
   },
   timestamp: { color: "#888", fontSize: 12, marginRight: 8, marginTop: 8 },
   levelText: {
-    color: "white",
+    color: semanticColors.text.inverse,
     fontWeight: "bold",
     marginBottom: 4,
     fontSize: 12,

@@ -1,4 +1,5 @@
 import SendChatIcon from "@assets/icons/send-chat.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import type React from "react";
 import { useCallback, useState } from "react";
 import {
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     ...(Platform.OS === "android"
       ? { textAlignVertical: "center" }
       : { paddingVertical: 0 }),
-    color: "#1E2229",
+    color: semanticColors.text.secondary,
   },
   inputContainer: {
     flex: 1,
@@ -88,13 +89,13 @@ const styles = StyleSheet.create({
 
     alignItems: "center",
     borderRadius: 24,
-    backgroundColor: "#F8F9FA",
+    backgroundColor: semanticColors.surface.surface,
     paddingHorizontal: 8,
   },
   container: {
     minHeight: 70,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     flexDirection: "row",
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
     alignSelf: "flex-end",
     textAlignVertical: "top",
-    backgroundColor: "#7A4AE1",
+    backgroundColor: semanticColors.brand.primary,
   },
 });
 

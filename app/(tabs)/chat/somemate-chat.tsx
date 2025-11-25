@@ -1,6 +1,7 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { router, useLocalSearchParams } from "expo-router";
-import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator } from "react-native";
+import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
@@ -13,7 +14,7 @@ import { useActiveSession, useMessages, useAnalyzeSession, useCompleteSession, u
 import { useModal } from "@/src/shared/hooks/use-modal";
 import type { AiChatMessage } from "@/src/features/somemate/types";
 import { sendMessageStream } from "@/src/features/somemate/apis/ai-chat";
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CategoryBadge } from "@/src/features/somemate/ui/category-badge";
 
@@ -234,6 +235,20 @@ export default function SomemateChatScreen() {
     });
   };
 
+  useEffect(() => {
+    const onBackPress = () => {
+      router.replace("/chat");
+      return true;
+    };
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+
+    return () => subscription.remove();
+  }, []);
+
   const dateStr = useMemo(() => {
     const now = new Date();
     return `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
@@ -356,14 +371,14 @@ export default function SomemateChatScreen() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: semanticColors.surface.background,
         paddingTop: insets.top,
         width: "100%",
         paddingBottom: insets.bottom + 4,
       }}
     >
       <View style={styles.header}>
-        <Pressable onPress={() => router.push("/chat/somemate")}>
+        <Pressable onPress={() => router.replace("/chat")}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
         <Pressable style={styles.profileSection}>
@@ -392,7 +407,7 @@ export default function SomemateChatScreen() {
           {
             flex: 1,
             width: "100%",
-            backgroundColor: "#FAFAFA",
+            backgroundColor: semanticColors.surface.surface,
             alignContent: "center",
             justifyContent: "center",
           },
@@ -434,7 +449,7 @@ const styles = StyleSheet.create({
   header: {
     width: "100%",
     height: 68,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     flexDirection: "row",
     paddingHorizontal: 16,
     alignItems: "center",
@@ -461,14 +476,14 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   name: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontWeight: "700",
     fontFamily: "Pretendard-ExtraBold",
     fontSize: 18,
     lineHeight: 19,
   },
   subtitle: {
-    color: "#767676",
+    color: semanticColors.text.disabled,
     fontSize: 13,
     lineHeight: 19,
   },
@@ -480,13 +495,13 @@ const styles = StyleSheet.create({
   },
   matchBanner: {
     paddingVertical: 8,
-    backgroundColor: "#FDFBFF",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 10,
     marginHorizontal: 16,
     alignItems: "center",
     gap: 1,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#7A4AE266",
+    borderColor: semanticColors.brand.primary,
   },
   bannerIcon: {
     width: 34,
@@ -501,26 +516,26 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 27,
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   matchName: {
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontWeight: "800",
     fontFamily: "Pretendard-ExtraBold",
   },
   matchSubtext: {
     fontSize: 14,
     lineHeight: 21,
-    color: "#898A8D",
+    color: semanticColors.text.disabled,
   },
   guideBanner: {
     paddingVertical: 8,
     paddingHorizontal: 10,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 10,
     marginHorizontal: 16,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#73727566",
+    borderColor: semanticColors.text.muted,
   },
   guideHeader: {
     flexDirection: "row",
@@ -528,7 +543,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   guideTitle: {
-    color: "#737275",
+    color: semanticColors.text.muted,
     fontSize: 15,
     lineHeight: 22,
   },
@@ -541,12 +556,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 10,
-    backgroundColor: "#FBF9FF",
+    backgroundColor: semanticColors.surface.background,
   },
   guideText: {
     fontSize: 13,
     lineHeight: 20,
-    color: "#737275",
+    color: semanticColors.text.muted,
   },
   messageContainer: {
     flexDirection: "row",
@@ -572,11 +587,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   userBubble: {
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     borderBottomRightRadius: 4,
   },
   assistantBubble: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     borderBottomLeftRadius: 4,
   },
   messageText: {
@@ -584,10 +599,10 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   userMessageText: {
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
   },
   assistantMessageText: {
-    color: "#000000",
+    color: semanticColors.text.primary,
   },
   analyzeButtonContainer: {
     paddingHorizontal: 16,
@@ -596,32 +611,32 @@ const styles = StyleSheet.create({
   },
   analyzeHintText: {
     fontSize: 13,
-    color: "#666666",
+    color: semanticColors.text.disabled,
     textAlign: "center",
     lineHeight: 18,
     fontFamily: "Pretendard-Regular",
   },
   analyzeButton: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 2,
-    borderColor: "#7A4AE2",
+    borderColor: semanticColors.brand.primary,
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 20,
     alignItems: "center",
   },
   analyzeButtonDisabled: {
-    backgroundColor: "#F5F5F5",
-    borderColor: "#CCCCCC",
+    backgroundColor: semanticColors.surface.background,
+    borderColor: semanticColors.border.default,
   },
   analyzeButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontFamily: "Pretendard-SemiBold",
   },
   analyzeButtonTextDisabled: {
-    color: "#999999",
+    color: semanticColors.text.disabled,
   },
 });
 

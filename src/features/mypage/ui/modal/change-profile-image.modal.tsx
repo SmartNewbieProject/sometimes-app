@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { semanticColors } from '../../../../shared/constants/colors';
 import apis from "@/src/features/mypage/apis";
 
 import Layout from "@/src/features/layout";
@@ -339,9 +340,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.secondary,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
 
     shadowColor: "#F2ECFF",
     shadowOffset: {
@@ -365,9 +366,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
     marginBottom: 230,
     shadowColor: "#F2ECFF",
     shadowOffset: {
@@ -384,10 +385,10 @@ const styles = StyleSheet.create({
 
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   infoTitle: {
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: 600,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 16.8,

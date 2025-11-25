@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../shared/constants/colors';
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
 
@@ -26,8 +27,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#7A4AE2",
-    backgroundColor: "#fff",
+    borderColor: semanticColors.brand.primary,
+    backgroundColor: semanticColors.surface.background,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
   reportButtonText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
     fontFamily: "Pretendard-SemiBold",
   },
 });

@@ -1,4 +1,5 @@
 import { ImageResources, cn } from "@/src/shared/libs";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Button, ImageResource } from "@/src/shared/ui";
 import { Text } from "@shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
@@ -51,10 +52,10 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[5px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             상대방도 관심을 보이면,
           </Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             인스타그램으로 연락할 수 있어요
           </Text>
         </View>
@@ -90,10 +91,10 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[5px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             이성에게 간단히 관심을 표현하고,
           </Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             그 다음 단계로 자연스럽게 나아가 보세요.
           </Text>
         </View>
@@ -129,7 +130,7 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
         ) : (
           <></>
         )}
-        <RNText className="text-md text-white whitespace-nowrap">좋아요</RNText>
+        <RNText className="text-md text-text-inverse whitespace-nowrap">좋아요</RNText>
       </View>
     </Button>
   );
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginLeft: -5,
     marginRight: 6,
-    color: "#BEACFF",
+    color: semanticColors.brand.accent,
   },
   particle1: {
     position: "absolute",

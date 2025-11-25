@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../../../shared/constants/colors';
 import type { ILiked, LikedMe } from "@/src/features/like/type/like";
 import ImageCollapse from "@/src/features/matching-history/ui/image-collapse";
 import { LinearGradient } from "expo-linear-gradient";
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   more: {
-    backgroundColor: "#A892D7",
+    backgroundColor: semanticColors.brand.accent,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     borderRadius: "50%",
   },
   moreText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 14,
   },
   background: {
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 5,
     marginLeft: 14,
-    color: "#5A269A",
+    color: semanticColors.text.primary,
     fontSize: 12,
 
     fontFamily: "Pretendard-Semibold",

@@ -1,6 +1,6 @@
 import { useMyInfoForm } from "@/src/features/my-info/hooks";
 import { useMbti } from "@/src/features/mypage/hooks";
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 10,
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.other,
   },
 });
 

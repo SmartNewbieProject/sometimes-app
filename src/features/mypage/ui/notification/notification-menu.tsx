@@ -1,4 +1,5 @@
 import { Text } from "@/src/shared/ui";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { StyleSheet, View } from "react-native";
 import NotificationCard from "./notification-card";
 import { usePushNotification } from "../../hooks/use-push-notification";
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   title: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 16,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 1,
     width: "100%",
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
   },
   contentContainer: {
     gap: 10,

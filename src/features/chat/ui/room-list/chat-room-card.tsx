@@ -1,4 +1,5 @@
 import { dayUtils } from "@/src/shared/libs";
+import { semanticColors } from '../../../../shared/constants/colors';
 import LockChatIcon from "@assets/icons/lock-chat.svg";
 import { useRouter } from "expo-router";
 import React, { useRef } from "react";
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 16,
     paddingTop: 8,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     gap: 8,
   },
   contentContainer: {
@@ -175,12 +176,12 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 14,
     lineHeight: 24,
-    color: "#000",
+    color: semanticColors.text.primary,
     fontWeight: 500,
     fontFamily: "Pretendard-Medium",
   },
   lastMessageText: {
-    color: "#585858",
+    color: semanticColors.text.disabled,
     fontSize: 14,
     lineHeight: 24,
   },
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   timeText: {
-    color: "#A2A2A2",
+    color: semanticColors.text.disabled,
     fontSize: 13,
     lineHeight: 24,
   },
@@ -203,14 +204,14 @@ const styles = StyleSheet.create({
     paddingVertical: 4.5,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
   },
   unreadCountText: {
     fontSize: 12,
     fontWeight: "700",
     fontFamily: "Pretendard-Bold",
 
-    color: "#fff",
+    color: semanticColors.text.inverse,
   },
   rightContainer: {
     flexDirection: "row",
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "white",
+    color: semanticColors.text.inverse,
     fontWeight: "bold",
   },
   blurContainer: {
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 12,
     right: 12,
-    backgroundColor: "#0000004D",
+    backgroundColor: '#00000040',
     borderRadius: 20,
     flexDirection: "row",
     gap: 4,
@@ -253,23 +254,23 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 14,
-    backgroundColor: "#EFEFEF",
+    backgroundColor: semanticColors.surface.background,
   },
   approveButton: {
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 14,
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
   },
   removeButtonText: {
-    color: "#8E8E8E",
+    color: semanticColors.text.disabled,
     fontSize: 13,
     fontWeight: 600,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 16,
   },
   approveButtonText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 13,
     fontWeight: 600,
     fontFamily: "Pretendard-SemiBold",

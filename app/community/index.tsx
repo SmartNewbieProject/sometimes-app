@@ -1,5 +1,6 @@
 // app/community/index.tsx
 import { useCategory } from "@/src/features/community/hooks";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { CategoryList, CreateArticleFAB } from "@/src/features/community/ui";
 import { ImageResources } from "@/src/shared/libs";
 import { BottomNavigation, Header, ImageResource, HeaderWithNotification } from "@/src/shared/ui";
@@ -98,15 +99,15 @@ export default function CommunityScreen() {
       const { route } = props;
       if (route.isHome) {
         return (
-          <View style={{ flex: 1, backgroundColor: "white" }} key={route.key}>
-            <View style={{ height: 1, backgroundColor: "#F3F0FF" }} />
+          <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key={route.key}>
+            <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
             <CommuHome />
           </View>
         );
       }
       return (
-        <View style={{ flex: 1, backgroundColor: "white" }} key={route.key}>
-          <View style={{ height: 1, backgroundColor: "#F3F0FF" }} />
+        <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key={route.key}>
+          <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
           <InfiniteArticleList
             key={`list-${route.key}`}
             initialSize={10}
@@ -122,8 +123,8 @@ export default function CommunityScreen() {
   const renderLazyPlaceholder = useCallback(
     (_: SceneRendererProps & { route: CategoryRoute }) => {
       return (
-        <View style={{ flex: 1, backgroundColor: "white" }}>
-          <View style={{ height: 1, backgroundColor: "#F3F0FF" }} />
+        <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }}>
+          <View style={{ height: 1, backgroundColor: semanticColors.surface.background }} />
           <View style={{ paddingHorizontal: 16, paddingVertical: 10 }}>
             <ActivityIndicator size="large" color="#8B5CF6" />
           </View>
@@ -145,11 +146,11 @@ export default function CommunityScreen() {
     <View className="flex-1 relative">
       <ListHeaderComponent />
 
-      <View className="flex-1 bg-white">
+      <View className="flex-1 bg-surface-background">
         {/** 공지 전용: 스와이프 불가 */}
         {isNotice ? (
-          <View style={{ flex: 1, backgroundColor: "white" }} key="__notice__">
-            <View style={{ height: 1, backgroundColor: "#F3F0FF" }} />
+          <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key="__notice__">
+            <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
             <InfiniteArticleList
               key={`list-${NOTICE_CODE}`}
               initialSize={10}
@@ -196,7 +197,7 @@ const ListHeaderComponent = () => {
         }
         showBackButton={false}
       />
-      <View className="pt-[14px] bg-white">
+      <View className="pt-[14px] bg-surface-background">
         <CategoryList />
       </View>
     </View>

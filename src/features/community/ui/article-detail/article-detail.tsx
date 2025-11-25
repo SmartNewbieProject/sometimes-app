@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { semanticColors } from '../../../../shared/constants/colors';
 import apis from "@/src/features/community/apis";
 import apis_comments from "@/src/features/community/apis/comments";
 import {
@@ -346,7 +347,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const imageUrls = article.images?.map((img) => img.imageUrl) || [];
 
   return (
-    <View className="flex-1 relative bg-white">
+    <View className="flex-1 relative bg-surface-background">
       <PhotoSlider
         images={imageUrls}
         onClose={onZoomClose}
@@ -359,7 +360,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         keyboardShouldPersistTaps="handled"
         className="flex-1 relative  px-5"
       >
-        <View className="h-[1px] bg-[#F3F0FF] mb-[15px]" />
+        <View className="h-[1px] bg-surface-other mb-[15px]" />
 
         <UserProfile
           author={article.author}
@@ -412,7 +413,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
             <View className="flex-row items-center">
               <Text
                 style={{
-                  color: "#676767",
+                  color: semanticColors.text.muted,
                   fontFamily: "Pretendard",
                   fontSize: 13,
                   fontStyle: "normal",
@@ -425,7 +426,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
               </Text>
               <Text
                 style={{
-                  color: "#676767",
+                  color: semanticColors.text.muted,
                   fontFamily: "Pretendard",
                   fontSize: 13,
                   fontStyle: "normal",
@@ -451,7 +452,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
             </View>
           </View>
         </View>
-        <View className="h-[1px] bg-[#F3F0FF] " />
+        <View className="h-[1px] bg-surface-other " />
         <View className="flex-1">
           <Loading.Lottie
             title="댓글을 불러오고 있어요"
@@ -469,10 +470,10 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: "white",
+          backgroundColor: semanticColors.surface.background,
           paddingBottom: insets.bottom,
         }}
-        className="border-t border-[#F3F0FF] pt-3  px-4"
+        className="border-t border-border-default pt-3  px-4"
       >
         <InputForm
           checked={checked}

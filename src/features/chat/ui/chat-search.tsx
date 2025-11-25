@@ -1,4 +1,5 @@
 import WhiteXIcon from "@assets/icons/chat-search-x.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import SearchIcon from "@assets/icons/search-chat.svg";
 import type React from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 16,
     alignItems: "center",
-    backgroundColor: "#F3F1FA",
+    backgroundColor: semanticColors.surface.secondary,
     gap: 10,
   },
   input: {
@@ -58,14 +59,14 @@ const styles = StyleSheet.create({
     outlineWidth: 0,
     flex: 1,
     lineHeight: 20,
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   reset: {
     width: 18,
     height: 18,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#DCD5EA",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 9,
   },
 });

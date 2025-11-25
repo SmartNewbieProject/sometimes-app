@@ -1,4 +1,5 @@
 import LockIcon from "@assets/icons/lock.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
@@ -96,12 +97,12 @@ const styles = StyleSheet.create({
 
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 17,
-    color: "#4A4A4A",
+    color: semanticColors.text.muted,
   },
   titleStrong: {
     fontWeight: 800,
     fontFamily: "Pretendard-ExtraBold",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
   },
   description: {
     fontSize: 10,
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 5,
     marginLeft: 14,
-    color: "#5A269A",
+    color: semanticColors.text.primary,
     fontSize: 12,
 
     fontFamily: "Pretendard-Semibold",
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 53,
-    backgroundColor: "#A892D7",
+    backgroundColor: semanticColors.brand.accent,
     marginRight: 12,
   },
 });

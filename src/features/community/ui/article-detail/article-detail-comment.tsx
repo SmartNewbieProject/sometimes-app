@@ -1,4 +1,4 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import { dayUtils } from "@/src/shared/libs";
 import type { UniversityName } from "@/src/shared/libs/univ";
@@ -67,7 +67,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
         style={{
           backgroundColor: isEditing ? colors.moreLightPurple : colors.white,
         }}
-        className="flex py-3 flex-col w-full border-b border-[#E7E9EC]"
+        className="flex py-3 flex-col w-full border-b border-border-default"
       >
       {/* 대댓글인 경우 화살표 아이콘과 들여쓰기 */}
       <View className={`flex-row ${isReply ? 'pl-4' : ''}`}>
@@ -116,7 +116,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
             <View className="absolute right-0 top-0">
               <View
                 className="flex-row items-center gap-x-3 px-2 py-1 rounded-lg"
-                style={{ backgroundColor: '#F3EDFF' }}
+                style={{ backgroundColor: semanticColors.surface.background }}
               >
                 {/* 답글 버튼 */}
                 {onReply && (
@@ -178,14 +178,14 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
                       width: 80,
                       paddingVertical: 4,
                       borderRadius: 8,
-                      backgroundColor: 'white',
+                      backgroundColor: semanticColors.surface.background,
                       shadowColor: '#000',
                       shadowOffset: { width: 0, height: 4 },
                       shadowOpacity: 0.1,
                       shadowRadius: 8,
                       elevation: 8,
                       borderWidth: 1,
-                      borderColor: '#e0e0e0',
+                      borderColor: semanticColors.border.default,
                     }}>
                       <Pressable
                         onPress={(e) => {
@@ -198,7 +198,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
                           paddingVertical: 8,
                           borderBottomWidth: 1,
                           borderBottomColor: '#f5f5f5',
-                          backgroundColor: 'white',
+                          backgroundColor: semanticColors.surface.background,
                         }}
                       >
                         <Text size="sm" textColor="black">수정</Text>
@@ -212,7 +212,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
                         style={{
                           paddingHorizontal: 12,
                           paddingVertical: 8,
-                          backgroundColor: 'white',
+                          backgroundColor: semanticColors.surface.background,
                         }}
                       >
                         <Text size="sm" textColor="black">삭제</Text>

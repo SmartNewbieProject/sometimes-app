@@ -1,4 +1,5 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 
 import { useAuth } from "@/src/features/auth";
 import {
@@ -101,7 +102,7 @@ export const Profile = () => {
                 marginLeft: 10,
 
                 borderRadius: 10,
-                backgroundColor: "white",
+                backgroundColor: semanticColors.surface.background,
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -113,18 +114,18 @@ export const Profile = () => {
               />
             </View>
             <View style={styles.profileInfoContainer}>
-              <Text className="text-white " style={styles.name}>
+              <Text className="text-text-inverse " style={styles.name}>
                 {profileData.name}
               </Text>
               <View style={styles.subInfo}>
-                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
                   {profileData.grade}
                 </Text>
-                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
                   {" "}
                   ·{" "}
                 </Text>
-                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
                   {profileData.university}
                 </Text>
                 {!isLoadingVerification &&
@@ -178,7 +179,7 @@ export const Profile = () => {
                       style={{ width: 20, height: 8 }}
                     />
 
-                    <Text className="text-[10px] text-[#9747FF]">
+                    <Text className="text-[10px] text-brand-secondary">
                       프로필 수정
                     </Text>
                   </View>
@@ -195,12 +196,12 @@ export const Profile = () => {
         >
           <ImageResource resource={ImageResources.GEM} width={28} height={28} />
           <View className="pl-[10px] flex-row">
-            <Text className="text-[13px] text-[#FFFFFF]">구슬이 </Text>
-            <Text className="text-[13px] text-[#9747FF]">
+            <Text className="text-[13px] text-text-inverse">구슬이 </Text>
+            <Text className="text-[13px] text-brand-secondary">
               {" "}
               {gem?.totalGem ?? 0}개
             </Text>
-            <Text className="text-[13px] text-[#FFFFFF]"> 남았어요</Text>
+            <Text className="text-[13px] text-text-inverse"> 남았어요</Text>
           </View>
         </View>
       </View>
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
     width: 361,
     height: 150,
     borderRadius: 15,
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
     paddingRight: 15,
     paddingTop: 10,
     overflow: "hidden",
@@ -237,12 +238,12 @@ const styles = StyleSheet.create({
     height: 42.75,
     borderBottomLeftRadius: 999,
     borderBottomRightRadius: 999,
-    backgroundColor: "#E9D9FF",
+    backgroundColor: '#E9D9FF',
   },
   leftRect: {
     width: 19,
     height: 20,
-    backgroundColor: "#E9D9FF",
+    backgroundColor: semanticColors.surface.other,
     position: "absolute",
     top: 5,
     left: -18,
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
   leftRadius: {
     width: 20,
     height: 20,
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
     borderTopRightRadius: 14,
     position: "absolute",
     top: 5,
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
   rightRadius: {
     width: 20,
     height: 20,
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
     borderTopLeftRadius: 14,
     position: "absolute",
     top: 5,
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
   rightRect: {
     width: 19,
     height: 20,
-    backgroundColor: "#E9D9FF",
+    backgroundColor: semanticColors.surface.other,
     position: "absolute",
     top: 5,
     right: -18,
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Regular",
     fontWeight: 400,
     lineHeight: 30,
-    color: "#fff",
+    color: semanticColors.text.inverse,
   },
   profileInfoContainer: {
     marginLeft: 10,
@@ -297,13 +298,13 @@ const styles = StyleSheet.create({
   },
   subInfoText: {
     fontSize: 14,
-    color: "#E6DBFF",
+    color: semanticColors.text.inverse,
     lineHeight: 15.6,
   },
   universityVerificationButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 20,
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
   },
   universityVerificationButtonText: {
     fontSize: 12,
-    color: "#9747FF",
+    color: semanticColors.brand.secondary,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
   },

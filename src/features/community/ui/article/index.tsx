@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import {
   ImageResources,
@@ -22,6 +23,8 @@ import type { Article as ArticleType } from "../../types";
 import { Comment } from "../comment";
 import { UserProfile } from "../user-profile";
 import Interaction from "./interaction-nav";
+import { useBlockUser } from "../../hooks/use-block-user";
+import { useModal } from "@/src/shared/hooks/use-modal";
 
 interface ArticleItemProps {
   data: ArticleType;
@@ -51,7 +54,9 @@ export function Article({
   //     toggle: toggleShowComment,
   //     setFalse,
   //   } = useBoolean();
-  const { value: isDropdownOpen, setFalse: closeDropdown } = useBoolean();
+  const { value: isDropdownOpen, setValue: setDropdownOpen } = useBoolean();
+  const { mutate: blockUser } = useBlockUser();
+  const { showModal } = useModal();
 
   const isOwner = (() => {
     if (!my) return false;
@@ -66,6 +71,32 @@ export function Article({
     },
     [onLike]
   );
+
+  const handleBlockUser = () => {
+    showModal({
+      title: "사용자 차단",
+      children: (
+        <View>
+          <Text size="sm" textColor="black">
+            {`'${author.name}'님을 차단하시겠습니까?\n차단하면 해당 사용자의 모든 게시글이 보이지 않게 됩니다.`}
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "차단하기",
+        onClick: () => {
+          blockUser(author.id);
+          setDropdownOpen(false);
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {
+          setDropdownOpen(false);
+        },
+      },
+    });
+  };
 
   const dropdownMenus: DropdownItem[] = (() => {
     const menus: DropdownItem[] = [];
@@ -83,7 +114,7 @@ export function Article({
           content: "삭제",
           onPress: () => {
             onDelete(data.id);
-            closeDropdown();
+            setDropdownOpen(false);
           },
         },
       ];
@@ -97,6 +128,11 @@ export function Article({
         onPress: () => {
           router.push(`/community/report/${data.id}`);
         },
+      });
+      menus.push({
+        key: "block",
+        content: "차단",
+        onPress: handleBlockUser,
       });
     }
 
@@ -112,8 +148,8 @@ export function Article({
   const redirectDetails = () => router.push(`/community/${data.id}`);
 
   useEffect(() => {
-    closeDropdown();
-  }, [closeDropdown]);
+    setDropdownOpen(false);
+  }, [setDropdownOpen]);
 
   return (
     <View className="w-full relative">
@@ -183,7 +219,7 @@ export function Article({
           <View className="flex-row items-center">
             <Text
               style={{
-                color: "#676767",
+                color: semanticColors.text.muted,
                 fontFamily: "Pretendard",
                 fontSize: 13,
                 fontStyle: "normal",
@@ -196,7 +232,7 @@ export function Article({
             </Text>
             <Text
               style={{
-                color: "#676767",
+                color: semanticColors.text.muted,
                 fontFamily: "Pretendard",
                 fontSize: 13,
                 fontStyle: "normal",
@@ -259,10 +295,14 @@ export function Article({
           e.stopPropagation();
         }}
       >
-        <Dropdown open={isDropdownOpen} items={dropdownMenus} />
+        <Dropdown
+          open={isDropdownOpen}
+          items={dropdownMenus}
+          onOpenChange={setDropdownOpen}
+        />
       </View>
 
-      {!isPreviewOpen && <View className="h-[1px] bg-[#F3F0FF]" />}
+      {!isPreviewOpen && <View className="h-[1px] bg-surface-other" />}
     </View>
   );
 }

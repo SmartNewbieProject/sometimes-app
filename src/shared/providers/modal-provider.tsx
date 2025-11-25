@@ -1,4 +1,5 @@
 import ModalParticle from "@/src/widgets/particle/modal-particle";
+import { semanticColors } from '../constants/colors';
 import ErrorFace from "@assets/icons/error-face.svg";
 import Letter from "@assets/icons/letter.svg";
 import { Image } from "expo-image";
@@ -84,7 +85,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     options: ErrorModalOptions,
     type: "mono" | "nested"
   ) => (
-    <View className="bg-white w-[300px] md:w-[468px] rounded-2xl p-5">
+    <View className="bg-surface-background w-[300px] md:w-[468px] rounded-2xl p-5">
       <View className="flex flex-row items-center gap-x-2 mb-4">
         <ErrorFace />
         <Text size="lg" weight="semibold" textColor="black">
@@ -125,7 +126,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       <View
         onLayout={onLayout}
         className={cn(
-          "bg-white w-[300px] md:w-[468px] rounded-2xl p-5 relative",
+          "bg-surface-background w-[300px] md:w-[468px] rounded-2xl p-5 relative",
           options?.showLogo && "pt-[60px]"
         )}
       >
@@ -149,7 +150,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
                 width: "100%",
                 height: "100%",
                 borderRadius: "50%",
-                backgroundColor: "#7A4AE2",
+                backgroundColor: semanticColors.brand.primary,
               }}
             >
               {typeof options.showLogo === "boolean" ? (
@@ -234,7 +235,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         animationType="fade"
         onRequestClose={hideModal}
       >
-        <View className="flex-1 bg-black/50 justify-center items-center px-5">
+        <View className="flex-1 bg-surface-inverse/50 justify-center items-center px-5">
           {currentModal && "type" in currentModal
             ? renderErrorModal(currentModal as ErrorModalOptions, "mono")
             : currentModal
@@ -245,7 +246,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         {nestedModal && (
           <View
             style={StyleSheet.absoluteFill}
-            className="bg-black/50 justify-center items-center px-5"
+            className="bg-surface-inverse/50 justify-center items-center px-5"
           >
             {nestedModal && "type" in nestedModal
               ? renderErrorModal(nestedModal as ErrorModalOptions, "nested")
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
     top: -18,
     alignSelf: "center",
     borderRadius: 999,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     padding: 5.7,
   },
 });

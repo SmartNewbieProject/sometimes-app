@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../shared/constants/colors';
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     height: 216,
   },
   description: {
-    color: "#E1D9FF",
+    color: semanticColors.text.disabled,
     fontWeight: 500,
     fontFamily: "Pretendard-Medium",
     fontSize: 18,

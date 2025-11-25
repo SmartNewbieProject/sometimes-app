@@ -1,4 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
@@ -47,7 +48,7 @@ export default function ProfileImgEditDoneScreen() {
               top: 12,
               left: 0,
 
-              backgroundColor: "#7A4AE2",
+              backgroundColor: semanticColors.brand.primary,
               position: "absolute",
             }}
           />

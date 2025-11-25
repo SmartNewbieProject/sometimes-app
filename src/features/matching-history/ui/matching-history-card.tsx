@@ -1,4 +1,4 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { UniversityName, getUnivLogo, formatLastLogin } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
@@ -71,7 +71,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
         ),
         children: (
           <View style={ModalStyles.content}>
-            <Text style={ModalStyles.description} className="text-[#AEAEAE]">
+            <Text style={ModalStyles.description} className="text-text-disabled">
               시간이 지났지만 다시 인연을 이어가고 싶다면, 용기 내어 먼저 다가가
               보세요.
             </Text>
@@ -191,7 +191,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                   borderTopEndRadius: 16,
                   height: 35,
                   width: "100%",
-                  borderColor: "#E7E9EC",
+                  borderColor: semanticColors.border.default,
                 }}
               />
             </View>
@@ -211,7 +211,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                 ]}
                 onPress={onClickToPartner}
               >
-                <Text className="w-[20px] text-white text-[7px]">
+                <Text className="w-[20px] text-text-inverse text-[7px]">
                   {item.blinded ? "프로필\n풀기" : "더보기"}
                 </Text>
                 <IconWrapper width={6} height={6}>
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     height: 68,
   },
   someReceivedBadge: {
-    backgroundColor: "#F5F1FF",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 16,
     width: 48,
     justifyContent: "center",

@@ -55,7 +55,7 @@ export default function SignupLayout() {
 
             <View
               className={cn(
-                " pb-[30px] items-center bg-white",
+                " pb-[30px] items-center bg-surface-background",
                 platform({
                   ios: () => "",
                   android: () => "",

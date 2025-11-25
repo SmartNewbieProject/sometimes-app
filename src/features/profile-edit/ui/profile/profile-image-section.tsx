@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../../../shared/constants/colors';
 import ChangeProfileImageModal from "@/src/features/mypage/ui/modal/change-profile-image.modal";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import React, { useEffect, useState, useMemo } from "react";
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     paddingRight: 26,
   },
   title: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 21.6,
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
   bar: {
     marginRight: 28,
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.other,
     marginTop: 12,
   },
 });

@@ -171,7 +171,7 @@ function WebChatInput() {
   };
 
   return (
-    <div className="flex w-full items-center bg-white p-4 ">
+    <div className="flex w-full items-center bg-surface-background p-4 ">
       <PhotoPickerModal
         showGuide={false}
         visible={isImageModal}
@@ -182,12 +182,12 @@ function WebChatInput() {
       <button
         onClick={handlePress}
         type="button"
-        className="flex h-8 w-8 border-none items-center justify-center rounded-full bg-[#F3EDFF] hover:bg-purple-200 transition-colors focus:outline-none "
+        className="flex h-8 w-8 border-none items-center justify-center rounded-full bg-surface-background hover:bg-purple-200 transition-colors focus:outline-none "
       >
         <PlusIcon />
       </button>
 
-      <div className="relative ml-3 flex flex-1 items-center rounded-full bg-[#F8F9FA] py-[8px] px-2 pl-4">
+      <div className="relative ml-3 flex flex-1 items-center rounded-full bg-surface-surface py-[8px] px-2 pl-4">
         <textarea
           ref={textareaRef}
           value={chat}
@@ -197,7 +197,7 @@ function WebChatInput() {
           placeholder={
             roomDetail?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
           }
-          className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-[#1E2229] placeholder-gray-500 focus:outline-none "
+          className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-text-secondary placeholder-gray-500 focus:outline-none "
         />
         <textarea
           className="leading-[18px] box-border  w-full resize-none overflow-y-scroll m-0 p-0 absolute -top-[9999px] -left-[9999px] -z-10"
@@ -210,7 +210,7 @@ function WebChatInput() {
           <button
             type="button"
             onClick={handleSend}
-            className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-[#7A4AE1] text-white hover:bg-purple-700 transition-colors focus:outline-none "
+            className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-brand-primary text-text-inverse hover:bg-purple-700 transition-colors focus:outline-none "
             aria-label="Send message"
           >
             <SendChatIcon width={20} height={20} />

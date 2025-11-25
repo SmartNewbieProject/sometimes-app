@@ -1,4 +1,5 @@
 import ChatBellOffIcon from "@assets/icons/chat-bell-off.svg";
+import { semanticColors } from '../../../../../shared/constants/colors';
 import ChatBellOnIcon from "@assets/icons/chat-bell-on.svg";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
@@ -123,19 +124,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   nameText: {
-    color: "#111827",
+    color: semanticColors.text.secondary,
     fontSize: 20,
     fontWeight: 500,
     fontFamily: "Pretendard-Medium",
     lineHeight: 24,
   },
   univText: {
-    color: "#4B5563",
+    color: semanticColors.text.muted,
     fontSize: 16,
     lineHeight: 20,
   },
   ageText: {
-    color: "#6B7280",
+    color: semanticColors.text.muted,
     fontSize: 14,
     lineHeight: 20,
   },
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 20,
     lineHeight: 20,
-    color: "#FF0000",
+    color: semanticColors.state.error,
     fontWeight: 500,
     fontFamily: "Pretendard-Medium",
   },

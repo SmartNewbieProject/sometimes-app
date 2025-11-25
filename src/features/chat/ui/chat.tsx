@@ -1,4 +1,5 @@
 import { BottomNavigation } from "@/src/shared/ui";
+import { semanticColors } from '../../../shared/constants/colors';
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,7 +12,7 @@ function Chat() {
   return (
     <View
       style={{
-        backgroundColor: "#fff",
+        backgroundColor: semanticColors.surface.background,
         flex: 1,
         paddingTop: insets.top,
         position: "relative",

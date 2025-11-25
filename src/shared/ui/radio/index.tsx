@@ -1,4 +1,5 @@
 import React from "react";
+import { semanticColors } from '../../constants/colors';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Show } from "../show";
 import { TextArea } from "../text-area";
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: semanticColors.border.default,
   },
   contentContainer: {
     flexDirection: "row",
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   labelText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#1F2937",
+    color: semanticColors.text.primary,
   },
   radioContainer: {
     position: "relative",
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
   },
 });
 
