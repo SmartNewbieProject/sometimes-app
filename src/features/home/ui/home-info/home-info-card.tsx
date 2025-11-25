@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "rgba(134, 56, 229, 0.5)",
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
 
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.other,
   },
   buttonDisabledStyle: {
     backgroundColor: semanticColors.brand.primary,
