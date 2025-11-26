@@ -3,7 +3,7 @@
  * AARRR 프레임워크 기반의 표준화된 이벤트 정의
  */
 
-export const AMPLITUDE_KPI_EVENTS = {
+export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   // 1. 사용자 온보딩 퍼널
   UNIVERSITY_VERIFICATION_STARTED: 'University_Verification_Started',
   UNIVERSITY_VERIFICATION_COMPLETED: 'University_Verification_Completed',
@@ -412,4 +412,7 @@ export interface KpiEventTypePropertiesMap {
   Somemate_Report_Viewed: SomemateEventProperties;
   Somemate_Report_Shared: SomemateEventProperties;
   Somemate_Category_Selected: SomemateEventProperties;
+
+  // 다른 모든 이벤트들도 기본 BaseEventProperties 사용
+  [key: string]: BaseEventProperties;
 }

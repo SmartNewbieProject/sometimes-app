@@ -2,27 +2,18 @@ import { useCallback } from 'react';
 import { track as amplitudeTrack } from '@amplitude/analytics-react-native';
 import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
 import type {
-  KpiEventTypePropertiesMap,
   BaseEventProperties,
-  AuthEventProperties,
   SignupEventProperties,
-  MatchingEventProperties,
-  ChatEventProperties,
-  CommunityEventProperties,
   PaymentEventProperties,
-  MomentEventProperties,
-  ReferralEventProperties,
-  SessionEventProperties,
-  FeatureEventProperties,
-  SomemateEventProperties,
 } from './use-amplitude.types';
+import { KpiEventTypePropertiesMap } from '@/src/shared/constants/amplitude-kpi-events';
 
 // 확장된 KPI 훅 반환 타입
 export interface UseKpiAnalyticsReturn {
   // 기본 이벤트 추적
-  trackEvent: <T extends keyof typeof AMPLITUDE_KPI_EVENTS>(
+  trackEvent: <T extends string>(
     eventName: T,
-    properties?: KpiEventTypePropertiesMap[T],
+    properties?: KpiEventTypePropertiesMap[string],
     options?: { immediate?: boolean; validate?: boolean }
   ) => void;
 
@@ -163,9 +154,9 @@ export interface UseKpiAnalyticsReturn {
 export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
   // 공통 속성 추가 및 이벤트 추적
   const trackEvent = useCallback(
-    <T extends keyof typeof AMPLITUDE_KPI_EVENTS>(
+    <T extends string>(
       eventName: T,
-      properties: KpiEventTypePropertiesMap[T] = {},
+      properties: KpiEventTypePropertiesMap[string] = {},
       options = { immediate: false, validate: true }
     ) => {
       try {
@@ -635,7 +626,7 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
     trackMatchConversationRate: useCallback((matchId: string, conversationStarted: boolean) => {
       trackEvent('Match_Conversation_Rate', {
         match_id: matchId,
-        conversation_started
+        conversation_started: conversationStarted
       });
     }, [trackEvent]),
 

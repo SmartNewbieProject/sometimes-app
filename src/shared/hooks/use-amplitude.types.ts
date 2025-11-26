@@ -3,6 +3,8 @@ import { AmplitudeEventValues } from '@/src/shared/constants/amplitude-events';
 // 기본 이벤트 파라미터 타입
 export interface BaseEventProperties {
   env?: string;
+  timestamp?: number;
+  app_version?: string;
   [key: string]: any;
 }
 
@@ -58,6 +60,15 @@ export interface EventTypePropertiesMap {
   Interest_Started: UserBehaviorEventProperties;
   Profile_Started: UserBehaviorEventProperties;
 }
+
+// KPI 이벤트 타입별 속성 매핑 (기본 타입들)
+export interface KpiEventTypePropertiesMap {
+  // 기본 이벤트들을 위한 플레이스홀더
+  [key: string]: BaseEventProperties;
+}
+
+// KPI 이벤트 키 타입 (amplitude-kpi-events에서 가져옴)
+export type KpiEventKey = keyof any; // keyof typeof AMPLITUDE_KPI_EVENTS와 동일하게 처리
 
 // 훅 반환 타입
 export interface UseAmplitudeReturn {
