@@ -255,10 +255,7 @@ export default function ReportScreen() {
             style={styles.profileImage}
           />
           <View style={styles.profileTextContainer}>
-            <View style={styles.profileNameAge}>
-              <Text style={styles.profileName}>{profile.name}</Text>
-              <Text style={styles.profileAge}>만 {profile.age}세</Text>
-            </View>
+            <Text style={styles.profileAge}>만 {profile.age}세</Text>
             <Text style={styles.profileUniversity}>{profile.university}</Text>
           </View>
         </View>
@@ -448,20 +445,11 @@ const styles = StyleSheet.create({
   profileTextContainer: {
     flex: 1,
   },
-  profileNameAge: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 4,
-  },
-  profileName: {
+  profileAge: {
     fontSize: 18,
     fontWeight: "bold",
     color: semanticColors.text.secondary,
-    marginRight: 5,
-  },
-  profileAge: {
-    fontSize: 14,
-    color: "#888",
+    marginBottom: 4,
   },
   profileUniversity: {
     fontSize: 14,
