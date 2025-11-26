@@ -64,10 +64,10 @@ declare namespace IMP {
         code: string;
         quota: number;
       };
-      detail?: Array<{
+      detail?: {
         card_code: string;
         enabled: boolean;
-      }>;
+      }[];
     };
   }
 

@@ -1,6 +1,5 @@
-import { TwoButtons } from "@/src/features/layout/ui";
+import { TwoButtons , DefaultLayout } from "@/src/features/layout/ui";
 import { semanticColors } from '../../../src/shared/constants/colors';
-import { DefaultLayout } from "@/src/features/layout/ui";
 import { SignupSteps } from "@/src/features/signup/hooks";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
 import UniversityLogos from "@/src/features/signup/ui/university-logos";
@@ -13,6 +12,7 @@ import Loading from "@features/loading";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
+import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 import {
   BackHandler,
   Text as RNText,
@@ -24,6 +24,7 @@ import Animated from "react-native-reanimated";
 
 function UniversityPage() {
   const router = useRouter();
+  const { onboardingEvents } = useKpiAnalytics();
   const {
     searchText,
     setSearchText,
@@ -43,6 +44,11 @@ function UniversityPage() {
     handleChange,
   } = useUniversityHook();
 
+  // 대학 인증 시작 이벤트 추적
+  useEffect(() => {
+    onboardingEvents.trackUniversityVerificationStarted();
+  }, [onboardingEvents]);
+
   const handleBackPress = () => {
     onBackPress(() => {
       router.navigate("/auth/login");
@@ -50,6 +56,8 @@ function UniversityPage() {
   };
   const handleNext = () => {
     onNext(() => {
+      // 대학 인증 완료 이벤트 추적
+      onboardingEvents.trackUniversityVerificationCompleted('search_selection');
       router.push(
         `/auth/signup/university-cluster?universityId=${selectedUniv}`
       );

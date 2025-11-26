@@ -8,8 +8,7 @@ import {
 import { Button, Show, Text } from "@shared/ui";
 import { Image } from "expo-image";
 import type React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Linking } from "react-native";
+import { StyleSheet, TouchableOpacity, View , Linking } from "react-native";
 import type { VersionUpdateResponse } from "../types";
 
 interface UpdateModalContentProps {

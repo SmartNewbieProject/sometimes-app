@@ -7,12 +7,13 @@ import { useState, useCallback, useEffect } from "react";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
 import { useActiveSession, useCreateSession } from "@/src/features/somemate/queries/use-ai-chat";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import type { AiChatCategory } from "@/src/features/somemate/types";
 import { ReportButton } from "@/src/features/somemate/ui/report-button";
 import { useCurrentGem } from "@/src/features/payment/hooks/use-current-gem";
 import { Text } from "@/src/shared/ui";
 
-const CATEGORIES: Array<{ id: string; label: AiChatCategory }> = [
+const CATEGORIES: { id: string; label: AiChatCategory }[] = [
   { id: "daily", label: "일상" },
   { id: "relationship", label: "인간관계" },
   { id: "hobby", label: "진로/학교" },
@@ -23,6 +24,7 @@ export default function SomemateScreen() {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState<AiChatCategory>("일상");
   const { showModal } = useModal();
+  const { somemateEvents } = useKpiAnalytics();
 
   const { data: activeSession, isLoading: isLoadingSession, refetch } = useActiveSession();
   const createSessionMutation = useCreateSession();
@@ -107,9 +109,11 @@ export default function SomemateScreen() {
         text: "네, 해볼래요",
         onClick: async () => {
           try {
+            somemateEvents.trackSessionStarted('pending', selectedCategory);
             const response = await createSessionMutation.mutateAsync({
               category: selectedCategory,
             });
+            somemateEvents.trackSessionStarted(response.sessionId, selectedCategory);
             router.push(`/chat/somemate-chat?sessionId=${response.sessionId}`);
           } catch (error: unknown) {
             showModal({
@@ -161,7 +165,10 @@ export default function SomemateScreen() {
             {CATEGORIES.map((category) => (
               <Pressable
                 key={category.id}
-                onPress={() => setSelectedCategory(category.label)}
+                onPress={() => {
+                  setSelectedCategory(category.label);
+                  somemateEvents.trackCategorySelected(category.label);
+                }}
                 style={[
                   styles.categoryButton,
                   selectedCategory === category.label && styles.categoryButtonActive,

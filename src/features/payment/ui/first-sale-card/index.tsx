@@ -17,9 +17,8 @@ import Animated, {
 import { useFirstSaleEvents } from "../../hooks/useFirstSaleEvents";
 import type { GemMetadata } from "../../types";
 import { usePortoneStore } from "../../hooks/use-portone-store";
-import { track } from "@amplitude/analytics-react-native";
 import { useAuth } from "@/src/features/auth";
-import { TRACKING_EVENTS } from "../../constants";
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import { FIRST_SALE_PRODUCTS } from "../../constants/first-sale-products";
 
 type FirstSaleCardProps = {
@@ -33,6 +32,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
   } });
   const { setEventType } = usePortoneStore();
   const { my } = useAuth();
+  const { paymentEvents } = useKpiAnalytics();
 
   const translateYAnim = useSharedValue(0);
 
@@ -103,30 +103,28 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
 
         <Show when={!event7Expired}>
           <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_7} onOpenPayment={(metadata) => {
-            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_7, {
-              who: my,
-              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-            })
+            // KPI 이벤트: 결제 아이템 선택 (첫 구매)
+paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_7.gemCount);
+
+            // 기존 이벤트 호환성
+            paymentEvents.trackStoreViewed('gem');
+
             setEventType(EventType.FIRST_SALE_7);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>
         <Show when={!event16Expired}>
           <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_16} onOpenPayment={(metadata) => {
-            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_16, {
-              who: my,
-              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-            })
+            // KPI 이벤트: 결제 아이템 선택 (첫 구매)
+paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_16.gemCount);
             setEventType(EventType.FIRST_SALE_16);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>
          <Show when={!event27Expired}>
           <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_27} onOpenPayment={(metadata) => {
-            track(TRACKING_EVENTS.GEM_STORE_FIRST_SALE_27, {
-              who: my,
-              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-            })
+            // KPI 이벤트: 결제 아이템 선택 (첫 구매)
+paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_27.gemCount);
             setEventType(EventType.FIRST_SALE_27);
             onOpenPayment(metadata);
           }} hot={false} />

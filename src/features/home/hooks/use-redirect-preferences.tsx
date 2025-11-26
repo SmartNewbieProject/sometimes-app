@@ -2,7 +2,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { dayUtils } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
-import { track } from "@amplitude/analytics-react-native";
+import { useUserBehaviorEvents } from "@/src/shared/hooks";
 import { router } from "expo-router";
 import { useCallback, useEffect } from "react";
 import { View } from "react-native";
@@ -14,6 +14,7 @@ type CheckPreferences = {
 };
 
 export const useRedirectPreferences = () => {
+  const { trackInterestHold, trackInterestStarted } = useUserBehaviorEvents();
   const {
     data: isPreferenceFill,
     refetch,
@@ -29,7 +30,7 @@ export const useRedirectPreferences = () => {
   const { showModal } = useModal();
 
   const confirm = useCallback(() => {
-    track("Interest_Hold", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    trackInterestHold();
     setValue({
       isLater: true,
       latestDate: dayUtils.create().format("YYYY-MM-DD HH:mm:ss"),
@@ -38,10 +39,7 @@ export const useRedirectPreferences = () => {
 
   const onRedirect = useCallback(() => {
     confirm();
-    track("Interest_Started", {
-      type: "modal",
-      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-    });
+    trackInterestStarted("modal");
     router.navigate("/interest");
   }, [confirm]);
 

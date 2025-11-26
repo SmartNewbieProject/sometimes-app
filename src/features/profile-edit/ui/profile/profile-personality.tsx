@@ -32,10 +32,6 @@ function ProfilePersonality() {
     if (values.length > 3) {
       return;
     }
-    if (values.length === 0) {
-      updateForm("personality", undefined);
-      return;
-    }
     updateForm("personality", values);
   };
   return (
@@ -57,11 +53,11 @@ function ProfilePersonality() {
           <ChipSelector
             value={personality}
             options={
-              preferences?.options.map((option) => ({
+              preferences?.options?.map((option) => ({
                 label: option.displayName,
                 value: option.id,
                 imageUrl: option?.imageUrl,
-              })) || []
+              })) ?? []
             }
             multiple={true}
             onChange={onChangeOption}

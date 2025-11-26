@@ -124,10 +124,10 @@ export default function SmokingSelectionScreen() {
               middleLabelLeft={-15}
               onChange={onChangeSmoking}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
-                })) || []
+                })) ?? []
               }
             />
           </Loading.Lottie>

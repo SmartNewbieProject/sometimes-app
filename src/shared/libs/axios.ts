@@ -68,6 +68,10 @@ axiosClient.interceptors.request.use(
       if (isNetworkDisabled) {
         return Promise.reject(new Error('Network requests are disabled due to REGION_NOT_ALLOWED'));
       }
+      // 로그인 요청에는 Authorization 헤더를 추가하지 않음
+      if (config.url === '/auth/login') {
+        return config;
+      }
       const accessToken = await storage.getItem('access-token');
       config.headers.Authorization = `Bearer ${accessToken?.replaceAll('\"', '')}`;
       return config;

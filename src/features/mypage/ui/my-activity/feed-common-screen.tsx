@@ -2,7 +2,7 @@ import Layout from "@/src/features/layout";
 import { semanticColors } from '../../../../shared/constants/colors';
 import { View } from "react-native";
 import { Header, Text } from "@/src/shared/ui";
-import { router } from "expo-router";
+import { router , useFocusEffect } from "expo-router";
 import { Image } from "expo-image";
 import { Article } from "@/src/features/community/ui/article";
 import type { Article as ArticleType } from "@/src/features/community/types";
@@ -11,7 +11,6 @@ import { tryCatch } from "@/src/shared/libs";
 import apis from "@/src/features/community/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { ArticleSkeleton } from "@/src/features/loading/skeleton/article-skeleton";
-import { useFocusEffect } from "expo-router";
 import { useCallback, useMemo } from "react";
 import {
   useInfiniteMyFeedQuery,

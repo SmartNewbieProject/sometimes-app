@@ -11,12 +11,14 @@ import {
   containsSale,
   extractNumber,
   getPriceAndDiscount,
+  getPriceAndDiscountFromServer,
 } from "../utils/apple";
 
 export type GemItemProps = {
   onOpenPurchase: (productId: string) => void;
   hot?: boolean;
   gemProduct: Product;
+  serverGemProducts?: GemDetails[]; // 서버 데이터 추가
 };
 
 const AppleGemStoreProvider = ({ children }: { children: React.ReactNode }) => {
@@ -38,7 +40,13 @@ const AppleGemStoreItem = ({
   gemProduct,
   hot,
   onOpenPurchase,
+  serverGemProducts,
 }: GemItemProps) => {
+  // 서버 데이터가 있으면 서버 데이터 기반으로 할인율/원가 표시
+  const priceAndDiscount = serverGemProducts
+    ? getPriceAndDiscountFromServer(gemProduct.id, serverGemProducts)
+    : getPriceAndDiscount(gemProduct.id);
+
   return (
     <Pressable
       onPress={() => onOpenPurchase(gemProduct.id)}
@@ -76,15 +84,15 @@ const AppleGemStoreItem = ({
         </View>
 
         <View style={{ display: "flex", flexDirection: "column", rowGap: 6 }}>
-          <Show when={gemProduct.id !== "gem_12"}>
+          <Show when={priceAndDiscount && priceAndDiscount.discountRate > 0}>
             <View
               style={{ display: "flex", flexDirection: "row", columnGap: 6 }}
             >
               <Text className="text-[10px] text-text-disabled line-through">
-                {toKRW(getPriceAndDiscount(gemProduct.id)?.price ?? 0)}원
+                {toKRW(priceAndDiscount?.price ?? 0)}원
               </Text>
               <Text className="text-[10px]">
-                {getPriceAndDiscount(gemProduct.id)?.discountRate}% 할인
+                {priceAndDiscount?.discountRate}% 할인
               </Text>
             </View>
           </Show>

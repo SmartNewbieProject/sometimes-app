@@ -7,8 +7,7 @@ import { track } from "@amplitude/analytics-react-native";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Text } from "react-native";
-import {
+import { Text ,
   BackHandler,
   Keyboard,
   Platform,

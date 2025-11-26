@@ -1,4 +1,5 @@
 import BannerRightArrowIcon from "@assets/images/promotion/home-banner/right-arrow.svg";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 18,
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
   },
   topTitle: {
     opacity: 0.9
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 21.6,
     fontFamily: "Pretendard-ExtraBold",
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
   },
   bottomContainer: {
     flexDirection: "row",
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 10,
     gap: 2.5,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     marginRight: 19,
   },
   particleLeft: {
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
     },
 
   inviteText: {
-    color: "#212121",
+    color: semanticColors.text.secondary,
     fontWeight: 700,
     fontFamily: "Pretendard-Bold",
     lineHeight: 15,

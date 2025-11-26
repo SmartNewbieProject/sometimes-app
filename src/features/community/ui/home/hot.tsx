@@ -1,10 +1,9 @@
 import React from "react";
 import { semanticColors } from '../../../../shared/constants/colors';
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity , ActivityIndicator } from "react-native";
 import { Text } from "@/src/shared/ui";
 import { useHomeHots } from "@/src/features/community/hooks/use-home";
 import { router } from "expo-router";
-import { ActivityIndicator } from "react-native";
 
 type Props = {
   pageSize?: number; // 기본 5

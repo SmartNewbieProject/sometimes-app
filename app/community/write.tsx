@@ -9,6 +9,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { View } from "react-native";
 import { useMemo } from "react";
 import { useCategory } from "@/src/features/community/hooks";
+import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 
 const {
   ArticleWriteFormProvider,
@@ -19,6 +20,7 @@ const {
 
 export default function CommunityWriteScreen() {
   const { showModal } = useModal();
+  const { communityEngagementEvents } = useKpiAnalytics();
 
   const { category: initCategory } = useLocalSearchParams<{
     category: string;
@@ -61,6 +63,14 @@ export default function CommunityWriteScreen() {
     await tryCatch(
       async () => {
         const { originalImages, deleteImageIds, ...articleData } = data;
+
+        // 커뮤니티 글 생성 이벤트 추적
+        communityEngagementEvents.trackArticleCreated(
+          articleData.category || '일반',
+          !!originalImages && originalImages.length > 0,
+          Math.ceil(articleData.content.length / 500) // 500자당 1분으로 예상 독서 시간
+        );
+
         await articles.postArticles(articleData);
 
         showModal({

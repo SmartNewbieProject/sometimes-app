@@ -20,12 +20,12 @@ import {
   uploadImageAction,
 } from './actions';
 
+import type { Chat } from '../types/chat';
+
 export type ChatSocket = Socket<
   ChatServerToClientEvents,
   ChatClientToServerEvents
 > | null;
-
-import type { Chat } from '../types/chat';
 
 export type ChatEventActions = {
   sendMessage: (payload: { to: string; content: string; chatRoomId: string; senderId: string }) => { optimisticMessage: Chat; promise: Promise<any> };

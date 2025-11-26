@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     marginRight: 60,
   },
   speechBubble: {
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.secondary,
     borderRadius: 16,
     padding: 18,
     minHeight: 120,

@@ -151,10 +151,10 @@ export default function TattooSelectionScreen() {
               middleLabelLeft={-10}
               onChange={onChangeTattoo}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
-                })) || []
+                })) ?? []
               }
             />
           </Loading.Lottie>

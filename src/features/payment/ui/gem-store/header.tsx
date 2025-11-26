@@ -1,11 +1,10 @@
 import { View } from 'react-native';
 import { semanticColors } from '../../../../shared/constants/colors';
-import { Text } from '@shared/ui';
+import { Text , Header as SharedHeader } from '@shared/ui';
 import { ImageResource } from "@ui/image-resource";
 import {ImageResources} from "@shared/libs";
 import { router } from 'expo-router';
 
-import { Header as SharedHeader } from '@shared/ui';
 
 type HeaderProps = {
   gemCount: number;
