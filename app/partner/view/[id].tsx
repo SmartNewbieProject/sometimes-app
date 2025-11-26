@@ -21,6 +21,7 @@ import {
   ImageResource,
   Show,
   Text,
+  HeaderWithNotification,
 } from "@shared/ui";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -202,28 +203,27 @@ export default function PartnerDetailScreen() {
         visible={isZoomVisible}
       />
 
-      <View className="absolute top-0 left-0 right-0 z-50 flex-row justify-between items-center px-4 pt-[50px]">
-        <Pressable onPress={() => router.push("/home")} className="p-2">
-          <Feather name="chevron-left" size={28} color={semanticColors.text.inverse} />
-        </Pressable>
-        <Pressable
-          onPress={() =>
-            router.navigate({
-              pathname: "/partner/ban-report",
-              params: {
-                partnerId: partner.id,
-                partnerName: partner.name,
-                partnerAge: partner.age,
-                partnerUniv: partner.universityDetails.name,
-                partnerProfileImage: mainProfileImageUrl,
-              },
-            })
-          }
-          className="p-2"
-        >
-          <Feather name="alert-triangle" size={24} color={semanticColors.text.inverse} />
-        </Pressable>
-      </View>
+      <HeaderWithNotification
+        rightContent={
+          <Pressable
+            onPress={() =>
+              router.navigate({
+                pathname: "/partner/ban-report",
+                params: {
+                  partnerId: partner.id,
+                  partnerName: partner.name,
+                  partnerAge: partner.age,
+                  partnerUniv: partner.universityDetails.name,
+                  partnerProfileImage: mainProfileImageUrl,
+                },
+              })
+            }
+            className="pt-2 -mr-2"
+          >
+            <Feather name="alert-triangle" size={24} color={semanticColors.text.primary} />
+          </Pressable>
+        }
+      />
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {partner.profileImages.length > 0 && (
@@ -255,7 +255,7 @@ export default function PartnerDetailScreen() {
                 <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-light">{formatLastLogin(partner.updatedAt)}</Text>
               </View>
               <Text style={{ color: semanticColors.text.inverse }} className="text-3xl font-bold mb-1">
-                {partner.name || "알 수 없음"}, 만 {partner.age}
+                만 {partner.age}세
               </Text>
               <View className="flex-row items-center mb-1">
                 {partner.universityDetails?.code && (
