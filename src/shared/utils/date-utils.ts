@@ -6,11 +6,13 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import isoWeek from 'dayjs/plugin/isoWeek';
 import 'dayjs/locale/ko';
 
 // Day.js 플러그인 확장
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(isoWeek);
 dayjs.locale('ko', {
   weekStart: 1,
 });
@@ -279,6 +281,44 @@ export const getWeekNumber = (date?: Date): number => {
 export const getYear = (date?: Date): number => {
   const targetDate = date || create().toDate();
   return targetDate.getFullYear();
+};
+
+/**
+ * 주차 시작일과 종료일 계산
+ */
+export const getWeekRange = (weekNumber: number, year: number): { start: dayjs.Dayjs; end: dayjs.Dayjs } => {
+  const firstDayOfYear = dayjs().year(year).startOf('year');
+
+  // 해당 연도의 첫 주차 시작일 찾기
+  let firstWeekStart = firstDayOfYear;
+  const dayOfWeek = firstWeekStart.day();
+
+  // 한국 시간대 기준: 주가 월요일에 시작
+  if (dayOfWeek > 1) {
+    firstWeekStart = firstWeekStart.subtract(dayOfWeek - 1, 'day');
+  } else if (dayOfWeek === 0) {
+    firstWeekStart = firstWeekStart.subtract(6, 'day');
+  }
+
+  const targetWeekStart = firstWeekStart.add(weekNumber - 1, 'week');
+  const targetWeekEnd = targetWeekStart.add(6, 'day');
+
+  return {
+    start: targetWeekStart,
+    end: targetWeekEnd
+  };
+};
+
+/**
+ * 포맷된 주차 표시 (예: "10월 2주차 (10.13~10.19)")
+ */
+export const formatWeekDisplay = (weekNumber: number, year: number): string => {
+  const weekRange = getWeekRange(weekNumber, year);
+  const month = weekRange.start.month() + 1; // dayjs는 0-based month
+  const startDay = weekRange.start.date();
+  const endDay = weekRange.end.date();
+
+  return `${month}월 ${weekNumber}주차 (${month}.${startDay}~${month}.${endDay})`;
 };
 
 /**
