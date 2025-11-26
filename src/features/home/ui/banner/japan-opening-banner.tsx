@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 20,
     width: "99%",
-    minHeight: 90,
+    height: 88,
     borderWidth: 1,
     borderColor: semanticColors.border.default,
     backgroundColor: semanticColors.surface.background,
@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+    resizeMode: "cover",
   },
 });
 

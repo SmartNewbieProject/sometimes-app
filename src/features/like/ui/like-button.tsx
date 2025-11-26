@@ -8,6 +8,7 @@ import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
 import { useAuth } from "../../auth";
 import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMatchingEfficiency } from "../../matching/hooks/use-matching-efficiency";
 import useLike from "../hooks/use-like";
 
 type LikeButtonProps = {
@@ -24,6 +25,13 @@ export const LikeButton = ({
   const { featureCosts } = useFeatureCost();
   const { onLike } = useLike();
   const { matchingEvents, paymentEvents } = useKpiAnalytics();
+  const {
+    statistics,
+    trackMatchingAttempt,
+    trackMatchingSuccess,
+    trackMatchingFailure,
+    getPerformanceMetrics
+  } = useMatchingEfficiency();
   const showPartnerLikeAnnouncement = () => {
     showModal({
       showLogo: true,
@@ -59,9 +67,20 @@ export const LikeButton = ({
       primaryButton: {
         text: "네, 해볼래요",
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        onClick: () => {
-          // KPI 이벤트: 매칭 요청 (좋아요는 매칭의 일종)
+        onClick: async () => {
           const gemCost = profileDetails?.gender === "MALE" ? featureCosts?.LIKE_MESSAGE : 0;
+          const currentTime = new Date().getHours();
+          const isPeakTime = currentTime >= 20 && currentTime <= 23;
+
+          // 매칭 효율성 분석: 시도 트래킹
+          trackMatchingAttempt(connectionId!, {
+            gemBalance: 0, // TODO: 실제 잔액 가져오기
+            timeOfDay: currentTime,
+            isPeakTime,
+            userTier: profileDetails?.tier
+          });
+
+          // 기존 KPI 이벤트: 매칭 요청
           matchingEvents.trackMatchingRequested(connectionId!, gemCost);
 
           // 구슬 사용 이벤트 (남성의 경우)
@@ -69,7 +88,31 @@ export const LikeButton = ({
             paymentEvents.trackGemUsed('matching', gemCost);
           }
 
-          onLike(connectionId!);
+          // 성공/실패 트래킹은 useLike 훅에서 처리됨
+          const startTime = Date.now();
+
+          try {
+            await onLike(connectionId!);
+
+            // 성공 시간 측정 및 트래킹
+            const responseTime = Date.now() - startTime;
+            trackMatchingSuccess(connectionId!, {
+              matchType: 'mutual_like',
+              responseTime
+            });
+          } catch (error: any) {
+            // 실패 원인 분석 (useLike에서 이미 처리됨)
+            const failureReason = {
+              type: error.type || 'UNKNOWN_ERROR',
+              category: 'SYSTEM',
+              userAction: 'RETRY_LATER',
+              recoverable: true,
+              severity: 'MEDIUM',
+              serverMessage: error.message || '알 수 없는 오류'
+            };
+
+            trackMatchingFailure(connectionId!, failureReason);
+          }
         },
       },
       secondaryButton: {
