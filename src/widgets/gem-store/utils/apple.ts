@@ -1,4 +1,5 @@
 import type { Product, ProductPurchase } from 'expo-iap';
+import type { GemDetails } from '@/src/features/payment/api';
 
 /**
  * App Store Connect에 등록된 상품들의 고유 ID Enum.
@@ -54,9 +55,62 @@ export const containsSale = (text: string): boolean => {
 	return text.includes('세일');
 };
 
+// Apple Product ID를 서버 GemDetails와 매핑하기 위한 함수
+export const mapAppleProductToServerGem = (
+	appleProductId: string,
+	serverGemProducts: GemDetails[],
+): GemDetails | null => {
+	const appleToServerMapping: Record<string, string> = {
+		// 정상 상품 (totalGems 기반 매핑)
+		'gem_12': '라이트 팩',      // 12개
+		'gem_27': '스타터 팩',      // 27개
+		'gem_39': '베이직 팩',      // 39개
+		'gem_54': '스탠다드 팩',    // 54개
+		'gem_67': '플러스 팩',      // 67개
+
+		// 호환성을 위한 이전 매핑들
+		'gem_15': '스타터 팩',      // 호환성 유지
+		'gem_30': '베이직 팩',      // 호환성 유지
+		'gem_60': '스탠다드 팩',    // 호환성 유지
+		'gem_130': '플러스 팩',     // 호환성 유지
+
+		// 세일 상품 (totalGems 기반 매핑)
+		'gem_sale_7': '라이트 팩',     // 7개 -> 라이트 팩(12개) 기준 할인
+		'gem_sale_16': '스타터 팩',    // 16개 -> 스타터 팩(27개) 기준 할인
+		'gem_sale_27': '베이직 팩',     // 27개 -> 베이직 팩(39개) 기준 할인
+	};
+
+	const serverProductName = appleToServerMapping[appleProductId];
+	if (!serverProductName) return null;
+
+	return serverGemProducts.find(gem => gem.productName === serverProductName) || null;
+};
+
+// 서버 데이터를 기반으로 가격과 할인율 반환
+export const getPriceAndDiscountFromServer = (
+	appleProductId: string,
+	serverGemProducts: GemDetails[],
+): { price: number; discountRate: number } | null => {
+	const serverGem = mapAppleProductToServerGem(appleProductId, serverGemProducts);
+	if (!serverGem) return null;
+
+	return {
+		price: serverGem.price,
+		discountRate: serverGem.discountRate,
+	};
+};
+
+// 하드코딩된 함수는 레거시 호환성을 위해 유지하지만, 서버 데이터 우선 사용
 export const getPriceAndDiscount = (
 	text: string,
+	serverGemProducts?: GemDetails[],
 ): { price: number; discountRate: number } | null => {
+	// 서버 데이터가 있으면 서버 데이터 우선 사용
+	if (serverGemProducts) {
+		return getPriceAndDiscountFromServer(text, serverGemProducts);
+	}
+
+	// 레거시 하드코딩 데이터 (fallback)
 	const mapping: Record<string, { price: number; discountRate: number }> = {
 		gem_15: { price: 11000, discountRate: 21 },
 		gem_30: { price: 22000, discountRate: 37 },
