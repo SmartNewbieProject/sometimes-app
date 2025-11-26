@@ -13,6 +13,7 @@ import Slider from "@/src/widgets/slide";
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import Loading from "@features/loading";
 import Match from "@features/match";
+import { PreferenceKeys } from "@/src/features/interest/queries";
 import { useCarousel } from "@shared/hooks/use-carousel";
 import {
   ImageResources,
@@ -77,13 +78,13 @@ export default function PartnerDetailScreen() {
   })();
 
   const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
-    ["성격", "연애 스타일", "관심사"],
+    [PreferenceKeys.PERSONALITY, PreferenceKeys.DATING_STYLE, PreferenceKeys.INTEREST],
     partner?.characteristics ?? []
   );
 
-  const personal = characteristicsOptions.성격;
-  const loveStyles = characteristicsOptions["연애 스타일"];
-  const interests = characteristicsOptions.관심사;
+  const personal = characteristicsOptions[PreferenceKeys.PERSONALITY];
+  const loveStyles = characteristicsOptions[PreferenceKeys.DATING_STYLE];
+  const interests = characteristicsOptions[PreferenceKeys.INTEREST];
 
   if (loading || !partner) {
     return <Loading.Page title="파트너 정보를 불러오고 있어요" />;
@@ -223,7 +224,7 @@ export default function PartnerDetailScreen() {
             <Section.Profile title="선호 나이대">
               <Text size="md">
                 {parser.getSingleOption(
-                  "선호 나이대",
+                  PreferenceKeys.AGE,
                   partner.characteristics
                 ) ?? "상관없음"}
               </Text>
@@ -234,7 +235,7 @@ export default function PartnerDetailScreen() {
             <Section.Profile title="음주">
               <Text size="md">
                 {parser.getSingleOption(
-                  "음주 선호도",
+                  PreferenceKeys.DRINKING,
                   partner.characteristics
                 ) ?? ""}
               </Text>
@@ -242,7 +243,7 @@ export default function PartnerDetailScreen() {
             <Section.Profile title="흡연">
               <Text size="md">
                 {parser.getSingleOption(
-                  "흡연 선호도",
+                  PreferenceKeys.SMOKING,
                   partner.characteristics
                 ) ?? ""}
               </Text>
@@ -250,7 +251,7 @@ export default function PartnerDetailScreen() {
             <Section.Profile title="문신">
               <Text size="md">
                 {parser.getSingleOption(
-                  "문신 선호도",
+                  PreferenceKeys.TATTOO,
                   partner.characteristics
                 ) ?? ""}
               </Text>
@@ -259,7 +260,7 @@ export default function PartnerDetailScreen() {
               <Section.Profile title="군복무">
                 <Text size="md">
                   {parser.getSingleOption(
-                    "군필 여부",
+                    PreferenceKeys.MILITARY_STATUS,
                     partner.characteristics
                   ) ?? ""}
                 </Text>

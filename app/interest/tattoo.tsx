@@ -173,7 +173,7 @@ export default function TattooSelectionScreen() {
                   .map((option) => ({
                     label: option.displayName,
                     value: option.id,
-                  })) || []
+                  })) ?? []
               }
             />
           </Loading.Lottie>

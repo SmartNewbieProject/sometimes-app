@@ -36,15 +36,12 @@ export default function PersonalitySelectionScreen() {
   const onChangeOption = (values: string[]) => {
     if (values.length > 3) return;
 
-    if (values.length === 0) {
-      updateForm("personality", undefined);
-    } else {
-      updateForm("personality", values);
-    }
+    // 항상 배열로 유지하여 최소 1개 선택 필요하도록 함
+    updateForm("personality", values);
   };
 
   const nextMessage = (() => {
-    if (!personality) return "최대 3개 선택 가능";
+    if (!personality || personality.length === 0) return "최소 1개 선택해주세요";
     return "다음으로";
   })();
 
@@ -98,11 +95,11 @@ export default function PersonalitySelectionScreen() {
             <ChipSelector
               value={personality}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
                   imageUrl: option?.imageUrl,
-                })) || []
+                })) ?? []
               }
               multiple
               onChange={onChangeOption}
@@ -113,7 +110,7 @@ export default function PersonalitySelectionScreen() {
       </View>
 
       <Layout.TwoButtons
-        disabledNext={!personality}
+        disabledNext={!personality || personality.length === 0}
         content={{ next: nextMessage }}
         onClickNext={onNext}
         onClickPrevious={() => router.navigate("/interest/bad-mbti")}

@@ -1,4 +1,4 @@
-import { Header, Text, PalePurpleGradient } from "@/src/shared/ui";
+import { Header, Text, PalePurpleGradient , Button, ImageSelector } from "@/src/shared/ui";
 import { semanticColors } from '../../src/shared/constants/colors';
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -15,17 +15,15 @@ import {
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { DefaultLayout } from "@/src/features/layout/ui";
-import { Button, ImageSelector } from "@/src/shared/ui";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import {
   GuideView,
   guideHeight,
   useOverlay,
-} from "@/src/shared/hooks/use-overlay";
+ OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import Loading from "@/src/features/loading";
 import { useVerification } from "@/src/features/university-verification/hooks/use-id-verification";
-import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 
 const { height } = Dimensions.get("window");
 

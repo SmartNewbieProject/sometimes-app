@@ -88,11 +88,11 @@ export default function InterestSelectionScreen() {
             <ChipSelector
               value={interestIds}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
                   imageUrl: option?.imageUrl,
-                })) || []
+                })) ?? []
               }
               onChange={onChangeOption}
               multiple

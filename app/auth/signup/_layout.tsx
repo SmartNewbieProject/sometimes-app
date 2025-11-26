@@ -2,6 +2,7 @@ import { DefaultLayout } from "@/src/features/layout/ui";
 import { useWindowWidth } from "@/src/features/signup/hooks";
 import colors from "@/src/shared/constants/colors";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
+import { useSignupSession } from "@/src/shared/hooks/use-signup-session";
 import Loading from "@features/loading";
 import Signup from "@features/signup";
 import { useFocusEffect } from "@react-navigation/native";
@@ -11,8 +12,8 @@ import { PalePurpleGradient } from "@shared/ui/gradient";
 import { ProgressBar } from "@shared/ui/progress-bar";
 import { Stack, router, usePathname } from "expo-router";
 import { Suspense, useCallback } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { BackHandler } from "react-native";
+import { StyleSheet, Text, View , BackHandler } from "react-native";
+
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -20,6 +21,7 @@ const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
   const { progress, updateStep, step, showHeader } = useSignupProgress();
+  const { startSignupSession, recordMilestone } = useSignupSession();
 
   const pathname = usePathname();
   const renderProgress =
@@ -38,6 +40,18 @@ export default function SignupLayout() {
   };
 
   const title = titleMap[step];
+
+  // 회원가입 세션 시작 및 마일스톤 추적
+  React.useEffect(() => {
+    // 첫 화면에서 세션 시작
+    if (step === SignupSteps.UNIVERSITY) {
+      startSignupSession();
+      recordMilestone('signup_started', {
+        entry_point: 'university_selection'
+      });
+    }
+  }, [step, startSignupSession, recordMilestone]);
+
   return (
     <DefaultLayout className="flex-1 relative">
       <OverlayProvider>

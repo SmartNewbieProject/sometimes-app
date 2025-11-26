@@ -12,8 +12,7 @@ import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo } from "react";
-import { Linking } from "react-native";
-import { KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
+import { Linking , KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
