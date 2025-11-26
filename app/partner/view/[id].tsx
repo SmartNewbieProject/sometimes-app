@@ -25,7 +25,7 @@ import {
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Pressable,
   ScrollView,
@@ -33,6 +33,7 @@ import {
   View,
 } from "react-native";
 import { semanticColors } from "@/src/shared/constants/colors";
+import { usePreferenceOptionsQuery } from "@/src/features/my-info/queries";
 
 const { queries } = Match;
 const { useMatchPartnerQuery } = queries;
@@ -43,6 +44,8 @@ export default function PartnerDetailScreen() {
   const [isZoomVisible, setZoomVisible] = useState(false);
   const { isStatus, isLiked, isExpired } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const { data: preferencesArray = [] } = usePreferenceOptionsQuery();
 
   const onZoomClose = () => {
     setZoomVisible(false);
@@ -55,13 +58,23 @@ export default function PartnerDetailScreen() {
   }
 
   const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
-    ["성격 유형", "연애 스타일", "관심사"],
+    ["성격", "연애 스타일", "관심사"],
     partner.characteristics
   );
 
-  const personal = characteristicsOptions["성격 유형"];
+  const personal = characteristicsOptions["성격"];
   const loveStyles = characteristicsOptions["연애 스타일"];
   const interests = characteristicsOptions.관심사;
+
+  const interestOptions = preferencesArray.find((item) => item.typeName === "관심사")?.options || [];
+
+  const interestsWithIcons = interests.map((interest) => {
+    const option = interestOptions.find((opt) => opt.id === interest.value);
+    return {
+      ...interest,
+      imageUrl: option?.imageUrl || null,
+    };
+  });
 
   const mainProfileImageUrl = partner.profileImages.find(
     (img) => img.isMain
@@ -267,7 +280,7 @@ export default function PartnerDetailScreen() {
         )}
 
         <View className="px-5 py-6">
-          <Text style={{ color: semanticColors.text.muted }} className="text-sm mb-4">기본 정보</Text>
+          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mb-4">기본 정보</Text>
           <View style={{ backgroundColor: semanticColors.surface.surface }} className="rounded-2xl p-5 flex-row flex-wrap justify-between">
             {basicInfo.map((info, index) => (
               <View key={index} className="w-[48%] flex-row items-center mb-4">
@@ -288,7 +301,7 @@ export default function PartnerDetailScreen() {
             />
           </View>
 
-          <Text style={{ color: semanticColors.text.muted }} className="text-sm mt-8 mb-3">제 연애 스타일은</Text>
+          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 연애 스타일은</Text>
           <View className="flex-row flex-wrap gap-2">
             {loveStyles.map((style, index) => (
               <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
@@ -298,7 +311,7 @@ export default function PartnerDetailScreen() {
           </View>
 
           {/* Personality */}
-          <Text style={{ color: semanticColors.text.muted }} className="text-sm mt-8 mb-3">제 성격은</Text>
+          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 성격은</Text>
           <View className="flex-row flex-wrap gap-2 mb-8">
             {personal.map((item, index) => (
               <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
@@ -331,8 +344,15 @@ export default function PartnerDetailScreen() {
           {/* Interests */}
           <Text style={{ color: semanticColors.text.muted }} className="text-sm mb-3">제 관심사는</Text>
           <View className="flex-row flex-wrap gap-2 mb-8">
-            {interests.map((item, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2 flex-row items-center">
+            {interestsWithIcons.map((item, index) => (
+              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2 flex-row items-center gap-1">
+                {item.imageUrl && (
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={{ width: 16, height: 16 }}
+                    contentFit="contain"
+                  />
+                )}
                 <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
               </View>
             ))}
