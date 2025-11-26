@@ -16,6 +16,13 @@ function useUniversityDetails() {
 
   const [signupLoading, setSignupLoading] = useState(false);
 
+  // URL 파라미터로 전달된 universityId를 form에 저장
+  useEffect(() => {
+    if (universityId && universityId !== form.universityId) {
+      updateForm({ universityId });
+    }
+  }, [universityId, form.universityId, updateForm]);
+
   const { data: departments = [], isLoading } = useDepartmentQuery(
     universityId ?? form.universityId
   );

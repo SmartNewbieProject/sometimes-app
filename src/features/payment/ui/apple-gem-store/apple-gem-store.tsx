@@ -17,7 +17,7 @@ import { useEventControl } from "@/src/features/event/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { usePathname, useRouter } from "expo-router";
 import paymentApis from "../../api";
-import { useCurrentGem } from "../../hooks";
+import { useCurrentGem , useGemProducts } from "../../hooks";
 import { useAppleInApp } from "../../hooks/use-apple-in-app";
 import { usePortoneStore } from "../../hooks/use-portone-store";
 import { AppleFirstSaleCard } from "../first-sale-card/apple";
@@ -30,6 +30,7 @@ function AppleGemStore() {
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
   const pathname = usePathname();
   const { data: gem } = useCurrentGem();
+  const { data: serverGemProducts, isLoading: isLoadingServer } = useGemProducts();
   const [purchasing, setPurchasing] = useState(false);
   const appleInAppMutation = useAppleInApp();
   const { showErrorModal } = useModal();
@@ -72,9 +73,23 @@ function AppleGemStore() {
     const completePurchase = async () => {
       setPurchasing(true);
       try {
-        const serverResponse = await appleInAppMutation.mutateAsync(
-          purchase?.jwsRepresentationIOS ?? ""
-        );
+        // transactionReceipt 값 유효성 검증
+        const transactionReceipt = purchase?.transactionReceipt || purchase?.jwsRepresentationIOS;
+
+        if (!transactionReceipt || transactionReceipt.trim() === "") {
+          console.error("❌ Invalid transactionReceipt:", {
+            transactionReceipt,
+            purchase,
+            currentPurchase
+          });
+          showErrorModal("결제 정보가 올바르지 않습니다. 다시 시도해주세요.", "error");
+          setPurchasing(false);
+          return;
+        }
+
+        console.log("✅ Sending transactionReceipt:", transactionReceipt.substring(0, 50) + "...");
+
+        const serverResponse = await appleInAppMutation.mutateAsync(transactionReceipt);
 
         if (serverResponse.success) {
           const result = await finishTransaction({
@@ -141,6 +156,7 @@ function AppleGemStore() {
                 <Show when={sale.length > 0}>
                   <AppleFirstSaleCard
                     gemProducts={sale}
+                    serverGemProducts={serverGemProducts}
                     onOpenPurchase={handlePurchase}
                   />
                 </Show>
@@ -152,18 +168,19 @@ function AppleGemStore() {
             </View>
 
             <View className="flex flex-col gap-y-4 justify-center mb-auto">
-              <Show when={!products || products?.length === 0}>
+              <Show when={isLoadingServer || !products || products?.length === 0}>
                 <View className="flex-1 justify-center items-center">
                   <Text>젬 상품을 불러오는 중...</Text>
                 </View>
               </Show>
 
-              <Show when={normal && normal?.length > 0}>
+              <Show when={!isLoadingServer && normal && normal?.length > 0}>
                 <AppleGemStoreWidget.Provider>
                   {normal.map((product, index) => (
                     <AppleGemStoreWidget.Item
                       key={product.id}
                       gemProduct={product}
+                      serverGemProducts={serverGemProducts}
                       onOpenPurchase={handlePurchase}
                       hot={index === 2}
                     />

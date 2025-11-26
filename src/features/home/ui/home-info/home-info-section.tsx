@@ -1,4 +1,4 @@
-import { track } from "@amplitude/analytics-react-native";
+import { useUserBehaviorEvents } from "@/src/shared/hooks";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -13,17 +13,15 @@ const { useRedirectPreferences } = hooks;
 
 function HomeInfoSection() {
   const { isPreferenceFill } = useRedirectPreferences();
+  const { trackInterestStarted, trackProfileStarted } = useUserBehaviorEvents();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const router = useRouter();
   const handleClickButton = (to: "my-info" | "interest") => {
     if (to === "my-info") {
-      track("Profile_Started", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+      trackProfileStarted();
       router.navigate("/my-info");
     } else {
-      track("Interest_Started", {
-        type: "home",
-        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-      });
+      trackInterestStarted("home");
       router.navigate("/interest");
     }
   };

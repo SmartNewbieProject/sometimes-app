@@ -29,7 +29,7 @@ import {
   Header,
   PalePurpleGradient,
   Show,
-} from "@/src/shared/ui";
+ Text } from "@/src/shared/ui";
 import { NotificationIcon } from "@/src/features/notification/ui/notification-icon";
 import { track } from "@amplitude/analytics-react-native";
 import { useAuth } from "@features/auth";
@@ -37,7 +37,6 @@ import Event from "@features/event";
 import { Feedback } from "@features/feedback";
 import Home from "@features/home";
 import IdleMatchTimer from "@features/idle-match-timer";
-import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImageResource } from "@ui/image-resource";
 import { Link, router, useFocusEffect } from "expo-router";

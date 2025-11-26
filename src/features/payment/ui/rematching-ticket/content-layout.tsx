@@ -1,8 +1,7 @@
-import { View } from "react-native";
+import { View , Platform, ScrollView, StyleSheet } from "react-native";
 
 import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { LinearGradient } from "expo-linear-gradient";
-import { Platform, ScrollView, StyleSheet } from "react-native";
 
 type Props = {
   children: React.ReactNode;

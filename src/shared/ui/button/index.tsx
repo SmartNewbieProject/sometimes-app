@@ -22,6 +22,7 @@ const buttonStyles = cva(
       size: {
         md: "text-md h-[50px]",
         sm: "text-sm h-[40px]",
+        lg: "text-lg h-[60px]",
         chip:
           Platform.OS === "web"
             ? "text-xs h-[28px] px-2"

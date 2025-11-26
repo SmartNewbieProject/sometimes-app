@@ -8,3 +8,5 @@ export { useAtt } from './use-att';
 export { useCashableModal, ModalStyles } from './use-cashable-modal';
 export { useTimer, getRemainingSeconds } from './use-timer';
 export { useScrollIndicator } from './use-scroll-indicator';
+export { useAmplitude, useSignupEvents, usePaymentEvents, useUserBehaviorEvents } from './use-amplitude';
+export { useKpiAnalytics } from './use-kpi-analytics';

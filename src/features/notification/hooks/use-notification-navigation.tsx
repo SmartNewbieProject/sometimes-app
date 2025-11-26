@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation , StackNavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/types/navigation';
-import { StackNavigationProp } from '@react-navigation/native';
 import { Notification } from '../types/notification';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;

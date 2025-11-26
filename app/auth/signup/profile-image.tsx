@@ -8,6 +8,7 @@ import {
   guideHeight,
   useOverlay,
 } from "@/src/shared/hooks/use-overlay";
+import { useSignupSession } from "@/src/shared/hooks/use-signup-session";
 
 import { Button, ImageSelector } from "@/src/shared/ui";
 import { Text } from "@/src/shared/ui/text";

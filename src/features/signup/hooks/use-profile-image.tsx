@@ -1,8 +1,7 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { semanticColors } from '../../../shared/constants/colors';
 import { guideHeight, useOverlay } from "@/src/shared/hooks/use-overlay";
-
-import { track } from "@amplitude/analytics-react-native";
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -49,10 +48,10 @@ const schema = z.object({
 function useProfileImage() {
   const router = useRouter();
   const { updateForm, form: userForm } = useSignupProgress();
+  const { signupEvents } = useKpiAnalytics();
   const [images, setImages] = useState<(string | null)[]>(
     userForm.profileImages ?? [null, null, null]
   );
-  const { trackSignupEvent } = useSignupAnalytics("profile_image");
   const { showOverlay, visible } = useOverlay();
 
   const getImaages = (index: number) => {
@@ -114,10 +113,9 @@ function useProfileImage() {
   const nextable = images.every((image) => image !== null);
 
   const uploadImage = (index: number, value: string) => {
-    trackSignupEvent("image_upload", `image_${index + 1}`);
-    track(`Signup_profile_image_${index + 1}`, {
-      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-    });
+    // KPI 이벤트: 프로필 이미지 업로드
+    signupEvents.trackProfileImageUploaded(index + 1);
+
     const newImages = [...images];
     newImages[index] = value;
     setImages(newImages);

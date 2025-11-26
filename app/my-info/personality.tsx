@@ -38,11 +38,7 @@ export default function PersonalitySelectionScreen() {
       return;
     }
 
-    if (values.length === 0) {
-      updateForm("personality", undefined);
-    } else {
-      updateForm("personality", values);
-    }
+    updateForm("personality", values);
   };
 
   const nextMessage = (() => {
@@ -98,11 +94,11 @@ export default function PersonalitySelectionScreen() {
             <ChipSelector
               value={personality}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
                   imageUrl: option?.imageUrl,
-                })) || []
+                })) ?? []
               }
               multiple={true}
               onChange={onChangeOption}

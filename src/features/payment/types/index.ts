@@ -122,7 +122,7 @@ export interface PaymentRequest {
   confirmUrl?: string;
   appScheme?: string;
   isEscrow?: boolean;
-  products?: Array<Record<string, unknown>>;
+  products?: Record<string, unknown>[];
   isCulturalExpense?: boolean;
   locale?: string;
   customData?: Record<string, unknown>;

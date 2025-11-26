@@ -14,6 +14,7 @@ const textStyles = cva("text-base", {
       secondary: "text-lightPurple",
     },
     size: {
+      xs: "text-xs",
       sm: "text-sm",
       md: "text-md",
       "10": "text-[10px]",
@@ -23,6 +24,9 @@ const textStyles = cva("text-base", {
       "12": "text-[12px]",
       chip: "text-[13px]",
       lg: "text-lg",
+      xl: "text-xl",
+      "2xl": "text-2xl",
+      "3xl": "text-3xl",
     },
     weight: {
       normal: "font-normal",
@@ -40,6 +44,11 @@ const textStyles = cva("text-base", {
       "pale-purple": "text-text-disabled",
       deepPurple: "text-strongPurple",
       gray: "text-gray",
+      accent: "text-brand-accent",
+      primary: "text-text-primary",
+      secondary: "text-text-secondary",
+      muted: "text-text-muted",
+      disabled: "text-text-disabled",
     },
   },
   defaultVariants: {
@@ -70,8 +79,8 @@ export const Text: React.FC<TextProps> = ({
   const mergedStyle = Array.isArray(style)
     ? style.filter(Boolean)
     : style
-    ? [style]
-    : undefined;
+      ? [style]
+      : undefined;
 
   return (
     <RNText

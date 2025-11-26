@@ -12,6 +12,7 @@ import BulbIcon from "@assets/icons/bulb.svg";
 import { SomemateInput } from "@/src/features/somemate/ui";
 import { useActiveSession, useMessages, useAnalyzeSession, useCompleteSession, useDeleteSession } from "@/src/features/somemate/queries/use-ai-chat";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import type { AiChatMessage } from "@/src/features/somemate/types";
 import { sendMessageStream } from "@/src/features/somemate/apis/ai-chat";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
@@ -28,6 +29,7 @@ export default function SomemateChatScreen() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ sessionId?: string }>();
   const { showModal } = useModal();
+  const { somemateEvents } = useKpiAnalytics();
   const queryClient = useQueryClient();
 
   const { data: activeSession } = useActiveSession();
@@ -79,6 +81,10 @@ export default function SomemateChatScreen() {
     setIsStreaming(true);
     streamingContentRef.current = "";
 
+    const startTime = Date.now();
+
+    somemateEvents.trackMessageSent(sessionId, 'text', message.length);
+
     try {
       await sendMessageStream(
         sessionId,
@@ -88,6 +94,9 @@ export default function SomemateChatScreen() {
           setStreamingTrigger(prev => prev + 1);
         }
       );
+
+      const responseTime = Date.now() - startTime;
+      somemateEvents.trackMessageReceived(sessionId, 'analysis', responseTime);
 
       setIsStreaming(false);
       streamingContentRef.current = "";
@@ -135,9 +144,19 @@ export default function SomemateChatScreen() {
         text: "분석하기",
         onClick: async () => {
           try {
+            const analysisStartTime = Date.now();
+
+            somemateEvents.trackAnalysisStarted(sessionId);
+
             await completeSessionMutation.mutateAsync(sessionId);
 
             await analyzeSessionMutation.mutateAsync({ sessionId });
+
+            const analysisDuration = Date.now() - analysisStartTime;
+            somemateEvents.trackAnalysisCompleted(sessionId, analysisDuration);
+
+            const turnCount = activeSession?.turnCount || 0;
+            somemateEvents.trackSessionCompleted(sessionId, turnCount);
 
             showModal({
               title: "분석 시작",

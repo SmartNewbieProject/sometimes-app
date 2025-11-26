@@ -26,6 +26,7 @@ export const semanticColors = {
     inverse: '#FFFFFF',
   },
   border: {
+    smooth: '#e4e2e2ff',
     default: '#AEAEAE',
     strong: '#333333',
   },
@@ -59,6 +60,7 @@ const colors = {
   ['gray-300']: '#D1D5DB',
   // biome-ignore lint/complexity/useLiteralKeys: <explanation>
   ['gray-600']: '#8B94A1',
+  momentBackground: '#FDFCFF',
 
   // semantic groups (nested)
   ...semanticColors,

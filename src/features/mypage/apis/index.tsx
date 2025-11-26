@@ -1,8 +1,6 @@
 import { axiosClient, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from "nanoid";
-import type { Article as MyArticle } from "@/src/features/community/types";
-import type { MyComment as MyComment } from "@/src/features/community/types";
-import type { MyLike as MyLike } from "@/src/features/community/types";
+import type { Article as MyArticle , MyComment as MyComment , MyLike as MyLike } from "@/src/features/community/types";
 type RematchingTicket = { total: number };
 type MyRematchingTicket = { id: number; name: string };
 

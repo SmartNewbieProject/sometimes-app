@@ -5,6 +5,7 @@ import { router, usePathname } from "expo-router";
 import React, { type ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import colors from "@/src/shared/constants/colors";
+import { useMomentEnabled } from "@/src/features/moment/queries/use-moment-enabled";
 
 import CommunitySelected from "@/assets/icons/nav/community-selected.svg";
 import CommunityUnselected from "@/assets/icons/nav/community-unselected.svg";
@@ -44,14 +45,14 @@ const NavIcons: Record<
     selected: <View style={{ width: 24, height: 24, justifyContent: 'center', alignItems: 'center' }}>
       <Image
         source={require("@/assets/images/moment/moment-on.png")}
-        style={{ width: 20, height: 20 }}
+        style={{ width: 24, height: 24 }}
         contentFit="contain"
       />
     </View>,
     unSelected: <View style={{ width: 24, height: 24, justifyContent: 'center', alignItems: 'center' }}>
       <Image
         source={require("@/assets/images/moment/moment-off.png")}
-        style={{ width: 20, height: 20 }}
+        style={{ width: 24, height: 24 }}
         contentFit="contain"
       />
     </View>,
@@ -84,13 +85,12 @@ const navigationItems: NavigationItem[] = [
     path: "/chat",
     icon: NavIcons.chat,
   },
-  // 모먼트 메뉴 임시 비활성화
-  // {
-  //   name: "moment",
-  //   label: "모먼트",
-  //   path: "/moment",
-  //   icon: NavIcons.moment,
-  // },
+  {
+    name: "moment",
+    label: "모먼트",
+    path: "/moment",
+    icon: NavIcons.moment,
+  },
   {
     name: "my",
     label: "MY",
@@ -101,6 +101,9 @@ const navigationItems: NavigationItem[] = [
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const { data: momentEnabled } = useMomentEnabled();
+
+  const canAccessMoment = momentEnabled?.enabled ?? false;
 
   const isActive = (path: string) => {
     return pathname.startsWith(path);
@@ -114,7 +117,9 @@ export function BottomNavigation() {
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>
-        {navigationItems.map((item) => (
+        {navigationItems
+          .filter(item => item.name !== 'moment' || canAccessMoment)
+          .map((item) => (
           <TouchableOpacity
             key={item.name}
             style={styles.navItem}

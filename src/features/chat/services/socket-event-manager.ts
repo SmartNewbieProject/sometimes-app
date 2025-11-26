@@ -15,11 +15,11 @@ class SocketConnectionManager {
 	private maxReconnectAttempts = 5;
 	private reconnectDelay = 1000;
 	private isReconnecting = false;
-	private pendingMessages: Array<{
+	private pendingMessages: {
 		event: string;
 		payload: any;
 		callback?: (response: any) => void;
-	}> = [];
+	}[] = [];
 
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	private uploadImagePromise(payload: any): Promise<Chat> {

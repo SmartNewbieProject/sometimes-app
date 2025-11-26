@@ -1,4 +1,4 @@
-import { track } from "@amplitude/analytics-react-native";
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import { useModal } from "@shared/hooks/use-modal";
 import { Text } from "@shared/ui";
 import { router } from "expo-router";
@@ -33,6 +33,7 @@ export function usePortone(): UsePortone {
   const { loaded, error } = usePortoneScript();
   const { showModal, showErrorModal, hideModal } = useModal();
   const { gemCount, eventType, clearEventType } = usePortoneStore();
+  const { paymentEvents } = useKpiAnalytics();
   
   const { participate: participateFirstSale7 } = useEventControl({ type: EventType.FIRST_SALE_7 });
   const { participate: participateFirstSale16 } = useEventControl({ type: EventType.FIRST_SALE_16 });
@@ -92,10 +93,16 @@ export function usePortone(): UsePortone {
           });
         }
 
-        track("GemStore_Payment_Success", {
-          result,
-          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-        });
+        // KPI 이벤트: 결제 완료
+paymentEvents.trackPaymentCompleted(
+  result.paymentId,
+  result.pgProvider || 'unknown',
+  result.amount || 0,
+  result.products || []
+);
+
+// 기존 이벤트 호환성
+trackPaymentSuccess(result);
 
         if (eventType) {
           await handleEventParticipation(eventType);

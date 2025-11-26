@@ -1,10 +1,9 @@
 import { cn } from '@/src/shared/libs/cn';
-import { semanticColors } from '../../constants/colors';
+import colors, { semanticColors } from '../../constants/colors';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
 import { Text } from '../text';
-import colors from '../../constants/colors';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const select = cva(

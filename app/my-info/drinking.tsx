@@ -145,7 +145,7 @@ export default function DrinkingSelectionScreen() {
                   .map((option) => ({
                     label: option.displayName,
                     value: option.id,
-                  })) || []
+                  })) ?? []
               }
             />
           </Loading.Lottie>
