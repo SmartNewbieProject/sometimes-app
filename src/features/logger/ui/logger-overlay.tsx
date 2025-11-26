@@ -9,11 +9,10 @@ import {
 } from "react-native";
 import { FlatList, GestureDetector } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useDragToClose } from "../hooks/use-drag-to-close";
 import { type Tab, useLoggerTabs } from "../hooks/use-logger-tabs";
-
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useLogs from "../hooks/use-logs";
 import type { Log } from "../types/log";
 import { LogItem } from "./log-item";
