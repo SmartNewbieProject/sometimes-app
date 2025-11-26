@@ -42,6 +42,7 @@ export interface UserProfile {
 	preferences: PreferenceTypeGroup[];
 	deletedAt: string | null;
 	matchLikeId?: string | null;
+	updatedAt?: string | null;
 }
 
 export interface SimpleProfile {
