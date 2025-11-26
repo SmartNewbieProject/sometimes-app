@@ -49,6 +49,31 @@ export enum ImageResources {
 
   SALE_MIHO = `${S3_BASE_URL}/miho-with-gem.png`,
   FIRST_SALE = `${S3_BASE_URL}/first_sale.png`,
+
+  // MBTI 이미지
+  ENFJ = `${S3_BASE_URL}/ENFJ.png`,
+  ENFP = `${S3_BASE_URL}/ENFP.png`,
+  ENTJ = `${S3_BASE_URL}/ENTJ.png`,
+  ENTP = `${S3_BASE_URL}/ENTP.png`,
+  ESFJ = `${S3_BASE_URL}/ESFJ.png`,
+  ESFP = `${S3_BASE_URL}/ESFP.png`,
+  ESTJ = `${S3_BASE_URL}/ESTJ.png`,
+  ESTP = `${S3_BASE_URL}/ESTP.png`,
+  INFJ = `${S3_BASE_URL}/INFJ.png`,
+  INFP = `${S3_BASE_URL}/INFP.png`,
+  INTJ = `${S3_BASE_URL}/INTJ.png`,
+  INTP = `${S3_BASE_URL}/INTP.png`,
+  ISFJ = `${S3_BASE_URL}/ISFJ.png`,
+  ISFP = `${S3_BASE_URL}/ISFP.png`,
+  ISTJ = `${S3_BASE_URL}/ISTJ.png`,
+  ISTP = `${S3_BASE_URL}/ISTP.png`,
+
+  // 매칭 관련 이미지
+  AGE = `${S3_BASE_URL}/age.png`,
+  ARMY = `${S3_BASE_URL}/army.png`,
+  BEER = `${S3_BASE_URL}/beer.png`,
+  SMOKE = `${S3_BASE_URL}/smoke.png`,
+  TATOO = `${S3_BASE_URL}/tatoo.png`,
 }
 
 const imageUtils = {
