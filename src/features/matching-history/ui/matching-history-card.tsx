@@ -1,6 +1,6 @@
 import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { UniversityName, getUnivLogo } from "@/src/shared/libs";
+import { UniversityName, getUnivLogo, formatLastLogin } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import LockProfileIcon from "@assets/icons/lock-profile.svg";
@@ -142,6 +142,26 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                   </IconWrapper>
                 );
               })()}
+            </View>
+            <View
+              style={{
+                backgroundColor: "#7A4AE2",
+                paddingHorizontal: 6,
+                paddingVertical: 3,
+                borderRadius: 3,
+                alignSelf: "flex-start",
+                marginTop: 3,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 3,
+              }}
+            >
+              <Text textColor="white" weight="medium" size="10">
+                마지막 접속
+              </Text>
+              <Text textColor="white" weight="light" size="10">
+                {formatLastLogin(item.lastLogin)}
+              </Text>
             </View>
           </View>
 

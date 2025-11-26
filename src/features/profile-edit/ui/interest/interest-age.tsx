@@ -43,11 +43,11 @@ function InterestAge() {
           <ChipSelector
             value={age}
             options={
-              preferences?.options.map((option) => ({
+              preferences?.options?.map((option) => ({
                 label: option.displayName,
                 value: option.id,
                 imageUrl: option?.imageUrl,
-              })) || []
+              })) ?? []
             }
             multiple={false}
             onChange={onChangeOption}
