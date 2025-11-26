@@ -245,7 +245,7 @@ export interface PaymentEventProperties extends BaseEventProperties {
   payment_method?: PaymentMethod;
   total_amount?: number;
   transaction_id?: string;
-  items_purchased?: Array<{ type: string; quantity: number; price: number }>;
+  items_purchased?: { type: string; quantity: number; price: number }[];
   usage_type?: string;
   gem_count?: number;
   error_reason?: string;
