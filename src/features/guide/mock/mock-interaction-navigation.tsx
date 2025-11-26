@@ -1,7 +1,6 @@
 import { ImageResources, cn } from "@/src/shared/libs";
 import { semanticColors } from '../../../shared/constants/colors';
-import { Button, ImageResource } from "@/src/shared/ui";
-import { Text } from "@shared/ui";
+import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
 import type { MatchDetails } from "../../idle-match-timer/types";
 

@@ -30,8 +30,7 @@ import {
 import { CustomInfiniteScrollView } from "../../../shared/infinite-scroll/custom-infinite-scroll-view";
 import apis from "../apis";
 import { useCategory } from "../hooks";
-import { useInfiniteArticlesQuery } from "../queries/use-infinite-articles";
-import { createArticlesQueryKey } from "../queries/use-infinite-articles";
+import { useInfiniteArticlesQuery , createArticlesQueryKey } from "../queries/use-infinite-articles";
 import type { Article as ArticleType } from "../types";
 import { Article } from "./article";
 
@@ -245,7 +244,7 @@ export const InfiniteArticleList = forwardRef<
     });
 
     const onViewableItemsChangedRef = useRef(
-      ({ viewableItems }: { viewableItems: Array<ViewToken> }) => {
+      ({ viewableItems }: { viewableItems: ViewToken[] }) => {
         if (!viewableItems || viewableItems.length === 0) return;
 
         const firstIdx = viewableItems.reduce((min, v) => {
