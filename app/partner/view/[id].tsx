@@ -227,7 +227,7 @@ export default function PartnerDetailScreen() {
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {partner.profileImages.length > 0 && (
-          <View style={{ width: "100%", aspectRatio: 1 }}>
+          <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
             <Pressable
               onPress={() => {
                 setSelectedIndex(0);
@@ -323,7 +323,7 @@ export default function PartnerDetailScreen() {
 
         {/* Image 2 */}
         {partner.profileImages.length > 1 && (
-          <View style={{ width: "100%", aspectRatio: 1, marginBottom: 32 }}>
+          <View style={{ width: "100%", aspectRatio: 1, marginBottom: 32, borderRadius: 32, overflow: "hidden" }}>
             <Pressable
               onPress={() => {
                 setSelectedIndex(1);
@@ -363,7 +363,7 @@ export default function PartnerDetailScreen() {
         {partner.profileImages.length > 2 && (
           <View className="pb-10">
             {partner.profileImages.slice(2).map((item, index) => (
-              <View key={item.id} style={{ width: "100%", aspectRatio: 1, marginBottom: 16 }}>
+              <View key={item.id} style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden", marginBottom: 16 }}>
                 <Pressable
                   onPress={() => {
                     setSelectedIndex(index + 2);
