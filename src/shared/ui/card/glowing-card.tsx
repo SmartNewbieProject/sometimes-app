@@ -1,6 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { semanticColors } from '../../constants/colors';
-import colors from "../../constants/colors";
+import colors, { semanticColors } from '../../constants/colors';
 
 interface GlowingCardProps {
   children: React.ReactNode;

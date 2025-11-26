@@ -9,6 +9,7 @@ import { GemItemProps } from "@/src/widgets/gem-store";
 import { AppleGemStoreWidget } from "@/src/widgets/gem-store/apple";
 import { track } from "@amplitude/analytics-react-native";
 import type { Product } from "expo-iap";
+import type { GemDetails } from "@/src/features/payment/api";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
@@ -26,11 +27,13 @@ import type { GemMetadata } from "../../types";
 type AppleFirstSaleCardProps = {
   onOpenPurchase: (productId: string) => void;
   gemProducts: Product[];
+  serverGemProducts?: GemDetails[]; // 서버 데이터 추가
 };
 
 export const AppleFirstSaleCard = ({
   onOpenPurchase,
   gemProducts,
+  serverGemProducts,
 }: AppleFirstSaleCardProps) => {
   console.log("gemProducts", gemProducts);
   const {
@@ -120,6 +123,7 @@ export const AppleFirstSaleCard = ({
         <Show when={!event7Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[0]}
+            serverGemProducts={serverGemProducts}
             onOpenPurchase={() => {
               track("GemStore_FirstSale_7", {
                 who: my,
@@ -134,6 +138,7 @@ export const AppleFirstSaleCard = ({
         <Show when={!event16Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[1]}
+            serverGemProducts={serverGemProducts}
             onOpenPurchase={() => {
               track("GemStore_FirstSale_16", {
                 who: my,
@@ -148,6 +153,7 @@ export const AppleFirstSaleCard = ({
         <Show when={!event27Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[2]}
+            serverGemProducts={serverGemProducts}
             onOpenPurchase={() => {
               track("GemStore_FirstSale_27", {
                 who: my,
