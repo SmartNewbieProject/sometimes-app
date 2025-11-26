@@ -80,8 +80,6 @@ export const AMPLITUDE_KPI_EVENTS = {
   PAYMENT_STORE_VIEWED: 'Payment_Store_Viewed',
   PAYMENT_ITEM_SELECTED: 'Payment_Item_Selected',
   PAYMENT_STARTED: 'Payment_Started',
-  PAYMENT_COMPLETED: 'Payment_Completed',
-  PAYMENT_FAILED: 'Payment_Failed',
   PAYMENT_GEM_USED: 'Payment_Gem_Used',
   PAYMENT_TICKET_USED: 'Payment_Ticket_Used',
 
@@ -302,6 +300,47 @@ export interface SomemateEventProperties extends BaseEventProperties {
 
 // 이벤트 타입별 속성 매핑
 export interface KpiEventTypePropertiesMap {
+  // 사용자 온보딩 퍼널
+  University_Verification_Started: SignupEventProperties;
+  University_Verification_Completed: SignupEventProperties;
+  Profile_Completion_Updated: SignupEventProperties;
+  Profile_Photo_Uploaded: SignupEventProperties;
+  Onboarding_Started: BaseEventProperties;
+  Onboarding_Completed: SignupEventProperties;
+  Onboarding_Step_Completed: SignupEventProperties;
+
+  // 매칭 효율성
+  Match_Request_Sent: MatchingEventProperties;
+  Match_Accepted: MatchingEventProperties;
+  Match_Rejected: MatchingEventProperties;
+  First_Message_Sent_After_Match: ChatEventProperties;
+  Match_Conversation_Rate: MatchingEventProperties;
+  Match_Card_Viewed: MatchingEventProperties;
+  Match_Time_To_Response: MatchingEventProperties;
+
+  // 커뮤니티 참여도
+  Article_Created: CommunityEventProperties;
+  Article_Liked: CommunityEventProperties;
+  Article_Commented: CommunityEventProperties;
+  Article_Shared: CommunityEventProperties;
+  Article_Viewed: CommunityEventProperties;
+  Community_Daily_Active_Users: BaseEventProperties;
+  Article_Bookmarked: CommunityEventProperties;
+  Article_Reported: CommunityEventProperties;
+
+  // 결제 전환율
+  Payment_Initiated: PaymentEventProperties;
+  Payment_Completed: PaymentEventProperties;
+  Payment_Failed: PaymentEventProperties;
+  Payment_Cancelled: PaymentEventProperties;
+  Rematch_Purchased: PaymentEventProperties;
+  Subscription_Started: PaymentEventProperties;
+  Subscription_Renewed: PaymentEventProperties;
+  Subscription_Cancelled: PaymentEventProperties;
+  Revenue_Per_User: PaymentEventProperties;
+  Payment_Method_Added: PaymentEventProperties;
+  Payment_Method_Removed: PaymentEventProperties;
+
   // 인증 관련
   Auth_Login_Started: AuthEventProperties;
   Auth_Login_Completed: AuthEventProperties;

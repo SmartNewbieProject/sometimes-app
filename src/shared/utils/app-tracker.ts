@@ -46,7 +46,7 @@ const getCurrentAppVersion = (): string => {
  */
 export const shouldTrackAppOpen = async (): Promise<boolean> => {
   try {
-    const today = getKoreanTodayDate();
+    const today = getKoreanToday();
     const lastTrackedDate = await AsyncStorage.getItem(STORAGE_KEYS.LAST_TRACKED_DATE);
     const currentAppVersion = await AsyncStorage.getItem(STORAGE_KEYS.APP_VERSION);
 
