@@ -16,6 +16,14 @@ export enum PreferenceKeys {
   TATTOO = "문신 선호도",
 }
 
+// Fix Interest Personality Page Rendering Issue
+//
+// ## Problem
+// - [x] Identify why `/interest/personality` page shows age options instead of personality options
+// - [x] Locate the interest page routing and data fetching logic
+// - [/] Test the page in Chrome browser to reproduce the issue
+// - [x] Fix the filtering/selection logic for personality options
+// - [ ] Verify the fix works correctly
 export const usePreferenceOptionsQuery = () =>
   useQuery<Preferences[]>({
     queryKey: ["preference-options"],

@@ -38,6 +38,9 @@ export type ModalOptions = {
   };
   reverse?: boolean;
   custom?: React.ElementType;
+  hideTitleBar?: boolean;
+  hidePrimaryButton?: boolean;
+  hideSecondaryButton?: boolean;
 };
 
 export type ErrorModalOptions = {
@@ -165,17 +168,21 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           </View>
         )}
         {!!options?.banner && options?.banner}
-        {!!options?.customTitle && options.customTitle}
-        {!options?.customTitle && options?.title && (
-          <View className="mb-4">
-            {typeof options.title === "string" ? (
-              <Text size="18" weight="semibold" textColor="black">
-                {options.title}
-              </Text>
-            ) : (
-              options.title
+        {!options?.hideTitleBar && (
+          <>
+            {!!options?.customTitle && options.customTitle}
+            {!options?.customTitle && options?.title && (
+              <View className="mb-4">
+                {typeof options.title === "string" ? (
+                  <Text size="18" weight="semibold" textColor="black">
+                    {options.title}
+                  </Text>
+                ) : (
+                  options.title
+                )}
+              </View>
             )}
-          </View>
+          </>
         )}
         <View className="mb-4">
           {typeof options?.children === "string" ? (
@@ -186,33 +193,35 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             options?.children
           )}
         </View>
-        <View
-          style={{
-            flexDirection: options?.reverse ? "row-reverse" : "row",
-          }}
-          className="flex flex-row gap-x-2"
-        >
-          {options?.secondaryButton && (
-            <Button
-              variant="secondary"
-              onPress={() =>
-                handleButtonClick(options.secondaryButton?.onClick)
-              }
-              className="flex-1"
-            >
-              {options.secondaryButton.text}
-            </Button>
-          )}
-          {options?.primaryButton && (
-            <Button
-              variant="primary"
-              onPress={() => handleButtonClick(options.primaryButton?.onClick)}
-              className="flex-1"
-            >
-              {options.primaryButton.text}
-            </Button>
-          )}
-        </View>
+        {!options?.hidePrimaryButton && !options?.hideSecondaryButton && (
+          <View
+            style={{
+              flexDirection: options?.reverse ? "row-reverse" : "row",
+            }}
+            className="flex flex-row gap-x-2"
+          >
+            {options?.secondaryButton && !options?.hideSecondaryButton && (
+              <Button
+                variant="secondary"
+                onPress={() =>
+                  handleButtonClick(options.secondaryButton?.onClick)
+                }
+                className="flex-1"
+              >
+                {options.secondaryButton.text}
+              </Button>
+            )}
+            {options?.primaryButton && !options?.hidePrimaryButton && (
+              <Button
+                variant="primary"
+                onPress={() => handleButtonClick(options.primaryButton?.onClick)}
+                className="flex-1"
+              >
+                {options.primaryButton.text}
+              </Button>
+            )}
+          </View>
+        )}
       </View>
     );
   };

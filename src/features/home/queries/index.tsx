@@ -35,5 +35,20 @@ export const useNotificationQuery = () =>
     staleTime: 0,
   });
 
+export const useHomeBannersQuery = () =>
+  useQuery({
+    queryKey: ["home-banners"],
+    queryFn: apis.getHomeBanners,
+    initialData: [
+      {
+        id: "introduction-sometimes",
+        imageUrl: require("@/assets/images/moment/introduction-sometimes.png"),
+        title: "Sometimes 소개",
+        link: undefined,
+        externalLink: undefined,
+      },
+    ],
+  });
+
 export { useExistsUniversityQuery } from "./use-exists-university";
 export { useCheckBusanQuery } from "./use-check-busan";

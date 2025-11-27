@@ -31,34 +31,34 @@ export const savePreferences = async (props: Properties) => {
     preferences: [
       {
         typeName: PreferenceKeys.DRINKING,
-        optionIds: [props.drinking],
+        optionIds: [props.drinking].filter(Boolean),
       },
 
       {
         typeName: PreferenceKeys.SMOKING,
-        optionIds: [props.smoking],
+        optionIds: [props.smoking].filter(Boolean),
       },
       {
         typeName: PreferenceKeys.TATTOO,
-        optionIds: [props.tattoo],
+        optionIds: [props.tattoo].filter(Boolean),
       },
       {
         typeName: PreferenceKeys.MBTI,
-        optionIds: [props.mbti],
+        optionIds: [props.mbti].filter(Boolean),
       },
       {
         typeName: PreferenceKeys.INTEREST,
-        optionIds: props.interestIds,
+        optionIds: props.interestIds || [],
       },
 
       {
         typeName: PreferenceKeys.PERSONALITY,
-        optionIds: props.personality,
+        optionIds: props.personality || [],
       },
 
       {
         typeName: PreferenceKeys.DATING_STYLE,
-        optionIds: props.datingStyleIds,
+        optionIds: props.datingStyleIds || [],
       },
     ],
   };
@@ -66,7 +66,7 @@ export const savePreferences = async (props: Properties) => {
   if (props.militaryStatus) {
     body.preferences.push({
       typeName: PreferenceKeys.MILITARY_STATUS,
-      optionIds: [props.militaryStatus],
+      optionIds: [props.militaryStatus].filter(Boolean),
     });
   }
 

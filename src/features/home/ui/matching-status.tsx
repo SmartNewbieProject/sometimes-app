@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../shared/constants/colors';
 import React from "react";
 import {
   type ImageStyle,
@@ -28,7 +29,7 @@ function MatchingStatus() {
                 width: 2,
                 height: 4,
                 borderRadius: 2,
-                backgroundColor: "#DFC7FF", // 연보라
+                backgroundColor: semanticColors.surface.background, // 연보라
                 marginVertical: 1,
               }}
             />
@@ -67,12 +68,12 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingVertical: 18,
     borderRadius: 20,
-    backgroundColor: "#F6F2FF",
+    backgroundColor: semanticColors.surface.background,
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
-    color: "#1F1F1F",
+    color: semanticColors.text.primary,
     textAlign: "center",
     fontSize: 18,
     fontFamily: "Pretendard-SemiBold",
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cardStatistics: {
-    color: "#313131",
+    color: semanticColors.text.primary,
     textAlign: "center",
     fontSize: 26,
     fontFamily: "Pretendard-SemiBold",
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   cardTitle: {
-    color: "#363636",
+    color: semanticColors.text.primary,
     textAlign: "center",
     fontSize: 14,
     fontFamily: "Pretendard-Light",

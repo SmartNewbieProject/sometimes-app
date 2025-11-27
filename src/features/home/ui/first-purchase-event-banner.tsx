@@ -1,4 +1,5 @@
 import BannerRightArrowIcon from "@assets/icons/banner-right-arrow.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect } from "react";
@@ -68,8 +69,8 @@ const styles = StyleSheet.create({
     width: "99%",
     minHeight: 90,
     borderWidth: 1,
-    borderColor: "#FFF",
-    backgroundColor: "#F2ECFF",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.background,
     overflow: "hidden",
     shadowColor: "#F2ECFF",
     shadowOffset: {
@@ -99,12 +100,12 @@ const styles = StyleSheet.create({
 
     fontFamily: "Pretendard-SemiBold",
     lineHeight: 21.6,
-    color: "#4A4A4A",
+    color: semanticColors.text.muted,
   },
   titleStrong: {
     fontWeight: 800,
     fontFamily: "Pretendard-ExtraBold",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
   },
   description: {
     fontSize: 13,
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 53,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     marginRight: 12,
   },
 });

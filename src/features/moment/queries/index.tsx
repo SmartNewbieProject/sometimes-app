@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useInfiniteQuery, useQueryClient, QueryClient } from "@tanstack/react-query";
 import apis from "../apis";
 import type { MomentSlide, MomentReportResponse } from "../types";
 import type {

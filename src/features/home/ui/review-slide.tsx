@@ -48,7 +48,7 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
               {review.content}
             </Text>
 
-            <Text size="sm" className="text-[#6F6F6F] mt-2 mb-3">
+            <Text size="sm" className="text-text-disabled mt-2 mb-3">
               {review.date}
             </Text>
           </View>

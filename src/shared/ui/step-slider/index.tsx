@@ -6,7 +6,7 @@ import {
   PanResponder,
   type PanResponderGestureState,
   Platform,
-} from "react-native";
+ View , type LayoutChangeEvent } from "react-native";
 
 import React, {
   useState,
@@ -15,7 +15,6 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { type LayoutChangeEvent, View } from "react-native";
 import { semanticColors } from "@/src/shared/constants/colors";
 
 interface Option {

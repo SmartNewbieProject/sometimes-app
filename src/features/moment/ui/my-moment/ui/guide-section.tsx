@@ -17,9 +17,9 @@ export const GuideSection = () => {
           </Text>
         </View>
 
-        <Text size="12" weight="normal" textColor="gray" style={styles.description}>
+        <Text size="13" weight="normal" textColor="gray" style={styles.description}>
           미호가 우체통에 오늘의 질문을 넣어놔요!{"\n"}
-          오늘의 질문에 답하면, <Text size="12" weight="bold" textColor="purple">매주 일요일</Text> 리포트가 생성되요
+          오늘의 질문에 답하면, <Text size="13" weight="bold" textColor="purple">매주 일요일</Text> 리포트가 생성되요
         </Text>
       </View>
       <Image
@@ -58,10 +58,10 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   character: {
-    width: 180,
-    height: 160,
+    width: 160,
+    height: 140,
     position: "absolute",
-    bottom: 0,
+    bottom: 60,
     right: -20,
     zIndex: 1, // Lower than text
   },

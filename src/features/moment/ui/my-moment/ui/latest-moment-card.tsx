@@ -15,7 +15,7 @@ export const LatestMomentCard: React.FC<LatestMomentCardProps> = ({
 }) => {
   const handlePress = () => {
     if (momentReport) {
-      router.push(`/moment/my-moment-record?id=${momentReport.id}`);
+      router.push(`/moment/weekly-report?week=${momentReport.weekNumber}&year=${momentReport.year}`);
     }
   };
 

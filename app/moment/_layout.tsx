@@ -1,3 +1,4 @@
+import { semanticColors } from "@/src/shared/constants/colors";
 import { Stack } from "expo-router";
 
 export default function MomentLayout() {
@@ -15,6 +16,23 @@ export default function MomentLayout() {
         options={{
           title: "나의 모먼트",
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="weekly-report"
+        options={{
+          title: "모먼트 보고서",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: 'white',
+            shadowOpacity: 0,
+            elevation: 0,
+          },
+          headerTintColor: semanticColors.text.primary,
+          headerTitleStyle: {
+            fontWeight: '600',
+            fontSize: 16,
+          },
         }}
       />
     </Stack>

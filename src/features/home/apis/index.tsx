@@ -45,6 +45,16 @@ export const updateUniversity = async (body: UniversityUpdateRequest) => {
 export const checkBusan = (): Promise<boolean> =>
     axiosClient.get('/temporal/is-busan');
 
+export interface HomeBanner {
+  id: string;
+  imageUrl: string | number;
+  link?: string;
+  externalLink?: string;
+}
+
+export const getHomeBanners = (): Promise<HomeBanner[]> =>
+    axiosClient.get("/home/banners");
+
 type HomeApiService = {
   getTotalMatchCount: () => Promise<TotalMatchCountResponse>;
   checkPreferenceFill: () => Promise<boolean>;
@@ -54,6 +64,7 @@ type HomeApiService = {
   checkExistsUniversity: () => Promise<boolean>;
   updateUniversity: (body: UniversityUpdateRequest) => Promise<void>;
   checkBusan: () => Promise<boolean>;
+  getHomeBanners: () => Promise<HomeBanner[]>;
 };
 
 const apis: HomeApiService = {
@@ -65,6 +76,7 @@ const apis: HomeApiService = {
   checkExistsUniversity,
   updateUniversity,
   checkBusan,
+  getHomeBanners,
 };
 
 export default apis;

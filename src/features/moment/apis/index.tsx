@@ -189,12 +189,20 @@ export interface PaginationParams {
   limit?: number;
 }
 
-// Progress Types
 export interface UserProgressStatus {
-  hasActiveSession: boolean;
-  currentStreak?: number;
-  totalAnswers?: number;
-  lastActivityDate?: string;
+  currentWeek: {
+    week: number;
+    year: number;
+  };
+  canProceedToday: boolean;
+  answeredThisWeek: number;
+  blockedReason: string;
+  sequenceValidation: {
+    canProceed: boolean;
+    reason: string;
+    message: string;
+    suggestedAction: string;
+  };
 }
 
 export interface WeeklyProgress {
@@ -253,7 +261,7 @@ export interface AdminError {
 }
 
 // Updated Daily Question Response (matching new API spec)
-export interface UpdatedDailyQuestionResponse extends DailyQuestionData {}
+export interface UpdatedDailyQuestionResponse extends DailyQuestionData { }
 
 export interface NoQuestionResponse {
   questionId: null;
@@ -426,6 +434,7 @@ export type MomentApiService = {
   getUserProgressStatus: () => Promise<UserProgressStatus>;
   getWeeklyProgress: () => Promise<WeeklyProgress>;
   getMomentSlides: () => Promise<MomentSlide[]>;
+  getLatestMomentReport: () => Promise<MomentReportResponse>;
 };
 
 // API Service Object
@@ -445,6 +454,7 @@ const momentApis: MomentApiService = {
   getUserProgressStatus,
   getWeeklyProgress,
   getMomentSlides,
+  getLatestMomentReport,
 };
 
 export default momentApis;

@@ -1,5 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator, TouchableOpacity } from "react-native";
+import { Stack, router } from "expo-router";
 import { GuideSection } from "./ui/guide-section";
 import { QuestionCard } from "./ui/question-card/index";
 import { RecentMoment } from "./ui/recent-moment";
@@ -7,6 +8,7 @@ import { HistorySection } from "./ui/history-section";
 import colors from "@/src/shared/constants/colors";
 import { useDailyQuestionQuery, useProgressStatusQuery } from "../../queries";
 import type { UserProgressStatus } from "../../apis";
+import { ArrowLeft } from "lucide-react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -18,7 +20,7 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
   const { data: dailyQuestion, isLoading: questionLoading, error: questionError } = useDailyQuestionQuery();
   const { data: progressStatus } = useProgressStatusQuery();
 
-  // 응답 여부 확인 - 다양한 상태 고려
+  
   const getQuestionCardState = () => {
     if (!progressStatus) {
       return { responded: false, blocked: false, blockedReason: null, blockedMessage: null };
@@ -31,10 +33,6 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
         blockedReason: progressStatus.blockedReason || "unknown",
         blockedMessage: progressStatus.sequenceValidation?.suggestedAction || null
       };
-    }
-
-    if (progressStatus.hasActiveSession) {
-      return { responded: true, blocked: false, blockedReason: null, blockedMessage: null };
     }
 
     return { responded: false, blocked: false, blockedReason: null, blockedMessage: null };
@@ -77,6 +75,19 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen
+        options={{
+          headerTitle: "나의 모먼트",
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: colors.momentBackground },
+          headerShadowVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.push("/moment")} style={{ marginLeft: 16 }}>
+              <ArrowLeft size={24} color={colors.text.primary} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -93,11 +104,11 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
         />
         <GuideSection />
         <QuestionCard
-            responded={questionCardState.responded}
-            blocked={questionCardState.blocked}
-            blockedReason={questionCardState.blockedReason}
-            blockedMessage={questionCardState.blockedMessage}
-          />
+          responded={questionCardState.responded}
+          blocked={questionCardState.blocked}
+          blockedReason={questionCardState.blockedReason}
+          blockedMessage={questionCardState.blockedMessage}
+        />
         <RecentMoment />
         <HistorySection />
       </ScrollView>

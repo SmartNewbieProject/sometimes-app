@@ -6,4 +6,5 @@ export { GemStoreWidget } from './gem-store';
 export * from './slide';
 export * from './step-indicator';
 export * from './ticket';
+export * from './special-text';
 

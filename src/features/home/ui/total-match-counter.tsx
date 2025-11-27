@@ -1,4 +1,5 @@
 import { Text } from "@/src/shared/ui";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef, useState } from "react";
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     minHeight: 90,
     flex: 1,
     borderWidth: 1.5,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
 
     shadowColor: "#F2ECFF",
     shadowOffset: {

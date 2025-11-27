@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Dimensions, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, Dimensions, TouchableOpacity, Image, ActivityIndicator, Platform } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Polygon, Line, Text as SvgText } from 'react-native-svg';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 import { Text } from '@/src/shared/ui';
 import colors, { semanticColors } from '@/src/shared/constants/colors';
 import { useWeeklyReportQuery, useGenerateWeeklyReportMutation, useWeeklyProgressQuery, useSyncProfileMutation } from '../../queries';
-import { WeeklyReportRequest, StatItem, InsightItem } from '../../apis';
+import { WeeklyReportRequest } from '../../apis';
 import { getCurrentWeekInfo } from '../../utils/week-calculator';
 import { useModal } from '@/src/shared/hooks/use-modal';
 
-import { WeeklyReportHeader } from './weekly-report-header';
-import { WeeklyReportStats } from './weekly-report-stats';
-import { WeeklyReportInsights } from './weekly-report-insights';
-import { WeeklyReportKeywords } from './weekly-report-keywords';
 import { AnalysisCard } from '../widgets/analysis-card';
+import { SpecialText } from '@/src/widgets';
+import RadarChart from '../radar-chart';
 
 export const WeeklyReportPage = () => {
   const insets = useSafeAreaInsets();
@@ -65,7 +64,7 @@ export const WeeklyReportPage = () => {
       showModal({
         title: "알림",
         children: (
-          <Text size="14" weight="normal" textColor="dark">
+          <Text size="13" weight="normal" textColor="dark">
             프로필에 추가할 키워드가 없습니다.
           </Text>
         ),
@@ -85,7 +84,7 @@ export const WeeklyReportPage = () => {
         showModal({
           title: "성공",
           children: (
-            <Text size="14" weight="normal" textColor="dark">
+            <Text size="13" weight="normal" textColor="dark">
               {response.syncedKeywords.length > 0
                 ? `${response.syncedKeywords.join(", ")} 키워드를 프로필에 추가했습니다.`
                 : "키워드가 프로필에 동기화되었습니다."
@@ -102,7 +101,7 @@ export const WeeklyReportPage = () => {
         showModal({
           title: "오류",
           children: (
-            <Text size="14" weight="normal" textColor="dark">
+            <Text size="13" weight="normal" textColor="dark">
               키워드 추가에 실패했습니다. 다시 시도해주세요.
             </Text>
           ),
@@ -117,6 +116,29 @@ export const WeeklyReportPage = () => {
 
   const { width } = Dimensions.get("window");
 
+  // 로딩 상태 처리 - 먼저 체크
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.loadingContainer}>
+          <View style={styles.loadingContent}>
+            <ActivityIndicator size="large" color={colors.primaryPurple} />
+            <Text
+              size="16"
+              weight="medium"
+              textColor="gray"
+              style={styles.loadingText}
+            >
+              당신의 소중한 한주를
+              {"\n"}
+              불러오고 있어요!
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   // 보고서 생성 여부 확인
   const hasValidReport = reportData;
 
@@ -128,14 +150,14 @@ export const WeeklyReportPage = () => {
           <Text size="18" weight="bold" textColor="purple" style={styles.noReportTitle}>
             아직 모먼트 리포트가 없어요
           </Text>
-          <Text size="14" weight="normal" textColor="gray" style={styles.noReportDescription}>
+          <Text size="13" weight="normal" textColor="gray" style={styles.noReportDescription}>
             오늘의 질문에 답변하고 나만의 성장 리포트를 만들어보세요!
           </Text>
           <TouchableOpacity
             style={styles.goToQuestionButton}
             onPress={() => router.push("/moment/question-detail")}
           >
-            <Text size="16" weight="bold" textColor="white">
+            <Text size="md" weight="bold" textColor="white">
               질문 답변하러 가기
             </Text>
           </TouchableOpacity>
@@ -144,213 +166,32 @@ export const WeeklyReportPage = () => {
     );
   }
 
-  // 로딩 상태 처리
-  if (isLoading) {
-    return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primaryPurple} />
-        </View>
-      </View>
-    );
-  }
-
   // 레이더 차트 데이터 생성
-  const generateRadarData = () => {
+  const radarData = (() => {
     if (!reportData?.stats || reportData.stats.length === 0) {
       return [
-        { label: "감정 개방성", value: 50, prevValue: 45, angle: -90 },
-        { label: "관계 안정감", value: 50, prevValue: 45, angle: -18 },
-        { label: "갈등 성숙도", value: 50, prevValue: 45, angle: 54 },
-        { label: "가치 명확성", value: 50, prevValue: 45, angle: 126 },
-        { label: "열린 태도", value: 50, prevValue: 45, angle: 198 },
+        { label: "감정 개방성", value: 70, prevValue: 70, angle: -90, maxValue: 100 },
+        { label: "관계 안정감", value: 64, prevValue: 64, angle: -18, maxValue: 100 },
+        { label: "갈등 성숙도", value: 82, prevValue: 82, angle: 54, maxValue: 100 },
+        { label: "가치 명확성", value: 76, prevValue: 76, angle: 126, maxValue: 100 },
+        { label: "열린 태도", value: 86, prevValue: 86, angle: 198, maxValue: 100 },
       ];
     }
 
     return reportData.stats.map((stat, index) => ({
       label: stat.category,
-      value: stat.currentScore,
+      value: stat.currentScore, // 원래 점수 그대로 사용
       prevValue: stat.prevScore,
       angle: -90 + (index * 72), // 5개의 차원을 360도에 분배
+      maxValue: 100,
     }));
-  };
-
-  const radarData = generateRadarData();
-
-  const renderRadarChart = () => {
-    const size = Math.min(width - 60, 320); // 차트 크기 증가
-    const center = size / 2;
-    const maxRadius = size / 2 - 55; // 패딩 감소로 더 큰 차트
-    const levels = 5;
-
-    // Calculate polygon points
-    const getPoint = (value: number, angle: number) => {
-      const radius = (value / 100) * maxRadius;
-      const radian = (angle * Math.PI) / 180;
-      return {
-        x: center + radius * Math.cos(radian),
-        y: center + radius * Math.sin(radian),
-      };
-    };
-
-    const dataPoints = radarData.map(d => getPoint(d.value, d.angle));
-    const dataPolygonPoints = dataPoints.map(p => `${p.x},${p.y}`).join(" ");
-
-    const prevDataPoints = radarData.map(d => getPoint(d.prevValue, d.angle));
-    const prevPolygonPoints = prevDataPoints.map(p => `${p.x},${p.y}`).join(" ");
-
-    return (
-      <View style={styles.radarContainer}>
-        <Svg width={size} height={size}>
-          {/* Background levels */}
-          {[...Array(levels)].map((_, i) => {
-            const levelRadius = ((i + 1) / levels) * maxRadius;
-            const points = radarData.map(d => {
-              const radian = (d.angle * Math.PI) / 180;
-              return `${center + levelRadius * Math.cos(radian)},${center + levelRadius * Math.sin(radian)}`;
-            }).join(" ");
-
-            return (
-              <Polygon
-                key={i}
-                points={points}
-                fill="none"
-                stroke="#E0E0E0"
-                strokeWidth="1"
-                strokeDasharray={i === levels - 1 ? "0" : "4,4"}
-              />
-            );
-          })}
-
-          {/* Axis lines */}
-          {radarData.map((d, i) => {
-            const point = getPoint(100, d.angle);
-            return (
-              <Line
-                key={`axis-${i}`}
-                x1={center}
-                y1={center}
-                x2={point.x}
-                y2={point.y}
-                stroke="#E0E0E0"
-                strokeWidth="1"
-              />
-            );
-          })}
-
-          {/* Previous Week Data (Dashed) */}
-          <Polygon
-            points={prevPolygonPoints}
-            fill="none"
-            stroke="#A0A0A0"
-            strokeWidth="2"
-            strokeDasharray="4,4"
-          />
-
-          {/* Current Week Data */}
-          <Polygon
-            points={dataPolygonPoints}
-            fill={semanticColors.brand.primary}
-            fillOpacity="0.3"
-            stroke={semanticColors.brand.primary}
-            strokeWidth="2"
-          />
-        </Svg>
-
-        {/* Labels */}
-        <View style={styles.radarLabels}>
-          {radarData.map((d, i) => {
-            const labelRadius = maxRadius + 45; // 거리 증가
-            const radian = (d.angle * Math.PI) / 180;
-            const x = center + labelRadius * Math.cos(radian);
-            const y = center + labelRadius * Math.sin(radian);
-
-            let alignItems: 'flex-start' | 'center' | 'flex-end' = 'center';
-            let textAlign: 'left' | 'center' | 'right' = 'center';
-
-            // 더 세밀한 각도 범위별 정렬
-            if (d.angle >= -90 && d.angle < -54) {
-              // 상단 중앙
-              alignItems = 'center';
-              textAlign = 'center';
-            } else if (d.angle >= -54 && d.angle < -18) {
-              // 상단 우측
-              alignItems = 'flex-start';
-              textAlign = 'left';
-            } else if (d.angle >= -18 && d.angle < 18) {
-              // 우측 상단
-              alignItems = 'flex-start';
-              textAlign = 'left';
-            } else if (d.angle >= 18 && d.angle < 54) {
-              // 우측 하단
-              alignItems = 'flex-start';
-              textAlign = 'left';
-            } else if (d.angle >= 54 && d.angle < 90) {
-              // 하단 우측
-              alignItems = 'flex-start';
-              textAlign = 'left';
-            } else if (d.angle >= 90 && d.angle < 126) {
-              // 하단
-              alignItems = 'center';
-              textAlign = 'center';
-            } else if (d.angle >= 126 && d.angle < 162) {
-              // 하단 좌측
-              alignItems = 'flex-end';
-              textAlign = 'right';
-            } else if (d.angle >= 162 && d.angle < 198) {
-              // 좌측 하단
-              alignItems = 'flex-end';
-              textAlign = 'right';
-            } else if (d.angle >= 198 && d.angle < 234) {
-              // 좌측
-              alignItems = 'flex-end';
-              textAlign = 'right';
-            } else if (d.angle >= 234 && d.angle < 270) {
-              // 좌측 상단
-              alignItems = 'flex-end';
-              textAlign = 'right';
-            } else {
-              // 상단 좌측
-              alignItems = 'center';
-              textAlign = 'center';
-            }
-
-            return (
-              <View
-                key={i}
-                style={{
-                  position: "absolute",
-                  left: x - 50, // 너비 증가
-                  top: y - 12,  // 수직 정렬 개선
-                  width: 100,  // 너비 증가
-                  alignItems: alignItems,
-                }}
-              >
-                <Text
-                  size="11"        // 폰트 크기 증가
-                  weight="semibold" // 폰트 두께 증가
-                  textColor="black"
-                  style={{
-                    textAlign: textAlign,
-                    width: '100%',
-                    lineHeight: 14, // 줄 간격 추가
-                  }}
-                >
-                  {d.label}
-                </Text>
-              </View>
-            );
-          })}
-        </View>
-      </View>
-    );
-  };
+  })();
 
   const displayWeek = paramWeek || weekNumber;
   const displayYear = paramYear || year;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       {/* Main Background Gradient (bottom-up emphasis) */}
       <LinearGradient
         colors={['#FFFFFF', '#F5F1FF', '#DECEFF', '#B095E0']}
@@ -378,12 +219,14 @@ export const WeeklyReportPage = () => {
             resizeMode="contain"
           />
           <View style={styles.headerTextContainer}>
-            <Text size="20" weight="bold" textColor="purple" style={styles.personalityTitle}>
-              {reportData?.title || "성장을 응원하는 당신"}\n
-              모먼트 레포트
-            </Text>
-            <Text size="12" weight="normal" textColor="purple" style={styles.description}>
-              {reportData?.subTitle || "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."}
+            <SpecialText
+              size="lg"
+              weight="bold"
+              text={reportData?.title || "성장을 응원하는 당신"}
+              special
+            />
+            <Text weight="normal" textColor="purple" style={styles.description}>
+              {reportData?.subTitle}
             </Text>
           </View>
         </View>
@@ -392,7 +235,7 @@ export const WeeklyReportPage = () => {
         <View style={styles.weekButtonContainer}>
           <View style={styles.weekButton}>
             <Text size="12" weight="medium" textColor="white">
-              {displayYear}년 {displayWeek}주차
+              모먼트 보고서 ({displayWeek}주차)
             </Text>
           </View>
         </View>
@@ -404,10 +247,31 @@ export const WeeklyReportPage = () => {
             <View style={styles.sectionTitleContainer}>
               <Text size="md" weight="bold" textColor="black">🔍</Text>
               <Text size="md" weight="bold" textColor="black" style={styles.sectionTitleText}>
-                나의 모먼트 성향 5가지
+                나의 연애 성향 5가지
               </Text>
             </View>
-            {renderRadarChart()}
+            <RadarChart
+              data={radarData}
+              size={Math.min(screenWidth - 40, 280)}
+              maxValue={100}
+              config={{
+                mobile: {
+                  labelDistance: 25,    // 차트와 더 가깝게
+                  labelWidth: 70,       // 너비 줄임
+                  fontSize: 8,          // 폰트 크기 줄임
+                  lineHeight: 11,       // 줄 간격 줄임
+                  verticalOffset: 6,    // 수직 간격 줄임
+                },
+                pc: {
+                  labelDistance: 35,    // PC도 거리 줄임
+                  labelWidth: 90,       // 너비 줄임
+                  fontSize: 10,         // 폰트 크기 줄임
+                  lineHeight: 13,       // 줄 간격 줄임
+                  verticalOffset: 8,    // 수직 간격 줄임
+                },
+                breakpoint: 768,
+              }}
+            />
             <View style={styles.legend}>
               <View style={styles.legendItem}>
                 <View style={[styles.legendBox, { backgroundColor: semanticColors.brand.primary }]} />
@@ -422,6 +286,17 @@ export const WeeklyReportPage = () => {
 
           {/* Comparison Section */}
           <View style={styles.section}>
+
+            <View style={styles.hashtagsContainer}>
+              {reportData?.keywords?.length > 0 && (
+                reportData.keywords.slice(0, 5).map((keyword) => (
+                  <View key={keyword} style={styles.hashtag}>
+                    <Text size="12" weight="medium" textColor="purple">{keyword}</Text>
+                  </View>
+                ))
+              )}
+            </View>
+
             <View style={styles.sectionTitleContainer}>
               <Text size="md" weight="bold" textColor="black">📊</Text>
               <Text size="md" weight="bold" textColor="black" style={styles.sectionTitleText}>
@@ -485,27 +360,14 @@ export const WeeklyReportPage = () => {
             ))}
           </View>
 
-          {/* Hashtags Section */}
           <View style={styles.section}>
-            <View style={styles.sectionTitleContainer}>
+            {/* <View style={styles.sectionTitleContainer}>
               <Text size="md" weight="bold" textColor="black">🏷️</Text>
               <Text size="md" weight="bold" textColor="black" style={styles.sectionTitleText}>
                 레포트를 프로필에 넣어보세요!
               </Text>
-            </View>
-            <View style={styles.hashtagsContainer}>
-              {reportData?.keywords?.length > 0 ? (
-                reportData.keywords.slice(0, 5).map((keyword, index) => (
-                  <View key={index} style={styles.hashtag}>
-                    <Text size="12" weight="medium" textColor="purple">#{keyword}</Text>
-                  </View>
-                ))
-              ) : (
-                <View style={styles.hashtag}>
-                  <Text size="12" weight="medium" textColor="purple">#모먼트_분석</Text>
-                </View>
-              )}
-            </View>
+            </View> */}
+
           </View>
         </View>
 
@@ -546,6 +408,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: '#FFFFFF',
+  },
+  loadingContent: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loadingText: {
+    textAlign: "center",
+    marginTop: 20,
+    lineHeight: 24,
   },
   noReportContainer: {
     flex: 1,
@@ -606,6 +478,8 @@ const styles = StyleSheet.create({
   description: {
     opacity: 0.8,
     lineHeight: 18,
+    marginLeft: 8,
+    fontSize: 15,
   },
   weekButtonContainer: {
     alignItems: "center",
@@ -678,6 +552,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
+    marginBottom: 16,
   },
   hashtag: {
     backgroundColor: colors.moreLightPurple,
