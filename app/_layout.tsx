@@ -4,7 +4,6 @@ import { Slot, router, useLocalSearchParams, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
-import "react-native-reanimated";
 import "../global.css";
 import {
   type NotificationData,
@@ -25,6 +24,15 @@ import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
 import * as amplitude from "@amplitude/analytics-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+// 동적으로 react-native-reanimated import
+if (Platform.OS !== "web") {
+  try {
+    require("react-native-reanimated");
+  } catch (error) {
+    console.warn("react-native-reanimated not available:", error);
+  }
+}
 
 if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync()
