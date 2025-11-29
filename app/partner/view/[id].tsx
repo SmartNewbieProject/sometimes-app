@@ -8,17 +8,15 @@ import {
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import Loading from "@features/loading";
 import Match from "@features/match";
+import { MihoIntroModal } from "@/src/features/match/ui";
 import {
-  ImageResources,
   cn,
-  parser,
   formatLastLogin,
   getSmartUnivLogoUrl,
 } from "@shared/libs";
 import Feather from "@expo/vector-icons/Feather";
 import {
   Button,
-  ImageResource,
   Show,
   Text,
   HeaderWithNotification,
@@ -26,15 +24,15 @@ import {
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   Pressable,
   ScrollView,
   StyleSheet,
   View,
+  Text as RNText,
 } from "react-native";
 import { semanticColors } from "@/src/shared/constants/colors";
-import { usePreferenceOptionsQuery } from "@/src/features/my-info/queries";
 
 const { queries } = Match;
 const { useMatchPartnerQuery } = queries;
@@ -45,11 +43,14 @@ export default function PartnerDetailScreen() {
   const [isZoomVisible, setZoomVisible] = useState(false);
   const { isStatus, isLiked, isExpired } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const { data: preferencesArray = [] } = usePreferenceOptionsQuery();
+  const [showMihoIntro, setShowMihoIntro] = useState(true);
 
   const onZoomClose = () => {
     setZoomVisible(false);
+  };
+
+  const handleMihoIntroClose = () => {
+    setShowMihoIntro(false);
   };
 
   const userWithdrawal = !!partner?.deletedAt;
@@ -58,58 +59,9 @@ export default function PartnerDetailScreen() {
     return <Loading.Page title="파트너 정보를 불러오고 있어요" />;
   }
 
-  const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
-    ["성격", "연애 스타일", "관심사"],
-    partner.characteristics
-  );
-
-  const personal = characteristicsOptions["성격"];
-  const loveStyles = characteristicsOptions["연애 스타일"];
-  const interests = characteristicsOptions.관심사;
-
-  const interestOptions = preferencesArray.find((item) => item.typeName === "관심사")?.options || [];
-
-  const interestsWithIcons = interests.map((interest) => {
-    const option = interestOptions.find((opt) => opt.id === interest.value);
-    return {
-      ...interest,
-      imageUrl: option?.imageUrl || null,
-    };
-  });
-
   const mainProfileImageUrl = partner.profileImages.find(
     (img) => img.isMain
   )?.url;
-
-  const basicInfoItems = [
-    {
-      icon: ImageResources.BEER,
-      label: parser.getSingleOption("음주 선호도", partner.characteristics) ?? "정보 없음",
-    },
-    {
-      icon: ImageResources.SMOKE,
-      label: parser.getSingleOption("흡연 선호도", partner.characteristics) ?? "정보 없음",
-    },
-    {
-      icon: ImageResources.TATOO,
-      prefix: "문신 : ",
-      label: parser.getSingleOption("문신 선호도", partner.characteristics) ?? "정보 없음",
-    },
-    {
-      icon: ImageResources.AGE,
-      prefix: "선호 연령 : ",
-      label: parser.getSingleOption("선호 나이대", partner.preferences) ?? "상관없음",
-    },
-  ];
-
-  if (partner.gender === "MALE") {
-    basicInfoItems.push({
-      icon: ImageResources.ARMY,
-      label: parser.getSingleOption("군필 여부", partner.characteristics) ?? "정보 없음",
-    });
-  }
-
-  const basicInfo = basicInfoItems;
 
   const renderBottomButtons = () => {
     return (
@@ -196,6 +148,8 @@ export default function PartnerDetailScreen() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
+      <MihoIntroModal visible={showMihoIntro} onClose={handleMihoIntroClose} />
+
       <PhotoSlider
         images={partner?.profileImages.map((item) => item.url) ?? []}
         onClose={onZoomClose}
@@ -227,7 +181,7 @@ export default function PartnerDetailScreen() {
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {partner.profileImages.length > 0 && (
-          <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
+          <View style={{ width: "100%", aspectRatio: 1,  overflow: "hidden" }}>
             <Pressable
               onPress={() => {
                 setSelectedIndex(0);
@@ -279,51 +233,16 @@ export default function PartnerDetailScreen() {
           </View>
         )}
 
-        <View className="px-5 py-6">
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mb-4">기본 정보</Text>
-          <View style={{ backgroundColor: semanticColors.surface.surface }} className="rounded-2xl p-5 flex-row flex-wrap justify-between">
-            {basicInfo.map((info, index) => (
-              <View key={index} className="w-[48%] flex-row items-center mb-4">
-                <ImageResource resource={info.icon} width={24} height={24} />
-                <Text style={{ color: semanticColors.text.secondary }} className="ml-2 font-medium text-sm flex-1" numberOfLines={1}>
-                  {info.prefix && <Text style={{ color: semanticColors.text.secondary, fontSize: 14 }}>{info.prefix}</Text>}
-                  {info.label}
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          <View className="w-full aspect-[280/160] mt-8 mb-8">
-            <ImageResource
-              resource={ImageResources[partner.mbti as keyof typeof ImageResources]}
-              width="100%"
-              height="100%"
-            />
-          </View>
-
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 연애 스타일은</Text>
-          <View className="flex-row flex-wrap gap-2">
-            {loveStyles.map((style, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{style.label}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Personality */}
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 성격은</Text>
-          <View className="flex-row flex-wrap gap-2 mb-8">
-            {personal.map((item, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
-              </View>
-            ))}
-          </View>
+        <View style={styles.sectionContainer}>
+          <RNText style={styles.sectionTitle}>침묵조차 어색하지 않을, 잔잔한 파동의 만남</RNText>
+          <RNText style={styles.sectionContent}>
+            두 분 다 왁자지껄한 모임보다는, 소수의 사람과 깊은 이야기를 나누는 걸 편안해하시는 성향이세요. 상대방은 섬세하고 속 깊은 감성(INFJ)을, 재윤 님은 차분하면서도 통찰력 있는 모습(INTJ)을 가지고 계시죠.{'\n\n'}억지로 텐션을 높이려 애쓰지 않아도 돼요. 분위기 좋은 카페에 마주 앉아 각자의 이야기를 조곤조곤 나누다 보면, "이 사람과는 굳이 말하지 않아도 마음이 통한다"는 편안함을 느끼실 거예요. 서로의 고요함을 지루해하지 않고 오히려 아껴줄 수 있는, 결이 아주 비슷한 두 분입니다.
+          </RNText>
         </View>
 
         {/* Image 2 */}
         {partner.profileImages.length > 1 && (
-          <View style={{ width: "100%", aspectRatio: 1, marginBottom: 32, borderRadius: 32, overflow: "hidden" }}>
+          <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
             <Pressable
               onPress={() => {
                 setSelectedIndex(1);
@@ -340,47 +259,38 @@ export default function PartnerDetailScreen() {
           </View>
         )}
 
-        <View className="px-5 pb-6">
-          {/* Interests */}
-          <Text style={{ color: semanticColors.text.muted }} className="text-sm mb-3">제 관심사는</Text>
-          <View className="flex-row flex-wrap gap-2 mb-8">
-            {interestsWithIcons.map((item, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2 flex-row items-center gap-1">
-                {item.imageUrl && (
-                  <Image
-                    source={{ uri: item.imageUrl }}
-                    style={{ width: 16, height: 16 }}
-                    contentFit="contain"
-                  />
-                )}
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
-              </View>
-            ))}
-          </View>
+        <View style={styles.sectionContainer}>
+          <RNText style={styles.sectionTitle}>서로의 '싫음'을 건드리지 않는 평화로운 관계</RNText>
+          <RNText style={styles.sectionContent}>
+            연애하다 보면 사소한 습관 때문에 부딪히는 경우가 참 많잖아요? 그런데 두 분은 그런 불필요한 감정 소모가 전혀 없을 조합입니다.{'\n\n'}두 분 다 담배 연기를 싫어하시고, 술도 분위기를 즐길 정도로만 딱 깔끔하게 마시는 걸 선호하시죠. 자극적이거나 화려한 겉모습보다는, 단정하고 깔끔한 본연의 모습을 서로 지향하고 계세요. 서로의 라이프스타일이 워낙 닮아 있어서, 만나는 내내 거슬림 없이 물 흐르듯 편안한 데이트가 이어질 겁니다.
+          </RNText>
         </View>
 
-        {/* Image 3 and others */}
+        {/* Image 3 */}
         {partner.profileImages.length > 2 && (
-          <View className="pb-10">
-            {partner.profileImages.slice(2).map((item, index) => (
-              <View key={item.id} style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden", marginBottom: 16 }}>
-                <Pressable
-                  onPress={() => {
-                    setSelectedIndex(index + 2);
-                    setZoomVisible(true);
-                  }}
-                  className="w-full h-full"
-                >
-                  <Image
-                    source={{ uri: item.url }}
-                    style={{ width: "100%", height: "100%" }}
-                    contentFit="cover"
-                  />
-                </Pressable>
-              </View>
-            ))}
+          <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
+            <Pressable
+              onPress={() => {
+                setSelectedIndex(2);
+                setZoomVisible(true);
+              }}
+              className="w-full h-full"
+            >
+              <Image
+                source={{ uri: partner.profileImages[2].url }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
+            </Pressable>
           </View>
         )}
+
+        <View style={styles.sectionContainer}>
+          <RNText style={styles.sectionTitle}>듬직한 '복학생 오빠'와 사랑스러운 '새내기'의 케미</RNText>
+          <RNText style={styles.sectionContent}>
+            재윤 님은 군 복무를 마친 3학년, 상대방은 이제 막 대학 생활을 시작한 1학년이시네요. 재윤 님은 '연하'를 선호하시고, 상대방은 기댈 수 있는 '배려심 깊고 다정한 사람'을 찾으셨죠.{'\n\n'}상상이 되시나요? 요리와 사진, 패션에 관심 많은 센스 있는 재윤 님이 예쁜 카페를 찾아 상대방을 리드해주고, 윤주 님은 그런 재윤 님의 다정함 속에서 편안하게 의지하는 그림이요. 서로가 바라는 이상적인 연애의 모습(리드하는 다정함 & 따뜻한 호응)을 각자가 가지고 있어, 시작부터 설렘 가득한 캠퍼스 커플의 느낌이 물씬 납니다.
+          </RNText>
+        </View>
       </ScrollView>
 
       {/* Bottom Action Bar */}
@@ -389,4 +299,21 @@ export default function PartnerDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  sectionContainer: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: semanticColors.text.primary,
+    marginBottom: 12,
+    lineHeight: 26,
+  },
+  sectionContent: {
+    fontSize: 15,
+    color: semanticColors.text.secondary,
+    lineHeight: 24,
+  },
+});
