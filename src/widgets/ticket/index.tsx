@@ -67,8 +67,8 @@ const TicketComponent = ({ count, hot, discount, onOpenPayment }: TicketDetails)
         <View style={styles.sales}>
           {discount && (
             <>
-              <Text textColor="gray" className="text-[12px] line-through">{totalOriginPrice}원</Text>
-              <Text className="text-[12px]">{discount.toFixed(0)}% 할인</Text>
+              <Text textColor="gray" style={styles.originalPrice}>{totalOriginPrice}원</Text>
+              <Text style={styles.discountText}>{discount.toFixed(0)}% 할인</Text>
             </>
           )}
         </View>
@@ -145,5 +145,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+  },
+  originalPrice: {
+    fontSize: 12,
+    textDecorationLine: 'line-through',
+  },
+  discountText: {
+    fontSize: 12,
   }
 });

@@ -1,5 +1,5 @@
 import colors , { semanticColors } from "@/src/shared/constants/colors";
-import { Text } from "@/src/shared/ui";
+import { Text } from "@/src/shared/ui/text";
 import { useEffect, useState } from "react";
 import {
   ScrollView,

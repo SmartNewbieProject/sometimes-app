@@ -1,4 +1,3 @@
-import { cn } from "@/src/shared/libs/cn";
 import { Text } from "@/src/shared/ui";
 import React, {
   useState,

@@ -1,26 +1,12 @@
-import { Button } from "@/src/shared/ui";
-import { cn } from "@shared/libs/cn";
-import { type VariantProps, cva } from "class-variance-authority";
+import { Button } from "@/src/shared/ui/button";
 import {
   Image,
   Platform,
+  StyleSheet,
   type StyleProp,
   View,
   type ViewStyle,
 } from "react-native";
-
-const chipSelector = cva("flex flex-row flex-wrap gap-2", {
-  variants: {
-    align: {
-      start: "justify-start",
-      center: "justify-center",
-      end: "justify-end",
-    },
-  },
-  defaultVariants: {
-    align: "start",
-  },
-});
 
 interface Option<T> {
   label: string;
@@ -28,7 +14,7 @@ interface Option<T> {
   imageUrl?: string;
 }
 
-interface ChipSelectorProps<T> extends VariantProps<typeof chipSelector> {
+interface ChipSelectorProps<T> {
   options: Option<T>[];
   value?: T | T[];
   onChange: (value: T) => void;
@@ -36,6 +22,7 @@ interface ChipSelectorProps<T> extends VariantProps<typeof chipSelector> {
   className?: string;
   buttonClassName?: string;
   style?: StyleProp<ViewStyle>;
+  align?: 'start' | 'center' | 'end';
 }
 
 interface MultipleChipSelectorProps<T>
@@ -44,9 +31,44 @@ interface MultipleChipSelectorProps<T>
   multiple: true;
 }
 
+const createChipSelectorStyles = ({ align }: { align?: 'start' | 'center' | 'end' }) => {
+  const alignStyles = {
+    start: { justifyContent: 'flex-start' as const },
+    center: { justifyContent: 'center' as const },
+    end: { justifyContent: 'flex-end' as const },
+  };
+
+  return {
+    container: {
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      gap: 8,
+      ...(align && alignStyles[align]),
+    },
+    button: {
+      borderRadius: 12,
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      gap: 8,
+      justifyContent: 'center' as const,
+      paddingHorizontal: Platform.OS === "web" ? 12 : 16,
+      paddingVertical: Platform.OS === "web" ? 4 : 8,
+    },
+    image: {
+      width: 16,
+      height: 16,
+      marginRight: 4,
+      marginTop: 2,
+    },
+  };
+};
+
 export function ChipSelector<T>(
   props: ChipSelectorProps<T> | MultipleChipSelectorProps<T>
 ) {
+  const { align = 'start' } = props;
+  const styles = createChipSelectorStyles({ align });
+
   const isSelected = (optionValue: T) => {
     if (props.multiple) {
       return (props.value as T[])?.includes(optionValue);
@@ -67,27 +89,20 @@ export function ChipSelector<T>(
   };
 
   return (
-    <View
-      style={props.style ?? {}}
-      className={cn(chipSelector({ align: props.align }), props.className)}
-    >
+    <View style={[styles.container, props.style]}>
       {props.options.map((option) => (
         <Button
           key={String(option.value)}
           variant={isSelected(option.value) ? "primary" : "white"}
           textColor={isSelected(option.value) ? "white" : "purple"}
           onPress={() => handleSelect(option.value)}
-          className={cn(
-            Platform.OS === "web" ? "py-1 px-3" : "py-2 px-4",
-            "rounded-xl flex flex-row  items-center gap-x-2 justify-center",
-            props.buttonClassName
-          )}
+          style={[styles.button, props.buttonClassName ? {} : {}]}
           size="chip"
         >
           {option?.imageUrl && (
             <Image
               source={{ uri: option.imageUrl }}
-              style={{ width: 16, height: 16, paddingRight: 4, paddingTop: 2 }}
+              style={styles.image}
             />
           )}
           {option.label}

@@ -1,6 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
-import { cn } from '@/src/shared/libs/cn';
+import { View, StyleSheet } from 'react-native';
+import { primaryPurple, lightPurple } from '@/src/shared/constants/colors';
 
 interface StepIndicatorProps {
   length: number;
@@ -20,21 +20,31 @@ export function StepIndicator({
   const currentStep = Math.max(0, Math.min(step, length));
 
   return (
-    <View className={cn("flex flex-row items-center", className)}>
+    <View style={[styles.container, className]}>
       {Array.from({ length }).map((_, index) => (
         <View
           key={index}
-          className={cn(
-            "rounded-full",
-            index < currentStep ? "bg-primaryPurple" : "bg-lightPurple"
-          )}
-          style={{
-            width: dotSize,
-            height: dotSize,
-            marginRight: index < length - 1 ? dotGap : 0,
-          }}
+          style={[
+            styles.dot,
+            {
+              width: dotSize,
+              height: dotSize,
+              backgroundColor: index < currentStep ? primaryPurple : lightPurple,
+              marginRight: index < length - 1 ? dotGap : 0,
+            }
+          ]}
         />
       ))}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dot: {
+    borderRadius: 9999,
+  },
+});

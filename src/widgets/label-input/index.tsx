@@ -1,23 +1,10 @@
-import { View } from 'react-native';
-import { Input, Text, Label } from '@/src/shared/ui';
-import type { InputProps } from '@/src/shared/ui';
-import { cn } from '@shared/libs/cn';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { View, StyleSheet } from 'react-native';
+import { Input } from '@/src/shared/ui/input';
+import { Text } from '@/src/shared/ui/text';
+import { Label } from '@/src/shared/ui/label';
+import type { InputProps } from '@/src/shared/ui/input';
 
-const labelInput = cva('flex flex-col', {
-  variants: {
-    size: {
-      sm: 'gap-y-0',
-      md: 'gap-y-2',
-      lg: 'gap-y-3',
-    }
-  },
-  defaultVariants: {
-    size: 'md'
-  }
-});
-
-export interface LabelInputProps extends InputProps, VariantProps<typeof labelInput> {
+export interface LabelInputProps extends InputProps {
   label: string;
   required?: boolean;
   description?: string;
@@ -25,8 +12,33 @@ export interface LabelInputProps extends InputProps, VariantProps<typeof labelIn
   onBlur?: () => void;
   error?: string;
   wrapperClassName?: string;
+  size?: 'sm' | 'md' | 'lg';
   textColor?: "white" | "purple" | "light" | "dark" | "black" | "pale-purple";
 }
+
+const createLabelInputStyles = ({ size }: { size: 'sm' | 'md' | 'lg' }) => {
+  const sizeStyles = {
+    sm: { gap: 0 },
+    md: { gap: 8 },
+    lg: { gap: 12 },
+  };
+
+  return {
+    container: {
+      flexDirection: 'column' as const,
+      ...sizeStyles[size],
+    },
+    description: {
+      marginBottom: 4,
+    },
+    input: {
+      marginBottom: 4,
+    },
+    error: {
+      color: '#f87171',
+    },
+  };
+};
 
 export function LabelInput({
   label,
@@ -37,24 +49,26 @@ export function LabelInput({
   containerClassName,
   placeholder,
   onBlur,
-  size,
+  size = 'md',
   textColor,
   ...props
 }: LabelInputProps) {
+  const styles = createLabelInputStyles({ size });
+
   return (
-    <View className={cn(labelInput({ size }), wrapperClassName)}>
-      <Label 
+    <View style={styles.container}>
+      <Label
         label={label}
         required={required}
         size={size}
         textColor={textColor}
       />
-      
+
       {description && (
-        <Text 
-          size={size} 
-          textColor="black" 
-          className="mb-1"
+        <Text
+          size={size}
+          textColor="black"
+          style={styles.description}
         >
           {description}
         </Text>
@@ -62,15 +76,16 @@ export function LabelInput({
 
       <Input
         size={size}
-        containerClassName={cn("mb-1", containerClassName)}
+        containerClassName={containerClassName}
         placeholder={placeholder}
         status={error ? "error" : "default"}
         onBlur={onBlur}
+        style={styles.input}
         {...props}
       />
 
       {error && (
-        <Text size={size === 'lg' ? 'md' : 'sm'} className="text-rose-400">
+        <Text size={size === 'lg' ? 'md' : 'sm'} style={styles.error}>
           {error}
         </Text>
       )}
