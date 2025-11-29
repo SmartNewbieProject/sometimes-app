@@ -9,6 +9,7 @@ import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import Loading from "@features/loading";
 import Match from "@features/match";
 import MatchReasons from "@/src/features/match-reasons";
+import MatchingAnalysis from "@/src/features/match-reasons/ui/matching-analysis";
 import { MihoIntroModal } from "@/src/features/match/ui";
 import {
   cn,
@@ -25,7 +26,7 @@ import {
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -46,7 +47,17 @@ export default function PartnerDetailScreen() {
   const [isZoomVisible, setZoomVisible] = useState(false);
   const { isStatus, isLiked, isExpired } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [showMihoIntro, setShowMihoIntro] = useState(true);
+  const [showMihoIntro, setShowMihoIntro] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAnalyzing(false);
+      setShowMihoIntro(true);
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const onZoomClose = () => {
     setZoomVisible(false);
@@ -182,90 +193,98 @@ export default function PartnerDetailScreen() {
         }
       />
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {partner.profileImages.length > 0 && (
-          <View style={{ width: "100%", aspectRatio: 1,  overflow: "hidden" }}>
-            <Pressable
-              onPress={() => {
-                setSelectedIndex(0);
-                setZoomVisible(true);
-              }}
-              className="w-full h-full"
-              style={{ width: "100%", height: "100%" }}
-            >
-              <Image
-                source={{ uri: partner.profileImages[0].url }}
-                style={{ width: "100%", height: "100%" }}
-                contentFit="cover"
-              />
-              <LinearGradient
-                colors={["transparent", "rgba(0,0,0,0.8)"]}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0.5 }}
-                end={{ x: 0.5, y: 1 }}
-              />
-            </Pressable>
-
-            <View className="absolute bottom-8 left-5 right-5" pointerEvents="none">
-              <View style={{ backgroundColor: semanticColors.brand.primary }} className="self-start px-2 py-1 rounded-md mb-2 flex-row items-center gap-1">
-                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-bold">마지막 접속</Text>
-                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-light">{formatLastLogin(partner.updatedAt)}</Text>
-              </View>
-              <Text style={{ color: semanticColors.text.inverse }} className="text-3xl font-bold mb-1">
-                만 {partner.age}세
-              </Text>
-              <View className="flex-row items-center mb-1">
-                {partner.universityDetails?.code && (
-                  <Image
-                    source={{ uri: getSmartUnivLogoUrl(partner.universityDetails.code) }}
-                    style={{ width: 20, height: 20, marginRight: 6 }}
-                    contentFit="contain"
-                  />
-                )}
-                <Text style={{ color: semanticColors.text.inverse }} className="text-base opacity-90">
-                  {partner.universityDetails?.name}
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <Feather name="check-square" size={16} color={semanticColors.brand.accent} />
-                <Text style={{ color: semanticColors.brand.accent }} className="ml-1 text-sm">
-                  {partner.universityDetails?.authentication ? "대학교 인증 완료" : "대학교 인증 전"}
-                </Text>
-              </View>
-            </View>
-          </View>
-        )}
-
-        {matchReasonsData?.reasons.map((reason, index) => (
-          <View key={`reason-${index}-${reason.title}`}>
-            <View style={styles.sectionContainer}>
-              <RNText style={styles.sectionTitle}>{reason.title}</RNText>
-              <RNText style={styles.sectionContent}>{reason.description}</RNText>
-            </View>
-
-            {partner.profileImages.length > index + 1 && (
-              <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
+      {isAnalyzing ? (
+        <View className="flex-1 items-center justify-center">
+          <MatchingAnalysis imageUrl={mainProfileImageUrl} />
+        </View>
+      ) : (
+        <>
+          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            {partner.profileImages.length > 0 && (
+              <View style={{ width: "100%", aspectRatio: 1, overflow: "hidden" }}>
                 <Pressable
                   onPress={() => {
-                    setSelectedIndex(index + 1);
+                    setSelectedIndex(0);
                     setZoomVisible(true);
                   }}
                   className="w-full h-full"
+                  style={{ width: "100%", height: "100%" }}
                 >
                   <Image
-                    source={{ uri: partner.profileImages[index + 1].url }}
+                    source={{ uri: partner.profileImages[0].url }}
                     style={{ width: "100%", height: "100%" }}
                     contentFit="cover"
                   />
+                  <LinearGradient
+                    colors={["transparent", "rgba(0,0,0,0.8)"]}
+                    style={StyleSheet.absoluteFill}
+                    start={{ x: 0.5, y: 0.5 }}
+                    end={{ x: 0.5, y: 1 }}
+                  />
                 </Pressable>
+
+                <View className="absolute bottom-8 left-5 right-5" pointerEvents="none">
+                  <View style={{ backgroundColor: semanticColors.brand.primary }} className="self-start px-2 py-1 rounded-md mb-2 flex-row items-center gap-1">
+                    <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-bold">마지막 접속</Text>
+                    <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-light">{formatLastLogin(partner.updatedAt)}</Text>
+                  </View>
+                  <Text style={{ color: semanticColors.text.inverse }} className="text-3xl font-bold mb-1">
+                    {partner.age}세
+                  </Text>
+                  <View className="flex-row items-center mb-1">
+                    {partner.universityDetails?.code && (
+                      <Image
+                        source={{ uri: getSmartUnivLogoUrl(partner.universityDetails.code) }}
+                        style={{ width: 20, height: 20, marginRight: 6 }}
+                        contentFit="contain"
+                      />
+                    )}
+                    <Text style={{ color: semanticColors.text.inverse }} className="text-base opacity-90">
+                      {partner.universityDetails?.name}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center">
+                    <Feather name="check-square" size={16} color={semanticColors.brand.accent} />
+                    <Text style={{ color: semanticColors.brand.accent }} className="ml-1 text-sm">
+                      {partner.universityDetails?.authentication ? "대학교 인증 완료" : "대학교 인증 전"}
+                    </Text>
+                  </View>
+                </View>
               </View>
             )}
-          </View>
-        ))}
-      </ScrollView>
 
-      {/* Bottom Action Bar */}
-      {renderBottomButtons()}
+            {matchReasonsData?.reasons.map((reason, index) => (
+              <View key={`reason-${index}-${reason.title}`}>
+                <View style={styles.sectionContainer}>
+                  <RNText style={styles.sectionTitle}>{reason.title}</RNText>
+                  <RNText style={styles.sectionContent}>{reason.description}</RNText>
+                </View>
+
+                {partner.profileImages.length > index + 1 && (
+                  <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
+                    <Pressable
+                      onPress={() => {
+                        setSelectedIndex(index + 1);
+                        setZoomVisible(true);
+                      }}
+                      className="w-full h-full"
+                    >
+                      <Image
+                        source={{ uri: partner.profileImages[index + 1].url }}
+                        style={{ width: "100%", height: "100%" }}
+                        contentFit="cover"
+                      />
+                    </Pressable>
+                  </View>
+                )}
+              </View>
+            ))}
+          </ScrollView>
+
+          {/* Bottom Action Bar */}
+          {renderBottomButtons()}
+        </>
+      )}
     </View>
   );
 }

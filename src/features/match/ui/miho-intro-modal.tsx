@@ -105,7 +105,10 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
                 <RNText style={styles.speechTitle}>미호가 물어왔어요!</RNText>
                 <RNText style={styles.speechText}>쉿! 비밀인데요..🤫</RNText>
                 <RNText style={styles.speechText}>
-                  제가 봤을때 두 분.. 역대급 조합이에요!
+                  제가 봤을때 두 분.. 역대급
+                </RNText>
+                <RNText style={styles.speechText}>
+                  조합이에요!
                 </RNText>
                 <View style={styles.closeButtonContainer}>
                   <RNText style={styles.closeButtonText}>터치해서 닫기</RNText>
