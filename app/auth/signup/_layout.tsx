@@ -13,7 +13,7 @@ import { ProgressBar } from "@shared/ui/progress-bar";
 import { Stack, router, usePathname } from "expo-router";
 import { Suspense, useCallback } from "react";
 import { StyleSheet, Text, View , BackHandler } from "react-native";
-
+import * as React from 'react';
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
