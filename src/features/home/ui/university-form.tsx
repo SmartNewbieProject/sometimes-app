@@ -1,4 +1,3 @@
-import {cn} from '@/src/shared/libs/cn';
 import {platform} from '@/src/shared/libs/platform';
 import {Button, Label, Show, PalePurpleGradient, Text} from '@/src/shared/ui';
 import {Form, LabelInput, ChipSelector} from '@/src/widgets';
@@ -95,7 +94,6 @@ export default function UniversityForm({
                     setSelectedUniv(value);
                     setValue('universityName', value);
                   }}
-                  className="w-full"
               />
             </ScrollView>
           </View>
@@ -120,7 +118,6 @@ export default function UniversityForm({
                     options={studentNumberOptions.map((option) => ({label: option, value: option}))}
                     placeholder="학번 선택"
                     size="sm"
-                    className="flex-1"
                 />
                 <Label label="학번" size="sm"/>
               </View>
@@ -132,7 +129,6 @@ export default function UniversityForm({
                     options={gradeOptions}
                     placeholder="학년 선택"
                     size="sm"
-                    className="flex-1"
                 />
                 <Label label="학년" size="sm"/>
               </View>

@@ -3,13 +3,10 @@ import { DefaultLayout } from "@/src/features/layout/ui";
 import { semanticColors } from '../../../src/shared/constants/colors';
 import Signup from "@/src/features/signup";
 import { useStorage } from "@/src/shared/hooks/use-storage";
-import { track } from "@amplitude/analytics-react-native";
 import { Image } from "expo-image";
-import { router, useGlobalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Text ,
-  BackHandler,
-  Keyboard,
   Platform,
   Pressable,
   ScrollView,
@@ -18,7 +15,6 @@ import { Text ,
   View,
 } from "react-native";
 import {
-  SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
@@ -60,7 +56,7 @@ export default function UserInfoPage() {
       setName(appleUserName);
       updateForm({ name: appleUserName });
     }
-  }, [appleUserName]);
+  }, [appleUserName, updateForm]);
 
   // 이름이 useStorage 값으로 채워진 경우, 이름을 필수 입력 조건에서 제외.
   const isFormComplete =

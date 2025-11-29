@@ -13,7 +13,6 @@ import {
 } from "@/src/shared/ui";
 import { Form } from "@/src/widgets";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -32,7 +31,6 @@ type FormState = z.infer<typeof schema>;
 export default function ReapplyScreen() {
   const params = useLocalSearchParams();
   const phoneNumber = params.phoneNumber as string;
-  const rejectionReason = params.rejectionReason as string;
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const { showModal } = useModal();

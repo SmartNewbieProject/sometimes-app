@@ -200,7 +200,7 @@ export default function RootLayout() {
           } else {
             router.push("/home");
           }
-        } catch (error) {
+        } catch {
           router.push("/home");
         }
       });

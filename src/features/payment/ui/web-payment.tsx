@@ -18,15 +18,9 @@ export interface WebPaymentProps {
  * 웹 환경에서 I'mport.js를 사용한 결제 컴포넌트
  */
 export const WebPaymentView = (props: WebPaymentProps) => {
-  const { paymentParams, onComplete, onError, onCancel, gemCount } = props;
+  const { paymentParams, onComplete, onError, gemCount } = props;
   const [isProcessing, setIsProcessing] = useState(true);
   const { setCustomData } = usePortoneStore();
-
-  if (!paymentParams.storeId || !paymentParams.channelKey) {
-    return (
-      <Loading.Page title="결제 환경변수가 누락되었습니다." />
-    );
-  }
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
@@ -69,7 +63,13 @@ export const WebPaymentView = (props: WebPaymentProps) => {
     };
 
     processPayment();
-  }, []);
+  }, [paymentParams.storeId, paymentParams.channelKey, onComplete, onError, setCustomData, gemCount]);
+
+  if (!paymentParams.storeId || !paymentParams.channelKey) {
+    return (
+      <Loading.Page title="결제 환경변수가 누락되었습니다." />
+    );
+  }
 
   if (isProcessing) {
     return (

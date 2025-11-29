@@ -7,8 +7,6 @@ import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-re
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
 import DateDivider from "@/src/features/chat/ui/message/date-divider";
-import BackgroundHeartIcon from "@assets/icons/new-chat-banner-heart.svg";
-import BulbIcon from "@assets/icons/bulb.svg";
 import { SomemateInput } from "@/src/features/somemate/ui";
 import { useActiveSession, useMessages, useAnalyzeSession, useCompleteSession, useDeleteSession } from "@/src/features/somemate/queries/use-ai-chat";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -46,12 +44,11 @@ export default function SomemateChatScreen() {
   const [localMessages, setLocalMessages] = useState<AiChatMessage[]>([]);
   const streamingContentRef = useRef<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [streamingTrigger, setStreamingTrigger] = useState(0);
-
-  const allMessages = messagesData?.messages || [];
+  
   const displayMessages = useMemo(() => {
+    const allMessages = messagesData?.messages || [];
     return isStreaming ? [...allMessages, ...localMessages] : allMessages;
-  }, [isStreaming, allMessages, localMessages]);
+  }, [isStreaming, messagesData?.messages, localMessages]);
 
   const keyboard = useAnimatedKeyboard();
 
@@ -127,7 +124,7 @@ export default function SomemateChatScreen() {
         },
       });
     }
-  }, [sessionId, isStreaming, queryClient, showModal]);
+  }, [sessionId, isStreaming, queryClient, showModal, somemateEvents]);
 
   const handleAnalyze = async () => {
     if (!sessionId) return;
@@ -304,7 +301,7 @@ export default function SomemateChatScreen() {
     items.push({ type: "spacer", id: "bottom" });
 
     return items;
-  }, [dateStr, displayMessages, isStreaming, sessionId, canAnalyze, streamingTrigger]);
+  }, [dateStr, displayMessages, isStreaming, sessionId, canAnalyze]);
 
   const renderItem = ({ item }: { item: ListItem }) => {
     if (item.type === "spacer") {

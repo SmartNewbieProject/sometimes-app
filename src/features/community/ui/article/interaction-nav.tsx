@@ -65,6 +65,8 @@ Interaction.Like = ({ count, iconSize = 24, isLiked, ...props }: LikeProps) => {
   );
 };
 
+Interaction.Like.displayName = 'InteractionLike';
+
 Interaction.Comment = ({
   count,
   iconSize = 24,
@@ -82,6 +84,8 @@ Interaction.Comment = ({
   );
 };
 
+Interaction.Comment.displayName = 'InteractionComment';
+
 Interaction.View = ({
   count,
   iconSize = 24,
@@ -98,5 +102,7 @@ Interaction.View = ({
     </TouchableOpacity>
   );
 };
+
+Interaction.View.displayName = 'InteractionView';
 
 export default Interaction;

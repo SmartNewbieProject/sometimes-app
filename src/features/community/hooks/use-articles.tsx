@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useInfiniteData, useInfiniteScroll } from '../../../shared/hooks';
 import { getAllArticles } from '../apis/articles';
 import { Article } from '../types';
-import { PaginationParams } from '../../../shared/infinite-scroll/types';
 import { PaginatedResponse, Pagination } from '@/src/types/server';
 
 type Props = {
@@ -41,52 +40,50 @@ export const useArticles = ({
     [categoryCode]
   );
 
-  if (infiniteScroll) {
-    const {
-      data: articles,
-      isLoading,
-      isLoadingMore,
-      error,
-      hasNextPage,
-      loadMore,
-      refresh,
-      meta,
-      setData,
-      currentPage,
-    } = useInfiniteData<Article>({
-      fetchFn: fetchArticles,
-      initialPage,
-      pageSize: initialSize,
-      autoLoad: !!categoryCode,
-      dependencies: [categoryCode],
-      getItemKey: (item) => item.id,
-    });
+  const {
+    data: articles,
+    isLoading,
+    isLoadingMore,
+    error,
+    hasNextPage,
+    loadMore,
+    refresh,
+    meta,
+    setData,
+    currentPage,
+  } = useInfiniteData<Article>({
+    fetchFn: fetchArticles,
+    initialPage,
+    pageSize: initialSize,
+    autoLoad: infiniteScroll && !!categoryCode,
+    dependencies: [categoryCode],
+    getItemKey: (item) => item.id,
+  });
 
-    const { scrollProps } = useInfiniteScroll(loadMore, {
-      threshold: 0.5,
-      enabled: hasNextPage && !isLoadingMore,
-    });
+  const { scrollProps } = useInfiniteScroll(loadMore, {
+    threshold: 0.5,
+    enabled: infiniteScroll && hasNextPage && !isLoadingMore,
+  });
 
-    const updateArticle = (updatedArticle: Article) => {
-      setData((prevArticles) =>
-        prevArticles.map((article) =>
-          article.id === updatedArticle.id ? updatedArticle : article
-        )
-      );
-    };
+  const updateArticle = (updatedArticle: Article) => {
+    setData((prevArticles) =>
+      prevArticles.map((article) =>
+        article.id === updatedArticle.id ? updatedArticle : article
+      )
+    );
+  };
 
-    return {
-      articles,
-      isLoading,
-      isLoadingMore,
-      error,
-      hasNextPage,
-      loadMore,
-      refresh,
-      meta,
-      currentPage,
-      scrollProps,
-      updateArticle,
-    };
-  }
+  return {
+    articles,
+    isLoading,
+    isLoadingMore,
+    error,
+    hasNextPage,
+    loadMore,
+    refresh,
+    meta,
+    currentPage,
+    scrollProps: infiniteScroll ? scrollProps : undefined,
+    updateArticle,
+  };
 }

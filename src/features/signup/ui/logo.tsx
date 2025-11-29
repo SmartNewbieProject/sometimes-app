@@ -1,7 +1,6 @@
 import BigTitle from "@/assets/icons/big-title.svg";
 import { AppleReviewModal } from "@/src/features/auth/ui/apple-review-modal";
 import { EmailLoginModal } from "@/src/features/auth/ui/email-login-modal";
-import { cn } from "@/src/shared/libs/cn";
 import { platform } from "@/src/shared/libs/platform";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";

@@ -42,7 +42,7 @@ export const useSendMessage = (sessionId: string) => {
 
   return useMutation({
     mutationFn: (data: SendMessageRequest) =>
-      aiChatApi.sendMessage(sessionId, data),
+      aiChatApi.sendMessageStream(sessionId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: AI_CHAT_KEYS.messages(sessionId),

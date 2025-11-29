@@ -3,8 +3,8 @@ import { SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 import { compressImageWeb } from '../utils/image/web-compression';
 import type { CompressionConfig } from '../utils/image/compression';
 
-export function useImageCompression(uri?: string) {
-  const context = uri ? useImageManipulator(uri) : null;
+export function useImageCompression(uri: string) {
+  const context = useImageManipulator(uri);
 
   const compressImage = async (
     imageUri: string,
@@ -22,10 +22,7 @@ export function useImageCompression(uri?: string) {
       return result.base64;
     }
 
-    if (!context) {
-      throw new Error('useImageCompression hook에 올바른 URI가 설정되지 않음');
-    }
-
+  
     context.resize({
       width: config.maxWidth,
       height: config.maxHeight,

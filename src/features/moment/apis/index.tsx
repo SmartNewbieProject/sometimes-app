@@ -41,19 +41,6 @@ export interface SubmitAnswerResponse {
 }
 
 // Weekly Report Types (Updated API Schema)
-export interface StatItem {
-  category: string;
-  currentScore: number;
-  prevScore: number;
-  status: 'INCREASE' | 'DECREASE' | 'MAINTAIN';
-}
-
-export interface InsightItem {
-  category: string;
-  score: number;
-  definition: string;
-  feedback: string;
-}
 
 export interface WeeklyReport {
   id: string;                              // UUID
@@ -147,19 +134,6 @@ export interface AnswerHistoryResponse {
   };
 }
 
-export interface StatItem {
-  category: string;        // '감정 개방성', '가치 명확성', 등
-  currentScore: number;    // 현재 점수
-  prevScore: number;       // 이전 주 점수
-  status: 'INCREASE' | 'DECREASE' | 'MAINTAIN';
-}
-
-export interface InsightItem {
-  category: string;        // 차원 이름
-  score: number;          // 점수
-  definition: string;     // 정의
-  feedback: string;       // 피드백
-}
 
 export interface ReportHistoryItem {
   id: string;                              // UUID

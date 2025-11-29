@@ -6,7 +6,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { track } from "@amplitude/analytics-react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Platform, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 function KakaoLoginRedirect() {
   const params = useLocalSearchParams();
@@ -115,7 +115,7 @@ function KakaoLoginRedirect() {
       console.log("인증 코드가 없습니다.");
       router.replace("/auth/login");
     }
-  }, [params?.code, params?.error]);
+  }, [params?.code, params?.error, loginWithKakao, router, showModal]);
 
   return (
     <View
