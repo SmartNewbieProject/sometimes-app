@@ -5,6 +5,7 @@ import {
   PanResponder,
   type PanResponderGestureState,
   Platform,
+  StyleSheet,
  type LayoutChangeEvent, View } from "react-native";
 
 import React, {

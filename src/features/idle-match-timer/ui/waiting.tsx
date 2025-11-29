@@ -1,6 +1,7 @@
 import { useCommingSoon } from "@/src/features/admin/hooks";
 import { dayUtils } from "@/src/shared/libs";
 import { IconWrapper } from "@/src/shared/ui/icons";
+import { semanticColors } from "@/src/shared/constants/colors";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text } from "@shared/ui";
 import { useRouter } from "expo-router";

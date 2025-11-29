@@ -1,23 +1,23 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { SvgProps } from 'react-native-svg';
-import { cn } from '@/src/shared/libs/cn';
+import { textDarkPurple } from '@/src/shared/constants/colors';
 
 interface IconProps extends SvgProps {
-  className?: string;
+  style?: any;
   size?: number;
 }
 
-export const IconWrapper: React.FC<IconProps> = ({ 
-  className,
+export const IconWrapper: React.FC<IconProps> = ({
+  style,
   width,
   height,
   size = 24,
   children,
-  ...props 
+  ...props
 }) => {
   return (
-    <View className={cn('text-darkPurple', className)}>
+    <View style={[styles.container, style]}>
       {React.cloneElement(children as React.ReactElement, {
         width: width || size,
         height: height || size,
@@ -25,4 +25,10 @@ export const IconWrapper: React.FC<IconProps> = ({
       })}
     </View>
   );
-}; 
+};
+
+const styles = StyleSheet.create({
+  container: {
+    color: textDarkPurple,
+  },
+}); 

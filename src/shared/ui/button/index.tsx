@@ -1,7 +1,7 @@
 import type React from "react";
 import type { ReactNode } from "react";
 import { Platform, Pressable, StyleSheet, View, ViewStyle } from "react-native";
-import { semanticColors } from "../../../constants/colors";
+import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { Text } from "../text";
 
 interface ButtonStyleProps {
