@@ -1,28 +1,150 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+/* 시스템 폰트 fallback 설정 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
+/* Pretendard 웹 폰트 - colors.ts와 동일한 색상 사용 */
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: local('Pretendard Regular'), local('Pretendard-Regular'),
+       url('/assets/fonts/Pretendard-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard-Bold';
+  src: local('Pretendard Bold'), local('Pretendard-Bold'),
+       url('/assets/fonts/Pretendard-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pretendard-SemiBold';
+  src: local('Pretendard SemiBold'), local('Pretendard-SemiBold'),
+       url('/assets/fonts/Pretendard-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik-Regular';
+  src: local('Rubik'), local('Rubik-Regular'),
+       url('/assets/fonts/Rubik-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik-Medium';
+  src: local('Rubik Medium'), local('Rubik-Medium'),
+       url('/assets/fonts/Rubik-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik-Bold';
+  src: local('Rubik Bold'), local('Rubik-Bold'),
+       url('/assets/fonts/Rubik-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gmarket-Sans-Medium';
+  src: local('Gmarket Sans Medium'), local('GmarketSansTTFMedium'),
+       url('/assets/fonts/GmarketSansTTFMedium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* colors.ts와 동일한 CSS 변수 */
 :root {
-  --primary-purple: #A78BFA;
-  /* 주요 보라색 */
-  --light-purple: #EDE9FE;
-  /* 배경에 사용된 연한 보라색 */
+  /* Brand colors */
+  --brand-primary: #7A4AE2;
+  --brand-on-primary: #FFFFFF;
+  --brand-accent: #A892D7;
+  --brand-secondary: #9747FF;
+  --brand-deep: #49386E;
+
+  /* Surface colors */
+  --surface-background: #FFFFFF;
+  --surface-surface: #F8F9FA;
+  --surface-secondary: #F7F3FF;
+  --surface-tertiary: #F2EDFF;
+  --surface-other: #E1D9FF;
+  --surface-inverse: #000000;
+
+  /* Text colors */
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #7C7C7C;
+  --text-disabled: #AEAEAE;
+  --text-inverse: #FFFFFF;
+
+  /* Border colors */
+  --border-smooth: #e4e2e2ff;
+  --border-default: #AEAEAE;
+  --border-strong: #333333;
+
+  /* Legacy colors for backward compatibility */
+  --primary-purple: #7A4AE2;
+  --strong-purple: #49386E;
+  --light-purple: #E2D5FF;
+  --card-purple: #F7F3FF;
+  --more-light-purple: #F6F2FF;
   --dark-purple: #7C3AED;
-  /* 버튼에 사용된 진한 보라색 */
   --white: #FFFFFF;
-  /* 텍스트 및 배경에 사용된 흰색 */
   --black: #000000;
-  /* 텍스트에 사용된 검정색 */
+  --strong: #2F2F2F;
   --gray: #9CA3AF;
-  /* 입력 필드의 힌트 텍스트에 사용된 회색 */
+  --gray-300: #D1D5DB;
+  --gray-600: #8B94A1;
+  --moment-background: #FDFCFF;
 }
 
-.purple-gradient-bg {
-  background: linear-gradient(180deg, #FFF 0%, #F9F7FF 100%);
+/* React Native Web를 위한 기본 스타일 */
+#root {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
-input {
+/* iOS에서 추가적인 확대 방지 */
+input, textarea, select {
   transform: scale(1);
-  /* iOS에서 추가적인 확대 방지 */
+  font-size: 16px; /* iOS에서 자동 확대 방지 */
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
