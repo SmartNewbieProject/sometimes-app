@@ -1,7 +1,6 @@
-import { View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import Event from '@features/event';
 import { platform } from '@shared/libs/platform';
-import { cn } from '@shared/libs/cn';
 import { useEffect, useRef } from 'react';
 import { PalePurpleGradient } from '@shared/ui';
 import {
@@ -63,29 +62,18 @@ export default function PreSignupScreen() {
         <PalePurpleGradient />
         <ScrollView
           ref={scrollViewRef}
-          className="flex-1"
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: 40
-          }}
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
           scrollEnabled={true}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={true}
         >
           <View
-            className={cn(
-              "flex-col px-4 min-h-full",
-              platform({
-                ios: () => "pt-[50px]",
-                android: () => "pt-[50px]",
-                web: () => "pt-[40px]",
-              })
-            )}
-            style={{ justifyContent: 'space-between' }}
+            style={styles.container}
           >
-            <View className="flex-1">
+            <View style={styles.contentContainer}>
               <PreSignup.Header />
-              <View className="justify-start items-center overflow-visible">
+              <View style={styles.characterContainer}>
                 <PreSignup.CharacterImage style={characterStyle} />
                 <PreSignup.CardCarousel
                   style={cardSectionStyle}
@@ -100,3 +88,33 @@ export default function PreSignupScreen() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    paddingBottom: 40
+  },
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 16,
+    minHeight: '100%',
+    paddingTop: Platform.select({
+      ios: 50,
+      android: 50,
+      web: 40,
+    }) || 50,
+    justifyContent: 'space-between'
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  characterContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    overflow: 'visible',
+  },
+});

@@ -5,7 +5,7 @@ import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { ScrollView, View , Linking } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ApprovalRejectedScreen() {
@@ -14,7 +14,6 @@ export default function ApprovalRejectedScreen() {
   const rejectionReason =
     (params.rejectionReason as string) || "승인이 거절되었습니다.";
   const phoneNumber = params.phoneNumber as string;
-  const { logoutOnly } = useAuth();
 
   const handleReapply = () => {
     router.push({

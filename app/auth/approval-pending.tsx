@@ -6,12 +6,10 @@ import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { BackHandler, ScrollView, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScrollView, View } from "react-native";
 
 export default function ApprovalPendingScreen() {
-  const { logoutOnly } = useAuth();
-  const { my } = useAuth();
+  const { my, logoutOnly } = useAuth();
   const { data: statusData } = useUserStatus(my.phoneNumber);
   const handleGoToLogin = async () => {
     await logoutOnly();

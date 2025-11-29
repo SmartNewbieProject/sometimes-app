@@ -1,26 +1,22 @@
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { useWindowWidth } from "@/src/features/signup/hooks";
-import colors from "@/src/shared/constants/colors";
+import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import { useSignupSession } from "@/src/shared/hooks/use-signup-session";
 import Loading from "@features/loading";
 import Signup from "@features/signup";
-import { useFocusEffect } from "@react-navigation/native";
-import { cn } from "@shared/libs/cn";
-import { platform } from "@shared/libs/platform";
 import { PalePurpleGradient } from "@shared/ui/gradient";
 import { ProgressBar } from "@shared/ui/progress-bar";
-import { Stack, router, usePathname } from "expo-router";
-import { Suspense, useCallback } from "react";
-import { StyleSheet, Text, View , BackHandler } from "react-native";
+import { Stack, usePathname } from "expo-router";
+import { Suspense } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import * as React from 'react';
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { useSignupProgress, SignupSteps } = Signup;
 
 export default function SignupLayout() {
-  const { progress, updateStep, step, showHeader } = useSignupProgress();
+  const { progress, step, showHeader } = useSignupProgress();
   const { startSignupSession, recordMilestone } = useSignupSession();
 
   const pathname = usePathname();
@@ -53,7 +49,7 @@ export default function SignupLayout() {
   }, [step, startSignupSession, recordMilestone]);
 
   return (
-    <DefaultLayout className="flex-1 relative">
+    <DefaultLayout style={styles.container}>
       <OverlayProvider>
         <PalePurpleGradient />
         {renderProgress && showHeader && (
@@ -67,16 +63,7 @@ export default function SignupLayout() {
               <Text style={styles.title}>{title}</Text>
             </View>
 
-            <View
-              className={cn(
-                " pb-[30px] items-center bg-surface-background",
-                platform({
-                  ios: () => "",
-                  android: () => "",
-                  web: () => "",
-                })
-              )}
-            >
+            <View style={styles.progressContainer}>
               <ProgressBar progress={progress} width={progressWidth} />
             </View>
           </>
@@ -120,6 +107,10 @@ export default function SignupLayout() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
   titleContainer: {
     paddingVertical: 10,
     flexDirection: "row",
@@ -132,5 +123,10 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     lineHeight: 22,
     fontSize: 20,
+  },
+  progressContainer: {
+    paddingBottom: 30,
+    alignItems: "center",
+    backgroundColor: semanticColors.surface.background,
   },
 });
