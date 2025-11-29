@@ -1,9 +1,9 @@
 import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
-import { Slot, router, useLocalSearchParams, usePathname } from "expo-router";
+import { Slot, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import { Platform, View , StyleSheet } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
 import {
@@ -19,8 +19,6 @@ import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import { VersionUpdateChecker } from "@/src/features/version-update";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
-import { useStorage } from "@/src/shared/hooks/use-storage";
-import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
 import * as amplitude from "@amplitude/analytics-react-native";
@@ -60,27 +58,41 @@ export default function RootLayout() {
     initKakao();
   }, []);
 
-  const [loaded] = useFonts({
-    "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
-    "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
-    "Pretendard-SemiBold": require("../assets/fonts/Pretendard-SemiBold.ttf"),
-    "Pretendard-ExtraBold": require("../assets/fonts/Pretendard-ExtraBold.ttf"),
-    "Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.ttf"),
-    "Pretendard-Black": require("../assets/fonts/Pretendard-Black.ttf"),
-    Rubik: require("../assets/fonts/Rubik-Regular.ttf"),
-    "Rubik-Medium": require("../assets/fonts/Rubik-Medium.ttf"),
-    "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
-    "Rubik-Light": require("../assets/fonts/Rubik-Light.ttf"),
-    "Rubik-SemiBold": require("../assets/fonts/Rubik-SemiBold.ttf"),
-    "Gmarket-Sans-Medium": require("../assets/fonts/GmarketSansTTFMedium.ttf"),
-    "Gmarket-Sans-Bold": require("../assets/fonts/GmarketSansTTFBold.ttf"),
-    "Gmarket-Sans-Light": require("../assets/fonts/GmarketSansTTFLight.ttf"),
-    StyleScript: require("../assets/fonts/StyleScript-Regular.ttf"),
-  });
+  // 네이티브 환경에서만 폰트 로딩 - 웹은 CSS @font-face 사용
+  const getFontConfig = () => {
+    if (Platform.OS === "web") {
+      // 웹에서는 CSS @font-face를 사용하므로 expo-font 로딩 안 함
+      return {};
+    }
+
+    try {
+      return {
+        "Pretendard-Regular": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
+        "Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.ttf"),
+        "Pretendard-SemiBold": require("../assets/fonts/Pretendard-SemiBold.ttf"),
+        Rubik: require("../assets/fonts/Rubik-Regular.ttf"),
+        "Rubik-Medium": require("../assets/fonts/Rubik-Medium.ttf"),
+        "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
+        "Gmarket-Sans-Medium": require("../assets/fonts/GmarketSansTTFMedium.ttf"),
+      };
+    } catch (e) {
+      console.warn("Font loading failed:", e);
+      return {};
+    }
+  };
+
+  const [loaded, error] = useFonts(getFontConfig());
+
+  // 폰트 로딩 에러가 있어도 앱이 계속 진행되도록 처리
+  useEffect(() => {
+    if (error) {
+      console.warn("Font loading error:", error);
+    }
+  }, [error]);
 
   useEffect(() => {
-    //폰트가 로드되지 않았다면 아무것도 하지 않음
-    if (!loaded) {
+    // 네이티브에서 폰트가 로드되지 않았다면 아무것도 하지 않음
+    if (!loaded && Platform.OS !== "web") {
       return;
     }
 
@@ -128,7 +140,8 @@ export default function RootLayout() {
   );
 
   useEffect(() => {
-    if (!loaded) return;
+    // 네이티브 환경에서만 폰트 로딩 확인
+    if (!loaded && Platform.OS !== "web") return;
 
     const handleColdStartNotification = () => {
       try {
@@ -163,7 +176,8 @@ export default function RootLayout() {
   }, [loaded, isValidNotificationData]);
 
   useEffect(() => {
-    if (!loaded || !coldStartProcessed) return;
+    // 네이티브 환경에서만 폰트 로딩 확인
+    if ((!loaded && Platform.OS !== "web") || !coldStartProcessed) return;
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -201,22 +215,20 @@ export default function RootLayout() {
     };
   }, [loaded, coldStartProcessed, isValidNotificationData]);
 
-  if (!loaded) {
+  // 네이티브 환경에서만 폰트 로딩 대기, 웹은 바로 렌더링
+  if (!loaded && Platform.OS !== "web" && !error) {
     return null;
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.gestureContainer}>
       <LoggerContainer>
         <QueryProvider>
           <ModalProvider>
             <GlobalChatProvider>
               <PortoneProvider>
                 <View
-                  className={cn(
-                    "flex-1 font-extralight",
-                    Platform.OS === "web" && "max-w-[468px] w-full self-center"
-                  )}
+                  style={styles.container}
                 >
                   <AnalyticsProvider>
                     <RouteTracker>
@@ -236,3 +248,17 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  gestureContainer: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    ...(Platform.OS === "web" && {
+      maxWidth: 468,
+      width: "100%",
+      alignSelf: "center",
+    }),
+  },
+});

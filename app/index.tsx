@@ -6,12 +6,11 @@ import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 
 export default function Home() {
-  const { isAuthorized } = useAuth();
+  // 임시적으로 항상 false로 설정하여 로그인 페이지로 이동
   const redirectPath = "/home";
   const loginPath = "/auth/login";
   const { "invite-code": inviteCode } = useLocalSearchParams<{ "invite-code"?: string }>();
-  const { setValue} = useStorage({key: "invite-code"})
-
+  const { setValue} = useStorage({key: "invite-code"});
 
     useEffect(() => {
       console.log("inviteCode", inviteCode)
@@ -19,19 +18,14 @@ export default function Home() {
         setValue(inviteCode)
       }
     },[inviteCode])
-    
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isAuthorized) {
-        router.push(redirectPath);
-      } else {
-        router.push(loginPath);
-      }
+    console.log("Home component loaded - redirecting to login");
+    // 임시적으로 항상 false로 설정하여 로그인 페이지로 바로 이동
+    setTimeout(() => {
+      router.push(loginPath);
     }, 100);
-
-    return () => clearTimeout(timer);
-  }, [isAuthorized, redirectPath]);
+  }, [loginPath]);
 
   return <Loading.Page title="앱을 불러오고 있어요!" />;
 }

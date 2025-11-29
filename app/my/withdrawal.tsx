@@ -6,6 +6,7 @@ import { ImageResources, axiosClient, tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient } from "@/src/shared/ui/gradient";
 import { Header } from "@/src/shared/ui/header";
 import { Form } from "@/src/widgets";
+import { useMyFinalizeLTV } from "@/src/features/payment/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, ImageResource, Show, Text, TextArea } from "@shared/ui";
 import { Image } from "expo-image";
@@ -79,6 +80,38 @@ const withdraw = async (reason: string) =>
     data: { reason },
   });
 
+/**
+ * 탈퇴 사유를 LTV 정산용 타입으로 매핑
+ * @param withdrawalReason 탈퇴 사유
+ * @returns LTV 정산용 삭제 사유 타입
+ */
+const mapWithdrawalReasonToDeletionReason = (
+  withdrawalReason: string
+): 'voluntary' | 'forced' | 'system' => {
+  // 파트너를 찾은 경우나 사용자 선택 탈퇴는 'voluntary'
+  if ([
+    WithdrawalReason.FOUND_PARTNER,
+    WithdrawalReason.POOR_MATCHING,
+    WithdrawalReason.PRIVACY_CONCERN,
+    WithdrawalReason.INACTIVE_USAGE,
+    WithdrawalReason.DISSATISFIED_SERVICE,
+    WithdrawalReason.OTHER
+  ].includes(withdrawalReason as WithdrawalReason)) {
+    return 'voluntary';
+  }
+
+  // 안전성 문제나 기술적 문제는 'forced'로 처리
+  if ([
+    WithdrawalReason.SAFETY_CONCERN,
+    WithdrawalReason.TECHNICAL_ISSUES
+  ].includes(withdrawalReason as WithdrawalReason)) {
+    return 'forced';
+  }
+
+  // 기본값은 'voluntary'
+  return 'voluntary';
+};
+
 export default function WithdrawalScreen() {
   const router = useRouter();
   const {
@@ -95,6 +128,7 @@ export default function WithdrawalScreen() {
   const [otherReason, setOtherReason] = useState("");
   const { showErrorModal, showModal } = useModal();
   const { clearTokensOnly } = useAuth();
+  const { mutate: finalizeLTV } = useMyFinalizeLTV();
   const isOther = watch("reason") === "OTHER";
 
   const onSubmitWithdrawal = handleSubmit(async (data) => {
@@ -104,13 +138,42 @@ export default function WithdrawalScreen() {
 
     await tryCatch(
       async () => {
+        // 1. LTV 정산 먼저 처리 (탈퇴 전에 실행)
+        finalizeLTV(
+          {
+            deletionReason: mapWithdrawalReasonToDeletionReason(reason),
+            lastActiveDate: new Date().toISOString(),
+          },
+          {
+            onSuccess: () => {
+              console.log('✅ LTV 정산 완료, 탈퇴 처리 시작');
+              proceedWithdrawal(reason);
+            },
+            onError: (error) => {
+              console.log('⚠️ LTV 정산 실패, 탈퇴는 계속 진행:', error);
+              // LTV 정산 실패해도 탈퇴는 진행
+              proceedWithdrawal(reason);
+            },
+          }
+        );
+      },
+      ({ error }) => {
+        console.log(error);
+        showErrorModal(error, "error");
+      }
+    );
+  });
+
+  const proceedWithdrawal = async (reason: string) => {
+    await tryCatch(
+      async () => {
         await withdraw(reason);
         await clearTokensOnly();
 
         showModal({
           title: "다음에 다시봐요",
           children: (
-            <View className="flex flex-col gap-y-2">
+            <View style={styles.modalContent}>
               <Text textColor="black">회원 탈퇴가 완료되었습니다.</Text>
               <Text textColor="black">다음에 다시 만나요</Text>
             </View>
@@ -126,7 +189,7 @@ export default function WithdrawalScreen() {
         showErrorModal(error, "error");
       }
     );
-  });
+  };
 
   return (
     <Layout.Default>
@@ -219,7 +282,6 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "100%",
-
     justifyContent: "center",
   },
   description: {
@@ -236,5 +298,9 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingBottom: 120,
+  },
+  modalContent: {
+    flexDirection: 'column',
+    gap: 8,
   },
 });
