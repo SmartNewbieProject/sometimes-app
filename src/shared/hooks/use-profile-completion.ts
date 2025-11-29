@@ -4,8 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { UserProfile } from '@/src/shared/utils/profile-completion-calculator';
-import { ProfileCompletionCalculator } from '@/src/shared/utils/profile-completion-calculator';
+import { UserProfile , ProfileCompletionCalculator } from '@/src/shared/utils/profile-completion-calculator';
 
 export const useProfileCompletion = (profile: UserProfile) => {
   const [completionScore, setCompletionScore] = useState<number>(0);

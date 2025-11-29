@@ -92,7 +92,7 @@ export const Dropdown = ({ open, items, dropdownStyle, onOpenChange }: DropdownP
 							handleClose();
 						}}
 					>
-						<Text className="text-[18px]" textColor="black">
+						<Text style={styles.itemText} textColor="black">
 							{item.content}
 						</Text>
 					</Pressable>
@@ -188,6 +188,9 @@ const styles = StyleSheet.create({
 	},
 	itemPressed: {
 		backgroundColor: '#f5f5f5',
+	},
+	itemText: {
+		fontSize: 18,
 	},
 });
 

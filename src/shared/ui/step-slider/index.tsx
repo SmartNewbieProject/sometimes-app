@@ -1,12 +1,12 @@
 import { cn } from "@/src/shared/libs/cn";
-import { Text } from "@/src/shared/ui";
+import { Text } from "@/src/shared/ui/text";
 import { throttle } from "lodash";
 import {
   type GestureResponderEvent,
   PanResponder,
   type PanResponderGestureState,
   Platform,
-} from "react-native";
+ type LayoutChangeEvent, View } from "react-native";
 
 import React, {
   useState,
@@ -15,7 +15,6 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { type LayoutChangeEvent, View } from "react-native";
 import { semanticColors } from "@/src/shared/constants/colors";
 
 interface Option {
@@ -202,13 +201,15 @@ export function StepSlider({
     };
   }, [throttledDragMove]);
 
+  const containerStyle = [styles.container, className && { /* className styles would go here */ }];
+
   return (
-    <View className={cn("w-full ", className)}>
+    <View style={containerStyle}>
       {/* Labels */}
       {options && sliderWidth > 0 && (
         <View
           pointerEvents="none"
-          className="absolute top-[-16px] left-0 w-full flex-row justify-between px-2"
+          style={styles.labelsContainer}
         >
           {options.map((label, index) => {
             const totalSteps = options.length - 1;
@@ -247,34 +248,35 @@ export function StepSlider({
       )}
 
       {/* Slider container */}
-      <View className="flex-row justify-between items-center">
+      <View style={styles.sliderContainer}>
         {/* Slider track */}
-        <View className="flex-1 mx-2 justify-center">
+        <View style={styles.trackContainer}>
           {/* 확장된 터치 영역 */}
           <View
             ref={sliderRef}
             onLayout={handleLayout}
             {...(panResponder?.panHandlers ?? {})}
-            className="w-full bg-transparent"
-            style={{
-              height: touchAreaHeight,
-              justifyContent: "center",
-              // 디버깅을 위해 배경색 추가 (나중에 제거)
-              // backgroundColor: 'rgba(255, 0, 0, 0.1)'
-            }}
+            style={[
+              styles.touchArea,
+              {
+                height: touchAreaHeight,
+                justifyContent: "center",
+              }
+            ]}
           >
             {/* 실제 슬라이더 트랙 */}
             <View
-              className="w-full h-3 bg-surface-tertiary rounded-full"
-              style={{ backgroundColor: semanticColors.surface.tertiary }}
+              style={[styles.track, { backgroundColor: semanticColors.surface.tertiary }]}
             >
               {/* Active track */}
               <View
-                className="absolute z-20 top-0 left-0 h-full bg-primaryPurple rounded-full"
-                style={{
-                  width: `${percentage}%`,
-                  backgroundColor: semanticColors.brand.primary
-                }}
+                style={[
+                  styles.activeTrack,
+                  {
+                    width: `${percentage}%`,
+                    backgroundColor: semanticColors.brand.primary
+                  }
+                ]}
               />
               {/* pointer */}
               {options ? (
@@ -284,17 +286,14 @@ export function StepSlider({
                   return (
                     <View
                       key={label.label}
-                      className="absolute z-10  w-[10px] h-[10px] bg-surface-other rounded-full -mt-2.5 items-center justify-center"
-                      style={{
-                        top: Platform.OS === "web" ? 11 : 9,
-                        left:
-                          options[0].label === label.label
-                            ? left
-                            : options.at(-1)?.label === label.label
-                            ? left
-                            : left,
-                        backgroundColor: semanticColors.surface.other
-                      }}
+                      style={[
+                        styles.pointer,
+                        {
+                          top: Platform.OS === "web" ? 11 : 9,
+                          left: left,
+                          backgroundColor: semanticColors.surface.other
+                        }
+                      ]}
                     />
                   );
                 })
@@ -303,16 +302,17 @@ export function StepSlider({
               )}
               {/* Thumb */}
               <View
-                className="absolute z-30 top-0 w-8 h-8 bg-primaryPurple rounded-full -mt-2.5 items-center justify-center"
-                style={{
-                  left: `${percentage}%`,
-                  transform: [{ translateX: -16 }],
-                  backgroundColor: semanticColors.brand.primary
-                }}
+                style={[
+                  styles.thumb,
+                  {
+                    left: `${percentage}%`,
+                    transform: [{ translateX: -16 }],
+                    backgroundColor: semanticColors.brand.primary
+                  }
+                ]}
               >
                 <View
-                  className="w-[30px] h-[30px] rounded-full bg-primaryPurple drop-shadow-[0px,4px,8px,rgba(0,0,0,0.17)]"
-                  style={{ backgroundColor: semanticColors.brand.primary }}
+                  style={[styles.thumbInner, { backgroundColor: semanticColors.brand.primary }]}
                 />
               </View>
             </View>
@@ -322,3 +322,71 @@ export function StepSlider({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  labelsContainer: {
+    position: 'absolute',
+    top: -16,
+    left: 0,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+  },
+  sliderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  trackContainer: {
+    flex: 1,
+    marginHorizontal: 8,
+    justifyContent: 'center',
+  },
+  touchArea: {
+    width: '100%',
+    backgroundColor: 'transparent',
+  },
+  track: {
+    width: '100%',
+    height: 12,
+    borderRadius: 6,
+  },
+  activeTrack: {
+    position: 'absolute',
+    zIndex: 20,
+    top: 0,
+    left: 0,
+    height: '100%',
+    borderRadius: 6,
+  },
+  pointer: {
+    position: 'absolute',
+    zIndex: 10,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginTop: -5,
+  },
+  thumb: {
+    position: 'absolute',
+    zIndex: 30,
+    top: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginTop: -10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  thumbInner: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    // Note: drop-shadow not supported in React Native StyleSheet
+    // Could use elevation or shadow properties instead
+  },
+});

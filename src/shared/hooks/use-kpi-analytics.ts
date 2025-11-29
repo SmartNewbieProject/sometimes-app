@@ -1,12 +1,11 @@
 import { useCallback } from 'react';
 import { track as amplitudeTrack } from '@amplitude/analytics-react-native';
-import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
+import { AMPLITUDE_KPI_EVENTS , KpiEventTypePropertiesMap } from '@/src/shared/constants/amplitude-kpi-events';
 import type {
   BaseEventProperties,
   SignupEventProperties,
   PaymentEventProperties,
 } from './use-amplitude.types';
-import { KpiEventTypePropertiesMap } from '@/src/shared/constants/amplitude-kpi-events';
 
 // 확장된 KPI 훅 반환 타입
 export interface UseKpiAnalyticsReturn {

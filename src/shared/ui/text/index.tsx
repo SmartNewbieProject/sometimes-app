@@ -1,94 +1,98 @@
-import { type VariantProps, cva } from "class-variance-authority";
 import type React from "react";
 import {
   Text as RNText,
+  Platform,
   type TextStyle,
   type TextProps as RNTextProps,
 } from "react-native";
-import { cn } from "../../libs/cn";
+import { StyleSheet } from "react-native";
+import colors, { getColor } from "../../../shared/constants/colors";
 
-const textStyles = cva("text-base", {
-  variants: {
-    variant: {
-      primary: "text-darkPurple",
-      secondary: "text-lightPurple",
-    },
-    size: {
-      xs: "text-xs",
-      sm: "text-sm",
-      md: "text-md",
-      "10": "text-[10px]",
-      "18": "text-[18px]",
-      "20": "text-[20px]",
-      "13": "text-[13px]",
-      "12": "text-[12px]",
-      chip: "text-[13px]",
-      lg: "text-lg",
-      xl: "text-xl",
-      "2xl": "text-2xl",
-      "3xl": "text-3xl",
-    },
-    weight: {
-      normal: "font-normal",
-      medium: "font-medium",
-      semibold: "font-semibold",
-      light: "font-light",
-      bold: "font-bold",
-    },
-    textColor: {
-      white: "text-text-inverse",
-      purple: "text-primaryPurple",
-      dark: "text-darkPurple",
-      black: "text-text-primary",
-      light: "text-lightPurple",
-      "pale-purple": "text-text-disabled",
-      deepPurple: "text-strongPurple",
-      gray: "text-gray",
-      accent: "text-brand-accent",
-      primary: "text-text-primary",
-      secondary: "text-text-secondary",
-      muted: "text-text-muted",
-      disabled: "text-text-disabled",
-    },
-  },
-  defaultVariants: {
-    variant: "primary",
-    size: "md",
-    weight: "normal",
-    textColor: "dark",
-  },
-});
+// Tailwind 제거, StyleSheet 기반 스타일링으로 변경
+const getFontSize = (size?: string | number) => {
+  switch (size) {
+    case "xs": return 12;
+    case "sm": return 14;
+    case "md": return 16;
+    case "lg": return 18;
+    case "xl": return 20;
+    case "2xl": return 24;
+    case "3xl": return 30;
+    case "10": return 10;
+    case "12": return 12;
+    case "13": return 13;
+    case "18": return 18;
+    case "20": return 20;
+    case "chip": return 13;
+    default: return 16;
+  }
+};
 
-export type TextProps = VariantProps<typeof textStyles> &
-  Omit<RNTextProps, "style" | "children"> & {
-    children?: React.ReactNode;
-    className?: string;
-    style?: TextStyle | TextStyle[];
-  };
+const getFontWeight = (weight?: string) => {
+  switch (weight) {
+    case "light": return "300";
+    case "normal": return "400";
+    case "medium": return "500";
+    case "semibold": return "600";
+    case "bold": return "700";
+    default: return "400";
+  }
+};
+
+const getTextColor = (color?: string) => {
+  switch (color) {
+    case "white": return Platform.OS === 'web' ? getColor('text-inverse', colors.text.inverse) : colors.text.inverse;
+    case "purple": return Platform.OS === 'web' ? getColor('brand-primary', colors.brand.primary) : colors.brand.primary;
+    case "dark": return Platform.OS === 'web' ? getColor('brand-primary', colors.brand.primary) : colors.brand.primary;
+    case "black": return Platform.OS === 'web' ? getColor('text-primary', colors.text.primary) : colors.text.primary;
+    case "light": return Platform.OS === 'web' ? getColor('surface-tertiary', colors.surface.tertiary) : colors.surface.tertiary;
+    case "pale-purple": return Platform.OS === 'web' ? getColor('text-disabled', colors.text.disabled) : colors.text.disabled;
+    case "deepPurple": return Platform.OS === 'web' ? getColor('brand-deep', colors.brand.deep) : colors.brand.deep;
+    case "gray": return Platform.OS === 'web' ? getColor('gray', colors.gray) : colors.gray;
+    case "accent": return Platform.OS === 'web' ? getColor('brand-accent', colors.brand.accent) : colors.brand.accent;
+    case "primary": return Platform.OS === 'web' ? getColor('text-primary', colors.text.primary) : colors.text.primary;
+    case "secondary": return Platform.OS === 'web' ? getColor('text-secondary', colors.text.secondary) : colors.text.secondary;
+    case "muted": return Platform.OS === 'web' ? getColor('text-muted', colors.text.muted) : colors.text.muted;
+    case "disabled": return Platform.OS === 'web' ? getColor('text-disabled', colors.text.disabled) : colors.text.disabled;
+    default: return Platform.OS === 'web' ? getColor('text-primary', colors.text.primary) : colors.text.primary;
+  }
+};
+
+export type TextProps = Omit<RNTextProps, "style" | "children"> & {
+  children?: React.ReactNode;
+  variant?: "primary" | "secondary";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "10" | "12" | "13" | "18" | "20" | "chip";
+  weight?: "light" | "normal" | "medium" | "semibold" | "bold";
+  textColor?: "white" | "purple" | "dark" | "black" | "light" | "pale-purple" | "deepPurple" | "gray" | "accent" | "primary" | "secondary" | "muted" | "disabled";
+  style?: TextStyle | TextStyle[];
+  className?: string; // 호환성 유지
+};
 
 export const Text: React.FC<TextProps> = ({
   variant,
   size,
   weight,
   textColor,
-  className = "",
   style,
   children,
+  className, // 사용하지 않지만 호환성 유지
   ...rest
 }) => {
+  const textStyle: TextStyle = {
+    fontSize: getFontSize(size),
+    fontWeight: getFontWeight(weight),
+    color: getTextColor(textColor),
+  };
+
   const mergedStyle = Array.isArray(style)
-    ? style.filter(Boolean)
+    ? [textStyle, ...style.filter(Boolean)]
     : style
-      ? [style]
-      : undefined;
+      ? [textStyle, style]
+      : [textStyle];
 
   return (
     <RNText
       {...rest}
-      className={cn(
-        textStyles({ variant, size, weight, textColor }),
-        className
-      )}
       style={mergedStyle}
     >
       {children}

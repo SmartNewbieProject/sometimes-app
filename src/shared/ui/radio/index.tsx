@@ -12,7 +12,6 @@ export interface RadioProps {
   value: string;
   onChange?: (value: string) => void;
   option: Option;
-  className?: string;
   isOther?: boolean;
   otherReason?: string;
   onChangeOtherReason?: (text: string) => void;
@@ -22,7 +21,6 @@ function Radio({
   value,
   onChange,
   option,
-  className,
   isOther,
   otherReason,
   onChangeOtherReason,
@@ -30,7 +28,6 @@ function Radio({
   const selected = value === option.value;
   return (
     <Pressable
-      className={className}
       onPress={() => onChange?.(option.value)}
       style={[
         styles.container,
@@ -61,7 +58,6 @@ function Radio({
         <TextArea
           value={otherReason}
           size="sm"
-          className="mb-[9px]"
           onChangeText={onChangeOtherReason}
           placeholder="기타 이유를 입력해주세요"
         />

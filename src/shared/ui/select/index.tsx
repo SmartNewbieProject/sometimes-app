@@ -1,47 +1,66 @@
-import { cn } from '@/src/shared/libs/cn';
-import colors, { semanticColors } from '../../constants/colors';
-import { type VariantProps, cva } from 'class-variance-authority';
-import { useState } from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Modal } from 'react-native';
 import { Text } from '../text';
 import { ScrollView } from 'react-native-gesture-handler';
-
-const select = cva(
-  'w-full flex flex-col justify-center bg-transparent border-b border-border-default', 
-  {
-    variants: {
-      size: {
-        sm: 'h-10 text-sm',
-        md: 'h-12 text-md',
-        lg: 'h-14 text-lg',
-      },
-      status: {
-        default: 'border-lightPurple',
-        error: 'border-rose-400',
-        success: 'border-green-500',
-      },
-      isDisabled: {
-        true: 'opacity-50 bg-gray-100',
-      },
-    },
-    defaultVariants: {
-      size: 'md',
-      status: 'default',
-    },
-  }
-);
+import { semanticColors } from '../../constants/colors';
+import { useState } from 'react';
 
 interface Option {
   label: string;
   value: string;
 }
 
-export interface SelectProps extends VariantProps<typeof select> {
+interface SelectStyleProps {
+  size?: 'sm' | 'md' | 'lg';
+  status?: 'default' | 'error' | 'success';
+  isDisabled?: boolean;
+}
+
+const createSelectStyles = (props: SelectStyleProps) => {
+  const {
+    size = 'md',
+    status = 'default',
+    isDisabled = false
+  } = props;
+
+  const baseStyle = {
+    width: '100%',
+    flexDirection: 'column' as const,
+    justifyContent: 'center' as const,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 1,
+    borderColor: '#D1D5DB', // border-border-default
+  };
+
+  const sizeStyles = {
+    sm: { minHeight: 40 },
+    md: { minHeight: 48 },
+    lg: { minHeight: 56 },
+  };
+
+  const statusStyles = {
+    default: { borderColor: '#C4B5FD' }, // border-lightPurple
+    error: { borderColor: '#F87171' }, // border-rose-400
+    success: { borderColor: '#10B981' }, // border-green-500
+  };
+
+  const disabledStyles = isDisabled ? {
+    opacity: 0.5,
+    backgroundColor: '#F3F4F6', // bg-gray-100
+  } : {};
+
+  return StyleSheet.flatten([
+    baseStyle,
+    sizeStyles[size],
+    statusStyles[status],
+    disabledStyles
+  ]);
+};
+
+export interface SelectProps extends SelectStyleProps {
   value?: string;
   onChange?: (value: string) => void;
   options: Option[];
   placeholder?: string;
-  className?: string;
   width?: number;
 }
 
@@ -49,28 +68,28 @@ export function Select({
   value,
   onChange,
   options,
-  size,
-  status,
-  isDisabled,
+  size = 'md',
+  status = 'default',
+  isDisabled = false,
   placeholder = '선택해주세요',
-  className,
   width,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectedOption = options.find(option => option.value === value);
   const modalWidth = 300;
+  const selectStyles = createSelectStyles({ size, status, isDisabled });
 
   return (
-    <View className={cn(className)} style={width ? { width } : undefined}>
-      <TouchableOpacity 
+    <View style={width ? { width } : {}}>
+      <TouchableOpacity
         onPress={() => !isDisabled && setIsOpen(!isOpen)}
         activeOpacity={0.8}
       >
-        <View className={select({ size, status, isDisabled })}>
-          <Text 
-            size={size} 
+        <View style={selectStyles}>
+          <Text
+            size={size}
             textColor={value ? 'black' : 'pale-purple'}
-            className="py-2"
+            style={{ paddingVertical: 8 }}
           >
             {selectedOption?.label || placeholder}
           </Text>
@@ -83,7 +102,7 @@ export function Select({
         animationType="fade"
         onRequestClose={() => setIsOpen(false)}
       >
-        <View className="flex-1 bg-surface-inverse/30 justify-center items-center">
+        <View style={styles.overlay}>
           <ScrollView
             style={[styles.modalContainer, { width: modalWidth }]}
             contentContainerStyle={styles.modalContent}
@@ -97,17 +116,14 @@ export function Select({
                   onChange?.(option.value);
                   setIsOpen(false);
                 }}
-                className={cn(
-                  "py-3 px-4",
-                  value === option.value && "bg-lightPurple"
-                )}
-                style={{
-                  width: '100%',
-                }}
+                style={[
+                  styles.option,
+                  value === option.value && styles.selectedOption
+                ]}
               >
                 <Text
                   textColor={value === option.value ? 'purple' : 'black'}
-                  className="text-[18px]"
+                  style={{ fontSize: 18 }}
                 >
                   {option.label}
                 </Text>
@@ -121,11 +137,17 @@ export function Select({
 }
 
 const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // bg-surface-inverse/30
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   modalContainer: {
     backgroundColor: semanticColors.surface.background,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: colors.lightPurple,
+    borderColor: '#C4B5FD', // colors.lightPurple
     borderRadius: 10,
     maxHeight: 500,
     position: 'absolute',
@@ -133,5 +155,13 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     flexGrow: 1,
+  },
+  option: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%',
+  },
+  selectedOption: {
+    backgroundColor: '#C4B5FD', // bg-lightPurple
   },
 });

@@ -1,21 +1,20 @@
 import PhotoPickerModal from "@/src/features/mypage/ui/modal/image-modal";
 import { platform } from "@/src/shared/libs/platform";
-import type { VariantProps } from "class-variance-authority";
+import { semanticColors } from "../../constants/colors";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import React, { useState } from "react";
-import { Alert, Linking, Platform, Pressable, View } from "react-native";
+import { Alert, Linking, Platform, Pressable, View, StyleSheet } from "react-native";
 import { useModal } from "../../hooks/use-modal";
 import { convertToJpeg, isHeicBase64 } from "../../utils/image";
-import { ContentSelector, type contentSelector } from "../content-selector";
+import { ContentSelector } from "../content-selector";
 import { Text } from "../text";
 
-export interface ImageSelectorProps
-  extends VariantProps<typeof contentSelector> {
+export interface ImageSelectorProps {
   value?: string;
   onChange: (value: string) => void;
-  className?: string;
+  size?: 'sm' | 'md' | 'lg';
   actionLabel?: string;
 }
 
@@ -34,14 +33,14 @@ export function renderImage(value: string | null, isPlaceHolder?: boolean) {
 // Static method for rendering a placeholder
 export function renderPlaceholder() {
   return (
-    <View className="flex-1 items-center justify-center">
-      <View className="w-full h-full bg-surface-secondary flex justify-center items-center">
+    <View style={styles.placeholderContainer}>
+      <View style={styles.placeholderContent}>
         <Image
           source={require("@assets/images/image.png")}
           style={{ width: 70, height: 70 }}
           contentFit="cover"
         />
-        <Text size="sm" className="text-text-disabled">
+        <Text size="sm" textColor="disabled">
           사진 추가하기
         </Text>
       </View>
@@ -53,7 +52,6 @@ export function ImageSelector({
   value,
   onChange,
   size,
-  className,
   actionLabel = undefined,
 }: ImageSelectorProps) {
   const [isImageModal, setImageModal] = useState(false);
@@ -140,7 +138,6 @@ export function ImageSelector({
         <ContentSelector
           value={value}
           size={size}
-          className={className}
           actionLabel={actionLabel}
           renderContent={renderImage}
           renderPlaceholder={renderPlaceholder}
@@ -155,3 +152,18 @@ export function ImageSelector({
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  placeholderContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  placeholderContent: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: semanticColors.surface.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

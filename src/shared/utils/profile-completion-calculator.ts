@@ -6,32 +6,32 @@
 import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
 
 export interface UserProfile {
-  profileImages: Array<{
+  profileImages: {
     id: string;
     order: number;
     isMain: boolean;
     url: string;
-  }>;
+  }[];
 
   // 내 성향 정보 (characteristics)
-  characteristics?: Array<{
+  characteristics?: {
     typeName: string;
-    selectedOptions: Array<{
+    selectedOptions: {
       id: string;
       displayName: string;
       imageUrl: string | null;
-    }>;
-  }>;
+    }[];
+  }[];
 
   // 내 이상형 정보 (preferences)
-  preferences?: Array<{
+  preferences?: {
     typeName: string;
-    selectedOptions: Array<{
+    selectedOptions: {
       id: string;
       displayName: string;
       imageUrl: string | null;
-    }>;
-  }>;
+    }[];
+  }[];
 }
 
 export class ProfileCompletionCalculator {

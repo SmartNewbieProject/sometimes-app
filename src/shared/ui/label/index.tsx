@@ -1,40 +1,26 @@
-import { View } from 'react-native';
-import { Text } from '@/src/shared/ui';
-import { cn } from '@shared/libs/cn';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { View, StyleSheet } from 'react-native';
+import { Text } from '@/src/shared/ui/text';
 
-const label = cva('flex-row items-center gap-x-1', {
-  variants: {
-    size: {
-      sm: 'gap-x-0.5',
-      md: 'gap-x-1',
-      lg: 'gap-x-1.5',
-    }
-  },
-  defaultVariants: {
-    size: 'md'
-  }
-});
-
-interface LabelProps extends VariantProps<typeof label> {
+interface LabelProps {
   label: string;
   required?: boolean;
-  className?: string;
+  size?: 'sm' | 'md' | 'lg';
   textColor?: "white" | "purple" | "light" | "dark" | "black" | "pale-purple";
 }
 
 export function Label({
   label: labelText,
   required = false,
-  size,
-  className,
+  size = 'md',
   textColor = "purple",
 }: LabelProps) {
+  const labelStyles = createLabelStyles({ size });
+
   return (
-    <View className={cn(label({ size }), className)}>
-      <Text 
-        size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'} 
-        weight="semibold" 
+    <View style={labelStyles.container}>
+      <Text
+        size={size}
+        weight="semibold"
         textColor={textColor}
       >
         {labelText}
@@ -46,4 +32,20 @@ export function Label({
       )}
     </View>
   );
-} 
+}
+
+const createLabelStyles = ({ size }: { size: 'sm' | 'md' | 'lg' }) => {
+  const sizeStyles = {
+    sm: { gap: 2 },
+    md: { gap: 4 },
+    lg: { gap: 6 },
+  };
+
+  return {
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      ...sizeStyles[size],
+    },
+  };
+}; 

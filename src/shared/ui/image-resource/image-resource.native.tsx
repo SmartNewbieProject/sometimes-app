@@ -3,15 +3,13 @@ import { semanticColors } from '../../constants/colors';
 import { Image as ExpoImage, useImage } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import type { ImageResourceProps } from './index';
-import Loading from '@/src/features/loading';
-import { Text } from '@/src/shared/ui';
+import { Text } from '@/src/shared/ui/text';
 import { CustomInfiniteScrollView } from '../../infinite-scroll/custom-infinite-scroll-view';
 
 export const ImageResource: React.FC<ImageResourceProps> = ({
   resource,
   width = 100,
   height = 100,
-  className = '',
   style,
   loadingTitle = '이미지를 불러오고 있어요',
   contentFit = 'cover',
@@ -36,6 +34,12 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
       width: '100%',
       height: '100%',
     },
+    imageLoading: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
   });
 
   const handleLoadStart = () => {
@@ -48,7 +52,7 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
 
   if (hasError) {
     return (
-      <View style={[styles.container, style]} className={className}>
+      <View style={[styles.container, style]}>
         <View style={[styles.image, { backgroundColor: semanticColors.surface.background }]}>
           <Text>이미지 로드 실패</Text>
         </View>
@@ -56,18 +60,26 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
     );
   }
 
+  if (!image) {
+    return (
+      <View style={[styles.container, style]}>
+        <View style={[styles.imageLoading, { backgroundColor: semanticColors.surface.background }]}>
+          <Text>{loadingTitle}</Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
-    <View style={[styles.container, style]} className={className}>
-      <Loading.Lottie title={loadingTitle} loading={!image}>
-        <ExpoImage
-          source={image}
-          style={styles.image}
-          contentFit={contentFit}
-          onLoadStart={handleLoadStart}
-          onError={handleError}
-          transition={300}
-        />
-      </Loading.Lottie>
+    <View style={[styles.container, style]}>
+      <ExpoImage
+        source={image}
+        style={styles.image}
+        contentFit={contentFit}
+        onLoadStart={handleLoadStart}
+        onError={handleError}
+        transition={300}
+      />
     </View>
   );
 }; 

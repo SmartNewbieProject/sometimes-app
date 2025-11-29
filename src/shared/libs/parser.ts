@@ -22,7 +22,7 @@ const getSingleOption = (key: string, preferGroup: PreferenceTypeGroup[]): strin
 const getCharacteristicsOptions = <T extends string = string>(
 	typeName: string,
 	preferences: PreferenceTypeGroup[],
-): Array<{ label: string; value: T; imageUrl?: string | null }> => {
+): { label: string; value: T; imageUrl?: string | null }[] => {
 	const preferenceGroup = preferences.find((p) => p.typeName === typeName);
 	if (!preferenceGroup || preferenceGroup.selectedOptions.length === 0) {
 		return [];
@@ -44,8 +44,8 @@ const getCharacteristicsOptions = <T extends string = string>(
 const getMultipleCharacteristicsOptions = <T extends string = string>(
 	typeNames: string[],
 	preferences: PreferenceTypeGroup[],
-): Record<string, Array<{ label: string; value: T; imageUrl?: string | null }>> => {
-	const result: Record<string, Array<{ label: string; value: T; imageUrl?: string | null }>> = {};
+): Record<string, { label: string; value: T; imageUrl?: string | null }[]> => {
+	const result: Record<string, { label: string; value: T; imageUrl?: string | null }[]> = {};
 
 	// biome-ignore lint/complexity/noForEach: <explanation>
 	typeNames.forEach((typeName) => {

@@ -1,31 +1,11 @@
-import { cn } from "@/src/shared/libs/cn";
-import { type VariantProps, cva } from "class-variance-authority";
-import { type ReactNode, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { type ReactNode } from "react";
+import { View, StyleSheet } from "react-native";
 import { Text } from "../text";
+import { semanticColors } from "../../constants/colors";
 
-export const contentSelector = cva(
-  "rounded-[20px] relative overflow-hidden border-2 ",
-  {
-    variants: {
-      size: {
-        sm: "w-[105px] h-[105px]",
-        md: "w-[160px] h-[160px]",
-        lg: "w-[220px] h-[220px]",
-      },
-    },
-    defaultVariants: {
-      size: "md",
-    },
-  }
-);
-
-export interface ContentSelectorProps
-  extends VariantProps<typeof contentSelector> {
+export interface ContentSelectorProps {
   value?: string;
-
-  className?: string;
-
+  size?: 'sm' | 'md' | 'lg';
   renderContent?: (value: string | null) => ReactNode;
   renderPlaceholder?: () => ReactNode;
   actionLabel?: string;
@@ -35,37 +15,33 @@ export interface ContentSelectorProps
 
 export function ContentSelector({
   value,
-
-  size,
-  className,
-
+  size = 'md',
   renderContent,
   renderPlaceholder,
-  actionLabel = undefined,
+  actionLabel,
   activeColor = "#7A4AE2",
   inactiveColor = "#E2D5FF",
 }: ContentSelectorProps) {
+  const selectorStyles = createSelectorStyles({ size });
+
   return (
     <View>
       <View
-        className={cn(
-          contentSelector({ size }),
-
-          className
-        )}
-        style={{
-          borderColor: value ? activeColor : inactiveColor,
-          borderWidth: 1,
-        }}
+        style={[
+          selectorStyles.container,
+          {
+            borderColor: value ? activeColor : inactiveColor,
+          }
+        ]}
       >
-        {!!actionLabel && (
+        {actionLabel && (
           <View
-            className={cn(
-              "absolute top-0  right-0 z-10 px-2.5 py-1 rounded-bl-lg  text-text-inverse"
-            )}
-            style={{
-              backgroundColor: value ? activeColor : inactiveColor,
-            }}
+            style={[
+              selectorStyles.actionLabel,
+              {
+                backgroundColor: value ? activeColor : inactiveColor,
+              }
+            ]}
           >
             <Text size="sm" textColor="white">
               {actionLabel}
@@ -78,9 +54,9 @@ export function ContentSelector({
         {!value && renderPlaceholder ? (
           renderPlaceholder()
         ) : (
-          <View className="flex-1 items-center justify-center">
-            <View className="w-full h-full bg-surface-background flex justify-center items-center">
-              <Text size="sm" className="text-text-disabled">
+          <View style={styles.defaultPlaceholder}>
+            <View style={styles.placeholderContent}>
+              <Text size="sm" textColor="disabled">
                 콘텐츠 추가하기
               </Text>
             </View>
@@ -90,3 +66,45 @@ export function ContentSelector({
     </View>
   );
 }
+
+const createSelectorStyles = ({ size }: { size: 'sm' | 'md' | 'lg' }) => {
+  const sizeStyles = {
+    sm: { width: 105, height: 105 },
+    md: { width: 160, height: 160 },
+    lg: { width: 220, height: 220 },
+  };
+
+  return {
+    container: {
+      borderRadius: 20,
+      position: 'relative',
+      overflow: 'hidden',
+      borderWidth: 1,
+      ...sizeStyles[size],
+    },
+    actionLabel: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      zIndex: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderBottomLeftRadius: 8,
+    },
+  };
+};
+
+const styles = StyleSheet.create({
+  defaultPlaceholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  placeholderContent: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: semanticColors.surface.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
