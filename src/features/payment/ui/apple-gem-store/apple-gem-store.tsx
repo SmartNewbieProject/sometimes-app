@@ -139,8 +139,7 @@ function AppleGemStore() {
 
   return (
     <Layout.Default
-      className="flex flex-1 flex-col"
-      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
+      style={[styles.container, { backgroundColor: semanticColors.surface.background, paddingTop: insets.top }]}
     >
       <GemStore.Header gemCount={gem?.totalGem ?? 0} />
       <ScrollView
@@ -150,8 +149,8 @@ function AppleGemStore() {
       >
         <GemStore.Banner />
         <RematchingTicket.ContentLayout>
-          <View className="flex-1 flex flex-col px-[16px] mt-4">
-            <View className="flex flex-col mb-2">
+          <View style={styles.contentContainer}>
+            <View style={styles.sectionContainer}>
               <View style={{ marginBottom: 30 }}>
                 <Show when={sale.length > 0}>
                   <AppleFirstSaleCard
@@ -167,9 +166,9 @@ function AppleGemStore() {
               </Text>
             </View>
 
-            <View className="flex flex-col gap-y-4 justify-center mb-auto">
+            <View style={styles.productListContainer}>
               <Show when={isLoadingServer || !products || products?.length === 0}>
-                <View className="flex-1 justify-center items-center">
+                <View style={styles.loadingContainer}>
                   <Text>젬 상품을 불러오는 중...</Text>
                 </View>
               </Show>
@@ -204,6 +203,31 @@ function AppleGemStore() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column'
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 16,
+    marginTop: 16
+  },
+  sectionContainer: {
+    flexDirection: 'column',
+    marginBottom: 8
+  },
+  productListContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginBottom: 'auto',
+    rowGap: 16
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.5)",

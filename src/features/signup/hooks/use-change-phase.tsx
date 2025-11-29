@@ -1,6 +1,6 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
-import { type SignupSteps, useSignupProgress } from "../hooks";
+import { type SignupSteps, useSignupProgress } from "./use-signup-progress";
 
 export default function useChangePhase(phase: SignupSteps) {
   const { updateStep } = useSignupProgress();

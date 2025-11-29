@@ -1,4 +1,4 @@
-import { CommunityGuideline } from "@/src/features/community/ui";
+import { CommunityGuideline } from "@/src/features/community/ui/guideline";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import {
   ScrollView,
@@ -10,6 +10,7 @@ import {
   Alert,
   Keyboard,
   Pressable,
+  StyleSheet,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useMemo, useState } from "react";
@@ -19,6 +20,7 @@ import { useAuth } from "@/src/features/auth";
 import { useQuery } from "@tanstack/react-query";
 import { getMySimpleDetails } from "@/src/features/auth/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from "@/src/shared/constants/colors";
 
 type MySimpleDetails = {
   /** @deprecated 하위 호환성을 위해 유지 */
@@ -99,12 +101,12 @@ export const ArticleWriteForm = ({
       children: (
         <Pressable
           onPress={hideModal}
-          style={{ width: "100%" }}
+          style={styles.modalOverlay}
           android_disableSound
           accessibilityRole="button"
           accessibilityLabel="모달 닫기 영역"
         >
-          <Pressable onPress={() => {}} style={{ paddingVertical: 8 }}>
+          <Pressable onPress={() => {}} style={styles.modalContent}>
             {allowedCategories.length > 0 ? (
               allowedCategories.map((c) => {
                 const selected = c.code === selectedCategory;
@@ -115,25 +117,28 @@ export const ArticleWriteForm = ({
                       pickCategory(c.code);
                       hideModal?.();
                     }}
-                    className="mb-2"
+                    style={styles.categoryItem}
                     accessibilityRole="button"
                     accessibilityLabel={`${c.displayName} 카테고리 선택`}
                   >
                     <View
-                      className="px-3 py-4 rounded-lg"
-                      style={{
-                        backgroundColor: selected ? "#F3F0FF" : "#F7F8FA",
-                        borderWidth: selected ? 1 : 0,
-                        borderColor: selected ? "#6D28D9" : "transparent",
-                      }}
+                      style={[
+                        styles.categoryBox,
+                        {
+                          backgroundColor: selected ? "#F3F0FF" : "#F7F8FA",
+                          borderWidth: selected ? 1 : 0,
+                          borderColor: selected ? "#6D28D9" : "transparent",
+                        }
+                      ]}
                     >
                       <Text
-                        style={{
-                          fontWeight: selected ? "700" : "500",
-                          color: selected ? "#6D28D9" : "#111827",
-                          fontSize: 15,
-                          textAlign: "center",
-                        }}
+                        style={[
+                          styles.categoryText,
+                          {
+                            fontWeight: selected ? "700" : "500",
+                            color: selected ? "#6D28D9" : "#111827",
+                          }
+                        ]}
                       >
                         {c.displayName}
                       </Text>
@@ -142,8 +147,8 @@ export const ArticleWriteForm = ({
                 );
               })
             ) : (
-              <View className="px-4 py-12 rounded-lg bg-surface-background">
-                <Text className="text-gray-500 text-center">
+              <View style={styles.noCategoriesContainer}>
+                <Text style={styles.noCategoriesText}>
                   선택 가능한 카테고리가 없습니다.
                 </Text>
               </View>
@@ -188,39 +193,40 @@ export const ArticleWriteForm = ({
 
   return (
     <ScrollView
-      className="flex-1"
+      style={styles.scrollView}
       nestedScrollEnabled
       keyboardShouldPersistTaps="handled"
       scrollEnabled={outerScrollEnabled}
-      contentContainerStyle={{ paddingBottom: 16 }}
+      contentContainerStyle={styles.scrollViewContent}
       showsVerticalScrollIndicator
     >
-      <View className="h-[1px] bg-surface-background" />
+      <View style={styles.divider} />
 
-      <View className="px-[16px] pt-[26px]">
-        <View className="flex-row items-center gap-3 mb-[10px]">
+      <View style={styles.contentContainer}>
+        <View style={styles.headerContainer}>
           {allowedCategories.length > 0 && (
             <TouchableOpacity
               onPress={mode === "create" ? openCategoryModal : undefined}
-              className="px-3 py-2 rounded-md bg-surface-background items-center justify-center"
-              // update일 때 약간 투명하게
-              style={{ opacity: mode === "create" ? 1 : 0.6 }}
+              style={[
+                styles.categoryButton,
+                { opacity: mode === "create" ? 1 : 0.6 }
+              ]}
               disabled={mode !== "create"}
             >
-              <Text className="text-brand-primary font-bold text-sm">
+              <Text style={styles.categoryButtonText}>
                 {displayName} ▼
               </Text>
             </TouchableOpacity>
           )}
 
-          <View style={{ flex: 1 }}>
+          <View style={styles.titleContainer}>
             <Controller
               control={control}
               name="title"
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   placeholder="제목을 입력해주세요."
-                  className="w-full p-2 font-bold placeholder:text-text-inverse text-[18px] border-b border-border-default pb-2"
+                  style={styles.titleInput}
                   onChangeText={onChange}
                   value={value}
                   blurOnSubmit={false}
@@ -230,7 +236,7 @@ export const ArticleWriteForm = ({
           </View>
         </View>
 
-        <View className="items-center justify-center">
+        <View style={styles.formContainer}>
           <Controller
             control={control}
             name="content"
@@ -242,10 +248,12 @@ export const ArticleWriteForm = ({
                 scrollEnabled
                 textAlignVertical="top"
                 maxLength={2000}
-                className="w-full p-2 text-[14px] md:text-md placeholder:text-text-inverse"
+                style={[
+                  styles.contentInput,
+                  { minHeight: 232, maxHeight: 400 }
+                ]}
                 onChangeText={onChange}
                 value={value}
-                style={{ minHeight: 232, maxHeight: 400 }}
                 underlineColorAndroid="transparent"
                 blurOnSubmit={false}
                 onFocus={() => setOuterScrollEnabled(false)}
@@ -256,39 +264,39 @@ export const ArticleWriteForm = ({
             )}
           />
 
-          <View className="flex-row items-center justify-between w-full mt-1 mb-2">
+          <View style={styles.actionContainer}>
             <TouchableOpacity
               onPress={pickImage}
-              className="flex-row items-center px-3 py-2 bg-gray-100 rounded-lg"
+              style={styles.imageButton}
             >
               <Image
                 source={require("@assets/images/camera.png")}
-                style={{ width: 30, height: 30, marginRight: 8 }}
+                style={styles.cameraIcon}
                 resizeMode="contain"
               />
-              <Text className="text-gray-600 text-sm">
+              <Text style={styles.imageButtonText}>
                 이미지 추가 ({images.length}/5)
               </Text>
             </TouchableOpacity>
-            <Text className="text-gray-500">x {content?.length ?? 0}/2000</Text>
+            <Text style={styles.charCount}>x {content?.length ?? 0}/2000</Text>
           </View>
 
           {images.length > 0 && (
-            <View className="w-full mt-2">
+            <View style={styles.imageContainer}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View className="flex-row gap-2">
+                <View style={styles.imageRow}>
                   {images.map((uri: string, index: number) => (
-                    <View key={`image-${uri}-${index}`} className="relative">
+                    <View key={`image-${uri}-${index}`} style={styles.imageWrapper}>
                       <Image
                         source={{ uri }}
-                        className="w-20 h-20 rounded-lg"
+                        style={styles.image}
                         resizeMode="cover"
                       />
                       <TouchableOpacity
                         onPress={() => removeImage(index)}
-                        className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full items-center justify-center"
+                        style={styles.deleteButton}
                       >
-                        <Text className="text-text-inverse text-xs font-bold">×</Text>
+                        <Text style={styles.deleteButtonText}>×</Text>
                       </TouchableOpacity>
                     </View>
                   ))}
@@ -299,8 +307,155 @@ export const ArticleWriteForm = ({
         </View>
       </View>
 
-      <View className="h-[1px] bg-surface-background mb-4" />
+      <View style={[styles.divider, { marginBottom: 16 }]} />
       <CommunityGuideline />
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingBottom: 16,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 26,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 10,
+  },
+  categoryButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: semanticColors.surface.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryButtonText: {
+    color: semanticColors.brand.primary,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  titleInput: {
+    width: '100%',
+    padding: 8,
+    fontWeight: 'bold',
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: semanticColors.border.default,
+    paddingBottom: 8,
+    color: semanticColors.text.inverse,
+  },
+  formContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contentInput: {
+    width: '100%',
+    padding: 8,
+    fontSize: 14,
+    color: semanticColors.text.primary,
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  imageButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+  },
+  cameraIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 8,
+  },
+  imageButtonText: {
+    color: '#6B7280',
+    fontSize: 14,
+  },
+  charCount: {
+    color: '#6B7280',
+  },
+  imageContainer: {
+    width: '100%',
+    marginTop: 8,
+  },
+  imageRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  imageWrapper: {
+    position: 'relative',
+  },
+  image: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    width: 24,
+    height: 24,
+    backgroundColor: semanticColors.state.error,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteButtonText: {
+    color: semanticColors.text.inverse,
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  modalOverlay: {
+    width: '100%',
+  },
+  modalContent: {
+    paddingVertical: 8,
+  },
+  categoryItem: {
+    marginBottom: 8,
+  },
+  categoryBox: {
+    paddingHorizontal: 12,
+    paddingVertical: 16,
+    borderRadius: 8,
+  },
+  categoryText: {
+    fontSize: 15,
+    textAlign: 'center',
+  },
+  noCategoriesContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 48,
+    borderRadius: 8,
+    backgroundColor: semanticColors.surface.background,
+  },
+  noCategoriesText: {
+    color: '#6B7280',
+    textAlign: 'center',
+  },
+});

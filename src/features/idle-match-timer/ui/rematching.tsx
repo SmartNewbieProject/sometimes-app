@@ -9,12 +9,10 @@ import Animated, {
   interpolate,
   runOnJS,
   useAnimatedReaction,
-} from "react-native-reanimated";
-import {
+
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+  withTiming} from "react-native-reanimated";
 import { useMatchLoading } from "../hooks";
 import { useLatestMatching } from "../queries";
 

@@ -8,7 +8,7 @@ import { HttpStatusCode } from "axios";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { useMatchLoading } from "../hooks";
+import { useMatchLoading } from "./use-match-loading";
 
 const useRematchingMutation = () =>
   useMutation({
@@ -66,7 +66,7 @@ function useRematch() {
         showModal({
           title: "아직 추천드릴 상대가 없어요",
           children: (
-            <View className="flex flex-col">
+            <View style={styles.modalContent}>
               <Text>지금은 조건에 맞는 상대가 잠시 없어요.</Text>
               <Text>
                 곧 더 많은 분들이 참여할 예정이니, 잠시 후 다시 시도해 주세요!
@@ -103,6 +103,10 @@ function useRematch() {
   };
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  modalContent: {
+    flexDirection: 'column'
+  }
+});
 
 export default useRematch;

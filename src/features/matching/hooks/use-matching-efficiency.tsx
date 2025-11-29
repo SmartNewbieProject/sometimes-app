@@ -60,8 +60,8 @@ export const useMatchingEfficiency = () => {
 
   // 실패 원인 분석
   const analyzeFailureReasons = useCallback((
-    failureData: Array<{ type: string; count: number }>
-  ): Array<FailureAnalysis> => {
+    failureData: { type: string; count: number }[]
+  ): FailureAnalysis[] => {
     const totalFailures = failureData.reduce((sum, item) => sum + item.count, 0);
 
     return failureData.map(item => ({
@@ -202,15 +202,15 @@ export const useMatchingEfficiency = () => {
 
   // 실패 방지 추천 생성
   const generateFailurePreventionRecommendations = useCallback((
-    failureAnalysis: Array<FailureAnalysis>,
+    failureAnalysis: FailureAnalysis[],
     currentStatistics: MatchingStatistics
   ) => {
-    const recommendations: Array<{
+    const recommendations: {
       type: 'immediate' | 'short_term' | 'long_term';
       priority: 'high' | 'medium' | 'low';
       action: string;
       expectedImprovement: string;
-    }> = [];
+    }[] = [];
 
     // 높은 실패율의 경우
     if (currentStatistics.failureRate > 30) {

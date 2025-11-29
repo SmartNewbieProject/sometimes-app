@@ -1,7 +1,7 @@
 import { platform } from "@shared/libs/platform";
 import { Button } from "@/src/shared/ui/button";
 import { router } from "expo-router";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 interface SignupButtonsProps {
   onPress?: () => void;
@@ -10,28 +10,13 @@ interface SignupButtonsProps {
 
 export default function SignupButtons({ onPress, onPassLogin }: SignupButtonsProps) {
   return (
-    <View className="mt-flex flex-col px-2 gap-y-2" style={{
-      ...platform({
-        ios: () => ({
-          paddingTop: 58,
-          paddingBottom: 58,
-        }),
-        android: () => ({
-          paddingTop: 58,
-          paddingBottom: 58,
-        }),
-        web: () => ({
-          paddingTop: 14,
-          paddingBottom: 0,
-        }),
-      })
-    }}>
+    <View style={styles.container}>
     {onPassLogin ? (
       <Button
         size="md"
         variant="primary"
         onPress={onPassLogin}
-        className="w-full"
+        style={styles.button}
       >
         PASS 인증으로 로그인
       </Button>
@@ -41,7 +26,7 @@ export default function SignupButtons({ onPress, onPassLogin }: SignupButtonsPro
           size="md"
           variant="primary"
           onPress={onPress || (() => {})}
-          className="w-full"
+          style={styles.button}
         >
           로그인
         </Button>
@@ -49,7 +34,7 @@ export default function SignupButtons({ onPress, onPassLogin }: SignupButtonsPro
           size="md"
           variant="secondary"
           onPress={() => router.push('/auth/signup/terms')}
-          className="w-full"
+          style={styles.button}
           textColor="purple"
         >
           회원가입
@@ -59,3 +44,29 @@ export default function SignupButtons({ onPress, onPassLogin }: SignupButtonsPro
   </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 'auto',
+    flexDirection: 'column',
+    paddingHorizontal: 8,
+    rowGap: 8,
+    ...platform({
+      ios: () => ({
+        paddingTop: 58,
+        paddingBottom: 58,
+      }),
+      android: () => ({
+        paddingTop: 58,
+        paddingBottom: 58,
+      }),
+      web: () => ({
+        paddingTop: 14,
+        paddingBottom: 0,
+      }),
+    })
+  },
+  button: {
+    width: '100%'
+  }
+});

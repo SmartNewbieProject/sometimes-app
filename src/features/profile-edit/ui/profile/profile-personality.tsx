@@ -43,7 +43,7 @@ function ProfilePersonality() {
           step={personality?.length ?? 0}
           dotGap={4}
           dotSize={16}
-          className="self-end"
+          style={styles.stepIndicator}
         />
       </View>
 
@@ -61,7 +61,7 @@ function ProfilePersonality() {
             }
             multiple={true}
             onChange={onChangeOption}
-            className="w-full"
+            style={styles.chipSelectorFullWidth}
           />
         </Loading.Lottie>
       </View>
@@ -98,6 +98,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 0.5,
     backgroundColor: semanticColors.surface.other,
+  },
+  stepIndicator: {
+    alignSelf: 'flex-end',
+  },
+  chipSelectorFullWidth: {
+    width: '100%',
   },
 });
 

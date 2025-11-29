@@ -19,7 +19,7 @@ function BannerSlide() {
         indicatorContainerClassName="!bottom-[-16px] "
         autoPlay
         autoPlayInterval={5000}
-        className="w-full !min-h-[92px] "
+        style={styles.sliderContainer}
       >
         <JapanOpeningBanner />
         <FirstPurchaseEvent />
@@ -30,6 +30,11 @@ function BannerSlide() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  sliderContainer: {
+    width: '100%',
+    minHeight: 92,
+  },
+});
 
 export default BannerSlide;

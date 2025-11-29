@@ -71,7 +71,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
         ),
         children: (
           <View style={ModalStyles.content}>
-            <Text style={ModalStyles.description} className="text-text-disabled">
+            <Text style={[ModalStyles.description, styles.modalDescription]}>
               시간이 지났지만 다시 인연을 이어가고 싶다면, 용기 내어 먼저 다가가
               보세요.
             </Text>
@@ -97,15 +97,13 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
         style={[styles.imageBackground, { width: size, height: size }]}
       >
         <View
-          style={{
-            position: "relative",
-            width: size,
-            height: size,
-            padding: 14,
-            boxSizing: "border-box",
-            borderRadius: 30,
-          }}
-          className="flex flex-col justify-between"
+          style={[
+            styles.cardContainer,
+            {
+              width: size,
+              height: size,
+            }
+          ]}
         >
           {item.blinded && (
             <View style={styles.lock}>
@@ -125,7 +123,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
             <Text textColor="white" weight="semibold" size="20">
               {item.age}
             </Text>
-            <View className="flex flex-row items-center">
+            <View style={styles.infoRow}>
               <Text textColor="white" weight="light" size="10">
                 {item.mbti ? `#${item?.mbti}` : ""} #{item.universityName}
               </Text>
@@ -196,11 +194,8 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
               />
             </View>
 
-            <View className="w-full flex flex-row">
+            <View style={styles.buttonContainer}>
               <Pressable
-                className={
-                  " flex-1 flex flex-row justify-end items-center pr-1"
-                }
                 style={[
                   styles.previousButton,
                   {
@@ -211,7 +206,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                 ]}
                 onPress={onClickToPartner}
               >
-                <Text className="w-[20px] text-text-inverse text-[7px]">
+                <Text style={styles.buttonText}>
                   {item.blinded ? "프로필\n풀기" : "더보기"}
                 </Text>
                 <IconWrapper width={6} height={6}>
@@ -220,10 +215,12 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
               </Pressable>
             </View>
             <View
-              className="w-full relative"
-              style={{
-                overflow: "hidden",
-              }}
+              style={[
+                styles.bottomCorner,
+                {
+                  overflow: "hidden",
+                }
+              ]}
             >
               <View
                 style={{
@@ -291,6 +288,34 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Bold",
     color: colors.primaryPurple,
   },
+  cardContainer: {
+    position: "relative",
+    padding: 14,
+    boxSizing: "border-box",
+    borderRadius: 30,
+    flexDirection: 'column',
+    justifyContent: 'space-between'
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  buttonContainer: {
+    width: '100%',
+    flexDirection: 'row'
+  },
+  buttonText: {
+    width: 20,
+    color: semanticColors.text.inverse,
+    fontSize: 7
+  },
+  bottomCorner: {
+    width: '100%',
+    position: 'relative'
+  },
+  modalDescription: {
+    color: semanticColors.text.disabled
+  }
 });
 
 export default MatchingHistoryCard;

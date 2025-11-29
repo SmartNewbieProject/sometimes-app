@@ -7,7 +7,7 @@ import ReloadingIcon from "@assets/icons/reloading.svg";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
-import useRematch from "../hooks/use-rematch";
+import { useRematch } from "../hooks";
 import NotFoundCard from "./not-found-card";
 export const NotFound = () => {
   const router = useRouter();
@@ -32,7 +32,7 @@ export const NotFound = () => {
             <Button
               size="chip"
               onPress={onRematch}
-              className="!px-[7px] !h-[34px] "
+              style={styles.rematchButton}
             >
               재매칭
             </Button>
@@ -49,7 +49,7 @@ export const NotFound = () => {
               size="chip"
               onPress={() => router.push("/profile-edit/interest")}
               textColor="dark"
-              className="!px-[12px] !h-[33px]  !border-border-default"
+              style={styles.editButton}
             >
               수정
             </Button>
@@ -66,7 +66,7 @@ export const NotFound = () => {
               variant={"white"}
               size="chip"
               textColor="dark"
-              className="!px-[12px] !h-[33px]  !border-border-default"
+              style={styles.editButton}
             >
               수정
             </Button>
@@ -102,9 +102,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  button: {
+  rematchButton: {
     paddingHorizontal: 7,
-    paddingVertical: 6,
+    height: 34,
+  },
+  editButton: {
+    paddingHorizontal: 12,
+    height: 33,
+    borderWidth: 1,
+    borderColor: semanticColors.border.default
   },
   frameIcon: {
     width: 38,

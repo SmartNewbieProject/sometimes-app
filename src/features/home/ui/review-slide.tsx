@@ -1,7 +1,7 @@
 import { UniversityName, getUnivLogo } from "@/src/shared/libs";
 import Slide from "@/src/widgets/slide";
 import { Text } from "@shared/ui";
-import { Image, Platform, View } from "react-native";
+import { Image, Platform, View, StyleSheet } from "react-native";
 
 type Review = {
   name: string;
@@ -19,21 +19,21 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
   return (
     <Slide
       autoPlayInterval={6000}
-      className={"w-full"}
+      style={styles.slideContainer}
       autoPlay
       indicatorContainerClassName="!-bottom-[28px] "
     >
       {reviews.map((review) => (
         <View
           key={review.name}
-          className="flex flex-col gap-y-2 w-full bg-moreLightPurple p-2.5 rounded-xl"
+          style={styles.reviewCard}
         >
-          <View className="flex flex-row gap-x-2">
+          <View style={styles.headerRow}>
             <Image
               source={{ uri: review.universityImageUrl }}
-              style={{ width: 60, height: 60 }}
+              style={styles.universityLogo}
             />
-            <View className="flex flex-col self-end gap-y-1">
+            <View style={styles.userInfo}>
               <Text size="md" weight="semibold" textColor="black">
                 {review.name}
               </Text>
@@ -43,12 +43,12 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
             </View>
           </View>
 
-          <View className="mx-2 mt-2 flex flex-col ml-2">
+          <View style={styles.contentContainer}>
             <Text size="sm" textColor="black">
               {review.content}
             </Text>
 
-            <Text size="sm" className="text-[#6F6F6F] mt-2 mb-3">
+            <Text size="sm" style={styles.dateText}>
               {review.date}
             </Text>
           </View>
@@ -100,3 +100,41 @@ const reviews: Review[] = [
     date: "25.08.09",
   },
 ];
+
+const styles = StyleSheet.create({
+  slideContainer: {
+    width: '100%',
+  },
+  reviewCard: {
+    flexDirection: 'column',
+    gap: 8,
+    width: '100%',
+    backgroundColor: '#F2EDFF',
+    padding: 10,
+    borderRadius: 12,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  universityLogo: {
+    width: 60,
+    height: 60,
+  },
+  userInfo: {
+    flexDirection: 'column',
+    alignSelf: 'flex-end',
+    gap: 4,
+  },
+  contentContainer: {
+    marginHorizontal: 8,
+    marginTop: 8,
+    marginLeft: 8,
+    flexDirection: 'column',
+  },
+  dateText: {
+    color: '#6F6F6F',
+    marginTop: 8,
+    marginBottom: 12,
+  },
+});

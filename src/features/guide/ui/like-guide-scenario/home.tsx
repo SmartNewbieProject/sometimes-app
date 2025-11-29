@@ -9,7 +9,7 @@ import {
 import BannerSlide from "@/src/features/home/ui/banner-slide";
 import LikeCollapse from "@/src/features/like/ui/like-collapse";
 import HistoryCollapse from "@/src/features/matching-history/ui/history-collapse";
-import { ImageResources, cn } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs";
 import { Image } from "expo-image";
 import {
   Platform,
@@ -39,10 +39,10 @@ function HomeGuide() {
 
   return (
     <View
-      className={cn(
-        "flex-1 relative",
-        Platform.OS === "web" && "max-w-[468px] w-full self-center"
-      )}
+      style={[
+        styles.mainContainer,
+        Platform.OS === "web" && styles.webContainer
+      ]}
     >
       <PalePurpleGradient />
 
@@ -93,10 +93,10 @@ function HomeGuide() {
           />
 
           <ScrollView
-            className={cn(
-              "flex-1 px-5 flex flex-col gap-y-[14px]",
-              Platform.OS === "android" ? "pb-40" : "pb-14"
-            )}
+            style={[
+              styles.scrollView,
+              Platform.OS === "android" ? styles.androidPadding : styles.iosPadding
+            ]}
           >
             <View style={{ paddingBottom: 4, marginTop: 2 }}>
               <BannerSlide />
@@ -109,11 +109,11 @@ function HomeGuide() {
               />
             </View>
 
-            <View className="mt-[18px] flex flex-col gap-y-1.5">
+            <View style={styles.feedbackContainer}>
               <Feedback.WallaFeedbackBanner />
             </View>
 
-            <View className="mt-[14px]">
+            <View style={styles.mockPartnerContainer}>
               <MockPartner />
             </View>
             <View style={{ marginTop: 20 }}>
@@ -124,7 +124,7 @@ function HomeGuide() {
               <ReviewSlide onScrollStateChange={() => {}} />
             </View>
 
-            <View className="my-[25px]">
+            <View style={styles.tipContainer}>
               <TipAnnouncement />
             </View>
 
@@ -137,11 +137,11 @@ function HomeGuide() {
       {isHistoryStep && (
         <>
           <View
-            className={cn(
-              "flex-1 px-5 flex flex-col gap-y-[14px]",
-              Platform.OS === "android" ? "pb-40" : "pb-14"
-            )}
-            style={{ paddingTop: insets.top }}
+            style={[
+              styles.historyContainer,
+              Platform.OS === "android" ? styles.androidPadding : styles.iosPadding,
+              { paddingTop: insets.top }
+            ]}
           >
             <View style={{ marginTop: 20 }}>
               <HistoryCollapse />
@@ -152,7 +152,7 @@ function HomeGuide() {
               <ReviewSlide onScrollStateChange={() => {}} />
             </View>
 
-            <View className="my-[25px]">
+            <View style={styles.tipContainer}>
               <TipAnnouncement />
             </View>
 
@@ -225,6 +225,42 @@ function HomeGuide() {
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    position: 'relative',
+  },
+  webContainer: {
+    maxWidth: 468,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  androidPadding: {
+    paddingBottom: 160,
+  },
+  iosPadding: {
+    paddingBottom: 56,
+  },
+  feedbackContainer: {
+    marginTop: 18,
+    flexDirection: 'column',
+    gap: 6,
+  },
+  mockPartnerContainer: {
+    marginTop: 14,
+  },
+  tipContainer: {
+    marginVertical: 25,
+  },
+  historyContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    flexDirection: 'column',
+    gap: 14,
+  },
   highlightContainer: {
     backgroundColor: semanticColors.surface.background,
     position: "absolute",

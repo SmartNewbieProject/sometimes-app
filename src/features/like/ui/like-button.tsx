@@ -1,4 +1,4 @@
-import { ImageResources, cn } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs";
 import { semanticColors } from '../../../shared/constants/colors';
 import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
@@ -37,12 +37,7 @@ export const LikeButton = ({
       showLogo: true,
       customTitle: (
         <View
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-          }}
+          style={styles.titleContainer}
         >
           <Text textColor="black" weight="bold" size="20">
             마음에 드는 이성에게
@@ -55,11 +50,11 @@ export const LikeButton = ({
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[5px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.contentContainer}>
+          <Text textColor="disabled" size="12">
             이성에게 간단히 관심을 표현하고,
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text textColor="disabled" size="12">
             그 다음 단계로 자연스럽게 나아가 보세요.
           </Text>
         </View>
@@ -126,7 +121,8 @@ export const LikeButton = ({
     <Button
       onPress={showPartnerLikeAnnouncement}
       variant="primary"
-      className={cn("flex-1 items-center", className)}
+      flex="flex-1"
+      style={styles.button}
       prefix={
         profileDetails?.gender === "MALE" ? (
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />
@@ -135,26 +131,50 @@ export const LikeButton = ({
         )
       }
     >
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <View style={styles.buttonContent}>
         {profileDetails?.gender === "MALE" ? (
           <RNText style={styles.subText}>x{featureCosts?.LIKE_MESSAGE}</RNText>
         ) : (
           <></>
         )}
-        <RNText className="text-md text-text-inverse whitespace-nowrap">좋아요</RNText>
+        <RNText style={styles.buttonText}>좋아요</RNText>
       </View>
     </Button>
   );
 };
 
 const styles = StyleSheet.create({
+  button: {
+    alignItems: "center",
+  },
+  titleContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%",
+  },
+  contentContainer: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   subText: {
     fontSize: 15,
     fontFamily: "Pretendard-Thin",
-    fontWeight: 300,
+    fontWeight: "300",
     lineHeight: 18,
     marginLeft: -5,
     marginRight: 6,
     color: semanticColors.brand.accent,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: semanticColors.text.inverse,
   },
 });

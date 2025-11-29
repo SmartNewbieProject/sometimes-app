@@ -1,4 +1,4 @@
-import type { AuthorizeSmsCode } from "@/app/auth/signup/types";
+import type { AuthorizeSmsCode } from "@/src/features/auth/types/types";
 import { axiosClient, dayUtils, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from "nanoid";
 import type { SignupForm } from "../hooks";

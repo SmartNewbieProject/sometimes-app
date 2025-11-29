@@ -65,10 +65,10 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
           alignItems: "center",
         }}
       >
-        <Text textColor="black" weight="bold" size="20" className="text-[20px]">
+        <Text textColor="black" weight="bold" size="20" style={styles.titleText}>
           🔥 타임 특가! 지금만 이 가격!
         </Text>
-        <Text weight="bold" size="20" className="text-rose-600">
+        <Text weight="bold" size="20" style={styles.timeText}>
           {formatTime(seconds)}
         </Text>
       </View>
@@ -85,14 +85,14 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
               <Text
                 textColor="purple"
                 weight="semibold"
-                className="text-[15px] mb-1"
+                style={styles.bubbleText1}
               >
                 💜 썸타임이 첫 만남을 응원해요!
               </Text>
               <Text
                 textColor="purple"
                 weight="semibold"
-                className="text-[15px]"
+                style={styles.bubbleText2}
               >
                 신규 회원 첫 구슬팩 특별 할인
               </Text>
@@ -173,4 +173,17 @@ const styles = StyleSheet.create({
     borderBottomColor: "transparent",
     borderRightColor: colors.white,
   },
+  titleText: {
+    fontSize: 20
+  },
+  timeText: {
+    color: "#e11d48"
+  },
+  bubbleText1: {
+    fontSize: 15,
+    marginBottom: 4
+  },
+  bubbleText2: {
+    fontSize: 15
+  }
 });

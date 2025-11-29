@@ -7,7 +7,7 @@ import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { Image } from "expo-image";
 import { useRef, useState } from "react";
-import { Animated, Pressable, View } from "react-native";
+import { Animated, Pressable, View, StyleSheet, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Logo() {
@@ -57,35 +57,26 @@ export default function Logo() {
   });
 
   return (
-    <View
-      className={cn("flex flex-col items-center gap-y-2")}
-      style={{ paddingTop: insets.top }}
-    >
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <Pressable
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        className="relative mt-[80px]"
+        style={styles.logoContainer}
       >
         <Image
-          style={{
-            position: "absolute",
-            right: 45,
-            top: -71,
-            width: 60,
-            height: 60,
-          }}
+          style={styles.letterImage}
           source={require("@assets/images/letter.png")}
         />
-        <Animated.View style={{ transform: [{ rotate: spin }] }}>
+        <Animated.View style={[styles.animatedLogo, { transform: [{ rotate: spin }] }]}>
           <BigTitle width={309} height={41} />
         </Animated.View>
       </Pressable>
-      <View className="mt-[20px]">
+      <View style={styles.taglineContainer}>
         <Pressable
           onLongPress={() => setIsEmailLoginModalVisible(true)}
           delayLongPress={2000}
         >
-          <Text className="text-[20px] font-medium text-primaryPurple">
+          <Text style={styles.tagline}>
             대학생을 위한 진짜 설렘의 시작
           </Text>
         </Pressable>
@@ -103,3 +94,37 @@ export default function Logo() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 8, // gap-y-2
+  },
+  logoContainer: {
+    position: 'relative',
+    marginTop: Platform.OS === 'web' ? 60 : 80, // 웹에서는 마진을 줄임
+  },
+  letterImage: {
+    position: 'absolute',
+    right: Platform.OS === 'web' ? 35 : 45, // 웹에서는 위치 조정
+    top: Platform.OS === 'web' ? -55 : -71, // 웹에서는 위치 조정
+    width: Platform.OS === 'web' ? 45 : 60, // 웹에서는 크기 조정
+    height: Platform.OS === 'web' ? 45 : 60, // 웹에서는 크기 조정
+  },
+  animatedLogo: {
+    // 웹에서 로고 크기 조정
+    ...(Platform.OS === 'web' && {
+      transform: [{ scale: 0.85 }], // 웹에서는 85% 크기로 조정
+    }),
+  },
+  taglineContainer: {
+    marginTop: Platform.OS === 'web' ? 15 : 20, // 웹에서는 마진 조정
+  },
+  tagline: {
+    fontSize: Platform.OS === 'web' ? 18 : 20, // 웹에서는 폰트 크기 조정
+    fontWeight: '500',
+    color: '#A78BFA', // text-primaryPurple
+    textAlign: 'center',
+  },
+});

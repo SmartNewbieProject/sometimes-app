@@ -114,18 +114,18 @@ export const Profile = () => {
               />
             </View>
             <View style={styles.profileInfoContainer}>
-              <Text className="text-text-inverse " style={styles.name}>
+              <Text style={[styles.name, styles.commonText]}>
                 {profileData.name}
               </Text>
               <View style={styles.subInfo}>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
+                <Text style={[styles.subInfoText, styles.commonText]}>
                   {profileData.grade}
                 </Text>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
+                <Text style={[styles.subInfoText, styles.commonText]}>
                   {" "}
                   ·{" "}
                 </Text>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
+                <Text style={[styles.subInfoText, styles.commonText]}>
                   {profileData.university}
                 </Text>
                 {!isLoadingVerification &&
@@ -179,7 +179,7 @@ export const Profile = () => {
                       style={{ width: 20, height: 8 }}
                     />
 
-                    <Text className="text-[10px] text-brand-secondary">
+                    <Text style={styles.updateButtonText}>
                       프로필 수정
                     </Text>
                   </View>
@@ -190,18 +190,15 @@ export const Profile = () => {
             </View>
           </View>
         </View>
-        <View
-          className="pt-[5px] pl-[32px] flex-row"
-          style={{ alignItems: "center" }}
-        >
+        <View style={styles.gemContainer}>
           <ImageResource resource={ImageResources.GEM} width={28} height={28} />
-          <View className="pl-[10px] flex-row">
-            <Text className="text-[13px] text-text-inverse">구슬이 </Text>
-            <Text className="text-[13px] text-brand-secondary">
+          <View style={styles.gemTextContainer}>
+            <Text style={[styles.gemText, styles.commonText]}>구슬이 </Text>
+            <Text style={styles.gemCount}>
               {" "}
               {gem?.totalGem ?? 0}개
             </Text>
-            <Text className="text-[13px] text-text-inverse"> 남았어요</Text>
+            <Text style={[styles.gemText, styles.commonText]}> 남았어요</Text>
           </View>
         </View>
       </View>
@@ -316,6 +313,30 @@ const styles = StyleSheet.create({
     color: semanticColors.brand.secondary,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
+  },
+  commonText: {
+    color: semanticColors.text.inverse,
+  },
+  updateButtonText: {
+    fontSize: 10,
+    color: semanticColors.brand.secondary,
+  },
+  gemContainer: {
+    paddingTop: 5,
+    paddingLeft: 32,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  gemTextContainer: {
+    paddingLeft: 10,
+    flexDirection: 'row',
+  },
+  gemText: {
+    fontSize: 13,
+  },
+  gemCount: {
+    fontSize: 13,
+    color: semanticColors.brand.secondary,
   },
 });
 

@@ -1,6 +1,9 @@
 import { View, ActivityIndicator, StyleSheet } from "react-native";
-import { Lottie, PalePurpleGradient, Text } from "@shared/ui";
+import { Text } from "@/src/shared/ui/text";
 import { ReactNode } from "react";
+
+// Direct imports to avoid circular dependencies
+import { Lottie } from "@/src/shared/ui/lottie";
 
 type Props = {
   title?: string;
@@ -18,20 +21,18 @@ export default function PageLoading({
   spinnerColor = "#8C6AE3",
 }: Props) {
   return (
-    <View className="flex-1 flex flex-col h-screen items-center justify-center">
-      <PalePurpleGradient />
-      <Lottie size={size} />
+    <View style={styles.container}>
       {!!children && children}
       {!children && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size={spinnerSize} color={spinnerColor} />
+          <Lottie size={size} />
           {title && (
             <Text
               variant="primary"
               weight="normal"
               textColor="black"
               size="md"
-              className="text-center mt-2"
+              style={styles.title}
             >
               {title}
             </Text>
@@ -43,9 +44,21 @@ export default function PageLoading({
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#faf5ff', // purple-50
+  },
   loadingContainer: {
     padding: 16,
     alignItems: "center",
     justifyContent: "center",
+  },
+  title: {
+    textAlign: 'center',
+    marginTop: 8,
   },
 });

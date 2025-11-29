@@ -1,4 +1,4 @@
-import { ImageResources, cn } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs";
 import { semanticColors } from '../../../shared/constants/colors';
 import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
@@ -8,7 +8,7 @@ import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
 import useILiked from "../../like/hooks/use-liked";
 import { LikeButton } from "../../like/ui/like-button";
-import useRematch from "../hooks/use-rematch";
+import { useRematch } from "../hooks";
 
 type InteractionNavigationProps = {
   match?: MatchDetails;
@@ -30,12 +30,7 @@ export const InteractionNavigation = ({
 
       customTitle: (
         <View
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: "100%",
-          }}
+          style={styles.titleContainer}
         >
           <Text textColor="black" weight="bold" size="20">
             마음에 드는 이성을 찾기위해
@@ -46,11 +41,11 @@ export const InteractionNavigation = ({
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[8px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.contentContainer}>
+          <Text style={styles.contentText}>
             성격과 소통 스타일을 바탕으로,
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text style={styles.contentText}>
             자연스럽게 연결될 수 있는 인연을 추천해드릴게요.
           </Text>
         </View>
@@ -67,24 +62,24 @@ export const InteractionNavigation = ({
   };
 
   return (
-    <View className=" flex flex-row gap-x-[5px] mt-4">
+    <View style={styles.container}>
       <Button
         onPress={showPartnerFindAnnouncement}
         variant={hasPartner ? "outline" : "primary"}
-        className="flex-1 items-center"
+        flex="flex-1"
         prefix={
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />
         }
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={styles.buttonContent}>
           {hasPartner && (
             <RNText style={styles.subText}>x{featureCosts?.REMATCHING}</RNText>
           )}
           <RNText
-            className={cn(
-              "text-md text-primaryPurple whitespace-nowrap",
-              !hasPartner && "text-text-inverse"
-            )}
+            style={[
+              styles.buttonText,
+              !hasPartner && styles.buttonTextPrimary
+            ]}
           >
             더 찾아보기
           </RNText>
@@ -93,7 +88,9 @@ export const InteractionNavigation = ({
       {isLiked ? (
         <Button
           onPress={() => {}}
-          className="flex-1 items-center !bg-surface-other !text-text-inverse"
+          flex="flex-1"
+          variant="secondary"
+          styles={styles.disabledButton}
         >
           썸 보내기 완료!
         </Button>
@@ -108,6 +105,31 @@ export const InteractionNavigation = ({
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    gap: 5,
+    marginTop: 16,
+  },
+  titleContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%",
+  },
+  contentContainer: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  contentText: {
+    fontSize: 12,
+    color: semanticColors.text.disabled,
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   subText: {
     fontSize: 15,
     fontFamily: "Pretendard-Thin",
@@ -115,5 +137,15 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     lineHeight: 18,
     color: semanticColors.brand.accent,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: semanticColors.brand.primary,
+  },
+  buttonTextPrimary: {
+    color: semanticColors.text.inverse,
+  },
+  disabledButton: {
+    backgroundColor: semanticColors.surface.other,
   },
 });

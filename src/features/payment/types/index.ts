@@ -162,3 +162,111 @@ export type GemMetadata = {
   gemProduct: GemDetails;
   eventType?: EventType;
 }
+
+// 총 결제 금액 관련 타입
+export type TotalRevenue = {
+  totalRevenue: number;
+  transactionCount: number;
+  averageTransactionValue: number;
+  currency: 'KRW';
+};
+
+export type TotalRevenueResponse = {
+  success: boolean;
+  data: TotalRevenue;
+  meta: {
+    calculatedAt: string;
+    period: {
+      from: string;
+      to: string;
+    };
+  };
+};
+
+export type RevenueByProduct = {
+  productType: string;
+  productName: string;
+  revenue: number;
+  purchaseCount: number;
+  averagePrice: number;
+};
+
+export type RevenueByMonth = {
+  month: string;
+  revenue: number;
+  transactionCount: number;
+};
+
+export type RevenueAnalytics = {
+  totalRevenue: number;
+  transactionCount: number;
+  averageTransactionValue: number;
+  revenueByProduct: RevenueByProduct[];
+  revenueByMonth: RevenueByMonth[];
+  firstPaymentDate: string;
+  lastPaymentDate: string;
+  lifetimeDays: number;
+  monthlyARPU: number;
+};
+
+export type RevenueAnalyticsResponse = {
+  success: boolean;
+  data: RevenueAnalytics;
+};
+
+export type FinalizeLTVDto = {
+  deletionReason: 'voluntary' | 'forced' | 'system';
+  lastActiveDate: string;
+};
+
+export type LTVScore = 'LOW' | 'MEDIUM' | 'HIGH';
+
+export type FinalLTV = {
+  totalRevenue: number;
+  transactionCount: number;
+  averageTransactionValue: number;
+  lifetimeDays: number;
+  signupDate: string;
+  churnDate: string;
+  monthlyARPU: number;
+  ltvScore: LTVScore;
+};
+
+export type AmplitudeLTVEvent = {
+  eventName: string;
+  properties: {
+    user_id: string;
+    total_revenue: number;
+    transaction_count: number;
+    lifetime_days: number;
+    churn_reason: string;
+    ltv_category: LTVScore;
+  };
+};
+
+export type FinalizeLTVResponse = {
+  success: boolean;
+  data: {
+    finalLTV: FinalLTV;
+    amplitudeEvent: AmplitudeLTVEvent;
+  };
+};
+
+export type RevenuePeriodQuery = {
+  from?: string;
+  to?: string;
+};
+
+export type RevenuePeriodResponse = {
+  success: boolean;
+  data: {
+    period: {
+      from: string;
+      to: string;
+    };
+    totalRevenue: number;
+    transactionCount: number;
+    averageTransactionValue: number;
+    monthlyBreakdown: RevenueByMonth[];
+  };
+};

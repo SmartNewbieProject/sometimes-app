@@ -5,8 +5,8 @@ import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text } from "@shared/ui";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
-import { Time } from ".";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import Time from "./time";
 import { useAuth } from "../../auth";
 import { type TimeResult, calculateTime } from "../services/calculate-time";
 import type { MatchDetails } from "../types";
@@ -73,17 +73,17 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
   }, [updateTime]);
 
   return (
-    <View className="p-[14px]">
+    <View style={styles.container}>
       <Image
         source={require("@assets/images/sandclock.png")}
         style={{ width: 72, height: 82 }}
       />
-      <View className="my-[8px]">
+      <View style={styles.nameSection}>
         <Text
           size="18"
           textColor="black"
           weight="semibold"
-          className="mb-[2px]"
+          style={styles.nameText}
         >
           {my?.name}님
         </Text>
@@ -92,7 +92,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
         </Text>
       </View>
 
-      <View className="flex flex-row gap-x-1 mb-[8px]">
+      <View style={styles.timeContainer}>
         <Time value={timeSet?.delimeter || ""} />
         <Time value="-" />
         {timeSet?.value
@@ -109,7 +109,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           size="18"
           textColor="black"
           weight="semibold"
-          className="mt-[4px]"
+          style={styles.remainingText}
         >
           남았어요
         </Text>
@@ -117,33 +117,87 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           size="18"
           textColor="pale-purple"
           weight="normal"
-          className="mt-[8px]"
+          style={styles.scheduleText}
         >
           매주 목·일 21시에 매칭이 시작돼요!
         </Text>
       </View>
 
       <View style={sideStyle.previousContainer}>
-        <View className="w-full bg-surface-background relative">
+        <View style={styles.topSection}>
           <View style={sideStyle.topRadius} />
         </View>
-        <View className="w-full flex flex-row">
+        <View style={styles.buttonSection}>
           <TouchableOpacity
-            className="bg-primaryPurple flex-1 flex flex-row justify-end items-center pr-1"
-            style={sideStyle.previousButton}
+            style={[sideStyle.previousButton, styles.previousButton]}
             onPress={() => router.push("/matching-history")}
           >
-            <Text className="w-[24px] text-text-inverse text-[12px]">이전 매칭</Text>
+            <Text style={styles.previousButtonText}>이전 매칭</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>
           </TouchableOpacity>
-          <View className="w-[16px] bg-surface-background h-full" />
+          <View style={styles.spacer} />
         </View>
-        <View className="w-full bg-surface-background relative">
+        <View style={styles.bottomSection}>
           <View style={sideStyle.bottomRadius} />
         </View>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 14
+  },
+  nameSection: {
+    marginVertical: 8
+  },
+  nameText: {
+    marginBottom: 2
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    columnGap: 4,
+    marginBottom: 8
+  },
+  remainingText: {
+    marginTop: 4
+  },
+  scheduleText: {
+    marginTop: 8
+  },
+  topSection: {
+    width: '100%',
+    backgroundColor: semanticColors.surface.background,
+    position: 'relative'
+  },
+  buttonSection: {
+    width: '100%',
+    flexDirection: 'row'
+  },
+  previousButton: {
+    backgroundColor: '#7A4AE2',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingRight: 4
+  },
+  previousButtonText: {
+    width: 24,
+    color: semanticColors.text.inverse,
+    fontSize: 12
+  },
+  spacer: {
+    width: 16,
+    backgroundColor: semanticColors.surface.background,
+    height: '100%'
+  },
+  bottomSection: {
+    width: '100%',
+    backgroundColor: semanticColors.surface.background,
+    position: 'relative'
+  }
+});

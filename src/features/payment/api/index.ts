@@ -1,6 +1,15 @@
 import { axiosClient } from '@/src/shared/libs';
 import type { Product } from 'expo-iap';
-import type { PaymentBeforeHistory, PortOnePayment } from '../types';
+import type {
+  PaymentBeforeHistory,
+  PortOnePayment,
+  TotalRevenueResponse,
+  RevenueAnalyticsResponse,
+  FinalizeLTVResponse,
+  RevenuePeriodQuery,
+  RevenuePeriodResponse,
+  FinalizeLTVDto
+} from '../types';
 
 export enum GemReferenceType {
 	PAYMENT = 'PAYMENT',
@@ -64,6 +73,33 @@ const postAppleVerifyPurchase = (transactionReceipt: string): Promise<AppleVerif
 	return axiosClient.post('/iap/apple/verify-purchase', { transactionReceipt });
 };
 
+// 총 결제 금액 조회 API
+const getTotalRevenue = (userId: string): Promise<TotalRevenueResponse> => {
+	return axiosClient.get(`/v1/users/${userId}/total-revenue`);
+};
+
+// 상세 결제 분석 API
+const getRevenueAnalytics = (userId: string): Promise<RevenueAnalyticsResponse> => {
+	return axiosClient.get(`/v1/users/${userId}/revenue-analytics`);
+};
+
+// LTV 정산 API (탈퇴 시점)
+const finalizeLTV = (userId: string, data: FinalizeLTVDto): Promise<FinalizeLTVResponse> => {
+	return axiosClient.post(`/v1/users/${userId}/finalize-ltv`, data);
+};
+
+// 기간별 결제 금액 조회 API
+const getRevenueByPeriod = (
+	userId: string,
+	query: RevenuePeriodQuery
+): Promise<RevenuePeriodResponse> => {
+	const params = new URLSearchParams();
+	if (query.from) params.append('from', query.from);
+	if (query.to) params.append('to', query.to);
+
+	return axiosClient.get(`/v1/users/${userId}/revenue-by-period?${params.toString()}`);
+};
+
 const paymentApis = {
 	saveHistory: savePaymentHistory,
 	pay,
@@ -72,6 +108,11 @@ const paymentApis = {
 	payGem,
 	postAppleVerifyPurchase,
 	getFeatureCosts,
+	// 새로운 수익 분석 API
+	getTotalRevenue,
+	getRevenueAnalytics,
+	finalizeLTV,
+	getRevenueByPeriod,
 };
 
 export default paymentApis;

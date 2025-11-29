@@ -20,11 +20,11 @@ export interface FailureContext {
   ticketCount: number;
   recentLikeCount: number;
   recentMatchCount: number;
-  restrictionHistory: Array<{
+  restrictionHistory: {
     timestamp: number;
     endTime: number;
     type: string;
-  }>;
+  }[];
   lastLikeTime: number;
   timeOfDay: number;
   isPeakTime: boolean;

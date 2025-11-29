@@ -4,8 +4,7 @@ import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { ScrollView, View } from "react-native";
-import { Linking } from "react-native";
+import { ScrollView, StyleSheet, View , Linking } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useConfirmProfileImageReview } from "@/src/features/mypage/hooks/use-confirm-profile-image-review";
 
@@ -31,20 +30,20 @@ export default function ProfileImgEditRejectScreen() {
   };
 
   return (
-    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout style={styles.container}>
       <PalePurpleGradient />
 
       <ScrollView
-        className="flex-1 w-full"
+        style={styles.scrollView}
         contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top }}
       >
-        <View className="flex-1 items-center px-6 pb-12">
+        <View style={styles.contentContainer}>
           {/* SOMETIME 로고 */}
-          <View className="mt-[10px] mb-[28px]">
+          <View style={styles.logoContainer}>
             <SmallTitleIcon width={160} height={40} />
           </View>
           {/* 메인 이미지 */}
-          <View className="items-center  relative ">
+          <View style={styles.imageContainer}>
             <View style={{ position: "absolute", left: 0 }}>
               <View
                 style={{
@@ -89,30 +88,29 @@ export default function ProfileImgEditRejectScreen() {
 
             <Image
               source={require("@assets/images/limit-age.png")}
-              style={{ width: 259, height: 259, top: 30, left: 30 }}
-              className="mb-6"
+              style={[styles.mainImage, { width: 259, height: 259, top: 30, left: 30 }]}
             />
           </View>
 
           {/* 제목 */}
-          <View className="w-full mb-4">
+          <View style={styles.titleContainer}>
             <Text
               size="lg"
               textColor="black"
               weight="semibold"
-              className="text-left"
+              style={styles.title}
             >
               승인이 거절되었어요
             </Text>
           </View>
 
           {/* 설명 */}
-          <View className="w-full mb-8">
+          <View style={styles.descriptionContainer}>
             <Text
               size="md"
               textColor="pale-purple"
               weight="light"
-              className="text-left leading-6"
+              style={styles.description}
             >
               아래 사유를 확인하고 정보를 수정한 후{"\n"}
               다시 신청해주세요
@@ -120,20 +118,20 @@ export default function ProfileImgEditRejectScreen() {
           </View>
 
           {/* 거절 사유 카드 */}
-          <View className="w-full mb-8">
-            <View className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-              <View className="flex-row items-center">
-                <View className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center mr-3">
+          <View style={styles.rejectionCardContainer}>
+            <View style={styles.rejectionCard}>
+              <View style={styles.rejectionHeader}>
+                <View style={styles.rejectionIcon}>
                   <Text size="12" textColor="white" weight="bold">
                     !
                   </Text>
                 </View>
-                <View className="flex-1">
+                <View style={styles.rejectionContent}>
                   <Text
                     size="md"
                     textColor="dark"
                     weight="semibold"
-                    className="mb-1"
+                    style={styles.rejectionTitle}
                   >
                     거절 사유
                   </Text>
@@ -150,7 +148,7 @@ export default function ProfileImgEditRejectScreen() {
             size="sm"
             textColor="gray"
             weight="light"
-            className="text-center mt-8"
+            style={styles.noticeText}
           >
             정보를 수정하신 후 언제든지 다시 신청하실 수 있어요
           </Text>
@@ -158,19 +156,19 @@ export default function ProfileImgEditRejectScreen() {
       </ScrollView>
 
       {/* 하단 버튼들 */}
-      <View className="w-full px-6 pb-8 gap-1 space-y-3">
+      <View style={styles.buttonContainer}>
         <Button
           variant="primary"
           size="md"
           onPress={handleReapply}
-          className="w-full py-4 rounded-2xl"
+          style={styles.primaryButton}
         >
-          <View className="flex-row items-center justify-center">
+          <View style={styles.buttonContent}>
             <Text
               size="md"
               textColor="white"
               weight="semibold"
-              className="mr-2"
+              style={styles.buttonIcon}
             >
               ↻
             </Text>
@@ -184,10 +182,10 @@ export default function ProfileImgEditRejectScreen() {
           variant="secondary"
           size="md"
           onPress={handleContactSupport}
-          className="w-full py-4 rounded-2xl bg-surface-background border border-gray-300"
+          style={styles.secondaryButton}
         >
-          <View className="flex-row items-center justify-center">
-            <Text size="md" textColor="gray" weight="medium" className="mr-2">
+          <View style={styles.buttonContent}>
+            <Text size="md" textColor="gray" weight="medium" style={styles.buttonIcon}>
               🎧
             </Text>
             <Text size="md" textColor="gray" weight="medium">
@@ -199,3 +197,109 @@ export default function ProfileImgEditRejectScreen() {
     </DefaultLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    width: '100%',
+    alignItems: 'center',
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 48,
+  },
+  logoContainer: {
+    marginTop: 10,
+    marginBottom: 28,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    position: 'relative',
+  },
+  mainImage: {
+    marginBottom: 24,
+  },
+  titleContainer: {
+    width: '100%',
+    marginBottom: 16,
+  },
+  title: {
+    textAlign: 'left',
+  },
+  descriptionContainer: {
+    width: '100%',
+    marginBottom: 32,
+  },
+  description: {
+    textAlign: 'left',
+    lineHeight: 24,
+  },
+  rejectionCardContainer: {
+    width: '100%',
+    marginBottom: 32,
+  },
+  rejectionCard: {
+    backgroundColor: '#FAF5FF',
+    borderWidth: 1,
+    borderColor: '#E9D5FF',
+    borderRadius: 12,
+    padding: 16,
+  },
+  rejectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rejectionIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#EF4444',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  rejectionContent: {
+    flex: 1,
+  },
+  rejectionTitle: {
+    marginBottom: 4,
+  },
+  noticeText: {
+    textAlign: 'center',
+    marginTop: 32,
+  },
+  buttonContainer: {
+    width: '100%',
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+    gap: 12,
+  },
+  primaryButton: {
+    width: '100%',
+    paddingVertical: 16,
+    borderRadius: 16,
+  },
+  secondaryButton: {
+    width: '100%',
+    paddingVertical: 16,
+    borderRadius: 16,
+    backgroundColor: semanticColors.surface.background,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+});

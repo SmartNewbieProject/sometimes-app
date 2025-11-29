@@ -7,7 +7,7 @@ import PostBoxCard, {
 } from "@/src/features/post-box/ui/post-box-card";
 import PostBoxHeaders from "@/src/features/post-box/ui/post-box-header";
 import { type Tab, ToggleTab } from "@/src/features/post-box/ui/toggle-tab";
-import { cn, storage } from "@/src/shared/libs";
+import { storage } from "@/src/shared/libs";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import {
@@ -244,10 +244,10 @@ function LikeGuide() {
 
   return (
     <DefaultLayout
-      className={cn(
-        "flex-1 relative",
-        Platform.OS === "web" && "max-w-[468px] w-full self-center"
-      )}
+      style={[
+        styles.defaultLayout,
+        Platform.OS === "web" && styles.webContainer
+      ]}
     >
       {renderHighlightCard()}
 
@@ -316,6 +316,15 @@ function LikeGuide() {
 }
 
 const styles = StyleSheet.create({
+  defaultLayout: {
+    flex: 1,
+    position: 'relative',
+  },
+  webContainer: {
+    maxWidth: 468,
+    width: '100%',
+    alignSelf: 'center',
+  },
   toggleContainer: {
     alignItems: "center",
     justifyContent: "center",
