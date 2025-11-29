@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { SvgProps } from 'react-native-svg';
-import { cn } from '../../libs/cn';
+import { cn } from '@/src/shared/libs/cn';
 
 interface IconProps extends SvgProps {
   className?: string;

@@ -1,6 +1,6 @@
 export * from './types';
 
-export { type InfiniteScrollStrategy } from './strategies/infinite-scroll-strategy';
+export { useInfiniteScrollStrategy } from './strategies/infinite-scroll-strategy';
 export { WebInfiniteScrollStrategy, useLastItemRef } from './strategies/web-infinite-scroll-strategy';
 export { NativeInfiniteScrollStrategy, useFlatListRef } from './strategies/native-infinite-scroll-strategy';
 

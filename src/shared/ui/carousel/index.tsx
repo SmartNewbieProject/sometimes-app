@@ -112,6 +112,8 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(
   }
 );
 
+Carousel.displayName = 'Carousel';
+
 const styles = StyleSheet.create({
   container: {
     width: '100%',

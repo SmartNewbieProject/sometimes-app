@@ -1,4 +1,3 @@
-import { cn } from "@/src/shared/libs/cn";
 import { Text } from "@/src/shared/ui/text";
 import { throttle } from "lodash";
 import {
@@ -201,7 +200,7 @@ export function StepSlider({
     };
   }, [throttledDragMove]);
 
-  const containerStyle = [styles.container, className && { /* className styles would go here */ }];
+  const containerStyle = [styles.container];
 
   return (
     <View style={containerStyle}>

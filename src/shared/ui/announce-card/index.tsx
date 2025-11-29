@@ -1,8 +1,8 @@
-import { cva } from "class-variance-authority";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { ImageResources } from "../../libs";
 import { ImageResource } from "../image-resource";
 import { Text } from "../text";
+import { semanticColors } from "../../constants/colors";
 
 type AnnounceCardProps = {
   emoji?: ImageResources;
@@ -27,38 +27,6 @@ type AnnounceCardProps = {
   theme?: "default" | "alert";
 };
 
-const cardClass = cva(
-  [
-    "w-full h-[42px]",
-    "flex flex-row items-center gap-x-2.5 px-4",
-    "rounded-[20px]",
-  ],
-  {
-    variants: {
-      theme: {
-        default: "bg-moreLightPurple",
-        alert: "bg-surface-background",
-      },
-    },
-    defaultVariants: {
-      theme: "default",
-    },
-  }
-);
-
-const textClass = cva("", {
-  variants: {
-    theme: {
-      default: "text-brand-deep",
-      alert: "text-[#FF813C]",
-    },
-  },
-
-  defaultVariants: {
-    theme: "default",
-  },
-});
-
 export const AnnounceCard = ({
   emoji,
   emojiSize,
@@ -69,7 +37,10 @@ export const AnnounceCard = ({
 }: AnnounceCardProps) => {
   return (
     <TouchableOpacity
-      className={cardClass({ theme })}
+      style={[
+        styles.card,
+        theme === "default" ? styles.defaultTheme : styles.alertTheme,
+      ]}
       activeOpacity={0.4}
       onPress={onPress}
     >
@@ -87,9 +58,37 @@ export const AnnounceCard = ({
           height={emojiSize?.height || 24}
         />
       )}
-      <Text size={textSize} weight="bold" className={textClass({ theme })}>
+      <Text
+        size={textSize}
+        weight="bold"
+        style={theme === "default" ? styles.defaultText : styles.alertText}
+      >
         {text}
       </Text>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    width: '100%',
+    height: 42,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  defaultTheme: {
+    backgroundColor: semanticColors.surface.secondary,
+  },
+  alertTheme: {
+    backgroundColor: semanticColors.surface.background,
+  },
+  defaultText: {
+    color: semanticColors.text.primary,
+  },
+  alertText: {
+    color: '#FF813C',
+  },
+});

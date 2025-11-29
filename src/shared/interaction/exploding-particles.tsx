@@ -1,12 +1,10 @@
-import { useFocusEffect } from "expo-router";
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withDelay,
-  interpolate,
   Easing,
   runOnJS,
 } from "react-native-reanimated";
@@ -28,7 +26,9 @@ function ExplodingParticles({
   startTiming,
   left,
 }: ExplodingParticlesProps) {
-  const particles = Array.from({ length: particleCount }).map(() => ({
+  // Initialize all shared values at component level
+  const particleCountArray = Array.from({ length: particleCount });
+  const particles = particleCountArray.map(() => ({
     translateX: useSharedValue(0),
     translateY: useSharedValue(0),
     opacity: useSharedValue(0),
@@ -70,19 +70,23 @@ function ExplodingParticles({
       });
       handleEnd();
     }
-  }, [startTiming]);
+  }, [delay, handleEnd]);
+
+  // Create animated styles for each particle at component level
+  const particleStyles = particles.map((p) =>
+    useAnimatedStyle(() => ({
+      transform: [
+        { translateX: p.translateX.value },
+        { translateY: p.translateY.value },
+        { scale: p.scale.value },
+      ],
+      opacity: p.opacity.value,
+    }))
+  );
 
   return (
     <>
       {particles.map((p, i) => {
-        const style = useAnimatedStyle(() => ({
-          transform: [
-            { translateX: p.translateX.value },
-            { translateY: p.translateY.value },
-            { scale: p.scale.value },
-          ],
-          opacity: p.opacity.value,
-        }));
         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
         return (
           <Animated.View
@@ -90,7 +94,7 @@ function ExplodingParticles({
             key={i}
             style={[
               styles.particle,
-              style,
+              particleStyles[i],
               { backgroundColor: getRandomRainbowColor(), top, left },
             ]}
           />

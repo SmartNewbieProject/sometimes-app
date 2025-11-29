@@ -1,7 +1,7 @@
 import React, { type ReactNode } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { semanticColors } from "../../../../constants/colors";
+import { semanticColors } from "@/src/shared/constants/colors";
 
 interface ContainerProps {
   children: ReactNode;
