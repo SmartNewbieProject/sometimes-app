@@ -1,4 +1,4 @@
-import { View, Image, Platform } from "react-native";
+import { View, Image, Platform, StyleSheet } from "react-native";
 import type { Comment as CommentType } from "../../types";
 import { dayUtils, getUnivLogo, UniversityName } from "@/src/shared/libs";
 import { LinkifiedText, Text } from "@/src/shared/ui";
@@ -6,47 +6,75 @@ import { useState } from "react";
 
 type CommentProps = {
   data: CommentType;
-  className?: string;
+  style?: any;
 }
 
-export const Comment = ({ data, className }: CommentProps) => {
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    flexDirection: 'row',
+  },
+  avatarContainer: {
+    marginRight: 8,
+  },
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    gap: 4,
+  },
+  authorContainer: {
+    flexDirection: 'row',
+    gap: 6,
+    width: '100%',
+  },
+  commentTextContainer: {
+    paddingTop: 6,
+    flex: 1,
+  },
+  linkifiedText: {
+    flexWrap: 'wrap',
+    flexShrink: 1,
+    lineHeight: Platform.OS === 'ios' ? 18 : 20,
+  },
+});
+
+export const Comment = ({ data, style }: CommentProps) => {
   const [imageUri, setImageUri] = useState<string>(() => getUnivLogo(data.author.universityDetails.name as UniversityName));
   const author = data?.author;
 
   return (
-    <View className={`w-full flex-row ${className}`}>
-      <View className="mr-2">
+    <View style={[styles.container, style]}>
+      <View style={styles.avatarContainer}>
         <Image
           source={{ uri: imageUri }}
-          style={{ width: 36, height: 36 }}
+          style={styles.avatar}
           onError={() => {
             setImageUri(getUnivLogo(UniversityName.한밭대학교));
           }}
-          className="rounded-full"
         />
       </View>
 
-        <View className="flex-1 flex-col gap-y-1">
-          <View className=" flex-row gap-x-1.5 w-full">
+        <View style={styles.contentContainer}>
+          <View style={styles.authorContainer}>
             <Text size="13" textColor="black">{author.name}</Text>
-            <Text size="sm" className="text-text-muted">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
+            <Text size="sm" textColor="text-muted">{dayUtils.formatRelativeTime(data.updatedAt)}</Text>
           </View>
-          <View className="pt-1.5 flex-1">
+          <View style={styles.commentTextContainer}>
             <LinkifiedText
               size="sm"
               textColor="black"
-              className="flex-1"
-              style={{
-                flexWrap: 'wrap',
-                flexShrink: 1,
-                lineHeight: Platform.OS === 'ios' ? 18 : 20
-              }}
+              style={styles.linkifiedText}
             >
               {data.content}
             </LinkifiedText>
           </View>
       </View>
     </View>
-    
+
   );
 };

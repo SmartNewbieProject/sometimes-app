@@ -1,5 +1,4 @@
-import { cn } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Text } from "@/src/shared/ui";
 import React from "react";
 import {
@@ -57,11 +56,10 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
       activeOpacity={0.8}
     >
       <View
-        style={styles.cardInner}
-        className={cn(
-          "flex-1 font-extralight",
-          Platform.OS === "web" && "max-w-[468px]  w-full self-center"
-        )}
+        style={[
+          styles.cardInner,
+          Platform.OS === "web" && styles.cardInnerWeb
+        ]}
       >
         <Image source={option.image} style={styles.image} resizeMode="cover" />
         <Text variant="primary" size="md" weight="semibold">
@@ -109,11 +107,15 @@ const styles = StyleSheet.create({
     borderColor: semanticColors.border.default,
   },
   cardInner: {
-    width: "100%",
-    height: "100%",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
+  },
+  cardInnerWeb: {
+    maxWidth: 468,
+    width: "100%",
+    alignSelf: "center",
   },
   image: {
     width: 81,

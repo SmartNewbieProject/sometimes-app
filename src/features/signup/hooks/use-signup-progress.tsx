@@ -18,7 +18,7 @@ export type SignupForm = {
   referralCode?: string;
 };
 
-type StoreProps = {
+type SignupStore = {
   progress: number;
   step: SignupSteps;
   showHeader: boolean;
@@ -29,9 +29,7 @@ type StoreProps = {
   univTitle: string;
   updateUnivTitle: (area: string) => void;
   updateForm: (form: Partial<SignupForm>) => void;
-
   clear: () => void;
-
   updateShowHeader: (bool: boolean) => void;
 };
 
@@ -46,9 +44,9 @@ export enum SignupSteps {
 
 const phaseCount = Object.keys(SignupSteps).length / 2;
 
-const useSignupProgress = create<StoreProps>((set) => ({
+// Store 생성을 즉시 실행
+const useSignupProgressStore = create<SignupStore>((set) => ({
   progress: 1 / phaseCount,
-
   step: SignupSteps.UNIVERSITY,
   updateStep: (step) => {
     const isLast = step === phaseCount;
@@ -71,8 +69,10 @@ const useSignupProgress = create<StoreProps>((set) => ({
     set({
       form: {},
       step: SignupSteps.UNIVERSITY,
-
+      progress: 1 / phaseCount,
+      showHeader: false,
       univTitle: "",
+      regions: [],
     }),
 
   updateShowHeader: (bool) => {
@@ -83,4 +83,9 @@ const useSignupProgress = create<StoreProps>((set) => ({
   updateUnivTitle: (univTitle: string) => set({ univTitle: univTitle }),
 }));
 
+// Hook export
+const useSignupProgress = useSignupProgressStore;
+
 export default useSignupProgress;
+export type { SignupSteps };
+export { useSignupProgressStore };

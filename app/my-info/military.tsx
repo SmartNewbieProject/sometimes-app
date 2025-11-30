@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";

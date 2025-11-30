@@ -15,7 +15,6 @@ type HeaderProps = {
   showBackButton?: boolean;
   rightContent?: ReactNode;
   onBackPress?: () => void;
-  className?: string;
   centered?: boolean;
   logoSize?: number;
 };
@@ -26,7 +25,6 @@ export function Header({
   showBackButton = false,
   rightContent,
   onBackPress,
-  className,
   centered = false,
   logoSize = 32,
 }: HeaderProps) {
@@ -39,7 +37,7 @@ export function Header({
   };
 
   return (
-    <Container className={className} centered={centered}>
+    <Container centered={centered}>
       <LeftContent>
         <LeftButton visible={showBackButton} onPress={handleBackPress} />
       </LeftContent>

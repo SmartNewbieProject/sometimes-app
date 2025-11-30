@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import PostBoxCard, {
   ILikedRejectedButton,

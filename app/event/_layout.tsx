@@ -1,10 +1,10 @@
 import { PalePurpleGradient } from '@/src/shared/ui';
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 export default function EventLayout() {
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <PalePurpleGradient />
       <Stack>
         <Stack.Screen
@@ -20,3 +20,9 @@ export default function EventLayout() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

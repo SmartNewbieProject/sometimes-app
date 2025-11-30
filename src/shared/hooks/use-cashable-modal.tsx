@@ -24,11 +24,11 @@ export const useCashableModal = () => {
       ),
       children: (
           <View style={styles.content}>
-            <Text textColor="black" weight="bold" className="text-[15px]">
+            <Text textColor="black" weight="bold" style={styles.mainText}>
               이 기능을 사용하려면 구슬이 더 필요해요
             </Text>
 
-            <Text style={styles.description} className="text-text-disabled">
+            <Text style={styles.description}>
               {textContent}
             </Text>
         </View>
@@ -60,6 +60,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+  },
+  mainText: {
+    fontSize: 15,
   },
   description: {
     color: semanticColors.text.disabled,

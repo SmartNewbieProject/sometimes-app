@@ -1,5 +1,5 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Time } from "@/src/features/idle-match-timer/ui";
 import { sideStyle } from "@/src/features/idle-match-timer/ui/constants";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
@@ -43,15 +43,17 @@ function MockPartner() {
         ]}
       >
         <View
-          style={{
-            position: "relative",
-            width: "100%",
-            height: "100%",
-            padding: 14,
-          }}
-          className="flex flex-col justify-between"
+          style={[
+            styles.imageContainer,
+            {
+              position: "relative",
+              width: "100%",
+              height: "100%",
+              padding: 14,
+            }
+          ]}
         >
-          <View className="flex flex-row gap-x-[2px]">
+          <View style={styles.timeContainer}>
             <Time size="sm" value={"D"} />
             <Time size="sm" value="-" />
             {"04"
@@ -82,7 +84,7 @@ function MockPartner() {
             <Text textColor="white" weight="semibold" size="lg">
               {21}
             </Text>
-            <View className="flex flex-row items-center">
+            <View style={styles.profileContainer}>
               <Text textColor="white" weight="light" size="md">
                 #ISTJ #김지안
               </Text>
@@ -124,23 +126,24 @@ function MockPartner() {
               />
             </View>
 
-            <View className="w-full flex flex-row">
+            <View style={styles.buttonRow}>
               <TouchableOpacity
-                className="bg-primaryPurple flex-1 flex flex-row justify-end items-center pr-1"
-                style={sideStyle.previousButton}
+                style={[styles.moreButton, sideStyle.previousButton]}
                 onPress={() => {}}
               >
-                <Text className="w-[32px] text-text-inverse text-[12px]">더보기</Text>
+                <Text style={styles.moreButtonText}>더보기</Text>
                 <IconWrapper width={12} height={12}>
                   <ArrowRight />
                 </IconWrapper>
               </TouchableOpacity>
             </View>
             <View
-              className="w-full relative"
-              style={{
-                overflow: "hidden",
-              }}
+              style={[
+                styles.bottomRow,
+                {
+                  overflow: "hidden",
+                }
+              ]}
             >
               <View
                 style={{
@@ -183,6 +186,39 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 20,
+  },
+  imageContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  profileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonRow: {
+    width: '100%',
+    flexDirection: 'row',
+  },
+  moreButton: {
+    backgroundColor: semanticColors.primaryPurple,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingRight: 4,
+  },
+  moreButtonText: {
+    width: 32,
+    color: semanticColors.text.inverse,
+    fontSize: 12,
+  },
+  bottomRow: {
+    width: '100%',
+    position: 'relative',
   },
 });
 

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   type TouchableOpacityProps,
   View,
+  StyleSheet,
 } from "react-native";
 import type { Article } from "../../types";
 
@@ -32,8 +33,8 @@ const Interaction: React.FC<InteractionComponentProps> & {
   View: React.FC<InteractionItemProps>;
 } = ({ data, onLike, onComment, onViews }) => {
   return (
-    <View className="flex-row items-center justify-between">
-      <View className="flex-row items-center gap-4">
+    <View style={styles.container}>
+      <View style={styles.interactions}>
         <Interaction.Like
           count={data.likeCount}
           onPress={onLike}
@@ -50,7 +51,7 @@ type LikeProps = InteractionItemProps & { isLiked: boolean };
 
 Interaction.Like = ({ count, iconSize = 24, isLiked, ...props }: LikeProps) => {
   return (
-    <TouchableOpacity className="flex-row items-center gap-2" {...props}>
+    <TouchableOpacity style={styles.interactionItem} {...props}>
       <IconWrapper size={iconSize}>
         {isLiked ? (
           <ImageResource resource={ImageResources.HEART_ON} />
@@ -58,7 +59,7 @@ Interaction.Like = ({ count, iconSize = 24, isLiked, ...props }: LikeProps) => {
           <HeartIcon stroke="#646464" />
         )}
       </IconWrapper>
-      <Text size="13" className="text-text-muted">
+      <Text size="13" style={styles.countText}>
         {count}
       </Text>
     </TouchableOpacity>
@@ -73,11 +74,11 @@ Interaction.Comment = ({
   ...props
 }: InteractionItemProps) => {
   return (
-    <TouchableOpacity className="flex-row items-center gap-2" {...props}>
+    <TouchableOpacity style={styles.interactionItem} {...props}>
       <IconWrapper size={iconSize}>
         <CommentIcon strokeWidth={1} stroke="#646464" />
       </IconWrapper>
-      <Text size="13" className="text-text-muted">
+      <Text size="13" style={styles.countText}>
         {count}
       </Text>
     </TouchableOpacity>
@@ -92,11 +93,11 @@ Interaction.View = ({
   ...props
 }: InteractionItemProps) => {
   return (
-    <TouchableOpacity className="flex-row items-center gap-2" {...props}>
+    <TouchableOpacity style={styles.interactionItem} {...props}>
       <IconWrapper size={iconSize}>
         <EyesIcon stroke="#646464" />
       </IconWrapper>
-      <Text size="13" className="text-text-muted">
+      <Text size="13" style={styles.countText}>
         {count}
       </Text>
     </TouchableOpacity>
@@ -106,3 +107,24 @@ Interaction.View = ({
 Interaction.View.displayName = 'InteractionView';
 
 export default Interaction;
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  interactions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  interactionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  countText: {
+    color: '#646464',
+  },
+});

@@ -43,14 +43,14 @@ function ProfileInterest() {
             step={interestIds?.length ?? 0}
             dotGap={4}
             dotSize={16}
-            className="self-end"
+            style={styles.stepIndicator}
           />
         </View>
 
         <Divider.Horizontal />
       </View>
 
-      <View className="flex-1 w-full flex ">
+      <View style={styles.chipContainer}>
         <Loading.Lottie title="관심사를 불러오고 있어요" loading={isLoading}>
           <ChipSelector
             value={interestIds}
@@ -93,6 +93,13 @@ const styles = StyleSheet.create({
     fontWeight: 600,
 
     lineHeight: 22,
+  },
+  stepIndicator: {
+    alignSelf: 'flex-end',
+  },
+  chipContainer: {
+    flex: 1,
+    width: '100%',
   },
   chipSelector: {
     marginTop: 12,

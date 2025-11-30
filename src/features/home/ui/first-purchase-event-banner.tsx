@@ -11,7 +11,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import { useWindowWidth } from "../../signup/hooks";
+import useWindowWidth from "../../signup/hooks/use-window-width";
 function FirstPurchaseEvent() {
   const translateXAnim = useSharedValue(0);
   const router = useRouter();

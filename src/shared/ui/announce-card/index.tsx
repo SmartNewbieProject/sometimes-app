@@ -25,6 +25,7 @@ type AnnounceCardProps = {
   text: string;
   onPress: () => void;
   theme?: "default" | "alert";
+  customTextStyle?: object; // 커스텀 텍스트 스타일
 };
 
 export const AnnounceCard = ({
@@ -34,6 +35,7 @@ export const AnnounceCard = ({
   textSize = "13",
   onPress,
   theme = "default",
+  customTextStyle,
 }: AnnounceCardProps) => {
   return (
     <TouchableOpacity
@@ -61,7 +63,10 @@ export const AnnounceCard = ({
       <Text
         size={textSize}
         weight="bold"
-        style={theme === "default" ? styles.defaultText : styles.alertText}
+        style={[
+          theme === "default" ? styles.defaultText : styles.alertText,
+          customTextStyle
+        ]}
       >
         {text}
       </Text>

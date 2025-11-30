@@ -7,7 +7,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams } from "expo-router";
 import { getUniversitiesByRegion } from "../apis";
-import { useSignupProgress } from "../hooks";
+import { useSignupProgress } from "../hooks/use-signup-progress";
 import {
   getAllRegionList,
   getRegionListByCode,

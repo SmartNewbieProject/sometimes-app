@@ -1,5 +1,5 @@
 import { DefaultLayout } from "@/src/features/layout/ui";
-import { useWindowWidth } from "@/src/features/signup/hooks";
+import useWindowWidth from "@/src/features/signup/hooks/use-window-width";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import { useSignupSession } from "@/src/shared/hooks/use-signup-session";

@@ -197,10 +197,11 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           {options?.secondaryButton && (
             <Button
               variant="secondary"
+              width="full"
               onPress={() =>
                 handleButtonClick(options.secondaryButton?.onClick)
               }
-              style={styles.secondaryButton}
+              styles={[styles.secondaryButton, { width: '100%' }]}
             >
               {options.secondaryButton.text}
             </Button>
@@ -208,8 +209,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           {options?.primaryButton && (
             <Button
               variant="primary"
+              width="full"
               onPress={() => handleButtonClick(options.primaryButton?.onClick)}
-              style={styles.primaryButton}
+              styles={[styles.primaryButton, { width: '100%' }]}
             >
               {options.primaryButton.text}
             </Button>
@@ -310,12 +312,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     gap: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   secondaryButton: {
-    flex: 1,
+    flex: 0.5,
   },
   primaryButton: {
-    flex: 1,
+    flex: 0.5,
   },
   modalOverlay: {
     flex: 1,

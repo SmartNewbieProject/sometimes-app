@@ -19,6 +19,7 @@ import {
   MESSAGES,
   UI_CONSTANTS,
 } from "@/src/features/university-verification";
+import { StyleSheet } from "react-native";
 
 export default function UniversityVerificationScreen() {
   const { showModal } = useModal();
@@ -143,11 +144,11 @@ export default function UniversityVerificationScreen() {
   };
 
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <PalePurpleGradient />
       <Header.Container>
         <Header.LeftContent>
-          <Pressable onPress={() => router.back()} className="p-2 -ml-2">
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
@@ -159,13 +160,13 @@ export default function UniversityVerificationScreen() {
         <Header.RightContent></Header.RightContent>
       </Header.Container>
 
-      <View className="flex-1">
-        <ScrollView className="flex-1 px-5">
-          <View className="mt-8">
+      <View style={styles.content}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+          <View style={styles.formContainer}>
             {/* 학교 이메일 주소 입력 섹션 */}
-            <View className="mb-8">
-              <View className="flex-row items-end gap-x-3">
-                <View className="flex-1">
+            <View style={styles.section}>
+              <View style={styles.inputRow}>
+                <View style={styles.inputContainer}>
                   <LabelInput
                     label=""
                     placeholder="학교 이메일 주소"
@@ -177,15 +178,16 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleEmailVerification}
                   disabled={isLoading}
-                  className={`bg-surface-background border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${
-                    isLoading ? "opacity-50" : ""
-                  }`}
+                  style={[
+                    styles.verifyButton,
+                    isLoading && styles.disabledButton
+                  ]}
                 >
                   <Text
                     size="sm"
                     weight="medium"
                     textColor="purple"
-                    className="text-center"
+                    style={styles.buttonText}
                   >
                     {isLoading ? "전송중..." : "인증번호 전송"}
                   </Text>
@@ -194,9 +196,9 @@ export default function UniversityVerificationScreen() {
             </View>
 
             {/* 인증번호 입력 섹션 */}
-            <View className="mb-8">
-              <View className="flex-row items-end gap-x-3">
-                <View className="flex-1">
+            <View style={styles.section}>
+              <View style={styles.inputRow}>
+                <View style={styles.inputContainer}>
                   <LabelInput
                     label=""
                     placeholder="인증번호 입력"
@@ -209,15 +211,16 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleCodeVerification}
                   disabled={isLoading}
-                  className={`bg-surface-background border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${
-                    isLoading ? "opacity-50" : ""
-                  }`}
+                  style={[
+                    styles.confirmButton,
+                    isLoading && styles.disabledButton
+                  ]}
                 >
                   <Text
                     size="sm"
                     weight="medium"
                     textColor="purple"
-                    className="text-center"
+                    style={styles.buttonText}
                   >
                     {isLoading ? "확인중..." : "확인"}
                   </Text>
@@ -227,31 +230,31 @@ export default function UniversityVerificationScreen() {
           </View>
         </ScrollView>
 
-        <View className="px-5 mb-4">
-          <Text size="sm" weight="normal" className="text-gray">
+        <View style={styles.helpSection}>
+          <Text size="sm" weight="normal" style={styles.helpText}>
             학교 이메일이 없는 경우
           </Text>
-          <View className="flex-row flex-wrap">
+          <View style={styles.helpRow}>
             <TouchableOpacity onPress={handleIDcardCertification}>
-              <Text size="sm" weight="normal" className="text-gray underline">
+              <Text size="sm" weight="normal" style={styles.linkText}>
                 학생증 및 재학증명 제출
               </Text>
             </TouchableOpacity>
-            <Text size="sm" weight="normal" className="text-gray">
+            <Text size="sm" weight="normal" style={styles.helpText}>
               을 통해 재학 정보를 인증 받을 수 있어요.
             </Text>
           </View>
-          <View className="mt-4">
-            <Text size="sm" weight="normal" className="text-gray">
+          <View style={styles.helpSection}>
+            <Text size="sm" weight="normal" style={styles.helpText}>
               재학 인증에 어려움이 있는 경우
             </Text>
-            <View className="flex-row flex-wrap">
+            <View style={styles.helpRow}>
               <TouchableOpacity onPress={handleDMClick}>
-                <Text size="sm" weight="normal" className="text-gray underline">
+                <Text size="sm" weight="normal" style={styles.linkText}>
                   DM
                 </Text>
               </TouchableOpacity>
-              <Text size="sm" weight="normal" className="text-gray">
+              <Text size="sm" weight="normal" style={styles.helpText}>
                 으로 문의 주시면 확인 후 도와드립니다.
               </Text>
             </View>
@@ -259,10 +262,10 @@ export default function UniversityVerificationScreen() {
         </View>
 
         {/* 하단 완료 버튼 */}
-        <View className="px-5 pb-8">
+        <View style={styles.bottomSection}>
           <TouchableOpacity
             onPress={handleConfirm}
-            className="w-full bg-darkPurple rounded-2xl h-[50px] justify-center items-center"
+            style={styles.completeButton}
           >
             <Text size="md" weight="normal" textColor="white">
               대학 인증 완료하기
@@ -273,3 +276,92 @@ export default function UniversityVerificationScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+  content: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  formContainer: {
+    marginTop: 32,
+  },
+  section: {
+    marginBottom: 32,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: 12,
+  },
+  inputContainer: {
+    flex: 1,
+  },
+  verifyButton: {
+    backgroundColor: "rgb(249 250 251)",
+    borderWidth: 1,
+    borderColor: "rgb(192 132 252)",
+    borderRadius: 16,
+    width: 112,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  confirmButton: {
+    backgroundColor: "rgb(249 250 251)",
+    borderWidth: 1,
+    borderColor: "rgb(192 132 252)",
+    borderRadius: 16,
+    paddingHorizontal: 8,
+    width: 112,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    textAlign: "center",
+  },
+  helpSection: {
+    paddingHorizontal: 20,
+    marginBottom: 16,
+    marginTop: 16,
+  },
+  helpText: {
+    color: "rgb(107 114 128)",
+  },
+  helpRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  linkText: {
+    color: "rgb(107 114 128)",
+    textDecorationLine: "underline",
+  },
+  bottomSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 32,
+  },
+  completeButton: {
+    width: "100%",
+    backgroundColor: "rgb(88 28 135)",
+    borderRadius: 16,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

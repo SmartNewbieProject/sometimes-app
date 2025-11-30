@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import BlackXIcon from "@assets/icons/black-x-icon.svg";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";

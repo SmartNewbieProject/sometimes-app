@@ -2,6 +2,7 @@ import VectorIcon from "@/assets/icons/Vector.svg";
 import { useAuth } from "@/src/features/auth";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
+import { semanticColors } from "@/src/shared/constants/colors";
 import { Lottie, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { useQueryClient } from "@tanstack/react-query";
@@ -22,6 +23,7 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   Platform,
+  StyleSheet,
   TouchableOpacity,
   View,
   type ViewToken,
@@ -192,7 +194,7 @@ export const InfiniteArticleList = forwardRef<
     const renderFooter = useCallback(() => {
       if (!isLoadingMore) return null;
       return (
-        <View className="py-2">
+        <View style={styles.footerContainer}>
           {Array.from({ length: 3 }).map((_, i) => (
             <ArticleSkeleton key={`skel-more-${i}`} variant={pickVariant()} />
           ))}
@@ -302,9 +304,9 @@ export const InfiniteArticleList = forwardRef<
       (isLoading && articles.length === 0)
     ) {
       return (
-        <View className="flex-1 bg-surface-background">
-          <View className="h-[1px] bg-surface-other" />
-          <View className="h-[1px] bg-surface-other mb-2" />
+        <View style={styles.skeletonContainer}>
+          <View style={styles.divider} />
+          <View style={[styles.divider, styles.dividerWithMargin]} />
           {Array.from({ length: initialSize }).map((_, i) => (
             <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
           ))}
@@ -313,15 +315,25 @@ export const InfiniteArticleList = forwardRef<
     }
 
     return (
-      <View className="flex-1 bg-surface-background">
-        <View className="h-[1px] bg-surface-background" />
+      <View style={styles.container}>
+        <View style={styles.divider} />
         {/* <TouchableOpacity
           onPress={() =>
             Linking.openURL(
               "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
             )
           }
-          className="bg-surface-background rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+          style={{
+            backgroundColor: semanticColors.surface.background,
+            borderRadius: 5,
+            marginHorizontal: 16,
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            marginVertical: 10,
+            gap: 8,
+            flexDirection: "row",
+            alignItems: "center",
+          }}
         >
           <Image
             source={require("@/assets/images/fireIcon.png")}
@@ -330,13 +342,13 @@ export const InfiniteArticleList = forwardRef<
           <Text size="sm" weight="bold">
             [FAQ] 자주묻는 질문
           </Text>
-          <TouchableOpacity className="ml-auto">
+          <TouchableOpacity style={{ marginLeft: "auto" }}>
             <IconWrapper>
-              <VectorIcon className=" h-[12px] w-[9px]" color="black" />
+              <VectorIcon style={{ height: 12, width: 9 }} color="black" />
             </IconWrapper>
           </TouchableOpacity>
         </TouchableOpacity> */}
-        <View className="h-[1px] bg-surface-background mb-2" />
+        <View style={[styles.divider, styles.dividerWithMargin]} />
         <PalePurpleGradient />
 
         <CustomInfiniteScrollView
@@ -364,7 +376,7 @@ export const InfiniteArticleList = forwardRef<
           hasMore={hasNextPage}
           onRefresh={invalidateAndRefetch}
           refreshing={isLoading && !isLoadingMore}
-          className="flex-1"
+          style={styles.flexContainer}
           ListFooterComponent={renderFooter}
           onScroll={handleScroll}
           scrollEventThrottle={16}
@@ -378,3 +390,27 @@ export const InfiniteArticleList = forwardRef<
     );
   }
 );
+
+const styles = StyleSheet.create({
+  footerContainer: {
+    paddingVertical: 8, // py-2
+  },
+  skeletonContainer: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  flexContainer: {
+    flex: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  dividerWithMargin: {
+    marginBottom: 8, // mb-2
+  },
+});

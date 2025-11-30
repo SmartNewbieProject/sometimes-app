@@ -1,5 +1,5 @@
-import colors from "@constants/colors";
-import { Text } from "@ui/text";
+import colors from "@/src/shared/constants/colors";
+import { Text } from "@/src/shared/ui/text";
 import { useState } from "react";
 import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppleReviewModal } from "./apple-review-modal";
@@ -15,54 +15,54 @@ export const PrivacyNotice = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
-    <View className="flex flex-col w-full items-center">
-      <Text textColor="gray" className="text-[12px]">
+    <View style={styles.container}>
+      <Text style={styles.descriptionText}>
         회원가입 및 로그인 버튼을 누르면
       </Text>
 
-      <View className="flex flex-row">
+      <View style={styles.linksContainer}>
         <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_LINK)}>
           <Text
-            style={{
-              ...styles.link,
-              marginRight: 2,
-            }}
+            style={[
+              styles.link,
+              styles.linkMargin
+            ]}
           >
             개인정보 보호 약관,
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => Linking.openURL(SERVICE_LINK)}>
-          <Text style={{ ...styles.link, marginRight: 2 }}>
+          <Text style={[styles.link, styles.linkMargin]}>
             서비스 이용약관,
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_POLICY_LINK)}>
-          <Text style={{ ...styles.link }}>개인정보 수집 및 이용동의</Text>
+          <Text style={styles.link}>개인정보 수집 및 이용동의</Text>
         </TouchableOpacity>
       </View>
-      <Text textColor="gray" className="text-[12px]">
+      <Text style={styles.descriptionText}>
         에 동의하게 됩니다.
       </Text>
 
       <TouchableOpacity onPress={() => Linking.openURL(ENTERPIRSE_LINK)}>
         <Text
-          style={{
-            ...styles.link,
-            marginTop: 10,
-            color: colors.gray,
-          }}
+          style={[
+            styles.link,
+            styles.marginTop10,
+            { color: colors.gray }
+          ]}
         >
           스마트 뉴비 사업자 정보 {">"}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
         <Text
-          style={{
-            ...styles.link,
-            marginTop: 10,
-            color: colors.gray,
-          }}
+          style={[
+            styles.link,
+            styles.marginTop10,
+            { color: colors.gray }
+          ]}
         >
           Log in with Review Account
         </Text>
@@ -76,11 +76,29 @@ export const PrivacyNotice = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+  },
+  descriptionText: {
+    fontSize: 12,
+    color: colors.gray,
+  },
+  linksContainer: {
+    flexDirection: 'row',
+  },
   link: {
     textDecorationLine: "underline",
     fontSize: 12,
     color: colors["gray-600"],
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
+  },
+  linkMargin: {
+    marginRight: 2,
+  },
+  marginTop10: {
+    marginTop: 10,
   },
 });

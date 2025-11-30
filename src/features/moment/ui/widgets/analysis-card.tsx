@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: colors.lightPurple, // #E2D5FF
+    borderColor: "#E2D5FF",
     ...Platform.select({
       ios: {
         shadowColor: "#F2ECFF",

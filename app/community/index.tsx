@@ -1,12 +1,12 @@
 // app/community/index.tsx
 import { useCategory } from "@/src/features/community/hooks";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { CategoryList, CreateArticleFAB } from "@/src/features/community/ui";
 import { ImageResources } from "@/src/shared/libs";
 import { BottomNavigation, Header, ImageResource, HeaderWithNotification } from "@/src/shared/ui";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { View, useWindowDimensions, ActivityIndicator } from "react-native";
+import { View, useWindowDimensions, ActivityIndicator, StyleSheet } from "react-native";
 import {
   TabView,
   type NavigationState,
@@ -143,10 +143,10 @@ export default function CommunityScreen() {
   const isHome = !isNotice && routes[index]?.isHome === true;
 
   return (
-    <View className="flex-1 relative">
+    <View style={styles.container}>
       <ListHeaderComponent />
 
-      <View className="flex-1 bg-surface-background">
+      <View style={styles.contentContainer}>
         {/** 공지 전용: 스와이프 불가 */}
         {isNotice ? (
           <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key="__notice__">
@@ -184,6 +184,21 @@ export default function CommunityScreen() {
   );
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  headerContainer: {
+    paddingTop: 14,
+    backgroundColor: semanticColors.surface.background,
+  },
+});
+
 const ListHeaderComponent = () => {
   return (
     <View>
@@ -197,7 +212,7 @@ const ListHeaderComponent = () => {
         }
         showBackButton={false}
       />
-      <View className="pt-[14px] bg-surface-background">
+      <View style={styles.headerContainer}>
         <CategoryList />
       </View>
     </View>

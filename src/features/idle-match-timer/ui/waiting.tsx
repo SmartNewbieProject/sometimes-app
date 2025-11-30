@@ -116,7 +116,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
         </Text>
         <Text
           size="18"
-          textColor="pale-purple"
+          textColor="#F7F3FF"
           weight="normal"
           style={styles.scheduleText}
         >

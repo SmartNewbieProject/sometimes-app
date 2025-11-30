@@ -2,6 +2,7 @@ import { TextInput, type TextInputProps, View, TouchableOpacity, Platform, Style
 import { useState } from 'react';
 import EyeOn from '@assets/icons/eye-on.svg';
 import EyeOff from '@assets/icons/eye-off.svg';
+import { semanticColors } from '../../constants/colors';
 
 interface InputStyleProps {
   size?: 'sm' | 'md' | 'lg';
@@ -17,27 +18,29 @@ const createInputStyles = (props: InputStyleProps) => {
   } = props;
 
   const baseStyle = {
-    width: '100%',
+    width: '100%' as const,
     backgroundColor: 'transparent',
     borderBottomWidth: 1,
-    borderColor: '#D1D5DB', // border-border-default
+    borderColor: '#D1D5DB',
   };
 
   const sizeStyles = {
-    sm: { minHeight: 40 },
-    md: { minHeight: 48 },
-    lg: { minHeight: 56 },
+    sm: { height: 40 },
+    md: { height: 48 },
+    lg: { height: 56 },
   };
 
+  // semanticColors 기반 상태 스타일
   const statusStyles = {
-    default: { borderColor: '#C4B5FD' }, // border-lightPurple
-    error: { borderColor: '#F87171' }, // border-rose-400
-    success: { borderColor: '#10B981' }, // border-green-500
+    default: { borderColor: semanticColors.surface.tertiary },
+    error: { borderColor: semanticColors.state.error },
+    success: { borderColor: semanticColors.state.success },
   };
 
+  // semanticColors disabled 스타일
   const disabledStyles = isDisabled ? {
     opacity: 0.5,
-    backgroundColor: '#F3F4F6', // bg-gray-100
+    backgroundColor: semanticColors.surface.disabled,
   } : {};
 
   return StyleSheet.flatten([
@@ -67,7 +70,7 @@ export function Input({
 }: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // 플랫폼별 폰트 크기 설정 (플레이스홀더와 입력 텍스트 모두 적용)
+  // 플랫폼별 폰트 크기 설정
   const getFontSize = () => {
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
       switch (size) {
@@ -89,7 +92,7 @@ export function Input({
 
   const inputStyles = createInputStyles({ size, status, isDisabled });
   const containerStyles = StyleSheet.flatten([
-    { flexDirection: 'row', alignItems: 'center' },
+    { flexDirection: 'row', alignItems: 'center' } as const,
     inputStyles
   ]);
 

@@ -3,7 +3,7 @@ import { useModal } from "@shared/hooks/use-modal";
 import { Text } from "@shared/ui";
 import { router } from "expo-router";
 import { useCallback } from "react";
-import { Platform, View } from "react-native";
+import { Platform, View, StyleSheet } from "react-native";
 import paymentApis from "../api";
 import type { PaymentResponse } from "../types";
 import { usePortoneScript } from "./PortoneProvider";
@@ -117,14 +117,14 @@ trackPaymentSuccess(result);
             showModal({
               showLogo: true,
               customTitle: (
-                <View className="w-full flex flex-row justify-center pb-[5px]">
+                <View style={styles.modalTitleContainer}>
                   <Text size="20" weight="bold" textColor="black">
                     ❤️ 구매 완료
                   </Text>
                 </View>
               ),
               children: (
-                <View className="flex flex-col gap-y-1 items-center">
+                <View style={styles.modalContentContainer}>
                   <Text textColor="black" weight="semibold">
                     구슬 {gemCount} 개 구매를 완료했어요
                   </Text>
@@ -149,7 +149,7 @@ trackPaymentSuccess(result);
               showLogo: true,
               title: "❤️ 구매 완료",
               children: (
-                <View className="flex flex-col gap-y-1">
+                <View style={styles.modalContentContainer}>
                   {productCount && (
                     <Text textColor="black" weight="semibold">
                       연인 재매칭권 {productCount} 개 구매를 완료했어요
@@ -187,3 +187,17 @@ trackPaymentSuccess(result);
     handlePaymentComplete,
   };
 }
+
+const styles = StyleSheet.create({
+  modalTitleContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingBottom: 5,
+  },
+  modalContentContainer: {
+    flexDirection: 'column',
+    gap: 4,
+    alignItems: 'center',
+  },
+});

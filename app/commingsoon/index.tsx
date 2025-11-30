@@ -1,5 +1,5 @@
-import {View, ScrollView, TouchableOpacity} from 'react-native';
-import { semanticColors } from '../../src/shared/constants/colors';
+import {View, ScrollView, TouchableOpacity, StyleSheet} from 'react-native';
+import { semanticColors } from '@/src/shared/constants/colors';
 import {Text, PalePurpleGradient, Button} from '@/src/shared/ui';
 import {Image} from 'expo-image';
 import {IconWrapper} from '@/src/shared/ui/icons';
@@ -28,20 +28,20 @@ export default function CommingSoonScreen() {
   const userName = signupForm.name || profileDetails?.name;
 
   return (
-      <View className="flex-1 flex flex-col w-full items-center">
+      <View style={styles.container}>
         <PalePurpleGradient/>
-        <IconWrapper width={128} className="text-primaryPurple md:pb-[58px] py-8">
+        <IconWrapper width={128} style={styles.iconWrapper}>
           <SmallTitle/>
         </IconWrapper>
 
-        <View className="flex flex-col flex-1 items-center">
+        <View style={styles.contentContainer}>
           <Image
               source={require('@assets/images/commingsooncharacter.png')}
               style={{width: 200, height: 200}}
           />
 
-          <View className="flex flex-col">
-            <View className="mt-8 px-5">
+          <View style={styles.textContainer}>
+            <View style={styles.nameContainer}>
               <Text size="md" textColor="black" weight="semibold">
                 {userName}님!
               </Text>
@@ -50,7 +50,7 @@ export default function CommingSoonScreen() {
               </Text>
             </View>
 
-            <View className="mt-2 px-5">
+            <View style={styles.descriptionContainer}>
               <Text weight="medium" size="sm" style={{color: semanticColors.brand.deep}}>
                 곧, 당신에게 꼭 맞는 사람을 소개해드릴게요.
               </Text>
@@ -64,7 +64,7 @@ export default function CommingSoonScreen() {
           </View>
         </View>
 
-        <View className="w-full px-5">
+        <View style={styles.buttonContainer}>
           <Button
               variant="primary"
               size="md"
@@ -72,7 +72,7 @@ export default function CommingSoonScreen() {
                 onClickSeeYouLater();
 
               }}
-              className="mb-[14px] w-full"
+              style={styles.button}
           >
             출시일에 다시 볼게요.
           </Button>
@@ -80,3 +80,41 @@ export default function CommingSoonScreen() {
       </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    width: '100%',
+    alignItems: 'center',
+  },
+  iconWrapper: {
+    color: semanticColors.brand.primary,
+    paddingBottom: 32,
+    paddingVertical: 32,
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  textContainer: {
+    flexDirection: 'column',
+  },
+  nameContainer: {
+    marginTop: 32,
+    paddingHorizontal: 20,
+  },
+  descriptionContainer: {
+    marginTop: 8,
+    paddingHorizontal: 20,
+  },
+  buttonContainer: {
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  button: {
+    marginBottom: 14,
+    width: '100%',
+  },
+});

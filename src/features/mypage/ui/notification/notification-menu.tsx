@@ -1,5 +1,5 @@
 import { Text } from "@/src/shared/ui";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { StyleSheet, View } from "react-native";
 import NotificationCard from "./notification-card";
 import { usePushNotification } from "../../hooks/use-push-notification";

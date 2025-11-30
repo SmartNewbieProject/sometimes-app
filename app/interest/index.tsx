@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Layout from "@/src/features/layout";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";

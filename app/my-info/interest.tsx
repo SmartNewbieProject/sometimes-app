@@ -1,5 +1,5 @@
 import Layout from "@/src/features/layout";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
@@ -78,12 +78,12 @@ export default function InterestSelectionScreen() {
             step={interestIds.length}
             dotGap={4}
             dotSize={16}
-            className="self-end"
+            style={styles.stepIndicator}
           />
           <Divider.Horizontal />
         </View>
 
-        <View className="flex-1 w-full flex px-4">
+        <View style={styles.chipContainer}>
           <Loading.Lottie title="관심사를 불러오고 있어요" loading={isLoading}>
             <ChipSelector
               value={interestIds}
@@ -139,6 +139,14 @@ const styles = StyleSheet.create({
     width: "100%",
     rowGap: 10,
     paddingHorizontal: 32,
+  },
+  stepIndicator: {
+    alignSelf: 'flex-end',
+  },
+  chipContainer: {
+    flex: 1,
+    width: '100%',
+    paddingHorizontal: 16,
   },
   chipSelector: {
     marginTop: 12,

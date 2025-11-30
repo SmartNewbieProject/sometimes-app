@@ -1,5 +1,5 @@
 import { cn } from "@/src/shared/libs";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { platform } from "@/src/shared/libs/platform";
 import { ProgressBar } from "@/src/shared/ui";
 import Interest from "@features/interest";
@@ -18,7 +18,6 @@ export default function InterestLayout() {
   return (
     <View
       style={[styles.container, { paddingTop: insets.top }]}
-      className="flex-1"
     >
       <View style={styles.contentContainer}>
         {renderProgress && (

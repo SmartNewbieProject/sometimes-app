@@ -12,11 +12,12 @@ import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo } from "react";
-import { Linking , KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
+import { Linking , KeyboardAvoidingView, Platform, Pressable, View, StyleSheet } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { semanticColors } from "@/src/shared/constants/colors";
 
 interface ArticleHeaderProps {
   isOwner: boolean;
@@ -53,7 +54,7 @@ export default function ArticleDetailScreen() {
   useEffect(() => {
     if (!my?.id) {
       Linking.openURL("https://info.some-in-univ.com");
-      router.navigate("/community");
+      router.replace("/community");
       return;
     }
   }, [my?.id]);
@@ -105,7 +106,7 @@ export default function ArticleDetailScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 bg-surface-background justify-center items-center">
+      <View style={styles.errorContainer}>
         <Text>게시글을 불러오는 중 오류가 발생했습니다.</Text>
       </View>
     );
@@ -117,8 +118,7 @@ export default function ArticleDetailScreen() {
 
   return (
     <DefaultLayout
-      style={{ paddingBottom: insets.bottom }}
-      className="flex-1 bg-surface-background "
+      style={[styles.container, { paddingBottom: insets.bottom }]}
     >
       <ArticleHeader
         isOwner={isOwner}
@@ -126,9 +126,25 @@ export default function ArticleDetailScreen() {
         dropdownItems={dropdownItems}
       />
 
-      <View className="flex-1">
+      <View style={styles.articleContainer}>
         <ArticleDetail article={article} />
       </View>
     </DefaultLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  articleContainer: {
+    flex: 1,
+  },
+  errorContainer: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   unreadItem: {
-    backgroundColor: colors.lightPurple + '20',
+    backgroundColor: "#E2D5FF20",
   },
   evenItem: {
     backgroundColor: semanticColors.surface.background,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.primaryPurple,
+    backgroundColor: '#7A4AE2',
     marginRight: 8,
   },
   loadingMore: {

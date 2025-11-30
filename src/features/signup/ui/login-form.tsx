@@ -1,23 +1,20 @@
-import {
-  MobileIdentityVerification,
-  usePortOneLogin,
-} from "@/src/features/pass";
-import { Button, Show, Text } from "@/src/shared/ui";
-import { useKpiAnalytics } from "@/src/shared/hooks";
-import KakaoLogo from "@assets/icons/kakao-logo.svg";
-import { checkAppEnvironment } from "@shared/libs";
-import * as Localization from "expo-localization";
+import { usePortOneLogin } from "@/src/features/pass/hooks/use-portone-login";
+import { Button } from "@/src/shared/ui/button";
+import { Show } from "@/src/shared/ui/show/index";
+import { Text } from "@/src/shared/ui/text";
+// import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 import { Link, usePathname, useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
+import * as Localization from "expo-localization";
 import { useEffect, useMemo, useState } from "react";
-import { Platform, Pressable, TouchableOpacity, View, StyleSheet } from "react-native";
-import { useAuth } from "../../auth";
-import { PrivacyNotice } from "../../auth/ui/privacy-notice";
+import { Platform, TouchableOpacity, View, StyleSheet } from "react-native";
 import AppleLoginButton from "./apple-login-button";
+import KakaoLogin from "./kakao-login";
 import KakaoLoginWebView from "./kakao-login-web-view";
 import UniversityLogos from "./university-logos";
+import { PrivacyNotice } from "../../auth/ui/privacy-notice";
 
 export default function LoginForm() {
+  const [showKakaoWebView, setShowKakaoWebView] = useState(false);
   const {
     startPortOneLogin,
     isLoading,
@@ -28,7 +25,7 @@ export default function LoginForm() {
     handleMobileAuthComplete,
     handleMobileAuthError,
   } = usePortOneLogin();
-  const { authEvents, signupEvents } = useKpiAnalytics();
+  // const { authEvents, signupEvents } = useKpiAnalytics();
   const pathname = usePathname();
   const { regionCode } = Localization.getLocales()[0];
   const isUS = regionCode === "US";
@@ -37,10 +34,10 @@ export default function LoginForm() {
     const loginStartTime = Date.now();
 
     // KPI 이벤트: 로그인 시작
-    authEvents.trackLoginStarted('pass');
+    // authEvents.trackLoginStarted('pass');
 
     // 기존 이벤트 호환성
-    signupEvents.trackSignupStarted();
+    // signupEvents.trackSignupStarted();
 
     clearError();
     try {
@@ -48,15 +45,16 @@ export default function LoginForm() {
 
       // KPI 이벤트: 로그인 성공
       const loginDuration = Date.now() - loginStartTime;
-      authEvents.trackLoginCompleted('pass', loginDuration);
+      // authEvents.trackLoginCompleted('pass', loginDuration);
     } catch (error) {
       // KPI 이벤트: 로그인 실패
-      authEvents.trackLoginFailed('pass', 'authentication_error');
+      // authEvents.trackLoginFailed('pass', 'authentication_error');
     }
   };
 
   // 모바일에서 PASS 인증 화면 표시
   if (showMobileAuth && mobileAuthRequest && Platform.OS !== "web") {
+    const MobileIdentityVerification = require("@/src/features/pass/ui/mobile-identity-verification").MobileIdentityVerification;
     return (
       <MobileIdentityVerification
         request={mobileAuthRequest}
@@ -76,10 +74,10 @@ export default function LoginForm() {
         <View style={styles.buttonWrapper}>
           <Button
             variant="primary"
-            width="full"
+            width="fit"
             onPress={onPressPassLogin}
             disabled={isLoading}
-            style={styles.passButton}
+            styles={styles.passButton}
           >
             <Text style={styles.passButtonText}>
               {isLoading ? "PASS 인증 중..." : "PASS 로그인"}
@@ -87,7 +85,10 @@ export default function LoginForm() {
           </Button>
         </View>
         <View style={styles.buttonWrapper}>
-          <KakaoLogin />
+          <KakaoLogin
+            onKakaoLoginStart={() => setShowKakaoWebView(true)}
+            onKakaoLoginComplete={() => setShowKakaoWebView(false)}
+          />
         </View>
 
         <Show when={Platform.OS === "ios"}>
@@ -106,66 +107,13 @@ export default function LoginForm() {
       <View style={styles.privacyContainer}>
         <PrivacyNotice />
       </View>
-    </View>
-  );
-}
-function KakaoLogin() {
-  const [showWebView, setShowWebView] = useState(false);
-  const { authEvents, signupEvents } = useKpiAnalytics();
 
-  const KAKAO_CLIENT_ID = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY as string;
-  const redirectUri = process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI as string;
-
-  const handleKakaoLogin = () => {
-    // KPI 이벤트: 카카오 로그인 시작
-    authEvents.trackLoginStarted('kakao');
-
-    // 기존 이벤트 호환성
-    signupEvents.trackSignupStarted();
-
-    if (Platform.OS === "web") {
-      // 웹에서는 기존 방식 유지
-      const scope = [
-        "name",
-        "gender",
-        "birthyear",
-        "birthday",
-        "phone_number",
-      ].join(" ");
-
-      const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-        redirectUri
-      )}&response_type=code&scope=${encodeURIComponent(scope)}`;
-
-      window.location.href = kakaoAuthUrl;
-    } else {
-      // 앱에서는 WebView 모달 열기
-      setShowWebView(true);
-    }
-  };
-
-  return (
-    <>
-      <View style={styles.kakaoButtonContainer}>
-        <Pressable
-          onPress={handleKakaoLogin}
-          style={styles.kakaoButton}
-        >
-          <View style={styles.kakaoLogoContainer}>
-            <KakaoLogo width={34} height={34} />
-          </View>
-          <View>
-            <Text style={styles.kakaoButtonText}>카카오 로그인</Text>
-          </View>
-        </Pressable>
-      </View>
-
-      {/* WebView 모달 */}
+      {/* Kakao WebView 모달 */}
       <KakaoLoginWebView
-        visible={showWebView}
-        onClose={() => setShowWebView(false)}
+        visible={showKakaoWebView}
+        onClose={() => setShowKakaoWebView(false)}
       />
-    </>
+    </View>
   );
 }
 
@@ -184,16 +132,27 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'web' ? 12 : 15, // 웹에서는 마진 조정
   },
   passButton: {
-    paddingVertical: 16, // py-4
+    width: 330,
+    height: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 9999, // rounded-full
-    minWidth: Platform.OS === 'web' ? 280 : 330, // 웹에서는 최소 너비 조정
-    minHeight: Platform.OS === 'web' ? 50 : 60, // 웹에서는 높이 조정
+    backgroundColor: 'rgb(124 58 237)', // --tw-bg-opacity: 1; background-color: rgb(124 58 237/var(--tw-bg-opacity,1));
+    paddingHorizontal: 24, // px-6
+    paddingVertical: 16, // py-4
+    columnGap: 6, // column-gap: .375rem
+    transitionProperty: 'all',
+    transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    transitionDuration: '200ms',
+    // Button 컴포넌트의 자체 스타일 덮어쓰기
+    minWidth: 330,
   },
   passButtonText: {
-    textAlign: 'center',
-    fontSize: Platform.OS === 'web' ? 16 : 18, // 웹에서는 폰트 크기 조정
-    height: Platform.OS === 'web' ? 35 : 40, // 웹에서는 높이 조정
-    color: '#FFFFFF', // text-text-inverse
+    fontSize: 16,
+    fontWeight: '700', // bold
+    fontFamily: 'Pretendard-Bold',
+    color: '#FFFFFF',
   },
   errorContainer: {
     width: '100%',
@@ -209,28 +168,5 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 24, // px-6
     marginTop: 24, // mt-6
-  },
-  kakaoButtonContainer: {
-    width: '100%',
-  },
-  kakaoButton: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16, // py-4
-    borderRadius: 9999, // rounded-full
-    minWidth: Platform.OS === 'web' ? 280 : 330, // 웹에서는 최소 너비 조정
-    height: Platform.OS === 'web' ? 50 : 60, // 웹에서는 높이 조정
-    backgroundColor: '#FEE500',
-    gap: 10, // gap-[10px]
-  },
-  kakaoLogoContainer: {
-    width: Platform.OS === 'web' ? 28 : 34, // 웹에서는 크기 조정
-    height: Platform.OS === 'web' ? 28 : 34, // 웹에서는 크기 조정
-  },
-  kakaoButtonText: {
-    fontSize: Platform.OS === 'web' ? 16 : 18, // 웹에서는 폰트 크기 조정
-    color: '#000000', // text-text-primary
   },
 });

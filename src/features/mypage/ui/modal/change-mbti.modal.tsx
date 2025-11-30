@@ -1,4 +1,4 @@
-import { Alert, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { Text, Button } from "@/src/shared/ui";
 import { useMbti } from "@/src/features/mypage/hooks";
 import Loading from "@/src/features/loading";
@@ -41,21 +41,21 @@ export const ChangeMbtiModal = () => {
   }
 
   return (
-    <View className="flex flex-col items-center gap-y-4 ">
-      <View className="flex flex-col w-full">
-      <Text className="text-2xl font-bold" textColor="black">MBTI 변경</Text>
-      <Text className="text-md mt-1.5" textColor="gray">
+    <View style={styles.container}>
+      <View style={styles.titleContainer}>
+      <Text style={styles.title} textColor="black">MBTI 변경</Text>
+      <Text style={styles.subtitle} textColor="gray">
         MBTI를 설정하지 않으면 목·일 21시 매칭에서 제외될 수 있어요.
       </Text>
       </View>
 
-      <MbtiSelector 
+      <MbtiSelector
         value={mbtiValue}
-        onChange={setMbtiValue} 
-        onBlur={() => {}} 
+        onChange={setMbtiValue}
+        onBlur={() => {}}
       />
 
-      <View className="flex flex-row items-center gap-x-2 mt-4 justify-center">
+      <View style={styles.buttonContainer}>
         <Button
           variant="outline"
           onPress={hideModal}
@@ -72,3 +72,30 @@ export const ChangeMbtiModal = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 16,
+  },
+  titleContainer: {
+    flexDirection: 'column',
+    width: '100%',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    fontSize: 16,
+    marginTop: 6,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 16,
+    justifyContent: 'center',
+  },
+});

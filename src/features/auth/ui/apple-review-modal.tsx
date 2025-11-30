@@ -1,9 +1,12 @@
 import {useState} from "react";
-import {View, Modal, Alert} from "react-native";
-import {Text, Button, TextArea} from "@/src/shared/ui";
+import {View, Modal, Alert, StyleSheet} from "react-native";
+import { Text } from "@/src/shared/ui/text";
+import { Button } from "@/src/shared/ui/button";
+import { TextArea } from "@/src/shared/ui/text-area";
 import {useAppleReviewLogin} from "../hooks/use-apple-review-login";
 import {useAuth} from "../hooks/use-auth";
 import {router} from "expo-router";
+import { semanticColors } from "@/src/shared/constants/colors";
 
 interface AppleReviewModalProps {
   isVisible: boolean;
@@ -60,13 +63,13 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
           animationType="fade"
           onRequestClose={handleClose}
       >
-        <View className="flex-1 justify-center items-center bg-surface-inverse/50">
-          <View className="bg-surface-background rounded-lg p-6 mx-4 w-full max-w-sm">
-            <Text className="text-lg font-semibold text-center mb-4">
+        <View style={styles.overlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.titleText}>
               Apple 심사용 로그인
             </Text>
 
-            <Text className="text-sm text-gray-600 text-center mb-6">
+            <Text style={styles.descriptionText}>
               애플 심사용 코드를 입력해주세요
             </Text>
 
@@ -74,23 +77,23 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
                 value={code}
                 onChangeText={setCode}
                 placeholder="코드를 입력하세요"
-                className="mb-4"
+                style={styles.textArea}
                 autoCapitalize="none"
                 autoCorrect={false}
             />
 
-            <View className="flex-row gap-2">
+            <View style={styles.buttonContainer}>
               <Button
                   variant="outline"
                   onPress={handleClose}
-                  className="flex-1"
+                  style={styles.button}
                   disabled={isPending}
               >
                 취소
               </Button>
               <Button
                   onPress={handleSubmit}
-                  className="flex-1"
+                  style={styles.button}
                   disabled={isPending || !code.trim()}
               >
                 {isPending ? "로그인 중..." : "로그인"}
@@ -101,3 +104,43 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
       </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: semanticColors.surface.background,
+    borderRadius: 8,
+    padding: 24,
+    marginHorizontal: 16,
+    width: '100%',
+    maxWidth: 384,
+  },
+  titleText: {
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 16,
+    color: semanticColors.text.primary,
+  },
+  descriptionText: {
+    fontSize: 14,
+    color: semanticColors.text.tertiary,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  textArea: {
+    marginBottom: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  button: {
+    flex: 1,
+  },
+});

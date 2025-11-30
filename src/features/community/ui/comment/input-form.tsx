@@ -1,12 +1,78 @@
 import SendIcon from "@/assets/icons/send.svg";
-import { cn } from "@/src/shared/libs";
 import { Check, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { Form } from "@/src/widgets/form";
 import React from "react";
 import type { Control, UseFormReturn } from "react-hook-form";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
+import { semanticColors } from "@/src/shared/constants/colors";
 import type { CommentForm } from "../../types";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: semanticColors.surface.background,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
+    borderRadius: 8,
+  },
+  statusText: {
+    color: semanticColors.brand.accent,
+    fontSize: 14,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: "center",
+    gap: 5,
+    borderRadius: 16,
+    backgroundColor: semanticColors.surface.background,
+    height: 50,
+    width: "100%",
+  },
+  leftSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  contentSection: {
+    flex: 1,
+  },
+  cancelButton: {
+    paddingLeft: 12,
+    paddingBottom: 1,
+  },
+  checkboxContainer: {
+    paddingLeft: 12,
+    height: 25,
+  },
+  checkboxText: {
+    marginRight: 4,
+    color: semanticColors.text.primary,
+    fontSize: 15,
+    height: 25,
+    lineHeight: 25,
+    alignItems: "center",
+  },
+  inputStyle: {
+    width: "100%",
+    flex: 1,
+    paddingHorizontal: 8,
+    fontSize: 14,
+    color: semanticColors.brand.accent,
+    borderBottomWidth: 0,
+    outlineWidth: 0,
+  },
+  sendButton: {
+    marginRight: 12,
+  },
+});
 
 interface InputFormProps {
   checked: boolean;
@@ -36,27 +102,27 @@ export const InputForm = ({
   handleCancelReply,
 }: InputFormProps) => {
   return (
-    <View>
+    <View style={styles.container}>
       {editingCommentId && (
-        <View className="flex-row items-center justify-between bg-surface-background px-3 py-2 mb-2 rounded-lg">
-          <Text size="sm" className="text-brand-accent">
+        <View style={styles.statusContainer}>
+          <Text size="sm" style={styles.statusText}>
             댓글 수정 중...
           </Text>
           <TouchableOpacity onPress={handleCancelEdit}>
-            <Text size="sm" className="text-brand-accent">
+            <Text size="sm" style={styles.statusText}>
               취소
             </Text>
           </TouchableOpacity>
         </View>
       )}
       {!editingCommentId && replyingToCommentId && (
-        <View className="flex-row items-center justify-between bg-surface-background px-3 py-2 mb-2 rounded-lg">
-          <Text size="sm" className="text-brand-accent">
+        <View style={styles.statusContainer}>
+          <Text size="sm" style={styles.statusText}>
             답글 작성 중...
           </Text>
           {handleCancelReply && (
             <TouchableOpacity onPress={handleCancelReply}>
-              <Text size="sm" className="text-brand-accent">
+              <Text size="sm" style={styles.statusText}>
                 취소
               </Text>
             </TouchableOpacity>
@@ -64,19 +130,14 @@ export const InputForm = ({
         </View>
       )}
 
-      <View
-        className={cn([
-          "flex-row flex items-center gap-[5px]",
-          "rounded-[16px] bg-surface-background h-[50px] w-full",
-        ])}
-      >
-        <View className="flex-row items-center gap-[5px]">
+      <View style={styles.inputContainer}>
+        <View style={styles.leftSection}>
           {editingCommentId && <CancelEditButton onCancel={handleCancelEdit} />}
           {!editingCommentId && (
             <AnonymousToggle checked={checked} setChecked={setChecked} />
           )}
         </View>
-        <View className="flex-1">
+        <View style={styles.contentSection}>
           <CommentInput
             control={form.control}
             editingCommentId={editingCommentId}
@@ -99,7 +160,7 @@ export const InputForm = ({
 };
 
 const CancelEditButton = ({ onCancel }: { onCancel: () => void }) => (
-  <TouchableOpacity className="pl-[12px] pb-[1px]" onPress={onCancel}>
+  <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
     <Text>취소</Text>
   </TouchableOpacity>
 );
@@ -113,12 +174,12 @@ const AnonymousToggle = ({
 }) => (
   <>
     <Check.Box
-      className="pl-[12px] h-[25px] "
+      style={styles.checkboxContainer}
       checked={checked}
       size={25}
       onChange={setChecked}
     >
-      <Text className="mr-1 text-text-primary text-[15px] h-[25px] leading-[25px] flex items-center">
+      <Text style={styles.checkboxText}>
         익명
       </Text>
     </Check.Box>
@@ -139,11 +200,7 @@ const CommentInput = ({
   <Form.Input
     name="content"
     control={control}
-    className={cn([
-      "w-full flex-1 px-2",
-      "text-sm md:text-md",
-      "text-brand-accent border-b-0 outline-none",
-    ])}
+    style={styles.inputStyle}
     placeholder="댓글을 입력하세요"
     onChange={(e) => setEditingContent(e.nativeEvent.text)}
     returnKeyType="send"
@@ -158,7 +215,7 @@ const SendButton = ({
   onPress: () => void;
   disabled: boolean;
 }) => (
-  <TouchableOpacity onPress={onPress} disabled={disabled} className="mr-[12px]">
+  <TouchableOpacity onPress={onPress} disabled={disabled} style={styles.sendButton}>
     <IconWrapper size={22}>
       <SendIcon />
     </IconWrapper>

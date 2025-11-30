@@ -84,10 +84,10 @@ export const AppleFirstSaleCard = ({
           alignItems: "center",
         }}
       >
-        <Text textColor="black" weight="bold" size="20" className="text-[20px]">
+        <Text textColor="black" weight="bold" size="20" style={styles.titleText}>
           🔥 타임 특가! 지금만 이 가격!
         </Text>
-        <Text weight="bold" size="20" className="text-rose-600">
+        <Text weight="bold" size="20" style={styles.timerText}>
           {formatTime(seconds)}
         </Text>
       </View>
@@ -104,14 +104,14 @@ export const AppleFirstSaleCard = ({
               <Text
                 textColor="purple"
                 weight="semibold"
-                className="text-[15px] mb-1"
+                style={styles.bubbleTextTop}
               >
                 💜 썸타임이 첫 만남을 응원해요!
               </Text>
               <Text
                 textColor="purple"
                 weight="semibold"
-                className="text-[15px]"
+                style={styles.bubbleText}
               >
                 신규 회원 첫 구슬팩 특별 할인
               </Text>
@@ -171,6 +171,12 @@ export const AppleFirstSaleCard = ({
 };
 
 const styles = StyleSheet.create({
+  titleText: {
+    fontSize: 20,
+  },
+  timerText: {
+    color: '#E11D48', // text-rose-600
+  },
   paymentList: {
     flexDirection: "column",
     position: "relative",
@@ -195,6 +201,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     position: "absolute",
     left: 120,
+  },
+  bubbleTextTop: {
+    fontSize: 15,
+    marginBottom: 4,
+  },
+  bubbleText: {
+    fontSize: 15,
   },
   bubbleTail: {
     position: "absolute",

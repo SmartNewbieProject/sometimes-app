@@ -1,7 +1,7 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Signup from "@/src/features/signup";
-import { SignupSteps } from "@/src/features/signup/hooks";
+import { SignupSteps } from "@/src/features/signup/hooks/use-signup-progress";
 import useUniversityDetails from "@/src/features/signup/hooks/use-university-details";
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
@@ -76,11 +76,10 @@ function UniversityDetailsPage() {
             }
           }}
         >
-          <View className="px-[5px]">
+          <View style={styles.imageContainer}>
             <Image
               source={require("@assets/images/details.png")}
-              style={{ width: 81, height: 81 }}
-              className="mb-4"
+              style={styles.universityImage}
             />
           </View>
 
@@ -100,7 +99,7 @@ function UniversityDetailsPage() {
           </View>
         </Pressable>
       </ScrollView>
-      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+      <View style={[styles.bottomContainer, styles.fullWidth]}>
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={handleNext}
@@ -117,8 +116,16 @@ export default withSignupValidation(
 );
 
 const styles = StyleSheet.create({
+  imageContainer: {
+    paddingHorizontal: 5,
+  },
+  universityImage: {
+    width: 81,
+    height: 81,
+    marginBottom: 16,
+  },
   title: {
-    fontWeight: 600,
+    fontWeight: "600",
     fontFamily: "Pretendard-SemiBold",
     fontSize: 18,
     lineHeight: 22,
@@ -135,6 +142,9 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingHorizontal: 0,
     backgroundColor: semanticColors.surface.background,
+  },
+  fullWidth: {
+    width: "100%",
   },
   tipConatainer: {
     flexDirection: "row",

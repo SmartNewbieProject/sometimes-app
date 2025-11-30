@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { router, useFocusEffect } from "expo-router";
 import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

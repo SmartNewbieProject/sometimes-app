@@ -1,5 +1,5 @@
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -12,7 +12,7 @@ import Payment from "@features/payment";
 import type { PortOneController } from "@portone/react-native-sdk";
 import { Button, PalePurpleGradient, Text } from "@shared/ui";
 import { createRef, useEffect, useState } from "react";
-import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
+import { Alert, BackHandler, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { ui, services } = Payment;
@@ -127,16 +127,15 @@ export default function RematchingTicketSellingScreen() {
 
   return (
     <Layout.Default
-      className="flex flex-1 flex-col"
-      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
+      style={[styles.container, { backgroundColor: semanticColors.surface.background, paddingTop: insets.top }]}
     >
       <RematchingTicket.Header />
       <ScrollView>
         <RematchingTicket.Banner />
 
         <RematchingTicket.ContentLayout>
-          <View className="flex-1 flex flex-col px-[32px]">
-            <View className="flex flex-col my-2 mb-4">
+          <View style={styles.contentContainer}>
+            <View style={styles.titleContainer}>
               <Text weight="semibold" size="20" textColor="black">
                 연인 재매칭권을 구매하면
               </Text>
@@ -145,7 +144,7 @@ export default function RematchingTicketSellingScreen() {
               </Text>
             </View>
 
-            <View className="flex flex-col gap-y-4 mt-4 justify-center mb-auto">
+            <View style={styles.ticketContainer}>
               <Ticket.Provider name={OPTIONS.name} price={OPTIONS.price}>
                 <Ticket.Item count={1} onOpenPayment={onPurchase} />
                 <Ticket.Item
@@ -177,3 +176,27 @@ export default function RematchingTicketSellingScreen() {
     </Layout.Default>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 32,
+  },
+  titleContainer: {
+    flexDirection: 'column',
+    marginVertical: 8,
+    marginBottom: 16,
+  },
+  ticketContainer: {
+    flexDirection: 'column',
+    gap: 16,
+    marginTop: 16,
+    justifyContent: 'center',
+    marginBottom: 'auto',
+  },
+});

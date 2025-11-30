@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { UserProfileSkeleton } from "./user-profile-skeleton";
 import { SkeletonBlock } from "@/src/shared/skeleton/block";
 
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     padding: 16, // p-4
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#F8F9FA", // semanticColors.surface.surface
   },
   headerRow: {
     marginTop: 12, // my-3 (top)
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: "#E1D9FF", // semanticColors.surface.other
     marginTop: 12, // mt-3
   },
 });

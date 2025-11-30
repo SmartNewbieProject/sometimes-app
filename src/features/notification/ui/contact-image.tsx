@@ -30,7 +30,7 @@ export const ContactImage: React.FC<ContactImageProps> = ({
               { width: size - 4, height: size - 4 },
             ]}
             intensity={5}
-            tint={colors.primaryPurple}
+            tint="#7A4AE2"
           />
         </>
       ) : (

@@ -1,5 +1,5 @@
 import { useStorage } from "@/src/shared/hooks/use-storage";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { track } from "@amplitude/analytics-react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
@@ -258,11 +258,14 @@ const AppleLoginButton: React.FC = () => {
         <Pressable
           onPress={handleWebAppleLogin}
           disabled={isLoading}
-          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-surface-inverse border  !border-border-default"
+          style={[
+            styles.appleButton,
+            isLoading && styles.disabled
+          ]}
         >
           <Text style={styles.appleLogo}></Text>
           <View>
-            <Text className="text-text-inverse text-[18px]">Apple 로그인</Text>
+            <Text style={styles.buttonText}>Apple 로그인</Text>
           </View>
         </Pressable>
       </View>
@@ -273,15 +276,18 @@ const AppleLoginButton: React.FC = () => {
   if (Platform.OS === "ios") {
     return (
       <View style={styles.iosContainer}>
-        <View className="w-full">
+        <View style={styles.iosContainerFullWidth}>
           <Pressable
             onPress={handleIOSAppleLogin}
             disabled={isLoading}
-            className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !containerh-[60px] !bg-surface-inverse border  !border-border-default"
+            style={[
+              styles.appleButton,
+              isLoading && styles.disabled
+            ]}
           >
             <Text style={styles.appleLogo}></Text>
             <View>
-              <Text className="text-text-inverse text-[18px]">Apple 로그인</Text>
+              <Text style={styles.buttonText}>Apple 로그인</Text>
             </View>
           </Pressable>
         </View>
@@ -332,6 +338,27 @@ const styles = StyleSheet.create({
     fontFamily: "SF Pro",
     fontSize: 26,
     fontWeight: 600,
+  },
+  appleButton: {
+    paddingVertical: 16,
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    gap: 10,
+    justifyContent: 'center',
+    borderRadius: 30,
+    minWidth: 330,
+    height: 60,
+    backgroundColor: semanticColors.surface.inverse,
+    borderWidth: 1,
+    borderColor: semanticColors.border.default,
+  },
+  buttonText: {
+    color: semanticColors.text.inverse,
+    fontSize: 18,
+  },
+  iosContainerFullWidth: {
+    width: '100%',
   },
 });
 

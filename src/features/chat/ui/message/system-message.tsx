@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";

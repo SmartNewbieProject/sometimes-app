@@ -1,12 +1,13 @@
 // UserInfoPage.tsx
 import { DefaultLayout } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Signup from "@/src/features/signup";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Text ,
+import {
+  Text,
   Platform,
   Pressable,
   ScrollView,
@@ -19,7 +20,6 @@ import {
 } from "react-native-safe-area-context";
 
 const { useSignupProgress } = Signup;
-
 export default function UserInfoPage() {
   const { updateForm, form } = useSignupProgress();
 
@@ -170,11 +170,10 @@ export default function UserInfoPage() {
           paddingHorizontal: 20,
         }}
       >
-        <View className="px-[5px]">
+        <View style={styles.imageContainer}>
           <Image
             source={require("@assets/images/details.png")}
-            style={{ width: 81, height: 81, marginTop: 30 }}
-            className="mb-4"
+            style={styles.image}
           />
         </View>
 
@@ -294,7 +293,6 @@ export default function UserInfoPage() {
 
       <View
         style={[styles.bottomContainer, { bottom: insets.bottom }]}
-        className="w-[calc(100%)]"
       >
         <View style={styles.messageContainer}>
           <Image
@@ -355,6 +353,15 @@ const styles = StyleSheet.create({
     gap: 15,
     marginTop: 34,
     paddingHorizontal: 10,
+  },
+  imageContainer: {
+    paddingHorizontal: 5,
+  },
+  image: {
+    width: 81,
+    height: 81,
+    marginTop: 30,
+    marginBottom: 16,
   },
   nameInput: {
     width: 305.45,

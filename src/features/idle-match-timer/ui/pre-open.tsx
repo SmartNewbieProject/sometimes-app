@@ -1,46 +1,86 @@
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { ImageResource, Text } from '@shared/ui';
-import { cn, ImageResources } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs";
 
 export const PreOpening = () => {
   return (
-    <View
-      style={{ position: 'relative', width: '100%', height: '100%', padding: 14 }}
-      className="flex flex-col h-full"
-    >
-
-      <View className="w-full flex flex-row justify-center items-center mt-[14px]">
+    <View style={styles.container}>
+      <View style={styles.foxContainer}>
         <ImageResource
           resource={ImageResources.PLITE_FOX}
-          className="w-[148px] h-[148px] md:w-[238px] md:h-[238px]"
+          width={148}
+          height={148}
         />
       </View>
 
-      <View className="w-full h-full flex flex-col items-center mt-[20px]">
-        <View className="flex flex-col justify-between items-center">
-          <Text textColor="deepPurple" weight="semibold" size="20" className="text-[18px] md:text-[22px]">
+      <View style={styles.contentContainer}>
+        <View style={styles.titleContainer}>
+          <Text textColor="deepPurple" weight="semibold" size="20" style={styles.mainTitle}>
             설레는 만남을 위해 준비 중이에요.
           </Text>
-          <Text weight="semibold" size="18" className="text-[16px] md:text-[18px] mt-1.5">
+          <Text weight="semibold" size="18" style={styles.subTitle}>
             곧 다시 찾아올게요&nbsp;💜
           </Text>
         </View>
 
-        <Text textColor="pale-purple" className="text-[12px] md:text-[14px] mt-2 md:mt-8">
+        <Text textColor="pale-purple" style={styles.scheduleText}>
           썸타임은 매주 목·일 21시에 매칭이 시작돼요!
         </Text>
       </View>
 
       <ImageResource
         resource={ImageResources.DISAPPEAR_FOX}
-        className={cn([
-          "w-[148px] h-[148px] md:w-[238px] md:h-[238px]",
-          "absolute bottom-[-24px] left-[-30px] md:left-[-60px]",
-          "z-[-1]",
-        ])}
-        width={238}
-        height={238}
+        style={styles.bottomFox}
+        width={148}
+        height={148}
       />
     </View>
   )
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    padding: 14,
+    flex: 1,
+    flexDirection: 'column',
+  },
+  foxContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 14,
+  },
+  contentContainer: {
+    width: '100%',
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  titleContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  mainTitle: {
+    fontSize: 18,
+  },
+  subTitle: {
+    fontSize: 16,
+    marginTop: 6,
+  },
+  scheduleText: {
+    fontSize: 12,
+    marginTop: 8,
+  },
+  bottomFox: {
+    position: 'absolute',
+    bottom: -24,
+    left: -30,
+    zIndex: -1,
+  },
+});

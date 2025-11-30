@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { semanticColors } from '../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import type React from "react";
 import {
   Modal,
@@ -30,7 +30,7 @@ function GuideWithLayoutAnimation({
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <View className="flex-1 bg-surface-inverse/50 justify-center items-center px-5 relative">
+      <View style={styles.modalOverlay}>
         <View style={styles.infoWrapper}>
           <Text style={styles.infoTitle}>프로필을 매력적으로 보여주세요!</Text>
           <Text style={styles.infoDescription}>
@@ -65,6 +65,14 @@ function GuideWithLayoutAnimation({
 }
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // bg-surface-inverse/50
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    position: 'relative',
+  },
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: 600,

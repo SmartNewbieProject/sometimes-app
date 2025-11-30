@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Modal } from "react-native";
-import { Text, Button, Input } from "@/src/shared/ui";
+import { Text } from "@/src/shared/ui/text";
+import { Button } from "@/src/shared/ui/button";
+import { Input } from "@/src/shared/ui/input";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { tryCatch } from "@/src/shared/libs";
 import { router } from "expo-router";
-import colors from "@constants/colors";
+import colors from "@/src/shared/constants/colors";
 
 interface EmailLoginModalProps {
   isVisible: boolean;

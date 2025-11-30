@@ -1,16 +1,16 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { track } from "@amplitude/analytics-react-native";
-import Signup from "@features/signup";
-import { platform } from "@shared/libs/platform";
+import useSignupProgress from "@/src/features/signup/hooks/use-signup-progress";
+import Logo from "@/src/features/signup/ui/logo";
+import LoginForm from "@/src/features/signup/ui/login-form";
+import { platform } from "@/src/shared/libs/platform";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
-
-const { useSignupProgress } = Signup;
 
 export default function LoginScreen() {
   const { clear } = useSignupProgress();
@@ -120,12 +120,12 @@ export default function LoginScreen() {
         >
           {/* 로고 섹션 */}
           <View style={styles.logoSection}>
-            <Signup.Logo />
+            <Logo />
           </View>
 
           {/* 메인 콘텐츠 */}
           <View style={styles.mainContent}>
-            <Signup.LoginForm />
+            <LoginForm />
           </View>
         </View>
       </ScrollView>

@@ -1,5 +1,5 @@
 import React from "react";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
 
 function FindPartner() {

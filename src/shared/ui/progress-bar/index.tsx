@@ -11,7 +11,7 @@ export const ProgressBar = ({
   return (
     <Bar
       progress={progress}
-      color={colors.primaryPurple}
+      color="#7A4AE2"
       unfilledColor="#F3EDFF"
       borderWidth={0}
       borderRadius={100}

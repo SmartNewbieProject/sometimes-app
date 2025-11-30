@@ -27,12 +27,12 @@ export function Container({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    backgroundColor: semanticColors.surface.background,
+    width: '100%', // w-full
+    flexDirection: 'row', // flex-row
+    justifyContent: 'space-between', // justify-between
+    alignItems: 'center', // items-center
+    paddingHorizontal: 12, // px-3 (12px)
+    paddingVertical: 12, // py-[12px]
+    backgroundColor: semanticColors.surface.background, // bg-surface-background
   },
 });

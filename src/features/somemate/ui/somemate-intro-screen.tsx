@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { Button, BottomNavigation } from "@/src/shared/ui";
@@ -57,7 +57,7 @@ export default function SomemateIntroScreen() {
               queryClient.invalidateQueries({ queryKey: ["ai-chat"] });
               router.push("/chat/somemate-chat");
             }}
-            className="w-full"
+            style={styles.buttonFullWidth}
           >
             <View style={styles.buttonContent}>
               <Image
@@ -187,6 +187,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: semanticColors.text.inverse,
     fontFamily: "Pretendard-SemiBold",
+  },
+  buttonFullWidth: {
+    width: "100%",
   },
 });
 

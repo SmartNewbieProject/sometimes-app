@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import type { AiChatCategory } from "../types";
 
 interface CategoryBadgeProps {

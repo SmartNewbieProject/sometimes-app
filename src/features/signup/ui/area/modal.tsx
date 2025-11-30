@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Animated, StyleSheet, Text, View } from "react-native";
 
 interface AreaModalProps {

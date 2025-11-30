@@ -8,7 +8,7 @@ import { tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 const {
   ArticleWriteFormProvider,
@@ -74,7 +74,7 @@ export default function CommunityUpdateScreen() {
       showModal({
         title: "완료",
         children: (
-          <View className="flex flex-col gap-y-1">
+          <View style={styles.modalContent}>
             <Text textColor="black" size="sm">
               게시글이 수정되었어요!
             </Text>
@@ -110,7 +110,7 @@ export default function CommunityUpdateScreen() {
 
   return (
     <ArticleWriteFormProvider form={form}>
-      <DefaultLayout className="flex-1">
+      <DefaultLayout style={styles.container}>
         <PalePurpleGradient />
         <ArtcileWriter.Header mode="update" onConfirm={onSubmit} />
         <ArtcileWriter.Form mode="update" />
@@ -119,3 +119,13 @@ export default function CommunityUpdateScreen() {
     </ArticleWriteFormProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  modalContent: {
+    flexDirection: 'column',
+    gap: 4,
+  },
+});

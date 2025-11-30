@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   arrowLine: {
     width: 2,
     height: 8,
-    backgroundColor: colors.primaryPurple,
+    backgroundColor: '#7A4AE2',
     marginBottom: 2,
   },
   arrowHead: {
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: 6,
     height: 2,
-    backgroundColor: colors.primaryPurple,
+    backgroundColor: '#7A4AE2',
   },
   arrowHeadLeft: {
     left: 3,

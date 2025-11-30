@@ -2,7 +2,7 @@ import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { track } from '@amplitude/analytics-react-native';
-import { checkAppEnvironment, logger } from '@shared/libs';
+import { checkAppEnvironment, logger } from '@/src/shared/libs';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Platform } from 'react-native';

@@ -52,16 +52,12 @@ export interface TextAreaProps
 	size?: 'sm' | 'md' | 'lg';
 	status?: 'default' | 'error' | 'success';
 	isDisabled?: boolean;
-	className?: string;
-	containerClassName?: string;
 }
 
 export function TextArea({
 	size,
 	status,
 	isDisabled,
-	className,
-	containerClassName,
 	placeholderTextColor = '#9CA3AF',
 	editable = true,
 	style,
@@ -70,11 +66,11 @@ export function TextArea({
 	const textAreaStyles = createTextAreaStyles({ size, status, isDisabled });
 
 	return (
-		<View style={containerClassName ? StyleSheet.flatten([{}, containerClassName]) : {}}>
+		<View style={styles.container}>
 			<TextInput
 				style={StyleSheet.flatten([
 					textAreaStyles,
-					{ textAlignVertical: 'top' },
+					styles.textInput,
 					style
 				])}
 				placeholderTextColor={placeholderTextColor}
@@ -87,3 +83,12 @@ export function TextArea({
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  textInput: {
+    textAlignVertical: 'top',
+  },
+});

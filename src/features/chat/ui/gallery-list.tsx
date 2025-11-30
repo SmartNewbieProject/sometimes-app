@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Text as CustomText } from "@/src/shared/ui";
 import { convertToJpeg, uriToBase64 } from "@/src/shared/utils/image";
 import { LegendList } from "@legendapp/list";

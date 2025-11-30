@@ -1,12 +1,12 @@
 import { Stack } from "expo-router";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { PalePurpleGradient } from "@/src/shared/ui";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 
 export default function UniversityVerificationLayout() {
   return (
     <OverlayProvider>
-      <View className="flex-1">
+      <View style={styles.container}>
         <PalePurpleGradient />
         <Stack>
           <Stack.Screen
@@ -41,3 +41,9 @@ export default function UniversityVerificationLayout() {
     </OverlayProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

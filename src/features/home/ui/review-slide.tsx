@@ -21,7 +21,6 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
       autoPlayInterval={6000}
       style={styles.slideContainer}
       autoPlay
-      indicatorContainerClassName="!-bottom-[28px] "
     >
       {reviews.map((review) => (
         <View
@@ -48,7 +47,7 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
               {review.content}
             </Text>
 
-            <Text size="sm" style={styles.dateText}>
+            <Text size="sm" style={styles.dateText} weight="bold">
               {review.date}
             </Text>
           </View>
@@ -131,6 +130,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginLeft: 8,
     flexDirection: 'column',
+    justifyContent: 'space-between',
+    flex: 1,
   },
   dateText: {
     color: '#6F6F6F',

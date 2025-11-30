@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: colors.primaryPurple,
+    borderBottomColor: '#7A4AE2',
   },
   tabText: {
     fontSize: 16,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   activeTabText: {
-    color: colors.primaryPurple,
+    color: '#7A4AE2',
     fontWeight: '600',
   },
   countBadge: {
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   activeCountBadge: {
-    backgroundColor: colors.primaryPurple,
+    backgroundColor: '#7A4AE2',
   },
   countText: {
     fontSize: 12,

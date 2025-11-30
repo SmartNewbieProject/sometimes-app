@@ -10,9 +10,10 @@ import { ImageResources } from "@/src/shared/libs/image";
 import { Button, Header, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { ImageResource } from "@/src/shared/ui/image-resource";
 import { Form } from "@/src/widgets";
+import { semanticColors } from "@/src/shared/constants/colors";
 import { router, useLocalSearchParams } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
-import { Alert, Platform, Pressable, View } from "react-native";
+import { Alert, Platform, Pressable, View, StyleSheet } from "react-native";
 
 type ReportForm = {
   reason: string;
@@ -56,7 +57,7 @@ export default function ReportScreen() {
       <PalePurpleGradient />
       <HeaderComponent />
 
-      <View className="flex-1 px-5">
+      <View style={styles.contentContainer}>
         <ImageResource
           resource={ImageResources.REPORT}
           width={152}
@@ -65,11 +66,11 @@ export default function ReportScreen() {
         <Text textColor="deepPurple" size="20" weight="bold">
           부적절한 게시글을 발견하셨나요?
         </Text>
-        <Text textColor="gray" size="md" weight="medium" className="mt-1.5">
+        <Text textColor="gray" size="md" weight="medium" style={styles.description}>
           신고해주신 내용은 관리자가 검토 후 적절한 조치를 취하겠습니다.
         </Text>
 
-        <View className="flex-1 mt-4 mr-4">
+        <View style={styles.formContainer}>
           <FormProvider {...form}>
             <Form.Select
               name="reason"
@@ -82,9 +83,9 @@ export default function ReportScreen() {
         </View>
       </View>
 
-      <View className="mb-14 px-5">
+      <View style={styles.buttonContainer}>
         <Button
-          className="w-full"
+          style={styles.button}
           disabled={!form.formState.isValid}
           onPress={onSubmit}
         >
@@ -103,7 +104,7 @@ const HeaderComponent = () => (
       </Pressable>
     </Header.LeftContent>
 
-    <Header.CenterContent className="pr-10">
+    <Header.CenterContent style={styles.headerCenter}>
       <Text textColor="black" weight="bold">
         신고하기
       </Text>
@@ -121,3 +122,28 @@ const reportReasons = [
   "괴롭힘/협박",
   "커뮤니티 규칙 위반",
 ];
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  description: {
+    marginTop: 6,
+  },
+  formContainer: {
+    flex: 1,
+    marginTop: 16,
+    marginRight: 16,
+  },
+  buttonContainer: {
+    marginBottom: 56,
+    paddingHorizontal: 20,
+  },
+  button: {
+    width: '100%',
+  },
+  headerCenter: {
+    paddingRight: 40,
+  },
+});

@@ -6,12 +6,10 @@ import { Animated, Easing, StyleSheet, View } from "react-native";
 
 interface TotalMatchCounterProps {
   count: number;
-  className?: string;
 }
 
 export default function TotalMatchCounter({
   count,
-  className,
 }: TotalMatchCounterProps) {
   const animatedValue = useRef(new Animated.Value(0)).current;
   const [displayValue, setDisplayValue] = useState(0);
@@ -70,31 +68,29 @@ export default function TotalMatchCounter({
       end={{ x: 1, y: 0.5 }}
       locations={[0, 0.2853, 1]}
       style={styles.container}
-      className={className}
     >
-      <View style={styles.contentContainer} className="whitespace-nowrap">
-        <View style={styles.leftContent} className="w-full flex flex-row">
+      <View style={styles.contentContainer}>
+        <View style={styles.leftContent}>
           <Text
             textColor="white"
-            className="mb-1 whitespace-nowrap text-sm md:text-md pt-5 pr-1"
+            style={styles.labelText}
           >
             지금까지
           </Text>
           <View
             style={styles.counterContainer}
-            className="self-center flex justify-center"
           >
             <Text
               weight="bold"
               textColor="white"
-              className="text-[34px] tracking-wide font-rubik"
+              style={styles.counterText}
             >
               {formattedCount}
             </Text>
           </View>
           <Text
             textColor="white"
-            className="self-end text-sm md:text-md pb-[19px]"
+            style={styles.suffixText}
           >
             명이 신청했어요!
           </Text>
@@ -132,6 +128,26 @@ const styles = StyleSheet.create({
   leftContent: {
     flex: 1,
     justifyContent: "center",
+    flexDirection: "row",
+    width: "100%",
+  },
+  labelText: {
+    marginBottom: 4,
+    fontSize: 14,
+    paddingTop: 20,
+    paddingRight: 4,
+    fontFamily: "Pretendard-Regular",
+  },
+  counterText: {
+    fontSize: 34,
+    letterSpacing: 1.5,
+    fontFamily: "Rubik-Regular",
+  },
+  suffixText: {
+    alignSelf: "flex-end",
+    fontSize: 14,
+    paddingBottom: 19,
+    fontFamily: "Pretendard-Regular",
   },
   rightContent: {
     justifyContent: "center",

@@ -1,5 +1,5 @@
 import MyInfo from "@/src/features/my-info";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { useMyInfoStep } from "@/src/features/my-info/hooks";
 import { cn } from "@/src/shared/libs";
 import { platform } from "@/src/shared/libs/platform";
@@ -18,8 +18,7 @@ export default function InterestLayout() {
   const insets = useSafeAreaInsets();
   return (
     <View
-      style={[styles.container, { paddingTop: insets.top }]}
-      className="flex-1"
+      style={[styles.container, styles.flexContainer, { paddingTop: insets.top }]}
     >
       <View style={styles.contentContainer}>
         {renderProgress && (
@@ -151,6 +150,9 @@ const progressStyle: ViewStyle = {
 const styles = StyleSheet.create({
   progress: progressStyle,
   container: {
+    flex: 1,
+  },
+  flexContainer: {
     flex: 1,
   },
   contentContainer: {

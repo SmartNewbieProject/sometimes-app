@@ -1,6 +1,6 @@
 import { ArticleWriteHeader, ArticleWriteForm, ArticleWriteNav } from './ui';
 
-export const ArtcileWriter = {
+export const ArticleWriter = {
   Header: ArticleWriteHeader,
   Form: ArticleWriteForm,
   Nav: ArticleWriteNav,

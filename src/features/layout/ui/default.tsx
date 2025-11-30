@@ -1,5 +1,5 @@
 import { usePathname } from "expo-router";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import type { ReactNode } from "react";
 import {
   KeyboardAvoidingView,

@@ -3,16 +3,25 @@ import useUserStatus from "@/src/features/auth/queries/use-user-status";
 import Loading from "@/src/features/loading";
 import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 export default function HomeLayout() {
   const { my } = useAuth();
   const [statusChecked, setStatusChecked] = useState(false);
   const { data: statusData, isLoading } = useUserStatus(my.phoneNumber);
+
   useEffect(() => {
     const checkApprovalStatus = async () => {
       console.log("statusData", my, statusData);
-      if (!my?.phoneNumber || statusChecked || isLoading) return;
+
+      // phoneNumber가 없으면 바로 통과
+      if (!my?.phoneNumber) {
+        setStatusChecked(true);
+        return;
+      }
+
+      // 이미 체크했거나 로딩 중이면 return
+      if (statusChecked || isLoading) return;
 
       try {
         if (statusData?.status === "pending") {
@@ -39,14 +48,14 @@ export default function HomeLayout() {
     };
 
     checkApprovalStatus();
-  }, [my?.phoneNumber, statusChecked, isLoading]);
+  }, [my?.phoneNumber, statusData, isLoading]);
 
   if (!statusChecked) {
     return <Loading.Page title="사용자 정보를 확인하고 있어요..." />;
   }
 
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <Stack>
         <Stack.Screen
           name="index"
@@ -61,3 +70,9 @@ export default function HomeLayout() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

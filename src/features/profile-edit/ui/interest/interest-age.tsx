@@ -51,7 +51,7 @@ function InterestAge() {
             }
             multiple={false}
             onChange={onChangeOption}
-            className="w-full"
+            style={styles.chipSelectorFullWidth}
           />
         </Loading.Lottie>
       </View>
@@ -83,6 +83,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 0.5,
     backgroundColor: semanticColors.surface.other,
+  },
+  chipSelectorFullWidth: {
+    width: '100%',
   },
 });
 

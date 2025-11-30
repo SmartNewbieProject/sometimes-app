@@ -164,12 +164,12 @@ export default function PartnerDetailScreen() {
             isStatus(partner?.connectionId ?? "") === "PENDING"
           }
         >
-          <View className="w-full flex flex-row">
+          <View style={styles.waitingContainer}>
             <Button
               variant="outline"
               disabled={true}
               size="md"
-              className={cn("flex-1 items-center ", `!h-[${20}px]`)}
+              style={[styles.flexButton, styles.waitingButton]}
             >
               <Text>상대방 응답을 기다리는 중..</Text>
             </Button>
@@ -195,7 +195,7 @@ export default function PartnerDetailScreen() {
   };
 
   return (
-    <View className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
+    <View style={[styles.container, { backgroundColor: semanticColors.surface.background }]}>
       <PhotoSlider
         images={partner?.profileImages.map((item) => item.url) ?? []}
         onClose={onZoomClose}
@@ -218,14 +218,14 @@ export default function PartnerDetailScreen() {
                 },
               })
             }
-            className="pt-2 -mr-2"
+            style={styles.rightButton}
           >
             <Feather name="alert-triangle" size={24} color={semanticColors.text.primary} />
           </Pressable>
         }
       />
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {partner.profileImages.length > 0 && (
           <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
             <Pressable
@@ -233,8 +233,7 @@ export default function PartnerDetailScreen() {
                 setSelectedIndex(0);
                 setZoomVisible(true);
               }}
-              className="w-full h-full"
-              style={{ width: "100%", height: "100%" }}
+              style={styles.fullSizePressable}
             >
               <Image
                 source={{ uri: partner.profileImages[0].url }}
@@ -249,29 +248,29 @@ export default function PartnerDetailScreen() {
               />
             </Pressable>
 
-            <View className="absolute bottom-8 left-5 right-5" pointerEvents="none">
-              <View style={{ backgroundColor: semanticColors.brand.primary }} className="self-start px-2 py-1 rounded-md mb-2 flex-row items-center gap-1">
-                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-bold">마지막 접속</Text>
-                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-light">{formatLastLogin(partner.updatedAt)}</Text>
+            <View style={styles.overlayInfo} pointerEvents="none">
+              <View style={[styles.lastLoginContainer, { backgroundColor: semanticColors.brand.primary }]}>
+                <Text style={[styles.lastLoginLabel, { color: semanticColors.text.inverse }]}>마지막 접속</Text>
+                <Text style={[styles.lastLoginTime, { color: semanticColors.text.inverse }]}>{formatLastLogin(partner.updatedAt)}</Text>
               </View>
-              <Text style={{ color: semanticColors.text.inverse }} className="text-3xl font-bold mb-1">
+              <Text style={[styles.ageText, { color: semanticColors.text.inverse }]}>
                 만 {partner.age}세
               </Text>
-              <View className="flex-row items-center mb-1">
+              <View style={styles.universityRow}>
                 {partner.universityDetails?.code && (
                   <Image
                     source={{ uri: getSmartUnivLogoUrl(partner.universityDetails.code) }}
-                    style={{ width: 20, height: 20, marginRight: 6 }}
+                    style={styles.universityLogo}
                     contentFit="contain"
                   />
                 )}
-                <Text style={{ color: semanticColors.text.inverse }} className="text-base opacity-90">
+                <Text style={[styles.universityName, { color: semanticColors.text.inverse }]}>
                   {partner.universityDetails?.name}
                 </Text>
               </View>
-              <View className="flex-row items-center">
+              <View style={styles.authStatusRow}>
                 <Feather name="check-square" size={16} color={semanticColors.brand.accent} />
-                <Text style={{ color: semanticColors.brand.accent }} className="ml-1 text-sm">
+                <Text style={[styles.authStatusText, { color: semanticColors.brand.accent }]}>
                   {partner.universityDetails?.authentication ? "대학교 인증 완료" : "대학교 인증 전"}
                 </Text>
               </View>
@@ -279,21 +278,21 @@ export default function PartnerDetailScreen() {
           </View>
         )}
 
-        <View className="px-5 py-6">
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mb-4">기본 정보</Text>
-          <View style={{ backgroundColor: semanticColors.surface.surface }} className="rounded-2xl p-5 flex-row flex-wrap justify-between">
+        <View style={styles.contentContainer}>
+          <Text style={[styles.sectionTitle, { color: semanticColors.text.muted }]}>기본 정보</Text>
+          <View style={[styles.basicInfoContainer, { backgroundColor: semanticColors.surface.surface }]}>
             {basicInfo.map((info, index) => (
-              <View key={index} className="w-[48%] flex-row items-center mb-4">
+              <View key={index} style={styles.infoItem}>
                 <ImageResource resource={info.icon} width={24} height={24} />
-                <Text style={{ color: semanticColors.text.secondary }} className="ml-2 font-medium text-sm flex-1" numberOfLines={1}>
-                  {info.prefix && <Text style={{ color: semanticColors.text.secondary, fontSize: 14 }}>{info.prefix}</Text>}
+                <Text style={[styles.infoText, { color: semanticColors.text.secondary }]} numberOfLines={1}>
+                  {info.prefix && <Text style={[styles.infoPrefix, { color: semanticColors.text.secondary, fontSize: 14 }]}>{info.prefix}</Text>}
                   {info.label}
                 </Text>
               </View>
             ))}
           </View>
 
-          <View className="w-full aspect-[280/160] mt-8 mb-8">
+          <View style={styles.mbtiContainer}>
             <ImageResource
               resource={ImageResources[partner.mbti as keyof typeof ImageResources]}
               width="100%"
@@ -301,21 +300,21 @@ export default function PartnerDetailScreen() {
             />
           </View>
 
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 연애 스타일은</Text>
-          <View className="flex-row flex-wrap gap-2">
+          <Text style={[styles.sectionTitle, styles.sectionTopMargin, { color: semanticColors.text.muted }]}>제 연애 스타일은</Text>
+          <View style={styles.tagContainer}>
             {loveStyles.map((style, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{style.label}</Text>
+              <View key={index} style={[styles.tag, { borderColor: semanticColors.brand.primary }]}>
+                <Text style={[styles.tagText, { color: semanticColors.brand.primary }]}>{style.label}</Text>
               </View>
             ))}
           </View>
 
           {/* Personality */}
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 성격은</Text>
-          <View className="flex-row flex-wrap gap-2 mb-8">
+          <Text style={[styles.sectionTitle, styles.sectionTopMargin, { color: semanticColors.text.muted }]}>제 성격은</Text>
+          <View style={[styles.tagContainer, styles.sectionBottomMargin]}>
             {personal.map((item, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
+              <View key={index} style={[styles.tag, { borderColor: semanticColors.brand.primary }]}>
+                <Text style={[styles.tagText, { color: semanticColors.brand.primary }]}>{item.label}</Text>
               </View>
             ))}
           </View>
@@ -329,7 +328,7 @@ export default function PartnerDetailScreen() {
                 setSelectedIndex(1);
                 setZoomVisible(true);
               }}
-              className="w-full h-full"
+              style={styles.fullSizePressable}
             >
               <Image
                 source={{ uri: partner.profileImages[1].url }}
@@ -340,20 +339,20 @@ export default function PartnerDetailScreen() {
           </View>
         )}
 
-        <View className="px-5 pb-6">
+        <View style={styles.interestsContainer}>
           {/* Interests */}
-          <Text style={{ color: semanticColors.text.muted }} className="text-sm mb-3">제 관심사는</Text>
-          <View className="flex-row flex-wrap gap-2 mb-8">
+          <Text style={[styles.interestsTitle, { color: semanticColors.text.muted }]}>제 관심사는</Text>
+          <View style={[styles.tagContainer, styles.sectionBottomMargin]}>
             {interestsWithIcons.map((item, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2 flex-row items-center gap-1">
+              <View key={index} style={[styles.interestTag, { borderColor: semanticColors.brand.primary }]}>
                 {item.imageUrl && (
                   <Image
                     source={{ uri: item.imageUrl }}
-                    style={{ width: 16, height: 16 }}
+                    style={styles.interestIcon}
                     contentFit="contain"
                   />
                 )}
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
+                <Text style={[styles.tagText, { color: semanticColors.brand.primary }]}>{item.label}</Text>
               </View>
             ))}
           </View>
@@ -361,15 +360,15 @@ export default function PartnerDetailScreen() {
 
         {/* Image 3 and others */}
         {partner.profileImages.length > 2 && (
-          <View className="pb-10">
+          <View style={styles.additionalImagesContainer}>
             {partner.profileImages.slice(2).map((item, index) => (
-              <View key={item.id} style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden", marginBottom: 16 }}>
+              <View key={item.id} style={styles.additionalImage}>
                 <Pressable
                   onPress={() => {
                     setSelectedIndex(index + 2);
                     setZoomVisible(true);
                   }}
-                  className="w-full h-full"
+                  style={styles.fullSizePressable}
                 >
                   <Image
                     source={{ uri: item.url }}
@@ -389,4 +388,170 @@ export default function PartnerDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  rightButton: {
+    paddingTop: 8,
+    marginRight: -8,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  fullSizePressable: {
+    width: "100%",
+    height: "100%",
+  },
+  overlayInfo: {
+    position: "absolute",
+    bottom: 32,
+    left: 20,
+    right: 20,
+  },
+  lastLoginContainer: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  lastLoginLabel: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  lastLoginTime: {
+    fontSize: 12,
+    fontWeight: "300",
+  },
+  ageText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  universityRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  universityLogo: {
+    width: 20,
+    height: 20,
+    marginRight: 6,
+  },
+  universityName: {
+    fontSize: 16,
+    opacity: 0.9,
+  },
+  authStatusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  authStatusText: {
+    marginLeft: 4,
+    fontSize: 14,
+  },
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    marginBottom: 16,
+  },
+  basicInfoContainer: {
+    borderRadius: 16,
+    padding: 20,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  infoItem: {
+    width: "48%",
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  infoText: {
+    marginLeft: 8,
+    fontWeight: "500",
+    fontSize: 14,
+    flex: 1,
+  },
+  infoPrefix: {
+    fontSize: 14,
+  },
+  mbtiContainer: {
+    width: "100%",
+    aspectRatio: 280 / 160,
+    marginTop: 32,
+    marginBottom: 32,
+  },
+  sectionTopMargin: {
+    marginTop: 32,
+  },
+  sectionBottomMargin: {
+    marginBottom: 32,
+  },
+  tagContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  tag: {
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  tagText: {
+    fontSize: 14,
+  },
+  interestsContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+  },
+  interestsTitle: {
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  interestTag: {
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  interestIcon: {
+    width: 16,
+    height: 16,
+  },
+  additionalImagesContainer: {
+    paddingBottom: 40,
+  },
+  additionalImage: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: 32,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  waitingContainer: {
+    width: "100%",
+    flex: 1,
+    flexDirection: "row",
+    height: 48,
+  },
+  flexButton: {
+    flex: 1,
+    alignItems: "center",
+  },
+  waitingButton: {
+    height: 20,
+  },
+});

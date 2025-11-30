@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { guideHeight, useOverlay } from "@/src/shared/hooks/use-overlay";
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,19 +17,14 @@ import {
   View,
 } from "react-native";
 import { z } from "zod";
-import Signup from "..";
+import { useSignupProgress, useChangePhase, SignupSteps } from "../hooks/use-signup-progress";
+import { apis } from "../apis";
+import { useSignupAnalytics } from "../hooks/use-signup-analytics";
 import {
   buildSignupForm,
 
 } from "../services/signup-validator";
 
-const {
-  SignupSteps,
-  useChangePhase,
-  useSignupProgress,
-  apis,
-  useSignupAnalytics,
-} = Signup;
 
 type FormState = {
   images: (string | null)[];

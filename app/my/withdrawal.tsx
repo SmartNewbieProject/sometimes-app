@@ -240,10 +240,9 @@ export default function WithdrawalScreen() {
       <View style={styles.buttonContainer}>
         <Button
           width="full"
-          className="flex-1"
           variant="primary"
           onPress={onSubmitWithdrawal}
-          styles={styles.button}
+          style={styles.button}
           disabled={!isValid}
         >
           서비스 떠나기

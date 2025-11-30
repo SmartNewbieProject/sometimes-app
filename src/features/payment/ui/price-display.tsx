@@ -1,34 +1,34 @@
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Text } from '@shared/ui';
 
 
 type Props = {
-  classNames?: string;
+  style?: any;
   totalPrice: number;
   originalPrice?: number;
   salesPercent?: number;
 }
 
-export const PriceDisplay = ({ classNames, totalPrice, originalPrice, salesPercent }: Props) => {
+export const PriceDisplay = ({ style, totalPrice, originalPrice, salesPercent }: Props) => {
   const showSales = (originalPrice && salesPercent && originalPrice > totalPrice && salesPercent) !== 0;
 
   return (
-    <View className={classNames}>
-      <View className="flex-row items-center">
-        <Text weight="semibold" textColor="black" className="mr-2">
+    <View style={style}>
+      <View style={styles.priceContainer}>
+        <Text weight="semibold" textColor="black" style={styles.totalLabel}>
           총
         </Text>
         <Text weight="semibold" size="lg" textColor="purple">
           {totalPrice.toLocaleString()}
         </Text>
-        <Text weight="semibold" textColor="black" className="ml-1">
+        <Text weight="semibold" textColor="black" style={styles.wonLabel}>
           원
         </Text>
       </View>
 
       {showSales && (
-        <View className="flex-row justify-end mb-1">
-          <Text size="sm" textColor="light" className="line-through mr-1">
+        <View style={styles.salesContainer}>
+          <Text size="sm" textColor="light" style={styles.originalPrice}>
             {originalPrice?.toLocaleString()}원
           </Text>
           <Text size="sm" textColor="purple" weight="semibold">
@@ -40,3 +40,25 @@ export const PriceDisplay = ({ classNames, totalPrice, originalPrice, salesPerce
     </View>
   )
 };
+
+const styles = StyleSheet.create({
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  totalLabel: {
+    marginRight: 8,
+  },
+  wonLabel: {
+    marginLeft: 4,
+  },
+  salesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 4,
+  },
+  originalPrice: {
+    textDecorationLine: 'line-through',
+    marginRight: 4,
+  },
+});

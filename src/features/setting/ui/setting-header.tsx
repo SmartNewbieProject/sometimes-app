@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Header } from "@/src/shared/ui";
 import { usePathname, useRouter } from "expo-router";
 import React from "react";
@@ -12,7 +12,7 @@ function SettingHeader() {
   const title = path === "/setting" ? "설정" : "계정관리";
 
   return (
-    <Header.Container className="items-center  ">
+    <Header.Container style={styles.headerContainer}>
       <Header.LeftContent>
         <Pressable
           onPress={() => {
@@ -63,6 +63,9 @@ const styles = StyleSheet.create({
   arrowContainer: {
     width: 24,
     height: 24,
+  },
+  headerContainer: {
+    alignItems: 'center',
   },
 });
 

@@ -11,13 +11,13 @@ import {
 
 interface SlideProps {
   children: React.ReactNode[] | React.ReactNode;
-  className?: string;
-  indicatorClassName?: string;
-  activeIndicatorClassName?: string;
-  indicatorContainerClassName?: string;
+  style?: any;
+  indicatorStyle?: any;
+  activeIndicatorStyle?: any;
+  indicatorContainerStyle?: any;
   autoPlay?: boolean;
   autoPlayInterval?: number;
-  contentContainerClassName?: string;
+  contentContainerStyle?: any;
   showIndicator?: boolean;
   indicatorPosition?: "top" | "bottom";
   onSlideChange?: (index: number) => void;
@@ -32,11 +32,11 @@ function Slider({
   indicatorPosition = "bottom",
   onSlideChange,
   animationDuration = 500,
-  indicatorClassName,
-  contentContainerClassName,
-  activeIndicatorClassName,
-  indicatorContainerClassName,
-  className,
+  indicatorStyle,
+  contentContainerStyle,
+  activeIndicatorStyle,
+  indicatorContainerStyle,
+  style,
 }: SlideProps) {
   const arrayChildren = Array.isArray(children) ? children : [children];
   const realCount = arrayChildren.length;
@@ -154,18 +154,16 @@ function Slider({
 
   return (
     <View
-      className={className}
+      style={[style, { width: "100%" }]}
       onLayout={(e) => {
         const w = e.nativeEvent.layout.width;
         if (w && w !== containerWidth) {
           setContainerWidth(w);
         }
       }}
-      style={{ width: "100%" as ViewStyle["width"] }}
     >
       <View
-        style={{ width: containerWidth || 0, overflow: "hidden" }}
-        className={contentContainerClassName}
+        style={[contentContainerStyle, { width: containerWidth || 0, overflow: "hidden" }]}
       >
         <Animated.View
           {...(!isSingle ? panResponder.panHandlers : {})}
@@ -203,8 +201,8 @@ function Slider({
               [indicatorPosition]: -16,
               paddingHorizontal: 8,
             } as ViewStyle,
+            indicatorContainerStyle,
           ]}
-          className={indicatorContainerClassName}
         >
           {arrayChildren.map((_, index) => (
             <Pressable
@@ -214,18 +212,16 @@ function Slider({
               style={{ padding: 6 }}
             >
               <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 8,
-                  backgroundColor:
-                    focusIndex === index + 1 ? "#7A4AE2" : colors.lightPurple,
-                }}
-                className={
-                  focusIndex === index + 1
-                    ? activeIndicatorClassName
-                    : indicatorClassName
-                }
+                style={[
+                  {
+                    width: 8,
+                    height: 8,
+                    borderRadius: 8,
+                    backgroundColor:
+                      focusIndex === index + 1 ? "#7A4AE2" : "#E2D5FF",
+                  },
+                  focusIndex === index + 1 ? activeIndicatorStyle : indicatorStyle,
+                ]}
               />
             </Pressable>
           ))}

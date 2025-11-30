@@ -1,6 +1,6 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
-import { cn, dayUtils, tryCatch } from "@/src/shared/libs";
+import { semanticColors } from '@/src/shared/constants/colors';
+import { dayUtils, tryCatch } from "@/src/shared/libs";
 import { Button, Show } from "@/src/shared/ui";
 import {
   getRemainingTimeFormatted,
@@ -119,7 +119,7 @@ function PostBoxCard({
         <Image source={mainProfileUrl} style={styles.profileImage} />
         <View style={styles.contentContainer}>
           <View style={styles.topText}>
-            <Text style={styles.name} className="font-medium">
+            <Text style={[styles.name, { fontWeight: '500' }]}>
               {nickname}
             </Text>
             <Text style={styles.age}>만 {age}세</Text>
@@ -177,17 +177,17 @@ export function LikedMePendingButton({
     );
   };
   return (
-    <View className="w-full flex flex-row  gap-x-[10px]">
+    <View style={buttonStyles.pendingContainer}>
       <Button
         onPress={handleReject}
         variant="outline"
-        className="flex-1 items-center !h-[40px]"
+        style={buttonStyles.pendingButton}
         prefix={<XIcon width={21} height={21} />}
       >
         괜찮아요
       </Button>
 
-      <LikeButton className="!h-[40px]" connectionId={connectionId} />
+      <LikeButton style={buttonStyles.likeButton} connectionId={connectionId} />
     </View>
   );
 }
@@ -229,14 +229,14 @@ export function LikedMeOpenButton({
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={buttonStyles.modalContent}>
+          <Text style={buttonStyles.modalText}>
             {profileDetails?.gender === "MALE"
               ? `구슬 ${featureCosts?.CHAT_START}개로`
               : "지금 바로"}
             로 채팅방을 열 수 있어요.
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text style={buttonStyles.modalText}>
             지금 바로 첫 메시지를 보내보세요!
           </Text>
         </View>
@@ -254,12 +254,12 @@ export function LikedMeOpenButton({
     });
   };
   return (
-    <View className="w-full flex flex-row">
+    <View style={buttonStyles.buttonContainer}>
       <Button
         onPress={handleCreateChat}
         variant="primary"
         size="md"
-        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
+        style={[buttonStyles.chatButton, { height: height }]}
         prefix={<ChatIcon width={20} height={20} />}
       >
         대화 시작하기
@@ -296,8 +296,8 @@ export function ILikedRejectedButton({
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={buttonStyles.modalContent}>
+          <Text style={buttonStyles.modalText}>
             괜찮아요 더 멋진 만남이 곧 찾아올 거예요.
           </Text>
         </View>
@@ -315,12 +315,12 @@ export function ILikedRejectedButton({
     });
   };
   return (
-    <View className="w-full flex flex-row">
+    <View style={buttonStyles.buttonContainer}>
       <Button
         onPress={handleBye}
         variant="outline"
         size="md"
-        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
+        style={[buttonStyles.outlineButton, { height: height }]}
         prefix={<XIcon width={21} height={21} />}
       >
         인연이 아니었나봐요
@@ -335,12 +335,12 @@ export function InChatButton({ height = 40 }: { height?: number }) {
     router.push("/chat");
   };
   return (
-    <View className="w-full flex flex-row">
+    <View style={buttonStyles.buttonContainer}>
       <Button
         onPress={handleCreateChat}
         variant="primary"
         size="md"
-        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
+        style={[buttonStyles.chatButton, { height: height }]}
         prefix={<ChatIcon width={20} height={20} />}
       >
         대화가 이어지고 있어요
@@ -348,6 +348,45 @@ export function InChatButton({ height = 40 }: { height?: number }) {
     </View>
   );
 }
+
+const buttonStyles = StyleSheet.create({
+  pendingContainer: {
+    width: "100%",
+    flexDirection: "row",
+    gap: 10,
+  },
+  pendingButton: {
+    flex: 1,
+    alignItems: "center",
+    height: 40,
+  },
+  likeButton: {
+    height: 40,
+  },
+  modalContent: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 8,
+    minHeight: 40,
+  },
+  modalText: {
+    color: semanticColors.text.disabled,
+    fontSize: 12,
+  },
+  buttonContainer: {
+    width: "100%",
+    flexDirection: "row",
+  },
+  chatButton: {
+    flex: 1,
+    alignItems: "center",
+  },
+  outlineButton: {
+    flex: 1,
+    alignItems: "center",
+  },
+});
 
 const styles = StyleSheet.create({
   container: {

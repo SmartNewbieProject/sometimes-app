@@ -2,12 +2,11 @@ import { StyleSheet, View, type ViewStyle, ActivityIndicator } from "react-nativ
 import { Text } from "../text";
 
 export interface LottieProps {
-  classNames?: string;
   size?: number;
   style?: ViewStyle;
 }
 
-export const Lottie = ({ classNames, size = 80, style }: LottieProps) => {
+export const Lottie = ({ size = 80, style }: LottieProps) => {
   const styles = StyleSheet.create({
     lottie: {
       width: size,

@@ -1,5 +1,5 @@
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
-import { semanticColors } from '../../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import useShareKakao from "../../../hooks/promotion/use-share-kakao";

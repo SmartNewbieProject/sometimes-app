@@ -2,7 +2,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { router } from "expo-router";
 import type React from "react";
 import { useEffect } from "react";
-import { type SignupForm, SignupSteps, useSignupProgress } from "../hooks";
+import { type SignupForm, SignupSteps, useSignupProgress } from "../hooks/use-signup-progress";
 
 interface PageValidation {
   requiredFields: (keyof SignupForm)[];

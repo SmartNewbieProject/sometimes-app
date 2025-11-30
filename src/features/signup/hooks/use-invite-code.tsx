@@ -5,17 +5,10 @@ import { useStorage } from '@/src/shared/hooks/use-storage';
 import { tryCatch } from '@/src/shared/libs';
 import { ensureAppleId, processSignup, validatePhone, validateUniversity } from '../services/signup-validator';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import Signup from '..';
+import { useSignupProgress, useChangePhase, SignupSteps } from '../hooks/use-signup-progress';
+import { apis } from '../apis';
+import { useSignupAnalytics } from '../hooks/use-signup-analytics';
 import { track } from '@amplitude/analytics-react-native';
-
-
-const {
-  SignupSteps,
-  useChangePhase,
-  useSignupProgress,
-  apis,
-  useSignupAnalytics,
-} = Signup;
 
 function useInviteCode() {
   const router = useRouter();

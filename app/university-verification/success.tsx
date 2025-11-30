@@ -1,7 +1,8 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { Header, PalePurpleGradient, Text } from "@/src/shared/ui";
+import { semanticColors } from "@/src/shared/constants/colors";
 import { router } from "expo-router";
-import { Image, Pressable, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, TouchableOpacity, View, StyleSheet } from "react-native";
 
 export default function UniversityVerificationSuccess() {
   const handleGoToProfile = () => {
@@ -9,11 +10,11 @@ export default function UniversityVerificationSuccess() {
   };
 
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <PalePurpleGradient />
       <Header.Container>
         <Header.LeftContent>
-          <Pressable onPress={() => router.back()} className="p-2 -ml-2">
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
@@ -25,9 +26,9 @@ export default function UniversityVerificationSuccess() {
         <Header.RightContent />
       </Header.Container>
 
-      <View className="flex-1 px-5 justify-center items-center relative">
+      <View style={styles.contentContainer}>
         {/* 메인 이미지 */}
-        <View className="mb-16 mt-8 items-center ml-6">
+        <View style={styles.imageContainer}>
           <Image
             source={require("@/assets/images/verification-done.png")}
             style={{ width: 320, height: 320 }}
@@ -36,27 +37,27 @@ export default function UniversityVerificationSuccess() {
         </View>
 
         {/* 메인 텍스트 */}
-        <View className="mb-20 w-[80%] items-start">
-          <Text size="lg" weight="normal" textColor="black" className="mb-1">
+        <View style={styles.textContainer}>
+          <Text size="lg" weight="normal" textColor="black" style={styles.firstTitle}>
             축하드려요!
           </Text>
-          <Text size="lg" weight="normal" textColor="black" className="mb-2">
+          <Text size="lg" weight="normal" textColor="black" style={styles.secondTitle}>
             대학 인증이 완료되었어요!
           </Text>
 
-          <Text size="sm" weight="normal" className="mb-1 text-text-disabled">
+          <Text size="sm" weight="normal" style={styles.firstDescription}>
             이제 안심하고 시작해볼까요?
           </Text>
-          <Text size="sm" weight="normal" className="text-text-disabled">
+          <Text size="sm" weight="normal" style={styles.secondDescription}>
             내가 있는 지역에서 이상형을 안전하게 만나보세요!
           </Text>
         </View>
 
         {/* 하단 버튼 */}
-        <View className="absolute bottom-8 left-5 right-5">
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={handleGoToProfile}
-            className="bg-brand-primary rounded-2xl py-4 items-center"
+            style={styles.button}
           >
             <Text size="md" weight="semibold" textColor="white">
               이상형 찾으러 가기 →
@@ -67,3 +68,56 @@ export default function UniversityVerificationSuccess() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  imageContainer: {
+    marginBottom: 64,
+    marginTop: 32,
+    alignItems: 'center',
+    marginLeft: 24,
+  },
+  textContainer: {
+    marginBottom: 80,
+    width: '80%',
+    alignItems: 'flex-start',
+  },
+  firstTitle: {
+    marginBottom: 4,
+  },
+  secondTitle: {
+    marginBottom: 8,
+  },
+  firstDescription: {
+    marginBottom: 4,
+    color: semanticColors.text.disabled,
+  },
+  secondDescription: {
+    color: semanticColors.text.disabled,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 32,
+    left: 20,
+    right: 20,
+  },
+  button: {
+    backgroundColor: semanticColors.brand.primary,
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+});

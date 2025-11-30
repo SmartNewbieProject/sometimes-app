@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../auth";

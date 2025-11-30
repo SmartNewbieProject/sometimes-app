@@ -49,11 +49,11 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.warningContainer}>
+          <Text style={styles.warningText}>
             나가면 대화 내역과 목록에서 완전히 삭제되며,
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text style={styles.warningText}>
             복구가 불가능합니다.
           </Text>
         </View>
@@ -193,6 +193,17 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Light",
     fontWeight: 300,
     lineHeight: 18,
+  },
+  warningContainer: {
+    flexDirection: 'column',
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 8,
+    height: 40,
+  },
+  warningText: {
+    color: semanticColors.text.disabled,
+    fontSize: 12,
   },
 });
 

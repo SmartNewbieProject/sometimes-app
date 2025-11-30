@@ -13,14 +13,16 @@ import {
   TouchableOpacity,
   View,
   useWindowDimensions,
+  StyleSheet,
 } from "react-native";
+import colors from "@/src/shared/constants/colors";
 
 interface SlideProps {
   children: React.ReactNode[];
-  className?: string;
-  indicatorClassName?: string;
-  activeIndicatorClassName?: string;
-  indicatorContainerClassName?: string;
+  style?: any;
+  indicatorStyle?: any;
+  activeIndicatorStyle?: any;
+  indicatorContainerStyle?: any;
   autoPlay?: boolean;
   autoPlayInterval?: number;
   showIndicator?: boolean;
@@ -33,10 +35,6 @@ interface SlideProps {
 
 export function Slide({
   children,
-  className = "",
-  indicatorClassName = "",
-  activeIndicatorClassName = "",
-  indicatorContainerClassName = "",
   autoPlay = false,
   autoPlayInterval = 3000,
   showIndicator = true,
@@ -296,12 +294,7 @@ export function Slide({
     switch (indicatorType) {
       case "number":
         return (
-          <View
-            className={cn(
-              "px-2 py-1 bg-primaryPurple rounded-full",
-              indicatorContainerClassName
-            )}
-          >
+          <View style={styles.numberIndicator}>
             <Text size="sm" textColor="white">
               {activeIndex + 1} / {totalSlides}
             </Text>
@@ -310,23 +303,18 @@ export function Slide({
 
       case "line":
         return (
-          <View
-            className={cn(
-              "flex-row items-center justify-center gap-1",
-              indicatorContainerClassName
-            )}
-          >
+          <View style={styles.lineIndicatorContainer}>
             {Array.from({ length: totalSlides }).map((_, index) => (
               <TouchableOpacity
                 // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                 key={index}
                 onPress={() => scrollToIndex(index)}
-                className={cn(
-                  "h-1 rounded-full",
+                style={[
+                  styles.lineIndicator,
                   index === activeIndex
-                    ? cn("bg-primaryPurple w-6", activeIndicatorClassName)
-                    : cn("bg-lightPurple w-3", indicatorClassName)
-                )}
+                    ? styles.activeLineIndicator
+                    : styles.inactiveLineIndicator
+                ]}
               />
             ))}
           </View>
@@ -334,23 +322,18 @@ export function Slide({
 
       case "dot":
         return (
-          <View
-            className={cn(
-              "flex-row items-center justify-center gap-2",
-              indicatorContainerClassName
-            )}
-          >
+          <View style={styles.dotIndicatorContainer}>
             {Array.from({ length: totalSlides }).map((_, index) => (
               <TouchableOpacity
                 // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                 key={index}
                 onPress={() => scrollToIndex(index)}
-                className={cn(
-                  "w-2 h-2 rounded-full",
+                style={[
+                  styles.dotIndicator,
                   index === activeIndex
-                    ? cn("bg-primaryPurple", activeIndicatorClassName)
-                    : cn("bg-lightPurple", indicatorClassName)
-                )}
+                    ? styles.activeDotIndicator
+                    : styles.inactiveDotIndicator
+                ]}
               />
             ))}
           </View>
@@ -362,11 +345,11 @@ export function Slide({
 
   return (
     <View
-      className={cn("relative flex flex-col", className)}
+      style={styles.container}
       onLayout={handleLayout}
     >
       {showIndicator && indicatorPosition === "top" && (
-        <View className="absolute top-4 z-10 w-full items-center">
+        <View style={styles.topIndicatorContainer}>
           {renderIndicator()}
         </View>
       )}
@@ -399,8 +382,68 @@ export function Slide({
       )}
 
       {showIndicator && indicatorPosition === "bottom" && (
-        <View className="pt-3 w-full items-center">{renderIndicator()}</View>
+        <View style={styles.bottomIndicatorContainer}>{renderIndicator()}</View>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'relative',
+    flexDirection: 'column',
+  },
+  numberIndicator: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: colors.primaryPurple,
+    borderRadius: 999,
+  },
+  lineIndicatorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  lineIndicator: {
+    height: 4,
+    borderRadius: 2,
+  },
+  activeLineIndicator: {
+    backgroundColor: colors.primaryPurple,
+    width: 24,
+  },
+  inactiveLineIndicator: {
+    backgroundColor: "#E2D5FF",
+    width: 12,
+  },
+  dotIndicatorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  dotIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  activeDotIndicator: {
+    backgroundColor: colors.primaryPurple,
+  },
+  inactiveDotIndicator: {
+    backgroundColor: "#E2D5FF",
+  },
+  topIndicatorContainer: {
+    position: 'absolute',
+    top: 16,
+    zIndex: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  bottomIndicatorContainer: {
+    paddingTop: 12,
+    width: '100%',
+    alignItems: 'center',
+  },
+});

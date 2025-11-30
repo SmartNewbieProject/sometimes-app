@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import type { Preferences } from "@/src/features/interest/api";
 import { Properties, savePreferences } from "@/src/features/interest/services";
 import Loading from "@/src/features/loading";

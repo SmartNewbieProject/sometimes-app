@@ -1,5 +1,5 @@
 import BannerRightArrowIcon from "@assets/images/promotion/home-banner/right-arrow.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";

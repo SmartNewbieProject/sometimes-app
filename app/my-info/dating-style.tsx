@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
@@ -88,12 +88,12 @@ export default function DatingStyleSelectionScreen() {
             step={datingStyleIds.length}
             dotGap={4}
             dotSize={16}
-            className="self-end"
+            style={styles.stepIndicator}
           />
           <Divider.Horizontal />
         </View>
 
-        <View className="flex-1 w-full flex px-4 mt-2">
+        <View style={styles.chipContainer}>
           <Loading.Lottie
             title="연애 스타일 옵션 불러오고 있어요"
             loading={isLoading}
@@ -153,6 +153,15 @@ const styles = StyleSheet.create({
     width: "100%",
     rowGap: 10,
     paddingHorizontal: 32,
+  },
+  stepIndicator: {
+    alignSelf: 'flex-end',
+  },
+  chipContainer: {
+    flex: 1,
+    width: '100%',
+    paddingHorizontal: 16,
+    marginTop: 8,
   },
   chipSelector: {
     marginTop: 12,

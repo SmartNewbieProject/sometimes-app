@@ -45,7 +45,12 @@ export function useStorage<T>({ key, initialValue }: StorageProps<T>) {
   const setValue = useCallback(async (value: T) => {
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value;
-      await storage.setItem(key, JSON.stringify(valueToStore));
+
+      if (typeof valueToStore === 'string') {
+        await storage.setItem(key, valueToStore);
+      } else {
+        await storage.setItem(key, JSON.stringify(valueToStore));
+      }
 
       setStoredValue(prevValue => {
         const isSameValue = JSON.stringify(prevValue) === JSON.stringify(valueToStore);

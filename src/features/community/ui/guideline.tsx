@@ -1,6 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from '@shared/ui';
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 
 export const CommunityGuideline = () => (
   <View style={styles.container}>

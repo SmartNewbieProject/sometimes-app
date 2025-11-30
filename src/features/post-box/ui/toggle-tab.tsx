@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import React, { useEffect } from "react";
 import {
   Pressable,

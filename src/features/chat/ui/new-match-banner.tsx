@@ -1,5 +1,5 @@
 import BackgroundHeartIcon from "@assets/icons/new-chat-banner-heart.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";

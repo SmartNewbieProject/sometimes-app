@@ -70,7 +70,7 @@ export default function RootLayout() {
         "Pretendard-Regular": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
         "Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.ttf"),
         "Pretendard-SemiBold": require("../assets/fonts/Pretendard-SemiBold.ttf"),
-        Rubik: require("../assets/fonts/Rubik-Regular.ttf"),
+        "Rubik-Regular": require("../assets/fonts/Rubik-Regular.ttf"),
         "Rubik-Medium": require("../assets/fonts/Rubik-Medium.ttf"),
         "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
         "Gmarket-Sans-Medium": require("../assets/fonts/GmarketSansTTFMedium.ttf"),

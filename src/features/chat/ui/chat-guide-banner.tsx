@@ -1,5 +1,5 @@
 import BulbIcon from "@assets/icons/bulb.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 

@@ -1,5 +1,5 @@
 import Loading from "@/src/features/loading";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import SearchIcon from "@assets/icons/search.svg";
 import { useGlobalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -13,7 +13,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { useSignupProgress } from "../../hooks";
+import { useSignupProgress } from "../../hooks/use-signup-progress";
 import { filterDepartments } from "../../lib/university-details";
 import { useDepartmentQuery } from "../../queries";
 
@@ -57,12 +57,11 @@ function DepartmentSearch() {
         ]}
       >
         <TextInput
-          className="outline-none"
+          style={[styles.input, styles.inputOutlineNone]}
           value={departmentName}
           onChangeText={(text) => updateForm({ departmentName: text })}
           placeholder="학과를 입력해주세요"
           placeholderTextColor="#999"
-          style={styles.input}
           ref={inputRef}
           onFocus={() => setFocused(true)}
           onBlur={() => {
@@ -199,6 +198,9 @@ const styles = StyleSheet.create({
     color: semanticColors.text.inverse,
     fontSize: 13,
     lineHeight: 15.6,
+  },
+  inputOutlineNone: {
+    outlineStyle: 'none',
   },
 });
 

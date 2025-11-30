@@ -9,7 +9,6 @@ import { Pressable } from "react-native";
 export interface FormContentSelectorProps
   extends UseControllerProps,
     Omit<ContentSelectorProps, "value" | "onChange"> {
-  className?: string;
   size?: "sm" | "md" | "lg";
   renderContent?: (value: string | null) => ReactNode;
   renderPlaceholder?: () => ReactNode;
@@ -23,7 +22,6 @@ export function FormContentSelector({
   name,
   control,
   rules,
-  className,
   size,
   renderContent,
   renderPlaceholder,
@@ -53,7 +51,6 @@ export function FormContentSelector({
       <ContentSelector
         value={value}
         size={size}
-        className={className}
         renderContent={renderContent}
         renderPlaceholder={renderPlaceholder}
         actionLabel={actionLabel}

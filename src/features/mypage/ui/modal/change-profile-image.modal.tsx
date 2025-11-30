@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import apis from "@/src/features/mypage/apis";
 
 import Layout from "@/src/features/layout";
@@ -10,7 +10,6 @@ import {
   guideHeight,
   useOverlay,
 } from "@/src/shared/hooks/use-overlay";
-import { cn } from "@/src/shared/libs";
 
 import { ImageSelector, Text } from "@/src/shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
@@ -157,9 +156,9 @@ export const ChangeProfileImageModal = ({
 
   if (!profileDetails) {
     return (
-      <View className="items-center justify-center p-4">
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#6A3EA1" />
-        <Text className="mt-2 text-center" textColor="black">
+        <Text style={styles.loadingText} textColor="black">
           프로필 정보를 불러오는 중...
         </Text>
       </View>
@@ -168,10 +167,7 @@ export const ChangeProfileImageModal = ({
 
   return (
     <DefaultLayout
-      className={cn(
-        "flex-1 ",
-        Platform.OS === "web" && "max-w-[468px] relative w-full self-center"
-      )}
+      style={styles.modalContainer}
     >
       <View style={{ flex: 1 }}>
         <GuideView>
@@ -185,7 +181,7 @@ export const ChangeProfileImageModal = ({
                 weight="semibold"
                 size="20"
                 textColor="black"
-                className="mt-2"
+                style={styles.titleText}
               >
                 프로필 사진을 변경해보세요
               </Text>
@@ -194,7 +190,7 @@ export const ChangeProfileImageModal = ({
               </Text>
             </View>
 
-            <View style={styles.descriptioncontianer}>
+            <View style={styles.descriptionContainer}>
               <Text weight="medium" size="sm" textColor="pale-purple">
                 3장의 프로필 사진을 모두 새로 등록해주세요
               </Text>
@@ -203,8 +199,8 @@ export const ChangeProfileImageModal = ({
               </Text>
             </View>
 
-            <View className="flex-row justify-center px-[8px]  w-full gap-[16px]">
-              <View className="flex  justify-center items-center">
+            <View style={styles.imageRow}>
+              <View style={styles.mainImageContainer}>
                 {images[0] ? (
                   <ImageSelector
                     size="lg"
@@ -226,7 +222,7 @@ export const ChangeProfileImageModal = ({
                 )}
               </View>
 
-              <View className="flex flex-col justify-center gap-y-[12px]">
+              <View style={styles.subImageContainer}>
                 {images[1] ? (
                   <ImageSelector
                     size="sm"
@@ -304,7 +300,7 @@ export const ChangeProfileImageModal = ({
             </Animated.View>
           )}
         </GuideView>
-        <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+        <View style={[styles.bottomContainer]}>
           <Layout.TwoButtons
             disabledNext={isSubmitting || images.filter((img) => img !== null).length !== 3}
             content={{
@@ -320,16 +316,44 @@ export const ChangeProfileImageModal = ({
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+  },
   container: {
     flex: 1,
   },
   titleContainer: {
     paddingHorizontal: 28,
+    alignItems: 'center',
   },
-  descriptioncontianer: {
+  titleText: {
+    marginBottom: 8,
+  },
+  descriptionContainer: {
     paddingTop: 16,
     paddingBottom: 64,
     paddingHorizontal: 28,
+  },
+  imageRow: {
+    flexDirection: 'row',
+    gap: 20,
+    paddingHorizontal: 28,
+    marginTop: 40,
+  },
+  mainImageContainer: {
+    flex: 1,
+  },
+  subImageContainer: {
+    gap: 16,
+    flex: 1,
   },
   infoOverlayWrapper: {
     bottom: 200,

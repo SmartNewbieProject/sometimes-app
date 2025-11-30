@@ -1,13 +1,22 @@
 import React, { ReactNode } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 interface LeftContentProps {
   children?: ReactNode;
 }
 
+const styles = StyleSheet.create({
+  container: {
+    width: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+});
+
 export function LeftContent({ children }: LeftContentProps) {
   return (
-    <View className="w-12 items-center justify-center px-1">
+    <View style={styles.container}>
       {children}
     </View>
   );

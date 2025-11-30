@@ -7,7 +7,6 @@ import {eventBus} from './event-bus';
 
 let refreshTokenPromise: Promise<string> | null = null;
 let isNetworkDisabled = false;
-const detach = (token: string) => token.replaceAll('\"', '');
 const TokenErrorExceptPaths = [
   '/community',
 ];
@@ -28,7 +27,7 @@ const refresh = async () => {
       if (!refreshToken) throw new Error('No refresh token');
 
       const {accessToken, refreshToken: newRefreshToken} = await temporaryAxiosClient
-          .post<TokenResponse>('/auth/refresh', {refreshToken: detach(refreshToken)})
+          .post<TokenResponse>('/auth/refresh', {refreshToken})
           .then(response => response.data);
 
       await storage.setItem('access-token', accessToken);
@@ -73,7 +72,9 @@ axiosClient.interceptors.request.use(
         return config;
       }
       const accessToken = await storage.getItem('access-token');
-      config.headers.Authorization = `Bearer ${accessToken?.replaceAll('\"', '')}`;
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
       return config;
     },
     (error) => {

@@ -120,23 +120,23 @@ export function BottomNavigation() {
         {navigationItems
           .filter(item => item.name !== 'moment' || canAccessMoment)
           .map((item) => (
-          <TouchableOpacity
-            key={item.name}
-            style={styles.navItem}
-            onPress={() => handleNavClick(item.path)}
-          >
-            <IconWrapper width={24} height={24} style={styles.iconWrapper}>
-              {isActive(item.path) ? item.icon.selected : item.icon.unSelected}
-            </IconWrapper>
-            <Text
-              size="sm"
-              weight={isActive(item.path) ? "semibold" : "normal"}
-              textColor={isActive(item.path) ? colors.primaryPurple : colors.lightPurple}
+            <TouchableOpacity
+              key={item.name}
+              style={styles.navItem}
+              onPress={() => handleNavClick(item.path)}
             >
-              {item.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <IconWrapper width={24} height={24} style={styles.iconWrapper}>
+                {isActive(item.path) ? item.icon.selected : item.icon.unSelected}
+              </IconWrapper>
+              <Text
+                size="sm"
+                weight={isActive(item.path) ? "semibold" : "normal"}
+                textColor={isActive(item.path) ? "purple" : "muted"}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
       </View>
     </View>
   );
@@ -145,7 +145,7 @@ export function BottomNavigation() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    borderTopColor: colors.lightPurple,
+    borderTopColor: "#E2D5FF",
     borderTopWidth: 1,
     paddingBottom: 16,
     width: '100%',

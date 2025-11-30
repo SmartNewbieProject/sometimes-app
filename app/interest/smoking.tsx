@@ -1,5 +1,5 @@
 import type { Preferences } from "@/src/features/interest/api";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { PreferenceOption } from "@/src/types/user";

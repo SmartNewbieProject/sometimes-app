@@ -111,12 +111,12 @@ const styles = StyleSheet.create({
     height: 58,
   },
   hot: {
-    borderColor: colors.primaryPurple,
+    borderColor: '#7A4AE2',
   },
   hotCard: {
     width: 40,
     height: 22,
-    backgroundColor: colors.primaryPurple,
+    backgroundColor: '#7A4AE2',
     borderRadius: 6,
     position: 'absolute',
     left: 20,

@@ -1,5 +1,5 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Signup from "@/src/features/signup";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { useOverlay } from "@/src/shared/hooks/use-overlay";
@@ -127,11 +127,10 @@ function SignupInstagram() {
           }}
         >
           <View>
-            <View className="px-[5px]">
+            <View style={styles.imageContainer}>
               <Image
                 source={require("@assets/images/instagram.png")}
-                style={{ width: 81, height: 81 }}
-                className="mb-4"
+                style={styles.instagramIcon}
               />
             </View>
 
@@ -184,7 +183,7 @@ function SignupInstagram() {
           )}
         </View>
 
-        <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+        <View style={[styles.bottomContainer, styles.fullWidth]}>
           <View style={styles.tipConatainer}>
             <HeartIcon width={20} height={20} />
             <Text style={styles.tip}>
@@ -207,6 +206,14 @@ function SignupInstagram() {
 export default withSignupValidation(SignupInstagram, SignupSteps.INSTAGRAM);
 
 const styles = StyleSheet.create({
+  imageContainer: {
+    paddingHorizontal: 5,
+  },
+  instagramIcon: {
+    width: 81,
+    height: 81,
+    marginBottom: 16,
+  },
   title: {
     fontWeight: 600,
     fontFamily: "Pretendard-SemiBold",
@@ -253,6 +260,9 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingHorizontal: 0,
     backgroundColor: semanticColors.surface.background,
+  },
+  fullWidth: {
+    width: "100%",
   },
   tipConatainer: {
     flexDirection: "row",

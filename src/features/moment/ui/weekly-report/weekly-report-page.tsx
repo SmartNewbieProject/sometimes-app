@@ -149,7 +149,7 @@ export const WeeklyReportPage = () => {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primaryPurple} />
+          <ActivityIndicator size="large" color="#7A4AE2" />
         </View>
       </View>
     );

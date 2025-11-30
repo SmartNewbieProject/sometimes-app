@@ -28,3 +28,4 @@ export * from './linkified-text';
 export * from './card';
 export * from './scroll-down-indicator';
 export * from './floating-tooltip';
+export * from './payment-trigger-button';

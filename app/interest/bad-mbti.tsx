@@ -1,5 +1,5 @@
 import Interest from "@/src/features/interest";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { PreferenceKeys } from "@/src/features/interest/queries";
 import Layout from "@/src/features/layout";
 import { useMbti } from "@/src/features/mypage/hooks";

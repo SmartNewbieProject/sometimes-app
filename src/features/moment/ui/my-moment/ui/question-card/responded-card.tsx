@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
     borderWidth: 1,
-    borderColor: colors.lightPurple, // Light purple border
+    borderColor: "#E2D5FF",
     position: "relative",
   },
   icon: {

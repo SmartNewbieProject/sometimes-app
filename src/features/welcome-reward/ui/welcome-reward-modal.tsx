@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import {
   Modal,
   View,

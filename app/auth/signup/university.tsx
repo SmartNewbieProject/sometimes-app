@@ -1,6 +1,6 @@
 import { TwoButtons , DefaultLayout } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
-import { SignupSteps } from "@/src/features/signup/hooks";
+import { semanticColors } from '@/src/shared/constants/colors';
+import { SignupSteps } from "@/src/features/signup/hooks/use-signup-progress";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
 import UniversityLogos from "@/src/features/signup/ui/university-logos";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
@@ -73,7 +73,7 @@ function UniversityPage() {
     return () => subscription.remove();
   }, []);
   return (
-    <DefaultLayout className="flex-1 ">
+    <DefaultLayout style={styles.flexOne}>
       {!showHeader && <PalePurpleGradient />}
       <View style={[styles.container]}>
         {!trigger && <UniversityLogos logoSize={64} />}
@@ -148,6 +148,9 @@ function UniversityPage() {
 export default withSignupValidation(UniversityPage, SignupSteps.UNIVERSITY);
 
 const styles = StyleSheet.create({
+  flexOne: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     paddingHorizontal: 16,

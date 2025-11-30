@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCallback, useEffect } from "react";

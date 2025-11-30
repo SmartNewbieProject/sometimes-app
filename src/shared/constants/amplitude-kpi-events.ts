@@ -82,6 +82,7 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   PAYMENT_STARTED: 'Payment_Started',
   PAYMENT_GEM_USED: 'Payment_Gem_Used',
   PAYMENT_TICKET_USED: 'Payment_Ticket_Used',
+  STORE_ENTRY_POINT: 'Store_Entry_Point',
 
   // 모먼트 관련 (Retention)
   MOMENT_QUESTION_VIEWED: 'Moment_Question_Viewed',
@@ -298,6 +299,19 @@ export interface SomemateEventProperties extends BaseEventProperties {
   satisfaction_score?: number;
 }
 
+// 결제 유입 경로 추적 이벤트 속성
+export interface StoreEntryPointEventProperties extends BaseEventProperties {
+  entry_timestamp: string;
+  trigger_screen: string;
+  trigger_component: string;
+  previous_payment_count: number;
+  days_since_signup: number;
+  remaining_quota: number;
+  time_on_store_page: number;
+  plans_viewed: string[];
+  price_comparison_active: boolean;
+}
+
 // 이벤트 타입별 속성 매핑
 export interface KpiEventTypePropertiesMap {
   // 사용자 온보딩 퍼널
@@ -412,6 +426,9 @@ export interface KpiEventTypePropertiesMap {
   Somemate_Report_Viewed: SomemateEventProperties;
   Somemate_Report_Shared: SomemateEventProperties;
   Somemate_Category_Selected: SomemateEventProperties;
+
+  // 결제 유입 경로 추적 관련
+  Store_Entry_Point: StoreEntryPointEventProperties;
 
   // 다른 모든 이벤트들도 기본 BaseEventProperties 사용
   [key: string]: BaseEventProperties;

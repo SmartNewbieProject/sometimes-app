@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { View, StyleSheet, Dimensions, FlatList, Pressable, Text } from "react-native";
 import { Image } from "expo-image";
 import { Linking } from "expo-router";

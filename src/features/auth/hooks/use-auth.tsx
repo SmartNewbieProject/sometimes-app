@@ -2,8 +2,8 @@ import { axiosClient, platform, tryCatch } from "@/src/shared/libs";
 import { eventBus } from "@/src/shared/libs/event-bus";
 import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
 import type { TokenResponse } from "@/src/types/auth";
-import { passKakao, passLogin } from "@features/auth/apis/index";
-import { loginByPass } from "@features/auth/utils/login-utils";
+import { passKakao, passLogin } from "../apis";
+import { loginByPass } from "../utils/login-utils";
 import { useModal } from "@hooks/use-modal";
 import { useStorage } from "@shared/hooks/use-storage";
 import { router } from "expo-router";
@@ -164,7 +164,7 @@ export function useAuth() {
     clearTokensOnly,
     accessToken,
     my: {
-      ...my,
+      ...myQueryProps.data,
       universityDetails: profileDetails?.universityDetails,
     },
     updateToken,
@@ -174,11 +174,19 @@ export function useAuth() {
   };
 }
 
-const loginApi = (email: string, password: string) =>
-  axiosClient.post("/auth/login", {
+const loginApi = async (email: string, password: string): Promise<TokenResponse> => {
+  const response = await axiosClient.post("/auth/login", {
     email,
     password,
-  }) as unknown as Promise<TokenResponse>;
+  });
+
+  // axios 인터셉터가 이미 response.data를 반환하므로 data 필드에 접근
+  if (response.success && response.data) {
+    return response.data;
+  }
+
+  throw new Error('Login failed: Invalid response format');
+};
 
 const logoutApi = (refreshToken: string) =>
   axiosClient.post("/auth/logout", {

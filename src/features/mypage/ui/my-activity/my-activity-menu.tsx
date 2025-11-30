@@ -1,5 +1,5 @@
 import { useCommingSoon } from "@/src/features/admin/hooks";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
 import MyActivityCard from "./my-activity-card";
 import { router } from "expo-router";

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { semanticColors } from '../../../shared/constants/colors';
-import { View, TouchableOpacity } from 'react-native';
+import { semanticColors } from '@/src/shared/constants/colors';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -106,61 +106,62 @@ export const FlippableCard: React.FC<FlippableCardProps> = ({
     zIndex: rotation.value >= 90 ? 1 : 0,
   }));
 
-  const cardStyle = {
+  const styles = StyleSheet.create({
+  touchable: {
+    width: '100%',
+    height: '100%',
+  },
+  cardContainer: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    overflow: 'visible',
+  },
+  animatedCard: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
     backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
     borderColor: semanticColors.border.default,
     borderRadius: 18.34,
-  };
-
-  const imageStyle = {
+  },
+  cardImage: {
     width: '100%',
     height: '100%',
     maxWidth: '100%',
     borderRadius: 18.34,
-  };
+  },
+});
 
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={flipCard}
       disabled={disableFlip}
-      className="w-full h-full"
+      style={styles.touchable}
     >
-      <View className="relative w-full h-full overflow-visible">
+      <View style={styles.cardContainer}>
         <Animated.View
-          className="absolute w-full h-full overflow-hidden"
-          style={[cardStyle, frontAnimatedStyle]}
+          style={[styles.animatedCard, frontAnimatedStyle]}
         >
           <ImageResource
             resource={initialImage}
             contentFit="cover"
             loadingTitle="카드 이미지 로딩 중..."
-            style={{
-              width: '100%',
-              height: '100%',
-              maxWidth: '100%',
-              borderRadius: 18.34,
-            }}
-            className="w-full h-full"
+            style={styles.cardImage}
           />
         </Animated.View>
 
         <Animated.View
-          className="absolute w-full h-full overflow-hidden"
-          style={[cardStyle, backAnimatedStyle]}
+          style={[styles.animatedCard, backAnimatedStyle]}
         >
           <ImageResource
             resource={switchImage}
             contentFit="cover"
             loadingTitle="카드 이미지 로딩 중..."
-            style={{
-              width: '100%',
-              height: '100%',
-              maxWidth: '100%',
-              borderRadius: 18.34,
-            }}
-            className="w-full h-full"
+            style={styles.cardImage}
           />
         </Animated.View>
       </View>

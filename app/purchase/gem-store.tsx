@@ -1,8 +1,10 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
+import { PaymentFunnelProvider } from "@/src/features/payment/providers/payment-funnel-provider";
+import { usePaymentFunnelAnalytics } from "@/src/features/payment/hooks/use-payment-funnel-analytics";
 import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { GemStoreWidget } from "@/src/widgets";
@@ -15,12 +17,43 @@ import { FirstSaleCard, GemStore } from "@features/payment/ui";
 import type { PortOneController } from "@portone/react-native-sdk";
 import { ScrollDownIndicator, Show, Text } from "@shared/ui";
 import { createRef, lazy, useEffect, useState } from "react";
-import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
+import { Alert, BackHandler, Platform, ScrollView, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { ui, services } = Payment;
 const { PaymentView } = ui;
 const { createUniqueId } = services;
+
+const styles = StyleSheet.create({
+  layout: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  sectionContainer: {
+    flexDirection: 'column',
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    marginBottom: 30,
+  },
+  productsContainer: {
+    flexDirection: 'column',
+    gap: 16,
+    justifyContent: 'center',
+    marginBottom: 'auto',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default function GemStoreScreen() {
   const insets = useSafeAreaInsets();
@@ -35,6 +68,7 @@ export default function GemStoreScreen() {
   const { setGemCount, clearEventType } = usePortoneStore();
   const { my } = useAuth();
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
+  const { setupStoreEntry, trackPlanInteraction, handleStoreExit } = usePaymentFunnelAnalytics();
 
   const { handlePaymentComplete } = usePortone();
 
@@ -98,18 +132,25 @@ export default function GemStoreScreen() {
   }, [showPayment]);
 
   useEffect(() => {
+    // 기존 이벤트 유지
     track("GemStore_Entered", {
       who: my,
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
+
+    // 퍼널 추적 초기화 - 직접 진입으로 설정
+    setupStoreEntry('main_menu_store_button');
 
     return () => {
       track("GemStore_Exited", {
         who: my,
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
+
+      // 페이지 나갈 때 퍼널 종료 처리
+      handleStoreExit();
     };
-  }, []);
+  }, [my, setupStoreEntry, handleStoreExit]);
 
   if (showPayment) {
     return (
@@ -140,79 +181,84 @@ export default function GemStoreScreen() {
     return <AppleGemStore />;
   }
   return (
-    <Layout.Default
-      className="flex flex-1 flex-col"
-      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
-    >
-      <GemStore.Header gemCount={gem?.totalGem ?? 0} />
-      <ScrollView
-        ref={scrollViewRef}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
+    <PaymentFunnelProvider>
+      <Layout.Default
+        style={[styles.layout, { backgroundColor: semanticColors.surface.background, paddingTop: insets.top }]}
       >
-        <GemStore.Banner />
-        <RematchingTicket.ContentLayout>
-          <View className="flex-1 flex flex-col px-[16px] mt-4">
-            <View className="flex flex-col mb-2">
-              <View style={{ marginBottom: 30 }}>
-                <FirstSaleCard
-                  onOpenPayment={(metadata) => {
-                    setGemCount(metadata.gemProduct.totalGems);
-                    onPurchase({
-                      totalPrice: metadata.totalPrice,
-                      count: 1,
-                    });
-                  }}
-                />
+        <GemStore.Header gemCount={gem?.totalGem ?? 0} />
+        <ScrollView
+          ref={scrollViewRef}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
+          <GemStore.Banner />
+          <RematchingTicket.ContentLayout>
+            <View style={styles.contentContainer}>
+              <View style={styles.sectionContainer}>
+                <View style={styles.sectionTitle}>
+                  <FirstSaleCard
+                    onOpenPayment={(metadata) => {
+                      setGemCount(metadata.gemProduct.totalGems);
+                      // 퍼널 추적: 첫 구매 상품 조회
+                      trackPlanInteraction(metadata.gemProduct.id, 'first_sale');
+                      onPurchase({
+                        totalPrice: metadata.totalPrice,
+                        count: 1,
+                      });
+                    }}
+                  />
+                </View>
+
+                <Text weight="semibold" size="20" textColor="black">
+                  구슬 구매
+                </Text>
               </View>
 
-              <Text weight="semibold" size="20" textColor="black">
-                구슬 구매
-              </Text>
+              <View style={styles.productsContainer}>
+                <Show when={isLoading}>
+                  <View style={styles.loadingContainer}>
+                    <Text>젬 상품을 불러오는 중...</Text>
+                  </View>
+                </Show>
+                <Show when={!!error}>
+                  <View style={styles.loadingContainer}>
+                    <Text>젬 상품을 불러오는데 실패했습니다.</Text>
+                  </View>
+                </Show>
+                <Show when={!isLoading}>
+                  <GemStoreWidget.Provider>
+                    {gemProducts
+                      ?.sort((a, b) => a.sortOrder - b.sortOrder)
+                      .map((product, index) => (
+                        <GemStoreWidget.Item
+                          key={product.id}
+                          gemProduct={product}
+                          onOpenPayment={(metadata) => {
+                            track("GemStore_Product_Clicked", {
+                              who: my,
+                              product: metadata,
+                              env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+                            });
+                            // 퍼널 추적: 일반 상품 조회
+                            trackPlanInteraction(product.id, `gem_${product.totalGems}`);
+                            setGemCount(product.totalGems);
+                            clearEventType();
+                            onPurchase({
+                              totalPrice: metadata.totalPrice,
+                              count: 1,
+                            });
+                          }}
+                          hot={index === 2}
+                        />
+                      ))}
+                  </GemStoreWidget.Provider>
+                </Show>
+              </View>
             </View>
-
-            <View className="flex flex-col gap-y-4 justify-center mb-auto">
-              <Show when={isLoading}>
-                <View className="flex-1 justify-center items-center">
-                  <Text>젬 상품을 불러오는 중...</Text>
-                </View>
-              </Show>
-              <Show when={!!error}>
-                <View className="flex-1 justify-center items-center">
-                  <Text>젬 상품을 불러오는데 실패했습니다.</Text>
-                </View>
-              </Show>
-              <Show when={!isLoading}>
-                <GemStoreWidget.Provider>
-                  {gemProducts
-                    ?.sort((a, b) => a.sortOrder - b.sortOrder)
-                    .map((product, index) => (
-                      <GemStoreWidget.Item
-                        key={product.id}
-                        gemProduct={product}
-                        onOpenPayment={(metadata) => {
-                          track("GemStore_Product_Clicked", {
-                            who: my,
-                            product: metadata,
-                            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-                          });
-                          setGemCount(product.totalGems);
-                          clearEventType();
-                          onPurchase({
-                            totalPrice: metadata.totalPrice,
-                            count: 1,
-                          });
-                        }}
-                        hot={index === 2}
-                      />
-                    ))}
-                </GemStoreWidget.Provider>
-              </Show>
-            </View>
-          </View>
-        </RematchingTicket.ContentLayout>
-      </ScrollView>
-      <ScrollDownIndicator visible={showIndicator} />
-    </Layout.Default>
+          </RematchingTicket.ContentLayout>
+        </ScrollView>
+        <ScrollDownIndicator visible={showIndicator} />
+      </Layout.Default>
+    </PaymentFunnelProvider>
   );
 }

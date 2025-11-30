@@ -31,7 +31,7 @@ export const envelopeStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.lightPurple,
+    borderColor: "#E2D5FF",
     overflow: 'hidden', // Ensure gradient stays within bounds
   },
 
@@ -154,7 +154,7 @@ export const questionCardStyles = StyleSheet.create({
   highlightText: {
     color: colors.brand.primary,
     textDecorationLine: 'underline',
-    textDecorationColor: colors.lightPurple,
+    textDecorationColor: "#E2D5FF",
     textDecorationStyle: 'solid',
   },
 
@@ -387,7 +387,7 @@ export const sentStepStyles = StyleSheet.create({
   aiReplyContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderWidth: 1,
-    borderColor: colors.lightPurple,
+    borderColor: "#E2D5FF",
     borderRadius: 16,
     padding: 20,
     marginBottom: 32,

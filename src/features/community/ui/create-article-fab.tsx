@@ -1,11 +1,12 @@
 import WriteIcon from "@/assets/icons/write.svg";
 import { IconWrapper } from "@shared/ui/icons";
 import { router } from "expo-router";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { useAuth } from "../../auth";
 import { useCategory } from "../hooks";
 import { useQuery } from "@tanstack/react-query";
 import { getMySimpleDetails } from "@/src/features/auth/apis";
+import colors from "@/src/shared/constants/colors";
 
 type MySimpleDetails = {
   /** @deprecated 하위 호환성을 위해 유지 */
@@ -24,6 +25,20 @@ const isPopularCategory = (code?: string) => {
   if (!code) return false;
   return code === "hot";
 };
+
+const styles = StyleSheet.create({
+  fabButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: colors.primaryPurple,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: "absolute",
+    bottom: 96,
+    right: 24,
+  },
+});
 
 export const CreateArticleFAB = () => {
   const { currentCategory } = useCategory();
@@ -50,8 +65,7 @@ export const CreateArticleFAB = () => {
       onPress={() =>
         router.push(`/community/write?category=${currentCategory}`)
       }
-      className="w-[60px] h-[60px] rounded-full bg-brand-secondary items-center justify-center"
-      style={{ position: "absolute", bottom: 96, right: 24 }}
+      style={styles.fabButton}
       accessibilityRole="button"
       accessibilityLabel="새 글 작성"
     >

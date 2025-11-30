@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text } from '@/src/shared/ui';
 import { useMarkAllAsRead, useDeleteAllRead } from '../queries/use-notification-mutations';

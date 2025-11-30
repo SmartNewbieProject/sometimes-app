@@ -1,5 +1,5 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 
 import { useAuth } from "@/src/features/auth";
 import {

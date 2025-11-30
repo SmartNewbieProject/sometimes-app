@@ -7,7 +7,7 @@ function useLiked() {
   const { data: iLiked, isLoading: isILoading } = useILikedQuery();
   const { data: likedMe, isLoading: isMeLoading } = useLikedMeQuery();
   const isLikedPartner = (connectionId: string) => {
-    if (isILoading) {
+    if (isILoading || !Array.isArray(iLiked)) {
       return false;
     }
     return !!iLiked?.find((matching) => matching.connectionId === connectionId);
@@ -18,10 +18,10 @@ function useLiked() {
       return false;
     }
 
-    if (likedMe && likedMe?.length > 0) {
+    if (Array.isArray(likedMe) && likedMe?.length > 0) {
       return { data: likedMe, type: "likedMe" };
     }
-    if (iLiked && iLiked?.length > 0) {
+    if (Array.isArray(iLiked) && iLiked?.length > 0) {
       return { data: iLiked, type: "iLiked" };
     }
     return false;

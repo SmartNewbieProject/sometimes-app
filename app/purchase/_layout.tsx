@@ -1,11 +1,11 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { PortoneProvider } from '@/src/features/payment/hooks/PortoneProvider';
 
 export default function PurchaseLayout() {
   return (
     <PortoneProvider>
-      <View className="flex-1">
+      <View style={styles.container}>
         <Stack>
           <Stack.Screen
               name="gem-store"
@@ -42,3 +42,9 @@ export default function PurchaseLayout() {
     </PortoneProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

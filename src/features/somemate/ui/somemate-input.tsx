@@ -1,5 +1,5 @@
 import SendChatIcon from "@assets/icons/send-chat.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import type React from "react";
 import { useCallback, useState } from "react";
 import {

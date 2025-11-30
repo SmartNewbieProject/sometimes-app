@@ -32,7 +32,7 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
   const segments = parseTextWithLinks(children || "");
 
   return (
-    <Text {...textProps}>
+    <Text {...textProps} style={[{ width: '100%' }, style]}>
       {segments.map((segment, index) => {
         const key = `${segment.type}-${index}-${segment.content.slice(0, 10)}`;
 
@@ -42,7 +42,6 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
               key={key}
               onPress={() => handleLinkPress(segment.content)}
               style={[
-                (style as TextStyle) || undefined,
                 { color: linkColor, textDecorationLine: "underline" },
               ]}
               suppressHighlighting
@@ -53,7 +52,7 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
         }
 
         return (
-          <RNText key={key} style={style as TextStyle}>
+          <RNText key={key}>
             {segment.content}
           </RNText>
         );

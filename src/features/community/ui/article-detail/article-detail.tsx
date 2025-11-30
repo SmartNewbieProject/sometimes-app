@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import apis from "@/src/features/community/apis";
 import apis_comments from "@/src/features/community/apis/comments";
@@ -18,7 +18,7 @@ import type { UniversityName } from "@shared/libs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Keyboard, ScrollView, View, Image, Pressable } from "react-native";
+import { Keyboard, ScrollView, View, Image, Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
 import { InputForm } from "../comment/input-form";
@@ -356,7 +356,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const imageUrls = article.images?.map((img) => img.imageUrl) || [];
 
   return (
-    <View className="flex-1 relative bg-surface-background">
+    <View style={styles.container}>
       <PhotoSlider
         images={imageUrls}
         onClose={onZoomClose}
@@ -365,11 +365,11 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
       />
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={styles.scrollViewContainer}
         keyboardShouldPersistTaps="handled"
-        className="flex-1 relative  px-5"
+        style={styles.scrollView}
       >
-        <View className="h-[1px] bg-surface-other mb-[15px]" />
+        <View style={styles.divider} />
 
         <UserProfile
           author={article.author}
@@ -379,22 +379,22 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           isOwner={isOwner}
         />
 
-        <View className="my-3 mb-6 mx-[8px]  flex flex-row  items-center justify-between">
+        <View style={styles.titleContainer}>
           <Text size="md" weight="medium" textColor="black">
             {article.title}
           </Text>
         </View>
         <LinkifiedText
-          className="mb-4 text-[14px] mx-[8px] leading-5"
+          style={styles.content}
           textColor="black"
         >
           {article.content}
         </LinkifiedText>
 
         {article.images && article.images.length > 0 && (
-          <View className="mx-[8px] mb-4">
+          <View style={styles.imageContainer}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View className="flex-row gap-2">
+              <View style={styles.imageRow}>
                 {article.images
                   .sort((a, b) => a.displayOrder - b.displayOrder)
                   .map((image, index) => (
@@ -404,10 +404,11 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
                         setSelectedIndex(index);
                         setZoomVisible(true);
                       }}
+                      style={styles.imagePressable}
                     >
                       <Image
                         source={{ uri: image.imageUrl }}
-                        className="w-32 h-32 rounded-lg"
+                        style={styles.articleImage}
                         resizeMode="cover"
                       />
                     </Pressable>
@@ -417,73 +418,40 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           </View>
         )}
 
-        <View className="w-full mt-[10px]">
-          <View className="flex-row items-center justify-between pb-[10px] mx-[8px]">
-            <View className="flex-row items-center">
-              <Text
-                style={{
-                  color: semanticColors.text.muted,
-                  fontFamily: "Pretendard",
-                  fontSize: 13,
-                  fontStyle: "normal",
-                  fontWeight: "300" as any,
-                  lineHeight: 14.4,
-                  fontFeatureSettings: "'liga' off, 'clig' off",
-                }}
-              >
-                {dayUtils.formatRelativeTime(article.createdAt)}
-              </Text>
-              <Text
-                style={{
-                  color: semanticColors.text.muted,
-                  fontFamily: "Pretendard",
-                  fontSize: 13,
-                  fontStyle: "normal",
-                  fontWeight: "300" as any,
-                  lineHeight: 14.4,
-                  fontFeatureSettings: "'liga' off, 'clig' off",
-                  marginLeft: 8,
-                }}
-              >
-                {`·  조회 ${article.readCount}`}
-              </Text>
-            </View>
+        <View style={styles.metaContainer}>
+          <View style={styles.timeContainer}>
+            <Text style={styles.timeText}>
+              {dayUtils.formatRelativeTime(article.createdAt)}
+            </Text>
+            <Text style={styles.viewCountText}>
+              {`·  조회 ${article.readCount}`}
+            </Text>
+          </View>
 
-            <View className="flex-row items-center">
-              <Interaction.Like
-                count={likeCount}
-                isLiked={isLiked}
-                iconSize={18}
-                onPress={() => like(article)}
-              />
-              <View style={{ width: 12 }} />
-              <Interaction.Comment count={totalCommentCount} iconSize={18} />
-            </View>
+          <View style={styles.interactionContainer}>
+            <Interaction.Like
+              count={likeCount}
+              isLiked={isLiked}
+              iconSize={18}
+              onPress={() => like(article)}
+            />
+            <View style={styles.interactionSpacer} />
+            <Interaction.Comment count={totalCommentCount} iconSize={18} />
           </View>
         </View>
-        <View className="h-[1px] bg-surface-other " />
-        <View className="flex-1">
+        <View style={styles.bottomDivider} />
+        <View style={styles.commentsContainer}>
           <Loading.Lottie
             title="댓글을 불러오고 있어요"
             loading={isCommentLoading}
           >
-            <View className="flex flex-col  pb-4 ">
+            <View style={styles.commentsWrapper}>
               {renderComments(comments, editingCommentId)}
             </View>
           </Loading.Lottie>
         </View>
       </ScrollView>
-      <View
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: semanticColors.surface.background,
-          paddingBottom: insets.bottom,
-        }}
-        className="border-t border-border-default pt-3  px-4"
-      >
+      <View style={styles.bottomInputContainer}>
         <InputForm
           checked={checked}
           setChecked={setChecked}
@@ -501,3 +469,96 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+    position: 'relative',
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  scrollViewContainer: {
+    paddingVertical: 16,
+    alignItems: 'stretch',
+    width: '100%',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: semanticColors.border.primary,
+    marginVertical: 16,
+  },
+  titleContainer: {
+    marginVertical: 12,
+  },
+  content: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginVertical: 12,
+    alignSelf: 'stretch',
+  },
+  imageContainer: {
+    marginVertical: 16,
+  },
+  imageRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  imagePressable: {
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  articleImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+  },
+  metaContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: semanticColors.border.primary,
+    marginTop: 16,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeText: {
+    fontSize: 12,
+    color: semanticColors.text.secondary,
+  },
+  viewCountText: {
+    fontSize: 12,
+    color: semanticColors.text.secondary,
+  },
+  interactionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  interactionSpacer: {
+    width: 16,
+  },
+  bottomDivider: {
+    height: 1,
+    backgroundColor: semanticColors.border.primary,
+    marginVertical: 16,
+  },
+  commentsContainer: {
+    flex: 1,
+  },
+  commentsWrapper: {
+    paddingBottom: 16,
+  },
+  bottomInputContainer: {
+    borderTopWidth: 1,
+    borderTopColor: semanticColors.border.primary,
+    backgroundColor: semanticColors.surface.background,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+});

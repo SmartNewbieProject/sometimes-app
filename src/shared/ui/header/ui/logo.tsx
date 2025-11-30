@@ -1,8 +1,19 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from '@/src/shared/ui/text';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import SmallTitle from '@/assets/icons/small-title.svg';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logo: {
+    color: '#7A4AE2',
+  },
+});
 
 interface LogoProps {
   title?: string;
@@ -12,9 +23,9 @@ interface LogoProps {
 
 export function Logo({ title, showLogo = true, logoSize = 32 }: LogoProps) {
   return (
-    <View className="flex-1 items-center justify-center">
+    <View style={styles.container}>
       {showLogo ? (
-        <IconWrapper width={logoSize} className="text-primaryPurple">
+        <IconWrapper width={logoSize} style={styles.logo}>
           <SmallTitle />
         </IconWrapper>
       ) : (

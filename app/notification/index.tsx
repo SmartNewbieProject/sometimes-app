@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   activeMenuItem: {
-    color: colors.primaryPurple,
+    color: '#7A4AE2',
   },
   divider: {
     height: 1,

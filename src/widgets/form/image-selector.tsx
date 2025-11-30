@@ -17,7 +17,6 @@ import { FormContentSelector } from "./content-selector";
 interface FormImageSelectorProps
   extends UseControllerProps,
     VariantProps<typeof contentSelector> {
-  className?: string;
   size?: "sm" | "md" | "lg";
   actionLabel?: string;
 }
@@ -26,7 +25,6 @@ export function FormImageSelector({
   name,
   control,
   rules,
-  className,
   size,
   actionLabel,
 }: FormImageSelectorProps) {
@@ -123,7 +121,6 @@ export function FormImageSelector({
         <ContentSelector
           value={value}
           size={size}
-          className={className}
           actionLabel={actionLabel}
           renderContent={renderImage}
           renderPlaceholder={renderPlaceholder}

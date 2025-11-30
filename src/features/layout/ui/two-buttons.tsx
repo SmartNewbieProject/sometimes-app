@@ -1,5 +1,5 @@
-import { cn, platform } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { platform } from "@/src/shared/libs";
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Button } from "@shared/ui";
 import {
   Platform,
@@ -37,16 +37,14 @@ export const TwoButtons = ({
     >
       <Button
         variant="secondary"
-        className="flex-[0.3]"
-        styles={styles.rightButton}
+        styles={[styles.rightButton, { flex: 0.3 }]}
         onPress={onClickPrevious}
       >
         <Text style={styles.rightButtonText}> {content?.prev || "뒤로"}</Text>
       </Button>
       <Button
-        className="flex-[0.7]"
+        styles={[styles.leftButton, { flex: 0.7 }]}
         onPress={onClickNext}
-        styles={styles.leftButton}
         disabled={disabledNext}
       >
         <Text style={styles.leftButtonText}>{content?.next || "다음으로"}</Text>
@@ -61,6 +59,8 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 31,
     gap: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   rightButton: {
     borderRadius: 20,

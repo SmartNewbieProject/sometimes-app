@@ -4,7 +4,9 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  StyleSheet,
 } from "react-native";
+import { semanticColors } from "@/src/shared/constants/colors";
 import { Text } from "@/src/shared/ui";
 import { router } from "expo-router";
 import { useHomeNotices } from "@/src/features/community/hooks/use-home";
@@ -13,6 +15,40 @@ import { Article } from "../../ui/article";
 type Props = {
   pageSize?: number;
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginHorizontal: 16,
+    marginVertical: 12,
+    paddingVertical: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    backgroundColor: semanticColors.surface.background,
+  },
+  fullWidthContainer: {
+    width: '100%',
+  },
+  scrollContainer: {
+    width: '100%',
+  },
+  paginationContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  paginationDot: {
+    marginHorizontal: 3,
+    borderRadius: 10,
+  },
+  errorText: {
+    marginTop: 4,
+    opacity: 0.6,
+  },
+});
 
 export default function Notice({ pageSize = 5 }: Props) {
   const {
@@ -33,7 +69,7 @@ export default function Notice({ pageSize = 5 }: Props) {
 
   if (isLoading) {
     return (
-      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-surface-background">
+      <View style={styles.container}>
         <ActivityIndicator />
       </View>
     );
@@ -41,10 +77,10 @@ export default function Notice({ pageSize = 5 }: Props) {
 
   if (isError) {
     return (
-      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-surface-background">
+      <View style={styles.container}>
         <Text textColor="black">공지사항을 불러오지 못했어요.</Text>
         {__DEV__ && (
-          <Text size="sm" className="mt-1 opacity-60">
+          <Text size="sm" style={styles.errorText}>
             {String((error as any)?.message ?? "")}
           </Text>
         )}
@@ -54,15 +90,15 @@ export default function Notice({ pageSize = 5 }: Props) {
 
   if (!notices.length) {
     return (
-      <View className="mx-[16px] my-[12px] py-10 items-center justify-center rounded-xl bg-surface-background">
+      <View style={styles.container}>
         <Text textColor="black">등록된 공지가 없습니다.</Text>
       </View>
     );
   }
 
   return (
-    <View className="w-full">
-      <View className="w-full" onLayout={handlers.onLayout}>
+    <View style={styles.fullWidthContainer}>
+      <View style={styles.scrollContainer} onLayout={handlers.onLayout}>
         <ScrollView
           ref={refs.scrollRef}
           horizontal
@@ -93,18 +129,20 @@ export default function Notice({ pageSize = 5 }: Props) {
         </ScrollView>
       </View>
 
-      <View className="w-full flex-row items-center justify-center mt-2 mb-2">
+      <View style={styles.paginationContainer}>
         {Array.from({ length: total || 1 }).map((_, i) => {
           const active = i === index;
           return (
             <View
               key={i}
-              className="mx-[3px] rounded-full"
-              style={{
-                width: active ? 8 : 6,
-                height: active ? 8 : 6,
-                backgroundColor: active ? "#7A4AE2" : "#D9D9D9",
-              }}
+              style={[
+                styles.paginationDot,
+                {
+                  width: active ? 8 : 6,
+                  height: active ? 8 : 6,
+                  backgroundColor: active ? "#7A4AE2" : "#D9D9D9",
+                }
+              ]}
             />
           );
         })}

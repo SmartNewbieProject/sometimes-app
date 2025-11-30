@@ -67,7 +67,7 @@ export const Envelope: React.FC<EnvelopeProps> = ({ onPress, questionDate }) => 
           />
         </Animated.View>
         <LinearGradient
-          colors={[colors.cardPurple, colors.lightPurple]}
+          colors={["#F7F3FF", "#E2D5FF"]}
           style={envelopeStyles.envelopeContainer}
         >
           <View style={envelopeStyles.envelopeFlap}>

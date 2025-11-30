@@ -1,5 +1,5 @@
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
@@ -71,7 +71,7 @@ function ChatBalloon({ message, mediaUrl, isMe, uploadStatus = 'completed' }: Ch
         style={[
           styles.container,
           {
-            backgroundColor: hasImageContent ? "transparent" : isMe ? "#7A4AE1" : "#fff",
+            backgroundColor: hasImageContent ? "transparent" : isMe ? semanticColors.brand.primary : semanticColors.surface.background,
             borderTopRightRadius: isMe ? 6 : 18,
             borderTopLeftRadius: !isMe ? 6 : 18,
           },
@@ -80,7 +80,7 @@ function ChatBalloon({ message, mediaUrl, isMe, uploadStatus = 'completed' }: Ch
         {hasImageContent ? (
           renderImageContent()
         ) : (
-          <Text style={[styles.messageText, { color: isMe ? "#fff" : "#000" }]}>
+          <Text style={[styles.messageText, { color: isMe ? semanticColors.brand.onPrimary : semanticColors.text.primary }]}>
             {message}
           </Text>
         )}
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
+        shadowColor: semanticColors.overlay.scrim,
         shadowOffset: {
           width: 0,
           height: 1,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 8,
     right: 8,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: semanticColors.overlay.scrim,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 8,
     right: 8,
-    backgroundColor: "#FF3B30",
+    backgroundColor: semanticColors.state.error,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,

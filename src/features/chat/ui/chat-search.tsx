@@ -1,5 +1,5 @@
 import WhiteXIcon from "@assets/icons/chat-search-x.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import SearchIcon from "@assets/icons/search-chat.svg";
 import type React from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";

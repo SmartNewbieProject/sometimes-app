@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -62,7 +62,8 @@ function HistoryCollapse() {
   const name = profileDetails?.name ?? "";
   return !isLoading &&
     previewMatchingHistory &&
-    previewMatchingHistory?.imageUrls.length > 0 ? (
+    previewMatchingHistory?.imageUrls &&
+    previewMatchingHistory.imageUrls.length > 0 ? (
     <View style={{ overflow: "hidden", borderRadius: 20 }}>
       <LinearGradient
         start={[0, 0]}

@@ -1,5 +1,5 @@
 import BottomArrowIcon from "@assets/icons/bottom-arrow.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import React, { useRef, useState } from "react";
 import {
   Animated,
@@ -10,7 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useSignupProgress } from "../../hooks";
+import { useSignupProgress } from "../../hooks/use-signup-progress";
 
 const NUMBER_LIST = [
   "25학번",

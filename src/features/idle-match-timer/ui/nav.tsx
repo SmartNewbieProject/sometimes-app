@@ -1,5 +1,5 @@
 import { ImageResources } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
 import type { MatchDetails } from "../types";

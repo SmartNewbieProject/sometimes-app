@@ -1,6 +1,6 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
 import { UniversityName, dayUtils, getUnivLogo, formatLastLogin } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text, UniversityBadge } from "@shared/ui";
@@ -57,15 +57,17 @@ export const Partner = ({ match }: PartnerProps) => {
 
   return (
     <View
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        padding: 14,
-      }}
-      className="flex flex-col justify-between"
+      style={[
+        styles.container,
+        {
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          padding: 14,
+        }
+      ]}
     >
-      <View className="flex flex-row gap-x-[2px]">
+      <View style={styles.timeRow}>
         <Time size="sm" value={delimeter} />
         <Time size="sm" value="-" />
         {value
@@ -96,7 +98,7 @@ export const Partner = ({ match }: PartnerProps) => {
         <Text textColor="white" weight="semibold" size="lg">
           {partner?.age}
         </Text>
-        <View className="flex flex-row items-center">
+        <View style={styles.universityInfo}>
           <Text textColor="white" weight="light" size="md">
             #{partner?.mbti} #{partner?.universityDetails?.name}
           </Text>
@@ -167,24 +169,18 @@ export const Partner = ({ match }: PartnerProps) => {
           />
         </View>
 
-        <View className="w-full flex flex-row">
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
-            className="bg-primaryPurple flex-1 flex flex-row justify-end items-center pr-1"
-            style={sideStyle.previousButton}
+            style={[styles.button, sideStyle.previousButton]}
             onPress={onClickToPartner}
           >
-            <Text className="w-[32px] text-text-inverse text-[12px]">더보기</Text>
+            <Text style={styles.buttonText}>더보기</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>
           </TouchableOpacity>
         </View>
-        <View
-          className="w-full relative"
-          style={{
-            overflow: "hidden",
-          }}
-        >
+        <View style={styles.bottomSection}>
           <View
             style={{
               borderTopEndRadius: 16,
@@ -208,3 +204,40 @@ export const Partner = ({ match }: PartnerProps) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  timeRow: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  universityInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    width: '100%',
+    flexDirection: 'row',
+  },
+  button: {
+    backgroundColor: '#7A4AE2',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingRight: 4,
+  },
+  buttonText: {
+    width: 32,
+    color: '#FFFFFF',
+    fontSize: 12,
+  },
+  bottomSection: {
+    width: '100%',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+});

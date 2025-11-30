@@ -1,5 +1,6 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { convertToJpeg, isHeicBase64 } from "@/src/shared/utils/image";
+import { semanticColors } from "@/src/shared/constants/colors";
 import SendChatIcon from "@assets/icons/send-chat.svg";
 import { useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
@@ -7,7 +8,7 @@ import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { type ChangeEvent, useRef, useState } from "react";
-import { Alert, Linking, Platform } from "react-native";
+import { Alert, Linking, Platform, StyleSheet, View, TouchableOpacity } from "react-native-web";
 import { useAuth } from "../../auth";
 import PhotoPickerModal from "../../mypage/ui/modal/image-modal";
 import useKeyboardResizeEffect from "../hooks/use-keyboard-resize-effect";
@@ -171,7 +172,7 @@ function WebChatInput() {
   };
 
   return (
-    <div className="flex w-full items-center bg-surface-background p-4 ">
+    <View style={styles.container}>
       <PhotoPickerModal
         showGuide={false}
         visible={isImageModal}
@@ -179,15 +180,14 @@ function WebChatInput() {
         onTakePhoto={takePhoto}
         onPickFromGallery={pickImage}
       />
-      <button
-        onClick={handlePress}
-        type="button"
-        className="flex h-8 w-8 border-none items-center justify-center rounded-full bg-surface-background hover:bg-purple-200 transition-colors focus:outline-none "
+      <TouchableOpacity
+        onPress={handlePress}
+        style={styles.photoButton}
       >
         <PlusIcon />
-      </button>
+      </TouchableOpacity>
 
-      <div className="relative ml-3 flex flex-1 items-center rounded-full bg-surface-surface py-[8px] px-2 pl-4">
+      <View style={styles.inputContainer}>
         <textarea
           ref={textareaRef}
           value={chat}
@@ -197,29 +197,28 @@ function WebChatInput() {
           placeholder={
             roomDetail?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
           }
-          className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-text-secondary placeholder-gray-500 focus:outline-none "
+          style={styles.textarea}
         />
         <textarea
-          className="leading-[18px] box-border  w-full resize-none overflow-y-scroll m-0 p-0 absolute -top-[9999px] -left-[9999px] -z-10"
+          style={styles.cloneTextarea}
           readOnly
           ref={cloneRef}
           rows={1}
         />
 
         {chat !== "" ? (
-          <button
-            type="button"
-            onClick={handleSend}
-            className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-brand-primary text-text-inverse hover:bg-purple-700 transition-colors focus:outline-none "
+          <TouchableOpacity
+            onPress={handleSend}
+            style={styles.sendButton}
             aria-label="Send message"
           >
             <SendChatIcon width={20} height={20} />
-          </button>
+          </TouchableOpacity>
         ) : (
-          <div className="h-8 w-8" />
+          <View style={styles.emptyButton} />
         )}
-      </div>
-    </div>
+      </View>
+    </View>
   );
 }
 
@@ -241,5 +240,76 @@ function PlusIcon() {
     </svg>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: semanticColors.surface.background,
+    padding: 16,
+  },
+  photoButton: {
+    height: 32,
+    width: 32,
+    borderWidth: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+    backgroundColor: semanticColors.surface.background,
+  },
+  inputContainer: {
+    position: 'relative',
+    marginLeft: 12,
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+    borderRadius: 16,
+    backgroundColor: semanticColors.surface.surface,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingLeft: 16,
+  },
+  textarea: {
+    flex: 1,
+    lineHeight: 18,
+    resize: 'none',
+    overflowY: 'auto',
+    backgroundColor: 'transparent',
+    margin: 0,
+    padding: 0,
+    fontSize: 16,
+    color: semanticColors.text.secondary,
+    border: 'none',
+    outline: 'none',
+  },
+  cloneTextarea: {
+    lineHeight: 18,
+    boxSizing: 'border-box',
+    width: '100%',
+    resize: 'none',
+    overflowY: 'auto',
+    margin: 0,
+    padding: 0,
+    position: 'absolute',
+    top: -9999,
+    left: -9999,
+    zIndex: -10,
+  },
+  sendButton: {
+    height: 32,
+    width: 32,
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    borderRadius: 16,
+    backgroundColor: semanticColors.brand.primary,
+  },
+  emptyButton: {
+    height: 32,
+    width: 32,
+  },
+});
 
 export default WebChatInput;

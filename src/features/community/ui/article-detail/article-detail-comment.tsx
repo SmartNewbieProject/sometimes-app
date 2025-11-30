@@ -1,10 +1,10 @@
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/colors";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import { dayUtils } from "@/src/shared/libs";
 import type { UniversityName } from "@/src/shared/libs/univ";
 import { LinkifiedText, Show, Text } from "@/src/shared/ui";
 import React, { useRef, useState } from "react";
-import { Platform, View, TouchableOpacity, Image, Modal, Pressable, TouchableWithoutFeedback } from "react-native";
+import { Platform, View, TouchableOpacity, Image, Modal, Pressable, TouchableWithoutFeedback, StyleSheet } from "react-native";
 import { useAuth } from "../../../auth";
 import type { Comment } from "../../types";
 import { UserProfile } from "../user-profile";
@@ -20,6 +20,120 @@ interface ArticleDetailCommentProps {
   isReply?: boolean;
   rootParentId?: string;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    paddingVertical: 12,
+    alignSelf: 'stretch',
+    width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: semanticColors.border.default,
+  },
+  replyRow: {
+    flexDirection: 'row',
+  },
+  replyIndent: {
+    paddingLeft: 16,
+  },
+  replyIconContainer: {
+    marginRight: 8,
+    marginTop: 4,
+  },
+  replyIcon: {
+    width: 16,
+    height: 16,
+  },
+  contentContainer: {
+    flex: 1,
+    minWidth: 0,
+  },
+  userContainer: {
+    position: 'relative',
+    paddingHorizontal: 8,
+  },
+  userInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  userInfoLeft: {
+    flex: 1,
+    marginRight: 8,
+    minWidth: 0,
+  },
+  actionButtonsContainer: {
+    alignSelf: 'flex-start',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  likeCountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+    actionButtonsBackground: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: semanticColors.surface.background,
+  },
+  menuButtonContainer: {
+    position: 'relative',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    width: 80,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: semanticColors.surface.background,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: semanticColors.border.default,
+  },
+  dropdownButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  dropdownButtonBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#f5f5f5',
+  },
+  commentContentContainer: {
+    alignSelf: 'stretch',
+    paddingHorizontal: 16,
+    marginTop: 8,
+  },
+  linkifiedText: {
+    fontSize: 14,
+    lineHeight: Platform.OS === 'ios' ? 18 : 20,
+  },
+  actionButtonIcon: {
+    width: 12,
+    height: 12,
+  },
+  heartIcon: {
+    width: 12,
+    height: 10,
+    tintColor: '#A892D7',
+  },
+});
 
 export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
   comment,
@@ -64,103 +178,103 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
   return (
     <View
         key={comment.id}
-        style={{
-          backgroundColor: isEditing ? colors.moreLightPurple : colors.white,
-        }}
-        className="flex py-3 flex-col w-full border-b border-border-default"
+        style={[
+          styles.container,
+          {
+            backgroundColor: isEditing ? semanticColors.surface.secondary : semanticColors.surface.background,
+          }
+        ]}
       >
       {/* 대댓글인 경우 화살표 아이콘과 들여쓰기 */}
-      <View className={`flex-row ${isReply ? 'pl-4' : ''}`}>
+      <View style={[styles.replyRow, isReply && styles.replyIndent]}>
         {isReply && (
-          <View className="mr-2 mt-1">
+          <View style={styles.replyIconContainer}>
             <Image
               source={require('@/assets/icons/reply.png')}
-              style={{ width: 16, height: 16 }}
+              style={styles.replyIcon}
               resizeMode="contain"
             />
           </View>
         )}
 
-        <View className="flex-1">
-          <View className="relative px-2">
-            <UserProfile
-              author={comment.author}
-              universityName={
-                comment.author.universityDetails.name as UniversityName
-              }
-              isOwner={isAuthor}
-              updatedAt={
-                <View className="flex-row items-center gap-x-2">
-                  <Text size={"sm"} textColor="pale-purple">
-                    {dayUtils.formatRelativeTime(comment.updatedAt)}
-                  </Text>
+        <View style={styles.contentContainer}>
+          <View style={styles.userContainer}>
+            <View style={styles.userInfoRow}>
+              <View style={styles.userInfoLeft}>
+                <UserProfile
+                  author={comment.author}
+                  universityName={
+                    comment.author.universityDetails.name as UniversityName
+                  }
+                  isOwner={isAuthor}
+                  hideUniv
+                />
+              </View>
 
-                  {/* 좋아요 수 표시 - 좋아요가 있을 때만 */}
-                  {comment.likeCount > 0 && (
-                    <View className="flex-row items-center gap-x-1">
+              {/* 액션 버튼들 */}
+              <View style={styles.actionButtonsContainer}>
+                <View style={styles.actionButtonsBackground}>
+                  {/* 답글 버튼 */}
+                  {onReply && (
+                    <TouchableOpacity onPress={() => onReply(rootParentId || comment.id)}>
+                      <Image
+                        source={require("@/assets/icons/engagement.png")}
+                        style={styles.actionButtonIcon}
+                      />
+                    </TouchableOpacity>
+                  )}
+
+                  {/* 좋아요 버튼 */}
+                  <TouchableOpacity onPress={() => onLike(comment.id)}>
+                    {comment.isLiked ? (
                       <AreaFillHeart
                         width={14}
                         height={14}
                       />
-                      <Text size={"sm"} textColor="pale-purple">
-                        {comment.likeCount}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              }
-              hideUniv
-            />
-
-            {/* 액션 버튼들 */}
-            <View className="absolute right-0 top-0">
-              <View
-                className="flex-row items-center gap-x-3 px-2 py-1 rounded-lg"
-                style={{ backgroundColor: semanticColors.surface.background }}
-              >
-                {/* 답글 버튼 */}
-                {onReply && (
-                  <TouchableOpacity onPress={() => onReply(rootParentId || comment.id)}>
-                    <Image
-                      source={require("@/assets/icons/engagement.png")}
-                      style={{ width: 12, height: 12 }}
-                    />
-                  </TouchableOpacity>
-                )}
-
-                {/* 좋아요 버튼 */}
-                <TouchableOpacity onPress={() => onLike(comment.id)}>
-                  {comment.isLiked ? (
-                    <AreaFillHeart
-                      width={14}
-                      height={14}
-                    />
-                  ) : (
-                    <Image
-                      source={require("@/assets/icons/heart.png")}
-                      style={{
-                        width: 12,
-                        height: 10,
-                        tintColor: "#A892D7"
-                      }}
-                    />
-                  )}
-                </TouchableOpacity>
-
-                {/* 더보기 버튼 (작성자에게만) */}
-                <Show when={isAuthor}>
-                  <TouchableWithoutFeedback onPress={handleToggleMenu}>
-                    <View ref={containerRef} style={{ position: 'relative' }}>
+                    ) : (
                       <Image
-                        source={require("@/assets/icons/menu-dots-vertical.png")}
-                        style={{ width: 12, height: 12 }}
+                        source={require("@/assets/icons/heart.png")}
+                        style={styles.heartIcon}
                       />
-                    </View>
-                  </TouchableWithoutFeedback>
-                </Show>
+                    )}
+                  </TouchableOpacity>
+
+                  {/* 더보기 버튼 (작성자에게만) */}
+                  <Show when={isAuthor}>
+                    <TouchableWithoutFeedback onPress={handleToggleMenu}>
+                      <View ref={containerRef} style={styles.menuButtonContainer}>
+                        <Image
+                          source={require("@/assets/icons/menu-dots-vertical.png")}
+                          style={styles.actionButtonIcon}
+                        />
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </Show>
+                </View>
               </View>
             </View>
 
+            {/* 두 번째 행: 시간 + 좋아요 수 */}
+            <View style={styles.metaRow}>
+              <Text size={"sm"} textColor="pale-purple">
+                {dayUtils.formatRelativeTime(comment.updatedAt)}
+              </Text>
+
+              {/* 좋아요 수 표시 - 좋아요가 있을 때만 */}
+              {comment.likeCount > 0 && (
+                <View style={styles.likeCountContainer}>
+                  <AreaFillHeart
+                    width={14}
+                    height={14}
+                  />
+                  <Text size={"sm"} textColor="pale-purple">
+                    {comment.likeCount}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+  
             {/* 드롭다운 메뉴 Modal */}
             <Modal
               visible={isMenuOpen}
@@ -169,37 +283,26 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
               onRequestClose={closeMenu}
             >
               <TouchableWithoutFeedback onPress={closeMenu}>
-                <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+                <View style={styles.modalOverlay}>
                   <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-                    <View style={{
-                      position: 'absolute',
-                      top: dropdownPosition.top,
-                      left: dropdownPosition.right,
-                      width: 80,
-                      paddingVertical: 4,
-                      borderRadius: 8,
-                      backgroundColor: semanticColors.surface.background,
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 8,
-                      elevation: 8,
-                      borderWidth: 1,
-                      borderColor: semanticColors.border.default,
-                    }}>
+                    <View style={[
+                      styles.dropdownMenu,
+                      {
+                        top: dropdownPosition.top,
+                        left: dropdownPosition.right,
+                      }
+                    ]}>
                       <Pressable
                         onPress={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           handleUpdate();
                         }}
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          borderBottomWidth: 1,
-                          borderBottomColor: '#f5f5f5',
-                          backgroundColor: semanticColors.surface.background,
-                        }}
+                        style={[
+                          styles.dropdownButton,
+                          styles.dropdownButtonBorder,
+                          { backgroundColor: semanticColors.surface.background }
+                        ]}
                       >
                         <Text size="sm" textColor="black">수정</Text>
                       </Pressable>
@@ -209,11 +312,10 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
                           e.stopPropagation();
                           handleDelete();
                         }}
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          backgroundColor: semanticColors.surface.background,
-                        }}
+                        style={[
+                          styles.dropdownButton,
+                          { backgroundColor: semanticColors.surface.background }
+                        ]}
                       >
                         <Text size="sm" textColor="black">삭제</Text>
                       </Pressable>
@@ -223,27 +325,14 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
               </TouchableWithoutFeedback>
             </Modal>
 
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                paddingLeft: 48,
-                paddingRight: 16,
-              }}
-            >
+            <View style={styles.commentContentContainer}>
               <LinkifiedText
-                className="text-[14px] flex-1"
                 textColor="black"
-                style={{
-                  flexWrap: "wrap",
-                  flexShrink: 1,
-                  lineHeight: Platform.OS === "ios" ? 18 : 20,
-                }}
+                style={styles.linkifiedText}
               >
                 {comment.content}
               </LinkifiedText>
             </View>
-
 
           </View>
         </View>

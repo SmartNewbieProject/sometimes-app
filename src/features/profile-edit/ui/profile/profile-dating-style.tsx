@@ -46,7 +46,7 @@ function ProfileDatingStyle() {
             step={datingStyleIds?.length ?? 0}
             dotGap={4}
             dotSize={16}
-            className="self-end"
+            style={styles.stepIndicator}
           />
         </View>
 
@@ -94,6 +94,9 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 22,
+  },
+  stepIndicator: {
+    alignSelf: 'flex-end',
   },
   chipSelector: {
     marginTop: 12,

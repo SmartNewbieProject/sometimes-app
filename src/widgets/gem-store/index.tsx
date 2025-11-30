@@ -38,7 +38,7 @@ const GemStoreItem = ({ gemProduct, hot, onOpenPayment }: GemItemProps) => {
         marginVertical: 4,
         borderRadius: 8,
         borderWidth: hot ? 3 : 1,
-        borderColor: hot ? '#8B5CF6' : '#E6DBFF',
+        borderColor: hot ? semanticColors.brand.primary : semanticColors.surface.tertiary,
     }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
         <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row', flex: 1 }}>
@@ -52,10 +52,10 @@ const GemStoreItem = ({ gemProduct, hot, onOpenPayment }: GemItemProps) => {
 
           <Show when={Math.floor(discountRate) !== 0}>
             <View style={{ display: 'flex', flexDirection: 'row', columnGap: 6 }}>
-              <Text className="text-[10px] text-text-disabled line-through">
+              <Text style={styles.originalPrice}>
                 {dropHundred(price)}원
               </Text>
-              <Text className="text-[10px]">
+              <Text style={styles.discountText}>
                 {Math.ceil(discountRate)}% 할인
               </Text>
             </View>
@@ -88,3 +88,16 @@ export const GemStoreWidget = {
   Provider: GemStoreProvider,
   Item: GemStoreItem,
 };
+
+const styles = StyleSheet.create({
+  originalPrice: {
+    fontSize: 10,
+    color: semanticColors.text.disabled,
+    textDecorationLine: 'line-through',
+  },
+  discountText: {
+    fontSize: 10,
+    color: colors.primaryPurple,
+    fontWeight: 'bold',
+  },
+});

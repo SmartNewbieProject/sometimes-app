@@ -41,7 +41,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ImageResource } from "@ui/image-resource";
 import { Link, router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
+import { Platform, ScrollView, TouchableOpacity, View, StyleSheet } from "react-native";
 
 const { ui, queries, hooks } = Home;
 const {
@@ -129,7 +129,7 @@ const HomeScreen = () => {
     }, [queryClient])
   );
   return (
-    <View className="flex-1 ">
+    <View style={styles.container}>
       <PalePurpleGradient />
       <VersionUpdateChecker />
       {/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
@@ -142,7 +142,7 @@ const HomeScreen = () => {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginRight: 16 }}>
+          <View style={styles.headerRightContent}>
             <NotificationIcon size={41} />
             <TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
               <ImageResource
@@ -157,20 +157,20 @@ const HomeScreen = () => {
 
       <ScrollView
         scrollEnabled={!isSlideScrolling}
-        className={`flex-1 px-5 flex flex-col gap-y-[14px] ${Platform.OS === "android" ? "pb-40" : "pb-14"
-          }`}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
       >
-        <View style={{ paddingBottom: 4, marginTop: 2 }}>
+        <View style={styles.bannerContainer}>
           <BannerSlide />
         </View>
-        <View style={{ marginTop: 20 }}>
+        <View style={styles.likeSection}>
           {collapse ? (
             <LikeCollapse collapse={collapse.data} type={collapse.type} />
           ) : (
             <NoneLikeBanner />
           )}
         </View>
-        <View className="mt-[18px] flex flex-col gap-y-1.5">
+        <View style={styles.announcementSection}>
           <Feedback.WallaFeedbackBanner />
           <Show when={!isPreferenceFill}>
             <AnnounceCard
@@ -183,23 +183,23 @@ const HomeScreen = () => {
         </View>
 
         {!isPreferenceFill || preferencesSelf?.length === 0 ? (
-          <View style={{ gap: 14 }}>
+          <View style={styles.homeInfoSection}>
             <HomeInfoSection />
             <MatchingStatus />
           </View>
         ) : (
-          <View className="mt-[14px]">
+          <View style={styles.idleMatchSection}>
             <IdleMatchTimer />
           </View>
         )}
-        <View style={{ marginTop: 20 }}>
+        <View style={styles.historySection}>
           <HistoryCollapse />
         </View>
         <View>
           <CommunityAnnouncement />
           <ReviewSlide onScrollStateChange={onScrollStateChange} />
         </View>
-        <View className="my-[25px]">
+        <View style={styles.tipSection}>
           <TipAnnouncement />
         </View>
 
@@ -210,5 +210,50 @@ const HomeScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  headerRightContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginRight: 16,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingHorizontal: 20,
+    flexDirection: 'column',
+    gap: 14,
+    paddingBottom: Platform.OS === "android" ? 160 : 56,
+  },
+  bannerContainer: {
+    paddingBottom: 4,
+    marginTop: 2,
+  },
+  likeSection: {
+    marginTop: 20,
+  },
+  announcementSection: {
+    marginTop: 18,
+    flexDirection: 'column',
+    gap: 6,
+  },
+  homeInfoSection: {
+    gap: 14,
+  },
+  idleMatchSection: {
+    marginTop: 14,
+  },
+  historySection: {
+    marginTop: 20,
+  },
+  tipSection: {
+    marginVertical: 25,
+  },
+});
 
 export default HomeScreen;

@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import React, { memo, useCallback, useState } from "react";
 import {
   type GestureResponderEvent,

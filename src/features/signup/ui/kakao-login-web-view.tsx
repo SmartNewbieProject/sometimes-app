@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { track } from "@amplitude/analytics-react-native";

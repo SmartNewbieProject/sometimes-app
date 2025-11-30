@@ -1,5 +1,7 @@
 import { track } from "@amplitude/analytics-react-native";
-import Signup from "@features/signup";
+import { useSignupProgress, SignupSteps } from "./use-signup-progress";
+import { useChangePhase } from "./use-change-phase";
+import { useSignupAnalytics } from "./use-signup-analytics";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, StyleSheet } from "react-native";
@@ -10,9 +12,6 @@ import {
 } from "react-native-reanimated";
 import { filterUniversities } from "../lib";
 import useUniversities from "../queries/use-universities";
-
-const { SignupSteps, useChangePhase, useSignupProgress, useSignupAnalytics } =
-  Signup;
 
 function useUniversityHook() {
   const [searchText, setSearchText] = useState("");

@@ -1,5 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
 import { environmentStrategy } from "@/src/shared/libs";
@@ -31,37 +31,28 @@ export default function SignupDoneScreen() {
   };
 
   return (
-    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout style={styles.container}>
       <PalePurpleGradient />
       <IconWrapper
         width={128}
-        className="text-primaryPurple md:pb-[58px] py-12"
+        style={styles.iconWrapper}
       >
         <SmallTitle />
       </IconWrapper>
 
-      <View className="flex flex-col flex-1">
-        <View style={{ position: "relative" }}>
+      <View style={styles.contentContainer}>
+        <View style={styles.imageContainer}>
           <View
-            style={{
-              width: 274,
-              height: 274,
-              borderRadius: 274,
-              top: 12,
-              left: 0,
-
-              backgroundColor: semanticColors.brand.primary,
-              position: "absolute",
-            }}
+            style={styles.circleBackground}
           />
           <Image
             source={require("@assets/images/signup-done.png")}
-            style={{ width: 298, height: 296, marginTop: 50 }}
+            style={styles.signupImage}
           />
         </View>
 
-        <View className="flex flex-col">
-          <View className="mt-[42px]">
+        <View style={styles.textContainer}>
+          <View style={styles.titleContainer}>
             <Text size="lg" textColor="black" weight="semibold">
               축하드려요!
             </Text>
@@ -70,7 +61,7 @@ export default function SignupDoneScreen() {
             </Text>
           </View>
 
-          <View className="mt-2">
+          <View style={styles.subtitleContainer}>
             <Text size="sm" textColor="pale-purple" weight="light">
               설레는 인연, 시작해볼까요?
             </Text>
@@ -81,27 +72,27 @@ export default function SignupDoneScreen() {
         </View>
       </View>
 
-      <View className="w-full px-5 mb-[24px] md:mb-[58px]">
+      <View style={styles.buttonContainer}>
         <Button
           disabled={loading}
           variant="primary"
           size="md"
           onPress={onNext}
-          className="w-full items-center "
+          style={styles.button}
         >
           {loading ? (
             <>
-              <Text textColor={"white"} className="text-md white">
+              <Text textColor={"white"} style={styles.buttonText}>
                 잠시만요...
               </Text>
               <ActivityIndicator
                 size="small"
                 color="#0000ff"
-                className="ml-6"
+                style={styles.activityIndicator}
               />
             </>
           ) : (
-            <Text textColor={"white"} className="text-md white">
+            <Text textColor={"white"} style={styles.buttonText}>
               로그인하러 가기 →
             </Text>
           )}
@@ -110,3 +101,63 @@ export default function SignupDoneScreen() {
     </DefaultLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    width: '100%',
+    alignItems: 'center',
+  },
+  iconWrapper: {
+    color: semanticColors.primaryPurple,
+    paddingBottom: 48,
+    paddingTop: 48,
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  circleBackground: {
+    width: 274,
+    height: 274,
+    borderRadius: 274,
+    top: 12,
+    left: 0,
+    backgroundColor: semanticColors.brand.primary,
+    position: 'absolute',
+  },
+  signupImage: {
+    width: 298,
+    height: 296,
+    marginTop: 50,
+  },
+  textContainer: {
+    flexDirection: 'column',
+  },
+  titleContainer: {
+    marginTop: 42,
+  },
+  subtitleContainer: {
+    marginTop: 8,
+  },
+  buttonContainer: {
+    width: '100%',
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  button: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 16,
+    color: 'white',
+  },
+  activityIndicator: {
+    marginLeft: 24,
+  },
+});

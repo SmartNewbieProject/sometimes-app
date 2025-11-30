@@ -1,5 +1,5 @@
 import BottomArrowIcon from "@assets/icons/bottom-arrow.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import React, { useRef, useState } from "react";
 import {
   Animated,
@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useSignupProgress } from "../../hooks";
+import { useSignupProgress } from "../../hooks/use-signup-progress";
 
 const GRADE_LIST = ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"];
 

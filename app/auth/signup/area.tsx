@@ -1,5 +1,5 @@
 import { DefaultLayout } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 
 import useAreaHook from "@/src/features/signup/hooks/use-area-hook";
 import { areaMap } from "@/src/features/signup/lib";
@@ -165,7 +165,7 @@ function Area() {
               )
             )
           }
-          className="w-full"
+          style={styles.fullWidthButton}
           size="md"
         >
           이 지역으로 시작하기
@@ -207,6 +207,9 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 16,
     backgroundColor: semanticColors.surface.background,
+  },
+  fullWidthButton: {
+    width: "100%",
   },
   tipConatainer: {
     flexDirection: "row",

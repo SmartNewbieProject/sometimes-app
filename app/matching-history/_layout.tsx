@@ -1,5 +1,5 @@
 import { useRematchingTickets } from "@/src/features/mypage/queries";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import { Header, Text } from "@/src/shared/ui";
 import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
 import { Image } from "expo-image";
@@ -13,17 +13,17 @@ export default function MatchingHistoryLayoutScreen() {
   const router = useRouter();
   const { data: gem } = useCurrentGem();
   return (
-    <View className="flex-1">
-      <Header.Container className="border-b items-center border-b-[#E7E9EC]">
+    <View style={styles.flexOne}>
+      <Header.Container style={[styles.headerContainer, styles.borderBottom]}>
         <Header.LeftContent>
           <Pressable
             onPress={() => router.navigate("/")}
-            className="pt-2 -ml-2"
+            style={styles.backButton}
           >
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
-        <Header.CenterContent className=" pt-2">
+        <Header.CenterContent style={styles.centerContent}>
           <Text textColor="black" size="20" weight="bold">
             이전매칭
           </Text>
@@ -62,6 +62,23 @@ export default function MatchingHistoryLayoutScreen() {
 }
 
 const styles = StyleSheet.create({
+  flexOne: {
+    flex: 1,
+  },
+  headerContainer: {
+    alignItems: 'center',
+  },
+  borderBottom: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E7E9EC',
+  },
+  backButton: {
+    paddingTop: 8,
+    marginLeft: -8,
+  },
+  centerContent: {
+    paddingTop: 8,
+  },
   rematchingContainer: {
     flexDirection: "row",
     paddingHorizontal: 10,

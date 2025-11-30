@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: semanticColors.surface.background,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: '#C4B5FD', // colors.lightPurple
+    borderColor: '#E2D5FF',
     borderRadius: 10,
     maxHeight: 500,
     position: 'absolute',

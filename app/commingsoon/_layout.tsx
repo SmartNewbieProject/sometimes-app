@@ -1,11 +1,11 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 
 
 export default function CommingSoonLayout() {
     return (
-        <View className="flex-1">
+        <View style={styles.container}>
           <Stack>
             <Stack.Screen 
               name="index" 
@@ -20,3 +20,9 @@ export default function CommingSoonLayout() {
         </View>
       );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

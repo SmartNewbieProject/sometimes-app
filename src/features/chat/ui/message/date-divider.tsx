@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 
 const DateDivider = ({ date }: { date: string }) => (
   <View style={styles.dateDividerContainer}>

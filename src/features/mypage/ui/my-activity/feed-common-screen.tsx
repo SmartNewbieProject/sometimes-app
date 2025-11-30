@@ -1,6 +1,6 @@
 import Layout from "@/src/features/layout";
-import { semanticColors } from '../../../../shared/constants/colors';
-import { View } from "react-native";
+import { semanticColors } from '@/src/shared/constants/colors';
+import { StyleSheet, View } from "react-native";
 import { Header, Text } from "@/src/shared/ui";
 import { router , useFocusEffect } from "expo-router";
 import { Image } from "expo-image";
@@ -83,7 +83,7 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
 
   const header = useMemo(
     () => (
-      <Header.Container className="items-center ">
+      <Header.Container style={styles.headerContainer}>
         <Header.LeftContent>
           <Header.LeftButton visible={true} onPress={() => router.back()} />
         </Header.LeftContent>
@@ -104,7 +104,7 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
     return (
       <Layout.Default style={{ backgroundColor: semanticColors.surface.background }}>
         {header}
-        <View className="flex-1 bg-surface-background">
+        <View style={[styles.flexContainer, { backgroundColor: semanticColors.surface.background }]}>
           {Array.from({ length: 10 }).map((_, i) => (
             <ArticleSkeleton
               key={`skel-${type}-${i}`}
@@ -119,8 +119,8 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
   return (
     <Layout.Default style={{ backgroundColor: semanticColors.surface.background }}>
       {header}
-      <View className="flex-1 bg-surface-background">
-        <Text className="px-4 py-3" weight="bold">
+      <View style={[styles.flexContainer, { backgroundColor: semanticColors.surface.background }]}>
+        <Text style={styles.titleText} weight="bold">
           {title}
         </Text>
         <CustomInfiniteScrollView
@@ -141,9 +141,22 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
           hasMore={hasNextPage}
           onRefresh={invalidateAndRefetch}
           refreshing={isLoading && !isLoadingMore}
-          className="flex-1"
+          style={styles.flexContainer}
         />
       </View>
     </Layout.Default>
   );
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    alignItems: 'center',
+  },
+  flexContainer: {
+    flex: 1,
+  },
+  titleText: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+});

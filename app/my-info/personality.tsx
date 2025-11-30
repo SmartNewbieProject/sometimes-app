@@ -1,5 +1,5 @@
 import Layout from "@/src/features/layout";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
@@ -81,7 +81,7 @@ export default function PersonalitySelectionScreen() {
             step={personality?.length ?? 0}
             dotGap={4}
             dotSize={16}
-            className="self-end"
+            style={styles.stepIndicator}
           />
           <Divider.Horizontal />
         </View>
@@ -102,7 +102,7 @@ export default function PersonalitySelectionScreen() {
               }
               multiple={true}
               onChange={onChangeOption}
-              className="w-full"
+              style={styles.chipSelectorFullWidth}
             />
           </Loading.Lottie>
         </View>
@@ -144,11 +144,17 @@ const styles = StyleSheet.create({
     rowGap: 10,
     paddingHorizontal: 32,
   },
+  stepIndicator: {
+    alignSelf: 'flex-end',
+  },
   chipSelector: {
     marginTop: 12,
     paddingLeft: 24,
     paddingRight: 28,
     flexDirection: "row",
     justifyContent: "flex-start",
+  },
+  chipSelectorFullWidth: {
+    width: '100%',
   },
 });

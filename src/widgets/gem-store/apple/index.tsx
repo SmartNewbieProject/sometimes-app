@@ -88,10 +88,10 @@ const AppleGemStoreItem = ({
             <View
               style={{ display: "flex", flexDirection: "row", columnGap: 6 }}
             >
-              <Text className="text-[10px] text-text-disabled line-through">
+              <Text style={styles.originalPrice}>
                 {toKRW(priceAndDiscount?.price ?? 0)}원
               </Text>
-              <Text className="text-[10px]">
+              <Text style={styles.discountText}>
                 {priceAndDiscount?.discountRate}% 할인
               </Text>
             </View>
@@ -135,3 +135,14 @@ export const AppleGemStoreWidget = {
   Provider: AppleGemStoreProvider,
   Item: AppleGemStoreItem,
 };
+
+const styles = StyleSheet.create({
+  originalPrice: {
+    fontSize: 10,
+    color: semanticColors.text.disabled,
+    textDecorationLine: 'line-through',
+  },
+  discountText: {
+    fontSize: 10,
+  },
+});

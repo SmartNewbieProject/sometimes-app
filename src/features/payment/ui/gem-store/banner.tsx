@@ -1,5 +1,5 @@
 import {ImageResources} from "@shared/libs/image";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import {ImageResource, Text } from "@shared/ui";
 import {Dimensions, Pressable, StyleSheet, View} from "react-native";
 import { router } from 'expo-router';

@@ -7,6 +7,7 @@ import {
   Image,
   Linking,
   ScrollView,
+  StyleSheet,
 } from "react-native";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import VectorIcon from "@/assets/icons/Vector.svg";
@@ -22,29 +23,29 @@ export default function CommuHome() {
   const { changeCategory } = useCategory();
 
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <PalePurpleGradient />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
       >
-        <View className="px-4 pt-3">
+        <View style={styles.noticeSection}>
           <TouchableOpacity
-            className="flex-row items-center"
+            style={styles.noticeRow}
             onPress={() => changeCategory(NOTICE_CODE)}
             accessibilityRole="button"
           >
             <Image
               source={require("@/assets/images/loudspeaker.png")}
-              style={{ width: 26, height: 26 }}
+              style={styles.largeIcon}
             />
-            <Text className="text-[24px] font-semibold mt-2 mx-2">
+            <Text style={styles.noticeTitle}>
               공지사항
             </Text>
-            <View className="ml-auto">
+            <View style={styles.mlAuto}>
               <IconWrapper>
-                <VectorIcon className="h-[24px] w-[9px] mx-2" color="black" />
+                <VectorIcon style={styles.largeVector} color="black" />
               </IconWrapper>
             </View>
           </TouchableOpacity>
@@ -56,49 +57,126 @@ export default function CommuHome() {
               "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
             )
           }
-          className="bg-surface-background rounded-[5px] mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+          style={styles.faqButton}
           activeOpacity={0.8}
         >
           <Image
             source={require("@/assets/images/loudspeaker.png")}
-            style={{ width: 16, height: 16 }}
+            style={styles.smallIcon}
           />
-          <Text className="text-[14px]">[FAQ] 자주묻는 질문</Text>
+          <Text style={styles.faqText}>[FAQ] 자주묻는 질문</Text>
 
-          <View className="ml-auto">
+          <View style={styles.mlAuto}>
             <IconWrapper>
-              <VectorIcon className="h-[12px] w-[9px]" color="black" />
+              <VectorIcon style={styles.smallVector} color="black" />
             </IconWrapper>
           </View>
         </TouchableOpacity>
 
-        <View className="mx-[16px] mb-[16px]">
+        <View style={styles.noticePreview}>
           <NotiPreView pageSize={5} />
         </View>
 
-        <View className="px-4 py-3">
+        <View style={styles.hotSection}>
           <TouchableOpacity
-            className="flex-row items-center"
+            style={styles.hotRow}
             onPress={() => changeCategory(HOT_CODE)}
             accessibilityRole="button"
           >
             <Image
               source={require("@/assets/images/fireIcon.png")}
-              style={{ width: 26, height: 26 }}
+              style={styles.largeIcon}
             />
-            <Text className="text-[24px] font-semibold mt-2 mx-2">인기</Text>
-            <View className="ml-auto">
+            <Text style={styles.hotTitle}>인기</Text>
+            <View style={styles.mlAuto}>
               <IconWrapper>
-                <VectorIcon className="h-[24px] w-[9px] mx-2" color="black" />
+                <VectorIcon style={styles.largeVector} color="black" />
               </IconWrapper>
             </View>
           </TouchableOpacity>
         </View>
 
-        <View className="mx-[2px] mb-[2px]">
+        <View style={styles.hotPreview}>
           <HotPreView pageSize={5} />
         </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  noticeSection: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  noticeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  largeIcon: {
+    width: 26,
+    height: 26,
+  },
+  noticeTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginTop: 8,
+    marginHorizontal: 8,
+  },
+  mlAuto: {
+    marginLeft: "auto",
+  },
+  largeVector: {
+    height: 24,
+    width: 9,
+    marginHorizontal: 8,
+  },
+  faqButton: {
+    backgroundColor: "rgb(249 250 251)",
+    borderRadius: 5,
+    marginHorizontal: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginTop: 10,
+    marginBottom: 10,
+    gap: 8,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  smallIcon: {
+    width: 16,
+    height: 16,
+  },
+  faqText: {
+    fontSize: 14,
+  },
+  smallVector: {
+    height: 12,
+    width: 9,
+  },
+  noticePreview: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  hotSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  hotRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  hotTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginTop: 8,
+    marginHorizontal: 8,
+  },
+  hotPreview: {
+    marginHorizontal: 2,
+    marginBottom: 2,
+  },
+});

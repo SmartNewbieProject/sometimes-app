@@ -1,5 +1,5 @@
 import DownArrowIcon from "@assets/images/promotion/banner/down-arrow.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import LetterIcon from "@assets/images/promotion/banner/letter.svg";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";

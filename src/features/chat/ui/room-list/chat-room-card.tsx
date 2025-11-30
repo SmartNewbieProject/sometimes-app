@@ -1,5 +1,5 @@
 import { dayUtils } from "@/src/shared/libs";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 import LockChatIcon from "@assets/icons/lock-chat.svg";
 import { useRouter } from "expo-router";
 import React, { useRef } from "react";

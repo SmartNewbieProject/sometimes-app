@@ -1,12 +1,12 @@
 import React from "react";
 import { View, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator } from "react-native";
 import { GuideSection } from "./ui/guide-section";
-import { QuestionCard } from "./ui/question-card/index";
 import { RecentMoment } from "./ui/recent-moment";
 import { HistorySection } from "./ui/history-section";
 import colors from "@/src/shared/constants/colors";
 import { useDailyQuestionQuery, useProgressStatusQuery } from "../../queries";
 import type { UserProgressStatus } from "../../apis";
+import { QuestionCard } from "./ui";
 
 const { width } = Dimensions.get("window");
 
@@ -46,7 +46,7 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primaryPurple} />
+          <ActivityIndicator size="large" color="#7A4AE2" />
         </View>
       </View>
     );
@@ -93,11 +93,11 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
         />
         <GuideSection />
         <QuestionCard
-            responded={questionCardState.responded}
-            blocked={questionCardState.blocked}
-            blockedReason={questionCardState.blockedReason}
-            blockedMessage={questionCardState.blockedMessage}
-          />
+          responded={questionCardState.responded}
+          blocked={questionCardState.blocked}
+          blockedReason={questionCardState.blockedReason}
+          blockedMessage={questionCardState.blockedMessage}
+        />
         <RecentMoment />
         <HistorySection />
       </ScrollView>

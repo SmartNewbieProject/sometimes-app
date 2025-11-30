@@ -1,6 +1,6 @@
 import type React from "react";
 import type { ReactNode } from "react";
-import { Platform, Pressable, StyleSheet, View, ViewStyle } from "react-native";
+import { Platform, Pressable, StyleSheet, ViewStyle } from "react-native";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { Text } from "../text";
 
@@ -21,35 +21,39 @@ const createButtonStyles = (props: ButtonStyleProps) => {
     rounded = "lg"
   } = props;
 
-  const baseStyle: ViewStyle = {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+  const baseStyle = {
+    borderRadius: 20,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     paddingVertical: 8,
     paddingHorizontal: 24,
     gap: 6,
-    borderRadius: rounded === "full" ? 999 : rounded === "md" ? 8 : 12,
-    transitionDuration: "200ms",
   };
 
-  // Size styles
   const sizeStyles = {
-    md: { minHeight: 50 },
-    sm: { minHeight: 40 },
-    lg: { minHeight: 60 },
+    md: {
+      height: 50,
+    },
+    sm: {
+      height: 40,
+    },
+    lg: {
+      height: 60,
+    },
     chip: {
-      minHeight: Platform.OS === "web" ? 28 : 34,
+      height: Platform.OS === "web" ? 28 : 34,
       paddingHorizontal: 8,
     }
   };
 
-  // Variant styles
+  // Variant styles - semanticColors 사용
   const variantStyles = {
     primary: {
       backgroundColor: semanticColors.brand.primary,
     },
     secondary: {
-      backgroundColor: semanticColors.brand.secondary,
+      backgroundColor: semanticColors.surface.tertiary,
     },
     outline: {
       backgroundColor: "transparent",
@@ -63,13 +67,11 @@ const createButtonStyles = (props: ButtonStyleProps) => {
     },
   };
 
-  // Width styles
   const widthStyles = {
     full: { width: "100%" },
     fit: { width: "auto" },
   };
 
-  // Flex styles
   const flexStyles = {
     "flex-1": { flex: 1 },
     "flex-0": { flex: 0 },

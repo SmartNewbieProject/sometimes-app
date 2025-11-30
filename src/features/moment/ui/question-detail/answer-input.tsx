@@ -189,7 +189,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
           textColor={isValid && !isSending ? "white" : "gray"}
           styles={{
             backgroundColor: isValid && !isSending ? colors.brand.primary : colors.cardPurple,
-            shadowColor: isValid && !isSending ? colors.lightPurple : 'transparent',
+            shadowColor: isValid && !isSending ? "#E2D5FF" : 'transparent',
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: isValid && !isSending ? 0.5 : 0,
             shadowRadius: 8,

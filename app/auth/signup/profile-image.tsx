@@ -1,7 +1,7 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
 
-import { type SignupForm, SignupSteps } from "@/src/features/signup/hooks";
+import { type SignupForm, SignupSteps } from "@/src/features/signup/hooks/use-signup-progress";
 
 import {
   GuideView,
@@ -45,14 +45,14 @@ function ProfilePage() {
  
 
   return (
-    <DefaultLayout className="flex-1 relative">
+    <DefaultLayout style={styles.flexContainer}>
       <GuideView>
-        <View className="px-5 ">
+        <View style={styles.headerContainer}>
           <Image
             source={require("@assets/images/profile-image.png")}
-            style={{ width: 81, height: 81 }}
+            style={styles.profileIcon}
           />
-          <Text weight="semibold" size="20" textColor="black" className="mt-2">
+          <Text weight="semibold" size="20" textColor="black" style={styles.titleWithMargin}>
             프로필 사진이 없으면 매칭이 안 돼요!
           </Text>
           <Text weight="semibold" size="20" textColor="black">
@@ -60,7 +60,7 @@ function ProfilePage() {
           </Text>
         </View>
 
-        <View className="flex flex-col pb-[18px] pt-4 px-5">
+        <View style={styles.guideContainer}>
           <Text weight="medium" size="sm" textColor="pale-purple">
             매칭을 위해 3장의 프로필 사진을 필수로 올려주세요
           </Text>
@@ -69,8 +69,8 @@ function ProfilePage() {
           </Text>
         </View>
 
-        <View className="flex-row justify-center   w-full gap-[16px]">
-          <View className="flex  justify-center items-center">
+        <View style={styles.imageSelectorContainer}>
+          <View style={styles.largeImageContainer}>
             <ImageSelector
               size="lg"
               value={getImaages(0)}
@@ -80,7 +80,7 @@ function ProfilePage() {
             />
           </View>
 
-          <View className="flex flex-col justify-center gap-y-[12px]">
+          <View style={styles.smallImagesContainer}>
             <ImageSelector
               size="sm"
               value={getImaages(1)}
@@ -139,7 +139,7 @@ function ProfilePage() {
         )}
       </GuideView>
 
-      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+      <View style={[styles.bottomContainer, styles.fullWidth]}>
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={onNext}
@@ -154,6 +154,42 @@ function ProfilePage() {
 export default withSignupValidation(ProfilePage, SignupSteps.PROFILE_IMAGE);
 
 const styles = StyleSheet.create({
+  flexContainer: {
+    flex: 1,
+    position: "relative",
+  },
+  headerContainer: {
+    paddingHorizontal: 20,
+  },
+  profileIcon: {
+    width: 81,
+    height: 81,
+  },
+  titleWithMargin: {
+    marginTop: 8,
+  },
+  guideContainer: {
+    flexDirection: "column",
+    paddingBottom: 18,
+    paddingTop: 16,
+    paddingHorizontal: 20,
+  },
+  imageSelectorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
+    gap: 16,
+  },
+  largeImageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  smallImagesContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: 12,
+  },
   infoOverlayWrapper: {
     bottom: 200,
     position: "absolute",
@@ -214,5 +250,8 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingHorizontal: 0,
     backgroundColor: semanticColors.surface.background,
+  },
+  fullWidth: {
+    width: "100%",
   },
 });

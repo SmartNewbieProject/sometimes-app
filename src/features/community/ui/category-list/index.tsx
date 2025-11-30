@@ -9,9 +9,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ScrollView, View, type LayoutChangeEvent } from "react-native";
+import { ScrollView, View, type LayoutChangeEvent, StyleSheet } from "react-native";
 import { useCategory } from "../../hooks";
 import { NOTICE_CODE } from "@/src/features/community/queries/use-home";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/colors";
 
 type LayoutMap = Record<string, { x: number; width: number }>;
 
@@ -20,6 +22,44 @@ const HOME_CODE = "__home__";
 function hasEmojiUrl(c: unknown): c is { emojiUrl: string } {
   return !!c && typeof (c as any).emojiUrl === "string";
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    paddingHorizontal: 16,
+    backgroundColor: semanticColors.surface.background,
+    overflow: 'hidden',
+  },
+  categoriesContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    gap: 10,
+    marginBottom: 8,
+  },
+  categoryButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 20,
+    borderWidth: 0,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activeCategoryButton: {
+    backgroundColor: colors.primaryPurple,
+  },
+  inactiveCategoryButton: {
+    backgroundColor: semanticColors.surface.secondary,
+  },
+  homeIcon: {
+    width: 32,
+    height: 32,
+  },
+  emojiIcon: {
+    width: 32,
+    height: 32,
+  },
+});
 
 export const CategoryList = () => {
   const { categories, changeCategory, currentCategory, isLoading } =
@@ -90,7 +130,7 @@ export const CategoryList = () => {
 
   return (
     <View
-      className="w-full px-[16px] bg-surface-background overflow-hidden"
+      style={styles.container}
       onLayout={onContainerLayout}
     >
       <ScrollView
@@ -100,10 +140,9 @@ export const CategoryList = () => {
         scrollEventThrottle={16}
       >
         <Loading.Lottie title="카테고리를 불러오고 있어요" loading={isLoading}>
-          <View className="flex flex-row w-full gap-x-[10px] mb-2">
+          <View style={styles.categoriesContainer}>
             {renderCategories.map((category) => {
               const isActive = currentCategory === category.code;
-              const bgClass = isActive ? "bg-brand-primary" : "bg-surface-secondary";
 
               return (
                 <View
@@ -112,23 +151,26 @@ export const CategoryList = () => {
                 >
                   <Button
                     size="sm"
-                    variant="white"
+                    variant={isActive ? "primary" : "white"}
                     textColor={isActive ? "white" : "dark"}
                     onPress={() => {
                       changeCategory(category.code);
                       ensureVisible(category.code, true);
                     }}
-                    className={`px-[12px] py-[8px] rounded-full border-0 ${bgClass}`}
+                    styles={[
+                      styles.categoryButton,
+                      isActive ? styles.activeCategoryButton : styles.inactiveCategoryButton
+                    ]}
                     prefix={
                       category.code === HOME_CODE ? (
                         <Image
                           source={require("@/assets/images/home.png")}
-                          style={{ width: 32, height: 32 }}
+                          style={styles.homeIcon}
                         />
                       ) : hasEmojiUrl(category) ? (
                         <Image
                           source={{ uri: (category as any).emojiUrl }}
-                          style={{ width: 32, height: 32 }}
+                          style={styles.emojiIcon}
                         />
                       ) : undefined
                     }
