@@ -11,6 +11,7 @@ import { usePortoneStore } from "./use-portone-store";
 import {queryClient} from "@shared/config/query";
 import { useEventControl } from "@/src/features/event/hooks";
 import { EventType } from "@/src/features/event/types";
+import { usePaymentEvents } from "@/src/shared/hooks/use-amplitude";
 
 interface UsePortone {
   handlePaymentComplete: (
@@ -34,7 +35,8 @@ export function usePortone(): UsePortone {
   const { showModal, showErrorModal, hideModal } = useModal();
   const { gemCount, eventType, clearEventType } = usePortoneStore();
   const { paymentEvents } = useKpiAnalytics();
-  
+  const { trackPaymentSuccess } = usePaymentEvents();
+
   const { participate: participateFirstSale7 } = useEventControl({ type: EventType.FIRST_SALE_7 });
   const { participate: participateFirstSale16 } = useEventControl({ type: EventType.FIRST_SALE_16 });
   const { participate: participateFirstSale27 } = useEventControl({ type: EventType.FIRST_SALE_27 });
