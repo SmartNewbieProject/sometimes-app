@@ -75,12 +75,12 @@ export const ChangeProfileImageModal = ({
       <View style={styles.infoContainer}>
         <View style={styles.infoOverlayWrapper}>
           <RNText style={styles.infoTitle}>
-            이목구비가 잘 보이는 사진 필수에요
+            {t("apps.auth.sign_up.profile_image.info_title")}
           </RNText>
           <RNText style={styles.infoDescription}>
-            눈, 코, 입이 잘 보이는 사진이라면
+            {t("apps.auth.sign_up.profile_image.info_desc_1")}
           </RNText>
-          <RNText style={styles.infoDescription}>어떤 각도든 좋아요</RNText>
+          <RNText style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
           <Image
             source={require("@assets/images/instagram-some.png")}
             style={{
@@ -240,19 +240,19 @@ export const ChangeProfileImageModal = ({
                 textColor="black"
                 className="mt-2"
               >
-                {t("features.mypage.profile_image_no_match")}
+                {t("apps.auth.sign_up.profile_image.main_title_1")}
               </Text>
               <Text weight="semibold" size="20" textColor="black">
-                {t("features.mypage.profile_image_add_now")}
+                {t("apps.auth.sign_up.profile_image.main_title_2")}
               </Text>
             </View>
 
             <View style={styles.descriptioncontianer}>
               <Text weight="medium" size="sm" textColor="pale-purple">
-                {t("features.mypage.profile_image_required_one")}
+                {t("apps.auth.sign_up.profile_image.guide_1")}
               </Text>
               <Text weight="medium" size="sm" textColor="pale-purple">
-                {t("features.mypage.profile_image_face_visible")}
+                {t("apps.auth.sign_up.profile_image.guide_2")}
               </Text>
             </View>
 
@@ -261,7 +261,7 @@ export const ChangeProfileImageModal = ({
                 {images[0] ? (
                   <ImageSelector
                     size="lg"
-                    actionLabel={t("features.mypage.representative")}
+                    actionLabel={t("features.mypage.image-modal.main")}
                     value={images[0]}
                     onChange={(value) => {
                       handleImageChange(0, value);
@@ -270,7 +270,7 @@ export const ChangeProfileImageModal = ({
                 ) : (
                   <ImageSelector
                     size="lg"
-                    actionLabel={t("features.mypage.representative")}
+                    actionLabel={t("features.mypage.image-modal.main")}
                     value={undefined}
                     onChange={(value) => {
                       handleImageChange(0, value);
@@ -327,12 +327,12 @@ export const ChangeProfileImageModal = ({
               ]}
             >
               <RNText style={styles.infoTitle}>
-                {t("features.mypage.eyes_nose_mouth_required")}
+                {t("apps.auth.sign_up.profile_image.info_title")}
               </RNText>
               <RNText style={styles.infoDescription}>
-                {t("features.mypage.eyes_nose_mouth_any_angle")}
+                {t("apps.auth.sign_up.profile_image.info_desc_1")}
               </RNText>
-              <RNText style={styles.infoDescription}>{t("features.mypage.any_angle_ok")}</RNText>
+              <RNText style={styles.infoDescription}> {t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
               <Image
                 source={require("@assets/images/instagram-some.png")}
                 style={{
@@ -361,7 +361,7 @@ export const ChangeProfileImageModal = ({
           <Layout.TwoButtons
             disabledNext={isSubmitting}
             content={{
-              next: isSubmitting ? t("features.mypage.saving") : t("features.mypage.save"),
+              next: isSubmitting ? t("features.mypage.image-modal.saving") : t("features.mypage.image-modal.save"),
             }}
             onClickNext={handleSubmit}
             onClickPrevious={onCloseModal}

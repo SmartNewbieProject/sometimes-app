@@ -17,6 +17,9 @@
     "tips_3" : "본인의 사진이 아닌 경우에는 매칭이 제한됩니다.",
     "take_photo": "📷 사진 찍기",
     "choose_from_library": "🖼 사진 선택하기",
-    "close": "닫기"
+    "close": "닫기",
+    "saving": "저장 중..",
+    "save": "저장하기",
+    "main": "대표"
   }
 }
