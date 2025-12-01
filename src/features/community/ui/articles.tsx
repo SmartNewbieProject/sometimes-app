@@ -47,7 +47,7 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
 
   return (
     <View className="flex-1">
-      <View className="h-[1px] bg-[#F3F0FF]" />
+      <View className="h-[1px] bg-surface-other" />
       <TouchableOpacity className="bg-lightPurple/20 px-4 py-2 mt-2 flex-row items-center">
         <Image
           source={require('@/assets/images/fireIcon.png')}
@@ -60,7 +60,7 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
           </IconWrapper>
         </TouchableOpacity>
       </TouchableOpacity>
-      <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+      <View className="h-[1px] bg-surface-other mb-2" />
 
       <FlatList
         data={articles}
@@ -74,7 +74,7 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
         )}
         keyExtractor={(item) => item.id.toString()}
         className="flex-1 scrolling"
-        ItemSeparatorComponent={() => <View className="h-[1px] bg-[#F3F0FF]" />}
+        ItemSeparatorComponent={() => <View className="h-[1px] bg-surface-other" />}
         ListFooterComponent={renderFooter}
         {...scrollProps}
         onEndReached={infiniteScroll ? (info) => {

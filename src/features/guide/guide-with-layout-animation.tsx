@@ -1,5 +1,6 @@
 
 import { Image } from "expo-image";
+import { semanticColors } from '../../shared/constants/colors';
 import type React from "react";
 import {
   Modal,
@@ -30,7 +31,7 @@ function GuideWithLayoutAnimation({
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <View className="flex-1 bg-black/50 justify-center items-center px-5 relative">
+      <View className="flex-1 bg-surface-inverse/50 justify-center items-center px-5 relative">
         <View style={styles.infoWrapper}>
           <Text style={styles.infoTitle}>프로필을 매력적으로 보여주세요!</Text>
           <Text style={styles.infoDescription}>
@@ -66,7 +67,7 @@ function GuideWithLayoutAnimation({
 
 const styles = StyleSheet.create({
   infoTitle: {
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: 600,
     fontFamily: "semibold",
     lineHeight: 16.8,
@@ -86,9 +87,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
 
     shadowColor: "#F2ECFF",
     shadowOffset: {

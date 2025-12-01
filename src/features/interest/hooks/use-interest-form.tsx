@@ -7,7 +7,7 @@ type StoreStates = {
   drinking?: PreferenceOption;
   goodMbti?: string | null;
   badMbti?: string | null;
-  personality?: string[];
+  personality: string[];
   // interestIds: string[];
   // datingStyleIds: string[];
   militaryPreference?: PreferenceOption;
@@ -29,6 +29,7 @@ export const useInterestForm = create<StoreProps>((set) => ({
   goodMbti: null,
   badMbti: null,
   init: false,
+  personality: [],
   updateForm: (propertyName, data) => set({ [propertyName]: data }),
   clear: () =>
     set({
@@ -38,7 +39,7 @@ export const useInterestForm = create<StoreProps>((set) => ({
       init: false,
       smoking: undefined,
       goodMbti: null,
-      personality: undefined,
+      personality: [],
       badMbti: null,
     }),
 }));

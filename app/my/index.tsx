@@ -4,6 +4,7 @@ import {
   MyActivityMenu,
   Notice,
   Profile,
+  NotificationMenu,
 } from "@/src/features/mypage/ui";
 import {
   BottomNavigation,
@@ -11,6 +12,7 @@ import {
   Header,
   PalePurpleGradient,
   Text,
+  HeaderWithNotification,
 } from "@/src/shared/ui";
 import SettingIcon from "@assets/icons/setting.svg";
 import { Image } from "expo-image";
@@ -23,31 +25,32 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { useProfileReviewRedirect } from "@/src/features/mypage/hooks/use-img-edit-status";
 
 export default function MyScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  useProfileReviewRedirect();
+
   return (
     <Layout.Default
       style={{
         backgroundColor: "#fff",
       }}
     >
-      <Header.Container className="items-center ">
-        <Header.LeftContent>
-          <Header.LeftButton visible={false} />
-        </Header.LeftContent>
-        <Header.CenterContent>
+      <HeaderWithNotification
+        centerContent={
           <Image
             source={require("@assets/images/MY_LOGO.png")}
             style={{ width: 40, height: 20 }}
             contentFit="contain"
           />
-        </Header.CenterContent>
-
-        <Header.RightContent>
+        }
+        showBackButton={false}
+        rightContent={
           <TouchableOpacity>
             <View style={styles.iconContainer}>
               <Pressable onPress={() => router.navigate("/setting")}>
@@ -55,8 +58,9 @@ export default function MyScreen() {
               </Pressable>
             </View>
           </TouchableOpacity>
-        </Header.RightContent>
-      </Header.Container>
+        }
+        style={{ marginTop: 9 }}
+      />
 
       <ScrollView style={styles.scrollViewContainer}>
         <View style={styles.profileContainer}>
@@ -65,7 +69,8 @@ export default function MyScreen() {
 
         <View style={styles.menuContainer}>
           <MatchingMenu />
-          {/* <MyActivityMenu /> */}
+          <NotificationMenu />
+          <MyActivityMenu />
         </View>
       </ScrollView>
 
@@ -83,7 +88,7 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     paddingTop: 0,
-    paddingBottom: 16,
+    paddingBottom: 35,
   },
   iconPlace: {
     width: 40,

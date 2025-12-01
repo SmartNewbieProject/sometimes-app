@@ -1,8 +1,11 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import Signup from "@/src/features/signup";
+import { SignupSteps } from "@/src/features/signup/hooks";
+import useUniversityDetails from "@/src/features/signup/hooks/use-university-details";
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
-
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 
 import { tryCatch } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui/text";
@@ -10,7 +13,7 @@ import { Form } from "@/src/widgets";
 import { track } from "@amplitude/analytics-react-native";
 import Loading from "@features/loading";
 import { Image } from "expo-image";
-import { router, useGlobalSearchParams } from "expo-router";
+import { router, useGlobalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -22,105 +25,39 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const {
-  SignupSteps,
-  useChangePhase,
-  useSignupProgress,
-  queries,
-  apis,
-  useSignupAnalytics,
-} = Signup;
-const { useDepartmentQuery } = queries;
-
-export default function UniversityDetailsPage() {
-  const { updateForm, form } = useSignupProgress();
-  const { universityName } = useGlobalSearchParams<{
-    universityName: string;
-  }>();
-  const insets = useSafeAreaInsets();
+function UniversityDetailsPage() {
+  const { onBackPress, onNext, signupLoading, nextable } =
+    useUniversityDetails();
+  const router = useRouter();
   const { t } = useTranslation();
-  const [signupLoading, setSignupLoading] = useState(false);
-
-  const { data: departments = [], isLoading } = useDepartmentQuery(
-    universityName ?? form.universityName
-  );
-
-  useChangePhase(SignupSteps.UNIVERSITY_DETAIL);
-
-  // 애널리틱스 추적 설정
-  const { trackSignupEvent } = useSignupAnalytics("university_details");
-
-  const onNext = async () => {
-    const rawNumber = form.studentNumber ?? "";
-
-    if (/^([0][1-9]|1[0-9]|2[0-5])$/.test(rawNumber)) {
-      updateForm({ studentNumber: `${rawNumber}학번` });
-    }
-
-    trackSignupEvent("next_button_click", "to_done");
-    track("Singup_university_details", {
-      grade: form.grade,
-      department: form.departmentName,
-      studentNumber: `${form.studentNumber}`,
-      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-    });
-
-    setSignupLoading(true);
-    await tryCatch(async () => {
-      setSignupLoading(false);
-      trackSignupEvent("next_button_click", "to_instagram_id");
-      router.push("/auth/signup/instagram");
-    });
-  };
-
-  const validateUniversityForm = (): boolean => {
-    const isValidGrade = !!form.grade;
-    const isValidDepartment = departments.includes(
-      form?.departmentName ?? "없음"
-    );
-    const studentNumber = form.studentNumber ?? "";
-
-    const isValidStudentNumber =
-      /^([0][1-9]|1[0-9]|2[0-5])학번$/.test(studentNumber) ||
-      /^([0][1-9]|1[0-9]|2[0-5])$/.test(studentNumber);
-
-    return isValidGrade && isValidDepartment && isValidStudentNumber;
-  };
-  const nextable = validateUniversityForm();
-
-  const nextButtonMessage = (() => {
-    if (!validateUniversityForm()) {
-      return t("apps.auth.sign_up.university_detail.next_button_incomplete");
-    }
-    return t("apps.auth.reapply.button_next");
-  })();
-
-  if (signupLoading) {
-    return <Loading.Page title={t("apps.auth.sign_up.university_detail.next_button_wait")} />;
-  }
-
   useEffect(() => {
-    const onBackPress = () => {
-      updateForm({
-        departmentName: undefined,
-        grade: undefined,
-        studentNumber: undefined,
-      });
-      router.navigate("/auth/signup/university");
-      return true;
-    };
-
     // 이벤트 리스너 등록
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      onBackPress
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () =>
+      onBackPress(() => {
+        router.navigate("/auth/signup/university");
+      })
     );
 
     // 컴포넌트 언마운트 시 리스너 제거
     return () => subscription.remove();
   }, []);
+
+  const handleBackPress = () => {
+    onBackPress(() => {
+      router.navigate("/auth/signup/university");
+    });
+  };
+
+  const handleNext = () => {
+    onNext(() => {
+      router.push("/auth/signup/instagram");
+    });
+  };
+
+  if (signupLoading) {
+    return <Loading.Page title={t("apps.auth.sign_up.university_detail.next_button_wait")} />;
+  }
 
   return (
     <DefaultLayout>
@@ -136,7 +73,6 @@ export default function UniversityDetailsPage() {
       >
         <Pressable
           onPress={(e) => {
-            console.log("click");
             if (Platform.OS !== "web") {
               Keyboard.dismiss();
             }
@@ -169,20 +105,18 @@ export default function UniversityDetailsPage() {
       <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
         <TwoButtons
           disabledNext={!nextable}
-          onClickNext={onNext}
-          onClickPrevious={() => {
-            router.navigate("/auth/signup/university");
-            updateForm({
-              departmentName: undefined,
-              grade: undefined,
-              studentNumber: undefined,
-            });
-          }}
+          onClickNext={handleNext}
+          onClickPrevious={handleBackPress}
         />
       </View>
     </DefaultLayout>
   );
 }
+
+export default withSignupValidation(
+  UniversityDetailsPage,
+  SignupSteps.UNIVERSITY_DETAIL
+);
 
 const styles = StyleSheet.create({
   title: {
@@ -190,7 +124,7 @@ const styles = StyleSheet.create({
     fontFamily: "semibold",
     fontSize: 18,
     lineHeight: 22,
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
   },
   contentWrapper: {
     gap: 15,
@@ -202,7 +136,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   tipConatainer: {
     flexDirection: "row",

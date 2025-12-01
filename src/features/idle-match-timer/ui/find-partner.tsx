@@ -1,4 +1,5 @@
 import React from "react";
+import { semanticColors } from '../../../shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
   card: {
     width: 340,
     height: 300,
-    backgroundColor: "#F5F1FE",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 24,
     overflow: "hidden",
     justifyContent: "center",
@@ -30,14 +31,14 @@ const styles = StyleSheet.create({
     top: 0,
     height: "100%",
     width: 100,
-    backgroundColor: "#8638E5",
+    backgroundColor: semanticColors.brand.primary,
     borderTopLeftRadius: 100,
     borderBottomLeftRadius: 100,
     justifyContent: "center",
     alignItems: "center",
   },
   seeMoreText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontFamily: "bold",
     fontWeight: 700,
     fontSize: 16,

@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { GemStoreWidget } from '@/src/widgets/gem-store';
-import { useGemProducts } from '../../hooks';
-import { Text } from '@/src/shared/ui';
+import { Text } from "@/src/shared/ui";
+import { GemStoreWidget } from "@/src/widgets/gem-store";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { useGemProducts } from "../../hooks";
 import { useTranslation } from 'react-i18next';
 
 type GemProductListProps = {
@@ -13,7 +13,11 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
   const { data: gemProductsResponse, isLoading, error } = useGemProducts();
   const { t } = useTranslation();
 
-  const handlePurchase = (metadata: { totalPrice: number; gemProduct: any }) => {
+  const handlePurchase = (metadata: {
+    totalPrice: number;
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    gemProduct: any;
+  }) => {
     onPurchase?.(metadata.gemProduct.id, metadata.totalPrice);
   };
 
@@ -60,14 +64,14 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
 });

@@ -1,24 +1,26 @@
+import Feather from "@expo/vector-icons/Feather";
+import { semanticColors } from '../../src/shared/constants/colors';
+import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState, useRef, useEffect } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
   ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  Dimensions,
-  ActivityIndicator,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-import { router, useLocalSearchParams } from "expo-router";
-import Feather from "@expo/vector-icons/Feather";
-import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
 
-import { Header } from "@shared/ui";
 import { useReport } from "@/src/features/ban-report/hooks/useReport";
+import useLeaveChatRoom from "@/src/features/chat/queries/use-leave-chat-room";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { Header } from "@shared/ui";
 
 const { width } = Dimensions.get("window");
 
@@ -30,12 +32,14 @@ export default function ReportScreen() {
     partnerAge,
     partnerUniv,
     partnerProfileImage,
+    chatRoomId,
   } = useLocalSearchParams<{
     partnerId?: string;
     partnerName?: string;
     partnerAge?: string;
     partnerUniv?: string;
     partnerProfileImage?: string;
+    chatRoomId?: string;
   }>();
   const { mutate, isLoading, isError, error } = useReport();
   const { showModal, hideModal } = useModal();
@@ -51,6 +55,8 @@ export default function ReportScreen() {
   const [selectedImageUris, setSelectedImageUris] = useState<string[]>([]);
   const [selectedImageFiles, setSelectedImageFiles] = useState<any[]>([]);
   const isSubmitButtonEnabled = selectedReasons.length > 0 && !isLoading;
+
+  const chatLeaveMutate = useLeaveChatRoom();
 
   const reportReasons = [
     {
@@ -114,15 +120,43 @@ export default function ReportScreen() {
       });
       return;
     }
-
-    mutate({
-      userId: partnerId,
-      reason: selectedReasons
-        .map((id) => reportReasons.find((r) => r.id === id)?.text || "")
-        .join(", "),
-      description: detailedContent.trim() === "" ? undefined : detailedContent,
-      evidenceImages: selectedImageFiles,
-    });
+    if (chatRoomId) {
+      mutate(
+        {
+          userId: partnerId,
+          reason: selectedReasons
+            .map((id) => reportReasons.find((r) => r.id === id)?.text || "")
+            .join(", "),
+          description:
+            detailedContent.trim() === "" ? undefined : detailedContent,
+          evidenceImages: selectedImageFiles,
+        },
+        {
+          onSuccess: () => {
+            if (chatRoomId) {
+              chatLeaveMutate.mutateAsync(
+                { chatRoomId: chatRoomId },
+                {
+                  onSuccess: () => {
+                    router.navigate("/chat");
+                  },
+                }
+              );
+            }
+          },
+        }
+      );
+    } else {
+      mutate({
+        userId: partnerId,
+        reason: selectedReasons
+          .map((id) => reportReasons.find((r) => r.id === id)?.text || "")
+          .join(", "),
+        description:
+          detailedContent.trim() === "" ? undefined : detailedContent,
+        evidenceImages: selectedImageFiles,
+      });
+    }
   };
 
   const handleAttachEvidence = async () => {
@@ -221,7 +255,7 @@ export default function ReportScreen() {
     if (partnerId) {
       setProfile({
         name: partnerName || t("apps.partner.profile_unknown_name"),
-        age: partnerAge ? parseInt(partnerAge, 10) : 0,
+        age: partnerAge ? Number.parseInt(partnerAge, 10) : 0,
         university: partnerUniv || t("apps.partner.profile_unknown_univ"),
         profileImage:
           partnerProfileImage ||
@@ -257,12 +291,9 @@ export default function ReportScreen() {
             style={styles.profileImage}
           />
           <View style={styles.profileTextContainer}>
-            <View style={styles.profileNameAge}>
-              <Text style={styles.profileName}>{profile.name}</Text>
-              <Text style={styles.profileAge}>
+            <Text style={styles.profileAge}>
                 {t("apps.partner.profile_age", { age: profile.age })}
               </Text>
-            </View>
             <Text style={styles.profileUniversity}>{profile.university}</Text>
           </View>
         </View>
@@ -394,7 +425,7 @@ export default function ReportScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
   },
   customHeader: {
     flexDirection: "row",
@@ -402,7 +433,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     height: 56,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     borderBottomWidth: 1,
     borderBottomColor: "#E7E9EC",
   },
@@ -423,7 +454,7 @@ const styles = StyleSheet.create({
   headerTitleText: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   headerRightPlaceholder: {
     width: 24 + 16,
@@ -448,20 +479,11 @@ const styles = StyleSheet.create({
   profileTextContainer: {
     flex: 1,
   },
-  profileNameAge: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 4,
-  },
-  profileName: {
+  profileAge: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
-    marginRight: 5,
-  },
-  profileAge: {
-    fontSize: 14,
-    color: "#888",
+    color: semanticColors.text.secondary,
+    marginBottom: 4,
   },
   profileUniversity: {
     fontSize: 14,
@@ -474,7 +496,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "400",
-    color: "#333",
+    color: semanticColors.text.secondary,
     marginBottom: 15,
   },
   reasonsList: {
@@ -487,22 +509,22 @@ const styles = StyleSheet.create({
     height: 62,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.background,
     paddingLeft: 16,
     paddingRight: 10,
   },
   reasonButtonSelected: {
     borderWidth: 2,
-    borderColor: "#9747FF",
-    backgroundColor: "#F7F3FF",
+    borderColor: semanticColors.brand.secondary,
+    backgroundColor: semanticColors.surface.background,
   },
   radioCircle: {
     height: 20,
     width: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: "#D1D5DB",
+    borderColor: semanticColors.border.default,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
@@ -511,14 +533,14 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
   },
   reasonTextContent: {
     flex: 1,
   },
   reasonText: {
     fontSize: 16,
-    color: "#333",
+    color: semanticColors.text.secondary,
     fontWeight: "500",
   },
   reasonSubText: {
@@ -531,12 +553,12 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: semanticColors.border.default,
     padding: 16,
     textAlignVertical: "top",
     fontSize: 15,
-    color: "#333",
-    backgroundColor: "#FFFFFF",
+    color: semanticColors.text.secondary,
+    backgroundColor: semanticColors.surface.background,
   },
   evidenceContainer: {
     flexDirection: "row",
@@ -546,8 +568,8 @@ const styles = StyleSheet.create({
     minHeight: 120,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#F9FAFB",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.background,
     padding: 10,
     justifyContent: "flex-start",
     alignItems: "flex-start",
@@ -575,7 +597,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: semanticColors.border.default,
   },
   previewImage: {
     width: "100%",
@@ -596,8 +618,8 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#F9FAFB",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.background,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -609,19 +631,19 @@ const styles = StyleSheet.create({
   },
   attachEvidenceText: {
     fontSize: 15,
-    color: "#9CA3AF",
+    color: semanticColors.text.disabled,
     marginBottom: 5,
   },
   attachFileButton: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#9747FF",
+    color: semanticColors.brand.secondary,
     textDecorationLine: "underline",
   },
   infoContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: "#F0F0F0",
+    backgroundColor: semanticColors.surface.secondary,
     borderRadius: 8,
     padding: 15,
     marginTop: 20,
@@ -631,13 +653,13 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#9CA3AF",
+    backgroundColor: semanticColors.text.disabled,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 10,
   },
   infoIconText: {
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
     fontSize: 14,
     fontWeight: "bold",
   },
@@ -646,13 +668,13 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 13,
-    color: "#6B7280",
+    color: semanticColors.text.muted,
     lineHeight: 18,
   },
   bottomButtonContainer: {
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     borderTopWidth: 1,
     borderTopColor: "#F2F2F2",
   },
@@ -660,16 +682,17 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 56,
     borderRadius: 8,
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
     justifyContent: "center",
     alignItems: "center",
   },
   submitButtonDisabled: {
-    backgroundColor: "#E2D9FF",
+    backgroundColor: semanticColors.surface.other,
   },
   submitButtonText: {
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
     fontSize: 18,
     fontWeight: "bold",
   },
 });
+

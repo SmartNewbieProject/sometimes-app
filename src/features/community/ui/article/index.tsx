@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import {
   ImageResources,
@@ -22,28 +23,41 @@ import type { Article as ArticleType } from "../../types";
 import { Comment } from "../comment";
 import { UserProfile } from "../user-profile";
 import Interaction from "./interaction-nav";
+import { useBlockUser } from "../../hooks/use-block-user";
+import { useModal } from "@/src/shared/hooks/use-modal";
 import { useTranslation } from "react-i18next";
 interface ArticleItemProps {
   data: ArticleType;
   onPress: () => void;
   onLike: () => void;
-  refresh: () => Promise<void>;
+  refresh: () => void;
   onDelete: (id: string) => void;
+  isPreviewOpen: boolean;
+  onTogglePreview: () => void;
 }
 
-export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
+export function Article({
+  data,
+  onPress,
+  onLike,
+  onDelete,
+  isPreviewOpen,
+  onTogglePreview,
+}: ArticleItemProps) {
   const { my } = useAuth();
   const { t } = useTranslation();
   const author = data?.author;
   const comments = data.comments;
   const university = author?.universityDetails;
   const universityName = university?.name as UniversityName;
-  const {
-    value: showComment,
-    toggle: toggleShowComment,
-    setFalse,
-  } = useBoolean();
-  const { value: isDropdownOpen, setFalse: closeDropdown } = useBoolean();
+  //   const {
+  //     value: showComment,
+  //     toggle: toggleShowComment,
+  //     setFalse,
+  //   } = useBoolean();
+  const { value: isDropdownOpen, setValue: setDropdownOpen } = useBoolean();
+  const { mutate: blockUser } = useBlockUser();
+  const { showModal } = useModal();
 
   const isOwner = (() => {
     if (!my) return false;
@@ -51,10 +65,39 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   })();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  const handleLike = useCallback((e: { stopPropagation: () => void }) => {
-    e.stopPropagation();
-    onLike();
-  }, []);
+  const handleLike = useCallback(
+    (e: { stopPropagation: () => void }) => {
+      e.stopPropagation();
+      onLike();
+    },
+    [onLike]
+  );
+
+  const handleBlockUser = () => {
+    showModal({
+      title: "사용자 차단",
+      children: (
+        <View>
+          <Text size="sm" textColor="black">
+            {`'${author.name}'님을 차단하시겠습니까?\n차단하면 해당 사용자의 모든 게시글이 보이지 않게 됩니다.`}
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "차단하기",
+        onClick: () => {
+          blockUser(author.id);
+          setDropdownOpen(false);
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {
+          setDropdownOpen(false);
+        },
+      },
+    });
+  };
 
   const dropdownMenus: DropdownItem[] = (() => {
     const menus: DropdownItem[] = [];
@@ -72,7 +115,7 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
           content: t("features.community.ui.article.delete_button"),
           onPress: () => {
             onDelete(data.id);
-            closeDropdown();
+            setDropdownOpen(false);
           },
         },
       ];
@@ -86,6 +129,11 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
         onPress: () => {
           router.push(`/community/report/${data.id}`);
         },
+      });
+      menus.push({
+        key: "block",
+        content: "차단",
+        onPress: handleBlockUser,
       });
     }
 
@@ -101,15 +149,14 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
   const redirectDetails = () => router.push(`/community/${data.id}`);
 
   useEffect(() => {
-    setFalse();
-    closeDropdown();
-  }, [setFalse, closeDropdown]);
+    setDropdownOpen(false);
+  }, [setDropdownOpen]);
 
   return (
     <View className="w-full relative">
       <TouchableOpacity
         onPress={handleArticlePress}
-        className="p-4 bg-white"
+        className="p-4 bg-transparent"
         activeOpacity={0.7}
       >
         <UserProfile
@@ -118,66 +165,105 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
           isOwner={isOwner}
         />
 
-        <View className="my-3 mb-4 mx-[8px]  flex flex-row justify-between">
-          <Text numberofLine={1} size="md" weight="medium" textColor="black">
-            {data.title}
-          </Text>
-          <Text size="13" textColor="pale-purple">
-            {dayUtils.formatRelativeTime(data.createdAt)}
-          </Text>
-        </View>
-        <LinkifiedText
-          size="sm"
-          className="mb-4 mx-[8px] leading-5"
-          textColor="black"
-          style={{ flexWrap: "wrap", flexShrink: 1 }}
-        >
-          {data.content}
-        </LinkifiedText>
+        <View className="mx-[8px] mt-3 mb-4 flex-row items-start gap-3">
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text numberOfLines={1} size="md" weight="medium" textColor="black">
+              {data.title}
+            </Text>
 
-        {data.images && data.images.length > 0 && (
-          <View className="mx-[8px] mb-4">
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View className="flex-row gap-2">
-                {data.images
-                  .sort((a, b) => a.displayOrder - b.displayOrder)
-                  .slice(0, 3)
-                  .map((image) => (
-                    <Image
-                      key={`preview-image-${image.id}`}
-                      source={{ uri: image.imageUrl }}
-                      className="w-20 h-20 rounded-lg"
-                      resizeMode="cover"
-                    />
-                  ))}
-                {data.images.length > 3 && (
-                  <View className="w-20 h-20 rounded-lg bg-gray-200 items-center justify-center">
-                    <Text className="text-gray-600 text-xs">
-                      +{data.images.length - 3}
+            <LinkifiedText
+              size="sm"
+              className="mt-2 leading-5"
+              textColor="black"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {data.content}
+            </LinkifiedText>
+          </View>
+
+          {data.images && data.images.length > 0 && (
+            <TouchableOpacity
+              onPress={redirectDetails}
+              activeOpacity={0.85}
+              style={{ width: 70, height: 70 }}
+            >
+              <View
+                className="relative rounded-lg overflow-hidden bg-gray-100"
+                style={{ width: 70, height: 70 }}
+              >
+                <Image
+                  source={{
+                    uri: data.images.sort(
+                      (a, b) => a.displayOrder - b.displayOrder
+                    )[0].imageUrl,
+                  }}
+                  className="w-full h-full"
+                  resizeMode="cover"
+                />
+                {data.images.length > 1 && (
+                  <View
+                    className="absolute right-1 bottom-1 rounded px-2 py-[2px]"
+                    style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+                  >
+                    <Text size="12" textColor="white" weight="medium">
+                      +{data.images.length - 1}
                     </Text>
                   </View>
                 )}
               </View>
-            </ScrollView>
-          </View>
-        )}
-
-        <View className="flex-row items-center  mx-[8px]   justify-between">
-          <Interaction.Like
-            count={data.likeCount}
-            isLiked={data.isLiked}
-            iconSize={24}
-            onPress={handleLike}
-          />
-          <Interaction.Comment
-            count={data.commentCount}
-            iconSize={24}
-            onPress={toggleShowComment}
-          />
-          <Interaction.View iconSize={20} count={data.readCount} />
+            </TouchableOpacity>
+          )}
         </View>
 
-        <Show when={showComment}>
+        <View className="mx-[8px] mt-2 flex-row items-center justify-between">
+          <View className="flex-row items-center">
+            <Text
+              style={{
+                color: semanticColors.text.muted,
+                fontFamily: "Pretendard",
+                fontSize: 13,
+                fontStyle: "normal",
+                fontWeight: "300" as any,
+                lineHeight: 14.4,
+                fontFeatureSettings: "'liga' off, 'clig' off",
+              }}
+            >
+              {dayUtils.formatRelativeTime(data.createdAt)}
+            </Text>
+            <Text
+              style={{
+                color: semanticColors.text.muted,
+                fontFamily: "Pretendard",
+                fontSize: 13,
+                fontStyle: "normal",
+                fontWeight: "300" as any,
+                lineHeight: 14.4,
+                fontFeatureSettings: "'liga' off, 'clig' off",
+                marginLeft: 8,
+              }}
+            >
+              {`·  조회 ${data.readCount}`}
+            </Text>
+          </View>
+
+          <View className="flex-row items-center">
+            <Interaction.Like
+              count={data.likeCount}
+              isLiked={data.isLiked}
+              iconSize={18}
+              onPress={handleLike}
+            />
+            <View style={{ width: 12 }} />
+            <Interaction.Comment
+              count={data.commentCount}
+              iconSize={18}
+              onPress={onTogglePreview}
+            />
+          </View>
+        </View>
+
+        <Show when={isPreviewOpen}>
           <View className="w-full flex flex-col gap-y-1.5 mt-6 px-[18px]">
             {comments.map((comment) => (
               <View className="w-full flex flex-col" key={comment.id}>
@@ -203,15 +289,21 @@ export function Article({ data, onPress, onLike, onDelete }: ArticleItemProps) {
           </View>
         </Show>
       </TouchableOpacity>
+
       <View
         className="absolute right-[8px] top-[12px]"
         onTouchEnd={(e) => {
           e.stopPropagation();
         }}
       >
-        <Dropdown open={isDropdownOpen} items={dropdownMenus} />
+        <Dropdown
+          open={isDropdownOpen}
+          items={dropdownMenus}
+          onOpenChange={setDropdownOpen}
+        />
       </View>
-      {!showComment && <View className="h-[1px] bg-[#F3F0FF]" />}
+
+      {!isPreviewOpen && <View className="h-[1px] bg-surface-other" />}
     </View>
   );
 }

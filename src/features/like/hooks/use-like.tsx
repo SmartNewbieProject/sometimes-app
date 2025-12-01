@@ -10,6 +10,8 @@ import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../../idle-match-timer/hooks";
+import { determineFailureReason, predictFailureLikelihood } from "../../matching/utils/failure-analyzer";
+import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
 import { useTranslation } from "react-i18next";
 
 const useLikeMutation = () =>
@@ -25,7 +27,70 @@ const useLikeMutation = () =>
       await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
       await queryClient.refetchQueries({ queryKey: ["liked", "of-me"] });
       await queryClient.refetchQueries({ queryKey: ["liked", "to-me"] });
+
+      // 매칭 성공 이벤트 트래킹
+      const amplitude = (global as any).amplitude || {
+        track: (event: string, properties: any) => {
+          console.log('Amplitude Event:', event, properties);
+        }
+      };
+
+      amplitude.track(AMPLITUDE_KPI_EVENTS.MATCHING_SUCCESS, {
+        action_type: 'like_success',
+        result: 'success',
+        timestamp: new Date().toISOString(),
+        user_context: {
+          gem_balance: queryClient.getQueryData(["gem", "current"]),
+          matching_stage: 'like_sent'
+        }
+      });
     },
+    onError: async (error: any) => {
+      // 실패 원인 분석 및 트래킹
+      const failureReason = determineFailureReason(error);
+
+      const amplitude = (global as any).amplitude || {
+        track: (event: string, properties: any) => {
+          console.log('Amplitude Event:', event, properties);
+        }
+      };
+
+      // 매칭 실패 이벤트 트래킹
+      amplitude.track(AMPLITUDE_KPI_EVENTS.MATCHING_FAILURE, {
+        action_type: 'like_failed',
+        failure_type: failureReason.type,
+        failure_category: failureReason.category,
+        user_action_required: failureReason.userAction,
+        recoverable: failureReason.recoverable,
+        severity: failureReason.severity,
+        server_message: failureReason.serverMessage,
+        http_status: failureReason.httpStatus,
+        timestamp: new Date().toISOString()
+      });
+
+      // 실패 예측 데이터 수집 (다음 시도를 위해)
+      const currentGemBalance = queryClient.getQueryData(["gem", "current"]) as number || 0;
+      const failurePrediction = predictFailureLikelihood({
+        currentGemBalance,
+        ticketCount: 0, // TODO: 실제 티켓 수 가져오기
+        recentLikeCount: 0, // TODO: 최근 좋아요 수 가져오기
+        recentMatchCount: 0, // TODO: 최근 매칭 수 가져오기
+        restrictionHistory: [], // TODO: 제한 이력 가져오기
+        lastLikeTime: Date.now() - 3600000, // 1시간 전으로 가정
+        timeOfDay: new Date().getHours(),
+        isPeakTime: new Date().getHours() >= 20 && new Date().getHours() <= 23
+      });
+
+      // 실패 예측 이벤트 트래킹
+      amplitude.track('MATCHING_FAILURE_PREDICTION', {
+        risk_score: failurePrediction.riskScore,
+        primary_risk: failurePrediction.primaryRisk,
+        is_high_risk: failurePrediction.isHighRisk,
+        preventable: failurePrediction.preventable,
+        predicted_server_message: failurePrediction.predictedServerMessage,
+        recommendations: failurePrediction.recommendations
+      });
+    }
   });
 
 export default function useLike() {
@@ -69,10 +134,10 @@ export default function useLike() {
           ),
           children: (
             <View className="flex flex-col w-full items-center mt-[5px]">
-              <Text className="text-[#AEAEAE] text-[12px]">
+              <Text className="text-text-disabled text-[12px]">
                 {t("features.like.hooks.use-like.if_interested")}
               </Text>
-              <Text className="text-[#AEAEAE] text-[12px]">
+              <Text className="text-text-disabled text-[12px]">
                 {t("features.like.hooks.use-like.can_contact")}
               </Text>
             </View>
@@ -84,6 +149,9 @@ export default function useLike() {
         });
       },
       (err) => {
+        // 실패 원인 분석기로 정확한 원인 파악
+        const failureReason = determineFailureReason(err);
+
         if (err.status === HttpStatusCode.Forbidden) {
           showCashable({
             textContent:
@@ -91,8 +159,28 @@ export default function useLike() {
           });
           return;
         }
+
+        // 실패 원인에 따른 구체적인 사용자 가이드 제공
+        if (failureReason.type === 'TICKET_INSUFFICIENT') {
+          showCashable({
+            textContent: "재매칭권이 필요합니다. 지금 구매하고 계속 매칭을 즐겨보세요!",
+          });
+          return;
+        }
+
+        if (failureReason.type === 'COMMUNICATION_RESTRICTED') {
+          showErrorModal("현재 상대방과 소통이 제한되어 있습니다. 잠시 후 다시 시도해주세요.", "announcement");
+          return;
+        }
+
+        if (failureReason.type === 'DUPLICATE_LIKE') {
+          showErrorModal("이미 좋아요를 보낸 상대방입니다.", "announcement");
+          return;
+        }
+
+        // 기타 409 에러 처리
         if (err.status === HttpStatusCode.Conflict) {
-          if (err.error.includes('소통이 제한')) {
+          if (err.error?.includes('소통이 제한')) {
             showErrorModal(err.error, "announcement");
             return;
           }

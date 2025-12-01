@@ -13,6 +13,7 @@ export * from './select';
 export * from './navigation';
 export * from './layout';
 export * from './header';
+export * from './header-with-notification';
 export * from './step-slider';
 export * from './show';
 export * from './image-resource';

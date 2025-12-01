@@ -39,30 +39,30 @@ export const useVersionUpdate = () => {
       Platform.OS as VersionSupportPlatform
     );
 
-    if (needsUpdate && supportedPlatform) {
-      setUpdateData(latestVersionData);
-      setShowUpdateModal(true);
-    }
-  }, [latestVersionData, skippedVersion]);
+		if (needsUpdate && supportedPlatform) {
+			setUpdateData(latestVersionData);
+			setShowUpdateModal(true);
+		}
+	}, [latestVersionData, skippedVersion]);
 
-  const skipVersion = useCallback(async () => {
-    if (updateData && !updateData.shouldUpdate) {
-      await setSkippedVersion(updateData.version);
-      setShowUpdateModal(false);
-      setUpdateData(null);
-    }
-  }, [updateData, setSkippedVersion]);
+	const skipVersion = useCallback(async () => {
+		if (updateData && !updateData.shouldUpdate) {
+			await setSkippedVersion(updateData.version);
+			setShowUpdateModal(false);
+			setUpdateData(null);
+		}
+	}, [updateData, setSkippedVersion]);
 
-  const closeModal = () => {
-    if (updateData && !updateData.shouldUpdate) {
-      setShowUpdateModal(false);
-      setUpdateData(null);
-    }
-  };
+	const closeModal = () => {
+		if (updateData && !updateData.shouldUpdate) {
+			setShowUpdateModal(false);
+			setUpdateData(null);
+		}
+	};
 
-  useEffect(() => {
-    if (skippedVersionLoading || isLoading) return;
-    if (skippedVersion && skippedVersion === serverVersion) return;
+	useEffect(() => {
+		if (skippedVersionLoading || isLoading) return;
+		if (skippedVersion && skippedVersion === serverVersion) return;
 
     if (serverVersion) {
       checkForUpdate();

@@ -1,4 +1,5 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Time } from "@/src/features/idle-match-timer/ui";
 import { sideStyle } from "@/src/features/idle-match-timer/ui/constants";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
@@ -120,7 +121,7 @@ function MockPartner() {
                   borderTopEndRadius: 16,
                   height: 35,
                   width: "100%",
-                  borderColor: "#E7E9EC",
+                  borderColor: semanticColors.border.default,
                 }}
               />
             </View>
@@ -131,7 +132,7 @@ function MockPartner() {
                 style={sideStyle.previousButton}
                 onPress={() => {}}
               >
-                <Text className="w-[32px] text-white text-[12px]">
+                <Text className="w-[32px] text-text-inverse text-[12px]">
                   {t("features.guide.mock.mock_partner.button_more")}
                 </Text>
                 <IconWrapper width={12} height={12}>

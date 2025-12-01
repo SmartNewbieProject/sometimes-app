@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { Animated, StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
@@ -22,7 +23,7 @@ function AreaModal({ open, area, description, isShow }: AreaModalProps) {
     open === "preOpen"
       ? {
           borderWidth: 3,
-          borderColor: "#7A4AE2",
+          borderColor: semanticColors.brand.primary,
         }
       : {};
 

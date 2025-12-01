@@ -1,4 +1,6 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { semanticColors } from '../../../../shared/constants/colors';
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import apis from "@/src/features/community/apis";
 import apis_comments from "@/src/features/community/apis/comments";
 import {
@@ -16,8 +18,7 @@ import type { UniversityName } from "@shared/libs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Keyboard, ScrollView, View, Image, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
@@ -45,6 +46,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     },
   });
   const [likeCount, setLikeCount] = useState(article.likeCount);
+  const { communityEvents } = useKpiAnalytics();
   const [isLiked, setIsLiked] = useState(article.isLiked);
   const { my } = useAuth();
   const isOwner = (() => {
@@ -71,6 +73,9 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     return total + 1 + (comment.replies ? comment.replies.length : 0);
   }, 0);
   const handleSubmit = async (data: { content: string }) => {
+    // KPI 이벤트: 댓글 추가
+    communityEvents.trackCommentAdded(article.id, data.content.length);
+
     createCommentMutation.mutate(
       {
         content: data.content,
@@ -79,7 +84,10 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
       },
       {
         onSuccess: () => {
-          form.reset();
+          form.reset({
+            content: "",
+            anonymous: true,
+          });
           setEditingContent("");
           setReplyingToCommentId(null);
           Keyboard.dismiss();
@@ -158,6 +166,11 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
       async () => {
         const newIsLiked = !isLiked;
         const newLikeCount = isLiked ? likeCount - 1 : likeCount + 1;
+
+        // KPI 이벤트: 게시글 좋아요
+        if (newIsLiked) {
+          communityEvents.trackPostLiked(article.id);
+        }
 
         setLikeCount(newLikeCount);
         setIsLiked(newIsLiked);
@@ -345,7 +358,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const imageUrls = article.images?.map((img) => img.imageUrl) || [];
 
   return (
-    <View className="flex-1 relative bg-white">
+    <View className="flex-1 relative bg-surface-background">
       <PhotoSlider
         images={imageUrls}
         onClose={onZoomClose}
@@ -358,7 +371,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         keyboardShouldPersistTaps="handled"
         className="flex-1 relative  px-5"
       >
-        <View className="h-[1px] bg-[#F3F0FF] mb-[15px]" />
+        <View className="h-[1px] bg-surface-other mb-[15px]" />
 
         <UserProfile
           author={article.author}
@@ -369,11 +382,8 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         />
 
         <View className="my-3 mb-6 mx-[8px]  flex flex-row  items-center justify-between">
-          <Text numberofLine={1} size="md" weight="medium" textColor="black">
+          <Text size="md" weight="medium" textColor="black">
             {article.title}
-          </Text>
-          <Text size="12" textColor="pale-purple">
-            {dayUtils.formatRelativeTime(article.createdAt)}
           </Text>
         </View>
         <LinkifiedText
@@ -410,17 +420,50 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         )}
 
         <View className="w-full mt-[10px]">
-          <View className="flex-row items-center justify-around gap-4 pb-[10px]">
-            <Interaction.Like
-              count={likeCount}
-              isLiked={isLiked}
-              onPress={() => like(article)}
-            />
-            <Interaction.Comment count={totalCommentCount} />
-            <Interaction.View count={article.readCount} />
+          <View className="flex-row items-center justify-between pb-[10px] mx-[8px]">
+            <View className="flex-row items-center">
+              <Text
+                style={{
+                  color: semanticColors.text.muted,
+                  fontFamily: "Pretendard",
+                  fontSize: 13,
+                  fontStyle: "normal",
+                  fontWeight: "300" as any,
+                  lineHeight: 14.4,
+                  fontFeatureSettings: "'liga' off, 'clig' off",
+                }}
+              >
+                {dayUtils.formatRelativeTime(article.createdAt)}
+              </Text>
+              <Text
+                style={{
+                  color: semanticColors.text.muted,
+                  fontFamily: "Pretendard",
+                  fontSize: 13,
+                  fontStyle: "normal",
+                  fontWeight: "300" as any,
+                  lineHeight: 14.4,
+                  fontFeatureSettings: "'liga' off, 'clig' off",
+                  marginLeft: 8,
+                }}
+              >
+                {`·  조회 ${article.readCount}`}
+              </Text>
+            </View>
+
+            <View className="flex-row items-center">
+              <Interaction.Like
+                count={likeCount}
+                isLiked={isLiked}
+                iconSize={18}
+                onPress={() => like(article)}
+              />
+              <View style={{ width: 12 }} />
+              <Interaction.Comment count={totalCommentCount} iconSize={18} />
+            </View>
           </View>
         </View>
-        <View className="h-[1px] bg-[#F3F0FF] " />
+        <View className="h-[1px] bg-surface-other " />
         <View className="flex-1">
           <Loading.Lottie
             title={t("features.community.ui.article_detail.loading_comments")}
@@ -438,10 +481,10 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: "white",
+          backgroundColor: semanticColors.surface.background,
           paddingBottom: insets.bottom,
         }}
-        className="border-t border-[#F3F0FF] pt-3  px-4"
+        className="border-t border-border-default pt-3  px-4"
       >
         <InputForm
           checked={checked}

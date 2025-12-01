@@ -1,3 +1,4 @@
+import { semanticColors } from '../../../shared/constants/colors';
 import {
   getRemainingTimeFormatted,
   getRemainingTimeLimit,
@@ -42,7 +43,7 @@ function MockTime({ matchExpiredAt }: MockTimeProps) {
         },
       ]}
     >
-      {getRemainingTimeFormatted(matchExpiredAt)}
+      {getRemainingTimeFormatted(matchExpiredAt, true)}
     </Animated.Text>
   );
 }
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: semanticColors.text.disabled,
     lineHeight: 14,
     marginTop: 2,
     fontWeight: "500",

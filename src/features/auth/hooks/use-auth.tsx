@@ -34,7 +34,6 @@ export function useAuth() {
     key: "approval-status",
     initialValue: null,
   });
-  console.log("accessToken", accessToken);
 
   const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
 
@@ -166,6 +165,7 @@ export function useAuth() {
     logout,
     logoutOnly,
     clearTokensOnly,
+    accessToken,
     my: {
       ...my,
       universityDetails: profileDetails?.universityDetails,

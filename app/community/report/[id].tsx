@@ -41,7 +41,7 @@ export default function ReportScreen() {
             t("apps.community.report.alert_title") + "\n" + t("apps.community.report.alert_desc")
           );
         } else {
-                    Alert.alert(
+                Alert.alert(
             t("apps.community.report.alert_title"),
             t("apps.community.report.alert_desc")
           );

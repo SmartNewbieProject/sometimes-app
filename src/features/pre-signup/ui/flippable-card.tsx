@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { semanticColors } from '../../../shared/constants/colors';
 import { View, TouchableOpacity } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -46,7 +47,7 @@ export const FlippableCard: React.FC<FlippableCardProps> = ({
 
     flipTimerRef.current = setInterval(() => {
       flipCard();
-    }, 3000);
+    }, 3000) as unknown as NodeJS.Timeout;
   };
 
   const stopAutoFlipTimer = () => {
@@ -107,9 +108,9 @@ export const FlippableCard: React.FC<FlippableCardProps> = ({
   }));
 
   const cardStyle = {
-    backgroundColor: '#ffffff',
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: semanticColors.border.default,
     borderRadius: 18.34,
   };
 

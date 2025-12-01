@@ -1,4 +1,5 @@
 import { useStorage } from "@/src/shared/hooks/use-storage";
+import { semanticColors } from '../../../shared/constants/colors';
 import { track } from "@amplitude/analytics-react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
@@ -259,11 +260,11 @@ const AppleLoginButton: React.FC = () => {
         <Pressable
           onPress={handleWebAppleLogin}
           disabled={isLoading}
-          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-[#000] border  !border-[#4D4D4D]"
+          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-surface-inverse border  !border-border-default"
         >
           <Text style={styles.appleLogo}></Text>
           <View>
-            <Text className="text-[#fff] text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
+            <Text className="text-text-inverse text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
           </View>
         </Pressable>
       </View>
@@ -278,11 +279,11 @@ const AppleLoginButton: React.FC = () => {
           <Pressable
             onPress={handleIOSAppleLogin}
             disabled={isLoading}
-            className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !containerh-[60px] !bg-[#000] border  !border-[#4D4D4D]"
+            className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !containerh-[60px] !bg-surface-inverse border  !border-border-default"
           >
             <Text style={styles.appleLogo}></Text>
             <View>
-              <Text className="text-[#fff] text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
+              <Text className="text-text-inverse text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
             </View>
           </Pressable>
         </View>
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   webAppleButton: {
-    backgroundColor: "#000",
+    backgroundColor: semanticColors.surface.inverse,
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
     minWidth: 200,
   },
   webButtonText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 16,
     fontWeight: "600",
   },
@@ -324,10 +325,10 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 8,
     fontSize: 14,
-    color: "#666",
+    color: semanticColors.text.disabled,
   },
   appleLogo: {
-    color: "#FFF",
+    color: semanticColors.text.inverse,
     textAlign: "center",
 
     fontFamily: "SF Pro",

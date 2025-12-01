@@ -41,6 +41,8 @@ export interface UserProfile {
 	universityDetails: UniversityDetail;
 	preferences: PreferenceTypeGroup[];
 	deletedAt: string | null;
+	matchLikeId?: string | null;
+	updatedAt?: string | null;
 }
 
 export interface SimpleProfile {

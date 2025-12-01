@@ -17,7 +17,7 @@ export const getUnivs = async (): Promise<string[]> => {
 };
 
 export const getDepartments = async (univ: string): Promise<string[]> => {
-  return axiosClient.get(`/universities/departments?university=${univ}`);
+  return axiosClient.get(`/universities/departments?universityId=${univ}`);
 };
 
 const createFileObject = (imageUri: string, fileName: string) =>
@@ -53,14 +53,13 @@ export const checkPhoneNumberBlacklist = (
 
 export const signup = (form: SignupForm): Promise<void> => {
   const formData = new FormData();
-  console.log("checkpoint2", form);
   formData.append("phoneNumber", form.phone);
   formData.append("name", form.name);
   formData.append("birthday", form.birthday);
   formData.append("gender", form.gender);
   const age = calculateAge(form.birthday);
   formData.append("age", age.toString());
-  formData.append("universityName", form.universityName);
+  formData.append("universityId", form.universityId);
   formData.append("departmentName", form.departmentName);
   formData.append("grade", form.grade);
   formData.append("studentNumber", form.studentNumber);
@@ -72,13 +71,15 @@ export const signup = (form: SignupForm): Promise<void> => {
     formData.append("appleId", form.appleId);
   }
 
+  if (form?.referralCode && form.referralCode !== "") {
+    formData.append("referralCode", form.referralCode);
+  }
   // biome-ignore lint/complexity/noForEach: <explanation>
   form.profileImages.forEach((imageUri) => {
     const file = createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`);
     formData.append("profileImages", file);
   });
 
-  console.log("checkpoint3", formData);
   return axiosClient.post("/auth/signup", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });

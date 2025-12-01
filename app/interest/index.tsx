@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../src/shared/constants/colors';
 import Layout from "@/src/features/layout";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
@@ -7,6 +8,7 @@ import { track } from "@amplitude/analytics-react-native";
 import SmallTitle from "@assets/icons/small-title.svg";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from 'react-i18next';
 
 
@@ -14,6 +16,7 @@ export default function InterestIntroScreen() {
   const { showModal } = useModal();
   const { t } = useTranslation();
   const { profileDetails } = useAuth();
+  const insets = useSafeAreaInsets();
   const showPreviousModal = () =>
     showModal({
       customTitle: (
@@ -54,33 +57,46 @@ export default function InterestIntroScreen() {
     <Layout.Default>
       <View style={styles.contentContainer}>
         <PalePurpleGradient />
-        <View style={styles.titleLogoWrapper}>
+        <View style={[styles.titleLogoWrapper, { paddingTop: insets.top }]}>
           <IconWrapper width={128} style={styles.titleLogoIcon}>
             <SmallTitle />
           </IconWrapper>
         </View>
         <View style={styles.textWrapper}>
-          <Image
-            source={require("@assets/images/interest.png")}
-            style={{ width: 248, height: 323 }}
-          />
-
-          <View style={styles.titleWrapper}>
-            <Text size="lg" textColor="black" weight="semibold">
-              {t("apps.interest.index.title_1")}
-            </Text>
-            <Text size="lg" textColor="black" weight="semibold">
-              {t("apps.interest.index.title_2")}
-            </Text>
+          <View
+            style={{
+              width: 280,
+              height: 280,
+              borderRadius: 280,
+              overflow: "hidden",
+              marginBottom: 50,
+              backgroundColor: semanticColors.brand.primary,
+              position: "relative",
+            }}
+          >
+            <Image
+              source={require("@assets/images/info-miho.png")}
+              style={{ width: 255, height: 259, top: 20, position: "absolute" }}
+            />
           </View>
+          <View>
+            <View style={styles.titleWrapper}>
+              <Text size="lg" textColor="black" weight="semibold">
+                {t("apps.interest.index.title_1")}
+              </Text>
+              <Text size="lg" textColor="black" weight="semibold">
+                {t("apps.interest.index.title_2")}
+              </Text>
+            </View>
 
-          <View style={styles.descriptionWrapper}>
-            <Text size="sm" textColor="pale-purple" weight="light">
-              {t("apps.interest.index.title_3")}
-            </Text>
-            <Text size="sm" textColor="pale-purple" weight="light">
-              {t("apps.interest.index.title_4")}
-            </Text>
+            <View style={styles.descriptionWrapper}>
+              <Text size="sm" textColor="pale-purple" weight="light">
+                {t("apps.interest.index.title_3")}
+              </Text>
+              <Text size="sm" textColor="pale-purple" weight="light">
+                {t("apps.interest.index.title_4")}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -123,6 +139,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   descriptionWrapper: {
-    marginTop: 50.53,
+    marginTop: 40,
   },
 });

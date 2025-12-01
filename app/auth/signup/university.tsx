@@ -1,136 +1,205 @@
-import { TwoButtons } from "@/src/features/layout/ui";
-import { DefaultLayout } from "@/src/features/layout/ui";
+import { TwoButtons , DefaultLayout } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
+import { SignupSteps } from "@/src/features/signup/hooks";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
-import { filterUniversities } from "@/src/features/signup/lib";
-import useUniversities from "@/src/features/signup/queries/use-universities";
-import SearchUniversity from "@/src/features/signup/ui/university/search-university";
+import UniversityLogos from "@/src/features/signup/ui/university-logos";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
-import { track } from "@amplitude/analytics-react-native";
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
+import { PalePurpleGradient, Show } from "@/src/shared/ui";
 import { useTranslation } from "react-i18next";
 import HelpIcon from "@assets/icons/help.svg";
+import SearchIcon from "@assets/icons/search.svg";
 import Loading from "@features/loading";
-
 import { FlashList } from "@shopify/flash-list";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 import {
   BackHandler,
-  KeyboardAvoidingView,
   Text as RNText,
-  ScrollView,
   StyleSheet,
+  TextInput,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
 
-
-export default function UniversityPage() {
+function UniversityPage() {
   const router = useRouter();
+  const { onboardingEvents } = useKpiAnalytics();
   const {
     searchText,
     setSearchText,
     filteredUniv,
     handleClickUniv,
+    trigger,
     onNext,
     selectedUniv,
+    handleBlur,
+    handleFocus,
     isLoading,
-    regions,
+    onBackPress,
+    showHeader,
+    animatedTitleStyle,
+    animatedContainerStyle,
+    animatedListStyle,
+    handleChange,
   } = useUniversityHook();
   const { t } = useTranslation();
+  // 대학 인증 시작 이벤트 추적
+  useEffect(() => {
+    onboardingEvents.trackUniversityVerificationStarted();
+  }, [onboardingEvents]);
 
+  const handleBackPress = () => {
+    onBackPress(() => {
+      router.navigate("/auth/login");
+    });
+  };
   const handleNext = () => {
     onNext(() => {
-      track("Signup_university", {
-        test: true,
-        university: selectedUniv,
-        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-      });
+      // 대학 인증 완료 이벤트 추적
+      onboardingEvents.trackUniversityVerificationCompleted('search_selection');
       router.push(
-        `/auth/signup/university-details?universityName=${selectedUniv}`
+        `/auth/signup/university-cluster?universityId=${selectedUniv}`
       );
     });
   };
+
   useEffect(() => {
-    const onBackPress = () => {
-      router.navigate("/auth/signup/area");
-      return true;
-    };
-
-    // 이벤트 리스너 등록
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      onBackPress
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () =>
+      onBackPress(() => {
+        router.navigate("/auth/login");
+      })
     );
-
-    // 컴포넌트 언마운트 시 리스너 제거
     return () => subscription.remove();
   }, []);
-
   return (
-    <DefaultLayout className="flex-1">
-      <View style={styles.container}>
-        <SearchUniversity
-          searchText={searchText}
-          setSearchText={setSearchText}
-        />
-        <Loading.Lottie title={t("apps.auth.sign_up.university.loading")} loading={isLoading}>
-          <FlashList
-            extraData={selectedUniv}
-            data={filteredUniv}
-            renderItem={({ item }) => (
-              <UniversityCard
-                onClick={handleClickUniv(item.name)}
-                isSelected={item.name === selectedUniv}
-                item={item}
+    <DefaultLayout className="flex-1 ">
+      {!showHeader && <PalePurpleGradient />}
+      <View style={[styles.container]}>
+        {!trigger && <UniversityLogos logoSize={64} />}
+
+        <Animated.View style={[styles.titleContainer, animatedTitleStyle]}>
+          <RNText style={styles.welcome}>
+            대학생만 모인 곳, 당신의 이상형을 찾아드려요
+          </RNText>
+          <RNText style={styles.title}>
+            지금 다니시는 학교를 검색해보세요
+          </RNText>
+        </Animated.View>
+        <Animated.View
+          style={[animatedContainerStyle, { width: "100%", zIndex: 10 }]}
+        >
+          <View style={styles.searchWrapper}>
+            <SearchIcon width={16} height={16} style={{ marginRight: 8 }} />
+            <TextInput
+              value={searchText}
+              onBlur={handleBlur}
+              onChangeText={handleChange}
+              placeholder="대학교 이름을 검색해주세요"
+              placeholderTextColor="#9B94AB"
+              style={styles.input}
+              onFocus={handleFocus}
+            />
+          </View>
+        </Animated.View>
+        <Show when={trigger}>
+          <Animated.View
+            style={[styles.listAndBottomContainer, animatedListStyle]}
+          >
+            <Loading.Lottie
+              title={t("apps.auth.sign_up.university.loading")} 
+              loading={isLoading}
+            >
+              <FlashList
+                extraData={selectedUniv}
+                data={filteredUniv}
+                renderItem={({ item }) => (
+                  <UniversityCard
+                    onClick={handleClickUniv(item.id)}
+                    isSelected={item.id === selectedUniv}
+                    item={item}
+                  />
+                )}
+                estimatedItemSize={90}
+                contentContainerStyle={{ paddingBottom: 160 }}
               />
-            )}
-            estimatedItemSize={90}
-            ListFooterComponentStyle={{ paddingBottom: 160 }}
-          />
-        </Loading.Lottie>
-      </View>
-      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
-        <View style={styles.tipConatainer}>
-          <HelpIcon width={20} height={20} />
-          <RNText style={styles.tip}>
-            <RNText style={styles.tip}>
-            {t("apps.auth.sign_up.university.tip")}
-          </RNText>
-          </RNText>
-        </View>
-        <TwoButtons
-          disabledNext={!selectedUniv}
-          onClickNext={handleNext}
-          onClickPrevious={() => {
-            router.navigate("/auth/signup/area");
-          }}
-        />
+            </Loading.Lottie>
+
+            <View style={styles.bottomContainer}>
+              <View style={styles.tipContainer}>
+                <HelpIcon width={20} height={20} />
+                <RNText style={styles.tip}>
+                  {t("apps.auth.sign_up.university.tip")}
+                </RNText>
+              </View>
+              <TwoButtons
+                disabledNext={!selectedUniv}
+                onClickNext={handleNext}
+                onClickPrevious={handleBackPress}
+              />
+            </View>
+          </Animated.View>
+        </Show>
       </View>
     </DefaultLayout>
   );
 }
 
+export default withSignupValidation(UniversityPage, SignupSteps.UNIVERSITY);
+
 const styles = StyleSheet.create({
-  chipContainer: {
-    marginTop: 4,
-    width: "100%",
-    maxHeight: 400,
-  },
-  chipScrollContent: {
-    flexGrow: 1,
-  },
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor: "#fff",
+
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  titleContainer: {
+    position: "absolute",
+    alignItems: "center",
+    zIndex: 1,
+    transform: [{ translateY: 75 }],
+  },
+  logoContainer: {
+    top: -60,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: semanticColors.text.secondary,
+    fontFamily: "Pretendard-Bold",
+  },
+  searchWrapper: {
+    height: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 12,
+    backgroundColor: semanticColors.surface.background,
+    paddingHorizontal: 16,
+    width: "100%",
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: semanticColors.text.primary,
+    fontFamily: "Pretendard-Regular",
+  },
+  listAndBottomContainer: {
+    flex: 1,
+    width: "100%",
+    marginTop: 24,
   },
   bottomContainer: {
     position: "absolute",
     bottom: 0,
+    left: 0,
+    right: 0,
     paddingTop: 16,
-    paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
-  tipConatainer: {
+  tipContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -138,11 +207,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tip: {
-    color: "#9B94AB",
-    fontWeight: 300,
+    color: semanticColors.text.disabled,
+    fontWeight: "300",
     fontFamily: "thin",
     fontSize: 13,
-
     lineHeight: 20,
+  },
+  welcome: {
+    fontSize: 18,
+    color: semanticColors.brand.primary,
+    fontFamily: "Pretendard-Medium",
+    marginBottom: 8,
+    textAlign: "center",
   },
 });

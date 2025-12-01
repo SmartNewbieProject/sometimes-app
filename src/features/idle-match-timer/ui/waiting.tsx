@@ -83,10 +83,15 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
         style={{ width: 72, height: 82 }}
       />
       <View className="my-[8px]">
-        <Text size="md" textColor="black" weight="semibold">
+        <Text
+          size="18"
+          textColor="black"
+          weight="semibold"
+          className="mb-[2px]"
+        >
           {t("features.idle-match-timer.ui.waiting.title_1",{name:my?.name})}
         </Text>
-        <Text size="md" textColor="black" weight="semibold">
+        <Text size="18" textColor="black" weight="semibold">
           {t("features.idle-match-timer.ui.waiting.title_2")}
         </Text>
       </View>
@@ -104,13 +109,18 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
       </View>
 
       <View>
-        <Text size="md" textColor="black" weight="semibold">
+        <Text
+          size="18"
+          textColor="black"
+          weight="semibold"
+          className="mt-[4px]"
+        >
           {t("features.idle-match-timer.ui.waiting.description_2")}
         </Text>
         <Text
-          size="sm"
+          size="18"
           textColor="pale-purple"
-          weight="light"
+          weight="normal"
           className="mt-[8px]"
         >
           {t("features.idle-match-timer.ui.waiting.description_3")}
@@ -118,7 +128,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
       </View>
 
       <View style={sideStyle.previousContainer}>
-        <View className="w-full bg-[#fcfaff] relative">
+        <View className="w-full bg-surface-background relative">
           <View style={sideStyle.topRadius} />
         </View>
         <View className="w-full flex flex-row">
@@ -127,14 +137,14 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
             style={sideStyle.previousButton}
             onPress={() => router.push("/matching-history")}
           >
-            <Text className="w-[24px] text-white text-[12px]">{t("features.idle-match-timer.ui.waiting.previous_button")}</Text>
+            <Text className="w-[24px] text-text-inverse text-[12px]">{t("features.idle-match-timer.ui.waiting.previous_button")}</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>
           </TouchableOpacity>
-          <View className="w-[16px] bg-[#fcfaff] h-full" />
+          <View className="w-[16px] bg-surface-background h-full" />
         </View>
-        <View className="w-full bg-[#fcfaff] relative">
+        <View className="w-full bg-surface-background relative">
           <View style={sideStyle.bottomRadius} />
         </View>
       </View>

@@ -1,4 +1,4 @@
-// ui/category-list/index.tsx
+// src/features/community/ui/category-list/index.tsx
 import Loading from "@/src/features/loading";
 import { Button } from "@shared/ui";
 import { Image } from "expo-image";
@@ -11,14 +11,15 @@ import React, {
 } from "react";
 import { ScrollView, View, type LayoutChangeEvent } from "react-native";
 import { useCategory } from "../../hooks";
+import { NOTICE_CODE } from "@/src/features/community/queries/use-home";
 
-type LayoutMap = Record<
-  string,
-  {
-    x: number;
-    width: number;
-  }
->;
+type LayoutMap = Record<string, { x: number; width: number }>;
+
+const HOME_CODE = "__home__";
+
+function hasEmojiUrl(c: unknown): c is { emojiUrl: string } {
+  return !!c && typeof (c as any).emojiUrl === "string";
+}
 
 import { useTranslation } from "react-i18next";
 
@@ -30,11 +31,21 @@ export const CategoryList = () => {
   const [containerWidth, setContainerWidth] = useState(0);
   const itemLayoutsRef = useRef<LayoutMap>({});
 
-  // 카테고리 수(혹은 코드 조합)가 바뀌면 이전 레이아웃 캐시를 초기화
-  const routesKey = useMemo(
-    () => categories.map((c) => c.code).join("|"),
+  const augmentedCategories = useMemo(
+    () => [{ code: HOME_CODE, displayName: "홈" } as const, ...categories],
     [categories]
   );
+
+  const renderCategories = useMemo(
+    () => augmentedCategories.filter((c) => c.code !== NOTICE_CODE),
+    [augmentedCategories]
+  );
+
+  const routesKey = useMemo(
+    () => renderCategories.map((c) => c.code).join("|"),
+    [renderCategories]
+  );
+
   useEffect(() => {
     itemLayoutsRef.current = {};
   }, [routesKey]);
@@ -42,14 +53,11 @@ export const CategoryList = () => {
   const onContainerLayout = useCallback(
     (e: LayoutChangeEvent) => {
       const { width } = e.nativeEvent.layout;
-      if (width && width !== containerWidth) {
-        setContainerWidth(width);
-      }
+      if (width && width !== containerWidth) setContainerWidth(width);
     },
     [containerWidth]
   );
 
-  // 각 버튼 래퍼의 레이아웃 저장
   const onItemLayout = useCallback((code: string, e: LayoutChangeEvent) => {
     const { x, width } = e.nativeEvent.layout;
     const prev = itemLayoutsRef.current[code];
@@ -66,7 +74,6 @@ export const CategoryList = () => {
 
       const targetCenterX = layout.x + layout.width / 2;
       let nextScrollX = Math.max(0, targetCenterX - containerWidth / 2);
-
       const PADDING = 12;
       nextScrollX = Math.max(0, nextScrollX - PADDING);
 
@@ -85,7 +92,7 @@ export const CategoryList = () => {
 
   return (
     <View
-      className="w-full px-[16px] bg-white overflow-hidden"
+      className="w-full px-[16px] bg-surface-background overflow-hidden"
       onLayout={onContainerLayout}
     >
       <ScrollView
@@ -94,6 +101,45 @@ export const CategoryList = () => {
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={16}
       >
+        <Loading.Lottie title="카테고리를 불러오고 있어요" loading={isLoading}>
+          <View className="flex flex-row w-full gap-x-[10px] mb-2">
+            {renderCategories.map((category) => {
+              const isActive = currentCategory === category.code;
+              const bgClass = isActive ? "bg-brand-primary" : "bg-surface-secondary";
+
+              return (
+                <View
+                  key={category.code}
+                  onLayout={(e) => onItemLayout(category.code, e)}
+                >
+                  <Button
+                    size="sm"
+                    variant="white"
+                    textColor={isActive ? "white" : "dark"}
+                    onPress={() => {
+                      changeCategory(category.code);
+                      ensureVisible(category.code, true);
+                    }}
+                    className={`px-[12px] py-[8px] rounded-full border-0 ${bgClass}`}
+                    prefix={
+                      category.code === HOME_CODE ? (
+                        <Image
+                          source={require("@/assets/images/home.png")}
+                          style={{ width: 32, height: 32 }}
+                        />
+                      ) : hasEmojiUrl(category) ? (
+                        <Image
+                          source={{ uri: (category as any).emojiUrl }}
+                          style={{ width: 32, height: 32 }}
+                        />
+                      ) : undefined
+                    }
+                  >
+                    {category.displayName}
+                  </Button>
+                </View>
+              );
+            })}
         <Loading.Lottie title={t("features.community.ui.category_list.loading_categories")} loading={isLoading}>
           <View className="flex flex-row w-full gap-x-[10px] mb-2 ">
             {categories.map((category) => (

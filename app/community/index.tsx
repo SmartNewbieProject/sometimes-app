@@ -1,7 +1,9 @@
+// app/community/index.tsx
 import { useCategory } from "@/src/features/community/hooks";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { CategoryList, CreateArticleFAB } from "@/src/features/community/ui";
 import { ImageResources } from "@/src/shared/libs";
-import { BottomNavigation, Header, ImageResource, Text } from "@/src/shared/ui";
+import { BottomNavigation, Header, ImageResource, HeaderWithNotification } from "@/src/shared/ui";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, useWindowDimensions, ActivityIndicator } from "react-native";
@@ -11,12 +13,17 @@ import {
   type SceneRendererProps,
 } from "react-native-tab-view";
 import { InfiniteArticleList } from "@/src/features/community/ui/infinite-article-list";
-import { useInfiniteArticlesQuery } from "@/src/features/community/queries/use-infinite-articles";
+import {
+  prefetchArticlesFirstPage,
+  useInfiniteArticlesQuery,
+} from "@/src/features/community/queries/use-infinite-articles";
 import { useQueryClient } from "@tanstack/react-query";
-import { prefetchArticlesFirstPage } from "@/src/features/community/queries/use-infinite-articles";
 import { ArticleSkeleton } from "@/src/features/loading/skeleton/article-skeleton";
+import CommuHome from "@/src/features/community/ui/home";
+import { NOTICE_CODE } from "@/src/features/community/queries/use-home";
 
-type CategoryRoute = { key: string; title: string };
+const HOME_CODE = "__home__";
+type CategoryRoute = { key: string; title: string; isHome?: boolean };
 
 export default function CommunityScreen() {
   const { refresh: shouldRefresh } = useLocalSearchParams<{
@@ -29,64 +36,78 @@ export default function CommunityScreen() {
   } = useCategory();
   const layout = useWindowDimensions();
   const queryClient = useQueryClient();
-
   const safeWidth = Math.max(1, layout.width || 0);
 
-  const routes: CategoryRoute[] = useMemo(
-    () => categories.map((c) => ({ key: c.code, title: c.displayName })),
-    [categories]
-  );
+  const routes: CategoryRoute[] = useMemo(() => {
+    return [
+      { key: HOME_CODE, title: "홈", isHome: true },
+      ...categories
+        .filter((c) => c.code !== NOTICE_CODE)
+        .map((c) => ({ key: c.code, title: c.displayName })),
+    ];
+  }, [categories]);
+
+  const isNotice = (categoryCode ?? HOME_CODE) === NOTICE_CODE;
 
   const currentIndex = useMemo(() => {
-    const idx = routes.findIndex((r) => r.key === categoryCode);
+    const targetKey = categoryCode ?? HOME_CODE;
+    const idx = routes.findIndex((r) => r.key === targetKey);
     return idx >= 0 ? idx : 0;
   }, [routes, categoryCode]);
 
   const [index, setIndex] = useState<number>(currentIndex);
-
   useEffect(() => {
-    if (index !== currentIndex) setIndex(currentIndex);
+    if (!isNotice && index !== currentIndex) setIndex(currentIndex);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex]);
+  }, [currentIndex, isNotice]);
 
   useEffect(() => {
-    if (routes.length === 0) return;
+    if (isNotice || routes.length === 0) return;
     const targets = [index, index - 1, index + 1]
       .filter((i) => i >= 0 && i < routes.length)
-      .map((i) => routes[i].key);
-
+      .map((i) => routes[i].key)
+      .filter((code) => code !== HOME_CODE);
     targets.forEach((code) => {
       prefetchArticlesFirstPage(queryClient, code, 10).catch(() => {});
     });
-  }, [index, routes, queryClient]);
+  }, [index, routes, queryClient, isNotice]);
 
   const onIndexChange = useCallback(
     (next: number) => {
       if (next < 0 || next >= routes.length) return;
       setIndex(next);
       const nextKey = routes[next]?.key;
-      if (nextKey && nextKey !== categoryCode) {
-        changeCategory(nextKey);
-      }
+      if (nextKey && nextKey !== categoryCode) changeCategory(nextKey);
     },
     [routes, categoryCode, changeCategory]
   );
 
-  const { refetch } = useInfiniteArticlesQuery({ categoryCode, pageSize: 10 });
+  const { refetch } = useInfiniteArticlesQuery({
+    categoryCode: isNotice ? undefined : categoryCode,
+    pageSize: 10,
+  });
   useEffect(() => {
-    if (shouldRefresh === "true") {
+    if (shouldRefresh === "true" && !isNotice) {
       refetch();
     }
-  }, [shouldRefresh, refetch]);
+  }, [shouldRefresh, refetch, isNotice]);
 
   const hasRoutes = routes.length > 0;
 
   const renderScene = useCallback(
     (props: SceneRendererProps & { route: CategoryRoute }) => {
       const { route } = props;
+      if (route.isHome) {
+        return (
+          <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key={route.key}>
+            <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
+            <CommuHome />
+          </View>
+        );
+      }
       return (
-        <View style={{ flex: 1, backgroundColor: "white" }} key={route.key}>
-          <View style={{ height: 1, backgroundColor: "#F3F0FF" }} />
+        <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key={route.key}>
+          <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
           <InfiniteArticleList
             key={`list-${route.key}`}
             initialSize={10}
@@ -102,12 +123,9 @@ export default function CommunityScreen() {
   const renderLazyPlaceholder = useCallback(
     (_: SceneRendererProps & { route: CategoryRoute }) => {
       return (
-        <View style={{ flex: 1, backgroundColor: "white" }}>
-          <View style={{ height: 1, backgroundColor: "#F3F0FF" }} />
+        <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }}>
+          <View style={{ height: 1, backgroundColor: semanticColors.surface.background }} />
           <View style={{ paddingHorizontal: 16, paddingVertical: 10 }}>
-            {/* <Text size="sm" weight="bold">
-              로딩 중…
-            </Text> */}
             <ActivityIndicator size="large" color="#8B5CF6" />
           </View>
           {Array.from({ length: 8 }).map((_, i) => (
@@ -122,12 +140,25 @@ export default function CommunityScreen() {
     []
   );
 
+  const isHome = !isNotice && routes[index]?.isHome === true;
+
   return (
     <View className="flex-1 relative">
       <ListHeaderComponent />
 
-      <View className="flex-1 bg-white">
-        {hasRoutes ? (
+      <View className="flex-1 bg-surface-background">
+        {/** 공지 전용: 스와이프 불가 */}
+        {isNotice ? (
+          <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key="__notice__">
+            <View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
+            <InfiniteArticleList
+              key={`list-${NOTICE_CODE}`}
+              initialSize={10}
+              categoryCode={NOTICE_CODE}
+              preferSkeletonOnCategoryChange
+            />
+          </View>
+        ) : hasRoutes ? (
           <TabView<CategoryRoute>
             key={routes.map((r) => r.key).join("|")}
             navigationState={
@@ -147,7 +178,7 @@ export default function CommunityScreen() {
         )}
       </View>
 
-      <CreateArticleFAB />
+      {!isHome && <CreateArticleFAB />}
       <BottomNavigation />
     </View>
   );
@@ -156,17 +187,17 @@ export default function CommunityScreen() {
 const ListHeaderComponent = () => {
   return (
     <View>
-      <Header.Container className="items-center bg-white ">
-        <Header.CenterContent>
+      <HeaderWithNotification
+        centerContent={
           <ImageResource
             resource={ImageResources.COMMUNITY_LOGO}
             width={152}
             height={18}
           />
-        </Header.CenterContent>
-      </Header.Container>
-
-      <View className="pt-[14px] bg-white">
+        }
+        showBackButton={false}
+      />
+      <View className="pt-[14px] bg-surface-background">
         <CategoryList />
       </View>
     </View>

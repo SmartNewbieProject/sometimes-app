@@ -1,6 +1,6 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { semanticColors } from '../../../../shared/constants/colors';
 import apis from "@/src/features/mypage/apis";
-import { platform } from "@/src/shared/libs/platform";
 
 import Layout from "@/src/features/layout";
 import { DefaultLayout } from "@/src/features/layout/ui";
@@ -10,17 +10,12 @@ import {
   guideHeight,
   useOverlay,
 } from "@/src/shared/hooks/use-overlay";
-import { useStorage } from "@/src/shared/hooks/use-storage";
 import { cn } from "@/src/shared/libs";
-import {
-  Button,
-  ImageSelector,
-  PalePurpleGradient,
-  Text,
-} from "@/src/shared/ui";
+
+import { ImageSelector, Text } from "@/src/shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Animated,
@@ -28,11 +23,11 @@ import {
   Easing,
   Platform,
   Text as RNText,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 
@@ -49,6 +44,7 @@ export const ChangeProfileImageModal = ({
   const insets = useSafeAreaInsets();
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { t } = useTranslation();
 
   const [images, setImages] = useState<(string | null)[]>([null, null, null]);
@@ -107,34 +103,12 @@ export const ChangeProfileImageModal = ({
     );
   }, []);
 
-  useEffect(() => {
-    if (profileDetails?.profileImages) {
-      const sortedPorifleImages = profileDetails?.profileImages.sort((a, b) => {
-        if (a.isMain && !b.isMain) return -1;
-        if (!a.isMain && b.isMain) return 1;
-        return 0;
-      });
-      setImages(sortedPorifleImages.map((item) => item.url));
-    }
-  }, [profileDetails]);
+
 
   const handleImageChange = (index: number, value: string) => {
     const newImages = [...images];
     newImages[index] = value;
     setImages(newImages);
-  };
-
-  const addNewImage = async (newImage: string[]) => {
-    await apis.uploadProfileImages(newImage);
-  };
-
-  const cleanupRemainingImages = async (
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    oldImages: any[]
-  ) => {
-    for (let i = 0; i < oldImages.length; i++) {
-      await apis.deleteProfileImage(oldImages[i].id).catch(() => {});
-    }
   };
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -163,38 +137,14 @@ export const ChangeProfileImageModal = ({
     try {
       setIsSubmitting(true);
 
-      const oldImages = [...(profileDetails.profileImages || [])];
-      const changedIndexes: number[] = [];
-
-      images.forEach((img, idx) => {
-        const oldImage = oldImages[idx]?.url ?? null;
-        if (img !== oldImage) {
-          changedIndexes.push(idx);
-        }
-      });
-
-      for (const index of changedIndexes) {
-        const oldImage = oldImages[index];
-        if (oldImage) {
-          await apis.deleteProfileImage(oldImage.id).catch(() => {});
-        }
-      }
-
-      for (const index of changedIndexes) {
-        const newImage = images[index];
-        if (newImage) {
-          await apis.uploadProfileImage(newImage, index);
-        }
-      }
+      await apis.uploadProfileImages(validImages);
 
       await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
+      await queryClient.invalidateQueries({ queryKey: ["profile-image-review-status"] });
       hideModal();
 
       setTimeout(() => {
-        showErrorModal(
-          t("features.mypage.profile_image_success"),
-          "announcement"
-        );
+        router.push("/my/approval-step/waiting");
       }, 100);
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
@@ -228,7 +178,7 @@ export const ChangeProfileImageModal = ({
     >
       <View style={{ flex: 1 }}>
         <GuideView>
-          <View style={[styles.container]}>
+          <View style={[styles.container, { paddingTop: insets.top }]}>
             <View style={styles.titleContainer}>
               <Image
                 source={require("@assets/images/profile-image.png")}
@@ -240,16 +190,16 @@ export const ChangeProfileImageModal = ({
                 textColor="black"
                 className="mt-2"
               >
-                {t("apps.auth.sign_up.profile_image.main_title_1")}
+                프로필 사진을 변경해보세요
               </Text>
               <Text weight="semibold" size="20" textColor="black">
-                {t("apps.auth.sign_up.profile_image.main_title_2")}
+                더 매력적인 나를 보여주세요!
               </Text>
             </View>
 
             <View style={styles.descriptioncontianer}>
               <Text weight="medium" size="sm" textColor="pale-purple">
-                {t("apps.auth.sign_up.profile_image.guide_1")}
+                3장의 프로필 사진을 모두 새로 등록해주세요
               </Text>
               <Text weight="medium" size="sm" textColor="pale-purple">
                 {t("apps.auth.sign_up.profile_image.guide_2")}
@@ -359,7 +309,7 @@ export const ChangeProfileImageModal = ({
         </GuideView>
         <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
           <Layout.TwoButtons
-            disabledNext={isSubmitting}
+            disabledNext={isSubmitting || images.filter((img) => img !== null).length !== 3}
             content={{
               next: isSubmitting ? t("features.mypage.image-modal.saving") : t("features.mypage.image-modal.save"),
             }}
@@ -393,9 +343,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.secondary,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
 
     shadowColor: "#F2ECFF",
     shadowOffset: {
@@ -419,9 +369,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
     marginBottom: 230,
     shadowColor: "#F2ECFF",
     shadowOffset: {
@@ -438,10 +388,10 @@ const styles = StyleSheet.create({
 
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   infoTitle: {
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: 600,
     fontFamily: "semibold",
     lineHeight: 16.8,

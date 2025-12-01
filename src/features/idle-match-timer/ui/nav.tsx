@@ -1,6 +1,6 @@
 import { ImageResources, cn } from "@/src/shared/libs";
-import { Button, ImageResource } from "@/src/shared/ui";
-import { Text } from "@shared/ui";
+import { semanticColors } from '../../../shared/constants/colors';
+import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
 import type { MatchDetails } from "../types";
 
@@ -52,10 +52,10 @@ export const InteractionNavigation = ({
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             {t("features.idle-match-timer.ui.nav.modal_text_1")}
           </Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             {t("features.idle-match-timer.ui.nav.modal_text_2")}
           </Text>
         </View>
@@ -88,7 +88,7 @@ export const InteractionNavigation = ({
           <RNText
             className={cn(
               "text-md text-primaryPurple whitespace-nowrap",
-              !hasPartner && "text-white"
+              !hasPartner && "text-text-inverse"
             )}
           >
             {t("features.idle-match-timer.ui.nav.main_button")}
@@ -98,7 +98,7 @@ export const InteractionNavigation = ({
       {isLiked ? (
         <Button
           onPress={() => {}}
-          className="flex-1 items-center !bg-[#E1D9FF] !text-white"
+          className="flex-1 items-center !bg-surface-other !text-text-inverse"
         >
           {t("features.idle-match-timer.ui.nav.complete_button")}
         </Button>
@@ -119,6 +119,6 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     paddingRight: 5,
     lineHeight: 18,
-    color: "#BEACFF",
+    color: semanticColors.brand.accent,
   },
 });

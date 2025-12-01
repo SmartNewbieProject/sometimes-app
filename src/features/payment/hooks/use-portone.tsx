@@ -1,4 +1,4 @@
-import { track } from "@amplitude/analytics-react-native";
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import { useModal } from "@shared/hooks/use-modal";
 import { Text } from "@shared/ui";
 import { router } from "expo-router";
@@ -9,6 +9,8 @@ import type { PaymentResponse } from "../types";
 import { usePortoneScript } from "./PortoneProvider";
 import { usePortoneStore } from "./use-portone-store";
 import {queryClient} from "@shared/config/query";
+import { useEventControl } from "@/src/features/event/hooks";
+import { EventType } from "@/src/features/event/types";
 import { useTranslation } from "react-i18next";
 
 interface UsePortone {
@@ -31,8 +33,37 @@ interface HandlePaymentCompleteOptions {
 export function usePortone(): UsePortone {
   const { loaded, error } = usePortoneScript();
   const { showModal, showErrorModal, hideModal } = useModal();
-  const { gemCount } = usePortoneStore();
+  const { gemCount, eventType, clearEventType } = usePortoneStore();
+  const { paymentEvents } = useKpiAnalytics();
   const { t } = useTranslation();
+  const { participate: participateFirstSale7 } = useEventControl({ type: EventType.FIRST_SALE_7 });
+  const { participate: participateFirstSale16 } = useEventControl({ type: EventType.FIRST_SALE_16 });
+  const { participate: participateFirstSale27 } = useEventControl({ type: EventType.FIRST_SALE_27 });
+
+  const handleEventParticipation = useCallback(async (eventType: EventType) => {
+    try {
+      let participate;
+      switch (eventType) {
+        case EventType.FIRST_SALE_7:
+          participate = participateFirstSale7;
+          break;
+        case EventType.FIRST_SALE_16:
+          participate = participateFirstSale16;
+          break;
+        case EventType.FIRST_SALE_27:
+          participate = participateFirstSale27;
+          break;
+        default:
+          console.warn('알 수 없는 eventType:', eventType);
+          return;
+      }
+      await participate();
+      console.log('이벤트 참여 완료:', eventType);
+    } catch (error) {
+      console.error('이벤트 참여 실패:', error);
+    }
+  }, [participateFirstSale7, participateFirstSale16, participateFirstSale27]);
+
 
   const handlePaymentComplete = useCallback(
     async (
@@ -64,10 +95,24 @@ export function usePortone(): UsePortone {
           });
         }
 
-        track("GemStore_Payment_Success", {
-          result,
-          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-        });
+        // KPI 이벤트: 결제 완료
+paymentEvents.trackPaymentCompleted(
+  result.paymentId,
+  result.pgProvider || 'unknown',
+  result.amount || 0,
+  result.products || []
+);
+
+// 기존 이벤트 호환성
+trackPaymentSuccess(result);
+
+        if (eventType) {
+          await handleEventParticipation(eventType);
+          await queryClient.invalidateQueries({
+            queryKey: ["event"],
+          });
+          clearEventType();
+        }
 
         if (showSuccessModal) {
           if (gemCount) {

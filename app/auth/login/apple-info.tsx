@@ -1,13 +1,13 @@
 // UserInfoPage.tsx
 import { DefaultLayout } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import Signup from "@/src/features/signup";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { track } from "@amplitude/analytics-react-native";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Text } from "react-native";
-import {
+import { Text ,
   BackHandler,
   Keyboard,
   Platform,
@@ -70,7 +70,7 @@ export default function UserInfoPage() {
     (!!name || !!appleUserName) &&
     !!gender &&
     year.length === 4 &&
-    month.length === 2 &&
+    month.length > 0 &&
     day.length === 2 &&
     phone.length === 11;
 
@@ -86,7 +86,7 @@ export default function UserInfoPage() {
       phone: formattedPhoneNumberForServer,
     });
 
-    router.push("/auth/signup/area");
+    router.push("/auth/signup/university");
   };
 
   /**
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     position: "absolute",
     width: "100%",
     zIndex: 10,
@@ -349,14 +349,14 @@ const styles = StyleSheet.create({
   topBarTitle: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#000000",
+    color: semanticColors.text.primary,
   },
   title: {
     fontWeight: "600",
     fontFamily: "semibold",
     fontSize: 18,
     lineHeight: 22,
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
   },
   contentWrapper: {
     gap: 15,
@@ -370,8 +370,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: "#E2D9FF",
-    backgroundColor: "#FFFFFF",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.background,
     textAlign: "left",
   },
   genderButtonContainer: {
@@ -383,13 +383,13 @@ const styles = StyleSheet.create({
     height: 37,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#E2D9FF",
+    borderColor: semanticColors.border.default,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
   },
   genderButtonSelected: {
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
   },
   genderButtonText: {
     color: "#BAB0D0",
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   genderButtonTextSelected: {
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
   },
   dateInputContainer: {
     flexDirection: "row",
@@ -410,8 +410,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: "#E2D9FF",
-    backgroundColor: "#FFFFFF",
+    borderColor: semanticColors.border.default,
+    backgroundColor: semanticColors.surface.background,
     textAlign: "left",
   },
   phoneInput: {
@@ -420,16 +420,16 @@ const styles = StyleSheet.create({
     color: "#BAB0D0",
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#E2D9FF",
+    borderColor: semanticColors.border.default,
     paddingHorizontal: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     textAlign: "left",
   },
   bottomContainer: {
     position: "absolute",
     paddingTop: 16,
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
     alignItems: "center",
   },
   messageContainer: {
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   startButton: {
-    backgroundColor: "#E2D9FF",
+    backgroundColor: semanticColors.surface.background,
     width: 330,
     height: 50,
     borderRadius: 28,
@@ -457,19 +457,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   startButtonActive: {
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
   },
   startButtonDisabled: {
-    backgroundColor: "#E2D9FF",
+    backgroundColor: semanticColors.surface.background,
   },
   startButtonText: {
     fontWeight: "bold",
     fontSize: 18,
   },
   startButtonTextActive: {
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
   },
   startButtonTextDisabled: {
-    color: "#9B94AB",
+    color: semanticColors.text.disabled,
   },
 });

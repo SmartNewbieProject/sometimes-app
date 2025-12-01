@@ -1,15 +1,15 @@
 import { cn } from '@/src/shared/libs/cn';
+import colors, { semanticColors } from '../../constants/colors';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
 import { Text } from '../text';
-import colors from '../../constants/colors';
 import { ScrollView } from 'react-native-gesture-handler';
 import i18n from '@/src/shared/libs/i18n';
 
 
 const select = cva(
-  'w-full flex flex-col justify-center bg-transparent border-b border-[#E7E9EC]', 
+  'w-full flex flex-col justify-center bg-transparent border-b border-border-default', 
   {
     variants: {
       size: {
@@ -85,7 +85,7 @@ export function Select({
         animationType="fade"
         onRequestClose={() => setIsOpen(false)}
       >
-        <View className="flex-1 bg-black/30 justify-center items-center">
+        <View className="flex-1 bg-surface-inverse/30 justify-center items-center">
           <ScrollView
             style={[styles.modalContainer, { width: modalWidth }]}
             contentContainerStyle={styles.modalContent}
@@ -124,7 +124,7 @@ export function Select({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    backgroundColor: 'white',
+    backgroundColor: semanticColors.surface.background,
     borderStyle: 'solid',
     borderWidth: 1,
     borderColor: colors.lightPurple,

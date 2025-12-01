@@ -2,6 +2,7 @@ import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { track } from '@amplitude/analytics-react-native';
+import { checkAppEnvironment, logger } from '@shared/libs';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Platform } from 'react-native';
@@ -11,7 +12,6 @@ import type {
 	PortOneIdentityVerificationResponse,
 } from '../types';
 import { isAdult } from '../utils';
-import {checkAppEnvironment, logger} from "@shared/libs";
 
 interface UsePortOneLoginOptions {
 	onError?: (error: Error) => void;
@@ -115,7 +115,7 @@ export const usePortOneLogin = ({
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
 				router.push({
-					pathname: '/auth/signup/area',
+					pathname: '/auth/signup/university',
 					params: {
 						certificationInfo: JSON.stringify(loginResult.certificationInfo),
 					},

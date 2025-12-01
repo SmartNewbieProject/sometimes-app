@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 
 type Id = {
   id: string;
-}
+};
 
 type PostArticleBody = {
   title: string;
@@ -13,12 +13,12 @@ type PostArticleBody = {
   type: ArticleRequestType;
   anonymous: boolean;
   images?: string[];
-}
+};
 
 type getArticleParams = {
   page: number;
   size: number;
-}
+};
 
 type GetArticleParams = getArticleParams & {
   code: string;
@@ -29,7 +29,7 @@ type PatchArticleBody = {
   title: string;
   images?: string[];
   deleteImageIds?: string[];
-}
+};
 
 const createImageFileObject = (imageUri: string, fileName: string) =>
   platform({
@@ -45,13 +45,18 @@ const createImageFileObject = (imageUri: string, fileName: string) =>
       } as any),
   });
 
-export const reportArticle = async (articleId: string, reason: string): Promise<void> =>
-   axiosClient.post(`/articles/${articleId}/reports`, { reason });
+export const reportArticle = async (
+  articleId: string,
+  reason: string
+): Promise<void> =>
+  axiosClient.post(`/articles/${articleId}/reports`, { reason });
 
 type GetArticleResponse = PaginatedResponse<Article>;
 
-export const getAllArticles = async (params: getArticleParams): Promise<Article[]> => {
-  return axiosClient.get('/articles', { params });
+export const getAllArticles = async (
+  params: GetArticleParams
+): Promise<PaginatedResponse<Article>> => {
+  return axiosClient.get("/articles", { params });
 };
 
 export const postArticles = async (body: PostArticleBody): Promise<Article> => {
@@ -67,11 +72,11 @@ export const postArticles = async (body: PostArticleBody): Promise<Article> => {
       formData.append("images", file);
     });
 
-    return axiosClient.post('/articles', formData, {
+    return axiosClient.post("/articles", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   } else {
-    return axiosClient.post('/articles', body);
+    return axiosClient.post("/articles", body);
   }
 };
 
@@ -79,7 +84,10 @@ export const getArticle = async (articleId: string): Promise<Article> => {
   return axiosClient.get(`/articles/details/${articleId}`);
 };
 
-export const patchArticle = async (articleId: string, body: PatchArticleBody): Promise<Article> => {
+export const patchArticle = async (
+  articleId: string,
+  body: PatchArticleBody
+): Promise<Article> => {
   if (body.images && body.images.length > 0) {
     const formData = new FormData();
     formData.append("content", body.content);
@@ -113,14 +121,21 @@ export const patchArticleLike = async (articleId: string): Promise<Article> => {
 };
 
 export const getCategoryList = (): Promise<Category[]> =>
-  axiosClient.get('/articles/category/list');
+  axiosClient.get("/articles/category/list");
 
-export const getArticles = async ({ code, ...params }: GetArticleParams): Promise<GetArticleResponse> => {
+export const getArticles = async ({
+  code,
+  ...params
+}: GetArticleParams): Promise<GetArticleResponse> => {
   return axiosClient.get(`/articles/${code}`, { params });
 };
 
 export const doLike = async (data: Id): Promise<void> =>
   axiosClient.patch(`/articles/${data.id}/like`);
+
+export const getHotArticles = async (): Promise<import("../types").HotArticle[]> => {
+  return axiosClient.get("/articles/hot/latest");
+};
 
 type Service = {
   getAllArticles: (params: getArticleParams) => Promise<Article[]>;
@@ -132,7 +147,7 @@ type Service = {
   getCategoryList: () => Promise<Category[]>;
   doLike: (params: Id) => Promise<void>;
   reportArticle: (articleId: string, reason: string) => Promise<void>;
-}
+};
 
 const apis: Service = {
   getAllArticles,

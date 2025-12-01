@@ -1,8 +1,7 @@
-import { View } from "react-native";
+import { View , Platform, ScrollView, StyleSheet } from "react-native";
 
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { LinearGradient } from "expo-linear-gradient";
-import { Platform, ScrollView, StyleSheet } from "react-native";
 
 type Props = {
   children: React.ReactNode;
@@ -31,7 +30,7 @@ export const ContentLayout = ({ children }: Props) => {
 const styles = StyleSheet.create({
   shadowWrapper: {
     width: "100%",
-    backgroundColor: "#F3EDFF",
+    backgroundColor: semanticColors.surface.secondary,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     top: -32,
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     flex: 1,
-    backgroundColor: "#F3EEFC",
+    backgroundColor: semanticColors.surface.secondary,
     flexDirection: "column",
     display: "flex",
   },

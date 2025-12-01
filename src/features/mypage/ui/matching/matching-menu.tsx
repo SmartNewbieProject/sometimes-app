@@ -1,13 +1,7 @@
-import { useCommingSoon } from "@/src/features/admin/hooks";
 import { useMatchingFilters } from "@/src/features/mypage/hooks/use-matching-filter";
-import { useModal } from "@/src/shared/hooks/use-modal";
-import { ImageResources } from "@/src/shared/libs";
-import { AnnounceCard, Button, Text } from "@/src/shared/ui";
-import { router } from "expo-router";
-import { useEffect } from "react";
+import { semanticColors } from '../../../../shared/constants/colors';
+import { Text } from "@/src/shared/ui";
 import { StyleSheet, View } from "react-native";
-import CustomSwitch from "../custom-switch";
-import { ChangeMbtiModal } from "../modal/change-mbti.modal";
 import MatchingCard from "./matching-card";
 import { useTranslation } from "react-i18next";
 
@@ -15,11 +9,11 @@ import { useTranslation } from "react-i18next";
 
 
 const MatchingMenu = () => {
-  const showCommingSoon = useCommingSoon();
   const { t } = useTranslation();
   const {
     filters,
     isLoading,
+    isUpdating,
     error,
     toggleAvoidDepartment,
     toggleAvoidUniversity,
@@ -38,11 +32,13 @@ const MatchingMenu = () => {
           title={t('features.mypage.ex_same_class')}
           isOn={filters?.avoidDepartment || false}
           toggle={toggleAvoidDepartment}
+          disabled={isUpdating}
         />
         <MatchingCard
           title={t('features.mypage.ex_same_school')}
           isOn={filters?.avoidUniversity || false}
           toggle={toggleAvoidUniversity}
+          disabled={isUpdating}
         />
       </View>
     </View>
@@ -54,7 +50,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 18,
     fontFamily: "semibold",
     fontWeight: 600,
@@ -65,7 +61,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 1,
     width: "100%",
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
   },
   contentContainer: {
     gap: 10,

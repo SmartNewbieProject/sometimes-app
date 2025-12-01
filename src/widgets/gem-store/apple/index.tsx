@@ -1,21 +1,24 @@
 import type { AppleGemDetails, GemDetails } from "@/src/features/payment/api";
 import type { GemMetadata } from "@/src/features/payment/types";
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { ImageResources } from "@shared/libs";
 import { Show, Text } from "@shared/ui";
 import { ImageResource } from "@ui/image-resource";
+import type { Product } from "expo-iap";
 import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { calculateDiscount, dropHundred, toKRW } from "../utils";
 import {
   containsSale,
   extractNumber,
   getPriceAndDiscount,
+  getPriceAndDiscountFromServer,
 } from "../utils/apple";
 
 export type GemItemProps = {
   onOpenPurchase: (productId: string) => void;
   hot?: boolean;
-  gemProduct: AppleGemDetails;
+  gemProduct: Product;
+  serverGemProducts?: GemDetails[]; // 서버 데이터 추가
 };
 
 const AppleGemStoreProvider = ({ children }: { children: React.ReactNode }) => {
@@ -37,12 +40,18 @@ const AppleGemStoreItem = ({
   gemProduct,
   hot,
   onOpenPurchase,
+  serverGemProducts,
 }: GemItemProps) => {
+  // 서버 데이터가 있으면 서버 데이터 기반으로 할인율/원가 표시
+  const priceAndDiscount = serverGemProducts
+    ? getPriceAndDiscountFromServer(gemProduct.id, serverGemProducts)
+    : getPriceAndDiscount(gemProduct.id);
+
   return (
     <Pressable
       onPress={() => onOpenPurchase(gemProduct.id)}
       style={{
-        backgroundColor: "white",
+        backgroundColor: semanticColors.surface.background,
         padding: 16,
         height: 59,
         display: "flex",
@@ -68,22 +77,22 @@ const AppleGemStoreItem = ({
         >
           <ImageResource resource={ImageResources.GEM} width={42} height={42} />
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold", color: "black" }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", color: semanticColors.text.primary }}>
               {extractNumber(gemProduct.title)}개
             </Text>
           </View>
         </View>
 
         <View style={{ display: "flex", flexDirection: "column", rowGap: 6 }}>
-          <Show when={gemProduct.id !== "gem_8"}>
+          <Show when={priceAndDiscount && priceAndDiscount.discountRate > 0}>
             <View
               style={{ display: "flex", flexDirection: "row", columnGap: 6 }}
             >
-              <Text className="text-[10px] text-[#969696] line-through">
-                {toKRW(getPriceAndDiscount(gemProduct.id)?.price ?? 0)}원
+              <Text className="text-[10px] text-text-disabled line-through">
+                {toKRW(priceAndDiscount?.price ?? 0)}원
               </Text>
               <Text className="text-[10px]">
-                {getPriceAndDiscount(gemProduct.id)?.discountRate}% 할인
+                {priceAndDiscount?.discountRate}% 할인
               </Text>
             </View>
           </Show>
@@ -91,7 +100,7 @@ const AppleGemStoreItem = ({
           <Text
             size="18"
             style={{
-              color: "black",
+              color: semanticColors.text.primary,
               fontWeight: "bold",
               alignSelf: "flex-end",
             }}
@@ -106,14 +115,14 @@ const AppleGemStoreItem = ({
             position: "absolute",
             top: 0,
             left: 0,
-            backgroundColor: "#8B5CF6",
+            backgroundColor: semanticColors.brand.primary,
             paddingHorizontal: 8,
             paddingVertical: 4,
             borderTopLeftRadius: 4,
             borderBottomRightRadius: 4,
           }}
         >
-          <Text style={{ color: "white", fontSize: 10, fontWeight: "bold" }}>
+          <Text style={{ color: semanticColors.text.inverse, fontSize: 10, fontWeight: "bold" }}>
             인기
           </Text>
         </View>

@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import PostBoxCard, {
   ILikedRejectedButton,
@@ -46,7 +47,7 @@ function LikeGuide() {
   const renderHighlightCard = () => {
     const commonStyle = {
       marginTop: 20,
-      backgroundColor: "#fff",
+      backgroundColor: semanticColors.surface.background,
       position: "absolute" as const,
       left: 18,
       right: 18,
@@ -97,7 +98,7 @@ function LikeGuide() {
             pointerEvents="none"
             style={{
               marginTop: 20,
-              backgroundColor: "#fff",
+              backgroundColor: semanticColors.surface.background,
               position: "absolute",
               top: insets.top + 234,
               borderRadius: 18,
@@ -127,7 +128,7 @@ function LikeGuide() {
             pointerEvents="none"
             style={{
               marginTop: 20,
-              backgroundColor: "#fff",
+              backgroundColor: semanticColors.surface.background,
               position: "absolute",
               top: insets.top + 212,
               height: 20,
@@ -336,7 +337,7 @@ function LikeGuide() {
         }}
       />
 
-      <View style={[styles.overlay, { backgroundColor: "#00000080" }]} />
+      <View style={[styles.overlay, { backgroundColor: semanticColors.surface.inverse }]} />
     </DefaultLayout>
   );
 }
@@ -372,7 +373,7 @@ const styles = StyleSheet.create({
     bottom: -4,
     borderRadius: 12,
     borderWidth: 3,
-    borderColor: "#9F84D8",
+    borderColor: semanticColors.brand.accent,
     backgroundColor: "transparent",
   },
   infoWrapper: {
@@ -384,9 +385,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
     shadowColor: "#F2ECFF",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
@@ -394,7 +395,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   infoTitle: {
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: "600",
     fontFamily: "semibold",
     lineHeight: 16.8,
@@ -409,7 +410,7 @@ const styles = StyleSheet.create({
   infoNextHint: {
     fontSize: 11,
     lineHeight: 14,
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: "500",
     marginTop: 10,
     textAlign: "left",

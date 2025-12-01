@@ -1,4 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { semanticColors } from '../../../shared/constants/colors';
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -96,13 +97,13 @@ function HistoryCollapse() {
               startTiming={startTiming}
               handleAllImagesLoaded={handleAllImagesLoaded}
               imageUrls={
-                previewMatchingHistory.imageUrls.length > 5
+                previewMatchingHistory.countOfPartner > 5
                   ? previewMatchingHistory.imageUrls.slice(0, 5)
                   : previewMatchingHistory.imageUrls
               }
             />
           </View>
-          {previewMatchingHistory.imageUrls.length > 5 && (
+          {previewMatchingHistory.countOfPartner > 5 && (
             <View style={styles.more}>
               <Animated.Text
                 style={[styles.moreText, textOpacityStyle]}
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
 
-    borderColor: "#E1D9FF",
+    borderColor: semanticColors.border.default,
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 15,
@@ -154,23 +155,23 @@ const styles = StyleSheet.create({
 
     fontFamily: "semibold",
     lineHeight: 21.6,
-    color: "#4A4A4A",
+    color: semanticColors.text.muted,
   },
   titleStrong: {
     fontWeight: 800,
     fontFamily: "extrabold",
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
   },
   description: {
     fontSize: 12,
     fontWeight: 500,
     fontFamily: "Pretendard-Medium",
     lineHeight: 14.4,
-    color: "#A892D7",
+    color: semanticColors.brand.accent,
   },
 
   more: {
-    backgroundColor: "#A892D7",
+    backgroundColor: semanticColors.brand.accent,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
     borderRadius: "50%",
   },
   moreText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 14,
   },
   background: {

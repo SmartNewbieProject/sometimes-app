@@ -5,3 +5,5 @@ export * from './leave-chat-room';
 export * from './typing';
 export * from './upload-image';
 export * from './read-messages';
+export * from './join-room';
+export * from './leave-room';

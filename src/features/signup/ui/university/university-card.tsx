@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { semanticColors } from '../../../../shared/constants/colors';
 import React, { useRef } from "react";
 import {
   Animated,
@@ -12,7 +13,7 @@ import type { UniversityCard as UniversityCardProps } from "../../queries/use-un
 
 
 function UniversityCard({
-  item: { name, region, universityType, area, logoUrl, en },
+  item: { name, area, logoUrl, en },
   onClick,
   isSelected,
 }: {
@@ -72,15 +73,11 @@ function UniversityCard({
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
             {name}
           </Text>
-          <Text style={styles.englishName}>
-            {en}
-          </Text>
+          <Text style={styles.englishName}>{en}</Text>
           <View style={styles.bottomContainer}>
             <View style={styles.area}>
               <Text style={styles.areaText}>{area}</Text>
             </View>
-
-            <Text style={styles.universityType}>{universityType}</Text>
           </View>
         </View>
       </Animated.View>
@@ -96,13 +93,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 36,
     borderWidth: 1.5,
-    borderColor: "#E6DBFF",
+    borderColor: semanticColors.border.default,
     borderRadius: 10,
     marginBottom: 10,
     alignItems: "center",
   },
   title: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 20,
     fontWeight: "600",
     fontFamily: "semibold",
@@ -110,7 +107,8 @@ const styles = StyleSheet.create({
   },
   area: {
     paddingHorizontal: 11,
-    backgroundColor: "#7A4AE2",
+    paddingVertical: 4,
+    backgroundColor: semanticColors.brand.primary,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
@@ -120,19 +118,19 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   areaText: {
-    color: "#fff",
-    fontSize: 10,
-    lineHeight: 12,
+    color: semanticColors.text.inverse,
+    fontSize: 13,
+    lineHeight: 13,
   },
   universityType: {
-    color: "#9B94AB",
+    color: semanticColors.text.disabled,
     fontFamily: "thin",
     lineHeight: 22,
     fontWeight: 100,
     fontSize: 13,
   },
   englishName: {
-    color: "#000",
+    color: semanticColors.text.primary,
     marginVertical: 8,
     opacity: 0.7,
     fontSize: 13,

@@ -1,5 +1,6 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
-import { UniversityName, dayUtils, getUnivLogo } from "@/src/shared/libs";
+import { UniversityName, dayUtils, getUnivLogo, formatLastLogin } from "@/src/shared/libs";
+import { semanticColors } from '../../../shared/constants/colors';
 import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text, UniversityBadge } from "@shared/ui";
@@ -115,6 +116,26 @@ export const Partner = ({ match }: PartnerProps) => {
             );
           })()}
         </View>
+        <View
+          style={{
+            backgroundColor: "#7A4AE2",
+            paddingHorizontal: 8,
+            paddingVertical: 4,
+            borderRadius: 4,
+            alignSelf: "flex-start",
+            marginTop: 4,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
+          <Text textColor="white" weight="medium" size="sm">
+            마지막 접속
+          </Text>
+          <Text textColor="white" weight="light" size="sm">
+            {formatLastLogin(partner?.updatedAt)}
+          </Text>
+        </View>
       </View>
 
       <View
@@ -143,7 +164,7 @@ export const Partner = ({ match }: PartnerProps) => {
               borderTopEndRadius: 16,
               height: 35,
               width: "100%",
-              borderColor: "#E7E9EC",
+              borderColor: semanticColors.border.default,
             }}
           />
         </View>
@@ -154,7 +175,7 @@ export const Partner = ({ match }: PartnerProps) => {
             style={sideStyle.previousButton}
             onPress={onClickToPartner}
           >
-            <Text className="w-[32px] text-white text-[12px]">{t("features.idle-match-timer.ui.partner.button_more")}</Text>
+            <Text className="w-[32px] text-text-inverse text-[12px]">{t("features.idle-match-timer.ui.partner.button_more")}</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>

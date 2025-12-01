@@ -40,27 +40,26 @@ export const InputForm = ({
   const { t } = useTranslation();
   return (
     <View>
-      {/* 수정 모드 또는 대댓글 작성 모드 표시 */}
       {editingCommentId && (
-        <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
-          <Text size="sm" className="text-[#A892D7]">
+        <View className="flex-row items-center justify-between bg-surface-background px-3 py-2 mb-2 rounded-lg">
+          <Text size="sm" className="text-brand-accent">
             {t("features.community.ui.comment.input_form.editing_comment")}
           </Text>
           <TouchableOpacity onPress={handleCancelEdit}>
-            <Text size="sm" className="text-[#A892D7]">
+            <Text size="sm" className="text-brand-accent">
               {t("global.cancel")}
             </Text>
           </TouchableOpacity>
         </View>
       )}
       {!editingCommentId && replyingToCommentId && (
-        <View className="flex-row items-center justify-between bg-[#F3F0FF] px-3 py-2 mb-2 rounded-lg">
-          <Text size="sm" className="text-[#A892D7]">
+        <View className="flex-row items-center justify-between bg-surface-background px-3 py-2 mb-2 rounded-lg">
+          <Text size="sm" className="text-brand-accent">
             {t("features.community.ui.comment.input_form.replying_comment")}
           </Text>
           {handleCancelReply && (
             <TouchableOpacity onPress={handleCancelReply}>
-              <Text size="sm" className="text-[#A892D7]">
+              <Text size="sm" className="text-brand-accent">
                 {t("global.cancel")}
               </Text>
             </TouchableOpacity>
@@ -71,7 +70,7 @@ export const InputForm = ({
       <View
         className={cn([
           "flex-row flex items-center gap-[5px]",
-          "rounded-[16px] bg-[#F8F4FF] h-[50px] w-full",
+          "rounded-[16px] bg-surface-background h-[50px] w-full",
         ])}
       >
         <View className="flex-row items-center gap-[5px]">
@@ -95,7 +94,7 @@ export const InputForm = ({
               ? handleSubmitUpdate
               : form.handleSubmit(handleSubmit)
           }
-          disabled={!editingContent}
+          disabled={!editingContent.trim()}
         />
       </View>
     </View>
@@ -122,7 +121,7 @@ const AnonymousToggle = ({
       size={25}
       onChange={setChecked}
     >
-      <Text className="mr-1 text-black text-[15px] h-[25px] leading-[25px] flex items-center">
+      <Text className="mr-1 text-text-primary text-[15px] h-[25px] leading-[25px] flex items-center">
         {i18n.t("features.community.ui.comment.input_form.anonymous")}
       </Text>
     </Check.Box>
@@ -146,7 +145,7 @@ const CommentInput = ({
     className={cn([
       "w-full flex-1 px-2",
       "text-sm md:text-md",
-      "text-[#A892D7] border-b-0 outline-none",
+      "text-brand-accent border-b-0 outline-none",
     ])}
     placeholder={i18n.t("features.community.ui.comment.input_form.comment_placeholder")}
     onChange={(e) => setEditingContent(e.nativeEvent.text)}

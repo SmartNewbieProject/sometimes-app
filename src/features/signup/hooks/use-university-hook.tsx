@@ -1,31 +1,95 @@
+import { track } from "@amplitude/analytics-react-native";
 import Signup from "@features/signup";
-import { useGlobalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Keyboard, StyleSheet } from "react-native";
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { filterUniversities } from "../lib";
 import useUniversities from "../queries/use-universities";
-const {
-  SignupSteps,
-  useChangePhase,
-  useSignupProgress,
-  queries,
-  useSignupAnalytics,
-} = Signup;
-const { useUnivQuery } = queries;
+
+const { SignupSteps, useChangePhase, useSignupProgress, useSignupAnalytics } =
+  Signup;
+
 function useUniversityHook() {
   const [searchText, setSearchText] = useState("");
-
   const { updateForm, form: userForm, regions } = useSignupProgress();
   const { isLoading, data: univs } = useUniversities();
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
-    userForm.universityName
+    userForm.universityId
   );
+  const params = useLocalSearchParams();
+  const hasProcessedPassInfo = useRef(false);
+  const [trigger, setTrigger] = useState(false);
   const [filteredUniv, setFilteredUniv] = useState(univs);
-  const router = useRouter();
-  useChangePhase(SignupSteps.UNIVERSITY);
+  const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } =
+    useSignupProgress();
+  const [isFocused, setIsFocused] = useState(false);
 
-  // 애널리틱스 추적 설정
-  const { trackSignupEvent } = useSignupAnalytics("university");
+  const titleOpacity = useSharedValue(1);
+  const containerTranslateY = useSharedValue(60);
+  const listOpacity = useSharedValue(0);
+  const listTranslateY = useSharedValue(50);
+
+  const animatedTitleStyle = useAnimatedStyle(() => ({
+    opacity: titleOpacity.value,
+  }));
+
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: containerTranslateY.value }],
+  }));
+
+  const animatedListStyle = useAnimatedStyle(() => ({
+    opacity: listOpacity.value,
+    transform: [{ translateY: listTranslateY.value }],
+  }));
+
+  const selectedUnivObj = filteredUniv?.find(
+    (item) => item.id === selectedUniv
+  );
+
+  const handleFocus = () => {
+    if (!isFocused) {
+      setTrigger(true);
+      setIsFocused(true);
+      updateShowHeader(true);
+
+      titleOpacity.value = withTiming(0, { duration: 0 });
+      containerTranslateY.value = withTiming(0, { duration: 350 });
+      listOpacity.value = withTiming(1, { duration: 350 });
+      listTranslateY.value = withTiming(0, { duration: 350 });
+    }
+  };
+
+  const onBackPress = (fallback: () => void) => {
+    if (isFocused) {
+      setTrigger(false);
+      setIsFocused(false);
+      setSearchText("");
+      Keyboard.dismiss();
+      updateShowHeader(false);
+
+      titleOpacity.value = withTiming(1, { duration: 0 });
+      containerTranslateY.value = withTiming(60, { duration: 0 });
+      listOpacity.value = withTiming(0, { duration: 0 });
+      listTranslateY.value = withTiming(50, { duration: 0 });
+    } else {
+      fallback();
+    }
+    return true;
+  };
+
+  const handleChange = useCallback((text: string) => {
+    setSearchText(text);
+  }, []);
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    Keyboard.dismiss();
+  };
 
   const onNext = (fallback: () => void) => {
     if (!selectedUniv) {
@@ -34,14 +98,56 @@ function useUniversityHook() {
     trackSignupEvent("next_button_click", "to_university_details");
     updateForm({
       ...userForm,
-      universityName: selectedUniv,
+      universityId: selectedUniv,
     });
-    fallback();
+    track("Signup_university", {
+      university: selectedUniv,
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
+    if (selectedUnivObj) {
+      updateRegions([selectedUnivObj.region]);
+      updateUnivTitle(selectedUnivObj.name);
+      fallback();
+    }
   };
 
-  const handleClickUniv = (univ: string) => () => {
-    setSelectedUniv((prev) => (prev === univ ? undefined : univ));
-  };
+  useEffect(() => {
+    updateShowHeader(false);
+    setIsFocused(false);
+    setTrigger(false);
+
+    titleOpacity.value = 1;
+    containerTranslateY.value = 60;
+    listOpacity.value = 0;
+    listTranslateY.value = 50;
+  }, []);
+
+  useChangePhase(SignupSteps.UNIVERSITY);
+
+  useEffect(() => {
+    if (params.certificationInfo && !hasProcessedPassInfo.current) {
+      hasProcessedPassInfo.current = true;
+      const certInfo = JSON.parse(params.certificationInfo as string);
+      updateForm({
+        ...userForm,
+        passVerified: true,
+        name: certInfo.name,
+        phone: certInfo.phone,
+        gender: certInfo.gender,
+        birthday: certInfo.birthday,
+        kakaoId: certInfo?.externalId,
+      });
+    }
+  }, [params.certificationInfo]);
+
+  const { trackSignupEvent } = useSignupAnalytics("university");
+
+  const handleClickUniv = useCallback(
+    (univ: string) => () => {
+      setSelectedUniv((prev) => (prev === univ ? undefined : univ));
+    },
+    []
+  );
 
   useEffect(() => {
     if (!univs) return;
@@ -52,7 +158,11 @@ function useUniversityHook() {
       selected && !filtered.some((u) => u.name === selected.name)
         ? [selected, ...filtered]
         : filtered;
-    setFilteredUniv(merged);
+    const sorted = [...merged].sort((a, b) =>
+      a.name.localeCompare(b.name, "ko")
+    );
+
+    setFilteredUniv(sorted);
   }, [searchText, JSON.stringify(univs), selectedUniv]);
 
   return {
@@ -60,10 +170,20 @@ function useUniversityHook() {
     filteredUniv,
     searchText,
     setSearchText,
-    onNext,
     handleClickUniv,
     selectedUniv,
     regions,
+    animatedTitleStyle,
+    animatedContainerStyle,
+    animatedListStyle,
+    showHeader,
+    trigger,
+    handleFocus,
+    handleBlur,
+    onNext,
+    onBackPress,
+    isFocused,
+    handleChange,
   };
 }
 

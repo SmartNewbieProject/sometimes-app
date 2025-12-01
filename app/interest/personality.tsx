@@ -1,7 +1,8 @@
 import type { Preferences } from "@/src/features/interest/api";
+import { semanticColors } from '../../src/shared/constants/colors';
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
-import { ChipSelector } from "@/src/widgets";
+import { ChipSelector, StepIndicator } from "@/src/widgets";
 import { useTranslation } from 'react-i18next';
 import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
@@ -35,23 +36,15 @@ export default function PersonalitySelectionScreen() {
     ) ?? preferencesArray[0];
 
   const onChangeOption = (values: string[]) => {
-    if (values.length > 3) {
-      return;
-    }
+    if (values.length > 3) return;
 
-    console.log("values", values);
-    if (values.length === 0) {
-      updateForm("personality", undefined);
-    } else {
-      updateForm("personality", values);
-    }
+    // 항상 배열로 유지하여 최소 1개 선택 필요하도록 함
+    updateForm("personality", values);
   };
 
   const nextMessage = (() => {
-    if (!personality) {
-      return t("apps.interest.personality.next_none");
-    }
-    return t("global.next");
+    if (!personality || personality.length === 0) return t("apps.interest.personality.next_none"); //최소 1개 선택해주세요
+    return "다음으로";
   })();
 
   const onNext = () => {
@@ -64,6 +57,7 @@ export default function PersonalitySelectionScreen() {
   useFocusEffect(
     useCallback(() => updateStep(InterestSteps.PERSONALITY), [updateStep])
   );
+
   return (
     <Layout.Default>
       <PalePurpleGradient />
@@ -72,6 +66,7 @@ export default function PersonalitySelectionScreen() {
           source={require("@assets/images/loved.png")}
           style={{ width: 81, height: 81, marginLeft: 28 }}
         />
+
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
             {t("apps.interest.personality.title_1")}
@@ -79,6 +74,17 @@ export default function PersonalitySelectionScreen() {
           <Text weight="semibold" size="20" textColor="black">
             {t("apps.interest.personality.title_2")}
           </Text>
+        </View>
+
+        <View style={styles.indicatorRow}>
+          <View style={{ flex: 1 }} />
+          <StepIndicator
+            length={3}
+            step={personality?.length ?? 0}
+            dotGap={4}
+            dotSize={16}
+            className="self-end"
+          />
         </View>
 
         <View style={styles.bar} />
@@ -91,24 +97,23 @@ export default function PersonalitySelectionScreen() {
             <ChipSelector
               value={personality}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
                   imageUrl: option?.imageUrl,
-                })) || []
+                })) ?? []
               }
-              multiple={true}
+              multiple
               onChange={onChangeOption}
               className="w-full"
             />
           </Loading.Lottie>
         </View>
       </View>
+
       <Layout.TwoButtons
-        disabledNext={!personality}
-        content={{
-          next: nextMessage,
-        }}
+        disabledNext={!personality || personality.length === 0}
+        content={{ next: nextMessage }}
         onClickNext={onNext}
         onClickPrevious={() => router.navigate("/interest/bad-mbti")}
       />
@@ -131,15 +136,17 @@ const styles = StyleSheet.create({
   },
   bar: {
     marginHorizontal: 32,
-
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 15,
   },
-  indicatorContainer: {
+  indicatorRow: {
     width: "100%",
-    rowGap: 10,
     paddingHorizontal: 32,
+    marginTop: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
   chipSelector: {
     marginTop: 12,

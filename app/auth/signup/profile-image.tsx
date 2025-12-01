@@ -1,276 +1,49 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import Loading from "@/src/features/loading";
-import Signup from "@/src/features/signup";
-import type { SignupForm } from "@/src/features/signup/hooks";
-import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from '../../../src/shared/constants/colors';
+
+import { type SignupForm, SignupSteps } from "@/src/features/signup/hooks";
+
 import {
   GuideView,
   guideHeight,
   useOverlay,
 } from "@/src/shared/hooks/use-overlay";
-import { tryCatch } from "@/src/shared/libs";
-import { cn } from "@/src/shared/libs/cn";
-import { platform } from "@/src/shared/libs/platform";
+import { useSignupSession } from "@/src/shared/hooks/use-signup-session";
+
 import { Button, ImageSelector } from "@/src/shared/ui";
 import { Text } from "@/src/shared/ui/text";
-import { track } from "@amplitude/analytics-react-native";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  Animated,
-  BackHandler,
   Dimensions,
-  Easing,
-  Platform,
   Text as RNText,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
-import { z } from "zod";
 
+
+import useProfileImage from "@/src/features/signup/hooks/use-profile-image";
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { useStorage } from "@/src/shared/hooks/use-storage";
+import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
-
-
-const {
-  SignupSteps,
-  useChangePhase,
-  useSignupProgress,
-  apis,
-  useSignupAnalytics,
-} = Signup;
 
 const { height } = Dimensions.get("window");
 
-type FormState = {
-  images: (string | null)[];
-};
+function ProfilePage() {
+  const {
+    getImaages,
+    visible,
+    nextable,
+    uploadImage,
+    onNext,
+    onBackPress,
+  } = useProfileImage();
 
-const schema = z.object({
-  images: z
-    .array(z.string().nullable())
-    .min(3, { message: "3장의 사진을 올려주세요" })
-    .refine((images) => images.every((img) => img !== null), {
-      message: "3장의 사진을 올려주세요",
-    }),
-});
-
-export default function ProfilePage() {
-  const { updateForm, form: userForm } = useSignupProgress();
-  const [images, setImages] = useState<(string | null)[]>(
-    userForm.profileImages ?? [null, null, null]
-  );
-  const { showErrorModal } = useModal();
-  const [signupLoading, setSignupLoading] = useState(false);
-  const { trackSignupEvent } = useSignupAnalytics("profile_image");
-  const { showOverlay, hideOverlay, visible } = useOverlay();
-  const animation = useRef(new Animated.Value(0)).current;
-
-  const { value: appleUserIdFromStorage, loading: storageLoading } = useStorage<
-    string | null
-  >({ key: "appleUserId" });
-  const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
-  const { value: loginTypeStorage } = useStorage<string | null>({
-    key: "loginType",
-  });
-  const { removeValue: removeLoginType } = useStorage({ key: "loginType" });
-
-  const form = useForm<FormState>({
-    resolver: zodResolver(schema),
-    mode: "onBlur",
-    defaultValues: {
-      images: userForm.profileImages ?? [null, null, null],
-    },
-  });
-
-  const {t} = useTranslation();
-
-  useEffect(() => {
-    if (visible) {
-      Animated.sequence([
-        Animated.delay(height <= guideHeight ? 500 : 0),
-        Animated.timing(animation, {
-          toValue: 1,
-          duration: height <= guideHeight ? 500 : 0,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [visible]);
-  useEffect(() => {
-    showOverlay(
-      <View style={styles.infoOverlayWrapper}>
-        <RNText style={styles.infoTitle}>
-          {t("apps.auth.sign_up.profile_image.info_title")}
-        </RNText>
-        <RNText style={styles.infoDescription}>
-          {t("apps.auth.sign_up.profile_image.info_desc_1")}
-        </RNText>
-        <RNText style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
-        <Image
-          source={require("@assets/images/instagram-some.png")}
-          style={{
-            width: 116,
-            height: 175,
-            position: "absolute",
-            top: 20,
-            right: -66,
-          }}
-        />
-        <Image
-          source={require("@assets/images/instagram-lock.png")}
-          style={{
-            width: 52,
-            height: 52,
-            position: "absolute",
-            top: -30,
-            left: -30,
-            transform: [{ rotate: "-10deg" }],
-          }}
-        />
-      </View>
-    );
-  }, []);
-
-  const onNext = async () => {
-    const signupForm = {
-      ...userForm,
-      profileImages: images.filter(Boolean) as string[],
-    };
-
-    updateForm(signupForm);
-    setSignupLoading(true);
-
-    await tryCatch(
-      async () => {
-        if (Platform.OS === "ios" && loginTypeStorage === "apple") {
-          if (appleUserIdFromStorage) {
-            signupForm.appleId = appleUserIdFromStorage;
-          } else {
-            await removeAppleUserId();
-            await removeLoginType();
-            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
-            router.push("/auth/login");
-            return;
-          }
-        } else if (
-          Platform.OS === "web" &&
-          sessionStorage.getItem("loginType") === "apple"
-        ) {
-          const appleIdFromSession = sessionStorage.getItem("appleUserId");
-          if (appleIdFromSession) {
-            signupForm.appleId = appleIdFromSession;
-          } else {
-            sessionStorage.removeItem("appleUserId");
-            sessionStorage.removeItem("loginType");
-            showErrorModal("애플 로그인 정보가 없습니다.", "announcement");
-            router.push("/auth/login");
-            return;
-          }
-        }
-
-        if (!signupForm.phone) {
-          showErrorModal(t("apps.auth.sign_up.profile_image.error_phone"), "announcement");
-          trackSignupEvent("signup_error", "missing_phone");
-          track("Signup_profile_image_error", {
-            error: "휴대폰 번호가 없습니다.",
-            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-          });
-          router.push("/auth/login");
-          return;
-        }
-
-        const { exists } = await apis.checkPhoneNumberExists(signupForm.phone);
-
-        if (exists) {
-          showErrorModal(t("apps.auth.sign_up.profile_image.error_exists"), "announcement");
-          track("Signup_profile_image_error", {
-            error: "이미 가입된 사용자입니다",
-            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-          });
-          trackSignupEvent("signup_error", "phone_already_exists");
-
-          if (Platform.OS === "ios") {
-            await removeLoginType();
-          } else if (Platform.OS === "web") {
-            sessionStorage.removeItem("loginType");
-          }
-
-          router.push("/auth/login");
-          return;
-        }
-        if (!signupForm.universityName || !signupForm.departmentName) {
-          showErrorModal(t("apps.auth.sign_up.profile_image.error_univ"), "announcement");
-          router.navigate("/auth/signup/area");
-          return;
-        }
-        await apis.signup(signupForm as SignupForm);
-        track("Signup_profile_image", {
-          success: true,
-          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-        });
-        trackSignupEvent("signup_complete");
-
-        if (Platform.OS === "ios") {
-          await removeLoginType();
-        } else if (Platform.OS === "web") {
-          sessionStorage.removeItem("loginType");
-        }
-
-        router.push("/auth/signup/done");
-      },
-      (error) => {
-        console.error("Signup error:", error);
-        track("Signup_profile_image_error", {
-          error: error,
-          env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-        });
-        trackSignupEvent("signup_error", error.error);
-        showErrorModal(error.error, "announcement");
-      }
-    );
-
-    setSignupLoading(false);
-  };
-
-  const nextable = images.every((image) => image !== null);
-
-  const uploadImage = (index: number, value: string) => {
-    const newImages = [...images];
-    newImages[index] = value;
-    setImages(newImages);
-  };
-
-  useChangePhase(SignupSteps.PROFILE_IMAGE);
-
-  useEffect(() => {
-    form.setValue("images", images);
-  }, [images, form]);
-
-  useEffect(() => {
-    const onBackPress = () => {
-      router.navigate("/auth/signup/instagram");
-      return true;
-    };
-
-    // 이벤트 리스너 등록
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      onBackPress
-    );
-
-    // 컴포넌트 언마운트 시 리스너 제거
-    return () => subscription.remove();
-  }, []);
-
-  if (signupLoading || storageLoading) {
-    return <Loading.Page />;
-  }
+ 
 
   return (
     <DefaultLayout className="flex-1 relative">
@@ -301,14 +74,9 @@ export default function ProfilePage() {
           <View className="flex  justify-center items-center">
             <ImageSelector
               size="lg"
-              value={images[0] ?? undefined}
+              value={getImaages(0)}
               onChange={(value) => {
-                trackSignupEvent("image_upload", "image_1");
-                track("Signup_profile_image_1", {
-                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-                });
                 uploadImage(0, value);
-                form.trigger("images");
               }}
             />
           </View>
@@ -316,26 +84,16 @@ export default function ProfilePage() {
           <View className="flex flex-col justify-center gap-y-[12px]">
             <ImageSelector
               size="sm"
-              value={images[1] ?? undefined}
+              value={getImaages(1)}
               onChange={(value) => {
-                trackSignupEvent("image_upload", "image_2");
-                track("Signup_profile_image_2", {
-                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-                });
                 uploadImage(1, value);
-                form.trigger("images");
               }}
             />
             <ImageSelector
               size="sm"
-              value={images[2] ?? undefined}
+              value={getImaages(2)}
               onChange={(value) => {
-                trackSignupEvent("image_upload", "image_3");
-                track("Signup_profile_image_3", {
-                  env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-                });
                 uploadImage(2, value);
-                form.trigger("images");
               }}
             />
           </View>
@@ -347,7 +105,7 @@ export default function ProfilePage() {
               height < guideHeight
                 ? styles.infoWrapper
                 : styles.infoOverlayWrapper,
-              { marginTop: 40, opacity: animation },
+              { marginTop: 40 },
             ]}
           >
             <RNText style={styles.infoTitle}>
@@ -386,16 +144,16 @@ export default function ProfilePage() {
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={onNext}
-          content={{ next: t("apps.auth.sign_up.profile_image.button_complete") }}
-          onClickPrevious={() => {
-            trackSignupEvent("back_button_click", "to_university_details");
-            router.push("/auth/signup/instagram");
+          content={{ next: t("global.next") }}
+          onClickPrevious={onBackPress}
           }}
         />
       </View>
     </DefaultLayout>
   );
 }
+
+export default withSignupValidation(ProfilePage, SignupSteps.PROFILE_IMAGE);
 
 const styles = StyleSheet.create({
   infoOverlayWrapper: {
@@ -407,9 +165,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
 
     shadowColor: "#F2ECFF",
     shadowOffset: {
@@ -425,10 +183,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
     marginBottom: 223,
+
     shadowColor: "#F2ECFF",
     shadowOffset: {
       width: 0,
@@ -439,7 +198,7 @@ const styles = StyleSheet.create({
     elevation: 3, // Android에서 그림자
   },
   infoTitle: {
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: 600,
     fontFamily: "semibold",
     lineHeight: 16.8,
@@ -456,6 +215,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
 });

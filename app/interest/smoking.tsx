@@ -1,4 +1,5 @@
 import type { Preferences } from "@/src/features/interest/api";
+import { semanticColors } from '../../src/shared/constants/colors';
 import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { PreferenceOption } from "@/src/types/user";
@@ -127,10 +128,10 @@ export default function SmokingSelectionScreen() {
               middleLabelLeft={-15}
               onChange={onChangeSmoking}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
-                })) || []
+                })) ?? []
               }
             />
           </Loading.Lottie>
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
 
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 39,
     marginBottom: 30,
   },

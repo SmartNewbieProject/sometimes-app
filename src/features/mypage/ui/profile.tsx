@@ -1,4 +1,5 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
+import { semanticColors } from '../../../shared/constants/colors';
 
 import { useAuth } from "@/src/features/auth";
 import {
@@ -15,7 +16,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRematchingTickets } from "../queries";
 import { useTranslation } from "react-i18next";
 
@@ -102,7 +103,7 @@ export const Profile = () => {
                 marginLeft: 10,
 
                 borderRadius: 10,
-                backgroundColor: "white",
+                backgroundColor: semanticColors.surface.background,
                 justifyContent: "center",
                 alignItems: "center",
               }}
@@ -114,18 +115,18 @@ export const Profile = () => {
               />
             </View>
             <View style={styles.profileInfoContainer}>
-              <Text className="text-white " style={styles.name}>
+              <Text className="text-text-inverse " style={styles.name}>
                 {profileData.name}
               </Text>
               <View style={styles.subInfo}>
-                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
                   {profileData.grade}
                 </Text>
-                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
                   {" "}
                   ·{" "}
                 </Text>
-                <Text className="text-[#E6DBFF]" style={styles.subInfoText}>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
                   {profileData.university}
                 </Text>
                 {!isLoadingVerification &&
@@ -169,7 +170,7 @@ export const Profile = () => {
                 right: 15,
               }}
             >
-              <TouchableOpacity onPress={handleProfileEdit}>
+              <Pressable onPress={handleProfileEdit}>
                 <View style={styles.leftRect} />
                 <View style={styles.leftRadius} />
                 <View style={[styles.previousButton]}>
@@ -179,14 +180,14 @@ export const Profile = () => {
                       style={{ width: 20, height: 8 }}
                     />
 
-                    <Text className="text-[10px] text-[#9747FF]">
+                    <Text className="text-[10px] text-brand-secondary">
                       {t("features.profile-edit.ui.header.title")}
                     </Text>
                   </View>
                 </View>
                 <View style={styles.rightRect} />
                 <View style={styles.rightRadius} />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -196,12 +197,12 @@ export const Profile = () => {
         >
           <ImageResource resource={ImageResources.GEM} width={28} height={28} />
           <View className="pl-[10px] flex-row">
-            <Text className="text-[13px] text-[#FFFFFF]">{t("features.profile-edit.ui.header.gem")} </Text>
-            <Text className="text-[13px] text-[#9747FF]">
+            <Text className="text-[13px] text-text-inverse">{t("features.profile-edit.ui.header.gem")} </Text>
+            <Text className="text-[13px] text-brand-secondary">
               {" "}
               {t("features.profile-edit.ui.header.gem_unit",{count:gem?.totalGem ?? 0})}
             </Text>
-            <Text className="text-[13px] text-[#FFFFFF]"> {t("features.profile-edit.ui.header.gem_left")}</Text>
+            <Text className="text-[13px] text-text-inverse"> {t("features.profile-edit.ui.header.gem_left")}</Text>
           </View>
         </View>
       </View>
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     width: 361,
     height: 150,
     borderRadius: 15,
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
     paddingRight: 15,
     paddingTop: 10,
     overflow: "hidden",
@@ -238,12 +239,12 @@ const styles = StyleSheet.create({
     height: 42.75,
     borderBottomLeftRadius: 999,
     borderBottomRightRadius: 999,
-    backgroundColor: "#E9D9FF",
+    backgroundColor: '#E9D9FF',
   },
   leftRect: {
     width: 19,
     height: 20,
-    backgroundColor: "#E9D9FF",
+    backgroundColor: semanticColors.surface.other,
     position: "absolute",
     top: 5,
     left: -18,
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
   leftRadius: {
     width: 20,
     height: 20,
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
     borderTopRightRadius: 14,
     position: "absolute",
     top: 5,
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
   rightRadius: {
     width: 20,
     height: 20,
-    backgroundColor: "#9747FF",
+    backgroundColor: semanticColors.brand.secondary,
     borderTopLeftRadius: 14,
     position: "absolute",
     top: 5,
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   rightRect: {
     width: 19,
     height: 20,
-    backgroundColor: "#E9D9FF",
+    backgroundColor: semanticColors.surface.other,
     position: "absolute",
     top: 5,
     right: -18,
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
     fontFamily: "regular",
     fontWeight: 400,
     lineHeight: 30,
-    color: "#fff",
+    color: semanticColors.text.inverse,
   },
   profileInfoContainer: {
     marginLeft: 10,
@@ -298,13 +299,13 @@ const styles = StyleSheet.create({
   },
   subInfoText: {
     fontSize: 14,
-    color: "#E6DBFF",
+    color: semanticColors.text.inverse,
     lineHeight: 15.6,
   },
   universityVerificationButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 20,
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
   },
   universityVerificationButtonText: {
     fontSize: 12,
-    color: "#9747FF",
+    color: semanticColors.brand.secondary,
     fontFamily: "semibold",
     fontWeight: 600,
   },

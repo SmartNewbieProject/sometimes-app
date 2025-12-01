@@ -2,12 +2,18 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "2.5.1",
+    "version": "3.5.1",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "cover",
+      "image": "./assets/images/splash-portrait.png",
+      "backgroundColor": "#FFFFFF",
+      "enableFullScreenImage_legacy": true
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.some-in-univ",
@@ -111,8 +117,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/favicon-logo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/android-adaptive-icon.png",
+        "backgroundColor": "#8B7BFF"
       },
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.smartnewb.sometimes",
@@ -147,18 +153,42 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#FFFFFF",
+          "image": "./assets/images/splash-portrait.png",
+          "dark": {
+            "image": "./assets/images/splash-portrait.png",
+            "backgroundColor": "#FFFFFF"
+          },
+          "imageWidth": 400,
+          "ios": {
+            "enableFullScreenImage_legacy": true
+          }
         }
       ],
       "@react-native-firebase/app",
+      [
+        "@react-native-kakao/core",
+        {
+          "nativeAppKey": "4d405583bea731b1c4fb26eb8a14e894",
+          "android": {
+            "authCodeHandlerActivity": true,
+            "forwardKakaoLinkIntentFilterToMainActivity": true
+          },
+          "ios": {
+            "handleKakaoOpenUrl": true
+          }
+        }
+      ],
       [
         "expo-build-properties",
         {
           "ios": {
             "useFrameworks": "static"
+          },
+          "android": {
+            "extraMavenRepos": [
+              "https://devrepo.kakao.com/nexus/content/groups/public/"
+            ]
           }
         }
       ],
@@ -212,7 +242,8 @@
             "kotlinVersion": "2.0.21"
           }
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

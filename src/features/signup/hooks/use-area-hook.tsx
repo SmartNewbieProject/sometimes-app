@@ -19,7 +19,7 @@ function useAreaHook() {
     updateUnivTitle,
     updateRegions,
   } = useSignupProgress();
-  useChangePhase(SignupSteps.AREA);
+  // useChangePhase(SignupSteps.AREA);
 
   // 애널리틱스 추적 설정
   const { trackSignupEvent } = useSignupAnalytics("area");
@@ -52,15 +52,13 @@ function useAreaHook() {
     }, 200);
 
     setTimeout(() => {
-      setShow("인천");
+      setShow("서울/인천/경기");
     }, 700);
-    setTimeout(() => {
-      setShow("천안");
-    }, 1200);
+
     setTimeout(() => {
       setShow(null);
       setInitDisabled(false);
-    }, 1700);
+    }, 1200);
   }, []);
 
   const onNext = (fallback: () => void) => {
@@ -69,7 +67,6 @@ function useAreaHook() {
     }
     trackSignupEvent("next_button_click", "to_university");
     updateUnivTitle(`${show}${t("features.signup.ui.area.university_suffix")}`);
-    updateRegions(getRegionList(show));
 
     fallback();
 

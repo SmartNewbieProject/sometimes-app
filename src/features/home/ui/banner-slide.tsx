@@ -6,6 +6,8 @@ import Loading from "../../loading";
 import { useTotalMatchCountQuery, useTotalUserCountQuery } from "../queries";
 import FirstPurchaseEvent from "./first-purchase-event-banner";
 import TotalMatchCounter from "./total-match-counter";
+import InvitePromotionBanner from "./banner/invite-promotion-banner";
+import JapanOpeningBanner from "./banner/japan-opening-banner";
 
 function BannerSlide() {
   const { data: { count: totalMatchCount } = { count: 0 }, isLoading } =
@@ -24,7 +26,9 @@ function BannerSlide() {
         autoPlayInterval={5000}
         className="w-full !min-h-[92px] "
       >
+        <JapanOpeningBanner />
         <FirstPurchaseEvent />
+        <InvitePromotionBanner />
         <TotalMatchCounter count={totalMatchCount + totalUserCount + 1000} />
       </Slider>
     </Loading.Lottie>

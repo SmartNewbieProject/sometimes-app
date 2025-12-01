@@ -1,10 +1,10 @@
 import Layout from "@/src/features/layout";
+import { semanticColors } from '../../src/shared/constants/colors';
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import { track } from "@amplitude/analytics-react-native";
-import Interest from "@features/interest";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
@@ -40,11 +40,7 @@ export default function PersonalitySelectionScreen() {
       return;
     }
 
-    if (values.length === 0) {
-      updateForm("personality", undefined);
-    } else {
-      updateForm("personality", values);
-    }
+    updateForm("personality", values);
   };
 
   const nextMessage = (() => {
@@ -81,7 +77,16 @@ export default function PersonalitySelectionScreen() {
           </Text>
         </View>
 
-        <View style={styles.bar} />
+        <View style={styles.indicatorContainer}>
+          <StepIndicator
+            length={3}
+            step={personality?.length ?? 0}
+            dotGap={4}
+            dotSize={16}
+            className="self-end"
+          />
+          <Divider.Horizontal />
+        </View>
 
         <View style={styles.chipSelector}>
           <Loading.Lottie
@@ -91,11 +96,11 @@ export default function PersonalitySelectionScreen() {
             <ChipSelector
               value={personality}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
                   imageUrl: option?.imageUrl,
-                })) || []
+                })) ?? []
               }
               multiple={true}
               onChange={onChangeOption}
@@ -133,7 +138,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
 
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 15,
   },
   indicatorContainer: {

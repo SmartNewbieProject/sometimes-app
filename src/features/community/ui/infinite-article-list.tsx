@@ -2,7 +2,7 @@ import VectorIcon from "@/assets/icons/Vector.svg";
 import { useAuth } from "@/src/features/auth";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
-import { Lottie, Text } from "@/src/shared/ui";
+import { Lottie, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -24,12 +24,13 @@ import {
   Platform,
   TouchableOpacity,
   View,
+  type ViewToken,
+  type ViewabilityConfig,
 } from "react-native";
 import { CustomInfiniteScrollView } from "../../../shared/infinite-scroll/custom-infinite-scroll-view";
 import apis from "../apis";
 import { useCategory } from "../hooks";
-import { useInfiniteArticlesQuery } from "../queries/use-infinite-articles";
-import { createArticlesQueryKey } from "../queries/use-infinite-articles";
+import { useInfiniteArticlesQuery , createArticlesQueryKey } from "../queries/use-infinite-articles";
 import type { Article as ArticleType } from "../types";
 import { Article } from "./article";
 
@@ -70,6 +71,7 @@ export const InfiniteArticleList = forwardRef<
 
     const {
       articles,
+      pagesCount,
       isLoading,
       isLoadingMore,
       hasNextPage,
@@ -88,18 +90,17 @@ export const InfiniteArticleList = forwardRef<
 
     useEffect(() => {
       if (!preferSkeletonOnCategoryChange) return;
-
-      // 카테고리가 바뀌면 → 데이터 준비 전까지 스켈레톤 고정
       if (prevCategoryRef.current !== categoryCode) {
         prevCategoryRef.current = categoryCode;
         setForceSkeleton(true);
+        // 페이지 보장/프리패치 락도 리셋
+        didEnsureTwoPagesRef.current = false;
+        lastEnsuredTargetRef.current = null;
       }
     }, [categoryCode, preferSkeletonOnCategoryChange]);
 
     useEffect(() => {
       if (!preferSkeletonOnCategoryChange) return;
-
-      // 새 데이터가 도착했거나, 로딩이 끝났다면 스켈레톤 해제
       if ((articles && articles.length > 0) || (!isLoading && !isLoadingMore)) {
         setForceSkeleton(false);
       }
@@ -112,6 +113,7 @@ export const InfiniteArticleList = forwardRef<
         queryKey: createArticlesQueryKey(categoryCode),
       });
       await refetch();
+      setOpenPreviewArticleId(null);
     };
 
     const handleScroll = useCallback(
@@ -123,12 +125,12 @@ export const InfiniteArticleList = forwardRef<
       },
       [isWeb, saveScrollPosition]
     );
+
     const like = (item: ArticleType) => {
       if (!my?.id) {
         Linking.openURL("https://info.some-in-univ.com");
         return;
       }
-
       tryCatch(
         async () => {
           updateArticleLike(item.id);
@@ -139,6 +141,14 @@ export const InfiniteArticleList = forwardRef<
         }
       );
     };
+
+    const [openPreviewArticleId, setOpenPreviewArticleId] = useState<
+      string | null
+    >(null);
+
+    useEffect(() => {
+      setOpenPreviewArticleId(null);
+    }, [categoryCode]);
 
     const deleteArticle = (id: string) => {
       showModal({
@@ -156,6 +166,7 @@ export const InfiniteArticleList = forwardRef<
             tryCatch(
               async () => {
                 await apis.articles.deleteArticle(id);
+                setOpenPreviewArticleId(null);
                 await invalidateAndRefetch();
               },
               ({ error }) => {
@@ -171,7 +182,7 @@ export const InfiniteArticleList = forwardRef<
       });
     };
 
-    //스켈레톤 버킷
+    // 스켈레톤 버킷
     const pickVariant = useCallback((): "short" | "medium" | "long" => {
       const r = Math.random();
       if (r < 0.33) return "short";
@@ -191,57 +202,98 @@ export const InfiniteArticleList = forwardRef<
     }, [isLoadingMore, pickVariant]);
 
     useImperativeHandle(ref, () => ({
-      refresh: () => {
-        return invalidateAndRefetch();
-      },
+      refresh: () => invalidateAndRefetch(),
     }));
 
+    const didEnsureTwoPagesRef = useRef(false);
     useEffect(() => {
-      if (isWeb) {
-        const scrollContainer = document?.getElementById(
-          "CommunityScrollView"
-        ) as HTMLElement;
-        if (!scrollContainer) return;
-        const handleWebScroll = () => {
-          console.log("handleWebScroll()");
-          console.dir(scrollContainer);
-          const position = scrollContainer.scrollTop;
-          console.log({ position });
-          saveScrollPosition(position);
-        };
-
-        scrollContainer.addEventListener("scroll", handleWebScroll, {
-          passive: true,
-        });
-
-        return () => {
-          scrollContainer.removeEventListener("scroll", handleWebScroll);
-        };
+      if (didEnsureTwoPagesRef.current) return;
+      if (isLoading) return;
+      if (isLoadingMore) return;
+      if (pagesCount >= 2) {
+        didEnsureTwoPagesRef.current = true;
+        return;
       }
+      if (hasNextPage) {
+        didEnsureTwoPagesRef.current = true;
+        loadMore();
+      }
+    }, [isLoading, isLoadingMore, pagesCount, hasNextPage, loadMore]);
+
+    const lastEnsuredTargetRef = useRef<number | null>(null);
+
+    const pageSizeRef = useRef(initialSize);
+    const pagesCountRef = useRef(pagesCount);
+    const hasNextPageRef = useRef(hasNextPage);
+    const isLoadingMoreRef = useRef(isLoadingMore);
+    useEffect(() => {
+      pageSizeRef.current = initialSize;
+    }, [initialSize]);
+    useEffect(() => {
+      pagesCountRef.current = pagesCount;
+    }, [pagesCount]);
+    useEffect(() => {
+      hasNextPageRef.current = hasNextPage;
+    }, [hasNextPage]);
+    useEffect(() => {
+      isLoadingMoreRef.current = isLoadingMore;
+    }, [isLoadingMore]);
+
+    const viewabilityConfigRef = useRef<ViewabilityConfig>({
+      itemVisiblePercentThreshold: 10,
+      minimumViewTime: 80,
+    });
+
+    const onViewableItemsChangedRef = useRef(
+      ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+        if (!viewableItems || viewableItems.length === 0) return;
+
+        const firstIdx = viewableItems.reduce((min, v) => {
+          return typeof v.index === "number" ? Math.min(min, v.index) : min;
+        }, Number.POSITIVE_INFINITY);
+        if (!Number.isFinite(firstIdx)) return;
+
+        const size = Math.max(1, pageSizeRef.current);
+        const currentPage = Math.floor(firstIdx / size) + 1;
+        const targetPages = currentPage + 1;
+
+        if (pagesCountRef.current >= targetPages) return;
+        if (!hasNextPageRef.current) return;
+        if (lastEnsuredTargetRef.current === targetPages) return;
+        if (isLoadingMoreRef.current) return;
+
+        lastEnsuredTargetRef.current = targetPages;
+        loadMore().catch(() => {
+          lastEnsuredTargetRef.current = null;
+        });
+      }
+    );
+
+    useEffect(() => {
+      if (!isWeb) return;
+      const el = document?.getElementById(
+        "CommunityScrollView"
+      ) as HTMLElement | null;
+      if (!el) return;
+
+      const handleWebScroll = () => {
+        saveScrollPosition(el.scrollTop);
+      };
+      el.addEventListener("scroll", handleWebScroll, { passive: true });
+      return () => el.removeEventListener("scroll", handleWebScroll);
     }, [isWeb, saveScrollPosition]);
 
     useEffect(() => {
       if (!isWeb) return;
       const position = getScrollPosition();
-      const scrollContainer = document.getElementById(
+      const el = document.getElementById(
         "CommunityScrollView"
-      ) as HTMLElement;
-      if (!scrollContainer) return;
+      ) as HTMLElement | null;
+      if (!el) return;
 
       if (position > 0) {
         setTimeout(() => {
-          if (isWeb && typeof window !== "undefined") {
-            console.debug(`scroll To ${position}`);
-            scrollContainer.scrollTo({
-              top: position,
-              behavior: "auto",
-            });
-          } else if (flatListRef.current) {
-            flatListRef.current.scrollToOffset({
-              offset: position,
-              animated: false,
-            });
-          }
+          el.scrollTo({ top: position, behavior: "auto" });
         }, 100);
       }
     }, [getScrollPosition, isWeb]);
@@ -251,10 +303,9 @@ export const InfiniteArticleList = forwardRef<
       (isLoading && articles.length === 0)
     ) {
       return (
-        <View className="flex-1 bg-white">
-          <View className="h-[1px] bg-[#F3F0FF]" />
-
-          <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+        <View className="flex-1 bg-surface-background">
+          <View className="h-[1px] bg-surface-other" />
+          <View className="h-[1px] bg-surface-other mb-2" />
           {Array.from({ length: initialSize }).map((_, i) => (
             <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
           ))}
@@ -263,15 +314,15 @@ export const InfiniteArticleList = forwardRef<
     }
 
     return (
-      <View className="flex-1 bg-white">
-        <View className="h-[1px] bg-[#F3F0FF]" />
-        <TouchableOpacity
+      <View className="flex-1 bg-surface-background">
+        <View className="h-[1px] bg-surface-background" />
+        {/* <TouchableOpacity
           onPress={() =>
             Linking.openURL(
               "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
             )
           }
-          className="bg-[#F3EDFF] rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+          className="bg-surface-background rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
         >
           <Image
             source={require("@/assets/images/fireIcon.png")}
@@ -285,8 +336,9 @@ export const InfiniteArticleList = forwardRef<
               <VectorIcon className=" h-[12px] w-[9px]" color="black" />
             </IconWrapper>
           </TouchableOpacity>
-        </TouchableOpacity>
-        <View className="h-[1px] bg-[#F3F0FF] mb-2" />
+        </TouchableOpacity> */}
+        <View className="h-[1px] bg-surface-background mb-2" />
+        <PalePurpleGradient />
 
         <CustomInfiniteScrollView
           data={articles}
@@ -299,8 +351,11 @@ export const InfiniteArticleList = forwardRef<
               }}
               onLike={() => like(article)}
               onDelete={deleteArticle}
-              refresh={() => {
-                return invalidateAndRefetch();
+              isPreviewOpen={openPreviewArticleId === article.id}
+              onTogglePreview={() => {
+                setOpenPreviewArticleId((prev) =>
+                  prev === article.id ? null : article.id
+                );
               }}
             />
           )}
@@ -315,6 +370,10 @@ export const InfiniteArticleList = forwardRef<
           onScroll={handleScroll}
           scrollEventThrottle={16}
           flatListRef={flatListRef}
+          observerEnabled={false}
+          autoFillMaxPages={0}
+          onViewableItemsChanged={onViewableItemsChangedRef.current}
+          viewabilityConfig={viewabilityConfigRef.current}
         />
       </View>
     );

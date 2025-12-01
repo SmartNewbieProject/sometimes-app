@@ -81,9 +81,9 @@ src/
 - **기본 사용법**:
   ```typescript
   import { useModal } from '@/src/shared/hooks/use-modal';
-  
+
   const { showModal } = useModal();
-  
+
   showModal({
     title: '제목',
     children: <CustomComponent />,
@@ -92,11 +92,34 @@ src/
       onClick: () => { /* 액션 */ }
     },
     secondaryButton: {
-      text: '취소', 
+      text: '취소',
       onClick: () => {}
     }
   });
   ```
+
+### 상단바/노치 처리 규칙
+
+- **Safe Area 처리 필수**: iOS 기기의 노치, Dynamic Island, 상태바 고려
+- **useSafeAreaInsets 사용**: `react-native-safe-area-context` 라이브러리 활용
+- **기본 적용 패턴**:
+  ```typescript
+  import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+  const insets = useSafeAreaInsets();
+
+  // Header 컨테이너 스타일
+  const headerStyle = {
+    paddingTop: insets.top + 12, // 기본 padding + safe area
+  };
+
+  // 드롭다운/팝업 위치 조정
+  const dropdownStyle = {
+    top: insets.top + 16 + 54, // header 높이 계산 포함
+  };
+  ```
+- **기존 컴포넌트 활용**: `HeaderWithNotification`, `Header.Container` 등 공통 컴포넌트 우선 사용
+- **모든 신규 페이지 필수 적용**: 페이지 생성 시 상단 Safe Area 처리 의무화
 - **복잡한 컴포넌트**: 별도 컴포넌트로 작성 후 children에서 호출
 - **에러 모달**: `showErrorModal(error, 'error')` 사용
 

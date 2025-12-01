@@ -1,3 +1,4 @@
+import { semanticColors } from '../../../shared/constants/colors';
 import {
   IdentityVerification,
   type PortOneController,
@@ -82,7 +83,7 @@ export const MobileIdentityVerification: React.FC<
     >
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <View
-        style={{ flex: 1, backgroundColor: "white", paddingTop: insets.top }}
+        style={{ flex: 1, backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
       >
         <View style={modalStyles.header}>
           <TouchableOpacity
@@ -113,7 +114,7 @@ const modalStyles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     height: 56,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: semanticColors.surface.background,
     borderBottomWidth: 1,
     borderBottomColor: "#E7E9EC",
   },
@@ -124,7 +125,7 @@ const modalStyles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#000",
+    color: semanticColors.text.primary,
   },
   rightPlaceholder: {
     width: 24 + 16,

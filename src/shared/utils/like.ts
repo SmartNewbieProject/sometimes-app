@@ -1,6 +1,6 @@
 import i18n from "@/src/shared/libs/i18n";
 
-export function getRemainingTimeFormatted(message: string): string {
+export function getRemainingTimeFormatted(message: string, isExpired: boolean): string {
 	if (!message) {
 		return '';
 	}
@@ -15,8 +15,11 @@ export function getRemainingTimeFormatted(message: string): string {
 
 	const diffInMillis = expirationDate.getTime() - now.getTime();
 
-	if (diffInMillis <= 0) {
+	if (diffInMillis <= 0 && isExpired) {
 		return i18n.t('shareds.utils.like.message_expired');
+	}
+	if (diffInMillis <= 0 && !isExpired) {
+		return '';
 	}
 
 	const days = Math.floor(diffInMillis / (1000 * 60 * 60 * 24));

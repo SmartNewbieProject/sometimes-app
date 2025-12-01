@@ -1,11 +1,11 @@
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { ScrollView, View } from "react-native";
-import { Linking } from "react-native";
+import { ScrollView, View , Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -37,21 +37,33 @@ export default function ApprovalRejectedScreen() {
 
       <ScrollView
         className="flex-1 w-full"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top }}
       >
-        <View className="flex-1 justify-center items-center px-6 py-12">
+        <View className="flex-1 items-center px-6 pb-12">
           {/* SOMETIME 로고 */}
-          <View className="mb-8">
+          <View className="mt-[10px] mb-[28px]">
             <SmallTitleIcon width={160} height={40} />
           </View>
-
           {/* 메인 이미지 */}
-          <Image
-            source={require("@/assets/images/limit_signup.png")}
-            style={{ width: 280, height: 280 }}
-            contentFit="contain"
-            className="mb-8"
-          />
+          <View className="items-center mb-8 relative">
+            <View
+              style={{
+                width: 165,
+                height: 165,
+                borderRadius: 81,
+                top: -8,
+                left: 0,
+
+                backgroundColor: semanticColors.brand.primary,
+                position: "absolute",
+              }}
+            />
+            <Image
+              source={require("@assets/images/limit-signup.png")}
+              style={{ width: 160, height: 160 }}
+              className="mb-6"
+            />
+          </View>
 
           {/* 제목 */}
           <View className="w-full mb-4">
@@ -142,7 +154,7 @@ export default function ApprovalRejectedScreen() {
           variant="secondary"
           size="md"
           onPress={handleContactSupport}
-          className="w-full py-4 rounded-2xl bg-white border border-gray-300"
+          className="w-full py-4 rounded-2xl bg-surface-background border border-gray-300"
         >
           <View className="flex-row items-center justify-center">
             <Text size="md" textColor="gray" weight="medium" className="mr-2">

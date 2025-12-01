@@ -1,4 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
 import { environmentStrategy } from "@/src/shared/libs";
@@ -42,10 +43,24 @@ export default function SignupDoneScreen() {
       </IconWrapper>
 
       <View className="flex flex-col flex-1">
-        <Image
-          source={require("@assets/images/signup-done.png")}
-          style={{ width: 298, height: 296, marginTop: 50 }}
-        />
+        <View style={{ position: "relative" }}>
+          <View
+            style={{
+              width: 274,
+              height: 274,
+              borderRadius: 274,
+              top: 12,
+              left: 0,
+
+              backgroundColor: semanticColors.brand.primary,
+              position: "absolute",
+            }}
+          />
+          <Image
+            source={require("@assets/images/signup-done.png")}
+            style={{ width: 298, height: 296, marginTop: 50 }}
+          />
+        </View>
 
         <View className="flex flex-col">
           <View className="mt-[42px]">

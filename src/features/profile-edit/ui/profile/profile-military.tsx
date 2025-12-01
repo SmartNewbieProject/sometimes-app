@@ -55,10 +55,10 @@ function ProfileMilitary() {
             onChange={onChangeOption}
             middleLabelLeft={-10}
             options={
-              preferences?.options.map((option) => ({
+              preferences?.options?.map((option) => ({
                 label: option.displayName,
                 value: option.id,
-              })) || []
+              })) ?? []
             }
           />
         </Loading.Lottie>

@@ -71,7 +71,7 @@ function InterestTattoo() {
                 .map((option) => ({
                   label: option.displayName,
                   value: option.id,
-                })) || []
+                })) ?? []
             }
           />
         </Loading.Lottie>

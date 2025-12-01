@@ -1,4 +1,5 @@
 import { cn } from "@/src/shared/libs";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { platform } from "@/src/shared/libs/platform";
 import { ProgressBar } from "@/src/shared/ui";
 import Interest from "@features/interest";
@@ -162,7 +163,7 @@ const progressStyle: ViewStyle = {
     default: 0,
   }),
   alignItems: "center",
-  backgroundColor: "#FFFFFF",
+  backgroundColor: semanticColors.surface.background,
 };
 
 const styles = StyleSheet.create({

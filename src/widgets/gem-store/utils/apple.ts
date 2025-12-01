@@ -1,4 +1,5 @@
 import type { Product, ProductPurchase } from 'expo-iap';
+import type { GemDetails } from '@/src/features/payment/api';
 
 /**
  * App Store Connect에 등록된 상품들의 고유 ID Enum.
@@ -14,7 +15,6 @@ export enum ProductID {
 	GEM_400 = 'gem_400',
 	GEM_500 = 'gem_500',
 	GEM_800 = 'gem_800',
-	// 세일 상품들은 DB 이름과 직접 매핑되지 않으므로, 이 함수에서는 반환되지 않습니다.
 	GEM_SALE_6 = 'gem_sale_6',
 	GEM_SALE_20 = 'gem_sale_20',
 	GEM_SALE_40 = 'gem_sale_40',
@@ -51,53 +51,91 @@ const packNameToProductIdMap: Record<DbPackName, ProductID> = {
 	맥시멈팩: ProductID.GEM_800,
 };
 
-/**
- * 백엔드 API로부터 받은 상품 이름(name)을 기반으로
- * 대응하는 ProductID enum 값을 찾아 반환하는 함수.
- *
- * @param dbProductName - 백엔드 DB의 상품 이름 (예: '라이트팩')
- * @returns 대응하는 ProductID enum 값. 만약 매핑되는 ID가 없으면 null을 반환합니다.
- */
-export function getProductIdByName(dbProductName: string): ProductID | null {
-	// packNameToProductIdMap에 dbProductName이 키로 존재하는지 확인
-	if (dbProductName in packNameToProductIdMap) {
-		// 존재한다면, 해당 키로 ProductID 값을 반환 (타입 단언 사용)
-		return packNameToProductIdMap[dbProductName as DbPackName];
-	}
-
-	// 매핑되는 ID를 찾지 못한 경우 null 반환
-	return null;
-}
-
 export const containsSale = (text: string): boolean => {
 	return text.includes('세일');
 };
 
+// Apple Product ID를 서버 GemDetails와 매핑하기 위한 함수
+export const mapAppleProductToServerGem = (
+	appleProductId: string,
+	serverGemProducts: GemDetails[],
+): GemDetails | null => {
+	const appleToServerMapping: Record<string, string> = {
+		// 정상 상품 (totalGems 기반 매핑)
+		'gem_12': '라이트 팩',      // 12개
+		'gem_27': '스타터 팩',      // 27개
+		'gem_39': '베이직 팩',      // 39개
+		'gem_54': '스탠다드 팩',    // 54개
+		'gem_67': '플러스 팩',      // 67개
+
+		// 호환성을 위한 이전 매핑들
+		'gem_15': '스타터 팩',      // 호환성 유지
+		'gem_30': '베이직 팩',      // 호환성 유지
+		'gem_60': '스탠다드 팩',    // 호환성 유지
+		'gem_130': '플러스 팩',     // 호환성 유지
+
+		// 세일 상품 (totalGems 기반 매핑)
+		'gem_sale_7': '라이트 팩',     // 7개 -> 라이트 팩(12개) 기준 할인
+		'gem_sale_16': '스타터 팩',    // 16개 -> 스타터 팩(27개) 기준 할인
+		'gem_sale_27': '베이직 팩',     // 27개 -> 베이직 팩(39개) 기준 할인
+	};
+
+	const serverProductName = appleToServerMapping[appleProductId];
+	if (!serverProductName) return null;
+
+	return serverGemProducts.find(gem => gem.productName === serverProductName) || null;
+};
+
+// 서버 데이터를 기반으로 가격과 할인율 반환
+export const getPriceAndDiscountFromServer = (
+	appleProductId: string,
+	serverGemProducts: GemDetails[],
+): { price: number; discountRate: number } | null => {
+	const serverGem = mapAppleProductToServerGem(appleProductId, serverGemProducts);
+	if (!serverGem) return null;
+
+	return {
+		price: serverGem.price,
+		discountRate: serverGem.discountRate,
+	};
+};
+
+// 하드코딩된 함수는 레거시 호환성을 위해 유지하지만, 서버 데이터 우선 사용
 export const getPriceAndDiscount = (
 	text: string,
+	serverGemProducts?: GemDetails[],
 ): { price: number; discountRate: number } | null => {
+	// 서버 데이터가 있으면 서버 데이터 우선 사용
+	if (serverGemProducts) {
+		return getPriceAndDiscountFromServer(text, serverGemProducts);
+	}
+
+	// 레거시 하드코딩 데이터 (fallback)
 	const mapping: Record<string, { price: number; discountRate: number }> = {
-		gem_sale_6: { price: 6000, discountRate: 50.9 },
 		gem_15: { price: 11000, discountRate: 21 },
-		gem_sale_20: { price: 14700, discountRate: 53.2 },
 		gem_30: { price: 22000, discountRate: 37 },
-		gem_sale_40: { price: 29400, discountRate: 56.2 },
 		gem_60: { price: 44000, discountRate: 51 },
 		gem_130: { price: 95000, discountRate: 60 },
 		gem_200: { price: 147000, discountRate: 61 },
 		gem_400: { price: 295000, discountRate: 64 },
 		gem_500: { price: 368000, discountRate: 66 },
 		gem_800: { price: 590000, discountRate: 67 },
+
+		gem_sale_7: { price: 5250, discountRate: 37.2 },
+		gem_sale_16: { price: 12000, discountRate: 43.3 },
+		gem_sale_27: { price: 20250, discountRate: 31.9 },
+		gem_sale_6: { price: 6000, discountRate: 50.9 },
+		gem_sale_20: { price: 14700, discountRate: 53.2 },
+		gem_sale_40: { price: 29400, discountRate: 56.2 },
 	};
 
-	// 문자열 안에 key가 포함되어 있으면 반환
 	for (const key in mapping) {
 		if (text === key) {
 			return mapping[key];
 		}
 	}
 
-	return null; // 일치하는 항목 없으면 null
+	return null;
 };
 
 export function splitAndSortProducts(products: Product[]): {

@@ -18,16 +18,16 @@ export const BusinessInfo: React.FC = () => {
       }`}
     >
       <Text className="text-[#888] text-[10px] text-center leading-5">
-        {t("shareds.business-info.business_info.company_info")}{" "}
+        상호명: 스마트 뉴비 | 사업장 소재지: 대전광역시 서구 갈마중로 7번길 42,
+        4동 407호 | 대표: 전준영 | 사업자 등록번호: 498-05-02914 |
+        통신판매업신고: 제 2025-대전유성-0530호 | 문의전화: 010-8465-2476 |
+        이메일: notify@smartnewb.com |{" "}
         <TouchableOpacity
           onPress={() => onClickLink(businessRegistrationLink)}
-          className="underline inderline-offset-1"
+          className="inderline-offset-1"
         >
-          <Text className="text-[#888] text-[10px]">
-            {t("shareds.business-info.business_info.registration_number")}
-          </Text>
+          <Text className="text-[#888] text-[10px]">사업자정보확인</Text>
         </TouchableOpacity>{" "}
-        {t("shareds.business-info.business_info.sales_report")}
       </Text>
       <View className="flex flex-row gap-x-2 items-center justify-center w-full">
         <TouchableOpacity

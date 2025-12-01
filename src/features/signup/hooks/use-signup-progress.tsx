@@ -6,7 +6,7 @@ export type SignupForm = {
   phone: string;
   birthday: string;
   gender: "MALE" | "FEMALE";
-  universityName: string;
+  universityId: string;
   area: string;
   departmentName: string;
   grade: string;
@@ -16,57 +16,13 @@ export type SignupForm = {
   passVerified: boolean;
   kakaoId?: string;
   appleId?: string;
+  referralCode?: string;
 };
-
-type Agreement = {
-  id: string;
-  label: string;
-  link?: string;
-  required: boolean;
-  checked: boolean;
-};
-
-const AGREEMENTS: Agreement[] = [
-  {
-    id: "privacy",
-    label: i18n.t("features.signup.agreements.privacy"),
-    link: "https://ruby-composer-6d2.notion.site/1cd1bbec5ba180a3a4bbdf9301683145",
-    required: true,
-    checked: false,
-  },
-  {
-    id: "terms",
-    label:i18n.t("features.signup.agreements.terms"),
-    link: "https://ruby-composer-6d2.notion.site/1cd1bbec5ba1805dbafbc9426a0aaa80",
-    required: true,
-    checked: false,
-  },
-  {
-    id: "location",
-    label: i18n.t("features.signup.agreements.location"),
-    link: "https://ruby-composer-6d2.notion.site/1cd1bbec5ba180a3a4bbdf9301683145?pvs=73",
-    required: true,
-    checked: false,
-  },
-  {
-    id: "sensitive",
-    label: i18n.t("features.signup.agreements.sensitive"),
-    link: "https://www.notion.so/1cd1bbec5ba180ae800ff36c46285274",
-    required: true,
-    checked: false,
-  },
-  {
-    id: "marketing",
-    label: i18n.t("features.signup.agreements.marketing"),
-    link: "https://www.notion.so/1cd1bbec5ba1800daa29fd7a8d01b7c9",
-    required: false,
-    checked: false,
-  },
-];
 
 type StoreProps = {
   progress: number;
   step: SignupSteps;
+  showHeader: boolean;
   updateStep: (step: SignupSteps) => void;
   form: Partial<SignupForm>;
   regions: string[];
@@ -74,19 +30,19 @@ type StoreProps = {
   univTitle: string;
   updateUnivTitle: (area: string) => void;
   updateForm: (form: Partial<SignupForm>) => void;
-  agreements: Agreement[];
-  updateAgreements: (agreements: Agreement[]) => void;
+
   clear: () => void;
-  smsComplete: boolean;
-  completeSms: () => void;
+
+  updateShowHeader: (bool: boolean) => void;
 };
 
 export enum SignupSteps {
-  AREA = 1,
-  UNIVERSITY = 2,
-  UNIVERSITY_DETAIL = 3,
-  INSTAGRAM = 4,
-  PROFILE_IMAGE = 5,
+  // AREA = 1,
+  UNIVERSITY = 1,
+  UNIVERSITY_DETAIL = 2,
+  INSTAGRAM = 3,
+  PROFILE_IMAGE = 4,
+  INVITE_CODE = 5,
 }
 
 const phaseCount = Object.keys(SignupSteps).length / 2;
@@ -94,7 +50,7 @@ const phaseCount = Object.keys(SignupSteps).length / 2;
 const useSignupProgress = create<StoreProps>((set) => ({
   progress: 1 / phaseCount,
 
-  step: SignupSteps.AREA,
+  step: SignupSteps.UNIVERSITY,
   updateStep: (step) => {
     const isLast = step === phaseCount;
     return set({
@@ -115,19 +71,17 @@ const useSignupProgress = create<StoreProps>((set) => ({
   clear: () =>
     set({
       form: {},
-      step: SignupSteps.AREA,
-      smsComplete: false,
-      agreements: AGREEMENTS,
+      step: SignupSteps.UNIVERSITY,
+
       univTitle: "",
     }),
 
+  updateShowHeader: (bool) => {
+    set({ showHeader: bool });
+  },
+  showHeader: false,
   univTitle: "",
-  updateUnivTitle: (area: string) => set({ univTitle: area }),
-  agreements: AGREEMENTS,
-  updateAgreements: (agreements) => set({ agreements }),
-
-  smsComplete: false,
-  completeSms: () => set({ smsComplete: true }),
+  updateUnivTitle: (univTitle: string) => set({ univTitle: univTitle }),
 }));
 
 export default useSignupProgress;

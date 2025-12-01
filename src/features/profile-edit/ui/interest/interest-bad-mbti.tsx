@@ -1,6 +1,6 @@
 import { useInterestForm } from "@/src/features/interest/hooks";
-import React from "react";
-import colors from "@/src/shared/constants/colors";
+
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { Button } from "@/src/shared/ui";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
 import { useTranslation } from 'react-i18next';
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 10,
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.other,
   },
 });
 

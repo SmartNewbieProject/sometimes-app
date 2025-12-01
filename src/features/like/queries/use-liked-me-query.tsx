@@ -10,6 +10,8 @@ function useLikedMeQuery() {
     refetchInterval: 1 * 60 * 1000,
     refetchIntervalInBackground: true,
     refetchOnMount: true,
+    staleTime: 0,
+    gcTime: 0,
   });
   return { data, ...props };
 }

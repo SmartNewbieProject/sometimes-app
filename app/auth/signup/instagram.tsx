@@ -1,6 +1,7 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import Signup from "@/src/features/signup";
-
+import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { useOverlay } from "@/src/shared/hooks/use-overlay";
 import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
@@ -27,8 +28,7 @@ const {
   apis,
   useSignupAnalytics,
 } = Signup;
-
-export default function SignupInstagram() {
+function SignupInstagram() {
   const { updateForm, form } = useSignupProgress();
   const [instagramId, setInstagramId] = useState("");
   const insets = useSafeAreaInsets();
@@ -204,13 +204,15 @@ export default function SignupInstagram() {
   );
 }
 
+export default withSignupValidation(SignupInstagram, SignupSteps.INSTAGRAM);
+
 const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
     fontFamily: "semibold",
     fontSize: 18,
     lineHeight: 22,
-    color: "#7A4AE2",
+    color: semanticColors.brand.primary,
   },
   contentWrapper: {
     gap: 15,
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
 
-    color: "#000",
+    color: semanticColors.text.primary,
     fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 22,
@@ -238,7 +240,7 @@ const styles = StyleSheet.create({
     marginLeft: 1,
   },
   instagramText: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 22,
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     paddingTop: 16,
     paddingHorizontal: 0,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   tipConatainer: {
     flexDirection: "row",
@@ -260,7 +262,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tip: {
-    color: "#9B94AB",
+    color: semanticColors.text.disabled,
     fontWeight: 300,
     fontFamily: "thin",
     fontSize: 13,
@@ -277,9 +279,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 19,
     borderRadius: 20,
-    backgroundColor: "#F2ECFF",
+    backgroundColor: semanticColors.surface.background,
     borderWidth: 1,
-    borderColor: "#FFF",
+    borderColor: semanticColors.border.default,
 
     shadowColor: "#F2ECFF",
     shadowOffset: {
@@ -291,7 +293,7 @@ const styles = StyleSheet.create({
     elevation: 3, // Android에서 그림자
   },
   infoTitle: {
-    color: "#9F84D8",
+    color: semanticColors.brand.accent,
     fontWeight: 600,
     fontFamily: "semibold",
     lineHeight: 16.8,

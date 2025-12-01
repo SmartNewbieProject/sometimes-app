@@ -1,4 +1,5 @@
 import { View, StyleSheet } from 'react-native';
+import { semanticColors } from '../../../shared/constants/colors';
 import { Text } from '@/src/shared/ui';
 
 type SizeType = 'sm' | 'md';
@@ -23,7 +24,7 @@ export default function Time({ value, size = 'md' }: TimeProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 8,
     textAlign: 'center',
     fontFamily: 'Rubik',

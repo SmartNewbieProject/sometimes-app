@@ -3,7 +3,7 @@ import {
   usePortOneLogin,
 } from "@/src/features/pass";
 import { Button, Show, Text } from "@/src/shared/ui";
-import { track } from "@amplitude/analytics-react-native";
+import { useKpiAnalytics } from "@/src/shared/hooks";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import { checkAppEnvironment } from "@shared/libs";
 import * as Localization from "expo-localization";
@@ -32,19 +32,32 @@ export default function LoginForm() {
     handleMobileAuthComplete,
     handleMobileAuthError,
   } = usePortOneLogin();
+  const { authEvents, signupEvents } = useKpiAnalytics();
   const pathname = usePathname();
   const { regionCode } = Localization.getLocales()[0];
   const isUS = regionCode === "US";
   const {t} = useTranslation();
 
   const onPressPassLogin = async () => {
-    track("Signup_Init", {
-      platform: "pass",
-      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-    });
+    const loginStartTime = Date.now();
+
+    // KPI 이벤트: 로그인 시작
+    authEvents.trackLoginStarted('pass');
+
+    // 기존 이벤트 호환성
+    signupEvents.trackSignupStarted();
 
     clearError();
-    await startPortOneLogin();
+    try {
+      await startPortOneLogin();
+
+      // KPI 이벤트: 로그인 성공
+      const loginDuration = Date.now() - loginStartTime;
+      authEvents.trackLoginCompleted('pass', loginDuration);
+    } catch (error) {
+      // KPI 이벤트: 로그인 실패
+      authEvents.trackLoginFailed('pass', 'authentication_error');
+    }
   };
 
   // 모바일에서 PASS 인증 화면 표시
@@ -73,7 +86,7 @@ export default function LoginForm() {
             disabled={isLoading}
             className="py-4 rounded-full min-w-[330px] min-h-[60px]"
           >
-            <Text className="text-white text-center text-[18px] h-[40px]">
+            <Text className="text-text-inverse text-center text-[18px] h-[40px]">
               {isLoading ? t("features.signup.ui.login_form.pass_loading"): t("features.signup.ui.login_form.pass_login")}
             </Text>
           </Button>
@@ -104,15 +117,17 @@ export default function LoginForm() {
 function KakaoLogin() {
   const { t } = useTranslation();
   const [showWebView, setShowWebView] = useState(false);
+  const { authEvents, signupEvents } = useKpiAnalytics();
 
   const KAKAO_CLIENT_ID = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY as string;
   const redirectUri = process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI as string;
 
   const handleKakaoLogin = () => {
-    track("Signup_Init", {
-      platform: "kakao",
-      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-    });
+    // KPI 이벤트: 카카오 로그인 시작
+    authEvents.trackLoginStarted('kakao');
+
+    // 기존 이벤트 호환성
+    signupEvents.trackSignupStarted();
 
     if (Platform.OS === "web") {
       // 웹에서는 기존 방식 유지
@@ -146,7 +161,7 @@ function KakaoLogin() {
             <KakaoLogo width={34} height={34} />
           </View>
           <View>
-            <Text className="text-[#00000085] text-[18px]">{t("features.signup.ui.login_form.kakao_login")}</Text>
+            <Text className="text-text-primary text-[18px]">{t("features.signup.ui.login_form.kakao_login")}</Text>
           </View>
         </Pressable>
       </View>

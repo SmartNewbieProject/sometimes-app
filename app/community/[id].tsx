@@ -7,13 +7,12 @@ import { ArticleDetail } from "@/src/features/community/ui/article-detail/articl
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Loading from "@/src/features/loading";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
-import { Header, Show, Text } from "@/src/shared/ui";
+import { Header, Show, Text, HeaderWithNotification } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo } from "react";
-import { Linking } from "react-native";
-import { KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
+import { Linking , KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -33,23 +32,14 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
   dropdownItems,
   t,
 }) => (
-  <Header.Container className=" items-center">
-    <Header.LeftContent>
-      <Pressable
-        onPress={() => router.push("/community")}
-        className="p-2 -ml-2"
-      >
-        <ChevronLeftIcon width={24} height={24} />
-      </Pressable>
-      <Header.LeftButton visible={false} />
-    </Header.LeftContent>
-    <Header.Logo title={t("apps.community.id.header_title")} showLogo={true} logoSize={128} />
-    <Header.RightContent>
+  <HeaderWithNotification
+    centerContent={<Text weight="bold">커뮤니티</Text>}
+    rightContent={
       <Show when={isOwner}>
         <Dropdown open={dropdownOpen} items={dropdownItems} />
       </Show>
-    </Header.RightContent>
-  </Header.Container>
+    }
+  />
 );
 
 export default function ArticleDetailScreen() {
@@ -119,7 +109,7 @@ export default function ArticleDetailScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 bg-white justify-center items-center">
+      <View className="flex-1 bg-surface-background justify-center items-center">
         <Text>{t("apps.community.id.error_loading")}</Text>
       </View>
     );
@@ -131,7 +121,7 @@ export default function ArticleDetailScreen() {
   return (
     <DefaultLayout
       style={{ paddingBottom: insets.bottom }}
-      className="flex-1 bg-white "
+      className="flex-1 bg-surface-background "
     >
       <ArticleHeader
         isOwner={isOwner}

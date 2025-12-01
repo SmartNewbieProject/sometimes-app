@@ -1,4 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from '../../../shared/constants/colors';
 import { Header } from "@/src/shared/ui";
 import { usePathname, useRouter } from "expo-router";
 import React from "react";
@@ -18,7 +19,11 @@ function SettingHeader() {
       <Header.LeftContent>
         <Pressable
           onPress={() => {
-            router.back();
+            if (path === "/setting") {
+              router.navigate("/my");
+            } else {
+              router.navigate("/setting");
+            }
           }}
           style={styles.arrowContainer}
         >
@@ -38,7 +43,7 @@ function SettingHeader() {
 
 const styles = StyleSheet.create({
   headerTitle: {
-    color: "#000",
+    color: semanticColors.text.primary,
     fontSize: 20,
     fontFamily: "bold",
     fontWeight: 600,

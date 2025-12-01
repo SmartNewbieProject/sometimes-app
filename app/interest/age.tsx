@@ -1,15 +1,14 @@
 import type { Preferences } from "@/src/features/interest/api";
-import { PreferenceKeys } from "@/src/features/interest/queries";
-import { usePreferenceOptionsQuery } from "@/src/features/interest/queries";
+import { semanticColors } from '../../src/shared/constants/colors';
+import { PreferenceKeys , usePreferenceOptionsQuery } from "@/src/features/interest/queries";
 import type { AgeOptionData } from "@/src/features/interest/types";
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { environmentStrategy, platform } from "@/src/shared/libs";
-import { PalePurpleGradient } from "@/src/shared/ui";
+import { PalePurpleGradient , Text } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
 import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
-import { Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Image, Platform, StyleSheet, View } from "react-native";
@@ -129,7 +128,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
 
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 15,
     marginBottom: 30,
   },

@@ -1,27 +1,20 @@
 import type { RegionCode } from "@/src/shared/constants/region";
 import {
   UniversityImage,
-  type UniversityName,
   getSmartUnivLogoUrl,
   getUnivLogo,
 } from "@/src/shared/libs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams } from "expo-router";
 import { getUniversitiesByRegion } from "../apis";
-import { useSignupProgress } from "../hooks";
-import {
-  type UIRegion,
-  getRegionsByRegionCode,
-} from "../lib";
+import { getAllRegionList, getRegionsByRegionCode } from "../lib";
 import { useTranslation } from "react-i18next";
 
 export default function useUniversities() {
   const { t } = useTranslation();
-  const { regions } = useSignupProgress();
-
   const { data, isLoading } = useQuery({
-    queryFn: () => getUniversitiesByRegion(regions),
-    queryKey: ["universities", ...regions],
+    queryFn: () => getUniversitiesByRegion(getAllRegionList()),
+    queryKey: ["universities", "all"],
   });
   console.log("universities", data);
   const mappedData = data?.map((item) => ({
@@ -38,7 +31,7 @@ export type UniversitiesByRegion = {
   id: string;
   name: string;
   code: string;
-  region: string;
+  region: RegionCode;
   en: string;
   foundation: string;
 }[];
@@ -46,11 +39,11 @@ export type UniversitiesByRegion = {
 export type UniversityCard = {
   logoUrl: string;
   universityType: string;
-  area: UIRegion | undefined;
+  area: string | undefined;
   id: string;
   name: string;
   code: string;
-  region: string;
+  region: RegionCode;
   en: string;
   foundation: string;
 };

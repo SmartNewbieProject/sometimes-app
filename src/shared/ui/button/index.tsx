@@ -17,11 +17,12 @@ const buttonStyles = cva(
         outline:
           "bg-transparent hover:bg-darkPurple/20 active:bg-darkPurple/40 border border-primaryPurple",
         white:
-          "bg-white border-primaryPurple border hover:bg-darkPurple/20 active:bg-darkPurple/40",
+          "bg-surface-background border-primaryPurple border hover:bg-darkPurple/20 active:bg-darkPurple/40",
       },
       size: {
         md: "text-md h-[50px]",
         sm: "text-sm h-[40px]",
+        lg: "text-lg h-[60px]",
         chip:
           Platform.OS === "web"
             ? "text-xs h-[28px] px-2"

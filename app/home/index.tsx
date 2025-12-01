@@ -1,3 +1,5 @@
+import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
+import RouletteModal from "@/src/features/event/ui/roulette/roulette-modal";
 import { useStep } from "@/src/features/guide/hooks/use-step";
 import useMatchingFirst from "@/src/features/guide/queries/use-maching-first";
 import LikeGuideScenario from "@/src/features/guide/ui/like-guide-scenario";
@@ -17,6 +19,7 @@ import {
 } from "@/src/features/version-update";
 import WelcomeReward from "@/src/features/welcome-reward";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import { ImageResources, storage } from "@/src/shared/libs";
 import { ensurePushTokenRegistered } from "@/src/shared/libs/notifications";
 import { useTranslation } from 'react-i18next';
@@ -27,14 +30,14 @@ import {
   Header,
   PalePurpleGradient,
   Show,
-} from "@/src/shared/ui";
+ Text } from "@/src/shared/ui";
+import { NotificationIcon } from "@/src/features/notification/ui/notification-icon";
 import { track } from "@amplitude/analytics-react-native";
 import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
 import Home from "@features/home";
 import IdleMatchTimer from "@features/idle-match-timer";
-import { Text } from "@shared/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImageResource } from "@ui/image-resource";
 import { Link, router, useFocusEffect } from "expo-router";
@@ -67,22 +70,33 @@ const HomeScreen = () => {
   const [isSlideScrolling, setSlideScrolling] = useState(false);
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
-  const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
-  const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
+  // const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
+  // const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
 
+  const { value, setValue, loading } = useStorage<string | null>({
+    key: "show-push-token-modal",
+  });
   // 환영 보상 관련
   const { shouldShowReward, markRewardAsReceived } = useWelcomeReward();
+  // useEffect(() => {
+  //   const fetchTutorialStatus = async () => {
+  //     const finished = await storage.getItem("like-guide");
+
+  //     setTutorialFinished(finished === "true");
+  //   };
+  //   fetchTutorialStatus();
+  // }, []);
+
+  const { data, isLoading, isError, error } = useRouletteEligibility();
+
   useEffect(() => {
-    const fetchTutorialStatus = async () => {
-      const finished = await storage.getItem("like-guide");
+    if (data?.canParticipate && !isLoading) {
+      showModal({ custom: RouletteModal });
+    }
+  }, [data?.canParticipate, isLoading]);
 
-      setTutorialFinished(finished === "true");
-    };
-    fetchTutorialStatus();
-  }, []);
-
-  const visibleLikeGuide =
-    step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
+  // const visibleLikeGuide =
+  //   step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
 
   const onScrollStateChange = (bool: boolean) => {
     setSlideScrolling(bool);
@@ -98,7 +112,10 @@ const HomeScreen = () => {
 
   useEffect(() => {
     trackEventAction("home_view");
-    ensurePushTokenRegistered(showModal);
+    if (!loading && value !== "true") {
+      ensurePushTokenRegistered(showModal);
+      setValue("true");
+    }
   }, [showModal]);
 
   useTemporalUniversity();
@@ -117,7 +134,7 @@ const HomeScreen = () => {
     <View className="flex-1 ">
       <PalePurpleGradient />
       <VersionUpdateChecker />
-      <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} />
+      {/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
       <WelcomeRewardModal
         visible={shouldShowReward}
         onClose={markRewardAsReceived}
@@ -127,21 +144,23 @@ const HomeScreen = () => {
         logoSize={128}
         showBackButton={false}
         rightContent={
-          <TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
-            <ImageResource
-              resource={ImageResources.GEM}
-              width={41}
-              height={41}
-            />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginRight: 16 }}>
+            <NotificationIcon size={41} />
+            <TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
+              <ImageResource
+                resource={ImageResources.GEM}
+                width={41}
+                height={41}
+              />
+            </TouchableOpacity>
+          </View>
         }
       />
 
       <ScrollView
         scrollEnabled={!isSlideScrolling}
-        className={`flex-1 px-5 flex flex-col gap-y-[14px] ${
-          Platform.OS === "android" ? "pb-40" : "pb-14"
-        }`}
+        className={`flex-1 px-5 flex flex-col gap-y-[14px] ${Platform.OS === "android" ? "pb-40" : "pb-14"
+          }`}
       >
         <View style={{ paddingBottom: 4, marginTop: 2 }}>
           <BannerSlide />
@@ -153,7 +172,6 @@ const HomeScreen = () => {
             <NoneLikeBanner />
           )}
         </View>
-
         <View className="mt-[18px] flex flex-col gap-y-1.5">
           <Feedback.WallaFeedbackBanner />
           <Show when={!isPreferenceFill}>

@@ -1,80 +1,64 @@
-import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
-import Instagram from "@/src/features/instagram";
 import useLiked from "@/src/features/like/hooks/use-liked";
 import { LikeButton } from "@/src/features/like/ui/like-button";
 import {
   ILikedRejectedButton,
+  InChatButton,
   LikedMeOpenButton,
 } from "@/src/features/post-box/ui/post-box-card";
-import { useModal } from "@/src/shared/hooks/use-modal";
-import { ChipSelector } from "@/src/widgets";
-import Slider from "@/src/widgets/slide";
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import Loading from "@features/loading";
 import Match from "@features/match";
-import { useCarousel } from "@shared/hooks/use-carousel";
 import {
   ImageResources,
-  axiosClient,
   cn,
   parser,
-  tryCatch,
+  formatLastLogin,
+  getSmartUnivLogoUrl,
 } from "@shared/libs";
-
+import Feather from "@expo/vector-icons/Feather";
 import {
   Button,
-  Carousel,
-  type CarouselRef,
-  Header,
   ImageResource,
-  PalePurpleGradient,
-  Section,
   Show,
   Text,
+  HeaderWithNotification,
 } from "@shared/ui";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { HttpStatusCode } from "axios";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useRef, useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Dimensions,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   View,
 } from "react-native";
-// Feather 아이콘 임포트
-import Feather from "@expo/vector-icons/Feather";
+import { semanticColors } from "@/src/shared/constants/colors";
+import { usePreferenceOptionsQuery } from "@/src/features/my-info/queries";
 
-const { queries, ui } = Match;
-const {
-  ui: { InstagramContactButton },
-} = Instagram;
+const { queries } = Match;
 const { useMatchPartnerQuery } = queries;
 
 export default function PartnerDetailScreen() {
   const { t } = useTranslation();
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
-  const [isSlideScrolling, setSlideScrolling] = useState(false);
   const [isZoomVisible, setZoomVisible] = useState(false);
   const { isStatus, isLiked, isExpired } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const { data: preferencesArray = [] } = usePreferenceOptionsQuery();
+
   const onZoomClose = () => {
     setZoomVisible(false);
   };
 
   const userWithdrawal = !!partner?.deletedAt;
 
-  const loading = (() => {
-    if (!partner) return true;
-    if (isLoading) return true;
-    return false;
-  })();
+  if (isLoading || !partner) {
+    return <Loading.Page title="파트너 정보를 불러오고 있어요" />;
+  }
 
   const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
     [
@@ -82,40 +66,152 @@ export default function PartnerDetailScreen() {
       t("apps.partner.view.profile_love_style"),
       t("apps.partner.view.profile_interest"),
     ],
-    partner?.characteristics ?? []
+    partner.characteristics
   );
 
-  const personal = characteristicsOptions[t("apps.partner.view.profile_personality_type")];
-  const loveStyles =
-    characteristicsOptions[t("apps.partner.view.profile_love_style")];
-  const interests = characteristicsOptions[t("apps.partner.view.profile_interest")];
+  const personal = characteristicsOptions["성격"];
+  const loveStyles = characteristicsOptions["연애 스타일"];
+  const interests = characteristicsOptions.관심사;
 
-  if (loading || !partner) {
-    return <Loading.Page title={t("apps.partner.view.loading")} />;
-  }
+  const interestOptions = preferencesArray.find((item) => item.typeName === "관심사")?.options || [];
+
+  const interestsWithIcons = interests.map((interest) => {
+    const option = interestOptions.find((opt) => opt.id === interest.value);
+    return {
+      ...interest,
+      imageUrl: option?.imageUrl || null,
+    };
+  });
 
   const mainProfileImageUrl = partner.profileImages.find(
     (img) => img.isMain
   )?.url;
 
+  const basicInfoItems = [
+    {
+      icon: ImageResources.BEER,
+      label: parser.getSingleOption("음주 선호도", partner.characteristics) ?? "정보 없음",
+    },
+    {
+      icon: ImageResources.SMOKE,
+      label: parser.getSingleOption("흡연 선호도", partner.characteristics) ?? "정보 없음",
+    },
+    {
+      icon: ImageResources.TATOO,
+      prefix: "문신 : ",
+      label: parser.getSingleOption("문신 선호도", partner.characteristics) ?? "정보 없음",
+    },
+    {
+      icon: ImageResources.AGE,
+      prefix: "선호 연령 : ",
+      label: parser.getSingleOption("선호 나이대", partner.preferences) ?? "상관없음",
+    },
+  ];
+
+  if (partner.gender === "MALE") {
+    basicInfoItems.push({
+      icon: ImageResources.ARMY,
+      label: parser.getSingleOption("군필 여부", partner.characteristics) ?? "정보 없음",
+    });
+  }
+
+  const basicInfo = basicInfoItems;
+
+  const renderBottomButtons = () => {
+    return (
+      <View
+        style={{
+          marginBottom: 36,
+          height: 48,
+          marginTop: 6,
+          marginLeft: 16,
+          marginRight: 16,
+        }}
+      >
+        <Show
+          when={
+            isStatus(partner?.connectionId ?? "") === "OPEN" &&
+            isStatus(partner?.connectionId ?? "") !== "IN_CHAT"
+          }
+        >
+          <View
+            style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
+          >
+            <LikedMeOpenButton
+              height={48}
+              matchId={matchId}
+              likeId={partner?.matchLikeId ?? undefined}
+            />
+          </View>
+        </Show>
+
+        <Show
+          when={
+            !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
+            !isLiked(partner?.connectionId ?? "") &&
+            !!partner?.connectionId &&
+            !(isStatus(partner?.connectionId ?? "") === "IN_CHAT")
+          }
+        >
+          <View
+            style={{
+              width: "100%",
+              flex: 1,
+              flexDirection: "row",
+              height: 48,
+            }}
+          >
+            <LikeButton connectionId={partner.connectionId ?? ""} />
+          </View>
+        </Show>
+        <Show
+          when={
+            !isExpired(partner?.connectionId ?? "") &&
+            isStatus(partner?.connectionId ?? "") === "PENDING"
+          }
+        >
+          <View className="w-full flex flex-row">
+            <Button
+              variant="outline"
+              disabled={true}
+              size="md"
+              className={cn("flex-1 items-center ", `!h-[${20}px]`)}
+            >
+              <Text>{t("apps.partner.view.button_waiting")}</Text>
+            </Button>
+          </View>
+        </Show>
+        <Show
+          when={
+            isExpired(partner?.connectionId ?? "") ||
+            isStatus(partner?.connectionId ?? "") === "REJECTED" ||
+            userWithdrawal
+          }
+        >
+          <ILikedRejectedButton
+            height={48}
+            connectionId={partner?.connectionId ?? ""}
+          />
+        </Show>
+        <Show when={isStatus(partner?.connectionId ?? "") === "IN_CHAT"}>
+          <InChatButton height={48} />
+        </Show>
+      </View>
+    );
+  };
+
   return (
-    <View className="flex-1">
+    <View className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
       <PhotoSlider
         images={partner?.profileImages.map((item) => item.url) ?? []}
         onClose={onZoomClose}
         initialIndex={selectedIndex}
         visible={isZoomVisible}
       />
-      <PalePurpleGradient />
 
-      <Header.Container>
-        <Header.LeftContent>
-          <Pressable onPress={router.back} className="pt-2 -ml-2">
-            <ChevronLeftIcon width={24} height={24} />
-          </Pressable>
-        </Header.LeftContent>
-        <Header.RightContent>
-          <Pressable // 신고하기 버튼
+      <HeaderWithNotification
+        rightContent={
+          <Pressable
             onPress={() =>
               router.navigate({
                 pathname: "/partner/ban-report",
@@ -128,344 +224,175 @@ export default function PartnerDetailScreen() {
                 },
               })
             }
-            className="pt-2 -ml-2"
+            className="pt-2 -mr-2"
           >
-            <Feather name="alert-triangle" size={24} color="#000" />
+            <Feather name="alert-triangle" size={24} color={semanticColors.text.primary} />
           </Pressable>
-        </Header.RightContent>
-      </Header.Container>
+        }
+      />
 
-      <ScrollView
-        scrollEnabled={!isSlideScrolling}
-        className="flex-1 px-4 border-t border-t-[#E7E9EC] pt-[22px]"
-      >
-        <View className="w-full flex justify-center items-center">
-          <View style={styles.outerContainer}>
-            <View style={{ width: 255, height: 255, overflow: "hidden" }}>
-              <LinearGradient
-                pointerEvents="none"
-                colors={["#F3EDFF", "#9747FF"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientBorder}
-              />
-            </View>
-            <View
-              style={{
-                width: 245,
-                height: 265,
-                overflow: "hidden",
-                position: "absolute",
-                borderRadius: 20,
-                top: 5,
-                left: 5,
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {partner.profileImages.length > 0 && (
+          <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
+            <Pressable
+              onPress={() => {
+                setSelectedIndex(0);
+                setZoomVisible(true);
               }}
+              className="w-full h-full"
+              style={{ width: "100%", height: "100%" }}
             >
-              <Slider
-                showIndicator={true}
-                autoPlayInterval={6000}
-                animationDuration={250}
-                indicatorContainerClassName="!bottom-[-20px] "
-                className={"w-full absolute  "}
-                autoPlay
-              >
-                {partner.profileImages.map((img, index) => (
-                  <Pressable
-                    onPress={() => {
-                      setSelectedIndex(index);
-                      setZoomVisible(true);
-                    }}
-                    key={img.id}
-                    style={[styles.itemContainer, { height: 245, width: 245 }]}
-                  >
-                    <Image
-                      source={{ uri: img.url }}
-                      style={{
-                        ...styles.image,
-                        height: 245,
-                        width: 245,
-                      }}
-                      contentFit="cover"
-                    />
-                  </Pressable>
-                ))}
-              </Slider>
-            </View>
+              <Image
+                source={{ uri: partner.profileImages[0].url }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
+              <LinearGradient
+                colors={["transparent", "rgba(0,0,0,0.8)"]}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0.5, y: 0.5 }}
+                end={{ x: 0.5, y: 1 }}
+              />
+            </Pressable>
 
-            <View pointerEvents="none" style={styles.textContainer}>
-              <Text textColor="white" weight="semibold" className="text-[20px]">
-                {partner.age}
+            <View className="absolute bottom-8 left-5 right-5" pointerEvents="none">
+              <View style={{ backgroundColor: semanticColors.brand.primary }} className="self-start px-2 py-1 rounded-md mb-2 flex-row items-center gap-1">
+                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-bold">마지막 접속</Text>
+                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-light">{formatLastLogin(partner.updatedAt)}</Text>
+              </View>
+              <Text style={{ color: semanticColors.text.inverse }} className="text-3xl font-bold mb-1">
+                만 {partner.age}세
               </Text>
-              <View className="flex flex-row items-center">
-                <Text textColor="white" weight="light" size="sm">
-                  {partner.mbti
-                    ? `#${partner.mbti} #${
-                        partner.universityDetails?.name || ""
-                      }`
-                    : `#${partner.universityDetails?.name || ""}`}
+              <View className="flex-row items-center mb-1">
+                {partner.universityDetails?.code && (
+                  <Image
+                    source={{ uri: getSmartUnivLogoUrl(partner.universityDetails.code) }}
+                    style={{ width: 20, height: 20, marginRight: 6 }}
+                    contentFit="contain"
+                  />
+                )}
+                <Text style={{ color: semanticColors.text.inverse }} className="text-base opacity-90">
+                  {partner.universityDetails?.name}
                 </Text>
-                {/* &nbsp;<UniversityBadge authenticated={profile.authenticated} /> */}
+              </View>
+              <View className="flex-row items-center">
+                <Feather name="check-square" size={16} color={semanticColors.brand.accent} />
+                <Text style={{ color: semanticColors.brand.accent }} className="ml-1 text-sm">
+                  {partner.universityDetails?.authentication ? "대학교 인증 완료" : "대학교 인증 전"}
+                </Text>
               </View>
             </View>
+          </View>
+        )}
 
-            <View pointerEvents="none" style={styles.paperPlane}>
-              <ImageResource
-                resource={ImageResources.PAPER_PLANE_WITHOUT_BG}
-                width={76}
-                height={76}
-              />
-            </View>
-            <View pointerEvents="none" style={styles.heart}>
-              <ImageResource
-                resource={ImageResources.HEART}
-                width={64}
-                height={64}
-              />
-            </View>
+        <View className="px-5 py-6">
+          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mb-4">기본 정보</Text>
+          <View style={{ backgroundColor: semanticColors.surface.surface }} className="rounded-2xl p-5 flex-row flex-wrap justify-between">
+            {basicInfo.map((info, index) => (
+              <View key={index} className="w-[48%] flex-row items-center mb-4">
+                <ImageResource resource={info.icon} width={24} height={24} />
+                <Text style={{ color: semanticColors.text.secondary }} className="ml-2 font-medium text-sm flex-1" numberOfLines={1}>
+                  {info.prefix && <Text style={{ color: semanticColors.text.secondary, fontSize: 14 }}>{info.prefix}</Text>}
+                  {info.label}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          <View className="w-full aspect-[280/160] mt-8 mb-8">
+            <ImageResource
+              resource={ImageResources[partner.mbti as keyof typeof ImageResources]}
+              width="100%"
+              height="100%"
+            />
+          </View>
+
+          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 연애 스타일은</Text>
+          <View className="flex-row flex-wrap gap-2">
+            {loveStyles.map((style, index) => (
+              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
+                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{style.label}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Personality */}
+          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 성격은</Text>
+          <View className="flex-row flex-wrap gap-2 mb-8">
+            {personal.map((item, index) => (
+              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
+                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
+              </View>
+            ))}
           </View>
         </View>
 
-        <View className="flex flex-col gap-y-[30px] mt-[24px] mb-[48px]">
-          <Section.Container title={t("apps.partner.view.section_basic")}>
-            <Section.Profile title={t("apps.partner.view.profile_gender")}>
-              <Text size="md">{parser.gender(partner.gender)}</Text>
-            </Section.Profile>
-            <Section.Profile title={t("apps.partner.view.profile_age_pref")}>
-              <Text size="md">
-                {parser.getSingleOption(
-                  t("apps.partner.view.profile_age_pref"),
-                  partner.characteristics
-                ) ?? "상관없음"}
-              </Text>
-            </Section.Profile>
-          </Section.Container>
-
-          <Section.Container title={t("apps.partner.view.section_love_style")}>
-            <Section.Profile title={t("apps.partner.view.profile_drinking")}>
-              <Text size="md">
-                {parser.getSingleOption(
-                  "음주 선호도",
-                  partner.characteristics
-                ) ?? ""}
-              </Text>
-            </Section.Profile>
-            <Section.Profile title={t("apps.partner.view.profile_smoking")}>
-              <Text size="md">
-                {parser.getSingleOption(
-                  "흡연 선호도",
-                  partner.characteristics
-                ) ?? ""}
-              </Text>
-            </Section.Profile>
-            <Section.Profile title={t("apps.partner.view.profile_tattoo")}>
-              <Text size="md">
-                {parser.getSingleOption(
-                  "문신 선호도",
-                  partner.characteristics
-                ) ?? ""}
-              </Text>
-            </Section.Profile>
-            {partner.gender === "MALE" && (
-              <Section.Profile title={t("apps.partner.view.profile_military")}>
-                <Text size="md">
-                  {parser.getSingleOption(
-                    "군필 여부",
-                    partner.characteristics
-                  ) ?? ""}
-                </Text>
-              </Section.Profile>
-            )}
-
-            <View
-              style={[
-                styles.datingStyleContainer,
-                {
-                  flexDirection: loveStyles.length === 1 ? "row" : "column",
-                  alignItems: loveStyles.length === 1 ? "center" : "flex-start",
-                  justifyContent:
-                    loveStyles.length === 1 ? "space-between" : "flex-start",
-                },
-              ]}
+        {/* Image 2 */}
+        {partner.profileImages.length > 1 && (
+          <View style={{ width: "100%", aspectRatio: 1, marginBottom: 32, borderRadius: 32, overflow: "hidden" }}>
+            <Pressable
+              onPress={() => {
+                setSelectedIndex(1);
+                setZoomVisible(true);
+              }}
+              className="w-full h-full"
             >
-              <Text size="md" textColor="black" className="mb-[10px] ">
-                {t("apps.partner.view.profile_love_style")}
-              </Text>
-              <ChipSelector
-                value={[]}
-                options={loveStyles}
-                className={cn(
-                  "w-full flex-1 ",
-                  loveStyles.length === 1 && "justify-end"
+              <Image
+                source={{ uri: partner.profileImages[1].url }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
+            </Pressable>
+          </View>
+        )}
+
+        <View className="px-5 pb-6">
+          {/* Interests */}
+          <Text style={{ color: semanticColors.text.muted }} className="text-sm mb-3">제 관심사는</Text>
+          <View className="flex-row flex-wrap gap-2 mb-8">
+            {interestsWithIcons.map((item, index) => (
+              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2 flex-row items-center gap-1">
+                {item.imageUrl && (
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={{ width: 16, height: 16 }}
+                    contentFit="contain"
+                  />
                 )}
-                onChange={() => {}}
-              />
-            </View>
-          </Section.Container>
-
-          <Section.Container title={t("apps.partner.view.section_personality")}>
-            <Section.Profile title={t("apps.partner.view.profile_mbti")}>
-              <Text size="md">{partner.mbti}</Text>
-            </Section.Profile>
-            <View className="flex flex-col w-full">
-              <Text size="md" textColor="black" className="mb-[10px]">
-                {t("apps.partner.view.profile_personality_type")}
-              </Text>
-              <ChipSelector
-                value={[]}
-                options={personal}
-                className="w-full"
-                onChange={() => {}}
-              />
-            </View>
-          </Section.Container>
-
-          <Section.Container title={t("apps.partner.view.section_lifestyle")}>
-            <View className="flex flex-col w-full">
-              <ChipSelector
-                value={[]}
-                options={interests}
-                className="w-full"
-                onChange={() => {}}
-              />
-            </View>
-          </Section.Container>
+                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
+              </View>
+            ))}
+          </View>
         </View>
+
+        {/* Image 3 and others */}
+        {partner.profileImages.length > 2 && (
+          <View className="pb-10">
+            {partner.profileImages.slice(2).map((item, index) => (
+              <View key={item.id} style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden", marginBottom: 16 }}>
+                <Pressable
+                  onPress={() => {
+                    setSelectedIndex(index + 2);
+                    setZoomVisible(true);
+                  }}
+                  className="w-full h-full"
+                >
+                  <Image
+                    source={{ uri: item.url }}
+                    style={{ width: "100%", height: "100%" }}
+                    contentFit="cover"
+                  />
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
 
-      <View
-        style={{
-          marginBottom: 36,
-          height: 48,
-          marginTop: 6,
-          marginLeft: 16,
-          marginRight: 16,
-        }}
-      >
-        <Show when={isStatus(partner?.connectionId ?? "") === "OPEN"}>
-          <View
-            style={{ width: "100%", flex: 1, flexDirection: "row", height: 48 }}
-          >
-            <LikedMeOpenButton height={48} instagramId={partner.instagramId} />
-          </View>
-        </Show>
-
-        <Show when={userWithdrawal}>
-          <Text textColor="gray" className="text-center">
-            {t("apps.partner.view.withdrawal_user")}
-          </Text>
-        </Show>
-
-        <Show when={!userWithdrawal}>
-          <Show
-            when={
-              !(isStatus(partner?.connectionId ?? "") === "OPEN") &&
-              !isLiked(partner?.connectionId ?? "") &&
-              !!partner?.connectionId
-            }
-          >
-            <View
-              style={{
-                width: "100%",
-                flex: 1,
-                flexDirection: "row",
-                height: 48,
-              }}
-            >
-              <LikeButton connectionId={partner.connectionId ?? ""} />
-            </View>
-          </Show>
-          <Show
-            when={
-              !isExpired(partner?.connectionId ?? "") &&
-              isStatus(partner?.connectionId ?? "") === "PENDING"
-            }
-          >
-            <View className="w-full flex flex-row">
-              <Button
-                variant="outline"
-                disabled={true}
-                size="md"
-                className={cn("flex-1 items-center ", `!h-[${20}px]`)}
-              >
-                <Text>{t("apps.partner.view.button_waiting")}</Text>
-              </Button>
-            </View>
-          </Show>
-          <Show
-            when={
-              isExpired(partner?.connectionId ?? "") ||
-              isStatus(partner?.connectionId ?? "") === "REJECTED"
-            }
-          >
-            <ILikedRejectedButton
-              height={48}
-              connectionId={partner?.connectionId ?? ""}
-            />
-          </Show>
-        </Show>
-      </View>
+      {/* Bottom Action Bar */}
+      {renderBottomButtons()}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  outerContainer: {
-    width: 255,
-
-    height: 275,
-    position: "relative",
-  },
-  gradientBorder: {
-    borderRadius: 20,
-    padding: 5,
-    width: 255,
-    height: 255,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  container: {
-    borderRadius: 15,
-    overflow: "hidden",
-    width: "100%",
-    height: "100%",
-    position: "relative",
-  },
-
-  textContainer: {
-    position: "absolute",
-    display: "flex",
-    flexDirection: "column",
-    left: 14,
-    bottom: 28,
-    zIndex: 10,
-  },
-  paperPlane: {
-    position: "absolute",
-    right: -42,
-    bottom: 16,
-  },
-  heart: {
-    position: "absolute",
-    left: -44,
-    top: 16,
-    zIndex: -1,
-  },
-
-  itemContainer: {
-    width: 245,
-
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  image: {
-    width: "100%",
-    overflow: "hidden",
-    height: "100%",
-  },
-  datingStyleContainer: {
-    width: "100%",
-  },
-});
+const styles = StyleSheet.create({});

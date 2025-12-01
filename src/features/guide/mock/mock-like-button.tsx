@@ -1,6 +1,6 @@
 import { ImageResources, cn } from "@/src/shared/libs";
-import { Button, ImageResource } from "@/src/shared/ui";
-import { Text } from "@shared/ui";
+import { semanticColors } from '../../../shared/constants/colors';
+import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
 import type { MatchDetails } from "../../idle-match-timer/types";
 
@@ -54,10 +54,10 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[5px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             {t("features.guide.mock.mock_like_button.modal_text_1")}
           </Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             {t("features.guide.mock.mock_like_button.modal_text_2")}
           </Text>
         </View>
@@ -97,10 +97,10 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[5px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             {t("features.guide.mock.mock_like_button.partner_modal_text_1")}
           </Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             {t("features.guide.mock.mock_like_button.partner_modal_text_2")}
           </Text>
         </View>
@@ -136,7 +136,7 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
         ) : (
           <></>
         )}
-        <RNText className="text-md text-white whitespace-nowrap">
+        <RNText className="text-md text-text-inverse whitespace-nowrap">
           {t("features.guide.mock.mock_like_button.main_button")}
         </RNText>
       </View>
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginLeft: -5,
     marginRight: 6,
-    color: "#BEACFF",
+    color: semanticColors.brand.accent,
   },
   particle1: {
     position: "absolute",

@@ -1,4 +1,4 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 
 import { cn } from "@/src/shared/libs";
 import React from "react";
@@ -17,6 +17,7 @@ interface PhotoPickerModalProps {
   visible: boolean;
   onClose: () => void;
   onTakePhoto: () => Promise<string | null>;
+  showGuide?: boolean;
   onPickFromGallery: () => Promise<string | null>;
 }
 
@@ -24,6 +25,7 @@ const PhotoPickerModal = ({
   visible,
   onClose,
   onTakePhoto,
+  showGuide = true,
   onPickFromGallery,
 }: PhotoPickerModalProps) => {
   const insets = useSafeAreaInsets();
@@ -36,19 +38,21 @@ const PhotoPickerModal = ({
       onRequestClose={onClose}
     >
       <View style={[styles.overlay, { paddingBottom: insets.bottom }]}>
-        <View style={[styles.info, { bottom: insets.bottom + 192 }]}>
-          <Text style={[styles.infoText]}>
-            {t("features.mypage.image-modal.tips_1")}
-          </Text>
+        {showGuide && (
+          <View style={[styles.info, { bottom: insets.bottom + 192 }]}>
+            <Text style={[styles.infoText]}>
+              {t("features.mypage.image-modal.tips_1")}
+            </Text>
 
-          <Text style={[styles.infoText]}>
-            {t("features.mypage.image-modal.tips_2")}
-          </Text>
+            <Text style={[styles.infoText]}>
+              {t("features.mypage.image-modal.tips_2")}
+            </Text>
 
-          <Text style={[styles.infoText]}>
-            {t("features.mypage.image-modal.tips_3")}
-          </Text>
-        </View>
+            <Text style={[styles.infoText]}>
+              {t("features.mypage.image-modal.tips_3")}
+            </Text>
+          </View>
+        )}
         <View style={[styles.modalContainer, { bottom: insets.bottom + 74 }]}>
           <TouchableOpacity onPress={onTakePhoto} style={styles.option}>
             <Text style={styles.optionText}>{t("features.mypage.image-modal.take_photo")}</Text>
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
     }),
   },
   modalContainer: {
-    backgroundColor: "white",
+    backgroundColor: semanticColors.surface.background,
 
     marginHorizontal: 30,
     bottom: 0,
@@ -118,7 +122,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closeText: {
-    color: "white", 
+    color: semanticColors.text.inverse, 
     fontFamily: "bold",
     fontWeight: 700,
     fontSize: 16,
@@ -131,7 +135,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoText: {
-    color: "#EEE8FA",
+    color: semanticColors.text.inverse,
     textAlign: "center",
     fontSize: 15,
     fontFamily: "light",

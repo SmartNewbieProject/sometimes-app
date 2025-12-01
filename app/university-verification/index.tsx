@@ -1,7 +1,13 @@
 import { Header, Text, PalePurpleGradient } from "@/src/shared/ui";
 import { LabelInput } from "@/src/widgets/label-input";
 import { router } from "expo-router";
-import { ScrollView, TouchableOpacity, View, Pressable, Linking } from "react-native";
+import {
+  ScrollView,
+  TouchableOpacity,
+  View,
+  Pressable,
+  Linking,
+} from "react-native";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
@@ -10,7 +16,8 @@ import {
   sendEmailVerification,
   verifyEmailCode,
   getProfileId,
-  UI_CONSTANTS
+  MESSAGES,
+  UI_CONSTANTS,
 } from "@/src/features/university-verification";
 import { useTranslation } from "react-i18next";
 
@@ -46,7 +53,7 @@ export default function UniversityVerificationScreen() {
           primaryButton: {
             text: t("apps.university-verification.confirm_button"),
             onClick: () => {},
-          },
+          },,
         });
       },
       (error) => {
@@ -121,6 +128,10 @@ export default function UniversityVerificationScreen() {
     );
   };
 
+  const handleIDcardCertification = () => {
+    router.push("/university-verification/idcard");
+  };
+
   const handleConfirm = () => {
     if (!isVerified) {
       showModal({
@@ -174,7 +185,9 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleEmailVerification}
                   disabled={isLoading}
-                  className={`bg-white border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
+                  className={`bg-surface-background border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${
+                    isLoading ? "opacity-50" : ""
+                  }`}
                 >
                   <Text
                     size="sm"
@@ -208,7 +221,9 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleCodeVerification}
                   disabled={isLoading}
-                  className={`bg-white border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
+                  className={`bg-surface-background border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${
+                    isLoading ? "opacity-50" : ""
+                  }`}
                 >
                   <Text
                     size="sm"
@@ -226,20 +241,34 @@ export default function UniversityVerificationScreen() {
           </View>
         </ScrollView>
 
-        {/* DM 인증 안내 */}
         <View className="px-5 mb-4">
           <Text size="sm" weight="regular" className="text-gray">
             {t("apps.university-verification.no_email_guide_1")}
           </Text>
           <View className="flex-row flex-wrap">
-            <TouchableOpacity onPress={handleDMClick}>
-              <Text size="sm" weight="bold" className="text-gray-500">
-                {t("apps.university-verification.no_email_guide_2")}
+            <TouchableOpacity onPress={handleIDcardCertification}>
+              <Text size="sm" weight="normal" className="text-gray underline">
+                학생증 및 재학증명 제출
               </Text>
             </TouchableOpacity>
-            <Text size="sm" weight="regular" className="text-gray">
-              {t("apps.university-verification.no_email_guide_3")}
+            <Text size="sm" weight="normal" className="text-gray">
+              을 통해 재학 정보를 인증 받을 수 있어요.
             </Text>
+          </View>
+          <View className="mt-4">
+            <Text size="sm" weight="normal" className="text-gray">
+              재학 인증에 어려움이 있는 경우
+            </Text>
+            <View className="flex-row flex-wrap">
+              <TouchableOpacity onPress={handleDMClick}>
+                <Text size="sm" weight="normal" className="text-gray underline">
+                  DM
+                </Text>
+              </TouchableOpacity>
+              <Text size="sm" weight="normal" className="text-gray">
+                으로 문의 주시면 확인 후 도와드립니다.
+              </Text>
+            </View>
           </View>
         </View>
 

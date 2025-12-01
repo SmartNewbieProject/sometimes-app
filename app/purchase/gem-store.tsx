@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../src/shared/constants/colors';
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
@@ -33,7 +34,7 @@ export default function GemStoreScreen() {
   const controller = createRef<PortOneController>();
   const { showErrorModal } = useModal();
   const [paymentId, setPaymentId] = useState<string>(() => createUniqueId());
-  const { setGemCount } = usePortoneStore();
+  const { setGemCount, clearEventType } = usePortoneStore();
   const { my } = useAuth();
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
 
@@ -143,7 +144,7 @@ export default function GemStoreScreen() {
   return (
     <Layout.Default
       className="flex flex-1 flex-col"
-      style={{ backgroundColor: "white", paddingTop: insets.top }}
+      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
     >
       <GemStore.Header gemCount={gem?.totalGem ?? 0} />
       <ScrollView
@@ -198,6 +199,7 @@ export default function GemStoreScreen() {
                             env: process.env.EXPO_PUBLIC_TRACKING_MODE,
                           });
                           setGemCount(product.totalGems);
+                          clearEventType();
                           onPurchase({
                             totalPrice: metadata.totalPrice,
                             count: 1,

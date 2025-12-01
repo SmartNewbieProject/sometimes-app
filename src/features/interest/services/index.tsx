@@ -37,25 +37,25 @@ export const savePreferences = async (props: Properties) => {
     preferences: [
       {
         typeName: PreferenceKeys.AGE,
-        optionIds: [props.age],
+        optionIds: [props.age].filter(Boolean),
       },
       {
         typeName: PreferenceKeys.DRINKING,
-        optionIds: [props.drinking],
+        optionIds: [props.drinking].filter(Boolean),
       },
 
       {
         typeName: PreferenceKeys.SMOKING,
-        optionIds: [props.smoking],
+        optionIds: [props.smoking].filter(Boolean),
       },
       {
         typeName: PreferenceKeys.TATTOO,
-        optionIds: [props.tattoo],
+        optionIds: [props.tattoo].filter(Boolean),
       },
 
       {
-        typeName: "성격 유형",
-        optionIds: props.personality,
+        typeName: PreferenceKeys.PERSONALITY,
+        optionIds: props.personality || [],
       },
     ],
   };
@@ -63,7 +63,7 @@ export const savePreferences = async (props: Properties) => {
   if (props.militaryPreference) {
     body.preferences.push({
       typeName: PreferenceKeys.MILITARY_PREFERENCE,
-      optionIds: [props.militaryPreference],
+      optionIds: [props.militaryPreference].filter(Boolean),
     });
   }
 

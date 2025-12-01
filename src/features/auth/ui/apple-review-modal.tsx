@@ -61,8 +61,8 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
           animationType="fade"
           onRequestClose={handleClose}
       >
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-lg p-6 mx-4 w-full max-w-sm">
+        <View className="flex-1 justify-center items-center bg-surface-inverse/50">
+          <View className="bg-surface-background rounded-lg p-6 mx-4 w-full max-w-sm">
             <Text className="text-lg font-semibold text-center mb-4">
               {t("features.auth.ui.apple_review_modal.modal_title")}
             </Text>

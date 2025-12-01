@@ -1,7 +1,7 @@
 import {TouchableOpacity, View, StyleSheet, Pressable} from "react-native";
 import {Show, Text} from "@shared/ui";
 import {calculateDiscount, dropHundred, toKRW} from "./utils";
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import type { GemDetails } from "@/src/features/payment/api";
 import {ImageResource} from "@ui/image-resource";
 import {ImageResources} from "@shared/libs";
@@ -29,7 +29,7 @@ const GemStoreItem = ({ gemProduct, hot, onOpenPayment }: GemItemProps) => {
     <Pressable
       onPress={() => onOpenPayment({ totalPrice: discountedPrice, gemProduct })}
       style={{
-        backgroundColor: 'white',
+        backgroundColor: semanticColors.surface.background,
         padding: 16,
         height: 59,
         display: 'flex',
@@ -45,7 +45,7 @@ const GemStoreItem = ({ gemProduct, hot, onOpenPayment }: GemItemProps) => {
         <View style={{ display: 'flex', alignItems: 'center', flexDirection: 'row', flex: 1 }}>
           <ImageResource resource={ImageResources.GEM} width={42} height={42} />
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'black' }}>{totalGems}{i18n.t('widgets.gem-store.common.unit_piece')}</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: semanticColors.text.primary }}>{totalGems}{i18n.t('widgets.gem-store.common.unit_piece')}</Text>
           </View>
         </View>
 
@@ -53,7 +53,7 @@ const GemStoreItem = ({ gemProduct, hot, onOpenPayment }: GemItemProps) => {
 
           <Show when={Math.floor(discountRate) !== 0}>
             <View style={{ display: 'flex', flexDirection: 'row', columnGap: 6 }}>
-              <Text className="text-[10px] text-[#969696] line-through">
+              <Text className="text-[10px] text-text-disabled line-through">
                 {dropHundred(price)}{i18n.t('widgets.gem-store.common.unit_currency')}
               </Text>
               <Text className="text-[10px]">
@@ -62,7 +62,7 @@ const GemStoreItem = ({ gemProduct, hot, onOpenPayment }: GemItemProps) => {
             </View>
           </Show>
 
-          <Text size="18" style={{ color: 'black', fontWeight: 'bold', alignSelf: 'flex-end' }}>
+          <Text size="18" style={{ color: semanticColors.text.primary, fontWeight: 'bold', alignSelf: 'flex-end' }}>
             {toKRW(discountedPrice)}{i18n.t('widgets.gem-store.common.unit_currency')}
           </Text>
         </View>
@@ -72,13 +72,13 @@ const GemStoreItem = ({ gemProduct, hot, onOpenPayment }: GemItemProps) => {
           position: 'absolute',
           top: 0,
           left: 0,
-          backgroundColor: '#8B5CF6',
+          backgroundColor: semanticColors.brand.primary,
           paddingHorizontal: 8,
           paddingVertical: 4,
           borderTopLeftRadius: 4,
           borderBottomRightRadius: 4,
         }}>
-          <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>{i18n.t('widgets.gem-store.common.popular_badge')}</Text>
+          <Text style={{ color: semanticColors.text.inverse, fontSize: 10, fontWeight: 'bold' }}>{i18n.t('widgets.gem-store.common.popular_badge')}</Text>
         </View>
       )}
     </Pressable>

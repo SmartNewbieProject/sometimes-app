@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../src/shared/constants/colors';
 import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import Tooltip from "@/src/shared/ui/tooltip";
@@ -146,10 +147,10 @@ export default function DrinkingSelectionScreen() {
               onChange={onChangeDrinking}
               lastLabelLeft={-70}
               options={
-                preferences?.options.map((option) => ({
+                preferences?.options?.map((option) => ({
                   label: option.displayName,
                   value: option.id,
-                })) || []
+                })) ?? []
               }
             />
           </Loading.Lottie>
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
 
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.background,
     marginTop: 39,
     marginBottom: 30,
   },

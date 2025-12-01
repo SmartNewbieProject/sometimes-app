@@ -1,4 +1,5 @@
 import { DefaultLayout } from "@/src/features/layout/ui";
+import { semanticColors } from '../../../src/shared/constants/colors';
 
 import useAreaHook from "@/src/features/signup/hooks/use-area-hook";
 import { areaMap } from "@/src/features/signup/lib";
@@ -43,7 +44,7 @@ function Area() {
   return (
     <DefaultLayout
       style={{
-        backgroundColor: "#fff",
+        backgroundColor: semanticColors.surface.background,
       }}
     >
       <View style={{ paddingHorizontal: 16 }}>
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     width: "100%",
     paddingHorizontal: 16,
-    backgroundColor: "#fff",
+    backgroundColor: semanticColors.surface.background,
   },
   tipConatainer: {
     flexDirection: "row",
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tip: {
-    color: "#9B94AB",
+    color: semanticColors.text.disabled,
     fontWeight: 300,
     fontFamily: "thin",
     fontSize: 13,

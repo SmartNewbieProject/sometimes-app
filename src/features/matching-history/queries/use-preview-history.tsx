@@ -8,6 +8,7 @@ export const usePreviewHistory = () => {
     queryFn: getPreviewHistory,
     initialData: { imageUrls: [], countOfPartner: 0 },
     staleTime: 0,
+    gcTime: 0,
   });
 
   return { previewHistory, ...queryProps };

@@ -37,13 +37,13 @@ export function renderPlaceholder() {
   const { t } = useTranslation();
   return (
     <View className="flex-1 items-center justify-center">
-      <View className="w-full h-full bg-[#F3EDFF] flex justify-center items-center">
+      <View className="w-full h-full bg-surface-secondary flex justify-center items-center">
         <Image
           source={require("@assets/images/image.png")}
           style={{ width: 70, height: 70 }}
           contentFit="cover"
         />
-        <Text size="sm" className="text-[#9B94AB]">
+        <Text size="sm" className="text-text-disabled">
           {t("shareds.image-selector.image_selector.add_photo")}
         </Text>
       </View>

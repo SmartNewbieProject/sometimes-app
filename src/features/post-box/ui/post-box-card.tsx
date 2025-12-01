@@ -1,17 +1,21 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from '../../../shared/constants/colors';
 import { cn, dayUtils, tryCatch } from "@/src/shared/libs";
 import { Button, Show } from "@/src/shared/ui";
 import {
   getRemainingTimeFormatted,
   getRemainingTimeLimit,
 } from "@/src/shared/utils/like";
+import type { UserProfile } from "@/src/types/user";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
 import { Text as CustomText } from "@shared/ui/text";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { useAuth } from "../../auth";
+import useCreateChatRoom from "../../chat/queries/use-create-chat-room";
 import { useTranslation } from "react-i18next";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
@@ -37,6 +41,7 @@ interface PostBoxCardProps {
   isMutualLike: boolean;
   deletedAt: string | null;
   type: "liked-me" | "i-liked";
+  likeId?: string;
 }
 
 function PostBoxCard({
@@ -55,6 +60,7 @@ function PostBoxCard({
   isMutualLike,
   deletedAt,
   type,
+  likeId,
 }: PostBoxCardProps) {
   const { t } = useTranslation();
   const opacity = useRef(new Animated.Value(1)).current;
@@ -65,20 +71,25 @@ function PostBoxCard({
       ? t("features.post-box.ui.card.status_messages.mutual_like")
       : status === "REJECTED"
       ? t("features.post-box.ui.card.status_messages.rejected")
+      : status === "IN_CHAT"
+      ? "상대방과 대화중이에요"
       : t("features.post-box.ui.card.status_messages.waiting_response");
   const userWithdrawal = !!deletedAt;
 
-  const renderBottomButton = isExpired ? (
-    <ILikedRejectedButton connectionId={connectionId} />
-  ) : status === "OPEN" && instagram ? (
-    <LikedMeOpenButton instagramId={instagram} />
-  ) : type === "liked-me" ? (
-    <LikedMePendingButton connectionId={connectionId} />
-  ) : type === "i-liked" && status === "REJECTED" ? (
-    <ILikedRejectedButton connectionId={connectionId} />
-  ) : (
-    <></>
-  );
+  const renderBottomButton =
+    (type === "i-liked" && status === "REJECTED") || userWithdrawal ? (
+      <ILikedRejectedButton connectionId={connectionId} />
+    ) : status === "IN_CHAT" ? (
+      <InChatButton />
+    ) : isExpired ? (
+      <ILikedRejectedButton connectionId={connectionId} />
+    ) : status === "OPEN" && instagram ? (
+      <LikedMeOpenButton matchId={matchId} likeId={likeId} />
+    ) : type === "liked-me" ? (
+      <LikedMePendingButton connectionId={connectionId} />
+    ) : (
+      <></>
+    );
 
   useEffect(() => {
     const anim = Animated.loop(
@@ -118,16 +129,19 @@ function PostBoxCard({
             <Text style={styles.age}>{t("features.post-box.apps.post_box.age_display", { age })}</Text>
           </View>
           <Text style={styles.university}>{universityName}</Text>
-          <Text
-            style={[
-              styles.status,
-              styles.pending,
-              type === "i-liked" && status === "REJECTED" && styles.reject,
-              type === "i-liked" && status === "OPEN" && styles.open,
-            ]}
-          >
-            {statusMessage}
-          </Text>
+          <Show when={!userWithdrawal}>
+            <Text
+              style={[
+                styles.status,
+                styles.pending,
+                type === "i-liked" && status === "REJECTED" && styles.reject,
+                type === "i-liked" && status === "OPEN" && styles.open,
+              ]}
+            >
+              {statusMessage}
+            </Text>
+          </Show>
+
           <Animated.Text
             style={[
               styles.status,
@@ -138,15 +152,12 @@ function PostBoxCard({
               },
             ]}
           >
-            {getRemainingTimeFormatted(matchExpiredAt)}
+            {status === "IN_CHAT"
+              ? ""
+              : getRemainingTimeFormatted(matchExpiredAt, isExpired)}
           </Animated.Text>
 
-          <Show when={userWithdrawal}>
-            <CustomText textColor="gray" size="13" weight="light">
-              {t("features.post-box.ui.card.withdrawn_text")}
-            </CustomText>
-          </Show>
-          <Show when={!userWithdrawal}>{renderBottomButton}</Show>
+          {renderBottomButton}
         </View>
       </View>
     </Pressable>
@@ -187,16 +198,22 @@ export function LikedMePendingButton({
 }
 
 export function LikedMeOpenButton({
-  instagramId,
+  matchId,
+  likeId,
   height = 40,
 }: {
-  instagramId: string;
+  matchId: string;
+  likeId?: string;
   height?: number;
 }) {
   const { t } = useTranslation();
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
-  const handleStartInstagram = () => {
+  const { my } = useAuth();
+  const mutation = useCreateChatRoom();
+  const { profileDetails } = useAuth();
+
+  const handleCreateChat = () => {
     showModal({
       showLogo: true,
 
@@ -219,15 +236,22 @@ export function LikedMeOpenButton({
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-[#AEAEAE] text-[12px]">{t("features.post-box.ui.card.modal_texts.start_instagram_subline1")}</Text>
-          <Text className="text-[#AEAEAE] text-[12px]">
-            {t("features.post-box.ui.card.modal_texts.start_instagram_subline2")}
+          <Text className="text-text-disabled text-[12px]">
+            {profileDetails?.gender === "MALE"
+              ? `구슬 ${featureCosts?.CHAT_START}개로`
+              : "지금 바로"}
+            로 채팅방을 열 수 있어요.
+          </Text>
+          <Text className="text-text-disabled text-[12px]">
+            지금 바로 첫 메시지를 보내보세요!
           </Text>
         </View>
       ),
       primaryButton: {
         text: t("features.post-box.ui.card.buttons.yes_try"),
-        onClick: () => openInstagram(instagramId),
+        onClick: () => {
+          mutation.mutateAsync({ matchId, matchLikeId: likeId });
+        },
       },
       secondaryButton: {
         text: t("global.no"),
@@ -238,7 +262,7 @@ export function LikedMeOpenButton({
   return (
     <View className="w-full flex flex-row">
       <Button
-        onPress={handleStartInstagram}
+        onPress={handleCreateChat}
         variant="primary"
         size="md"
         className={cn("flex-1 items-center ", `!h-[${height}px]`)}
@@ -279,7 +303,7 @@ export function ILikedRejectedButton({
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-[#AEAEAE] text-[12px]">
+          <Text className="text-text-disabled text-[12px]">
             {i18n.t("features.post-box.ui.card.modal_texts.bye_subline")}
           </Text>
         </View>
@@ -311,6 +335,46 @@ export function ILikedRejectedButton({
   );
 }
 
+export function InChatButton({ height = 40 }: { height?: number }) {
+  const router = useRouter();
+  const handleCreateChat = () => {
+    router.push("/chat");
+  };
+  return (
+    <View className="w-full flex flex-row">
+      <Button
+        onPress={handleCreateChat}
+        variant="primary"
+        size="md"
+        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
+        prefix={<ChatIcon width={20} height={20} />}
+      >
+        대화가 이어지고 있어요
+      </Button>
+    </View>
+  );
+}
+
+export function InChatButton({ height = 40 }: { height?: number }) {
+  const router = useRouter();
+  const handleCreateChat = () => {
+    router.push("/chat");
+  };
+  return (
+    <View className="w-full flex flex-row">
+      <Button
+        onPress={handleCreateChat}
+        variant="primary"
+        size="md"
+        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
+        prefix={<ChatIcon width={20} height={20} />}
+      >
+        대화가 이어지고 있어요
+      </Button>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     position: "relative",
@@ -320,7 +384,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     marginTop: 10,
-    borderColor: "#E1D9FF",
+    borderColor: semanticColors.border.default,
     paddingLeft: 12,
     paddingRight: 16,
     flexDirection: "row",
@@ -333,7 +397,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: semanticColors.text.disabled,
     lineHeight: 14,
     marginTop: 2,
     fontWeight: "500",
@@ -342,13 +406,13 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 9999,
-    backgroundColor: "#F3EDFF",
+    backgroundColor: semanticColors.surface.background,
     position: "absolute",
     right: 13,
     top: 13,
   },
   viewYet: {
-    backgroundColor: "#7A4AE2",
+    backgroundColor: semanticColors.brand.primary,
   },
   contentContainer: {
     flex: 1,
@@ -362,17 +426,17 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     lineHeight: 24,
-    color: "#111827",
+    color: semanticColors.text.secondary,
   },
   age: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#6B7280",
+    color: semanticColors.text.muted,
   },
   university: {
     fontSize: 16,
     lineHeight: 20,
-    color: "#4B5563",
+    color: semanticColors.text.muted,
     marginBottom: 6,
   },
   status: {
@@ -381,23 +445,23 @@ const styles = StyleSheet.create({
   },
   pending: {
     fontSize: 12,
-    color: "#6B7280",
+    color: semanticColors.text.muted,
   },
   subText: {
     fontSize: 15,
     fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 18,
-    color: "#BEACFF",
+    color: semanticColors.brand.accent,
     marginLeft: -6,
     marginRight: 5,
   },
   reject: {
     fontSize: 12,
-    color: "#6B7280",
+    color: semanticColors.text.muted,
   },
   open: {
-    color: "#8638E5",
+    color: semanticColors.brand.primary,
     fontSize: 13,
   },
 });

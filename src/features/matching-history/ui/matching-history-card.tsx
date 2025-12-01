@@ -1,11 +1,13 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { UniversityName, getUnivLogo } from "@/src/shared/libs";
+import { UniversityName, getUnivLogo, formatLastLogin } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import LockProfileIcon from "@assets/icons/lock-profile.svg";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import NotSecuredIcon from "@assets/icons/shield-not-secured.svg";
+import { useFeatureCost } from "@features/payment/hooks";
+import { ModalStyles } from "@shared/hooks";
 import { Image, ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -22,8 +24,6 @@ import { useCommingSoon } from "../../admin/hooks";
 import { useMatchingBackground } from "../../idle-match-timer/hooks";
 import { useUnlockProfile } from "../queries/use-unlock-profile";
 import type { MatchingHistoryDetails } from "../type";
-import {ModalStyles} from "@shared/hooks";
-import {useFeatureCost} from "@features/payment/hooks";
 
 
 interface MatchingHistoryCardProps {
@@ -34,11 +34,9 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const size =
-    Dimensions.get("window").width / 2 > 300
-      ? 220
-      : Dimensions.get("window").width / 2 < 170
-      ? 140
-      : 180;
+    Dimensions.get("window").width > 468
+      ? 218
+      : (Dimensions.get("window").width - 32) / 2;
 
   const { update } = useMatchingBackground();
   const unlockProfile = useUnlockProfile(item.matchId);
@@ -75,8 +73,8 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
         ),
         children: (
           <View style={ModalStyles.content}>
-              <Text style={ModalStyles.description} className="text-[#AEAEAE]">
-                {t("features.matching-history.ui.matching_history_card.modal_description")}
+            <Text style={ModalStyles.description} className="text-text-disabled">
+              {t("features.matching-history.ui.matching_history_card.modal_description")}
             </Text>
           </View>
         ),
@@ -105,6 +103,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
             width: size,
             height: size,
             padding: 14,
+            boxSizing: "border-box",
             borderRadius: 30,
           }}
           className="flex flex-col justify-between"
@@ -145,6 +144,26 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                 );
               })()}
             </View>
+            <View
+              style={{
+                backgroundColor: "#7A4AE2",
+                paddingHorizontal: 6,
+                paddingVertical: 3,
+                borderRadius: 3,
+                alignSelf: "flex-start",
+                marginTop: 3,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 3,
+              }}
+            >
+              <Text textColor="white" weight="medium" size="10">
+                마지막 접속
+              </Text>
+              <Text textColor="white" weight="light" size="10">
+                {formatLastLogin(item.lastLogin)}
+              </Text>
+            </View>
           </View>
 
           <View
@@ -173,7 +192,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                   borderTopEndRadius: 16,
                   height: 35,
                   width: "100%",
-                  borderColor: "#E7E9EC",
+                  borderColor: semanticColors.border.default,
                 }}
               />
             </View>
@@ -193,7 +212,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                 ]}
                 onPress={onClickToPartner}
               >
-                <Text className="w-[20px] text-white text-[7px]">
+                <Text className="w-[20px] text-text-inverse text-[7px]">
                   {item.blinded ? t("features.matching-history.ui.matching_history_card.profile_unlock_button") : t("features.matching-history.ui.matching_history_card.more_button")}
                 </Text>
                 <IconWrapper width={6} height={6}>
@@ -256,7 +275,7 @@ const styles = StyleSheet.create({
     height: 68,
   },
   someReceivedBadge: {
-    backgroundColor: "#F5F1FF",
+    backgroundColor: semanticColors.surface.background,
     borderRadius: 16,
     width: 48,
     justifyContent: "center",

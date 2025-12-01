@@ -1,7 +1,7 @@
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import React from "react";
@@ -34,10 +34,6 @@ function ProfilePersonality() {
     if (values.length > 3) {
       return;
     }
-    if (values.length === 0) {
-      updateForm("personality", undefined);
-      return;
-    }
     updateForm("personality", values);
   };
   return (
@@ -59,11 +55,11 @@ function ProfilePersonality() {
           <ChipSelector
             value={personality}
             options={
-              preferences?.options.map((option) => ({
+              preferences?.options?.map((option) => ({
                 label: option.displayName,
                 value: option.id,
                 imageUrl: option?.imageUrl,
-              })) || []
+              })) ?? []
             }
             multiple={true}
             onChange={onChangeOption}
@@ -103,7 +99,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 10,
     height: 0.5,
-    backgroundColor: "#E7E9EC",
+    backgroundColor: semanticColors.surface.other,
   },
 });
 

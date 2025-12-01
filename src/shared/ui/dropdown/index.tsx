@@ -1,16 +1,17 @@
+import React, { useRef, useState, useEffect } from 'react';
 import {
 	StyleSheet,
-	TouchableWithoutFeedback,
 	View,
 	Pressable,
 	Platform,
-	Modal,
+	useWindowDimensions,
 	type ViewStyle,
+	type GestureResponderEvent,
+	type LayoutRectangle,
 } from 'react-native';
-import { ImageResources } from '../../libs';
 import { ImageResource } from '../image-resource';
-import { Show } from '../show';
-import { useState, useEffect, useRef } from 'react';
+import { ImageResources } from '../../libs';
+import { semanticColors } from '../../constants/colors';
 import { Text } from '../text';
 
 export type DropdownItem = {
@@ -23,100 +24,122 @@ type DropdownProps = {
 	open: boolean;
 	items: DropdownItem[];
 	dropdownStyle?: ViewStyle;
+	onOpenChange?: (isOpen: boolean) => void;
 };
 
-export const Dropdown = ({ open: _open, items, dropdownStyle }: DropdownProps) => {
-	const [open, setOpen] = useState(_open);
-	const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
-	const containerRef = useRef<View>(null);
+const DROPDOWN_WIDTH = 140;
 
-	useEffect(() => {
-		setOpen(_open);
-	}, [_open]);
+export const Dropdown = ({ open, items, dropdownStyle, onOpenChange }: DropdownProps) => {
+	const triggerRef = useRef<View>(null);
+	const [triggerLayout, setTriggerLayout] = useState<LayoutRectangle | null>(null);
+	const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
-	useEffect(() => {
-		if (Platform.OS === 'web' && typeof document !== 'undefined') {
-			const handleOutsideClick = (event: Event) => {
-				const target = event.target as HTMLElement;
-				const isOutsideClick = !target.closest('.dropdown-container');
+	const handleClose = () => {
+		onOpenChange?.(false);
+	};
 
-				if (open && isOutsideClick) {
-					setOpen(false);
-				}
-			};
-			document.addEventListener('click', handleOutsideClick, true);
-			return () => {
-				document.removeEventListener('click', handleOutsideClick, true);
-			};
+	const handleTriggerPress = (e: GestureResponderEvent) => {
+		e.stopPropagation();
+		if (open) {
+			handleClose();
+		} else {
+			onOpenChange?.(true);
 		}
-	}, [open]);
+	};
 
-	const handleToggle = () => {
-		if (!open && containerRef.current) {
-			containerRef.current.measure((fx, fy, width, height, px, py) => {
-				setDropdownPosition({
-					top: py + height + 4,
-					right: px + width - 158,
+	// Measure trigger position ONLY for the backdrop
+	useEffect(() => {
+		if (open && triggerRef.current) {
+			// We need global coordinates for the backdrop to cover the screen
+			// regardless of where the dropdown is in the hierarchy.
+			if (Platform.OS === 'web') {
+				const element = triggerRef.current as unknown as HTMLElement;
+				const rect = element.getBoundingClientRect();
+				setTriggerLayout({ x: rect.left, y: rect.top, width: rect.width, height: rect.height });
+			} else {
+				triggerRef.current.measureInWindow((x, y, width, height) => {
+					setTriggerLayout({ x, y, width, height });
 				});
-			});
+			}
 		}
-		setOpen(!open);
+	}, [open, windowWidth, windowHeight]);
+
+	const renderMenu = () => {
+		return (
+			<View
+				style={[
+					styles.menu,
+					dropdownStyle,
+					// Position relative to the trigger container
+					{
+						top: '100%', // Right below the trigger
+						right: 0,    // Right aligned with the trigger
+						marginTop: 4,
+					},
+				]}
+			>
+				{items.map((item, index) => (
+					<Pressable
+						key={item.key}
+						style={({ pressed }) => [
+							styles.item,
+							pressed && styles.itemPressed,
+							index === items.length - 1 && { borderBottomWidth: 0 },
+						]}
+						onPress={(e) => {
+							e.stopPropagation();
+							item.onPress();
+							handleClose();
+						}}
+					>
+						<Text className="text-[18px]" textColor="black">
+							{item.content}
+						</Text>
+					</Pressable>
+				))}
+			</View>
+		);
 	};
 
 	return (
-		<View style={styles.container}>
-			<TouchableWithoutFeedback onPress={handleToggle}>
-				<View ref={containerRef} style={styles.triggerContainer}>
-					<ImageResource resource={ImageResources.MENU} width={24} height={24} />
-				</View>
-			</TouchableWithoutFeedback>
-
-			<Modal
-				visible={open}
-				transparent
-				animationType="fade"
-				style={{ position: 'absolute' }}
-				onRequestClose={() => setOpen(false)}
+		<View
+			style={[
+				styles.container,
+				open && { zIndex: 9999 } // Ensure dropdown is on top when open
+			]}
+		>
+			<Pressable
+				ref={triggerRef}
+				onPress={handleTriggerPress}
+				style={styles.trigger}
+				hitSlop={8}
 			>
-				<TouchableWithoutFeedback onPress={() => setOpen(false)}>
-					<View style={styles.overlay}>
-						<TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-							<View 
-								style={[
-									styles.dropdownContainer, 
-									dropdownStyle,
-									{
-										position: 'absolute',
-										top: dropdownPosition.top,
-										left: dropdownPosition.right,
-									}
-								]} 
-								className="dropdown-container"
-							>
-								{items.map((item, index) => (
-									<Pressable
-										key={item.key}
-										style={[
-											styles.dropdownItem,
-											index === items.length - 1 && { borderBottomWidth: 0 }
-										]}
-										onPress={(e) => {
-											e.preventDefault();
-											e.stopPropagation();
-											item.onPress();
-											setOpen(false);
-										}}
-									>
-										<Text className="text-[18px]" textColor="black">
-											{item.content}
-										</Text>
-									</Pressable>
-								))}
-							</View>
-						</TouchableWithoutFeedback>
-					</View>
-				</TouchableWithoutFeedback>
-			</Modal>
+				<ImageResource resource={ImageResources.MENU} width={24} height={24} />
+			</Pressable>
+
+			{open && (
+				<>
+					{/* Backdrop: Positioned absolutely to cover the whole screen */}
+					{/* We use negative margins/positions based on trigger layout to expand it */}
+					{triggerLayout && (
+						<Pressable
+							style={[
+								styles.backdrop,
+								{
+									top: -triggerLayout.y,
+									left: -triggerLayout.x,
+									width: windowWidth,
+									height: windowHeight,
+								}
+							]}
+							onPress={handleClose}
+						/>
+					)}
+
+					{/* Menu: Rendered normally in the flow, positioned absolutely relative to container */}
+					{renderMenu()}
+				</>
+			)}
 		</View>
 	);
 };
@@ -124,39 +147,47 @@ export const Dropdown = ({ open: _open, items, dropdownStyle }: DropdownProps) =
 const styles = StyleSheet.create({
 	container: {
 		position: 'relative',
-		width: 32,
-		height: 32,
-		cursor: 'pointer',
+		// zIndex is handled dynamically
 	},
-	triggerContainer: {
+	trigger: {
 		width: 32,
 		height: 32,
 		justifyContent: 'center',
 		alignItems: 'center',
+		// @ts-ignore
+		cursor: 'pointer',
 	},
-	overlay: {
-		flex: 1,
-		backgroundColor: 'transparent',
+	backdrop: {
+		position: 'absolute',
+		zIndex: -1, // Behind the menu but above other content (since container is zIndex 9999)
+		backgroundColor: 'transparent', // Or 'rgba(0,0,0,0.1)' for debugging
+		// @ts-ignore
+		cursor: 'default',
 	},
-	dropdownContainer: {
-		width: 140,
-		paddingVertical: 4,
+	menu: {
+		position: 'absolute',
+		width: DROPDOWN_WIDTH,
+		backgroundColor: semanticColors.surface.background,
 		borderRadius: 8,
-		backgroundColor: 'white',
+		borderWidth: 1,
+		borderColor: semanticColors.border.default,
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.1,
 		shadowRadius: 8,
-		elevation: 8,
-		borderWidth: 1,
-		borderColor: '#e0e0e0',
+		elevation: 5,
+		overflow: 'hidden',
 	},
-	dropdownItem: {
+	item: {
 		paddingHorizontal: 16,
 		paddingVertical: 12,
 		borderBottomWidth: 1,
 		borderBottomColor: '#f5f5f5',
-		backgroundColor: 'white',
+		minHeight: 48,
+		justifyContent: 'center',
+	},
+	itemPressed: {
+		backgroundColor: '#f5f5f5',
 	},
 });
 

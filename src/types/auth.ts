@@ -3,5 +3,7 @@ export type TokenResponse = {
   refreshToken: string;
   tokenType: string;
   expiresIn: number;
-  role: "user" | "admin";
+  /** @deprecated 하위 호환성을 위해 유지.*/
+  role?: "user" | "admin" | "tester";
+  roles?: ("user" | "admin" | "tester")[];
 }

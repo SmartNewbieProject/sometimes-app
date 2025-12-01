@@ -1,5 +1,4 @@
-import colors from "@/src/shared/constants/colors";
-
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { Image } from "expo-image";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -53,7 +52,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "rgba(134, 56, 229, 0.5)",
-    backgroundColor: "#F9F5FE",
+    backgroundColor: semanticColors.surface.secondary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 8,
     marginBottom: 2,
-    color: "#1F1F1F",
+    color: semanticColors.text.primary,
     textAlign: "center",
     fontSize: 18,
     fontFamily: "semibold",
@@ -72,7 +71,7 @@ const styles = StyleSheet.create({
     lineHeight: 21.6,
   },
   description: {
-    color: "#717171",
+    color: semanticColors.text.disabled,
     textAlign: "center",
     fontSize: 12,
     marginBottom: 11,
@@ -88,20 +87,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
 
-    backgroundColor: "#F2E7FF",
+    backgroundColor: semanticColors.surface.other,
   },
   buttonDisabledStyle: {
-    backgroundColor: "#8638E5",
+    backgroundColor: semanticColors.brand.primary,
   },
   buttonText: {
     fontSize: 16,
     fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 18,
-    color: "#8638E5",
+    color: semanticColors.brand.primary,
   },
   buttonDisabledText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
   },
 });
 

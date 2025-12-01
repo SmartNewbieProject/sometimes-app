@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/features/auth";
+import { semanticColors } from '../../../src/shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -86,7 +87,7 @@ function KakaoLoginRedirect() {
               }
             }
             router.replace({
-              pathname: "/auth/signup/area",
+              pathname: "/auth/signup/university",
               params: {
                 certificationInfo: JSON.stringify(result.certificationInfo),
               },
@@ -125,14 +126,14 @@ function KakaoLoginRedirect() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#ffffff",
+        backgroundColor: semanticColors.surface.background,
       }}
     >
       <Text
         style={{
           fontSize: 16,
           textAlign: "center",
-          color: "#333333",
+          color: semanticColors.text.secondary,
         }}
       >
         {t("apps.auth.redirect.login_loading")}

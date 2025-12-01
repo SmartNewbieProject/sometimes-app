@@ -1,4 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { semanticColors } from '../../../shared/constants/colors';
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 36,
   },
   more: {
-    backgroundColor: "#A892D7",
+    backgroundColor: semanticColors.brand.accent,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     borderRadius: "50%",
   },
   moreText: {
-    color: "#fff",
+    color: semanticColors.text.inverse,
     fontSize: 14,
   },
   background: {
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 5,
     marginLeft: 14,
-    color: "#5A269A",
+    color: semanticColors.text.primary,
     fontSize: 12,
 
     fontFamily: "semibold",

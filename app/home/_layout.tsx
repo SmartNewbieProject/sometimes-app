@@ -1,7 +1,5 @@
-import { getUserStatus } from "@/src/features/auth/apis";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import useUserStatus from "@/src/features/auth/queries/use-user-status";
-import { useCheckBusanQuery } from "@/src/features/home/queries";
 import Loading from "@/src/features/loading";
 import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";

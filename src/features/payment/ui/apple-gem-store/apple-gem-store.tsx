@@ -1,4 +1,5 @@
 import { useIAP } from "expo-iap";
+import { semanticColors } from '../../../../shared/constants/colors';
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,21 +13,29 @@ import {
   splitAndSortProducts,
 } from "@/src/widgets/gem-store/utils/apple";
 
+import { useEventControl } from "@/src/features/event/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { usePathname, useRouter } from "expo-router";
 import paymentApis from "../../api";
-import { useCurrentGem } from "../../hooks";
+import { useCurrentGem , useGemProducts } from "../../hooks";
 import { useAppleInApp } from "../../hooks/use-apple-in-app";
+import { usePortoneStore } from "../../hooks/use-portone-store";
 import { AppleFirstSaleCard } from "../first-sale-card/apple";
 import { GemStore } from "../gem-store";
 import { RematchingTicket } from "../rematching-ticket";
 
 function AppleGemStore() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
+  const pathname = usePathname();
   const { data: gem } = useCurrentGem();
+  const { data: serverGemProducts, isLoading: isLoadingServer } = useGemProducts();
   const [purchasing, setPurchasing] = useState(false);
   const appleInAppMutation = useAppleInApp();
   const { showErrorModal } = useModal();
+  const { eventType } = usePortoneStore();
+  const { participate } = useEventControl({ type: eventType! });
   const {
     connected,
     products,
@@ -39,18 +48,14 @@ function AppleGemStore() {
     currentPurchase as ExtendedProductPurchase;
 
   const productIds = [
-    "gem_sale_20",
-    "gem_sale_40",
-    "gem_sale_6",
-    "gem_130",
-    "gem_15",
-    "gem_200",
-    "gem_30",
-    "gem_400",
-    "gem_500",
-    "gem_60",
-    "gem_800",
-    "gem_8",
+    "gem_sale_7",
+    "gem_sale_16",
+    "gem_sale_27",
+    "gem_12",
+    "gem_27",
+    "gem_39",
+    "gem_54",
+    "gem_67",
   ];
 
   const { sale, normal } = products
@@ -68,21 +73,44 @@ function AppleGemStore() {
     const completePurchase = async () => {
       setPurchasing(true);
       try {
-        // 1. 백엔드에 영수증 검증 요청
-        const serverResponse = await appleInAppMutation.mutateAsync(
-          purchase?.jwsRepresentationIOS ?? ""
-        );
+        // transactionReceipt 값 유효성 검증
+        const transactionReceipt = purchase?.transactionReceipt || purchase?.jwsRepresentationIOS;
 
-        // 2. 백엔드가 '성공'이라고 응답했을 때만 트랜잭션 완료
+        if (!transactionReceipt || transactionReceipt.trim() === "") {
+          console.error("❌ Invalid transactionReceipt:", {
+            transactionReceipt,
+            purchase,
+            currentPurchase
+          });
+          showErrorModal("결제 정보가 올바르지 않습니다. 다시 시도해주세요.", "error");
+          setPurchasing(false);
+          return;
+        }
+
+        console.log("✅ Sending transactionReceipt:", transactionReceipt.substring(0, 50) + "...");
+
+        const serverResponse = await appleInAppMutation.mutateAsync(transactionReceipt);
+
         if (serverResponse.success) {
           const result = await finishTransaction({
             purchase: currentPurchase,
             isConsumable: true,
           });
+
+          if (eventType) {
+            try {
+              await participate();
+              console.log("이벤트 참여 완료:", eventType);
+            } catch (error) {
+              console.error("이벤트 참여 실패:", error);
+            }
+            const { clearEventType } = usePortoneStore.getState();
+            clearEventType();
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            router.replace(pathname as any);
+          }
         } else {
-          // 3. 백엔드가 '실패'라고 응답한 경우
           console.error("서버 검증 실패");
-          // 사용자에게 "결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요." 알림 표시
         }
       } catch (error) {
         console.error("Failed to complete purchase:", error);
@@ -112,7 +140,7 @@ function AppleGemStore() {
   return (
     <Layout.Default
       className="flex flex-1 flex-col"
-      style={{ backgroundColor: "white", paddingTop: insets.top }}
+      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
     >
       <GemStore.Header gemCount={gem?.totalGem ?? 0} />
       <ScrollView
@@ -128,6 +156,7 @@ function AppleGemStore() {
                 <Show when={sale.length > 0}>
                   <AppleFirstSaleCard
                     gemProducts={sale}
+                    serverGemProducts={serverGemProducts}
                     onOpenPurchase={handlePurchase}
                   />
                 </Show>
@@ -139,18 +168,19 @@ function AppleGemStore() {
             </View>
 
             <View className="flex flex-col gap-y-4 justify-center mb-auto">
-              <Show when={!products || products?.length === 0}>
+              <Show when={isLoadingServer || !products || products?.length === 0}>
                 <View className="flex-1 justify-center items-center">
                   <Text>젬 상품을 불러오는 중...</Text>
                 </View>
               </Show>
 
-              <Show when={normal && normal?.length > 0}>
+              <Show when={!isLoadingServer && normal && normal?.length > 0}>
                 <AppleGemStoreWidget.Provider>
                   {normal.map((product, index) => (
                     <AppleGemStoreWidget.Item
                       key={product.id}
                       gemProduct={product}
+                      serverGemProducts={serverGemProducts}
                       onOpenPurchase={handlePurchase}
                       hot={index === 2}
                     />

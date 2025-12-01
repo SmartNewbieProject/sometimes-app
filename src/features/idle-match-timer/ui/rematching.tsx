@@ -1,4 +1,4 @@
-import colors from "@/src/shared/constants/colors";
+import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { ImageResources } from "@/src/shared/libs";
 import { ImageResource, PurpleGradient, Text } from "@/src/shared/ui";
 import CheckIcon from "@assets/icons/check-unchecked.svg";
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    borderColor: "#CEC1FF",
+    borderColor: semanticColors.border.default,
     borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     width: 134,
     height: 134,
     borderRadius: "50%",
-    borderColor: "#DCD3FF",
+    borderColor: semanticColors.border.default,
     borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     left: 7,
     position: "absolute",
     height: "90%",
-    backgroundColor: "#C5B2FF",
+    backgroundColor: semanticColors.surface.background,
   },
   unChecked: {
     width: 16,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     position: "relative",
     height: 5,
     borderRadius: 20,
-    backgroundColor: "#ECECEC",
+    backgroundColor: semanticColors.surface.background,
     overflow: "hidden",
     marginTop: 20,
     marginBottom: 5,

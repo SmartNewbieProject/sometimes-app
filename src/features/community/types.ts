@@ -1,9 +1,9 @@
 import type { Gender, UniversityDetail } from "@/src/types/user";
 
 export enum ArticleRequestType {
-  GENERAL = 'general',
-  REVIEW = 'review',
-  LOVE_CONCERNS = 'love-concerns'
+  GENERAL = "general",
+  REVIEW = "review",
+  LOVE_CONCERNS = "love-concerns",
 }
 
 export type Author = {
@@ -50,6 +50,20 @@ export interface Comment {
   parentId: string | null;
   replies: Comment[];
   replyCount: number;
+}
+
+export type MyComment = {
+  id: string;
+  content: string;
+  createdAt: string;
+  article: Article;
+};
+
+export type MyLike = {
+  id: string;
+  content: string;
+  createdAt: string;
+  article: Article;
 };
 
 export interface Category {
@@ -61,4 +75,11 @@ export interface Category {
 export interface CommentForm {
   content: string;
   anonymous: boolean;
+}
+
+export interface HotArticle {
+  id: string;
+  title: string;
+  categoryId: string;
+  categoryName: string;
 }

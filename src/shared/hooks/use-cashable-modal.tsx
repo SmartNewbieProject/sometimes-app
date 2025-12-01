@@ -1,4 +1,5 @@
 import {useModal} from "@hooks/use-modal";
+import { semanticColors } from '../constants/colors';
 import {StyleSheet, View} from "react-native";
 import {router} from "expo-router";
 import {Text} from "@ui/text";
@@ -29,7 +30,7 @@ export const useCashableModal = () => {
               {t("shareds.hooks.use_cashable_modal.description")}
             </Text>
 
-            <Text style={styles.description} className="text-[#AEAEAE]">
+            <Text style={styles.description} className="text-text-disabled">
               {textContent}
             </Text>
         </View>
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   description: {
-    color: '#AEAEAE',
+    color: semanticColors.text.disabled,
     marginTop: 8,
     fontSize: 12,
     textAlign: 'center'

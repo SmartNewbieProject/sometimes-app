@@ -1,6 +1,5 @@
 import type { RegionCode } from '@/src/shared/constants/region';
 import type { UniversityCard } from '../queries/use-universities';
-
 export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	BSN: '부산',
 	DJN: '대전',
@@ -12,16 +11,36 @@ export const regionCodeMap: Partial<Record<RegionCode, UIRegion>> = {
 	ICN: '인천',
 	SEL: '서울',
 	KYG: '경기',
+	GWJ: '광주',
+	JJU: '전주',
+	GSN: '군산',
+	IKS: '익산',
+	ADG: '안동',
+	YJA: '영주',
+	MGY: '문경',
 };
-
-export type UIRegion = '부산' | '대전' | '김해' | '대구' | '세종' | '청주' | '천안' | '인천' | '서울' | '경기';
-
-export const getRegionsByRegionCode = (code: RegionCode) => {
+export type UIRegion =
+	| '부산'
+	| '대전'
+	| '김해'
+	| '대구'
+	| '세종'
+	| '청주'
+	| '천안'
+	| '인천'
+	| '서울'
+	| '광주'
+	| '경기'
+	| '전주'
+	| '군산'
+	| '익산'
+	| '안동'
+	| '영주'
+	| '문경';
+export const getRegionsByRegionCode = (code: RegionCode): string | undefined => {
 	return regionCodeMap[code];
 };
-
 export type UniversityType = '국립' | '사립' | '과학기술원' | '도립' | '알 수 없음';
-
 export function getUniversityType(name: string): UniversityType {
 	const nationalUniversities = [
 		'국립부경대학교',
@@ -53,9 +72,7 @@ export function getUniversityType(name: string): UniversityType {
 		'인천대학교',
 		'한국폴리텍 II 대학 인천캠퍼스',
 	];
-
 	const provincialUniversities = ['충북도립대학교'];
-
 	const privateUniversities = [
 		'부산여자대학교',
 		'부산경상대학교',
@@ -97,7 +114,6 @@ export function getUniversityType(name: string): UniversityType {
 		'우송정보대',
 		'대전신학대학교',
 		'중부대학교',
-
 		'한국침례신학대학교',
 		'대덕대학교',
 		'금강대학교',
@@ -126,7 +142,6 @@ export function getUniversityType(name: string): UniversityType {
 		'영진전문대학교',
 		'호산대학교',
 		'경운대학교',
-
 		'한국기술교육대학교',
 		'연암대학교',
 		'나사렛대학교',
@@ -137,7 +152,6 @@ export function getUniversityType(name: string): UniversityType {
 		'순천향대학교',
 		'유원대학교',
 		'호서대학교',
-
 		'가천대학교',
 		'안양대학교',
 		'인천가톨릭대학교',
@@ -149,16 +163,13 @@ export function getUniversityType(name: string): UniversityType {
 		'한국공학대학교',
 		'연세대학교국제캠퍼스',
 	];
-
 	const ISTUniversities = ['KAIST', '대구경북과학기술원'];
-
 	if (nationalUniversities?.includes(name)) return '국립';
 	if (privateUniversities?.includes(name)) return '사립';
 	if (provincialUniversities?.includes(name)) return '도립';
 	if (ISTUniversities?.includes(name)) return '과학기술원';
 	return '알 수 없음';
 }
-
 export function getUniversityLogoFolderName(region: RegionCode) {
 	switch (region) {
 		case 'DJN':
@@ -167,6 +178,9 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 		case 'GHE':
 			return 'busan';
 		case 'DGU':
+		case 'ADG':
+		case 'MGY':
+		case 'YJA':
 			return 'daegu';
 		case 'CJU':
 		case 'SJG':
@@ -179,21 +193,22 @@ export function getUniversityLogoFolderName(region: RegionCode) {
 			return 'seoul';
 		case 'KYG':
 			return 'gyeonggi';
+		case 'GWJ':
+		case 'JJU':
+		case 'GSN':
+		case 'IKS':
+			return 'gwangju';
 		default:
 			return '';
 	}
 }
-
 export function filterUniversities(universities: UniversityCard[], searchText: string) {
 	const lowerText = searchText.toLowerCase();
-
 	return (
 		universities?.filter(({ name, area, region, en }) => {
 			return (
 				name.toLowerCase().includes(lowerText) ||
-				(area?.toLowerCase?.().includes(lowerText) ?? false) ||
-				region.toLowerCase().includes(lowerText) ||
-				en.toLowerCase().includes(lowerText)
+				(area?.toLowerCase?.().includes(lowerText) ?? false)
 			);
 		}) ?? []
 	);
