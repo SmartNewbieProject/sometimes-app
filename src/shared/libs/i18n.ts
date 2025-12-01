@@ -10,9 +10,7 @@ const resources = {
 };
 
 const deviceLocales = Localization.getLocales();
-const deviceLang = deviceLocales[0]?.languageTag?.toLowerCase().startsWith('ja')
-  ? 'ja'
-  : 'ko';
+const deviceLang = deviceLocales[0].languageTag || 'ko'
 
 i18n
   .use(initReactI18next)

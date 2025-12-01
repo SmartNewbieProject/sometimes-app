@@ -1,5 +1,8 @@
 import  React, { useMemo } from "react";
 import { getUserLanguage } from "@shared/libs";
+import * as Localization from 'expo-localization';
+const deviceLocales = Localization.getLocales();
+
 
 export type FontWeight =
   | "thin"
@@ -14,7 +17,9 @@ export type FontWeight =
 
 export const useAppFont = (weight: FontWeight = "regular") => {
   const locale = getUserLanguage();
-  const isJapanese = locale.startsWith("ja");
+  const deviceLang = deviceLocales[0].languageTag || 'ko'
+  const isJapanese = deviceLang === 'ja';
+
 
   const fontFamily = useMemo(() => {
     if (isJapanese) {
