@@ -15,10 +15,22 @@ interface Props {
 }
 
 const ANALYSIS_STEPS = [
-    "미호가 연결고리를 찾고 있어요!",
-    "어떤 점이 통했는지 분석 중...",
-    "숨겨진 매력 포인트를 발견했어요!",
-    "두 분이 연결된 이유를 알려드릴게요!",
+    {
+        text: "미호가 연결고리를 찾고 있어요!",
+        keywords: ["미호", "연결고리"]
+    },
+    {
+        text: "어떤 점이 통했는지 분석 중...",
+        keywords: []
+    },
+    {
+        text: "숨겨진 매력 포인트를 발견했어요!",
+        keywords: ["매력 포인트"]
+    },
+    {
+        text: "두 분이 연결된 이유를 알려드릴게요!",
+        keywords: ["이유"]
+    },
 ];
 
 export default function MatchingAnalysis({ imageUrl }: Props) {
@@ -59,7 +71,21 @@ export default function MatchingAnalysis({ imageUrl }: Props) {
                 <View style={styles.overlay} />
                 <Animated.View style={[styles.scanLine, animatedStyle]} />
             </View>
-            <Text style={styles.text}>{ANALYSIS_STEPS[stepIndex]}</Text>
+            <Text style={styles.text}>
+                {ANALYSIS_STEPS[stepIndex].text.split(/(미호|연결고리|매력 포인트|이유)/).map((part, index) => {
+                    const isKeyword = ["미호", "연결고리", "매력 포인트", "이유"].includes(part);
+                    return (
+                        <Text
+                            key={index}
+                            style={[
+                                isKeyword && styles.keywordHighlight
+                            ]}
+                        >
+                            {part}
+                        </Text>
+                    );
+                })}
+            </Text>
         </View>
     );
 }
@@ -108,5 +134,8 @@ const styles = StyleSheet.create({
         color: semanticColors.text.primary,
         minWidth: 150,
         textAlign: "center",
+    },
+    keywordHighlight: {
+        color: semanticColors.brand.primary,
     },
 });
