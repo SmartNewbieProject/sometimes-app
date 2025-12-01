@@ -3,24 +3,35 @@ import { semanticColors } from '../../../../shared/constants/colors';
 import ChangeProfileImageModal from "@/src/features/mypage/ui/modal/change-profile-image.modal";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import React, { useEffect, useState, useMemo } from "react";
-import { useTranslation } from 'react-i18next';
 import { Modal, Text , StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import ProfileImageCard from "./profile-image-card";
 import ProfileImageCover from "./profile-image-cover";
-
+import { useTranslation } from 'react-i18next';
 import { useProfileImageCover } from "@/src/features/profile-edit/hooks/use-profile-image-cover";
 
 function ProfileImageSection() {
+  const { t } = useTranslation();
   const { profileDetails } = useAuth();
   const [isProfileImageOpen, setProfileOpen] = useState(false);
-  const { t } = useTranslation();
 
-  const sortedPorifleImages = profileDetails?.profileImages.sort((a, b) => {
-    if (a.isMain && !b.isMain) return -1;
-    if (!a.isMain && b.isMain) return 1;
-    return 0;
-  });
+  const [refreshKey, setRefreshKey] = useState<number>(Date.now());
+
+  const { isCoverVisible, refetch } = useProfileImageCover();
+
+  useEffect(() => {
+    setRefreshKey(Date.now());
+    refetch();
+  }, [refetch]);
+
+  const sortedPorifleImages = useMemo(() => {
+    const list = profileDetails?.profileImages ?? [];
+    return [...list].sort((a, b) => {
+      if (a.isMain && !b.isMain) return -1;
+      if (!a.isMain && b.isMain) return 1;
+      return 0;
+    });
+  }, [profileDetails?.profileImages]);
 
   const handleProfileImageOpen = () => {
     setProfileOpen(true);
@@ -56,7 +67,6 @@ function ProfileImageSection() {
                 .map((none, index) => (
                   <ProfileImageCard
                     onClick={handleProfileImageOpen}
-                    // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                     key={index}
                     noneImage={none}
                   />
@@ -64,7 +74,6 @@ function ProfileImageSection() {
           </ScrollView>
 
           <ProfileImageCover visible={isCoverVisible} />
-          {/* <ProfileImageCover visible={!!isApproved} /> */}
         </View>
 
         <View style={styles.bar} />
