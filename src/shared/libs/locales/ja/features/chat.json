@@ -1,0 +1,8 @@
+{
+  "hooks": {
+    "use_chat_event": {
+      "connected_status": "",
+      "disconnected_status": ""
+    }
+  }
+}

@@ -6,10 +6,12 @@ import type { MatchDetails } from "../../idle-match-timer/types";
 
 import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth";
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import { useMatchingEfficiency } from "../../matching/hooks/use-matching-efficiency";
 import useLike from "../hooks/use-like";
+
 
 type LikeButtonProps = {
   connectionId: string;
@@ -32,6 +34,7 @@ export const LikeButton = ({
     trackMatchingFailure,
     getPerformanceMetrics
   } = useMatchingEfficiency();
+  const { t } = useTranslation();
   const showPartnerLikeAnnouncement = () => {
     showModal({
       showLogo: true,
@@ -45,27 +48,29 @@ export const LikeButton = ({
           }}
         >
           <Text textColor="black" weight="bold" size="20">
-            마음에 드는 이성에게
+            {t("features.like.ui.like_button.modal.title_line1")}
           </Text>
           <Text textColor="black" weight="bold" size="20">
             {profileDetails?.gender === "MALE"
-              ? `구슬 ${featureCosts?.LIKE_MESSAGE}개로 관심을 표현할까요?`
-              : "관심을 표현할까요?"}
+              ? t("features.like.ui.like_button.modal.title_line2_male", {
+                  cost: featureCosts?.LIKE_MESSAGE,
+                })
+              : t("features.like.ui.like_button.modal.title_line2_default")}
           </Text>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[5px]">
           <Text className="text-text-disabled text-[12px]">
-            이성에게 간단히 관심을 표현하고,
+            {t("features.like.ui.like_button.modal.body_line1")}
           </Text>
           <Text className="text-text-disabled text-[12px]">
-            그 다음 단계로 자연스럽게 나아가 보세요.
+            {t("features.like.ui.like_button.modal.body_line2")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
+        text: t("features.like.ui.like_button.modal.primary_button"),
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
         onClick: async () => {
           const gemCost = profileDetails?.gender === "MALE" ? featureCosts?.LIKE_MESSAGE : 0;
@@ -116,7 +121,7 @@ export const LikeButton = ({
         },
       },
       secondaryButton: {
-        text: "아니요",
+        text: t("global.no"),
         onClick: hideModal,
       },
     });
@@ -141,7 +146,9 @@ export const LikeButton = ({
         ) : (
           <></>
         )}
-        <RNText className="text-md text-text-inverse whitespace-nowrap">좋아요</RNText>
+        <RNText className="text-md text-text-inverse whitespace-nowrap">
+          {t("features.like.ui.like_button.button_label")}
+        </RNText>
       </View>
     </Button>
   );
@@ -150,7 +157,7 @@ export const LikeButton = ({
 const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 18,
     marginLeft: -5,

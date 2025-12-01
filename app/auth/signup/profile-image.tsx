@@ -29,6 +29,7 @@ import useProfileImage from "@/src/features/signup/hooks/use-profile-image";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import Animated from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 const { height } = Dimensions.get("window");
 
@@ -41,8 +42,8 @@ function ProfilePage() {
     onNext,
     onBackPress,
   } = useProfileImage();
+  const { t } = useTranslation();
 
- 
 
   return (
     <DefaultLayout className="flex-1 relative">
@@ -53,19 +54,19 @@ function ProfilePage() {
             style={{ width: 81, height: 81 }}
           />
           <Text weight="semibold" size="20" textColor="black" className="mt-2">
-            프로필 사진이 없으면 매칭이 안 돼요!
+            {t("apps.auth.sign_up.profile_image.main_title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            지금 바로 추가해 주세요
+            {t("apps.auth.sign_up.profile_image.main_title_2")} 
           </Text>
         </View>
 
         <View className="flex flex-col pb-[18px] pt-4 px-5">
           <Text weight="medium" size="sm" textColor="pale-purple">
-            매칭을 위해 3장의 프로필 사진을 필수로 올려주세요
+            {t("apps.auth.sign_up.profile_image.guide_1")}
           </Text>
           <Text weight="medium" size="sm" textColor="pale-purple">
-            얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+            {t("apps.auth.sign_up.profile_image.guide_2")}
           </Text>
         </View>
 
@@ -108,12 +109,12 @@ function ProfilePage() {
             ]}
           >
             <RNText style={styles.infoTitle}>
-              이목구비가 잘 보이는 사진 필수에요
+              {t("apps.auth.sign_up.profile_image.info_title")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              눈, 코, 입이 잘 보이는 사진이라면
+              {t("apps.auth.sign_up.profile_image.info_desc_1")}
             </RNText>
-            <RNText style={styles.infoDescription}>어떤 각도든 좋아요</RNText>
+            <RNText style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
             <Image
               source={require("@assets/images/instagram-some.png")}
               style={{
@@ -143,7 +144,7 @@ function ProfilePage() {
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={onNext}
-          content={{ next: "다음으로" }}
+          content={{ next: t("global.next") }}
           onClickPrevious={onBackPress}
         />
       </View>
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

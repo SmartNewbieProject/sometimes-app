@@ -1,0 +1,49 @@
+{
+  "id": {
+    "header_title": "コミュニティ",
+    "dropdown_edit": "編集",
+    "dropdown_delete": "削除",
+    "error_invalid": "無効なリクエストです",
+    "error_loading": "読み込む際にエラーが発生しました",
+    "loading": "投稿を読み込んでいます"
+  },
+  "write": {
+    "modal_short_title": "短すぎます",
+    "modal_short_desc": "タイトルと本文は3文字以上で作成してください",
+    "modal_overflow_title": "文字数オーバー",
+    "modal_overflow_desc": "本文は2000文字以内で作成してください",
+    "modal_success_title": "投稿作成完了",
+    "modal_success_desc": "投稿の作成が完了しました",
+    "modal_fail_title": "投稿作成失敗",
+    "modal_fail_desc_default": "投稿の作成中にエラーが発生しました",
+    "modal_confirm_checked": "確認しました"
+  },
+  "update": {
+    "modal_short_title": "短すぎます",
+    "modal_short_desc": "タイトルと本文は3文字以上で作成してください",
+    "modal_overflow_title": "文字数オーバー",
+    "modal_overflow_desc": "本文は2000文字以内で作成してください",
+    "modal_success_desc_1": "投稿が修正されました！",
+    "modal_success_desc_2": "コミュニティに戻ります",
+    "modal_confirm_checked": "確認しました",
+    "modal_confirm_move": "はい",
+    "loading": "投稿を読み込んでいます"
+  },
+  "report": {
+    "alert_title": "通報が完了しました",
+    "alert_desc": "管理者が確認後、適切な措置を取ります\n該当の投稿はあなたに表示されません",
+    "title": "不適切な投稿を見つけましたか？",
+    "desc": "通報していただいた内容は管理者が確認後、適切な措置を取ります",
+    "button": "通報する",
+    "header": "通報する",
+    "reason_spam": "スパム/連続投稿",
+    "reason_abuse": "悪口/ヘイトスピーチ",
+    "reason_sexual": "性的/わいせつな内容",
+    "reason_privacy": "個人情報の露出/プライバシー侵害",
+    "reason_ad": "商業的広告/宣伝",
+    "reason_image": "不適切な画像",
+    "reason_bullying": "嫌がらせ/脅迫",
+    "reason_rule": "コミュニティルール違反",
+    "reason_other": "その他"
+  }
+}

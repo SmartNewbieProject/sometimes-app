@@ -27,6 +27,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Pressable,
   ScrollView,
@@ -40,6 +41,7 @@ const { queries } = Match;
 const { useMatchPartnerQuery } = queries;
 
 export default function PartnerDetailScreen() {
+  const { t } = useTranslation();
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
   const [isZoomVisible, setZoomVisible] = useState(false);
@@ -59,7 +61,11 @@ export default function PartnerDetailScreen() {
   }
 
   const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
-    ["성격", "연애 스타일", "관심사"],
+    [
+      t("apps.partner.view.profile_personality_type"),
+      t("apps.partner.view.profile_love_style"),
+      t("apps.partner.view.profile_interest"),
+    ],
     partner.characteristics
   );
 
@@ -171,7 +177,7 @@ export default function PartnerDetailScreen() {
               size="md"
               className={cn("flex-1 items-center ", `!h-[${20}px]`)}
             >
-              <Text>상대방 응답을 기다리는 중..</Text>
+              <Text>{t("apps.partner.view.button_waiting")}</Text>
             </Button>
           </View>
         </Show>

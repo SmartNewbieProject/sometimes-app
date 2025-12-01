@@ -9,6 +9,7 @@ import { Image } from "expo-image";
 import { useRef, useState } from "react";
 import { Animated, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 export default function Logo() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -19,6 +20,7 @@ export default function Logo() {
     typeof setTimeout
   > | null>(null);
   const rotationValue = useRef(new Animated.Value(0)).current;
+  const { t } = useTranslation();
 
   const handlePressIn = () => {
     const timeout = setTimeout(() => {
@@ -86,7 +88,7 @@ export default function Logo() {
           delayLongPress={2000}
         >
           <Text className="text-[20px] font-medium text-primaryPurple">
-            대학생을 위한 진짜 설렘의 시작
+            {t("features.signup.ui.logo.tagline")}
           </Text>
         </Pressable>
       </View>

@@ -6,6 +6,7 @@ import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { environmentStrategy, platform } from "@/src/shared/libs";
 import { PalePurpleGradient , Text } from "@/src/shared/ui";
+import { useTranslation } from 'react-i18next';
 import { track } from "@amplitude/analytics-react-native";
 import Interest from "@features/interest";
 import { router, useFocusEffect } from "expo-router";
@@ -18,6 +19,7 @@ const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 
 export default function AgeSelectionScreen() {
+  const { t } = useTranslation();
   const { age, updateForm } = useInterestForm();
   const { updateStep } = useInterestStep();
   const [options, setOptions] = useState<AgeOptionData[]>([]);
@@ -69,7 +71,7 @@ export default function AgeSelectionScreen() {
   };
 
   if (optionsLoading) {
-    return <Loading.Page title="나이대 선호도를 불러오고 있어요" />;
+    return <Loading.Page title={t("apps.interest.age.loading")} />;
   }
 
   return (
@@ -82,10 +84,10 @@ export default function AgeSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            선호하는 나이대를
+            {t("apps.interest.age.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            선택해 주세요!
+            {t("apps.interest.age.title_2")}
           </Text>
         </View>
         <View style={styles.bar} />

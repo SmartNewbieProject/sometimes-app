@@ -1,0 +1,13 @@
+{
+  "ui": {
+    "partner_image": {
+      "alt_text": "파트너 이미지"
+    }
+  },
+  "queries": {
+    "modal_title_period_ended": "조회 기간이 끝났어요",
+    "modal_content_partner_period_ended": "연인의 조회 기간이 끝났어요",
+    "modal_content_use_rematching_ticket": "다시 조회하고 싶다면 연인 재매칭권을 사용해주세요",
+    "modal_button_confirm": "네 확인했어요"
+  }
+}

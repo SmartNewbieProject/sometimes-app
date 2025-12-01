@@ -1,4 +1,5 @@
 import { platform } from './platform';
+import i18n from "@/src/shared/libs/i18n";
 //default는 안드로이드, ios를 의미
 function dataURLtoBlob(dataURL: string): Blob {
 	return platform({
@@ -17,7 +18,7 @@ function dataURLtoBlob(dataURL: string): Blob {
 			return new Blob([uInt8Array], { type: contentType });
 		},
 		default: () => {
-			throw new Error('dataURLtoBlob should not be used in React Native');
+			throw new Error(i18n.t('shareds.hooks.file.data_url_to_blob_error'));
 		},
 	});
 }
@@ -26,7 +27,7 @@ function createFileFromBlob(blob: Blob, fileName: string): File {
 	return platform({
 		web: () => new File([blob], fileName, { type: blob.type, lastModified: Date.now() }),
 		default: () => {
-			throw new Error('createFileFromBlob should not be used in React Native');
+			throw new Error(i18n.t('shareds.hooks.file.create_file_from_blob_error'));
 		},
 	});
 }

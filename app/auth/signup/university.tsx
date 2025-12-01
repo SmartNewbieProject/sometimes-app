@@ -6,6 +6,7 @@ import UniversityLogos from "@/src/features/signup/ui/university-logos";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { PalePurpleGradient, Show } from "@/src/shared/ui";
+import { useTranslation } from "react-i18next";
 import HelpIcon from "@assets/icons/help.svg";
 import SearchIcon from "@assets/icons/search.svg";
 import Loading from "@features/loading";
@@ -43,7 +44,7 @@ function UniversityPage() {
     animatedListStyle,
     handleChange,
   } = useUniversityHook();
-
+  const { t } = useTranslation();
   // 대학 인증 시작 이벤트 추적
   useEffect(() => {
     onboardingEvents.trackUniversityVerificationStarted();
@@ -107,7 +108,7 @@ function UniversityPage() {
             style={[styles.listAndBottomContainer, animatedListStyle]}
           >
             <Loading.Lottie
-              title="대학 목록을 로딩중입니다.."
+              title={t("apps.auth.sign_up.university.loading")} 
               loading={isLoading}
             >
               <FlashList
@@ -129,7 +130,7 @@ function UniversityPage() {
               <View style={styles.tipContainer}>
                 <HelpIcon width={20} height={20} />
                 <RNText style={styles.tip}>
-                  학교 인증을 통해 안전하게 이용할 수 있습니다
+                  {t("apps.auth.sign_up.university.tip")}
                 </RNText>
               </View>
               <TwoButtons
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
   tip: {
     color: semanticColors.text.disabled,
     fontWeight: "300",
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontSize: 13,
     lineHeight: 20,
   },

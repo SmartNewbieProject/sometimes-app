@@ -13,6 +13,7 @@ import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -20,30 +21,8 @@ const { useMyInfoForm, useMyInfoStep } = hooks;
 const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-const tooltips = [
-  {
-    title: "문신 X",
-    description: ["문신이 전혀 없어요", "향후에도 할 계획이 없어요"],
-  },
-  {
-    title: "작은 문신",
-    description: [
-      "눈에 잘 뜨지 않는 곳에 작은 문신이 있어요",
-      "손목, 발목, 어깨 등에 1-2개 정도의 작은 문신",
-      "평소엔 옷으로 가려지는 은근한 포인트 문신",
-    ],
-  },
-  {
-    title: "문신 O",
-    description: [
-      "눈에 띄는 문신이 있어요",
-      "다수의 문신이 있거나 큰 사이즈의 문신",
-      "문신을 패션/자기 표현의 일부로 생각해요",
-    ],
-  },
-];
-
 export default function TattooSelectionScreen() {
+  const { t } = useTranslation();
   const { updateStep } = useMyInfoStep();
   const { updateForm, clear: _, tattoo, ...form } = useMyInfoForm();
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
@@ -58,6 +37,32 @@ export default function TattooSelectionScreen() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
   const { showErrorModal } = useModal();
+
+  const tooltips = [
+    {
+      title: t("apps.my-info.tattoo.tooltip_0_title"),
+      description: [
+        t("apps.my-info.tattoo.tooltip_0_desc_1"),
+        t("apps.my-info.tattoo.tooltip_0_desc_2"),
+      ],
+    },
+    {
+      title: t("apps.my-info.tattoo.tooltip_1_title"),
+      description: [
+        t("apps.my-info.tattoo.tooltip_1_desc_1"),
+        t("apps.my-info.tattoo.tooltip_1_desc_2"),
+        t("apps.my-info.tattoo.tooltip_1_desc_3"),
+      ],
+    },
+    {
+      title: t("apps.my-info.tattoo.tooltip_2_title"),
+      description: [
+        t("apps.my-info.tattoo.tooltip_2_desc_1"),
+        t("apps.my-info.tattoo.tooltip_2_desc_2"),
+        t("apps.my-info.tattoo.tooltip_2_desc_3"),
+      ],
+    },
+  ];
 
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
@@ -84,7 +89,8 @@ export default function TattooSelectionScreen() {
     await tryCatch(
       async () => {
         const validation = Object.values(form).every((v) => v !== null);
-        if (!validation) throw new Error("비어있는 양식이 존재합니다.");
+        if (!validation)
+          throw new Error(t("apps.my-info.tattoo.empty_form"));
         await savePreferences({
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
@@ -132,13 +138,13 @@ export default function TattooSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            문신이 있으신가요?
+            {t("apps.my-info.tattoo.title")}
           </Text>
         </View>
         <View style={styles.bar} />
         <View style={styles.wrapper}>
           <Loading.Lottie
-            title="선호도를 불러오고 있어요"
+            title={t("apps.my-info.tattoo.loading")}
             loading={optionsLoading}
           >
             <StepSlider

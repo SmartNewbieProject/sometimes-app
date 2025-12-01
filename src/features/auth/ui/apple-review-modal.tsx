@@ -4,6 +4,7 @@ import {Text, Button, TextArea} from "@/src/shared/ui";
 import {useAppleReviewLogin} from "../hooks/use-apple-review-login";
 import {useAuth} from "../hooks/use-auth";
 import {router} from "expo-router";
+import { useTranslation } from "react-i18next";
 
 interface AppleReviewModalProps {
   isVisible: boolean;
@@ -12,6 +13,7 @@ interface AppleReviewModalProps {
 
 export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
   const [code, setCode] = useState("");
+  const { t } = useTranslation();
   const {mutate: appleReviewLogin, isPending} = useAppleReviewLogin();
   const {updateToken} = useAuth();
 
@@ -23,9 +25,9 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
             onSuccess: async (data) => {
               if (data.accessToken && data.refreshToken) {
                 await updateToken(data.accessToken, data.refreshToken);
-                Alert.alert("성공", "Apple 심사용 로그인이 완료되었습니다.", [
+                Alert.alert(t("features.auth.ui.apple_review_modal.alert_success_title"), t("features.auth.ui.apple_review_modal.alert_success_message"), [
                   {
-                    text: "확인",
+                    text: t("features.auth.ui.apple_review_modal.alert_confirm_button"),
                     onPress: () => {
                       onClose();
                       setCode("");
@@ -34,17 +36,16 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
                   },
                 ]);
               } else {
-                Alert.alert("오류", "토큰 정보가 올바르지 않습니다.");
+                Alert.alert(t("features.auth.ui.apple_review_modal.alert_error_title"), t("features.auth.ui.apple_review_modal.alert_error_token"));
               }
             },
             onError: (error) => {
-              Alert.alert("오류", "로그인에 실패했습니다. 다시 시도해주세요.");
-              console.error("Apple review login error:", error);
+              Alert.alert(t("features.auth.ui.apple_review_modal.alert_error_title"), t("features.auth.ui.apple_review_modal.alert_error_login_failed"));
             },
           }
       );
     } else {
-      Alert.alert("오류", "올바른 코드를 입력해주세요.");
+      Alert.alert(t("features.auth.ui.apple_review_modal.alert_error_title"), t("features.auth.ui.apple_review_modal.alert_error_invalid_code"));
     }
   };
 
@@ -63,17 +64,17 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
         <View className="flex-1 justify-center items-center bg-surface-inverse/50">
           <View className="bg-surface-background rounded-lg p-6 mx-4 w-full max-w-sm">
             <Text className="text-lg font-semibold text-center mb-4">
-              Apple 심사용 로그인
+              {t("features.auth.ui.apple_review_modal.modal_title")}
             </Text>
 
             <Text className="text-sm text-gray-600 text-center mb-6">
-              애플 심사용 코드를 입력해주세요
+              {t("features.auth.ui.apple_review_modal.modal_prompt")}
             </Text>
 
             <TextArea
                 value={code}
                 onChangeText={setCode}
-                placeholder="코드를 입력하세요"
+                placeholder={t("features.auth.ui.apple_review_modal.code_placeholder")}
                 className="mb-4"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -86,14 +87,14 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
                   className="flex-1"
                   disabled={isPending}
               >
-                취소
+                {t("features.auth.ui.apple_review_modal.cancel_button")}
               </Button>
               <Button
                   onPress={handleSubmit}
                   className="flex-1"
                   disabled={isPending || !code.trim()}
               >
-                {isPending ? "로그인 중..." : "로그인"}
+                {isPending ? t("features.auth.ui.apple_review_modal.login_button_loading") : t("features.auth.ui.apple_review_modal.login_button")}
               </Button>
             </View>
           </View>

@@ -2,9 +2,11 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
+
 import { Divider } from "@/src/shared/ui";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -14,6 +16,7 @@ const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 function ProfileDatingStyle() {
   const { datingStyleIds, updateForm } = useMyInfoForm();
+  const { t } = useTranslation();
   const {
     data: preferencesArray = [
       {
@@ -40,7 +43,7 @@ function ProfileDatingStyle() {
     <View style={styles.container}>
       <View style={styles.indicatorContainer}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>연애 스타일</Text>
+          <Text style={styles.title}>{t("features.profile-edit.ui.profile.dating_style.title")}</Text>
           <StepIndicator
             length={3}
             step={datingStyleIds?.length ?? 0}
@@ -53,7 +56,7 @@ function ProfileDatingStyle() {
         <Divider.Horizontal />
       </View>
       <View>
-        <Loading.Lottie title="관심사를 불러오고 있어요" loading={isLoading}>
+        <Loading.Lottie title={t("features.profile-edit.ui.profile.dating_style.loading")} loading={isLoading}>
           <ChipSelector
             value={datingStyleIds}
             options={
@@ -91,7 +94,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 22,
   },

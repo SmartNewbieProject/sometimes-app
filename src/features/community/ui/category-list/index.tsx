@@ -21,10 +21,12 @@ function hasEmojiUrl(c: unknown): c is { emojiUrl: string } {
   return !!c && typeof (c as any).emojiUrl === "string";
 }
 
+import { useTranslation } from "react-i18next";
+
 export const CategoryList = () => {
   const { categories, changeCategory, currentCategory, isLoading } =
     useCategory();
-
+  const { t } = useTranslation();
   const scrollRef = useRef<ScrollView>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const itemLayoutsRef = useRef<LayoutMap>({});
@@ -99,7 +101,7 @@ export const CategoryList = () => {
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={16}
       >
-        <Loading.Lottie title="카테고리를 불러오고 있어요" loading={isLoading}>
+        <Loading.Lottie title={t("features.community.ui.category_list.loading_categories")}  loading={isLoading}>
           <View className="flex flex-row w-full gap-x-[10px] mb-2">
             {renderCategories.map((category) => {
               const isActive = currentCategory === category.code;
@@ -138,9 +140,8 @@ export const CategoryList = () => {
                 </View>
               );
             })}
-          </View>
-        </Loading.Lottie>
-      </ScrollView>
-    </View>
-  );
+        </View>
+      </Loading.Lottie>
+    </ScrollView>
+  </View>);
 };

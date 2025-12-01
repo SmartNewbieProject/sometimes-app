@@ -2,6 +2,7 @@ import dayjs, { type ConfigType } from 'dayjs';
 import 'dayjs/locale/ko';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import i18n from "@/src/shared/libs/i18n";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -26,7 +27,7 @@ const getDayBy6Digit = (digit: string) => {
   })();
 
   if (isOverDayOfMonth) {
-    throw new Error("날짜가 존재하지 않습니다.");
+    throw new Error(i18n.t("shareds.hooks.day.date_not_exist"));
   }
 
   return create(`${year}-${month}-${day}`);
@@ -55,12 +56,12 @@ const formatRelativeTime = (stringDate: string) => {
   //   target: target.format('MM/DD HH:mm'),
   // })
 
-  if (secondsDiff < 0) return '방금 전';
+  if (secondsDiff < 0) return i18n.t("shareds.hooks.day.just_now");
 
-  if (secondsDiff < 60) return `${secondsDiff}초 전`;
-  if (minutesDiff < 60) return `${minutesDiff}분 전`;
-  if (hoursDiff < 24) return `${hoursDiff}시간 전`;
-  if (daysDiff < 8) return `${daysDiff}일 전`;
+  if (secondsDiff < 60) return i18n.t("shareds.hooks.day.seconds_ago", { seconds: secondsDiff });
+  if (minutesDiff < 60) return i18n.t("shareds.hooks.day.minutes_ago", { minutes: minutesDiff });
+  if (hoursDiff < 24) return i18n.t("shareds.hooks.day.hours_ago", { hours: hoursDiff });
+  if (daysDiff < 8) return i18n.t("shareds.hooks.day.days_ago", { days: daysDiff });
   return target.format('MM/DD HH:mm');
 };
 

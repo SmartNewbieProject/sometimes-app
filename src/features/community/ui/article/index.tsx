@@ -25,7 +25,7 @@ import { UserProfile } from "../user-profile";
 import Interaction from "./interaction-nav";
 import { useBlockUser } from "../../hooks/use-block-user";
 import { useModal } from "@/src/shared/hooks/use-modal";
-
+import { useTranslation } from "react-i18next";
 interface ArticleItemProps {
   data: ArticleType;
   onPress: () => void;
@@ -45,6 +45,7 @@ export function Article({
   onTogglePreview,
 }: ArticleItemProps) {
   const { my } = useAuth();
+  const { t } = useTranslation();
   const author = data?.author;
   const comments = data.comments;
   const university = author?.universityDetails;
@@ -104,14 +105,14 @@ export function Article({
       const ownerMenus: DropdownItem[] = [
         {
           key: "update",
-          content: "수정",
+          content: t("features.community.ui.article.edit_button"),
           onPress: () => {
             router.push(`/community/update/${data.id}`);
           },
         },
         {
           key: "delete",
-          content: "삭제",
+          content: t("features.community.ui.article.delete_button"),
           onPress: () => {
             onDelete(data.id);
             setDropdownOpen(false);
@@ -124,7 +125,7 @@ export function Article({
     if (!isOwner) {
       menus.push({
         key: "report",
-        content: "신고",
+        content: t("features.community.ui.article.report_button"),
         onPress: () => {
           router.push(`/community/report/${data.id}`);
         },
@@ -276,7 +277,7 @@ export function Article({
                   className="flex-row items-center gap-x-1"
                   onPress={redirectDetails}
                 >
-                  <Text size="sm">답글 더보기</Text>
+                  <Text size="sm">{t("features.community.ui.article.view_more_replies")}</Text>
                   <ImageResource
                     resource={ImageResources.PURPLE_ARROW_RIGHT}
                     width={16}

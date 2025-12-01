@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import i18n from "@/src/shared/libs/i18n";
 
 export type SignupForm = {
   name: string;

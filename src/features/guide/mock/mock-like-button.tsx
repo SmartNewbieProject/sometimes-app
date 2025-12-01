@@ -7,7 +7,9 @@ import type { MatchDetails } from "../../idle-match-timer/types";
 import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
 import { Image } from "expo-image";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth";
+
 
 type MockLikeButtonProps = {
   className?: string;
@@ -17,6 +19,7 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
   const { profileDetails } = useAuth();
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
+  const { t } = useTranslation();
 
   const handleClick = () => {
     showModal({
@@ -45,22 +48,22 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
             source={require("@assets/images/particle3.png")}
           />
           <Text textColor="black" weight="bold" size="20">
-            썸을 보냈어요!
+            {t("features.guide.mock.mock_like_button.modal_title")}
           </Text>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[5px]">
           <Text className="text-text-disabled text-[12px]">
-            상대방도 관심을 보이면,
+            {t("features.guide.mock.mock_like_button.modal_text_1")}
           </Text>
           <Text className="text-text-disabled text-[12px]">
-            인스타그램으로 연락할 수 있어요
+            {t("features.guide.mock.mock_like_button.modal_text_2")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "확인했어요",
+        text: t("features.guide.mock.mock_like_button.primary_button"),
         onClick: () => {},
       },
     });
@@ -79,32 +82,36 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
           }}
         >
           <Text textColor="black" weight="bold" size="20">
-            마음에 드는 이성에게
+            {t("features.guide.mock.mock_like_button.partner_modal_title_1")}
           </Text>
           <Text textColor="black" weight="bold" size="20">
             {profileDetails?.gender === "MALE"
-              ? `구슬 ${featureCosts?.LIKE_MESSAGE}개로 관심을 표현할까요?`
-              : "관심을 표현할까요?"}
+              ? t("features.guide.mock.mock_like_button.partner_modal_title_2_male", {
+                  count: featureCosts?.LIKE_MESSAGE,
+                })
+              : t(
+                  "features.guide.mock.mock_like_button.partner_modal_title_2_female"
+                )}
           </Text>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[5px]">
           <Text className="text-text-disabled text-[12px]">
-            이성에게 간단히 관심을 표현하고,
+            {t("features.guide.mock.mock_like_button.partner_modal_text_1")}
           </Text>
           <Text className="text-text-disabled text-[12px]">
-            그 다음 단계로 자연스럽게 나아가 보세요.
+            {t("features.guide.mock.mock_like_button.partner_modal_text_2")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
+        text: t("features.guide.mock.mock_like_button.partner_primary_button"),
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
         onClick: handleClick,
       },
       secondaryButton: {
-        text: "아니요",
+        text: t("features.guide.mock.mock_interaction_navigation.secondary_button"),
         onClick: hideModal,
       },
     });
@@ -129,7 +136,9 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
         ) : (
           <></>
         )}
-        <RNText className="text-md text-text-inverse whitespace-nowrap">좋아요</RNText>
+        <RNText className="text-md text-text-inverse whitespace-nowrap">
+          {t("features.guide.mock.mock_like_button.main_button")}
+        </RNText>
       </View>
     </Button>
   );
@@ -138,7 +147,7 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
 const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 18,
     marginLeft: -5,

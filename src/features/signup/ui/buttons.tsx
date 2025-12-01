@@ -1,6 +1,7 @@
 import { platform } from "@shared/libs/platform";
 import { Button } from "@/src/shared/ui/button";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
 interface SignupButtonsProps {
@@ -9,6 +10,7 @@ interface SignupButtonsProps {
 }
 
 export default function SignupButtons({ onPress, onPassLogin }: SignupButtonsProps) {
+  const { t } = useTranslation();
   return (
     <View className="mt-flex flex-col px-2 gap-y-2" style={{
       ...platform({
@@ -33,7 +35,7 @@ export default function SignupButtons({ onPress, onPassLogin }: SignupButtonsPro
         onPress={onPassLogin}
         className="w-full"
       >
-        PASS 인증으로 로그인
+        {t("features.signup.ui.login_form.pass_auth_login")}
       </Button>
     ) : (
       <>
@@ -43,7 +45,7 @@ export default function SignupButtons({ onPress, onPassLogin }: SignupButtonsPro
           onPress={onPress || (() => {})}
           className="w-full"
         >
-          로그인
+          {t("features.signup.ui.login_form.login_button")}
         </Button>
         <Button
           size="md"
@@ -52,7 +54,7 @@ export default function SignupButtons({ onPress, onPassLogin }: SignupButtonsPro
           className="w-full"
           textColor="purple"
         >
-          회원가입
+          {t("features.signup.ui.login_form.signup_button")}
         </Button>
       </>
     )}

@@ -2,8 +2,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { semanticColors } from '../../../shared/constants/colors';
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, {
+import Animated,{
   Easing,
   useAnimatedStyle,
   useSharedValue,
@@ -15,9 +16,11 @@ import { useAuth } from "../../auth";
 import { usePreviewHistory } from "../queries/use-preview-history";
 import ImageCollapse from "./image-collapse";
 
+
 function HistoryCollapse() {
   const textOpacity = useSharedValue(0);
   const router = useRouter();
+  const { t } = useTranslation();
   const { previewHistory = { imageUrls: [], countOfPartner: 0 }, isLoading } =
     usePreviewHistory();
   const [startTiming, setStartTiming] = useState(false);
@@ -76,14 +79,14 @@ function HistoryCollapse() {
       >
         <View style={styles.content}>
           <Text style={[styles.title, { fontSize: 18 }]}>
-            혹시 놓친 <Text style={styles.titleStrong}>인연</Text>이 있을지도
-            몰라요
+          {t("features.matching-history.ui.history_collapse.title")} <Text style={styles.titleStrong}>{t("features.matching-history.ui.history_collapse.title_2")}</Text>
+          {t("features.matching-history.ui.history_collapse.title_3")}
           </Text>
           <Text style={styles.description}>
-            스쳐간 인연 중 아직 연결되지 않은 사람들이에요.
+            {t("features.matching-history.ui.history_collapse.description_1")}
           </Text>
           <Text style={styles.description}>
-            지금 다시 보면, 더 잘 맞을 수도 있어요.
+            {t("features.matching-history.ui.history_collapse.description_2")}
           </Text>
         </View>
 
@@ -150,13 +153,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 21.6,
     color: semanticColors.text.muted,
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: "Pretendard-ExtraBold",
+    fontFamily: "extrabold",
     color: semanticColors.brand.primary,
   },
   description: {
@@ -174,6 +177,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     width: 48,
+
     height: 48,
     borderRadius: "50%",
   },

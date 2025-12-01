@@ -1,0 +1,10 @@
+{
+  "image_selector": {
+    "add_photo": "写真を追加する",
+    "permission_needed_title": "権限が必要です",
+    "gallery_permission_message": "写真を選択するには設定から写真へのアクセスを許可してください。",
+    "open_settings": "設定を開く",
+    "unsupported_format": "対応している画像形式は jpeg、jpg、png のみです。",
+    "camera_permission_message": "カメラを使用するには設定からカメラへのアクセスを許可してください。"
+  }
+}

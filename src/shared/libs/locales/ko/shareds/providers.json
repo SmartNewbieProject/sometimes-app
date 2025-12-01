@@ -1,0 +1,7 @@
+{
+  "modal_provider": {
+    "error_title": "오류가 발생했어요.",
+    "announcement_title": "안내",
+    "confirm_button": "네, 확인했어요"
+  }
+}

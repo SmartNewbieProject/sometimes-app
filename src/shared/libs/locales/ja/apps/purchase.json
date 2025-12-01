@@ -1,0 +1,32 @@
+{
+  "gem_store": {
+    "error_alert_message": "決済処理中にエラーが発生しました",
+    "payment_error_console": "決済エラー:",
+    "payment_error_debug": "決済エラー時に新しいorderIdを生成:",
+    "title": "ジェム購入",
+    "loading_gems": "ジェム商品を読み込み中…",
+    "failed_to_load_gems": "ジェム商品を読み込めませんでした"
+  },
+  "complete": {
+    "processing_payment": "決済を処理しています..."
+  },
+  "rematch": {
+    "rematch_ticket_name": "リマッチチケット",
+    "error_alert_message": "決済処理中にエラーが発生しました",
+    "purchase_count_tracking": "Purchase_Count"
+  },
+  "tickets": {
+    "rematch": {
+      "rematch_ticket_name": "リマッチチケット",
+      "rematch_ticket_name_repeat": "リマッチチケット（再購入）",
+      "error_alert_message": "決済処理中にエラーが発生しました",
+      "payment_error_console": "決済エラー:",
+      "payment_error_debug": "決済エラー時に新しいorderIdを生成:",
+      "payment_error_modal": "決済処理中にエラーが発生しました",
+      "order_name_single": "リマッチチケット",
+      "order_name_multiple": "リマッチチケット x{{productCount}}",
+      "title_1": "リマッチチケットを購入すると",
+      "title_2": "新しく好みの相手を探せます"
+    }
+  }
+}

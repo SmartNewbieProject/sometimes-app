@@ -11,6 +11,7 @@ import {useKeyboarding} from '@/src/shared/hooks';
 import {useUnivQuery, useDepartmentQuery} from "@features/signup/queries";
 import {useState} from 'react';
 import {useExistsUniversityQuery} from "@features/home/queries";
+import i18n from '@/src/shared/libs/i18n';
 
 type FormProps = {
   universityName: string;
@@ -20,19 +21,18 @@ type FormProps = {
 }
 
 const gradeOptions = Array.from({length: 5}, (_, i) => ({
-  label: `${i + 1}학년`,
-  value: `${i + 1}학년`,
+  label: `${i + 1}${i18n.t("features.home.ui.university_form.grade")}`,
+  value: `${i + 1}${i18n.t("features.home.ui.university_form.grade")}`,
 }));
 
-const studentNumberOptions = ['25학번', '24학번', '23학번', '22학번', '21학번', '20학번', '19학번', '18학번', '17학번'];
+const studentNumberOptions = ['25', '24', '23', '22', '21', '20', '19', '18', '17'].map(n => `${n}${i18n.t("features.home.ui.university_form.student_number")}`);
 
 const schema = z.object({
-  universityName: z.string().min(1, '대학교 이름을 입력해주세요.'),
-  departmentName: z.string().min(1, '학과를 선택해주세요.'),
-  grade: z.string().min(1, '학년을 선택해주세요.'),
-  studentNumber: z.string().min(1, '학번을 선택해주세요.'),
+  universityName: z.string().min(1, i18n.t("features.home.ui.university_form.error_university_name")),
+  departmentName: z.string().min(1, i18n.t("features.home.ui.university_form.error_department_name")),
+  grade: z.string().min(1, i18n.t("features.home.ui.university_form.error_grade")),
+  studentNumber: z.string().min(1, i18n.t("features.home.ui.university_form.error_student_number")),
 });
-
 interface UniversityFormProps {
   onSubmit: (data: FormProps) => void;
   onBack?: () => void;
@@ -44,6 +44,7 @@ export default function UniversityForm({
                                          onBack,
                                          isLoading = false
                                        }: UniversityFormProps) {
+
   const [selectedUniv, setSelectedUniv] = useState<string>('');
   const {data: univs = []} = useUnivQuery();
   const {data: departments = []} = useDepartmentQuery(selectedUniv || undefined);
@@ -68,7 +69,7 @@ export default function UniversityForm({
 
   const nextable = isValid;
 
-  const nextButtonMessage = '대학정보 갱신하기'
+  const nextButtonMessage = i18n.t("features.home.ui.university_form.submit_button");
 
   return (
       <KeyboardAvoidingView
@@ -78,10 +79,10 @@ export default function UniversityForm({
         <View style={styles.formContainer}>
           <View style={styles.fieldContainer}>
             <LabelInput
-                label="대학교"
+                label={i18n.t("features.home.ui.university_form.university_label")}
                 size="sm"
                 value={selectedUniv}
-                placeholder="대학교 이름을 입력하세요"
+                placeholder={i18n.t("features.home.ui.university_form.university_placeholder")}
                 onChangeText={(text) => {
                   setSelectedUniv(text);
                   setValue('universityName', text);
@@ -102,13 +103,13 @@ export default function UniversityForm({
 
           <Show when={selectedUniv !== ''}>
             <View style={styles.fieldContainer}>
-              <Label label="학과" size="sm"/>
+              <Label label={i18n.t("features.home.ui.university_form.department_label")} size="sm"/>
               <Form.Select
                   size="sm"
                   name="departmentName"
                   control={form.control}
                   options={departments.map((department) => ({label: department, value: department}))}
-                  placeholder="학과를 선택하세요."
+                  placeholder={i18n.t("features.home.ui.university_form.department_placeholder")}
               />
             </View>
 
@@ -118,11 +119,11 @@ export default function UniversityForm({
                     name="studentNumber"
                     control={form.control}
                     options={studentNumberOptions.map((option) => ({label: option, value: option}))}
-                    placeholder="학번 선택"
+                    placeholder={i18n.t("features.home.ui.university_form.student_number_placeholder")}
                     size="sm"
                     className="flex-1"
                 />
-                <Label label="학번" size="sm"/>
+                <Label label={i18n.t("features.home.ui.university_form.student_number")} size="sm"/>
               </View>
 
               <View style={styles.halfFieldContainer}>
@@ -130,11 +131,11 @@ export default function UniversityForm({
                     name="grade"
                     control={form.control}
                     options={gradeOptions}
-                    placeholder="학년 선택"
+                    placeholder={i18n.t("features.home.ui.university_form.grade_placeholder")}
                     size="sm"
                     className="flex-1"
                 />
-                <Label label="학년" size="sm"/>
+                <Label label={i18n.t("features.home.ui.university_form.grade")} size="sm"/>
               </View>
             </View>
           </Show>

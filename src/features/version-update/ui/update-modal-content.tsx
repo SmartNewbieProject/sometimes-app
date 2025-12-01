@@ -11,6 +11,7 @@ import type React from "react";
 import { StyleSheet, TouchableOpacity, View , Linking } from "react-native";
 import type { VersionUpdateResponse } from "../types";
 
+
 interface UpdateModalContentProps {
   updateData: VersionUpdateResponse;
   serverVersion?: string;
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     color: colors.primaryPurple,
     fontWeight: 600,
 
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
   },
   descriptionContainer: {
     maxHeight: 200,

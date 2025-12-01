@@ -1,17 +1,19 @@
 import Interest from "@/src/features/interest";
 import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
+import React, { useEffect } from "react";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React, { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
+
 
 const { hooks, services, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
-
 function InterestSmoking() {
   const { smoking, updateForm } = useInterestForm();
+  const { t } = useTranslation();
 
   const {
     data: preferencesArray = [
@@ -46,10 +48,10 @@ function InterestSmoking() {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>흡연 선호도</Text>
+      <Text style={styles.title}>{t("features.profile-edit.ui.interest.smoking.title")}</Text>
       <View style={styles.wrapper}>
         <Loading.Lottie
-          title="흡연 선도호 옵션을 불러오고 있어요"
+          title={t("features.profile-edit.ui.interest.smoking.loading")}
           loading={optionsLoading}
         >
           <StepSlider
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 22,
   },

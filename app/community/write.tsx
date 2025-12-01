@@ -10,6 +10,7 @@ import { View } from "react-native";
 import { useMemo } from "react";
 import { useCategory } from "@/src/features/community/hooks";
 import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
+import { useTranslation } from "react-i18next";
 
 const {
   ArticleWriteFormProvider,
@@ -19,6 +20,7 @@ const {
 } = Community;
 
 export default function CommunityWriteScreen() {
+  const { t } = useTranslation();
   const { showModal } = useModal();
   const { communityEngagementEvents } = useKpiAnalytics();
 
@@ -38,24 +40,29 @@ export default function CommunityWriteScreen() {
   const onSubmitForm = form.handleSubmit(async (data) => {
     if (data.title.length < 3 || data.content.length < 3) {
       showModal({
-        title: "너무 짧아요",
+        title: t("apps.community.write.modal_short_title"),
         children: (
           <Text textColor="black">
-            제목과 본문은 3자 이상으로 작성해주세요.
+            {t("apps.community.write.modal_short_desc")}
           </Text>
         ),
-        primaryButton: { text: "네, 확인했어요", onClick: () => {} },
+                primaryButton: {text: t("apps.community.write.modal_confirm_checked"),onClick: () => {} },
       });
       return;
     }
 
     if (data.content.length > 2000) {
       showModal({
-        title: "글자수 초과",
+        title: t("apps.community.write.modal_overflow_title"),
         children: (
-          <Text textColor="black">본문은 2000자 이하로 작성해주세요.</Text>
+          <Text textColor="black">
+            {t("apps.community.write.modal_overflow_desc")}
+          </Text>
         ),
-        primaryButton: { text: "네, 확인했어요", onClick: () => {} },
+                primaryButton: {
+          text: t("apps.community.write.modal_confirm_checked"),
+          onClick: () => {},
+        },
       });
       return;
     }
@@ -74,10 +81,10 @@ export default function CommunityWriteScreen() {
         await articles.postArticles(articleData);
 
         showModal({
-          title: "글 작성 완료",
-          children: <Text textColor="black">글 작성이 완료되었습니다.</Text>,
+          title: t("apps.community.write.modal_success_title"),
+          children: <Text textColor="black">{t("apps.community.write.modal_success_desc")}</Text>,
           primaryButton: {
-            text: "확인",
+            text: t("global.confirm"),
             onClick: () => {
               router.push("/community?refresh=true");
             },
@@ -86,11 +93,11 @@ export default function CommunityWriteScreen() {
       },
       (error) => {
         const errorMessage =
-          (error as any)?.error || "글 작성 중 오류가 발생했습니다.";
+          (error as any)?.error ||  t("apps.community.write.modal_fail_desc_default");
         showModal({
-          title: "글 작성 실패",
+          title: t("apps.community.write.modal_fail_title"),
           children: <Text textColor="black">{errorMessage}</Text>,
-          primaryButton: { text: "확인", onClick: () => {} },
+          primaryButton: {text:  t("global.confirm"), onClick: () => {} },
         });
       }
     );

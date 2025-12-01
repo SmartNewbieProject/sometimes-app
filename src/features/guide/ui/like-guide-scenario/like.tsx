@@ -18,17 +18,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useStep } from "../../hooks/use-step";
 import MockTime from "../../mock/mock-time";
 import { mockILiked, mockLikedMe } from "../../utils/mock-data";
 
-const TABS: Tab[] = [
-  { id: "liked-me", label: "도착한 썸" },
-  { id: "i-liked", label: "보낸 썸" },
-];
 
 function LikeGuide() {
+  const { t } = useTranslation();
+  const TABS: Tab[] = [
+    {
+      id: "liked-me",
+      label: t("features.guide.ui.like_guide_scenario.like.tab_liked_me"),
+    },
+    { id: "i-liked", label: t("features.guide.ui.like_guide_scenario.like.tab_i_liked") },
+  ];
   const { step, setStep } = useStep();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<string>("i-liked");
@@ -148,92 +153,112 @@ function LikeGuide() {
       case 3:
         return (
           <>
-            <RNText style={styles.infoTitle}>보낸 썸</RNText>
-            <RNText style={styles.infoDescription}>
-              내가 먼저 마음을 표현한
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step3_title")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              사람들을 볼 수 있어요
+              {t("features.guide.ui.like_guide_scenario.like.info.step3_desc1")}
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step3_desc2")}
             </RNText>
           </>
         );
       case 4:
         return (
           <>
-            <RNText style={styles.infoTitle}>도착한 썸</RNText>
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step4_title")}
+            </RNText>
             <RNText style={styles.infoDescription}>
-              누가 나에게 호감을 보냈는지 바로 확인해요
+              {t("features.guide.ui.like_guide_scenario.like.info.step4_desc1")}
             </RNText>
           </>
         );
       case 5:
         return (
           <>
-            <RNText style={styles.infoTitle}>프로필 미리보기</RNText>
-            <RNText style={styles.infoDescription}>
-              여기서 프로필 미리보기를 확인할 수 있어요
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step5_title")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              카드를 누르면 상세 프로필로 이동해요
+              {t("features.guide.ui.like_guide_scenario.like.info.step5_desc1")}
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step5_desc2")}
             </RNText>
           </>
         );
       case 6:
         return (
           <>
-            <RNText style={styles.infoTitle}>좋아요</RNText>
-            <RNText style={styles.infoDescription}>
-              좋아요를 누르면 서로 매칭돼요!
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step6_title")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              매칭이 되면 인스타그램에서
+              {t("features.guide.ui.like_guide_scenario.like.info.step6_desc1")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              대화를 시작할 수 있어요
+              {t("features.guide.ui.like_guide_scenario.like.info.step6_desc2")}
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step6_desc3")}
             </RNText>
           </>
         );
       case 7:
         return (
           <>
-            <RNText style={styles.infoTitle}>괜찮아요</RNText>
-            <RNText style={styles.infoDescription}>
-              관심이 없으면 ‘괜찮아요’를 눌러주세요
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step7_title")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              이번 인연은 아쉽게 마무리되고,
+              {t("features.guide.ui.like_guide_scenario.like.info.step7_desc1")}
             </RNText>
-            <RNText style={styles.infoDescription}>카드가 사라져요</RNText>
+            <RNText style={styles.infoDescription}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step7_desc2")}
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step7_desc3")}
+            </RNText>
           </>
         );
       case 8:
         return (
           <>
-            <RNText style={styles.infoTitle}>인연이 아니였나봐요</RNText>
-            <RNText style={styles.infoDescription}>카드는 사라지고,</RNText>
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step8_title")}
+            </RNText>
             <RNText style={styles.infoDescription}>
-              다음 인연을 확인할 수 있어요
+              {t("features.guide.ui.like_guide_scenario.like.info.step8_desc1")}
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step8_desc2")}
             </RNText>
           </>
         );
       case 9:
         return (
           <>
-            <RNText style={styles.infoTitle}>만료 안내</RNText>
-            <RNText style={styles.infoDescription}>
-              표시된 시간이 지나면 자동으로
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step9_title")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              ‘인연이 아니였나봐요’로 처리돼요.
+              {t("features.guide.ui.like_guide_scenario.like.info.step9_desc1")}
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step9_desc2")}
             </RNText>
           </>
         );
       case 10:
         return (
           <>
-            <RNText style={styles.infoTitle}>튜토리얼이 끝났어요!</RNText>
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.like_guide_scenario.like.info.step10_title")}
+            </RNText>
             <RNText style={styles.infoDescription}>
-              이제 나만의 이상형을 만나러 가볼까요?
+              {t("features.guide.ui.like_guide_scenario.like.info.step10_desc1")}
             </RNText>
           </>
         );
@@ -277,7 +302,9 @@ function LikeGuide() {
       <View style={styles.infoWrapper}>
         {renderInfo()}
         <RNText style={styles.infoNextHint}>
-          {step === 10 ? "👉 튜토리얼 닫기" : "👉 터치해서 다음"}
+          {step === 10
+            ? t("features.guide.ui.like_guide_scenario.like.info.close_hint")
+            : t("features.guide.ui.home.info_next_hint")}
         </RNText>
         <Image
           source={require("@assets/images/instagram-some.png")}
@@ -370,7 +397,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: "600",
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

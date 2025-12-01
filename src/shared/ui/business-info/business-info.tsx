@@ -1,11 +1,13 @@
 import { Linking, Platform, TouchableOpacity, View } from "react-native";
 import { Text } from "../text";
+import { useTranslation } from "react-i18next";
 
 export const BusinessInfo: React.FC = () => {
   const onClickLink = (link: string) => {
     Linking.openURL(link);
   };
 
+  const { t } = useTranslation(); 
   const businessRegistrationLink =
     "https://www.ftc.go.kr/bizCommPop.do?wrkr_no=4980502914";
 
@@ -36,7 +38,7 @@ export const BusinessInfo: React.FC = () => {
           }
         >
           <Text className="text-[#888] text-[10px] text-center leading-5  underline underline-offset-1">
-            개인정보처리방침
+            {t("shareds.business-info.business_info.privacy_policy")}
           </Text>
         </TouchableOpacity>
 
@@ -48,7 +50,7 @@ export const BusinessInfo: React.FC = () => {
           }
         >
           <Text className="text-[#888] text-[10px] text-center leading-5  underline underline-offset-1">
-            개인정보 수집 및 이용동의
+            {t("shareds.business-info.business_info.data_consent")}
           </Text>
         </TouchableOpacity>
 
@@ -60,7 +62,7 @@ export const BusinessInfo: React.FC = () => {
           }
         >
           <Text className="text-[#888] text-[10px] text-center leading-5  underline underline-offset-1">
-            서비스 이용약관
+            {t("shareds.business-info.business_info.terms_of_service")}
           </Text>
         </TouchableOpacity>
       </View>

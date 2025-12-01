@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "use_report": {
+      "modal_title_success": "報告受付",
+      "modal_message_success": "報告が正常に受付されました。",
+      "modal_title_error": "報告失敗",
+      "default_error_message": "報告提出に失敗しました。もう一度お試しください。"
+    }
+  }
+}

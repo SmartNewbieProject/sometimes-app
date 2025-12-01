@@ -2,6 +2,7 @@ import { cn } from "@/src/shared/libs";
 import { semanticColors } from '../../../shared/constants/colors';
 import { Text } from "@/src/shared/ui";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   FlatList,
@@ -47,6 +48,7 @@ interface AgeCardProps {
 }
 
 function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
+  const { t } = useTranslation();
   return (
     <TouchableOpacity
       onPress={onSelect}
@@ -75,7 +77,7 @@ function AgeCard({ option, isSelected, onSelect }: AgeCardProps) {
           ]}
         >
           <Text size="sm" textColor="white">
-            선택
+            {t("features.interest.ui.age-selector.select")}
           </Text>
         </View>
       </View>

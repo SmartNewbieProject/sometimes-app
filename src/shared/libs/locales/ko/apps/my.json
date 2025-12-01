@@ -1,0 +1,34 @@
+{
+  "withdrawal": {
+    "reason_partner": "파트너를 찾았어요",
+    "reason_matching": "매칭이 부정확해요",
+    "reason_privacy": "개인정보 보호가 걱정돼요",
+    "reason_safety": "안전성 문제가 있어요",
+    "reason_technical": "기술적인 문제가 있어요",
+    "reason_inactive": "서비스 사용이 불편해요",
+    "reason_dissatisfied": "서비스 만족도가 낮아요",
+    "reason_other": "기타",
+    "reason_select_error": "이유를 선택해주세요",
+    "modal_title": "다음에 다시봐요",
+    "modal_desc_1": "회원 탈퇴가 완료되었습니다.",
+    "modal_desc_2": "다음에 다시 만나요",
+    "title": "다음에 다시 만나요",
+    "textarea_placeholder": "기타 이유를 입력해주세요",
+    "button_prev": "돌아기기",
+    "button_next": "서비스 떠나기"
+  },
+  "info": {
+    "dating_style": {
+      "title_1": "당신에게 가장 잘 맞는",
+      "title_2": "연애 스타일은 무엇인가요?",
+      "loading": "연애 스타일 옵션 불러오고 있어요",
+      "next_count": "{{count}} 개만 더!"
+    },
+    "done": {
+      "title_1": "당신의 정보를 확인했어요",
+      "title_2": "이제는 설레는 만남을 시작해요",
+      "desc": "썸타임이 {{name}}님의 이상형을 찾아드릴게요",
+      "button": "이상형 찾으러 가기 →"
+    }
+  }
+}

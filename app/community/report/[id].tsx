@@ -14,6 +14,8 @@ import { router, useLocalSearchParams } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { Alert, Platform, Pressable, View } from "react-native";
 
+import { useTranslation } from "react-i18next";
+import i18n from "@/src/shared/libs/i18n";
 type ReportForm = {
   reason: string;
 };
@@ -25,6 +27,7 @@ export default function ReportScreen() {
   });
   const { showErrorModal } = useModal();
   const { currentCategory: categoryCode } = useCategory();
+  const { t } = useTranslation();
 
   const onSubmit = form.handleSubmit(async (data) => {
     await tryCatch(
@@ -35,12 +38,12 @@ export default function ReportScreen() {
         });
         if (Platform.OS === "web") {
           window.alert(
-            "신고가 완료되었어요.\n관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다."
+            t("apps.community.report.alert_title") + "\n" + t("apps.community.report.alert_desc")
           );
         } else {
-          Alert.alert(
-            "사용자 차단이 완료되었어요.",
-            "해당 사용자의 모든 게시글과 댓글이 더 이상 보이지 않습니다."
+                Alert.alert(
+            t("apps.community.report.alert_title"),
+            t("apps.community.report.alert_desc")
           );
         }
         router.navigate("/community?refresh=true");
@@ -54,7 +57,7 @@ export default function ReportScreen() {
   return (
     <Layout.Default>
       <PalePurpleGradient />
-      <HeaderComponent />
+      <HeaderComponent t={t} />
 
       <View className="flex-1 px-5">
         <ImageResource
@@ -62,11 +65,11 @@ export default function ReportScreen() {
           width={152}
           height={182}
         />
-        <Text textColor="deepPurple" size="20" weight="bold">
-          부적절한 게시글을 발견하셨나요?
+                <Text textColor="deepPurple" size="20" weight="bold">
+          {t("apps.community.report.title")}
         </Text>
         <Text textColor="gray" size="md" weight="medium" className="mt-1.5">
-          신고해주신 내용은 관리자가 검토 후 적절한 조치를 취하겠습니다.
+          {t("apps.community.report.desc")}
         </Text>
 
         <View className="flex-1 mt-4 mr-4">
@@ -88,14 +91,14 @@ export default function ReportScreen() {
           disabled={!form.formState.isValid}
           onPress={onSubmit}
         >
-          신고하기
+          {t("apps.community.report.button")}
         </Button>
       </View>
     </Layout.Default>
   );
 }
 
-const HeaderComponent = () => (
+const HeaderComponent = ({ t }: { t: (key: string) => string }) => (
   <Header.Container>
     <Header.LeftContent>
       <Pressable onPress={() => router.back()}>
@@ -105,19 +108,18 @@ const HeaderComponent = () => (
 
     <Header.CenterContent className="pr-10">
       <Text textColor="black" weight="bold">
-        신고하기
+        {t("apps.community.report.header")}
       </Text>
     </Header.CenterContent>
   </Header.Container>
 );
 
 const reportReasons = [
-  "스팸/도배성 게시글",
-  "욕설/혐오표현",
-  "성적/선정적 내용",
-  "개인정보 노출/사생활 침해",
-  "상업적 광고/홍보",
-  "부적절한 이미지",
-  "괴롭힘/협박",
-  "커뮤니티 규칙 위반",
+  i18n.t("apps.community.report.reason_spam"),
+  i18n.t("apps.community.report.reason_abuse"),
+  i18n.t("apps.community.report.reason_sexual"),
+  i18n.t("apps.community.report.reason_privacy"),
+  i18n.t("apps.community.report.reason_ad"),
+  i18n.t("apps.community.report.reason_bullying"),
+  i18n.t("apps.community.report.reason_rule"),
 ];

@@ -13,6 +13,9 @@ import {
 import { initializeKakaoSDK } from "@react-native-kakao/core";
 import * as Notifications from "expo-notifications";
 
+import { I18nextProvider } from "react-i18next";
+import i18n from "@/src/shared/libs/i18n";
+
 import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
 import LoggerContainer from "@/src/features/logger/ui/logger-container";
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
@@ -76,6 +79,12 @@ export default function RootLayout() {
     "Gmarket-Sans-Bold": require("../assets/fonts/GmarketSansTTFBold.ttf"),
     "Gmarket-Sans-Light": require("../assets/fonts/GmarketSansTTFLight.ttf"),
     StyleScript: require("../assets/fonts/StyleScript-Regular.ttf"),
+    "MPLUS1p-Thin": require("../assets/fonts/MPLUS1p-Thin.ttf"),
+    "MPLUS1p-Light": require("../assets/fonts/MPLUS1p-Light.ttf"),
+    "MPLUS1p-Medium": require("../assets/fonts/MPLUS1p-Medium.ttf"),
+    "MPLUS1p-Bold": require("../assets/fonts/MPLUS1p-Bold.ttf"),
+    "MPLUS1p-ExtraBold": require("../assets/fonts/MPLUS1p-ExtraBold.ttf"),
+    "MPLUS1p-Black": require("../assets/fonts/MPLUS1p-Black.ttf"),
   });
 
   useEffect(() => {
@@ -210,26 +219,28 @@ export default function RootLayout() {
       <LoggerContainer>
         <QueryProvider>
           <ModalProvider>
-            <GlobalChatProvider>
+          <I18nextProvider i18n={i18n}>
+              <GlobalChatProvider>
               <PortoneProvider>
-                <View
-                  className={cn(
-                    "flex-1 font-extralight",
-                    Platform.OS === "web" && "max-w-[468px] w-full self-center"
-                  )}
-                >
-                  <AnalyticsProvider>
-                    <RouteTracker>
-                      <>
-                        <Slot />
-                        <VersionUpdateChecker />
-                        <Toast />
+                  <View
+                    className={cn(
+                      "flex-1 font-extralight",
+                      Platform.OS === "web" && "max-w-[468px] w-full self-center"
+                    )}
+                  >
+                    <AnalyticsProvider>
+                      <RouteTracker>
+                        <>
+                          <Slot />
+                          <VersionUpdateChecker />
+                          <Toast />
                       </>
-                    </RouteTracker>
-                  </AnalyticsProvider>
-                </View>
-              </PortoneProvider>
-            </GlobalChatProvider>
+                      </RouteTracker>
+                    </AnalyticsProvider>
+                  </View>
+                </PortoneProvider>
+              </GlobalChatProvider>
+            </I18nextProvider>  
           </ModalProvider>
         </QueryProvider>
       </LoggerContainer>

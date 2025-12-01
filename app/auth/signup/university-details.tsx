@@ -15,6 +15,7 @@ import Loading from "@features/loading";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   BackHandler,
   Keyboard,
@@ -29,6 +30,7 @@ function UniversityDetailsPage() {
   const { onBackPress, onNext, signupLoading, nextable } =
     useUniversityDetails();
   const router = useRouter();
+  const { t } = useTranslation();
   useEffect(() => {
     // 이벤트 리스너 등록
     const subscription = BackHandler.addEventListener("hardwareBackPress", () =>
@@ -54,7 +56,7 @@ function UniversityDetailsPage() {
   };
 
   if (signupLoading) {
-    return <Loading.Page title="잠시만 기다려주세요.." />;
+    return <Loading.Page title={t("apps.auth.sign_up.university_detail.next_button_wait")} />;
   }
 
   return (
@@ -85,7 +87,7 @@ function UniversityDetailsPage() {
           </View>
 
           <View style={[styles.contentWrapper, { zIndex: 10 }]}>
-            <Text style={styles.title}>어떤 과에 다니고 있나요?</Text>
+            <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_department")}</Text>
             <DepartmentSearch />
           </View>
 
@@ -95,7 +97,7 @@ function UniversityDetailsPage() {
               { marginTop: 40, paddingBottom: 214 },
             ]}
           >
-            <Text style={styles.title}>학번과 학년은 어떻게 되시나요?</Text>
+            <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_academic")}</Text>
             <AcademicInfoSelector />
           </View>
         </Pressable>
@@ -119,7 +121,7 @@ export default withSignupValidation(
 const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontSize: 18,
     lineHeight: 22,
     color: semanticColors.brand.primary,

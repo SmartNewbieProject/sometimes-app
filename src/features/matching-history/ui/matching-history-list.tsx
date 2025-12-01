@@ -2,12 +2,15 @@ import { Show, Text } from "@/src/shared/ui";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useMatchingHistoryList } from "../queries/use-matching-history-list";
 import MatchingHistoryCard from "./matching-history-card";
 
+
 function MatchingHistoryList() {
   const { matchingHistoryList } = useMatchingHistoryList();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -27,10 +30,14 @@ function MatchingHistoryList() {
             source={require("@assets/images/love-letter.png")}
           />
           <Text size="md" textColor={"purple"} style={styles.infoText}>
-            더 많은 매칭을 원하시나요?
+            {t(
+              "features.matching-history.ui.matching_history_list.more_matches_prompt"
+            )}
           </Text>
           <Text size="md" textColor={"purple"} style={styles.infoText}>
-            지금 재매칭권을 사용해 새로운 인연을만나보세요!"
+            {t(
+              "features.matching-history.ui.matching_history_list.use_rematch_hint"
+            )}
           </Text>
         </View>
       </Show>
@@ -51,7 +58,7 @@ const styles = StyleSheet.create({
   infoText: {
     textAlign: "center",
     lineHeight: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
   },
   image: {

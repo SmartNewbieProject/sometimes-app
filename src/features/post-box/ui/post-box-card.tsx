@@ -16,11 +16,14 @@ import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../auth";
 import useCreateChatRoom from "../../chat/queries/use-create-chat-room";
+import { useTranslation } from "react-i18next";
 import { openInstagram } from "../../instagram/services";
 import { LikeButton } from "../../like/ui/like-button";
 import { useFeatureCost } from "../../payment/hooks";
 import useByeLike from "../queries/useByeLike";
 import useRejectLike from "../queries/useRejectLike";
+import i18n from "@/src/shared/libs/i18n";
+
 
 interface PostBoxCardProps {
   status: string;
@@ -59,17 +62,18 @@ function PostBoxCard({
   type,
   likeId,
 }: PostBoxCardProps) {
+  const { t } = useTranslation();
   const opacity = useRef(new Animated.Value(1)).current;
   const statusMessage =
     type === "liked-me"
-      ? `${dayUtils.formatRelativeTime(likedAt)} 좋아요를 눌렀어요`
+      ? t("features.post-box.ui.card.status_messages.liked_me_relative", { time: dayUtils.formatRelativeTime(likedAt) })
       : status === "OPEN"
-      ? "서로 좋아요를 눌렀어요!"
+      ? t("features.post-box.ui.card.status_messages.mutual_like")
       : status === "REJECTED"
-      ? "상대방이 거절했어요"
+      ? t("features.post-box.ui.card.status_messages.rejected")
       : status === "IN_CHAT"
       ? "상대방과 대화중이에요"
-      : "상대방의 응답을 기다리고 있어요";
+      : t("features.post-box.ui.card.status_messages.waiting_response");
   const userWithdrawal = !!deletedAt;
 
   const renderBottomButton =
@@ -122,7 +126,7 @@ function PostBoxCard({
             <Text style={styles.name} className="font-medium">
               {nickname}
             </Text>
-            <Text style={styles.age}>만 {age}세</Text>
+            <Text style={styles.age}>{t("features.post-box.apps.post_box.age_display", { age })}</Text>
           </View>
           <Text style={styles.university}>{universityName}</Text>
           <Show when={!userWithdrawal}>
@@ -165,6 +169,7 @@ export function LikedMePendingButton({
 }: {
   connectionId: string;
 }) {
+  const { t } = useTranslation();
   const mutation = useRejectLike();
   const handleReject = () => {
     tryCatch(
@@ -184,7 +189,7 @@ export function LikedMePendingButton({
         className="flex-1 items-center !h-[40px]"
         prefix={<XIcon width={21} height={21} />}
       >
-        괜찮아요
+        {t("features.post-box.ui.card.buttons.ok")}
       </Button>
 
       <LikeButton className="!h-[40px]" connectionId={connectionId} />
@@ -201,6 +206,7 @@ export function LikedMeOpenButton({
   likeId?: string;
   height?: number;
 }) {
+  const { t } = useTranslation();
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const { my } = useAuth();
@@ -221,10 +227,10 @@ export function LikedMeOpenButton({
           }}
         >
           <CustomText textColor="black" weight="bold" size="20">
-            마음에 드는 이성과
+            {t("features.post-box.ui.card.modal_texts.start_instagram_title_line1")}
           </CustomText>
           <CustomText textColor="black" weight="bold" size="20">
-            대화를 시작해볼까요?
+            {t("features.post-box.ui.card.modal_texts.start_instagram_title_line2")}
           </CustomText>
         </View>
       ),
@@ -242,13 +248,13 @@ export function LikedMeOpenButton({
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
+        text: t("features.post-box.ui.card.buttons.yes_try"),
         onClick: () => {
           mutation.mutateAsync({ matchId, matchLikeId: likeId });
         },
       },
       secondaryButton: {
-        text: "아니요",
+        text: t("global.no"),
         onClick: hideModal,
       },
     });
@@ -262,7 +268,7 @@ export function LikedMeOpenButton({
         className={cn("flex-1 items-center ", `!h-[${height}px]`)}
         prefix={<ChatIcon width={20} height={20} />}
       >
-        대화 시작하기
+        {t("features.post-box.ui.card.buttons.start_chat")}
       </Button>
     </View>
   );
@@ -291,25 +297,25 @@ export function ILikedRejectedButton({
           }}
         >
           <CustomText textColor="black" weight="bold" size="20">
-            이번엔 인연이 닿지 않았어요
+            {i18n.t("features.post-box.ui.card.modal_texts.bye_title")}
           </CustomText>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
           <Text className="text-text-disabled text-[12px]">
-            괜찮아요 더 멋진 만남이 곧 찾아올 거예요.
+            {i18n.t("features.post-box.ui.card.modal_texts.bye_subline")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "확인",
+        text: i18n.t("features.post-box.ui.card.buttons.confirm"),
         onClick: async () => {
           await mutation.mutateAsync(connectionId);
         },
       },
       secondaryButton: {
-        text: "닫기",
+        text: i18n.t("features.post-box.ui.card.buttons.close"),
         onClick: hideModal,
       },
     });
@@ -323,7 +329,7 @@ export function ILikedRejectedButton({
         className={cn("flex-1 items-center ", `!h-[${height}px]`)}
         prefix={<XIcon width={21} height={21} />}
       >
-        인연이 아니었나봐요
+        {i18n.t("features.post-box.ui.card.buttons.not_a_match")}
       </Button>
     </View>
   );
@@ -423,7 +429,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 15,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 18,
     color: semanticColors.brand.accent,
