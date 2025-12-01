@@ -21,7 +21,7 @@ import useNestedModal from "../hooks/use-nested-modal";
 import { cn } from "../libs";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-export import { useTranslation } from "react-i18next";
+
 type ModalOptions = {
   title?: ReactNode;
   customTitle?: ReactNode;

@@ -1,7 +1,5 @@
-import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import Layout from "@/src/features/layout";
 import { TwoButtons } from "@/src/features/layout/ui";
-import { useModal } from "@/src/shared/hooks/use-modal";
 import { ImageResources, axiosClient, tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient } from "@/src/shared/ui/gradient";
 import { Header } from "@/src/shared/ui/header";

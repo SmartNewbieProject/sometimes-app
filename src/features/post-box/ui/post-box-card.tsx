@@ -355,26 +355,6 @@ export function InChatButton({ height = 40 }: { height?: number }) {
   );
 }
 
-export function InChatButton({ height = 40 }: { height?: number }) {
-  const router = useRouter();
-  const handleCreateChat = () => {
-    router.push("/chat");
-  };
-  return (
-    <View className="w-full flex flex-row">
-      <Button
-        onPress={handleCreateChat}
-        variant="primary"
-        size="md"
-        className={cn("flex-1 items-center ", `!h-[${height}px]`)}
-        prefix={<ChatIcon width={20} height={20} />}
-      >
-        대화가 이어지고 있어요
-      </Button>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     position: "relative",

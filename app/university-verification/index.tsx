@@ -53,7 +53,7 @@ export default function UniversityVerificationScreen() {
           primaryButton: {
             text: t("apps.university-verification.confirm_button"),
             onClick: () => {},
-          },,
+          },
         });
       },
       (error) => {
@@ -247,25 +247,25 @@ export default function UniversityVerificationScreen() {
           </Text>
           <View className="flex-row flex-wrap">
             <TouchableOpacity onPress={handleIDcardCertification}>
-              <Text size="sm" weight="normal" className="text-gray underline">
+              <Text size="sm" weight="regular" className="text-gray underline">
                 학생증 및 재학증명 제출
               </Text>
             </TouchableOpacity>
-            <Text size="sm" weight="normal" className="text-gray">
+            <Text size="sm" weight="regular" className="text-gray">
               을 통해 재학 정보를 인증 받을 수 있어요.
             </Text>
           </View>
           <View className="mt-4">
-            <Text size="sm" weight="normal" className="text-gray">
+            <Text size="sm" weight="regular" className="text-gray">
               재학 인증에 어려움이 있는 경우
             </Text>
             <View className="flex-row flex-wrap">
               <TouchableOpacity onPress={handleDMClick}>
-                <Text size="sm" weight="normal" className="text-gray underline">
+                <Text size="sm" weight="regular" className="text-gray underline">
                   DM
                 </Text>
               </TouchableOpacity>
-              <Text size="sm" weight="normal" className="text-gray">
+              <Text size="sm" weight="regular" className="text-gray">
                 으로 문의 주시면 확인 후 도와드립니다.
               </Text>
             </View>

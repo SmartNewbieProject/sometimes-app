@@ -239,8 +239,8 @@ export default function RootLayout() {
                     </AnalyticsProvider>
                   </View>
                 </PortoneProvider>
-          </I18nextProvider>
-            </GlobalChatProvider>
+              </GlobalChatProvider>
+            </I18nextProvider>  
           </ModalProvider>
         </QueryProvider>
       </LoggerContainer>

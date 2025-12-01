@@ -42,8 +42,8 @@ function ProfilePage() {
     onNext,
     onBackPress,
   } = useProfileImage();
+  const { t } = useTranslation();
 
- 
 
   return (
     <DefaultLayout className="flex-1 relative">
@@ -146,7 +146,6 @@ function ProfilePage() {
           onClickNext={onNext}
           content={{ next: t("global.next") }}
           onClickPrevious={onBackPress}
-          }}
         />
       </View>
     </DefaultLayout>

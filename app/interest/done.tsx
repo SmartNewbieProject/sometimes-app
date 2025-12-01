@@ -87,6 +87,7 @@ export default function InterestDoneScreen() {
           </Button>
         </View>
       </View>
+      </View>
     </Layout.Default>
   );
 }

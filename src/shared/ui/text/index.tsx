@@ -3,8 +3,7 @@ import type React from "react";
 import {
   Text as RNText,
   type TextStyle,
-  type TextProps as RNTextProps,
-, StyleSheet } from "react-native";
+  type TextProps as RNTextProps, StyleSheet } from "react-native";
 import { cn } from "../../libs/cn";
 import { useAppFont, type FontWeight } from "../../hooks/use-app-font";
 

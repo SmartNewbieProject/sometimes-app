@@ -173,7 +173,8 @@ export const CategoryList = () => {
             ))}
           </View>
         </Loading.Lottie>
-      </ScrollView>
-    </View>
-  );
+        </View>
+      </Loading.Lottie>
+    </ScrollView>
+  </View>);
 };
