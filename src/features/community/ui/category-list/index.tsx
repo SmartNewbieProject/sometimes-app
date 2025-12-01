@@ -101,7 +101,7 @@ export const CategoryList = () => {
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={16}
       >
-        <Loading.Lottie title="카테고리를 불러오고 있어요" loading={isLoading}>
+        <Loading.Lottie title={t("features.community.ui.category_list.loading_categories")}  loading={isLoading}>
           <View className="flex flex-row w-full gap-x-[10px] mb-2">
             {renderCategories.map((category) => {
               const isActive = currentCategory === category.code;
@@ -140,39 +140,6 @@ export const CategoryList = () => {
                 </View>
               );
             })}
-        <Loading.Lottie title={t("features.community.ui.category_list.loading_categories")} loading={isLoading}>
-          <View className="flex flex-row w-full gap-x-[10px] mb-2 ">
-            {categories.map((category) => (
-              <View
-                key={category.code}
-                onLayout={(e) => onItemLayout(category.code, e)}
-              >
-                <Button
-                  size="sm"
-                  textColor={
-                    currentCategory === category.code ? "white" : "black"
-                  }
-                  variant={
-                    currentCategory === category.code ? "primary" : "outline"
-                  }
-                  onPress={() => {
-                    changeCategory(category.code);
-                    ensureVisible(category.code, true);
-                  }}
-                  prefix={
-                    <Image
-                      source={{ uri: category.emojiUrl }}
-                      style={{ width: 32, height: 32 }}
-                    />
-                  }
-                  className="px-[10px]"
-                >
-                  {category.displayName}
-                </Button>
-              </View>
-            ))}
-          </View>
-        </Loading.Lottie>
         </View>
       </Loading.Lottie>
     </ScrollView>
