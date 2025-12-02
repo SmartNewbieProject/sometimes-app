@@ -4,13 +4,17 @@ import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
 import { Image } from "expo-image";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import ChatInfoModalContainer from "./modal/info-modal-container";
+
+const REFUND_GOOGLE_FORM_URL = "https://docs.google.com/forms/d/1cPdZEU7zL09b7Z-x8h5NpCk_8oJieYbnCHHw5LuhAc8";
 function ChatRoomHeader() {
   const router = useRouter();
   const [isVisible, setVisible] = useState(false);
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { my: user } = useAuth();
 
   const { data: partner } = useChatRoomDetail(id);
   const handleClose = useCallback(() => {
@@ -23,6 +27,13 @@ function ChatRoomHeader() {
     if (isExpired) return;
     router.push(`/partner/view/${partner.matchId}`);
   };
+
+  const handleRefundPress = () => {
+    Linking.openURL(REFUND_GOOGLE_FORM_URL);
+  };
+
+  const isMale = user?.gender === "MALE";
+  const showRefundButton = isMale && partner?.canRefund;
 
   return (
     <>
@@ -37,7 +48,14 @@ function ChatRoomHeader() {
             style={styles.profileImage}
           />
           <View style={styles.profileContainer}>
-            <Text style={styles.name}>{partner?.partner.name}</Text>
+            <View style={styles.nameRow}>
+              <Text style={styles.name}>{partner?.partner.name}</Text>
+              {showRefundButton && (
+                <Pressable onPress={handleRefundPress} style={styles.refundButton}>
+                  <Text style={styles.refundButtonText}>환불 가능</Text>
+                </Pressable>
+              )}
+            </View>
             <View style={styles.schoolContainer}>
               <Text style={styles.school}>{partner?.partner.university}</Text>
               <Text style={styles.school}>{partner?.partner.department}</Text>
@@ -92,12 +110,29 @@ const styles = StyleSheet.create({
 
     gap: 2,
   },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
   name: {
     color: semanticColors.text.primary,
     fontWeight: 700,
     fontFamily: "Pretendard-ExtraBold",
     fontSize: 18,
     lineHeight: 19,
+  },
+  refundButton: {
+    backgroundColor: semanticColors.brand.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  refundButtonText: {
+    color: "#FFFFFF",
+    fontSize: 11,
+    fontWeight: "600",
+    lineHeight: 13,
   },
   school: {
     color: semanticColors.text.disabled,

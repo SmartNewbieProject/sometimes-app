@@ -24,6 +24,7 @@ export interface ChatRoomDetail {
 	createdAt: string;
 	hasLeft?: boolean;
 	snooze: boolean;
+	canRefund: boolean;
 	partner: Partner;
 }
 
@@ -53,6 +54,7 @@ export interface ChatRoomList {
 	profileImages: string;
 	recentDate: string;
 	paymentConfirm: boolean;
+	canRefund: boolean;
 }
 
 export interface ChatRoomListResponse {
