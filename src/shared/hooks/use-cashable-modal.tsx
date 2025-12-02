@@ -3,6 +3,7 @@ import { semanticColors } from '../constants/colors';
 import {StyleSheet, View} from "react-native";
 import {router} from "expo-router";
 import {Text} from "@ui/text";
+import { useTranslation } from "react-i18next";
 
 type CashableModalProps = {
   title?: string;
@@ -11,6 +12,7 @@ type CashableModalProps = {
 
 export const useCashableModal = () => {
   const { showModal, hideModal } = useModal();
+  const { t } = useTranslation();
 
   const show = ({ title, textContent }: CashableModalProps) => {
     return showModal({
@@ -18,14 +20,14 @@ export const useCashableModal = () => {
       customTitle: (
           <View style={styles.title}>
             <Text size="20" weight="bold" textColor="black">
-              {title ?? '💔 구슬이 부족해요!'}
+              {title ?? t("shareds.hooks.use_cashable_modal.title")}
             </Text>
           </View>
       ),
       children: (
           <View style={styles.content}>
             <Text textColor="black" weight="bold" className="text-[15px]">
-              이 기능을 사용하려면 구슬이 더 필요해요
+              {t("shareds.hooks.use_cashable_modal.description")}
             </Text>
 
             <Text style={styles.description} className="text-text-disabled">
@@ -34,11 +36,11 @@ export const useCashableModal = () => {
         </View>
       ),
       primaryButton: {
-        text: '구슬 충전',
+        text: t("shareds.hooks.use_cashable_modal.charge_button"),
         onClick: () => router.push('/purchase/gem-store'),
       },
       secondaryButton: {
-        text: '아니요',
+        text: t("shareds.hooks.use_cashable_modal.cancel_button"),
         onClick: hideModal,
       },
     });

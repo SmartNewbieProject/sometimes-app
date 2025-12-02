@@ -2,17 +2,17 @@ import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
-import React from "react";
-
+import { useTranslation } from 'react-i18next';
 import Interest from "@/src/features/interest";
 import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect } from "react";
 
 const { hooks, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
-
 function InterestPersonality() {
   const { personality, updateForm } = useInterestForm();
+  const { t } = useTranslation();
   const {
     data: preferencesArray = [
       {
@@ -37,7 +37,7 @@ function InterestPersonality() {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>원하는 이상형의 성격</Text>
+        <Text style={styles.title}>{t("features.profile-edit.ui.interest.personality.title")}</Text>
         <StepIndicator
           length={3}
           step={personality?.length ?? 0}
@@ -48,7 +48,7 @@ function InterestPersonality() {
       </View>
       <View style={styles.bar} />
       <View style={styles.chipSelector}>
-        <Loading.Lottie title="성격 유형을 불러오고 있어요" loading={isLoading}>
+        <Loading.Lottie title={t("features.profile-edit.ui.interest.personality.loading")} loading={isLoading}>
           <ChipSelector
             value={personality}
             options={
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 22,
   },

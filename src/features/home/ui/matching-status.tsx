@@ -1,5 +1,7 @@
+
 import { Image } from "expo-image";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   type ImageStyle,
   type StyleProp,
@@ -9,12 +11,15 @@ import {
 } from "react-native";
 
 function MatchingStatus() {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>썸타임 매칭 현황</Text>
+      <Text style={styles.title}>
+        {t("features.home.ui.matching_status.title")}
+      </Text>
       <View style={styles.contentContainer}>
         <Card
-          title="매칭 성공률"
+          title={t("features.home.ui.matching_status.success_rate")}
           statistics={"89%"}
           imageUri={require("@assets/images/chart-arrow.png")}
           imageStyle={{ width: 35, height: 26, marginBottom: 7, marginTop: 6 }}
@@ -35,7 +40,7 @@ function MatchingStatus() {
           ))}
         </View>
         <Card
-          title="이번 주 새 매칭"
+          title={t("features.home.ui.matching_status.new_matches_this_week")}
           statistics={"2,847"}
           imageUri={require("@assets/images/new.png")}
           imageStyle={{ width: 37.5, height: 37.5, marginBottom: 0 }}
@@ -75,7 +80,7 @@ const styles = StyleSheet.create({
     color: "#1F1F1F",
     textAlign: "center",
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 21.6,
     marginBottom: 12,
@@ -92,7 +97,7 @@ const styles = StyleSheet.create({
     color: "#313131",
     textAlign: "center",
     fontSize: 26,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 30,
     marginTop: 6,
@@ -102,7 +107,7 @@ const styles = StyleSheet.create({
     color: "#363636",
     textAlign: "center",
     fontSize: 14,
-    fontFamily: "Pretendard-Light",
+    fontFamily: "light",
 
     fontWeight: 300,
     lineHeight: 16,

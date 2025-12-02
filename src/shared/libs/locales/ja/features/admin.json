@@ -1,0 +1,8 @@
+{
+  "hooks": {
+    "use_comming_soon": {
+      "modal_title": "準備中の機能です。",
+      "modal_body": "準備が出来次第使えます！"
+    }
+  }
+}

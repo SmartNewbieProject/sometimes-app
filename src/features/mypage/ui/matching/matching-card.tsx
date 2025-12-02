@@ -3,6 +3,7 @@ import { semanticColors } from '../../../../shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
 import CustomSwitch from "../custom-switch";
 
+
 interface MatchingCardProps {
   title: string;
   isOn: boolean;
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.primary,
     fontSize: 16,
 
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 18,
   },

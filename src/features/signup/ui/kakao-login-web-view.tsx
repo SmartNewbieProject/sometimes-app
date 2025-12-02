@@ -17,6 +17,7 @@ import {
   View,
 } from "react-native";
 import { WebView, type WebViewNavigation } from "react-native-webview";
+import { useTranslation } from "react-i18next";
 import { checkPhoneNumberBlacklist } from "../apis";
 
 interface KakaoLoginWebViewProps {
@@ -28,6 +29,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
   visible,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const webViewRef = useRef<WebView>(null);
   const router = useRouter();
   const { loginWithKakao } = useAuth();
@@ -102,11 +104,11 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
                 phone: result.certificationInfo?.phone,
               });
               showModal({
-                title: "가입 제한",
+                title: t("features.signup.ui.login_form.registration_restricted_title"),
                 children:
-                  "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
+                  t("features.signup.ui.login_form.registration_restricted_message"),
                 primaryButton: {
-                  text: "확인",
+                  text: t("features.signup.ui.login_form.confirm_button"),
                   onClick: () => {
                     router.replace("/");
                   },
@@ -167,9 +169,9 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
         {/* 헤더 */}
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>닫기</Text>
+            <Text style={styles.closeButtonText}>{t("features.signup.ui.login_form.close_button")}</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>카카오 로그인</Text>
+          <Text style={styles.headerTitle}>{t("features.signup.ui.login_form.kakao_login")}</Text>
           <View style={styles.placeholder} />
         </View>
 

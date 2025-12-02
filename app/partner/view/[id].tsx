@@ -33,6 +33,8 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Pressable,
   ScrollView,
@@ -47,6 +49,7 @@ const { useMatchPartnerQuery } = queries;
 const { useMatchReasonsQuery } = MatchReasons.queries;
 
 export default function PartnerDetailScreen() {
+  const { t } = useTranslation();
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
   const { data: matchReasonsData } = useMatchReasonsQuery(partner?.connectionId);
@@ -78,6 +81,29 @@ export default function PartnerDetailScreen() {
   if (isLoading || !partner) {
     return <Loading.Page title="파트너 정보를 불러오고 있어요" />;
   }
+
+  const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
+    [
+      t("apps.partner.view.profile_personality_type"),
+      t("apps.partner.view.profile_love_style"),
+      t("apps.partner.view.profile_interest"),
+    ],
+    partner.characteristics
+  );
+
+  const personal = characteristicsOptions["성격"];
+  const loveStyles = characteristicsOptions["연애 스타일"];
+  const interests = characteristicsOptions.관심사;
+
+  const interestOptions = preferencesArray.find((item) => item.typeName === "관심사")?.options || [];
+
+  const interestsWithIcons = interests.map((interest) => {
+    const option = interestOptions.find((opt) => opt.id === interest.value);
+    return {
+      ...interest,
+      imageUrl: option?.imageUrl || null,
+    };
+  });
 
   const mainProfileImageUrl = partner.profileImages.find(
     (img) => img.isMain
@@ -143,7 +169,7 @@ export default function PartnerDetailScreen() {
               size="md"
               className={cn("flex-1 items-center ", `!h-[${20}px]`)}
             >
-              <Text>상대방 응답을 기다리는 중..</Text>
+              <Text>{t("apps.partner.view.button_waiting")}</Text>
             </Button>
           </View>
         </Show>

@@ -1,0 +1,79 @@
+{
+  "use_auth": {
+    "logout_modal_title": "ログアウト",
+    "comment_new_user": "新規ユーザーの場合は本人確認情報を送信してください",
+    "logout_modal_message": "ログアウトしました。"
+  },
+  "use_comming_soon": {
+    "modal_title": "準備中の機能です",
+    "modal_body": "公開までしばらくお待ちください。"
+  },
+  "use_report": {
+    "modal_title_success": "通報完了",
+    "modal_message_success": "通報が正常に送信されました。",
+    "modal_title_error": "通報失敗",
+    "default_error_message": "通報の送信に失敗しました。もう一度お試しください。"
+  },
+  "use_chat_event": {
+    "connected_status": "接続中",
+    "disconnected_status": "切断されました"
+  },
+  "use_my_info_form": {
+    "clear_action": "リセット"
+  },
+  "use_event_control": {
+    "event_expired_comment": "イベントが終了しました",
+    "event_over_participated_comment": "参加可能回数を超えました"
+  },
+  "use_apple_review_login": {
+    "comment": "トークン保存や追加処理が必要な場合はこちらに追記してください"
+  },
+  "use_cashable_modal": {
+    "title": "💔 ジェムが不足しています",
+    "description": "この機能を利用するにはジェムが必要です",
+    "charge_button": "ジェムをチャージ",
+    "cancel_button": "キャンセル"
+  },
+  "day": {
+    "date_not_exist": "存在しない日付です",
+    "just_now": "たった今",
+    "seconds_ago": "{{seconds}}秒前",
+    "minutes_ago": "{{minutes}}分前",
+    "hours_ago": "{{hours}}時間前",
+    "days_ago": "{{days}}日前"
+  },
+  "environment": {
+    "current_environment": "現在の環境: {{env}}"
+  },
+  "file": {
+    "data_url_to_blob_error": "dataURLtoBlobはReact Nativeでは使用できません",
+    "create_file_from_blob_error": "createFileFromBlobはReact Nativeでは使用できません"
+  },
+  "gps": {
+    "permission_denied": "位置情報の権限が拒否されました。",
+    "cannot_get_location": "位置情報を取得できませんでした:"
+  },
+  "notifications": {
+    "channel_community_name": "コミュニティ通知",
+    "channel_community_description": "コメント、いいね などコミュニティ関連のお知らせ",
+    "error_eas_project_id_not_set": "EASプロジェクトIDが設定されていません。",
+    "warning_push_only_on_device": "プッシュ通知は実際のデバイスのみ利用可能です。",
+    "warning_permission_denied": "プッシュ通知の権限が拒否されました。",
+    "success_token_registration": "プッシュトークン登録成功:",
+    "error_token_registration": "プッシュトークン登録失敗:",
+    "success_token_backend_registration": "プッシュトークンをバックエンドに登録しました",
+    "error_token_lookup": "プッシュトークンの取得に失敗しました:",
+    "warning_show_modal_not_provided": "showModal関数が提供されていないため、プッシュトークン登録をスキップします。",
+    "modal_title_allow_notifications": "通知を許可しますか？",
+    "modal_body_allow_notifications": "マッチング結果やコメントなどのお知らせを受け取りますか？",
+    "button_allow": "許可する",
+    "button_later": "あとで",
+    "error_checking_token_registration": "プッシュトークン登録確認中にエラーが発生しました:"
+  },
+  "parser": {
+    "gender": {
+      "female": "女性",
+      "male": "男性"
+    }
+  }
+}

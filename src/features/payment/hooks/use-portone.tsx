@@ -11,6 +11,7 @@ import { usePortoneStore } from "./use-portone-store";
 import {queryClient} from "@shared/config/query";
 import { useEventControl } from "@/src/features/event/hooks";
 import { EventType } from "@/src/features/event/types";
+import { useTranslation } from "react-i18next";
 
 interface UsePortone {
   handlePaymentComplete: (
@@ -34,7 +35,7 @@ export function usePortone(): UsePortone {
   const { showModal, showErrorModal, hideModal } = useModal();
   const { gemCount, eventType, clearEventType } = usePortoneStore();
   const { paymentEvents } = useKpiAnalytics();
-  
+  const { t } = useTranslation();
   const { participate: participateFirstSale7 } = useEventControl({ type: EventType.FIRST_SALE_7 });
   const { participate: participateFirstSale16 } = useEventControl({ type: EventType.FIRST_SALE_16 });
   const { participate: participateFirstSale27 } = useEventControl({ type: EventType.FIRST_SALE_27 });
@@ -62,6 +63,7 @@ export function usePortone(): UsePortone {
       console.error('이벤트 참여 실패:', error);
     }
   }, [participateFirstSale7, participateFirstSale16, participateFirstSale27]);
+
 
   const handlePaymentComplete = useCallback(
     async (
@@ -119,26 +121,26 @@ trackPaymentSuccess(result);
               customTitle: (
                 <View className="w-full flex flex-row justify-center pb-[5px]">
                   <Text size="20" weight="bold" textColor="black">
-                    ❤️ 구매 완료
+                    {t("features.payment.ui.payment_modal.purchase_complete_title")}
                   </Text>
                 </View>
               ),
               children: (
                 <View className="flex flex-col gap-y-1 items-center">
                   <Text textColor="black" weight="semibold">
-                    구슬 {gemCount} 개 구매를 완료했어요
+                    {t("features.payment.ui.payment_modal.gem_purchase_complete", { gemCount })}
                   </Text>
                   <Text textColor="pale-purple" weight="semibold">
-                    결제가 완료되었으니 홈으로 이동할게요
+                    {t("features.payment.ui.payment_modal.payment_complete_redirect")}
                   </Text>
                 </View>
               ),
               primaryButton: {
-                text: "네 이동할게요",
+                text: t("features.payment.ui.payment_modal.confirm_redirect_button"),
                 onClick: () => router.push("/home"),
               },
               secondaryButton: {
-                text: "좀 더 구경할게요",
+                text: t("features.payment.ui.payment_modal.browse_more_button"),
                 onClick: hideModal,
               },
             });
@@ -147,21 +149,21 @@ trackPaymentSuccess(result);
           if (!gemCount) {
             showModal({
               showLogo: true,
-              title: "❤️ 구매 완료",
+              title: t("features.payment.ui.payment_modal.purchase_complete_title"),
               children: (
                 <View className="flex flex-col gap-y-1">
                   {productCount && (
                     <Text textColor="black" weight="semibold">
-                      연인 재매칭권 {productCount} 개 구매를 완료했어요
+                      {t("features.payment.ui.payment_modal.gem_purchase_complete", { productCount })}
                     </Text>
                   )}
                   <Text textColor="black" weight="semibold">
-                    결제가 완료되었으니 홈으로 이동할게요
+                    {t("features.payment.ui.payment_modal.payment_complete_redirect")}
                   </Text>
                 </View>
               ),
               primaryButton: {
-                text: "홈으로 이동",
+                text: t("features.payment.ui.payment_modal.go_home_button"),
                 onClick: () => router.push("/home"),
               },
             });

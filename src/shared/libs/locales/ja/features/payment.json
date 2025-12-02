@@ -1,0 +1,81 @@
+{
+  "ui": {
+    "gem_store": {
+      "banner": {
+        "guide_button_text": "既にある再マッチングチケットはどうなりますか？"
+      },
+      "error_alert_message": "決済処理中にエラーが発生しました",
+      "payment_error_console": "決済エラー:",
+      "payment_error_debug": "決済エラー発生時に新しい orderId を生成:",
+      "failed_to_load_gem_products": "ジェム商品の読み込みに失敗しました。",
+      "store_name": "ジェムショップ",
+      "header_title": "ジェムストア"
+    },
+    "rematch": {
+      "rematch_ticket_name": "カップルマッチングチケット",
+      "error_alert_message": "決済処理中にエラーが発生しました",
+      "purchase_count_tracking": "Purchase_Count",
+      "header_title": "マッチングチケット"
+    },
+    "tickets": {
+      "rematch": {
+        "rematch_ticket_name": "カップルマッチングチケット",
+        "rematch_ticket_name_repeat": "カップル再マッチングチケット",
+        "error_alert_message": "決済処理中にエラーが発生しました",
+        "payment_error_console": "決済エラー:",
+        "payment_error_debug": "決済エラー発生時に新しい orderId を生成:",
+        "payment_error_modal": "決済処理中にエラーが発生しました",
+        "order_name_single": "カップル再マッチングチケット",
+        "order_name_multiple": "カップル再マッチングチケット x{{productCount}}"
+      }
+    },
+    "portone": {
+      "script_load_failure": "Portone(I'mport)スクリプトの読み込みに失敗しました",
+      "payment_failure": "失敗"
+    },
+    "payment_modal": {
+      "purchase_complete_title": "❤️ 購入完了",
+      "gem_purchase_complete": "ジェム {{gemCount}} 個の購入が完了しました",
+      "payment_complete_redirect": "決済が完了したのでホームに戻ります",
+      "confirm_redirect_button": "はい、戻ります",
+      "browse_more_button": "もっと見てみる",
+      "rematch_ticket_purchase_complete": "カップル再マッチングチケット {{productCount}} 個の購入が完了しました",
+      "go_home_button": "ホームへ戻る"
+    },
+    "payment_error": {
+      "processing_error_console": "決済処理エラー:",
+      "processing_error_message": "決済処理中にエラーが発生しました"
+    },
+    "apple_gem_store": {
+      "server_verification_failed": "サーバー検証失敗",
+      "gem_purchase_title": "ジェム購入",
+      "loading_gem_products": "ジェム商品を読み込み中…"
+    },
+    "apple_first_sale_card": {
+      "time_sale_title": "🔥 タイムセール！今だけこの価格！",
+      "cheer_message": "💜 Sometimeがあなたの初めての出会いを応援します！",
+      "new_member_discount": "新規会員限定 初回ジェムパック特別割引"
+    },
+    "first_sale_card": {
+      "product_name_6_gems": "初回セール 6個"
+    },
+    "price_display": {
+      "total_prefix": "合計",
+      "currency_suffix": "円",
+      "discount_suffix": "%オフ"
+    },
+    "web_payment": {
+      "missing_env_vars": "決済用環境変数が不足しています。",
+      "web_only_error": "ウェブ環境でのみ利用可能です。",
+      "no_payment_result": "決済結果を取得できませんでした。",
+      "processing_payment_wait": "決済処理中です。少々お待ちください…"
+    }
+  },
+  "apps": {
+    "purchase": {
+      "complete": {
+        "processing_payment": "決済を処理中です…"
+      }
+    }
+  }
+}

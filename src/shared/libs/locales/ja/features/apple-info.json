@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "top_bar": {
+      "title": "Appleログイン"
+    },
+    "name_input": {
+      "title": "名前を入力してください",
+      "placeholder": "尾形ミホ"
+    },
+    "gender_selector": {
+      "title": "性別を選択してください",
+      "male": "男性",
+      "female": "女性"
+    },
+    "birth_input": {
+      "title": "誕生日を入力してください"
+    },
+    "phone_input": {
+      "title": "電話番号を入力してください"
+    },
+    "bottom_cta": {
+      "message": "会員登録のために情報を入力してください！",
+      "button_complete": "サムタイム始める",
+      "button_incomplete": "あなたがどんな人か教えてください！"
+    }
+  }
+}

@@ -17,17 +17,20 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 interface ArticleHeaderProps {
   isOwner: boolean;
   dropdownOpen: boolean;
   dropdownItems: DropdownItem[];
+  t: (key: string) => string;
 }
 
 const ArticleHeader: React.FC<ArticleHeaderProps> = ({
   isOwner,
   dropdownOpen,
   dropdownItems,
+  t,
 }) => (
   <HeaderWithNotification
     centerContent={<Text weight="bold">커뮤니티</Text>}
@@ -40,6 +43,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({
 );
 
 export default function ArticleDetailScreen() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const { article, isLoading, error } = useArticleDetail(id);
@@ -87,12 +91,12 @@ export default function ArticleDetailScreen() {
     () => [
       {
         key: "edit",
-        content: <Text textColor="black">수정</Text>,
+        content: <Text textColor="black">{t("apps.community.id.dropdown_edit")}</Text>,
         onPress: handleEdit,
       },
       {
         key: "delete",
-        content: <Text textColor="black">삭제</Text>,
+        content: <Text textColor="black">{t("apps.community.id.dropdown_delete")}</Text>,
         onPress: handleDelete,
       },
     ],
@@ -100,21 +104,20 @@ export default function ArticleDetailScreen() {
   );
 
   if (!id) {
-    return <Loading.Page title="잘못된 요청입니다" />;
+    return <Loading.Page title={t("apps.community.id.error_invalid")} />;
   }
 
   if (error) {
     return (
       <View className="flex-1 bg-surface-background justify-center items-center">
-        <Text>게시글을 불러오는 중 오류가 발생했습니다.</Text>
+        <Text>{t("apps.community.id.error_loading")}</Text>
       </View>
     );
   }
 
   if (isLoading || !isValidArticle(article)) {
-    return <Loading.Page title="게시글을 불러오고 있어요" />;
+    return <Loading.Page title={t("apps.community.id.loading")} />;
   }
-
   return (
     <DefaultLayout
       style={{ paddingBottom: insets.bottom }}
@@ -124,6 +127,7 @@ export default function ArticleDetailScreen() {
         isOwner={isOwner}
         dropdownOpen={isDropdownOpen}
         dropdownItems={dropdownItems}
+        t={t}
       />
 
       <View className="flex-1">

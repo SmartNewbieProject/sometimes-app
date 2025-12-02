@@ -1,3 +1,4 @@
+
 import { Image } from "expo-image";
 import { semanticColors } from '../../shared/constants/colors';
 import type React from "react";
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

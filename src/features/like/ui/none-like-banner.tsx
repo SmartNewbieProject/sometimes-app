@@ -3,22 +3,24 @@ import { semanticColors } from '../../../shared/constants/colors';
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../../auth";
+import { useTranslation } from "react-i18next";
+
 
 function NoneLikeBanner() {
   const { profileDetails } = useAuth();
   const router = useRouter();
-
+  const { t } = useTranslation();
   const title =
     profileDetails?.gender === "FEMALE" ? (
       <Text style={[styles.title, { fontSize: 14 }]}>
-        <Text style={styles.titleStrong}>‘좋아요'</Text>를 보내보셨나요?
+        <Text style={styles.titleStrong}>{t("features.like.ui.none_like_banner.title_female")}</Text>
       </Text>
     ) : (
       <Text style={[styles.title, { fontSize: 14 }]}>
-        잠시 <Text style={styles.titleStrong}>‘프로필'</Text>을 점검해 볼까요?
+        {t("features.like.ui.none_like_banner.title_male")} <Text style={styles.titleStrong}>{t("features.like.ui.none_like_banner.title_male_profile")}</Text>{t("features.like.ui.none_like_banner.title_male_1")}
       </Text>
     );
 
@@ -26,21 +28,21 @@ function NoneLikeBanner() {
     profileDetails?.gender === "FEMALE" ? (
       <View>
         <Text style={styles.description}>
-          마음에 드는 상대에게 '좋아요'를 보내고,{" "}
+          {t("features.like.ui.none_like_banner.description_female_part1")}
         </Text>
-        <Text style={styles.description}>설레는 반응을 기다려보세요!</Text>
+        <Text style={styles.description}>{t("features.like.ui.none_like_banner.description_female_part2")}</Text>
       </View>
     ) : (
       <View>
         <Text style={styles.description}>
-          취미나 관심사를 추가해서, 공통점을 찾고
+          {t("features.like.ui.none_like_banner.description_male_part1")}
         </Text>
-        <Text style={styles.description}>나만의 매력을 어필해 보세요!</Text>
+        <Text style={styles.description}>{t("features.like.ui.none_like_banner.description_male_part2")}</Text>
       </View>
     );
   return (
     <View style={{ marginTop: 20 }}>
-      <Text style={styles.text}>관심을 가진 사람이 아직 없어요</Text>
+      <Text style={styles.text}>{t("features.like.ui.none_like_banner.nothing_like")}</Text>
       <Pressable
         style={styles.container}
         onPress={() => {
@@ -95,13 +97,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 17,
     color: semanticColors.text.muted,
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: "Pretendard-ExtraBold",
+    fontFamily: "extrabold",
     color: semanticColors.brand.primary,
   },
   description: {
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.primary,
     fontSize: 12,
 
-    fontFamily: "Pretendard-Semibold",
+    fontFamily: "semibold",
     fontWeight: 600,
   },
   background: {

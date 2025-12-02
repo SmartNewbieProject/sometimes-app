@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 import { useReport } from "@/src/features/ban-report/hooks/useReport";
 import useLeaveChatRoom from "@/src/features/chat/queries/use-leave-chat-room";
@@ -24,6 +25,7 @@ import { Header } from "@shared/ui";
 const { width } = Dimensions.get("window");
 
 export default function ReportScreen() {
+  const { t } = useTranslation();
   const {
     partnerId,
     partnerName,
@@ -42,9 +44,9 @@ export default function ReportScreen() {
   const { mutate, isLoading, isError, error } = useReport();
   const { showModal, hideModal } = useModal();
   const [profile, setProfile] = useState({
-    name: "알 수 없는 사용자",
+    name: t("apps.partner.profile_unknown_name"),
     age: 0,
-    university: "알 수 없음",
+    university: t("apps.partner.profile_unknown_univ"),
     profileImage: "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG", // 기본 이미지
   });
 
@@ -56,6 +58,39 @@ export default function ReportScreen() {
 
   const chatLeaveMutate = useLeaveChatRoom();
 
+  const reportReasons = [
+    {
+      id: "1",
+      text: t("apps.partner.reason_1_text"),
+      subText: t("apps.partner.reason_1_sub"),
+    },
+    {
+      id: "2",
+      text: t("apps.partner.reason_2_text"),
+      subText: t("apps.partner.reason_2_sub"),
+    },
+    {
+      id: "3",
+      text: t("apps.partner.reason_3_text"),
+      subText: t("apps.partner.reason_3_sub"),
+    },
+    {
+      id: "4",
+      text: t("apps.partner.reason_4_text"),
+      subText: t("apps.partner.reason_4_sub"),
+    },
+    {
+      id: "5",
+      text: t("apps.partner.reason_5_text"),
+      subText: t("apps.partner.reason_5_sub"),
+    },
+    {
+      id: "6",
+      text: t("apps.partner.reason_6_text"),
+      subText: t("apps.partner.reason_6_sub"),
+    },
+  ];
+
   const handleReasonSelect = (id: string) => {
     setSelectedReasons((prev) => (prev.includes(id) ? [] : [id]));
   };
@@ -63,8 +98,8 @@ export default function ReportScreen() {
   const handleSubmitReport = () => {
     if (!partnerId) {
       showModal({
-        title: "오류",
-        children: "신고 대상을 찾을 수 없습니다.",
+        title: t("apps.partner.modal_image_error_title"),
+        children: t("apps.partner.modal_error_desc"),
         primaryButton: {
           text: "확인",
           onClick: () => hideModal(),
@@ -76,8 +111,8 @@ export default function ReportScreen() {
     const isOtherReasonSelected = selectedReasons.includes("6");
     if (isOtherReasonSelected && detailedContent.trim() === "") {
       showModal({
-        title: "필수 입력",
-        children: "상세 내용을 입력해주세요!",
+        title: t("apps.partner.modal_required_title"),
+        children: t("apps.partner.modal_required_desc"),
         primaryButton: {
           text: "확인",
           onClick: () => hideModal(),
@@ -128,8 +163,8 @@ export default function ReportScreen() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       showModal({
-        title: "권한 필요",
-        children: "사진을 선택하려면 미디어 라이브러리 접근 권한이 필요합니다.",
+        title: t("apps.partner.modal_permission_title"),
+        children: t("apps.partner.modal_permission_desc"),
         primaryButton: {
           text: "확인",
           onClick: () => hideModal(),
@@ -142,8 +177,8 @@ export default function ReportScreen() {
       const remainingSelectionLimit = 3 - selectedImageUris.length;
       if (remainingSelectionLimit <= 0) {
         showModal({
-          title: "알림",
-          children: "최대 3장의 이미지만 첨부할 수 있습니다.",
+          title: t("apps.partner.modal_alert_title"),
+          children: t("apps.partner.modal_alert_desc_max"),
           primaryButton: {
             text: "확인",
             onClick: () => hideModal(),
@@ -164,7 +199,6 @@ export default function ReportScreen() {
         const newSelectedFiles: any[] = [];
 
         for (const asset of result.assets) {
-          // 허용된 MIME 타입 (jpg, jpeg, png) 검사
           if (
             asset.mimeType === "image/jpeg" ||
             asset.mimeType === "image/png"
@@ -179,8 +213,10 @@ export default function ReportScreen() {
             });
           } else {
             showModal({
-              title: "알림",
-              children: `허용되지 않는 이미지 형식입니다: ${asset.mimeType}\njpg, jpeg, png 형식만 가능합니다.`,
+              title: t("apps.partner.modal_alert_title"),
+              children: t("apps.partner.modal_alert_desc_type", {
+                type: asset.mimeType,
+              }),
               primaryButton: {
                 text: "확인",
                 onClick: () => hideModal(),
@@ -197,11 +233,11 @@ export default function ReportScreen() {
     } catch (error) {
       console.error("이미지 선택 중 오류 발생:", error);
       showModal({
-        title: "오류",
-        children: "이미지 선택 중 오류가 발생했습니다.",
+        title: t("apps.partner.modal_image_error_title"),
+        children: t("apps.partner.modal_image_error_desc"),
         primaryButton: {
           text: "확인",
-          onClick: () => hideModal(), // 모달 닫기
+          onClick: () => hideModal(),
         },
       });
     }
@@ -209,18 +245,18 @@ export default function ReportScreen() {
 
   useEffect(() => {
     showModal({
-      title: "주의",
-      children: `신고하기 기능은 일시적으로\n상대방과의 매칭을 차단합니다.\n관리자 검토 후 확정 여부가 결정됩니다.`,
+      title: t("apps.partner.modal_notice_title"),
+      children: t("apps.partner.modal_notice_desc"),
       primaryButton: {
-        text: "이해했어요",
+        text: t("apps.partner.modal_notice_confirm"),
         onClick: () => hideModal(),
       },
     });
     if (partnerId) {
       setProfile({
-        name: partnerName || "알 수 없는 사용자",
+        name: partnerName || t("apps.partner.profile_unknown_name"),
         age: partnerAge ? Number.parseInt(partnerAge, 10) : 0,
-        university: partnerUniv || "알 수 없음",
+        university: partnerUniv || t("apps.partner.profile_unknown_univ"),
         profileImage:
           partnerProfileImage ||
           "https://placehold.co/100x100/CCCCCC/999999?text=NO+IMG",
@@ -234,7 +270,7 @@ export default function ReportScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.headerBackButton}
-          disabled={isLoading} // 로딩 중에는 뒤로가기 버튼 비활성화
+          disabled={isLoading}
         >
           <Feather name="chevron-left" size={24} color="#000" />
         </TouchableOpacity>
@@ -243,7 +279,7 @@ export default function ReportScreen() {
             source={require("@/assets/icons/emergency.png")}
             style={styles.headerIcon}
           />
-          <Text style={styles.headerTitleText}>신고하기</Text>
+          <Text style={styles.headerTitleText}>{t("apps.partner.header_title")}</Text>
         </View>
         <View style={styles.headerRightPlaceholder} />
       </View>
@@ -255,13 +291,15 @@ export default function ReportScreen() {
             style={styles.profileImage}
           />
           <View style={styles.profileTextContainer}>
-            <Text style={styles.profileAge}>만 {profile.age}세</Text>
+            <Text style={styles.profileAge}>
+                {t("apps.partner.profile_age", { age: profile.age })}
+              </Text>
             <Text style={styles.profileUniversity}>{profile.university}</Text>
           </View>
         </View>
 
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>신고 사유를 선택해주세요</Text>
+          <Text style={styles.sectionTitle}>{t("apps.partner.reason_select_title")}</Text>
           <View style={styles.reasonsList}>
             {reportReasons.map((reason) => (
               <TouchableOpacity
@@ -272,7 +310,7 @@ export default function ReportScreen() {
                     styles.reasonButtonSelected,
                 ]}
                 onPress={() => handleReasonSelect(reason.id)}
-                disabled={isLoading} // 로딩 중에는 선택 불가
+                disabled={isLoading}
               >
                 <View style={styles.radioCircle}>
                   {selectedReasons.includes(reason.id) && (
@@ -289,20 +327,20 @@ export default function ReportScreen() {
         </View>
 
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>상세 내용 (선택사항)</Text>
+          <Text style={styles.sectionTitle}>{t("apps.partner.detail_title")}</Text>
           <TextInput
             style={styles.detailedInput}
-            placeholder="신고 사유에 대해 자세히 설명해주세요..."
+            placeholder={t("apps.partner.detail_placeholder")}
             multiline
             value={detailedContent}
             onChangeText={setDetailedContent}
             placeholderTextColor="#9CA3AF"
-            editable={!isLoading} // 로딩 중에는 입력 불가
+            editable={!isLoading}
           />
         </View>
 
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>증거 자료 첨부 (선택사항)</Text>
+          <Text style={styles.sectionTitle}>{t("apps.partner.evidence_title")}</Text>
           <View style={styles.evidenceContainer}>
             {selectedImageUris.length === 0 ? (
               <TouchableOpacity
@@ -312,9 +350,9 @@ export default function ReportScreen() {
               >
                 <Feather name="camera" size={24} color="#9CA3AF" />
                 <Text style={styles.attachEvidenceText}>
-                  스크린샷이나 증거 이미지를 첨부해주세요
+                  {t("apps.partner.evidence_attach_text")}
                 </Text>
-                <Text style={styles.attachFileButton}>파일 선택</Text>
+                <Text style={styles.attachFileButton}>{t("apps.partner.evidence_attach_file")}</Text>
               </TouchableOpacity>
             ) : (
               <View style={styles.selectedImagesPreviewContainer}>
@@ -358,12 +396,8 @@ export default function ReportScreen() {
             <Text style={styles.infoIconText}>i</Text>
           </View>
           <View style={styles.infoTextWrapper}>
-            <Text style={styles.infoText}>
-              신고 접수 후 검토까지 1-3일 소요됩니다.
-            </Text>
-            <Text style={styles.infoText}>
-              허위 신고 시 계정 제재를 받을 수 있습니다.
-            </Text>
+            <Text style={styles.infoText}>{t("apps.partner.info_1")}</Text>
+            <Text style={styles.infoText}>{t("apps.partner.info_2")}</Text>
           </View>
         </View>
       </ScrollView>
@@ -380,7 +414,7 @@ export default function ReportScreen() {
           {isLoading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.submitButtonText}>신고 접수하기</Text>
+            <Text style={styles.submitButtonText}>{t("apps.partner.button_submit")}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -662,15 +696,3 @@ const styles = StyleSheet.create({
   },
 });
 
-const reportReasons = [
-  { id: "1", text: "부적절한 언어 사용", subText: "욕설, 비하 발언 등" },
-  { id: "2", text: "허위 프로필", subText: "가짜 사진, 거짓 정보 등" },
-  {
-    id: "3",
-    text: "성희롱 또는 괴롭힘",
-    subText: "원치 않는 성적 메시지 등",
-  },
-  { id: "4", text: "스팸 또는 광고", subText: "홍보, 영리목적 메시지 등" },
-  { id: "5", text: "미성년자", subText: "18세 미만으로 의심됨" },
-  { id: "6", text: "기타", subText: "위에 해당하지 않는 않는 사유" },
-];

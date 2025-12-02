@@ -3,9 +3,9 @@ import type React from "react";
 import {
   Text as RNText,
   type TextStyle,
-  type TextProps as RNTextProps,
-} from "react-native";
+  type TextProps as RNTextProps, StyleSheet } from "react-native";
 import { cn } from "../../libs/cn";
+import { useAppFont, type FontWeight } from "../../hooks/use-app-font";
 
 const textStyles = cva("text-base", {
   variants: {
@@ -18,10 +18,10 @@ const textStyles = cva("text-base", {
       sm: "text-sm",
       md: "text-md",
       "10": "text-[10px]",
+      "12": "text-[12px]",
+      "13": "text-[13px]",
       "18": "text-[18px]",
       "20": "text-[20px]",
-      "13": "text-[13px]",
-      "12": "text-[12px]",
       chip: "text-[13px]",
       lg: "text-lg",
       xl: "text-xl",
@@ -29,11 +29,15 @@ const textStyles = cva("text-base", {
       "3xl": "text-3xl",
     },
     weight: {
-      normal: "font-normal",
+      thin: "font-thin",
+      extralight: "font-extralight",
+      light: "font-light",
+      regular: "font-normal",
       medium: "font-medium",
       semibold: "font-semibold",
-      light: "font-light",
       bold: "font-bold",
+      extrabold: "font-extrabold",
+      black: "font-black",
     },
     textColor: {
       white: "text-text-inverse",
@@ -54,7 +58,7 @@ const textStyles = cva("text-base", {
   defaultVariants: {
     variant: "primary",
     size: "md",
-    weight: "normal",
+    weight: "regular",
     textColor: "dark",
   },
 });
@@ -64,12 +68,13 @@ export type TextProps = VariantProps<typeof textStyles> &
     children?: React.ReactNode;
     className?: string;
     style?: TextStyle | TextStyle[];
+    weight?: FontWeight;
   };
 
 export const Text: React.FC<TextProps> = ({
   variant,
   size,
-  weight,
+  weight = "regular",
   textColor,
   className = "",
   style,
@@ -81,6 +86,10 @@ export const Text: React.FC<TextProps> = ({
     : style
       ? [style]
       : undefined;
+
+  const fontFamily = useAppFont(weight);
+
+  const textStyle = StyleSheet.flatten([{ fontFamily }, style]);
 
   return (
     <RNText

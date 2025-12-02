@@ -1,0 +1,14 @@
+{
+  "apple": {
+    "unit_piece": "개",
+    "unit_currency": "원",
+    "discount_suffix": "% 할인",
+    "popular_badge": "인기"
+  },
+  "common": {
+    "unit_piece": "개",
+    "unit_currency": "원",
+    "discount_suffix": "% 할인",
+    "popular_badge": "인기"
+  }
+}

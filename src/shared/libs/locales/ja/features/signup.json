@@ -1,0 +1,99 @@
+{
+  "ui": {
+    "logo": {
+      "tagline": "大学生の本当のときめきが、ここから始まる"
+    },
+    "login_form": {
+      "pass_loading": "PASS認証中…",
+      "pass_login": "PASSでログイン",
+      "kakao_login": "カカオでログイン",
+      "kakao_button_label": "カカオログイン",
+      "apple_login_preparing": "Appleログイン準備中…",
+      "apple_login": "Appleでログイン",
+      "apple_login_availability_check_failed": "Appleログイン利用確認に失敗しました：",
+      "apple_js_load_failed": "Apple JSの読み込みに失敗しました",
+      "backend_request_failed": "サーバーリクエストに失敗しました：",
+      "popup_closed_by_user": "ポップアップが閉じられました",
+      "web_apple_login_failed": "WebでのAppleログインに失敗しました：",
+      "login_canceled_by_user": "ログインがキャンセルされました",
+      "ios_apple_login_failed": "iOSでのAppleログインに失敗しました：",
+      "pass_auth_login": "PASS認証でログイン",
+      "login_button": "ログイン",
+      "signup_button": "新規登録",
+      "confirm_button": "確認",
+      "close_button": "閉じる",
+      "registration_restricted_title": "登録制限",
+      "registration_restricted_message": "通報やプロフィール情報の不備などにより、登録が制限されています。",
+      "kakao_login_error": "カカオログインエラー：",
+      "kakao_auth_code_received": "カカオ認証コードを受信しました：",
+      "url_parsing_error": "URL解析エラー：",
+      "blacklist_check_error": "ブラックリスト確認エラー：",
+      "login_processing_error": "ログイン処理エラー：",
+      "web_localstorage_save_failed": "Web環境ですが、localStorageに保存できませんでした。"
+    },
+    "area": {
+      "university_suffix": "大学",
+      "descriptions": {
+        "open_22_unis": "22大学オープン完了！",
+        "open_28_unis": "28大学オープン完了！",
+        "open_32_unis": "32大学オープン完了！",
+        "open_11_unis": "11大学オープン完了！",
+        "open_13_unis": "13大学オープン完了！",
+        "open_12_unis": "12大学オープン完了！",
+        "coming_soon": "近日オープン予定"
+      }
+    },
+    "university_types": {
+      "national": "国立",
+      "private": "私立",
+      "ist": "科学技術院",
+      "provincial": "公立",
+      "unknown": "不明"
+    },
+    "validation": {
+      "email_required": "メールアドレスを入力してください。",
+      "email_invalid": "有効なメールアドレスを入力してください。",
+      "password_required": "パスワードを入力してください。",
+      "password_invalid": "英数字と記号を含む8文字以上で入力してください。",
+      "password_confirm_required": "確認用パスワードを入力してください。",
+      "phone_required": "電話番号を入力してください。",
+      "phone_invalid": "有効な電話番号を入力してください。",
+      "auth_code_required": "認証コードを入力してください。",
+      "auth_code_invalid": "有効な認証コードを入力してください。",
+      "name_required": "名前を入力してください。",
+      "birthday_required": "生年月日を入力してください。",
+      "birthday_length": "生年月日は6桁で入力してください。",
+      "birthday_numeric": "数字のみ入力してください。",
+      "birthday_invalid_date": "存在しない日付です。",
+      "gender_required": "性別を選択してください。",
+      "mbti_required": "MBTIを選択してください。"
+    },
+    "university_search_placeholder": "大学を検索",
+    "department_search_loading": "学科を検索中です…",
+    "department_search_placeholder": "学科を入力してください",
+    "grade_select_placeholder": "学年を選択",
+    "grade_1": "1年生",
+    "grade_2": "2年生",
+    "grade_3": "3年生",
+    "grade_4": "4年生",
+    "grade_5": "5年生",
+    "grade_6": "6年生",
+    "student_id_select_placeholder": "入学年度を選択",
+    "student_id_25": "25年",
+    "student_id_24": "24年",
+    "student_id_23": "23年",
+    "student_id_22": "22年",
+    "student_id_21": "21年",
+    "student_id_20": "20年",
+    "student_id_19": "19年",
+    "student_id_enter_directly": "直接入力する",
+    "grade_suffix": "年生"
+  },
+  "agreements": {
+    "privacy": "（必須）個人情報の収集・利用に同意",
+    "terms": "（必須）利用規約に同意",
+    "location": "（必須）プライバシーポリシーに同意",
+    "sensitive": "（必須）センシティブ情報の利用に同意",
+    "marketing": "（任意）マーケティング通知を受け取る"
+  }
+}

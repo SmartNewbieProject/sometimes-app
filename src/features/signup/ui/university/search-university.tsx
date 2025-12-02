@@ -2,6 +2,7 @@ import SearchIcon from "@assets/icons/search.svg";
 import { semanticColors } from '../../../../shared/constants/colors';
 import type React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useWindowWidth } from "../../hooks";
 
 interface SearchUniversityProps {
@@ -13,6 +14,7 @@ function SearchUniversity({
   searchText,
   setSearchText,
 }: SearchUniversityProps) {
+  const { t } = useTranslation();
   const width = useWindowWidth();
   const searchWidth = width > 480 ? 436 : width - 48;
 

@@ -8,6 +8,7 @@ import { track } from "@amplitude/analytics-react-native";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -16,6 +17,7 @@ const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function PersonalitySelectionScreen() {
+  const { t } = useTranslation();
   const { updateStep } = useMyInfoStep();
   const { personality, updateForm } = useMyInfoForm();
   const {
@@ -43,9 +45,9 @@ export default function PersonalitySelectionScreen() {
 
   const nextMessage = (() => {
     if (!personality) {
-      return "최대 3개 선택 가능";
+      return t("apps.my-info.personality.max_3");
     }
-    return "다음으로";
+    return t("apps.my-info.personality.next");
   })();
 
   const onNext = () => {
@@ -68,10 +70,10 @@ export default function PersonalitySelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            당신의 성격을
+            {t("apps.my-info.personality.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            말씀해주세요!
+            {t("apps.my-info.personality.title_2")}
           </Text>
         </View>
 
@@ -88,7 +90,7 @@ export default function PersonalitySelectionScreen() {
 
         <View style={styles.chipSelector}>
           <Loading.Lottie
-            title="성격 유형을 불러오고 있어요"
+            title={t("apps.my-info.personality.loading")}
             loading={isLoading}
           >
             <ChipSelector

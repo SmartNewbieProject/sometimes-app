@@ -1,0 +1,151 @@
+{
+  "ui": {
+    "articles": {
+      "faq_title": "[FAQ] よくある質問"
+    },
+    "guideline": {
+      "title": "SOMETIMEコミュニティ利用ガイドライン",
+      "welcome_message": "こんにちは！SOMETIMEコミュニティへようこそ。",
+      "guideline_purpose": "みんなが安心して楽しく交流できる場を作るため、以下のガイドラインを守ってください。",
+      "basic_rules_title": "基本ルール",
+      "rule_1": "1. 相互尊重：他の会員の意見や考えを尊重しましょう。中傷、嘲笑、差別的な発言はご遠慮ください。",
+      "rule_2": "2. 個人情報保護：本人または他人の実名、連絡先、SNS IDなどの個人情報は公開しないでください。",
+      "rule_3": "3. 健全な内容：違法・わいせつ・暴力的な内容の投稿やコメントは禁止です。",
+      "rule_4": "4. 広告禁止：商業的な宣伝や広告コンテンツの投稿は禁止です。",
+      "writing_tips_title": "投稿のコツ",
+      "tip_1": "・タイトルは内容を分かりやすく反映させましょう。",
+      "tip_2": "・他の会員に役立つ情報や経験をシェアしてみましょう。",
+      "tip_3": "・質問や相談は具体的に書くと、より良い回答を得やすいです。",
+      "tip_4": "・楽しいデートスポットやアクティビティを共有するのもおすすめです！",
+      "report_and_sanction_title": "通報と措置",
+      "sanction_message_1": "ガイドラインに違反する投稿やコメントは管理者により削除される場合があり、違反の程度によってはアカウント利用が制限されることがあります。",
+      "sanction_message_2": "不適切なコンテンツを見つけた場合は通報機能をご利用ください。楽しく有意義なコミュニティ活動を！💕"
+    },
+    "infinite_article_list": {
+      "comment_category_change": "カテゴリが変わった場合 → データ準備完了までスケルトン固定",
+      "comment_data_loaded": "新しいデータが届いた、または読み込み完了したらスケルトン解除",
+      "delete_article_title": "投稿削除",
+      "delete_article_confirm": "この投稿を削除しますか？",
+      "delete_button": "削除する",
+      "faq_title": "[FAQ] よくある質問"
+    },
+    "article": {
+      "edit_button": "編集",
+      "delete_button": "削除",
+      "report_button": "通報",
+      "view_more_replies": "返信をもっと見る"
+    },
+    "article_detail": {
+      "comment_arrow_indent_comment": "返信の場合は矢印アイコンとインデント",
+      "like_count_comment": "いいね数表示 - いいねがある場合のみ",
+      "action_buttons_comment": "アクション",
+      "reply_button_comment": "返信",
+      "like_button_comment": "いいね",
+      "more_button_comment": "その他（投稿者のみ）",
+      "dropdown_modal_comment": "ドロップダウンメニューModal",
+      "edit_button": "編集",
+      "delete_button": "削除",
+      "loading_comments": "コメントを読み込んでいます",
+      "header_title": "コミュニティ",
+      "invalid_request": "不正なリクエストです",
+      "loading_error": "投稿読み込み中にエラーが発生しました",
+      "loading_article": "投稿を読み込んでいます"
+    },
+    "article_write_screen": {
+      "form": {
+        "alert_title": "お知らせ",
+        "alert_image_limit": "画像は最大5枚まで選択できます。",
+        "title_placeholder": "タイトルを入力してください。",
+        "content_placeholder": "内容を入力してください。",
+        "add_image_button": "画像追加"
+      },
+      "modal": {
+        "short_content": {
+          "title": "短すぎます",
+          "desc": "タイトルと本文は3文字以上で入力してください。"
+        },
+        "overflow": {
+          "title": "文字数オーバー",
+          "desc": "本文は2000文字以内で入力してください。"
+        },
+        "success": {
+          "title": "投稿完了",
+          "desc": "投稿が完了しました。"
+        },
+        "fail": {
+          "title": "投稿失敗",
+          "desc": "投稿中にエラーが発生しました"
+        },
+        "confirm_checked": "確認しました"
+      },
+      "header": {
+        "write_post": "投稿する",
+        "edit_post": "投稿を編集",
+        "complete_button": "完了"
+      },
+      "nav": {
+        "anonymous": "匿名"
+      }
+    },
+    "article_edit_screen": {
+      "loading": "投稿を読み込んでいます。",
+      "modal": {
+        "short_content": {
+          "title": "短すぎます",
+          "desc": "タイトルと本文は3文字以上で入力してください。"
+        },
+        "overflow": {
+          "title": "文字数オーバー",
+          "desc": "本文は2000文字以内で入力してください。"
+        },
+        "success": {
+          "title": "完了",
+          "desc_1": "投稿が修正されました！",
+          "desc_2": "投稿へ移動します。"
+        },
+        "confirm_checked": "確認しました",
+        "confirm_move": "はい、移動します"
+      }
+    },
+    "report": {
+      "alert": {
+        "title": "通報が完了しました。",
+        "desc": "管理者が確認後、適切な対応を行います。\nこの投稿は会員様には表示されません。"
+      },
+      "title": "不適切な投稿を見つけましたか？",
+      "desc": "通報内容は管理者が確認後、適切な対応を行います。",
+      "button": "通報する",
+      "header": "通報する",
+      "reasons": {
+        "spam": "スパム/連投投稿",
+        "abuse": "暴言/差別表現",
+        "sexual": "性的/わいせつな内容",
+        "privacy": "個人情報の公開/プライバシー侵害",
+        "ad": "商業的広告/宣伝",
+        "image": "不適切な画像",
+        "bullying": "嫌がらせ/脅迫",
+        "rule": "コミュニティ規則違反"
+      }
+    },
+    "category_list": {
+      "comment_category_change_cache_reset": "カテゴリ数（またはコード構成）が変わったら、以前のレイアウトキャッシュを初期化",
+      "comment_button_wrapper_layout_save": "各コンテナのレイアウト保存",
+      "loading_categories": "カテゴリを読み込んでいます"
+    },
+    "comment": {
+      "university_name": "韓国・ハンバット大学",
+      "input_form": {
+        "comment_edit_reply_mode_comment": "編集モードまたは返信作成モード表示",
+        "editing_comment": "コメントを編集中...",
+        "replying_comment": "返信を作成中...",
+        "anonymous": "匿名",
+        "comment_placeholder": "コメントを入力してください",
+        "cancel": "戻る"
+      }
+    },
+    "user_profile": {
+      "me_indicator": "（自分）",
+      "separator": "·"
+    }
+  }
+}

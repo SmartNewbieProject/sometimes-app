@@ -6,12 +6,14 @@ import { Text, View } from "react-native";
 import { getPreviewHistory, postUnlockProfile } from "../apis";
 import type { PreviewMatchingHistory } from "../type";
 import {useCashableModal} from "@shared/hooks";
+import { useTranslation } from "react-i18next";
 
 export const useUnlockProfile = (matchId: string) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showErrorModal, showModal } = useModal();
   const { show } = useCashableModal();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: () => postUnlockProfile(matchId),
@@ -23,9 +25,9 @@ export const useUnlockProfile = (matchId: string) => {
     },
     onError: (err: { error: string; status: number }) => {
       console.log("err", err.error);
-      if (err.error === '남은 재화가 부족합니다' || err.status === 400) {
+      if (err.error === t('features.matching-history.ui.messages.error_insufficient_gems') || err.status === 400) {
         show({
-          textContent: '지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!',
+          textContent: t('features.matching-history.ui.messages.modal_recharge_prompt'),
         });
         return;
       }

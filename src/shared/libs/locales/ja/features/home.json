@@ -1,0 +1,74 @@
+{
+  "ui": {
+    "layout": {
+      "loading_user_info": "ユーザー情報を確認しています..."
+    },
+    "banner_slide": {
+      "loading_title": "何人がマッチングを申請したのでしょうか？"
+    },
+    "announce_card": {
+      "text": "好みのタイプを教えていただければ、もっと正確にマッチングをお手伝いします！"
+    },
+    "community_announcement": {
+      "greeting": "{{name}}さんも参加できます",
+      "default_user": "会員",
+      "success_story_prompt": "恋愛成功体験、ぜひチェックしてみてください！"
+    },
+    "first_purchase_event_banner": {
+      "title": "は初めてですか？",
+      "brand_name": "サムタイム",
+      "description_1": "あなたのためだけの",
+      "description_2": "をご用意しました！",
+      "special_match": "特別な出会い",
+      "comment_android_shadow": "Androidでのシャドウ"
+    },
+    "matching_status": {
+      "title": "サムタイム マッチング状況",
+      "success_rate": "マッチング成功率",
+      "new_matches_this_week": "今週の新しいマッチング"
+    },
+    "review_slide": {
+      "anonymous": "匿名",
+      "review_1": "最初はInstagramの広告で見かけて、半信半疑で登録しました😀 釜山地域まで広がったという広告だったんですが、実際にマッチングを通じて良い友達ができて、さらに最近は素敵な女性とも出会えました。他のアプリのように課金を強制されることもなく、無料でも良い出会いを作れる一番良いアプリだと思います！開発者の皆さん、本当に感謝しています。ありがとうございます！！",
+      "review_2": "他のアプリは大体ソウルや首都圏の人ばかりで残念でしたが、ここではテジョンの人とも会えるのでそこがいいと思います。毎週2回マッチングしてくれるので好みのタイプをすぐに見つけられました。イケメンが多くて嬉しいし、何より安全なアプリだと思います！！",
+      "review_3": "3日に1回無料の再マッチング機能があるので、夜9時が楽しみな時間になりました。まだあまり知られていないのは残念ですが、そのうち恋人募集中の人たちが集まってくる気がします...笑 新しい人たちと知り合えて楽しいです！もっと多くの方に使っていただき、新しい人と出会えることを願ってます！",
+      "review_4": "実際にこのアプリを通してデートも何度かしていて、大学の同期にどんどん勧めてます！こんなアプリを無料で使えるだけでも感謝です。",
+      "review_5": "今までの他のマッチングアプリは『好みを参考にする』と言いながら全然反映されなかったり、適当にマッチングされることが多かったですが、サムタイムはAIが好みを反映してマッチングしてくれるので正確さが高いと思います！これからもっと使ってみる予定です！大学生同士だからさらに良いですね🥰"
+    },
+    "tip_announcement": {
+      "title": "今日の出会いのワンポイントアドバイス",
+      "tip": "わかり合おうとする気持ちが、いい出会いを育てます"
+    },
+    "total_match_counter": {
+      "count_prefix": "これまでに",
+      "count_suffix": "人が申請しました！"
+    },
+    "university_form": {
+      "grade": "学年",
+      "student_number": "学籍番号",
+      "error_university_name": "大学名を入力してください。",
+      "error_department_name": "学科を選択してください。",
+      "error_grade": "学年を選択してください。",
+      "error_student_number": "学籍番号を入力してください。",
+      "submit_button": "大学情報を更新する",
+      "university_label": "大学",
+      "university_placeholder": "大学名を入力してください",
+      "department_label": "学科",
+      "department_placeholder": "学科を選択してください",
+      "student_number_placeholder": "学籍番号を選択",
+      "grade_placeholder": "学年を選択"
+    },
+    "home_info": {
+      "home_info_section": {
+        "status_complete": "完了",
+        "status_incomplete": "入力する",
+        "my_info_title": "私の情報",
+        "my_info_description": "性格、趣味、恋愛スタイルなど",
+        "my_info_tooltip": "好みのマッチングのために自分の情報を入力しましょう！",
+        "preference_info_title": "好みのタイプ情報",
+        "preference_info_description": "求める性格、趣味、飲酒など",
+        "preference_info_tooltip": "好みのマッチングのためにタイプ情報を入力しましょう！"
+      }
+    }
+  }
+}

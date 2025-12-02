@@ -1,0 +1,13 @@
+{
+  "ui": {
+    "partner_image": {
+      "alt_text": "相手のプロフィール"
+    }
+  },
+  "queries": {
+    "modal_title_period_ended": "閲覧期間が終了しました",
+    "modal_content_partner_period_ended": "相手の閲覧期間が終了しました",
+    "modal_content_use_rematching_ticket": "もう一度閲覧するには、リマッチチケットを使用してください",
+    "modal_button_confirm": "確認しました"
+  }
+}

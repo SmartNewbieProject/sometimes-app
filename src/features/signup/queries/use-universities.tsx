@@ -8,8 +8,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams } from "expo-router";
 import { getUniversitiesByRegion } from "../apis";
 import { getAllRegionList, getRegionsByRegionCode } from "../lib";
+import { useTranslation } from "react-i18next";
 
 export default function useUniversities() {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({
     queryFn: () => getUniversitiesByRegion(getAllRegionList()),
     queryKey: ["universities", "all"],

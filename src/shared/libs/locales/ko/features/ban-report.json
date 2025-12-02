@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "use_report": {
+      "modal_title_success": "신고 접수",
+      "modal_message_success": "신고가 성공적으로 접수되었습니다.",
+      "modal_title_error": "신고 실패",
+      "default_error_message": "신고 제출에 실패했습니다. 다시 시도해주세요."
+    }
+  },
+  "services": {
+    "report": {
+      "param_payload_comment": "신고에 필요한 데이터 (userId, reason, description, evidenceImages)",
+      "returns_comment": "서버 응답 데이터",
+      "add_images_comment": "evidenceImages가 존재하면 FormData에 추가",
+      "create_blob_comment": "이미지 URI로부터 Blob 객체 생성",
+      "auth_interceptor_comment": "Bearer Token은 axiosClient 인터셉터에서 추가."
+    }
+  }
+}

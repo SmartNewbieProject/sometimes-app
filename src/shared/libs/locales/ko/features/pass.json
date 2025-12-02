@@ -1,0 +1,18 @@
+{
+  "ageRestriction": {
+    "title": "가입 가능 연령이 아니에요",
+    "subtitle": "안전하고 건전한 만남을 위해 만 18세 이상 27세 이하만 가입 가능해요.",
+    "bottomText": "가입 가능 연령이 되면 다시 찾아주세요!",
+    "usageConditions": {
+      "title": "확인된 이용 조건",
+      "ageRange": "만 18세 이상 27세 이하",
+      "education": "대학교 재학 중 또는 졸업",
+      "verification": "대학 이메일 인증 필수"
+    },
+    "birthDateCheck": "생년월일 기준으로 가입 가능 여부를 확인해요",
+    "findIdealTypeButton": "이상형 찾으러 가기 →"
+  },
+  "mobile-identity-verification":{
+    "title": "본인 인증"
+  }
+}

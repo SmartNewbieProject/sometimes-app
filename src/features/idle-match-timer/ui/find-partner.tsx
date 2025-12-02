@@ -1,12 +1,15 @@
 import React from "react";
 import { semanticColors } from '../../../shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+
 
 function FindPartner() {
+  const { t } = useTranslation();
   return (
     <View style={styles.card}>
       <View style={styles.seeMore}>
-        <Text style={styles.seeMoreText}>더보기</Text>
+        <Text style={styles.seeMoreText}>{t("features.idle-match-timer.ui.find-partner.button_more")}</Text>
       </View>
     </View>
   );
@@ -36,7 +39,7 @@ const styles = StyleSheet.create({
   },
   seeMoreText: {
     color: semanticColors.text.inverse,
-    fontFamily: "Pretendard-Bold",
+    fontFamily: "bold",
     fontWeight: 700,
     fontSize: 16,
   },

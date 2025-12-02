@@ -4,6 +4,7 @@ import { PreferenceKeys } from "@/src/features/interest/queries";
 import Layout from "@/src/features/layout";
 import { useMbti } from "@/src/features/mypage/hooks";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
+import { useTranslation } from 'react-i18next';
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
 import { track } from "@amplitude/analytics-react-native";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -16,6 +17,7 @@ const { InterestSteps } = services;
 const { usePreferenceOptionsQuery } = queries;
 
 function BadMbti() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [mbtiValue, setMbtiValue] = useState<string>("");
   const { badMbti, updateForm } = useInterestForm();
@@ -29,9 +31,9 @@ function BadMbti() {
 
   const nextMessage = (() => {
     if (!badMbti) {
-      return "상관없어요";
+      return t("apps.interest.bad_mbti.next_none");
     }
-    return "다음으로";
+    return t("global.next");
   })();
 
   const onNext = () => {
@@ -49,7 +51,7 @@ function BadMbti() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            당신이 싫어하는 MBTI 유형은?
+            {t("apps.interest.bad_mbti.title")}
           </Text>
         </View>
         <View style={styles.bar} />

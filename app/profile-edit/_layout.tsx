@@ -9,15 +9,17 @@ import {
   ToggleTab,
 } from "@/src/features/profile-edit/ui";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const TABS: Tab[] = [
-  { id: "profile", label: "나의 프로필" },
-  { id: "interest", label: "이상형" },
-];
-
 export default function ProfileEditLayout() {
+  const { t } = useTranslation();
+  const TABS: Tab[] = [
+    { id: "profile", label: t("apps.profile_edit.tabs.profile") },
+    { id: "interest", label: t("apps.profile_edit.tabs.interest") },
+  ];
+
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathname = usePathname();

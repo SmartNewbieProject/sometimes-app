@@ -1,0 +1,34 @@
+{
+  "withdrawal": {
+    "reason_partner": "恋人ができたから",
+    "reason_matching": "タイプの人とマッチングしないから",
+    "reason_privacy": "個人情報の保護に不安がある",
+    "reason_safety": "安全性に問題がある",
+    "reason_technical": "技術的な問題がある",
+    "reason_inactive": "機能性に不満がある",
+    "reason_dissatisfied": "サービスの満足度が低いから",
+    "reason_other": "その他",
+    "reason_select_error": "理由を選択してください",
+    "modal_title": "またお会いしましょう",
+    "modal_desc_1": "退会が完了しました",
+    "modal_desc_2": "またいつかお会いできるのを楽しみにしています",
+    "title": "またお会いしましょう",
+    "textarea_placeholder": "その他の理由を入力してください",
+    "button_prev": "戻る",
+    "button_next": "サービスを退会する"
+  },
+  "info": {
+    "dating_style": {
+      "title_1": "あなたに一番合う",
+      "title_2": "恋愛スタイルはどれですか？",
+      "loading": "恋愛スタイルのオプションを読み込んでいます",
+      "next_count": "あと{{count}}つ！"
+    },
+    "done": {
+      "title_1": "あなたの情報を確認しました",
+      "title_2": "さあ、ときめく出会いを始めましょう",
+      "desc": "Sometimeが{{name}}さんの好みの相手を見つけます",
+      "button": "好みの相手を探しに行く →"
+    }
+  }
+}

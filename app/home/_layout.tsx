@@ -4,8 +4,11 @@ import Loading from "@/src/features/loading";
 import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
+
 
 export default function HomeLayout() {
+  const { t } = useTranslation();
   const { my } = useAuth();
   const [statusChecked, setStatusChecked] = useState(false);
   const { data: statusData, isLoading } = useUserStatus(my.phoneNumber);
@@ -26,7 +29,7 @@ export default function HomeLayout() {
             params: {
               phoneNumber: my.phoneNumber,
               rejectionReason:
-                statusData.rejectionReason || "승인이 거절되었습니다.",
+                statusData.rejectionReason || t("apps.home.rejected"),
             },
           });
           return;
@@ -42,7 +45,7 @@ export default function HomeLayout() {
   }, [my?.phoneNumber, statusChecked, isLoading]);
 
   if (!statusChecked) {
-    return <Loading.Page title="사용자 정보를 확인하고 있어요..." />;
+    return <Loading.Page title={t("apps.auth.layout.auth_def")} />;
   }
 
   return (

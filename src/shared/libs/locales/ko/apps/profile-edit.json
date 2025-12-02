@@ -1,0 +1,12 @@
+{
+  "tabs": {
+    "profile": "나의 프로필",
+    "interest": "이상형"
+  },
+  "ui": {
+    "save_button": "저장",
+    "validation": {
+      "empty_form": "비어있는 양식이 존재합니다."
+    }
+  }
+}

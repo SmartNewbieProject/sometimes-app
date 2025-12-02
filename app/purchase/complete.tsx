@@ -4,10 +4,12 @@ import { router, useGlobalSearchParams } from 'expo-router';
 import { View, ActivityIndicator } from "react-native";
 import { Text } from "@shared/ui";
 import { usePortone } from "@/src/features/payment/hooks";
+import { useTranslation } from "react-i18next";
 
 const { apis } = Payment;
 
 export default function PaymentComplete() {
+  const { t } = useTranslation();
   const { txId, paymentId, custom_data: customData } = useGlobalSearchParams();
   const { handlePaymentComplete } = usePortone();
 
@@ -47,7 +49,7 @@ export default function PaymentComplete() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <ActivityIndicator size="large" color="#8B5CF6" />
       <Text textColor="pale-purple" weight="semibold" className="mt-4">
-        결제를 처리중입니다...
+        {t("apps.purchase.complete.processing_payment")}
       </Text>
     </View>
   );

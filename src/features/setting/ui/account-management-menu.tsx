@@ -3,9 +3,11 @@ import { semanticColors } from '../../../shared/constants/colors';
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import Menu from "./menu";
 
 const AccountManagementMenu = () => {
+  const { t } = useTranslation();
   const { logout } = useAuth();
   const { showModal } = useModal();
 
@@ -45,13 +47,13 @@ const AccountManagementMenu = () => {
             onClick: () => {},
           },
           secondaryButton: {
-            text: "로그아웃",
+            text: t("features.setting.ui.menu.logout"),
             onClick: logout,
           },
         }),
     },
     {
-      text: "회원 탈퇴",
+      text: t("features.setting.ui.menu.member_withdrawal"),
       onClick: () =>
         showModal({
           showLogo: true,
@@ -88,7 +90,7 @@ const AccountManagementMenu = () => {
         }),
     },
   ];
-  return <Menu title="계정 관리" options={options} />;
+  return <Menu title={t("features.setting.ui.menu.account_management")} options={options} />;
 };
 
 const styles = StyleSheet.create({

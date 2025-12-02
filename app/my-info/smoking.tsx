@@ -9,6 +9,7 @@ import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -16,28 +17,29 @@ const { useMyInfoForm, useMyInfoStep } = hooks;
 const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-const tooltips = [
-  {
-    title: "비흡연자",
-    description: [
-      "담배를 전혀 피우지 않아요",
-      "간접흡연도 불편해요",
-      "금연한 지 오래됐어요",
-    ],
-  },
-  {
-    title: "전자담배",
-    description: ["일반 담배 대신 전자담배만 사용해요"],
-  },
-  {
-    title: "흡연자",
-    description: ["일반 담배를 피워요"],
-  },
-];
-
 export default function SmokingSelectionScreen() {
+  const { t } = useTranslation();
   const { updateStep } = useMyInfoStep();
   const { smoking, updateForm } = useMyInfoForm();
+
+  const tooltips = [
+    {
+      title: t("apps.my-info.smoking.tooltip_0_title"),
+      description: [
+        t("apps.my-info.smoking.tooltip_0_desc_1"),
+        t("apps.my-info.smoking.tooltip_0_desc_2"),
+        t("apps.my-info.smoking.tooltip_0_desc_3"),
+      ],
+    },
+    {
+      title: t("apps.my-info.smoking.tooltip_1_title"),
+      description: [t("apps.my-info.smoking.tooltip_1_desc_1")],
+    },
+    {
+      title: t("apps.my-info.smoking.tooltip_2_title"),
+      description: [t("apps.my-info.smoking.tooltip_2_desc_1")],
+    },
+  ];
 
   const {
     data: preferencesArray = [
@@ -91,14 +93,14 @@ export default function SmokingSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            흡연은 하시나요?
+            {t("apps.my-info.smoking.title")}
           </Text>
         </View>
 
         <View style={styles.bar} />
         <View style={styles.wrapper}>
           <Loading.Lottie
-            title="선호도를 불러오고 있어요"
+            title={t("apps.my-info.smoking.loading")}
             loading={optionsLoading}
           >
             <StepSlider

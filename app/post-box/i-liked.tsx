@@ -4,9 +4,11 @@ import NotSome from "@/src/features/post-box/ui/not-some";
 import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
 import { FlashList } from "@shopify/flash-list";
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 
 function ILiked() {
+  const { t } = useTranslation();
   const { data: iLikedList, isLoading } = useILikedQuery();
   const sortedList = useMemo(() => {
     if (!iLikedList) {
@@ -22,7 +24,7 @@ function ILiked() {
   return (
     <View>
       <Loading.Lottie
-        title={"보낸 썸 리스트를 불러오는 중이에요!"}
+        title={t("apps.postBox.i_liked_loading")}
         loading={isLoading}
       >
         {sortedList?.length > 0 ? (

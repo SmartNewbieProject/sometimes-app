@@ -1,0 +1,18 @@
+{
+  "ageRestriction": {
+    "title": "ご利用可能な年齢ではありません",
+    "subtitle": "安心で健全な出会いのため、18歳以上27歳以下の方のみご利用いただけます。",
+    "bottomText": "ご利用可能な年齢になりましたら、ぜひまたお越しください！",
+    "usageConditions": {
+      "title": "ご利用条件",
+      "ageRange": "18歳〜27歳の方",
+      "education": "大学在学中または卒業済みの方",
+      "verification": "大学メールでの本人確認が必要です"
+    },
+    "birthDateCheck": "生年月日をもとに登録可能か確認します",
+    "findIdealTypeButton": "理想の相手を見つけに行く →"
+  }, 
+   "mobile-identity-verification":{
+    "title": "本人確認"
+  }
+}

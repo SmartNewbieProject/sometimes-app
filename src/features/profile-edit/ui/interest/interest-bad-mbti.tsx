@@ -3,11 +3,12 @@ import { useInterestForm } from "@/src/features/interest/hooks";
 import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { Button } from "@/src/shared/ui";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
-import React from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
 function InterestBadMbti() {
   const { badMbti, updateForm } = useInterestForm();
+  const { t } = useTranslation();
   const onUpdateMbti = (mbti: string) => {
     updateForm("badMbti", mbti);
   };
@@ -18,7 +19,7 @@ function InterestBadMbti() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>당신이 싫어하는 MBTI</Text>
+      <Text style={styles.title}>{t("features.profile-edit.ui.interest.bad_mbti.title")}</Text>
       <View style={styles.bar} />
       <MbtiSelector
         value={badMbti}
@@ -33,7 +34,7 @@ function InterestBadMbti() {
           variant={badMbti ? "outline" : "primary"}
           size="sm"
         >
-          상관없음
+          {t("features.profile-edit.ui.interest.bad_mbti.no_preference")}
         </Button>
       </View>
     </View>
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 22,
   },

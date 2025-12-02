@@ -12,6 +12,7 @@ import { Image, ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions,
   Pressable,
@@ -23,6 +24,7 @@ import { useCommingSoon } from "../../admin/hooks";
 import { useMatchingBackground } from "../../idle-match-timer/hooks";
 import { useUnlockProfile } from "../queries/use-unlock-profile";
 import type { MatchingHistoryDetails } from "../type";
+
 
 interface MatchingHistoryCardProps {
   item: MatchingHistoryDetails;
@@ -39,6 +41,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
   const { update } = useMatchingBackground();
   const unlockProfile = useUnlockProfile(item.matchId);
   const router = useRouter();
+  const { t } = useTranslation();
   const onClickToPartner = () => {
     return router.navigate(`/partner/view/${item.matchId}`);
   };
@@ -62,27 +65,25 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
       showModal({
         showLogo: true,
         customTitle: (
-          <View style={ModalStyles.title}>
-            <Text textColor="black" size="20" weight="bold">
-              이전에 만났던 분께 다시 연락하기 위해 구슬{" "}
-              {featureCosts?.PROFILE_OPEN}개를 사용할까요?
-            </Text>
-          </View>
+            <View style={ModalStyles.title}>
+              <Text textColor="black" size="20" weight="bold">
+                {t("features.matching-history.ui.matching_history_card.modal_title", { cost: featureCosts?.PROFILE_OPEN })}
+              </Text>
+            </View>
         ),
         children: (
           <View style={ModalStyles.content}>
             <Text style={ModalStyles.description} className="text-text-disabled">
-              시간이 지났지만 다시 인연을 이어가고 싶다면, 용기 내어 먼저 다가가
-              보세요.
+              {t("features.matching-history.ui.matching_history_card.modal_description")}
             </Text>
           </View>
         ),
         primaryButton: {
-          text: "네, 해볼래요",
+          text: t("global.ok"),
           onClick: unlockProfile.mutateAsync,
         },
         secondaryButton: {
-          text: "아니요",
+          text: t("global.no"),
           onClick: hideModal,
         },
       });
@@ -212,7 +213,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                 onPress={onClickToPartner}
               >
                 <Text className="w-[20px] text-text-inverse text-[7px]">
-                  {item.blinded ? "프로필\n풀기" : "더보기"}
+                  {item.blinded ? t("features.matching-history.ui.matching_history_card.profile_unlock_button") : t("features.matching-history.ui.matching_history_card.more_button")}
                 </Text>
                 <IconWrapper width={6} height={6}>
                   <ArrowRight />
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     lineHeight: 10,
     fontWeight: 700,
     fontSize: 10,
-    fontFamily: "Pretendard-Bold",
+    fontFamily: "bold",
     color: colors.primaryPurple,
   },
 });

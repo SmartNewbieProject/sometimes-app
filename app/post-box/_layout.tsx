@@ -7,15 +7,16 @@ import Layout from "@/src/features/layout";
 import PostBoxHeaders from "@/src/features/post-box/ui/post-box-header";
 import { type Tab, ToggleTab } from "@/src/features/post-box/ui/toggle-tab";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const TABS: Tab[] = [
-  { id: "liked-me", label: "도착한 썸" },
-  { id: "i-liked", label: "보낸 썸" },
-];
-
 export default function ProfileEditLayout() {
+  const { t } = useTranslation();
+  const TABS: Tab[] = [
+    { id: "liked-me", label: t("apps.postBox.tab_liked_me") },
+    { id: "i-liked", label: t("apps.postBox.tab_i_liked") },
+  ];
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathname = usePathname();

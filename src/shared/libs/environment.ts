@@ -1,4 +1,5 @@
 import logger from "@shared/libs/logger";
+import i18n from "@/src/shared/libs/i18n";
 
 const isProduction = !__DEV__;
 const isDevelopment = __DEV__;
@@ -19,7 +20,7 @@ export const environmentStrategy = ({ production, development, defaultCallback }
 };
 
 export const checkAppEnvironment = (target: 'development' | 'production') => {
-  logger.debug(`현재 환경: ${__DEV__ ? 'development' : 'production'}`);
+  logger.debug(i18n.t("shareds.hooks.environment.current_environment", { env: __DEV__ ? 'development' : 'production' }));
   if (target === 'production' && !isProduction) {
     return false;
   }

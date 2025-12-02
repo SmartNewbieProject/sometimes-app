@@ -1,0 +1,31 @@
+{
+  "ui": {
+    "menu": {
+      "account": "계정",
+      "account_management": "계정 관리",
+      "logout": "로그아웃",
+      "member_withdrawal": "회원 탈퇴"
+    },
+    "header": {
+      "title": "설정"
+    }
+  },
+  "withdrawal": {
+    "reason_partner": "파트너를 찾았어요",
+    "reason_matching": "매칭이 부정확해요",
+    "reason_privacy": "개인정보 보호가 걱정돼요",
+    "reason_safety": "안전성 문제가 있어요",
+    "reason_technical": "기술적인 문제가 있어요",
+    "reason_inactive": "서비스 사용이 불편해요",
+    "reason_dissatisfied": "서비스 만족도가 낮아요",
+    "reason_other": "기타",
+    "reason_select_error": "이유를 선택해주세요",
+    "modal_title": "다음에 다시봐요",
+    "modal_desc_1": "회원 탈퇴가 완료되었습니다.",
+    "modal_desc_2": "다음에 다시 만나요",
+    "title": "다음에 다시 만나요",
+    "textarea_placeholder": "기타 이유를 입력해주세요",
+    "button_prev": "돌아기기",
+    "button_next": "서비스 떠나기"
+  }
+}

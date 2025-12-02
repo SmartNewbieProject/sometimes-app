@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/src/features/auth";
 import { storage, axiosClient } from "@/src/shared/libs";
+import { useTranslation } from "react-i18next";
 
 const checkWelcomeRewardStatus = async (): Promise<{ received: boolean }> => {
   return axiosClient.get("/profile/welcome-gems/status");
@@ -11,6 +12,7 @@ const receiveWelcomeReward = async () => {
 };
 
 export const useWelcomeReward = () => {
+  const { t } = useTranslation();
   const [shouldShowReward, setShouldShowReward] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { my, isAuthorized } = useAuth();
@@ -40,7 +42,7 @@ export const useWelcomeReward = () => {
           setShouldShowReward(true);
         }
       } catch (error) {
-        console.error("환영 보상 상태 확인 오류:", error);
+        console.error(t("features.welcome-reward.ui.modal.status_check_error"), error);
         const localStatus = await storage.getItem(`welcome-reward-${my.phoneNumber}`);
         if (my.gender === "FEMALE" && localStatus !== "true") {
           setShouldShowReward(true);
@@ -61,7 +63,7 @@ export const useWelcomeReward = () => {
       await storage.setItem(`welcome-reward-${my.phoneNumber}`, "true");
       setShouldShowReward(false);
     } catch (error) {
-      console.error("환영 보상 수령 오류:", error);
+      console.error(t("features.welcome-reward.ui.modal.receive_error"), error);
       await storage.setItem(`welcome-reward-${my.phoneNumber}`, "true");
       setShouldShowReward(false);
     }
