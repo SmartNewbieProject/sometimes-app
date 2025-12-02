@@ -33,7 +33,6 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Pressable,
@@ -93,17 +92,6 @@ export default function PartnerDetailScreen() {
 
   const personal = characteristicsOptions["성격"];
   const loveStyles = characteristicsOptions["연애 스타일"];
-  const interests = characteristicsOptions.관심사;
-
-  const interestOptions = preferencesArray.find((item) => item.typeName === "관심사")?.options || [];
-
-  const interestsWithIcons = interests.map((interest) => {
-    const option = interestOptions.find((opt) => opt.id === interest.value);
-    return {
-      ...interest,
-      imageUrl: option?.imageUrl || null,
-    };
-  });
 
   const mainProfileImageUrl = partner.profileImages.find(
     (img) => img.isMain
