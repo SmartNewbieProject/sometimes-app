@@ -1,21 +1,13 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { semanticColors } from '../../../shared/constants/colors';
-import type React from "react";
-import { useEffect, useRef, useState } from "react";
-import {
-  FlatList,
-  Keyboard,
-  Platform,
-  Pressable,
-  type ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { useState, useCallback } from "react";
+import { Platform, View } from "react-native";
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useQueryClient } from "@tanstack/react-query";
 import useChatList from "../queries/use-chat-list";
 import ChatGuideBanner from "./chat-guide-banner";
 import ChatList from "./chat-list";
@@ -30,6 +22,16 @@ function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [isPhotoClicked, setPhotoClicked] = useState(false);
   const { id } = useLocalSearchParams<{ id: string }>();
+  const queryClient = useQueryClient();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (id) {
+        queryClient.invalidateQueries({ queryKey: ["chat-list", id] });
+        queryClient.invalidateQueries({ queryKey: ["chat-detail", id] });
+      }
+    }, [id, queryClient])
+  );
 
   const { data, isLoading } = useChatList(id);
 

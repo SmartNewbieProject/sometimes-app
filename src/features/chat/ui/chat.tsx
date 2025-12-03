@@ -1,13 +1,22 @@
 import { BottomNavigation } from "@/src/shared/ui";
 import { semanticColors } from '../../../shared/constants/colors';
-import React, { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { useCallback } from "react";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
 import ChatHeader from "./chat-header";
 import ChatRoomList from "./room-list/chat-room-list";
 
 function Chat() {
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
+
+  useFocusEffect(
+    useCallback(() => {
+      queryClient.invalidateQueries({ queryKey: ["chat-room"] });
+    }, [queryClient])
+  );
 
   return (
     <View
@@ -27,7 +36,5 @@ function Chat() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default Chat;
