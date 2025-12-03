@@ -5,7 +5,7 @@ import Loading from "../loading";
 import { useMatchLoading } from "./hooks";
 import { useLatestMatching } from "./queries";
 import type { MatchDetails } from "./types";
-import { Waiting } from "./ui";
+import { Waiting, Error } from "./ui";
 import { Container } from "./ui/container";
 import { InteractionNavigation } from "./ui/nav";
 import { NotFound } from "./ui/not-found";
@@ -22,7 +22,7 @@ const createDefaultWaitingMatch = (): MatchDetails => ({
 });
 
 export default function IdleMatchTimer() {
-  const { match, isLoading: matchLoading, refetch } = useLatestMatching();
+  const { match, isPending, isFetchingData, isError, refetch } = useLatestMatching();
   const {
     rematchingLoading,
     finishRematching,
@@ -58,9 +58,15 @@ export default function IdleMatchTimer() {
     );
   }
 
+  const showLoading = isPending || isFetchingData;
+
   const renderContent = () => {
-    if (matchLoading) {
+    if (showLoading) {
       return <Loading.Lottie />;
+    }
+
+    if (isError) {
+      return <Error />;
     }
 
     if (!match) {
@@ -91,11 +97,12 @@ export default function IdleMatchTimer() {
   };
 
   const isPartnerView = match?.type === "open" || match?.type === "rematching";
+  const shouldShowGradient = !isPartnerView || isError;
 
   return (
     <View>
       <View style={styles.container}>
-        <Container gradientMode={!isPartnerView}>
+        <Container gradientMode={shouldShowGradient}>
           {renderContent()}
         </Container>
       </View>

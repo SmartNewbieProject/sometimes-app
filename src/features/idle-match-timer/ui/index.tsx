@@ -1,2 +1,3 @@
 export { default as Time } from './time';
 export { Waiting } from './waiting';
+export { Error } from './error';
