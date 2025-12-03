@@ -129,10 +129,10 @@ export const QuestionDetailPage = () => {
     try {
       // AI 영감 도우미 API 호출 (임시 구현)
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const inspiration = "따뜻한 햇살 아래서...";
+      const inspiration = t('features.moment.question_detail.inspiration.sample');
       setTextAnswer(prev => prev ? `${prev} ${inspiration}` : inspiration);
     } catch (error) {
-      console.error("AI 영감 도우미 오류:", error);
+      console.error("AI inspiration error:", error);
     } finally {
       setIsAiLoading(false);
     }
@@ -193,7 +193,7 @@ export const QuestionDetailPage = () => {
       // submitAnswerMutation에서 이미 invalidateQueries를 실행하고 있습니다.
 
       // AI 답장 생성 (임시 구현)
-      const aiReplyText = "당신의 소중한 마음이 잘 도착했어요. 💌";
+      const aiReplyText = t('features.moment.question_detail.sent.ai_reply');
 
       // 최소 1.5초 대기
       await new Promise(resolve => setTimeout(resolve, 1500));

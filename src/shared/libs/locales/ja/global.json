@@ -11,5 +11,10 @@
   "ok": "はい",
   "no": "いいえ",
   "confirm_button": "はい、移動します",
-  "confirm_checked": "確認しました"
+  "confirm_checked": "確認しました",
+  "not_found": {
+    "title": "あれ、迷子になっちゃった！",
+    "description": "お探しのページが見つからないか、\n間違ったパスでアクセスしました",
+    "go_home": "ホームに戻る"
+  }
 }

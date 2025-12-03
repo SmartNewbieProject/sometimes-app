@@ -190,16 +190,16 @@ export const ChangeProfileImageModal = ({
                 textColor="black"
                 className="mt-2"
               >
-                프로필 사진을 변경해보세요
+                {t('features.mypage.profile_image_change.title')}
               </Text>
               <Text weight="semibold" size="20" textColor="black">
-                더 매력적인 나를 보여주세요!
+                {t('features.mypage.profile_image_change.subtitle')}
               </Text>
             </View>
 
             <View style={styles.descriptioncontianer}>
               <Text weight="medium" size="sm" textColor="pale-purple">
-                3장의 프로필 사진을 모두 새로 등록해주세요
+                {t('features.mypage.profile_image_change.guide')}
               </Text>
               <Text weight="medium" size="sm" textColor="pale-purple">
                 {t("apps.auth.sign_up.profile_image.guide_2")}

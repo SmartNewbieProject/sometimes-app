@@ -7,8 +7,10 @@ import {
   disablePushNotification,
   getNotificationPermissionStatus,
 } from '@/src/shared/libs/notifications';
+import { useTranslation } from 'react-i18next';
 
 export const usePushNotification = () => {
+  const { t } = useTranslation();
   const [isEnabled, setIsEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -20,23 +22,23 @@ export const usePushNotification = () => {
       const response = await getPushNotificationStatus();
       setIsEnabled(response.isEnabled);
     } catch (error) {
-      console.error('푸시 알림 상태 확인 실패:', error);
+      console.error(t('features.mypage.notification.status_check_failed'), error);
       setIsEnabled(false);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const openAppSettings = useCallback(() => {
     Alert.alert(
-      '알림 권한 필요',
-      '푸시 알림을 받으려면 설정에서 알림을 허용해주세요.',
+      t('features.mypage.notification.permission_required_title'),
+      t('features.mypage.notification.permission_required_message'),
       [
-        { text: '설정 열기', onPress: () => Linking.openSettings() },
-        { text: '취소', style: 'cancel' },
+        { text: t('features.mypage.notification.open_settings'), onPress: () => Linking.openSettings() },
+        { text: t('features.mypage.notification.cancel'), style: 'cancel' },
       ]
     );
-  }, []);
+  }, [t]);
 
   const handleEnable = useCallback(async () => {
     if (isUpdating) return;
@@ -60,27 +62,27 @@ export const usePushNotification = () => {
       await checkStatus();
     } catch (error) {
       setIsEnabled(previousValue);
-      console.error('푸시 알림 활성화 실패:', error);
+      console.error(t('features.mypage.notification.enable_failed'), error);
 
-      const errorMessage = error instanceof Error ? error.message : '푸시 알림 활성화에 실패했습니다.';
+      const errorMessage = error instanceof Error ? error.message : t('features.mypage.notification.activation_failed_title');
 
       if (Platform.OS === 'web' && errorMessage.includes('등록된 푸시 토큰이 없습니다')) {
         showModal({
-          title: '푸시 알림 등록 필요',
-          children: '푸시 알림은 모바일 기기에서만 등록할 수 있습니다.\n모바일 앱에서 먼저 알림을 허용해주세요.',
-          primaryButton: { text: '확인', onClick: () => {} },
+          title: t('features.mypage.notification.registration_required_title'),
+          children: t('features.mypage.notification.registration_required_message'),
+          primaryButton: { text: t('features.mypage.notification.confirm'), onClick: () => {} },
         });
       } else {
         showModal({
-          title: '알림 활성화 실패',
+          title: t('features.mypage.notification.activation_failed_title'),
           children: errorMessage,
-          primaryButton: { text: '확인', onClick: () => {} },
+          primaryButton: { text: t('features.mypage.notification.confirm'), onClick: () => {} },
         });
       }
     } finally {
       setIsUpdating(false);
     }
-  }, [isUpdating, isEnabled, openAppSettings, checkStatus, showModal]);
+  }, [isUpdating, isEnabled, openAppSettings, checkStatus, showModal, t]);
 
   const handleDisable = useCallback(async () => {
     if (isUpdating) return;
@@ -94,16 +96,16 @@ export const usePushNotification = () => {
       await checkStatus();
     } catch (error) {
       setIsEnabled(previousValue);
-      console.error('푸시 알림 비활성화 실패:', error);
+      console.error(t('features.mypage.notification.disable_failed'), error);
       showModal({
-        title: '알림 비활성화 실패',
-        children: '푸시 알림 비활성화에 실패했습니다. 다시 시도해주세요.',
-        primaryButton: { text: '확인', onClick: () => {} },
+        title: t('features.mypage.notification.deactivation_failed_title'),
+        children: t('features.mypage.notification.deactivation_failed_message'),
+        primaryButton: { text: t('features.mypage.notification.confirm'), onClick: () => {} },
       });
     } finally {
       setIsUpdating(false);
     }
-  }, [isUpdating, isEnabled, checkStatus, showModal]);
+  }, [isUpdating, isEnabled, checkStatus, showModal, t]);
 
   const toggle = useCallback(async () => {
     if (isUpdating) return;

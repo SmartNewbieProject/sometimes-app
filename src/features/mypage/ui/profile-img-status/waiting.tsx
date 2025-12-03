@@ -8,8 +8,10 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { BackHandler, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 export default function ProfileImgEditWaitingScreen() {
+  const { t } = useTranslation();
   const { my } = useAuth();
   const { data: statusData } = useUserStatus(my.phoneNumber);
   const handleGoToLogin = async () => {
@@ -75,7 +77,7 @@ export default function ProfileImgEditWaitingScreen() {
               weight="semibold"
               className="text-center"
             >
-              새 프로필 사진 승인 대기 중!
+              {t('features.mypage.profile_status.waiting.title')}
             </Text>
             <Text
               size="lg"
@@ -83,7 +85,7 @@ export default function ProfileImgEditWaitingScreen() {
               weight="normal"
               className="text-center mt-1"
             >
-              관리자가 검토 중입니다.
+              {t('features.mypage.profile_status.waiting.reviewing')}
             </Text>
           </View>
 
@@ -95,7 +97,7 @@ export default function ProfileImgEditWaitingScreen() {
               weight="light"
               className="text-center"
             >
-              승인 여부는 푸시로 알려드릴게요
+              {t('features.mypage.profile_status.waiting.push_notify')}
             </Text>
           </View>
 
@@ -115,10 +117,10 @@ export default function ProfileImgEditWaitingScreen() {
                     weight="semibold"
                     className="mb-1"
                   >
-                    승인 대기
+                    {t('features.mypage.profile_status.waiting.status_title')}
                   </Text>
                   <Text size="sm" textColor="gray" weight="light">
-                    관리자 승인까지 2~12시간 소요됩니다
+                    {t('features.mypage.profile_status.waiting.time_info')}
                   </Text>
                 </View>
               </View>
@@ -135,7 +137,7 @@ export default function ProfileImgEditWaitingScreen() {
           onPress={handleGoToLogin}
           className="w-full py-4 rounded-2xl"
         >
-          썸타임 홈으로 돌아가기 →
+          {t('features.mypage.profile_status.waiting.go_home')}
         </Button>
       </View>
     </DefaultLayout>

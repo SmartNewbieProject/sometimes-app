@@ -56,6 +56,10 @@
   },
   "question_detail": {
     "header_title": "今日のポスト",
+    "envelope": {
+      "question_arrived": "質問が届きました",
+      "share_your_story": "あなたの話を聞かせてください。"
+    },
     "loading": "今日の質問を読み込み中...",
     "error_loading": "質問の読み込みに失敗しました",
     "check_network": "ネットワーク接続を確認してください",
@@ -84,7 +88,11 @@
     },
     "sent": {
       "success": "返信が送信されました",
-      "back_to_moment": "質問箱に戻る"
+      "back_to_moment": "質問箱に戻る",
+      "ai_reply": "あなたの大切な気持ちが届きました。💌"
+    },
+    "inspiration": {
+      "sample": "暖かい日差しの下で..."
     },
     "modal": {
       "notice": "お知らせ",

@@ -6,6 +6,7 @@ import { envelopeStyles } from './envelope.styles';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Polygon } from 'react-native-svg';
 import colors from '@/src/shared/constants/colors';
+import { useTranslation } from 'react-i18next';
 
 interface EnvelopeProps {
   onPress: () => void;
@@ -13,6 +14,7 @@ interface EnvelopeProps {
 }
 
 export const Envelope: React.FC<EnvelopeProps> = ({ onPress, questionDate }) => {
+  const { t } = useTranslation();
   const glowAnim = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -104,14 +106,14 @@ export const Envelope: React.FC<EnvelopeProps> = ({ onPress, questionDate }) => 
           textColor="primary"
           style={envelopeStyles.titleText}
         >
-          질문이 도착했어요
+          {t('features.moment.question_detail.envelope.question_arrived')}
         </Text>
         <Text
           size="sm"
           textColor="muted"
           style={envelopeStyles.subtitleText}
         >
-          당신의 이야기를 들려주세요.
+          {t('features.moment.question_detail.envelope.share_your_story')}
         </Text>
       </View>
     </View>
