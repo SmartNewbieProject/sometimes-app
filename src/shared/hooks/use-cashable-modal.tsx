@@ -1,8 +1,8 @@
-import {useModal} from "@hooks/use-modal";
+import { useModal } from "@hooks/use-modal";
 import { semanticColors } from '../constants/colors';
-import {StyleSheet, View} from "react-native";
-import {router} from "expo-router";
-import {Text} from "@ui/text";
+import { StyleSheet, View } from "react-native";
+import { router } from "expo-router";
+import { Text } from "@/src/shared/ui/text";
 
 type CashableModalProps = {
   title?: string;
@@ -16,21 +16,21 @@ export const useCashableModal = () => {
     return showModal({
       showLogo: true,
       customTitle: (
-          <View style={styles.title}>
-            <Text size="20" weight="bold" textColor="black">
-              {title ?? '💔 구슬이 부족해요!'}
-            </Text>
-          </View>
+        <View style={styles.title}>
+          <Text size="20" weight="bold" textColor="black">
+            {title ?? '💔 구슬이 부족해요!'}
+          </Text>
+        </View>
       ),
       children: (
-          <View style={styles.content}>
-            <Text textColor="black" weight="bold" className="text-[15px]">
-              이 기능을 사용하려면 구슬이 더 필요해요
-            </Text>
+        <View style={styles.content}>
+          <Text textColor="black" weight="bold" className="text-[15px]">
+            이 기능을 사용하려면 구슬이 더 필요해요
+          </Text>
 
-            <Text style={styles.description} className="text-text-disabled">
-              {textContent}
-            </Text>
+          <Text style={styles.description} className="text-text-disabled">
+            {textContent}
+          </Text>
         </View>
       ),
       primaryButton: {

@@ -9,7 +9,7 @@ import {
 import type { UserProfile } from "@/src/types/user";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
-import { Text as CustomText } from "@shared/ui/text";
+import { Text as CustomText } from "@/src/shared/ui/text";
 import { Image } from "expo-image";
 import { router, useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
@@ -64,12 +64,12 @@ function PostBoxCard({
     type === "liked-me"
       ? `${dayUtils.formatRelativeTime(likedAt)} 좋아요를 눌렀어요`
       : status === "OPEN"
-      ? "서로 좋아요를 눌렀어요!"
-      : status === "REJECTED"
-      ? "상대방이 거절했어요"
-      : status === "IN_CHAT"
-      ? "상대방과 대화중이에요"
-      : "상대방의 응답을 기다리고 있어요";
+        ? "서로 좋아요를 눌렀어요!"
+        : status === "REJECTED"
+          ? "상대방이 거절했어요"
+          : status === "IN_CHAT"
+            ? "상대방과 대화중이에요"
+            : "상대방의 응답을 기다리고 있어요";
   const userWithdrawal = !!deletedAt;
 
   const renderBottomButton =

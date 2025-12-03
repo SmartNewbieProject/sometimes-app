@@ -1,4 +1,3 @@
-import { useCommingSoon } from "@/src/features/admin/hooks";
 import { dayUtils } from "@/src/shared/libs";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
@@ -14,24 +13,19 @@ import { sideStyle } from "./constants";
 
 interface WaitingProps {
   onTimeEnd?: () => void;
-  match: MatchDetails;
+  match: Pick<MatchDetails, 'type' | 'untilNext'> & { untilNext: string };
 }
 
 export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
-  const { my } = useAuth();
+  const { my, profileDetails } = useAuth();
   const router = useRouter();
+
+  const userName = profileDetails?.name ?? my?.name;
   const [currentTime, setCurrentTime] = useState(() => dayUtils.create());
   const trigger = useRef(false);
-  const [timeSet, setTimeSet] = useState<TimeResult | null>(() => {
-    if (!match || !match.untilNext) return null;
-    const test = dayUtils.create().add(1, "minute");
-    // return calculateTime(test, currentTime);
-    const nextMatchingDate = dayUtils.create(match.untilNext);
-    return calculateTime(nextMatchingDate, currentTime);
+  const [timeSet, setTimeSet] = useState<TimeResult>(() => {
+    return calculateTime(match.untilNext, currentTime);
   });
-  const showCommingSoon = useCommingSoon();
-
-  // const time = calculateTime(dayUtils.create(match.untilNext), currentTime);
 
   const fire = () => {
     trigger.current = true;
@@ -40,29 +34,25 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
 
   const updateTime = useCallback(() => {
     if (trigger.current) return;
-    if (!match || !match.untilNext) return;
-    const { untilNext } = match;
-    const nextMatchingDate = dayUtils.create(untilNext);
-    if (currentTime.isSame(nextMatchingDate, "second")) {
-      fire();
-      return;
-    }
 
     const now = dayUtils.create();
     setCurrentTime(now);
+
     const { shouldTriggerCallback, value, delimeter } = calculateTime(
-      nextMatchingDate,
+      match.untilNext,
       now
     );
+
     setTimeSet({
       shouldTriggerCallback,
       value,
       delimeter,
     });
+
     if (shouldTriggerCallback && onTimeEnd) {
       fire();
     }
-  }, [match, onTimeEnd]);
+  }, [match.untilNext, onTimeEnd]);
 
   useEffect(() => {
     updateTime();
@@ -79,24 +69,26 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
         style={{ width: 72, height: 82 }}
       />
       <View className="my-[8px]">
-        <Text
-          size="18"
-          textColor="black"
-          weight="semibold"
-          className="mb-[2px]"
-        >
-          {my?.name}님
-        </Text>
+        {userName && (
+          <Text
+            size="18"
+            textColor="black"
+            weight="semibold"
+            className="mb-[2px]"
+          >
+            {userName}님
+          </Text>
+        )}
         <Text size="18" textColor="black" weight="semibold">
           이상형 매칭까지
         </Text>
       </View>
 
       <View className="flex flex-row gap-x-1 mb-[8px]">
-        <Time value={timeSet?.delimeter || ""} />
+        <Time value={timeSet.delimeter} />
         <Time value="-" />
-        {timeSet?.value
-          ?.toString()
+        {timeSet.value
+          .toString()
           .split("")
           .map((value, key) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>

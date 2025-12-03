@@ -182,14 +182,14 @@ const HomeScreen = () => {
           </Show>
         </View>
 
-        {!isPreferenceFill || preferencesSelf?.length === 0 ? (
+        {true ? (
+          <View className="mt-[14px]">
+            <IdleMatchTimer />
+          </View>
+        ) : (
           <View style={{ gap: 14 }}>
             <HomeInfoSection />
             <MatchingStatus />
-          </View>
-        ) : (
-          <View className="mt-[14px]">
-            <IdleMatchTimer />
           </View>
         )}
         <View style={{ marginTop: 20 }}>

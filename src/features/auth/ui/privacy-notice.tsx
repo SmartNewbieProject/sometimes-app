@@ -1,5 +1,5 @@
 import colors from "@constants/colors";
-import { Text } from "@ui/text";
+import { Text } from "@/src/shared/ui/text";
 import { useState } from "react";
 import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppleReviewModal } from "./apple-review-modal";
