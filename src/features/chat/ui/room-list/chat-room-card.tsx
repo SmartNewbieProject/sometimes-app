@@ -6,15 +6,19 @@ import React, { useRef } from "react";
 import {
   Animated,
   Dimensions,
+  Linking,
   PanResponder,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { useAuth } from "../../../auth";
 import useChatLock from "../../hooks/use-chat-lock";
 import type { ChatRoomList } from "../../types/chat";
 import ChatProfileImage from "../message/chat-profile-image";
+
+const REFUND_GOOGLE_FORM_URL = "https://forms.gle/DYSKhgzPEVTWuqcr9";
 
 interface ChatRoomCardProps {
   item: ChatRoomList;
@@ -121,6 +125,13 @@ function OpenVariant({ item }: ChatRoomCardProps) {
 const RenderContent = ({ item }: ChatRoomCardProps) => {
   const screenWidth =
     Dimensions.get("window").width > 468 ? 468 : Dimensions.get("window").width;
+  const { my: user } = useAuth();
+  const isMale = user?.gender === "MALE";
+  const showRefund = isMale && item.canRefund && item.paymentConfirm;
+
+  const handleRefundPress = () => {
+    Linking.openURL(REFUND_GOOGLE_FORM_URL);
+  };
 
   return (
     <Animated.View style={[styles.roomContainer, { width: screenWidth }]}>
@@ -140,10 +151,16 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
           </Text>
         </View>
         <View style={styles.infoContainer}>
-          {item.paymentConfirm && (
-            <Text style={styles.timeText}>
-              {dayUtils.formatRelativeTime(item.recentDate)}
-            </Text>
+          {showRefund ? (
+            <Pressable onPress={handleRefundPress} style={styles.refundButton}>
+              <Text style={styles.refundButtonText}>구슬 돌려받기</Text>
+            </Pressable>
+          ) : (
+            item.paymentConfirm && (
+              <Text style={styles.timeText}>
+                {dayUtils.formatRelativeTime(item.recentDate)}
+              </Text>
+            )
           )}
 
           {item.unreadCount > 0 && item.paymentConfirm ? (
@@ -193,6 +210,18 @@ const styles = StyleSheet.create({
     color: semanticColors.text.disabled,
     fontSize: 13,
     lineHeight: 24,
+  },
+  refundButton: {
+    backgroundColor: semanticColors.brand.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 14,
+  },
+  refundButtonText: {
+    color: semanticColors.text.inverse,
+    fontSize: 13,
+    fontWeight: "600",
+    lineHeight: 18,
   },
   unreadCount: {
     height: 24,
