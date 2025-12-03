@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   refundButtonText: {
-    color: "#FFFFFF",
+    color: semanticColors.text.inverse,
     fontSize: 11,
     fontWeight: "600",
     lineHeight: 13,
