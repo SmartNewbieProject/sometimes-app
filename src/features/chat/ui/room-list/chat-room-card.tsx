@@ -18,7 +18,7 @@ import useChatLock from "../../hooks/use-chat-lock";
 import type { ChatRoomList } from "../../types/chat";
 import ChatProfileImage from "../message/chat-profile-image";
 
-const REFUND_GOOGLE_FORM_URL = "https://docs.google.com/forms/d/1cPdZEU7zL09b7Z-x8h5NpCk_8oJieYbnCHHw5LuhAc8";
+const REFUND_GOOGLE_FORM_URL = "https://forms.gle/DYSKhgzPEVTWuqcr9";
 
 interface ChatRoomCardProps {
   item: ChatRoomList;
@@ -153,7 +153,7 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
         <View style={styles.infoContainer}>
           {showRefund ? (
             <Pressable onPress={handleRefundPress} style={styles.refundButton}>
-              <Text style={styles.refundButtonText}>환불 가능</Text>
+              <Text style={styles.refundButtonText}>구슬 돌려받기</Text>
             </Pressable>
           ) : (
             item.paymentConfirm && (
