@@ -1,0 +1,98 @@
+{
+  "navigation": {
+    "events_title": "진행중인 이벤트",
+    "events_description": "썸타임에서 진행중인 이벤트를 확인하고 지금 상품을 받아가세요!",
+    "events_disabled_message": "곧 다양한 이벤트로 찾아뵙겠습니다!",
+    "my_moment_title": "나의 모먼트",
+    "my_moment_description": "다양한 활동으로\n나의 연애 성향을\n분석해보세요!",
+    "check_in_title": "출석체크",
+    "check_in_description": "매일 출석하고\n상품을 받아가기",
+    "check_in_disabled_message": "출석 체크 기능을 준비하고 있습니다!",
+    "roulette_title": "데일리 룰렛",
+    "roulette_description": "룰렛을 돌려\n오늘의 운세 시험하기",
+    "roulette_disabled_text": "참여 완료!",
+    "roulette_disabled_message": "오늘은 이미 참여했어요!",
+    "somemate_title": "썸메이트",
+    "somemate_description": "대화할수록 나를\n더 잘 아는 썸메이트",
+    "weekly_report_title": "모먼트 보고서",
+    "weekly_report_description": "이번 주 활동을\n리포트로 확인해보세요!",
+    "preparing": "준비 중.."
+  },
+  "my_moment": {
+    "guide": {
+      "every_night": "매일 밤",
+      "at_midnight": "12시",
+      "description_1": "미호가 우체통에 오늘의 질문을 넣어놔요!",
+      "description_2": "오늘의 질문에 답하면,",
+      "every_sunday": "매주 일요일",
+      "report_generated": "리포트가 생성되요"
+    },
+    "question_card": {
+      "today_arrived": "오늘의 질문이 도착했어요!",
+      "today_answered": "오늘의 질문에 답변했어요!",
+      "previous_first": "이전 질문에 먼저 답변해야 해요!",
+      "previous_first_subtitle": "순서대로 질문에 답변해주세요",
+      "go_to_previous": "이전 질문으로 가기",
+      "answered_today": "오늘의 질문에 답변했어요",
+      "see_you_tomorrow": "내일 새로운 질문으로 만나요!",
+      "complete_previous": "이전 질문을 먼저 완료해주세요"
+    },
+    "history": {
+      "my_moment_record": "나의 모먼트 기록",
+      "weekly_analysis": "주차별 분석 결과를 볼 수 있어요",
+      "my_answers": "내 답변 기록",
+      "check_past_answers": "그동안 답변한 오늘의 질문을 확인할 수 있어요"
+    },
+    "status_card": {
+      "my_recent_moment": "나의 최근 모먼트",
+      "week_info": "{{year}}년 {{week}}주차",
+      "waiting_first": "첫 모먼트를 기다려요",
+      "start_description": "오늘의 질문에 답변하고 나만의 성장 리포트를 만들어보세요!"
+    },
+    "blocked_messages": {
+      "no_question": "오늘은 질문이 없습니다. 내일 다시 방문해주세요.",
+      "not_allowed": "오늘의 질문에 답변할 수 없습니다. 내일 다시 시도해주세요."
+    }
+  },
+  "question_detail": {
+    "header_title": "오늘의 우체통",
+    "loading": "오늘의 질문을 불러오는 중...",
+    "error_loading": "질문을 불러오는데 실패했습니다",
+    "check_network": "네트워크 연결을 확인해주세요",
+    "debug_info": "디버그 정보",
+    "status_code": "상태 코드",
+    "no_question": "오늘의 질문이 없습니다",
+    "visit_tomorrow": "내일 다시 방문해주세요",
+    "retry": "다시 시도",
+    "weekdays": {
+      "sun": "일",
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토"
+    },
+    "answer_input": {
+      "to_myself": "To. 나에게",
+      "placeholder": "이곳에 당신의 진심을 적어주세요...",
+      "writing_count": "{{count}}자 작성 중",
+      "selection_complete": "선택 완료",
+      "select_answer": "답변을 선택해주세요",
+      "sending": "우체통에 넣는 중...",
+      "submit": "답장 보내기"
+    },
+    "sent": {
+      "success": "답장이 전송되었습니다",
+      "back_to_moment": "질문함으로 돌아가기"
+    },
+    "modal": {
+      "notice": "알림",
+      "no_multiple_choice": "이 질문은 선택형 답변을 지원하지 않습니다.",
+      "confirm": "확인",
+      "enter_answer": "답변을 입력해주세요.",
+      "error": "오류",
+      "save_failed": "답변 저장에 실패했습니다. 다시 시도해주세요."
+    }
+  }
+}

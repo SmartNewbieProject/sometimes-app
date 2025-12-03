@@ -438,12 +438,15 @@ export interface MomentSlidesProps {
 export interface MomentNavigationItem {
   id: string;
   titleComponent: React.ReactNode;
-  description: string;
+  description?: string;
+  descriptionKey?: string;
   backgroundImageUrl?: string | number;
   imageSize?: number;
   isReady?: boolean;
   disabledText?: string;
+  disabledTextKey?: string;
   disabledMessage?: string;
+  disabledMessageKey?: string;
   onPress: () => void;
   width?: number;
 }

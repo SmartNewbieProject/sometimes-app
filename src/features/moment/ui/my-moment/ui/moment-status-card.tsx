@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { router } from "expo-router";
@@ -21,6 +22,7 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
   reportLoading,
   reportError,
 }) => {
+  const { t } = useTranslation();
 
   // 로딩 중이면 표시하지 않음
   if (isLoading || reportLoading) {
@@ -30,7 +32,7 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
   // 최신 리포트가 있는 경우 - 리포트 데이터로 표시 (이번 주 진행률과 관계없이)
   if (latestReport) {
     const weekInfo = latestReport.week && latestReport.year
-      ? `${latestReport.year}년 ${latestReport.week}주차`
+      ? t('features.moment.my_moment.status_card.week_info', { year: latestReport.year, week: latestReport.week })
       : null;
 
     // 키워드가 없을 때 빈 배열로 처리
@@ -56,7 +58,7 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
       >
         <View style={styles.contentContainer}>
           <Text size="12" weight="normal" textColor="white" style={styles.subtitle}>
-            나의 최근 모먼트 {weekInfo && `(${weekInfo})`}
+            {t('features.moment.my_moment.status_card.my_recent_moment')} {weekInfo && `(${weekInfo})`}
           </Text>
           <Text size="20" weight="bold" textColor="white" style={styles.title}>
             {title}
@@ -96,13 +98,13 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
     <View style={[styles.container, styles.disabledContainer]}>
       <View style={styles.contentContainer}>
         <Text size="12" weight="normal" textColor="white" style={styles.subtitle}>
-          나의 최근 모먼트
+          {t('features.moment.my_moment.status_card.my_recent_moment')}
         </Text>
         <Text size="20" weight="bold" textColor="white" style={styles.title}>
-          첫 모먼트를 기다려요
+          {t('features.moment.my_moment.status_card.waiting_first')}
         </Text>
         <Text size="13" weight="normal" textColor="white" style={styles.description}>
-          오늘의 질문에 답변하고 나만의 성장 리포트를 만들어보세요!
+          {t('features.moment.my_moment.status_card.start_description')}
         </Text>
       </View>
       <Image

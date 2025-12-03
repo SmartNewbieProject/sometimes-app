@@ -3,6 +3,7 @@ import { semanticColors } from '../../../shared/constants/colors';
 import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import { useReport } from "../queries/use-ai-chat";
 import { useKpiAnalytics } from "@/src/shared/hooks";
@@ -10,6 +11,7 @@ import { Image } from "expo-image";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
 
 export default function SomemateReportDetailScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ reportId?: string }>();
   const reportId = params.reportId || "";
@@ -43,7 +45,7 @@ export default function SomemateReportDetailScreen() {
           <Pressable onPress={() => router.push("/chat/somemate-report")}>
             <ChevronLeft width={20} height={20} />
           </Pressable>
-          <Text style={styles.headerTitle}>썸타임 리포트</Text>
+          <Text style={styles.headerTitle}>{t('features.somemate.report_detail.header_title')}</Text>
           <View style={{ width: 20 }} />
         </View>
         <View style={styles.loadingContainer}>
@@ -61,7 +63,7 @@ export default function SomemateReportDetailScreen() {
           <Pressable onPress={() => router.push("/chat/somemate-report")}>
             <ChevronLeft width={20} height={20} />
           </Pressable>
-          <Text style={styles.headerTitle}>썸타임 리포트</Text>
+          <Text style={styles.headerTitle}>{t('features.somemate.report_detail.header_title')}</Text>
           <View style={{ width: 20 }} />
         </View>
         <View style={styles.loadingContainer}>
@@ -70,10 +72,9 @@ export default function SomemateReportDetailScreen() {
             style={styles.processingImage}
             contentFit="contain"
           />
-          <Text style={styles.processingTitle}>리포트 분석 중이에요</Text>
+          <Text style={styles.processingTitle}>{t('features.somemate.report_detail.processing.title')}</Text>
           <Text style={styles.processingText}>
-            미호가 열심히 분석하고 있어요.{'\n'}
-            잠시만 기다려주세요!
+            {t('features.somemate.report_detail.processing.message')}
           </Text>
         </View>
         <BottomNavigation />
@@ -90,11 +91,11 @@ export default function SomemateReportDetailScreen() {
           <Pressable onPress={() => router.push("/chat/somemate-report")}>
             <ChevronLeft width={20} height={20} />
           </Pressable>
-          <Text style={styles.headerTitle}>썸타임 리포트</Text>
+          <Text style={styles.headerTitle}>{t('features.somemate.report_detail.header_title')}</Text>
           <View style={{ width: 20 }} />
         </View>
         <View style={styles.loadingContainer}>
-          <Text style={styles.errorText}>리포트 데이터가 없습니다.</Text>
+          <Text style={styles.errorText}>{t('features.somemate.report_detail.no_data')}</Text>
         </View>
         <BottomNavigation />
       </View>
@@ -158,7 +159,7 @@ export default function SomemateReportDetailScreen() {
         <Pressable onPress={() => router.push("/chat/somemate-report")}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
-        <Text style={styles.headerTitle}>썸타임 리포트</Text>
+        <Text style={styles.headerTitle}>{t('features.somemate.report_detail.header_title')}</Text>
         <View style={{ width: 20 }} />
       </View>
 
@@ -181,7 +182,7 @@ export default function SomemateReportDetailScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionIcon}>📝</Text>
-            <Text style={styles.sectionTitle}>전체 요약</Text>
+            <Text style={styles.sectionTitle}>{t('features.somemate.report_detail.sections.overall_summary')}</Text>
           </View>
           <View style={styles.card}>
             <Text style={styles.summaryText}>{cleanMarkdown(reportData.overallSummary)}</Text>
@@ -192,7 +193,7 @@ export default function SomemateReportDetailScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionIcon}>✨</Text>
-              <Text style={styles.sectionTitle}>성격 특성</Text>
+              <Text style={styles.sectionTitle}>{t('features.somemate.report_detail.sections.personality_traits')}</Text>
             </View>
             {values.map((value: any, index: number) => (
               <View key={index} style={styles.valueCard}>
@@ -207,7 +208,7 @@ export default function SomemateReportDetailScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionIcon}>💡</Text>
-              <Text style={styles.sectionTitle}>인사이트</Text>
+              <Text style={styles.sectionTitle}>{t('features.somemate.report_detail.sections.insights')}</Text>
             </View>
             {cleanInsights.map((insight, index) => (
               <View key={index} style={styles.insightCard}>
@@ -224,7 +225,7 @@ export default function SomemateReportDetailScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionIcon}>🎯</Text>
-              <Text style={styles.sectionTitle}>카테고리 분석</Text>
+              <Text style={styles.sectionTitle}>{t('features.somemate.report_detail.sections.category_analysis')}</Text>
             </View>
             <View style={styles.card}>
               <Text style={styles.summaryText}>{categorySummary}</Text>

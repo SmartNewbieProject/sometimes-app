@@ -82,13 +82,13 @@ const navigationItems: NavigationItem[] = [
   },
   {
     name: "chat",
-    label: "채팅",
+    label: i18n.t("shareds.navigation.bottom_navigation.chat"),
     path: "/chat",
     icon: NavIcons.chat,
   },
   {
     name: "moment",
-    label: "모먼트",
+    label: i18n.t("shareds.navigation.bottom_navigation.moment"),
     path: "/moment",
     icon: NavIcons.moment,
   },

@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, Dimensions, Pressable, Text as RNText } from "react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { MomentNavigationProps, MomentNavigationItem, MomentNavigationHeight } from "../types";
 import colors from "@/src/shared/constants/colors";
 import { Text } from "@/src/shared/ui/text";
@@ -15,6 +16,7 @@ const HEIGHT_CONFIG = {
 } as const;
 
 export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentNavigationProps) => {
+  const { t } = useTranslation();
   const actualHeight = HEIGHT_CONFIG[itemHeight];
   const { data: rouletteEligibility } = useRouletteEligibility();
 
@@ -35,15 +37,15 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
     if (item.id === "moment-daily-roulette" && rouletteEligibility && !rouletteEligibility.canParticipate) {
       return {
         isDisabled: true,
-        text: item.disabledText || "참여 완료!",
-        message: item.disabledMessage || "오늘은 이미 참여했어요!",
+        text: item.disabledTextKey ? t(item.disabledTextKey) : (item.disabledText || t('features.moment.navigation.roulette_disabled_text')),
+        message: item.disabledMessageKey ? t(item.disabledMessageKey) : (item.disabledMessage || t('features.moment.navigation.roulette_disabled_message')),
       };
     }
     if (item.isReady === false) {
       return {
         isDisabled: true,
-        text: item.disabledText || "준비 중..",
-        message: item.disabledMessage,
+        text: item.disabledTextKey ? t(item.disabledTextKey) : (item.disabledText || t('features.moment.navigation.preparing')),
+        message: item.disabledMessageKey ? t(item.disabledMessageKey) : item.disabledMessage,
       };
     }
     return { isDisabled: false, text: null, message: null };
@@ -84,7 +86,9 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
 
         <View style={styles.content}>
           {item.titleComponent}
-          <RNText style={styles.description}>{item.description}</RNText>
+          <RNText style={styles.description}>
+            {item.descriptionKey ? t(item.descriptionKey) : item.description}
+          </RNText>
         </View>
 
         {disabledState.isDisabled && (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Image, Dimensions, KeyboardAvoidingView, Platform, ScrollView, SafeAreaView, TouchableOpacity, BackHandler } from "react-native";
 import { Heart, List, PenTool, Loader2, Check, Sparkles , ArrowLeft } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import { Text, Button } from "@/src/shared/ui";
 import colors from "@/src/shared/constants/colors";
 import { Stack, router } from "expo-router";
@@ -19,6 +20,7 @@ const { width } = Dimensions.get("window");
 type QuestionStep = 'envelope' | 'reading' | 'sending' | 'sent';
 
 export const QuestionDetailPage = () => {
+  const { t } = useTranslation();
   // 상태 관리
   const [step, setStep] = useState<QuestionStep>('envelope');
   const [questionType, setQuestionType] = useState<'text' | 'multiple-choice'>('text');
@@ -69,8 +71,8 @@ export const QuestionDetailPage = () => {
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-    const weekday = weekdays[now.getDay()];
+    const weekdayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const weekday = t(`features.moment.question_detail.weekdays.${weekdayKeys[now.getDay()]}`);
 
     return `${year}. ${month}. ${day}. (${weekday})`;
   };
@@ -103,10 +105,10 @@ export const QuestionDetailPage = () => {
         console.log('⚠️ Cannot switch to multiple-choice: no options available');
         // 옵션이 없는 경우 사용자에게 알림
         showModal({
-          title: "알림",
-          children: <Text size="14" weight="normal" textColor="dark">이 질문은 선택형 답변을 지원하지 않습니다.</Text>,
+          title: t('features.moment.question_detail.modal.notice'),
+          children: <Text size="14" weight="normal" textColor="dark">{t('features.moment.question_detail.modal.no_multiple_choice')}</Text>,
           primaryButton: {
-            text: "확인",
+            text: t('features.moment.question_detail.modal.confirm'),
             onClick: () => { },
           },
         });
@@ -148,10 +150,10 @@ export const QuestionDetailPage = () => {
 
     if (!isValid || !questionData) {
       showModal({
-        title: "알림",
-        children: <Text>답변을 입력해주세요.</Text>,
+        title: t('features.moment.question_detail.modal.notice'),
+        children: <Text>{t('features.moment.question_detail.modal.enter_answer')}</Text>,
         primaryButton: {
-          text: "확인",
+          text: t('features.moment.question_detail.modal.confirm'),
           onClick: () => { },
         },
       });
@@ -202,10 +204,10 @@ export const QuestionDetailPage = () => {
       console.error("답변 저장 실패:", error);
       setStep('reading');
       showModal({
-        title: "오류",
-        children: <Text>답변 저장에 실패했습니다. 다시 시도해주세요.</Text>,
+        title: t('features.moment.question_detail.modal.error'),
+        children: <Text>{t('features.moment.question_detail.modal.save_failed')}</Text>,
         primaryButton: {
-          text: "확인",
+          text: t('features.moment.question_detail.modal.confirm'),
           onClick: () => { },
         },
       });
@@ -250,7 +252,7 @@ export const QuestionDetailPage = () => {
       >
         <Stack.Screen
           options={{
-            headerTitle: "오늘의 우체통",
+            headerTitle: t('features.moment.question_detail.header_title'),
             headerTitleAlign: "center",
             headerStyle: { backgroundColor: colors.momentBackground },
             headerShadowVisible: false,
@@ -274,7 +276,7 @@ export const QuestionDetailPage = () => {
         {questionLoading ? (
           <View style={styles.loadingContainer}>
             <Text size="lg" weight="medium" textColor="gray">
-              오늘의 질문을 불러오는 중...
+              {t('features.moment.question_detail.loading')}
             </Text>
           </View>
         ) : questionError ? (
@@ -285,20 +287,20 @@ export const QuestionDetailPage = () => {
               resizeMode="contain"
             />
             <Text size="18" weight="bold" textColor="black" style={styles.noQuestionText}>
-              질문을 불러오는데 실패했습니다
+              {t('features.moment.question_detail.error_loading')}
             </Text>
             <Text size="md" weight="medium" textColor="gray" style={styles.noQuestionSubText}>
-              {questionError.message || '네트워크 연결을 확인해주세요'}
+              {questionError.message || t('features.moment.question_detail.check_network')}
             </Text>
 
             {/* Debug 정보 */}
             <View style={{ marginTop: 16, padding: 12, backgroundColor: '#f5f5f5', borderRadius: 8 }}>
               <Text size="xs" weight="medium" textColor="red">
-                디버그 정보: {questionError.message}
+                {t('features.moment.question_detail.debug_info')}: {questionError.message}
               </Text>
               {questionError.status && (
                 <Text size="xs" textColor="red">
-                  상태 코드: {questionError.status}
+                  {t('features.moment.question_detail.status_code')}: {questionError.status}
                 </Text>
               )}
             </View>
@@ -309,7 +311,7 @@ export const QuestionDetailPage = () => {
               variant="primary"
               style={{ marginTop: 16 }}
             >
-              다시 시도
+              {t('features.moment.question_detail.retry')}
             </Button>
           </View>
         ) : !dailyQuestionResponse?.question ? (
@@ -320,10 +322,10 @@ export const QuestionDetailPage = () => {
               resizeMode="contain"
             />
             <Text size="18" weight="bold" textColor="black" style={styles.noQuestionText}>
-              오늘의 질문이 없습니다
+              {t('features.moment.question_detail.no_question')}
             </Text>
             <Text size="md" weight="medium" textColor="gray" style={styles.noQuestionSubText}>
-              내일 다시 방문해주세요
+              {t('features.moment.question_detail.visit_tomorrow')}
             </Text>
           </View>
         ) : (
@@ -369,7 +371,7 @@ export const QuestionDetailPage = () => {
                   <Check size={40} color={colors.brand.primary} strokeWidth={3} />
                 </View>
                 <Text size="2xl" weight="bold" textColor="primary" style={sentStepStyles.titleText}>
-                  답장이 전송되었습니다
+                  {t('features.moment.question_detail.sent.success')}
                 </Text>
 
                 {/* TODO: AI 우체부 추신 기능 구현 후 활성화
@@ -393,7 +395,7 @@ export const QuestionDetailPage = () => {
                   styles={sentStepStyles.backButton}
                   textColor="white"
                 >
-                  질문함으로 돌아가기
+                  {t('features.moment.question_detail.sent.back_to_moment')}
                 </Button>
               </View>
             )}

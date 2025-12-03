@@ -1,11 +1,14 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 
 import { router } from "expo-router";
 
 export const HistorySection = () => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -14,10 +17,10 @@ export const HistorySection = () => {
       >
         <View style={styles.textContainer}>
           <Text size="md" weight="bold" textColor="dark" style={styles.title}>
-            나의 모먼트 기록
+            {t('features.moment.my_moment.history.my_moment_record')}
           </Text>
           <Text size="12" weight="normal" textColor="gray">
-            주차별 분석 결과를 볼 수 있어요
+            {t('features.moment.my_moment.history.weekly_analysis')}
           </Text>
         </View>
         <Text size="20" weight="light" textColor="gray" style={styles.arrow}>

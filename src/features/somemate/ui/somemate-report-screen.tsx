@@ -4,6 +4,7 @@ import { router, useFocusEffect } from "expo-router";
 import { ScrollView, StyleSheet, Text, View, Pressable, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import Animated, {
   Easing,
   ReduceMotion,
@@ -32,6 +33,7 @@ const ChevronRight = ({ width = 24, height = 24, color = "#7A4AE2" }) => (
 );
 
 export default function SomemateReportScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const translateXAnim = useSharedValue(0);
   const { somemateEvents } = useKpiAnalytics();
@@ -85,10 +87,10 @@ export default function SomemateReportScreen() {
     const day = String(date.getDate()).padStart(2, '0');
     const hours = date.getHours();
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    const period = hours >= 12 ? '오후' : '오전';
+    const period = hours >= 12 ? t('features.somemate.report.date.pm') : t('features.somemate.report.date.am');
     const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
 
-    return `${year}년 ${month}월 ${day}일 ${period} ${String(displayHours).padStart(2, '0')}:${minutes}`;
+    return `${year}. ${month}. ${day} ${period} ${String(displayHours).padStart(2, '0')}:${minutes}`;
   };
 
   const lastUpdateDate = reports.length > 0
@@ -106,7 +108,7 @@ export default function SomemateReportScreen() {
           <Pressable onPress={() => router.push("/chat")}>
             <ChevronLeft width={20} height={20} />
           </Pressable>
-          <Text style={styles.headerTitle}>나의 썸타임</Text>
+          <Text style={styles.headerTitle}>{t('features.somemate.report.header_title')}</Text>
           <View style={{ width: 20 }} />
         </View>
         <View style={styles.loadingContainer}>
@@ -123,7 +125,7 @@ export default function SomemateReportScreen() {
         <Pressable onPress={() => router.push("/chat")}>
           <ChevronLeft width={20} height={20} />
         </Pressable>
-        <Text style={styles.headerTitle}>나의 썸타임</Text>
+        <Text style={styles.headerTitle}>{t('features.somemate.report.header_title')}</Text>
         <View style={{ width: 20 }} />
       </View>
 
@@ -134,17 +136,17 @@ export default function SomemateReportScreen() {
             style={styles.heartIcon}
             contentFit="contain"
           />
-          <Text style={styles.topCardTitle}>나의 썸타임 모음</Text>
+          <Text style={styles.topCardTitle}>{t('features.somemate.report.top_card.title')}</Text>
           <Text style={styles.topCardDescription}>
-            지금까지 생성된 리포트를 한 눈에 볼 수 있어요!
+            {t('features.somemate.report.top_card.description')}
           </Text>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>생성된 썸타임 : </Text>
-              <Text style={styles.statValue}>{totalCount}개</Text>
+              <Text style={styles.statLabel}>{t('features.somemate.report.top_card.total_count')}</Text>
+              <Text style={styles.statValue}>{t('features.somemate.report.top_card.count_unit', { count: totalCount })}</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>마지막 업데이트 : </Text>
+              <Text style={styles.statLabel}>{t('features.somemate.report.top_card.last_update')}</Text>
               <Text style={styles.statValue}>{lastUpdateDate}</Text>
             </View>
           </View>
@@ -152,8 +154,8 @@ export default function SomemateReportScreen() {
 
         {reports.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>아직 생성된 리포트가 없어요</Text>
-            <Text style={styles.emptySubText}>미호와 대화를 나눈 후 분석을 받아보세요!</Text>
+            <Text style={styles.emptyText}>{t('features.somemate.report.empty.title')}</Text>
+            <Text style={styles.emptySubText}>{t('features.somemate.report.empty.subtitle')}</Text>
           </View>
         ) : (
           reports.map((report, index) => (
@@ -175,13 +177,13 @@ export default function SomemateReportScreen() {
               <View style={styles.reportContent}>
                 <View style={styles.reportTitleRow}>
                   <Text style={styles.reportTitle}>
-                    {report.reportData?.title || `썸타임 #${String(totalCount - index).padStart(2, '0')}`}
+                    {report.reportData?.title || t('features.somemate.report.card.default_title', { number: String(totalCount - index).padStart(2, '0') })}
                   </Text>
                   <CategoryBadge category={report.category} />
                 </View>
                 <Text style={styles.reportDate}>{formatDate(report.createdAt)}</Text>
                 {report.status === 'processing' && (
-                  <Text style={styles.processingBadge}>분석 중</Text>
+                  <Text style={styles.processingBadge}>{t('features.somemate.report.card.processing')}</Text>
                 )}
               </View>
               <Animated.View style={arrowAnimatedStyle}>

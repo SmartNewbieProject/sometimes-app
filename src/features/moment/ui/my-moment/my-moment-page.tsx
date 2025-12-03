@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator } from "react-native";
+import { useTranslation } from "react-i18next";
 import { GuideSection } from "./ui/guide-section";
 import { QuestionCard } from "./ui/question-card/index";
 import { RecentMoment } from "./ui/recent-moment";
@@ -15,6 +16,7 @@ interface MyMomentPageProps {
 }
 
 export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
+  const { t } = useTranslation();
   const { data: dailyQuestion, isLoading: questionLoading, error: questionError } = useDailyQuestionQuery();
   const { data: progressStatus } = useProgressStatusQuery();
 
@@ -50,7 +52,7 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
           responded: false,
           blocked: true,
           blockedReason: "no_question",
-          blockedMessage: "오늘은 질문이 없습니다. 내일 다시 방문해주세요."
+          blockedMessage: t('features.moment.my_moment.blocked_messages.no_question')
         };
       }
 
@@ -59,7 +61,7 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
         responded: false,
         blocked: true,
         blockedReason: "not_allowed",
-        blockedMessage: "오늘의 질문에 답변할 수 없습니다. 내일 다시 시도해주세요."
+        blockedMessage: t('features.moment.my_moment.blocked_messages.not_allowed')
       };
     }
 

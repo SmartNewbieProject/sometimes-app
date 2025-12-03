@@ -43,6 +43,8 @@ import featuresSignup from './features/signup.json';
 import featuresWelcomeReward from './features/welcome-reward.json';
 import featuresIdleMatchTimer from './features/idle-match-timer.json';
 import featureMypage from './features/mypage.json';
+import featuresMoment from './features/moment.json';
+import featuresSomemate from './features/somemate.json';
 
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
@@ -110,6 +112,8 @@ const features = {
   'signup': featuresSignup,
   'welcome-reward': featuresWelcomeReward,
   'idle-match-timer': featuresIdleMatchTimer,
+  'moment': featuresMoment,
+  'somemate': featuresSomemate,
 };
 
 const widgets = {
