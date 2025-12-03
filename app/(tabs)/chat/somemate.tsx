@@ -1,7 +1,8 @@
 import { Image } from "expo-image";
 import { semanticColors } from '../../../src/shared/constants/colors';
 import { router, useFocusEffect } from "expo-router";
-import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText, BackHandler } from "react-native";
+import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText, BackHandler, TouchableOpacity } from "react-native";
+import { ChevronLeft } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useCallback, useEffect } from "react";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
@@ -138,8 +139,20 @@ export default function SomemateScreen() {
     });
   };
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+          <ChevronLeft size={24} color={semanticColors.text.primary} />
+        </TouchableOpacity>
+        <RNText style={styles.headerTitle}>썸메이트</RNText>
+        <View style={styles.headerRight} />
+      </View>
+
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.characterContainer}>
           <Image
@@ -235,6 +248,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: semanticColors.surface.background,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 56,
+    paddingHorizontal: 16,
+    backgroundColor: semanticColors.surface.background,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: semanticColors.text.primary,
+    fontFamily: "Pretendard-SemiBold",
+  },
+  headerRight: {
+    width: 40,
+  },
   scrollView: {
     flex: 1,
   },
@@ -243,7 +279,7 @@ const styles = StyleSheet.create({
   },
   characterContainer: {
     alignItems: "center",
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 20,
   },
   characterImage: {
