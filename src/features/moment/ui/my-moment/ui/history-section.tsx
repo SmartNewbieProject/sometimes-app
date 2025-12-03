@@ -25,7 +25,8 @@ export const HistorySection = () => {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {/* TODO: 답변 기록 활성화 필요 */}
+      {/* <TouchableOpacity
         style={styles.listItem}
         onPress={() => router.push("/moment/my-answers")}
       >
@@ -40,7 +41,7 @@ export const HistorySection = () => {
         <Text size="20" weight="light" textColor="gray" style={styles.arrow}>
           ›
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

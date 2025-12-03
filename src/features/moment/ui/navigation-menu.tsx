@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet, Dimensions, Pressable, Text as RNText } from "react-native";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { MomentNavigationProps, MomentNavigationItem, MomentNavigationHeight } from "../types";
 import colors from "@/src/shared/constants/colors";
 import { Text } from "@/src/shared/ui/text";
-import { useModal } from "@/src/shared/hooks/use-modal";
-import RouletteModal from "@/src/features/event/ui/roulette/roulette-modal";
+import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -15,8 +15,8 @@ const HEIGHT_CONFIG = {
 } as const;
 
 export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentNavigationProps) => {
-  const { showModal } = useModal();
   const actualHeight = HEIGHT_CONFIG[itemHeight];
+  const { data: rouletteEligibility } = useRouletteEligibility();
 
   const rows = [];
   for (let i = 0; i < items.length; i += itemsPerRow) {
@@ -25,25 +25,38 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
 
   const handlePress = (item: MomentNavigationItem) => {
     if (item.id === "moment-daily-roulette") {
-      showModal({
-        title: "",
-        children: <RouletteModal />,
-        hideTitleBar: true,
-        hidePrimaryButton: true,
-        hideSecondaryButton: true,
-      });
+      router.push("/moment/daily-roulette");
     } else {
       item.onPress?.();
     }
   };
 
+  const getItemDisabledState = (item: MomentNavigationItem) => {
+    if (item.id === "moment-daily-roulette" && rouletteEligibility && !rouletteEligibility.canParticipate) {
+      return {
+        isDisabled: true,
+        text: item.disabledText || "참여 완료!",
+        message: item.disabledMessage || "오늘은 이미 참여했어요!",
+      };
+    }
+    if (item.isReady === false) {
+      return {
+        isDisabled: true,
+        text: item.disabledText || "준비 중..",
+        message: item.disabledMessage,
+      };
+    }
+    return { isDisabled: false, text: null, message: null };
+  };
+
   const renderItem = (item: MomentNavigationItem, itemIndex: number, totalInRow: number) => {
     const isLastInRow = itemIndex === totalInRow - 1;
     const imageSize = item.imageSize || 60;
-    const isReady = item.isReady !== false; // Default to true if not specified
+    const disabledState = getItemDisabledState(item);
 
     return (
       <Pressable
+        key={item.id}
         style={[
           styles.menuItem,
           {
@@ -52,8 +65,8 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
             marginRight: isLastInRow ? 0 : 7,
           },
         ]}
-        onPress={isReady ? () => handlePress(item) : undefined}
-        disabled={!isReady}
+        onPress={!disabledState.isDisabled ? () => handlePress(item) : undefined}
+        disabled={disabledState.isDisabled}
       >
         {item.backgroundImageUrl && (
           <Image
@@ -74,15 +87,15 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
           <RNText style={styles.description}>{item.description}</RNText>
         </View>
 
-        {!isReady && (
+        {disabledState.isDisabled && (
           <View style={styles.overlay}>
             <View style={styles.overlayContent}>
               <Text textColor="white" weight="semibold" size="md">
-                준비 중..
+                {disabledState.text}
               </Text>
-              {item.readyMessage && (
-                <Text textColor="white" size="10" style={styles.readyMessage}>
-                  {item.readyMessage}
+              {disabledState.message && (
+                <Text textColor="white" size="10" style={styles.disabledMessage}>
+                  {disabledState.message}
                 </Text>
               )}
             </View>
@@ -156,12 +169,10 @@ const styles = StyleSheet.create({
   },
   overlayContent: {
     alignItems: "center",
-    gap: 8,
+    gap: 4,
   },
-  readyMessage: {
+  disabledMessage: {
     textAlign: "center",
-    marginTop: 4,
-    paddingLeft: 4,
-    paddingRight: 4,
+    paddingHorizontal: 8,
   },
 });

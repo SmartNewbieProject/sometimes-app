@@ -10,7 +10,7 @@ interface AnswerInputProps {
   questionType: 'text' | 'multiple-choice';
   textAnswer: string;
   selectedOption: number | null;
-  options: string[];
+  options: Array<{ id: string; text: string; order?: number }>;
   onTextChange: (text: string) => void;
   onOptionSelect: (index: number) => void;
   onGetInspiration: () => void;
@@ -82,7 +82,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
           const isSelected = selectedOption === index;
           return (
             <TouchableOpacity
-              key={index}
+              key={`${option.id}-${index}`}
               style={[
                 answerInputStyles.optionButton,
                 isSelected
@@ -113,7 +113,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
                     : answerInputStyles.optionTextUnselected,
                 ]}
               >
-                {option}
+                {option.text}
               </Text>
             </TouchableOpacity>
           );
@@ -130,6 +130,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
         </Text>
 
         <View style={answerInputStyles.statusContainer}>
+          {/* AI 영감 기능 - 현재 미사용
           {questionType === 'text' && (
             <TouchableOpacity
               onPress={onGetInspiration}
@@ -160,6 +161,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
               </LinearGradient>
             </TouchableOpacity>
           )}
+          */}
 
           <Text
             size="xs"

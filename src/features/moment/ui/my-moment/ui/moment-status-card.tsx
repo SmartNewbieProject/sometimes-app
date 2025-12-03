@@ -3,103 +3,114 @@ import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { router } from "expo-router";
-import type { WeeklyProgress } from "../../../queries";
+import { WeeklyProgress } from "../../../apis";
+import type { LatestReport } from "../../../types";
 
 interface MomentStatusCardProps {
   weeklyProgress?: WeeklyProgress | null;
   isLoading: boolean;
+  latestReport?: LatestReport | null;
+  reportLoading?: boolean;
+  reportError?: any;
 }
 
 export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
   weeklyProgress,
   isLoading,
+  latestReport,
+  reportLoading,
+  reportError,
 }) => {
-  // 데이터가 없거나 completionRate가 0일 때는 모먼트 기록 유도 메시지 표시
-  if (!weeklyProgress || weeklyProgress.completionRate === 0) {
-    return (
-      <View style={[styles.container, styles.disabledContainer]}>
-        <View style={styles.contentContainer}>
-          <Text size="12" weight="normal" textColor="white" style={styles.subtitle}>
-            나의 최근 모먼트
-          </Text>
-          <Text size="20" weight="bold" textColor="white" style={styles.title}>
-            첫 모먼트를 기다려요
-          </Text>
-          <Text size="14" weight="normal" textColor="white" style={styles.description}>
-            오늘의 질문에 답변하고 나만의 성장 리포트를 만들어보세요!
-          </Text>
-        </View>
-        <Image
-          source={require("@/assets/images/moment/clipboard.png")}
-          style={[styles.illustration, styles.disabledIllustration]}
-          resizeMode="contain"
-        />
-      </View>
-    );
-  }
 
   // 로딩 중이면 표시하지 않음
-  if (isLoading) {
+  if (isLoading || reportLoading) {
     return null;
   }
 
-  // 데이터가 있는 경우 - 모먼트 카드 렌더링
-  const weekInfo = weeklyProgress && weeklyProgress.year && weeklyProgress.weekOfYear
-    ? `${weeklyProgress.year}년 ${weeklyProgress.weekOfYear}주차`
-    : null;
+  // 최신 리포트가 있는 경우 - 리포트 데이터로 표시 (이번 주 진행률과 관계없이)
+  if (latestReport) {
+    const weekInfo = latestReport.week && latestReport.year
+      ? `${latestReport.year}년 ${latestReport.week}주차`
+      : null;
 
-  // 키워드가 없을 때 빈 배열로 처리
-  const keywords = weeklyProgress?.keywords?.length > 0
-    ? weeklyProgress.keywords.slice(0, 3).map(k => `#${k}`)
-    : [];
+    // 키워드가 없을 때 빈 배열로 처리
+    const keywords = latestReport.keywords?.length > 0
+      ? latestReport.keywords.slice(0, 3).map(k => `#${k}`)
+      : [];
 
-  // 타이틀 생성 (keywords 기반 또는 기본값)
-  const generateTitle = () => {
-    if (!weeklyProgress) return "모먼트 분석 중...";
+    // userTitles에서 첫 번째 타이틀 사용
+    const firstTitle = latestReport.userTitles?.[0];
+    const title = firstTitle?.title || latestReport.persona || "모먼트 분석 완료";
+    const subTitle = firstTitle?.subTitle || "";
 
-    // completionRate 기반으로 다른 타이틀
-    if (weeklyProgress.completionRate >= 80) {
-      return "적극적인 참여자";
-    } else if (weeklyProgress.completionRate >= 50) {
-      return "꾸준한 성장자";
-    } else if (weeklyProgress.completionRate > 0) {
-      return "새로운 시작";
-    } else {
-      return "첫 모먼트를 기다려요";
-    }
-  };
+    // summaryText를 description으로 사용
+    const description = latestReport.summaryText?.length > 50
+      ? latestReport.summaryText.slice(0, 68) + "..."
+      : latestReport.summaryText || "";
 
+    return (
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={0.9}
+        onPress={() => router.push(`/moment/weekly-report?week=${latestReport.week}&year=${latestReport.year}`)}
+      >
+        <View style={styles.contentContainer}>
+          <Text size="12" weight="normal" textColor="white" style={styles.subtitle}>
+            나의 최근 모먼트 {weekInfo && `(${weekInfo})`}
+          </Text>
+          <Text size="20" weight="bold" textColor="white" style={styles.title}>
+            {title}
+          </Text>
+          {subTitle && (
+            <Text size="13" weight="normal" textColor="white" style={{ opacity: 0.9, marginBottom: 4 }}>
+              {subTitle}
+            </Text>
+          )}
+          <Text size="12" weight="normal" textColor="white" style={{ marginBottom: 8 }}>
+            {description}
+          </Text>
+
+          {keywords.length > 0 && (
+            <View style={styles.keywordsContainer}>
+              {keywords.map((keyword, index) => (
+                <View key={index} style={styles.keywordChip}>
+                  <Text size="12" weight="medium" textColor="purple">
+                    {keyword?.replaceAll("##", "#")}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+        <Image
+          source={require("@/assets/images/moment/clipboard.png")}
+          style={styles.illustration}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    );
+  }
+
+  // latestReport도 없고 weeklyProgress도 없거나 completionRate가 0인 경우 - 신규 유저
   return (
-    <TouchableOpacity
-      style={styles.container}
-      activeOpacity={0.9}
-      onPress={() => router.push("/moment/moment-report")}
-    >
+    <View style={[styles.container, styles.disabledContainer]}>
       <View style={styles.contentContainer}>
         <Text size="12" weight="normal" textColor="white" style={styles.subtitle}>
-          나의 최근 모먼트 {weekInfo && `(${weekInfo})`}
+          나의 최근 모먼트
         </Text>
         <Text size="20" weight="bold" textColor="white" style={styles.title}>
-          {generateTitle()}
+          첫 모먼트를 기다려요
         </Text>
-        {keywords.length > 0 && (
-          <View style={styles.keywordsContainer}>
-            {keywords.map((keyword, index) => (
-              <View key={index} style={styles.keywordChip}>
-                <Text size="12" weight="medium" textColor="purple">
-                  {keyword}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
+        <Text size="13" weight="normal" textColor="white" style={styles.description}>
+          오늘의 질문에 답변하고 나만의 성장 리포트를 만들어보세요!
+        </Text>
       </View>
       <Image
         source={require("@/assets/images/moment/clipboard.png")}
-        style={styles.illustration}
+        style={[styles.illustration, styles.disabledIllustration]}
         resizeMode="contain"
       />
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -110,7 +121,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 20,
     marginBottom: 20,
-    height: 130,
+    maxHeight: 200,
     minHeight: 120,
     flexDirection: "row",
     alignItems: "center",
@@ -128,7 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    marginBottom: 12,
+    marginBottom: 4,
   },
   keywordsContainer: {
     flexDirection: "row",
