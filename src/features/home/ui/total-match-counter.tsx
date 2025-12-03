@@ -2,6 +2,7 @@ import { Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 
 interface TotalMatchCounterProps {
@@ -16,6 +17,7 @@ export default function TotalMatchCounter({
   const animatedValue = useRef(new Animated.Value(0)).current;
   const [displayValue, setDisplayValue] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const { t } = useTranslation();
 
   const isFirstRender = useRef(true);
   const finalCountRef = useRef(count);
@@ -78,7 +80,7 @@ export default function TotalMatchCounter({
             textColor="white"
             className="mb-1 whitespace-nowrap text-sm md:text-md pt-5 pr-1"
           >
-            지금까지
+            {t("features.home.ui.total_match_counter.count_prefix")}
           </Text>
           <View
             style={styles.counterContainer}
@@ -96,7 +98,7 @@ export default function TotalMatchCounter({
             textColor="white"
             className="self-end text-sm md:text-md pb-[19px]"
           >
-            명이 신청했어요!
+            {t("features.home.ui.total_match_counter.count_suffix")}
           </Text>
         </View>
       </View>

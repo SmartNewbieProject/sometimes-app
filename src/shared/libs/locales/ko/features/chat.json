@@ -1,0 +1,8 @@
+{
+  "hooks": {
+    "use_chat_event": {
+      "connected_status": "연결됨",
+      "disconnected_status": "연결 끊김"
+    }
+  }
+}

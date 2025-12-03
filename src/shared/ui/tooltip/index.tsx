@@ -36,14 +36,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
 
-    fontFamily: "Pretendard-Regular",
+    fontFamily: "regular",
     fontWeight: 400,
 
     color: semanticColors.text.disabled,
   },
   description: {
     fontSize: 14,
-    fontFamily: "Pretendard-Regular",
+    fontFamily:  "regular",
     fontWeight: 400,
 
     color: semanticColors.text.disabled,

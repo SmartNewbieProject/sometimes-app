@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import MyActivityCard from "./my-activity-card";
 import { router } from "expo-router";
 
+
 function MyActivityMenu() {
   const showCommingSoon = useCommingSoon();
   return (

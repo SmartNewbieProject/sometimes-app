@@ -1,0 +1,16 @@
+{
+  "ui": {
+    "header": {
+      "subtitle": "理想の相手を見つける最速の方法"
+    },
+    "footer": {
+      "start_intro_button": "お見合いを始める",
+      "login_button": "ログインする",
+      "feedback_banner": "恋愛で望むことやコミュニケーションのスタイルを教えてください！"
+    },
+    "common": {
+      "loading_character_image": "キャラクター画像を読み込み中…",
+      "loading_card_image": "カード画像を読み込み中…"
+    }
+  }
+}

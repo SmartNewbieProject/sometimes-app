@@ -16,6 +16,7 @@ import { StyleSheet, Text, View , BackHandler } from "react-native";
 import * as React from 'react';
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 const { useSignupProgress, SignupSteps } = Signup;
 
@@ -23,6 +24,7 @@ export default function SignupLayout() {
   const { progress, updateStep, step, showHeader } = useSignupProgress();
   const { startSignupSession, recordMilestone } = useSignupSession();
 
+  const { t } = useTranslation();
   const pathname = usePathname();
   const renderProgress =
     pathname !== "/auth/signup/done" &&
@@ -33,9 +35,9 @@ export default function SignupLayout() {
   const titleMap = {
     // [SignupSteps.AREA]: "지역 선택하기",
     [SignupSteps.UNIVERSITY]: "대학선택",
-    [SignupSteps.UNIVERSITY_DETAIL]: "추가 정보 입력하기",
-    [SignupSteps.INSTAGRAM]: "인스타그램 아이디 입력하기",
-    [SignupSteps.PROFILE_IMAGE]: "프로필 사진 추가하기",
+    [SignupSteps.UNIVERSITY_DETAIL]: t("apps.auth.sign_up.select_university_detail"),
+    [SignupSteps.INSTAGRAM]: t("apps.auth.sign_up.instageam"),
+    [SignupSteps.PROFILE_IMAGE]: t("apps.auth.sign_up.Profile_image"),
     [SignupSteps.INVITE_CODE]: "초대코드를 입력해주세요"
   };
 
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.black,
-    fontFamily: "Pretendard-Bold",
+    fontFamily: "bold",
     fontWeight: 700,
     lineHeight: 22,
     fontSize: 20,

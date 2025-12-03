@@ -7,10 +7,11 @@ import { Modal, Text , StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import ProfileImageCard from "./profile-image-card";
 import ProfileImageCover from "./profile-image-cover";
-
+import { useTranslation } from 'react-i18next';
 import { useProfileImageCover } from "@/src/features/profile-edit/hooks/use-profile-image-cover";
 
 function ProfileImageSection() {
+  const { t } = useTranslation();
   const { profileDetails } = useAuth();
   const [isProfileImageOpen, setProfileOpen] = useState(false);
 
@@ -44,7 +45,7 @@ function ProfileImageSection() {
   return (
     <>
       <View key={refreshKey} style={styles.container}>
-        <Text style={styles.title}>프로필 사진</Text>
+        <Text style={styles.title}>{t("features.profile-edit.ui.profile.image_section.title")}</Text>
 
         <View style={styles.cardWrapper}>
           <ScrollView
@@ -66,7 +67,6 @@ function ProfileImageSection() {
                 .map((none, index) => (
                   <ProfileImageCard
                     onClick={handleProfileImageOpen}
-                    // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                     key={index}
                     noneImage={none}
                   />
@@ -74,7 +74,6 @@ function ProfileImageSection() {
           </ScrollView>
 
           <ProfileImageCover visible={isCoverVisible} />
-          {/* <ProfileImageCover visible={!!isApproved} /> */}
         </View>
 
         <View style={styles.bar} />
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
   title: {
     color: semanticColors.text.primary,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 21.6,
     fontWeight: 600 as any,
     marginBottom: 12,

@@ -3,13 +3,16 @@ import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text } from "@shared/ui";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { Time } from ".";
 import { useAuth } from "../../auth";
 import { type TimeResult, calculateTime } from "../services/calculate-time";
 import type { MatchDetails } from "../types";
 import { sideStyle } from "./constants";
+import { useTranslation } from "react-i18next";
+import i18n from "@/src/shared/libs/i18n";
+
 
 interface WaitingProps {
   onTimeEnd?: () => void;
@@ -19,6 +22,7 @@ interface WaitingProps {
 export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
   const { my, profileDetails } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const userName = profileDetails?.name ?? my?.name;
   const [currentTime, setCurrentTime] = useState(() => dayUtils.create());
@@ -69,18 +73,16 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
         style={{ width: 72, height: 82 }}
       />
       <View className="my-[8px]">
-        {userName && (
-          <Text
-            size="18"
-            textColor="black"
-            weight="semibold"
-            className="mb-[2px]"
-          >
-            {userName}님
-          </Text>
-        )}
+        <Text
+          size="18"
+          textColor="black"
+          weight="semibold"
+          className="mb-[2px]"
+        >
+          {t("features.idle-match-timer.ui.waiting.title_1",{name:my?.name})}
+        </Text>
         <Text size="18" textColor="black" weight="semibold">
-          이상형 매칭까지
+          {t("features.idle-match-timer.ui.waiting.title_2")}
         </Text>
       </View>
 
@@ -103,7 +105,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           weight="semibold"
           className="mt-[4px]"
         >
-          남았어요
+          {t("features.idle-match-timer.ui.waiting.description_2")}
         </Text>
         <Text
           size="18"
@@ -111,7 +113,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           weight="normal"
           className="mt-[8px]"
         >
-          매주 목·일 21시에 매칭이 시작돼요!
+          {t("features.idle-match-timer.ui.waiting.description_3")}
         </Text>
       </View>
 
@@ -125,7 +127,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
             style={sideStyle.previousButton}
             onPress={() => router.push("/matching-history")}
           >
-            <Text className="w-[24px] text-text-inverse text-[12px]">이전 매칭</Text>
+            <Text className="w-[24px] text-text-inverse text-[12px]">{t("features.idle-match-timer.ui.waiting.previous_button")}</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>

@@ -3,6 +3,7 @@ import { semanticColors } from '../../../../shared/constants/colors';
 import {ImageResource, Text } from "@shared/ui";
 import {Dimensions, Pressable, StyleSheet, View} from "react-native";
 import { router } from 'expo-router';
+import { useTranslation } from "react-i18next";
 
 export const Banner = () => {
   const width = Dimensions.get("window").width;
@@ -12,7 +13,7 @@ export const Banner = () => {
     }
     return 260;
   })();
-
+  const { t } = useTranslation();
   return (
       <View style={styles.container}>
         <ImageResource

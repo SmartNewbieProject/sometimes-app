@@ -1,0 +1,14 @@
+{
+  "apple": {
+    "unit_piece": "個",
+    "unit_currency": "円",
+    "discount_suffix": "% オフ",
+    "popular_badge": "人気"
+  },
+  "common": {
+    "unit_piece": "個",
+    "unit_currency": "円",
+    "discount_suffix": "% オフ",
+    "popular_badge": "人気"
+  }
+}

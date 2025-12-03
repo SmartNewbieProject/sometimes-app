@@ -3,8 +3,9 @@ import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
 import colors from "@/src/shared/constants/colors";
 import { StepSlider } from "@/src/shared/ui";
-import React, { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect } from "react";
 
 const { hooks, services, queries } = Interest;
 const { useInterestForm } = hooks;
@@ -12,6 +13,7 @@ const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 function InterestTattoo() {
   const { updateForm, clear: _, tattoo } = useInterestForm();
+  const { t } = useTranslation();
   const {
     data: preferencesArray = [
       {
@@ -43,10 +45,10 @@ function InterestTattoo() {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>문신 선호도</Text>
+      <Text style={styles.title}>{t("features.profile-edit.ui.interest.tattoo.title")}</Text>
       <View style={styles.wrapper}>
         <Loading.Lottie
-          title="문신 선호도 옵션을 불러오고 있어요"
+          title={t("features.profile-edit.ui.interest.tattoo.loading")}
           loading={optionsLoading}
         >
           <StepSlider
@@ -62,8 +64,8 @@ function InterestTattoo() {
             options={
               preferences?.options
                 .map((option) =>
-                  option.displayName === "문신 없음"
-                    ? { ...option, displayName: "작은 문신" }
+                  option.displayName === t("features.profile-edit.ui.interest.tattoo.no_tattoo")
+                    ? { ...option, displayName: t("features.profile-edit.ui.interest.tattoo.small_tattoo") }
                     : option
                 )
                 .map((option) => ({
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 22,
   },

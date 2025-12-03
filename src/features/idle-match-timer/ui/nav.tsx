@@ -6,9 +6,11 @@ import type { MatchDetails } from "../types";
 
 import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
+import { useTranslation } from "react-i18next";
 import useILiked from "../../like/hooks/use-liked";
 import { LikeButton } from "../../like/ui/like-button";
 import useRematch from "../hooks/use-rematch";
+
 
 type InteractionNavigationProps = {
   match?: MatchDetails;
@@ -23,6 +25,7 @@ export const InteractionNavigation = ({
   const { featureCosts } = useFeatureCost();
   const { isLikedPartner } = useILiked();
   const isLiked = isLikedPartner(match?.connectionId ?? "");
+  const { t } = useTranslation();
   console.log("isdata", isLikedPartner(match?.connectionId ?? ""));
   const showPartnerFindAnnouncement = () => {
     showModal({
@@ -38,29 +41,31 @@ export const InteractionNavigation = ({
           }}
         >
           <Text textColor="black" weight="bold" size="20">
-            마음에 드는 이성을 찾기위해
+            {t("features.idle-match-timer.ui.nav.modal_title_1")}
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 {featureCosts?.REMATCHING}개를 사용할게요!
+            {t("features.idle-match-timer.ui.nav.modal_title_2", {
+              count: featureCosts?.REMATCHING,
+            })}
           </Text>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px]">
           <Text className="text-text-disabled text-[12px]">
-            성격과 소통 스타일을 바탕으로,
+            {t("features.idle-match-timer.ui.nav.modal_text_1")}
           </Text>
           <Text className="text-text-disabled text-[12px]">
-            자연스럽게 연결될 수 있는 인연을 추천해드릴게요.
+            {t("features.idle-match-timer.ui.nav.modal_text_2")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
+        text: t("features.idle-match-timer.ui.nav.primary_button"),
         onClick: onRematch,
       },
       secondaryButton: {
-        text: "아니요",
+        text: t("global.no"),
         onClick: hideModal,
       },
     });
@@ -86,7 +91,7 @@ export const InteractionNavigation = ({
               !hasPartner && "text-text-inverse"
             )}
           >
-            더 찾아보기
+            {t("features.idle-match-timer.ui.nav.main_button")}
           </RNText>
         </View>
       </Button>
@@ -95,7 +100,7 @@ export const InteractionNavigation = ({
           onPress={() => {}}
           className="flex-1 items-center !bg-surface-other !text-text-inverse"
         >
-          썸 보내기 완료!
+          {t("features.idle-match-timer.ui.nav.complete_button")}
         </Button>
       ) : hasPartner ? (
         // biome-ignore lint/style/noNonNullAssertion: <explanation>
@@ -110,7 +115,7 @@ export const InteractionNavigation = ({
 const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontWeight: "300",
     paddingRight: 5,
     lineHeight: 18,

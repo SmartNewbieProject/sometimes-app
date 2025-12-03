@@ -20,6 +20,8 @@ import { usePortoneStore } from "../../hooks/use-portone-store";
 import { useAuth } from "@/src/features/auth";
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import { FIRST_SALE_PRODUCTS } from "../../constants/first-sale-products";
+import { useTranslation } from "react-i18next";
+
 
 type FirstSaleCardProps = {
   onOpenPayment: (gemProduct: GemMetadata) => void;
@@ -35,6 +37,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
   const { paymentEvents } = useKpiAnalytics();
 
   const translateYAnim = useSharedValue(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     translateYAnim.value = withRepeat(
@@ -66,7 +69,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
         }}
       >
         <Text textColor="black" weight="bold" size="20" className="text-[20px]">
-          🔥 타임 특가! 지금만 이 가격!
+            {t("features.payment.ui.apple_first_sale_card.time_sale_title")}
         </Text>
         <Text weight="bold" size="20" className="text-rose-600">
           {formatTime(seconds)}
@@ -87,14 +90,14 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
                 weight="semibold"
                 className="text-[15px] mb-1"
               >
-                💜 썸타임이 첫 만남을 응원해요!
+                  {t("features.payment.ui.apple_first_sale_card.cheer_message")}
               </Text>
               <Text
                 textColor="purple"
                 weight="semibold"
                 className="text-[15px]"
               >
-                신규 회원 첫 구슬팩 특별 할인
+                {t("features.payment.ui.apple_first_sale_card.new_member_discount")}
               </Text>
               <View style={styles.bubbleTail} />
             </Animated.View>

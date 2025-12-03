@@ -3,8 +3,13 @@ import { View } from 'react-native';
 import { Text } from '@shared/ui';
 import { IconWrapper } from "@/src/shared/ui/icons";
 import SmallTitle from '@/assets/icons/small-title.svg';
+import { useTranslation } from 'react-i18next';
+
 
 export const Header: React.FC = () => {
+  
+  const { t } = useTranslation();
+
   return (
     <View className="flex-row justify-between items-start mb-4">
       <View className="flex-1 items-center">
@@ -14,7 +19,7 @@ export const Header: React.FC = () => {
             size="sm"
             className="text-transparent bg-clip-text bg-gradient-to-r from-[#6A3EA1] to-[#9D6FFF] whitespace-nowrap"
           >
-            내 이상형을 찾는 가장 빠른 방법
+            {t("features.pre-signup.ui.header.subtitle")}
           </Text>
         </View>
 

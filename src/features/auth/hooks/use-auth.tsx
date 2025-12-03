@@ -10,8 +10,11 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
+import { useTranslation } from "react-i18next";
 
 export function useAuth() {
+  const { t } = useTranslation();
+
   const { value: accessToken, setValue: setToken } = useStorage<string | null>({
     key: "access-token",
     initialValue: null,
@@ -125,10 +128,10 @@ export function useAuth() {
       async () => {
         logoutOnly();
         showModal({
-          title: "로그아웃",
-          children: "로그아웃 되었습니다.",
+          title: t("features.auth.hooks.use_auth.logout_modal_title"),
+          children: t("features.auth.hooks.use_auth.logout_modal_message"),
           primaryButton: {
-            text: "확인",
+            text: t("features.auth.hooks.use_auth.logout_modal_button"),
             onClick: () => router.push("/auth/login"),
           },
         });

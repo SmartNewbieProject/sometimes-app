@@ -9,6 +9,7 @@ import { useAuth } from "../../../auth";
 import type { Comment } from "../../types";
 import { UserProfile } from "../user-profile";
 import AreaFillHeart from "@/assets/icons/area-fill-heart.svg";
+import { useTranslation } from "react-i18next";
 
 interface ArticleDetailCommentProps {
   comment: Comment;
@@ -32,6 +33,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
   rootParentId,
 }) => {
   const { my } = useAuth();
+  const { t } = useTranslation();
   const isAuthor = comment.author.id === my?.id;
   const { value: isMenuOpen, setFalse: closeMenu, setTrue: openMenu } = useBoolean();
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
@@ -201,7 +203,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
                           backgroundColor: semanticColors.surface.background,
                         }}
                       >
-                        <Text size="sm" textColor="black">수정</Text>
+                        <Text size="sm" textColor="black">{t("features.community.ui.article_detail.edit_button")}</Text>
                       </Pressable>
                       <Pressable
                         onPress={(e) => {
@@ -215,7 +217,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
                           backgroundColor: semanticColors.surface.background,
                         }}
                       >
-                        <Text size="sm" textColor="black">삭제</Text>
+                        <Text size="sm" textColor="black">{t("features.community.ui.article_detail.delete_button")}</Text>
                       </Pressable>
                     </View>
                   </TouchableWithoutFeedback>

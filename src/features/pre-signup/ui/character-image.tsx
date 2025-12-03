@@ -3,12 +3,16 @@ import { View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { ImageResource } from '@shared/ui';
 import { ImageResources } from '@/src/shared/libs/image';
+import { useTranslation } from 'react-i18next';
 
 interface CharacterImageProps {
   style?: any;
 }
 
 export const CharacterImage: React.FC<CharacterImageProps> = ({ style }) => {
+  
+  const { t } = useTranslation();
+
   return (
     <Animated.View className="w-full flex items-center justify-center" style={style}>
       <View style={{
@@ -20,7 +24,7 @@ export const CharacterImage: React.FC<CharacterImageProps> = ({ style }) => {
         <ImageResource
           resource={ImageResources.PRE_SIGNUP_CHARACTER}
           contentFit="contain"
-          loadingTitle="캐릭터 이미지 로딩 중..."
+          loadingTitle={t("features.pre-signup.ui.common.loading_character_image")}
           style={{
             width: '100%',
             height: '100%',

@@ -4,8 +4,11 @@ import Loading from "@/src/features/loading";
 import { Stack, router } from "expo-router";
 import { useEffect, useState, useRef } from "react";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
+
 
 export default function HomeLayout() {
+  const { t } = useTranslation();
   const { my, accessToken, queryProps } = useAuth();
   const [statusChecked, setStatusChecked] = useState(true); // 기본 true로 설정
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -81,7 +84,7 @@ export default function HomeLayout() {
             params: {
               phoneNumber: my.phoneNumber,
               rejectionReason:
-                statusData.rejectionReason || "승인이 거절되었습니다.",
+                statusData.rejectionReason || t("apps.home.rejected"),
             },
           });
           return;

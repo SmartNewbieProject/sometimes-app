@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { getRegionList } from "../lib";
 import useChangePhase from "./use-change-phase";
@@ -7,6 +8,7 @@ import { useSignupAnalytics } from "./use-signup-analytics";
 import useSignupProgress, { SignupSteps } from "./use-signup-progress";
 
 function useAreaHook() {
+  const { t } = useTranslation();
   const [show, setShow] = useState<null | string>(null);
   const [initDisabled, setInitDisabled] = useState(true);
   const params = useLocalSearchParams();
@@ -64,7 +66,7 @@ function useAreaHook() {
       return;
     }
     trackSignupEvent("next_button_click", "to_university");
-    updateUnivTitle(`${show} 대학`);
+    updateUnivTitle(`${show}${t("features.signup.ui.area.university_suffix")}`);
 
     fallback();
 

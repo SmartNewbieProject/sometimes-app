@@ -19,6 +19,7 @@ import { calculateTime } from "../services/calculate-time";
 import type { MatchDetails } from "../types";
 import { sideStyle } from "./constants";
 import Time from "./time";
+import { useTranslation } from "react-i18next";
 
 type PartnerProps = {
   match: MatchDetails;
@@ -27,6 +28,7 @@ type PartnerProps = {
 export const Partner = ({ match }: PartnerProps) => {
   const { partner } = match;
   const { update } = useMatchingBackground();
+  const { t } = useTranslation();
   const { delimeter, value } = calculateTime(
     match.endOfView,
     dayUtils.create()
@@ -138,7 +140,7 @@ export const Partner = ({ match }: PartnerProps) => {
             style={[sideStyle.previousButton, styles.moreButton]}
             onPress={onClickToPartner}
           >
-            <Text textColor="white" style={styles.moreButtonText}>더보기</Text>
+            <Text className="w-[32px] text-text-inverse text-[12px]">{t("features.idle-match-timer.ui.partner.button_more")}</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>

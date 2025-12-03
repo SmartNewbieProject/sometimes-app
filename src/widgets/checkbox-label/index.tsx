@@ -3,6 +3,7 @@ import { Text } from '../../shared/ui/text';
 import { Check } from '../../shared/ui/check';
 import { cn } from '@/src/shared/libs/cn';
 import * as Linking from 'expo-linking';
+import i18n from '@/src/shared/libs/i18n';
 
 type CheckLabelProps = {
   label: string;
@@ -21,7 +22,7 @@ export const CheckboxLabel = ({
   onChange,
   disabled = false,
   link,
-  linkText = '보기',
+  linkText = i18n.t("widgets.checkbox-label.checkbox_label.view_link"),
   variant = 'box',
   className = '',
 }: CheckLabelProps) => {

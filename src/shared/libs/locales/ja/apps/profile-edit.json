@@ -1,0 +1,12 @@
+{
+  "tabs": {
+    "profile": "マイプロフィール",
+    "interest": "好みのタイプ"
+  },
+  "ui": {
+    "save_button": "保存",
+    "validation": {
+      "empty_form": "未入力の項目があります"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+    "like": {
+        "wrong_date_format": "正しい日付の形式ではありません。",
+        "message_expired": "このいいねはすでに消えました。",
+        "remaining_time_formatted": "{{time}}後にいいねが消えます！",
+        "remaining_text_1": "{{days}}日と{{hours}}時間",
+        "remaining_text_2": "{{hours}}時間{{minutes}}分",
+        "remaining_text_3": "{{minutes}}分",
+        "remaining_text_4": "{{seconds}}秒"
+    }
+}

@@ -3,6 +3,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
 import { deleteRejectLike } from "../api";
+import i18n from "@/src/shared/libs/i18n";
 
 function useRejectLike() {
   const { showErrorModal } = useModal();
@@ -13,7 +14,7 @@ function useRejectLike() {
       await queryClient.invalidateQueries({ queryKey: ["liked", "to-me"] });
     },
     onError: () => {
-      showErrorModal("서버 내부 오류로 좋아요 거절에 실패하였습니다.", "error");
+      showErrorModal(i18n.t("features.post-box.queries.use_reject_like.error_message"), "error");
     },
   });
   return mutataion;

@@ -20,30 +20,32 @@ const { ui, hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
+import i18n from "@/src/shared/libs/i18n";
+import { useTranslation } from 'react-i18next';
 
 const tooltips = [
   {
-    title: "문신 X",
+    title: i18n.t("apps.interest.tattoo.tooltip_0_title"),
     description: [
-      "문신이 전혀 없는 사람을 선호해요",
-      "문신에 대해 보수적인 가치관을 가지고 있어요",
+      i18n.t("apps.interest.tattoo.tooltip_0_desc_1"),
+      i18n.t("apps.interest.tattoo.tooltip_0_desc_2"),
     ],
   },
   {
-    title: "상관없음",
+    title: i18n.t("apps.interest.tattoo.tooltip_1_title"),
     description: [
-      "문신 유무는 중요한 기준이 아니에요",
-      "작은 문신이든 큰 문신이든 개의치 않아요",
-      "문신보다 다른 가치관이나 성격이 더 좋요해요",
-      "문신을 개인의 표현 방식으로 존중해요",
+      i18n.t("apps.interest.tattoo.tooltip_1_desc_1"),
+      i18n.t("apps.interest.tattoo.tooltip_1_desc_2"),
+      i18n.t("apps.interest.tattoo.tooltip_1_desc_3"),
+      i18n.t("apps.interest.tattoo.tooltip_1_desc_4"),
     ],
   },
   {
-    title: "문신 있는 사람이 좋아요",
+    title: i18n.t("apps.interest.tattoo.tooltip_2_title"),
     description: [
-      "문신이 있는 사람에게 호감이 있어요",
-      "문신을 예술적 표현이나 매력적인 요소로 생각해요",
-      "함께 문신에 관한 이야기를 나누고 싶어요",
+      i18n.t("apps.interest.tattoo.tooltip_2_desc_1"),
+      i18n.t("apps.interest.tattoo.tooltip_2_desc_2"),
+      i18n.t("apps.interest.tattoo.tooltip_2_desc_3"),
     ],
   },
 ];
@@ -63,6 +65,7 @@ export default function TattooSelectionScreen() {
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
   const { showErrorModal } = useModal();
+  const { t } = useTranslation();
 
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
@@ -142,16 +145,16 @@ export default function TattooSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            문신에 대해
+            {t("apps.interest.tattoo.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            어떻게 생각하시나요?
+            {t("apps.interest.tattoo.title_2")}
           </Text>
         </View>
         <View style={styles.bar} />
         <View style={styles.wrapper}>
           <Loading.Lottie
-            title="선호도를 불러오고 있어요"
+            title={ t("apps.interest.tattoo.loading")}
             loading={optionsLoading}
           >
             <StepSlider

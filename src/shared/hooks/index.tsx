@@ -10,3 +10,4 @@ export { useTimer, getRemainingSeconds } from './use-timer';
 export { useScrollIndicator } from './use-scroll-indicator';
 export { useAmplitude, useSignupEvents, usePaymentEvents, useUserBehaviorEvents } from './use-amplitude';
 export { useKpiAnalytics } from './use-kpi-analytics';
+export { useAppFont } from './use-app-font';

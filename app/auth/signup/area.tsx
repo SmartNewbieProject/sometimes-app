@@ -5,12 +5,14 @@ import useAreaHook from "@/src/features/signup/hooks/use-area-hook";
 import { areaMap } from "@/src/features/signup/lib";
 import Heart from "@/src/features/signup/ui/area/heart";
 import AreaModal from "@/src/features/signup/ui/area/modal";
+
 import { Button, Header, Text } from "@/src/shared/ui";
 import { track } from "@amplitude/analytics-react-native";
 import AreaFillHeart from "@assets/icons/area-fill-heart.svg";
 import DokdoIcon from "@assets/icons/dokdo.svg";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 import {
   BackHandler,
@@ -23,6 +25,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 function Area() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { onNext, show, initDisabled, handleChangeShow, handleShowNull } =
     useAreaHook();
@@ -51,10 +54,12 @@ function Area() {
           textColor={"black"}
           style={styles.title}
         >
-          어느 지역에서 만남을 시작할까요?
+          {t("apps.auth.sign_up.area.title")}
         </Text>
         <Text size="13" weight="light" textColor={"light"} style={styles.desc}>
-          현재 거주하거나 학교가 있는 지역을 선택해주세요
+          <Text size="13" weight="light" textColor={"light"} style={styles.desc}>
+          {t("apps.auth.sign_up.area.desc")}
+        </Text>
         </Text>
       </View>
       <ScrollView>
@@ -151,7 +156,7 @@ function Area() {
           <AreaFillHeart width={20} height={20} />
 
           <RNText style={styles.tip}>
-            하트를 눌러 지역을 선택하고 오픈 현황을 확인하세요!
+            {t("apps.auth.sign_up.area.tip")}
           </RNText>
         </View>
         <Button
@@ -168,7 +173,7 @@ function Area() {
           className="w-full"
           size="md"
         >
-          이 지역으로 시작하기
+          {t("apps.auth.sign_up.area.button")}
         </Button>
       </View>
     </DefaultLayout>
@@ -218,7 +223,7 @@ const styles = StyleSheet.create({
   tip: {
     color: semanticColors.text.disabled,
     fontWeight: 300,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontSize: 13,
 
     lineHeight: 20,
