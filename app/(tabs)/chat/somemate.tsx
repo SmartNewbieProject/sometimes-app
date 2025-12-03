@@ -14,15 +14,15 @@ import { useCurrentGem } from "@/src/features/payment/hooks/use-current-gem";
 import { Text } from "@/src/shared/ui";
 
 const CATEGORIES: { id: string; label: AiChatCategory }[] = [
+  { id: "love", label: "연애" },
   { id: "daily", label: "일상" },
   { id: "relationship", label: "인간관계" },
   { id: "hobby", label: "진로/학교" },
-  { id: "love", label: "연애" },
 ];
 
 export default function SomemateScreen() {
   const insets = useSafeAreaInsets();
-  const [selectedCategory, setSelectedCategory] = useState<AiChatCategory>("일상");
+  const [selectedCategory, setSelectedCategory] = useState<AiChatCategory>("연애");
   const { showModal } = useModal();
   const { somemateEvents } = useKpiAnalytics();
 
