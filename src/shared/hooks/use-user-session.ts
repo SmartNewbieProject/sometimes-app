@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { track } from '@amplitude/analytics-react-native';
+import { Mixpanel } from 'mixpanel-react-native';
 import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
 
 interface UserSessionData {
@@ -81,7 +81,7 @@ export const useUserSession = (userId?: string) => {
     }
 
     // 앱 오픈 이벤트 발송
-    track(AMPLITUDE_KPI_EVENTS.APP_OPENED, {
+    Mixpanel.track(AMPLITUDE_KPI_EVENTS.APP_OPENED, {
       session_id: sessionRef.current.sessionId,
       session_type: sessionRef.current.sessionType,
       app_open_count: sessionRef.current.appOpenCount,
@@ -94,7 +94,7 @@ export const useUserSession = (userId?: string) => {
 
     // 세션 시작 이벤트 (새 세션만)
     if (isNewSession) {
-      track(AMPLITUDE_KPI_EVENTS.SESSION_STARTED, {
+      Mixpanel.track(AMPLITUDE_KPI_EVENTS.SESSION_STARTED, {
         session_id: sessionRef.current.sessionId,
         session_start_reason: sessionType === 'new' ? 'app_launch' : 'returning_user',
         time_since_last_session: timeSinceLastSession,
@@ -133,7 +133,7 @@ export const useUserSession = (userId?: string) => {
 
     featureUsageStart.current = featureName;
 
-    track(AMPLITUDE_KPI_EVENTS.FEATURE_USED, {
+    Mixpanel.track(AMPLITUDE_KPI_EVENTS.FEATURE_USED, {
       session_id: sessionRef.current.sessionId,
       feature_name: featureName,
       action: 'start',
@@ -150,7 +150,7 @@ export const useUserSession = (userId?: string) => {
       featureUsageStart.current = '';
     }
 
-    track(AMPLITUDE_KPI_EVENTS.FEATURE_USED, {
+    Mixpanel.track(AMPLITUDE_KPI_EVENTS.FEATURE_USED, {
       session_id: sessionRef.current.sessionId,
       feature_name: featureName,
       action: 'end',
@@ -174,7 +174,7 @@ export const useUserSession = (userId?: string) => {
     const sessionQuality = assessSessionQuality(sessionRef.current);
 
     // 세션 종료 이벤트 발송
-    track(AMPLITUDE_KPI_EVENTS.SESSION_ENDED, {
+    Mixpanel.track(AMPLITUDE_KPI_EVENTS.SESSION_ENDED, {
       session_id: sessionRef.current.sessionId,
       session_duration: totalSessionTime,
       end_reason,
@@ -221,7 +221,7 @@ export const useUserSession = (userId?: string) => {
 
     const sessionDuration = backgroundStartTime.current - sessionRef.current.startTime;
 
-    track(AMPLITUDE_KPI_EVENTS.APP_BACKGROUNDED, {
+    Mixpanel.track(AMPLITUDE_KPI_EVENTS.APP_BACKGROUNDED, {
       session_id: sessionRef.current.sessionId,
       session_duration_at_background: sessionDuration,
       background_reason: 'user_action',
@@ -323,7 +323,7 @@ export const useUserSession = (userId?: string) => {
       sessionRef.current.userId = userId;
 
       // 로그인 이벤트 발송
-      track(AMPLITUDE_KPI_EVENTS.AUTH_LOGIN_COMPLETED, {
+      Mixpanel.track(AMPLITUDE_KPI_EVENTS.AUTH_LOGIN_COMPLETED, {
         session_id: sessionRef.current.sessionId,
         user_id: userId,
         login_method: 'existing_session',

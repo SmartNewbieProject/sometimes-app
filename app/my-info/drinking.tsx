@@ -4,7 +4,7 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import Tooltip from "@/src/shared/ui/tooltip";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";

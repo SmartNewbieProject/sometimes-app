@@ -19,7 +19,6 @@
     "build:ios:prod": "cross-env APP_ENV=production node ./scripts/build-ios.js"
   },
   "dependencies": {
-    "@amplitude/analytics-react-native": "^1.5.0",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@expo/config-plugins": "^10.0.2",
     "@expo/vector-icons": "^14.0.2",
@@ -85,6 +84,7 @@
     "lottie-react-native": "^7.3.4",
     "lucide-react-native": "^0.554.0",
     "metro-react-native-babel-transformer": "^0.76.9",
+    "mixpanel-react-native": "^3.1.2",
     "nanoid": "^5.1.5",
     "nativewind": "^4.1.23",
     "react": "19.0.0",

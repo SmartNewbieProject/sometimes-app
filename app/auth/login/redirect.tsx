@@ -3,7 +3,7 @@ import { semanticColors } from '../../../src/shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform, Text, View } from "react-native";

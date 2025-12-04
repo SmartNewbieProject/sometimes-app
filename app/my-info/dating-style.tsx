@@ -7,7 +7,7 @@ import type { Preferences } from "@/src/features/my-info/api";
 import { ImageResources } from "@/src/shared/libs";
 import { Divider, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";

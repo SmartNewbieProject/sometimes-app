@@ -6,7 +6,7 @@ import { tryCatch } from '@/src/shared/libs';
 import { ensureAppleId, processSignup, validatePhone, validateUniversity } from '../services/signup-validator';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import Signup from '..';
-import { track } from '@amplitude/analytics-react-native';
+import { track } from '@/src/shared/libs/amplitude-compat';
 
 
 const {

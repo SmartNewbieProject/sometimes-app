@@ -6,7 +6,7 @@ import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { GemStoreWidget } from "@/src/widgets";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import Layout from "@features/layout";
 import Payment from "@features/payment";
 import { useCurrentGem, useGemProducts } from "@features/payment/hooks";

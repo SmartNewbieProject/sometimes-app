@@ -8,7 +8,7 @@ import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import Tooltip from "@/src/shared/ui/tooltip";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";

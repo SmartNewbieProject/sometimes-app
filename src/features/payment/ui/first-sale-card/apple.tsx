@@ -7,7 +7,7 @@ import { ImageResources, formatTime } from "@/src/shared/libs";
 import { GlowingCard, ImageResource, Show, Text } from "@/src/shared/ui";
 import { GemItemProps } from "@/src/widgets/gem-store";
 import { AppleGemStoreWidget } from "@/src/widgets/gem-store/apple";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import type { Product } from "expo-iap";
 import type { GemDetails } from "@/src/features/payment/api";
 import { useEffect } from "react";

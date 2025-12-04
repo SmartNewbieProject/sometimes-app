@@ -3,7 +3,7 @@ import { DefaultLayout } from "@/src/features/layout/ui";
 import { semanticColors } from '../../../src/shared/constants/colors';
 import Signup from "@/src/features/signup";
 import { useStorage } from "@/src/shared/hooks/use-storage";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";

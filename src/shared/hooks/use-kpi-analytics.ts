@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { track as amplitudeTrack } from '@amplitude/analytics-react-native';
+import { Mixpanel } from 'mixpanel-react-native';
 import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
 import type {
   BaseEventProperties,
@@ -179,8 +179,8 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
           return;
         }
 
-        // Amplitude 이벤트 전송
-        amplitudeTrack(AMPLITUDE_KPI_EVENTS[eventName], eventProperties);
+        // Mixpanel 이벤트 전송
+        Mixpanel.track(AMPLITUDE_KPI_EVENTS[eventName], eventProperties);
 
         // 개발 환경에서 로그 출력
         if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {

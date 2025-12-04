@@ -26,7 +26,7 @@ import { useStorage } from "@/src/shared/hooks/use-storage";
 import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
-import * as amplitude from "@amplitude/analytics-react-native";
+import { Mixpanel } from 'mixpanel-react-native';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 if (Platform.OS !== "web") {
@@ -37,7 +37,10 @@ if (Platform.OS !== "web") {
 
 const MIN_SPLASH_MS = 2000;
 const START_AT = Date.now();
-amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_KEY as string);
+
+// Mixpanel 초기화
+const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN as string;
+Mixpanel.init(mixpanelToken, true); // trackAutomaticEvents = true
 
 export default function RootLayout() {
   const { request: requestAtt } = useAtt();

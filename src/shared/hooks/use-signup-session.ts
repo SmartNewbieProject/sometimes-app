@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { track } from '@amplitude/analytics-react-native';
+import { track } from '@/src/shared/libs/amplitude-compat';
 import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
 
 interface SignupSessionData {

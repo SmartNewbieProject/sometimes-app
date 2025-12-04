@@ -5,7 +5,7 @@ import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useAuth } from "@features/auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";

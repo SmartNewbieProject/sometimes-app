@@ -3,7 +3,7 @@
  * 서버 응답 메시지 기반 정확한 실패 원인 판단
  */
 
-import { track } from '@amplitude/analytics-react-native';
+import { track } from '@/src/shared/libs/amplitude-compat';
 
 export interface FailureReason {
   type: string;

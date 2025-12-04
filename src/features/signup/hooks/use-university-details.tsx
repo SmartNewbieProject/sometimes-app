@@ -1,5 +1,5 @@
 import { tryCatch } from "@/src/shared/libs";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useGlobalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { BackHandler, StyleSheet, View } from "react-native";
