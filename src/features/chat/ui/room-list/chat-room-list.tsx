@@ -6,6 +6,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { useState } from "react";
 import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import useChatRoomList from "../../hooks/use-chat-room-list";
 import { useSomemateEnabled } from "@/src/features/somemate/queries/use-somemate-enabled";
 
@@ -15,6 +16,7 @@ import ChatRoomCard from "./chat-room-card";
 import SomemateBanner from "../somemate-banner";
 
 function ChatRoomList() {
+  const { t } = useTranslation();
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
   const [keyword, setKeyword] = useState("");
@@ -53,16 +55,16 @@ function ChatRoomList() {
             style={{ width: 216, height: 216, marginBottom: 20 }}
             source={require("@assets/images/no-chat-miho.png")}
           />
-          <Text style={styles.infoText}>아직 열린 채팅방이 없어요</Text>
+          <Text style={styles.infoText}>{t('features.chat.ui.chat_room_list.no_chat_title')}</Text>
           <Text style={styles.infoText}>
-            서로 좋아요가 되면 대화가 시작돼요
+            {t('features.chat.ui.chat_room_list.no_chat_subtitle')}
           </Text>
         </View>
       </Show>
       <Show when={lockChatRooms.length > 0}>
         <View style={styles.lockContainer}>
           <Text style={styles.lockTitleText}>
-            새로운 마음이 도착했어요💜 채팅을 열고 메시지를 확인해보세요!
+            {t('features.chat.ui.chat_room_list.new_match_notice')}
           </Text>
           {Platform.OS === "web" ? (
             <FlashList
@@ -97,7 +99,7 @@ function ChatRoomList() {
       </Show>
       <Show when={openChatRooms.length > 0}>
         <View style={styles.openContainer}>
-          <Text style={styles.openTitleText}>최근 대화</Text>
+          <Text style={styles.openTitleText}>{t('features.chat.ui.chat_room_list.recent_chat')}</Text>
           {Platform.OS === "web" ? (
             <FlashList
               data={openChatRooms}

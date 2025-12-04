@@ -32,7 +32,7 @@ export const CategoryList = () => {
   const itemLayoutsRef = useRef<LayoutMap>({});
 
   const augmentedCategories = useMemo(
-    () => [{ code: HOME_CODE, displayName: "홈" } as const, ...categories],
+    () => [{ code: HOME_CODE, displayName: "홈" } as const, ...(Array.isArray(categories) ? categories : [])],
     [categories]
   );
 

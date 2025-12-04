@@ -25,7 +25,9 @@ function HistoryCollapse() {
     usePreviewHistory();
   const [startTiming, setStartTiming] = useState(false);
   const previewMatchingHistory = previewHistory;
-  const imagesUrls = previewMatchingHistory?.imageUrls ?? [];
+  const imagesUrls = Array.isArray(previewMatchingHistory?.imageUrls)
+    ? previewMatchingHistory.imageUrls
+    : [];
   const sv1 = useSharedValue(0);
   const sv2 = useSharedValue(0);
   const sv3 = useSharedValue(0);
@@ -65,7 +67,8 @@ function HistoryCollapse() {
   const name = profileDetails?.name ?? "";
   return !isLoading &&
     previewMatchingHistory &&
-    previewMatchingHistory?.imageUrls.length > 0 ? (
+    Array.isArray(previewMatchingHistory?.imageUrls) &&
+    previewMatchingHistory.imageUrls.length > 0 ? (
     <View style={{ overflow: "hidden", borderRadius: 20 }}>
       <LinearGradient
         start={[0, 0]}

@@ -1,5 +1,3 @@
-import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
-import RouletteModal from "@/src/features/event/ui/roulette/roulette-modal";
 import { useStep } from "@/src/features/guide/hooks/use-step";
 import useMatchingFirst from "@/src/features/guide/queries/use-maching-first";
 import LikeGuideScenario from "@/src/features/guide/ui/like-guide-scenario";
@@ -87,13 +85,6 @@ const HomeScreen = () => {
   //   fetchTutorialStatus();
   // }, []);
 
-  const { data, isLoading, isError, error } = useRouletteEligibility();
-
-  useEffect(() => {
-    if (data?.canParticipate && !isLoading) {
-      showModal({ custom: RouletteModal });
-    }
-  }, [data?.canParticipate, isLoading]);
 
   // const visibleLikeGuide =
   //   step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
@@ -184,14 +175,14 @@ const HomeScreen = () => {
           </Show>
         </View>
 
-        {!isPreferenceFill || preferencesSelf?.length === 0 ? (
+        {true ? (
+          <View className="mt-[14px]">
+            <IdleMatchTimer />
+          </View>
+        ) : (
           <View style={{ gap: 14 }}>
             <HomeInfoSection />
             <MatchingStatus />
-          </View>
-        ) : (
-          <View className="mt-[14px]">
-            <IdleMatchTimer />
           </View>
         )}
         <View style={{ marginTop: 20 }}>

@@ -9,7 +9,7 @@ import {
 import type { UserProfile } from "@/src/types/user";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
-import { Text as CustomText } from "@shared/ui/text";
+import { Text as CustomText } from "@/src/shared/ui/text";
 import { Image } from "expo-image";
 import { router, useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";

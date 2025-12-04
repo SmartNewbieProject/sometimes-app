@@ -1,4 +1,4 @@
-import {useModal} from "@hooks/use-modal";
+import { useModal } from "@hooks/use-modal";
 import { semanticColors } from '../constants/colors';
 import {StyleSheet, View} from "react-native";
 import {router} from "expo-router";
@@ -30,9 +30,9 @@ export const useCashableModal = () => {
               {t("shareds.hooks.use_cashable_modal.description")}
             </Text>
 
-            <Text style={styles.description} className="text-text-disabled">
-              {textContent}
-            </Text>
+          <Text style={styles.description} className="text-text-disabled">
+            {textContent}
+          </Text>
         </View>
       ),
       primaryButton: {

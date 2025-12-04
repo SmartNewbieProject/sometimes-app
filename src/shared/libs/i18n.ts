@@ -3,20 +3,22 @@ import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
 import ko from './locales/ko';
 import ja from './locales/ja';
+import en from './locales/en';
 
 const resources = {
   ja: { translation: ja },
   ko: { translation: ko },
+  en: { translation: en },
 };
 
-const deviceLocales = Localization.getLocales();
-const deviceLang = deviceLocales[0].languageTag || 'ko'
+// 기기 언어 감지
+const deviceLanguage = Localization.getLocales()[0]?.languageCode || 'ko';
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: deviceLang,
+    lng: deviceLanguage,
     fallbackLng: 'ko',
     interpolation: {
       escapeValue: false,

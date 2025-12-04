@@ -3,28 +3,30 @@ import { semanticColors } from '../../../../shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
 import MyActivityCard from "./my-activity-card";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 
 function MyActivityMenu() {
+  const { t } = useTranslation();
   const showCommingSoon = useCommingSoon();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My 활동</Text>
+      <Text style={styles.title}>{t('features.mypage.my_activity.title')}</Text>
       <View style={styles.bar} />
       <View style={styles.contentContainer}>
         <MyActivityCard
-          title="내가 쓴 글"
+          title={t('features.mypage.my_activity.my_articles')}
           onPress={() => router.push("/community/my/my-articles")}
         />
         <MyActivityCard
-          title="댓글 단 글"
+          title={t('features.mypage.my_activity.my_comments')}
           onPress={() => router.push("/community/my/my-comments")}
         />
         <MyActivityCard
-          title="좋아요한 글"
+          title={t('features.mypage.my_activity.my_liked')}
           onPress={() => router.push("/community/my/my-liked")}
         />
-        {/* <MyActivityCard title="리뷰 내역" onPress={showCommingSoon} /> */}
+        {/* <MyActivityCard title={t('features.mypage.my_activity.my_reviews')} onPress={showCommingSoon} /> */}
       </View>
     </View>
   );

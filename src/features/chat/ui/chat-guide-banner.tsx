@@ -1,25 +1,27 @@
 import BulbIcon from "@assets/icons/bulb.svg";
 import { semanticColors } from '../../../shared/constants/colors';
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-
-const GUIDE_TEXT = [
-  "요즘 가장 관심있게 보고 있는 드라마나 예능 이 있나요?",
-  "주말에 주로 뭐 하면서 시간 보내세요?",
-  "안녕하세요! 프로필에서 카페투어를 좋아한다고 하셨는데, 추천하고 싶은 카페가 있나요?",
-  "동아리나 학회 활동 하고 계신가요?",
-  "OO학과라고 하셨는데, 어떤 분야에 관심이 있으신가요?",
-  "동아리나 학회 활동 하고 계신가요?",
-  "방학동안에 어떤 활동하면서 지내셨나요?",
-];
+import { useTranslation } from "react-i18next";
 
 function ChatGuideBanner() {
-  const guideList = getRandomItems(GUIDE_TEXT, 2);
+  const { t } = useTranslation();
+
+  const guideTexts = useMemo(() => [
+    t('features.chat.ui.chat_guide_banner.guide_1'),
+    t('features.chat.ui.chat_guide_banner.guide_2'),
+    t('features.chat.ui.chat_guide_banner.guide_3'),
+    t('features.chat.ui.chat_guide_banner.guide_4'),
+    t('features.chat.ui.chat_guide_banner.guide_5'),
+    t('features.chat.ui.chat_guide_banner.guide_6'),
+  ], [t]);
+
+  const guideList = getRandomItems(guideTexts, 2);
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
         <BulbIcon />
-        <Text style={styles.title}>대화 시작 도우미</Text>
+        <Text style={styles.title}>{t('features.chat.ui.chat_guide_banner.title')}</Text>
       </View>
       <View style={styles.bottomContainer}>
         {guideList.map((item) => (

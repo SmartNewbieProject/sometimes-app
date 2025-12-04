@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { Check, Sparkles, Loader2 } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { Text, Button } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
 import { answerInputStyles } from './envelope.styles';
@@ -10,7 +11,7 @@ interface AnswerInputProps {
   questionType: 'text' | 'multiple-choice';
   textAnswer: string;
   selectedOption: number | null;
-  options: string[];
+  options: Array<{ id: string; text: string; order?: number }>;
   onTextChange: (text: string) => void;
   onOptionSelect: (index: number) => void;
   onGetInspiration: () => void;
@@ -31,6 +32,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
   isSending,
   onSubmit,
 }) => {
+  const { t } = useTranslation();
   const isTextValid = textAnswer.trim().length > 0;
   const isOptionValid = selectedOption !== null;
   const isValid = questionType === 'text' ? isTextValid : isOptionValid;
@@ -57,7 +59,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
       {renderLines()}
       <TextInput
         style={answerInputStyles.textInput}
-        placeholder="이곳에 당신의 진심을 적어주세요..."
+        placeholder={t('features.moment.question_detail.answer_input.placeholder')}
         placeholderTextColor={colors.text.disabled}
         value={textAnswer}
         onChangeText={(text) => {
@@ -82,7 +84,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
           const isSelected = selectedOption === index;
           return (
             <TouchableOpacity
-              key={index}
+              key={`${option.id}-${index}`}
               style={[
                 answerInputStyles.optionButton,
                 isSelected
@@ -113,7 +115,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
                     : answerInputStyles.optionTextUnselected,
                 ]}
               >
-                {option}
+                {option.text}
               </Text>
             </TouchableOpacity>
           );
@@ -126,10 +128,11 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
     <View style={answerInputStyles.container}>
       <View style={answerInputStyles.header}>
         <Text size="xs" weight="semibold" textColor="muted" style={answerInputStyles.headerText}>
-          To. 나에게
+          {t('features.moment.question_detail.answer_input.to_myself')}
         </Text>
 
         <View style={answerInputStyles.statusContainer}>
+          {/* AI 영감 기능 - 현재 미사용
           {questionType === 'text' && (
             <TouchableOpacity
               onPress={onGetInspiration}
@@ -160,6 +163,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
               </LinearGradient>
             </TouchableOpacity>
           )}
+          */}
 
           <Text
             size="xs"
@@ -170,10 +174,10 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
             ]}
           >
             {questionType === 'text'
-              ? `${textAnswer.length}자 작성 중`
+              ? t('features.moment.question_detail.answer_input.writing_count', { count: textAnswer.length })
               : isOptionValid
-                ? '선택 완료'
-                : '답변을 선택해주세요'}
+                ? t('features.moment.question_detail.answer_input.selection_complete')
+                : t('features.moment.question_detail.answer_input.select_answer')}
           </Text>
         </View>
       </View>
@@ -200,10 +204,10 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
           {isSending ? (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Loader2 size={20} color={colors.white} style={{ marginRight: 8 }} />
-              <Text textColor="white" weight="bold">우체통에 넣는 중...</Text>
+              <Text textColor="white" weight="bold">{t('features.moment.question_detail.answer_input.sending')}</Text>
             </View>
           ) : (
-            '답장 보내기'
+            t('features.moment.question_detail.answer_input.submit')
           )}
         </Button>
       </View>

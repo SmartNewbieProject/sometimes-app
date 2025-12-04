@@ -43,6 +43,10 @@
         "profile_search": "새로운 프로필 검색 완료",
         "result_ready": "매칭 결과 준비 완료"
       }
+    },
+    "error": {
+      "highlight": "연결",
+      "message": "이 불안정해요.\n잠시 후 다시 확인해 주세요."
     }
   },
   "hooks":{

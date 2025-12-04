@@ -8,12 +8,14 @@ import { ScrollView, View } from "react-native";
 import { Linking } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useConfirmProfileImageReview } from "@/src/features/mypage/hooks/use-confirm-profile-image-review";
+import { useTranslation } from "react-i18next";
 
 export default function ProfileImgEditRejectScreen() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const rejectionReason =
-    (params.rejectionReason as string) || "승인이 거절되었습니다.";
+    (params.rejectionReason as string) || t('features.mypage.profile_status.reject.default_reason');
 
   const { mutateAsync, isPending } = useConfirmProfileImageReview();
 
@@ -102,7 +104,7 @@ export default function ProfileImgEditRejectScreen() {
               weight="semibold"
               className="text-left"
             >
-              승인이 거절되었어요
+              {t('features.mypage.profile_status.reject.title')}
             </Text>
           </View>
 
@@ -114,8 +116,8 @@ export default function ProfileImgEditRejectScreen() {
               weight="light"
               className="text-left leading-6"
             >
-              아래 사유를 확인하고 정보를 수정한 후{"\n"}
-              다시 신청해주세요
+              {t('features.mypage.profile_status.reject.description_1')}{"\n"}
+              {t('features.mypage.profile_status.reject.description_2')}
             </Text>
           </View>
 
@@ -135,7 +137,7 @@ export default function ProfileImgEditRejectScreen() {
                     weight="semibold"
                     className="mb-1"
                   >
-                    거절 사유
+                    {t('features.mypage.profile_status.reject.reason_title')}
                   </Text>
                   <Text size="sm" textColor="gray" weight="light">
                     {rejectionReason}
@@ -152,7 +154,7 @@ export default function ProfileImgEditRejectScreen() {
             weight="light"
             className="text-center mt-8"
           >
-            정보를 수정하신 후 언제든지 다시 신청하실 수 있어요
+            {t('features.mypage.profile_status.reject.reapply_info')}
           </Text>
         </View>
       </ScrollView>
@@ -175,7 +177,7 @@ export default function ProfileImgEditRejectScreen() {
               ↻
             </Text>
             <Text size="md" textColor="white" weight="semibold">
-              다시 입력하기
+              {t('features.mypage.profile_status.reject.reapply_button')}
             </Text>
           </View>
         </Button>
@@ -191,7 +193,7 @@ export default function ProfileImgEditRejectScreen() {
               🎧
             </Text>
             <Text size="md" textColor="gray" weight="medium">
-              고객센터 문의
+              {t('features.mypage.profile_status.reject.contact_support')}
             </Text>
           </View>
         </Button>

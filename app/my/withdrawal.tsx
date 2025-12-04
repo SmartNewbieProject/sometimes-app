@@ -142,7 +142,7 @@ export default function WithdrawalScreen() {
         </Header.LeftContent>
         <Header.CenterContent>
           <Text size="lg" weight="bold" textColor="black">
-            탈퇴하기
+            {t('features.mypage.withdrawal.header_title')}
           </Text>
         </Header.CenterContent>
         <Header.RightContent>
@@ -158,11 +158,10 @@ export default function WithdrawalScreen() {
             />
           </View>
           <Text size="lg" textColor="black" weight="semibold">
-            썸타임을 아껴주셔서 감사합니다
+            {t('features.mypage.withdrawal.thank_you')}
           </Text>
           <RNText style={styles.description}>
-            느끼셨던 점을 공유해주시면 더욱 좋은 서비스를 제공할 수 있도록
-            하겠습니다.
+            {t('features.mypage.withdrawal.feedback_request')}
           </RNText>
         </View>
 
@@ -186,7 +185,7 @@ export default function WithdrawalScreen() {
           styles={styles.button}
           disabled={!isValid}
         >
-          서비스 떠나기
+          {t('features.mypage.withdrawal.leave_service')}
         </Button>
       </View>
     </Layout.Default>

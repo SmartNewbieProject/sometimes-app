@@ -1,22 +1,48 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Polygon, Line, Text as SvgText } from 'react-native-svg';
 
 import { Text } from '@/src/shared/ui';
+import { SpecialText } from '@/src/shared/ui/text/special-text';
 import colors, { semanticColors } from '@/src/shared/constants/colors';
-import { useWeeklyReportQuery, useGenerateWeeklyReportMutation, useWeeklyProgressQuery, useSyncProfileMutation } from '../../queries';
-import { WeeklyReportRequest, StatItem, InsightItem } from '../../apis';
-import { getCurrentWeekInfo } from '../../utils/week-calculator';
+import { useWeeklyReportQuery, useWeeklyProgressQuery, useSyncProfileMutation } from '../../queries';
 import { useModal } from '@/src/shared/hooks/use-modal';
-
-import { WeeklyReportHeader } from './weekly-report-header';
-import { WeeklyReportStats } from './weekly-report-stats';
-import { WeeklyReportInsights } from './weekly-report-insights';
-import { WeeklyReportKeywords } from './weekly-report-keywords';
 import { AnalysisCard } from '../widgets/analysis-card';
+import { getPersonalityTypeLabel } from '../../constants/personality-types';
+
+// API response types based on actual API response
+interface WeeklyReportStats {
+  category: string;
+  currentScore: number;
+  prevScore: number;
+  status: 'INCREASE' | 'DECREASE' | 'SAME';
+}
+
+interface WeeklyReportInsight {
+  category: string;
+  score: number;
+  definition: string;
+  feedback: string;
+}
+
+interface WeeklyReportResponse {
+  id: string;
+  userId: string;
+  weekNumber: number;
+  year: number;
+  title: string;
+  subTitle: string;
+  description: string;
+  imageUrl?: string;
+  generatedAt: string;
+  stats: WeeklyReportStats[];
+  insights: WeeklyReportInsight[];
+  keywords: string[];
+}
 
 export const WeeklyReportPage = () => {
   const insets = useSafeAreaInsets();
@@ -33,35 +59,140 @@ export const WeeklyReportPage = () => {
     }));
   };
 
-  // URL 파라미터에서 주차 정보 가져오기, 없으면 현재 주차 사용
   const paramWeek = localParams.week ? parseInt(localParams.week, 10) : null;
   const paramYear = localParams.year ? parseInt(localParams.year, 10) : null;
 
-  // 현재 주차 정보 계산
+  const getCurrentWeekInfo = () => {
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const weekNumber = Math.ceil(((now.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7);
+    return { weekNumber, year: now.getFullYear() };
+  };
+
   const { weekNumber, year } = getCurrentWeekInfo();
 
-  const reportParams: WeeklyReportRequest = {
-    weekNumber: paramWeek || weekNumber,
+  const reportParams = {
+    week: paramWeek || weekNumber,
     year: paramYear || year,
   };
 
   const { data: reportData, isLoading, error } = useWeeklyReportQuery(reportParams);
-  const { data: weeklyProgress } = useWeeklyProgressQuery();
-  const { mutate: generateReport, isPending: isGenerating } = useGenerateWeeklyReportMutation();
   const { mutate: syncProfile, isPending: isSyncing } = useSyncProfileMutation();
   const { showModal } = useModal();
 
-  const handleGenerateReport = () => {
-    generateReport();
-  };
 
   const handleBackToMoment = () => {
-    router.push('/moment');
+    router.push('/moment/my-moment');
   };
+
+  const { width } = Dimensions.get("window");
+
+  // 로딩 상태 처리
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top, backgroundColor: colors.white }]}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primaryPurple} />
+          <Text size="16" weight="medium" textColor="purple" style={styles.loadingText}>
+            보고서를 불러오는 중...
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  // 에러 상태 처리 - reportData가 없는 경우만 에러 처리
+  if (error) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        {/* Main Background Gradient (bottom-up emphasis) */}
+        <LinearGradient
+          colors={['#FFFFFF', '#F5F1FF', '#DECEFF', '#B095E0']}
+          locations={[0, 0.5, 0.78, 1]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={styles.backgroundGradient}
+        />
+
+        {/* Top Purple Gradient Overlay */}
+        <LinearGradient
+          colors={['#E8DEFF', '#F5F1FF', 'rgba(255, 255, 255, 0)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.topGradientOverlay}
+          pointerEvents="none"
+        />
+        <View style={styles.noReportContainer}>
+          <Text size="18" weight="bold" textColor="white" style={styles.noReportTitle}>
+            보고서를 불러올 수 없어요
+          </Text>
+          <Text size="14" weight="normal" textColor="white" style={styles.noReportDescription}>
+            잠시 후 다시 시도해주세요.
+          </Text>
+          <TouchableOpacity
+            style={styles.goToQuestionButton}
+            onPress={() => router.push("/moment")}
+          >
+            <Text size="16" weight="bold" textColor="white">
+              돌아가기
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  // 실제 데이터 추출 - API 응답 구조에 따라 동적으로 처리
+  const report = reportData?.reports?.[0] || reportData?.data?.reports?.[0] || reportData?.data || reportData;
+
+
+  // 데이터가 없는 경우 fallback 처리
+  if (!report || (!report.title && !report.stats?.length && !report.insights?.length)) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        {/* Main Background Gradient (bottom-up emphasis) */}
+        <LinearGradient
+          colors={['#FFFFFF', '#F5F1FF', '#DECEFF', '#B095E0']}
+          locations={[0, 0.5, 0.78, 1]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={styles.backgroundGradient}
+        />
+
+        {/* Top Purple Gradient Overlay */}
+        <LinearGradient
+          colors={['#E8DEFF', '#F5F1FF', 'rgba(255, 255, 255, 0)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.topGradientOverlay}
+          pointerEvents="none"
+        />
+        <View style={styles.noReportContainer}>
+          <Text size="18" weight="bold" textColor="white" style={styles.noReportTitle}>
+            모먼트 보고서가 없어요
+          </Text>
+          <Text size="14" weight="normal" textColor="white" style={styles.noReportDescription}>
+            {paramYear && paramWeek
+              ? `${paramYear}년 ${paramWeek}주차 보고서가 존재하지 않습니다.`
+              : "이번 주차 보고서가 아직 생성되지 않았습니다. 오늘의 질문에 답변하고 나만의 성장 보고서를 만들어보세요!"
+            }
+          </Text>
+          <TouchableOpacity
+            style={styles.goToQuestionButton}
+            onPress={() => router.push("/moment/question-detail")}
+          >
+            <Text size="16" weight="bold" textColor="white">
+              질문 답변하러 가기
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   // 프로필 동기화 핸들러
   const handleSyncProfile = () => {
-    if (!reportData?.keywords?.length) {
+    if (!report?.keywords?.length) {
       showModal({
         title: "알림",
         children: (
@@ -80,98 +211,26 @@ export const WeeklyReportPage = () => {
     syncProfile({
       syncKeywords: true,
       syncIntroduction: false
-    }, {
-      onSuccess: (response) => {
-        showModal({
-          title: "성공",
-          children: (
-            <Text size="14" weight="normal" textColor="dark">
-              {response.syncedKeywords.length > 0
-                ? `${response.syncedKeywords.join(", ")} 키워드를 프로필에 추가했습니다.`
-                : "키워드가 프로필에 동기화되었습니다."
-              }
-            </Text>
-          ),
-          primaryButton: {
-            text: "확인",
-            onClick: () => { }
-          }
-        });
-      },
-      onError: (error) => {
-        showModal({
-          title: "오류",
-          children: (
-            <Text size="14" weight="normal" textColor="dark">
-              키워드 추가에 실패했습니다. 다시 시도해주세요.
-            </Text>
-          ),
-          primaryButton: {
-            text: "확인",
-            onClick: () => { }
-          }
-        });
-      }
     });
   };
 
-  const { width } = Dimensions.get("window");
-
-  // 보고서 생성 여부 확인
-  const hasValidReport = reportData;
-
-  // 보고서가 없을 경우 접근 제한
-  if (!hasValidReport) {
-    return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        <View style={styles.noReportContainer}>
-          <Text size="18" weight="bold" textColor="purple" style={styles.noReportTitle}>
-            아직 모먼트 리포트가 없어요
-          </Text>
-          <Text size="14" weight="normal" textColor="gray" style={styles.noReportDescription}>
-            오늘의 질문에 답변하고 나만의 성장 리포트를 만들어보세요!
-          </Text>
-          <TouchableOpacity
-            style={styles.goToQuestionButton}
-            onPress={() => router.push("/moment/question-detail")}
-          >
-            <Text size="16" weight="bold" textColor="white">
-              질문 답변하러 가기
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-
-  // 로딩 상태 처리
-  if (isLoading) {
-    return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primaryPurple} />
-        </View>
-      </View>
-    );
-  }
-
   // 레이더 차트 데이터 생성
   const generateRadarData = () => {
-    if (!reportData?.stats || reportData.stats.length === 0) {
+    if (!report?.stats || report.stats.length === 0) {
       return [
-        { label: "감정 개방성", value: 50, prevValue: 45, angle: -90 },
-        { label: "관계 안정감", value: 50, prevValue: 45, angle: -18 },
-        { label: "갈등 성숙도", value: 50, prevValue: 45, angle: 54 },
-        { label: "가치 명확성", value: 50, prevValue: 45, angle: 126 },
-        { label: "열린 태도", value: 50, prevValue: 45, angle: 198 },
+        { label: getPersonalityTypeLabel("openness"), value: 50, prevValue: 45, angle: -90 },
+        { label: getPersonalityTypeLabel("conscientiousness"), value: 50, prevValue: 45, angle: -18 },
+        { label: getPersonalityTypeLabel("extraversion"), value: 50, prevValue: 45, angle: 54 },
+        { label: getPersonalityTypeLabel("agreeableness"), value: 50, prevValue: 45, angle: 126 },
+        { label: getPersonalityTypeLabel("neuroticism"), value: 50, prevValue: 45, angle: 198 },
       ];
     }
 
-    return reportData.stats.map((stat, index) => ({
-      label: stat.category,
+    return report.stats.map((stat, index) => ({
+      label: getPersonalityTypeLabel(stat.category as any) || stat.category,
       value: stat.currentScore,
-      prevValue: stat.prevScore,
-      angle: -90 + (index * 72), // 5개의 차원을 360도에 분배
+      prevValue: stat.prevScore || 45,
+      angle: -90 + (index * 72), // 5개의 차원을 360도에 분배 (360/5 = 72도)
     }));
   };
 
@@ -200,7 +259,7 @@ export const WeeklyReportPage = () => {
     const prevPolygonPoints = prevDataPoints.map(p => `${p.x},${p.y}`).join(" ");
 
     return (
-      <View style={styles.radarContainer}>
+      <View style={[styles.radarContainer, { width: size, height: size }]}>
         <Svg width={size} height={size}>
           {/* Background levels */}
           {[...Array(levels)].map((_, i) => {
@@ -260,80 +319,83 @@ export const WeeklyReportPage = () => {
         {/* Labels */}
         <View style={styles.radarLabels}>
           {radarData.map((d, i) => {
-            const labelRadius = maxRadius + 45; // 거리 증가
-            const radian = (d.angle * Math.PI) / 180;
-            const x = center + labelRadius * Math.cos(radian);
-            const y = center + labelRadius * Math.sin(radian);
+            // 컨테이너 기준 고정 좌표 설정
+            const center = size / 2;
+            const labelOffset = size / 2 + 20; // 차트 끝에서 20px 떨어진 위치
 
-            let alignItems: 'flex-start' | 'center' | 'flex-end' = 'center';
-            let textAlign: 'left' | 'center' | 'right' = 'center';
+            // 각 인덱스별 고정 위치 및 정렬 설정 - 실제 각도에 기반한 계산
+            const labelPositions = [
+              // Index 0: -90° (정상단) - 12시 방향
+              {
+                x: center - 45, // 중심에서 약간 왼쪽으로
+                y: 15, // 최상단
+                textAlign: 'center' as const,
+                alignItems: 'center' as const,
+                width: 90
+              },
+              // Index 1: -18° (우상단) - 1시 방향
+              {
+                x: center + 50, // 오른쪽
+                y: 60, // 상단
+                textAlign: 'left' as const,
+                alignItems: 'flex-start' as const,
+                width: 85
+              },
+              // Index 2: 54° (우하단) - 5시 방향
+              {
+                x: center + 50, // 오른쪽
+                y: size - 80 + 12, // 하단에서 3px 아래로
+                textAlign: 'left' as const,
+                alignItems: 'flex-start' as const,
+                width: 85
+              },
+              // Index 3: 126° (좌하단) - 7시 방향
+              {
+                x: center - 135, // 왼쪽
+                y: size - 80 + 12, // 하단에서 3px 아래로
+                textAlign: 'right' as const,
+                alignItems: 'flex-end' as const,
+                width: 85
+              },
+              // Index 4: 198° (좌상단) - 11시 방향
+              {
+                x: center - 135, // 왼쪽
+                y: 60, // 상단
+                textAlign: 'right' as const,
+                alignItems: 'flex-end' as const,
+                width: 85
+              }
+            ];
 
-            // 더 세밀한 각도 범위별 정렬
-            if (d.angle >= -90 && d.angle < -54) {
-              // 상단 중앙
-              alignItems = 'center';
-              textAlign = 'center';
-            } else if (d.angle >= -54 && d.angle < -18) {
-              // 상단 우측
-              alignItems = 'flex-start';
-              textAlign = 'left';
-            } else if (d.angle >= -18 && d.angle < 18) {
-              // 우측 상단
-              alignItems = 'flex-start';
-              textAlign = 'left';
-            } else if (d.angle >= 18 && d.angle < 54) {
-              // 우측 하단
-              alignItems = 'flex-start';
-              textAlign = 'left';
-            } else if (d.angle >= 54 && d.angle < 90) {
-              // 하단 우측
-              alignItems = 'flex-start';
-              textAlign = 'left';
-            } else if (d.angle >= 90 && d.angle < 126) {
-              // 하단
-              alignItems = 'center';
-              textAlign = 'center';
-            } else if (d.angle >= 126 && d.angle < 162) {
-              // 하단 좌측
-              alignItems = 'flex-end';
-              textAlign = 'right';
-            } else if (d.angle >= 162 && d.angle < 198) {
-              // 좌측 하단
-              alignItems = 'flex-end';
-              textAlign = 'right';
-            } else if (d.angle >= 198 && d.angle < 234) {
-              // 좌측
-              alignItems = 'flex-end';
-              textAlign = 'right';
-            } else if (d.angle >= 234 && d.angle < 270) {
-              // 좌측 상단
-              alignItems = 'flex-end';
-              textAlign = 'right';
-            } else {
-              // 상단 좌측
-              alignItems = 'center';
-              textAlign = 'center';
-            }
+            const position = labelPositions[i] || labelPositions[0];
+            const fontSize = 11;
 
             return (
               <View
                 key={i}
                 style={{
                   position: "absolute",
-                  left: x - 50, // 너비 증가
-                  top: y - 12,  // 수직 정렬 개선
-                  width: 100,  // 너비 증가
-                  alignItems: alignItems,
+                  left: position.x,
+                  top: position.y,
+                  width: position.width,
+                  alignItems: position.alignItems,
                 }}
               >
                 <Text
-                  size="11"        // 폰트 크기 증가
-                  weight="semibold" // 폰트 두께 증가
+                  size={fontSize}
+                  weight="normal"
                   textColor="black"
                   style={{
-                    textAlign: textAlign,
+                    textAlign: position.textAlign,
                     width: '100%',
-                    lineHeight: 14, // 줄 간격 추가
+                    lineHeight: fontSize + 3,
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    borderRadius: 4,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    flexShrink: 0,
+                    flexWrap: 'nowrap',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {d.label}
@@ -346,12 +408,36 @@ export const WeeklyReportPage = () => {
     );
   };
 
-  const displayWeek = paramWeek || weekNumber;
-  const displayYear = paramYear || year;
-
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Simple Header */}
+      <View
+        style={{
+          height: 59,
+          backgroundColor: '#FFFFFF',
+          borderBottomWidth: 1,
+          borderBottomColor: '#E0E0E0',
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          zIndex: 1000
+        }}
+      >
+        <TouchableOpacity
+          onPress={handleBackToMoment}
+          style={{
+            padding: 8,
+            borderRadius: 8,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Ionicons name="chevron-back" size={24} color="#000000" />
+        </TouchableOpacity>
+      </View>
+
       {/* Main Background Gradient (bottom-up emphasis) */}
+
       <LinearGradient
         colors={['#FFFFFF', '#F5F1FF', '#DECEFF', '#B095E0']}
         locations={[0, 0.5, 0.78, 1]}
@@ -378,12 +464,12 @@ export const WeeklyReportPage = () => {
             resizeMode="contain"
           />
           <View style={styles.headerTextContainer}>
-            <Text size="20" weight="bold" textColor="purple" style={styles.personalityTitle}>
-              {reportData?.title || "성장을 응원하는 당신"}\n
-              모먼트 레포트
+            <SpecialText size="2xl" weight="semibold" style={styles.personalityTitle} text={report?.title || "성장을 응원하는 당신"} />
+            <Text size="13" weight="normal" textColor="purple" style={styles.description}>
+              {report?.subTitle || report?.description || "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."}
             </Text>
-            <Text size="12" weight="normal" textColor="purple" style={styles.description}>
-              {reportData?.subTitle || "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."}
+            <Text size="12" weight="semibold" textColor="purple" style={{ ...styles.description, marginTop: 8 }}>
+              {report?.description}
             </Text>
           </View>
         </View>
@@ -392,7 +478,7 @@ export const WeeklyReportPage = () => {
         <View style={styles.weekButtonContainer}>
           <View style={styles.weekButton}>
             <Text size="12" weight="medium" textColor="white">
-              {displayYear}년 {displayWeek}주차
+              {report?.year || year}년 {report?.weekNumber || paramWeek || weekNumber}주차
             </Text>
           </View>
         </View>
@@ -407,7 +493,9 @@ export const WeeklyReportPage = () => {
                 나의 모먼트 성향 5가지
               </Text>
             </View>
-            {renderRadarChart()}
+            <View style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center' }} id="RadarContainer">
+              {renderRadarChart()}
+            </View>
             <View style={styles.legend}>
               <View style={styles.legendItem}>
                 <View style={[styles.legendBox, { backgroundColor: semanticColors.brand.primary }]} />
@@ -429,16 +517,16 @@ export const WeeklyReportPage = () => {
               </Text>
             </View>
 
-            {radarData.map((item, index) => {
-              const change = item.value - item.prevValue;
-              const changeColor = change > 0 ? "#00C853" : change < 0 ? "#FF5252" : "#757575";
-              const changeText = change > 0 ? `▲ +${change}` : change < 0 ? `▼ ${change}` : "— 유지";
-              const scoreText = `${item.value}점`;
+            {report?.stats?.map((stat, index) => {
+              const change = stat.prevScore ? stat.currentScore - stat.prevScore : 0;
+              const changeColor = stat.status === 'INCREASE' ? "#00C853" : stat.status === 'DECREASE' ? "#FF5252" : "#757575";
+              const changeText = stat.status === 'INCREASE' ? `▲ +${change}` : stat.status === 'DECREASE' ? `▼ ${change}` : "— 유지";
+              const scoreText = `${stat.currentScore}점`;
 
               return (
                 <AnalysisCard
                   key={index}
-                  title={item.label}
+                  title={getPersonalityTypeLabel(stat.category as any) || stat.category}
                   score={scoreText}
                   mode="custom"
                   rightElement={
@@ -460,29 +548,57 @@ export const WeeklyReportPage = () => {
               </Text>
             </View>
 
-            {reportData?.insights?.map((item, index) => (
-              <AnalysisCard
-                key={index}
-                title={item.category}
-                score={`${item.score}점`}
-                mode="toggle"
-                isExpanded={expandedSections[`analysis${index}`]}
-                onToggle={() => toggleSection(`analysis${index}`)}
-              >
-                <Text size="12" weight="bold" textColor="black" style={styles.questionText}>
-                  어떤 의미 인가요?
-                </Text>
-                <Text size="12" weight="normal" textColor="gray" style={styles.answerText}>
-                  {item.definition}
-                </Text>
-                <Text size="12" weight="bold" textColor="black" style={styles.questionText}>
-                  분석 결과
-                </Text>
-                <Text size="12" weight="normal" textColor="gray" style={styles.answerText}>
-                  {item.feedback}
-                </Text>
-              </AnalysisCard>
-            ))}
+            {report?.insights?.map((insight, index) => {
+              const getInsightIcon = (score: number) => {
+                if (score >= 70) return '💪';  // Strong
+                if (score >= 50) return '🌱';  // Growth
+                return '💡'; // Suggestion
+              };
+
+              const getScoreColor = (score: number) => {
+                if (score >= 70) return '#00C853';  // Green for good
+                if (score >= 50) return '#FF9800';  // Orange for medium
+                return '#FF5252'; // Red for needs improvement
+              };
+
+              return (
+                <AnalysisCard
+                  key={index}
+                  title={`${getInsightIcon(insight.score)} ${insight.category}`}
+                  score={`${insight.score}점`}
+                  mode="toggle"
+                  isExpanded={expandedSections[`insight${index}`]}
+                  onToggle={() => toggleSection(`insight${index}`)}
+                >
+                  <Text size="12" weight="bold" textColor="black" style={styles.questionText}>
+                    정의
+                  </Text>
+                  <Text size="12" weight="normal" textColor="gray" style={styles.answerText}>
+                    {insight.definition}
+                  </Text>
+
+                  <Text size="12" weight="bold" textColor="black" style={styles.questionText}>
+                    피드백
+                  </Text>
+                  <Text size="12" weight="normal" textColor="gray" style={styles.answerText}>
+                    {insight.feedback}
+                  </Text>
+
+                  <View style={styles.severityContainer}>
+                    <Text size="12" weight="bold" textColor="black" style={styles.questionText}>
+                      점수
+                    </Text>
+                    <Text
+                      size="12"
+                      weight="medium"
+                      style={[styles.severityText, { color: getScoreColor(insight.score) }]}
+                    >
+                      {insight.score}점
+                    </Text>
+                  </View>
+                </AnalysisCard>
+              );
+            })}
           </View>
 
           {/* Hashtags Section */}
@@ -494,10 +610,10 @@ export const WeeklyReportPage = () => {
               </Text>
             </View>
             <View style={styles.hashtagsContainer}>
-              {reportData?.keywords?.length > 0 ? (
-                reportData.keywords.slice(0, 5).map((keyword, index) => (
+              {report?.keywords?.length > 0 ? (
+                report.keywords.slice(0, 5).map((keyword, index) => (
                   <View key={index} style={styles.hashtag}>
-                    <Text size="12" weight="medium" textColor="purple">#{keyword}</Text>
+                    <Text size="12" weight="medium" textColor="purple">{keyword}</Text>
                   </View>
                 ))
               ) : (
@@ -520,13 +636,13 @@ export const WeeklyReportPage = () => {
           <TouchableOpacity
             style={[styles.addButton, isSyncing && styles.addButtonDisabled]}
             onPress={handleSyncProfile}
-            disabled={isSyncing || !reportData?.keywords?.length}
+            disabled={isSyncing || !report?.keywords?.length}
           >
             {isSyncing ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
               <Text size="md" weight="bold" textColor="white">
-                {reportData?.keywords?.length ? "내 프로필에 키워드 추가하기" : "키워드가 없습니다"}
+                {report?.keywords?.length ? "내 프로필에 키워드 추가하기" : "키워드가 없습니다"}
               </Text>
             )}
           </TouchableOpacity>
@@ -542,10 +658,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  headerContainer: {
+    height: 59,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  backButton: {
+    padding: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    gap: 16,
+  },
+  loadingText: {
+    marginTop: 16,
   },
   noReportContainer: {
     flex: 1,
@@ -599,6 +734,7 @@ const styles = StyleSheet.create({
   },
   headerTextContainer: {
     flex: 1,
+    flexDirection: 'column',
   },
   personalityTitle: {
     marginBottom: 8,
@@ -641,11 +777,14 @@ const styles = StyleSheet.create({
   radarContainer: {
     alignItems: "center",
     marginVertical: 20,
+    position: "relative",
   },
   radarLabels: {
     position: "absolute",
     width: "100%",
     height: "100%",
+    top: 0,
+    left: 0,
   },
   legend: {
     flexDirection: "row",
@@ -710,5 +849,18 @@ const styles = StyleSheet.create({
   addButtonDisabled: {
     backgroundColor: colors.gray,
     opacity: 0.6,
+  },
+  severityContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+  },
+  severityText: {
+    fontSize: 12,
+    fontWeight: '500',
   },
 });

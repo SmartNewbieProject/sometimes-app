@@ -1,0 +1,106 @@
+{
+  "navigation": {
+    "events_title": "開催中のイベント",
+    "events_description": "サムタイムで開催中のイベントをチェックして、今すぐ賞品をゲットしよう！",
+    "events_disabled_message": "まもなく様々なイベントでお会いしましょう！",
+    "my_moment_title": "マイモーメント",
+    "my_moment_description": "様々な活動で\n自分の恋愛傾向を\n分析してみよう！",
+    "check_in_title": "出席チェック",
+    "check_in_description": "毎日出席して\n賞品をゲット",
+    "check_in_disabled_message": "出席チェック機能を準備中です！",
+    "roulette_title": "デイリールーレット",
+    "roulette_description": "ルーレットを回して\n今日の運勢を試そう",
+    "roulette_disabled_text": "参加完了！",
+    "roulette_disabled_message": "今日はすでに参加しました！",
+    "somemate_title": "サムメイト",
+    "somemate_description": "会話するほど\n私をよく知る\nサムメイト",
+    "weekly_report_title": "モーメントレポート",
+    "weekly_report_description": "今週の活動を\nレポートで確認しよう！",
+    "preparing": "準備中.."
+  },
+  "my_moment": {
+    "guide": {
+      "every_night": "毎晩",
+      "at_midnight": "12時",
+      "description_1": "ミホがポストに今日の質問を入れておきます！",
+      "description_2": "今日の質問に答えると、",
+      "every_sunday": "毎週日曜日",
+      "report_generated": "レポートが生成されます"
+    },
+    "question_card": {
+      "today_arrived": "今日の質問が届きました！",
+      "today_answered": "今日の質問に回答しました！",
+      "previous_first": "前の質問に先に答えてください！",
+      "previous_first_subtitle": "順番に質問に答えてください",
+      "go_to_previous": "前の質問へ",
+      "answered_today": "今日の質問に回答しました",
+      "see_you_tomorrow": "明日新しい質問でお会いしましょう！",
+      "complete_previous": "前の質問を先に完了してください"
+    },
+    "history": {
+      "my_moment_record": "マイモーメント記録",
+      "weekly_analysis": "週ごとの分析結果を見ることができます",
+      "my_answers": "私の回答記録",
+      "check_past_answers": "これまで回答した今日の質問を確認できます"
+    },
+    "status_card": {
+      "my_recent_moment": "最近のモーメント",
+      "week_info": "{{year}}年第{{week}}週",
+      "waiting_first": "初めてのモーメントを待っています",
+      "start_description": "今日の質問に答えて、自分だけの成長レポートを作りましょう！"
+    },
+    "blocked_messages": {
+      "no_question": "今日は質問がありません。明日また来てください。",
+      "not_allowed": "今日の質問に回答できません。明日もう一度お試しください。"
+    }
+  },
+  "question_detail": {
+    "header_title": "今日のポスト",
+    "envelope": {
+      "question_arrived": "質問が届きました",
+      "share_your_story": "あなたの話を聞かせてください。"
+    },
+    "loading": "今日の質問を読み込み中...",
+    "error_loading": "質問の読み込みに失敗しました",
+    "check_network": "ネットワーク接続を確認してください",
+    "debug_info": "デバッグ情報",
+    "status_code": "ステータスコード",
+    "no_question": "今日の質問はありません",
+    "visit_tomorrow": "明日また来てください",
+    "retry": "再試行",
+    "weekdays": {
+      "sun": "日",
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土"
+    },
+    "answer_input": {
+      "to_myself": "To. 私へ",
+      "placeholder": "ここにあなたの本心を書いてください...",
+      "writing_count": "{{count}}文字作成中",
+      "selection_complete": "選択完了",
+      "select_answer": "回答を選択してください",
+      "sending": "ポストに入れています...",
+      "submit": "返信を送る"
+    },
+    "sent": {
+      "success": "返信が送信されました",
+      "back_to_moment": "質問箱に戻る",
+      "ai_reply": "あなたの大切な気持ちが届きました。💌"
+    },
+    "inspiration": {
+      "sample": "暖かい日差しの下で..."
+    },
+    "modal": {
+      "notice": "お知らせ",
+      "no_multiple_choice": "この質問は選択式回答に対応していません。",
+      "confirm": "確認",
+      "enter_answer": "回答を入力してください。",
+      "error": "エラー",
+      "save_failed": "回答の保存に失敗しました。もう一度お試しください。"
+    }
+  }
+}

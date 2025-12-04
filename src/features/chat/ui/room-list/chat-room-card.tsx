@@ -13,6 +13,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../../auth";
 import useChatLock from "../../hooks/use-chat-lock";
 import type { ChatRoomList } from "../../types/chat";
@@ -32,6 +33,7 @@ function ChatRoomCard({ item }: ChatRoomCardProps) {
 }
 
 function Lockariant({ item }: ChatRoomCardProps) {
+  const { t } = useTranslation();
   const { handleRemove, handleUnlock } = useChatLock(item.id);
 
   return (
@@ -43,10 +45,10 @@ function Lockariant({ item }: ChatRoomCardProps) {
         </View>
 
         <Pressable onPress={handleRemove} style={styles.removeButton}>
-          <Text style={styles.removeButtonText}>삭제</Text>
+          <Text style={styles.removeButtonText}>{t('features.chat.ui.chat_room_card.delete')}</Text>
         </Pressable>
         <Pressable onPress={handleUnlock} style={styles.approveButton}>
-          <Text style={styles.approveButtonText}>수락</Text>
+          <Text style={styles.approveButtonText}>{t('features.chat.ui.chat_room_card.accept')}</Text>
         </Pressable>
       </View>
     </View>
@@ -54,6 +56,7 @@ function Lockariant({ item }: ChatRoomCardProps) {
 }
 
 function OpenVariant({ item }: ChatRoomCardProps) {
+  const { t } = useTranslation();
   const screenWidth =
     Dimensions.get("window").width > 468 ? 468 : Dimensions.get("window").width;
   const buttonWidth = screenWidth * 0.25;
@@ -115,7 +118,7 @@ function OpenVariant({ item }: ChatRoomCardProps) {
       style={{ flex: 1, alignItems: "flex-end" }}
     >
       <View style={[styles.deleteButton, { width: buttonWidth }]}>
-        <Text style={styles.buttonText}>나가기</Text>
+        <Text style={styles.buttonText}>{t('features.chat.ui.chat_room_card.leave')}</Text>
       </View>
       <RenderContent item={item} />
     </Pressable>
@@ -123,6 +126,7 @@ function OpenVariant({ item }: ChatRoomCardProps) {
 }
 
 const RenderContent = ({ item }: ChatRoomCardProps) => {
+  const { t } = useTranslation();
   const screenWidth =
     Dimensions.get("window").width > 468 ? 468 : Dimensions.get("window").width;
   const { my: user } = useAuth();
@@ -144,10 +148,10 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
           </Text>
           <Text style={styles.lastMessageText} numberOfLines={1}>
             {item.recentMessage === ""
-              ? "사진"
+              ? t('features.chat.ui.chat_room_card.photo')
               : item.recentMessage
               ? item.recentMessage
-              : "대화를 시작해볼까요?"}
+              : t('features.chat.ui.chat_room_card.start_conversation')}
           </Text>
         </View>
         <View style={styles.infoContainer}>

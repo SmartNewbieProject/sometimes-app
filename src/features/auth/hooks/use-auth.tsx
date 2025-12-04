@@ -19,6 +19,8 @@ export function useAuth() {
     key: "access-token",
     initialValue: null,
   });
+
+  // 디버깅: 직접 storage 확인 제거 (storage import 오류 방지)
   const { value: refreshToken, setValue: setRefreshToken } = useStorage<
     string | null
   >({
@@ -38,8 +40,19 @@ export function useAuth() {
   const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
 
   const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
-  const { my, ...myQueryProps } = useMyDetailsQuery(!!accessToken);
+  const hasToken = !!accessToken;
+  console.log('🔍 [useAuth] Token status:', { hasToken, accessTokenLength: accessToken?.length });
+  const { my, ...myQueryProps } = useMyDetailsQuery(hasToken);
   const { showModal } = useModal();
+
+  // 디버깅용 콘솔 출력
+  console.log('🔍 [useAuth] Debug data:', {
+    accessToken: accessToken ? 'exists' : 'missing',
+    profileDetails: profileDetails,
+    my: my,
+    profileDetailsName: profileDetails?.name,
+    myName: my?.name
+  });
 
   const updateToken = async (accessToken: string, refreshToken: string) => {
     await setToken(accessToken);

@@ -2,6 +2,8 @@
   "bottom_navigation": {
     "home": "홈",
     "community": "커뮤니티",
+    "chat": "채팅",
+    "moment": "모먼트",
     "my": "my"
   }
 }

@@ -2,10 +2,10 @@ import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { semanticColors } from '@/src/shared/constants/colors';
-import type { MomentReport } from '../../../types';
+import type { MomentReport, Report } from '../../../types';
 
 interface LatestMomentCardProps {
-  momentReport: MomentReport | null;
+  momentReport: MomentReport | Report | null;
   isLoading?: boolean;
 }
 
@@ -13,6 +13,37 @@ export const LatestMomentCard: React.FC<LatestMomentCardProps> = ({
   momentReport,
   isLoading = false
 }) => {
+  // Handle both legacy MomentReport and new Report types
+  const getReportData = (report: MomentReport | Report) => {
+    if ('weekNumber' in report) {
+      // Legacy MomentReport
+      return {
+        id: report.id,
+        weekNumber: report.weekNumber,
+        year: report.year,
+        title: report.title,
+        subTitle: report.subTitle,
+        description: report.description,
+        keywords: report.keywords,
+        imageUrl: report.imageUrl,
+        generatedAt: report.generatedAt,
+      };
+    } else {
+      // New Report type
+      return {
+        id: report.id,
+        weekNumber: report.week,
+        year: report.year,
+        title: report.narrative.title,
+        subTitle: report.narrative.summary,
+        description: report.narrative.highlights.join(' '),
+        keywords: report.narrative.insights.slice(0, 5), // Use insights as keywords for now
+        imageUrl: '', // New API doesn't include imageUrl
+        generatedAt: report.generatedAt,
+      };
+    }
+  };
+
   const handlePress = () => {
     if (momentReport) {
       router.push(`/moment/my-moment-record?id=${momentReport.id}`);
@@ -28,24 +59,19 @@ export const LatestMomentCard: React.FC<LatestMomentCardProps> = ({
   }
 
   if (!momentReport) {
-    return (
-      <View style={[styles.container, styles.emptyContainer]}>
-        <Text style={styles.emptyText}>
-          아직 모먼트 리포트가 없어요{'\n'}
-          질문에 답변하고 나의 연애 성향을 알아보세요!
-        </Text>
-      </View>
-    );
+    return null;
   }
+
+  const reportData = getReportData(momentReport);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.weekText}>
-          {momentReport.year}년 {momentReport.weekNumber}주차
+          {reportData.year}년 {reportData.weekNumber}주차
         </Text>
         <Text style={styles.dateText}>
-          {new Date(momentReport.generatedAt).toLocaleDateString('ko-KR', {
+          {new Date(reportData.generatedAt).toLocaleDateString('ko-KR', {
             month: 'long',
             day: 'numeric',
           })}
@@ -54,14 +80,14 @@ export const LatestMomentCard: React.FC<LatestMomentCardProps> = ({
 
       <View style={styles.content}>
         <View style={styles.textSection}>
-          <Text style={styles.title}>{momentReport.title}</Text>
-          <Text style={styles.subTitle}>{momentReport.subTitle}</Text>
+          <Text style={styles.title}>{reportData.title}</Text>
+          <Text style={styles.subTitle}>{reportData.subTitle}</Text>
           <Text style={styles.description} numberOfLines={2}>
-            {momentReport.description}
+            {reportData.description}
           </Text>
 
           <View style={styles.keywordContainer}>
-            {momentReport.keywords.slice(0, 3).map((keyword, index) => (
+            {reportData.keywords.slice(0, 3).map((keyword, index) => (
               <View key={index} style={styles.keyword}>
                 <Text style={styles.keywordText}>{keyword}</Text>
               </View>
@@ -69,10 +95,10 @@ export const LatestMomentCard: React.FC<LatestMomentCardProps> = ({
           </View>
         </View>
 
-        {momentReport.imageUrl && (
+        {reportData.imageUrl && (
           <View style={styles.imageSection}>
             <Image
-              source={{ uri: momentReport.imageUrl }}
+              source={{ uri: reportData.imageUrl }}
               style={styles.image}
               contentFit="cover"
             />

@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
 import DateDivider from "@/src/features/chat/ui/message/date-divider";
@@ -26,6 +27,7 @@ type ListItem =
   | { type: "analyzeButton" };
 
 export default function SomemateChatScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ sessionId?: string }>();
   const { showModal } = useModal();
@@ -115,33 +117,32 @@ export default function SomemateChatScreen() {
       setLocalMessages([]);
 
       showModal({
-        title: "오류",
+        title: t('features.somemate.chat.error.title'),
         children: (
           <Text style={{ textAlign: "center" }}>
-            {error?.message || "메시지 전송에 실패했습니다."}
+            {error?.message || t('features.somemate.chat.error.message_failed')}
           </Text>
         ),
         primaryButton: {
-          text: "확인",
+          text: t('features.somemate.chat.error.confirm'),
           onClick: () => {},
         },
       });
     }
-  }, [sessionId, isStreaming, queryClient, showModal]);
+  }, [sessionId, isStreaming, queryClient, showModal, t]);
 
   const handleAnalyze = async () => {
     if (!sessionId) return;
 
     showModal({
-      title: "분석 요청",
+      title: t('features.somemate.chat.analyze.title'),
       children: (
         <Text style={{ textAlign: "center" }}>
-          대화를 분석하여 썸타임 리포트를 생성할까요?{"\n"}
-          리포트 생성 후에는 새로운 대화를 시작할 수 있습니다.
+          {t('features.somemate.chat.analyze.message')}
         </Text>
       ),
       primaryButton: {
-        text: "분석하기",
+        text: t('features.somemate.chat.analyze.button'),
         onClick: async () => {
           try {
             const analysisStartTime = Date.now();
@@ -159,15 +160,14 @@ export default function SomemateChatScreen() {
             somemateEvents.trackSessionCompleted(sessionId, turnCount);
 
             showModal({
-              title: "분석 시작",
+              title: t('features.somemate.chat.analyze_started.title'),
               children: (
                 <Text style={{ textAlign: "center" }}>
-                  리포트 생성을 시작했습니다.{"\n"}
-                  잠시 후 리포트 목록에서 확인해주세요.
+                  {t('features.somemate.chat.analyze_started.message')}
                 </Text>
               ),
               primaryButton: {
-                text: "리포트 보러가기",
+                text: t('features.somemate.chat.analyze_started.button'),
                 onClick: () => {
                   router.push("/chat/somemate-report");
                 },
@@ -175,14 +175,14 @@ export default function SomemateChatScreen() {
             });
           } catch (error: any) {
             showModal({
-              title: "오류",
+              title: t('features.somemate.chat.analyze_error.title'),
               children: (
                 <Text style={{ textAlign: "center" }}>
-                  {error?.message || "분석 요청에 실패했습니다."}
+                  {error?.message || t('features.somemate.chat.analyze_error.message')}
                 </Text>
               ),
               primaryButton: {
-                text: "확인",
+                text: t('features.somemate.chat.analyze_error.confirm'),
                 onClick: () => {},
               },
             });
@@ -190,7 +190,7 @@ export default function SomemateChatScreen() {
         },
       },
       secondaryButton: {
-        text: "취소",
+        text: t('features.somemate.chat.analyze.cancel'),
         onClick: () => {},
       },
     });
@@ -200,32 +200,29 @@ export default function SomemateChatScreen() {
     if (!sessionId) return;
 
     showModal({
-      title: "대화방 나가기",
+      title: t('features.somemate.chat.leave.title'),
       children: (
         <Text style={{ textAlign: "center" }}>
-          대화방을 나가면 현재 대화 내용이 삭제되고{"\n"}
-          리포트를 받을 수 없습니다.{"\n\n"}
-          정말 나가시겠어요?
+          {t('features.somemate.chat.leave.message')}
         </Text>
       ),
       primaryButton: {
-        text: "나가기",
+        text: t('features.somemate.chat.leave.button'),
         onClick: async () => {
           try {
             await deleteSessionMutation.mutateAsync(sessionId);
 
-            // 캐시 완전히 초기화
             queryClient.clear();
 
             showModal({
-              title: "대화방 나가기",
+              title: t('features.somemate.chat.leave.success_title'),
               children: (
                 <Text style={{ textAlign: "center" }}>
-                  대화방에서 나갔습니다.
+                  {t('features.somemate.chat.leave.success_message')}
                 </Text>
               ),
               primaryButton: {
-                text: "확인",
+                text: t('features.somemate.chat.leave.confirm'),
                 onClick: () => {
                   router.replace("/chat/somemate");
                 },
@@ -233,14 +230,14 @@ export default function SomemateChatScreen() {
             });
           } catch (error: any) {
             showModal({
-              title: "오류",
+              title: t('features.somemate.chat.leave.error_title'),
               children: (
                 <Text style={{ textAlign: "center" }}>
-                  {error?.message || "대화방 나가기에 실패했습니다."}
+                  {error?.message || t('features.somemate.chat.leave.error_message')}
                 </Text>
               ),
               primaryButton: {
-                text: "확인",
+                text: t('features.somemate.chat.leave.confirm'),
                 onClick: () => {},
               },
             });
@@ -248,7 +245,7 @@ export default function SomemateChatScreen() {
         },
       },
       secondaryButton: {
-        text: "취소",
+        text: t('features.somemate.chat.leave.cancel'),
         onClick: () => {},
       },
     });
@@ -349,12 +346,12 @@ export default function SomemateChatScreen() {
     }
     if (item.type === "analyzeButton") {
       const buttonText = canAnalyze
-        ? `분석받기 (${turnCount}턴)`
-        : `조금 더 대화해보세요 (${turnCount}/10턴)`;
+        ? t('features.somemate.chat.analyze.button_text', { count: turnCount })
+        : t('features.somemate.chat.analyze.button_text_disabled', { count: turnCount });
 
       const hintText = canAnalyze
-        ? "💡 지금 분석받거나, 더 대화하고 나중에 분석받을 수 있어요"
-        : "💬 10턴 이상 대화하면 썸타입 리포트를 받을 수 있어요";
+        ? t('features.somemate.chat.analyze.hint_enabled')
+        : t('features.somemate.chat.analyze.hint_disabled');
 
       return (
         <View style={styles.analyzeButtonContainer}>
@@ -408,12 +405,12 @@ export default function SomemateChatScreen() {
           />
           <View style={styles.profileInfo}>
             <View style={styles.nameRow}>
-              <Text style={styles.name}>미호</Text>
+              <Text style={styles.name}>{t('features.somemate.chat.name')}</Text>
               {activeSession?.category && (
                 <CategoryBadge category={activeSession.category} />
               )}
             </View>
-            <Text style={styles.subtitle}>대화 {turnCount}턴</Text>
+            <Text style={styles.subtitle}>{t('features.somemate.chat.turn_count', { count: turnCount })}</Text>
           </View>
         </Pressable>
         <Pressable style={styles.menuButton} onPress={handleLeaveChat}>

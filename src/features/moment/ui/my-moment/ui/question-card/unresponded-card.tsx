@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Text } from "@/src/shared/ui";
 import colors from "@/src/shared/constants/colors";
 import { router } from "expo-router";
@@ -11,22 +12,23 @@ interface UnrespondedCardProps {
 }
 
 export const UnrespondedCard = ({ blocked = false, blockedReason = null, blockedMessage = null }: UnrespondedCardProps) => {
+  const { t } = useTranslation();
   const questionDate = "2025. 10. 24 (금)";
 
   // blocked 상태에 따른 다른 콘텐츠 생성
   const getCardContent = () => {
     if (blocked && blockedReason === "previous_day_not_answered") {
       return {
-        title: "이전 질문에 먼저 답변해야 해요!",
-        subtitle: "순서대로 질문에 답변해주세요",
-        buttonText: "이전 질문으로 가기",
+        title: t('features.moment.my_moment.question_card.previous_first'),
+        subtitle: t('features.moment.my_moment.question_card.previous_first_subtitle'),
+        buttonText: t('features.moment.my_moment.question_card.go_to_previous'),
         onPress: () => router.push("/moment/question-detail?previous=true")
       };
     }
 
     if (blocked) {
       return {
-        title: "오늘의 질문에 답변했어요!",
+        title: t('features.moment.my_moment.question_card.today_answered'),
         subtitle: questionDate,
         buttonText: "",
         onPress: () => {} // blocked 상태에서는 아무 동작 안 함
@@ -34,7 +36,7 @@ export const UnrespondedCard = ({ blocked = false, blockedReason = null, blocked
     }
 
     return {
-      title: "오늘의 질문이 도착했어요!",
+      title: t('features.moment.my_moment.question_card.today_arrived'),
       subtitle: questionDate,
       buttonText: "",
       onPress: () => router.push("/moment/question-detail")
@@ -63,7 +65,7 @@ export const UnrespondedCard = ({ blocked = false, blockedReason = null, blocked
         </Text>
         {blocked && blockedReason === "previous_day_not_answered" && (
           <Text size="11" weight="normal" textColor="purple" style={styles.blockedMessage}>
-            {blockedMessage || "이전 질문을 먼저 완료해주세요"}
+            {blockedMessage || t('features.moment.my_moment.question_card.complete_previous')}
           </Text>
         )}
       </View>

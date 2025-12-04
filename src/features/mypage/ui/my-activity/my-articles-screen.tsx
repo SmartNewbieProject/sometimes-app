@@ -1,6 +1,9 @@
 import FeedListScreen from "./feed-common-screen";
+import { useTranslation } from "react-i18next";
+
 export default function MyArticlesScreen() {
+  const { t } = useTranslation();
   return (
-    <FeedListScreen title="내가 작성한 게시글" type="articles" pageSize={10} />
+    <FeedListScreen title={t('features.mypage.my_activity.articles_title')} type="articles" pageSize={10} />
   );
 }
