@@ -5,7 +5,7 @@
  * 내부적으로 Mixpanel API를 호출합니다.
  */
 
-import { Mixpanel } from 'mixpanel-react-native';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 
 /**
  * Amplitude track 함수와 호환되는 Mixpanel wrapper
@@ -17,8 +17,8 @@ export const track = (
   properties?: Record<string, any>
 ): void => {
   try {
-    // Mixpanel 이벤트 전송
-    Mixpanel.track(eventName, properties || {});
+    // Mixpanel 이벤트 전송 (플랫폼 자동 선택)
+    mixpanelAdapter.track(eventName, properties || {});
 
     // 개발 환경에서 로그 출력
     if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
@@ -38,7 +38,7 @@ export const track = (
  */
 export const setUserId = (userId: string): void => {
   try {
-    Mixpanel.identify(userId);
+    mixpanelAdapter.identify(userId);
 
     if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
       console.log(`[Amplitude Compat → Mixpanel] User identified:`, userId);
@@ -54,7 +54,7 @@ export const setUserId = (userId: string): void => {
  */
 export const identify = (properties: Record<string, any>): void => {
   try {
-    Mixpanel.getPeople().set(properties);
+    mixpanelAdapter.setUserProperties(properties);
 
     if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
       console.log(`[Amplitude Compat → Mixpanel] User properties set:`, properties);

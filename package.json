@@ -84,6 +84,7 @@
     "lottie-react-native": "^7.3.4",
     "lucide-react-native": "^0.554.0",
     "metro-react-native-babel-transformer": "^0.76.9",
+    "mixpanel-browser": "^2.72.0",
     "mixpanel-react-native": "^3.1.2",
     "nanoid": "^5.1.5",
     "nativewind": "^4.1.23",

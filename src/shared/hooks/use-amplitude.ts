@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Mixpanel } from 'mixpanel-react-native';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { AMPLITUDE_EVENTS } from '@/src/shared/constants/amplitude-events';
 import type {
   UseAmplitudeReturn,
@@ -28,8 +28,8 @@ export const useAmplitude = (): UseAmplitudeReturn => {
           return;
         }
 
-        // Mixpanel 이벤트 전송
-        Mixpanel.track(AMPLITUDE_EVENTS[eventName], eventProperties);
+        // Mixpanel 이벤트 전송 (플랫폼 자동 선택)
+        mixpanelAdapter.track(AMPLITUDE_EVENTS[eventName], eventProperties);
 
         // 개발 환경에서 로그 출력
         if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
@@ -48,8 +48,8 @@ export const useAmplitude = (): UseAmplitudeReturn => {
   // 사용자 속성 설정
   const setUserProperties = useCallback((properties: Record<string, any>) => {
     try {
-      // Mixpanel 사용자 속성 설정
-      Mixpanel.getPeople().set(properties);
+      // Mixpanel 사용자 속성 설정 (플랫폼 자동 선택)
+      mixpanelAdapter.setUserProperties(properties);
 
       // 개발 환경에서 로그 출력
       if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
@@ -63,7 +63,8 @@ export const useAmplitude = (): UseAmplitudeReturn => {
   // 사용자 식별
   const identifyUser = useCallback((userId: string) => {
     try {
-      Mixpanel.identify(userId);
+      // Mixpanel 사용자 식별 (플랫폼 자동 선택)
+      mixpanelAdapter.identify(userId);
 
       // 개발 환경에서 로그 출력
       if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {

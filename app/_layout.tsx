@@ -26,7 +26,7 @@ import { useStorage } from "@/src/shared/hooks/use-storage";
 import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
-import { Mixpanel } from 'mixpanel-react-native';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 if (Platform.OS !== "web") {
@@ -38,9 +38,9 @@ if (Platform.OS !== "web") {
 const MIN_SPLASH_MS = 2000;
 const START_AT = Date.now();
 
-// Mixpanel 초기화
+// Mixpanel 초기화 (플랫폼별 자동 선택)
 const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN as string;
-Mixpanel.init(mixpanelToken, true); // trackAutomaticEvents = true
+mixpanelAdapter.init(mixpanelToken, true); // trackAutomaticEvents = true
 
 export default function RootLayout() {
   const { request: requestAtt } = useAtt();
