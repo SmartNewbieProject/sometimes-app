@@ -10,16 +10,13 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../hooks";
 import { useTranslation } from "react-i18next";
-
+import type { RematchResponseV3 } from "../types-v3";
 
 const useRematchingMutation = () =>
-  useMutation({
-    mutationFn: () => axiosClient.post("/v2/matching/rematch"),
+  useMutation<RematchResponseV3>({
+    mutationFn: () => axiosClient.post("/v3/matching/rematch"),
     onSuccess: async () => {
-      // 쿼리 무효화를 확실히 처리하기 위해 await 사용
       await queryClient.invalidateQueries({ queryKey: ["latest-matching"] });
-
-      // 추가로 쿼리를 강제로 다시 가져오기
       await queryClient.refetchQueries({ queryKey: ["latest-matching"] });
       await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
       await queryClient.invalidateQueries({ queryKey: ["matching-first"] });
