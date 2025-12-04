@@ -1,0 +1,20 @@
+{
+  "loading": "Loading…",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "close": "Close",
+  "error": "Error",
+  "back": "Back",
+  "success": "Success",
+  "select": "Select",
+  "next": "Next",
+  "ok": "Yes",
+  "no": "No",
+  "confirm_button": "Yes, let's go",
+  "confirm_checked": "Yes, I've checked",
+  "not_found": {
+    "title": "Oops, we got lost!",
+    "description": "The page you're looking for doesn't exist\nor you've accessed an invalid path",
+    "go_home": "Go to Home"
+  }
+}
