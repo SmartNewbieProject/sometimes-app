@@ -1,10 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { axiosClient } from "@/src/shared/libs";
-import type { UserProfile } from "@/src/types/user";
-
-const getMyDetails = (): Promise<UserProfile> => {
-  return axiosClient.get('/profile');
-};
+import { getMyDetails } from "../apis";
 
 export const useMyDetailsQuery = (enabled: boolean) => {
   const { data, ...props } = useQuery({
