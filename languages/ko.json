@@ -1,0 +1,14 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "썸타임즈",
+    "NSCameraUsageDescription": "프로필 사진 촬영을 위해 카메라 접근이 필요합니다",
+    "NSPhotoLibraryUsageDescription": "프로필 사진 선택을 위해 사진 라이브러리 접근이 필요합니다",
+    "NSUserNotificationUsageDescription": "매칭 결과 및 중요한 알림을 받기 위해 알림 권한이 필요합니다",
+    "NSLocationWhenInUseUsageDescription": "위치 정보를 사용하여 지도 서비스를 제공합니다.",
+    "NSLocationAlwaysUsageDescription": "백그라운드에서 위치 기반 서비스를 제공합니다.",
+    "NSCalendarsUsageDescription": "데이트 일정 관리를 위해 캘린더 접근 권한이 필요합니다."
+  },
+  "android": {
+    "app_name": "썸타임즈"
+  }
+}
