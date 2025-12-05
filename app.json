@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "3.6.4",
+    "version": "3.6.5",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -238,8 +238,14 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["ko", "ja"],
-            "android": ["ko", "ja"]
+            "ios": [
+              "ko",
+              "ja"
+            ],
+            "android": [
+              "ko",
+              "ja"
+            ]
           }
         }
       ],

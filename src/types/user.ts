@@ -61,6 +61,8 @@ export interface UserProfile {
 	matchLikeId?: string | null;
 	deletedAt: string | null;
 	updatedAt: string | null;
+	phoneNumber: string;
+	email?: string;
 }
 
 export interface SimpleProfile {
