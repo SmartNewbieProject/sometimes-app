@@ -18,7 +18,7 @@ type Props = {
   justifyContent?: "center" | "flex-start" | "flex-end";
 };
 
-const parse = (mbti: string, index: number) => mbti.charAt(index);
+const parse = (mbti: string, index: number) => mbti && mbti.length > index ? mbti.charAt(index) : "";
 export function MbtiSelector({
   onChange,
   onBlur,
