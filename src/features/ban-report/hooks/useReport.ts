@@ -4,6 +4,7 @@ import type { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { type ReportResponse, submitReport } from '../services/report';
 import { useTranslation } from "react-i18next";
+import { AMPLITUDE_KPI_EVENTS, USER_ACTION_SOURCES } from "@/src/shared/constants/amplitude-kpi-events";
 
 interface ApiErrorResponse {
 	statusCode?: number;
@@ -30,7 +31,20 @@ export function useReport() {
 		unknown
 	>({
 		mutationFn: submitReport,
-		onSuccess: (data) => {
+		onSuccess: (data, variables) => {
+			const amplitude = (global as any).amplitude || {
+				track: (event: string, properties: any) => {
+					console.log("Amplitude Event:", event, properties);
+				},
+			};
+
+			amplitude.track(AMPLITUDE_KPI_EVENTS.USER_REPORTED, {
+				reported_user_id: variables.userId,
+				reason: variables.reason,
+				action_source: USER_ACTION_SOURCES.PROFILE,
+				timestamp: new Date().toISOString(),
+			});
+
 			showModal({
 				title: t("features.ban-report.hooks.use_report.modal_title_success"),
 				children: t("features.ban-report.hooks.use_report.modal_message_success"),

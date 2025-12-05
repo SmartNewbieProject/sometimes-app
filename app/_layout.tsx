@@ -17,6 +17,7 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "@/src/shared/libs/i18n";
 
 import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
+import { ChatActivityTracker } from "@/src/features/chat/ui/chat-activity-tracker";
 import LoggerContainer from "@/src/features/logger/ui/logger-container";
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import { VersionUpdateChecker } from "@/src/features/version-update";
@@ -237,6 +238,7 @@ export default function RootLayout() {
                           <Slot />
                           <VersionUpdateChecker />
                           <Toast />
+                          <ChatActivityTracker />
                       </>
                       </RouteTracker>
                     </AnalyticsProvider>
