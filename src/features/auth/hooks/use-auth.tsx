@@ -11,7 +11,7 @@ import { AMPLITUDE_KPI_EVENTS, LOGOUT_REASONS } from "@shared/constants/amplitud
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
-import { useMyDetailsQuery } from "../queries";
+import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
 import { useTranslation } from "react-i18next";
 
 export function useAuth() {
@@ -44,6 +44,7 @@ export function useAuth() {
 
   const hasToken = !!accessToken;
   const { my, ...myQueryProps } = useMyDetailsQuery(hasToken);
+  const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
   const { showModal } = useModal();
 
   const updateToken = async (accessToken: string, refreshToken: string) => {
@@ -173,8 +174,11 @@ export function useAuth() {
     logoutOnly,
     clearTokensOnly,
     accessToken,
-    my,
-    profileDetails: my,
+    my: {
+      ...my,
+      universityDetails: profileDetails?.universityDetails,
+    },
+    profileDetails,
     updateToken,
     queryProps: {
       my: myQueryProps,
