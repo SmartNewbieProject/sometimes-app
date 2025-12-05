@@ -10,7 +10,7 @@ import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidat
 import { tryCatch } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui/text";
 import { Form } from "@/src/widgets";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import Loading from "@features/loading";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams, useRouter } from "expo-router";

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { track as amplitudeTrack } from '@amplitude/analytics-react-native';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
 import type {
   BaseEventProperties,
@@ -36,7 +36,11 @@ export interface UseKpiAnalyticsReturn {
     trackProfileViewed: (profileId: string, viewDuration: number) => void;
     trackMatchingRequested: (profileId: string, gemCost?: number) => void;
     trackMatchingSuccess: (matchedProfileId: string, timeToMatch: number) => void;
-    trackMatchingFailed: (errorReason: string) => void;
+    trackMatchingFailed: (errorReason: string, options?: {
+      retryAvailableAt?: string;
+      failureCategory?: 'PAYMENT' | 'PERMISSION' | 'USAGE' | 'SYSTEM';
+      isRecoverable?: boolean;
+    }) => void;
   };
 
   chatEvents: {
@@ -179,8 +183,8 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
           return;
         }
 
-        // Amplitude 이벤트 전송
-        amplitudeTrack(AMPLITUDE_KPI_EVENTS[eventName], eventProperties);
+        // Mixpanel 이벤트 전송 (플랫폼 자동 선택)
+        mixpanelAdapter.track(AMPLITUDE_KPI_EVENTS[eventName], eventProperties);
 
         // 개발 환경에서 로그 출력
         if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
@@ -272,8 +276,17 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
       });
     }, [trackEvent]),
 
-    trackMatchingFailed: useCallback((errorReason: string) => {
-      trackEvent('Matching_Failed', { error_reason: errorReason });
+    trackMatchingFailed: useCallback((errorReason: string, options?: {
+      retryAvailableAt?: string;
+      failureCategory?: 'PAYMENT' | 'PERMISSION' | 'USAGE' | 'SYSTEM';
+      isRecoverable?: boolean;
+    }) => {
+      trackEvent('Matching_Failed', {
+        error_reason: errorReason,
+        retry_available_at: options?.retryAvailableAt,
+        failure_category: options?.failureCategory,
+        is_recoverable: options?.isRecoverable,
+      });
     }, [trackEvent]),
   };
 

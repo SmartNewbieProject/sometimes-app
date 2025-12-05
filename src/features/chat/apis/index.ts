@@ -1,5 +1,11 @@
 import { axiosClient } from '@/src/shared/libs';
 import type { Chat, ChatResponse, ChatRoomDetail, ChatRoomListResponse } from '../types/chat';
+import type {
+	ChatRoomActivityStatus,
+	ChatRoomActivitySummaryResponse,
+	MarkActivityTrackedRequest,
+	MarkActivityTrackedResponse,
+} from '../types/chat-activity';
 
 export const getChatRooms = ({
 	pageParam,
@@ -61,4 +67,24 @@ export const snoozeChatRoom = ({
 	return axiosClient.patch(`/chat/rooms/${chatRoomId}/snooze`, {
 		snooze,
 	});
+};
+
+export const getChatRoomActivityStatus = (
+	chatRoomId: string,
+): Promise<ChatRoomActivityStatus> => {
+	return axiosClient.get(`/chat/rooms/${chatRoomId}/activity-status`);
+};
+
+export const markChatRoomActivityTracked = (
+	chatRoomId: string,
+	body: MarkActivityTrackedRequest,
+): Promise<MarkActivityTrackedResponse> => {
+	return axiosClient.post(`/v1/chat/rooms/${chatRoomId}/activity-tracked`, body);
+};
+
+export const getChatRoomActivitySummary = (
+	needsTracking?: boolean,
+): Promise<ChatRoomActivitySummaryResponse> => {
+	const params = needsTracking !== undefined ? { needsTracking } : {};
+	return axiosClient.get('/v1/chat/rooms/activity-summary', { params });
 };

@@ -7,7 +7,7 @@ import Loading from "@/src/features/loading";
 import { environmentStrategy, platform } from "@/src/shared/libs";
 import { PalePurpleGradient , Text } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import Interest from "@features/interest";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { track as amplitudeTrack, identify, setUserId } from '@amplitude/analytics-react-native';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { AMPLITUDE_EVENTS } from '@/src/shared/constants/amplitude-events';
 import type {
   UseAmplitudeReturn,
@@ -24,22 +24,22 @@ export const useAmplitude = (): UseAmplitudeReturn => {
 
         // 이벤트 유효성 검사 (옵션)
         if (options.validate && !AMPLITUDE_EVENTS[eventName]) {
-          console.warn(`[Amplitude] Unknown event: ${eventName}`);
+          console.warn(`[Mixpanel] Unknown event: ${eventName}`);
           return;
         }
 
-        // Amplitude 이벤트 전송
-        amplitudeTrack(AMPLITUDE_EVENTS[eventName], eventProperties);
+        // Mixpanel 이벤트 전송 (플랫폼 자동 선택)
+        mixpanelAdapter.track(AMPLITUDE_EVENTS[eventName], eventProperties);
 
         // 개발 환경에서 로그 출력
         if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
-          console.log(`[Amplitude] Event tracked:`, {
+          console.log(`[Mixpanel] Event tracked:`, {
             event: AMPLITUDE_EVENTS[eventName],
             properties: eventProperties,
           });
         }
       } catch (error) {
-        console.error('[Amplitude] Error tracking event:', error);
+        console.error('[Mixpanel] Error tracking event:', error);
       }
     },
     []
@@ -48,29 +48,30 @@ export const useAmplitude = (): UseAmplitudeReturn => {
   // 사용자 속성 설정
   const setUserProperties = useCallback((properties: Record<string, any>) => {
     try {
-      // Amplitude 사용자 속성 설정
-      identify(properties);
+      // Mixpanel 사용자 속성 설정 (플랫폼 자동 선택)
+      mixpanelAdapter.setUserProperties(properties);
 
       // 개발 환경에서 로그 출력
       if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
-        console.log(`[Amplitude] User properties set:`, properties);
+        console.log(`[Mixpanel] User properties set:`, properties);
       }
     } catch (error) {
-      console.error('[Amplitude] Error setting user properties:', error);
+      console.error('[Mixpanel] Error setting user properties:', error);
     }
   }, []);
 
   // 사용자 식별
   const identifyUser = useCallback((userId: string) => {
     try {
-      setUserId(userId);
+      // Mixpanel 사용자 식별 (플랫폼 자동 선택)
+      mixpanelAdapter.identify(userId);
 
       // 개발 환경에서 로그 출력
       if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
-        console.log(`[Amplitude] User identified:`, userId);
+        console.log(`[Mixpanel] User identified:`, userId);
       }
     } catch (error) {
-      console.error('[Amplitude] Error identifying user:', error);
+      console.error('[Mixpanel] Error identifying user:', error);
     }
   }, []);
 

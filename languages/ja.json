@@ -1,0 +1,14 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "サムタイムズ",
+    "NSCameraUsageDescription": "プロフィール写真を撮影するためにカメラへのアクセスが必要です",
+    "NSPhotoLibraryUsageDescription": "プロフィール写真を選択するためにフォトライブラリへのアクセスが必要です",
+    "NSUserNotificationUsageDescription": "マッチング結果や重要なお知らせを受け取るために通知の許可が必要です",
+    "NSLocationWhenInUseUsageDescription": "地図サービスを提供するために位置情報を使用します。",
+    "NSLocationAlwaysUsageDescription": "バックグラウンドで位置情報サービスを提供します。",
+    "NSCalendarsUsageDescription": "デートのスケジュール管理のためにカレンダーへのアクセスが必要です。"
+  },
+  "android": {
+    "app_name": "サムタイムズ"
+  }
+}

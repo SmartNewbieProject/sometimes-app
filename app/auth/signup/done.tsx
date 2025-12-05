@@ -5,7 +5,7 @@ import Signup from "@/src/features/signup";
 import { environmentStrategy } from "@/src/shared/libs";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";

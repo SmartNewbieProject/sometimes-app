@@ -3,7 +3,7 @@ import { semanticColors } from '../../src/shared/constants/colors';
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";

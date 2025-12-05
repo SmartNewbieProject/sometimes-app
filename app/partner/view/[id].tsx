@@ -32,7 +32,7 @@ import {
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Pressable,
@@ -42,6 +42,7 @@ import {
   Text as RNText,
 } from "react-native";
 import { semanticColors } from "@/src/shared/constants/colors";
+import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
 
 const { queries } = Match;
 const { useMatchPartnerQuery } = queries;
@@ -57,15 +58,33 @@ export default function PartnerDetailScreen() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showMihoIntro, setShowMihoIntro] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const hasTrackedView = useRef(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsAnalyzing(false);
       setShowMihoIntro(true);
+
+      if (partner && !hasTrackedView.current) {
+        hasTrackedView.current = true;
+        const amplitude = (global as any).amplitude || {
+          track: (event: string, properties: any) => {
+            console.log('Amplitude Event:', event, properties);
+          },
+        };
+
+        amplitude.track(AMPLITUDE_KPI_EVENTS.PROFILE_VIEWED, {
+          viewed_profile_id: partner.id,
+          view_source: 'matching_history',
+          partner_age: partner.age,
+          partner_university: partner.universityDetails?.name,
+          timestamp: new Date().toISOString(),
+        });
+      }
     }, 4000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [partner]);
 
   const onZoomClose = () => {
     setZoomVisible(false);

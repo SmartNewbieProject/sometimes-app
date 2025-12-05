@@ -162,3 +162,19 @@ export type GemMetadata = {
   gemProduct: GemDetails;
   eventType?: EventType;
 }
+
+export interface UserMetrics {
+  userId: string;
+  metrics: {
+    totalSpent: number;
+    purchaseCount: number;
+    firstPurchaseAt: string | null;
+    lastPurchaseAt: string | null;
+    accountCreatedAt: string;
+    lastActiveAt: string;
+    averagePurchaseValue: number;
+    daysSinceFirstPurchase: number | null;
+    isChurned: boolean;
+  };
+  calculatedLTV: number | null;
+}

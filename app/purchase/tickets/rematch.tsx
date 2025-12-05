@@ -5,7 +5,7 @@ import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Ticket, TicketDetails } from "@/src/widgets";
 import { Selector } from "@/src/widgets/selector";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useAuth } from "@features/auth";
 import Layout from "@features/layout";
 import Payment from "@features/payment";

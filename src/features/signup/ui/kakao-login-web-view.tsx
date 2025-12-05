@@ -2,7 +2,7 @@ import { useAuth } from "@/src/features/auth";
 import { semanticColors } from '../../../shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useRouter } from "expo-router";
 // KakaoLoginWebView.tsx
 import type React from "react";

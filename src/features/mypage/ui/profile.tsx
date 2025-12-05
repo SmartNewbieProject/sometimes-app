@@ -28,11 +28,17 @@ export const Profile = () => {
   const [isLoadingVerification, setIsLoadingVerification] =
     useState<boolean>(true);
   const { data: gem } = useCurrentGem();
+  const formatStudentNumber = (studentNumber: string | null | undefined): string => {
+    if (!studentNumber) return "";
+    const prefix = studentNumber.substring(0, 2);
+    return `${prefix}학번`;
+  };
+
   const profileData = {
-    name: profileDetails?.name || "이름",
-    age: profileDetails?.age || "20",
-    grade: profileDetails?.universityDetails?.grade || "19학번",
-    university: profileDetails?.universityDetails?.name || "한밭대학교",
+    name: profileDetails?.name || "",
+    age: profileDetails?.age || 0,
+    grade: formatStudentNumber(profileDetails?.universityDetails?.studentNumber),
+    university: profileDetails?.universityDetails?.name || "",
     profileImage:
       profileDetails?.profileImages?.find((image) => image.isMain)?.url ||
       require("@/assets/images/profile.png"),

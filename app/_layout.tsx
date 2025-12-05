@@ -17,6 +17,7 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "@/src/shared/libs/i18n";
 
 import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
+import { ChatActivityTracker } from "@/src/features/chat/ui/chat-activity-tracker";
 import LoggerContainer from "@/src/features/logger/ui/logger-container";
 import { PortoneProvider } from "@/src/features/payment/hooks/PortoneProvider";
 import { VersionUpdateChecker } from "@/src/features/version-update";
@@ -26,7 +27,7 @@ import { useStorage } from "@/src/shared/hooks/use-storage";
 import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
-import * as amplitude from "@amplitude/analytics-react-native";
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 if (Platform.OS !== "web") {
@@ -37,7 +38,10 @@ if (Platform.OS !== "web") {
 
 const MIN_SPLASH_MS = 2000;
 const START_AT = Date.now();
-amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_KEY as string);
+
+// Mixpanel 초기화 (플랫폼별 자동 선택)
+const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN as string;
+mixpanelAdapter.init(mixpanelToken, true); // trackAutomaticEvents = true
 
 export default function RootLayout() {
   const { request: requestAtt } = useAtt();
@@ -234,6 +238,7 @@ export default function RootLayout() {
                           <Slot />
                           <VersionUpdateChecker />
                           <Toast />
+                          <ChatActivityTracker />
                       </>
                       </RouteTracker>
                     </AnalyticsProvider>

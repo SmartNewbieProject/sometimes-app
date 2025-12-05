@@ -30,7 +30,7 @@ import {
   Show,
  Text } from "@/src/shared/ui";
 import { NotificationIcon } from "@/src/features/notification/ui/notification-icon";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";

@@ -194,12 +194,40 @@ export interface PaginationParams {
   limit?: number;
 }
 
-// Progress Types
+// Progress Types - Updated to match server response
+export interface ServerProgressStatus {
+  currentWeek: {
+    week: number;
+    year: number;
+  };
+  dayOfWeek: number;
+  answeredThisWeek: number;
+  canProceedToday: boolean;
+  remainingQuestions: number;
+  currentQuestion: {
+    questionId: string;
+    text: string;
+    dimension: string;
+    type: string;
+    dayOfWeek: number;
+    isAnswered: boolean;
+    remainingQuestions: number;
+  } | null;
+}
+
+// Internal UserProgressStatus type (for component compatibility)
 export interface UserProgressStatus {
-  hasDailyQuestion: boolean;        // 과거 데일리 질문 답변 여부
+  hasDailyQuestion: boolean;        // 데일리 질문 존재 여부
   hasWeeklyProgress: boolean;       // 이번 주 진행상황 여부
-  hasTodayAnswer: boolean;          // 오늘 답변 여부 (NEW!)
-  canProceed: boolean;              // 답변 가능 여부 (NEW!)
+  hasTodayAnswer: boolean;          // 오늘 답변 여부
+  canProceed: boolean;              // 답변 가능 여부
+  answeredThisWeek: number;         // 이번 주 답변 수
+  remainingQuestions: number;       // 남은 질문 수
+  currentWeek?: {
+    week: number;
+    year: number;
+  };
+  dayOfWeek?: number;
   hasActiveSession?: boolean;       // 레거시 호환성
   currentStreak?: number;
   totalAnswers?: number;
@@ -298,6 +326,9 @@ export type ProfileIntroduction = ProfileIntroductionResponse;
 export type AnswerHistory = AnswerHistoryResponse;
 export type ReportHistory = ReportHistoryResponse;
 export type ProgressStatus = UserProgressStatus;
+
+// Export ServerProgressStatus for type safety
+export type { ServerProgressStatus, UserProgressStatus };
 
 // =============================================
 // API Functions (Based on New API Specification)
@@ -630,8 +661,20 @@ export const getProfileIntroduction = async (): Promise<any> => {
   return axiosClient.get('/moment/profile/introduction');
 };
 
-export const getUserProgressStatus = async (): Promise<any> => {
-  return axiosClient.get('/moment/progress/status');
+export const getUserProgressStatus = async (): Promise<UserProgressStatus> => {
+  const serverResponse: ServerProgressStatus = await axiosClient.get('/moment/progress/status');
+
+  // Transform server response to internal format
+  return {
+    hasDailyQuestion: serverResponse.currentQuestion !== null,
+    hasWeeklyProgress: serverResponse.answeredThisWeek > 0,
+    hasTodayAnswer: serverResponse.currentQuestion?.isAnswered || false,
+    canProceed: serverResponse.canProceedToday,
+    answeredThisWeek: serverResponse.answeredThisWeek,
+    remainingQuestions: serverResponse.remainingQuestions,
+    currentWeek: serverResponse.currentWeek,
+    dayOfWeek: serverResponse.dayOfWeek,
+  };
 };
 
 export const getWeeklyProgress = async (): Promise<any> => {

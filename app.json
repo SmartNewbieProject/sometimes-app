@@ -31,6 +31,7 @@
         "maps"
       ],
       "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
         "UIBackgroundModes": [
           "remote-notification"
         ],
@@ -233,7 +234,15 @@
       ],
       "expo-web-browser",
       "expo-build-properties",
-      "expo-localization",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["ko", "ja"],
+            "android": ["ko", "ja"]
+          }
+        }
+      ],
       "expo-iap",
       [
         "expo-build-properties",
@@ -245,6 +254,10 @@
       ],
       "expo-asset"
     ],
+    "locales": {
+      "ko": "./languages/ko.json",
+      "ja": "./languages/ja.json"
+    },
     "experiments": {
       "typedRoutes": true
     },
