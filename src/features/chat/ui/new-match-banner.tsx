@@ -11,7 +11,7 @@ function NewMatchBanner() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { data } = useChatRoomDetail(id);
-  const name = data?.partner.name ?? t('features.chat.ui.new_match_banner.default_name');
+  const age = data?.partner.age ?? '?';
   return (
     <View style={styles.container}>
       <View style={{ position: "relative" }}>
@@ -22,7 +22,7 @@ function NewMatchBanner() {
         />
       </View>
       <Text style={styles.title}>
-        {t('features.chat.ui.new_match_banner.congrats')} <Text style={[styles.title, styles.name]}>{name}</Text>{t('features.chat.ui.new_match_banner.matched')}
+        {t('features.chat.ui.new_match_banner.congrats')} <Text style={[styles.title, styles.name]}>만 {age}세</Text>{t('features.chat.ui.new_match_banner.matched')}
       </Text>
       <Text style={styles.subText}>{t('features.chat.ui.new_match_banner.mutual_interest')}</Text>
     </View>

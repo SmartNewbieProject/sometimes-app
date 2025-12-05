@@ -79,7 +79,7 @@ export const Partner = ({ match }: PartnerProps) => {
 
       <View style={styles.infoContainer}>
         <Text textColor="white" weight="bold" size="xl">
-          {partner?.name}, {partner?.age}
+          만 {partner?.age}세
         </Text>
 
         <View style={styles.tagsRow}>

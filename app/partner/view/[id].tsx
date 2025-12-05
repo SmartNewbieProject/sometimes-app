@@ -295,7 +295,7 @@ export default function PartnerDetailScreen() {
                     style={{ color: semanticColors.text.inverse }}
                     className="text-3xl font-bold mb-1"
                   >
-                    {partner.age}세
+                    만 {partner.age}세
                   </Text>
                   <View className="flex-row items-center mb-1">
                     {partner.universityDetails?.code && (
