@@ -44,11 +44,21 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   REVENUE_PER_USER: 'Revenue_Per_User',
   PAYMENT_METHOD_ADDED: 'Payment_Method_Added',
   PAYMENT_METHOD_REMOVED: 'Payment_Method_Removed',
+  USER_METRICS_UPDATED: 'User_Metrics_Updated',
 
   // 기존 인증 관련 (Acquisition)
   AUTH_LOGIN_STARTED: 'Auth_Login_Started',
   AUTH_LOGIN_COMPLETED: 'Auth_Login_Completed',
   AUTH_LOGIN_FAILED: 'Auth_Login_Failed',
+  AUTH_LOGOUT: 'Auth_Logout',
+
+  // 좋아요 관련 (Engagement/Revenue)
+  LIKE_SENT: 'Like_Sent',
+  LIKE_RECEIVED: 'Like_Received',
+
+  // 사용자 관리 관련 (Safety/Retention)
+  USER_BLOCKED: 'User_Blocked',
+  USER_REPORTED: 'User_Reported',
 
   // 회원가입 관련 (Acquisition → Activation)
   SIGNUP_STARTED: 'Signup_Started',
@@ -62,12 +72,15 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   MATCHING_REQUESTED: 'Matching_Requested',
   MATCHING_SUCCESS: 'Matching_Success',
   MATCHING_FAILED: 'Matching_Failed',
+  PROFILE_VIEWED: 'Profile_Viewed',
+  FILTER_APPLIED: 'Filter_Applied',
 
   // 채팅 관련 (Activation → Retention)
   CHAT_STARTED: 'Chat_Started',
   CHAT_MESSAGE_SENT: 'Chat_Message_Sent',
   CHAT_ENDED: 'Chat_Ended',
   CHAT_GIFT_SENT: 'Chat_Gift_Sent',
+  CHAT_24H_ACTIVE: 'Chat_24h_Active',
 
   // 커뮤니티 관련 (Retention)
   COMMUNITY_POST_CREATED: 'Community_Post_Created',
@@ -93,6 +106,8 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   REFERRAL_INVITE_SENT: 'Referral_Invite_Sent',
   REFERRAL_INVITE_ACCEPTED: 'Referral_Invite_Accepted',
   REFERRAL_SIGNUP_COMPLETED: 'Referral_Signup_Completed',
+  INVITE_LINK_CLICKED: 'Invite_Link_Clicked',
+  INVITE_CONVERSION_COMPLETED: 'Invite_Conversion_Completed',
 
   // 세션 관련 (Retention)
   SESSION_STARTED: 'Session_Started',
@@ -121,6 +136,27 @@ export const AUTH_METHODS = {
   PASS: 'pass',
   KAKAO: 'kakao',
   APPLE: 'apple',
+} as const;
+
+// 로그아웃 사유 Enum
+export const LOGOUT_REASONS = {
+  MANUAL: 'manual',
+  SESSION_EXPIRED: 'session_expired',
+  ACCOUNT_DELETED: 'account_deleted',
+} as const;
+
+// 좋아요 타입 Enum
+export const LIKE_TYPES = {
+  FREE: 'free',
+  SUPER: 'super',
+} as const;
+
+// 차단/신고 소스 Enum
+export const USER_ACTION_SOURCES = {
+  CHAT: 'chat',
+  PROFILE: 'profile',
+  COMMUNITY: 'community',
+  MATCHING: 'matching',
 } as const;
 
 // 결제 방법 Enum
@@ -171,6 +207,9 @@ export const SOMEMATE_SESSION_STATUS = {
 
 // 타입 정의
 export type AuthMethod = typeof AUTH_METHODS[keyof typeof AUTH_METHODS];
+export type LogoutReason = typeof LOGOUT_REASONS[keyof typeof LOGOUT_REASONS];
+export type LikeType = typeof LIKE_TYPES[keyof typeof LIKE_TYPES];
+export type UserActionSource = typeof USER_ACTION_SOURCES[keyof typeof USER_ACTION_SOURCES];
 export type PaymentMethod = typeof PAYMENT_METHODS[keyof typeof PAYMENT_METHODS];
 export type MatchingType = typeof MATCHING_TYPES[keyof typeof MATCHING_TYPES];
 export type ContentType = typeof CONTENT_TYPES[keyof typeof CONTENT_TYPES];
@@ -193,6 +232,26 @@ export interface AuthEventProperties extends BaseEventProperties {
   error_type?: string;
 }
 
+// 로그아웃 이벤트 속성
+export interface LogoutEventProperties extends BaseEventProperties {
+  reason: LogoutReason;
+}
+
+// 좋아요 이벤트 속성
+export interface LikeEventProperties extends BaseEventProperties {
+  target_profile_id?: string;
+  source_profile_id?: string;
+  like_type?: LikeType;
+}
+
+// 사용자 차단/신고 이벤트 속성
+export interface UserActionEventProperties extends BaseEventProperties {
+  blocked_user_id?: string;
+  reported_user_id?: string;
+  reason: string;
+  action_source?: UserActionSource;
+}
+
 // 가입 이벤트 속성
 export interface SignupEventProperties extends BaseEventProperties {
   source?: EventSource;
@@ -212,6 +271,24 @@ export interface MatchingEventProperties extends BaseEventProperties {
   time_to_match?: number;
   filters_applied?: string[];
   error_reason?: string;
+  retry_available_at?: string;
+  failure_category?: 'PAYMENT' | 'PERMISSION' | 'USAGE' | 'SYSTEM';
+  is_recoverable?: boolean;
+}
+
+// 프로필 조회 이벤트 속성
+export interface ProfileViewedEventProperties extends BaseEventProperties {
+  viewed_profile_id: string;
+  view_source: 'matching_history' | 'post_box' | 'chat' | 'direct';
+  partner_age?: number;
+  partner_university?: string;
+}
+
+// 필터 적용 이벤트 속성
+export interface FilterAppliedEventProperties extends BaseEventProperties {
+  filter_type: 'avoid_university' | 'avoid_department';
+  filter_value: boolean;
+  previous_value: boolean;
 }
 
 // 채팅 이벤트 속성
@@ -223,6 +300,22 @@ export interface ChatEventProperties extends BaseEventProperties {
   message_count?: number;
   end_reason?: string;
   gift_type?: string;
+  is_first_message?: boolean;
+}
+
+// 채팅 24시간 활성화 이벤트 속성
+export interface Chat24hActiveEventProperties extends BaseEventProperties {
+  chat_room_id: string;
+  match_id: string;
+  chat_partner_id?: string;
+  is_active: boolean;
+  is_mutual_conversation: boolean;
+  activity_status: 'inactive' | 'active' | 'mutual' | 'one_sided';
+  my_message_count?: number;
+  partner_message_count?: number;
+  total_message_count?: number;
+  first_response_time?: number;
+  tracking_source: 'batch' | 'app';
 }
 
 // 커뮤니티 이벤트 속성
@@ -264,6 +357,17 @@ export interface ReferralEventProperties extends BaseEventProperties {
   invite_method?: string;
   referrer_id?: string;
   invite_code?: string;
+}
+
+// 초대 링크 이벤트 속성
+export interface InviteLinkEventProperties extends BaseEventProperties {
+  invite_code: string;
+  inviter_id?: string;
+  invited_user_id?: string;
+  referrer?: string;
+  device_type?: 'ios' | 'android' | 'web';
+  click_id?: string;
+  signup_method?: string;
 }
 
 // 세션 이벤트 속성
@@ -345,6 +449,15 @@ export interface KpiEventTypePropertiesMap {
   Auth_Login_Started: AuthEventProperties;
   Auth_Login_Completed: AuthEventProperties;
   Auth_Login_Failed: AuthEventProperties;
+  Auth_Logout: LogoutEventProperties;
+
+  // 좋아요 관련
+  Like_Sent: LikeEventProperties;
+  Like_Received: LikeEventProperties;
+
+  // 사용자 차단/신고 관련
+  User_Blocked: UserActionEventProperties;
+  User_Reported: UserActionEventProperties;
 
   // 가입 관련
   Signup_Started: SignupEventProperties;
@@ -358,12 +471,15 @@ export interface KpiEventTypePropertiesMap {
   Matching_Requested: MatchingEventProperties;
   Matching_Success: MatchingEventProperties;
   Matching_Failed: MatchingEventProperties;
+  Profile_Viewed: ProfileViewedEventProperties;
+  Filter_Applied: FilterAppliedEventProperties;
 
   // 채팅 관련
   Chat_Started: ChatEventProperties;
   Chat_Message_Sent: ChatEventProperties;
   Chat_Ended: ChatEventProperties;
   Chat_Gift_Sent: ChatEventProperties;
+  Chat_24h_Active: Chat24hActiveEventProperties;
 
   // 커뮤니티 관련
   Community_Post_Created: CommunityEventProperties;
@@ -372,12 +488,10 @@ export interface KpiEventTypePropertiesMap {
   Community_Comment_Added: CommunityEventProperties;
   Community_Post_Shared: CommunityEventProperties;
 
-  // 결제 관련
+  // 결제 관련 (추가)
   Payment_Store_Viewed: PaymentEventProperties;
   Payment_Item_Selected: PaymentEventProperties;
   Payment_Started: PaymentEventProperties;
-  Payment_Completed: PaymentEventProperties;
-  Payment_Failed: PaymentEventProperties;
   Payment_Gem_Used: PaymentEventProperties;
   Payment_Ticket_Used: PaymentEventProperties;
 
@@ -391,6 +505,8 @@ export interface KpiEventTypePropertiesMap {
   Referral_Invite_Sent: ReferralEventProperties;
   Referral_Invite_Accepted: ReferralEventProperties;
   Referral_Signup_Completed: ReferralEventProperties;
+  Invite_Link_Clicked: InviteLinkEventProperties;
+  Invite_Conversion_Completed: InviteLinkEventProperties;
 
   // 세션 관련
   Session_Started: SessionEventProperties;

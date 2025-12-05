@@ -36,7 +36,11 @@ export interface UseKpiAnalyticsReturn {
     trackProfileViewed: (profileId: string, viewDuration: number) => void;
     trackMatchingRequested: (profileId: string, gemCost?: number) => void;
     trackMatchingSuccess: (matchedProfileId: string, timeToMatch: number) => void;
-    trackMatchingFailed: (errorReason: string) => void;
+    trackMatchingFailed: (errorReason: string, options?: {
+      retryAvailableAt?: string;
+      failureCategory?: 'PAYMENT' | 'PERMISSION' | 'USAGE' | 'SYSTEM';
+      isRecoverable?: boolean;
+    }) => void;
   };
 
   chatEvents: {
@@ -272,8 +276,17 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
       });
     }, [trackEvent]),
 
-    trackMatchingFailed: useCallback((errorReason: string) => {
-      trackEvent('Matching_Failed', { error_reason: errorReason });
+    trackMatchingFailed: useCallback((errorReason: string, options?: {
+      retryAvailableAt?: string;
+      failureCategory?: 'PAYMENT' | 'PERMISSION' | 'USAGE' | 'SYSTEM';
+      isRecoverable?: boolean;
+    }) => {
+      trackEvent('Matching_Failed', {
+        error_reason: errorReason,
+        retry_available_at: options?.retryAvailableAt,
+        failure_category: options?.failureCategory,
+        is_recoverable: options?.isRecoverable,
+      });
     }, [trackEvent]),
   };
 
