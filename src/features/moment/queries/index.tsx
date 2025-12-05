@@ -32,6 +32,7 @@ const CLIENT_SLIDES: MomentSlide[] = [
     imageType: "local",
     title: "Sometimes 소개",
     order: 1,
+    externalLink: "https://www.instagram.com/p/DRUZkdrE5Oq/?img_index=1",
   }
 ];
 
