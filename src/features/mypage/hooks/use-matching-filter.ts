@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import apis, { MatchingFilters } from "../apis";
+import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
 
 export const useMatchingFilters = () => {
   const [filters, setFilters] = useState<MatchingFilters | null>(null);
@@ -36,6 +37,20 @@ export const useMatchingFilters = () => {
 
     try {
       await apis.updateAvoidDepartmentFilter(newFlag);
+
+      const amplitude = (global as any).amplitude || {
+        track: (event: string, properties: any) => {
+          console.log('Amplitude Event:', event, properties);
+        },
+      };
+
+      amplitude.track(AMPLITUDE_KPI_EVENTS.FILTER_APPLIED, {
+        filter_type: 'avoid_department',
+        filter_value: newFlag,
+        previous_value: previousValue,
+        timestamp: new Date().toISOString(),
+      });
+
       await fetchFilters();
     } catch (err) {
       setFilters({ ...filters, avoidDepartment: previousValue });
@@ -57,6 +72,20 @@ export const useMatchingFilters = () => {
 
     try {
       await apis.updateAvoidUniversityFilter(newFlag);
+
+      const amplitude = (global as any).amplitude || {
+        track: (event: string, properties: any) => {
+          console.log('Amplitude Event:', event, properties);
+        },
+      };
+
+      amplitude.track(AMPLITUDE_KPI_EVENTS.FILTER_APPLIED, {
+        filter_type: 'avoid_university',
+        filter_value: newFlag,
+        previous_value: previousValue,
+        timestamp: new Date().toISOString(),
+      });
+
       await fetchFilters();
     } catch (err) {
       setFilters({ ...filters, avoidUniversity: previousValue });

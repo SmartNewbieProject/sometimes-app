@@ -11,13 +11,26 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../../idle-match-timer/hooks";
 import { determineFailureReason, predictFailureLikelihood } from "../../matching/utils/failure-analyzer";
-import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
+import { AMPLITUDE_KPI_EVENTS, LIKE_TYPES } from "@/src/shared/constants/amplitude-kpi-events";
 import { useTranslation } from "react-i18next";
 
 const useLikeMutation = () =>
   useMutation({
     mutationFn: (connectionId: string) =>
       axiosClient.post(`/v1/matching/interactions/like/${connectionId}`),
+    onMutate: async (connectionId: string) => {
+      const amplitude = (global as any).amplitude || {
+        track: (event: string, properties: any) => {
+          console.log('Amplitude Event:', event, properties);
+        }
+      };
+
+      amplitude.track(AMPLITUDE_KPI_EVENTS.LIKE_SENT, {
+        target_profile_id: connectionId,
+        like_type: LIKE_TYPES.FREE,
+        timestamp: new Date().toISOString(),
+      });
+    },
     onSuccess: async () => {
       // 쿼리 무효화를 확실히 처리하기 위해 await 사용
       await queryClient.invalidateQueries({ queryKey: ["latest-matching"] });
@@ -65,6 +78,8 @@ const useLikeMutation = () =>
         severity: failureReason.severity,
         server_message: failureReason.serverMessage,
         http_status: failureReason.httpStatus,
+        retry_available_at: failureReason.retryAvailableAt,
+        wait_time_seconds: failureReason.waitTimeSeconds,
         timestamp: new Date().toISOString()
       });
 

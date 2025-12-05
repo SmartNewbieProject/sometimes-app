@@ -13,6 +13,8 @@ export interface FailureReason {
   severity: 'LOW' | 'MEDIUM' | 'HIGH';
   serverMessage: string;
   httpStatus?: number;
+  retryAvailableAt?: string;
+  waitTimeSeconds?: number;
 }
 
 export interface FailureContext {
@@ -30,12 +32,21 @@ export interface FailureContext {
   isPeakTime: boolean;
 }
 
+const calculateWaitTimeSeconds = (retryAvailableAt: string | undefined): number | undefined => {
+  if (!retryAvailableAt) return undefined;
+  const retryTime = new Date(retryAvailableAt).getTime();
+  const now = Date.now();
+  return Math.max(0, Math.floor((retryTime - now) / 1000));
+};
+
 /**
  * 서버 응답 메시지 기반 실패 원인 분류
  */
 export const determineFailureReason = (error: any): FailureReason => {
   const status = error.status;
-  const message = error.response?.data?.message || error.message || '';
+  const responseData = error.response?.data || error;
+  const message = responseData?.message || responseData?.error || error.message || '';
+  const retryAvailableAt = responseData?.retry_available_at;
 
   // 403: 금지된 요청
   if (status === 403) {
@@ -84,7 +95,9 @@ export const determineFailureReason = (error: any): FailureReason => {
         recoverable: true,
         severity: 'MEDIUM',
         serverMessage: message,
-        httpStatus: status
+        httpStatus: status,
+        retryAvailableAt,
+        waitTimeSeconds: calculateWaitTimeSeconds(retryAvailableAt)
       };
     }
 
