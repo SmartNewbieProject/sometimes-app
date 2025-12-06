@@ -56,6 +56,8 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
     descriptionKey: "features.moment.navigation.my_moment_description",
     backgroundImageUrl: require("@/assets/images/moment/menu/moment.png"),
     imageSize: 100,
+    disabledTextKey: "features.moment.navigation.my_moment_disabled_text",
+    disabledMessageKey: "features.moment.navigation.my_moment_disabled_message",
     onPress: () => {
       router.push("/moment/my-moment");
     },

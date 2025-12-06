@@ -7,6 +7,7 @@ import { MomentNavigationProps, MomentNavigationItem, MomentNavigationHeight } f
 import colors from "@/src/shared/constants/colors";
 import { Text } from "@/src/shared/ui/text";
 import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
+import { useMyMomentEnabled } from "../queries";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -19,6 +20,7 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
   const { t } = useTranslation();
   const actualHeight = HEIGHT_CONFIG[itemHeight];
   const { data: rouletteEligibility } = useRouletteEligibility();
+  const { data: myMomentEnabled } = useMyMomentEnabled();
 
   const rows = [];
   for (let i = 0; i < items.length; i += itemsPerRow) {
@@ -39,6 +41,13 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
         isDisabled: true,
         text: item.disabledTextKey ? t(item.disabledTextKey) : (item.disabledText || t('features.moment.navigation.roulette_disabled_text')),
         message: item.disabledMessageKey ? t(item.disabledMessageKey) : (item.disabledMessage || t('features.moment.navigation.roulette_disabled_message')),
+      };
+    }
+    if (item.id === "moment-my-moment" && myMomentEnabled && !myMomentEnabled.enabled) {
+      return {
+        isDisabled: true,
+        text: item.disabledTextKey ? t(item.disabledTextKey) : (item.disabledText || t('features.moment.navigation.preparing')),
+        message: item.disabledMessageKey ? t(item.disabledMessageKey) : item.disabledMessage,
       };
     }
     if (item.isReady === false) {

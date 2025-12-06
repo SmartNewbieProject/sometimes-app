@@ -378,6 +378,12 @@ export const invalidateProfileQueries = (queryClient: QueryClient) => {
 };
 
 // =============================================
+// Feature Flags
+// =============================================
+
+export { useMyMomentEnabled, MY_MOMENT_ENABLED_KEY } from "./use-my-moment-enabled";
+
+// =============================================
 // Additional Legacy Queries (Missing Functions)
 // =============================================
 

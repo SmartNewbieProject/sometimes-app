@@ -5,6 +5,8 @@
     "events_disabled_message": "곧 다양한 이벤트로 찾아뵙겠습니다!",
     "my_moment_title": "나의 모먼트",
     "my_moment_description": "다양한 활동으로\n나의 연애 성향을\n분석해보세요!",
+    "my_moment_disabled_text": "준비중",
+    "my_moment_disabled_message": "곧 만나요!",
     "check_in_title": "출석체크",
     "check_in_description": "매일 출석하고\n상품을 받아가기",
     "check_in_disabled_message": "출석 체크 기능을 준비하고 있습니다!",
