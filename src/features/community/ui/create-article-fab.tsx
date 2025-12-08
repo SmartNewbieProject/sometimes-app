@@ -47,6 +47,7 @@ export const CreateArticleFAB = () => {
 
   return (
     <TouchableOpacity
+      testID="create-article-fab"
       onPress={() =>
         router.push(`/community/write?category=${currentCategory}`)
       }

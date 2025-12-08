@@ -58,7 +58,7 @@ function UniversityCard({
   });
 
   return (
-    <Pressable onPress={onClick} onPressIn={onPressIn} onPressOut={onPressOut}>
+    <Pressable testID={`university-card-${name}`} onPress={onClick} onPressIn={onPressIn} onPressOut={onPressOut}>
       <Animated.View
         style={[
           styles.container,

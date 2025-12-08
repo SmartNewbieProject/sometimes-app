@@ -93,6 +93,7 @@ function UniversityPage() {
           <View style={styles.searchWrapper}>
             <SearchIcon width={16} height={16} style={{ marginRight: 8 }} />
             <TextInput
+              testID="university-search-input"
               value={searchText}
               onBlur={handleBlur}
               onChangeText={handleChange}

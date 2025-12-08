@@ -155,6 +155,7 @@ export function Article({
   return (
     <View className="w-full relative">
       <TouchableOpacity
+        testID={`article-item-${data.id}`}
         onPress={handleArticlePress}
         className="p-4 bg-transparent"
         activeOpacity={0.7}

@@ -39,10 +39,6 @@ if (Platform.OS !== "web") {
 const MIN_SPLASH_MS = 2000;
 const START_AT = Date.now();
 
-// Mixpanel 초기화 (플랫폼별 자동 선택)
-const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN as string;
-mixpanelAdapter.init(mixpanelToken, true); // trackAutomaticEvents = true
-
 export default function RootLayout() {
   const { request: requestAtt } = useAtt();
   const notificationListener = useRef<{ remove(): void } | null>(null);
@@ -50,21 +46,40 @@ export default function RootLayout() {
   const processedNotificationIds = useRef<Set<string>>(new Set());
 
   const [coldStartProcessed, setColdStartProcessed] = useState(false);
+  const [sdkInitialized, setSdkInitialized] = useState(false);
+
   useEffect(() => {
-    const initKakao = async () => {
+    const initializeSDKs = async () => {
       try {
+        console.log('[SDK Init] Starting SDK initialization sequence...');
+
         await initializeKakaoSDK("4d405583bea731b1c4fb26eb8a14e894", {
           web: {
             javascriptKey: "2356db85eb35f5f941d0d66178e16b4e",
             restApiKey: "228e892bfc0e42e824d592d92f52e72e",
           },
         });
+        console.log('[SDK Init] Kakao SDK initialized');
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN as string;
+        if (mixpanelToken) {
+          mixpanelAdapter.init(mixpanelToken, true);
+          console.log('[SDK Init] Mixpanel initialized');
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        setSdkInitialized(true);
+        console.log('[SDK Init] All SDKs initialized successfully');
       } catch (error) {
-        console.error("Kakao SDK 초기화 실패:", error);
+        console.error('[SDK Init] SDK 초기화 실패:', error);
+        setSdkInitialized(true);
       }
     };
 
-    initKakao();
+    initializeSDKs();
   }, []);
 
   const [loaded] = useFonts({
@@ -92,8 +107,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    //폰트가 로드되지 않았다면 아무것도 하지 않음
-    if (!loaded) {
+    if (!loaded || !sdkInitialized) {
       return;
     }
 
@@ -114,7 +128,7 @@ export default function RootLayout() {
     };
 
     hideSplashScreen();
-  }, [loaded]);
+  }, [loaded, sdkInitialized]);
 
   useEffect(() => {
     requestAtt();
@@ -141,7 +155,7 @@ export default function RootLayout() {
   );
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || !sdkInitialized) return;
 
     const handleColdStartNotification = () => {
       try {
@@ -173,7 +187,7 @@ export default function RootLayout() {
     };
 
     handleColdStartNotification();
-  }, [loaded, isValidNotificationData]);
+  }, [loaded, sdkInitialized, isValidNotificationData]);
 
   useEffect(() => {
     if (!loaded || !coldStartProcessed) return;
@@ -214,7 +228,7 @@ export default function RootLayout() {
     };
   }, [loaded, coldStartProcessed, isValidNotificationData]);
 
-  if (!loaded) {
+  if (!loaded || !sdkInitialized) {
     return null;
   }
 

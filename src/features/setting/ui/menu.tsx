@@ -20,7 +20,7 @@ function Menu({ options, title }: MenuProps) {
         </Text>
       </View>
       {options.map((item) => (
-        <Pressable key={item.text} onPress={item.onClick} style={styles.menu}>
+        <Pressable key={item.text} testID={`menu-item-${item.text}`} onPress={item.onClick} style={styles.menu}>
           <Text textColor={"black"} size="md">
             {item.text}
           </Text>
