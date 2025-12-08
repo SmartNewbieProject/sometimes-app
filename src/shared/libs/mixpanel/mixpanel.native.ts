@@ -8,10 +8,12 @@ import type { MixpanelAdapter } from './types';
 
 class MixpanelNative implements MixpanelAdapter {
   private initialized = false;
+  private mixpanel: Mixpanel | null = null;
 
   init(token: string, trackAutomaticEvents = true): void {
     try {
-      Mixpanel.init(token, trackAutomaticEvents);
+      this.mixpanel = new Mixpanel(token, trackAutomaticEvents);
+      this.mixpanel.init();
       this.initialized = true;
       console.log('[Mixpanel Native] Initialized successfully');
     } catch (error) {
@@ -20,52 +22,52 @@ class MixpanelNative implements MixpanelAdapter {
   }
 
   track(eventName: string, properties?: Record<string, any>): void {
-    if (!this.initialized) {
+    if (!this.initialized || !this.mixpanel) {
       console.warn('[Mixpanel Native] Not initialized, skipping track');
       return;
     }
 
     try {
-      Mixpanel.track(eventName, properties || {});
+      this.mixpanel.track(eventName, properties || {});
     } catch (error) {
       console.error('[Mixpanel Native] Track error:', error);
     }
   }
 
   identify(userId: string): void {
-    if (!this.initialized) {
+    if (!this.initialized || !this.mixpanel) {
       console.warn('[Mixpanel Native] Not initialized, skipping identify');
       return;
     }
 
     try {
-      Mixpanel.identify(userId);
+      this.mixpanel.identify(userId);
     } catch (error) {
       console.error('[Mixpanel Native] Identify error:', error);
     }
   }
 
   setUserProperties(properties: Record<string, any>): void {
-    if (!this.initialized) {
+    if (!this.initialized || !this.mixpanel) {
       console.warn('[Mixpanel Native] Not initialized, skipping setUserProperties');
       return;
     }
 
     try {
-      Mixpanel.getPeople().set(properties);
+      this.mixpanel.getPeople().set(properties);
     } catch (error) {
       console.error('[Mixpanel Native] SetUserProperties error:', error);
     }
   }
 
   reset(): void {
-    if (!this.initialized) {
+    if (!this.initialized || !this.mixpanel) {
       console.warn('[Mixpanel Native] Not initialized, skipping reset');
       return;
     }
 
     try {
-      Mixpanel.reset();
+      this.mixpanel.reset();
     } catch (error) {
       console.error('[Mixpanel Native] Reset error:', error);
     }

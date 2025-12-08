@@ -1,7 +1,7 @@
 
 import { LinearGradient } from "expo-linear-gradient";
 import { semanticColors } from '../../../shared/constants/colors';
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -13,6 +13,7 @@ import Animated, {
   useSharedValue,
   withTiming,
   useAnimatedStyle,
+  runOnJS,
 } from "react-native-reanimated";
 
 export interface Tab {
@@ -33,15 +34,40 @@ export const ToggleTab = ({
   onTabClick,
   style,
 }: ToggleTabProps) => {
+  const [isMounted, setIsMounted] = useState(false);
+
   const left = useSharedValue(activeTab === "profile" ? 5 : 100);
   const width = useSharedValue(activeTab === "profile" ? 87 : 57);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
+    if (activeTab === "profile") {
+      left.value = 5;
+      width.value = 87;
+    } else {
+      left.value = 100;
+      width.value = 57;
+    }
+  }, [activeTab, isMounted, left, width]);
+
   const animatedStyle = useAnimatedStyle(() => {
+    if (!isMounted) {
+      return {
+        transform: [{ translateX: activeTab === "profile" ? 5 : 100 }],
+        width: activeTab === "profile" ? 87 : 57,
+      };
+    }
+
     return {
       transform: [{ translateX: left.value }],
       width: width.value,
     };
-  });
+  }, [isMounted, activeTab]);
 
   const handleTabChange = () => {
     if (activeTab === "profile") {
