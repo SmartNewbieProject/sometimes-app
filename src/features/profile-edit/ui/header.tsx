@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useMyInfoForm } from "../../my-info/hooks";
 
-
 function ProfileEditHeader() {
   const router = useRouter();
   const { clear } = useMyInfoForm();

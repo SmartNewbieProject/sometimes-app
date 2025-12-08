@@ -8,24 +8,24 @@ import {
   type Tab,
   ToggleTab,
 } from "@/src/features/profile-edit/ui";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileEditLayout() {
   const { t } = useTranslation();
-  const TABS: Tab[] = [
-    { id: "profile", label: t("apps.profile_edit.tabs.profile") },
-    { id: "interest", label: t("apps.profile_edit.tabs.interest") },
-  ];
-
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<string>(
     pathname.split("/")[2] ?? "profile"
   );
+
+  const TABS: Tab[] = useMemo(() => [
+    { id: "profile", label: t("apps.profile_edit.tabs.profile") },
+    { id: "interest", label: t("apps.profile_edit.tabs.interest") },
+  ], [t]);
   return (
     <Layout.Default
       style={[styles.container, { paddingBottom: insets.bottom }]}
