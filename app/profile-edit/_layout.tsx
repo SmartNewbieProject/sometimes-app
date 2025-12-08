@@ -8,7 +8,7 @@ import {
   type Tab,
   ToggleTab,
 } from "@/src/features/profile-edit/ui";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -35,6 +35,15 @@ export default function ProfileEditLayout() {
     { id: "profile", label: t("apps.profile_edit.tabs.profile") },
     { id: "interest", label: t("apps.profile_edit.tabs.interest") },
   ], [t]);
+
+  const handleTabClick = useCallback(() => {
+    setActiveTab(prev => {
+      const next = prev === "profile" ? "interest" : "profile";
+      router.navigate(`/profile-edit/${next}`);
+      return next;
+    });
+  }, [router]);
+
   return (
     <Layout.Default
       style={[styles.container, { paddingBottom: insets.bottom }]}
@@ -45,11 +54,7 @@ export default function ProfileEditLayout() {
           <ToggleTab
             tabs={TABS}
             activeTab={activeTab}
-            onTabClick={() => {
-              const next = activeTab === "profile" ? "interest" : "profile";
-              setActiveTab(next);
-              router.navigate(`/profile-edit/${next}`);
-            }}
+            onTabClick={handleTabClick}
           />
         </View>
         <View>
