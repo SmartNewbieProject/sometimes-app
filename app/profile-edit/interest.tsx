@@ -39,11 +39,11 @@ function InterestSection() {
     !form.personality ||
     form.personality.length === 0
   );
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (profileDetails?.preferences) {
       const preferences = profileDetails.preferences;
       const additionalPreferences = profileDetails.additionalPreferences;
+
       const drinking = preferences?.find(
         (item) => item.typeName === PreferenceKeys.DRINKING
       )?.selectedOptions[0];
@@ -56,6 +56,13 @@ function InterestSection() {
       const tattoo = preferences?.find(
         (item) => item.typeName === PreferenceKeys.TATTOO
       )?.selectedOptions[0];
+      const age = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.AGE
+      )?.selectedOptions[0];
+      const personality = preferences?.find(
+        (item) => item.typeName === PreferenceKeys.PERSONALITY
+      )?.selectedOptions;
+
       if (drinking) {
         updateForm("drinking", drinking);
       }
@@ -68,27 +75,17 @@ function InterestSection() {
       if (tattoo) {
         updateForm("tattoo", tattoo);
       }
-      updateForm(
-        "drinking",
-        preferences?.find((item) => item.typeName === PreferenceKeys.DRINKING)
-          ?.selectedOptions[0]
-      );
-      updateForm(
-        "age",
-        preferences?.find((item) => item.typeName === PreferenceKeys.AGE)
-          ?.selectedOptions[0].id
-      );
+      if (age?.id) {
+        updateForm("age", age.id);
+      }
+      if (personality && personality.length > 0) {
+        updateForm("personality", personality.map((item) => item.id));
+      }
+
       updateForm("goodMbti", additionalPreferences?.goodMbti);
       updateForm("badMbti", additionalPreferences?.badMbti);
-
-      updateForm(
-        "personality",
-        preferences
-          ?.find((item) => item.typeName === PreferenceKeys.PERSONALITY)
-          ?.selectedOptions.map((item) => item.id) as string[]
-      );
     }
-  }, [JSON.stringify(profileDetails), updateForm]);
+  }, [profileDetails?.id, updateForm]);
 
   const onFinish = async () => {
     await tryCatch(
