@@ -1,8 +1,8 @@
 import { useAuth } from "@/src/features/auth";
 import { usePreferenceSelfQuery } from "@/src/features/home/queries";
 import Interest from "@/src/features/interest";
-import { useSavePartnerPreferencesMutation } from "@/src/features/interest/hooks";
 import { PreferenceKeys } from "@/src/features/interest/queries";
+import { savePreferences } from "@/src/features/interest/services";
 import InterestAge from "@/src/features/profile-edit/ui/interest/interest-age";
 import InterestBadMbti from "@/src/features/profile-edit/ui/interest/interest-bad-mbti";
 import InterestDrinking from "@/src/features/profile-edit/ui/interest/interest-drinking";
@@ -12,11 +12,12 @@ import InterestPersonality from "@/src/features/profile-edit/ui/interest/interes
 import InterestSmoking from "@/src/features/profile-edit/ui/interest/interest-smoking";
 import InterestTattoo from "@/src/features/profile-edit/ui/interest/interest-tattoo";
 
+import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import { Button } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -31,8 +32,8 @@ function InterestSection() {
   const insets = useSafeAreaInsets();
 
   const { profileDetails } = useAuth();
+  const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { showErrorModal } = useModal();
-  const { mutateAsync: savePreferences, isPending: formSubmitLoading } = useSavePartnerPreferencesMutation();
 
   const disabled = !!(
     !form.age ||
@@ -114,10 +115,7 @@ function InterestSection() {
   }, [profileDetails?.id, updateForm]);
 
   const onFinish = async () => {
-    if (formSubmitLoading) {
-      return;
-    }
-
+    setFormSubmitLoading(true);
     await tryCatch(
       async () => {
         if (!form.age || typeof form.age !== "string") {
@@ -151,11 +149,17 @@ function InterestSection() {
           badMbti: form.badMbti ?? null,
         });
 
+        await queryClient.invalidateQueries({ queryKey: ["check-preference-fill"] });
+        await queryClient.invalidateQueries({ queryKey: ["preference-self"] });
+        await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
+
         router.navigate("/my");
+        setFormSubmitLoading(false);
       },
       ({ error }) => {
         console.error("Failed to save interest preferences:", error);
         showErrorModal(error, "error");
+        setFormSubmitLoading(false);
       }
     );
   };
