@@ -1,7 +1,7 @@
 
 import { LinearGradient } from "expo-linear-gradient";
 import { semanticColors } from '../../../shared/constants/colors';
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -35,12 +35,19 @@ export const ToggleTab = ({
   style,
 }: ToggleTabProps) => {
   const [isMounted, setIsMounted] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const left = useSharedValue(activeTab === "profile" ? 5 : 100);
   const width = useSharedValue(activeTab === "profile" ? 87 : 57);
 
   useEffect(() => {
     setIsMounted(true);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -70,7 +77,10 @@ export const ToggleTab = ({
   }, [isMounted, activeTab]);
 
   const handleTabChange = useCallback(() => {
-    // 애니메이션 먼저 시작
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     if (activeTab === "profile") {
       left.value = withTiming(100, { duration: 300 });
       width.value = withTiming(57, { duration: 300 });
@@ -79,11 +89,12 @@ export const ToggleTab = ({
       width.value = withTiming(87, { duration: 300 });
     }
 
-    // 애니메이션이 끝난 후 onTabClick 호출 (기존 타이밍 유지)
-    setTimeout(() => {
-      onTabClick();
+    timeoutRef.current = setTimeout(() => {
+      if (isMounted) {
+        onTabClick();
+      }
     }, 400);
-  }, [activeTab, onTabClick]);
+  }, [activeTab, onTabClick, isMounted, left, width]);
 
   return (
     <Pressable style={[styles.container, style]} onPress={handleTabChange}>

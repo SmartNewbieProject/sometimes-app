@@ -10,7 +10,6 @@ import {
 } from "@/src/features/profile-edit/ui";
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileEditLayout() {
@@ -49,7 +48,7 @@ export default function ProfileEditLayout() {
       style={[styles.container, { paddingBottom: insets.bottom }]}
     >
       <ProfileEditHeader />
-      <ScrollView style={styles.editContainer}>
+      <View style={styles.editContainer}>
         <View style={styles.toggleContainer}>
           <ToggleTab
             tabs={TABS}
@@ -57,10 +56,10 @@ export default function ProfileEditLayout() {
             onTabClick={handleTabClick}
           />
         </View>
-        <View>
+        <View style={styles.contentContainer}>
           <Slot />
         </View>
-      </ScrollView>
+      </View>
     </Layout.Default>
   );
 }
@@ -78,5 +77,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: 22,
     paddingBottom: 10,
+  },
+  contentContainer: {
+    flex: 1,
   },
 });
