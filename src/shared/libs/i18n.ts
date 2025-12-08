@@ -26,6 +26,7 @@ i18n
     react: {
       useSuspense: false,
     },
+    defaultNS: 'common',
   });
 
 export default i18n;

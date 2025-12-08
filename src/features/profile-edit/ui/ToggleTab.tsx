@@ -1,7 +1,7 @@
 
 import { LinearGradient } from "expo-linear-gradient";
 import { semanticColors } from '../../../shared/constants/colors';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -69,7 +69,8 @@ export const ToggleTab = ({
     };
   }, [isMounted, activeTab]);
 
-  const handleTabChange = () => {
+  const handleTabChange = useCallback(() => {
+    // 애니메이션 먼저 시작
     if (activeTab === "profile") {
       left.value = withTiming(100, { duration: 300 });
       width.value = withTiming(57, { duration: 300 });
@@ -78,10 +79,11 @@ export const ToggleTab = ({
       width.value = withTiming(87, { duration: 300 });
     }
 
+    // 애니메이션이 끝난 후 onTabClick 호출 (기존 타이밍 유지)
     setTimeout(() => {
       onTabClick();
     }, 400);
-  };
+  }, [activeTab, onTabClick]);
 
   return (
     <Pressable style={[styles.container, style]} onPress={handleTabChange}>

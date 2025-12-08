@@ -8,7 +8,7 @@ import {
   type Tab,
   ToggleTab,
 } from "@/src/features/profile-edit/ui";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,9 +18,18 @@ export default function ProfileEditLayout() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState<string>(
-    pathname.split("/")[2] ?? "profile"
-  );
+
+  const [activeTab, setActiveTab] = useState<string>("profile");
+
+  // pathname 변경에 따라 activeTab 동기화
+  useEffect(() => {
+    if (pathname.includes("/profile-edit/")) {
+      const pathTab = pathname.split("/")[2];
+      if (pathTab === "profile" || pathTab === "interest") {
+        setActiveTab(pathTab);
+      }
+    }
+  }, [pathname]);
 
   const TABS: Tab[] = useMemo(() => [
     { id: "profile", label: t("apps.profile_edit.tabs.profile") },
