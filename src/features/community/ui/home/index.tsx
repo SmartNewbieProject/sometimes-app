@@ -1,4 +1,5 @@
 import { PalePurpleGradient } from "@/src/shared/ui";
+import { semanticColors } from "@/src/shared/constants/colors";
 import React from "react";
 import {
   View,
@@ -39,7 +40,10 @@ export default function CommuHome() {
               source={require("@/assets/images/loudspeaker.png")}
               style={{ width: 26, height: 26 }}
             />
-            <Text className="text-[24px] font-semibold mt-2 mx-2">
+            <Text
+              className="text-[24px] font-semibold mt-2 mx-2"
+              style={{ color: semanticColors.text.primary }}
+            >
               공지사항
             </Text>
             <View className="ml-auto">
@@ -63,7 +67,12 @@ export default function CommuHome() {
             source={require("@/assets/images/loudspeaker.png")}
             style={{ width: 16, height: 16 }}
           />
-          <Text className="text-[14px]">[FAQ] 자주묻는 질문</Text>
+          <Text
+            className="text-[14px]"
+            style={{ color: semanticColors.text.primary }}
+          >
+            [FAQ] 자주묻는 질문
+          </Text>
 
           <View className="ml-auto">
             <IconWrapper>
@@ -86,7 +95,12 @@ export default function CommuHome() {
               source={require("@/assets/images/fireIcon.png")}
               style={{ width: 26, height: 26 }}
             />
-            <Text className="text-[24px] font-semibold mt-2 mx-2">인기</Text>
+            <Text
+              className="text-[24px] font-semibold mt-2 mx-2"
+              style={{ color: semanticColors.text.primary }}
+            >
+              인기
+            </Text>
             <View className="ml-auto">
               <IconWrapper>
                 <VectorIcon className="h-[24px] w-[9px] mx-2" color="black" />
