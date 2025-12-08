@@ -14,7 +14,7 @@ interface MatchingCardProps {
 function MatchingCard({ title, isOn, toggle, disabled }: MatchingCardProps) {
   return (
     <View style={styles.container}>
-      <Text>{title}</Text>
+      <Text style={styles.text}>{title}</Text>
       <CustomSwitch disabled={disabled} value={isOn} onChange={toggle} />
     </View>
   );
