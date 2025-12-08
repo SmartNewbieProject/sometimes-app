@@ -33,6 +33,7 @@ function InterestSection() {
 
   const { profileDetails } = useAuth();
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const { showErrorModal } = useModal();
 
   const disabled = !!(
@@ -40,7 +41,12 @@ function InterestSection() {
     !form.personality ||
     form.personality.length === 0
   );
+
   useEffect(() => {
+    if (isInitialized) {
+      return;
+    }
+
     if (!profileDetails?.preferences || !Array.isArray(profileDetails.preferences)) {
       return;
     }
@@ -109,10 +115,18 @@ function InterestSection() {
       if (additionalPreferences?.badMbti !== undefined) {
         updateForm("badMbti", additionalPreferences.badMbti);
       }
+
+      setIsInitialized(true);
     } catch (error) {
       console.error("Failed to initialize interest form:", error);
     }
-  }, [profileDetails?.id, updateForm]);
+  }, [profileDetails?.preferences, isInitialized, profileDetails?.gender, updateForm]);
+
+  useEffect(() => {
+    return () => {
+      console.log("Interest form unmounting - cleaning up");
+    };
+  }, []);
 
   const onFinish = async () => {
     setFormSubmitLoading(true);
