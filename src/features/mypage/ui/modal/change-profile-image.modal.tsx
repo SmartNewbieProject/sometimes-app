@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
     left: "50%",
-    transform: [{ translateX: "-50%" }],
+    marginLeft: -234, // 468 / 2 = 234 (maxWidth의 절반)
     maxWidth: 468,
   },
   infoWrapper: {
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
   infoDescription: {
     fontSize: 11,
     lineHeight: 13.2,
-    color: "#BAB0D0",
+    color: semanticColors.text.disabled,
   },
 });
 

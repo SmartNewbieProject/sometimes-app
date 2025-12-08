@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     ...(Platform.OS === "web" && {
       maxWidth: 468,
       left: "50%",
-      transform: [{ translateX: "-50%" }],
+      marginLeft: -234, // 468 / 2 = 234 (maxWidth의 절반)
     }),
   },
   modalContainer: {

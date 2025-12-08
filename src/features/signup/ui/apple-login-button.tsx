@@ -250,7 +250,7 @@ const AppleLoginButton: React.FC = () => {
     if (!isAppleJSLoaded) {
       return (
         <View style={styles.loadingContainer}>
-          <Text>{t("features.signup.ui.login_form.apple_login_preparing")}</Text>
+          <Text style={{ color: semanticColors.text.primary }}>{t("features.signup.ui.login_form.apple_login_preparing")}</Text>
         </View>
       );
     }

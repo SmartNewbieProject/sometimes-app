@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   infoDescription: {
     fontSize: 11,
     lineHeight: 13.2,
-    color: "#BAB0D0",
+    color: semanticColors.text.disabled,
   },
   bottomContainer: {
     position: "absolute",

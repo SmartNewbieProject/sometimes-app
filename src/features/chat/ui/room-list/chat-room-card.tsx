@@ -313,7 +313,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: "50%",
     top: "50%",
-    transform: [{ translateX: "-50%" }, { translateY: "-50%" }],
+    marginLeft: -12, // 아이콘 너비의 절반 (대략 24/2)
+    marginTop: -12, // 아이콘 높이의 절반 (대략 24/2)
   },
 });
 
