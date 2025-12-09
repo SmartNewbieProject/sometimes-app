@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   optionText: {
+    color: semanticColors.text.primary,
     fontSize: 16,
   },
   closeButton: {

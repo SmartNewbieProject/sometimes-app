@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectorText: {
-    color: "BAB0D0",
+    color: semanticColors.text.disabled,
     fontSize: 15,
     fontWeight: 300,
     fontFamily: "thin",
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 14,
     lineHeight: 15.6,
-    color: "#BAB0D0",
+    color: semanticColors.text.primary,
   },
 });
 

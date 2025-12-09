@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     fontWeight: 400,
 
     lineHeight: 15.6,
-    color: "#BAB0D0",
+    color: semanticColors.text.primary,
   },
   popularContainer: {
     flexDirection: "row",
