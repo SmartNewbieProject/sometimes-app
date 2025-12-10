@@ -1,0 +1,61 @@
+{
+  "ui": {
+    "nav": {
+      "modal_title_1": "마음에 드는 이성을 찾기위해",
+      "modal_title_2": "구슬 {{count}}개를 사용할게요!",
+      "modal_text_1": "성격과 소통 스타일을 바탕으로,",
+      "modal_text_2": "자연스럽게 연결될 수 있는 인연을 추천해드릴게요.",
+      "primary_button": "네, 해볼래요",
+      "main_button": "더 찾아보기",
+      "complete_button": "썸 보내기 완료!"
+    },
+    "waiting":{
+      "title_1": "{{name}}님",
+      "title_2": "이상형 매칭까지",
+      "description_2": "남았어요",
+      "description_3": "매주 목・금 21시에 매칭이 시작돼요!",
+      "previous_button": "이전 매칭",
+      "previous_button_text": "이전 매칭"
+    },
+    "partner":{
+      "button_more": "더보기"
+    },
+    "find-partner":{
+      "button_more": "더보기"
+    },
+    "not-found":{
+      "faild_title": "매칭에 실패했어요",
+      "faild_try": "새로운 매칭 시도",
+      "look_around": "다른 프로필들을 둘러보세요",
+      "rematch": "재매칭",
+      "expand_condition": "매칭 조건 확장",
+      "expand_ideal_type": "이상형 범위를 넓혀보세요",
+      "edit": "수정",
+      "improve_profile": "프로필 개선",
+      "update_profile": "사진이나 자기소개를 업데이트\n해보세요"
+    },
+    "rematching": {
+      "title": "새로운 인연을 찾고 있어요",
+      "complete_text": "완료",
+      "steps": {
+        "profile_analysis": "프로필 분석 완료",
+        "condition_check": "매칭 조건 확인 완료",
+        "profile_search": "새로운 프로필 검색 완료",
+        "result_ready": "매칭 결과 준비 완료"
+      }
+    },
+    "error": {
+      "highlight": "연결",
+      "message": "이 불안정해요.\n잠시 후 다시 확인해 주세요."
+    }
+  },
+  "hooks":{
+    "use-rematch":{
+      "charge": "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
+      "no_recommend": "아직 추천드릴 상대가 없어요",
+      "no_match": "지금은 조건에 맞는 상대가 잠시 없어요.",
+      "retry_later": "곧 더 많은 분들이 참여할 예정이니, 잠시 후 다시 시도해 주세요!",
+      "no_rematch_ticket":"재매칭권이 없습니다."
+    }
+  }
+}

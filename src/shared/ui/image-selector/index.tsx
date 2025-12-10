@@ -10,6 +10,7 @@ import { useModal } from "../../hooks/use-modal";
 import { convertToJpeg, isHeicBase64 } from "../../utils/image";
 import { ContentSelector, type contentSelector } from "../content-selector";
 import { Text } from "../text";
+import { useTranslation } from "react-i18next";
 
 export interface ImageSelectorProps
   extends VariantProps<typeof contentSelector> {
@@ -33,6 +34,7 @@ export function renderImage(value: string | null, isPlaceHolder?: boolean) {
 
 // Static method for rendering a placeholder
 export function renderPlaceholder() {
+  const { t } = useTranslation();
   return (
     <View className="flex-1 items-center justify-center">
       <View className="w-full h-full bg-surface-secondary flex justify-center items-center">
@@ -42,7 +44,7 @@ export function renderPlaceholder() {
           contentFit="cover"
         />
         <Text size="sm" className="text-text-disabled">
-          사진 추가하기
+          {t("shareds.image-selector.image_selector.add_photo")}
         </Text>
       </View>
     </View>

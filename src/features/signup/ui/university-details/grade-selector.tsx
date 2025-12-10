@@ -9,11 +9,24 @@ import {
   Text,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSignupProgress } from "../../hooks";
+import i18n from "@/src/shared/libs/i18n";
 
-const GRADE_LIST = ["1학년", "2학년", "3학년", "4학년", "5학년", "6학년"];
 
+
+
+const GRADE_LIST = [
+  i18n.t("features.signup.ui.grade_1"),
+  i18n.t("features.signup.ui.grade_2"),
+  i18n.t("features.signup.ui.grade_3"),
+  i18n.t("features.signup.ui.grade_4"),
+  i18n.t("features.signup.ui.grade_5"),
+  i18n.t("features.signup.ui.grade_6"),
+];
 function GradeSelector() {
+  const { t } = useTranslation();
+
   const {
     form: { grade },
     updateForm,
@@ -70,7 +83,7 @@ function GradeSelector() {
   return (
     <View style={styles.container}>
       <Pressable onPress={toggleOptions} style={styles.selector}>
-        <Text style={styles.selectorText}>{grade ?? "학년 선택"}</Text>
+        <Text style={styles.selectorText}>{grade ?? t("features.signup.ui.grade_select_placeholder")}</Text>
         <View style={styles.checkBox}>
           <BottomArrowIcon width={13} height={8} />
         </View>
@@ -118,10 +131,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectorText: {
-    color: "BAB0D0",
+    color: semanticColors.text.disabled,
     fontSize: 15,
     fontWeight: 300,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     lineHeight: 18.9,
     marginLeft: 12,
   },
@@ -152,7 +165,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 14,
     lineHeight: 15.6,
-    color: "#BAB0D0",
+    color: semanticColors.text.primary,
   },
 });
 

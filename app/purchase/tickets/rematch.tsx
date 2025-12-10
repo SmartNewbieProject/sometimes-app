@@ -5,26 +5,28 @@ import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Ticket, TicketDetails } from "@/src/widgets";
 import { Selector } from "@/src/widgets/selector";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useAuth } from "@features/auth";
 import Layout from "@features/layout";
 import Payment from "@features/payment";
 import type { PortOneController } from "@portone/react-native-sdk";
 import { Button, PalePurpleGradient, Text } from "@shared/ui";
 import { createRef, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import i18n from "@shared/libs/i18n";
 const { ui, services } = Payment;
 const { PaymentView } = ui;
 const { createUniqueId } = services;
 
 const OPTIONS = {
-  name: "연인 매칭권",
+  name: i18n.t("apps.purchase.tickets.rematch.rematch_ticket_name"),
   price: 5900,
 };
 
 export default function RematchingTicketSellingScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [productCount, setProductCount] = useState<number>();
   const [totalPrice, setTotalPrice] = useState<number>();
@@ -46,27 +48,27 @@ export default function RematchingTicketSellingScreen() {
       setTotalPrice(metadata.totalPrice);
       setProductCount(metadata.count);
       setShowPayment(true);
-      track("Purchase_Count", {
+      track(t("apps.purchase.rematch.purchase_count_tracking"), {
         count: metadata.count,
         who: my,
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
     } catch (error) {
-      Alert.alert("오류", "결제 처리 중 오류가 발생했습니다.");
+      Alert.alert(t("global.error"), t("apps.purchase.tickets.rematch.error_alert_message"));
       setShowPayment(false);
     }
   };
 
   const onError = async (error: unknown) => {
-    console.error("결제 오류:", error);
+    console.error(t("apps.purchase.tickets.rematch.payment_error_console"), error);
     const id = createUniqueId();
-    console.debug("결제 오류 발생 시 새로운 orderId 생성:", id);
+    console.debug(t("apps.purchase.tickets.rematch.payment_error_debug"), id);
     setPaymentId(id);
     setShowPayment(false);
     showErrorModal(
       error instanceof Error
         ? error.message
-        : "결제 처리 중 오류가 발생했습니다.",
+        : t("apps.purchase.tickets.rematch.payment_error_modal"),
       "error"
     );
   };
@@ -111,10 +113,14 @@ export default function RematchingTicketSellingScreen() {
         productCount={productCount ?? 0}
         paymentId={paymentId}
         orderName={
-          productCount ? `연인 재매칭권 x${productCount}` : "연인 재매칭권"
+          productCount
+            ? t("apps.purchase.tickets.rematch.order_name_multiple", {
+                productCount,
+              })
+            : t("apps.purchase.tickets.rematch.order_name_single")
         }
         totalAmount={totalPrice ?? 0}
-        productName="연인 재매칭권"
+        productName={t("apps.purchase.tickets.rematch.order_name_single")}
         onError={onError}
         onComplete={onCompletePayment}
         onCancel={() => {
@@ -138,15 +144,18 @@ export default function RematchingTicketSellingScreen() {
           <View className="flex-1 flex flex-col px-[32px]">
             <View className="flex flex-col my-2 mb-4">
               <Text weight="semibold" size="20" textColor="black">
-                연인 재매칭권을 구매하면
+                {t("apps.purchase.tickets.rematch.title_1")}
               </Text>
               <Text weight="semibold" size="20" textColor="black">
-                재매칭을 통해 이상형을 찾을 수 있어요
+                {t("apps.purchase.tickets.rematch.title_2")}
               </Text>
             </View>
 
             <View className="flex flex-col gap-y-4 mt-4 justify-center mb-auto">
-              <Ticket.Provider name={OPTIONS.name} price={OPTIONS.price}>
+              <Ticket.Provider
+                name={t("apps.purchase.tickets.rematch.rematch_ticket_name")}
+                price={OPTIONS.price}
+              >
                 <Ticket.Item count={1} onOpenPayment={onPurchase} />
                 <Ticket.Item
                   count={2}

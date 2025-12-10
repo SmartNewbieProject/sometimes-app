@@ -2,6 +2,13 @@
 
 .idea
 .serena
+
+# Environment variables (IMPORTANT: Never commit these!)
+.env
+.env.*
+.env.backup
+!.env.example
+
 # dependencies
 node_modules/
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { semanticColors } from '../../constants/colors';
 import { Image as ExpoImage, useImage } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
@@ -17,11 +17,21 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   contentFit = 'cover',
   borderRadius = 0,
 }) => {
+  const isMounted = useRef(true);
   const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   const image = useImage(resource, {
     onError: (error) => {
-      console.error(error);
-      setHasError(true);
+      if (isMounted.current) {
+        console.error('[ImageResource] Error loading image:', error);
+        setHasError(true);
+      }
     },
   });
 
@@ -39,11 +49,16 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   });
 
   const handleLoadStart = () => {
-    setHasError(false);
+    if (isMounted.current) {
+      setHasError(false);
+    }
   };
 
   const handleError = (error: unknown) => {
-    setHasError(true);
+    if (isMounted.current) {
+      console.error('[ImageResource] ExpoImage error:', error);
+      setHasError(true);
+    }
   };
 
   if (hasError) {

@@ -9,6 +9,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { Selector } from "../selector";
+import i18n from "@/src/shared/libs/i18n";
 
 type Props = {
   onChange: (mbti: string) => void;
@@ -17,7 +18,7 @@ type Props = {
   justifyContent?: "center" | "flex-start" | "flex-end";
 };
 
-const parse = (mbti: string, index: number) => mbti.charAt(index);
+const parse = (mbti: string, index: number) => mbti && mbti.length > index ? mbti.charAt(index) : "";
 export function MbtiSelector({
   onChange,
   onBlur,
@@ -50,7 +51,7 @@ export function MbtiSelector({
       showsHorizontalScrollIndicator={false}
     >
       <View style={[styles.mbtiColumn, styles.marginRight]}>
-        <Text style={styles.label}>외향</Text>
+        <Text style={styles.label}>{i18n.t('widgets.mbti-selector.mbti_selector.extroversion')}</Text>
         <Selector
           value={first}
           direction="vertical"
@@ -62,10 +63,10 @@ export function MbtiSelector({
           onBlur={onBlur}
           variant="default"
         />
-        <Text style={styles.bottomLabel}>내향</Text>
+        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti-selector.mbti_selector.introversion')}</Text>
       </View>
       <View style={[styles.mbtiColumn, styles.marginRight]}>
-        <Text style={styles.label}>직관</Text>
+        <Text style={styles.label}>{i18n.t('widgets.mbti-selector.mbti_selector.intuition')}</Text>
         <Selector
           value={second}
           direction="vertical"
@@ -77,10 +78,10 @@ export function MbtiSelector({
           onBlur={onBlur}
           variant="default"
         />
-        <Text style={styles.bottomLabel}>현실</Text>
+        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti-selector.mbti_selector.sensing')}</Text>
       </View>
       <View style={[styles.mbtiColumn, styles.marginRight]}>
-        <Text style={styles.label}>감성</Text>
+        <Text style={styles.label}>{i18n.t('widgets.mbti-selector.mbti_selector.feeling')}</Text>
         <Selector
           value={third}
           direction="vertical"
@@ -92,10 +93,10 @@ export function MbtiSelector({
           onBlur={onBlur}
           variant="default"
         />
-        <Text style={styles.bottomLabel}>이성</Text>
+        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti-selector.mbti_selector.thinking')}</Text>
       </View>
       <View style={styles.mbtiColumn}>
-        <Text style={styles.label}>탐색</Text>
+        <Text style={styles.label}>{i18n.t('widgets.mbti-selector.mbti_selector.prospecting')}</Text>
         <Selector
           value={fourth}
           direction="vertical"
@@ -107,7 +108,7 @@ export function MbtiSelector({
           onBlur={onBlur}
           variant="default"
         />
-        <Text style={styles.bottomLabel}>계획</Text>
+        <Text style={styles.bottomLabel}>{i18n.t('widgets.mbti-selector.mbti_selector.judging')}</Text>
       </View>
     </ScrollView>
   );

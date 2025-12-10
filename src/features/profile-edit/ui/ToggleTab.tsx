@@ -1,6 +1,7 @@
+
 import { LinearGradient } from "expo-linear-gradient";
 import { semanticColors } from '../../../shared/constants/colors';
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -12,6 +13,7 @@ import Animated, {
   useSharedValue,
   withTiming,
   useAnimatedStyle,
+  runOnJS,
 } from "react-native-reanimated";
 
 export interface Tab {
@@ -32,17 +34,43 @@ export const ToggleTab = ({
   onTabClick,
   style,
 }: ToggleTabProps) => {
+  const [isMounted, setIsMounted] = useState(false);
+
   const left = useSharedValue(activeTab === "profile" ? 5 : 100);
   const width = useSharedValue(activeTab === "profile" ? 87 : 57);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
+    if (activeTab === "profile") {
+      left.value = 5;
+      width.value = 87;
+    } else {
+      left.value = 100;
+      width.value = 57;
+    }
+  }, [activeTab, isMounted, left, width]);
+
   const animatedStyle = useAnimatedStyle(() => {
+    if (!isMounted) {
+      return {
+        transform: [{ translateX: activeTab === "profile" ? 5 : 100 }],
+        width: activeTab === "profile" ? 87 : 57,
+      };
+    }
+
     return {
       transform: [{ translateX: left.value }],
       width: width.value,
     };
-  });
+  }, [isMounted, activeTab]);
 
-  const handleTabChange = () => {
+  const handleTabChange = useCallback(() => {
+    // 애니메이션 먼저 시작
     if (activeTab === "profile") {
       left.value = withTiming(100, { duration: 300 });
       width.value = withTiming(57, { duration: 300 });
@@ -51,10 +79,11 @@ export const ToggleTab = ({
       width.value = withTiming(87, { duration: 300 });
     }
 
+    // 애니메이션이 끝난 후 onTabClick 호출 (기존 타이밍 유지)
     setTimeout(() => {
       onTabClick();
     }, 400);
-  };
+  }, [activeTab, onTabClick]);
 
   return (
     <Pressable style={[styles.container, style]} onPress={handleTabChange}>
@@ -121,7 +150,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 18,
   },

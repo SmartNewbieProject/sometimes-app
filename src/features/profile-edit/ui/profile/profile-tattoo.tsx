@@ -2,8 +2,10 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
+
 import { StepSlider } from "@/src/shared/ui";
 import React, { useEffect, useMemo } from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -12,6 +14,7 @@ const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
 function ProfileTattoo() {
+  const { t } = useTranslation();
   const { updateForm, tattoo, ...form } = useMyInfoForm();
   const {
     data: preferencesArray = [
@@ -44,10 +47,10 @@ function ProfileTattoo() {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>문신 여부</Text>
+      <Text style={styles.title}>{t("features.profile-edit.ui.profile.tattoo.title")}</Text>
       <View style={styles.wrapper}>
         <Loading.Lottie
-          title="선호도를 불러오고 있어요"
+          title={t("features.profile-edit.ui.profile.tattoo.loading")}
           loading={optionsLoading}
         >
           <StepSlider
@@ -83,7 +86,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.black,
     fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
 
     lineHeight: 22,

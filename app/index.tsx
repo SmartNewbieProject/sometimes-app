@@ -1,24 +1,36 @@
 import Loading from "@/src/features/loading";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import "react-native-get-random-values";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { useStorage } from "@/src/shared/hooks/use-storage";
+import i18n from '@/src/shared/libs/i18n';
+import { useRecordInviteClick } from "@/src/features/invite/hooks/use-record-invite-click";
+import type { InviteReferrer } from "@/src/features/invite/types";
 
 export default function Home() {
   const { isAuthorized } = useAuth();
   const redirectPath = "/home";
   const loginPath = "/auth/login";
-  const { "invite-code": inviteCode } = useLocalSearchParams<{ "invite-code"?: string }>();
-  const { setValue} = useStorage({key: "invite-code"})
+  const { "invite-code": inviteCode, ref: referrer } = useLocalSearchParams<{
+    "invite-code"?: string;
+    ref?: string;
+  }>();
+  const { setValue } = useStorage({ key: "invite-code" });
+  const { recordClick } = useRecordInviteClick();
+  const hasRecordedClick = useRef(false);
 
+  useEffect(() => {
+    if (inviteCode && !hasRecordedClick.current) {
+      hasRecordedClick.current = true;
+      setValue(inviteCode);
 
-    useEffect(() => {
-      console.log("inviteCode", inviteCode)
-      if (inviteCode) {
-        setValue(inviteCode)
-      }
-    },[inviteCode])
+      recordClick({
+        inviteCode,
+        referrer: (referrer as InviteReferrer) || 'direct',
+      });
+    }
+  }, [inviteCode, referrer]);
     
 
   useEffect(() => {
@@ -33,5 +45,5 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [isAuthorized, redirectPath]);
 
-  return <Loading.Page title="앱을 불러오고 있어요!" />;
+  return <Loading.Page title={i18n.t("apps.index.loading")} />;
 }

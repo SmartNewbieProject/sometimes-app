@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { semanticColors } from '@/src/shared/constants/colors';
 import { useKpiAnalytics } from "@/src/shared/hooks";
-import { View, StyleSheet, Dimensions, Animated, PanResponder, Pressable, Text } from "react-native";
+import { View, StyleSheet, Dimensions, Animated, PanResponder, Pressable, Text, Linking } from "react-native";
 import { Image } from "expo-image";
-import { Linking } from "expo-router";
 import { MomentSlide, MomentSlidesProps } from "../types";
 import { ImageSourceFactory } from "../strategies/image-source";
 
@@ -132,7 +131,11 @@ export const MomentSlides = ({ items, autoPlayInterval = 5000, height }: MomentS
     momentEvents.trackQuestionViewed(item.id || 'unknown', item.category || 'general');
 
     if (item.externalLink) {
-      Linking.openURL(item.externalLink);
+      Linking.openURL(item.externalLink).catch((err) => {
+        console.error('Failed to open URL:', err);
+        // Fallback: 웹 브라우저에서 열기 시도
+        window.open(item.externalLink, '_blank');
+      });
     } else if (item.link) {
       // 내부 라우팅
       // router.push(item.link);

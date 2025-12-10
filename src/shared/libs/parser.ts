@@ -1,4 +1,5 @@
 import type { PreferenceTypeGroup } from '@/src/types/user';
+import i18n from "@/src/shared/libs/i18n";
 
 /**
  * 특정 선호도 타입에서 첫 번째 옵션의 표시 이름을 반환합니다.
@@ -57,7 +58,7 @@ const getMultipleCharacteristicsOptions = <T extends string = string>(
 
 export const parser = {
 	gender: (gender: string) => {
-		return gender === 'FEMALE' ? '여성' : '남성';
+		return gender === 'FEMALE' ? i18n.t('shareds.hooks.parser.gender.female') : i18n.t('shareds.hooks.parser.gender.male');
 	},
 	getSingleOption,
 	getCharacteristicsOptions,

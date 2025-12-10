@@ -1,8 +1,8 @@
 import { Button } from "@/src/shared/ui";
 import { cn } from "@shared/libs/cn";
 import { type VariantProps, cva } from "class-variance-authority";
+import { Image } from "expo-image";
 import {
-  Image,
   Platform,
   type StyleProp,
   View,
@@ -84,10 +84,19 @@ export function ChipSelector<T>(
           )}
           size="chip"
         >
-          {option?.imageUrl && (
+          {option?.imageUrl && option.imageUrl.trim() !== '' && (
             <Image
-              source={{ uri: option.imageUrl }}
-              style={{ width: 16, height: 16, paddingRight: 4, paddingTop: 2 }}
+              source={{
+                uri: option.imageUrl,
+                cacheKey: `chip-${String(option.value)}-${option.imageUrl}`,
+              }}
+              style={{ width: 16, height: 16, marginRight: 4, marginTop: 2 }}
+              contentFit="contain"
+              transition={200}
+              cachePolicy="memory-disk"
+              onError={(error) => {
+                console.warn(`Failed to load chip image for "${option.label}":`, error.error);
+              }}
             />
           )}
           {option.label}

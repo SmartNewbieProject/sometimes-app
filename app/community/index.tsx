@@ -39,9 +39,10 @@ export default function CommunityScreen() {
   const safeWidth = Math.max(1, layout.width || 0);
 
   const routes: CategoryRoute[] = useMemo(() => {
+    const safeCategories = Array.isArray(categories) ? categories : [];
     return [
       { key: HOME_CODE, title: "홈", isHome: true },
-      ...categories
+      ...safeCategories
         .filter((c) => c.code !== NOTICE_CODE)
         .map((c) => ({ key: c.code, title: c.displayName })),
     ];

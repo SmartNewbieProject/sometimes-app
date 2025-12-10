@@ -1,0 +1,17 @@
+{
+  "tabs": {
+    "profile": "나의 프로필",
+    "interest": "이상형"
+  },
+  "ui": {
+    "save_button": "저장",
+    "validation": {
+      "empty_form": "비어있는 양식이 존재합니다.",
+      "age_required": "나이 선호도를 선택해주세요",
+      "drinking_required": "음주 선호도를 선택해주세요",
+      "smoking_required": "흡연 선호도를 선택해주세요",
+      "personality_required": "성격 선호도를 3개 선택해주세요",
+      "tattoo_required": "타투 선호도를 선택해주세요"
+    }
+  }
+}

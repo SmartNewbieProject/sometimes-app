@@ -1,0 +1,20 @@
+{
+  "loading": "로딩 중…",
+  "cancel": "취소",
+  "confirm": "확인",
+  "close": "닫기",
+  "error": "오류",
+  "success": "성공",
+  "select": "선택",
+  "next": "다음으로",
+  "back": "뒤로",
+  "ok": "네",
+  "no": "아니요",
+  "confirm_button": "네, 이동할게요",
+  "confirm_checked": "네, 확인했어요",
+  "not_found": {
+    "title": "앗, 길을 잃었어요!",
+    "description": "찾으시는 페이지가 없거나\n잘못된 경로로 접근했어요",
+    "go_home": "홈으로 돌아가기"
+  }
+}

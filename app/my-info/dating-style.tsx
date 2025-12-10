@@ -7,9 +7,10 @@ import type { Preferences } from "@/src/features/my-info/api";
 import { ImageResources } from "@/src/shared/libs";
 import { Divider, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -18,6 +19,7 @@ const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function DatingStyleSelectionScreen() {
+  const { t } = useTranslation();
   const { my } = useAuth();
   const { datingStyleIds, updateForm } = useMyInfoForm();
   const {
@@ -44,9 +46,11 @@ export default function DatingStyleSelectionScreen() {
 
   const nextMessage = (() => {
     if (datingStyleIds.length < 1) {
-      return `${1 - datingStyleIds.length} 개만 더!`;
+      return t("apps.my-info.dating_style.more", {
+        count: 1 - datingStyleIds.length,
+      });
     }
-    return "다음으로";
+    return t("apps.my-info.dating_style.next");
   })();
 
   const disabled = datingStyleIds.length < 1;
@@ -75,10 +79,10 @@ export default function DatingStyleSelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            당신에게 가장 잘 맞는
+            {t("apps.my-info.dating_style.title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            연애 스타일은 무엇인가요?
+            {t("apps.my-info.dating_style.title_2")}
           </Text>
         </View>
 
@@ -95,7 +99,7 @@ export default function DatingStyleSelectionScreen() {
 
         <View className="flex-1 w-full flex px-4 mt-2">
           <Loading.Lottie
-            title="연애 스타일 옵션 불러오고 있어요"
+            title={t("apps.my-info.dating_style.loading")}
             loading={isLoading}
           >
             <ChipSelector

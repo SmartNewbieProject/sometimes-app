@@ -2,12 +2,12 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "3.5.2",
+    "version": "3.8.0",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "resizeMode": "cover",
       "image": "./assets/images/splash-portrait.png",
@@ -31,6 +31,7 @@
         "maps"
       ],
       "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
         "UIBackgroundModes": [
           "remote-notification"
         ],
@@ -233,7 +234,21 @@
       ],
       "expo-web-browser",
       "expo-build-properties",
-      "expo-localization",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": [
+              "ko",
+              "ja"
+            ],
+            "android": [
+              "ko",
+              "ja"
+            ]
+          }
+        }
+      ],
       "expo-iap",
       [
         "expo-build-properties",
@@ -245,6 +260,10 @@
       ],
       "expo-asset"
     ],
+    "locales": {
+      "ko": "./languages/ko.json",
+      "ja": "./languages/ja.json"
+    },
     "experiments": {
       "typedRoutes": true
     },

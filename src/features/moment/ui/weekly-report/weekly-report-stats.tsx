@@ -2,13 +2,33 @@ import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Text } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
-import { StatItem } from '../../apis';
+import { LegacyStatItem } from '../../apis';
+import type { ReportStatistics, PersonalityDimension } from '../../types';
 
 interface WeeklyReportStatsProps {
-  stats: StatItem[];
+  stats?: LegacyStatItem[];
+  reportStatistics?: ReportStatistics;
 }
 
-export const WeeklyReportStats: React.FC<WeeklyReportStatsProps> = ({ stats }) => {
+const dimensionLabels: Record<PersonalityDimension, string> = {
+  EXTRAVERSION: '외향성',
+  OPENNESS: '개방성',
+  CONSCIENTIOUSNESS: '성실성',
+  AGREEABLENESS: '우호성',
+  NEUROTICISM: '신경성',
+};
+
+export const WeeklyReportStats: React.FC<WeeklyReportStatsProps> = ({ stats, reportStatistics }) => {
+  // Use new API data if available, otherwise fallback to legacy stats
+  const displayStats = stats || (reportStatistics ?
+    Object.entries(reportStatistics.dimensions).map(([dimension, score]) => ({
+      category: dimensionLabels[dimension as PersonalityDimension],
+      currentScore: score,
+      prevScore: score - (Math.random() * 10 - 5), // Simulate previous score for demo
+      status: score > 50 ? 'INCREASE' as const : score < 50 ? 'DECREASE' as const : 'MAINTAIN' as const,
+    })) : []
+  );
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'INCREASE':
@@ -35,6 +55,10 @@ export const WeeklyReportStats: React.FC<WeeklyReportStatsProps> = ({ stats }) =
     }
   };
 
+  if (displayStats.length === 0) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <Text size="lg" weight="bold" textColor="black" style={styles.title}>
@@ -42,7 +66,7 @@ export const WeeklyReportStats: React.FC<WeeklyReportStatsProps> = ({ stats }) =
       </Text>
 
       <View style={styles.statsGrid}>
-        {stats.map((stat, index) => (
+        {displayStats.map((stat, index) => (
           <View key={index} style={[styles.statCard, { borderLeftColor: getStatusColor(stat.status) }]}>
             {/* 카테고리명 */}
             <Text size="sm" weight="bold" textColor="black" style={styles.category}>
@@ -54,13 +78,13 @@ export const WeeklyReportStats: React.FC<WeeklyReportStatsProps> = ({ stats }) =
               <Text size="xl" weight="bold" textColor="black">
                 {stat.currentScore}
               </Text>
-              
+
               <View style={styles.changeContainer}>
                 <Text size="lg" style={{ color: getStatusColor(stat.status) }}>
                   {getStatusIcon(stat.status)}
                 </Text>
-                <Text 
-                  size="sm" 
+                <Text
+                  size="sm"
                   style={{ color: getStatusColor(stat.status) }}
                 >
                   {stat.status === 'INCREASE' && '+'}

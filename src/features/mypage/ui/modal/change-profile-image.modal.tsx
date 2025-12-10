@@ -28,6 +28,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
+
 
 interface ChangeProfileImageModalProps {
   onCloseModal: () => void;
@@ -43,6 +45,7 @@ export const ChangeProfileImageModal = ({
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [images, setImages] = useState<(string | null)[]>([null, null, null]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,12 +71,12 @@ export const ChangeProfileImageModal = ({
       <View style={styles.infoContainer}>
         <View style={styles.infoOverlayWrapper}>
           <RNText style={styles.infoTitle}>
-            이목구비가 잘 보이는 사진 필수에요
+            {t("apps.auth.sign_up.profile_image.info_title")}
           </RNText>
           <RNText style={styles.infoDescription}>
-            눈, 코, 입이 잘 보이는 사진이라면
+            {t("apps.auth.sign_up.profile_image.info_desc_1")}
           </RNText>
-          <RNText style={styles.infoDescription}>어떤 각도든 좋아요</RNText>
+          <RNText style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
           <Image
             source={require("@assets/images/instagram-some.png")}
             style={{
@@ -115,19 +118,19 @@ export const ChangeProfileImageModal = ({
       error?.response?.data?.message ||
       error?.message ||
       error?.error ||
-      "알 수 없는 오류가 발생했습니다."
+      t("features.mypage.unknown_error")
     );
   };
 
   const handleSubmit = async () => {
     if (!profileDetails) {
-      showErrorModal("프로필 정보를 불러올 수 없습니다.", "error");
+      showErrorModal(t("features.mypage.profile_image_error_load"), "error");
       return;
     }
 
     const validImages = images.filter((img) => img !== null) as string[];
     if (validImages.length !== 3) {
-      showErrorModal("프로필 이미지 3장을 모두 등록해주세요.", "announcement");
+      showErrorModal(t("features.mypage.profile_image_error_count"), "announcement");
       return;
     }
 
@@ -146,7 +149,7 @@ export const ChangeProfileImageModal = ({
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       showErrorModal(
-        `프로필 이미지 변경 중 오류가 발생했습니다: ${getErrorMessage(error)}`,
+        `${t("features.mypage.profile_image_error_change")}${getErrorMessage(error)}`,
         "error"
       );
     } finally {
@@ -160,7 +163,7 @@ export const ChangeProfileImageModal = ({
       <View className="items-center justify-center p-4">
         <ActivityIndicator size="large" color="#6A3EA1" />
         <Text className="mt-2 text-center" textColor="black">
-          프로필 정보를 불러오는 중...
+          {t("features.mypage.profile_image_loading")}
         </Text>
       </View>
     );
@@ -187,19 +190,19 @@ export const ChangeProfileImageModal = ({
                 textColor="black"
                 className="mt-2"
               >
-                프로필 사진을 변경해보세요
+                {t('features.mypage.profile_image_change.title')}
               </Text>
               <Text weight="semibold" size="20" textColor="black">
-                더 매력적인 나를 보여주세요!
+                {t('features.mypage.profile_image_change.subtitle')}
               </Text>
             </View>
 
             <View style={styles.descriptioncontianer}>
               <Text weight="medium" size="sm" textColor="pale-purple">
-                3장의 프로필 사진을 모두 새로 등록해주세요
+                {t('features.mypage.profile_image_change.guide')}
               </Text>
               <Text weight="medium" size="sm" textColor="pale-purple">
-                얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+                {t("apps.auth.sign_up.profile_image.guide_2")}
               </Text>
             </View>
 
@@ -208,7 +211,7 @@ export const ChangeProfileImageModal = ({
                 {images[0] ? (
                   <ImageSelector
                     size="lg"
-                    actionLabel="대표"
+                    actionLabel={t("features.mypage.image-modal.main")}
                     value={images[0]}
                     onChange={(value) => {
                       handleImageChange(0, value);
@@ -217,7 +220,7 @@ export const ChangeProfileImageModal = ({
                 ) : (
                   <ImageSelector
                     size="lg"
-                    actionLabel="대표"
+                    actionLabel={t("features.mypage.image-modal.main")}
                     value={undefined}
                     onChange={(value) => {
                       handleImageChange(0, value);
@@ -274,12 +277,12 @@ export const ChangeProfileImageModal = ({
               ]}
             >
               <RNText style={styles.infoTitle}>
-                이목구비가 잘 보이는 사진 필수에요
+                {t("apps.auth.sign_up.profile_image.info_title")}
               </RNText>
               <RNText style={styles.infoDescription}>
-                눈, 코, 입이 잘 보이는 사진이라면
+                {t("apps.auth.sign_up.profile_image.info_desc_1")}
               </RNText>
-              <RNText style={styles.infoDescription}>어떤 각도든 좋아요</RNText>
+              <RNText style={styles.infoDescription}> {t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
               <Image
                 source={require("@assets/images/instagram-some.png")}
                 style={{
@@ -308,7 +311,7 @@ export const ChangeProfileImageModal = ({
           <Layout.TwoButtons
             disabledNext={isSubmitting || images.filter((img) => img !== null).length !== 3}
             content={{
-              next: isSubmitting ? "저장 중.." : "저장하기",
+              next: isSubmitting ? t("features.mypage.image-modal.saving") : t("features.mypage.image-modal.save"),
             }}
             onClickNext={handleSubmit}
             onClickPrevious={onCloseModal}
@@ -358,7 +361,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
     left: "50%",
-    transform: [{ translateX: "-50%" }],
+    marginLeft: -234, // 468 / 2 = 234 (maxWidth의 절반)
     maxWidth: 468,
   },
   infoWrapper: {
@@ -390,7 +393,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,
@@ -398,7 +401,7 @@ const styles = StyleSheet.create({
   infoDescription: {
     fontSize: 11,
     lineHeight: 13.2,
-    color: "#BAB0D0",
+    color: semanticColors.text.disabled,
   },
 });
 

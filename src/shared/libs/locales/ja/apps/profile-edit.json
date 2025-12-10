@@ -1,0 +1,17 @@
+{
+  "tabs": {
+    "profile": "マイプロフィール",
+    "interest": "好みのタイプ"
+  },
+  "ui": {
+    "save_button": "保存",
+    "validation": {
+      "empty_form": "未入力の項目があります",
+      "age_required": "年齢の好みを選択してください",
+      "drinking_required": "飲酒の好みを選択してください",
+      "smoking_required": "喫煙の好みを選択してください",
+      "personality_required": "性格の好みを3つ選択してください",
+      "tattoo_required": "タトゥーの好みを選択してください"
+    }
+  }
+}

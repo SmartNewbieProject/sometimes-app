@@ -1,8 +1,10 @@
 import colors from "@constants/colors";
-import { Text } from "@ui/text";
+import { Text } from "@/src/shared/ui/text";
 import { useState } from "react";
 import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppleReviewModal } from "./apple-review-modal";
+import { useTranslation } from "react-i18next";
+
 
 const PRIVACY_LINK =
   "https://ruby-composer-6d2.notion.site/1cd1bbec5ba180a3a4bbdf9301683145";
@@ -13,11 +15,12 @@ const PRIVACY_POLICY_LINK =
   "https://ruby-composer-6d2.notion.site/1cd1bbec5ba180c6b987ff2dcd75fa15";
 export const PrivacyNotice = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const { t } = useTranslation();
+  console.log(t("features.auth.ui.privacy_notice.notice_prefix"));
   return (
     <View className="flex flex-col w-full items-center">
       <Text textColor="gray" className="text-[12px]">
-        회원가입 및 로그인 버튼을 누르면
+        {t("features.auth.ui.privacy_notice.notice_prefix")}
       </Text>
 
       <View className="flex flex-row">
@@ -28,21 +31,21 @@ export const PrivacyNotice = () => {
               marginRight: 2,
             }}
           >
-            개인정보 보호 약관,
+            {t("features.auth.ui.privacy_notice.privacy_terms")}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => Linking.openURL(SERVICE_LINK)}>
           <Text style={{ ...styles.link, marginRight: 2 }}>
-            서비스 이용약관,
+            {t("features.auth.ui.privacy_notice.service_terms")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_POLICY_LINK)}>
-          <Text style={{ ...styles.link }}>개인정보 수집 및 이용동의</Text>
+          <Text style={{ ...styles.link }}>{t("features.auth.ui.privacy_notice.collection_agreement")}</Text>
         </TouchableOpacity>
       </View>
       <Text textColor="gray" className="text-[12px]">
-        에 동의하게 됩니다.
+        {t("features.auth.ui.privacy_notice.notice_suffix")}
       </Text>
 
       <TouchableOpacity onPress={() => Linking.openURL(ENTERPIRSE_LINK)}>
@@ -53,7 +56,7 @@ export const PrivacyNotice = () => {
             color: colors.gray,
           }}
         >
-          스마트 뉴비 사업자 정보 {">"}
+          {t("features.auth.ui.privacy_notice.business_info")}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
@@ -80,7 +83,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontSize: 12,
     color: colors["gray-600"],
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
   },
 });

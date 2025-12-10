@@ -18,18 +18,21 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
+import i18n from "@/src/shared/libs/i18n";
 
 const schema = z.object({
-  instagramId: z.string().min(1, "인스타그램 ID를 입력해주세요"),
+    instagramId: z.string().min(1, i18n.t("apps.auth.reapply.validation.instagram_id_required")),
   images: z
     .array(z.string().nullable())
-    .min(3, "3장의 프로필 사진이 필요합니다"),
+    .min(3, i18n.t("apps.auth.reapply.validation.images_min")),
 });
 
 type FormState = z.infer<typeof schema>;
 
 export default function ReapplyScreen() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
   const phoneNumber = params.phoneNumber as string;
   const rejectionReason = params.rejectionReason as string;
@@ -90,10 +93,10 @@ export default function ReapplyScreen() {
   const onSubmit = () => {
     if (!nextable) {
       showModal({
-        title: "프로필 사진 필요",
-        children: "3장의 프로필 사진이 필요합니다",
+        title: t("apps.auth.reapply.modal_need_images_title"),
+        children: t("apps.auth.reapply.modal_need_images_desc"),
         primaryButton: {
-          text: "확인",
+          text: t("apps.auth.reapply.button_confirm"),
           onClick: () => {},
         },
       });
@@ -113,10 +116,10 @@ export default function ReapplyScreen() {
         await clearApprovalStatus();
 
         showModal({
-          title: "재신청 완료",
+          title: t("apps.auth.reapply.modal_reapply_success_title"),
           children: response.message,
           primaryButton: {
-            text: "확인",
+            text: t("apps.auth.reapply.button_confirm"),
             onClick: () => {
               router.push("/auth/approval-pending");
             },
@@ -124,14 +127,14 @@ export default function ReapplyScreen() {
         });
       } catch (error: unknown) {
         const errorMessage =
-          error instanceof Error
+                    error instanceof Error
             ? error.message
-            : "재신청 중 오류가 발생했습니다.";
+            : t("apps.auth.reapply.modal_reapply_fail_desc");
         showModal({
-          title: "재신청 실패",
+          title: t("apps.auth.reapply.modal_reapply_fail_title"),
           children: errorMessage,
           primaryButton: {
-            text: "확인",
+            text: t("apps.auth.reapply.button_confirm"),
             onClick: () => {},
           },
         });
@@ -159,22 +162,22 @@ export default function ReapplyScreen() {
           <View className="mb-8">
             <View className="flex-row items-center mb-4">
               <Text size="md" textColor="purple" weight="semibold">
-                인스타그램 아이디
+                {t("apps.auth.reapply.instagram_id_label")}
               </Text>
             </View>
             <Form.LabelInput
               label=""
-              placeholder="인스타그램 아이디를 입력"
+              placeholder={t("apps.auth.reapply.instagram_id_placeholder")}
               control={form.control}
               name="instagramId"
               size="sm"
             />
             <View className="mt-2">
               <Text size="sm" textColor="pale-purple" weight="light">
-                사진을 업로드하고 계정을 공개로 설정하면, 매칭 확률이 높아져요.
+                {t("apps.auth.reapply.instagram_info_1")}
               </Text>
               <Text size="sm" textColor="pale-purple" weight="light">
-                매칭된 상대와 더 자연스러운 대화를 나눠보세요!
+                {t("apps.auth.reapply.instagram_info_2")}
               </Text>
             </View>
           </View>
@@ -183,7 +186,7 @@ export default function ReapplyScreen() {
           <View className="mb-8">
             <View className="flex-row items-center mb-4">
               <Text size="md" textColor="purple" weight="semibold">
-                프로필 사진이 없으면 매칭이 안 돼요!
+                {t("apps.auth.reapply.profile_image_label")}
               </Text>
             </View>
             <Text
@@ -192,8 +195,7 @@ export default function ReapplyScreen() {
               weight="light"
               className="mb-6"
             >
-              매칭을 위해 3장의 프로필 사진을 모두 올려주세요.{"\n"}
-              얼굴이 잘 보이는 사진을 업로드해주세요. (최대 20MB)
+              {t("apps.auth.reapply.profile_image_info")}
             </Text>
 
             {/* 이미지 업로드 영역 */}
@@ -239,7 +241,7 @@ export default function ReapplyScreen() {
           disabled={!isValid || isLoading}
           className="w-full py-4 rounded-2xl"
         >
-          {isLoading ? "재신청 중..." : "다음으로"}
+          {isLoading ? t("apps.auth.reapply.button_reapply_loading") : t("apps.auth.reapply.button_next")}
         </Button>
       </View>
     </DefaultLayout>

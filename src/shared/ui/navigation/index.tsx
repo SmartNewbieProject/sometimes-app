@@ -15,6 +15,7 @@ import MySelected from "@/assets/icons/nav/my-selected.svg";
 import MyUnselected from "@/assets/icons/nav/my-unselected.svg";
 import ChatSeleted from "@assets/icons/nav/chat-selected.svg";
 import ChatUnseleted from "@assets/icons/nav/chat-unselected.svg";
+import i18n from "@/src/shared/libs/i18n";
 
 type NavItem = "home" | "community" | "chat" | "moment" | "my";
 
@@ -69,31 +70,31 @@ type NavigationItem = {
 const navigationItems: NavigationItem[] = [
   {
     name: "home",
-    label: "홈",
+    label: i18n.t("shareds.navigation.bottom_navigation.home"),
     path: "/home",
     icon: NavIcons.home,
   },
   {
     name: "community",
-    label: "커뮤니티",
+    label: i18n.t("shareds.navigation.bottom_navigation.community"),
     path: "/community",
     icon: NavIcons.community,
   },
   {
     name: "chat",
-    label: "채팅",
+    label: i18n.t("shareds.navigation.bottom_navigation.chat"),
     path: "/chat",
     icon: NavIcons.chat,
   },
   {
     name: "moment",
-    label: "모먼트",
+    label: i18n.t("shareds.navigation.bottom_navigation.moment"),
     path: "/moment",
     icon: NavIcons.moment,
   },
   {
     name: "my",
-    label: "MY",
+    label: i18n.t("shareds.navigation.bottom_navigation.my"),
     path: "/my",
     icon: NavIcons.my,
   },

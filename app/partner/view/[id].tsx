@@ -8,17 +8,23 @@ import {
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import Loading from "@features/loading";
 import Match from "@features/match";
+import MatchReasons from "@/src/features/match-reasons";
+import MatchingAnalysis from "@/src/features/match-reasons/ui/matching-analysis";
 import {
-  ImageResources,
+  MihoIntroModal,
+  PartnerBasicInfo,
+  PartnerMBTI,
+  MatchingReasonCard,
+} from "@/src/features/match/ui";
+import {
   cn,
-  parser,
   formatLastLogin,
   getSmartUnivLogoUrl,
-} from "@shared/libs";
+  parser,
+} from "@/src/shared/libs";
 import Feather from "@expo/vector-icons/Feather";
 import {
   Button,
-  ImageResource,
   Show,
   Text,
   HeaderWithNotification,
@@ -26,30 +32,66 @@ import {
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Pressable,
   ScrollView,
   StyleSheet,
   View,
+  Text as RNText,
 } from "react-native";
 import { semanticColors } from "@/src/shared/constants/colors";
-import { usePreferenceOptionsQuery } from "@/src/features/my-info/queries";
+import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
 
 const { queries } = Match;
 const { useMatchPartnerQuery } = queries;
+const { useMatchReasonsQuery } = MatchReasons.queries;
 
 export default function PartnerDetailScreen() {
+  const { t } = useTranslation();
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
+  const { data: matchReasonsData } = useMatchReasonsQuery(partner?.connectionId);
   const [isZoomVisible, setZoomVisible] = useState(false);
   const { isStatus, isLiked, isExpired } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [showMihoIntro, setShowMihoIntro] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const hasTrackedView = useRef(false);
 
-  const { data: preferencesArray = [] } = usePreferenceOptionsQuery();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAnalyzing(false);
+      setShowMihoIntro(true);
+
+      if (partner && !hasTrackedView.current) {
+        hasTrackedView.current = true;
+        const amplitude = (global as any).amplitude || {
+          track: (event: string, properties: any) => {
+            console.log('Amplitude Event:', event, properties);
+          },
+        };
+
+        amplitude.track(AMPLITUDE_KPI_EVENTS.PROFILE_VIEWED, {
+          viewed_profile_id: partner.id,
+          view_source: 'matching_history',
+          partner_age: partner.age,
+          partner_university: partner.universityDetails?.name,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [partner]);
 
   const onZoomClose = () => {
     setZoomVisible(false);
+  };
+
+  const handleMihoIntroClose = () => {
+    setShowMihoIntro(false);
   };
 
   const userWithdrawal = !!partner?.deletedAt;
@@ -59,57 +101,20 @@ export default function PartnerDetailScreen() {
   }
 
   const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
-    ["성격", "연애 스타일", "관심사"],
+    [
+      t("apps.partner.view.profile_personality_type"),
+      t("apps.partner.view.profile_love_style"),
+      t("apps.partner.view.profile_interest"),
+    ],
     partner.characteristics
   );
 
   const personal = characteristicsOptions["성격"];
   const loveStyles = characteristicsOptions["연애 스타일"];
-  const interests = characteristicsOptions.관심사;
-
-  const interestOptions = preferencesArray.find((item) => item.typeName === "관심사")?.options || [];
-
-  const interestsWithIcons = interests.map((interest) => {
-    const option = interestOptions.find((opt) => opt.id === interest.value);
-    return {
-      ...interest,
-      imageUrl: option?.imageUrl || null,
-    };
-  });
 
   const mainProfileImageUrl = partner.profileImages.find(
     (img) => img.isMain
   )?.url;
-
-  const basicInfoItems = [
-    {
-      icon: ImageResources.BEER,
-      label: parser.getSingleOption("음주 선호도", partner.characteristics) ?? "정보 없음",
-    },
-    {
-      icon: ImageResources.SMOKE,
-      label: parser.getSingleOption("흡연 선호도", partner.characteristics) ?? "정보 없음",
-    },
-    {
-      icon: ImageResources.TATOO,
-      prefix: "문신 : ",
-      label: parser.getSingleOption("문신 선호도", partner.characteristics) ?? "정보 없음",
-    },
-    {
-      icon: ImageResources.AGE,
-      prefix: "선호 연령 : ",
-      label: parser.getSingleOption("선호 나이대", partner.preferences) ?? "상관없음",
-    },
-  ];
-
-  if (partner.gender === "MALE") {
-    basicInfoItems.push({
-      icon: ImageResources.ARMY,
-      label: parser.getSingleOption("군필 여부", partner.characteristics) ?? "정보 없음",
-    });
-  }
-
-  const basicInfo = basicInfoItems;
 
   const renderBottomButtons = () => {
     return (
@@ -171,7 +176,7 @@ export default function PartnerDetailScreen() {
               size="md"
               className={cn("flex-1 items-center ", `!h-[${20}px]`)}
             >
-              <Text>상대방 응답을 기다리는 중..</Text>
+              <Text>{t("apps.partner.view.button_waiting")}</Text>
             </Button>
           </View>
         </Show>
@@ -196,6 +201,8 @@ export default function PartnerDetailScreen() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
+      <MihoIntroModal visible={showMihoIntro} onClose={handleMihoIntroClose} />
+
       <PhotoSlider
         images={partner?.profileImages.map((item) => item.url) ?? []}
         onClose={onZoomClose}
@@ -225,168 +232,237 @@ export default function PartnerDetailScreen() {
         }
       />
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {partner.profileImages.length > 0 && (
-          <View style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden" }}>
-            <Pressable
-              onPress={() => {
-                setSelectedIndex(0);
-                setZoomVisible(true);
-              }}
-              className="w-full h-full"
-              style={{ width: "100%", height: "100%" }}
-            >
-              <Image
-                source={{ uri: partner.profileImages[0].url }}
-                style={{ width: "100%", height: "100%" }}
-                contentFit="cover"
-              />
-              <LinearGradient
-                colors={["transparent", "rgba(0,0,0,0.8)"]}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.5, y: 0.5 }}
-                end={{ x: 0.5, y: 1 }}
-              />
-            </Pressable>
-
-            <View className="absolute bottom-8 left-5 right-5" pointerEvents="none">
-              <View style={{ backgroundColor: semanticColors.brand.primary }} className="self-start px-2 py-1 rounded-md mb-2 flex-row items-center gap-1">
-                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-bold">마지막 접속</Text>
-                <Text style={{ color: semanticColors.text.inverse }} className="text-xs font-light">{formatLastLogin(partner.updatedAt)}</Text>
-              </View>
-              <Text style={{ color: semanticColors.text.inverse }} className="text-3xl font-bold mb-1">
-                만 {partner.age}세
-              </Text>
-              <View className="flex-row items-center mb-1">
-                {partner.universityDetails?.code && (
-                  <Image
-                    source={{ uri: getSmartUnivLogoUrl(partner.universityDetails.code) }}
-                    style={{ width: 20, height: 20, marginRight: 6 }}
-                    contentFit="contain"
-                  />
-                )}
-                <Text style={{ color: semanticColors.text.inverse }} className="text-base opacity-90">
-                  {partner.universityDetails?.name}
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <Feather name="check-square" size={16} color={semanticColors.brand.accent} />
-                <Text style={{ color: semanticColors.brand.accent }} className="ml-1 text-sm">
-                  {partner.universityDetails?.authentication ? "대학교 인증 완료" : "대학교 인증 전"}
-                </Text>
-              </View>
-            </View>
-          </View>
-        )}
-
-        <View className="px-5 py-6">
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mb-4">기본 정보</Text>
-          <View style={{ backgroundColor: semanticColors.surface.surface }} className="rounded-2xl p-5 flex-row flex-wrap justify-between">
-            {basicInfo.map((info, index) => (
-              <View key={index} className="w-[48%] flex-row items-center mb-4">
-                <ImageResource resource={info.icon} width={24} height={24} />
-                <Text style={{ color: semanticColors.text.secondary }} className="ml-2 font-medium text-sm flex-1" numberOfLines={1}>
-                  {info.prefix && <Text style={{ color: semanticColors.text.secondary, fontSize: 14 }}>{info.prefix}</Text>}
-                  {info.label}
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          <View className="w-full aspect-[280/160] mt-8 mb-8">
-            <ImageResource
-              resource={ImageResources[partner.mbti as keyof typeof ImageResources]}
-              width="100%"
-              height="100%"
-            />
-          </View>
-
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 연애 스타일은</Text>
-          <View className="flex-row flex-wrap gap-2">
-            {loveStyles.map((style, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{style.label}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Personality */}
-          <Text style={{ color: semanticColors.text.muted }} className="text-[18px] mt-8 mb-3">제 성격은</Text>
-          <View className="flex-row flex-wrap gap-2 mb-8">
-            {personal.map((item, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2">
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
-              </View>
-            ))}
-          </View>
+      {isAnalyzing ? (
+        <View className="flex-1 items-center justify-center">
+          <MatchingAnalysis imageUrl={mainProfileImageUrl} />
         </View>
-
-        {/* Image 2 */}
-        {partner.profileImages.length > 1 && (
-          <View style={{ width: "100%", aspectRatio: 1, marginBottom: 32, borderRadius: 32, overflow: "hidden" }}>
-            <Pressable
-              onPress={() => {
-                setSelectedIndex(1);
-                setZoomVisible(true);
-              }}
-              className="w-full h-full"
-            >
-              <Image
-                source={{ uri: partner.profileImages[1].url }}
-                style={{ width: "100%", height: "100%" }}
-                contentFit="cover"
-              />
-            </Pressable>
-          </View>
-        )}
-
-        <View className="px-5 pb-6">
-          {/* Interests */}
-          <Text style={{ color: semanticColors.text.muted }} className="text-sm mb-3">제 관심사는</Text>
-          <View className="flex-row flex-wrap gap-2 mb-8">
-            {interestsWithIcons.map((item, index) => (
-              <View key={index} style={{ borderColor: semanticColors.brand.primary }} className="border rounded-full px-4 py-2 flex-row items-center gap-1">
-                {item.imageUrl && (
-                  <Image
-                    source={{ uri: item.imageUrl }}
-                    style={{ width: 16, height: 16 }}
-                    contentFit="contain"
-                  />
-                )}
-                <Text style={{ color: semanticColors.brand.primary }} className="text-sm">{item.label}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Image 3 and others */}
-        {partner.profileImages.length > 2 && (
-          <View className="pb-10">
-            {partner.profileImages.slice(2).map((item, index) => (
-              <View key={item.id} style={{ width: "100%", aspectRatio: 1, borderRadius: 32, overflow: "hidden", marginBottom: 16 }}>
+      ) : (
+        <>
+          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            {partner.profileImages.length > 0 && (
+              <View
+                style={{
+                  width: "100%",
+                  aspectRatio: 1,
+                  overflow: "hidden",
+                }}
+              >
                 <Pressable
                   onPress={() => {
-                    setSelectedIndex(index + 2);
+                    setSelectedIndex(0);
+                    setZoomVisible(true);
+                  }}
+                  className="w-full h-full"
+                  style={{ width: "100%", height: "100%" }}
+                >
+                  <Image
+                    source={{ uri: partner.profileImages[0].url }}
+                    style={{ width: "100%", height: "100%" }}
+                    contentFit="cover"
+                  />
+                  <LinearGradient
+                    colors={["transparent", "rgba(0,0,0,0.8)"]}
+                    style={StyleSheet.absoluteFill}
+                    start={{ x: 0.5, y: 0.5 }}
+                    end={{ x: 0.5, y: 1 }}
+                  />
+                </Pressable>
+
+                <View
+                  className="absolute bottom-8 left-5 right-5"
+                  pointerEvents="none"
+                >
+                  <View
+                    style={{
+                      backgroundColor: semanticColors.brand.primary,
+                    }}
+                    className="self-start px-2 py-1 rounded-md mb-2 flex-row items-center gap-1"
+                  >
+                    <Text
+                      style={{ color: semanticColors.text.inverse }}
+                      className="text-xs font-bold"
+                    >
+                      마지막 접속
+                    </Text>
+                    <Text
+                      style={{ color: semanticColors.text.inverse }}
+                      className="text-xs font-light"
+                    >
+                      {formatLastLogin(partner.updatedAt)}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{ color: semanticColors.text.inverse }}
+                    className="text-3xl font-bold mb-1"
+                  >
+                    만 {partner.age}세
+                  </Text>
+                  <View className="flex-row items-center mb-1">
+                    {partner.universityDetails?.code && (
+                      <Image
+                        source={{
+                          uri: getSmartUnivLogoUrl(
+                            partner.universityDetails.code
+                          ),
+                        }}
+                        style={{ width: 20, height: 20, marginRight: 6 }}
+                        contentFit="contain"
+                      />
+                    )}
+                    <Text
+                      style={{ color: semanticColors.text.inverse }}
+                      className="text-base opacity-90"
+                    >
+                      {partner.universityDetails?.name}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center">
+                    <Feather
+                      name="check-square"
+                      size={16}
+                      color={semanticColors.brand.accent}
+                    />
+                    <Text
+                      style={{ color: semanticColors.brand.accent }}
+                      className="ml-1 text-sm"
+                    >
+                      {partner.universityDetails?.authentication
+                        ? "대학교 인증 완료"
+                        : "대학교 인증 전"}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
+
+            <PartnerBasicInfo partner={partner} />
+
+            {partner.profileImages.length > 1 && (
+              <View
+                style={{
+                  width: "100%",
+                  aspectRatio: 1,
+                  marginBottom: 32,
+                  borderRadius: 32,
+                  overflow: "hidden",
+                }}
+              >
+                <Pressable
+                  onPress={() => {
+                    setSelectedIndex(1);
                     setZoomVisible(true);
                   }}
                   className="w-full h-full"
                 >
                   <Image
-                    source={{ uri: item.url }}
+                    source={{ uri: partner.profileImages[1].url }}
                     style={{ width: "100%", height: "100%" }}
                     contentFit="cover"
                   />
                 </Pressable>
               </View>
-            ))}
-          </View>
-        )}
-      </ScrollView>
+            )}
 
-      {/* Bottom Action Bar */}
-      {renderBottomButtons()}
+            <PartnerMBTI partner={partner} />
+
+            {partner.profileImages.length > 2 && (
+              <View
+                style={{
+                  width: "100%",
+                  aspectRatio: 1,
+                  marginBottom: 32,
+                  borderRadius: 32,
+                  overflow: "hidden",
+                }}
+              >
+                <Pressable
+                  onPress={() => {
+                    setSelectedIndex(2);
+                    setZoomVisible(true);
+                  }}
+                  className="w-full h-full"
+                >
+                  <Image
+                    source={{ uri: partner.profileImages[2].url }}
+                    style={{ width: "100%", height: "100%" }}
+                    contentFit="cover"
+                  />
+                </Pressable>
+              </View>
+            )}
+            <Text
+              style={{ color: semanticColors.text.primary }}
+              className="text-lg font-medium ml-3"
+            >
+              미호가 두분을 연결한 특별한 이유
+            </Text>
+
+            {matchReasonsData?.reasons && matchReasonsData.reasons.length > 0 && (
+              <MatchingReasonCard
+                reasons={matchReasonsData.reasons.map((r) => r.description)}
+                keywords={[
+                  ...(parser.getMultipleCharacteristicsOptions(["성격"], partner.characteristics)["성격"]?.map((c: any) => c.label) || []),
+                  ...(parser.getMultipleCharacteristicsOptions(["연애 스타일"], partner.characteristics)["연애 스타일"]?.map((c: any) => c.label) || []),
+                  ...(parser.getMultipleCharacteristicsOptions(["관심사"], partner.characteristics)["관심사"]?.map((c: any) => c.label) || []),
+                ]}
+              />
+            )}
+
+            {partner.profileImages.length > 3 && (
+              <View className="pb-10">
+                {partner.profileImages.slice(3).map((item, index) => (
+                  <View
+                    key={item.id}
+                    style={{
+                      width: "100%",
+                      aspectRatio: 1,
+                      borderRadius: 32,
+                      overflow: "hidden",
+                      marginBottom: 16,
+                    }}
+                  >
+                    <Pressable
+                      onPress={() => {
+                        setSelectedIndex(index + 3);
+                        setZoomVisible(true);
+                      }}
+                      className="w-full h-full"
+                    >
+                      <Image
+                        source={{ uri: item.url }}
+                        style={{ width: "100%", height: "100%" }}
+                        contentFit="cover"
+                      />
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            )}
+          </ScrollView>
+
+          {/* Bottom Action Bar */}
+          {renderBottomButtons()}
+        </>
+      )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  sectionContainer: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: semanticColors.text.primary,
+    marginBottom: 12,
+    lineHeight: 26,
+  },
+  sectionContent: {
+    fontSize: 15,
+    color: semanticColors.text.secondary,
+    lineHeight: 24,
+  },
+});

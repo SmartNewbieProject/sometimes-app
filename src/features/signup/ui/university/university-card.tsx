@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import type { UniversityCard as UniversityCardProps } from "../../queries/use-universities";
 
+
 function UniversityCard({
   item: { name, area, logoUrl, en },
   onClick,
@@ -57,7 +58,7 @@ function UniversityCard({
   });
 
   return (
-    <Pressable onPress={onClick} onPressIn={onPressIn} onPressOut={onPressOut}>
+    <Pressable testID={`university-card-${name}`} onPress={onClick} onPressIn={onPressIn} onPressOut={onPressOut}>
       <Animated.View
         style={[
           styles.container,
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.primary,
     fontSize: 20,
     fontWeight: "600",
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 24,
   },
   area: {
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   },
   universityType: {
     color: semanticColors.text.disabled,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     lineHeight: 22,
     fontWeight: 100,
     fontSize: 13,

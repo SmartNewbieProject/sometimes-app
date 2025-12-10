@@ -3,6 +3,7 @@ import { semanticColors } from '../../../../shared/constants/colors';
 import { StyleSheet, Text, View } from "react-native";
 import CustomSwitch from "../custom-switch";
 
+
 interface MatchingCardProps {
   title: string;
   isOn: boolean;
@@ -13,7 +14,7 @@ interface MatchingCardProps {
 function MatchingCard({ title, isOn, toggle, disabled }: MatchingCardProps) {
   return (
     <View style={styles.container}>
-      <Text>{title}</Text>
+      <Text style={styles.text}>{title}</Text>
       <CustomSwitch disabled={disabled} value={isOn} onChange={toggle} />
     </View>
   );
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.primary,
     fontSize: 16,
 
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
     lineHeight: 18,
   },

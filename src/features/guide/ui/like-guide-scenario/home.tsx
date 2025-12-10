@@ -19,6 +19,7 @@ import {
   View,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BusinessInfo } from "../../../../shared/ui/business-info";
 import { PalePurpleGradient } from "../../../../shared/ui/gradient";
@@ -29,10 +30,12 @@ import { useStep } from "../../hooks/use-step";
 import MockPartner from "../../mock/mock-partner";
 import { likedMeMock } from "../../utils/mock-data";
 
+
 function HomeGuide() {
   const { step, setStep } = useStep();
   const insets = useSafeAreaInsets();
   const { my } = useAuth();
+  const { t } = useTranslation();
 
   const isLikeStep = step === 0 || step === 2;
   const isHistoryStep = step === 1;
@@ -168,41 +171,45 @@ function HomeGuide() {
         {step === 0 && (
           <>
             <RNText style={styles.infoTitle}>
-              좋아요 기능이 새로 생겼어요 ✨️
+              {t("features.guide.ui.home.info_title_1")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              이제 여기서 내가 좋아요한 사람과,
+              {t("features.guide.ui.home.info_description_1")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              나에게 좋아요한 사람을 확인할 수 있어요.
+              {t("features.guide.ui.home.info_description_2")}
             </RNText>
           </>
         )}
         {step === 1 && (
           <>
             <RNText style={styles.infoTitle}>
-              기존 이전 매칭은 여기로 이동했어요
+              {t("features.guide.ui.home.info_title_2")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              매칭 카드 아래에서 바로 확인할 수 있어요
+              {t("features.guide.ui.home.info_description_3")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              놓치지 말고 확인해보세요
+              {t("features.guide.ui.home.info_description_4")}
             </RNText>
           </>
         )}
         {step === 2 && (
           <>
-            <RNText style={styles.infoTitle}>좋아요, 자세히 알아볼까요?</RNText>
-            <RNText style={styles.infoDescription}>
-              위 버튼을 누르면 바로
+            <RNText style={styles.infoTitle}>
+              {t("features.guide.ui.home.info_title_3")}
             </RNText>
             <RNText style={styles.infoDescription}>
-              썸 우편함으로 들어갈 수 있어요
+              {t("features.guide.ui.home.info_description_5")}
+            </RNText>
+            <RNText style={styles.infoDescription}>
+              {t("features.guide.ui.home.info_description_6")}
             </RNText>
           </>
         )}
-        <RNText style={styles.infoNextHint}>👉 터치해서 다음</RNText>
+        <RNText style={styles.infoNextHint}>
+          {t("features.guide.ui.home.info_next_hint")}
+        </RNText>
 
         <Image
           source={require("@assets/images/instagram-some.png")}
@@ -281,7 +288,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: "600",
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

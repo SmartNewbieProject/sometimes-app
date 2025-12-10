@@ -13,11 +13,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSignupProgress } from "../../hooks";
 import { filterDepartments } from "../../lib/university-details";
 import { useDepartmentQuery } from "../../queries";
 
 function DepartmentSearch() {
+  const { t } = useTranslation();
   const {
     updateForm,
     form: { departmentName },
@@ -40,7 +42,7 @@ function DepartmentSearch() {
   }, [departmentName, JSON.stringify(departments)]);
 
   if (isLoading) {
-    return <Loading.Page title="학과를 검색중이에요" />;
+    return <Loading.Page title={t("features.signup.ui.department_search_loading")} />;
   }
   return (
     <View style={styles.container}>
@@ -60,7 +62,7 @@ function DepartmentSearch() {
           className="outline-none"
           value={departmentName}
           onChangeText={(text) => updateForm({ departmentName: text })}
-          placeholder="학과를 입력해주세요"
+          placeholder={t("features.signup.ui.department_search_placeholder")}
           placeholderTextColor="#999"
           style={styles.input}
           ref={inputRef}
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
     fontWeight: 400,
 
     lineHeight: 15.6,
-    color: "#BAB0D0",
+    color: semanticColors.text.primary,
   },
   popularContainer: {
     flexDirection: "row",

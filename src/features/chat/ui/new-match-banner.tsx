@@ -4,12 +4,14 @@ import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 function NewMatchBanner() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { data } = useChatRoomDetail(id);
-  const name = data?.partner.name ?? "썸타임";
+  const age = data?.partner.age ?? '?';
   return (
     <View style={styles.container}>
       <View style={{ position: "relative" }}>
@@ -20,10 +22,9 @@ function NewMatchBanner() {
         />
       </View>
       <Text style={styles.title}>
-        축하드려요! <Text style={[styles.title, styles.name]}>{name}</Text>님과
-        매칭되었습니다
+        {t('features.chat.ui.new_match_banner.congrats')} <Text style={[styles.title, styles.name]}>만 {age}세</Text>{t('features.chat.ui.new_match_banner.matched')}
       </Text>
-      <Text style={styles.subText}>서로에게 관심을 보였어요!</Text>
+      <Text style={styles.subText}>{t('features.chat.ui.new_match_banner.mutual_interest')}</Text>
     </View>
   );
 }

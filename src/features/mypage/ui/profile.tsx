@@ -18,6 +18,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useRematchingTickets } from "../queries";
+import { useTranslation } from "react-i18next";
 
 export const Profile = () => {
   const { profileDetails } = useAuth();
@@ -27,17 +28,23 @@ export const Profile = () => {
   const [isLoadingVerification, setIsLoadingVerification] =
     useState<boolean>(true);
   const { data: gem } = useCurrentGem();
+  const formatStudentNumber = (studentNumber: string | null | undefined): string => {
+    if (!studentNumber) return "";
+    const prefix = studentNumber.substring(0, 2);
+    return `${prefix}학번`;
+  };
+
   const profileData = {
-    name: profileDetails?.name || "이름",
-    age: profileDetails?.age || "20",
-    grade: profileDetails?.universityDetails?.grade || "19학번",
-    university: profileDetails?.universityDetails?.name || "한밭대학교",
+    name: profileDetails?.name || "",
+    age: profileDetails?.age || 0,
+    grade: formatStudentNumber(profileDetails?.universityDetails?.studentNumber),
+    university: profileDetails?.universityDetails?.name || "",
     profileImage:
       profileDetails?.profileImages?.find((image) => image.isMain)?.url ||
       require("@/assets/images/profile.png"),
     totalRematchingTickets: reMatchingTicketCount?.total ?? 0,
   };
-
+  const { t } = useTranslation();
   useEffect(() => {
     const checkUniversityVerification = async () => {
       try {
@@ -154,7 +161,7 @@ export const Profile = () => {
                     style={{ width: 16, height: 16, marginRight: 4 }}
                   />
                   <Text style={styles.universityVerificationButtonText}>
-                    학교인증
+                    {t("features.profile-edit.ui.header.university_verification")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -180,7 +187,7 @@ export const Profile = () => {
                     />
 
                     <Text className="text-[10px] text-brand-secondary">
-                      프로필 수정
+                      {t("features.profile-edit.ui.header.title")}
                     </Text>
                   </View>
                 </View>
@@ -196,12 +203,12 @@ export const Profile = () => {
         >
           <ImageResource resource={ImageResources.GEM} width={28} height={28} />
           <View className="pl-[10px] flex-row">
-            <Text className="text-[13px] text-text-inverse">구슬이 </Text>
+            <Text className="text-[13px] text-text-inverse">{t("features.profile-edit.ui.header.gem")} </Text>
             <Text className="text-[13px] text-brand-secondary">
               {" "}
-              {gem?.totalGem ?? 0}개
+              {t("features.profile-edit.ui.header.gem_unit",{count:gem?.totalGem ?? 0})}
             </Text>
-            <Text className="text-[13px] text-text-inverse"> 남았어요</Text>
+            <Text className="text-[13px] text-text-inverse"> {t("features.profile-edit.ui.header.gem_left")}</Text>
           </View>
         </View>
       </View>
@@ -281,7 +288,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 26,
-    fontFamily: "Pretendard-Regular",
+    fontFamily: "regular",
     fontWeight: 400,
     lineHeight: 30,
     color: semanticColors.text.inverse,
@@ -314,7 +321,7 @@ const styles = StyleSheet.create({
   universityVerificationButtonText: {
     fontSize: 12,
     color: semanticColors.brand.secondary,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontWeight: 600,
   },
 });

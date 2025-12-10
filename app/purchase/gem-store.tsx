@@ -6,7 +6,7 @@ import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { GemStoreWidget } from "@/src/widgets";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import Layout from "@features/layout";
 import Payment from "@features/payment";
 import { useCurrentGem, useGemProducts } from "@features/payment/hooks";
@@ -17,12 +17,14 @@ import { ScrollDownIndicator, Show, Text } from "@shared/ui";
 import { createRef, lazy, useEffect, useState } from "react";
 import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 const { ui, services } = Payment;
 const { PaymentView } = ui;
 const { createUniqueId } = services;
 
 export default function GemStoreScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { data: gem } = useCurrentGem();
   const { data: gemProducts, isLoading, error } = useGemProducts();
@@ -47,21 +49,21 @@ export default function GemStoreScreen() {
       setProductCount(metadata.count);
       setShowPayment(true);
     } catch (error) {
-      Alert.alert("오류", "결제 처리 중 오류가 발생했습니다.");
+      Alert.alert("오류", t("apps.purchase.gem_store.error_alert_message"));
       setShowPayment(false);
     }
   };
 
   const onError = async (error: unknown) => {
-    console.error("결제 오류:", error);
+    console.error(t("apps.purchase.gem_store.payment_error_console"), error);
     const id = createUniqueId();
-    console.debug("결제 오류 발생 시 새로운 orderId 생성:", id);
+    console.debug(t("apps.purchase.gem_store.payment_error_debug"), id);
     setPaymentId(id);
     setShowPayment(false);
     showErrorModal(
       error instanceof Error
         ? error.message
-        : "결제 처리 중 오류가 발생했습니다.",
+        : t("apps.purchase.gem_store.error_alert_message"),
       "error"
     );
   };
@@ -167,19 +169,19 @@ export default function GemStoreScreen() {
               </View>
 
               <Text weight="semibold" size="20" textColor="black">
-                구슬 구매
+                {t("apps.purchase.gem_store.title")}
               </Text>
             </View>
 
             <View className="flex flex-col gap-y-4 justify-center mb-auto">
               <Show when={isLoading}>
                 <View className="flex-1 justify-center items-center">
-                  <Text>젬 상품을 불러오는 중...</Text>
+                  <Text>{t("apps.purchase.gem_store.loading_gems")}</Text>
                 </View>
               </Show>
               <Show when={!!error}>
                 <View className="flex-1 justify-center items-center">
-                  <Text>젬 상품을 불러오는데 실패했습니다.</Text>
+                  <Text>{t("apps.purchase.gem_store.failed_to_load_gems")}</Text>
                 </View>
               </Show>
               <Show when={!isLoading}>

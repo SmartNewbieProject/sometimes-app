@@ -1,4 +1,6 @@
+
 import React from "react";
+import { semanticColors } from '../../../../shared/constants/colors';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface MyActivityCardProps {
@@ -24,8 +26,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
+    color: semanticColors.text.primary,
     fontSize: 15,
-    fontFamily: "Pretendard-Regular",
+    fontFamily: "regular",
     fontWeight: 400,
     lineHeight: 21,
     letterSpacing: -0.045,

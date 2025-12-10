@@ -119,8 +119,10 @@ export const questionCardStyles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderRadius: 16,
-    padding: 24,
-    marginBottom: 20,
+    paddingTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 56,
+    marginBottom: 32,
     shadowColor: colors.text.primary,
     shadowOffset: {
       width: 0,

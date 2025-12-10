@@ -6,16 +6,24 @@ import { passKakao, passLogin } from "@features/auth/apis/index";
 import { loginByPass } from "@features/auth/utils/login-utils";
 import { useModal } from "@hooks/use-modal";
 import { useStorage } from "@shared/hooks/use-storage";
+import { useAmplitude } from "@shared/hooks/use-amplitude";
+import { AMPLITUDE_KPI_EVENTS, LOGOUT_REASONS } from "@shared/constants/amplitude-kpi-events";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
+import { useTranslation } from "react-i18next";
 
 export function useAuth() {
+  const { t } = useTranslation();
+  const { trackEvent } = useAmplitude();
+
   const { value: accessToken, setValue: setToken } = useStorage<string | null>({
     key: "access-token",
     initialValue: null,
   });
+
+  // 디버깅: 직접 storage 확인 제거 (storage import 오류 방지)
   const { value: refreshToken, setValue: setRefreshToken } = useStorage<
     string | null
   >({
@@ -34,8 +42,9 @@ export function useAuth() {
 
   const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
 
+  const hasToken = !!accessToken;
+  const { my, ...myQueryProps } = useMyDetailsQuery(hasToken);
   const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
-  const { my, ...myQueryProps } = useMyDetailsQuery(!!accessToken);
   const { showModal } = useModal();
 
   const updateToken = async (accessToken: string, refreshToken: string) => {
@@ -110,12 +119,15 @@ export function useAuth() {
   const logout = () => {
     tryCatch(
       async () => {
+        trackEvent(AMPLITUDE_KPI_EVENTS.AUTH_LOGOUT, {
+          reason: LOGOUT_REASONS.MANUAL,
+        });
         logoutOnly();
         showModal({
-          title: "로그아웃",
-          children: "로그아웃 되었습니다.",
+          title: t("features.auth.hooks.use_auth.logout_modal_title"),
+          children: t("features.auth.hooks.use_auth.logout_modal_message"),
           primaryButton: {
-            text: "확인",
+            text: t("features.auth.hooks.use_auth.logout_modal_button"),
             onClick: () => router.push("/auth/login"),
           },
         });
@@ -154,7 +166,6 @@ export function useAuth() {
   return {
     login,
     loginWithPass,
-    profileDetails,
     isAuthorized: !!accessToken,
     approvalStatus,
     clearApprovalStatus,
@@ -167,6 +178,7 @@ export function useAuth() {
       ...my,
       universityDetails: profileDetails?.universityDetails,
     },
+    profileDetails,
     updateToken,
     queryProps: {
       my: myQueryProps,

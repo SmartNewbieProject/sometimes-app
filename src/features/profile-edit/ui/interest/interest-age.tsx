@@ -5,6 +5,7 @@ import Loading from "@/src/features/loading";
 import colors , { semanticColors } from "@/src/shared/constants/colors";
 import { ChipSelector } from "@/src/widgets";
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
 const { ui, hooks, queries } = Interest;
@@ -13,6 +14,7 @@ const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 function InterestAge() {
   const { age, updateForm } = useInterestForm();
+  const { t } = useTranslation();
   const {
     data: preferencesArray = [
       {
@@ -33,11 +35,11 @@ function InterestAge() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>선호 나이대</Text>
+      <Text style={styles.title}>{t("features.profile-edit.ui.interest.age.title")}</Text>
       <View style={styles.bar} />
       <View style={styles.chipSelector}>
         <Loading.Lottie
-          title="선호 나이대 옵션을 불러오고 있어요"
+          title={t("features.profile-edit.ui.interest.age.loading")}
           loading={isLoading}
         >
           <ChipSelector
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 18,
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 22,
   },
   chipSelector: {

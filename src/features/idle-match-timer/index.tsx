@@ -1,33 +1,33 @@
-import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { useEffect, useState } from "react";
+import { dayUtils } from "@/src/shared/libs";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Loading from "../loading";
 import { useMatchLoading } from "./hooks";
 import { useLatestMatching } from "./queries";
-import { Waiting } from "./ui";
+import type { MatchDetails } from "./types";
+import { Waiting, Error } from "./ui";
 import { Container } from "./ui/container";
 import { InteractionNavigation } from "./ui/nav";
 import { NotFound } from "./ui/not-found";
 import { Partner } from "./ui/partner";
 import { RematchLoading } from "./ui/rematching";
 
+const createDefaultWaitingMatch = (): MatchDetails => ({
+  type: "waiting",
+  untilNext: dayUtils.create().add(1, "hour").format("YYYY-MM-DD HH:mm:ss"),
+  partner: null,
+  id: null,
+  endOfView: null,
+  connectionId: null,
+});
+
 export default function IdleMatchTimer() {
-  const { match, isLoading: matchLoading, refetch } = useLatestMatching();
-  const { my } = useAuth();
+  const { match, isPending, isFetchingData, isError, refetch } = useLatestMatching();
   const {
     rematchingLoading,
     finishRematching,
     loading: realRematchingLoading,
   } = useMatchLoading();
-
-  const isOpen = match?.type
-    ? ["open", "rematching"].includes(match.type)
-    : false;
-
-  const loading = (() => {
-    if (!my || !match || matchLoading) return true;
-    return false;
-  })();
 
   useEffect(() => {
     if (rematchingLoading) {
@@ -58,34 +58,53 @@ export default function IdleMatchTimer() {
     );
   }
 
-  // return (
-  //   <View>
-  //     <View style={styles.container}>
-  //       <Container gradientMode>
-  //         <PreOpening />
-  //       </Container>
-  //     </View>
-  //   </View>
-  // );
+  const showLoading = isPending || isFetchingData;
+
+  const renderContent = () => {
+    if (showLoading) {
+      return <Loading.Lottie />;
+    }
+
+    if (isError) {
+      return <Error />;
+    }
+
+    if (!match) {
+      return (
+        <Waiting
+          match={createDefaultWaitingMatch()}
+          onTimeEnd={refetch}
+        />
+      );
+    }
+
+    switch (match.type) {
+      case "open":
+      case "rematching":
+        return <Partner match={match} />;
+      case "not-found":
+        return <NotFound />;
+      case "waiting":
+        return <Waiting match={match} onTimeEnd={refetch} />;
+      default:
+        return (
+          <Waiting
+            match={createDefaultWaitingMatch()}
+            onTimeEnd={refetch}
+          />
+        );
+    }
+  };
+
+  const isPartnerView = match?.type === "open" || match?.type === "rematching";
+  const shouldShowGradient = !isPartnerView || isError;
 
   return (
     <View>
       <View style={styles.container}>
-        <Loading.Lottie title="불러오고 있어요" loading={loading}>
-          <Container
-            gradientMode={["not-found", "waiting"].includes(
-              match?.type as string
-            )}
-          >
-            {match?.type === "not-found" && <NotFound />}
-            {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
-            {isOpen && <Partner match={match!} />}
-            {match?.type === "waiting" && (
-              <Waiting match={match} onTimeEnd={refetch} />
-            )}
-            {/* <Waiting match={match!} onTimeEnd={onTimeEnd} />  */}
-          </Container>
-        </Loading.Lottie>
+        <Container gradientMode={shouldShowGradient}>
+          {renderContent()}
+        </Container>
       </View>
       <InteractionNavigation match={match} />
     </View>

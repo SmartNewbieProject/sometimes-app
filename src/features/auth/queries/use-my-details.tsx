@@ -7,5 +7,6 @@ export const useMyDetailsQuery = (enabled: boolean) => {
     queryFn: getMyDetails,
     enabled,
   });
+
   return { my: data, ...props };
 };

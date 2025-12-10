@@ -3,12 +3,15 @@ import { semanticColors } from '../../../src/shared/constants/colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform, Text, View } from "react-native";
 
+import { useTranslation } from "react-i18next";
+
 function KakaoLoginRedirect() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
   const router = useRouter();
   const { loginWithKakao } = useAuth();
@@ -60,9 +63,9 @@ function KakaoLoginRedirect() {
                     phone: result.certificationInfo?.phone,
                   });
                   showModal({
-                    title: "가입 제한",
+                    title: t("apps.auth.redirect.cant_register.title"),
                     children:
-                      "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
+                      t("apps.auth.redirect.cant_register.children"),
                     primaryButton: {
                       text: "확인",
                       onClick: () => {
@@ -107,7 +110,7 @@ function KakaoLoginRedirect() {
           router.replace({
             pathname: "/auth/login",
             params: {
-              error: "카카오 로그인에 실패했습니다. 다시 시도해주세요.",
+              error: t("apps.auth.redirect.kakao_login_error.params"),
             },
           });
         });
@@ -133,9 +136,9 @@ function KakaoLoginRedirect() {
           color: semanticColors.text.secondary,
         }}
       >
-        로그인 처리 중입니다...
+        {t("apps.auth.redirect.login_loading")}
         {"\n\n"}
-        잠시만 기다려주세요.
+        {t("apps.auth.redirect.waiting")}
       </Text>
     </View>
   );

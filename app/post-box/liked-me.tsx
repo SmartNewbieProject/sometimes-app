@@ -5,9 +5,11 @@ import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
 import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
 function LikedMe() {
+  const { t } = useTranslation();
   const { data: likedMeList, isLoading } = useLikedMeQuery();
   const queryClient = useQueryClient();
 
@@ -35,7 +37,7 @@ function LikedMe() {
   return (
     <View>
       <Loading.Lottie
-        title={"도착한 썸 리스트를 불러오는 중이에요!"}
+        title={t("apps.postBox.liked_me_loading")}
         loading={isLoading}
       >
         {sortedList?.length > 0 ? (

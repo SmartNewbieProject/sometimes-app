@@ -17,6 +17,20 @@ export default function MomentLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="weekly-report"
+        options={{
+          headerShown: false,
+          headerTitle: "모먼트 보고서",
+        }}
+      />
+      <Stack.Screen
+        name="daily-roulette"
+        options={{
+          headerShown: false,
+          title: "데일리 룰렛",
+        }}
+      />
     </Stack>
   );
 }

@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useMemo, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import { useCategory } from "@/src/features/community/hooks";
 import { useAuth } from "@/src/features/auth";
 import { useQuery } from "@tanstack/react-query";
@@ -34,12 +34,14 @@ const isPopularCategory = (code?: string) => !!code && code === "hot";
 const isAllowedCategory = (code?: string, isAdmin?: boolean) =>
   !!code && !isPopularCategory(code) && !(isNoticeCategory(code) && !isAdmin);
 
+
 export const ArticleWriteForm = ({
   mode = "create" as "create" | "update",
 }) => {
   const { control, setValue } = useFormContext();
   const { showModal, hideModal } = useModal();
 
+  const { t } = useTranslation();
   const content = useWatch({ control, name: "content" });
   const images = useWatch({ control, name: "images" }) || [];
   const originalImages = useWatch({ control, name: "originalImages" }) || [];
@@ -156,7 +158,7 @@ export const ArticleWriteForm = ({
 
   const pickImage = async () => {
     if (images.length >= 5) {
-      Alert.alert("알림", "이미지는 최대 5개까지 선택할 수 있습니다.");
+      Alert.alert(t("features.community.ui.article_write_screen.form.alert_title"), t("features.community.ui.article_write_screen.form.alert_image_limit"));
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -219,7 +221,7 @@ export const ArticleWriteForm = ({
               name="title"
               render={({ field: { onChange, value } }) => (
                 <TextInput
-                  placeholder="제목을 입력해주세요."
+                  placeholder={t("features.community.ui.article_write_screen.form.title_placeholder")}
                   className="w-full p-2 font-bold placeholder:text-text-inverse text-[18px] border-b border-border-default pb-2"
                   onChangeText={onChange}
                   value={value}
@@ -237,7 +239,7 @@ export const ArticleWriteForm = ({
             rules={{ maxLength: 2000 }}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                placeholder="내용을 입력해주세요."
+                placeholder={t("features.community.ui.article_write_screen.form.content_placeholder")}
                 multiline
                 scrollEnabled
                 textAlignVertical="top"
@@ -267,7 +269,7 @@ export const ArticleWriteForm = ({
                 resizeMode="contain"
               />
               <Text className="text-gray-600 text-sm">
-                이미지 추가 ({images.length}/5)
+              {t("features.community.ui.article_write_screen.form.add_image_button")} ({images.length}/5)
               </Text>
             </TouchableOpacity>
             <Text className="text-gray-500">x {content?.length ?? 0}/2000</Text>

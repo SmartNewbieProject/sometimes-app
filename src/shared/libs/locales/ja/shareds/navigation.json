@@ -1,0 +1,9 @@
+{
+  "bottom_navigation": {
+    "home": "ホーム",
+    "community": "コミュニティ",
+    "chat": "チャット",
+    "moment": "モーメント",
+    "my": "マイページ"
+  }
+}

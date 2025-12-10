@@ -30,6 +30,7 @@ function Radio({
   const selected = value === option.value;
   return (
     <Pressable
+      testID={`radio-option-${option.value}`}
       className={className}
       onPress={() => onChange?.(option.value)}
       style={[

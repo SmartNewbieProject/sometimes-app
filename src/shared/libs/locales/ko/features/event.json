@@ -1,0 +1,8 @@
+{
+  "hooks": {
+    "use_event_control": {
+      "event_expired_comment": "이벤트 만료",
+      "event_over_participated_comment": "이벤트 참여 횟수 초과"
+    }
+  }
+}

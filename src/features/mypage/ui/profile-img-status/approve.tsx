@@ -8,8 +8,10 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { useConfirmProfileImageReview } from "../../hooks/use-confirm-profile-image-review";
+import { useTranslation } from "react-i18next";
 
 export default function ProfileImgEditDoneScreen() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const { mutateAsync, isPending } = useConfirmProfileImageReview();
 
@@ -61,19 +63,19 @@ export default function ProfileImgEditDoneScreen() {
         <View className="flex flex-col">
           <View className="mt-[42px]">
             <Text size="lg" textColor="black" weight="semibold">
-              축하드려요!
+              {t('features.mypage.profile_status.approve.congratulations')}
             </Text>
             <Text size="lg" textColor="black" weight="semibold">
-              사진 변경이 완료되었어요!
+              {t('features.mypage.profile_status.approve.photo_change_complete')}
             </Text>
           </View>
 
           <View className="mt-2">
             <Text size="sm" textColor="pale-purple" weight="light">
-              사진 변경이 완료되었어요!
+              {t('features.mypage.profile_status.approve.photo_change_complete')}
             </Text>
             <Text size="sm" textColor="pale-purple" weight="light">
-              이제 새로운 프로필로 당신의 이상형을 만나보세요.
+              {t('features.mypage.profile_status.approve.meet_your_type')}
             </Text>
           </View>
         </View>
@@ -90,7 +92,7 @@ export default function ProfileImgEditDoneScreen() {
           {loading ? (
             <>
               <Text textColor={"white"} className="text-md white">
-                잠시만요...
+                {t('features.mypage.profile_status.approve.please_wait')}
               </Text>
               <ActivityIndicator
                 size="small"
@@ -100,7 +102,7 @@ export default function ProfileImgEditDoneScreen() {
             </>
           ) : (
             <Text textColor={"white"} className="text-md white">
-              이상형 찾으러 가기 →
+              {t('features.mypage.profile_status.approve.go_find_type')}
             </Text>
           )}
         </Button>

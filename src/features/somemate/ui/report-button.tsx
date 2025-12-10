@@ -2,8 +2,11 @@ import { Image } from "expo-image";
 import { semanticColors } from '../../../shared/constants/colors';
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
+import { useTranslation } from "react-i18next";
 
 export const ReportButton = () => {
+  const { t } = useTranslation();
+
   return (
     <Pressable
       style={styles.reportButton}
@@ -14,7 +17,7 @@ export const ReportButton = () => {
         style={styles.reportIcon}
         contentFit="contain"
       />
-      <Text style={styles.reportButtonText}>리포트 보러가기</Text>
+      <Text style={styles.reportButtonText}>{t('features.somemate.intro.report_button')}</Text>
     </Pressable>
   );
 };

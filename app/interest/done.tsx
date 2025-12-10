@@ -3,8 +3,9 @@ import { semanticColors } from '../../src/shared/constants/colors';
 import { useInterestForm } from "@/src/features/interest/hooks";
 import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
+import { useTranslation } from 'react-i18next';
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useAuth } from "@features/auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
@@ -14,6 +15,7 @@ import { Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function InterestDoneScreen() {
+  const { t } = useTranslation();
   const { profileDetails } = useAuth();
   const queryClient = useQueryClient();
   const { updateForm, clear, tattoo, ...form } = useInterestForm();
@@ -54,18 +56,17 @@ export default function InterestDoneScreen() {
           <View>
             <View style={styles.titleWrapper}>
               <Text size="lg" textColor="black" weight="semibold">
-                이상형 정보를 확인했어요
+                {t("apps.interest.done.title_1")}
               </Text>
               <Text size="lg" textColor="black" weight="semibold">
-                이제 이상형을 찾아드릴게요
+                {t("apps.interest.done.title_2")}
               </Text>
             </View>
 
-            <View style={styles.descriptionWrapper}>
-              <Text size="sm" textColor="pale-purple" weight="light">
-                썸타임이 {profileDetails?.name}님의 이상형을 찾아드릴게요
-              </Text>
-            </View>
+          <View style={styles.descriptionWrapper}>
+            <Text size="sm" textColor="pale-purple" weight="light">
+              {t('apps.my-info.done.desc', { name: profileDetails?.name })}
+            </Text>
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -82,9 +83,10 @@ export default function InterestDoneScreen() {
             }}
             styles={styles.button}
           >
-            이상형 찾으러 가기 →
+            {t("apps.interest.done.button")}
           </Button>
         </View>
+      </View>
       </View>
     </Layout.Default>
   );

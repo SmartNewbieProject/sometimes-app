@@ -1,0 +1,51 @@
+{
+  "hooks": {
+    "use_chat_event": {
+      "connected_status": "接続中",
+      "disconnected_status": "接続切断"
+    }
+  },
+  "ui": {
+    "chat_screen": {
+      "date_format": "{{year}}年{{month}}月{{day}}日"
+    },
+    "chat_room_list": {
+      "no_chat_title": "まだチャットルームがありません",
+      "no_chat_subtitle": "お互いに「いいね」するとチャットが始まります",
+      "new_match_notice": "新しいマッチングが届きました💜 チャットを開いてメッセージを確認しましょう！",
+      "recent_chat": "最近のチャット"
+    },
+    "chat_room_card": {
+      "delete": "削除",
+      "accept": "承認",
+      "leave": "退出",
+      "photo": "写真",
+      "start_conversation": "会話を始めてみませんか？"
+    },
+    "new_match_banner": {
+      "default_name": "サムタイム",
+      "congrats": "おめでとうございます！",
+      "matched": "さんとマッチングしました",
+      "mutual_interest": "お互いに興味を持っています！"
+    },
+    "chat_guide_banner": {
+      "title": "会話スターターヘルパー",
+      "guide_1": "最近ハマっているドラマやバラエティ番組はありますか？",
+      "guide_2": "週末はどのように過ごしていますか？",
+      "guide_3": "こんにちは！プロフィールでカフェ巡りが好きとありましたが、おすすめのカフェはありますか？",
+      "guide_4": "サークルや研究会の活動はされていますか？",
+      "guide_5": "〇〇学科とのことですが、どんな分野に興味がありますか？",
+      "guide_6": "休暇中はどんな活動をされていましたか？"
+    },
+    "menu_modal": {
+      "leave_chat_title": "チャットルームを退出しますか？",
+      "leave_chat_warning_1": "退出するとチャット履歴とリストから完全に削除され、",
+      "leave_chat_warning_2": "復元できません。",
+      "cancel": "キャンセル",
+      "leave": "退出",
+      "report_and_leave": "通報して退出",
+      "leave_chat": "チャットルームを退出",
+      "close": "閉じる"
+    }
+  }
+}

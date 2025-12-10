@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useChatRoomDetail from "../../queries/use-chat-room-detail";
 import useLeaveChatRoom from "../../queries/use-leave-chat-room";
@@ -23,6 +24,7 @@ interface ChatMenuModalProps {
 }
 
 const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -44,26 +46,26 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
           }}
         >
           <CustomText textColor="black" weight="bold" size="20">
-            채팅방을 나가시겠습니까?
+            {t('features.chat.ui.menu_modal.leave_chat_title')}
           </CustomText>
         </View>
       ),
       children: (
         <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
           <Text className="text-text-disabled text-[12px]">
-            나가면 대화 내역과 목록에서 완전히 삭제되며,
+            {t('features.chat.ui.menu_modal.leave_chat_warning_1')}
           </Text>
           <Text className="text-text-disabled text-[12px]">
-            복구가 불가능합니다.
+            {t('features.chat.ui.menu_modal.leave_chat_warning_2')}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "취소",
+        text: t('features.chat.ui.menu_modal.cancel'),
         onClick: hideModal,
       },
       secondaryButton: {
-        text: "나가기",
+        text: t('features.chat.ui.menu_modal.leave'),
         onClick: () => {
           mutate.mutateAsync({ chatRoomId: id });
           router.navigate("/chat");
@@ -97,7 +99,7 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
           <TouchableOpacity onPress={handleReport} style={styles.option}>
             <RedEmergencyIcon />
             <Text style={[styles.optionText, { color: semanticColors.state.error }]}>
-              신고 후 나가기
+              {t('features.chat.ui.menu_modal.report_and_leave')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -111,7 +113,7 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
             ]}
           >
             <Text style={[styles.optionText, { color: semanticColors.text.disabled }]}>
-              채팅방 나가기
+              {t('features.chat.ui.menu_modal.leave_chat')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -119,7 +121,7 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
           onPress={onClose}
           style={[styles.closeButton, { bottom: insets.bottom + 12 }]}
         >
-          <Text style={styles.closeText}>닫기</Text>
+          <Text style={styles.closeText}>{t('features.chat.ui.menu_modal.close')}</Text>
         </TouchableOpacity>
       </View>
     </Modal>
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
     ...(Platform.OS === "web" && {
       maxWidth: 468,
       left: "50%",
-      transform: [{ translateX: "-50%" }],
+      marginLeft: -234, // 468 / 2 = 234 (maxWidth의 절반)
     }),
   },
   modalContainer: {

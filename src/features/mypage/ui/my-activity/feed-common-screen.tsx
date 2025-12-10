@@ -16,6 +16,7 @@ import {
   useInfiniteMyFeedQuery,
   type MyFeedType,
 } from "../../queries/use-infinite-my-feed";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   title: string;
@@ -31,6 +32,7 @@ const pickVariant = (): "short" | "medium" | "long" => {
 };
 
 export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
+  const { t } = useTranslation();
   const { articles, isLoading, isLoadingMore, hasNextPage, loadMore, refetch } =
     useInfiniteMyFeedQuery(type, pageSize);
 
@@ -62,10 +64,10 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
   const deleteArticle = useCallback(
     (id: string) => {
       showModal({
-        title: "게시글 삭제",
-        children: <Text size="sm">해당 게시글을 삭제할까요?</Text>,
+        title: t('features.mypage.feed.delete_title'),
+        children: <Text size="sm">{t('features.mypage.feed.delete_message')}</Text>,
         primaryButton: {
-          text: "삭제하기",
+          text: t('features.mypage.feed.delete_button'),
           onClick: () =>
             tryCatch(
               async () => {
@@ -75,10 +77,10 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
               ({ error }) => showErrorModal(error, "error")
             ),
         },
-        secondaryButton: { text: "취소", onClick: () => {} },
+        secondaryButton: { text: t('features.mypage.feed.cancel_button'), onClick: () => {} },
       });
     },
-    [invalidateAndRefetch, showErrorModal, showModal]
+    [invalidateAndRefetch, showErrorModal, showModal, t]
   );
 
   const header = useMemo(

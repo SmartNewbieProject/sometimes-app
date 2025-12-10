@@ -24,7 +24,12 @@ module.exports = {
         extrabold: ['Pretendard-ExtraBold'],
         bold: ['Pretendard-Bold'],
         black: ['Pretendard-Black'],
-        rubik: ['Rubik']
+        rubik: ['Rubik'],
+        ja_thin: ['MPLUS1p-Thin'],
+        ja_bold: ['MPLUS1p-Bold'],
+        ja_medium: ['MPLUS1p-Medium'],
+        ja_regular: ['MPLUS1p-Regular'],
+        ja_extrabold: ['MPLUS1p-ExtraBold'],
       },
     },
   },

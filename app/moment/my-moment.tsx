@@ -1,6 +1,7 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Stack, useRouter } from "expo-router";
+import { ChevronLeft } from "lucide-react-native";
 import { MyMomentPage } from "@/src/features/moment/ui/my-moment";
 import { BottomNavigation } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
@@ -21,7 +22,14 @@ export default function MyMomentRoute() {
             backgroundColor: colors.momentBackground, // Match header bg to page bg if desired, or keep white
           },
           headerShadowVisible: false,
-          headerLeft: () => null, // Remove default back button
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.push('/moment')}
+              style={{ marginLeft: 16 }}
+            >
+              <ChevronLeft size={24} color={semanticColors.text.primary} />
+            </TouchableOpacity>
+          ),
         }}
       />
       <MyMomentPage

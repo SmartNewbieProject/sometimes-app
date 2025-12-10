@@ -1,5 +1,3 @@
-import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
-import RouletteModal from "@/src/features/event/ui/roulette/roulette-modal";
 import { useStep } from "@/src/features/guide/hooks/use-step";
 import useMatchingFirst from "@/src/features/guide/queries/use-maching-first";
 import LikeGuideScenario from "@/src/features/guide/ui/like-guide-scenario";
@@ -22,6 +20,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { ImageResources, storage } from "@/src/shared/libs";
 import { ensurePushTokenRegistered } from "@/src/shared/libs/notifications";
+import { useTranslation } from 'react-i18next';
 import {
   AnnounceCard,
   BottomNavigation,
@@ -31,7 +30,7 @@ import {
   Show,
  Text } from "@/src/shared/ui";
 import { NotificationIcon } from "@/src/features/notification/ui/notification-icon";
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
@@ -58,6 +57,7 @@ const { WelcomeRewardModal } = welcomeRewardUI;
 const { useWelcomeReward } = welcomeRewardHooks;
 
 const HomeScreen = () => {
+  const { t } = useTranslation();
   const { showModal } = useModal();
   const { step } = useStep();
   const { isPreferenceFill } = useRedirectPreferences();
@@ -85,13 +85,6 @@ const HomeScreen = () => {
   //   fetchTutorialStatus();
   // }, []);
 
-  const { data, isLoading, isError, error } = useRouletteEligibility();
-
-  useEffect(() => {
-    if (data?.canParticipate && !isLoading) {
-      showModal({ custom: RouletteModal });
-    }
-  }, [data?.canParticipate, isLoading]);
 
   // const visibleLikeGuide =
   //   step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
@@ -176,7 +169,7 @@ const HomeScreen = () => {
             <AnnounceCard
               emoji={ImageResources.DETAILS}
               emojiSize={{ width: 31, height: 28 }}
-              text="나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
+              text={t("apps.home.announce_card_text")}
               onPress={() => router.navigate("/interest")}
             />
           </Show>

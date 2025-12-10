@@ -1,6 +1,6 @@
 import { axiosClient } from '@/src/shared/libs';
 import type { Product } from 'expo-iap';
-import type { PaymentBeforeHistory, PortOnePayment } from '../types';
+import type { PaymentBeforeHistory, PortOnePayment, UserMetrics } from '../types';
 
 export enum GemReferenceType {
 	PAYMENT = 'PAYMENT',
@@ -64,6 +64,10 @@ const postAppleVerifyPurchase = (transactionReceipt: string): Promise<AppleVerif
 	return axiosClient.post('/iap/apple/verify-purchase', { transactionReceipt });
 };
 
+const getUserMetrics = (): Promise<UserMetrics> => {
+	return axiosClient.get('/v1/analytics/user-metrics');
+};
+
 const paymentApis = {
 	saveHistory: savePaymentHistory,
 	pay,
@@ -72,6 +76,7 @@ const paymentApis = {
 	payGem,
 	postAppleVerifyPurchase,
 	getFeatureCosts,
+	getUserMetrics,
 };
 
 export default paymentApis;

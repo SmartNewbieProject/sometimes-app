@@ -1,9 +1,12 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 
 export const RespondedCard = () => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <Image
@@ -13,10 +16,10 @@ export const RespondedCard = () => {
       />
       <View style={styles.contentContainer}>
         <Text size="md" weight="bold" textColor="black" style={styles.title}>
-          오늘의 질문에 답변했어요
+          {t('features.moment.my_moment.question_card.answered_today')}
         </Text>
         <Text size="12" weight="normal" textColor="gray">
-          내일 새로운 질문으로 만나요!
+          {t('features.moment.my_moment.question_card.see_you_tomorrow')}
         </Text>
       </View>
     </View>

@@ -1,6 +1,6 @@
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { semanticColors } from '../../../shared/constants/colors';
-import { track } from "@amplitude/analytics-react-native";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
 import type React from "react";
@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { AppleLoginResponse, useAppleLogin } from "../queries/use-apple-login";
 
 declare global {
@@ -86,6 +87,7 @@ interface BackendResponse {
 }
 
 const AppleLoginButton: React.FC = () => {
+  const { t } = useTranslation();
   const { removeValue: removeAppleUserId } = useStorage({ key: "appleUserId" });
   const { setValue: setLoginType } = useStorage<string | null>({
     key: "loginType",
@@ -248,7 +250,7 @@ const AppleLoginButton: React.FC = () => {
     if (!isAppleJSLoaded) {
       return (
         <View style={styles.loadingContainer}>
-          <Text>Apple 로그인 준비 중...</Text>
+          <Text style={{ color: semanticColors.text.primary }}>{t("features.signup.ui.login_form.apple_login_preparing")}</Text>
         </View>
       );
     }
@@ -262,7 +264,7 @@ const AppleLoginButton: React.FC = () => {
         >
           <Text style={styles.appleLogo}></Text>
           <View>
-            <Text className="text-text-inverse text-[18px]">Apple 로그인</Text>
+            <Text className="text-text-inverse text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
           </View>
         </Pressable>
       </View>
@@ -281,7 +283,7 @@ const AppleLoginButton: React.FC = () => {
           >
             <Text style={styles.appleLogo}></Text>
             <View>
-              <Text className="text-text-inverse text-[18px]">Apple 로그인</Text>
+              <Text className="text-text-inverse text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
             </View>
           </Pressable>
         </View>

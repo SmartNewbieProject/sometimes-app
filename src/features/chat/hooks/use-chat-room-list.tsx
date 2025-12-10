@@ -24,7 +24,7 @@ function useChatRoomList({ keyword }: useChatRoomListProps) {
   });
 
   const filteredData = sortedByTimeChatRooms.filter((item) => {
-    return item.nickName.includes(keyword);
+    return item?.nickName?.includes(keyword) ?? false;
   });
 
   // biome-ignore lint/complexity/noForEach: <explanation>

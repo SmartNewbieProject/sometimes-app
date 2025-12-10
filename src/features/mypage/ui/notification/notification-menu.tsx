@@ -3,17 +3,19 @@ import { semanticColors } from '../../../../shared/constants/colors';
 import { StyleSheet, View } from "react-native";
 import NotificationCard from "./notification-card";
 import { usePushNotification } from "../../hooks/use-push-notification";
+import { useTranslation } from "react-i18next";
 
 const NotificationMenu = () => {
+  const { t } = useTranslation();
   const { isEnabled, isUpdating, toggle } = usePushNotification();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>알림 설정</Text>
+      <Text style={styles.title}>{t('features.mypage.notification.title')}</Text>
       <View style={styles.bar} />
       <View style={styles.contentContainer}>
         <NotificationCard
-          title="푸시 알림"
+          title={t('features.mypage.notification.push_notification')}
           isOn={isEnabled}
           toggle={toggle}
           disabled={isUpdating}

@@ -11,12 +11,26 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../../idle-match-timer/hooks";
 import { determineFailureReason, predictFailureLikelihood } from "../../matching/utils/failure-analyzer";
-import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
+import { AMPLITUDE_KPI_EVENTS, LIKE_TYPES } from "@/src/shared/constants/amplitude-kpi-events";
+import { useTranslation } from "react-i18next";
 
 const useLikeMutation = () =>
   useMutation({
     mutationFn: (connectionId: string) =>
       axiosClient.post(`/v1/matching/interactions/like/${connectionId}`),
+    onMutate: async (connectionId: string) => {
+      const amplitude = (global as any).amplitude || {
+        track: (event: string, properties: any) => {
+          console.log('Amplitude Event:', event, properties);
+        }
+      };
+
+      amplitude.track(AMPLITUDE_KPI_EVENTS.LIKE_SENT, {
+        target_profile_id: connectionId,
+        like_type: LIKE_TYPES.FREE,
+        timestamp: new Date().toISOString(),
+      });
+    },
     onSuccess: async () => {
       // 쿼리 무효화를 확실히 처리하기 위해 await 사용
       await queryClient.invalidateQueries({ queryKey: ["latest-matching"] });
@@ -64,6 +78,8 @@ const useLikeMutation = () =>
         severity: failureReason.severity,
         server_message: failureReason.serverMessage,
         http_status: failureReason.httpStatus,
+        retry_available_at: failureReason.retryAvailableAt,
+        wait_time_seconds: failureReason.waitTimeSeconds,
         timestamp: new Date().toISOString()
       });
 
@@ -96,7 +112,7 @@ export default function useLike() {
   const { showErrorModal, showModal } = useModal();
   const { mutateAsync: like } = useLikeMutation();
   const { show: showCashable } = useCashableModal();
-
+  const { t } = useTranslation();
   const performLike = async (connectionId: string) => {
     await tryCatch(
       async () => {
@@ -127,22 +143,22 @@ export default function useLike() {
                 source={require("@assets/images/particle3.png")}
               />
               <Text textColor="black" weight="bold" size="20">
-                썸을 보냈어요!
+                {t("features.like.hooks.use-like.like_sent")}
               </Text>
             </View>
           ),
           children: (
             <View className="flex flex-col w-full items-center mt-[5px]">
               <Text className="text-text-disabled text-[12px]">
-                상대방도 관심을 보이면,
+                {t("features.like.hooks.use-like.if_interested")}
               </Text>
               <Text className="text-text-disabled text-[12px]">
-                인스타그램으로 연락할 수 있어요
+                {t("features.like.hooks.use-like.can_contact")}
               </Text>
             </View>
           ),
           primaryButton: {
-            text: "확인했어요",
+            text: t("features.like.hooks.use-like.confirm"),
             onClick: () => {},
           },
         });
@@ -154,7 +170,7 @@ export default function useLike() {
         if (err.status === HttpStatusCode.Forbidden) {
           showCashable({
             textContent:
-              "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
+              t("features.like.hooks.use-like.charge_message"),
           });
           return;
         }
@@ -183,7 +199,7 @@ export default function useLike() {
             showErrorModal(err.error, "announcement");
             return;
           }
-          showErrorModal("중복된 요청이거나 일시적인 문제가 발생했습니다.", "announcement");
+          showErrorModal(t("features.like.hooks.use-like.duplicate_liked"), "announcement");
           return;
         }
       }
@@ -197,7 +213,7 @@ export default function useLike() {
       },
       (err) => {
         if (err.status === HttpStatusCode.Forbidden) {
-          showErrorModal("구슬이 없습니다.", "announcement");
+          showErrorModal(t("features.like.hooks.use-like.no_gems"), "announcement");
           return;
         }
         showErrorModal(err.error, "error");

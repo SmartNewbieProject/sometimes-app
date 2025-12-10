@@ -1,17 +1,19 @@
 import { View } from "react-native";
 import { Text } from "@/src/shared/ui";
+import { useTranslation } from "react-i18next";
 
 export const TipAnnouncement = () => {
+  const { t } = useTranslation();
   return (
     <View className="my-[25px]">
       <Text textColor="black" className="font-bold text-[18px]" weight="medium">
-        오늘의 소개팅 꿀팁을 알려드릴게요
+        {t("features.home.ui.tip_announcement.title")}
       </Text>
       <View
         className="flex flex-col gap-y-2 w-full bg-moreLightPurple p-2.5 rounded-xl mt-2"
       >
         <Text size="sm" weight="light" textColor="black">
-          상대방을 존중하는 태도를 보여주세요.
+          {t("features.home.ui.tip_announcement.tip")}
         </Text>
       </View>
     </View>

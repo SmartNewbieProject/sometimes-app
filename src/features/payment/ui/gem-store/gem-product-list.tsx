@@ -3,6 +3,7 @@ import { GemStoreWidget } from "@/src/widgets/gem-store";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useGemProducts } from "../../hooks";
+import { useTranslation } from 'react-i18next';
 
 type GemProductListProps = {
   onPurchase?: (gemProductId: string, totalPrice: number) => void;
@@ -10,6 +11,7 @@ type GemProductListProps = {
 
 const GemProductList = ({ onPurchase }: GemProductListProps) => {
   const { data: gemProductsResponse, isLoading, error } = useGemProducts();
+  const { t } = useTranslation();
 
   const handlePurchase = (metadata: {
     totalPrice: number;
@@ -22,7 +24,7 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>젬 상품을 불러오는 중...</Text>
+        <Text>{t("features.payment.ui.apple_gem_store.loading_gem_products")}</Text>
       </View>
     );
   }
@@ -30,7 +32,7 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
   if (error) {
     return (
       <View style={styles.errorContainer}>
-        <Text>젬 상품을 불러오는데 실패했습니다.</Text>
+        <Text>{t("features.payment.ui.gem_store.failed_to_load_gem_products")}</Text>
       </View>
     );
   }
@@ -39,7 +41,7 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
 
   return (
     <View style={styles.content}>
-      <GemStoreWidget.Provider storeName="젬 상점">
+      <GemStoreWidget.Provider storeName={t("features.payment.ui.gem_store.store_name")}>
         {gemProducts
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((product, index) => (

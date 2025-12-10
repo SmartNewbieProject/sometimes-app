@@ -1,9 +1,11 @@
 import { Image } from "expo-image";
 import { semanticColors } from '../../../src/shared/constants/colors';
 import { router, useFocusEffect } from "expo-router";
-import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText, BackHandler } from "react-native";
+import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText, BackHandler, TouchableOpacity } from "react-native";
+import { ChevronLeft } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
 import { useActiveSession, useCreateSession } from "@/src/features/somemate/queries/use-ai-chat";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -13,16 +15,12 @@ import { ReportButton } from "@/src/features/somemate/ui/report-button";
 import { useCurrentGem } from "@/src/features/payment/hooks/use-current-gem";
 import { Text } from "@/src/shared/ui";
 
-const CATEGORIES: { id: string; label: AiChatCategory }[] = [
-  { id: "daily", label: "일상" },
-  { id: "relationship", label: "인간관계" },
-  { id: "hobby", label: "진로/학교" },
-  { id: "love", label: "연애" },
-];
+const CATEGORY_KEYS = ["daily", "relationship", "hobby", "love"] as const;
 
 export default function SomemateScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const [selectedCategory, setSelectedCategory] = useState<AiChatCategory>("일상");
+  const [selectedCategory, setSelectedCategory] = useState<AiChatCategory>(t('features.somemate.intro.categories.daily') as AiChatCategory);
   const { showModal } = useModal();
   const { somemateEvents } = useKpiAnalytics();
 
@@ -61,15 +59,15 @@ export default function SomemateScreen() {
     const currentGem = gemData?.totalGem ?? 0;
     if (currentGem < 1) {
       showModal({
-        title: "구슬이 부족해요",
+        title: t('features.somemate.modal.gem_shortage.title'),
         children: (
           <View style={{ flexDirection: "column" }}>
-            <Text>썸메이트 대화를 시작하려면 구슬 1개가 필요해요.</Text>
-            <Text>구슬을 충전하고 미호와 대화해보세요!</Text>
+            <Text>{t('features.somemate.modal.gem_shortage.message_1')}</Text>
+            <Text>{t('features.somemate.modal.gem_shortage.message_2')}</Text>
           </View>
         ),
         primaryButton: {
-          text: "확인",
+          text: t('features.somemate.modal.error.confirm'),
           onClick: () => {},
         },
       });
@@ -88,25 +86,25 @@ export default function SomemateScreen() {
           }}
         >
           <Text textColor="black" weight="bold" size="20">
-            AI 미호와 대화를 시작하기 위해
+            {t('features.somemate.modal.start_chat.title_1')}
           </Text>
           <Text textColor="black" weight="bold" size="20">
-            구슬 1개를 사용할게요!
+            {t('features.somemate.modal.start_chat.title_2')}
           </Text>
         </View>
       ),
       children: (
         <View style={{ flexDirection: "column", width: "100%", alignItems: "center", marginTop: 8 }}>
           <Text style={{ color: "#AEAEAE", fontSize: 12 }}>
-            🎉 오픈 할인가! 5개 → 1개
+            {t('features.somemate.modal.start_chat.discount_info')}
           </Text>
           <Text style={{ color: "#AEAEAE", fontSize: 12 }}>
-            특별 할인가로 AI 미호와 대화해보세요
+            {t('features.somemate.modal.start_chat.discount_subtitle')}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "네, 해볼래요",
+        text: t('features.somemate.modal.start_chat.confirm'),
         onClick: async () => {
           try {
             somemateEvents.trackSessionStarted('pending', selectedCategory);
@@ -117,14 +115,14 @@ export default function SomemateScreen() {
             router.push(`/chat/somemate-chat?sessionId=${response.sessionId}`);
           } catch (error: unknown) {
             showModal({
-              title: "오류",
+              title: t('features.somemate.modal.error.title'),
               children: (
                 <View style={{ flexDirection: "column" }}>
-                  <Text>{(error as Error)?.message || "세션 생성에 실패했습니다."}</Text>
+                  <Text>{(error as Error)?.message || t('features.somemate.modal.error.session_failed')}</Text>
                 </View>
               ),
               primaryButton: {
-                text: "확인",
+                text: t('features.somemate.modal.error.confirm'),
                 onClick: () => {},
               },
             });
@@ -132,14 +130,26 @@ export default function SomemateScreen() {
         },
       },
       secondaryButton: {
-        text: "취소",
+        text: t('features.somemate.modal.start_chat.cancel'),
         onClick: () => {},
       },
     });
   };
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+          <ChevronLeft size={24} color={semanticColors.text.primary} />
+        </TouchableOpacity>
+        <RNText style={styles.headerTitle}>{t('features.somemate.intro.header_title')}</RNText>
+        <View style={styles.headerRight} />
+      </View>
+
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.characterContainer}>
           <Image
@@ -158,40 +168,43 @@ export default function SomemateScreen() {
         </View>
 
         <View style={styles.contentContainer}>
-          <RNText style={styles.title}>대화 주제 설정하기</RNText>
-          <RNText style={styles.subtitle}>AI 미호와 나누고 싶은 대화 주제를 골라보세요!</RNText>
+          <RNText style={styles.title}>{t('features.somemate.intro.topic_title')}</RNText>
+          <RNText style={styles.subtitle}>{t('features.somemate.intro.topic_subtitle')}</RNText>
 
           <View style={styles.categoryContainer}>
-            {CATEGORIES.map((category) => (
-              <Pressable
-                key={category.id}
-                onPress={() => {
-                  setSelectedCategory(category.label);
-                  somemateEvents.trackCategorySelected(category.label);
-                }}
-                style={[
-                  styles.categoryButton,
-                  selectedCategory === category.label && styles.categoryButtonActive,
-                ]}
-              >
-                <RNText
+            {CATEGORY_KEYS.map((categoryKey) => {
+              const categoryLabel = t(`features.somemate.intro.categories.${categoryKey}`) as AiChatCategory;
+              return (
+                <Pressable
+                  key={categoryKey}
+                  onPress={() => {
+                    setSelectedCategory(categoryLabel);
+                    somemateEvents.trackCategorySelected(categoryLabel);
+                  }}
                   style={[
-                    styles.categoryText,
-                    selectedCategory === category.label && styles.categoryTextActive,
+                    styles.categoryButton,
+                    selectedCategory === categoryLabel && styles.categoryButtonActive,
                   ]}
                 >
-                  {category.label}
-                </RNText>
-              </Pressable>
-            ))}
+                  <RNText
+                    style={[
+                      styles.categoryText,
+                      selectedCategory === categoryLabel && styles.categoryTextActive,
+                    ]}
+                  >
+                    {categoryLabel}
+                  </RNText>
+                </Pressable>
+              );
+            })}
           </View>
         </View>
 
         <View style={styles.promotionContainer}>
           <View style={styles.promotionTextContainer}>
-            <RNText style={styles.promotionTitle}>썸타임은 충분한 대화가 쌓인 후에 생성돼요</RNText>
+            <RNText style={styles.promotionTitle}>{t('features.somemate.intro.promotion.title')}</RNText>
             <RNText style={styles.promotionSubtitle}>
-              미호와 대화를 이어가며 나만의 패턴을{"\n"}발견해보세요!
+              {t('features.somemate.intro.promotion.subtitle')}
             </RNText>
           </View>
           <Image
@@ -216,7 +229,7 @@ export default function SomemateScreen() {
                   style={styles.buttonIcon}
                   contentFit="contain"
                 />
-                <RNText style={styles.buttonText}>미호와 대화하기</RNText>
+                <RNText style={styles.buttonText}>{t('features.somemate.intro.chat_button')}</RNText>
               </>
             )}
           </Pressable>
@@ -235,6 +248,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: semanticColors.surface.background,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 56,
+    paddingHorizontal: 16,
+    backgroundColor: semanticColors.surface.background,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: semanticColors.text.primary,
+    fontFamily: "Pretendard-SemiBold",
+  },
+  headerRight: {
+    width: 40,
+  },
   scrollView: {
     flex: 1,
   },
@@ -243,7 +279,7 @@ const styles = StyleSheet.create({
   },
   characterContainer: {
     alignItems: "center",
-    marginTop: 40,
+    marginTop: 20,
     marginBottom: 20,
   },
   characterImage: {

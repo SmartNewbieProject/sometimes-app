@@ -2,6 +2,7 @@ import BannerRightArrowIcon from "@assets/icons/banner-right-arrow.svg";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   Easing,
@@ -12,10 +13,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useWindowWidth } from "../../signup/hooks";
+
 function FirstPurchaseEvent() {
   const translateXAnim = useSharedValue(0);
   const router = useRouter();
   const width = useWindowWidth();
+  const { t } = useTranslation();
   useEffect(() => {
     translateXAnim.value = withRepeat(
       withTiming(10, {
@@ -45,13 +48,17 @@ function FirstPurchaseEvent() {
         style={styles.image}
       />
       <View style={styles.content}>
+        {/* i18n: The following text has nested styling and requires manual translation using the <Trans> component or another method. */}
         <Text style={[styles.title, { fontSize: width >= 490 ? 18 : 15 }]}>
-          <Text style={styles.titleStrong}>썸타임</Text>이 처음이신가요?
+          <Text style={styles.titleStrong}>{t("features.home.ui.first_purchase_event_banner.brand_name")}</Text>{t("features.home.ui.first_purchase_event_banner.title")}
         </Text>
-        <Text style={styles.description}>당신만을 위한</Text>
         <Text style={styles.description}>
-          <Text style={styles.descriptionStrong}>특별한 매칭</Text>이
-          준비되었어요!
+          {t("features.home.ui.first_purchase_event_banner.description_1")}
+        </Text>
+        {/* i18n: The following text has nested styling and requires manual translation using the <Trans> component or another method. */}
+        <Text style={styles.description}>
+          <Text style={styles.descriptionStrong}>{t("features.home.ui.first_purchase_event_banner.special_match")}</Text>
+          {t("features.home.ui.first_purchase_event_banner.description_2")}
         </Text>
       </View>
       <View style={styles.button}>
@@ -97,13 +104,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 21.6,
     color: "#4A4A4A",
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: "Pretendard-ExtraBold",
+    fontFamily: "extrabold",
     color: "#7A4AE2",
   },
   description: {

@@ -1,0 +1,149 @@
+{
+  "ui": {
+    "articles": {
+      "faq_title": "[FAQ] 자주묻는 질문"
+    },
+    "guideline": {
+      "title": "썸타임 커뮤니티 이용 가이드라인",
+      "welcome_message": "안녕하세요! 썸타임 커뮤니티에 오신 것을 환영합니다.",
+      "guideline_purpose": "모두가 편안하고 즐겁게 소통할 수 있는 공간을 만들기 위해 아래 가이드라인을 준수해 주세요.",
+      "basic_rules_title": "기본 규칙",
+      "rule_1": "1. 상호 존중: 다른 회원의 의견과 관점을 존중해 주세요. 비방, 조롱, 혐오 발언은 삼가주세요.",
+      "rule_2": "2. 개인정보 보호: 본인 또는 타인의 실명, 연락처, SNS ID 등 개인정보를 공개하지 마세요.",
+      "rule_3": "3. 건전한 내용: 불법적이거나 선정적인, 폭력적인 내용의 게시글과 댓글은 작성하지 마세요.",
+      "rule_4": "4. 광고 금지: 상업적 홍보나 광고성 콘텐츠는 게시하지 마세요.",
+      "writing_tips_title": "게시글 작성 팁",
+      "tip_1": "ㆍ 제목은 내용을 잘 반영하도록 작성해 주세요.",
+      "tip_2": "ㆍ 다른 회원들에게 도움이 될 수 있는 정보나 경험을 공유해 보세요.",
+      "tip_3": "ㆍ 질문이나 고민이 있다면 구체적으로 작성하면 더 좋은 답변을 받을 수 있어요.",
+      "tip_4": "ㆍ 재미있는 데이트 장소나 활동을 공유하는 것도 좋아요!",
+      "report_and_sanction_title": "신고 및 제재",
+      "sanction_message_1": "가이드라인을 위반하는 게시글이나 댓글은 관리자에 의해 삭제될 수 있으며, 위반 정도에 따라 계정",
+      "sanction_message_2": "이용이 제한될 수 있습니다. 부적절한 콘텐츠를 발견하시면 신고 기능을 통해 알려주세요.즐겁고 의미 있는 커뮤니티 활동 되세요!💕"
+    },
+    "infinite_article_list": {
+      "delete_article_title": "게시글 삭제",
+      "delete_article_confirm": "해당 게시글을 삭제할까요?",
+      "delete_button": "삭제하기",
+      "faq_title": "[FAQ] 자주묻는 질문"
+    },
+    "article": {
+      "edit_button": "수정",
+      "delete_button": "삭제",
+      "report_button": "신고",
+      "view_more_replies": "답글 더보기"
+    },
+    "article_detail": {
+      "comment_arrow_indent_comment": "대댓글인 경우 화살표 아이콘과 들여쓰기",
+      "like_count_comment": "좋아요 수 표시 - 좋아요가 있을 때만",
+      "action_buttons_comment": "액션 버튼들",
+      "reply_button_comment": "답글 버튼",
+      "like_button_comment": "좋아요 버튼",
+      "more_button_comment": "더보기 버튼 (작성자에게만)",
+      "dropdown_modal_comment": "드롭다운 메뉴 Modal",
+      "edit_button": "수정",
+      "delete_button": "삭제",
+      "loading_comments": "댓글을 불러오고 있어요",
+      "header_title": "커뮤니티",
+      "invalid_request": "잘못된 요청입니다",
+      "loading_error": "게시글을 불러오는 중 오류가 발생했습니다.",
+      "loading_article": "게시글을 불러오고 있어요"
+    },
+    "article_write_screen": {
+      "form": {
+        "alert_title": "알림",
+        "alert_image_limit": "이미지는 최대 5개까지 선택할 수 있습니다.",
+        "title_placeholder": "제목을 입력하세요.",
+        "content_placeholder": "내용을 입력하세요.",
+        "add_image_button": "이미지 추가"
+      },
+      "modal": {
+        "short_content": {
+          "title": "너무 짧아요",
+          "desc": "제목과 본문은 3자 이상으로 작성해주세요."
+        },
+        "overflow": {
+          "title": "글자수 초과",
+          "desc": "본문은 2000자 이하로 작성해주세요."
+        },
+        "success": {
+          "title": "글 작성 완료",
+          "desc": "글 작성이 완료되었습니다."
+        },
+        "fail": {
+          "title": "글 작성 실패",
+          "desc": "글 작성 중 오류가 발생했습니다."
+        },
+        "confirm_checked": "네, 확인했어요"
+      },
+      "header": {
+        "write_post": "글 쓰기",
+        "edit_post": "글 수정",
+        "complete_button": "완료"
+      },
+      "nav": {
+        "anonymous": "익명"
+      }
+    },
+    "article_edit_screen": {
+      "loading": "게시글을 불러오고 있어요.",
+      "modal": {
+        "short_content": {
+          "title": "너무 짧아요",
+          "desc": "제목과 본문은 3자 이상으로 작성해주세요."
+        },
+        "overflow": {
+          "title": "글자수 초과",
+          "desc": "본문은 2000자 이하로 작성해주세요."
+        },
+        "success": {
+          "title": "완료",
+          "desc_1": "게시글이 수정되었어요!",
+          "desc_2": "게시글로 이동할게요."
+        },
+        "confirm_checked": "네, 확인했어요",
+        "confirm_move": "네, 이동할게요"
+      }
+    },
+    "report": {
+      "alert": {
+        "title": "신고가 완료되었어요.",
+        "desc": "관리자가 검토 후 적절한 조치를 취하겠습니다.\n해당 게시글은 회원님에게 노출되지 않습니다."
+      },
+      "title": "부적절한 게시글을 발견하셨나요?",
+      "desc": "신고해주신 내용은 관리자가 검토 후 적절한 조치를 취하겠습니다.",
+      "button": "신고하기",
+      "header": "신고하기",
+      "reasons": {
+        "spam": "스팸/도배성 게시글",
+        "abuse": "욕설/혐오표현",
+        "sexual": "성적/선정적 내용",
+        "privacy": "개인정보 노출/사생활 침해",
+        "ad": "상업적 광고/홍보",
+        "image": "부적절한 이미지",
+        "bullying": "괴롭힘/협박",
+        "rule": "커뮤니티 규칙 위반"
+      }
+    },
+    "category_list": {
+      "comment_category_change_cache_reset": "카테고리 수(혹은 코드 조합)가 바뀌면 이전 레이아웃 캐시를 초기화",
+      "comment_button_wrapper_layout_save": "각 버튼 래퍼의 레이아웃 저장",
+      "loading_categories": "카테고리를 불러오고 있어요"
+    },
+    "comment": {
+      "university_name": "한밭대학교",
+      "input_form": {
+        "comment_edit_reply_mode_comment": "수정 모드 또는 대댓글 작성 모드 표시",
+        "editing_comment": "댓글 수정 중...",
+        "replying_comment": "답글 작성 중...",
+        "anonymous": "익명",
+        "comment_placeholder": "댓글을 입력하세요",
+        "cancel": "취소"
+      }
+    },
+    "user_profile": {
+      "me_indicator": "(나)",
+      "separator": "·"
+    }
+  }
+}

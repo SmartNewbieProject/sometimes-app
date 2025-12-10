@@ -12,6 +12,7 @@ import { PalePurpleGradient, StepSlider, Text } from "@/src/shared/ui";
 
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Image, StyleSheet, View } from "react-native";
 
 const { hooks, services, queries } = MyInfo;
@@ -20,6 +21,7 @@ const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 export default function MilitarySelectionScreen() {
+  const { t } = useTranslation();
   const { updateForm, clear: _, militaryStatus, ...form } = useMyInfoForm();
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { my } = useAuth();
@@ -58,7 +60,8 @@ export default function MilitarySelectionScreen() {
     await tryCatch(
       async () => {
         const validation = Object.values(form).every((v) => v !== null);
-        if (!validation) throw new Error("비어있는 양식이 존재합니다.");
+        if (!validation)
+          throw new Error(t("apps.my-info.military.empty_form"));
         await savePreferences({
           datingStyleIds: form.datingStyleIds,
           interestIds: form.interestIds,
@@ -98,7 +101,7 @@ export default function MilitarySelectionScreen() {
         />
         <View style={styles.topContainer}>
           <Text weight="semibold" size="20" textColor="black">
-            군대는 다녀 오셨나요?
+            {t("apps.my-info.military.title")}
           </Text>
         </View>
 
@@ -106,7 +109,7 @@ export default function MilitarySelectionScreen() {
 
         <View style={styles.wrapper}>
           <Loading.Lottie
-            title="옵션을 불러오고 있어요"
+            title={t("apps.my-info.military.loading")}
             loading={optionsLoading}
           >
             <StepSlider

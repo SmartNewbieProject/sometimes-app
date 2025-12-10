@@ -3,20 +3,23 @@ export interface ProfileImage {
 	order: number;
 	isMain: boolean;
 	url: string;
+	reviewStatus?: string;
 }
 
 export interface UniversityDetail {
-	name: string;
+	name: string | null;
 	authentication: boolean;
-	department: string;
-	grade: string;
-	studentNumber: string;
+	department: string | null;
+	grade: string | null;
+	studentNumber: string | null;
+	code: string | null;
+	region: string | null;
 }
 
 export interface PreferenceOption {
 	id: string;
 	displayName: string;
-	imageUrl?: string;
+	imageUrl?: string | null;
 }
 
 export interface PreferenceTypeGroup {
@@ -24,25 +27,42 @@ export interface PreferenceTypeGroup {
 	selectedOptions: PreferenceOption[];
 }
 
+export interface IntroductionData {
+	introductions: string[];
+	metadata: {
+		source?: string;
+		generatedAt?: string;
+		lastUpdated?: string;
+	};
+}
+
 export interface UserProfile {
 	id: string;
 	name: string;
 	age: number;
-	mbti: string;
+	gender: 'MALE' | 'FEMALE';
+	mbti: string | null;
+	rank: string | null;
+	instagramId: string | null;
+	profileImages: ProfileImage[];
+	universityDetails: UniversityDetail | null;
+	preferences: PreferenceTypeGroup[];
 	characteristics: PreferenceTypeGroup[];
 	additionalPreferences: {
-		[key: string]: string;
-	};
+		goodMbti: string;
+		badMbti: string;
+	} | null;
+	introductions: string[];
+	introductionData?: IntroductionData;
+	introduction: string | null;
+	keywords: string[] | null;
 	connectionId?: string;
 	isLikeSended?: number;
-	gender: string;
-	profileImages: ProfileImage[];
-	instagramId: string;
-	universityDetails: UniversityDetail;
-	preferences: PreferenceTypeGroup[];
-	deletedAt: string | null;
 	matchLikeId?: string | null;
-	updatedAt?: string | null;
+	deletedAt: string | null;
+	updatedAt: string | null;
+	phoneNumber: string;
+	email?: string;
 }
 
 export interface SimpleProfile {

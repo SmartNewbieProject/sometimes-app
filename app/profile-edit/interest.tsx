@@ -18,19 +18,22 @@ import { tryCatch } from "@/src/shared/libs";
 import { Button } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { hooks } = Interest;
 const { useInterestForm } = hooks;
 
 function InterestSection() {
+  const { t } = useTranslation();
   const { updateForm, clear: _, ...form } = useInterestForm();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
   const { profileDetails } = useAuth();
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const { showErrorModal } = useModal();
 
   const disabled = !!(
@@ -38,95 +41,146 @@ function InterestSection() {
     !form.personality ||
     form.personality.length === 0
   );
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+
   useEffect(() => {
-    if (profileDetails?.preferences) {
+    if (isInitialized) {
+      return;
+    }
+
+    if (!profileDetails?.preferences || !Array.isArray(profileDetails.preferences)) {
+      return;
+    }
+
+    try {
       const preferences = profileDetails.preferences;
       const additionalPreferences = profileDetails.additionalPreferences;
-      const drinking = preferences?.find(
-        (item) => item.typeName === PreferenceKeys.DRINKING
-      )?.selectedOptions[0];
-      const militaryPreference = preferences?.find(
-        (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
-      )?.selectedOptions[0];
-      const smoking = preferences?.find(
-        (item) => item.typeName === PreferenceKeys.SMOKING
-      )?.selectedOptions[0];
-      const tattoo = preferences?.find(
-        (item) => item.typeName === PreferenceKeys.TATTOO
-      )?.selectedOptions[0];
-      if (drinking) {
+
+      const drinkingPreference = preferences.find(
+        (item) => item?.typeName === PreferenceKeys.DRINKING
+      );
+      const drinking = drinkingPreference?.selectedOptions?.[0];
+
+      const militaryPreferenceData = preferences.find(
+        (item) => item?.typeName === PreferenceKeys.MILITARY_PREFERENCE
+      );
+      const militaryPreference = militaryPreferenceData?.selectedOptions?.[0];
+
+      const smokingPreference = preferences.find(
+        (item) => item?.typeName === PreferenceKeys.SMOKING
+      );
+      const smoking = smokingPreference?.selectedOptions?.[0];
+
+      const tattooPreference = preferences.find(
+        (item) => item?.typeName === PreferenceKeys.TATTOO
+      );
+      const tattoo = tattooPreference?.selectedOptions?.[0];
+
+      const agePreference = preferences.find(
+        (item) => item?.typeName === PreferenceKeys.AGE
+      );
+      const age = agePreference?.selectedOptions?.[0];
+
+      const personalityPreference = preferences.find(
+        (item) => item?.typeName === PreferenceKeys.PERSONALITY
+      );
+      const personality = personalityPreference?.selectedOptions;
+
+      if (drinking?.id) {
         updateForm("drinking", drinking);
       }
-      if (militaryPreference && profileDetails.gender === "FEMALE") {
+      if (militaryPreference?.id && profileDetails.gender === "FEMALE") {
         updateForm("militaryPreference", militaryPreference);
       }
-      if (smoking) {
+      if (smoking?.id) {
         updateForm("smoking", smoking);
       }
-      if (tattoo) {
+      if (tattoo?.id) {
         updateForm("tattoo", tattoo);
       }
-      updateForm(
-        "drinking",
-        preferences?.find((item) => item.typeName === PreferenceKeys.DRINKING)
-          ?.selectedOptions[0]
-      );
-      updateForm(
-        "age",
-        preferences?.find((item) => item.typeName === PreferenceKeys.AGE)
-          ?.selectedOptions[0].id
-      );
-      updateForm("goodMbti", additionalPreferences?.goodMbti);
-      updateForm("badMbti", additionalPreferences?.badMbti);
+      if (age?.id) {
+        updateForm("age", age.id);
+      }
+      if (Array.isArray(personality) && personality.length > 0) {
+        const personalityIds = personality
+          .filter((item) => item?.id)
+          .map((item) => item.id);
+        if (personalityIds.length > 0) {
+          updateForm("personality", personalityIds);
+        }
+      }
 
-      updateForm(
-        "personality",
-        preferences
-          ?.find((item) => item.typeName === PreferenceKeys.PERSONALITY)
-          ?.selectedOptions.map((item) => item.id) as string[]
-      );
+      if (additionalPreferences?.goodMbti !== undefined) {
+        updateForm("goodMbti", additionalPreferences.goodMbti);
+      }
+      if (additionalPreferences?.badMbti !== undefined) {
+        updateForm("badMbti", additionalPreferences.badMbti);
+      }
+
+      setIsInitialized(true);
+    } catch (error) {
+      console.error("Failed to initialize interest form:", error);
     }
-  }, [JSON.stringify(profileDetails), updateForm]);
+  }, [profileDetails?.preferences, isInitialized, profileDetails?.gender, updateForm]);
+
+  useEffect(() => {
+    return () => {
+      console.log("Interest form unmounting - cleaning up");
+    };
+  }, []);
 
   const onFinish = async () => {
     setFormSubmitLoading(true);
     await tryCatch(
       async () => {
-        const validation = Object.entries(form)
-          .filter(([key]) => key !== "goodMbti" && key !== "badMbti")
-          .every(([_, value]) => value !== null);
-        if (!validation) throw new Error("비어있는 양식이 존재합니다.");
+        if (!form.age || typeof form.age !== "string") {
+          throw new Error(t("apps.profile-edit.ui.validation.age_required"));
+        }
+
+        if (!form.drinking?.id) {
+          throw new Error(t("apps.profile-edit.ui.validation.drinking_required"));
+        }
+
+        if (!form.smoking?.id) {
+          throw new Error(t("apps.profile-edit.ui.validation.smoking_required"));
+        }
+
+        if (!Array.isArray(form.personality) || form.personality.length === 0) {
+          throw new Error(t("apps.profile-edit.ui.validation.personality_required"));
+        }
+
+        if (!form.tattoo?.id) {
+          throw new Error(t("apps.profile-edit.ui.validation.tattoo_required"));
+        }
+
         await savePreferences({
-          age: form.age as string,
-          drinking: form.drinking?.id as string,
-          smoking: form.smoking?.id as string,
-          personality: form.personality as string[],
-          tattoo: form.tattoo?.id as string,
+          age: form.age,
+          drinking: form.drinking.id,
+          smoking: form.smoking.id,
+          personality: form.personality,
+          tattoo: form.tattoo.id,
           militaryPreference: form.militaryPreference?.id ?? "",
           goodMbti: form.goodMbti ?? null,
           badMbti: form.badMbti ?? null,
         });
 
-        await queryClient.invalidateQueries({
-          queryKey: ["check-preference-fill"],
-        });
-        await queryClient.invalidateQueries({
-          queryKey: ["preference-self"],
-        });
-        await queryClient.invalidateQueries({
-          queryKey: ["my-profile-details"],
-        });
+        await queryClient.invalidateQueries({ queryKey: ["check-preference-fill"] });
+        await queryClient.invalidateQueries({ queryKey: ["preference-self"] });
+        await queryClient.invalidateQueries({ queryKey: ["my-profile-details"] });
+
         router.navigate("/my");
         setFormSubmitLoading(false);
       },
       ({ error }) => {
-        console.log("error", error);
+        console.error("Failed to save interest preferences:", error);
         showErrorModal(error, "error");
         setFormSubmitLoading(false);
       }
     );
   };
+
+  if (!profileDetails) {
+    return null;
+  }
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom + 100 }]}>
@@ -135,13 +189,13 @@ function InterestSection() {
         <InterestGoodMbti />
         <InterestBadMbti />
         <InterestPersonality />
-        {profileDetails?.gender === "FEMALE" && <InterestMilitary />}
+        {profileDetails.gender === "FEMALE" && <InterestMilitary />}
         <InterestDrinking />
         <InterestSmoking />
         <InterestTattoo />
       </ScrollView>
       <Button
-        disabled={disabled}
+        disabled={disabled || formSubmitLoading}
         onPress={onFinish}
         rounded="lg"
         styles={{
@@ -151,7 +205,7 @@ function InterestSection() {
           right: 28,
         }}
       >
-        저장
+        {t("apps.profile_edit.ui.save_button")}
       </Button>
     </View>
   );

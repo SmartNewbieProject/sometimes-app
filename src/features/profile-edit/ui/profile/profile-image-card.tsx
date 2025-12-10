@@ -1,6 +1,8 @@
+
 import { Image } from "expo-image";
 import { semanticColors } from '../../../../shared/constants/colors';
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ProfileImageCardProps {
@@ -16,6 +18,7 @@ function ProfileImageCard({
   isMain = false,
   noneImage = false,
 }: ProfileImageCardProps) {
+  const { t } = useTranslation();
   if (noneImage) {
     return (
       <Pressable onPress={onClick} style={[styles.card, styles.noneCard]}>
@@ -23,9 +26,9 @@ function ProfileImageCard({
           source={require("@assets/images/image.png")}
           style={styles.noneImage}
         />
-        <Text style={styles.noneText}>사진 추가하기</Text>
+        <Text style={styles.noneText}>{t("features.profile-edit.ui.profile.image_card.add_photo")}</Text>
         <View style={[styles.imageTag, styles.noneImageTag]}>
-          <Text style={styles.imageTagText}>{isMain ? "대표" : "선택"}</Text>
+          <Text style={styles.imageTagText}>{isMain ? t("features.profile-edit.ui.profile.image_card.main") : t("features.profile-edit.ui.profile.image_card.select")}</Text>
         </View>
       </Pressable>
     );
@@ -34,7 +37,7 @@ function ProfileImageCard({
     <Pressable onPress={onClick} style={styles.card}>
       <Image source={imageUri} style={styles.image} />
       <View style={styles.imageTag}>
-        <Text style={styles.imageTagText}>{isMain ? "대표" : "선택"}</Text>
+        <Text style={styles.imageTagText}>{isMain ? t("features.profile-edit.ui.profile.image_card.main") : t("features.profile-edit.ui.profile.image_card.select")}</Text>
       </View>
       <View style={styles.edit}>
         <Image
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
   },
   imageTagText: {
     fontSize: 13,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 15.6,
     fontWeight: 600,
 
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
   noneText: {
     color: semanticColors.text.disabled,
     fontSize: 13,
-    fontFamily: "Pretendard-Light",
+    fontFamily:  "light",
     fontWeight: 300,
 
     lineHeight: 15.6,

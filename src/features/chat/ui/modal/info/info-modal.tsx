@@ -56,7 +56,6 @@ export function Body() {
         style={styles.profileImage}
       />
       <View style={styles.textContainer}>
-        <Text style={styles.nameText}>{partner?.name}</Text>
         <Text style={styles.ageText}>만 {partner?.age}세</Text>
         <Text style={styles.univText}>{partner?.university}</Text>
       </View>

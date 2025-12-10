@@ -4,3 +4,7 @@ import { FeatureFlagResponse } from "@/src/features/somemate/apis/feature-flags"
 export const checkMomentEnabled = async (): Promise<FeatureFlagResponse> => {
   return axiosClient.get("/feature-flags/moment");
 };
+
+export const checkMyMomentEnabled = async (): Promise<FeatureFlagResponse> => {
+  return axiosClient.get("/feature-flags/my-moment");
+};

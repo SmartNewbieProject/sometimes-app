@@ -1,0 +1,102 @@
+{
+  "tabs": {
+    "profile": "나의 프로필",
+    "interest": "이상형"
+  },
+  "ui": {
+    "save_button": "저장",
+    "validation": {
+      "empty_form": "비어있는 양식이 존재합니다."
+    },
+    "header": {
+      "modal_title": "수정 중인 내용이 있어요",
+      "modal_description": "지금 나가면 작성 중인 수정 내용이 모두 사라져요.정말 나가시겠어요?",
+      "modal_primary_button": "계속 수정하기",
+      "modal_secondary_button": "나가기",
+      "title": "프로필 수정",
+      "gem":"구슬이",
+      "gem_unit":"{{count}}개",
+      "gem_left":"남았어요",
+      "university_verification":"학교인증"
+    },
+    "interest": {
+      "age": {
+        "title": "선호 나이대",
+        "loading": "선호 나이대 옵션을 불러오고 있어요"
+      },
+      "bad_mbti": {
+        "title": "당신이 싫어하는 MBTI",
+        "no_preference": "상관없음"
+      },
+      "drinking": {
+        "title": "음주 선호도",
+        "loading": "음주 선호도를 불러오고 있어요"
+      },
+      "good_mbti": {
+        "title": "당신이 좋아하는 MBTI",
+        "no_preference": "상관없음"
+      },
+      "military": {
+        "title": "군필 선호도",
+        "loading": "옵션을 불러오고 있어요"
+      },
+      "personality": {
+        "title": "원하는 이상형의 성격",
+        "loading": "성격 유형을 불러오고 있어요"
+      },
+      "smoking": {
+        "title": "흡연 선호도",
+        "loading": "흡연 선도호 옵션을 불러오고 있어요"
+      },
+      "tattoo": {
+        "title": "문신 선호도",
+        "loading": "문신 선호도 옵션을 불러오고 있어요",
+        "no_tattoo": "문신 없음",
+        "small_tattoo": "작은 문신"
+      }
+    },
+    "profile": {
+      "dating_style": {
+        "title": "연애 스타일",
+        "loading": "관심사를 불러오고 있어요"
+      },
+      "drinking": {
+        "title": "음주 빈도",
+        "loading": "음주 여부를 불러오고 있어요",
+        "not_drinking_at_all_old": "전혀 안마시지 않음",
+        "not_drinking_at_all": "전혀 마시지 않음"
+      },
+      "image_card": {
+        "add_photo": "사진 추가하기",
+        "main": "대표",
+        "select": "선택"
+      },
+      "image_section": {
+        "title": "프로필 사진"
+      },
+      "interest": {
+        "title": "관심사",
+        "loading": "관심사를 불러오고 있어요"
+      },
+      "mbti": {
+        "title": "MBTI"
+      },
+      "military": {
+        "title": "병역사항",
+        "loading": "옵션을 불러오고 있어요"
+      },
+      "personality": {
+        "title": "성격 유형",
+        "loading": "성격 유형을 불러오고 있어요"
+      },
+      "smoking": {
+        "title": "흡연 여부",
+        "loading": "흡연 여부를 불러오고 있어요"
+      },
+      "tattoo": {
+        "title": "문신 여부",
+        "loading": "선호도를 불러오고 있어요"
+      }
+    }
+  }
+}

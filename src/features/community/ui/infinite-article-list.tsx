@@ -35,6 +35,7 @@ import type { Article as ArticleType } from "../types";
 import { Article } from "./article";
 
 import { ArticleSkeleton } from "../../loading/skeleton/article-skeleton";
+import { useTranslation } from "react-i18next";
 
 interface InfiniteArticleListProps {
   initialSize?: number;
@@ -62,7 +63,7 @@ export const InfiniteArticleList = forwardRef<
     const { currentCategory: currentFromContext } = useCategory();
     const categoryCode = categoryCodeOverride ?? currentFromContext;
     const { my } = useAuth();
-
+    const { t } = useTranslation();
     const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<
       FlatList<ArticleType>
     >;
@@ -151,16 +152,16 @@ export const InfiniteArticleList = forwardRef<
 
     const deleteArticle = (id: string) => {
       showModal({
-        title: "게시글 삭제",
+        title: t("features.community.ui.infinite_article_list.delete_article_title"),
         children: (
           <View>
             <Text size="sm" textColor="black">
-              해당 게시글을 삭제할까요?
+              {t("features.community.ui.infinite_article_list.delete_article_confirm")}
             </Text>
           </View>
         ),
         primaryButton: {
-          text: "삭제하기",
+          text:  t("features.community.ui.infinite_article_list.delete_button"),
           onClick: () =>
             tryCatch(
               async () => {
@@ -175,7 +176,7 @@ export const InfiniteArticleList = forwardRef<
             ),
         },
         secondaryButton: {
-          text: "취소",
+          text: t("global.cancel"),
           onClick: () => {},
         },
       });
@@ -328,7 +329,7 @@ export const InfiniteArticleList = forwardRef<
             style={{ width: 16, height: 16 }}
           />
           <Text size="sm" weight="bold">
-            [FAQ] 자주묻는 질문
+            {t("features.community.ui.infinite_article_list.faq_title")}
           </Text>
           <TouchableOpacity className="ml-auto">
             <IconWrapper>

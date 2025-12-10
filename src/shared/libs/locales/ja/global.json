@@ -1,0 +1,20 @@
+{
+  "loading": "読み込み中…",
+  "cancel": "キャンセル",
+  "confirm": "確認",
+  "close": "閉じる",
+  "error": "エラー",
+  "back": "戻る",
+  "success": "成功",
+  "select": "選択",
+  "next": "次へ",
+  "ok": "はい",
+  "no": "いいえ",
+  "confirm_button": "はい、移動します",
+  "confirm_checked": "確認しました",
+  "not_found": {
+    "title": "あれ、迷子になっちゃった！",
+    "description": "お探しのページが見つからないか、\n間違ったパスでアクセスしました",
+    "go_home": "ホームに戻る"
+  }
+}

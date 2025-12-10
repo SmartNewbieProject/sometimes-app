@@ -7,7 +7,7 @@ import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
 import { router, useGlobalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import {
   BackHandler,
   Keyboard,
@@ -32,18 +32,18 @@ function SignupInstagram() {
   const { updateForm, form } = useSignupProgress();
   const [instagramId, setInstagramId] = useState("");
   const insets = useSafeAreaInsets();
-
+  const { t } = useTranslation();
   const { showOverlay, hideOverlay } = useOverlay();
 
   useEffect(() => {
     // 처음에 오버레이 띄우기
     showOverlay(
       <View style={styles.infoWrapper}>
-        <Text style={styles.infoTitle}>프로필을 매력적으로 보여주세요!</Text>
+        <Text style={styles.infoTitle}>{t("apps.auth.sign_up.instagram.info_title")}</Text>
         <Text style={styles.infoDescription}>
-          사진을 업로드하고 계정을 공개로 설정하면
+          {t("apps.auth.sign_up.instagram.info_desc_1")}
         </Text>
-        <Text style={styles.infoDescription}>매칭 확률이 더 높아져요</Text>
+        <Text style={styles.infoDescription}>{t("apps.auth.sign_up.instagram.info_desc_2")}</Text>
         <Image
           source={require("@assets/images/instagram-some.png")}
           style={{
@@ -136,7 +136,7 @@ function SignupInstagram() {
             </View>
 
             <View style={[styles.contentWrapper, { zIndex: 10 }]}>
-              <Text style={styles.title}>인스타그램 아이디를 알려주세요</Text>
+              <Text style={styles.title}>{t("apps.auth.sign_up.instagram.title")}</Text>
               <View style={styles.inputWrapper}>
                 <Text style={styles.instagramText}>@</Text>
                 <TextInput
@@ -151,13 +151,13 @@ function SignupInstagram() {
           {!keyboardVisible && (
             <View style={[styles.infoWrapper]}>
               <Text style={styles.infoTitle}>
-                프로필을 매력적으로 보여주세요!
+                {t("apps.auth.sign_up.instagram.info_title")}
               </Text>
               <Text style={styles.infoDescription}>
-                사진을 업로드하고 계정을 공개로 설정하면
+                {t("apps.auth.sign_up.instagram.info_desc_1")}
               </Text>
               <Text style={styles.infoDescription}>
-                매칭 확률이 더 높아져요
+                {t("apps.auth.sign_up.instagram.info_desc_2")}
               </Text>
               <Image
                 source={require("@assets/images/instagram-some.png")}
@@ -188,7 +188,7 @@ function SignupInstagram() {
           <View style={styles.tipConatainer}>
             <HeartIcon width={20} height={20} />
             <Text style={styles.tip}>
-              인스타그램은 매칭된 상대에게만 공개됩니다
+              {t("apps.auth.sign_up.instagram.tip")}
             </Text>
           </View>
           <TwoButtons
@@ -209,7 +209,7 @@ export default withSignupValidation(SignupInstagram, SignupSteps.INSTAGRAM);
 const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     fontSize: 18,
     lineHeight: 22,
     color: semanticColors.brand.primary,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
     color: semanticColors.text.primary,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 22,
     textAlignVertical: "center",
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   },
   instagramText: {
     color: semanticColors.text.primary,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontWeight: 300,
     lineHeight: 22,
 
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   tip: {
     color: semanticColors.text.disabled,
     fontWeight: 300,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "thin",
     fontSize: 13,
 
     lineHeight: 20,
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: 600,
-    fontFamily: "Pretendard-SemiBold",
+    fontFamily: "semibold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

@@ -3,6 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { type ReportResponse, submitReport } from '../services/report';
+import { useTranslation } from "react-i18next";
+import { AMPLITUDE_KPI_EVENTS, USER_ACTION_SOURCES } from "@/src/shared/constants/amplitude-kpi-events";
 
 interface ApiErrorResponse {
 	statusCode?: number;
@@ -20,6 +22,7 @@ interface SubmitReportVariables {
 export function useReport() {
 	const queryClient = useQueryClient();
 	const { showModal, hideModal } = useModal();
+  const { t } = useTranslation();
 
 	const { mutate, isPending, isError, error } = useMutation<
 		ReportResponse,
@@ -28,12 +31,25 @@ export function useReport() {
 		unknown
 	>({
 		mutationFn: submitReport,
-		onSuccess: (data) => {
+		onSuccess: (data, variables) => {
+			const amplitude = (global as any).amplitude || {
+				track: (event: string, properties: any) => {
+					console.log("Amplitude Event:", event, properties);
+				},
+			};
+
+			amplitude.track(AMPLITUDE_KPI_EVENTS.USER_REPORTED, {
+				reported_user_id: variables.userId,
+				reason: variables.reason,
+				action_source: USER_ACTION_SOURCES.PROFILE,
+				timestamp: new Date().toISOString(),
+			});
+
 			showModal({
-				title: '신고 접수',
-				children: '신고가 성공적으로 접수되었습니다.',
+				title: t("features.ban-report.hooks.use_report.modal_title_success"),
+				children: t("features.ban-report.hooks.use_report.modal_message_success"),
 				primaryButton: {
-					text: '확인',
+					text: t("global.confirm"),
 					onClick: () => {
 						hideModal();
 						router.navigate('/home');
@@ -49,12 +65,12 @@ export function useReport() {
 		onError: (error) => {
 			console.error('신고 제출 중 오류 발생:', error);
 			const errorMessage =
-				error.response?.data?.message || '신고 제출에 실패했습니다. 다시 시도해주세요.';
+				error.response?.data?.message || t("features.ban-report.hooks.use_report.default_error_message");
 			showModal({
-				title: '신고 실패',
+				title:  t("features.ban-report.hooks.use_report.modal_title_error"),
 				children: errorMessage,
 				primaryButton: {
-					text: '확인',
+					text: t("global.confirm"),
 					onClick: () => hideModal(),
 				},
 			});
