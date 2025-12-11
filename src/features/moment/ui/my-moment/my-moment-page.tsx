@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
 import { GuideSection } from "./ui/guide-section";
@@ -8,6 +8,7 @@ import { HistorySection } from "./ui/history-section";
 import colors from "@/src/shared/constants/colors";
 import { useDailyQuestionQuery, useProgressStatusQuery } from "../../queries";
 import type { UserProgressStatus } from "../../apis";
+import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
 
 const { width } = Dimensions.get("window");
 
@@ -19,6 +20,24 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
   const { t } = useTranslation();
   const { data: dailyQuestion, isLoading: questionLoading, error: questionError } = useDailyQuestionQuery();
   const { data: progressStatus } = useProgressStatusQuery();
+  const { trackMyMomentView, trackQuestionCardView, trackGuideRewardView } = useMomentAnalytics();
+
+  useEffect(() => {
+    if (!questionLoading && progressStatus) {
+      const hasDailyQuestion = !!dailyQuestion?.question;
+      const isResponded = !progressStatus.canProceed && progressStatus.hasTodayAnswer;
+      trackMyMomentView({
+        source: 'navigation',
+        has_daily_question: hasDailyQuestion,
+        is_responded: isResponded,
+        is_blocked: !progressStatus.canProceed && !progressStatus.hasTodayAnswer,
+      });
+
+      if (isResponded) {
+        trackGuideRewardView({ reward_type: 'gem' });
+      }
+    }
+  }, [questionLoading, progressStatus, dailyQuestion]);
 
   // 응답 여부 확인 - 새로운 API 필드 기반으로 분기
   const getQuestionCardState = () => {
@@ -122,7 +141,7 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
           style={styles.background}
           resizeMode="stretch"
         />
-        <GuideSection />
+        <GuideSection responded={questionCardState.responded} />
         <QuestionCard
             responded={questionCardState.responded}
             blocked={questionCardState.blocked}

@@ -4,12 +4,15 @@ import { useTranslation } from "react-i18next";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 
-export const GuideSection = () => {
+interface GuideSectionProps {
+  responded?: boolean;
+}
+
+export const GuideSection = ({ responded = false }: GuideSectionProps) => {
   const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      {/* Removed paw prints from here as it's now in the page background */}
       <View style={styles.textContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 12 }}>
           <Text size="18" weight="semibold" textColor="black" style={styles.label}>
@@ -24,6 +27,19 @@ export const GuideSection = () => {
           {t('features.moment.my_moment.guide.description_1')}{"\n"}
           {t('features.moment.my_moment.guide.description_2')} <Text size="12" weight="bold" textColor="purple">{t('features.moment.my_moment.guide.every_sunday')}</Text> {t('features.moment.my_moment.guide.report_generated')}
         </Text>
+
+        {responded && (
+          <View style={styles.rewardContainer}>
+            <Image
+              source={require("@/assets/images/promotion/home-banner/gem.png")}
+              style={styles.gemIcon}
+              resizeMode="contain"
+            />
+            <Text size="12" weight="medium" textColor="purple">
+              {t('features.moment.my_moment.question_card.reward_received')}
+            </Text>
+          </View>
+        )}
       </View>
       <Image
         source={require("@/assets/images/moment/miho-mailbox.png")}
@@ -41,7 +57,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 20,
     marginBottom: 10,
-    height: 180,
+    minHeight: 180,
     position: "relative",
   },
   textContainer: {
@@ -60,12 +76,22 @@ const styles = StyleSheet.create({
   description: {
     lineHeight: 18,
   },
+  rewardContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+    gap: 6,
+  },
+  gemIcon: {
+    width: 18,
+    height: 18,
+  },
   character: {
     width: 180,
     height: 160,
     position: "absolute",
     bottom: 0,
     right: -20,
-    zIndex: 1, // Lower than text
+    zIndex: 1,
   },
 });

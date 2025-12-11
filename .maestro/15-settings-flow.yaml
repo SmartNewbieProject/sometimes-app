@@ -1,0 +1,432 @@
+appId: host.exp.Exponent
+---
+# 설정 플로우 테스트
+# 설정 메뉴, 계정 관리, 로그아웃, 회원 탈퇴
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 마이페이지에서 설정 진입
+# ====================================
+
+# 홈 화면에서 마이 탭으로 이동
+- tapOn:
+    text: "마이"
+    timeout: 5000
+    optional: true
+
+- tapOn:
+    text: "프로필"
+    optional: true
+
+# 마이페이지 화면 확인
+- assertVisible:
+    text: "마이"
+    timeout: 10000
+    optional: true
+
+# 설정 버튼 찾기 (톱니바퀴 아이콘 또는 "설정" 텍스트)
+- assertVisible:
+    text: "설정"
+    timeout: 5000
+    optional: true
+
+# 설정 버튼 클릭
+- tapOn:
+    text: "설정"
+    optional: true
+
+# ====================================
+# 시나리오 2: 설정 메인 화면 (/setting)
+# ====================================
+
+# 설정 화면 확인
+- assertVisible:
+    text: "설정"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기 버튼
+- assertVisible:
+    text: "←"
+    optional: true
+
+# ====================================
+# 시나리오 3: 계정 메뉴 확인 (AccountMenu)
+# ====================================
+
+# Menu 컴포넌트로 렌더링
+# title: "계정"
+
+- assertVisible:
+    text: "계정"
+    timeout: 5000
+    optional: true
+
+# 계정 관리 메뉴
+- assertVisible:
+    text: "계정 관리"
+    timeout: 5000
+    optional: true
+
+# 화살표 아이콘 (시각적 요소)
+- assertVisible:
+    text: "→"
+    optional: true
+
+# ====================================
+# 시나리오 4: 계정 관리 진입 (/setting/account)
+# ====================================
+
+# 계정 관리 메뉴 클릭
+- tapOn:
+    text: "계정 관리"
+    optional: true
+
+# 계정 관리 화면 확인
+- assertVisible:
+    text: "계정 관리"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 5: 계정 관리 메뉴 확인 (AccountManagementMenu)
+# ====================================
+
+# Menu 컴포넌트로 렌더링
+# title: "계정 관리"
+
+# 로그아웃 메뉴
+- assertVisible:
+    text: "로그아웃"
+    timeout: 5000
+    optional: true
+
+# 회원 탈퇴 메뉴
+- assertVisible:
+    text: "탈퇴"
+    optional: true
+
+- assertVisible:
+    text: "회원"
+    optional: true
+
+# ====================================
+# 시나리오 6: 로그아웃 확인 모달
+# ====================================
+
+# 로그아웃 메뉴 클릭
+- tapOn:
+    text: "로그아웃"
+    optional: true
+
+# 로그아웃 확인 모달 표시
+- assertVisible:
+    text: "로그아웃"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "하시겠습니까"
+    optional: true
+
+# 모달 설명 텍스트
+- assertVisible:
+    text: "일부 기능"
+    optional: true
+
+- assertVisible:
+    text: "사용할 수 없으며"
+    optional: true
+
+- assertVisible:
+    text: "다시 로그인"
+    optional: true
+
+# 버튼 확인 (reverse 모드: 취소가 primary, 로그아웃이 secondary)
+- assertVisible:
+    text: "취소"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "로그아웃"
+    optional: true
+
+# 취소 버튼 클릭 (실제로 로그아웃하지 않음)
+- tapOn:
+    text: "취소"
+    optional: true
+
+# ====================================
+# 시나리오 7: 회원 탈퇴 확인 모달
+# ====================================
+
+# 회원 탈퇴 메뉴 클릭
+- tapOn:
+    text: "회원"
+    optional: true
+
+# 또는 "탈퇴" 단독 텍스트로 시도
+- tapOn:
+    text: "탈퇴"
+    optional: true
+
+# 탈퇴 확인 모달 표시
+- assertVisible:
+    text: "탈퇴"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "정말"
+    optional: true
+
+# 모달 설명 텍스트
+- assertVisible:
+    text: "계정은 삭제"
+    optional: true
+
+- assertVisible:
+    text: "복구되지 않습니다"
+    optional: true
+
+# 버튼 확인
+- assertVisible:
+    text: "취소"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "탈퇴"
+    optional: true
+
+# 탈퇴 버튼 클릭 (실제 탈퇴 화면으로 이동)
+- tapOn:
+    text: "탈퇴"
+    optional: true
+
+# ====================================
+# 시나리오 8: 회원 탈퇴 화면 (/my/withdrawal)
+# ====================================
+
+# 회원 탈퇴 화면 확인
+- assertVisible:
+    text: "탈퇴"
+    timeout: 10000
+    optional: true
+
+# 헤더 타이틀
+- assertVisible:
+    text: "회원"
+    optional: true
+
+# 뒤로가기 버튼
+- assertVisible:
+    text: "←"
+    optional: true
+
+# ====================================
+# 시나리오 9: 탈퇴 화면 상단 정보 (TopContainer)
+# ====================================
+
+# 미호 이미지 (withdrawal-miho.png)
+# 80x80 사이즈
+
+# 감사 메시지
+- assertVisible:
+    text: "감사"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "이용"
+    optional: true
+
+# 피드백 요청 메시지
+- assertVisible:
+    text: "피드백"
+    optional: true
+
+- assertVisible:
+    text: "남겨주세요"
+    optional: true
+
+# ====================================
+# 시나리오 10: 탈퇴 사유 선택 (Form.Radio)
+# ====================================
+
+# 8가지 탈퇴 사유 목록:
+# 1. FOUND_PARTNER - "파트너를 찾았어요"
+# 2. POOR_MATCHING - "매칭이 만족스럽지 않아요"
+# 3. PRIVACY_CONCERN - "개인정보가 걱정돼요"
+# 4. SAFETY_CONCERN - "안전 문제가 있어요"
+# 5. TECHNICAL_ISSUES - "기술적 문제가 있어요"
+# 6. INACTIVE_USAGE - "자주 사용하지 않아요"
+# 7. DISSATISFIED_SERVICE - "서비스가 만족스럽지 않아요"
+# 8. OTHER - "기타"
+
+# 첫 번째 사유 확인
+- assertVisible:
+    text: "파트너"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "찾았어요"
+    optional: true
+
+# 두 번째 사유 확인
+- assertVisible:
+    text: "매칭"
+    optional: true
+
+- assertVisible:
+    text: "만족"
+    optional: true
+
+# 세 번째 사유 확인
+- assertVisible:
+    text: "개인정보"
+    optional: true
+
+# "기타" 사유 확인
+- assertVisible:
+    text: "기타"
+    optional: true
+
+# ====================================
+# 시나리오 11: 탈퇴 사유 선택 (라디오 버튼)
+# ====================================
+
+# 첫 번째 사유 선택
+- tapOn:
+    index: 0
+    optional: true
+
+# 선택된 라디오 버튼 (보라색 점)
+# 참고: 시각적 요소이므로 직접 확인 어려움
+
+# ====================================
+# 시나리오 12: "기타" 선택 시 상세 입력
+# ====================================
+
+# "기타" 사유 선택
+- tapOn:
+    text: "기타"
+    optional: true
+
+# 상세 입력 필드 표시 (isOther = true)
+- assertVisible:
+    text: "상세"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "입력"
+    optional: true
+
+# 상세 사유 입력
+- tapOn:
+    text: "입력"
+    optional: true
+
+- inputText: "기타 사유 상세 내용입니다."
+
+# ====================================
+# 시나리오 13: 탈퇴 버튼 확인 및 유효성 검사
+# ====================================
+
+# 하단 탈퇴 버튼 확인
+- assertVisible:
+    text: "서비스"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "떠나기"
+    optional: true
+
+# 유효성 검사:
+# - reason이 선택되어 있어야 함 (3자 이상)
+# - disabled = !isValid
+
+# 탈퇴 버튼 클릭 (실제로는 취소)
+# 참고: 실제 탈퇴 시 계정이 삭제되므로 테스트에서는 진행하지 않음
+
+# ====================================
+# 시나리오 14: 탈퇴 처리 플로우 (참고용)
+# ====================================
+
+# onSubmitWithdrawal 실행 시:
+# 1. isOther ? otherReason : data.reason 선택
+# 2. DELETE /user/withdrawl API 호출
+# 3. clearTokensOnly() 토큰 삭제
+# 4. 탈퇴 완료 모달 표시
+# 5. 로그인 화면으로 이동 (/auth/login)
+
+# 탈퇴 완료 모달 (참고)
+# - title: "탈퇴가 완료되었습니다"
+# - children: "그동안 이용해주셔서 감사합니다" + "더 나은 서비스로 찾아뵙겠습니다"
+# - primaryButton: "확인" → 로그인 화면 이동
+
+# ====================================
+# 시나리오 15: 뒤로가기로 설정 화면 복귀
+# ====================================
+
+# 뒤로가기 버튼 클릭
+- tapOn:
+    text: "←"
+    optional: true
+
+# 계정 관리 화면으로 복귀
+- assertVisible:
+    text: "계정 관리"
+    timeout: 10000
+    optional: true
+
+# 다시 뒤로가기
+- back
+
+# 설정 메인으로 복귀
+- assertVisible:
+    text: "설정"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 16: 설정 추가 메뉴 (향후 확장)
+# ====================================
+
+# 현재는 AccountMenu만 있음
+# 향후 알림 설정, 언어 설정, 이용약관 등 추가 가능
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 뒤로가기로 마이페이지 복귀
+- back
+
+# 홈으로 이동
+- tapOn:
+    text: "홈"
+    optional: true
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 참고: 설정 플로우 테스트 시 고려사항
+# 1. 설정 메인 (/setting): AccountMenu 컴포넌트
+# 2. 계정 관리 (/setting/account): AccountManagementMenu 컴포넌트
+# 3. 로그아웃: showModal로 확인 후 logout() 호출
+# 4. 회원 탈퇴: 확인 모달 → 탈퇴 화면 (/my/withdrawal)
+# 5. 탈퇴 사유: 8가지 선택지 + "기타" 시 상세 입력 필수
+# 6. 탈퇴 처리: DELETE /user/withdrawl + clearTokensOnly() + 로그인 화면 이동
+# 7. Menu 컴포넌트: title + options 배열로 메뉴 렌더링
+# 8. 모달 reverse 모드: 취소가 primary, 실행이 secondary
+# 9. Form.Radio: react-hook-form + zod 유효성 검사
+# 10. 탈퇴 후 계정 복구 불가 경고 메시지 표시

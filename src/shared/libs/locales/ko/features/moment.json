@@ -37,7 +37,8 @@
       "go_to_previous": "이전 질문으로 가기",
       "answered_today": "오늘의 질문에 답변했어요",
       "see_you_tomorrow": "내일 새로운 질문으로 만나요!",
-      "complete_previous": "이전 질문을 먼저 완료해주세요"
+      "complete_previous": "이전 질문을 먼저 완료해주세요",
+      "reward_received": "이번 보상을 수령했습니다"
     },
     "history": {
       "my_moment_record": "나의 모먼트 기록",
@@ -49,7 +50,12 @@
       "my_recent_moment": "나의 최근 모먼트",
       "week_info": "{{year}}년 {{week}}주차",
       "waiting_first": "첫 모먼트를 기다려요",
-      "start_description": "오늘의 질문에 답변하고 나만의 성장 리포트를 만들어보세요!"
+      "start_description": "오늘의 질문에 답변하고 나만의 성장 리포트를 만들어보세요!",
+      "no_analysis_yet": "아직 분석된 내용이 없어요",
+      "empty_state_modal": {
+        "title": "아직 모먼트가 없어요 🥺",
+        "description": "매일 질문에 답변하면\n일주일마다 나만의 모먼트 리포트가 생성돼요!"
+      }
     },
     "blocked_messages": {
       "no_question": "오늘은 질문이 없습니다. 내일 다시 방문해주세요.",
@@ -91,7 +97,8 @@
     "sent": {
       "success": "답장이 전송되었습니다",
       "back_to_moment": "질문함으로 돌아가기",
-      "ai_reply": "당신의 소중한 마음이 잘 도착했어요. 💌"
+      "ai_reply": "당신의 소중한 마음이 잘 도착했어요. 💌",
+      "reward_message": "을 받았습니다! 오늘 하루도 화이팅하세요!"
     },
     "inspiration": {
       "sample": "따뜻한 햇살 아래서..."

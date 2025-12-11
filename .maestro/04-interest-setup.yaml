@@ -1,0 +1,203 @@
+appId: host.exp.Exponent
+---
+# 관심사 설정 플로우 테스트
+# 로그인 후 관심사 설정 화면을 통해 매칭 선호도 입력
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# 관심사 소개 화면 (/interest)
+- assertVisible:
+    text: "이상형에 관한 정보를 알려주세요"
+    timeout: 10000
+
+- assertVisible:
+    text: "미호가 이상형에 가까운 사람을 찾아드려요"
+
+# 시작하기 버튼 클릭
+- tapOn:
+    text: "시작하기"
+
+# 1. 나이 선택 (/interest/age)
+- assertVisible:
+    text: "이런 나이대의 사람이"
+    timeout: 10000
+
+- assertVisible:
+    text: "좋아요"
+
+# 나이 옵션 선택 (예: 동갑)
+- tapOn:
+    text: "동갑"
+    optional: true
+
+# 또는 다른 옵션
+- tapOn:
+    text: "연상"
+    optional: true
+
+- tapOn:
+    text: "연하"
+    optional: true
+
+# 다음 버튼
+- tapOn:
+    text: "다음"
+
+# 2. 선호 MBTI 선택 (/interest/like-mbti)
+- assertVisible:
+    text: "이런 MBTI를 좋아해요"
+    timeout: 10000
+
+# MBTI 선택 (E/I, S/N, T/F, J/P)
+# 예: ENFP 선택
+- tapOn:
+    text: "E"
+    index: 0
+    optional: true
+
+- tapOn:
+    text: "N"
+    index: 0
+    optional: true
+
+- tapOn:
+    text: "F"
+    index: 0
+    optional: true
+
+- tapOn:
+    text: "P"
+    index: 0
+    optional: true
+
+# 다음 버튼 (선택 안해도 다음 가능)
+- tapOn:
+    text: "선택 안 할래요"
+    optional: true
+
+- tapOn:
+    text: "다음"
+    optional: true
+
+# 3. 비선호 MBTI 선택 (/interest/bad-mbti)
+- assertVisible:
+    text: "이런 MBTI는 피하고 싶어요"
+    timeout: 10000
+    optional: true
+
+# MBTI 선택 건너뛰기
+- tapOn:
+    text: "선택 안 할래요"
+    optional: true
+
+- tapOn:
+    text: "다음"
+    optional: true
+
+# 4. 흡연 선호도 (/interest/smoking)
+- assertVisible:
+    text: "흡연"
+    timeout: 10000
+    optional: true
+
+# 흡연 옵션 선택
+- tapOn:
+    text: "비흡연"
+    optional: true
+
+- tapOn:
+    text: "다음"
+    optional: true
+
+# 5. 음주 선호도 (/interest/drinking)
+- assertVisible:
+    text: "음주"
+    timeout: 10000
+    optional: true
+
+# 음주 옵션 선택
+- tapOn:
+    text: "가끔"
+    optional: true
+
+- tapOn:
+    text: "다음"
+    optional: true
+
+# 6. 문신 선호도 (/interest/tattoo)
+- assertVisible:
+    text: "문신"
+    timeout: 10000
+    optional: true
+
+# 문신 옵션 선택
+- tapOn:
+    text: "없음"
+    optional: true
+
+- tapOn:
+    text: "다음"
+    optional: true
+
+# 7. 군대 선호도 (/interest/military)
+- assertVisible:
+    text: "군대"
+    timeout: 10000
+    optional: true
+
+# 군대 옵션 선택
+- tapOn:
+    text: "전역"
+    optional: true
+
+- tapOn:
+    text: "미필"
+    optional: true
+
+- tapOn:
+    text: "다음"
+    optional: true
+
+# 8. 성격 선택 (/interest/personality)
+- assertVisible:
+    text: "성격"
+    timeout: 10000
+    optional: true
+
+# 성격 옵션 선택 (다중 선택 가능)
+- tapOn:
+    text: "유머러스"
+    optional: true
+
+- tapOn:
+    text: "친절"
+    optional: true
+
+- tapOn:
+    text: "다음"
+    optional: true
+
+# 9. 완료 화면 (/interest/done)
+- assertVisible:
+    text: "관심사 설정이 완료되었어요"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "미호가 이상형을 찾아드릴게요"
+    optional: true
+
+# 홈으로 이동 버튼
+- tapOn:
+    text: "확인"
+    optional: true
+
+- tapOn:
+    text: "홈으로 이동"
+    optional: true
+
+# 홈 화면 진입 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000

@@ -61,11 +61,39 @@ export default function PartnerDetailScreen() {
   const hasTrackedView = useRef(false);
 
   useEffect(() => {
+    if (!partner) return;
+
+    // 재방문 (isFirstView: false) - 애니메이션/모달 스킵
+    if (partner.isFirstView === false) {
+      setIsAnalyzing(false);
+      setShowMihoIntro(false);
+
+      // Amplitude 트래킹만 실행
+      if (!hasTrackedView.current) {
+        hasTrackedView.current = true;
+        const amplitude = (global as any).amplitude || {
+          track: (event: string, properties: any) => {
+            console.log('Amplitude Event:', event, properties);
+          },
+        };
+
+        amplitude.track(AMPLITUDE_KPI_EVENTS.PROFILE_VIEWED, {
+          viewed_profile_id: partner.id,
+          view_source: 'matching_history',
+          partner_age: partner.age,
+          partner_university: partner.universityDetails?.name,
+          timestamp: new Date().toISOString(),
+        });
+      }
+      return;
+    }
+
+    // 최초 방문 (isFirstView: true 또는 undefined) - 애니메이션 + 모달 표시
     const timer = setTimeout(() => {
       setIsAnalyzing(false);
       setShowMihoIntro(true);
 
-      if (partner && !hasTrackedView.current) {
+      if (!hasTrackedView.current) {
         hasTrackedView.current = true;
         const amplitude = (global as any).amplitude || {
           track: (event: string, properties: any) => {
@@ -365,6 +393,24 @@ export default function PartnerDetailScreen() {
 
             <PartnerMBTI partner={partner} />
 
+            <Text
+              style={{ color: semanticColors.text.primary }}
+              className="text-lg font-bold ml-5"
+            >
+              미호가 두분을 연결한 특별한 이유
+            </Text>
+
+            {matchReasonsData?.reasons && matchReasonsData.reasons.length > 0 && (
+              <MatchingReasonCard
+                reasons={matchReasonsData.reasons.map((r) => r.description)}
+                keywords={[
+                  ...(parser.getMultipleCharacteristicsOptions(["성격"], partner.characteristics)["성격"]?.map((c: any) => c.label) || []),
+                  ...(parser.getMultipleCharacteristicsOptions(["연애 스타일"], partner.characteristics)["연애 스타일"]?.map((c: any) => c.label) || []),
+                  ...(parser.getMultipleCharacteristicsOptions(["관심사"], partner.characteristics)["관심사"]?.map((c: any) => c.label) || []),
+                ]}
+              />
+            )}
+
             {partner.profileImages.length > 2 && (
               <View
                 style={{
@@ -389,23 +435,6 @@ export default function PartnerDetailScreen() {
                   />
                 </Pressable>
               </View>
-            )}
-            <Text
-              style={{ color: semanticColors.text.primary }}
-              className="text-lg font-medium ml-3"
-            >
-              미호가 두분을 연결한 특별한 이유
-            </Text>
-
-            {matchReasonsData?.reasons && matchReasonsData.reasons.length > 0 && (
-              <MatchingReasonCard
-                reasons={matchReasonsData.reasons.map((r) => r.description)}
-                keywords={[
-                  ...(parser.getMultipleCharacteristicsOptions(["성격"], partner.characteristics)["성격"]?.map((c: any) => c.label) || []),
-                  ...(parser.getMultipleCharacteristicsOptions(["연애 스타일"], partner.characteristics)["연애 스타일"]?.map((c: any) => c.label) || []),
-                  ...(parser.getMultipleCharacteristicsOptions(["관심사"], partner.characteristics)["관심사"]?.map((c: any) => c.label) || []),
-                ]}
-              />
             )}
 
             {partner.profileImages.length > 3 && (

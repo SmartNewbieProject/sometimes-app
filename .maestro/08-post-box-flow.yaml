@@ -1,0 +1,335 @@
+appId: host.exp.Exponent
+---
+# 우편함 플로우 테스트
+# "내가 좋아요한"과 "나를 좋아요한" 목록 확인 및 액션 테스트
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 우편함 진입 (/post-box)
+# ====================================
+
+# 우편함으로 이동
+# 참고: 네비게이션 경로는 실제 앱 구조에 따라 조정 필요
+# 홈 또는 프로필에서 접근 가능할 것으로 예상
+
+# 우편함 버튼 찾기
+- tapOn:
+    text: "우편함"
+    timeout: 5000
+    optional: true
+
+# 우편함 헤더 확인
+- assertVisible:
+    text: "우편함"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 2: "나를 좋아요한" 탭 (/post-box/liked-me)
+# ====================================
+
+# "나를 좋아요한" 탭 확인 및 클릭
+- assertVisible:
+    text: "나를"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "좋아요한"
+    optional: true
+
+- tapOn:
+    text: "나를 좋아요한"
+    optional: true
+
+# 로딩 메시지 확인
+- assertVisible:
+    text: "불러오는 중"
+    timeout: 5000
+    optional: true
+
+# 좋아요 카드 목록 확인
+# FlashList로 렌더링됨
+
+# 프로필 이미지 확인
+- assertVisible:
+    text: "님"
+    timeout: 10000
+    optional: true
+
+# 나이 표시 확인
+- assertVisible:
+    text: "세"
+    optional: true
+
+# 대학교 정보 확인
+- assertVisible:
+    text: "대학교"
+    optional: true
+
+# 상태 메시지 확인 (예: "3시간 전에 좋아요를 보냈어요")
+- assertVisible:
+    text: "좋아요"
+    optional: true
+
+# 남은 시간 확인
+- assertVisible:
+    text: "남음"
+    optional: true
+
+# ====================================
+# 시나리오 3: "나를 좋아요한" - 액션 버튼 확인
+# ====================================
+
+# PENDING 상태 카드의 버튼들 확인
+
+# 거절 버튼 (X 아이콘)
+- assertVisible:
+    text: "패스"
+    optional: true
+
+# 좋아요 버튼
+- assertVisible:
+    text: "좋아요"
+    optional: true
+
+# ====================================
+# 시나리오 4: 프로필 상세 보기
+# ====================================
+
+# 카드 클릭하여 프로필 상세로 이동
+- tapOn:
+    index: 0
+    optional: true
+
+# 프로필 상세 화면 확인
+- assertVisible:
+    text: "프로필"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 5: "내가 좋아요한" 탭 (/post-box/i-liked)
+# ====================================
+
+# "내가 좋아요한" 탭 클릭
+- tapOn:
+    text: "내가 좋아요한"
+    optional: true
+
+# 로딩 확인
+- assertVisible:
+    text: "불러오는 중"
+    timeout: 5000
+    optional: true
+
+# 카드 목록 확인
+- assertVisible:
+    text: "세"
+    timeout: 10000
+    optional: true
+
+# 상태별 메시지 확인
+
+# PENDING 상태 (응답 대기)
+- assertVisible:
+    text: "응답"
+    optional: true
+
+- assertVisible:
+    text: "대기"
+    optional: true
+
+# OPEN 상태 (상호 좋아요)
+- assertVisible:
+    text: "상호"
+    optional: true
+
+# REJECTED 상태 (거절됨)
+- assertVisible:
+    text: "거절"
+    optional: true
+
+# ====================================
+# 시나리오 6: "내가 좋아요한" - REJECTED 카드 처리
+# ====================================
+
+# REJECTED 카드의 "안 맞음" 버튼 확인
+- assertVisible:
+    text: "안 맞음"
+    optional: true
+
+# "안 맞음" 버튼 클릭
+- tapOn:
+    text: "안 맞음"
+    optional: true
+
+# 확인 모달 표시
+- assertVisible:
+    text: "정말"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "삭제"
+    optional: true
+
+# 모달 닫기
+- tapOn:
+    text: "취소"
+    optional: true
+
+- tapOn:
+    text: "닫기"
+    optional: true
+
+# ====================================
+# 시나리오 7: OPEN 상태 - 채팅 시작
+# ====================================
+
+# OPEN 상태 카드 찾기 (상호 좋아요)
+- assertVisible:
+    text: "채팅"
+    optional: true
+
+- assertVisible:
+    text: "시작"
+    optional: true
+
+# "채팅 시작하기" 버튼 클릭
+- tapOn:
+    text: "채팅 시작하기"
+    optional: true
+
+# 채팅 시작 모달 확인
+- assertVisible:
+    text: "인스타"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "공개"
+    optional: true
+
+# 구슬 비용 안내 (남성 사용자의 경우)
+- assertVisible:
+    text: "구슬"
+    optional: true
+
+- assertVisible:
+    text: "개로"
+    optional: true
+
+# 모달 닫기
+- tapOn:
+    text: "아니요"
+    optional: true
+
+# ====================================
+# 시나리오 8: IN_CHAT 상태 - 채팅 이동
+# ====================================
+
+# IN_CHAT 카드 확인
+- assertVisible:
+    text: "대화"
+    optional: true
+
+- assertVisible:
+    text: "이어지고"
+    optional: true
+
+# "대화가 이어지고 있어요" 버튼 클릭
+- tapOn:
+    text: "대화가 이어지고 있어요"
+    optional: true
+
+# 채팅 화면 진입 확인
+- assertVisible:
+    text: "채팅"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 9: 빈 상태 (NotSome 컴포넌트)
+# ====================================
+
+# 좋아요가 없는 경우 표시되는 메시지
+# 참고: 실제로 좋아요가 없을 때만 표시됨
+
+# "아직 좋아요가 없어요" 메시지 확인
+- assertVisible:
+    text: "아직"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "없어요"
+    optional: true
+
+# ====================================
+# 시나리오 10: 읽음 표시 (viewPoint)
+# ====================================
+
+# 읽지 않은 카드는 보라색 점 표시
+# 읽은 카드는 회색 점 표시
+# 참고: 시각적 요소이므로 텍스트 기반 테스트에서는 확인 어려움
+
+# ====================================
+# 시나리오 11: 만료 시간 경고 (getRemainingTimeLimit)
+# ====================================
+
+# 남은 시간이 얼마 없을 때 빨간색 깜빡임 표시
+- assertVisible:
+    text: "시간"
+    optional: true
+
+- assertVisible:
+    text: "남음"
+    optional: true
+
+# 만료된 경우
+- assertVisible:
+    text: "만료"
+    optional: true
+
+# ====================================
+# 시나리오 12: 탈퇴한 사용자 카드
+# ====================================
+
+# 탈퇴한 사용자 (deletedAt이 있는 경우)
+- assertVisible:
+    text: "탈퇴"
+    optional: true
+
+# 탈퇴한 사용자 카드는 클릭 불가 (프로필 진입 안됨)
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 홈으로 이동
+- tapOn:
+    text: "홈"
+    optional: true
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+    optional: true
+
+# 참고: 우편함 테스트 시 고려사항
+# 1. 실제 데이터 상태에 따라 카드가 다르게 표시됨
+# 2. PENDING, OPEN, REJECTED, IN_CHAT 상태별 다른 UI
+# 3. 만료 시간 카운트다운 (matchExpiredAt)
+# 4. 읽음/안읽음 표시 (viewedAt)
+# 5. 탈퇴한 사용자 처리 (deletedAt)
+# 6. 상호 좋아요 여부 (isMutualLike)

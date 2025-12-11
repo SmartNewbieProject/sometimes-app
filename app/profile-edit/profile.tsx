@@ -102,7 +102,7 @@ function Profile() {
           ?.selectedOptions?.map((item) => item.id) as string[]
       );
     }
-  }, [preferenceSelf?.length, JSON.stringify(profileDetails), updateForm]);
+  }, [preferenceSelf, profileDetails?.id, profileDetails?.mbti, profileDetails?.gender, updateForm]);
 
   const onFinish = async () => {
     setFormSubmitLoading(true);

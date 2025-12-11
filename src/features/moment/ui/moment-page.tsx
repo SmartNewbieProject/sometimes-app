@@ -10,27 +10,25 @@ import { MomentNavigationMenu } from "./navigation-menu";
 import { useMomentSlidesQuery, prefetchDailyQuestion } from "../queries";
 import { MOMENT_NAVIGATION_ITEMS } from "../constants/navigation-data";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMomentAnalytics } from "../hooks/use-moment-analytics";
 
 export const MomentPage = () => {
   const { data: slides = [], isLoading: slidesLoading } = useMomentSlidesQuery();
   const { momentEvents, featureEvents } = useKpiAnalytics();
   const queryClient = useQueryClient();
+  const { trackMomentHomeView } = useMomentAnalytics();
 
-  // 페이지가 focus 될 때마다 데이터 refetch
   useFocusEffect(
     React.useCallback(() => {
-      // KPI 이벤트: 모먼트 기능 사용
       featureEvents.trackFeatureUsed('moment', 'navigation');
+      trackMomentHomeView({ source: 'navigation' });
 
-      // 관련 쿼리들 refetch
       queryClient.refetchQueries({ queryKey: ["moment", "daily-question"] });
       queryClient.refetchQueries({ queryKey: ["moment", "progress-status"] });
       queryClient.refetchQueries({ queryKey: ["moment", "moment-slides"] });
 
-      return () => {
-        // cleanup (필요시)
-      };
-    }, [queryClient])
+      return () => {};
+    }, [queryClient, trackMomentHomeView])
   );
 
   return (

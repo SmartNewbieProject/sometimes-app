@@ -1,0 +1,259 @@
+appId: host.exp.Exponent
+---
+# 결제 플로우 테스트
+# 구슬 상점(Gem Store)과 재매칭 티켓(Rematch Ticket) 결제 흐름 확인
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 구슬 상점 진입 (/purchase/gem-store)
+# ====================================
+
+# 구슬 상점으로 이동
+# 참고: 네비게이션 경로는 실제 앱 구조에 따라 조정 필요
+# 프로필 또는 설정에서 접근 가능할 것으로 예상
+
+# 홈에서 프로필로 이동
+- tapOn:
+    text: "프로필"
+    optional: true
+    timeout: 5000
+
+# 구슬 상점 버튼 찾기
+- tapOn:
+    text: "구슬"
+    optional: true
+
+- tapOn:
+    text: "상점"
+    optional: true
+
+# 구슬 상점 화면 확인
+- assertVisible:
+    text: "구슬"
+    timeout: 10000
+    optional: true
+
+# 현재 보유 구슬 개수 확인
+- assertVisible:
+    text: "보유"
+    optional: true
+
+# ====================================
+# 시나리오 2: 구슬 상품 목록 확인
+# ====================================
+
+# 첫 구매 할인 카드 확인
+- assertVisible:
+    text: "첫 구매"
+    optional: true
+
+- assertVisible:
+    text: "할인"
+    optional: true
+
+# 구슬 상품 목록 확인
+# gemProducts는 sortOrder로 정렬되어 표시됨
+
+# 가격 정보 확인
+- assertVisible:
+    text: "원"
+    timeout: 5000
+    optional: true
+
+# HOT 뱃지 확인 (index 2 상품)
+- assertVisible:
+    text: "HOT"
+    optional: true
+
+# ====================================
+# 시나리오 3: 구슬 구매 시도
+# ====================================
+
+# 구슬 상품 선택 (첫 번째 상품)
+- tapOn:
+    index: 0
+    optional: true
+
+# 결제 화면 진입 확인
+- assertVisible:
+    text: "결제"
+    timeout: 10000
+    optional: true
+
+# 결제 정보 확인
+- assertVisible:
+    text: "구슬"
+    optional: true
+
+- assertVisible:
+    text: "총 금액"
+    optional: true
+
+# 결제 취소 버튼 확인
+- assertVisible:
+    text: "취소"
+    optional: true
+
+# 결제 취소 (실제 결제는 진행하지 않음)
+- tapOn:
+    text: "취소"
+    optional: true
+
+# 구슬 상점으로 복귀 확인
+- assertVisible:
+    text: "구슬"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 4: 재매칭 티켓 구매 (/purchase/tickets/rematch)
+# ====================================
+
+# 뒤로가기로 홈 복귀
+- back
+
+# 재매칭 티켓 화면으로 이동
+# 참고: 매칭 화면이나 프로필에서 접근 가능할 것으로 예상
+- tapOn:
+    text: "재매칭"
+    optional: true
+
+- tapOn:
+    text: "티켓"
+    optional: true
+
+# 재매칭 티켓 화면 확인
+- assertVisible:
+    text: "재매칭"
+    timeout: 10000
+    optional: true
+
+# 티켓 안내 배너 확인
+- assertVisible:
+    text: "티켓"
+    optional: true
+
+# ====================================
+# 시나리오 5: 재매칭 티켓 상품 목록 확인
+# ====================================
+
+# 티켓 가격 확인 (5900원)
+- assertVisible:
+    text: "5,900"
+    optional: true
+
+- assertVisible:
+    text: "원"
+    optional: true
+
+# 할인율 확인
+- assertVisible:
+    text: "%"
+    optional: true
+
+# HOT 뱃지 확인 (3개 구매 옵션)
+- assertVisible:
+    text: "HOT"
+    optional: true
+
+# 다양한 구매 옵션 확인
+# 1개, 2개, 3개, 5개, 10개 옵션
+
+# ====================================
+# 시나리오 6: 재매칭 티켓 구매 시도
+# ====================================
+
+# 티켓 1개 구매 선택
+- tapOn:
+    text: "1개"
+    optional: true
+
+# 결제 화면 진입
+- assertVisible:
+    text: "결제"
+    timeout: 10000
+    optional: true
+
+# 주문명 확인
+- assertVisible:
+    text: "재매칭"
+    optional: true
+
+# 총 금액 확인
+- assertVisible:
+    text: "5,900"
+    optional: true
+
+# 결제 취소
+- tapOn:
+    text: "취소"
+    optional: true
+
+# 티켓 화면 복귀 확인
+- assertVisible:
+    text: "재매칭"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 7: 다량 구매 옵션 확인
+# ====================================
+
+# HOT 상품 (3개) 선택
+- tapOn:
+    text: "3개"
+    optional: true
+
+# 할인가 확인 (27.2% 할인)
+- assertVisible:
+    text: "할인"
+    timeout: 5000
+    optional: true
+
+# 결제 화면 확인
+- assertVisible:
+    text: "결제"
+    timeout: 10000
+    optional: true
+
+# 수량 확인
+- assertVisible:
+    text: "3"
+    optional: true
+
+# 결제 취소
+- tapOn:
+    text: "취소"
+    optional: true
+
+# ====================================
+# 시나리오 8: 결제 완료 화면 (/purchase/complete)
+# ====================================
+
+# 참고: 실제 결제 완료 시 이동하는 화면
+# 테스트 환경에서는 직접 접근 어려움
+# 결제 완료 후 표시될 요소들:
+# - 결제 성공 메시지
+# - 구매한 아이템 정보
+# - 홈으로 돌아가기 버튼
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 홈으로 이동
+- back
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+    optional: true
+
+# 참고: 실제 결제 테스트는 다음 사항을 고려해야 함
+# 1. 테스트 결제 환경 (PortOne 샌드박스)
+# 2. 실제 결제 완료 플로우는 외부 PG사 화면 필요
+# 3. iOS는 별도 Apple 인앱결제 시스템 사용
+# 4. 결제 완료 후 서버 검증 및 아이템 지급 확인

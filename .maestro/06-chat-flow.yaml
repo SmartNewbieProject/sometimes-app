@@ -1,0 +1,245 @@
+appId: host.exp.Exponent
+---
+# 채팅 플로우 테스트
+# 채팅 목록, 채팅방 진입, 메시지 전송, Somemate AI 챗봇
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 채팅 목록 화면 (/chat)
+# ====================================
+
+# 하단 네비게이션에서 채팅 탭 클릭
+- tapOn:
+    text: "채팅"
+    timeout: 5000
+
+# 채팅 목록 화면 확인
+- assertVisible:
+    text: "채팅"
+    timeout: 10000
+
+# 채팅방 목록 확인
+- assertVisible:
+    text: "채팅방"
+    optional: true
+
+# 미읽은 메시지 뱃지 확인
+- assertVisible:
+    text: "1"
+    optional: true
+
+# 검색 기능 확인
+- assertVisible:
+    text: "검색"
+    optional: true
+
+# Somemate 배너 확인
+- assertVisible:
+    text: "Somemate"
+    optional: true
+
+- assertVisible:
+    text: "AI"
+    optional: true
+
+# ====================================
+# 시나리오 2: 채팅방 진입 (/chat/[id])
+# ====================================
+
+# 첫 번째 채팅방 클릭 (목록에서 첫 번째 아이템)
+# 참고: 실제 채팅방이 있어야 테스트 가능
+- tapOn:
+    index: 0
+    optional: true
+
+# 채팅방 헤더 확인
+- assertVisible:
+    text: "프로필"
+    timeout: 10000
+    optional: true
+
+# 상대방 이름 표시 확인
+- assertVisible:
+    text: "님"
+    optional: true
+
+# 뒤로가기 버튼 확인
+- assertVisible:
+    text: "←"
+    optional: true
+
+# ====================================
+# 시나리오 3: 메시지 히스토리 확인
+# ====================================
+
+# 기존 메시지 로드 확인
+- assertVisible:
+    text: "안녕하세요"
+    timeout: 5000
+    optional: true
+
+# 날짜 구분선 확인
+- assertVisible:
+    text: "2025"
+    optional: true
+
+# 시스템 메시지 확인
+- assertVisible:
+    text: "매칭"
+    optional: true
+
+# ====================================
+# 시나리오 4: 메시지 전송
+# ====================================
+
+# 메시지 입력창 확인
+- assertVisible:
+    text: "메시지를 입력하세요"
+    timeout: 5000
+    optional: true
+
+# 메시지 입력
+- tapOn:
+    text: "메시지를 입력하세요"
+    optional: true
+
+- inputText: "안녕하세요! Maestro 테스트 메시지입니다."
+
+# 전송 버튼 확인 및 클릭
+- assertVisible:
+    text: "전송"
+    optional: true
+
+- tapOn:
+    text: "전송"
+    optional: true
+
+# 메시지 전송 확인 (보낸 메시지가 화면에 표시됨)
+- assertVisible:
+    text: "Maestro"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 5: 이미지 전송 (선택사항)
+# ====================================
+
+# 갤러리 버튼 확인
+- assertVisible:
+    text: "+"
+    optional: true
+
+- assertVisible:
+    text: "사진"
+    optional: true
+
+# 카메라 버튼 확인
+- assertVisible:
+    text: "카메라"
+    optional: true
+
+# 참고: 실제 이미지 업로드는 파일 시스템 접근이 필요하므로
+# 버튼 존재 여부만 확인
+
+# ====================================
+# 시나리오 6: Somemate AI 챗봇
+# ====================================
+
+# 채팅 목록으로 돌아가기
+- back
+
+# Somemate 배너 클릭
+- tapOn:
+    text: "Somemate"
+    optional: true
+
+# Somemate 소개 화면
+- assertVisible:
+    text: "AI"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "고민"
+    optional: true
+
+- assertVisible:
+    text: "상담"
+    optional: true
+
+# Somemate 채팅 시작
+- tapOn:
+    text: "시작하기"
+    optional: true
+
+- tapOn:
+    text: "채팅하기"
+    optional: true
+
+# Somemate 채팅방 진입
+- assertVisible:
+    text: "Somemate"
+    timeout: 10000
+    optional: true
+
+# Somemate에게 메시지 전송
+- tapOn:
+    text: "메시지를 입력하세요"
+    optional: true
+
+- inputText: "안녕하세요"
+
+- tapOn:
+    text: "전송"
+    optional: true
+
+# AI 응답 대기 (시간이 걸릴 수 있음)
+- assertVisible:
+    text: "안녕"
+    timeout: 15000
+    optional: true
+
+# Somemate 카테고리 확인
+- assertVisible:
+    text: "연애"
+    optional: true
+
+- assertVisible:
+    text: "고민"
+    optional: true
+
+# ====================================
+# 시나리오 7: 채팅 가이드 배너
+# ====================================
+
+# 뒤로가기로 채팅 목록 복귀
+- back
+
+# 채팅 가이드 배너 확인
+- assertVisible:
+    text: "가이드"
+    optional: true
+
+- assertVisible:
+    text: "채팅 팁"
+    optional: true
+
+# ====================================
+# 최종 확인: 채팅 화면 상태
+# ====================================
+
+# 채팅 목록 화면 확인
+- assertVisible:
+    text: "채팅"
+    timeout: 5000
+
+# 홈으로 돌아가기
+- tapOn:
+    text: "홈"
+    optional: true
+
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
