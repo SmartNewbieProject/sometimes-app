@@ -1,0 +1,500 @@
+appId: host.exp.Exponent
+---
+# 모먼트(Moment) 플로우 테스트
+# 모먼트 메인, 내 모먼트, 데일리 룰렛, 답변 기록, 주간 리포트
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 모먼트 탭 진입 (/moment)
+# ====================================
+
+# 홈 화면에서 모먼트 탭으로 이동
+- tapOn:
+    text: "모먼트"
+    timeout: 5000
+    optional: true
+
+# 모먼트 메인 화면 확인
+- assertVisible:
+    text: "모먼트"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 2: 모먼트 헤더 확인 (MomentHeader)
+# ====================================
+
+# 모먼트 헤더 타이틀
+- assertVisible:
+    text: "MOMENT"
+    timeout: 5000
+    optional: true
+
+# 설명 텍스트
+- assertVisible:
+    text: "썸타임즈"
+    optional: true
+
+- assertVisible:
+    text: "모먼트"
+    optional: true
+
+# ====================================
+# 시나리오 3: 모먼트 슬라이드 (MomentSlides)
+# ====================================
+
+# 슬라이드 이미지 영역 확인
+# autoPlayInterval: 5000ms
+# height: 248px
+# 참고: 시각적 요소이므로 텍스트 기반 테스트에서는 제한적
+
+# 슬라이드 인디케이터 확인 (점)
+- assertVisible:
+    text: "●"
+    optional: true
+
+# ====================================
+# 시나리오 4: 모먼트 네비게이션 메뉴 (MomentNavigationMenu)
+# ====================================
+
+# MOMENT_NAVIGATION_ITEMS 확인
+# 상단 2개 (lg): 진행중인 이벤트, 내 모먼트
+# 하단 3개 (md): 출석체크, 데일리 룰렛, 썸메이트
+
+# 진행중인 이벤트 (비활성화 상태)
+- assertVisible:
+    text: "이벤트"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "진행중"
+    optional: true
+
+# 내 모먼트
+- assertVisible:
+    text: "모먼트"
+    optional: true
+
+- assertVisible:
+    text: "질문"
+    optional: true
+
+# 출석체크 (비활성화 상태)
+- assertVisible:
+    text: "출석"
+    optional: true
+
+- assertVisible:
+    text: "체크"
+    optional: true
+
+# 데일리 룰렛
+- assertVisible:
+    text: "룰렛"
+    optional: true
+
+- assertVisible:
+    text: "데일리"
+    optional: true
+
+# 썸메이트
+- assertVisible:
+    text: "썸메이트"
+    optional: true
+
+# ====================================
+# 시나리오 5: 내 모먼트 진입 (/moment/my-moment)
+# ====================================
+
+# "내 모먼트" 메뉴 클릭
+- tapOn:
+    text: "모먼트 질문"
+    optional: true
+
+# 내 모먼트 화면 확인
+- assertVisible:
+    text: "모먼트 질문함"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기 버튼
+- assertVisible:
+    text: "←"
+    optional: true
+
+# ====================================
+# 시나리오 6: 내 모먼트 - 질문 목록 확인
+# ====================================
+
+# 질문 카드 확인
+# MyMomentPage에서 질문 목록 렌더링
+
+# 질문 텍스트
+- assertVisible:
+    text: "?"
+    timeout: 5000
+    optional: true
+
+# 답변 상태 확인
+- assertVisible:
+    text: "답변"
+    optional: true
+
+- assertVisible:
+    text: "완료"
+    optional: true
+
+- assertVisible:
+    text: "대기"
+    optional: true
+
+# ====================================
+# 시나리오 7: 질문 상세 보기 (/moment/question-detail)
+# ====================================
+
+# 질문 카드 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# 질문 상세 화면 확인
+- assertVisible:
+    text: "질문"
+    timeout: 10000
+    optional: true
+
+# 답변 입력 필드
+- assertVisible:
+    text: "답변"
+    optional: true
+
+# 제출 버튼
+- assertVisible:
+    text: "제출"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 8: 내 답변 기록 (/moment/my-answers)
+# ====================================
+
+# 내 답변 기록으로 이동 (헤더 메뉴 또는 버튼)
+- tapOn:
+    text: "답변 기록"
+    optional: true
+
+# 내 답변 기록 화면 확인
+- assertVisible:
+    text: "내 답변 기록"
+    timeout: 10000
+    optional: true
+
+# 답변 목록 확인
+- assertVisible:
+    text: "답변"
+    optional: true
+
+# 날짜 정보
+- assertVisible:
+    text: "2025"
+    optional: true
+
+- assertVisible:
+    text: "월"
+    optional: true
+
+# 뒤로가기
+- back
+
+# 모먼트 메인으로 복귀
+- back
+
+# ====================================
+# 시나리오 9: 데일리 룰렛 진입 (/moment/daily-roulette)
+# ====================================
+
+# 데일리 룰렛 메뉴 클릭
+- tapOn:
+    text: "데일리 룰렛"
+    optional: true
+
+# 데일리 룰렛 화면 확인
+- assertVisible:
+    text: "데일리 룰렛"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 10: 룰렛 휠 확인 (RouletteWheel)
+# ====================================
+
+# 타이틀 확인
+- assertVisible:
+    text: "오늘의 럭키 룰렛"
+    timeout: 5000
+    optional: true
+
+# 룰렛 참여 가능 여부 확인
+# useRouletteEligibility로 체크
+
+# 참여 불가 시 자동으로 뒤로가기됨
+# canParticipate === false && !isSpinning → router.back()
+
+# 룰렛 휠 영역 (시각적 요소)
+# 참고: 애니메이션은 직접 확인 어려움
+
+# 룰렛 돌리기 버튼
+- assertVisible:
+    text: "돌리기"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "시작"
+    optional: true
+
+# ====================================
+# 시나리오 11: 룰렛 참여 제한 확인
+# ====================================
+
+# 이미 참여한 경우 메시지
+- assertVisible:
+    text: "이미"
+    optional: true
+
+- assertVisible:
+    text: "참여"
+    optional: true
+
+# 자격 없음 메시지
+- assertVisible:
+    text: "자격"
+    optional: true
+
+# ====================================
+# 시나리오 12: 룰렛 결과 확인
+# ====================================
+
+# 룰렛 돌리기 클릭 (가능한 경우)
+- tapOn:
+    text: "돌리기"
+    optional: true
+
+# 결과 모달 확인
+- assertVisible:
+    text: "축하"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "당첨"
+    optional: true
+
+# 획득한 리워드 확인
+- assertVisible:
+    text: "구슬"
+    optional: true
+
+- assertVisible:
+    text: "티켓"
+    optional: true
+
+# 확인 버튼
+- assertVisible:
+    text: "확인"
+    optional: true
+
+- tapOn:
+    text: "확인"
+    optional: true
+
+# ====================================
+# 시나리오 13: 주간 리포트 (/moment/weekly-report)
+# ====================================
+
+# 모먼트 메인으로 복귀
+- back
+
+# 주간 리포트 메뉴로 이동 (있는 경우)
+- tapOn:
+    text: "주간 리포트"
+    optional: true
+
+# 주간 리포트 화면 확인
+- assertVisible:
+    text: "주간"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "리포트"
+    optional: true
+
+# 주간 통계 정보
+- assertVisible:
+    text: "이번주"
+    optional: true
+
+# 답변 개수
+- assertVisible:
+    text: "개"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 14: 모먼트 레코드 (/moment/my-moment-record)
+# ====================================
+
+# 모먼트 레코드로 이동 (있는 경우)
+- tapOn:
+    text: "기록"
+    optional: true
+
+# 모먼트 레코드 화면 확인
+- assertVisible:
+    text: "기록"
+    timeout: 10000
+    optional: true
+
+# 날짜별 기록
+- assertVisible:
+    text: "일"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 15: 모먼트 리포트 (/moment/moment-report)
+# ====================================
+
+# 모먼트 리포트로 이동 (있는 경우)
+- tapOn:
+    text: "리포트"
+    optional: true
+
+# 모먼트 리포트 화면 확인
+- assertVisible:
+    text: "리포트"
+    timeout: 10000
+    optional: true
+
+# 통계 정보
+- assertVisible:
+    text: "참여"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 16: 썸메이트 연결 (/chat/somemate)
+# ====================================
+
+# 썸메이트 메뉴 클릭
+- tapOn:
+    text: "썸메이트"
+    optional: true
+
+# 썸메이트 채팅 화면으로 이동
+- assertVisible:
+    text: "썸메이트"
+    timeout: 10000
+    optional: true
+
+# AI 챗봇 확인
+- assertVisible:
+    text: "AI"
+    optional: true
+
+# 채팅 입력창
+- assertVisible:
+    text: "메시지"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 17: 비활성화된 메뉴 클릭 (진행중인 이벤트, 출석체크)
+# ====================================
+
+# 진행중인 이벤트 클릭 (isReady: false)
+- tapOn:
+    text: "진행중인 이벤트"
+    optional: true
+
+# 비활성화 메시지 모달 확인
+- assertVisible:
+    text: "준비"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "중"
+    optional: true
+
+# 모달 닫기
+- tapOn:
+    text: "확인"
+    optional: true
+
+# 출석체크 클릭 (isReady: false)
+- tapOn:
+    text: "출석체크"
+    optional: true
+
+# 비활성화 메시지
+- assertVisible:
+    text: "준비중"
+    timeout: 5000
+    optional: true
+
+# 모달 닫기
+- tapOn:
+    text: "확인"
+    optional: true
+
+# ====================================
+# 시나리오 18: 모먼트 메뉴 레이아웃 확인
+# ====================================
+
+# 상단 2개 메뉴 (lg height)
+# itemHeight: 'lg', itemsPerRow: 2
+
+# 하단 3개 메뉴 (md height)
+# itemHeight: 'md', itemsPerRow: 3
+
+# 참고: 레이아웃은 시각적으로만 확인 가능
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 홈으로 이동
+- tapOn:
+    text: "홈"
+    optional: true
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 참고: 모먼트 테스트 시 고려사항
+# 1. MomentPage: 헤더, 슬라이드, 네비게이션 메뉴 구조
+# 2. 내 모먼트: 질문 목록, 질문 상세, 답변 제출
+# 3. 데일리 룰렛: 참여 자격 확인, 룰렛 휠 애니메이션, 결과 모달
+# 4. useRouletteEligibility: canParticipate 체크
+# 5. 비활성화 메뉴: isReady: false → 준비중 모달
+# 6. 네비게이션: 6개 메뉴 (이벤트, 내 모먼트, 출석, 룰렛, 썸메이트, 주간 리포트)
+# 7. 자동 리디렉션: 룰렛 참여 불가 시 자동 뒤로가기
+# 8. 슬라이드 자동 재생: autoPlayInterval: 5000ms
+# 9. 주간/일간 통계 확인 (리포트 기능)

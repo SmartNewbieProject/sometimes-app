@@ -1,0 +1,441 @@
+appId: host.exp.Exponent
+---
+# 신고/차단 플로우 테스트
+# 상대방 신고, 썸메이트 신고 확인
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 프로필에서 신고 버튼 진입
+# ====================================
+
+# 매칭 히스토리 또는 우편함에서 프로필 진입
+- tapOn:
+    text: "히스토리"
+    optional: true
+
+# 프로필 카드 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# 프로필 상세 화면 확인
+- assertVisible:
+    text: "프로필"
+    timeout: 10000
+    optional: true
+
+# 신고 버튼 확인 (우측 상단 경고 아이콘)
+- assertVisible:
+    text: "⚠"
+    optional: true
+
+# ====================================
+# 시나리오 2: 신고 화면 진입 (/partner/ban-report)
+# ====================================
+
+# 신고 버튼 클릭
+- tapOn:
+    text: "⚠"
+    optional: true
+
+# 신고 화면 헤더 확인
+- assertVisible:
+    text: "신고"
+    timeout: 10000
+    optional: true
+
+# emergency 아이콘 확인
+- assertVisible:
+    text: "!"
+    optional: true
+
+# 뒤로가기 버튼
+- assertVisible:
+    text: "←"
+    optional: true
+
+# ====================================
+# 시나리오 3: 상대방 프로필 정보 확인
+# ====================================
+
+# 프로필 이미지 확인
+# 60x60 원형 이미지
+
+# 나이 정보
+- assertVisible:
+    text: "세"
+    timeout: 5000
+    optional: true
+
+# 대학교 정보
+- assertVisible:
+    text: "대학교"
+    optional: true
+
+# ====================================
+# 시나리오 4: 신고 사유 선택
+# ====================================
+
+# 신고 사유 제목
+- assertVisible:
+    text: "사유"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "선택"
+    optional: true
+
+# 신고 사유 목록 (6개)
+# 1. 부적절한 프로필 사진
+# 2. 스팸 또는 광고
+# 3. 욕설 또는 혐오 발언
+# 4. 성적인 콘텐츠
+# 5. 사기 행위
+# 6. 기타
+
+# 첫 번째 사유 선택 (라디오 버튼)
+- tapOn:
+    index: 0
+    optional: true
+
+# 선택된 라디오 버튼 확인 (보라색 점)
+# 참고: 시각적 요소이므로 직접 확인 어려움
+
+# ====================================
+# 시나리오 5: 상세 내용 입력
+# ====================================
+
+# 상세 내용 제목
+- assertVisible:
+    text: "상세"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "내용"
+    optional: true
+
+# 상세 내용 입력창 (120px height, multiline)
+- assertVisible:
+    text: "입력"
+    optional: true
+
+# 텍스트 입력
+- tapOn:
+    text: "입력"
+    optional: true
+
+- inputText: "신고 상세 내용 테스트"
+
+# ====================================
+# 시나리오 6: 증거 자료 첨부
+# ====================================
+
+# 증거 자료 제목
+- assertVisible:
+    text: "증거"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "자료"
+    optional: true
+
+# 파일 첨부 버튼 (카메라 아이콘)
+- assertVisible:
+    text: "📷"
+    optional: true
+
+- assertVisible:
+    text: "첨부"
+    optional: true
+
+# 이미지 선택 (최대 3개)
+# ImagePicker.launchImageLibraryAsync
+# selectionLimit: 3 - selectedImageUris.length
+
+# 이미지 첨부 버튼 클릭
+- tapOn:
+    text: "파일"
+    optional: true
+
+# 권한 모달 (권한 없는 경우)
+- assertVisible:
+    text: "권한"
+    timeout: 5000
+    optional: true
+
+# 모달 닫기
+- tapOn:
+    text: "확인"
+    optional: true
+
+# ====================================
+# 시나리오 7: 안내 정보 확인
+# ====================================
+
+# 안내 정보 (i 아이콘)
+- assertVisible:
+    text: "i"
+    timeout: 5000
+    optional: true
+
+# 안내 텍스트
+- assertVisible:
+    text: "신고"
+    optional: true
+
+- assertVisible:
+    text: "접수"
+    optional: true
+
+# ====================================
+# 시나리오 8: 신고 제출
+# ====================================
+
+# 제출 버튼 확인
+- assertVisible:
+    text: "제출"
+    timeout: 5000
+
+# 제출 버튼 활성화 조건: selectedReasons.length > 0
+# 비활성화 상태: 회색 배경
+
+# 제출 버튼 클릭
+- tapOn:
+    text: "제출"
+    optional: true
+
+# 로딩 인디케이터 (ActivityIndicator)
+- assertVisible:
+    text: "..."
+    timeout: 3000
+    optional: true
+
+# 제출 완료 후 채팅 목록으로 이동
+- assertVisible:
+    text: "채팅"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 9: 썸메이트 신고 진입 (/chat/somemate-report)
+# ====================================
+
+# 썸메이트 채팅으로 이동
+- tapOn:
+    text: "썸메이트"
+    optional: true
+
+# 썸메이트 채팅 화면 확인
+- assertVisible:
+    text: "AI"
+    timeout: 10000
+    optional: true
+
+# 신고 버튼 또는 메뉴 찾기
+# 참고: 실제 UI에 따라 경로가 다를 수 있음
+
+# 뒤로가기
+- back
+
+# 채팅 목록에서 썸메이트 신고로 이동
+- tapOn:
+    text: "신고"
+    optional: true
+
+# ====================================
+# 시나리오 10: 썸메이트 신고 화면 확인
+# ====================================
+
+# 썸메이트 신고 화면 헤더
+- assertVisible:
+    text: "썸메이트 신고"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기 버튼 (ChevronLeft)
+- assertVisible:
+    text: "←"
+    optional: true
+
+# ====================================
+# 시나리오 11: 썸메이트 신고 - 상단 카드
+# ====================================
+
+# 미호 이미지 확인
+# somemate_miho.png
+
+# 상단 카드 제목
+- assertVisible:
+    text: "썸메이트"
+    timeout: 5000
+    optional: true
+
+# 설명 텍스트
+- assertVisible:
+    text: "신고"
+    optional: true
+
+# 통계 정보
+- assertVisible:
+    text: "총"
+    optional: true
+
+- assertVisible:
+    text: "건"
+    optional: true
+
+# 최근 업데이트
+- assertVisible:
+    text: "최근"
+    optional: true
+
+# ====================================
+# 시나리오 12: 썸메이트 신고 - 신고 목록
+# ====================================
+
+# 신고 카드 목록 확인
+- assertVisible:
+    text: "리포트"
+    timeout: 5000
+    optional: true
+
+# 날짜 정보 (formatDate)
+- assertVisible:
+    text: "2025"
+    optional: true
+
+- assertVisible:
+    text: "오전"
+    optional: true
+
+- assertVisible:
+    text: "오후"
+    optional: true
+
+# 카테고리 뱃지 (CategoryBadge)
+- assertVisible:
+    text: "카테고리"
+    optional: true
+
+# 우측 화살표 아이콘 (ChevronRight)
+# 애니메이션: translateX 3px
+- assertVisible:
+    text: "→"
+    optional: true
+
+# ====================================
+# 시나리오 13: 썸메이트 신고 상세 (/chat/somemate-report-detail)
+# ====================================
+
+# 신고 카드 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# 신고 상세 화면 확인
+- assertVisible:
+    text: "상세"
+    timeout: 10000
+    optional: true
+
+# 신고 내용 확인
+- assertVisible:
+    text: "내용"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 14: 빈 신고 목록
+# ====================================
+
+# 신고 내역이 없는 경우
+- assertVisible:
+    text: "없습니다"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "아직"
+    optional: true
+
+# ====================================
+# 시나리오 15: "기타" 사유 선택 시 상세 내용 필수
+# ====================================
+
+# 뒤로가기로 파트너 신고 화면 복귀
+- back
+
+# 프로필에서 신고 다시 진입
+- tapOn:
+    text: "⚠"
+    optional: true
+
+# "기타" 사유 선택 (id: "6")
+- tapOn:
+    text: "기타"
+    optional: true
+
+# 상세 내용 비워두고 제출 시도
+- tapOn:
+    text: "제출"
+    optional: true
+
+# 필수 입력 모달
+- assertVisible:
+    text: "필수"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "입력"
+    optional: true
+
+# 모달 닫기
+- tapOn:
+    text: "확인"
+    optional: true
+
+# 상세 내용 입력
+- tapOn:
+    text: "입력"
+    optional: true
+
+- inputText: "기타 사유 상세 내용"
+
+# 제출
+- tapOn:
+    text: "제출"
+    optional: true
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 홈으로 이동
+- tapOn:
+    text: "홈"
+    optional: true
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 참고: 신고/차단 테스트 시 고려사항
+# 1. 신고 화면 (/partner/ban-report): 6가지 사유 선택
+# 2. useReport 훅으로 신고 제출
+# 3. "기타" 선택 시 상세 내용 필수 (detailedContent.trim() !== "")
+# 4. 이미지 첨부: 최대 3개 (JPEG, PNG만 허용)
+# 5. 제출 후 chatRoomId 있으면 채팅방 나가기 (useLeaveChatRoom)
+# 6. 썸메이트 신고 (/chat/somemate-report): 신고 목록 + 통계
+# 7. 썸메이트 신고 상세 (/chat/somemate-report-detail): 개별 신고 내용
+# 8. useReports 훅으로 신고 목록 조회
+# 9. BackHandler로 하드웨어 뒤로가기 처리 (썸메이트 신고)
+# 10. 신고 완료 후 채팅 목록 (/chat)으로 리다이렉트

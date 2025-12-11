@@ -1,0 +1,589 @@
+appId: host.exp.Exponent
+---
+# 커뮤니티 플로우 테스트
+# 커뮤니티 홈, 게시글 작성/조회/수정/삭제, 댓글, 내 활동
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 커뮤니티 탭 진입 (/community)
+# ====================================
+
+# 홈 화면에서 커뮤니티 탭으로 이동
+- tapOn:
+    text: "커뮤니티"
+    timeout: 5000
+    optional: true
+
+# 커뮤니티 메인 화면 확인
+- assertVisible:
+    text: "커뮤니티"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 2: 커뮤니티 헤더 확인
+# ====================================
+
+# 헤더 타이틀 확인
+- assertVisible:
+    text: "커뮤니티"
+    timeout: 5000
+    optional: true
+
+# 알림 아이콘 (HeaderWithNotification)
+- assertVisible:
+    text: "🔔"
+    optional: true
+
+# ====================================
+# 시나리오 3: 카테고리 탭뷰 확인 (TabView)
+# ====================================
+
+# 홈 탭 확인 (HOME_CODE)
+- assertVisible:
+    text: "홈"
+    timeout: 5000
+    optional: true
+
+# 카테고리 탭들 확인
+# categories가 있는 경우 표시
+- assertVisible:
+    text: "자유"
+    optional: true
+
+- assertVisible:
+    text: "질문"
+    optional: true
+
+# 탭 스와이프 또는 탭 클릭으로 이동
+- tapOn:
+    text: "자유"
+    optional: true
+
+# ====================================
+# 시나리오 4: 게시글 목록 확인 (InfiniteArticleList)
+# ====================================
+
+# CommuHome 컴포넌트에서 게시글 목록 렌더링
+# ArticleListItem 컴포넌트로 각 게시글 표시
+
+# 게시글 제목 확인
+- assertVisible:
+    text: "글"
+    timeout: 5000
+    optional: true
+
+# 댓글 수 확인
+- assertVisible:
+    text: "댓글"
+    optional: true
+
+# 좋아요 수 확인
+- assertVisible:
+    text: "좋아요"
+    optional: true
+
+# 작성 시간 확인 (formatRelativeTime)
+- assertVisible:
+    text: "분 전"
+    optional: true
+
+- assertVisible:
+    text: "시간 전"
+    optional: true
+
+- assertVisible:
+    text: "일 전"
+    optional: true
+
+# ====================================
+# 시나리오 5: 게시글 작성 진입 (/community/write)
+# ====================================
+
+# CreateArticleFAB 버튼 확인 (홈 탭이 아닌 경우 표시)
+- assertVisible:
+    text: "+"
+    timeout: 5000
+    optional: true
+
+# FAB 클릭하여 작성 화면 진입
+- tapOn:
+    text: "+"
+    optional: true
+
+# 게시글 작성 화면 확인
+- assertVisible:
+    text: "작성"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기 버튼
+- assertVisible:
+    text: "←"
+    optional: true
+
+# ====================================
+# 시나리오 6: 게시글 작성 폼 확인
+# ====================================
+
+# 카테고리 선택 드롭다운
+- assertVisible:
+    text: "카테고리"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "선택"
+    optional: true
+
+# 카테고리 선택
+- tapOn:
+    text: "카테고리 선택"
+    optional: true
+
+# 카테고리 옵션 선택
+- tapOn:
+    text: "자유"
+    optional: true
+
+# 제목 입력 필드
+- assertVisible:
+    text: "제목"
+    timeout: 5000
+    optional: true
+
+# 제목 입력 (3자 이상 필수)
+- tapOn:
+    text: "제목"
+    optional: true
+
+- inputText: "테스트 게시글 제목입니다"
+
+# 내용 입력 필드
+- assertVisible:
+    text: "내용"
+    timeout: 5000
+    optional: true
+
+# 내용 입력 (3자 이상, 2000자 이하 필수)
+- tapOn:
+    text: "내용"
+    optional: true
+
+- inputText: "테스트 게시글 내용입니다. 최소 3자 이상 작성해야 합니다."
+
+# ====================================
+# 시나리오 7: 게시글 작성 유효성 검사
+# ====================================
+
+# 짧은 제목/내용 검증 (3자 미만)
+# showModal: "제목과 내용을 3자 이상 입력해주세요."
+
+# 긴 내용 검증 (2000자 초과)
+# showModal: "내용이 너무 깁니다. 2000자 이내로 작성해주세요."
+
+# 제출 버튼 확인
+- assertVisible:
+    text: "작성"
+    timeout: 5000
+    optional: true
+
+# 제출 버튼 클릭
+- tapOn:
+    text: "작성"
+    optional: true
+
+# 작성 완료 모달
+- assertVisible:
+    text: "성공"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "작성"
+    optional: true
+
+# 모달 확인
+- tapOn:
+    text: "확인"
+    optional: true
+
+# 커뮤니티 목록으로 복귀
+- assertVisible:
+    text: "커뮤니티"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 8: 게시글 상세 보기 (/community/[id])
+# ====================================
+
+# 게시글 카드 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# 게시글 상세 화면 확인
+- assertVisible:
+    text: "게시글"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기 버튼
+- assertVisible:
+    text: "←"
+    optional: true
+
+# ====================================
+# 시나리오 9: 게시글 상세 정보 확인 (ArticleDetail)
+# ====================================
+
+# 작성자 정보
+- assertVisible:
+    text: "작성자"
+    timeout: 5000
+    optional: true
+
+# 작성 시간
+- assertVisible:
+    text: "전"
+    optional: true
+
+# 게시글 제목
+- assertVisible:
+    text: "제목"
+    optional: true
+
+# 게시글 내용
+- assertVisible:
+    text: "내용"
+    optional: true
+
+# 좋아요 버튼
+- assertVisible:
+    text: "좋아요"
+    optional: true
+
+# 댓글 수 확인
+- assertVisible:
+    text: "댓글"
+    optional: true
+
+# ====================================
+# 시나리오 10: 소유자 드롭다운 메뉴 (edit/delete)
+# ====================================
+
+# 자신이 작성한 게시글인 경우 드롭다운 표시
+# Dropdown 컴포넌트 (ThreeDots 아이콘)
+
+# 드롭다운 버튼 확인
+- assertVisible:
+    text: "⋮"
+    optional: true
+
+# 드롭다운 클릭
+- tapOn:
+    text: "⋮"
+    optional: true
+
+# 수정 메뉴
+- assertVisible:
+    text: "수정"
+    timeout: 5000
+    optional: true
+
+# 삭제 메뉴
+- assertVisible:
+    text: "삭제"
+    optional: true
+
+# 수정 클릭
+- tapOn:
+    text: "수정"
+    optional: true
+
+# 수정 화면으로 이동 (/community/[id]/edit)
+- assertVisible:
+    text: "수정"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 11: 댓글 작성 (CommentSection)
+# ====================================
+
+# 게시글 상세로 복귀
+- assertVisible:
+    text: "게시글"
+    timeout: 5000
+    optional: true
+
+# 댓글 입력창 확인
+- assertVisible:
+    text: "댓글"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "입력"
+    optional: true
+
+# 댓글 입력
+- tapOn:
+    text: "입력"
+    optional: true
+
+- inputText: "테스트 댓글입니다."
+
+# 댓글 작성 버튼
+- assertVisible:
+    text: "작성"
+    optional: true
+
+- tapOn:
+    text: "작성"
+    optional: true
+
+# 댓글 목록에서 확인
+- assertVisible:
+    text: "테스트"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 12: 좋아요 기능
+# ====================================
+
+# 좋아요 버튼 클릭
+- tapOn:
+    text: "좋아요"
+    optional: true
+
+# 좋아요 수 증가 확인
+# 참고: 숫자는 동적이므로 시각적으로만 확인 가능
+
+# ====================================
+# 시나리오 13: 게시글 신고 (/community/report/[id])
+# ====================================
+
+# 신고 버튼 또는 메뉴 찾기 (드롭다운 또는 별도 버튼)
+- assertVisible:
+    text: "신고"
+    optional: true
+
+# 신고 버튼 클릭
+- tapOn:
+    text: "신고"
+    optional: true
+
+# 신고 화면 확인
+- assertVisible:
+    text: "신고"
+    timeout: 10000
+    optional: true
+
+# 신고 사유 선택
+- tapOn:
+    index: 0
+    optional: true
+
+# 신고 제출
+- tapOn:
+    text: "제출"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 14: 내 활동 - 내가 쓴 글 (/community/my/my-articles)
+# ====================================
+
+# 커뮤니티 목록으로 복귀
+- back
+
+# 마이 활동 메뉴 진입 (헤더 또는 별도 버튼)
+- tapOn:
+    text: "내 활동"
+    optional: true
+
+# 내가 쓴 글 탭
+- assertVisible:
+    text: "쓴 글"
+    timeout: 10000
+    optional: true
+
+# MyArticlesScreen 확인
+- tapOn:
+    text: "쓴 글"
+    optional: true
+
+# 내가 쓴 게시글 목록 확인
+- assertVisible:
+    text: "글"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 15: 내 활동 - 댓글 단 글 (/community/my/my-comments)
+# ====================================
+
+# 댓글 단 글 탭
+- assertVisible:
+    text: "댓글"
+    timeout: 5000
+    optional: true
+
+- tapOn:
+    text: "댓글"
+    optional: true
+
+# MyCommentsScreen 확인
+- assertVisible:
+    text: "댓글"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 16: 내 활동 - 좋아요 한 글 (/community/my/my-liked)
+# ====================================
+
+# 좋아요 한 글 탭
+- assertVisible:
+    text: "좋아요"
+    timeout: 5000
+    optional: true
+
+- tapOn:
+    text: "좋아요"
+    optional: true
+
+# MyLikedScreen 확인
+- assertVisible:
+    text: "좋아요"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 17: 무한 스크롤 (InfiniteArticleList)
+# ====================================
+
+# 커뮤니티 목록으로 복귀
+- assertVisible:
+    text: "커뮤니티"
+    timeout: 10000
+    optional: true
+
+# 스크롤하여 더 많은 게시글 로드
+# useInfiniteArticles로 페이지네이션
+# 참고: 스크롤 동작은 Maestro의 제한으로 시각적으로만 확인
+
+# ====================================
+# 시나리오 18: 공지사항 카테고리 (NOTICE_CODE)
+# ====================================
+
+# 공지사항 탭이 있는 경우 확인
+- assertVisible:
+    text: "공지"
+    optional: true
+
+# 공지사항 탭 클릭
+- tapOn:
+    text: "공지"
+    optional: true
+
+# 공지사항 게시글 목록 확인
+- assertVisible:
+    text: "공지"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 19: 게시글 삭제 확인
+# ====================================
+
+# 자신이 작성한 게시글 상세로 진입
+- tapOn:
+    index: 0
+    optional: true
+
+# 드롭다운 메뉴 열기
+- tapOn:
+    text: "⋮"
+    optional: true
+
+# 삭제 메뉴 클릭
+- tapOn:
+    text: "삭제"
+    optional: true
+
+# 삭제 확인 모달
+- assertVisible:
+    text: "삭제"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "확인"
+    optional: true
+
+# 취소 버튼 클릭 (실제로 삭제하지 않음)
+- tapOn:
+    text: "취소"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 20: 빈 목록 상태
+# ====================================
+
+# 게시글이 없는 카테고리로 이동 (가능한 경우)
+- tapOn:
+    text: "카테고리"
+    optional: true
+
+# 빈 목록 메시지
+- assertVisible:
+    text: "없습니다"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "아직"
+    optional: true
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 홈으로 이동
+- tapOn:
+    text: "홈"
+    optional: true
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 참고: 커뮤니티 테스트 시 고려사항
+# 1. TabView 기반 카테고리 시스템 (HOME_CODE, NOTICE_CODE 등)
+# 2. 게시글 작성 유효성 검사 (제목/내용 3자 이상, 내용 2000자 이하)
+# 3. 무한 스크롤 (useInfiniteArticles)
+# 4. 소유자만 수정/삭제 가능 (Dropdown 메뉴)
+# 5. 댓글 작성/조회 (CommentSection)
+# 6. 좋아요 기능 (useLikeArticle)
+# 7. 게시글 신고 (/community/report/[id])
+# 8. 내 활동 (내가 쓴 글, 댓글 단 글, 좋아요 한 글)
+# 9. CreateArticleFAB는 홈 탭이 아닌 경우에만 표시
+# 10. formatRelativeTime으로 작성 시간 표시

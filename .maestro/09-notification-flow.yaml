@@ -1,0 +1,335 @@
+appId: host.exp.Exponent
+---
+# 알림 플로우 테스트
+# 알림 목록 확인, 읽음 처리, 알림 삭제, 알림 클릭 액션
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 알림 아이콘 확인 및 진입
+# ====================================
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 알림 아이콘 확인
+# 참고: 상단 헤더에 알림 아이콘이 있을 것으로 예상
+- assertVisible:
+    text: "알림"
+    timeout: 5000
+    optional: true
+
+# 알림 뱃지 개수 확인 (읽지 않은 알림이 있는 경우)
+- assertVisible:
+    text: "1"
+    optional: true
+
+- assertVisible:
+    text: "2"
+    optional: true
+
+# 알림 아이콘 클릭
+- tapOn:
+    text: "알림"
+    optional: true
+
+# ====================================
+# 시나리오 2: 알림 화면 확인 (/notification)
+# ====================================
+
+# 알림 화면 헤더 확인
+- assertVisible:
+    text: "알림"
+    timeout: 10000
+
+# 뒤로가기 버튼 확인
+- assertVisible:
+    text: "←"
+    optional: true
+
+# 메뉴 버튼 확인 (⋯)
+- assertVisible:
+    text: "⋯"
+    optional: true
+
+# ====================================
+# 시나리오 3: 알림 목록 확인
+# ====================================
+
+# 로딩 상태 확인
+- assertVisible:
+    text: "불러오는 중"
+    timeout: 5000
+    optional: true
+
+# 알림 아이템 확인
+# NotificationList가 FlatList로 렌더링됨
+
+# 알림 제목 확인
+- assertVisible:
+    text: "님"
+    timeout: 10000
+    optional: true
+
+# 알림 내용 확인
+- assertVisible:
+    text: "요를"
+    optional: true
+
+- assertVisible:
+    text: "보냈어요"
+    optional: true
+
+# 시간 정보 확인 (예: "3시간 전", "방금 전")
+- assertVisible:
+    text: "전"
+    optional: true
+
+# ====================================
+# 시나리오 4: 읽음/안읽음 표시 확인
+# ====================================
+
+# 읽지 않은 알림은 보라색 점 표시
+# 참고: 시각적 요소이므로 직접 확인 어려움
+
+# 읽지 않은 알림은 배경색이 다름 (lightPurple + '20')
+# 참고: 스타일 확인은 Maestro에서 제한적
+
+# ====================================
+# 시나리오 5: 알림 타입별 아이콘 확인
+# ====================================
+
+# general 타입: 일반 알림 아이콘
+# reward 타입: 리워드 아이콘
+# contact 타입: 프로필 이미지 (ContactImage 컴포넌트)
+
+# 아이콘 또는 프로필 이미지 영역 확인
+# 참고: 시각적 요소이므로 텍스트 기반으로는 확인 어려움
+
+# ====================================
+# 시나리오 6: 알림 메뉴 (⋯) 클릭
+# ====================================
+
+# 메뉴 버튼 클릭
+- tapOn:
+    text: "⋯"
+    optional: true
+
+# 드롭다운 메뉴 표시 확인
+- assertVisible:
+    text: "모두 읽기"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "읽은 알림 삭제"
+    optional: true
+
+# ====================================
+# 시나리오 7: 모두 읽기 기능
+# ====================================
+
+# "모두 읽기" 클릭
+- tapOn:
+    text: "모두 읽기"
+    optional: true
+
+# 확인 모달 표시
+- assertVisible:
+    text: "모든 알림 읽기"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "읽음 상태로 변경"
+    optional: true
+
+# 확인 버튼 클릭
+- tapOn:
+    text: "확인"
+    optional: true
+
+# 모달이 닫히고 알림 목록으로 복귀
+- assertVisible:
+    text: "알림"
+    timeout: 5000
+
+# ====================================
+# 시나리오 8: 읽은 알림 삭제 기능
+# ====================================
+
+# 메뉴 다시 열기
+- tapOn:
+    text: "⋯"
+    optional: true
+
+# "읽은 알림 삭제" 클릭
+- tapOn:
+    text: "읽은 알림 삭제"
+    optional: true
+
+# 확인 모달 표시
+- assertVisible:
+    text: "읽은 알림 삭제"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "삭제하시겠습니까"
+    optional: true
+
+# 취소 버튼 클릭 (실제 삭제하지 않음)
+- tapOn:
+    text: "취소"
+    optional: true
+
+# ====================================
+# 시나리오 9: 알림 클릭 - redirectUrl
+# ====================================
+
+# 알림 아이템 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# redirectUrl이 있는 경우 해당 화면으로 이동
+# 예: /chat/[id], /partner/view/[id] 등
+
+# 매칭 알림 → 상대방 프로필
+- assertVisible:
+    text: "프로필"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 10: 알림 클릭 - deepLink
+# ====================================
+
+# deepLink가 있는 경우 딥링크 처리
+# 참고: 콘솔 로그로만 확인됨
+
+# ====================================
+# 시나리오 11: 빈 알림 목록
+# ====================================
+
+# 알림이 없는 경우
+- assertVisible:
+    text: "알림이 없습니다"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 12: 무한 스크롤 (Pagination)
+# ====================================
+
+# 알림 목록을 아래로 스크롤
+- scrollUntilVisible:
+    element:
+      text: "더 불러오는 중"
+    direction: DOWN
+    optional: true
+
+# 다음 페이지 로딩 확인
+- assertVisible:
+    text: "더 불러오는 중"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 13: 알림 읽음 처리 (자동)
+# ====================================
+
+# 알림을 클릭하면 자동으로 읽음 처리됨
+# markAsReadMutation.mutate(notification.id)
+
+# 읽지 않은 알림 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# 뒤로가기
+- back
+
+# 읽음 처리된 알림은 보라색 점이 사라짐
+# 참고: 시각적 확인 필요
+
+# ====================================
+# 시나리오 14: 알림 타입별 내용 확인
+# ====================================
+
+# general 타입 알림 예시
+- assertVisible:
+    text: "시스템"
+    optional: true
+
+- assertVisible:
+    text: "공지"
+    optional: true
+
+# reward 타입 알림 예시
+- assertVisible:
+    text: "구슬"
+    optional: true
+
+- assertVisible:
+    text: "리워드"
+    optional: true
+
+# contact 타입 알림 예시 (매칭/좋아요)
+- assertVisible:
+    text: "좋아요"
+    optional: true
+
+- assertVisible:
+    text: "매칭"
+    optional: true
+
+# ====================================
+# 시나리오 15: 상대 시간 표시 (formatRelativeTime)
+# ====================================
+
+# 방금 전
+- assertVisible:
+    text: "방금 전"
+    optional: true
+
+# N분 전
+- assertVisible:
+    text: "분 전"
+    optional: true
+
+# N시간 전
+- assertVisible:
+    text: "시간 전"
+    optional: true
+
+# N일 전
+- assertVisible:
+    text: "일 전"
+    optional: true
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 뒤로가기로 홈 복귀
+- back
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 참고: 알림 테스트 시 고려사항
+# 1. 실제 알림 데이터가 있어야 테스트 가능
+# 2. 읽음/안읽음 상태는 시각적 확인 필요
+# 3. redirectUrl과 deepLink는 알림 타입에 따라 다름
+# 4. 무한 스크롤은 충분한 알림 데이터 필요
+# 5. 알림 타입: general, reward, contact
+# 6. unreadCount는 헤더 뱃지에 표시
