@@ -23,6 +23,7 @@ import { usePortoneStore } from "../../hooks/use-portone-store";
 import { AppleFirstSaleCard } from "../first-sale-card/apple";
 import { GemStore } from "../gem-store";
 import { RematchingTicket } from "../rematching-ticket";
+import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 
 function AppleGemStore() {
   const router = useRouter();
@@ -36,6 +37,7 @@ function AppleGemStore() {
   const { showErrorModal } = useModal();
   const { eventType } = usePortoneStore();
   const { participate } = useEventControl({ type: eventType! });
+  const { paymentEvents } = useKpiAnalytics();
   const {
     connected,
     products,
@@ -96,6 +98,22 @@ function AppleGemStore() {
             purchase: currentPurchase,
             isConsumable: true,
           });
+
+          // Payment tracking for analytics
+          const purchasedProduct = products?.find(p => p.productId === currentPurchase?.productId);
+          if (purchasedProduct?.price) {
+            const amount = Number.parseFloat(purchasedProduct.price);
+            paymentEvents.trackPaymentCompleted(
+              currentPurchase?.transactionId || purchase?.transactionReceipt || 'unknown',
+              'apple_iap',
+              amount,
+              [{
+                type: 'gem',
+                quantity: serverResponse?.grantedQuantity || 0,
+                price: amount
+              }]
+            );
+          }
 
           if (eventType) {
             try {

@@ -1,17 +1,30 @@
 import { semanticColors } from "@/src/shared/constants/colors";
 import { Image } from "expo-image";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, Linking } from "react-native";
 
 function JapanOpeningBanner() {
+  const handlePress = async () => {
+    const url = "https://sometimejapan.vercel.app/";
+    const canOpen = await Linking.canOpenURL(url);
+
+    if (canOpen) {
+      await Linking.openURL(url);
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={0.8}
+      onPress={handlePress}
+    >
       <Image
         source={require("@assets/images/banner/japan-opening.png")}
         style={styles.image}
         contentFit="cover"
       />
-    </View>
+    </TouchableOpacity>
   );
 }
 

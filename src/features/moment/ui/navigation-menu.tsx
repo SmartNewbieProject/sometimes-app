@@ -8,6 +8,7 @@ import colors from "@/src/shared/constants/colors";
 import { Text } from "@/src/shared/ui/text";
 import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
 import { useMyMomentEnabled } from "../queries";
+import { useMomentAnalytics } from "../hooks/use-moment-analytics";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -21,13 +22,46 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
   const actualHeight = HEIGHT_CONFIG[itemHeight];
   const { data: rouletteEligibility } = useRouletteEligibility();
   const { data: myMomentEnabled } = useMyMomentEnabled();
+  const {
+    trackNavMyMomentClick,
+    trackNavDailyRouletteClick,
+    trackNavSomemateClick,
+    trackNavWeeklyReportClick,
+    trackNavEventsClick,
+    trackNavCheckinClick,
+  } = useMomentAnalytics();
 
   const rows = [];
   for (let i = 0; i < items.length; i += itemsPerRow) {
     rows.push(items.slice(i, i + itemsPerRow));
   }
 
+  const trackNavClick = (itemId: string, isDisabled: boolean) => {
+    const properties = { is_ready: !isDisabled, destination: itemId };
+    switch (itemId) {
+      case "moment-my-moment":
+        trackNavMyMomentClick(properties);
+        break;
+      case "moment-daily-roulette":
+        trackNavDailyRouletteClick({ ...properties, is_eligible: rouletteEligibility?.canParticipate });
+        break;
+      case "moment-somemate":
+        trackNavSomemateClick(properties);
+        break;
+      case "moment-weekly-report":
+        trackNavWeeklyReportClick(properties);
+        break;
+      case "moment-events":
+        trackNavEventsClick(properties);
+        break;
+      case "moment-checkin":
+        trackNavCheckinClick(properties);
+        break;
+    }
+  };
+
   const handlePress = (item: MomentNavigationItem) => {
+    trackNavClick(item.id, false);
     if (item.id === "moment-daily-roulette") {
       router.push("/moment/daily-roulette");
     } else {

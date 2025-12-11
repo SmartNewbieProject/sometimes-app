@@ -664,11 +664,14 @@ export const getProfileIntroduction = async (): Promise<any> => {
 export const getUserProgressStatus = async (): Promise<UserProgressStatus> => {
   const serverResponse: ServerProgressStatus = await axiosClient.get('/moment/progress/status');
 
-  // Transform server response to internal format
+  // canProceedToday가 false이고 currentQuestion이 없으면 오늘 이미 답변 완료한 상태
+  const hasTodayAnswer = serverResponse.currentQuestion?.isAnswered
+    || (!serverResponse.canProceedToday && !serverResponse.currentQuestion);
+
   return {
-    hasDailyQuestion: serverResponse.currentQuestion !== null,
+    hasDailyQuestion: !!serverResponse.currentQuestion,
     hasWeeklyProgress: serverResponse.answeredThisWeek > 0,
-    hasTodayAnswer: serverResponse.currentQuestion?.isAnswered || false,
+    hasTodayAnswer,
     canProceed: serverResponse.canProceedToday,
     answeredThisWeek: serverResponse.answeredThisWeek,
     remainingQuestions: serverResponse.remainingQuestions,

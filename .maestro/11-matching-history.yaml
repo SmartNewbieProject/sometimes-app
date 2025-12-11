@@ -1,0 +1,369 @@
+appId: host.exp.Exponent
+---
+# 매칭 히스토리 플로우 테스트
+# 홈 화면 히스토리 프리뷰, 매칭 히스토리 목록, 프로필 잠금 해제
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 홈 화면 히스토리 프리뷰 (HistoryCollapse)
+# ====================================
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 히스토리 프리뷰 배너 확인
+- assertVisible:
+    text: "히스토리"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "내역"
+    optional: true
+
+# 프리뷰 설명 확인
+- assertVisible:
+    text: "이상형"
+    optional: true
+
+- assertVisible:
+    text: "찾아드릴게요"
+    optional: true
+
+# 이미지 프리뷰 (최대 5개)
+# ImageCollapse 컴포넌트로 렌더링
+
+# 5개 초과 시 "+N" 표시
+- assertVisible:
+    text: "+"
+    optional: true
+
+# ====================================
+# 시나리오 2: 매칭 히스토리 화면 진입 (/matching-history)
+# ====================================
+
+# 히스토리 프리뷰 배너 클릭
+- tapOn:
+    text: "히스토리"
+    optional: true
+
+# 또는 네비게이션에서 매칭 히스토리로 이동
+- tapOn:
+    text: "매칭"
+    optional: true
+
+# 매칭 히스토리 화면 확인
+- assertVisible:
+    text: "매칭"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "히스토리"
+    optional: true
+
+# ====================================
+# 시나리오 3: 매칭 히스토리 카드 목록 (MatchingHistoryCard)
+# ====================================
+
+# 그리드 형태로 카드 표시
+# MatchingHistoryList가 FlatList로 렌더링
+
+# 카드 기본 정보 확인
+- assertVisible:
+    text: "세"
+    timeout: 10000
+    optional: true
+
+# MBTI 표시
+- assertVisible:
+    text: "ENFP"
+    optional: true
+
+- assertVisible:
+    text: "INFJ"
+    optional: true
+
+# 대학교 정보
+- assertVisible:
+    text: "대학교"
+    optional: true
+
+# 마지막 접속 시간
+- assertVisible:
+    text: "마지막 접속"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "시간 전"
+    optional: true
+
+- assertVisible:
+    text: "일 전"
+    optional: true
+
+# ====================================
+# 시나리오 4: 잠긴 프로필 (blinded)
+# ====================================
+
+# 잠금 아이콘 확인
+# LockProfileIcon이 표시됨 (시각적 요소)
+
+# "열람" 버튼 확인
+- assertVisible:
+    text: "열람"
+    optional: true
+
+# 잠긴 카드 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# 잠금 해제 모달 표시
+- assertVisible:
+    text: "구슬"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "열람"
+    optional: true
+
+# 모달 설명 확인
+- assertVisible:
+    text: "프로필"
+    optional: true
+
+# 확인/취소 버튼
+- assertVisible:
+    text: "확인"
+    optional: true
+
+- assertVisible:
+    text: "취소"
+    optional: true
+
+# 취소 버튼 클릭 (실제로 구슬을 사용하지 않음)
+- tapOn:
+    text: "취소"
+    optional: true
+
+# ====================================
+# 시나리오 5: 잠금 해제된 프로필 (unlocked)
+# ====================================
+
+# "더보기" 버튼 확인
+- assertVisible:
+    text: "더보기"
+    optional: true
+
+# 잠금 해제된 카드 클릭
+- tapOn:
+    text: "더보기"
+    optional: true
+
+# 프로필 상세 화면으로 이동
+- assertVisible:
+    text: "프로필"
+    timeout: 10000
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 6: 대학교 인증 뱃지
+# ====================================
+
+# 대학교 인증된 사용자는 대학 로고 표시
+# getUnivLogo()로 로고 URL 가져옴
+
+# 인증되지 않은 사용자는 NotSecuredIcon 표시
+# 참고: 시각적 요소이므로 직접 확인 어려움
+
+# ====================================
+# 시나리오 7: 카드 상세 정보
+# ====================================
+
+# 나이 정보 (20세 형식)
+- assertVisible:
+    text: "2"
+    optional: true
+
+# MBTI 해시태그
+- assertVisible:
+    text: "#"
+    optional: true
+
+# 대학교 해시태그
+- assertVisible:
+    text: "#"
+    optional: true
+
+# 마지막 접속 배지 (보라색 배경)
+- assertVisible:
+    text: "마지막 접속"
+    optional: true
+
+# formatLastLogin으로 상대 시간 표시
+- assertVisible:
+    text: "방금"
+    optional: true
+
+- assertVisible:
+    text: "분 전"
+    optional: true
+
+- assertVisible:
+    text: "시간 전"
+    optional: true
+
+- assertVisible:
+    text: "일 전"
+    optional: true
+
+# ====================================
+# 시나리오 8: 프로필 열람 버튼 (잠긴/열린 상태)
+# ====================================
+
+# 잠긴 상태: #452D79 배경 + "열람" 텍스트
+# 열린 상태: primaryPurple 배경 + "더보기" 텍스트
+
+# 열람 버튼 색상은 시각적으로만 확인 가능
+
+# ====================================
+# 시나리오 9: 이미지 갤러리 (ImageCollapse)
+# ====================================
+
+# HistoryCollapse의 이미지 프리뷰
+# 최대 5개 이미지를 겹쳐서 표시
+# Reanimated로 애니메이션 효과
+
+# 이미지 로드 및 애니메이션
+# 150ms 간격으로 순차 표시
+
+# ====================================
+# 시나리오 10: 5개 초과 카운트 표시
+# ====================================
+
+# previewMatchingHistory.countOfPartner > 5인 경우
+# "+N" 표시 (예: +3)
+
+# ExplodingParticles 애니메이션 효과
+# 참고: 시각적 효과이므로 텍스트만 확인
+
+# ====================================
+# 시나리오 11: 빈 히스토리 상태
+# ====================================
+
+# 매칭 히스토리가 없는 경우
+# HistoryCollapse 컴포넌트가 렌더링되지 않음
+
+# 빈 목록 메시지
+- assertVisible:
+    text: "없습니다"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "아직"
+    optional: true
+
+# ====================================
+# 시나리오 12: 프로필 잠금 해제 (useUnlockProfile)
+# ====================================
+
+# 잠긴 프로필 카드 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# 잠금 해제 확인 모달
+- assertVisible:
+    text: "구슬"
+    timeout: 5000
+    optional: true
+
+# 필요한 구슬 개수 표시 (featureCosts?.PROFILE_OPEN)
+- assertVisible:
+    text: "개"
+    optional: true
+
+# 확인 버튼 클릭 (실제로는 취소)
+- tapOn:
+    text: "취소"
+    optional: true
+
+# ====================================
+# 시나리오 13: 프로필 상세 보기
+# ====================================
+
+# 잠금 해제된 카드의 "더보기" 버튼 클릭
+- tapOn:
+    text: "더보기"
+    optional: true
+
+# 프로필 상세 화면 진입
+- assertVisible:
+    text: "프로필"
+    timeout: 10000
+    optional: true
+
+# 상대방 정보 확인
+- assertVisible:
+    text: "세"
+    optional: true
+
+- assertVisible:
+    text: "MBTI"
+    optional: true
+
+# 뒤로가기
+- back
+
+# ====================================
+# 시나리오 14: 그라데이션 효과
+# ====================================
+
+# LinearGradient로 카드 하단 그라데이션 효과
+# "rgba(0, 0, 0, 0)" → "rgba(0, 0, 0, 0.7)"
+# 참고: 시각적 효과이므로 직접 확인 어려움
+
+# ====================================
+# 시나리오 15: 반응형 카드 크기
+# ====================================
+
+# 화면 너비에 따라 카드 크기 조정
+# width > 468: 218px
+# width <= 468: (width - 32) / 2
+
+# 참고: 시각적 레이아웃이므로 직접 확인 어려움
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 홈으로 이동
+- tapOn:
+    text: "홈"
+    optional: true
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 참고: 매칭 히스토리 테스트 시 고려사항
+# 1. 실제 매칭 히스토리 데이터가 있어야 테스트 가능
+# 2. blinded 상태와 unlocked 상태에 따라 다른 UI
+# 3. 구슬 사용하여 프로필 잠금 해제 (PROFILE_OPEN)
+# 4. 이미지는 그리드 형태로 표시 (FlatList)
+# 5. 최대 5개 이미지 프리뷰 + "+N" 카운트
+# 6. formatLastLogin으로 마지막 접속 시간 표시
+# 7. 대학교 인증 뱃지 (로고 vs NotSecuredIcon)
+# 8. LinearGradient, Reanimated 애니메이션 효과

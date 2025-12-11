@@ -6,6 +6,7 @@ import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { router } from "expo-router";
 import { WeeklyProgress } from "../../../apis";
 import type { LatestReport } from "../../../types";
+import { useModal } from "@/src/shared/hooks/use-modal";
 
 interface MomentStatusCardProps {
   weeklyProgress?: WeeklyProgress | null;
@@ -23,11 +24,24 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
   reportError,
 }) => {
   const { t } = useTranslation();
+  const { showModal } = useModal();
 
   // 로딩 중이면 표시하지 않음
   if (isLoading || reportLoading) {
     return null;
   }
+
+  // Empty state 모달 표시 함수
+  const showEmptyStateModal = () => {
+    showModal({
+      title: t('features.moment.my_moment.status_card.empty_state_modal.title'),
+      children: t('features.moment.my_moment.status_card.empty_state_modal.description'),
+      primaryButton: {
+        text: "확인",
+        onClick: () => {}
+      }
+    });
+  };
 
   // 최신 리포트가 있는 경우 - 리포트 데이터로 표시 (이번 주 진행률과 관계없이)
   if (latestReport) {
@@ -42,7 +56,13 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
 
     // userTitles에서 첫 번째 타이틀 사용
     const firstTitle = latestReport.userTitles?.[0];
-    const title = firstTitle?.title || latestReport.persona || "모먼트 분석 완료";
+
+    // Empty state 체크: 주요 데이터가 없으면 empty로 간주
+    const hasNoData = !firstTitle?.title && !latestReport.persona && !latestReport.summaryText;
+
+    const title = hasNoData
+      ? t('features.moment.my_moment.status_card.no_analysis_yet')
+      : (firstTitle?.title || latestReport.persona || "모먼트 분석 완료");
     const subTitle = firstTitle?.subTitle || "";
 
     // summaryText를 description으로 사용
@@ -54,7 +74,13 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
       <TouchableOpacity
         style={styles.container}
         activeOpacity={0.9}
-        onPress={() => router.push(`/moment/weekly-report?week=${latestReport.week}&year=${latestReport.year}`)}
+        onPress={() => {
+          if (hasNoData) {
+            showEmptyStateModal();
+          } else {
+            router.push(`/moment/weekly-report?week=${latestReport.week}&year=${latestReport.year}`);
+          }
+        }}
       >
         <View style={styles.contentContainer}>
           <Text size="12" weight="normal" textColor="white" style={styles.subtitle}>

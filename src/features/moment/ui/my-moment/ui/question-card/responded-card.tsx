@@ -28,7 +28,7 @@ export const RespondedCard = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.moreLightPurple, // Light purple background
+    backgroundColor: colors.moreLightPurple,
     borderRadius: 20,
     paddingVertical: 24,
     paddingRight: 20,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
     borderWidth: 1,
-    borderColor: colors.lightPurple, // Light purple border
+    borderColor: colors.lightPurple,
     position: "relative",
   },
   icon: {

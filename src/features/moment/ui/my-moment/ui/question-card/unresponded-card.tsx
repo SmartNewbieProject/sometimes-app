@@ -13,7 +13,19 @@ interface UnrespondedCardProps {
 
 export const UnrespondedCard = ({ blocked = false, blockedReason = null, blockedMessage = null }: UnrespondedCardProps) => {
   const { t } = useTranslation();
-  const questionDate = "2025. 10. 24 (금)";
+
+  // 오늘 날짜를 동적으로 생성
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][today.getDay()];
+
+    return `${year}. ${month}. ${day} (${dayOfWeek})`;
+  };
+
+  const questionDate = getTodayDate();
 
   // blocked 상태에 따른 다른 콘텐츠 생성
   const getCardContent = () => {

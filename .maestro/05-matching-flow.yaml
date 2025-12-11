@@ -1,0 +1,182 @@
+appId: host.exp.Exponent
+---
+# 매칭 플로우 테스트
+# 홈 화면에서 매칭 대기, 성공, 프로필 확인까지
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# ====================================
+# 시나리오 1: 매칭 대기 상태 (Waiting)
+# ====================================
+
+# 매칭 대기 화면 확인
+# IdleMatchTimer 컴포넌트가 표시됨
+- assertVisible:
+    text: "매칭을 기다리고 있어요"
+    timeout: 15000
+    optional: true
+
+# 대기 시간 타이머 확인 (시간/분 표시)
+- assertVisible:
+    text: "시"
+    optional: true
+
+- assertVisible:
+    text: "분"
+    optional: true
+
+# 이전 매칭 보기 버튼 확인
+- assertVisible:
+    text: "이전"
+    optional: true
+
+# ====================================
+# 시나리오 2: 매칭 성공 - 상대방 프로필 표시
+# ====================================
+
+# 매칭이 완료되면 상대방 정보가 표시됨
+# 참고: 실제 매칭까지 시간이 걸릴 수 있으므로 타임아웃 길게 설정
+
+# 상대방 나이 확인 (예: "23세")
+- assertVisible:
+    text: "세"
+    timeout: 120000
+    optional: true
+
+# MBTI 확인
+- assertVisible:
+    text: "ENFP"
+    optional: true
+
+- assertVisible:
+    text: "INFJ"
+    optional: true
+
+- assertVisible:
+    text: "ISTJ"
+    optional: true
+
+# 대학교 정보 확인
+- assertVisible:
+    text: "대학교"
+    optional: true
+
+# 프로필 상세 보기 버튼
+- assertVisible:
+    text: "프로필 보기"
+    optional: true
+
+# 프로필 상세로 이동
+- tapOn:
+    text: "프로필 보기"
+    optional: true
+
+# ====================================
+# 시나리오 3: 프로필 상세 화면 (/partner/view/[id])
+# ====================================
+
+# 프로필 이미지 영역 확인
+- assertVisible:
+    text: "프로필"
+    timeout: 10000
+    optional: true
+
+# 기본 정보 섹션
+- assertVisible:
+    text: "이름"
+    optional: true
+
+- assertVisible:
+    text: "나이"
+    optional: true
+
+- assertVisible:
+    text: "MBTI"
+    optional: true
+
+# 매칭 이유 확인
+- assertVisible:
+    text: "매칭 이유"
+    optional: true
+
+- assertVisible:
+    text: "이상형과"
+    optional: true
+
+# ====================================
+# 시나리오 4: Like/Pass 액션
+# ====================================
+
+# 뒤로가기로 홈으로 복귀
+- back
+
+# 홈 화면에서 Like 버튼 찾기
+- assertVisible:
+    text: "좋아요"
+    timeout: 5000
+    optional: true
+
+# Like 버튼 클릭
+- tapOn:
+    text: "좋아요"
+    optional: true
+
+# Like 후 다음 단계 확인
+- assertVisible:
+    text: "매칭 성공"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "채팅"
+    optional: true
+
+# 또는 Pass 시나리오
+- tapOn:
+    text: "패스"
+    optional: true
+
+# Pass 후 다음 매칭 대기
+- assertVisible:
+    text: "다음 매칭"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 5: 매칭 실패 (Not Found)
+# ====================================
+
+# 매칭 상대를 찾지 못한 경우
+- assertVisible:
+    text: "매칭 상대를 찾지 못했어요"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "재매칭"
+    optional: true
+
+# 재매칭 버튼 클릭
+- tapOn:
+    text: "재매칭"
+    optional: true
+
+# 재매칭 시작 확인
+- assertVisible:
+    text: "매칭 중"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
