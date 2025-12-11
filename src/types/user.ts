@@ -63,6 +63,7 @@ export interface UserProfile {
 	updatedAt: string | null;
 	phoneNumber: string;
 	email?: string;
+	isFirstView?: boolean; // 최초 조회 여부 (true: 처음 조회, false: 재조회, undefined: fallback to true)
 }
 
 export interface SimpleProfile {

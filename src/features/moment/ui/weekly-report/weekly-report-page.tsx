@@ -77,8 +77,9 @@ export const WeeklyReportPage = () => {
   };
 
   const { data: reportData, isLoading, error } = useWeeklyReportQuery(reportParams);
-  const { mutate: syncProfile, isPending: isSyncing } = useSyncProfileMutation();
-  const { showModal } = useModal();
+  // TODO: 프로필 동기화 기능 미구현으로 인해 임시 비활성화
+  // const { mutate: syncProfile, isPending: isSyncing } = useSyncProfileMutation();
+  // const { showModal } = useModal();
 
 
   const handleBackToMoment = () => {
@@ -190,29 +191,30 @@ export const WeeklyReportPage = () => {
     );
   }
 
+  // TODO: 프로필 동기화 기능 미구현으로 인해 임시 비활성화
   // 프로필 동기화 핸들러
-  const handleSyncProfile = () => {
-    if (!report?.keywords?.length) {
-      showModal({
-        title: "알림",
-        children: (
-          <Text size="14" weight="normal" textColor="dark">
-            프로필에 추가할 키워드가 없습니다.
-          </Text>
-        ),
-        primaryButton: {
-          text: "확인",
-          onClick: () => { }
-        }
-      });
-      return;
-    }
+  // const handleSyncProfile = () => {
+  //   if (!report?.keywords?.length) {
+  //     showModal({
+  //       title: "알림",
+  //       children: (
+  //         <Text size="14" weight="normal" textColor="dark">
+  //           프로필에 추가할 키워드가 없습니다.
+  //         </Text>
+  //       ),
+  //       primaryButton: {
+  //         text: "확인",
+  //         onClick: () => { }
+  //       }
+  //     });
+  //     return;
+  //   }
 
-    syncProfile({
-      syncKeywords: true,
-      syncIntroduction: false
-    });
-  };
+  //   syncProfile({
+  //     syncKeywords: true,
+  //     syncIntroduction: false
+  //   });
+  // };
 
   // 레이더 차트 데이터 생성
   const generateRadarData = () => {
@@ -628,12 +630,13 @@ export const WeeklyReportPage = () => {
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
           <TouchableOpacity
-            style={styles.backButton}
+            style={styles.backButtonFull}
             onPress={handleBackToMoment}
           >
-            <Text size="md" weight="bold" textColor="purple">뒤로</Text>
+            <Text size="md" weight="bold" textColor="white">뒤로</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* TODO: 프로필 키워드 추가 기능 미구현으로 인해 임시 비활성화 */}
+          {/* <TouchableOpacity
             style={[styles.addButton, isSyncing && styles.addButtonDisabled]}
             onPress={handleSyncProfile}
             disabled={isSyncing || !report?.keywords?.length}
@@ -645,7 +648,7 @@ export const WeeklyReportPage = () => {
                 {report?.keywords?.length ? "내 프로필에 키워드 추가하기" : "키워드가 없습니다"}
               </Text>
             )}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <View style={{ height: 40 }} />
@@ -838,6 +841,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: semanticColors.brand.primary,
+  },
+  backButtonFull: {
+    flex: 1,
+    backgroundColor: semanticColors.brand.primary,
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: "center",
   },
   addButton: {
     flex: 2,

@@ -28,7 +28,7 @@ export default defineConfig({
 
   use: {
     // 기본 URL (로컬 개발 서버)
-    baseURL: 'http://localhost:19006',
+    baseURL: 'http://localhost:3000',
 
     // 스크린샷 및 비디오 설정
     screenshot: 'only-on-failure',

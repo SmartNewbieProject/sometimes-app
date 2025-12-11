@@ -37,7 +37,8 @@
       "go_to_previous": "前の質問へ",
       "answered_today": "今日の質問に回答しました",
       "see_you_tomorrow": "明日新しい質問でお会いしましょう！",
-      "complete_previous": "前の質問を先に完了してください"
+      "complete_previous": "前の質問を先に完了してください",
+      "reward_received": "今回の報酬を受け取りました"
     },
     "history": {
       "my_moment_record": "マイモーメント記録",
@@ -49,7 +50,12 @@
       "my_recent_moment": "最近のモーメント",
       "week_info": "{{year}}年第{{week}}週",
       "waiting_first": "初めてのモーメントを待っています",
-      "start_description": "今日の質問に答えて、自分だけの成長レポートを作りましょう！"
+      "start_description": "今日の質問に答えて、自分だけの成長レポートを作りましょう！",
+      "no_analysis_yet": "まだ分析された内容がありません",
+      "empty_state_modal": {
+        "title": "まだモーメントがありません 🥺",
+        "description": "毎日質問に答えると\n毎週あなただけのモーメントレポートが作成されます！"
+      }
     },
     "blocked_messages": {
       "no_question": "今日は質問がありません。明日また来てください。",
@@ -91,7 +97,8 @@
     "sent": {
       "success": "返信が送信されました",
       "back_to_moment": "質問箱に戻る",
-      "ai_reply": "あなたの大切な気持ちが届きました。💌"
+      "ai_reply": "あなたの大切な気持ちが届きました。💌",
+      "reward_message": "を受け取りました！今日も頑張ってください！"
     },
     "inspiration": {
       "sample": "暖かい日差しの下で..."

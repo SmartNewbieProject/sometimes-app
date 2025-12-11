@@ -28,14 +28,51 @@ export class AuthPage extends BasePage {
    * 회원가입 페이지로 이동
    */
   async gotoSignup() {
-    await this.goto('/signup');
+    await this.goto('/auth/signup/instagram');
   }
 
   /**
    * 로그인 페이지로 이동
    */
   async gotoLogin() {
-    await this.goto('/login');
+    await this.goto('/auth/login');
+  }
+
+  /**
+   * 이메일 로그인 모달 열기 (태그라인 Long Press)
+   */
+  async openEmailLoginModal() {
+    // 로그인 페이지의 태그라인 텍스트를 찾아서 long press
+    const tagline = this.page.getByText(/썸타는 순간/i);
+
+    // Long press (2초 이상 누르기)
+    await tagline.hover();
+    await this.page.mouse.down();
+    await this.page.waitForTimeout(2500); // 2.5초 대기
+    await this.page.mouse.up();
+
+    // 모달이 나타날 때까지 대기
+    await this.page.waitForTimeout(500);
+  }
+
+  /**
+   * 이메일 로그인 수행
+   */
+  async loginWithEmail(email: string, password: string) {
+    // 이메일 입력
+    const emailInput = this.page.getByPlaceholder(/이메일|email/i);
+    await emailInput.fill(email);
+
+    // 비밀번호 입력
+    const passwordInput = this.page.getByPlaceholder(/비밀번호|password/i);
+    await passwordInput.fill(password);
+
+    // 로그인 버튼 클릭
+    const loginButton = this.page.getByRole('button', { name: /로그인/i });
+    await loginButton.click();
+
+    // 네비게이션 대기
+    await this.waitForNavigation();
   }
 
   /**
@@ -134,7 +171,7 @@ export class AuthPage extends BasePage {
    * 회원가입 완료 확인
    */
   async expectSignupComplete() {
-    await expect(this.page).toHaveURL(/\/(home|main)/, { timeout: 10000 });
+    await expect(this.page).toHaveURL(/\/home/, { timeout: 10000 });
   }
 
   /**

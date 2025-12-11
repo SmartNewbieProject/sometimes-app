@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, StyleSheet, Image, Dimensions, KeyboardAvoidingView, Platform, ScrollView, SafeAreaView, TouchableOpacity, BackHandler } from "react-native";
 import { Heart, List, PenTool, Loader2, Check, Sparkles , ArrowLeft } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
@@ -14,6 +14,7 @@ import { Envelope } from "./envelope";
 import { QuestionCard } from "./question-card";
 import { AnswerInput } from "./answer-input";
 import { sentStepStyles } from "./envelope.styles";
+import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
 
 const { width } = Dimensions.get("window");
 
@@ -21,7 +22,6 @@ type QuestionStep = 'envelope' | 'reading' | 'sending' | 'sent';
 
 export const QuestionDetailPage = () => {
   const { t } = useTranslation();
-  // 상태 관리
   const [step, setStep] = useState<QuestionStep>('envelope');
   const [questionType, setQuestionType] = useState<'text' | 'multiple-choice'>('text');
   const [textAnswer, setTextAnswer] = useState('');
@@ -29,8 +29,38 @@ export const QuestionDetailPage = () => {
   const [startTime] = useState(Date.now());
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiReply, setAiReply] = useState('');
+  const textInputStartTracked = useRef(false);
 
   const { data: dailyQuestionResponse, isLoading: questionLoading, error: questionError, refetch: refetchDailyQuestion } = useDailyQuestionQuery();
+
+  const {
+    trackQuestionDetailView,
+    trackQuestionEnvelopeView,
+    trackQuestionEnvelopeOpen,
+    trackQuestionReadingStart,
+    trackQuestionTypeToggle,
+    trackQuestionAIInspirationClick,
+    trackQuestionAIInspirationApply,
+    trackQuestionTextInputStart,
+    trackQuestionOptionSelect,
+    trackQuestionSubmitAttempt,
+    trackQuestionSubmitSuccess,
+    trackQuestionSubmitFail,
+    trackQuestionRewardView,
+    trackQuestionCompleteBack,
+  } = useMomentAnalytics();
+
+  const getQuestionProperties = useCallback(() => {
+    const question = dailyQuestionResponse?.question;
+    if (!question) return null;
+    return {
+      question_id: question.id,
+      question_text: question.text,
+      question_type: question.type as 'text' | 'single_choice',
+      dimension: question.dimension,
+      has_options: !!(question.options && question.options.length > 0),
+    };
+  }, [dailyQuestionResponse?.question]);
 
   // 상세한 디버깅 로그 추가
   console.log('🔍 QuestionDetail Debug:', {
@@ -42,7 +72,6 @@ export const QuestionDetailPage = () => {
     error: questionError?.message
   });
 
-  // 실제 질문 데이터에 따라 질문 타입 초기화
   useEffect(() => {
     if (dailyQuestionResponse?.question) {
       const question = dailyQuestionResponse.question;
@@ -56,10 +85,13 @@ export const QuestionDetailPage = () => {
         optionsCount: question.options?.length || 0,
       });
 
-      // 기본은 'text'로 유지, 옵션이 있는 경우에만 multiple-choice 가능
-      // 단, 처음에는 무조건 'text'로 시작하여 사용자가 직접 선택하게 함
+      const props = getQuestionProperties();
+      if (props) {
+        trackQuestionDetailView(props);
+        trackQuestionEnvelopeView(props);
+      }
+
       console.log('📝 Starting with text input (default behavior)');
-      // setQuestionType('text'); // 이미 기본값이 'text'이므로 설정 불필요
     }
   }, [dailyQuestionResponse?.question]);
   const queryClient = useQueryClient();
@@ -79,8 +111,12 @@ export const QuestionDetailPage = () => {
 
   const questionDate = getCurrentDateString();
 
-  // 핸들러 함수들
   const handleOpenLetter = () => {
+    const props = getQuestionProperties();
+    if (props) {
+      trackQuestionEnvelopeOpen(props);
+      trackQuestionReadingStart(props);
+    }
     setStep('reading');
   };
 
@@ -95,15 +131,20 @@ export const QuestionDetailPage = () => {
     });
 
     if (questionType === 'text') {
-      // text -> multiple-choice로 전환 (옵션이 있는 경우에만)
       if (hasOptions) {
         console.log('✅ Switching to multiple-choice UI');
+        if (question) {
+          trackQuestionTypeToggle({
+            question_id: question.id,
+            from_type: 'text',
+            to_type: 'multiple-choice',
+          });
+        }
         setQuestionType('multiple-choice');
         setSelectedOption(null);
         setTextAnswer('');
       } else {
         console.log('⚠️ Cannot switch to multiple-choice: no options available');
-        // 옵션이 없는 경우 사용자에게 알림
         showModal({
           title: t('features.moment.question_detail.modal.notice'),
           children: <Text size="14" weight="normal" textColor="dark">{t('features.moment.question_detail.modal.no_multiple_choice')}</Text>,
@@ -114,8 +155,14 @@ export const QuestionDetailPage = () => {
         });
       }
     } else {
-      // multiple-choice -> text로 전환
       console.log('📝 Switching to text input UI');
+      if (question) {
+        trackQuestionTypeToggle({
+          question_id: question.id,
+          from_type: 'multiple-choice',
+          to_type: 'text',
+        });
+      }
       setQuestionType('text');
       setSelectedOption(null);
       setTextAnswer('');
@@ -124,13 +171,15 @@ export const QuestionDetailPage = () => {
 
   const handleGetInspiration = async () => {
     if (isAiLoading || !dailyQuestionResponse?.question) return;
+    const question = dailyQuestionResponse.question;
+    trackQuestionAIInspirationClick({ question_id: question.id });
     setIsAiLoading(true);
 
     try {
-      // AI 영감 도우미 API 호출 (임시 구현)
       await new Promise(resolve => setTimeout(resolve, 1000));
       const inspiration = t('features.moment.question_detail.inspiration.sample');
       setTextAnswer(prev => prev ? `${prev} ${inspiration}` : inspiration);
+      trackQuestionAIInspirationApply({ question_id: question.id, suggestion_length: inspiration.length });
     } catch (error) {
       console.error("AI inspiration error:", error);
     } finally {
@@ -143,7 +192,6 @@ export const QuestionDetailPage = () => {
     const options = questionData?.options || [];
     const selectedOptionData = selectedOption !== null ? options[selectedOption] : null;
 
-    // 유효성 검사
     const isValid = questionType === 'text'
       ? textAnswer.trim().length > 0
       : selectedOptionData !== null;
@@ -163,23 +211,31 @@ export const QuestionDetailPage = () => {
     setStep('sending');
 
     const responseTimeSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const answerType = questionType === 'text' ? 'text' : (textAnswer.trim() ? 'mixed' : 'option');
+    const submitProps = {
+      question_id: questionData.id,
+      answer_type: answerType as 'text' | 'option' | 'mixed',
+      text_length: textAnswer.trim().length,
+      option_id: selectedOptionData?.id,
+      option_index: selectedOption ?? undefined,
+      response_time_seconds: responseTimeSeconds,
+      total_time_seconds: responseTimeSeconds,
+    };
 
-    // API 요청 데이터 구성
+    trackQuestionSubmitAttempt(submitProps);
+
     const requestData = {
-      questionId: questionData.id, // 변환된 ID 사용
+      questionId: questionData.id,
       responseTimeSeconds,
     } as any;
 
-    // 주관식: 항상 answerText 포함
     if (questionType === 'text') {
       requestData.answerText = textAnswer.trim();
     }
 
-    // 선택형: answerOptionId 포함
     if (selectedOptionData) {
       requestData.answerOptionId = selectedOptionData.id;
 
-      // 혼합형 지원: 선택형에서도 추가 텍스트 입력시 answerText 포함
       if (textAnswer.trim()) {
         requestData.answerText = textAnswer.trim();
       }
@@ -188,20 +244,28 @@ export const QuestionDetailPage = () => {
     try {
       await submitAnswerMutation.mutateAsync(requestData);
 
-      // NOTE: 답변 제출 후 refetchDailyQuestion() 호출 제거
-      // TanStack Query가 자동으로 캐시 무효화 및 리프레시 처리합니다.
-      // submitAnswerMutation에서 이미 invalidateQueries를 실행하고 있습니다.
+      trackQuestionSubmitSuccess(submitProps);
 
-      // AI 답장 생성 (임시 구현)
       const aiReplyText = t('features.moment.question_detail.sent.ai_reply');
 
-      // 최소 1.5초 대기
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       setAiReply(aiReplyText);
       setStep('sent');
-    } catch (error) {
+
+      trackQuestionRewardView({
+        question_id: questionData.id,
+        question_text: questionData.text,
+        reward_type: 'gem',
+        reward_amount: 1,
+      });
+    } catch (error: any) {
       console.error("답변 저장 실패:", error);
+      trackQuestionSubmitFail({
+        ...submitProps,
+        error_message: error?.message || 'Unknown error',
+        error_code: error?.code || error?.status?.toString(),
+      });
       setStep('reading');
       showModal({
         title: t('features.moment.question_detail.modal.error'),
@@ -223,10 +287,12 @@ export const QuestionDetailPage = () => {
   };
 
   const handleBackToMoment = () => {
-    // 완료 화면에서 나갈 때 DAILY_QUESTION 쿼리 무효화
-    // 이렇게 하면 /moment 페이지 진입 시 새로운 질문 데이터를 fetch합니다.
+    const props = getQuestionProperties();
+    if (props) {
+      trackQuestionCompleteBack(props);
+    }
     queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.DAILY_QUESTION });
-    router.push('/moment');
+    router.push('/moment/my-moment');
   };
 
   // 하드웨어 뒤로가기 버튼 핸들링 (Android)
@@ -353,8 +419,26 @@ export const QuestionDetailPage = () => {
                   textAnswer={textAnswer}
                   selectedOption={selectedOption}
                   options={dailyQuestionResponse?.question?.options || []}
-                  onTextChange={setTextAnswer}
-                  onOptionSelect={setSelectedOption}
+                  onTextChange={(text) => {
+                    if (!textInputStartTracked.current && text.length > 0) {
+                      textInputStartTracked.current = true;
+                      const props = getQuestionProperties();
+                      if (props) trackQuestionTextInputStart(props);
+                    }
+                    setTextAnswer(text);
+                  }}
+                  onOptionSelect={(index) => {
+                    const question = dailyQuestionResponse?.question;
+                    const options = question?.options || [];
+                    if (question && index !== null && options[index]) {
+                      trackQuestionOptionSelect({
+                        question_id: question.id,
+                        option_id: options[index].id,
+                        option_index: index,
+                      });
+                    }
+                    setSelectedOption(index);
+                  }}
                   onGetInspiration={handleGetInspiration}
                   isAiLoading={isAiLoading}
                   isSending={step === 'sending'}
@@ -374,19 +458,16 @@ export const QuestionDetailPage = () => {
                   {t('features.moment.question_detail.sent.success')}
                 </Text>
 
-                {/* TODO: AI 우체부 추신 기능 구현 후 활성화
-                <View style={sentStepStyles.aiReplyContainer}>
-                  <View style={sentStepStyles.aiReplyHeader}>
-                    <Sparkles size={16} color={colors.brand.accent} />
-                    <Text size="xs" weight="bold" textColor="purple" style={sentStepStyles.aiReplyHeaderText}>
-                      AI 우체부의 추신
-                    </Text>
-                  </View>
-                  <Text size="md" weight="medium" textColor="black" style={sentStepStyles.aiReplyText}>
-                    &ldquo;{aiReply}&rdquo;
+                <View style={sentStepStyles.rewardContainer}>
+                  <Image
+                    source={require("@/assets/images/promotion/home-banner/gem.png")}
+                    style={sentStepStyles.gemIcon}
+                    resizeMode="contain"
+                  />
+                  <Text size="14" weight="medium" textColor="purple">
+                    {t('features.moment.question_detail.sent.reward_message')}
                   </Text>
                 </View>
-                */}
 
                 <Button
                   onPress={handleBackToMoment}
