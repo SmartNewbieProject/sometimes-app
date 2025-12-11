@@ -1,0 +1,22 @@
+appId: host.exp.Exponent
+---
+# 홈 화면 테스트
+# 로그인 후 홈 화면 기능 확인
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# 홈 화면 로드 확인
+- assertVisible:
+    id: "home-screen"
+
+# 홈 화면 기본 요소 확인
+- assertVisible: "Sometimes"  # 앱 로고 또는 제목
+
+# 새로고침 후에도 로그인 상태 유지 확인
+- swipe:
+    direction: DOWN
+    duration: 500
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000

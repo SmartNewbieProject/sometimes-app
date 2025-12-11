@@ -60,8 +60,12 @@ const HomeScreen = () => {
   const { t } = useTranslation();
   const { showModal } = useModal();
   const { step } = useStep();
-  const { isPreferenceFill } = useRedirectPreferences();
-  const { data: preferencesSelf } = usePreferenceSelfQuery();
+  const {
+    isPreferenceFill,
+    isOnboardingCompleted,
+    onboardingLoading,
+  } = useRedirectPreferences();
+  const { data: preferencesSelf, isLoading: isPreferencesSelfLoading } = usePreferenceSelfQuery();
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
   const { my } = useAuth();
   const queryClient = useQueryClient();
@@ -121,6 +125,42 @@ const HomeScreen = () => {
       });
     }, [queryClient])
   );
+
+  const renderMatchingSection = () => {
+    const hasCompletedOnboarding = isPreferenceFill && preferencesSelf && preferencesSelf.length > 0;
+
+    if (isOnboardingCompleted) {
+      return (
+        <View className="mt-[14px]">
+          <IdleMatchTimer />
+        </View>
+      );
+    }
+
+    if (onboardingLoading) {
+      return (
+        <View className="mt-[14px]">
+          <IdleMatchTimer />
+        </View>
+      );
+    }
+
+    if (hasCompletedOnboarding) {
+      return (
+        <View className="mt-[14px]">
+          <IdleMatchTimer />
+        </View>
+      );
+    }
+
+    return (
+      <View style={{ gap: 14 }}>
+        <HomeInfoSection />
+        <MatchingStatus />
+      </View>
+    );
+  };
+
   return (
     <View className="flex-1 ">
       <PalePurpleGradient />
@@ -175,16 +215,7 @@ const HomeScreen = () => {
           </Show>
         </View>
 
-        {!isPreferenceFill || preferencesSelf?.length === 0 ? (
-          <View style={{ gap: 14 }}>
-            <HomeInfoSection />
-            <MatchingStatus />
-          </View>
-        ) : (
-          <View className="mt-[14px]">
-            <IdleMatchTimer />
-          </View>
-        )}
+        {renderMatchingSection()}
         <View style={{ marginTop: 20 }}>
           <HistoryCollapse />
         </View>

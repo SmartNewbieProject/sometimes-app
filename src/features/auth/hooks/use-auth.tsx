@@ -1,4 +1,4 @@
-import { axiosClient, platform, tryCatch } from "@/src/shared/libs";
+import { axiosClient, platform, tryCatch, storage } from "@/src/shared/libs";
 import { eventBus } from "@/src/shared/libs/event-bus";
 import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
 import type { TokenResponse } from "@/src/types/auth";
@@ -13,6 +13,12 @@ import { useEffect } from "react";
 import { Platform } from "react-native";
 import { useMyDetailsQuery, useProfileDetailsQuery } from "../queries";
 import { useTranslation } from "react-i18next";
+
+const ONBOARDING_COMPLETED_KEY = 'onboarding-completed';
+
+const clearOnboardingCompletedFlag = async () => {
+  await storage.removeItem(ONBOARDING_COMPLETED_KEY);
+};
 
 export function useAuth() {
   const { t } = useTranslation();
@@ -95,13 +101,7 @@ export function useAuth() {
       await setToken(null);
       await setRefreshToken(null);
       await setApprovalStatus(null);
-      // if (Platform.OS === "ios") {
-      //   await removeAppleUserId();
-      //   console.log("iOS: appleUserId를 삭제합니다.");
-      // } else {
-      //   sessionStorage.removeItem("appleUserId");
-      //   console.log("Web: appleUserId를 삭제합니다.");
-      // }
+      await clearOnboardingCompletedFlag();
       return;
     }
 
@@ -109,11 +109,13 @@ export function useAuth() {
     await setToken(null);
     await setRefreshToken(null);
     await setApprovalStatus(null);
+    await clearOnboardingCompletedFlag();
   };
   const clearTokensOnly = async () => {
     await setToken(null);
     await setRefreshToken(null);
     await setApprovalStatus(null);
+    await clearOnboardingCompletedFlag();
   };
 
   const logout = () => {

@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     },
     reasonText: {
         fontSize: 18,
-        fontWeight: "700",
+        fontWeight: "400",
         lineHeight: 26,
         marginBottom: 12,
     },

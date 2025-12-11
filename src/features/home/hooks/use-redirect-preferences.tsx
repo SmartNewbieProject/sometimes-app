@@ -1,5 +1,6 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { useStorage } from "@/src/shared/hooks/use-storage";
+import { useOnboardingCompleted } from "@/src/shared/hooks/use-onboarding-completed";
 import { dayUtils } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
 import { useUserBehaviorEvents } from "@/src/shared/hooks";
@@ -28,6 +29,17 @@ export const useRedirectPreferences = () => {
     key: "redirect-preferences",
   });
   const { showModal } = useModal();
+  const {
+    isCompleted: isOnboardingCompleted,
+    loading: onboardingLoading,
+    syncWithServerStatus,
+  } = useOnboardingCompleted();
+
+  useEffect(() => {
+    if (!isLoading && isPreferenceFill !== undefined) {
+      syncWithServerStatus(isPreferenceFill);
+    }
+  }, [isLoading, isPreferenceFill, syncWithServerStatus]);
 
   const confirm = useCallback(() => {
     trackInterestHold();
@@ -110,5 +122,7 @@ export const useRedirectPreferences = () => {
     ...latest,
     isPreferenceFill,
     refetchPreferenceFill: refetch,
+    isOnboardingCompleted,
+    onboardingLoading,
   };
 };

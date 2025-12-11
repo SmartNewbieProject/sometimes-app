@@ -1,0 +1,26 @@
+appId: host.exp.Exponent
+---
+# 이메일 로그인 플로우
+# test1@test.com / test1234! 로 로그인하여 홈 화면 진입
+
+- launchApp
+- tapOn: "썸타는 순간"
+  longPress: true  # 2초 long press로 이메일 로그인 모달 열기
+- assertVisible: "이메일"
+- assertVisible: "비밀번호"
+
+# 이메일과 비밀번호 입력
+- tapOn:
+    text: "이메일"
+- inputText: "test1@test.com"
+- tapOn:
+    text: "비밀번호"
+- inputText: "test1234!"
+
+# 로그인 버튼 클릭
+- tapOn: "로그인"
+
+# 홈 화면으로 이동 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 15000

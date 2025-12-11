@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, ViewStyle, Platform } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -15,12 +15,13 @@ type RotationType = 'bottom' | 'top' | 'left' | 'right';
 interface FloatingTooltipProps {
   text: string;
   rotation: RotationType;
+  style?: ViewStyle;
 }
 
 const OFFSET = 6;
 const TRIANGLE_SIZE = 6;
 
-export const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ text, rotation }) => {
+export const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ text, rotation, style }) => {
   const translateY = useSharedValue(0);
 
   useEffect(() => {
@@ -136,12 +137,8 @@ export const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ text, rotation
     }
   };
 
-  if (Platform.OS === 'web') {
-    return null;
-  }
-
   return (
-    <Animated.View style={[styles.container, getPositionStyle(), animatedStyle]}>
+    <Animated.View style={[styles.container, getPositionStyle(), animatedStyle, style]}>
       <View style={styles.tooltip}>
         <Text size="12" textColor="white" weight="medium">
           {text}

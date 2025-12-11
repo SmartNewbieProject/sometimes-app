@@ -426,6 +426,18 @@ export const sentStepStyles = StyleSheet.create({
     fontStyle: 'italic',
   },
 
+  rewardContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+    gap: 8,
+  },
+
+  gemIcon: {
+    width: 24,
+    height: 24,
+  },
+
   backButton: {
     paddingHorizontal: 24,
     paddingVertical: 14,

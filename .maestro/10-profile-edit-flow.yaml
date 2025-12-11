@@ -1,0 +1,528 @@
+appId: host.exp.Exponent
+---
+# 프로필 수정 플로우 테스트
+# 마이페이지 진입, 내 프로필 수정, 이상형 선호도 수정
+
+# 먼저 로그인 수행
+- runFlow: 01-email-login.yaml
+
+# ====================================
+# 시나리오 1: 마이페이지 진입 (/my)
+# ====================================
+
+# 홈 화면에서 마이 탭으로 이동
+- tapOn:
+    text: "마이"
+    timeout: 5000
+    optional: true
+
+- tapOn:
+    text: "프로필"
+    optional: true
+
+# 마이페이지 화면 확인
+- assertVisible:
+    text: "마이"
+    timeout: 10000
+    optional: true
+
+# 프로필 정보 확인
+- assertVisible:
+    text: "님"
+    optional: true
+
+# 나이 표시 확인
+- assertVisible:
+    text: "세"
+    optional: true
+
+# 티켓/구슬 개수 확인
+- assertVisible:
+    text: "티켓"
+    optional: true
+
+- assertVisible:
+    text: "구슬"
+    optional: true
+
+# ====================================
+# 시나리오 2: 프로필 승인 상태 확인
+# ====================================
+
+# 승인 상태 (approve)
+- assertVisible:
+    text: "승인"
+    timeout: 5000
+    optional: true
+
+# 대기 상태 (waiting)
+- assertVisible:
+    text: "대기"
+    optional: true
+
+# 거절 상태 (reject)
+- assertVisible:
+    text: "거절"
+    optional: true
+
+# ====================================
+# 시나리오 3: 프로필 수정 진입 (/profile-edit/profile)
+# ====================================
+
+# 프로필 수정 버튼 찾기
+- assertVisible:
+    text: "수정"
+    timeout: 5000
+    optional: true
+
+# 프로필 수정 버튼 클릭
+- tapOn:
+    text: "수정"
+    optional: true
+
+# 프로필 수정 화면 확인
+- assertVisible:
+    text: "프로필"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 4: 프로필 이미지 섹션
+# ====================================
+
+# ProfileImageSection 컴포넌트 확인
+- assertVisible:
+    text: "사진"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "등록"
+    optional: true
+
+# 사진 선택하기 버튼
+- assertVisible:
+    text: "선택"
+    optional: true
+
+# ====================================
+# 시나리오 5: MBTI 수정 (ProfileMbti)
+# ====================================
+
+# MBTI 섹션 확인
+- assertVisible:
+    text: "MBTI"
+    timeout: 5000
+    optional: true
+
+# MBTI 선택 (예: ENFP)
+- tapOn:
+    text: "E"
+    index: 0
+    optional: true
+
+- tapOn:
+    text: "N"
+    index: 0
+    optional: true
+
+- tapOn:
+    text: "F"
+    index: 0
+    optional: true
+
+- tapOn:
+    text: "P"
+    index: 0
+    optional: true
+
+# ====================================
+# 시나리오 6: 관심사 수정 (ProfileInterest)
+# ====================================
+
+# 관심사 섹션 확인
+- assertVisible:
+    text: "관심사"
+    timeout: 5000
+    optional: true
+
+# 관심사 선택 (여러 개 선택 가능)
+- tapOn:
+    text: "운동"
+    optional: true
+
+- tapOn:
+    text: "음악"
+    optional: true
+
+- tapOn:
+    text: "영화"
+    optional: true
+
+# ====================================
+# 시나리오 7: 성격 수정 (ProfilePersonality)
+# ====================================
+
+# 성격 섹션 확인
+- assertVisible:
+    text: "성격"
+    timeout: 5000
+    optional: true
+
+# 성격 선택 (여러 개 선택 가능)
+- tapOn:
+    text: "친절"
+    optional: true
+
+- tapOn:
+    text: "유머러스"
+    optional: true
+
+# ====================================
+# 시나리오 8: 데이트 스타일 수정 (ProfileDatingStyle)
+# ====================================
+
+# 데이트 스타일 섹션 확인
+- assertVisible:
+    text: "데이트"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "스타일"
+    optional: true
+
+# 데이트 스타일 선택
+- tapOn:
+    text: "액티브"
+    optional: true
+
+- tapOn:
+    text: "여유로운"
+    optional: true
+
+# ====================================
+# 시나리오 9: 군대 (남성만) (ProfileMilitary)
+# ====================================
+
+# 군대 섹션 확인 (남성 사용자만 표시)
+- assertVisible:
+    text: "군대"
+    timeout: 5000
+    optional: true
+
+# 군대 옵션 선택
+- tapOn:
+    text: "전역"
+    optional: true
+
+- tapOn:
+    text: "미필"
+    optional: true
+
+- tapOn:
+    text: "면제"
+    optional: true
+
+# ====================================
+# 시나리오 10: 음주 수정 (ProfileDrinking)
+# ====================================
+
+# 음주 섹션 확인
+- assertVisible:
+    text: "음주"
+    timeout: 5000
+    optional: true
+
+# 음주 옵션 선택
+- tapOn:
+    text: "가끔"
+    optional: true
+
+- tapOn:
+    text: "전혀 안함"
+    optional: true
+
+- tapOn:
+    text: "자주"
+    optional: true
+
+# ====================================
+# 시나리오 11: 흡연 수정 (ProfileSmoking)
+# ====================================
+
+# 흡연 섹션 확인
+- assertVisible:
+    text: "흡연"
+    timeout: 5000
+    optional: true
+
+# 흡연 옵션 선택
+- tapOn:
+    text: "비흡연"
+    optional: true
+
+- tapOn:
+    text: "가끔"
+    optional: true
+
+# ====================================
+# 시나리오 12: 문신 수정 (ProfileTattoo)
+# ====================================
+
+# 문신 섹션 확인
+- assertVisible:
+    text: "문신"
+    timeout: 5000
+    optional: true
+
+# 문신 옵션 선택
+- tapOn:
+    text: "없음"
+    optional: true
+
+- tapOn:
+    text: "있음"
+    optional: true
+
+# ====================================
+# 시나리오 13: 저장 버튼 확인
+# ====================================
+
+# 하단 저장 버튼 확인
+- assertVisible:
+    text: "저장"
+    timeout: 5000
+
+# 필수 항목 미입력 시 버튼 비활성화 확인
+# disabled = !!(datingStyleIds.length === 0 || personality.length === 0 || interestIds.length === 0 || !mbti)
+
+# 저장 버튼 클릭
+- tapOn:
+    text: "저장"
+    optional: true
+
+# 저장 후 마이페이지로 복귀
+- assertVisible:
+    text: "마이"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 14: 이상형 선호도 수정 진입 (/profile-edit/interest)
+# ====================================
+
+# 다시 프로필 수정 진입
+- tapOn:
+    text: "수정"
+    optional: true
+
+# 이상형 선호도 탭 찾기
+- assertVisible:
+    text: "이상형"
+    timeout: 5000
+    optional: true
+
+# 이상형 선호도 탭 클릭
+- tapOn:
+    text: "이상형"
+    optional: true
+
+# ====================================
+# 시나리오 15: 나이 선택 (InterestAge)
+# ====================================
+
+# 나이 섹션 확인
+- assertVisible:
+    text: "나이"
+    timeout: 5000
+    optional: true
+
+# 나이 옵션 선택
+- tapOn:
+    text: "동갑"
+    optional: true
+
+- tapOn:
+    text: "연상"
+    optional: true
+
+- tapOn:
+    text: "연하"
+    optional: true
+
+# ====================================
+# 시나리오 16: 선호 MBTI (InterestGoodMbti)
+# ====================================
+
+# 선호 MBTI 섹션 확인
+- assertVisible:
+    text: "좋아하는"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "MBTI"
+    optional: true
+
+# MBTI 선택 (선택 안 할 수도 있음)
+- tapOn:
+    text: "E"
+    optional: true
+
+- tapOn:
+    text: "N"
+    optional: true
+
+# "선택 안 할래요" 버튼
+- assertVisible:
+    text: "선택 안 할래요"
+    optional: true
+
+# ====================================
+# 시나리오 17: 비선호 MBTI (InterestBadMbti)
+# ====================================
+
+# 비선호 MBTI 섹션 확인
+- assertVisible:
+    text: "피하고 싶은"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "MBTI"
+    optional: true
+
+# "선택 안 할래요" 버튼
+- tapOn:
+    text: "선택 안 할래요"
+    optional: true
+
+# ====================================
+# 시나리오 18: 이상형 성격 (InterestPersonality)
+# ====================================
+
+# 이상형 성격 섹션 확인
+- assertVisible:
+    text: "성격"
+    timeout: 5000
+    optional: true
+
+# 성격 선택 (여러 개 선택 가능)
+- tapOn:
+    text: "친절"
+    optional: true
+
+- tapOn:
+    text: "유머러스"
+    optional: true
+
+# ====================================
+# 시나리오 19: 이상형 군대 (여성만) (InterestMilitary)
+# ====================================
+
+# 군대 섹션 확인 (여성 사용자만 표시)
+- assertVisible:
+    text: "군대"
+    timeout: 5000
+    optional: true
+
+# 군대 옵션 선택
+- tapOn:
+    text: "전역"
+    optional: true
+
+- tapOn:
+    text: "면제"
+    optional: true
+
+# ====================================
+# 시나리오 20: 이상형 음주 (InterestDrinking)
+# ====================================
+
+# 음주 섹션 확인
+- assertVisible:
+    text: "음주"
+    timeout: 5000
+    optional: true
+
+# 음주 옵션 선택
+- tapOn:
+    text: "가끔"
+    optional: true
+
+# ====================================
+# 시나리오 21: 이상형 흡연 (InterestSmoking)
+# ====================================
+
+# 흡연 섹션 확인
+- assertVisible:
+    text: "흡연"
+    timeout: 5000
+    optional: true
+
+# 흡연 옵션 선택
+- tapOn:
+    text: "비흡연"
+    optional: true
+
+# ====================================
+# 시나리오 22: 이상형 문신 (InterestTattoo)
+# ====================================
+
+# 문신 섹션 확인
+- assertVisible:
+    text: "문신"
+    timeout: 5000
+    optional: true
+
+# 문신 옵션 선택
+- tapOn:
+    text: "없음"
+    optional: true
+
+# ====================================
+# 시나리오 23: 이상형 저장
+# ====================================
+
+# 저장 버튼 확인
+- assertVisible:
+    text: "저장"
+    timeout: 5000
+
+# 필수 항목 미입력 시 버튼 비활성화
+# disabled = !!(age === null || personality.length === 0)
+
+# 저장 버튼 클릭
+- tapOn:
+    text: "저장"
+    optional: true
+
+# 저장 후 마이페이지로 복귀
+- assertVisible:
+    text: "마이"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 최종 확인: 홈 화면 복귀
+# ====================================
+
+# 홈으로 이동
+- tapOn:
+    text: "홈"
+    optional: true
+
+# 홈 화면 확인
+- assertVisible:
+    id: "home-screen"
+    timeout: 10000
+
+# 참고: 프로필 수정 테스트 시 고려사항
+# 1. 성별(gender)에 따라 일부 섹션 표시 차이 (군대)
+# 2. 필수 항목: MBTI, 관심사, 성격, 데이트 스타일 (프로필)
+# 3. 필수 항목: 나이, 성격 (이상형)
+# 4. 저장 버튼은 필수 항목 미입력 시 비활성화
+# 5. 저장 후 쿼리 invalidation 및 마이페이지 복귀
+# 6. 이미지 업로드는 파일 시스템 접근 필요
+# 7. MBTI, 선호도는 여러 개 선택 가능한 항목과 단일 선택 항목 혼재

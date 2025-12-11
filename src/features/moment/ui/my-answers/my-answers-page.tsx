@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { router } from "expo-router";
 import { useAnswerHistoryInfiniteQuery } from "../../queries";
 import type { AnswerHistoryItem } from "../../apis";
+import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
 
 export const MyAnswersPage = () => {
   const {
@@ -14,6 +15,15 @@ export const MyAnswersPage = () => {
     hasNextPage,
     isFetchingNextPage
   } = useAnswerHistoryInfiniteQuery();
+
+  const { trackMyAnswersView, trackHistoryAnswerClick, trackHistoryScrollLoadMore } = useMomentAnalytics();
+  const pageLoadedRef = useRef(0);
+
+  useEffect(() => {
+    if (!isLoading) {
+      trackMyAnswersView({ source: 'navigation' });
+    }
+  }, [isLoading]);
 
   const answerHistory = answerHistoryData?.pages.flatMap(page => page.answers) || [];
 
@@ -37,11 +47,20 @@ export const MyAnswersPage = () => {
     }
   };
 
+  const handleAnswerPress = (item: AnswerHistoryItem) => {
+    trackHistoryAnswerClick({
+      question_id: item.questionId,
+      question_text: item.questionText,
+      answer_position: answerHistory.findIndex(a => a.id === item.id),
+    });
+    router.push(`/moment/question-detail?questionId=${item.questionId}`);
+  };
+
   const renderAnswerItem = ({ item }: { item: AnswerHistoryItem }) => (
     <TouchableOpacity
       style={styles.answerCard}
       activeOpacity={0.7}
-      onPress={() => router.push(`/moment/question-detail?questionId=${item.questionId}`)}
+      onPress={() => handleAnswerPress(item)}
     >
       <View style={styles.header}>
         <Text size="14" weight="medium" textColor="gray" style={styles.date}>
@@ -109,7 +128,13 @@ export const MyAnswersPage = () => {
           data={answerHistory}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderAnswerItem}
-          onEndReached={() => hasNextPage && fetchNextPage()}
+          onEndReached={() => {
+            if (hasNextPage) {
+              pageLoadedRef.current += 1;
+              trackHistoryScrollLoadMore({ page_number: pageLoadedRef.current });
+              fetchNextPage();
+            }
+          }}
           onEndReachedThreshold={0.1}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContainer}

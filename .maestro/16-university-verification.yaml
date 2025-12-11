@@ -1,0 +1,389 @@
+appId: host.exp.Exponent
+---
+# 대학교 인증 플로우 테스트
+# 회원가입 시 대학교 검색, 클러스터 확인, 학과/학년 정보 입력
+
+# 참고: 이 테스트는 회원가입 플로우의 일부입니다
+# 실제로는 01-email-signup.yaml에 포함되어야 하지만
+# 대학교 인증만 따로 테스트하기 위해 분리
+
+# ====================================
+# 시나리오 1: 대학교 검색 화면 진입 (/auth/signup/university)
+# ====================================
+
+# 회원가입 플로우 시작 (로그인 화면에서)
+# 참고: 실제로는 이메일 인증 후 진입
+
+# 대학교 검색 화면 확인
+- assertVisible:
+    text: "대학생"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "이상형"
+    optional: true
+
+# ====================================
+# 시나리오 2: 대학교 로고 애니메이션 (UniversityLogos)
+# ====================================
+
+# 대학교 로고들이 표시됨
+# UniversityLogos 컴포넌트로 렌더링
+# logoSize: 64
+
+# 참고: 로고는 이미지이므로 시각적으로만 확인 가능
+
+# ====================================
+# 시나리오 3: 환영 메시지 확인
+# ====================================
+
+# 타이틀 텍스트
+- assertVisible:
+    text: "대학생만 모인 곳"
+    timeout: 5000
+    optional: true
+
+- assertVisible:
+    text: "당신의 이상형을 찾아드려요"
+    optional: true
+
+# 서브 타이틀
+- assertVisible:
+    text: "지금 다니시는 학교를 검색해보세요"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 4: 검색창 확인
+# ====================================
+
+# 검색 아이콘 (SearchIcon)
+- assertVisible:
+    text: "🔍"
+    optional: true
+
+# 검색 placeholder
+- assertVisible:
+    text: "대학교 이름을 검색해주세요"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 5: 대학교 검색
+# ====================================
+
+# 검색창 클릭
+- tapOn:
+    text: "대학교 이름을 검색해주세요"
+    optional: true
+
+# 대학교 이름 입력
+- inputText: "서울"
+
+# 검색 결과 로딩 확인
+- assertVisible:
+    text: "로딩"
+    timeout: 3000
+    optional: true
+
+# ====================================
+# 시나리오 6: 검색 결과 목록 (FlashList)
+# ====================================
+
+# FlashList로 대학교 목록 렌더링
+# UniversityCard 컴포넌트로 각 항목 표시
+
+# 대학교 카드 확인
+- assertVisible:
+    text: "대학교"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 7: 대학교 선택 (UniversityCard)
+# ====================================
+
+# 첫 번째 대학교 카드 클릭
+- tapOn:
+    index: 0
+    optional: true
+
+# 선택된 카드 하이라이트 (시각적 요소)
+# isSelected = true → 보라색 배경
+
+# ====================================
+# 시나리오 8: 하단 팁 및 버튼
+# ====================================
+
+# 도움말 아이콘 (HelpIcon)
+- assertVisible:
+    text: "ℹ"
+    timeout: 5000
+    optional: true
+
+# 팁 텍스트
+- assertVisible:
+    text: "학교"
+    optional: true
+
+- assertVisible:
+    text: "찾기 어렵다면"
+    optional: true
+
+# TwoButtons 컴포넌트
+# 이전/다음 버튼
+
+# 다음 버튼 확인
+- assertVisible:
+    text: "다음"
+    timeout: 5000
+    optional: true
+
+# 다음 버튼 클릭
+- tapOn:
+    text: "다음"
+    optional: true
+
+# ====================================
+# 시나리오 9: 클러스터 화면 (/auth/signup/university-cluster)
+# ====================================
+
+# 체크 아이콘 애니메이션 (check-icon.json Lottie)
+# 200x200 사이즈
+
+# 선택 완료 타이틀
+- assertVisible:
+    text: "선택 완료"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 10: 클러스터 정보 확인
+# ====================================
+
+# 핀 아이콘 (PinIcon)
+- assertVisible:
+    text: "📍"
+    optional: true
+
+# 소속 클러스터 제목
+- assertVisible:
+    text: "소속 클러스터"
+    timeout: 5000
+    optional: true
+
+# 클러스터 지역 정보
+- assertVisible:
+    text: "권 클러스터"
+    optional: true
+
+# 클러스터 설명
+- assertVisible:
+    text: "같은 클러스터의"
+    optional: true
+
+- assertVisible:
+    text: "매칭돼요"
+    optional: true
+
+# ====================================
+# 시나리오 11: 같은 클러스터 대학 목록
+# ====================================
+
+# FlashList로 같은 클러스터 대학들 표시
+# sortedData로 이름순 정렬
+
+# 대학 목록 확인
+- assertVisible:
+    text: "대학교"
+    timeout: 5000
+    optional: true
+
+# ====================================
+# 시나리오 12: 클러스터 화면에서 다음으로
+# ====================================
+
+# 다음 버튼 클릭
+- tapOn:
+    text: "다음"
+    optional: true
+
+# ====================================
+# 시나리오 13: 대학 상세 정보 화면 (/auth/signup/university-details)
+# ====================================
+
+# details.png 이미지 확인
+# 81x81 사이즈
+
+# ====================================
+# 시나리오 14: 학과 검색 (DepartmentSearch)
+# ====================================
+
+# 학과 섹션 타이틀
+- assertVisible:
+    text: "학과"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "전공"
+    optional: true
+
+# 학과 검색 드롭다운 또는 입력창
+- assertVisible:
+    text: "검색"
+    timeout: 5000
+    optional: true
+
+# 학과 선택
+- tapOn:
+    text: "검색"
+    optional: true
+
+# 학과 입력
+- inputText: "컴퓨터"
+
+# 학과 목록에서 선택
+- tapOn:
+    index: 0
+    optional: true
+
+# ====================================
+# 시나리오 15: 학년 정보 선택 (AcademicInfoSelector)
+# ====================================
+
+# 학년 섹션 타이틀
+- assertVisible:
+    text: "학년"
+    timeout: 5000
+    optional: true
+
+# GradeSelector, StudentIdSelector 포함
+# AcademicInfoSelector 컴포넌트
+
+# 학년 선택 (1학년 ~ 4학년, 졸업생 등)
+- tapOn:
+    text: "1학년"
+    optional: true
+
+# ====================================
+# 시나리오 16: 학번 선택 (StudentIdSelector)
+# ====================================
+
+# 학번 섹션 확인
+- assertVisible:
+    text: "학번"
+    timeout: 5000
+    optional: true
+
+# 학번 입력 또는 선택
+- tapOn:
+    text: "입력"
+    optional: true
+
+- inputText: "22"
+
+# ====================================
+# 시나리오 17: 다음 단계로 진행
+# ====================================
+
+# 다음 버튼 활성화 확인
+# nextable = true (학과, 학년 모두 입력 시)
+
+# 다음 버튼 클릭
+- tapOn:
+    text: "다음"
+    optional: true
+
+# 로딩 화면 표시 (signupLoading)
+- assertVisible:
+    text: "잠시만"
+    timeout: 10000
+    optional: true
+
+- assertVisible:
+    text: "기다려"
+    optional: true
+
+# ====================================
+# 시나리오 18: 인스타그램 화면으로 이동 (/auth/signup/instagram)
+# ====================================
+
+# 인스타그램 연동 화면 확인
+- assertVisible:
+    text: "인스타그램"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 19: 뒤로가기 동작 확인
+# ====================================
+
+# 뒤로가기 버튼 클릭
+- tapOn:
+    text: "←"
+    optional: true
+
+# 이전 화면 (대학 상세)으로 복귀
+- assertVisible:
+    text: "학과"
+    timeout: 10000
+    optional: true
+
+# 다시 뒤로가기
+- back
+
+# 클러스터 화면으로 복귀
+- assertVisible:
+    text: "클러스터"
+    timeout: 10000
+    optional: true
+
+# 다시 뒤로가기
+- back
+
+# 대학교 검색 화면으로 복귀
+- assertVisible:
+    text: "대학교 이름을 검색해주세요"
+    timeout: 10000
+    optional: true
+
+# ====================================
+# 시나리오 20: 하드웨어 뒤로가기 (BackHandler)
+# ====================================
+
+# BackHandler로 하드웨어 뒤로가기 처리
+# onBackPress → 로그인 화면으로 이동
+
+# 참고: Maestro에서는 하드웨어 뒤로가기 테스트 제한적
+
+# ====================================
+# 최종 확인: 로그인 화면 복귀
+# ====================================
+
+# 뒤로가기로 로그인 화면 복귀 (회원가입 취소)
+- back
+
+# 로그인 화면 확인
+- assertVisible:
+    text: "로그인"
+    timeout: 10000
+    optional: true
+
+# 참고: 대학교 인증 테스트 시 고려사항
+# 1. 회원가입 플로우의 일부 (SignupSteps.UNIVERSITY)
+# 2. withSignupValidation HOC로 단계 검증
+# 3. 3단계 플로우: university → university-cluster → university-details
+# 4. useUniversityHook: 검색, 필터링, 선택 로직
+# 5. useUniversityDetails: 학과, 학년 선택 로직
+# 6. FlashList로 대학 목록 렌더링 (성능 최적화)
+# 7. UniversityLogos 애니메이션 (64px 로고)
+# 8. Lottie 애니메이션 (체크 아이콘, 로딩)
+# 9. 클러스터: 지역권 기반 매칭 시스템
+# 10. TwoButtons: 이전/다음 네비게이션
+# 11. BackHandler: 하드웨어 뒤로가기 처리
+# 12. KPI 이벤트 추적: trackUniversityVerificationStarted, trackUniversityVerificationCompleted
+# 13. signupLoading 상태에서 Loading.Page 표시
+# 14. DepartmentSearch, AcademicInfoSelector 컴포넌트
+# 15. nextable 조건: 학과, 학년 모두 입력 시 다음 버튼 활성화

@@ -148,6 +148,29 @@ export {
   invalidateProfileQueries,
 } from './queries';
 
+// Analytics Hooks
+export { useMomentAnalytics } from './hooks/use-moment-analytics';
+
+// Analytics Event Constants
+export { MOMENT_EVENTS } from './constants/moment-events';
+export type {
+  MomentEventName,
+  MomentPageViewProperties,
+  MomentBannerProperties,
+  MomentNavProperties,
+  MomentQuestionCardProperties,
+  MomentQuestionDetailProperties,
+  MomentQuestionTypeToggleProperties,
+  MomentQuestionAnswerProperties,
+  MomentQuestionSubmitProperties,
+  MomentReportProperties,
+  MomentReportInsightProperties,
+  MomentReportKeywordProperties,
+  MomentReportSyncProperties,
+  MomentHistoryProperties,
+  MomentAIInspirationProperties,
+} from './constants/moment-events';
+
 // Default export for backward compatibility
 import apis from './apis';
 export default apis;

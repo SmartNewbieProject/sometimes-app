@@ -36,8 +36,13 @@ export function useRoulettePage() {
     };
   }, [rouletteValue]);
 
+  const handleModalClose = () => {
+    hideModal();
+    router.back();
+  };
+
   const showModalForPrize = (prizeValue: number) => {
-    const modalStrategy = rouletteModalStrategy(showModal, hideModal);
+    const modalStrategy = rouletteModalStrategy(showModal, handleModalClose);
     modalStrategy[prizeValue as keyof typeof modalStrategy]();
   };
 

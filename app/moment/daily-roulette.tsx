@@ -1,27 +1,17 @@
-import React from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { semanticColors } from "@/src/shared/constants/colors";
 import { RouletteWheel } from "@/src/features/event/ui/roulette/roulette-wheel";
 import { useRoulettePage } from "@/src/features/event/hooks/roulette/use-roulette-page";
-import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 
 export default function DailyRoulettePage() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { rouletteAnimationStyle, handleStart, isSpinning } = useRoulettePage();
-  const { data: eligibility } = useRouletteEligibility();
-
-  const canParticipate = eligibility?.canParticipate ?? true;
-
-  React.useEffect(() => {
-    if (!canParticipate && !isSpinning) {
-      router.back();
-    }
-  }, [canParticipate, isSpinning]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
