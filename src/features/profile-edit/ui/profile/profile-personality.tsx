@@ -8,12 +8,12 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 
-const { t } = useTranslation();
 const { hooks, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 function ProfilePersonality() {
+  const { t } = useTranslation();
   const { personality, updateForm } = useMyInfoForm();
   const {
     data: preferencesArray = [
