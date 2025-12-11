@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, FlatList } from "react-native";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import { useReportHistoryInfiniteQuery } from "../../queries";
 import { formatWeekDisplay } from "@/src/shared/utils/date-utils";
 import { GrowthChart } from "../growth-chart";
+import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
 
 const CHART_MARGIN = 22;
 
@@ -17,7 +18,18 @@ export const MyMomentRecordPage = () => {
     hasNextPage: hasNextReports
   } = useReportHistoryInfiniteQuery();
 
+  const { trackMyMomentRecordView, trackHistoryReportClick, trackHistoryScrollLoadMore } = useMomentAnalytics();
+  const pageLoadedRef = useRef(0);
+
   const reportHistory = reportHistoryData?.pages.flatMap(page => page.reports) || [];
+
+  useEffect(() => {
+    if (!reportLoading) {
+      trackMyMomentRecordView({
+        source: 'navigation',
+      });
+    }
+  }, [reportLoading]);
 
   if (reportLoading) {
     return (
@@ -40,7 +52,7 @@ export const MyMomentRecordPage = () => {
           <FlatList
             data={reportHistory}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <View style={styles.timelineItem}>
                 <View style={styles.timelineDot} />
                 <View style={styles.timelineCard}>
@@ -52,8 +64,8 @@ export const MyMomentRecordPage = () => {
                   </Text>
                   {item.keywords.length > 0 && (
                     <View style={styles.tagsContainer}>
-                      {item.keywords.slice(0, 3).map((keyword, index) => (
-                        <View key={index} style={styles.tag}>
+                      {item.keywords.slice(0, 3).map((keyword, keywordIndex) => (
+                        <View key={keywordIndex} style={styles.tag}>
                           <Text size="12" weight="medium" textColor="purple">
                             {keyword}
                           </Text>
@@ -63,13 +75,20 @@ export const MyMomentRecordPage = () => {
                   )}
                   <TouchableOpacity
                     style={styles.detailLink}
-                    onPress={() => router.push({
-                      pathname: "/moment/weekly-report",
-                      params: {
+                    onPress={() => {
+                      trackHistoryReportClick({
                         week: item.weekNumber,
                         year: item.year,
-                      }
-                    })}
+                        report_position: index,
+                      });
+                      router.push({
+                        pathname: "/moment/weekly-report",
+                        params: {
+                          week: item.weekNumber,
+                          year: item.year,
+                        }
+                      });
+                    }}
                   >
                     <Text size="13" weight="medium" textColor="black">
                       자세히 보기 {'>'}
@@ -78,7 +97,13 @@ export const MyMomentRecordPage = () => {
                 </View>
               </View>
             )}
-            onEndReached={() => hasNextReports && fetchNextReports()}
+            onEndReached={() => {
+              if (hasNextReports) {
+                pageLoadedRef.current += 1;
+                trackHistoryScrollLoadMore({ page_number: pageLoadedRef.current });
+                fetchNextReports();
+              }
+            }}
             onEndReachedThreshold={0.1}
             showsVerticalScrollIndicator={false}
           />

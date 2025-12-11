@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -13,6 +13,7 @@ import { useWeeklyReportQuery, useWeeklyProgressQuery, useSyncProfileMutation } 
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { AnalysisCard } from '../widgets/analysis-card';
 import { getPersonalityTypeLabel } from '../../constants/personality-types';
+import { useMomentAnalytics } from '../../hooks/use-moment-analytics';
 
 // API response types based on actual API response
 interface WeeklyReportStats {
@@ -51,8 +52,21 @@ export const WeeklyReportPage = () => {
     year?: string;
   }>();
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
+  const {
+    trackWeeklyReportView,
+    trackReportChartView,
+    trackReportInsightExpand,
+    trackReportInsightCollapse,
+    trackReportKeywordView,
+  } = useMomentAnalytics();
 
-  const toggleSection = (section: string) => {
+  const toggleSection = (section: string, category: string) => {
+    const isCurrentlyExpanded = expandedSections[section];
+    if (isCurrentlyExpanded) {
+      trackReportInsightCollapse({ category, section_index: parseInt(section.replace('insight', '')) });
+    } else {
+      trackReportInsightExpand({ category, section_index: parseInt(section.replace('insight', '')) });
+    }
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
@@ -77,9 +91,36 @@ export const WeeklyReportPage = () => {
   };
 
   const { data: reportData, isLoading, error } = useWeeklyReportQuery(reportParams);
-  // TODO: 프로필 동기화 기능 미구현으로 인해 임시 비활성화
-  // const { mutate: syncProfile, isPending: isSyncing } = useSyncProfileMutation();
-  // const { showModal } = useModal();
+
+  useEffect(() => {
+    if (reportData && !isLoading) {
+      const report = reportData?.reports?.[0] || reportData?.data?.reports?.[0] || reportData?.data || reportData;
+      if (report) {
+        const isCurrentWeek = !paramWeek || (report.weekNumber === weekNumber && report.year === year);
+        trackWeeklyReportView({
+          week: report.weekNumber || reportParams.week,
+          year: report.year || reportParams.year,
+          is_current_week: isCurrentWeek,
+          average_score: report.stats?.reduce((sum: number, s: any) => sum + s.currentScore, 0) / (report.stats?.length || 1),
+          has_previous_week: report.stats?.some((s: any) => s.prevScore !== undefined),
+          report_title: report.title,
+        });
+
+        trackReportChartView({
+          week: report.weekNumber || reportParams.week,
+          year: report.year || reportParams.year,
+          chart_type: 'radar',
+        });
+
+        if (report.keywords?.length > 0) {
+          trackReportKeywordView({
+            keywords: report.keywords,
+            keyword_count: report.keywords.length,
+          });
+        }
+      }
+    }
+  }, [reportData, isLoading]);
 
 
   const handleBackToMoment = () => {
@@ -570,7 +611,7 @@ export const WeeklyReportPage = () => {
                   score={`${insight.score}점`}
                   mode="toggle"
                   isExpanded={expandedSections[`insight${index}`]}
-                  onToggle={() => toggleSection(`insight${index}`)}
+                  onToggle={() => toggleSection(`insight${index}`, insight.category)}
                 >
                   <Text size="12" weight="bold" textColor="black" style={styles.questionText}>
                     정의
