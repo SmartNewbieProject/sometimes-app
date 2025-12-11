@@ -4,5 +4,19 @@
       "event_expired_comment": "イベント期限切れ",
       "event_over_participated_comment": "イベント参加回数オーバー"
     }
+  },
+  "ui": {
+    "community_event_prompt": {
+      "title": "サムタイムへようこそ！",
+      "subtitle": "コミュニティで簡単な自己紹介をしてみませんか？\n本当の出会いは挨拶から始まりますから。",
+      "gem_label": "報酬",
+      "reward_text": "宝石{{gems}}個",
+      "write_button": "投稿を書く",
+      "later_button": "後で"
+    },
+    "community_event_error": {
+      "title": "エラー",
+      "message": "報酬付与中にエラーが発生しました。"
+    }
   }
 }
