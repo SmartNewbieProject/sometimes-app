@@ -22,17 +22,17 @@ import { Button } from "@/src/shared/ui";
 
 const { width: screenWidth } = Dimensions.get("window");
 
-interface CommunityEventPromptModalProps {
+interface UniversityCertificationPromptModalProps {
   visible: boolean;
   onClose: () => void;
-  onWriteArticle: () => void;
+  onCertify: () => void;
   onLater: () => void;
 }
 
-export const CommunityEventPromptModal: React.FC<CommunityEventPromptModalProps> = ({
+export const UniversityCertificationPromptModal: React.FC<UniversityCertificationPromptModalProps> = ({
   visible,
   onClose,
-  onWriteArticle,
+  onCertify,
   onLater,
 }) => {
   const { t } = useTranslation();
@@ -77,10 +77,10 @@ export const CommunityEventPromptModal: React.FC<CommunityEventPromptModalProps>
     }, 200);
   };
 
-  const handleWriteArticle = () => {
+  const handleCertify = () => {
     handleClose();
     setTimeout(() => {
-      onWriteArticle();
+      onCertify();
     }, 300);
   };
 
@@ -94,16 +94,15 @@ export const CommunityEventPromptModal: React.FC<CommunityEventPromptModalProps>
         </TouchableWithoutFeedback>
 
         <Animated.View style={[styles.modalContainer, contentAnimatedStyle]}>
-          {/* 말풍선 */}
           <View style={styles.speechBubbleContainer}>
             <View style={styles.speechBubble}>
               <Text style={styles.speechText}>
-                {t("features.event.ui.community_event_prompt.title")}
+                {t("features.event.ui.university_certification_prompt.title")}
               </Text>
               <Text style={styles.subText}>
-                {t("features.event.ui.community_event_prompt.subtitle")}
+                {t("features.event.ui.university_certification_prompt.subtitle")}
               </Text>
-              <View style={styles.gemReward}>
+              <View style={styles.benefitContainer}>
                 <View style={styles.gemIconContainer}>
                   <Image
                     source={require("@/assets/images/promotion/home-banner/gem.png")}
@@ -112,11 +111,11 @@ export const CommunityEventPromptModal: React.FC<CommunityEventPromptModalProps>
                   />
                 </View>
                 <View>
-                  <Text style={styles.rewardText}>
-                    {t("features.event.ui.community_event_prompt.gem_label")}
+                  <Text style={styles.benefitText}>
+                    {t("features.event.ui.university_certification_prompt.benefit_text")}
                   </Text>
-                  <Text style={styles.rewardSubtext}>
-                    받고 시작해보세요!
+                  <Text style={styles.benefitSubtext}>
+                    바로 지급!
                   </Text>
                 </View>
               </View>
@@ -127,21 +126,20 @@ export const CommunityEventPromptModal: React.FC<CommunityEventPromptModalProps>
                   variant="secondary"
                   flex="flex-1"
                 >
-                  {t("features.event.ui.community_event_prompt.later_button")}
+                  {t("features.event.ui.university_certification_prompt.later_button")}
                 </Button>
                 <Button
-                  onPress={handleWriteArticle}
+                  onPress={handleCertify}
                   variant="primary"
                   flex="flex-1"
                 >
-                  {t("features.event.ui.community_event_prompt.write_button")}
+                  {t("features.event.ui.university_certification_prompt.certify_button")}
                 </Button>
               </View>
             </View>
             <View style={styles.speechTail} />
           </View>
 
-          {/* 캐릭터 */}
           <View style={styles.characterContainer}>
             <Image
               source={require("@assets/images/instagram-some.png")}
@@ -237,7 +235,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     textAlign: "left",
   },
-  gemReward: {
+  benefitContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: semanticColors.surface.background,
@@ -261,12 +259,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
-  rewardText: {
+  benefitText: {
     fontSize: 16,
     color: semanticColors.text.primary,
     fontWeight: "bold",
   },
-  rewardSubtext: {
+  benefitSubtext: {
     fontSize: 12,
     color: semanticColors.brand.primary,
     fontWeight: "600",

@@ -94,125 +94,127 @@ export const Profile = () => {
   };
 
   return (
-    <View style={[styles.container]}>
-      <LinearGradient
-        colors={["#E9D9FF", "#D6B6FF"]}
-        style={styles.baseRectangle}
-      />
-      <View style={styles.overlapWrapper}>
-        <View style={styles.overlapRectangle}>
-          <View style={{ flexDirection: "row" }}>
-            <View
-              style={{
-                width: 130,
-                height: 130,
-                marginLeft: 10,
+    <>
+      <View style={[styles.container]}>
+        <LinearGradient
+          colors={["#E9D9FF", "#D6B6FF"]}
+          style={styles.baseRectangle}
+        />
+        <View style={styles.overlapWrapper}>
+          <View style={styles.overlapRectangle}>
+            <View style={{ flexDirection: "row" }}>
+              <View
+                style={{
+                  width: 130,
+                  height: 130,
+                  marginLeft: 10,
 
-                borderRadius: 10,
-                backgroundColor: semanticColors.surface.background,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Image
-                key={profileData.profileImage || ""}
-                source={profileData.profileImage}
-                style={{ borderRadius: 10, width: 120, height: 120 }}
-              />
-            </View>
-            <View style={styles.profileInfoContainer}>
-              <Text className="text-text-inverse " style={styles.name}>
-                {profileData.name}
-              </Text>
-              <View style={styles.subInfo}>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
-                  {profileData.grade}
-                </Text>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
-                  {" "}
-                  ·{" "}
-                </Text>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
-                  {profileData.university}
-                </Text>
-                {!isLoadingVerification &&
-                  (() => {
-                    const logoUrl = getUniversityLogoUrl();
-                    return isUniversityVerified && logoUrl ? (
-                      <Image
-                        source={{ uri: logoUrl }}
-                        style={{ width: 14, height: 14, marginLeft: 3 }}
-                      />
-                    ) : (
-                      <IconWrapper style={{ marginLeft: 3 }} size={14}>
-                        <NotSecuredIcon />
-                      </IconWrapper>
-                    );
-                  })()}
+                  borderRadius: 10,
+                  backgroundColor: semanticColors.surface.background,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Image
+                  key={profileData.profileImage || ""}
+                  source={profileData.profileImage}
+                  style={{ borderRadius: 10, width: 120, height: 120 }}
+                />
               </View>
-              {/* 대학교 인증 버튼 - 로딩 완료 후 인증 미완료 시에만 표시 */}
-              {!isLoadingVerification && !isUniversityVerified && (
-                <TouchableOpacity
-                  onPress={handleUniversityVerification}
-                  style={styles.universityVerificationButton}
-                >
-                  <Image
-                    source={require("@/assets/images/icon_change.png")}
-                    style={{ width: 16, height: 16, marginRight: 4 }}
-                  />
-                  <Text style={styles.universityVerificationButtonText}>
-                    {t("features.profile-edit.ui.header.university_verification")}
+              <View style={styles.profileInfoContainer}>
+                <Text className="text-text-inverse " style={styles.name}>
+                  {profileData.name}
+                </Text>
+                <View style={styles.subInfo}>
+                  <Text className="text-text-inverse" style={styles.subInfoText}>
+                    {profileData.grade}
                   </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                zIndex: 30,
-                position: "absolute",
-                top: -15,
-                right: 15,
-              }}
-            >
-              <Pressable onPress={handleProfileEdit}>
-                <View style={styles.leftRect} />
-                <View style={styles.leftRadius} />
-                <View style={[styles.previousButton]}>
-                  <View style={styles.updateContainer}>
-                    <Image
-                      source={require("@/assets/images/arrow-up.png")}
-                      style={{ width: 20, height: 8 }}
-                    />
-
-                    <Text className="text-[10px] text-brand-secondary">
-                      {t("features.profile-edit.ui.header.title")}
-                    </Text>
-                  </View>
+                  <Text className="text-text-inverse" style={styles.subInfoText}>
+                    {" "}
+                    ·{" "}
+                  </Text>
+                  <Text className="text-text-inverse" style={styles.subInfoText}>
+                    {profileData.university}
+                  </Text>
+                  {!isLoadingVerification &&
+                    (() => {
+                      const logoUrl = getUniversityLogoUrl();
+                      return isUniversityVerified && logoUrl ? (
+                        <Image
+                          source={{ uri: logoUrl }}
+                          style={{ width: 14, height: 14, marginLeft: 3 }}
+                        />
+                      ) : (
+                        <IconWrapper style={{ marginLeft: 3 }} size={14}>
+                          <NotSecuredIcon />
+                        </IconWrapper>
+                      );
+                    })()}
                 </View>
-                <View style={styles.rightRect} />
-                <View style={styles.rightRadius} />
-              </Pressable>
+                {/* 대학교 인증 버튼 - 로딩 완료 후 인증 미완료 시에만 표시 */}
+                {!isLoadingVerification && !isUniversityVerified && (
+                  <TouchableOpacity
+                    onPress={handleUniversityVerification}
+                    style={styles.universityVerificationButton}
+                  >
+                    <Image
+                      source={require("@/assets/images/icon_change.png")}
+                      style={{ width: 16, height: 16, marginRight: 4 }}
+                    />
+                    <Text style={styles.universityVerificationButtonText}>
+                      {t("features.profile-edit.ui.header.university_verification")}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  zIndex: 30,
+                  position: "absolute",
+                  top: -15,
+                  right: 15,
+                }}
+              >
+                <Pressable onPress={handleProfileEdit}>
+                  <View style={styles.leftRect} />
+                  <View style={styles.leftRadius} />
+                  <View style={[styles.previousButton]}>
+                    <View style={styles.updateContainer}>
+                      <Image
+                        source={require("@/assets/images/arrow-up.png")}
+                        style={{ width: 20, height: 8 }}
+                      />
+
+                      <Text className="text-[10px] text-brand-secondary">
+                        {t("features.profile-edit.ui.header.title")}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.rightRect} />
+                  <View style={styles.rightRadius} />
+                </Pressable>
+              </View>
             </View>
           </View>
-        </View>
-        <View
-          className="pt-[5px] pl-[32px] flex-row"
-          style={{ alignItems: "center" }}
-        >
-          <ImageResource resource={ImageResources.GEM} width={28} height={28} />
-          <View className="pl-[10px] flex-row">
-            <Text className="text-[13px] text-text-inverse">{t("features.profile-edit.ui.header.gem")} </Text>
-            <Text className="text-[13px] text-brand-secondary">
-              {" "}
-              {t("features.profile-edit.ui.header.gem_unit",{count:gem?.totalGem ?? 0})}
-            </Text>
-            <Text className="text-[13px] text-text-inverse"> {t("features.profile-edit.ui.header.gem_left")}</Text>
+          <View
+            className="pt-[5px] pl-[32px] flex-row"
+            style={{ alignItems: "center" }}
+          >
+            <ImageResource resource={ImageResources.GEM} width={28} height={28} />
+            <View className="pl-[10px] flex-row">
+              <Text className="text-[13px] text-text-inverse">{t("features.profile-edit.ui.header.gem")} </Text>
+              <Text className="text-[13px] text-brand-secondary">
+                {" "}
+                {t("features.profile-edit.ui.header.gem_unit",{count:gem?.totalGem ?? 0})}
+              </Text>
+              <Text className="text-[13px] text-text-inverse"> {t("features.profile-edit.ui.header.gem_left")}</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </>
   );
 };
 

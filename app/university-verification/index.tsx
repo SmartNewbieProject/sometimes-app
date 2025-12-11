@@ -245,16 +245,19 @@ export default function UniversityVerificationScreen() {
           <Text size="sm" weight="regular" className="text-gray">
             {t("apps.university-verification.no_email_guide_1")}
           </Text>
-          <View className="flex-row flex-wrap">
+          <View className="flex-row flex-wrap mb-1">
             <TouchableOpacity onPress={handleIDcardCertification}>
               <Text size="sm" weight="regular" className="text-gray underline">
-                학생증 및 재학증명 제출
+                학생증 및 재학증명서 제출
               </Text>
             </TouchableOpacity>
             <Text size="sm" weight="regular" className="text-gray">
-              을 통해 재학 정보를 인증 받을 수 있어요.
+              을 통해 재학 정보를 인증받을 수 있어요.
             </Text>
           </View>
+          <Text size="sm" weight="regular" className="text-gray">
+            (24시간 이내로 구슬 9개가 지급돼요)
+          </Text>
           <View className="mt-4">
             <Text size="sm" weight="regular" className="text-gray">
               재학 인증에 어려움이 있는 경우

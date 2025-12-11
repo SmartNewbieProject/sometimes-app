@@ -8,8 +8,8 @@
   "ui": {
     "community_event_prompt": {
       "title": "サムタイムへようこそ！",
-      "subtitle": "コミュニティで簡単な自己紹介をしてみませんか？\n本当の出会いは挨拶から始まりますから。",
-      "gem_label": "報酬",
+      "subtitle": "簡単な自己紹介をしてみましょう！\n本当の出会いは挨拶から始まります\n挨拶して宝石ももらっていきましょう！",
+      "gem_label": "宝石7個",
       "reward_text": "宝石{{gems}}個",
       "write_button": "投稿を書く",
       "later_button": "後で"
@@ -17,6 +17,13 @@
     "community_event_error": {
       "title": "エラー",
       "message": "報酬付与中にエラーが発生しました。"
+    },
+    "university_certification_prompt": {
+      "title": "大学認証を完了してみませんか？",
+      "subtitle": "大学認証を完了して宝石9個をもらっていきましょう！\nより信頼性の高いプロフィールで他のユーザーとより簡単に繋がることができます！",
+      "benefit_text": "報酬: 宝石9個",
+      "certify_button": "認証する",
+      "later_button": "後で"
     }
   }
 }

@@ -2,7 +2,7 @@ import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { Header, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router } from "expo-router";
-import { Image, Pressable, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, TouchableOpacity, View, ScrollView } from "react-native";
 
 export default function UniversityVerificationSuccess() {
   const { t } = useTranslation();
@@ -27,32 +27,37 @@ export default function UniversityVerificationSuccess() {
         <Header.RightContent />
       </Header.Container>
 
-      <View className="flex-1 px-5 justify-center items-center relative">
-        {/* 메인 이미지 */}
-        <View className="mb-16 mt-8 items-center ml-6">
-          <Image
-            source={require("@/assets/images/verification-done.png")}
-            style={{ width: 320, height: 320 }}
-            resizeMode="contain"
-          />
-        </View>
+      <View className="flex-1 relative">
+        <ScrollView className="flex-1 px-5">
+          {/* 메인 이미지 */}
+          <View className="mb-8 mt-8 items-center ml-6">
+            <Image
+              source={require("@/assets/images/verification-done.png")}
+              style={{ width: 320, height: 320 }}
+              resizeMode="contain"
+            />
+          </View>
 
-        {/* 메인 텍스트 */}
-        <View className="mb-20 w-[80%] items-start">
-          <Text size="lg" weight="normal" textColor="black" className="mb-1">
-            {t("apps.university-verification.success.congratulations")}
-          </Text>
-          <Text size="lg" weight="normal" textColor="black" className="mb-2">
-            {t("apps.university-verification.success.verification_complete")}
-          </Text>
+          {/* 메인 텍스트 */}
+          <View className="mb-32 w-[80%] items-start">
+            <Text size="lg" weight="normal" textColor="black" className="mb-1">
+              {t("apps.university-verification.success.congratulations")}
+            </Text>
+            <Text size="lg" weight="normal" textColor="black" className="mb-2">
+              {t("apps.university-verification.success.verification_complete")}
+            </Text>
 
-          <Text size="sm" weight="normal" className="mb-1 text-text-disabled">
-            이제 안심하고 시작해볼까요?
-          </Text>
-          <Text size="sm" weight="normal" className="text-text-disabled">
-            내가 있는 지역에서 이상형을 안전하게 만나보세요!
-          </Text>
-        </View>
+            <Text size="sm" weight="normal" className="mb-1 text-text-disabled">
+              구슬 9개를 받았어요!
+            </Text>
+            <Text size="sm" weight="normal" className="mb-1 text-text-disabled">
+              이제 안심하고 시작해볼까요?
+            </Text>
+            <Text size="sm" weight="normal" className="text-text-disabled">
+              내가 있는 지역에서 이상형을 안전하게 만나보세요!
+            </Text>
+          </View>
+        </ScrollView>
 
         {/* 하단 버튼 */}
         <View className="absolute bottom-8 left-5 right-5">

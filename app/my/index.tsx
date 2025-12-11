@@ -14,6 +14,7 @@ import {
   Text,
   HeaderWithNotification,
 } from "@/src/shared/ui";
+import { useUniversityCertificationPrompt } from "@/src/features/event/hooks/use-university-certification-prompt";
 import SettingIcon from "@assets/icons/setting.svg";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -32,6 +33,7 @@ import { useProfileReviewRedirect } from "@/src/features/mypage/hooks/use-img-ed
 export default function MyScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { renderPromptModal } = useUniversityCertificationPrompt();
 
   useProfileReviewRedirect();
 
@@ -76,6 +78,8 @@ export default function MyScreen() {
 
       {/* Bottom Navigation */}
       <BottomNavigation />
+
+      {renderPromptModal()}
     </Layout.Default>
   );
 }
