@@ -7,7 +7,7 @@ import { tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router, useLocalSearchParams } from "expo-router";
 import { View } from "react-native";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useCategory } from "@/src/features/community/hooks";
 import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 import { useTranslation } from "react-i18next";
@@ -23,6 +23,7 @@ export default function CommunityWriteScreen() {
   const { t } = useTranslation();
   const { showModal } = useModal();
   const { communityEngagementEvents } = useKpiAnalytics();
+  const [initialEventAttempt, setInitialEventAttempt] = useState<number | null>(null);
 
   const { category: initCategory } = useLocalSearchParams<{
     category: string;
@@ -36,6 +37,21 @@ export default function CommunityWriteScreen() {
   );
 
   const form = useArticleWriteForm({ type: initialType as ArticleRequestType });
+
+  useEffect(() => {
+    const saveInitialEventState = async () => {
+      try {
+        const { getEventByType } = await import("@/src/features/event/api");
+        const { EventType } = await import("@/src/features/event/types");
+
+        const eventDetails = await getEventByType(EventType.COMMUNITY_FIRST_POST);
+        setInitialEventAttempt(eventDetails.currentAttempt);
+      } catch (error) {
+      }
+    };
+
+    saveInitialEventState();
+  }, []);
 
   const onSubmitForm = form.handleSubmit(async (data) => {
     if (data.title.length < 3 || data.content.length < 3) {
@@ -67,18 +83,48 @@ export default function CommunityWriteScreen() {
       return;
     }
 
+    
     await tryCatch(
       async () => {
         const { originalImages, deleteImageIds, ...articleData } = data;
 
-        // 커뮤니티 글 생성 이벤트 추적
         communityEngagementEvents.trackArticleCreated(
-          articleData.category || '일반',
+          articleData.type || '일반',
           !!originalImages && originalImages.length > 0,
-          Math.ceil(articleData.content.length / 500) // 500자당 1분으로 예상 독서 시간
+          Math.ceil(articleData.content.length / 500)
         );
 
         await articles.postArticles(articleData);
+
+        try {
+          const { storage } = await import("@/src/shared/libs");
+          const { my } = await import("@/src/features/auth");
+          const auth = my();
+          if (auth?.phoneNumber) {
+            await storage.setItem(`community-written-post-${auth.phoneNumber}`, "true");
+          }
+        } catch (error) {
+        }
+
+        if (initialEventAttempt !== null) {
+          try {
+            const { getEventByType } = await import("@/src/features/event/api");
+            const { EventType } = await import("@/src/features/event/types");
+
+            const eventDetails = await getEventByType(EventType.COMMUNITY_FIRST_POST);
+            const actuallyReceivedReward = eventDetails.currentAttempt > initialEventAttempt;
+
+            if (actuallyReceivedReward) {
+              router.push("/community?refresh=true&receivedGemReward=true");
+            } else {
+              router.push("/community?refresh=true");
+            }
+          } catch (error) {
+            router.push("/community?refresh=true");
+          }
+        } else {
+          router.push("/community?refresh=true");
+        }
 
         showModal({
           title: t("apps.community.write.modal_success_title"),

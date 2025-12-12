@@ -69,6 +69,17 @@
       "web_only_error": "웹 환경에서만 사용 가능합니다.",
       "no_payment_result": "결제 결과를 받아오지 못했습니다.",
       "processing_payment_wait": "결제를 처리 중입니다. 잠시만 기다려주세요."
+    },
+    "gem_reward": {
+      "congratulations": "축하합니다!",
+      "gems_received": "구슬을 받았습니다"
+    },
+    "community_event_modal": {
+      "title": "❤️ 구슬 지급 완료",
+      "description": "구슬 7개를 받았어요",
+      "redirect_text": "커뮤니티 이동이 완료되었어요",
+      "confirm_button": "확인",
+      "continue_button": "계속 탐색하기"
     }
   },
   "apps": {

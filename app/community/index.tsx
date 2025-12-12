@@ -3,7 +3,7 @@ import { useCategory } from "@/src/features/community/hooks";
 import { semanticColors } from '../../src/shared/constants/colors';
 import { CategoryList, CreateArticleFAB } from "@/src/features/community/ui";
 import { ImageResources } from "@/src/shared/libs";
-import { BottomNavigation, Header, ImageResource, HeaderWithNotification } from "@/src/shared/ui";
+import { BottomNavigation, Header, ImageResource, HeaderWithNotification, Text } from "@/src/shared/ui";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, useWindowDimensions, ActivityIndicator } from "react-native";
@@ -21,13 +21,18 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ArticleSkeleton } from "@/src/features/loading/skeleton/article-skeleton";
 import CommuHome from "@/src/features/community/ui/home";
 import { NOTICE_CODE } from "@/src/features/community/queries/use-home";
+import { useCommunityEvent } from "@/src/features/event/hooks/use-community-event";
+import { useModal } from "@/src/shared/hooks/use-modal";
+import { useTranslation } from "react-i18next";
 
 const HOME_CODE = "__home__";
 type CategoryRoute = { key: string; title: string; isHome?: boolean };
 
 export default function CommunityScreen() {
-  const { refresh: shouldRefresh } = useLocalSearchParams<{
+  const { t } = useTranslation();
+  const { refresh: shouldRefresh, receivedGemReward } = useLocalSearchParams<{
     refresh: string;
+    receivedGemReward?: string;
   }>();
   const {
     categories,
@@ -37,6 +42,38 @@ export default function CommunityScreen() {
   const layout = useWindowDimensions();
   const queryClient = useQueryClient();
   const safeWidth = Math.max(1, layout.width || 0);
+
+  const { renderPromptModal } = useCommunityEvent();
+  const { showModal } = useModal();
+  const [hasShownGemReward, setHasShownGemReward] = useState(false);
+
+  useEffect(() => {
+    if (receivedGemReward === "true" && !hasShownGemReward) {
+      setHasShownGemReward(true);
+
+      showModal({
+        showLogo: true,
+        customTitle: (
+          <View className="w-full flex flex-row justify-center pb-[5px]">
+            <Text size="20" weight="bold" textColor="black">
+              {t("features.payment.ui.community_event_modal.title")}
+            </Text>
+          </View>
+        ),
+        children: (
+          <View className="flex flex-col gap-y-1 items-center">
+            <Text textColor="black" weight="semibold">
+              {t("features.payment.ui.community_event_modal.description")}
+            </Text>
+          </View>
+        ),
+        primaryButton: {
+          text: t("features.payment.ui.community_event_modal.confirm_button"),
+          onClick: () => {},
+        },
+      });
+    }
+  }, [receivedGemReward, hasShownGemReward, showModal, t]);
 
   const routes: CategoryRoute[] = useMemo(() => {
     const safeCategories = Array.isArray(categories) ? categories : [];
@@ -181,6 +218,8 @@ export default function CommunityScreen() {
 
       {!isHome && <CreateArticleFAB />}
       <BottomNavigation />
+
+      {renderPromptModal()}
     </View>
   );
 }

@@ -4,5 +4,26 @@
       "event_expired_comment": "이벤트 만료",
       "event_over_participated_comment": "이벤트 참여 횟수 초과"
     }
+  },
+  "ui": {
+    "community_event_prompt": {
+      "title": "썸타임에 온 걸 환영해요!",
+      "subtitle": "간단히 자기소개 남겨보세요!\n진짜 만남은 인사부터 시작해요\n인사하고 구슬도 받아가세요!",
+      "gem_label": "구슬 7개",
+      "reward_text": "구슬 {{gems}}개",
+      "write_button": "글 작성하기",
+      "later_button": "나중에 하기"
+    },
+    "community_event_error": {
+      "title": "오류",
+      "message": "보상 지급 중 오류가 발생했습니다."
+    },
+    "university_certification_prompt": {
+      "title": "학교 인증하고 구슬 받기",
+      "subtitle": "신뢰도 있는 프로필로 더 쉽게 연결될 수 있어요!",
+      "benefit_text": "구슬 9개",
+      "certify_button": "인증하기",
+      "later_button": "나중에 하기"
+    }
   }
 }
