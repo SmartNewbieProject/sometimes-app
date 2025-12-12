@@ -69,6 +69,17 @@
       "web_only_error": "ウェブ環境でのみ利用可能です。",
       "no_payment_result": "決済結果を取得できませんでした。",
       "processing_payment_wait": "決済処理中です。少々お待ちください…"
+    },
+    "gem_reward": {
+      "congratulations": "おめでとうございます！",
+      "gems_received": "ジェムを受け取りました"
+    },
+    "community_event_modal": {
+      "title": "❤️ ジェム付与完了",
+      "description": "ジェム7個を受け取りました",
+      "redirect_text": "コミュニティへの移動が完了しました",
+      "confirm_button": "確認",
+      "continue_button": "探索を続ける"
     }
   },
   "apps": {
