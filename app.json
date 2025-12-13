@@ -7,7 +7,7 @@
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "splash": {
       "resizeMode": "cover",
       "image": "./assets/images/splash-portrait.png",
@@ -184,12 +184,17 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks": "static"
+            "useFrameworks": "static",
+            "ccacheEnabled": true,
+            "buildSettings": {
+              "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES": "YES"
+            }
           },
           "android": {
             "extraMavenRepos": [
               "https://devrepo.kakao.com/nexus/content/groups/public/"
-            ]
+            ],
+            "kotlinVersion": "2.0.21"
           }
         }
       ],
@@ -233,7 +238,6 @@
         }
       ],
       "expo-web-browser",
-      "expo-build-properties",
       [
         "expo-localization",
         {
@@ -250,14 +254,6 @@
         }
       ],
       "expo-iap",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "kotlinVersion": "2.0.21"
-          }
-        }
-      ],
       "expo-asset"
     ],
     "locales": {

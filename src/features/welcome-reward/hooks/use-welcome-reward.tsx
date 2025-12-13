@@ -56,15 +56,20 @@ export const useWelcomeReward = () => {
   }, [isAuthorized, my]);
 
   const markRewardAsReceived = async () => {
-    if (!my?.phoneNumber) return;
+    if (!my?.phoneNumber) {
+      console.warn("markRewardAsReceived called without valid user data");
+      return;
+    }
+
+    const phoneNumber = my.phoneNumber;
 
     try {
       await receiveWelcomeReward();
-      await storage.setItem(`welcome-reward-${my.phoneNumber}`, "true");
+      await storage.setItem(`welcome-reward-${phoneNumber}`, "true");
       setShouldShowReward(false);
     } catch (error) {
       console.error(t("features.welcome-reward.ui.modal.receive_error"), error);
-      await storage.setItem(`welcome-reward-${my.phoneNumber}`, "true");
+      await storage.setItem(`welcome-reward-${phoneNumber}`, "true");
       setShouldShowReward(false);
     }
   };

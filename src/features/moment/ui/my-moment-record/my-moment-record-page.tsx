@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, FlatList } from "react-native";
+import React, { useEffect, useRef, useCallback } from "react";
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList } from "react-native";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { router } from "expo-router";
@@ -7,6 +7,7 @@ import { useReportHistoryInfiniteQuery } from "../../queries";
 import { formatWeekDisplay } from "@/src/shared/utils/date-utils";
 import { GrowthChart } from "../growth-chart";
 import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
+import type { ReportHistory } from "../../types";
 
 const CHART_MARGIN = 22;
 
@@ -41,84 +42,90 @@ export const MyMomentRecordPage = () => {
     );
   }
 
-  return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.chartSection}>
-        <GrowthChart reports={reportHistory} maxWeeks={5} />
-      </View>
-
-      <View style={styles.timelineSection}>
-        {reportHistory.length > 0 ? (
-          <FlatList
-            data={reportHistory}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item, index }) => (
-              <View style={styles.timelineItem}>
-                <View style={styles.timelineDot} />
-                <View style={styles.timelineCard}>
-                  <Text size="12" weight="normal" textColor="gray" style={styles.dateText}>
-                    {formatWeekDisplay(item.weekNumber, item.year)}
-                  </Text>
-                  <Text size="18" weight="bold" textColor="black" style={styles.cardTitle}>
-                    {item.title || "모먼트 분석 결과"}
-                  </Text>
-                  {item.keywords.length > 0 && (
-                    <View style={styles.tagsContainer}>
-                      {item.keywords.slice(0, 3).map((keyword, keywordIndex) => (
-                        <View key={keywordIndex} style={styles.tag}>
-                          <Text size="12" weight="medium" textColor="purple">
-                            {keyword}
-                          </Text>
-                        </View>
-                      ))}
-                    </View>
-                  )}
-                  <TouchableOpacity
-                    style={styles.detailLink}
-                    onPress={() => {
-                      trackHistoryReportClick({
-                        week: item.weekNumber,
-                        year: item.year,
-                        report_position: index,
-                      });
-                      router.push({
-                        pathname: "/moment/weekly-report",
-                        params: {
-                          week: item.weekNumber,
-                          year: item.year,
-                        }
-                      });
-                    }}
-                  >
-                    <Text size="13" weight="medium" textColor="black">
-                      자세히 보기 {'>'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+  const renderItem = useCallback(({ item, index }: { item: ReportHistory; index: number }) => (
+    <View style={styles.timelineItem}>
+      <View style={styles.timelineDot} />
+      <View style={styles.timelineCard}>
+        <Text size="12" weight="normal" textColor="gray" style={styles.dateText}>
+          {formatWeekDisplay(item.weekNumber, item.year)}
+        </Text>
+        <Text size="18" weight="bold" textColor="black" style={styles.cardTitle}>
+          {item.title || "모먼트 분석 결과"}
+        </Text>
+        {item.keywords.length > 0 && (
+          <View style={styles.tagsContainer}>
+            {item.keywords.slice(0, 3).map((keyword, keywordIndex) => (
+              <View key={keywordIndex} style={styles.tag}>
+                <Text size="12" weight="medium" textColor="purple">
+                  {keyword}
+                </Text>
               </View>
-            )}
-            onEndReached={() => {
-              if (hasNextReports) {
-                pageLoadedRef.current += 1;
-                trackHistoryScrollLoadMore({ page_number: pageLoadedRef.current });
-                fetchNextReports();
-              }
-            }}
-            onEndReachedThreshold={0.1}
-            showsVerticalScrollIndicator={false}
-          />
-        ) : (
-          <View style={styles.emptyState}>
-            <Text size="16" weight="medium" textColor="gray" style={styles.emptyText}>
-              아직 모먼트 기록이 없어요
-            </Text>
-            <Text size="14" weight="normal" textColor="gray">
-              오늘의 질문에 답변하고 모먼트를 시작해보세요!
-            </Text>
+            ))}
           </View>
         )}
+        <TouchableOpacity
+          style={styles.detailLink}
+          onPress={() => {
+            trackHistoryReportClick({
+              week: item.weekNumber,
+              year: item.year,
+              report_position: index,
+            });
+            router.push({
+              pathname: "/moment/weekly-report",
+              params: {
+                week: item.weekNumber,
+                year: item.year,
+              }
+            });
+          }}
+        >
+          <Text size="13" weight="medium" textColor="black">
+            자세히 보기 {'>'}
+          </Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
+  ), [trackHistoryReportClick]);
+
+  const ListHeader = useCallback(() => (
+    <View style={styles.chartSection}>
+      <GrowthChart reports={reportHistory} maxWeeks={5} />
+    </View>
+  ), [reportHistory]);
+
+  const ListEmpty = useCallback(() => (
+    <View style={styles.emptyState}>
+      <Text size="16" weight="medium" textColor="gray" style={styles.emptyText}>
+        아직 모먼트 기록이 없어요
+      </Text>
+      <Text size="14" weight="normal" textColor="gray">
+        오늘의 질문에 답변하고 모먼트를 시작해보세요!
+      </Text>
+    </View>
+  ), []);
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextReports) {
+      pageLoadedRef.current += 1;
+      trackHistoryScrollLoadMore({ page_number: pageLoadedRef.current });
+      fetchNextReports();
+    }
+  }, [hasNextReports, fetchNextReports, trackHistoryScrollLoadMore]);
+
+  return (
+    <FlatList
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      data={reportHistory}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={renderItem}
+      ListHeaderComponent={ListHeader}
+      ListEmptyComponent={ListEmpty}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.1}
+      showsVerticalScrollIndicator={false}
+    />
   );
 };
 
@@ -126,6 +133,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  contentContainer: {
+    paddingBottom: 20,
   },
   loadingContainer: {
     flex: 1,
@@ -137,11 +147,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
-  timelineSection: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
   timelineItem: {
+    marginHorizontal: 20,
     flexDirection: "row",
     marginBottom: 20,
     position: "relative",
