@@ -10,6 +10,7 @@ import { useFeatureCost } from "@features/payment/hooks";
 import { ModalStyles } from "@shared/hooks";
 import { Image, ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -97,6 +98,23 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
         source={{ uri: item.imageUrl }}
         style={[styles.imageBackground, { width: size, height: size }]}
       >
+        {item.blinded && (
+          <>
+            <BlurView
+              intensity={90}
+              tint="dark"
+              style={StyleSheet.absoluteFillObject}
+            />
+            <View style={styles.blurContent}>
+              <Text weight="bold" size="md" textColor="white" style={styles.blurMessage}>
+                {t('features.matching.blur_photo.message', { count: 1 })}
+              </Text>
+              <Text weight="medium" size="xs" textColor="white" style={styles.blurSubMessage}>
+                {t('features.matching.blur_photo.sub_description')}
+              </Text>
+            </View>
+          </>
+        )}
         <View
           style={{
             position: "relative",
@@ -108,11 +126,6 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
           }}
           className="flex flex-col justify-between"
         >
-          {item.blinded && (
-            <View style={styles.lock}>
-              <LockProfileIcon width={40} height={60} />
-            </View>
-          )}
           <View
             style={{
               position: "absolute",
@@ -259,7 +272,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     margin: 8,
   },
-  lock: {
+  blurContent: {
     position: "absolute",
     top: 0,
     left: 0,
@@ -268,6 +281,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1000,
+    padding: 16,
+    gap: 8,
+  },
+  blurMessage: {
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  blurSubMessage: {
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+    opacity: 0.9,
   },
   previousButton: {
     borderTopLeftRadius: 999,

@@ -31,6 +31,7 @@ import featuresInterest from './features/interest.json';
 import featuresLike from './features/like.json';
 import featuresLoading from './features/loading.json';
 import featuresMatch from './features/match.json';
+import featuresMatching from './features/matching.json';
 import featuresMatchingHistory from './features/matching-history.json';
 import featuresMyInfo from './features/my-info.json';
 import featuresPartner from './features/partner.json';
@@ -45,6 +46,7 @@ import featuresIdleMatchTimer from './features/idle-match-timer.json';
 import featureMypage from './features/mypage.json';
 import featuresMoment from './features/moment.json';
 import featuresSomemate from './features/somemate.json';
+import featuresOnboarding from './features/onboarding.json';
 
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
@@ -99,6 +101,7 @@ const features = {
   'like': featuresLike,
   'loading': featuresLoading,
   'match': featuresMatch,
+  'matching': featuresMatching,
   'matching-history': featuresMatchingHistory,
   'my-info': featuresMyInfo,
   'mypage': featureMypage,
@@ -114,6 +117,7 @@ const features = {
   'idle-match-timer': featuresIdleMatchTimer,
   'moment': featuresMoment,
   'somemate': featuresSomemate,
+  'onboarding': featuresOnboarding,
 };
 
 const widgets = {

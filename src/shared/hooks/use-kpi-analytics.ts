@@ -24,6 +24,19 @@ export interface UseKpiAnalyticsReturn {
     trackLoginFailed: (authMethod: string, errorType: string) => void;
   };
 
+  accountEvents: {
+    trackAccountDeletionRequested: (reason: string, reasonDetail?: string) => void;
+    trackAccountDeletionCancelled: (reason?: string) => void;
+    trackAccountDeleted: (deletionReason: string, userStats: {
+      daysSinceSignup?: number;
+      totalMatchesCount?: number;
+      hasPurchased?: boolean;
+      totalSpent?: number;
+      lastActiveDaysAgo?: number;
+    }) => void;
+    trackAccountReactivated: () => void;
+  };
+
   signupEvents: {
     trackSignupStarted: (source?: string) => void;
     trackProfileImageUploaded: (imageCount: number) => void;
@@ -61,7 +74,6 @@ export interface UseKpiAnalyticsReturn {
   paymentEvents: {
     trackStoreViewed: (storeType: string) => void;
     trackItemSelected: (itemType: string, itemValue: number) => void;
-    trackPaymentStarted: (paymentMethod: string, totalAmount: number) => void;
     trackPaymentCompleted: (transactionId: string, paymentMethod: string, totalAmount: number, items: any[]) => void;
     trackPaymentFailed: (paymentMethod: string, errorReason: string) => void;
     trackGemUsed: (usageType: string, gemCount: number) => void;
@@ -200,6 +212,19 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
     []
   );
 
+  // User Properties 업데이트 헬퍼 함수
+  const updateUserProperties = useCallback((properties: Record<string, any>) => {
+    try {
+      mixpanelAdapter.setUserProperties(properties);
+
+      if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
+        console.log(`[KPI Analytics] User properties updated:`, properties);
+      }
+    } catch (error) {
+      console.error('[KPI Analytics] Error updating user properties:', error);
+    }
+  }, []);
+
   // 인증 이벤트들
   const authEvents = {
     trackLoginStarted: useCallback((authMethod: string) => {
@@ -218,6 +243,43 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
         auth_method: authMethod as any,
         error_type: errorType
       });
+    }, [trackEvent]),
+  };
+
+  // 회원 관리 이벤트들
+  const accountEvents = {
+    trackAccountDeletionRequested: useCallback((reason: string, reasonDetail?: string) => {
+      trackEvent('Account_Deletion_Requested', {
+        deletion_reason: reason as any,
+        deletion_reason_detail: reasonDetail,
+      });
+    }, [trackEvent]),
+
+    trackAccountDeletionCancelled: useCallback((reason?: string) => {
+      trackEvent('Account_Deletion_Cancelled', {
+        deletion_reason: reason as any,
+      });
+    }, [trackEvent]),
+
+    trackAccountDeleted: useCallback((deletionReason: string, userStats: {
+      daysSinceSignup?: number;
+      totalMatchesCount?: number;
+      hasPurchased?: boolean;
+      totalSpent?: number;
+      lastActiveDaysAgo?: number;
+    }) => {
+      trackEvent('Account_Deleted', {
+        deletion_reason: deletionReason as any,
+        days_since_signup: userStats.daysSinceSignup,
+        total_matches_count: userStats.totalMatchesCount,
+        has_purchased: userStats.hasPurchased,
+        total_spent: userStats.totalSpent,
+        last_active_days_ago: userStats.lastActiveDaysAgo,
+      });
+    }, [trackEvent]),
+
+    trackAccountReactivated: useCallback(() => {
+      trackEvent('Account_Reactivated', {});
     }, [trackEvent]),
   };
 
@@ -274,7 +336,13 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
         matched_profile_id: matchedProfileId,
         time_to_match: timeToMatch
       });
-    }, [trackEvent]),
+
+      // User Properties 자동 업데이트: 매칭 성공 횟수 증가
+      updateUserProperties({
+        $add: { total_matches: 1 },
+        last_match_date: new Date().toISOString(),
+      });
+    }, [trackEvent, updateUserProperties]),
 
     trackMatchingFailed: useCallback((errorReason: string, options?: {
       retryAvailableAt?: string;
@@ -371,13 +439,6 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
       });
     }, [trackEvent]),
 
-    trackPaymentStarted: useCallback((paymentMethod: string, totalAmount: number) => {
-      trackEvent('Payment_Started', {
-        payment_method: paymentMethod as any,
-        total_amount: totalAmount
-      });
-    }, [trackEvent]),
-
     trackPaymentCompleted: useCallback((transactionId: string, paymentMethod: string, totalAmount: number, items: any[]) => {
       trackEvent('Payment_Completed', {
         transaction_id: transactionId,
@@ -385,7 +446,20 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
         total_amount: totalAmount,
         items_purchased: items
       });
-    }, [trackEvent]),
+
+      // User Properties 자동 업데이트: 결제 관련 정보
+      updateUserProperties({
+        has_purchased: true,
+        $add: {
+          total_spent: totalAmount,
+          purchase_count: 1,
+        },
+        $set_once: {
+          first_purchase_date: new Date().toISOString(),
+        },
+        last_purchase_date: new Date().toISOString(),
+      });
+    }, [trackEvent, updateUserProperties]),
 
     trackPaymentFailed: useCallback((paymentMethod: string, errorReason: string) => {
       trackEvent('Payment_Failed', {
@@ -457,7 +531,12 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
   const sessionEvents = {
     trackSessionStarted: useCallback((sessionStartReason: string) => {
       trackEvent('Session_Started', { session_start_reason: sessionStartReason });
-    }, [trackEvent]),
+
+      // User Properties 자동 업데이트: 마지막 활동 날짜
+      updateUserProperties({
+        last_active_date: new Date().toISOString(),
+      });
+    }, [trackEvent, updateUserProperties]),
 
     trackSessionEnded: useCallback((sessionDuration: number) => {
       trackEvent('Session_Ended', { session_duration: sessionDuration });
@@ -571,7 +650,12 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
         completed_fields: completedFields,
         fields_count: completedFields.length
       });
-    }, [trackEvent]),
+
+      // User Properties 자동 업데이트: 프로필 완성도
+      updateUserProperties({
+        profile_completion_rate: completionRate,
+      });
+    }, [trackEvent, updateUserProperties]),
 
     trackProfilePhotoUploaded: useCallback((photoCount: number) => {
       trackEvent('Profile_Photo_Uploaded', {
@@ -618,7 +702,15 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
         time_to_response: timeToResponse,
         response_type: 'accepted'
       });
-    }, [trackEvent]),
+
+      // User Properties 자동 업데이트: 상호 좋아요 횟수 증가
+      updateUserProperties({
+        $add: {
+          mutual_likes_count: 1,
+          successful_matches: 1,
+        },
+      });
+    }, [trackEvent, updateUserProperties]),
 
     trackMatchRejected: useCallback((sourceProfileId: string, rejectionReason?: string) => {
       trackEvent('Match_Rejected', {
@@ -827,6 +919,7 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
   return {
     trackEvent,
     authEvents,
+    accountEvents,
     signupEvents,
     matchingEvents,
     chatEvents,

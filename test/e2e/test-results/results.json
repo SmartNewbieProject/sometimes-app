@@ -1,0 +1,551 @@
+{
+  "config": {
+    "configFile": "/Users/user/projects/sometimes-app/test/e2e/playwright.config.ts",
+    "rootDir": "/Users/user/projects/sometimes-app/test/e2e/specs",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 6
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "./test-results/html"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "./test-results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/user/projects/sometimes-app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 6
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/user/projects/sometimes-app/test/e2e/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Users/user/projects/sometimes-app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 6
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "/Users/user/projects/sometimes-app/test/e2e/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "/Users/user/projects/sometimes-app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 6
+        },
+        "id": "mobile-safari",
+        "name": "mobile-safari",
+        "testDir": "/Users/user/projects/sometimes-app/test/e2e/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 6,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth/signup.spec.ts",
+      "file": "auth/signup.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "로그인 플로우",
+          "file": "auth/signup.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "로그인 페이지 로드 확인",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3514,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-06T13:08:41.860Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-beec61ae88e7fd595681",
+              "file": "auth/signup.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "이메일 로그인 성공",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 13673,
+                      "error": {
+                        "message": "TimeoutError: locator.hover: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText(/썸타는 순간/i)\u001b[22m\n",
+                        "stack": "TimeoutError: locator.hover: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText(/썸타는 순간/i)\u001b[22m\n\n    at AuthPage.openEmailLoginModal (/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts:49:19)\n    at /Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts:26:20",
+                        "location": {
+                          "file": "/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts",
+                          "column": 19,
+                          "line": 49
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m../pages/auth.page.ts:49\n\n  47 |\n  48 |     // Long press (2초 이상 누르기)\n> 49 |     await tagline.hover();\n     |                   ^\n  50 |     await this.page.mouse.down();\n  51 |     await this.page.waitForTimeout(2500); // 2.5초 대기\n  52 |     await this.page.mouse.up();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts",
+                            "column": 19,
+                            "line": 49
+                          },
+                          "message": "TimeoutError: locator.hover: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText(/썸타는 순간/i)\u001b[22m\n\n\n   at ../pages/auth.page.ts:49\n\n  47 |\n  48 |     // Long press (2초 이상 누르기)\n> 49 |     await tagline.hover();\n     |                   ^\n  50 |     await this.page.mouse.down();\n  51 |     await this.page.waitForTimeout(2500); // 2.5초 대기\n  52 |     await this.page.mouse.up();\n    at AuthPage.openEmailLoginModal (/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts:49:19)\n    at /Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts:26:20"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-06T13:08:41.860Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/user/projects/sometimes-app/test-results/auth-signup-로그인-플로우-이메일-로그인-성공-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/user/projects/sometimes-app/test-results/auth-signup-로그인-플로우-이메일-로그인-성공-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/user/projects/sometimes-app/test-results/auth-signup-로그인-플로우-이메일-로그인-성공-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/user/projects/sometimes-app/test-results/auth-signup-로그인-플로우-이메일-로그인-성공-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/pages/auth.page.ts",
+                        "column": 19,
+                        "line": 49
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-4adb1779a7b77fd1dbca",
+              "file": "auth/signup.spec.ts",
+              "line": 21,
+              "column": 7
+            },
+            {
+              "title": "전화번호 인증 단계",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 35,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-06T13:08:41.553Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 35,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-9a415b4bd5d72aad0cc5",
+              "file": "auth/signup.spec.ts",
+              "line": 35,
+              "column": 8
+            },
+            {
+              "title": "기본 정보 입력 단계",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 56,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 56,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-9e7a38768217cd0db1b8",
+              "file": "auth/signup.spec.ts",
+              "line": 56,
+              "column": 8
+            },
+            {
+              "title": "닉네임 입력 단계",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 73,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 73,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-c29627af5e858eeecbee",
+              "file": "auth/signup.spec.ts",
+              "line": 73,
+              "column": 8
+            },
+            {
+              "title": "약관 동의 단계",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 86,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 86,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-95543a63e61ae45a5290",
+              "file": "auth/signup.spec.ts",
+              "line": 86,
+              "column": 8
+            },
+            {
+              "title": "잘못된 전화번호 형식 에러",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 97,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 97,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-5b15edcd5b67059f2784",
+              "file": "auth/signup.spec.ts",
+              "line": 97,
+              "column": 8
+            },
+            {
+              "title": "잘못된 인증번호 에러",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                        "line": 106,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-12-06T13:08:41.554Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/user/projects/sometimes-app/test/e2e/specs/auth/signup.spec.ts",
+                            "line": 106,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c60d589c25b5f9baa21a-382070bd536077699a15",
+              "file": "auth/signup.spec.ts",
+              "line": 106,
+              "column": 8
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-12-06T13:08:41.538Z",
+    "duration": 14387.848,
+    "expected": 1,
+    "skipped": 6,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

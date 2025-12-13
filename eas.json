@@ -6,13 +6,35 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk"
+      }
+    },
+    "adhoc": {
+      "distribution": "internal",
+      "env": {
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk"
+      },
+      "ios": {
+        "distribution": "adhoc",
+        "buildConfiguration": "Release"
+      },
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {
       "autoIncrement": true,
+      "env": {
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk"
+      },
       "ios": {
         "distribution": "store",
         "developmentClient": false,

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 // import * as FileSystem from "expo-file-system";
 import { uploadUniversityVerificationImage } from "../apis";
+import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 
 function guessName(uri: string, fallback = "university_document.jpg") {
   const last = uri.split(/[\\/]/).pop();
@@ -16,9 +17,14 @@ function guessMime(uri: string) {
 
 export function useVerification() {
   const [submitting, setSubmitting] = useState(false);
+  const { onboardingEvents } = useKpiAnalytics();
 
   const submitOne = useCallback(async (uri: string, note?: string) => {
     setSubmitting(true);
+
+    // KPI 이벤트: 대학 인증 시작
+    onboardingEvents.trackUniversityVerificationStarted();
+
     try {
       const uploaded = await uploadUniversityVerificationImage({
         uri,
@@ -26,11 +32,14 @@ export function useVerification() {
         type: guessMime(uri),
       });
 
+      // KPI 이벤트: 대학 인증 완료
+      onboardingEvents.trackUniversityVerificationCompleted('document_upload');
+
       return uploaded;
     } finally {
       setSubmitting(false);
     }
-  }, []);
+  }, [onboardingEvents]);
 
   return { submitOne, submitting };
 }

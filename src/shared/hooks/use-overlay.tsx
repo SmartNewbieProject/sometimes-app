@@ -104,9 +104,22 @@ const { height } = Dimensions.get("window");
 
 export const guideHeight = 860;
 
-export const GuideView = ({ children }: { children: React.ReactNode }) =>
-  height > guideHeight ? (
-    <View style={{ flex: 1 }}>{children}</View>
+interface GuideViewProps {
+  children: React.ReactNode;
+  paddingBottom?: number;
+}
+
+export const GuideView = ({ children, paddingBottom = 0 }: GuideViewProps) => {
+  const contentContainerStyle = paddingBottom > 0 ? { paddingBottom } : undefined;
+
+  return height > guideHeight ? (
+    <View style={{ flex: 1, paddingBottom }}>{children}</View>
   ) : (
-    <ScrollView>{children}</ScrollView>
+    <ScrollView
+      contentContainerStyle={contentContainerStyle}
+      showsVerticalScrollIndicator={false}
+    >
+      {children}
+    </ScrollView>
   );
+};

@@ -20,6 +20,14 @@
     "partner":{
       "button_more": "더보기"
     },
+    "pending-approval": {
+      "title": "프로필 심사 진행 중",
+      "description": "프로필 심사가 진행 중입니다. 승인 완료 후 매칭이 시작됩니다.",
+      "estimated-time": "예상 소요 시간",
+      "info": "승인이 완료되면 알림을 보내드릴게요!",
+      "next-matching": "다음 매칭까지",
+      "timer-description": "승인 후 매칭이 진행됩니다"
+    },
     "find-partner":{
       "button_more": "더보기"
     },

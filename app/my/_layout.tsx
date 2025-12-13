@@ -32,15 +32,7 @@ export default function MyLayout() {
             },
           }}
         />
-        <Stack.Screen
-          name="approval-step/rejected"
-          options={{
-            headerShown: false,
-            contentStyle: {
-              backgroundColor: "transparent",
-            },
-          }}
-        />
+        {/* REMOVED: approval-step/rejected - 사진 거절 페이지가 사진관리 페이지로 통합됨 (2025-12-14) */}
         <Stack.Screen
           name="approval-step/waiting"
           options={{

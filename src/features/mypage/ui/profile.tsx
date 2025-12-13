@@ -40,6 +40,7 @@ export const Profile = () => {
     grade: formatStudentNumber(profileDetails?.universityDetails?.studentNumber),
     university: profileDetails?.universityDetails?.name || "",
     profileImage:
+      profileDetails?.profileImages?.find((image) => image.isMain)?.imageUrl ||
       profileDetails?.profileImages?.find((image) => image.isMain)?.url ||
       require("@/assets/images/profile.png"),
     totalRematchingTickets: reMatchingTicketCount?.total ?? 0,
@@ -94,32 +95,64 @@ export const Profile = () => {
   };
 
   return (
-    <>
-      <View style={[styles.container]}>
-        <LinearGradient
-          colors={["#E9D9FF", "#D6B6FF"]}
-          style={styles.baseRectangle}
-        />
-        <View style={styles.overlapWrapper}>
-          <View style={styles.overlapRectangle}>
-            <View style={{ flexDirection: "row" }}>
-              <View
-                style={{
+    <View style={[styles.container]}>
+      <LinearGradient
+        colors={["#E9D9FF", "#D6B6FF"]}
+        style={styles.baseRectangle}
+      />
+      <View style={styles.overlapWrapper}>
+        <View style={styles.overlapRectangle}>
+          <View style={{ flexDirection: "row" }}>
+            <Pressable
+              style={({ pressed }) => [
+                {
                   width: 130,
                   height: 130,
                   marginLeft: 10,
-
                   borderRadius: 10,
                   backgroundColor: semanticColors.surface.background,
                   justifyContent: "center",
                   alignItems: "center",
-                }}
-              >
-                <Image
-                  key={profileData.profileImage || ""}
-                  source={profileData.profileImage}
-                  style={{ borderRadius: 10, width: 120, height: 120 }}
-                />
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}
+              onPress={() => router.push('/profile/photo-management')}
+            >
+              <Image
+                key={profileData.profileImage || ""}
+                source={profileData.profileImage}
+                style={{ borderRadius: 10, width: 120, height: 120 }}
+              />
+            </Pressable>
+            <View style={styles.profileInfoContainer}>
+              <Text className="text-text-inverse " style={styles.name}>
+                {profileData.name}
+              </Text>
+              <View style={styles.subInfo}>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
+                  {profileData.grade}
+                </Text>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
+                  {" "}
+                  ·{" "}
+                </Text>
+                <Text className="text-text-inverse" style={styles.subInfoText}>
+                  {profileData.university}
+                </Text>
+                {!isLoadingVerification &&
+                  (() => {
+                    const logoUrl = getUniversityLogoUrl();
+                    return isUniversityVerified && logoUrl ? (
+                      <Image
+                        source={{ uri: logoUrl }}
+                        style={{ width: 14, height: 14, marginLeft: 3 }}
+                      />
+                    ) : (
+                      <IconWrapper style={{ marginLeft: 3 }} size={14}>
+                        <NotSecuredIcon />
+                      </IconWrapper>
+                    );
+                  })()}
               </View>
               <View style={styles.profileInfoContainer}>
                 <Text className="text-text-inverse " style={styles.name}>

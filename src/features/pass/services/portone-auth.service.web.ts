@@ -1,12 +1,11 @@
-import { Platform } from 'react-native';
 import type {
 	PortOneIdentityVerificationRequest,
 	PortOneIdentityVerificationResponse,
 } from '../types';
 
 /**
- * PortOne V2 본인인증 서비스
- * 플랫폼별로 다른 인증 방식을 제공합니다.
+ * PortOne V2 본인인증 서비스 (Web 전용)
+ * 웹 환경에서 @portone/browser-sdk를 사용한 본인인증을 처리합니다.
  */
 export class PortOneAuthService {
 	private readonly storeId: string;
@@ -20,16 +19,8 @@ export class PortOneAuthService {
 	}
 
 	private async loadPortOneSDK() {
-		if (Platform.OS !== 'web') {
-			throw new Error('웹 환경에서만 사용 가능합니다.');
-		}
-
-		try {
-			const module = await import('@portone/browser-sdk/v2');
-			return module;
-		} catch (error) {
-			throw new Error('PortOne SDK 로드에 실패했습니다.');
-		}
+		const module = await import('@portone/browser-sdk/v2');
+		return module;
 	}
 
 	private validateEnvironmentVariables() {
@@ -48,16 +39,14 @@ export class PortOneAuthService {
 	async requestIdentityVerification(
 		options: Partial<PortOneIdentityVerificationRequest> = {},
 	): Promise<PortOneIdentityVerificationResponse> {
-		// 웹에서만 사용됨 (모바일은 MobileIdentityVerification 컴포넌트에서 처리)
 		return this.requestWebAuth(options);
 	}
 
-	// 웹 환경에서 PortOne V2 SDK를 사용한 본인인증
 	private async requestWebAuth(
 		options: Partial<PortOneIdentityVerificationRequest>,
 	): Promise<PortOneIdentityVerificationResponse> {
 		try {
-			if (typeof window === 'undefined' || Platform.OS !== 'web') {
+			if (typeof window === 'undefined') {
 				throw new Error('웹 환경에서만 사용 가능합니다.');
 			}
 			const PortOne = await this.loadPortOneSDK();
@@ -66,7 +55,7 @@ export class PortOneAuthService {
 
 			const request: PortOneIdentityVerificationRequest = {
 				storeId: this.storeId,
-				channelKey: this.passChannelKey, // PASS 인증용 채널키 사용
+				channelKey: this.passChannelKey,
 				identityVerificationId,
 				windowType: {
 					pc: 'POPUP',

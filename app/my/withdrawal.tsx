@@ -22,6 +22,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { useTranslation } from "react-i18next";
 import i18n from "@/src/shared/libs/i18n";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 export enum WithdrawalReason {
   FOUND_PARTNER = "FOUND_PARTNER",
   POOR_MATCHING = "POOR_MATCHING",
@@ -97,7 +98,8 @@ export default function WithdrawalScreen() {
   });
   const [otherReason, setOtherReason] = useState("");
   const { showErrorModal, showModal } = useModal();
-  const { clearTokensOnly } = useAuth();
+  const { clearTokensOnly, my } = useAuth();
+  const { accountEvents } = useKpiAnalytics();
   const isOther = watch("reason") === "OTHER";
 
   const onSubmitWithdrawal = handleSubmit(async (data) => {
@@ -105,9 +107,27 @@ export default function WithdrawalScreen() {
       return isOther ? otherReason : data.reason;
     })();
 
+    // 탈퇴 요청 시작 이벤트 (버튼 클릭 시)
+    accountEvents.trackAccountDeletionRequested(
+      reason,
+      isOther ? otherReason : undefined
+    );
+
     await tryCatch(
       async () => {
         await withdraw(reason);
+
+        // 탈퇴 완료 이벤트 (사용자 통계 포함)
+        accountEvents.trackAccountDeleted(reason, {
+          daysSinceSignup: my?.createdAt
+            ? Math.floor((Date.now() - new Date(my.createdAt).getTime()) / (1000 * 60 * 60 * 24))
+            : undefined,
+          totalMatchesCount: my?.totalMatches,
+          hasPurchased: my?.hasPurchased,
+          totalSpent: my?.totalSpent,
+          lastActiveDaysAgo: 0,
+        });
+
         await clearTokensOnly();
 
         showModal({

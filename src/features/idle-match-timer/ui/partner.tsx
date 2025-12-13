@@ -41,7 +41,9 @@ export const Partner = ({ match }: PartnerProps) => {
   useEffect(() => {
     const mainProfileImageUri = partner?.profileImages?.find(
       (image) => image.isMain
-    )?.url ?? partner?.profileImages?.[0]?.url;
+    )?.imageUrl || partner?.profileImages?.find(
+      (image) => image.isMain
+    )?.url || partner?.profileImages?.[0]?.imageUrl || partner?.profileImages?.[0]?.url;
     if (!mainProfileImageUri) return;
     update(mainProfileImageUri);
   }, [partner?.profileImages, update]);

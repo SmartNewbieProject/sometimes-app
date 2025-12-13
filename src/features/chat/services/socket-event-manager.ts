@@ -7,6 +7,8 @@ import type { Chat } from '../types/chat';
 import { generateTempId } from '../utils/generate-temp-id';
 import { compressImage, isImageTooLarge } from '../utils/image-compression';
 import { chatEventBus } from './chat-event-bus';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
 
 class SocketConnectionManager {
 	private socket: Socket | null = null;
@@ -174,6 +176,14 @@ class SocketConnectionManager {
 	}
 
 	private emitMessageSuccess(serverMessage: Chat, tempId: string) {
+		// KPI 이벤트: 채팅 메시지 전송
+		mixpanelAdapter.track(AMPLITUDE_KPI_EVENTS.CHAT_MESSAGE_SENT, {
+			chat_id: serverMessage.chatRoomId,
+			message_type: serverMessage.messageType || 'text',
+			timestamp: Date.now(),
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE || 'production',
+		});
+
 		chatEventBus.emit({
 			type: 'MESSAGE_SEND_SUCCESS',
 			payload: {

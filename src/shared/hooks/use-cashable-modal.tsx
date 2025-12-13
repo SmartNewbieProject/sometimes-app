@@ -17,6 +17,7 @@ export const useCashableModal = () => {
   const show = ({ title, textContent }: CashableModalProps) => {
     return showModal({
       showLogo: true,
+      showParticle: true,
       customTitle: (
           <View style={styles.title}>
             <Text size="20" weight="bold" textColor="black">

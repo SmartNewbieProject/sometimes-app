@@ -1,26 +1,15 @@
 import { Button } from "@/src/shared/ui";
-import { cn } from "@shared/libs/cn";
-import { type VariantProps, cva } from "class-variance-authority";
 import { Image } from "expo-image";
 import {
   Platform,
   type StyleProp,
+  StyleSheet,
+  Text,
   View,
   type ViewStyle,
 } from "react-native";
 
-const chipSelector = cva("flex flex-row flex-wrap gap-2", {
-  variants: {
-    align: {
-      start: "justify-start",
-      center: "justify-center",
-      end: "justify-end",
-    },
-  },
-  defaultVariants: {
-    align: "start",
-  },
-});
+type AlignType = "start" | "center" | "end";
 
 interface Option<T> {
   label: string;
@@ -28,14 +17,14 @@ interface Option<T> {
   imageUrl?: string;
 }
 
-interface ChipSelectorProps<T> extends VariantProps<typeof chipSelector> {
+interface ChipSelectorProps<T> {
   options: Option<T>[];
   value?: T | T[];
   onChange: (value: T) => void;
   multiple?: false;
-  className?: string;
-  buttonClassName?: string;
+  align?: AlignType;
   style?: StyleProp<ViewStyle>;
+  buttonStyle?: StyleProp<ViewStyle>;
 }
 
 interface MultipleChipSelectorProps<T>
@@ -47,6 +36,8 @@ interface MultipleChipSelectorProps<T>
 export function ChipSelector<T>(
   props: ChipSelectorProps<T> | MultipleChipSelectorProps<T>
 ) {
+  const { align = "start", style, buttonStyle } = props;
+
   const isSelected = (optionValue: T) => {
     if (props.multiple) {
       return (props.value as T[])?.includes(optionValue);
@@ -66,42 +57,110 @@ export function ChipSelector<T>(
     }
   };
 
+  const getContainerStyle = () => {
+    const alignmentStyle =
+      align === "center"
+        ? styles.containerCenter
+        : align === "end"
+          ? styles.containerEnd
+          : styles.containerStart;
+
+    return [styles.container, alignmentStyle, style];
+  };
+
+  const getButtonPaddingStyle = () => {
+    return Platform.OS === "web" ? styles.buttonPaddingWeb : styles.buttonPaddingNative;
+  };
+
+  const getButtonStyles = () => {
+    return StyleSheet.flatten([
+      styles.chipButton,
+      getButtonPaddingStyle(),
+      styles.buttonBorderRadius,
+      buttonStyle,
+    ]);
+  };
+
   return (
-    <View
-      style={props.style ?? {}}
-      className={cn(chipSelector({ align: props.align }), props.className)}
-    >
+    <View style={getContainerStyle()}>
       {props.options.map((option) => (
         <Button
           key={String(option.value)}
           variant={isSelected(option.value) ? "primary" : "white"}
           textColor={isSelected(option.value) ? "white" : "purple"}
           onPress={() => handleSelect(option.value)}
-          className={cn(
-            Platform.OS === "web" ? "py-1 px-3" : "py-2 px-4",
-            "rounded-xl flex flex-row  items-center gap-x-2 justify-center",
-            props.buttonClassName
-          )}
+          styles={getButtonStyles()}
           size="chip"
         >
-          {option?.imageUrl && option.imageUrl.trim() !== '' && (
-            <Image
-              source={{
-                uri: option.imageUrl,
-                cacheKey: `chip-${String(option.value)}-${option.imageUrl}`,
-              }}
-              style={{ width: 16, height: 16, marginRight: 4, marginTop: 2 }}
-              contentFit="contain"
-              transition={200}
-              cachePolicy="memory-disk"
-              onError={(error) => {
-                console.warn(`Failed to load chip image for "${option.label}":`, error.error);
-              }}
-            />
-          )}
-          {option.label}
+          <View style={styles.chipContent}>
+            {option?.imageUrl && option.imageUrl.trim() !== '' && (
+              <Image
+                source={{
+                  uri: option.imageUrl,
+                  cacheKey: `chip-${String(option.value)}-${option.imageUrl}`,
+                }}
+                style={styles.chipImage}
+                contentFit="contain"
+                transition={200}
+                cachePolicy="memory-disk"
+                onError={(error) => {
+                  console.warn(`Failed to load chip image for "${option.label}":`, error.error);
+                }}
+              />
+            )}
+            <Text style={styles.chipLabel}>{option.label}</Text>
+          </View>
         </Button>
       ))}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 8,
+  },
+  containerStart: {
+    justifyContent: 'flex-start',
+  },
+  containerCenter: {
+    justifyContent: 'center',
+  },
+  containerEnd: {
+    justifyContent: 'flex-end',
+  },
+  chipButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chipContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonPaddingWeb: {
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+  },
+  buttonPaddingNative: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  buttonBorderRadius: {
+    borderRadius: 12,
+  },
+  chipImage: {
+    width: 16,
+    height: 16,
+    marginRight: 4,
+    alignSelf: 'center',
+  },
+  chipLabel: {
+    lineHeight: 16,
+    alignSelf: 'center',
+  },
+});

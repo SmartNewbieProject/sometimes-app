@@ -20,6 +20,14 @@
     "partner":{
       "button_more": "もっと見る"
     },
+    "pending-approval": {
+      "title": "プロフィール審査中",
+      "description": "プロフィールを審査中です。承認後、マッチングが開始されます。",
+      "estimated-time": "予想所要時間",
+      "info": "承認が完了したら通知をお送りします！",
+      "next-matching": "次のマッチングまで",
+      "timer-description": "承認後、マッチングが開始されます"
+    },
     "find-partner":{
       "button_more": "もっと見る"
     },

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import i18n from "@/src/shared/libs/i18n";
+import type { SignupResponse } from "../apis";
 
 export type SignupForm = {
   name: string;
@@ -30,7 +31,8 @@ type StoreProps = {
   univTitle: string;
   updateUnivTitle: (area: string) => void;
   updateForm: (form: Partial<SignupForm>) => void;
-
+  signupResponse: SignupResponse | null;
+  setSignupResponse: (response: SignupResponse | null) => void;
   clear: () => void;
 
   updateShowHeader: (bool: boolean) => void;
@@ -68,11 +70,13 @@ const useSignupProgress = create<StoreProps>((set) => ({
         ...form,
       },
     })),
+  signupResponse: null,
+  setSignupResponse: (response) => set({ signupResponse: response }),
   clear: () =>
     set({
       form: {},
       step: SignupSteps.UNIVERSITY,
-
+      signupResponse: null,
       univTitle: "",
     }),
 

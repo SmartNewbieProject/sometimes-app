@@ -11,6 +11,7 @@ import { InteractionNavigation } from "./ui/nav";
 import { NotFound } from "./ui/not-found";
 import { Partner } from "./ui/partner";
 import { RematchLoading } from "./ui/rematching";
+import { PendingApproval } from "./ui/pending-approval";
 
 const createDefaultWaitingMatch = (): MatchDetails => ({
   type: "waiting",
@@ -82,6 +83,8 @@ export default function IdleMatchTimer() {
       case "open":
       case "rematching":
         return <Partner match={match} />;
+      case "pending-approval":
+        return <PendingApproval match={match} onTimeEnd={refetch} />;
       case "not-found":
         return <NotFound />;
       case "waiting":

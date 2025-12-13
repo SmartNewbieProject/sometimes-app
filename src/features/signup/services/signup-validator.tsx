@@ -134,6 +134,7 @@ export async function processSignup(
     trackSignupEvent,
     trackKpiEvent,
     removeLoginType,
+    setSignupResponse,
   }: {
     router: Router;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -143,23 +144,35 @@ export async function processSignup(
     trackSignupEvent: (event: string, detail?: string) => void;
     trackKpiEvent?: (event: string, data?: any) => void;
     removeLoginType: () => Promise<void>;
+    setSignupResponse?: (response: any) => void;
   }
 ): Promise<void> {
-  await apis.signup(signupForm);
+  const response = await apis.signup(signupForm);
+
+  // 회원가입 응답 저장 (토큰 포함)
+  if (setSignupResponse && response) {
+    setSignupResponse(response);
+  }
 
   // 프로필 완성률 계산
-  const profileFields = ['phone', 'universityId', 'profileImages'];
+  const profileFields = ['phone', 'universityId', 'profileImages', 'name', 'birthday', 'gender', 'departmentName', 'grade', 'studentNumber', 'instagramId'];
   const completedFields = profileFields.filter(field => {
     if (field === 'profileImages') {
       return signupForm.profileImages?.some(img => img !== null) || false;
     }
-    return signupForm[field as keyof typeof signupForm] !== undefined && signupForm[field as keyof typeof signupForm] !== null;
+    return signupForm[field as keyof typeof signupForm] !== undefined && signupForm[field as keyof typeof signupForm] !== null && signupForm[field as keyof typeof signupForm] !== '';
   });
 
   const completionRate = Math.round((completedFields.length / profileFields.length) * 100);
 
-  // KPI 이벤트: 가입 완료
+  // KPI 이벤트: 프로필 완성도 업데이트 (최초 가입 시)
   if (trackKpiEvent) {
+    trackKpiEvent('Profile_Completion_Updated', {
+      profile_completion_rate: completionRate,
+      completed_fields: completedFields,
+    });
+
+    // KPI 이벤트: 가입 완료
     trackKpiEvent('Signup_Completed', {
       profile_completion_rate: completionRate,
       total_duration: Date.now() - (signupForm.signupStartTime || Date.now())
