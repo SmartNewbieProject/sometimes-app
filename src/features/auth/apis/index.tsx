@@ -33,6 +33,9 @@ export const passDevLogin = (): Promise<PassLoginResponse> =>
 export const passKakao = (code: string): Promise<PassLoginResponse> =>
   axiosClient.post("/auth/oauth/kakao", { code });
 
+export const passKakaoNative = (accessToken: string): Promise<PassLoginResponse> =>
+  axiosClient.post("/auth/oauth/kakao", { accessToken });
+
 export const getUserStatus = (
   phoneNumber: string
 ): Promise<{

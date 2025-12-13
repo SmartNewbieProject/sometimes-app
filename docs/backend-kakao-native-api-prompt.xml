@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task>
+  <context>
+    <project>
+      <name>Sometimes 소셜 매칭 애플리케이션</name>
+      <description>React Native + Expo 기반 대학생 매칭 앱</description>
+      <platform>웹, iOS, Android</platform>
+    </project>
+
+    <current_situation>
+      <problem>
+        현재 카카오 로그인이 웹뷰 방식으로 구현되어 있어, 네이티브 앱에서도 사용자가 ID/PW를 직접 입력해야 합니다.
+        이는 UX가 좋지 않아, 카카오톡 앱이 설치된 경우 앱 간 전환으로 원클릭 로그인을 지원하고자 합니다.
+      </problem>
+
+      <existing_api>
+        <endpoint>POST /auth/oauth/kakao</endpoint>
+        <request_body>
+          <field name="code" type="string" required="true">
+            OAuth Authorization Code (웹 플랫폼에서 카카오 OAuth 페이지를 거쳐 받은 코드)
+          </field>
+        </request_body>
+        <process>
+          1. code를 받아서 카카오 토큰 서버로 accessToken 교환
+          2. accessToken으로 사용자 정보 조회
+          3. DB에서 사용자 조회 또는 생성
+          4. 신규 사용자면 본인인증 정보 반환, 기존 사용자면 JWT 토큰 발급
+        </process>
+      </existing_api>
+
+      <new_requirement>
+        <platform>iOS, Android 네이티브 앱</platform>
+        <sdk>@react-native-kakao/user (버전 2.4.0)</sdk>
+        <flow>
+          1. 프론트엔드에서 login() 함수 호출
+          2. 카카오톡 앱으로 자동 전환 (앱이 있는 경우)
+          3. 사용자 동의 후 SDK가 accessToken 직접 반환
+          4. 프론트엔드가 accessToken을 백엔드로 전송
+          5. 백엔드가 토큰 검증 후 기존 로직과 동일하게 처리
+        </flow>
+        <sdk_response>
+          {
+            "accessToken": "xxxxxx...",
+            "refreshToken": "xxxxxx...",
+            "idToken": "xxxxxx...",
+            "scopes": ["account_email", "profile_nickname", ...],
+            "accessTokenExpiresAt": 1234567890,
+            "refreshTokenExpiresAt": 1234567890
+          }
+        </sdk_response>
+      </new_requirement>
+    </current_situation>
+
+    <tech_stack>
+      <backend>Node.js + TypeScript + Express (or NestJS)</backend>
+      <database>PostgreSQL (추정)</database>
+      <current_dependencies>axios (카카오 API 호출용)</current_dependencies>
+    </tech_stack>
+  </context>
+
+  <objective>
+    기존 `POST /auth/oauth/kakao` 엔드포인트를 확장하여,
+    OAuth Authorization Code(웹)와 Kakao Access Token(네이티브)
+    두 가지 방식을 모두 지원하도록 백엔드 API를 구현하세요.
+  </objective>
+
+  <requirements>
+    <functional>
+      <requirement id="FR-1" priority="critical">
+        요청 본문에 code 또는 accessToken 중 하나가 반드시 포함되어야 합니다.
+        둘 다 없으면 400 Bad Request 응답을 반환하세요.
+      </requirement>
+
+      <requirement id="FR-2" priority="critical">
+        accessToken이 제공된 경우, 카카오 API로 토큰 검증을 수행해야 합니다.
+        - API: GET https://kapi.kakao.com/v1/user/access_token_info
+        - Header: Authorization: Bearer {accessToken}
+        - 성공: 200 OK + {id, expires_in, app_id}
+        - 실패: 401 Unauthorized
+      </requirement>
+
+      <requirement id="FR-3" priority="critical">
+        검증된 accessToken으로 카카오 사용자 정보를 조회해야 합니다.
+        - API: GET https://kapi.kakao.com/v2/user/me
+        - Header: Authorization: Bearer {accessToken}
+        - Query: property_keys=["kakao_account.name","kakao_account.phone_number","kakao_account.birthday","kakao_account.birthyear","kakao_account.gender"]
+      </requirement>
+
+      <requirement id="FR-4" priority="high">
+        조회한 카카오 사용자 정보를 다음과 같이 변환하세요:
+        - phone: 전화번호에서 공백, 하이픈, 국가코드(+82) 제거
+        - gender: "male" → "M", "female" → "F"
+        - birthday: MMDD 형식 유지
+        - birthyear: YYYY 형식 유지
+      </requirement>
+
+      <requirement id="FR-5" priority="critical">
+        code 방식과 accessToken 방식의 응답 형식은 완전히 동일해야 합니다.
+
+        신규 사용자:
+        {
+          "isNewUser": true,
+          "certificationInfo": {
+            "name": string,
+            "phone": string,
+            "birthday": string,
+            "birthyear": string,
+            "gender": "M" | "F"
+          }
+        }
+
+        기존 사용자:
+        {
+          "isNewUser": false,
+          "accessToken": string (JWT),
+          "refreshToken": string (JWT),
+          "userId": number
+        }
+      </requirement>
+
+      <requirement id="FR-6" priority="medium">
+        카카오 ID(response.id)를 기준으로 DB에서 사용자를 조회하거나 생성하세요.
+        기존 code 방식의 로직과 동일하게 처리해야 합니다.
+      </requirement>
+    </functional>
+
+    <non_functional>
+      <requirement id="NFR-1" priority="critical">
+        카카오 API 호출 실패 시 적절한 에러 핸들링을 수행하세요:
+        - 401: Invalid token → 클라이언트에 401 반환
+        - 5xx: Kakao service error → 클라이언트에 503 반환
+        - Network error: 503 Service Unavailable 반환
+      </requirement>
+
+      <requirement id="NFR-2" priority="high">
+        모든 카카오 로그인 시도를 로깅하세요:
+        - 로그인 방식 (code vs accessToken)
+        - 카카오 사용자 ID
+        - 성공/실패 여부
+        - 에러 메시지 (실패 시)
+      </requirement>
+
+      <requirement id="NFR-3" priority="medium">
+        Rate limiting을 적용하여 동일 IP에서 1분에 10회 이상 요청 시 429 응답을 반환하세요.
+      </requirement>
+
+      <requirement id="NFR-4" priority="low">
+        카카오 API 응답 캐싱을 고려하세요 (선택 사항):
+        - Redis를 사용하여 검증된 토큰 정보를 5분간 캐싱
+        - 동일 토큰으로 재요청 시 카카오 API 호출 생략
+      </requirement>
+    </non_functional>
+  </requirements>
+
+  <constraints>
+    <constraint id="C-1">기존 code 방식의 동작은 절대 변경하지 마세요. 하위 호환성 유지가 필수입니다.</constraint>
+    <constraint id="C-2">프로덕션 배포 전 반드시 단위 테스트와 통합 테스트를 작성하세요.</constraint>
+    <constraint id="C-3">카카오 개발자 문서를 참조하여 최신 API 스펙을 확인하세요: https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api</constraint>
+    <constraint id="C-4">민감한 정보(전화번호, 이름)는 로그에 마스킹 처리하세요.</constraint>
+  </constraints>
+
+  <deliverables>
+    <deliverable id="D-1">
+      <title>수정된 API 엔드포인트 코드</title>
+      <description>POST /auth/oauth/kakao 핸들러 함수 (TypeScript)</description>
+      <format>코드 파일 또는 코드 블록</format>
+    </deliverable>
+
+    <deliverable id="D-2">
+      <title>카카오 API 호출 유틸리티 함수</title>
+      <description>
+        - verifyKakaoAccessToken(accessToken: string): Promise&lt;boolean&gt;
+        - getKakaoUserInfo(accessToken: string): Promise&lt;KakaoUserInfo&gt;
+      </description>
+      <format>코드 파일 또는 코드 블록</format>
+    </deliverable>
+
+    <deliverable id="D-3">
+      <title>단위 테스트</title>
+      <description>
+        - accessToken 검증 성공/실패 케이스
+        - 사용자 정보 조회 성공/실패 케이스
+        - 데이터 변환 로직 테스트
+      </description>
+      <format>Jest 또는 Mocha 테스트 파일</format>
+    </deliverable>
+
+    <deliverable id="D-4">
+      <title>통합 테스트</title>
+      <description>
+        - code 방식 로그인 (기존 동작 검증)
+        - accessToken 방식 로그인 (신규 동작 검증)
+        - 에러 케이스 (잘못된 토큰, 카카오 API 장애 등)
+      </description>
+      <format>Jest 또는 Mocha 테스트 파일</format>
+    </deliverable>
+
+    <deliverable id="D-5">
+      <title>API 문서 업데이트</title>
+      <description>
+        Swagger/OpenAPI 또는 README에 새로운 요청 파라미터 추가
+      </description>
+      <format>Markdown 또는 YAML</format>
+    </deliverable>
+  </deliverables>
+
+  <examples>
+    <example name="카카오 토큰 검증 구현 예시">
+      <code language="typescript"><![CDATA[
+import axios from 'axios';
+
+interface KakaoTokenInfo {
+  id: number;
+  expires_in: number;
+  app_id: number;
+}
+
+async function verifyKakaoAccessToken(accessToken: string): Promise<boolean> {
+  try {
+    const response = await axios.get<KakaoTokenInfo>(
+      'https://kapi.kakao.com/v1/user/access_token_info',
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        timeout: 5000,
+      }
+    );
+
+    return response.status === 200 && response.data.id > 0;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      console.warn('Invalid Kakao access token');
+      return false;
+    }
+    throw error; // 네트워크 에러 등은 상위로 전파
+  }
+}
+      ]]></code>
+    </example>
+
+    <example name="사용자 정보 조회 구현 예시">
+      <code language="typescript"><![CDATA[
+import axios from 'axios';
+
+interface KakaoUserInfo {
+  id: number;
+  kakao_account: {
+    name?: string;
+    phone_number?: string;
+    birthday?: string;
+    birthyear?: string;
+    gender?: 'male' | 'female';
+  };
+}
+
+async function getKakaoUserInfo(accessToken: string): Promise<KakaoUserInfo> {
+  const response = await axios.get<KakaoUserInfo>(
+    'https://kapi.kakao.com/v2/user/me',
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: {
+        property_keys: JSON.stringify([
+          'kakao_account.name',
+          'kakao_account.phone_number',
+          'kakao_account.birthday',
+          'kakao_account.birthyear',
+          'kakao_account.gender',
+        ]),
+      },
+      timeout: 5000,
+    }
+  );
+
+  return response.data;
+}
+      ]]></code>
+    </example>
+
+    <example name="API 엔드포인트 핸들러 예시">
+      <code language="typescript"><![CDATA[
+app.post('/auth/oauth/kakao', async (req, res) => {
+  const { code, accessToken } = req.body;
+
+  try {
+    let userInfo: KakaoUserInfo;
+
+    // 1. Code 방식 (웹)
+    if (code) {
+      const tokenResponse = await exchangeCodeForToken(code);
+      userInfo = await getKakaoUserInfo(tokenResponse.access_token);
+    }
+    // 2. Access Token 방식 (네이티브)
+    else if (accessToken) {
+      const isValid = await verifyKakaoAccessToken(accessToken);
+      if (!isValid) {
+        return res.status(401).json({ error: 'Invalid Kakao access token' });
+      }
+      userInfo = await getKakaoUserInfo(accessToken);
+    }
+    // 3. 둘 다 없음
+    else {
+      return res.status(400).json({
+        error: 'Either code or accessToken is required'
+      });
+    }
+
+    // 공통 로직: 사용자 정보 처리
+    const certificationInfo = {
+      name: userInfo.kakao_account.name,
+      phone: userInfo.kakao_account.phone_number?.replace(/[\s\-+]/g, '').replace(/^82/, '0'),
+      birthday: userInfo.kakao_account.birthday,
+      birthyear: userInfo.kakao_account.birthyear,
+      gender: userInfo.kakao_account.gender === 'male' ? 'M' : 'F',
+    };
+
+    const user = await findOrCreateUserByKakaoId(userInfo.id);
+
+    if (user.isNewUser) {
+      return res.json({
+        isNewUser: true,
+        certificationInfo,
+      });
+    } else {
+      const tokens = generateJwtTokens(user);
+      return res.json({
+        isNewUser: false,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        userId: user.id,
+      });
+    }
+  } catch (error) {
+    console.error('Kakao login error:', error);
+
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        return res.status(401).json({ error: 'Invalid Kakao credentials' });
+      }
+      return res.status(503).json({ error: 'Kakao service temporarily unavailable' });
+    }
+
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+      ]]></code>
+    </example>
+
+    <example name="테스트 케이스 예시">
+      <code language="typescript"><![CDATA[
+describe('POST /auth/oauth/kakao', () => {
+  describe('accessToken 방식', () => {
+    it('유효한 accessToken으로 신규 사용자 로그인 성공', async () => {
+      // Given
+      const validToken = 'valid_kakao_access_token';
+      mockKakaoApi.verifyToken(validToken).returns({ id: 12345 });
+      mockKakaoApi.getUserInfo(validToken).returns({
+        id: 12345,
+        kakao_account: {
+          name: '홍길동',
+          phone_number: '+82 10-1234-5678',
+          birthday: '1201',
+          birthyear: '1995',
+          gender: 'male',
+        },
+      });
+      mockUserRepository.findByKakaoId(12345).returns(null);
+
+      // When
+      const response = await request(app)
+        .post('/auth/oauth/kakao')
+        .send({ accessToken: validToken });
+
+      // Then
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        isNewUser: true,
+        certificationInfo: {
+          name: '홍길동',
+          phone: '01012345678',
+          birthday: '1201',
+          birthyear: '1995',
+          gender: 'M',
+        },
+      });
+    });
+
+    it('잘못된 accessToken으로 401 에러 반환', async () => {
+      // Given
+      const invalidToken = 'invalid_token';
+      mockKakaoApi.verifyToken(invalidToken).throws({ status: 401 });
+
+      // When
+      const response = await request(app)
+        .post('/auth/oauth/kakao')
+        .send({ accessToken: invalidToken });
+
+      // Then
+      expect(response.status).toBe(401);
+      expect(response.body.error).toBe('Invalid Kakao access token');
+    });
+
+    it('code도 accessToken도 없으면 400 에러 반환', async () => {
+      // When
+      const response = await request(app)
+        .post('/auth/oauth/kakao')
+        .send({});
+
+      // Then
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Either code or accessToken is required');
+    });
+  });
+});
+      ]]></code>
+    </example>
+  </examples>
+
+  <testing_guide>
+    <manual_test>
+      <step>1. 카카오 Developers 콘솔(https://developers.kakao.com/console)에서 테스트 앱 선택</step>
+      <step>2. 도구 → REST API 테스트로 이동</step>
+      <step>3. 사용자 토큰 받기로 테스트용 accessToken 발급</step>
+      <step>4. cURL로 API 테스트:
+        <command><![CDATA[
+curl -X POST http://localhost:3000/auth/oauth/kakao \
+  -H "Content-Type: application/json" \
+  -d '{"accessToken": "YOUR_TEST_TOKEN"}'
+        ]]></command>
+      </step>
+      <step>5. 응답 확인:
+        - 신규 사용자: isNewUser=true, certificationInfo 포함
+        - 기존 사용자: isNewUser=false, JWT 토큰 포함
+      </step>
+    </manual_test>
+
+    <automated_test>
+      <step>1. Kakao API를 mocking하여 단위 테스트 작성</step>
+      <step>2. 통합 테스트 환경에서 실제 카카오 테스트 계정으로 E2E 테스트</step>
+      <step>3. CI/CD 파이프라인에 테스트 추가</step>
+    </automated_test>
+  </testing_guide>
+
+  <security_checklist>
+    <item>✓ Access Token은 HTTPS로만 전송</item>
+    <item>✓ 카카오 API로 토큰 검증 필수 (클라이언트 신뢰 금지)</item>
+    <item>✓ Rate limiting 적용 (DDoS 방지)</item>
+    <item>✓ 에러 메시지에 민감 정보 노출 금지</item>
+    <item>✓ 로그에 전화번호, 이름 마스킹 처리</item>
+    <item>✓ CORS 설정 확인 (허용된 도메인만)</item>
+    <item>✓ JWT 토큰 만료 시간 적절히 설정</item>
+  </security_checklist>
+
+  <references>
+    <reference>
+      <title>카카오 로그인 REST API 공식 문서</title>
+      <url>https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api</url>
+    </reference>
+    <reference>
+      <title>사용자 정보 가져오기 API</title>
+      <url>https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info</url>
+    </reference>
+    <reference>
+      <title>토큰 정보 보기 API</title>
+      <url>https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#get-token-info</url>
+    </reference>
+    <reference>
+      <title>@react-native-kakao/user 공식 문서</title>
+      <url>https://rnkakao.mjstudio.net/en/docs/user/login</url>
+    </reference>
+  </references>
+
+  <communication>
+    <contact>
+      <role>프론트엔드 팀 리드</role>
+      <channel>Slack #frontend-team 또는 이메일</channel>
+      <note>구현 중 프론트엔드 변경이 필요한 경우 즉시 연락 주세요.</note>
+    </contact>
+    <timeline>
+      <milestone>API 구현 완료: 구현 시작 후 2-3일</milestone>
+      <milestone>테스트 완료: 구현 완료 후 1일</milestone>
+      <milestone>코드 리뷰 및 배포: 테스트 완료 후 1일</milestone>
+    </timeline>
+  </communication>
+
+  <additional_notes>
+    <note priority="high">
+      기존 code 방식의 동작을 절대 변경하지 마세요.
+      웹 플랫폼 사용자는 여전히 code 방식을 사용합니다.
+    </note>
+    <note priority="medium">
+      카카오 API 응답 구조가 변경될 수 있으므로,
+      API 호출 시 응답 스키마 검증을 추가하는 것을 권장합니다.
+    </note>
+    <note priority="low">
+      향후 Apple 로그인, Google 로그인도 동일한 패턴으로
+      네이티브 지원을 추가할 예정입니다.
+      확장 가능한 구조로 설계하면 좋습니다.
+    </note>
+  </additional_notes>
+</task>
