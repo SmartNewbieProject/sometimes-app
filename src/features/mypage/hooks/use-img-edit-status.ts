@@ -22,11 +22,8 @@ export function useProfileReviewRedirect() {
               navigatingRef.current = true;
               router.replace("/my/approval-step/approved");
               break;
-            case "rejected":
-              console.log("reviewStatus:", resp.reviewStatus);
-              navigatingRef.current = true;
-              router.replace("/my/approval-step/rejected");
-              break;
+            // REMOVED: rejected case - 사진 거절 기능이 사진관리 페이지로 통합됨 (2025-12-14)
+            // 사진 거절 상태는 이제 프로필 수정 → 사진관리 페이지에서 확인
             default:
               console.log("reviewStatus:", resp.reviewStatus);
               break;

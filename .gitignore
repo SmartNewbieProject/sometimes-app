@@ -18,6 +18,12 @@ dist/
 web-build/
 expo-env.d.ts
 
+# Local builds
+builds/
+*.ipa
+*.aab
+*.apk
+
 # Native
 *.orig.*
 *.jks

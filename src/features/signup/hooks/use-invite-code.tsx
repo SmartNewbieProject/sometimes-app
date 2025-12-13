@@ -15,6 +15,7 @@ const {
   useSignupProgress,
   apis,
   useSignupAnalytics,
+  useSignup,
 } = Signup;
 
 function useInviteCode() {
@@ -24,6 +25,7 @@ function useInviteCode() {
     const { trackSignupEvent } = useSignupAnalytics("invite_code");
 
   const { updateForm, form: signupForm } = useSignupProgress();
+  const { setSignupResponse } = useSignup();
   const { value: appleUserIdFromStorage, loading: storageLoading } = useStorage<
     string | null
   >({
@@ -96,6 +98,7 @@ function useInviteCode() {
             track,
             trackSignupEvent,
             removeLoginType,
+            setSignupResponse,
           });
         },
         (error) => {

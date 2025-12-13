@@ -120,7 +120,8 @@ function InterestSection() {
     } catch (error) {
       console.error("Failed to initialize interest form:", error);
     }
-  }, [profileDetails?.preferences, isInitialized, profileDetails?.gender, updateForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileDetails?.preferences, isInitialized, profileDetails?.gender]);
 
   useEffect(() => {
     return () => {

@@ -36,7 +36,7 @@ export default function MatchingHistoryLayoutScreen() {
             style={styles.rematchingContainer}
           >
             <Text
-              numberofLine={1}
+              numberOfLines={1}
               textColor={"black"}
               size={"13"}
               style={styles.rematchingCount}
@@ -76,8 +76,10 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
     minWidth: 64,
     alignItems: "center",
+    flexWrap: "nowrap",
   },
   rematchingCount: {
     lineHeight: 22,
+    flexShrink: 0,
   },
 });

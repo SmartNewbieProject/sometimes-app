@@ -11,25 +11,72 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
-const { useSignupProgress, useSignupAnalytics } = Signup;
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
+const { useSignupProgress, useSignupAnalytics, useSignup } = Signup;
 
 export default function SignupDoneScreen() {
   const { clear } = useSignupProgress();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+  const [autoLoginInProgress, setAutoLoginInProgress] = useState(false);
   const { trackSignupEvent } = useSignupAnalytics("done");
+  const { updateToken } = useAuth();
+  const { signupResponse } = useSignup();
+
   useEffect(() => {
-    if (loading) {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    }
-  }, [loading]);
+    const performAutoLogin = async () => {
+      if (signupResponse?.accessToken && signupResponse?.refreshToken) {
+        try {
+          setAutoLoginInProgress(true);
+
+          // 토큰 저장
+          await updateToken(signupResponse.accessToken, signupResponse.refreshToken);
+
+          // Mixpanel 사용자 식별
+          if (signupResponse.userId) {
+            mixpanelAdapter.identify(signupResponse.userId.toString());
+          }
+
+          // 푸시 알림 등록
+          registerForPushNotificationsAsync().catch((error) => {
+            console.error("푸시 토큰 등록 중 오류:", error);
+          });
+
+          // 1초 대기 후 홈으로 이동
+          setTimeout(() => {
+            setLoading(false);
+            setAutoLoginInProgress(false);
+          }, 1000);
+        } catch (error) {
+          console.error("자동 로그인 실패:", error);
+          setLoading(false);
+          setAutoLoginInProgress(false);
+        }
+      } else {
+        // 토큰이 없으면 기존 플로우 (로그인 화면으로)
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
+    };
+
+    performAutoLogin();
+  }, [signupResponse, updateToken]);
+
   const onNext = () => {
     trackSignupEvent("completion_button_click");
     track("Signup_done", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     clear();
-    router.push("/auth/login");
+
+    if (signupResponse?.accessToken) {
+      // 토큰이 있으면 홈으로
+      router.replace("/(tabs)/");
+    } else {
+      // 토큰이 없으면 로그인 화면으로
+      router.push("/auth/login");
+    }
   };
 
   return (
@@ -91,22 +138,20 @@ export default function SignupDoneScreen() {
           onPress={onNext}
           className="w-full items-center "
         >
-          {loading ? (
+          {loading || autoLoginInProgress ? (
             <>
               <Text textColor={"white"} className="text-md white">
-                {t("apps.auth.sign_up.done.loading")}
+                {autoLoginInProgress ? "로그인 중..." : t("apps.auth.sign_up.done.loading")}
               </Text>
               <ActivityIndicator
                 size="small"
-                color="#0000ff"
+                color="#ffffff"
                 className="ml-6"
               />
             </>
           ) : (
             <Text textColor={"white"} className="text-md white">
-              <Text textColor={"white"} className="text-md white">
-              {t("apps.auth.sign_up.done.go_login")}
-            </Text>
+              {signupResponse?.accessToken ? "시작하기" : t("apps.auth.sign_up.done.go_login")}
             </Text>
           )}
         </Button>

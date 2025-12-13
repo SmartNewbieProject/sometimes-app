@@ -84,8 +84,7 @@ export default function ReapplyScreen() {
         }
       }
       if (newImages[i]) {
-        const isMain = i === 0 ? 1 : 0;
-        await mypageApis.uploadProfileImage(newImages[i], isMain);
+        await mypageApis.uploadProfileImage(newImages[i], i);
       }
     }
   };

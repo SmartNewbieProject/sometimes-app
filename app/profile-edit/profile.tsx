@@ -55,7 +55,7 @@ function Profile() {
   );
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (profileDetails?.id && preferenceSelf) {
+    if (profileDetails?.id && preferenceSelf && !form.init) {
       const drinking = preferenceSelf?.find(
         (item) => item.typeName === PreferenceKeys.DRINKING
       )?.selectedOptions[0];
@@ -101,8 +101,10 @@ function Profile() {
           ?.find((item) => item.typeName === PreferenceKeys.PERSONALITY)
           ?.selectedOptions?.map((item) => item.id) as string[]
       );
+
+      updateForm("init", true);
     }
-  }, [preferenceSelf, profileDetails?.id, profileDetails?.mbti, profileDetails?.gender, updateForm]);
+  }, [preferenceSelf, profileDetails?.id, profileDetails?.mbti, profileDetails?.gender, form.init]);
 
   const onFinish = async () => {
     setFormSubmitLoading(true);
@@ -140,8 +142,12 @@ function Profile() {
   };
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom + 100 }]}>
-      <ScrollView>
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 100,
+        }}
+      >
         <ProfileImageSection />
         <ProfileMbti />
         <ProfileInterest />
@@ -171,6 +177,7 @@ function Profile() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     position: "relative",
   },
 });

@@ -1,5 +1,6 @@
 {
   "error": "エラーが発生しました: ",
+  "my_photos": "マイ写真",
   "matching_setting": "マッチング設定",
   "ex_same_class": "同じ学科とのマッチングを除外",
   "ex_same_school": "同じ学校とのマッチングを除外",
@@ -20,7 +21,16 @@
     "close": "閉じる",
     "saving": "保存中..",
     "save": "保存する",
-    "main": "メイン"
+    "main": "メイン",
+    "approved": "承認済み",
+    "reviewing": "審査中",
+    "pending": "審査中",
+    "rejected": "却下",
+    "no_reason": "理由未記載",
+    "change_photo": "変更する",
+    "retry_count": "再審査 {{current}}/{{max}}回",
+    "max_retry_exceeded": "最大再審査回数超過",
+    "contact_support": "カスタマーサポートにお問い合わせください"
   },
   "my_activity": {
     "title": "Myアクティビティ",
@@ -83,9 +93,10 @@
     }
   },
   "profile_image_change": {
+    "page_title": "プロフィール写真管理",
     "title": "プロフィール写真を変更しましょう",
     "subtitle": "もっと魅力的な自分を見せましょう！",
-    "guide": "3枚のプロフィール写真をすべて新しく登録してください"
+    "guide": "顔がはっきり見える写真をアップロードしてください"
   },
   "unknown_error": "不明なエラー",
   "profile_image_error_load": "プロフィール情報を読み込めません。",

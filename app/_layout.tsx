@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import { Slot, router, useLocalSearchParams, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import { AppState, Platform, View } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
 import {
@@ -29,6 +29,7 @@ import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SessionTracker } from "@/src/shared/components/session-tracker";
 
 if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync()
@@ -253,6 +254,7 @@ export default function RootLayout() {
                           <VersionUpdateChecker />
                           <Toast />
                           <ChatActivityTracker />
+                          <SessionTracker />
                       </>
                       </RouteTracker>
                     </AnalyticsProvider>

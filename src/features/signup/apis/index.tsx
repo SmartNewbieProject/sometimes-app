@@ -51,7 +51,13 @@ export const checkPhoneNumberBlacklist = (
 ): Promise<{ isBlacklisted: boolean }> =>
   axiosClient.post("/auth/check/phone-number/blacklist", { phoneNumber });
 
-export const signup = (form: SignupForm): Promise<void> => {
+export interface SignupResponse {
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+}
+
+export const signup = (form: SignupForm): Promise<SignupResponse> => {
   const formData = new FormData();
   formData.append("phoneNumber", form.phone);
   formData.append("name", form.name);
@@ -80,6 +86,8 @@ export const signup = (form: SignupForm): Promise<void> => {
     formData.append("profileImages", file);
   });
 
+  formData.append("mainImageIndex", "0");
+
   return axiosClient.post("/auth/signup", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
@@ -95,7 +103,7 @@ type Service = {
   checkPhoneNumberBlacklist: (
     phoneNumber: string
   ) => Promise<{ isBlacklisted: boolean }>;
-  signup: (form: SignupForm) => Promise<void>;
+  signup: (form: SignupForm) => Promise<SignupResponse>;
   sendVerificationCode: (phoneNumber: string) => Promise<{ uniqueKey: string }>;
   authenticateSmsCode: (smsCode: AuthorizeSmsCode) => Promise<void>;
   postAppleLogin: (identityToken: string) => Promise<AppleLoginResponse>;

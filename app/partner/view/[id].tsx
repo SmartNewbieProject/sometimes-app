@@ -16,6 +16,8 @@ import {
   PartnerMBTI,
   MatchingReasonCard,
 } from "@/src/features/match/ui";
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
+import { BlurredPhotoCard } from "@/src/widgets/blurred-photo-card";
 import {
   cn,
   formatLastLogin,
@@ -53,12 +55,18 @@ export default function PartnerDetailScreen() {
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
   const { data: matchReasonsData } = useMatchReasonsQuery(partner?.connectionId);
+  const { profileDetails } = useAuth();
   const [isZoomVisible, setZoomVisible] = useState(false);
   const { isStatus, isLiked, isExpired } = useLiked();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showMihoIntro, setShowMihoIntro] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const hasTrackedView = useRef(false);
+
+  // 내 승인된 사진 개수 계산
+  const myApprovedPhotosCount = profileDetails?.profileImages?.filter(
+    (img) => img.reviewStatus?.toUpperCase() === 'APPROVED'
+  ).length ?? 0;
 
   useEffect(() => {
     if (!partner) return;
@@ -140,9 +148,11 @@ export default function PartnerDetailScreen() {
   const personal = characteristicsOptions["성격"];
   const loveStyles = characteristicsOptions["연애 스타일"];
 
-  const mainProfileImageUrl = partner.profileImages.find(
-    (img) => img.isMain
-  )?.url;
+  const mainProfileImageUrl =
+    partner.profileImages.find((img) => img.isMain)?.imageUrl ||
+    partner.profileImages.find((img) => img.isMain)?.url ||
+    partner.profileImages[0]?.imageUrl ||
+    partner.profileImages[0]?.url;
 
   const renderBottomButtons = () => {
     return (
@@ -232,7 +242,7 @@ export default function PartnerDetailScreen() {
       <MihoIntroModal visible={showMihoIntro} onClose={handleMihoIntroClose} />
 
       <PhotoSlider
-        images={partner?.profileImages.map((item) => item.url) ?? []}
+        images={partner?.profileImages.map((item) => item.imageUrl || item.url) ?? []}
         onClose={onZoomClose}
         initialIndex={selectedIndex}
         visible={isZoomVisible}
@@ -284,7 +294,7 @@ export default function PartnerDetailScreen() {
                   style={{ width: "100%", height: "100%" }}
                 >
                   <Image
-                    source={{ uri: partner.profileImages[0].url }}
+                    source={{ uri: partner.profileImages[0].imageUrl || partner.profileImages[0].url }}
                     style={{ width: "100%", height: "100%" }}
                     contentFit="cover"
                   />
@@ -375,19 +385,28 @@ export default function PartnerDetailScreen() {
                   overflow: "hidden",
                 }}
               >
-                <Pressable
-                  onPress={() => {
-                    setSelectedIndex(1);
-                    setZoomVisible(true);
-                  }}
-                  className="w-full h-full"
-                >
-                  <Image
-                    source={{ uri: partner.profileImages[1].url }}
-                    style={{ width: "100%", height: "100%" }}
-                    contentFit="cover"
+                {myApprovedPhotosCount >= 2 ? (
+                  <Pressable
+                    onPress={() => {
+                      setSelectedIndex(1);
+                      setZoomVisible(true);
+                    }}
+                    className="w-full h-full"
+                  >
+                    <Image
+                      source={{ uri: partner.profileImages[1].imageUrl || partner.profileImages[1].url }}
+                      style={{ width: "100%", height: "100%" }}
+                      contentFit="cover"
+                    />
+                  </Pressable>
+                ) : (
+                  <BlurredPhotoCard
+                    skippedPhotoCount={partner.profileImages.length - myApprovedPhotosCount}
+                    showCTA={true}
+                    size="full"
+                    sampleImageUrl={mainProfileImageUrl}
                   />
-                </Pressable>
+                )}
               </View>
             )}
 
@@ -421,19 +440,28 @@ export default function PartnerDetailScreen() {
                   overflow: "hidden",
                 }}
               >
-                <Pressable
-                  onPress={() => {
-                    setSelectedIndex(2);
-                    setZoomVisible(true);
-                  }}
-                  className="w-full h-full"
-                >
-                  <Image
-                    source={{ uri: partner.profileImages[2].url }}
-                    style={{ width: "100%", height: "100%" }}
-                    contentFit="cover"
+                {myApprovedPhotosCount >= 3 ? (
+                  <Pressable
+                    onPress={() => {
+                      setSelectedIndex(2);
+                      setZoomVisible(true);
+                    }}
+                    className="w-full h-full"
+                  >
+                    <Image
+                      source={{ uri: partner.profileImages[2].imageUrl || partner.profileImages[2].url }}
+                      style={{ width: "100%", height: "100%" }}
+                      contentFit="cover"
+                    />
+                  </Pressable>
+                ) : (
+                  <BlurredPhotoCard
+                    skippedPhotoCount={partner.profileImages.length - myApprovedPhotosCount}
+                    showCTA={myApprovedPhotosCount === 2}
+                    size="full"
+                    sampleImageUrl={mainProfileImageUrl}
                   />
-                </Pressable>
+                )}
               </View>
             )}
 
@@ -450,19 +478,28 @@ export default function PartnerDetailScreen() {
                       marginBottom: 16,
                     }}
                   >
-                    <Pressable
-                      onPress={() => {
-                        setSelectedIndex(index + 3);
-                        setZoomVisible(true);
-                      }}
-                      className="w-full h-full"
-                    >
-                      <Image
-                        source={{ uri: item.url }}
-                        style={{ width: "100%", height: "100%" }}
-                        contentFit="cover"
+                    {myApprovedPhotosCount >= (index + 4) ? (
+                      <Pressable
+                        onPress={() => {
+                          setSelectedIndex(index + 3);
+                          setZoomVisible(true);
+                        }}
+                        className="w-full h-full"
+                      >
+                        <Image
+                          source={{ uri: item.imageUrl || item.url }}
+                          style={{ width: "100%", height: "100%" }}
+                          contentFit="cover"
+                        />
+                      </Pressable>
+                    ) : (
+                      <BlurredPhotoCard
+                        skippedPhotoCount={partner.profileImages.length - myApprovedPhotosCount}
+                        showCTA={myApprovedPhotosCount === (index + 3)}
+                        size="full"
+                        sampleImageUrl={mainProfileImageUrl}
                       />
-                    </Pressable>
+                    )}
                   </View>
                 ))}
               </View>

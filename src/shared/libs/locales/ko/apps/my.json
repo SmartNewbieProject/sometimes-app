@@ -1,7 +1,7 @@
 {
   "withdrawal": {
     "reason_partner": "파트너를 찾았어요",
-    "reason_matching": "매칭이 부정확해요",
+    "reason_poor_matching": "매칭이 부정확해요",
     "reason_privacy": "개인정보 보호가 걱정돼요",
     "reason_safety": "안전성 문제가 있어요",
     "reason_technical": "기술적인 문제가 있어요",

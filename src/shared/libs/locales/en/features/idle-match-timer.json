@@ -20,6 +20,14 @@
     "partner": {
       "button_more": "See more"
     },
+    "pending-approval": {
+      "title": "Profile Under Review",
+      "description": "Your profile is currently under review. Matching will start once approved.",
+      "estimated-time": "Estimated time",
+      "info": "We'll notify you when your profile is approved!",
+      "next-matching": "Until next matching",
+      "timer-description": "Matching will start after approval"
+    },
     "find-partner": {
       "button_more": "See more"
     },

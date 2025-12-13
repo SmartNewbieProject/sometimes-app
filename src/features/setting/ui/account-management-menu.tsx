@@ -4,12 +4,14 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 import Menu from "./menu";
 
 const AccountManagementMenu = () => {
   const { t } = useTranslation();
   const { logout } = useAuth();
   const { showModal } = useModal();
+  const { accountEvents } = useKpiAnalytics();
 
   const options = [
     {
@@ -81,7 +83,9 @@ const AccountManagementMenu = () => {
           ),
           primaryButton: {
             text: "취소",
-            onClick: () => {},
+            onClick: () => {
+              accountEvents.trackAccountDeletionCancelled('user_cancelled');
+            },
           },
           secondaryButton: {
             text: "탈퇴",

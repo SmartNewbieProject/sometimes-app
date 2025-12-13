@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Text } from "@/src/shared/ui";
 import colors, { semanticColors } from "@/src/shared/constants/colors";
 import { router } from "expo-router";
-import { WeeklyProgress } from "../../../apis";
+import { WeeklyProgress, UserProgressStatus } from "../../../apis";
 import type { LatestReport } from "../../../types";
 import { useModal } from "@/src/shared/hooks/use-modal";
 
@@ -14,6 +14,7 @@ interface MomentStatusCardProps {
   latestReport?: LatestReport | null;
   reportLoading?: boolean;
   reportError?: any;
+  progressStatus?: UserProgressStatus | null;
 }
 
 export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
@@ -22,6 +23,7 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
   latestReport,
   reportLoading,
   reportError,
+  progressStatus,
 }) => {
   const { t } = useTranslation();
   const { showModal } = useModal();
@@ -45,8 +47,11 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
 
   // 최신 리포트가 있는 경우 - 리포트 데이터로 표시 (이번 주 진행률과 관계없이)
   if (latestReport) {
-    const weekInfo = latestReport.week && latestReport.year
-      ? t('features.moment.my_moment.status_card.week_info', { year: latestReport.year, week: latestReport.week })
+    const reportWeek = latestReport.weekNumber;
+    const reportYear = latestReport.year;
+
+    const weekInfo = reportWeek && reportYear
+      ? t('features.moment.my_moment.status_card.week_info', { year: reportYear, week: reportWeek })
       : null;
 
     // 키워드가 없을 때 빈 배열로 처리
@@ -78,7 +83,19 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
           if (hasNoData) {
             showEmptyStateModal();
           } else {
-            router.push(`/moment/weekly-report?week=${latestReport.week}&year=${latestReport.year}`);
+            // latestReport에서 week/year 가져오기 (API는 weekNumber 사용)
+            // 없으면 progressStatus.currentWeek에서 가져오기
+            const week = reportWeek || progressStatus?.currentWeek?.week;
+            const year = reportYear || progressStatus?.currentWeek?.year;
+
+            if (week && year) {
+              router.push(`/moment/weekly-report?week=${week}&year=${year}`);
+            } else {
+              console.warn('Week or year is missing from both latestReport and progressStatus:', {
+                latestReport: { weekNumber: latestReport.weekNumber, year: latestReport.year },
+                progressStatus: progressStatus?.currentWeek
+              });
+            }
           }
         }}
       >

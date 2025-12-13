@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
+import { useKpiAnalytics } from '@/src/shared/hooks/use-kpi-analytics';
 
 export interface MatchingStatistics {
   totalAttempts: number;
@@ -33,6 +34,7 @@ export interface FailureAnalysis {
 }
 
 export const useMatchingEfficiency = () => {
+  const { matchingEvents, matchingEfficiencyEvents } = useKpiAnalytics();
   const [statistics, setStatistics] = useState<MatchingStatistics>({
     totalAttempts: 0,
     successfulMatches: 0,
@@ -119,19 +121,8 @@ export const useMatchingEfficiency = () => {
       responseTime: number;
     }
   ) => {
-    const amplitude = (global as any).amplitude || {
-      track: (event: string, properties: any) => {
-        console.log('Amplitude Event:', event, properties);
-      }
-    };
-
-    amplitude.track(AMPLITUDE_KPI_EVENTS.MATCHING_SUCCESS, {
-      action_type: 'like_success',
-      result: 'success',
-      match_type: context.matchType,
-      response_time_ms: context.responseTime,
-      timestamp: new Date().toISOString()
-    });
+    // KPI 이벤트: 매칭 성공 (User Properties 자동 업데이트 포함)
+    matchingEvents.trackMatchingSuccess(connectionId, context.responseTime);
 
     // 통계 업데이트
     setStatistics(prev => {
@@ -143,7 +134,7 @@ export const useMatchingEfficiency = () => {
         averageResponseTime: (prev.averageResponseTime + context.responseTime) / 2
       };
     });
-  }, [calculateSuccessRate]);
+  }, [calculateSuccessRate, matchingEvents]);
 
   // 매칭 실패 이벤트 트래킹
   const trackMatchingFailure = useCallback((
@@ -157,21 +148,10 @@ export const useMatchingEfficiency = () => {
       serverMessage: string;
     }
   ) => {
-    const amplitude = (global as any).amplitude || {
-      track: (event: string, properties: any) => {
-        console.log('Amplitude Event:', event, properties);
-      }
-    };
-
-    amplitude.track(AMPLITUDE_KPI_EVENTS.MATCHING_FAILURE, {
-      action_type: 'like_failed',
-      failure_type: failureReason.type,
-      failure_category: failureReason.category,
-      user_action_required: failureReason.userAction,
-      recoverable: failureReason.recoverable,
-      severity: failureReason.severity,
-      server_message: failureReason.serverMessage,
-      timestamp: new Date().toISOString()
+    // KPI 이벤트: 매칭 실패
+    matchingEvents.trackMatchingFailed(failureReason.serverMessage, {
+      failureCategory: failureReason.category as any,
+      isRecoverable: failureReason.recoverable,
     });
 
     // 통계 업데이트
@@ -189,7 +169,7 @@ export const useMatchingEfficiency = () => {
         failureRate: calculateFailureRate(prev.totalAttempts, newFailed)
       };
     });
-  }, []);
+  }, [matchingEvents]);
 
   // 실패율 계산
   const calculateFailureRate = useCallback((

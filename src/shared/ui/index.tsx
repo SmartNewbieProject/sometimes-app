@@ -29,3 +29,4 @@ export * from './card';
 export * from './scroll-down-indicator';
 export * from './floating-tooltip';
 export * from './line-chart';
+export * from './loading-modal';

@@ -9,10 +9,12 @@ import ProfileImageCard from "./profile-image-card";
 import ProfileImageCover from "./profile-image-cover";
 import { useTranslation } from 'react-i18next';
 import { useProfileImageCover } from "@/src/features/profile-edit/hooks/use-profile-image-cover";
+import { useRouter } from "expo-router";
 
 function ProfileImageSection() {
   const { t } = useTranslation();
   const { profileDetails } = useAuth();
+  const router = useRouter();
   const [isProfileImageOpen, setProfileOpen] = useState(false);
 
   const [refreshKey, setRefreshKey] = useState<number>(Date.now());
@@ -34,7 +36,7 @@ function ProfileImageSection() {
   }, [profileDetails?.profileImages]);
 
   const handleProfileImageOpen = () => {
-    setProfileOpen(true);
+    router.push('/profile/photo-management');
   };
   const handleProfileImageClose = () => {
     setProfileOpen(false);
@@ -56,7 +58,7 @@ function ProfileImageSection() {
             {sortedPorifleImages?.map((image) => (
               <ProfileImageCard
                 key={image.id}
-                imageUri={image.url}
+                imageUri={image.imageUrl || image.url}
                 onClick={handleProfileImageOpen}
                 isMain={image.isMain}
               />

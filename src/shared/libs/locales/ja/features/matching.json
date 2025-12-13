@@ -1,0 +1,7 @@
+{
+  "blur_photo": {
+    "message": "写真があと{{count}}枚あります!",
+    "sub_description": "プロフィール写真をアップロードして、ご縁の情報を確認しましょう!",
+    "add_photo_cta": "写真を追加"
+  }
+}
