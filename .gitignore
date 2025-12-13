@@ -60,3 +60,6 @@ app-example
 .vscode
 
 review.md
+# Build artifacts
+*.aab
+builds/

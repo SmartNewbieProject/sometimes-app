@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-fbsdk-next/ios/ExpoAdapterFBSDKNext/FacebookAppDelegate.swift b/node_modules/react-native-fbsdk-next/ios/ExpoAdapterFBSDKNext/FacebookAppDelegate.swift
-index 17f4c2e..eb2159b 100644
+index 17f4c2e..7ba870a 100644
 --- a/node_modules/react-native-fbsdk-next/ios/ExpoAdapterFBSDKNext/FacebookAppDelegate.swift
 +++ b/node_modules/react-native-fbsdk-next/ios/ExpoAdapterFBSDKNext/FacebookAppDelegate.swift
 @@ -3,10 +3,8 @@ import FBSDKCoreKit
@@ -10,8 +10,8 @@ index 17f4c2e..eb2159b 100644
 -      application,
 -      didFinishLaunchingWithOptions: launchOptions
 -    )
-+    // Facebook SDK 18.0.2+ no longer requires explicit initialization here
-+    // The SDK auto-initializes via Info.plist configuration
++    // Facebook SDK 18.x+ uses initializeSDK instead of application delegate method
++    ApplicationDelegate.shared.initializeSDK()
      return true
    }
  

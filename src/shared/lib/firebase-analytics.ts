@@ -1,5 +1,10 @@
-import analytics from '@react-native-firebase/analytics';
+// TODO: Firebase Analytics is temporarily disabled for SDK 54 / New Architecture compatibility
+// Reinstall @react-native-firebase/analytics when the package supports New Architecture (TurboModules)
+// Tracking issue: https://github.com/invertase/react-native-firebase/discussions/6200
+
 import firebase from '@react-native-firebase/app';
+
+const ANALYTICS_DISABLED_WARNING = '[Firebase Analytics] Temporarily disabled for New Architecture compatibility';
 
 /**
  * Firebase 연결 상태 확인
@@ -8,19 +13,10 @@ export async function checkFirebaseConnection(): Promise<boolean> {
   try {
     const app = firebase.app();
     console.log('Firebase 앱 초기화됨:', app.name);
-    
-    const instanceId = await analytics().getAppInstanceId();
-    console.log('Analytics 인스턴스 ID:', instanceId);
-    
-    await analytics().logEvent('connection_test', {
-      timestamp: Date.now(),
-      platform: 'react-native',
-    });
-    
-    console.log('✅ Firebase Analytics 연결 성공!');
+    console.log(ANALYTICS_DISABLED_WARNING);
     return true;
   } catch (error) {
-    console.error('❌ Firebase Analytics 연결 실패:', error);
+    console.error('❌ Firebase 연결 실패:', error);
     return false;
   }
 }
@@ -36,6 +32,7 @@ export function logFirebaseConfig() {
     console.log('프로젝트 ID:', app.options.projectId);
     console.log('앱 ID:', app.options.appId);
     console.log('API 키:', app.options.apiKey ? '설정됨' : '설정되지 않음');
+    console.log('Analytics:', 'temporarily disabled');
     console.log('========================');
   } catch (error) {
     console.error('Firebase 설정 정보 확인 실패:', error);
@@ -43,133 +40,64 @@ export function logFirebaseConfig() {
 }
 
 /**
- * 사용자 회원가입 이벤트 추적
+ * 사용자 회원가입 이벤트 추적 (no-op)
  */
-export async function trackSignUp(method = 'email') {
-  try {
-    await analytics().logSignUp({
-      method,
-    });
-    console.log('회원가입 이벤트 추적됨:', method);
-  } catch (error) {
-    console.error('회원가입 이벤트 추적 실패:', error);
-  }
+export async function trackSignUp(_method = 'email') {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
 
 /**
- * 매칭권 결제창 클릭 이벤트 추적
+ * 매칭권 결제창 클릭 이벤트 추적 (no-op)
  */
-export async function trackPurchaseClick(itemId: string, itemName: string, price: number) {
-  try {
-    await analytics().logEvent('purchase_click', {
-      item_id: itemId,
-      item_name: itemName,
-      price: price,
-      currency: 'KRW',
-    });
-    console.log('매칭권 결제창 클릭 이벤트 추적됨:', itemName);
-  } catch (error) {
-    console.error('매칭권 결제창 클릭 이벤트 추적 실패:', error);
-  }
+export async function trackPurchaseClick(_itemId: string, _itemName: string, _price: number) {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
 
 /**
- * 실제 구매 완료 이벤트 추적
+ * 실제 구매 완료 이벤트 추적 (no-op)
  */
-export async function trackPurchase(itemId: string, itemName: string, price: number, transactionId: string) {
-  try {
-    await analytics().logPurchase({
-      currency: 'KRW',
-      value: price,
-      items: [
-        {
-          item_id: itemId,
-          item_name: itemName,
-          price: price,
-          quantity: 1,
-        },
-      ],
-      transaction_id: transactionId,
-    });
-    console.log('구매 완료 이벤트 추적됨:', itemName);
-  } catch (error) {
-    console.error('구매 완료 이벤트 추적 실패:', error);
-  }
+export async function trackPurchase(_itemId: string, _itemName: string, _price: number, _transactionId: string) {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
 
 /**
- * 로그인 이벤트 추적
+ * 로그인 이벤트 추적 (no-op)
  */
-export async function trackLogin(method = 'email') {
-  try {
-    await analytics().logLogin({
-      method,
-    });
-    console.log('로그인 이벤트 추적됨:', method);
-  } catch (error) {
-    console.error('로그인 이벤트 추적 실패:', error);
-  }
+export async function trackLogin(_method = 'email') {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
 
 /**
- * 화면 조회 이벤트 추적
+ * 화면 조회 이벤트 추적 (no-op)
  */
-export async function trackScreenView(screenName: string, screenClass?: string) {
-  try {
-    await analytics().logScreenView({
-      screen_name: screenName,
-      screen_class: screenClass || screenName,
-    });
-    console.log('화면 조회 이벤트 추적됨:', screenName);
-  } catch (error) {
-    console.error('화면 조회 이벤트 추적 실패:', error);
-  }
+export async function trackScreenView(_screenName: string, _screenClass?: string) {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
 
 /**
- * 커스텀 이벤트 추적
+ * 커스텀 이벤트 추적 (no-op)
  */
-export async function trackCustomEvent(eventName: string, parameters?: Record<string, unknown>) {
-  try {
-    await analytics().logEvent(eventName, parameters);
-    console.log('커스텀 이벤트 추적됨:', eventName, parameters);
-  } catch (error) {
-    console.error('커스텀 이벤트 추적 실패:', error);
-  }
+export async function trackCustomEvent(_eventName: string, _parameters?: Record<string, unknown>) {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
 
 /**
- * 사용자 속성 설정
+ * 사용자 속성 설정 (no-op)
  */
-export async function setUserProperty(name: string, value: string) {
-  try {
-    await analytics().setUserProperty(name, value);
-    console.log('사용자 속성 설정됨:', name, value);
-  } catch (error) {
-    console.error('사용자 속성 설정 실패:', error);
-  }
+export async function setUserProperty(_name: string, _value: string) {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
 
 /**
- * 사용자 ID 설정
+ * 사용자 ID 설정 (no-op)
  */
-export async function setUserId(userId: string) {
-  try {
-    await analytics().setUserId(userId);
-    console.log('사용자 ID 설정됨:', userId);
-  } catch (error) {
-    console.error('사용자 ID 설정 실패:', error);
-  }
+export async function setUserId(_userId: string) {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
 
 /**
- * Analytics 수집 활성화/비활성화
+ * Analytics 수집 활성화/비활성화 (no-op)
  */
-export async function setAnalyticsCollectionEnabled(enabled: boolean) {
-  try {
-    await analytics().setAnalyticsCollectionEnabled(enabled);
-    console.log('Analytics 수집 상태 변경됨:', enabled);
-  } catch (error) {
-    console.error('Analytics 수집 상태 변경 실패:', error);
-  }
+export async function setAnalyticsCollectionEnabled(_enabled: boolean) {
+  console.log(ANALYTICS_DISABLED_WARNING);
 }
