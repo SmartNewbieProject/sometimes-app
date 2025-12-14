@@ -4,7 +4,8 @@ import { Stack, useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { MyMomentPage } from "@/src/features/moment/ui/my-moment";
 import { BottomNavigation } from "@/src/shared/ui";
-import colors, { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 export default function MyMomentRoute() {
   const router = useRouter();

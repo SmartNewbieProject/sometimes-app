@@ -1,5 +1,5 @@
 import React from 'react';
-import { semanticColors } from '../../constants/colors';
+import { semanticColors } from '../../constants/semantic-colors';
 import {StyleSheet, Text, View} from 'react-native';
 import { useToast } from '../../hooks/use-toast';
 import { Show } from '../show';

@@ -6,7 +6,8 @@ import { NotificationList } from '@/src/features/notification/ui/notification-li
 import { useMarkAllAsRead, useDeleteAllRead } from '@/src/features/notification/queries/use-notification-mutations';
 import { useUnreadCount } from '@/src/features/notification/queries/use-unread-count';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import colors , { semanticColors } from '@/src/shared/constants/colors';
+import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { router } from 'expo-router';
 
 export default function NotificationPage() {

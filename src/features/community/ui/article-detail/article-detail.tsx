@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import apis from "@/src/features/community/apis";
 import apis_comments from "@/src/features/community/apis/comments";

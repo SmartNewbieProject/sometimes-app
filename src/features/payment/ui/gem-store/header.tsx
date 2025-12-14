@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text , Header as SharedHeader } from '@shared/ui';
 import { ImageResource } from "@ui/image-resource";
 import {ImageResources} from "@shared/libs";

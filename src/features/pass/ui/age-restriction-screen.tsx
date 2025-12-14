@@ -1,5 +1,5 @@
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button } from "@/src/shared/ui/button";
 import { PalePurpleGradient } from "@/src/shared/ui/gradient";
 import { IconWrapper } from "@/src/shared/ui/icons";

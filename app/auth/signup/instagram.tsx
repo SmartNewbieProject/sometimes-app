@@ -1,5 +1,5 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Signup from "@/src/features/signup";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { useOverlay } from "@/src/shared/hooks/use-overlay";

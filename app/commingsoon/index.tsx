@@ -1,5 +1,5 @@
 import {View, ScrollView, TouchableOpacity} from 'react-native';
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import {Text, PalePurpleGradient, Button} from '@/src/shared/ui';
 import {Image} from 'expo-image';
 import {IconWrapper} from '@/src/shared/ui/icons';

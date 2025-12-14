@@ -1,5 +1,5 @@
 import ReadCheckIcon from "@assets/icons/read-check.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import UnreadCheckIcon from "@assets/icons/unread-check.svg";
 import { Link } from "expo-router";
 import React from "react";

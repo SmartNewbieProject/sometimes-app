@@ -1,6 +1,6 @@
 
 import React from "react";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface MyActivityCardProps {

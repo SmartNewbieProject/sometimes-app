@@ -1,6 +1,6 @@
 
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import {SignupSteps } from "@/src/features/signup/hooks";
 import { Text } from "@/src/shared/ui/text";
 import { Image } from "expo-image";

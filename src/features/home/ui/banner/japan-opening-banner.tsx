@@ -1,4 +1,4 @@
-import { semanticColors } from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { Image } from "expo-image";
 import React from "react";
 import { StyleSheet, TouchableOpacity, Linking } from "react-native";

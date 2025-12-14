@@ -1,5 +1,5 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Header } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React from "react";

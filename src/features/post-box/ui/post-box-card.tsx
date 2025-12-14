@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { cn, dayUtils, tryCatch } from "@/src/shared/libs";
 import { Button, Show } from "@/src/shared/ui";
 import {

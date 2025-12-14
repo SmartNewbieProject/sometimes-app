@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";

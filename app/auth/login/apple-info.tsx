@@ -1,6 +1,6 @@
 // UserInfoPage.tsx
 import { DefaultLayout } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Signup from "@/src/features/signup";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { track } from "@/src/shared/libs/amplitude-compat";

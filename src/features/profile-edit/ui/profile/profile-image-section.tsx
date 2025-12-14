@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import ChangeProfileImageModal from "@/src/features/mypage/ui/modal/change-profile-image.modal";
 import { OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import React, { useEffect, useState, useMemo } from "react";

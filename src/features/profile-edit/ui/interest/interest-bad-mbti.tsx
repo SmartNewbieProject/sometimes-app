@@ -1,6 +1,7 @@
 import { useInterestForm } from "@/src/features/interest/hooks";
 
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { Button } from "@/src/shared/ui";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
 import { useTranslation } from 'react-i18next';

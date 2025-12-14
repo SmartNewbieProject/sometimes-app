@@ -1,4 +1,5 @@
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { Text } from "@/src/shared/ui";
 import { useEffect, useState } from "react";
 import {

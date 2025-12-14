@@ -1,5 +1,5 @@
 import { Stack, usePathname, useRouter , Slot, withLayoutContext } from "expo-router";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { StyleSheet, View } from "react-native";
 
 import Layout from "@/src/features/layout";

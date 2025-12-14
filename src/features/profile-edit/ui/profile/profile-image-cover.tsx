@@ -1,8 +1,9 @@
 import React from "react";
-import { semanticColors } from '../../../../shared/constants/colors';
-import { View, Text, StyleSheet } from "react-native";
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
 import LockIcon from "@/assets/icons/lock-chat.svg";
+import { useRouter } from "expo-router";
 
 type ProfileImageCoverProps = {
   visible?: boolean;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import SearchIcon from "@assets/icons/search.svg"
 import { useStorage } from '@/src/shared/hooks/use-storage';

@@ -3,6 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { List, PenTool } from 'lucide-react-native';
 import { Text } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { questionCardStyles } from './envelope.styles';
 import type { Question, QuestionType } from '../../types';
 
@@ -97,14 +98,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         >
           {currentType === 'text' ? (
             <>
-              <List size={14} color={colors.text.muted} />
+              <List size={14} color={semanticColors.text.muted} />
               <Text size="xs" weight="semibold" textColor="muted" style={questionCardStyles.toggleText}>
                 보기 선택
               </Text>
             </>
           ) : (
             <>
-              <PenTool size={14} color={colors.text.muted} />
+              <PenTool size={14} color={semanticColors.text.muted} />
               <Text size="xs" weight="semibold" textColor="muted" style={questionCardStyles.toggleText}>
                 직접 입력
               </Text>

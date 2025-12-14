@@ -1,5 +1,5 @@
 import type { Preferences } from "@/src/features/interest/api";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { ChipSelector, StepIndicator } from "@/src/widgets";

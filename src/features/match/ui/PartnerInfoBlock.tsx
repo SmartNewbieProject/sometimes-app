@@ -5,7 +5,7 @@ import {
 import { ImageResource, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { View } from "react-native";
-import { semanticColors } from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 
 interface PartnerInfoBlockProps {

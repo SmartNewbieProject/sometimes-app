@@ -1,5 +1,5 @@
 import { Text } from "@/src/shared/ui";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import type React from "react";
 import { StyleSheet, View } from "react-native";
 

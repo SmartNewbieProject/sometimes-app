@@ -1,5 +1,5 @@
 import BottomArrowIcon from "@assets/icons/bottom-arrow.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React, { useRef, useState } from "react";
 import {
   Animated,

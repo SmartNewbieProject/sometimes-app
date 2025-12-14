@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { guideHeight, useOverlay } from "@/src/shared/hooks/use-overlay";
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";

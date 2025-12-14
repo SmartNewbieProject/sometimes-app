@@ -1,5 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Signup from "@/src/features/signup";
 import { environmentStrategy } from "@/src/shared/libs";

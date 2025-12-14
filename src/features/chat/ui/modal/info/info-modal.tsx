@@ -1,5 +1,5 @@
 import ChatBellOffIcon from "@assets/icons/chat-bell-off.svg";
-import { semanticColors } from '../../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import ChatBellOnIcon from "@assets/icons/chat-bell-on.svg";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";

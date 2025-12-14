@@ -1,5 +1,5 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useSignupProgress } from "@/src/features/signup/hooks";
 import { getAreaByCode } from "@/src/features/signup/lib";
 import useUniversitiesByArea from "@/src/features/signup/queries/use-universities-by-area";

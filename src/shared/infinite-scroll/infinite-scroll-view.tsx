@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { semanticColors } from '../constants/colors';
+import { semanticColors } from '../constants/semantic-colors';
 import {
   ActivityIndicator,
   FlatList,

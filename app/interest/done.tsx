@@ -1,5 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useInterestForm } from "@/src/features/interest/hooks";
 import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";

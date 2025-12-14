@@ -1,5 +1,5 @@
 import PlusIcon from "@assets/icons/plus.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import SendChatIcon from "@assets/icons/send-chat.svg";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";

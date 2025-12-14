@@ -3,7 +3,57 @@ export interface ProfileImage {
 	order: number;
 	isMain: boolean;
 	url: string;
+	imageUrl?: string;
+	thumbnailUrl?: string;
+	isLocked?: boolean;
 	reviewStatus?: string;
+	rejectionReason?: string | null;
+	retryCount?: number;
+	isReviewed?: boolean;
+	replacingImageId?: string | null;
+	createdAt?: string;
+}
+
+export interface ManagementImagesResponse {
+	images: [
+		ProfileImage | null,
+		ProfileImage | null,
+		ProfileImage | null
+	];
+}
+
+export interface RejectedImage {
+	id: string;
+	imageUrl: string;
+	rejectionReason: string;
+	imageOrder: number;
+	retryCount: number;
+	isReviewed: boolean;
+	createdAt: string;
+}
+
+export interface RejectedImagesResponse {
+	rejectedImages: RejectedImage[];
+}
+
+export interface AddImageResponse {
+	success: boolean;
+	message: string;
+	imageId: string;
+	imageUrl: string;
+	reviewStatus: string;
+	imageOrder: number;
+	totalImages: number;
+}
+
+export interface ReplaceImageResponse {
+	success: boolean;
+	message: string;
+	imageId: string;
+	newImageUrl: string;
+	reviewStatus: string;
+	imageOrder: number;
+	isMain: boolean;
 }
 
 export interface UniversityDetail {
@@ -63,7 +113,11 @@ export interface UserProfile {
 	updatedAt: string | null;
 	phoneNumber: string;
 	email?: string;
-	isFirstView?: boolean; // 최초 조회 여부 (true: 처음 조회, false: 재조회, undefined: fallback to true)
+	isFirstView?: boolean;
+	skippedPhotoCount?: number;
+	totalPhotoCount?: number;
+	myPhotoCount?: number;
+	isApproved?: boolean;
 }
 
 export interface SimpleProfile {

@@ -1,5 +1,5 @@
 import { DefaultLayout } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 import useAreaHook from "@/src/features/signup/hooks/use-area-hook";
 import { areaMap } from "@/src/features/signup/lib";

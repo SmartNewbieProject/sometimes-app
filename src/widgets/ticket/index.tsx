@@ -3,7 +3,8 @@ import { Show, Text } from "@shared/ui";
 import { createContext, useContext } from "react";
 import { Image } from "expo-image";
 import { calculateDiscount, toKRW } from "./utils";
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import i18n from "@/src/shared/libs/i18n";
 
 type Metadata = {

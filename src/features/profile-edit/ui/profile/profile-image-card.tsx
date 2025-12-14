@@ -1,6 +1,6 @@
 
 import { Image } from "expo-image";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React from "react";
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from "react-native";

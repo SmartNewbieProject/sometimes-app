@@ -1,4 +1,5 @@
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { ImageResources } from "@/src/shared/libs";
 import { ImageResource, PurpleGradient, Text } from "@/src/shared/ui";
 import CheckIcon from "@assets/icons/check-unchecked.svg";

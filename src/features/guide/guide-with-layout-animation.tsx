@@ -1,6 +1,6 @@
 
 import { Image } from "expo-image";
-import { semanticColors } from '../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import type React from "react";
 import {
   Modal,

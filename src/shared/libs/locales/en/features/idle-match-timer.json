@@ -20,6 +20,24 @@
     "partner": {
       "button_more": "See more"
     },
+    "pending-approval": {
+      "title": "Profile Under Review",
+      "description": "Your profile is currently under review. Matching will start once approved.",
+      "estimated-time": "Estimated time",
+      "info": "We'll notify you when your profile is approved!",
+      "next-matching": "Until next matching",
+      "timer-description": "Matching will start after approval",
+      "rejected-title": "Profile Rejected",
+      "rejection-reason-label": "Rejection Reason",
+      "rejection-category": {
+        "inappropriate-image": "Inappropriate Profile Image",
+        "false-info": "False Information",
+        "terms-violation": "Terms Violation",
+        "other": "Other"
+      },
+      "edit-profile-button": "Edit Profile",
+      "rejected-info": "You can request review again after updating your profile."
+    },
     "find-partner": {
       "button_more": "See more"
     },

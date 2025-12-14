@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import type { ILiked, LikedMe } from "@/src/features/like/type/like";
 import ImageCollapse from "@/src/features/matching-history/ui/image-collapse";
 import { LinearGradient } from "expo-linear-gradient";

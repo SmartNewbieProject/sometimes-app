@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Header } from "@/src/shared/ui";
 import { usePathname, useRouter } from "expo-router";
 import React from "react";
