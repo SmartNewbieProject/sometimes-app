@@ -2,12 +2,13 @@ import { axiosClient, platform, tryCatch, storage } from "@/src/shared/libs";
 import { eventBus } from "@/src/shared/libs/event-bus";
 import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
 import type { TokenResponse } from "@/src/types/auth";
-import { passKakao, passLogin } from "@features/auth/apis/index";
+import { passKakao, passKakaoNative, passLogin } from "@features/auth/apis/index";
 import { loginByPass } from "@features/auth/utils/login-utils";
 import { useModal } from "@hooks/use-modal";
 import { useStorage } from "@shared/hooks/use-storage";
 import { useAmplitude } from "@shared/hooks/use-amplitude";
 import { AMPLITUDE_KPI_EVENTS, LOGOUT_REASONS } from "@shared/constants/amplitude-kpi-events";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
@@ -72,6 +73,12 @@ export function useAuth() {
     }
 
     await updateToken(data.accessToken, data.refreshToken);
+
+    // Mixpanel 사용자 식별 (로그인 성공 시)
+    if (data.userId) {
+      mixpanelAdapter.identify(data.userId.toString());
+    }
+
     registerForPushNotificationsAsync().catch((error) => {
       console.error("푸시 토큰 등록 중 오류:", error);
     });
@@ -88,6 +95,34 @@ export function useAuth() {
     }
 
     await updateToken(data.accessToken, data.refreshToken);
+
+    // Mixpanel 사용자 식별 (로그인 성공 시)
+    if (data.userId) {
+      mixpanelAdapter.identify(data.userId.toString());
+    }
+
+    registerForPushNotificationsAsync().catch((error) => {
+      console.error("푸시 토큰 등록 중 오류:", error);
+    });
+
+    return { isNewUser: false };
+  };
+
+  const loginWithKakaoNative = async (accessToken: string) => {
+    const data = await passKakaoNative(accessToken);
+
+    if (data.isNewUser) {
+      // 신규 사용자인 경우 본인인증 정보 전달
+      return { isNewUser: true, certificationInfo: data.certificationInfo };
+    }
+
+    await updateToken(data.accessToken, data.refreshToken);
+
+    // Mixpanel 사용자 식별 (로그인 성공 시)
+    if (data.userId) {
+      mixpanelAdapter.identify(data.userId.toString());
+    }
+
     registerForPushNotificationsAsync().catch((error) => {
       console.error("푸시 토큰 등록 중 오류:", error);
     });
@@ -161,6 +196,21 @@ export function useAuth() {
     };
   }, [setToken, setRefreshToken]);
 
+  // User Properties 설정 (my 정보 로드 시)
+  useEffect(() => {
+    if (my?.id && profileDetails) {
+      mixpanelAdapter.setUserProperties({
+        university_name: profileDetails.universityDetails?.name,
+        university_verified: profileDetails.universityDetails?.isVerified,
+        gender: my.gender,
+        age: my.age,
+        days_since_signup: my.createdAt
+          ? Math.floor((Date.now() - new Date(my.createdAt).getTime()) / (1000 * 60 * 60 * 24))
+          : undefined,
+      });
+    }
+  }, [my, profileDetails]);
+
   const clearApprovalStatus = async () => {
     await setApprovalStatus(null);
   };
@@ -172,6 +222,7 @@ export function useAuth() {
     approvalStatus,
     clearApprovalStatus,
     loginWithKakao,
+    loginWithKakaoNative,
     logout,
     logoutOnly,
     clearTokensOnly,

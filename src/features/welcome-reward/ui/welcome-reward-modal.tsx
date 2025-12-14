@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { semanticColors } from '../../../shared/constants/colors';
 import {
   Modal,
   View,
@@ -173,7 +172,7 @@ const styles = StyleSheet.create({
     marginRight: 60,
   },
   speechBubble: {
-    backgroundColor: semanticColors.surface.secondary,
+    backgroundColor: '#F7F3FF',
     borderRadius: 16,
     padding: 18,
     minHeight: 120,
@@ -203,13 +202,13 @@ const styles = StyleSheet.create({
   speechText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: semanticColors.text.primary,
+    color: '#000000',
     marginBottom: 6,
     textAlign: "left",
   },
   subText: {
     fontSize: 14,
-    color: semanticColors.text.primary,
+    color: '#000000',
     lineHeight: 20,
     marginBottom: 14,
     textAlign: "left",
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -230,13 +229,13 @@ const styles = StyleSheet.create({
   },
   rewardText: {
     fontSize: 16,
-    color: semanticColors.text.primary,
+    color: '#000000',
     fontWeight: "600",
   },
   closeButtonContainer: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -244,7 +243,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 14,
-    color: semanticColors.text.primary,
+    color: '#000000',
     fontWeight: "600",
     textAlign: "center",
   },
