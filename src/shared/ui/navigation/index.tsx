@@ -107,6 +107,10 @@ export function BottomNavigation() {
   const canAccessMoment = momentEnabled?.enabled ?? false;
 
   const isActive = (path: string) => {
+    // 썸메이트 경로인 경우 모먼트 탭 활성화
+    if (pathname.includes('/chat/somemate')) {
+      return path === '/moment';
+    }
     return pathname.startsWith(path);
   };
 
