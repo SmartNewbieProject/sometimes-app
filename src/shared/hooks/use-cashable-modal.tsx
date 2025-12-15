@@ -1,5 +1,5 @@
 import { useModal } from "@hooks/use-modal";
-import { semanticColors } from '../constants/colors';
+import { semanticColors } from '../constants/semantic-colors';
 import {StyleSheet, View} from "react-native";
 import {router} from "expo-router";
 import {Text} from "@ui/text";

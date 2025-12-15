@@ -1,5 +1,6 @@
 import { cn } from '@/src/shared/libs/cn';
-import colors, { semanticColors } from '../../constants/colors';
+import colors from '../../constants/colors';
+import { semanticColors } from '../../constants/semantic-colors';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';

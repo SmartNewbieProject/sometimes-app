@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { semanticColors } from '../../constants/colors';
+import { semanticColors } from '../../constants/semantic-colors';
 
 type BadgeVariant = 'main' | 'approved' | 'reviewing' | 'pending' | 'rejected';
 

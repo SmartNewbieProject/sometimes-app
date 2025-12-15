@@ -1,5 +1,5 @@
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import { colors } from '@/src/shared/constants/colors';
+import colors from '@/src/shared/constants/colors';
 
 export interface ImageCompressionProgressProps {
   progress: number;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Text } from './text';
-import { semanticColors } from '../constants/colors';
+import { semanticColors } from '../constants/semantic-colors';
 
 interface LoadingModalProps {
   message?: string;

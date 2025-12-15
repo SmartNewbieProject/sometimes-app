@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import type React from "react";
-import type { ReactNode } from "react";
+import { isValidElement, type ReactNode } from "react";
 import { Platform, Pressable, TouchableOpacity } from "react-native";
 import type { ViewStyle } from "react-native";
 import { cn } from "../../libs/cn";
@@ -93,6 +93,8 @@ export const Button: React.FC<ButtonProps> = ({
     }
   };
 
+  const isComplexChild = isValidElement(children);
+
   return (
     <Pressable
       className={cn(buttonStyles({ variant, size, flex }), className)}
@@ -100,14 +102,18 @@ export const Button: React.FC<ButtonProps> = ({
       style={[styles, disabled && { opacity: 0.5 }]}
     >
       {prefix}
-      <Text
-        textColor={getTextColor()}
-        size={size}
-        weight="semibold"
-        className="text-center whitespace-nowrap"
-      >
-        {children}
-      </Text>
+      {isComplexChild ? (
+        children
+      ) : (
+        <Text
+          textColor={getTextColor()}
+          size={size}
+          weight="semibold"
+          className="text-center whitespace-nowrap"
+        >
+          {children}
+        </Text>
+      )}
     </Pressable>
   );
 };

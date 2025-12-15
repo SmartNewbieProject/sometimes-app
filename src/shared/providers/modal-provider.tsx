@@ -1,5 +1,5 @@
 import ModalParticle from "@/src/widgets/particle/modal-particle";
-import { semanticColors } from '../constants/colors';
+import { semanticColors } from '../constants/semantic-colors';
 import ErrorFace from "@assets/icons/error-face.svg";
 import Letter from "@assets/icons/letter.svg";
 import { Image } from "expo-image";
