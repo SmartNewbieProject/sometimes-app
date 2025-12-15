@@ -1,17 +1,19 @@
 import { dayUtils } from "@/src/shared/libs";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import Loading from "../loading";
 import { useMatchLoading } from "./hooks";
 import { useLatestMatching } from "./queries";
+import { useProfileDetailsQuery } from "@/src/features/auth/queries";
+import { useStorage } from "@/src/shared/hooks/use-storage";
 import type { MatchDetails } from "./types";
-import { Waiting, Error } from "./ui";
+import { Waiting, Error, LoadingSkeleton } from "./ui";
 import { Container } from "./ui/container";
 import { InteractionNavigation } from "./ui/nav";
 import { NotFound } from "./ui/not-found";
 import { Partner } from "./ui/partner";
 import { RematchLoading } from "./ui/rematching";
 import { PendingApproval } from "./ui/pending-approval";
+import { ProfilePhotoRejected } from "./ui/profile-photo-rejected";
 
 const createDefaultWaitingMatch = (): MatchDetails => ({
   type: "waiting",
@@ -22,8 +24,13 @@ const createDefaultWaitingMatch = (): MatchDetails => ({
   connectionId: null,
 });
 
-export default function IdleMatchTimer() {
-  const { match, isPending, isFetchingData, isError, refetch } = useLatestMatching();
+function IdleMatchTimerContent() {
+  const { match, isError, refetch } = useLatestMatching();
+  const { value: accessToken } = useStorage<string | null>({
+    key: "access-token",
+    initialValue: null,
+  });
+  const { data: profileDetails } = useProfileDetailsQuery(accessToken);
   const {
     rematchingLoading,
     finishRematching,
@@ -47,7 +54,18 @@ export default function IdleMatchTimer() {
 
       return () => clearTimeout(timer);
     }
-  }, [rematchingLoading, realRematchingLoading]);
+  }, [rematchingLoading, realRematchingLoading, finishRematching]);
+
+  // 프로필 사진 거절 상태 체크 (최우선)
+  if (profileDetails?.status === "rejected") {
+    return (
+      <View style={styles.container}>
+        <Container gradientMode>
+          <ProfilePhotoRejected />
+        </Container>
+      </View>
+    );
+  }
 
   if (rematchingLoading) {
     return (
@@ -59,13 +77,7 @@ export default function IdleMatchTimer() {
     );
   }
 
-  const showLoading = isPending || isFetchingData;
-
   const renderContent = () => {
-    if (showLoading) {
-      return <Loading.Lottie />;
-    }
-
     if (isError) {
       return <Error />;
     }
@@ -111,6 +123,14 @@ export default function IdleMatchTimer() {
       </View>
       <InteractionNavigation match={match} />
     </View>
+  );
+}
+
+export default function IdleMatchTimer() {
+  return (
+    <Suspense fallback={<LoadingSkeleton />}>
+      <IdleMatchTimerContent />
+    </Suspense>
   );
 }
 

@@ -1,5 +1,5 @@
 import { ImageResources, cn } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
 import type { MatchDetails } from "../types";
@@ -20,6 +20,7 @@ export const InteractionNavigation = ({
   match,
 }: InteractionNavigationProps) => {
   const hasPartner = !!match?.partner;
+  const isPendingApproval = match?.type === "pending-approval";
   const { onRematch } = useRematch();
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
@@ -27,6 +28,10 @@ export const InteractionNavigation = ({
   const isLiked = isLikedPartner(match?.connectionId ?? "");
   const { t } = useTranslation();
   console.log("isdata", isLikedPartner(match?.connectionId ?? ""));
+
+  if (isPendingApproval) {
+    return null;
+  }
   const showPartnerFindAnnouncement = () => {
     showModal({
       showLogo: true,

@@ -32,7 +32,7 @@ export const getLatestMatching = (): Promise<MatchDetails> =>
     });
 
 export const getLatestMatchingV2 = (): Promise<MatchDetails> =>
-  axiosClient.get('/api/v2/matching')
+  axiosClient.get('/v2/matching')
     .then((result: unknown) => {
       const data = result as ServerMatchDetails;
 
@@ -44,11 +44,14 @@ export const getLatestMatchingV2 = (): Promise<MatchDetails> =>
         approvalStatus: data.approvalStatus,
         approvalMessage: data.approvalMessage,
         estimatedApprovalTime: data.estimatedApprovalTime,
+        rejectionCategory: data.rejectionCategory,
+        rejectionReason: data.rejectionReason,
       };
 
       console.log('🔍 [API v2] Transformed data:', {
         type: transformedData.type,
         approvalStatus: transformedData.approvalStatus,
+        rejectionCategory: transformedData.rejectionCategory,
         untilNext: transformedData.untilNext
       });
 

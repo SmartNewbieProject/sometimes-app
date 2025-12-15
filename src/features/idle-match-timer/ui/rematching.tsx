@@ -1,8 +1,8 @@
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { ImageResources } from "@/src/shared/libs";
 import { ImageResource, PurpleGradient, Text } from "@/src/shared/ui";
 import CheckIcon from "@assets/icons/check-unchecked.svg";
-import { transform } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { Animated as EssetionAnimated, StyleSheet, View } from "react-native";
 import Animated, {
@@ -16,7 +16,6 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { useMatchLoading } from "../hooks";
-import { useLatestMatching } from "../queries";
 import i18n from "@/src/shared/libs/i18n";
 const processStep = [
   i18n.t("features.idle-match-timer.ui.rematching.steps.profile_analysis"),

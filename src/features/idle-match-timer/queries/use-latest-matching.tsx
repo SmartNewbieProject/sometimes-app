@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getLatestMatchingV2 } from "../apis";
 import { useRef } from "react";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
@@ -7,7 +7,7 @@ import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-event
 export const useLatestMatching = () => {
   const lastMatchIdRef = useRef<string | null>(null);
 
-  const { data: match, status, fetchStatus, ...queryProps } = useQuery({
+  const { data: match, status, fetchStatus, ...queryProps } = useSuspenseQuery({
     queryKey: ["latest-matching-v2"],
     queryFn: getLatestMatchingV2,
     staleTime: 30 * 1000,
@@ -42,17 +42,12 @@ export const useLatestMatching = () => {
     });
   }
 
-  const isPending = status === "pending";
-  const isFetchingData = fetchStatus === "fetching";
-
   console.log('🔍 [Query] Match data updated:', {
     match,
     status,
     fetchStatus,
-    isPending,
-    isFetchingData,
     isError: queryProps.isError,
   });
 
-  return { match, status, fetchStatus, isPending, isFetchingData, ...queryProps };
+  return { match, status, fetchStatus, ...queryProps };
 };

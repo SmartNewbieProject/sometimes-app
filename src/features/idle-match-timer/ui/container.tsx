@@ -12,7 +12,7 @@ type ContainerProps = {
 };
 
 export const Container = ({ children, gradientMode }: ContainerProps) => {
-  const { match, isLoading: matchLoading, refetch } = useLatestMatching();
+  const { match } = useLatestMatching();
   const { rematchingLoading } = useMatchLoading();
   const [width, setWidth] = useState(0);
   const { uri: backgroundUri } = useMatchingBackground();
