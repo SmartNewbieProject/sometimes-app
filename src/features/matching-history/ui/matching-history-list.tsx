@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   infoText: {
     textAlign: "center",
     lineHeight: 18,
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
   },
   image: {

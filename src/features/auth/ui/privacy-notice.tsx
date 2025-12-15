@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontSize: 12,
     color: colors["gray-600"],
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
   },
 });

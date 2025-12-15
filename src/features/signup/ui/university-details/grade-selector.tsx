@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.disabled,
     fontSize: 15,
     fontWeight: 300,
-    fontFamily: "thin",
+    fontFamily: "Pretendard-Thin",
     lineHeight: 18.9,
     marginLeft: 12,
   },

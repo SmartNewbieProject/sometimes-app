@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     lineHeight: 10,
     fontWeight: 700,
     fontSize: 10,
-    fontFamily: "bold",
+    fontFamily: "Pretendard-Bold",
     color: colors.primaryPurple,
   },
 });

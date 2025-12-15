@@ -104,13 +104,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 21.6,
     color: "#4A4A4A",
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: "extrabold",
+    fontFamily: "Pretendard-ExtraBold",
     color: "#7A4AE2",
   },
   description: {

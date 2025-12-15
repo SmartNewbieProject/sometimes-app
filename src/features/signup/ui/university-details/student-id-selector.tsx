@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.disabled,
     fontSize: 15,
     fontWeight: 300,
-    fontFamily: "thin",
+    fontFamily: "Pretendard-Thin",
     flex: 1,
 
     borderWidth: 0,
