@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.primary,
     fontSize: 12,
 
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
   },
   contentContainer: {

@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
 
-    fontFamily: "regular",
+    fontFamily: "Pretendard-Regular",
     fontWeight: 400,
 
     color: semanticColors.text.disabled,

@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   imageTagText: {
     fontSize: 13,
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 15.6,
     fontWeight: 600,
 

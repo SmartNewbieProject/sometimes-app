@@ -156,13 +156,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 21.6,
     color: semanticColors.text.muted,
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: "extrabold",
+    fontFamily: "Pretendard-ExtraBold",
     color: semanticColors.brand.primary,
   },
   description: {

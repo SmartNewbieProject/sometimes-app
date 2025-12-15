@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 18,
     fontWeight: 600,
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 22,
   },
   chipSelector: {

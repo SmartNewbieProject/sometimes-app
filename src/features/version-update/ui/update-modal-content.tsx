@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     color: colors.primaryPurple,
     fontWeight: 600,
 
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
   },
   descriptionContainer: {
     maxHeight: 200,

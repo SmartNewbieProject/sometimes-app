@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     zIndex: 30,
   },
   area: {
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 24,
     fontSize: 20,
     marginBottom: 10,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 13,
     fontWeight: 300,
-    fontFamily: "thin",
+    fontFamily: "Pretendard-Thin",
 
     lineHeight: 15.6,
     opacity: 0.7,

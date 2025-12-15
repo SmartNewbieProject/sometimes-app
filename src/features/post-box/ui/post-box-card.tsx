@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 15,
-    fontFamily: "thin",
+    fontFamily: "Pretendard-Thin",
     fontWeight: 300,
     lineHeight: 18,
     color: semanticColors.brand.accent,

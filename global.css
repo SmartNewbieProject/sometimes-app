@@ -1,8 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+@layer base {
+  * {
+    font-family: 'Pretendard-Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  body {
+    font-family: 'Pretendard-Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+}
 
 @font-face {
   font-family: 'Pretendard-Thin';
@@ -67,69 +76,6 @@
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'thin';
-  src: url('./assets/fonts/Pretendard-Thin.ttf') format('truetype');
-  font-weight: 100;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'extralight';
-  src: url('./assets/fonts/Pretendard-ExtraLight.ttf') format('truetype');
-  font-weight: 200;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'light';
-  src: url('./assets/fonts/Pretendard-Light.otf') format('opentype');
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'regular';
-  src: url('./assets/fonts/Pretendard-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'medium';
-  src: url('./assets/fonts/Pretendard-Medium.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'semibold';
-  src: url('./assets/fonts/Pretendard-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'bold';
-  src: url('./assets/fonts/Pretendard-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'extrabold';
-  src: url('./assets/fonts/Pretendard-ExtraBold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'black';
-  src: url('./assets/fonts/Pretendard-Black.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-}
-
 :root {
   --primary-purple: #A78BFA;
   /* 주요 보라색 */
@@ -151,17 +97,5 @@
 
 input {
   transform: scale(1);
-  font-family: 'thin', sans-serif;
-}
-
-input::placeholder {
-  font-family: 'thin', sans-serif;
-}
-
-textarea {
-  font-family: 'thin', sans-serif;
-}
-
-textarea::placeholder {
-  font-family: 'thin', sans-serif;
+  /* iOS에서 추가적인 확대 방지 */
 }

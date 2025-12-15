@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 24,
     color: semanticColors.text.primary,

@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 26,
-    fontFamily: "regular",
+    fontFamily: "Pretendard-Regular",
     fontWeight: 400,
     lineHeight: 30,
     color: semanticColors.text.inverse,
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   universityVerificationButtonText: {
     fontSize: 12,
     color: semanticColors.brand.secondary,
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
   },
 });

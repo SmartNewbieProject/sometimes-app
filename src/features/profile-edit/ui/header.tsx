@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: semanticColors.text.primary,
     fontSize: 20,
-    fontFamily: "bold",
+    fontFamily: "Pretendard-Bold",
     fontWeight: 700,
     lineHeight: 22,
   },
