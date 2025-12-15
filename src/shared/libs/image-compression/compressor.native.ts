@@ -55,7 +55,8 @@ async function getImageDimensions(uri: string): Promise<{ width: number; height:
 
     return { width: image.width, height: image.height };
   } catch (error) {
-    logger.error('Failed to get image dimensions', { error, uri });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    logger.error(`Failed to get image dimensions: ${errorMsg}`);
 
     if (error instanceof ImageCompressionError) {
       throw error;
@@ -80,7 +81,8 @@ async function getFileSize(uri: string): Promise<number> {
     }
     return info.size || 0;
   } catch (error) {
-    logger.error('Failed to get file size', { error, uri });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    logger.error(`Failed to get file size: ${errorMsg}`);
     return 0;
   }
 }
@@ -190,7 +192,10 @@ async function compressImageWithRetry(
       mimeType: `image/${config.outputFormat}`,
     };
   } catch (error) {
-    logger.error('Image compression failed', { error, uri, attempt });
+    const errorMsg = error instanceof ImageCompressionError
+      ? `${error.code}: ${error.message}`
+      : error instanceof Error ? error.message : String(error);
+    logger.error(`Image compression failed (attempt ${attempt + 1}): ${errorMsg}`);
 
     if (attempt < config.maxRetries) {
       const delay = RETRY_DELAYS_MS[attempt] || 4000;
@@ -231,7 +236,10 @@ export async function compressImage(
   try {
     return await compressImageWithRetry(uri, options);
   } catch (error) {
-    logger.error('Image compression failed completely', { error, uri, options });
+    const errorMsg = error instanceof ImageCompressionError
+      ? `${error.code}: ${error.message}`
+      : error instanceof Error ? error.message : String(error);
+    logger.error(`Image compression failed completely: ${errorMsg}`);
     throw error;
   }
 }
