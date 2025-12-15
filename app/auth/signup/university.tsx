@@ -1,5 +1,5 @@
 import { TwoButtons , DefaultLayout } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { SignupSteps } from "@/src/features/signup/hooks";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
 import UniversityLogos from "@/src/features/signup/ui/university-logos";
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: semanticColors.text.primary,
-    fontFamily: "Pretendard-Regular",
+    fontFamily: "Pretendard-Thin",
   },
   listAndBottomContainer: {
     flex: 1,
@@ -210,14 +210,14 @@ const styles = StyleSheet.create({
   tip: {
     color: semanticColors.text.disabled,
     fontWeight: "300",
-    fontFamily: "thin",
+    fontFamily: "Pretendard-Thin",
     fontSize: 13,
     lineHeight: 20,
   },
   welcome: {
     fontSize: 18,
     color: semanticColors.brand.primary,
-    fontFamily: "Pretendard-Medium",
+    fontFamily: "Pretendard-SemiBold",
     marginBottom: 8,
     textAlign: "center",
   },

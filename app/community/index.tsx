@@ -1,6 +1,6 @@
 // app/community/index.tsx
 import { useCategory } from "@/src/features/community/hooks";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { CategoryList, CreateArticleFAB } from "@/src/features/community/ui";
 import { ImageResources } from "@/src/shared/libs";
 import { BottomNavigation, Header, ImageResource, HeaderWithNotification, Text } from "@/src/shared/ui";

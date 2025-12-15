@@ -1,11 +1,11 @@
 // UserInfoPage.tsx
 import { DefaultLayout } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Signup from "@/src/features/signup";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { track } from "@/src/shared/libs/amplitude-compat";
 import { Image } from "expo-image";
-import { router, useGlobalSearchParams } from "expo-router";
+import { router, useGlobalSearchParams, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Text ,
   BackHandler,
@@ -29,12 +29,23 @@ const { useSignupProgress } = Signup;
 export default function UserInfoPage() {
   const { t } = useTranslation();
   const { updateForm, form } = useSignupProgress();
+  const params = useLocalSearchParams<{ certificationInfo?: string }>();
 
   const insets = useSafeAreaInsets();
 
   const { value: appleUserFullName, loading: fullNameLoading } = useStorage<
     string | null
   >({ key: "appleUserFullName" });
+
+  useEffect(() => {
+    if (params.certificationInfo) {
+      const certInfo = JSON.parse(params.certificationInfo);
+      updateForm({
+        loginType: certInfo.loginType,
+        appleId: certInfo.appleId,
+      });
+    }
+  }, [params.certificationInfo]);
 
   const [name, setName] = useState(form.name || "");
   const [gender, setGender] = useState(form.gender || null);

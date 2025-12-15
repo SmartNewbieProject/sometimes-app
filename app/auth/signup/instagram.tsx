@@ -1,75 +1,32 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Signup from "@/src/features/signup";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
-import { useOverlay } from "@/src/shared/hooks/use-overlay";
 import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
-import { router, useGlobalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   BackHandler,
-  Keyboard,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const {
   SignupSteps,
   useChangePhase,
   useSignupProgress,
-  queries,
-  apis,
   useSignupAnalytics,
 } = Signup;
 function SignupInstagram() {
-  const { updateForm, form } = useSignupProgress();
+  const { updateForm } = useSignupProgress();
   const [instagramId, setInstagramId] = useState("");
-  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-  const { showOverlay, hideOverlay } = useOverlay();
 
-  useEffect(() => {
-    // 처음에 오버레이 띄우기
-    showOverlay(
-      <View style={styles.infoWrapper}>
-        <Text style={styles.infoTitle}>{t("apps.auth.sign_up.instagram.info_title")}</Text>
-        <Text style={styles.infoDescription}>
-          {t("apps.auth.sign_up.instagram.info_desc_1")}
-        </Text>
-        <Text style={styles.infoDescription}>{t("apps.auth.sign_up.instagram.info_desc_2")}</Text>
-        <Image
-          source={require("@assets/images/instagram-some.png")}
-          style={{
-            width: 116,
-            height: 175,
-            position: "absolute",
-            top: 20,
-            right: -66,
-          }}
-        />
-        <Image
-          source={require("@assets/images/instagram-lock.png")}
-          style={{
-            width: 52,
-            height: 52,
-            position: "absolute",
-            top: -30,
-            left: -30,
-            transform: [{ rotate: "-10deg" }],
-          }}
-        />
-      </View>
-    );
-  }, []);
   useChangePhase(SignupSteps.INSTAGRAM);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const { trackSignupEvent } = useSignupAnalytics("university_details");
 
   const onNext = async () => {
@@ -98,24 +55,6 @@ function SignupInstagram() {
     return () => subscription.remove();
   }, []);
 
-  useEffect(() => {
-    const showEvent =
-      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent =
-      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
-
-    const showSubscription = Keyboard.addListener(showEvent, () => {
-      setKeyboardVisible(true);
-    });
-    const hideSubscription = Keyboard.addListener(hideEvent, () => {
-      setKeyboardVisible(false);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
 
   return (
     <>
@@ -148,40 +87,6 @@ function SignupInstagram() {
             </View>
           </View>
 
-          {!keyboardVisible && (
-            <View style={[styles.infoWrapper]}>
-              <Text style={styles.infoTitle}>
-                {t("apps.auth.sign_up.instagram.info_title")}
-              </Text>
-              <Text style={styles.infoDescription}>
-                {t("apps.auth.sign_up.instagram.info_desc_1")}
-              </Text>
-              <Text style={styles.infoDescription}>
-                {t("apps.auth.sign_up.instagram.info_desc_2")}
-              </Text>
-              <Image
-                source={require("@assets/images/instagram-some.png")}
-                style={{
-                  width: 116,
-                  height: 175,
-                  position: "absolute",
-                  top: 20,
-                  right: -66,
-                }}
-              />
-              <Image
-                source={require("@assets/images/instagram-lock.png")}
-                style={{
-                  width: 52,
-                  height: 52,
-                  position: "absolute",
-                  top: -30,
-                  left: -30,
-                  transform: [{ rotate: "-10deg" }],
-                }}
-              />
-            </View>
-          )}
         </View>
 
         <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
@@ -266,43 +171,6 @@ const styles = StyleSheet.create({
     fontWeight: 300,
     fontFamily: "thin",
     fontSize: 13,
-
     lineHeight: 20,
-  },
-  infoWrapper: {
-    bottom: 240,
-    position: "absolute",
-
-    right: 90,
-
-    marginHorizontal: "auto",
-    paddingHorizontal: 28,
-    paddingVertical: 19,
-    borderRadius: 20,
-    backgroundColor: semanticColors.surface.background,
-    borderWidth: 1,
-    borderColor: semanticColors.border.default,
-
-    shadowColor: "#F2ECFF",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 5,
-    elevation: 3, // Android에서 그림자
-  },
-  infoTitle: {
-    color: semanticColors.brand.accent,
-    fontWeight: 600,
-    fontFamily: "semibold",
-    lineHeight: 16.8,
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  infoDescription: {
-    fontSize: 11,
-    lineHeight: 13.2,
-    color: "#BAB0D0",
   },
 });

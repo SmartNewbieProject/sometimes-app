@@ -1,5 +1,5 @@
 import MyInfo from "@/src/features/my-info";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useMyInfoStep } from "@/src/features/my-info/hooks";
 import { cn } from "@/src/shared/libs";
 import { platform } from "@/src/shared/libs/platform";

@@ -120,7 +120,7 @@ export default function ReapplyScreen() {
           primaryButton: {
             text: t("apps.auth.reapply.button_confirm"),
             onClick: () => {
-              router.push("/auth/approval-pending");
+              router.replace("/auth/login");
             },
           },
         });

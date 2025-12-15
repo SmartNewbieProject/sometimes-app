@@ -1,5 +1,5 @@
 import Layout from "@/src/features/layout";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import MyInfo from "@/src/features/my-info";
 import { useMbti } from "@/src/features/mypage/hooks";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";

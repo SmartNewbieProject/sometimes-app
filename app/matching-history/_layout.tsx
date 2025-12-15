@@ -1,5 +1,5 @@
 import { useRematchingTickets } from "@/src/features/mypage/queries";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Header, Text } from "@/src/shared/ui";
 import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
 import { Image } from "expo-image";

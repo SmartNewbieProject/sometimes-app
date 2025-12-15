@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";

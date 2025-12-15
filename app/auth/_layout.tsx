@@ -44,15 +44,6 @@ export default function AuthLayout() {
           }}
         />
         <Stack.Screen
-          name="approval-rejected"
-          options={{
-            headerShown: false,
-            contentStyle: {
-              backgroundColor: "transparent",
-            },
-          }}
-        />
-        <Stack.Screen
           name="reapply"
           options={{
             headerShown: false,

@@ -1,5 +1,5 @@
 import React from "react";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { View, StyleSheet } from "react-native";
 
 import { MomentPage } from "@/src/features/moment/ui";

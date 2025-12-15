@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { router, useFocusEffect } from "expo-router";
 import { ScrollView, StyleSheet, View, Pressable, ActivityIndicator, Text as RNText, BackHandler, TouchableOpacity } from "react-native";
 import { ChevronLeft } from "lucide-react-native";

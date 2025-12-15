@@ -70,23 +70,16 @@ export default function HomeLayout() {
           return;
         }
 
-        // 승인 상태 확인
+        // 승인 상태 확인 - pending, rejected 상태도 홈으로 진행
         if (statusData?.status === "pending") {
-          console.log("⏸️ [HomeLayout] 승인 대기 상태");
-          router.replace("/auth/approval-pending");
+          console.log("⏸️ [HomeLayout] 승인 대기 상태 - 홈으로 진행");
+          setStatusChecked(true);
           return;
         }
 
         if (statusData?.status === "rejected") {
-          console.log("🚫 [HomeLayout] 승인 거절 상태");
-          router.replace({
-            pathname: "/auth/approval-rejected",
-            params: {
-              phoneNumber: my.phoneNumber,
-              rejectionReason:
-                statusData.rejectionReason || t("apps.home.rejected"),
-            },
-          });
+          console.log("🚫 [HomeLayout] 승인 거절 상태 - 홈으로 진행");
+          setStatusChecked(true);
           return;
         }
 

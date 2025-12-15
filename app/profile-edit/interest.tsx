@@ -184,8 +184,12 @@ function InterestSection() {
   }
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom + 100 }]}>
-      <ScrollView>
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 100,
+        }}
+      >
         <InterestAge />
         <InterestGoodMbti />
         <InterestBadMbti />
@@ -195,25 +199,35 @@ function InterestSection() {
         <InterestSmoking />
         <InterestTattoo />
       </ScrollView>
-      <Button
-        disabled={disabled || formSubmitLoading}
-        onPress={onFinish}
-        rounded="lg"
-        styles={{
-          bottom: insets.bottom + 15,
+      <View
+        style={{
           position: "absolute",
-          left: 28,
-          right: 28,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          backgroundColor: "#FFFFFF",
+          paddingHorizontal: 31,
+          paddingBottom: insets.bottom + 15,
+          paddingTop: 15,
         }}
       >
-        {t("apps.profile_edit.ui.save_button")}
-      </Button>
+        <Button
+          disabled={disabled || formSubmitLoading}
+          onPress={onFinish}
+          rounded="lg"
+          styles={{ width: "100%" }}
+        >
+          {t("apps.profile_edit.ui.save_button")}
+        </Button>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     position: "relative",
   },
 });

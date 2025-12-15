@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -10,6 +10,7 @@ import { platform } from "@shared/libs/platform";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { useSignupProgress } = Signup;
 
@@ -91,6 +92,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     clear();
+    AsyncStorage.removeItem('signup_session');
   }, [clear]);
 
   return (

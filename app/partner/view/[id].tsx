@@ -43,7 +43,7 @@ import {
   View,
   Text as RNText,
 } from "react-native";
-import { semanticColors } from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
 
 const { queries } = Match;

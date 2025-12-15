@@ -1,6 +1,7 @@
 import { useAuth } from "@/src/features/auth";
 import { usePreferenceSelfQuery } from "@/src/features/home/queries";
 import Layout from "@/src/features/layout";
+import PageLoading from "@/src/features/loading/ui/page";
 import MyInfo from "@/src/features/my-info";
 import { PreferenceKeys } from "@/src/features/my-info/queries";
 import { savePreferences } from "@/src/features/my-info/services";
@@ -19,7 +20,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import { Button } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -27,7 +28,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const { hooks } = MyInfo;
 const { useMyInfoForm } = hooks;
 
-function Profile() {
+function ProfileContent() {
   const { t } = useTranslation();
   const { updateForm, ...form } = useMyInfoForm();
   const router = useRouter();
@@ -38,12 +39,14 @@ function Profile() {
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { showErrorModal } = useModal();
   const { data: preferenceSelf = [] } = usePreferenceSelfQuery();
+  const setInitialSnapshot = useMyInfoForm((state) => state.setInitialSnapshot);
+  const hasChanges = useMyInfoForm((state) => state.hasChanges);
 
   useEffect(() => {
     queryClient.refetchQueries({ queryKey: ["my-profile-details"] });
   }, []);
 
-  const disabled = !!(
+  const validation = !!(
     !form ||
     !form.datingStyleIds ||
     !form.personality ||
@@ -53,6 +56,9 @@ function Profile() {
     form.personality.length === 0 ||
     form.interestIds.length === 0
   );
+
+  const disabled = !hasChanges() || validation;
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (profileDetails?.id && preferenceSelf && !form.init) {
@@ -103,8 +109,27 @@ function Profile() {
       );
 
       updateForm("init", true);
+
+      // 초기 스냅샷 저장 (프로필 이미지 제외)
+      setInitialSnapshot({
+        drinking,
+        mbti: profileDetails.mbti,
+        init: true,
+        interestIds: preferenceSelf
+          ?.find((item) => item.typeName === PreferenceKeys.INTEREST)
+          ?.selectedOptions?.map((item) => item.id) as string[],
+        datingStyleIds: preferenceSelf
+          ?.find((item) => item.typeName === PreferenceKeys.DATING_STYLE)
+          ?.selectedOptions?.map((item) => item.id) as string[],
+        militaryStatus,
+        personality: preferenceSelf
+          ?.find((item) => item.typeName === PreferenceKeys.PERSONALITY)
+          ?.selectedOptions?.map((item) => item.id) as string[],
+        smoking,
+        tattoo,
+      });
     }
-  }, [preferenceSelf, profileDetails?.id, profileDetails?.mbti, profileDetails?.gender, form.init]);
+  }, [preferenceSelf, profileDetails?.id, profileDetails?.mbti, profileDetails?.gender, form.init, setInitialSnapshot]);
 
   const onFinish = async () => {
     setFormSubmitLoading(true);
@@ -158,19 +183,28 @@ function Profile() {
         <ProfileSmoking />
         <ProfileTattoo />
       </ScrollView>
-      <Button
-        disabled={disabled}
-        onPress={onFinish}
-        rounded="lg"
-        styles={{
-          bottom: insets.bottom + 15,
+      <View
+        style={{
           position: "absolute",
-          left: 28,
-          right: 28,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          backgroundColor: "#FFFFFF",
+          paddingHorizontal: 31,
+          paddingBottom: insets.bottom + 15,
+          paddingTop: 15,
         }}
       >
-        {t("apps.profile_edit.ui.save_button")}
-      </Button>
+        <Button
+          disabled={disabled}
+          onPress={onFinish}
+          rounded="lg"
+          styles={{ width: "100%" }}
+        >
+          {t("apps.profile_edit.ui.save_button")}
+        </Button>
+      </View>
     </View>
   );
 }
@@ -181,5 +215,13 @@ const styles = StyleSheet.create({
     position: "relative",
   },
 });
+
+function Profile() {
+  return (
+    <Suspense fallback={<PageLoading />}>
+      <ProfileContent />
+    </Suspense>
+  );
+}
 
 export default Profile;

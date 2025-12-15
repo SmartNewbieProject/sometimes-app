@@ -1,5 +1,5 @@
 import { Header, Text, PalePurpleGradient , Button, ImageSelector } from "@/src/shared/ui";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
