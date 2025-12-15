@@ -20,4 +20,6 @@ config.server = {
   port: 3000,
 };
 
+config.watchFolders = [__dirname];
+
 module.exports = withNativeWind(config, { input: './global.css' })
