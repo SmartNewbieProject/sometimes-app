@@ -1,5 +1,5 @@
 import { useStorage } from "@/src/shared/hooks/use-storage";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { track } from "@/src/shared/libs/amplitude-compat";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";

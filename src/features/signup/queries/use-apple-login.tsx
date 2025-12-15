@@ -48,7 +48,11 @@ export const useAppleLogin = () => {
         router.replace({
           pathname: "/auth/login/apple-info",
           params: {
-            certificationInfo: JSON.stringify(result.certificationInfo),
+            certificationInfo: JSON.stringify({
+              ...result.certificationInfo,
+              loginType: "apple",
+              appleId: result.appleId,
+            }),
           },
         });
       } else {

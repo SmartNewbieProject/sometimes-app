@@ -134,7 +134,9 @@ export async function processSignup(
     trackSignupEvent,
     trackKpiEvent,
     removeLoginType,
-    setSignupResponse,
+    updateToken,
+    clearSignupForm,
+    identifyUser,
   }: {
     router: Router;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -144,15 +146,14 @@ export async function processSignup(
     trackSignupEvent: (event: string, detail?: string) => void;
     trackKpiEvent?: (event: string, data?: any) => void;
     removeLoginType: () => Promise<void>;
-    setSignupResponse?: (response: any) => void;
+    updateToken: (accessToken: string, refreshToken: string) => Promise<void>;
+    clearSignupForm: () => void;
+    identifyUser?: (userId: string) => void;
   }
 ): Promise<void> {
   const response = await apis.signup(signupForm);
 
-  // 회원가입 응답 저장 (토큰 포함)
-  if (setSignupResponse && response) {
-    setSignupResponse(response);
-  }
+  console.log("[processSignup] signup response:", JSON.stringify(response, null, 2));
 
   // 프로필 완성률 계산
   const profileFields = ['phone', 'universityId', 'profileImages', 'name', 'birthday', 'gender', 'departmentName', 'grade', 'studentNumber', 'instagramId'];
@@ -186,6 +187,19 @@ export async function processSignup(
   if (Platform.OS === "ios") await removeLoginType();
   else if (Platform.OS === "web") sessionStorage.removeItem("loginType");
 
-  router.push("/auth/signup/done");
-  return;
+  // 토큰 저장 (회원가입 API가 토큰을 반환하므로 바로 로그인 처리)
+  await updateToken(response.accessToken, response.refreshToken);
+
+  // 사용자 식별 (analytics)
+  if (identifyUser && response.id) {
+    identifyUser(response.id);
+  }
+
+  // 회원가입 폼 데이터 클리어
+  clearSignupForm();
+
+  console.log("[processSignup] signup & login completed, navigating to /home");
+
+  // 바로 홈으로 이동 (done 페이지 스킵)
+  router.replace("/home");
 }

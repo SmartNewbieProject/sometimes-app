@@ -8,6 +8,7 @@ export interface PassLoginResponse {
   expiresIn: number;
   role: string;
   isNewUser: boolean;
+  userId?: string;
   certificationInfo: {
     name: string;
     phone: string;

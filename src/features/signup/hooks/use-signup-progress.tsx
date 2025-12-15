@@ -2,6 +2,8 @@ import { create } from "zustand";
 import i18n from "@/src/shared/libs/i18n";
 import type { SignupResponse } from "../apis";
 
+export type LoginType = "pass" | "kakao" | "kakao_native" | "apple";
+
 export type SignupForm = {
   name: string;
   phone: string;
@@ -18,6 +20,10 @@ export type SignupForm = {
   kakaoId?: string;
   appleId?: string;
   referralCode?: string;
+  loginType?: LoginType;
+  identityVerificationId?: string;
+  kakaoCode?: string;
+  kakaoAccessToken?: string;
 };
 
 type StoreProps = {
@@ -76,8 +82,11 @@ const useSignupProgress = create<StoreProps>((set) => ({
     set({
       form: {},
       step: SignupSteps.UNIVERSITY,
+      progress: 1 / phaseCount,
+      regions: [],
       signupResponse: null,
       univTitle: "",
+      showHeader: false,
     }),
 
   updateShowHeader: (bool) => {

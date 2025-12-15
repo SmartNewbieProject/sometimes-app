@@ -1,4 +1,5 @@
 import { axiosClient, platform, tryCatch, storage } from "@/src/shared/libs";
+import { resetAppState } from "@/src/shared/libs/reset-app-state";
 import { eventBus } from "@/src/shared/libs/event-bus";
 import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
 import type { TokenResponse } from "@/src/types/auth";
@@ -131,6 +132,8 @@ export function useAuth() {
   };
 
   const logoutOnly = async () => {
+    resetAppState();
+
     if (!refreshToken) {
       router.push("/auth/login");
       await setToken(null);
@@ -186,15 +189,18 @@ export function useAuth() {
     );
 
     const unsubscribeLogout = eventBus.on("auth:logout", async () => {
+      resetAppState();
       await setToken(null);
       await setRefreshToken(null);
+      await setApprovalStatus(null);
+      await clearOnboardingCompletedFlag();
     });
 
     return () => {
       unsubscribeTokens();
       unsubscribeLogout();
     };
-  }, [setToken, setRefreshToken]);
+  }, [setToken, setRefreshToken, setApprovalStatus]);
 
   // User Properties 설정 (my 정보 로드 시)
   useEffect(() => {

@@ -33,6 +33,7 @@ export default function LoginForm() {
     mobileAuthRequest,
     handleMobileAuthComplete,
     handleMobileAuthError,
+    handleMobileAuthCancel,
   } = usePortOneLogin();
   const { authEvents, signupEvents } = useKpiAnalytics();
   const pathname = usePathname();
@@ -69,6 +70,7 @@ export default function LoginForm() {
         request={mobileAuthRequest}
         onComplete={handleMobileAuthComplete}
         onError={handleMobileAuthError}
+        onCancel={handleMobileAuthCancel}
       />
     );
   }
@@ -199,7 +201,11 @@ function KakaoLoginComponent() {
         router.push({
           pathname: "/auth/signup/university",
           params: {
-            certificationInfo: JSON.stringify(loginResult.certificationInfo),
+            certificationInfo: JSON.stringify({
+              ...loginResult.certificationInfo,
+              loginType: "kakao_native",
+              kakaoAccessToken: result.accessToken,
+            }),
           },
         });
       } else {

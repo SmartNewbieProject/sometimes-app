@@ -136,6 +136,10 @@ function useUniversityHook() {
         gender: certInfo.gender,
         birthday: certInfo.birthday,
         kakaoId: certInfo?.externalId,
+        loginType: certInfo?.loginType || "pass",
+        identityVerificationId: certInfo?.identityVerificationId,
+        kakaoCode: certInfo?.kakaoCode,
+        kakaoAccessToken: certInfo?.kakaoAccessToken,
       });
     }
   }, [params.certificationInfo]);

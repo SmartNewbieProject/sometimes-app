@@ -1,5 +1,5 @@
 import Loading from "@/src/features/loading";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import SearchIcon from "@assets/icons/search.svg";
 import { useGlobalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";

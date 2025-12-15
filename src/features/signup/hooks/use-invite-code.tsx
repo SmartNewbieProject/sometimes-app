@@ -7,6 +7,8 @@ import { ensureAppleId, processSignup, validatePhone, validateUniversity } from 
 import { useModal } from '@/src/shared/hooks/use-modal';
 import Signup from '..';
 import { track } from '@/src/shared/libs/amplitude-compat';
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 
 
 const {
@@ -22,10 +24,10 @@ function useInviteCode() {
   const router = useRouter();
   const [signupLoading, setSignupLoading] = useState(false);
   const { showErrorModal } = useModal()
-    const { trackSignupEvent } = useSignupAnalytics("invite_code");
+  const { trackSignupEvent } = useSignupAnalytics("invite_code");
+  const { updateToken } = useAuth();
 
-  const { updateForm, form: signupForm } = useSignupProgress();
-  const { setSignupResponse } = useSignup();
+  const { updateForm, form: signupForm, clear: clearSignupForm } = useSignupProgress();
   const { value: appleUserIdFromStorage, loading: storageLoading } = useStorage<
     string | null
   >({
@@ -98,7 +100,9 @@ function useInviteCode() {
             track,
             trackSignupEvent,
             removeLoginType,
-            setSignupResponse,
+            updateToken,
+            clearSignupForm,
+            identifyUser: (userId) => mixpanelAdapter.identify(userId),
           });
         },
         (error) => {

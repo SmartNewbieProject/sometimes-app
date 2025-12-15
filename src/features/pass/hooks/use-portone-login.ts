@@ -27,6 +27,7 @@ interface UsePortOneLoginReturn {
 	mobileAuthRequest: PortOneIdentityVerificationRequest | null;
 	handleMobileAuthComplete: (response: PortOneIdentityVerificationResponse) => void;
 	handleMobileAuthError: (error: Error) => void;
+	handleMobileAuthCancel: () => void;
 }
 
 const validateEnvironmentVariables = () => {
@@ -117,7 +118,11 @@ export const usePortOneLogin = ({
 				router.push({
 					pathname: '/auth/signup/university',
 					params: {
-						certificationInfo: JSON.stringify(loginResult.certificationInfo),
+						certificationInfo: JSON.stringify({
+							...loginResult.certificationInfo,
+							loginType: 'pass',
+							identityVerificationId,
+						}),
 					},
 				});
 				onSuccess?.(true);
@@ -177,6 +182,15 @@ export const usePortOneLogin = ({
 		[onError],
 	);
 
+	const handleMobileAuthCancel = useCallback(() => {
+		track('Signup_IdentityVerification_Cancelled', {
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
+		setShowMobileAuth(false);
+		setMobileAuthRequest(null);
+		setIsLoading(false);
+	}, []);
+
 	const handleWebAuth = useCallback(async () => {
 		const authResponse = await authService.requestIdentityVerification();
 
@@ -200,11 +214,11 @@ export const usePortOneLogin = ({
 
 	const startPortOneLogin = useCallback(async () => {
 		try {
-			setIsLoading(true);
 			setError(null);
 
 			// development 환경에서는 외부 인증 창을 띄우지 않고 바로 다음 프로세스로
 			if (checkAppEnvironment('development')) {
+				setIsLoading(true);
 				track('Signup_IdentityVerification_Started', {
 					platform: Platform.OS,
 					type: 'pass',
@@ -224,8 +238,10 @@ export const usePortOneLogin = ({
 			});
 
 			if (Platform.OS === 'web') {
+				setIsLoading(true);
 				await handleWebAuth();
 			} else {
+				// 모바일: 인증 화면으로 바로 전환되므로 isLoading 불필요
 				handleMobileAuth();
 			}
 		} catch (error) {
@@ -251,5 +267,6 @@ export const usePortOneLogin = ({
 		mobileAuthRequest,
 		handleMobileAuthComplete,
 		handleMobileAuthError,
+		handleMobileAuthCancel,
 	};
 };
