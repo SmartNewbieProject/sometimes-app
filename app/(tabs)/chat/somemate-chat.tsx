@@ -49,6 +49,7 @@ export default function SomemateChatScreen() {
   const streamingContentRef = useRef<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingTrigger, setStreamingTrigger] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
 
   const allMessages = messagesData?.messages || [];
   const displayMessages = useMemo(() => {
@@ -303,6 +304,16 @@ export default function SomemateChatScreen() {
     return items;
   }, [dateStr, displayMessages, isStreaming, sessionId, canAnalyze, streamingTrigger]);
 
+  // 메시지가 추가되거나 스트리밍 중일 때 자동으로 맨 아래로 스크롤
+  useEffect(() => {
+    if (listData.length > 0) {
+      // 약간의 딜레이를 주어 렌더링 후 스크롤
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [listData.length, streamingTrigger]);
+
   const renderItem = ({ item }: { item: ListItem }) => {
     if (item.type === "spacer") {
       return <View style={{ height: 15 }} />;
@@ -437,6 +448,7 @@ export default function SomemateChatScreen() {
         ) : (
           <>
             <FlatList
+              ref={flatListRef}
               data={listData}
               renderItem={renderItem}
               keyExtractor={(item, index) =>

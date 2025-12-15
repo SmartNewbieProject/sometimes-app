@@ -62,12 +62,11 @@ const HomeScreen = () => {
   const { step } = useStep();
   const {
     isPreferenceFill,
-    isOnboardingCompleted,
     onboardingLoading,
   } = useRedirectPreferences();
   const { data: preferencesSelf, isLoading: isPreferencesSelfLoading } = usePreferenceSelfQuery();
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
-  const { my } = useAuth();
+  const { my, profileDetails } = useAuth();
   const queryClient = useQueryClient();
   const [isSlideScrolling, setSlideScrolling] = useState(false);
   const { showCollapse } = useLiked();
@@ -127,16 +126,11 @@ const HomeScreen = () => {
   );
 
   const renderMatchingSection = () => {
-    const hasCompletedOnboarding = isPreferenceFill && preferencesSelf && preferencesSelf.length > 0;
+    const hasProfileImages = profileDetails?.profileImages && profileDetails.profileImages.length > 0;
+    const hasCharacteristics = profileDetails?.characteristics && profileDetails.characteristics.length > 0;
+    const hasPreferences = isPreferenceFill && preferencesSelf && preferencesSelf.length > 0;
 
-    if (isOnboardingCompleted) {
-      return (
-        <View className="mt-[14px]">
-          <IdleMatchTimer />
-        </View>
-      );
-    }
-
+    const isProfileComplete = hasProfileImages && hasCharacteristics && hasPreferences;
     if (onboardingLoading) {
       return (
         <View className="mt-[14px]">
@@ -145,7 +139,7 @@ const HomeScreen = () => {
       );
     }
 
-    if (hasCompletedOnboarding) {
+    if (isProfileComplete) {
       return (
         <View className="mt-[14px]">
           <IdleMatchTimer />
