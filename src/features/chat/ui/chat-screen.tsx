@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Platform, View } from "react-native";
 import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";

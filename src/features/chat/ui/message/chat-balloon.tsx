@@ -1,5 +1,5 @@
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
