@@ -1,5 +1,5 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Time } from "@/src/features/idle-match-timer/ui";
 import { sideStyle } from "@/src/features/idle-match-timer/ui/constants";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";

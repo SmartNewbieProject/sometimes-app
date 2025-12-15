@@ -1,7 +1,8 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
-import colors , { semanticColors } from '@/src/shared/constants/colors';
+import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 interface ContactImageProps {
   imageUrl?: string;

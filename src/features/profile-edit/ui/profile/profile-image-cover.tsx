@@ -1,5 +1,5 @@
 import React from "react";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
 import LockIcon from "@/assets/icons/lock-chat.svg";

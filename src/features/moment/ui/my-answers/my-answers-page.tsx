@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Text } from "@/src/shared/ui";
-import colors, { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { router } from "expo-router";
 import { useAnswerHistoryInfiniteQuery } from "../../queries";
 import type { AnswerHistoryItem } from "../../apis";

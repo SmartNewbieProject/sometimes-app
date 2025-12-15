@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Header } from "@/src/shared/ui";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -9,34 +9,43 @@ import { useMyInfoForm } from "../../my-info/hooks";
 
 function ProfileEditHeader() {
   const router = useRouter();
-  const { clear } = useMyInfoForm();
+  const { clear, hasChanges } = useMyInfoForm();
   const { showModal } = useModal();
   const { t } = useTranslation();
+
+  const handleBack = () => {
+    if (hasChanges()) {
+      // 변경사항이 있으면 모달 표시
+      showModal({
+        title: t("features.profile-edit.ui.header.modal_title"),
+        children:
+          t("features.profile-edit.ui.header.modal_description"),
+        primaryButton: {
+          text: t("features.profile-edit.ui.header.modal_primary_button"),
+          onClick: () => {
+            return;
+          },
+        },
+        secondaryButton: {
+          text: t("features.profile-edit.ui.header.modal_secondary_button"),
+          onClick: () => {
+            router.navigate("/my");
+            clear();
+          },
+        },
+      });
+    } else {
+      // 변경사항이 없으면 바로 뒤로가기
+      router.navigate("/my");
+      clear();
+    }
+  };
 
   return (
     <Header.Container className="items-center  ">
       <Header.LeftContent>
         <Pressable
-          onPress={() => {
-            showModal({
-              title: t("features.profile-edit.ui.header.modal_title"),
-              children:
-                t("features.profile-edit.ui.header.modal_description"),
-              primaryButton: {
-                text: t("features.profile-edit.ui.header.modal_primary_button"),
-                onClick: () => {
-                  return;
-                },
-              },
-              secondaryButton: {
-                text: t("features.profile-edit.ui.header.modal_secondary_button"),
-                onClick: () => {
-                  router.navigate("/my");
-                  clear();
-                },
-              },
-            });
-          }}
+          onPress={handleBack}
           style={styles.arrowContainer}
         >
           <View style={styles.backArrow} />

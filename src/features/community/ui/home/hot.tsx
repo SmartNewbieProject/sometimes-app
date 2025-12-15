@@ -1,5 +1,5 @@
 import React from "react";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { View, TouchableOpacity , ActivityIndicator } from "react-native";
 import { Text } from "@/src/shared/ui";
 import { useHomeHots } from "@/src/features/community/hooks/use-home";

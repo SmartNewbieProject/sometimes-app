@@ -1,5 +1,5 @@
 import { Button } from "@/src/shared/ui";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import CopyIcon from "@assets/icons/promotion/invite-code/copy.svg";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";

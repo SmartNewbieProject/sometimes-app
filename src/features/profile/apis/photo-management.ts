@@ -1,5 +1,5 @@
 import { axiosClient, fileUtils, platform } from '@/src/shared/libs';
-import type { RejectedImagesResponse, AddImageResponse, ReplaceImageResponse } from '@/src/types/user';
+import type { RejectedImagesResponse, AddImageResponse, ReplaceImageResponse, ManagementImagesResponse } from '@/src/types/user';
 import { nanoid } from 'nanoid';
 
 export const setMainProfileImage = async (imageId: string): Promise<void> => {
@@ -24,12 +24,14 @@ export const replaceApprovedImage = async (
 
 export const uploadProfileImage = async (
   imageUri: string,
-  order: number
+  slotIndex: number
 ): Promise<AddImageResponse> => {
+  console.log('[API] uploadProfileImage called with slotIndex:', slotIndex);
+
   const formData = new FormData();
-  const file = platform({
-    web: () => {
-      const blob = fileUtils.dataURLtoBlob(imageUri);
+  const file = await platform({
+    web: async () => {
+      const blob = await fileUtils.dataURLtoBlob(imageUri);
       return fileUtils.toFile(blob, `profile-${nanoid(6)}.png`);
     },
     default: () =>
@@ -41,11 +43,20 @@ export const uploadProfileImage = async (
   });
 
   formData.append('image', file);
-  formData.append('order', order.toString());
+  formData.append('slotIndex', slotIndex.toString());
 
-  return axiosClient.post('/v1/profile/images', formData, {
+  console.log('[API] FormData slotIndex value:', slotIndex.toString());
+
+  const response = await axiosClient.post('/v1/profile/images', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
+
+  console.log('[API] uploadProfileImage response:', response);
+  return response;
+};
+
+export const getManagementSlots = async (): Promise<ManagementImagesResponse> => {
+  return axiosClient.get('/v1/profile/images/management');
 };
 
 export const reuploadProfileImage = async (

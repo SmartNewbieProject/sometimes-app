@@ -1,5 +1,5 @@
 import { Show } from "@/src/shared/ui";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { ConsoleLog, Log, NetworkLog } from "../types/log";

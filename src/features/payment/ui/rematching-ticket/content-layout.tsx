@@ -1,6 +1,7 @@
 import { View , Platform, ScrollView, StyleSheet } from "react-native";
 
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { LinearGradient } from "expo-linear-gradient";
 
 type Props = {

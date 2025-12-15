@@ -1,5 +1,5 @@
 import type { ModalOptions } from "@/src/shared/providers/modal-provider";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Image } from "expo-image";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";

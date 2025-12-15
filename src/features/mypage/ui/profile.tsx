@@ -1,5 +1,5 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 import { useAuth } from "@/src/features/auth";
 import {
@@ -154,52 +154,20 @@ export const Profile = () => {
                     );
                   })()}
               </View>
-              <View style={styles.profileInfoContainer}>
-                <Text className="text-text-inverse " style={styles.name}>
-                  {profileData.name}
-                </Text>
-                <View style={styles.subInfo}>
-                  <Text className="text-text-inverse" style={styles.subInfoText}>
-                    {profileData.grade}
+              {!isLoadingVerification && !isUniversityVerified && (
+                <TouchableOpacity
+                  onPress={handleUniversityVerification}
+                  style={styles.universityVerificationButton}
+                >
+                  <Image
+                    source={require("@/assets/images/icon_change.png")}
+                    style={{ width: 16, height: 16, marginRight: 4 }}
+                  />
+                  <Text style={styles.universityVerificationButtonText}>
+                    {t("features.profile-edit.ui.header.university_verification")}
                   </Text>
-                  <Text className="text-text-inverse" style={styles.subInfoText}>
-                    {" "}
-                    ·{" "}
-                  </Text>
-                  <Text className="text-text-inverse" style={styles.subInfoText}>
-                    {profileData.university}
-                  </Text>
-                  {!isLoadingVerification &&
-                    (() => {
-                      const logoUrl = getUniversityLogoUrl();
-                      return isUniversityVerified && logoUrl ? (
-                        <Image
-                          source={{ uri: logoUrl }}
-                          style={{ width: 14, height: 14, marginLeft: 3 }}
-                        />
-                      ) : (
-                        <IconWrapper style={{ marginLeft: 3 }} size={14}>
-                          <NotSecuredIcon />
-                        </IconWrapper>
-                      );
-                    })()}
-                </View>
-                {/* 대학교 인증 버튼 - 로딩 완료 후 인증 미완료 시에만 표시 */}
-                {!isLoadingVerification && !isUniversityVerified && (
-                  <TouchableOpacity
-                    onPress={handleUniversityVerification}
-                    style={styles.universityVerificationButton}
-                  >
-                    <Image
-                      source={require("@/assets/images/icon_change.png")}
-                      style={{ width: 16, height: 16, marginRight: 4 }}
-                    />
-                    <Text style={styles.universityVerificationButtonText}>
-                      {t("features.profile-edit.ui.header.university_verification")}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+                </TouchableOpacity>
+              )}
               <View
                 style={{
                   flexDirection: "row",
@@ -247,7 +215,7 @@ export const Profile = () => {
           </View>
         </View>
       </View>
-    </>
+    </View>
   );
 };
 

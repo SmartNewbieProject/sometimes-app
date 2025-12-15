@@ -1,5 +1,5 @@
 import CopyLinkIcon from "@assets/icons/promotion/invite-code/copy-link.svg";
-import { semanticColors } from '../../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import useShare from "../../../hooks/promotion/use-share";

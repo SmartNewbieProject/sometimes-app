@@ -1,6 +1,7 @@
 import { useMyInfoForm } from "@/src/features/my-info/hooks";
 import { useMbti } from "@/src/features/mypage/hooks";
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
 import React from "react";

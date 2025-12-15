@@ -1,4 +1,5 @@
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { UniversityName, getUnivLogo, formatLastLogin } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";

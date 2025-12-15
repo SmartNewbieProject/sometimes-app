@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { Text } from "@/src/shared/ui";
-import { semanticColors } from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import Feather from "@expo/vector-icons/Feather";
 import Animated, {
     useAnimatedStyle,

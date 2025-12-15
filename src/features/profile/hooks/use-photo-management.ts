@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { useStorage } from '@/src/shared/hooks/use-storage';
-import { useProfileDetailsQuery } from '@/src/features/auth/queries/use-profile-details';
 import {
   setMainProfileImage,
   deleteProfileImage,
@@ -9,24 +7,38 @@ import {
   reuploadProfileImage,
   markPhotoAsReviewed
 } from '../apis/photo-management';
+import { useManagementSlots } from '../queries/use-management-slots';
 import { useToast } from '@/src/shared/hooks/use-toast';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { fileUtils, platform } from '@/src/shared/libs';
-import type { ProfileImage } from '@/src/types/user';
+import type { ProfileImage, ManagementSlot } from '@/src/types/user';
 
 export function usePhotoManagement() {
-  const { value: accessToken } = useStorage<string | null>({
-    key: 'access-token',
-    initialValue: null,
-  });
-  const { data: profileDetails, refetch } = useProfileDetailsQuery(accessToken);
+  const { data: managementData, refetch } = useManagementSlots();
   const { emitToast } = useToast();
   const { showModal } = useModal();
   const [isActionSheetVisible, setActionSheetVisible] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<ProfileImage | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const photos = profileDetails?.profileImages || [];
+  // API는 images 배열을 반환하므로 slots 형식으로 변환
+  // 이미지의 slotIndex 필드를 기준으로 정확한 슬롯에 배치
+  const slots: ManagementSlot[] = managementData?.images
+    ? [0, 1, 2].map((slotIndex) => ({
+        slotIndex,
+        image: managementData.images.find((img) => img?.slotIndex === slotIndex) ?? null,
+      }))
+    : [
+        { slotIndex: 0, image: null },
+        { slotIndex: 1, image: null },
+        { slotIndex: 2, image: null },
+      ];
+
+  // 기존 호환성을 위해 photos 배열도 제공
+  const photos = slots
+    .filter((slot): slot is ManagementSlot & { image: ProfileImage } => slot.image !== null)
+    .map(slot => slot.image);
+
   const approvedPhotos = photos.filter(
     (p) => p.reviewStatus?.toUpperCase() === 'APPROVED' || !p.reviewStatus
   );
@@ -79,9 +91,9 @@ export function usePhotoManagement() {
   const handleChangePhoto = async (photo: ProfileImage, imageUri: string) => {
     setIsLoading(true);
     try {
-      const file = platform({
-        web: () => {
-          const blob = fileUtils.dataURLtoBlob(imageUri);
+      const file = await platform({
+        web: async () => {
+          const blob = await fileUtils.dataURLtoBlob(imageUri);
           return fileUtils.toFile(blob, `profile-${Date.now()}.jpg`);
         },
         default: () =>
@@ -95,21 +107,35 @@ export function usePhotoManagement() {
       await replaceApprovedImage(photo.id, file);
       await refetch();
       emitToast('사진이 교체되었습니다. 관리자 승인 후 반영됩니다');
-    } catch (error) {
-      emitToast('사진 교체에 실패했습니다');
+    } catch (error: any) {
+      const errorMessage = error?.message || '사진 교체에 실패했습니다';
+      emitToast(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAddPhoto = async (imageUri: string, order: number) => {
+  const handleAddPhoto = async (imageUri: string, slotIndex: number) => {
     setIsLoading(true);
     try {
-      await uploadProfileImage(imageUri, order);
-      await refetch();
+      const uploadResponse = await uploadProfileImage(imageUri, slotIndex);
+      console.log('[PHOTO_MGMT] Upload response:', uploadResponse);
+
+      const refetchResult = await refetch();
+      console.log('[PHOTO_MGMT] Refetch result - images:', refetchResult.data?.images?.map(img => ({
+        id: img?.id,
+        slotIndex: img?.slotIndex,
+        order: img?.order,
+        isMain: img?.isMain,
+      })));
+
       emitToast('사진이 추가되었습니다. 관리자 승인 후 반영됩니다');
-    } catch (error) {
-      emitToast('사진 추가에 실패했습니다');
+    } catch (error: any) {
+      if (error?.response?.status === 409) {
+        emitToast('해당 슬롯에 이미 승인된 사진이 있습니다. 교체 기능을 사용하세요');
+      } else {
+        emitToast('사진 추가에 실패했습니다');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -129,9 +155,9 @@ export function usePhotoManagement() {
 
     setIsLoading(true);
     try {
-      const file = platform({
-        web: () => {
-          const blob = fileUtils.dataURLtoBlob(imageUri);
+      const file = await platform({
+        web: async () => {
+          const blob = await fileUtils.dataURLtoBlob(imageUri);
           return fileUtils.toFile(blob, `profile-${Date.now()}.jpg`);
         },
         default: () =>
@@ -153,8 +179,11 @@ export function usePhotoManagement() {
 
       const refetchResult = await refetch();
       console.log('[REUPLOAD] Refetch completed, new data:', {
-        totalPhotos: refetchResult.data?.profileImages?.length,
-        targetPhoto: refetchResult.data?.profileImages?.find((p: any) => p.id === photo.id),
+        slots: refetchResult.data?.slots?.map(s => ({
+          slotIndex: s.slotIndex,
+          imageId: s.image?.id,
+          reviewStatus: s.image?.reviewStatus,
+        })),
       });
 
       // 재심사 요청 안내 모달 표시
@@ -167,17 +196,10 @@ export function usePhotoManagement() {
         },
       });
     } catch (error: any) {
-      console.error('[REUPLOAD] Error occurred:', {
-        errorCode: error?.response?.data?.errorCode,
-        errorMessage: error?.response?.data?.message,
-        status: error?.response?.status,
-        fullError: error,
-      });
-
-      if (error?.response?.data?.errorCode === 'MAX_RETRY_EXCEEDED') {
+      if (error?.errorCode === 'MAX_RETRY_EXCEEDED') {
         emitToast('최대 재심사 횟수를 초과했습니다. 고객센터에 문의하세요');
       } else {
-        const errorMessage = error?.response?.data?.message || '사진 재업로드에 실패했습니다';
+        const errorMessage = error?.message || '사진 재업로드에 실패했습니다';
         emitToast(errorMessage);
       }
     } finally {
@@ -206,6 +228,7 @@ export function usePhotoManagement() {
   };
 
   return {
+    slots,
     photos,
     approvedPhotos,
     selectedPhoto,

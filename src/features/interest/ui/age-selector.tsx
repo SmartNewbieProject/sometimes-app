@@ -1,5 +1,5 @@
 import { cn } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from "@/src/shared/ui";
 import React from "react";
 import { useTranslation } from "react-i18next";

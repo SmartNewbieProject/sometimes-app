@@ -1,6 +1,7 @@
 import type { Preferences } from "@/src/features/interest/api";
 import Loading from "@/src/features/loading";
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import { useTranslation } from 'react-i18next';
 import Interest from "@/src/features/interest";
@@ -60,7 +61,7 @@ function InterestPersonality() {
             }
             multiple={true}
             onChange={onChangeOption}
-            className="w-full"
+            style={{ width: "100%" }}
           />
         </Loading.Lottie>
       </View>
@@ -87,8 +88,9 @@ const styles = StyleSheet.create({
   },
   chipSelector: {
     marginTop: 16,
-
+    width: "100%",
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "flex-start",
   },
   bar: {

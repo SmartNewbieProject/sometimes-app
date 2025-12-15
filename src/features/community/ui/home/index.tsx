@@ -1,5 +1,5 @@
 import { PalePurpleGradient } from "@/src/shared/ui";
-import { semanticColors } from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import React from "react";
 import {
   View,

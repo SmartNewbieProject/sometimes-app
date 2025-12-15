@@ -4,7 +4,8 @@ import { useNotificationList } from '../queries/use-notification-list';
 import { useMarkAsRead } from '../queries/use-notification-mutations';
 import type { Notification } from '../types/notification';
 import { ContactImage } from './contact-image';
-import colors , { semanticColors } from '@/src/shared/constants/colors';
+import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import dayUtils from '@/src/shared/libs/day';
 
 interface NotificationListProps {

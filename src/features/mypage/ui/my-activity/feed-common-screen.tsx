@@ -1,5 +1,5 @@
 import Layout from "@/src/features/layout";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { View } from "react-native";
 import { Header, Text } from "@/src/shared/ui";
 import { router , useFocusEffect } from "expo-router";
