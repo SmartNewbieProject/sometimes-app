@@ -1,6 +1,7 @@
 export interface ProfileImage {
 	id: string;
 	order: number;
+	slotIndex: number;
 	isMain: boolean;
 	url: string;
 	imageUrl?: string;
@@ -10,7 +11,25 @@ export interface ProfileImage {
 	rejectionReason?: string | null;
 	retryCount?: number;
 	isReviewed?: boolean;
+	replacingImageId?: string | null;
 	createdAt?: string;
+}
+
+export interface ManagementImagesResponse {
+	images: [
+		ProfileImage | null,
+		ProfileImage | null,
+		ProfileImage | null
+	];
+}
+
+export interface ManagementSlot {
+	slotIndex: number;
+	image: ProfileImage | null;
+}
+
+export interface ManagementSlotsResponse {
+	slots: [ManagementSlot, ManagementSlot, ManagementSlot];
 }
 
 export interface RejectedImage {
@@ -18,6 +37,7 @@ export interface RejectedImage {
 	imageUrl: string;
 	rejectionReason: string;
 	imageOrder: number;
+	slotIndex: number;
 	retryCount: number;
 	isReviewed: boolean;
 	createdAt: string;
@@ -30,21 +50,18 @@ export interface RejectedImagesResponse {
 export interface AddImageResponse {
 	success: boolean;
 	message: string;
-	imageId: string;
-	imageUrl: string;
-	reviewStatus: string;
-	imageOrder: number;
-	totalImages: number;
+	image: ProfileImage;
 }
 
 export interface ReplaceImageResponse {
 	success: boolean;
 	message: string;
-	imageId: string;
-	newImageUrl: string;
-	reviewStatus: string;
-	imageOrder: number;
-	isMain: boolean;
+	oldImage: {
+		id: string;
+		slotIndex: number;
+		reviewStatus: string;
+	};
+	newImage: ProfileImage;
 }
 
 export interface UniversityDetail {
@@ -109,6 +126,7 @@ export interface UserProfile {
 	totalPhotoCount?: number;
 	myPhotoCount?: number;
 	isApproved?: boolean;
+	status?: 'approved' | 'rejected' | 'pending';
 }
 
 export interface SimpleProfile {

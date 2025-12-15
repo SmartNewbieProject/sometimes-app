@@ -1,5 +1,5 @@
 import { Text } from "@/src/shared/ui";
-import { semanticColors } from '../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button, type ButtonProps } from "@/src/shared/ui/button";
 import { StyleSheet, View, type ViewStyle } from "react-native";
 

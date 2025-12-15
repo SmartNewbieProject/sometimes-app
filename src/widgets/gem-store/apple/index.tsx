@@ -1,6 +1,7 @@
 import type { AppleGemDetails, GemDetails } from "@/src/features/payment/api";
 import type { GemMetadata } from "@/src/features/payment/types";
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { ImageResources } from "@shared/libs";
 import { Show, Text } from "@shared/ui";
 import { ImageResource } from "@ui/image-resource";

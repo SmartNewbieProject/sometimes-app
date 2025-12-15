@@ -108,7 +108,14 @@ export function ChipSelector<T>(
                 }}
               />
             )}
-            <Text style={styles.chipLabel}>{option.label}</Text>
+            <Text
+              style={[
+                styles.chipLabel,
+                { color: isSelected(option.value) ? '#FFFFFF' : '#7A4AE2' }
+              ]}
+            >
+              {option.label}
+            </Text>
           </View>
         </Button>
       ))}
@@ -141,6 +148,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    height: '100%',
+    paddingVertical: 0,
   },
   buttonPaddingWeb: {
     paddingVertical: 4,
@@ -160,6 +169,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   chipLabel: {
+    fontSize: 13,
+    fontWeight: '600',
     lineHeight: 16,
     alignSelf: 'center',
   },

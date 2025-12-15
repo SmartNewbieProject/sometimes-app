@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   rejectedOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    borderRadius: 16,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 12,
@@ -193,7 +193,8 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     textAlign: 'center',
-    lineHeight: 16.8,
+    lineHeight: 14.4,
+    fontSize: 10,
   },
   detailButton: {
     paddingVertical: 2,
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 20,
-    marginTop: 4,
+    marginTop: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
