@@ -55,6 +55,7 @@ export function SomemateInput({ onSend }: SomemateInputProps) {
           onChangeText={(text) => setChat(text)}
           style={styles.textInput}
           placeholder={t('features.somemate.chat.input_placeholder')}
+          placeholderTextColor={semanticColors.text.disabled}
         />
         {chat !== "" ? (
           <Pressable onPress={handleSend} style={styles.send}>
