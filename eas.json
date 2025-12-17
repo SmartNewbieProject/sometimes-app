@@ -23,7 +23,6 @@
         "ANDROID_HOME": "/Users/user/Library/Android/sdk"
       },
       "ios": {
-        "distribution": "adhoc",
         "buildConfiguration": "Release"
       },
       "android": {
