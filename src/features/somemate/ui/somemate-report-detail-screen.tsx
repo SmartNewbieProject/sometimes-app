@@ -104,6 +104,14 @@ export default function SomemateReportDetailScreen() {
 
   const categoryAnalysis = reportData.analysisByCategory[0];
 
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}. ${month}. ${day}`;
+  };
+
   const cleanMarkdown = (text: string) => {
     return text
       .replace(/\*\*/g, '')
@@ -166,7 +174,7 @@ export default function SomemateReportDetailScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerCard}>
           <Text style={styles.reportTitle}>{reportData.title}</Text>
-          <Text style={styles.reportDate}>{reportData.generatedAt}</Text>
+          <Text style={styles.reportDate}>{formatDate(reportData.generatedAt)}</Text>
 
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryText}>{report.category}</Text>

@@ -222,7 +222,7 @@ export const ArticleWriteForm = ({
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   placeholder={t("features.community.ui.article_write_screen.form.title_placeholder")}
-                  className="w-full p-2 font-bold placeholder:text-text-inverse text-[18px] border-b border-border-default pb-2"
+                  className="w-full p-2 font-bold placeholder:text-text-disabled text-[18px] border-b border-border-default pb-2"
                   onChangeText={onChange}
                   value={value}
                   blurOnSubmit={false}
@@ -244,7 +244,7 @@ export const ArticleWriteForm = ({
                 scrollEnabled
                 textAlignVertical="top"
                 maxLength={2000}
-                className="w-full p-2 text-[14px] md:text-md placeholder:text-text-inverse"
+                className="w-full p-2 text-[14px] md:text-md placeholder:text-text-disabled"
                 onChangeText={onChange}
                 value={value}
                 style={{ minHeight: 232, maxHeight: 400 }}

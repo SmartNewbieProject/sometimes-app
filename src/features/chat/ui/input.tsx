@@ -109,6 +109,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
           placeholder={
             partner?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
           }
+          placeholderTextColor={semanticColors.text.disabled}
           numberOfLines={3}
         />
         {chat !== "" ? (

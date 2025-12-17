@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Header } from '@/src/shared/ui';
 import { NotificationIcon } from '@/src/features/notification/ui/notification-icon';
@@ -29,16 +29,16 @@ export const HeaderWithNotification: React.FC<HeaderWithNotificationProps> = ({
 
   return (
     <Header.Container style={[{ backgroundColor }, style]}>
-      {showBackButton && (
-        <Header.LeftContent>
+      <Header.LeftContent>
+        {showBackButton && (
           <TouchableOpacity
             onPress={backButtonAction || defaultBackAction}
             style={styles.backButton}
           >
             <Header.LeftButton visible={true} onPress={backButtonAction || defaultBackAction} />
           </TouchableOpacity>
-        </Header.LeftContent>
-      )}
+        )}
+      </Header.LeftContent>
 
       <Header.CenterContent>
         {centerContent || title}

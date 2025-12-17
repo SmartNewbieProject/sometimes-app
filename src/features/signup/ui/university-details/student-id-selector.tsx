@@ -102,8 +102,9 @@ const styles = StyleSheet.create({
   },
   selectorText: {
     color: semanticColors.text.disabled,
-    fontSize: 16,
-    fontWeight: '400',
+    fontSize: 15,
+    fontWeight: 300,
+    fontFamily: "Pretendard-Thin",
     flex: 1,
   },
   selectorTextSelected: {
