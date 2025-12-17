@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   title: {
     color: semanticColors.text.primary,
     fontSize: 15,
-    fontFamily: "regular",
+    fontFamily: "Pretendard-Regular",
     fontWeight: 400,
     lineHeight: 21,
     letterSpacing: -0.045,

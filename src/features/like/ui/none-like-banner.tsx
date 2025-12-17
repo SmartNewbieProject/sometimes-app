@@ -97,13 +97,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 600,
 
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 17,
     color: semanticColors.text.muted,
   },
   titleStrong: {
     fontWeight: 800,
-    fontFamily: "extrabold",
+    fontFamily: "Pretendard-ExtraBold",
     color: semanticColors.brand.primary,
   },
   description: {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.primary,
     fontSize: 12,
 
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
   },
   background: {

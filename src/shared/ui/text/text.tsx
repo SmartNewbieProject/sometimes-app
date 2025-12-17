@@ -76,11 +76,28 @@ export const Text: React.FC<TextProps> = ({
   children,
   ...rest
 }) => {
+  const getFontFamily = () => {
+    switch (weight) {
+      case "light":
+        return "Pretendard-Light";
+      case "normal":
+        return "Pretendard-Regular";
+      case "medium":
+        return "Pretendard-Medium";
+      case "semibold":
+        return "Pretendard-SemiBold";
+      case "bold":
+        return "Pretendard-Bold";
+      default:
+        return "Pretendard-Regular";
+    }
+  };
+
   const mergedStyle = Array.isArray(style)
-    ? style.filter(Boolean)
+    ? [{ fontFamily: getFontFamily() }, ...style.filter(Boolean)]
     : style
-      ? [style]
-      : undefined;
+      ? [{ fontFamily: getFontFamily() }, style]
+      : [{ fontFamily: getFontFamily() }];
 
   return (
     <RNText

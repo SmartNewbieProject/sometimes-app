@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: semanticColors.text.inverse, 
-    fontFamily: "bold",
+    fontFamily: "Pretendard-Bold",
     fontWeight: 700,
     fontSize: 16,
   },
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.inverse,
     textAlign: "center",
     fontSize: 15,
-    fontFamily: "light",
+    fontFamily: "Pretendard-Light",
     fontWeight: 300,
     lineHeight: 18,
   },

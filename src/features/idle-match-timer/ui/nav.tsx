@@ -115,7 +115,7 @@ export const InteractionNavigation = ({
 const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
-    fontFamily: "thin",
+    fontFamily: "Pretendard-Thin",
     fontWeight: "300",
     paddingRight: 5,
     lineHeight: 18,

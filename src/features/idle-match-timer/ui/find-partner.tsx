@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   seeMoreText: {
     color: semanticColors.text.inverse,
-    fontFamily: "bold",
+    fontFamily: "Pretendard-Bold",
     fontWeight: 700,
     fontSize: 16,
   },
