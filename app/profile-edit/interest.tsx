@@ -172,8 +172,17 @@ function InterestSection() {
         setFormSubmitLoading(false);
       },
       ({ error }) => {
-        console.error("Failed to save interest preferences:", error);
-        showErrorModal(error, "error");
+        console.error("Preference save error:", {
+          error,
+          errorMessage: error?.message,
+          errorString: error?.error,
+          status: error?.status,
+          statusCode: error?.statusCode,
+          form,
+        });
+
+        const errorMessage = error?.message || error?.error || "선호 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        showErrorModal(errorMessage, "error");
         setFormSubmitLoading(false);
       }
     );

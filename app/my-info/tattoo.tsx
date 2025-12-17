@@ -88,9 +88,20 @@ export default function TattooSelectionScreen() {
     updateForm("tattoo", preferences.options[currentIndex]);
     await tryCatch(
       async () => {
-        const validation = Object.values(form).every((v) => v !== null);
-        if (!validation)
-          throw new Error(t("apps.my-info.tattoo.empty_form"));
+        const emptyFields = [];
+        if (!form.drinking) emptyFields.push("음주");
+        if (!form.smoking) emptyFields.push("흡연");
+        if (!form.personality || form.personality.length === 0) emptyFields.push("성격");
+        if (!form.datingStyleIds || form.datingStyleIds.length === 0) emptyFields.push("데이트 스타일");
+        if (!form.interestIds || form.interestIds.length === 0) emptyFields.push("관심사");
+        if (!form.mbti) emptyFields.push("MBTI");
+
+        if (emptyFields.length > 0) {
+          const message = `다음 정보를 입력해주세요: ${emptyFields.join(", ")}`;
+          console.error("Validation failed:", { emptyFields, form });
+          throw new Error(message);
+        }
+
         await savePreferences({
           drinking: form.drinking?.id as string,
           smoking: form.smoking?.id as string,
@@ -108,7 +119,17 @@ export default function TattooSelectionScreen() {
         setFormSubmitLoading(false);
       },
       ({ error }) => {
-        showErrorModal(error, "error");
+        console.error("Profile save error:", {
+          error,
+          errorMessage: error?.message,
+          errorString: error?.error,
+          status: error?.status,
+          statusCode: error?.statusCode,
+          form,
+        });
+
+        const errorMessage = error?.message || error?.error || "프로필 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        showErrorModal(errorMessage, "error");
         setFormSubmitLoading(false);
       }
     );

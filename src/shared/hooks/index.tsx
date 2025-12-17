@@ -12,3 +12,4 @@ export { useAmplitude, useSignupEvents, usePaymentEvents, useUserBehaviorEvents 
 export { useKpiAnalytics } from './use-kpi-analytics';
 export { useAppFont } from './use-app-font';
 export { useOnboardingCompleted } from './use-onboarding-completed';
+export { useDebounce } from './use-debounce';

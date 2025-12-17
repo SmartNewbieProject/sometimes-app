@@ -1,20 +1,14 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import Signup from "@/src/features/signup";
-import { SignupSteps } from "@/src/features/signup/hooks";
+import { SignupSteps, useSignupProgress } from "@/src/features/signup/hooks";
 import useUniversityDetails from "@/src/features/signup/hooks/use-university-details";
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
-
-import { tryCatch } from "@/src/shared/libs";
-import { Text } from "@/src/shared/ui/text";
-import { Form } from "@/src/widgets";
-import { track } from "@/src/shared/libs/amplitude-compat";
 import Loading from "@features/loading";
 import { Image } from "expo-image";
-import { router, useGlobalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   BackHandler,
@@ -23,6 +17,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Text,
   View,
 } from "react-native";
 
@@ -31,15 +26,19 @@ function UniversityDetailsPage() {
     useUniversityDetails();
   const router = useRouter();
   const { t } = useTranslation();
+  const { updateShowHeader } = useSignupProgress();
+
   useEffect(() => {
-    // 이벤트 리스너 등록
+    updateShowHeader(true);
+  }, [updateShowHeader]);
+
+  useEffect(() => {
     const subscription = BackHandler.addEventListener("hardwareBackPress", () =>
       onBackPress(() => {
         router.navigate("/auth/signup/university");
       })
     );
 
-    // 컴포넌트 언마운트 시 리스너 제거
     return () => subscription.remove();
   }, []);
 
@@ -65,48 +64,44 @@ function UniversityDetailsPage() {
         nestedScrollEnabled={true}
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="none"
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingHorizontal: 20,
-          paddingBottom: 140,
-        }}
+        contentContainerStyle={styles.scrollContent}
       >
         <Pressable
-          onPress={(e) => {
+          onPress={() => {
             if (Platform.OS !== "web") {
               Keyboard.dismiss();
             }
           }}
         >
-          <View className="px-[5px]">
+          <View style={styles.imageWrapper}>
             <Image
               source={require("@assets/images/details.png")}
-              style={{ width: 81, height: 81 }}
-              className="mb-4"
+              style={styles.headerImage}
             />
           </View>
 
-          <View style={[styles.contentWrapper, { zIndex: 10 }]}>
-            <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_department")}</Text>
+          <View style={[styles.contentWrapper, styles.departmentSection]}>
+            <View style={styles.titleWrapper}>
+              <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_department")}</Text>
+              <Text style={styles.subtitle}>{t("apps.auth.sign_up.university_detail.subtitle_department")}</Text>
+            </View>
             <DepartmentSearch />
           </View>
 
-          <View
-            style={[
-              styles.contentWrapper,
-              { marginTop: 40, paddingBottom: 214 },
-            ]}
-          >
-            <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_academic")}</Text>
+          <View style={[styles.contentWrapper, styles.academicSection]}>
+            <View style={styles.titleWrapper}>
+              <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_academic")}</Text>
+              <Text style={styles.subtitle}>{t("apps.auth.sign_up.university_detail.subtitle_academic")}</Text>
+            </View>
             <AcademicInfoSelector />
           </View>
         </Pressable>
       </ScrollView>
-      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+      <View style={styles.bottomContainer}>
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={handleNext}
-          onClickPrevious={handleBackPress}
+          hidePrevious={true}
         />
       </View>
     </DefaultLayout>
@@ -119,30 +114,52 @@ export default withSignupValidation(
 );
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 140,
+  },
+  imageWrapper: {
+    paddingHorizontal: 5,
+  },
+  headerImage: {
+    width: 81,
+    height: 81,
+    marginBottom: 16,
+  },
+  titleWrapper: {
+    gap: 4,
+  },
   title: {
-    fontWeight: 600,
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontSize: 18,
     lineHeight: 22,
     color: semanticColors.brand.primary,
+  },
+  subtitle: {
+    fontFamily: "Pretendard-Regular",
+    fontSize: 14,
+    lineHeight: 20,
+    color: semanticColors.text.muted,
   },
   contentWrapper: {
     gap: 15,
     marginTop: 34,
     paddingHorizontal: 10,
   },
+  departmentSection: {
+    zIndex: 10,
+  },
+  academicSection: {
+    marginTop: 40,
+    paddingBottom: 214,
+  },
   bottomContainer: {
     position: "absolute",
     bottom: 0,
+    width: '100%',
     paddingTop: 16,
     paddingHorizontal: 0,
     backgroundColor: semanticColors.surface.background,
-  },
-  tipConatainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 5,
-    marginBottom: 16,
   },
 });

@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import colors from '@/src/shared/constants/colors';
-import { PuzzleMatch } from '../animations/puzzle-match';
 import type { SlideComponent } from '../types';
 
-export const SlideAiMatching: SlideComponent = ({ isActive }) => {
+const meetImage = require('@assets/images/onboarding/ai/meet.png');
+
+export const SlideAiMatching: SlideComponent = () => {
   const { t } = useTranslation();
 
   return (
@@ -18,7 +19,7 @@ export const SlideAiMatching: SlideComponent = ({ isActive }) => {
         </Text>
 
         <View style={styles.illustrationArea}>
-          <PuzzleMatch isActive={isActive} />
+          <Image source={meetImage} style={styles.meetImage} resizeMode="contain" />
         </View>
       </View>
     </View>
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: 'Pretendard-Bold',
     color: colors.black,
     textAlign: 'center',
     marginBottom: 16,
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   },
   subtext: {
     fontSize: 16,
-    fontWeight: '400',
+    fontFamily: 'Pretendard-Regular',
     color: colors.gray,
     textAlign: 'center',
     marginBottom: 48,
@@ -59,5 +60,9 @@ const styles = StyleSheet.create({
     minHeight: 200,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  meetImage: {
+    width: 200,
+    height: 120,
   },
 });

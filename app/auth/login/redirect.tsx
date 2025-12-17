@@ -7,6 +7,7 @@ import { track } from "@/src/shared/libs/amplitude-compat";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform, Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useTranslation } from "react-i18next";
 
@@ -86,12 +87,13 @@ function KakaoLoginRedirect() {
                 return;
               }
             }
-            router.replace({
-              pathname: "/auth/signup/university",
-              params: {
-                certificationInfo: JSON.stringify(result.certificationInfo),
-              },
-            });
+            // 보안: certificationInfo를 AsyncStorage에 저장 (URL에 노출 방지)
+            await AsyncStorage.setItem(
+              'signup_certification_info',
+              JSON.stringify(result.certificationInfo)
+            );
+
+            router.replace("/auth/signup/university");
           } else {
             router.replace("/home");
           }

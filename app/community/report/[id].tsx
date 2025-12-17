@@ -49,7 +49,18 @@ export default function ReportScreen() {
         router.navigate("/community?refresh=true");
       },
       ({ error }) => {
-        showErrorModal(error, "error");
+        console.error("Report submission error:", {
+          error,
+          errorMessage: error?.message,
+          errorString: error?.error,
+          status: error?.status,
+          statusCode: error?.statusCode,
+          articleId: id,
+          reason: data.reason,
+        });
+
+        const errorMessage = error?.message || error?.error || "신고 접수에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        showErrorModal(errorMessage, "error");
       }
     );
   });

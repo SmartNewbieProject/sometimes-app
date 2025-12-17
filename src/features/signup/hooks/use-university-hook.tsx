@@ -1,38 +1,74 @@
 import { track } from "@/src/shared/libs/amplitude-compat";
+import { useDebounce } from "@/src/shared/hooks";
+import { getSmartUnivLogoUrl } from "@/src/shared/libs";
+import type { RegionCode } from "@/src/shared/constants/region";
 import Signup from "@features/signup";
-import { useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocalSearchParams, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { Keyboard, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { filterUniversities } from "../lib";
-import useUniversities from "../queries/use-universities";
+import { useQuery } from "@tanstack/react-query";
+import { getTopUniversities, searchUniversities } from "../apis";
+import { getRegionsByRegionCode } from "../lib";
 
 const { SignupSteps, useChangePhase, useSignupProgress, useSignupAnalytics } =
   Signup;
 
 function useUniversityHook() {
-  const [searchText, setSearchText] = useState("");
   const { updateForm, form: userForm, regions } = useSignupProgress();
-  const { isLoading, data: univs } = useUniversities();
+  const [searchText, setSearchText] = useState(userForm.universitySearchText || "");
+  const debouncedSearchText = useDebounce(searchText, 1500);
   const [selectedUniv, setSelectedUniv] = useState<string | undefined>(
     userForm.universityId
   );
   const params = useLocalSearchParams();
   const hasProcessedPassInfo = useRef(false);
-  const [trigger, setTrigger] = useState(false);
-  const [filteredUniv, setFilteredUniv] = useState(univs);
+  const [trigger, setTrigger] = useState(true);
   const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } =
     useSignupProgress();
   const [isFocused, setIsFocused] = useState(false);
 
-  const titleOpacity = useSharedValue(1);
-  const containerTranslateY = useSharedValue(60);
-  const listOpacity = useSharedValue(0);
-  const listTranslateY = useSharedValue(50);
+  const { data: topUnivs, isLoading: isLoadingTop } = useQuery({
+    queryKey: ["universities", "top"],
+    queryFn: getTopUniversities,
+  });
+
+  const { data: searchResults, isLoading: isSearching } = useQuery({
+    queryKey: ["universities", "search", debouncedSearchText],
+    queryFn: () => searchUniversities(debouncedSearchText),
+    enabled: debouncedSearchText.length > 0,
+  });
+
+  const rawUnivs = debouncedSearchText ? searchResults : topUnivs;
+  const isLoading = debouncedSearchText ? isSearching : isLoadingTop;
+
+  const isDebouncing = searchText.length > 0 && searchText !== debouncedSearchText;
+  const isActuallySearching = isDebouncing || isSearching;
+
+  const univs = useMemo(() => {
+    return rawUnivs?.map((item) => ({
+      ...item,
+      logoUrl: getSmartUnivLogoUrl(item.code),
+      universityType: item.foundation,
+      area: getRegionsByRegionCode(item.region as RegionCode),
+    }));
+  }, [rawUnivs]);
+
+  const filteredUniv = useMemo(() => {
+    if (!univs) return [];
+    const sorted = [...univs].sort((a, b) => a.name.localeCompare(b.name, "ko"));
+    return sorted;
+  }, [univs]);
+
+  const titleOpacity = useSharedValue(0);
+  const containerTranslateY = useSharedValue(0);
+  const listOpacity = useSharedValue(1);
+  const listTranslateY = useSharedValue(0);
 
   const animatedTitleStyle = useAnimatedStyle(() => ({
     opacity: titleOpacity.value,
@@ -84,7 +120,8 @@ function useUniversityHook() {
 
   const handleChange = useCallback((text: string) => {
     setSearchText(text);
-  }, []);
+    updateForm({ universitySearchText: text });
+  }, [updateForm]);
 
   const handleBlur = () => {
     setIsFocused(false);
@@ -112,37 +149,63 @@ function useUniversityHook() {
   };
 
   useEffect(() => {
-    updateShowHeader(false);
+    updateShowHeader(true);
     setIsFocused(false);
-    setTrigger(false);
+    setTrigger(true);
 
-    titleOpacity.value = 1;
-    containerTranslateY.value = 60;
-    listOpacity.value = 0;
-    listTranslateY.value = 50;
+    titleOpacity.value = 0;
+    containerTranslateY.value = 0;
+    listOpacity.value = 1;
+    listTranslateY.value = 0;
   }, []);
+
+  // 페이지가 포커스될 때마다 리스트를 보이도록 설정
+  useFocusEffect(
+    useCallback(() => {
+      setTrigger(true);
+      setIsFocused(false);
+    }, [])
+  );
+
+  useEffect(() => {
+    if (userForm.universityId && userForm.universityId !== selectedUniv) {
+      setSelectedUniv(userForm.universityId);
+    }
+  }, [userForm]);
 
   useChangePhase(SignupSteps.UNIVERSITY);
 
+  // 보안: AsyncStorage에서 certificationInfo를 읽어옴 (URL에서 제거)
   useEffect(() => {
-    if (params.certificationInfo && !hasProcessedPassInfo.current) {
-      hasProcessedPassInfo.current = true;
-      const certInfo = JSON.parse(params.certificationInfo as string);
-      updateForm({
-        ...userForm,
-        passVerified: true,
-        name: certInfo.name,
-        phone: certInfo.phone,
-        gender: certInfo.gender,
-        birthday: certInfo.birthday,
-        kakaoId: certInfo?.externalId,
-        loginType: certInfo?.loginType || "pass",
-        identityVerificationId: certInfo?.identityVerificationId,
-        kakaoCode: certInfo?.kakaoCode,
-        kakaoAccessToken: certInfo?.kakaoAccessToken,
-      });
-    }
-  }, [params.certificationInfo]);
+    const loadCertificationInfo = async () => {
+      if (hasProcessedPassInfo.current) return;
+
+      try {
+        const certInfoStr = await AsyncStorage.getItem('signup_certification_info');
+        if (certInfoStr) {
+          hasProcessedPassInfo.current = true;
+          const certInfo = JSON.parse(certInfoStr);
+          updateForm({
+            ...userForm,
+            passVerified: true,
+            name: certInfo.name,
+            phone: certInfo.phone,
+            gender: certInfo.gender,
+            birthday: certInfo.birthday,
+            kakaoId: certInfo?.externalId,
+            loginType: certInfo?.loginType || "pass",
+            identityVerificationId: certInfo?.identityVerificationId,
+            kakaoCode: certInfo?.kakaoCode,
+            kakaoAccessToken: certInfo?.kakaoAccessToken,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load certification info:', error);
+      }
+    };
+
+    loadCertificationInfo();
+  }, []);
 
   const { trackSignupEvent } = useSignupAnalytics("university");
 
@@ -153,24 +216,9 @@ function useUniversityHook() {
     []
   );
 
-  useEffect(() => {
-    if (!univs) return;
-
-    const filtered = filterUniversities(univs ?? [], searchText);
-    const selected = univs.find((u) => u.name === selectedUniv);
-    const merged =
-      selected && !filtered.some((u) => u.name === selected.name)
-        ? [selected, ...filtered]
-        : filtered;
-    const sorted = [...merged].sort((a, b) =>
-      a.name.localeCompare(b.name, "ko")
-    );
-
-    setFilteredUniv(sorted);
-  }, [searchText, JSON.stringify(univs), selectedUniv]);
-
   return {
     isLoading,
+    isSearching: isActuallySearching,
     filteredUniv,
     searchText,
     setSearchText,

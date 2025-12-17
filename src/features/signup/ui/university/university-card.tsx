@@ -121,13 +121,14 @@ const styles = StyleSheet.create({
     color: semanticColors.text.inverse,
     fontSize: 13,
     lineHeight: 13,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "Pretendard-Medium",
+    fontWeight: "500",
   },
   universityType: {
     color: semanticColors.text.disabled,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "Pretendard-Regular",
     lineHeight: 22,
-    fontWeight: 100,
+    fontWeight: "400",
     fontSize: 13,
   },
   englishName: {
@@ -136,7 +137,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     fontSize: 13,
     lineHeight: 16,
-    fontFamily: "Pretendard-Thin",
+    fontFamily: "Pretendard-Regular",
+    fontWeight: "400",
   },
 });
 

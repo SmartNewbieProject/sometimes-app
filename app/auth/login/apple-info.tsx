@@ -17,6 +17,7 @@ import { Text ,
   TextInput,
   View,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
 import {
   SafeAreaView,
@@ -37,15 +38,25 @@ export default function UserInfoPage() {
     string | null
   >({ key: "appleUserFullName" });
 
+  // 보안: AsyncStorage에서 certificationInfo를 읽어옴 (URL에서 제거)
   useEffect(() => {
-    if (params.certificationInfo) {
-      const certInfo = JSON.parse(params.certificationInfo);
-      updateForm({
-        loginType: certInfo.loginType,
-        appleId: certInfo.appleId,
-      });
-    }
-  }, [params.certificationInfo]);
+    const loadCertificationInfo = async () => {
+      try {
+        const certInfoStr = await AsyncStorage.getItem('signup_certification_info');
+        if (certInfoStr) {
+          const certInfo = JSON.parse(certInfoStr);
+          updateForm({
+            loginType: certInfo.loginType,
+            appleId: certInfo.appleId,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load certification info:', error);
+      }
+    };
+
+    loadCertificationInfo();
+  }, []);
 
   const [name, setName] = useState(form.name || "");
   const [gender, setGender] = useState(form.gender || null);
@@ -364,7 +375,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "600",
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontSize: 18,
     lineHeight: 22,
     color: semanticColors.brand.primary,
@@ -404,7 +415,7 @@ const styles = StyleSheet.create({
   },
   genderButtonText: {
     color: "#BAB0D0",
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     fontSize: 15,
   },
   genderButtonTextSelected: {

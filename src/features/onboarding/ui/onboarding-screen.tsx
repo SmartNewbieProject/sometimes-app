@@ -41,7 +41,11 @@ const SLIDES = [
   SlideCta,
 ];
 
-export const OnboardingScreen = () => {
+interface OnboardingScreenProps {
+  source?: string;
+}
+
+export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
   const insets = useSafeAreaInsets();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -76,13 +80,14 @@ export const OnboardingScreen = () => {
       {
         duration: 300,
         easing: Easing.out(Easing.cubic),
-      },
-      () => {
-        setIsTransitioning(false);
       }
     );
 
     setCurrentIndex(nextIndex);
+
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 320);
   }, [currentIndex, isTransitioning, translateX, containerWidth]);
 
   const handleComplete = async () => {
@@ -112,6 +117,7 @@ export const OnboardingScreen = () => {
                 <SlideComponent
                   isActive={index === currentIndex}
                   index={index}
+                  source={source}
                 />
               ) : null}
             </View>
@@ -124,6 +130,7 @@ export const OnboardingScreen = () => {
         totalSlides={TOTAL_SLIDES}
         onNext={goToNextSlide}
         isTransitioning={isTransitioning}
+        source={source}
       />
     </View>
   );

@@ -1,4 +1,4 @@
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
 import { Text } from "@/src/shared/ui";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useTranslation } from "react-i18next";
@@ -8,8 +8,11 @@ export const ProfilePhotoRejected = () => {
   const { t } = useTranslation();
 
   const handleViewGuidelines = () => {
-    // TODO: 가이드라인 페이지로 이동
-    router.navigate("/my");
+    Linking.openURL("https://ruby-composer-6d2.notion.site/2cb1bbec5ba180458fcbf8af5a8200da");
+  };
+
+  const handleChangeProfilePhoto = () => {
+    router.push("/profile/photo-management");
   };
 
   return (
@@ -42,6 +45,16 @@ export const ProfilePhotoRejected = () => {
         </View>
 
         <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={handleChangeProfilePhoto}
+          activeOpacity={0.8}
+        >
+          <Text size="sm" weight="normal" textColor="black">
+            대표 사진 변경하러가기
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={styles.button}
           onPress={handleViewGuidelines}
           activeOpacity={0.8}
@@ -67,8 +80,8 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     backgroundColor: semanticColors.surface.background,
     borderRadius: 16,
-    paddingTop: 24,
-    paddingBottom: 20,
+    paddingTop: 12,
+    paddingBottom: 12,
     paddingHorizontal: 16,
     alignItems: "center",
     shadowColor: "#000",
@@ -79,34 +92,45 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 4,
   },
   sadEmoji: {
-    fontSize: 48,
-    marginBottom: 8,
+    fontSize: 60,
+    marginBottom: 0,
   },
   contentContainer: {
-    gap: 8,
+    gap: 2,
     width: "100%",
-    marginBottom: 16,
+    marginBottom: 4,
   },
   title: {
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: 4,
     fontSize: 20,
   },
   description: {
     textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 24,
+    lineHeight: 18,
+    marginBottom: 4,
+  },
+  secondaryButton: {
+    width: "100%",
+    backgroundColor: semanticColors.surface.background,
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: semanticColors.border.smooth,
+    alignItems: "center",
+    marginBottom: 4,
   },
   button: {
     width: "100%",
     backgroundColor: semanticColors.brand.primary,
-    paddingVertical: 14,
+    paddingVertical: 10,
     paddingHorizontal: 24,
     borderRadius: 8,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 0,
   },
 });

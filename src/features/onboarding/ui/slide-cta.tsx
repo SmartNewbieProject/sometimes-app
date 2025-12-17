@@ -1,12 +1,81 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/colors';
+import { Button, Show } from '@/src/shared/ui';
 import { useCountdownTimer } from '../hooks/use-countdown-timer';
+import { useOnboardingStorage } from '../hooks/use-onboarding-storage';
 import type { SlideComponent } from '../types';
+import KakaoLogo from '@assets/icons/kakao-logo.svg';
 
-export const SlideCta: SlideComponent = () => {
+export const SlideCta: SlideComponent = ({ source }) => {
   const { t } = useTranslation();
   const { countdown } = useCountdownTimer();
+  const { saveOnboardingComplete } = useOnboardingStorage();
+  const insets = useSafeAreaInsets();
+  const isFromLogin = source === 'login';
+
+  const handlePassLogin = async () => {
+    await saveOnboardingComplete();
+    router.replace('/auth/login');
+  };
+
+  const handleKakaoLogin = async () => {
+    await saveOnboardingComplete();
+    router.replace('/auth/login');
+  };
+
+  const handleAppleLogin = async () => {
+    await saveOnboardingComplete();
+    router.replace('/auth/login');
+  };
+
+  if (isFromLogin) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.headline}>
+            {t('features.onboarding.slides.cta.headline')}
+          </Text>
+          <Text style={styles.subtext}>
+            지금 바로 가입하고{'\n'}설렘을 시작하세요
+          </Text>
+
+          <View style={styles.loginButtonsContainer}>
+            <Button
+              variant="primary"
+              width="full"
+              onPress={handlePassLogin}
+              styles={styles.passButton}
+            >
+              <Text style={styles.passButtonText}>PASS 로그인</Text>
+            </Button>
+
+            <Pressable
+              onPress={handleKakaoLogin}
+              style={styles.kakaoButton}
+            >
+              <View style={styles.kakaoLogoWrapper}>
+                <KakaoLogo width={28} height={28} />
+              </View>
+              <Text style={styles.kakaoButtonText}>카카오 로그인</Text>
+            </Pressable>
+
+            <Show when={Platform.OS === 'ios'}>
+              <Pressable
+                onPress={handleAppleLogin}
+                style={styles.appleButton}
+              >
+                <Text style={styles.appleButtonText}> 애플 로그인</Text>
+              </Pressable>
+            </Show>
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -46,7 +115,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: 'Pretendard-Bold',
     color: colors.black,
     textAlign: 'center',
     marginBottom: 16,
@@ -54,7 +123,7 @@ const styles = StyleSheet.create({
   },
   subtext: {
     fontSize: 16,
-    fontWeight: '400',
+    fontFamily: 'Pretendard-Regular',
     color: colors.gray,
     textAlign: 'center',
     marginBottom: 48,
@@ -77,13 +146,67 @@ const styles = StyleSheet.create({
   },
   countdownLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Pretendard-SemiBold',
     color: colors.gray,
     marginBottom: 12,
   },
   countdownText: {
     fontSize: 28,
-    fontWeight: '700',
+    fontFamily: 'Pretendard-Bold',
     color: colors.primaryPurple,
+  },
+  loginButtonsContainer: {
+    width: '100%',
+    gap: 12,
+    alignItems: 'center',
+  },
+  passButton: {
+    paddingVertical: 16,
+    borderRadius: 30,
+    minWidth: 300,
+    minHeight: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  passButtonText: {
+    color: colors.white,
+    fontSize: 17,
+    fontFamily: 'Pretendard-SemiBold',
+    textAlign: 'center',
+  },
+  kakaoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#FEE500',
+    paddingVertical: 16,
+    borderRadius: 30,
+    minWidth: 300,
+    minHeight: 56,
+  },
+  kakaoLogoWrapper: {
+    width: 28,
+    height: 28,
+  },
+  kakaoButtonText: {
+    color: colors.black,
+    fontSize: 17,
+    fontFamily: 'Pretendard-SemiBold',
+  },
+  appleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.black,
+    paddingVertical: 16,
+    borderRadius: 30,
+    minWidth: 300,
+    minHeight: 56,
+  },
+  appleButtonText: {
+    color: colors.white,
+    fontSize: 17,
+    fontFamily: 'Pretendard-SemiBold',
   },
 });

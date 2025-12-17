@@ -9,10 +9,17 @@ export const NavigationButtons = ({
   totalSlides,
   onNext,
   isTransitioning,
+  source,
 }: NavigationButtonsProps) => {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const isLastSlide = currentIndex === totalSlides - 1;
+  const isFromLogin = source === 'login';
+
+  if (isLastSlide && isFromLogin) {
+    return null;
+  }
+
   const buttonText = isLastSlide
     ? t('features.onboarding.navigation.start')
     : t('features.onboarding.navigation.next');
@@ -52,6 +59,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: 'Pretendard-Bold',
   },
 });

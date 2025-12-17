@@ -11,14 +11,16 @@ const resources = {
   en: { translation: en },
 };
 
-// 기기 언어 감지
+// 기기 언어 감지 (지원하는 언어만 사용, 나머지는 한국어로 fallback)
 const deviceLanguage = Localization.getLocales()[0]?.languageCode || 'ko';
+const supportedLanguages = ['ko', 'ja'];
+const initialLanguage = supportedLanguages.includes(deviceLanguage) ? deviceLanguage : 'ko';
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: deviceLanguage,
+    lng: initialLanguage,
     fallbackLng: 'ko',
     interpolation: {
       escapeValue: false,

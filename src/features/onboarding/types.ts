@@ -15,6 +15,7 @@ export interface OnboardingStorage {
 export type SlideComponent = React.FC<{
   isActive: boolean;
   index: number;
+  source?: string;
 }>;
 
 export interface ProgressBarProps {
@@ -27,6 +28,7 @@ export interface NavigationButtonsProps {
   totalSlides: number;
   onNext: () => void;
   isTransitioning: boolean;
+  source?: string;
 }
 
 export interface SkipButtonProps {

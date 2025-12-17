@@ -33,6 +33,6 @@ const styles = StyleSheet.create({
   text: {
     color: colors.gray,
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Pretendard-SemiBold',
   },
 });

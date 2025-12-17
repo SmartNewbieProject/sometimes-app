@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: 'Pretendard-Bold',
     color: colors.black,
     textAlign: 'center',
     marginBottom: 16,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   subtext: {
     fontSize: 16,
-    fontWeight: '400',
+    fontFamily: 'Pretendard-Regular',
     color: colors.gray,
     textAlign: 'center',
     marginBottom: 48,

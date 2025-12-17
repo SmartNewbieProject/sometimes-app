@@ -1,16 +1,28 @@
 import { useState, useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
-import { calculateNextMatchTime, formatCountdown } from '../utils/calculate-next-match';
+import {
+  calculateNextMatchTime,
+  formatCountdown,
+  getCountdownParts,
+  CountdownParts,
+} from '../utils/calculate-next-match';
 
 export const useCountdownTimer = () => {
   const [countdown, setCountdown] = useState('');
+  const [countdownParts, setCountdownParts] = useState<CountdownParts>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+  });
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const appState = useRef(AppState.currentState);
 
   const updateCountdown = () => {
     const nextMatchTime = calculateNextMatchTime();
     const formattedCountdown = formatCountdown(nextMatchTime);
+    const parts = getCountdownParts(nextMatchTime);
     setCountdown(formattedCountdown);
+    setCountdownParts(parts);
   };
 
   useEffect(() => {
@@ -36,5 +48,5 @@ export const useCountdownTimer = () => {
     };
   }, []);
 
-  return { countdown };
+  return { countdown, countdownParts };
 };

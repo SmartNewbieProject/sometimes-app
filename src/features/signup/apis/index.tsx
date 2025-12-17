@@ -16,6 +16,16 @@ export const getUnivs = async (): Promise<string[]> => {
   return axiosClient.get("/universities");
 };
 
+export const getTopUniversities = (): Promise<UniversitiesByRegion> => {
+  return axiosClient.get("/universities/top");
+};
+
+export const searchUniversities = (
+  searchText: string
+): Promise<UniversitiesByRegion> => {
+  return axiosClient.get(`/universities?name=${encodeURIComponent(searchText)}`);
+};
+
 export const getDepartments = async (univ: string): Promise<string[]> => {
   return axiosClient.get(`/universities/departments?universityId=${univ}`);
 };

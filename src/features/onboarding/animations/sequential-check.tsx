@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Pretendard-SemiBold',
     color: colors.primaryPurple,
   },
 });

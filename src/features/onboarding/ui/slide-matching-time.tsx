@@ -1,13 +1,25 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useCountdownTimer } from '../hooks/use-countdown-timer';
 import type { SlideComponent } from '../types';
 
+const clockImage = require('@assets/images/onboarding/matching-time/time.png');
+
+interface TimeCardProps {
+  value: string;
+}
+
+const TimeCard = ({ value }: TimeCardProps) => (
+  <View style={styles.timeCard}>
+    <Text style={styles.timeCardText}>{value}</Text>
+  </View>
+);
+
 export const SlideMatchingTime: SlideComponent = () => {
   const { t } = useTranslation();
-  const { countdown } = useCountdownTimer();
+  const { countdownParts } = useCountdownTimer();
 
   return (
     <View style={styles.container}>
@@ -20,12 +32,16 @@ export const SlideMatchingTime: SlideComponent = () => {
         </Text>
 
         <View style={styles.illustrationArea}>
-          <FontAwesome name="clock-o" size={80} color={colors.primaryPurple} />
-          <View style={styles.countdownBox}>
+          <Image source={clockImage} style={styles.clockImage} resizeMode="contain" />
+          <View style={styles.countdownContainer}>
             <Text style={styles.countdownLabel}>
               {t('features.onboarding.slides.matchingTime.countdownLabel')}
             </Text>
-            <Text style={styles.countdownText}>{countdown}</Text>
+            <View style={styles.timeCardsRow}>
+              <TimeCard value={`D-${countdownParts.days}`} />
+              <TimeCard value={`${countdownParts.hours}시`} />
+              <TimeCard value={`${countdownParts.minutes}분`} />
+            </View>
           </View>
         </View>
       </View>
@@ -48,7 +64,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: 'Pretendard-Bold',
     color: colors.black,
     textAlign: 'center',
     marginBottom: 16,
@@ -56,7 +72,7 @@ const styles = StyleSheet.create({
   },
   subtext: {
     fontSize: 16,
-    fontWeight: '400',
+    fontFamily: 'Pretendard-Regular',
     color: colors.gray,
     textAlign: 'center',
     marginBottom: 48,
@@ -68,23 +84,42 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  countdownBox: {
+  clockImage: {
+    width: 120,
+    height: 120,
+  },
+  countdownContainer: {
     marginTop: 24,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    backgroundColor: colors.cardPurple,
-    borderRadius: 12,
     alignItems: 'center',
   },
   countdownLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Pretendard-SemiBold',
     color: colors.gray,
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  countdownText: {
-    fontSize: 20,
-    fontWeight: '700',
+  timeCardsRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  timeCard: {
+    backgroundColor: semanticColors.surface.background,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  timeCardText: {
+    fontSize: 23,
+    fontFamily: 'Rubik-Bold',
     color: colors.primaryPurple,
   },
 });

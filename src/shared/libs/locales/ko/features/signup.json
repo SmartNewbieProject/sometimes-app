@@ -74,6 +74,8 @@
     "university_search_placeholder": "대학교 검색",
     "department_search_loading": "학과를 검색중이에요",
     "department_search_placeholder": "학과를 입력해주세요",
+    "department_search_title": "학과 선택",
+    "department_search_empty": "검색 결과가 없습니다",
     "grade_select_placeholder": "학년 선택",
     "grade_1": "1학년",
     "grade_2": "2학년",

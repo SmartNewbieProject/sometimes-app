@@ -20,8 +20,17 @@ export const useMarkAsRead = () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications', 'read-count'] });
     },
-    onError: (error) => {
-      showErrorModal(error, 'error');
+    onError: (error: any) => {
+      console.error("Mark notification as read error:", {
+        error,
+        errorMessage: error?.message,
+        errorString: error?.error,
+        status: error?.status,
+        statusCode: error?.statusCode,
+      });
+
+      const errorMessage = error?.message || error?.error || "알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      showErrorModal(errorMessage, 'error');
     },
   });
 };
@@ -37,8 +46,17 @@ export const useMarkAllAsRead = () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications', 'read-count'] });
     },
-    onError: (error) => {
-      showErrorModal(error, 'error');
+    onError: (error: any) => {
+      console.error("Mark all notifications as read error:", {
+        error,
+        errorMessage: error?.message,
+        errorString: error?.error,
+        status: error?.status,
+        statusCode: error?.statusCode,
+      });
+
+      const errorMessage = error?.message || error?.error || "전체 알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      showErrorModal(errorMessage, 'error');
     },
   });
 };
@@ -54,8 +72,17 @@ export const useMarkAsReadBatch = () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications', 'read-count'] });
     },
-    onError: (error) => {
-      showErrorModal(error, 'error');
+    onError: (error: any) => {
+      console.error("Batch mark as read error:", {
+        error,
+        errorMessage: error?.message,
+        errorString: error?.error,
+        status: error?.status,
+        statusCode: error?.statusCode,
+      });
+
+      const errorMessage = error?.message || error?.error || "선택한 알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      showErrorModal(errorMessage, 'error');
     },
   });
 };
@@ -71,8 +98,17 @@ export const useDeleteNotification = () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications', 'read-count'] });
     },
-    onError: (error) => {
-      showErrorModal(error, 'error');
+    onError: (error: any) => {
+      console.error("Delete notification error:", {
+        error,
+        errorMessage: error?.message,
+        errorString: error?.error,
+        status: error?.status,
+        statusCode: error?.statusCode,
+      });
+
+      const errorMessage = error?.message || error?.error || "알림 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      showErrorModal(errorMessage, 'error');
     },
   });
 };
@@ -88,8 +124,17 @@ export const useDeleteAllRead = () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications', 'read-count'] });
     },
-    onError: (error) => {
-      showErrorModal(error, 'error');
+    onError: (error: any) => {
+      console.error("Delete all read notifications error:", {
+        error,
+        errorMessage: error?.message,
+        errorString: error?.error,
+        status: error?.status,
+        statusCode: error?.statusCode,
+      });
+
+      const errorMessage = error?.message || error?.error || "읽은 알림 전체 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      showErrorModal(errorMessage, 'error');
     },
   });
 };
@@ -105,8 +150,17 @@ export const useDeleteNotificationsBatch = () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications', 'read-count'] });
     },
-    onError: (error) => {
-      showErrorModal(error, 'error');
+    onError: (error: any) => {
+      console.error("Batch delete notifications error:", {
+        error,
+        errorMessage: error?.message,
+        errorString: error?.error,
+        status: error?.status,
+        statusCode: error?.statusCode,
+      });
+
+      const errorMessage = error?.message || error?.error || "선택한 알림 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      showErrorModal(errorMessage, 'error');
     },
   });
 };

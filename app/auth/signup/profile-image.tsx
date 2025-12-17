@@ -44,7 +44,11 @@ function ProfilePage() {
     onBackPress,
   } = useProfileImage();
   const { t } = useTranslation();
-  const { form } = useSignupProgress();
+  const { form, updateShowHeader } = useSignupProgress();
+
+  useEffect(() => {
+    updateShowHeader(true);
+  }, [updateShowHeader]);
 
   // 업로드된 이미지 개수 계산 (실시간 업데이트)
   const uploadedCount = [0, 1, 2].filter((i) => {
@@ -149,7 +153,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: 600,
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

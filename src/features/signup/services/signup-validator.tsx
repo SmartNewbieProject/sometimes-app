@@ -198,8 +198,8 @@ export async function processSignup(
   // 회원가입 폼 데이터 클리어
   clearSignupForm();
 
-  console.log("[processSignup] signup & login completed, navigating to /home");
+  console.log("[processSignup] signup & login completed, navigating to done page");
 
-  // 바로 홈으로 이동 (done 페이지 스킵)
-  router.replace("/home");
+  // 회원가입 완료 페이지로 이동
+  router.replace("/auth/signup/done");
 }

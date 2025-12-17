@@ -44,3 +44,24 @@ export const formatCountdown = (targetDate: Date): string => {
 
   return `D-${days}일 ${hours}시간 ${minutes}분`;
 };
+
+export interface CountdownParts {
+  days: number;
+  hours: number;
+  minutes: number;
+}
+
+export const getCountdownParts = (targetDate: Date): CountdownParts => {
+  const now = new Date();
+  const diff = targetDate.getTime() - now.getTime();
+
+  if (diff <= 0) {
+    return { days: 0, hours: 0, minutes: 0 };
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  return { days, hours, minutes };
+};

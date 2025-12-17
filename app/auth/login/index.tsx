@@ -76,12 +76,13 @@ export default function LoginScreen() {
               }
             }
 
-            router.replace({
-              pathname: "/auth/signup/university",
-              params: {
-                certificationInfo: JSON.stringify(result.certificationInfo),
-              },
-            });
+            // 보안: certificationInfo를 AsyncStorage에 저장 (URL에 노출 방지)
+            await AsyncStorage.setItem(
+              'signup_certification_info',
+              JSON.stringify(result.certificationInfo)
+            );
+
+            router.replace("/auth/signup/university");
           } else {
             router.replace("/home");
           }
@@ -92,7 +93,9 @@ export default function LoginScreen() {
 
   useEffect(() => {
     clear();
+    // 회원가입 관련 storage 초기화
     AsyncStorage.removeItem('signup_session');
+    AsyncStorage.removeItem('signup_certification_info');
   }, [clear]);
 
   return (

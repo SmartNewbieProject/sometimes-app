@@ -6,6 +6,7 @@ import { checkAppEnvironment, logger } from '@shared/libs';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PortOneAuthService } from '../services/portone-auth.service';
 import type {
 	PortOneIdentityVerificationRequest,
@@ -115,16 +116,18 @@ export const usePortOneLogin = ({
 					platform: 'pass',
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
-				router.push({
-					pathname: '/auth/signup/university',
-					params: {
-						certificationInfo: JSON.stringify({
-							...loginResult.certificationInfo,
-							loginType: 'pass',
-							identityVerificationId,
-						}),
-					},
-				});
+
+				// 보안: certificationInfo를 AsyncStorage에 저장 (URL에 노출 방지)
+				await AsyncStorage.setItem(
+					'signup_certification_info',
+					JSON.stringify({
+						...loginResult.certificationInfo,
+						loginType: 'pass',
+						identityVerificationId,
+					})
+				);
+
+				router.push('/auth/signup/university');
 				onSuccess?.(true);
 			} else {
 				router.replace('/home');

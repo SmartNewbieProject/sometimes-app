@@ -30,3 +30,7 @@ export * from './scroll-down-indicator';
 export * from './floating-tooltip';
 export * from './line-chart';
 export * from './loading-modal';
+export * from './bottom-sheet-picker';
+export * from './action-sheet';
+export * from './slide-unlock';
+export * from './app-download-section';
