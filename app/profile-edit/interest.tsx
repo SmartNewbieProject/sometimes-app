@@ -120,7 +120,8 @@ function InterestSection() {
     } catch (error) {
       console.error("Failed to initialize interest form:", error);
     }
-  }, [profileDetails?.preferences, isInitialized, profileDetails?.gender, updateForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileDetails?.preferences, isInitialized, profileDetails?.gender]);
 
   useEffect(() => {
     return () => {
@@ -171,8 +172,17 @@ function InterestSection() {
         setFormSubmitLoading(false);
       },
       ({ error }) => {
-        console.error("Failed to save interest preferences:", error);
-        showErrorModal(error, "error");
+        console.error("Preference save error:", {
+          error,
+          errorMessage: error?.message,
+          errorString: error?.error,
+          status: error?.status,
+          statusCode: error?.statusCode,
+          form,
+        });
+
+        const errorMessage = error?.message || error?.error || "선호 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        showErrorModal(errorMessage, "error");
         setFormSubmitLoading(false);
       }
     );
@@ -183,8 +193,12 @@ function InterestSection() {
   }
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom + 100 }]}>
-      <ScrollView>
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 100,
+        }}
+      >
         <InterestAge />
         <InterestGoodMbti />
         <InterestBadMbti />
@@ -194,25 +208,35 @@ function InterestSection() {
         <InterestSmoking />
         <InterestTattoo />
       </ScrollView>
-      <Button
-        disabled={disabled || formSubmitLoading}
-        onPress={onFinish}
-        rounded="lg"
-        styles={{
-          bottom: insets.bottom + 15,
+      <View
+        style={{
           position: "absolute",
-          left: 28,
-          right: 28,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          backgroundColor: "#FFFFFF",
+          paddingHorizontal: 31,
+          paddingBottom: insets.bottom + 15,
+          paddingTop: 15,
         }}
       >
-        {t("apps.profile_edit.ui.save_button")}
-      </Button>
+        <Button
+          disabled={disabled || formSubmitLoading}
+          onPress={onFinish}
+          rounded="lg"
+          styles={{ width: "100%" }}
+        >
+          {t("apps.profile_edit.ui.save_button")}
+        </Button>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     position: "relative",
   },
 });

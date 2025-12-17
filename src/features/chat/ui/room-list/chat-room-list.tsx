@@ -1,5 +1,5 @@
 import useLiked from "@/src/features/like/hooks/use-liked";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Show } from "@/src/shared/ui";
 import { LegendList } from "@legendapp/list";
 import { FlashList } from "@shopify/flash-list";

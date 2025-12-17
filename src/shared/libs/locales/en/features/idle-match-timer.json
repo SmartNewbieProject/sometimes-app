@@ -20,6 +20,41 @@
     "partner": {
       "button_more": "See more"
     },
+    "pending-approval": {
+      "title": "Profile Under Review",
+      "description": "Your profile is currently under review. Matching will start once approved.",
+      "estimated-time": "Estimated time",
+      "default-time": "2 hours",
+      "info": "We'll notify you when your profile is approved!",
+      "notification-info": "We'll send you an SMS when your profile is approved.",
+      "next-matching": "Until next matching",
+      "timer-description": "Matching will start after approval",
+      "card-title-line1": "Profile review",
+      "card-title-line2": "in progress",
+      "card-desc-line1": "Our team is carefully reviewing.",
+      "card-desc-line2": "We'll let you know soon!",
+      "refresh-button": "Tap to check status",
+      "refresh-messages": {
+        "still-reviewing": "Still under review! 🦊",
+        "please-wait": "Please wait a bit more ✨",
+        "team-reviewing": "Our team is reviewing 👀",
+        "almost-done": "Almost done! ⏳"
+      },
+      "rejected-title": "Profile Rejected",
+      "rejection-reason-label": "Rejection Reason",
+      "rejection-category": {
+        "inappropriate-image": "Inappropriate Profile Image",
+        "false-info": "False Information",
+        "terms-violation": "Terms Violation",
+        "other": "Other"
+      },
+      "edit-profile-button": "Edit Profile",
+      "rejected-info": "You can request review again after updating your profile.",
+      "photo-rejection-title": "Please upload your\nprofile photo again",
+      "photo-rejection-line1": "Your profile photo didn't meet our guidelines during the review process.",
+      "photo-rejection-line2": "Don't worry! Upload a new one and we'll review it quickly ✨",
+      "view-guidelines-button": "View Photo Upload Guidelines"
+    },
     "find-partner": {
       "button_more": "See more"
     },

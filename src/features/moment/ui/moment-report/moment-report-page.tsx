@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image, ActivityIndicator } from "react-native";
 import { Text } from "@/src/shared/ui";
-import colors, { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import Svg, { Polygon, Line, Text as SvgText } from "react-native-svg";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";

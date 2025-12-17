@@ -1,6 +1,6 @@
 
 import { Image } from "expo-image";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React from "react";
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -38,12 +38,6 @@ function ProfileImageCard({
       <Image source={imageUri} style={styles.image} />
       <View style={styles.imageTag}>
         <Text style={styles.imageTagText}>{isMain ? t("features.profile-edit.ui.profile.image_card.main") : t("features.profile-edit.ui.profile.image_card.select")}</Text>
-      </View>
-      <View style={styles.edit}>
-        <Image
-          source={require("@assets/images/edit-pencil.png")}
-          style={styles.editPencil}
-        />
       </View>
     </Pressable>
   );
@@ -83,22 +77,6 @@ const styles = StyleSheet.create({
     fontWeight: 600,
 
     color: semanticColors.text.inverse,
-  },
-  edit: {
-    position: "absolute",
-    bottom: 9,
-    right: 9,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    overflow: "hidden",
-    backgroundColor: semanticColors.surface.background,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  editPencil: {
-    width: 22,
-    height: 22,
   },
   noneCard: {
     borderColor: semanticColors.border.default,

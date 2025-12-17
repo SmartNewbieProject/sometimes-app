@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -10,6 +10,7 @@ import { platform } from "@shared/libs/platform";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { useSignupProgress } = Signup;
 
@@ -75,12 +76,13 @@ export default function LoginScreen() {
               }
             }
 
-            router.replace({
-              pathname: "/auth/signup/university",
-              params: {
-                certificationInfo: JSON.stringify(result.certificationInfo),
-              },
-            });
+            // 보안: certificationInfo를 AsyncStorage에 저장 (URL에 노출 방지)
+            await AsyncStorage.setItem(
+              'signup_certification_info',
+              JSON.stringify(result.certificationInfo)
+            );
+
+            router.replace("/auth/signup/university");
           } else {
             router.replace("/home");
           }
@@ -91,6 +93,9 @@ export default function LoginScreen() {
 
   useEffect(() => {
     clear();
+    // 회원가입 관련 storage 초기화
+    AsyncStorage.removeItem('signup_session');
+    AsyncStorage.removeItem('signup_certification_info');
   }, [clear]);
 
   return (

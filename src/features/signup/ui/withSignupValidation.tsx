@@ -1,7 +1,7 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { router } from "expo-router";
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { type SignupForm, SignupSteps, useSignupProgress } from "../hooks";
 
 interface PageValidation {
@@ -154,15 +154,40 @@ export function withSignupValidation<P extends object>(
   return function ValidatedComponent(props: P) {
     const { form } = useSignupProgress();
     const { showModal, hideModal } = useModal();
+    const hasValidatedRef = useRef(false);
 
     useEffect(() => {
+      // 이미 validation을 한 번 실행했다면 skip (무한 루프 방지)
+      if (hasValidatedRef.current) {
+        return;
+      }
+
       const validation = PAGE_VALIDATIONS[currentStep];
       const missingFields: string[] = [];
-      console.log(PAGE_VALIDATIONS, currentStep, WrappedComponent)
-      if (Object.keys(form).length === 0) {
+
+      // 첫 페이지(UNIVERSITY)는 form이 비어있어도 허용
+      if (currentStep === SignupSteps.UNIVERSITY && Object.keys(form).length === 0) {
         return;
-        
       }
+
+      // 다른 페이지에서 form이 비어있으면 로그인 페이지로 redirect
+      if (currentStep !== SignupSteps.UNIVERSITY && Object.keys(form).length === 0) {
+        hasValidatedRef.current = true;
+        showModal({
+          title: "알림",
+          children: "회원가입을 처음부터 시작해주세요",
+          primaryButton: {
+            text: "확인",
+            onClick: () => {
+              // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+              router.navigate("/auth/login" as any);
+              hideModal();
+            },
+          },
+        });
+        return;
+      }
+
       for (const field of validation.requiredFields) {
         if (hasEmptyValue(form[field])) {
           missingFields.push(field);
@@ -170,6 +195,7 @@ export function withSignupValidation<P extends object>(
       }
 
       if (missingFields.length > 0) {
+        hasValidatedRef.current = true; // validation 완료 표시
         const redirectRoute = getRedirectRoute(missingFields);
         const message = getDetailedMessage(missingFields, currentStep);
 
@@ -182,13 +208,12 @@ export function withSignupValidation<P extends object>(
               // biome-ignore lint/suspicious/noExplicitAny: <explanation>
               router.navigate(redirectRoute as any);
               hideModal();
-              return;
             },
           },
         });
         return;
       }
-    }, [JSON.stringify(form)]);
+    }, []); // mount 시에만 실행 (form 변경 시 재실행 방지)
 
     return <WrappedComponent {...props} />;
   };

@@ -1,5 +1,5 @@
 import type { Preferences } from "@/src/features/interest/api";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
@@ -105,7 +105,7 @@ export default function PersonalitySelectionScreen() {
               }
               multiple
               onChange={onChangeOption}
-              className="w-full"
+              style={styles.chipSelectorContent}
             />
           </Loading.Lottie>
         </View>
@@ -150,9 +150,9 @@ const styles = StyleSheet.create({
   },
   chipSelector: {
     marginTop: 12,
-    paddingLeft: 24,
-    paddingRight: 28,
-    flexDirection: "row",
-    justifyContent: "flex-start",
+    paddingHorizontal: 24,
+  },
+  chipSelectorContent: {
+    width: "100%",
   },
 });

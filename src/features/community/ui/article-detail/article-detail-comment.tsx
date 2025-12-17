@@ -1,4 +1,5 @@
-import colors , { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
 import { dayUtils } from "@/src/shared/libs";
 import type { UniversityName } from "@/src/shared/libs/univ";

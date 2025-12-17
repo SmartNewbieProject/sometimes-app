@@ -1,5 +1,5 @@
 import SmallTitle from "@/assets/icons/small-title.svg";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useInterestForm } from "@/src/features/interest/hooks";
 import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
@@ -11,7 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function InterestDoneScreen() {
@@ -69,7 +69,8 @@ export default function InterestDoneScreen() {
             </Text>
           </View>
         </View>
-        <View style={styles.buttonContainer}>
+        </View>
+        <View style={[styles.buttonContainer, { paddingBottom: insets.bottom + 24 }]}>
           <Button
             width="full"
             flex="flex-1"
@@ -86,7 +87,6 @@ export default function InterestDoneScreen() {
             {t("apps.interest.done.button")}
           </Button>
         </View>
-      </View>
       </View>
     </Layout.Default>
   );
@@ -120,18 +120,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     paddingHorizontal: 31,
-    gap: 14,
-    ...Platform.select({
-      web: {
-        marginBottom: 14,
-      },
-      ios: {
-        marginBottom: 58,
-      },
-      android: {
-        marginBottom: 58,
-      },
-    }),
     flexDirection: "row",
   },
   button: {

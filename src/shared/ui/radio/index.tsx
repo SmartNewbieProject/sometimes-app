@@ -1,5 +1,5 @@
 import React from "react";
-import { semanticColors } from '../../constants/colors';
+import { semanticColors } from '../../constants/semantic-colors';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Show } from "../show";
 import { TextArea } from "../text-area";

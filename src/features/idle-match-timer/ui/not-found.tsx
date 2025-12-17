@@ -1,5 +1,5 @@
 import { ImageResources } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button, ImageResource, Text } from "@/src/shared/ui";
 import FrameIcon from "@assets/icons/frame.svg";
 import ImproveProfileIcon from "@assets/icons/improve-profile.svg";

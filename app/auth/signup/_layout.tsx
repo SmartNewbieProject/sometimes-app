@@ -130,8 +130,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.black,
-    fontFamily: "bold",
-    fontWeight: 700,
+    fontFamily: "Pretendard-Bold",
     lineHeight: 22,
     fontSize: 20,
   },

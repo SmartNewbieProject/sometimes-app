@@ -4,6 +4,7 @@ import { Heart, List, PenTool, Loader2, Check, Sparkles , ArrowLeft } from "luci
 import { useTranslation } from "react-i18next";
 import { Text, Button } from "@/src/shared/ui";
 import colors from "@/src/shared/constants/colors";
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Stack, router } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDailyQuestionQuery, useSubmitAnswerMutation } from "../../queries";
@@ -333,7 +334,7 @@ export const QuestionDetailPage = () => {
                 }}
                 style={{ marginLeft: 16 }}
               >
-                <ArrowLeft size={24} color={colors.text.primary} />
+                <ArrowLeft size={24} color={semanticColors.text.primary} />
               </TouchableOpacity>
             ),
           }}
@@ -452,7 +453,7 @@ export const QuestionDetailPage = () => {
               <View style={sentStepStyles.container}>
                 <View style={sentStepStyles.successCircle}>
                   <View style={sentStepStyles.successCircleGlow} />
-                  <Check size={40} color={colors.brand.primary} strokeWidth={3} />
+                  <Check size={40} color={semanticColors.brand.primary} strokeWidth={3} />
                 </View>
                 <Text size="2xl" weight="bold" textColor="primary" style={sentStepStyles.titleText}>
                   {t('features.moment.question_detail.sent.success')}

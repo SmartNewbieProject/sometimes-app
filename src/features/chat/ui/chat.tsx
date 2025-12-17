@@ -1,5 +1,5 @@
 import { BottomNavigation } from "@/src/shared/ui";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useCallback } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

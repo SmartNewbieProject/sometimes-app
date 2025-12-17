@@ -1,97 +1,39 @@
-import BottomArrowIcon from "@assets/icons/bottom-arrow.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
-import React, { useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { useTranslation } from "react-i18next";
-import { useSignupProgress } from "../../hooks";
-import i18n from "@/src/shared/libs/i18n";
+import BottomArrowIcon from '@assets/icons/bottom-arrow.svg';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { BottomSheetPicker } from '@/src/shared/ui/bottom-sheet-picker';
+import type { BottomSheetPickerOption } from '@/src/shared/ui/bottom-sheet-picker';
+import React, { useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useSignupProgress } from '../../hooks';
+import i18n from '@/src/shared/libs/i18n';
 
+const MIN_TOUCH_TARGET = 48;
 
-const NUMBER_LIST = [
-  i18n.t("features.signup.ui.student_id_25"),
-  i18n.t("features.signup.ui.student_id_24"),
-  i18n.t("features.signup.ui.student_id_23"),
-  i18n.t("features.signup.ui.student_id_22"),
-  i18n.t("features.signup.ui.student_id_21"),
-  i18n.t("features.signup.ui.student_id_20"),
-  i18n.t("features.signup.ui.student_id_19"),
-  i18n.t("features.signup.ui.student_id_enter_directly"),
-];
 function StudentIdSelector() {
   const { t } = useTranslation();
-
-  const inputRef = useRef<null | TextInput>(null);
   const {
     form: { studentNumber, grade },
     updateForm,
   } = useSignupProgress();
 
-  const [isInput, setInput] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  const heightAnim = useRef(new Animated.Value(0)).current;
-  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const studentIdOptions: BottomSheetPickerOption[] = useMemo(
+    () => [
+      { label: i18n.t('features.signup.ui.student_id_25'), value: i18n.t('features.signup.ui.student_id_25') },
+      { label: i18n.t('features.signup.ui.student_id_24'), value: i18n.t('features.signup.ui.student_id_24') },
+      { label: i18n.t('features.signup.ui.student_id_23'), value: i18n.t('features.signup.ui.student_id_23') },
+      { label: i18n.t('features.signup.ui.student_id_22'), value: i18n.t('features.signup.ui.student_id_22') },
+      { label: i18n.t('features.signup.ui.student_id_21'), value: i18n.t('features.signup.ui.student_id_21') },
+      { label: i18n.t('features.signup.ui.student_id_20'), value: i18n.t('features.signup.ui.student_id_20') },
+      { label: i18n.t('features.signup.ui.student_id_19'), value: i18n.t('features.signup.ui.student_id_19') },
+    ],
+    []
+  );
 
-  const openOptions = () => {
-    setIsVisible(true);
-    Animated.parallel([
-      Animated.timing(heightAnim, {
-        toValue: 214,
-        duration: 200,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: false,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 200,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: false,
-      }),
-    ]).start();
-  };
-
-  const closeOptions = () => {
-    Animated.parallel([
-      Animated.timing(heightAnim, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.in(Easing.ease),
-        useNativeDriver: false,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 0,
-        duration: 150,
-        easing: Easing.in(Easing.ease),
-        useNativeDriver: false,
-      }),
-    ]).start(() => {
-      setIsVisible(false);
-    });
-  };
-
-  const toggleOptions = () => {
-    if (isVisible) closeOptions();
-    else openOptions();
-  };
-
-  const handleSelect = (number: string) => {
-    if (number === t("features.signup.ui.student_id_enter_directly")) {
-      setInput(true);
-      inputRef?.current?.focus();
-      closeOptions();
-      return;
-    }
-
-    // 학번 숫자 추출
-    const yearPrefix = number.slice(0, 2);
+  const handleSelect = (value: string) => {
+    const yearPrefix = value.slice(0, 2);
     const yearNumber = Number.parseInt(yearPrefix, 10);
     const currentFullYear = new Date().getFullYear();
     const entryYear = 2000 + yearNumber;
@@ -101,77 +43,62 @@ function StudentIdSelector() {
     );
 
     updateForm({
-      studentNumber: number,
+      studentNumber: value,
       ...(grade === undefined && !Number.isNaN(calculatedGrade)
-        ? { grade: `${calculatedGrade}${t("features.signup.ui.grade_suffix")}` }
+        ? { grade: `${calculatedGrade}${t('features.signup.ui.grade_suffix')}` }
         : {}),
     });
-
-    setInput(false);
-    closeOptions();
   };
+
+  const hasValue = !!studentNumber;
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={toggleOptions} style={styles.selector}>
-        {isInput ? (
-          <TextInput
-            ref={inputRef}
-            placeholder={t("features.signup.ui.student_id_select_placeholder")}
-            value={studentNumber}
-            onChangeText={(text: string) => updateForm({ studentNumber: text })}
-            style={[styles.selectorText, { maxWidth: 60 }]}
-          />
-        ) : (
-          <Text style={styles.selectorText}>
-            {studentNumber ?? t("features.signup.ui.student_id_select_placeholder")}
-          </Text>
-        )}
-        <View style={styles.checkBox}>
+      <Pressable
+        onPress={() => setIsVisible(true)}
+        style={({ pressed }) => [
+          styles.selector,
+          pressed && styles.selectorPressed,
+        ]}
+      >
+        <Text style={[styles.selectorText, hasValue && styles.selectorTextSelected]}>
+          {studentNumber ?? t('features.signup.ui.student_id_select_placeholder')}
+        </Text>
+        <View style={styles.iconBox}>
           <BottomArrowIcon width={13} height={8} />
         </View>
       </Pressable>
 
-      {isVisible && (
-        <Animated.View
-          style={[
-            styles.optionList,
-            {
-              height: heightAnim,
-              opacity: opacityAnim,
-              overflow: "hidden",
-            },
-          ]}
-        >
-          {NUMBER_LIST.map((number) => (
-            <Pressable
-              key={number}
-              onPress={() => handleSelect(number)}
-              style={styles.option}
-            >
-              <Text style={styles.optionText}>{number}</Text>
-            </Pressable>
-          ))}
-        </Animated.View>
-      )}
+      <BottomSheetPicker
+        visible={isVisible}
+        onClose={() => setIsVisible(false)}
+        options={studentIdOptions}
+        selectedValue={studentNumber}
+        onSelect={handleSelect}
+        title={t('features.signup.ui.student_id_select_placeholder')}
+        searchable={false}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
+    flex: 1,
   },
   selector: {
-    width: 132,
-    height: 37,
+    minHeight: MIN_TOUCH_TARGET,
     borderRadius: 15,
     borderWidth: 1,
     borderColor: semanticColors.brand.primary,
     backgroundColor: semanticColors.surface.background,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+  },
+  selectorPressed: {
+    backgroundColor: semanticColors.surface.surface,
   },
   selectorText: {
     color: semanticColors.text.disabled,
@@ -179,39 +106,18 @@ const styles = StyleSheet.create({
     fontWeight: 300,
     fontFamily: "Pretendard-Thin",
     flex: 1,
-
-    borderWidth: 0,
-    lineHeight: 18.9,
-    marginLeft: 12,
   },
-  checkBox: {
-    marginRight: 9,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10,
-    width: 25,
-    height: 25,
-    backgroundColor: semanticColors.surface.other,
-  },
-  optionList: {
-    paddingVertical: 11,
-    paddingHorizontal: 13,
-    position: "absolute",
-    top: 44,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: semanticColors.brand.primary,
-    backgroundColor: semanticColors.surface.background,
-    width: 132,
-    maxHeight: 214,
-  },
-  option: {
-    paddingVertical: 4,
-  },
-  optionText: {
-    fontSize: 14,
-    lineHeight: 15.6,
+  selectorTextSelected: {
     color: semanticColors.text.primary,
+    fontWeight: '500',
+  },
+  iconBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    width: 28,
+    height: 28,
+    backgroundColor: semanticColors.surface.other,
   },
 });
 

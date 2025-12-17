@@ -1,0 +1,7 @@
+{
+  "blur_photo": {
+    "message": "사진 {{count}}장이 더 있어요!",
+    "sub_description": "프로필 사진을 업로드하고, 내 인연의 정보를 확인하세요!",
+    "add_photo_cta": "사진 추가하기"
+  }
+}

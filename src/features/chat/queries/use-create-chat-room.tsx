@@ -6,13 +6,21 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { createChatRoom } from "../apis";
 import { errorHandlers } from "../services/chat-create-error-handler";
+import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 
 function useCreateChatRoom() {
   const router = useRouter();
   const { showModal, showErrorModal, hideModal } = useModal();
+  const { chatEvents } = useKpiAnalytics();
+
   return useMutation({
     mutationFn: createChatRoom,
-    onSuccess: ({ chatRoomId }: { chatRoomId: string }) => {
+    onSuccess: ({ chatRoomId, partnerId }: { chatRoomId: string; partnerId?: string }) => {
+      // KPI 이벤트: 채팅 시작
+      if (partnerId) {
+        chatEvents.trackChatStarted(partnerId, 'mutual_like');
+      }
+
       router.push(`/chat/${chatRoomId}`);
     },
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>

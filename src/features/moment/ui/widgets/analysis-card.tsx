@@ -1,7 +1,8 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, LayoutAnimation, Platform, UIManager } from "react-native";
 import { Text } from "@/src/shared/ui";
-import colors, { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 if (
   Platform.OS === "android" &&

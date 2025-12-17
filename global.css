@@ -99,3 +99,31 @@ input {
   transform: scale(1);
   /* iOS에서 추가적인 확대 방지 */
 }
+
+/* 인스타그램 입력 페이지 애니메이션 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes textGlow {
+  0%, 100% {
+    text-shadow: 0 0 0px rgba(124, 58, 237, 0);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(124, 58, 237, 0.8);
+  }
+}
+
+/* SlideUnlock shimmer animation */
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
+}

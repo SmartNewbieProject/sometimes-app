@@ -1,5 +1,5 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 import { type SignupForm, SignupSteps } from "@/src/features/signup/hooks";
 
@@ -10,7 +10,7 @@ import {
 } from "@/src/shared/hooks/use-overlay";
 import { useSignupSession } from "@/src/shared/hooks/use-signup-session";
 
-import { Button, ImageSelector } from "@/src/shared/ui";
+import { Button } from "@/src/shared/ui";
 import { Text } from "@/src/shared/ui/text";
 
 import { Image } from "expo-image";
@@ -19,7 +19,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Dimensions,
-  Text as RNText,
   StyleSheet,
   View,
 } from "react-native";
@@ -30,6 +29,8 @@ import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidat
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
+import useSignupProgress from "@/src/features/signup/hooks/use-signup-progress";
+import { OppositeGenderPreview, ProfileImageGrid } from "@/src/widgets";
 
 const { height } = Dimensions.get("window");
 
@@ -43,11 +44,22 @@ function ProfilePage() {
     onBackPress,
   } = useProfileImage();
   const { t } = useTranslation();
+  const { form, updateShowHeader } = useSignupProgress();
+
+  useEffect(() => {
+    updateShowHeader(true);
+  }, [updateShowHeader]);
+
+  // 업로드된 이미지 개수 계산 (실시간 업데이트)
+  const uploadedCount = [0, 1, 2].filter((i) => {
+    const image = getImaages(i);
+    return image !== null && image !== undefined;
+  }).length;
 
 
   return (
     <DefaultLayout className="flex-1 relative">
-      <GuideView>
+      <GuideView paddingBottom={150}>
         <View className="px-5 ">
           <Image
             source={require("@assets/images/profile-image.png")}
@@ -68,76 +80,18 @@ function ProfilePage() {
           <Text weight="medium" size="sm" textColor="pale-purple">
             {t("apps.auth.sign_up.profile_image.guide_2")}
           </Text>
+          <Text weight="medium" size="sm" textColor="purple" style={{ marginTop: 8 }}>
+            {t("apps.auth.sign_up.profile_image.guide_3")}
+          </Text>
         </View>
 
-        <View className="flex-row justify-center   w-full gap-[16px]">
-          <View className="flex  justify-center items-center">
-            <ImageSelector
-              size="lg"
-              value={getImaages(0)}
-              onChange={(value) => {
-                uploadImage(0, value);
-              }}
-            />
-          </View>
+        <ProfileImageGrid
+          images={[getImaages(0), getImaages(1), getImaages(2)]}
+          onImageChange={uploadImage}
+        />
 
-          <View className="flex flex-col justify-center gap-y-[12px]">
-            <ImageSelector
-              size="sm"
-              value={getImaages(1)}
-              onChange={(value) => {
-                uploadImage(1, value);
-              }}
-            />
-            <ImageSelector
-              size="sm"
-              value={getImaages(2)}
-              onChange={(value) => {
-                uploadImage(2, value);
-              }}
-            />
-          </View>
-        </View>
-
-        {!visible && (
-          <Animated.View
-            style={[
-              height < guideHeight
-                ? styles.infoWrapper
-                : styles.infoOverlayWrapper,
-              { marginTop: 40 },
-            ]}
-          >
-            <RNText style={styles.infoTitle}>
-              {t("apps.auth.sign_up.profile_image.info_title")}
-            </RNText>
-            <RNText style={styles.infoDescription}>
-              {t("apps.auth.sign_up.profile_image.info_desc_1")}
-            </RNText>
-            <RNText style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
-            <Image
-              source={require("@assets/images/instagram-some.png")}
-              style={{
-                width: 116,
-                height: 175,
-                position: "absolute",
-                top: 20,
-                right: -66,
-              }}
-            />
-            <Image
-              source={require("@assets/images/instagram-lock.png")}
-              style={{
-                width: 52,
-                height: 52,
-                position: "absolute",
-                top: -30,
-                left: -30,
-                transform: [{ rotate: "-10deg" }],
-              }}
-            />
-          </Animated.View>
-        )}
+        {/* 반대 성별 프로필 프리뷰 */}
+        <OppositeGenderPreview uploadedCount={uploadedCount} userGender={form.gender} />
       </GuideView>
 
       <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
@@ -199,7 +153,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: 600,
-    fontFamily: "semibold",
+    fontFamily: "Pretendard-SemiBold",
     lineHeight: 16.8,
     fontSize: 14,
     marginBottom: 8,

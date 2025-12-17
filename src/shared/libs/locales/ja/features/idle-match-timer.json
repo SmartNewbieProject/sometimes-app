@@ -20,6 +20,41 @@
     "partner":{
       "button_more": "もっと見る"
     },
+    "pending-approval": {
+      "title": "プロフィール審査中",
+      "description": "プロフィールを審査中です。承認後、マッチングが開始されます。",
+      "estimated-time": "予想所要時間",
+      "default-time": "2時間",
+      "info": "承認が完了したら通知をお送りします！",
+      "notification-info": "承認が完了したら、登録したSMSにメッセージをお送りします。",
+      "next-matching": "次のマッチングまで",
+      "timer-description": "承認後、マッチングが開始されます",
+      "card-title-line1": "プロフィール審査が",
+      "card-title-line2": "進行中です",
+      "card-desc-line1": "管理者が丁寧に確認しています。",
+      "card-desc-line2": "もう少しお待ちください！",
+      "refresh-button": "タップして状態を確認",
+      "refresh-messages": {
+        "still-reviewing": "まだ審査中です！🦊",
+        "please-wait": "もう少しお待ちください ✨",
+        "team-reviewing": "運営チームが確認中です 👀",
+        "almost-done": "もうすぐです！⏳"
+      },
+      "rejected-title": "プロフィールが却下されました",
+      "rejection-reason-label": "却下理由",
+      "rejection-category": {
+        "inappropriate-image": "不適切なプロフィール画像",
+        "false-info": "虚偽の情報",
+        "terms-violation": "利用規約違反",
+        "other": "その他"
+      },
+      "edit-profile-button": "プロフィールを編集",
+      "rejected-info": "プロフィールを修正後、再度審査をリクエストできます。",
+      "photo-rejection-title": "プロフィール写真を\n再度アップロードしてください",
+      "photo-rejection-line1": "審査の過程でプロフィール写真がガイドラインに適合せず、承認が困難でした。",
+      "photo-rejection-line2": "ご心配なく！すぐに再アップロードすれば、迅速に承認いたします ✨",
+      "view-guidelines-button": "写真アップロードガイドラインを確認"
+    },
     "find-partner":{
       "button_more": "もっと見る"
     },

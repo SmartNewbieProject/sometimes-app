@@ -1,11 +1,22 @@
 import { platform } from './platform';
 import i18n from "@/src/shared/libs/i18n";
-//default는 안드로이드, ios를 의미
-function dataURLtoBlob(dataURL: string): Blob {
+
+async function blobUrlToBlob(blobUrl: string): Promise<Blob> {
+	const response = await fetch(blobUrl);
+	return response.blob();
+}
+
+function dataURLtoBlob(dataURL: string): Blob | Promise<Blob> {
 	return platform({
 		web: () => {
-			console.log('dataURL', dataURL);
+			if (dataURL.startsWith('blob:')) {
+				return blobUrlToBlob(dataURL);
+			}
+
 			const parts = dataURL.split(';base64,');
+			if (parts.length !== 2) {
+				throw new Error(`Invalid data URL format: ${dataURL.substring(0, 50)}...`);
+			}
 			const contentType = parts[0].split(':')[1];
 			const raw = window.atob(parts[1]);
 			const rawLength = raw.length;

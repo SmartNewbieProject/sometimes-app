@@ -6,6 +6,7 @@ import { envelopeStyles } from './envelope.styles';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Polygon } from 'react-native-svg';
 import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useTranslation } from 'react-i18next';
 
 interface EnvelopeProps {
@@ -62,7 +63,7 @@ export const Envelope: React.FC<EnvelopeProps> = ({ onPress, questionDate }) => 
           ]}
         >
           <LinearGradient
-            colors={[colors.brand.secondary, colors.brand.accent]}
+            colors={[semanticColors.brand.secondary, semanticColors.brand.accent]}
             style={{ flex: 1, borderRadius: 20, opacity: 0.5 }}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}

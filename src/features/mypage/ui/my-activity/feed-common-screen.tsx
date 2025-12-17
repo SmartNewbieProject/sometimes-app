@@ -1,5 +1,5 @@
 import Layout from "@/src/features/layout";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { View } from "react-native";
 import { Header, Text } from "@/src/shared/ui";
 import { router , useFocusEffect } from "expo-router";
@@ -74,7 +74,19 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
                 await apis.articles.deleteArticle(id);
                 await invalidateAndRefetch();
               },
-              ({ error }) => showErrorModal(error, "error")
+              ({ error }) => {
+                console.error("Article deletion error:", {
+                  error,
+                  errorMessage: error?.message,
+                  errorString: error?.error,
+                  status: error?.status,
+                  statusCode: error?.statusCode,
+                  articleId: id,
+                });
+
+                const errorMessage = error?.message || error?.error || "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+                showErrorModal(errorMessage, "error");
+              }
             ),
         },
         secondaryButton: { text: t('features.mypage.feed.cancel_button'), onClick: () => {} },

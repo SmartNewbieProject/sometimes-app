@@ -141,7 +141,8 @@ async function compressImageInternal(
       mimeType,
     };
   } catch (error) {
-    logger.error('Image compression failed (web)', { error, uri });
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    logger.error(`Image compression failed (web): ${errorMsg}`);
     throw new ImageCompressionError(
       ImageCompressionErrorCode.COMPRESSION_FAILED,
       'Failed to compress image on web',
@@ -160,7 +161,10 @@ async function compressImageWithRetry(
   try {
     return await compressImageInternal(uri, options);
   } catch (error) {
-    logger.error('Image compression attempt failed', { error, attempt });
+    const errorMsg = error instanceof ImageCompressionError
+      ? `${error.code}: ${error.message}`
+      : error instanceof Error ? error.message : String(error);
+    logger.error(`Image compression attempt failed (${attempt + 1}): ${errorMsg}`);
 
     if (attempt < config.maxRetries) {
       const delay = RETRY_DELAYS_MS[attempt] || 4000;

@@ -1,6 +1,6 @@
 import NotSecuredIcon from "@/assets/icons/shield-not-secured.svg";
 import { UniversityName, dayUtils, getUnivLogo, formatLastLogin } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text } from "@shared/ui";
@@ -41,7 +41,9 @@ export const Partner = ({ match }: PartnerProps) => {
   useEffect(() => {
     const mainProfileImageUri = partner?.profileImages?.find(
       (image) => image.isMain
-    )?.url ?? partner?.profileImages?.[0]?.url;
+    )?.imageUrl || partner?.profileImages?.find(
+      (image) => image.isMain
+    )?.url || partner?.profileImages?.[0]?.imageUrl || partner?.profileImages?.[0]?.url;
     if (!mainProfileImageUri) return;
     update(mainProfileImageUri);
   }, [partner?.profileImages, update]);

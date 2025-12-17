@@ -1,9 +1,11 @@
 import { TwoButtons , DefaultLayout } from "@/src/features/layout/ui";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { SignupSteps } from "@/src/features/signup/hooks";
 import useUniversityHook from "@/src/features/signup/hooks/use-university-hook";
 import UniversityLogos from "@/src/features/signup/ui/university-logos";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
+import { SearchTip } from "@/src/features/signup/ui/university/search-tip";
+import { SearchingState } from "@/src/features/signup/ui/university/searching-state";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { PalePurpleGradient, Show } from "@/src/shared/ui";
 import { useTranslation } from "react-i18next";
@@ -37,12 +39,14 @@ function UniversityPage() {
     handleBlur,
     handleFocus,
     isLoading,
+    isSearching,
     onBackPress,
     showHeader,
     animatedTitleStyle,
     animatedContainerStyle,
     animatedListStyle,
     handleChange,
+    isFocused,
   } = useUniversityHook();
   const { t } = useTranslation();
   // 대학 인증 시작 이벤트 추적
@@ -90,8 +94,18 @@ function UniversityPage() {
         <Animated.View
           style={[animatedContainerStyle, { width: "100%", zIndex: 10 }]}
         >
-          <View style={styles.searchWrapper}>
-            <SearchIcon width={16} height={16} style={{ marginRight: 8 }} />
+          <View
+            style={[
+              styles.searchWrapper,
+              isFocused && styles.searchWrapperFocused,
+            ]}
+          >
+            <SearchIcon
+              width={16}
+              height={16}
+              style={{ marginRight: 8 }}
+              color={isFocused ? semanticColors.brand.primary : "#9B94AB"}
+            />
             <TextInput
               testID="university-search-input"
               value={searchText}
@@ -108,24 +122,34 @@ function UniversityPage() {
           <Animated.View
             style={[styles.listAndBottomContainer, animatedListStyle]}
           >
-            <Loading.Lottie
-              title={t("apps.auth.sign_up.university.loading")} 
-              loading={isLoading}
-            >
-              <FlashList
-                extraData={selectedUniv}
-                data={filteredUniv}
-                renderItem={({ item }) => (
-                  <UniversityCard
-                    onClick={handleClickUniv(item.id)}
-                    isSelected={item.id === selectedUniv}
-                    item={item}
-                  />
-                )}
-                estimatedItemSize={90}
-                contentContainerStyle={{ paddingBottom: 160 }}
-              />
-            </Loading.Lottie>
+            {isSearching ? (
+              <SearchingState keyword={searchText} />
+            ) : (
+              <Loading.Lottie
+                title={t("apps.auth.sign_up.university.loading")}
+                loading={isLoading}
+              >
+                <FlashList
+                  extraData={selectedUniv}
+                  data={filteredUniv}
+                  ListHeaderComponent={
+                    <SearchTip
+                      title={t("apps.auth.sign_up.university.search_tip_title")}
+                      description={t("apps.auth.sign_up.university.search_tip_desc")}
+                    />
+                  }
+                  renderItem={({ item }) => (
+                    <UniversityCard
+                      onClick={handleClickUniv(item.id)}
+                      isSelected={item.id === selectedUniv}
+                      item={item}
+                    />
+                  )}
+                  estimatedItemSize={90}
+                  contentContainerStyle={{ paddingBottom: 160 }}
+                />
+              </Loading.Lottie>
+            )}
 
             <View style={styles.bottomContainer}>
               <View style={styles.tipContainer}>
@@ -173,19 +197,26 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Bold",
   },
   searchWrapper: {
-    height: 48,
+    height: 52,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 12,
     backgroundColor: semanticColors.surface.background,
     paddingHorizontal: 16,
     width: "100%",
+    borderWidth: 2,
+    borderColor: semanticColors.border.default,
+  },
+  searchWrapperFocused: {
+    borderColor: semanticColors.brand.primary,
+    backgroundColor: "#FDFBFF",
   },
   input: {
     flex: 1,
     fontSize: 16,
     color: semanticColors.text.primary,
     fontFamily: "Pretendard-Regular",
+    fontWeight: "400",
   },
   listAndBottomContainer: {
     flex: 1,
@@ -210,14 +241,14 @@ const styles = StyleSheet.create({
   tip: {
     color: semanticColors.text.disabled,
     fontWeight: "300",
-    fontFamily: "thin",
+    fontFamily: "Pretendard-Thin",
     fontSize: 13,
     lineHeight: 20,
   },
   welcome: {
     fontSize: 18,
     color: semanticColors.brand.primary,
-    fontFamily: "Pretendard-Medium",
+    fontFamily: "Pretendard-SemiBold",
     marginBottom: 8,
     textAlign: "center",
   },

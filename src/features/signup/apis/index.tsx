@@ -16,14 +16,24 @@ export const getUnivs = async (): Promise<string[]> => {
   return axiosClient.get("/universities");
 };
 
+export const getTopUniversities = (): Promise<UniversitiesByRegion> => {
+  return axiosClient.get("/universities/top");
+};
+
+export const searchUniversities = (
+  searchText: string
+): Promise<UniversitiesByRegion> => {
+  return axiosClient.get(`/universities?name=${encodeURIComponent(searchText)}`);
+};
+
 export const getDepartments = async (univ: string): Promise<string[]> => {
   return axiosClient.get(`/universities/departments?universityId=${univ}`);
 };
 
 const createFileObject = (imageUri: string, fileName: string) =>
   platform({
-    web: () => {
-      const blob = fileUtils.dataURLtoBlob(imageUri);
+    web: async () => {
+      const blob = await fileUtils.dataURLtoBlob(imageUri);
       return fileUtils.toFile(blob, fileName);
     },
     default: () =>
@@ -51,7 +61,19 @@ export const checkPhoneNumberBlacklist = (
 ): Promise<{ isBlacklisted: boolean }> =>
   axiosClient.post("/auth/check/phone-number/blacklist", { phoneNumber });
 
-export const signup = (form: SignupForm): Promise<void> => {
+export interface SignupResponse {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  createdAt: string;
+  accessToken: string;
+  refreshToken: string;
+  tokenType: "Bearer";
+  expiresIn: number;
+  roles: string[];
+}
+
+export const signup = async (form: SignupForm): Promise<SignupResponse> => {
   const formData = new FormData();
   formData.append("phoneNumber", form.phone);
   formData.append("name", form.name);
@@ -74,11 +96,16 @@ export const signup = (form: SignupForm): Promise<void> => {
   if (form?.referralCode && form.referralCode !== "") {
     formData.append("referralCode", form.referralCode);
   }
-  // biome-ignore lint/complexity/noForEach: <explanation>
-  form.profileImages.forEach((imageUri) => {
-    const file = createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`);
+
+  const filePromises = form.profileImages.map((imageUri) =>
+    createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`)
+  );
+  const files = await Promise.all(filePromises);
+  for (const file of files) {
     formData.append("profileImages", file);
-  });
+  }
+
+  formData.append("mainImageIndex", "0");
 
   return axiosClient.post("/auth/signup", formData, {
     headers: { "Content-Type": "multipart/form-data" },
@@ -95,7 +122,7 @@ type Service = {
   checkPhoneNumberBlacklist: (
     phoneNumber: string
   ) => Promise<{ isBlacklisted: boolean }>;
-  signup: (form: SignupForm) => Promise<void>;
+  signup: (form: SignupForm) => Promise<SignupResponse>;
   sendVerificationCode: (phoneNumber: string) => Promise<{ uniqueKey: string }>;
   authenticateSmsCode: (smsCode: AuthorizeSmsCode) => Promise<void>;
   postAppleLogin: (identityToken: string) => Promise<AppleLoginResponse>;

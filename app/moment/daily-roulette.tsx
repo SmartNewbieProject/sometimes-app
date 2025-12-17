@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { semanticColors } from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { RouletteWheel } from "@/src/features/event/ui/roulette/roulette-wheel";
 import { useRoulettePage } from "@/src/features/event/hooks/roulette/use-roulette-page";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
@@ -18,7 +18,7 @@ export default function DailyRoulettePage() {
       <View style={styles.headerWrapper}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={() => router.replace('/moment')}
         >
           <ChevronLeft />
         </TouchableOpacity>

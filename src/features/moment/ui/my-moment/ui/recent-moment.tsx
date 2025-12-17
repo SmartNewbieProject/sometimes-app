@@ -1,10 +1,11 @@
 import React from "react";
-import { useWeeklyProgressQuery, useLatestReportQuery } from "../../../queries";
+import { useWeeklyProgressQuery, useLatestReportQuery, useProgressStatusQuery } from "../../../queries";
 import { MomentStatusCard } from "./moment-status-card";
 import { LatestMomentCard } from "./latest-moment-card";
 
 export const RecentMoment = () => {
   const { data: weeklyProgress, isLoading: weeklyProgressLoading } = useWeeklyProgressQuery();
+  const { data: progressStatus } = useProgressStatusQuery();
   const {
     data: latestReport,
     isLoading: reportLoading,
@@ -45,6 +46,7 @@ export const RecentMoment = () => {
         latestReport={latestReport}
         reportLoading={reportLoading}
         reportError={reportError}
+        progressStatus={progressStatus}
       />
     </>
   );

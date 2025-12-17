@@ -1,5 +1,5 @@
 import React from 'react';
-import { semanticColors } from '../../constants/colors';
+import { semanticColors } from '../../constants/semantic-colors';
 import {StyleSheet, Text, View} from 'react-native';
 import { useToast } from '../../hooks/use-toast';
 import { Show } from '../show';
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   toast: {
     minHeight: 46,
     borderRadius: 15,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: semanticColors.surface.inverse,
     paddingVertical: 11,
     alignItems: 'center',
     position: "relative",
@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 24,
     color: semanticColors.text.inverse,
-
   },
   iconContainer: {
     position: "absolute",

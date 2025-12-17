@@ -1,5 +1,5 @@
 import type { Preferences } from "@/src/features/interest/api";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { PreferenceKeys , usePreferenceOptionsQuery } from "@/src/features/interest/queries";
 import type { AgeOptionData } from "@/src/features/interest/types";
 import Layout from "@/src/features/layout";

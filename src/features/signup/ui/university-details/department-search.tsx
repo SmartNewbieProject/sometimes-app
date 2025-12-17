@@ -1,22 +1,16 @@
-import Loading from "@/src/features/loading";
-import { semanticColors } from '../../../../shared/constants/colors';
-import SearchIcon from "@assets/icons/search.svg";
-import { useGlobalSearchParams } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
-import { useTranslation } from "react-i18next";
-import { useSignupProgress } from "../../hooks";
-import { filterDepartments } from "../../lib/university-details";
-import { useDepartmentQuery } from "../../queries";
+import Loading from '@/src/features/loading';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { BottomSheetPicker } from '@/src/shared/ui/bottom-sheet-picker';
+import type { BottomSheetPickerOption } from '@/src/shared/ui/bottom-sheet-picker';
+import BottomArrowIcon from '@assets/icons/bottom-arrow.svg';
+import { useGlobalSearchParams } from 'expo-router';
+import React, { useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useSignupProgress } from '../../hooks';
+import { useDepartmentQuery } from '../../queries';
+
+const MIN_TOUCH_TARGET = 48;
 
 function DepartmentSearch() {
   const { t } = useTranslation();
@@ -24,183 +18,104 @@ function DepartmentSearch() {
     updateForm,
     form: { departmentName },
   } = useSignupProgress();
-  const [focused, setFocused] = useState(false);
-  const inputRef = useRef<TextInput>(null);
+
+  const [isVisible, setIsVisible] = useState(false);
   const { universityId } = useGlobalSearchParams<{
     universityId: string;
   }>();
-  const { data: departments = [], isLoading } =
-    useDepartmentQuery(universityId);
-  const [filteredDepartment, setFilteredDepartment] = useState(departments);
+  const { data: departments = [], isLoading } = useDepartmentQuery(universityId);
 
-  useEffect(() => {
-    if (!departments) return;
+  const departmentOptions: BottomSheetPickerOption[] = useMemo(
+    () =>
+      departments.map((dept) => ({
+        label: dept,
+        value: dept,
+      })),
+    [departments]
+  );
 
-    const filtered = filterDepartments(departments, departmentName ?? "");
+  const handleSelect = (value: string) => {
+    updateForm({ departmentName: value });
+  };
 
-    setFilteredDepartment(filtered);
-  }, [departmentName, JSON.stringify(departments)]);
+  const hasValue = !!departmentName;
 
   if (isLoading) {
-    return <Loading.Page title={t("features.signup.ui.department_search_loading")} />;
+    return <Loading.Page title={t('features.signup.ui.department_search_loading')} />;
   }
+
   return (
     <View style={styles.container}>
-      <View
-        style={[
-          styles.searchContainer,
-
-          {
-            backgroundColor: semanticColors.surface.background,
-            borderColor: semanticColors.brand.primary,
-            flexDirection: "row",
-            paddingHorizontal: 12,
-          },
+      <Pressable
+        onPress={() => setIsVisible(true)}
+        style={({ pressed }) => [
+          styles.selector,
+          pressed && styles.selectorPressed,
         ]}
       >
-        <TextInput
-          className="outline-none"
-          value={departmentName}
-          onChangeText={(text) => updateForm({ departmentName: text })}
-          placeholder={t("features.signup.ui.department_search_placeholder")}
-          placeholderTextColor="#999"
-          style={styles.input}
-          ref={inputRef}
-          onFocus={() => setFocused(true)}
-          onBlur={() => {
-            if (Platform.OS === "web") {
-              setTimeout(() => setFocused(false), 100);
-              return;
-            }
-            setFocused(false);
-          }}
-          underlineColorAndroid="transparent"
-        />
-
-        <TouchableWithoutFeedback>
-          <View style={styles.iconWrapper}>
-            <SearchIcon width={12} height={12} />
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
-
-      <View style={styles.popularContainer}>
-        {departments.slice(0, 3).map((department, index) => (
-          <Pressable
-            onPress={(e) => {
-              e.stopPropagation();
-              updateForm({ departmentName: department });
-            }}
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            key={index}
-            style={styles.tag}
-          >
-            <Text style={styles.tagText}>{department}</Text>
-          </Pressable>
-        ))}
-      </View>
-
-      {focused && filteredDepartment && filteredDepartment.length > 0 && (
-        <ScrollView
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="none"
-          nestedScrollEnabled={true}
-          style={[styles.searchResult]}
+        <Text
+          style={[styles.selectorText, hasValue && styles.selectorTextSelected]}
+          numberOfLines={1}
         >
-          {filteredDepartment.map((department, index) => (
-            <Pressable
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              key={index}
-              onPress={() => {
-                updateForm({ departmentName: department });
-                if (inputRef?.current) {
-                  inputRef?.current.blur();
-                }
-              }}
-              style={{ paddingVertical: 4 }}
-            >
-              <Text style={styles.searchResultText}>{department}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      )}
+          {departmentName || t('features.signup.ui.department_search_placeholder')}
+        </Text>
+        <View style={styles.iconBox}>
+          <BottomArrowIcon width={13} height={8} />
+        </View>
+      </Pressable>
+
+      <BottomSheetPicker
+        visible={isVisible}
+        onClose={() => setIsVisible(false)}
+        options={departmentOptions}
+        selectedValue={departmentName}
+        onSelect={handleSelect}
+        title={t('features.signup.ui.department_search_title')}
+        searchable={true}
+        searchPlaceholder={t('features.signup.ui.department_search_placeholder')}
+        emptyText={t('features.signup.ui.department_search_empty')}
+        loading={isLoading}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  searchContainer: {
-    height: 36,
-
-    alignItems: "center",
-
-    position: "relative",
-    borderRadius: 15,
-    borderWidth: 1,
-    overflow: "hidden",
-  },
-  input: {
-    flex: 1,
-    borderWidth: 0,
-    fontSize: 14,
-    height: 32,
-    paddingVertical: 0,
-    color: semanticColors.text.primary,
-  },
-  iconWrapper: {
-    width: 32,
-    height: 32,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    right: 0,
-    paddingLeft: 1,
-    top: 0,
-  },
   container: {
-    paddingHorizontal: 0,
     marginBottom: 16,
   },
-  searchResult: {
-    maxHeight: 166,
-    paddingHorizontal: 13,
-    paddingVertical: 7,
-    width: 230,
+  selector: {
+    minHeight: MIN_TOUCH_TARGET,
+    borderRadius: 15,
     borderWidth: 1,
     borderColor: semanticColors.brand.primary,
-
-    position: "absolute",
-    top: 43,
     backgroundColor: semanticColors.surface.background,
-    borderRadius: 15,
-    zIndex: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
   },
-
-  searchResultText: {
-    fontSize: 13,
-    backgroundColor: semanticColors.surface.background,
-    fontWeight: 400,
-
-    lineHeight: 15.6,
+  selectorPressed: {
+    backgroundColor: semanticColors.surface.surface,
+  },
+  selectorText: {
+    color: semanticColors.text.disabled,
+    fontSize: 16,
+    fontWeight: '400',
+    flex: 1,
+    marginRight: 8,
+  },
+  selectorTextSelected: {
     color: semanticColors.text.primary,
+    fontWeight: '500',
   },
-  popularContainer: {
-    flexDirection: "row",
-    gap: 7,
-    marginTop: 7,
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  tag: {
-    paddingVertical: 7,
-    paddingHorizontal: 16,
-    borderRadius: 20,
+  iconBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    width: 28,
+    height: 28,
     backgroundColor: semanticColors.surface.other,
-  },
-  tagText: {
-    color: semanticColors.text.inverse,
-    fontSize: 13,
-    lineHeight: 15.6,
   },
 });
 

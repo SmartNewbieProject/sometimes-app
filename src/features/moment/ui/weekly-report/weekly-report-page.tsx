@@ -8,7 +8,8 @@ import Svg, { Polygon, Line, Text as SvgText } from 'react-native-svg';
 
 import { Text } from '@/src/shared/ui';
 import { SpecialText } from '@/src/shared/ui/text/special-text';
-import colors, { semanticColors } from '@/src/shared/constants/colors';
+import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useWeeklyReportQuery, useWeeklyProgressQuery, useSyncProfileMutation } from '../../queries';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { AnalysisCard } from '../widgets/analysis-card';

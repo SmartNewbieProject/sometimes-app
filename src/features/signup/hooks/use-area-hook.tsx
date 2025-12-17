@@ -2,6 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getRegionList } from "../lib";
 import useChangePhase from "./use-change-phase";
 import { useSignupAnalytics } from "./use-signup-analytics";
@@ -28,23 +29,34 @@ function useAreaHook() {
     updateRegions([]);
   }, []);
 
-  // PASS 인증 정보 처리 (useRef로 한 번만 실행되도록 제어)
+  // 보안: AsyncStorage에서 certificationInfo를 읽어옴 (URL에서 제거)
   useEffect(() => {
-    if (params.certificationInfo && !hasProcessedPassInfo.current) {
-      hasProcessedPassInfo.current = true;
-      const certInfo = JSON.parse(params.certificationInfo as string);
-      updateForm({
-        ...userForm,
-        passVerified: true,
-        name: certInfo.name,
-        phone: certInfo.phone,
-        gender: certInfo.gender,
-        birthday: certInfo.birthday,
-        kakaoId: certInfo?.externalId,
-      });
-    }
+    const loadCertificationInfo = async () => {
+      if (hasProcessedPassInfo.current) return;
+
+      try {
+        const certInfoStr = await AsyncStorage.getItem('signup_certification_info');
+        if (certInfoStr) {
+          hasProcessedPassInfo.current = true;
+          const certInfo = JSON.parse(certInfoStr);
+          updateForm({
+            ...userForm,
+            passVerified: true,
+            name: certInfo.name,
+            phone: certInfo.phone,
+            gender: certInfo.gender,
+            birthday: certInfo.birthday,
+            kakaoId: certInfo?.externalId,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load certification info:', error);
+      }
+    };
+
+    loadCertificationInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.certificationInfo]);
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {

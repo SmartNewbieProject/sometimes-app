@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { track } from "@/src/shared/libs/amplitude-compat";
@@ -141,7 +141,11 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
         router.push({
           pathname: "/auth/signup/university",
           params: {
-            certificationInfo: JSON.stringify(result.certificationInfo),
+            certificationInfo: JSON.stringify({
+              ...result.certificationInfo,
+              loginType: "kakao",
+              kakaoCode: code,
+            }),
           },
         });
       } else {

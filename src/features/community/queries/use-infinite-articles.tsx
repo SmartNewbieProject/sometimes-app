@@ -5,6 +5,8 @@ import type { Article } from "../types";
 import { QUERY_KEYS } from "./keys";
 import { useCallback } from "react";
 
+const HOME_CODE = "__home__";
+
 type UseInfiniteArticlesProps = {
   categoryCode?: string;
   pageSize?: number;
@@ -22,7 +24,7 @@ export function prefetchArticlesFirstPage(
   categoryCode: string,
   pageSize = 10
 ) {
-  if (!categoryCode) return Promise.resolve();
+  if (!categoryCode || categoryCode === HOME_CODE) return Promise.resolve();
   return queryClient.prefetchInfiniteQuery({
     queryKey: createArticlesQueryKey(categoryCode),
     queryFn: async ({ pageParam = 1 }) => {
@@ -84,7 +86,7 @@ export const useInfiniteArticlesQuery = ({
       if (!lastPage.meta?.hasNextPage) return undefined;
       return (lastPage.meta.currentPage ?? 1) + 1;
     },
-    enabled: enabled && !!categoryCode,
+    enabled: enabled && !!categoryCode && categoryCode !== HOME_CODE,
     staleTime: 30_000,
     gcTime: 10 * 60 * 1000,
   });

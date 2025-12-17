@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, LineChart } from '@/src/shared/ui';
-import colors, { semanticColors } from '@/src/shared/constants/colors';
+import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import type { ReportHistoryItem } from '../../apis/index';
 import { convertReportsToChartData } from './growth-chart.utils';
 

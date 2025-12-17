@@ -1,6 +1,6 @@
 
 import { LinearGradient } from "expo-linear-gradient";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Pressable,
@@ -37,8 +37,8 @@ export const ToggleTab = ({
   const [isMounted, setIsMounted] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const left = useSharedValue(activeTab === "profile" ? 5 : 100);
-  const width = useSharedValue(activeTab === "profile" ? 87 : 57);
+  const left = useSharedValue(activeTab === "profile" ? 5 : 125);
+  const width = useSharedValue(activeTab === "profile" ? 110 : 75);
 
   useEffect(() => {
     setIsMounted(true);
@@ -55,18 +55,18 @@ export const ToggleTab = ({
 
     if (activeTab === "profile") {
       left.value = 5;
-      width.value = 87;
+      width.value = 110;
     } else {
-      left.value = 100;
-      width.value = 57;
+      left.value = 125;
+      width.value = 75;
     }
   }, [activeTab, isMounted, left, width]);
 
   const animatedStyle = useAnimatedStyle(() => {
     if (!isMounted) {
       return {
-        transform: [{ translateX: activeTab === "profile" ? 5 : 100 }],
-        width: activeTab === "profile" ? 87 : 57,
+        transform: [{ translateX: activeTab === "profile" ? 5 : 125 }],
+        width: activeTab === "profile" ? 110 : 75,
       };
     }
 
@@ -82,11 +82,11 @@ export const ToggleTab = ({
     }
 
     if (activeTab === "profile") {
-      left.value = withTiming(100, { duration: 300 });
-      width.value = withTiming(57, { duration: 300 });
+      left.value = withTiming(125, { duration: 300 });
+      width.value = withTiming(75, { duration: 300 });
     } else {
       left.value = withTiming(5, { duration: 300 });
-      width.value = withTiming(87, { duration: 300 });
+      width.value = withTiming(110, { duration: 300 });
     }
 
     timeoutRef.current = setTimeout(() => {
@@ -104,19 +104,29 @@ export const ToggleTab = ({
         pointerEvents="none"
       />
       <Animated.View style={[styles.toggle, animatedStyle]} />
-      <View style={styles.textContainer}>
-        {tabs.map((tab) => (
+      <View style={styles.tabWrapper}>
+        <View style={styles.profileTab}>
           <Text
             numberOfLines={1}
             style={[
               styles.text,
-              { color: activeTab === tab.id ? "#fff" : "#7A4AE2" },
+              { color: activeTab === "profile" ? "#fff" : "#7A4AE2" },
             ]}
-            key={tab.id}
           >
-            {tab.label}
+            {tabs[0].label}
           </Text>
-        ))}
+        </View>
+        <View style={styles.interestTab}>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.text,
+              { color: activeTab === "interest" ? "#fff" : "#7A4AE2" },
+            ]}
+          >
+            {tabs[1].label}
+          </Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -124,7 +134,7 @@ export const ToggleTab = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: 163,
+    width: 220,
     height: 50,
     borderRadius: 20,
     position: "relative",
@@ -151,18 +161,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 16,
   },
-  textContainer: {
+  tabWrapper: {
     flexDirection: "row",
-    paddingHorizontal: 15,
     width: "100%",
-    gap: 26,
-    justifyContent: "space-between",
+    height: "100%",
+    position: "relative",
+  },
+  profileTab: {
+    position: "absolute",
+    left: 5,
+    width: 110,
+    height: "100%",
     alignItems: "center",
+    justifyContent: "center",
+  },
+  interestTab: {
+    position: "absolute",
+    left: 125,
+    width: 75,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   text: {
     fontSize: 14,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
     lineHeight: 18,
+    textAlign: "center",
   },
 });

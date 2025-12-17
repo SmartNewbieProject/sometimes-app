@@ -1,8 +1,9 @@
 import React from "react";
-import { semanticColors } from '../../../../shared/constants/colors';
-import { View, Text, StyleSheet } from "react-native";
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
 import LockIcon from "@/assets/icons/lock-chat.svg";
+import { useRouter } from "expo-router";
 
 type ProfileImageCoverProps = {
   visible?: boolean;
@@ -15,10 +16,16 @@ export default function ProfileImageCover({
   title = "프로필 심사를 진행중이에요",
   subtitle = "현재 프로필 심사를 진행중이에요\n끝난 후 사진 수정을 진행할 수 있어요",
 }: ProfileImageCoverProps) {
+  const router = useRouter();
+
   if (!visible) return null;
 
+  const handlePress = () => {
+    router.push('/profile/photo-management');
+  };
+
   return (
-    <View pointerEvents="auto" style={styles.coverRoot}>
+    <Pressable onPress={handlePress} style={styles.coverRoot}>
       <BlurView intensity={40} style={styles.blur} />
 
       <View style={styles.dim} />
@@ -28,7 +35,7 @@ export default function ProfileImageCover({
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

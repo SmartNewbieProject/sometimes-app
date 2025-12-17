@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 const { width } = Dimensions.get('window');
 
@@ -20,7 +21,7 @@ export const envelopeStyles = StyleSheet.create({
     height: 130,
     // backgroundColor is handled by LinearGradient
     borderRadius: 16,
-    shadowColor: colors.text.primary,
+    shadowColor: semanticColors.text.primary,
     shadowOffset: {
       width: 0,
       height: 10,
@@ -48,7 +49,7 @@ export const envelopeStyles = StyleSheet.create({
   heartButton: {
     width: 48,
     height: 48,
-    backgroundColor: colors.state.attention, // #F70A8D
+    backgroundColor: semanticColors.state.attention, // #F70A8D
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
@@ -70,7 +71,7 @@ export const envelopeStyles = StyleSheet.create({
     bottom: 16,
     fontSize: 10,
     fontWeight: '600',
-    color: colors.brand.accent,
+    color: semanticColors.brand.accent,
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
@@ -78,7 +79,7 @@ export const envelopeStyles = StyleSheet.create({
   dateText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text.muted,
+    color: semanticColors.text.muted,
     marginBottom: 8,
     letterSpacing: 0.5,
   },
@@ -86,7 +87,7 @@ export const envelopeStyles = StyleSheet.create({
   titleText: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.text.primary,
+    color: semanticColors.text.primary,
     marginBottom: 8,
     textAlign: 'center',
     lineHeight: 32,
@@ -94,7 +95,7 @@ export const envelopeStyles = StyleSheet.create({
 
   subtitleText: {
     fontSize: 14,
-    color: colors.text.muted,
+    color: semanticColors.text.muted,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -103,7 +104,7 @@ export const envelopeStyles = StyleSheet.create({
   envelopeGlow: {
     position: 'absolute',
     borderRadius: 20,
-    shadowColor: colors.brand.secondary,
+    shadowColor: semanticColors.brand.secondary,
     shadowOffset: {
       width: 0,
       height: 0,
@@ -123,7 +124,7 @@ export const questionCardStyles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 56,
     marginBottom: 32,
-    shadowColor: colors.text.primary,
+    shadowColor: semanticColors.text.primary,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -132,7 +133,7 @@ export const questionCardStyles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: colors.border.smooth,
+    borderColor: semanticColors.border.smooth,
     position: 'relative',
   },
 
@@ -148,13 +149,13 @@ export const questionCardStyles = StyleSheet.create({
   questionText: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.text.primary,
+    color: semanticColors.text.primary,
     lineHeight: 30,
     marginBottom: 16,
   },
 
   highlightText: {
-    color: colors.brand.primary,
+    color: semanticColors.brand.primary,
     textDecorationLine: 'underline',
     textDecorationColor: colors.lightPurple,
     textDecorationStyle: 'solid',
@@ -171,13 +172,13 @@ export const questionCardStyles = StyleSheet.create({
     backgroundColor: colors.moreLightPurple,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.border.smooth,
+    borderColor: semanticColors.border.smooth,
   },
 
   toggleText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.text.muted,
+    color: semanticColors.text.muted,
     marginLeft: 6,
   },
 });
@@ -188,7 +189,7 @@ export const answerInputStyles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    shadowColor: colors.text.primary,
+    shadowColor: semanticColors.text.primary,
     shadowOffset: {
       width: 0,
       height: -5,
@@ -207,7 +208,7 @@ export const answerInputStyles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.default,
+    borderBottomColor: semanticColors.border.default,
     backgroundColor: colors.white,
     zIndex: 10,
   },
@@ -215,7 +216,7 @@ export const answerInputStyles = StyleSheet.create({
   headerText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.text.muted,
+    color: semanticColors.text.muted,
   },
 
   statusContainer: {
@@ -230,11 +231,11 @@ export const answerInputStyles = StyleSheet.create({
   },
 
   activeStatusText: {
-    color: colors.brand.primary,
+    color: semanticColors.brand.primary,
   },
 
   inactiveStatusText: {
-    color: colors.text.disabled,
+    color: semanticColors.text.disabled,
   },
 
   aiInspirationButton: {
@@ -250,7 +251,7 @@ export const answerInputStyles = StyleSheet.create({
   aiButtonText: {
     fontSize: 10,
     fontWeight: '700',
-    color: colors.brand.primary,
+    color: semanticColors.brand.primary,
     marginLeft: 4,
   },
 
@@ -266,7 +267,7 @@ export const answerInputStyles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '500',
-    color: colors.text.primary,
+    color: semanticColors.text.primary,
     textAlignVertical: 'top',
     lineHeight: 46, // 48보다 2 작게 조정
     paddingTop: 1, // 1px 위에서 시작
@@ -292,8 +293,8 @@ export const answerInputStyles = StyleSheet.create({
 
   optionButtonSelected: {
     backgroundColor: colors.cardPurple,
-    borderColor: colors.brand.primary,
-    shadowColor: colors.brand.primary,
+    borderColor: semanticColors.brand.primary,
+    shadowColor: semanticColors.brand.primary,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -305,7 +306,7 @@ export const answerInputStyles = StyleSheet.create({
 
   optionButtonUnselected: {
     backgroundColor: colors.white,
-    borderColor: colors.border.default,
+    borderColor: semanticColors.border.default,
   },
 
   optionRadio: {
@@ -319,12 +320,12 @@ export const answerInputStyles = StyleSheet.create({
   },
 
   optionRadioSelected: {
-    borderColor: colors.brand.primary,
-    backgroundColor: colors.brand.primary,
+    borderColor: semanticColors.brand.primary,
+    backgroundColor: semanticColors.brand.primary,
   },
 
   optionRadioUnselected: {
-    borderColor: colors.border.default,
+    borderColor: semanticColors.border.default,
   },
 
   optionText: {
@@ -335,11 +336,11 @@ export const answerInputStyles = StyleSheet.create({
   },
 
   optionTextSelected: {
-    color: colors.brand.primary,
+    color: semanticColors.brand.primary,
   },
 
   optionTextUnselected: {
-    color: colors.text.primary,
+    color: semanticColors.text.primary,
   },
 
   submitButton: {
@@ -381,7 +382,7 @@ export const sentStepStyles = StyleSheet.create({
   titleText: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.text.primary,
+    color: semanticColors.text.primary,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -393,7 +394,7 @@ export const sentStepStyles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 32,
-    shadowColor: colors.text.primary,
+    shadowColor: semanticColors.text.primary,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -413,14 +414,14 @@ export const sentStepStyles = StyleSheet.create({
   aiReplyHeaderText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.brand.primary,
+    color: semanticColors.brand.primary,
     marginLeft: 8,
   },
 
   aiReplyText: {
     fontSize: 16,
     fontWeight: '500',
-    color: colors.text.primary,
+    color: semanticColors.text.primary,
     lineHeight: 24,
     textAlign: 'center',
     fontStyle: 'italic',
@@ -441,10 +442,10 @@ export const sentStepStyles = StyleSheet.create({
   backButton: {
     paddingHorizontal: 24,
     paddingVertical: 14,
-    backgroundColor: colors.brand.primary,
+    backgroundColor: semanticColors.brand.primary,
     borderWidth: 0,
     borderRadius: 20,
-    shadowColor: colors.brand.primary,
+    shadowColor: semanticColors.brand.primary,
     shadowOffset: {
       width: 0,
       height: 4,

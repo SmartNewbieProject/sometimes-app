@@ -2,11 +2,11 @@ import {
   MobileIdentityVerification,
   usePortOneLogin,
 } from "@/src/features/pass";
-import { Button, Show, Text } from "@/src/shared/ui";
+import { Button, Show, SlideUnlock, Text, AppDownloadSection } from "@/src/shared/ui";
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import * as Localization from "expo-localization";
-import { usePathname, useRouter } from "expo-router";
+import { router, usePathname, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../auth";
@@ -33,20 +33,18 @@ export default function LoginForm() {
     mobileAuthRequest,
     handleMobileAuthComplete,
     handleMobileAuthError,
+    handleMobileAuthCancel,
   } = usePortOneLogin();
   const { authEvents, signupEvents } = useKpiAnalytics();
   const pathname = usePathname();
   const { regionCode } = Localization.getLocales()[0];
   const isUS = regionCode === "US";
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const onPressPassLogin = async () => {
     const loginStartTime = Date.now();
 
-    // KPI 이벤트: 로그인 시작
     authEvents.trackLoginStarted('pass');
-
-    // 기존 이벤트 호환성
     signupEvents.trackSignupStarted();
 
     clearError();
@@ -69,6 +67,7 @@ export default function LoginForm() {
         request={mobileAuthRequest}
         onComplete={handleMobileAuthComplete}
         onError={handleMobileAuthError}
+        onCancel={handleMobileAuthCancel}
       />
     );
   }
@@ -76,7 +75,30 @@ export default function LoginForm() {
   return (
     <View className="flex flex-col flex-1 items-center">
       {/* 대학교 로고 애니메이션 */}
-      <UniversityLogos logoSize={64} />
+      <View style={{ marginBottom: 20 }}>
+        <UniversityLogos logoSize={64} />
+      </View>
+
+      {/* 웹 전용: 앱 다운로드 섹션 */}
+      <Show when={Platform.OS === 'web'}>
+        <AppDownloadSection
+          onAppStorePress={() => {
+            if (Platform.OS === 'web') {
+              window.open('https://apps.apple.com/kr/app/%EC%8D%B8%ED%83%80%EC%9E%84-%EC%A7%80%EC%97%AD-%EB%8C%80%ED%95%99%EC%83%9D-%EC%86%8C%EA%B0%9C%ED%8C%85/id6746120889?l=en-GB', '_blank');
+            }
+          }}
+          onGooglePlayPress={() => {
+            if (Platform.OS === 'web') {
+              window.open('https://play.google.com/store/apps/details?id=com.smartnewb.sometimes&hl=ko&pli=1', '_blank');
+            }
+          }}
+        />
+      </Show>
+
+      {/* 슬라이드 잠금 해제 → 온보딩으로 이동 */}
+      <View style={{ marginBottom: 15, width: 330 }}>
+        <SlideUnlock onAction={() => router.push('/onboarding?source=login')} />
+      </View>
 
       {/* 회원가입 및 로그인 버튼 */}
       <View className="flex w-full items-center flex-col ">
@@ -87,9 +109,17 @@ export default function LoginForm() {
             onPress={onPressPassLogin}
             disabled={isLoading}
             className="py-4 rounded-full min-w-[330px] min-h-[60px]"
+            styles={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <Text className="text-text-inverse text-center text-[18px] h-[40px]">
-              {isLoading ? t("features.signup.ui.login_form.pass_loading"): t("features.signup.ui.login_form.pass_login")}
+            <Text
+              className="text-text-inverse text-center text-[18px]"
+              style={{ lineHeight: 40 }}
+            >
+              {isLoading ? t("features.signup.ui.login_form.pass_loading") : t("features.signup.ui.login_form.pass_login")}
             </Text>
           </Button>
         </View>
@@ -199,11 +229,14 @@ function KakaoLoginComponent() {
         router.push({
           pathname: "/auth/signup/university",
           params: {
-            certificationInfo: JSON.stringify(loginResult.certificationInfo),
+            certificationInfo: JSON.stringify({
+              ...loginResult.certificationInfo,
+              loginType: "kakao_native",
+              kakaoAccessToken: result.accessToken,
+            }),
           },
         });
       } else {
-        // 기존 사용자 - 로그인 성공
         const loginDuration = Date.now() - loginStartTime;
         authEvents.trackLoginCompleted('kakao', loginDuration);
 
@@ -211,17 +244,13 @@ function KakaoLoginComponent() {
       }
     } catch (error) {
       console.error("카카오 네이티브 로그인 실패:", error);
-
-      // KPI 이벤트: 로그인 실패
       authEvents.trackLoginFailed('kakao', 'authentication_error');
-
-      // 에러 모달 표시
       showModal({
         title: t("features.signup.ui.login_form.login_failed_title"),
         children: t("features.signup.ui.login_form.login_failed_message"),
         primaryButton: {
           text: t("features.signup.ui.login_form.confirm_button"),
-          onClick: () => {},
+          onClick: () => { },
         },
       });
 
@@ -254,16 +283,11 @@ function KakaoLoginComponent() {
   };
 
   const handleKakaoLogin = () => {
-    // KPI 이벤트: 카카오 로그인 시작
     authEvents.trackLoginStarted('kakao');
-
-    // 기존 이벤트 호환성
     signupEvents.trackSignupStarted();
-
     if (Platform.OS === "web") {
       handleWebKakaoLogin();
     } else {
-      // 네이티브: 카카오 SDK 사용
       handleNativeKakaoLogin();
     }
   };

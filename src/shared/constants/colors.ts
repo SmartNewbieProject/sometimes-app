@@ -1,10 +1,12 @@
-// Consolidated semantic palette (aggressively merged)
-// Threshold used in clustering (ΔE76): ~12, see color-map.json for details.
-export const semanticColors = {
+// Legacy + Tailwind export map
+// Keep existing keys for backward-compatibility
+// semanticColors is inlined here to avoid circular reference issues at module load time
+
+// Semantic color tokens - inlined to prevent circular reference
+const semanticColorsInline = {
   brand: {
     primary: '#7A4AE2',
     onPrimary: '#FFFFFF',
-    // supporting brand tones
     accent: '#A892D7',
     secondary: '#9747FF',
     deep: '#49386E',
@@ -15,7 +17,6 @@ export const semanticColors = {
     secondary: '#F7F3FF',
     tertiary: '#F2EDFF',
     other: '#E1D9FF',
-    // Use opacity/alpha overlays for elevation if needed
     inverse: '#000000',
   },
   text: {
@@ -38,12 +39,10 @@ export const semanticColors = {
     attention: '#F70A8D',
   },
   overlay: {
-    scrim: '#000000', // apply with alpha externally
+    scrim: '#000000',
   },
 } as const;
 
-// Legacy + Tailwind export map
-// Keep existing keys for backward-compatibility, and expose semantic groups for Tailwind (bg-brand-primary, text-text-muted, etc.)
 const colors = {
   // legacy names
   primaryPurple: '#7A4AE2',
@@ -61,9 +60,9 @@ const colors = {
   // biome-ignore lint/complexity/useLiteralKeys: <explanation>
   ['gray-600']: '#8B94A1',
   momentBackground: '#FDFCFF',
-
-  // semantic groups (nested)
-  ...semanticColors,
+  // Spread semantic colors for backward compatibility
+  ...semanticColorsInline,
 };
 
 export default colors;
+export { semanticColorsInline as semanticColors };

@@ -1,5 +1,5 @@
 import SearchIcon from "@assets/icons/search.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import type React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import { useTranslation } from "react-i18next";

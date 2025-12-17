@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { UserProfileSkeleton } from "./user-profile-skeleton";
 import { SkeletonBlock } from "@/src/shared/skeleton/block";
 

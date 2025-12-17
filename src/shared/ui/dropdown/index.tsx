@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { ImageResource } from '../image-resource';
 import { ImageResources } from '../../libs';
-import { semanticColors } from '../../constants/colors';
+import { semanticColors } from '../../constants/semantic-colors';
 import { Text } from '../text';
 
 export type DropdownItem = {

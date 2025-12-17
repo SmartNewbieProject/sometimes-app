@@ -33,8 +33,8 @@ type PatchArticleBody = {
 
 const createImageFileObject = (imageUri: string, fileName: string) =>
   platform({
-    web: () => {
-      const blob = fileUtils.dataURLtoBlob(imageUri);
+    web: async () => {
+      const blob = await fileUtils.dataURLtoBlob(imageUri);
       return fileUtils.toFile(blob, fileName);
     },
     default: () =>
@@ -67,10 +67,13 @@ export const postArticles = async (body: PostArticleBody): Promise<Article> => {
     formData.append("type", body.type);
     formData.append("anonymous", body.anonymous.toString());
 
-    body.images.forEach((imageUri) => {
-      const file = createImageFileObject(imageUri, `article-${nanoid(6)}.png`);
+    const filePromises = body.images.map((imageUri) =>
+      createImageFileObject(imageUri, `article-${nanoid(6)}.png`)
+    );
+    const files = await Promise.all(filePromises);
+    for (const file of files) {
       formData.append("images", file);
-    });
+    }
 
     return axiosClient.post("/articles", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -93,15 +96,18 @@ export const patchArticle = async (
     formData.append("content", body.content);
     formData.append("title", body.title);
 
-    body.images.forEach((imageUri) => {
-      const file = createImageFileObject(imageUri, `article-${nanoid(6)}.png`);
+    const filePromises = body.images.map((imageUri) =>
+      createImageFileObject(imageUri, `article-${nanoid(6)}.png`)
+    );
+    const files = await Promise.all(filePromises);
+    for (const file of files) {
       formData.append("images", file);
-    });
+    }
 
     if (body.deleteImageIds && body.deleteImageIds.length > 0) {
-      body.deleteImageIds.forEach((imageId) => {
+      for (const imageId of body.deleteImageIds) {
         formData.append("deleteImageIds", imageId);
-      });
+      }
     }
 
     return axiosClient.patch(`/articles/${articleId}`, formData, {

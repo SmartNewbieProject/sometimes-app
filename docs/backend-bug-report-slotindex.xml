@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bug-report>
+  <metadata>
+    <title>POST /v1/profile/images - slotIndex 파라미터 무시 버그</title>
+    <severity>high</severity>
+    <reporter>Frontend Team</reporter>
+    <date>2025-01-15</date>
+    <affected-endpoint>POST /v1/profile/images</affected-endpoint>
+  </metadata>
+
+  <problem-summary>
+    프로필 이미지 업로드 시 slotIndex 파라미터가 무시되고,
+    항상 대표 이미지(slot 0)가 업데이트되는 버그가 발생합니다.
+  </problem-summary>
+
+  <reproduction-steps>
+    <step number="1">
+      사용자가 프로필 이미지 관리 페이지(/profile/photo-management)에서
+      두 번째 슬롯(slotIndex=1)의 "사진 추가하기" 버튼을 클릭
+    </step>
+    <step number="2">
+      이미지를 선택하여 업로드
+    </step>
+    <step number="3">
+      프론트엔드에서 POST /v1/profile/images 요청 전송
+      - FormData에 slotIndex=1 포함
+    </step>
+    <step number="4">
+      서버 응답에서 imageOrder=0으로 반환됨
+    </step>
+    <step number="5">
+      GET /v1/profile/images/management 호출 시
+      대표 이미지(slot 0)가 pending 상태로 변경됨
+    </step>
+  </reproduction-steps>
+
+  <frontend-request-log>
+    <log-entry>[PHOTO_MGMT] handleImageChange called: {slotIndex: 1, existingImageId: undefined}</log-entry>
+    <log-entry>[PHOTO_MGMT] Adding new photo to slotIndex: 1</log-entry>
+    <log-entry>[API] uploadProfileImage called with slotIndex: 1</log-entry>
+    <log-entry>[API] FormData slotIndex value: 1</log-entry>
+    <log-entry>[API] uploadProfileImage response: {success: true, imageOrder: 0, ...}</log-entry>
+  </frontend-request-log>
+
+  <request-example>
+    <method>POST</method>
+    <endpoint>/v1/profile/images</endpoint>
+    <content-type>multipart/form-data</content-type>
+    <form-data>
+      <field name="image">파일 데이터</field>
+      <field name="slotIndex">1</field>
+    </form-data>
+  </request-example>
+
+  <expected-behavior>
+    <description>
+      slotIndex=1로 요청 시 두 번째 슬롯에 새 이미지가 추가되어야 함
+    </description>
+    <expected-response>
+      {
+        "success": true,
+        "message": "사진이 추가되었습니다. 심사 대기 중입니다.",
+        "imageId": "new-image-id",
+        "slotIndex": 1,
+        "imageOrder": 1,
+        "reviewStatus": "pending"
+      }
+    </expected-response>
+    <expected-management-api-response>
+      GET /v1/profile/images/management 응답:
+      {
+        "images": [
+          { "id": "existing-id", "slotIndex": 0, "isMain": true, "reviewStatus": "approved" },
+          { "id": "new-image-id", "slotIndex": 1, "isMain": false, "reviewStatus": "pending" },
+          null
+        ]
+      }
+    </expected-management-api-response>
+  </expected-behavior>
+
+  <actual-behavior>
+    <description>
+      slotIndex=1로 요청해도 대표 이미지(slot 0)가 pending 상태로 변경됨
+    </description>
+    <actual-response>
+      {
+        "success": true,
+        "message": "사진이 추가되었습니다. 심사 대기 중입니다.",
+        "imageId": "new-image-id",
+        "imageOrder": 0,  // 잘못됨 - 1이어야 함
+        "reviewStatus": "pending"
+      }
+    </actual-response>
+    <actual-management-api-response>
+      GET /v1/profile/images/management 응답:
+      {
+        "images": [
+          { "id": "new-image-id", "slotIndex": 0, "isMain": true, "reviewStatus": "pending" },
+          null,
+          null
+        ]
+      }
+      // 기존 대표 이미지가 사라지고 새 이미지가 slot 0에 배치됨
+    </actual-management-api-response>
+  </actual-behavior>
+
+  <impact>
+    <user-impact>
+      사용자가 두 번째/세 번째 슬롯에 이미지를 추가하려고 해도
+      대표 이미지가 교체되어 기존 승인된 대표 이미지를 잃게 됨
+    </user-impact>
+    <business-impact>
+      - 사용자 경험 저하
+      - 의도치 않은 대표 이미지 재심사 발생
+      - 프로필 이미지 관리 기능 정상 작동 불가
+    </business-impact>
+  </impact>
+
+  <root-cause-hypothesis>
+    <hypothesis number="1">
+      POST /v1/profile/images 엔드포인트에서 slotIndex 파라미터를
+      파싱하지 않거나 무시하고 있을 가능성
+    </hypothesis>
+    <hypothesis number="2">
+      slotIndex 대신 order 필드만 처리하고 있어서
+      기본값 0이 적용될 가능성
+    </hypothesis>
+    <hypothesis number="3">
+      새 이미지 추가 시 항상 대표 이미지를 교체하는 로직이
+      의도치 않게 적용될 가능성
+    </hypothesis>
+  </root-cause-hypothesis>
+
+  <requested-fix>
+    <action number="1">
+      POST /v1/profile/images 엔드포인트에서
+      FormData의 slotIndex 파라미터를 올바르게 파싱
+    </action>
+    <action number="2">
+      전달받은 slotIndex 값에 해당하는 슬롯에 이미지 저장
+    </action>
+    <action number="3">
+      응답에 올바른 slotIndex/imageOrder 값 반환
+    </action>
+    <action number="4">
+      기존 승인된 대표 이미지가 있는 경우 보존
+    </action>
+  </requested-fix>
+
+  <verification-checklist>
+    <check>slotIndex=0 요청 시 slot 0에 이미지 추가</check>
+    <check>slotIndex=1 요청 시 slot 1에 이미지 추가</check>
+    <check>slotIndex=2 요청 시 slot 2에 이미지 추가</check>
+    <check>기존 승인된 대표 이미지가 다른 슬롯 업로드 시 유지됨</check>
+    <check>management API 응답에서 각 이미지의 slotIndex가 정확함</check>
+  </verification-checklist>
+</bug-report>

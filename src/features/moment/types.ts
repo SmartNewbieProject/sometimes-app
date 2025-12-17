@@ -279,7 +279,7 @@ export type UserTitle = z.infer<typeof UserTitle>;
 export const LatestReport = z.object({
   id: z.string(),
   userId: z.string(),
-  week: z.number(),
+  weekNumber: z.number(),  // API는 weekNumber 필드 사용
   year: z.number(),
   totalAnswers: z.number(),
   dimensionScores: z.record(z.string(), z.number()),

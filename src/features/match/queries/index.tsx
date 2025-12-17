@@ -13,6 +13,9 @@ export const useMatchPartnerQuery = (matchId?: string) => {
     enabled: !!matchId,
     queryKey: ['match-partner', matchId],
     queryFn: () => matchHistoryApis.getPartnerByMatchId(matchId!),
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: 'always',
   });
   const { showModal } = useModal();
 

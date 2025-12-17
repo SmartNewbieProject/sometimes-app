@@ -229,52 +229,24 @@ export const useReportHistoryInfiniteQuery = () =>
   useInfiniteQuery({
     queryKey: MOMENT_QUERY_KEYS.REPORT_HISTORY,
     queryFn: ({ pageParam = 1 }) => {
-      console.log(`🔄 useReportHistoryInfiniteQuery called with pageParam: ${pageParam}`);
       return apis.getReportHistory({ page: pageParam as number, limit: 20 });
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      console.log('🔍 getNextPageParam called');
-      console.log('📊 Last page reports length:', lastPage?.reports?.length || 0);
-
-      // Add null checks for safety
-      if (!lastPage || !Array.isArray(lastPage.reports)) {
-        console.log('⚠️ Last page or reports array is invalid, stopping pagination');
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
+      if (!lastPage?.pagination) {
         return undefined;
       }
 
-      const totalLoaded = allPages.reduce((acc, page) => {
-        if (page && Array.isArray(page.reports)) {
-          return acc + page.reports.length;
-        }
-        return acc;
-      }, 0);
+      const { page, totalPages } = lastPage.pagination;
+      const currentPage = (lastPageParam as number) || page;
 
-      console.log('📊 Total loaded:', totalLoaded);
-      console.log('📊 Last page reports length:', lastPage.reports.length);
-
-      // If last page had no data, stop pagination
-      if (lastPage.reports.length === 0) {
-        console.log('⚠️ Last page has no data, stopping pagination');
+      if (currentPage >= totalPages) {
         return undefined;
       }
 
-      // Continue if we got a full page (20 items) or if there's potentially more data
-      const shouldContinue = totalLoaded < (lastPage.reports.length * 2); // Simple heuristic
-      console.log('🔍 Should continue pagination:', shouldContinue);
-
-      const currentPage = (lastPageParam as number) || 1;
-      return shouldContinue ? currentPage + 1 : undefined;
+      return currentPage + 1;
     },
-    staleTime: 0, // 페이지 접근 시마다 항상 재갱신
-    onError: (error) => {
-      console.error('❌ Report History Query Error:', error);
-      console.error('Error details:', {
-        message: error.message,
-        status: error.status,
-        stack: error.stack
-      });
-    },
+    staleTime: 0,
   });
 
 // =============================================

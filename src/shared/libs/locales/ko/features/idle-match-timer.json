@@ -20,6 +20,41 @@
     "partner":{
       "button_more": "더보기"
     },
+    "pending-approval": {
+      "title": "프로필 심사 진행 중",
+      "description": "프로필 심사가 진행 중입니다. 승인 완료 후 매칭이 시작됩니다.",
+      "estimated-time": "예상 소요 시간",
+      "default-time": "2시간",
+      "info": "승인이 완료되면 알림을 보내드릴게요!",
+      "notification-info": "승인이 완료되면 등록한 SMS로 문자를 발송해드릴게요.",
+      "next-matching": "다음 매칭까지",
+      "timer-description": "승인 후 매칭이 진행됩니다",
+      "card-title-line1": "프로필 심사가",
+      "card-title-line2": "진행 중이에요",
+      "card-desc-line1": "관리자가 꼼꼼하게 확인하고 있어요.",
+      "card-desc-line2": "조금만 기다려주시면 곧 알려드릴게요!",
+      "refresh-button": "눌러서 상태 확인하기",
+      "refresh-messages": {
+        "still-reviewing": "아직 심사 중이에요! 🦊",
+        "please-wait": "조금만 더 기다려주세요 ✨",
+        "team-reviewing": "운영팀이 열심히 검토 중입니다 👀",
+        "almost-done": "거의 다 되었어요! ⏳"
+      },
+      "rejected-title": "프로필이 반려되었습니다",
+      "rejection-reason-label": "반려 사유",
+      "rejection-category": {
+        "inappropriate-image": "부적절한 프로필 이미지",
+        "false-info": "허위 정보",
+        "terms-violation": "약관 위반",
+        "other": "기타"
+      },
+      "edit-profile-button": "프로필 수정하기",
+      "rejected-info": "프로필을 수정한 후 다시 심사를 요청할 수 있습니다.",
+      "photo-rejection-title": "프로필 사진을 다시\n올려주세요",
+      "photo-rejection-line1": "심사 과정에서 프로필 사진이 가이드에 맞지 않아 승인이 어려웠어요.",
+      "photo-rejection-line2": "걱정 마세요! 바로 다시 올리면 빠르게 승인해드릴게요 ✨",
+      "view-guidelines-button": "사진 업로드 가이드라인 확인하기"
+    },
     "find-partner":{
       "button_more": "더보기"
     },

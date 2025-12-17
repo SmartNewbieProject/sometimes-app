@@ -1,116 +1,74 @@
-import SmallTitle from "@/assets/icons/small-title.svg";
-import { semanticColors } from '../../../src/shared/constants/colors';
-import { DefaultLayout } from "@/src/features/layout/ui";
-import Signup from "@/src/features/signup";
-import { environmentStrategy } from "@/src/shared/libs";
-import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
-import { IconWrapper } from "@/src/shared/ui/icons";
-import { track } from "@/src/shared/libs/amplitude-compat";
-import { Image } from "expo-image";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { useTranslation } from "react-i18next";
-const { useSignupProgress, useSignupAnalytics } = Signup;
+import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
+
+const celebrationImage = require("@assets/images/info-miho.png");
 
 export default function SignupDoneScreen() {
-  const { clear } = useSignupProgress();
-  const { t } = useTranslation();
-  const [loading, setLoading] = useState(true);
-  const { trackSignupEvent } = useSignupAnalytics("done");
-  useEffect(() => {
-    if (loading) {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    }
-  }, [loading]);
-  const onNext = () => {
-    trackSignupEvent("completion_button_click");
-    track("Signup_done", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
-    clear();
-    router.push("/auth/login");
+  const handleGoToService = () => {
+    router.replace("/onboarding?source=signup");
   };
 
   return (
-    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
-      <PalePurpleGradient />
-      <IconWrapper
-        width={128}
-        className="text-primaryPurple md:pb-[58px] py-12"
-      >
-        <SmallTitle />
-      </IconWrapper>
+    <DefaultLayout style={styles.layout}>
+      <View style={styles.content}>
+        <Image source={celebrationImage} style={styles.image} resizeMode="contain" />
 
-      <View className="flex flex-col flex-1">
-        <View style={{ position: "relative" }}>
-          <View
-            style={{
-              width: 274,
-              height: 274,
-              borderRadius: 274,
-              top: 12,
-              left: 0,
-
-              backgroundColor: semanticColors.brand.primary,
-              position: "absolute",
-            }}
-          />
-          <Image
-            source={require("@assets/images/signup-done.png")}
-            style={{ width: 298, height: 296, marginTop: 50 }}
-          />
-        </View>
-
-        <View className="flex flex-col">
-          <View className="mt-[42px]">
-            <Text size="lg" textColor="black" weight="semibold">
-              {t("apps.auth.sign_up.done.congrats")}
-            </Text>
-            <Text size="lg" textColor="black" weight="semibold">
-              {t("apps.auth.sign_up.done.signup_complete")}
-            </Text>
-          </View>
-
-          <View className="mt-2">
-            <Text size="sm" textColor="pale-purple" weight="light">
-              {t("apps.auth.sign_up.done.start_love")}
-            </Text>
-            <Text size="sm" textColor="pale-purple" weight="light">
-              {t("apps.auth.sign_up.done.find_match")}
-            </Text>
-          </View>
-        </View>
+        <Text style={styles.title}>가입 완료!</Text>
+        <Text style={styles.subtitle}>
+          썸타임에 오신 것을 환영해요{"\n"}
+          지금 바로 설레는 만남을 시작해보세요
+        </Text>
       </View>
 
-      <View className="w-full px-5 mb-[24px] md:mb-[58px]">
-        <Button
-          disabled={loading}
-          variant="primary"
-          size="md"
-          onPress={onNext}
-          className="w-full items-center "
-        >
-          {loading ? (
-            <>
-              <Text textColor={"white"} className="text-md white">
-                {t("apps.auth.sign_up.done.loading")}
-              </Text>
-              <ActivityIndicator
-                size="small"
-                color="#0000ff"
-                className="ml-6"
-              />
-            </>
-          ) : (
-            <Text textColor={"white"} className="text-md white">
-              <Text textColor={"white"} className="text-md white">
-              {t("apps.auth.sign_up.done.go_login")}
-            </Text>
-            </Text>
-          )}
-        </Button>
+      <View style={styles.buttonContainer}>
+        <TwoButtons
+          disabledNext={false}
+          onClickNext={handleGoToService}
+          content={{ next: "서비스 보러가기" }}
+          hidePrevious
+        />
       </View>
     </DefaultLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  layout: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  image: {
+    width: 180,
+    height: 180,
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 28,
+    fontFamily: "Pretendard-Bold",
+    color: colors.black,
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 16,
+    fontFamily: "Pretendard-Regular",
+    color: colors.gray,
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    backgroundColor: semanticColors.surface.background,
+  },
+});

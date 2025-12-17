@@ -52,6 +52,12 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   AUTH_LOGIN_FAILED: 'Auth_Login_Failed',
   AUTH_LOGOUT: 'Auth_Logout',
 
+  // 회원 관리 관련 (Retention/Churn)
+  ACCOUNT_DELETION_REQUESTED: 'Account_Deletion_Requested',
+  ACCOUNT_DELETION_CANCELLED: 'Account_Deletion_Cancelled',
+  ACCOUNT_DELETED: 'Account_Deleted',
+  ACCOUNT_REACTIVATED: 'Account_Reactivated',
+
   // 좋아요 관련 (Engagement/Revenue)
   LIKE_SENT: 'Like_Sent',
   LIKE_RECEIVED: 'Like_Received',
@@ -92,7 +98,6 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   // 결제 관련 (Revenue)
   PAYMENT_STORE_VIEWED: 'Payment_Store_Viewed',
   PAYMENT_ITEM_SELECTED: 'Payment_Item_Selected',
-  PAYMENT_STARTED: 'Payment_Started',
   PAYMENT_GEM_USED: 'Payment_Gem_Used',
   PAYMENT_TICKET_USED: 'Payment_Ticket_Used',
 
@@ -235,6 +240,18 @@ export interface AuthEventProperties extends BaseEventProperties {
 // 로그아웃 이벤트 속성
 export interface LogoutEventProperties extends BaseEventProperties {
   reason: LogoutReason;
+}
+
+// 회원 탈퇴 이벤트 속성
+export interface AccountDeletionEventProperties extends BaseEventProperties {
+  deletion_reason?: 'dissatisfaction' | 'goal_achieved' | 'price' | 'privacy' | 'inactivity' | 'found_match' | 'other';
+  deletion_reason_detail?: string;
+  days_since_signup?: number;
+  total_matches_count?: number;
+  has_purchased?: boolean;
+  total_spent?: number;
+  last_active_days_ago?: number;
+  user_tier?: 'new' | 'active' | 'dormant';
 }
 
 // 좋아요 이벤트 속성
@@ -451,6 +468,12 @@ export interface KpiEventTypePropertiesMap {
   Auth_Login_Failed: AuthEventProperties;
   Auth_Logout: LogoutEventProperties;
 
+  // 회원 관리 관련
+  Account_Deletion_Requested: AccountDeletionEventProperties;
+  Account_Deletion_Cancelled: AccountDeletionEventProperties;
+  Account_Deleted: AccountDeletionEventProperties;
+  Account_Reactivated: BaseEventProperties;
+
   // 좋아요 관련
   Like_Sent: LikeEventProperties;
   Like_Received: LikeEventProperties;
@@ -491,7 +514,6 @@ export interface KpiEventTypePropertiesMap {
   // 결제 관련 (추가)
   Payment_Store_Viewed: PaymentEventProperties;
   Payment_Item_Selected: PaymentEventProperties;
-  Payment_Started: PaymentEventProperties;
   Payment_Gem_Used: PaymentEventProperties;
   Payment_Ticket_Used: PaymentEventProperties;
 

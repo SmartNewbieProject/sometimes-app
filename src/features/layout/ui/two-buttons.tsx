@@ -1,5 +1,5 @@
 import { cn, platform } from "@/src/shared/libs";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button } from "@shared/ui";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,7 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
-  onClickPrevious: () => void;
+  onClickPrevious?: () => void;
   onClickNext: () => void;
   content?: {
     prev?: string;
@@ -21,6 +21,7 @@ type Props = {
   };
   disabledNext: boolean;
   style?: StyleProp<ViewStyle>;
+  hidePrevious?: boolean;
 };
 
 export const TwoButtons = ({
@@ -29,6 +30,7 @@ export const TwoButtons = ({
   content,
   style,
   disabledNext,
+  hidePrevious = false,
 }: Props) => {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
@@ -36,16 +38,18 @@ export const TwoButtons = ({
     <View
       style={[styles.container, style, { paddingBottom: insets.bottom + 16 }]}
     >
+      {!hidePrevious && (
+        <Button
+          variant="secondary"
+          className="flex-[0.3]"
+          styles={styles.rightButton}
+          onPress={onClickPrevious!}
+        >
+          <Text style={styles.rightButtonText}> {content?.prev || t("global.back")}</Text>
+        </Button>
+      )}
       <Button
-        variant="secondary"
-        className="flex-[0.3]"
-        styles={styles.rightButton}
-        onPress={onClickPrevious}
-      >
-        <Text style={styles.rightButtonText}> {content?.prev || t("global.back")}</Text>
-      </Button>
-      <Button
-        className="flex-[0.7]"
+        className={hidePrevious ? "flex-1" : "flex-[0.7]"}
         onPress={onClickNext}
         styles={styles.leftButton}
         disabled={disabledNext}
@@ -75,5 +79,6 @@ const styles = StyleSheet.create({
   },
   leftButtonText: {
     fontSize: 20,
+    color: semanticColors.text.inverse,
   },
 });

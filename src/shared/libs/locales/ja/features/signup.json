@@ -74,6 +74,8 @@
     "university_search_placeholder": "大学を検索",
     "department_search_loading": "学科を検索中です…",
     "department_search_placeholder": "学科を入力してください",
+    "department_search_title": "学科を選択",
+    "department_search_empty": "検索結果がありません",
     "grade_select_placeholder": "学年を選択",
     "grade_1": "1年生",
     "grade_2": "2年生",

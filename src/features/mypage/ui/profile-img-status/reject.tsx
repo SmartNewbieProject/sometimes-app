@@ -1,5 +1,10 @@
+// DEPRECATED: 사진 거절 페이지가 사진관리 페이지로 통합됨
+// 이 파일은 더 이상 사용되지 않습니다. (2025-12-14)
+// 거절된 사진은 이제 app/profile/photo-management.tsx에서 확인할 수 있습니다.
+
+/*
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
@@ -41,11 +46,11 @@ export default function ProfileImgEditRejectScreen() {
         contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top }}
       >
         <View className="flex-1 items-center px-6 pb-12">
-          {/* SOMETIME 로고 */}
+          {/* SOMETIME 로고 *\/}
           <View className="mt-[10px] mb-[28px]">
             <SmallTitleIcon width={160} height={40} />
           </View>
-          {/* 메인 이미지 */}
+          {/* 메인 이미지 *\/}
           <View className="items-center  relative ">
             <View style={{ position: "absolute", left: 0 }}>
               <View
@@ -96,7 +101,7 @@ export default function ProfileImgEditRejectScreen() {
             />
           </View>
 
-          {/* 제목 */}
+          {/* 제목 *\/}
           <View className="w-full mb-4">
             <Text
               size="lg"
@@ -108,7 +113,7 @@ export default function ProfileImgEditRejectScreen() {
             </Text>
           </View>
 
-          {/* 설명 */}
+          {/* 설명 *\/}
           <View className="w-full mb-8">
             <Text
               size="md"
@@ -121,7 +126,7 @@ export default function ProfileImgEditRejectScreen() {
             </Text>
           </View>
 
-          {/* 거절 사유 카드 */}
+          {/* 거절 사유 카드 *\/}
           <View className="w-full mb-8">
             <View className="bg-purple-50 border border-purple-200 rounded-xl p-4">
               <View className="flex-row items-center">
@@ -147,7 +152,7 @@ export default function ProfileImgEditRejectScreen() {
             </View>
           </View>
 
-          {/* 안내 텍스트 */}
+          {/* 안내 텍스트 *\/}
           <Text
             size="sm"
             textColor="gray"
@@ -159,7 +164,7 @@ export default function ProfileImgEditRejectScreen() {
         </View>
       </ScrollView>
 
-      {/* 하단 버튼들 */}
+      {/* 하단 버튼들 *\/}
       <View className="w-full px-6 pb-8 gap-1 space-y-3">
         <Button
           variant="primary"
@@ -200,4 +205,9 @@ export default function ProfileImgEditRejectScreen() {
       </View>
     </DefaultLayout>
   );
+}
+*/
+
+export default function DeprecatedProfileImgEditRejectScreen() {
+  return null;
 }

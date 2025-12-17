@@ -4,6 +4,7 @@ import { Check, Sparkles, Loader2 } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Text, Button } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { answerInputStyles } from './envelope.styles';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -60,7 +61,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
       <TextInput
         style={answerInputStyles.textInput}
         placeholder={t('features.moment.question_detail.answer_input.placeholder')}
-        placeholderTextColor={colors.text.disabled}
+        placeholderTextColor={semanticColors.text.disabled}
         value={textAnswer}
         onChangeText={(text) => {
           const lineCount = text.split('\n').length;
@@ -153,9 +154,9 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
                 }}
               >
                 {isAiLoading ? (
-                  <Loader2 size={12} color={colors.brand.primary} />
+                  <Loader2 size={12} color={semanticColors.brand.primary} />
                 ) : (
-                  <Sparkles size={12} color={colors.brand.primary} />
+                  <Sparkles size={12} color={semanticColors.brand.primary} />
                 )}
                 <Text size="xs" weight="bold" textColor="purple" style={{ marginLeft: 4 }}>
                   AI 영감
@@ -192,7 +193,7 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
           width="full"
           textColor={isValid && !isSending ? "white" : "gray"}
           styles={{
-            backgroundColor: isValid && !isSending ? colors.brand.primary : colors.cardPurple,
+            backgroundColor: isValid && !isSending ? semanticColors.brand.primary : colors.cardPurple,
             shadowColor: isValid && !isSending ? colors.lightPurple : 'transparent',
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: isValid && !isSending ? 0.5 : 0,

@@ -1,5 +1,5 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import XIcon from "@assets/icons/white-x-icon.svg";
 import { Image } from "expo-image";
 import React, { useEffect, useRef, useState } from "react";

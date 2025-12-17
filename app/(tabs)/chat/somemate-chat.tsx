@@ -1,9 +1,20 @@
 import { Image } from "expo-image";
-import { semanticColors } from '../../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { router, useLocalSearchParams } from "expo-router";
 import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+
+const useKeyboardHeight = () => {
+  const fallbackHeight = useSharedValue(0);
+  if (Platform.OS === 'web') {
+    return { height: fallbackHeight };
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { useAnimatedKeyboard } = require('react-native-reanimated');
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useAnimatedKeyboard();
+};
 import { useTranslation } from "react-i18next";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
@@ -56,13 +67,13 @@ export default function SomemateChatScreen() {
     return isStreaming ? [...allMessages, ...localMessages] : allMessages;
   }, [isStreaming, allMessages, localMessages]);
 
-  const keyboard = useAnimatedKeyboard();
+  const keyboard = useKeyboardHeight();
 
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
         translateY:
-          Platform.OS === "android"
+          Platform.OS === "android" || Platform.OS === "web"
             ? 0
             : -keyboard.height.value + insets.bottom,
       },

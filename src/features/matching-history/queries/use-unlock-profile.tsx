@@ -23,15 +23,21 @@ export const useUnlockProfile = (matchId: string) => {
 
       router.push(`/partner/view/${matchId}`);
     },
-    onError: (err: { error: string; status: number }) => {
-      console.log("err", err.error);
-      if (err.error === t('features.matching-history.ui.messages.error_insufficient_gems') || err.status === 400) {
+    onError: (err: { message?: string; errorCode?: string; status?: number }) => {
+      console.log("err", err);
+
+      const isInsufficientGems = err.message?.includes("재화가 부족") ||
+                                 err.message?.includes("구슬이 부족") ||
+                                 err.message?.includes("insufficient");
+
+      if (isInsufficientGems) {
         show({
-          textContent: t('features.matching-history.ui.messages.modal_recharge_prompt'),
+          textContent: t('features.matching-history.ui.matching_history_card.messages.modal_recharge_prompt'),
         });
         return;
       }
-      showErrorModal(err.error, "error");
+
+      showErrorModal(err.message || "오류가 발생했어요", "error");
       return;
     },
   });

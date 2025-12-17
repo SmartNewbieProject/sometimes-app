@@ -1,5 +1,5 @@
 import Layout from "@/src/features/layout";
-import { semanticColors } from '../../src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import { ChipSelector, StepIndicator } from "@/src/widgets";

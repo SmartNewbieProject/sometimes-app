@@ -1,5 +1,5 @@
 import { useModal } from "@hooks/use-modal";
-import { semanticColors } from '../constants/colors';
+import { semanticColors } from '../constants/semantic-colors';
 import {StyleSheet, View} from "react-native";
 import {router} from "expo-router";
 import {Text} from "@ui/text";
@@ -17,6 +17,7 @@ export const useCashableModal = () => {
   const show = ({ title, textContent }: CashableModalProps) => {
     return showModal({
       showLogo: true,
+      showParticle: true,
       customTitle: (
           <View style={styles.title}>
             <Text size="20" weight="bold" textColor="black">

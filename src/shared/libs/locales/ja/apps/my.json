@@ -1,7 +1,7 @@
 {
   "withdrawal": {
     "reason_partner": "恋人ができたから",
-    "reason_matching": "タイプの人とマッチングしないから",
+    "reason_poor_matching": "タイプの人とマッチングしないから",
     "reason_privacy": "個人情報の保護に不安がある",
     "reason_safety": "安全性に問題がある",
     "reason_technical": "技術的な問題がある",

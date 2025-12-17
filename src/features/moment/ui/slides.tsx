@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { semanticColors } from '@/src/shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import { View, StyleSheet, Dimensions, Animated, PanResponder, Pressable, Text, Linking } from "react-native";
 import { Image } from "expo-image";

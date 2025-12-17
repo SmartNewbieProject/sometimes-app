@@ -1,5 +1,5 @@
 import { useMatchingFilters } from "@/src/features/mypage/hooks/use-matching-filter";
-import { semanticColors } from '../../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from "@/src/shared/ui";
 import { StyleSheet, View } from "react-native";
 import MatchingCard from "./matching-card";

@@ -1,4 +1,4 @@
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import {
   IdentityVerification,
   type PortOneController,
@@ -87,7 +87,10 @@ export const MobileIdentityVerification: React.FC<
       >
         <View style={modalStyles.header}>
           <TouchableOpacity
-            onPress={router.back}
+            onPress={() => {
+              onCancel?.();
+              router.back();
+            }}
             style={modalStyles.backButton}
           >
             <Feather name="chevron-left" size={24} color="#000" />

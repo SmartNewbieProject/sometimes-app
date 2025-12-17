@@ -79,8 +79,8 @@ const deleteProfileImage = async (imageId: string): Promise<void> => {
 
 const createProfileFileObject = (imageUri: string, fileName: string) =>
   platform({
-    web: () => {
-      const blob = fileUtils.dataURLtoBlob(imageUri);
+    web: async () => {
+      const blob = await fileUtils.dataURLtoBlob(imageUri);
       return fileUtils.toFile(blob, fileName);
     },
     default: () =>
@@ -93,15 +93,15 @@ const createProfileFileObject = (imageUri: string, fileName: string) =>
 
 const uploadProfileImage = async (
   image: string,
-  isMain: number
+  order: number
 ): Promise<void> => {
   const formData = new FormData();
-  const file = createProfileFileObject(image, `profile-${nanoid(6)}.png`);
+  const file = await createProfileFileObject(image, `profile-${nanoid(6)}.png`);
 
-  formData.append("files", file);
-  formData.append("isMain", String(isMain));
+  formData.append("image", file);
+  formData.append("order", order.toString());
 
-  await axiosClient.post("/profile/images", formData, {
+  await axiosClient.post("/v1/profile/images", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
@@ -109,15 +109,15 @@ const uploadProfileImage = async (
 const uploadProfileImages = async (images: string[]): Promise<void> => {
   const formData = new FormData();
 
-  images
+  const filePromises = images
     .filter((image): image is string => !!image)
-    .forEach((imageUri) => {
-      const file = createProfileFileObject(
-        imageUri,
-        `profile-${nanoid(6)}.png`
-      );
-      formData.append("files", file);
-    });
+    .map((imageUri) =>
+      createProfileFileObject(imageUri, `profile-${nanoid(6)}.png`)
+    );
+  const files = await Promise.all(filePromises);
+  for (const file of files) {
+    formData.append("files", file);
+  }
 
   formData.append("isMain", "0");
 
@@ -237,7 +237,7 @@ type Service = {
   getMbti: () => Promise<Mbti>;
   updateMbti: (mbti: string) => Promise<void>;
   deleteProfileImage: (imageId: string) => Promise<void>;
-  uploadProfileImage: (image: string, isMain: number) => Promise<void>;
+  uploadProfileImage: (image: string, order: number) => Promise<void>;
   uploadProfileImages: (images: string[]) => Promise<void>;
   getCurrentMatchingFilters: () => Promise<MatchingFilters>;
   updateAvoidUniversityFilter: (flag: boolean) => Promise<void>;

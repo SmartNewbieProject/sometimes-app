@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<backend_request>
+  <metadata>
+    <title>프로필 이미지 슬롯 기반 API 개선 요청</title>
+    <priority>HIGH</priority>
+    <requested_by>Frontend Team</requested_by>
+    <created_at>2025-01-15</created_at>
+  </metadata>
+
+  <problem_summary>
+    <description>
+      현재 프로필 이미지 관리 API에서 order 값 기반 로직으로 인해
+      프론트엔드 UI 슬롯과 백엔드 데이터 간 불일치가 발생합니다.
+      사용자가 특정 슬롯에 사진을 추가/교체할 때 예상치 못한 동작이 발생합니다.
+    </description>
+
+    <issues>
+      <issue id="1">
+        <title>사진 추가 시 기존 대표사진 덮어쓰기</title>
+        <scenario>
+          1. 사용자가 슬롯 0(대표)에 승인된 사진 보유 (order=0 또는 order=1)
+          2. 사용자가 슬롯 1에 새 사진 추가 시도
+          3. POST /v1/profile/images에 order=1 전송
+          4. 기존 order=1 사진이 있으면 덮어씌워짐
+        </scenario>
+        <expected>슬롯 1에 새 사진이 추가되고, 기존 대표사진은 유지</expected>
+        <actual>기존 사진이 삭제되고 새 사진으로 대체됨</actual>
+      </issue>
+
+      <issue id="2">
+        <title>사진 교체 후 UI 슬롯 불일치</title>
+        <scenario>
+          1. 사용자가 슬롯 1의 승인된 사진 교체 시도
+          2. PUT /v1/profile/images/{id}/replace 호출
+          3. 새 사진이 다른 order 값(예: order=3)으로 생성됨
+          4. 프론트엔드에서 order 기준 정렬 시 슬롯 2에 표시됨
+        </scenario>
+        <expected>교체된 사진이 동일한 슬롯(슬롯 1)에 표시</expected>
+        <actual>교체된 사진이 다른 슬롯에 표시됨</actual>
+      </issue>
+
+      <issue id="3">
+        <title>order 값의 일관성 부재</title>
+        <description>
+          - order=0이 대표사진을 의미하는지 불명확
+          - 사진 교체/재업로드 시 order 값이 변경됨
+          - 프론트엔드 슬롯 인덱스와 order 값의 관계가 불분명
+        </description>
+      </issue>
+    </issues>
+  </problem_summary>
+
+  <current_api_spec>
+    <endpoint method="POST" path="/v1/profile/images">
+      <description>새 프로필 이미지 업로드</description>
+      <parameters>
+        <param name="image" type="File" required="true">이미지 파일</param>
+        <param name="order" type="number" required="true">이미지 순서 (현재 문제의 원인)</param>
+      </parameters>
+      <problem>
+        order 값이 기존 사진의 order와 충돌하면 기존 사진이 덮어씌워짐.
+        대표사진 보호 로직이 없음.
+      </problem>
+    </endpoint>
+
+    <endpoint method="PUT" path="/v1/profile/images/{imageId}/replace">
+      <description>승인된 이미지 교체</description>
+      <parameters>
+        <param name="image" type="File" required="true">새 이미지 파일</param>
+      </parameters>
+      <problem>
+        교체된 사진이 원본과 다른 order 값을 가지게 되어 UI 슬롯 불일치 발생.
+        replacingImageId로 연결은 되지만 order가 달라서 정렬 시 문제.
+      </problem>
+    </endpoint>
+
+    <endpoint method="PUT" path="/v1/profile/images/{imageId}/reupload">
+      <description>거절된 이미지 재업로드</description>
+      <parameters>
+        <param name="image" type="File" required="true">새 이미지 파일</param>
+      </parameters>
+    </endpoint>
+  </current_api_spec>
+
+  <proposed_solution>
+    <concept>
+      <title>슬롯 인덱스(slotIndex) 기반 API 개선</title>
+      <description>
+        order 값 대신 명시적인 slotIndex(0, 1, 2)를 사용하여
+        프론트엔드 UI 슬롯과 백엔드 데이터의 일관성을 보장합니다.
+      </description>
+
+      <slot_definition>
+        <slot index="0" description="대표 사진 (Main Photo)" is_main="true" />
+        <slot index="1" description="서브 사진 1" is_main="false" />
+        <slot index="2" description="서브 사진 2" is_main="false" />
+      </slot_definition>
+    </concept>
+
+    <api_changes>
+      <endpoint method="POST" path="/v1/profile/images">
+        <change type="parameter_add">
+          <param name="slotIndex" type="number" required="true">
+            <description>이미지가 표시될 슬롯 인덱스 (0, 1, 2)</description>
+            <validation>0 &lt;= slotIndex &lt;= 2</validation>
+          </param>
+        </change>
+
+        <change type="parameter_deprecate">
+          <param name="order">slotIndex로 대체 (하위 호환성을 위해 당분간 유지 가능)</param>
+        </change>
+
+        <new_behavior>
+          <rule id="1">
+            slotIndex=0 (대표사진 슬롯)에 승인된 사진이 있으면:
+            - 새 사진 추가 거부 (에러 반환)
+            - 또는 교체 API(/replace)를 사용하도록 안내
+          </rule>
+          <rule id="2">
+            해당 slotIndex에 이미 사진이 있으면:
+            - 심사중(pending) 사진: 새 사진으로 교체
+            - 승인된(approved) 사진: 에러 반환 (교체 API 사용 안내)
+            - 거절된(rejected) 사진: 새 사진으로 교체
+          </rule>
+          <rule id="3">
+            새 사진의 order 값은 slotIndex와 동일하게 설정
+          </rule>
+        </new_behavior>
+      </endpoint>
+
+      <endpoint method="PUT" path="/v1/profile/images/{imageId}/replace">
+        <change type="behavior">
+          <description>교체된 새 사진이 원본 사진의 order(slotIndex)를 유지</description>
+        </change>
+
+        <new_behavior>
+          <rule id="1">
+            새로 생성되는 이미지의 order = 원본 이미지의 order
+          </rule>
+          <rule id="2">
+            replacingImageId 설정 유지 (심사 중 원본 표시용)
+          </rule>
+          <rule id="3">
+            새 이미지의 slotIndex = 원본 이미지의 slotIndex
+          </rule>
+        </new_behavior>
+      </endpoint>
+
+      <endpoint method="PUT" path="/v1/profile/images/{imageId}/reupload">
+        <change type="behavior">
+          <description>재업로드된 사진이 원본과 동일한 slotIndex 유지</description>
+        </change>
+      </endpoint>
+    </api_changes>
+
+    <data_model_changes>
+      <entity name="ProfileImage">
+        <field name="slotIndex" type="number" nullable="false">
+          <description>UI 슬롯 인덱스 (0=대표, 1=서브1, 2=서브2)</description>
+          <constraint>UNIQUE per user (한 사용자당 같은 slotIndex는 하나만)</constraint>
+        </field>
+        <field name="order" type="number" nullable="true">
+          <description>기존 필드 - slotIndex와 동일 값으로 동기화</description>
+          <note>하위 호환성을 위해 유지, 추후 deprecated</note>
+        </field>
+      </entity>
+    </data_model_changes>
+
+    <response_changes>
+      <endpoint path="/v1/profile/images">
+        <add_field name="slotIndex" type="number">할당된 슬롯 인덱스</add_field>
+      </endpoint>
+
+      <endpoint path="GET /v1/profile/me (profileImages)">
+        <add_field name="slotIndex" type="number">각 이미지의 슬롯 인덱스</add_field>
+        <note>
+          프론트엔드에서 slotIndex로 정렬하여 UI 슬롯에 매핑.
+          slotIndex=0 → 대표사진 슬롯, slotIndex=1 → 서브1, slotIndex=2 → 서브2
+        </note>
+      </endpoint>
+    </response_changes>
+  </proposed_solution>
+
+  <business_rules>
+    <rule id="BR-001" priority="CRITICAL">
+      <title>대표사진 보호</title>
+      <description>
+        슬롯 0에 승인된(approved) 대표사진이 있는 경우:
+        - 새 사진 추가(POST)로 덮어쓰기 불가
+        - 반드시 교체 API(PUT /replace)를 사용해야 함
+        - 교체 시에도 최소 1장의 승인된 사진 유지 필요
+      </description>
+    </rule>
+
+    <rule id="BR-002" priority="HIGH">
+      <title>슬롯 인덱스 일관성</title>
+      <description>
+        사진의 slotIndex는 생성 시 결정되며, 교체/재업로드 시에도 유지됨.
+        프론트엔드 UI 슬롯과 항상 1:1 대응.
+      </description>
+    </rule>
+
+    <rule id="BR-003" priority="HIGH">
+      <title>심사 중 사진 처리</title>
+      <description>
+        심사 중(pending) 사진은 동일 슬롯에 새 사진 업로드 시 자동 교체됨.
+        사용자가 심사 완료 전에 마음이 바뀌어 다시 업로드하는 경우 대응.
+      </description>
+    </rule>
+  </business_rules>
+
+  <migration_plan>
+    <phase number="1" title="데이터 마이그레이션">
+      <task>기존 ProfileImage에 slotIndex 필드 추가</task>
+      <task>기존 데이터의 slotIndex 값 계산 (isMain=true → 0, 나머지는 order 기반)</task>
+      <task>slotIndex 중복 제거 (동일 user_id 내에서)</task>
+    </phase>
+
+    <phase number="2" title="API 업데이트">
+      <task>POST /v1/profile/images에 slotIndex 파라미터 추가</task>
+      <task>order 파라미터는 하위 호환성을 위해 유지 (slotIndex 없으면 order 사용)</task>
+      <task>/replace, /reupload API에서 원본 slotIndex 유지 로직 추가</task>
+    </phase>
+
+    <phase number="3" title="프론트엔드 업데이트">
+      <task>order 대신 slotIndex 사용하도록 변경</task>
+      <task>정렬 로직 slotIndex 기준으로 변경</task>
+    </phase>
+  </migration_plan>
+
+  <error_codes>
+    <error code="SLOT_OCCUPIED_APPROVED">
+      <message>해당 슬롯에 이미 승인된 사진이 있습니다. 교체 API를 사용하세요.</message>
+      <http_status>409</http_status>
+    </error>
+    <error code="MAIN_PHOTO_PROTECTED">
+      <message>대표 사진은 직접 삭제할 수 없습니다. 다른 사진을 대표로 설정 후 삭제하세요.</message>
+      <http_status>403</http_status>
+    </error>
+    <error code="INVALID_SLOT_INDEX">
+      <message>유효하지 않은 슬롯 인덱스입니다. (0, 1, 2만 허용)</message>
+      <http_status>400</http_status>
+    </error>
+  </error_codes>
+
+  <frontend_expected_changes>
+    <change>
+      <file>src/features/profile/apis/photo-management.ts</file>
+      <description>uploadProfileImage 함수에서 order 대신 slotIndex 전송</description>
+    </change>
+    <change>
+      <file>app/profile/photo-management.tsx</file>
+      <description>sortedPhotos 정렬 기준을 slotIndex로 변경</description>
+    </change>
+  </frontend_expected_changes>
+
+  <acceptance_criteria>
+    <criterion id="AC-1">
+      슬롯 1에 새 사진 추가 시, 슬롯 0의 대표사진이 영향받지 않아야 함
+    </criterion>
+    <criterion id="AC-2">
+      슬롯 1의 사진 교체 시, 교체된 사진이 동일하게 슬롯 1에 표시되어야 함
+    </criterion>
+    <criterion id="AC-3">
+      profileImages 응답의 slotIndex로 정렬하면 UI 슬롯과 일치해야 함
+    </criterion>
+    <criterion id="AC-4">
+      승인된 대표사진이 있을 때, 새 사진 추가로 덮어쓰기 시도하면 에러 반환
+    </criterion>
+  </acceptance_criteria>
+</backend_request>

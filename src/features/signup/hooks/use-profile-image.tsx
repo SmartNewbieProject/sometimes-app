@@ -1,5 +1,5 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { guideHeight, useOverlay } from "@/src/shared/hooks/use-overlay";
 import { useKpiAnalytics } from "@/src/shared/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
- 
+
   BackHandler,
   Dimensions,
 
@@ -22,6 +22,7 @@ import {
   buildSignupForm,
 
 } from "../services/signup-validator";
+import { useToast } from "@/src/shared/hooks/use-toast";
 
 const {
   SignupSteps,
@@ -38,9 +39,9 @@ type FormState = {
 const schema = z.object({
   images: z
     .array(z.string().nullable())
-    .min(3, { message: "3장의 사진을 올려주세요" })
-    .refine((images) => images.every((img) => img !== null), {
-      message: "3장의 사진을 올려주세요",
+    .min(1, { message: "최소 1장의 사진을 올려주세요" })
+    .refine((images) => images.some((img) => img !== null), {
+      message: "최소 1장의 사진을 올려주세요",
     }),
 });
 
@@ -110,14 +111,29 @@ function useProfileImage() {
 
   };
 
-  const nextable = images.every((image) => image !== null);
+  const nextable = images.some((image) => image !== null);
+  const { emitToast } = useToast();
 
   const uploadImage = (index: number, value: string) => {
     // KPI 이벤트: 프로필 이미지 업로드
     signupEvents.trackProfileImageUploaded(index + 1);
 
     const newImages = [...images];
-    newImages[index] = value;
+
+    if (index === 1 || index === 2) {
+      if (!newImages[0]) {
+        // 대표사진이 없으면: 추가한 사진을 대표로 자동 설정
+        newImages[0] = value;
+        emitToast('대표 사진이 자동으로 설정되었습니다');
+      } else {
+        // 대표사진이 있으면: 해당 위치에만 추가
+        newImages[index] = value;
+      }
+    } else {
+      // 0번(대표) 직접 설정
+      newImages[index] = value;
+    }
+
     setImages(newImages);
     form.trigger("images");
   };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { semanticColors } from '../../constants/colors';
+import { semanticColors } from '../../constants/semantic-colors';
 import { Image as ExpoImage } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import type { ImageResourceProps } from './index';

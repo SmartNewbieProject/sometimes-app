@@ -28,14 +28,17 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useProfileReviewRedirect } from "@/src/features/mypage/hooks/use-img-edit-status";
+// REMOVED: useProfileReviewRedirect - 자동 리다이렉션 제거 (2025-12-14)
+// 사진 거절 상태는 이제 프로필 수정 → 사진관리 페이지에서 확인
+// import { useProfileReviewRedirect } from "@/src/features/mypage/hooks/use-img-edit-status";
 
 export default function MyScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { renderPromptModal } = useUniversityCertificationPrompt();
 
-  useProfileReviewRedirect();
+  // REMOVED: 마이페이지 자동 리다이렉션 제거 (2025-12-14)
+  // useProfileReviewRedirect();
 
   return (
     <Layout.Default

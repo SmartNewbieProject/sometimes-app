@@ -16,7 +16,7 @@ import React, {
   useMemo,
 } from "react";
 import { type LayoutChangeEvent, View } from "react-native";
-import { semanticColors } from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 interface Option {
   label: string;

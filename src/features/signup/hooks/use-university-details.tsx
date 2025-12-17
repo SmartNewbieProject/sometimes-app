@@ -71,11 +71,7 @@ function useUniversityDetails() {
   const nextable = validateUniversityForm();
 
   const onBackPress = (fallback: () => void) => {
-    updateForm({
-      departmentName: undefined,
-      grade: undefined,
-      studentNumber: undefined,
-    });
+    // 뒤로가기 시 입력한 데이터는 유지 (삭제하지 않음)
     fallback();
     return true;
   };

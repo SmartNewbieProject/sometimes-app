@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList } from "react-native";
 import { Text } from "@/src/shared/ui";
-import colors, { semanticColors } from "@/src/shared/constants/colors";
+import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { router } from "expo-router";
 import { useReportHistoryInfiniteQuery } from "../../queries";
 import { formatWeekDisplay } from "@/src/shared/utils/date-utils";
@@ -31,16 +32,6 @@ export const MyMomentRecordPage = () => {
       });
     }
   }, [reportLoading]);
-
-  if (reportLoading) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primaryPurple} />
-        </View>
-      </View>
-    );
-  }
 
   const renderItem = useCallback(({ item, index }: { item: ReportHistory; index: number }) => (
     <View style={styles.timelineItem}>
@@ -112,6 +103,16 @@ export const MyMomentRecordPage = () => {
       fetchNextReports();
     }
   }, [hasNextReports, fetchNextReports, trackHistoryScrollLoadMore]);
+
+  if (reportLoading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primaryPurple} />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <FlatList

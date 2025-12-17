@@ -134,6 +134,9 @@ export async function processSignup(
     trackSignupEvent,
     trackKpiEvent,
     removeLoginType,
+    updateToken,
+    clearSignupForm,
+    identifyUser,
   }: {
     router: Router;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -143,23 +146,34 @@ export async function processSignup(
     trackSignupEvent: (event: string, detail?: string) => void;
     trackKpiEvent?: (event: string, data?: any) => void;
     removeLoginType: () => Promise<void>;
+    updateToken: (accessToken: string, refreshToken: string) => Promise<void>;
+    clearSignupForm: () => void;
+    identifyUser?: (userId: string) => void;
   }
 ): Promise<void> {
-  await apis.signup(signupForm);
+  const response = await apis.signup(signupForm);
+
+  console.log("[processSignup] signup response:", JSON.stringify(response, null, 2));
 
   // 프로필 완성률 계산
-  const profileFields = ['phone', 'universityId', 'profileImages'];
+  const profileFields = ['phone', 'universityId', 'profileImages', 'name', 'birthday', 'gender', 'departmentName', 'grade', 'studentNumber', 'instagramId'];
   const completedFields = profileFields.filter(field => {
     if (field === 'profileImages') {
       return signupForm.profileImages?.some(img => img !== null) || false;
     }
-    return signupForm[field as keyof typeof signupForm] !== undefined && signupForm[field as keyof typeof signupForm] !== null;
+    return signupForm[field as keyof typeof signupForm] !== undefined && signupForm[field as keyof typeof signupForm] !== null && signupForm[field as keyof typeof signupForm] !== '';
   });
 
   const completionRate = Math.round((completedFields.length / profileFields.length) * 100);
 
-  // KPI 이벤트: 가입 완료
+  // KPI 이벤트: 프로필 완성도 업데이트 (최초 가입 시)
   if (trackKpiEvent) {
+    trackKpiEvent('Profile_Completion_Updated', {
+      profile_completion_rate: completionRate,
+      completed_fields: completedFields,
+    });
+
+    // KPI 이벤트: 가입 완료
     trackKpiEvent('Signup_Completed', {
       profile_completion_rate: completionRate,
       total_duration: Date.now() - (signupForm.signupStartTime || Date.now())
@@ -173,6 +187,19 @@ export async function processSignup(
   if (Platform.OS === "ios") await removeLoginType();
   else if (Platform.OS === "web") sessionStorage.removeItem("loginType");
 
-  router.push("/auth/signup/done");
-  return;
+  // 토큰 저장 (회원가입 API가 토큰을 반환하므로 바로 로그인 처리)
+  await updateToken(response.accessToken, response.refreshToken);
+
+  // 사용자 식별 (analytics)
+  if (identifyUser && response.id) {
+    identifyUser(response.id);
+  }
+
+  // 회원가입 폼 데이터 클리어
+  clearSignupForm();
+
+  console.log("[processSignup] signup & login completed, navigating to done page");
+
+  // 회원가입 완료 페이지로 이동
+  router.replace("/auth/signup/done");
 }

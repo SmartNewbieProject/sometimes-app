@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { semanticColors } from '../../../shared/constants/colors';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
 
 type SizeType = 'sm' | 'md';

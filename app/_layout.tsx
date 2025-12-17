@@ -3,14 +3,14 @@ import { useFonts } from "expo-font";
 import { Slot, router, useLocalSearchParams, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import { Alert, AppState, Platform, View } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
 import {
   type NotificationData,
   handleNotificationTap,
 } from "@/src/shared/libs/notifications";
-import { initializeKakaoSDK } from "@react-native-kakao/core";
+import { initializeKakaoSDK, getKeyHashAndroid } from "@react-native-kakao/core";
 import * as Notifications from "expo-notifications";
 
 import { I18nextProvider } from "react-i18next";
@@ -29,6 +29,7 @@ import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SessionTracker } from "@/src/shared/components/session-tracker";
 
 if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync()
@@ -61,6 +62,24 @@ export default function RootLayout() {
         });
         console.log('[SDK Init] Kakao SDK initialized');
 
+        // Android 키 해시 확인 (개발 모드에서만)
+        if (Platform.OS === 'android' && __DEV__) {
+          try {
+            const keyHash = await getKeyHashAndroid();
+            console.log('🔑 [Android Key Hash]', keyHash);
+            Alert.alert(
+              'Android Key Hash',
+              `키 해시를 복사하여 카카오 개발자 콘솔에 등록하세요:\n\n${keyHash}`,
+              [
+                { text: '확인', style: 'default' },
+                { text: '콘솔에서 보기', onPress: () => console.log('🔑 Key Hash:', keyHash) }
+              ]
+            );
+          } catch (error) {
+            console.error('🔑 [Android Key Hash] 확인 실패:', error);
+          }
+        }
+
         await new Promise(resolve => setTimeout(resolve, 100));
 
         const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN as string;
@@ -85,9 +104,12 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
+    "Pretendard-Light": require("../assets/fonts/Pretendard-Light.otf"),
+    "Pretendard-Regular": require("../assets/fonts/Pretendard-Regular.otf"),
+    "Pretendard-Medium": require("../assets/fonts/Pretendard-Medium.otf"),
     "Pretendard-SemiBold": require("../assets/fonts/Pretendard-SemiBold.ttf"),
-    "Pretendard-ExtraBold": require("../assets/fonts/Pretendard-ExtraBold.ttf"),
     "Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.ttf"),
+    "Pretendard-ExtraBold": require("../assets/fonts/Pretendard-ExtraBold.ttf"),
     "Pretendard-Black": require("../assets/fonts/Pretendard-Black.ttf"),
     Rubik: require("../assets/fonts/Rubik-Regular.ttf"),
     "Rubik-Medium": require("../assets/fonts/Rubik-Medium.ttf"),
@@ -253,6 +275,7 @@ export default function RootLayout() {
                           <VersionUpdateChecker />
                           <Toast />
                           <ChatActivityTracker />
+                          <SessionTracker />
                       </>
                       </RouteTracker>
                     </AnalyticsProvider>
