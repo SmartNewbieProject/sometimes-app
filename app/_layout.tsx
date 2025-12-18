@@ -2,7 +2,7 @@ import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
 import { Slot, router, useLocalSearchParams, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { usePreventScreenCapture } from "expo-screen-capture";
+import { preventScreenCaptureAsync } from "expo-screen-capture";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import "react-native-reanimated";
@@ -41,7 +41,11 @@ const MIN_SPLASH_MS = 2000;
 const START_AT = Date.now();
 
 export default function RootLayout() {
-  usePreventScreenCapture();
+  useEffect(() => {
+    if (Platform.OS !== "web") {
+      preventScreenCaptureAsync();
+    }
+  }, []);
 
   const { request: requestAtt } = useAtt();
   const notificationListener = useRef<{ remove(): void } | null>(null);
