@@ -88,3 +88,15 @@ export const getChatRoomActivitySummary = (
 	const params = needsTracking !== undefined ? { needsTracking } : {};
 	return axiosClient.get('/v1/chat/rooms/activity-summary', { params });
 };
+
+export interface ChatTip {
+	question: string;
+}
+
+export interface ChatTipsResponse {
+	tips: ChatTip[];
+}
+
+export const getChatTips = (chatRoomId: string): Promise<ChatTipsResponse> => {
+	return axiosClient.get(`/chat/rooms/${chatRoomId}/tips`);
+};
