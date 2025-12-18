@@ -6,7 +6,7 @@ import { ImageResources } from "@shared/libs";
 import { Show, Text } from "@shared/ui";
 import { ImageResource } from "@ui/image-resource";
 import type { Product } from "expo-iap";
-import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet as RNStyleSheet, TouchableOpacity, View } from "react-native";
 import { calculateDiscount, dropHundred, toKRW } from "../utils";
 import {
   containsSale,
@@ -89,10 +89,10 @@ const AppleGemStoreItem = ({
             <View
               style={{ display: "flex", flexDirection: "row", columnGap: 6 }}
             >
-              <Text className="text-[10px] text-text-disabled line-through">
+              <Text style={styles.originalPrice}>
                 {toKRW(priceAndDiscount?.price ?? 0)}원
               </Text>
-              <Text className="text-[10px]">
+              <Text style={styles.discountRate}>
                 {priceAndDiscount?.discountRate}% 할인
               </Text>
             </View>
@@ -136,3 +136,14 @@ export const AppleGemStoreWidget = {
   Provider: AppleGemStoreProvider,
   Item: AppleGemStoreItem,
 };
+
+const styles = RNStyleSheet.create({
+  originalPrice: {
+    fontSize: 10,
+    color: semanticColors.text.disabled,
+    textDecorationLine: "line-through",
+  },
+  discountRate: {
+    fontSize: 10,
+  },
+});

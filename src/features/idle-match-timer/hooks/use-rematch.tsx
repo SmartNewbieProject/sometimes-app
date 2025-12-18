@@ -16,8 +16,8 @@ const useRematchingMutation = () =>
   useMutation<RematchResponseV3>({
     mutationFn: () => axiosClient.post("/v3/matching/rematch"),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["latest-matching"] });
-      await queryClient.refetchQueries({ queryKey: ["latest-matching"] });
+      await queryClient.invalidateQueries({ queryKey: ["latest-matching-v2"] });
+      await queryClient.refetchQueries({ queryKey: ["latest-matching-v2"] });
       await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
       await queryClient.invalidateQueries({ queryKey: ["matching-first"] });
     },
@@ -27,11 +27,8 @@ const useDevRematchingMutation = () =>
   useMutation({
     mutationFn: () => axiosClient.post("/matching/dev/auto-match"),
     onSuccess: async () => {
-      // 쿼리 무효화를 확실히 처리하기 위해 await 사용
-      await queryClient.invalidateQueries({ queryKey: ["latest-matching"] });
-
-      // 추가로 쿼리를 강제로 다시 가져오기
-      await queryClient.refetchQueries({ queryKey: ["latest-matching"] });
+      await queryClient.invalidateQueries({ queryKey: ["latest-matching-v2"] });
+      await queryClient.refetchQueries({ queryKey: ["latest-matching-v2"] });
       await queryClient.invalidateQueries({ queryKey: ["gem", "current"] });
       await queryClient.invalidateQueries({ queryKey: ["matching-first"] });
     },
@@ -48,9 +45,9 @@ function useRematch() {
     await tryCatch(
       async () => {
         onLoading();
-
         await rematch();
         finishLoading();
+        finishRematching();
       },
       (err) => {
         finishLoading();
@@ -66,7 +63,7 @@ function useRematch() {
         showModal({
           title: t("features.idle-match-timer.hooks.use-rematch.no_recommend"),
           children: (
-            <View className="flex flex-col">
+            <View style={styles.modalContent}>
               <Text>{t("features.idle-match-timer.hooks.use-rematch.no_match")}</Text>
               <Text>
                 {t("features.idle-match-timer.hooks.use-rematch.retry_later")}
@@ -103,6 +100,10 @@ function useRematch() {
   };
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  modalContent: {
+    flexDirection: "column",
+  },
+});
 
 export default useRematch;

@@ -46,14 +46,14 @@ function ProfileInterest() {
             step={interestIds?.length ?? 0}
             dotGap={4}
             dotSize={16}
-            className="self-end"
+            style={styles.stepIndicator}
           />
         </View>
 
         <Divider.Horizontal />
       </View>
 
-      <View className="flex-1 w-full flex ">
+      <View style={styles.loadingContainer}>
         <Loading.Lottie title={t("features.profile-edit.ui.profile.interest.loading")} loading={isLoading}>
           <ChipSelector
             value={interestIds}
@@ -99,8 +99,14 @@ const styles = StyleSheet.create({
   },
   chipSelector: {
     marginTop: 12,
-
     justifyContent: "flex-start",
+  },
+  stepIndicator: {
+    alignSelf: 'flex-end',
+  },
+  loadingContainer: {
+    flex: 1,
+    width: '100%',
   },
 });
 

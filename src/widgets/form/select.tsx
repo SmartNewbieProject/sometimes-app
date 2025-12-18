@@ -16,7 +16,6 @@ interface FormSelectProps<T extends FieldValues>
 		Omit<SelectProps, 'status'> {
 	options: Option[];
 	placeholder?: string;
-	className?: string;
 }
 
 export function FormSelect<T extends FieldValues>({
@@ -27,7 +26,6 @@ export function FormSelect<T extends FieldValues>({
 	size,
 	isDisabled,
 	placeholder,
-	className,
 }: FormSelectProps<T>) {
 	const {
 		field: { value, onChange },
@@ -47,7 +45,6 @@ export function FormSelect<T extends FieldValues>({
 			status={error ? 'error' : 'default'}
 			isDisabled={isDisabled}
 			placeholder={placeholder}
-			className={className}
 		/>
 	);
 }

@@ -1,8 +1,9 @@
 import { UniversityName, getUnivLogo } from "@/src/shared/libs";
 import Slide from "@/src/widgets/slide";
 import { Text } from "@shared/ui";
-import { Image, Platform, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import i18n from "@/src/shared/libs/i18n";
+import colors from "@/src/shared/constants/colors";
 
 type Review = {
   name: string;
@@ -20,21 +21,18 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
   return (
     <Slide
       autoPlayInterval={6000}
-      className={"w-full"}
       autoPlay
-      indicatorContainerClassName="!-bottom-[28px] "
+      style={styles.slider}
+      indicatorContainerStyle={styles.indicatorContainer}
     >
       {reviews.map((review) => (
-        <View
-          key={review.name}
-          className="flex flex-col gap-y-2 w-full bg-moreLightPurple p-2.5 rounded-xl"
-        >
-          <View className="flex flex-row gap-x-2">
+        <View key={review.name} style={styles.reviewCard}>
+          <View style={styles.headerRow}>
             <Image
               source={{ uri: review.universityImageUrl }}
-              style={{ width: 60, height: 60 }}
+              style={styles.universityImage}
             />
-            <View className="flex flex-col self-end gap-y-1">
+            <View style={styles.userInfo}>
               <Text size="md" weight="semibold" textColor="black">
                 {review.name}
               </Text>
@@ -44,12 +42,12 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
             </View>
           </View>
 
-          <View className="mx-2 mt-2 flex flex-col ml-2">
+          <View style={styles.contentSection}>
             <Text size="sm" textColor="black">
               {review.content}
             </Text>
 
-            <Text size="sm" className="text-[#6F6F6F] mt-2 mb-3">
+            <Text size="sm" style={styles.dateText}>
               {review.date}
             </Text>
           </View>
@@ -58,6 +56,47 @@ export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
     </Slide>
   );
 };
+
+const styles = StyleSheet.create({
+  slider: {
+    width: "100%",
+  },
+  indicatorContainer: {
+    bottom: -28,
+  },
+  reviewCard: {
+    flexDirection: "column",
+    gap: 8,
+    width: "100%",
+    backgroundColor: colors.moreLightPurple,
+    padding: 10,
+    borderRadius: 12,
+  },
+  headerRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  universityImage: {
+    width: 60,
+    height: 60,
+  },
+  userInfo: {
+    flexDirection: "column",
+    alignSelf: "flex-end",
+    gap: 4,
+  },
+  contentSection: {
+    marginHorizontal: 8,
+    marginTop: 8,
+    flexDirection: "column",
+    marginLeft: 8,
+  },
+  dateText: {
+    color: "#6F6F6F",
+    marginTop: 8,
+    marginBottom: 12,
+  },
+});
 
 const reviews: Review[] = [
   {

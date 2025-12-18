@@ -1,65 +1,26 @@
-import { type VariantProps, cva } from "class-variance-authority";
 import type React from "react";
 import { isValidElement, type ReactNode } from "react";
-import { Platform, Pressable, TouchableOpacity } from "react-native";
-import type { ViewStyle } from "react-native";
-import { cn } from "../../libs/cn";
+import { Platform, Pressable, StyleSheet } from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { Text } from "../text";
 
-const buttonStyles = cva(
-  "rounded-[20] flex items-center flex flex-row gap-x-1.5 justify-center w-fit h-[50] py-2 px-6 transition-all duration-200",
-  {
-    variants: {
-      variant: {
-        primary: "bg-darkPurple hover:bg-darkPurple/80 active:bg-darkPurple/40",
-        secondary:
-          "bg-lightPurple hover:bg-darkPurple/20 active:bg-darkPurple/40",
-        outline:
-          "bg-transparent hover:bg-darkPurple/20 active:bg-darkPurple/40 border border-primaryPurple",
-        white:
-          "bg-surface-background border-primaryPurple border hover:bg-darkPurple/20 active:bg-darkPurple/40",
-      },
-      size: {
-        md: "text-md h-[50px]",
-        sm: "text-sm h-[40px]",
-        lg: "text-lg h-[60px]",
-        chip:
-          Platform.OS === "web"
-            ? "text-xs h-[28px] px-2"
-            : "text-xs h-[34px] px-2",
-      },
-      flex: {
-        "flex-1": "flex-1",
-        "flex-0": "flex-0",
-      },
+export type ButtonVariant = "primary" | "secondary" | "outline" | "white";
+export type ButtonSize = "sm" | "md" | "lg" | "chip";
+export type ButtonWidth = "full" | "fit";
+export type ButtonRounded = "full" | "md" | "lg";
 
-      width: {
-        full: "w-full",
-        fit: "w-fit",
-      },
-      rounded: {
-        full: "rounded-full",
-        md: "rounded-lg",
-        lg: "rounded-xl",
-      },
-    },
-    defaultVariants: {
-      variant: "primary",
-      size: "md",
-
-      rounded: "lg",
-    },
-  }
-);
-
-export type ButtonProps = VariantProps<typeof buttonStyles> & {
+export type ButtonProps = {
   children?: React.ReactNode;
   onPress?: () => void;
   prefix?: ReactNode;
-  className?: string;
   textColor?: "white" | "purple" | "black" | "gray" | "dark";
-  styles?: ViewStyle;
+  styles?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  width?: ButtonWidth;
+  rounded?: ButtonRounded;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -70,9 +31,9 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   prefix,
   textColor,
-  className = "",
   styles,
-  flex = undefined,
+  width,
+  rounded = "lg",
 }) => {
   const press = () => {
     if (disabled) return;
@@ -85,6 +46,7 @@ export const Button: React.FC<ButtonProps> = ({
       case "primary":
         return "white";
       case "secondary":
+        return "gray";
       case "outline":
       case "white":
         return "purple";
@@ -95,12 +57,18 @@ export const Button: React.FC<ButtonProps> = ({
 
   const isComplexChild = isValidElement(children);
 
+  const buttonStyle: StyleProp<ViewStyle> = [
+    baseStyles.button,
+    variantStyles[variant],
+    sizeStyles[size],
+    width && widthStyles[width],
+    rounded && roundedStyles[rounded],
+    disabled && baseStyles.disabled,
+    styles,
+  ];
+
   return (
-    <Pressable
-      className={cn(buttonStyles({ variant, size, flex }), className)}
-      onPress={press}
-      style={[styles, disabled && { opacity: 0.5 }]}
-    >
+    <Pressable onPress={press} style={buttonStyle}>
       {prefix}
       {isComplexChild ? (
         children
@@ -109,7 +77,8 @@ export const Button: React.FC<ButtonProps> = ({
           textColor={getTextColor()}
           size={size}
           weight="semibold"
-          className="text-center whitespace-nowrap"
+          style={baseStyles.text}
+          numberOfLines={1}
         >
           {children}
         </Text>
@@ -117,3 +86,87 @@ export const Button: React.FC<ButtonProps> = ({
     </Pressable>
   );
 };
+
+const baseStyles = StyleSheet.create({
+  button: {
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    gap: 8,
+    ...Platform.select({
+      web: {
+        display: 'flex',
+      } as any,
+    }),
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  text: {
+    textAlign: "center",
+    ...Platform.select({
+      web: {
+        whiteSpace: 'nowrap',
+      } as any,
+    }),
+  },
+});
+
+const variantStyles = StyleSheet.create({
+  primary: {
+    backgroundColor: semanticColors.brand.primary,
+  },
+  secondary: {
+    backgroundColor: semanticColors.surface.surface,
+  },
+  outline: {
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: semanticColors.brand.primary,
+  },
+  white: {
+    backgroundColor: semanticColors.surface.background,
+    borderWidth: 1,
+    borderColor: semanticColors.brand.primary,
+  },
+});
+
+const sizeStyles = StyleSheet.create({
+  sm: {
+    height: 40,
+  },
+  md: {
+    height: 50,
+  },
+  lg: {
+    height: 60,
+  },
+  chip: {
+    height: Platform.OS === "web" ? 28 : 34,
+    paddingHorizontal: 8,
+  },
+});
+
+const widthStyles = StyleSheet.create({
+  full: {
+    width: "100%",
+  },
+  fit: {
+    alignSelf: "flex-start",
+  },
+});
+
+const roundedStyles = StyleSheet.create({
+  full: {
+    borderRadius: 9999,
+  },
+  md: {
+    borderRadius: 12,
+  },
+  lg: {
+    borderRadius: 16,
+  },
+});

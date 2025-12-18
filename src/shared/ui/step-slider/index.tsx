@@ -1,11 +1,12 @@
-import { cn } from "@/src/shared/libs/cn";
 import { Text } from "@/src/shared/ui";
 import { throttle } from "lodash";
 import {
   type GestureResponderEvent,
   PanResponder,
-  type PanResponderGestureState,
   Platform,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
 } from "react-native";
 
 import React, {
@@ -17,6 +18,7 @@ import React, {
 } from "react";
 import { type LayoutChangeEvent, View } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import colors from "@/src/shared/constants/colors";
 
 interface Option {
   label: string;
@@ -36,9 +38,9 @@ interface StepSliderProps {
   firstLabelLeft?: number;
   middleLabelLeft?: number;
   onChange?: (value: number) => void;
-  className?: string;
+  style?: StyleProp<ViewStyle>;
   showSelectedValue?: boolean;
-  touchAreaHeight?: number; // 터치 영역 높이 (기본값: 44)
+  touchAreaHeight?: number;
 }
 
 export function StepSlider({
@@ -53,8 +55,8 @@ export function StepSlider({
   value: controlledValue,
   onChange,
   showMiddle = true,
-  className,
-  touchAreaHeight = 48, // 터치 영역 높이
+  style,
+  touchAreaHeight = 48,
 }: StepSliderProps) {
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [draggingValue, setDraggingValue] = useState<number | null>(
@@ -71,13 +73,13 @@ export function StepSlider({
 
   const thumbValue = draggingValue ?? value;
   const percentage = ((thumbValue - min) / (max - min)) * 100;
+
   useEffect(() => {
     if (isControlled) {
       setInternalValue(controlledValue);
     }
   }, [isControlled, controlledValue]);
 
-  // 값을 step에 맞게 정렬하는 함수
   const snapToStep = useCallback(
     (rawValue: number) => {
       const clampedValue = Math.max(min, Math.min(max, rawValue));
@@ -102,12 +104,10 @@ export function StepSlider({
     [snapToStep, isControlled, onChange]
   );
 
-  // 레이아웃 변경 시 슬라이더 위치와 크기 측정
   const handleLayout = useCallback((event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
     setSliderWidth(Platform.OS === "web" ? width - 10 : width);
 
-    // 슬라이더의 절대 위치 측정
     if (sliderRef.current) {
       sliderRef.current.measure((x, y, width, height, pageX, pageY) => {
         setSliderX(pageX);
@@ -115,14 +115,11 @@ export function StepSlider({
     }
   }, []);
 
-  // 터치 좌표에서 값을 계산하는 함수 (pageX 사용)
   const calculateValueFromTouch = useCallback(
     (pageX: number) => {
       if (!sliderWidth || !sliderX) return null;
 
-      // 슬라이더 상대 위치 계산
       const relativeX = pageX - sliderX;
-
       const clampedX = Math.max(0, Math.min(sliderWidth, relativeX));
       const percentage = clampedX / sliderWidth;
       const rawValue = min + percentage * (max - min);
@@ -132,7 +129,6 @@ export function StepSlider({
     [sliderWidth, sliderX, min, max]
   );
 
-  // 드래그 시작 핸들러 - 클릭한 위치부터 시작
   const handleDragStart = useCallback(
     (event: GestureResponderEvent) => {
       const pageX = event.nativeEvent.pageX;
@@ -141,15 +137,12 @@ export function StepSlider({
       if (newValue !== null) {
         setIsDragging(true);
         setDraggingValue(newValue);
-
-        // 즉시 값 업데이트 (클릭한 위치로 바로 이동)
         handleValueChange(newValue);
       }
     },
     [calculateValueFromTouch, handleValueChange]
   );
 
-  // 스로틀된 드래그 중 핸들러
   const throttledDragMove = useMemo(() => {
     return throttle((pageX: number) => {
       const newValue = calculateValueFromTouch(pageX);
@@ -160,7 +153,6 @@ export function StepSlider({
     }, 16);
   }, [calculateValueFromTouch]);
 
-  // 드래그 중 핸들러
   const handleDragMove = useCallback(
     (event: GestureResponderEvent) => {
       if (!isDragging) return;
@@ -171,7 +163,6 @@ export function StepSlider({
     [isDragging, throttledDragMove]
   );
 
-  // 드래그 종료 핸들러
   const handleDragEnd = useCallback(() => {
     throttledDragMove.cancel();
     if (draggingValue !== null) {
@@ -181,13 +172,19 @@ export function StepSlider({
     setDraggingValue(null);
   }, [draggingValue, handleValueChange, throttledDragMove]);
 
-  // panResponder를 메모화
   const panResponder = useMemo(() => {
     if (!sliderWidth || !sliderX) return null;
 
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        // 수평 이동이 수직 이동보다 크면 슬라이더가 제스처를 가져감
+        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+      },
+      onMoveShouldSetPanResponderCapture: (_, gestureState) => {
+        // 수평 이동이 충분히 크면 제스처를 캡처하여 부모 스크롤 방지
+        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && Math.abs(gestureState.dx) > 5;
+      },
       onPanResponderGrant: handleDragStart,
       onPanResponderMove: handleDragMove,
       onPanResponderRelease: handleDragEnd,
@@ -195,7 +192,6 @@ export function StepSlider({
     });
   }, [sliderWidth, sliderX, handleDragStart, handleDragMove, handleDragEnd]);
 
-  // 컴포넌트 언마운트 시 스로틀 정리
   useEffect(() => {
     return () => {
       throttledDragMove.cancel();
@@ -203,13 +199,10 @@ export function StepSlider({
   }, [throttledDragMove]);
 
   return (
-    <View className={cn("w-full ", className)}>
+    <View style={[styles.container, style]}>
       {/* Labels */}
       {options && sliderWidth > 0 && (
-        <View
-          pointerEvents="none"
-          className="absolute top-[-16px] left-0 w-full flex-row justify-between px-2"
-        >
+        <View pointerEvents="none" style={styles.labelsContainer}>
           {options.map((label, index) => {
             const totalSteps = options.length - 1;
             const left = (index / totalSteps) * sliderWidth;
@@ -222,7 +215,6 @@ export function StepSlider({
             ) {
               return (
                 <View
-                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                   key={index}
                   style={{
                     position: "absolute",
@@ -247,34 +239,24 @@ export function StepSlider({
       )}
 
       {/* Slider container */}
-      <View className="flex-row justify-between items-center">
+      <View style={styles.sliderContainer}>
         {/* Slider track */}
-        <View className="flex-1 mx-2 justify-center">
+        <View style={styles.trackContainer}>
           {/* 확장된 터치 영역 */}
           <View
             ref={sliderRef}
             onLayout={handleLayout}
             {...(panResponder?.panHandlers ?? {})}
-            className="w-full bg-transparent"
-            style={{
-              height: touchAreaHeight,
-              justifyContent: "center",
-              // 디버깅을 위해 배경색 추가 (나중에 제거)
-              // backgroundColor: 'rgba(255, 0, 0, 0.1)'
-            }}
+            style={[styles.touchArea, { height: touchAreaHeight }]}
           >
             {/* 실제 슬라이더 트랙 */}
-            <View
-              className="w-full h-3 bg-surface-tertiary rounded-full"
-              style={{ backgroundColor: semanticColors.surface.tertiary }}
-            >
+            <View style={styles.track}>
               {/* Active track */}
               <View
-                className="absolute z-20 top-0 left-0 h-full bg-primaryPurple rounded-full"
-                style={{
-                  width: `${percentage}%`,
-                  backgroundColor: semanticColors.brand.primary
-                }}
+                style={[
+                  styles.activeTrack,
+                  { width: `${percentage}%` },
+                ]}
               />
               {/* pointer */}
               {options ? (
@@ -284,17 +266,13 @@ export function StepSlider({
                   return (
                     <View
                       key={label.label}
-                      className="absolute z-10  w-[10px] h-[10px] bg-surface-other rounded-full -mt-2.5 items-center justify-center"
-                      style={{
-                        top: Platform.OS === "web" ? 11 : 9,
-                        left:
-                          options[0].label === label.label
-                            ? left
-                            : options.at(-1)?.label === label.label
-                            ? left
-                            : left,
-                        backgroundColor: semanticColors.surface.other
-                      }}
+                      style={[
+                        styles.stepDot,
+                        {
+                          top: Platform.OS === "web" ? 11 : 9,
+                          left: left,
+                        },
+                      ]}
                     />
                   );
                 })
@@ -303,17 +281,15 @@ export function StepSlider({
               )}
               {/* Thumb */}
               <View
-                className="absolute z-30 top-0 w-8 h-8 bg-primaryPurple rounded-full -mt-2.5 items-center justify-center"
-                style={{
-                  left: `${percentage}%`,
-                  transform: [{ translateX: -16 }],
-                  backgroundColor: semanticColors.brand.primary
-                }}
+                style={[
+                  styles.thumbContainer,
+                  {
+                    left: `${percentage}%`,
+                    transform: [{ translateX: -16 }],
+                  },
+                ]}
               >
-                <View
-                  className="w-[30px] h-[30px] rounded-full bg-primaryPurple drop-shadow-[0px,4px,8px,rgba(0,0,0,0.17)]"
-                  style={{ backgroundColor: semanticColors.brand.primary }}
-                />
+                <View style={styles.thumb} />
               </View>
             </View>
           </View>
@@ -322,3 +298,82 @@ export function StepSlider({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+  },
+  labelsContainer: {
+    position: "absolute",
+    top: -16,
+    left: 0,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 8,
+  },
+  sliderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  trackContainer: {
+    flex: 1,
+    marginHorizontal: 8,
+    justifyContent: "center",
+  },
+  touchArea: {
+    width: "100%",
+    backgroundColor: "transparent",
+    justifyContent: "center",
+  },
+  track: {
+    width: "100%",
+    height: 12,
+    backgroundColor: semanticColors.surface.tertiary,
+    borderRadius: 9999,
+  },
+  activeTrack: {
+    position: "absolute",
+    zIndex: 20,
+    top: 0,
+    left: 0,
+    height: "100%",
+    backgroundColor: semanticColors.brand.primary,
+    borderRadius: 9999,
+  },
+  stepDot: {
+    position: "absolute",
+    zIndex: 10,
+    width: 10,
+    height: 10,
+    backgroundColor: semanticColors.surface.other,
+    borderRadius: 9999,
+    marginTop: -10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  thumbContainer: {
+    position: "absolute",
+    zIndex: 30,
+    top: 0,
+    width: 32,
+    height: 32,
+    backgroundColor: semanticColors.brand.primary,
+    borderRadius: 9999,
+    marginTop: -10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  thumb: {
+    width: 30,
+    height: 30,
+    borderRadius: 9999,
+    backgroundColor: semanticColors.brand.primary,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.17,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+});

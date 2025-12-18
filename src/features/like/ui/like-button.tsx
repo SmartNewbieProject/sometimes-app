@@ -1,8 +1,9 @@
-import { ImageResources, cn } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { Button, ImageResource , Text } from "@/src/shared/ui";
-import { Text as RNText, StyleSheet, View } from "react-native";
-import type { MatchDetails } from "../../idle-match-timer/types";
+import { ImageResource, Text } from "@/src/shared/ui";
+import { Text as RNText, StyleSheet, View, StyleProp, ViewStyle, Pressable, Animated, Easing } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useRef, useState } from "react";
 
 import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
@@ -15,12 +16,12 @@ import useLike from "../hooks/use-like";
 
 type LikeButtonProps = {
   connectionId: string;
-  className?: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const LikeButton = ({
   connectionId,
-  className = "",
+  style,
 }: LikeButtonProps) => {
   const { profileDetails } = useAuth();
   const { showModal, hideModal } = useModal();
@@ -53,18 +54,18 @@ export const LikeButton = ({
           <Text textColor="black" weight="bold" size="20">
             {profileDetails?.gender === "MALE"
               ? t("features.like.ui.like_button.modal.title_line2_male", {
-                  cost: featureCosts?.LIKE_MESSAGE,
-                })
+                cost: featureCosts?.LIKE_MESSAGE,
+              })
               : t("features.like.ui.like_button.modal.title_line2_default")}
           </Text>
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[5px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.modalContent}>
+          <Text textColor="disabled" size="12">
             {t("features.like.ui.like_button.modal.body_line1")}
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text textColor="disabled" size="12">
             {t("features.like.ui.like_button.modal.body_line2")}
           </Text>
         </View>
@@ -127,41 +128,135 @@ export const LikeButton = ({
     });
   };
 
+  const translateX = useRef(new Animated.Value(-1)).current;
+  const [containerW, setContainerW] = useState(0);
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(translateX, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.delay(500),
+        Animated.timing(translateX, {
+          toValue: -1,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [translateX]);
+
+  const animatedStyle = {
+    transform: [
+      {
+        translateX: translateX.interpolate({
+          inputRange: [-1, 1],
+          outputRange: [-containerW, containerW],
+        }),
+      },
+    ],
+  };
+
   return (
-    <Button
+    <Pressable
       onPress={showPartnerLikeAnnouncement}
-      variant="primary"
-      className={cn("flex-1 items-center", className)}
-      prefix={
-        profileDetails?.gender === "MALE" ? (
-          <ImageResource resource={ImageResources.GEM} width={23} height={23} />
-        ) : (
-          <></>
-        )
-      }
+      onLayout={(e) => setContainerW(e.nativeEvent.layout.width || 0)}
+      style={[styles.gradientButtonContainer, style]}
     >
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        {profileDetails?.gender === "MALE" ? (
-          <RNText style={styles.subText}>x{featureCosts?.LIKE_MESSAGE}</RNText>
-        ) : (
-          <></>
+      <LinearGradient
+        colors={["#9B6DFF", "#7A4AE2", "#6B3FD4"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientButton}
+      >
+        {profileDetails?.gender === "MALE" && (
+          <View style={styles.gemContainer}>
+            <ImageResource resource={ImageResources.GEM} width={31} height={31} />
+            <RNText style={styles.gemCountText}>x{featureCosts?.LIKE_MESSAGE}</RNText>
+          </View>
         )}
-        <RNText className="text-md text-text-inverse whitespace-nowrap">
+        <RNText style={styles.buttonText}>
           {t("features.like.ui.like_button.button_label")}
         </RNText>
-      </View>
-    </Button>
+      </LinearGradient>
+      <Animated.View style={[styles.glowOverlay, animatedStyle]}>
+        <LinearGradient
+          colors={[
+            "transparent",
+            "rgba(255,255,255,0.05)",
+            "rgba(255,255,255,0.15)",
+            "rgba(255,255,255,0.2)",
+            "rgba(255,255,255,0.15)",
+            "rgba(255,255,255,0.05)",
+            "transparent",
+          ]}
+          locations={[0, 0.2, 0.35, 0.5, 0.65, 0.8, 1]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={StyleSheet.absoluteFill}
+        />
+      </Animated.View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  subText: {
-    fontSize: 15,
-    fontFamily: "Pretendard-Thin",
-    fontWeight: 300,
-    lineHeight: 18,
-    marginLeft: -5,
-    marginRight: 6,
-    color: semanticColors.brand.accent,
+  modalContent: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  gradientButtonContainer: {
+    width: "100%",
+    height: 56,
+    borderRadius: 16,
+    borderWidth: 3,
+    borderColor: "#6B3FD4",
+    overflow: "hidden",
+  },
+  gradientButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    gap: 12,
+  },
+  glowOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+  },
+  gemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 2,
+  },
+  gemCountText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: semanticColors.text.inverse,
+    includeFontPadding: false,
+    textAlignVertical: "center",
+    lineHeight: 31,
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: semanticColors.text.inverse,
+    includeFontPadding: false,
+    textAlignVertical: "center",
+    lineHeight: 31,
   },
 });

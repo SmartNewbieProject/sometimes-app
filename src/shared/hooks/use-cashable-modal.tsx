@@ -27,11 +27,11 @@ export const useCashableModal = () => {
       ),
       children: (
           <View style={styles.content}>
-            <Text textColor="black" weight="bold" className="text-[15px]">
+            <Text textColor="black" weight="bold" style={styles.descriptionTitle}>
               {t("shareds.hooks.use_cashable_modal.description")}
             </Text>
 
-          <Text style={styles.description} className="text-text-disabled">
+          <Text style={styles.description}>
             {textContent}
           </Text>
         </View>
@@ -53,22 +53,23 @@ export const useCashableModal = () => {
 
 const styles = StyleSheet.create({
   title: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
   },
   content: {
     marginTop: 8,
     width: '100%',
-    display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+  },
+  descriptionTitle: {
+    fontSize: 15,
   },
   description: {
     color: semanticColors.text.disabled,
     marginTop: 8,
     fontSize: 12,
-    textAlign: 'center'
+    textAlign: 'center',
   },
 });
 

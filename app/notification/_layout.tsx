@@ -1,9 +1,9 @@
 import { Stack } from "expo-router";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function NotificationLayout() {
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <Stack>
         <Stack.Screen
           name="index"
@@ -18,3 +18,9 @@ export default function NotificationLayout() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

@@ -8,6 +8,7 @@ import {
   Image,
   Linking,
   ScrollView,
+  StyleSheet,
 } from "react-native";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import VectorIcon from "@/assets/icons/Vector.svg";
@@ -23,32 +24,29 @@ export default function CommuHome() {
   const { changeCategory } = useCategory();
 
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <PalePurpleGradient />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={styles.scrollContent}
       >
-        <View className="px-4 pt-3">
+        <View style={styles.sectionHeader}>
           <TouchableOpacity
-            className="flex-row items-center"
+            style={styles.sectionTitleRow}
             onPress={() => changeCategory(NOTICE_CODE)}
             accessibilityRole="button"
           >
             <Image
               source={require("@/assets/images/loudspeaker.png")}
-              style={{ width: 26, height: 26 }}
+              style={styles.sectionIcon}
             />
-            <Text
-              className="text-[24px] font-semibold mt-2 mx-2"
-              style={{ color: semanticColors.text.primary }}
-            >
+            <Text style={styles.sectionTitle}>
               공지사항
             </Text>
-            <View className="ml-auto">
+            <View style={styles.mlAuto}>
               <IconWrapper>
-                <VectorIcon className="h-[24px] w-[9px] mx-2" color="black" />
+                <VectorIcon width={9} height={24} style={styles.arrowIcon} color="black" />
               </IconWrapper>
             </View>
           </TouchableOpacity>
@@ -60,59 +58,118 @@ export default function CommuHome() {
               "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
             )
           }
-          className="bg-surface-background rounded-[5px] mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
+          style={styles.faqButton}
           activeOpacity={0.8}
         >
           <Image
             source={require("@/assets/images/loudspeaker.png")}
-            style={{ width: 16, height: 16 }}
+            style={styles.faqIcon}
           />
-          <Text
-            className="text-[14px]"
-            style={{ color: semanticColors.text.primary }}
-          >
+          <Text style={styles.faqText}>
             [FAQ] 자주묻는 질문
           </Text>
 
-          <View className="ml-auto">
+          <View style={styles.mlAuto}>
             <IconWrapper>
-              <VectorIcon className="h-[12px] w-[9px]" color="black" />
+              <VectorIcon width={9} height={12} color="black" />
             </IconWrapper>
           </View>
         </TouchableOpacity>
 
-        <View className="mx-[16px] mb-[16px]">
+        <View style={styles.noticeContainer}>
           <NotiPreView pageSize={5} />
         </View>
 
-        <View className="px-4 py-3">
+        <View style={styles.sectionHeaderHot}>
           <TouchableOpacity
-            className="flex-row items-center"
+            style={styles.sectionTitleRow}
             onPress={() => changeCategory(HOT_CODE)}
             accessibilityRole="button"
           >
             <Image
               source={require("@/assets/images/fireIcon.png")}
-              style={{ width: 26, height: 26 }}
+              style={styles.sectionIcon}
             />
-            <Text
-              className="text-[24px] font-semibold mt-2 mx-2"
-              style={{ color: semanticColors.text.primary }}
-            >
+            <Text style={styles.sectionTitle}>
               인기
             </Text>
-            <View className="ml-auto">
+            <View style={styles.mlAuto}>
               <IconWrapper>
-                <VectorIcon className="h-[24px] w-[9px] mx-2" color="black" />
+                <VectorIcon width={9} height={24} style={styles.arrowIcon} color="black" />
               </IconWrapper>
             </View>
           </TouchableOpacity>
         </View>
 
-        <View className="mx-[2px] mb-[2px]">
+        <View style={styles.hotContainer}>
           <HotPreView pageSize={5} />
         </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  sectionHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  sectionHeaderHot: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  sectionTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  sectionIcon: {
+    width: 26,
+    height: 26,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginTop: 8,
+    marginHorizontal: 8,
+    color: semanticColors.text.primary,
+  },
+  mlAuto: {
+    marginLeft: "auto",
+  },
+  arrowIcon: {
+    marginHorizontal: 8,
+  },
+  faqButton: {
+    backgroundColor: semanticColors.surface.background,
+    borderRadius: 5,
+    marginHorizontal: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginVertical: 10,
+    gap: 8,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  faqIcon: {
+    width: 16,
+    height: 16,
+  },
+  faqText: {
+    fontSize: 14,
+    color: semanticColors.text.primary,
+  },
+  noticeContainer: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  hotContainer: {
+    marginHorizontal: 2,
+    marginBottom: 2,
+  },
+});

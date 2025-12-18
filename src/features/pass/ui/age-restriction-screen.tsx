@@ -7,7 +7,7 @@ import { Text } from "@/src/shared/ui/text";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import type React from "react";
-import { SafeAreaView, ScrollView, View } from "react-native";
+import { SafeAreaView, ScrollView, View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DefaultLayout } from "../../layout/ui";
 import i18n from '@/src/shared/libs/i18n';
@@ -37,99 +37,57 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
   };
 
   return (
-    <DefaultLayout className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
+    <DefaultLayout style={styles.layout}>
       <PalePurpleGradient />
 
       <ScrollView
-        className="flex-1"
-        contentContainerStyle={{
-          flexGrow: 1,
-          alignItems: "center",
-          width: "100%",
-          paddingTop: insets.top,
-        }}
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top }]}
         showsVerticalScrollIndicator={false}
       >
         {/* 상단 로고 */}
-        <View className="mt-[20px] mb-[38px]">
+        <View style={styles.logoContainer}>
           <SmallTitleIcon width={160} height={40} />
         </View>
 
-        <View className="flex-1 px-5 min-h-screen w-full items-center">
+        <View style={styles.mainContent}>
           {/* 상단 이미지 */}
-          <View className="items-center  relative ">
-            <View style={{ position: "absolute", top: -30, left: 0 }}>
-              <View
-                style={{
-                  width: 253,
-                  height: 253,
-                  borderRadius: 253,
-                  top: 0,
-                  left: 0,
-
-                  backgroundColor: semanticColors.brand.primary,
-                  position: "absolute",
-                }}
-              />
-              <View
-                style={{
-                  width: 193,
-                  height: 193,
-                  borderRadius: 223,
-
-                  backgroundColor: semanticColors.surface.background,
-                  top: 30,
-                  left: 30,
-                  position: "absolute",
-                }}
-              />
-              <View
-                style={{
-                  width: 30,
-                  height: 196,
-                  top: 30,
-                  left: 111.5,
-                  transform: [
-                    {
-                      rotate: "-45deg",
-                    },
-                  ],
-                  backgroundColor: semanticColors.brand.primary,
-                  position: "absolute",
-                }}
-              />
+          <View style={styles.imageSection}>
+            <View style={styles.circleContainer}>
+              <View style={styles.outerCircle} />
+              <View style={styles.innerCircle} />
+              <View style={styles.diagonalLine} />
             </View>
 
             <Image
               source={require("@assets/images/limit-age.png")}
-              style={{ width: 259, height: 259 }}
-              className="mb-6"
+              style={styles.mainImage}
             />
           </View>
 
           {/* 메인 텍스트 */}
-          <View className="mb-8">
+          <View style={styles.textSection}>
             <Text
               weight="semibold"
               size="20"
               textColor="black"
-              className="text-center mb-2"
+              style={styles.titleText}
             >
               {ageMessage.title}
             </Text>
             <Text
               size="md"
               textColor="pale-purple"
-              className="text-center leading-6 px-4"
+              style={styles.subtitleText}
             >
               {ageMessage.subtitle}
             </Text>
           </View>
 
           {/* 안내 정보 */}
-          <View className="bg-surface-background rounded-2xl p-6 mb-8 w-full  shadow-sm mx-2">
-            <View className="flex-row items-center mb-4">
-              <View className="w-6 h-6 bg-lightPurple rounded-full items-center justify-center mr-3">
+          <View style={styles.infoCard}>
+            <View style={styles.infoHeader}>
+              <View style={styles.infoIcon}>
                 <Text size="sm" textColor="purple" weight="semibold">
                   ℹ
                 </Text>
@@ -139,28 +97,28 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
               </Text>
             </View>
 
-            <View className="space-y-3">
-              <View className="flex-row items-start">
-                <Text size="sm" textColor="pale-purple" className="mr-2 mt-0.5">
+            <View style={styles.infoList}>
+              <View style={styles.infoItem}>
+                <Text size="sm" textColor="pale-purple" style={styles.bullet}>
                   •
                 </Text>
-                <Text size="sm" textColor="black" className="flex-1">
+                <Text size="sm" textColor="black" style={styles.infoText}>
                   {i18n.t('features.pass.ageRestriction.usageConditions.ageRange')}
                 </Text>
               </View>
-              <View className="flex-row items-start">
-                <Text size="sm" textColor="pale-purple" className="mr-2 mt-0.5">
+              <View style={styles.infoItem}>
+                <Text size="sm" textColor="pale-purple" style={styles.bullet}>
                   •
                 </Text>
-                <Text size="sm" textColor="black" className="flex-1">
+                <Text size="sm" textColor="black" style={styles.infoText}>
                   {i18n.t('features.pass.ageRestriction.usageConditions.education')}
                 </Text>
               </View>
-              <View className="flex-row items-start">
-                <Text size="sm" textColor="pale-purple" className="mr-2 mt-0.5">
+              <View style={styles.infoItem}>
+                <Text size="sm" textColor="pale-purple" style={styles.bullet}>
                   •
                 </Text>
-                <Text size="sm" textColor="black" className="flex-1">
+                <Text size="sm" textColor="black" style={styles.infoText}>
                   {i18n.t('features.pass.ageRestriction.usageConditions.verification')}
                 </Text>
               </View>
@@ -168,31 +126,31 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
           </View>
 
           {/* 하단 텍스트 */}
-          <View className="mb-8">
+          <View style={styles.bottomTextSection}>
             <Text
               weight="semibold"
               size="18"
               textColor="black"
-              className="text-center mb-2"
+              style={styles.bottomTitle}
             >
               {ageMessage.bottomText}
             </Text>
             <Text
               size="sm"
               textColor="pale-purple"
-              className="text-center px-4"
+              style={styles.bottomSubtitle}
             >
               {i18n.t('features.pass.ageRestriction.birthDateCheck')}
             </Text>
           </View>
 
           {/* 버튼 */}
-          <View className="mt-auto px-2 pb-4">
+          <View style={styles.buttonContainer}>
             <Button
               variant="primary"
               size="md"
               onPress={handleGoBack}
-              className="w-full"
+              width="full"
             >
               {i18n.t('features.pass.ageRestriction.findIdealTypeButton')}
             </Button>
@@ -202,3 +160,134 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
     </DefaultLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  layout: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    alignItems: "center",
+    width: "100%",
+  },
+  logoContainer: {
+    marginTop: 20,
+    marginBottom: 38,
+  },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    minHeight: "100%",
+    width: "100%",
+    alignItems: "center",
+  },
+  imageSection: {
+    alignItems: "center",
+    position: "relative",
+  },
+  circleContainer: {
+    position: "absolute",
+    top: -30,
+    left: 0,
+  },
+  outerCircle: {
+    width: 253,
+    height: 253,
+    borderRadius: 253,
+    top: 0,
+    left: 0,
+    backgroundColor: semanticColors.brand.primary,
+    position: "absolute",
+  },
+  innerCircle: {
+    width: 193,
+    height: 193,
+    borderRadius: 223,
+    backgroundColor: semanticColors.surface.background,
+    top: 30,
+    left: 30,
+    position: "absolute",
+  },
+  diagonalLine: {
+    width: 30,
+    height: 196,
+    top: 30,
+    left: 111.5,
+    transform: [{ rotate: "-45deg" }],
+    backgroundColor: semanticColors.brand.primary,
+    position: "absolute",
+  },
+  mainImage: {
+    width: 259,
+    height: 259,
+    marginBottom: 24,
+  },
+  textSection: {
+    marginBottom: 32,
+  },
+  titleText: {
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  subtitleText: {
+    textAlign: "center",
+    lineHeight: 24,
+    paddingHorizontal: 16,
+  },
+  infoCard: {
+    backgroundColor: semanticColors.surface.background,
+    borderRadius: 16,
+    padding: 24,
+    marginBottom: 32,
+    width: "100%",
+    marginHorizontal: 8,
+  },
+  infoHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  infoIcon: {
+    width: 24,
+    height: 24,
+    backgroundColor: "#E8E0F7",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  infoList: {
+    gap: 12,
+  },
+  infoItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  bullet: {
+    marginRight: 8,
+    marginTop: 2,
+  },
+  infoText: {
+    flex: 1,
+  },
+  bottomTextSection: {
+    marginBottom: 32,
+  },
+  bottomTitle: {
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  bottomSubtitle: {
+    textAlign: "center",
+    paddingHorizontal: 16,
+  },
+  buttonContainer: {
+    marginTop: "auto",
+    paddingHorizontal: 8,
+    paddingBottom: 16,
+  },
+});

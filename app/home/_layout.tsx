@@ -1,9 +1,9 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import useUserStatus from "@/src/features/auth/queries/use-user-status";
 import Loading from "@/src/features/loading";
-import { Stack, router } from "expo-router";
+import { Stack } from "expo-router";
 import { useEffect, useState, useRef } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 
 
@@ -118,7 +118,7 @@ export default function HomeLayout() {
   }
 
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <Stack>
         <Stack.Screen
           name="index"
@@ -133,3 +133,9 @@ export default function HomeLayout() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

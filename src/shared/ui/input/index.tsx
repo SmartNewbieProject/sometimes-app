@@ -1,46 +1,27 @@
-import { TextInput, type TextInputProps, View, TouchableOpacity, Platform } from 'react-native';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { TextInput, type TextInputProps, View, TouchableOpacity, Platform, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { useState } from 'react';
 import EyeOn from '@assets/icons/eye-on.svg';
 import EyeOff from '@assets/icons/eye-off.svg';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
-const input = cva(
-  'w-full bg-transparent border-b border-border-default',
-  {
-    variants: {
-      size: {
-        sm: 'h-10',
-        md: 'h-12',
-        lg: 'h-14',
-      },
-      status: {
-        default: 'border-lightPurple',
-        error: 'border-rose-400',
-        success: 'border-green-500',
-      },
-      isDisabled: {
-        true: 'opacity-50 bg-gray-100',
-      },
-    },
-    defaultVariants: {
-      size: 'md',
-      status: 'default',
-    },
-  }
-);
+type SizeType = 'sm' | 'md' | 'lg';
+type StatusType = 'default' | 'error' | 'success';
 
-export interface InputProps extends Omit<TextInputProps, 'style'>, VariantProps<typeof input> {
-  className?: string;
-  containerClassName?: string;
+export interface InputProps extends Omit<TextInputProps, 'style'> {
+  size?: SizeType;
+  status?: StatusType;
+  isDisabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
   isPassword?: boolean;
 }
 
 export function Input({
-  size,
-  status,
+  size = 'md',
+  status = 'default',
   isDisabled,
-  className,
-  containerClassName,
+  style,
+  containerStyle,
   placeholderTextColor = '#9CA3AF',
   editable = true,
   isPassword = false,
@@ -48,7 +29,6 @@ export function Input({
 }: InputProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // 플랫폼별 폰트 크기 설정 (플레이스홀더와 입력 텍스트 모두 적용)
   const getFontSize = () => {
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
       switch (size) {
@@ -58,7 +38,6 @@ export function Input({
         default: return 14;
       }
     } else {
-      // 웹에서는 기존 크기 유지
       switch (size) {
         case 'sm': return 13;
         case 'md': return 16;
@@ -68,25 +47,81 @@ export function Input({
     }
   };
 
+  const getHeightStyle = () => {
+    switch (size) {
+      case 'sm': return styles.heightSm;
+      case 'lg': return styles.heightLg;
+      default: return styles.heightMd;
+    }
+  };
+
+  const getBorderStyle = () => {
+    switch (status) {
+      case 'error': return styles.borderError;
+      case 'success': return styles.borderSuccess;
+      default: return styles.borderDefault;
+    }
+  };
+
   return (
-    <View className={containerClassName}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }} className={input({ size, status, isDisabled, className })}>
+    <View style={containerStyle}>
+      <View style={[
+        styles.container,
+        getHeightStyle(),
+        getBorderStyle(),
+        isDisabled && styles.disabled,
+        style,
+      ]}>
         <TextInput
-          className={input({ size, status, isDisabled, className })}
           placeholderTextColor={placeholderTextColor}
           editable={!isDisabled && editable}
           secureTextEntry={isPassword && !isPasswordVisible}
-          style={{ flex: 1, fontSize: getFontSize() }}
+          style={[styles.input, { fontSize: getFontSize() }]}
           autoCapitalize="none"
           autoCorrect={false}
           {...props}
         />
         {isPassword && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-            {isPasswordVisible  ? <EyeOn width={24} height={24} /> : <EyeOff width={24} height={24} />}
+            {isPasswordVisible ? <EyeOn width={24} height={24} /> : <EyeOff width={24} height={24} />}
           </TouchableOpacity>
         )}
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    backgroundColor: 'transparent',
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+  },
+  heightSm: {
+    height: 40,
+  },
+  heightMd: {
+    height: 48,
+  },
+  heightLg: {
+    height: 56,
+  },
+  borderDefault: {
+    borderBottomColor: semanticColors.border.default,
+  },
+  borderError: {
+    borderBottomColor: '#FB7185',
+  },
+  borderSuccess: {
+    borderBottomColor: '#22C55E',
+  },
+  disabled: {
+    opacity: 0.5,
+    backgroundColor: '#F3F4F6',
+  },
+});

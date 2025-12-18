@@ -96,7 +96,7 @@ export default function TattooSelectionScreen() {
         if (!form.drinking) emptyFields.push("음주");
         if (!form.smoking) emptyFields.push("흡연");
         if (!form.personality || form.personality.length === 0) emptyFields.push("성격");
-        if (!form.militaryPreference) emptyFields.push("군필 여부");
+        if (my?.gender === "FEMALE" && !form.militaryPreference) emptyFields.push("군필 여부");
 
         if (emptyFields.length > 0) {
           const message = `다음 정보를 입력해주세요: ${emptyFields.join(", ")}`;

@@ -44,7 +44,7 @@ function InterestPersonality() {
           step={personality?.length ?? 0}
           dotGap={4}
           dotSize={16}
-          className="self-end"
+          style={styles.stepIndicator}
         />
       </View>
       <View style={styles.bar} />
@@ -98,6 +98,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 0.5,
     backgroundColor: semanticColors.surface.other,
+  },
+  stepIndicator: {
+    alignSelf: 'flex-end',
   },
 });
 

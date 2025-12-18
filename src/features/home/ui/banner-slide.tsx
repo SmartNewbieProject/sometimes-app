@@ -1,7 +1,7 @@
 import Slider from "@/src/widgets/slide";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Loading from "../../loading";
 import { useTotalMatchCountQuery, useTotalUserCountQuery } from "../queries";
 import FirstPurchaseEvent from "./first-purchase-event-banner";
@@ -21,10 +21,10 @@ function BannerSlide() {
       loading={isLoading}
     >
       <Slider
-        indicatorContainerClassName="!bottom-[-16px] "
         autoPlay
         autoPlayInterval={5000}
-        className="w-full !min-h-[92px] "
+        style={styles.slider}
+        indicatorContainerStyle={styles.indicatorContainer}
       >
         <JapanOpeningBanner />
         <FirstPurchaseEvent />
@@ -35,6 +35,14 @@ function BannerSlide() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  slider: {
+    width: "100%",
+    minHeight: 92,
+  },
+  indicatorContainer: {
+    bottom: -16,
+  },
+});
 
 export default BannerSlide;

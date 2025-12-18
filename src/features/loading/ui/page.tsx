@@ -18,7 +18,7 @@ export default function PageLoading({
   spinnerColor = "#8C6AE3",
 }: Props) {
   return (
-    <View className="flex-1 flex flex-col h-screen items-center justify-center">
+    <View style={styles.container}>
       <PalePurpleGradient />
       <Lottie size={size} />
       {!!children && children}
@@ -31,7 +31,7 @@ export default function PageLoading({
               weight="normal"
               textColor="black"
               size="md"
-              className="text-center mt-2"
+              style={styles.titleText}
             >
               {title}
             </Text>
@@ -43,9 +43,20 @@ export default function PageLoading({
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   loadingContainer: {
     padding: 16,
     alignItems: "center",
     justifyContent: "center",
+  },
+  titleText: {
+    textAlign: 'center',
+    marginTop: 8,
   },
 });

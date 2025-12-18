@@ -4,12 +4,12 @@ import {
 } from "@/src/shared/ui/content-selector";
 import type { ReactNode } from "react";
 import { type UseControllerProps, useController } from "react-hook-form";
-import { Pressable } from "react-native";
+import { Pressable, type StyleProp, type ViewStyle } from "react-native";
 
 export interface FormContentSelectorProps
   extends UseControllerProps,
     Omit<ContentSelectorProps, "value" | "onChange"> {
-  className?: string;
+  style?: StyleProp<ViewStyle>;
   size?: "sm" | "md" | "lg";
   renderContent?: (value: string | null) => ReactNode;
   renderPlaceholder?: () => ReactNode;
@@ -23,7 +23,7 @@ export function FormContentSelector({
   name,
   control,
   rules,
-  className,
+  style,
   size,
   renderContent,
   renderPlaceholder,
@@ -53,7 +53,7 @@ export function FormContentSelector({
       <ContentSelector
         value={value}
         size={size}
-        className={className}
+        style={style}
         renderContent={renderContent}
         renderPlaceholder={renderPlaceholder}
         actionLabel={actionLabel}

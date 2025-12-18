@@ -1,59 +1,66 @@
-import React, { ReactNode } from 'react';
-import { View, ScrollView } from 'react-native';
-import { PalePurpleGradient } from '../gradient';
-import { BottomNavigation } from '../navigation';
-import { cn } from '@/src/shared/libs/cn';
+import React, { type ReactNode } from "react";
+import { StyleSheet, View, ScrollView, type StyleProp, type ViewStyle } from "react-native";
+import { PalePurpleGradient } from "../gradient";
+import { BottomNavigation } from "../navigation";
 
 type MainLayoutProps = {
   children: ReactNode;
   showNavigation?: boolean;
   showGradient?: boolean;
-  className?: string;
-  contentClassName?: string;
+  style?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
 };
 
 export function MainLayout({
   children,
   showNavigation = true,
   showGradient = true,
-  className,
-  contentClassName,
+  style,
+  contentStyle,
 }: MainLayoutProps) {
   return (
-    <View className={cn("flex-1", className)}>
+    <View style={[styles.container, style]}>
       {showGradient && <PalePurpleGradient />}
-      
-      <View className={cn("flex-1", contentClassName)}>
-        {children}
-      </View>
-      
+
+      <View style={[styles.content, contentStyle]}>{children}</View>
+
       {showNavigation && <BottomNavigation />}
     </View>
   );
 }
 
 type ScrollableLayoutProps = MainLayoutProps & {
-  scrollClassName?: string;
+  scrollStyle?: StyleProp<ViewStyle>;
 };
 
 export function ScrollableLayout({
   children,
   showNavigation = true,
   showGradient = true,
-  className,
-  contentClassName,
-  scrollClassName,
+  style,
+  contentStyle,
+  scrollStyle,
 }: ScrollableLayoutProps) {
   return (
     <MainLayout
       showNavigation={showNavigation}
       showGradient={showGradient}
-      className={className}
-      contentClassName={contentClassName}
+      style={style}
+      contentStyle={contentStyle}
     >
-      <ScrollView className={cn("flex-1", scrollClassName)}>
-        {children}
-      </ScrollView>
+      <ScrollView style={[styles.scroll, scrollStyle]}>{children}</ScrollView>
     </MainLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+});

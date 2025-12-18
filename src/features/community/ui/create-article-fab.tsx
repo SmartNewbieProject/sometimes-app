@@ -1,7 +1,8 @@
 import WriteIcon from "@/assets/icons/write.svg";
 import { IconWrapper } from "@shared/ui/icons";
 import { router } from "expo-router";
-import { TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useAuth } from "../../auth";
 import { useCategory } from "../hooks";
 import { useQuery } from "@tanstack/react-query";
@@ -51,8 +52,7 @@ export const CreateArticleFAB = () => {
       onPress={() =>
         router.push(`/community/write?category=${currentCategory}`)
       }
-      className="w-[60px] h-[60px] rounded-full bg-brand-secondary items-center justify-center"
-      style={{ position: "absolute", bottom: 96, right: 24 }}
+      style={styles.fab}
       accessibilityRole="button"
       accessibilityLabel="새 글 작성"
     >
@@ -62,3 +62,17 @@ export const CreateArticleFAB = () => {
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  fab: {
+    position: "absolute",
+    bottom: 96,
+    right: 24,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: semanticColors.brand.secondary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

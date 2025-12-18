@@ -411,10 +411,10 @@ const styles = StyleSheet.create({
   },
   notiText: {
     flex: 1,
-    fontSize: 8,
+    fontSize: 12,
     color: semanticColors.text.primary,
     fontWeight: "400",
-    lineHeight: 12,
+    lineHeight: 16,
   },
 
   rejectedContainer: {

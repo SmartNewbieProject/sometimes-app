@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from '@shared/ui';
 import { useTranslation } from 'react-i18next';
 
@@ -15,22 +15,22 @@ export const PriceDisplay = ({ classNames, totalPrice, originalPrice, salesPerce
   const { t } = useTranslation();
 
   return (
-    <View className={classNames}>
-      <View className="flex-row items-center">
-        <Text weight="semibold" textColor="black" className="mr-2">
+    <View style={classNames ? undefined : styles.container}>
+      <View style={styles.priceRow}>
+        <Text weight="semibold" textColor="black" style={styles.marginRight}>
           {t("features.payment.ui.price_display.total_prefix")}
         </Text>
         <Text weight="semibold" size="lg" textColor="purple">
           {totalPrice.toLocaleString()}
         </Text>
-        <Text weight="semibold" textColor="black" className="ml-1">
+        <Text weight="semibold" textColor="black" style={styles.marginLeft}>
           {t("features.payment.ui.price_display.currency_suffix")}
         </Text>
       </View>
 
       {showSales && (
-        <View className="flex-row justify-end mb-1">
-          <Text size="sm" textColor="light" className="line-through mr-1">
+        <View style={styles.salesRow}>
+          <Text size="sm" textColor="light" style={styles.lineThrough}>
             {originalPrice?.toLocaleString()}{t("features.payment.ui.price_display.currency_suffix")}
           </Text>
           <Text size="sm" textColor="purple" weight="semibold">
@@ -42,4 +42,27 @@ export const PriceDisplay = ({ classNames, totalPrice, originalPrice, salesPerce
     </View>
   )
 };
+
+const styles = StyleSheet.create({
+  container: {},
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  marginRight: {
+    marginRight: 8,
+  },
+  marginLeft: {
+    marginLeft: 4,
+  },
+  salesRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 4,
+  },
+  lineThrough: {
+    textDecorationLine: 'line-through',
+    marginRight: 4,
+  },
+});
 

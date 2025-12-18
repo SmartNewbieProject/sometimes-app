@@ -78,7 +78,7 @@ function UniversityPage() {
     return () => subscription.remove();
   }, []);
   return (
-    <DefaultLayout className="flex-1 ">
+    <DefaultLayout style={styles.layout}>
       {!showHeader && <PalePurpleGradient />}
       <View style={[styles.container]}>
         {!trigger && <UniversityLogos logoSize={64} />}
@@ -174,6 +174,9 @@ function UniversityPage() {
 export default withSignupValidation(UniversityPage, SignupSteps.UNIVERSITY);
 
 const styles = StyleSheet.create({
+  layout: {
+    position: "relative",
+  },
   container: {
     flex: 1,
     paddingHorizontal: 16,

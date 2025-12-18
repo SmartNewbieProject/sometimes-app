@@ -67,11 +67,11 @@ export default function StudentVerifyPage() {
   if (submitting) return <Loading.Page />;
 
   return (
-    <DefaultLayout className="flex-1 relative">
+    <DefaultLayout style={styles.container}>
       <PalePurpleGradient />
       <Header.Container>
         <Header.LeftContent>
-          <Pressable onPress={() => router.back()} className="p-2 -ml-2">
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
@@ -83,12 +83,12 @@ export default function StudentVerifyPage() {
         <Header.RightContent></Header.RightContent>
       </Header.Container>
       <GuideView>
-        <View className="px-5">
+        <View style={styles.contentPadding}>
           <Image
             source={require("@assets/images/profile-image.png")}
             style={{ width: 72, height: 72 }}
           />
-          <Text weight="semibold" size="20" textColor="black" className="mt-2">
+          <Text weight="semibold" size="20" textColor="black" style={styles.titleText}>
             재학 인증을 진행해 주세요
           </Text>
           <Text weight="medium" size="sm" textColor="pale-purple">
@@ -99,7 +99,7 @@ export default function StudentVerifyPage() {
           </Text>
         </View>
 
-        <View className="px-5 mt-6 items-center">
+        <View style={styles.imageSelectorContainer}>
           <ImageSelector
             size="lg"
             value={image ?? undefined}
@@ -114,7 +114,7 @@ export default function StudentVerifyPage() {
           size="md"
           disabled={!nextable}
           onPress={onSubmit}
-          className="w-full"
+          width="full"
         >
           제출하기
         </Button>
@@ -124,6 +124,25 @@ export default function StudentVerifyPage() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: "relative",
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+  contentPadding: {
+    paddingHorizontal: 20,
+  },
+  titleText: {
+    marginTop: 8,
+  },
+  imageSelectorContainer: {
+    paddingHorizontal: 20,
+    marginTop: 24,
+    alignItems: "center",
+  },
   infoOverlay: {
     bottom: 180,
     position: "absolute",

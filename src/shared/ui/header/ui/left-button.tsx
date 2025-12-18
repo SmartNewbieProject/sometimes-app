@@ -1,6 +1,5 @@
-import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
-import { Image } from 'expo-image';
+import React from "react";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
 
 interface LeftButtonProps {
@@ -10,14 +9,26 @@ interface LeftButtonProps {
 
 export function LeftButton({ onPress, visible = false }: LeftButtonProps) {
   if (!visible) {
-    return <View className="w-10" />;
+    return <View style={styles.placeholder} />;
   }
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <View className="w-10 h-10 items-center justify-center">
+      <View style={styles.button}>
         <ChevronLeftIcon />
       </View>
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  placeholder: {
+    width: 40,
+  },
+  button: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

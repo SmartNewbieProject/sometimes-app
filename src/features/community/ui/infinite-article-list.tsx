@@ -22,11 +22,13 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
   Platform,
+  StyleSheet,
   TouchableOpacity,
   View,
   type ViewToken,
   type ViewabilityConfig,
 } from "react-native";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { CustomInfiniteScrollView } from "../../../shared/infinite-scroll/custom-infinite-scroll-view";
 import apis from "../apis";
 import { useCategory } from "../hooks";
@@ -202,7 +204,7 @@ export const InfiniteArticleList = forwardRef<
     const renderFooter = useCallback(() => {
       if (!isLoadingMore) return null;
       return (
-        <View className="py-2">
+        <View style={listStyles.footerLoader}>
           {Array.from({ length: 3 }).map((_, i) => (
             <ArticleSkeleton key={`skel-more-${i}`} variant={pickVariant()} />
           ))}
@@ -312,9 +314,9 @@ export const InfiniteArticleList = forwardRef<
       (isLoading && articles.length === 0)
     ) {
       return (
-        <View className="flex-1 bg-surface-background">
-          <View className="h-[1px] bg-surface-other" />
-          <View className="h-[1px] bg-surface-other mb-2" />
+        <View style={listStyles.container}>
+          <View style={listStyles.separator} />
+          <View style={listStyles.separatorWithMargin} />
           {Array.from({ length: initialSize }).map((_, i) => (
             <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
           ))}
@@ -323,30 +325,9 @@ export const InfiniteArticleList = forwardRef<
     }
 
     return (
-      <View className="flex-1 bg-surface-background">
-        <View className="h-[1px] bg-surface-background" />
-        {/* <TouchableOpacity
-          onPress={() =>
-            Linking.openURL(
-              "https://ruby-composer-6d2.notion.site/FAQ-1ff1bbec5ba1803bab5cfbe635bba220?source=copy_link"
-            )
-          }
-          className="bg-surface-background rounded-[5px]  mx-[16px] px-4 py-2 my-[10px] gap-x-2 flex-row items-center"
-        >
-          <Image
-            source={require("@/assets/images/fireIcon.png")}
-            style={{ width: 16, height: 16 }}
-          />
-          <Text size="sm" weight="bold">
-            {t("features.community.ui.infinite_article_list.faq_title")}
-          </Text>
-          <TouchableOpacity className="ml-auto">
-            <IconWrapper>
-              <VectorIcon className=" h-[12px] w-[9px]" color="black" />
-            </IconWrapper>
-          </TouchableOpacity>
-        </TouchableOpacity> */}
-        <View className="h-[1px] bg-surface-background mb-2" />
+      <View style={listStyles.container}>
+        <View style={listStyles.separatorBackground} />
+        <View style={listStyles.separatorBackgroundWithMargin} />
         <PalePurpleGradient />
 
         <CustomInfiniteScrollView
@@ -374,7 +355,7 @@ export const InfiniteArticleList = forwardRef<
           hasMore={hasNextPage}
           onRefresh={invalidateAndRefetch}
           refreshing={isLoading && !isLoadingMore}
-          className="flex-1"
+          style={listStyles.scrollView}
           ListFooterComponent={renderFooter}
           onScroll={handleScroll}
           scrollEventThrottle={16}
@@ -388,3 +369,34 @@ export const InfiniteArticleList = forwardRef<
     );
   }
 );
+
+const listStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: semanticColors.surface.other,
+  },
+  separatorWithMargin: {
+    height: 1,
+    backgroundColor: semanticColors.surface.other,
+    marginBottom: 8,
+  },
+  separatorBackground: {
+    height: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  separatorBackgroundWithMargin: {
+    height: 1,
+    backgroundColor: semanticColors.surface.background,
+    marginBottom: 8,
+  },
+  footerLoader: {
+    paddingVertical: 8,
+  },
+  scrollView: {
+    flex: 1,
+  },
+});

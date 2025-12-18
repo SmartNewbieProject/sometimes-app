@@ -2,12 +2,10 @@ import { useAuth } from "@/src/features/auth";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
-import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { GemStoreWidget } from "@/src/widgets";
 import { track } from "@/src/shared/libs/amplitude-compat";
-import Layout from "@features/layout";
 import Payment from "@features/payment";
 import { useCurrentGem, useGemProducts } from "@features/payment/hooks";
 import { usePortoneStore } from "@features/payment/hooks/use-portone-store";
@@ -15,7 +13,7 @@ import { FirstSaleCard, GemStore } from "@features/payment/ui";
 import type { PortOneController } from "@portone/react-native-sdk";
 import { ScrollDownIndicator, Show, Text } from "@shared/ui";
 import { createRef, lazy, useEffect, useState } from "react";
-import { Alert, BackHandler, Platform, ScrollView, View } from "react-native";
+import { Alert, BackHandler, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 
@@ -142,21 +140,20 @@ export default function GemStoreScreen() {
     return <AppleGemStore />;
   }
   return (
-    <Layout.Default
-      className="flex flex-1 flex-col"
-      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
-    >
+    <View style={[styles.container, { backgroundColor: semanticColors.surface.background, paddingTop: insets.top }]}>
       <GemStore.Header gemCount={gem?.totalGem ?? 0} />
       <ScrollView
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
       >
         <GemStore.Banner />
-        <RematchingTicket.ContentLayout>
-          <View className="flex-1 flex flex-col px-[16px] mt-4">
-            <View className="flex flex-col mb-2">
-              <View style={{ marginBottom: 30 }}>
+        <View style={styles.contentCard}>
+          <View style={styles.contentWrapper}>
+            <View style={styles.titleSection}>
+              <View style={styles.firstSaleWrapper}>
                 <FirstSaleCard
                   onOpenPayment={(metadata) => {
                     setGemCount(metadata.gemProduct.totalGems);
@@ -173,14 +170,14 @@ export default function GemStoreScreen() {
               </Text>
             </View>
 
-            <View className="flex flex-col gap-y-4 justify-center mb-auto">
+            <View style={styles.productList}>
               <Show when={isLoading}>
-                <View className="flex-1 justify-center items-center">
+                <View style={styles.centered}>
                   <Text>{t("apps.purchase.gem_store.loading_gems")}</Text>
                 </View>
               </Show>
               <Show when={!!error}>
-                <View className="flex-1 justify-center items-center">
+                <View style={styles.centered}>
                   <Text>{t("apps.purchase.gem_store.failed_to_load_gems")}</Text>
                 </View>
               </Show>
@@ -212,9 +209,54 @@ export default function GemStoreScreen() {
               </Show>
             </View>
           </View>
-        </RematchingTicket.ContentLayout>
+        </View>
       </ScrollView>
       <ScrollDownIndicator visible={showIndicator} />
-    </Layout.Default>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingBottom: 40,
+  },
+  contentCard: {
+    backgroundColor: semanticColors.surface.secondary,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    marginTop: -32,
+    paddingTop: 32,
+    paddingBottom: 28,
+    minHeight: 400,
+  },
+  contentWrapper: {
+    flex: 1,
+    flexDirection: "column",
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  titleSection: {
+    flexDirection: "column",
+    marginBottom: 8,
+  },
+  firstSaleWrapper: {
+    marginBottom: 30,
+  },
+  productList: {
+    flexDirection: "column",
+    gap: 16,
+    justifyContent: "center",
+    paddingBottom: 20,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

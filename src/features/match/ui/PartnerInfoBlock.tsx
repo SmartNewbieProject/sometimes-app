@@ -4,7 +4,7 @@ import {
 } from "@/src/shared/libs";
 import { ImageResource, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 
@@ -52,23 +52,22 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
     }
 
     return (
-        <View className="px-5 py-6">
+        <View style={styles.container}>
             <Text
-                style={{ color: semanticColors.text.muted }}
-                className="text-[18px] mb-4"
+                textColor="muted"
+                style={styles.title}
             >
                 기본 정보
             </Text>
             <View
-                style={{ backgroundColor: semanticColors.surface.surface }}
-                className="rounded-2xl p-5 flex-row flex-wrap justify-between"
+                style={[styles.infoCard, { backgroundColor: semanticColors.surface.surface }]}
             >
                 {basicInfoItems.map((info, index) => (
-                    <View key={index} className="w-[48%] flex-row items-center mb-4">
+                    <View key={index} style={styles.infoItem}>
                         <ImageResource resource={info.icon} width={24} height={24} />
                         <Text
-                            style={{ color: semanticColors.text.secondary }}
-                            className="ml-2 font-medium text-sm flex-1"
+                            textColor="secondary"
+                            style={styles.infoText}
                             numberOfLines={1}
                         >
                             {info.prefix && (
@@ -92,8 +91,8 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
 
 export const PartnerMBTI = ({ partner }: PartnerInfoBlockProps) => {
     return (
-        <View className="px-5 pb-6">
-            <View className="w-full aspect-[280/160]">
+        <View style={styles.mbtiContainer}>
+            <View style={styles.mbtiImageContainer}>
                 <ImageResource
                     resource={ImageResources[partner.mbti as keyof typeof ImageResources]}
                     width="100%"
@@ -103,3 +102,41 @@ export const PartnerMBTI = ({ partner }: PartnerInfoBlockProps) => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 20,
+        paddingVertical: 24,
+    },
+    title: {
+        fontSize: 18,
+        marginBottom: 16,
+    },
+    infoCard: {
+        borderRadius: 16,
+        padding: 20,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+    },
+    infoItem: {
+        width: '48%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    infoText: {
+        marginLeft: 8,
+        fontWeight: '500',
+        fontSize: 14,
+        flex: 1,
+    },
+    mbtiContainer: {
+        paddingHorizontal: 20,
+        paddingBottom: 24,
+    },
+    mbtiImageContainer: {
+        width: '100%',
+        aspectRatio: 280 / 160,
+    },
+});

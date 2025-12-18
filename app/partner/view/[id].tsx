@@ -238,7 +238,7 @@ export default function PartnerDetailScreen() {
   };
 
   return (
-    <View className="flex-1" style={{ backgroundColor: semanticColors.surface.background }}>
+    <View style={styles.mainContainer}>
       <MihoIntroModal visible={showMihoIntro} onClose={handleMihoIntroClose} />
 
       <PhotoSlider
@@ -271,12 +271,12 @@ export default function PartnerDetailScreen() {
       />
 
       {isAnalyzing ? (
-        <View className="flex-1 items-center justify-center">
+        <View style={styles.analyzingContainer}>
           <MatchingAnalysis imageUrl={mainProfileImageUrl} />
         </View>
       ) : (
         <>
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
             {partner.profileImages.length > 0 && (
               <View
                 style={{
@@ -307,35 +307,21 @@ export default function PartnerDetailScreen() {
                 </Pressable>
 
                 <View
-                  className="absolute bottom-8 left-5 right-5"
+                  style={styles.profileOverlay}
                   pointerEvents="none"
                 >
-                  <View
-                    style={{
-                      backgroundColor: semanticColors.brand.primary,
-                    }}
-                    className="self-start px-2 py-1 rounded-md mb-2 flex-row items-center gap-1"
-                  >
-                    <Text
-                      style={{ color: semanticColors.text.inverse }}
-                      className="text-xs font-bold"
-                    >
+                  <View style={styles.lastLoginBadge}>
+                    <Text style={styles.lastLoginLabel}>
                       마지막 접속
                     </Text>
-                    <Text
-                      style={{ color: semanticColors.text.inverse }}
-                      className="text-xs font-light"
-                    >
+                    <Text style={styles.lastLoginValue}>
                       {formatLastLogin(partner.updatedAt)}
                     </Text>
                   </View>
-                  <Text
-                    style={{ color: semanticColors.text.inverse }}
-                    className="text-3xl font-bold mb-1"
-                  >
+                  <Text style={styles.ageText}>
                     만 {partner.age}세
                   </Text>
-                  <View className="flex-row items-center mb-1">
+                  <View style={styles.universityRow}>
                     {partner.universityDetails?.code && (
                       <Image
                         source={{
@@ -343,27 +329,21 @@ export default function PartnerDetailScreen() {
                             partner.universityDetails.code
                           ),
                         }}
-                        style={{ width: 20, height: 20, marginRight: 6 }}
+                        style={styles.universityLogo}
                         contentFit="contain"
                       />
                     )}
-                    <Text
-                      style={{ color: semanticColors.text.inverse }}
-                      className="text-base opacity-90"
-                    >
+                    <Text style={styles.universityName}>
                       {partner.universityDetails?.name}
                     </Text>
                   </View>
-                  <View className="flex-row items-center">
+                  <View style={styles.verificationRow}>
                     <Feather
                       name="check-square"
                       size={16}
                       color={semanticColors.brand.accent}
                     />
-                    <Text
-                      style={{ color: semanticColors.brand.accent }}
-                      className="ml-1 text-sm"
-                    >
+                    <Text style={styles.verificationText}>
                       {partner.universityDetails?.authentication
                         ? "대학교 인증 완료"
                         : "대학교 인증 전"}
@@ -413,8 +393,13 @@ export default function PartnerDetailScreen() {
             <PartnerMBTI partner={partner} />
 
             <Text
-              style={{ color: semanticColors.text.primary }}
-              className="text-lg font-bold ml-5"
+              style={{
+                color: semanticColors.text.primary,
+                fontSize: 18,
+                fontWeight: 'bold',
+                paddingHorizontal: 20,
+                marginBottom: 4,
+              }}
             >
               미호가 두분을 연결한 특별한 이유
             </Text>
@@ -515,6 +500,75 @@ export default function PartnerDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  analyzingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  profileOverlay: {
+    position: 'absolute',
+    bottom: 32,
+    left: 20,
+    right: 20,
+  },
+  lastLoginBadge: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: semanticColors.brand.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 8,
+    gap: 4,
+  },
+  lastLoginLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: semanticColors.text.inverse,
+  },
+  lastLoginValue: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: semanticColors.text.inverse,
+  },
+  ageText: {
+    fontSize: 30,
+    fontWeight: '700',
+    color: semanticColors.text.inverse,
+    marginBottom: 4,
+  },
+  universityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  universityLogo: {
+    width: 20,
+    height: 20,
+    marginRight: 6,
+  },
+  universityName: {
+    fontSize: 16,
+    color: semanticColors.text.inverse,
+    opacity: 0.9,
+  },
+  verificationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  verificationText: {
+    fontSize: 14,
+    color: semanticColors.brand.accent,
+    marginLeft: 4,
+  },
   sectionContainer: {
     paddingHorizontal: 12,
     paddingVertical: 12,

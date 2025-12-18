@@ -2,10 +2,11 @@ import Loading from '@/src/features/loading';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { BottomSheetPicker } from '@/src/shared/ui/bottom-sheet-picker';
 import type { BottomSheetPickerOption } from '@/src/shared/ui/bottom-sheet-picker';
+import { Text } from '@/src/shared/ui/text';
 import BottomArrowIcon from '@assets/icons/bottom-arrow.svg';
 import { useGlobalSearchParams } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSignupProgress } from '../../hooks';
 import { useDepartmentQuery } from '../../queries';
@@ -54,7 +55,10 @@ function DepartmentSearch() {
         ]}
       >
         <Text
-          style={[styles.selectorText, hasValue && styles.selectorTextSelected]}
+          size="md"
+          weight={hasValue ? "medium" : "normal"}
+          textColor={hasValue ? "primary" : "disabled"}
+          style={styles.selectorText}
           numberOfLines={1}
         >
           {departmentName || t('features.signup.ui.department_search_placeholder')}
@@ -99,17 +103,11 @@ const styles = StyleSheet.create({
     backgroundColor: semanticColors.surface.surface,
   },
   selectorText: {
-    color: semanticColors.text.disabled,
-    fontSize: 16,
-    fontWeight: '400',
     flex: 1,
-    marginRight: 8,
-  },
-  selectorTextSelected: {
-    color: semanticColors.text.primary,
-    fontWeight: '500',
   },
   iconBox: {
+    flexShrink: 0,
+    marginLeft: 8,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,

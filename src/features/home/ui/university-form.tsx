@@ -1,4 +1,3 @@
-import {cn} from '@/src/shared/libs/cn';
 import {platform} from '@/src/shared/libs/platform';
 import {Button, Label, Show, PalePurpleGradient, Text} from '@/src/shared/ui';
 import {Form, LabelInput, ChipSelector} from '@/src/widgets';
@@ -96,7 +95,7 @@ export default function UniversityForm({
                     setSelectedUniv(value);
                     setValue('universityName', value);
                   }}
-                  className="w-full"
+                  style={styles.fullWidth}
               />
             </ScrollView>
           </View>
@@ -121,7 +120,7 @@ export default function UniversityForm({
                     options={studentNumberOptions.map((option) => ({label: option, value: option}))}
                     placeholder={i18n.t("features.home.ui.university_form.student_number_placeholder")}
                     size="sm"
-                    className="flex-1"
+                    style={styles.flex1}
                 />
                 <Label label={i18n.t("features.home.ui.university_form.student_number")} size="sm"/>
               </View>
@@ -133,7 +132,7 @@ export default function UniversityForm({
                     options={gradeOptions}
                     placeholder={i18n.t("features.home.ui.university_form.grade_placeholder")}
                     size="sm"
-                    className="flex-1"
+                    style={styles.flex1}
                 />
                 <Label label={i18n.t("features.home.ui.university_form.grade")} size="sm"/>
               </View>
@@ -209,6 +208,12 @@ const styles = StyleSheet.create({
     flex: 0.7,
   },
   fullButton: {
+    flex: 1,
+  },
+  fullWidth: {
+    width: '100%',
+  },
+  flex1: {
     flex: 1,
   },
 });

@@ -260,12 +260,10 @@ const AppleLoginButton: React.FC = () => {
         <Pressable
           onPress={handleWebAppleLogin}
           disabled={isLoading}
-          className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-surface-inverse border  !border-border-default"
+          style={[styles.appleButton, isLoading && styles.disabled]}
         >
-          <Text style={styles.appleLogo}></Text>
-          <View>
-            <Text className="text-text-inverse text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
-          </View>
+          <Text style={styles.appleLogo}></Text>
+          <Text style={styles.appleButtonText}>{t("features.signup.ui.login_form.apple_login")}</Text>
         </Pressable>
       </View>
     );
@@ -275,18 +273,14 @@ const AppleLoginButton: React.FC = () => {
   if (Platform.OS === "ios") {
     return (
       <View style={styles.iosContainer}>
-        <View className="w-full">
-          <Pressable
-            onPress={handleIOSAppleLogin}
-            disabled={isLoading}
-            className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !containerh-[60px] !bg-surface-inverse border  !border-border-default"
-          >
-            <Text style={styles.appleLogo}></Text>
-            <View>
-              <Text className="text-text-inverse text-[18px]">{t("features.signup.ui.login_form.apple_login")}</Text>
-            </View>
-          </Pressable>
-        </View>
+        <Pressable
+          onPress={handleIOSAppleLogin}
+          disabled={isLoading}
+          style={[styles.appleButton, isLoading && styles.disabled]}
+        >
+          <Text style={styles.appleLogo}></Text>
+          <Text style={styles.appleButtonText}>{t("features.signup.ui.login_form.apple_login")}</Text>
+        </Pressable>
       </View>
     );
   }
@@ -299,41 +293,36 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: "center",
   },
-  webAppleButton: {
-    backgroundColor: semanticColors.surface.inverse,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    minWidth: 200,
+  appleButton: {
+    width: 330,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#000000',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    borderWidth: 1,
+    borderColor: semanticColors.border.default,
   },
-  webButtonText: {
+  appleButtonText: {
     color: semanticColors.text.inverse,
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18,
+    fontFamily: 'Pretendard-SemiBold',
+    fontWeight: '600',
   },
   iosContainer: {
     alignItems: "center",
   },
-  iosAppleButton: {
-    width: 200,
-    height: 44,
-  },
   disabled: {
     opacity: 0.6,
-  },
-  loadingText: {
-    marginTop: 8,
-    fontSize: 14,
-    color: semanticColors.text.disabled,
   },
   appleLogo: {
     color: semanticColors.text.inverse,
     textAlign: "center",
-
     fontFamily: "SF Pro",
     fontSize: 26,
-    fontWeight: 600,
+    fontWeight: "600",
   },
 });
 

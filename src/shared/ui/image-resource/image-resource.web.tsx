@@ -9,7 +9,6 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   resource,
   width = 100,
   height = 100,
-  className = '',
   style,
   loadingTitle = '이미지를 불러오고 있어요',
   contentFit = 'cover',
@@ -47,14 +46,14 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
 
   if (hasError) {
     return (
-      <View style={[styles.container, style]} className={className}>
+      <View style={[styles.container, style]}>
         <View style={[styles.image, { backgroundColor: semanticColors.surface.background }]} />
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, style]} className={className}>
+    <View style={[styles.container, style]}>
       <Loading.Lottie title={loadingTitle} loading={isLoading}>
         <ExpoImage
           source={{ uri: resource.toString() }}

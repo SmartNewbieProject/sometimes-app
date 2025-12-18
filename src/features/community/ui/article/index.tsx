@@ -17,7 +17,7 @@ import {
 } from "@/src/shared/ui";
 import { router } from "expo-router";
 import { useCallback, useEffect } from "react";
-import { Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import type { Article as ArticleType } from "../../types";
 import { Comment } from "../comment";
@@ -153,11 +153,11 @@ export function Article({
   }, [setDropdownOpen]);
 
   return (
-    <View className="w-full relative">
+    <View style={styles.container}>
       <TouchableOpacity
         testID={`article-item-${data.id}`}
         onPress={handleArticlePress}
-        className="p-4 bg-transparent"
+        style={styles.touchable}
         activeOpacity={0.7}
       >
         <UserProfile
@@ -166,15 +166,15 @@ export function Article({
           isOwner={isOwner}
         />
 
-        <View className="mx-[8px] mt-3 mb-4 flex-row items-start gap-3">
-          <View style={{ flex: 1, minWidth: 0 }}>
+        <View style={styles.contentRow}>
+          <View style={styles.textContent}>
             <Text numberOfLines={1} size="md" weight="medium" textColor="black">
               {data.title}
             </Text>
 
             <LinkifiedText
               size="sm"
-              className="mt-2 leading-5"
+              style={styles.contentText}
               textColor="black"
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -187,26 +187,20 @@ export function Article({
             <TouchableOpacity
               onPress={redirectDetails}
               activeOpacity={0.85}
-              style={{ width: 70, height: 70 }}
+              style={styles.imageContainer}
             >
-              <View
-                className="relative rounded-lg overflow-hidden bg-gray-100"
-                style={{ width: 70, height: 70 }}
-              >
+              <View style={styles.imageWrapper}>
                 <Image
                   source={{
                     uri: data.images.sort(
                       (a, b) => a.displayOrder - b.displayOrder
                     )[0].imageUrl,
                   }}
-                  className="w-full h-full"
+                  style={styles.articleImage}
                   resizeMode="cover"
                 />
                 {data.images.length > 1 && (
-                  <View
-                    className="absolute right-1 bottom-1 rounded px-2 py-[2px]"
-                    style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-                  >
+                  <View style={styles.imageCountBadge}>
                     <Text size="12" textColor="white" weight="medium">
                       +{data.images.length - 1}
                     </Text>
@@ -217,45 +211,24 @@ export function Article({
           )}
         </View>
 
-        <View className="mx-[8px] mt-2 flex-row items-center justify-between">
-          <View className="flex-row items-center">
-            <Text
-              style={{
-                color: semanticColors.text.muted,
-                fontFamily: "Pretendard",
-                fontSize: 13,
-                fontStyle: "normal",
-                fontWeight: "300" as any,
-                lineHeight: 14.4,
-                fontFeatureSettings: "'liga' off, 'clig' off",
-              }}
-            >
+        <View style={styles.metaRow}>
+          <View style={styles.metaLeft}>
+            <Text style={styles.metaText}>
               {dayUtils.formatRelativeTime(data.createdAt)}
             </Text>
-            <Text
-              style={{
-                color: semanticColors.text.muted,
-                fontFamily: "Pretendard",
-                fontSize: 13,
-                fontStyle: "normal",
-                fontWeight: "300" as any,
-                lineHeight: 14.4,
-                fontFeatureSettings: "'liga' off, 'clig' off",
-                marginLeft: 8,
-              }}
-            >
+            <Text style={[styles.metaText, styles.metaTextWithMargin]}>
               {`·  조회 ${data.readCount}`}
             </Text>
           </View>
 
-          <View className="flex-row items-center">
+          <View style={styles.metaRight}>
             <Interaction.Like
               count={data.likeCount}
               isLiked={data.isLiked}
               iconSize={18}
               onPress={handleLike}
             />
-            <View style={{ width: 12 }} />
+            <View style={styles.interactionSpacer} />
             <Interaction.Comment
               count={data.commentCount}
               iconSize={18}
@@ -265,17 +238,17 @@ export function Article({
         </View>
 
         <Show when={isPreviewOpen}>
-          <View className="w-full flex flex-col gap-y-1.5 mt-6 px-[18px]">
+          <View style={styles.commentsContainer}>
             {comments.map((comment) => (
-              <View className="w-full flex flex-col" key={comment.id}>
-                <Comment data={comment} className="mb-[6px]" />
+              <View style={styles.commentItem} key={comment.id}>
+                <Comment data={comment} style={styles.commentSpacing} />
                 <Divider.Horizontal />
               </View>
             ))}
             {data.commentCount > 3 && (
-              <View className="w-full flex flex-row justify-end my-1">
+              <View style={styles.viewMoreContainer}>
                 <TouchableOpacity
-                  className="flex-row items-center gap-x-1"
+                  style={styles.viewMoreButton}
                   onPress={redirectDetails}
                 >
                   <Text size="sm">{t("features.community.ui.article.view_more_replies")}</Text>
@@ -292,7 +265,7 @@ export function Article({
       </TouchableOpacity>
 
       <View
-        className="absolute right-[8px] top-[12px]"
+        style={styles.dropdownContainer}
         onTouchEnd={(e) => {
           e.stopPropagation();
         }}
@@ -304,7 +277,122 @@ export function Article({
         />
       </View>
 
-      {!isPreviewOpen && <View className="h-[1px] bg-surface-other" />}
+      {!isPreviewOpen && <View style={styles.separator} />}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    position: "relative",
+  },
+  touchable: {
+    padding: 16,
+    backgroundColor: "transparent",
+  },
+  contentRow: {
+    marginHorizontal: 8,
+    marginTop: 12,
+    marginBottom: 16,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  textContent: {
+    flex: 1,
+    minWidth: 0,
+  },
+  contentText: {
+    marginTop: 8,
+    lineHeight: 20,
+  },
+  imageContainer: {
+    width: 70,
+    height: 70,
+  },
+  imageWrapper: {
+    position: "relative",
+    borderRadius: 8,
+    overflow: "hidden",
+    backgroundColor: "#f3f4f6",
+    width: 70,
+    height: 70,
+  },
+  articleImage: {
+    width: "100%",
+    height: "100%",
+  },
+  imageCountBadge: {
+    position: "absolute",
+    right: 4,
+    bottom: 4,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    backgroundColor: "rgba(0,0,0,0.6)",
+  },
+  metaRow: {
+    marginHorizontal: 8,
+    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  metaLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  metaText: {
+    color: semanticColors.text.muted,
+    fontFamily: "Pretendard",
+    fontSize: 13,
+    fontStyle: "normal",
+    fontWeight: "300" as any,
+    lineHeight: 14.4,
+  },
+  metaTextWithMargin: {
+    marginLeft: 8,
+  },
+  metaRight: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  interactionSpacer: {
+    width: 12,
+  },
+  commentsContainer: {
+    width: "100%",
+    flexDirection: "column",
+    gap: 6,
+    marginTop: 24,
+    paddingHorizontal: 18,
+  },
+  commentItem: {
+    width: "100%",
+    flexDirection: "column",
+  },
+  commentSpacing: {
+    marginBottom: 6,
+  },
+  viewMoreContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginVertical: 4,
+  },
+  viewMoreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  dropdownContainer: {
+    position: "absolute",
+    right: 8,
+    top: 12,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: semanticColors.surface.other,
+  },
+});

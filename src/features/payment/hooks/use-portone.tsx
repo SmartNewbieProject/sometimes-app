@@ -3,7 +3,7 @@ import { useModal } from "@shared/hooks/use-modal";
 import { Text } from "@shared/ui";
 import { router } from "expo-router";
 import { useCallback } from "react";
-import { Platform, View } from "react-native";
+import { Platform, View, StyleSheet } from "react-native";
 import paymentApis from "../api";
 import type { PaymentResponse } from "../types";
 import { usePortoneScript } from "./PortoneProvider";
@@ -122,14 +122,14 @@ trackPaymentSuccess(result);
             showModal({
               showLogo: true,
               customTitle: (
-                <View className="w-full flex flex-row justify-center pb-[5px]">
+                <View style={styles.modalTitleContainer}>
                   <Text size="20" weight="bold" textColor="black">
                     {t("features.payment.ui.payment_modal.purchase_complete_title")}
                   </Text>
                 </View>
               ),
               children: (
-                <View className="flex flex-col gap-y-1 items-center">
+                <View style={styles.modalContent}>
                   <Text textColor="black" weight="semibold">
                     {t("features.payment.ui.payment_modal.gem_purchase_complete", { gemCount })}
                   </Text>
@@ -154,7 +154,7 @@ trackPaymentSuccess(result);
               showLogo: true,
               title: t("features.payment.ui.payment_modal.purchase_complete_title"),
               children: (
-                <View className="flex flex-col gap-y-1">
+                <View style={styles.modalContentNoCenter}>
                   {productCount && (
                     <Text textColor="black" weight="semibold">
                       {t("features.payment.ui.payment_modal.gem_purchase_complete", { productCount })}
@@ -192,3 +192,21 @@ trackPaymentSuccess(result);
     handlePaymentComplete,
   };
 }
+
+const styles = StyleSheet.create({
+  modalTitleContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingBottom: 5,
+  },
+  modalContent: {
+    flexDirection: "column",
+    gap: 4,
+    alignItems: "center",
+  },
+  modalContentNoCenter: {
+    flexDirection: "column",
+    gap: 4,
+  },
+});

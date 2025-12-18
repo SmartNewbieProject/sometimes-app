@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text } from '@/src/shared/ui';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import CustomSwitch from './custom-switch';
 
 export const Notice = () => {
@@ -9,18 +10,47 @@ export const Notice = () => {
 
     return (
         <View>
-            <Text className="text-[18px] font-medium text-text-primary">알림 설정</Text>
-            <View style={{ borderBottomWidth: 1, borderBottomColor: '#E0E0E0', marginBottom: 16 }} />
-            <View className="flex-row justify-between items-center mb-[16px]">
-                <Text className="text-[16px] text-text-primary font-medium">매칭 완료 알림</Text>
+            <Text style={noticeStyles.title}>알림 설정</Text>
+            <View style={noticeStyles.divider} />
+            <View style={noticeStyles.row}>
+                <Text style={noticeStyles.label}>매칭 완료 알림</Text>
                 <CustomSwitch value={isMatchComplete} onChange={setIsMatchComplete} />
             </View>
-            <View className="flex-row justify-between items-center">
-                <Text className="text-[16px] text-text-primary font-medium">이벤트 알림</Text>
-                <CustomSwitch value={isEvent} onChange={setIsEvent} />  
+            <View style={noticeStyles.rowLast}>
+                <Text style={noticeStyles.label}>이벤트 알림</Text>
+                <CustomSwitch value={isEvent} onChange={setIsEvent} />
             </View>
         </View>
     );
 }
+
+const noticeStyles = StyleSheet.create({
+    title: {
+        fontSize: 18,
+        fontWeight: '500',
+        color: semanticColors.text.primary,
+    },
+    divider: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+        marginBottom: 16,
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    rowLast: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    label: {
+        fontSize: 16,
+        color: semanticColors.text.primary,
+        fontWeight: '500',
+    },
+});
 
 export default Notice;

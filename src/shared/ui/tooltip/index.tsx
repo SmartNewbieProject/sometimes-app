@@ -43,9 +43,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    fontFamily:  "regular",
+    fontFamily: "Pretendard-Regular",
     fontWeight: 400,
-
     color: semanticColors.text.disabled,
   },
   descriptionContainer: {

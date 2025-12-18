@@ -57,7 +57,7 @@ export default function SomemateIntroScreen() {
               queryClient.invalidateQueries({ queryKey: ["ai-chat"] });
               router.push("/chat/somemate-chat");
             }}
-            className="w-full"
+            width="full"
           >
             <View style={styles.buttonContent}>
               <Image

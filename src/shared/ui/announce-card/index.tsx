@@ -1,8 +1,8 @@
-import { cva } from "class-variance-authority";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { ImageResources } from "../../libs";
 import { ImageResource } from "../image-resource";
 import { Text } from "../text";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 type AnnounceCardProps = {
   emoji?: ImageResources;
@@ -27,38 +27,6 @@ type AnnounceCardProps = {
   theme?: "default" | "alert";
 };
 
-const cardClass = cva(
-  [
-    "w-full h-[42px]",
-    "flex flex-row items-center gap-x-2.5 px-4",
-    "rounded-[20px]",
-  ],
-  {
-    variants: {
-      theme: {
-        default: "bg-moreLightPurple",
-        alert: "bg-surface-background",
-      },
-    },
-    defaultVariants: {
-      theme: "default",
-    },
-  }
-);
-
-const textClass = cva("", {
-  variants: {
-    theme: {
-      default: "text-brand-deep",
-      alert: "text-[#FF813C]",
-    },
-  },
-
-  defaultVariants: {
-    theme: "default",
-  },
-});
-
 export const AnnounceCard = ({
   emoji,
   emojiSize,
@@ -67,9 +35,12 @@ export const AnnounceCard = ({
   onPress,
   theme = "default",
 }: AnnounceCardProps) => {
+  const cardStyle = theme === "alert" ? styles.cardAlert : styles.cardDefault;
+  const textColor = theme === "alert" ? "#FF813C" : semanticColors.brand.deep;
+
   return (
     <TouchableOpacity
-      className={cardClass({ theme })}
+      style={[styles.card, cardStyle]}
       activeOpacity={0.4}
       onPress={onPress}
     >
@@ -87,9 +58,27 @@ export const AnnounceCard = ({
           height={emojiSize?.height || 24}
         />
       )}
-      <Text size={textSize} weight="bold" className={textClass({ theme })}>
+      <Text size={textSize} weight="bold" style={{ color: textColor }}>
         {text}
       </Text>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    width: "100%",
+    height: 42,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  cardDefault: {
+    backgroundColor: "#F5F0FF",
+  },
+  cardAlert: {
+    backgroundColor: semanticColors.surface.background,
+  },
+});

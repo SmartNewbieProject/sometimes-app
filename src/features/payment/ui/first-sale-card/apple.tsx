@@ -79,17 +79,11 @@ export const AppleFirstSaleCard = ({
 
   return (
     <GlowingCard>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-                <Text textColor="black" weight="bold" size="20" className="text-[20px]">
+      <View style={styles.headerRow}>
+        <Text textColor="black" weight="bold" size="20" style={styles.fontSize20}>
           {t("features.payment.ui.apple_first_sale_card.time_sale_title")}
         </Text>
-        <Text weight="bold" size="20" className="text-rose-600">
+        <Text weight="bold" size="20" style={styles.roseText}>
           {formatTime(seconds)}
         </Text>
       </View>
@@ -106,14 +100,14 @@ export const AppleFirstSaleCard = ({
               <Text
                 textColor="purple"
                 weight="semibold"
-                className="text-[15px] mb-1"
+                style={styles.bubbleTextTop}
               >
                 {t("features.payment.ui.apple_first_sale_card.cheer_message")}
               </Text>
               <Text
                 textColor="purple"
                 weight="semibold"
-                className="text-[15px]"
+                style={styles.bubbleText}
               >
                 {t("features.payment.ui.apple_first_sale_card.new_member_discount")}
               </Text>
@@ -210,5 +204,23 @@ const styles = StyleSheet.create({
     borderTopColor: "transparent",
     borderBottomColor: "transparent",
     borderRightColor: colors.white,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  fontSize20: {
+    fontSize: 20,
+  },
+  roseText: {
+    color: '#f43f5e',
+  },
+  bubbleTextTop: {
+    fontSize: 15,
+    marginBottom: 4,
+  },
+  bubbleText: {
+    fontSize: 15,
   },
 });

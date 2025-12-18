@@ -68,6 +68,13 @@ axiosClient.interceptors.request.use(
       if (isNetworkDisabled) {
         return Promise.reject(new Error('Network requests are disabled due to REGION_NOT_ALLOWED'));
       }
+
+      // 디버깅: 요청 정보 로깅
+      console.log(`[API 요청] ${config.method?.toUpperCase()} ${config.url}`);
+      if (config.data) {
+        console.log('[API 요청 데이터]', typeof config.data === 'string' ? config.data : JSON.stringify(config.data, null, 2));
+      }
+
       // 로그인 요청에는 Authorization 헤더를 추가하지 않음
       if (config.url === '/auth/login') {
         return config;
@@ -84,6 +91,9 @@ axiosClient.interceptors.request.use(
 // 응답 인터셉터
 axiosClient.interceptors.response.use(
     (response) => {
+      // 디버깅: 응답 정보 로깅
+      console.log(`[API 응답] ${response.config.method?.toUpperCase()} ${response.config.url} - 상태: ${response.status}`);
+
       // { success: boolean, data: T } 형태의 응답 처리
       if (response.data && typeof response.data === 'object' && 'success' in response.data && 'data' in response.data) {
         return response.data; // 전체 응답 객체 반환 (success와 data 모두 포함)
@@ -91,6 +101,12 @@ axiosClient.interceptors.response.use(
       return response.data;
     },
     async (error) => {
+      // 디버깅: 에러 응답 로깅
+      console.error(`[API 에러] ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+      console.error(`[API 에러] 상태 코드: ${error.response?.status}`);
+      console.error(`[API 에러] 응답 데이터:`, error.response?.data);
+
+
       const data = error?.response?.data;
       if (error.status === 403 && data.code === ErrorCode.REGION_NOT_ALLOWED) {
         isNetworkDisabled = true;

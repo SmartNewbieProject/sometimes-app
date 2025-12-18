@@ -6,7 +6,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 
 function LikedMe() {
   const { t } = useTranslation();
@@ -34,25 +34,58 @@ function LikedMe() {
     };
   }, []);
 
+  const renderList = () => {
+    if (sortedList?.length === 0) {
+      return <NotSome type="likedMe" />;
+    }
+
+    if (Platform.OS === "web") {
+      return (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {sortedList.map((item) => (
+            <PostBoxCard key={item.matchId} type="liked-me" {...item} />
+          ))}
+        </ScrollView>
+      );
+    }
+
+    return (
+      <FlashList
+        data={sortedList}
+        renderItem={({ item }) => <PostBoxCard type="liked-me" {...item} />}
+        estimatedItemSize={200}
+        contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
+      />
+    );
+  };
+
   return (
-    <View>
+    <View style={styles.container}>
       <Loading.Lottie
         title={t("apps.postBox.liked_me_loading")}
         loading={isLoading}
       >
-        {sortedList?.length > 0 ? (
-          <FlashList
-            data={sortedList}
-            renderItem={({ item }) => <PostBoxCard type="liked-me" {...item} />}
-            estimatedItemSize={200}
-            contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
-          />
-        ) : (
-          <NotSome type="likedMe" />
-        )}
+        {renderList()}
       </Loading.Lottie>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    minHeight: 400,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 18,
+    paddingBottom: 48,
+  },
+});
 
 export default LikedMe;

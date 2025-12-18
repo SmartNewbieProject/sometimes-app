@@ -5,19 +5,21 @@ import {
   Animated,
   PanResponder,
   Pressable,
+  StyleSheet,
   View,
+  type StyleProp,
   type ViewStyle,
 } from "react-native";
 
 interface SlideProps {
   children: React.ReactNode[] | React.ReactNode;
-  className?: string;
-  indicatorClassName?: string;
-  activeIndicatorClassName?: string;
-  indicatorContainerClassName?: string;
+  style?: StyleProp<ViewStyle>;
+  indicatorStyle?: StyleProp<ViewStyle>;
+  activeIndicatorStyle?: StyleProp<ViewStyle>;
+  indicatorContainerStyle?: StyleProp<ViewStyle>;
   autoPlay?: boolean;
   autoPlayInterval?: number;
-  contentContainerClassName?: string;
+  contentContainerStyle?: StyleProp<ViewStyle>;
   showIndicator?: boolean;
   indicatorPosition?: "top" | "bottom";
   onSlideChange?: (index: number) => void;
@@ -32,11 +34,11 @@ function Slider({
   indicatorPosition = "bottom",
   onSlideChange,
   animationDuration = 500,
-  indicatorClassName,
-  contentContainerClassName,
-  activeIndicatorClassName,
-  indicatorContainerClassName,
-  className,
+  indicatorStyle,
+  contentContainerStyle,
+  activeIndicatorStyle,
+  indicatorContainerStyle,
+  style,
 }: SlideProps) {
   const arrayChildren = Array.isArray(children) ? children : [children];
   const realCount = arrayChildren.length;
@@ -154,18 +156,16 @@ function Slider({
 
   return (
     <View
-      className={className}
       onLayout={(e) => {
         const w = e.nativeEvent.layout.width;
         if (w && w !== containerWidth) {
           setContainerWidth(w);
         }
       }}
-      style={{ width: "100%" as ViewStyle["width"] }}
+      style={[styles.container, style]}
     >
       <View
-        style={{ width: containerWidth || 0, overflow: "hidden" }}
-        className={contentContainerClassName}
+        style={[{ width: containerWidth || 0, overflow: "hidden" }, contentContainerStyle]}
       >
         <Animated.View
           {...(!isSingle ? panResponder.panHandlers : {})}
@@ -194,38 +194,27 @@ function Slider({
       {showIndicator && realCount > 0 && (
         <View
           style={[
-            {
-              flexDirection: "row",
-              justifyContent: "center",
-              position: "absolute",
-              left: 0,
-              right: 0,
-              [indicatorPosition]: -16,
-              paddingHorizontal: 8,
-            } as ViewStyle,
+            styles.indicatorContainer,
+            { [indicatorPosition]: -16 } as ViewStyle,
+            indicatorContainerStyle,
           ]}
-          className={indicatorContainerClassName}
         >
           {arrayChildren.map((_, index) => (
             <Pressable
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               key={index}
               onPress={() => onButtonNavigation(index)}
-              style={{ padding: 6 }}
+              style={styles.indicatorButton}
             >
               <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 8,
-                  backgroundColor:
-                    focusIndex === index + 1 ? "#7A4AE2" : colors.lightPurple,
-                }}
-                className={
-                  focusIndex === index + 1
-                    ? activeIndicatorClassName
-                    : indicatorClassName
-                }
+                style={[
+                  styles.indicator,
+                  {
+                    backgroundColor:
+                      focusIndex === index + 1 ? "#7A4AE2" : colors.lightPurple,
+                  },
+                  focusIndex === index + 1 ? activeIndicatorStyle : indicatorStyle,
+                ]}
               />
             </Pressable>
           ))}
@@ -234,5 +223,27 @@ function Slider({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+  },
+  indicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    paddingHorizontal: 8,
+  },
+  indicatorButton: {
+    padding: 6,
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 8,
+  },
+});
 
 export default Slider;

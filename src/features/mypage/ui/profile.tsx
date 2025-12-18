@@ -99,7 +99,18 @@ export const Profile = () => {
       <LinearGradient
         colors={["#E9D9FF", "#D6B6FF"]}
         style={styles.baseRectangle}
-      />
+      >
+        <View style={styles.gemContainer}>
+          <ImageResource resource={ImageResources.GEM} width={24} height={24} />
+          <View style={styles.gemTextRow}>
+            <Text style={styles.gemText}>{t("features.profile-edit.ui.header.gem")} </Text>
+            <Text style={styles.gemCountText}>
+              {t("features.profile-edit.ui.header.gem_unit", { count: gem?.totalGem ?? 0 })}
+            </Text>
+            <Text style={styles.gemText}> {t("features.profile-edit.ui.header.gem_left")}</Text>
+          </View>
+        </View>
+      </LinearGradient>
       <View style={styles.overlapWrapper}>
         <View style={styles.overlapRectangle}>
           <View style={{ flexDirection: "row" }}>
@@ -125,19 +136,12 @@ export const Profile = () => {
               />
             </Pressable>
             <View style={styles.profileInfoContainer}>
-              <Text className="text-text-inverse " style={styles.name}>
+              <Text textColor="white" style={styles.name}>
                 {profileData.name}
               </Text>
               <View style={styles.subInfo}>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
-                  {profileData.grade}
-                </Text>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
-                  {" "}
-                  ·{" "}
-                </Text>
-                <Text className="text-text-inverse" style={styles.subInfoText}>
-                  {profileData.university}
+                <Text textColor="white" style={styles.subInfoText} numberOfLines={1}>
+                  {profileData.grade} · {profileData.university}
                 </Text>
                 {!isLoadingVerification &&
                   (() => {
@@ -188,7 +192,7 @@ export const Profile = () => {
                         style={{ width: 20, height: 8 }}
                       />
 
-                      <Text className="text-[10px] text-brand-secondary">
+                      <Text style={styles.updateText}>
                         {t("features.profile-edit.ui.header.title")}
                       </Text>
                     </View>
@@ -197,20 +201,6 @@ export const Profile = () => {
                   <View style={styles.rightRadius} />
                 </Pressable>
               </View>
-            </View>
-          </View>
-          <View
-            className="pt-[5px] pl-[32px] flex-row"
-            style={{ alignItems: "center" }}
-          >
-            <ImageResource resource={ImageResources.GEM} width={28} height={28} />
-            <View className="pl-[10px] flex-row">
-              <Text className="text-[13px] text-text-inverse">{t("features.profile-edit.ui.header.gem")} </Text>
-              <Text className="text-[13px] text-brand-secondary">
-                {" "}
-                {t("features.profile-edit.ui.header.gem_unit",{count:gem?.totalGem ?? 0})}
-              </Text>
-              <Text className="text-[13px] text-text-inverse"> {t("features.profile-edit.ui.header.gem_left")}</Text>
             </View>
           </View>
         </View>
@@ -228,6 +218,9 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 15,
     zIndex: 0,
+    justifyContent: "flex-end",
+    alignItems: "flex-start",
+    paddingHorizontal: 12,
   },
   overlapWrapper: {
     position: "relative",
@@ -297,14 +290,18 @@ const styles = StyleSheet.create({
     color: semanticColors.text.inverse,
   },
   profileInfoContainer: {
+    flex: 1,
     marginLeft: 10,
-    justifyContent: "center",
+    paddingRight: 80,
+    paddingTop: 20,
+    justifyContent: "flex-start",
     alignItems: "flex-start",
   },
   subInfo: {
     flexDirection: "row",
     alignItems: "center",
     paddingBottom: 20,
+    flexWrap: "nowrap",
   },
   subInfoText: {
     fontSize: 14,
@@ -326,6 +323,28 @@ const styles = StyleSheet.create({
     color: semanticColors.brand.secondary,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: 600,
+  },
+  updateText: {
+    fontSize: 10,
+    color: semanticColors.brand.secondary,
+  },
+  gemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  gemTextRow: {
+    paddingLeft: 8,
+    flexDirection: "row",
+  },
+  gemText: {
+    fontSize: 13,
+    color: semanticColors.text.primary,
+  },
+  gemCountText: {
+    fontSize: 13,
+    fontFamily: "Pretendard-SemiBold",
+    color: semanticColors.brand.secondary,
   },
 });
 

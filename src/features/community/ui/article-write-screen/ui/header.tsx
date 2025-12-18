@@ -1,4 +1,4 @@
-import { TouchableOpacity, Pressable } from "react-native";
+import { TouchableOpacity, Pressable, StyleSheet } from "react-native";
 import { Header, Text } from "@shared/ui";
 import { router } from "expo-router";
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
@@ -14,7 +14,7 @@ export const ArticleWriteHeader = ({ onConfirm, mode }: ArticleWriteHeaderProps)
   return (
     <Header.Container>
       <Header.LeftContent>
-        <Pressable onPress={() => router.push('/community')} className="p-2 -ml-2">
+        <Pressable onPress={() => router.push('/community')} style={headerStyles.backButton}>
           <ChevronLeftIcon width={24} height={24} />
         </Pressable>
       </Header.LeftContent>
@@ -35,3 +35,10 @@ export const ArticleWriteHeader = ({ onConfirm, mode }: ArticleWriteHeaderProps)
     </Header.Container>
   );
 };
+
+const headerStyles = StyleSheet.create({
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+});

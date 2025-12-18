@@ -2,7 +2,7 @@
   "expo": {
     "name": "sometimes",
     "slug": "sometimes",
-    "version": "3.8.9",
+    "version": "3.9.0",
     "orientation": "portrait",
     "icon": "./assets/icons/app.png",
     "scheme": "myapp",
@@ -184,6 +184,7 @@
         "expo-build-properties",
         {
           "ios": {
+            "deploymentTarget": "16.0",
             "useFrameworks": "static",
             "ccacheEnabled": true,
             "buildSettings": {
@@ -254,7 +255,8 @@
         }
       ],
       "expo-iap",
-      "expo-asset"
+      "expo-asset",
+      "./plugins/withIOS16DeploymentTarget.js"
     ],
     "locales": {
       "ko": "./languages/ko.json",

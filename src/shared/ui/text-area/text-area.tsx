@@ -1,53 +1,56 @@
-import { TextInput, type TextInputProps, View } from 'react-native';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { TextInput, type TextInputProps, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
-const textArea = cva('w-full bg-transparent border rounded-md p-2 border-border-default', {
-	variants: {
-		size: {
-			sm: 'min-h-[80px] text-sm',
-			md: 'min-h-[120px] text-md',
-			lg: 'min-h-[160px] text-lg',
-		},
-		status: {
-			default: 'border-lightPurple',
-			error: 'border-rose-400',
-			success: 'border-green-500',
-		},
-		isDisabled: {
-			true: 'opacity-50 bg-gray-100',
-		},
-	},
-	defaultVariants: {
-		size: 'md',
-		status: 'default',
-	},
-});
+type SizeType = 'sm' | 'md' | 'lg';
+type StatusType = 'default' | 'error' | 'success';
 
-export interface TextAreaProps
-	extends Omit<TextInputProps, 'style' | 'multiline'>,
-		VariantProps<typeof textArea> {
-	className?: string;
-	containerClassName?: string;
+export interface TextAreaProps extends Omit<TextInputProps, 'style' | 'multiline'> {
+	size?: SizeType;
+	status?: StatusType;
+	isDisabled?: boolean;
+	style?: StyleProp<ViewStyle>;
+	containerStyle?: StyleProp<ViewStyle>;
 }
 
 export function TextArea({
-	size,
-	status,
+	size = 'md',
+	status = 'default',
 	isDisabled,
-	className,
-	containerClassName,
+	style,
+	containerStyle,
 	placeholderTextColor = '#9CA3AF',
 	editable = true,
 	...props
 }: TextAreaProps) {
+	const getSizeStyle = () => {
+		switch (size) {
+			case 'sm': return styles.sizeSm;
+			case 'lg': return styles.sizeLg;
+			default: return styles.sizeMd;
+		}
+	};
+
+	const getStatusStyle = () => {
+		switch (status) {
+			case 'error': return styles.statusError;
+			case 'success': return styles.statusSuccess;
+			default: return styles.statusDefault;
+		}
+	};
+
 	return (
-		<View className={containerClassName}>
+		<View style={containerStyle}>
 			<TextInput
-				className={textArea({ size, status, isDisabled, className })}
 				placeholderTextColor={placeholderTextColor}
 				editable={!isDisabled && editable}
 				multiline
-				style={{ textAlignVertical: 'top' }}
+				style={[
+					styles.textArea,
+					getSizeStyle(),
+					getStatusStyle(),
+					isDisabled && styles.disabled,
+					style,
+				]}
 				autoCapitalize="none"
 				autoCorrect={false}
 				{...props}
@@ -55,3 +58,39 @@ export function TextArea({
 		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	textArea: {
+		width: '100%',
+		backgroundColor: 'transparent',
+		borderWidth: 1,
+		borderRadius: 8,
+		padding: 8,
+		textAlignVertical: 'top',
+	},
+	sizeSm: {
+		minHeight: 80,
+		fontSize: 12,
+	},
+	sizeMd: {
+		minHeight: 120,
+		fontSize: 14,
+	},
+	sizeLg: {
+		minHeight: 160,
+		fontSize: 16,
+	},
+	statusDefault: {
+		borderColor: semanticColors.border.default,
+	},
+	statusError: {
+		borderColor: '#FB7185',
+	},
+	statusSuccess: {
+		borderColor: '#22C55E',
+	},
+	disabled: {
+		opacity: 0.5,
+		backgroundColor: '#F3F4F6',
+	},
+});

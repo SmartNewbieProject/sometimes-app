@@ -83,7 +83,7 @@ export default function PersonalitySelectionScreen() {
             step={personality?.length ?? 0}
             dotGap={4}
             dotSize={16}
-            className="self-end"
+            style={styles.stepIndicator}
           />
           <Divider.Horizontal />
         </View>
@@ -152,5 +152,8 @@ const styles = StyleSheet.create({
   },
   chipSelectorContent: {
     width: "100%",
+  },
+  stepIndicator: {
+    alignSelf: "flex-end",
   },
 });

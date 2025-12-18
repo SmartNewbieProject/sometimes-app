@@ -181,7 +181,16 @@ function useUniversityHook() {
       if (hasProcessedPassInfo.current) return;
 
       try {
-        const certInfoStr = await AsyncStorage.getItem('signup_certification_info');
+        // AsyncStorage에서 먼저 시도
+        let certInfoStr = await AsyncStorage.getItem('signup_certification_info');
+
+        // AsyncStorage에 없으면 URL params에서 fallback (기존 사용자 지원)
+        if (!certInfoStr && params.certificationInfo) {
+          certInfoStr = params.certificationInfo as string;
+          // URL params에서 가져온 경우, AsyncStorage에 저장
+          await AsyncStorage.setItem('signup_certification_info', certInfoStr);
+        }
+
         if (certInfoStr) {
           hasProcessedPassInfo.current = true;
           const certInfo = JSON.parse(certInfoStr);
@@ -205,7 +214,7 @@ function useUniversityHook() {
     };
 
     loadCertificationInfo();
-  }, []);
+  }, [params.certificationInfo]);
 
   const { trackSignupEvent } = useSignupAnalytics("university");
 

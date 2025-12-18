@@ -18,55 +18,40 @@ export const PrivacyNotice = () => {
   const { t } = useTranslation();
   console.log(t("features.auth.ui.privacy_notice.notice_prefix"));
   return (
-    <View className="flex flex-col w-full items-center">
-      <Text textColor="gray" className="text-[12px]">
+    <View style={styles.container}>
+      <Text textColor="gray" size="12" weight="normal" style={styles.noticeText}>
         {t("features.auth.ui.privacy_notice.notice_prefix")}
       </Text>
 
-      <View className="flex flex-row">
+      <View style={styles.linksRow}>
         <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_LINK)}>
-          <Text
-            style={{
-              ...styles.link,
-              marginRight: 2,
-            }}
-          >
+          <Text style={[styles.link, styles.linkSpacing]}>
             {t("features.auth.ui.privacy_notice.privacy_terms")}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => Linking.openURL(SERVICE_LINK)}>
-          <Text style={{ ...styles.link, marginRight: 2 }}>
+          <Text style={[styles.link, styles.linkSpacing]}>
             {t("features.auth.ui.privacy_notice.service_terms")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_POLICY_LINK)}>
-          <Text style={{ ...styles.link }}>{t("features.auth.ui.privacy_notice.collection_agreement")}</Text>
+          <Text style={styles.link}>
+            {t("features.auth.ui.privacy_notice.collection_agreement")}
+          </Text>
         </TouchableOpacity>
       </View>
-      <Text textColor="gray" className="text-[12px]">
+      <Text textColor="gray" size="12" weight="normal" style={styles.noticeText}>
         {t("features.auth.ui.privacy_notice.notice_suffix")}
       </Text>
 
       <TouchableOpacity onPress={() => Linking.openURL(ENTERPIRSE_LINK)}>
-        <Text
-          style={{
-            ...styles.link,
-            marginTop: 10,
-            color: colors.gray,
-          }}
-        >
+        <Text style={[styles.link, styles.businessLink]}>
           {t("features.auth.ui.privacy_notice.business_info")}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-        <Text
-          style={{
-            ...styles.link,
-            marginTop: 10,
-            color: colors.gray,
-          }}
-        >
+        <Text style={[styles.link, styles.businessLink]}>
           Log in with Review Account
         </Text>
       </TouchableOpacity>
@@ -79,11 +64,33 @@ export const PrivacyNotice = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    width: '100%',
+    alignItems: 'center',
+  },
+  noticeText: {
+    textAlign: 'center',
+  },
+  linksRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+  },
   link: {
     textDecorationLine: "underline",
     fontSize: 12,
     color: colors["gray-600"],
     fontFamily: "Pretendard-SemiBold",
-    fontWeight: 600,
+    fontWeight: "600",
+    textAlign: 'center',
+  },
+  linkSpacing: {
+    marginRight: 2,
+  },
+  businessLink: {
+    marginTop: 10,
+    color: colors.gray,
   },
 });

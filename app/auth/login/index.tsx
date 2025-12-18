@@ -9,7 +9,7 @@ import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { useSignupProgress } = Signup;
@@ -99,38 +99,20 @@ export default function LoginScreen() {
   }, [clear]);
 
   return (
-    <View className="flex-1" style={{ backgroundColor: semanticColors.surface.secondary }}>
+    <View style={styles.container}>
       <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ flexGrow: 1 }}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View
-          className="flex-1 justify-center items-center px-4"
-          style={{
-            ...platform({
-              ios: () => ({
-                paddingTop: 20,
-                paddingBottom: 40,
-              }),
-              android: () => ({
-                paddingTop: 20,
-                paddingBottom: 40,
-              }),
-              web: () => ({
-                paddingTop: 40,
-                paddingBottom: 40,
-              }),
-            }),
-          }}
-        >
+        <View style={styles.contentWrapper}>
           {/* 로고 섹션 */}
-          <View className="items-center mb-[54px]">
+          <View style={styles.logoSection}>
             <Signup.Logo />
           </View>
 
           {/* 메인 콘텐츠 */}
-          <View className="flex-1 w-full max-w-sm">
+          <View style={styles.mainContent}>
             <Signup.LoginForm />
           </View>
         </View>
@@ -138,3 +120,34 @@ export default function LoginScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.secondary,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  contentWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  logoSection: {
+    alignItems: 'center',
+    marginBottom: 54,
+  },
+  mainContent: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 384,
+    alignItems: 'center',
+  },
+});

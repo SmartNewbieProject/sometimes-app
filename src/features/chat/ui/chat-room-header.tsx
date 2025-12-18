@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     color: semanticColors.text.disabled,
     fontSize: 13,
     lineHeight: 19,
+    fontFamily: "Pretendard-Medium",
   },
   schoolContainer: {
     flexDirection: "row",

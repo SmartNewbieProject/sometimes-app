@@ -155,7 +155,7 @@ select_environment() {
             ;;
         2)
             PROFILE="preview"
-            ENV_FILE=".env.production"
+            ENV_FILE=".env"
             ;;
         3)
             PROFILE="development"
@@ -272,6 +272,93 @@ build_android() {
     print_success "Android build completed!"
 }
 
+# List connected iOS devices
+list_connected_devices() {
+    xcrun devicectl list devices 2>/dev/null | grep -E "iPhone|iPad" | grep "connected" || true
+}
+
+# Get device ID from device name or use first connected device
+get_device_id() {
+    local device_list=$(xcrun devicectl list devices 2>/dev/null | grep -E "iPhone|iPad" | grep "connected")
+
+    if [ -z "$device_list" ]; then
+        return 1
+    fi
+
+    # Extract device ID (3rd column)
+    echo "$device_list" | head -1 | awk '{print $3}'
+}
+
+# Install IPA to connected iPhone
+install_ipa_to_device() {
+    local ipa_file="$1"
+    local device_id="$2"
+
+    if [ ! -f "$ipa_file" ]; then
+        print_error "IPA file not found: $ipa_file"
+        return 1
+    fi
+
+    print_step "Installing to iPhone..."
+    echo -e "${CYAN}Device ID: $device_id${NC}"
+    echo -e "${CYAN}IPA: $(basename "$ipa_file")${NC}"
+    echo ""
+
+    if xcrun devicectl device install app --device "$device_id" "$ipa_file"; then
+        print_success "App installed successfully! 🎉"
+        notify "App Installed ✅" "썸타임 앱이 iPhone에 설치되었습니다!" "Glass"
+        play_sound "success"
+        return 0
+    else
+        print_error "Installation failed"
+        notify "Installation Failed ❌" "앱 설치에 실패했습니다." "Basso"
+        play_sound "error"
+        return 1
+    fi
+}
+
+# Prompt user to install IPA to device
+prompt_install_to_device() {
+    local build_dir="$1"
+
+    # Find IPA file in build directory
+    local ipa_file=$(find "$build_dir" -name "*.ipa" -type f | head -1)
+
+    if [ -z "$ipa_file" ]; then
+        return 0
+    fi
+
+    # Check for connected devices
+    local connected_devices=$(list_connected_devices)
+
+    if [ -z "$connected_devices" ]; then
+        echo ""
+        print_warning "No iPhone/iPad connected via USB"
+        return 0
+    fi
+
+    echo ""
+    echo -e "${CYAN}============================================================${NC}"
+    echo -e "${BOLD}Connected iOS Devices:${NC}"
+    echo "$connected_devices"
+    echo -e "${CYAN}============================================================${NC}"
+    echo ""
+
+    read -p "Install app to connected device? [y/N]: " install_confirm
+
+    if [[ $install_confirm =~ ^[Yy]$ ]]; then
+        local device_id=$(get_device_id)
+        if [ -n "$device_id" ]; then
+            install_ipa_to_device "$ipa_file" "$device_id"
+        else
+            print_error "Could not get device ID"
+            return 1
+        fi
+    else
+        echo "Skipping installation."
+    fi
+}
+
 # Move build artifacts to organized directory
 organize_artifacts() {
     local build_dir="$PROJECT_ROOT/builds"
@@ -290,12 +377,17 @@ organize_artifacts() {
         echo ""
         echo -e "${BOLD}Generated files:${NC}"
         ls -lah "$target_dir"
+
+        # Store the build directory path in a global variable
+        BUILD_OUTPUT_DIR="$target_dir"
     else
         print_warning "No build artifacts found to organize"
         # Check if artifacts are in current directory
         echo ""
         echo -e "${BOLD}Looking for build outputs...${NC}"
         find "$PROJECT_ROOT" -maxdepth 2 \( -name "*.ipa" -o -name "*.aab" -o -name "*.apk" \) -mmin -60 2>/dev/null || echo "No recent builds found"
+        echo ""
+        BUILD_OUTPUT_DIR=""
     fi
 }
 
@@ -369,6 +461,13 @@ main() {
             upload_to_diawi "$ipa_file" || true
         else
             print_warning "No IPA file found to upload to Diawi"
+        fi
+    fi
+
+    # Prompt to install to connected device (iOS only)
+    if [ "$PLATFORM" = "ios" ] || [ "$PLATFORM" = "all" ]; then
+        if [ -n "$BUILD_OUTPUT_DIR" ]; then
+            prompt_install_to_device "$BUILD_OUTPUT_DIR" || true
         fi
     fi
 

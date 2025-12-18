@@ -1,11 +1,12 @@
 import SmallTitleIcon from "@/assets/icons/small-title.svg";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import colors from "@/src/shared/constants/colors";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { DefaultLayout } from "@/src/features/layout/ui";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { ScrollView, View , Linking } from "react-native";
+import { ScrollView, View, Linking, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -32,78 +33,66 @@ export default function ApprovalRejectedScreen() {
   };
 
   return (
-    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout style={styles.container}>
       <PalePurpleGradient />
 
       <ScrollView
-        className="flex-1 w-full"
+        style={styles.scrollView}
         contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top }}
       >
-        <View className="flex-1 items-center px-6 pb-12">
+        <View style={styles.contentWrapper}>
           {/* SOMETIME 로고 */}
-          <View className="mt-[10px] mb-[28px]">
+          <View style={styles.logoContainer}>
             <SmallTitleIcon width={160} height={40} />
           </View>
           {/* 메인 이미지 */}
-          <View className="items-center mb-8 relative">
-            <View
-              style={{
-                width: 165,
-                height: 165,
-                borderRadius: 81,
-                top: -8,
-                left: 0,
-
-                backgroundColor: semanticColors.brand.primary,
-                position: "absolute",
-              }}
-            />
+          <View style={styles.imageContainer}>
+            <View style={styles.imageBackground} />
             <Image
               source={require("@assets/images/limit-signup.png")}
-              style={{ width: 160, height: 160 }}
-              className="mb-6"
+              style={styles.mainImage}
             />
           </View>
 
           {/* 제목 */}
-          <View className="w-full mb-4">
+          <View style={styles.titleContainer}>
             <Text
               size="lg"
               textColor="black"
               weight="normal"
-              className="text-left"
+              style={styles.textLeft}
             >
               {t("apps.auth.approval-rejected.title")}
             </Text>
           </View>
 
           {/* 설명 */}
-          <View className="w-full mb-8">
+          <View style={styles.descriptionContainer}>
             <Text
               size="md"
               textColor="gray"
               weight="light"
-              className="text-left leading-6"
+              style={styles.descriptionText}
             >
               {t("apps.auth.approval-rejected.desc")}
             </Text>
           </View>
 
           {/* 거절 사유 카드 */}
-          <View className="w-full mb-8">
-            <View className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-              <View className="flex-row items-center">
-                <View className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center mr-3">
+          <View style={styles.cardWrapper}>
+            <View style={styles.card}>
+              <View style={styles.cardRow}>
+                <View style={styles.iconCircle}>
                   <Text size="12" textColor="white" weight="bold">
                     !
                   </Text>
                 </View>
-                <View className="flex-1">
+                <View style={styles.flex1}>
                   <Text
                     size="md"
                     textColor="dark"
                     weight="semibold"
-                    className="mb-1"
+                    style={styles.cardTitle}
                   >
                     {t("apps.auth.approval-rejected.card_title")}
                   </Text>
@@ -120,7 +109,7 @@ export default function ApprovalRejectedScreen() {
             size="sm"
             textColor="gray"
             weight="light"
-            className="text-center mt-8"
+            style={styles.guideText}
           >
             {t("apps.auth.approval-rejected.guide")}
           </Text>
@@ -128,19 +117,19 @@ export default function ApprovalRejectedScreen() {
       </ScrollView>
 
       {/* 하단 버튼들 */}
-      <View className="w-full px-6 pb-8 gap-3 space-y-3">
+      <View style={styles.bottomContainer}>
         <Button
           variant="primary"
           size="md"
           onPress={handleReapply}
-          className="w-full py-4 rounded-2xl"
+          styles={styles.primaryButton}
         >
-          <View className="flex-row items-center justify-center">
+          <View style={styles.buttonContent}>
             <Text
               size="md"
               textColor="white"
               weight="semibold"
-              className="mr-2"
+              style={styles.buttonIcon}
             >
               ↻
             </Text>
@@ -154,10 +143,10 @@ export default function ApprovalRejectedScreen() {
           variant="secondary"
           size="md"
           onPress={handleContactSupport}
-          className="w-full py-4 rounded-2xl bg-surface-background border border-gray-300"
+          styles={styles.secondaryButton}
         >
-          <View className="flex-row items-center justify-center">
-            <Text size="md" textColor="gray" weight="medium" className="mr-2">
+          <View style={styles.buttonContent}>
+            <Text size="md" textColor="gray" weight="medium" style={styles.buttonIcon}>
               🎧
             </Text>
             <Text size="md" textColor="gray" weight="medium">
@@ -169,3 +158,121 @@ export default function ApprovalRejectedScreen() {
     </DefaultLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+  },
+  scrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  contentWrapper: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingBottom: 48,
+  },
+  logoContainer: {
+    marginTop: 10,
+    marginBottom: 28,
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 32,
+    position: "relative",
+  },
+  imageBackground: {
+    width: 165,
+    height: 165,
+    borderRadius: 81,
+    top: -8,
+    left: 0,
+    backgroundColor: semanticColors.brand.primary,
+    position: "absolute",
+  },
+  mainImage: {
+    width: 160,
+    height: 160,
+    marginBottom: 24,
+  },
+  titleContainer: {
+    width: "100%",
+    marginBottom: 16,
+  },
+  textLeft: {
+    textAlign: "left",
+  },
+  descriptionContainer: {
+    width: "100%",
+    marginBottom: 32,
+  },
+  descriptionText: {
+    textAlign: "left",
+    lineHeight: 24,
+  },
+  cardWrapper: {
+    width: "100%",
+    marginBottom: 32,
+  },
+  card: {
+    backgroundColor: "#FAF5FF",
+    borderWidth: 1,
+    borderColor: "#E9D5FF",
+    borderRadius: 12,
+    padding: 16,
+  },
+  cardRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#EF4444",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  flex1: {
+    flex: 1,
+  },
+  cardTitle: {
+    marginBottom: 4,
+  },
+  guideText: {
+    textAlign: "center",
+    marginTop: 32,
+  },
+  bottomContainer: {
+    width: "100%",
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+    gap: 12,
+  },
+  primaryButton: {
+    width: "100%",
+    paddingVertical: 16,
+    borderRadius: 16,
+  },
+  secondaryButton: {
+    width: "100%",
+    paddingVertical: 16,
+    borderRadius: 16,
+    backgroundColor: semanticColors.surface.background,
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+});

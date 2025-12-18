@@ -1,4 +1,4 @@
-import { ImageResources, cn } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
@@ -12,10 +12,10 @@ import { useAuth } from "../../auth";
 
 
 type MockLikeButtonProps = {
-  className?: string;
+  style?: object;
 };
 
-export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
+export const MockLikeButton = ({ style }: MockLikeButtonProps) => {
   const { profileDetails } = useAuth();
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
@@ -53,11 +53,11 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[5px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.modalContent}>
+          <Text textColor="disabled" style={styles.modalText}>
             {t("features.guide.mock.mock_like_button.modal_text_1")}
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text textColor="disabled" style={styles.modalText}>
             {t("features.guide.mock.mock_like_button.modal_text_2")}
           </Text>
         </View>
@@ -96,11 +96,11 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[5px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.modalContent}>
+          <Text textColor="disabled" style={styles.modalText}>
             {t("features.guide.mock.mock_like_button.partner_modal_text_1")}
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text textColor="disabled" style={styles.modalText}>
             {t("features.guide.mock.mock_like_button.partner_modal_text_2")}
           </Text>
         </View>
@@ -121,7 +121,7 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
     <Button
       onPress={showPartnerLikeAnnouncement}
       variant="primary"
-      className={cn("flex-1 items-center", className)}
+      style={[styles.buttonBase, style]}
       prefix={
         profileDetails?.gender === "MALE" ? (
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />
@@ -136,7 +136,7 @@ export const MockLikeButton = ({ className = "" }: MockLikeButtonProps) => {
         ) : (
           <></>
         )}
-        <RNText className="text-md text-text-inverse whitespace-nowrap">
+        <RNText style={styles.mainButtonText}>
           {t("features.guide.mock.mock_like_button.main_button")}
         </RNText>
       </View>
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   subText: {
     fontSize: 15,
     fontFamily: "Pretendard-Thin",
-    fontWeight: 300,
+    fontWeight: "300",
     lineHeight: 18,
     marginLeft: -5,
     marginRight: 6,
@@ -174,6 +174,23 @@ const styles = StyleSheet.create({
     top: -40,
     width: 105,
     height: 80,
+  },
+  modalContent: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  modalText: {
+    fontSize: 12,
+  },
+  buttonBase: {
+    flex: 1,
+    alignItems: "center",
+  },
+  mainButtonText: {
+    fontSize: 14,
+    color: semanticColors.text.inverse,
   },
 });
 

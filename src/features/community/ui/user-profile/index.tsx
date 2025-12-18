@@ -2,7 +2,7 @@ import type { Author } from "@/src/features/community/types";
 import { type UniversityName, getUnivLogo } from "@/src/shared/libs/univ";
 import { Show, Text } from "@/src/shared/ui";
 import type { ReactNode } from "react";
-import { Image, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 interface UserProfileProps {
   author: Author;
@@ -20,27 +20,26 @@ export const UserProfile = ({
   hideUniv = false,
 }: UserProfileProps) => {
   return (
-    <View className="flex flex-row flex-shrink items-center  mb-2 relative">
+    <View style={styles.container}>
       <Image
         source={{ uri: getUnivLogo(universityName) }}
-        style={{ width: 32, height: 32 }}
-        className="rounded-full mr-3 self-start"
+        style={styles.avatar}
       />
 
-      <View className="flex-1 relative">
-        <View className="flex flex-row items-center justify-between">
-          <View className="flex flex-col flex-1">
-            <View className="flex flex-row flex-wrap">
+      <View style={styles.content}>
+        <View style={styles.nameRow}>
+          <View style={styles.nameColumn}>
+            <View style={styles.nameWrapper}>
               <Text size="sm" weight="medium" textColor="black">
                 {author.name}
               </Text>
               <Show when={isOwner}>
-                <Text size="sm" className="ml-1" textColor="pale-purple">
+                <Text size="sm" style={styles.ownerBadge} textColor="pale-purple">
                   (나)
                 </Text>
               </Show>
               <Show when={!!updatedAt}>
-                <View className="pl-1.5">
+                <View style={styles.updatedAtWrapper}>
                   <Text size="sm" textColor="pale-purple">
                     {updatedAt}
                   </Text>
@@ -51,7 +50,7 @@ export const UserProfile = ({
         </View>
 
         <Show when={!hideUniv}>
-          <Text size="13" textColor="purple" className="opacity-70">
+          <Text size="13" textColor="purple" style={styles.univText}>
             {author.age}
             <Text> · </Text>
             {universityName}
@@ -61,3 +60,46 @@ export const UserProfile = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    flexShrink: 1,
+    alignItems: "center",
+    marginBottom: 8,
+    position: "relative",
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginRight: 12,
+    alignSelf: "flex-start",
+  },
+  content: {
+    flex: 1,
+    position: "relative",
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  nameColumn: {
+    flexDirection: "column",
+    flex: 1,
+  },
+  nameWrapper: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  ownerBadge: {
+    marginLeft: 4,
+  },
+  updatedAtWrapper: {
+    paddingLeft: 6,
+  },
+  univText: {
+    opacity: 0.7,
+  },
+});

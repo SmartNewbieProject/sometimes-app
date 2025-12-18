@@ -17,9 +17,9 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
+import { Text } from "@/src/shared/ui/text";
 
 function UniversityDetailsPage() {
   const { onBackPress, onNext, signupLoading, nextable } =
@@ -82,16 +82,24 @@ function UniversityDetailsPage() {
 
           <View style={[styles.contentWrapper, styles.departmentSection]}>
             <View style={styles.titleWrapper}>
-              <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_department")}</Text>
-              <Text style={styles.subtitle}>{t("apps.auth.sign_up.university_detail.subtitle_department")}</Text>
+              <Text size="lg" weight="semibold" textColor="purple" style={styles.title}>
+                {t("apps.auth.sign_up.university_detail.title_department")}
+              </Text>
+              <Text size="sm" weight="normal" textColor="muted" style={styles.subtitle}>
+                {t("apps.auth.sign_up.university_detail.subtitle_department")}
+              </Text>
             </View>
             <DepartmentSearch />
           </View>
 
           <View style={[styles.contentWrapper, styles.academicSection]}>
             <View style={styles.titleWrapper}>
-              <Text style={styles.title}>{t("apps.auth.sign_up.university_detail.title_academic")}</Text>
-              <Text style={styles.subtitle}>{t("apps.auth.sign_up.university_detail.subtitle_academic")}</Text>
+              <Text size="lg" weight="semibold" textColor="purple" style={styles.title}>
+                {t("apps.auth.sign_up.university_detail.title_academic")}
+              </Text>
+              <Text size="sm" weight="normal" textColor="muted" style={styles.subtitle}>
+                {t("apps.auth.sign_up.university_detail.subtitle_academic")}
+              </Text>
             </View>
             <AcademicInfoSelector />
           </View>
@@ -131,16 +139,10 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   title: {
-    fontFamily: "Pretendard-SemiBold",
-    fontSize: 18,
     lineHeight: 22,
-    color: semanticColors.brand.primary,
   },
   subtitle: {
-    fontFamily: "Pretendard-Regular",
-    fontSize: 14,
     lineHeight: 20,
-    color: semanticColors.text.muted,
   },
   contentWrapper: {
     gap: 15,
