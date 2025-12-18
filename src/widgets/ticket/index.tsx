@@ -69,8 +69,8 @@ const TicketComponent = ({ count, hot, discount, onOpenPayment }: TicketDetails)
         <View style={styles.sales}>
           {discount && (
             <>
-              <Text textColor="gray" className="text-[12px] line-through">{totalOriginPrice}{i18n.t('widgets.ticket.currency_unit')}</Text>
-              <Text className="text-[12px]">{discount.toFixed(0)}{i18n.t('widgets.ticket.discount_suffix')}</Text>
+              <Text textColor="gray" style={styles.originalPriceText}>{totalOriginPrice}{i18n.t('widgets.ticket.currency_unit')}</Text>
+              <Text style={styles.discountRateText}>{discount.toFixed(0)}{i18n.t('widgets.ticket.discount_suffix')}</Text>
             </>
           )}
         </View>
@@ -147,5 +147,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-  }
+  },
+  originalPriceText: {
+    fontSize: 12,
+    textDecorationLine: 'line-through',
+  },
+  discountRateText: {
+    fontSize: 12,
+  },
 });

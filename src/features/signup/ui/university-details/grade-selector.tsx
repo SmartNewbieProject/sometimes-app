@@ -2,8 +2,9 @@ import BottomArrowIcon from '@assets/icons/bottom-arrow.svg';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { BottomSheetPicker } from '@/src/shared/ui/bottom-sheet-picker';
 import type { BottomSheetPickerOption } from '@/src/shared/ui/bottom-sheet-picker';
+import { Text } from '@/src/shared/ui/text';
 import React, { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSignupProgress } from '../../hooks';
 import i18n from '@/src/shared/libs/i18n';
@@ -46,7 +47,12 @@ function GradeSelector() {
           pressed && styles.selectorPressed,
         ]}
       >
-        <Text style={[styles.selectorText, hasValue && styles.selectorTextSelected]}>
+        <Text
+          size="md"
+          weight={hasValue ? "medium" : "light"}
+          textColor={hasValue ? "primary" : "disabled"}
+          style={styles.selectorText}
+        >
           {grade ?? t('features.signup.ui.grade_select_placeholder')}
         </Text>
         <View style={styles.iconBox}>
@@ -86,18 +92,11 @@ const styles = StyleSheet.create({
     backgroundColor: semanticColors.surface.surface,
   },
   selectorText: {
-    color: semanticColors.text.disabled,
-    fontSize: 15,
-    fontWeight: 300,
-    fontFamily: "Pretendard-Thin",
-    lineHeight: 18.9,
-    marginLeft: 12,
-  },
-  selectorTextSelected: {
-    color: semanticColors.text.primary,
-    fontWeight: '500',
+    flex: 1,
   },
   iconBox: {
+    flexShrink: 0,
+    marginLeft: 8,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,

@@ -7,7 +7,7 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  Text,
+  Text as RNText,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -21,15 +21,20 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { semanticColors } from '../../constants/semantic-colors';
+import { Text } from '../text';
 import SearchIcon from '@assets/icons/search.svg';
 import CheckIcon from '@assets/icons/circle-check.svg';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SHEET_HEIGHT = SCREEN_HEIGHT * 0.7;
 const MIN_TOUCH_TARGET = 48;
 const ANIMATION_DURATION = 300;
 
 const isWeb = Platform.OS === 'web';
+
+// 웹: 최대 600px, 네이티브: 화면의 70%
+const SHEET_HEIGHT = isWeb
+  ? Math.min(600, SCREEN_HEIGHT * 0.7)
+  : SCREEN_HEIGHT * 0.7;
 
 export interface BottomSheetPickerOption {
   label: string;
@@ -119,10 +124,10 @@ function WebBottomSheetPicker({
           onPress={() => handleSelect(item.value)}
         >
           <Text
-            style={[
-              styles.optionText,
-              isSelected && styles.optionTextSelected,
-            ]}
+            size="lg"
+            weight={isSelected ? "semibold" : "normal"}
+            textColor="primary"
+            style={styles.optionText}
           >
             {item.label}
           </Text>
@@ -183,7 +188,7 @@ function WebBottomSheetPicker({
 
           {title && (
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>{title}</Text>
+              <Text size="lg" weight="bold" textColor="primary" style={styles.title}>{title}</Text>
             </View>
           )}
 
@@ -210,7 +215,7 @@ function WebBottomSheetPicker({
                     onPress={() => setSearchQuery('')}
                     style={styles.clearButton}
                   >
-                    <Text style={styles.clearButtonText}>✕</Text>
+                    <Text size="sm" textColor="muted">✕</Text>
                   </Pressable>
                 )}
               </View>
@@ -219,11 +224,11 @@ function WebBottomSheetPicker({
 
           {loading ? (
             <View style={styles.loadingContainer}>
-              <Text style={styles.loadingText}>로딩 중...</Text>
+              <Text size="md" textColor="muted">로딩 중...</Text>
             </View>
           ) : filteredOptions.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>{emptyText}</Text>
+              <Text size="md" textColor="muted" style={styles.emptyText}>{emptyText}</Text>
             </View>
           ) : (
             <FlatList
@@ -343,10 +348,10 @@ function NativeBottomSheetPicker({
           onPress={() => handleSelect(item.value)}
         >
           <Text
-            style={[
-              styles.optionText,
-              isSelected && styles.optionTextSelected,
-            ]}
+            size="lg"
+            weight={isSelected ? "semibold" : "normal"}
+            textColor="primary"
+            style={styles.optionText}
           >
             {item.label}
           </Text>
@@ -395,7 +400,7 @@ function NativeBottomSheetPicker({
 
           {title && (
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>{title}</Text>
+              <Text size="lg" weight="bold" textColor="primary" style={styles.title}>{title}</Text>
             </View>
           )}
 
@@ -423,7 +428,7 @@ function NativeBottomSheetPicker({
                     style={styles.clearButton}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
-                    <Text style={styles.clearButtonText}>✕</Text>
+                    <Text size="sm" textColor="muted">✕</Text>
                   </Pressable>
                 )}
               </View>
@@ -432,11 +437,11 @@ function NativeBottomSheetPicker({
 
           {loading ? (
             <View style={styles.loadingContainer}>
-              <Text style={styles.loadingText}>로딩 중...</Text>
+              <Text size="md" textColor="muted">로딩 중...</Text>
             </View>
           ) : filteredOptions.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>{emptyText}</Text>
+              <Text size="md" textColor="muted" style={styles.emptyText}>{emptyText}</Text>
             </View>
           ) : (
             <FlatList
@@ -479,7 +484,11 @@ const styles = StyleSheet.create({
     backgroundColor: semanticColors.surface.background,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    boxShadow: '0 -3px 10px rgba(0, 0, 0, 0.1)',
+    ...Platform.select({
+      web: {
+        boxShadow: '0 -3px 10px rgba(0, 0, 0, 0.1)',
+      } as any,
+    }),
   },
   sheetNative: {
     ...Platform.select({
@@ -506,74 +515,84 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: semanticColors.border.smooth,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: semanticColors.text.primary,
     textAlign: 'center',
   },
   searchContainer: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingTop: 16,
+    paddingBottom: 12,
   },
   searchInputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: semanticColors.surface.surface,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    height: MIN_TOUCH_TARGET,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    height: 52,
+    ...Platform.select({
+      web: {
+        display: 'flex',
+      } as any,
+    }),
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 17,
+    fontFamily: 'Pretendard-Regular',
     color: semanticColors.text.primary,
-    marginLeft: 8,
-    height: MIN_TOUCH_TARGET,
-    outlineStyle: 'none',
+    marginLeft: 12,
+    height: 52,
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+      } as any,
+    }),
   },
   clearButton: {
     padding: 4,
-  },
-  clearButtonText: {
-    fontSize: 14,
-    color: semanticColors.text.muted,
   },
   list: {
     flex: 1,
   },
   listContent: {
     paddingHorizontal: 8,
+    paddingTop: 12,
+    paddingBottom: 20,
   },
   optionItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    minHeight: MIN_TOUCH_TARGET,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    minHeight: 60,
+    paddingHorizontal: 24,
+    paddingVertical: 18,
     marginHorizontal: 8,
-    marginVertical: 2,
-    borderRadius: 12,
+    marginVertical: 6,
+    borderRadius: 14,
+    backgroundColor: semanticColors.surface.background,
+    borderWidth: 1,
+    borderColor: semanticColors.border.default,
+    ...Platform.select({
+      web: {
+        display: 'flex',
+      } as any,
+    }),
   },
   optionItemSelected: {
     backgroundColor: semanticColors.surface.tertiary,
+    borderColor: semanticColors.brand.primary,
+    borderWidth: 2,
   },
   optionItemPressed: {
     backgroundColor: semanticColors.surface.surface,
   },
   optionText: {
-    fontSize: 16,
-    color: semanticColors.text.primary,
     flex: 1,
-  },
-  optionTextSelected: {
-    color: semanticColors.text.primary,
-    fontWeight: '600',
   },
   checkIconWrapper: {
     marginLeft: 8,
@@ -583,10 +602,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loadingText: {
-    fontSize: 16,
-    color: semanticColors.text.muted,
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -594,8 +609,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   emptyText: {
-    fontSize: 16,
-    color: semanticColors.text.muted,
     textAlign: 'center',
   },
 });

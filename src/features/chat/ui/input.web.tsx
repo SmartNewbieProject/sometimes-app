@@ -321,6 +321,85 @@ function WebChatInput() {
   );
 }
 
+const webStyles: Record<string, React.CSSProperties> = {
+  container: {
+    display: "flex",
+    width: "100%",
+    alignItems: "center",
+    backgroundColor: "#F7F5FA",
+    padding: 16,
+    boxSizing: "border-box",
+  },
+  plusButton: {
+    display: "flex",
+    height: 32,
+    width: 32,
+    border: "none",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    backgroundColor: "#F7F5FA",
+    cursor: "pointer",
+  },
+  inputWrapper: {
+    position: "relative",
+    marginLeft: 12,
+    display: "flex",
+    flex: 1,
+    alignItems: "center",
+    borderRadius: 9999,
+    backgroundColor: "#FFFFFF",
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingRight: 8,
+    paddingLeft: 16,
+  },
+  textarea: {
+    flex: 1,
+    lineHeight: "18px",
+    resize: "none",
+    overflowY: "hidden",
+    backgroundColor: "transparent",
+    margin: 0,
+    padding: 0,
+    fontSize: 16,
+    color: "#374151",
+    border: "none",
+    outline: "none",
+  },
+  hiddenTextarea: {
+    lineHeight: "18px",
+    boxSizing: "border-box",
+    width: "100%",
+    resize: "none",
+    overflowY: "scroll",
+    margin: 0,
+    padding: 0,
+    position: "absolute",
+    top: -9999,
+    left: -9999,
+    zIndex: -10,
+  },
+  sendButton: {
+    display: "flex",
+    height: 32,
+    width: 32,
+    flexShrink: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-end",
+    borderRadius: "50%",
+    backgroundColor: "#7A4AE1",
+    color: "#FFFFFF",
+    border: "none",
+    cursor: "pointer",
+  },
+  sendButtonPlaceholder: {
+    height: 32,
+    width: 32,
+  },
+};
+
 function PlusIcon() {
   return (
     // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
@@ -335,6 +414,24 @@ function PlusIcon() {
       <path
         d="M7.875 2.9375C7.875 2.45352 7.48398 2.0625 7 2.0625C6.51602 2.0625 6.125 2.45352 6.125 2.9375V6.875H2.1875C1.70352 6.875 1.3125 7.26602 1.3125 7.75C1.3125 8.23398 1.70352 8.625 2.1875 8.625H6.125V12.5625C6.125 13.0465 6.51602 13.4375 7 13.4375C7.48398 13.4375 7.875 13.0465 7.875 12.5625V8.625H11.8125C12.2965 8.625 12.6875 8.23398 12.6875 7.75C12.6875 7.26602 12.2965 6.875 11.8125 6.875H7.875V2.9375Z"
         fill="#7A4AE1"
+      />
+    </svg>
+  );
+}
+
+function SendIcon() {
+  return (
+    // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 28 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4.35569 12.79C9.66961 10.314 13.2071 8.66881 14.9835 7.87063C20.0393 5.60645 21.1022 5.21551 21.7854 5.19922C21.9372 5.19922 22.2712 5.2318 22.4989 5.42727C22.6811 5.59016 22.7267 5.80192 22.7571 5.96481C22.7875 6.1277 22.8178 6.46977 22.7875 6.7304C22.5141 9.82534 21.3299 17.3346 20.7225 20.7879C20.4645 22.2539 19.9634 22.7426 19.4776 22.7915C18.4149 22.8892 17.6101 22.0422 16.5929 21.3254C14.9835 20.2015 14.0878 19.5011 12.5239 18.3934C10.7172 17.1229 11.8862 16.4224 12.9187 15.2821C13.1919 14.989 17.8531 10.428 17.9442 10.0208C17.9593 9.97193 17.9593 9.77646 17.8531 9.67873C17.7468 9.58099 17.5949 9.61357 17.4735 9.64616C17.3065 9.67873 14.7558 11.5031 9.79107 15.103C9.0623 15.6405 8.40945 15.9012 7.81733 15.8848C7.16447 15.8686 5.9195 15.4939 4.97818 15.1682C3.83947 14.7772 2.92851 14.5655 3.00442 13.8813C3.04997 13.5229 3.50545 13.1646 4.35569 12.79Z"
+        fill="white"
       />
     </svg>
   );

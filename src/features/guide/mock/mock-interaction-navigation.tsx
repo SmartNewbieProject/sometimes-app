@@ -1,4 +1,4 @@
-import { ImageResources, cn } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button, ImageResource , Text } from "@/src/shared/ui";
 import { Text as RNText, StyleSheet, View } from "react-native";
@@ -42,11 +42,11 @@ const MockInteractionNavigation = () => {
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[8px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.modalContent}>
+          <Text textColor="disabled" style={styles.modalText}>
             {t("features.guide.mock.mock_interaction_navigation.modal_text_1")}
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text textColor="disabled" style={styles.modalText}>
             {t("features.guide.mock.mock_interaction_navigation.modal_text_2")}
           </Text>
         </View>
@@ -65,20 +65,18 @@ const MockInteractionNavigation = () => {
   };
 
   return (
-    <View className=" flex flex-row gap-x-[5px] mt-4">
+    <View style={styles.container}>
       <Button
         onPress={showPartnerFindAnnouncement}
         variant={"outline"}
-        className="flex-1 items-center"
+        style={styles.buttonBase}
         prefix={
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />
         }
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={styles.buttonContent}>
           <RNText style={styles.subText}>x{featureCosts?.REMATCHING}</RNText>
-          <RNText
-            className={cn("text-md text-primaryPurple whitespace-nowrap")}
-          >
+          <RNText style={styles.mainButtonText}>
             {t("features.guide.mock.mock_interaction_navigation.main_button")}
           </RNText>
         </View>
@@ -86,7 +84,7 @@ const MockInteractionNavigation = () => {
       {isLiked ? (
         <Button
           onPress={() => {}}
-          className="flex-1 items-center !bg-surface-background !text-text-inverse"
+          style={styles.completedButton}
         >
           {t("features.guide.mock.mock_interaction_navigation.complete_button")}
         </Button>
@@ -98,6 +96,11 @@ const MockInteractionNavigation = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    gap: 5,
+    marginTop: 16,
+  },
   subText: {
     fontSize: 15,
     fontFamily: "Pretendard-Thin",
@@ -105,6 +108,32 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     lineHeight: 18,
     color: semanticColors.brand.accent,
+  },
+  modalContent: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  modalText: {
+    fontSize: 12,
+  },
+  buttonBase: {
+    flex: 1,
+    alignItems: "center",
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  mainButtonText: {
+    fontSize: 14,
+    color: "#8B5CF6",
+  },
+  completedButton: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: semanticColors.surface.background,
   },
 });
 

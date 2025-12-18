@@ -22,7 +22,6 @@ import { useAppleInApp } from "../../hooks/use-apple-in-app";
 import { usePortoneStore } from "../../hooks/use-portone-store";
 import { AppleFirstSaleCard } from "../first-sale-card/apple";
 import { GemStore } from "../gem-store";
-import { RematchingTicket } from "../rematching-ticket";
 import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
 
 function AppleGemStore() {
@@ -157,20 +156,21 @@ function AppleGemStore() {
 
   return (
     <Layout.Default
-      className="flex flex-1 flex-col"
-      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
+      style={[styles.layoutContainer, { backgroundColor: semanticColors.surface.background, paddingTop: insets.top }]}
     >
       <GemStore.Header gemCount={gem?.totalGem ?? 0} />
       <ScrollView
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
       >
         <GemStore.Banner />
-        <RematchingTicket.ContentLayout>
-          <View className="flex-1 flex flex-col px-[16px] mt-4">
-            <View className="flex flex-col mb-2">
-              <View style={{ marginBottom: 30 }}>
+        <View style={styles.contentCard}>
+          <View style={styles.contentContainer}>
+            <View style={styles.headerSection}>
+              <View style={styles.saleCardContainer}>
                 <Show when={sale.length > 0}>
                   <AppleFirstSaleCard
                     gemProducts={sale}
@@ -185,9 +185,9 @@ function AppleGemStore() {
               </Text>
             </View>
 
-            <View className="flex flex-col gap-y-4 justify-center mb-auto">
+            <View style={styles.productListContainer}>
               <Show when={isLoadingServer || !products || products?.length === 0}>
-                <View className="flex-1 justify-center items-center">
+                <View style={styles.loadingContainer}>
                   <Text>젬 상품을 불러오는 중...</Text>
                 </View>
               </Show>
@@ -207,7 +207,7 @@ function AppleGemStore() {
               </Show>
             </View>
           </View>
-        </RematchingTicket.ContentLayout>
+        </View>
       </ScrollView>
       <ScrollDownIndicator visible={showIndicator} />
 
@@ -228,6 +228,49 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 9999,
+  },
+  layoutContainer: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingBottom: 40,
+  },
+  contentCard: {
+    backgroundColor: semanticColors.surface.secondary,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    marginTop: -32,
+    paddingTop: 32,
+    paddingBottom: 28,
+    minHeight: 400,
+  },
+  contentContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  headerSection: {
+    flexDirection: 'column',
+    marginBottom: 8,
+  },
+  saleCardContainer: {
+    marginBottom: 30,
+  },
+  productListContainer: {
+    flexDirection: 'column',
+    gap: 16,
+    justifyContent: 'center',
+    marginBottom: 'auto',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

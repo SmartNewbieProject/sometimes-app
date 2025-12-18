@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Text } from "@/src/shared/ui";
 import { useAuth } from "../../auth";
 import PurpleRightArrow from '@assets/icons/purple-arrow.svg';
@@ -11,20 +11,38 @@ export const CommunityAnnouncement = () => {
 
   return (
     <TouchableOpacity
-      className="flex flex-row items-center justify-between"
+      style={styles.container}
       onPress={() => router.navigate('/community')}
     >
-      <View className="my-[25px]">
-        <Text textColor="black" className="font-bold text-[18px]" weight="medium">
+      <View style={styles.textContainer}>
+        <Text textColor="black" weight="medium" style={styles.text}>
           {t("features.home.ui.community_announcement.greeting", {name:profileDetails?.name|| t("features.home.ui.community_announcement.default_user")})}
         </Text>
-        <Text textColor="black" className="font-bold text-[18px]" weight="medium">
+        <Text textColor="black" weight="medium" style={styles.text}>
           {t("features.home.ui.community_announcement.success_story_prompt")}
         </Text>
       </View>
-      <View className="mt-4">
+      <View style={styles.arrowContainer}>
         <PurpleRightArrow />
       </View>
     </TouchableOpacity>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  textContainer: {
+    marginVertical: 25,
+  },
+  text: {
+    fontWeight: '700',
+    fontSize: 18,
+  },
+  arrowContainer: {
+    marginTop: 16,
+  },
+});

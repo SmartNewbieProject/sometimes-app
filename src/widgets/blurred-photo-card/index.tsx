@@ -47,7 +47,7 @@ export function BlurredPhotoCard({
       )}
 
       {/* 블러 오버레이 */}
-      <BlurView intensity={90} style={styles.blurOverlay} tint="dark" />
+      <BlurView intensity={20} style={styles.blurOverlay} tint="dark" />
 
       {/* 컨텐츠 */}
       <View style={styles.content}>

@@ -83,7 +83,6 @@ export default function PersonalitySelectionScreen() {
             step={personality?.length ?? 0}
             dotGap={4}
             dotSize={16}
-            className="self-end"
           />
         </View>
 

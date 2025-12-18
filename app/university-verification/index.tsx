@@ -7,6 +7,7 @@ import {
   View,
   Pressable,
   Linking,
+  StyleSheet,
 } from "react-native";
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useModal } from "@/src/shared/hooks/use-modal";
@@ -20,6 +21,8 @@ import {
   UI_CONSTANTS,
 } from "@/src/features/university-verification";
 import { useTranslation } from "react-i18next";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import colors from "@/src/shared/constants/colors";
 
 export default function UniversityVerificationScreen() {
   const { t } = useTranslation();
@@ -149,11 +152,11 @@ export default function UniversityVerificationScreen() {
   };
 
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <PalePurpleGradient />
       <Header.Container>
         <Header.LeftContent>
-          <Pressable onPress={() => router.back()} className="p-2 -ml-2">
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
@@ -165,13 +168,13 @@ export default function UniversityVerificationScreen() {
         <Header.RightContent></Header.RightContent>
       </Header.Container>
 
-      <View className="flex-1">
-        <ScrollView className="flex-1 px-5">
-          <View className="mt-8">
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.formContainer}>
             {/* 학교 이메일 주소 입력 섹션 */}
-            <View className="mb-8">
-              <View className="flex-row items-end gap-x-3">
-                <View className="flex-1">
+            <View style={styles.inputSection}>
+              <View style={styles.inputRow}>
+                <View style={styles.inputWrapper}>
                   <LabelInput
                     label=""
                     placeholder={t(
@@ -185,15 +188,16 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleEmailVerification}
                   disabled={isLoading}
-                  className={`bg-surface-background border border-purple-400 rounded-2xl w-28 h-8 justify-center items-center ${
-                    isLoading ? "opacity-50" : ""
-                  }`}
+                  style={[
+                    styles.actionButton,
+                    isLoading && styles.actionButtonDisabled,
+                  ]}
                 >
                   <Text
                     size="sm"
                     weight="medium"
                     textColor="purple"
-                    className="text-center"
+                    style={styles.buttonText}
                   >
                     {isLoading
                       ? t("apps.university-verification.sending_code")
@@ -204,9 +208,9 @@ export default function UniversityVerificationScreen() {
             </View>
 
             {/* 인증번호 입력 섹션 */}
-            <View className="mb-8">
-              <View className="flex-row items-end gap-x-3">
-                <View className="flex-1">
+            <View style={styles.inputSection}>
+              <View style={styles.inputRow}>
+                <View style={styles.inputWrapper}>
                   <LabelInput
                     label=""
                     placeholder={t(
@@ -221,15 +225,17 @@ export default function UniversityVerificationScreen() {
                 <TouchableOpacity
                   onPress={handleCodeVerification}
                   disabled={isLoading}
-                  className={`bg-surface-background border border-purple-400 rounded-2xl px-2 w-28 h-8 justify-center items-center ${
-                    isLoading ? "opacity-50" : ""
-                  }`}
+                  style={[
+                    styles.actionButton,
+                    styles.actionButtonWithPadding,
+                    isLoading && styles.actionButtonDisabled,
+                  ]}
                 >
                   <Text
                     size="sm"
                     weight="medium"
                     textColor="purple"
-                    className="text-center"
+                    style={styles.buttonText}
                   >
                     {isLoading
                       ? t("apps.university-verification.verifying_code")
@@ -241,34 +247,34 @@ export default function UniversityVerificationScreen() {
           </View>
         </ScrollView>
 
-        <View className="px-5 mb-4">
-          <Text size="sm" weight="regular" className="text-gray">
+        <View style={styles.guideContainer}>
+          <Text size="sm" weight="regular" style={styles.grayText}>
             {t("apps.university-verification.no_email_guide_1")}
           </Text>
-          <View className="flex-row flex-wrap mb-1">
+          <View style={styles.guideRow}>
             <TouchableOpacity onPress={handleIDcardCertification}>
-              <Text size="sm" weight="regular" className="text-gray underline">
+              <Text size="sm" weight="regular" style={styles.grayUnderlineText}>
                 학생증 및 재학증명서 제출
               </Text>
             </TouchableOpacity>
-            <Text size="sm" weight="regular" className="text-gray">
+            <Text size="sm" weight="regular" style={styles.grayText}>
               을 통해 재학 정보를 인증받을 수 있어요.
             </Text>
           </View>
-          <Text size="sm" weight="regular" className="text-gray">
+          <Text size="sm" weight="regular" style={styles.grayText}>
             (24시간 이내로 구슬 9개가 지급돼요)
           </Text>
-          <View className="mt-4">
-            <Text size="sm" weight="regular" className="text-gray">
+          <View style={styles.dmGuideContainer}>
+            <Text size="sm" weight="regular" style={styles.grayText}>
               재학 인증에 어려움이 있는 경우
             </Text>
-            <View className="flex-row flex-wrap">
+            <View style={styles.guideRowWrap}>
               <TouchableOpacity onPress={handleDMClick}>
-                <Text size="sm" weight="regular" className="text-gray underline">
+                <Text size="sm" weight="regular" style={styles.grayUnderlineText}>
                   DM
                 </Text>
               </TouchableOpacity>
-              <Text size="sm" weight="regular" className="text-gray">
+              <Text size="sm" weight="regular" style={styles.grayText}>
                 으로 문의 주시면 확인 후 도와드립니다.
               </Text>
             </View>
@@ -276,10 +282,10 @@ export default function UniversityVerificationScreen() {
         </View>
 
         {/* 하단 완료 버튼 */}
-        <View className="px-5 pb-8">
+        <View style={styles.bottomButtonContainer}>
           <TouchableOpacity
             onPress={handleConfirm}
-            className="w-full bg-darkPurple rounded-2xl h-[50px] justify-center items-center"
+            style={styles.confirmButton}
           >
             <Text size="md" weight="regular" textColor="white">
               {t("apps.university-verification.complete_verification_button")}
@@ -290,3 +296,85 @@ export default function UniversityVerificationScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  formContainer: {
+    marginTop: 32,
+  },
+  inputSection: {
+    marginBottom: 32,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    columnGap: 12,
+  },
+  inputWrapper: {
+    flex: 1,
+  },
+  actionButton: {
+    backgroundColor: semanticColors.surface.background,
+    borderWidth: 1,
+    borderColor: "#C084FC",
+    borderRadius: 16,
+    width: 112,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  actionButtonWithPadding: {
+    paddingHorizontal: 8,
+  },
+  actionButtonDisabled: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    textAlign: "center",
+  },
+  guideContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  guideRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 4,
+  },
+  guideRowWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  grayText: {
+    color: colors.gray,
+  },
+  grayUnderlineText: {
+    color: colors.gray,
+    textDecorationLine: "underline",
+  },
+  dmGuideContainer: {
+    marginTop: 16,
+  },
+  bottomButtonContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 32,
+  },
+  confirmButton: {
+    width: "100%",
+    backgroundColor: colors.darkPurple,
+    borderRadius: 16,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

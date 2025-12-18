@@ -8,7 +8,7 @@ import { tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
 const {
@@ -78,7 +78,7 @@ export default function CommunityUpdateScreen() {
       showModal({
         title: t("global.success"),
         children: (
-          <View className="flex flex-col gap-y-1">
+          <View style={styles.modalContent}>
             <Text textColor="black" size="sm">
               {t("apps.community.update.modal_success_desc_1")}
             </Text>
@@ -114,7 +114,7 @@ export default function CommunityUpdateScreen() {
 
   return (
     <ArticleWriteFormProvider form={form}>
-      <DefaultLayout className="flex-1">
+      <DefaultLayout style={styles.container}>
         <PalePurpleGradient />
         <ArtcileWriter.Header mode="update" onConfirm={onSubmit} />
         <ArtcileWriter.Form mode="update" />
@@ -123,3 +123,13 @@ export default function CommunityUpdateScreen() {
     </ArticleWriteFormProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  modalContent: {
+    flexDirection: "column",
+    gap: 4,
+  },
+});

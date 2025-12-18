@@ -7,12 +7,10 @@ import { Animated, Easing, StyleSheet, View } from "react-native";
 
 interface TotalMatchCounterProps {
   count: number;
-  className?: string;
 }
 
 export default function TotalMatchCounter({
   count,
-  className,
 }: TotalMatchCounterProps) {
   const animatedValue = useRef(new Animated.Value(0)).current;
   const [displayValue, setDisplayValue] = useState(0);
@@ -72,31 +70,29 @@ export default function TotalMatchCounter({
       end={{ x: 1, y: 0.5 }}
       locations={[0, 0.2853, 1]}
       style={styles.container}
-      className={className}
     >
-      <View style={styles.contentContainer} className="whitespace-nowrap">
-        <View style={styles.leftContent} className="w-full flex flex-row">
+      <View style={styles.contentContainer}>
+        <View style={styles.textRow}>
           <Text
             textColor="white"
-            className="mb-1 whitespace-nowrap text-sm md:text-md pt-5 pr-1"
+            size="sm"
+            style={styles.prefixText}
           >
             {t("features.home.ui.total_match_counter.count_prefix")}
           </Text>
-          <View
-            style={styles.counterContainer}
-            className="self-center flex justify-center"
-          >
+          <View style={styles.counterContainer}>
             <Text
               weight="bold"
               textColor="white"
-              className="text-[34px] tracking-wide font-rubik"
+              style={styles.counterText}
             >
               {formattedCount}
             </Text>
           </View>
           <Text
             textColor="white"
-            className="self-end text-sm md:text-md pb-[19px]"
+            size="sm"
+            style={styles.suffixText}
           >
             {t("features.home.ui.total_match_counter.count_suffix")}
           </Text>
@@ -111,10 +107,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: "99%",
     minHeight: 90,
-    flex: 1,
     borderWidth: 1.5,
     borderColor: "#FFF",
-
     shadowColor: "#F2ECFF",
     shadowOffset: {
       width: 0,
@@ -122,40 +116,38 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 1,
     shadowRadius: 5,
-    elevation: 3, // Android에서 그림자
-
-    flexDirection: "row",
+    elevation: 3,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   contentContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "95%",
-  },
-  leftContent: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  rightContent: {
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 10,
+  },
+  textRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  prefixText: {
+    paddingTop: 20,
+    paddingRight: 4,
+    marginBottom: 4,
   },
   counterContainer: {
-    flexDirection: "row",
-    width: 142,
-    alignItems: "flex-end",
-  },
-  iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    alignSelf: "center",
     justifyContent: "center",
-    alignItems: "center",
-    padding: 12,
   },
-  heartIcon: {
-    width: 40,
-    height: 40,
+  counterText: {
+    fontSize: 34,
+    letterSpacing: 0.8,
+    fontFamily: "Rubik-Bold",
+  },
+  suffixText: {
+    alignSelf: "flex-end",
+    paddingBottom: 19,
   },
 });

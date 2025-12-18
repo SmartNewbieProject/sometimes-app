@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     paddingTop: 0,
-    paddingBottom: 35,
+    paddingBottom: 75,
   },
   iconPlace: {
     width: 40,

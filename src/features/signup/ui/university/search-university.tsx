@@ -22,7 +22,6 @@ function SearchUniversity({
     <View style={styles.container}>
       <View style={[styles.searchContainer, { width: searchWidth }]}>
         <TextInput
-          className="outline-none"
           value={searchText}
           onChangeText={setSearchText}
           placeholder="대학교 이름을 검색해주세요"
@@ -63,7 +62,8 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     color: semanticColors.text.primary,
     marginRight: 8,
-  },
+    outlineStyle: "none",
+  } as any,
   iconWrapper: {
     width: 24,
     height: 24,

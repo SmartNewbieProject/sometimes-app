@@ -1,19 +1,19 @@
-import { StyleSheet, View, type ViewStyle } from "react-native";
+import { StyleSheet, View, type ViewStyle, StyleProp } from "react-native";
 import { Text } from "../text";
 
 export interface LottieProps {
-  classNames?: string;
   size?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const Lottie = ({ classNames, size = 80, style }: LottieProps) => {
-  const styles = StyleSheet.create({
+export const Lottie = ({ size = 80, style }: LottieProps) => {
+  const dynamicStyles = StyleSheet.create({
     lottie: {
       width: size,
       height: size,
     },
   });
+
   // 브라우저에서 사용할 때 렌더링 오류 방지, 나중에 수정 필요
   if (typeof HTMLElement !== "undefined") {
     const originalGetBoundingClientRect =
@@ -29,12 +29,12 @@ export const Lottie = ({ classNames, size = 80, style }: LottieProps) => {
   }
 
   return (
-    <View style={style} className={classNames}>
+    <View style={style}>
       {/* <LottieView
         source={require('@assets/lottie.json')}
         autoPlay
         loop
-        style={styles.lottie}
+        style={dynamicStyles.lottie}
       /> */}
       {/* <Text>
 				로딩중...

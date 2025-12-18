@@ -18,7 +18,7 @@ const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 export default function InterestSelectionScreen() {
   const { t } = useTranslation();
   const { updateStep } = useMyInfoStep();
-  const { interestIds, updateForm } = useMyInfoForm();
+  const { interestIds = [], updateForm } = useMyInfoForm();
   const {
     data: preferencesArray = [
       {
@@ -80,12 +80,12 @@ export default function InterestSelectionScreen() {
             step={interestIds.length}
             dotGap={4}
             dotSize={16}
-            className="self-end"
+            style={styles.stepIndicator}
           />
           <Divider.Horizontal />
         </View>
 
-        <View className="flex-1 w-full flex px-4">
+        <View style={styles.chipSelectorContainer}>
           <Loading.Lottie
             title={t("apps.my-info.interest.loading")}
             loading={isLoading}
@@ -144,6 +144,14 @@ const styles = StyleSheet.create({
     width: "100%",
     rowGap: 10,
     paddingHorizontal: 32,
+  },
+  stepIndicator: {
+    alignSelf: "flex-end",
+  },
+  chipSelectorContainer: {
+    flex: 1,
+    width: "100%",
+    paddingHorizontal: 16,
   },
   chipSelector: {
     marginTop: 12,

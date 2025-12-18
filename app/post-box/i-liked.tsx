@@ -5,7 +5,7 @@ import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
 import { FlashList } from "@shopify/flash-list";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 
 function ILiked() {
   const { t } = useTranslation();
@@ -21,27 +21,58 @@ function ILiked() {
       );
     });
   }, [iLikedList]);
+  const renderList = () => {
+    if (sortedList?.length === 0) {
+      return <NotSome type="iLiked" />;
+    }
+
+    if (Platform.OS === "web") {
+      return (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {sortedList.map((item) => (
+            <PostBoxCard key={item.matchId} type="i-liked" {...item} />
+          ))}
+        </ScrollView>
+      );
+    }
+
+    return (
+      <FlashList
+        data={sortedList}
+        renderItem={({ item }) => <PostBoxCard type="i-liked" {...item} />}
+        estimatedItemSize={200}
+        contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
+      />
+    );
+  };
+
   return (
-    <View>
+    <View style={styles.container}>
       <Loading.Lottie
         title={t("apps.postBox.i_liked_loading")}
         loading={isLoading}
       >
-        {sortedList?.length > 0 ? (
-          <FlashList
-            data={sortedList}
-            renderItem={({ item }) => <PostBoxCard type="i-liked" {...item} />}
-            estimatedItemSize={200}
-            contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
-          />
-        ) : (
-          <NotSome type="iLiked" />
-        )}
+        {renderList()}
       </Loading.Lottie>
     </View>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    minHeight: 400,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 18,
+    paddingBottom: 48,
+  },
+});
 
 export default ILiked;

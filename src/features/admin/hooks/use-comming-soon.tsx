@@ -1,7 +1,7 @@
 // TODO: Internationalization failed for this file. Manual intervention required.
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Text } from '@shared/ui';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useTranslation } from "react-i18next";
 
 
@@ -12,11 +12,11 @@ export const useCommingSoon = () => {
   const showCommingSoonModal = () => {
     showModal({
       customTitle:
-        <Text textColor="purple" weight="semibold" className="text-[18px] pb-2">
+        <Text textColor="purple" weight="semibold" style={styles.title}>
           {t("features.admin.hooks.use_comming_soon.modal_title")}
         </Text>,
       children: (
-        <View> 
+        <View>
           <Text size="md" textColor="black" weight="light">
             {t("features.admin.hooks.use_comming_soon.modal_body")}
           </Text>
@@ -31,3 +31,10 @@ export const useCommingSoon = () => {
 
   return showCommingSoonModal;
 };
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 18,
+    paddingBottom: 8,
+  },
+});

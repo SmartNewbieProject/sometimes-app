@@ -15,7 +15,7 @@ function SettingHeader() {
   const title = path === "/setting" ? t("features.setting.ui.header.title") : t("features.setting.ui.menu.account_management");
 
   return (
-    <Header.Container className="items-center  ">
+    <Header.Container style={styles.headerContainer}>
       <Header.LeftContent>
         <Pressable
           onPress={() => {
@@ -42,6 +42,9 @@ function SettingHeader() {
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    alignItems: "center",
+  },
   headerTitle: {
     color: semanticColors.text.primary,
     fontSize: 20,

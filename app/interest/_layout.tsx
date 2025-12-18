@@ -1,6 +1,4 @@
-import { cn } from "@/src/shared/libs";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { platform } from "@/src/shared/libs/platform";
 import { ProgressBar } from "@/src/shared/ui";
 import Interest from "@features/interest";
 import { Stack, usePathname } from "expo-router";
@@ -16,10 +14,7 @@ export default function InterestLayout() {
   const { progress } = useInterestStep();
   const insets = useSafeAreaInsets();
   return (
-    <View
-      style={[styles.container, { paddingTop: insets.top }]}
-      className="flex-1"
-    >
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.contentContainer}>
         {renderProgress && (
           <View style={styles.progress}>

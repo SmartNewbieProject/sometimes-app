@@ -1,16 +1,17 @@
 import { Stack } from "expo-router";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 export default function PartnerLayoutScreen() {
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <Stack>
         <Stack.Screen
           name="view"
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: "transparent",
+              backgroundColor: semanticColors.surface.background,
             },
             animation: "slide_from_right",
           }}
@@ -20,7 +21,7 @@ export default function PartnerLayoutScreen() {
           options={{
             headerShown: false,
             contentStyle: {
-              backgroundColor: "transparent",
+              backgroundColor: semanticColors.surface.background,
             },
             animation: "slide_from_right",
           }}
@@ -29,3 +30,10 @@ export default function PartnerLayoutScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+});

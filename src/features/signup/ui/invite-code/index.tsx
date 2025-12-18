@@ -30,7 +30,7 @@ function InviteCode() {
             source={require("@assets/images/invite-code-key.png")}
             style={styles.image}
           />
-          <Text weight="semibold" size="20" textColor="black" className="mt-2">
+          <Text weight="semibold" size="20" textColor="black" style={styles.titleMargin}>
             받으신 초대코드가 있다면
           </Text>
           <Text weight="semibold" size="20" textColor="black">
@@ -46,7 +46,7 @@ function InviteCode() {
 
         
 
-      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+      <View style={styles.bottomContainer}>
         <TwoButtons
           disabledNext={false}
           onClickNext={onNext}
@@ -68,11 +68,14 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     paddingHorizontal: 30,
-    
+  },
+  titleMargin: {
+    marginTop: 8,
   },
   bottomContainer: {
     position: "absolute",
     bottom: 0,
+    width: "100%",
     paddingTop: 16,
     paddingHorizontal: 0,
     backgroundColor: semanticColors.surface.background,
@@ -80,11 +83,11 @@ const styles = StyleSheet.create({
   image: {
     width: 81,
     height: 81,
-    marginBottom: 16
+    marginBottom: 16,
   },
   descriptionContainer: {
     paddingTop: 10,
     paddingLeft: 30,
     marginBottom: 42,
-  }
+  },
 });

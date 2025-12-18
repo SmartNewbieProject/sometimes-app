@@ -4,7 +4,7 @@ import {useExistsUniversityQuery} from '../queries';
 import {useUniversityMutation} from './use-university-mutation';
 import UniversityForm from '../ui/university-form';
 import {Text} from '@/src/shared/ui';
-import {View} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {queryClient} from "@shared/config/query";
 
 export const useTemporalUniversity = () => {
@@ -15,12 +15,12 @@ export const useTemporalUniversity = () => {
   const showUniversityModal = useCallback(() => {
     showModal({
       customTitle: (
-          <Text size="md" weight="bold" textColor="black" className="mb-2">
+          <Text size="md" weight="bold" textColor="black" style={modalStyles.title}>
             대학정보를 다시 입력해주세요
           </Text>
       ),
       children: (
-          <View className="flex flex-col">
+          <View style={modalStyles.container}>
             <UniversityForm
                 onSubmit={(data) => {
                   updateUniversity({
@@ -55,3 +55,12 @@ export const useTemporalUniversity = () => {
     showUniversityModal,
   };
 };
+
+const modalStyles = StyleSheet.create({
+  title: {
+    marginBottom: 8,
+  },
+  container: {
+    flexDirection: 'column',
+  },
+});

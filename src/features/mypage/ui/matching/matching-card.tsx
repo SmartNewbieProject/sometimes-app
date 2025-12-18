@@ -29,9 +29,7 @@ const styles = StyleSheet.create({
   text: {
     color: semanticColors.text.primary,
     fontSize: 16,
-
-    fontFamily: "Pretendard-SemiBold",
-    fontWeight: 600,
+    fontFamily: "Pretendard-Regular",
     lineHeight: 18,
   },
 });

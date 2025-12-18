@@ -17,7 +17,7 @@ import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import i18n from "@/src/shared/libs/i18n";
@@ -144,22 +144,22 @@ export default function ReapplyScreen() {
   };
 
   return (
-    <DefaultLayout className="flex-1 flex flex-col w-full items-center">
+    <DefaultLayout style={styles.container}>
       <PalePurpleGradient />
 
       <ScrollView
-        className="flex-1 w-full"
+        style={styles.scrollView}
         contentContainerStyle={{ flexGrow: 1 }}
       >
-        <View className="flex-1 px-6 py-8">
+        <View style={styles.contentWrapper}>
           {/* SOMETIME 로고 */}
-          <View className="items-center mb-8 mt-4">
+          <View style={styles.logoContainer}>
             <SmallTitleIcon width={160} height={40} />
           </View>
 
           {/* 인스타그램 아이디 섹션 */}
-          <View className="mb-8">
-            <View className="flex-row items-center mb-4">
+          <View style={styles.sectionContainer}>
+            <View style={styles.labelRow}>
               <Text size="md" textColor="purple" weight="semibold">
                 {t("apps.auth.reapply.instagram_id_label")}
               </Text>
@@ -171,7 +171,7 @@ export default function ReapplyScreen() {
               name="instagramId"
               size="sm"
             />
-            <View className="mt-2">
+            <View style={styles.infoTextContainer}>
               <Text size="sm" textColor="pale-purple" weight="light">
                 {t("apps.auth.reapply.instagram_info_1")}
               </Text>
@@ -182,8 +182,8 @@ export default function ReapplyScreen() {
           </View>
 
           {/* 프로필 사진 섹션 */}
-          <View className="mb-8">
-            <View className="flex-row items-center mb-4">
+          <View style={styles.sectionContainer}>
+            <View style={styles.labelRow}>
               <Text size="md" textColor="purple" weight="semibold">
                 {t("apps.auth.reapply.profile_image_label")}
               </Text>
@@ -192,14 +192,14 @@ export default function ReapplyScreen() {
               size="sm"
               textColor="pale-purple"
               weight="light"
-              className="mb-6"
+              style={styles.profileImageInfo}
             >
               {t("apps.auth.reapply.profile_image_info")}
             </Text>
 
             {/* 이미지 업로드 영역 */}
-            <View className="flex-1 flex flex-col gap-y-4">
-              <View className="flex w-full justify-center items-center">
+            <View style={styles.imageUploadContainer}>
+              <View style={styles.mainImageWrapper}>
                 <ImageSelector
                   size="sm"
                   actionLabel="대표"
@@ -210,7 +210,7 @@ export default function ReapplyScreen() {
                 />
               </View>
 
-              <View className="flex flex-row justify-center gap-x-4">
+              <View style={styles.subImagesRow}>
                 <ImageSelector
                   size="sm"
                   value={images[1] ?? undefined}
@@ -232,13 +232,13 @@ export default function ReapplyScreen() {
       </ScrollView>
 
       {/* 하단 버튼 */}
-      <View className="w-full px-6 pb-8">
+      <View style={styles.bottomContainer}>
         <Button
           variant="primary"
           size="md"
           onPress={onSubmit}
           disabled={!isValid || isLoading}
-          className="w-full py-4 rounded-2xl"
+          styles={styles.submitButton}
         >
           {isLoading ? t("apps.auth.reapply.button_reapply_loading") : t("apps.auth.reapply.button_next")}
         </Button>
@@ -246,3 +246,65 @@ export default function ReapplyScreen() {
     </DefaultLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+  },
+  scrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  contentWrapper: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingVertical: 32,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 32,
+    marginTop: 16,
+  },
+  sectionContainer: {
+    marginBottom: 32,
+  },
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  infoTextContainer: {
+    marginTop: 8,
+  },
+  profileImageInfo: {
+    marginBottom: 24,
+  },
+  imageUploadContainer: {
+    flex: 1,
+    flexDirection: "column",
+    gap: 16,
+  },
+  mainImageWrapper: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  subImagesRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 16,
+  },
+  bottomContainer: {
+    width: "100%",
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+  },
+  submitButton: {
+    width: "100%",
+    paddingVertical: 16,
+    borderRadius: 16,
+  },
+});

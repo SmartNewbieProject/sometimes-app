@@ -6,7 +6,7 @@ import { Text } from "@/src/shared/ui";
 import { useUserBehaviorEvents } from "@/src/shared/hooks";
 import { router } from "expo-router";
 import { useCallback, useEffect } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useCheckPreferenceFillQuery } from "../queries";
 
 type CheckPreferences = {
@@ -60,12 +60,12 @@ export const useRedirectPreferences = () => {
       console.log("Showing modal -", reason);
       showModal({
         customTitle: (
-          <Text size="md" weight="bold" textColor="black" className="mb-2">
+          <Text size="md" weight="bold" textColor="black" style={modalStyles.title}>
             회원님의 이상형 정보가 없어요!
           </Text>
         ),
         children: (
-          <View className="flex flex-col">
+          <View style={modalStyles.container}>
             <Text size="sm" textColor="black">
               나에게 맞는 연인 매칭을 위해
             </Text>
@@ -126,3 +126,12 @@ export const useRedirectPreferences = () => {
     onboardingLoading,
   };
 };
+
+const modalStyles = StyleSheet.create({
+  title: {
+    marginBottom: 8,
+  },
+  container: {
+    flexDirection: 'column',
+  },
+});

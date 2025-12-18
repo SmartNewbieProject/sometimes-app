@@ -10,7 +10,7 @@ function PromotionHeader() {
   return (
     <Header.Container>
       <Header.LeftContent>
-        <Pressable onPress={() => router.navigate("/")} className="p-2 -ml-2">
+        <Pressable onPress={() => router.navigate("/")} style={styles.backButton}>
           <ChevronLeftIcon width={24} height={24} />
         </Pressable>
       </Header.LeftContent>
@@ -25,6 +25,10 @@ function PromotionHeader() {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
   titleText: {
     color: semanticColors.text.primary,
     fontSize: 20,

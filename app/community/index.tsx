@@ -6,7 +6,7 @@ import { ImageResources } from "@/src/shared/libs";
 import { BottomNavigation, Header, ImageResource, HeaderWithNotification, Text } from "@/src/shared/ui";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { View, useWindowDimensions, ActivityIndicator } from "react-native";
+import { StyleSheet, View, useWindowDimensions, ActivityIndicator } from "react-native";
 import {
   TabView,
   type NavigationState,
@@ -54,14 +54,14 @@ export default function CommunityScreen() {
       showModal({
         showLogo: true,
         customTitle: (
-          <View className="w-full flex flex-row justify-center pb-[5px]">
+          <View style={modalStyles.titleContainer}>
             <Text size="20" weight="bold" textColor="black">
               {t("features.payment.ui.community_event_modal.title")}
             </Text>
           </View>
         ),
         children: (
-          <View className="flex flex-col gap-y-1 items-center">
+          <View style={modalStyles.contentContainer}>
             <Text textColor="black" weight="semibold">
               {t("features.payment.ui.community_event_modal.description")}
             </Text>
@@ -181,10 +181,10 @@ export default function CommunityScreen() {
   const isHome = !isNotice && routes[index]?.isHome === true;
 
   return (
-    <View className="flex-1 relative">
+    <View style={styles.container}>
       <ListHeaderComponent />
 
-      <View className="flex-1 bg-surface-background">
+      <View style={styles.contentArea}>
         {/** 공지 전용: 스와이프 불가 */}
         {isNotice ? (
           <View style={{ flex: 1, backgroundColor: semanticColors.surface.background }} key="__notice__">
@@ -237,9 +237,38 @@ const ListHeaderComponent = () => {
         }
         showBackButton={false}
       />
-      <View className="pt-[14px] bg-surface-background">
+      <View style={styles.categoryListContainer}>
         <CategoryList />
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: "relative",
+  },
+  contentArea: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  categoryListContainer: {
+    paddingTop: 14,
+    backgroundColor: semanticColors.surface.background,
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  titleContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingBottom: 5,
+  },
+  contentContainer: {
+    flexDirection: "column",
+    gap: 4,
+    alignItems: "center",
+  },
+});

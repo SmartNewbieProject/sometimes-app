@@ -1,7 +1,9 @@
-import { ImageResources, cn } from "@/src/shared/libs";
+import { ImageResources } from "@/src/shared/libs";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button, ImageResource , Text } from "@/src/shared/ui";
-import { Text as RNText, StyleSheet, View } from "react-native";
+import { Text as RNText, StyleSheet, View, Pressable, Animated, Easing } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useRef, useState } from "react";
 import type { MatchDetails } from "../types";
 
 import { useFeatureCost } from "@features/payment/hooks";
@@ -11,6 +13,82 @@ import useILiked from "../../like/hooks/use-liked";
 import { LikeButton } from "../../like/ui/like-button";
 import useRematch from "../hooks/use-rematch";
 
+
+type GlowButtonProps = {
+  onPress: () => void;
+  children: React.ReactNode;
+};
+
+const GlowButton = ({ onPress, children }: GlowButtonProps) => {
+  const translateX = useRef(new Animated.Value(-1)).current;
+  const [containerW, setContainerW] = useState(0);
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(translateX, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.delay(500),
+        Animated.timing(translateX, {
+          toValue: -1,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [translateX]);
+
+  const animatedStyle = {
+    transform: [
+      {
+        translateX: translateX.interpolate({
+          inputRange: [-1, 1],
+          outputRange: [-containerW, containerW],
+        }),
+      },
+    ],
+  };
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onLayout={(e) => setContainerW(e.nativeEvent.layout.width || 0)}
+      style={styles.gradientButtonContainer}
+    >
+      <LinearGradient
+        colors={["#9B6DFF", "#7A4AE2", "#6B3FD4"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientButton}
+      >
+        {children}
+      </LinearGradient>
+      <Animated.View style={[styles.glowOverlay, animatedStyle]}>
+        <LinearGradient
+          colors={[
+            "transparent",
+            "rgba(255,255,255,0.05)",
+            "rgba(255,255,255,0.15)",
+            "rgba(255,255,255,0.2)",
+            "rgba(255,255,255,0.15)",
+            "rgba(255,255,255,0.05)",
+            "transparent",
+          ]}
+          locations={[0, 0.2, 0.35, 0.5, 0.65, 0.8, 1]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={StyleSheet.absoluteFill}
+        />
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 type InteractionNavigationProps = {
   match?: MatchDetails;
@@ -56,11 +134,11 @@ export const InteractionNavigation = ({
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[8px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.modalContent}>
+          <Text textColor="disabled" size="12">
             {t("features.idle-match-timer.ui.nav.modal_text_1")}
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text textColor="disabled" size="12">
             {t("features.idle-match-timer.ui.nav.modal_text_2")}
           </Text>
         </View>
@@ -76,54 +154,139 @@ export const InteractionNavigation = ({
     });
   };
 
-  return (
-    <View className=" flex flex-row gap-x-[5px] mt-4">
-      <Button
-        onPress={showPartnerFindAnnouncement}
-        variant={hasPartner ? "outline" : "primary"}
-        className="flex-1 items-center"
-        prefix={
-          <ImageResource resource={ImageResources.GEM} width={23} height={23} />
-        }
-      >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {hasPartner && (
-            <RNText style={styles.subText}>x{featureCosts?.REMATCHING}</RNText>
-          )}
-          <RNText
-            className={cn(
-              "text-md text-primaryPurple whitespace-nowrap",
-              !hasPartner && "text-text-inverse"
-            )}
-          >
-            {t("features.idle-match-timer.ui.nav.main_button")}
-          </RNText>
-        </View>
-      </Button>
-      {isLiked ? (
+  const renderMainButton = () => {
+    if (hasPartner) {
+      return (
         <Button
-          onPress={() => {}}
-          className="flex-1 items-center !bg-surface-other !text-text-inverse"
+          onPress={showPartnerFindAnnouncement}
+          variant="white"
+          styles={styles.navButton}
+          prefix={
+            <ImageResource resource={ImageResources.GEM} width={32} height={32} style={{ marginRight: 6 }} />
+          }
         >
-          {t("features.idle-match-timer.ui.nav.complete_button")}
+          <View style={styles.buttonContent}>
+            <RNText style={styles.subText}>x{featureCosts?.REMATCHING}</RNText>
+            <RNText style={styles.buttonTextBlack}>
+              {t("features.idle-match-timer.ui.nav.main_button")}
+            </RNText>
+          </View>
         </Button>
+      );
+    }
+
+    return (
+      <GlowButton onPress={showPartnerFindAnnouncement}>
+        <ImageResource resource={ImageResources.GEM} width={26} height={26} style={{ marginRight: 4 }} />
+        <RNText style={styles.buttonTextInverse}>
+          {t("features.idle-match-timer.ui.nav.main_button")}
+        </RNText>
+      </GlowButton>
+    );
+  };
+
+  return (
+    <View style={styles.navContainer}>
+      <View style={styles.buttonWrapper}>
+        {renderMainButton()}
+      </View>
+      {isLiked ? (
+        <View style={styles.buttonWrapper}>
+          <Button
+            onPress={() => {}}
+            styles={styles.completedButton}
+          >
+            {t("features.idle-match-timer.ui.nav.complete_button")}
+          </Button>
+        </View>
       ) : hasPartner ? (
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        <LikeButton connectionId={match.connectionId!} />
-      ) : (
-        <></>
-      )}
+        <View style={styles.buttonWrapper}>
+          {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
+          <LikeButton connectionId={match.connectionId!} />
+        </View>
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   subText: {
-    fontSize: 15,
-    fontFamily: "Pretendard-Thin",
-    fontWeight: "300",
-    paddingRight: 5,
-    lineHeight: 18,
-    color: semanticColors.brand.accent,
+    fontSize: 16,
+    fontFamily: "Pretendard-Medium",
+    fontWeight: "500",
+    paddingRight: 4,
+    lineHeight: 20,
+    color: semanticColors.text.secondary,
+  },
+  modalContent: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  navContainer: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 16,
+  },
+  buttonWrapper: {
+    flex: 1,
+  },
+  navButton: {
+    width: "100%",
+    alignItems: "center",
+    height: 56,
+    borderWidth: 3,
+    borderColor: semanticColors.border.default,
+    borderRadius: 16,
+  },
+  navButtonFull: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+  },
+  gradientButtonContainer: {
+    flex: 1,
+    width: "100%",
+    borderRadius: 16,
+    borderWidth: 3,
+    borderColor: "#6B3FD4",
+    overflow: "hidden",
+  },
+  gradientButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    gap: 4,
+  },
+  glowOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  buttonTextBlack: {
+    fontSize: 18,
+    fontFamily: "Pretendard-Medium",
+    fontWeight: "500",
+    color: semanticColors.text.secondary,
+  },
+  buttonTextInverse: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: semanticColors.text.inverse,
+  },
+  completedButton: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: semanticColors.surface.other,
   },
 });

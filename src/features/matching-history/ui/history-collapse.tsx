@@ -69,7 +69,7 @@ function HistoryCollapse() {
     previewMatchingHistory &&
     Array.isArray(previewMatchingHistory?.imageUrls) &&
     previewMatchingHistory.imageUrls.length > 0 ? (
-    <View style={{ overflow: "hidden", borderRadius: 20 }}>
+    <View style={styles.outerContainer}>
       <LinearGradient
         start={[0, 0]}
         end={[0, 1]}
@@ -131,9 +131,12 @@ function HistoryCollapse() {
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    overflow: 'hidden',
+    borderRadius: 20,
+  },
   container: {
     borderWidth: 1,
-
     borderColor: semanticColors.border.default,
     borderRadius: 20,
     paddingHorizontal: 20,

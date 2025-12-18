@@ -1,7 +1,6 @@
 import colors from "@/src/shared/constants/colors";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { cn } from "@/src/shared/libs";
 import { Text as CustomText } from "@/src/shared/ui";
 import RedEmergencyIcon from "@assets/icons/red-emergency.svg";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -52,11 +51,11 @@ const ChatMenuModal = ({ visible, onClose }: ChatMenuModalProps) => {
         </View>
       ),
       children: (
-        <View className="flex flex-col w-full items-center mt-[8px] !h-[40px]">
-          <Text className="text-text-disabled text-[12px]">
+        <View style={styles.leaveWarningContainer}>
+          <Text style={styles.leaveWarningText}>
             {t('features.chat.ui.menu_modal.leave_chat_warning_1')}
           </Text>
-          <Text className="text-text-disabled text-[12px]">
+          <Text style={styles.leaveWarningText}>
             {t('features.chat.ui.menu_modal.leave_chat_warning_2')}
           </Text>
         </View>
@@ -188,6 +187,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: "center",
+  },
+  leaveWarningContainer: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 8,
+    height: 40,
+  },
+  leaveWarningText: {
+    color: semanticColors.text.disabled,
+    fontSize: 12,
   },
   infoText: {
     color: semanticColors.text.inverse,

@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Divider, Text } from "@/src/shared/ui";
 
 type SectionProps = {
@@ -8,15 +8,15 @@ type SectionProps = {
 
 const Container = ({ title, children }: SectionProps) => {
   return (
-    <View className="w-full flex flex-col">
-      <View className="w-full flex flex-col mb-2">
+    <View style={styles.container}>
+      <View style={styles.titleContainer}>
         <Text size="18" textColor="black">
           {title}
         </Text>
-        <Divider.Horizontal className="my-1" />
+        <Divider.Horizontal style={styles.divider} />
       </View>
 
-      <View className="flex flex-col gap-y-2">
+      <View style={styles.childrenContainer}>
         {children}
       </View>
     </View>
@@ -30,7 +30,7 @@ type ProfileProps = {
 
 const Profile = ({ title, children }: ProfileProps) => {
   return (
-    <View className="flex flex-row justify-between items-center">
+    <View style={styles.profileContainer}>
       <Text textColor="black" size="md">{title}</Text>
       {children}
     </View>
@@ -40,4 +40,28 @@ const Profile = ({ title, children }: ProfileProps) => {
 export const Section = {
   Container,
   Profile,
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    flexDirection: 'column',
+  },
+  titleContainer: {
+    width: '100%',
+    flexDirection: 'column',
+    marginBottom: 8,
+  },
+  divider: {
+    marginVertical: 4,
+  },
+  childrenContainer: {
+    flexDirection: 'column',
+    gap: 8,
+  },
+  profileContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+});

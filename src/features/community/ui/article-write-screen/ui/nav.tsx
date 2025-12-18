@@ -1,9 +1,11 @@
 import { Check, Text } from "@/src/shared/ui";
 import { useFormContext } from "react-hook-form";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ArticleWriterForm } from "../../../hooks";
 import { useTranslation } from "react-i18next";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import colors from "@/src/shared/constants/colors";
 
 
 
@@ -19,16 +21,38 @@ export const ArticleWriteNav = ({ mode }: { mode: "create" | "update" }) => {
 
   return (
     <View
-      style={{ paddingBottom: insets.bottom }}
-      className="bg-surface-background border-t border-lightPurple px-5 pt-4 flex flex-row justify-end"
+      style={[navStyles.container, { paddingBottom: insets.bottom }]}
     >
-      <View className="flex-row items-center gap-x-2">
+      <View style={navStyles.innerRow}>
         {mode === "create" && (
           <Check.Box checked={anonymous} size={25} onChange={onToggleAnonymous}>
-            <Text className="text-[15px] text-text-primary font-medium">{t("features.community.ui.article_write_screen.nav.anonymous")}</Text>
+            <Text style={navStyles.anonymousText}>{t("features.community.ui.article_write_screen.nav.anonymous")}</Text>
           </Check.Box>
         )}
       </View>
     </View>
   );
 };
+
+const navStyles = StyleSheet.create({
+  container: {
+    backgroundColor: semanticColors.surface.background,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightPurple,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  innerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  anonymousText: {
+    fontSize: 15,
+    color: semanticColors.text.primary,
+    fontWeight: "500",
+  },
+});

@@ -14,7 +14,8 @@ export default function Time({ value, size = 'md' }: TimeProps) {
     <View style={[styles.container, styles[size]]}>
       <Text
         weight="bold"
-        className={size === 'md' ? "text-[23px] text-primaryPurple font-rubik" : "text-[18px] text-primaryPurple font-rubik"}
+        textColor="purple"
+        style={size === 'md' ? styles.textMd : styles.textSm}
       >
         {value}
       </Text>
@@ -45,5 +46,15 @@ const styles = StyleSheet.create({
   sm: {
     paddingHorizontal: 8,
     paddingVertical: 5,
+  },
+  textMd: {
+    fontSize: 23,
+    fontFamily: 'Rubik',
+    fontWeight: 'bold',
+  },
+  textSm: {
+    fontSize: 18,
+    fontFamily: 'Rubik',
+    fontWeight: 'bold',
   },
 });

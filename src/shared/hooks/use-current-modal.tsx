@@ -22,16 +22,12 @@ function useCurrentModal() {
   }, []);
 
   const showModal = useCallback((options: ModalOptions) => {
-    setTimeout(() => {
-      modalSagaRef.current.next(options);
-    }, 0);
+    modalSagaRef.current.next(options);
   }, []);
 
   const showErrorModal = useCallback(
     (message: string, type: "announcement" | "error") => {
-      setTimeout(() => {
-        modalSagaRef.current.next({ message, type });
-      }, 0);
+      modalSagaRef.current.next({ message, type });
     },
     []
   );

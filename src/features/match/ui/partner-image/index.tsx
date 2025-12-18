@@ -31,10 +31,10 @@ export const PartnerImage = ({ uri, profile }: PartnerImageProps) => {
       </LinearGradient>
 
       <View style={styles.textContainer}>
-        <Text textColor="white" weight="semibold" className="text-[20px]">
+        <Text textColor="white" weight="semibold" style={styles.ageText}>
           {profile.age}
         </Text>
-        <View className="flex flex-row items-center">
+        <View style={styles.infoRow}>
           <Text textColor="white" weight="light" size="sm">
             #{profile.mbti}
             &nbsp;#{profile.universityName}
@@ -99,5 +99,12 @@ const styles = StyleSheet.create({
     left: -44,
     top: 16,
     zIndex: -1,
+  },
+  ageText: {
+    fontSize: 20,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

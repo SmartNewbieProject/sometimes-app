@@ -1,4 +1,4 @@
-import { Alert, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { Text, Button } from "@/src/shared/ui";
 import { useMbti } from "@/src/features/mypage/hooks";
 import Loading from "@/src/features/loading";
@@ -44,21 +44,21 @@ export const ChangeMbtiModal = () => {
   }
 
   return (
-    <View className="flex flex-col items-center gap-y-4 ">
-      <View className="flex flex-col w-full">
-      <Text className="text-2xl font-bold" textColor="black">{t('features.mypage.mbti_변경')}</Text>
-      <Text className="text-md mt-1.5" textColor="gray">
-        {t('features.mypage.not_mbti_set')}
-      </Text>
+    <View style={mbtiStyles.container}>
+      <View style={mbtiStyles.headerContainer}>
+        <Text style={mbtiStyles.title} textColor="black">{t('features.mypage.mbti_변경')}</Text>
+        <Text style={mbtiStyles.subtitle} textColor="gray">
+          {t('features.mypage.not_mbti_set')}
+        </Text>
       </View>
 
-      <MbtiSelector 
+      <MbtiSelector
         value={mbtiValue}
-        onChange={setMbtiValue} 
-        onBlur={() => {}} 
+        onChange={setMbtiValue}
+        onBlur={() => {}}
       />
 
-      <View className="flex flex-row items-center gap-x-2 mt-4 justify-center">
+      <View style={mbtiStyles.buttonRow}>
         <Button
           variant="outline"
           onPress={hideModal}
@@ -75,3 +75,29 @@ export const ChangeMbtiModal = () => {
     </View>
   );
 };
+
+const mbtiStyles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 16,
+  },
+  headerContainer: {
+    flexDirection: "column",
+    width: "100%",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  subtitle: {
+    marginTop: 6,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 16,
+    justifyContent: "center",
+  },
+});

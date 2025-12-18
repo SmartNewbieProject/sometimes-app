@@ -1,31 +1,29 @@
-import { useRematchingTickets } from "@/src/features/mypage/queries";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Header, Text } from "@/src/shared/ui";
 import ChevronLeftIcon from "@assets/icons/chevron-left.svg";
-import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
-import {useCurrentGem} from "@features/payment/hooks";
-import {ImageResource} from "@ui/image-resource";
-import {ImageResources} from "@shared/libs";
+import { useCurrentGem } from "@features/payment/hooks";
+import { ImageResource } from "@ui/image-resource";
+import { ImageResources } from "@shared/libs";
 import { useTranslation } from "react-i18next";
 
 export default function MatchingHistoryLayoutScreen() {
   const router = useRouter();
   const { data: gem } = useCurrentGem();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
-    <View className="flex-1">
-      <Header.Container className="border-b items-center border-b-[#E7E9EC]">
+    <View style={styles.container}>
+      <Header.Container style={styles.headerContainer}>
         <Header.LeftContent>
           <Pressable
             onPress={() => router.navigate("/")}
-            className="pt-2 -ml-2"
+            style={styles.backButton}
           >
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
-        <Header.CenterContent className=" pt-2">
+        <Header.CenterContent style={styles.centerContent}>
           <Text textColor="black" size="20" weight="bold">
             {t("apps.matching_history.header_title")}
           </Text>
@@ -64,6 +62,21 @@ export default function MatchingHistoryLayoutScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  headerContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#E7E9EC',
+    alignItems: 'center',
+  },
+  backButton: {
+    paddingTop: 8,
+    marginLeft: -8,
+  },
+  centerContent: {
+    paddingTop: 8,
+  },
   rematchingContainer: {
     flexDirection: "row",
     paddingHorizontal: 10,

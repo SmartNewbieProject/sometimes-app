@@ -6,7 +6,8 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router, useLocalSearchParams } from "expo-router";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useMemo, useEffect, useState } from "react";
 import { useCategory } from "@/src/features/community/hooks";
 import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
@@ -151,10 +152,10 @@ export default function CommunityWriteScreen() {
 
   return (
     <ArticleWriteFormProvider form={form}>
-      <DefaultLayout className="flex-1">
+      <DefaultLayout style={styles.container}>
         <ArtcileWriter.Header onConfirm={onSubmitForm} mode="create" />
 
-        <View className="bg-surface-background px-4 pt-3" />
+        <View style={styles.spacer} />
 
         <ArtcileWriter.Form mode="create" />
         <ArtcileWriter.Nav mode="create" />
@@ -162,3 +163,14 @@ export default function CommunityWriteScreen() {
     </ArticleWriteFormProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  spacer: {
+    backgroundColor: semanticColors.surface.background,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+});

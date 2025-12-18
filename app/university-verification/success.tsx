@@ -2,7 +2,8 @@ import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { Header, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { router } from "expo-router";
-import { Image, Pressable, TouchableOpacity, View, ScrollView } from "react-native";
+import { Image, Pressable, TouchableOpacity, View, ScrollView, StyleSheet } from "react-native";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 export default function UniversityVerificationSuccess() {
   const { t } = useTranslation();
@@ -11,11 +12,11 @@ export default function UniversityVerificationSuccess() {
   };
 
   return (
-    <View className="flex-1">
+    <View style={styles.container}>
       <PalePurpleGradient />
       <Header.Container>
         <Header.LeftContent>
-          <Pressable onPress={() => router.back()} className="p-2 -ml-2">
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
             <ChevronLeftIcon width={24} height={24} />
           </Pressable>
         </Header.LeftContent>
@@ -27,10 +28,10 @@ export default function UniversityVerificationSuccess() {
         <Header.RightContent />
       </Header.Container>
 
-      <View className="flex-1 relative">
-        <ScrollView className="flex-1 px-5">
+      <View style={styles.contentContainer}>
+        <ScrollView style={styles.scrollView}>
           {/* 메인 이미지 */}
-          <View className="mb-8 mt-8 items-center ml-6">
+          <View style={styles.imageContainer}>
             <Image
               source={require("@/assets/images/verification-done.png")}
               style={{ width: 320, height: 320 }}
@@ -39,31 +40,31 @@ export default function UniversityVerificationSuccess() {
           </View>
 
           {/* 메인 텍스트 */}
-          <View className="mb-32 w-[80%] items-start">
-            <Text size="lg" weight="normal" textColor="black" className="mb-1">
+          <View style={styles.textContainer}>
+            <Text size="lg" weight="normal" textColor="black" style={styles.textMarginBottom1}>
               {t("apps.university-verification.success.congratulations")}
             </Text>
-            <Text size="lg" weight="normal" textColor="black" className="mb-2">
+            <Text size="lg" weight="normal" textColor="black" style={styles.textMarginBottom2}>
               {t("apps.university-verification.success.verification_complete")}
             </Text>
 
-            <Text size="sm" weight="normal" className="mb-1 text-text-disabled">
+            <Text size="sm" weight="normal" style={[styles.disabledText, styles.textMarginBottom1]}>
               구슬 9개를 받았어요!
             </Text>
-            <Text size="sm" weight="normal" className="mb-1 text-text-disabled">
+            <Text size="sm" weight="normal" style={[styles.disabledText, styles.textMarginBottom1]}>
               이제 안심하고 시작해볼까요?
             </Text>
-            <Text size="sm" weight="normal" className="text-text-disabled">
+            <Text size="sm" weight="normal" style={styles.disabledText}>
               내가 있는 지역에서 이상형을 안전하게 만나보세요!
             </Text>
           </View>
         </ScrollView>
 
         {/* 하단 버튼 */}
-        <View className="absolute bottom-8 left-5 right-5">
+        <View style={styles.bottomButtonContainer}>
           <TouchableOpacity
             onPress={handleGoToProfile}
-            className="bg-brand-primary rounded-2xl py-4 items-center"
+            style={styles.primaryButton}
           >
             <Text size="md" weight="semibold" textColor="white">
               {t("apps.university-verification.success.go_to_find_ideal_type")}
@@ -74,3 +75,53 @@ export default function UniversityVerificationSuccess() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  backButton: {
+    padding: 8,
+    marginLeft: -8,
+  },
+  contentContainer: {
+    flex: 1,
+    position: "relative",
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  imageContainer: {
+    marginBottom: 32,
+    marginTop: 32,
+    alignItems: "center",
+    marginLeft: 24,
+  },
+  textContainer: {
+    marginBottom: 128,
+    width: "80%",
+    alignItems: "flex-start",
+  },
+  textMarginBottom1: {
+    marginBottom: 4,
+  },
+  textMarginBottom2: {
+    marginBottom: 8,
+  },
+  disabledText: {
+    color: semanticColors.text.disabled,
+  },
+  bottomButtonContainer: {
+    position: "absolute",
+    bottom: 32,
+    left: 20,
+    right: 20,
+  },
+  primaryButton: {
+    backgroundColor: semanticColors.brand.primary,
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: "center",
+  },
+});

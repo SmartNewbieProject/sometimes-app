@@ -19,7 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
-import { Keyboard, ScrollView, View, Image, Pressable } from "react-native";
+import { Keyboard, ScrollView, View, Image, Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
 import { InputForm } from "../comment/input-form";
@@ -358,7 +358,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
   const imageUrls = article.images?.map((img) => img.imageUrl) || [];
 
   return (
-    <View className="flex-1 relative bg-surface-background">
+    <View style={detailStyles.container}>
       <PhotoSlider
         images={imageUrls}
         onClose={onZoomClose}
@@ -367,11 +367,11 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
       />
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={detailStyles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        className="flex-1 relative  px-5"
+        style={detailStyles.scrollView}
       >
-        <View className="h-[1px] bg-surface-other mb-[15px]" />
+        <View style={detailStyles.separator} />
 
         <UserProfile
           author={article.author}
@@ -381,22 +381,22 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           isOwner={isOwner}
         />
 
-        <View className="my-3 mb-6 mx-[8px]  flex flex-row  items-center justify-between">
+        <View style={detailStyles.titleRow}>
           <Text size="md" weight="medium" textColor="black">
             {article.title}
           </Text>
         </View>
         <LinkifiedText
-          className="mb-4 text-[14px] mx-[8px] leading-5"
+          style={detailStyles.contentText}
           textColor="black"
         >
           {article.content}
         </LinkifiedText>
 
         {article.images && article.images.length > 0 && (
-          <View className="mx-[8px] mb-4">
+          <View style={detailStyles.imagesContainer}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View className="flex-row gap-2">
+              <View style={detailStyles.imagesRow}>
                 {article.images
                   .sort((a, b) => a.displayOrder - b.displayOrder)
                   .map((image, index) => (
@@ -409,7 +409,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
                     >
                       <Image
                         source={{ uri: image.imageUrl }}
-                        className="w-32 h-32 rounded-lg"
+                        style={detailStyles.articleImage}
                         resizeMode="cover"
                       />
                     </Pressable>
@@ -419,9 +419,9 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           </View>
         )}
 
-        <View className="w-full mt-[10px]">
-          <View className="flex-row items-center justify-between pb-[10px] mx-[8px]">
-            <View className="flex-row items-center">
+        <View style={detailStyles.metaContainer}>
+          <View style={detailStyles.metaRow}>
+            <View style={detailStyles.metaLeft}>
               <Text
                 style={{
                   color: semanticColors.text.muted,
@@ -451,40 +451,35 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
               </Text>
             </View>
 
-            <View className="flex-row items-center">
+            <View style={detailStyles.metaRight}>
               <Interaction.Like
                 count={likeCount}
                 isLiked={isLiked}
                 iconSize={18}
                 onPress={() => like(article)}
               />
-              <View style={{ width: 12 }} />
+              <View style={detailStyles.interactionSpacer} />
               <Interaction.Comment count={totalCommentCount} iconSize={18} />
             </View>
           </View>
         </View>
-        <View className="h-[1px] bg-surface-other " />
-        <View className="flex-1">
+        <View style={detailStyles.divider} />
+        <View style={detailStyles.flex1}>
           <Loading.Lottie
             title={t("features.community.ui.article_detail.loading_comments")}
             loading={isCommentLoading}
           >
-            <View className="flex flex-col  pb-4 ">
+            <View style={detailStyles.commentsContainer}>
               {renderComments(comments, editingCommentId)}
             </View>
           </Loading.Lottie>
         </View>
       </ScrollView>
       <View
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: semanticColors.surface.background,
-          paddingBottom: insets.bottom,
-        }}
-        className="border-t border-border-default pt-3  px-4"
+        style={[
+          detailStyles.inputFormContainer,
+          { paddingBottom: insets.bottom },
+        ]}
       >
         <InputForm
           checked={checked}
@@ -503,3 +498,97 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     </View>
   );
 };
+
+const detailStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: "relative",
+    backgroundColor: semanticColors.surface.background,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
+  scrollView: {
+    flex: 1,
+    position: "relative",
+    paddingHorizontal: 20,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: semanticColors.surface.other,
+    marginBottom: 15,
+  },
+  titleRow: {
+    marginVertical: 12,
+    marginBottom: 24,
+    marginHorizontal: 8,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  contentText: {
+    marginBottom: 16,
+    fontSize: 14,
+    marginHorizontal: 8,
+    lineHeight: 20,
+  },
+  imagesContainer: {
+    marginHorizontal: 8,
+    marginBottom: 16,
+  },
+  imagesRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  articleImage: {
+    width: 128,
+    height: 128,
+    borderRadius: 8,
+  },
+  metaContainer: {
+    width: "100%",
+    marginTop: 10,
+  },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: 10,
+    marginHorizontal: 8,
+  },
+  metaLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  metaRight: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  interactionSpacer: {
+    width: 12,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: semanticColors.surface.other,
+  },
+  flex1: {
+    flex: 1,
+  },
+  commentsContainer: {
+    display: "flex",
+    flexDirection: "column",
+    paddingBottom: 16,
+  },
+  inputFormContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: semanticColors.surface.background,
+    borderTopWidth: 1,
+    borderTopColor: semanticColors.border.default,
+    paddingTop: 12,
+    paddingHorizontal: 16,
+  },
+});

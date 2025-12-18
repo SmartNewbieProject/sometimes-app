@@ -3,9 +3,8 @@ import { useFonts } from "expo-font";
 import { Slot, router, useLocalSearchParams, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, AppState, Platform, View } from "react-native";
+import { Alert, AppState, Platform, View, StyleSheet } from "react-native";
 import "react-native-reanimated";
-import "../global.css";
 import {
   type NotificationData,
   handleNotificationTap,
@@ -24,7 +23,6 @@ import { VersionUpdateChecker } from "@/src/features/version-update";
 import { QueryProvider, RouteTracker } from "@/src/shared/config";
 import { useAtt } from "@/src/shared/hooks";
 import { useStorage } from "@/src/shared/hooks/use-storage";
-import { cn } from "@/src/shared/libs/cn";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -262,12 +260,7 @@ export default function RootLayout() {
           <I18nextProvider i18n={i18n}>
               <GlobalChatProvider>
               <PortoneProvider>
-                  <View
-                    className={cn(
-                      "flex-1 font-extralight",
-                      Platform.OS === "web" && "max-w-[468px] w-full self-center"
-                    )}
-                  >
+                  <View style={styles.container}>
                     <AnalyticsProvider>
                       <RouteTracker>
                         <>
@@ -282,10 +275,23 @@ export default function RootLayout() {
                   </View>
                 </PortoneProvider>
               </GlobalChatProvider>
-            </I18nextProvider>  
+            </I18nextProvider>
           </ModalProvider>
         </QueryProvider>
       </LoggerContainer>
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    ...Platform.select({
+      web: {
+        maxWidth: 468,
+        width: '100%',
+        alignSelf: 'center',
+      },
+    }),
+  },
+});

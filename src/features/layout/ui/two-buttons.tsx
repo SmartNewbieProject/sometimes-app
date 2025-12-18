@@ -1,4 +1,4 @@
-import { cn, platform } from "@/src/shared/libs";
+import { platform } from "@/src/shared/libs";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button } from "@shared/ui";
 import { useTranslation } from "react-i18next";
@@ -41,17 +41,15 @@ export const TwoButtons = ({
       {!hidePrevious && (
         <Button
           variant="secondary"
-          className="flex-[0.3]"
-          styles={styles.rightButton}
+          styles={[styles.rightButton, { flex: 0.3 }]}
           onPress={onClickPrevious!}
         >
           <Text style={styles.rightButtonText}> {content?.prev || t("global.back")}</Text>
         </Button>
       )}
       <Button
-        className={hidePrevious ? "flex-1" : "flex-[0.7]"}
         onPress={onClickNext}
-        styles={styles.leftButton}
+        styles={[styles.leftButton, { flex: hidePrevious ? 1 : 0.7 }]}
         disabled={disabledNext}
       >
         <Text style={styles.leftButtonText}>{content?.next || t("global.next")}</Text>
@@ -71,7 +69,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   rightButtonText: {
-    color: semanticColors.text.inverse,
+    color: semanticColors.text.primary,
     fontSize: 20,
   },
   leftButton: {

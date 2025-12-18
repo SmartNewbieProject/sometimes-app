@@ -5,7 +5,7 @@ import { dayUtils } from "@/src/shared/libs";
 import type { UniversityName } from "@/src/shared/libs/univ";
 import { LinkifiedText, Show, Text } from "@/src/shared/ui";
 import React, { useRef, useState } from "react";
-import { Platform, View, TouchableOpacity, Image, Modal, Pressable, TouchableWithoutFeedback } from "react-native";
+import { Platform, View, TouchableOpacity, Image, Modal, Pressable, TouchableWithoutFeedback, StyleSheet } from "react-native";
 import { useAuth } from "../../../auth";
 import type { Comment } from "../../types";
 import { UserProfile } from "../user-profile";
@@ -67,25 +67,25 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
   return (
     <View
         key={comment.id}
-        style={{
-          backgroundColor: isEditing ? colors.moreLightPurple : colors.white,
-        }}
-        className="flex py-3 flex-col w-full border-b border-border-default"
+        style={[
+          styles.container,
+          { backgroundColor: isEditing ? colors.moreLightPurple : colors.white },
+        ]}
       >
       {/* 대댓글인 경우 화살표 아이콘과 들여쓰기 */}
-      <View className={`flex-row ${isReply ? 'pl-4' : ''}`}>
+      <View style={[styles.row, isReply && styles.replyPadding]}>
         {isReply && (
-          <View className="mr-2 mt-1">
+          <View style={styles.replyIcon}>
             <Image
               source={require('@/assets/icons/reply.png')}
-              style={{ width: 16, height: 16 }}
+              style={styles.replyImage}
               resizeMode="contain"
             />
           </View>
         )}
 
-        <View className="flex-1">
-          <View className="relative px-2">
+        <View style={styles.flex1}>
+          <View style={styles.contentWrapper}>
             <UserProfile
               author={comment.author}
               universityName={
@@ -93,14 +93,14 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
               }
               isOwner={isAuthor}
               updatedAt={
-                <View className="flex-row items-center gap-x-2">
+                <View style={styles.metaRow}>
                   <Text size={"sm"} textColor="pale-purple">
                     {dayUtils.formatRelativeTime(comment.updatedAt)}
                   </Text>
 
                   {/* 좋아요 수 표시 - 좋아요가 있을 때만 */}
                   {comment.likeCount > 0 && (
-                    <View className="flex-row items-center gap-x-1">
+                    <View style={styles.likeCountRow}>
                       <AreaFillHeart
                         width={14}
                         height={14}
@@ -116,11 +116,8 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
             />
 
             {/* 액션 버튼들 */}
-            <View className="absolute right-0 top-0">
-              <View
-                className="flex-row items-center gap-x-3 px-2 py-1 rounded-lg"
-                style={{ backgroundColor: semanticColors.surface.background }}
-              >
+            <View style={styles.actionButtonsContainer}>
+              <View style={styles.actionButtons}>
                 {/* 답글 버튼 */}
                 {onReply && (
                   <TouchableOpacity onPress={() => onReply(rootParentId || comment.id)}>
@@ -235,13 +232,11 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
               }}
             >
               <LinkifiedText
-                className="text-[14px] flex-1"
                 textColor="black"
-                style={{
-                  flexWrap: "wrap",
-                  flexShrink: 1,
-                  lineHeight: Platform.OS === "ios" ? 18 : 20,
-                }}
+                style={[
+                  styles.commentText,
+                  { lineHeight: Platform.OS === "ios" ? 18 : 20 },
+                ]}
               >
                 {comment.content}
               </LinkifiedText>
@@ -254,3 +249,65 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    paddingVertical: 12,
+    flexDirection: "column",
+    width: "100%",
+    borderBottomWidth: 1,
+    borderBottomColor: semanticColors.border.default,
+  },
+  row: {
+    flexDirection: "row",
+  },
+  replyPadding: {
+    paddingLeft: 16,
+  },
+  replyIcon: {
+    marginRight: 8,
+    marginTop: 4,
+  },
+  replyImage: {
+    width: 16,
+    height: 16,
+  },
+  flex1: {
+    flex: 1,
+  },
+  contentWrapper: {
+    position: "relative",
+    paddingHorizontal: 8,
+  },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  likeCountRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  actionButtonsContainer: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: semanticColors.surface.background,
+  },
+  commentText: {
+    fontSize: 14,
+    flex: 1,
+    flexWrap: "wrap",
+    flexShrink: 1,
+  },
+});

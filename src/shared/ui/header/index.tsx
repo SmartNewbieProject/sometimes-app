@@ -1,5 +1,6 @@
 import React, { type ReactNode } from "react";
 import { router } from "expo-router";
+import type { StyleProp, ViewStyle } from "react-native";
 import {
   Container,
   LeftButton,
@@ -15,7 +16,7 @@ type HeaderProps = {
   showBackButton?: boolean;
   rightContent?: ReactNode;
   onBackPress?: () => void;
-  className?: string;
+  style?: StyleProp<ViewStyle>;
   centered?: boolean;
   logoSize?: number;
 };
@@ -26,7 +27,7 @@ export function Header({
   showBackButton = false,
   rightContent,
   onBackPress,
-  className,
+  style,
   centered = false,
   logoSize = 32,
 }: HeaderProps) {
@@ -39,7 +40,7 @@ export function Header({
   };
 
   return (
-    <Container className={className} centered={centered}>
+    <Container style={style} centered={centered}>
       <LeftContent>
         <LeftButton visible={showBackButton} onPress={handleBackPress} />
       </LeftContent>

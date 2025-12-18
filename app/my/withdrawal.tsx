@@ -133,7 +133,7 @@ export default function WithdrawalScreen() {
         showModal({
           title: t("apps.my.withdrawal.modal_title"),
           children: (
-            <View className="flex flex-col gap-y-2">
+            <View style={styles.modalContent}>
               <Text textColor="black">{t("apps.my.withdrawal.modal_desc_1")}</Text>
               <Text textColor="black">{t("apps.my.withdrawal.modal_desc_2")}</Text>
             </View>
@@ -208,7 +208,6 @@ export default function WithdrawalScreen() {
       <View style={styles.buttonContainer}>
         <Button
           width="full"
-          className="flex-1"
           variant="primary"
           onPress={onSubmitWithdrawal}
           styles={styles.button}
@@ -267,5 +266,10 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingBottom: 120,
+  },
+  modalContent: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
   },
 });

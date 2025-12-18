@@ -10,6 +10,7 @@ import {
   Alert,
   Keyboard,
   Pressable,
+  StyleSheet,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useMemo, useState } from "react";
@@ -19,6 +20,8 @@ import { useAuth } from "@/src/features/auth";
 import { useQuery } from "@tanstack/react-query";
 import { getMySimpleDetails } from "@/src/features/auth/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import colors from "@/src/shared/constants/colors";
 
 type MySimpleDetails = {
   /** @deprecated 하위 호환성을 위해 유지 */
@@ -117,17 +120,19 @@ export const ArticleWriteForm = ({
                       pickCategory(c.code);
                       hideModal?.();
                     }}
-                    className="mb-2"
+                    style={formStyles.categoryItem}
                     accessibilityRole="button"
                     accessibilityLabel={`${c.displayName} 카테고리 선택`}
                   >
                     <View
-                      className="px-3 py-4 rounded-lg"
-                      style={{
-                        backgroundColor: selected ? "#F3F0FF" : "#F7F8FA",
-                        borderWidth: selected ? 1 : 0,
-                        borderColor: selected ? "#6D28D9" : "transparent",
-                      }}
+                      style={[
+                        formStyles.categoryItemInner,
+                        {
+                          backgroundColor: selected ? "#F3F0FF" : "#F7F8FA",
+                          borderWidth: selected ? 1 : 0,
+                          borderColor: selected ? "#6D28D9" : "transparent",
+                        },
+                      ]}
                     >
                       <Text
                         style={{
@@ -144,8 +149,8 @@ export const ArticleWriteForm = ({
                 );
               })
             ) : (
-              <View className="px-4 py-12 rounded-lg bg-surface-background">
-                <Text className="text-gray-500 text-center">
+              <View style={formStyles.noCategoriesContainer}>
+                <Text style={formStyles.noCategoriesText}>
                   선택 가능한 카테고리가 없습니다.
                 </Text>
               </View>
@@ -190,39 +195,41 @@ export const ArticleWriteForm = ({
 
   return (
     <ScrollView
-      className="flex-1"
+      style={formStyles.scrollView}
       nestedScrollEnabled
       keyboardShouldPersistTaps="handled"
       scrollEnabled={outerScrollEnabled}
-      contentContainerStyle={{ paddingBottom: 16 }}
+      contentContainerStyle={formStyles.scrollContent}
       showsVerticalScrollIndicator
     >
-      <View className="h-[1px] bg-surface-background" />
+      <View style={formStyles.separatorBg} />
 
-      <View className="px-[16px] pt-[26px]">
-        <View className="flex-row items-center gap-3 mb-[10px]">
+      <View style={formStyles.formContainer}>
+        <View style={formStyles.headerRow}>
           {allowedCategories.length > 0 && (
             <TouchableOpacity
               onPress={mode === "create" ? openCategoryModal : undefined}
-              className="px-3 py-2 rounded-md bg-surface-background items-center justify-center"
-              // update일 때 약간 투명하게
-              style={{ opacity: mode === "create" ? 1 : 0.6 }}
+              style={[
+                formStyles.categoryButton,
+                { opacity: mode === "create" ? 1 : 0.6 },
+              ]}
               disabled={mode !== "create"}
             >
-              <Text className="text-brand-primary font-bold text-sm">
+              <Text style={formStyles.categoryButtonText}>
                 {displayName} ▼
               </Text>
             </TouchableOpacity>
           )}
 
-          <View style={{ flex: 1 }}>
+          <View style={formStyles.flex1}>
             <Controller
               control={control}
               name="title"
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   placeholder={t("features.community.ui.article_write_screen.form.title_placeholder")}
-                  className="w-full p-2 font-bold placeholder:text-text-disabled text-[18px] border-b border-border-default pb-2"
+                  style={formStyles.titleInput}
+                  placeholderTextColor={semanticColors.text.disabled}
                   onChangeText={onChange}
                   value={value}
                   blurOnSubmit={false}
@@ -232,7 +239,7 @@ export const ArticleWriteForm = ({
           </View>
         </View>
 
-        <View className="items-center justify-center">
+        <View style={formStyles.contentContainer}>
           <Controller
             control={control}
             name="content"
@@ -244,10 +251,10 @@ export const ArticleWriteForm = ({
                 scrollEnabled
                 textAlignVertical="top"
                 maxLength={2000}
-                className="w-full p-2 text-[14px] md:text-md placeholder:text-text-disabled"
+                style={formStyles.contentInput}
+                placeholderTextColor={semanticColors.text.disabled}
                 onChangeText={onChange}
                 value={value}
-                style={{ minHeight: 232, maxHeight: 400 }}
                 underlineColorAndroid="transparent"
                 blurOnSubmit={false}
                 onFocus={() => setOuterScrollEnabled(false)}
@@ -258,39 +265,39 @@ export const ArticleWriteForm = ({
             )}
           />
 
-          <View className="flex-row items-center justify-between w-full mt-1 mb-2">
+          <View style={formStyles.imagePickerRow}>
             <TouchableOpacity
               onPress={pickImage}
-              className="flex-row items-center px-3 py-2 bg-gray-100 rounded-lg"
+              style={formStyles.imagePickerButton}
             >
               <Image
                 source={require("@assets/images/camera.png")}
-                style={{ width: 30, height: 30, marginRight: 8 }}
+                style={formStyles.cameraIcon}
                 resizeMode="contain"
               />
-              <Text className="text-gray-600 text-sm">
+              <Text style={formStyles.imagePickerText}>
               {t("features.community.ui.article_write_screen.form.add_image_button")} ({images.length}/5)
               </Text>
             </TouchableOpacity>
-            <Text className="text-gray-500">x {content?.length ?? 0}/2000</Text>
+            <Text style={formStyles.charCount}>x {content?.length ?? 0}/2000</Text>
           </View>
 
           {images.length > 0 && (
-            <View className="w-full mt-2">
+            <View style={formStyles.imagesContainer}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View className="flex-row gap-2">
+                <View style={formStyles.imagesRow}>
                   {images.map((uri: string, index: number) => (
-                    <View key={`image-${uri}-${index}`} className="relative">
+                    <View key={`image-${uri}-${index}`} style={formStyles.imageWrapper}>
                       <Image
                         source={{ uri }}
-                        className="w-20 h-20 rounded-lg"
+                        style={formStyles.previewImage}
                         resizeMode="cover"
                       />
                       <TouchableOpacity
                         onPress={() => removeImage(index)}
-                        className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full items-center justify-center"
+                        style={formStyles.removeImageButton}
                       >
-                        <Text className="text-text-inverse text-xs font-bold">×</Text>
+                        <Text style={formStyles.removeImageText}>×</Text>
                       </TouchableOpacity>
                     </View>
                   ))}
@@ -301,8 +308,150 @@ export const ArticleWriteForm = ({
         </View>
       </View>
 
-      <View className="h-[1px] bg-surface-background mb-4" />
+      <View style={formStyles.bottomSeparator} />
       <CommunityGuideline />
     </ScrollView>
   );
 };
+
+const formStyles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 16,
+  },
+  separatorBg: {
+    height: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  formContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 26,
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 10,
+  },
+  categoryButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: semanticColors.surface.background,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  categoryButtonText: {
+    color: colors.primaryPurple,
+    fontWeight: "700",
+    fontSize: 14,
+  },
+  flex1: {
+    flex: 1,
+  },
+  titleInput: {
+    width: "100%",
+    padding: 8,
+    fontWeight: "700",
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: semanticColors.border.default,
+    paddingBottom: 8,
+  },
+  contentContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  contentInput: {
+    width: "100%",
+    padding: 8,
+    fontSize: 14,
+    minHeight: 232,
+    maxHeight: 400,
+  },
+  imagePickerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  imagePickerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: colors.gray100,
+    borderRadius: 8,
+  },
+  cameraIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 8,
+  },
+  imagePickerText: {
+    color: colors.gray600,
+    fontSize: 14,
+  },
+  charCount: {
+    color: colors.gray500,
+  },
+  imagesContainer: {
+    width: "100%",
+    marginTop: 8,
+  },
+  imagesRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  imageWrapper: {
+    position: "relative",
+  },
+  previewImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+  },
+  removeImageButton: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    width: 24,
+    height: 24,
+    backgroundColor: colors.red500,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  removeImageText: {
+    color: semanticColors.text.inverse,
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  bottomSeparator: {
+    height: 1,
+    backgroundColor: semanticColors.surface.background,
+    marginBottom: 16,
+  },
+  categoryItem: {
+    marginBottom: 8,
+  },
+  categoryItemInner: {
+    paddingHorizontal: 12,
+    paddingVertical: 16,
+    borderRadius: 8,
+  },
+  noCategoriesContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 48,
+    borderRadius: 8,
+    backgroundColor: semanticColors.surface.background,
+  },
+  noCategoriesText: {
+    color: colors.gray500,
+    textAlign: "center",
+  },
+});

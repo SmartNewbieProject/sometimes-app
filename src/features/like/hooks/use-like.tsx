@@ -148,11 +148,11 @@ export default function useLike() {
             </View>
           ),
           children: (
-            <View className="flex flex-col w-full items-center mt-[5px]">
-              <Text className="text-text-disabled text-[12px]">
+            <View style={styles.modalContent}>
+              <Text textColor="disabled" size="12">
                 {t("features.like.hooks.use-like.if_interested")}
               </Text>
-              <Text className="text-text-disabled text-[12px]">
+              <Text textColor="disabled" size="12">
                 {t("features.like.hooks.use-like.can_contact")}
               </Text>
             </View>
@@ -246,5 +246,11 @@ const styles = StyleSheet.create({
     top: -40,
     width: 105,
     height: 80,
+  },
+  modalContent: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 5,
   },
 });

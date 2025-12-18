@@ -122,6 +122,7 @@ function ChatScreen() {
             backgroundColor: semanticColors.surface.surface,
             alignContent: "center",
             justifyContent: "center",
+            overflow: "hidden",
           },
           animatedStyles,
         ]}

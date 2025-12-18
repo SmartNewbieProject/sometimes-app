@@ -12,7 +12,7 @@ function PostBoxHeaders() {
   const router = useRouter();
   const { t } = useTranslation();
   return (
-    <Header.Container className="items-center  ">
+    <Header.Container style={styles.headerContainer}>
       <Header.LeftContent>
         <Pressable
           onPress={() => {
@@ -35,6 +35,9 @@ function PostBoxHeaders() {
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    alignItems: 'center',
+  },
   headerTitle: {
     color: semanticColors.text.primary,
     fontSize: 20,
