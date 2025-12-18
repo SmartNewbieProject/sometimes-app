@@ -13,7 +13,7 @@ import type { UniversityCard as UniversityCardProps } from "../../queries/use-un
 
 
 function UniversityCard({
-  item: { name, area, logoUrl, en },
+  item: { name, area, logoUrl },
   onClick,
   isSelected,
 }: {
@@ -73,7 +73,6 @@ function UniversityCard({
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
             {name}
           </Text>
-          <Text style={styles.englishName}>{en}</Text>
           <View style={styles.bottomContainer}>
             <View style={styles.area}>
               <Text style={styles.areaText}>{area}</Text>
@@ -116,6 +115,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flexDirection: "row",
     gap: 6,
+    marginTop: 8,
   },
   areaText: {
     color: semanticColors.text.inverse,
@@ -130,15 +130,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: "400",
     fontSize: 13,
-  },
-  englishName: {
-    color: semanticColors.text.primary,
-    marginVertical: 8,
-    opacity: 0.7,
-    fontSize: 13,
-    lineHeight: 16,
-    fontFamily: "Pretendard-Regular",
-    fontWeight: "400",
   },
 });
 

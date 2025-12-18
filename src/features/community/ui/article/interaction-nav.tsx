@@ -4,7 +4,9 @@ import EyesIcon from "@/assets/icons/ph_eyes-fill.svg";
 import { ImageResources } from "@/src/shared/libs";
 import { ImageResource, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@shared/ui/icons";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import {
+  StyleSheet,
   TouchableOpacity,
   type TouchableOpacityProps,
   View,
@@ -32,8 +34,8 @@ const Interaction: React.FC<InteractionComponentProps> & {
   View: React.FC<InteractionItemProps>;
 } = ({ data, onLike, onComment, onViews }) => {
   return (
-    <View className="flex-row items-center justify-between">
-      <View className="flex-row items-center gap-4">
+    <View style={styles.container}>
+      <View style={styles.itemsRow}>
         <Interaction.Like
           count={data.likeCount}
           onPress={onLike}
@@ -50,7 +52,7 @@ type LikeProps = InteractionItemProps & { isLiked: boolean };
 
 Interaction.Like = ({ count, iconSize = 24, isLiked, ...props }: LikeProps) => {
   return (
-    <TouchableOpacity className="flex-row items-center gap-2" {...props}>
+    <TouchableOpacity style={styles.interactionItem} {...props}>
       <IconWrapper size={iconSize}>
         {isLiked ? (
           <ImageResource resource={ImageResources.HEART_ON} />
@@ -58,7 +60,7 @@ Interaction.Like = ({ count, iconSize = 24, isLiked, ...props }: LikeProps) => {
           <HeartIcon stroke="#646464" />
         )}
       </IconWrapper>
-      <Text size="13" className="text-text-muted">
+      <Text size="13" textColor="muted">
         {count}
       </Text>
     </TouchableOpacity>
@@ -71,11 +73,11 @@ Interaction.Comment = ({
   ...props
 }: InteractionItemProps) => {
   return (
-    <TouchableOpacity className="flex-row items-center gap-2" {...props}>
+    <TouchableOpacity style={styles.interactionItem} {...props}>
       <IconWrapper size={iconSize}>
         <CommentIcon strokeWidth={1} stroke="#646464" />
       </IconWrapper>
-      <Text size="13" className="text-text-muted">
+      <Text size="13" textColor="muted">
         {count}
       </Text>
     </TouchableOpacity>
@@ -88,15 +90,33 @@ Interaction.View = ({
   ...props
 }: InteractionItemProps) => {
   return (
-    <TouchableOpacity className="flex-row items-center gap-2" {...props}>
+    <TouchableOpacity style={styles.interactionItem} {...props}>
       <IconWrapper size={iconSize}>
         <EyesIcon stroke="#646464" />
       </IconWrapper>
-      <Text size="13" className="text-text-muted">
+      <Text size="13" textColor="muted">
         {count}
       </Text>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  itemsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  interactionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+});
 
 export default Interaction;

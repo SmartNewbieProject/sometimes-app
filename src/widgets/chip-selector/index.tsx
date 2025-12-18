@@ -144,12 +144,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chipContent: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
-    paddingVertical: 0,
   },
   buttonPaddingWeb: {
     paddingVertical: 4,
@@ -170,7 +167,7 @@ const styles = StyleSheet.create({
   },
   chipLabel: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'Pretendard-SemiBold',
     lineHeight: 16,
     alignSelf: 'center',
   },

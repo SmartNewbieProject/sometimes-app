@@ -12,7 +12,7 @@ import { ImageResource } from "@/src/shared/ui/image-resource";
 import { Form } from "@/src/widgets";
 import { router, useLocalSearchParams } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
-import { Alert, Platform, Pressable, View } from "react-native";
+import { Alert, Platform, Pressable, StyleSheet, View } from "react-native";
 
 import { useTranslation } from "react-i18next";
 import i18n from "@/src/shared/libs/i18n";
@@ -70,20 +70,20 @@ export default function ReportScreen() {
       <PalePurpleGradient />
       <HeaderComponent t={t} />
 
-      <View className="flex-1 px-5">
+      <View style={styles.content}>
         <ImageResource
           resource={ImageResources.REPORT}
           width={152}
           height={182}
         />
-                <Text textColor="deepPurple" size="20" weight="bold">
+        <Text textColor="deepPurple" size="20" weight="bold">
           {t("apps.community.report.title")}
         </Text>
-        <Text textColor="gray" size="md" weight="medium" className="mt-1.5">
+        <Text textColor="gray" size="md" weight="medium" style={styles.description}>
           {t("apps.community.report.desc")}
         </Text>
 
-        <View className="flex-1 mt-4 mr-4">
+        <View style={styles.formContainer}>
           <FormProvider {...form}>
             <Form.Select
               name="reason"
@@ -96,9 +96,9 @@ export default function ReportScreen() {
         </View>
       </View>
 
-      <View className="mb-14 px-5">
+      <View style={styles.buttonContainer}>
         <Button
-          className="w-full"
+          style={styles.button}
           disabled={!form.formState.isValid}
           onPress={onSubmit}
         >
@@ -117,13 +117,38 @@ const HeaderComponent = ({ t }: { t: (key: string) => string }) => (
       </Pressable>
     </Header.LeftContent>
 
-    <Header.CenterContent className="pr-10">
+    <Header.CenterContent style={styles.headerCenter}>
       <Text textColor="black" weight="bold">
         {t("apps.community.report.header")}
       </Text>
     </Header.CenterContent>
   </Header.Container>
 );
+
+const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  description: {
+    marginTop: 6,
+  },
+  formContainer: {
+    flex: 1,
+    marginTop: 16,
+    marginRight: 16,
+  },
+  buttonContainer: {
+    marginBottom: 56,
+    paddingHorizontal: 20,
+  },
+  button: {
+    width: "100%",
+  },
+  headerCenter: {
+    paddingRight: 40,
+  },
+});
 
 const reportReasons = [
   i18n.t("apps.community.report.reason_spam"),

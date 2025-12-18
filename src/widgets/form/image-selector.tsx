@@ -1,12 +1,9 @@
 import PhotoPickerModal from "@/src/features/mypage/ui/modal/image-modal";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import {
-  ContentSelector,
-  type contentSelector,
-} from "@/src/shared/ui/content-selector";
+import { ContentSelector } from "@/src/shared/ui/content-selector";
 import { renderImage, renderPlaceholder } from "@/src/shared/ui/image-selector";
 import { convertToJpeg, isHeicBase64 } from "@/src/shared/utils/image";
-import type { VariantProps } from "class-variance-authority";
+import type { StyleProp, ViewStyle } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { useState } from "react";
@@ -15,10 +12,8 @@ import { Alert, Linking, Platform, Pressable } from "react-native";
 import { FormContentSelector } from "./content-selector";
 import i18n from "@/src/shared/libs/i18n";
 
-interface FormImageSelectorProps
-  extends UseControllerProps,
-    VariantProps<typeof contentSelector> {
-  className?: string;
+interface FormImageSelectorProps extends UseControllerProps {
+  style?: StyleProp<ViewStyle>;
   size?: "sm" | "md" | "lg";
   actionLabel?: string;
 }
@@ -27,7 +22,7 @@ export function FormImageSelector({
   name,
   control,
   rules,
-  className,
+  style,
   size,
   actionLabel,
 }: FormImageSelectorProps) {
@@ -124,7 +119,7 @@ export function FormImageSelector({
         <ContentSelector
           value={value}
           size={size}
-          className={className}
+          style={style}
           actionLabel={actionLabel}
           renderContent={renderImage}
           renderPlaceholder={renderPlaceholder}

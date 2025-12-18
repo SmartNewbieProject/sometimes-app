@@ -1,9 +1,11 @@
-import { FlatList, TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';
+import { FlatList, TouchableOpacity, View, Image, ActivityIndicator, StyleSheet } from 'react-native';
 import { Article } from './article';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import VectorIcon from '@/assets/icons/Vector.svg';
 import { Text } from '@/src/shared/ui';
 import { useCategory, useArticles } from '../hooks';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import colors from '@/src/shared/constants/colors';
 
 interface ArticleListProps {
   initialSize?: number;
@@ -31,7 +33,7 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
     if (!isLoadingMore) return null;
 
     return (
-      <View className="py-4 flex items-center justify-center">
+      <View style={styles.footerLoader}>
         <ActivityIndicator size="small" color="#8C6AE3" />
       </View>
     );
@@ -39,28 +41,28 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
 
   if (isLoading && articles.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center">
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#8C6AE3" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1">
-      <View className="h-[1px] bg-surface-other" />
-      <TouchableOpacity className="bg-lightPurple/20 px-4 py-2 mt-2 flex-row items-center">
+    <View style={styles.container}>
+      <View style={styles.separator} />
+      <TouchableOpacity style={styles.faqButton}>
         <Image
           source={require('@/assets/images/fireIcon.png')}
-          style={{ width: 22, height: 22 }}
+          style={styles.faqIcon}
         />
         <Text size="sm">[FAQ] 자주묻는 질문</Text>
-        <TouchableOpacity className="ml-auto">
+        <TouchableOpacity style={styles.faqArrow}>
           <IconWrapper>
-            <VectorIcon className=" h-[12px] w-[9px]" color="black" />
+            <VectorIcon width={9} height={12} color="black" />
           </IconWrapper>
         </TouchableOpacity>
       </TouchableOpacity>
-      <View className="h-[1px] bg-surface-other mb-2" />
+      <View style={styles.separatorWithMargin} />
 
       <FlatList
         data={articles}
@@ -73,8 +75,8 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
           />
         )}
         keyExtractor={(item) => item.id.toString()}
-        className="flex-1 scrolling"
-        ItemSeparatorComponent={() => <View className="h-[1px] bg-surface-other" />}
+        style={styles.list}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListFooterComponent={renderFooter}
         {...scrollProps}
         onEndReached={infiniteScroll ? (info) => {
@@ -91,3 +93,46 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  footerLoader: {
+    paddingVertical: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: semanticColors.surface.other,
+  },
+  separatorWithMargin: {
+    height: 1,
+    backgroundColor: semanticColors.surface.other,
+    marginBottom: 8,
+  },
+  faqButton: {
+    backgroundColor: `${colors.lightPurple}33`,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  faqIcon: {
+    width: 22,
+    height: 22,
+  },
+  faqArrow: {
+    marginLeft: "auto",
+  },
+  list: {
+    flex: 1,
+  },
+});

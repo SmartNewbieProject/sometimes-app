@@ -15,10 +15,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { type LayoutChangeEvent, Modal, StyleSheet, View } from "react-native";
+import { type LayoutChangeEvent, Modal, StyleSheet, View, useWindowDimensions } from "react-native";
 import useCurrentModal from "../hooks/use-current-modal";
 import useNestedModal from "../hooks/use-nested-modal";
-import { cn } from "../libs";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 
@@ -73,6 +72,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     hideNestedModal,
     nestedModal,
   } = useNestedModal();
+  const { width: windowWidth } = useWindowDimensions();
+  const modalWidth = windowWidth >= 768 ? 468 : 300;
+
   const [size, setSize] = useState({ width: 0, height: 0 });
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -86,20 +88,20 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     options: ErrorModalOptions,
     type: "mono" | "nested"
   ) => (
-    <View className="bg-surface-background w-[300px] md:w-[468px] rounded-2xl p-5">
-      <View className="flex flex-row items-center gap-x-2 mb-4">
+    <View style={[styles.errorModalContainer, { width: modalWidth }]}>
+      <View style={styles.errorModalHeader}>
         <ErrorFace />
         <Text size="lg" weight="semibold" textColor="black">
           {options.type === "error" ? "오류가 발생했어요." : "안내"}
         </Text>
       </View>
-      <Text className="text-center mb-4" weight="medium" textColor="black">
+      <Text style={styles.errorModalMessage} weight="medium" textColor="black">
         {options.message}
       </Text>
       <Button
         variant="primary"
         onPress={type === "mono" ? hideModal : hideNestedModal}
-        className="w-full rounded-md"
+        width="full"
       >
         네, 확인했어요
       </Button>
@@ -126,10 +128,11 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     return (
       <View
         onLayout={onLayout}
-        className={cn(
-          "bg-surface-background w-[300px] md:w-[468px] rounded-2xl p-5 relative",
-          options?.showLogo && "pt-[60px]"
-        )}
+        style={[
+          styles.customModalContainer,
+          { width: modalWidth },
+          options?.showLogo && styles.customModalWithLogo
+        ]}
       >
         {options?.showParticle &&
           PARTICLE_IMAGE.map((item, index) => (
@@ -146,18 +149,11 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
         {options?.showLogo && (
           <View style={styles.logoStyle}>
-            <View
-              style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-                backgroundColor: semanticColors.brand.primary,
-              }}
-            >
+            <View style={styles.logoBackground}>
               {typeof options.showLogo === "boolean" ? (
                 <Image
                   source={require("@assets/images/letter.png")}
-                  style={{ width: 60, height: 60 }}
+                  style={styles.logoImage}
                 />
               ) : (
                 options.showLogo
@@ -168,7 +164,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         {!!options?.banner && options?.banner}
         {!!options?.customTitle && options.customTitle}
         {!options?.customTitle && options?.title && (
-          <View className="mb-4">
+          <View style={styles.titleContainer}>
             {typeof options.title === "string" ? (
               <Text size="18" weight="semibold" textColor="black">
                 {options.title}
@@ -178,9 +174,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             )}
           </View>
         )}
-        <View className="mb-4">
+        <View style={styles.childrenContainer}>
           {typeof options?.children === "string" ? (
-            <Text className="text-center" weight="medium" textColor="black">
+            <Text style={styles.centeredText} weight="medium" textColor="black">
               {options.children}
             </Text>
           ) : (
@@ -188,10 +184,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           )}
         </View>
         <View
-          style={{
-            flexDirection: options?.reverse ? "row-reverse" : "row",
-          }}
-          className="flex flex-row gap-x-2"
+          style={[
+            styles.buttonContainer,
+            {
+              flexDirection: options?.reverse ? "row-reverse" : "row",
+            }
+          ]}
         >
           {options?.secondaryButton && (
             <Button
@@ -199,7 +197,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
               onPress={() =>
                 handleButtonClick(options.secondaryButton?.onClick)
               }
-              className="flex-1"
+              styles={styles.button}
             >
               {options.secondaryButton.text}
             </Button>
@@ -208,7 +206,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             <Button
               variant="primary"
               onPress={() => handleButtonClick(options.primaryButton?.onClick)}
-              className="flex-1"
+              styles={styles.button}
             >
               {options.primaryButton.text}
             </Button>
@@ -236,7 +234,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         animationType="fade"
         onRequestClose={hideModal}
       >
-        <View className="flex-1 bg-surface-inverse/50 justify-center items-center px-5">
+        <View style={styles.modalOverlay}>
           {currentModal && "type" in currentModal
             ? renderErrorModal(currentModal as ErrorModalOptions, "mono")
             : currentModal
@@ -245,10 +243,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         </View>
 
         {nestedModal && (
-          <View
-            style={StyleSheet.absoluteFill}
-            className="bg-surface-inverse/50 justify-center items-center px-5"
-          >
+          <View style={[StyleSheet.absoluteFill, styles.nestedModalOverlay]}>
             {nestedModal && "type" in nestedModal
               ? renderErrorModal(nestedModal as ErrorModalOptions, "nested")
               : renderCustomModal(nestedModal as ModalOptions, "nested")}
@@ -260,6 +255,33 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 }
 
 const styles = StyleSheet.create({
+  // Error Modal Styles
+  errorModalContainer: {
+    backgroundColor: semanticColors.surface.background,
+    borderRadius: 16,
+    padding: 20,
+  },
+  errorModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+  },
+  errorModalMessage: {
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+
+  // Custom Modal Styles
+  customModalContainer: {
+    backgroundColor: semanticColors.surface.background,
+    borderRadius: 16,
+    padding: 20,
+    position: 'relative',
+  },
+  customModalWithLogo: {
+    paddingTop: 60,
+  },
   logoStyle: {
     position: "absolute",
     top: -18,
@@ -267,6 +289,50 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: semanticColors.surface.background,
     padding: 5.7,
+  },
+  logoBackground: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 999,
+    backgroundColor: semanticColors.brand.primary,
+  },
+  logoImage: {
+    width: 60,
+    height: 60,
+  },
+  titleContainer: {
+    marginBottom: 16,
+  },
+  childrenContainer: {
+    marginBottom: 16,
+  },
+  centeredText: {
+    textAlign: 'center',
+  },
+
+  // Button Container Styles (1:1 비율)
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    width: '100%',
+  },
+  button: {
+    flex: 1,
+  },
+
+  // Modal Overlay Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  nestedModalOverlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
 });
 

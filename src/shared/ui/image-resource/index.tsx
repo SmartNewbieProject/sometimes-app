@@ -5,7 +5,6 @@ export interface ImageResourceProps {
   resource: ImageResources;
   width?: number;
   height?: number;
-  className?: string;
   style?: ViewStyle;
   loadingTitle?: string;
   contentFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';

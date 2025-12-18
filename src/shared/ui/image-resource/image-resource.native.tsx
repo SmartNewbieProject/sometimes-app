@@ -11,7 +11,6 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   resource,
   width = 100,
   height = 100,
-  className = '',
   style,
   loadingTitle = '이미지를 불러오고 있어요',
   contentFit = 'cover',
@@ -63,7 +62,7 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
 
   if (hasError) {
     return (
-      <View style={[styles.container, style]} className={className}>
+      <View style={[styles.container, style]}>
         <View style={[styles.image, { backgroundColor: semanticColors.surface.background }]}>
           <Text>이미지 로드 실패</Text>
         </View>
@@ -72,7 +71,7 @@ export const ImageResource: React.FC<ImageResourceProps> = ({
   }
 
   return (
-    <View style={[styles.container, style]} className={className}>
+    <View style={[styles.container, style]}>
       <Loading.Lottie title={loadingTitle} loading={!image}>
         <ExpoImage
           source={image}

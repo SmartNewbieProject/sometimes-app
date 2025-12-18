@@ -1,4 +1,5 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useAuth } from "@/src/features/auth";
 import apis from "@/src/features/community/apis";
 import { useArticleDetail } from "@/src/features/community/hooks";
@@ -12,7 +13,7 @@ import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo } from "react";
-import { Linking , KeyboardAvoidingView, Platform, Pressable, View } from "react-native";
+import { Linking, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -109,7 +110,7 @@ export default function ArticleDetailScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 bg-surface-background justify-center items-center">
+      <View style={styles.errorContainer}>
         <Text>{t("apps.community.id.error_loading")}</Text>
       </View>
     );
@@ -119,10 +120,7 @@ export default function ArticleDetailScreen() {
     return <Loading.Page title={t("apps.community.id.loading")} />;
   }
   return (
-    <DefaultLayout
-      style={{ paddingBottom: insets.bottom }}
-      className="flex-1 bg-surface-background "
-    >
+    <DefaultLayout style={[styles.container, { paddingBottom: insets.bottom }]}>
       <ArticleHeader
         isOwner={isOwner}
         dropdownOpen={isDropdownOpen}
@@ -130,9 +128,25 @@ export default function ArticleDetailScreen() {
         t={t}
       />
 
-      <View className="flex-1">
+      <View style={styles.content}>
         <ArticleDetail article={article} />
       </View>
     </DefaultLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+  },
+  errorContainer: {
+    flex: 1,
+    backgroundColor: semanticColors.surface.background,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  content: {
+    flex: 1,
+  },
+});

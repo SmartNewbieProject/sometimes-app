@@ -1,8 +1,9 @@
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button, Text, BusinessInfo } from '@shared/ui';
 import { router } from 'expo-router';
 import { Feedback } from "@features/feedback";
 import { useTranslation } from 'react-i18next';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 interface FooterProps {
   trackEventAction?: (eventName: string) => void;
@@ -11,15 +12,16 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) => {
   const { t } = useTranslation();
   return (
-    <View className="w-full mt-8">
-      <View className="my-1.5">
+    <View style={styles.container}>
+      <View style={styles.feedbackContainer}>
         <Feedback.WallaFeedbackBanner textContent={t("features.pre-signup.ui.footer.feedback_banner")} />
       </View>
-      <View className="w-full px-4 py-3">
+      <View style={styles.buttonContainer}>
         <Button
           variant="primary"
           size="md"
-          className="w-full py-3 rounded-full"
+          width="full"
+          style={styles.primaryButton}
           onPress={() => {
             trackEventAction('signup_button_click');
             router.navigate('/auth/signup/terms');
@@ -30,7 +32,8 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
         <Button
           variant="outline"
           size="md"
-          className="w-full py-3 rounded-full mt-3 bg-surface-background border-border-default"
+          width="full"
+          style={styles.outlineButton}
           onPress={() => {
             trackEventAction('login_button_click');
             router.navigate('/auth/login');
@@ -39,7 +42,8 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
           <Text
             weight="medium"
             size="md"
-            className="text-center text-text-inverse"
+            textColor="inverse"
+            style={styles.loginText}
           >
             {t("features.pre-signup.ui.footer.login_button")}
           </Text>
@@ -49,3 +53,32 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    marginTop: 32,
+  },
+  feedbackContainer: {
+    marginVertical: 6,
+  },
+  buttonContainer: {
+    width: '100%',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  primaryButton: {
+    paddingVertical: 12,
+    borderRadius: 9999,
+  },
+  outlineButton: {
+    paddingVertical: 12,
+    borderRadius: 9999,
+    marginTop: 12,
+    backgroundColor: semanticColors.surface.background,
+    borderColor: semanticColors.border.default,
+  },
+  loginText: {
+    textAlign: 'center',
+  },
+});

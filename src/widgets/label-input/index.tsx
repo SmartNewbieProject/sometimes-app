@@ -1,31 +1,28 @@
-import { View } from 'react-native';
+import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { Input, Text, Label } from '@/src/shared/ui';
 import type { InputProps } from '@/src/shared/ui';
-import { cn } from '@shared/libs/cn';
-import { cva, type VariantProps } from 'class-variance-authority';
 
-const labelInput = cva('flex flex-col', {
-  variants: {
-    size: {
-      sm: 'gap-y-0',
-      md: 'gap-y-2',
-      lg: 'gap-y-3',
-    }
-  },
-  defaultVariants: {
-    size: 'md'
+type LabelInputSize = 'sm' | 'md' | 'lg';
+
+const getGapBySize = (size: LabelInputSize | undefined | null): number => {
+  switch (size) {
+    case 'sm': return 0;
+    case 'lg': return 12;
+    case 'md':
+    default: return 8;
   }
-});
+};
 
-export interface LabelInputProps extends InputProps, VariantProps<typeof labelInput> {
+export interface LabelInputProps extends InputProps {
   label: string;
   required?: boolean;
   description?: string;
   placeholder?: string;
   onBlur?: () => void;
   error?: string;
-  wrapperClassName?: string;
+  wrapperStyle?: StyleProp<ViewStyle>;
   textColor?: "white" | "purple" | "light" | "dark" | "black" | "pale-purple";
+  size?: LabelInputSize;
 }
 
 export function LabelInput({
@@ -33,7 +30,7 @@ export function LabelInput({
   required = false,
   description,
   error,
-  wrapperClassName,
+  wrapperStyle,
   containerClassName,
   placeholder,
   onBlur,
@@ -42,19 +39,19 @@ export function LabelInput({
   ...props
 }: LabelInputProps) {
   return (
-    <View className={cn(labelInput({ size }), wrapperClassName)}>
-      <Label 
+    <View style={[styles.container, { gap: getGapBySize(size) }, wrapperStyle]}>
+      <Label
         label={label}
         required={required}
         size={size}
         textColor={textColor}
       />
-      
+
       {description && (
-        <Text 
-          size={size} 
-          textColor="black" 
-          className="mb-1"
+        <Text
+          size={size}
+          textColor="black"
+          style={styles.description}
         >
           {description}
         </Text>
@@ -62,7 +59,7 @@ export function LabelInput({
 
       <Input
         size={size}
-        containerClassName={cn("mb-1", containerClassName)}
+        containerClassName={containerClassName}
         placeholder={placeholder}
         status={error ? "error" : "default"}
         onBlur={onBlur}
@@ -70,10 +67,22 @@ export function LabelInput({
       />
 
       {error && (
-        <Text size={size === 'lg' ? 'md' : 'sm'} className="text-rose-400">
+        <Text size={size === 'lg' ? 'md' : 'sm'} style={styles.errorText}>
           {error}
         </Text>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+  },
+  description: {
+    marginBottom: 4,
+  },
+  errorText: {
+    color: '#FB7185',
+  },
+});

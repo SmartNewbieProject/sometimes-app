@@ -1,4 +1,3 @@
-// src/features/community/ui/category-list/index.tsx
 import Loading from "@/src/features/loading";
 import { Button } from "@shared/ui";
 import { Image } from "expo-image";
@@ -9,9 +8,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ScrollView, View, type LayoutChangeEvent } from "react-native";
+import { ScrollView, StyleSheet, View, type LayoutChangeEvent } from "react-native";
 import { useCategory } from "../../hooks";
 import { NOTICE_CODE } from "@/src/features/community/queries/use-home";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import { useTranslation } from "react-i18next";
 
 type LayoutMap = Record<string, { x: number; width: number }>;
 
@@ -20,8 +21,6 @@ const HOME_CODE = "__home__";
 function hasEmojiUrl(c: unknown): c is { emojiUrl: string } {
   return !!c && typeof (c as any).emojiUrl === "string";
 }
-
-import { useTranslation } from "react-i18next";
 
 export const CategoryList = () => {
   const { categories, changeCategory, currentCategory, isLoading } =
@@ -91,21 +90,17 @@ export const CategoryList = () => {
   }, [currentCategory, isLoading, ensureVisible, routesKey]);
 
   return (
-    <View
-      className="w-full px-[16px] bg-surface-background overflow-hidden"
-      onLayout={onContainerLayout}
-    >
+    <View style={styles.container} onLayout={onContainerLayout}>
       <ScrollView
         horizontal
         ref={scrollRef}
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={16}
       >
-        <Loading.Lottie title={t("features.community.ui.category_list.loading_categories")}  loading={isLoading}>
-          <View className="flex flex-row w-full gap-x-[10px] mb-2">
+        <Loading.Lottie title={t("features.community.ui.category_list.loading_categories")} loading={isLoading}>
+          <View style={styles.categoriesRow}>
             {renderCategories.map((category) => {
               const isActive = currentCategory === category.code;
-              const bgClass = isActive ? "bg-brand-primary" : "bg-surface-secondary";
 
               return (
                 <View
@@ -120,17 +115,20 @@ export const CategoryList = () => {
                       changeCategory(category.code);
                       ensureVisible(category.code, true);
                     }}
-                    className={`px-[12px] py-[8px] rounded-full border-0 ${bgClass}`}
+                    styles={[
+                      styles.categoryButton,
+                      isActive ? styles.categoryButtonActive : styles.categoryButtonInactive,
+                    ]}
                     prefix={
                       category.code === HOME_CODE ? (
                         <Image
                           source={require("@/assets/images/home.png")}
-                          style={{ width: 32, height: 32 }}
+                          style={styles.categoryIcon}
                         />
                       ) : hasEmojiUrl(category) ? (
                         <Image
                           source={{ uri: (category as any).emojiUrl }}
-                          style={{ width: 32, height: 32 }}
+                          style={styles.categoryIcon}
                         />
                       ) : undefined
                     }
@@ -140,8 +138,40 @@ export const CategoryList = () => {
                 </View>
               );
             })}
-        </View>
-      </Loading.Lottie>
-    </ScrollView>
-  </View>);
+          </View>
+        </Loading.Lottie>
+      </ScrollView>
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    paddingHorizontal: 16,
+    backgroundColor: semanticColors.surface.background,
+    overflow: "hidden",
+  },
+  categoriesRow: {
+    flexDirection: "row",
+    width: "100%",
+    gap: 10,
+    marginBottom: 8,
+  },
+  categoryButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 9999,
+    borderWidth: 0,
+  },
+  categoryButtonActive: {
+    backgroundColor: semanticColors.brand.primary,
+  },
+  categoryButtonInactive: {
+    backgroundColor: semanticColors.surface.secondary,
+  },
+  categoryIcon: {
+    width: 32,
+    height: 32,
+  },
+});

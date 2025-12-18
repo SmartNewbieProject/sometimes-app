@@ -1,0 +1,24 @@
+diff --git a/node_modules/expo-iap/ios/ExpoIap.podspec b/node_modules/expo-iap/ios/ExpoIap.podspec
+index 04e6ddc..43c8650 100644
+--- a/node_modules/expo-iap/ios/ExpoIap.podspec
++++ b/node_modules/expo-iap/ios/ExpoIap.podspec
+@@ -18,7 +18,8 @@ Pod::Spec.new do |s|
+   # The iOS 15.0+ requirement is enforced at build time in source code via @available annotations
+   #
+   # NOTE: tvOS requires 16.0 because openiap dependency has minimum tvOS deployment target of 16.0
+-  s.platforms      = { :ios => '13.4', :tvos => '16.0' }
++  # Modified for this project: iOS 16.0 required for StoreKit 2 APIs like getAppTransactionIOS()
++  s.platforms      = { :ios => '16.0', :tvos => '16.0' }
+   s.swift_version  = '5.9'
+   s.source         = { git: 'https://github.com/hyochan/expo-iap' }
+   s.static_framework = true
+@@ -29,7 +30,8 @@ Pod::Spec.new do |s|
+   # Swift/Objective-C compatibility
+   s.pod_target_xcconfig = {
+     'DEFINES_MODULE' => 'YES',
+-    'SWIFT_COMPILATION_MODE' => 'wholemodule'
++    'SWIFT_COMPILATION_MODE' => 'wholemodule',
++    'IPHONEOS_DEPLOYMENT_TARGET' => '16.0'
+   }
+ 
+   s.source_files = "**/*.{h,m,swift}"

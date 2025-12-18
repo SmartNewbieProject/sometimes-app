@@ -42,7 +42,7 @@ function ProfileEditHeader() {
   };
 
   return (
-    <Header.Container className="items-center  ">
+    <Header.Container style={styles.headerContainer}>
       <Header.LeftContent>
         <Pressable
           onPress={handleBack}
@@ -63,6 +63,9 @@ function ProfileEditHeader() {
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    alignItems: 'center',
+  },
   headerTitle: {
     color: semanticColors.text.primary,
     fontSize: 20,

@@ -31,7 +31,7 @@ function GuideWithLayoutAnimation({
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <View className="flex-1 bg-surface-inverse/50 justify-center items-center px-5 relative">
+      <View style={styles.modalContainer}>
         <View style={styles.infoWrapper}>
           <Text style={styles.infoTitle}>프로필을 매력적으로 보여주세요!</Text>
           <Text style={styles.infoDescription}>
@@ -40,24 +40,11 @@ function GuideWithLayoutAnimation({
           <Text style={styles.infoDescription}>매칭 확률이 더 높아져요</Text>
           <Image
             source={require("@assets/images/instagram-some.png")}
-            style={{
-              width: 116,
-              height: 175,
-              position: "absolute",
-              top: 20,
-              right: -66,
-            }}
+            style={styles.instagramSomeImage}
           />
           <Image
             source={require("@assets/images/instagram-lock.png")}
-            style={{
-              width: 52,
-              height: 52,
-              position: "absolute",
-              top: -30,
-              left: -30,
-              transform: [{ rotate: "-10deg" }],
-            }}
+            style={styles.instagramLockImage}
           />
         </View>
       </View>
@@ -66,6 +53,14 @@ function GuideWithLayoutAnimation({
 }
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    position: "relative",
+  },
   infoTitle: {
     color: semanticColors.brand.accent,
     fontWeight: 600,
@@ -98,7 +93,22 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 1,
     shadowRadius: 5,
-    elevation: 3, // Android에서 그림자
+    elevation: 3,
+  },
+  instagramSomeImage: {
+    width: 116,
+    height: 175,
+    position: "absolute",
+    top: 20,
+    right: -66,
+  },
+  instagramLockImage: {
+    width: 52,
+    height: 52,
+    position: "absolute",
+    top: -30,
+    left: -30,
+    transform: [{ rotate: "-10deg" }],
   },
 });
 

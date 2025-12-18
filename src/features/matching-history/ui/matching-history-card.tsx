@@ -75,7 +75,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
         ),
         children: (
           <View style={ModalStyles.content}>
-            <Text style={ModalStyles.description} className="text-text-disabled">
+            <Text style={ModalStyles.description} textColor="disabled">
               {t("features.matching-history.ui.matching_history_card.modal_description")}
             </Text>
           </View>
@@ -102,45 +102,23 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
         {item.blinded && (
           <>
             <BlurView
-              intensity={90}
+              intensity={20}
               tint="dark"
               style={StyleSheet.absoluteFillObject}
             />
-            <View style={styles.blurContent}>
-              <Text weight="bold" size="md" textColor="white" style={styles.blurMessage}>
-                {t('features.matching.blur_photo.message', { count: 1 })}
-              </Text>
-              <Text weight="medium" size="xs" textColor="white" style={styles.blurSubMessage}>
-                {t('features.matching.blur_photo.sub_description')}
-              </Text>
+            <View style={styles.lockIconContainer}>
+              <LockProfileIcon width={32} height={32} />
             </View>
           </>
         )}
         <View
-          style={{
-            position: "relative",
-            width: size,
-            height: size,
-            padding: 14,
-            boxSizing: "border-box",
-            borderRadius: 30,
-          }}
-          className="flex flex-col justify-between"
+          style={[styles.cardContainer, { width: size, height: size }]}
         >
-          <View
-            style={{
-              position: "absolute",
-              display: "flex",
-              flexDirection: "column",
-              left: 10,
-              bottom: 10,
-              zIndex: 10,
-            }}
-          >
+          <View style={styles.infoContainer}>
             <Text textColor="white" weight="semibold" size="20">
               {item.age}
             </Text>
-            <View className="flex flex-row items-center">
+            <View style={styles.rowCenter}>
               <Text textColor="white" weight="light" size="10">
                 {item.mbti ? `#${item?.mbti}` : ""} #{item.universityName}
               </Text>
@@ -149,28 +127,16 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                 return item.universityAuthentication && logoUrl ? (
                   <Image
                     source={{ uri: logoUrl }}
-                    style={{ width: 10, height: 10, marginLeft: 5 }}
+                    style={styles.universityLogo}
                   />
                 ) : (
-                  <IconWrapper style={{ marginLeft: 5 }} size={10}>
+                  <IconWrapper style={styles.iconMarginLeft} size={10}>
                     <NotSecuredIcon />
                   </IconWrapper>
                 );
               })()}
             </View>
-            <View
-              style={{
-                backgroundColor: "#7A4AE2",
-                paddingHorizontal: 6,
-                paddingVertical: 3,
-                borderRadius: 3,
-                alignSelf: "flex-start",
-                marginTop: 3,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 3,
-              }}
-            >
+            <View style={styles.lastLoginBadge}>
               <Text textColor="white" weight="medium" size="10">
                 마지막 접속
               </Text>
@@ -180,44 +146,16 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
             </View>
           </View>
 
-          <View
-            style={{
-              position: "absolute",
-              width: 34,
-              flexDirection: "column",
-              height: 128,
-              backgroundColor: "rgba(0, 0, 0, 0)",
-              right: 1,
-              zIndex: 10,
-              bottom: 62,
-            }}
-          >
-            <View
-              style={{
-                width: "100%",
-                position: "relative",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-                overflow: "hidden",
-              }}
-            >
-              <View
-                style={{
-                  borderBottomRightRadius: 16,
-                  borderTopEndRadius: 16,
-                  height: 35,
-                  width: "100%",
-                  borderColor: semanticColors.border.default,
-                }}
-              />
+          <View style={styles.moreButtonContainer}>
+            <View style={styles.topSpacer}>
+              <View style={styles.topSpacerInner} />
             </View>
 
-            <View className="w-full flex flex-row">
+            <View style={styles.fullWidthRow}>
               <Pressable
-                className={
-                  " flex-1 flex flex-row justify-end items-center pr-1"
-                }
                 style={[
                   styles.previousButton,
+                  styles.pressableContent,
                   {
                     backgroundColor: item.blinded
                       ? "#452D79"
@@ -226,7 +164,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                 ]}
                 onPress={onClickToPartner}
               >
-                <Text className="w-[20px] text-text-inverse text-[7px]">
+                <Text textColor="white" style={styles.buttonText}>
                   {item.blinded ? t("features.matching-history.ui.matching_history_card.profile_unlock_button") : t("features.matching-history.ui.matching_history_card.more_button")}
                 </Text>
                 <IconWrapper width={6} height={6}>
@@ -234,31 +172,13 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
                 </IconWrapper>
               </Pressable>
             </View>
-            <View
-              className="w-full relative"
-              style={{
-                overflow: "hidden",
-              }}
-            >
-              <View
-                style={{
-                  borderTopEndRadius: 16,
-                  height: 35,
-                  width: "100%",
-                }}
-              />
+            <View style={styles.bottomContainer}>
+              <View style={styles.bottomSpacerInner} />
             </View>
           </View>
           <LinearGradient
             colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.7)"]}
-            style={{
-              position: "absolute",
-              bottom: 0,
-              width: size,
-              left: 0,
-              right: 0,
-              height: "40%", // 그라데이션 높이 조절
-            }}
+            style={[styles.gradientOverlay, { width: size }]}
           />
         </View>
       </ImageBackground>
@@ -273,30 +193,15 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     margin: 8,
   },
-  blurContent: {
-    position: "absolute",
+  lockIconContainer: {
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
-    padding: 16,
-    gap: 8,
-  },
-  blurMessage: {
-    textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  blurSubMessage: {
-    textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-    opacity: 0.9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
   },
   previousButton: {
     borderTopLeftRadius: 999,
@@ -320,6 +225,97 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: "Pretendard-Bold",
     color: colors.primaryPurple,
+  },
+  rowCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  fullWidthRow: {
+    width: '100%',
+    flexDirection: 'row',
+  },
+  pressableContent: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingRight: 4,
+  },
+  buttonText: {
+    width: 20,
+    fontSize: 7,
+  },
+  bottomContainer: {
+    width: '100%',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  cardContainer: {
+    position: 'relative',
+    padding: 14,
+    borderRadius: 30,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  infoContainer: {
+    position: 'absolute',
+    flexDirection: 'column',
+    left: 10,
+    bottom: 10,
+    zIndex: 10,
+  },
+  lastLoginBadge: {
+    backgroundColor: '#7A4AE2',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 3,
+    alignSelf: 'flex-start',
+    marginTop: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  moreButtonContainer: {
+    position: 'absolute',
+    width: 34,
+    flexDirection: 'column',
+    height: 128,
+    backgroundColor: 'transparent',
+    right: 1,
+    zIndex: 10,
+    bottom: 62,
+  },
+  topSpacer: {
+    width: '100%',
+    position: 'relative',
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  topSpacerInner: {
+    borderBottomRightRadius: 16,
+    borderTopEndRadius: 16,
+    height: 35,
+    width: '100%',
+  },
+  bottomSpacerInner: {
+    borderTopEndRadius: 16,
+    height: 35,
+    width: '100%',
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '40%',
+  },
+  universityLogo: {
+    width: 10,
+    height: 10,
+    marginLeft: 5,
+  },
+  iconMarginLeft: {
+    marginLeft: 5,
   },
 });
 

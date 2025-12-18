@@ -142,7 +142,7 @@ export const Partner = ({ match }: PartnerProps) => {
             style={[sideStyle.previousButton, styles.moreButton]}
             onPress={onClickToPartner}
           >
-            <Text className="w-[32px] text-text-inverse text-[12px]">{t("features.idle-match-timer.ui.partner.button_more")}</Text>
+            <Text style={styles.moreButtonText} textColor="white">{t("features.idle-match-timer.ui.partner.button_more")}</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   moreButtonText: {
     width: 32,
-    fontSize: 4,
+    fontSize: 12,
   },
   moreButtonBottomSpacer: {
     width: "100%",

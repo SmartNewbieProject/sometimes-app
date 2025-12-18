@@ -1,26 +1,25 @@
 import PhotoPickerModal from "@/src/features/mypage/ui/modal/image-modal";
-import { platform } from "@/src/shared/libs/platform";
-import type { VariantProps } from "class-variance-authority";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import React, { useState, forwardRef, useImperativeHandle } from "react";
-import { Alert, Linking, Platform, Pressable, View } from "react-native";
+import { Alert, Linking, Platform, Pressable, StyleSheet, View } from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
 import { useModal } from "../../hooks/use-modal";
-import { useToast } from "../../hooks/use-toast";
 import { convertToJpeg, isHeicBase64 } from "../../utils/image";
 import { compressImage } from "@/src/shared/libs/image-compression";
 import { PROFILE_IMAGE_CONFIG } from "@/src/shared/libs/image-compression/config";
-import { ContentSelector, type contentSelector } from "../content-selector";
+import { ContentSelector, type ContentSelectorSize } from "../content-selector";
 import { Text } from "../text";
 import { LoadingModal } from "../loading-modal";
 import { useTranslation } from "react-i18next";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
-export interface ImageSelectorProps
-  extends VariantProps<typeof contentSelector> {
+export interface ImageSelectorProps {
   value?: string;
   onChange: (value: string) => void;
-  className?: string;
+  size?: ContentSelectorSize;
+  style?: StyleProp<ViewStyle>;
   actionLabel?: string;
   skipCompression?: boolean;
 }
@@ -29,7 +28,6 @@ export interface ImageSelectorRef {
   openPicker: () => void;
 }
 
-// Static method for rendering an image
 export function renderImage(value: string | null, isPlaceHolder?: boolean) {
   if (!value) return null;
   return (
@@ -41,18 +39,17 @@ export function renderImage(value: string | null, isPlaceHolder?: boolean) {
   );
 }
 
-// Static method for rendering a placeholder
 export function renderPlaceholder() {
   const { t } = useTranslation();
   return (
-    <View className="flex-1 items-center justify-center">
-      <View className="w-full h-full bg-surface-secondary flex justify-center items-center">
+    <View style={styles.placeholderWrapper}>
+      <View style={styles.placeholderContent}>
         <Image
           source={require("@assets/images/image.png")}
           style={{ width: 70, height: 70 }}
           contentFit="cover"
         />
-        <Text size="sm" className="text-text-disabled">
+        <Text size="sm" textColor="disabled">
           {t("shareds.image-selector.image_selector.add_photo")}
         </Text>
       </View>
@@ -64,7 +61,7 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
   value,
   onChange,
   size,
-  className,
+  style,
   actionLabel = undefined,
   skipCompression = false,
 }, ref) => {
@@ -77,7 +74,6 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
     openPicker: handlePress,
   }));
   const { showErrorModal, showModal, hideModal } = useModal();
-  const { emitToast } = useToast();
   const pickImage = async () => {
     console.log('[ImageSelector] pickImage started');
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -107,7 +103,6 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
       const pickedUri = result.assets[0].uri;
       console.log('[ImageSelector] Picked image URI length:', pickedUri.length);
 
-      // 이미지 선택 모달 즉시 닫기
       setImageModal(false);
 
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
@@ -126,7 +121,6 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
       if (!skipCompression) {
         try {
           console.log('[ImageSelector] Starting compression...');
-          // 로딩 모달 표시
           showModal({
             custom: () => <LoadingModal message="이미지를 최적화하고 있어요..." />,
           });
@@ -135,7 +129,6 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
           jpegUri = compressed.uri;
           console.log('[ImageSelector] Compression completed, URI length:', jpegUri.length);
 
-          // 로딩 모달 닫기
           hideModal();
         } catch (error) {
           console.warn('이미지 압축 실패, 원본 사용:', error);
@@ -187,7 +180,6 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
       const pickedUri = result.assets[0].uri;
       console.log('[ImageSelector] Captured image URI length:', pickedUri.length);
 
-      // 사진 촬영 모달 즉시 닫기
       setImageModal(false);
 
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
@@ -206,7 +198,6 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
       if (!skipCompression) {
         try {
           console.log('[ImageSelector] Starting compression (camera)...');
-          // 로딩 모달 표시
           showModal({
             custom: () => <LoadingModal message="이미지를 최적화하고 있어요..." />,
           });
@@ -215,7 +206,6 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
           jpegUri = compressed.uri;
           console.log('[ImageSelector] Compression completed (camera), URI length:', jpegUri.length);
 
-          // 로딩 모달 닫기
           hideModal();
         } catch (error) {
           console.warn('이미지 압축 실패, 원본 사용:', error);
@@ -239,7 +229,7 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
         <ContentSelector
           value={value}
           size={size}
-          className={className}
+          style={style}
           actionLabel={actionLabel}
           renderContent={renderImage}
           renderPlaceholder={renderPlaceholder}
@@ -253,4 +243,19 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
       />
     </>
   );
+});
+
+const styles = StyleSheet.create({
+  placeholderWrapper: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  placeholderContent: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: semanticColors.surface.secondary,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

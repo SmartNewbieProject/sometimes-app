@@ -199,11 +199,10 @@ export default function UserInfoPage() {
           paddingHorizontal: 20,
         }}
       >
-        <View className="px-[5px]">
+        <View style={styles.imageWrapper}>
           <Image
             source={require("@assets/images/details.png")}
-            style={{ width: 81, height: 81, marginTop: 30 }}
-            className="mb-4"
+            style={styles.detailsImage}
           />
         </View>
 
@@ -322,8 +321,7 @@ export default function UserInfoPage() {
       </ScrollView>
 
       <View
-        style={[styles.bottomContainer, { bottom: insets.bottom }]}
-        className="w-[calc(100%)]"
+        style={[styles.bottomContainer, { bottom: insets.bottom, width: "100%" }]}
       >
         <View style={styles.messageContainer}>
           <Image
@@ -359,6 +357,15 @@ export default function UserInfoPage() {
 }
 
 const styles = StyleSheet.create({
+  imageWrapper: {
+    paddingHorizontal: 5,
+  },
+  detailsImage: {
+    width: 81,
+    height: 81,
+    marginTop: 30,
+    marginBottom: 16,
+  },
   topBar: {
     height: 50,
     justifyContent: "center",

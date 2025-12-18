@@ -50,10 +50,11 @@ function MockPartner() {
             width: "100%",
             height: "100%",
             padding: 14,
+            flexDirection: "column",
+            justifyContent: "space-between",
           }}
-          className="flex flex-col justify-between"
         >
-          <View className="flex flex-row gap-x-[2px]">
+          <View style={styles.timeRow}>
             <Time size="sm" value={"D"} />
             <Time size="sm" value="-" />
             {"04"
@@ -84,7 +85,7 @@ function MockPartner() {
             <Text textColor="white" weight="semibold" size="lg">
               {21}
             </Text>
-            <View className="flex flex-row items-center">
+            <View style={styles.infoRow}>
               <Text textColor="white" weight="light" size="md">
                 #ISTJ #김지안
               </Text>
@@ -126,13 +127,12 @@ function MockPartner() {
               />
             </View>
 
-            <View className="w-full flex flex-row">
+            <View style={styles.fullWidthRow}>
               <TouchableOpacity
-                className="bg-primaryPurple flex-1 flex flex-row justify-end items-center pr-1"
-                style={sideStyle.previousButton}
+                style={[sideStyle.previousButton, styles.touchableContent]}
                 onPress={() => {}}
               >
-                <Text className="w-[32px] text-text-inverse text-[12px]">
+                <Text textColor="inverse" style={styles.buttonText}>
                   {t("features.guide.mock.mock_partner.button_more")}
                 </Text>
                 <IconWrapper width={12} height={12}>
@@ -141,10 +141,7 @@ function MockPartner() {
               </TouchableOpacity>
             </View>
             <View
-              className="w-full relative"
-              style={{
-                overflow: "hidden",
-              }}
+              style={styles.bottomContainer}
             >
               <View
                 style={{
@@ -187,6 +184,35 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 20,
+  },
+  timeRow: {
+    flexDirection: "row",
+    gap: 2,
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  fullWidthRow: {
+    width: "100%",
+    flexDirection: "row",
+  },
+  touchableContent: {
+    backgroundColor: "#8B5CF6",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingRight: 4,
+  },
+  buttonText: {
+    width: 32,
+    fontSize: 12,
+  },
+  bottomContainer: {
+    width: "100%",
+    position: "relative",
+    overflow: "hidden",
   },
 });
 

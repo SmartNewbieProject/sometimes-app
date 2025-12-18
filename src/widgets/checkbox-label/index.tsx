@@ -1,9 +1,9 @@
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
 import { Text } from '../../shared/ui/text';
 import { Check } from '../../shared/ui/check';
-import { cn } from '@/src/shared/libs/cn';
 import * as Linking from 'expo-linking';
 import i18n from '@/src/shared/libs/i18n';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 type CheckLabelProps = {
   label: string;
@@ -13,7 +13,7 @@ type CheckLabelProps = {
   link?: string;
   linkText?: string;
   variant?: 'box' | 'symbol';
-  className?: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const CheckboxLabel = ({
@@ -24,35 +24,32 @@ export const CheckboxLabel = ({
   link,
   linkText = i18n.t("widgets.checkbox-label.checkbox_label.view_link"),
   variant = 'box',
-  className = '',
+  style,
 }: CheckLabelProps) => {
   const CheckComponent = variant === 'box' ? Check.Box : Check.Symbol;
 
   return (
-    <View className={cn("flex-row items-center gap-x-2", className)}>
+    <View style={[styles.container, style]}>
       <CheckComponent
         checked={checked}
         onChange={onChange}
         disabled={disabled}
       />
-      <TouchableOpacity 
+      <TouchableOpacity
         activeOpacity={0.8}
         disabled={disabled}
         onPress={() => onChange?.(!checked)}
-        className="flex-1 flex-row items-center justify-between"
+        style={styles.labelContainer}
       >
-        <Text 
-          size="md" 
-          className={cn(
-            "text-gray-700",
-            disabled && "text-gray-400"
-          )}
+        <Text
+          size="md"
+          style={[styles.labelText, disabled && styles.disabledText]}
         >
           {label}
         </Text>
         {link && (
           <TouchableOpacity onPress={() => Linking.openURL(link)}>
-            <Text size="sm" className="underline" textColor="pale-purple">
+            <Text size="sm" style={styles.linkText} textColor="pale-purple">
               {linkText}
             </Text>
           </TouchableOpacity>
@@ -60,4 +57,27 @@ export const CheckboxLabel = ({
       </TouchableOpacity>
     </View>
   );
-}; 
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  labelContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  labelText: {
+    color: '#374151',
+  },
+  disabledText: {
+    color: '#9CA3AF',
+  },
+  linkText: {
+    textDecorationLine: 'underline',
+  },
+});

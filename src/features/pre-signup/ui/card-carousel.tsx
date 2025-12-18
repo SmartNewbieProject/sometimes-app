@@ -2,7 +2,7 @@ import { ImageResources } from "@/src/shared/libs/image";
 import Slider from "@/src/widgets/slide";
 import type React from "react";
 import { useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { FlippableCard } from "./flippable-card";
 
@@ -42,14 +42,13 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
 
   return (
     <Animated.View
-      className="w-full h-[400px] relative overflow-visible"
-      style={style}
+      style={[styles.container, style]}
     >
       <Slider
         autoPlay={true}
         autoPlayInterval={6000}
         showIndicator={true}
-        className="w-full h-full"
+        style={styles.slider}
         animationDuration={400}
         indicatorPosition="bottom"
         indicatorContainerClassName=""
@@ -62,17 +61,9 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
         {cards.map((card, index) => (
           <View
             key={index}
-            className="w-full h-full flex items-center justify-center px-4"
+            style={styles.cardContainer}
           >
-            <View
-              style={{
-                width: 250,
-                height: 250 * 1.545,
-                borderRadius: 18.34,
-                overflow: "visible",
-                marginBottom: 20,
-              }}
-            >
+            <View style={styles.cardWrapper}>
               <FlippableCard
                 initialImage={card.initialImage}
                 switchImage={card.switchImage}
@@ -88,3 +79,30 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: 400,
+    position: 'relative',
+    overflow: 'visible',
+  },
+  slider: {
+    width: '100%',
+    height: '100%',
+  },
+  cardContainer: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+  cardWrapper: {
+    width: 250,
+    height: 250 * 1.545,
+    borderRadius: 18.34,
+    overflow: 'visible',
+    marginBottom: 20,
+  },
+});

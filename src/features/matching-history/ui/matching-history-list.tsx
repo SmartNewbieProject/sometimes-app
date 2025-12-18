@@ -3,7 +3,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { FlatList, Platform, StyleSheet, View } from "react-native";
 import { useMatchingHistoryList } from "../queries/use-matching-history-list";
 import MatchingHistoryCard from "./matching-history-card";
 
@@ -12,16 +12,34 @@ function MatchingHistoryList() {
   const { matchingHistoryList } = useMatchingHistoryList();
   const { t } = useTranslation();
 
-  return (
-    <View style={styles.container}>
-      {matchingHistoryList && matchingHistoryList.length > 0 && (
-        <FlashList
+  const renderList = () => {
+    if (!matchingHistoryList || matchingHistoryList.length === 0) return null;
+
+    if (Platform.OS === "web") {
+      return (
+        <FlatList
           data={matchingHistoryList}
           renderItem={({ item }) => <MatchingHistoryCard item={item} />}
-          estimatedItemSize={200}
           numColumns={2}
+          keyExtractor={(item) => item.connectionId}
+          contentContainerStyle={styles.listContent}
         />
-      )}
+      );
+    }
+
+    return (
+      <FlashList
+        data={matchingHistoryList}
+        renderItem={({ item }) => <MatchingHistoryCard item={item} />}
+        estimatedItemSize={200}
+        numColumns={2}
+      />
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      {renderList()}
 
       <Show when={!!matchingHistoryList && matchingHistoryList.length < 3}>
         <View style={[styles.info, { flex: 1 }]}>
@@ -48,8 +66,10 @@ function MatchingHistoryList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     marginTop: 16,
+  },
+  listContent: {
+    paddingHorizontal: 8,
   },
   info: {
     justifyContent: "center",

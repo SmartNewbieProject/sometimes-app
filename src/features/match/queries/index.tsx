@@ -3,7 +3,7 @@ import { matchHistoryApis } from "../apis";
 import { useEffect } from "react";
 import { HttpStatusCode } from "axios";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Text } from "@/src/shared/ui";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -33,7 +33,7 @@ export const useMatchPartnerQuery = (matchId?: string) => {
       showModal({
         title: t('features.match.queries.modal_title_period_ended'),
         children: (
-          <View className="flex flex-col">
+          <View style={modalStyles.container}>
             <Text textColor="black" size="sm">
               {t('features.match.queries.modal_content_partner_period_ended')}
             </Text>
@@ -54,3 +54,9 @@ export const useMatchPartnerQuery = (matchId?: string) => {
 
   return queryResults;
 }
+
+const modalStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+  },
+});

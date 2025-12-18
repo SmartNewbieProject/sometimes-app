@@ -6,17 +6,17 @@ import {
   Platform,
   type StyleProp,
   StyleSheet,
+  View,
   type ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   children: ReactNode;
-  className?: string;
   style?: StyleProp<ViewStyle>;
 };
 
-export const DefaultLayout = ({ children, className, style }: Props) => {
+export const DefaultLayout = ({ children, style }: Props) => {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
 
@@ -27,12 +27,17 @@ export const DefaultLayout = ({ children, className, style }: Props) => {
         : 60
       : 0;
 
+  const containerStyle = [styles.container, { backgroundColor: semanticColors.surface.background }, style];
+
+  if (Platform.OS === "web") {
+    return <View style={containerStyle}>{children}</View>;
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={keyboardVerticalOffset}
-      style={[styles.container, { backgroundColor: semanticColors.surface.background }, style]}
-      className={className}
+      style={containerStyle}
     >
       {children}
     </KeyboardAvoidingView>

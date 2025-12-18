@@ -1,4 +1,4 @@
-import { Stack, usePathname, useRouter , Slot, withLayoutContext } from "expo-router";
+import { usePathname, useRouter, Slot } from "expo-router";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { StyleSheet, View } from "react-native";
 
@@ -8,7 +8,6 @@ import PostBoxHeaders from "@/src/features/post-box/ui/post-box-header";
 import { type Tab, ToggleTab } from "@/src/features/post-box/ui/toggle-tab";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileEditLayout() {
@@ -28,7 +27,7 @@ export default function ProfileEditLayout() {
       style={[styles.container, { paddingBottom: insets.bottom }]}
     >
       <PostBoxHeaders />
-      <ScrollView style={styles.editContainer}>
+      <View style={styles.editContainer}>
         <View style={styles.toggleContainer}>
           <ToggleTab
             tabs={TABS}
@@ -40,10 +39,10 @@ export default function ProfileEditLayout() {
             }}
           />
         </View>
-        <View>
+        <View style={styles.slotContainer}>
           <Slot />
         </View>
-      </ScrollView>
+      </View>
     </Layout.Default>
   );
 }
@@ -61,5 +60,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: 22,
     paddingBottom: 10,
+  },
+  slotContainer: {
+    flex: 1,
   },
 });

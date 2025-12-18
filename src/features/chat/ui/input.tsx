@@ -21,6 +21,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../auth";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
@@ -39,6 +40,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
   const { showModal } = useModal();
+  const insets = useSafeAreaInsets();
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -141,7 +143,11 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   return (
     <>
       <Animated.View
-        style={[styles.container, { width: width }, animatedKeyboardStyles]}
+        style={[
+          styles.container,
+          { width: width, paddingBottom: Platform.OS === "ios" ? insets.bottom : 12 },
+          animatedKeyboardStyles,
+        ]}
       >
         <Pressable onPress={handlePhotoButton} style={styles.photoButton}>
           <Animated.View style={animatedStyles}>
@@ -212,11 +218,11 @@ const styles = StyleSheet.create({
     marginRight: 4,
     position: "relative",
     flexDirection: "row",
-
     alignItems: "center",
     borderRadius: 24,
     backgroundColor: semanticColors.surface.surface,
     paddingHorizontal: 8,
+    marginBottom: 20,
   },
   container: {
     minHeight: 70,
@@ -234,6 +240,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 16,
     backgroundColor: semanticColors.surface.background,
+    marginBottom: 20,
   },
   send: {
     width: 32,
@@ -254,6 +261,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
     backgroundColor: "#FFF9E6",
+    marginBottom: 20,
   },
   modalText: {
     fontSize: 15,

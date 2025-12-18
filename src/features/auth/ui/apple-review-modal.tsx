@@ -1,10 +1,11 @@
 import {useState} from "react";
-import {View, Modal, Alert} from "react-native";
+import {View, Modal, Alert, StyleSheet} from "react-native";
 import {Text, Button, TextArea} from "@/src/shared/ui";
 import {useAppleReviewLogin} from "../hooks/use-apple-review-login";
 import {useAuth} from "../hooks/use-auth";
 import {router} from "expo-router";
 import { useTranslation } from "react-i18next";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 interface AppleReviewModalProps {
   isVisible: boolean;
@@ -61,13 +62,13 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
           animationType="fade"
           onRequestClose={handleClose}
       >
-        <View className="flex-1 justify-center items-center bg-surface-inverse/50">
-          <View className="bg-surface-background rounded-lg p-6 mx-4 w-full max-w-sm">
-            <Text className="text-lg font-semibold text-center mb-4">
+        <View style={styles.overlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.title} textColor="black">
               {t("features.auth.ui.apple_review_modal.modal_title")}
             </Text>
 
-            <Text className="text-sm text-gray-600 text-center mb-6">
+            <Text style={styles.description} textColor="gray">
               {t("features.auth.ui.apple_review_modal.modal_prompt")}
             </Text>
 
@@ -75,23 +76,23 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
                 value={code}
                 onChangeText={setCode}
                 placeholder={t("features.auth.ui.apple_review_modal.code_placeholder")}
-                className="mb-4"
+                style={styles.textArea}
                 autoCapitalize="none"
                 autoCorrect={false}
             />
 
-            <View className="flex-row gap-2">
+            <View style={styles.buttonRow}>
               <Button
                   variant="outline"
                   onPress={handleClose}
-                  className="flex-1"
+                  styles={styles.button}
                   disabled={isPending}
               >
                 {t("features.auth.ui.apple_review_modal.cancel_button")}
               </Button>
               <Button
                   onPress={handleSubmit}
-                  className="flex-1"
+                  styles={styles.button}
                   disabled={isPending || !code.trim()}
               >
                 {isPending ? t("features.auth.ui.apple_review_modal.login_button_loading") : t("features.auth.ui.apple_review_modal.login_button")}
@@ -102,3 +103,41 @@ export function AppleReviewModal({isVisible, onClose}: AppleReviewModalProps) {
       </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    backgroundColor: semanticColors.surface.background,
+    borderRadius: 8,
+    padding: 24,
+    marginHorizontal: 16,
+    width: "100%",
+    maxWidth: 384,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  description: {
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  textArea: {
+    marginBottom: 16,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  button: {
+    flex: 1,
+  },
+});

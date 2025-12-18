@@ -8,7 +8,7 @@ import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import * as Localization from "expo-localization";
 import { router, usePathname, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Platform, Pressable, TouchableOpacity, View } from "react-native";
+import { Platform, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../auth";
 import { PrivacyNotice } from "../../auth/ui/privacy-notice";
 import AppleLoginButton from "./apple-login-button";
@@ -20,6 +20,7 @@ import { checkPhoneNumberBlacklist } from "../apis";
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { track } from "@/src/shared/libs/amplitude-compat";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
@@ -73,9 +74,9 @@ export default function LoginForm() {
   }
 
   return (
-    <View className="flex flex-col flex-1 items-center">
+    <View style={loginFormStyles.container}>
       {/* 대학교 로고 애니메이션 */}
-      <View style={{ marginBottom: 20 }}>
+      <View style={loginFormStyles.universityLogos}>
         <UniversityLogos logoSize={64} />
       </View>
 
@@ -96,34 +97,36 @@ export default function LoginForm() {
       </Show>
 
       {/* 슬라이드 잠금 해제 → 온보딩으로 이동 */}
-      <View style={{ marginBottom: 15, width: 330 }}>
+      <View style={loginFormStyles.slideUnlock}>
         <SlideUnlock onAction={() => router.push('/onboarding?source=login')} />
       </View>
 
       {/* 회원가입 및 로그인 버튼 */}
-      <View className="flex w-full items-center flex-col ">
-        <View style={{ marginBottom: 15 }}>
+      <View style={loginFormStyles.buttonsContainer}>
+        <View style={loginFormStyles.buttonWrapper}>
           <Button
             variant="primary"
-            width="full"
+            size="lg"
+            rounded="full"
             onPress={onPressPassLogin}
             disabled={isLoading}
-            className="py-4 rounded-full min-w-[330px] min-h-[60px]"
             styles={{
-              display: 'flex',
+              width: 330,
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
             <Text
-              className="text-text-inverse text-center text-[18px]"
-              style={{ lineHeight: 40 }}
+              textColor="white"
+              size="18"
+              weight="semibold"
+              style={{ lineHeight: 40, textAlign: 'center' }}
             >
               {isLoading ? t("features.signup.ui.login_form.pass_loading") : t("features.signup.ui.login_form.pass_login")}
             </Text>
           </Button>
         </View>
-        <View style={{ marginBottom: 15 }}>
+        <View style={loginFormStyles.buttonWrapper}>
           <KakaoLoginComponent />
         </View>
 
@@ -135,17 +138,50 @@ export default function LoginForm() {
       </View>
       {/* 에러 메시지 */}
 
-      <View className="w-full px-6 mt-4">
-        <Text className="text-red-600 text-sm text-center">{error}</Text>
+      <View style={loginFormStyles.errorMessage}>
+        <Text size="sm" style={{ color: '#DC2626', textAlign: 'center' }}>{error}</Text>
       </View>
 
       {/* 약관 동의 안내 */}
-      <View className="w-full px-6 mt-6">
+      <View style={loginFormStyles.privacyNotice}>
         <PrivacyNotice />
       </View>
     </View>
   );
 }
+
+const loginFormStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  universityLogos: {
+    marginBottom: 20,
+  },
+  slideUnlock: {
+    marginBottom: 15,
+    width: 330,
+  },
+  buttonsContainer: {
+    width: '100%',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  buttonWrapper: {
+    marginBottom: 15,
+  },
+  errorMessage: {
+    width: '100%',
+    paddingHorizontal: 24,
+    marginTop: 16,
+  },
+  privacyNotice: {
+    width: '100%',
+    paddingHorizontal: 24,
+    marginTop: 24,
+  },
+});
 function KakaoLoginComponent() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -162,16 +198,26 @@ function KakaoLoginComponent() {
 
     try {
       setIsLoading(true);
+      console.log("[카카오 로그인] 1단계: 카카오 SDK 호출 시작");
 
       // 카카오 네이티브 SDK로 로그인
       const result = await KakaoLogin.login();
+      console.log("[카카오 로그인] 2단계: SDK 응답 받음", {
+        hasAccessToken: !!result.accessToken,
+        tokenLength: result.accessToken?.length
+      });
 
       if (!result.accessToken) {
         throw new Error("Failed to get Kakao access token");
       }
 
+      console.log("[카카오 로그인] 3단계: 백엔드 API 호출 시작");
       // 백엔드로 accessToken 전송
       const loginResult = await loginWithKakaoNative(result.accessToken);
+      console.log("[카카오 로그인] 4단계: 백엔드 응답 받음", {
+        isNewUser: loginResult.isNewUser,
+        hasCertificationInfo: !!loginResult.certificationInfo
+      });
 
       track("Signup_Route_Entered", {
         screen: "AreaSelect",
@@ -226,16 +272,17 @@ function KakaoLoginComponent() {
           return;
         }
 
-        router.push({
-          pathname: "/auth/signup/university",
-          params: {
-            certificationInfo: JSON.stringify({
-              ...loginResult.certificationInfo,
-              loginType: "kakao_native",
-              kakaoAccessToken: result.accessToken,
-            }),
-          },
-        });
+        // 보안: certificationInfo를 AsyncStorage에 저장 (URL에 노출 방지)
+        await AsyncStorage.setItem(
+          'signup_certification_info',
+          JSON.stringify({
+            ...loginResult.certificationInfo,
+            loginType: "kakao_native",
+            kakaoAccessToken: result.accessToken,
+          })
+        );
+
+        router.push("/auth/signup/university");
       } else {
         const loginDuration = Date.now() - loginStartTime;
         authEvents.trackLoginCompleted('kakao', loginDuration);
@@ -243,7 +290,15 @@ function KakaoLoginComponent() {
         router.push("/home");
       }
     } catch (error) {
-      console.error("카카오 네이티브 로그인 실패:", error);
+      console.error("===== 카카오 로그인 에러 상세 정보 =====");
+      console.error("에러 타입:", error?.constructor?.name);
+      console.error("에러 메시지:", error instanceof Error ? error.message : String(error));
+      console.error("에러 스택:", error instanceof Error ? error.stack : "스택 없음");
+      if (error && typeof error === 'object') {
+        console.error("에러 전체 객체:", JSON.stringify(error, null, 2));
+      }
+      console.error("=======================================");
+
       authEvents.trackLoginFailed('kakao', 'authentication_error');
       showModal({
         title: t("features.signup.ui.login_form.login_failed_title"),
@@ -293,18 +348,20 @@ function KakaoLoginComponent() {
   };
 
   return (
-    <View className="w-full ">
+    <View style={kakaoStyles.container}>
       <Pressable
         onPress={handleKakaoLogin}
         disabled={isLoading}
-        className="py-4 !flex-row w-full !items-center !gap-[10px] !justify-center rounded-full min-w-[330px] !h-[60px] !bg-[#FEE500]"
-        style={{ opacity: isLoading ? 0.6 : 1 }}
+        style={[
+          kakaoStyles.button,
+          { opacity: isLoading ? 0.6 : 1 }
+        ]}
       >
         <View style={{ width: 34, height: 34 }}>
           <KakaoLogo width={34} height={34} />
         </View>
         <View>
-          <Text className="text-text-primary text-[18px]">
+          <Text textColor="black" size="18" weight="semibold">
             {isLoading
               ? t("features.signup.ui.login_form.kakao_login_loading")
               : t("features.signup.ui.login_form.kakao_login")
@@ -315,3 +372,20 @@ function KakaoLoginComponent() {
     </View>
   );
 }
+
+const kakaoStyles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  button: {
+    width: 330,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#FEE500',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 16,
+  },
+});

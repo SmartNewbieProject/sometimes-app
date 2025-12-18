@@ -58,22 +58,22 @@ function ProfilePage() {
 
 
   return (
-    <DefaultLayout className="flex-1 relative">
+    <DefaultLayout style={styles.layout}>
       <GuideView paddingBottom={150}>
-        <View className="px-5 ">
+        <View style={styles.headerSection}>
           <Image
             source={require("@assets/images/profile-image.png")}
             style={{ width: 81, height: 81 }}
           />
-          <Text weight="semibold" size="20" textColor="black" className="mt-2">
+          <Text weight="semibold" size="20" textColor="black" style={styles.titleMargin}>
             {t("apps.auth.sign_up.profile_image.main_title_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            {t("apps.auth.sign_up.profile_image.main_title_2")} 
+            {t("apps.auth.sign_up.profile_image.main_title_2")}
           </Text>
         </View>
 
-        <View className="flex flex-col pb-[18px] pt-4 px-5">
+        <View style={styles.guideSection}>
           <Text weight="medium" size="sm" textColor="pale-purple">
             {t("apps.auth.sign_up.profile_image.guide_1")}
           </Text>
@@ -94,7 +94,7 @@ function ProfilePage() {
         <OppositeGenderPreview uploadedCount={uploadedCount} userGender={form.gender} />
       </GuideView>
 
-      <View style={[styles.bottomContainer]} className="w-[calc(100%)]">
+      <View style={styles.bottomContainer}>
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={onNext}
@@ -109,6 +109,21 @@ function ProfilePage() {
 export default withSignupValidation(ProfilePage, SignupSteps.PROFILE_IMAGE);
 
 const styles = StyleSheet.create({
+  layout: {
+    position: "relative",
+  },
+  headerSection: {
+    paddingHorizontal: 20,
+  },
+  titleMargin: {
+    marginTop: 8,
+  },
+  guideSection: {
+    flexDirection: "column",
+    paddingBottom: 18,
+    paddingTop: 16,
+    paddingHorizontal: 20,
+  },
   infoOverlayWrapper: {
     bottom: 200,
     position: "absolute",
@@ -166,6 +181,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     position: "absolute",
     bottom: 0,
+    width: "100%",
     paddingTop: 16,
     paddingHorizontal: 0,
     backgroundColor: semanticColors.surface.background,

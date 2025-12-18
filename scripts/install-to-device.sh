@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # ============================================================
-# Install IPA to iPhone via Xcode
+# Install IPA to Connected iPhone
 # ============================================================
-# Usage: ./scripts/install-to-device.sh [ipa-file]
+# Usage: ./scripts/install-to-device.sh [build-directory]
+# Example: ./scripts/install-to-device.sh builds/preview_20251218_020430
 # ============================================================
 
 set -e
@@ -16,17 +17,6 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 BOLD='\033[1m'
 
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.."; pwd)"
-cd "$PROJECT_ROOT"
-
-print_header() {
-    echo ""
-    echo -e "${CYAN}============================================================${NC}"
-    echo -e "${CYAN}  Install to iPhone via Xcode${NC}"
-    echo -e "${CYAN}============================================================${NC}"
-    echo ""
-}
-
 print_step() {
     echo -e "${BLUE}[STEP]${NC} $1"
 }
@@ -35,201 +25,127 @@ print_success() {
     echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
 
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
 print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Find most recent IPA file or use provided path
-find_ipa() {
-    local ipa_file="$1"
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
 
-    if [ -n "$ipa_file" ] && [ -f "$ipa_file" ]; then
-        echo "$ipa_file"
-        return 0
-    fi
+# Get project root
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-    # Find most recent IPA
-    local recent_ipa=$(find "$PROJECT_ROOT" -name "*.ipa" -type f -mmin -120 | sort -r | head -1)
+# Build directory argument
+BUILD_DIR="${1:-}"
 
-    if [ -z "$recent_ipa" ]; then
-        print_error "No IPA file found"
-        echo ""
-        echo "Please build first:"
-        echo "  ./scripts/build.sh"
-        echo "  → iOS → Development"
+echo ""
+echo -e "${CYAN}============================================================${NC}"
+echo -e "${CYAN}  Install IPA to Connected iPhone${NC}"
+echo -e "${CYAN}============================================================${NC}"
+echo ""
+
+# If no argument, find the most recent build directory
+if [ -z "$BUILD_DIR" ]; then
+    print_step "Looking for most recent build..."
+    BUILD_DIR=$(find "$PROJECT_ROOT/builds" -type d -maxdepth 1 -name "preview_*" -o -name "production_*" -o -name "development_*" 2>/dev/null | sort -r | head -1)
+
+    if [ -z "$BUILD_DIR" ]; then
+        print_error "No build directory found"
+        echo "Usage: $0 [build-directory]"
+        echo "Example: $0 builds/preview_20251218_020430"
         exit 1
     fi
 
-    echo "$recent_ipa"
-}
+    print_success "Found: $BUILD_DIR"
+fi
 
-# Check if Xcode is installed
-check_xcode() {
-    if ! command -v xcodebuild &> /dev/null; then
-        print_error "Xcode is not installed"
-        echo ""
-        echo "Install Xcode from:"
-        echo "  https://apps.apple.com/app/xcode/id497799835"
-        exit 1
-    fi
+# Resolve relative path
+if [[ "$BUILD_DIR" != /* ]]; then
+    BUILD_DIR="$PROJECT_ROOT/$BUILD_DIR"
+fi
 
-    print_success "Xcode found: $(xcodebuild -version | head -1)"
-}
+# Check if directory exists
+if [ ! -d "$BUILD_DIR" ]; then
+    print_error "Directory not found: $BUILD_DIR"
+    exit 1
+fi
 
-# List connected devices
-list_devices() {
-    print_step "Checking connected devices..."
+# Find IPA file
+print_step "Looking for IPA file..."
+IPA_FILE=$(find "$BUILD_DIR" -name "*.ipa" -type f | head -1)
+
+if [ -z "$IPA_FILE" ]; then
+    print_error "No IPA file found in: $BUILD_DIR"
+    exit 1
+fi
+
+print_success "Found: $(basename "$IPA_FILE")"
+echo ""
+
+# Check for connected devices
+print_step "Checking for connected iOS devices..."
+
+CONNECTED_DEVICES=$(xcrun devicectl list devices 2>/dev/null | grep -E "iPhone|iPad" | grep "connected" || true)
+
+if [ -z "$CONNECTED_DEVICES" ]; then
+    print_error "No iPhone or iPad connected via USB"
     echo ""
+    echo "Please connect your device and try again."
+    exit 1
+fi
 
-    # Get device list using xcrun
-    local devices=$(xcrun devicectl list devices 2>/dev/null || instruments -s devices 2>/dev/null || true)
+echo ""
+echo -e "${CYAN}============================================================${NC}"
+echo -e "${BOLD}Connected iOS Devices:${NC}"
+echo "$CONNECTED_DEVICES"
+echo -e "${CYAN}============================================================${NC}"
+echo ""
 
-    if [ -z "$devices" ]; then
-        print_warning "No devices found"
-        echo ""
-        echo -e "${BOLD}To connect your iPhone:${NC}"
-        echo "  1. Connect iPhone via USB cable"
-        echo "  2. Trust this computer on your iPhone"
-        echo "  3. Or enable WiFi sync (Window > Devices and Simulators)"
-        echo ""
-        return 1
-    fi
+# Get device ID (first connected device)
+DEVICE_ID=$(echo "$CONNECTED_DEVICES" | head -1 | awk '{print $3}')
 
-    echo -e "${CYAN}Connected devices:${NC}"
-    echo "$devices" | grep -v "Simulator" | grep -i "iphone\|ipad" || echo "  No iOS devices found"
+if [ -z "$DEVICE_ID" ]; then
+    print_error "Could not extract device ID"
+    exit 1
+fi
+
+# Confirm installation
+read -p "Install $(basename "$IPA_FILE") to device? [y/N]: " confirm
+
+if [[ ! $confirm =~ ^[Yy]$ ]]; then
+    echo "Installation cancelled."
+    exit 0
+fi
+
+# Install IPA
+echo ""
+print_step "Installing to device..."
+echo -e "${CYAN}Device ID: $DEVICE_ID${NC}"
+echo -e "${CYAN}IPA: $(basename "$IPA_FILE")${NC}"
+echo ""
+
+if xcrun devicectl device install app --device "$DEVICE_ID" "$IPA_FILE"; then
     echo ""
-}
+    print_success "App installed successfully! 🎉"
 
-# Install IPA using Xcode
-install_ipa() {
-    local ipa_file="$1"
-
-    print_step "Opening Xcode Devices window..."
-    echo ""
-    echo -e "${YELLOW}Follow these steps in Xcode:${NC}"
-    echo ""
-    echo "  1. ${BOLD}Window${NC} → ${BOLD}Devices and Simulators${NC} (⇧⌘2)"
-    echo "  2. Select your ${BOLD}connected iPhone${NC} in the left sidebar"
-    echo "  3. Click the ${BOLD}+ button${NC} under 'Installed Apps'"
-    echo "  4. Select this file:"
-    echo ""
-    echo -e "     ${CYAN}$ipa_file${NC}"
-    echo ""
-    echo "  5. Wait for installation to complete"
-    echo "  6. Check your iPhone home screen!"
-    echo ""
-
-    # Copy IPA path to clipboard
-    echo "$ipa_file" | pbcopy
-    print_success "IPA file path copied to clipboard!"
-    echo ""
-
-    # Open Xcode Devices window
-    open "xcode:///"
-    sleep 2
-
-    # Try to open Devices window directly
-    osascript <<EOF 2>/dev/null || true
-tell application "Xcode"
-    activate
-end tell
-
-tell application "System Events"
-    tell process "Xcode"
-        keystroke "2" using {command down, shift down}
-    end tell
-end tell
-EOF
-
-    echo ""
-    print_warning "After installation, you may need to trust the developer certificate:"
-    echo ""
-    echo "  iPhone Settings → General → VPN & Device Management"
-    echo "  → Developer App → Trust"
-    echo ""
-}
-
-# Alternative: Install via command line (if device is connected)
-install_via_cli() {
-    local ipa_file="$1"
-
-    print_step "Attempting to install via command line..."
-
-    # Get first connected device
-    local device_id=$(xcrun devicectl list devices 2>/dev/null | grep -i "iphone\|ipad" | head -1 | grep -oE '[0-9A-F-]{36}' || true)
-
-    if [ -z "$device_id" ]; then
-        print_warning "No device found for automatic installation"
-        return 1
-    fi
-
-    print_step "Installing to device: $device_id"
-
-    # Try to install using xcrun
-    if xcrun devicectl device install app --device "$device_id" "$ipa_file" 2>/dev/null; then
-        print_success "Installation successful!"
-
-        # Notification
+    # macOS notification
+    if [[ "$OSTYPE" == "darwin"* ]]; then
         osascript <<EOF
-display notification "앱이 iPhone에 설치되었습니다!" with title "Installation Complete ✅" sound name "Glass"
+display notification "썸타임 앱이 iPhone에 설치되었습니다!" with title "App Installed ✅" sound name "Glass"
 EOF
-        return 0
-    else
-        print_warning "Automatic installation failed, please use Xcode GUI"
-        return 1
+        afplay /System/Library/Sounds/Glass.aiff 2>/dev/null &
     fi
-}
-
-# Main execution
-main() {
-    print_header
-
-    # Find IPA file
-    IPA_FILE=$(find_ipa "$1")
-
-    echo -e "${CYAN}IPA File:${NC} $(basename "$IPA_FILE")"
-    echo -e "${CYAN}Size:${NC} $(du -h "$IPA_FILE" | cut -f1)"
+else
     echo ""
+    print_error "Installation failed"
 
-    # Check Xcode
-    check_xcode
-
-    # List devices
-    list_devices || true
-
-    echo ""
-    echo -e "${BOLD}Choose installation method:${NC}"
-    echo "  1) Automatic CLI installation (recommended)"
-    echo "  2) Manual installation via Xcode GUI"
-    echo ""
-    read -p "Enter choice [1-2]: " install_choice
-
-    case $install_choice in
-        1)
-            if install_via_cli "$IPA_FILE"; then
-                echo ""
-                echo -e "${GREEN}============================================================${NC}"
-                echo -e "${GREEN}  Installation Complete!${NC}"
-                echo -e "${GREEN}============================================================${NC}"
-                echo ""
-                echo "Check your iPhone home screen for the app!"
-            else
-                echo ""
-                install_ipa "$IPA_FILE"
-            fi
-            ;;
-        2)
-            install_ipa "$IPA_FILE"
-            ;;
-        *)
-            print_error "Invalid choice"
-            exit 1
-            ;;
-    esac
-}
-
-main "$@"
+    # macOS notification
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        osascript <<EOF
+display notification "앱 설치에 실패했습니다." with title "Installation Failed ❌" sound name "Basso"
+EOF
+        afplay /System/Library/Sounds/Basso.aiff 2>/dev/null &
+    fi
+    exit 1
+fi

@@ -61,17 +61,11 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
 
   return (
     <GlowingCard>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Text textColor="black" weight="bold" size="20" className="text-[20px]">
+      <View style={styles.headerRow}>
+        <Text textColor="black" weight="bold" size="20">
             {t("features.payment.ui.apple_first_sale_card.time_sale_title")}
         </Text>
-        <Text weight="bold" size="20" className="text-rose-600">
+        <Text weight="bold" size="20" style={styles.timerText}>
           {formatTime(seconds)}
         </Text>
       </View>
@@ -88,14 +82,14 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
               <Text
                 textColor="purple"
                 weight="semibold"
-                className="text-[15px] mb-1"
+                style={styles.bubbleTextFirst}
               >
                   {t("features.payment.ui.apple_first_sale_card.cheer_message")}
               </Text>
               <Text
                 textColor="purple"
                 weight="semibold"
-                className="text-[15px]"
+                style={styles.bubbleText}
               >
                 {t("features.payment.ui.apple_first_sale_card.new_member_discount")}
               </Text>
@@ -138,6 +132,14 @@ paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_27.gemCount);
 };
 
 const styles = StyleSheet.create({
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  timerText: {
+    color: "#DC2626",
+  },
   paymentList: {
     flexDirection: "column",
     position: "relative",
@@ -162,6 +164,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     position: "absolute",
     left: 120,
+  },
+  bubbleTextFirst: {
+    fontSize: 15,
+    marginBottom: 4,
+  },
+  bubbleText: {
+    fontSize: 15,
   },
   bubbleTail: {
     position: "absolute",

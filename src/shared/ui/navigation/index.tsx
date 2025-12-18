@@ -136,7 +136,7 @@ export function BottomNavigation() {
             <Text
               size="sm"
               weight={isActive(item.path) ? "semibold" : "normal"}
-              textColor={isActive(item.path) ? colors.primaryPurple : colors.lightPurple}
+              textColor="black"
             >
               {item.label}
             </Text>

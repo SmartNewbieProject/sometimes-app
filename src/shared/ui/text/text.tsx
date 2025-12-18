@@ -1,77 +1,45 @@
-import { type VariantProps, cva } from "class-variance-authority";
 import type React from "react";
 import {
   Text as RNText,
   type TextStyle,
   type TextProps as RNTextProps,
+  StyleSheet,
 } from "react-native";
-import { cn } from "../../libs/cn";
+import { semanticColors } from "../../constants/semantic-colors";
+import colors from "../../constants/colors";
 
-const textStyles = cva("text-base", {
-  variants: {
-    variant: {
-      primary: "text-darkPurple",
-      secondary: "text-lightPurple",
-    },
-    size: {
-      xs: "text-xs",
-      sm: "text-sm",
-      md: "text-md",
-      "10": "text-[10px]",
-      "18": "text-[18px]",
-      "20": "text-[20px]",
-      "13": "text-[13px]",
-      "12": "text-[12px]",
-      chip: "text-[13px]",
-      lg: "text-lg",
-      xl: "text-xl",
-      "2xl": "text-2xl",
-      "3xl": "text-3xl",
-    },
-    weight: {
-      normal: "font-normal",
-      medium: "font-medium",
-      semibold: "font-semibold",
-      light: "font-light",
-      bold: "font-bold",
-    },
-    textColor: {
-      white: "text-text-inverse",
-      purple: "text-primaryPurple",
-      dark: "text-darkPurple",
-      black: "text-text-primary",
-      light: "text-lightPurple",
-      "pale-purple": "text-text-disabled",
-      deepPurple: "text-strongPurple",
-      gray: "text-gray",
-      accent: "text-brand-accent",
-      primary: "text-text-primary",
-      secondary: "text-text-secondary",
-      muted: "text-text-muted",
-      disabled: "text-text-disabled",
-    },
-  },
-  defaultVariants: {
-    variant: "primary",
-    size: "md",
-    weight: "normal",
-    textColor: "dark",
-  },
-});
+export type TextVariant = "primary" | "secondary";
+export type TextSize = "xs" | "sm" | "md" | "10" | "18" | "20" | "13" | "12" | "chip" | "lg" | "xl" | "2xl" | "3xl";
+export type TextWeight = "normal" | "medium" | "semibold" | "light" | "bold";
+export type TextColor =
+  | "white"
+  | "purple"
+  | "dark"
+  | "black"
+  | "light"
+  | "pale-purple"
+  | "deepPurple"
+  | "gray"
+  | "accent"
+  | "primary"
+  | "secondary"
+  | "muted"
+  | "disabled";
 
-export type TextProps = VariantProps<typeof textStyles> &
-  Omit<RNTextProps, "style" | "children"> & {
-    children?: React.ReactNode;
-    className?: string;
-    style?: TextStyle | TextStyle[];
-  };
+export type TextProps = Omit<RNTextProps, "style" | "children"> & {
+  children?: React.ReactNode;
+  variant?: TextVariant;
+  size?: TextSize;
+  weight?: TextWeight;
+  textColor?: TextColor;
+  style?: TextStyle | TextStyle[];
+};
 
 export const Text: React.FC<TextProps> = ({
-  variant,
-  size,
-  weight,
-  textColor,
-  className = "",
+  variant = "primary",
+  size = "md",
+  weight = "normal",
+  textColor = "dark",
   style,
   children,
   ...rest
@@ -93,22 +61,72 @@ export const Text: React.FC<TextProps> = ({
     }
   };
 
+  const getTextColor = (): string => {
+    switch (textColor) {
+      case "white":
+        return semanticColors.text.inverse;
+      case "purple":
+        return colors.primaryPurple;
+      case "dark":
+        return colors.darkPurple;
+      case "black":
+        return semanticColors.text.primary;
+      case "light":
+        return colors.lightPurple;
+      case "pale-purple":
+        return semanticColors.text.disabled;
+      case "deepPurple":
+        return colors.strongPurple;
+      case "gray":
+        return colors.gray;
+      case "accent":
+        return semanticColors.brand.accent;
+      case "primary":
+        return semanticColors.text.primary;
+      case "secondary":
+        return semanticColors.text.secondary;
+      case "muted":
+        return semanticColors.text.muted;
+      case "disabled":
+        return semanticColors.text.disabled;
+      default:
+        return colors.darkPurple;
+    }
+  };
+
+  const fontSize = sizeMap[size] || sizeMap.md;
+
+  const computedStyle: TextStyle = {
+    fontFamily: getFontFamily(),
+    fontSize,
+    color: getTextColor(),
+  };
+
   const mergedStyle = Array.isArray(style)
-    ? [{ fontFamily: getFontFamily() }, ...style.filter(Boolean)]
+    ? [computedStyle, ...style.filter(Boolean)]
     : style
-      ? [{ fontFamily: getFontFamily() }, style]
-      : [{ fontFamily: getFontFamily() }];
+      ? [computedStyle, style]
+      : computedStyle;
 
   return (
-    <RNText
-      {...rest}
-      className={cn(
-        textStyles({ variant, size, weight, textColor }),
-        className
-      )}
-      style={mergedStyle}
-    >
+    <RNText {...rest} style={mergedStyle}>
       {children}
     </RNText>
   );
+};
+
+const sizeMap: Record<TextSize, number> = {
+  xs: 12,
+  sm: 14,
+  md: 16,
+  "10": 10,
+  "12": 12,
+  "13": 13,
+  "18": 18,
+  "20": 20,
+  chip: 13,
+  lg: 18,
+  xl: 20,
+  "2xl": 24,
+  "3xl": 30,
 };

@@ -1,7 +1,5 @@
 import colors from "@/src/shared/constants/colors";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
-
-import { cn } from "@/src/shared/libs";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -124,9 +122,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closeText: {
-    color: semanticColors.text.inverse, 
+    color: semanticColors.text.inverse,
     fontFamily: "Pretendard-Bold",
-    fontWeight: 700,
+    fontWeight: "700",
     fontSize: 16,
   },
   info: {
@@ -141,7 +139,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 15,
     fontFamily: "Pretendard-Light",
-    fontWeight: 300,
+    fontWeight: "300",
     lineHeight: 18,
   },
 });

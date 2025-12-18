@@ -4,7 +4,8 @@ import ArrowRight from "@assets/icons/right-white-arrow.svg";
 import { Text } from "@shared/ui";
 import { useRouter } from "expo-router";
 import { use, useCallback, useEffect, useRef, useState } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { Time } from ".";
 import { useAuth } from "../../auth";
 import { type TimeResult, calculateTime } from "../services/calculate-time";
@@ -67,17 +68,17 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
   }, [updateTime]);
 
   return (
-    <View className="p-[14px]">
+    <View style={styles.container}>
       <Image
         source={require("@assets/images/sandclock.png")}
-        style={{ width: 72, height: 82 }}
+        style={styles.sandclockImage}
       />
-      <View className="my-[8px]">
+      <View style={styles.titleContainer}>
         <Text
           size="18"
           textColor="black"
           weight="semibold"
-          className="mb-[2px]"
+          style={styles.titleText}
         >
           {t("features.idle-match-timer.ui.waiting.title_1",{name:my?.name})}
         </Text>
@@ -86,7 +87,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
         </Text>
       </View>
 
-      <View className="flex flex-row gap-x-1 mb-[8px]">
+      <View style={styles.timeContainer}>
         <Time value={timeSet.delimeter} />
         <Time value="-" />
         {timeSet.value
@@ -103,7 +104,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           size="18"
           textColor="black"
           weight="semibold"
-          className="mt-[4px]"
+          style={styles.descriptionText1}
         >
           {t("features.idle-match-timer.ui.waiting.description_2")}
         </Text>
@@ -111,33 +112,85 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
           size="18"
           textColor="pale-purple"
           weight="normal"
-          className="mt-[8px]"
+          style={styles.descriptionText2}
         >
           {t("features.idle-match-timer.ui.waiting.description_3")}
         </Text>
       </View>
 
       <View style={sideStyle.previousContainer}>
-        <View className="w-full bg-surface-background relative">
+        <View style={styles.bgSurfaceRelative}>
           <View style={sideStyle.topRadius} />
         </View>
-        <View className="w-full flex flex-row">
+        <View style={styles.buttonRow}>
           <TouchableOpacity
-            className="bg-primaryPurple flex-1 flex flex-row justify-end items-center pr-1"
-            style={sideStyle.previousButton}
+            style={[sideStyle.previousButton, styles.previousButtonContent]}
             onPress={() => router.push("/matching-history")}
           >
-            <Text className="w-[24px] text-text-inverse text-[12px]">{t("features.idle-match-timer.ui.waiting.previous_button")}</Text>
+            <Text style={styles.previousButtonText} textColor="white">{t("features.idle-match-timer.ui.waiting.previous_button")}</Text>
             <IconWrapper width={12} height={12}>
               <ArrowRight />
             </IconWrapper>
           </TouchableOpacity>
-          <View className="w-[16px] bg-surface-background h-full" />
+          <View style={styles.spacer} />
         </View>
-        <View className="w-full bg-surface-background relative">
+        <View style={styles.bgSurfaceRelative}>
           <View style={sideStyle.bottomRadius} />
         </View>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 14,
+  },
+  sandclockImage: {
+    width: 72,
+    height: 82,
+  },
+  titleContainer: {
+    marginVertical: 8,
+  },
+  titleText: {
+    marginBottom: 2,
+  },
+  timeContainer: {
+    flexDirection: "row",
+    gap: 4,
+    marginBottom: 8,
+  },
+  descriptionText1: {
+    marginTop: 4,
+  },
+  descriptionText2: {
+    marginTop: 8,
+  },
+  bgSurfaceRelative: {
+    width: "100%",
+    backgroundColor: semanticColors.surface.secondary,
+    position: "relative",
+  },
+  buttonRow: {
+    width: "100%",
+    flexDirection: "row",
+  },
+  previousButtonContent: {
+    backgroundColor: semanticColors.brand.primary,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingRight: 4,
+  },
+  previousButtonText: {
+    width: 24,
+    fontSize: 12,
+  },
+  spacer: {
+    width: 16,
+    backgroundColor: semanticColors.surface.secondary,
+    height: "100%",
+  },
+});
