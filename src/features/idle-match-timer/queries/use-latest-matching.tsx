@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getLatestMatching } from "../apis";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getLatestMatchingV2 } from "../apis";
 import { useRef } from "react";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
@@ -7,9 +7,9 @@ import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-event
 export const useLatestMatching = () => {
   const lastMatchIdRef = useRef<string | null>(null);
 
-  const { data: match, status, fetchStatus, ...queryProps } = useQuery({
-    queryKey: ["latest-matching"],
-    queryFn: getLatestMatching,
+  const { data: match, status, fetchStatus, ...queryProps } = useSuspenseQuery({
+    queryKey: ["latest-matching-v2"],
+    queryFn: getLatestMatchingV2,
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
     refetchInterval: 60 * 1000,
