@@ -249,7 +249,7 @@ function WebChatInput() {
 
   return (
     <>
-      <div className="flex w-full items-center bg-surface-background p-4 ">
+      <div style={webStyles.container}>
         <PhotoPickerModal
           showGuide={false}
           visible={isImageModal}
@@ -260,7 +260,7 @@ function WebChatInput() {
         <button
           onClick={handlePress}
           type="button"
-          className="flex h-8 w-8 border-none items-center justify-center rounded-full bg-surface-background hover:bg-purple-200 transition-colors focus:outline-none "
+          style={webStyles.plusButton}
         >
           <PlusIcon />
         </button>
@@ -269,13 +269,16 @@ function WebChatInput() {
           onClick={handleTipsButton}
           type="button"
           disabled={roomDetail?.hasLeft}
-          className="flex h-10 w-10 mx-2 border-none items-center justify-center rounded-full bg-[#FFF9E6] hover:bg-yellow-100 transition-colors focus:outline-none disabled:opacity-50"
+          style={{
+            ...webStyles.tipsButton,
+            opacity: roomDetail?.hasLeft ? 0.5 : 1,
+          }}
           aria-label="대화 주제 추천"
         >
           <BulbIcon width={24} height={24} />
         </button>
 
-        <div className="relative flex flex-1 items-center rounded-full bg-surface-surface py-[8px] px-2 pl-4">
+        <div style={webStyles.inputWrapper}>
           <textarea
             ref={textareaRef}
             value={chat}
@@ -285,10 +288,10 @@ function WebChatInput() {
             placeholder={
               roomDetail?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
             }
-            className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-text-secondary placeholder-gray-500 focus:outline-none "
+            style={webStyles.textarea}
           />
           <textarea
-            className="leading-[18px] box-border  w-full resize-none overflow-y-scroll m-0 p-0 absolute -top-[9999px] -left-[9999px] -z-10"
+            style={webStyles.hiddenTextarea}
             readOnly
             ref={cloneRef}
             rows={1}
@@ -298,13 +301,13 @@ function WebChatInput() {
             <button
               type="button"
               onClick={handleSend}
-              className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-brand-primary text-text-inverse hover:bg-purple-700 transition-colors focus:outline-none "
+              style={webStyles.sendButton}
               aria-label="Send message"
             >
               <SendChatIcon width={20} height={20} />
             </button>
           ) : (
-            <div className="h-8 w-8" />
+            <div style={webStyles.sendButtonPlaceholder} />
           )}
         </div>
       </div>
@@ -339,6 +342,19 @@ const webStyles: Record<string, React.CSSProperties> = {
     justifyContent: "center",
     borderRadius: "50%",
     backgroundColor: "#F7F5FA",
+    cursor: "pointer",
+  },
+  tipsButton: {
+    display: "flex",
+    height: 40,
+    width: 40,
+    marginLeft: 8,
+    marginRight: 8,
+    border: "none",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    backgroundColor: "#FFF9E6",
     cursor: "pointer",
   },
   inputWrapper: {
