@@ -99,7 +99,6 @@ function ChatTipsModal({
 const styles = StyleSheet.create({
 	overlay: {
 		flex: 1,
-		backgroundColor: 'rgba(0,0,0,0.4)',
 		justifyContent: 'flex-end',
 		...(Platform.OS === 'web' && {
 			maxWidth: 468,

@@ -10,6 +10,7 @@ import {
   Platform,
   Pressable,
   StyleSheet,
+  Text,
   TextInput,
   View,
   useWindowDimensions,
@@ -21,6 +22,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useAuth } from "../../auth";
+import { useModal } from "@/src/shared/hooks/use-modal";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import useChatTips from "../queries/use-chat-tips";
 import { chatEventBus } from "../services/chat-event-bus";
@@ -36,6 +38,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
+  const { showModal } = useModal();
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -52,8 +55,41 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
 
   const handleTipsButton = () => {
     if (partner?.hasLeft) return;
-    setTipsModalVisible(true);
-    fetchTips(id);
+
+    showModal({
+      showLogo: true,
+      customTitle: (
+        <View style={styles.modalTitleContainer}>
+          <Text style={styles.modalTitleText}>
+            대화 주제를 추천해드려요
+          </Text>
+          <Text style={styles.modalTitleText}>
+            구슬 1개가 사용됩니다
+          </Text>
+        </View>
+      ),
+      children: (
+        <View style={styles.modalBodyContainer}>
+          <Text style={styles.modalBodyText}>
+            AI가 프로필을 기반으로
+          </Text>
+          <Text style={styles.modalBodyText}>
+            대화 주제를 추천해드려요
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "사용하기",
+        onClick: () => {
+          setTipsModalVisible(true);
+          fetchTips(id);
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {},
+      },
+    });
   };
 
   const handleSelectTip = (question: string) => {
@@ -218,6 +254,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
     backgroundColor: "#FFF9E6",
+  },
+  modalText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: semanticColors.text.secondary,
+    textAlign: "center",
+    fontFamily: "Pretendard-Regular",
+  },
+  modalTitleContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%",
+  },
+  modalTitleText: {
+    color: semanticColors.text.primary,
+    fontWeight: "700",
+    fontSize: 20,
+    fontFamily: "Pretendard-Bold",
+  },
+  modalBodyContainer: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  modalBodyText: {
+    color: semanticColors.text.disabled,
+    fontSize: 12,
+    fontFamily: "Pretendard-Regular",
   },
 });
 

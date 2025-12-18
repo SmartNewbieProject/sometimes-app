@@ -26,15 +26,77 @@ function WebChatInput() {
   const { my: user } = useAuth();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
-  const { showErrorModal } = useModal();
+  const { showModal, showErrorModal } = useModal();
   const [isImageModal, setImageModal] = useState(false);
   const [isTipsModalVisible, setTipsModalVisible] = useState(false);
   const { mutate: fetchTips, data: tipsData, isPending: isTipsLoading } = useChatTips();
 
   const handleTipsButton = () => {
     if (roomDetail?.hasLeft) return;
-    setTipsModalVisible(true);
-    fetchTips(id);
+
+    showModal({
+      showLogo: true,
+      customTitle: (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "100%"
+        }}>
+          <div style={{
+            color: "#000000",
+            fontWeight: 700,
+            fontSize: 20,
+            fontFamily: "Pretendard-Bold"
+          }}>
+            대화 주제를 추천해드려요
+          </div>
+          <div style={{
+            color: "#000000",
+            fontWeight: 700,
+            fontSize: 20,
+            fontFamily: "Pretendard-Bold"
+          }}>
+            구슬 1개가 사용됩니다
+          </div>
+        </div>
+      ),
+      children: (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          alignItems: "center",
+          marginTop: 5
+        }}>
+          <div style={{
+            color: "#999999",
+            fontSize: 12,
+            fontFamily: "Pretendard-Regular"
+          }}>
+            AI가 프로필을 기반으로
+          </div>
+          <div style={{
+            color: "#999999",
+            fontSize: 12,
+            fontFamily: "Pretendard-Regular"
+          }}>
+            대화 주제를 추천해드려요
+          </div>
+        </div>
+      ),
+      primaryButton: {
+        text: "사용하기",
+        onClick: () => {
+          setTipsModalVisible(true);
+          fetchTips(id);
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {},
+      },
+    });
   };
 
   const handleSelectTip = (question: string) => {
