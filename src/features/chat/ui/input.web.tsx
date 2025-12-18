@@ -1,5 +1,6 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { convertToJpeg, isHeicBase64 } from "@/src/shared/utils/image";
+import BulbIcon from "@assets/icons/bulb.svg";
 import SendChatIcon from "@assets/icons/send-chat.svg";
 import { useQueryClient } from "@tanstack/react-query";
 import * as ImagePicker from "expo-image-picker";
@@ -12,8 +13,10 @@ import { useAuth } from "../../auth";
 import PhotoPickerModal from "../../mypage/ui/modal/image-modal";
 import useKeyboardResizeEffect from "../hooks/use-keyboard-resize-effect";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
+import useChatTips from "../queries/use-chat-tips";
 import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
+import ChatTipsModal from "./chat-tips-modal";
 
 function WebChatInput() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -23,8 +26,82 @@ function WebChatInput() {
   const { my: user } = useAuth();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cloneRef = useRef<HTMLTextAreaElement>(null);
-  const { showErrorModal } = useModal();
+  const { showModal, showErrorModal } = useModal();
   const [isImageModal, setImageModal] = useState(false);
+  const [isTipsModalVisible, setTipsModalVisible] = useState(false);
+  const { mutate: fetchTips, data: tipsData, isPending: isTipsLoading } = useChatTips();
+
+  const handleTipsButton = () => {
+    if (roomDetail?.hasLeft) return;
+
+    showModal({
+      showLogo: true,
+      customTitle: (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "100%"
+        }}>
+          <div style={{
+            color: "#000000",
+            fontWeight: 700,
+            fontSize: 20,
+            fontFamily: "Pretendard-Bold"
+          }}>
+            대화 주제를 추천해드려요
+          </div>
+          <div style={{
+            color: "#000000",
+            fontWeight: 700,
+            fontSize: 20,
+            fontFamily: "Pretendard-Bold"
+          }}>
+            구슬 1개가 사용됩니다
+          </div>
+        </div>
+      ),
+      children: (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          alignItems: "center",
+          marginTop: 5
+        }}>
+          <div style={{
+            color: "#999999",
+            fontSize: 12,
+            fontFamily: "Pretendard-Regular"
+          }}>
+            AI가 프로필을 기반으로
+          </div>
+          <div style={{
+            color: "#999999",
+            fontSize: 12,
+            fontFamily: "Pretendard-Regular"
+          }}>
+            대화 주제를 추천해드려요
+          </div>
+        </div>
+      ),
+      primaryButton: {
+        text: "사용하기",
+        onClick: () => {
+          setTipsModalVisible(true);
+          fetchTips(id);
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {},
+      },
+    });
+  };
+
+  const handleSelectTip = (question: string) => {
+    setChat(question);
+  };
   const handlePress = async () => {
     setImageModal(true);
   };
@@ -171,55 +248,76 @@ function WebChatInput() {
   };
 
   return (
-    <div className="flex w-full items-center bg-surface-background p-4 ">
-      <PhotoPickerModal
-        showGuide={false}
-        visible={isImageModal}
-        onClose={() => setImageModal(false)}
-        onTakePhoto={takePhoto}
-        onPickFromGallery={pickImage}
-      />
-      <button
-        onClick={handlePress}
-        type="button"
-        className="flex h-8 w-8 border-none items-center justify-center rounded-full bg-surface-background hover:bg-purple-200 transition-colors focus:outline-none "
-      >
-        <PlusIcon />
-      </button>
-
-      <div className="relative ml-3 flex flex-1 items-center rounded-full bg-surface-surface py-[8px] px-2 pl-4">
-        <textarea
-          ref={textareaRef}
-          value={chat}
-          onChange={handleChange}
-          rows={1}
-          readOnly={roomDetail?.hasLeft}
-          placeholder={
-            roomDetail?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
-          }
-          className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-text-secondary placeholder-gray-500 focus:outline-none "
+    <>
+      <div className="flex w-full items-center bg-surface-background p-4 ">
+        <PhotoPickerModal
+          showGuide={false}
+          visible={isImageModal}
+          onClose={() => setImageModal(false)}
+          onTakePhoto={takePhoto}
+          onPickFromGallery={pickImage}
         />
-        <textarea
-          className="leading-[18px] box-border  w-full resize-none overflow-y-scroll m-0 p-0 absolute -top-[9999px] -left-[9999px] -z-10"
-          readOnly
-          ref={cloneRef}
-          rows={1}
-        />
+        <button
+          onClick={handlePress}
+          type="button"
+          className="flex h-8 w-8 border-none items-center justify-center rounded-full bg-surface-background hover:bg-purple-200 transition-colors focus:outline-none "
+        >
+          <PlusIcon />
+        </button>
 
-        {chat !== "" ? (
-          <button
-            type="button"
-            onClick={handleSend}
-            className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-brand-primary text-text-inverse hover:bg-purple-700 transition-colors focus:outline-none "
-            aria-label="Send message"
-          >
-            <SendChatIcon width={20} height={20} />
-          </button>
-        ) : (
-          <div className="h-8 w-8" />
-        )}
+        <button
+          onClick={handleTipsButton}
+          type="button"
+          disabled={roomDetail?.hasLeft}
+          className="flex h-10 w-10 mx-2 border-none items-center justify-center rounded-full bg-[#FFF9E6] hover:bg-yellow-100 transition-colors focus:outline-none disabled:opacity-50"
+          aria-label="대화 주제 추천"
+        >
+          <BulbIcon width={24} height={24} />
+        </button>
+
+        <div className="relative flex flex-1 items-center rounded-full bg-surface-surface py-[8px] px-2 pl-4">
+          <textarea
+            ref={textareaRef}
+            value={chat}
+            onChange={handleChange}
+            rows={1}
+            readOnly={roomDetail?.hasLeft}
+            placeholder={
+              roomDetail?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
+            }
+            className="flex-1 leading-[18px] resize-none overflow-y-scroll  bg-transparent m-0 p-0 text-[16px] text-text-secondary placeholder-gray-500 focus:outline-none "
+          />
+          <textarea
+            className="leading-[18px] box-border  w-full resize-none overflow-y-scroll m-0 p-0 absolute -top-[9999px] -left-[9999px] -z-10"
+            readOnly
+            ref={cloneRef}
+            rows={1}
+          />
+
+          {chat !== "" ? (
+            <button
+              type="button"
+              onClick={handleSend}
+              className=" flex h-8 w-8 flex-shrink-0 items-center justify-center self-end rounded-full bg-brand-primary text-text-inverse hover:bg-purple-700 transition-colors focus:outline-none "
+              aria-label="Send message"
+            >
+              <SendChatIcon width={20} height={20} />
+            </button>
+          ) : (
+            <div className="h-8 w-8" />
+          )}
+        </div>
       </div>
-    </div>
+
+      <ChatTipsModal
+        visible={isTipsModalVisible}
+        onClose={() => setTipsModalVisible(false)}
+        tips={tipsData?.tips ?? []}
+        isLoading={isTipsLoading}
+        onSelectTip={handleSelectTip}
+        onRefresh={() => fetchTips(id)}
+      />
+    </>
   );
 }
 

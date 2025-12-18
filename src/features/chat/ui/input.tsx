@@ -1,15 +1,16 @@
-import PlusIcon from "@assets/icons/plus.svg";
+import BulbIcon from "@assets/icons/bulb.svg";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import SendChatIcon from "@assets/icons/send-chat.svg";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Keyboard,
   Platform,
   Pressable,
   StyleSheet,
+  Text,
   TextInput,
   View,
   useWindowDimensions,
@@ -21,9 +22,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useAuth } from "../../auth";
+import { useModal } from "@/src/shared/hooks/use-modal";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
+import useChatTips from "../queries/use-chat-tips";
 import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
+import ChatTipsModal from "./chat-tips-modal";
 
 interface ChatInputProps {
   isPhotoClicked: boolean;
@@ -34,15 +38,62 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
+  const { showModal } = useModal();
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
+  const [isTipsModalVisible, setTipsModalVisible] = useState(false);
+  const { mutate: fetchTips, data: tipsData, isPending: isTipsLoading } = useChatTips();
   const rotate = useSharedValue(0);
+
   const handlePhotoButton = () => {
     setTimeout(() => {
       setPhotoClicked((prev) => !prev);
     }, 400);
     Keyboard.dismiss();
+  };
+
+  const handleTipsButton = () => {
+    if (partner?.hasLeft) return;
+
+    showModal({
+      showLogo: true,
+      customTitle: (
+        <View style={styles.modalTitleContainer}>
+          <Text style={styles.modalTitleText}>
+            대화 주제를 추천해드려요
+          </Text>
+          <Text style={styles.modalTitleText}>
+            구슬 1개가 사용됩니다
+          </Text>
+        </View>
+      ),
+      children: (
+        <View style={styles.modalBodyContainer}>
+          <Text style={styles.modalBodyText}>
+            AI가 프로필을 기반으로
+          </Text>
+          <Text style={styles.modalBodyText}>
+            대화 주제를 추천해드려요
+          </Text>
+        </View>
+      ),
+      primaryButton: {
+        text: "사용하기",
+        onClick: () => {
+          setTipsModalVisible(true);
+          fetchTips(id);
+        },
+      },
+      secondaryButton: {
+        text: "취소",
+        onClick: () => {},
+      },
+    });
+  };
+
+  const handleSelectTip = (question: string) => {
+    setChat(question);
   };
 
   useEffect(() => {
@@ -88,39 +139,55 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   }, [chat, partner, user, id]);
 
   return (
-    <Animated.View
-      style={[styles.container, { width: width }, animatedKeyboardStyles]}
-    >
-      <Pressable onPress={handlePhotoButton} style={styles.photoButton}>
-        <Animated.View style={animatedStyles}>
-          <Image
-            source={require("@assets/icons/plus.png")}
-            style={{ width: 14, height: 14 }}
+    <>
+      <Animated.View
+        style={[styles.container, { width: width }, animatedKeyboardStyles]}
+      >
+        <Pressable onPress={handlePhotoButton} style={styles.photoButton}>
+          <Animated.View style={animatedStyles}>
+            <Image
+              source={require("@assets/icons/plus.png")}
+              style={{ width: 14, height: 14 }}
+            />
+          </Animated.View>
+        </Pressable>
+        <Pressable
+          onPress={handleTipsButton}
+          style={styles.tipsButton}
+          disabled={partner?.hasLeft}
+        >
+          <BulbIcon width={24} height={24} />
+        </Pressable>
+        <View style={styles.inputContainer}>
+          <TextInput
+            multiline={true}
+            value={chat}
+            editable={!isPhotoClicked && !partner?.hasLeft}
+            onChangeText={(text) => setChat(text)}
+            style={styles.textInput}
+            placeholder={
+              partner?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
+            }
+            placeholderTextColor={semanticColors.text.disabled}
+            numberOfLines={3}
           />
-        </Animated.View>
-      </Pressable>
-      <View style={styles.inputContainer}>
-        <TextInput
-          multiline={true}
-          value={chat}
-          editable={!isPhotoClicked && !partner?.hasLeft}
-          onChangeText={(text) => setChat(text)}
-          style={styles.textInput}
-          placeholder={
-            partner?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
-          }
-          placeholderTextColor={semanticColors.text.disabled}
-          numberOfLines={3}
-        />
-        {chat !== "" ? (
-          <Pressable onPress={handleSend} style={styles.send}>
-            <SendChatIcon width={32} height={32} />
-          </Pressable>
-        ) : (
-          <View style={{ width: 32, height: 32 }} />
-        )}
-      </View>
-    </Animated.View>
+          {chat !== "" && (
+            <Pressable onPress={handleSend} style={styles.send}>
+              <SendChatIcon width={32} height={32} />
+            </Pressable>
+          )}
+        </View>
+      </Animated.View>
+
+      <ChatTipsModal
+        visible={isTipsModalVisible}
+        onClose={() => setTipsModalVisible(false)}
+        tips={tipsData?.tips ?? []}
+        isLoading={isTipsLoading}
+        onSelectTip={handleSelectTip}
+        onRefresh={() => fetchTips(id)}
+      />
+    </>
   );
 }
 
@@ -178,6 +245,45 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     textAlignVertical: "top",
     backgroundColor: semanticColors.brand.primary,
+  },
+  tipsButton: {
+    width: 40,
+    height: 40,
+    marginLeft: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    backgroundColor: "#FFF9E6",
+  },
+  modalText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: semanticColors.text.secondary,
+    textAlign: "center",
+    fontFamily: "Pretendard-Regular",
+  },
+  modalTitleContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%",
+  },
+  modalTitleText: {
+    color: semanticColors.text.primary,
+    fontWeight: "700",
+    fontSize: 20,
+    fontFamily: "Pretendard-Bold",
+  },
+  modalBodyContainer: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  modalBodyText: {
+    color: semanticColors.text.disabled,
+    fontSize: 12,
+    fontFamily: "Pretendard-Regular",
   },
 });
 
