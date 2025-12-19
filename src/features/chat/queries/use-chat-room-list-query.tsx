@@ -6,6 +6,8 @@ export const useChatRoomListQuery = () => {
     queryKey: ["chat-room"],
     queryFn: getChatRooms,
     staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => {
       if (lastPage.hasMore) {

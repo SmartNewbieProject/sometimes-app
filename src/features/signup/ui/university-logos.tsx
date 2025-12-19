@@ -46,34 +46,32 @@ export default function UniversityLogos({
   useEffect(() => {
     const width = universityLogos.length * (logoSize + 8);
 
-    const animate1 = () => {
-      anim1.setValue(0);
+    anim1.setValue(0);
+    Animated.loop(
       Animated.timing(anim1, {
         toValue: -width,
         duration: 20000,
         useNativeDriver: Platform.OS !== 'web',
         easing: Easing.linear,
-      }).start(animate1);
-    };
+      })
+    ).start();
 
-    animate1();
     return () => anim1.stopAnimation();
   }, [anim1, logoSize]);
 
   useEffect(() => {
     const width = moreLogos.length * (logoSize + 8);
 
-    const animate2 = () => {
-      anim2.setValue(-width);
+    anim2.setValue(0);
+    Animated.loop(
       Animated.timing(anim2, {
-        toValue: 0,
+        toValue: width,
         duration: 20000,
         useNativeDriver: Platform.OS !== 'web',
         easing: Easing.linear,
-      }).start(animate2);
-    };
+      })
+    ).start();
 
-    animate2();
     return () => anim2.stopAnimation();
   }, [anim2, logoSize]);
 
@@ -89,11 +87,11 @@ export default function UniversityLogos({
               styles.animatedRow,
               {
                 transform: [{ translateX: anim1 }],
-                width: universityLogos.length * logoWithMargin * 2,
+                width: universityLogos.length * logoWithMargin * 3,
               },
             ]}
           >
-            {[...universityLogos, ...universityLogos].map((logo, idx) => (
+            {[...universityLogos, ...universityLogos, ...universityLogos].map((logo, idx) => (
               <View
                 key={`row1-${idx}`}
                 style={[styles.logoContainer, { width: logoSize, height: logoSize }]}
@@ -115,11 +113,11 @@ export default function UniversityLogos({
               styles.animatedRow,
               {
                 transform: [{ translateX: anim2 }],
-                width: moreLogos.length * logoWithMargin * 2,
+                width: moreLogos.length * logoWithMargin * 3,
               },
             ]}
           >
-            {[...moreLogos, ...moreLogos].map((logo, idx) => (
+            {[...moreLogos, ...moreLogos, ...moreLogos].map((logo, idx) => (
               <View
                 key={`row2-${idx}`}
                 style={[styles.logoContainer, { width: logoSize, height: logoSize }]}
@@ -159,10 +157,8 @@ export default function UniversityLogos({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    paddingTop: 20,
-    paddingBottom: 46,
     position: "relative",
-    minHeight: 200,
+    minHeight: 180,
   },
   rowsContainer: {
     width: "100%",

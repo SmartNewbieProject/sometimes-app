@@ -14,7 +14,7 @@ function Chat() {
 
   useFocusEffect(
     useCallback(() => {
-      queryClient.invalidateQueries({ queryKey: ["chat-room"] });
+      queryClient.refetchQueries({ queryKey: ["chat-room"] });
     }, [queryClient])
   );
 
