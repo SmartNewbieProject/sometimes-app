@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Platform, StyleSheet, View, Text as RNText } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -64,6 +64,10 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
   const glowIntensity = useSharedValue(0);
   const isUnlocking = useSharedValue(false);
 
+  // 웹용 드래그 상태
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+
   const maxDrag = containerWidth - config.handleSize - config.padding * 2;
   const borderWidth = 2;
   const verticalPadding = (config.containerHeight - config.handleSize - borderWidth) / 2;
@@ -98,6 +102,63 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
     }
     onAction();
   };
+
+  // 웹용 드래그 핸들러
+  const handleWebPointerDown = (event: any) => {
+    if (Platform.OS !== 'web') return;
+    if (isUnlocking.value) return;
+
+    isDraggingRef.current = true;
+    startXRef.current = event.nativeEvent.pageX || event.nativeEvent.clientX;
+    event.preventDefault();
+  };
+
+  const handleWebPointerMove = (event: any) => {
+    if (Platform.OS !== 'web') return;
+    if (!isDraggingRef.current || isUnlocking.value) return;
+
+    const currentX = event.nativeEvent.pageX || event.nativeEvent.clientX;
+    const deltaX = currentX - startXRef.current;
+    const newX = Math.max(0, Math.min(deltaX, maxDrag));
+    translateX.value = newX;
+  };
+
+  const handleWebPointerUp = () => {
+    if (Platform.OS !== 'web') return;
+    if (!isDraggingRef.current || isUnlocking.value) return;
+
+    isDraggingRef.current = false;
+    const progress = translateX.value / maxDrag;
+
+    if (progress >= threshold) {
+      isUnlocking.value = true;
+      translateX.value = withSpring(maxDrag, { damping: 15, stiffness: 150 }, () => {
+        runOnJS(handleUnlockSuccess)();
+      });
+    } else {
+      translateX.value = withSpring(0, { damping: 20, stiffness: 200 });
+    }
+  };
+
+  // 웹에서 드래그 중 페이지를 벗어났을 때
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+
+    const handleGlobalPointerUp = () => {
+      if (isDraggingRef.current) {
+        handleWebPointerUp();
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pointerup', handleGlobalPointerUp);
+      window.addEventListener('mouseup', handleGlobalPointerUp);
+      return () => {
+        window.removeEventListener('pointerup', handleGlobalPointerUp);
+        window.removeEventListener('mouseup', handleGlobalPointerUp);
+      };
+    }
+  }, [maxDrag, threshold]);
 
   const panGesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -205,7 +266,7 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
       </Animated.View>
 
       {/* Handle */}
-      <GestureDetector gesture={panGesture}>
+      {Platform.OS === 'web' ? (
         <Animated.View
           style={[
             styles.handleWrapper,
@@ -217,6 +278,12 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
             },
             handleAnimatedStyle,
           ]}
+          onPointerDown={handleWebPointerDown}
+          onPointerMove={handleWebPointerMove}
+          onPointerUp={handleWebPointerUp}
+          onMouseDown={handleWebPointerDown}
+          onMouseMove={handleWebPointerMove}
+          onMouseUp={handleWebPointerUp}
         >
           <View
             style={[
@@ -233,7 +300,37 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
             </Animated.Text>
           </View>
         </Animated.View>
-      </GestureDetector>
+      ) : (
+        <GestureDetector gesture={panGesture}>
+          <Animated.View
+            style={[
+              styles.handleWrapper,
+              {
+                left: config.padding,
+                top: verticalPadding,
+                width: config.handleSize,
+                height: config.handleSize,
+              },
+              handleAnimatedStyle,
+            ]}
+          >
+            <View
+              style={[
+                styles.handle,
+                {
+                  width: config.handleSize,
+                  height: config.handleSize,
+                  borderRadius: config.handleSize / 2,
+                },
+              ]}
+            >
+              <Animated.Text style={[styles.handleIcon, { fontSize: config.iconSize }]}>
+                ➜
+              </Animated.Text>
+            </View>
+          </Animated.View>
+        </GestureDetector>
+      )}
     </View>
   );
 };
@@ -293,6 +390,16 @@ const styles = StyleSheet.create({
   }),
   handleWrapper: {
     position: 'absolute',
+    ...Platform.select({
+      web: {
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        msUserSelect: 'none',
+      } as any,
+      default: {},
+    }),
   },
   handle: {
     backgroundColor: semanticColors.brand.primary,

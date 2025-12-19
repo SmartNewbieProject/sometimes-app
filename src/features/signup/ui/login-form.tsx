@@ -83,6 +83,7 @@ export default function LoginForm() {
       {/* 웹 전용: 앱 다운로드 섹션 */}
       <Show when={Platform.OS === 'web'}>
         <AppDownloadSection
+          size="sm"
           onAppStorePress={() => {
             if (Platform.OS === 'web') {
               window.open('https://apps.apple.com/kr/app/%EC%8D%B8%ED%83%80%EC%9E%84-%EC%A7%80%EC%97%AD-%EB%8C%80%ED%95%99%EC%83%9D-%EC%86%8C%EA%B0%9C%ED%8C%85/id6746120889?l=en-GB', '_blank');
@@ -98,11 +99,14 @@ export default function LoginForm() {
 
       {/* 슬라이드 잠금 해제 → 온보딩으로 이동 */}
       <View style={loginFormStyles.slideUnlock}>
-        <SlideUnlock onAction={() => router.push('/onboarding?source=login')} />
+        <SlideUnlock size="sm" onAction={() => router.push('/onboarding?source=login')} />
       </View>
 
       {/* 회원가입 및 로그인 버튼 */}
       <View style={loginFormStyles.buttonsContainer}>
+        <View style={loginFormStyles.buttonWrapper}>
+          <KakaoLoginComponent />
+        </View>
         <View style={loginFormStyles.buttonWrapper}>
           <Button
             variant="primary"
@@ -125,9 +129,6 @@ export default function LoginForm() {
               {isLoading ? t("features.signup.ui.login_form.pass_loading") : t("features.signup.ui.login_form.pass_login")}
             </Text>
           </Button>
-        </View>
-        <View style={loginFormStyles.buttonWrapper}>
-          <KakaoLoginComponent />
         </View>
 
         <Show when={Platform.OS === "ios"}>
@@ -157,7 +158,6 @@ const loginFormStyles = StyleSheet.create({
     alignItems: 'center',
   },
   universityLogos: {
-    marginBottom: 20,
   },
   slideUnlock: {
     marginBottom: 15,

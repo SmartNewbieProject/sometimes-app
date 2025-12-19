@@ -5,7 +5,9 @@ import { router, usePathname } from "expo-router";
 import React, { type ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import colors from "@/src/shared/constants/colors";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useMomentEnabled } from "@/src/features/moment/queries/use-moment-enabled";
+import { useUnreadChatCount } from "@/src/features/chat/hooks/use-unread-chat-count";
 
 import CommunitySelected from "@/assets/icons/nav/community-selected.svg";
 import CommunityUnselected from "@/assets/icons/nav/community-unselected.svg";
@@ -103,6 +105,7 @@ const navigationItems: NavigationItem[] = [
 export function BottomNavigation() {
   const pathname = usePathname();
   const { data: momentEnabled } = useMomentEnabled();
+  const unreadChatCount = useUnreadChatCount();
 
   const canAccessMoment = momentEnabled?.enabled ?? false;
 
@@ -130,9 +133,18 @@ export function BottomNavigation() {
             style={styles.navItem}
             onPress={() => handleNavClick(item.path)}
           >
-            <IconWrapper width={24} height={24} style={styles.iconWrapper}>
-              {isActive(item.path) ? item.icon.selected : item.icon.unSelected}
-            </IconWrapper>
+            <View style={styles.iconContainer}>
+              <IconWrapper width={24} height={24} style={styles.iconWrapper}>
+                {isActive(item.path) ? item.icon.selected : item.icon.unSelected}
+              </IconWrapper>
+              {item.name === 'chat' && unreadChatCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>
+                    {unreadChatCount > 99 ? '99+' : unreadChatCount}
+                  </Text>
+                </View>
+              )}
+            </View>
             <Text
               size="sm"
               weight={isActive(item.path) ? "semibold" : "normal"}
@@ -163,7 +175,28 @@ const styles = StyleSheet.create({
   navItem: {
     alignItems: 'center',
   },
+  iconContainer: {
+    position: 'relative',
+  },
   iconWrapper: {
     marginBottom: 4,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -8,
+    backgroundColor: semanticColors.state.error,
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: colors.white,
+    fontSize: 10,
+    fontWeight: '700',
+    lineHeight: 12,
   },
 });

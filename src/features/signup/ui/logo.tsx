@@ -95,20 +95,20 @@ const logoStyles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 8,
+    gap: 4,
   },
   logoWrapper: {
     position: 'relative',
-    marginTop: 80,
+    marginTop: 40,
   },
   letterIcon: {
     position: "absolute",
-    right: 45,
-    top: -71,
-    width: 60,
-    height: 60,
+    right: 50,
+    top: -50,
+    width: 48,
+    height: 48,
   },
   taglineWrapper: {
-    marginTop: 20,
+    marginTop: 12,
   },
 });

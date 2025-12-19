@@ -2,34 +2,69 @@ import React from 'react';
 import { View, Image, Pressable, StyleSheet } from 'react-native';
 import { FloatingTooltip } from '../floating-tooltip';
 
+type AppDownloadSectionSize = 'sm' | 'md' | 'lg';
+
 interface AppDownloadSectionProps {
   onAppStorePress?: () => void;
   onGooglePlayPress?: () => void;
   tooltipText?: string;
   showTooltip?: boolean;
+  size?: AppDownloadSectionSize;
 }
+
+const SIZE_CONFIG = {
+  sm: {
+    imageWidth: 140,
+    imageHeight: 45,
+    gap: 4,
+    tooltipBottom: 48,
+  },
+  md: {
+    imageWidth: 160,
+    imageHeight: 52,
+    gap: 4,
+    tooltipBottom: 55,
+  },
+  lg: {
+    imageWidth: 180,
+    imageHeight: 59,
+    gap: 6,
+    tooltipBottom: 62,
+  },
+} as const;
 
 export const AppDownloadSection: React.FC<AppDownloadSectionProps> = ({
   onAppStorePress,
   onGooglePlayPress,
   tooltipText = '앱을 설치하여 더 간편하게 시작하세요!',
   showTooltip = true,
+  size = 'md',
 }) => {
+  const config = SIZE_CONFIG[size];
+
   return (
     <View style={styles.container}>
       <View style={styles.contentWrapper}>
-        <View style={styles.storeLinksContainer}>
+        <View style={[styles.storeLinksContainer, { gap: config.gap }]}>
           <Pressable onPress={onAppStorePress}>
             <Image
               source={require('@assets/images/download/appstore-hq.png')}
-              style={styles.storeImage}
+              style={{
+                width: config.imageWidth,
+                height: config.imageHeight,
+                cursor: 'pointer',
+              }}
               resizeMode="contain"
             />
           </Pressable>
           <Pressable onPress={onGooglePlayPress}>
             <Image
               source={require('@assets/images/download/googleplay-hq.png')}
-              style={styles.storeImage}
+              style={{
+                width: config.imageWidth,
+                height: config.imageHeight,
+                cursor: 'pointer',
+              }}
               resizeMode="contain"
             />
           </Pressable>
@@ -38,7 +73,7 @@ export const AppDownloadSection: React.FC<AppDownloadSectionProps> = ({
           <FloatingTooltip
             text={tooltipText}
             rotation="top"
-            style={styles.tooltip}
+            style={{ bottom: config.tooltipBottom, zIndex: 1001 }}
           />
         )}
       </View>
@@ -60,17 +95,7 @@ const styles = StyleSheet.create({
   },
   storeLinksContainer: {
     flexDirection: 'row',
-    gap: 4,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  storeImage: {
-    width: 160,
-    height: 52,
-    cursor: 'pointer',
-  },
-  tooltip: {
-    bottom: 55,
-    zIndex: 1001,
   },
 });
