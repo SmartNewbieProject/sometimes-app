@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
     paddingRight: 4,
     lineHeight: 20,
     color: semanticColors.text.secondary,
+    flexShrink: 0,
   },
   modalContent: {
     flexDirection: "column",
@@ -260,6 +261,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 24,
     gap: 4,
+    flexWrap: "nowrap",
   },
   glowOverlay: {
     position: "absolute",
@@ -272,17 +274,20 @@ const styles = StyleSheet.create({
   buttonContent: {
     flexDirection: "row",
     alignItems: "center",
+    flexWrap: "nowrap",
   },
   buttonTextBlack: {
     fontSize: 18,
     fontFamily: "Pretendard-Medium",
     fontWeight: "500",
     color: semanticColors.text.secondary,
+    flexShrink: 0,
   },
   buttonTextInverse: {
     fontSize: 20,
     fontWeight: "700",
     color: semanticColors.text.inverse,
+    flexShrink: 0,
   },
   completedButton: {
     flex: 1,

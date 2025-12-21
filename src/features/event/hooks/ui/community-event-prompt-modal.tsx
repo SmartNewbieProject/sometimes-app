@@ -84,6 +84,11 @@ export const CommunityEventPromptModal: React.FC<CommunityEventPromptModalProps>
     }, 300);
   };
 
+  const handleLater = () => {
+    onLater();
+    handleClose();
+  };
+
   if (!visible) return null;
 
   return (
@@ -123,7 +128,7 @@ export const CommunityEventPromptModal: React.FC<CommunityEventPromptModalProps>
 
               <View style={styles.buttonContainer}>
                 <Button
-                  onPress={onLater}
+                  onPress={handleLater}
                   variant="secondary"
                   flex="flex-1"
                 >

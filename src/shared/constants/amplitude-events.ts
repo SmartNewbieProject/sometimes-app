@@ -1,5 +1,12 @@
 export const AMPLITUDE_EVENTS = {
-  // 회원가입 관련
+  // 회원가입 퍼널 - View 이벤트 (화면 진입)
+  SIGNUP_LOGIN_VIEW: 'Signup_Login_View',
+  SIGNUP_AUTH_STARTED: 'Signup_Auth_Started',
+  SIGNUP_UNIVERSITY_VIEW: 'Signup_University_View',
+  SIGNUP_DETAILS_VIEW: 'Signup_Details_View',
+  SIGNUP_PROFILE_VIEW: 'Signup_Profile_View',
+
+  // 회원가입 퍼널 - 완료 이벤트
   SIGNUP_INIT: 'Signup_Init',
   SIGNUP_ROUTE_ENTERED: 'Signup_Route_Entered',
   SIGNUP_UNIVERSITY: 'Signup_university',
@@ -24,9 +31,18 @@ export const AMPLITUDE_EVENTS = {
   GEM_STORE_FIRST_SALE_27: 'GemStore_FirstSale_27',
   GEM_STORE_PAYMENT_SUCCESS: 'GemStore_Payment_Success',
 
+  // 인앱 리뷰 관련
+  IN_APP_REVIEW_ELIGIBLE: 'InAppReview_Eligible',
+  IN_APP_REVIEW_PRE_PROMPT_SHOWN: 'InAppReview_PrePromptShown',
+  IN_APP_REVIEW_PRE_PROMPT_RESPONSE: 'InAppReview_PrePromptResponse',
+  IN_APP_REVIEW_REQUESTED: 'InAppReview_Requested',
+
   // 기타
   SIGNUP_COMPLETE: 'signup_complete',
   IMAGE_UPLOAD: 'image_upload',
+
+  // 미호 멘트 관련
+  MIHO_MESSAGE_SHOWN: 'Miho_Message_Shown',
 } as const;
 
 export type AmplitudeEventKeys = keyof typeof AMPLITUDE_EVENTS;
@@ -34,6 +50,13 @@ export type AmplitudeEventValues = typeof AMPLITUDE_EVENTS[AmplitudeEventKeys];
 
 // 특정 카테고리별 이벤트 그룹
 export const SIGNUP_EVENTS = {
+  // View 이벤트 (화면 진입)
+  LOGIN_VIEW: AMPLITUDE_EVENTS.SIGNUP_LOGIN_VIEW,
+  AUTH_STARTED: AMPLITUDE_EVENTS.SIGNUP_AUTH_STARTED,
+  UNIVERSITY_VIEW: AMPLITUDE_EVENTS.SIGNUP_UNIVERSITY_VIEW,
+  DETAILS_VIEW: AMPLITUDE_EVENTS.SIGNUP_DETAILS_VIEW,
+  PROFILE_VIEW: AMPLITUDE_EVENTS.SIGNUP_PROFILE_VIEW,
+  // 완료 이벤트
   INIT: AMPLITUDE_EVENTS.SIGNUP_INIT,
   ROUTE_ENTERED: AMPLITUDE_EVENTS.SIGNUP_ROUTE_ENTERED,
   UNIVERSITY: AMPLITUDE_EVENTS.SIGNUP_UNIVERSITY,

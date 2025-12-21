@@ -117,7 +117,7 @@ export function OppositeGenderPreview({
   uploadedCount,
   userGender,
 }: OppositeGenderPreviewProps) {
-  const oppositeGender = userGender === 'MALE' ? 'FEMALE' : 'FEMALE';
+  const oppositeGender = userGender === 'MALE' ? 'FEMALE' : 'MALE';
   const genderLabel = oppositeGender === 'MALE' ? '남성' : '여성';
   const sampleImages = SAMPLE_IMAGES[oppositeGender];
 

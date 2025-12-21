@@ -96,6 +96,10 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
   };
 
   const handleSkip = async () => {
+    if (source === 'login') {
+      router.replace('/auth/login');
+      return;
+    }
     await saveOnboardingComplete();
     router.replace('/home');
   };

@@ -17,7 +17,7 @@ function PromotionBanner() {
           />
         ))}
         <Text style={styles.title}>특별 혜택!</Text>
-        <Text style={styles.description}>친구 초대 시 구슬 50개씩 지급!</Text>
+        <Text style={styles.description}>친구 초대 시 구슬 30개씩 지급!</Text>
         <Text style={styles.sub}>당신과 친구 모두에게</Text>
         <View style={styles.invite}>
           <Image

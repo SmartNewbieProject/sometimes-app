@@ -14,8 +14,9 @@ import SearchIcon from "@assets/icons/search.svg";
 import Loading from "@features/loading";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import {
   BackHandler,
   Text as RNText,
@@ -28,6 +29,7 @@ import Animated from "react-native-reanimated";
 function UniversityPage() {
   const router = useRouter();
   const { onboardingEvents } = useKpiAnalytics();
+  const hasTrackedView = useRef(false);
   const {
     searchText,
     setSearchText,
@@ -49,8 +51,14 @@ function UniversityPage() {
     isFocused,
   } = useUniversityHook();
   const { t } = useTranslation();
-  // 대학 인증 시작 이벤트 추적
+
   useEffect(() => {
+    if (!hasTrackedView.current) {
+      track("Signup_University_View", {
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
+      hasTrackedView.current = true;
+    }
     onboardingEvents.trackUniversityVerificationStarted();
   }, [onboardingEvents]);
 

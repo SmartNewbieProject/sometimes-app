@@ -5,10 +5,11 @@ import useUniversityDetails from "@/src/features/signup/hooks/use-university-det
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import Loading from "@features/loading";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   BackHandler,
@@ -27,8 +28,15 @@ function UniversityDetailsPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const { updateShowHeader } = useSignupProgress();
+  const hasTrackedView = useRef(false);
 
   useEffect(() => {
+    if (!hasTrackedView.current) {
+      track("Signup_Details_View", {
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
+      hasTrackedView.current = true;
+    }
     updateShowHeader(true);
   }, [updateShowHeader]);
 

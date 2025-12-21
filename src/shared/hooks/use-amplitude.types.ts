@@ -28,6 +28,13 @@ export interface UserBehaviorEventProperties extends BaseEventProperties {
   type?: 'modal';
 }
 
+export interface InAppReviewEventProperties extends BaseEventProperties {
+  trigger_type?: 'mutual_match' | 'chat_10_messages' | 'signup_3_days' | 'regular_matching' | 'withdrawal_found_partner';
+  can_request?: boolean;
+  reason?: string;
+  response?: 'accepted' | 'declined';
+}
+
 export interface AmplitudeTrackOptions {
   immediate?: boolean;
   validate?: boolean;
@@ -35,7 +42,13 @@ export interface AmplitudeTrackOptions {
 
 // 이벤트 타입별 파라미터 매핑
 export interface EventTypePropertiesMap {
-  // 회원가입 관련
+  // 회원가입 퍼널 - View 이벤트
+  Signup_Login_View: BaseEventProperties;
+  Signup_Auth_Started: SignupEventProperties;
+  Signup_University_View: BaseEventProperties;
+  Signup_Details_View: BaseEventProperties;
+  Signup_Profile_View: BaseEventProperties;
+  // 회원가입 퍼널 - 완료 이벤트
   Signup_Init: SignupEventProperties;
   Signup_Route_Entered: SignupEventProperties;
   Signup_university: SignupEventProperties;
@@ -59,6 +72,12 @@ export interface EventTypePropertiesMap {
   Interest_Hold: UserBehaviorEventProperties;
   Interest_Started: UserBehaviorEventProperties;
   Profile_Started: UserBehaviorEventProperties;
+
+  // 인앱 리뷰
+  InAppReview_Eligible: InAppReviewEventProperties;
+  InAppReview_PrePromptShown: InAppReviewEventProperties;
+  InAppReview_PrePromptResponse: InAppReviewEventProperties;
+  InAppReview_Requested: InAppReviewEventProperties;
 }
 
 // KPI 이벤트 타입별 속성 매핑 (기본 타입들)

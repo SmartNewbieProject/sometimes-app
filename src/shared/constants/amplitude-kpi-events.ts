@@ -86,6 +86,7 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   CHAT_MESSAGE_SENT: 'Chat_Message_Sent',
   CHAT_ENDED: 'Chat_Ended',
   CHAT_GIFT_SENT: 'Chat_Gift_Sent',
+  CHAT_RESPONSE: 'Chat_Response',
   CHAT_24H_ACTIVE: 'Chat_24h_Active',
 
   // 커뮤니티 관련 (Retention)
@@ -94,6 +95,9 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   COMMUNITY_POST_LIKED: 'Community_Post_Liked',
   COMMUNITY_COMMENT_ADDED: 'Community_Comment_Added',
   COMMUNITY_POST_SHARED: 'Community_Post_Shared',
+  COMMUNITY_FEED_VIEWED: 'Community_Feed_Viewed',
+  COMMUNITY_POST_REPORTED: 'Community_Post_Reported',
+  COMMUNITY_POST_DELETED: 'Community_Post_Deleted',
 
   // 결제 관련 (Revenue)
   PAYMENT_STORE_VIEWED: 'Payment_Store_Viewed',
@@ -111,6 +115,7 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   REFERRAL_INVITE_SENT: 'Referral_Invite_Sent',
   REFERRAL_INVITE_ACCEPTED: 'Referral_Invite_Accepted',
   REFERRAL_SIGNUP_COMPLETED: 'Referral_Signup_Completed',
+  REFERRAL_REWARD_GRANTED: 'Referral_Reward_Granted',
   INVITE_LINK_CLICKED: 'Invite_Link_Clicked',
   INVITE_CONVERSION_COMPLETED: 'Invite_Conversion_Completed',
 
@@ -118,6 +123,7 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   SESSION_STARTED: 'Session_Started',
   SESSION_ENDED: 'Session_Ended',
   PUSH_NOTIFICATION_OPENED: 'Push_Notification_Opened',
+  FIRST_SESSION_COMPLETED: 'First_Session_Completed',
 
   // 앱 사용 관련 (Retention)
   APP_OPENED: 'App_Opened',
@@ -134,6 +140,13 @@ export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
   SOMEMATE_REPORT_VIEWED: 'Somemate_Report_Viewed',
   SOMEMATE_REPORT_SHARED: 'Somemate_Report_Shared',
   SOMEMATE_CATEGORY_SELECTED: 'Somemate_Category_Selected',
+  SOMEMATE_SESSION_ABANDONED: 'Somemate_Session_Abandoned',
+  SOMEMATE_FEEDBACK_SUBMITTED: 'Somemate_Feedback_Submitted',
+  SOMEMATE_FOLLOW_UP_QUESTION: 'Somemate_Follow_Up_Question',
+
+  // 리텐션 관련 (Retention)
+  REACTIVATION: 'Reactivation',
+  FEATURE_ADOPTED: 'Feature_Adopted',
 } as const;
 
 // 인증 방법 Enum

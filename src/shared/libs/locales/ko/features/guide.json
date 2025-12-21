@@ -3,7 +3,7 @@
     "mock_like_button": {
       "modal_title": "썸을 보냈어요!",
       "modal_text_1": "상대방도 관심을 보이면,",
-      "modal_text_2": "인스타그램으로 연락할 수 있어요",
+      "modal_text_2": "바로 대화 시작할 수 있어!",
       "primary_button": "확인했어요",
       "partner_modal_title_1": "마음에 드는 이성에게",
       "partner_modal_title_2_male": "구슬 {{count}}개로 관심을 표현할까요?",

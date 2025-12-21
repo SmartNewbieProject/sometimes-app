@@ -228,6 +228,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 24,
     gap: 12,
+    flexWrap: "nowrap",
   },
   glowOverlay: {
     position: "absolute",
@@ -242,6 +243,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 2,
+    flexShrink: 0,
   },
   gemCountText: {
     fontSize: 16,
@@ -258,5 +260,6 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: "center",
     lineHeight: 31,
+    flexShrink: 0,
   },
 });

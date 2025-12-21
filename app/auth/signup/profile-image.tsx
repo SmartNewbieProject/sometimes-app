@@ -27,6 +27,7 @@ import {
 import useProfileImage from "@/src/features/signup/hooks/use-profile-image";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { useStorage } from "@/src/shared/hooks/use-storage";
+import { track } from "@/src/shared/libs/amplitude-compat";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import useSignupProgress from "@/src/features/signup/hooks/use-signup-progress";
@@ -45,8 +46,15 @@ function ProfilePage() {
   } = useProfileImage();
   const { t } = useTranslation();
   const { form, updateShowHeader } = useSignupProgress();
+  const hasTrackedView = useRef(false);
 
   useEffect(() => {
+    if (!hasTrackedView.current) {
+      track("Signup_Profile_View", {
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
+      hasTrackedView.current = true;
+    }
     updateShowHeader(true);
   }, [updateShowHeader]);
 

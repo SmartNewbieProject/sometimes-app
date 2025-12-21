@@ -2,6 +2,7 @@ import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
 import { Slot, router, useLocalSearchParams, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { preventScreenCaptureAsync } from "expo-screen-capture";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, AppState, Platform, View, StyleSheet } from "react-native";
 import "react-native-reanimated";
@@ -28,6 +29,7 @@ import Toast from "@/src/shared/ui/toast";
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SessionTracker } from "@/src/shared/components/session-tracker";
+import { AppBadgeSync } from "@/src/shared/components/app-badge-sync";
 
 if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync()
@@ -39,6 +41,12 @@ const MIN_SPLASH_MS = 2000;
 const START_AT = Date.now();
 
 export default function RootLayout() {
+  useEffect(() => {
+    if (Platform.OS !== "web") {
+      preventScreenCaptureAsync();
+    }
+  }, []);
+
   const { request: requestAtt } = useAtt();
   const notificationListener = useRef<{ remove(): void } | null>(null);
   const responseListener = useRef<{ remove(): void } | null>(null);
@@ -253,7 +261,7 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.rootView}>
       <LoggerContainer>
         <QueryProvider>
           <ModalProvider>
@@ -269,6 +277,7 @@ export default function RootLayout() {
                           <Toast />
                           <ChatActivityTracker />
                           <SessionTracker />
+                          <AppBadgeSync />
                       </>
                       </RouteTracker>
                     </AnalyticsProvider>
@@ -284,13 +293,24 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
+  rootView: {
+    flex: 1,
+    ...Platform.select({
+      web: {
+        height: '100%',
+        overflow: 'hidden',
+      },
+    }),
+  },
   container: {
     flex: 1,
     ...Platform.select({
       web: {
         maxWidth: 468,
         width: '100%',
+        height: '100%',
         alignSelf: 'center',
+        overflow: 'hidden',
       },
     }),
   },
