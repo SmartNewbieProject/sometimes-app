@@ -9,6 +9,11 @@
 .env.backup
 !.env.example
 
+# Sentry configuration (contains auth tokens)
+sentry.properties
+android/sentry.properties
+ios/sentry.properties
+
 # dependencies
 node_modules/
 
