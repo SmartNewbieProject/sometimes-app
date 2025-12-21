@@ -150,7 +150,12 @@
       }
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://some-in-univ.com"
+        }
+      ],
       [
         "expo-splash-screen",
         {

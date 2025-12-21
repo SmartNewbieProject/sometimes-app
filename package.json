@@ -143,6 +143,7 @@
     "@types/react": "~19.1.10",
     "@types/react-native-get-random-values": "^1.8.2",
     "@types/react-test-renderer": "^18.3.0",
+    "babel-plugin-transform-import-meta": "^2.3.3",
     "cross-env": "^10.0.0",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~10.0.0",
@@ -151,6 +152,7 @@
     "patch-package": "^8.0.1",
     "playwright": "^1.57.0",
     "react-test-renderer": "19.0.0",
+    "sharp": "^0.34.5",
     "ts-jest": "^29.3.2",
     "typescript": "~5.9.2"
   },
