@@ -4,7 +4,7 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import Tooltip from "@/src/shared/ui/tooltip";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -97,7 +97,7 @@ export default function DrinkingSelectionScreen() {
     if (!drinking) {
       updateForm("drinking", preferences.options[currentIndex]);
     }
-    track("Profile_Drinking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    mixpanelAdapter.track("Profile_Drinking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/my-info/smoking");
   };
 

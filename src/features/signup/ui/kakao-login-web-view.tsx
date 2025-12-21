@@ -2,7 +2,7 @@ import { useAuth } from "@/src/features/auth";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useRouter } from "expo-router";
 // KakaoLoginWebView.tsx
 import type React from "react";
@@ -19,6 +19,7 @@ import {
 import { WebView, type WebViewNavigation } from "react-native-webview";
 import { useTranslation } from "react-i18next";
 import { checkPhoneNumberBlacklist } from "../apis";
+import { devLogWithTag } from "@/src/shared/utils";
 
 interface KakaoLoginWebViewProps {
   visible: boolean;
@@ -54,7 +55,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
   // WebView 네비게이션 상태 변경 처리
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
     const { url } = navState;
-    console.log("Navigation URL:", url);
+    devLogWithTag('Kakao WebView', 'Navigation:', url);
 
     // 리디렉션 URL 확인
     if (url.includes("/auth/login/redirect")) {
@@ -64,18 +65,18 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
         const error = urlObj.searchParams.get("error");
 
         if (error) {
-          console.log("카카오 로그인 에러:", error);
+          devLogWithTag('Kakao WebView', 'Login error:', error);
           onClose();
           return false;
         }
 
         if (code) {
-          console.log("카카오 인증 코드 받음:", code);
+          devLogWithTag('Kakao WebView', 'Auth code received');
           handleKakaoLogin(code);
           return false;
         }
       } catch (err) {
-        console.log("URL 파싱 에러:", err);
+        devLogWithTag('Kakao WebView', 'URL parsing error:', err);
       }
     }
 
@@ -86,7 +87,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
     try {
       onClose();
       const result = await loginWithKakao(code);
-      track("Signup_Route_Entered", {
+      mixpanelAdapter.track("Signup_Route_Entered", {
         screen: "AreaSelect",
         platform: "kakao",
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -100,7 +101,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
             );
 
             if (isBlacklisted) {
-              track("Signup_PhoneBlacklist_Failed", {
+              mixpanelAdapter.track("Signup_PhoneBlacklist_Failed", {
                 phone: result.certificationInfo?.phone,
               });
               showModal({
@@ -118,7 +119,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
             }
           } catch (error) {
             console.error("블랙리스트 체크 오류:", error);
-            track("Signup_Error", {
+            mixpanelAdapter.track("Signup_Error", {
               stage: "PhoneBlacklistCheck",
               message: error instanceof Error ? error.message : String(error),
             });
@@ -129,7 +130,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
         const birthday = result.certificationInfo?.birthday;
 
         if (birthday && !isAdult(birthday)) {
-          track("Signup_AgeCheck_Failed", {
+          mixpanelAdapter.track("Signup_AgeCheck_Failed", {
             birthday,
             platform: "kakao",
             env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -152,7 +153,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
         router.push("/home");
       }
     } catch (error) {
-      console.log("로그인 처리 에러:", error);
+      devLogWithTag('Kakao WebView', 'Login processing error:', error);
     }
   };
 

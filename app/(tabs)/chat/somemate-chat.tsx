@@ -4,17 +4,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Platform, StyleSheet, Text, View, Pressable, FlatList, ActivityIndicator, BackHandler } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
-
-const useKeyboardHeight = () => {
-  const fallbackHeight = useSharedValue(0);
-  if (Platform.OS === 'web') {
-    return { height: fallbackHeight };
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { useAnimatedKeyboard } = require('react-native-reanimated');
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useAnimatedKeyboard();
-};
 import { useTranslation } from "react-i18next";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import VerticalEllipsisIcon from "@assets/icons/vertical-ellipsis.svg";
@@ -24,12 +13,23 @@ import BulbIcon from "@assets/icons/bulb.svg";
 import { SomemateInput } from "@/src/features/somemate/ui";
 import { useActiveSession, useMessages, useAnalyzeSession, useCompleteSession, useDeleteSession } from "@/src/features/somemate/queries/use-ai-chat";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import type { AiChatMessage } from "@/src/features/somemate/types";
 import { sendMessageStream } from "@/src/features/somemate/apis/ai-chat";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CategoryBadge } from "@/src/features/somemate/ui/category-badge";
+
+const useKeyboardHeight = () => {
+  const fallbackHeight = useSharedValue(0);
+  if (Platform.OS === 'web') {
+    return { height: fallbackHeight };
+  }
+   
+  const { useAnimatedKeyboard } = require('react-native-reanimated');
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useAnimatedKeyboard();
+};
 
 type ListItem =
   | { type: "spacer"; id: string }
@@ -42,7 +42,7 @@ export default function SomemateChatScreen() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ sessionId?: string }>();
   const { showModal } = useModal();
-  const { somemateEvents } = useKpiAnalytics();
+  const { somemateEvents } = useMixpanel();
   const queryClient = useQueryClient();
 
   const { data: activeSession } = useActiveSession();

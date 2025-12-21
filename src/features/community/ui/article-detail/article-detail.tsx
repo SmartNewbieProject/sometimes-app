@@ -1,6 +1,6 @@
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import apis from "@/src/features/community/apis";
 import apis_comments from "@/src/features/community/apis/comments";
 import {
@@ -19,7 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
-import { Keyboard, ScrollView, View, Image, Pressable, StyleSheet } from "react-native";
+import { Keyboard, ScrollView, View, Image, Pressable, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Article, Comment, CommentForm } from "../../types";
 import { InputForm } from "../comment/input-form";
@@ -28,6 +28,7 @@ import { ArticleDetailComment } from "./article-detail-comment";
 
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import { useForm } from "react-hook-form";
+import { devLogWithTag } from "@/src/shared/utils";
 
 export const ArticleDetail = ({ article }: { article: Article }) => {
   const insets = useSafeAreaInsets();
@@ -46,7 +47,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
     },
   });
   const [likeCount, setLikeCount] = useState(article.likeCount);
-  const { communityEvents } = useKpiAnalytics();
+  const { communityEvents } = useMixpanel();
   const [isLiked, setIsLiked] = useState(article.isLiked);
   const { my } = useAuth();
   const isOwner = (() => {
@@ -123,10 +124,11 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 
   const handleSubmitUpdate = async () => {
     if (editingCommentId) {
+      const content = form.getValues("content");
       updateCommentMutation.mutate(
         {
           commentId: editingCommentId,
-          content: editingContent,
+          content,
         },
         {
           onSuccess: () => {
@@ -255,10 +257,9 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         const currentComment = findComment(comments);
         if (!currentComment) return;
 
-        console.log("댓글 좋아요 클릭:", {
+        devLogWithTag('Comment Like', 'Toggling:', {
           commentId,
           currentIsLiked: currentComment.isLiked,
-          currentLikeCount: currentComment.likeCount,
         });
 
         const newIsLiked = !currentComment.isLiked;
@@ -267,7 +268,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           ? currentLikeCount - 1
           : currentLikeCount + 1;
 
-        console.log("새로운 상태:", {
+        devLogWithTag('Comment Like', 'New state:', {
           newIsLiked,
           newLikeCount,
         });
@@ -305,7 +306,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           articleId,
           commentId
         );
-        console.log("서버 응답:", serverResponse);
+        devLogWithTag('Comment Like', 'Server response:', { success: !!serverResponse });
       },
       (error) => {
         console.error("댓글 좋아요 업데이트 실패:", error);
@@ -475,26 +476,32 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
           </Loading.Lottie>
         </View>
       </ScrollView>
-      <View
-        style={[
-          detailStyles.inputFormContainer,
-          { paddingBottom: insets.bottom },
-        ]}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+        style={detailStyles.keyboardAvoidingView}
       >
-        <InputForm
-          checked={checked}
-          setChecked={setChecked}
-          editingCommentId={editingCommentId}
-          handleCancelEdit={handleCancelEdit}
-          editingContent={editingContent}
-          setEditingContent={setEditingContent}
-          form={form}
-          handleSubmitUpdate={handleSubmitUpdate}
-          handleSubmit={handleSubmit}
-          replyingToCommentId={replyingToCommentId}
-          handleCancelReply={handleCancelReply}
-        />
-      </View>
+        <View
+          style={[
+            detailStyles.inputFormContainer,
+            { paddingBottom: insets.bottom },
+          ]}
+        >
+          <InputForm
+            checked={checked}
+            setChecked={setChecked}
+            editingCommentId={editingCommentId}
+            handleCancelEdit={handleCancelEdit}
+            editingContent={editingContent}
+            setEditingContent={setEditingContent}
+            form={form}
+            handleSubmitUpdate={handleSubmitUpdate}
+            handleSubmit={handleSubmit}
+            replyingToCommentId={replyingToCommentId}
+            handleCancelReply={handleCancelReply}
+          />
+        </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -580,11 +587,13 @@ const detailStyles = StyleSheet.create({
     flexDirection: "column",
     paddingBottom: 16,
   },
-  inputFormContainer: {
+  keyboardAvoidingView: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  inputFormContainer: {
     backgroundColor: semanticColors.surface.background,
     borderTopWidth: 1,
     borderTopColor: semanticColors.border.default,

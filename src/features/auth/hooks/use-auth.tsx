@@ -1,4 +1,5 @@
 import { axiosClient, platform, tryCatch, storage } from "@/src/shared/libs";
+import * as Sentry from "@sentry/react-native";
 import { resetAppState } from "@/src/shared/libs/reset-app-state";
 import { eventBus } from "@/src/shared/libs/event-bus";
 import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
@@ -7,8 +8,8 @@ import { passKakao, passKakaoNative, passLogin } from "@features/auth/apis/index
 import { loginByPass } from "@features/auth/utils/login-utils";
 import { useModal } from "@hooks/use-modal";
 import { useStorage } from "@shared/hooks/use-storage";
-import { useAmplitude } from "@shared/hooks/use-amplitude";
-import { AMPLITUDE_KPI_EVENTS, LOGOUT_REASONS } from "@shared/constants/amplitude-kpi-events";
+import { useMixpanel } from "@shared/hooks/use-mixpanel";
+import { LOGOUT_REASONS } from "@shared/constants/mixpanel-events";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { router } from "expo-router";
 import { useEffect } from "react";
@@ -24,7 +25,7 @@ const clearOnboardingCompletedFlag = async () => {
 
 export function useAuth() {
   const { t } = useTranslation();
-  const { trackEvent } = useAmplitude();
+  const { trackEvent } = useMixpanel();
 
   const { value: accessToken, setValue: setToken } = useStorage<string | null>({
     key: "access-token",
@@ -133,6 +134,7 @@ export function useAuth() {
 
   const logoutOnly = async () => {
     resetAppState();
+    Sentry.setUser(null);
 
     if (!refreshToken) {
       router.push("/auth/login");
@@ -159,7 +161,7 @@ export function useAuth() {
   const logout = () => {
     tryCatch(
       async () => {
-        trackEvent(AMPLITUDE_KPI_EVENTS.AUTH_LOGOUT, {
+        trackEvent('AUTH_LOGOUT', {
           reason: LOGOUT_REASONS.MANUAL,
         });
         logoutOnly();
@@ -190,6 +192,7 @@ export function useAuth() {
 
     const unsubscribeLogout = eventBus.on("auth:logout", async () => {
       resetAppState();
+      Sentry.setUser(null);
       await setToken(null);
       await setRefreshToken(null);
       await setApprovalStatus(null);
@@ -213,6 +216,12 @@ export function useAuth() {
         days_since_signup: my.createdAt
           ? Math.floor((Date.now() - new Date(my.createdAt).getTime()) / (1000 * 60 * 60 * 24))
           : undefined,
+      });
+
+      Sentry.setUser({
+        id: my.id.toString(),
+        username: my.nickname,
+        email: my.email,
       });
     }
   }, [my, profileDetails]);

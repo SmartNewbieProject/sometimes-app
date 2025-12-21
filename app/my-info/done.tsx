@@ -4,7 +4,7 @@ import { useInterestForm } from "@/src/features/interest/hooks";
 import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useAuth } from "@features/auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
@@ -77,7 +77,7 @@ export default function MyInfoDoneScreen() {
             size="md"
             width={"full"}
             onPress={() => {
-              track("Profile_Done", {
+              mixpanelAdapter.track("Profile_Done", {
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
               clear();

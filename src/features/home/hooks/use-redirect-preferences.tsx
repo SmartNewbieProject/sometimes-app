@@ -3,11 +3,12 @@ import { useStorage } from "@/src/shared/hooks/use-storage";
 import { useOnboardingCompleted } from "@/src/shared/hooks/use-onboarding-completed";
 import { dayUtils } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
-import { useUserBehaviorEvents } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { router } from "expo-router";
 import { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useCheckPreferenceFillQuery } from "../queries";
+import { devLogWithTag } from "@/src/shared/utils";
 
 type CheckPreferences = {
   isLater: boolean;
@@ -15,7 +16,7 @@ type CheckPreferences = {
 };
 
 export const useRedirectPreferences = () => {
-  const { trackInterestHold, trackInterestStarted } = useUserBehaviorEvents();
+  const { trackEvent } = useMixpanel();
   const {
     data: isPreferenceFill,
     refetch,
@@ -42,22 +43,22 @@ export const useRedirectPreferences = () => {
   }, [isLoading, isPreferenceFill, syncWithServerStatus]);
 
   const confirm = useCallback(() => {
-    trackInterestHold();
+    trackEvent('INTEREST_HOLD');
     setValue({
       isLater: true,
       latestDate: dayUtils.create().format("YYYY-MM-DD HH:mm:ss"),
     });
-  }, [setValue]);
+  }, [setValue, trackEvent]);
 
   const onRedirect = useCallback(() => {
     confirm();
-    trackInterestStarted("modal");
+    trackEvent('INTEREST_STARTED', { type: 'modal' });
     router.navigate("/interest");
-  }, [confirm]);
+  }, [confirm, trackEvent]);
 
   const showPreferenceModal = useCallback(
     (reason: string) => {
-      console.log("Showing modal -", reason);
+      devLogWithTag('Preference Modal', 'Showing:', reason);
       showModal({
         customTitle: (
           <Text size="md" weight="bold" textColor="black" style={modalStyles.title}>
@@ -91,7 +92,7 @@ export const useRedirectPreferences = () => {
     // 이상형 정보 모달 비활성화
     // 로딩 중이거나 이상형이 이미 등록된 경우 모달을 보여주지 않음
     if (loading || isLoading || isPreferenceFill) {
-      console.log("Modal not shown - loading or preference filled:", {
+      devLogWithTag('Preference Modal', 'Skipped:', {
         loading,
         isLoading,
         isPreferenceFill,

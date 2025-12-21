@@ -1,6 +1,8 @@
 import "@/src/features/logger/service/patch";
 import { useFonts } from "expo-font";
-import { Slot, router, useLocalSearchParams, usePathname } from "expo-router";
+import { Slot, router, useLocalSearchParams, usePathname, useNavigationContainerRef } from "expo-router";
+import { isRunningInExpoGo } from "expo";
+import * as Application from "expo-application";
 import * as SplashScreen from "expo-splash-screen";
 import { preventScreenCaptureAsync } from "expo-screen-capture";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -30,6 +32,23 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SessionTracker } from "@/src/shared/components/session-tracker";
 import { AppBadgeSync } from "@/src/shared/components/app-badge-sync";
+import * as Sentry from '@sentry/react-native';
+
+const navigationIntegration = Sentry.reactNavigationIntegration({
+  enableTimeToInitialDisplay: !isRunningInExpoGo(),
+});
+
+Sentry.init({
+  dsn: 'https://2a33482b7a7b5a1787d3b8c0da4809a9@o4510573549846528.ingest.us.sentry.io/4510573550829568',
+  enabled: !__DEV__,
+  environment: __DEV__ ? 'development' : 'production',
+  release: `${Application.applicationId}@${Application.nativeApplicationVersion}+${Application.nativeBuildVersion}`,
+  sendDefaultPii: true,
+  enableLogs: true,
+  tracesSampleRate: 0.2,
+  integrations: [Sentry.feedbackIntegration(), navigationIntegration],
+  enableNativeFramesTracking: !isRunningInExpoGo(),
+});
 
 if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync()
@@ -40,7 +59,15 @@ if (Platform.OS !== "web") {
 const MIN_SPLASH_MS = 2000;
 const START_AT = Date.now();
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
+  const navigationRef = useNavigationContainerRef();
+
+  useEffect(() => {
+    if (navigationRef) {
+      navigationIntegration.registerNavigationContainer(navigationRef);
+    }
+  }, [navigationRef]);
+
   useEffect(() => {
     if (Platform.OS !== "web") {
       preventScreenCaptureAsync();
@@ -299,7 +326,7 @@ export default function RootLayout() {
       </LoggerContainer>
     </GestureHandlerRootView>
   );
-}
+});
 
 const styles = StyleSheet.create({
   rootView: {

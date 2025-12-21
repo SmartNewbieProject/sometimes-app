@@ -8,6 +8,5 @@ export const readMessagesAction = (
 	socket: Socket<ChatServerToClientEvents, ChatClientToServerEvents> | null,
 	chatRoomId: string,
 ) => {
-	console.log('check read message');
 	socket?.emit('readMessages', { chatRoomId });
 };

@@ -6,8 +6,9 @@ import { Button, Header } from '@/src/shared/ui';
 import { router } from 'expo-router';
 import { ImageResources } from '@/src/shared/libs/image';
 import { usePortoneStore } from '../hooks/use-portone-store';
-import { useKpiAnalytics } from '@/src/shared/hooks/use-kpi-analytics';
+import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { categorizePaymentError } from '../types';
+import { devLogWithTag } from '@/src/shared/utils';
 
 
 export interface PortOnePaymentCompleteResult {
@@ -58,7 +59,7 @@ export const PortOnePaymentView = forwardRef(
 	(props: PortOnePaymentProps, ref: ForwardedRef<PortOneController>) => {
 		const { request, onComplete, onError, onCancel, productName, payMode } = props;
 		const { eventType } = usePortoneStore();
-		const { conversionEvents } = useKpiAnalytics();
+		const { conversionEvents } = useMixpanel();
 
 		const handleComplete = async (complete: PortOnePaymentCompleteResult) => {
 			try {
@@ -97,7 +98,7 @@ export const PortOnePaymentView = forwardRef(
 		};
 
 		const handleError = (error: PortOnePaymentErrorResult) => {
-			console.log('실패', error.message);
+			devLogWithTag('Payment', 'Failed:', error.message);
 
 			// 오류 분류
 			const errorCategory = categorizePaymentError(error.message || 'Unknown error');

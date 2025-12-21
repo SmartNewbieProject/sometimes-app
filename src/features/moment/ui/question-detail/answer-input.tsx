@@ -12,7 +12,7 @@ interface AnswerInputProps {
   questionType: 'text' | 'multiple-choice';
   textAnswer: string;
   selectedOption: number | null;
-  options: Array<{ id: string; text: string; order?: number }>;
+  options: { id: string; text: string; order?: number }[];
   onTextChange: (text: string) => void;
   onOptionSelect: (index: number) => void;
   onGetInspiration: () => void;

@@ -16,16 +16,17 @@ export function AnalyticsProvider({ children }: AnalyticsProviderProps) {
   const segments = useSegments();
 
   useEffect(() => {
-    // 웹 환경에서만 Google Analytics 실행
     if (Platform.OS === 'web') {
-      // Google Analytics 스크립트 로드
-      if (!document.querySelector(`script[src="https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}"]`)) {
+      const loadGoogleAnalytics = () => {
+        if (document.querySelector(`script[src="https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}"]`)) {
+          return;
+        }
+
         const script1 = document.createElement('script');
         script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
         script1.async = true;
         document.head.appendChild(script1);
 
-        // gtag 초기화 스크립트
         const script2 = document.createElement('script');
         script2.innerHTML = `
           window.dataLayer = window.dataLayer || [];
@@ -34,6 +35,12 @@ export function AnalyticsProvider({ children }: AnalyticsProviderProps) {
           gtag('config', '${GA_TRACKING_ID}');
         `;
         document.head.appendChild(script2);
+      };
+
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(loadGoogleAnalytics, { timeout: 3000 });
+      } else {
+        setTimeout(loadGoogleAnalytics, 2000);
       }
     }
 

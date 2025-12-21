@@ -105,7 +105,6 @@ export const InteractionNavigation = ({
   const { isLikedPartner } = useILiked();
   const isLiked = isLikedPartner(match?.connectionId ?? "");
   const { t } = useTranslation();
-  console.log("isdata", isLikedPartner(match?.connectionId ?? ""));
 
   if (isPendingApproval) {
     return null;

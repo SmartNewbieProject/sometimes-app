@@ -17,6 +17,7 @@ import useChatTips from "../queries/use-chat-tips";
 import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
 import ChatTipsModal from "./chat-tips-modal";
+import { devLogWithTag } from "@/src/shared/utils";
 
 function WebChatInput() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -124,7 +125,7 @@ function WebChatInput() {
       selectionLimit: 1,
     });
 
-    console.log(result);
+    devLogWithTag('Chat Input', 'Image picker result:', { canceled: result.canceled });
 
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
@@ -224,7 +225,7 @@ function WebChatInput() {
   };
 
   const handleSend = () => {
-    console.log("chat", chat);
+    devLogWithTag('Chat Input', 'Sending message:', { length: chat.length });
     if (
       !textareaRef.current ||
       chat === "" ||

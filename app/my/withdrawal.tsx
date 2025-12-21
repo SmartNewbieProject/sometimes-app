@@ -22,7 +22,7 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { useTranslation } from "react-i18next";
 import i18n from "@/src/shared/libs/i18n";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
-import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 import { useWithdrawalReviewTrigger } from "@/src/features/in-app-review";
 export enum WithdrawalReason {
   FOUND_PARTNER = "FOUND_PARTNER",
@@ -100,7 +100,7 @@ export default function WithdrawalScreen() {
   const [otherReason, setOtherReason] = useState("");
   const { showErrorModal, showModal } = useModal();
   const { clearTokensOnly, my } = useAuth();
-  const { accountEvents } = useKpiAnalytics();
+  const { accountEvents } = useMixpanel();
   const { triggerIfFoundPartner } = useWithdrawalReviewTrigger();
   const isOther = watch("reason") === "OTHER";
 

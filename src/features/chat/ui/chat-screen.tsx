@@ -1,8 +1,9 @@
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { Platform, View } from "react-native";
-import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
+import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
 import { chatEventBus } from "../services/chat-event-bus";
 import { useChatActivityReviewTrigger } from "@/src/features/in-app-review";
 import { useAuth } from "@/src/features/auth";
@@ -56,13 +57,8 @@ function ChatScreen() {
     const subscription = chatEventBus.on("MESSAGE_SEND_SUCCESS").subscribe(({ payload }) => {
       const isFirstMessage = messageCountBeforeSendRef.current === 0;
 
-      const amplitude = (global as any).amplitude || {
-        track: (event: string, properties: any) => {
-          console.log('Amplitude Event:', event, properties);
-        },
-      };
 
-      amplitude.track(AMPLITUDE_KPI_EVENTS.CHAT_MESSAGE_SENT, {
+      mixpanelAdapter.track(MIXPANEL_EVENTS.CHAT_MESSAGE_SENT, {
         chat_id: id,
         chat_partner_id: chatRoomDetail?.partnerId,
         message_type: payload.serverMessage?.messageType || 'text',
@@ -75,7 +71,7 @@ function ChatScreen() {
         const now = Date.now();
         const timeToMessageMs = now - chatRoomCreatedAt;
 
-        amplitude.track(AMPLITUDE_KPI_EVENTS.FIRST_MESSAGE_SENT_AFTER_MATCH, {
+        mixpanelAdapter.track(MIXPANEL_EVENTS.FIRST_MESSAGE_SENT_AFTER_MATCH, {
           match_id: chatRoomDetail.matchId,
           chat_id: id,
           chat_partner_id: chatRoomDetail.partnerId,

@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import type { Chat } from '../types/chat';
 import { isTempId } from '../utils/generate-temp-id';
 import {dayUtils} from "@shared/libs";
+import { devLogWithTag, logError } from "@/src/shared/utils";
 
 interface UseOptimisticChatProps {
   chatRoomId: string;
@@ -18,7 +19,7 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
           pages: [{ messages: [message] }],
           pageParams: [undefined],
         };
-        console.log('Creating new data structure:', newData);
+        devLogWithTag('Optimistic Chat', 'Creating new structure');
         return newData;
       }
 
@@ -86,7 +87,7 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
     });
 
     if (error) {
-      console.error('Message send failed:', error);
+      logError('[Chat] Message send failed:', error);
     }
   }, [chatRoomId, queryClient]);
 
@@ -118,7 +119,7 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
   }, [chatRoomId, queryClient]);
 
   const updateImageUrl = useCallback((messageId: string, mediaUrl: string) => {
-    console.log('updateImageUrl called:', { messageId, mediaUrl, chatRoomId });
+    devLogWithTag('Optimistic Chat', 'Updating image:', { messageId });
     queryClient.setQueryData(['chat-list', chatRoomId], (oldData: any) => {
       if (!oldData) {
         return oldData;
@@ -128,13 +129,11 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
         ...page,
         messages: page.messages.map((message: Chat) => {
           if (message.id === messageId) {
-            console.log('Found matching message, updating:', { 
-              oldMediaUrl: message.mediaUrl, 
-              newMediaUrl: mediaUrl,
-              oldUploadStatus: message.uploadStatus 
+            devLogWithTag('Optimistic Chat', 'Image updated:', {
+              oldStatus: message.uploadStatus
             });
-            return { 
-              ...message, 
+            return {
+              ...message,
               mediaUrl,
               uploadStatus: 'completed' as const
             };
@@ -142,8 +141,6 @@ export const useOptimisticChat = ({ chatRoomId }: UseOptimisticChatProps) => {
           return message;
         }),
       }));
-
-      console.log('Updated pages:', updatedPages);
       
       const newData = {
         ...oldData,

@@ -27,6 +27,7 @@ import type {
   RawQuestion,
   Question,
 } from "../types";
+import { devLogWithTag, logError } from "@/src/shared/utils";
 
 // Weekly Report Types (Updated API Schema)
 export interface LegacyStatItem {
@@ -341,14 +342,14 @@ export type { ServerProgressStatus, UserProgressStatus };
 // Daily Question API
 export const getDailyQuestion = async (): Promise<DailyQuestionResponse> => {
   try {
-    console.log('🚀 Starting getDailyQuestion...');
+    devLogWithTag('Moment API', 'Starting getDailyQuestion');
 
     // axiosClient interceptor returns response.data directly
     // API now returns data directly without {success: boolean, data: T} wrapper
     const questionData: any = await axiosClient.get('/v1/moment/questions/daily');
-    console.log('📥 Question data received:', questionData);
-    console.log('📥 Response type:', typeof questionData);
-    console.log('📥 Response keys:', Object.keys(questionData || {}));
+    devLogWithTag('Moment API', 'Question received:', { hasData: !!questionData });
+    devLogWithTag('Moment API', 'Response type:', typeof questionData);
+    devLogWithTag('Moment API', 'Response keys:', Object.keys(questionData || {}));
 
     // Validate response structure
     if (!questionData || typeof questionData !== 'object') {
@@ -359,14 +360,14 @@ export const getDailyQuestion = async (): Promise<DailyQuestionResponse> => {
     // Handle both wrapped response { question: {...} } and direct question response
     const actualQuestion = questionData.question || questionData;
     if (!actualQuestion.questionId) {
-      console.log('ℹ️ No daily question available');
+      devLogWithTag('Moment API', 'No daily question available');
       return {
         question: null,
         weekInfo: null,
       };
     }
 
-    console.log('✅ Question data validated:', questionData);
+    devLogWithTag('Moment API', 'Question validated');
 
     // Get current week info
     const now = new Date();
@@ -379,7 +380,7 @@ export const getDailyQuestion = async (): Promise<DailyQuestionResponse> => {
       dayOfWeek: serverDayOfWeek,
     };
 
-    console.log('📅 WeekInfo calculated:', weekInfo);
+    devLogWithTag('Moment API', 'WeekInfo calculated:', weekInfo);
 
     // Convert raw question to internal format (inline implementation)
     const convertRawQuestionInline = (rawQuestion: any, weekInfo: WeekInfo) => {
@@ -397,7 +398,7 @@ export const getDailyQuestion = async (): Promise<DailyQuestionResponse> => {
         questionType = 'single_choice'; // For now, default to single choice
       }
 
-      console.log('🔄 Question type conversion:', {
+      devLogWithTag('Moment API', 'Type conversion:', {
         serverType: rawQuestion.type,
         internalType: questionType,
         hasOptions: !!rawQuestion.options && rawQuestion.options.length > 0,
@@ -416,16 +417,16 @@ export const getDailyQuestion = async (): Promise<DailyQuestionResponse> => {
     };
 
     const question = convertRawQuestionInline(actualQuestion, weekInfo);
-    console.log('🔄 Converted Question:', question);
+    devLogWithTag('Moment API', 'Question converted');
 
     return {
       question,
       weekInfo,
     };
   } catch (error) {
-    console.error('💥 getDailyQuestion failed:', error);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
+    logError('[Moment API] getDailyQuestion failed:', error);
+    logError('Error message:', error.message);
+    logError('Error stack:', error.stack);
     throw error;
   }
 };
@@ -446,22 +447,22 @@ export const getLatestQuestions = async (): Promise<LatestQuestionsResponse> => 
 
 // Submit Answer API
 export const submitAnswer = async (data: SubmitAnswerRequest): Promise<SubmitAnswerResponse> => {
-  console.log('🚀 submitAnswer called with:', data);
+  devLogWithTag('Moment API', 'submitAnswer called');
 
   try {
     // API now returns data directly without wrapper
     const response = await axiosClient.post('/v1/moment/answers', data);
-    console.log('✅ Answer submitted successfully:', response);
+    devLogWithTag('Moment API', 'Answer submitted');
 
     // API returns { id: "new-answer-uuid" }
     return response;
   } catch (error) {
-    console.error('❌ submitAnswer failed:', error);
+    logError('[Moment API] submitAnswer failed:', error);
 
     // Check if it's a structured error response from the API
     if (error.response?.data?.error) {
       const errorData = error.response.data;
-      console.log('🚫 API returned structured error:', errorData);
+      devLogWithTag('Moment API', 'Structured error:', errorData);
 
       // Create a more descriptive error with the API's structured information
       const enhancedError = new Error(errorData.message || '답변 제출에 실패했습니다');
@@ -499,71 +500,68 @@ export const generateReport = async (): Promise<GenerateReportResponse> => {
 
 // Get Weekly Report API
 export const getWeeklyReport = async (params: WeeklyReportParams): Promise<WeeklyReportResponse> => {
-  console.log('🚀 getWeeklyReport called with params:', params);
+  devLogWithTag('Moment API', 'getWeeklyReport called:', params);
 
   try {
     // API now returns data directly without {success: boolean, data: T} wrapper
     const response = await axiosClient.get('/v1/moment/reports/weekly', { params });
-    console.log('📥 Weekly Report Response:', response);
+    devLogWithTag('Moment API', 'Weekly report received');
 
     // Handle the case where API returns { reports: [...] } structure
     if (response && response.reports) {
-      console.log('✅ Reports array structure detected');
+      devLogWithTag('Moment API', 'Reports array structure detected');
       return response; // Return as-is since UI expects this structure
     }
 
     // Handle the case where API returns a single report object
     if (response && typeof response === 'object') {
-      console.log('✅ Single report structure detected, wrapping in reports array');
+      devLogWithTag('Moment API', 'Single report detected, wrapping');
       return { reports: [response] };
     }
 
     // Handle empty or invalid response
-    console.log('⚠️ No valid report data found');
+    devLogWithTag('Moment API', 'No valid report data');
     return { reports: [] };
 
   } catch (error) {
-    console.error('💥 getWeeklyReport failed:', error);
+    logError('[Moment API] getWeeklyReport failed:', error);
     throw error;
   }
 };
 
 // Report History API
 export const getReportHistory = async (params: ReportHistoryParams): Promise<ReportHistoryResponse> => {
-  console.log('🚀 getReportHistory called with params:', params);
+  devLogWithTag('Moment API', 'getReportHistory called:', params);
 
   try {
     // API now returns data directly without {success: boolean, data: T} wrapper
     const response = await axiosClient.get('/v1/moment/reports/history', { params });
-    console.log('📥 Report History Response:', response);
-    console.log('📥 Response type:', typeof response);
-    console.log('📥 Response keys:', Object.keys(response || {}));
+    devLogWithTag('Moment API', 'Report history received:', { type: typeof response });
 
     // Validate the response structure
     if (!response || typeof response !== 'object') {
-      console.error('❌ Invalid response format - not an object');
+      logError('[Moment API] Invalid response format');
       return { reports: [] };
     }
 
     // Handle reports array response
     if (response.reports && Array.isArray(response.reports)) {
-      console.log('✅ Reports array structure detected');
+      devLogWithTag('Moment API', 'Reports array detected');
       return response;
     }
 
     // Handle case where API returns just the reports array
     if (Array.isArray(response)) {
-      console.log('✅ Direct reports array detected');
+      devLogWithTag('Moment API', 'Direct reports array detected');
       return { reports: response };
     }
 
     // Handle empty response
-    console.log('ℹ️ No reports found in response');
+    devLogWithTag('Moment API', 'No reports found');
     return { reports: [] };
 
   } catch (error) {
-    console.error('💥 getReportHistory failed:', error);
-    console.error('Error message:', error.message);
+    logError('[Moment API] getReportHistory failed:', error);
 
     // Return safe fallback on error
     return { reports: [] };
@@ -572,13 +570,13 @@ export const getReportHistory = async (params: ReportHistoryParams): Promise<Rep
 
 // Latest Report API
 export const getLatestReport = async (): Promise<LatestReportResponse> => {
-  console.log('🚀 getLatestReport API call starting...');
+  devLogWithTag('Moment API', 'getLatestReport starting');
   try {
     const response = await axiosClient.get('/v1/moment/reports/latest');
-    console.log('✅ getLatestReport API response:', response);
+    devLogWithTag('Moment API', 'Latest report received');
     return response;
   } catch (error) {
-    console.error('❌ getLatestReport API error:', error);
+    logError('[Moment API] getLatestReport error:', error);
     throw error;
   }
 };

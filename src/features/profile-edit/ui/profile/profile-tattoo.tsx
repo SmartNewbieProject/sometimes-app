@@ -4,6 +4,7 @@ import type { Preferences } from "@/src/features/my-info/api";
 import colors from "@/src/shared/constants/colors";
 
 import { StepSlider } from "@/src/shared/ui";
+import Tooltip from "@/src/shared/ui/tooltip";
 import React, { useEffect, useMemo } from "react";
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
@@ -13,9 +14,41 @@ const { useMyInfoForm, useMyInfoStep } = hooks;
 const { MyInfoSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
 
-function ProfileTattoo() {
+interface ProfileTattooProps {
+  onSliderTouchStart?: () => void;
+  onSliderTouchEnd?: () => void;
+}
+
+function ProfileTattoo({ onSliderTouchStart, onSliderTouchEnd }: ProfileTattooProps) {
   const { t } = useTranslation();
   const { updateForm, tattoo, ...form } = useMyInfoForm();
+
+  const tooltips = [
+    {
+      title: t("apps.my-info.tattoo.tooltip_0_title"),
+      description: [
+        t("apps.my-info.tattoo.tooltip_0_desc_1"),
+        t("apps.my-info.tattoo.tooltip_0_desc_2"),
+      ],
+    },
+    {
+      title: t("apps.my-info.tattoo.tooltip_1_title"),
+      description: [
+        t("apps.my-info.tattoo.tooltip_1_desc_1"),
+        t("apps.my-info.tattoo.tooltip_1_desc_2"),
+        t("apps.my-info.tattoo.tooltip_1_desc_3"),
+      ],
+    },
+    {
+      title: t("apps.my-info.tattoo.tooltip_2_title"),
+      description: [
+        t("apps.my-info.tattoo.tooltip_2_desc_1"),
+        t("apps.my-info.tattoo.tooltip_2_desc_2"),
+        t("apps.my-info.tattoo.tooltip_2_desc_3"),
+      ],
+    },
+  ];
+
   const {
     data: preferencesArray = [
       {
@@ -63,6 +96,8 @@ function ProfileTattoo() {
             value={currentIndex}
             middleLabelLeft={-8}
             onChange={onChangeTattoo}
+            onTouchStart={onSliderTouchStart}
+            onTouchEnd={onSliderTouchEnd}
             options={
               preferences?.options?.map((option) => ({
                 label: option.displayName,
@@ -71,6 +106,12 @@ function ProfileTattoo() {
             }
           />
         </Loading.Lottie>
+      </View>
+      <View style={styles.tooltipContainer}>
+        <Tooltip
+          title={tooltips[currentIndex]?.title || ""}
+          description={tooltips[currentIndex]?.description || []}
+        />
       </View>
     </View>
   );
@@ -94,6 +135,9 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 28,
     marginBottom: 24,
+  },
+  tooltipContainer: {
+    marginTop: 24,
   },
 });
 

@@ -19,6 +19,7 @@ import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
 import ChatCamera from "./camera";
+import { devLogWithTag } from "@/src/shared/utils";
 
 interface GalleryListProps {
   isPhotoClicked: boolean;
@@ -63,7 +64,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
       const { status } = await MediaLibrary.requestPermissionsAsync(false, [
         "photo",
       ]);
-      console.log("status", status);
+      devLogWithTag('Gallery', 'Permission status:', status);
       if (status === "granted") {
         setPermissionGranted(true);
       } else {

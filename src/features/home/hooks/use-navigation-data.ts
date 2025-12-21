@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { NavigationMenuItem } from "../types";
+import { devLogWithTag } from "@/src/shared/utils";
 
 export const useNavigationData = (): NavigationMenuItem[] => {
   const menuItems = useMemo<NavigationMenuItem[]>(
@@ -12,7 +13,7 @@ export const useNavigationData = (): NavigationMenuItem[] => {
         backgroundImageUrl: require("@/assets/images/info-miho.png"), // 임시 대체
         onPress: () => {
           // TODO: 온보딩/가이드 페이지로 이동
-          console.log("Navigate to onboarding");
+          devLogWithTag('Navigation', 'TODO: onboarding');
         },
       },
       {
@@ -22,7 +23,7 @@ export const useNavigationData = (): NavigationMenuItem[] => {
         backgroundImageUrl: require("@/assets/images/roulette.png"), // 임시 대체
         onPress: () => {
           // TODO: 이벤트/모먼트 페이지로 이동
-          console.log("Navigate to events");
+          devLogWithTag('Navigation', 'TODO: events');
         },
       },
       {
@@ -32,7 +33,7 @@ export const useNavigationData = (): NavigationMenuItem[] => {
         backgroundImageUrl: require("@/assets/images/interest-info.png"), // 임시 대체
         onPress: () => {
           // TODO: 활동 메뉴 모달 또는 페이지로 이동
-          console.log("Navigate to activities");
+          devLogWithTag('Navigation', 'TODO: activities');
         },
       },
     ],

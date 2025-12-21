@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
 import { useActiveSession, useCreateSession } from "@/src/features/somemate/queries/use-ai-chat";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import type { AiChatCategory } from "@/src/features/somemate/types";
 import { ReportButton } from "@/src/features/somemate/ui/report-button";
 import { useCurrentGem } from "@/src/features/payment/hooks/use-current-gem";
@@ -22,7 +22,7 @@ export default function SomemateScreen() {
   const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState<AiChatCategory>(t('features.somemate.intro.categories.daily') as AiChatCategory);
   const { showModal } = useModal();
-  const { somemateEvents } = useKpiAnalytics();
+  const { somemateEvents } = useMixpanel();
 
   const { data: activeSession, isLoading: isLoadingSession, refetch } = useActiveSession();
   const createSessionMutation = useCreateSession();

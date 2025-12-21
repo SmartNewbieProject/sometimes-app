@@ -13,6 +13,7 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   isDisabled?: boolean;
   style?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
+  textInputStyle?: StyleProp<ViewStyle>;
   isPassword?: boolean;
 }
 
@@ -22,6 +23,7 @@ export function Input({
   isDisabled,
   style,
   containerStyle,
+  textInputStyle,
   placeholderTextColor = '#9CA3AF',
   editable = true,
   isPassword = false,
@@ -76,9 +78,11 @@ export function Input({
           placeholderTextColor={placeholderTextColor}
           editable={!isDisabled && editable}
           secureTextEntry={isPassword && !isPasswordVisible}
-          style={[styles.input, { fontSize: getFontSize() }]}
+          style={[styles.input, { fontSize: getFontSize() }, textInputStyle]}
           autoCapitalize="none"
           autoCorrect={false}
+          importantForAutofill="yes"
+          textContentType="none"
           {...props}
         />
         {isPassword && (
@@ -101,6 +105,9 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    color: semanticColors.text.primary,
+    paddingVertical: Platform.OS === 'ios' ? 8 : 4,
+    minHeight: Platform.OS === 'ios' ? 40 : undefined,
   },
   heightSm: {
     height: 40,

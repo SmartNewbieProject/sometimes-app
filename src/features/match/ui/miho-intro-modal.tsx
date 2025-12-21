@@ -134,20 +134,20 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
   useEffect(() => {
     if (visible && rarityStyle) {
       modalOpacity.value = withTiming(1, {
-        duration: 300,
+        duration: 200,
         easing: Easing.out(Easing.ease),
       });
 
       mihoScale.value = withDelay(
-        200,
+        100,
         withSpring(1, {
-          damping: 15,
-          stiffness: 150,
+          damping: 12,
+          stiffness: 250,
         })
       );
 
       const animationConfig = getAnimationConfig(rarityStyle.animation);
-      speechBubbleScale.value = withDelay(600, animationConfig);
+      speechBubbleScale.value = withDelay(300, animationConfig);
 
       if (rarityStyle.sparkle) {
         sparkleOpacity.value = withDelay(
@@ -196,23 +196,23 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
   const getAnimationConfig = (animation: string) => {
     switch (animation) {
       case 'bounce':
-        return withSpring(1, { damping: 8, stiffness: 200 });
+        return withSpring(1, { damping: 6, stiffness: 300 });
       case 'shake':
         return withSequence(
-          withSpring(1.1, { damping: 5, stiffness: 300 }),
-          withSpring(1, { damping: 10, stiffness: 200 })
+          withSpring(1.1, { damping: 4, stiffness: 400 }),
+          withSpring(1, { damping: 8, stiffness: 300 })
         );
       case 'heartbeat':
         return withSequence(
-          withSpring(1.15, { damping: 5, stiffness: 400 }),
-          withSpring(0.95, { damping: 5, stiffness: 400 }),
-          withSpring(1.1, { damping: 5, stiffness: 400 }),
-          withSpring(1, { damping: 10, stiffness: 200 })
+          withSpring(1.15, { damping: 4, stiffness: 500 }),
+          withSpring(0.95, { damping: 4, stiffness: 500 }),
+          withSpring(1.1, { damping: 4, stiffness: 500 }),
+          withSpring(1, { damping: 8, stiffness: 300 })
         );
       case 'slideUp':
-        return withSpring(1, { damping: 14, stiffness: 180 });
+        return withSpring(1, { damping: 10, stiffness: 250 });
       default:
-        return withSpring(1, { damping: 12, stiffness: 200 });
+        return withSpring(1, { damping: 10, stiffness: 300 });
     }
   };
 
@@ -237,12 +237,12 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
 
   const handleClose = () => {
     modalOpacity.value = withTiming(0, {
-      duration: 200,
+      duration: 150,
       easing: Easing.in(Easing.ease),
     });
     setTimeout(() => {
       onClose();
-    }, 200);
+    }, 150);
   };
 
   if (!visible || !message || !rarityStyle) return null;

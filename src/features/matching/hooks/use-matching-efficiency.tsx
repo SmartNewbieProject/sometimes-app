@@ -5,8 +5,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
-import { useKpiAnalytics } from '@/src/shared/hooks/use-kpi-analytics';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 
 export interface MatchingStatistics {
   totalAttempts: number;
@@ -34,7 +35,7 @@ export interface FailureAnalysis {
 }
 
 export const useMatchingEfficiency = () => {
-  const { matchingEvents, matchingEfficiencyEvents } = useKpiAnalytics();
+  const { matchingEvents, matchingEfficiencyEvents } = useMixpanel();
   const [statistics, setStatistics] = useState<MatchingStatistics>({
     totalAttempts: 0,
     successfulMatches: 0,
@@ -62,8 +63,8 @@ export const useMatchingEfficiency = () => {
 
   // 실패 원인 분석
   const analyzeFailureReasons = useCallback((
-    failureData: Array<{ type: string; count: number }>
-  ): Array<FailureAnalysis> => {
+    failureData: { type: string; count: number }[]
+  ): FailureAnalysis[] => {
     const totalFailures = failureData.reduce((sum, item) => sum + item.count, 0);
 
     return failureData.map(item => ({
@@ -86,13 +87,7 @@ export const useMatchingEfficiency = () => {
       userTier?: string;
     }
   ) => {
-    const amplitude = (global as any).amplitude || {
-      track: (event: string, properties: any) => {
-        console.log('Amplitude Event:', event, properties);
-      }
-    };
-
-    amplitude.track(AMPLITUDE_KPI_EVENTS.MATCHING_ATTEMPT, {
+    mixpanelAdapter.track(MIXPANEL_EVENTS.MATCHING_REQUESTED, {
       action_type: 'like_requested',
       connection_id: connectionId,
       user_context: {
@@ -182,15 +177,15 @@ export const useMatchingEfficiency = () => {
 
   // 실패 방지 추천 생성
   const generateFailurePreventionRecommendations = useCallback((
-    failureAnalysis: Array<FailureAnalysis>,
+    failureAnalysis: FailureAnalysis[],
     currentStatistics: MatchingStatistics
   ) => {
-    const recommendations: Array<{
+    const recommendations: {
       type: 'immediate' | 'short_term' | 'long_term';
       priority: 'high' | 'medium' | 'low';
       action: string;
       expectedImprovement: string;
-    }> = [];
+    }[] = [];
 
     // 높은 실패율의 경우
     if (currentStatistics.failureRate > 30) {

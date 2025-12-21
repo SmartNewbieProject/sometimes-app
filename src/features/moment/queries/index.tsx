@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useInfiniteQuery, useQueryClient, QueryClient } from "@tanstack/react-query";
-import { MOMENT_QUERY_KEYS } from "../apis";
+import apis, { MOMENT_QUERY_KEYS } from "../apis";
 import type {
   MomentSlide,
   MomentReportResponse,
@@ -23,7 +23,7 @@ import type {
   SyncStatusResponse,
   SubmitAnswerErrorResponse,
 } from "../types";
-import apis from "../apis";
+import { devLogWithTag, logError } from "@/src/shared/utils";
 
 const CLIENT_SLIDES: MomentSlide[] = [
   {
@@ -74,21 +74,20 @@ export const useDailyQuestionQuery = () =>
     refetchOnWindowFocus: false, // 창 포커스시 불필요한 재요청 방지
     select: (data: DailyQuestionResponse) => data,
     retry: (failureCount, error) => {
-      console.log(`🔄 Retry attempt ${failureCount + 1}, error:`, error);
+      devLogWithTag('Moment Query', `Retry ${failureCount + 1}:`, error);
 
       // Don't retry authentication errors
       if (error?.status === 401 || error?.errorCode === 'INSUFFICIENT_PERMISSION') {
-        console.log('🚫 Auth error - not retrying');
+        devLogWithTag('Moment Query', 'Auth error - not retrying');
         return false;
       }
       return failureCount < 3;
     },
     onError: (error) => {
-      console.error('❌ Daily question query failed:', {
+      logError('[Moment] Daily question failed:', {
         message: error.message,
         status: error.status,
         errorCode: error.errorCode,
-        stack: error.stack
       });
     },
   });
@@ -118,7 +117,7 @@ export const useSubmitAnswerMutation = () => {
   return useMutation({
     mutationFn: (data: SubmitAnswerRequest) => apis.submitAnswer(data),
     onSuccess: (data) => {
-      console.log('✅ Answer submission successful:', data);
+      devLogWithTag('Moment Answer', 'Submission success');
 
       // 답변 제출 성공 시 관련 쿼리 무효화
       // NOTE: DAILY_QUESTION은 완료 UI 표시 후 사용자가 "질문함으로 돌아가기" 버튼을
@@ -129,14 +128,13 @@ export const useSubmitAnswerMutation = () => {
       queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.PROGRESS_STATUS });
     },
     onError: (error) => {
-      console.error('❌ Answer submission failed:', error);
+      logError('[Moment] Answer submission failed:', error);
 
       // Enhanced error logging for structured API errors
       if (error.name === 'SubmitAnswerError') {
-        console.log('🚫 Structured error details:', {
+        devLogWithTag('Moment Answer', 'Error details:', {
           blockedReason: error.blockedReason,
           suggestedAction: error.suggestedAction,
-          originalMessage: error.message,
         });
       }
     },
@@ -215,13 +213,13 @@ export const useLatestReportQuery = () =>
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     enabled: true, // 명시적으로 활성화
     onError: (error) => {
-      console.error('❌ useLatestReportQuery error:', error);
+      logError('[Moment] Latest report error:', error);
     },
     onSuccess: (data) => {
-      console.log('✅ useLatestReportQuery success:', data);
+      devLogWithTag('Moment Report', 'Success');
     },
     onSettled: (data, error) => {
-      console.log('🔄 useLatestReportQuery settled:', { data, error });
+      devLogWithTag('Moment Report', 'Settled:', { hasData: !!data, hasError: !!error });
     }
   });
 

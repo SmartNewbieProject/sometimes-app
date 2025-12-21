@@ -1,11 +1,22 @@
 import dayjs from 'dayjs';
 import { REVIEW_CONFIG } from '../constants/review-config';
-import { getRequestCount, getLastRequestDate } from './review-storage';
+import { getRequestCount, getLastRequestDate, getDismissalDate } from './review-storage';
 import type { ReviewEligibilityResult } from '../types';
 
 export const checkReviewEligibility = async (
 	userCreatedAt?: string,
 ): Promise<ReviewEligibilityResult> => {
+	const dismissalDate = await getDismissalDate();
+	if (dismissalDate) {
+		const daysSinceDismissal = dayjs().diff(dayjs(dismissalDate), 'day');
+		if (daysSinceDismissal < REVIEW_CONFIG.DISMISSAL_INTERVAL_DAYS) {
+			return {
+				canRequest: false,
+				reason: 'recently_dismissed',
+			};
+		}
+	}
+
 	const requestCount = await getRequestCount();
 	if (requestCount >= REVIEW_CONFIG.MAX_REQUEST_COUNT) {
 		return {

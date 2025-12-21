@@ -8,19 +8,24 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "ANDROID_HOME": "/Users/user/Library/Android/sdk"
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk",
+        "SENTRY_ALLOW_FAILURE": "true"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "ANDROID_HOME": "/Users/user/Library/Android/sdk"
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk",
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
+        "SENTRY_ALLOW_FAILURE": "true"
       }
     },
     "adhoc": {
       "distribution": "internal",
       "env": {
-        "ANDROID_HOME": "/Users/user/Library/Android/sdk"
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk",
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
+        "SENTRY_ALLOW_FAILURE": "true"
       },
       "ios": {
         "buildConfiguration": "Release"
@@ -32,7 +37,8 @@
     "production": {
       "autoIncrement": true,
       "env": {
-        "ANDROID_HOME": "/Users/user/Library/Android/sdk"
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk",
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}"
       },
       "ios": {
         "distribution": "store",

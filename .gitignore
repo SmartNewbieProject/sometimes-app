@@ -63,3 +63,5 @@ review.md
 # Build artifacts
 *.aab
 builds/
+
+.env.local

@@ -14,6 +14,7 @@ import { Text } from "../text";
 import { LoadingModal } from "../loading-modal";
 import { useTranslation } from "react-i18next";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import { devLogWithTag, devWarn } from "@/src/shared/utils";
 
 export interface ImageSelectorProps {
   value?: string;
@@ -75,12 +76,12 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
   }));
   const { showErrorModal, showModal, hideModal } = useModal();
   const pickImage = async () => {
-    console.log('[ImageSelector] pickImage started');
+    devLogWithTag('ImageSelector', 'pickImage started');
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    console.log('[ImageSelector] Permission status:', status);
+    devLogWithTag('ImageSelector', 'Permission status:', status);
 
     if (status !== "granted") {
-      console.log('[ImageSelector] Permission denied');
+      devLogWithTag('ImageSelector', 'Permission denied');
       Alert.alert("권한 필요", "사진을 가져오기 위해서는 권한이 필요합니다.", [
         { text: "설정 열기", onPress: () => Linking.openSettings() },
         {
@@ -91,22 +92,22 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
       return null;
     }
 
-    console.log('[ImageSelector] Launching image picker...');
+    devLogWithTag('ImageSelector', 'Launching image picker...');
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "livePhotos"],
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
-    console.log('[ImageSelector] Image picker result:', { canceled: result.canceled, assetsCount: result.assets?.length });
+    devLogWithTag('ImageSelector', 'Image picker result:', { canceled: result.canceled, assetsCount: result.assets?.length });
 
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
-      console.log('[ImageSelector] Picked image URI length:', pickedUri.length);
+      devLogWithTag('ImageSelector', 'Picked image URI length:', pickedUri.length);
 
       setImageModal(false);
 
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
-        console.log('[ImageSelector] HEIC format detected on web');
+        devLogWithTag('ImageSelector', 'HEIC format detected on web');
         showErrorModal(
           "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
           "announcement"
@@ -114,45 +115,45 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
         return null;
       }
 
-      console.log('[ImageSelector] Converting to JPEG...');
+      devLogWithTag('ImageSelector', 'Converting to JPEG...');
       let jpegUri = await convertToJpeg(pickedUri);
-      console.log('[ImageSelector] JPEG URI length:', jpegUri.length);
+      devLogWithTag('ImageSelector', 'JPEG URI length:', jpegUri.length);
 
       if (!skipCompression) {
         try {
-          console.log('[ImageSelector] Starting compression...');
+          devLogWithTag('ImageSelector', 'Starting compression...');
           showModal({
             custom: () => <LoadingModal message="이미지를 최적화하고 있어요..." />,
           });
 
           const compressed = await compressImage(jpegUri, PROFILE_IMAGE_CONFIG);
           jpegUri = compressed.uri;
-          console.log('[ImageSelector] Compression completed, URI length:', jpegUri.length);
+          devLogWithTag('ImageSelector', 'Compression completed, URI length:', jpegUri.length);
 
           hideModal();
         } catch (error) {
-          console.warn('이미지 압축 실패, 원본 사용:', error);
+          devWarn('이미지 압축 실패, 원본 사용:', error);
           hideModal();
         }
       }
 
-      console.log('[ImageSelector] Calling onChange with URI length:', jpegUri.length);
+      devLogWithTag('ImageSelector', 'Calling onChange with URI length:', jpegUri.length);
       onChange(jpegUri);
-      console.log('[ImageSelector] onChange called successfully');
+      devLogWithTag('ImageSelector', 'onChange called successfully');
     } else {
-      console.log('[ImageSelector] Image selection canceled');
+      devLogWithTag('ImageSelector', 'Image selection canceled');
       setImageModal(false);
     }
     return null;
   };
 
   const takePhoto = async () => {
-    console.log('[ImageSelector] takePhoto started');
+    devLogWithTag('ImageSelector', 'takePhoto started');
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
-    console.log('[ImageSelector] Camera permission status:', status);
+    devLogWithTag('ImageSelector', 'Camera permission status:', status);
 
     if (status !== "granted") {
-      console.log('[ImageSelector] Camera permission denied');
+      devLogWithTag('ImageSelector', 'Camera permission denied');
       Alert.alert("권한 필요", "카메라 사용을 위해서 권한이 필요합니다", [
         { text: "설정 열기", onPress: () => Linking.openSettings() },
         {
@@ -163,13 +164,13 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
       return null;
     }
 
-    console.log('[ImageSelector] Launching camera...');
+    devLogWithTag('ImageSelector', 'Launching camera...');
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images", "livePhotos"],
       allowsMultipleSelection: false,
       selectionLimit: 1,
     });
-    console.log('[ImageSelector] Camera result:', { canceled: result.canceled, assetsCount: result.assets?.length });
+    devLogWithTag('ImageSelector', 'Camera result:', { canceled: result.canceled, assetsCount: result.assets?.length });
 
     status = (await MediaLibrary.requestPermissionsAsync()).status;
     if (status === "granted" && result.assets?.[0].uri) {
@@ -178,12 +179,12 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
 
     if (!result.canceled) {
       const pickedUri = result.assets[0].uri;
-      console.log('[ImageSelector] Captured image URI length:', pickedUri.length);
+      devLogWithTag('ImageSelector', 'Captured image URI length:', pickedUri.length);
 
       setImageModal(false);
 
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
-        console.log('[ImageSelector] HEIC format detected on web (camera)');
+        devLogWithTag('ImageSelector', 'HEIC format detected on web (camera)');
         showErrorModal(
           "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
           "announcement"
@@ -191,33 +192,33 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
         return null;
       }
 
-      console.log('[ImageSelector] Converting to JPEG (camera)...');
+      devLogWithTag('ImageSelector', 'Converting to JPEG (camera)...');
       let jpegUri = await convertToJpeg(pickedUri);
-      console.log('[ImageSelector] JPEG URI length (camera):', jpegUri.length);
+      devLogWithTag('ImageSelector', 'JPEG URI length (camera):', jpegUri.length);
 
       if (!skipCompression) {
         try {
-          console.log('[ImageSelector] Starting compression (camera)...');
+          devLogWithTag('ImageSelector', 'Starting compression (camera)...');
           showModal({
             custom: () => <LoadingModal message="이미지를 최적화하고 있어요..." />,
           });
 
           const compressed = await compressImage(jpegUri, PROFILE_IMAGE_CONFIG);
           jpegUri = compressed.uri;
-          console.log('[ImageSelector] Compression completed (camera), URI length:', jpegUri.length);
+          devLogWithTag('ImageSelector', 'Compression completed (camera), URI length:', jpegUri.length);
 
           hideModal();
         } catch (error) {
-          console.warn('이미지 압축 실패, 원본 사용:', error);
+          devWarn('이미지 압축 실패, 원본 사용:', error);
           hideModal();
         }
       }
 
-      console.log('[ImageSelector] Calling onChange (camera) with URI length:', jpegUri.length);
+      devLogWithTag('ImageSelector', 'Calling onChange (camera) with URI length:', jpegUri.length);
       onChange(jpegUri);
-      console.log('[ImageSelector] onChange called successfully (camera)');
+      devLogWithTag('ImageSelector', 'onChange called successfully (camera)');
     } else {
-      console.log('[ImageSelector] Camera capture canceled');
+      devLogWithTag('ImageSelector', 'Camera capture canceled');
       setImageModal(false);
     }
     return null;

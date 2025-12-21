@@ -1,5 +1,5 @@
 import { tryCatch } from "@/src/shared/libs";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useGlobalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { BackHandler, StyleSheet, View } from "react-native";
@@ -40,7 +40,7 @@ function useUniversityDetails() {
     }
 
     trackSignupEvent("next_button_click", "to_done");
-    track("Singup_university_details", {
+    mixpanelAdapter.track("Singup_university_details", {
       grade: form.grade,
       department: form.departmentName,
       studentNumber: `${form.studentNumber}`,

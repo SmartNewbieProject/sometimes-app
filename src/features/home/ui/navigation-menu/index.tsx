@@ -7,9 +7,6 @@ import colors from "@/src/shared/constants/colors";
 const { width: screenWidth } = Dimensions.get("window");
 
 export const NavigationMenu = ({ items, itemHeight, itemsPerRow }: NavigationMenuProps) => {
-  // Props 출력
-  console.log('NavigationMenu Props:', { itemsCount: items.length, itemHeight, itemsPerRow });
-
   const containerWidth = screenWidth - 40; // 20px 양쪽 패딩 제외
   const itemWidth = (containerWidth - (itemsPerRow - 1) * 16) / itemsPerRow; // 아이템 간 간격 고려
 

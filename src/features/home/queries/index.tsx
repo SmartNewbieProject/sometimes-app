@@ -26,6 +26,8 @@ export const usePreferenceSelfQuery = () =>
     queryKey: ["preference-self"],
     queryFn: apis.getPreferencesSelf,
     staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   });
 
 export const useNotificationQuery = () =>

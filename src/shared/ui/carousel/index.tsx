@@ -3,6 +3,7 @@ import { View, FlatList, StyleSheet, Dimensions, type NativeSyntheticEvent, type
 import { Image } from 'expo-image';
 import type { RefObject } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import { devLogWithTag } from '@/src/shared/utils';
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 
@@ -36,7 +37,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const slideSize = width;
       const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
-      console.log('[Carousel] handleScroll index:', index);
+      devLogWithTag('Carousel', 'Scroll index:', index);
       onIndexChange?.(index);
       setCurrent(index);
     };
@@ -46,7 +47,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(
       const interval = setInterval(() => {
         setCurrent(prev => {
           const next = (prev + 1) % images.length;
-          console.log('[Carousel] autoPlay scrollToIndex:', next);
+          devLogWithTag('Carousel', 'AutoPlay index:', next);
           if (flatListRef?.current) {
             flatListRef.current.scrollToIndex({ index: next, animated: true });
           }

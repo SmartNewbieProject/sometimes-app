@@ -38,6 +38,8 @@ export const InputForm = ({
   handleCancelReply,
 }: InputFormProps) => {
   const { t } = useTranslation();
+  const currentContent = form.watch("content");
+
   return (
     <View>
       {editingCommentId && (
@@ -89,7 +91,7 @@ export const InputForm = ({
               ? handleSubmitUpdate
               : form.handleSubmit(handleSubmit)
           }
-          disabled={!editingContent.trim()}
+          disabled={!currentContent || !currentContent.trim()}
         />
       </View>
     </View>
@@ -137,11 +139,13 @@ const CommentInput = ({
   <Form.Input
     name="content"
     control={control}
-    style={styles.commentInput}
+    containerStyle={styles.commentInputContainer}
+    textInputStyle={styles.commentInputText}
     placeholder={i18n.t("features.community.ui.comment.input_form.comment_placeholder")}
-    onChange={(e) => setEditingContent(e.nativeEvent.text)}
+    placeholderTextColor={semanticColors.text.muted}
     returnKeyType="send"
     multiline={false}
+    editable={true}
   />
 );
 
@@ -202,13 +206,17 @@ const styles = StyleSheet.create({
     height: 25,
     lineHeight: 25,
   },
-  commentInput: {
-    width: "100%",
+  commentInputContainer: {
     flex: 1,
-    paddingHorizontal: 8,
-    fontSize: 14,
-    color: semanticColors.brand.accent,
     borderBottomWidth: 0,
+    backgroundColor: semanticColors.surface.background,
+    paddingHorizontal: 8,
+    minHeight: 40,
+    justifyContent: 'center',
+  },
+  commentInputText: {
+    fontSize: 14,
+    color: semanticColors.text.primary,
   },
   sendButton: {
     marginRight: 12,

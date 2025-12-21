@@ -16,6 +16,7 @@ import { QuestionCard } from "./question-card";
 import { AnswerInput } from "./answer-input";
 import { sentStepStyles } from "./envelope.styles";
 import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
+import { devLogWithTag } from "@/src/shared/utils";
 
 const { width } = Dimensions.get("window");
 
@@ -64,7 +65,7 @@ export const QuestionDetailPage = () => {
   }, [dailyQuestionResponse?.question]);
 
   // 상세한 디버깅 로그 추가
-  console.log('🔍 QuestionDetail Debug:', {
+  devLogWithTag('Question Detail', 'Debug:', {
     dailyQuestionResponse,
     isLoading: questionLoading,
     hasQuestion: !!dailyQuestionResponse?.question,
@@ -77,7 +78,7 @@ export const QuestionDetailPage = () => {
     if (dailyQuestionResponse?.question) {
       const question = dailyQuestionResponse.question;
 
-      console.log('📋 Question data received:', {
+      devLogWithTag('Question Detail', 'Data received:', {
         id: question.id,
         text: question.text,
         type: question.type,
@@ -92,7 +93,7 @@ export const QuestionDetailPage = () => {
         trackQuestionEnvelopeView(props);
       }
 
-      console.log('📝 Starting with text input (default behavior)');
+      devLogWithTag('Question Detail', 'Starting with text input');
     }
   }, [dailyQuestionResponse?.question]);
   const queryClient = useQueryClient();
@@ -125,7 +126,7 @@ export const QuestionDetailPage = () => {
     const question = dailyQuestionResponse?.question;
     const hasOptions = question?.options && question.options.length > 0;
 
-    console.log('🔄 Toggle Question Type:', {
+    devLogWithTag('Question Detail', 'Toggle type:', {
       currentType: questionType,
       hasOptions,
       optionsCount: question?.options?.length || 0,
@@ -133,7 +134,7 @@ export const QuestionDetailPage = () => {
 
     if (questionType === 'text') {
       if (hasOptions) {
-        console.log('✅ Switching to multiple-choice UI');
+        devLogWithTag('Question Detail', 'Switching to multiple-choice');
         if (question) {
           trackQuestionTypeToggle({
             question_id: question.id,
@@ -145,7 +146,7 @@ export const QuestionDetailPage = () => {
         setSelectedOption(null);
         setTextAnswer('');
       } else {
-        console.log('⚠️ Cannot switch to multiple-choice: no options available');
+        devLogWithTag('Question Detail', 'Cannot switch: no options');
         showModal({
           title: t('features.moment.question_detail.modal.notice'),
           children: <Text size="14" weight="normal" textColor="dark">{t('features.moment.question_detail.modal.no_multiple_choice')}</Text>,
@@ -156,7 +157,7 @@ export const QuestionDetailPage = () => {
         });
       }
     } else {
-      console.log('📝 Switching to text input UI');
+      devLogWithTag('Question Detail', 'Switching to text input');
       if (question) {
         trackQuestionTypeToggle({
           question_id: question.id,

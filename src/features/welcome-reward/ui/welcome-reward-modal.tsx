@@ -39,23 +39,23 @@ const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
   useEffect(() => {
     if (visible) {
       modalOpacity.value = withTiming(1, {
-        duration: 300,
+        duration: 200,
         easing: Easing.out(Easing.ease),
       });
-      
+
       mihoScale.value = withDelay(
-        200,
+        100,
         withSpring(1, {
-          damping: 15,
-          stiffness: 150,
+          damping: 12,
+          stiffness: 250,
         })
       );
 
       speechBubbleScale.value = withDelay(
-        600,
+        300,
         withSpring(1, {
-          damping: 12,
-          stiffness: 200,
+          damping: 10,
+          stiffness: 300,
         })
       );
     } else {
@@ -81,12 +81,12 @@ const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
 
   const handleClose = () => {
     modalOpacity.value = withTiming(0, {
-      duration: 200,
+      duration: 150,
       easing: Easing.in(Easing.ease),
     });
     setTimeout(() => {
       onClose();
-    }, 200);
+    }, 150);
   };
 
   if (!visible) return null;

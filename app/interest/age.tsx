@@ -7,7 +7,7 @@ import Loading from "@/src/features/loading";
 import { environmentStrategy, platform } from "@/src/shared/libs";
 import { PalePurpleGradient , Text } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Interest from "@features/interest";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -66,7 +66,7 @@ export default function AgeSelectionScreen() {
   );
 
   const onNext = () => {
-    track("Interest_Age", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    mixpanelAdapter.track("Interest_Age", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/like-mbti");
   };
 

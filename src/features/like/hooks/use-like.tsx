@@ -1,4 +1,5 @@
 import { queryClient } from "@/src/shared/config/query";
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { axiosClient, tryCatch } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
@@ -11,7 +12,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../../idle-match-timer/hooks";
 import { determineFailureReason, predictFailureLikelihood } from "../../matching/utils/failure-analyzer";
-import { AMPLITUDE_KPI_EVENTS, LIKE_TYPES } from "@/src/shared/constants/amplitude-kpi-events";
+import { MIXPANEL_EVENTS, LIKE_TYPES } from "@/src/shared/constants/mixpanel-events";
 import { useTranslation } from "react-i18next";
 
 const useLikeMutation = () =>
@@ -19,13 +20,8 @@ const useLikeMutation = () =>
     mutationFn: (connectionId: string) =>
       axiosClient.post(`/v1/matching/interactions/like/${connectionId}`),
     onMutate: async (connectionId: string) => {
-      const amplitude = (global as any).amplitude || {
-        track: (event: string, properties: any) => {
-          console.log('Amplitude Event:', event, properties);
-        }
-      };
 
-      amplitude.track(AMPLITUDE_KPI_EVENTS.LIKE_SENT, {
+      mixpanelAdapter.track(MIXPANEL_EVENTS.LIKE_SENT, {
         target_profile_id: connectionId,
         like_type: LIKE_TYPES.FREE,
         timestamp: new Date().toISOString(),
@@ -42,13 +38,8 @@ const useLikeMutation = () =>
       await queryClient.refetchQueries({ queryKey: ["liked", "to-me"] });
 
       // 매칭 성공 이벤트 트래킹
-      const amplitude = (global as any).amplitude || {
-        track: (event: string, properties: any) => {
-          console.log('Amplitude Event:', event, properties);
-        }
-      };
 
-      amplitude.track(AMPLITUDE_KPI_EVENTS.MATCHING_SUCCESS, {
+      mixpanelAdapter.track(MIXPANEL_EVENTS.MATCHING_SUCCESS, {
         action_type: 'like_success',
         result: 'success',
         timestamp: new Date().toISOString(),
@@ -62,14 +53,9 @@ const useLikeMutation = () =>
       // 실패 원인 분석 및 트래킹
       const failureReason = determineFailureReason(error);
 
-      const amplitude = (global as any).amplitude || {
-        track: (event: string, properties: any) => {
-          console.log('Amplitude Event:', event, properties);
-        }
-      };
 
       // 매칭 실패 이벤트 트래킹
-      amplitude.track(AMPLITUDE_KPI_EVENTS.MATCHING_FAILURE, {
+      mixpanelAdapter.track(MIXPANEL_EVENTS.MATCHING_FAILURE, {
         action_type: 'like_failed',
         failure_type: failureReason.type,
         failure_category: failureReason.category,
@@ -97,7 +83,7 @@ const useLikeMutation = () =>
       });
 
       // 실패 예측 이벤트 트래킹
-      amplitude.track('MATCHING_FAILURE_PREDICTION', {
+      mixpanelAdapter.track('MATCHING_FAILURE_PREDICTION', {
         risk_score: failurePrediction.riskScore,
         primary_risk: failurePrediction.primaryRisk,
         is_high_risk: failurePrediction.isHighRisk,

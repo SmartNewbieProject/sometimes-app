@@ -8,7 +8,8 @@ import { generateTempId } from '../utils/generate-temp-id';
 import { compressImage, isImageTooLarge } from '../utils/image-compression';
 import { chatEventBus } from './chat-event-bus';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { devLogWithTag, logError, devWarn } from '@/src/shared/utils';
 
 class SocketConnectionManager {
 	private socket: Socket | null = null;
@@ -37,7 +38,6 @@ class SocketConnectionManager {
 					serverMessage: Chat;
 					error?: string;
 				}) => {
-					console.log('check2');
 					if (response?.success) {
 						resolve(response.serverMessage);
 					} else {
@@ -66,7 +66,7 @@ class SocketConnectionManager {
 		while (this.pendingMessages.length > 0) {
 			const message = this.pendingMessages.shift();
 			if (message) {
-				console.log(`Processing queued message: ${message.event}`);
+				devLogWithTag('Socket', `Processing queued: ${message.event}`);
 				if (message.callback) {
 					this.socket.emit(message.event, message.payload, message.callback);
 				} else {
@@ -78,12 +78,12 @@ class SocketConnectionManager {
 
 	private attemptReconnect() {
 		if (this.isReconnecting) {
-			console.log('Already attempting to reconnect...');
+			devLogWithTag('Socket', 'Already reconnecting...');
 			return;
 		}
 
 		if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-			console.error('Max reconnection attempts reached');
+			logError('Max reconnection attempts reached');
 			chatEventBus.emit({
 				type: 'SOCKET_RECONNECT_FAILED',
 				payload: { error: 'Max reconnection attempts reached' },
@@ -94,7 +94,7 @@ class SocketConnectionManager {
 		this.isReconnecting = true;
 		this.reconnectAttempts++;
 
-		console.log(`Reconnection attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
+		devLogWithTag('Socket', `Reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
 
 		chatEventBus.emit({
 			type: 'SOCKET_RECONNECTING',
@@ -134,12 +134,12 @@ class SocketConnectionManager {
 
 	private setupRoomHandlers() {
 		chatEventBus.on('CHAT_ROOM_JOIN_REQUESTED').subscribe(({ payload }) => {
-			console.log(`Joining room: ${payload.chatRoomId}`);
+			devLogWithTag('Chat Room', `Joining: ${payload.chatRoomId}`);
 			this.socket?.emit('joinRoom', { chatRoomId: payload.chatRoomId });
 		});
 
 		chatEventBus.on('CHAT_ROOM_LEAVE_REQUESTED').subscribe(({ payload }) => {
-			console.log(`Leaving room: ${payload.chatRoomId}`);
+			devLogWithTag('Chat Room', `Leaving: ${payload.chatRoomId}`);
 			this.socket?.emit('leaveRoom', { chatRoomId: payload.chatRoomId });
 		});
 	}
@@ -151,10 +151,10 @@ class SocketConnectionManager {
 	}
 
 	private handleMessageSend(payload: any) {
-		console.log('payload1', payload);
+		devLogWithTag('Socket', 'Sending message:', { tempId: payload.tempId });
 
 		if (!this.socket?.connected) {
-			console.warn('Socket not connected, attempting reconnection...');
+			devLogWithTag('Socket', 'Not connected, reconnecting...');
 			this.attemptReconnect();
 			this.queueMessage('sendMessage', payload);
 			return;
@@ -164,7 +164,7 @@ class SocketConnectionManager {
 			'sendMessage',
 			payload,
 			(response: { success: boolean; serverMessage: Chat; error?: string }) => {
-				console.log('payload2', payload, response);
+				devLogWithTag('Socket', 'Message response:', { success: response?.success });
 
 				if (response?.success) {
 					this.emitMessageSuccess(response.serverMessage, payload.tempId);
@@ -177,7 +177,7 @@ class SocketConnectionManager {
 
 	private emitMessageSuccess(serverMessage: Chat, tempId: string) {
 		// KPI 이벤트: 채팅 메시지 전송
-		mixpanelAdapter.track(AMPLITUDE_KPI_EVENTS.CHAT_MESSAGE_SENT, {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.CHAT_MESSAGE_SENT, {
 			chat_id: serverMessage.chatRoomId,
 			message_type: serverMessage.messageType || 'text',
 			timestamp: Date.now(),
@@ -196,7 +196,7 @@ class SocketConnectionManager {
 
 	private handleMessageFailure(error: string | undefined, payload: any) {
 		if (!this.socket?.connected) {
-			console.warn('Message send failed due to disconnection, attempting reconnection...');
+			devLogWithTag('Socket', 'Message failed, reconnecting...');
 			this.attemptReconnect();
 			this.queueMessage('sendMessage', payload);
 		} else {
@@ -258,7 +258,7 @@ class SocketConnectionManager {
 				quality: 0.7,
 				format: 'jpeg',
 			}).catch((compressionError) => {
-				console.warn('이미지 압축 실패, 원본 사용:', compressionError);
+				devWarn('이미지 압축 실패, 원본 사용:', compressionError);
 				return base64;
 			});
 		}
@@ -340,7 +340,7 @@ class SocketConnectionManager {
 
 	private registerConnectHandler() {
 		this.socket?.on('connect', () => {
-			console.log('Socket connected');
+			devLogWithTag('Socket', 'Connected');
 			this.reconnectAttempts = 0;
 			this.isReconnecting = false;
 			chatEventBus.emit({ type: 'SOCKET_CONNECTED', payload: {} });
@@ -350,12 +350,12 @@ class SocketConnectionManager {
 
 	private registerDisconnectHandler() {
 		this.socket?.on('disconnect', (reason) => {
-			console.log('Socket disconnected:', reason);
+			devLogWithTag('Socket', 'Disconnected:', reason);
 			chatEventBus.emit({ type: 'SOCKET_DISCONNECTED', payload: { reason } });
 
 			const shouldReconnect = reason === 'io server disconnect' || reason === 'transport close';
 			if (shouldReconnect) {
-				console.warn('Unexpected disconnect, attempting reconnection...');
+				devLogWithTag('Socket', 'Unexpected disconnect, reconnecting...');
 				this.attemptReconnect();
 			}
 		});

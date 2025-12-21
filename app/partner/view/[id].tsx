@@ -7,7 +7,7 @@ import {
 } from "@/src/features/post-box/ui/post-box-card";
 import PhotoSlider from "@/src/widgets/slide/photo-slider";
 import Loading from "@features/loading";
-import Match from "@features/match";
+import Match, { MatchContext, MihoMessage } from "@features/match";
 import MatchReasons from "@/src/features/match-reasons";
 import MatchingAnalysis from "@/src/features/match-reasons/ui/matching-analysis";
 import {
@@ -16,8 +16,8 @@ import {
   PartnerMBTI,
   MatchingReasonCard,
 } from "@/src/features/match/ui";
-import { MatchContext, MihoMessage } from "@/src/features/match";
-import { AMPLITUDE_EVENTS } from "@/src/shared/constants/amplitude-events";
+import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { BlurredPhotoCard } from "@/src/widgets/blurred-photo-card";
 import {
@@ -46,7 +46,6 @@ import {
   Text as RNText,
 } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
-import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
 
 const { queries } = Match;
 const { useMatchPartnerQuery } = queries;
@@ -92,16 +91,10 @@ export default function PartnerDetailScreen() {
       setIsAnalyzing(false);
       setShowMihoIntro(false);
 
-      // Amplitude 트래킹만 실행
+      // Mixpanel 트래킹만 실행
       if (!hasTrackedView.current) {
         hasTrackedView.current = true;
-        const amplitude = (global as any).amplitude || {
-          track: (event: string, properties: any) => {
-            console.log('Amplitude Event:', event, properties);
-          },
-        };
-
-        amplitude.track(AMPLITUDE_KPI_EVENTS.PROFILE_VIEWED, {
+        mixpanelAdapter.track(MIXPANEL_EVENTS.PROFILE_VIEWED, {
           viewed_profile_id: partner.id,
           view_source: 'matching_history',
           partner_age: partner.age,
@@ -119,13 +112,7 @@ export default function PartnerDetailScreen() {
 
       if (!hasTrackedView.current) {
         hasTrackedView.current = true;
-        const amplitude = (global as any).amplitude || {
-          track: (event: string, properties: any) => {
-            console.log('Amplitude Event:', event, properties);
-          },
-        };
-
-        amplitude.track(AMPLITUDE_KPI_EVENTS.PROFILE_VIEWED, {
+        mixpanelAdapter.track(MIXPANEL_EVENTS.PROFILE_VIEWED, {
           viewed_profile_id: partner.id,
           view_source: 'matching_history',
           partner_age: partner.age,
@@ -147,13 +134,7 @@ export default function PartnerDetailScreen() {
   };
 
   const handleMihoMessageShown = useCallback((message: MihoMessage) => {
-    const amplitude = (global as any).amplitude || {
-      track: (event: string, properties: any) => {
-        console.log('Amplitude Event:', event, properties);
-      },
-    };
-
-    amplitude.track(AMPLITUDE_EVENTS.MIHO_MESSAGE_SHOWN, {
+    mixpanelAdapter.track(MIXPANEL_EVENTS.MIHO_MESSAGE_SHOWN, {
       message_id: message.id,
       message_rarity: message.rarity,
       message_title: message.title,
@@ -437,7 +418,7 @@ export default function PartnerDetailScreen() {
             <Text
               style={{
                 color: semanticColors.text.primary,
-                fontSize: 18,
+                fontSize: 22,
                 fontWeight: 'bold',
                 paddingHorizontal: 20,
                 marginBottom: 4,

@@ -4,7 +4,7 @@ import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Button } from "@/src/shared/ui/button";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
@@ -24,7 +24,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (!hasTrackedView.current) {
-      track("Signup_Login_View", {
+      mixpanelAdapter.track("Signup_Login_View", {
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
       hasTrackedView.current = true;
@@ -40,7 +40,7 @@ export default function LoginScreen() {
             const birthday = result.certificationInfo?.birthday;
             const phone = result.certificationInfo?.phone;
             if (birthday && !isAdult(birthday)) {
-              track("Signup_AgeCheck_Failed", {
+              mixpanelAdapter.track("Signup_AgeCheck_Failed", {
                 birthday,
                 platform: "pass",
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -55,7 +55,7 @@ export default function LoginScreen() {
                 );
 
                 if (isBlacklisted) {
-                  track("Signup_PhoneBlacklist_Failed", {
+                  mixpanelAdapter.track("Signup_PhoneBlacklist_Failed", {
                     phone: phone,
                     platform: "pass",
                     env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -75,7 +75,7 @@ export default function LoginScreen() {
                 }
               } catch (error) {
                 console.error("블랙리스트 체크 오류:", error);
-                track("Signup_Error", {
+                mixpanelAdapter.track("Signup_Error", {
                   stage: "PhoneBlacklistCheck",
                   platform: "pass",
                   message:

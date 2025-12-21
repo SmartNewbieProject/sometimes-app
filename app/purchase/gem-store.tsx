@@ -5,7 +5,7 @@ import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { GemStoreWidget } from "@/src/widgets";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Payment from "@features/payment";
 import { useCurrentGem, useGemProducts } from "@features/payment/hooks";
 import { usePortoneStore } from "@features/payment/hooks/use-portone-store";
@@ -98,13 +98,13 @@ export default function GemStoreScreen() {
   }, [showPayment]);
 
   useEffect(() => {
-    track("GemStore_Entered", {
+    mixpanelAdapter.track("GemStore_Entered", {
       who: my,
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
 
     return () => {
-      track("GemStore_Exited", {
+      mixpanelAdapter.track("GemStore_Exited", {
         who: my,
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
@@ -190,7 +190,7 @@ export default function GemStoreScreen() {
                         key={product.id}
                         gemProduct={product}
                         onOpenPayment={(metadata) => {
-                          track("GemStore_Product_Clicked", {
+                          mixpanelAdapter.track("GemStore_Product_Clicked", {
                             who: my,
                             product: metadata,
                             env: process.env.EXPO_PUBLIC_TRACKING_MODE,

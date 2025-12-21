@@ -7,7 +7,7 @@ import { ImageResources, formatTime } from "@/src/shared/libs";
 import { GlowingCard, ImageResource, Show, Text } from "@/src/shared/ui";
 import { GemItemProps } from "@/src/widgets/gem-store";
 import { AppleGemStoreWidget } from "@/src/widgets/gem-store/apple";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import type { Product } from "expo-iap";
 import type { GemDetails } from "@/src/features/payment/api";
 import { useEffect } from "react";
@@ -121,7 +121,7 @@ export const AppleFirstSaleCard = ({
             gemProduct={gemProducts[0]}
             serverGemProducts={serverGemProducts}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_7", {
+              mixpanelAdapter.track("GemStore_FirstSale_7", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
@@ -136,7 +136,7 @@ export const AppleFirstSaleCard = ({
             gemProduct={gemProducts[1]}
             serverGemProducts={serverGemProducts}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_16", {
+              mixpanelAdapter.track("GemStore_FirstSale_16", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
@@ -151,7 +151,7 @@ export const AppleFirstSaleCard = ({
             gemProduct={gemProducts[2]}
             serverGemProducts={serverGemProducts}
             onOpenPurchase={() => {
-              track("GemStore_FirstSale_27", {
+              mixpanelAdapter.track("GemStore_FirstSale_27", {
                 who: my,
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });

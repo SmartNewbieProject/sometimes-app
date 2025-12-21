@@ -5,7 +5,7 @@ import useUniversityDetails from "@/src/features/signup/hooks/use-university-det
 import AcademicInfoSelector from "@/src/features/signup/ui/university-details/academic-info-selector";
 import DepartmentSearch from "@/src/features/signup/ui/university-details/department-search";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Loading from "@features/loading";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -32,7 +32,7 @@ function UniversityDetailsPage() {
 
   useEffect(() => {
     if (!hasTrackedView.current) {
-      track("Signup_Details_View", {
+      mixpanelAdapter.track("Signup_Details_View", {
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
       hasTrackedView.current = true;

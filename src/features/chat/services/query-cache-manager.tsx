@@ -2,6 +2,7 @@ import { dayUtils } from "@/src/shared/libs";
 import type { QueryClient } from "@tanstack/react-query";
 import type { Chat, ChatRoomListResponse } from "../types/chat";
 import { chatEventBus } from "./chat-event-bus";
+import { devLogWithTag, devWarn } from "@/src/shared/utils";
 
 class QueryCacheManager {
   private queryClient: QueryClient | null = null;
@@ -53,7 +54,7 @@ class QueryCacheManager {
     });
 
     chatEventBus.on("IMAGE_UPLOAD_SUCCESS").subscribe(({ payload }) => {
-      console.log("image success");
+      devLogWithTag('Chat Cache', 'Image upload success');
       this.replaceOptimisticMessageInCache(
         payload.tempId,
         payload.serverMessage
@@ -220,7 +221,7 @@ class QueryCacheManager {
     });
 
     if (!chatRoomId || !message) {
-      console.warn("Invalid chat message received");
+      devWarn("Invalid chat message received");
       return;
     }
 
@@ -259,9 +260,9 @@ class QueryCacheManager {
           chatRooms: updatedChatRooms,
         };
       });
-      console.log("check ", pages);
+      devLogWithTag('Chat Cache', 'Pages updated');
       if (!roomFound) {
-        console.warn(`Chat room with ID ${chatRoomId} not found in cache`);
+        devWarn(`Chat room ${chatRoomId} not found in cache`);
       }
 
       return {
@@ -280,7 +281,7 @@ class QueryCacheManager {
       pageParams: any[];
     }>(chatRoomQueryKey, (oldData) => {
       if (!oldData) return oldData;
-      console.log("oldData", oldData, chatRoomId);
+      devLogWithTag('Chat Cache', 'Marking as read:', chatRoomId);
       const updatedPages = oldData.pages.map((page) => ({
         ...page,
         chatRooms: page.chatRooms.map((room) =>

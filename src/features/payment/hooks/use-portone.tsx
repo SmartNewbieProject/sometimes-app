@@ -1,4 +1,4 @@
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { useModal } from "@shared/hooks/use-modal";
 import { Text } from "@shared/ui";
 import { router } from "expo-router";
@@ -11,8 +11,8 @@ import { usePortoneStore } from "./use-portone-store";
 import {queryClient} from "@shared/config/query";
 import { useEventControl } from "@/src/features/event/hooks";
 import { EventType } from "@/src/features/event/types";
-import { usePaymentEvents } from "@/src/shared/hooks/use-amplitude";
 import { useTranslation } from "react-i18next";
+import { devLogWithTag, devWarn } from "@/src/shared/utils";
 
 interface UsePortone {
   handlePaymentComplete: (
@@ -35,8 +35,7 @@ export function usePortone(): UsePortone {
   const { loaded, error } = usePortoneScript();
   const { showModal, showErrorModal, hideModal } = useModal();
   const { gemCount, eventType, clearEventType } = usePortoneStore();
-  const { paymentEvents } = useKpiAnalytics();
-  const { trackPaymentSuccess } = usePaymentEvents();
+  const { paymentEvents } = useMixpanel();
 
   const { t } = useTranslation();
   const { participate: participateFirstSale7 } = useEventControl({ type: EventType.FIRST_SALE_7 });
@@ -57,11 +56,11 @@ export function usePortone(): UsePortone {
           participate = participateFirstSale27;
           break;
         default:
-          console.warn('알 수 없는 eventType:', eventType);
+          devWarn('알 수 없는 eventType:', eventType);
           return;
       }
       await participate();
-      console.log('이벤트 참여 완료:', eventType);
+      devLogWithTag('Payment Event', '참여 완료:', eventType);
     } catch (error) {
       console.error('이벤트 참여 실패:', error);
     }
@@ -107,7 +106,12 @@ paymentEvents.trackPaymentCompleted(
 );
 
 // 기존 이벤트 호환성
-trackPaymentSuccess(result);
+paymentEvents.trackPaymentCompleted(
+        result.paymentId ?? '',
+        result.method ?? '',
+        result.totalAmount ?? 0,
+        []
+      );
 
         if (eventType) {
           await handleEventParticipation(eventType);

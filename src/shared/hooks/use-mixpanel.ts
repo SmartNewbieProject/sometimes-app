@@ -1,15 +1,15 @@
 import { useCallback } from 'react';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
-import type {
-  BaseEventProperties,
-  SignupEventProperties,
-  PaymentEventProperties,
-} from './use-amplitude.types';
-import { KpiEventTypePropertiesMap } from '@/src/shared/constants/amplitude-kpi-events';
+import {
+  MIXPANEL_EVENTS,
+  type BaseEventProperties,
+  type SignupEventProperties,
+  type PaymentEventProperties,
+  type KpiEventTypePropertiesMap,
+} from '@/src/shared/constants/mixpanel-events';
 
-// 확장된 KPI 훅 반환 타입
-export interface UseKpiAnalyticsReturn {
+// Mixpanel 훅 반환 타입
+export interface UseMixpanelReturn {
   // 기본 이벤트 추적
   trackEvent: <T extends string>(
     eventName: T,
@@ -181,7 +181,7 @@ export interface UseKpiAnalyticsReturn {
   };
 }
 
-export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
+export const useMixpanel = (): UseMixpanelReturn => {
   // 공통 속성 추가 및 이벤트 추적
   const trackEvent = useCallback(
     <T extends string>(
@@ -204,23 +204,23 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
         };
 
         // 이벤트 유효성 검사 (옵션)
-        if (options.validate && !AMPLITUDE_KPI_EVENTS[eventName]) {
-          console.warn(`[KPI Analytics] Unknown event: ${eventName}`);
+        if (options.validate && !MIXPANEL_EVENTS[eventName]) {
+          console.warn(`[Mixpanel] Unknown event: ${eventName}`);
           return;
         }
 
         // Mixpanel 이벤트 전송 (플랫폼 자동 선택)
-        mixpanelAdapter.track(AMPLITUDE_KPI_EVENTS[eventName], eventProperties);
+        mixpanelAdapter.track(MIXPANEL_EVENTS[eventName], eventProperties);
 
         // 개발 환경에서 로그 출력
         if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
-          console.log(`[KPI Analytics] Event tracked:`, {
-            event: AMPLITUDE_KPI_EVENTS[eventName],
+          console.log(`[Mixpanel] Event tracked:`, {
+            event: MIXPANEL_EVENTS[eventName],
             properties: eventProperties,
           });
         }
       } catch (error) {
-        console.error('[KPI Analytics] Error tracking event:', error);
+        console.error('[Mixpanel] Error tracking event:', error);
       }
     },
     []
@@ -232,10 +232,10 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
       mixpanelAdapter.setUserProperties(properties);
 
       if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
-        console.log(`[KPI Analytics] User properties updated:`, properties);
+        console.log(`[Mixpanel] User properties updated:`, properties);
       }
     } catch (error) {
-      console.error('[KPI Analytics] Error updating user properties:', error);
+      console.error('[Mixpanel] Error updating user properties:', error);
     }
   }, []);
 

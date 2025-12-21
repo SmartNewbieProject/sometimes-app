@@ -1,7 +1,7 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { guideHeight, useOverlay } from "@/src/shared/hooks/use-overlay";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -49,7 +49,7 @@ const schema = z.object({
 function useProfileImage() {
   const router = useRouter();
   const { updateForm, form: userForm } = useSignupProgress();
-  const { signupEvents } = useKpiAnalytics();
+  const { signupEvents } = useMixpanel();
   const [images, setImages] = useState<(string | null)[]>(
     userForm.profileImages ?? [null, null, null]
   );

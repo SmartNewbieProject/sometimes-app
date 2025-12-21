@@ -5,7 +5,7 @@ import { RematchingTicket } from "@/src/features/payment/ui/rematching-ticket";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { Ticket, TicketDetails } from "@/src/widgets";
 import { Selector } from "@/src/widgets/selector";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useAuth } from "@features/auth";
 import Layout from "@features/layout";
 import Payment from "@features/payment";
@@ -48,7 +48,7 @@ export default function RematchingTicketSellingScreen() {
       setTotalPrice(metadata.totalPrice);
       setProductCount(metadata.count);
       setShowPayment(true);
-      track(t("apps.purchase.rematch.purchase_count_tracking"), {
+      mixpanelAdapter.track(t("apps.purchase.rematch.purchase_count_tracking"), {
         count: metadata.count,
         who: my,
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -75,7 +75,7 @@ export default function RematchingTicketSellingScreen() {
 
   const onCompletePayment = (result: PaymentResponse) => {
     setShowPayment(false);
-    track("Purchase_Done", {
+    mixpanelAdapter.track("Purchase_Done", {
       who: my,
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });

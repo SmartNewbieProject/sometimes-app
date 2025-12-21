@@ -15,8 +15,8 @@ import Loading from "@features/loading";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
-import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import {
   BackHandler,
   Text as RNText,
@@ -28,7 +28,7 @@ import Animated from "react-native-reanimated";
 
 function UniversityPage() {
   const router = useRouter();
-  const { onboardingEvents } = useKpiAnalytics();
+  const { onboardingEvents } = useMixpanel();
   const hasTrackedView = useRef(false);
   const {
     searchText,
@@ -54,7 +54,7 @@ function UniversityPage() {
 
   useEffect(() => {
     if (!hasTrackedView.current) {
-      track("Signup_University_View", {
+      mixpanelAdapter.track("Signup_University_View", {
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
       hasTrackedView.current = true;

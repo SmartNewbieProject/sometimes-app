@@ -5,19 +5,19 @@ import Tooltip from "@/src/shared/ui/tooltip";
 import { PreferenceOption } from "@/src/types/user";
 import { Selector } from "@/src/widgets/selector";
 import { useTranslation } from 'react-i18next';
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
+import i18n from "@/src/shared/libs/i18n";
 
 const { ui, hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
-import i18n from "@/src/shared/libs/i18n";
 // TODO: The 't' function might not be in scope here.
 // Consider moving this array definition inside the component or passing 't' as a prop.
 const tooltips = [
@@ -88,7 +88,7 @@ export default function SmokingSelectionScreen() {
     if (!smoking) {
       updateForm("smoking", preferences.options[currentIndex]);
     }
-    track("Interest_Smoking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    mixpanelAdapter.track("Interest_Smoking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/tattoo");
   };
   useFocusEffect(

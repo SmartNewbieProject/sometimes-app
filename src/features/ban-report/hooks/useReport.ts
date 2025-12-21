@@ -1,10 +1,11 @@
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { type ReportResponse, submitReport } from '../services/report';
 import { useTranslation } from "react-i18next";
-import { AMPLITUDE_KPI_EVENTS, USER_ACTION_SOURCES } from "@/src/shared/constants/amplitude-kpi-events";
+import { MIXPANEL_EVENTS, USER_ACTION_SOURCES } from "@/src/shared/constants/mixpanel-events";
 
 interface ApiErrorResponse {
 	statusCode?: number;
@@ -32,13 +33,8 @@ export function useReport() {
 	>({
 		mutationFn: submitReport,
 		onSuccess: (data, variables) => {
-			const amplitude = (global as any).amplitude || {
-				track: (event: string, properties: any) => {
-					console.log("Amplitude Event:", event, properties);
-				},
-			};
 
-			amplitude.track(AMPLITUDE_KPI_EVENTS.USER_REPORTED, {
+			mixpanelAdapter.track(MIXPANEL_EVENTS.USER_REPORTED, {
 				reported_user_id: variables.userId,
 				reason: variables.reason,
 				action_source: USER_ACTION_SOURCES.PROFILE,

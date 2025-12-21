@@ -58,7 +58,7 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
   size = 'md',
 }) => {
   const config = SIZE_CONFIG[size];
-  const [containerWidth, setContainerWidth] = React.useState(0);
+  const containerWidthShared = useSharedValue(0);
   const translateX = useSharedValue(0);
   const pulseScale = useSharedValue(1);
   const glowIntensity = useSharedValue(0);
@@ -68,6 +68,8 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
 
+  // JS 레이어용 containerWidth (웹 핸들러에서 사용)
+  const [containerWidth, setContainerWidth] = React.useState(0);
   const maxDrag = containerWidth - config.handleSize - config.padding * 2;
   const borderWidth = 2;
   const verticalPadding = (config.containerHeight - config.handleSize - borderWidth) / 2;
@@ -160,19 +162,29 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
     }
   }, [maxDrag, threshold]);
 
+  const handleSize = config.handleSize;
+  const padding = config.padding;
+
   const panGesture = Gesture.Pan()
     .onUpdate((event) => {
+      'worklet';
       if (isUnlocking.value) return;
-      const newX = Math.max(0, Math.min(event.translationX, maxDrag));
+      const currentMaxDrag = containerWidthShared.value - handleSize - padding * 2;
+      if (currentMaxDrag <= 0) return;
+      const newX = Math.max(0, Math.min(event.translationX, currentMaxDrag));
       translateX.value = newX;
     })
     .onEnd(() => {
+      'worklet';
       if (isUnlocking.value) return;
-      const progress = translateX.value / maxDrag;
+      const currentMaxDrag = containerWidthShared.value - handleSize - padding * 2;
+      if (currentMaxDrag <= 0) return;
+
+      const progress = translateX.value / currentMaxDrag;
 
       if (progress >= threshold) {
         isUnlocking.value = true;
-        translateX.value = withSpring(maxDrag, { damping: 15, stiffness: 150 }, () => {
+        translateX.value = withSpring(currentMaxDrag, { damping: 15, stiffness: 150 }, () => {
           runOnJS(handleUnlockSuccess)();
         });
       } else {
@@ -191,7 +203,8 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
   });
 
   const textContainerAnimatedStyle = useAnimatedStyle(() => {
-    const progress = maxDrag > 0 ? translateX.value / maxDrag : 0;
+    const currentMaxDrag = containerWidthShared.value - handleSize - padding * 2;
+    const progress = currentMaxDrag > 0 ? translateX.value / currentMaxDrag : 0;
     return {
       opacity: 1 - progress * 1.5,
     };
@@ -221,6 +234,7 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
       onLayout={(event) => {
         const { width } = event.nativeEvent.layout;
         setContainerWidth(width);
+        containerWidthShared.value = width;
       }}
     >
       {/* Background Container */}

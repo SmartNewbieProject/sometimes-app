@@ -19,8 +19,8 @@ import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import { Button } from "@/src/shared/ui";
-import { useRouter } from "expo-router";
-import React, { Suspense, useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -40,28 +40,62 @@ function ProfileContent() {
   const { showErrorModal } = useModal();
   const { data: preferenceSelf = [] } = usePreferenceSelfQuery();
   const setInitialSnapshot = useMyInfoForm((state) => state.setInitialSnapshot);
-  const hasChanges = useMyInfoForm((state) => state.hasChanges);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const hasChanges = useMyInfoForm((state) => {
+    const {
+      initialSnapshot,
+      drinking,
+      mbti,
+      init,
+      interestIds,
+      datingStyleIds,
+      militaryStatus,
+      personality,
+      smoking,
+      tattoo,
+    } = state;
 
-  useEffect(() => {
-    queryClient.refetchQueries({ queryKey: ["my-profile-details"] });
-  }, []);
+    if (!initialSnapshot) return false;
 
-  const validation = !!(
-    !form ||
-    !form.datingStyleIds ||
-    !form.personality ||
-    !form.interestIds ||
-    !form.mbti ||
-    form.datingStyleIds?.length === 0 ||
-    form.personality.length === 0 ||
-    form.interestIds.length === 0
+    const currentValues = {
+      drinking,
+      mbti,
+      init,
+      interestIds,
+      datingStyleIds,
+      militaryStatus,
+      personality,
+      smoking,
+      tattoo,
+    };
+
+    return JSON.stringify(initialSnapshot) !== JSON.stringify(currentValues);
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      // 페이지 포커스 시 데이터 refetch 후 폼 상태 리셋
+      const refetchData = async () => {
+        await Promise.all([
+          queryClient.refetchQueries({ queryKey: ["my-profile-details"] }),
+          queryClient.refetchQueries({ queryKey: ["preference-self"] }),
+        ]);
+        updateForm("init", false);
+      };
+      refetchData();
+    }, [updateForm])
   );
 
-  const disabled = !hasChanges() || validation;
+  const disabled = !hasChanges;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (profileDetails?.id && preferenceSelf && !form.init) {
+      console.log("🟡 [INIT] preferenceSelf:", JSON.stringify(preferenceSelf.map(p => ({
+        typeName: p.typeName,
+        selectedOptions: p.selectedOptions?.length
+      })), null, 2));
+
       const drinking = preferenceSelf?.find(
         (item) => item.typeName === PreferenceKeys.DRINKING
       )?.selectedOptions[0];
@@ -190,9 +224,18 @@ function ProfileContent() {
     );
   };
 
+  const handleSliderTouchStart = useCallback(() => {
+    setScrollEnabled(false);
+  }, []);
+
+  const handleSliderTouchEnd = useCallback(() => {
+    setScrollEnabled(true);
+  }, []);
+
   return (
     <View style={styles.container}>
       <ScrollView
+        scrollEnabled={scrollEnabled}
         contentContainerStyle={{
           paddingBottom: insets.bottom + 100,
         }}
@@ -202,10 +245,24 @@ function ProfileContent() {
         <ProfileInterest />
         <ProfilePersonality />
         <ProfileDatingStyle />
-        {profileDetails?.gender === "MALE" && <ProfileMilitary />}
-        <ProfileDrinking />
-        <ProfileSmoking />
-        <ProfileTattoo />
+        {profileDetails?.gender === "MALE" && (
+          <ProfileMilitary
+            onSliderTouchStart={handleSliderTouchStart}
+            onSliderTouchEnd={handleSliderTouchEnd}
+          />
+        )}
+        <ProfileDrinking
+          onSliderTouchStart={handleSliderTouchStart}
+          onSliderTouchEnd={handleSliderTouchEnd}
+        />
+        <ProfileSmoking
+          onSliderTouchStart={handleSliderTouchStart}
+          onSliderTouchEnd={handleSliderTouchEnd}
+        />
+        <ProfileTattoo
+          onSliderTouchStart={handleSliderTouchStart}
+          onSliderTouchEnd={handleSliderTouchEnd}
+        />
       </ScrollView>
       <View
         style={{

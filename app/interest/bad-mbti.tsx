@@ -6,7 +6,7 @@ import { useMbti } from "@/src/features/mypage/hooks";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -37,7 +37,7 @@ function BadMbti() {
   })();
 
   const onNext = () => {
-    track("Interest_hateMbti", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    mixpanelAdapter.track("Interest_hateMbti", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/personality");
   };
 

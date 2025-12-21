@@ -1,8 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { Platform } from 'react-native';
 import { recordInviteClick } from '../api';
 import type { DeviceType, InviteReferrer, RecordClickRequest } from '../types';
-import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 
 const getDeviceType = (): DeviceType => {
 	if (Platform.OS === 'ios') return 'ios';
@@ -30,13 +31,8 @@ export function useRecordInviteClick(options?: UseRecordInviteClickOptions) {
 			return recordInviteClick(inviteCode, request);
 		},
 		onSuccess: (data, variables) => {
-			const amplitude = (global as any).amplitude || {
-				track: (event: string, properties: any) => {
-					console.log('Amplitude Event:', event, properties);
-				},
-			};
 
-			amplitude.track(AMPLITUDE_KPI_EVENTS.INVITE_LINK_CLICKED, {
+			mixpanelAdapter.track(MIXPANEL_EVENTS.INVITE_LINK_CLICKED, {
 				invite_code: variables.inviteCode,
 				referrer: variables.referrer,
 				device_type: getDeviceType(),

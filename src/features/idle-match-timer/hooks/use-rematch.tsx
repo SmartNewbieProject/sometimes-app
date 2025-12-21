@@ -5,7 +5,6 @@ import { Text } from "@/src/shared/ui";
 import { useCashableModal } from "@shared/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { HttpStatusCode } from "axios";
-import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useMatchLoading } from "../hooks";
@@ -16,6 +15,7 @@ import {
 	useRegionalExpansionModal,
 	useMatchingStore,
 } from "@/src/features/matching";
+import { logError } from "@/src/shared/utils";
 
 const useRematchingMutation = () =>
   useMutation<RematchResponseV3>({
@@ -53,7 +53,7 @@ function useRematch() {
   useEffect(() => {
     if (!externalMatchError) return;
 
-    console.error('[외부 매칭] 에러 발생:', externalMatchError);
+    logError('[외부 매칭] Error:', externalMatchError);
 
     finishLoading();
     finishRematching();
@@ -81,13 +81,12 @@ function useRematch() {
               lastMatchedRegion: currentRegion.name,
             },
             onComplete: () => {
-              console.log('[외부 매칭] 완료 콜백 실행 - 로딩 종료');
               finishLoading();
               finishRematching();
             },
           });
         } catch (error) {
-          console.error('[외부 매칭] onConfirm에서 에러:', error);
+          logError('[외부 매칭] Error:', error);
           finishLoading();
           finishRematching();
           showErrorModal(
@@ -96,9 +95,7 @@ function useRematch() {
           );
         }
       },
-      onCancel: () => {
-        router.push("/home");
-      },
+      onCancel: () => {},
     });
   };
 

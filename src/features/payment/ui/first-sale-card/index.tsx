@@ -18,7 +18,7 @@ import { useFirstSaleEvents } from "../../hooks/useFirstSaleEvents";
 import type { GemMetadata } from "../../types";
 import { usePortoneStore } from "../../hooks/use-portone-store";
 import { useAuth } from "@/src/features/auth";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { FIRST_SALE_PRODUCTS } from "../../constants/first-sale-products";
 import { useTranslation } from "react-i18next";
 
@@ -34,7 +34,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
   } });
   const { setEventType } = usePortoneStore();
   const { my } = useAuth();
-  const { paymentEvents } = useKpiAnalytics();
+  const { paymentEvents } = useMixpanel();
 
   const translateYAnim = useSharedValue(0);
   const { t } = useTranslation();

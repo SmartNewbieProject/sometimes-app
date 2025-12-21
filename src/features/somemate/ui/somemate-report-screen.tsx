@@ -17,7 +17,7 @@ import ChevronLeft from "@assets/icons/chevron-left.svg";
 import { Svg, Path } from "react-native-svg";
 import { useReports } from "../queries/use-ai-chat";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { CategoryBadge } from "./category-badge";
 
 const ChevronRight = ({ width = 24, height = 24, color = "#7A4AE2" }) => (
@@ -36,7 +36,7 @@ export default function SomemateReportScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const translateXAnim = useSharedValue(0);
-  const { somemateEvents } = useKpiAnalytics();
+  const { somemateEvents } = useMixpanel();
   const { data: reportsData, isLoading, refetch } = useReports();
 
   useFocusEffect(

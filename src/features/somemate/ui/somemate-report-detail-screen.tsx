@@ -6,7 +6,7 @@ import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import { useReport } from "../queries/use-ai-chat";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { Image } from "expo-image";
 import { BottomNavigation } from "@/src/shared/ui/navigation";
 

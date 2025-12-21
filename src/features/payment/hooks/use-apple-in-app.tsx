@@ -1,6 +1,7 @@
 import { queryClient } from "@/src/shared/config/query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import paymentApis from "../api";
+import { devLogWithTag } from "@/src/shared/utils";
 
 export const useAppleInApp = () => {
   return useMutation({
@@ -10,15 +11,14 @@ export const useAppleInApp = () => {
         throw new Error("TransactionReceipt is empty or invalid");
       }
 
-      console.log("🔍 Verifying Apple receipt:", {
+      devLogWithTag('Apple IAP', 'Verifying receipt:', {
         length: transactionReceipt.length,
-        prefix: transactionReceipt.substring(0, 20) + "..."
       });
 
       return paymentApis.postAppleVerifyPurchase(transactionReceipt);
     },
     onSuccess: async () => {
-      console.log("✅ Apple receipt verification successful");
+      devLogWithTag('Apple IAP', 'Verification successful');
       await queryClient.invalidateQueries({
         queryKey: ["gem", "current"],
       });

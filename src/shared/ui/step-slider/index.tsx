@@ -7,7 +7,7 @@ import {
   StyleSheet,
   type StyleProp,
   type ViewStyle,
-} from "react-native";
+ type LayoutChangeEvent, View } from "react-native";
 
 import React, {
   useState,
@@ -16,7 +16,6 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { type LayoutChangeEvent, View } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import colors from "@/src/shared/constants/colors";
 
@@ -41,6 +40,8 @@ interface StepSliderProps {
   style?: StyleProp<ViewStyle>;
   showSelectedValue?: boolean;
   touchAreaHeight?: number;
+  onTouchStart?: () => void;
+  onTouchEnd?: () => void;
 }
 
 export function StepSlider({
@@ -57,6 +58,8 @@ export function StepSlider({
   showMiddle = true,
   style,
   touchAreaHeight = 48,
+  onTouchStart,
+  onTouchEnd,
 }: StepSliderProps) {
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [draggingValue, setDraggingValue] = useState<number | null>(
@@ -131,6 +134,7 @@ export function StepSlider({
 
   const handleDragStart = useCallback(
     (event: GestureResponderEvent) => {
+      onTouchStart?.();
       const pageX = event.nativeEvent.pageX;
       const newValue = calculateValueFromTouch(pageX);
 
@@ -140,7 +144,7 @@ export function StepSlider({
         handleValueChange(newValue);
       }
     },
-    [calculateValueFromTouch, handleValueChange]
+    [calculateValueFromTouch, handleValueChange, onTouchStart]
   );
 
   const throttledDragMove = useMemo(() => {
@@ -170,25 +174,28 @@ export function StepSlider({
     }
     setIsDragging(false);
     setDraggingValue(null);
-  }, [draggingValue, handleValueChange, throttledDragMove]);
+    onTouchEnd?.();
+  }, [draggingValue, handleValueChange, throttledDragMove, onTouchEnd]);
 
   const panResponder = useMemo(() => {
     if (!sliderWidth || !sliderX) return null;
 
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        // 수평 이동이 수직 이동보다 크면 슬라이더가 제스처를 가져감
-        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
-      },
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponderCapture: (_, gestureState) => {
-        // 수평 이동이 충분히 크면 제스처를 캡처하여 부모 스크롤 방지
-        return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && Math.abs(gestureState.dx) > 5;
+        // 터치 시작부터 적극적으로 제스처를 캡처하여 스크롤 방지
+        // 수평 이동이 감지되거나, 초기 터치 시점에는 무조건 캡처
+        const hasHorizontalMovement = Math.abs(gestureState.dx) > 2;
+        const hasMinimalMovement = Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+        return hasHorizontalMovement || hasMinimalMovement;
       },
       onPanResponderGrant: handleDragStart,
       onPanResponderMove: handleDragMove,
       onPanResponderRelease: handleDragEnd,
       onPanResponderTerminate: handleDragEnd,
+      onPanResponderTerminationRequest: () => false,
     });
   }, [sliderWidth, sliderX, handleDragStart, handleDragMove, handleDragEnd]);
 

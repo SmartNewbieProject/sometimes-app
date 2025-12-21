@@ -4,7 +4,7 @@ import Layout from "@/src/features/layout";
 import Loading from "@/src/features/loading";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
 import { useTranslation } from 'react-i18next';
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Interest from "@features/interest";
 import { PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
@@ -48,7 +48,7 @@ export default function PersonalitySelectionScreen() {
   })();
 
   const onNext = () => {
-    track("Interest_Personality", {
+    mixpanelAdapter.track("Interest_Personality", {
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
     router.push("/interest/drinking");

@@ -12,7 +12,12 @@ const { hooks, services, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
-function ProfileMilitary() {
+interface ProfileMilitaryProps {
+  onSliderTouchStart?: () => void;
+  onSliderTouchEnd?: () => void;
+}
+
+function ProfileMilitary({ onSliderTouchStart, onSliderTouchEnd }: ProfileMilitaryProps) {
   const { updateForm, clear: _, militaryStatus, ...form } = useMyInfoForm();
   const { t } = useTranslation();
 
@@ -54,6 +59,8 @@ function ProfileMilitary() {
             value={currentIndex}
             onChange={onChangeOption}
             middleLabelLeft={-10}
+            onTouchStart={onSliderTouchStart}
+            onTouchEnd={onSliderTouchEnd}
             options={
               preferences?.options?.map((option) => ({
                 label: option.displayName,

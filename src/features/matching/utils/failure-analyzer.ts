@@ -3,7 +3,7 @@
  * 서버 응답 메시지 기반 정확한 실패 원인 판단
  */
 
-import { track } from '@/src/shared/libs/amplitude-compat';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 
 export interface FailureReason {
   type: string;
@@ -22,11 +22,11 @@ export interface FailureContext {
   ticketCount: number;
   recentLikeCount: number;
   recentMatchCount: number;
-  restrictionHistory: Array<{
+  restrictionHistory: {
     timestamp: number;
     endTime: number;
     type: string;
-  }>;
+  }[];
   lastLikeTime: number;
   timeOfDay: number;
   isPeakTime: boolean;

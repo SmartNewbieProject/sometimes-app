@@ -234,7 +234,7 @@ export function LikedMePendingButton({
       <Button
         onPress={handleReject}
         variant="outline"
-        style={styles.actionButton}
+        styles={styles.actionButton}
         prefix={<XIcon width={21} height={21} />}
       >
         {t("features.post-box.ui.card.buttons.ok")}
@@ -243,7 +243,7 @@ export function LikedMePendingButton({
       <Button
         onPress={handleLike}
         variant="primary"
-        style={styles.actionButton}
+        styles={styles.actionButton}
         prefix={<FillHeartIcon width={18} height={18} color="#fff" />}
       >
         {t("features.like.ui.like_button.button_label")}
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flex: 1,
     alignItems: "center",
-    height: 40,
+    height: 48,
   },
   modalTitleContainer: {
     flexDirection: "column",

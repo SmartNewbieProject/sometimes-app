@@ -3,6 +3,7 @@ import { matchingApi } from '../apis';
 import type { ExternalMatchParams } from '../types';
 import type { RematchResponseV3 } from '@/src/features/idle-match-timer/types-v3';
 import { queryClient } from '@/src/shared/config/query';
+import { devLogWithTag, logError } from '@/src/shared/utils';
 
 export const useExternalMatching = () => {
 	const externalMatchMutation = useMutation<
@@ -11,13 +12,13 @@ export const useExternalMatching = () => {
 		ExternalMatchParams
 	>({
 		mutationFn: async (params: ExternalMatchParams) => {
-			console.log('[외부 매칭 API] 요청 시작:', params);
+			devLogWithTag('외부 매칭 API', '요청:', { context: params.context });
 			const result = await matchingApi.externalMatch(params);
-			console.log('[외부 매칭 API] 응답 수신:', result);
+			devLogWithTag('외부 매칭 API', '응답:', { success: !!result });
 			return result;
 		},
 		onError: (error) => {
-			console.error('[외부 매칭 Mutation] onError 호출:', error);
+			logError('[외부 매칭] Error:', error);
 		},
 		retry: 1,
 		retryDelay: 3000,
@@ -43,8 +44,6 @@ export const useExternalMatching = () => {
 		try {
 			const data = await externalMatchMutation.mutateAsync(apiParams);
 
-			console.log('[외부 매칭] 쿼리 갱신 시작');
-
 			// 쿼리 갱신
 			await Promise.all([
 				queryClient.invalidateQueries({ queryKey: ["latest-matching-v2"] }),
@@ -53,14 +52,14 @@ export const useExternalMatching = () => {
 			]);
 			await queryClient.refetchQueries({ queryKey: ["latest-matching-v2"] });
 
-			console.log('[외부 매칭] 쿼리 갱신 완료');
+			devLogWithTag('외부 매칭', '완료');
 
 			// 쿼리 갱신 완료 후 콜백 실행
 			if (params.onComplete) {
 				params.onComplete();
 			}
 		} catch (error) {
-			console.error('[외부 매칭] 처리 중 오류:', error);
+			logError('[외부 매칭] Error:', error);
 			throw error;
 		}
 	};

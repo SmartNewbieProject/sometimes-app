@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { blockUser } from "../apis/block";
 import { QUERY_KEYS } from "../queries/keys";
 import { useToast } from "@/src/shared/hooks/use-toast";
-import { AMPLITUDE_KPI_EVENTS, USER_ACTION_SOURCES } from "@/src/shared/constants/amplitude-kpi-events";
+import { MIXPANEL_EVENTS, USER_ACTION_SOURCES } from "@/src/shared/constants/mixpanel-events";
 import type { Article } from "../types";
 
 export const useBlockUser = () => {
@@ -43,13 +44,8 @@ export const useBlockUser = () => {
       showToast("사용자 차단에 실패했습니다.", "error");
     },
     onSuccess: (_, blockedUserId) => {
-      const amplitude = (global as any).amplitude || {
-        track: (event: string, properties: any) => {
-          console.log("Amplitude Event:", event, properties);
-        },
-      };
 
-      amplitude.track(AMPLITUDE_KPI_EVENTS.USER_BLOCKED, {
+      mixpanelAdapter.track(MIXPANEL_EVENTS.USER_BLOCKED, {
         blocked_user_id: blockedUserId,
         reason: "user_initiated",
         action_source: USER_ACTION_SOURCES.COMMUNITY,

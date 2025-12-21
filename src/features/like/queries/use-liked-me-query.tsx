@@ -1,8 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useEffect, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { getLIkedMe } from "../api";
-import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
+import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
 import type { LikedMe } from "../type/like";
 
 function useLikedMeQuery() {
@@ -31,14 +32,9 @@ function useLikedMeQuery() {
     );
 
     if (newLikes.length > 0 && previousDataRef.current !== null) {
-      const amplitude = (global as any).amplitude || {
-        track: (event: string, properties: any) => {
-          console.log("Amplitude Event:", event, properties);
-        },
-      };
 
       newLikes.forEach((like) => {
-        amplitude.track(AMPLITUDE_KPI_EVENTS.LIKE_RECEIVED, {
+        mixpanelAdapter.track(MIXPANEL_EVENTS.LIKE_RECEIVED, {
           source_profile_id: like.connectionId,
           timestamp: new Date().toISOString(),
         });

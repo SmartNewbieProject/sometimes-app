@@ -1,9 +1,56 @@
 /**
- * Sometimes 앱 KPI 측정을 위한 Amplitude 이벤트 상수
+ * Sometimes 앱 Mixpanel 이벤트 상수
  * AARRR 프레임워크 기반의 표준화된 이벤트 정의
  */
 
-export const AMPLITUDE_KPI_EVENTS: Record<string, string> = {
+export const MIXPANEL_EVENTS: Record<string, string> = {
+  // ===== 일반 이벤트 (구 AMPLITUDE_EVENTS) =====
+  // 회원가입 퍼널 - View 이벤트 (화면 진입)
+  SIGNUP_LOGIN_VIEW: 'Signup_Login_View',
+  SIGNUP_AUTH_STARTED: 'Signup_Auth_Started',
+  SIGNUP_UNIVERSITY_VIEW: 'Signup_University_View',
+  SIGNUP_DETAILS_VIEW: 'Signup_Details_View',
+  SIGNUP_PROFILE_VIEW: 'Signup_Profile_View',
+
+  // 회원가입 퍼널 - 완료 이벤트
+  SIGNUP_INIT: 'Signup_Init',
+  SIGNUP_ROUTE_ENTERED: 'Signup_Route_Entered',
+  SIGNUP_UNIVERSITY: 'Signup_university',
+  SINGUP_UNIVERSITY_DETAILS: 'Singup_university_details',
+  SIGNUP_PROFILE_IMAGE: 'Signup_profile_image',
+  SIGNUP_PROFILE_IMAGE_ERROR: 'Signup_profile_image_error',
+  SIGNUP_PROFILE_INVITE_CODE_ERROR: 'Signup_profile_invite_code_error',
+
+  // 나이/인증 관련
+  SIGNUP_AGE_CHECK_FAILED: 'Signup_AgeCheck_Failed',
+  SIGNUP_PHONE_BLACKLIST_FAILED: 'Signup_PhoneBlacklist_Failed',
+  SIGNUP_ERROR: 'Signup_Error',
+
+  // 관심사/프로필 관련
+  INTEREST_HOLD: 'Interest_Hold',
+  INTEREST_STARTED: 'Interest_Started',
+  PROFILE_STARTED: 'Profile_Started',
+
+  // 결제 관련
+  GEM_STORE_FIRST_SALE_7: 'GemStore_FirstSale_7',
+  GEM_STORE_FIRST_SALE_16: 'GemStore_FirstSale_16',
+  GEM_STORE_FIRST_SALE_27: 'GemStore_FirstSale_27',
+  GEM_STORE_PAYMENT_SUCCESS: 'GemStore_Payment_Success',
+
+  // 인앱 리뷰 관련
+  IN_APP_REVIEW_ELIGIBLE: 'InAppReview_Eligible',
+  IN_APP_REVIEW_PRE_PROMPT_SHOWN: 'InAppReview_PrePromptShown',
+  IN_APP_REVIEW_PRE_PROMPT_RESPONSE: 'InAppReview_PrePromptResponse',
+  IN_APP_REVIEW_REQUESTED: 'InAppReview_Requested',
+
+  // 기타
+  SIGNUP_COMPLETE: 'signup_complete',
+  IMAGE_UPLOAD: 'image_upload',
+
+  // 미호 멘트 관련
+  MIHO_MESSAGE_SHOWN: 'Miho_Message_Shown',
+
+  // ===== KPI 측정 이벤트 =====
   // 1. 사용자 온보딩 퍼널
   UNIVERSITY_VERIFICATION_STARTED: 'University_Verification_Started',
   UNIVERSITY_VERIFICATION_COMPLETED: 'University_Verification_Completed',
@@ -567,3 +614,7 @@ export interface KpiEventTypePropertiesMap {
   // 다른 모든 이벤트들도 기본 BaseEventProperties 사용
   [key: string]: BaseEventProperties;
 }
+
+// Backward compatibility - 기존 코드에서 AMPLITUDE_KPI_EVENTS, AMPLITUDE_EVENTS를 사용하는 경우 대응
+export const AMPLITUDE_KPI_EVENTS = MIXPANEL_EVENTS;
+export const AMPLITUDE_EVENTS = MIXPANEL_EVENTS;

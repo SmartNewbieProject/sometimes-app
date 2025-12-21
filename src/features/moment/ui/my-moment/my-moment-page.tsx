@@ -9,6 +9,7 @@ import colors from "@/src/shared/constants/colors";
 import { useDailyQuestionQuery, useProgressStatusQuery } from "../../queries";
 import type { UserProgressStatus } from "../../apis";
 import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
+import { devLogWithTag } from "@/src/shared/utils";
 
 const { width } = Dimensions.get("window");
 
@@ -46,16 +47,16 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
     }
 
     // 로깅 추가 for debugging
-    console.log('🔍 Progress Status:', progressStatus);
+    devLogWithTag('My Moment', 'Progress status:', progressStatus);
 
     // 답변 가능 여부 확인 (canProceed를 최우선으로 확인)
     // canProceed가 false일 때만 hasTodayAnswer를 확인하여 "답변 완료" 상태로 표시
     if (!progressStatus.canProceed) {
-      console.log('🚫 Cannot proceed - checking if already answered');
+      devLogWithTag('My Moment', 'Cannot proceed - checking');
 
       // 답변을 완료했는데 진행이 불가능한 경우 (오늘 답변 완료)
       if (progressStatus.hasTodayAnswer) {
-        console.log('✅ Already answered today and cannot proceed');
+        devLogWithTag('My Moment', 'Already answered today');
         return {
           responded: true,
           blocked: false,
@@ -66,7 +67,7 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
 
       // 데일리 질문이 없어서 진행 불가능한 경우
       if (!progressStatus.hasDailyQuestion) {
-        console.log('❌ No daily question available');
+        devLogWithTag('My Moment', 'No daily question');
         return {
           responded: false,
           blocked: true,
@@ -85,12 +86,12 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
     }
 
     // canProceed가 true인 경우: 답변 가능 상태 (hasTodayAnswer와 관계없이)
-    console.log('✅ Can proceed - allowing to answer');
+    devLogWithTag('My Moment', 'Can proceed');
     return { responded: false, blocked: false, blockedReason: null, blockedMessage: null };
   };
 
   const questionCardState = getQuestionCardState();
-  console.log('📊 Final Question Card State:', questionCardState);
+  devLogWithTag('My Moment', 'Question card state:', questionCardState);
 
   if (questionLoading) {
     return (

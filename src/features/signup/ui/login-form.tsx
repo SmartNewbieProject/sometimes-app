@@ -3,7 +3,7 @@ import {
   usePortOneLogin,
 } from "@/src/features/pass";
 import { Button, Show, SlideUnlock, Text, AppDownloadSection } from "@/src/shared/ui";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import * as Localization from "expo-localization";
 import { router, usePathname, useRouter } from "expo-router";
@@ -19,8 +19,9 @@ import * as KakaoLogin from "@react-native-kakao/user";
 import { checkPhoneNumberBlacklist } from "../apis";
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { devLogWithTag } from "@/src/shared/utils";
 
 
 
@@ -36,7 +37,7 @@ export default function LoginForm() {
     handleMobileAuthError,
     handleMobileAuthCancel,
   } = usePortOneLogin();
-  const { authEvents, signupEvents } = useKpiAnalytics();
+  const { authEvents, signupEvents } = useMixpanel();
   const pathname = usePathname();
   const { regionCode } = Localization.getLocales()[0];
   const isUS = regionCode === "US";
@@ -45,7 +46,7 @@ export default function LoginForm() {
   const onPressPassLogin = async () => {
     const loginStartTime = Date.now();
 
-    track("Signup_Auth_Started", {
+    mixpanelAdapter.track("Signup_Auth_Started", {
       platform: "pass",
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
@@ -190,7 +191,7 @@ function KakaoLoginComponent() {
   const { t } = useTranslation();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { authEvents, signupEvents } = useKpiAnalytics();
+  const { authEvents, signupEvents } = useMixpanel();
   const { loginWithKakaoNative } = useAuth();
   const { showModal } = useModal();
 
@@ -202,28 +203,26 @@ function KakaoLoginComponent() {
 
     try {
       setIsLoading(true);
-      console.log("[카카오 로그인] 1단계: 카카오 SDK 호출 시작");
+      devLogWithTag('Kakao Login', '1. SDK 호출');
 
       // 카카오 네이티브 SDK로 로그인
       const result = await KakaoLogin.login();
-      console.log("[카카오 로그인] 2단계: SDK 응답 받음", {
+      devLogWithTag('Kakao Login', '2. SDK 응답 받음', {
         hasAccessToken: !!result.accessToken,
-        tokenLength: result.accessToken?.length
       });
 
       if (!result.accessToken) {
         throw new Error("Failed to get Kakao access token");
       }
 
-      console.log("[카카오 로그인] 3단계: 백엔드 API 호출 시작");
+      devLogWithTag('Kakao Login', '3. 백엔드 API 호출');
       // 백엔드로 accessToken 전송
       const loginResult = await loginWithKakaoNative(result.accessToken);
-      console.log("[카카오 로그인] 4단계: 백엔드 응답 받음", {
+      devLogWithTag('Kakao Login', '4. 백엔드 응답', {
         isNewUser: loginResult.isNewUser,
-        hasCertificationInfo: !!loginResult.certificationInfo
       });
 
-      track("Signup_Route_Entered", {
+      mixpanelAdapter.track("Signup_Route_Entered", {
         screen: "AreaSelect",
         platform: "kakao_native",
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -237,7 +236,7 @@ function KakaoLoginComponent() {
             );
 
             if (isBlacklisted) {
-              track("Signup_PhoneBlacklist_Failed", {
+              mixpanelAdapter.track("Signup_PhoneBlacklist_Failed", {
                 phone: loginResult.certificationInfo?.phone,
               });
               showModal({
@@ -255,7 +254,7 @@ function KakaoLoginComponent() {
             }
           } catch (error) {
             console.error("블랙리스트 체크 오류:", error);
-            track("Signup_Error", {
+            mixpanelAdapter.track("Signup_Error", {
               stage: "PhoneBlacklistCheck",
               message: error instanceof Error ? error.message : String(error),
             });
@@ -267,7 +266,7 @@ function KakaoLoginComponent() {
         const birthday = loginResult.certificationInfo?.birthday;
 
         if (birthday && !isAdult(birthday)) {
-          track("Signup_AgeCheck_Failed", {
+          mixpanelAdapter.track("Signup_AgeCheck_Failed", {
             birthday,
             platform: "kakao_native",
             env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -313,7 +312,7 @@ function KakaoLoginComponent() {
         },
       });
 
-      track("Signup_Error", {
+      mixpanelAdapter.track("Signup_Error", {
         stage: "KakaoNativeLogin",
         message: error instanceof Error ? error.message : String(error),
       });
@@ -342,7 +341,7 @@ function KakaoLoginComponent() {
   };
 
   const handleKakaoLogin = () => {
-    track("Signup_Auth_Started", {
+    mixpanelAdapter.track("Signup_Auth_Started", {
       platform: "kakao",
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });

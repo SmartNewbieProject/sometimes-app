@@ -6,12 +6,12 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { createChatRoom } from "../apis";
 import { errorHandlers } from "../services/chat-create-error-handler";
-import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 
 function useCreateChatRoom() {
   const router = useRouter();
   const { showModal, showErrorModal, hideModal } = useModal();
-  const { chatEvents } = useKpiAnalytics();
+  const { chatEvents } = useMixpanel();
 
   return useMutation({
     mutationFn: createChatRoom,

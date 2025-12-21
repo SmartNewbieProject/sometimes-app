@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
-import { useKpiAnalytics } from '@/src/shared/hooks/use-kpi-analytics';
+import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 
 /**
  * 앱 세션 추적 컴포넌트
@@ -13,7 +13,7 @@ import { useKpiAnalytics } from '@/src/shared/hooks/use-kpi-analytics';
  * - last_active_date: 세션 시작 시 자동 갱신
  */
 export function SessionTracker() {
-  const { sessionEvents, featureEvents } = useKpiAnalytics();
+  const { sessionEvents, featureEvents } = useMixpanel();
   const appState = useRef(AppState.currentState);
   const sessionStartTime = useRef<number | null>(null);
   const isFirstLaunch = useRef(true);

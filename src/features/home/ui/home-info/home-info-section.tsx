@@ -1,4 +1,4 @@
-import { useUserBehaviorEvents } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -14,16 +14,16 @@ const { useRedirectPreferences } = hooks;
 
 function HomeInfoSection() {
   const { isPreferenceFill } = useRedirectPreferences();
-  const { trackInterestStarted, trackProfileStarted } = useUserBehaviorEvents();
+  const { trackEvent } = useMixpanel();
   const { data: preferencesSelf } = usePreferenceSelfQuery();
   const router = useRouter();
   const { t } = useTranslation();
   const handleClickButton = (to: "my-info" | "interest") => {
     if (to === "my-info") {
-      trackProfileStarted();
+      trackEvent('PROFILE_STARTED');
       router.navigate("/my-info");
     } else {
-      trackInterestStarted("home");
+      trackEvent('INTEREST_STARTED', { type: 'home' });
       router.navigate("/interest");
     }
   };

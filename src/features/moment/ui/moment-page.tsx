@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { useFocusEffect } from "expo-router";
 import colors from "@/src/shared/constants/colors";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 
 import { MomentHeader } from "./moment-header";
 import { MomentSlides } from "./slides";
@@ -14,7 +14,7 @@ import { useMomentAnalytics } from "../hooks/use-moment-analytics";
 
 export const MomentPage = () => {
   const { data: slides = [], isLoading: slidesLoading } = useMomentSlidesQuery();
-  const { momentEvents, featureEvents } = useKpiAnalytics();
+  const { momentEvents, featureEvents } = useMixpanel();
   const queryClient = useQueryClient();
   const { trackMomentHomeView } = useMomentAnalytics();
 

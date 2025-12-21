@@ -31,7 +31,7 @@ import {
   Show,
  Text } from "@/src/shared/ui";
 import { NotificationIcon } from "@/src/features/notification/ui/notification-icon";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
@@ -104,7 +104,7 @@ const HomeScreen = () => {
   };
 
   const onNavigateGemStore = () => {
-    track("onNavigateGemStore", {
+    mixpanelAdapter.track("onNavigateGemStore", {
       ...my,
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });

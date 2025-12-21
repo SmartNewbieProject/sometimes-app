@@ -29,10 +29,30 @@ class MixpanelWeb implements MixpanelAdapter {
       return;
     }
 
+    // eventName 유효성 검사
+    if (!eventName || typeof eventName !== 'string' || eventName.trim() === '') {
+      console.error('[Mixpanel Web] Invalid eventName:', {
+        eventName,
+        type: typeof eventName,
+        properties,
+      });
+      return;
+    }
+
     try {
+      console.log('[Mixpanel Web] Tracking event:', {
+        eventName,
+        properties: properties || {},
+      });
       mixpanel.track(eventName, properties || {});
     } catch (error) {
-      console.error('[Mixpanel Web] Track error:', error);
+      console.error('[Mixpanel Web] Track error:', {
+        eventName,
+        properties,
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        errorStack: error instanceof Error ? error.stack : undefined,
+      });
     }
   }
 
@@ -42,10 +62,23 @@ class MixpanelWeb implements MixpanelAdapter {
       return;
     }
 
+    if (!userId || typeof userId !== 'string') {
+      console.error('[Mixpanel Web] Invalid userId:', {
+        userId,
+        type: typeof userId,
+      });
+      return;
+    }
+
     try {
+      console.log('[Mixpanel Web] Identifying user:', userId);
       mixpanel.identify(userId);
     } catch (error) {
-      console.error('[Mixpanel Web] Identify error:', error);
+      console.error('[Mixpanel Web] Identify error:', {
+        userId,
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -55,10 +88,23 @@ class MixpanelWeb implements MixpanelAdapter {
       return;
     }
 
+    if (!properties || typeof properties !== 'object') {
+      console.error('[Mixpanel Web] Invalid properties:', {
+        properties,
+        type: typeof properties,
+      });
+      return;
+    }
+
     try {
+      console.log('[Mixpanel Web] Setting user properties:', properties);
       mixpanel.people.set(properties);
     } catch (error) {
-      console.error('[Mixpanel Web] SetUserProperties error:', error);
+      console.error('[Mixpanel Web] SetUserProperties error:', {
+        properties,
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -69,9 +115,13 @@ class MixpanelWeb implements MixpanelAdapter {
     }
 
     try {
+      console.log('[Mixpanel Web] Resetting user');
       mixpanel.reset();
     } catch (error) {
-      console.error('[Mixpanel Web] Reset error:', error);
+      console.error('[Mixpanel Web] Reset error:', {
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 }

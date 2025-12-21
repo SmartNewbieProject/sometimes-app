@@ -2,8 +2,9 @@ import { useEffect, useRef } from 'react';
 import { useChatActivitySummary, useMarkActivityTracked } from '../queries/use-chat-activity';
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import type { Activity24hStatus } from '../types/chat-activity';
+import { devLogWithTag, logError } from '@/src/shared/utils';
 
 function determineActivityStatus(isActive: boolean, isMutualConversation: boolean): Activity24hStatus {
 	if (!isActive) return 'inactive';
@@ -36,7 +37,7 @@ export function useAutoTrackChatActivity() {
 				const status = determineActivityStatus(room.isActive, room.isMutualConversation);
 
 				try {
-					mixpanelAdapter.track(AMPLITUDE_KPI_EVENTS.CHAT_24H_ACTIVE, {
+					mixpanelAdapter.track(MIXPANEL_EVENTS.CHAT_24H_ACTIVE, {
 						chat_room_id: room.chatRoomId,
 						match_id: room.matchId,
 						chat_partner_id: room.partnerId,
@@ -53,9 +54,9 @@ export function useAutoTrackChatActivity() {
 						activityStatus: status,
 					});
 
-					console.log(`[Chat24hActivity] Tracked: ${room.chatRoomId} (${status})`);
+					devLogWithTag('Chat24hActivity', `Tracked: ${room.chatRoomId} (${status})`);
 				} catch (error) {
-					console.error(`[Chat24hActivity] Failed to track: ${room.chatRoomId}`, error);
+					logError(`[Chat24hActivity] Failed: ${room.chatRoomId}`, error);
 				}
 			}
 

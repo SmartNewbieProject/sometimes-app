@@ -4,7 +4,7 @@ import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import { ChipSelector, StepIndicator } from "@/src/widgets";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { Divider, PalePurpleGradient, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
@@ -51,7 +51,7 @@ export default function PersonalitySelectionScreen() {
   })();
 
   const onNext = () => {
-    track("Profile_personality", {
+    mixpanelAdapter.track("Profile_personality", {
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
     router.push("/my-info/dating-style");

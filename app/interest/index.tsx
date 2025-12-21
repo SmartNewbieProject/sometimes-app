@@ -4,7 +4,7 @@ import Layout from "@/src/features/layout";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import SmallTitle from "@assets/icons/small-title.svg";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
@@ -49,7 +49,7 @@ export default function InterestIntroScreen() {
     });
 
   const onNext = () => {
-    track("Interest_Intro", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    mixpanelAdapter.track("Interest_Intro", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/interest/age");
   };
 

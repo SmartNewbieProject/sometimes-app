@@ -1,8 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { track } from '@/src/shared/libs/amplitude-compat';
-import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 
 interface SignupSessionData {
   startTime: number;
@@ -65,7 +65,7 @@ export const useSignupSession = () => {
     AsyncStorage.setItem('signup_session', JSON.stringify(sessionRef.current));
 
     // 회원가입 세션 시작 이벤트
-    track(AMPLITUDE_KPI_EVENTS.ONBOARDING_STARTED, {
+    mixpanelAdapter.track(MIXPANEL_EVENTS.ONBOARDING_STARTED, {
       is_anonymous_user: true,
       session_start_time: startTime,
       env: __DEV__ ? 'development' : 'production'
@@ -97,16 +97,16 @@ export const useSignupSession = () => {
 
     // 마일스톤 이벤트 발송
     const milestoneEvents = {
-      signup_started: AMPLITUDE_KPI_EVENTS.SIGNUP_STARTED,
-      profile_image_uploaded: AMPLITUDE_KPI_EVENTS.SIGNUP_PROFILE_IMAGE_UPLOADED,
-      interest_selected: AMPLITUDE_KPI_EVENTS.SIGNUP_INTEREST_SELECTED,
-      signup_completed: AMPLITUDE_KPI_EVENTS.SIGNUP_COMPLETED
+      signup_started: MIXPANEL_EVENTS.SIGNUP_STARTED,
+      profile_image_uploaded: MIXPANEL_EVENTS.SIGNUP_PROFILE_IMAGE_UPLOADED,
+      interest_selected: MIXPANEL_EVENTS.SIGNUP_INTEREST_SELECTED,
+      signup_completed: MIXPANEL_EVENTS.SIGNUP_COMPLETED
     };
 
     if (milestoneEvents[milestone]) {
       const timeFromStart = currentTime - sessionRef.current.startTime;
 
-      track(milestoneEvents[milestone], {
+      mixpanelAdapter.track(milestoneEvents[milestone], {
         time_from_app_launch: timeFromStart,
         milestone_step: milestone,
         session_duration: timeFromStart,
@@ -135,7 +135,7 @@ export const useSignupSession = () => {
     };
 
     // 최종 회원가입 완료 이벤트
-    track(AMPLITUDE_KPI_EVENTS.SIGNUP_COMPLETED, {
+    mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_COMPLETED, {
       total_signup_time: totalTime,
       completion_rate: sessionResult.completionRate,
       time_per_milestone: sessionResult.timePerMilestone,
@@ -174,7 +174,7 @@ export const useSignupSession = () => {
     };
 
     // 회원가입 중단 이벤트
-    track('Signup_Abandoned', {
+    mixpanelAdapter.track('Signup_Abandoned', {
       total_time_spent: totalTime,
       last_milestone: lastMilestone || 'app_launch',
       completion_rate: sessionResult.completionRate,

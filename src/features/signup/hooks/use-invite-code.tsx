@@ -6,9 +6,8 @@ import { tryCatch } from '@/src/shared/libs';
 import { ensureAppleId, processSignup, validatePhone, validateUniversity } from '../services/signup-validator';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import Signup from '..';
-import { track } from '@/src/shared/libs/amplitude-compat';
-import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
 
 
 const {

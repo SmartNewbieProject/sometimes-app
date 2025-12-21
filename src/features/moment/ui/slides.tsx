@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { View, StyleSheet, Dimensions, Animated, PanResponder, Pressable, Text, Linking } from "react-native";
 import { Image } from "expo-image";
 import { MomentSlide, MomentSlidesProps } from "../types";
@@ -9,7 +9,7 @@ import { ImageSourceFactory } from "../strategies/image-source";
 const { width: screenWidth } = Dimensions.get("window");
 
 export const MomentSlides = ({ items, autoPlayInterval = 5000, height }: MomentSlidesProps) => {
-  const { momentEvents } = useKpiAnalytics();
+  const { momentEvents } = useMixpanel();
   const realItems = Array.isArray(items) ? items : [items];
   const isSingle = realItems.length <= 1;
 

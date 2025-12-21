@@ -10,7 +10,7 @@ import { StyleSheet, View } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useMemo, useEffect, useState } from "react";
 import { useCategory } from "@/src/features/community/hooks";
-import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 import { useTranslation } from "react-i18next";
 
 const {
@@ -23,7 +23,7 @@ const {
 export default function CommunityWriteScreen() {
   const { t } = useTranslation();
   const { showModal } = useModal();
-  const { communityEngagementEvents } = useKpiAnalytics();
+  const { communityEngagementEvents } = useMixpanel();
   const [initialEventAttempt, setInitialEventAttempt] = useState<number | null>(null);
 
   const { category: initCategory } = useLocalSearchParams<{

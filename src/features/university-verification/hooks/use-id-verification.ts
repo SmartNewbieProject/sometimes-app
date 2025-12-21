@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 // import * as FileSystem from "expo-file-system";
 import { uploadUniversityVerificationImage } from "../apis";
-import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 
 function guessName(uri: string, fallback = "university_document.jpg") {
   const last = uri.split(/[\\/]/).pop();
@@ -17,7 +17,7 @@ function guessMime(uri: string) {
 
 export function useVerification() {
   const [submitting, setSubmitting] = useState(false);
-  const { onboardingEvents } = useKpiAnalytics();
+  const { onboardingEvents } = useMixpanel();
 
   const submitOne = useCallback(async (uri: string, note?: string) => {
     setSubmitting(true);

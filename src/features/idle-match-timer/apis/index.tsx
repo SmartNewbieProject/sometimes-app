@@ -1,5 +1,6 @@
 import { axiosClient, dayUtils } from "@/src/shared/libs";
 import type { MatchDetails, ServerMatchDetails } from "../types";
+import { devLogWithTag } from "@/src/shared/utils";
 
 export const getNextMatchingDate = () =>
   axiosClient.get('/matching/next-date')
@@ -16,17 +17,16 @@ export const getLatestMatching = (): Promise<MatchDetails> =>
     .then((result: unknown) => {
       const data = result as ServerMatchDetails;
 
-      console.log('🔍 [API] Raw matching data:', data);
+      devLogWithTag('API', 'Matching:', {
+        id: data.id,
+        type: data.type,
+        untilNext: data.untilNext,
+      });
 
       const transformedData: MatchDetails = {
         ...data,
         endOfView: data.endOfView ? dayUtils.create(data.endOfView) : null,
       };
-
-      console.log('🔍 [API] Transformed untilNext:', {
-        original: data.untilNext,
-        processed: transformedData.untilNext
-      });
 
       return transformedData;
     });
@@ -35,8 +35,6 @@ export const getLatestMatchingV2 = (): Promise<MatchDetails> =>
   axiosClient.get('/v2/matching')
     .then((result: unknown) => {
       const data = result as ServerMatchDetails;
-
-      console.log('🔍 [API v2] Raw matching data:', data);
 
       const transformedData: MatchDetails = {
         ...data,
@@ -48,11 +46,11 @@ export const getLatestMatchingV2 = (): Promise<MatchDetails> =>
         rejectionReason: data.rejectionReason,
       };
 
-      console.log('🔍 [API v2] Transformed data:', {
+      devLogWithTag('API v2', 'Matching:', {
+        id: transformedData.id,
         type: transformedData.type,
         approvalStatus: transformedData.approvalStatus,
-        rejectionCategory: transformedData.rejectionCategory,
-        untilNext: transformedData.untilNext
+        untilNext: transformedData.untilNext,
       });
 
       return transformedData;

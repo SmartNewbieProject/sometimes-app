@@ -7,6 +7,7 @@ export function useChatRoomDetail(chatRoomId: string) {
   return useQuery({
     queryKey: ["chat-detail", chatRoomId],
     queryFn: () => getChatRoomDetail(chatRoomId),
+    enabled: !!chatRoomId,
   });
 }
 

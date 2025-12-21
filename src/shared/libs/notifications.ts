@@ -142,7 +142,7 @@ async function registerPushToken(pushToken: string): Promise<void> {
  * 푸시 토큰 API 응답 타입
  */
 interface PushTokenResponse {
-  data: Array<{
+  data: {
     id: string;
     pushToken: string;
     deviceId: string;
@@ -153,7 +153,7 @@ interface PushTokenResponse {
     updatedAt: string;
     lastUsedAt: string;
     deletedAt: string | null;
-  }>;
+  }[];
   success: boolean;
   message: string;
 }

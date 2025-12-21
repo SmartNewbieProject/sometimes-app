@@ -2,7 +2,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { getLatestMatchingV2 } from "../apis";
 import { useRef } from "react";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
-import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
+import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
+import { devLogWithTag } from "@/src/shared/utils";
 
 export const useLatestMatching = () => {
   const lastMatchIdRef = useRef<string | null>(null);
@@ -28,7 +29,7 @@ export const useLatestMatching = () => {
       ? Date.now() - new Date(match.matchedAt).getTime()
       : 0;
 
-    mixpanelAdapter.track(AMPLITUDE_KPI_EVENTS.MATCHING_SUCCESS, {
+    mixpanelAdapter.track(MIXPANEL_EVENTS.MATCHING_SUCCESS, {
       matched_profile_id: match.connectionId,
       time_to_match: timeToMatch,
       timestamp: Date.now(),
@@ -42,8 +43,10 @@ export const useLatestMatching = () => {
     });
   }
 
-  console.log('🔍 [Query] Match data updated:', {
-    match,
+  devLogWithTag('Query', 'Match status:', {
+    matchId: match?.id,
+    connectionId: match?.connectionId,
+    type: match?.type,
     status,
     fetchStatus,
     isError: queryProps.isError,

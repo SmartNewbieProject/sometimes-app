@@ -8,20 +8,20 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { tryCatch } from "@/src/shared/libs";
 import Tooltip from "@/src/shared/ui/tooltip";
 import { Selector } from "@/src/widgets/selector";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Interest from "@features/interest";
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
+import i18n from "@/src/shared/libs/i18n";
+import { useTranslation } from 'react-i18next';
 
 const { ui, hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
-import i18n from "@/src/shared/libs/i18n";
-import { useTranslation } from 'react-i18next';
 
 const tooltips = [
   {
@@ -117,7 +117,7 @@ export default function TattooSelectionScreen() {
         await queryClient.invalidateQueries({
           queryKey: ["check-preference-fill"],
         });
-        track("Interest_Tattoo", {
+        mixpanelAdapter.track("Interest_Tattoo", {
           env: process.env.EXPO_PUBLIC_TRACKING_MODE,
         });
         router.navigate("/interest/done");
@@ -141,7 +141,7 @@ export default function TattooSelectionScreen() {
   };
 
   const handleNextButton = () => {
-    track("Interest_Tattoo", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    mixpanelAdapter.track("Interest_Tattoo", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     updateForm("tattoo", preferences.options[currentIndex]);
     router.push("/interest/military");
   };

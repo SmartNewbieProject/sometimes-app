@@ -2,6 +2,7 @@ import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as MediaLibrary from 'expo-media-library';
 import { Platform } from 'react-native';
+import { devWarn } from './logger';
 
 export const isHeicBase64 = (uri: string) => {
 	// Base64 헤더에 HEIC가 포함돼 있는지 체크
@@ -21,7 +22,7 @@ export async function convertToJpeg(uri: string) {
 		});
 		return result.uri;
 	} catch (e) {
-		console.warn('이미지 변환 실패:', e);
+		devWarn('이미지 변환 실패:', e);
 		return uri;
 	}
 }
@@ -53,7 +54,7 @@ export async function uriToBase64(uri: string) {
 
 		return `data:image/jpeg;base64,${base64}`;
 	} catch (e) {
-		console.warn('Base64 변환 실패:', e);
+		devWarn('Base64 변환 실패:', e);
 		return null;
 	}
 }

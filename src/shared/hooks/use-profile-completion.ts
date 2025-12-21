@@ -1,11 +1,11 @@
 /**
  * 프로필 완성도 상태 관리 훅
- * 사용자 프로필 완성도를 실시간으로 계산하고 Amplitude 이벤트 트래킹
+ * 사용자 프로필 완성도를 실시간으로 계산하고 Mixpanel 이벤트 트래킹
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { UserProfile } from '@/src/shared/utils/profile-completion-calculator';
-import { ProfileCompletionCalculator } from '@/src/shared/utils/profile-completion-calculator';
+import { UserProfile , ProfileCompletionCalculator } from '@/src/shared/utils/profile-completion-calculator';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 
 export const useProfileCompletion = (profile: UserProfile) => {
   const [completionScore, setCompletionScore] = useState<number>(0);
@@ -22,21 +22,15 @@ export const useProfileCompletion = (profile: UserProfile) => {
 
   // 특정 필드 업데이트 트래킹
   const trackFieldUpdate = useCallback((fieldName: string, isCompleted: boolean) => {
-    // 임시 amplitude 객체 - 실제로는 amplitude SDK가 전역에 설치되어 있어야 함
-    const amplitude = (global as any).amplitude || {
-      track: (event: string, properties: any) => {
-        console.log('Amplitude Event:', event, properties);
-      }
-    };
 
     if (isCompleted) {
-      amplitude.track('PROFILE_FIELD_COMPLETED', {
+      mixpanelAdapter.track('PROFILE_FIELD_COMPLETED', {
         field_name: fieldName,
         completion_score: completionScore,
         field_progress: 'completed'
       });
     } else {
-      amplitude.track('PROFILE_FIELD_INCOMPLETE', {
+      mixpanelAdapter.track('PROFILE_FIELD_INCOMPLETE', {
         field_name: fieldName,
         completion_score: completionScore,
         field_progress: 'incomplete'
@@ -50,13 +44,8 @@ export const useProfileCompletion = (profile: UserProfile) => {
 
     // 완성 상태가 변경된 경우
     if (!isComplete && isNowComplete) {
-      const amplitude = (global as any).amplitude || {
-        track: (event: string, properties: any) => {
-          console.log('Amplitude Event:', event, properties);
-        }
-      };
 
-      amplitude.track('PROFILE_COMPLETION_ACHIEVED', {
+      mixpanelAdapter.track('PROFILE_COMPLETION_ACHIEVED', {
         completion_score: completionScore,
         completion_time: new Date().toISOString(),
         total_sections: 3,

@@ -9,7 +9,7 @@ import { useFeatureCost } from "@features/payment/hooks";
 import { useModal } from "@hooks/use-modal";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth";
-import { useKpiAnalytics } from "@/src/shared/hooks";
+import { useMixpanel } from "@/src/shared/hooks";
 import { useMatchingEfficiency } from "../../matching/hooks/use-matching-efficiency";
 import useLike from "../hooks/use-like";
 
@@ -27,7 +27,7 @@ export const LikeButton = ({
   const { showModal, hideModal } = useModal();
   const { featureCosts } = useFeatureCost();
   const { onLike } = useLike();
-  const { matchingEvents, paymentEvents } = useKpiAnalytics();
+  const { matchingEvents, paymentEvents } = useMixpanel();
   const {
     statistics,
     trackMatchingAttempt,

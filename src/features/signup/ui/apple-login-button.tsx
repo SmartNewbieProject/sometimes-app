@@ -1,6 +1,6 @@
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useRouter } from "expo-router";
 import type React from "react";
@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { AppleLoginResponse, useAppleLogin } from "../queries/use-apple-login";
+import { devLogWithTag } from "@/src/shared/utils";
 
 declare global {
   interface Window {
@@ -157,7 +158,7 @@ const AppleLoginButton: React.FC = () => {
 
       await mutation.mutateAsync(userId ?? "");
 
-      track("Signup_Route_Entered", {
+      mixpanelAdapter.track("Signup_Route_Entered", {
         screen: "AreaSelect",
         platform: "apple",
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -170,10 +171,10 @@ const AppleLoginButton: React.FC = () => {
   };
 
   const handleWebAppleLogin = async (): Promise<void> => {
-    console.log("Button clicked", { AppleID: window.AppleID, isLoading });
+    devLogWithTag('Apple Login', 'Button clicked', { hasSDK: !!window.AppleID });
     if (!window.AppleID || isLoading) return;
 
-    track("Signup_Auth_Started", {
+    mixpanelAdapter.track("Signup_Auth_Started", {
       platform: "apple",
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
@@ -201,7 +202,7 @@ const AppleLoginButton: React.FC = () => {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       if (error.error === "popup_closed_by_user") {
-        console.log("사용자가 팝업을 닫았습니다");
+        devLogWithTag('Apple Login', 'Popup closed by user');
       } else {
         console.error("웹 Apple 로그인 실패:", error);
       }
@@ -211,7 +212,7 @@ const AppleLoginButton: React.FC = () => {
   const handleIOSAppleLogin = async (): Promise<void> => {
     if (isLoading) return;
 
-    track("Signup_Auth_Started", {
+    mixpanelAdapter.track("Signup_Auth_Started", {
       platform: "apple",
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
@@ -249,7 +250,7 @@ const AppleLoginButton: React.FC = () => {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       if (error.code === "ERR_CANCELED") {
-        console.log("사용자가 로그인을 취소했습니다");
+        devLogWithTag('Apple Login', 'User canceled');
       } else {
         console.error("iOS Apple 로그인 실패:", error);
       }

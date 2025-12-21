@@ -1,6 +1,6 @@
-import { useIAP } from "expo-iap";
+import { useIAP, finishTransaction, type Purchase } from "expo-iap";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -13,7 +13,7 @@ import {
   splitAndSortProducts,
 } from "@/src/widgets/gem-store/utils/apple";
 
-import { useEventControl } from "@/src/features/event/hooks";
+import { participateEvent } from "@/src/features/event/api";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { usePathname, useRouter } from "expo-router";
 import paymentApis from "../../api";
@@ -22,7 +22,8 @@ import { useAppleInApp } from "../../hooks/use-apple-in-app";
 import { usePortoneStore } from "../../hooks/use-portone-store";
 import { AppleFirstSaleCard } from "../first-sale-card/apple";
 import { GemStore } from "../gem-store";
-import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
+import { devLogWithTag } from "@/src/shared/utils";
 
 function AppleGemStore() {
   const router = useRouter();
@@ -35,18 +36,93 @@ function AppleGemStore() {
   const appleInAppMutation = useAppleInApp();
   const { showErrorModal } = useModal();
   const { eventType } = usePortoneStore();
-  const { participate } = useEventControl({ type: eventType! });
-  const { paymentEvents, conversionEvents } = useKpiAnalytics();
+  const { paymentEvents, conversionEvents } = useMixpanel();
+
+  const productsRef = useRef<any[]>([]);
+
+  const handlePurchaseSuccess = useCallback(async (purchase: Purchase) => {
+    setPurchasing(true);
+    try {
+      const extendedPurchase = purchase as ExtendedProductPurchase;
+      const transactionReceipt = extendedPurchase?.transactionReceipt || extendedPurchase?.jwsRepresentationIOS;
+
+      if (!transactionReceipt || transactionReceipt.trim() === "") {
+        console.error("❌ Invalid transactionReceipt:", { transactionReceipt, purchase });
+        showErrorModal("결제 정보가 올바르지 않습니다. 다시 시도해주세요.", "error");
+        setPurchasing(false);
+        return;
+      }
+
+      devLogWithTag('Apple IAP', 'Sending receipt');
+
+      const serverResponse = await appleInAppMutation.mutateAsync(transactionReceipt);
+
+      if (serverResponse.success) {
+        await finishTransaction({ purchase, isConsumable: true });
+
+        const purchasedProduct = productsRef.current?.find(p => p.productId === purchase?.productId);
+        if (purchasedProduct?.price) {
+          const amount = Number.parseFloat(purchasedProduct.price);
+          paymentEvents.trackPaymentCompleted(
+            purchase?.transactionId || transactionReceipt || 'unknown',
+            'apple_iap',
+            amount,
+            [{ type: 'gem', quantity: serverResponse?.grantedQuantity || 0, price: amount }]
+          );
+        }
+
+        if (eventType) {
+          try {
+            await participateEvent(eventType);
+            devLogWithTag('Payment Event', '참여 완료:', eventType);
+          } catch (error) {
+            console.error("이벤트 참여 실패:", error);
+          }
+          const { clearEventType } = usePortoneStore.getState();
+          clearEventType();
+          router.replace(pathname as any);
+        }
+      } else {
+        console.error("서버 검증 실패");
+        showErrorModal("결제 검증에 실패했습니다", "error");
+      }
+    } catch (error) {
+      console.error("Failed to complete purchase:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown Apple IAP error';
+      conversionEvents.trackPaymentFailed('apple_iap', errorMessage);
+      showErrorModal("결제 처리 중 오류가 발생했습니다", "announcement");
+    } finally {
+      setPurchasing(false);
+    }
+  }, [appleInAppMutation, eventType, pathname, paymentEvents, conversionEvents, showErrorModal, router]);
+
+  const handlePurchaseError = useCallback((error: any) => {
+    console.error("Purchase error:", error);
+    const errorMessage = error?.message || 'Unknown error';
+    const isCancellation = errorMessage.toLowerCase().includes('cancel') ||
+                           errorMessage.toLowerCase().includes('취소');
+
+    if (isCancellation) {
+      conversionEvents.trackPaymentCancelled(errorMessage, 'apple_iap_dialog');
+    } else {
+      conversionEvents.trackPaymentFailed('apple_iap', errorMessage);
+    }
+    setPurchasing(false);
+  }, [conversionEvents]);
+
   const {
     connected,
     products,
-    requestProducts,
+    fetchProducts,
     requestPurchase,
-    currentPurchase,
-    finishTransaction,
-  } = useIAP();
-  const purchase: ExtendedProductPurchase =
-    currentPurchase as ExtendedProductPurchase;
+  } = useIAP({
+    onPurchaseSuccess: handlePurchaseSuccess,
+    onPurchaseError: handlePurchaseError,
+  });
+
+  useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
 
   const productIds = [
     "gem_sale_7",
@@ -65,84 +141,10 @@ function AppleGemStore() {
 
   useEffect(() => {
     if (connected) {
-      requestProducts({ skus: productIds, type: "inapp" });
+      fetchProducts({ skus: productIds, type: "inapp" });
     }
   }, [connected]);
 
-  useEffect(() => {
-    if (!currentPurchase) return;
-    const completePurchase = async () => {
-      setPurchasing(true);
-      try {
-        // transactionReceipt 값 유효성 검증
-        const transactionReceipt = purchase?.transactionReceipt || purchase?.jwsRepresentationIOS;
-
-        if (!transactionReceipt || transactionReceipt.trim() === "") {
-          console.error("❌ Invalid transactionReceipt:", {
-            transactionReceipt,
-            purchase,
-            currentPurchase
-          });
-          showErrorModal("결제 정보가 올바르지 않습니다. 다시 시도해주세요.", "error");
-          setPurchasing(false);
-          return;
-        }
-
-        console.log("✅ Sending transactionReceipt:", transactionReceipt.substring(0, 50) + "...");
-
-        const serverResponse = await appleInAppMutation.mutateAsync(transactionReceipt);
-
-        if (serverResponse.success) {
-          const result = await finishTransaction({
-            purchase: currentPurchase,
-            isConsumable: true,
-          });
-
-          // Payment tracking for analytics
-          const purchasedProduct = products?.find(p => p.productId === currentPurchase?.productId);
-          if (purchasedProduct?.price) {
-            const amount = Number.parseFloat(purchasedProduct.price);
-            paymentEvents.trackPaymentCompleted(
-              currentPurchase?.transactionId || purchase?.transactionReceipt || 'unknown',
-              'apple_iap',
-              amount,
-              [{
-                type: 'gem',
-                quantity: serverResponse?.grantedQuantity || 0,
-                price: amount
-              }]
-            );
-          }
-
-          if (eventType) {
-            try {
-              await participate();
-              console.log("이벤트 참여 완료:", eventType);
-            } catch (error) {
-              console.error("이벤트 참여 실패:", error);
-            }
-            const { clearEventType } = usePortoneStore.getState();
-            clearEventType();
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            router.replace(pathname as any);
-          }
-        } else {
-          console.error("서버 검증 실패");
-        }
-      } catch (error) {
-        console.error("Failed to complete purchase:", error);
-
-        // 결제 실패 이벤트 추적
-        const errorMessage = error instanceof Error ? error.message : 'Unknown Apple IAP error';
-        conversionEvents.trackPaymentFailed('apple_iap', errorMessage);
-
-        showErrorModal("결제 처리 중 오류가 발생했습니다", "announcement");
-      } finally {
-        setPurchasing(false);
-      }
-    };
-    completePurchase();
-  }, [currentPurchase]);
   const handlePurchase = async (productId: string) => {
     if (purchasing) return;
     setPurchasing(true);

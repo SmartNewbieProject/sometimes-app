@@ -47,3 +47,20 @@ export const hasRequestedWithTrigger = async (triggerType: ReviewTriggerType): P
 	const data = await getReviewTrackingData();
 	return data.requestTriggers.includes(triggerType);
 };
+
+export const saveDismissal = async (): Promise<void> => {
+	try {
+		await storage.setItem(STORAGE_KEY.REVIEW_DISMISSAL, new Date().toISOString());
+	} catch (error) {
+		console.error('[ReviewStorage] Error saving dismissal:', error);
+	}
+};
+
+export const getDismissalDate = async (): Promise<string | null> => {
+	try {
+		return await storage.getItem(STORAGE_KEY.REVIEW_DISMISSAL);
+	} catch (error) {
+		console.error('[ReviewStorage] Error getting dismissal date:', error);
+		return null;
+	}
+};

@@ -6,6 +6,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getKoreanToday, getTimeBasedSessionType } from './date-utils';
+import { devLogWithTag } from './logger';
 
 const STORAGE_KEYS = {
   LAST_TRACKED_DATE: '@sometimes/last_tracked_date',
@@ -61,14 +62,14 @@ export const shouldTrackAppOpen = async (): Promise<boolean> => {
         [STORAGE_KEYS.DAILY_OPEN_COUNT, '1'],
       ]);
 
-      console.log(`[AppTracker] 🆕 New KST day detected: ${today}, tracking APP_OPENED`);
+      devLogWithTag('AppTracker', 'New KST day:', today);
     } else {
       // 같은 날짜면 열기 횟수만 증가
       const currentCount = await AsyncStorage.getItem(STORAGE_KEYS.DAILY_OPEN_COUNT);
       const newCount = (parseInt(currentCount || '0') + 1).toString();
       await AsyncStorage.setItem(STORAGE_KEYS.DAILY_OPEN_COUNT, newCount);
 
-      console.log(`[AppTracker] Same KST day, open count: ${newCount}`);
+      devLogWithTag('AppTracker', 'Same day, count:', newCount);
     }
 
     return shouldTrack;
@@ -117,7 +118,7 @@ export const initializeAppTracker = async (): Promise<void> => {
     const storedVersion = await AsyncStorage.getItem(STORAGE_KEYS.APP_VERSION);
 
     if (storedVersion && storedVersion !== currentVersion) {
-      console.log(`[AppTracker] App version updated: ${storedVersion} → ${currentVersion}`);
+      devLogWithTag('AppTracker', 'Version updated:', `${storedVersion} → ${currentVersion}`);
       // 필요하다면 이전 버전 데이터 마이그레이션 로직 추가
     }
   } catch (error) {

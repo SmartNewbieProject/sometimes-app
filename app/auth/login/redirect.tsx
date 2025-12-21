@@ -3,7 +3,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { checkPhoneNumberBlacklist } from "@/src/features/signup/apis";
 import { useModal } from "@/src/shared/hooks/use-modal";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Platform, Text, View } from "react-native";
@@ -32,7 +32,7 @@ function KakaoLoginRedirect() {
 
       loginWithKakao(code)
         .then(async (result) => {
-          track("Signup_Route_Entered", {
+          mixpanelAdapter.track("Signup_Route_Entered", {
             screen: "AreaSelect",
             platform: "kakao",
             env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -44,7 +44,7 @@ function KakaoLoginRedirect() {
             const birthday = result.certificationInfo?.birthday;
 
             if (birthday && !isAdult(birthday)) {
-              track("Signup_AgeCheck_Failed", {
+              mixpanelAdapter.track("Signup_AgeCheck_Failed", {
                 birthday,
                 platform: "kakao",
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
@@ -60,7 +60,7 @@ function KakaoLoginRedirect() {
                 );
 
                 if (isBlacklisted) {
-                  track("Signup_PhoneBlacklist_Failed", {
+                  mixpanelAdapter.track("Signup_PhoneBlacklist_Failed", {
                     phone: result.certificationInfo?.phone,
                   });
                   showModal({
@@ -78,7 +78,7 @@ function KakaoLoginRedirect() {
                 }
               } catch (error) {
                 console.error("블랙리스트 체크 오류:", error);
-                track("Signup_Error", {
+                mixpanelAdapter.track("Signup_Error", {
                   stage: "PhoneBlacklistCheck",
                   message:
                     error instanceof Error ? error.message : String(error),

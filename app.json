@@ -249,7 +249,16 @@
       ],
       "expo-iap",
       "expo-asset",
-      "./plugins/withIOS16DeploymentTarget.js"
+      "./plugins/withIOS16DeploymentTarget.js",
+      "@sentry/react-native",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "smartnewbie"
+        }
+      ]
     ],
     "locales": {
       "ko": "./languages/ko.json",

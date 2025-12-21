@@ -3,7 +3,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
 import Tooltip from "@/src/shared/ui/tooltip";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 
 import Layout from "@features/layout";
 import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
@@ -76,7 +76,7 @@ export default function SmokingSelectionScreen() {
     if (!smoking) {
       updateForm("smoking", preferences.options[currentIndex]);
     }
-    track("Profile_Smoking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    mixpanelAdapter.track("Profile_Smoking", { env: process.env.EXPO_PUBLIC_TRACKING_MODE });
     router.push("/my-info/tattoo");
   };
   useFocusEffect(

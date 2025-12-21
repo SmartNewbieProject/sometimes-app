@@ -1,4 +1,4 @@
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useDebounce } from "@/src/shared/hooks";
 import { getSmartUnivLogoUrl } from "@/src/shared/libs";
 import type { RegionCode } from "@/src/shared/constants/region";
@@ -137,7 +137,7 @@ function useUniversityHook() {
       ...userForm,
       universityId: selectedUniv,
     });
-    track("Signup_university", {
+    mixpanelAdapter.track("Signup_university", {
       university: selectedUniv,
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });

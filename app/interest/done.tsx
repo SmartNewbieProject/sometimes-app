@@ -5,7 +5,7 @@ import Layout from "@/src/features/layout";
 import { Button, PalePurpleGradient, Text } from "@/src/shared/ui";
 import { useTranslation } from 'react-i18next';
 import { IconWrapper } from "@/src/shared/ui/icons";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useAuth } from "@features/auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
@@ -76,7 +76,7 @@ export default function InterestDoneScreen() {
             flex="flex-1"
             variant="primary"
             onPress={() => {
-              track("Interest_Done", {
+              mixpanelAdapter.track("Interest_Done", {
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
               clear();

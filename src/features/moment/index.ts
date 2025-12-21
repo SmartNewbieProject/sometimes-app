@@ -3,6 +3,9 @@
 // =============================================
 
 // Types
+// Default export for backward compatibility
+import apis from './apis';
+
 export type {
   // Questions API
   DailyQuestionResponse,
@@ -170,7 +173,4 @@ export type {
   MomentHistoryProperties,
   MomentAIInspirationProperties,
 } from './constants/moment-events';
-
-// Default export for backward compatibility
-import apis from './apis';
 export default apis;

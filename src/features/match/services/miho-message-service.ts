@@ -80,7 +80,7 @@ function getRelevantContextTags(context: MatchContext): ContextTag[] {
   if (context.commonPoints && context.commonPoints.length > 0) {
     tags.push('common_interests');
     if (context.commonPoints.some((p) =>
-      p.includes('성격') || p.includes('MBTI') || p.includes('가치관')
+      p && (p.includes('성격') || p.includes('MBTI') || p.includes('가치관'))
     )) {
       tags.push('personality_match');
     }

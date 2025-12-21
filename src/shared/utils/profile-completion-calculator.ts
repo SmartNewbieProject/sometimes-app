@@ -3,35 +3,36 @@
  * Sometimes 앱 프로필 완성도 측정을 위한 핵심 모듈
  */
 
-import { AMPLITUDE_KPI_EVENTS } from '@/src/shared/constants/amplitude-kpi-events';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 
 export interface UserProfile {
-  profileImages: Array<{
+  profileImages: {
     id: string;
     order: number;
     isMain: boolean;
     url: string;
-  }>;
+  }[];
 
   // 내 성향 정보 (characteristics)
-  characteristics?: Array<{
+  characteristics?: {
     typeName: string;
-    selectedOptions: Array<{
+    selectedOptions: {
       id: string;
       displayName: string;
       imageUrl: string | null;
-    }>;
-  }>;
+    }[];
+  }[];
 
   // 내 이상형 정보 (preferences)
-  preferences?: Array<{
+  preferences?: {
     typeName: string;
-    selectedOptions: Array<{
+    selectedOptions: {
       id: string;
       displayName: string;
       imageUrl: string | null;
-    }>;
-  }>;
+    }[];
+  }[];
 }
 
 export class ProfileCompletionCalculator {
@@ -78,7 +79,7 @@ export class ProfileCompletionCalculator {
     // 프로필 완성 여부 확인
     const isProfileComplete = this.isProfileComplete(profile);
 
-    // 이벤트 트래킹 (Amplitude)
+    // 이벤트 트래킹 (Mixpanel)
     this.trackCompletionUpdate(totalScore, completedFields, incompleteFields, isProfileComplete);
 
     return totalScore;
@@ -100,15 +101,9 @@ export class ProfileCompletionCalculator {
     incompleteFields: string[],
     isProfileComplete: boolean
   ): void {
-    // 기존 Amplitude 이벤트 상수 사용
-    // 임시 amplitude 객체 - 실제로는 amplitude SDK가 전역에 설치되어 있어야 함
-    const amplitude = (global as any).amplitude || {
-      track: (event: string, properties: any) => {
-        console.log('Amplitude Event:', event, properties);
-      }
-    };
+    // Mixpanel 이벤트 상수 사용
 
-    amplitude.track(AMPLITUDE_KPI_EVENTS.PROFILE_COMPLETION_UPDATED, {
+    mixpanelAdapter.track(MIXPANEL_EVENTS.PROFILE_COMPLETION_UPDATED, {
       completion_score: score,
       completion_level: this.getCompletionLevel(score),
       completed_fields_count: completedFields.length,
@@ -121,7 +116,7 @@ export class ProfileCompletionCalculator {
 
     // 프로필 완성 시 특별 이벤트
     if (isProfileComplete) {
-      amplitude.track('PROFILE_COMPLETED', {
+      mixpanelAdapter.track('PROFILE_COMPLETED', {
         completion_score: score,
         completion_time: new Date().toISOString()
       });

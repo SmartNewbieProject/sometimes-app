@@ -7,7 +7,7 @@ import Heart from "@/src/features/signup/ui/area/heart";
 import AreaModal from "@/src/features/signup/ui/area/modal";
 
 import { Button, Header, Text } from "@/src/shared/ui";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import AreaFillHeart from "@assets/icons/area-fill-heart.svg";
 import DokdoIcon from "@assets/icons/dokdo.svg";
 import { Image } from "expo-image";
@@ -33,7 +33,7 @@ function Area() {
 
   const handleNext = () => {
     onNext(() => {
-      track("Signup_area", {
+      mixpanelAdapter.track("Signup_area", {
         area: show,
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });

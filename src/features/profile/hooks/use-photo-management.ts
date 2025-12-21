@@ -12,6 +12,7 @@ import { useToast } from '@/src/shared/hooks/use-toast';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { fileUtils, platform } from '@/src/shared/libs';
 import type { ProfileImage, ManagementSlot } from '@/src/types/user';
+import { devLogWithTag, devWarn } from '@/src/shared/utils';
 
 export function usePhotoManagement() {
   const { data: managementData, refetch } = useManagementSlots();
@@ -119,15 +120,12 @@ export function usePhotoManagement() {
     setIsLoading(true);
     try {
       const uploadResponse = await uploadProfileImage(imageUri, slotIndex);
-      console.log('[PHOTO_MGMT] Upload response:', uploadResponse);
+      devLogWithTag('Photo Mgmt', 'Upload complete:', { photoId: uploadResponse?.id });
 
       const refetchResult = await refetch();
-      console.log('[PHOTO_MGMT] Refetch result - images:', refetchResult.data?.images?.map(img => ({
-        id: img?.id,
-        slotIndex: img?.slotIndex,
-        order: img?.order,
-        isMain: img?.isMain,
-      })));
+      devLogWithTag('Photo Mgmt', 'Refetch complete:', {
+        imageCount: refetchResult.data?.images?.length
+      });
 
       emitToast('사진이 추가되었습니다. 관리자 승인 후 반영됩니다');
     } catch (error: any) {
@@ -142,10 +140,10 @@ export function usePhotoManagement() {
   };
 
   const handleReuploadPhoto = async (photo: ProfileImage, imageUri: string) => {
-    console.log('[REUPLOAD] Starting reupload for photo:', {
+    devLogWithTag('Photo Reupload', 'Starting:', {
       photoId: photo.id,
-      currentRetryCount: photo.retryCount,
-      currentStatus: photo.reviewStatus,
+      retryCount: photo.retryCount,
+      status: photo.reviewStatus,
     });
 
     if (photo.retryCount && photo.retryCount >= 3) {
@@ -168,22 +166,17 @@ export function usePhotoManagement() {
           } as any),
       });
 
-      console.log('[REUPLOAD] File created:', {
+      devLogWithTag('Photo Reupload', 'File created:', {
         fileName: (file as any).name,
         fileType: (file as any).type,
-        hasUri: !!(file as any).uri,
       });
 
       const response = await reuploadProfileImage(photo.id, file);
-      console.log('[REUPLOAD] API response:', response);
+      devLogWithTag('Photo Reupload', 'API complete');
 
       const refetchResult = await refetch();
-      console.log('[REUPLOAD] Refetch completed, new data:', {
-        slots: refetchResult.data?.slots?.map(s => ({
-          slotIndex: s.slotIndex,
-          imageId: s.image?.id,
-          reviewStatus: s.image?.reviewStatus,
-        })),
+      devLogWithTag('Photo Reupload', 'Refetch complete:', {
+        imageCount: refetchResult.data?.images?.length
       });
 
       // 재심사 요청 안내 모달 표시
@@ -213,7 +206,7 @@ export function usePhotoManagement() {
       await refetch();
     } catch (error) {
       // 백그라운드 작업이므로 에러 무시
-      console.warn('Failed to mark as reviewed:', error);
+      devWarn('Failed to mark as reviewed:', error);
     }
   };
 

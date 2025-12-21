@@ -4,7 +4,7 @@ import MyInfo from "@/src/features/my-info";
 import { useMbti } from "@/src/features/mypage/hooks";
 import { PalePurpleGradient, Text } from "@/src/shared/ui";
 import { MbtiSelector } from "@/src/widgets/mbti-selector";
-import { track } from "@/src/shared/libs/amplitude-compat";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,7 +28,7 @@ function MbtiSectionScreen() {
 
   const handleNextButton = () => {
     updateMbti(mbti as string);
-    track("Profile_Mbti", {
+    mixpanelAdapter.track("Profile_Mbti", {
       mbti: mbti,
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
