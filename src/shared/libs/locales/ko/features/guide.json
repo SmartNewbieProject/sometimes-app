@@ -3,7 +3,7 @@
     "mock_like_button": {
       "modal_title": "썸을 보냈어요!",
       "modal_text_1": "상대방도 관심을 보이면,",
-      "modal_text_2": "인스타그램으로 연락할 수 있어요",
+      "modal_text_2": "채팅으로 연락할 수 있어요",
       "primary_button": "확인했어요",
       "partner_modal_title_1": "마음에 드는 이성에게",
       "partner_modal_title_2_male": "구슬 {{count}}개로 관심을 표현할까요?",
@@ -44,7 +44,7 @@
           "step5_desc2": "카드를 누르면 상세 프로필로 이동해요",
           "step6_title": "좋아요",
           "step6_desc1": "좋아요를 누르면 서로 매칭돼요!",
-          "step6_desc2": "매칭이 되면 인스타그램에서",
+          "step6_desc2": "매칭이 되면 채팅에서",
           "step6_desc3": "대화를 시작할 수 있어요",
           "step7_title": "괜찮아요",
           "step7_desc1": "관심이 없으면 ‘괜찮아요’를 눌러주세요",
