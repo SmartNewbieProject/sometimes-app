@@ -107,7 +107,8 @@ export default function RootLayout() {
     initializeSDKs();
   }, []);
 
-  const [loaded] = useFonts({
+  // 웹에서는 CDN 폰트 사용 (+html.tsx에서 로드), 네이티브에서만 로컬 폰트 로드
+  const nativeFonts = Platform.OS !== 'web' ? {
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
     "Pretendard-Light": require("../assets/fonts/Pretendard-Light.otf"),
@@ -132,7 +133,10 @@ export default function RootLayout() {
     "MPLUS1p-Bold": require("../assets/fonts/MPLUS1p-Bold.ttf"),
     "MPLUS1p-ExtraBold": require("../assets/fonts/MPLUS1p-ExtraBold.ttf"),
     "MPLUS1p-Black": require("../assets/fonts/MPLUS1p-Black.ttf"),
-  });
+  } : {};
+
+  const [fontsLoaded] = useFonts(nativeFonts);
+  const loaded = Platform.OS === 'web' ? true : fontsLoaded;
 
   useEffect(() => {
     if (!loaded || !sdkInitialized) {
@@ -185,6 +189,11 @@ export default function RootLayout() {
   useEffect(() => {
     if (!loaded || !sdkInitialized) return;
 
+    if (Platform.OS === 'web') {
+      setColdStartProcessed(true);
+      return;
+    }
+
     const handleColdStartNotification = () => {
       try {
         const lastNotificationResponse =
@@ -218,7 +227,7 @@ export default function RootLayout() {
   }, [loaded, sdkInitialized, isValidNotificationData]);
 
   useEffect(() => {
-    if (!loaded || !coldStartProcessed) return;
+    if (!loaded || !coldStartProcessed || Platform.OS === 'web') return;
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {

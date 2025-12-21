@@ -2,6 +2,7 @@ import useLikedMeQuery from "@/src/features/like/queries/use-liked-me-query";
 import Loading from "@/src/features/loading";
 import NotSome from "@/src/features/post-box/ui/not-some";
 import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
+import { useMutualMatchReviewTrigger } from "@/src/features/in-app-review";
 import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
@@ -24,6 +25,16 @@ function LikedMe() {
       );
     });
   }, [likedMeList]);
+
+  // 인앱 리뷰: 상호 좋아요 매칭 발생 시 리뷰 요청
+  const hasMutualMatch = useMemo(() => {
+    return likedMeList?.some((item) => item.isMutualLike) ?? false;
+  }, [likedMeList]);
+
+  useMutualMatchReviewTrigger({
+    isMutualMatch: hasMutualMatch,
+    enabled: !isLoading,
+  });
 
   useEffect(() => {
     return () => {

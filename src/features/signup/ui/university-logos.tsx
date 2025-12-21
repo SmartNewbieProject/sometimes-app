@@ -4,33 +4,33 @@ import { useEffect, useRef } from "react";
 import { Animated, Easing, Platform, StyleSheet, View } from "react-native";
 
 const universityLogos = [
-  require("@/assets/images/univ/cheonan/caschu.png"),
-  require("@/assets/images/univ/busan/pnu.png"),
-  require("@/assets/images/univ/daegu/dgcau.png"),
-  require("@/assets/images/univ/busan/kmou.png"),
-  require("@/assets/images/univ/daegu/dgdart.png"),
-  require("@/assets/images/univ/incheon/icninu.png"),
-  require("@/assets/images/univ/busan/dau.png"),
-  require("@/assets/images/univ/daegu/dgdau.png"),
-  require("@/assets/images/univ/incheon/icninu.png"),
-  require("@/assets/images/univ/busan/ksu.png"),
-  require("@/assets/images/univ/daegu/dgdhu.png"),
-  require("@/assets/images/univ/incheon/icninha.png"),
+  require("@/assets/images/univ/cheonan/caschu.webp"),
+  require("@/assets/images/univ/busan/pnu.webp"),
+  require("@/assets/images/univ/daegu/dgcau.webp"),
+  require("@/assets/images/univ/busan/kmou.webp"),
+  require("@/assets/images/univ/daegu/dgdart.webp"),
+  require("@/assets/images/univ/incheon/icninu.webp"),
+  require("@/assets/images/univ/busan/dau.webp"),
+  require("@/assets/images/univ/daegu/dgdau.webp"),
+  require("@/assets/images/univ/incheon/icninu.webp"),
+  require("@/assets/images/univ/busan/ksu.webp"),
+  require("@/assets/images/univ/daegu/dgdhu.webp"),
+  require("@/assets/images/univ/incheon/icninha.webp"),
 ];
 
 const moreLogos = [
-  require("@/assets/images/univ/daejeon/hbu.png"),
-  require("@/assets/images/univ/busan/deu.png"),
-  require("@/assets/images/univ/daegu/dgkit.png"),
-  require("@/assets/images/univ/daejeon/hnu.png"),
-  require("@/assets/images/univ/busan/ku.png"),
-  require("@/assets/images/univ/daegu/dgkmu.png"),
-  require("@/assets/images/univ/daejeon/kaist.png"),
-  require("@/assets/images/univ/busan/dsu.png"),
-  require("@/assets/images/univ/daegu/dgknu.png"),
-  require("@/assets/images/univ/daejeon/kyu.png"),
-  require("@/assets/images/univ/busan/tmu.png"),
-  require("@/assets/images/univ/daegu/dgynu.png"),
+  require("@/assets/images/univ/daejeon/hbu.webp"),
+  require("@/assets/images/univ/busan/deu.webp"),
+  require("@/assets/images/univ/daegu/dgkit.webp"),
+  require("@/assets/images/univ/daejeon/hnu.webp"),
+  require("@/assets/images/univ/busan/ku.webp"),
+  require("@/assets/images/univ/daegu/dgkmu.webp"),
+  require("@/assets/images/univ/daejeon/kaist.webp"),
+  require("@/assets/images/univ/busan/dsu.webp"),
+  require("@/assets/images/univ/daegu/dgknu.webp"),
+  require("@/assets/images/univ/daejeon/kyu.webp"),
+  require("@/assets/images/univ/busan/tmu.webp"),
+  require("@/assets/images/univ/daegu/dgynu.webp"),
 ];
 
 interface UniversityLogosProps {
@@ -100,6 +100,8 @@ export default function UniversityLogos({
                   source={logo}
                   style={{ width: logoSize, height: logoSize }}
                   contentFit="contain"
+                  accessibilityLabel="대학교 로고"
+                  alt="대학교 로고"
                 />
               </View>
             ))}
@@ -126,6 +128,8 @@ export default function UniversityLogos({
                   source={logo}
                   style={{ width: logoSize, height: logoSize }}
                   contentFit="contain"
+                  accessibilityLabel="대학교 로고"
+                  alt="대학교 로고"
                 />
               </View>
             ))}

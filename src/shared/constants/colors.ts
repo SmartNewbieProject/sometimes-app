@@ -25,6 +25,7 @@ const semanticColorsInline = {
     muted: '#7C7C7C',
     disabled: '#AEAEAE',
     inverse: '#FFFFFF',
+    mutedAccessible: '#666666',
   },
   border: {
     smooth: '#e4e2e2ff',

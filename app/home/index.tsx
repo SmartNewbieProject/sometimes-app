@@ -2,6 +2,7 @@ import { useStep } from "@/src/features/guide/hooks/use-step";
 import useMatchingFirst from "@/src/features/guide/queries/use-maching-first";
 import LikeGuideScenario from "@/src/features/guide/ui/like-guide-scenario";
 import type { Notification } from "@/src/features/home/apis";
+import { useSignupDaysReviewTrigger } from "@/src/features/in-app-review";
 import BannerSlide from "@/src/features/home/ui/banner-slide";
 import FirstPurchaseEvent from "@/src/features/home/ui/first-purchase-event-banner";
 import HomeInfoSection from "@/src/features/home/ui/home-info/home-info-section";
@@ -79,6 +80,12 @@ const HomeScreen = () => {
   });
   // 환영 보상 관련
   const { shouldShowReward, markRewardAsReceived } = useWelcomeReward();
+
+  // 인앱 리뷰: 가입 후 3일 경과 시 리뷰 요청
+  useSignupDaysReviewTrigger({
+    userCreatedAt: my?.createdAt,
+    enabled: true,
+  });
   // useEffect(() => {
   //   const fetchTutorialStatus = async () => {
   //     const finished = await storage.getItem("like-guide");

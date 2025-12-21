@@ -1,9 +1,11 @@
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { Platform, View } from "react-native";
 import { AMPLITUDE_KPI_EVENTS } from "@/src/shared/constants/amplitude-kpi-events";
 import { chatEventBus } from "../services/chat-event-bus";
+import { useChatActivityReviewTrigger } from "@/src/features/in-app-review";
+import { useAuth } from "@/src/features/auth";
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
@@ -27,6 +29,7 @@ function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
   const messageCountBeforeSendRef = useRef(0);
+  const { my } = useAuth();
 
   useFocusEffect(
     useCallback(() => {
@@ -86,6 +89,28 @@ function ChatScreen() {
   }, [id, chatRoomDetail]);
 
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
+
+  // 인앱 리뷰: 채팅 10회 이상 대화 시 리뷰 요청
+  const { myMessageCount, partnerMessageCount } = useMemo(() => {
+    if (!my?.id || chatList.length === 0) {
+      return { myMessageCount: 0, partnerMessageCount: 0 };
+    }
+    const myMessages = chatList.filter((msg) => msg.senderId === my.id);
+    const partnerMessages = chatList.filter(
+      (msg) => msg.senderId !== my.id && msg.senderId !== "system"
+    );
+    return {
+      myMessageCount: myMessages.length,
+      partnerMessageCount: partnerMessages.length,
+    };
+  }, [chatList, my?.id]);
+
+  useChatActivityReviewTrigger({
+    myMessageCount,
+    partnerMessageCount,
+    enabled: true,
+  });
+
   const year = new Date().getFullYear();
   const month = new Date().getMonth() + 1;
   const day = new Date().getDate();

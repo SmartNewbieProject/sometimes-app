@@ -365,8 +365,8 @@ function KakaoLoginComponent() {
           { opacity: isLoading ? 0.6 : 1 }
         ]}
       >
-        <View style={{ width: 34, height: 34 }}>
-          <KakaoLogo width={34} height={34} />
+        <View style={{ width: 34, height: 34 }} accessibilityLabel="카카오 로고" accessibilityRole="image">
+          <KakaoLogo width={34} height={34} aria-label="카카오" role="img" />
         </View>
         <View>
           <Text textColor="black" size="18" weight="semibold">

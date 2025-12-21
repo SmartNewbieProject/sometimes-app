@@ -16,10 +16,9 @@ const PRIVACY_POLICY_LINK =
 export const PrivacyNotice = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { t } = useTranslation();
-  console.log(t("features.auth.ui.privacy_notice.notice_prefix"));
   return (
     <View style={styles.container}>
-      <Text textColor="gray" size="12" weight="normal" style={styles.noticeText}>
+      <Text size="12" weight="normal" style={[styles.noticeText, styles.accessibleText]}>
         {t("features.auth.ui.privacy_notice.notice_prefix")}
       </Text>
 
@@ -41,7 +40,7 @@ export const PrivacyNotice = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <Text textColor="gray" size="12" weight="normal" style={styles.noticeText}>
+      <Text size="12" weight="normal" style={[styles.noticeText, styles.accessibleText]}>
         {t("features.auth.ui.privacy_notice.notice_suffix")}
       </Text>
 
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
   link: {
     textDecorationLine: "underline",
     fontSize: 12,
-    color: colors["gray-600"],
+    color: colors.text.mutedAccessible,
     fontFamily: "Pretendard-SemiBold",
     fontWeight: "600",
     textAlign: 'center',
@@ -91,6 +90,8 @@ const styles = StyleSheet.create({
   },
   businessLink: {
     marginTop: 10,
-    color: colors.gray,
+  },
+  accessibleText: {
+    color: colors.text.mutedAccessible,
   },
 });

@@ -7,8 +7,9 @@ import { Text } from "@shared/ui";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { useRegularMatchingReviewTrigger } from "@/src/features/in-app-review";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -33,6 +34,20 @@ export const Partner = ({ match }: PartnerProps) => {
     match.endOfView,
     dayUtils.create()
   );
+  const [hasViewedMatch, setHasViewedMatch] = useState(false);
+
+  // 인앱 리뷰: 정기매칭 결과 확인 시 리뷰 요청
+  useEffect(() => {
+    if (partner) {
+      setHasViewedMatch(true);
+    }
+  }, [partner]);
+
+  useRegularMatchingReviewTrigger({
+    hasViewedMatch,
+    matchType: "open",
+    enabled: true,
+  });
 
   const onClickToPartner = () => {
     return router.navigate(`/partner/view/${match.id}`);

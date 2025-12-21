@@ -23,6 +23,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/src/shared/libs/i18n";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { useKpiAnalytics } from "@/src/shared/hooks/use-kpi-analytics";
+import { useWithdrawalReviewTrigger } from "@/src/features/in-app-review";
 export enum WithdrawalReason {
   FOUND_PARTNER = "FOUND_PARTNER",
   POOR_MATCHING = "POOR_MATCHING",
@@ -100,12 +101,17 @@ export default function WithdrawalScreen() {
   const { showErrorModal, showModal } = useModal();
   const { clearTokensOnly, my } = useAuth();
   const { accountEvents } = useKpiAnalytics();
+  const { triggerIfFoundPartner } = useWithdrawalReviewTrigger();
   const isOther = watch("reason") === "OTHER";
 
   const onSubmitWithdrawal = handleSubmit(async (data) => {
     const reason = (() => {
       return isOther ? otherReason : data.reason;
     })();
+
+    if (data.reason === WithdrawalReason.FOUND_PARTNER) {
+      await triggerIfFoundPartner(data.reason);
+    }
 
     // 탈퇴 요청 시작 이벤트 (버튼 클릭 시)
     accountEvents.trackAccountDeletionRequested(

@@ -46,7 +46,7 @@ export const AppDownloadSection: React.FC<AppDownloadSectionProps> = ({
     <View style={styles.container}>
       <View style={styles.contentWrapper}>
         <View style={[styles.storeLinksContainer, { gap: config.gap }]}>
-          <Pressable onPress={onAppStorePress}>
+          <Pressable onPress={onAppStorePress} accessibilityLabel="App Store에서 다운로드" accessibilityRole="link">
             <Image
               source={require('@assets/images/download/appstore-hq.png')}
               style={{
@@ -55,9 +55,11 @@ export const AppDownloadSection: React.FC<AppDownloadSectionProps> = ({
                 cursor: 'pointer',
               }}
               resizeMode="contain"
+              accessibilityLabel="App Store에서 다운로드"
+              alt="App Store에서 다운로드"
             />
           </Pressable>
-          <Pressable onPress={onGooglePlayPress}>
+          <Pressable onPress={onGooglePlayPress} accessibilityLabel="Google Play에서 다운로드" accessibilityRole="link">
             <Image
               source={require('@assets/images/download/googleplay-hq.png')}
               style={{
@@ -66,6 +68,8 @@ export const AppDownloadSection: React.FC<AppDownloadSectionProps> = ({
                 cursor: 'pointer',
               }}
               resizeMode="contain"
+              accessibilityLabel="Google Play에서 다운로드"
+              alt="Google Play에서 다운로드"
             />
           </Pressable>
         </View>
