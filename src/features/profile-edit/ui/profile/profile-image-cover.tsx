@@ -14,7 +14,7 @@ type ProfileImageCoverProps = {
 export default function ProfileImageCover({
   visible = false,
   title = "프로필 심사를 진행중이에요",
-  subtitle = "현재 프로필 심사를 진행중이에요\n끝난 후 사진 수정을 진행할 수 있어요",
+  subtitle = "심사중에 언제든 사진을 변경할 수 있어요",
 }: ProfileImageCoverProps) {
   const router = useRouter();
 
