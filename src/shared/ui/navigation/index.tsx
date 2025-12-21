@@ -3,7 +3,7 @@ import { Text } from "@/src/shared/ui/text";
 import { Image } from "expo-image";
 import { router, usePathname } from "expo-router";
 import React, { type ReactNode } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text as RNText } from "react-native";
 import colors from "@/src/shared/constants/colors";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useMomentEnabled } from "@/src/features/moment/queries/use-moment-enabled";

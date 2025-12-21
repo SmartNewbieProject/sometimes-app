@@ -45,6 +45,10 @@ export default function LoginForm() {
   const onPressPassLogin = async () => {
     const loginStartTime = Date.now();
 
+    track("Signup_Auth_Started", {
+      platform: "pass",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     authEvents.trackLoginStarted('pass');
     signupEvents.trackSignupStarted();
 
@@ -338,6 +342,10 @@ function KakaoLoginComponent() {
   };
 
   const handleKakaoLogin = () => {
+    track("Signup_Auth_Started", {
+      platform: "kakao",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
     authEvents.trackLoginStarted('kakao');
     signupEvents.trackSignupStarted();
     if (Platform.OS === "web") {

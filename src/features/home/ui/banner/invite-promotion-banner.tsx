@@ -88,7 +88,7 @@ function InvitePromotionBanner() {
         source={require("@assets/images/promotion/home-banner/letter.png")}
         style={styles.letter}
       />
-            <Text style={styles.titleStrong}>50구슬</Text>
+            <Text style={styles.titleStrong}>30구슬</Text>
           </View>
           </View>
          

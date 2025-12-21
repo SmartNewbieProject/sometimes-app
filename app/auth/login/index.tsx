@@ -8,7 +8,7 @@ import { track } from "@/src/shared/libs/amplitude-compat";
 import Signup from "@features/signup";
 import { platform } from "@shared/libs/platform";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -20,6 +20,17 @@ export default function LoginScreen() {
   const router = useRouter();
   const { loginWithPass } = useAuth();
   const { showModal } = useModal();
+  const hasTrackedView = useRef(false);
+
+  useEffect(() => {
+    if (!hasTrackedView.current) {
+      track("Signup_Login_View", {
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
+      hasTrackedView.current = true;
+    }
+  }, []);
+
   useEffect(() => {
     const identityVerificationId = params.identityVerificationId as string;
     if (identityVerificationId) {

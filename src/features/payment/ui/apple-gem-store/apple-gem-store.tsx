@@ -36,7 +36,7 @@ function AppleGemStore() {
   const { showErrorModal } = useModal();
   const { eventType } = usePortoneStore();
   const { participate } = useEventControl({ type: eventType! });
-  const { paymentEvents } = useKpiAnalytics();
+  const { paymentEvents, conversionEvents } = useKpiAnalytics();
   const {
     connected,
     products,
@@ -131,6 +131,11 @@ function AppleGemStore() {
         }
       } catch (error) {
         console.error("Failed to complete purchase:", error);
+
+        // 결제 실패 이벤트 추적
+        const errorMessage = error instanceof Error ? error.message : 'Unknown Apple IAP error';
+        conversionEvents.trackPaymentFailed('apple_iap', errorMessage);
+
         showErrorModal("결제 처리 중 오류가 발생했습니다", "announcement");
       } finally {
         setPurchasing(false);
@@ -150,6 +155,18 @@ function AppleGemStore() {
       });
     } catch (error) {
       console.error("Purchase failed:", error);
+
+      // Apple IAP 취소/실패 이벤트 추적
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const isCancellation = errorMessage.toLowerCase().includes('cancel') ||
+                             errorMessage.toLowerCase().includes('취소');
+
+      if (isCancellation) {
+        conversionEvents.trackPaymentCancelled(errorMessage, 'apple_iap_dialog');
+      } else {
+        conversionEvents.trackPaymentFailed('apple_iap', errorMessage);
+      }
+
       setPurchasing(false);
     }
   };

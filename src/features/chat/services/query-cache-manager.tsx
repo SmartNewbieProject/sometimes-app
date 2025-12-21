@@ -269,8 +269,6 @@ class QueryCacheManager {
         pages,
       };
     });
-
-    this.queryClient?.invalidateQueries({ queryKey: ["chat-room"] });
   }
 
   private markRoomAsReadInCache(chatRoomId: string) {

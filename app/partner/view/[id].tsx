@@ -16,6 +16,8 @@ import {
   PartnerMBTI,
   MatchingReasonCard,
 } from "@/src/features/match/ui";
+import { MatchContext, MihoMessage } from "@/src/features/match";
+import { AMPLITUDE_EVENTS } from "@/src/shared/constants/amplitude-events";
 import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { BlurredPhotoCard } from "@/src/widgets/blurred-photo-card";
 import {
@@ -34,7 +36,7 @@ import {
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Pressable,
@@ -67,6 +69,20 @@ export default function PartnerDetailScreen() {
   const myApprovedPhotosCount = profileDetails?.profileImages?.filter(
     (img) => img.reviewStatus?.toUpperCase() === 'APPROVED'
   ).length ?? 0;
+
+  // 미호 멘트를 위한 매칭 컨텍스트
+  const matchContext: MatchContext = useMemo(() => {
+    const myUniversity = profileDetails?.universityDetails?.name;
+    const partnerUniversity = partner?.universityDetails?.name;
+    const sameUniversity = !!(myUniversity && partnerUniversity && myUniversity === partnerUniversity);
+
+    return {
+      matchScore: partner?.matchScore ?? 50,
+      sameUniversity,
+      isFirstMatch: partner?.isFirstMatch ?? false,
+      commonPoints: matchReasonsData?.reasons?.map(r => r.category) ?? [],
+    };
+  }, [partner, profileDetails, matchReasonsData]);
 
   useEffect(() => {
     if (!partner) return;
@@ -129,6 +145,26 @@ export default function PartnerDetailScreen() {
   const handleMihoIntroClose = () => {
     setShowMihoIntro(false);
   };
+
+  const handleMihoMessageShown = useCallback((message: MihoMessage) => {
+    const amplitude = (global as any).amplitude || {
+      track: (event: string, properties: any) => {
+        console.log('Amplitude Event:', event, properties);
+      },
+    };
+
+    amplitude.track(AMPLITUDE_EVENTS.MIHO_MESSAGE_SHOWN, {
+      message_id: message.id,
+      message_rarity: message.rarity,
+      message_title: message.title,
+      message_tone: message.tone,
+      is_special: message.special ?? false,
+      partner_id: partner?.id,
+      match_score: partner?.matchScore ?? 50,
+      same_university: matchContext.sameUniversity,
+      timestamp: new Date().toISOString(),
+    });
+  }, [partner?.id, partner?.matchScore, matchContext.sameUniversity]);
 
   const userWithdrawal = !!partner?.deletedAt;
 
@@ -245,7 +281,12 @@ export default function PartnerDetailScreen() {
 
   return (
     <View style={styles.mainContainer}>
-      <MihoIntroModal visible={showMihoIntro} onClose={handleMihoIntroClose} />
+      <MihoIntroModal
+        visible={showMihoIntro}
+        onClose={handleMihoIntroClose}
+        matchContext={matchContext}
+        onMessageShown={handleMihoMessageShown}
+      />
 
       <PhotoSlider
         images={validProfileImages.map((item) => item.imageUrl || item.url) ?? []}

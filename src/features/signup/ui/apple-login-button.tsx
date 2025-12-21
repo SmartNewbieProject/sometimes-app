@@ -173,6 +173,11 @@ const AppleLoginButton: React.FC = () => {
     console.log("Button clicked", { AppleID: window.AppleID, isLoading });
     if (!window.AppleID || isLoading) return;
 
+    track("Signup_Auth_Started", {
+      platform: "apple",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
+
     try {
       window.sessionStorage.removeItem("appleUserId");
       window.sessionStorage.removeItem("appleUserFullName");
@@ -205,6 +210,11 @@ const AppleLoginButton: React.FC = () => {
 
   const handleIOSAppleLogin = async (): Promise<void> => {
     if (isLoading) return;
+
+    track("Signup_Auth_Started", {
+      platform: "apple",
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
 
     try {
       await removeAppleUserId();

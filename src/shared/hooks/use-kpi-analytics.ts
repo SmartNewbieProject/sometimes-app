@@ -61,6 +61,7 @@ export interface UseKpiAnalyticsReturn {
     trackMessageSent: (chatId: string, messageType: string) => void;
     trackChatEnded: (chatId: string, chatDuration: number, messageCount: number, endReason: string) => void;
     trackGiftSent: (chatId: string, giftType: string) => void;
+    trackChatResponse: (chatId: string, responseTimeSeconds: number, isFirstResponse: boolean, conversationDepth: number) => void;
   };
 
   communityEvents: {
@@ -69,6 +70,9 @@ export interface UseKpiAnalyticsReturn {
     trackPostLiked: (postId: string) => void;
     trackCommentAdded: (postId: string, commentLength: number) => void;
     trackPostShared: (postId: string, sharePlatform: string) => void;
+    trackFeedViewed: (entryPoint: string, feedType: string) => void;
+    trackPostReported: (postId: string, reportReason: string, reporterUserId?: string) => void;
+    trackPostDeleted: (postId: string, deleteReason: string, postAge: number) => void;
   };
 
   paymentEvents: {
@@ -91,12 +95,14 @@ export interface UseKpiAnalyticsReturn {
     trackInviteSent: (inviteMethod: string) => void;
     trackInviteAccepted: (inviteCode: string) => void;
     trackReferralSignupCompleted: (referrerId: string) => void;
+    trackRewardGranted: (referrerId: string, refereeId: string, rewardType: string, rewardValue: number) => void;
   };
 
   sessionEvents: {
     trackSessionStarted: (sessionStartReason: string) => void;
     trackSessionEnded: (sessionDuration: number) => void;
     trackPushNotificationOpened: (notificationType: string) => void;
+    trackFirstSessionCompleted: (sessionDurationSeconds: number, actionsCompleted: string[]) => void;
   };
 
   // 1. 사용자 온보딩 퍼널 이벤트
@@ -106,7 +112,7 @@ export interface UseKpiAnalyticsReturn {
     trackProfileCompletionUpdated: (completionRate: number, completedFields: string[]) => void;
     trackProfilePhotoUploaded: (photoCount: number) => void;
     trackOnboardingStarted: (source?: string) => void;
-    trackOnboardingCompleted: (totalDuration: number, stepsCompleted: number) => void;
+    trackOnboardingCompleted: (completionTimeSeconds: number, profileCompletionRate: number, skippedSteps: string[], completedOptionalFields: string[]) => void;
     trackOnboardingStepCompleted: (stepName: string, stepNumber: number) => void;
   };
 
@@ -164,6 +170,14 @@ export interface UseKpiAnalyticsReturn {
     trackReportViewed: (reportId: string, category: string) => void;
     trackReportShared: (reportId: string, platform: string) => void;
     trackCategorySelected: (category: string) => void;
+    trackSessionAbandoned: (sessionId: string, abandonedAtTurn: number, timeSpentSeconds: number, lastMessageType: string) => void;
+    trackFeedbackSubmitted: (sessionId: string, messageId: string, feedbackType: 'positive' | 'negative', feedbackDetail?: string) => void;
+    trackFollowUpQuestion: (sessionId: string, previousSessionId: string, daysSinceLastSession: number, sameCategory: boolean) => void;
+  };
+
+  retentionEvents: {
+    trackReactivation: (daysSinceLastActive: number, reactivationSource: string, previousChurnRisk?: number) => void;
+    trackFeatureAdopted: (featureName: string, daysSinceSignup: number, adoptionSource: string) => void;
   };
 }
 
@@ -389,6 +403,20 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
         gift_type: giftType
       });
     }, [trackEvent]),
+
+    trackChatResponse: useCallback((chatId: string, responseTimeSeconds: number, isFirstResponse: boolean, conversationDepth: number) => {
+      trackEvent('Chat_Response', {
+        chat_id: chatId,
+        response_time_seconds: responseTimeSeconds,
+        is_first_response: isFirstResponse,
+        conversation_depth: conversationDepth
+      });
+
+      // User Properties 자동 업데이트: 양방향 대화 참여
+      updateUserProperties({
+        $add: { total_chat_responses_received: 1 },
+      });
+    }, [trackEvent, updateUserProperties]),
   };
 
   // 커뮤니티 이벤트들
@@ -422,6 +450,35 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
       trackEvent('Community_Post_Shared', {
         post_id: postId,
         share_platform: sharePlatform
+      });
+    }, [trackEvent]),
+
+    trackFeedViewed: useCallback((entryPoint: string, feedType: string) => {
+      trackEvent('Community_Feed_Viewed', {
+        entry_point: entryPoint,
+        feed_type: feedType
+      });
+
+      // User Properties 자동 업데이트: 피드 조회 횟수
+      updateUserProperties({
+        $add: { total_feed_views: 1 },
+        last_feed_view_date: new Date().toISOString(),
+      });
+    }, [trackEvent, updateUserProperties]),
+
+    trackPostReported: useCallback((postId: string, reportReason: string, reporterUserId?: string) => {
+      trackEvent('Community_Post_Reported', {
+        post_id: postId,
+        report_reason: reportReason,
+        reporter_user_id: reporterUserId
+      });
+    }, [trackEvent]),
+
+    trackPostDeleted: useCallback((postId: string, deleteReason: string, postAge: number) => {
+      trackEvent('Community_Post_Deleted', {
+        post_id: postId,
+        delete_reason: deleteReason,
+        post_age_hours: postAge
       });
     }, [trackEvent]),
   };
@@ -525,6 +582,23 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
     trackReferralSignupCompleted: useCallback((referrerId: string) => {
       trackEvent('Referral_Signup_Completed', { referrer_id: referrerId });
     }, [trackEvent]),
+
+    trackRewardGranted: useCallback((referrerId: string, refereeId: string, rewardType: string, rewardValue: number) => {
+      trackEvent('Referral_Reward_Granted', {
+        referrer_id: referrerId,
+        referee_id: refereeId,
+        reward_type: rewardType,
+        reward_value: rewardValue
+      });
+
+      // User Properties 자동 업데이트: 추천 보상 누적
+      updateUserProperties({
+        $add: {
+          total_referral_rewards: rewardValue,
+          successful_referrals: 1,
+        },
+      });
+    }, [trackEvent, updateUserProperties]),
   };
 
   // 세션 이벤트들
@@ -545,6 +619,23 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
     trackPushNotificationOpened: useCallback((notificationType: string) => {
       trackEvent('Push_Notification_Opened', { notification_type: notificationType });
     }, [trackEvent]),
+
+    trackFirstSessionCompleted: useCallback((sessionDurationSeconds: number, actionsCompleted: string[]) => {
+      trackEvent('First_Session_Completed', {
+        session_duration_seconds: sessionDurationSeconds,
+        actions_completed: actionsCompleted,
+        actions_count: actionsCompleted.length
+      });
+
+      // User Properties 자동 업데이트: 첫 세션 완료 표시
+      updateUserProperties({
+        first_session_completed: true,
+        first_session_duration_seconds: sessionDurationSeconds,
+        $set_once: {
+          first_session_completion_date: new Date().toISOString(),
+        },
+      });
+    }, [trackEvent, updateUserProperties]),
   };
 
   // 기능 사용 이벤트들
@@ -581,7 +672,20 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
         turn_count: turnCount,
         satisfaction_score: satisfactionScore
       });
-    }, [trackEvent]),
+
+      // User Properties 자동 업데이트: Somemate 사용 통계
+      updateUserProperties({
+        has_used_somemate: true,
+        $add: {
+          total_somemate_sessions: 1,
+          total_somemate_turns: turnCount,
+        },
+        $set_once: {
+          first_somemate_date: new Date().toISOString(),
+        },
+        last_somemate_date: new Date().toISOString(),
+      });
+    }, [trackEvent, updateUserProperties]),
 
     trackMessageSent: useCallback((sessionId: string, messageType: string, messageLength?: number) => {
       trackEvent('Somemate_Message_Sent', {
@@ -627,6 +731,33 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
     trackCategorySelected: useCallback((category: string) => {
       trackEvent('Somemate_Category_Selected', { category: category as any });
     }, [trackEvent]),
+
+    trackSessionAbandoned: useCallback((sessionId: string, abandonedAtTurn: number, timeSpentSeconds: number, lastMessageType: string) => {
+      trackEvent('Somemate_Session_Abandoned', {
+        session_id: sessionId,
+        abandoned_at_turn: abandonedAtTurn,
+        time_spent_seconds: timeSpentSeconds,
+        last_message_type: lastMessageType
+      });
+    }, [trackEvent]),
+
+    trackFeedbackSubmitted: useCallback((sessionId: string, messageId: string, feedbackType: 'positive' | 'negative', feedbackDetail?: string) => {
+      trackEvent('Somemate_Feedback_Submitted', {
+        session_id: sessionId,
+        message_id: messageId,
+        feedback_type: feedbackType,
+        feedback_detail: feedbackDetail
+      });
+    }, [trackEvent]),
+
+    trackFollowUpQuestion: useCallback((sessionId: string, previousSessionId: string, daysSinceLastSession: number, sameCategory: boolean) => {
+      trackEvent('Somemate_Follow_Up_Question', {
+        session_id: sessionId,
+        previous_session_id: previousSessionId,
+        days_since_last_session: daysSinceLastSession,
+        same_category: sameCategory
+      });
+    }, [trackEvent]),
   };
 
   // 1. 사용자 온보딩 퍼널 구현
@@ -670,13 +801,28 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
       });
     }, [trackEvent]),
 
-    trackOnboardingCompleted: useCallback((totalDuration: number, stepsCompleted: number) => {
+    trackOnboardingCompleted: useCallback((
+      completionTimeSeconds: number,
+      profileCompletionRate: number,
+      skippedSteps: string[],
+      completedOptionalFields: string[]
+    ) => {
       trackEvent('Onboarding_Completed', {
-        total_duration: totalDuration,
-        steps_completed: stepsCompleted,
-        completion_rate: 100
+        completion_time_seconds: completionTimeSeconds,
+        profile_completion_rate: profileCompletionRate,
+        skipped_steps: skippedSteps,
+        completed_optional_fields: completedOptionalFields
       });
-    }, [trackEvent]),
+
+      // User Properties 자동 업데이트
+      updateUserProperties({
+        onboarding_completed: true,
+        onboarding_completion_date: new Date().toISOString(),
+        $set_once: {
+          time_to_onboarding_completion_seconds: completionTimeSeconds,
+        },
+      });
+    }, [trackEvent, updateUserProperties]),
 
     trackOnboardingStepCompleted: useCallback((stepName: string, stepNumber: number) => {
       trackEvent('Onboarding_Step_Completed', {
@@ -916,6 +1062,38 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
     }, [trackEvent]),
   };
 
+  // 리텐션 이벤트들
+  const retentionEvents = {
+    trackReactivation: useCallback((daysSinceLastActive: number, reactivationSource: string, previousChurnRisk?: number) => {
+      trackEvent('Reactivation', {
+        days_since_last_active: daysSinceLastActive,
+        reactivation_source: reactivationSource,
+        previous_churn_risk: previousChurnRisk
+      });
+
+      // User Properties 자동 업데이트: 재활성화 표시
+      updateUserProperties({
+        is_reactivated_user: true,
+        last_reactivation_date: new Date().toISOString(),
+        $add: { reactivation_count: 1 },
+      });
+    }, [trackEvent, updateUserProperties]),
+
+    trackFeatureAdopted: useCallback((featureName: string, daysSinceSignup: number, adoptionSource: string) => {
+      trackEvent('Feature_Adopted', {
+        feature_name: featureName,
+        days_since_signup: daysSinceSignup,
+        adoption_source: adoptionSource
+      });
+
+      // User Properties 자동 업데이트: 채택한 기능 목록에 추가
+      updateUserProperties({
+        [`feature_${featureName}_adopted`]: true,
+        [`feature_${featureName}_adoption_date`]: new Date().toISOString(),
+      });
+    }, [trackEvent, updateUserProperties]),
+  };
+
   return {
     trackEvent,
     authEvents,
@@ -934,5 +1112,6 @@ export const useKpiAnalytics = (): UseKpiAnalyticsReturn => {
     matchingEfficiencyEvents,
     communityEngagementEvents,
     conversionEvents,
+    retentionEvents,
   };
 };

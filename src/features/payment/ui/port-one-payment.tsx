@@ -7,6 +7,7 @@ import { router } from 'expo-router';
 import { ImageResources } from '@/src/shared/libs/image';
 import { usePortoneStore } from '../hooks/use-portone-store';
 import { useKpiAnalytics } from '@/src/shared/hooks/use-kpi-analytics';
+import { categorizePaymentError } from '../types';
 
 
 export interface PortOnePaymentCompleteResult {
@@ -98,8 +99,22 @@ export const PortOnePaymentView = forwardRef(
 		const handleError = (error: PortOnePaymentErrorResult) => {
 			console.log('실패', error.message);
 
-			// 결제 실패 이벤트 추적
-			conversionEvents.trackPaymentFailed(payMode, error.message);
+			// 오류 분류
+			const errorCategory = categorizePaymentError(error.message || 'Unknown error');
+
+			if (errorCategory.category === 'USER_CANCEL') {
+				// 결제 취소 이벤트 추적
+				conversionEvents.trackPaymentCancelled(
+					errorCategory.message,
+					'payment_page'
+				);
+			} else {
+				// 결제 실패 이벤트 추적 (카테고리 정보 포함)
+				conversionEvents.trackPaymentFailed(
+					payMode,
+					`[${errorCategory.category}] ${errorCategory.message}`
+				);
+			}
 
 			onError?.(error);
 		};
