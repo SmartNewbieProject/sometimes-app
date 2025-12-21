@@ -38,6 +38,7 @@ type ModalOptions = {
   };
   reverse?: boolean;
   custom?: React.ElementType;
+  buttonLayout?: 'horizontal' | 'vertical'; // 버튼 배치 방향
 };
 
 export type ErrorModalOptions = {
@@ -187,29 +188,70 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           style={[
             styles.buttonContainer,
             {
-              flexDirection: options?.reverse ? "row-reverse" : "row",
+              flexDirection:
+                options?.buttonLayout === 'vertical'
+                  ? "column"
+                  : options?.buttonLayout === 'horizontal'
+                  ? "row"
+                  : // 기본: 텍스트 길이로 자동 판단
+                  (options?.primaryButton?.text.length ?? 0) >= 6 ||
+                  (options?.secondaryButton?.text.length ?? 0) >= 6
+                  ? "column"
+                  : options?.reverse ? "row-reverse" : "row",
             }
           ]}
         >
-          {options?.secondaryButton && (
-            <Button
-              variant="secondary"
-              onPress={() =>
-                handleButtonClick(options.secondaryButton?.onClick)
-              }
-              styles={styles.button}
-            >
-              {options.secondaryButton.text}
-            </Button>
-          )}
-          {options?.primaryButton && (
-            <Button
-              variant="primary"
-              onPress={() => handleButtonClick(options.primaryButton?.onClick)}
-              styles={styles.button}
-            >
-              {options.primaryButton.text}
-            </Button>
+          {/* 수직 정렬일 때는 primary 먼저, 수평 정렬일 때는 secondary 먼저 */}
+          {(options?.buttonLayout === 'vertical' ||
+            ((options?.primaryButton?.text.length ?? 0) >= 6 ||
+            (options?.secondaryButton?.text.length ?? 0) >= 6)) ? (
+            <>
+              {options?.primaryButton && (
+                <Button
+                  variant="primary"
+                  onPress={() => handleButtonClick(options.primaryButton?.onClick)}
+                  width="full"
+                  styles={styles.buttonColumn}
+                >
+                  {options.primaryButton.text}
+                </Button>
+              )}
+              {options?.secondaryButton && (
+                <Button
+                  variant="secondary"
+                  onPress={() =>
+                    handleButtonClick(options.secondaryButton?.onClick)
+                  }
+                  width="full"
+                  styles={styles.buttonColumn}
+                >
+                  {options.secondaryButton.text}
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              {options?.secondaryButton && (
+                <Button
+                  variant="secondary"
+                  onPress={() =>
+                    handleButtonClick(options.secondaryButton?.onClick)
+                  }
+                  styles={styles.button}
+                >
+                  {options.secondaryButton.text}
+                </Button>
+              )}
+              {options?.primaryButton && (
+                <Button
+                  variant="primary"
+                  onPress={() => handleButtonClick(options.primaryButton?.onClick)}
+                  styles={styles.button}
+                >
+                  {options.primaryButton.text}
+                </Button>
+              )}
+            </>
           )}
         </View>
       </View>
@@ -310,14 +352,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // Button Container Styles (1:1 비율)
+  // Button Container Styles
   buttonContainer: {
     flexDirection: 'row',
     gap: 8,
     width: '100%',
   },
   button: {
-    flex: 1,
+    flex: 1, // 가로 배치일 때 1:1 비율
+  },
+  buttonColumn: {
+    width: '100%', // 세로 배치일 때 전체 너비
   },
 
   // Modal Overlay Styles
