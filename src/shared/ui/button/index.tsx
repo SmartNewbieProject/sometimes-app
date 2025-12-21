@@ -121,6 +121,8 @@ const variantStyles = StyleSheet.create({
   },
   secondary: {
     backgroundColor: semanticColors.surface.surface,
+    borderWidth: 2,
+    borderColor: semanticColors.border.smooth,
   },
   outline: {
     backgroundColor: "transparent",
