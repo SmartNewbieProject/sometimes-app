@@ -11,6 +11,20 @@
   body {
     font-family: 'Pretendard-Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+
+  /* 웹 환경에서 불필요한 스크롤 제거 */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #root {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 @font-face {

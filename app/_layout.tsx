@@ -253,7 +253,7 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.rootView}>
       <LoggerContainer>
         <QueryProvider>
           <ModalProvider>
@@ -284,13 +284,24 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
+  rootView: {
+    flex: 1,
+    ...Platform.select({
+      web: {
+        height: '100%',
+        overflow: 'hidden',
+      },
+    }),
+  },
   container: {
     flex: 1,
     ...Platform.select({
       web: {
         maxWidth: 468,
         width: '100%',
+        height: '100%',
         alignSelf: 'center',
+        overflow: 'hidden',
       },
     }),
   },
