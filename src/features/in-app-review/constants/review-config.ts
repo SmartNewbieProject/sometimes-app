@@ -1,0 +1,11 @@
+export const REVIEW_CONFIG = {
+	MAX_REQUEST_COUNT: 3,
+	MIN_REQUEST_INTERVAL_DAYS: 30,
+	MIN_DAYS_SINCE_SIGNUP: 3,
+	CHAT_MESSAGE_THRESHOLD: 10,
+	DEFAULT_DELAY_MS: 1500,
+} as const;
+
+export const STORAGE_KEY = {
+	REVIEW_TRACKING: 'in_app_review_tracking',
+} as const;
