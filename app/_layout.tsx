@@ -1,9 +1,15 @@
+console.log('🚀 [_layout.tsx] START - App initializing...');
+
 import "@/src/features/logger/service/patch";
+console.log('✅ [_layout.tsx] Logger patch loaded');
+
 import { useFonts } from "expo-font";
 import { Slot, router, useLocalSearchParams, usePathname, useNavigationContainerRef } from "expo-router";
 import { isRunningInExpoGo } from "expo";
 import * as Application from "expo-application";
 import * as SplashScreen from "expo-splash-screen";
+
+console.log('✅ [_layout.tsx] Basic imports loaded');
 import { preventScreenCaptureAsync } from "expo-screen-capture";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, AppState, Platform, View, StyleSheet } from "react-native";
@@ -28,15 +34,28 @@ import { useAtt } from "@/src/shared/hooks";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
+console.log('✅ [_layout.tsx] UI imports loaded');
+
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+console.log('✅ [_layout.tsx] Mixpanel loaded');
+
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SessionTracker } from "@/src/shared/components/session-tracker";
 import { AppBadgeSync } from "@/src/shared/components/app-badge-sync";
 import * as Sentry from '@sentry/react-native';
 
+console.log('✅ [_layout.tsx] All imports loaded');
+console.log('📱 [_layout.tsx] App Info:', {
+  id: Application.applicationId,
+  version: Application.nativeApplicationVersion,
+  build: Application.nativeBuildVersion,
+});
+
 const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: !isRunningInExpoGo(),
 });
+
+console.log('🔧 [_layout.tsx] Initializing Sentry...');
 
 Sentry.init({
   dsn: 'https://2a33482b7a7b5a1787d3b8c0da4809a9@o4510573549846528.ingest.us.sentry.io/4510573550829568',
@@ -49,6 +68,8 @@ Sentry.init({
   integrations: [Sentry.feedbackIntegration(), navigationIntegration],
   enableNativeFramesTracking: !isRunningInExpoGo(),
 });
+
+console.log('✅ [_layout.tsx] Sentry initialized');
 
 if (Platform.OS !== "web") {
   SplashScreen.preventAutoHideAsync()

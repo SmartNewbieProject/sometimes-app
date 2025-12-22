@@ -7,8 +7,8 @@ import type { SlideComponent } from '../types';
 
 const mockManImage = require('@assets/images/onboarding/profile/mock_man_0.png');
 const mockGirlImage = require('@assets/images/onboarding/profile/mock_girl_0.png');
-const pnuLogo = require('@assets/images/univ/busan/pnu.png');
-const deuLogo = require('@assets/images/univ/busan/deu.png');
+const pnuLogo = require('@assets/images/univ/busan/pnu.webp');
+const deuLogo = require('@assets/images/univ/busan/deu.webp');
 
 interface MockProfileCardProps {
   image: any;

@@ -36,6 +36,19 @@ fi
 
 echo -e "${BLUE}[INFO]${NC} API Key found: ./AuthKey.p8"
 
+# Load environment variables from .env.production
+if [ -f ".env.production" ]; then
+    echo -e "${BLUE}[INFO]${NC} Loading environment variables from .env.production"
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        # Skip empty lines and comments
+        if [[ -z "$line" ]] || [[ "$line" =~ ^[[:space:]]*# ]]; then
+            continue
+        fi
+        # Export the variable
+        export "$line"
+    done < ".env.production"
+fi
+
 # Find latest IPA file
 LATEST_IPA=$(find "$PROJECT_ROOT/builds" -name "*.ipa" -type f -print0 | xargs -0 ls -t | head -1)
 

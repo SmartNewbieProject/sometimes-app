@@ -96,6 +96,21 @@ load_env_file() {
     done < "$env_file"
 
     print_success "Environment variables loaded"
+
+    # Verify critical environment variables
+    echo ""
+    echo -e "${CYAN}📋 Loaded Environment Variables:${NC}"
+    echo -e "  API_URL: ${GREEN}${EXPO_PUBLIC_API_URL:-NOT SET}${NC}"
+    echo -e "  MERCHANT_ID: ${GREEN}${EXPO_PUBLIC_MERCHANT_ID:-NOT SET}${NC}"
+    echo -e "  CHANNEL_KEY: ${GREEN}${EXPO_PUBLIC_CHANNEL_KEY:0:20}...${NC}"
+
+    if [ -z "$EXPO_PUBLIC_API_URL" ]; then
+        echo ""
+        print_error "EXPO_PUBLIC_API_URL is not set!"
+        echo ""
+        echo "Check your $env_file file"
+        exit 1
+    fi
 }
 
 # Check if eas-cli is installed
@@ -142,11 +157,12 @@ select_platform() {
 select_environment() {
     echo ""
     echo -e "${BOLD}Select environment:${NC}"
-    echo "  1) Production (Store Release)"
-    echo "  2) Preview (Internal Testing)"
-    echo "  3) Development (Dev Client)"
+    echo "  1) Production (Store Release - TestFlight only)"
+    echo "  2) Ad-hoc (Production env + USB Install)"
+    echo "  3) Preview (Internal Testing)"
+    echo "  4) Development (Dev Client)"
     echo ""
-    read -p "Enter choice [1-3]: " env_choice
+    read -p "Enter choice [1-4]: " env_choice
 
     case $env_choice in
         1)
@@ -154,15 +170,66 @@ select_environment() {
             ENV_FILE=".env.production"
             ;;
         2)
+            PROFILE="adhoc"
+            ENV_FILE=".env.production"
+            CAN_INSTALL_TO_DEVICE=true
+            ;;
+        3)
             PROFILE="preview"
             ENV_FILE=".env.preview"
             ;;
-        3)
+        4)
             PROFILE="development"
             ENV_FILE=".env"
             ;;
         *) print_error "Invalid choice"; exit 1 ;;
     esac
+}
+
+# Select clean build option
+select_clean_build() {
+    echo ""
+    echo -e "${BOLD}Build mode:${NC}"
+    echo "  1) Normal build (use cached native projects)"
+    echo "  2) Clean build (delete ios/android/.expo + prebuild) ${YELLOW}← 크래시 발생 시 선택${NC}"
+    echo ""
+    read -p "Enter choice [1-2]: " clean_choice
+
+    case $clean_choice in
+        1) CLEAN_BUILD=false ;;
+        2) CLEAN_BUILD=true ;;
+        *) print_error "Invalid choice"; exit 1 ;;
+    esac
+}
+
+# Perform clean build
+perform_clean_build() {
+    if [ "$CLEAN_BUILD" = false ]; then
+        return
+    fi
+
+    print_step "Performing clean build..."
+    echo ""
+
+    # Delete native folders
+    if [ -d "ios" ] || [ -d "android" ] || [ -d ".expo" ]; then
+        echo -e "${YELLOW}Deleting cached native projects...${NC}"
+        rm -rf ios android .expo
+        print_success "Deleted: ios/, android/, .expo/"
+    fi
+
+    # Run prebuild
+    print_step "Running expo prebuild --clean..."
+    echo ""
+
+    if npx expo prebuild --clean; then
+        print_success "Prebuild completed!"
+    else
+        print_error "Prebuild failed"
+        exit 1
+    fi
+
+    echo ""
 }
 
 # Select deployment option
@@ -225,6 +292,11 @@ upload_to_diawi() {
 
 # Confirm build settings
 confirm_build() {
+    local clean_mode="Normal"
+    if [ "$CLEAN_BUILD" = true ]; then
+        clean_mode="${YELLOW}Clean (prebuild)${NC}"
+    fi
+
     echo ""
     echo -e "${CYAN}============================================================${NC}"
     echo -e "${BOLD}Build Configuration:${NC}"
@@ -232,6 +304,7 @@ confirm_build() {
     echo -e "  Profile:     ${GREEN}$PROFILE${NC}"
     echo -e "  Env File:    ${GREEN}$ENV_FILE${NC}"
     echo -e "  Output:      ${GREEN}$OUTPUT_TYPE${NC}"
+    echo -e "  Build Mode:  $clean_mode"
     echo -e "${CYAN}============================================================${NC}"
     echo ""
 
@@ -246,9 +319,16 @@ confirm_build() {
 build_ios() {
     print_step "Building iOS ($PROFILE)..."
 
+    # Ad-hoc 빌드는 .env.production 사용
+    local env_file="$ENV_FILE"
+    if [ "$PROFILE" = "adhoc" ]; then
+        env_file=".env.production"
+    fi
+
     local cmd="EXPO_NO_DOCTOR=1 eas build --platform ios --profile $PROFILE --local --non-interactive"
 
     echo -e "${CYAN}Running: $cmd${NC}"
+    echo -e "${CYAN}Using environment: $env_file${NC}"
     eval $cmd
 
     print_success "iOS build completed!"
@@ -399,11 +479,15 @@ main() {
     select_platform
     select_environment
     select_deployment
+    select_clean_build
 
     # Load environment variables BEFORE confirming
     load_env_file "$ENV_FILE"
 
     confirm_build
+
+    # Perform clean build if requested
+    perform_clean_build
 
     echo ""
     print_step "Starting build process..."
@@ -465,13 +549,13 @@ main() {
     fi
 
     # Prompt to install to connected device (iOS only)
-    # Skip for production builds (they can't be installed via USB)
     if [ "$PLATFORM" = "ios" ] || [ "$PLATFORM" = "all" ]; then
-        if [ "$PROFILE" != "production" ]; then
+        # Check if this build can be installed via USB
+        if [ "$CAN_INSTALL_TO_DEVICE" = true ] || [ "$PROFILE" = "preview" ] || [ "$PROFILE" = "development" ]; then
             if [ -n "$BUILD_OUTPUT_DIR" ]; then
                 prompt_install_to_device "$BUILD_OUTPUT_DIR" || true
             fi
-        else
+        elif [ "$PROFILE" = "production" ]; then
             echo ""
             print_warning "Production builds cannot be installed directly via USB"
             echo ""
@@ -482,8 +566,8 @@ main() {
             echo ""
             echo "  2. Install from TestFlight app on your iPhone"
             echo ""
-            echo -e "${BLUE}For USB installation, use Preview build:${NC}"
-            echo -e "  ${CYAN}npm run build:ios:preview${NC}"
+            echo -e "${BLUE}For USB installation, use Ad-hoc build:${NC}"
+            echo -e "  ${CYAN}./scripts/build.sh${NC} → Select 'Ad-hoc'"
             echo ""
         fi
     fi
