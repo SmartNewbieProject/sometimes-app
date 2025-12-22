@@ -25,7 +25,9 @@
     "build:ios:preview": "./scripts/build-with-notify.sh ios preview",
     "build:android:preview": "./scripts/build-with-notify.sh android preview",
     "build:ios:dev": "./scripts/build-with-notify.sh ios development",
-    "install:device": "./scripts/install-to-device.sh"
+    "install:device": "./scripts/install-to-device.sh",
+    "install:latest": "./scripts/install-latest.sh",
+    "submit:testflight": "./scripts/submit-testflight.sh"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

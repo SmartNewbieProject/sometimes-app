@@ -465,9 +465,26 @@ main() {
     fi
 
     # Prompt to install to connected device (iOS only)
+    # Skip for production builds (they can't be installed via USB)
     if [ "$PLATFORM" = "ios" ] || [ "$PLATFORM" = "all" ]; then
-        if [ -n "$BUILD_OUTPUT_DIR" ]; then
-            prompt_install_to_device "$BUILD_OUTPUT_DIR" || true
+        if [ "$PROFILE" != "production" ]; then
+            if [ -n "$BUILD_OUTPUT_DIR" ]; then
+                prompt_install_to_device "$BUILD_OUTPUT_DIR" || true
+            fi
+        else
+            echo ""
+            print_warning "Production builds cannot be installed directly via USB"
+            echo ""
+            echo -e "${BLUE}To test this build:${NC}"
+            echo ""
+            echo "  1. Submit to TestFlight:"
+            echo -e "     ${CYAN}npm run submit:testflight${NC}"
+            echo ""
+            echo "  2. Install from TestFlight app on your iPhone"
+            echo ""
+            echo -e "${BLUE}For USB installation, use Preview build:${NC}"
+            echo -e "  ${CYAN}npm run build:ios:preview${NC}"
+            echo ""
         fi
     fi
 

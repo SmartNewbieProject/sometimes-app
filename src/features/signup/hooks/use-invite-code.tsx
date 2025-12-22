@@ -19,6 +19,11 @@ const {
   useSignup,
 } = Signup;
 
+// Mixpanel track 헬퍼 함수
+const track = (eventName: string, properties?: Record<string, any>) => {
+  mixpanelAdapter.track(eventName, properties);
+};
+
 function useInviteCode() {
   const router = useRouter();
   const [signupLoading, setSignupLoading] = useState(false);

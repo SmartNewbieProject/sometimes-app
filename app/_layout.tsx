@@ -193,6 +193,78 @@ export default Sentry.wrap(function RootLayout() {
     requestAtt();
   }, [requestAtt]);
 
+  // Web: AsyncRequireError 처리 (배포 중 캐시 불일치 문제 해결)
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+
+    const RELOAD_KEY = 'async-error-reload-count';
+    const MAX_RELOAD_ATTEMPTS = 2;
+    const RELOAD_RESET_TIME = 60000; // 1분
+
+    const handleAsyncRequireError = (event: ErrorEvent) => {
+      const error = event.error;
+      const message = event.message || error?.message || '';
+
+      // AsyncRequireError 감지
+      if (message.includes('AsyncRequireError') || message.includes('Loading module')) {
+        event.preventDefault();
+
+        // Sentry에 상세 로그
+        Sentry.captureException(error, {
+          tags: {
+            error_type: 'async_require_error',
+            platform: 'web',
+          },
+          contexts: {
+            async_error: {
+              message,
+              url: window.location.href,
+              timestamp: new Date().toISOString(),
+            },
+          },
+        });
+
+        // 무한 리로드 방지
+        const now = Date.now();
+        const stored = sessionStorage.getItem(RELOAD_KEY);
+        const reloadData = stored ? JSON.parse(stored) : { count: 0, lastAttempt: 0 };
+
+        // 1분 이상 지났으면 카운터 리셋
+        if (now - reloadData.lastAttempt > RELOAD_RESET_TIME) {
+          reloadData.count = 0;
+        }
+
+        if (reloadData.count < MAX_RELOAD_ATTEMPTS) {
+          reloadData.count += 1;
+          reloadData.lastAttempt = now;
+          sessionStorage.setItem(RELOAD_KEY, JSON.stringify(reloadData));
+
+          console.warn('[AsyncRequireError] 새 버전이 배포되었습니다. 페이지를 새로고침합니다...');
+
+          // 짧은 딜레이 후 리로드 (Toast 표시를 위해)
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          console.error('[AsyncRequireError] 최대 리로드 횟수 초과. 수동 새로고침이 필요합니다.');
+
+          // 최대 재시도 초과 시 사용자에게 알림
+          if (typeof alert !== 'undefined') {
+            alert(i18n.language === 'ja'
+              ? 'アプリが更新されました。ページを手動で更新してください。'
+              : '앱이 업데이트되었습니다. 페이지를 새로고침해주세요.');
+          }
+        }
+      }
+    };
+
+    window.addEventListener('error', handleAsyncRequireError);
+
+    return () => {
+      window.removeEventListener('error', handleAsyncRequireError);
+    };
+  }, []);
+
   const isValidNotificationData = useCallback(
     (data: unknown): data is NotificationData => {
       if (!data || typeof data !== "object") return false;

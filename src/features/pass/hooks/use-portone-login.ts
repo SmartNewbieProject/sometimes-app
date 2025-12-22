@@ -31,6 +31,11 @@ interface UsePortOneLoginReturn {
 	handleMobileAuthCancel: () => void;
 }
 
+// Mixpanel track 헬퍼 함수
+const track = (eventName: string, properties?: Record<string, any>) => {
+	mixpanelAdapter.track(eventName, properties);
+};
+
 const validateEnvironmentVariables = () => {
 	const requiredEnvVars = {
 		EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,

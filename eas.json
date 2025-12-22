@@ -40,7 +40,8 @@
         "ANDROID_HOME": "/Users/user/Library/Android/sdk",
         "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
         "SENTRY_ORG": "smartnewbie",
-        "SENTRY_PROJECT": "react-native"
+        "SENTRY_PROJECT": "react-native",
+        "SENTRY_ALLOW_FAILURE": "true"
       },
       "ios": {
         "distribution": "store",
@@ -65,8 +66,8 @@
       "ios": {
         "ascAppId": "6746120889",
         "ascApiKeyPath": "./AuthKey.p8",
-        "ascApiKeyId": "${ASC_API_KEY_ID}",
-        "ascApiKeyIssuerId": "${ASC_API_ISSUER_ID}"
+        "ascApiKeyId": "4Y52MCZB62",
+        "ascApiKeyIssuerId": "e8dbd13d-74e7-45ba-8f51-02977b51f1a6"
       },
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json",
