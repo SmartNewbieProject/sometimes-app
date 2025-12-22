@@ -1,5 +1,5 @@
 import type React from "react";
-import { Linking, Alert, Text as RNText, type TextStyle } from "react-native";
+import { Linking, Alert, Text as RNText } from "react-native";
 import { Text, type TextProps } from "../text";
 import { parseTextWithLinks } from "../../utils/link-utils";
 
@@ -14,6 +14,8 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
   linkColor = "#8B5CF6",
   onLinkPress,
   style,
+  numberOfLines,
+  ellipsizeMode,
   ...textProps
 }) => {
   const handleLinkPress = async (url: string) => {
@@ -32,7 +34,12 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
   const segments = parseTextWithLinks(children || "");
 
   return (
-    <Text {...textProps}>
+    <Text
+      {...textProps}
+      style={style}
+      numberOfLines={numberOfLines}
+      ellipsizeMode={ellipsizeMode}
+    >
       {segments.map((segment, index) => {
         const key = `${segment.type}-${index}-${segment.content.slice(0, 10)}`;
 
@@ -41,10 +48,7 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
             <RNText
               key={key}
               onPress={() => handleLinkPress(segment.content)}
-              style={[
-                (style as TextStyle) || undefined,
-                { color: linkColor, textDecorationLine: "underline" },
-              ]}
+              style={{ color: linkColor, textDecorationLine: "underline" }}
               suppressHighlighting
             >
               {segment.content}
@@ -52,11 +56,7 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
           );
         }
 
-        return (
-          <RNText key={key} style={style as TextStyle}>
-            {segment.content}
-          </RNText>
-        );
+        return segment.content;
       })}
     </Text>
   );
