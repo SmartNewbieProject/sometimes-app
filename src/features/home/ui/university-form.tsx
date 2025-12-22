@@ -9,8 +9,8 @@ import {z} from 'zod';
 import {useKeyboarding} from '@/src/shared/hooks';
 import {useUnivQuery, useDepartmentQuery} from "@features/signup/queries";
 import {useState} from 'react';
-import {useExistsUniversityQuery} from "@features/home/queries";
 import i18n from '@/src/shared/libs/i18n';
+import type {University} from "@features/signup/apis";
 
 type FormProps = {
   universityName: string;
@@ -45,9 +45,13 @@ export default function UniversityForm({
                                        }: UniversityFormProps) {
 
   const [selectedUniv, setSelectedUniv] = useState<string>('');
+  const [selectedUnivId, setSelectedUnivId] = useState<string>('');
   const {data: univs = []} = useUnivQuery();
-  const {data: departments = []} = useDepartmentQuery(selectedUniv || undefined);
-  const filteredUnivs = univs.filter((univ) => univ.startsWith(selectedUniv || ''));
+  const {data: departments = []} = useDepartmentQuery(selectedUnivId || undefined);
+
+  const filteredUnivs = univs.filter((univ: University) =>
+    univ.name.toLowerCase().includes((selectedUniv || '').toLowerCase())
+  );
 
   const form = useForm<FormProps>({
     resolver: zodResolver(schema),
@@ -85,15 +89,29 @@ export default function UniversityForm({
                 onChangeText={(text) => {
                   setSelectedUniv(text);
                   setValue('universityName', text);
+
+                  const matchedUniv = univs.find((u: University) =>
+                    u.name.toLowerCase() === text.toLowerCase()
+                  );
+                  if (matchedUniv) {
+                    setSelectedUnivId(matchedUniv.id);
+                  }
                 }}
             />
             <ScrollView style={styles.chipContainer} contentContainerStyle={styles.chipScrollContent}>
               <ChipSelector
                   value={selectedUniv}
-                  options={filteredUnivs.map((univ) => ({label: univ, value: univ}))}
+                  options={filteredUnivs.map((univ: University) => ({
+                    label: univ.name,
+                    value: univ.name
+                  }))}
                   onChange={(value) => {
-                    setSelectedUniv(value);
-                    setValue('universityName', value);
+                    const selectedUniversity = univs.find((u: University) => u.name === value);
+                    if (selectedUniversity) {
+                      setSelectedUniv(value);
+                      setSelectedUnivId(selectedUniversity.id);
+                      setValue('universityName', value);
+                    }
                   }}
                   style={styles.fullWidth}
               />

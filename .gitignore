@@ -8,6 +8,7 @@
 .env.*
 .env.backup
 !.env.example
+!.env.preview
 
 # Sentry configuration (contains auth tokens)
 sentry.properties

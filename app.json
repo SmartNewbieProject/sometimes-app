@@ -106,7 +106,21 @@
         "NSFileProtectionComplete": true,
         "NSLocationWhenInUseUsageDescription": "위치 정보를 사용하여 지도 서비스를 제공합니다.",
         "NSLocationAlwaysUsageDescription": "백그라운드에서 위치 기반 서비스를 제공합니다.",
-        "aps-environment": "development"
+        "aps-environment": "development",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false,
+          "NSExceptionDomains": {
+            "192.168.219.49": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSExceptionRequiresForwardSecrecy": false,
+              "NSIncludesSubdomains": true
+            },
+            "localhost": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSExceptionRequiresForwardSecrecy": false
+            }
+          }
+        }
       }
     },
     "android": {

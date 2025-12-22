@@ -26,7 +26,9 @@ export const useCommunityEvent = () => {
 
     try {
       const hasWrittenPost = await storage.getItem(`community-written-post-${my.phoneNumber}`);
-      if (hasWrittenPost === "true") {
+      const hasDismissed = await storage.getItem(`community-prompt-dismissed-${my.phoneNumber}`);
+
+      if (hasWrittenPost === "true" || hasDismissed === "true") {
         setShouldShowPrompt(false);
         setIsLoading(false);
         return;
@@ -42,10 +44,7 @@ export const useCommunityEvent = () => {
       }
     } catch (error) {
       console.error("Failed to check community post status:", error);
-      const hasWrittenPost = await storage.getItem(`community-written-post-${my.phoneNumber}`);
-      if (hasWrittenPost !== "true") {
-        setShouldShowPrompt(true);
-      }
+      setShouldShowPrompt(false);
     } finally {
       setIsLoading(false);
     }
@@ -71,10 +70,15 @@ export const useCommunityEvent = () => {
   };
 
   const handleLater = async () => {
-    if (my?.phoneNumber) {
-      await storage.setItem(`community-written-post-${my.phoneNumber}`, "true");
+    try {
+      if (my?.phoneNumber) {
+        await storage.setItem(`community-prompt-dismissed-${my.phoneNumber}`, "true");
+      }
+      setShouldShowPrompt(false);
+    } catch (error) {
+      console.error("Failed to save dismissal state:", error);
+      setShouldShowPrompt(false);
     }
-    setShouldShowPrompt(false);
   };
 
   const renderPromptModal = () => (

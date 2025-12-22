@@ -51,7 +51,7 @@ const {
   TipAnnouncement,
 } = ui;
 const { usePreferenceSelfQuery } = queries;
-const { useRedirectPreferences, useTemporalUniversity } = hooks;
+const { useRedirectPreferences } = hooks;
 
 const { ui: welcomeRewardUI, hooks: welcomeRewardHooks } = WelcomeReward;
 const { WelcomeRewardModal } = welcomeRewardUI;
@@ -119,7 +119,6 @@ const HomeScreen = () => {
     }
   }, [showModal]);
 
-  useTemporalUniversity();
   useVersionUpdate();
 
   // 화면이 포커스될 때마다 매칭 데이터 리프레시

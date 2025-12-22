@@ -46,8 +46,14 @@ const refresh = async () => {
   return refreshTokenPromise;
 };
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+console.log('=================================');
+console.log('[API 설정] baseURL:', API_URL);
+console.log('=================================');
+
 const axiosClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  baseURL: API_URL,
   timeout: 20000, // 20초로 타임아웃 증가
   headers: {
     'Content-Type': 'application/json'
@@ -91,12 +97,9 @@ axiosClient.interceptors.request.use(
 // 응답 인터셉터
 axiosClient.interceptors.response.use(
     (response) => {
-      // 디버깅: 응답 정보 로깅
-      console.log(`[API 응답] ${response.config.method?.toUpperCase()} ${response.config.url} - 상태: ${response.status}`);
-
       // { success: boolean, data: T } 형태의 응답 처리
       if (response.data && typeof response.data === 'object' && 'success' in response.data && 'data' in response.data) {
-        return response.data; // 전체 응답 객체 반환 (success와 data 모두 포함)
+        return response.data.data; // data 필드만 반환
       }
       return response.data;
     },
@@ -122,8 +125,8 @@ axiosClient.interceptors.response.use(
           return await tryCatch(async () => {
             const result = await temporaryAxiosClient(error.config);
             // { success: boolean, data: T } 형태의 응답 처리
-            if (result && typeof result === 'object' && 'success' in result && 'data' in result) {
-              return result.data;
+            if (result.data && typeof result.data === 'object' && 'success' in result.data && 'data' in result.data) {
+              return result.data.data;
             }
             return result.data;
           }, (error) => {
