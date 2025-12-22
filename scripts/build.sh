@@ -155,7 +155,7 @@ select_environment() {
             ;;
         2)
             PROFILE="preview"
-            ENV_FILE=".env"
+            ENV_FILE=".env.preview"
             ;;
         3)
             PROFILE="development"

@@ -12,7 +12,16 @@ const calculateAge = (birthday: string): number => {
   return today.diff(birthDate, "year");
 };
 
-export const getUnivs = async (): Promise<string[]> => {
+export interface University {
+  id: string;
+  name: string;
+  code: string;
+  region: string;
+  type: string;
+  en: string | null;
+}
+
+export const getUnivs = async (): Promise<University[]> => {
   return axiosClient.get("/universities");
 };
 

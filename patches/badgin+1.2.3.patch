@@ -1,0 +1,18 @@
+diff --git a/node_modules/badgin/build/index.es.js b/node_modules/badgin/build/index.es.js
+index 22f4e27..5470c7c 100644
+--- a/node_modules/badgin/build/index.es.js
++++ b/node_modules/badgin/build/index.es.js
+@@ -379,7 +379,12 @@ function changeTitle(title, value, options) {
+     }
+     const element = document.querySelector('title');
+     if (element) {
+-        element.childNodes[0].nodeValue = newTitle;
++        // React Native Web 환경에서 childNodes가 비어있을 수 있음
++        if (element.childNodes.length === 0) {
++            element.appendChild(document.createTextNode(newTitle));
++        } else {
++            element.childNodes[0].nodeValue = newTitle;
++        }
+     }
+ }
+ function set$2(value, options) {

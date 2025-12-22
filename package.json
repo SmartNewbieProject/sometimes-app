@@ -9,7 +9,12 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android --port 3000",
     "ios": "expo run:ios",
+    "dev:ios": "./scripts/dev-ios.sh",
     "web": "expo start --web",
+    "web:clear": "expo start --web --clear --port 3000",
+    "web:restart": "./scripts/restart-web.sh",
+    "cache:clear": "./scripts/clear-cache.sh",
+    "cache:clear:hard": "./scripts/clear-cache.sh --hard",
     "test": "jest",
     "test:watch": "jest --watchAll",
     "test:server-ping": "node scripts/test-server-ping-pong.js",
@@ -25,7 +30,10 @@
     "build:ios:preview": "./scripts/build-with-notify.sh ios preview",
     "build:android:preview": "./scripts/build-with-notify.sh android preview",
     "build:ios:dev": "./scripts/build-with-notify.sh ios development",
-    "install:device": "./scripts/install-to-device.sh"
+    "install:device": "./scripts/install-to-device.sh",
+    "install:latest": "./scripts/install-latest.sh",
+    "submit:testflight": "./scripts/submit-testflight.sh",
+    "logs": "./scripts/view-logs.sh"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
