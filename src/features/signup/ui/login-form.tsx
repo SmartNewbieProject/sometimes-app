@@ -292,20 +292,28 @@ function KakaoLoginComponent() {
 
         router.push("/home");
       }
-    } catch (error) {
+    } catch (error: any) {
+      const errorInfo = {
+        type: error?.constructor?.name || 'Unknown',
+        message: error instanceof Error ? error.message : String(error),
+        status: error?.status,
+        code: error?.code || error?.errorCode,
+        data: error?.data || error?.response?.data,
+      };
+
       console.error("===== 카카오 로그인 에러 상세 정보 =====");
-      console.error("에러 타입:", error?.constructor?.name);
-      console.error("에러 메시지:", error instanceof Error ? error.message : String(error));
-      console.error("에러 스택:", error instanceof Error ? error.stack : "스택 없음");
-      if (error && typeof error === 'object') {
-        console.error("에러 전체 객체:", JSON.stringify(error, null, 2));
-      }
+      console.error("에러 정보:", JSON.stringify(errorInfo, null, 2));
       console.error("=======================================");
 
-      authEvents.trackLoginFailed('kakao', 'authentication_error');
+      authEvents.trackLoginFailed('kakao', errorInfo.code || 'authentication_error');
+
+      const errorMessage = errorInfo.status === undefined
+        ? "서버에 연결할 수 없습니다. 네트워크를 확인해주세요."
+        : t("features.signup.ui.login_form.login_failed_message");
+
       showModal({
         title: t("features.signup.ui.login_form.login_failed_title"),
-        children: t("features.signup.ui.login_form.login_failed_message"),
+        children: errorMessage,
         primaryButton: {
           text: t("features.signup.ui.login_form.confirm_button"),
           onClick: () => { },
@@ -314,7 +322,7 @@ function KakaoLoginComponent() {
 
       mixpanelAdapter.track("Signup_Error", {
         stage: "KakaoNativeLogin",
-        message: error instanceof Error ? error.message : String(error),
+        ...errorInfo,
       });
     } finally {
       setIsLoading(false);

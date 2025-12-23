@@ -2,7 +2,10 @@ import type { Author } from "@/src/features/community/types";
 import { type UniversityName, getUnivLogo } from "@/src/shared/libs/univ";
 import { Show, Text } from "@/src/shared/ui";
 import type { ReactNode } from "react";
+import { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
+
+const DEFAULT_AVATAR = require("@assets/images/sometimelogo.png");
 
 interface UserProfileProps {
   author: Author;
@@ -19,11 +22,15 @@ export const UserProfile = ({
   updatedAt,
   hideUniv = false,
 }: UserProfileProps) => {
+  const [imageError, setImageError] = useState(false);
+  const logoUri = getUnivLogo(universityName);
+
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: getUnivLogo(universityName) }}
+        source={imageError || !logoUri ? DEFAULT_AVATAR : { uri: logoUri }}
         style={styles.avatar}
+        onError={() => setImageError(true)}
       />
 
       <View style={styles.content}>

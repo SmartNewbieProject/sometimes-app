@@ -1,0 +1,18 @@
+{
+  "index": {
+    "title": "알림",
+    "back_button_label": "뒤로 가기",
+    "menu_mark_all_read": "모두 읽기",
+    "menu_delete_all_read": "읽은 알림 삭제",
+    "modal_mark_all_read_title": "모든 알림 읽기",
+    "modal_mark_all_read_desc": "모든 알림을 읽음 상태로 변경하시겠습니까?",
+    "modal_delete_all_read_title": "읽은 알림 삭제",
+    "modal_delete_all_read_desc": "모든 읽은 알림을 삭제하시겠습니까?",
+    "modal_confirm": "확인",
+    "modal_cancel": "취소",
+    "error_invalid_link_title": "알림 오류",
+    "error_invalid_link_desc": "잘못된 알림 링크입니다.",
+    "error_invalid_article_title": "알림 오류",
+    "error_invalid_article_desc": "유효하지 않은 게시글입니다."
+  }
+}

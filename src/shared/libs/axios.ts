@@ -4,6 +4,7 @@ import type {TokenResponse} from '@/src/types/auth';
 import {tryCatch} from './try-catch';
 import {router} from 'expo-router';
 import {eventBus} from './event-bus';
+import {env} from './env';
 
 let refreshTokenPromise: Promise<string> | null = null;
 let isNetworkDisabled = false;
@@ -46,7 +47,16 @@ const refresh = async () => {
   return refreshTokenPromise;
 };
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+// API_URL 검증 및 fallback
+const FALLBACK_API_URL = 'https://api.some-in-univ.com/api';
+let API_URL = env.API_URL;
+
+// API_URL이 비어있거나 치환되지 않은 경우 fallback 사용
+if (!API_URL || API_URL.includes('${') || API_URL.includes('EXPO_PUBLIC_')) {
+  console.error('[axios.ts] ❌ Invalid API_URL detected:', API_URL);
+  console.error('[axios.ts] ⚠️ Using fallback:', FALLBACK_API_URL);
+  API_URL = FALLBACK_API_URL;
+}
 
 console.log('=================================');
 console.log('[API 설정] baseURL:', API_URL);
@@ -54,15 +64,15 @@ console.log('=================================');
 
 const axiosClient = axios.create({
   baseURL: API_URL,
-  timeout: 20000, // 20초로 타임아웃 증가
+  timeout: 20000,
   headers: {
     'Content-Type': 'application/json'
   },
 });
 
 const temporaryAxiosClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
-  timeout: 20000, // 20초로 타임아웃 증가
+  baseURL: API_URL,
+  timeout: 20000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -111,13 +121,15 @@ axiosClient.interceptors.response.use(
 
 
       const data = error?.response?.data;
-      if (error.status === 403 && data.code === ErrorCode.REGION_NOT_ALLOWED) {
+      const status = error?.response?.status;
+
+      if (status === 403 && data?.code === ErrorCode.REGION_NOT_ALLOWED) {
         isNetworkDisabled = true;
         router.push('/commingsoon');
         return;
       }
 
-      if (error.status === 401) {
+      if (status === 401) {
         try {
           const newAccessToken = await refresh();
           error.config.headers.Authorization = `Bearer ${newAccessToken}`;

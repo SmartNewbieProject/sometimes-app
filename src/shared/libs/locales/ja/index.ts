@@ -5,6 +5,7 @@ import home from './apps/home.json';
 import interest from './apps/interest.json';
 import matching_history from './apps/matching_history.json';
 import my from './apps/my.json';
+import notification from './apps/notification.json';
 import partner from './apps/partner.json';
 import postBox from './apps/post-box.json';
 import profile_edit from './apps/profile-edit.json';
@@ -72,6 +73,7 @@ const apps = {
   interest: interest,
   matching_history: matching_history,
   my: my,
+  notification: notification,
   partner: partner,
   'my-info': myInfo,
   postBox: postBox,

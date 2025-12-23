@@ -1,0 +1,18 @@
+{
+  "index": {
+    "title": "通知",
+    "back_button_label": "戻る",
+    "menu_mark_all_read": "すべて既読",
+    "menu_delete_all_read": "既読通知を削除",
+    "modal_mark_all_read_title": "すべての通知を既読にする",
+    "modal_mark_all_read_desc": "すべての通知を既読状態に変更しますか？",
+    "modal_delete_all_read_title": "既読通知を削除",
+    "modal_delete_all_read_desc": "すべての既読通知を削除しますか？",
+    "modal_confirm": "確認",
+    "modal_cancel": "キャンセル",
+    "error_invalid_link_title": "通知エラー",
+    "error_invalid_link_desc": "無効な通知リンクです。",
+    "error_invalid_article_title": "通知エラー",
+    "error_invalid_article_desc": "無効な投稿です。"
+  }
+}

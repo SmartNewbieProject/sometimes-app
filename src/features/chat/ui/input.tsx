@@ -7,6 +7,7 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   Keyboard,
+  Linking,
   Platform,
   Pressable,
   StyleSheet,
@@ -29,6 +30,9 @@ import useChatTips from "../queries/use-chat-tips";
 import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
 import ChatTipsModal from "./chat-tips-modal";
+import { useJpAgeConfirmation } from "../hooks/use-jp-age-confirmation";
+import { JP_LEGAL_LINKS } from "@/src/shared/constants/jp-legal-links";
+import { useTranslation } from "react-i18next";
 
 interface ChatInputProps {
   isPhotoClicked: boolean;
@@ -41,6 +45,8 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
   const { my: user } = useAuth();
   const { showModal } = useModal();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const { needsAgeConfirmation, confirmAge, isJP } = useJpAgeConfirmation();
 
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
@@ -120,7 +126,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
   }));
 
-  const handleSend = useCallback(async () => {
+  const sendMessage = useCallback(() => {
     if (chat === "" || !partner?.partnerId || !user?.id) {
       return;
     }
@@ -139,6 +145,53 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       },
     });
   }, [chat, partner, user, id]);
+
+  const showJpAgeConfirmationModal = useCallback(() => {
+    showModal({
+      title: t("jp_legal.age_confirmation_modal.title"),
+      children: (
+        <View style={styles.ageModalContainer}>
+          <Text style={styles.ageModalText}>
+            {t("jp_legal.age_confirmation_modal.description")}
+          </Text>
+          <Pressable
+            onPress={() => Linking.openURL(JP_LEGAL_LINKS.ageConfirmation)}
+            style={styles.ageModalLinkContainer}
+          >
+            <Text style={styles.ageModalLink}>
+              {t("jp_legal.age_confirmation_modal.link_text")}
+            </Text>
+          </Pressable>
+        </View>
+      ),
+      primaryButton: {
+        text: t("jp_legal.age_confirmation_modal.confirm_button"),
+        onClick: async () => {
+          const confirmed = await confirmAge();
+          if (confirmed) {
+            sendMessage();
+          }
+        },
+      },
+      secondaryButton: {
+        text: t("jp_legal.age_confirmation_modal.cancel_button"),
+        onClick: () => {},
+      },
+    });
+  }, [t, confirmAge, sendMessage, showModal]);
+
+  const handleSend = useCallback(async () => {
+    if (chat === "" || !partner?.partnerId || !user?.id) {
+      return;
+    }
+
+    if (needsAgeConfirmation) {
+      showJpAgeConfirmationModal();
+      return;
+    }
+
+    sendMessage();
+  }, [chat, partner, user, needsAgeConfirmation, showJpAgeConfirmationModal, sendMessage]);
 
   return (
     <>
@@ -292,6 +345,26 @@ const styles = StyleSheet.create({
     color: semanticColors.text.disabled,
     fontSize: 12,
     fontFamily: "Pretendard-Regular",
+  },
+  ageModalContainer: {
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+  ageModalText: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: semanticColors.text.secondary,
+    textAlign: "center",
+    fontFamily: "Pretendard-Regular",
+  },
+  ageModalLinkContainer: {
+    marginTop: 16,
+  },
+  ageModalLink: {
+    fontSize: 13,
+    color: semanticColors.brand.primary,
+    textDecorationLine: "underline",
+    fontFamily: "Pretendard-Medium",
   },
 });
 
