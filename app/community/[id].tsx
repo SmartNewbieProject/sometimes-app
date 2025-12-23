@@ -109,10 +109,32 @@ export default function ArticleDetailScreen() {
   }
 
   if (error) {
+    console.error('[Community] Failed to load article:', { id, error });
     return (
-      <View style={styles.errorContainer}>
-        <Text>{t("apps.community.id.error_loading")}</Text>
-      </View>
+      <DefaultLayout style={styles.container}>
+        <HeaderWithNotification
+          centerContent={<Text weight="bold">{t("apps.community.id.header_title")}</Text>}
+        />
+        <View style={styles.errorContainer}>
+          <Text textColor="black" weight="semibold" style={{ marginBottom: 8 }}>
+            {t("apps.community.id.error_loading")}
+          </Text>
+          <Text textColor="gray" size="14" style={{ marginBottom: 16 }}>
+            {t("apps.community.id.error_not_found")}
+          </Text>
+          <Pressable
+            onPress={() => router.back()}
+            style={{
+              backgroundColor: semanticColors.brand.primary,
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              borderRadius: 8,
+            }}
+          >
+            <Text textColor="white" weight="semibold">{t("apps.community.id.error_back_button")}</Text>
+          </Pressable>
+        </View>
+      </DefaultLayout>
     );
   }
 
