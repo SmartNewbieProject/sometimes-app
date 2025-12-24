@@ -11,8 +11,10 @@ import {
   StyleSheet,
   Dimensions,
   StatusBar,
+  Platform,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
+  type GestureResponderEvent,
   ActivityIndicator,
   Pressable,
   Linking,
@@ -114,13 +116,14 @@ export default function CardNewsDetailScreen() {
       const newIndex = Math.round(offsetX / CONTAINER_WIDTH);
       setCurrentIndex(newIndex);
 
-      if (
-        newIndex === totalCards - 1 &&
-        cardNews?.hasReward &&
-        !hasClaimedReward
-      ) {
-        handleClaimReward();
-      }
+      // TODO: 보상 기능 활성화 시 주석 해제
+      // if (
+      //   newIndex === totalCards - 1 &&
+      //   cardNews?.hasReward &&
+      //   !hasClaimedReward
+      // ) {
+      //   handleClaimReward();
+      // }
     },
     [totalCards, cardNews?.hasReward, hasClaimedReward]
   );
@@ -171,6 +174,47 @@ export default function CardNewsDetailScreen() {
       router.push("/community");
     }
   }, []);
+
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragStartScrollX = useRef(0);
+
+  const handleMouseDown = useCallback((e: GestureResponderEvent | React.MouseEvent) => {
+    if (Platform.OS !== "web") return;
+    isDragging.current = true;
+    const clientX = "nativeEvent" in e && "pageX" in e.nativeEvent
+      ? e.nativeEvent.pageX
+      : (e as React.MouseEvent).clientX;
+    dragStartX.current = clientX;
+    dragStartScrollX.current = currentIndex * CONTAINER_WIDTH;
+  }, [currentIndex]);
+
+  const handleMouseMove = useCallback((e: GestureResponderEvent | React.MouseEvent) => {
+    if (Platform.OS !== "web" || !isDragging.current) return;
+    const clientX = "nativeEvent" in e && "pageX" in e.nativeEvent
+      ? e.nativeEvent.pageX
+      : (e as React.MouseEvent).clientX;
+    const diff = dragStartX.current - clientX;
+    const newScrollX = dragStartScrollX.current + diff;
+    scrollRef.current?.scrollTo({ x: newScrollX, animated: false });
+  }, []);
+
+  const handleMouseUp = useCallback((e: GestureResponderEvent | React.MouseEvent) => {
+    if (Platform.OS !== "web" || !isDragging.current) return;
+    isDragging.current = false;
+    const clientX = "nativeEvent" in e && "pageX" in e.nativeEvent
+      ? e.nativeEvent.pageX
+      : (e as React.MouseEvent).clientX;
+    const diff = dragStartX.current - clientX;
+    const threshold = CONTAINER_WIDTH * 0.2;
+
+    if (Math.abs(diff) > threshold) {
+      const direction = diff > 0 ? 1 : -1;
+      goToCard(currentIndex + direction);
+    } else {
+      goToCard(currentIndex);
+    }
+  }, [currentIndex, goToCard]);
 
   const handleImageLoad = useCallback((order: number, width: number, height: number) => {
     if (width > 0 && height > 0) {
@@ -295,7 +339,15 @@ export default function CardNewsDetailScreen() {
         </View>
 
         {/* 카드 스크롤뷰 */}
-        <View style={{ flex: 1 }}>
+        <View
+          style={[{ flex: 1, overflow: "hidden" }, Platform.OS === "web" && { cursor: "grab" } as any]}
+          {...(Platform.OS === "web" && {
+            onMouseDown: handleMouseDown as any,
+            onMouseMove: handleMouseMove as any,
+            onMouseUp: handleMouseUp as any,
+            onMouseLeave: handleMouseUp as any,
+          })}
+        >
           <ScrollView
             ref={scrollRef}
             horizontal
@@ -304,6 +356,11 @@ export default function CardNewsDetailScreen() {
             onMomentumScrollEnd={handleMomentumEnd}
             scrollEventThrottle={16}
             decelerationRate="fast"
+            snapToInterval={CONTAINER_WIDTH}
+            snapToAlignment="start"
+            nestedScrollEnabled
+            disableIntervalMomentum
+            scrollEnabled={Platform.OS !== "web"}
             style={styles.scrollView}
           >
             {sections
@@ -314,13 +371,18 @@ export default function CardNewsDetailScreen() {
           {/* 진행 Dots (Absolute) */}
           <View style={styles.dotsContainerAbsolute}>
             {sections.map((_, index) => (
-              <View
+              <Pressable
                 key={index}
-                style={[
-                  styles.dot,
-                  index === currentIndex && styles.dotActive,
-                ]}
-              />
+                onPress={() => goToCard(index)}
+                hitSlop={{ top: 10, bottom: 10, left: 4, right: 4 }}
+              >
+                <View
+                  style={[
+                    styles.dot,
+                    index === currentIndex && styles.dotActive,
+                  ]}
+                />
+              </Pressable>
             ))}
           </View>
         </View>
@@ -428,7 +490,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     zIndex: 10,
-    pointerEvents: "none",
+    pointerEvents: "box-none",
   },
   dot: {
     width: 6,

@@ -118,13 +118,14 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
       const newIndex = Math.round(offsetX / SCREEN_WIDTH);
       setCurrentIndex(newIndex);
 
-      if (
-        newIndex === totalCards - 1 &&
-        cardNews?.hasReward &&
-        !hasClaimedReward
-      ) {
-        handleClaimReward();
-      }
+      // TODO: 보상 기능 활성화 시 주석 해제
+      // if (
+      //   newIndex === totalCards - 1 &&
+      //   cardNews?.hasReward &&
+      //   !hasClaimedReward
+      // ) {
+      //   handleClaimReward();
+      // }
     },
     [totalCards, cardNews?.hasReward, hasClaimedReward]
   );

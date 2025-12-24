@@ -215,11 +215,13 @@ export function CardNewsHighlights({ onPressItem }: Props) {
                   locations={[0, 0.4, 1]}
                   style={StyleSheet.absoluteFillObject}
                 />
+                {/* TODO: 보상 기능 활성화 시 주석 해제
                 {item.hasReward && (
                   <View style={styles.rewardBadge}>
                     <Text style={styles.rewardBadgeText}>🎁 보상</Text>
                   </View>
                 )}
+                */}
                 <View style={styles.cardContent}>
                   <Text style={styles.cardTitle} numberOfLines={2}>
                     {item.title}

@@ -57,11 +57,13 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
             <Text style={styles.title} numberOfLines={1}>
               {item.title}
             </Text>
+            {/* TODO: 보상 기능 활성화 시 주석 해제
             {item.hasReward && (
               <View style={styles.rewardBadge}>
                 <Text style={styles.rewardBadgeText}>🎁</Text>
               </View>
             )}
+            */}
           </View>
           <Text style={styles.meta}>
             {dayUtils.formatRelativeTime(item.publishedAt)} • 조회 {item.readCount}

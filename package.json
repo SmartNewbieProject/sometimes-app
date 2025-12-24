@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "postinstall": "npx patch-package || true",
-    "start": "expo start --port 3000",
-    "start:prod": "NODE_ENV=production expo start --port 3000",
+    "start": "NODE_OPTIONS='--max-old-space-size=8192' expo start --port 3000",
+    "start:prod": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=production expo start --port 3000",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android --port 3000",
     "ios": "expo run:ios",
