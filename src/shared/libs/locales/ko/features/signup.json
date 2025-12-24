@@ -92,7 +92,10 @@
     "student_id_20": "20학번",
     "student_id_19": "19학번",
     "student_id_enter_directly": "직접 입력하기",
-    "grade_suffix": "학년"
+    "grade_suffix": "학년",
+    "grade_graduated": "졸업",
+    "graduate_banner_title": "졸업하셨어도 괜찮아요!",
+    "graduate_banner_subtitle": "모교 인연을 만나보세요 💜"
   },
   "agreements": {
     "privacy": "(필수) 개인정보 수집 및 이용 동의",
