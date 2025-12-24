@@ -1,199 +1,24 @@
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useRef } from "react";
-import { Animated, Easing, Platform, StyleSheet, View } from "react-native";
+import KoreaUniversityLogos from "./university-logos/korea-university-logos";
+import JapanUniversityLogos from "./university-logos/japan-university-logos";
+import { japanUniversityLogos } from "./university-logos/japan-logos-data";
 
-const universityLogos = [
-  require("@/assets/images/univ/cheonan/caschu.webp"),
-  require("@/assets/images/univ/busan/pnu.webp"),
-  require("@/assets/images/univ/daegu/dgcau.webp"),
-  require("@/assets/images/univ/busan/kmou.webp"),
-  require("@/assets/images/univ/daegu/dgdart.webp"),
-  require("@/assets/images/univ/incheon/icninu.webp"),
-  require("@/assets/images/univ/busan/dau.webp"),
-  require("@/assets/images/univ/daegu/dgdau.webp"),
-  require("@/assets/images/univ/incheon/icninu.webp"),
-  require("@/assets/images/univ/busan/ksu.webp"),
-  require("@/assets/images/univ/daegu/dgdhu.webp"),
-  require("@/assets/images/univ/incheon/icninha.webp"),
-];
-
-const moreLogos = [
-  require("@/assets/images/univ/daejeon/hbu.webp"),
-  require("@/assets/images/univ/busan/deu.webp"),
-  require("@/assets/images/univ/daegu/dgkit.webp"),
-  require("@/assets/images/univ/daejeon/hnu.webp"),
-  require("@/assets/images/univ/busan/ku.webp"),
-  require("@/assets/images/univ/daegu/dgkmu.webp"),
-  require("@/assets/images/univ/daejeon/kaist.webp"),
-  require("@/assets/images/univ/busan/dsu.webp"),
-  require("@/assets/images/univ/daegu/dgknu.webp"),
-  require("@/assets/images/univ/daejeon/kyu.webp"),
-  require("@/assets/images/univ/busan/tmu.webp"),
-  require("@/assets/images/univ/daegu/dgynu.webp"),
-];
+export type CountryCode = "kr" | "jp";
 
 interface UniversityLogosProps {
   logoSize?: number;
+  country?: CountryCode;
 }
 
 export default function UniversityLogos({
   logoSize = 48,
+  country = "kr",
 }: UniversityLogosProps) {
-  const anim1 = useRef(new Animated.Value(0)).current;
-  const anim2 = useRef(new Animated.Value(0)).current;
+  const hasJapanLogos =
+    japanUniversityLogos?.row1?.length > 0 && japanUniversityLogos?.row2?.length > 0;
 
-  useEffect(() => {
-    const width = universityLogos.length * (logoSize + 8);
+  if (country === "jp" && hasJapanLogos) {
+    return <JapanUniversityLogos logoSize={logoSize} />;
+  }
 
-    anim1.setValue(0);
-    Animated.loop(
-      Animated.timing(anim1, {
-        toValue: -width,
-        duration: 20000,
-        useNativeDriver: Platform.OS !== 'web',
-        easing: Easing.linear,
-      })
-    ).start();
-
-    return () => anim1.stopAnimation();
-  }, [anim1, logoSize]);
-
-  useEffect(() => {
-    const width = moreLogos.length * (logoSize + 8);
-
-    anim2.setValue(0);
-    Animated.loop(
-      Animated.timing(anim2, {
-        toValue: width,
-        duration: 20000,
-        useNativeDriver: Platform.OS !== 'web',
-        easing: Easing.linear,
-      })
-    ).start();
-
-    return () => anim2.stopAnimation();
-  }, [anim2, logoSize]);
-
-  const logoWithMargin = logoSize + 8;
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.rowsContainer}>
-        {/* Row 1 */}
-        <View testID="logo-row-1" style={[styles.row, { height: logoWithMargin }]}>
-          <Animated.View
-            style={[
-              styles.animatedRow,
-              {
-                transform: [{ translateX: anim1 }],
-                width: universityLogos.length * logoWithMargin * 3,
-              },
-            ]}
-          >
-            {[...universityLogos, ...universityLogos, ...universityLogos].map((logo, idx) => (
-              <View
-                key={`row1-${idx}`}
-                style={[styles.logoContainer, { width: logoSize, height: logoSize }]}
-              >
-                <Image
-                  source={logo}
-                  style={{ width: logoSize, height: logoSize }}
-                  contentFit="contain"
-                  accessibilityLabel="대학교 로고"
-                  alt="대학교 로고"
-                />
-              </View>
-            ))}
-          </Animated.View>
-        </View>
-
-        {/* Row 2 */}
-        <View testID="logo-row-2" style={[styles.row, { height: logoWithMargin, marginTop: 12 }]}>
-          <Animated.View
-            style={[
-              styles.animatedRow,
-              {
-                transform: [{ translateX: anim2 }],
-                width: moreLogos.length * logoWithMargin * 3,
-              },
-            ]}
-          >
-            {[...moreLogos, ...moreLogos, ...moreLogos].map((logo, idx) => (
-              <View
-                key={`row2-${idx}`}
-                style={[styles.logoContainer, { width: logoSize, height: logoSize }]}
-              >
-                <Image
-                  source={logo}
-                  style={{ width: logoSize, height: logoSize }}
-                  contentFit="contain"
-                  accessibilityLabel="대학교 로고"
-                  alt="대학교 로고"
-                />
-              </View>
-            ))}
-          </Animated.View>
-        </View>
-      </View>
-
-      {/* Left Gradient */}
-      <LinearGradient
-        colors={["rgba(247, 243, 255, 1)", "rgba(247, 243, 255, 0)"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.gradientLeft}
-        pointerEvents="none"
-      />
-
-      {/* Right Gradient */}
-      <LinearGradient
-        colors={["rgba(247, 243, 255, 0)", "rgba(247, 243, 255, 1)"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.gradientRight}
-        pointerEvents="none"
-      />
-    </View>
-  );
+  return <KoreaUniversityLogos logoSize={logoSize} />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    position: "relative",
-    minHeight: 180,
-  },
-  rowsContainer: {
-    width: "100%",
-  },
-  row: {
-    overflow: "hidden",
-    width: "100%",
-  },
-  animatedRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  logoContainer: {
-    marginHorizontal: 4,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  gradientLeft: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 40,
-    zIndex: 2,
-  },
-  gradientRight: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: 40,
-    zIndex: 2,
-  },
-});
