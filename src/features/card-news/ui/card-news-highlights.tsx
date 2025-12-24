@@ -25,6 +25,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "@/src/shared/ui";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useCardNewsHighlights } from "../queries";
+import { useCardNewsAnalytics } from "../hooks";
 import type { CardNewsHighlight } from "../types";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -36,6 +37,7 @@ type Props = {
 
 export function CardNewsHighlights({ onPressItem }: Props) {
   const { data: highlights, isLoading, isError } = useCardNewsHighlights();
+  const analytics = useCardNewsAnalytics();
   const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(SCREEN_WIDTH - 32);
@@ -43,6 +45,7 @@ export function CardNewsHighlights({ onPressItem }: Props) {
   const autoSlideTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const isJumpingRef = useRef(false);
   const goToIndexRef = useRef<(index: number) => void>(() => {});
+  const wasAutoScrolledRef = useRef(true);
 
   const itemCount = highlights?.length ?? 0;
 
@@ -159,12 +162,24 @@ export function CardNewsHighlights({ onPressItem }: Props) {
 
   const handleScrollBeginDrag = useCallback(() => {
     setIsUserInteracting(true);
+    wasAutoScrolledRef.current = false;
     stopAutoSlide();
   }, [stopAutoSlide]);
 
   const handleScrollEndDrag = useCallback(() => {
     setIsUserInteracting(false);
   }, []);
+
+  const handleItemPress = useCallback((item: CardNewsHighlight, index: number) => {
+    const realIndex = getRealIndex(index);
+    analytics.trackHighlightClicked(
+      item.id,
+      item.title,
+      realIndex,
+      wasAutoScrolledRef.current
+    );
+    onPressItem(item);
+  }, [analytics, getRealIndex, onPressItem]);
 
   const panResponder = useMemo(
     () =>
@@ -180,6 +195,7 @@ export function CardNewsHighlights({ onPressItem }: Props) {
         },
         onPanResponderGrant: () => {
           setIsUserInteracting(true);
+          wasAutoScrolledRef.current = false;
           stopAutoSlide();
         },
         onPanResponderMove: (_, gestureState) => {
@@ -281,7 +297,7 @@ export function CardNewsHighlights({ onPressItem }: Props) {
             <TouchableOpacity
               key={`${item.id}-${index}`}
               activeOpacity={0.9}
-              onPress={() => onPressItem(item)}
+              onPress={() => handleItemPress(item, index)}
               style={[styles.cardWrapper, { width: containerWidth }]}
             >
               <View style={styles.card}>

@@ -25,6 +25,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Text } from "@/src/shared/ui";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useCardNewsDetail, useCardNewsReward } from "@/src/features/card-news/queries";
+import { useCardNewsAnalytics, CARD_NEWS_NAVIGATION_METHODS, CARD_NEWS_EXIT_METHODS, CARD_NEWS_ENTRY_SOURCES } from "@/src/features/card-news";
 import { useToast } from "@/src/shared/hooks/use-toast";
 import type { CardSection } from "@/src/features/card-news/types";
 
@@ -97,24 +98,49 @@ export default function CardNewsDetailScreen() {
   const [hasClaimedReward, setHasClaimedReward] = useState(false);
   const [imageAspectRatios, setImageAspectRatios] = useState<Record<number, number>>({});
   const { emitToast } = useToast();
+  const analytics = useCardNewsAnalytics();
 
   const { data: cardNews, isLoading, error } = useCardNewsDetail(id ?? "", !!id);
   const { mutate: claimReward, isPending: isClaimingReward } = useCardNewsReward();
 
   const sections = cardNews?.sections ?? [];
   const totalCards = sections.length;
+  const entrySourceRef = useRef<typeof CARD_NEWS_ENTRY_SOURCES[keyof typeof CARD_NEWS_ENTRY_SOURCES]>(
+    CARD_NEWS_ENTRY_SOURCES.DEEP_LINK
+  );
+  const hasTrackedEntryRef = useRef(false);
+  const hasTrackedCompletionRef = useRef(false);
 
   useEffect(() => {
     setCurrentIndex(0);
     setHasClaimedReward(false);
+    hasTrackedEntryRef.current = false;
+    hasTrackedCompletionRef.current = false;
     scrollRef.current?.scrollTo({ x: 0, animated: false });
   }, [id]);
+
+  useEffect(() => {
+    if (cardNews && !hasTrackedEntryRef.current) {
+      hasTrackedEntryRef.current = true;
+      analytics.trackDetailEntered(
+        cardNews.id,
+        cardNews.title,
+        cardNews.sections.length,
+        entrySourceRef.current
+      );
+    }
+  }, [cardNews, analytics]);
 
   const handleMomentumEnd = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       const offsetX = e.nativeEvent.contentOffset.x;
       const newIndex = Math.round(offsetX / CONTAINER_WIDTH);
       setCurrentIndex(newIndex);
+
+      if (newIndex === totalCards - 1 && !hasTrackedCompletionRef.current) {
+        hasTrackedCompletionRef.current = true;
+        analytics.trackCompleted();
+      }
 
       // TODO: 보상 기능 활성화 시 주석 해제
       // if (
@@ -125,7 +151,7 @@ export default function CardNewsDetailScreen() {
       //   handleClaimReward();
       // }
     },
-    [totalCards, cardNews?.hasReward, hasClaimedReward]
+    [totalCards, cardNews?.hasReward, hasClaimedReward, analytics]
   );
 
   const handleClaimReward = useCallback(() => {
@@ -150,30 +176,42 @@ export default function CardNewsDetailScreen() {
   }, [id, hasClaimedReward, isClaimingReward, claimReward, emitToast]);
 
   const goToCard = useCallback(
-    (index: number) => {
+    (index: number, navigationMethod?: typeof CARD_NEWS_NAVIGATION_METHODS[keyof typeof CARD_NEWS_NAVIGATION_METHODS]) => {
       if (index >= 0 && index < totalCards) {
+        if (navigationMethod) {
+          analytics.trackCardNavigated(index, navigationMethod);
+        }
         scrollRef.current?.scrollTo({ x: CONTAINER_WIDTH * index, animated: true });
         setCurrentIndex(index);
+
+        if (index === totalCards - 1 && !hasTrackedCompletionRef.current) {
+          hasTrackedCompletionRef.current = true;
+          analytics.trackCompleted();
+        }
       }
     },
-    [totalCards]
+    [totalCards, analytics]
   );
 
   const handleLeftTap = useCallback(() => {
-    goToCard(currentIndex - 1);
+    goToCard(currentIndex - 1, CARD_NEWS_NAVIGATION_METHODS.TAP_LEFT);
   }, [currentIndex, goToCard]);
 
   const handleRightTap = useCallback(() => {
-    goToCard(currentIndex + 1);
+    goToCard(currentIndex + 1, CARD_NEWS_NAVIGATION_METHODS.TAP_RIGHT);
   }, [currentIndex, goToCard]);
 
   const handleClose = useCallback(() => {
+    if (!hasTrackedCompletionRef.current && analytics.hasActiveSession()) {
+      analytics.trackExited(CARD_NEWS_EXIT_METHODS.BACK_BUTTON);
+    }
+
     if (router.canGoBack()) {
       router.back();
     } else {
       router.push("/community");
     }
-  }, []);
+  }, [analytics]);
 
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
@@ -210,7 +248,7 @@ export default function CardNewsDetailScreen() {
 
     if (Math.abs(diff) > threshold) {
       const direction = diff > 0 ? 1 : -1;
-      goToCard(currentIndex + direction);
+      goToCard(currentIndex + direction, CARD_NEWS_NAVIGATION_METHODS.SWIPE);
     } else {
       goToCard(currentIndex);
     }

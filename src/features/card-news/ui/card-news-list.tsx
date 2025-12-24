@@ -14,6 +14,7 @@ import { Image } from "expo-image";
 import { Text } from "@/src/shared/ui";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useCardNewsInfiniteList } from "../queries";
+import { useCardNewsAnalytics } from "../hooks";
 import type { CardNewsListItem } from "../types";
 import dayUtils from "@/src/shared/libs/day";
 
@@ -25,19 +26,33 @@ type Props = {
 export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
   const { items, isLoading, isLoadingMore, hasNextPage, loadMore, refetch } =
     useCardNewsInfiniteList(10);
+  const analytics = useCardNewsAnalytics();
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isLoadingMore) {
       loadMore();
     }
-  }, [hasNextPage, isLoadingMore, loadMore]);
+
+    analytics.trackListEndReached(items.length, hasNextPage);
+  }, [hasNextPage, isLoadingMore, loadMore, analytics, items.length]);
+
+  const handleItemPress = useCallback((item: CardNewsListItem, index: number) => {
+    analytics.trackListItemClicked(
+      item.id,
+      item.title,
+      index,
+      item.publishedAt,
+      item.readCount
+    );
+    onPressItem(item);
+  }, [analytics, onPressItem]);
 
   const renderItem = useCallback(
-    ({ item }: { item: CardNewsListItem }) => (
+    ({ item, index }: { item: CardNewsListItem; index: number }) => (
       <TouchableOpacity
         style={styles.itemContainer}
         activeOpacity={0.9}
-        onPress={() => onPressItem(item)}
+        onPress={() => handleItemPress(item, index)}
       >
         <View style={styles.thumbnail}>
           {item.backgroundImage?.url ? (
@@ -71,7 +86,7 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
         </View>
       </TouchableOpacity>
     ),
-    [onPressItem]
+    [handleItemPress]
   );
 
   const renderFooter = useCallback(() => {
