@@ -2,7 +2,15 @@ const {
   getSentryExpoConfig
 } = require("@sentry/react-native/metro");
 
-const config = getSentryExpoConfig(__dirname)
+const isDev = process.env.NODE_ENV !== 'production';
+
+const config = getSentryExpoConfig(__dirname, {
+  annotateReactComponents: !isDev,
+})
+
+if (isDev) {
+  config.maxWorkers = 2;
+}
 
 const { transformer, resolver } = config;
 
