@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import {BackHandler, StyleSheet, View} from 'react-native';
+import { useEffect, useState } from 'react';
+import { BackHandler } from 'react-native';
 import { useStorage } from '@/src/shared/hooks/use-storage';
 import { tryCatch } from '@/src/shared/libs';
 import { ensureAppleId, processSignup, validatePhone, validateUniversity } from '../services/signup-validator';
@@ -77,7 +77,6 @@ function useInviteCode() {
             router,
             apis,
             trackSignupEvent,
-            track,
             showErrorModal,
             removeLoginType,
           });
@@ -96,7 +95,6 @@ function useInviteCode() {
           await processSignup(signupForm as Required<typeof signupForm>, {
             router,
             apis,
-            track,
             trackSignupEvent,
             removeLoginType,
             updateToken,
@@ -106,11 +104,7 @@ function useInviteCode() {
         },
         (error) => {
           console.error("Signup error:", error);
-          track("Signup_profile_invite_code_error", {
-            error,
-            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-          });
-          trackSignupEvent("signup_error", error?.message);
+          trackSignupEvent("error", error?.message);
           showErrorModal(error?.message ?? "회원가입에 실패했습니다.", "announcement");
         }
       );
