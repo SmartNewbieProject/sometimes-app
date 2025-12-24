@@ -1,0 +1,212 @@
+{
+  "project_id": "3726144",
+  "insights": {
+    "mutual_like_rate": {
+      "name": "상호 좋아요율 (%)",
+      "description": "Match_Accepted / Like_Sent × 100. 목표: 15-25%",
+      "chart_type": "metric",
+      "project_id": 3726144,
+      "query": {
+        "analysis_type": "linear",
+        "events": [
+          {
+            "event": "Match_Accepted",
+            "name": "Match_Accepted",
+            "type": "events"
+          },
+          {
+            "event": "Like_Sent",
+            "name": "Like_Sent",
+            "type": "events"
+          }
+        ],
+        "formula": "(A / B) * 100",
+        "time": {
+          "unit": "day",
+          "value": 30
+        }
+      }
+    },
+    "chat_active_rate": {
+      "name": "채팅 활성화율 (%)",
+      "description": "24시간 내 상호 대화 비율. 목표: 35%+",
+      "chart_type": "metric",
+      "project_id": 3726144,
+      "query": {
+        "analysis_type": "linear",
+        "events": [
+          {
+            "event": "Chat_24h_Active",
+            "name": "Active Chats",
+            "type": "events",
+            "filters": [
+              {
+                "property": "activity_status",
+                "operator": "==",
+                "value": "mutual"
+              }
+            ]
+          },
+          {
+            "event": "Chat_Started",
+            "name": "Started Chats",
+            "type": "events"
+          }
+        ],
+        "formula": "(A / B) * 100",
+        "time": {
+          "unit": "day",
+          "value": 30
+        }
+      }
+    },
+    "matching_failure": {
+      "name": "매칭 실패 원인 분포",
+      "description": "failure_category별 분포",
+      "chart_type": "pie",
+      "project_id": 3726144,
+      "query": {
+        "analysis_type": "linear",
+        "events": [
+          {
+            "event": "Matching_Failed",
+            "name": "Failed Matches",
+            "type": "events"
+          }
+        ],
+        "breakdown": {
+          "property": "failure_category",
+          "type": "event"
+        },
+        "time": {
+          "unit": "day",
+          "value": 30
+        }
+      }
+    }
+  },
+  "funnels": {
+    "matching_funnel": {
+      "name": "전체 매칭 퍼널",
+      "description": "매칭 성공 → 좋아요 전송 → 상호 좋아요 → 채팅 시작 → 활성 대화",
+      "chart_type": "funnel",
+      "project_id": 3726144,
+      "query": {
+        "steps": [
+          {
+            "event": "Matching_Success",
+            "name": "알고리즘 매칭 성공"
+          },
+          {
+            "event": "Like_Sent",
+            "name": "좋아요 전송"
+          },
+          {
+            "event": "Match_Accepted",
+            "name": "상호 좋아요 (매칭 확정)"
+          },
+          {
+            "event": "Chat_Started",
+            "name": "채팅방 생성"
+          },
+          {
+            "event": "Chat_24h_Active",
+            "name": "24시간 내 활성 대화",
+            "filters": [
+              {
+                "property": "activity_status",
+                "operator": "!=",
+                "value": "inactive"
+              }
+            ]
+          }
+        ],
+        "conversion_window": {
+          "value": 14,
+          "unit": "day"
+        },
+        "time": {
+          "unit": "day",
+          "value": 30
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "name": "매칭 시스템 모니터링",
+    "description": "매칭 퍼널, 전환율, 품질 지표 종합 대시보드",
+    "project_id": 3375891,
+    "widgets": [
+      {
+        "type": "insight",
+        "name": "상호 좋아요율 (%)",
+        "position": {
+          "x": 0,
+          "y": 0,
+          "w": 3,
+          "h": 2
+        }
+      },
+      {
+        "type": "insight",
+        "name": "채팅 활성화율 (%)",
+        "position": {
+          "x": 3,
+          "y": 0,
+          "w": 3,
+          "h": 2
+        }
+      },
+      {
+        "type": "insight",
+        "name": "일일 매칭 성공 건수",
+        "position": {
+          "x": 6,
+          "y": 0,
+          "w": 3,
+          "h": 2
+        }
+      },
+      {
+        "type": "insight",
+        "name": "매칭 성공률",
+        "position": {
+          "x": 9,
+          "y": 0,
+          "w": 3,
+          "h": 2
+        }
+      },
+      {
+        "type": "funnel",
+        "name": "전체 매칭 퍼널",
+        "position": {
+          "x": 0,
+          "y": 2,
+          "w": 12,
+          "h": 4
+        }
+      },
+      {
+        "type": "insight",
+        "name": "매칭 실패 원인 분포",
+        "position": {
+          "x": 0,
+          "y": 6,
+          "w": 6,
+          "h": 3
+        }
+      },
+      {
+        "type": "insight",
+        "name": "일일 매칭 추이",
+        "position": {
+          "x": 6,
+          "y": 6,
+          "w": 6,
+          "h": 3
+        }
+      }
+    ]
+  }
+}
