@@ -4,6 +4,7 @@ import type {TokenResponse} from '@/src/types/auth';
 import {tryCatch} from './try-catch';
 import {router} from 'expo-router';
 import {eventBus} from './event-bus';
+import {env} from './env';
 
 let refreshTokenPromise: Promise<string> | null = null;
 let isNetworkDisabled = false;
@@ -46,7 +47,7 @@ const refresh = async () => {
   return refreshTokenPromise;
 };
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_URL = env.API_URL;
 
 console.log('=================================');
 console.log('[API 설정] baseURL:', API_URL);
@@ -61,7 +62,7 @@ const axiosClient = axios.create({
 });
 
 const temporaryAxiosClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  baseURL: env.API_URL,
   timeout: 20000, // 20초로 타임아웃 증가
   headers: {
     'Content-Type': 'application/json',

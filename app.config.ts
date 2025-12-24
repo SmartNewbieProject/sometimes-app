@@ -1,9 +1,36 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => {
+  // 환경 변수 로드 (우선순위: 프로세스 환경 변수 > .env 파일)
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL || '';
+  const serverUrl = process.env.EXPO_PUBLIC_SERVER_URL || apiUrl.replace('/api', '');
+  const channelKey = process.env.EXPO_PUBLIC_CHANNEL_KEY || '';
+  const imp = process.env.EXPO_PUBLIC_IMP || '';
+  const kakaoLoginApiKey = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY || '';
+  const kakaoRedirectUri = process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI || '';
+  const link = process.env.EXPO_PUBLIC_LINK || '';
+  const merchantId = process.env.EXPO_PUBLIC_MERCHANT_ID || '';
+  const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN || '';
+  const passChannelKey = process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY || '';
+  const pgProvider = process.env.EXPO_PUBLIC_PG_PROVIDER || '';
+  const slackLogger = process.env.EXPO_PUBLIC_SLACK_LOGGER || '';
+  const storeId = process.env.EXPO_PUBLIC_STORE_ID || '';
+  const trackingMode = process.env.EXPO_PUBLIC_TRACKING_MODE || 'production';
+
+  // 디버깅: 빌드 시 환경 변수 확인
+  console.log('=================================');
+  console.log('[app.config.ts] Environment Variables:');
+  console.log('  API_URL:', apiUrl || '❌ NOT SET');
+  console.log('  SERVER_URL:', serverUrl || '❌ NOT SET');
+  console.log('  MERCHANT_ID:', merchantId || '❌ NOT SET');
+  console.log('  CHANNEL_KEY:', channelKey ? 'SET ✅' : '❌ NOT SET');
+  console.log('  KAKAO_KEY:', kakaoLoginApiKey ? 'SET ✅' : '❌ NOT SET');
+  console.log('=================================');
+
   return {
     ...config,
-    name: "sometimes",
+    expo: {
+      name: "sometimes",
       slug: "sometimes",
       version: "3.9.1",
       orientation: "portrait",
@@ -235,7 +262,23 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         eas: {
           projectId: "f6df6d86-2504-4574-8bf2-e069c6e76316"
         },
-        enableRemoteLogging: true
+        enableRemoteLogging: true,
+        // 🔥 환경 변수를 extra에 주입 (expo-constants로 접근 가능)
+        apiUrl: apiUrl,
+        serverUrl: serverUrl,
+        channelKey: channelKey,
+        imp: imp,
+        kakaoLoginApiKey: kakaoLoginApiKey,
+        kakaoRedirectUri: kakaoRedirectUri,
+        link: link,
+        merchantId: merchantId,
+        mixpanelToken: mixpanelToken,
+        passChannelKey: passChannelKey,
+        pgProvider: pgProvider,
+        slackLogger: slackLogger,
+        storeId: storeId,
+        trackingMode: trackingMode
       }
+    }
   };
 };
