@@ -118,7 +118,7 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
   SIGNUP_STARTED: 'Signup_Started',
   SIGNUP_PROFILE_IMAGE_UPLOADED: 'Signup_Profile_Image_Uploaded',
   SIGNUP_INTEREST_SELECTED: 'Signup_Interest_Selected',
-  SIGNUP_COMPLETED: 'Signup_Completed',
+  SIGNUP_COMPLETED: 'Signup_done',
 
   // 매칭 관련 (Activation)
   MATCHING_STARTED: 'Matching_Started',
