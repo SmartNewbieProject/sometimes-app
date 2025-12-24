@@ -1,4 +1,5 @@
 import { useToast } from "@/src/shared/hooks/use-toast";
+import { env } from "@/src/shared/libs/env";
 import { shareFeedTemplate } from "@react-native-kakao/share";
 import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
@@ -29,16 +30,16 @@ function useShareKakao() {
         "당신과 친구 모두에게 구슬 30개 지급 💜\n 이상형 매칭, 지금 바로 시작하세요!",
       imageUrl: getKakaoImage(),
       link: {
-        mobileWebUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${inviteCode}`,
-        webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${inviteCode}`,
+        mobileWebUrl: `${env.LINK}?invite-code=${inviteCode}`,
+        webUrl: `${env.LINK}?invite-code=${inviteCode}`,
       },
     },
     buttons: [
       {
         title: "웹으로 이동",
         link: {
-          mobileWebUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${inviteCode}`,
-          webUrl: `${process.env.EXPO_PUBLIC_LINK}?invite-code=${inviteCode}`,
+          mobileWebUrl: `${env.LINK}?invite-code=${inviteCode}`,
+          webUrl: `${env.LINK}?invite-code=${inviteCode}`,
         },
       },
 

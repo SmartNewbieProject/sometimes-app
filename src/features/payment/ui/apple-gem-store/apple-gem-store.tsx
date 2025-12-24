@@ -44,7 +44,7 @@ function AppleGemStore() {
     setPurchasing(true);
     try {
       const extendedPurchase = purchase as ExtendedProductPurchase;
-      const transactionReceipt = extendedPurchase?.transactionReceipt || extendedPurchase?.jwsRepresentationIOS;
+      const transactionReceipt = extendedPurchase?.purchaseToken;
 
       if (!transactionReceipt || transactionReceipt.trim() === "") {
         console.error("❌ Invalid transactionReceipt:", { transactionReceipt, purchase });

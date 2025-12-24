@@ -16,6 +16,7 @@ import {
 	useMatchingStore,
 } from "@/src/features/matching";
 import { logError } from "@/src/shared/utils";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 
 const useRematchingMutation = () =>
   useMutation<RematchResponseV3>({
@@ -48,6 +49,7 @@ function useRematch() {
   const { showExpansionModal } = useRegionalExpansionModal();
   const { startExternalMatch, error: externalMatchError } = useExternalMatching();
   const { userRegion, matchAttempts, setCurrentMatch, setCurrentBadge } = useMatchingStore();
+  const { matchingEvents } = useMixpanel();
 
   // 외부 매칭 에러 처리
   useEffect(() => {
@@ -102,6 +104,9 @@ function useRematch() {
   const performRematch = async () => {
     await tryCatch(
       async () => {
+        // KPI 이벤트: 매칭 시작 (재매칭)
+        matchingEvents.trackMatchingStarted('rematch', []);
+
         onLoading();
         await rematch();
         finishLoading();

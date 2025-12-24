@@ -48,6 +48,8 @@ import featureMypage from './features/mypage.json';
 import featuresMoment from './features/moment.json';
 import featuresSomemate from './features/somemate.json';
 import featuresOnboarding from './features/onboarding.json';
+import featuresJpAuth from './features/jp-auth.json';
+import featuresCardNews from './features/card-news.json';
 
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
@@ -118,6 +120,8 @@ const features = {
   'moment': featuresMoment,
   'somemate': featuresSomemate,
   'onboarding': featuresOnboarding,
+  'jp-auth': featuresJpAuth,
+  'card-news': featuresCardNews,
 };
 
 const widgets = {
@@ -141,7 +145,7 @@ const shareds = {
 };
 
 export default {
-  global,
+  ...global,
   apps,
   features,
   widgets,

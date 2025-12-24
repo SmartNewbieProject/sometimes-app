@@ -38,10 +38,15 @@ const isValidEnvValue = (value: unknown): value is string => {
   return true;
 };
 
+// camelCase를 SCREAMING_SNAKE_CASE로 변환 (apiUrl -> API_URL)
+const toEnvKey = (camelCase: string): string => {
+  return camelCase.replace(/([A-Z])/g, '_$1').toUpperCase();
+};
+
 // 안전한 환경 변수 getter (Constants 우선, fallback 제공)
 const getEnv = (extraKey: string, fallback: string = ''): string => {
+  // 1. Constants.expoConfig.extra에서 먼저 시도
   const extraValue = extra?.[extraKey];
-
   if (isValidEnvValue(extraValue)) {
     return extraValue;
   }
@@ -49,20 +54,19 @@ const getEnv = (extraKey: string, fallback: string = ''): string => {
   // 환경 변수 치환 실패 감지
   if (typeof extraValue === 'string' && extraValue.includes('${')) {
     console.error(`[env.ts] ❌ ENV substitution failed for ${extraKey}: "${extraValue}"`);
-    console.error(`[env.ts] ⚠️ Using fallback: ${fallback}`);
-    return fallback;
   }
 
-  // Standalone 빌드에서는 process.env가 비어있음!
-  // Expo Go 개발 중에만 폴백으로 사용
-  if (__DEV__ && typeof process !== 'undefined' && process.env) {
-    const envValue = process.env[`EXPO_PUBLIC_${extraKey.toUpperCase()}`];
+  // 2. 웹 환경 또는 개발 환경에서 process.env 직접 사용
+  if (typeof process !== 'undefined' && process.env) {
+    const envKey = `EXPO_PUBLIC_${toEnvKey(extraKey)}`;
+    const envValue = process.env[envKey];
     if (envValue) {
-      console.log(`[env.ts] Using __DEV__ fallback for ${extraKey}`);
+      console.log(`[env.ts] ✅ Using process.env.${envKey}`);
       return String(envValue);
     }
   }
 
+  // 3. Fallback 사용
   if (fallback) {
     console.warn(`[env.ts] ⚠️ Using fallback for ${extraKey}: ${fallback}`);
   } else {

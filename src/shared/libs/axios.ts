@@ -5,6 +5,9 @@ import {tryCatch} from './try-catch';
 import {router} from 'expo-router';
 import {eventBus} from './event-bus';
 import {env} from './env';
+import {isJapanese} from './local';
+
+const getCountryCode = (): string => isJapanese() ? 'jp' : 'kr';
 
 let refreshTokenPromise: Promise<string> | null = null;
 let isNetworkDisabled = false;
@@ -78,6 +81,12 @@ const temporaryAxiosClient = axios.create({
   },
 });
 
+// temporaryAxiosClient에도 X-Country 헤더 설정
+temporaryAxiosClient.interceptors.request.use((config) => {
+  config.headers['X-Country'] = getCountryCode();
+  return config;
+});
+
 // 요청 인터셉터
 axiosClient.interceptors.request.use(
     async (config) => {
@@ -85,8 +94,11 @@ axiosClient.interceptors.request.use(
         return Promise.reject(new Error('Network requests are disabled due to REGION_NOT_ALLOWED'));
       }
 
+      // Multi-tenant 지원: 국가 코드 헤더 설정
+      config.headers['X-Country'] = getCountryCode();
+
       // 디버깅: 요청 정보 로깅
-      console.log(`[API 요청] ${config.method?.toUpperCase()} ${config.url}`);
+      console.log(`[API 요청] ${config.method?.toUpperCase()} ${config.url} [${config.headers['X-Country']}]`);
       if (config.data) {
         console.log('[API 요청 데이터]', typeof config.data === 'string' ? config.data : JSON.stringify(config.data, null, 2));
       }
@@ -118,6 +130,8 @@ axiosClient.interceptors.response.use(
       console.error(`[API 에러] ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
       console.error(`[API 에러] 상태 코드: ${error.response?.status}`);
       console.error(`[API 에러] 응답 데이터:`, error.response?.data);
+      console.error(`[API 에러] 에러 메시지: ${error.message}`);
+      console.error(`[API 에러] 에러 코드: ${error.code}`);
 
 
       const data = error?.response?.data;

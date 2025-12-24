@@ -7,6 +7,7 @@ import type { Product, PaymentRequest } from "../types";
 import { useAuth } from "../../auth";
 import { usePortoneStore } from "../hooks/use-portone-store";
 import paymentApis from "../api";
+import { env } from "@/src/shared/libs/env";
 
 export interface PaymentViewProps {
   paymentId: string;
@@ -39,8 +40,8 @@ export const PaymentView = forwardRef(
     };
 
     const basePaymentParams: PaymentRequest = {
-      storeId: process.env.EXPO_PUBLIC_STORE_ID as string,
-      channelKey: process.env.EXPO_PUBLIC_CHANNEL_KEY,
+      storeId: env.STORE_ID,
+      channelKey: env.CHANNEL_KEY,
       paymentId,
       orderName: productName || orderName,
       totalAmount: totalAmount,
