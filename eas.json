@@ -42,7 +42,8 @@
         "ANDROID_HOME": "/Users/user/Library/Android/sdk",
         "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
         "SENTRY_ORG": "smartnewbie",
-        "SENTRY_PROJECT": "react-native"
+        "SENTRY_PROJECT": "react-native",
+        "SENTRY_ALLOW_FAILURE": "true"
       },
       "ios": {
         "distribution": "store",

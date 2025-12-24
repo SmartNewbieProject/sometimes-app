@@ -28,6 +28,7 @@ import { useAtt } from "@/src/shared/hooks";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
+import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SessionTracker } from "@/src/shared/components/session-tracker";
@@ -115,7 +116,7 @@ export default Sentry.wrap(function RootLayout() {
 
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN as string;
+        const mixpanelToken = env.MIXPANEL_TOKEN;
         if (mixpanelToken) {
           mixpanelAdapter.init(mixpanelToken, true);
           console.log('[SDK Init] Mixpanel initialized');
