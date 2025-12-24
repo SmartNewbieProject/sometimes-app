@@ -131,16 +131,14 @@ function useInviteCode() {
 
   
   return {
-    onNext, 
-    signupLoading, 
-    storageLoading, 
+    onNext,
+    signupLoading,
+    storageLoading,
     onBackPress,
     handleInviteCode,
     code: signupForm?.referralCode ?? "",
     nextMessage
   }
 }
-
-const styles = StyleSheet.create({});
 
 export default useInviteCode;

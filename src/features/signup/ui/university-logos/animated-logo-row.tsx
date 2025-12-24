@@ -54,7 +54,8 @@ export default function AnimatedLogoRow({
   }, [anim2, logoSize, row2Logos.length]);
 
   const logoWithMargin = logoSize + 8;
-  const transparentGradient = gradientColor.replace(", 1)", ", 0)");
+  const safeGradientColor = gradientColor ?? "rgba(247, 243, 255, 1)";
+  const transparentGradient = safeGradientColor.replace(", 1)", ", 0)");
 
   return (
     <View style={styles.container}>
@@ -118,7 +119,7 @@ export default function AnimatedLogoRow({
       </View>
 
       <LinearGradient
-        colors={[gradientColor, transparentGradient]}
+        colors={[safeGradientColor, transparentGradient]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.gradientLeft}
@@ -126,7 +127,7 @@ export default function AnimatedLogoRow({
       />
 
       <LinearGradient
-        colors={[transparentGradient, gradientColor]}
+        colors={[transparentGradient, safeGradientColor]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.gradientRight}

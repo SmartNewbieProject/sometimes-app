@@ -24,6 +24,7 @@
     "test:e2e:debug": "playwright test -c test/e2e/playwright.config.ts --debug",
     "test:e2e:report": "playwright show-report test/e2e/test-results/html",
     "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
     "build": "./scripts/build.sh",
     "build:ios": "./scripts/build-with-notify.sh ios production",
     "build:android": "./scripts/build-with-notify.sh android production",
