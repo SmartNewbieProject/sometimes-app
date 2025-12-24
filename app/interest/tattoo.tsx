@@ -15,40 +15,12 @@ import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import i18n from "@/src/shared/libs/i18n";
 import { useTranslation } from 'react-i18next';
 
 const { ui, hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
-
-const tooltips = [
-  {
-    title: i18n.t("apps.interest.tattoo.tooltip_0_title"),
-    description: [
-      i18n.t("apps.interest.tattoo.tooltip_0_desc_1"),
-      i18n.t("apps.interest.tattoo.tooltip_0_desc_2"),
-    ],
-  },
-  {
-    title: i18n.t("apps.interest.tattoo.tooltip_1_title"),
-    description: [
-      i18n.t("apps.interest.tattoo.tooltip_1_desc_1"),
-      i18n.t("apps.interest.tattoo.tooltip_1_desc_2"),
-      i18n.t("apps.interest.tattoo.tooltip_1_desc_3"),
-      i18n.t("apps.interest.tattoo.tooltip_1_desc_4"),
-    ],
-  },
-  {
-    title: i18n.t("apps.interest.tattoo.tooltip_2_title"),
-    description: [
-      i18n.t("apps.interest.tattoo.tooltip_2_desc_1"),
-      i18n.t("apps.interest.tattoo.tooltip_2_desc_2"),
-      i18n.t("apps.interest.tattoo.tooltip_2_desc_3"),
-    ],
-  },
-];
 
 export default function TattooSelectionScreen() {
   const { updateStep } = useInterestStep();
@@ -75,6 +47,26 @@ export default function TattooSelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+
+  const tooltips = preferences?.options.map((_, idx) => {
+    const titleKey = `apps.interest.tattoo.tooltip_${idx}_title`;
+    const title = t(titleKey, { defaultValue: t("apps.interest.tattoo.tooltip_0_title") });
+
+    const descriptions: string[] = [];
+    let descIdx = 1;
+    while (true) {
+      const descKey = `apps.interest.tattoo.tooltip_${idx}_desc_${descIdx}`;
+      const desc = t(descKey, { defaultValue: "" });
+      if (!desc) break;
+      descriptions.push(desc);
+      descIdx++;
+    }
+
+    return {
+      title,
+      description: descriptions.length > 0 ? descriptions : [t("apps.interest.tattoo.tooltip_0_desc_1")],
+    };
+  }) ?? [];
   useEffect(() => {
     if (optionsLoading) return;
     if (!tattoo && preferences.options[currentIndex]) {
@@ -202,8 +194,8 @@ export default function TattooSelectionScreen() {
         </View>
         <View style={styles.tooltipContainer}>
           <Tooltip
-            title={tooltips[currentIndex].title}
-            description={tooltips[currentIndex].description}
+            title={tooltips[currentIndex]?.title ?? ""}
+            description={tooltips[currentIndex]?.description ?? []}
           />
         </View>
       </View>

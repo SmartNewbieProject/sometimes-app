@@ -38,7 +38,7 @@ function LikeMbti() {
     if (!goodMbti) {
       return t("apps.interest.like_mbti.next_none");
     }
-    return t("global.next");
+    return t("next");
   })();
 
   return (
