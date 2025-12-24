@@ -13,9 +13,12 @@ import {
   ActivityIndicator,
   StyleSheet,
   Dimensions,
+  PanResponder,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
   type LayoutChangeEvent,
+  type GestureResponderEvent,
+  type PanResponderGestureState,
 } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -39,6 +42,7 @@ export function CardNewsHighlights({ onPressItem }: Props) {
   const [isUserInteracting, setIsUserInteracting] = useState(false);
   const autoSlideTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const isJumpingRef = useRef(false);
+  const goToIndexRef = useRef<(index: number) => void>(() => {});
 
   const itemCount = highlights?.length ?? 0;
 
@@ -83,6 +87,52 @@ export function CardNewsHighlights({ onPressItem }: Props) {
     }
   }, [itemCount, containerWidth, scrollToIndex]);
 
+  const goToIndex = useCallback(
+    (index: number) => {
+      if (itemCount <= 1) {
+        scrollToIndex(0, true);
+        setCurrentIndex(0);
+        return;
+      }
+
+      let targetIndex = index;
+      if (index < 0) {
+        targetIndex = extendedHighlights.length - 2;
+      } else if (index >= extendedHighlights.length) {
+        targetIndex = 1;
+      }
+
+      scrollToIndex(targetIndex, true);
+      setCurrentIndex(targetIndex);
+
+      if (index === 0) {
+        isJumpingRef.current = true;
+        setTimeout(() => {
+          scrollToIndex(extendedHighlights.length - 2, false);
+          setCurrentIndex(extendedHighlights.length - 2);
+          isJumpingRef.current = false;
+        }, 300);
+      } else if (index === extendedHighlights.length - 1) {
+        isJumpingRef.current = true;
+        setTimeout(() => {
+          scrollToIndex(1, false);
+          setCurrentIndex(1);
+          isJumpingRef.current = false;
+        }, 300);
+      }
+    },
+    [itemCount, extendedHighlights.length, scrollToIndex]
+  );
+
+  goToIndexRef.current = goToIndex;
+
+  const stopAutoSlide = useCallback(() => {
+    if (autoSlideTimer.current) {
+      clearInterval(autoSlideTimer.current);
+      autoSlideTimer.current = null;
+    }
+  }, []);
+
   const startAutoSlide = useCallback(() => {
     if (autoSlideTimer.current) {
       clearInterval(autoSlideTimer.current);
@@ -94,18 +144,11 @@ export function CardNewsHighlights({ onPressItem }: Props) {
 
       setCurrentIndex((prev) => {
         const nextIndex = prev + 1;
-        scrollToIndex(nextIndex, true);
+        goToIndexRef.current(nextIndex);
         return nextIndex;
       });
     }, AUTO_SLIDE_INTERVAL);
-  }, [itemCount, scrollToIndex, isUserInteracting]);
-
-  const stopAutoSlide = useCallback(() => {
-    if (autoSlideTimer.current) {
-      clearInterval(autoSlideTimer.current);
-      autoSlideTimer.current = null;
-    }
-  }, []);
+  }, [itemCount, isUserInteracting]);
 
   useEffect(() => {
     if (!isUserInteracting && itemCount > 1) {
@@ -122,6 +165,46 @@ export function CardNewsHighlights({ onPressItem }: Props) {
   const handleScrollEndDrag = useCallback(() => {
     setIsUserInteracting(false);
   }, []);
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => false,
+        onMoveShouldSetPanResponder: (
+          _: GestureResponderEvent,
+          gestureState: PanResponderGestureState
+        ) => {
+          const isHorizontalSwipe = Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 1.5;
+          const hasMovedEnough = Math.abs(gestureState.dx) > 10;
+          return isHorizontalSwipe && hasMovedEnough;
+        },
+        onPanResponderGrant: () => {
+          setIsUserInteracting(true);
+          stopAutoSlide();
+        },
+        onPanResponderMove: (_, gestureState) => {
+          const newX = currentIndex * containerWidth - gestureState.dx;
+          scrollRef.current?.scrollTo({ x: newX, animated: false });
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          setIsUserInteracting(false);
+          const threshold = containerWidth * 0.2;
+
+          if (Math.abs(gestureState.dx) > threshold) {
+            const direction = gestureState.dx > 0 ? -1 : 1;
+            const nextIndex = currentIndex + direction;
+            goToIndex(nextIndex);
+          } else {
+            goToIndex(currentIndex);
+          }
+        },
+        onPanResponderTerminate: () => {
+          setIsUserInteracting(false);
+          goToIndex(currentIndex);
+        },
+      }),
+    [currentIndex, containerWidth, stopAutoSlide, goToIndex]
+  );
 
   const handleMomentumEnd = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -179,7 +262,7 @@ export function CardNewsHighlights({ onPressItem }: Props) {
         <Text style={styles.sectionTitle}>지금 주목할 소식</Text>
       </View>
 
-      <View onLayout={handleLayout}>
+      <View onLayout={handleLayout} {...panResponder.panHandlers}>
         <ScrollView
           ref={scrollRef}
           horizontal
@@ -191,6 +274,7 @@ export function CardNewsHighlights({ onPressItem }: Props) {
           scrollEventThrottle={16}
           decelerationRate="fast"
           snapToInterval={containerWidth}
+          scrollEnabled={false}
           contentContainerStyle={styles.scrollContent}
         >
           {extendedHighlights.map((item, index) => (

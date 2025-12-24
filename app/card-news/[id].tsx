@@ -368,22 +368,34 @@ export default function CardNewsDetailScreen() {
               .map((section, index) => renderCard(section, index))}
           </ScrollView>
 
-          {/* 진행 Dots (Absolute) */}
-          <View style={styles.dotsContainerAbsolute}>
-            {sections.map((_, index) => (
-              <Pressable
-                key={index}
-                onPress={() => goToCard(index)}
-                hitSlop={{ top: 10, bottom: 10, left: 4, right: 4 }}
-              >
-                <View
-                  style={[
-                    styles.dot,
-                    index === currentIndex && styles.dotActive,
-                  ]}
-                />
-              </Pressable>
-            ))}
+          {/* 슬라이드 인디케이터 영역 */}
+          <View style={styles.indicatorContainer}>
+            {/* 진행 Dots */}
+            <View style={styles.dotsWrapper}>
+              {sections.map((_, index) => (
+                <Pressable
+                  key={index}
+                  onPress={() => goToCard(index)}
+                  hitSlop={{ top: 10, bottom: 10, left: 6, right: 6 }}
+                >
+                  <View
+                    style={[
+                      styles.dot,
+                      index === currentIndex && styles.dotActive,
+                    ]}
+                  />
+                </Pressable>
+              ))}
+            </View>
+
+            {/* 남은 슬라이드 안내 */}
+            {totalCards - currentIndex - 1 > 0 && (
+              <View style={styles.remainingBadge}>
+                <Text style={styles.remainingText}>
+                  {totalCards - currentIndex - 1}장 남았어요!
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -478,29 +490,47 @@ const styles = StyleSheet.create({
     width: CONTAINER_WIDTH,
     minHeight: SCREEN_HEIGHT - 56,
     backgroundColor: "#FFFFFF",
-    paddingTop: 30,
+    paddingTop: 48,
   },
-  dotsContainerAbsolute: {
+  indicatorContainer: {
     position: "absolute",
-    top: 10,
-    left: 0,
-    right: 0,
+    top: 8,
+    left: 16,
+    right: 16,
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
-    gap: 6,
     zIndex: 10,
     pointerEvents: "box-none",
   },
+  dotsWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    pointerEvents: "auto",
+  },
+  remainingBadge: {
+    backgroundColor: "rgba(122, 74, 226, 0.1)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    pointerEvents: "none",
+  },
+  remainingText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: semanticColors.brand.primary,
+  },
   dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: "#E2D5FF",
   },
   dotActive: {
-    width: 18,
-    borderRadius: 10,
+    width: 28,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: semanticColors.brand.primary,
   },
   cardPadding: {

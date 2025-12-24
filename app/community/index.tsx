@@ -221,7 +221,7 @@ export default function CommunityScreen() {
             initialLayout={{ width: safeWidth }}
             lazy
             lazyPreloadDistance={1}
-            swipeEnabled
+            swipeEnabled={!isHome}
             renderTabBar={() => null}
           />
         ) : (
