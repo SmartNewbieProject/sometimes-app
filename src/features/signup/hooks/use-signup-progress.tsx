@@ -1,30 +1,7 @@
 import { create } from "zustand";
-import i18n from "@/src/shared/libs/i18n";
-import type { SignupResponse } from "../apis";
+import type { SignupForm, SignupResponse } from "../types";
 
-export type LoginType = "pass" | "kakao" | "kakao_native" | "apple";
-
-export type SignupForm = {
-  name: string;
-  phone: string;
-  birthday: string;
-  gender: "MALE" | "FEMALE";
-  universityId: string;
-  area: string;
-  departmentName: string;
-  grade: string;
-  studentNumber: string;
-  instagramId: string;
-  profileImages: string[];
-  passVerified: boolean;
-  kakaoId?: string;
-  appleId?: string;
-  referralCode?: string;
-  loginType?: LoginType;
-  identityVerificationId?: string;
-  kakaoCode?: string;
-  kakaoAccessToken?: string;
-};
+export type { SignupForm };
 
 type StoreProps = {
   progress: number;

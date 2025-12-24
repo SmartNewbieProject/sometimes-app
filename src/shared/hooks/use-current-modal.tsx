@@ -1,4 +1,4 @@
-import React, {
+import {
   type Dispatch,
   type SetStateAction,
   useCallback,
@@ -10,7 +10,7 @@ import type {
   ModalOption,
   ModalOptionOrNull,
   ModalOptions,
-} from "../providers/modal-provider";
+} from "../providers/modal-types";
 
 function useCurrentModal() {
   const [currentModal, setCurrentModal] = useState<ModalOptionOrNull>(null);

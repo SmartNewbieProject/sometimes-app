@@ -1,9 +1,8 @@
-import React, { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useCallback, useState } from "react";
 import type {
   ModalOptionOrNull,
   ModalOptions,
-} from "../providers/modal-provider";
+} from "../providers/modal-types";
 
 function useNestedModal() {
   const [nestedModal, setNestedModal] = useState<ModalOptionOrNull>(null);

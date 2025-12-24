@@ -1,9 +1,11 @@
 import type { AuthorizeSmsCode } from "@/app/auth/signup/types";
 import { axiosClient, dayUtils, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from "nanoid";
-import type { SignupForm } from "../hooks";
+import type { SignupForm, SignupResponse } from "../types";
 import type { AppleLoginResponse } from "../queries/use-apple-login";
 import type { UniversitiesByRegion } from "../queries/use-universities";
+
+export type { SignupResponse };
 
 // YYYY-MM-DD 형식의 생년월일로부터 만나이 계산
 const calculateAge = (birthday: string): number => {
@@ -69,18 +71,6 @@ export const checkPhoneNumberBlacklist = (
   phoneNumber: string
 ): Promise<{ isBlacklisted: boolean }> =>
   axiosClient.post("/auth/check/phone-number/blacklist", { phoneNumber });
-
-export interface SignupResponse {
-  id: string;
-  name: string;
-  phoneNumber: string;
-  createdAt: string;
-  accessToken: string;
-  refreshToken: string;
-  tokenType: "Bearer";
-  expiresIn: number;
-  roles: string[];
-}
 
 export const signup = async (form: SignupForm): Promise<SignupResponse> => {
   const formData = new FormData();

@@ -1,19 +1,9 @@
 import ModalParticle from "@/src/widgets/particle/modal-particle";
 import { semanticColors } from '../constants/semantic-colors';
 import ErrorFace from "@assets/icons/error-face.svg";
-import Letter from "@assets/icons/letter.svg";
-import CloseIcon from "@assets/icons/close.svg";
 import { Image } from "expo-image";
-import type React from "react";
 import {
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
   createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
   useState,
 } from "react";
 import { type LayoutChangeEvent, Modal, StyleSheet, View, useWindowDimensions, TouchableOpacity, Pressable } from "react-native";
@@ -21,33 +11,9 @@ import useCurrentModal from "../hooks/use-current-modal";
 import useNestedModal from "../hooks/use-nested-modal";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
+import type { ModalOptions, ErrorModalOptions, ModalOption, ModalOptionOrNull } from "./modal-types";
 
-type ModalOptions = {
-  title?: ReactNode;
-  customTitle?: ReactNode;
-  children?: ReactNode;
-  primaryButton?: {
-    text: string;
-    onClick: () => void;
-  };
-  banner?: React.ReactNode;
-  showParticle?: boolean;
-  showLogo?: boolean | React.ReactNode;
-  secondaryButton?: {
-    text: string;
-    onClick: () => void;
-  };
-  reverse?: boolean;
-  custom?: React.ElementType;
-  buttonLayout?: 'horizontal' | 'vertical';
-  dismissable?: boolean;
-};
-
-export type ErrorModalOptions = {
-  message: string;
-  type: "announcement" | "error";
-  dismissable?: boolean;
-};
+export type { ModalOptions, ErrorModalOptions, ModalOption, ModalOptionOrNull };
 
 type ModalContextType = {
   showModal: (options: ModalOptions) => void;
@@ -60,10 +26,6 @@ type ModalContextType = {
   ) => void;
   hideNestedModal: () => void;
 };
-
-export type ModalOption = ModalOptions | ErrorModalOptions;
-
-export type ModalOptionOrNull = null | ModalOptions | ErrorModalOptions;
 
 export const ModalContext = createContext<ModalContextType | null>(null);
 
