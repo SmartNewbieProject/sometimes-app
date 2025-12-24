@@ -54,7 +54,7 @@ export default function RematchingTicketSellingScreen() {
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
     } catch (error) {
-      Alert.alert(t("global.error"), t("apps.purchase.tickets.rematch.error_alert_message"));
+      Alert.alert(t("error"), t("apps.purchase.tickets.rematch.error_alert_message"));
       setShowPayment(false);
     }
   };

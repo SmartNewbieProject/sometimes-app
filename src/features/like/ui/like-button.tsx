@@ -122,7 +122,7 @@ export const LikeButton = ({
         },
       },
       secondaryButton: {
-        text: t("global.no"),
+        text: t("no"),
         onClick: hideModal,
       },
     });

@@ -147,7 +147,7 @@ export const InteractionNavigation = ({
         onClick: onRematch,
       },
       secondaryButton: {
-        text: t("global.no"),
+        text: t("no"),
         onClick: hideModal,
       },
     });

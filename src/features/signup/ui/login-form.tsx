@@ -4,11 +4,12 @@ import {
 } from "@/src/features/pass";
 import { Button, Show, SlideUnlock, Text, AppDownloadSection } from "@/src/shared/ui";
 import { useMixpanel } from "@/src/shared/hooks";
+import { env } from "@/src/shared/libs/env";
 import KakaoLogo from "@assets/icons/kakao-logo.svg";
 import * as Localization from "expo-localization";
 import { router, usePathname, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Platform, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Platform, Pressable, StyleSheet, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { useAuth } from "../../auth";
 import { PrivacyNotice } from "../../auth/ui/privacy-notice";
 import AppleLoginButton from "./apple-login-button";
@@ -22,10 +23,86 @@ import { useModal } from "@/src/shared/hooks/use-modal";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { devLogWithTag } from "@/src/shared/utils";
+import { isJapanese } from "@/src/shared/libs/local";
+import { JpSmsAuthContainer } from "@/src/features/jp-auth";
 
 
 
+/**
+ * 로그인 폼 - JP/KR 분기 처리
+ * - JP: SMS 인증 + Apple 로그인
+ * - KR: Kakao + PASS + Apple 로그인
+ */
 export default function LoginForm() {
+  if (isJapanese()) {
+    return <JpLoginForm />;
+  }
+  return <KrLoginForm />;
+}
+
+/**
+ * JP 로그인 폼 - SMS 인증 + Apple 로그인
+ */
+function JpLoginForm() {
+  const [showSmsAuth, setShowSmsAuth] = useState(false);
+  const { t } = useTranslation();
+
+  if (showSmsAuth) {
+    return <JpSmsAuthContainer onCancel={() => setShowSmsAuth(false)} />;
+  }
+
+  return (
+    <View style={loginFormStyles.container}>
+      <View style={loginFormStyles.universityLogos}>
+        <UniversityLogos logoSize={64} />
+      </View>
+
+      <View style={loginFormStyles.slideUnlock}>
+        <SlideUnlock size="sm" onAction={() => router.push('/onboarding?source=login')} />
+      </View>
+
+      <View style={loginFormStyles.buttonsContainer}>
+        <View style={loginFormStyles.buttonWrapper}>
+          <Button
+            variant="primary"
+            size="lg"
+            rounded="full"
+            onPress={() => setShowSmsAuth(true)}
+            styles={{
+              width: 330,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text
+              textColor="white"
+              size="18"
+              weight="semibold"
+              style={{ lineHeight: 40, textAlign: 'center' }}
+            >
+              {t('features.jp-auth.login_button')}
+            </Text>
+          </Button>
+        </View>
+
+        <Show when={Platform.OS === "ios"}>
+          <View>
+            <AppleLoginButton />
+          </View>
+        </Show>
+      </View>
+
+      <View style={loginFormStyles.privacyNotice}>
+        <PrivacyNotice />
+      </View>
+    </View>
+  );
+}
+
+/**
+ * KR 로그인 폼 - Kakao + PASS + Apple 로그인 (기존 코드)
+ */
+function KrLoginForm() {
   const {
     startPortOneLogin,
     isLoading,
@@ -57,16 +134,13 @@ export default function LoginForm() {
     try {
       await startPortOneLogin();
 
-      // KPI 이벤트: 로그인 성공
       const loginDuration = Date.now() - loginStartTime;
       authEvents.trackLoginCompleted('pass', loginDuration);
     } catch (error) {
-      // KPI 이벤트: 로그인 실패
       authEvents.trackLoginFailed('pass', 'authentication_error');
     }
   };
 
-  // 모바일에서 PASS 인증 화면 표시
   if (showMobileAuth && mobileAuthRequest && Platform.OS !== "web") {
     return (
       <MobileIdentityVerification
@@ -80,12 +154,10 @@ export default function LoginForm() {
 
   return (
     <View style={loginFormStyles.container}>
-      {/* 대학교 로고 애니메이션 */}
       <View style={loginFormStyles.universityLogos}>
         <UniversityLogos logoSize={64} />
       </View>
 
-      {/* 웹 전용: 앱 다운로드 섹션 */}
       <Show when={Platform.OS === 'web'}>
         <AppDownloadSection
           size="sm"
@@ -102,12 +174,10 @@ export default function LoginForm() {
         />
       </Show>
 
-      {/* 슬라이드 잠금 해제 → 온보딩으로 이동 */}
       <View style={loginFormStyles.slideUnlock}>
         <SlideUnlock size="sm" onAction={() => router.push('/onboarding?source=login')} />
       </View>
 
-      {/* 회원가입 및 로그인 버튼 */}
       <View style={loginFormStyles.buttonsContainer}>
         <View style={loginFormStyles.buttonWrapper}>
           <KakaoLoginComponent />
@@ -125,14 +195,28 @@ export default function LoginForm() {
               justifyContent: 'center',
             }}
           >
-            <Text
-              textColor="white"
-              size="18"
-              weight="semibold"
-              style={{ lineHeight: 40, textAlign: 'center' }}
-            >
-              {isLoading ? t("features.signup.ui.login_form.pass_loading") : t("features.signup.ui.login_form.pass_login")}
-            </Text>
+            {isLoading ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <ActivityIndicator size="small" color="#FFFFFF" />
+                <Text
+                  textColor="white"
+                  size="18"
+                  weight="semibold"
+                  style={{ lineHeight: 40, textAlign: 'center' }}
+                >
+                  {t("features.signup.ui.login_form.pass_loading")}
+                </Text>
+              </View>
+            ) : (
+              <Text
+                textColor="white"
+                size="18"
+                weight="semibold"
+                style={{ lineHeight: 40, textAlign: 'center' }}
+              >
+                {t("features.signup.ui.login_form.pass_login")}
+              </Text>
+            )}
           </Button>
         </View>
 
@@ -142,13 +226,11 @@ export default function LoginForm() {
           </View>
         </Show>
       </View>
-      {/* 에러 메시지 */}
 
       <View style={loginFormStyles.errorMessage}>
         <Text size="sm" style={{ color: '#DC2626', textAlign: 'center' }}>{error}</Text>
       </View>
 
-      {/* 약관 동의 안내 */}
       <View style={loginFormStyles.privacyNotice}>
         <PrivacyNotice />
       </View>
@@ -195,8 +277,8 @@ function KakaoLoginComponent() {
   const { loginWithKakaoNative } = useAuth();
   const { showModal } = useModal();
 
-  const KAKAO_CLIENT_ID = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY as string;
-  const redirectUri = process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI as string;
+  const KAKAO_CLIENT_ID = env.KAKAO_LOGIN_API_KEY;
+  const redirectUri = env.KAKAO_REDIRECT_URI;
 
   const handleNativeKakaoLogin = async () => {
     const loginStartTime = Date.now();
@@ -307,17 +389,36 @@ function KakaoLoginComponent() {
 
       authEvents.trackLoginFailed('kakao', errorInfo.code || 'authentication_error');
 
-      const errorMessage = errorInfo.status === undefined
-        ? "서버에 연결할 수 없습니다. 네트워크를 확인해주세요."
-        : t("features.signup.ui.login_form.login_failed_message");
+      let errorMessage = "";
+      let showRetryButton = false;
+
+      if (errorInfo.status === undefined || !errorInfo.status) {
+        errorMessage = "서버에 연결할 수 없습니다.\n네트워크 연결을 확인하고 다시 시도해주세요.";
+        showRetryButton = true;
+      } else if (errorInfo.status >= 500) {
+        errorMessage = "서버에 일시적인 문제가 발생했습니다.\n잠시 후 다시 시도해주세요.";
+        showRetryButton = true;
+      } else if (errorInfo.status === 401 || errorInfo.status === 403) {
+        errorMessage = "카카오 인증에 실패했습니다.\n다시 로그인을 시도해주세요.";
+        showRetryButton = true;
+      } else {
+        errorMessage = t("features.signup.ui.login_form.login_failed_message");
+      }
 
       showModal({
         title: t("features.signup.ui.login_form.login_failed_title"),
         children: errorMessage,
-        primaryButton: {
+        primaryButton: showRetryButton ? {
+          text: "다시 시도",
+          onClick: () => handleNativeKakaoLogin(),
+        } : {
           text: t("features.signup.ui.login_form.confirm_button"),
           onClick: () => { },
         },
+        secondaryButton: showRetryButton ? {
+          text: "닫기",
+          onClick: () => { },
+        } : undefined,
       });
 
       mixpanelAdapter.track("Signup_Error", {
@@ -372,17 +473,25 @@ function KakaoLoginComponent() {
           { opacity: isLoading ? 0.6 : 1 }
         ]}
       >
-        <View style={{ width: 34, height: 34 }} accessibilityLabel="카카오 로고" accessibilityRole="image">
-          <KakaoLogo width={34} height={34} aria-label="카카오" role="img" />
-        </View>
-        <View>
-          <Text textColor="black" size="18" weight="semibold">
-            {isLoading
-              ? t("features.signup.ui.login_form.kakao_login_loading")
-              : t("features.signup.ui.login_form.kakao_login")
-            }
-          </Text>
-        </View>
+        {isLoading ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <ActivityIndicator size="small" color="#3C1E1E" />
+            <Text textColor="black" size="18" weight="semibold">
+              {t("features.signup.ui.login_form.kakao_login_loading")}
+            </Text>
+          </View>
+        ) : (
+          <>
+            <View style={{ width: 34, height: 34 }} accessibilityLabel="카카오 로고" accessibilityRole="image">
+              <KakaoLogo width={34} height={34} aria-label="카카오" role="img" />
+            </View>
+            <View>
+              <Text textColor="black" size="18" weight="semibold">
+                {t("features.signup.ui.login_form.kakao_login")}
+              </Text>
+            </View>
+          </>
+        )}
       </Pressable>
     </View>
   );

@@ -81,11 +81,11 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
           </View>
         ),
         primaryButton: {
-          text: t("global.ok"),
+          text: t("ok"),
           onClick: unlockProfile.mutateAsync,
         },
         secondaryButton: {
-          text: t("global.no"),
+          text: t("no"),
           onClick: hideModal,
         },
       });

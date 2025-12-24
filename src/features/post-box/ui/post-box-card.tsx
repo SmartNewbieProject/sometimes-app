@@ -223,7 +223,7 @@ export function LikedMePendingButton({
         },
       },
       secondaryButton: {
-        text: t("global.no"),
+        text: t("no"),
         onClick: hideModal,
       },
     });
@@ -309,7 +309,7 @@ export function LikedMeOpenButton({
         },
       },
       secondaryButton: {
-        text: t("global.no"),
+        text: t("no"),
         onClick: hideModal,
       },
     });

@@ -145,7 +145,7 @@ export default function WithdrawalScreen() {
             </View>
           ),
           primaryButton: {
-            text: t("global.confirm"),
+            text: t("confirm"),
             onClick: () => router.navigate("/auth/login"),
           },
         });
