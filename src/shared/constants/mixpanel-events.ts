@@ -17,6 +17,7 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
   SIGNUP_ROUTE_ENTERED: 'Signup_Route_Entered',
   SIGNUP_UNIVERSITY: 'Signup_university',
   SINGUP_UNIVERSITY_DETAILS: 'Singup_university_details',
+  SIGNUP_INSTAGRAM_ENTERED: 'Signup_instagram_entered',
   SIGNUP_PROFILE_IMAGE: 'Signup_profile_image',
   SIGNUP_PROFILE_IMAGE_ERROR: 'Signup_profile_image_error',
   SIGNUP_PROFILE_INVITE_CODE_ERROR: 'Signup_profile_invite_code_error',

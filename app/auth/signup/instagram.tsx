@@ -1,6 +1,8 @@
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import Signup from "@/src/features/signup";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
+import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import HeartIcon from "@assets/icons/area-fill-heart.svg";
 import { Image } from "expo-image";
@@ -188,6 +190,9 @@ function SignupInstagram() {
     }
     updateForm({ instagramId: `${instagramId}` });
     trackSignupEvent("next_button_click", "to_profile_image");
+    mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_INSTAGRAM_ENTERED, {
+      env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+    });
 
     router.push("/auth/signup/profile-image");
   };
