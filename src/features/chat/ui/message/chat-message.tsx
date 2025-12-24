@@ -2,9 +2,10 @@ import ReadCheckIcon from "@assets/icons/read-check.svg";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import UnreadCheckIcon from "@assets/icons/unread-check.svg";
 import { Link } from "expo-router";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useCallback } from "react";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import useChatRoomDetail from "../../queries/use-chat-room-detail";
+import { chatEventBus } from "../../services/chat-event-bus";
 import type { Chat } from "../../types/chat";
 import { formatToAmPm } from "../../utils/time";
 import ChatBalloon from "./chat-balloon";
@@ -17,6 +18,21 @@ interface ChatMessageProps {
 
 function ChatMessage({ item, profileImage }: ChatMessageProps) {
   const { data } = useChatRoomDetail(item.chatRoomId);
+  const isSending = item.sendingStatus === "sending";
+  const isFailed = item.sendingStatus === "failed";
+
+  const handleRetry = useCallback(() => {
+    if (!isFailed || !data?.partnerId) return;
+
+    chatEventBus.emit({
+      type: "MESSAGE_RETRY_REQUESTED",
+      payload: {
+        message: item,
+        to: data.partnerId,
+      },
+    });
+  }, [isFailed, item, data?.partnerId]);
+
   return (
     <View
       style={[
@@ -37,21 +53,41 @@ function ChatMessage({ item, profileImage }: ChatMessageProps) {
           { alignItems: item.isMe ? "flex-end" : "flex-start" },
         ]}
       >
-        <ChatBalloon
-          mediaUrl={item.mediaUrl}
-          isMe={item.isMe}
-          message={item.content}
-          uploadStatus={item.uploadStatus}
-        />
+        <Pressable
+          style={styles.balloonRow}
+          onPress={isFailed ? handleRetry : undefined}
+          disabled={!isFailed}
+        >
+          {item.isMe && isSending && (
+            <View style={styles.sendingIndicator}>
+              <ActivityIndicator size="small" color={semanticColors.text.disabled} />
+            </View>
+          )}
+          {item.isMe && isFailed && (
+            <View style={styles.failedIndicator}>
+              <Text style={styles.failedText}>!</Text>
+            </View>
+          )}
+          <ChatBalloon
+            mediaUrl={item.mediaUrl}
+            isMe={item.isMe}
+            message={item.content}
+            uploadStatus={item.uploadStatus}
+          />
+        </Pressable>
         <View
           style={[
             styles.infoContainer,
             { flexDirection: item.isMe ? "row-reverse" : "row" },
           ]}
         >
-          <Text style={styles.time}>{formatToAmPm(item.createdAt)}</Text>
+          {isFailed ? (
+            <Text style={styles.failedStatusText}>전송 실패 · 탭하여 재전송</Text>
+          ) : (
+            <Text style={styles.time}>{formatToAmPm(item.createdAt)}</Text>
+          )}
 
-          {item.isMe && item.isRead && (
+          {item.isMe && item.isRead && !isSending && !isFailed && (
             <Text style={styles.readText}>읽음</Text>
           )}
         </View>
@@ -68,7 +104,37 @@ const styles = StyleSheet.create({
   },
   balloonContainer: {
     gap: 5,
-    flex: 1,
+    flexShrink: 1,
+    maxWidth: "80%",
+  },
+  balloonRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  sendingIndicator: {
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  failedIndicator: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#FF3B30",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  failedText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  failedStatusText: {
+    color: "#FF3B30",
+    fontSize: 12,
+    lineHeight: 17,
   },
   time: {
     color: semanticColors.text.disabled,
@@ -77,7 +143,6 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     gap: 5,
-
     alignItems: "center",
     flexDirection: "row",
   },

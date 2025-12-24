@@ -1,5 +1,5 @@
 import { uriToBase64 } from '@/src/shared/utils/image';
-import { fromEvent } from 'rxjs';
+import { fromEvent, type Subscription } from 'rxjs';
 import { type Socket, io } from 'socket.io-client';
 import { buildChatSocketUrl } from '../domain/utils/build-socket-url';
 import { type RNFileLike, fileToBase64Payload } from '../domain/utils/file-to-base64';
@@ -11,6 +11,10 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { devLogWithTag, logError, devWarn } from '@/src/shared/utils';
 
+declare const globalThis: {
+	__socketManagerSubscriptions?: Subscription[];
+};
+
 class SocketConnectionManager {
 	private socket: Socket | null = null;
 	private currentUrl: string | null = null;
@@ -18,6 +22,8 @@ class SocketConnectionManager {
 	private maxReconnectAttempts = 5;
 	private reconnectDelay = 1000;
 	private isReconnecting = false;
+	private lastSuccessfulSend: number = Date.now();
+	private isInitialized = false;
 	private pendingMessages: {
 		event: string;
 		payload: any;
@@ -60,6 +66,41 @@ class SocketConnectionManager {
 		this.pendingMessages.push({ event, payload, callback });
 	}
 
+	private isSocketHealthy(): boolean {
+		if (!this.socket) {
+			devLogWithTag('Socket Health', 'Socket is null');
+			return false;
+		}
+
+		// 기본 연결 상태 체크
+		if (!this.socket.connected) {
+			devLogWithTag('Socket Health', 'Socket not connected');
+			return false;
+		}
+
+		// Socket.io engine의 transport 레벨 상태 체크
+		try {
+			const engineState = (this.socket as any).io?.engine?.readyState;
+			if (engineState && engineState !== 'open') {
+				devLogWithTag('Socket Health', `Engine not open: ${engineState}`);
+				return false;
+			}
+		} catch (error) {
+			devWarn('Failed to check engine state:', error);
+		}
+
+		// 마지막 성공한 전송으로부터 너무 오래 지났는지 체크 (60초)
+		const STALE_CONNECTION_THRESHOLD = 60000;
+		const timeSinceLastSuccess = Date.now() - this.lastSuccessfulSend;
+		if (timeSinceLastSuccess > STALE_CONNECTION_THRESHOLD) {
+			devLogWithTag('Socket Health', `Stale connection: ${timeSinceLastSuccess}ms since last success`);
+			// 오래됐지만 연결은 되어있다면 경고만 하고 통과
+			devWarn('Connection might be stale, but allowing send attempt');
+		}
+
+		return true;
+	}
+
 	private processPendingMessages() {
 		if (!this.socket?.connected) return;
 
@@ -88,6 +129,8 @@ class SocketConnectionManager {
 				type: 'SOCKET_RECONNECT_FAILED',
 				payload: { error: 'Max reconnection attempts reached' },
 			});
+			this.isReconnecting = false;
+			this.reconnectAttempts = 0;
 			return;
 		}
 
@@ -102,7 +145,19 @@ class SocketConnectionManager {
 		});
 
 		setTimeout(() => {
-			if (this.socket && !this.socket.connected) {
+			if (!this.socket) {
+				devLogWithTag('Socket', 'Socket is null, cannot reconnect');
+				chatEventBus.emit({
+					type: 'SOCKET_RECONNECT_FAILED',
+					payload: { error: 'Socket is null' },
+				});
+				this.isReconnecting = false;
+				this.reconnectAttempts = 0;
+				return;
+			}
+
+			if (!this.socket.connected) {
+				devLogWithTag('Socket', 'Attempting to connect...');
 				this.socket.connect();
 			}
 			this.isReconnecting = false;
@@ -110,60 +165,159 @@ class SocketConnectionManager {
 	}
 
 	initialize() {
+		if (this.isInitialized) {
+			devLogWithTag('Socket', 'Already initialized, skipping...');
+			return;
+		}
+
+		this.cleanupSubscriptions();
+
+		devLogWithTag('Socket', 'Initializing socket manager...');
+		globalThis.__socketManagerSubscriptions = [];
+
 		this.setupConnectionHandlers();
 		this.setupMessageHandlers();
 		this.setupRoomHandlers();
 		this.setupImageUploadHandlers();
+		this.isInitialized = true;
+		devLogWithTag('Socket', 'Socket manager initialized');
+	}
+
+	cleanup() {
+		devLogWithTag('Socket', 'Cleaning up socket manager...');
+
+		this.cleanupSubscriptions();
+
+		if (this.socket) {
+			this.disconnectSocket();
+		}
+
+		this.reconnectAttempts = 0;
+		this.isReconnecting = false;
+		this.pendingMessages = [];
+		this.isInitialized = false;
+
+		devLogWithTag('Socket', 'Socket manager cleanup complete');
+	}
+
+	private cleanupSubscriptions() {
+		if (globalThis.__socketManagerSubscriptions?.length) {
+			devLogWithTag('Socket', `Cleaning up ${globalThis.__socketManagerSubscriptions.length} subscriptions...`);
+			globalThis.__socketManagerSubscriptions.forEach(sub => sub.unsubscribe());
+			globalThis.__socketManagerSubscriptions = [];
+		}
+	}
+
+	private addSubscription(subscription: Subscription) {
+		globalThis.__socketManagerSubscriptions?.push(subscription);
 	}
 
 	private setupConnectionHandlers() {
-		chatEventBus.on('CONNECTION_REQUESTED').subscribe(({ payload }) => {
-			this.connect(payload.url, payload.token);
-		});
+		devLogWithTag('Socket', 'Setting up connection handlers...');
+		this.addSubscription(
+			chatEventBus.on('CONNECTION_REQUESTED').subscribe(({ payload }) => {
+				devLogWithTag('Socket', 'CONNECTION_REQUESTED received');
+				devLogWithTag('Socket', 'URL:', payload.url);
+				devLogWithTag('Socket', 'Token exists:', !!payload.token);
+
+				if (!payload.url || !payload.token) {
+					logError('Socket connection failed: Missing URL or token');
+					return;
+				}
+
+				this.connect(payload.url, payload.token);
+			})
+		);
+		devLogWithTag('Socket', 'Connection handlers ready');
 	}
 
 	private setupMessageHandlers() {
-		chatEventBus.on('MESSAGES_READ_REQUESTED').subscribe(({ payload }) => {
-			this.socket?.emit('readMessages', { chatRoomId: payload.chatRoomId });
-		});
+		this.addSubscription(
+			chatEventBus.on('MESSAGES_READ_REQUESTED').subscribe(({ payload }) => {
+				this.socket?.emit('readMessages', { chatRoomId: payload.chatRoomId });
+			})
+		);
 
-		chatEventBus.on('MESSAGE_SEND_REQUESTED').subscribe(({ payload }) => {
-			this.handleMessageSend(payload);
-		});
+		this.addSubscription(
+			chatEventBus.on('MESSAGE_SEND_REQUESTED').subscribe(({ payload }) => {
+				this.handleMessageSend(payload);
+			})
+		);
+
+		this.addSubscription(
+			chatEventBus.on('MESSAGE_RETRY_REQUESTED').subscribe(({ payload }) => {
+				this.handleMessageRetry(payload);
+			})
+		);
 	}
 
 	private setupRoomHandlers() {
-		chatEventBus.on('CHAT_ROOM_JOIN_REQUESTED').subscribe(({ payload }) => {
-			devLogWithTag('Chat Room', `Joining: ${payload.chatRoomId}`);
-			this.socket?.emit('joinRoom', { chatRoomId: payload.chatRoomId });
-		});
+		this.addSubscription(
+			chatEventBus.on('CHAT_ROOM_JOIN_REQUESTED').subscribe(({ payload }) => {
+				devLogWithTag('Chat Room', `Joining: ${payload.chatRoomId}`);
+				this.socket?.emit('joinRoom', { chatRoomId: payload.chatRoomId });
+			})
+		);
 
-		chatEventBus.on('CHAT_ROOM_LEAVE_REQUESTED').subscribe(({ payload }) => {
-			devLogWithTag('Chat Room', `Leaving: ${payload.chatRoomId}`);
-			this.socket?.emit('leaveRoom', { chatRoomId: payload.chatRoomId });
-		});
+		this.addSubscription(
+			chatEventBus.on('CHAT_ROOM_LEAVE_REQUESTED').subscribe(({ payload }) => {
+				devLogWithTag('Chat Room', `Leaving: ${payload.chatRoomId}`);
+				this.socket?.emit('leaveRoom', { chatRoomId: payload.chatRoomId });
+			})
+		);
 	}
 
 	private setupImageUploadHandlers() {
-		chatEventBus.on('IMAGE_OPTIMISTIC_ADDED').subscribe(async ({ payload }) => {
-			await this.handleImageUpload(payload);
-		});
+		this.addSubscription(
+			chatEventBus.on('IMAGE_OPTIMISTIC_ADDED').subscribe(async ({ payload }) => {
+				await this.handleImageUpload(payload);
+			})
+		);
 	}
 
 	private handleMessageSend(payload: any) {
 		devLogWithTag('Socket', 'Sending message:', { tempId: payload.tempId });
 
-		if (!this.socket?.connected) {
-			devLogWithTag('Socket', 'Not connected, reconnecting...');
+		// 연결 상태 심층 체크
+		if (!this.isSocketHealthy()) {
+			devLogWithTag('Socket', 'Socket unhealthy, emitting failure...');
 			this.attemptReconnect();
-			this.queueMessage('sendMessage', payload);
+			chatEventBus.emit({
+				type: 'MESSAGE_SEND_FAILED',
+				payload: {
+					success: false,
+					error: 'Socket not connected',
+					tempId: payload.tempId,
+				},
+			});
 			return;
 		}
+
+		const MESSAGE_TIMEOUT_MS = 10000;
+		let isResolved = false;
+
+		const timeout = setTimeout(() => {
+			if (isResolved) return;
+			isResolved = true;
+			devLogWithTag('Socket', 'Message timeout:', { tempId: payload.tempId });
+			chatEventBus.emit({
+				type: 'MESSAGE_SEND_FAILED',
+				payload: {
+					success: false,
+					error: 'Timeout',
+					tempId: payload.tempId,
+				},
+			});
+		}, MESSAGE_TIMEOUT_MS);
 
 		this.socket?.emit(
 			'sendMessage',
 			payload,
 			(response: { success: boolean; serverMessage: Chat; error?: string }) => {
+				if (isResolved) return;
+				isResolved = true;
+				clearTimeout(timeout);
+
 				devLogWithTag('Socket', 'Message response:', { success: response?.success });
 
 				if (response?.success) {
@@ -176,6 +330,9 @@ class SocketConnectionManager {
 	}
 
 	private emitMessageSuccess(serverMessage: Chat, tempId: string) {
+		// 성공적인 전송 시간 기록
+		this.lastSuccessfulSend = Date.now();
+
 		// KPI 이벤트: 채팅 메시지 전송
 		mixpanelAdapter.track(MIXPANEL_EVENTS.CHAT_MESSAGE_SENT, {
 			chat_id: serverMessage.chatRoomId,
@@ -194,20 +351,37 @@ class SocketConnectionManager {
 		});
 	}
 
+	private handleMessageRetry(payload: { message: any; to: string }) {
+		const { message, to } = payload;
+		devLogWithTag('Socket', 'Retrying message:', { tempId: message.tempId, to });
+
+		// 메시지 재전송 (handleMessageSend 내부에서 상태 관리)
+		this.handleMessageSend({
+			to,
+			chatRoomId: message.chatRoomId,
+			senderId: message.senderId,
+			content: message.content,
+			tempId: message.tempId,
+		});
+	}
+
 	private handleMessageFailure(error: string | undefined, payload: any) {
+		devLogWithTag('Socket', 'Message failed:', { error, tempId: payload.tempId });
+
+		// 항상 실패 이벤트 발생 → UI에 실패 상태 표시
+		chatEventBus.emit({
+			type: 'MESSAGE_SEND_FAILED',
+			payload: {
+				success: false,
+				error: error || 'Unknown error',
+				tempId: payload.tempId,
+			},
+		});
+
+		// 소켓 연결 끊김이 원인이면 재연결 시도
 		if (!this.socket?.connected) {
-			devLogWithTag('Socket', 'Message failed, reconnecting...');
+			devLogWithTag('Socket', 'Connection lost, attempting reconnect...');
 			this.attemptReconnect();
-			this.queueMessage('sendMessage', payload);
-		} else {
-			chatEventBus.emit({
-				type: 'MESSAGE_SEND_FAILED',
-				payload: {
-					success: false,
-					error: error || 'Unknown error',
-					tempId: payload.tempId,
-				},
-			});
 		}
 	}
 
@@ -215,7 +389,10 @@ class SocketConnectionManager {
 		const { options, optimisticMessage } = payload;
 		const { tempId } = optimisticMessage;
 
-		if (!this.socket) {
+		// 연결 상태 심층 체크 (텍스트 메시지와 동일하게)
+		if (!this.isSocketHealthy()) {
+			devLogWithTag('Socket', 'Socket unhealthy for image upload, emitting failure...');
+			this.attemptReconnect();
 			this.emitImageUploadFailure('Socket not connected', tempId!);
 			return;
 		}
@@ -274,6 +451,9 @@ class SocketConnectionManager {
 	}
 
 	private emitImageUploadSuccess(serverMessage: Chat, tempId: string) {
+		// 성공적인 전송 시간 기록
+		this.lastSuccessfulSend = Date.now();
+
 		chatEventBus.emit({
 			type: 'IMAGE_UPLOAD_SUCCESS',
 			payload: { success: true, serverMessage, tempId },
@@ -289,22 +469,49 @@ class SocketConnectionManager {
 
 
 	private connect(url: string, token: string) {
+		devLogWithTag('Socket', '=== CONNECT START ===');
+		devLogWithTag('Socket', 'Base URL:', url);
+		devLogWithTag('Socket', 'Token length:', token ? token.length : 0);
+
 		const socketUrl = buildChatSocketUrl(url, '', token);
+		devLogWithTag('Socket', 'Built Socket URL:', socketUrl);
+
+		devLogWithTag('Socket', 'Current state:', {
+			hasSocket: !!this.socket,
+			currentUrl: this.currentUrl,
+			isConnected: this.socket?.connected,
+			isInitialized: this.isInitialized,
+		});
 
 		if (this.socket && this.currentUrl !== socketUrl) {
+			devLogWithTag('Socket', 'URL changed, disconnecting old socket...');
 			this.disconnectSocket();
 		}
 
 		if (this.socket && this.currentUrl === socketUrl && this.socket.connected) {
+			devLogWithTag('Socket', 'Socket already connected, reusing...');
 			return this.socket;
 		}
 
 		if (this.socket && !this.socket.connected) {
+			devLogWithTag('Socket', 'Socket exists but not connected, cleaning up...');
 			this.disconnectSocket();
 		}
 
-		this.createSocketConnection(socketUrl, token);
-		this.registerSocketListeners();
+		devLogWithTag('Socket', 'Creating new socket connection...');
+		try {
+			this.createSocketConnection(socketUrl, token);
+			this.registerSocketListeners();
+			devLogWithTag('Socket', 'Socket created:', {
+				connected: this.socket?.connected,
+				id: this.socket?.id,
+			});
+			devLogWithTag('Socket', '=== CONNECT END ===');
+		} catch (error) {
+			logError('Failed to create socket:', error);
+			devLogWithTag('Socket', 'Socket creation failed:', error);
+			devLogWithTag('Socket', '=== CONNECT FAILED ===');
+		}
 	}
 
 	private disconnectSocket() {
@@ -315,7 +522,7 @@ class SocketConnectionManager {
 	}
 
 	private createSocketConnection(socketUrl: string, token: string) {
-		this.socket = io(socketUrl, {
+		const options = {
 			transports: ['websocket', 'polling'],
 			withCredentials: true,
 			secure: process.env.NODE_ENV === 'production',
@@ -326,8 +533,21 @@ class SocketConnectionManager {
 			reconnectionDelay: 1000,
 			timeout: 20000,
 			forceNew: !!this.socket,
+		};
+
+		devLogWithTag('Socket', 'Creating socket with options:', {
+			url: socketUrl,
+			transports: options.transports,
+			withCredentials: options.withCredentials,
+			secure: options.secure,
+			hasAuth: !!options.auth,
+			timeout: options.timeout,
 		});
+
+		this.socket = io(socketUrl, options);
 		this.currentUrl = socketUrl;
+
+		devLogWithTag('Socket', 'Socket instance created');
 	}
 
 	private registerSocketListeners() {
@@ -335,14 +555,16 @@ class SocketConnectionManager {
 
 		this.registerConnectHandler();
 		this.registerDisconnectHandler();
+		this.registerErrorHandler();
 		this.registerMessageListeners();
 	}
 
 	private registerConnectHandler() {
 		this.socket?.on('connect', () => {
-			devLogWithTag('Socket', 'Connected');
+			devLogWithTag('Socket', 'Connected successfully');
 			this.reconnectAttempts = 0;
 			this.isReconnecting = false;
+			this.lastSuccessfulSend = Date.now();
 			chatEventBus.emit({ type: 'SOCKET_CONNECTED', payload: {} });
 			this.processPendingMessages();
 		});
@@ -358,6 +580,22 @@ class SocketConnectionManager {
 				devLogWithTag('Socket', 'Unexpected disconnect, reconnecting...');
 				this.attemptReconnect();
 			}
+		});
+	}
+
+	private registerErrorHandler() {
+		this.socket?.on('connect_error', (error) => {
+			logError('Socket connection error:', error.message);
+			devLogWithTag('Socket', 'Connection failed:', error.message);
+			chatEventBus.emit({
+				type: 'SOCKET_DISCONNECTED',
+				payload: { reason: `connect_error: ${error.message}` },
+			});
+		});
+
+		this.socket?.on('error', (error) => {
+			logError('Socket error:', error);
+			devLogWithTag('Socket', 'Error:', error);
 		});
 	}
 
@@ -391,6 +629,14 @@ class SocketConnectionManager {
 			isReconnecting: this.isReconnecting,
 			pendingMessagesCount: this.pendingMessages.length,
 		};
+	}
+
+	public get isConnected(): boolean {
+		return this.socket?.connected || false;
+	}
+
+	public get isModuleInitialized(): boolean {
+		return this.isInitialized;
 	}
 }
 

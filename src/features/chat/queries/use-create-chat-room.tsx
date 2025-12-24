@@ -7,6 +7,7 @@ import { StyleSheet, View } from "react-native";
 import { createChatRoom } from "../apis";
 import { errorHandlers } from "../services/chat-create-error-handler";
 import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
+import { storage } from "@/src/shared/libs/store";
 
 function useCreateChatRoom() {
   const router = useRouter();
@@ -15,10 +16,34 @@ function useCreateChatRoom() {
 
   return useMutation({
     mutationFn: createChatRoom,
-    onSuccess: ({ chatRoomId, partnerId }: { chatRoomId: string; partnerId?: string }) => {
-      // KPI 이벤트: 채팅 시작
+    onSuccess: async ({ chatRoomId, partnerId }: { chatRoomId: string; partnerId?: string }) => {
+      // KPI 이벤트: 채팅 시작 (시간 차이 계산 포함)
       if (partnerId) {
-        chatEvents.trackChatStarted(partnerId, 'mutual_like');
+        try {
+          // Match_Accepted 시각 조회
+          const matchAcceptedTimeStr = await storage.getItem(`match_accepted_time_${partnerId}`);
+
+          if (matchAcceptedTimeStr) {
+            const matchAcceptedTime = parseInt(matchAcceptedTimeStr, 10);
+            const now = Date.now();
+            const timeSinceMatchAccepted = Math.floor((now - matchAcceptedTime) / 1000); // 초 단위
+
+            // 확장된 이벤트 트래킹 (time_since_match_accepted 포함)
+            chatEvents.trackChatStarted(partnerId, 'mutual_like', timeSinceMatchAccepted);
+
+            console.log(`[Analytics] Chat started ${timeSinceMatchAccepted}s after Match_Accepted`);
+
+            // 저장된 시각 삭제 (일회성)
+            await storage.removeItem(`match_accepted_time_${partnerId}`);
+          } else {
+            // Match_Accepted 시각이 없는 경우 (이전 매칭 또는 데이터 누락)
+            chatEvents.trackChatStarted(partnerId, 'mutual_like');
+          }
+        } catch (error) {
+          console.error('[Analytics] Failed to calculate time since match accepted:', error);
+          // 에러가 발생해도 기본 이벤트는 전송
+          chatEvents.trackChatStarted(partnerId, 'mutual_like');
+        }
       }
 
       router.push(`/chat/${chatRoomId}`);

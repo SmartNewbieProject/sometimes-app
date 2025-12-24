@@ -1,65 +1,110 @@
 import { dayUtils } from "@/src/shared/libs";
 import type { QueryClient } from "@tanstack/react-query";
+import type { Subscription } from "rxjs";
 import type { Chat, ChatRoomListResponse } from "../types/chat";
 import { chatEventBus } from "./chat-event-bus";
 import { devLogWithTag, devWarn } from "@/src/shared/utils";
+
+declare const globalThis: {
+  __queryCacheManagerSubscriptions?: Subscription[];
+};
 
 class QueryCacheManager {
   private queryClient: QueryClient | null = null;
 
   initialize(queryClient: QueryClient) {
+    this.cleanupSubscriptions();
+
     this.queryClient = queryClient;
+    globalThis.__queryCacheManagerSubscriptions = [];
 
-    chatEventBus.on("MESSAGE_OPTIMISTIC_ADDED").subscribe(({ payload }) => {
-      this.addOptimisticMessageToCache(payload.chatRoomId, payload);
-    });
+    this.addSubscription(
+      chatEventBus.on("MESSAGE_OPTIMISTIC_ADDED").subscribe(({ payload }) => {
+        this.addOptimisticMessageToCache(payload.chatRoomId, payload);
+      })
+    );
 
-    chatEventBus.on("MESSAGE_SEND_SUCCESS").subscribe(({ payload }) => {
-      this.replaceMessageInCache(
-        payload.serverMessage.chatRoomId,
-        // biome-ignore lint/style/noNonNullAssertion: <explanation>
-        payload.serverMessage.tempId!,
-        payload.serverMessage
-      );
-    });
-
-    chatEventBus.on("MESSAGES_READ_REQUESTED").subscribe(({ payload }) => {
-      this.markRoomAsReadInCache(payload.chatRoomId);
-    });
-
-    chatEventBus.on("MESSAGE_SEND_FAILED").subscribe(({ payload }) => {
-      this.markMessageAsFailedInCache(payload.tempId, payload.error);
-    });
-
-    chatEventBus.on("MESSAGE_RECEIVED").subscribe(({ payload }) => {
-      this.addReceivedMessageToCache(payload.chatRoomId, payload);
-    });
-
-    chatEventBus.on("IMAGE_UPLOAD_FAILED").subscribe(({ payload }) => {
-      this.markMessageAsFailedInCache(payload.tempId, payload.error);
-    });
-
-    chatEventBus.on("IMAGE_UPLOAD_STATUS_CHANGED").subscribe(({ payload }) => {
-      if (
-        payload.uploadStatus === "completed" &&
-        payload.mediaUrl &&
-        payload.id
-      ) {
-        this.updateImageUrlInCache(
-          payload.chatRoomId,
-          payload.id,
-          payload.mediaUrl
+    this.addSubscription(
+      chatEventBus.on("MESSAGE_SEND_SUCCESS").subscribe(({ payload }) => {
+        this.replaceMessageInCache(
+          payload.serverMessage.chatRoomId,
+          // biome-ignore lint/style/noNonNullAssertion: <explanation>
+          payload.serverMessage.tempId!,
+          payload.serverMessage
         );
-      }
-    });
+      })
+    );
 
-    chatEventBus.on("IMAGE_UPLOAD_SUCCESS").subscribe(({ payload }) => {
-      devLogWithTag('Chat Cache', 'Image upload success');
-      this.replaceOptimisticMessageInCache(
-        payload.tempId,
-        payload.serverMessage
-      );
-    });
+    this.addSubscription(
+      chatEventBus.on("MESSAGES_READ_REQUESTED").subscribe(({ payload }) => {
+        this.markRoomAsReadInCache(payload.chatRoomId);
+      })
+    );
+
+    this.addSubscription(
+      chatEventBus.on("MESSAGE_SEND_FAILED").subscribe(({ payload }) => {
+        this.markMessageAsFailedInCache(payload.tempId, payload.error);
+      })
+    );
+
+    this.addSubscription(
+      chatEventBus.on("MESSAGE_RECEIVED").subscribe(({ payload }) => {
+        this.addReceivedMessageToCache(payload.chatRoomId, payload);
+      })
+    );
+
+    this.addSubscription(
+      chatEventBus.on("IMAGE_UPLOAD_FAILED").subscribe(({ payload }) => {
+        this.markMessageAsFailedInCache(payload.tempId, payload.error);
+      })
+    );
+
+    this.addSubscription(
+      chatEventBus.on("IMAGE_UPLOAD_STATUS_CHANGED").subscribe(({ payload }) => {
+        if (
+          payload.uploadStatus === "completed" &&
+          payload.mediaUrl &&
+          payload.id
+        ) {
+          this.updateImageUrlInCache(
+            payload.chatRoomId,
+            payload.id,
+            payload.mediaUrl
+          );
+        }
+      })
+    );
+
+    this.addSubscription(
+      chatEventBus.on("IMAGE_UPLOAD_SUCCESS").subscribe(({ payload }) => {
+        devLogWithTag('Chat Cache', 'Image upload success');
+        this.replaceOptimisticMessageInCache(
+          payload.tempId,
+          payload.serverMessage
+        );
+      })
+    );
+
+    this.addSubscription(
+      chatEventBus.on("MESSAGE_RETRY_REQUESTED").subscribe(({ payload }) => {
+        devLogWithTag('Chat Cache', 'Message retry requested:', payload.message.tempId);
+        this.markMessageAsRetryingInCache(payload.message.tempId);
+      })
+    );
+
+    devLogWithTag('Chat Cache', 'QueryCacheManager initialized');
+  }
+
+  private cleanupSubscriptions() {
+    if (globalThis.__queryCacheManagerSubscriptions?.length) {
+      devLogWithTag('Chat Cache', `Cleaning up ${globalThis.__queryCacheManagerSubscriptions.length} subscriptions...`);
+      globalThis.__queryCacheManagerSubscriptions.forEach(sub => sub.unsubscribe());
+      globalThis.__queryCacheManagerSubscriptions = [];
+    }
+  }
+
+  private addSubscription(subscription: Subscription) {
+    globalThis.__queryCacheManagerSubscriptions?.push(subscription);
   }
 
   private addOptimisticMessageToCache(chatRoomId: string, message: Chat) {
@@ -132,6 +177,48 @@ class QueryCacheManager {
         };
       }
     );
+  }
+
+  private markMessageAsRetryingInCache(tempId: string) {
+    const queries = this.queryClient?.getQueryCache().findAll({
+      queryKey: ["chat-list"],
+      predicate: (query) => {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        const data = query.state.data as any;
+        if (!data?.pages) return false;
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        return data.pages.some((page: any) =>
+          page.messages.some((msg: Chat) => msg.tempId === tempId)
+        );
+      },
+    });
+
+    // biome-ignore lint/complexity/noForEach: <explanation>
+    queries?.forEach((query) => {
+      const chatRoomId = query.queryKey[1];
+      this.queryClient?.setQueryData(
+        ["chat-list", chatRoomId],
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        (oldData: any) => {
+          if (!oldData) return oldData;
+          const updatedPages = oldData.pages.map(
+            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+            (page: any) => ({
+              ...page,
+              messages: page.messages.map((message: Chat) =>
+                message.tempId === tempId || message.id === tempId
+                  ? {
+                      ...message,
+                      sendingStatus: "sending" as const,
+                    }
+                  : message
+              ),
+            })
+          );
+          return { ...oldData, pages: updatedPages };
+        }
+      );
+    });
   }
 
   private markMessageAsFailedInCache(tempId: string, error?: string) {
@@ -361,6 +448,12 @@ class QueryCacheManager {
     this.queryClient?.invalidateQueries({
       queryKey: ["chat-list", chatRoomId],
     });
+  }
+
+  cleanup() {
+    devLogWithTag('Chat Cache', 'Cleaning up QueryCacheManager...');
+    this.cleanupSubscriptions();
+    this.queryClient = null;
   }
 }
 

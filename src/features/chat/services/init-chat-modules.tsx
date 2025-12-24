@@ -3,18 +3,22 @@ import { optimisticDataManager } from "./optimistic-data-manager";
 import { queryCacheManager } from "./query-cache-manager";
 import { socketConnectionManager } from "./socket-event-manager";
 
-const globalWithChat = global as typeof global & {
-  isChatInitialized?: boolean;
-};
-
 export function initializeChatModules() {
-  if (globalWithChat.isChatInitialized) {
-    return;
-  }
+  console.log('[initializeChatModules] Starting initialization...');
 
   socketConnectionManager.initialize();
   optimisticDataManager.initialize();
   queryCacheManager.initialize(queryClient);
 
-  globalWithChat.isChatInitialized = true;
+  console.log('[initializeChatModules] Initialization complete');
+}
+
+export function cleanupChatModules() {
+  console.log('[cleanupChatModules] Starting cleanup...');
+
+  socketConnectionManager.cleanup();
+  optimisticDataManager.cleanup();
+  queryCacheManager.cleanup();
+
+  console.log('[cleanupChatModules] Cleanup complete');
 }

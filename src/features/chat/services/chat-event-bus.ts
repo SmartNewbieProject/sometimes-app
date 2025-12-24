@@ -1,6 +1,11 @@
 import type { Observable, Subject as SubjectType } from 'rxjs';
 import { Subject } from 'rxjs';
 import type { ChatDomainEvent } from '../types/event';
+import { devLogWithTag } from '@/src/shared/utils';
+
+declare const globalThis: {
+	__chatEventBus?: ChatEventBus;
+};
 
 class ChatEventBus {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -8,12 +13,14 @@ class ChatEventBus {
 
 	emit<T extends ChatDomainEvent>(event: T) {
 		const stream = this.getOrCreateStream(event.type);
+		devLogWithTag('EventBus', `Emitting event: ${event.type}`);
 		stream.next(event);
 	}
 
 	on<T extends ChatDomainEvent['type']>(
 		eventType: T,
 	): Observable<Extract<ChatDomainEvent, { type: T }>> {
+		devLogWithTag('EventBus', `Subscribing to: ${eventType}`);
 		return this.getOrCreateStream(eventType).asObservable();
 	}
 
@@ -33,4 +40,4 @@ class ChatEventBus {
 	}
 }
 
-export const chatEventBus = new ChatEventBus();
+export const chatEventBus = globalThis.__chatEventBus ?? (globalThis.__chatEventBus = new ChatEventBus());
