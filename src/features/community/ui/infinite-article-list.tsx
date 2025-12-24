@@ -187,7 +187,7 @@ export const InfiniteArticleList = forwardRef<
             ),
         },
         secondaryButton: {
-          text: t("global.cancel"),
+          text: t("cancel"),
           onClick: () => {},
         },
       });

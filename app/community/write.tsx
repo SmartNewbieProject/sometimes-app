@@ -23,7 +23,7 @@ const {
 export default function CommunityWriteScreen() {
   const { t } = useTranslation();
   const { showModal } = useModal();
-  const { communityEngagementEvents } = useMixpanel();
+  const { communityEngagementEvents, communityEvents } = useMixpanel();
   const [initialEventAttempt, setInitialEventAttempt] = useState<number | null>(null);
 
   const { category: initCategory } = useLocalSearchParams<{
@@ -95,7 +95,12 @@ export default function CommunityWriteScreen() {
           Math.ceil(articleData.content.length / 500)
         );
 
-        await articles.postArticles(articleData);
+        const result = await articles.postArticles(articleData);
+
+        communityEvents.trackPostCreated(
+          articleData.type || '일반',
+          !!originalImages && originalImages.length > 0
+        );
 
         try {
           const { storage } = await import("@/src/shared/libs");
@@ -131,7 +136,7 @@ export default function CommunityWriteScreen() {
           title: t("apps.community.write.modal_success_title"),
           children: <Text textColor="black">{t("apps.community.write.modal_success_desc")}</Text>,
           primaryButton: {
-            text: t("global.confirm"),
+            text: t("confirm"),
             onClick: () => {
               router.push("/community?refresh=true");
             },
@@ -144,7 +149,7 @@ export default function CommunityWriteScreen() {
         showModal({
           title: t("apps.community.write.modal_fail_title"),
           children: <Text textColor="black">{errorMessage}</Text>,
-          primaryButton: {text:  t("global.confirm"), onClick: () => {} },
+          primaryButton: {text:  t("confirm"), onClick: () => {} },
         });
       }
     );

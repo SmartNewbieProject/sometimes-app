@@ -49,7 +49,7 @@ export const InputForm = ({
           </Text>
           <TouchableOpacity onPress={handleCancelEdit}>
             <Text size="sm" textColor="accent">
-              {t("global.cancel")}
+              {t("cancel")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -62,7 +62,7 @@ export const InputForm = ({
           {handleCancelReply && (
             <TouchableOpacity onPress={handleCancelReply}>
               <Text size="sm" textColor="accent">
-                {t("global.cancel")}
+                {t("cancel")}
               </Text>
             </TouchableOpacity>
           )}

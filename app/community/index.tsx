@@ -24,6 +24,7 @@ import { NOTICE_CODE } from "@/src/features/community/queries/use-home";
 import { useCommunityEvent } from "@/src/features/event/hooks/use-community-event";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { useTranslation } from "react-i18next";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 
 const HOME_CODE = "__home__";
 type CategoryRoute = { key: string; title: string; isHome?: boolean };
@@ -46,6 +47,7 @@ export default function CommunityScreen() {
   const { renderPromptModal } = useCommunityEvent();
   const { showModal } = useModal();
   const [hasShownGemReward, setHasShownGemReward] = useState(false);
+  const { communityEvents } = useMixpanel();
 
   useEffect(() => {
     if (receivedGemReward === "true" && !hasShownGemReward) {
@@ -129,6 +131,17 @@ export default function CommunityScreen() {
       refetch();
     }
   }, [shouldRefresh, refetch, isNotice]);
+
+  useEffect(() => {
+    const feedType = isNotice
+      ? 'notice'
+      : categoryCode === HOME_CODE
+        ? 'home'
+        : 'category';
+    const entryPoint = shouldRefresh === 'true' ? 'refresh' : 'tab';
+
+    communityEvents.trackFeedViewed(entryPoint, feedType);
+  }, [categoryCode, isNotice, shouldRefresh, communityEvents]);
 
   const hasRoutes = routes.length > 0;
 

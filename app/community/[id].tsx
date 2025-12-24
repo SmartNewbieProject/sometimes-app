@@ -12,7 +12,8 @@ import { Header, Show, Text, HeaderWithNotification } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 import { Linking, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import {
   SafeAreaView,
@@ -54,6 +55,8 @@ export default function ArticleDetailScreen() {
     setFalse: closeDropdown,
   } = useBoolean();
   const { my } = useAuth();
+  const { communityEvents } = useMixpanel();
+  const viewStartTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
     if (!my?.id) {
@@ -62,6 +65,17 @@ export default function ArticleDetailScreen() {
       return;
     }
   }, [my?.id]);
+
+  useEffect(() => {
+    if (!id || !article) return;
+
+    viewStartTimeRef.current = Date.now();
+
+    return () => {
+      const viewDuration = Math.floor((Date.now() - viewStartTimeRef.current) / 1000);
+      communityEvents.trackPostViewed(id, viewDuration);
+    };
+  }, [id, article, communityEvents]);
   const isValidArticle = (article: Article | undefined): article is Article => {
     return !!article && !!article.author;
   };
