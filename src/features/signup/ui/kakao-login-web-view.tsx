@@ -2,6 +2,7 @@ import { useAuth } from "@/src/features/auth";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { env } from "@/src/shared/libs/env";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useRouter } from "expo-router";
 // KakaoLoginWebView.tsx
@@ -35,10 +36,8 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
   const router = useRouter();
   const { loginWithKakao } = useAuth();
   const { showModal } = useModal();
-  const KAKAO_CLIENT_ID = process.env.EXPO_PUBLIC_KAKAO_LOGIN_API_KEY as string;
-  const redirectUri =
-    (process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI as string) ??
-    "https://some-in-univ.com/auth/login/redirect";
+  const KAKAO_CLIENT_ID = env.KAKAO_LOGIN_API_KEY;
+  const redirectUri = env.KAKAO_REDIRECT_URI || "https://some-in-univ.com/auth/login/redirect";
 
   const scope = [
     "name",
