@@ -85,6 +85,7 @@ const renderHtmlContent = (html: string) => {
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CONTAINER_WIDTH = Math.min(SCREEN_WIDTH, 428);
+const CONTENT_WIDTH = CONTAINER_WIDTH - 40;
 
 export default function CardNewsDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -92,6 +93,7 @@ export default function CardNewsDetailScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasClaimedReward, setHasClaimedReward] = useState(false);
+  const [imageAspectRatios, setImageAspectRatios] = useState<Record<number, number>>({});
   const { emitToast } = useToast();
 
   const { data: cardNews, isLoading, error } = useCardNewsDetail(id ?? "", !!id);
@@ -170,37 +172,52 @@ export default function CardNewsDetailScreen() {
     }
   }, []);
 
-  const renderCard = useCallback(
-    (section: CardSection, index: number) => (
-      <View key={section.order} style={styles.cardContainer}>
-        {/* 패딩 컨테이너 */}
-        <View style={styles.cardPadding}>
-          {/* 이미지 영역 (4:5 비율) */}
-          <View style={styles.cardImageArea}>
-            {section.imageUrl ? (
-              <Image
-                source={{ uri: section.imageUrl }}
-                style={styles.cardImage}
-                contentFit="cover"
-              />
-            ) : (
-              <View style={styles.cardImagePlaceholder}>
-                <Text style={styles.placeholderEmoji}>📰</Text>
-              </View>
-            )}
-          </View>
+  const handleImageLoad = useCallback((order: number, width: number, height: number) => {
+    if (width > 0 && height > 0) {
+      setImageAspectRatios(prev => ({
+        ...prev,
+        [order]: width / height,
+      }));
+    }
+  }, []);
 
-          {/* 텍스트 영역 */}
-          <View style={styles.cardTextArea}>
-            <Text style={styles.cardTitle}>{section.title}</Text>
-            <View style={styles.cardBodyContainer}>
-              {renderHtmlContent(section.content)}
+  const renderCard = useCallback(
+    (section: CardSection, index: number) => {
+      const aspectRatio = imageAspectRatios[section.order] || 4 / 5;
+      const imageHeight = CONTENT_WIDTH / aspectRatio;
+
+      return (
+        <View key={section.order} style={styles.cardContainer}>
+          <View style={styles.cardPadding}>
+            <View style={styles.cardImageArea}>
+              {section.imageUrl ? (
+                <Image
+                  source={{ uri: section.imageUrl }}
+                  style={[styles.cardImage, { aspectRatio }]}
+                  contentFit="cover"
+                  onLoad={(e) => {
+                    const { width, height } = e.source;
+                    handleImageLoad(section.order, width, height);
+                  }}
+                />
+              ) : (
+                <View style={[styles.cardImagePlaceholder, { aspectRatio: 4 / 5 }]}>
+                  <Text style={styles.placeholderEmoji}>📰</Text>
+                </View>
+              )}
+            </View>
+
+            <View style={styles.cardTextArea}>
+              <Text style={styles.cardTitle}>{section.title}</Text>
+              <View style={styles.cardBodyContainer}>
+                {renderHtmlContent(section.content)}
+              </View>
             </View>
           </View>
         </View>
-      </View>
-    ),
-    []
+      );
+    },
+    [imageAspectRatios, handleImageLoad]
   );
 
   if (!id) {
@@ -396,7 +413,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   cardContainer: {
-    width: "100%",
+    width: CONTAINER_WIDTH,
     minHeight: SCREEN_HEIGHT - 56,
     backgroundColor: "#FFFFFF",
     paddingTop: 30,
@@ -429,12 +446,9 @@ const styles = StyleSheet.create({
   },
   cardImageArea: {
     width: "100%",
-    aspectRatio: 4 / 5,
     backgroundColor: "#F7F3FF",
     borderRadius: 16,
     overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
   },
   cardImage: {
     width: "100%",
