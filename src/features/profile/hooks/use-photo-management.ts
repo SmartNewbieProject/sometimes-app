@@ -120,7 +120,7 @@ export function usePhotoManagement() {
     setIsLoading(true);
     try {
       const uploadResponse = await uploadProfileImage(imageUri, slotIndex);
-      devLogWithTag('Photo Mgmt', 'Upload complete:', { photoId: uploadResponse?.id });
+      devLogWithTag('Photo Mgmt', 'Upload complete:', { photoId: uploadResponse?.image?.id });
 
       const refetchResult = await refetch();
       devLogWithTag('Photo Mgmt', 'Refetch complete:', {

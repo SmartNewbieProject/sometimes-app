@@ -66,7 +66,7 @@ export const getNotifications = async (params?: {
   page?: number;
   limit?: number;
   isRead?: boolean;
-  type?: 'general' | 'reward';
+  type?: 'general' | 'reward' | 'contact';
 }): Promise<NotificationListResponse> => {
   return axiosClient.get('/notifications', { params });
 };

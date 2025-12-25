@@ -1,5 +1,7 @@
 import { View, ActivityIndicator, StyleSheet } from "react-native";
-import { Lottie, PalePurpleGradient, Text } from "@shared/ui";
+import { Lottie } from "@/src/shared/ui/lottie";
+import { PalePurpleGradient } from "@/src/shared/ui/gradient";
+import { Text } from "@/src/shared/ui/text";
 import { ReactNode } from "react";
 
 type Props = {

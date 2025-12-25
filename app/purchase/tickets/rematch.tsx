@@ -73,13 +73,14 @@ export default function RematchingTicketSellingScreen() {
     );
   };
 
-  const onCompletePayment = (result: PaymentResponse) => {
+  const onCompletePayment = (result: unknown) => {
+    const paymentResult = result as PaymentResponse;
     setShowPayment(false);
     mixpanelAdapter.track("Purchase_Done", {
       who: my,
       env: process.env.EXPO_PUBLIC_TRACKING_MODE,
     });
-    handlePaymentComplete(result, {
+    handlePaymentComplete(paymentResult, {
       productCount,
       onError,
     });
@@ -112,6 +113,7 @@ export default function RematchingTicketSellingScreen() {
         ref={controller}
         productCount={productCount ?? 0}
         paymentId={paymentId}
+        payMode="rematching"
         orderName={
           productCount
             ? t("apps.purchase.tickets.rematch.order_name_multiple", {
@@ -133,8 +135,7 @@ export default function RematchingTicketSellingScreen() {
 
   return (
     <Layout.Default
-      className="flex flex-1 flex-col"
-      style={{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
+      style={{ flex: 1, flexDirection: "column", backgroundColor: semanticColors.surface.background, paddingTop: insets.top }}
     >
       <RematchingTicket.Header />
       <ScrollView>

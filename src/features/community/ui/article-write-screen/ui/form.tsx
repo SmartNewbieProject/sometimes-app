@@ -1,4 +1,4 @@
-import { CommunityGuideline } from "@/src/features/community/ui";
+import { CommunityGuideline } from "../../guideline";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import {
   ScrollView,
@@ -54,7 +54,7 @@ export const ArticleWriteForm = ({
   const { profileDetails } = useAuth();
   const { data: me } = useQuery<MySimpleDetails>({
     queryKey: ["my-simple-details"],
-    queryFn: async () => (await getMySimpleDetails()).data,
+    queryFn: async () => await getMySimpleDetails(),
     enabled: !!profileDetails,
     staleTime: 5 * 60 * 1000,
   });

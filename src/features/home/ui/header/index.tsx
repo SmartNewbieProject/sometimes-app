@@ -3,7 +3,6 @@ import { View, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 
-import { HeaderProps } from "../../types";
 import colors from "@/src/shared/constants/colors";
 
 export const Header = () => {

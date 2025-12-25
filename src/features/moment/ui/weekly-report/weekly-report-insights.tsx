@@ -34,34 +34,37 @@ export const WeeklyReportInsights: React.FC<WeeklyReportInsightsProps> = ({ insi
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.insightsContainer}
       >
-        {insights.map((insight, index) => (
-          <View key={index} style={[styles.insightCard, { borderTopColor: getScoreColor(insight.score) }]}>
-            {/* 점수와 레이블 */}
-            <View style={styles.scoreHeader}>
-              <Text size="lg" weight="bold" style={{ color: getScoreColor(insight.score) }}>
-                {insight.score}점
+        {insights.map((insight, index) => {
+          const score = insight.score ?? 0;
+          return (
+            <View key={index} style={[styles.insightCard, { borderTopColor: getScoreColor(score) }]}>
+              {/* 점수와 레이블 */}
+              <View style={styles.scoreHeader}>
+                <Text size="lg" weight="bold" style={{ color: getScoreColor(score) }}>
+                  {score}점
+                </Text>
+                <Text size="12" textColor="gray" style={styles.scoreLabel}>
+                  {getScoreLabel(score)}
+                </Text>
+              </View>
+
+              {/* 카테고리명 */}
+              <Text size="md" weight="bold" textColor="black" style={styles.category}>
+                {insight.category}
               </Text>
-              <Text size="12" textColor="gray" style={styles.scoreLabel}>
-                {getScoreLabel(insight.score)}
+
+              {/* 정의 */}
+              <Text size="12" textColor="gray" style={styles.definition}>
+                {insight.definition}
+              </Text>
+
+              {/* 피드백 */}
+              <Text size="sm" textColor="black" style={styles.feedback}>
+                {insight.feedback}
               </Text>
             </View>
-
-            {/* 카테고리명 */}
-            <Text size="md" weight="bold" textColor="black" style={styles.category}>
-              {insight.category}
-            </Text>
-
-            {/* 정의 */}
-            <Text size="12" textColor="gray" style={styles.definition}>
-              {insight.definition}
-            </Text>
-
-            {/* 피드백 */}
-            <Text size="sm" textColor="black" style={styles.feedback}>
-              {insight.feedback}
-            </Text>
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
     </View>
   );

@@ -10,7 +10,7 @@ function ConnectionStatusBanner() {
   const [slideAnim] = useState(new Animated.Value(-60));
   const [reconnectAttempt, setReconnectAttempt] = useState(0);
   const [countdown, setCountdown] = useState(0);
-  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const connectedSub = chatEventBus.on('SOCKET_CONNECTED').subscribe(() => {

@@ -1,4 +1,4 @@
-import { TextInput, type TextInputProps, View, TouchableOpacity, Platform, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { TextInput, type TextInputProps, View, TouchableOpacity, Platform, StyleSheet, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { useState } from 'react';
 import EyeOn from '@assets/icons/eye-on.svg';
 import EyeOff from '@assets/icons/eye-off.svg';
@@ -13,7 +13,7 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   isDisabled?: boolean;
   style?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
-  textInputStyle?: StyleProp<ViewStyle>;
+  textInputStyle?: StyleProp<TextStyle>;
   isPassword?: boolean;
 }
 

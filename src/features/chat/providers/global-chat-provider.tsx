@@ -14,7 +14,7 @@ export const GlobalChatProvider = ({
   const { accessToken, tokenLoading } = useAuth();
   const isModuleInitialized = useRef(false);
   const reconnectAttempts = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isNetworkAvailable, setIsNetworkAvailable] = useState(true);
 
   // 지수 백오프 계산: 2초 → 4초 → 8초 → 16초 (최대 30초)

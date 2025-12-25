@@ -136,7 +136,7 @@ export default Sentry.wrap(function RootLayout() {
   }, []);
 
   // 웹에서는 CDN 폰트 사용 (+html.tsx에서 로드), 네이티브에서만 로컬 폰트 로드
-  const nativeFonts = Platform.OS !== 'web' ? {
+  const nativeFonts: Record<string, any> = Platform.OS !== 'web' ? {
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
     "Pretendard-Light": require("../assets/fonts/Pretendard-Light.otf"),

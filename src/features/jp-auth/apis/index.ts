@@ -8,7 +8,7 @@
  * - POST /jp/auth/signup - 회원가입 (신규 회원)
  */
 
-import { axiosClient } from '@/src/shared/libs/axios';
+import axiosClient from '@/src/shared/libs/axios';
 import type {
   JpSmsSendRequest,
   JpSmsSendResponse,

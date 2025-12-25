@@ -3,4 +3,7 @@ export type ServerError = {
   status: number;
   statusCode?: number;
   message?: string;
+  success?: boolean;
+  errorCode?: string;
+  details?: Record<string, unknown>;
 };

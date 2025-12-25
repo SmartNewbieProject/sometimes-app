@@ -1,4 +1,4 @@
-import { Text } from "@/src/shared/ui";
+import { Text } from "../text";
 import { throttle } from "lodash";
 import {
   type GestureResponderEvent,
@@ -233,7 +233,7 @@ export function StepSlider({
                         : left + (middleLabelLeft ?? -30),
                   }}
                 >
-                  <Text size="13" numberofLine={1} textColor="dark">
+                  <Text size="13" numberOfLines={1} textColor="dark">
                     {label.label}
                   </Text>
                 </View>

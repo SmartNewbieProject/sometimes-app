@@ -191,6 +191,13 @@ const getAuthToken = async (): Promise<string> => {
   return token?.replaceAll('"', '') || '';
 };
 
+export const sendMessage = async (
+  sessionId: string,
+  data: SendMessageRequest
+): Promise<SendMessageResponse> => {
+  return axiosClient.post(`${AI_CHAT_BASE_URL}/sessions/${sessionId}/messages`, data);
+};
+
 export const getMessages = async (
   sessionId: string
 ): Promise<GetMessagesResponse> => {

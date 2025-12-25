@@ -116,7 +116,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         style={[
           styles.customModalContainer,
           { width: modalWidth },
-          options?.showLogo && styles.customModalWithLogo
+          options?.showLogo ? styles.customModalWithLogo : undefined
         ]}
       >
         {dismissable && (

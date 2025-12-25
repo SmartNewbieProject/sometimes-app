@@ -5,6 +5,7 @@ export type SignupForm = {
   phone: string;
   birthday: string;
   gender: "MALE" | "FEMALE";
+  age?: number;
   universityId: string;
   area: string;
   departmentName: string;
@@ -20,6 +21,9 @@ export type SignupForm = {
   identityVerificationId?: string;
   kakaoCode?: string;
   kakaoAccessToken?: string;
+  phoneNumber?: string;
+  universitySearchText?: string;
+  signupStartTime?: number;
 };
 
 export interface SignupResponse {

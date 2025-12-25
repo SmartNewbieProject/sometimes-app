@@ -71,7 +71,7 @@ export const useMatchingEfficiency = () => {
       type: item.type,
       count: item.count,
       percentage: totalFailures > 0 ? Math.round((item.count / totalFailures) * 100) : 0,
-      trend: 'stable', // TODO: 히스토리 데이터 기반 트렌드 분석
+      trend: 'stable' as const, // TODO: 히스토리 데이터 기반 트렌드 분석
       userActionRequired: getUserActionForFailure(item.type),
       preventable: isPreventableFailure(item.type)
     })).sort((a, b) => b.count - a.count);

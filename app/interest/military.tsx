@@ -91,17 +91,18 @@ export default function MilitarySelectionScreen() {
         router.navigate("/interest/done");
         setFormSubmitLoading(false);
       },
-      ({ error }) => {
+      (serverError: unknown) => {
+        const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
         console.error("Preference save error:", {
-          error,
-          errorMessage: error?.message,
-          errorString: error?.error,
-          status: error?.status,
-          statusCode: error?.statusCode,
+          error: serverError,
+          errorMessage: err?.message,
+          errorString: err?.error,
+          status: err?.status,
+          statusCode: err?.statusCode,
           form,
         });
 
-        const errorMessage = error?.message || error?.error || "선호 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        const errorMessage = err?.message || err?.error || "선호 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
         showErrorModal(errorMessage, "error");
         setFormSubmitLoading(false);
       }

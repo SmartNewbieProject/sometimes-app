@@ -1,4 +1,4 @@
-import { TextInput, type TextInputProps, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { TextInput, type TextInputProps, View, StyleSheet, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 type SizeType = 'sm' | 'md' | 'lg';
@@ -8,7 +8,7 @@ export interface TextAreaProps extends Omit<TextInputProps, 'style' | 'multiline
 	size?: SizeType;
 	status?: StatusType;
 	isDisabled?: boolean;
-	style?: StyleProp<ViewStyle>;
+	style?: StyleProp<TextStyle>;
 	containerStyle?: StyleProp<ViewStyle>;
 }
 

@@ -124,14 +124,14 @@ export const UniversityCertificationPromptModal: React.FC<UniversityCertificatio
                 <Button
                   onPress={onLater}
                   variant="secondary"
-                  flex="flex-1"
+                  styles={{ flex: 1 }}
                 >
                   {t("features.event.ui.university_certification_prompt.later_button")}
                 </Button>
                 <Button
                   onPress={handleCertify}
                   variant="primary"
-                  flex="flex-1"
+                  styles={{ flex: 1 }}
                 >
                   {t("features.event.ui.university_certification_prompt.certify_button")}
                 </Button>

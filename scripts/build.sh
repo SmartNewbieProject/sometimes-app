@@ -203,6 +203,32 @@ select_clean_build() {
     esac
 }
 
+# Run TypeScript type check
+run_typecheck() {
+    print_step "Running TypeScript type check..."
+    echo ""
+
+    if npm run typecheck 2>&1; then
+        print_success "Type check passed! ✓"
+        echo ""
+    else
+        echo ""
+        print_error "Type check failed!"
+        echo ""
+        echo -e "${YELLOW}타입 에러를 수정한 후 다시 빌드해주세요.${NC}"
+        echo -e "${CYAN}팁: npm run typecheck 로 에러를 확인할 수 있습니다.${NC}"
+        echo ""
+
+        read -p "타입 에러를 무시하고 계속 빌드하시겠습니까? (권장하지 않음) [y/N]: " ignore_typecheck
+        if [[ ! $ignore_typecheck =~ ^[Yy]$ ]]; then
+            notify "Build Cancelled ⚠️" "타입 에러로 인해 빌드가 취소되었습니다." "Basso"
+            exit 1
+        fi
+        print_warning "타입 에러를 무시하고 빌드를 계속합니다..."
+        echo ""
+    fi
+}
+
 # Perform clean build
 perform_clean_build() {
     if [ "$CLEAN_BUILD" = false ]; then
@@ -486,6 +512,9 @@ main() {
     load_env_file "$ENV_FILE"
 
     confirm_build
+
+    # Run type check before build
+    run_typecheck
 
     # Perform clean build if requested
     perform_clean_build

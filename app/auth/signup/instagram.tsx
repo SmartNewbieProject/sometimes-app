@@ -236,10 +236,12 @@ function SignupInstagram() {
                     style={{
                       width: 81,
                       height: 81,
-                      // @ts-ignore
-                      filter: instagramId.length > 0 ? 'drop-shadow(0 0 20px rgba(124, 58, 237, 0.5))' : 'none',
-                      transition: 'filter 0.3s ease',
-                    }}
+                      // Web-only CSS properties for shadow effect
+                      ...(Platform.OS === 'web' && {
+                        filter: instagramId.length > 0 ? 'drop-shadow(0 0 20px rgba(124, 58, 237, 0.5))' : 'none',
+                        transition: 'filter 0.3s ease',
+                      }),
+                    } as any}
                   />
                 </View>
               ) : (

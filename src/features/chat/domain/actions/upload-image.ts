@@ -23,13 +23,7 @@ interface UploadImageResult {
 export const uploadImageAction = async (
   socket: Socket<ChatServerToClientEvents, ChatClientToServerEvents> | null,
   options: UploadImageOptions,
-): Promise<{
-  optimisticMessage: Chat;
-  promise: { success: boolean; error: string } | { success: boolean; serverMessage?: Chat; error?: string } | {
-    success: boolean;
-    error: string
-  }
-}> => {
+): Promise<UploadImageResult> => {
   const { to, chatRoomId, senderId, file } = options;
   const tempId = generateTempId();
   const now = dayUtils.create().format();
@@ -52,7 +46,7 @@ export const uploadImageAction = async (
               (typeof file === 'string' ? `data:image/jpeg;base64,${file}` : ''),
   };
 
-  const promise = await (async () => {
+  const promise = (async () => {
     try {
       if (!socket) {
         return {success: false, error: 'Socket not connected'};

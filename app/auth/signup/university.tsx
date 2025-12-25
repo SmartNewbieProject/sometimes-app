@@ -155,7 +155,6 @@ function UniversityPage() {
                       item={item}
                     />
                   )}
-                  estimatedItemSize={90}
                   contentContainerStyle={{ paddingBottom: 160 }}
                 />
               </Loading.Lottie>

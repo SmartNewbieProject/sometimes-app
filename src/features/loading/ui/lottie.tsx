@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { Text } from "@shared/ui";
+import { Text } from "@/src/shared/ui/text";
 
 type Props = {
   title: string;

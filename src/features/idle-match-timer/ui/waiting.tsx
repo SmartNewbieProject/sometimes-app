@@ -1,12 +1,12 @@
 import { dayUtils } from "@/src/shared/libs";
 import { IconWrapper } from "@/src/shared/ui/icons";
 import ArrowRight from "@assets/icons/right-white-arrow.svg";
-import { Text } from "@shared/ui";
+import { Text } from "@/src/shared/ui/text";
 import { useRouter } from "expo-router";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
-import { Time } from ".";
+import Time from "./time";
 import { useAuth } from "../../auth";
 import { type TimeResult, calculateTime } from "../services/calculate-time";
 import type { MatchDetails } from "../types";

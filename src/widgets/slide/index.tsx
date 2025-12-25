@@ -54,7 +54,7 @@ function Slider({
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const bannerAnim = useRef(new Animated.Value(0)).current;
   const pendingRef = useRef<boolean>(true);
-  const autoPlayRef = useRef<NodeJS.Timer | number | null>(null);
+  const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     focusRef.current = focusIndex;
@@ -70,9 +70,7 @@ function Slider({
   useEffect(() => {
     if (!autoPlay || containerWidth === 0 || isSingle) return;
     if (autoPlayRef.current) {
-      if (typeof autoPlayRef.current === "number")
-        clearInterval(autoPlayRef.current);
-      else clearInterval(autoPlayRef.current as NodeJS.Timer);
+      clearInterval(autoPlayRef.current);
     }
     const id = setInterval(() => {
       moveToIndex(focusRef.current + 1);

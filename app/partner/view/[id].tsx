@@ -79,7 +79,7 @@ export default function PartnerDetailScreen() {
       matchScore: partner?.matchScore ?? 50,
       sameUniversity,
       isFirstMatch: partner?.isFirstMatch ?? false,
-      commonPoints: matchReasonsData?.reasons?.map(r => r.category) ?? [],
+      commonPoints: matchReasonsData?.reasons?.map(r => r.category).filter((c): c is string => !!c) ?? [],
     };
   }, [partner, profileDetails, matchReasonsData]);
 
@@ -234,7 +234,7 @@ export default function PartnerDetailScreen() {
               variant="outline"
               disabled={true}
               size="md"
-              className={cn("flex-1 items-center ", `!h-[${20}px]`)}
+              styles={{ flex: 1, alignItems: "center" }}
             >
               <Text>{t("apps.partner.view.button_waiting")}</Text>
             </Button>
@@ -286,7 +286,7 @@ export default function PartnerDetailScreen() {
                   partnerId: partner.id,
                   partnerName: partner.name,
                   partnerAge: partner.age,
-                  partnerUniv: partner.universityDetails.name,
+                  partnerUniv: partner.universityDetails?.name,
                   partnerProfileImage: mainProfileImageUrl,
                 },
               })

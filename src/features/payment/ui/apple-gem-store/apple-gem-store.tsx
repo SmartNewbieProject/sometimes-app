@@ -154,7 +154,8 @@ function AppleGemStore() {
           ios: { sku: productId },
           android: { skus: [productId] },
         },
-      });
+        type: "inapp",
+      } as unknown as Parameters<typeof requestPurchase>[0]);
     } catch (error) {
       console.error("Purchase failed:", error);
 

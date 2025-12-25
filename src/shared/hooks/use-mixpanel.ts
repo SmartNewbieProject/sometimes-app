@@ -3,6 +3,7 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { storage } from '@/src/shared/libs/store';
 import {
   MIXPANEL_EVENTS,
+  EVENT_SOURCES,
   type BaseEventProperties,
   type SignupEventProperties,
   type PaymentEventProperties,
@@ -197,8 +198,9 @@ export const useMixpanel = (): UseMixpanelReturn => {
     <T extends string>(
       eventName: T,
       properties: KpiEventTypePropertiesMap[string] = {},
-      options = { immediate: false, validate: true }
+      options?: { immediate?: boolean; validate?: boolean }
     ) => {
+      const opts = { immediate: options?.immediate ?? false, validate: options?.validate ?? true };
       try {
         // 기본 공통 속성
         const baseProperties: BaseEventProperties = {
@@ -214,7 +216,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
         };
 
         // 이벤트 유효성 검사 (옵션)
-        if (options.validate && !MIXPANEL_EVENTS[eventName]) {
+        if (opts.validate && !MIXPANEL_EVENTS[eventName]) {
           console.warn(`[Mixpanel] Unknown event: ${eventName}`);
           return;
         }
@@ -823,7 +825,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
 
     trackOnboardingStarted: useCallback((source?: string) => {
       trackEvent('Onboarding_Started', {
-        source: source || 'direct'
+        source: (source || EVENT_SOURCES.DIRECT) as typeof EVENT_SOURCES[keyof typeof EVENT_SOURCES]
       });
     }, [trackEvent]),
 
@@ -1059,7 +1061,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
       trackEvent('Subscription_Started', {
         item_type: planType,
         trial_period: trialPeriod || false,
-        source: 'subscription_start'
+        source: EVENT_SOURCES.SUBSCRIPTION_START
       });
     }, [trackEvent]),
 
@@ -1067,7 +1069,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
       trackEvent('Subscription_Renewed', {
         item_type: planType,
         renewal_count: renewalCount,
-        source: 'subscription_renewal'
+        source: EVENT_SOURCES.SUBSCRIPTION_RENEWAL
       });
     }, [trackEvent]),
 

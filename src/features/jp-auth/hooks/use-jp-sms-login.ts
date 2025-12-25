@@ -56,7 +56,7 @@ export const useJpSmsLogin = ({
   const [verificationCode, setVerificationCode] = useState('');
   const [remainingSeconds, setRemainingSeconds] = useState(TIMER_SECONDS);
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { updateToken } = useAuth();
   const { showModal } = useModal();
 

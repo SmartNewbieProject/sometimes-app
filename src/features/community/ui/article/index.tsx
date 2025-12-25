@@ -26,14 +26,14 @@ import Interaction from "./interaction-nav";
 import { useBlockUser } from "../../hooks/use-block-user";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { useTranslation } from "react-i18next";
-interface ArticleItemProps {
+export interface ArticleItemProps {
   data: ArticleType;
   onPress: () => void;
   onLike: () => void;
-  refresh: () => void;
+  refresh: () => void | Promise<void>;
   onDelete: (id: string) => void;
-  isPreviewOpen: boolean;
-  onTogglePreview: () => void;
+  isPreviewOpen?: boolean;
+  onTogglePreview?: () => void;
 }
 
 export function Article({
@@ -41,8 +41,8 @@ export function Article({
   onPress,
   onLike,
   onDelete,
-  isPreviewOpen,
-  onTogglePreview,
+  isPreviewOpen = false,
+  onTogglePreview = () => {},
 }: ArticleItemProps) {
   const { my } = useAuth();
   const { t } = useTranslation();

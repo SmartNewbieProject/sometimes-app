@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { Header } from '@/src/shared/ui';
+import { Header } from '../header';
 import { NotificationIcon } from '@/src/features/notification/ui/notification-icon';
 
 interface HeaderWithNotificationProps {

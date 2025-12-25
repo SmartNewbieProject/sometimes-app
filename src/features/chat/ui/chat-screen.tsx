@@ -61,7 +61,7 @@ function ChatScreen() {
     const subscription = chatEventBus.on("MESSAGE_SEND_SUCCESS").subscribe(({ payload }) => {
       const isFirstMessage = messageCountBeforeSendRef.current === 0;
       const messageType = payload.serverMessage?.messageType || 'text';
-      const messageContent = payload.serverMessage?.content || payload.content || '';
+      const messageContent = payload.serverMessage?.content || '';
       const messageLength = typeof messageContent === 'string' ? messageContent.length : 0;
       const timeSinceChatStart = Math.floor((Date.now() - chatStartTimeRef.current) / 1000);
 

@@ -10,6 +10,7 @@ import { AnalysisCard } from "../widgets/analysis-card";
 import { useWeeklyReportQuery, useWeeklyProgressQuery, useSyncProfileMutation } from "../../queries";
 import { getWeekNumber, getYear } from "@/src/shared/utils/date-utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import type { UIWeeklyReport } from "../../types";
 
 const { width } = Dimensions.get("window");
 
@@ -28,10 +29,11 @@ export const MomentReportPage = () => {
   const currentYear = getYear();
 
   // API 데이터 조회
-  const { data: weeklyReport, isLoading: reportLoading } = useWeeklyReportQuery({
+  const { data: weeklyReportData, isLoading: reportLoading } = useWeeklyReportQuery({
     weekNumber: currentWeek,
     year: currentYear
   });
+  const weeklyReport = weeklyReportData as UIWeeklyReport | undefined;
 
   const { data: weeklyProgress, isLoading: progressLoading } = useWeeklyProgressQuery();
 
@@ -326,11 +328,11 @@ export const MomentReportPage = () => {
           />
           <View style={styles.headerTextContainer}>
             <Text size="20" weight="bold" textColor="purple" style={styles.personalityTitle}>
-              {weeklyReport?.insights[0]?.feedback || "성장을 응원하는 당신"}\n
+              {weeklyReport?.insights?.[0]?.feedback || "성장을 응원하는 당신"}\n
               모먼트 레포트
             </Text>
             <Text size="12" weight="normal" textColor="purple" style={styles.description}>
-              {weeklyReport?.insights[1]?.feedback || "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."}
+              {weeklyReport?.insights?.[1]?.feedback || "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."}
             </Text>
           </View>
         </View>
@@ -420,15 +422,15 @@ export const MomentReportPage = () => {
                   어떤 의미 인가요?
                 </Text>
                 <Text size="12" weight="normal" textColor="gray" style={styles.answerText}>
-                  {weeklyReport?.insights[index] || `${item.label}에 대한 분석 내용입니다.`}
+                  {weeklyReport?.insights?.[index]?.feedback || weeklyReport?.insights?.[index]?.text || `${item.label}에 대한 분석 내용입니다.`}
                 </Text>
-                {weeklyReport?.keywords.length > 0 && (
+                {(weeklyReport?.keywords?.length ?? 0) > 0 && (
                   <>
                     <Text size="12" weight="bold" textColor="black" style={styles.questionText}>
                       어떤 주요 요인이 작용했나요?
                     </Text>
                     <Text size="12" weight="normal" textColor="gray" style={styles.answerText}>
-                      이번 주 답변에서 {weeklyReport.keywords.slice(0, 3).join(", ")}와(과) 관련된 모습이 보였습니다.
+                      이번 주 답변에서 {weeklyReport?.keywords?.slice(0, 3).join(", ")}와(과) 관련된 모습이 보였습니다.
                     </Text>
                   </>
                 )}
@@ -445,8 +447,8 @@ export const MomentReportPage = () => {
               </Text>
             </View>
             <View style={styles.hashtagsContainer}>
-              {weeklyReport?.keywords.length > 0 ? (
-                weeklyReport.keywords.slice(0, 5).map((keyword, index) => (
+              {(weeklyReport?.keywords?.length ?? 0) > 0 ? (
+                weeklyReport?.keywords?.slice(0, 5).map((keyword: string, index: number) => (
                   <View key={index} style={styles.hashtag}>
                     <Text size="12" weight="medium" textColor="purple">#{keyword}</Text>
                   </View>

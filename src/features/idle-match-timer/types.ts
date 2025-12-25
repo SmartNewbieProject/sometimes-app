@@ -24,6 +24,7 @@ export type MatchDetails = {
 	estimatedApprovalTime?: string;
 	rejectionCategory?: UserRejectionCategory;
 	rejectionReason?: string;
+	matchedAt?: string;
 };
 
 export type ServerMatchDetails = Omit<MatchDetails, 'endOfView'> & {

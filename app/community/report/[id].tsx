@@ -48,18 +48,19 @@ export default function ReportScreen() {
         }
         router.navigate("/community?refresh=true");
       },
-      ({ error }) => {
+      (serverError: unknown) => {
+        const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
         console.error("Report submission error:", {
-          error,
-          errorMessage: error?.message,
-          errorString: error?.error,
-          status: error?.status,
-          statusCode: error?.statusCode,
+          error: serverError,
+          errorMessage: err?.message,
+          errorString: err?.error,
+          status: err?.status,
+          statusCode: err?.statusCode,
           articleId: id,
           reason: data.reason,
         });
 
-        const errorMessage = error?.message || error?.error || "신고 접수에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        const errorMessage = err?.message || err?.error || "신고 접수에 실패했습니다. 잠시 후 다시 시도해주세요.";
         showErrorModal(errorMessage, "error");
       }
     );
@@ -98,7 +99,7 @@ export default function ReportScreen() {
 
       <View style={styles.buttonContainer}>
         <Button
-          style={styles.button}
+          styles={styles.button}
           disabled={!form.formState.isValid}
           onPress={onSubmit}
         >

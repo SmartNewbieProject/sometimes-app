@@ -155,6 +155,11 @@ export interface PaymentResponse {
   message?: string;
   pgCode?: string;
   pgMessage?: string;
+  pgProvider?: string;
+  amount?: number;
+  totalAmount?: number;
+  method?: string;
+  products?: unknown[];
 }
 
 export type GemMetadata = {

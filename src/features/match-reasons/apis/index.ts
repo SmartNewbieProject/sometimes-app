@@ -3,6 +3,7 @@ import { axiosClient } from "@/src/shared/libs";
 export interface MatchReason {
   title: string;
   description: string;
+  category?: string;
 }
 
 export interface MatchReasonsResponse {

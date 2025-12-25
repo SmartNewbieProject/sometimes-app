@@ -115,7 +115,7 @@ const authenticateSmsCode = (smsCode: AuthorizeSmsCode): Promise<void> =>
   axiosClient.patch("/auth/sms", smsCode);
 
 type Service = {
-  getUnivs: () => Promise<string[]>;
+  getUnivs: () => Promise<University[]>;
   getDepartments: (univ: string) => Promise<string[]>;
   checkPhoneNumberExists: (phoneNumber: string) => Promise<{ exists: boolean }>;
   checkPhoneNumberBlacklist: (

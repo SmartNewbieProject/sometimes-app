@@ -132,26 +132,28 @@ export default function UniversityForm({
 
             <View style={styles.rowContainer}>
               <View style={styles.halfFieldContainer}>
-                <Form.Select
-                    name="studentNumber"
-                    control={form.control}
-                    options={studentNumberOptions.map((option) => ({label: option, value: option}))}
-                    placeholder={i18n.t("features.home.ui.university_form.student_number_placeholder")}
-                    size="sm"
-                    style={styles.flex1}
-                />
+                <View style={styles.flex1}>
+                  <Form.Select
+                      name="studentNumber"
+                      control={form.control}
+                      options={studentNumberOptions.map((option) => ({label: option, value: option}))}
+                      placeholder={i18n.t("features.home.ui.university_form.student_number_placeholder")}
+                      size="sm"
+                  />
+                </View>
                 <Label label={i18n.t("features.home.ui.university_form.student_number")} size="sm"/>
               </View>
 
               <View style={styles.halfFieldContainer}>
-                <Form.Select
-                    name="grade"
-                    control={form.control}
-                    options={gradeOptions}
-                    placeholder={i18n.t("features.home.ui.university_form.grade_placeholder")}
-                    size="sm"
-                    style={styles.flex1}
-                />
+                <View style={styles.flex1}>
+                  <Form.Select
+                      name="grade"
+                      control={form.control}
+                      options={gradeOptions}
+                      placeholder={i18n.t("features.home.ui.university_form.grade_placeholder")}
+                      size="sm"
+                  />
+                </View>
                 <Label label={i18n.t("features.home.ui.university_form.grade")} size="sm"/>
               </View>
             </View>

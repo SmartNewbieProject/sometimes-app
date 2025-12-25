@@ -121,7 +121,7 @@ export const MockLikeButton = ({ style }: MockLikeButtonProps) => {
     <Button
       onPress={showPartnerLikeAnnouncement}
       variant="primary"
-      style={[styles.buttonBase, style]}
+      styles={[styles.buttonBase, style]}
       prefix={
         profileDetails?.gender === "MALE" ? (
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />

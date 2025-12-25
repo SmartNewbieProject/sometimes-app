@@ -7,5 +7,5 @@
  * Metro bundler가 플랫폼에 따라 .native.ts 또는 .web.ts 자동 선택
  */
 
-export { mixpanelAdapter } from './mixpanel';
+export { mixpanelAdapter } from './mixpanel.native';
 export type { MixpanelAdapter } from './types';

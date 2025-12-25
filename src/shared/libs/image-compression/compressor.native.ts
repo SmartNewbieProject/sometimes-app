@@ -1,5 +1,5 @@
 import * as ImageManipulator from 'expo-image-manipulator';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import {
   DEFAULT_IMAGE_COMPRESSION_CONFIG,
   RETRY_DELAYS_MS,

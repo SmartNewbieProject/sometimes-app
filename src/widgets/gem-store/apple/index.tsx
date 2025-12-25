@@ -85,7 +85,7 @@ const AppleGemStoreItem = ({
         </View>
 
         <View style={{ display: "flex", flexDirection: "column", rowGap: 6 }}>
-          <Show when={priceAndDiscount && priceAndDiscount.discountRate > 0}>
+          <Show when={Boolean(priceAndDiscount && priceAndDiscount.discountRate > 0)}>
             <View
               style={{ display: "flex", flexDirection: "row", columnGap: 6 }}
             >

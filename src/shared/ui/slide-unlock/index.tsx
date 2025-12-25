@@ -302,9 +302,11 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
           onPointerDown={handleWebPointerDown}
           onPointerMove={handleWebPointerMove}
           onPointerUp={handleWebPointerUp}
-          onMouseDown={handleWebPointerDown}
-          onMouseMove={handleWebPointerMove}
-          onMouseUp={handleWebPointerUp}
+          {...{
+            onMouseDown: handleWebPointerDown,
+            onMouseMove: handleWebPointerMove,
+            onMouseUp: handleWebPointerUp,
+          } as any}
         >
           <View
             style={[

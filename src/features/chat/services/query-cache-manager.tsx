@@ -87,8 +87,11 @@ class QueryCacheManager {
 
     this.addSubscription(
       chatEventBus.on("MESSAGE_RETRY_REQUESTED").subscribe(({ payload }) => {
-        devLogWithTag('Chat Cache', 'Message retry requested:', payload.message.tempId);
-        this.markMessageAsRetryingInCache(payload.message.tempId);
+        const tempId = payload.message.tempId;
+        if (tempId) {
+          devLogWithTag('Chat Cache', 'Message retry requested:', tempId);
+          this.markMessageAsRetryingInCache(tempId);
+        }
       })
     );
 

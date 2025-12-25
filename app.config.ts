@@ -1,6 +1,7 @@
-import { ExpoConfig, ConfigContext } from 'expo/config';
+import { ConfigContext } from 'expo/config';
 
-export default ({ config }: ConfigContext): ExpoConfig => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default ({ config }: ConfigContext): any => {
   // 환경 변수 로드 (우선순위: 프로세스 환경 변수 > .env 파일)
   const apiUrl = process.env.EXPO_PUBLIC_API_URL || '';
   const serverUrl = process.env.EXPO_PUBLIC_SERVER_URL || apiUrl.replace('/api', '');

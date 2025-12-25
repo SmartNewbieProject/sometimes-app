@@ -24,7 +24,7 @@ export const MomentSlides = ({ items, autoPlayInterval = 5000, height }: MomentS
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const bannerAnim = useRef(new Animated.Value(0)).current;
   const pendingRef = useRef<boolean>(true);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (containerWidth > 0) {
@@ -37,7 +37,7 @@ export const MomentSlides = ({ items, autoPlayInterval = 5000, height }: MomentS
     if (!autoPlayInterval || isSingle || containerWidth === 0) return;
 
     if (intervalRef.current) {
-      clearInterval(intervalRef.current as NodeJS.Timeout);
+      clearInterval(intervalRef.current);
     }
 
     intervalRef.current = setInterval(() => {
@@ -48,7 +48,7 @@ export const MomentSlides = ({ items, autoPlayInterval = 5000, height }: MomentS
 
     return () => {
       if (intervalRef.current) {
-        clearInterval(intervalRef.current as NodeJS.Timeout);
+        clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };

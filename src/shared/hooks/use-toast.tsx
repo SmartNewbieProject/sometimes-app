@@ -15,7 +15,7 @@ const calculateToastDuration = (message: string): number => {
 interface ToastStore {
   toast: string | null;
   icon: React.ReactNode | null;
-  timeoutId: NodeJS.Timeout | null;
+  timeoutId: ReturnType<typeof setTimeout> | null;
   emitToast: (toast: string, icon?: React.ReactNode, customDuration?: number) => void;
   dismissToast: () => void;
 }

@@ -72,6 +72,7 @@ export interface UniversityDetail {
 	studentNumber: string | null;
 	code: string | null;
 	region: string | null;
+	isVerified?: boolean;
 }
 
 export interface PreferenceOption {
@@ -127,6 +128,9 @@ export interface UserProfile {
 	myPhotoCount?: number;
 	isApproved?: boolean;
 	status?: 'approved' | 'rejected' | 'pending';
+	matchScore?: number;
+	isFirstMatch?: boolean;
+	tier?: string;
 }
 
 export interface SimpleProfile {
@@ -146,6 +150,11 @@ export interface MyDetails {
 	profileImages: ProfileImage[];
 	instagramId: string;
 	universityDetails: UniversityDetail;
+	createdAt?: string;
+	nickname?: string;
+	totalMatches?: number;
+	hasPurchased?: boolean;
+	totalSpent?: number;
 }
 
 export type Gender = 'MALE' | 'FEMALE';

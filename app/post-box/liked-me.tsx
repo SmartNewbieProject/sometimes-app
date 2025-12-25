@@ -67,7 +67,6 @@ function LikedMe() {
       <FlashList
         data={sortedList}
         renderItem={({ item }) => <PostBoxCard type="liked-me" {...item} />}
-        estimatedItemSize={200}
         contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
       />
     );

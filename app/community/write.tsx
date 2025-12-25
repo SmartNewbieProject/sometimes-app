@@ -12,6 +12,8 @@ import { useMemo, useEffect, useState } from "react";
 import { useCategory } from "@/src/features/community/hooks";
 import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 import { useTranslation } from "react-i18next";
+import { getEventByType } from "@/src/features/event/api/index";
+import { EventType } from "@/src/features/event/types";
 
 const {
   ArticleWriteFormProvider,
@@ -42,9 +44,6 @@ export default function CommunityWriteScreen() {
   useEffect(() => {
     const saveInitialEventState = async () => {
       try {
-        const { getEventByType } = await import("@/src/features/event/api");
-        const { EventType } = await import("@/src/features/event/types");
-
         const eventDetails = await getEventByType(EventType.COMMUNITY_FIRST_POST);
         setInitialEventAttempt(eventDetails.currentAttempt);
       } catch (error) {
@@ -102,21 +101,8 @@ export default function CommunityWriteScreen() {
           !!originalImages && originalImages.length > 0
         );
 
-        try {
-          const { storage } = await import("@/src/shared/libs");
-          const { my } = await import("@/src/features/auth");
-          const auth = my();
-          if (auth?.phoneNumber) {
-            await storage.setItem(`community-written-post-${auth.phoneNumber}`, "true");
-          }
-        } catch (error) {
-        }
-
         if (initialEventAttempt !== null) {
           try {
-            const { getEventByType } = await import("@/src/features/event/api");
-            const { EventType } = await import("@/src/features/event/types");
-
             const eventDetails = await getEventByType(EventType.COMMUNITY_FIRST_POST);
             const actuallyReceivedReward = eventDetails.currentAttempt > initialEventAttempt;
 

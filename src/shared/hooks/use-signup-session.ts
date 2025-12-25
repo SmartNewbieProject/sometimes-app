@@ -78,12 +78,12 @@ export const useSignupSession = () => {
   const recordMilestone = useCallback((milestone: keyof SignupSessionData['milestones'], additionalData?: any) => {
     const currentTime = Date.now();
 
-    if (!sessionRef.current.milestone) {
+    if (!sessionRef.current.startTime) {
       sessionRef.current.startTime = currentTime;
-      sessionRef.current.milestones.app_launch = currentTime;
+      (sessionRef.current.milestones as Record<string, number>).app_launch = currentTime;
     }
 
-    sessionRef.current.milestones[milestone] = currentTime;
+    (sessionRef.current.milestones as Record<string, number>)[milestone] = currentTime;
 
     // 상호작용 기록
     sessionRef.current.interactions.push({
@@ -96,7 +96,7 @@ export const useSignupSession = () => {
     AsyncStorage.setItem('signup_session', JSON.stringify(sessionRef.current));
 
     // 마일스톤 이벤트 발송
-    const milestoneEvents = {
+    const milestoneEvents: Partial<Record<keyof SignupSessionData['milestones'], string>> = {
       signup_started: MIXPANEL_EVENTS.SIGNUP_STARTED,
       profile_image_uploaded: MIXPANEL_EVENTS.SIGNUP_PROFILE_IMAGE_UPLOADED,
       interest_selected: MIXPANEL_EVENTS.SIGNUP_INTEREST_SELECTED,
@@ -263,7 +263,7 @@ function calculateCompletionRate(milestones: SignupSessionData['milestones']): n
     'signup_completed'
   ];
 
-  const completedMilestones = possibleMilestones.filter(milestone => milestones[milestone]);
+  const completedMilestones = possibleMilestones.filter(milestone => milestones[milestone as keyof typeof milestones]);
 
   return Math.round((completedMilestones.length / possibleMilestones.length) * 100);
 }
@@ -281,7 +281,7 @@ function findDropOffPoints(milestones: SignupSessionData['milestones']): string[
   let foundIncomplete = false;
 
   for (const milestone of allMilestones) {
-    if (foundIncomplete || !milestones[milestone]) {
+    if (foundIncomplete || !milestones[milestone as keyof typeof milestones]) {
       dropOffPoints.push(milestone);
       foundIncomplete = true;
     }

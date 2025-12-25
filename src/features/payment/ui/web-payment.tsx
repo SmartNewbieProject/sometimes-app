@@ -51,7 +51,7 @@ export const WebPaymentView = (props: WebPaymentProps) => {
         const response = await PortOne.requestPayment({
           ...paymentParams,
           redirectUrl: `${location.origin}/purchase/complete`,
-        }) as unknown as PaymentResponse;
+        } as Parameters<typeof PortOne.requestPayment>[0]) as unknown as PaymentResponse;
 
         if (!response) {
           onError?.({ message: t("features.payment.ui.web_payment.no_payment_result") });
