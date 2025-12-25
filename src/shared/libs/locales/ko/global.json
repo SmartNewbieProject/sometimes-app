@@ -16,5 +16,8 @@
     "title": "앗, 길을 잃었어요!",
     "description": "찾으시는 페이지가 없거나\n잘못된 경로로 접근했어요",
     "go_home": "홈으로 돌아가기"
+  },
+  "slide_unlock": {
+    "default_text": "스와이프하여 진짜 설렘 찾기"
   }
 }

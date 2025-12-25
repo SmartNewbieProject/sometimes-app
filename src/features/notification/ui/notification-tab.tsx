@@ -35,8 +35,8 @@ export const NotificationTab: React.FC<NotificationTabProps> = ({
         >
           <Text style={[
             styles.tabText,
-            activeTab === tab.key && styles.activeTabText,
-          ]}>
+            activeTab === tab.key ? styles.activeTabText : undefined,
+          ].filter(Boolean) as import('react-native').TextStyle[]}>
             {tab.label}
           </Text>
           {tab.count > 0 && (
@@ -46,8 +46,8 @@ export const NotificationTab: React.FC<NotificationTabProps> = ({
             ]}>
               <Text style={[
                 styles.countText,
-                activeTab === tab.key && styles.activeCountText,
-              ]}>
+                activeTab === tab.key ? styles.activeCountText : undefined,
+              ].filter(Boolean) as import('react-native').TextStyle[]}>
                 {tab.count > 99 ? '99+' : tab.count}
               </Text>
             </View>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     minWidth: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: colors.lightGray,
+    backgroundColor: colors.gray,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 6,

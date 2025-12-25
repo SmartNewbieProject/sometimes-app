@@ -130,14 +130,14 @@ export const CommunityEventPromptModal: React.FC<CommunityEventPromptModalProps>
                 <Button
                   onPress={handleLater}
                   variant="secondary"
-                  flex="flex-1"
+                  styles={{ flex: 1 }}
                 >
                   {t("features.event.ui.community_event_prompt.later_button")}
                 </Button>
                 <Button
                   onPress={handleWriteArticle}
                   variant="primary"
-                  flex="flex-1"
+                  styles={{ flex: 1 }}
                 >
                   {t("features.event.ui.community_event_prompt.write_button")}
                 </Button>

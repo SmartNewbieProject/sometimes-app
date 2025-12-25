@@ -80,6 +80,13 @@ export default function SignupLayout() {
             }}
           >
             <Stack.Screen
+              name="jp-profile"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
               name="university"
               options={{
                 headerShown: false,

@@ -121,7 +121,7 @@ function ProfileContent() {
       if (tattoo) {
         updateForm("tattoo", tattoo);
       }
-      updateForm("mbti", profileDetails.mbti);
+      updateForm("mbti", profileDetails.mbti ?? undefined);
       updateForm(
         "interestIds",
         preferenceSelf
@@ -147,7 +147,7 @@ function ProfileContent() {
       // 초기 스냅샷 저장 (프로필 이미지 제외)
       setInitialSnapshot({
         drinking,
-        mbti: profileDetails.mbti,
+        mbti: profileDetails.mbti ?? undefined,
         init: true,
         interestIds: preferenceSelf
           ?.find((item) => item.typeName === PreferenceKeys.INTEREST)
@@ -207,17 +207,18 @@ function ProfileContent() {
         router.navigate("/my");
         setFormSubmitLoading(false);
       },
-      ({ error }) => {
+      (serverError: unknown) => {
+        const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
         console.error("Profile save error:", {
-          error,
-          errorMessage: error?.message,
-          errorString: error?.error,
-          status: error?.status,
-          statusCode: error?.statusCode,
+          error: serverError,
+          errorMessage: err?.message,
+          errorString: err?.error,
+          status: err?.status,
+          statusCode: err?.statusCode,
           form,
         });
 
-        const errorMessage = error?.message || error?.error || "프로필 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        const errorMessage = err?.message || err?.error || "프로필 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
         showErrorModal(errorMessage, "error");
         setFormSubmitLoading(false);
       }

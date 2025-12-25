@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '@/src/shared/constants/colors';
 import i18n from '@/src/shared/libs/i18n';
 import { useOnboardingStorage } from '@/src/features/onboarding';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function DevToolsPage() {
   const insets = useSafeAreaInsets();
@@ -11,8 +12,7 @@ export default function DevToolsPage() {
 
   const handleResetOnboarding = async () => {
     try {
-      const AsyncStorage = await import('@react-native-async-storage/async-storage');
-      await AsyncStorage.default.removeItem('@sometime:user:state');
+      await AsyncStorage.removeItem('@sometime:user:state');
       alert('온보딩 상태가 초기화되었습니다.\n앱을 재시작하면 온보딩이 다시 표시됩니다.');
     } catch (error) {
       alert('초기화 실패: ' + error);

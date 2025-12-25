@@ -1,4 +1,4 @@
-import type { Product, ProductPurchase } from 'expo-iap';
+import type { Product, Purchase as ProductPurchase } from 'expo-iap';
 import type { GemDetails } from '@/src/features/payment/api';
 
 /**

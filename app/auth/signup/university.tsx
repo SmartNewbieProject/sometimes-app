@@ -6,6 +6,7 @@ import UniversityLogos from "@/src/features/signup/ui/university-logos";
 import UniversityCard from "@/src/features/signup/ui/university/university-card";
 import { SearchTip } from "@/src/features/signup/ui/university/search-tip";
 import { SearchingState } from "@/src/features/signup/ui/university/searching-state";
+import { GraduateBanner } from "@/src/features/signup/ui/university/graduate-banner";
 import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
 import { PalePurpleGradient, Show } from "@/src/shared/ui";
 import { useTranslation } from "react-i18next";
@@ -102,6 +103,7 @@ function UniversityPage() {
         <Animated.View
           style={[animatedContainerStyle, { width: "100%", zIndex: 10 }]}
         >
+          <GraduateBanner />
           <View
             style={[
               styles.searchWrapper,
@@ -153,7 +155,6 @@ function UniversityPage() {
                       item={item}
                     />
                   )}
-                  estimatedItemSize={90}
                   contentContainerStyle={{ paddingBottom: 160 }}
                 />
               </Loading.Lottie>

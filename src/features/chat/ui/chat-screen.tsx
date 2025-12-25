@@ -1,12 +1,11 @@
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { Platform, View } from "react-native";
-import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
 import { chatEventBus } from "../services/chat-event-bus";
 import { useChatActivityReviewTrigger } from "@/src/features/in-app-review";
 import { useAuth } from "@/src/features/auth";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
@@ -18,6 +17,7 @@ import useChatRoomDetail from "../queries/use-chat-room-detail";
 import ChatGuideBanner from "./chat-guide-banner";
 import ChatList from "./chat-list";
 import ChatRoomHeader from "./chat-room-header";
+import ConnectionStatusBanner from "./connection-status-banner";
 import GalleryList from "./gallery-list";
 import ChatInput from "./input";
 import WebChatInput from "./input.web";
@@ -30,7 +30,11 @@ function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const queryClient = useQueryClient();
   const messageCountBeforeSendRef = useRef(0);
+  const chatStartTimeRef = useRef<number>(Date.now());
+  const lastPartnerMessageTimeRef = useRef<number | null>(null);
+  const partnerResponseTrackedRef = useRef(false);
   const { my } = useAuth();
+  const { chatEvents, matchingEfficiencyEvents } = useMixpanel();
 
   useFocusEffect(
     useCallback(() => {
@@ -56,33 +60,36 @@ function ChatScreen() {
   useEffect(() => {
     const subscription = chatEventBus.on("MESSAGE_SEND_SUCCESS").subscribe(({ payload }) => {
       const isFirstMessage = messageCountBeforeSendRef.current === 0;
+      const messageType = payload.serverMessage?.messageType || 'text';
+      const messageContent = payload.serverMessage?.content || '';
+      const messageLength = typeof messageContent === 'string' ? messageContent.length : 0;
+      const timeSinceChatStart = Math.floor((Date.now() - chatStartTimeRef.current) / 1000);
 
-
-      mixpanelAdapter.track(MIXPANEL_EVENTS.CHAT_MESSAGE_SENT, {
-        chat_id: id,
-        chat_partner_id: chatRoomDetail?.partnerId,
-        message_type: payload.serverMessage?.messageType || 'text',
-        is_first_message: isFirstMessage,
-        timestamp: new Date().toISOString(),
+      // Chat_Message_Sent 이벤트
+      chatEvents.trackMessageSent(id || '', messageType, {
+        messageLength,
+        isFirstMessage,
+        timeSinceChatStartSeconds: timeSinceChatStart,
+        chatPartnerId: chatRoomDetail?.partnerId,
       });
 
+      // First_Message_Sent_After_Match 이벤트
       if (isFirstMessage && chatRoomDetail?.createdAt) {
         const chatRoomCreatedAt = new Date(chatRoomDetail.createdAt).getTime();
         const now = Date.now();
         const timeToMessageMs = now - chatRoomCreatedAt;
 
-        mixpanelAdapter.track(MIXPANEL_EVENTS.FIRST_MESSAGE_SENT_AFTER_MATCH, {
-          match_id: chatRoomDetail.matchId,
-          chat_id: id,
-          chat_partner_id: chatRoomDetail.partnerId,
-          time_to_message: timeToMessageMs,
-          timestamp: new Date().toISOString(),
-        });
+        matchingEfficiencyEvents.trackFirstMessageSentAfterMatch(
+          chatRoomDetail.matchId || '',
+          id || '',
+          chatRoomDetail.partnerId || '',
+          timeToMessageMs
+        );
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [id, chatRoomDetail]);
+  }, [id, chatRoomDetail, chatEvents, matchingEfficiencyEvents]);
 
   const chatList = data?.pages.flatMap((page) => page.messages) ?? [];
 
@@ -100,6 +107,52 @@ function ChatScreen() {
       partnerMessageCount: partnerMessages.length,
     };
   }, [chatList, my?.id]);
+
+  // Chat_Response 이벤트 (파트너 응답 트래킹)
+  useEffect(() => {
+    if (!my?.id || !id || chatList.length === 0) return;
+
+    const partnerMessages = chatList.filter(
+      (msg) => msg.senderId !== my.id && msg.senderId !== "system"
+    );
+
+    if (partnerMessages.length > 0 && !partnerResponseTrackedRef.current) {
+      const latestPartnerMessage = partnerMessages[partnerMessages.length - 1];
+      const messageTime = latestPartnerMessage.createdAt
+        ? new Date(latestPartnerMessage.createdAt).getTime()
+        : Date.now();
+
+      // 첫 파트너 응답
+      if (!lastPartnerMessageTimeRef.current) {
+        const responseTime = Math.floor((messageTime - chatStartTimeRef.current) / 1000);
+        chatEvents.trackChatResponse(
+          id,
+          responseTime,
+          true, // isFirstResponse
+          partnerMessages.length
+        );
+        lastPartnerMessageTimeRef.current = messageTime;
+        partnerResponseTrackedRef.current = true;
+      }
+    }
+  }, [chatList, my?.id, id, chatEvents]);
+
+  // Chat_Ended 이벤트 (컴포넌트 언마운트 시)
+  useEffect(() => {
+    return () => {
+      if (id && chatList.length > 0) {
+        const chatDuration = Math.floor((Date.now() - chatStartTimeRef.current) / 1000);
+        const totalMessageCount = myMessageCount + partnerMessageCount;
+
+        chatEvents.trackChatEnded(
+          id,
+          chatDuration,
+          totalMessageCount,
+          'screen_exit'
+        );
+      }
+    };
+  }, [id, chatList.length, myMessageCount, partnerMessageCount, chatEvents]);
 
   useChatActivityReviewTrigger({
     myMessageCount,
@@ -135,6 +188,7 @@ function ChatScreen() {
       }}
     >
       <ChatRoomHeader />
+      <ConnectionStatusBanner />
       <Animated.View
         style={[
           {

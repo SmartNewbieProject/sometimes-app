@@ -92,7 +92,10 @@
     "student_id_20": "20年",
     "student_id_19": "19年",
     "student_id_enter_directly": "直接入力する",
-    "grade_suffix": "年生"
+    "grade_suffix": "年生",
+    "grade_graduated": "卒業",
+    "graduate_banner_title": "卒業しても大丈夫！",
+    "graduate_banner_subtitle": "母校の縁を見つけてみてください 💜"
   },
   "agreements": {
     "privacy": "（必須）個人情報の収集・利用に同意",

@@ -51,7 +51,7 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
         style={styles.slider}
         animationDuration={400}
         indicatorPosition="bottom"
-        indicatorContainerClassName=""
+        indicatorContainerStyle={{}}
         onSlideChange={(index) => {
           const safeIndex = index % cards.length;
           onSlideChange?.(safeIndex);

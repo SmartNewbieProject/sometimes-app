@@ -4,8 +4,7 @@ import { Image as ExpoImage, useImage } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import type { ImageResourceProps } from './index';
 import Loading from '@/src/features/loading';
-import { Text } from '@/src/shared/ui';
-import { CustomInfiniteScrollView } from '../../infinite-scroll/custom-infinite-scroll-view';
+import { Text } from '../text';
 
 export const ImageResource: React.FC<ImageResourceProps> = ({
   resource,

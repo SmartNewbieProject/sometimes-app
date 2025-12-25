@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Platform, StyleSheet, View, Text as RNText } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -53,10 +54,12 @@ const UNLOCK_THRESHOLD = 0.7;
 
 export const SlideUnlock: React.FC<SlideUnlockProps> = ({
   onAction,
-  text = '스와이프하여 진짜 설렘 찾기',
+  text,
   threshold = UNLOCK_THRESHOLD,
   size = 'md',
 }) => {
+  const { t } = useTranslation();
+  const displayText = text ?? t('slide_unlock.default_text');
   const config = SIZE_CONFIG[size];
   const containerWidthShared = useSharedValue(0);
   const translateX = useSharedValue(0);
@@ -134,9 +137,11 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
 
     if (progress >= threshold) {
       isUnlocking.value = true;
-      translateX.value = withSpring(maxDrag, { damping: 15, stiffness: 150 }, () => {
-        runOnJS(handleUnlockSuccess)();
+      translateX.value = withTiming(maxDrag, {
+        duration: 200,
+        easing: Easing.out(Easing.cubic),
       });
+      handleUnlockSuccess();
     } else {
       translateX.value = withSpring(0, { damping: 20, stiffness: 200 });
     }
@@ -184,9 +189,11 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
 
       if (progress >= threshold) {
         isUnlocking.value = true;
-        translateX.value = withSpring(currentMaxDrag, { damping: 15, stiffness: 150 }, () => {
-          runOnJS(handleUnlockSuccess)();
+        translateX.value = withTiming(currentMaxDrag, {
+          duration: 200,
+          easing: Easing.out(Easing.cubic),
         });
+        runOnJS(handleUnlockSuccess)();
       } else {
         translateX.value = withSpring(0, { damping: 20, stiffness: 200 });
       }
@@ -264,7 +271,7 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
               { fontSize: config.fontSize },
             ]}
           >
-            {text}
+            {displayText}
           </RNText>
         ) : (
           <Animated.Text
@@ -274,7 +281,7 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
               nativeTextAnimatedStyle,
             ]}
           >
-            {text}
+            {displayText}
           </Animated.Text>
         )}
       </Animated.View>
@@ -295,9 +302,11 @@ export const SlideUnlock: React.FC<SlideUnlockProps> = ({
           onPointerDown={handleWebPointerDown}
           onPointerMove={handleWebPointerMove}
           onPointerUp={handleWebPointerUp}
-          onMouseDown={handleWebPointerDown}
-          onMouseMove={handleWebPointerMove}
-          onMouseUp={handleWebPointerUp}
+          {...{
+            onMouseDown: handleWebPointerDown,
+            onMouseMove: handleWebPointerMove,
+            onMouseUp: handleWebPointerUp,
+          } as any}
         >
           <View
             style={[

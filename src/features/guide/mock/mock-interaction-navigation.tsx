@@ -69,7 +69,7 @@ const MockInteractionNavigation = () => {
       <Button
         onPress={showPartnerFindAnnouncement}
         variant={"outline"}
-        style={styles.buttonBase}
+        styles={styles.buttonBase}
         prefix={
           <ImageResource resource={ImageResources.GEM} width={23} height={23} />
         }
@@ -84,7 +84,7 @@ const MockInteractionNavigation = () => {
       {isLiked ? (
         <Button
           onPress={() => {}}
-          style={styles.completedButton}
+          styles={styles.completedButton}
         >
           {t("features.guide.mock.mock_interaction_navigation.complete_button")}
         </Button>

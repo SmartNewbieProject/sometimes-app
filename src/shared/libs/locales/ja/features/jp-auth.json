@@ -1,0 +1,41 @@
+{
+  "phone_input": {
+    "title": "電話番号を入力してください",
+    "subtitle": "認証コードをSMSで送信します",
+    "placeholder": "090-1234-5678",
+    "submit_button": "認証コードを送信",
+    "loading": "送信中..."
+  },
+  "code_verification": {
+    "title": "認証コードを入力",
+    "subtitle": "{{phoneNumber}}に送信されたコードを入力してください",
+    "placeholder": "000000",
+    "remaining_time": "残り時間: {{time}}",
+    "resend": "コードを再送信",
+    "submit_button": "確認",
+    "loading": "確認中...",
+    "back": "戻る"
+  },
+  "errors": {
+    "invalid_phone": "正しい電話番号を入力してください",
+    "sms_send_failed": "SMS送信に失敗しました",
+    "invalid_code": "認証コードが正しくありません",
+    "expired_code": "認証コードの有効期限が切れました",
+    "blacklisted": "報告受付またはプロフィール情報不適合等の理由により登録が制限されました"
+  },
+  "profile": {
+    "title": "基本情報",
+    "name": "お名前",
+    "name_placeholder": "山田 太郎",
+    "birthday": "生年月日",
+    "birthday_placeholder": "1998-01-15",
+    "birthday_hint": "YYYY-MM-DD形式で入力してください",
+    "gender": "性別",
+    "male": "男性",
+    "female": "女性",
+    "next": "次へ",
+    "back": "戻る",
+    "error": "エラーが発生しました。もう一度お試しください。"
+  },
+  "login_button": "電話番号で始める"
+}

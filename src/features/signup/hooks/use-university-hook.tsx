@@ -194,6 +194,11 @@ function useUniversityHook() {
         if (certInfoStr) {
           hasProcessedPassInfo.current = true;
           const certInfo = JSON.parse(certInfoStr);
+
+          if (certInfo?.loginType === 'apple') {
+            return;
+          }
+
           updateForm({
             ...userForm,
             passVerified: true,
@@ -221,6 +226,7 @@ function useUniversityHook() {
   const handleClickUniv = useCallback(
     (univ: string) => () => {
       setSelectedUniv((prev) => (prev === univ ? undefined : univ));
+      Keyboard.dismiss();
     },
     []
   );

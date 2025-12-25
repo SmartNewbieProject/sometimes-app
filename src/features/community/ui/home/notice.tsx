@@ -87,7 +87,9 @@ export default function Notice({ pageSize = 5 }: Props) {
                   onPress={() => handlePressArticle(notice.id)}
                   onLike={() => {}}
                   onDelete={() => {}}
-                  refresh={async () => {}}
+                  refresh={() => {}}
+                  isPreviewOpen={false}
+                  onTogglePreview={() => {}}
                 />
               </TouchableOpacity>
             </View>

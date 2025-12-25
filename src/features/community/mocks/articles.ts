@@ -1,4 +1,4 @@
-import { Article } from '../types';
+import type { Article } from '../types';
 
 export const mockArticles: Article[] = [
   {
@@ -11,10 +11,15 @@ export const mockArticles: Article[] = [
       name: '홍길동',
       age: 25,
       gender: 'MALE' as const,
-      universityDetails: { name: '서울대학교', authentication: true, department: '컴퓨터공학과', grade: '3학년', studentNumber: '2021001' }
+      universityDetails: { name: '서울대학교', authentication: true, department: '컴퓨터공학과', grade: '3학년', studentNumber: '2021001', code: 'SNU', region: '서울' }
     },
-    likes: 0,
-    views: 0
+    category: 'general' as any,
+    commentCount: 0,
+    readCount: 0,
+    likeCount: 0,
+    updatedAt: new Date().toISOString(),
+    isLiked: false,
+    comments: [],
   },
   {
     id: '2',
@@ -24,12 +29,17 @@ export const mockArticles: Article[] = [
     author: {
       id: '2',
       name: '김철수',
-            age: 23,
+      age: 23,
       gender: 'FEMALE' as const,
-      universityDetails: { name: '연세대학교', authentication: true, department: '경제학과', grade: '2학년', studentNumber: '2022001' }
+      universityDetails: { name: '연세대학교', authentication: true, department: '경제학과', grade: '2학년', studentNumber: '2022001', code: 'YSU', region: '서울' }
     },
-    likes: 0,
-    views: 0
+    category: 'general' as any,
+    commentCount: 0,
+    readCount: 0,
+    likeCount: 0,
+    updatedAt: new Date().toISOString(),
+    isLiked: false,
+    comments: [],
   },
   {
     id: '3',
@@ -39,12 +49,17 @@ export const mockArticles: Article[] = [
     author: {
       id: '3',
       name: '이영희',
-            age: 27,
+      age: 27,
       gender: 'MALE' as const,
-      universityDetails: { name: '고려대학교', authentication: true, department: '국문학과', grade: '4학년', studentNumber: '2020001' }
+      universityDetails: { name: '고려대학교', authentication: true, department: '국문학과', grade: '4학년', studentNumber: '2020001', code: 'KU', region: '서울' }
     },
-    likes: 0,
-    views: 0
+    category: 'general' as any,
+    commentCount: 0,
+    readCount: 0,
+    likeCount: 0,
+    updatedAt: new Date().toISOString(),
+    isLiked: false,
+    comments: [],
   }
 ];
 
@@ -57,11 +72,17 @@ export const mockPopularArticles: Article[] = [
     author: {
       id: '4',
       name: '토끼러버',
-            age: 22,
-      university: { name: '서울대학교', image: require('@/assets/images/univ.png') }
+      age: 22,
+      gender: 'MALE' as const,
+      universityDetails: { name: '서울대학교', authentication: true, department: null, grade: null, studentNumber: null, code: 'SNU', region: '서울' }
     },
-    likes: 10,
-    views: 5
+    category: 'general' as any,
+    commentCount: 0,
+    readCount: 5,
+    likeCount: 10,
+    updatedAt: new Date().toISOString(),
+    isLiked: false,
+    comments: [],
   },
   {
     id: '5',
@@ -71,11 +92,17 @@ export const mockPopularArticles: Article[] = [
     author: {
       id: '5',
       name: '별덕후',
-            age: 24,
-      university: { name: '서울대학교', image: require('@/assets/images/univ.png') }
+      age: 24,
+      gender: 'FEMALE' as const,
+      universityDetails: { name: '서울대학교', authentication: true, department: null, grade: null, studentNumber: null, code: 'SNU', region: '서울' }
     },
-    likes: 15,
-    views: 8
+    category: 'general' as any,
+    commentCount: 0,
+    readCount: 8,
+    likeCount: 15,
+    updatedAt: new Date().toISOString(),
+    isLiked: false,
+    comments: [],
   }
 ];
 

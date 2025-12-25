@@ -1,5 +1,6 @@
 import { View, StyleSheet } from "react-native";
-import { Divider, Text } from "@/src/shared/ui";
+import { Text } from "../text";
+import { Divider } from "../divider";
 
 type SectionProps = {
   title: string;

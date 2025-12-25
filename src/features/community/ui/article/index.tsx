@@ -17,7 +17,7 @@ import {
 } from "@/src/shared/ui";
 import { router } from "expo-router";
 import { useCallback, useEffect } from "react";
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import type { Article as ArticleType } from "../../types";
 import { Comment } from "../comment";
@@ -26,14 +26,14 @@ import Interaction from "./interaction-nav";
 import { useBlockUser } from "../../hooks/use-block-user";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { useTranslation } from "react-i18next";
-interface ArticleItemProps {
+export interface ArticleItemProps {
   data: ArticleType;
   onPress: () => void;
   onLike: () => void;
-  refresh: () => void;
+  refresh: () => void | Promise<void>;
   onDelete: (id: string) => void;
-  isPreviewOpen: boolean;
-  onTogglePreview: () => void;
+  isPreviewOpen?: boolean;
+  onTogglePreview?: () => void;
 }
 
 export function Article({
@@ -41,8 +41,8 @@ export function Article({
   onPress,
   onLike,
   onDelete,
-  isPreviewOpen,
-  onTogglePreview,
+  isPreviewOpen = false,
+  onTogglePreview = () => {},
 }: ArticleItemProps) {
   const { my } = useAuth();
   const { t } = useTranslation();
@@ -168,7 +168,7 @@ export function Article({
 
         <View style={styles.contentRow}>
           <View style={styles.textContent}>
-            <Text numberOfLines={1} size="md" weight="medium" textColor="black">
+            <Text numberOfLines={1} ellipsizeMode="tail" size="md" weight="medium" textColor="black">
               {data.title}
             </Text>
 
@@ -301,7 +301,9 @@ const styles = StyleSheet.create({
   },
   textContent: {
     flex: 1,
+    flexShrink: 1,
     minWidth: 0,
+    overflow: "hidden",
   },
   contentText: {
     marginTop: 8,
@@ -310,6 +312,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: 70,
     height: 70,
+    flexShrink: 0,
   },
   imageWrapper: {
     position: "relative",

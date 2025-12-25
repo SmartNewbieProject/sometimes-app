@@ -1,50 +1,19 @@
 import ModalParticle from "@/src/widgets/particle/modal-particle";
 import { semanticColors } from '../constants/semantic-colors';
 import ErrorFace from "@assets/icons/error-face.svg";
-import Letter from "@assets/icons/letter.svg";
 import { Image } from "expo-image";
-import type React from "react";
 import {
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
   createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
   useState,
 } from "react";
-import { type LayoutChangeEvent, Modal, StyleSheet, View, useWindowDimensions } from "react-native";
+import { type LayoutChangeEvent, Modal, StyleSheet, View, useWindowDimensions, TouchableOpacity, Pressable } from "react-native";
 import useCurrentModal from "../hooks/use-current-modal";
 import useNestedModal from "../hooks/use-nested-modal";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
+import type { ModalOptions, ErrorModalOptions, ModalOption, ModalOptionOrNull } from "./modal-types";
 
-type ModalOptions = {
-  title?: ReactNode;
-  customTitle?: ReactNode;
-  children?: ReactNode;
-  primaryButton?: {
-    text: string;
-    onClick: () => void;
-  };
-  banner?: React.ReactNode;
-  showParticle?: boolean;
-  showLogo?: boolean | React.ReactNode;
-  secondaryButton?: {
-    text: string;
-    onClick: () => void;
-  };
-  reverse?: boolean;
-  custom?: React.ElementType;
-  buttonLayout?: 'horizontal' | 'vertical'; // 버튼 배치 방향
-};
-
-export type ErrorModalOptions = {
-  message: string;
-  type: "announcement" | "error";
-};
+export type { ModalOptions, ErrorModalOptions, ModalOption, ModalOptionOrNull };
 
 type ModalContextType = {
   showModal: (options: ModalOptions) => void;
@@ -57,10 +26,6 @@ type ModalContextType = {
   ) => void;
   hideNestedModal: () => void;
 };
-
-export type ModalOption = ModalOptions | ErrorModalOptions;
-
-export type ModalOptionOrNull = null | ModalOptions | ErrorModalOptions;
 
 export const ModalContext = createContext<ModalContextType | null>(null);
 
@@ -88,26 +53,42 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const renderErrorModal = (
     options: ErrorModalOptions,
     type: "mono" | "nested"
-  ) => (
-    <View style={[styles.errorModalContainer, { width: modalWidth }]}>
-      <View style={styles.errorModalHeader}>
-        <ErrorFace />
-        <Text size="lg" weight="semibold" textColor="black">
-          {options.type === "error" ? "오류가 발생했어요." : "안내"}
+  ) => {
+    const dismissable = options.dismissable ?? true;
+    const handleClose = type === "mono" ? hideModal : hideNestedModal;
+
+    return (
+      <View style={[styles.errorModalContainer, { width: modalWidth }]}>
+        {dismissable && (
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={handleClose}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <View style={styles.closeIconContainer}>
+              <Text size="20" weight="medium" textColor="gray" style={{ lineHeight: 20 }}>✕</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        <View style={styles.errorModalHeader}>
+          <ErrorFace />
+          <Text size="lg" weight="semibold" textColor="black">
+            {options.type === "error" ? "오류가 발생했어요." : "안내"}
+          </Text>
+        </View>
+        <Text style={styles.errorModalMessage} weight="medium" textColor="black">
+          {options.message}
         </Text>
+        <Button
+          variant="primary"
+          onPress={handleClose}
+          width="full"
+        >
+          네, 확인했어요
+        </Button>
       </View>
-      <Text style={styles.errorModalMessage} weight="medium" textColor="black">
-        {options.message}
-      </Text>
-      <Button
-        variant="primary"
-        onPress={type === "mono" ? hideModal : hideNestedModal}
-        width="full"
-      >
-        네, 확인했어요
-      </Button>
-    </View>
-  );
+    );
+  };
 
   const renderCustomModal = (
     options: ModalOptions,
@@ -121,6 +102,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         hideNestedModal();
       }
     };
+    const handleClose = type === "mono" ? hideModal : hideNestedModal;
+    const dismissable = options.dismissable ?? true;
+
     const Custom = options?.custom;
     if (Custom) {
       return <Custom />;
@@ -132,9 +116,20 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         style={[
           styles.customModalContainer,
           { width: modalWidth },
-          options?.showLogo && styles.customModalWithLogo
+          options?.showLogo ? styles.customModalWithLogo : undefined
         ]}
       >
+        {dismissable && (
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={handleClose}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <View style={styles.closeIconContainer}>
+              <Text size="20" weight="medium" textColor="gray" style={{ lineHeight: 20 }}>✕</Text>
+            </View>
+          </TouchableOpacity>
+        )}
         {options?.showParticle &&
           PARTICLE_IMAGE.map((item, index) => (
             <ModalParticle
@@ -276,20 +271,48 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         animationType="fade"
         onRequestClose={hideModal}
       >
-        <View style={styles.modalOverlay}>
-          {currentModal && "type" in currentModal
-            ? renderErrorModal(currentModal as ErrorModalOptions, "mono")
-            : currentModal
-            ? renderCustomModal(currentModal as ModalOptions, "mono")
-            : null}
-        </View>
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={(e) => {
+            if (e.target === e.currentTarget) {
+              const isDismissable = currentModal && "type" in currentModal
+                ? (currentModal as ErrorModalOptions).dismissable ?? true
+                : (currentModal as ModalOptions).dismissable ?? true;
+              if (isDismissable) {
+                hideModal();
+              }
+            }
+          }}
+        >
+          <View onStartShouldSetResponder={() => true}>
+            {currentModal && "type" in currentModal
+              ? renderErrorModal(currentModal as ErrorModalOptions, "mono")
+              : currentModal
+              ? renderCustomModal(currentModal as ModalOptions, "mono")
+              : null}
+          </View>
+        </Pressable>
 
         {nestedModal && (
-          <View style={[StyleSheet.absoluteFill, styles.nestedModalOverlay]}>
-            {nestedModal && "type" in nestedModal
-              ? renderErrorModal(nestedModal as ErrorModalOptions, "nested")
-              : renderCustomModal(nestedModal as ModalOptions, "nested")}
-          </View>
+          <Pressable
+            style={[StyleSheet.absoluteFill, styles.nestedModalOverlay]}
+            onPress={(e) => {
+              if (e.target === e.currentTarget) {
+                const isDismissable = nestedModal && "type" in nestedModal
+                  ? (nestedModal as ErrorModalOptions).dismissable ?? true
+                  : (nestedModal as ModalOptions).dismissable ?? true;
+                if (isDismissable) {
+                  hideNestedModal();
+                }
+              }
+            }}
+          >
+            <View onStartShouldSetResponder={() => true}>
+              {nestedModal && "type" in nestedModal
+                ? renderErrorModal(nestedModal as ErrorModalOptions, "nested")
+                : renderCustomModal(nestedModal as ModalOptions, "nested")}
+            </View>
+          </Pressable>
         )}
       </Modal>
     </ModalContext.Provider>
@@ -302,6 +325,7 @@ const styles = StyleSheet.create({
     backgroundColor: semanticColors.surface.background,
     borderRadius: 16,
     padding: 20,
+    position: 'relative',
   },
   errorModalHeader: {
     flexDirection: 'row',
@@ -312,6 +336,22 @@ const styles = StyleSheet.create({
   errorModalMessage: {
     textAlign: 'center',
     marginBottom: 16,
+  },
+
+  // Close Button
+  closeButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 10,
+  },
+  closeIconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: semanticColors.surface.tertiary || '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   // Custom Modal Styles

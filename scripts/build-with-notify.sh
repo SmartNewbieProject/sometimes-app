@@ -58,8 +58,30 @@ if [ "$PLATFORM" = "android" ]; then
     fi
 fi
 
+# Select environment file based on profile
+case $PROFILE in
+    production)
+        ENV_FILE=".env.production"
+        ;;
+    preview)
+        ENV_FILE=".env.preview"
+        ;;
+    development|*)
+        ENV_FILE=".env"
+        ;;
+esac
+
+echo "Using environment file: $ENV_FILE"
+
+# Load environment variables
+if [ -f "$ENV_FILE" ]; then
+    export $(grep -v '^#' "$ENV_FILE" | xargs)
+else
+    echo "WARNING: $ENV_FILE not found, using default .env"
+    export $(grep -v '^#' .env | xargs)
+fi
+
 # Run the build
-export $(grep -v '^#' .env.production | xargs)
 EXPO_NO_DOCTOR=1 eas build --platform "$PLATFORM" --profile "$PROFILE" --local --non-interactive
 build_result=$?
 

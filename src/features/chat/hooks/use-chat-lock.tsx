@@ -40,7 +40,7 @@ function useChatLock(chatRoomId: string) {
             채팅방을 열 수 있어요
           </Text>
           <Text style={styles.modalContentText}>
-            지금 답잡을 보내 설레는 대화를 시작해보세요!
+            지금 답장을 보내 설레는 대화를 시작해보세요!
           </Text>
         </View>
       ),

@@ -87,7 +87,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
           media="print"
-          onLoad="this.media='all'"
+          onLoad={"this.media='all'" as unknown as React.ReactEventHandler<HTMLLinkElement>}
         />
         <noscript>
           <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
@@ -98,7 +98,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
           href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=M+PLUS+1p:wght@400;500;700&display=swap"
           rel="stylesheet"
           media="print"
-          onLoad="this.media='all'"
+          onLoad={"this.media='all'" as unknown as React.ReactEventHandler<HTMLLinkElement>}
         />
         <noscript>
           <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=M+PLUS+1p:wght@400;500;700&display=swap" rel="stylesheet" />

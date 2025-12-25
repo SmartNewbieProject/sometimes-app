@@ -30,7 +30,7 @@ function IdleMatchTimerContent() {
     key: "access-token",
     initialValue: null,
   });
-  const { data: profileDetails } = useProfileDetailsQuery(accessToken);
+  const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
   const {
     rematchingLoading,
     finishRematching,
@@ -85,7 +85,7 @@ function IdleMatchTimerContent() {
     if (!match) {
       return (
         <Waiting
-          match={createDefaultWaitingMatch()}
+          match={createDefaultWaitingMatch() as MatchDetails & { type: 'waiting'; untilNext: string }}
           onTimeEnd={refetch}
         />
       );
@@ -96,15 +96,15 @@ function IdleMatchTimerContent() {
       case "rematching":
         return <Partner match={match} />;
       case "pending-approval":
-        return <PendingApproval match={match} onTimeEnd={refetch} />;
+        return <PendingApproval match={match as MatchDetails & { type: 'pending-approval'; untilNext: string; approvalStatus: 'pending' | 'approved' | 'rejected' }} onTimeEnd={refetch} />;
       case "not-found":
         return <NotFound />;
       case "waiting":
-        return <Waiting match={match} onTimeEnd={refetch} />;
+        return <Waiting match={match as MatchDetails & { type: 'waiting'; untilNext: string }} onTimeEnd={refetch} />;
       default:
         return (
           <Waiting
-            match={createDefaultWaitingMatch()}
+            match={createDefaultWaitingMatch() as MatchDetails & { type: 'waiting'; untilNext: string }}
             onTimeEnd={refetch}
           />
         );

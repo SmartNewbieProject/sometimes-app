@@ -10,6 +10,7 @@ export type ChatDomainEvent =
 			payload: { success: boolean; serverMessage: Chat; tempId: string };
 	  }
 	| { type: 'MESSAGE_SEND_FAILED'; payload: { success: boolean; error: string; tempId: string } }
+	| { type: 'MESSAGE_RETRY_REQUESTED'; payload: { message: Chat; to: string } }
 
 	// 이미지 업로드 플로우
 	| {

@@ -57,9 +57,9 @@ export const useMomentSlidesQuery = () =>
 export const useLatestMomentReportQuery = () =>
   useQuery({
     queryKey: MOMENT_QUERY_KEYS.LATEST_REPORT_LEGACY,
-    queryFn: apis.getLatestMomentReport,
+    queryFn: apis.getLatestReport,
     staleTime: 1000 * 60 * 15, // 15분
-    select: (response: MomentReportResponse) => response.data,
+    select: (response: any) => response?.data ?? response,
   });
 
 // =============================================
@@ -72,8 +72,8 @@ export const useDailyQuestionQuery = () =>
     queryFn: apis.getDailyQuestion,
     staleTime: 1000 * 60 * 5, // 5분
     refetchOnWindowFocus: false, // 창 포커스시 불필요한 재요청 방지
-    select: (data: DailyQuestionResponse) => data,
-    retry: (failureCount, error) => {
+    select: (data: DailyQuestionResponse | { question: null; weekInfo: null }) => data,
+    retry: (failureCount, error: Error & { status?: number; errorCode?: string }) => {
       devLogWithTag('Moment Query', `Retry ${failureCount + 1}:`, error);
 
       // Don't retry authentication errors
@@ -82,13 +82,6 @@ export const useDailyQuestionQuery = () =>
         return false;
       }
       return failureCount < 3;
-    },
-    onError: (error) => {
-      logError('[Moment] Daily question failed:', {
-        message: error.message,
-        status: error.status,
-        errorCode: error.errorCode,
-      });
     },
   });
 
@@ -127,7 +120,7 @@ export const useSubmitAnswerMutation = () => {
       queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.QUESTION_HISTORY });
       queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.PROGRESS_STATUS });
     },
-    onError: (error) => {
+    onError: (error: Error & { blockedReason?: string; suggestedAction?: string }) => {
       logError('[Moment] Answer submission failed:', error);
 
       // Enhanced error logging for structured API errors
@@ -210,17 +203,8 @@ export const useLatestReportQuery = () =>
     queryFn: apis.getLatestReport,
     staleTime: 1000 * 60 * 15, // 15분
     retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
     enabled: true, // 명시적으로 활성화
-    onError: (error) => {
-      logError('[Moment] Latest report error:', error);
-    },
-    onSuccess: (data) => {
-      devLogWithTag('Moment Report', 'Success');
-    },
-    onSettled: (data, error) => {
-      devLogWithTag('Moment Report', 'Settled:', { hasData: !!data, hasError: !!error });
-    }
   });
 
 export const useReportHistoryInfiniteQuery = () =>
@@ -255,7 +239,7 @@ export const useSyncProfileMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: SyncProfileRequest) => apis.syncProfile(data),
+    mutationFn: (data: Parameters<typeof apis.syncProfile>[0]) => apis.syncProfile(data),
     onSuccess: (_, variables) => {
       // 프로필 동기화 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.PROFILE });
@@ -272,9 +256,10 @@ export const useSyncStatusQuery = (profileId: string) =>
     queryFn: () => apis.getSyncStatus(profileId),
     enabled: !!profileId,
     staleTime: 1000 * 60 * 2, // 2분
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
       // 진행 중인 상태이면 30초마다 재조회
-      return data?.status === 'pending' ? 30000 : false;
+      const data = query.state.data as SyncStatusResponse | undefined;
+      return (data?.syncStatus ?? data?.status) === 'pending' ? 30000 : false;
     },
   });
 
@@ -338,7 +323,8 @@ export const invalidateAnswersQueries = (queryClient: QueryClient) => {
 
 export const invalidateReportsQueries = (queryClient: QueryClient) => {
   queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.REPORTS });
-  queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.WEEKLY_REPORT });
+  // WEEKLY_REPORT is a function, invalidate using partial key match
+  queryClient.invalidateQueries({ queryKey: ['moment', 'reports', 'weekly'] });
   queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.REPORT_HISTORY });
   queryClient.invalidateQueries({ queryKey: MOMENT_QUERY_KEYS.LATEST_REPORT });
 };

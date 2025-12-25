@@ -9,7 +9,10 @@ export default function useArticleDetail(articleId: string) {
 
   const { data: article, isLoading: isArticleLoading, error: articleError } = useQuery<Article>({
     queryKey: QUERY_KEYS.articles.detail(articleId),
-    queryFn: () => ApiArticles.getArticle(articleId),
+    queryFn: () => {
+      console.log('[Community API] Fetching article:', articleId);
+      return ApiArticles.getArticle(articleId);
+    },
     staleTime: 0,
   });
 

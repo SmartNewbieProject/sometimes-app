@@ -12,41 +12,11 @@ import { PalePurpleGradient, StepSlider, Text } from "@shared/ui";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import i18n from "@/src/shared/libs/i18n";
 
 const { ui, hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
 const { InterestSteps } = services;
 const { usePreferenceOptionsQuery, PreferenceKeys: Keys } = queries;
-// TODO: The 't' function might not be in scope here.
-// Consider moving this array definition inside the component or passing 't' as a prop.
-const tooltips = [
-  {
-    title: i18n.t("apps.interest.smoke.tooltip_0_title"),
-    description: [
-      i18n.t("apps.interest.smoke.tooltip_0_desc_1"),
-      i18n.t("apps.interest.smoke.tooltip_0_desc_2"),
-      i18n.t("apps.interest.smoke.tooltip_0_desc_3"),
-    ],
-  },
-  {
-    title: i18n.t("apps.interest.smoke.tooltip_1_title"),
-    description: [
-      i18n.t("apps.interest.smoke.tooltip_1_desc_1"),
-      i18n.t("apps.interest.smoke.tooltip_1_desc_2"),
-      i18n.t("apps.interest.smoke.tooltip_1_desc_3"),
-      i18n.t("apps.interest.smoke.tooltip_1_desc_4"),
-    ],
-  },
-  {
-    title: i18n.t("apps.interest.smoke.tooltip_2_title"),
-    description: [
-      i18n.t("apps.interest.smoke.tooltip_2_desc_1"),
-      i18n.t("apps.interest.smoke.tooltip_2_desc_2"),
-      i18n.t("apps.interest.smoke.tooltip_2_desc_3"),
-    ],
-  },
-];
 
 export default function SmokingSelectionScreen() {
   const { t } = useTranslation();
@@ -72,6 +42,26 @@ export default function SmokingSelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+
+  const tooltips = preferences?.options.map((_, idx) => {
+    const titleKey = `apps.interest.smoke.tooltip_${idx}_title`;
+    const title = t(titleKey, { defaultValue: t("apps.interest.smoke.tooltip_0_title") });
+
+    const descriptions: string[] = [];
+    let descIdx = 1;
+    while (true) {
+      const descKey = `apps.interest.smoke.tooltip_${idx}_desc_${descIdx}`;
+      const desc = t(descKey, { defaultValue: "" });
+      if (!desc) break;
+      descriptions.push(desc);
+      descIdx++;
+    }
+
+    return {
+      title,
+      description: descriptions.length > 0 ? descriptions : [t("apps.interest.smoke.tooltip_0_desc_1")],
+    };
+  }) ?? [];
   useEffect(() => {
     if (optionsLoading) return;
     if (!smoking && preferences.options[currentIndex]) {
@@ -139,8 +129,8 @@ export default function SmokingSelectionScreen() {
 
         <View style={styles.tooltipContainer}>
           <Tooltip
-            title={tooltips[currentIndex].title}
-            description={tooltips[currentIndex].description}
+            title={tooltips[currentIndex]?.title ?? ""}
+            description={tooltips[currentIndex]?.description ?? []}
           />
         </View>
       </View>

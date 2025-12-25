@@ -5,6 +5,7 @@ import home from './apps/home.json';
 import interest from './apps/interest.json';
 import matching_history from './apps/matching_history.json';
 import my from './apps/my.json';
+import notification from './apps/notification.json';
 import partner from './apps/partner.json';
 import postBox from './apps/post-box.json';
 import profile_edit from './apps/profile-edit.json';
@@ -47,6 +48,8 @@ import featureMypage from './features/mypage.json';
 import featuresMoment from './features/moment.json';
 import featuresSomemate from './features/somemate.json';
 import featuresOnboarding from './features/onboarding.json';
+import featuresJpAuth from './features/jp-auth.json';
+import featuresCardNews from './features/card-news.json';
 
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
@@ -74,6 +77,7 @@ const apps = {
   interest: interest,
   matching_history: matching_history,
   my: my,
+  notification: notification,
   partner: partner,
   'my-info': myInfo,
   postBox: postBox,
@@ -118,6 +122,8 @@ const features = {
   'moment': featuresMoment,
   'somemate': featuresSomemate,
   'onboarding': featuresOnboarding,
+  'jp-auth': featuresJpAuth,
+  'card-news': featuresCardNews,
 };
 
 const widgets = {
@@ -142,7 +148,7 @@ const shareds = {
 };
 
 export default {
-  global,
+  ...global,
   apps,
   features,
   widgets,

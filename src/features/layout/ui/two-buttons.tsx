@@ -44,7 +44,7 @@ export const TwoButtons = ({
           styles={[styles.rightButton, { flex: 0.3 }]}
           onPress={onClickPrevious!}
         >
-          <Text style={styles.rightButtonText}> {content?.prev || t("global.back")}</Text>
+          <Text style={styles.rightButtonText}> {content?.prev || t("back")}</Text>
         </Button>
       )}
       <Button
@@ -52,7 +52,7 @@ export const TwoButtons = ({
         styles={[styles.leftButton, { flex: hidePrevious ? 1 : 0.7 }]}
         disabled={disabledNext}
       >
-        <Text style={styles.leftButtonText}>{content?.next || t("global.next")}</Text>
+        <Text style={styles.leftButtonText}>{content?.next || t("next")}</Text>
       </Button>
     </View>
   );

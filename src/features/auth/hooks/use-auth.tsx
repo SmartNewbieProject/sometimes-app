@@ -27,7 +27,7 @@ export function useAuth() {
   const { t } = useTranslation();
   const { trackEvent } = useMixpanel();
 
-  const { value: accessToken, setValue: setToken } = useStorage<string | null>({
+  const { value: accessToken, setValue: setToken, loading: tokenLoading } = useStorage<string | null>({
     key: "access-token",
     initialValue: null,
   });
@@ -242,6 +242,7 @@ export function useAuth() {
     logoutOnly,
     clearTokensOnly,
     accessToken,
+    tokenLoading,
     my: {
       ...my,
       universityDetails: profileDetails?.universityDetails,

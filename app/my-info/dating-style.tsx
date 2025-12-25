@@ -21,7 +21,7 @@ const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 export default function DatingStyleSelectionScreen() {
   const { t } = useTranslation();
   const { my } = useAuth();
-  const { datingStyleIds, updateForm } = useMyInfoForm();
+  const { datingStyleIds = [], updateForm } = useMyInfoForm();
   const {
     data: preferencesArray = [
       {

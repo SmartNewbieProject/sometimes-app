@@ -88,7 +88,6 @@ function UniversityCluster() {
           renderItem={({ item }) => (
             <UniversityCard onClick={() => {}} isSelected={false} item={item} />
           )}
-          estimatedItemSize={90}
           contentContainerStyle={{ paddingBottom: 160 }}
         />
       </ScrollView>

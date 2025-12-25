@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prompt>
+  <metadata>
+    <title>알림 시스템 redirectUrl 개선 작업</title>
+    <priority>P0 - Critical</priority>
+    <estimated_time>2-3일</estimated_time>
+    <related_issue>커뮤니티 댓글 알림 클릭 시 게시글 로딩 에러</related_issue>
+  </metadata>
+
+  <context>
+    <problem>
+      <description>
+        커뮤니티 게시글에 댓글이 달렸을 때 생성되는 알림의 redirectUrl을 통해 게시글로 이동 시,
+        "게시글을 불러오는중 오류가 발생했습니다" 에러가 발생하는 문제
+      </description>
+
+      <root_causes>
+        <cause priority="high">
+          <title>잘못된 redirectUrl 형식</title>
+          <examples>
+            <invalid>"/community/undefined"</invalid>
+            <invalid>"/community/null"</invalid>
+            <invalid>"community/123" (슬래시 없음)</invalid>
+            <invalid>"/community/" (ID 누락)</invalid>
+          </examples>
+          <valid_format>"/community/{articleId}"</valid_format>
+        </cause>
+
+        <cause priority="high">
+          <title>삭제된 게시글 참조</title>
+          <description>
+            게시글이 삭제되었는데 해당 게시글에 대한 알림은 남아있어서,
+            사용자가 알림 클릭 시 404 에러 발생
+          </description>
+        </cause>
+
+        <cause priority="medium">
+          <title>알림 생성 시 유효성 검증 부족</title>
+          <description>
+            알림 생성 시 게시글 존재 여부를 확인하지 않아,
+            존재하지 않는 게시글에 대한 알림이 생성될 수 있음
+          </description>
+        </cause>
+      </root_causes>
+    </problem>
+
+    <current_data_structure>
+      <notification_schema>
+        <field name="id" type="string" required="true"/>
+        <field name="userId" type="string" required="true"/>
+        <field name="type" type="'reward' | 'general' | 'contact'" required="true"/>
+        <field name="subType" type="NotificationSubType" required="true">
+          <possible_values>
+            community_comment, community_like, match_like, chat_message, etc.
+          </possible_values>
+        </field>
+        <field name="title" type="string" required="true"/>
+        <field name="content" type="string" required="true"/>
+        <field name="isRead" type="boolean" required="true"/>
+        <field name="deepLink" type="string" required="false"/>
+        <field name="redirectUrl" type="string" required="false">
+          <note>이 필드가 문제의 핵심</note>
+        </field>
+        <field name="data" type="Record&lt;string, any&gt;" required="false"/>
+        <field name="readAt" type="string" required="false"/>
+        <field name="createdAt" type="string" required="true"/>
+        <field name="updatedAt" type="string" required="true"/>
+        <field name="deletedAt" type="string" required="false"/>
+      </notification_schema>
+    </current_data_structure>
+
+    <frontend_changes>
+      <description>
+        프론트엔드에서는 이미 방어 로직을 추가했습니다:
+        - redirectUrl 형식 검증 (/, undefined, null 체크)
+        - 에러 발생 시 사용자 친화적 메시지 표시
+        - 상세 로깅 추가
+
+        하지만 근본적인 해결을 위해서는 백엔드에서 올바른 데이터를 생성하고 관리해야 합니다.
+      </description>
+    </frontend_changes>
+  </context>
+
+  <requirements>
+    <requirement id="REQ-001" priority="P0">
+      <title>redirectUrl 형식 검증 로직 구현</title>
+
+      <acceptance_criteria>
+        <criterion>알림 생성 시 redirectUrl이 올바른 형식인지 검증</criterion>
+        <criterion>잘못된 형식의 redirectUrl은 DB에 저장되지 않도록 차단</criterion>
+        <criterion>검증 실패 시 명확한 에러 메시지 반환</criterion>
+      </acceptance_criteria>
+
+      <validation_rules>
+        <rule>redirectUrl이 null 또는 undefined인 경우: 허용 (optional 필드)</rule>
+        <rule>redirectUrl이 빈 문자열("")인 경우: 거부</rule>
+        <rule>redirectUrl이 '/'로 시작하지 않는 경우: 거부</rule>
+        <rule>redirectUrl에 'undefined' 또는 'null' 문자열 포함 시: 거부</rule>
+        <rule>커뮤니티 URL 형식: /^\/community\/[a-zA-Z0-9-]+$/ 정규식 매칭 필요</rule>
+      </validation_rules>
+
+      <implementation_guide>
+        <step number="1">
+          <action>validateRedirectUrl 함수 생성</action>
+          <code_example language="typescript"><![CDATA[
+function validateRedirectUrl(url: string | null | undefined): boolean {
+  if (url === null || url === undefined) {
+    return true;
+  }
+
+  const trimmedUrl = url.trim();
+
+  if (trimmedUrl === '') {
+    return false;
+  }
+
+  if (!trimmedUrl.startsWith('/')) {
+    return false;
+  }
+
+  if (trimmedUrl.includes('undefined') || trimmedUrl.includes('null')) {
+    return false;
+  }
+
+  const communityRegex = /^\/community\/[a-zA-Z0-9-]+$/;
+  if (trimmedUrl.startsWith('/community/')) {
+    return communityRegex.test(trimmedUrl);
+  }
+
+  return true;
+}
+          ]]></code_example>
+        </step>
+
+        <step number="2">
+          <action>알림 생성 로직에 검증 함수 적용</action>
+          <code_example language="typescript"><![CDATA[
+async function createNotification(data: CreateNotificationDto) {
+  if (!validateRedirectUrl(data.redirectUrl)) {
+    throw new BadRequestException(
+      `Invalid redirectUrl format: ${data.redirectUrl}`
+    );
+  }
+
+  return await notificationRepository.create(data);
+}
+          ]]></code_example>
+        </step>
+
+        <step number="3">
+          <action>단위 테스트 작성</action>
+          <test_cases>
+            <test_case>
+              <input>"/community/abc123"</input>
+              <expected>true</expected>
+            </test_case>
+            <test_case>
+              <input>"community/abc123"</input>
+              <expected>false</expected>
+              <reason>슬래시 없음</reason>
+            </test_case>
+            <test_case>
+              <input>"/community/undefined"</input>
+              <expected>false</expected>
+              <reason>undefined 문자열 포함</reason>
+            </test_case>
+            <test_case>
+              <input>"/community/"</input>
+              <expected>false</expected>
+              <reason>ID 누락</reason>
+            </test_case>
+            <test_case>
+              <input>null</input>
+              <expected>true</expected>
+              <reason>optional 필드</reason>
+            </test_case>
+          </test_cases>
+        </step>
+      </implementation_guide>
+    </requirement>
+
+    <requirement id="REQ-002" priority="P0">
+      <title>알림 생성 시 게시글 존재 검증</title>
+
+      <acceptance_criteria>
+        <criterion>커뮤니티 댓글 알림 생성 전 해당 게시글이 존재하는지 확인</criterion>
+        <criterion>게시글이 없거나 삭제된 경우 알림 생성 실패</criterion>
+        <criterion>실패 시 로그 기록 및 적절한 에러 응답</criterion>
+      </acceptance_criteria>
+
+      <implementation_guide>
+        <code_example language="typescript"><![CDATA[
+async function createCommentNotification(
+  articleId: string,
+  commentAuthorId: string,
+  commentContent: string
+): Promise<Notification> {
+  // 1. 게시글 존재 여부 확인
+  const article = await articleRepository.findById(articleId);
+
+  if (!article || article.deletedAt) {
+    logger.error('Cannot create notification: Article not found', {
+      articleId,
+      commentAuthorId,
+      timestamp: new Date().toISOString(),
+    });
+
+    throw new NotFoundException(
+      `Cannot create notification: Article ${articleId} not found or deleted`
+    );
+  }
+
+  // 2. redirectUrl 생성 및 검증
+  const redirectUrl = `/community/${articleId}`;
+
+  if (!validateRedirectUrl(redirectUrl)) {
+    logger.error('Invalid redirectUrl generated', {
+      articleId,
+      redirectUrl,
+      timestamp: new Date().toISOString(),
+    });
+
+    throw new BadRequestException(
+      `Invalid redirectUrl format: ${redirectUrl}`
+    );
+  }
+
+  // 3. 알림 생성
+  const notification = await notificationRepository.create({
+    userId: article.authorId,
+    type: 'contact',
+    subType: 'community_comment',
+    title: '새 댓글이 달렸습니다',
+    content: truncateString(commentContent, 50),
+    redirectUrl,
+    data: {
+      articleId,
+      commentAuthorId,
+    },
+    isRead: false,
+  });
+
+  logger.info('Comment notification created successfully', {
+    notificationId: notification.id,
+    articleId,
+    timestamp: new Date().toISOString(),
+  });
+
+  return notification;
+}
+        ]]></code_example>
+      </implementation_guide>
+    </requirement>
+
+    <requirement id="REQ-003" priority="P1">
+      <title>게시글 삭제 시 관련 알림 처리</title>
+
+      <acceptance_criteria>
+        <criterion>게시글 삭제 시 해당 게시글을 참조하는 모든 알림도 처리</criterion>
+        <criterion>소프트 삭제(deletedAt) 방식 사용 권장</criterion>
+        <criterion>CASCADE 로직이 자동으로 실행되도록 구현</criterion>
+      </acceptance_criteria>
+
+      <implementation_options>
+        <option recommended="true">
+          <name>소프트 삭제 (Soft Delete)</name>
+          <advantages>
+            <advantage>데이터 히스토리 보존</advantage>
+            <advantage>필요시 복구 가능</advantage>
+            <advantage>프론트엔드 호환성 유지 (deletedAt 필드 이미 존재)</advantage>
+          </advantages>
+          <code_example language="typescript"><![CDATA[
+async function deleteArticle(articleId: string): Promise<void> {
+  // 1. 게시글 소프트 삭제
+  await articleRepository.softDelete(articleId);
+
+  // 2. 관련 알림도 소프트 삭제
+  await notificationRepository.update(
+    {
+      redirectUrl: {
+        $regex: `^/community/${articleId}`
+      },
+      deletedAt: null,
+    },
+    {
+      deletedAt: new Date(),
+    }
+  );
+
+  logger.info('Article and related notifications soft deleted', {
+    articleId,
+    timestamp: new Date().toISOString(),
+  });
+}
+          ]]></code_example>
+        </option>
+
+        <option>
+          <name>하드 삭제 (Hard Delete)</name>
+          <code_example language="typescript"><![CDATA[
+async function deleteArticle(articleId: string): Promise<void> {
+  await notificationRepository.delete({
+    redirectUrl: {
+      $regex: `^/community/${articleId}`
+    },
+  });
+
+  await articleRepository.delete(articleId);
+}
+          ]]></code_example>
+        </option>
+
+        <option>
+          <name>상태 플래그 추가</name>
+          <description>
+            알림 스키마에 isInvalid, invalidReason 필드 추가하여
+            참조 대상이 삭제되었음을 표시
+          </description>
+          <schema_change>
+            <field name="isInvalid" type="boolean" default="false"/>
+            <field name="invalidReason" type="string" required="false">
+              <possible_values>
+                article_deleted, user_blocked, content_removed
+              </possible_values>
+            </field>
+          </schema_change>
+        </option>
+      </implementation_options>
+    </requirement>
+
+    <requirement id="REQ-004" priority="P1">
+      <title>로깅 및 모니터링 강화</title>
+
+      <acceptance_criteria>
+        <criterion>알림 생성 실패 시 상세 로그 기록</criterion>
+        <criterion>잘못된 redirectUrl 시도 시 경고 알림</criterion>
+        <criterion>모니터링 대시보드에서 추적 가능한 메트릭 생성</criterion>
+      </acceptance_criteria>
+
+      <logging_format>
+        <log_example type="error"><![CDATA[
+{
+  "level": "error",
+  "message": "Failed to create notification",
+  "context": {
+    "articleId": "abc123",
+    "redirectUrl": "/community/undefined",
+    "reason": "Invalid redirectUrl format",
+    "userId": "user-456",
+    "timestamp": "2025-01-15T10:30:00.000Z"
+  }
+}
+        ]]></log_example>
+
+        <log_example type="info"><![CDATA[
+{
+  "level": "info",
+  "message": "Notification created successfully",
+  "context": {
+    "notificationId": "notif-789",
+    "articleId": "abc123",
+    "type": "community_comment",
+    "userId": "user-456",
+    "timestamp": "2025-01-15T10:30:00.000Z"
+  }
+}
+        ]]></log_example>
+      </logging_format>
+
+      <metrics>
+        <metric name="notification.creation.success">
+          <type>counter</type>
+          <tags>subType, type</tags>
+        </metric>
+        <metric name="notification.creation.failed">
+          <type>counter</type>
+          <tags>reason, subType</tags>
+        </metric>
+        <metric name="notification.invalid_redirect_url">
+          <type>counter</type>
+          <tags>pattern, subType</tags>
+        </metric>
+      </metrics>
+    </requirement>
+
+    <requirement id="REQ-005" priority="P2">
+      <title>기존 잘못된 데이터 정리</title>
+
+      <acceptance_criteria>
+        <criterion>현재 DB에 존재하는 잘못된 redirectUrl을 가진 알림 식별</criterion>
+        <criterion>해당 알림들을 수정 또는 삭제</criterion>
+        <criterion>마이그레이션 스크립트 작성 및 실행</criterion>
+      </acceptance_criteria>
+
+      <migration_steps>
+        <step number="1">
+          <action>잘못된 알림 찾기</action>
+          <query language="sql"><![CDATA[
+-- undefined/null 문자열 포함
+SELECT * FROM notifications
+WHERE redirectUrl LIKE '%undefined%'
+   OR redirectUrl LIKE '%null%'
+   OR redirectUrl NOT LIKE '/%'
+   OR redirectUrl LIKE '%//'
+   OR deletedAt IS NULL;
+          ]]></query>
+        </step>
+
+        <step number="2">
+          <action>삭제된 게시글 참조하는 알림 찾기</action>
+          <query language="sql"><![CDATA[
+SELECT n.*
+FROM notifications n
+LEFT JOIN articles a ON n.redirectUrl = CONCAT('/community/', a.id)
+WHERE n.redirectUrl LIKE '/community/%'
+  AND (a.id IS NULL OR a.deletedAt IS NOT NULL)
+  AND n.deletedAt IS NULL;
+          ]]></query>
+        </step>
+
+        <step number="3">
+          <action>소프트 삭제 실행</action>
+          <query language="sql"><![CDATA[
+UPDATE notifications
+SET deletedAt = NOW()
+WHERE (
+  redirectUrl LIKE '%undefined%'
+  OR redirectUrl LIKE '%null%'
+  OR redirectUrl NOT LIKE '/%'
+  OR id IN (
+    SELECT n.id
+    FROM notifications n
+    LEFT JOIN articles a ON n.redirectUrl = CONCAT('/community/', a.id)
+    WHERE n.redirectUrl LIKE '/community/%'
+      AND (a.id IS NULL OR a.deletedAt IS NOT NULL)
+  )
+)
+AND deletedAt IS NULL;
+          ]]></query>
+        </step>
+
+        <step number="4">
+          <action>마이그레이션 결과 확인</action>
+          <query language="sql"><![CDATA[
+-- 처리된 알림 수 확인
+SELECT
+  COUNT(*) as total_cleaned,
+  SUM(CASE WHEN redirectUrl LIKE '%undefined%' THEN 1 ELSE 0 END) as undefined_count,
+  SUM(CASE WHEN redirectUrl LIKE '%null%' THEN 1 ELSE 0 END) as null_count
+FROM notifications
+WHERE deletedAt IS NOT NULL
+  AND updatedAt > NOW() - INTERVAL '1 hour';
+          ]]></query>
+        </step>
+      </migration_steps>
+    </requirement>
+  </requirements>
+
+  <testing_strategy>
+    <unit_tests>
+      <test_suite name="redirectUrl validation">
+        <test name="should accept valid community URL"/>
+        <test name="should reject URL without leading slash"/>
+        <test name="should reject URL with undefined string"/>
+        <test name="should reject URL with null string"/>
+        <test name="should reject empty article ID"/>
+        <test name="should accept null/undefined value"/>
+      </test_suite>
+
+      <test_suite name="notification creation">
+        <test name="should create notification for valid article"/>
+        <test name="should fail for non-existent article"/>
+        <test name="should fail for deleted article"/>
+        <test name="should fail for invalid redirectUrl"/>
+      </test_suite>
+    </unit_tests>
+
+    <integration_tests>
+      <test_suite name="article deletion cascade">
+        <test name="should soft delete related notifications when article is deleted"/>
+        <test name="should not return deleted notifications in API"/>
+      </test_suite>
+
+      <test_suite name="end-to-end notification flow">
+        <test name="create article -> add comment -> generate notification -> verify redirectUrl"/>
+        <test name="delete article -> verify notifications are invalidated"/>
+      </test_suite>
+    </integration_tests>
+
+    <manual_testing>
+      <scenario>
+        <name>댓글 알림 생성 및 클릭</name>
+        <steps>
+          <step>게시글 작성</step>
+          <step>다른 사용자가 댓글 작성</step>
+          <step>알림 생성 확인 (DB 또는 API)</step>
+          <step>redirectUrl 형식 확인</step>
+          <step>프론트엔드에서 알림 클릭하여 게시글 이동 확인</step>
+        </steps>
+      </scenario>
+
+      <scenario>
+        <name>게시글 삭제 후 알림 처리</name>
+        <steps>
+          <step>게시글 작성 및 댓글 추가 (알림 생성)</step>
+          <step>게시글 삭제</step>
+          <step>알림이 소프트 삭제되었는지 확인 (deletedAt 체크)</step>
+          <step>프론트엔드 알림 목록에서 해당 알림이 보이지 않는지 확인</step>
+        </steps>
+      </scenario>
+    </manual_testing>
+  </testing_strategy>
+
+  <rollout_plan>
+    <phase number="1" duration="1-2일">
+      <name>검증 로직 구현 및 테스트</name>
+      <tasks>
+        <task>validateRedirectUrl 함수 구현</task>
+        <task>알림 생성 시 게시글 존재 확인 로직 추가</task>
+        <task>단위 테스트 작성 및 실행</task>
+        <task>코드 리뷰</task>
+      </tasks>
+    </phase>
+
+    <phase number="2" duration="0.5-1일">
+      <name>기존 데이터 정리</name>
+      <tasks>
+        <task>잘못된 redirectUrl을 가진 알림 쿼리 실행</task>
+        <task>마이그레이션 스크립트 작성</task>
+        <task>Staging 환경에서 마이그레이션 테스트</task>
+        <task>Production 환경에서 마이그레이션 실행</task>
+      </tasks>
+    </phase>
+
+    <phase number="3" duration="0.5일">
+      <name>CASCADE 로직 구현</name>
+      <tasks>
+        <task>게시글 삭제 시 알림 처리 로직 추가</task>
+        <task>통합 테스트</task>
+        <task>배포</task>
+      </tasks>
+    </phase>
+
+    <phase number="4" duration="0.5일">
+      <name>모니터링 및 검증</name>
+      <tasks>
+        <task>로깅 확인</task>
+        <task>메트릭 대시보드 확인</task>
+        <task>프론트엔드 팀과 함께 E2E 테스트</task>
+        <task>사용자 피드백 모니터링</task>
+      </tasks>
+    </phase>
+  </rollout_plan>
+
+  <questions_for_backend_team>
+    <question id="Q1">
+      <text>현재 알림 생성 로직이 어느 파일/서비스에 위치하나요?</text>
+      <purpose>수정할 코드 위치 파악</purpose>
+    </question>
+
+    <question id="Q2">
+      <text>게시글 삭제 로직이 어느 파일/서비스에 위치하나요?</text>
+      <purpose>CASCADE 로직 추가 위치 파악</purpose>
+    </question>
+
+    <question id="Q3">
+      <text>사용 중인 데이터베이스와 ORM/Query Builder는 무엇인가요?</text>
+      <purpose>쿼리 및 마이그레이션 스크립트 작성 방식 결정</purpose>
+      <examples>PostgreSQL + Prisma, MySQL + TypeORM, MongoDB + Mongoose</examples>
+    </question>
+
+    <question id="Q4">
+      <text>현재 잘못된 redirectUrl을 가진 알림이 대략 몇 건이나 존재하나요?</text>
+      <purpose>마이그레이션 규모 파악 및 다운타임 계획</purpose>
+    </question>
+
+    <question id="Q5">
+      <text>알림 생성 실패 시 어떻게 처리하면 되나요?</text>
+      <purpose>에러 핸들링 정책 확인</purpose>
+      <options>
+        <option>예외 발생시켜 트랜잭션 롤백</option>
+        <option>로깅만 하고 계속 진행</option>
+        <option>재시도 로직</option>
+      </options>
+    </question>
+  </questions_for_backend_team>
+
+  <success_criteria>
+    <criterion>새로 생성되는 모든 알림의 redirectUrl이 올바른 형식</criterion>
+    <criterion>존재하지 않는 게시글에 대한 알림 생성 차단</criterion>
+    <criterion>게시글 삭제 시 관련 알림 자동 처리</criterion>
+    <criterion>기존 잘못된 알림 데이터 100% 정리</criterion>
+    <criterion>프론트엔드에서 알림 클릭 시 에러 발생률 0%</criterion>
+    <criterion>모니터링 대시보드에서 알림 생성 실패 추적 가능</criterion>
+  </success_criteria>
+
+  <references>
+    <reference>
+      <title>프론트엔드 방어 로직 코드</title>
+      <file>app/notification/index.tsx</file>
+      <lines>26-90</lines>
+    </reference>
+
+    <reference>
+      <title>알림 타입 정의</title>
+      <file>src/features/notification/types/notification.ts</file>
+    </reference>
+
+    <reference>
+      <title>게시글 상세 화면 에러 처리</title>
+      <file>app/community/[id].tsx</file>
+      <lines>111-139</lines>
+    </reference>
+
+    <reference>
+      <title>상세 요구사항 문서</title>
+      <file>docs/BACKEND_NOTIFICATION_REQUIREMENTS.md</file>
+    </reference>
+  </references>
+</prompt>

@@ -42,7 +42,7 @@ export const useUserSession = (userId?: string) => {
 
   const backgroundStartTime = useRef<number>(0);
   const featureUsageStart = useRef<string>('');
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // 세션 ID 생성
   function generateSessionId(): string {
@@ -177,7 +177,7 @@ export const useUserSession = (userId?: string) => {
     mixpanelAdapter.track(MIXPANEL_EVENTS.SESSION_ENDED, {
       session_id: sessionRef.current.sessionId,
       session_duration: totalSessionTime,
-      end_reason,
+      end_reason: endReason,
       total_actions: sessionRef.current.featuresUsed.length,
       features_used: sessionRef.current.featuresUsed,
       engagement_score: calculateEngagementScore(sessionRef.current),

@@ -28,6 +28,7 @@ import { useAtt } from "@/src/shared/hooks";
 import { useStorage } from "@/src/shared/hooks/use-storage";
 import { AnalyticsProvider, ModalProvider } from "@/src/shared/providers";
 import Toast from "@/src/shared/ui/toast";
+import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SessionTracker } from "@/src/shared/components/session-tracker";
@@ -115,7 +116,7 @@ export default Sentry.wrap(function RootLayout() {
 
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        const mixpanelToken = process.env.EXPO_PUBLIC_MIXPANEL_TOKEN as string;
+        const mixpanelToken = env.MIXPANEL_TOKEN;
         if (mixpanelToken) {
           mixpanelAdapter.init(mixpanelToken, true);
           console.log('[SDK Init] Mixpanel initialized');
@@ -135,7 +136,7 @@ export default Sentry.wrap(function RootLayout() {
   }, []);
 
   // 웹에서는 CDN 폰트 사용 (+html.tsx에서 로드), 네이티브에서만 로컬 폰트 로드
-  const nativeFonts = Platform.OS !== 'web' ? {
+  const nativeFonts: Record<string, any> = Platform.OS !== 'web' ? {
     "Pretendard-Thin": require("../assets/fonts/Pretendard-Thin.ttf"),
     "Pretendard-ExtraLight": require("../assets/fonts/Pretendard-ExtraLight.ttf"),
     "Pretendard-Light": require("../assets/fonts/Pretendard-Light.otf"),
@@ -146,16 +147,14 @@ export default Sentry.wrap(function RootLayout() {
     "Pretendard-ExtraBold": require("../assets/fonts/Pretendard-ExtraBold.ttf"),
     "Pretendard-Black": require("../assets/fonts/Pretendard-Black.ttf"),
     Rubik: require("../assets/fonts/Rubik-Regular.ttf"),
-    "Rubik-Medium": require("../assets/fonts/Rubik-Medium.ttf"),
     "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
-    "Rubik-Light": require("../assets/fonts/Rubik-Light.ttf"),
-    "Rubik-SemiBold": require("../assets/fonts/Rubik-SemiBold.ttf"),
     "Gmarket-Sans-Medium": require("../assets/fonts/GmarketSansTTFMedium.ttf"),
     "Gmarket-Sans-Bold": require("../assets/fonts/GmarketSansTTFBold.ttf"),
     "Gmarket-Sans-Light": require("../assets/fonts/GmarketSansTTFLight.ttf"),
     StyleScript: require("../assets/fonts/StyleScript-Regular.ttf"),
     "MPLUS1p-Thin": require("../assets/fonts/MPLUS1p-Thin.ttf"),
     "MPLUS1p-Light": require("../assets/fonts/MPLUS1p-Light.ttf"),
+    "MPLUS1p-Regular": require("../assets/fonts/MPLUS1p-Regular.ttf"),
     "MPLUS1p-Medium": require("../assets/fonts/MPLUS1p-Medium.ttf"),
     "MPLUS1p-Bold": require("../assets/fonts/MPLUS1p-Bold.ttf"),
     "MPLUS1p-ExtraBold": require("../assets/fonts/MPLUS1p-ExtraBold.ttf"),

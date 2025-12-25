@@ -1,3 +1,4 @@
+import { env } from '@/src/shared/libs/env';
 import type {
 	PortOneIdentityVerificationRequest,
 	PortOneIdentityVerificationResponse,
@@ -12,8 +13,8 @@ export class PortOneAuthService {
 	private readonly passChannelKey: string;
 
 	constructor() {
-		this.storeId = process.env.EXPO_PUBLIC_STORE_ID as string;
-		this.passChannelKey = process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY as string;
+		this.storeId = env.STORE_ID;
+		this.passChannelKey = env.PASS_CHANNEL_KEY;
 
 		this.validateEnvironmentVariables();
 	}
@@ -25,8 +26,8 @@ export class PortOneAuthService {
 
 	private validateEnvironmentVariables() {
 		const requiredEnvVars = [
-			{ key: 'EXPO_PUBLIC_STORE_ID', value: this.storeId },
-			{ key: 'EXPO_PUBLIC_PASS_CHANNEL_KEY', value: this.passChannelKey },
+			{ key: 'STORE_ID', value: this.storeId },
+			{ key: 'PASS_CHANNEL_KEY', value: this.passChannelKey },
 		];
 
 		for (const { key, value } of requiredEnvVars) {

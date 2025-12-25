@@ -1,8 +1,9 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { checkAppEnvironment, logger } from '@shared/libs';
+import { checkAppEnvironment } from '@shared/libs';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Platform } from 'react-native';
@@ -13,6 +14,8 @@ import type {
 	PortOneIdentityVerificationResponse,
 } from '../types';
 import { isAdult } from '../utils';
+
+const track = mixpanelAdapter.track.bind(mixpanelAdapter);
 
 interface UsePortOneLoginOptions {
 	onError?: (error: Error) => void;
@@ -38,9 +41,9 @@ const track = (eventName: string, properties?: Record<string, any>) => {
 
 const validateEnvironmentVariables = () => {
 	const requiredEnvVars = {
-		EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
-		EXPO_PUBLIC_STORE_ID: process.env.EXPO_PUBLIC_STORE_ID,
-		EXPO_PUBLIC_PASS_CHANNEL_KEY: process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY,
+		API_URL: env.API_URL,
+		STORE_ID: env.STORE_ID,
+		PASS_CHANNEL_KEY: env.PASS_CHANNEL_KEY,
 	};
 
 	for (const [key, value] of Object.entries(requiredEnvVars)) {
@@ -211,8 +214,8 @@ export const usePortOneLogin = ({
 
 	const handleMobileAuth = useCallback(() => {
 		const request: PortOneIdentityVerificationRequest = {
-			storeId: process.env.EXPO_PUBLIC_STORE_ID as string,
-			channelKey: process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY as string,
+			storeId: env.STORE_ID,
+			channelKey: env.PASS_CHANNEL_KEY,
 			identityVerificationId: `cert_${Date.now()}`,
 		};
 
@@ -224,26 +227,21 @@ export const usePortOneLogin = ({
 		try {
 			setError(null);
 
-			// development 환경에서는 외부 인증 창을 띄우지 않고 바로 다음 프로세스로
-			if (checkAppEnvironment('development')) {
-				setIsLoading(true);
-				track('Signup_IdentityVerification_Started', {
-					platform: Platform.OS,
-					type: 'pass',
-					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-				});
-				logger.debug('개발 환경에서는 가짜 본인인증 ID로 바로 처리합니다.');
-				await processLoginResult(`dev_mock_${Date.now()}`);
-				return;
-			}
-
-			validateEnvironmentVariables();
-
 			track('Signup_IdentityVerification_Started', {
 				platform: Platform.OS,
 				type: 'pass',
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
+
+			// 개발 환경에서는 실제 PASS 인증을 건너뛰고 바로 백엔드 dev API 호출
+			if (__DEV__) {
+				setIsLoading(true);
+				await processLoginResult('dev_mock_id');
+				setIsLoading(false);
+				return;
+			}
+
+			validateEnvironmentVariables();
 
 			if (Platform.OS === 'web') {
 				setIsLoading(true);

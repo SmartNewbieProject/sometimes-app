@@ -11,4 +11,4 @@ export interface ImageResourceProps {
   borderRadius?: number;
 }
 
-export { ImageResource } from './image-resource';
+export { ImageResource } from './image-resource.native';

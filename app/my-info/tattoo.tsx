@@ -38,32 +38,6 @@ export default function TattooSelectionScreen() {
   } = usePreferenceOptionsQuery();
   const { showErrorModal } = useModal();
 
-  const tooltips = [
-    {
-      title: t("apps.my-info.tattoo.tooltip_0_title"),
-      description: [
-        t("apps.my-info.tattoo.tooltip_0_desc_1"),
-        t("apps.my-info.tattoo.tooltip_0_desc_2"),
-      ],
-    },
-    {
-      title: t("apps.my-info.tattoo.tooltip_1_title"),
-      description: [
-        t("apps.my-info.tattoo.tooltip_1_desc_1"),
-        t("apps.my-info.tattoo.tooltip_1_desc_2"),
-        t("apps.my-info.tattoo.tooltip_1_desc_3"),
-      ],
-    },
-    {
-      title: t("apps.my-info.tattoo.tooltip_2_title"),
-      description: [
-        t("apps.my-info.tattoo.tooltip_2_desc_1"),
-        t("apps.my-info.tattoo.tooltip_2_desc_2"),
-        t("apps.my-info.tattoo.tooltip_2_desc_3"),
-      ],
-    },
-  ];
-
   const preferences: Preferences =
     preferencesArray?.find((item) => item.typeName === Keys.TATTOO) ??
     preferencesArray[0];
@@ -72,6 +46,26 @@ export default function TattooSelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+
+  const tooltips = preferences?.options.map((_, idx) => {
+    const titleKey = `apps.my-info.tattoo.tooltip_${idx}_title`;
+    const title = t(titleKey, { defaultValue: t("apps.my-info.tattoo.tooltip_0_title") });
+
+    const descriptions: string[] = [];
+    let descIdx = 1;
+    while (true) {
+      const descKey = `apps.my-info.tattoo.tooltip_${idx}_desc_${descIdx}`;
+      const desc = t(descKey, { defaultValue: "" });
+      if (!desc) break;
+      descriptions.push(desc);
+      descIdx++;
+    }
+
+    return {
+      title,
+      description: descriptions.length > 0 ? descriptions : [t("apps.my-info.tattoo.tooltip_0_desc_1")],
+    };
+  }) ?? [];
   useEffect(() => {
     if (optionsLoading) return;
     if (!tattoo && preferences.options[currentIndex]) {
@@ -118,17 +112,18 @@ export default function TattooSelectionScreen() {
         router.navigate("/my-info/done");
         setFormSubmitLoading(false);
       },
-      ({ error }) => {
+      (serverError: unknown) => {
+        const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
         console.error("Profile save error:", {
-          error,
-          errorMessage: error?.message,
-          errorString: error?.error,
-          status: error?.status,
-          statusCode: error?.statusCode,
+          error: serverError,
+          errorMessage: err?.message,
+          errorString: err?.error,
+          status: err?.status,
+          statusCode: err?.statusCode,
           form,
         });
 
-        const errorMessage = error?.message || error?.error || "프로필 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        const errorMessage = err?.message || err?.error || "프로필 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
         showErrorModal(errorMessage, "error");
         setFormSubmitLoading(false);
       }
@@ -188,8 +183,8 @@ export default function TattooSelectionScreen() {
         </View>
         <View style={styles.tooltipContainer}>
           <Tooltip
-            title={tooltips[currentIndex].title}
-            description={tooltips[currentIndex].description}
+            title={tooltips[currentIndex]?.title ?? ""}
+            description={tooltips[currentIndex]?.description ?? []}
           />
         </View>
       </View>

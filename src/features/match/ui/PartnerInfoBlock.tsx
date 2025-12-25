@@ -95,8 +95,7 @@ export const PartnerMBTI = ({ partner }: PartnerInfoBlockProps) => {
             <View style={styles.mbtiImageContainer}>
                 <ImageResource
                     resource={ImageResources[partner.mbti as keyof typeof ImageResources]}
-                    width="100%"
-                    height="100%"
+                    style={styles.mbtiImage}
                 />
             </View>
         </View>
@@ -138,5 +137,9 @@ const styles = StyleSheet.create({
     mbtiImageContainer: {
         width: '100%',
         aspectRatio: 280 / 160,
+    },
+    mbtiImage: {
+        width: '100%',
+        height: '100%',
     },
 });

@@ -44,7 +44,7 @@ function AppleGemStore() {
     setPurchasing(true);
     try {
       const extendedPurchase = purchase as ExtendedProductPurchase;
-      const transactionReceipt = extendedPurchase?.transactionReceipt || extendedPurchase?.jwsRepresentationIOS;
+      const transactionReceipt = extendedPurchase?.purchaseToken;
 
       if (!transactionReceipt || transactionReceipt.trim() === "") {
         console.error("❌ Invalid transactionReceipt:", { transactionReceipt, purchase });
@@ -154,7 +154,8 @@ function AppleGemStore() {
           ios: { sku: productId },
           android: { skus: [productId] },
         },
-      });
+        type: "inapp",
+      } as unknown as Parameters<typeof requestPurchase>[0]);
     } catch (error) {
       console.error("Purchase failed:", error);
 

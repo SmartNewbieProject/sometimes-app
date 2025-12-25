@@ -20,7 +20,7 @@ export const IconWrapper: React.FC<IconProps> = ({
 }) => {
   return (
     <View style={[styles.container, style]}>
-      {React.cloneElement(children as React.ReactElement, {
+      {React.cloneElement(children as React.ReactElement<any>, {
         width: width || size,
         height: height || size,
         color,

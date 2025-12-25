@@ -9,8 +9,8 @@ import { semanticColors } from "../../constants/semantic-colors";
 import colors from "../../constants/colors";
 
 export type TextVariant = "primary" | "secondary";
-export type TextSize = "xs" | "sm" | "md" | "10" | "18" | "20" | "13" | "12" | "chip" | "lg" | "xl" | "2xl" | "3xl";
-export type TextWeight = "normal" | "medium" | "semibold" | "light" | "bold";
+export type TextSize = "xs" | "sm" | "md" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "18" | "20" | "24" | "chip" | "lg" | "xl" | "2xl" | "3xl";
+export type TextWeight = "normal" | "regular" | "medium" | "semibold" | "light" | "bold";
 export type TextColor =
   | "white"
   | "purple"
@@ -24,7 +24,9 @@ export type TextColor =
   | "primary"
   | "secondary"
   | "muted"
-  | "disabled";
+  | "disabled"
+  | "inverse"
+  | "red";
 
 export type TextProps = Omit<RNTextProps, "style" | "children"> & {
   children?: React.ReactNode;
@@ -49,6 +51,7 @@ export const Text: React.FC<TextProps> = ({
       case "light":
         return "Pretendard-Light";
       case "normal":
+      case "regular":
         return "Pretendard-Regular";
       case "medium":
         return "Pretendard-Medium";
@@ -89,6 +92,10 @@ export const Text: React.FC<TextProps> = ({
         return semanticColors.text.muted;
       case "disabled":
         return semanticColors.text.disabled;
+      case "inverse":
+        return semanticColors.text.inverse;
+      case "red":
+        return colors.red500 || '#EF4444';
       default:
         return colors.darkPurple;
     }
@@ -120,10 +127,15 @@ const sizeMap: Record<TextSize, number> = {
   sm: 14,
   md: 16,
   "10": 10,
+  "11": 11,
   "12": 12,
   "13": 13,
+  "14": 14,
+  "15": 15,
+  "16": 16,
   "18": 18,
   "20": 20,
+  "24": 24,
   chip: 13,
   lg: 18,
   xl: 20,

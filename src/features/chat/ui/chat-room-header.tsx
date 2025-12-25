@@ -39,7 +39,10 @@ function ChatRoomHeader() {
     <>
       <ChatInfoModalContainer visible={isVisible} onClose={handleClose} />
       <View style={[styles.container]}>
-        <Pressable onPress={() => router.navigate("/chat")}>
+        <Pressable
+          onPress={() => router.navigate("/chat")}
+          style={styles.backButton}
+        >
           <ChevronLeft width={20} height={20} />
         </Pressable>
         <Pressable onPress={handleProfilePress} style={styles.profilePressable}>
@@ -87,6 +90,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "center",
   },
+  backButton: {
+    width: 44,
+    height: 44,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 4,
+  },
   profilePressable: {
     flexDirection: "row",
     alignItems: "center",
@@ -94,7 +104,7 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     width: 34,
-    marginLeft: 7,
+    marginLeft: 12,
     marginRight: 10,
     height: 34,
     borderRadius: 34,

@@ -5,6 +5,8 @@
     "dropdown_delete": "削除",
     "error_invalid": "無効なリクエストです",
     "error_loading": "読み込む際にエラーが発生しました",
+    "error_not_found": "投稿が見つからないか、削除された可能性があります。",
+    "error_back_button": "戻る",
     "loading": "投稿を読み込んでいます"
   },
   "write": {

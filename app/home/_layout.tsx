@@ -11,7 +11,7 @@ export default function HomeLayout() {
   const { t } = useTranslation();
   const { my, accessToken, queryProps } = useAuth();
   const [statusChecked, setStatusChecked] = useState(true); // 기본 true로 설정
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isTimeout, setIsTimeout] = useState(false);
 
   // MyDetails Query가 완료될 때까지 기다림

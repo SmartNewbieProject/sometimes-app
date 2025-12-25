@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { storage } from '@/src/shared/libs/store';
 import {
   MIXPANEL_EVENTS,
+  EVENT_SOURCES,
   type BaseEventProperties,
   type SignupEventProperties,
   type PaymentEventProperties,
@@ -57,8 +59,17 @@ export interface UseMixpanelReturn {
   };
 
   chatEvents: {
-    trackChatStarted: (chatPartnerId: string, matchType?: string) => void;
-    trackMessageSent: (chatId: string, messageType: string) => void;
+    trackChatStarted: (chatPartnerId: string, matchType?: string, timeSinceMatchAccepted?: number) => void;
+    trackMessageSent: (
+      chatId: string,
+      messageType: string,
+      options?: {
+        messageLength?: number;
+        isFirstMessage?: boolean;
+        timeSinceChatStartSeconds?: number;
+        chatPartnerId?: string;
+      }
+    ) => void;
     trackChatEnded: (chatId: string, chatDuration: number, messageCount: number, endReason: string) => void;
     trackGiftSent: (chatId: string, giftType: string) => void;
     trackChatResponse: (chatId: string, responseTimeSeconds: number, isFirstResponse: boolean, conversationDepth: number) => void;
@@ -119,9 +130,9 @@ export interface UseMixpanelReturn {
   // 2. 매칭 효율성 이벤트
   matchingEfficiencyEvents: {
     trackMatchRequestSent: (targetProfileId: string, requestType: string) => void;
-    trackMatchAccepted: (sourceProfileId: string, timeToResponse: number) => void;
+    trackMatchAccepted: (sourceProfileId: string, timeToResponse: number) => Promise<void>;
     trackMatchRejected: (sourceProfileId: string, rejectionReason?: string) => void;
-    trackFirstMessageSentAfterMatch: (matchId: string, timeToMessage: number) => void;
+    trackFirstMessageSentAfterMatch: (matchId: string, chatId: string, chatPartnerId: string, timeToMessage: number) => void;
     trackMatchConversationRate: (matchId: string, conversationStarted: boolean) => void;
     trackMatchCardViewed: (profileId: string, viewDuration: number) => void;
     trackMatchTimeToResponse: (matchId: string, responseType: string, responseTime: number) => void;
@@ -187,8 +198,9 @@ export const useMixpanel = (): UseMixpanelReturn => {
     <T extends string>(
       eventName: T,
       properties: KpiEventTypePropertiesMap[string] = {},
-      options = { immediate: false, validate: true }
+      options?: { immediate?: boolean; validate?: boolean }
     ) => {
+      const opts = { immediate: options?.immediate ?? false, validate: options?.validate ?? true };
       try {
         // 기본 공통 속성
         const baseProperties: BaseEventProperties = {
@@ -204,7 +216,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
         };
 
         // 이벤트 유효성 검사 (옵션)
-        if (options.validate && !MIXPANEL_EVENTS[eventName]) {
+        if (opts.validate && !MIXPANEL_EVENTS[eventName]) {
           console.warn(`[Mixpanel] Unknown event: ${eventName}`);
           return;
         }
@@ -374,17 +386,33 @@ export const useMixpanel = (): UseMixpanelReturn => {
 
   // 채팅 이벤트들
   const chatEvents = {
-    trackChatStarted: useCallback((chatPartnerId: string, matchType?: string) => {
+    trackChatStarted: useCallback((chatPartnerId: string, matchType?: string, timeSinceMatchAccepted?: number) => {
       trackEvent('Chat_Started', {
         chat_partner_id: chatPartnerId,
-        match_type: matchType as any
+        match_type: matchType as any,
+        ...(timeSinceMatchAccepted !== undefined && {
+          time_since_match_accepted: timeSinceMatchAccepted
+        })
       });
     }, [trackEvent]),
 
-    trackMessageSent: useCallback((chatId: string, messageType: string) => {
+    trackMessageSent: useCallback((
+      chatId: string,
+      messageType: string,
+      options?: {
+        messageLength?: number;
+        isFirstMessage?: boolean;
+        timeSinceChatStartSeconds?: number;
+        chatPartnerId?: string;
+      }
+    ) => {
       trackEvent('Chat_Message_Sent', {
         chat_id: chatId,
-        message_type: messageType as any
+        message_type: messageType as any,
+        ...(options?.messageLength !== undefined && { message_length: options.messageLength }),
+        ...(options?.isFirstMessage !== undefined && { is_first_message: options.isFirstMessage }),
+        ...(options?.timeSinceChatStartSeconds !== undefined && { time_since_chat_start_seconds: options.timeSinceChatStartSeconds }),
+        ...(options?.chatPartnerId && { chat_partner_id: options.chatPartnerId }),
       });
     }, [trackEvent]),
 
@@ -797,7 +825,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
 
     trackOnboardingStarted: useCallback((source?: string) => {
       trackEvent('Onboarding_Started', {
-        source: source || 'direct'
+        source: (source || EVENT_SOURCES.DIRECT) as typeof EVENT_SOURCES[keyof typeof EVENT_SOURCES]
       });
     }, [trackEvent]),
 
@@ -842,7 +870,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
       });
     }, [trackEvent]),
 
-    trackMatchAccepted: useCallback((sourceProfileId: string, timeToResponse: number) => {
+    trackMatchAccepted: useCallback(async (sourceProfileId: string, timeToResponse: number) => {
       trackEvent('Match_Accepted', {
         profile_id: sourceProfileId,
         time_to_response: timeToResponse,
@@ -856,6 +884,13 @@ export const useMixpanel = (): UseMixpanelReturn => {
           successful_matches: 1,
         },
       });
+
+      // Match_Accepted 시각을 저장 (Chat_Started와의 시간 차이 계산용)
+      try {
+        await storage.setItem(`match_accepted_time_${sourceProfileId}`, Date.now().toString());
+      } catch (error) {
+        console.error('[Mixpanel] Failed to save match accepted time:', error);
+      }
     }, [trackEvent, updateUserProperties]),
 
     trackMatchRejected: useCallback((sourceProfileId: string, rejectionReason?: string) => {
@@ -866,9 +901,16 @@ export const useMixpanel = (): UseMixpanelReturn => {
       });
     }, [trackEvent]),
 
-    trackFirstMessageSentAfterMatch: useCallback((matchId: string, timeToMessage: number) => {
+    trackFirstMessageSentAfterMatch: useCallback((
+      matchId: string,
+      chatId: string,
+      chatPartnerId: string,
+      timeToMessage: number
+    ) => {
       trackEvent('First_Message_Sent_After_Match', {
         match_id: matchId,
+        chat_id: chatId,
+        chat_partner_id: chatPartnerId,
         time_to_message: timeToMessage,
         conversation_started: true
       });
@@ -1019,7 +1061,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
       trackEvent('Subscription_Started', {
         item_type: planType,
         trial_period: trialPeriod || false,
-        source: 'subscription_start'
+        source: EVENT_SOURCES.SUBSCRIPTION_START
       });
     }, [trackEvent]),
 
@@ -1027,7 +1069,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
       trackEvent('Subscription_Renewed', {
         item_type: planType,
         renewal_count: renewalCount,
-        source: 'subscription_renewal'
+        source: EVENT_SOURCES.SUBSCRIPTION_RENEWAL
       });
     }, [trackEvent]),
 

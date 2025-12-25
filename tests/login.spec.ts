@@ -31,7 +31,7 @@ test.describe('Login Page Accessibility', () => {
     await expect(passButton).toBeEnabled();
 
     // Check button has proper styling
-    await expect(passButton).toHaveCSS('background-color', /rgb\(124, 58, 237\)|#/7C3AED/);
+    await expect(passButton).toHaveCSS('background-color', /rgb\(124, 58, 237\)|#7C3AED/);
   });
 
   test('Kakao login button should be accessible', async ({ page }) => {

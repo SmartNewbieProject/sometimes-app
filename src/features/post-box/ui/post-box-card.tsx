@@ -223,7 +223,7 @@ export function LikedMePendingButton({
         },
       },
       secondaryButton: {
-        text: t("global.no"),
+        text: t("no"),
         onClick: hideModal,
       },
     });
@@ -309,7 +309,7 @@ export function LikedMeOpenButton({
         },
       },
       secondaryButton: {
-        text: t("global.no"),
+        text: t("no"),
         onClick: hideModal,
       },
     });
@@ -321,7 +321,7 @@ export function LikedMeOpenButton({
         variant="primary"
         size="md"
         width="full"
-        style={[styles.chatButton, { height }]}
+        styles={[styles.chatButton, { height }]}
         prefix={<ChatIcon width={20} height={20} />}
       >
         {t("features.post-box.ui.card.buttons.start_chat")}
@@ -382,7 +382,7 @@ export function ILikedRejectedButton({
         onPress={handleBye}
         variant="outline"
         size="md"
-        style={[styles.chatButton, { height }]}
+        styles={[styles.chatButton, { height }]}
         prefix={<XIcon width={21} height={21} />}
       >
         {i18n.t("features.post-box.ui.card.buttons.not_a_match")}

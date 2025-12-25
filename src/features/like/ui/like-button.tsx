@@ -87,10 +87,10 @@ export const LikeButton = ({
           });
 
           // 기존 KPI 이벤트: 매칭 요청
-          matchingEvents.trackMatchingRequested(connectionId!, gemCost);
+          matchingEvents.trackMatchingRequested(connectionId!, gemCost ?? 0);
 
           // 구슬 사용 이벤트 (남성의 경우)
-          if (profileDetails?.gender === "MALE" && gemCost > 0) {
+          if (profileDetails?.gender === "MALE" && gemCost && gemCost > 0) {
             paymentEvents.trackGemUsed('matching', gemCost);
           }
 
@@ -122,7 +122,7 @@ export const LikeButton = ({
         },
       },
       secondaryButton: {
-        text: t("global.no"),
+        text: t("no"),
         onClick: hideModal,
       },
     });

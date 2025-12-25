@@ -16,5 +16,22 @@
     "title": "あれ、迷子になっちゃった！",
     "description": "お探しのページが見つからないか、\n間違ったパスでアクセスしました",
     "go_home": "ホームに戻る"
+  },
+  "slide_unlock": {
+    "default_text": "スワイプして本当のときめきを探す"
+  },
+  "jp_legal": {
+    "terms_of_service": "利用規約",
+    "privacy_collection": "個人情報の収集および利用同意",
+    "age_verification": "年齢確認および利用制限",
+    "privacy_policy": "プライバシーポリシー",
+    "commercial_law": "特定商取引法に基づく表記",
+    "age_confirmation_modal": {
+      "title": "年齢確認",
+      "description": "本サービスは18歳以上の方のみご利用いただけます。\n\n利用規約に同意し、18歳以上であることを確認してください。",
+      "confirm_button": "18歳以上であることを確認",
+      "cancel_button": "キャンセル",
+      "link_text": "年齢確認について詳しく見る"
+    }
   }
 }

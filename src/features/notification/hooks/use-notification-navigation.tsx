@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
-import { useNavigation , StackNavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '@/src/types/navigation';
+import { useNavigation } from '@react-navigation/native';
 import { Notification } from '../types/notification';
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
+type NavigationProp = {
+  navigate: (screen: string, params?: Record<string, unknown>) => void;
+};
 
 export const useNotificationNavigation = () => {
   const navigation = useNavigation<NavigationProp>();

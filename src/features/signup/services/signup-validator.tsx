@@ -69,7 +69,6 @@ export async function validatePhone(
     router,
     apis,
     trackSignupEvent,
-    track,
     showErrorModal,
     removeLoginType,
   }: {
@@ -77,16 +76,13 @@ export async function validatePhone(
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     apis: any;
     trackSignupEvent: (event: string, detail?: string) => void;
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    track: (event: string, data?: any) => void;
     showErrorModal: (message: string, type: "announcement" | "error") => void;
     removeLoginType: () => Promise<void>;
   }
 ): Promise<boolean> {
   if (!signupForm.phone) {
     showErrorModal("휴대폰 번호가 없습니다", "announcement");
-    trackSignupEvent("signup_error", "missing_phone");
-    track("Signup_profile_image_error", { error: "휴대폰 번호가 없습니다.", env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    trackSignupEvent("phone_missing");
     router.push("/auth/login");
     return false;
   }
@@ -94,8 +90,7 @@ export async function validatePhone(
   const { exists } = await apis.checkPhoneNumberExists(signupForm.phone);
   if (exists) {
     showErrorModal("이미 가입된 사용자입니다", "announcement");
-    trackSignupEvent("signup_error", "phone_already_exists");
-    track("Signup_profile_image_error", { error: "이미 가입된 사용자입니다", env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+    trackSignupEvent("phone_already_exists");
 
     if (Platform.OS === "ios") await removeLoginType();
     else if (Platform.OS === "web") sessionStorage.removeItem("loginType");
@@ -130,7 +125,6 @@ export async function processSignup(
   {
     router,
     apis,
-    track,
     trackSignupEvent,
     trackKpiEvent,
     removeLoginType,
@@ -141,8 +135,6 @@ export async function processSignup(
     router: Router;
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     apis: any;
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    track: (event: string, data?: any) => void;
     trackSignupEvent: (event: string, detail?: string) => void;
     trackKpiEvent?: (event: string, data?: any) => void;
     removeLoginType: () => Promise<void>;
@@ -155,7 +147,6 @@ export async function processSignup(
 
   console.log("[processSignup] signup response:", JSON.stringify(response, null, 2));
 
-  // 프로필 완성률 계산
   const profileFields = ['phone', 'universityId', 'profileImages', 'name', 'birthday', 'gender', 'departmentName', 'grade', 'studentNumber', 'instagramId'];
   const completedFields = profileFields.filter(field => {
     if (field === 'profileImages') {
@@ -166,40 +157,32 @@ export async function processSignup(
 
   const completionRate = Math.round((completedFields.length / profileFields.length) * 100);
 
-  // KPI 이벤트: 프로필 완성도 업데이트 (최초 가입 시)
   if (trackKpiEvent) {
     trackKpiEvent('Profile_Completion_Updated', {
       profile_completion_rate: completionRate,
       completed_fields: completedFields,
     });
 
-    // KPI 이벤트: 가입 완료
     trackKpiEvent('Signup_Completed', {
       profile_completion_rate: completionRate,
       total_duration: Date.now() - (signupForm.signupStartTime || Date.now())
     });
   }
 
-  // 기존 이벤트 호환성
-  track("Signup_profile_image", { success: true, env: process.env.EXPO_PUBLIC_TRACKING_MODE });
-  trackSignupEvent("signup_complete");
+  trackSignupEvent("complete");
 
   if (Platform.OS === "ios") await removeLoginType();
   else if (Platform.OS === "web") sessionStorage.removeItem("loginType");
 
-  // 토큰 저장 (회원가입 API가 토큰을 반환하므로 바로 로그인 처리)
   await updateToken(response.accessToken, response.refreshToken);
 
-  // 사용자 식별 (analytics)
   if (identifyUser && response.id) {
     identifyUser(response.id);
   }
 
-  // 회원가입 폼 데이터 클리어
   clearSignupForm();
 
   console.log("[processSignup] signup & login completed, navigating to done page");
 
-  // 회원가입 완료 페이지로 이동
   router.replace("/auth/signup/done");
 }

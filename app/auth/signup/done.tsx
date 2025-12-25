@@ -1,12 +1,26 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import { router } from "expo-router";
+import { useEffect, useRef } from "react";
 import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
 import colors from "@/src/shared/constants/colors";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
+import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
 
 const celebrationImage = require("@assets/images/info-miho.png");
 
 export default function SignupDoneScreen() {
+  const hasTracked = useRef(false);
+
+  useEffect(() => {
+    if (!hasTracked.current) {
+      mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_COMPLETED, {
+        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+      });
+      hasTracked.current = true;
+    }
+  }, []);
+
   const handleGoToService = () => {
     router.replace("/onboarding?source=signup");
   };

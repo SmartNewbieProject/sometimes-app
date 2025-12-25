@@ -101,7 +101,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
         <Show when={!event7Expired}>
           <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_7} onOpenPayment={(metadata) => {
             // KPI 이벤트: 결제 아이템 선택 (첫 구매)
-paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_7.gemCount);
+paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_7.totalGems);
 
             // 기존 이벤트 호환성
             paymentEvents.trackStoreViewed('gem');
@@ -113,7 +113,7 @@ paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_7.gemCount);
         <Show when={!event16Expired}>
           <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_16} onOpenPayment={(metadata) => {
             // KPI 이벤트: 결제 아이템 선택 (첫 구매)
-paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_16.gemCount);
+paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_16.totalGems);
             setEventType(EventType.FIRST_SALE_16);
             onOpenPayment(metadata);
           }} hot={false} />
@@ -121,7 +121,7 @@ paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_16.gemCount);
          <Show when={!event27Expired}>
           <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_27} onOpenPayment={(metadata) => {
             // KPI 이벤트: 결제 아이템 선택 (첫 구매)
-paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_27.gemCount);
+paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_27.totalGems);
             setEventType(EventType.FIRST_SALE_27);
             onOpenPayment(metadata);
           }} hot={false} />

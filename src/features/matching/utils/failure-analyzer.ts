@@ -281,7 +281,7 @@ export const predictFailureLikelihood = (context: FailureContext) => {
  * 예상되는 서버 메시지 반환
  */
 const getPredictedServerMessage = (riskType: string) => {
-  const messageMap = {
+  const messageMap: Record<string, string> = {
     'TICKET_INSUFFICIENT': '재매칭권이 없습니다',
     'GEM_INSUFFICIENT': '구슬이 부족합니다',
     'COMMUNICATION_RESTRICTED': '현재 상대방과 소통이 제한되어 있습니다',
@@ -297,8 +297,8 @@ const getPredictedServerMessage = (riskType: string) => {
 /**
  * 실패 방지 조치 제안
  */
-const getFailurePreventionActions = (riskType: string, context: FailureContext) => {
-  const actions = {
+const getFailurePreventionActions = (riskType: string, _context: FailureContext) => {
+  const actions: Record<string, { action: string; message: string; button: string; priority: string }> = {
     'TICKET_INSUFFICIENT': {
       action: 'SHOW_TICKET_PURCHASE_MODAL',
       message: '재매칭권이 필요합니다. 지금 구매하시겠어요?',

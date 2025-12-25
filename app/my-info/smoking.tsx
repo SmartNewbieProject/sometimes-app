@@ -22,25 +22,6 @@ export default function SmokingSelectionScreen() {
   const { updateStep } = useMyInfoStep();
   const { smoking, updateForm } = useMyInfoForm();
 
-  const tooltips = [
-    {
-      title: t("apps.my-info.smoking.tooltip_0_title"),
-      description: [
-        t("apps.my-info.smoking.tooltip_0_desc_1"),
-        t("apps.my-info.smoking.tooltip_0_desc_2"),
-        t("apps.my-info.smoking.tooltip_0_desc_3"),
-      ],
-    },
-    {
-      title: t("apps.my-info.smoking.tooltip_1_title"),
-      description: [t("apps.my-info.smoking.tooltip_1_desc_1")],
-    },
-    {
-      title: t("apps.my-info.smoking.tooltip_2_title"),
-      description: [t("apps.my-info.smoking.tooltip_2_desc_1")],
-    },
-  ];
-
   const {
     data: preferencesArray = [
       {
@@ -60,6 +41,26 @@ export default function SmokingSelectionScreen() {
   );
 
   const currentIndex = index !== undefined && index !== -1 ? index : 0;
+
+  const tooltips = preferences?.options.map((_, idx) => {
+    const titleKey = `apps.my-info.smoking.tooltip_${idx}_title`;
+    const title = t(titleKey, { defaultValue: t("apps.my-info.smoking.tooltip_0_title") });
+
+    const descriptions: string[] = [];
+    let descIdx = 1;
+    while (true) {
+      const descKey = `apps.my-info.smoking.tooltip_${idx}_desc_${descIdx}`;
+      const desc = t(descKey, { defaultValue: "" });
+      if (!desc) break;
+      descriptions.push(desc);
+      descIdx++;
+    }
+
+    return {
+      title,
+      description: descriptions.length > 0 ? descriptions : [t("apps.my-info.smoking.tooltip_0_desc_1")],
+    };
+  }) ?? [];
   useEffect(() => {
     if (optionsLoading) return;
     if (!smoking && preferences.options[currentIndex]) {
@@ -123,8 +124,8 @@ export default function SmokingSelectionScreen() {
 
         <View style={styles.tooltipContainer}>
           <Tooltip
-            title={tooltips[currentIndex].title}
-            description={tooltips[currentIndex].description}
+            title={tooltips[currentIndex]?.title ?? ""}
+            description={tooltips[currentIndex]?.description ?? []}
           />
         </View>
       </View>

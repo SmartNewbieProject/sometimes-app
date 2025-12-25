@@ -42,6 +42,7 @@ import { ImageResource } from "@ui/image-resource";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import Constants from 'expo-constants';
 
 const { ui, queries, hooks } = Home;
 const {
@@ -51,7 +52,7 @@ const {
   TipAnnouncement,
 } = ui;
 const { usePreferenceSelfQuery } = queries;
-const { useRedirectPreferences, useTemporalUniversity } = hooks;
+const { useRedirectPreferences } = hooks;
 
 const { ui: welcomeRewardUI, hooks: welcomeRewardHooks } = WelcomeReward;
 const { WelcomeRewardModal } = welcomeRewardUI;
@@ -119,7 +120,6 @@ const HomeScreen = () => {
     }
   }, [showModal]);
 
-  useTemporalUniversity();
   useVersionUpdate();
 
   // 화면이 포커스될 때마다 매칭 데이터 리프레시
@@ -229,6 +229,12 @@ const HomeScreen = () => {
         </View>
 
         <BusinessInfo />
+
+        <View style={styles.versionContainer}>
+          <Text style={styles.versionText}>
+            v{Constants.expoConfig?.version}
+          </Text>
+        </View>
       </ScrollView>
 
       <BottomNavigation />
@@ -260,6 +266,16 @@ const styles = StyleSheet.create({
   },
   tipSection: {
     marginVertical: 25,
+  },
+  versionContainer: {
+    alignItems: 'center',
+    paddingVertical: 16,
+    marginTop: 8,
+  },
+  versionText: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    fontWeight: '400',
   },
 });
 

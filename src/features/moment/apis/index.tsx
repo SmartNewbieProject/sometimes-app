@@ -1,6 +1,7 @@
 import { axiosClient } from "@/src/shared/libs";
 import type {
   MomentSlide,
+  MomentReport,
   MomentReportResponse,
   DailyQuestionResponse,
   RawDailyQuestionResponse,
@@ -13,10 +14,7 @@ import type {
   WeeklyAnswersResponse,
   GenerateReportResponse,
   WeeklyReportResponse,
-  ReportHistoryResponse,
-  LatestReportResponse,
-  SyncProfileRequest,
-  SyncProfileResponse,
+  LatestReport,
   SyncStatusResponse,
   QuestionHistoryParams,
   AnswersParams,
@@ -94,8 +92,12 @@ export interface ProfileIntroductionResponse {
 }
 
 export interface SyncProfileRequest {
-  syncKeywords: boolean;
-  syncIntroduction: boolean;
+  syncKeywords?: boolean;
+  syncIntroduction?: boolean;
+  mbti?: string;
+  hobbies?: string[];
+  interests?: string[];
+  introduction?: string;
 }
 
 export interface SyncProfileResponse {
@@ -145,7 +147,10 @@ export interface StatItem {
 
 export interface InsightItem {
   category: string;
-  summary: string;
+  summary?: string;
+  score?: number;
+  definition?: string;
+  feedback?: string;
 }
 
 // 차트 시각화용 데이터 타입 (백엔드 제안 구조)
@@ -182,7 +187,7 @@ export interface ReportHistoryItem {
 
 export interface ReportHistoryResponse {
   reports: ReportHistoryItem[];
-  pagination: {
+  pagination?: {
     page: number;
     limit: number;
     total: number;
@@ -328,9 +333,6 @@ export type AnswerHistory = AnswerHistoryResponse;
 export type ReportHistory = ReportHistoryResponse;
 export type ProgressStatus = UserProgressStatus;
 
-// Export ServerProgressStatus for type safety
-export type { ServerProgressStatus, UserProgressStatus };
-
 // =============================================
 // API Functions (Based on New API Specification)
 // =============================================
@@ -340,7 +342,7 @@ export type { ServerProgressStatus, UserProgressStatus };
 // =======================
 
 // Daily Question API
-export const getDailyQuestion = async (): Promise<DailyQuestionResponse> => {
+export const getDailyQuestion = async (): Promise<DailyQuestionResponse | { question: null; weekInfo: null }> => {
   try {
     devLogWithTag('Moment API', 'Starting getDailyQuestion');
 
@@ -364,7 +366,7 @@ export const getDailyQuestion = async (): Promise<DailyQuestionResponse> => {
       return {
         question: null,
         weekInfo: null,
-      };
+      } as { question: null; weekInfo: null };
     }
 
     devLogWithTag('Moment API', 'Question validated');
@@ -425,8 +427,9 @@ export const getDailyQuestion = async (): Promise<DailyQuestionResponse> => {
     };
   } catch (error) {
     logError('[Moment API] getDailyQuestion failed:', error);
-    logError('Error message:', error.message);
-    logError('Error stack:', error.stack);
+    const err = error as Error;
+    logError('Error message:', err.message);
+    logError('Error stack:', err.stack);
     throw error;
   }
 };
@@ -451,21 +454,27 @@ export const submitAnswer = async (data: SubmitAnswerRequest): Promise<SubmitAns
 
   try {
     // API now returns data directly without wrapper
-    const response = await axiosClient.post('/v1/moment/answers', data);
+    // axiosClient interceptor unwraps response.data automatically
+    const response = await axiosClient.post<SubmitAnswerResponse>('/v1/moment/answers', data);
     devLogWithTag('Moment API', 'Answer submitted');
 
     // API returns { id: "new-answer-uuid" }
-    return response;
+    return response as unknown as SubmitAnswerResponse;
   } catch (error) {
     logError('[Moment API] submitAnswer failed:', error);
 
     // Check if it's a structured error response from the API
-    if (error.response?.data?.error) {
-      const errorData = error.response.data;
+    const axiosError = error as { response?: { data?: { error?: unknown; message?: string; blockedReason?: string; suggestedAction?: string } } };
+    if (axiosError.response?.data?.error) {
+      const errorData = axiosError.response.data;
       devLogWithTag('Moment API', 'Structured error:', errorData);
 
       // Create a more descriptive error with the API's structured information
-      const enhancedError = new Error(errorData.message || '답변 제출에 실패했습니다');
+      const enhancedError = new Error(errorData.message || '답변 제출에 실패했습니다') as Error & {
+        blockedReason?: string;
+        suggestedAction?: string;
+        originalError?: unknown;
+      };
       enhancedError.name = 'SubmitAnswerError';
       enhancedError.blockedReason = errorData.blockedReason;
       enhancedError.suggestedAction = errorData.suggestedAction;
@@ -504,24 +513,25 @@ export const getWeeklyReport = async (params: WeeklyReportParams): Promise<Weekl
 
   try {
     // API now returns data directly without {success: boolean, data: T} wrapper
-    const response = await axiosClient.get('/v1/moment/reports/weekly', { params });
+    // axiosClient interceptor unwraps response.data automatically
+    const response: any = await axiosClient.get('/v1/moment/reports/weekly', { params });
     devLogWithTag('Moment API', 'Weekly report received');
 
     // Handle the case where API returns { reports: [...] } structure
     if (response && response.reports) {
       devLogWithTag('Moment API', 'Reports array structure detected');
-      return response; // Return as-is since UI expects this structure
+      return response as WeeklyReportResponse;
     }
 
     // Handle the case where API returns a single report object
     if (response && typeof response === 'object') {
       devLogWithTag('Moment API', 'Single report detected, wrapping');
-      return { reports: [response] };
+      return { reports: [response] } as unknown as WeeklyReportResponse;
     }
 
     // Handle empty or invalid response
     devLogWithTag('Moment API', 'No valid report data');
-    return { reports: [] };
+    return { reports: [] } as unknown as WeeklyReportResponse;
 
   } catch (error) {
     logError('[Moment API] getWeeklyReport failed:', error);
@@ -535,7 +545,7 @@ export const getReportHistory = async (params: ReportHistoryParams): Promise<Rep
 
   try {
     // API now returns data directly without {success: boolean, data: T} wrapper
-    const response = await axiosClient.get('/v1/moment/reports/history', { params });
+    const response = await axiosClient.get('/v1/moment/reports/history', { params }) as unknown as ReportHistoryResponse | ReportHistoryItem[];
     devLogWithTag('Moment API', 'Report history received:', { type: typeof response });
 
     // Validate the response structure
@@ -545,9 +555,9 @@ export const getReportHistory = async (params: ReportHistoryParams): Promise<Rep
     }
 
     // Handle reports array response
-    if (response.reports && Array.isArray(response.reports)) {
+    if ('reports' in response && Array.isArray(response.reports)) {
       devLogWithTag('Moment API', 'Reports array detected');
-      return response;
+      return response as ReportHistoryResponse;
     }
 
     // Handle case where API returns just the reports array
@@ -569,10 +579,10 @@ export const getReportHistory = async (params: ReportHistoryParams): Promise<Rep
 };
 
 // Latest Report API
-export const getLatestReport = async (): Promise<LatestReportResponse> => {
+export const getLatestReport = async (): Promise<LatestReport> => {
   devLogWithTag('Moment API', 'getLatestReport starting');
   try {
-    const response = await axiosClient.get('/v1/moment/reports/latest');
+    const response = await axiosClient.get('/v1/moment/reports/latest') as unknown as LatestReport;
     devLogWithTag('Moment API', 'Latest report received');
     return response;
   } catch (error) {
@@ -619,14 +629,14 @@ export const getMomentSlides = async (): Promise<MomentSlide[]> => {
 export const getLatestMomentReport = async (): Promise<MomentReportResponse> => {
   try {
     // Try to use the new API endpoint - API now returns data directly
-    const reportData = await axiosClient.get('/v1/moment/reports/latest');
+    const reportData = await axiosClient.get('/v1/moment/reports/latest') as unknown as MomentReport;
     console.log('📥 Latest Moment Report Response:', reportData);
 
     // Transform new API response to legacy format for backward compatibility
     return {
       success: true,
       message: 'Latest report retrieved successfully',
-      data: reportData, // API now returns data directly
+      data: reportData,
     };
   } catch (error) {
     console.error('💥 getLatestMomentReport failed:', error);
@@ -716,11 +726,11 @@ export const MOMENT_QUERY_KEYS = {
 
   // Answers API
   ANSWERS: ['moment', 'answers'],
-  WEEKLY_ANSWERS: (week: number, year: number) => ['moment', 'answers', 'weekly', week, year],
+  WEEKLY_ANSWERS: (week: number | undefined, year: number) => ['moment', 'answers', 'weekly', week ?? 0, year],
 
   // Reports API
   REPORTS: ['moment', 'reports'],
-  WEEKLY_REPORT: (week: number, year: number) => ['moment', 'reports', 'weekly', week, year],
+  WEEKLY_REPORT: (week: number | undefined, year: number) => ['moment', 'reports', 'weekly', week ?? 0, year],
   REPORT_HISTORY: ['moment', 'reports', 'history'],
   LATEST_REPORT: ['moment', 'reports', 'latest'],
 
@@ -755,12 +765,12 @@ export const paginationDefaults = {
 // Legacy API Service for backward compatibility
 export type MomentApiService = {
   assignQuestionToUser: (data: AdminQuestionAssignmentRequest) => Promise<AdminQuestionAssignmentResponse>;
-  getDailyQuestion: () => Promise<UpdatedDailyQuestionResponse | NoQuestionResponse>;
+  getDailyQuestion: () => Promise<DailyQuestionResponse | { question: null; weekInfo: null }>;
   submitAnswer: (data: SubmitAnswerRequest) => Promise<SubmitAnswerResponse>;
   getAnswerHistory: (params?: PaginationParams) => Promise<AnswerHistoryResponse>;
-  getWeeklyReport: (params: WeeklyReportRequest) => Promise<WeeklyReport>;
-  generateWeeklyReport: () => Promise<WeeklyReport>;
-  getReportHistory: (params?: PaginationParams) => Promise<ReportHistoryResponse>;
+  getWeeklyReport: (params: WeeklyReportParams) => Promise<WeeklyReportResponse>;
+  generateWeeklyReport: () => Promise<GenerateReportResponse>;
+  getReportHistory: (params: ReportHistoryParams) => Promise<ReportHistoryResponse>;
   getRecommendedKeywords: () => Promise<ProfileKeywordsResponse>;
   getProfileIntroduction: () => Promise<ProfileIntroductionResponse>;
   syncProfile: (data: SyncProfileRequest) => Promise<SyncProfileResponse>;
@@ -769,7 +779,13 @@ export type MomentApiService = {
   getUserProgressStatus: () => Promise<UserProgressStatus>;
   getWeeklyProgress: () => Promise<WeeklyProgress>;
   getMomentSlides: () => Promise<MomentSlide[]>;
-  getLatestReport: () => Promise<LatestReportResponse>;
+  getLatestReport: () => Promise<LatestReport>;
+  getQuestionHistory: (params: QuestionHistoryParams) => Promise<QuestionHistoryResponse>;
+  getLatestQuestions: () => Promise<LatestQuestionsResponse>;
+  getAnswers: (params: AnswersParams) => Promise<GetAnswersResponse>;
+  getWeeklyAnswers: (params: WeeklyAnswersParams) => Promise<WeeklyAnswersResponse>;
+  generateReport: () => Promise<GenerateReportResponse>;
+  getSyncStatus: (profileId: string) => Promise<SyncStatusResponse>;
 };
 
 // API Service Object
@@ -790,6 +806,12 @@ const momentApis: MomentApiService = {
   getWeeklyProgress,
   getMomentSlides,
   getLatestReport,
+  getQuestionHistory,
+  getLatestQuestions,
+  getAnswers,
+  getWeeklyAnswers,
+  generateReport,
+  getSyncStatus,
 };
 
 export default momentApis;

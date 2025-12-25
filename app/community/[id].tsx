@@ -12,7 +12,8 @@ import { Header, Show, Text, HeaderWithNotification } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 import { Linking, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import {
   SafeAreaView,
@@ -54,6 +55,8 @@ export default function ArticleDetailScreen() {
     setFalse: closeDropdown,
   } = useBoolean();
   const { my } = useAuth();
+  const { communityEvents } = useMixpanel();
+  const viewStartTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
     if (!my?.id) {
@@ -62,6 +65,17 @@ export default function ArticleDetailScreen() {
       return;
     }
   }, [my?.id]);
+
+  useEffect(() => {
+    if (!id || !article) return;
+
+    viewStartTimeRef.current = Date.now();
+
+    return () => {
+      const viewDuration = Math.floor((Date.now() - viewStartTimeRef.current) / 1000);
+      communityEvents.trackPostViewed(id, viewDuration);
+    };
+  }, [id, article, communityEvents]);
   const isValidArticle = (article: Article | undefined): article is Article => {
     return !!article && !!article.author;
   };
@@ -109,10 +123,32 @@ export default function ArticleDetailScreen() {
   }
 
   if (error) {
+    console.error('[Community] Failed to load article:', { id, error });
     return (
-      <View style={styles.errorContainer}>
-        <Text>{t("apps.community.id.error_loading")}</Text>
-      </View>
+      <DefaultLayout style={styles.container}>
+        <HeaderWithNotification
+          centerContent={<Text weight="bold">{t("apps.community.id.header_title")}</Text>}
+        />
+        <View style={styles.errorContainer}>
+          <Text textColor="black" weight="semibold" style={{ marginBottom: 8 }}>
+            {t("apps.community.id.error_loading")}
+          </Text>
+          <Text textColor="gray" size="14" style={{ marginBottom: 16 }}>
+            {t("apps.community.id.error_not_found")}
+          </Text>
+          <Pressable
+            onPress={() => router.back()}
+            style={{
+              backgroundColor: semanticColors.brand.primary,
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              borderRadius: 8,
+            }}
+          >
+            <Text textColor="white" weight="semibold">{t("apps.community.id.error_back_button")}</Text>
+          </Pressable>
+        </View>
+      </DefaultLayout>
     );
   }
 

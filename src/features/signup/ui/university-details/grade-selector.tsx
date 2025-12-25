@@ -28,6 +28,7 @@ function GradeSelector() {
       { label: i18n.t('features.signup.ui.grade_4'), value: i18n.t('features.signup.ui.grade_4') },
       { label: i18n.t('features.signup.ui.grade_5'), value: i18n.t('features.signup.ui.grade_5') },
       { label: i18n.t('features.signup.ui.grade_6'), value: i18n.t('features.signup.ui.grade_6') },
+      { label: i18n.t('features.signup.ui.grade_graduated'), value: i18n.t('features.signup.ui.grade_graduated') },
     ],
     []
   );

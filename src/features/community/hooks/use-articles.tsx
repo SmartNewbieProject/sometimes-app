@@ -89,4 +89,24 @@ export const useArticles = ({
       updateArticle,
     };
   }
+
+  return {
+    articles: [] as Article[],
+    isLoading: false,
+    isLoadingMore: false,
+    error: null,
+    hasNextPage: false,
+    loadMore: async () => {},
+    refresh: async () => {},
+    meta: {
+      currentPage: initialPage,
+      itemsPerPage: initialSize,
+      totalItems: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    },
+    currentPage: initialPage,
+    scrollProps: {},
+    updateArticle: () => {},
+  };
 }

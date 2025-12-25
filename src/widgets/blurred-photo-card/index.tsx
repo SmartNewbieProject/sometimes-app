@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   emptyBackground: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: semanticColors.surface.dimmed,
+    backgroundColor: semanticColors.surface.secondary,
     borderRadius: 16,
   },
   blurOverlay: {

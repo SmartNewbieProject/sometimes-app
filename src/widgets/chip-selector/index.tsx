@@ -14,7 +14,7 @@ type AlignType = "start" | "center" | "end";
 interface Option<T> {
   label: string;
   value: T;
-  imageUrl?: string;
+  imageUrl?: string | null;
 }
 
 interface ChipSelectorProps<T> {

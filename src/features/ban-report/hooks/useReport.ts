@@ -45,7 +45,7 @@ export function useReport() {
 				title: t("features.ban-report.hooks.use_report.modal_title_success"),
 				children: t("features.ban-report.hooks.use_report.modal_message_success"),
 				primaryButton: {
-					text: t("global.confirm"),
+					text: t("confirm"),
 					onClick: () => {
 						hideModal();
 						router.navigate('/home');
@@ -66,7 +66,7 @@ export function useReport() {
 				title:  t("features.ban-report.hooks.use_report.modal_title_error"),
 				children: errorMessage,
 				primaryButton: {
-					text: t("global.confirm"),
+					text: t("confirm"),
 					onClick: () => hideModal(),
 				},
 			});

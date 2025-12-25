@@ -13,7 +13,7 @@ test.describe('채팅 기능', () => {
 
   test('채팅 페이지 접근 시 인증 확인', async () => {
     // When: 채팅 페이지로 이동 시도
-    await chatPage.gotoChat();
+    await chatPage.gotoChatList();
     await chatPage['page'].waitForLoadState('networkidle');
 
     // Then: 미인증 사용자는 로그인 페이지로 리다이렉트되거나 채팅 페이지 로드

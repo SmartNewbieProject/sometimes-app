@@ -4,6 +4,10 @@ import type {TokenResponse} from '@/src/types/auth';
 import {tryCatch} from './try-catch';
 import {router} from 'expo-router';
 import {eventBus} from './event-bus';
+import {env} from './env';
+import {isJapanese} from './local';
+
+const getCountryCode = (): string => isJapanese() ? 'jp' : 'kr';
 
 let refreshTokenPromise: Promise<string> | null = null;
 let isNetworkDisabled = false;
@@ -46,20 +50,41 @@ const refresh = async () => {
   return refreshTokenPromise;
 };
 
+// API_URL 검증 및 fallback
+const FALLBACK_API_URL = 'https://api.some-in-univ.com/api';
+let API_URL = env.API_URL;
+
+// API_URL이 비어있거나 치환되지 않은 경우 fallback 사용
+if (!API_URL || API_URL.includes('${') || API_URL.includes('EXPO_PUBLIC_')) {
+  console.error('[axios.ts] ❌ Invalid API_URL detected:', API_URL);
+  console.error('[axios.ts] ⚠️ Using fallback:', FALLBACK_API_URL);
+  API_URL = FALLBACK_API_URL;
+}
+
+console.log('=================================');
+console.log('[API 설정] baseURL:', API_URL);
+console.log('=================================');
+
 const axiosClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
-  timeout: 20000, // 20초로 타임아웃 증가
+  baseURL: API_URL,
+  timeout: 20000,
   headers: {
     'Content-Type': 'application/json'
   },
 });
 
 const temporaryAxiosClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
-  timeout: 20000, // 20초로 타임아웃 증가
+  baseURL: API_URL,
+  timeout: 20000,
   headers: {
     'Content-Type': 'application/json',
   },
+});
+
+// temporaryAxiosClient에도 X-Country 헤더 설정
+temporaryAxiosClient.interceptors.request.use((config) => {
+  config.headers['X-Country'] = getCountryCode();
+  return config;
 });
 
 // 요청 인터셉터
@@ -69,8 +94,11 @@ axiosClient.interceptors.request.use(
         return Promise.reject(new Error('Network requests are disabled due to REGION_NOT_ALLOWED'));
       }
 
+      // Multi-tenant 지원: 국가 코드 헤더 설정
+      config.headers['X-Country'] = getCountryCode();
+
       // 디버깅: 요청 정보 로깅
-      console.log(`[API 요청] ${config.method?.toUpperCase()} ${config.url}`);
+      console.log(`[API 요청] ${config.method?.toUpperCase()} ${config.url} [${config.headers['X-Country']}]`);
       if (config.data) {
         console.log('[API 요청 데이터]', typeof config.data === 'string' ? config.data : JSON.stringify(config.data, null, 2));
       }
@@ -91,12 +119,9 @@ axiosClient.interceptors.request.use(
 // 응답 인터셉터
 axiosClient.interceptors.response.use(
     (response) => {
-      // 디버깅: 응답 정보 로깅
-      console.log(`[API 응답] ${response.config.method?.toUpperCase()} ${response.config.url} - 상태: ${response.status}`);
-
       // { success: boolean, data: T } 형태의 응답 처리
       if (response.data && typeof response.data === 'object' && 'success' in response.data && 'data' in response.data) {
-        return response.data; // 전체 응답 객체 반환 (success와 data 모두 포함)
+        return response.data.data; // data 필드만 반환
       }
       return response.data;
     },
@@ -105,16 +130,20 @@ axiosClient.interceptors.response.use(
       console.error(`[API 에러] ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
       console.error(`[API 에러] 상태 코드: ${error.response?.status}`);
       console.error(`[API 에러] 응답 데이터:`, error.response?.data);
+      console.error(`[API 에러] 에러 메시지: ${error.message}`);
+      console.error(`[API 에러] 에러 코드: ${error.code}`);
 
 
       const data = error?.response?.data;
-      if (error.status === 403 && data.code === ErrorCode.REGION_NOT_ALLOWED) {
+      const status = error?.response?.status;
+
+      if (status === 403 && data?.code === ErrorCode.REGION_NOT_ALLOWED) {
         isNetworkDisabled = true;
         router.push('/commingsoon');
         return;
       }
 
-      if (error.status === 401) {
+      if (status === 401) {
         try {
           const newAccessToken = await refresh();
           error.config.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -122,8 +151,8 @@ axiosClient.interceptors.response.use(
           return await tryCatch(async () => {
             const result = await temporaryAxiosClient(error.config);
             // { success: boolean, data: T } 형태의 응답 처리
-            if (result && typeof result === 'object' && 'success' in result && 'data' in result) {
-              return result.data;
+            if (result.data && typeof result.data === 'object' && 'success' in result.data && 'data' in result.data) {
+              return result.data.data;
             }
             return result.data;
           }, (error) => {

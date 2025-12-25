@@ -1,4 +1,5 @@
 import { tryCatch } from "@/src/shared/libs";
+import { env } from "@/src/shared/libs/env";
 import { shareFeedTemplate } from "@react-native-kakao/share";
 import * as Clipboard from "expo-clipboard";
 import React, { useEffect, useState } from "react";
@@ -14,7 +15,7 @@ declare global {
 }
 
 
-const LINK = process.env.EXPO_PUBLIC_LINK
+const LINK = env.LINK;
 
 function useShare() {
 

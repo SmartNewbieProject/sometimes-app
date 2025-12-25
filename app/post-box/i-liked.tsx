@@ -43,7 +43,6 @@ function ILiked() {
       <FlashList
         data={sortedList}
         renderItem={({ item }) => <PostBoxCard type="i-liked" {...item} />}
-        estimatedItemSize={200}
         contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 48 }}
       />
     );

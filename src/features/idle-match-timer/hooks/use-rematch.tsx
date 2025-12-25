@@ -1,13 +1,13 @@
 import { queryClient } from "@/src/shared/config/query";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { axiosClient, tryCatch } from "@/src/shared/libs";
-import { Text } from "@/src/shared/ui";
+import { Text } from "@/src/shared/ui/text";
 import { useCashableModal } from "@shared/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { HttpStatusCode } from "axios";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import { useMatchLoading } from "../hooks";
+import { useMatchLoading } from "./use-match-loading";
 import { useTranslation } from "react-i18next";
 import type { RematchResponseV3 } from "../types-v3";
 import {
@@ -16,6 +16,7 @@ import {
 	useMatchingStore,
 } from "@/src/features/matching";
 import { logError } from "@/src/shared/utils";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 
 const useRematchingMutation = () =>
   useMutation<RematchResponseV3>({
@@ -40,7 +41,7 @@ const useDevRematchingMutation = () =>
   });
 
 function useRematch() {
-  const { showErrorModal, showModal, closeModal } = useModal();
+  const { showErrorModal, showModal } = useModal();
   const { mutateAsync: rematch } = useRematchingMutation();
   const { onLoading, finishLoading, finishRematching } = useMatchLoading();
   const { show: showCashable } = useCashableModal();
@@ -48,6 +49,7 @@ function useRematch() {
   const { showExpansionModal } = useRegionalExpansionModal();
   const { startExternalMatch, error: externalMatchError } = useExternalMatching();
   const { userRegion, matchAttempts, setCurrentMatch, setCurrentBadge } = useMatchingStore();
+  const { matchingEvents } = useMixpanel();
 
   // 외부 매칭 에러 처리
   useEffect(() => {
@@ -89,10 +91,8 @@ function useRematch() {
           logError('[외부 매칭] Error:', error);
           finishLoading();
           finishRematching();
-          showErrorModal(
-            error?.message || "확장 매칭 중 오류가 발생했습니다",
-            "error"
-          );
+          const errorMessage = error instanceof Error ? error.message : "확장 매칭 중 오류가 발생했습니다";
+          showErrorModal(errorMessage, "error");
         }
       },
       onCancel: () => {},
@@ -102,6 +102,9 @@ function useRematch() {
   const performRematch = async () => {
     await tryCatch(
       async () => {
+        // KPI 이벤트: 매칭 시작 (재매칭)
+        matchingEvents.trackMatchingStarted('rematch', []);
+
         onLoading();
         await rematch();
         finishLoading();
@@ -127,7 +130,7 @@ function useRematch() {
           err.errorCode === 'USER_NOT_FOUND' &&
           err.details?.expansionSuggestion
         ) {
-          const expansionSuggestion = err.details.expansionSuggestion;
+          const expansionSuggestion = err.details.expansionSuggestion as { available?: boolean; [key: string]: unknown };
           if (expansionSuggestion.available) {
             handleShowExpansionModal(expansionSuggestion);
           } else {

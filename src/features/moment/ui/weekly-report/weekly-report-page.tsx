@@ -91,7 +91,8 @@ export const WeeklyReportPage = () => {
     year: paramYear || year,
   };
 
-  const { data: reportData, isLoading, error } = useWeeklyReportQuery(reportParams);
+  const { data: reportDataRaw, isLoading, error } = useWeeklyReportQuery(reportParams);
+  const reportData = reportDataRaw as any;
 
   useEffect(() => {
     if (reportData && !isLoading) {
@@ -270,7 +271,7 @@ export const WeeklyReportPage = () => {
       ];
     }
 
-    return report.stats.map((stat, index) => ({
+    return report.stats.map((stat: { category: string; currentScore: number; prevScore?: number }, index: number) => ({
       label: getPersonalityTypeLabel(stat.category as any) || stat.category,
       value: stat.currentScore,
       prevValue: stat.prevScore || 45,
@@ -296,11 +297,11 @@ export const WeeklyReportPage = () => {
       };
     };
 
-    const dataPoints = radarData.map(d => getPoint(d.value, d.angle));
-    const dataPolygonPoints = dataPoints.map(p => `${p.x},${p.y}`).join(" ");
+    const dataPoints = radarData.map((d: { value: number; angle: number }) => getPoint(d.value, d.angle));
+    const dataPolygonPoints = dataPoints.map((p: { x: number; y: number }) => `${p.x},${p.y}`).join(" ");
 
-    const prevDataPoints = radarData.map(d => getPoint(d.prevValue, d.angle));
-    const prevPolygonPoints = prevDataPoints.map(p => `${p.x},${p.y}`).join(" ");
+    const prevDataPoints = radarData.map((d: { prevValue: number; angle: number }) => getPoint(d.prevValue, d.angle));
+    const prevPolygonPoints = prevDataPoints.map((p: { x: number; y: number }) => `${p.x},${p.y}`).join(" ");
 
     return (
       <View style={[styles.radarContainer, { width: size, height: size }]}>
@@ -308,7 +309,7 @@ export const WeeklyReportPage = () => {
           {/* Background levels */}
           {[...Array(levels)].map((_, i) => {
             const levelRadius = ((i + 1) / levels) * maxRadius;
-            const points = radarData.map(d => {
+            const points = radarData.map((d: { angle: number }) => {
               const radian = (d.angle * Math.PI) / 180;
               return `${center + levelRadius * Math.cos(radian)},${center + levelRadius * Math.sin(radian)}`;
             }).join(" ");
@@ -326,7 +327,7 @@ export const WeeklyReportPage = () => {
           })}
 
           {/* Axis lines */}
-          {radarData.map((d, i) => {
+          {radarData.map((d: { angle: number; label: string }, i: number) => {
             const point = getPoint(100, d.angle);
             return (
               <Line
@@ -362,7 +363,7 @@ export const WeeklyReportPage = () => {
 
         {/* Labels */}
         <View style={styles.radarLabels}>
-          {radarData.map((d, i) => {
+          {radarData.map((d: { label: string; value: number; prevValue: number; angle: number }, i: number) => {
             // 컨테이너 기준 고정 좌표 설정
             const center = size / 2;
             const labelOffset = size / 2 + 20; // 차트 끝에서 20px 떨어진 위치
@@ -412,7 +413,7 @@ export const WeeklyReportPage = () => {
             ];
 
             const position = labelPositions[i] || labelPositions[0];
-            const fontSize = 11;
+            const fontSizeNum = 11;
 
             return (
               <View
@@ -426,20 +427,19 @@ export const WeeklyReportPage = () => {
                 }}
               >
                 <Text
-                  size={fontSize}
+                  size="11"
                   weight="normal"
                   textColor="black"
                   style={{
                     textAlign: position.textAlign,
                     width: '100%',
-                    lineHeight: fontSize + 3,
+                    lineHeight: fontSizeNum + 3,
                     backgroundColor: "rgba(255, 255, 255, 0.9)",
                     borderRadius: 4,
                     paddingHorizontal: 8,
                     paddingVertical: 4,
                     flexShrink: 0,
                     flexWrap: 'nowrap',
-                    whiteSpace: 'nowrap',
                   }}
                 >
                   {d.label}
@@ -561,7 +561,7 @@ export const WeeklyReportPage = () => {
               </Text>
             </View>
 
-            {report?.stats?.map((stat, index) => {
+            {report?.stats?.map((stat: WeeklyReportStats, index: number) => {
               const change = stat.prevScore ? stat.currentScore - stat.prevScore : 0;
               const changeColor = stat.status === 'INCREASE' ? "#00C853" : stat.status === 'DECREASE' ? "#FF5252" : "#757575";
               const changeText = stat.status === 'INCREASE' ? `▲ +${change}` : stat.status === 'DECREASE' ? `▼ ${change}` : "— 유지";
@@ -592,7 +592,7 @@ export const WeeklyReportPage = () => {
               </Text>
             </View>
 
-            {report?.insights?.map((insight, index) => {
+            {report?.insights?.map((insight: WeeklyReportInsight, index: number) => {
               const getInsightIcon = (score: number) => {
                 if (score >= 70) return '💪';  // Strong
                 if (score >= 50) return '🌱';  // Growth
@@ -655,7 +655,7 @@ export const WeeklyReportPage = () => {
             </View>
             <View style={styles.hashtagsContainer}>
               {report?.keywords?.length > 0 ? (
-                report.keywords.slice(0, 5).map((keyword, index) => (
+                report.keywords.slice(0, 5).map((keyword: string, index: number) => (
                   <View key={index} style={styles.hashtag}>
                     <Text size="12" weight="medium" textColor="purple">{keyword}</Text>
                   </View>
@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
-  backButton: {
+  headerBackButton: {
     padding: 8,
     borderRadius: 8,
     alignItems: 'center',

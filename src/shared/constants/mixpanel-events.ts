@@ -17,6 +17,7 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
   SIGNUP_ROUTE_ENTERED: 'Signup_Route_Entered',
   SIGNUP_UNIVERSITY: 'Signup_university',
   SINGUP_UNIVERSITY_DETAILS: 'Singup_university_details',
+  SIGNUP_INSTAGRAM_ENTERED: 'Signup_instagram_entered',
   SIGNUP_PROFILE_IMAGE: 'Signup_profile_image',
   SIGNUP_PROFILE_IMAGE_ERROR: 'Signup_profile_image_error',
   SIGNUP_PROFILE_INVITE_CODE_ERROR: 'Signup_profile_invite_code_error',
@@ -117,7 +118,7 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
   SIGNUP_STARTED: 'Signup_Started',
   SIGNUP_PROFILE_IMAGE_UPLOADED: 'Signup_Profile_Image_Uploaded',
   SIGNUP_INTEREST_SELECTED: 'Signup_Interest_Selected',
-  SIGNUP_COMPLETED: 'Signup_Completed',
+  SIGNUP_COMPLETED: 'Signup_done',
 
   // 매칭 관련 (Activation)
   MATCHING_STARTED: 'Matching_Started',
@@ -253,6 +254,32 @@ export const EVENT_SOURCES = {
   DIRECT: 'direct',
   NOTIFICATION: 'notification',
   SEARCH: 'search',
+  SYSTEM: 'system',
+  GEM_MANAGEMENT: 'gem_management',
+  MONETIZATION: 'monetization',
+  REVENUE: 'revenue',
+  ACCOUNT_SECURITY: 'account_security',
+  SPAM_PREVENTION: 'spam_prevention',
+  ACCOUNT_MANAGEMENT: 'account_management',
+  SUBSCRIPTION_MANAGEMENT: 'subscription_management',
+  SUBSCRIPTION_CANCELLATION: 'subscription_cancellation',
+  SUBSCRIPTION_START: 'subscription_start',
+  SUBSCRIPTION_RENEWAL: 'subscription_renewal',
+  REVENUE_TRACKING: 'revenue_tracking',
+  PAYMENT_MANAGEMENT: 'payment_management',
+  SUBSCRIPTION_ANALYTICS: 'subscription_analytics',
+  SUBSCRIPTION_REVENUE: 'subscription_revenue',
+  REACTIVATION: 'reactivation',
+  USER_RETENTION: 'user_retention',
+  UNIVERSITY_VERIFICATION: 'university_verification',
+  PROFILE_SETUP: 'profile_setup',
+  COMMUNITY: 'community',
+  PAYMENT_FLOW: 'payment_flow',
+  PAYMENT_SUCCESS: 'payment_success',
+  PAYMENT_FAILURE: 'payment_failure',
+  PAYMENT_CANCELLATION: 'payment_cancellation',
+  MATCHING: 'matching',
+  SETTINGS: 'settings',
 } as const;
 
 // 썸메이트 카테고리 Enum
@@ -288,6 +315,7 @@ export interface BaseEventProperties {
   timestamp?: number;
   session_id?: string;
   source?: EventSource;
+  [key: string]: unknown;
 }
 
 // 인증 이벤트 속성

@@ -1,13 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import { matchingApi } from '../apis';
-import type { ExternalMatchParams } from '../types';
-import type { RematchResponseV3 } from '@/src/features/idle-match-timer/types-v3';
+import type { ExternalMatchParams, ExternalMatchResponse } from '../types';
 import { queryClient } from '@/src/shared/config/query';
 import { devLogWithTag, logError } from '@/src/shared/utils';
 
 export const useExternalMatching = () => {
 	const externalMatchMutation = useMutation<
-		RematchResponseV3, // 일반 재매칭과 동일한 응답 구조
+		ExternalMatchResponse,
 		Error,
 		ExternalMatchParams
 	>({

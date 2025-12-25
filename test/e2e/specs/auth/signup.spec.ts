@@ -63,7 +63,7 @@ test.describe('로그인 플로우', () => {
     // When: 기본 정보 입력
     await authPage.enterName(TEST_USERS.newUser.name);
     await authPage.enterBirthdate(TEST_USERS.newUser.birthdate);
-    await authPage.selectGender(TEST_USERS.newUser.gender);
+    await authPage.selectGender(TEST_USERS.newUser.gender as '남성' | '여성');
     await authPage.clickNext();
 
     // Then: 다음 단계로 이동

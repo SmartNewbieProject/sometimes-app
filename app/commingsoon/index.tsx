@@ -68,11 +68,12 @@ export default function CommingSoonScreen() {
           <Button
               variant="primary"
               size="md"
+              width="full"
               onPress={() => {
                 onClickSeeYouLater();
 
               }}
-              className="mb-[14px] w-full"
+              styles={{ marginBottom: 14 }}
           >
             출시일에 다시 볼게요.
           </Button>
