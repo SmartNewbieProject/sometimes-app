@@ -1,4 +1,4 @@
-export type LoginType = "pass" | "kakao" | "kakao_native" | "apple";
+export type LoginType = "pass" | "kakao" | "kakao_native" | "apple" | "jp_sms";
 
 export type SignupForm = {
   name: string;
@@ -36,4 +36,9 @@ export interface SignupResponse {
   tokenType: "Bearer";
   expiresIn: number;
   roles: string[];
+}
+
+export type AuthorizeSmsCode = {
+  uniqueKey: string;
+  authorizationCode: string;
 }

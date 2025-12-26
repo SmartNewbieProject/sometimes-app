@@ -1,7 +1,6 @@
-import type { AuthorizeSmsCode } from "@/app/auth/signup/types";
 import { axiosClient, dayUtils, fileUtils, platform } from "@/src/shared/libs";
 import { nanoid } from "nanoid";
-import type { SignupForm, SignupResponse } from "../types";
+import type { AuthorizeSmsCode, SignupForm, SignupResponse } from "../types";
 import type { AppleLoginResponse } from "../queries/use-apple-login";
 import type { UniversitiesByRegion } from "../queries/use-universities";
 

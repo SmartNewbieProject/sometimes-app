@@ -96,6 +96,7 @@ export default function JpProfilePage() {
         gender,
         age,
         phoneNumber: certInfo.phone,
+        loginType: certInfo.loginType || 'jp_sms',
       });
 
       await AsyncStorage.setItem(

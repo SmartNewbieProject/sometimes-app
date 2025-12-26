@@ -1,7 +1,7 @@
 import type { Router } from "expo-router";
-// src/features/signup/utils/signup-validators.ts
 import { Platform } from "react-native";
 import type { SignupForm } from "../hooks/use-signup-progress";
+import { jpSignup } from "@/src/features/jp-auth/apis";
 
 export function buildSignupForm(
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -80,14 +80,20 @@ export async function validatePhone(
     removeLoginType: () => Promise<void>;
   }
 ): Promise<boolean> {
-  if (!signupForm.phone) {
+  const phone = signupForm.phone || signupForm.phoneNumber;
+
+  if (!phone) {
     showErrorModal("휴대폰 번호가 없습니다", "announcement");
     trackSignupEvent("phone_missing");
     router.push("/auth/login");
     return false;
   }
 
-  const { exists } = await apis.checkPhoneNumberExists(signupForm.phone);
+  if (signupForm.loginType === "jp_sms") {
+    return true;
+  }
+
+  const { exists } = await apis.checkPhoneNumberExists(phone);
   if (exists) {
     showErrorModal("이미 가입된 사용자입니다", "announcement");
     trackSignupEvent("phone_already_exists");
@@ -143,7 +149,25 @@ export async function processSignup(
     identifyUser?: (userId: string) => void;
   }
 ): Promise<void> {
-  const response = await apis.signup(signupForm);
+  const isJpUser = signupForm.loginType === "jp_sms";
+
+  const response = isJpUser
+    ? await jpSignup({
+        phoneNumber: signupForm.phoneNumber || signupForm.phone,
+        name: signupForm.name,
+        gender: signupForm.gender,
+        birthday: signupForm.birthday,
+        age: signupForm.age ?? 0,
+        universityId: signupForm.universityId,
+        departmentName: signupForm.departmentName,
+        grade: signupForm.grade,
+        studentNumber: signupForm.studentNumber,
+        profileImages: signupForm.profileImages as unknown as File[],
+        mainImageIndex: 0,
+        instagramId: signupForm.instagramId,
+        referralCode: signupForm.referralCode,
+      })
+    : await apis.signup(signupForm);
 
   console.log("[processSignup] signup response:", JSON.stringify(response, null, 2));
 

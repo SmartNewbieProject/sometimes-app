@@ -24,7 +24,6 @@ import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { devLogWithTag } from "@/src/shared/utils";
 import { isJapanese } from "@/src/shared/libs/local";
-import { JpSmsAuthContainer } from "@/src/features/jp-auth";
 
 
 
@@ -42,14 +41,14 @@ export default function LoginForm() {
 
 /**
  * JP 로그인 폼 - SMS 인증 + Apple 로그인
+ * SMS 인증 버튼 클릭 시 /auth/jp-sms 페이지로 이동
  */
 function JpLoginForm() {
-  const [showSmsAuth, setShowSmsAuth] = useState(false);
   const { t } = useTranslation();
 
-  if (showSmsAuth) {
-    return <JpSmsAuthContainer onCancel={() => setShowSmsAuth(false)} />;
-  }
+  const handleSmsAuth = () => {
+    router.push('/auth/jp-sms');
+  };
 
   return (
     <View style={loginFormStyles.container}>
@@ -67,7 +66,7 @@ function JpLoginForm() {
             variant="primary"
             size="lg"
             rounded="full"
-            onPress={() => setShowSmsAuth(true)}
+            onPress={handleSmsAuth}
             styles={{
               width: 330,
               alignItems: 'center',
