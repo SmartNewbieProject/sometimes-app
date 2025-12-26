@@ -5,6 +5,7 @@ import {
   Notice,
   Profile,
   NotificationMenu,
+  PrivacyMenu,
 } from "@/src/features/mypage/ui";
 import {
   BottomNavigation,
@@ -74,6 +75,7 @@ export default function MyScreen() {
 
         <View style={styles.menuContainer}>
           <MatchingMenu />
+          <PrivacyMenu />
           <NotificationMenu />
           <MyActivityMenu />
         </View>
