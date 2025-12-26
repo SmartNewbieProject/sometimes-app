@@ -6,6 +6,7 @@ import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { Alert, Linking, Platform, Pressable, StyleSheet, View } from "react-native";
 import type { StyleProp, ViewStyle } from "react-native";
 import { useModal } from "../../hooks/use-modal";
+import { useDeviceResourceCheck } from "../../hooks/use-device-resource-check";
 import { convertToJpeg, isHeicBase64 } from "../../utils/image";
 import { compressImage } from "@/src/shared/libs/image-compression";
 import { PROFILE_IMAGE_CONFIG } from "@/src/shared/libs/image-compression/config";
@@ -75,7 +76,14 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
     openPicker: handlePress,
   }));
   const { showErrorModal, showModal, hideModal } = useModal();
+  const { checkBeforeImagePick } = useDeviceResourceCheck();
+
   const pickImage = async () => {
+    const hasResources = await checkBeforeImagePick();
+    if (!hasResources) {
+      setImageModal(false);
+      return null;
+    }
     devLogWithTag('ImageSelector', 'pickImage started');
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     devLogWithTag('ImageSelector', 'Permission status:', status);
@@ -148,6 +156,12 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
   };
 
   const takePhoto = async () => {
+    const hasResources = await checkBeforeImagePick();
+    if (!hasResources) {
+      setImageModal(false);
+      return null;
+    }
+
     devLogWithTag('ImageSelector', 'takePhoto started');
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
     devLogWithTag('ImageSelector', 'Camera permission status:', status);

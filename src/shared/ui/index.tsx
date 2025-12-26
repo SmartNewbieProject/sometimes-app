@@ -35,3 +35,4 @@ export * from './action-sheet';
 export * from './slide-unlock';
 export * from './app-download-section';
 export * from './jp-legal-links';
+export * from './animated-arrow';

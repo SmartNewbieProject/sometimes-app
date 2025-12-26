@@ -1,5 +1,5 @@
 import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { Text } from '@/src/shared/ui';
+import { Text } from '../text';
 
 type SizeType = 'sm' | 'md' | 'lg';
 
