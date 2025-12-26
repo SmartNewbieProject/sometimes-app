@@ -1,25 +1,24 @@
 /**
- * 카드뉴스 뷰어 (풀스크린 모달)
- * HTML 초안 기반 - 흰색 카드 + 스와이프 네비게이션
+ * 카드뉴스 뷰어 (풀스크린 오버레이)
+ * ScrollView pagingEnabled 기반 스와이프 네비게이션
  */
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import {
   View,
-  Modal,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  ScrollView,
   StyleSheet,
   Dimensions,
   StatusBar,
-  type NativeSyntheticEvent,
-  type NativeScrollEvent,
   ActivityIndicator,
   Linking,
+  ScrollView,
+  Platform,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
 } from "react-native";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Text } from "@/src/shared/ui";
+import { Text, AnimatedArrow } from "@/src/shared/ui";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useCardNewsDetail, useCardNewsReward } from "../queries";
 import { useToast } from "@/src/shared/hooks/use-toast";
@@ -82,7 +81,8 @@ const renderHtmlContent = (html: string) => {
   }).filter(Boolean);
 };
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const MAX_IMAGE_HEIGHT = 475;
 
 type Props = {
   cardNewsId: string | null;
@@ -91,10 +91,10 @@ type Props = {
 
 export function CardNewsViewer({ cardNewsId, onClose }: Props) {
   const insets = useSafeAreaInsets();
-  const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasClaimedReward, setHasClaimedReward] = useState(false);
   const { emitToast } = useToast();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const { data: cardNews, isLoading } = useCardNewsDetail(
     cardNewsId ?? "",
@@ -109,26 +109,20 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
   useEffect(() => {
     setCurrentIndex(0);
     setHasClaimedReward(false);
-    scrollRef.current?.scrollTo({ x: 0, animated: false });
+    scrollViewRef.current?.scrollTo({ x: 0, animated: false });
   }, [cardNewsId]);
 
-  const handleMomentumEnd = useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const offsetX = e.nativeEvent.contentOffset.x;
-      const newIndex = Math.round(offsetX / SCREEN_WIDTH);
-      setCurrentIndex(newIndex);
+  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / SCREEN_WIDTH);
+    console.log("[CardNewsViewer] handleScroll - offsetX:", offsetX, "index:", index);
+    setCurrentIndex(index);
+  }, []);
 
-      // TODO: 보상 기능 활성화 시 주석 해제
-      // if (
-      //   newIndex === totalCards - 1 &&
-      //   cardNews?.hasReward &&
-      //   !hasClaimedReward
-      // ) {
-      //   handleClaimReward();
-      // }
-    },
-    [totalCards, cardNews?.hasReward, hasClaimedReward]
-  );
+  const scrollToIndex = useCallback((index: number) => {
+    const clampedIndex = Math.max(0, Math.min(index, totalCards - 1));
+    scrollViewRef.current?.scrollTo({ x: clampedIndex * SCREEN_WIDTH, animated: true });
+  }, [totalCards]);
 
   const handleClaimReward = useCallback(() => {
     if (!cardNewsId || hasClaimedReward || isClaimingReward) return;
@@ -137,7 +131,6 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
       onSuccess: (response) => {
         setHasClaimedReward(true);
         if (response.success && response.reward) {
-          // 구슬 아이콘과 함께 토스트 표시
           emitToast(
             `구슬 ${response.reward.gems}개 획득!`,
             <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: semanticColors.brand.primary }} />
@@ -152,30 +145,18 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
     });
   }, [cardNewsId, hasClaimedReward, isClaimingReward, claimReward, emitToast]);
 
-  const goToCard = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < totalCards) {
-        scrollRef.current?.scrollTo({ x: SCREEN_WIDTH * index, animated: true });
-        setCurrentIndex(index);
-      }
-    },
-    [totalCards]
-  );
+  const handlePrevious = useCallback(() => {
+    scrollToIndex(currentIndex - 1);
+  }, [scrollToIndex, currentIndex]);
 
-  const handleLeftTap = useCallback(() => {
-    goToCard(currentIndex - 1);
-  }, [currentIndex, goToCard]);
-
-  const handleRightTap = useCallback(() => {
-    goToCard(currentIndex + 1);
-  }, [currentIndex, goToCard]);
+  const handleNext = useCallback(() => {
+    scrollToIndex(currentIndex + 1);
+  }, [scrollToIndex, currentIndex]);
 
   const renderCard = useCallback(
-    (section: CardSection, index: number) => (
+    (section: CardSection) => (
       <View key={section.order} style={styles.cardContainer}>
-        {/* 패딩 컨테이너 */}
         <View style={styles.cardPadding}>
-          {/* 이미지 영역 (4:5 비율) */}
           <View style={styles.cardImageArea}>
             {section.imageUrl ? (
               <Image
@@ -190,7 +171,6 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
             )}
           </View>
 
-          {/* 텍스트 영역 */}
           <View style={styles.cardTextArea}>
             <Text style={styles.cardTitle}>{section.title}</Text>
             <View style={styles.cardBodyContainer}>
@@ -205,53 +185,36 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
 
   if (!cardNewsId) return null;
 
+  const isFirstCard = currentIndex === 0;
+  const isLastCard = currentIndex === totalCards - 1;
+
   return (
-    <Modal
-      visible={!!cardNewsId}
-      animationType="slide"
-      presentationStyle="fullScreen"
-      onRequestClose={onClose}
-    >
+    <View style={styles.overlay}>
       <StatusBar barStyle="dark-content" />
-      <View style={styles.container}>
-        {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator color={semanticColors.brand.primary} size="large" />
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator color={semanticColors.brand.primary} size="large" />
+        </View>
+      ) : (
+        <>
+          {/* 헤더 */}
+          <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={onClose}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Text style={styles.backIcon}>←</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>새로운 소식</Text>
+            <View style={styles.headerSpacer} />
           </View>
-        ) : (
-          <>
-            {/* 헤더 */}
-            <View style={[styles.header, { paddingTop: insets.top }]}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={onClose}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
-                <Text style={styles.backIcon}>←</Text>
-              </TouchableOpacity>
-              <Text style={styles.headerTitle}>새로운 소식</Text>
-              <View style={styles.headerSpacer} />
-            </View>
 
-            {/* 카드 스크롤뷰 */}
-            <View style={{ flex: 1 }}>
-              <ScrollView
-                ref={scrollRef}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                onMomentumScrollEnd={handleMomentumEnd}
-                scrollEventThrottle={16}
-                decelerationRate="fast"
-                style={styles.scrollView}
-              >
-                {sections
-                  .sort((a, b) => a.order - b.order)
-                  .map((section, index) => renderCard(section, index))}
-              </ScrollView>
-
-              {/* 진행 Dots (Absolute) */}
-              <View style={styles.dotsContainerAbsolute}>
+          {/* 카드 캐러셀 - ScrollView 기반 */}
+          <View style={styles.carouselContainer}>
+            {/* 진행 Dots */}
+            {totalCards > 1 && (
+              <View style={styles.dotsContainer}>
                 {sections.map((_, index) => (
                   <View
                     key={index}
@@ -262,24 +225,63 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
                   />
                 ))}
               </View>
-            </View>
+            )}
 
-            {/* 탭 영역 (좌/우) */}
-            <TouchableWithoutFeedback onPress={handleLeftTap}>
-              <View style={[styles.touchZone, styles.touchLeft]} />
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={handleRightTap}>
-              <View style={[styles.touchZone, styles.touchRight]} />
-            </TouchableWithoutFeedback>
-          </>
-        )}
-      </View>
-    </Modal>
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handleScroll}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+              bounces={false}
+              decelerationRate="fast"
+              snapToInterval={SCREEN_WIDTH}
+              snapToAlignment="start"
+              style={styles.horizontalScroll}
+              contentContainerStyle={styles.horizontalScrollContent}
+            >
+              {sections
+                .sort((a, b) => a.order - b.order)
+                .map((section) => renderCard(section))}
+            </ScrollView>
+          </View>
+
+          {/* 하단 네비게이션 버튼 */}
+          <View style={[styles.navigationContainer, { paddingBottom: insets.bottom + 16 }]}>
+            {totalCards > 1 ? (
+              <>
+                <AnimatedArrow
+                  direction="left"
+                  onPress={handlePrevious}
+                  disabled={isFirstCard}
+                />
+                <View style={styles.pageIndicator}>
+                  <Text style={styles.pageText}>
+                    {isLastCard ? " " : `${totalCards - currentIndex - 1}장 남았어요!`}
+                  </Text>
+                </View>
+                <AnimatedArrow
+                  direction="right"
+                  onPress={handleNext}
+                  disabled={isLastCard}
+                />
+              </>
+            ) : (
+              <View style={styles.pageIndicator}>
+                <Text style={styles.pageText}> </Text>
+              </View>
+            )}
+          </View>
+        </>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  overlay: {
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
@@ -290,11 +292,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   header: {
-    height: 56,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
+    paddingBottom: 16,
     backgroundColor: semanticColors.surface.background,
     borderBottomWidth: 1,
     borderBottomColor: "#E4E2E2",
@@ -318,19 +320,18 @@ const styles = StyleSheet.create({
   headerSpacer: {
     width: 24,
   },
-  scrollView: {
+  carouselContainer: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
-  cardContainer: {
-    width: SCREEN_WIDTH,
-    minHeight: SCREEN_HEIGHT - 56,
-    backgroundColor: "#FFFFFF",
-    paddingTop: 30,
+  horizontalScroll: {
+    flex: 1,
   },
-  dotsContainerAbsolute: {
+  horizontalScrollContent: {
+    flexDirection: "row",
+  },
+  dotsContainer: {
     position: "absolute",
-    top: 10,
+    top: 12,
     left: 0,
     right: 0,
     flexDirection: "row",
@@ -338,7 +339,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     zIndex: 10,
-    pointerEvents: "none",
   },
   dot: {
     width: 6,
@@ -351,18 +351,23 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: semanticColors.brand.primary,
   },
+  cardContainer: {
+    width: SCREEN_WIDTH,
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
   cardPadding: {
     paddingHorizontal: 20,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   cardImageArea: {
     width: "100%",
     aspectRatio: 4 / 5,
-    maxHeight: SCREEN_HEIGHT * 0.5,
+    maxHeight: MAX_IMAGE_HEIGHT,
     backgroundColor: "#F7F3FF",
     borderRadius: 16,
     overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
   },
   cardImage: {
     width: "100%",
@@ -405,16 +410,26 @@ const styles = StyleSheet.create({
     color: semanticColors.brand.primary,
     textDecorationLine: "underline",
   },
-  touchZone: {
-    position: "absolute",
-    top: 100,
-    bottom: 0,
-    width: "50%",
+  navigationContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    gap: 32,
+    backgroundColor: "#FFFFFF",
+    borderTopWidth: 1,
+    borderTopColor: "#F0F0F0",
   },
-  touchLeft: {
-    left: 0,
+  pageIndicator: {
+    minWidth: 100,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  touchRight: {
-    right: 0,
+  pageText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: semanticColors.text.secondary,
   },
 });

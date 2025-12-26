@@ -113,7 +113,7 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
         {ListHeaderComponent}
         {items.length > 0 && (
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>지난 소식</Text>
+            <Text weight="bold" style={styles.sectionTitle}>지난 소식</Text>
           </View>
         )}
       </>

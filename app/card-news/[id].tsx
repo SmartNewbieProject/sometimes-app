@@ -89,6 +89,7 @@ const renderHtmlContent = (html: string) => {
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CONTAINER_WIDTH = Math.min(SCREEN_WIDTH, 428);
 const CONTENT_WIDTH = CONTAINER_WIDTH - 40;
+const MAX_IMAGE_HEIGHT = 475;
 
 export default function CardNewsDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -96,7 +97,6 @@ export default function CardNewsDetailScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasClaimedReward, setHasClaimedReward] = useState(false);
-  const [imageAspectRatios, setImageAspectRatios] = useState<Record<number, number>>({});
   const { emitToast } = useToast();
   const analytics = useCardNewsAnalytics();
 
@@ -152,6 +152,37 @@ export default function CardNewsDetailScreen() {
       // }
     },
     [totalCards, cardNews?.hasReward, hasClaimedReward, analytics]
+  );
+
+  const scrollEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const offsetX = e.nativeEvent.contentOffset.x;
+      const newIndex = Math.round(offsetX / CONTAINER_WIDTH);
+      if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalCards) {
+        setCurrentIndex(newIndex);
+
+        if (newIndex === totalCards - 1 && !hasTrackedCompletionRef.current) {
+          hasTrackedCompletionRef.current = true;
+          analytics.trackCompleted();
+        }
+      }
+
+      if (Platform.OS === "web") {
+        if (scrollEndTimer.current) {
+          clearTimeout(scrollEndTimer.current);
+        }
+        scrollEndTimer.current = setTimeout(() => {
+          const snapIndex = Math.round(offsetX / CONTAINER_WIDTH);
+          const snapX = snapIndex * CONTAINER_WIDTH;
+          if (Math.abs(offsetX - snapX) > 1) {
+            scrollRef.current?.scrollTo({ x: snapX, animated: true });
+          }
+        }, 150);
+      }
+    },
+    [currentIndex, totalCards, analytics]
   );
 
   const handleClaimReward = useCallback(() => {
@@ -254,52 +285,41 @@ export default function CardNewsDetailScreen() {
     }
   }, [currentIndex, goToCard]);
 
-  const handleImageLoad = useCallback((order: number, width: number, height: number) => {
-    if (width > 0 && height > 0) {
-      setImageAspectRatios(prev => ({
-        ...prev,
-        [order]: width / height,
-      }));
-    }
-  }, []);
-
   const renderCard = useCallback(
-    (section: CardSection, index: number) => {
-      const aspectRatio = imageAspectRatios[section.order] || 4 / 5;
-      const imageHeight = CONTENT_WIDTH / aspectRatio;
-
-      return (
-        <View key={section.order} style={styles.cardContainer}>
-          <View style={styles.cardPadding}>
-            <View style={styles.cardImageArea}>
-              {section.imageUrl ? (
-                <Image
-                  source={{ uri: section.imageUrl }}
-                  style={[styles.cardImage, { aspectRatio }]}
-                  contentFit="cover"
-                  onLoad={(e) => {
-                    const { width, height } = e.source;
-                    handleImageLoad(section.order, width, height);
-                  }}
-                />
-              ) : (
-                <View style={[styles.cardImagePlaceholder, { aspectRatio: 4 / 5 }]}>
-                  <Text style={styles.placeholderEmoji}>📰</Text>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.cardTextArea}>
-              <Text style={styles.cardTitle}>{section.title}</Text>
-              <View style={styles.cardBodyContainer}>
-                {renderHtmlContent(section.content)}
+    (section: CardSection) => (
+      <View
+        key={section.order}
+        style={[
+          styles.cardContainer,
+          // @ts-ignore - Web-specific CSS for scroll snap
+          Platform.OS === "web" && { scrollSnapAlign: "start" },
+        ]}
+      >
+        <View style={styles.cardPadding}>
+          <View style={styles.cardImageArea}>
+            {section.imageUrl ? (
+              <Image
+                source={{ uri: section.imageUrl }}
+                style={styles.cardImage}
+                contentFit="cover"
+              />
+            ) : (
+              <View style={styles.cardImagePlaceholder}>
+                <Text style={styles.placeholderEmoji}>📰</Text>
               </View>
+            )}
+          </View>
+
+          <View style={styles.cardTextArea}>
+            <Text style={styles.cardTitle}>{section.title}</Text>
+            <View style={styles.cardBodyContainer}>
+              {renderHtmlContent(section.content)}
             </View>
           </View>
         </View>
-      );
-    },
-    [imageAspectRatios, handleImageLoad]
+      </View>
+    ),
+    []
   );
 
   if (!id) {
@@ -323,7 +343,7 @@ export default function CardNewsDetailScreen() {
       <View style={styles.wrapper}>
         <View style={styles.container}>
           <StatusBar barStyle="dark-content" />
-          <View style={[styles.header, { paddingTop: insets.top }]}>
+          <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
             <TouchableOpacity
               style={styles.backButton}
               onPress={handleClose}
@@ -364,7 +384,7 @@ export default function CardNewsDetailScreen() {
         <StatusBar barStyle="dark-content" />
 
         {/* 헤더 */}
-        <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={handleClose}
@@ -378,7 +398,14 @@ export default function CardNewsDetailScreen() {
 
         {/* 카드 스크롤뷰 */}
         <View
-          style={[{ flex: 1, overflow: "hidden" }, Platform.OS === "web" && { cursor: "grab" } as any]}
+          style={[
+            { flex: 1, overflow: "hidden" },
+            Platform.OS === "web" && {
+              cursor: "grab",
+              // @ts-ignore - Web-specific: allow horizontal touch scrolling
+              touchAction: "pan-x",
+            } as any,
+          ]}
           {...(Platform.OS === "web" && {
             onMouseDown: handleMouseDown as any,
             onMouseMove: handleMouseMove as any,
@@ -389,61 +416,77 @@ export default function CardNewsDetailScreen() {
           <ScrollView
             ref={scrollRef}
             horizontal
-            pagingEnabled
+            pagingEnabled={Platform.OS !== "web"}
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={handleMomentumEnd}
+            onScroll={handleScroll}
             scrollEventThrottle={16}
             decelerationRate="fast"
             snapToInterval={CONTAINER_WIDTH}
             snapToAlignment="start"
             nestedScrollEnabled
             disableIntervalMomentum
-            scrollEnabled={Platform.OS !== "web"}
-            style={styles.scrollView}
+            scrollEnabled={totalCards > 1}
+            style={[
+              styles.scrollView,
+              Platform.OS === "web" && {
+                // @ts-ignore - Web-specific CSS for touch scrolling and snap
+                WebkitOverflowScrolling: "touch",
+                touchAction: "pan-x",
+                overscrollBehaviorX: "contain",
+                scrollSnapType: "x mandatory",
+              },
+            ]}
           >
             {sections
               .sort((a, b) => a.order - b.order)
-              .map((section, index) => renderCard(section, index))}
+              .map((section) => renderCard(section))}
           </ScrollView>
 
-          {/* 슬라이드 인디케이터 영역 */}
-          <View style={styles.indicatorContainer}>
-            {/* 진행 Dots */}
-            <View style={styles.dotsWrapper}>
-              {sections.map((_, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => goToCard(index)}
-                  hitSlop={{ top: 10, bottom: 10, left: 6, right: 6 }}
-                >
-                  <View
-                    style={[
-                      styles.dot,
-                      index === currentIndex && styles.dotActive,
-                    ]}
-                  />
-                </Pressable>
-              ))}
-            </View>
-
-            {/* 남은 슬라이드 안내 */}
-            {totalCards - currentIndex - 1 > 0 && (
-              <View style={styles.remainingBadge}>
-                <Text style={styles.remainingText}>
-                  {totalCards - currentIndex - 1}장 남았어요!
-                </Text>
+          {/* 슬라이드 인디케이터 영역 - 카드가 2개 이상일 때만 표시 */}
+          {totalCards > 1 && (
+            <View style={styles.indicatorContainer}>
+              {/* 진행 Dots */}
+              <View style={styles.dotsWrapper}>
+                {sections.map((_, index) => (
+                  <Pressable
+                    key={index}
+                    onPress={() => goToCard(index)}
+                    hitSlop={{ top: 10, bottom: 10, left: 6, right: 6 }}
+                  >
+                    <View
+                      style={[
+                        styles.dot,
+                        index === currentIndex && styles.dotActive,
+                      ]}
+                    />
+                  </Pressable>
+                ))}
               </View>
-            )}
-          </View>
+
+              {/* 남은 슬라이드 안내 */}
+              {totalCards - currentIndex - 1 > 0 && (
+                <View style={styles.remainingBadge}>
+                  <Text style={styles.remainingText}>
+                    {totalCards - currentIndex - 1}장 남았어요!
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
         </View>
 
-        {/* 탭 영역 (좌/우) */}
-        <TouchableWithoutFeedback onPress={handleLeftTap}>
-          <View style={[styles.touchZone, styles.touchLeft]} />
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={handleRightTap}>
-          <View style={[styles.touchZone, styles.touchRight]} />
-        </TouchableWithoutFeedback>
+        {/* 탭 영역 (좌/우) - 네이티브 앱에서만 표시 (웹에서는 스와이프 사용) */}
+        {totalCards > 1 && Platform.OS !== "web" && (
+          <>
+            <TouchableWithoutFeedback onPress={handleLeftTap}>
+              <View style={[styles.touchZone, styles.touchLeft]} />
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={handleRightTap}>
+              <View style={[styles.touchZone, styles.touchRight]} />
+            </TouchableWithoutFeedback>
+          </>
+        )}
       </View>
     </View>
   );
@@ -492,11 +535,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   header: {
-    height: 56,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
+    paddingBottom: 16,
     backgroundColor: semanticColors.surface.background,
     borderBottomWidth: 1,
     borderBottomColor: "#E4E2E2",
@@ -576,6 +619,8 @@ const styles = StyleSheet.create({
   },
   cardImageArea: {
     width: "100%",
+    aspectRatio: 4 / 5,
+    maxHeight: MAX_IMAGE_HEIGHT,
     backgroundColor: "#F7F3FF",
     borderRadius: 16,
     overflow: "hidden",

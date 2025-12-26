@@ -4,22 +4,25 @@
  * - 3초 간격 자동 슬라이드
  * - 무한 캐러셀 (마지막 → 첫 번째 자연스러운 전환)
  * - 터치 시 자동 슬라이드 일시 중지
+ * - Reanimated 기반 네이티브 스레드 애니메이션으로 60fps 성능 보장
  */
 import React, { useCallback, useRef, useState, useEffect, useMemo } from "react";
 import {
   View,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
   Dimensions,
-  PanResponder,
-  type NativeSyntheticEvent,
-  type NativeScrollEvent,
   type LayoutChangeEvent,
-  type GestureResponderEvent,
-  type PanResponderGestureState,
 } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  runOnJS,
+  Easing,
+} from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "@/src/shared/ui";
@@ -30,6 +33,7 @@ import type { CardNewsHighlight } from "../types";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const AUTO_SLIDE_INTERVAL = 3000;
+const ANIMATION_DURATION = 300;
 
 type Props = {
   onPressItem: (item: CardNewsHighlight) => void;
@@ -38,16 +42,13 @@ type Props = {
 export function CardNewsHighlights({ onPressItem }: Props) {
   const { data: highlights, isLoading, isError } = useCardNewsHighlights();
   const analytics = useCardNewsAnalytics();
-  const scrollRef = useRef<ScrollView>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(SCREEN_WIDTH - 32);
-  const [isUserInteracting, setIsUserInteracting] = useState(false);
+  const [displayIndex, setDisplayIndex] = useState(0);
   const autoSlideTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const isJumpingRef = useRef(false);
-  const goToIndexRef = useRef<(index: number) => void>(() => {});
   const wasAutoScrolledRef = useRef(true);
 
   const itemCount = highlights?.length ?? 0;
+  const extendedLength = itemCount <= 1 ? itemCount : itemCount + 2;
 
   const extendedHighlights = useMemo(() => {
     if (!highlights || highlights.length === 0) return [];
@@ -59,75 +60,28 @@ export function CardNewsHighlights({ onPressItem }: Props) {
     ];
   }, [highlights]);
 
+  const translateX = useSharedValue(0);
+  const currentIndex = useSharedValue(1);
+  const isAnimating = useSharedValue(false);
+
   const getRealIndex = useCallback(
     (extendedIndex: number) => {
       if (itemCount <= 1) return 0;
       if (extendedIndex === 0) return itemCount - 1;
-      if (extendedIndex === extendedHighlights.length - 1) return 0;
+      if (extendedIndex === extendedLength - 1) return 0;
       return extendedIndex - 1;
     },
-    [itemCount, extendedHighlights.length]
+    [itemCount, extendedLength]
   );
 
-  const scrollToIndex = useCallback(
-    (index: number, animated = true) => {
-      scrollRef.current?.scrollTo({
-        x: index * containerWidth,
-        animated,
-      });
-    },
-    [containerWidth]
-  );
+  const updateDisplayIndex = useCallback((extendedIndex: number) => {
+    const realIdx = getRealIndex(extendedIndex);
+    setDisplayIndex(realIdx);
+  }, [getRealIndex]);
 
   const handleLayout = useCallback((e: LayoutChangeEvent) => {
     setContainerWidth(e.nativeEvent.layout.width);
   }, []);
-
-  useEffect(() => {
-    if (itemCount > 1 && containerWidth > 0) {
-      scrollToIndex(1, false);
-      setCurrentIndex(1);
-    }
-  }, [itemCount, containerWidth, scrollToIndex]);
-
-  const goToIndex = useCallback(
-    (index: number) => {
-      if (itemCount <= 1) {
-        scrollToIndex(0, true);
-        setCurrentIndex(0);
-        return;
-      }
-
-      let targetIndex = index;
-      if (index < 0) {
-        targetIndex = extendedHighlights.length - 2;
-      } else if (index >= extendedHighlights.length) {
-        targetIndex = 1;
-      }
-
-      scrollToIndex(targetIndex, true);
-      setCurrentIndex(targetIndex);
-
-      if (index === 0) {
-        isJumpingRef.current = true;
-        setTimeout(() => {
-          scrollToIndex(extendedHighlights.length - 2, false);
-          setCurrentIndex(extendedHighlights.length - 2);
-          isJumpingRef.current = false;
-        }, 300);
-      } else if (index === extendedHighlights.length - 1) {
-        isJumpingRef.current = true;
-        setTimeout(() => {
-          scrollToIndex(1, false);
-          setCurrentIndex(1);
-          isJumpingRef.current = false;
-        }, 300);
-      }
-    },
-    [itemCount, extendedHighlights.length, scrollToIndex]
-  );
-
-  goToIndexRef.current = goToIndex;
 
   const stopAutoSlide = useCallback(() => {
     if (autoSlideTimer.current) {
@@ -136,39 +90,88 @@ export function CardNewsHighlights({ onPressItem }: Props) {
     }
   }, []);
 
+  const animateToIndex = useCallback(
+    (index: number, width: number, animated = true) => {
+      "worklet";
+      const targetX = -index * width;
+      if (animated) {
+        translateX.value = withTiming(targetX, {
+          duration: ANIMATION_DURATION,
+          easing: Easing.out(Easing.cubic),
+        });
+      } else {
+        translateX.value = targetX;
+      }
+    },
+    [translateX]
+  );
+
+  const goToIndex = useCallback(
+    (index: number, animated = true) => {
+      if (itemCount <= 1) {
+        currentIndex.value = 0;
+        animateToIndex(0, containerWidth, animated);
+        updateDisplayIndex(0);
+        return;
+      }
+
+      const maxIndex = extendedLength - 1;
+
+      if (index <= 0) {
+        currentIndex.value = 0;
+        animateToIndex(0, containerWidth, animated);
+        updateDisplayIndex(0);
+
+        setTimeout(() => {
+          const jumpIndex = extendedLength - 2;
+          currentIndex.value = jumpIndex;
+          translateX.value = -jumpIndex * containerWidth;
+        }, animated ? ANIMATION_DURATION : 0);
+      } else if (index >= maxIndex) {
+        currentIndex.value = maxIndex;
+        animateToIndex(maxIndex, containerWidth, animated);
+        updateDisplayIndex(maxIndex);
+
+        setTimeout(() => {
+          currentIndex.value = 1;
+          translateX.value = -containerWidth;
+        }, animated ? ANIMATION_DURATION : 0);
+      } else {
+        currentIndex.value = index;
+        animateToIndex(index, containerWidth, animated);
+        updateDisplayIndex(index);
+      }
+    },
+    [itemCount, extendedLength, containerWidth, animateToIndex, updateDisplayIndex, currentIndex, translateX]
+  );
+
   const startAutoSlide = useCallback(() => {
-    if (autoSlideTimer.current) {
-      clearInterval(autoSlideTimer.current);
-    }
+    stopAutoSlide();
     if (itemCount <= 1) return;
 
     autoSlideTimer.current = setInterval(() => {
-      if (isUserInteracting || isJumpingRef.current) return;
+      if (isAnimating.value) return;
 
-      setCurrentIndex((prev) => {
-        const nextIndex = prev + 1;
-        goToIndexRef.current(nextIndex);
-        return nextIndex;
-      });
+      wasAutoScrolledRef.current = true;
+      const nextIndex = currentIndex.value + 1;
+      goToIndex(nextIndex, true);
     }, AUTO_SLIDE_INTERVAL);
-  }, [itemCount, isUserInteracting]);
+  }, [itemCount, goToIndex, stopAutoSlide, currentIndex, isAnimating]);
 
   useEffect(() => {
-    if (!isUserInteracting && itemCount > 1) {
+    if (itemCount > 1 && containerWidth > 0) {
+      currentIndex.value = 1;
+      translateX.value = -containerWidth;
+      updateDisplayIndex(1);
+    }
+  }, [itemCount, containerWidth, translateX, updateDisplayIndex, currentIndex]);
+
+  useEffect(() => {
+    if (itemCount > 1) {
       startAutoSlide();
     }
     return () => stopAutoSlide();
-  }, [isUserInteracting, itemCount, startAutoSlide, stopAutoSlide]);
-
-  const handleScrollBeginDrag = useCallback(() => {
-    setIsUserInteracting(true);
-    wasAutoScrolledRef.current = false;
-    stopAutoSlide();
-  }, [stopAutoSlide]);
-
-  const handleScrollEndDrag = useCallback(() => {
-    setIsUserInteracting(false);
-  }, []);
+  }, [itemCount, startAutoSlide, stopAutoSlide]);
 
   const handleItemPress = useCallback((item: CardNewsHighlight, index: number) => {
     const realIndex = getRealIndex(index);
@@ -181,76 +184,53 @@ export function CardNewsHighlights({ onPressItem }: Props) {
     onPressItem(item);
   }, [analytics, getRealIndex, onPressItem]);
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => false,
-        onMoveShouldSetPanResponder: (
-          _: GestureResponderEvent,
-          gestureState: PanResponderGestureState
-        ) => {
-          const isHorizontalSwipe = Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 1.5;
-          const hasMovedEnough = Math.abs(gestureState.dx) > 10;
-          return isHorizontalSwipe && hasMovedEnough;
-        },
-        onPanResponderGrant: () => {
-          setIsUserInteracting(true);
-          wasAutoScrolledRef.current = false;
-          stopAutoSlide();
-        },
-        onPanResponderMove: (_, gestureState) => {
-          const newX = currentIndex * containerWidth - gestureState.dx;
-          scrollRef.current?.scrollTo({ x: newX, animated: false });
-        },
-        onPanResponderRelease: (_, gestureState) => {
-          setIsUserInteracting(false);
-          const threshold = containerWidth * 0.2;
+  const panGesture = useMemo(() => {
+    const cWidth = containerWidth;
+    const maxIdx = extendedLength - 1;
 
-          if (Math.abs(gestureState.dx) > threshold) {
-            const direction = gestureState.dx > 0 ? -1 : 1;
-            const nextIndex = currentIndex + direction;
-            goToIndex(nextIndex);
-          } else {
-            goToIndex(currentIndex);
-          }
-        },
-        onPanResponderTerminate: () => {
-          setIsUserInteracting(false);
-          goToIndex(currentIndex);
-        },
-      }),
-    [currentIndex, containerWidth, stopAutoSlide, goToIndex]
-  );
+    return Gesture.Pan()
+      .activeOffsetX([-10, 10])
+      .failOffsetY([-20, 20])
+      .onStart(() => {
+        "worklet";
+        isAnimating.value = true;
+        runOnJS(stopAutoSlide)();
+      })
+      .onUpdate((event) => {
+        "worklet";
+        const baseX = -currentIndex.value * cWidth;
+        translateX.value = baseX + event.translationX;
+      })
+      .onEnd((event) => {
+        "worklet";
+        const threshold = cWidth * 0.2;
+        const velocityThreshold = 500;
 
-  const handleMomentumEnd = useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (isJumpingRef.current) return;
+        let nextIndex = currentIndex.value;
 
-      const offsetX = e.nativeEvent.contentOffset.x;
-      const newIndex = Math.round(offsetX / containerWidth);
-      setCurrentIndex(newIndex);
+        const movedEnough = Math.abs(event.translationX) > threshold;
+        const flicked = Math.abs(event.velocityX) > velocityThreshold;
 
-      if (itemCount <= 1) return;
+        if (movedEnough || flicked) {
+          const direction = event.translationX !== 0
+            ? Math.sign(event.translationX)
+            : Math.sign(event.velocityX);
 
-      if (newIndex === 0) {
-        isJumpingRef.current = true;
-        const jumpToIndex = extendedHighlights.length - 2;
-        setTimeout(() => {
-          scrollToIndex(jumpToIndex, false);
-          setCurrentIndex(jumpToIndex);
-          isJumpingRef.current = false;
-        }, 50);
-      } else if (newIndex === extendedHighlights.length - 1) {
-        isJumpingRef.current = true;
-        setTimeout(() => {
-          scrollToIndex(1, false);
-          setCurrentIndex(1);
-          isJumpingRef.current = false;
-        }, 50);
-      }
-    },
-    [containerWidth, itemCount, extendedHighlights.length, scrollToIndex]
-  );
+          nextIndex = currentIndex.value + (direction > 0 ? -1 : 1);
+        }
+
+        runOnJS(goToIndex)(nextIndex, true);
+      })
+      .onFinalize(() => {
+        "worklet";
+        isAnimating.value = false;
+        runOnJS(startAutoSlide)();
+      });
+  }, [containerWidth, extendedLength, translateX, currentIndex, isAnimating, goToIndex, stopAutoSlide, startAutoSlide]);
+
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
 
   if (isLoading) {
     return (
@@ -275,84 +255,69 @@ export function CardNewsHighlights({ onPressItem }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.sectionTitle}>지금 주목할 소식</Text>
+        <Text weight="bold" style={styles.sectionTitle}>지금 주목할 소식</Text>
       </View>
 
-      <View onLayout={handleLayout} {...panResponder.panHandlers}>
-        <ScrollView
-          ref={scrollRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScrollBeginDrag={handleScrollBeginDrag}
-          onScrollEndDrag={handleScrollEndDrag}
-          onMomentumScrollEnd={handleMomentumEnd}
-          scrollEventThrottle={16}
-          decelerationRate="fast"
-          snapToInterval={containerWidth}
-          scrollEnabled={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          {extendedHighlights.map((item, index) => (
-            <TouchableOpacity
-              key={`${item.id}-${index}`}
-              activeOpacity={0.9}
-              onPress={() => handleItemPress(item, index)}
-              style={[styles.cardWrapper, { width: containerWidth }]}
-            >
-              <View style={styles.card}>
-                <Image
-                  source={{ uri: item.backgroundImage.url }}
-                  style={StyleSheet.absoluteFillObject}
-                  contentFit="cover"
-                />
-                <LinearGradient
-                  colors={[
-                    "transparent",
-                    "rgba(0,0,0,0.5)",
-                    "rgba(0,0,0,0.9)",
-                  ]}
-                  locations={[0, 0.4, 1]}
-                  style={StyleSheet.absoluteFillObject}
-                />
-                {/* TODO: 보상 기능 활성화 시 주석 해제
-                {item.hasReward && (
-                  <View style={styles.rewardBadge}>
-                    <Text style={styles.rewardBadgeText}>🎁 보상</Text>
-                  </View>
-                )}
-                */}
-                <View style={styles.cardContent}>
-                  <Text style={styles.cardTitle} numberOfLines={2}>
-                    {item.title}
-                  </Text>
-                  <Text style={styles.cardDescription} numberOfLines={2}>
-                    {item.description}
-                  </Text>
-                  <View style={styles.ctaButton}>
-                    <Text style={styles.ctaText}>지금 확인하기 →</Text>
+      <View onLayout={handleLayout} style={styles.carouselContainer}>
+        <GestureDetector gesture={panGesture}>
+          <Animated.View
+            style={[
+              styles.carouselTrack,
+              { width: containerWidth * extendedHighlights.length },
+              animatedContainerStyle,
+            ]}
+          >
+            {extendedHighlights.map((item, index) => (
+              <TouchableOpacity
+                key={`${item.id}-${index}`}
+                activeOpacity={0.9}
+                onPress={() => handleItemPress(item, index)}
+                style={[styles.cardWrapper, { width: containerWidth }]}
+              >
+                <View style={styles.card}>
+                  <Image
+                    source={{ uri: item.backgroundImage.url }}
+                    style={StyleSheet.absoluteFillObject}
+                    contentFit="cover"
+                    recyclingKey={`card-${item.id}`}
+                  />
+                  <LinearGradient
+                    colors={[
+                      "transparent",
+                      "rgba(0,0,0,0.5)",
+                      "rgba(0,0,0,0.9)",
+                    ]}
+                    locations={[0, 0.4, 1]}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                  <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                    <Text style={styles.cardDescription} numberOfLines={2}>
+                      {item.description}
+                    </Text>
+                    <View style={styles.ctaButton}>
+                      <Text style={styles.ctaText}>지금 확인하기 →</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+              </TouchableOpacity>
+            ))}
+          </Animated.View>
+        </GestureDetector>
       </View>
 
       <View style={styles.paginationContainer}>
-        {highlights.map((_, index) => {
-          const realCurrentIndex = getRealIndex(currentIndex);
-          const isActive = index === realCurrentIndex;
-          return (
-            <View
-              key={index}
-              style={[
-                styles.paginationDot,
-                isActive && styles.paginationDotActive,
-              ]}
-            />
-          );
-        })}
+        {highlights.map((_, index) => (
+          <Animated.View
+            key={index}
+            style={[
+              styles.paginationDot,
+              index === displayIndex && styles.paginationDotActive,
+            ]}
+          />
+        ))}
       </View>
     </View>
   );
@@ -403,8 +368,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: semanticColors.text.primary,
   },
-  scrollContent: {
-    paddingHorizontal: 16,
+  carouselContainer: {
+    overflow: "hidden",
+    marginHorizontal: 16,
+  },
+  carouselTrack: {
+    flexDirection: "row",
   },
   cardWrapper: {
     paddingRight: 8,
@@ -414,22 +383,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     backgroundColor: semanticColors.brand.primary,
-  },
-  rewardBadge: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-    backgroundColor: "rgba(255,255,255,0.25)",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-  },
-  rewardBadgeText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "600",
   },
   cardContent: {
     position: "absolute",
