@@ -2,14 +2,23 @@ import useILikedQuery from "@/src/features/like/queries/use-i-liked-query";
 import Loading from "@/src/features/loading";
 import NotSome from "@/src/features/post-box/ui/not-some";
 import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
+import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { FlashList } from "@shopify/flash-list";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 
 function ILiked() {
   const { t } = useTranslation();
   const { data: iLikedList, isLoading } = useILikedQuery();
+
+  useEffect(() => {
+    mixpanelAdapter.track(MIXPANEL_EVENTS.LIKE_LIST_VIEWED, {
+      list_type: "i_liked",
+      timestamp: new Date().toISOString(),
+    });
+  }, []);
   const sortedList = useMemo(() => {
     if (!iLikedList) {
       return [];

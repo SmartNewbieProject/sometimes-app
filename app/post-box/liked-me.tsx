@@ -3,6 +3,8 @@ import Loading from "@/src/features/loading";
 import NotSome from "@/src/features/post-box/ui/not-some";
 import PostBoxCard from "@/src/features/post-box/ui/post-box-card";
 import { useMutualMatchReviewTrigger } from "@/src/features/in-app-review";
+import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
+import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
@@ -13,6 +15,13 @@ function LikedMe() {
   const { t } = useTranslation();
   const { data: likedMeList, isLoading } = useLikedMeQuery();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    mixpanelAdapter.track(MIXPANEL_EVENTS.LIKE_LIST_VIEWED, {
+      list_type: "liked_me",
+      timestamp: new Date().toISOString(),
+    });
+  }, []);
 
   const sortedList = useMemo(() => {
     if (!likedMeList) {
