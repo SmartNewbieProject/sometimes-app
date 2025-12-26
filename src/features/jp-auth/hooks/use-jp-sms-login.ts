@@ -23,6 +23,9 @@ import type { JpAuthStep, JpLoginResponse, JpCertificationInfo } from '../types'
 
 const TIMER_SECONDS = 180; // 3분
 
+// 테스트용 기본 전화번호 (개발 환경에서만 사용)
+const TEST_DEFAULT_PHONE = __DEV__ ? '010-2655-4276' : '';
+
 interface UseJpSmsLoginOptions {
   onError?: (error: Error) => void;
   onSuccess?: (isNewUser: boolean) => void;
@@ -52,7 +55,7 @@ export const useJpSmsLogin = ({
   const [step, setStep] = useState<JpAuthStep>('phone_input');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(TEST_DEFAULT_PHONE);
   const [verificationCode, setVerificationCode] = useState('');
   const [remainingSeconds, setRemainingSeconds] = useState(TIMER_SECONDS);
 

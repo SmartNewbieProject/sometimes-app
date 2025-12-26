@@ -1,17 +1,18 @@
 /**
  * JP SMS 인증코드 입력 화면
  * 6자리 코드 입력, 3분 타이머, 재발송 기능
+ * 브랜드 가치: 설렘의 마지막 단계, 친근한 응원 메시지
  */
 
 import {
   View,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
+  ScrollView,
   TouchableOpacity,
 } from 'react-native';
 import { Text, Button, Input } from '@/src/shared/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import colors from '@/src/shared/constants/colors';
 import { useTranslation } from 'react-i18next';
 import { formatJpPhoneDisplay } from '../utils/phone-format';
 
@@ -33,7 +34,6 @@ export function CodeVerificationScreen({
   onCodeChange,
   onSubmit,
   onResend,
-  onBack,
   remainingSeconds,
   isLoading,
   error,
@@ -54,125 +54,161 @@ export function CodeVerificationScreen({
   };
 
   return (
-    <KeyboardAvoidingView
+    <ScrollView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      contentContainerStyle={styles.scrollContent}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
     >
       <View style={styles.content}>
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
-          <Text size="16" textColor="primary">
-            ← {t('features.jp-auth.code_verification.back')}
+        <View style={styles.headerSection}>
+          <Text size="20" weight="bold" style={styles.title}>
+            {t('features.jp-auth.code_verification.title')} ✨
           </Text>
-        </TouchableOpacity>
-
-        <Text size="24" weight="bold" style={styles.title}>
-          {t('features.jp-auth.code_verification.title')}
-        </Text>
-        <Text size="14" style={styles.subtitle}>
-          {t('features.jp-auth.code_verification.subtitle', {
-            phoneNumber: formatJpPhoneDisplay(phoneNumber),
-          })}
-        </Text>
-
-        <View style={styles.codeInputContainer}>
-          <Input
-            size="lg"
-            value={code}
-            onChangeText={handleCodeChange}
-            placeholder={t('features.jp-auth.code_verification.placeholder')}
-            keyboardType="number-pad"
-            maxLength={6}
-            textInputStyle={styles.codeInput}
-          />
+          <Text size="14" style={styles.subtitle}>
+            {t('features.jp-auth.code_verification.subtitle', {
+              phoneNumber: formatJpPhoneDisplay(phoneNumber),
+            })}
+          </Text>
         </View>
 
-        <View style={styles.timerContainer}>
-          {!isTimerExpired ? (
-            <Text size="14" style={styles.timer}>
-              {t('features.jp-auth.code_verification.remaining_time', {
-                time: formatTime(remainingSeconds),
-              })}
-            </Text>
-          ) : (
-            <TouchableOpacity onPress={onResend} disabled={isLoading}>
-              <Text size="14" style={styles.resendButton}>
-                {t('features.jp-auth.code_verification.resend')}
-              </Text>
-            </TouchableOpacity>
+        <View style={styles.codeSection}>
+          <View style={styles.codeInputContainer}>
+            <Input
+              size="lg"
+              value={code}
+              onChangeText={handleCodeChange}
+              placeholder={t('features.jp-auth.code_verification.placeholder')}
+              keyboardType="number-pad"
+              maxLength={6}
+              textInputStyle={styles.codeInput}
+              autoFocus
+            />
+          </View>
+
+          <View style={styles.timerContainer}>
+            {!isTimerExpired ? (
+              <View style={styles.timerBadge}>
+                <Text size="14" weight="semibold" style={styles.timerText}>
+                  {t('features.jp-auth.code_verification.remaining_time', {
+                    time: formatTime(remainingSeconds),
+                  })}
+                </Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={onResend}
+                disabled={isLoading}
+                style={styles.resendContainer}
+              >
+                <Text size="14" style={styles.resendButton}>
+                  {t('features.jp-auth.code_verification.resend')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text size="14" style={styles.error}>{error}</Text>
+            </View>
           )}
         </View>
-
-        {error && <Text size="14" style={styles.error}>{error}</Text>}
-
-        <View style={styles.buttonContainer}>
-          <Button
-            variant="primary"
-            size="lg"
-            rounded="full"
-            width="full"
-            onPress={onSubmit}
-            disabled={!isCodeComplete || isLoading || isTimerExpired}
-          >
-            <Text textColor="white" size="18" weight="semibold">
-              {isLoading
-                ? t('features.jp-auth.code_verification.loading')
-                : t('features.jp-auth.code_verification.submit_button')}
-            </Text>
-          </Button>
-        </View>
       </View>
-    </KeyboardAvoidingView>
+
+      <View style={styles.buttonContainer}>
+        <Button
+          variant="primary"
+          size="lg"
+          rounded="full"
+          width="full"
+          onPress={onSubmit}
+          disabled={!isCodeComplete || isLoading || isTimerExpired}
+        >
+          <Text textColor="white" size="18" weight="semibold">
+            {isLoading
+              ? t('features.jp-auth.code_verification.loading')
+              : t('features.jp-auth.code_verification.submit_button')}
+          </Text>
+        </Button>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: semanticColors.surface.background,
+    backgroundColor: 'transparent',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
+    paddingTop: 24,
   },
-  backButton: {
-    marginBottom: 20,
+  headerSection: {
+    alignItems: 'center',
+    marginBottom: 40,
   },
   title: {
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
+    color: colors.black,
   },
   subtitle: {
     textAlign: 'center',
     color: semanticColors.text.tertiary,
-    marginBottom: 40,
+    lineHeight: 20,
+  },
+  codeSection: {
+    alignItems: 'center',
   },
   codeInputContainer: {
-    alignItems: 'center',
-    marginBottom: 16,
+    width: '100%',
+    marginBottom: 20,
   },
   codeInput: {
-    fontSize: 28,
-    letterSpacing: 8,
+    fontSize: 32,
+    letterSpacing: 12,
     textAlign: 'center',
+    fontWeight: '600',
   },
   timerContainer: {
     alignItems: 'center',
     marginBottom: 16,
   },
-  timer: {
-    color: semanticColors.text.tertiary,
+  timerBadge: {
+    backgroundColor: colors.lightPurple,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  timerText: {
+    color: colors.primaryPurple,
+  },
+  resendContainer: {
+    paddingVertical: 8,
   },
   resendButton: {
-    color: semanticColors.brand.primary,
+    color: colors.primaryPurple,
     textDecorationLine: 'underline',
+  },
+  errorContainer: {
+    marginTop: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#FEF2F2',
+    borderRadius: 8,
+    width: '100%',
   },
   error: {
     color: '#DC2626',
     textAlign: 'center',
-    marginBottom: 16,
   },
   buttonContainer: {
-    marginTop: 24,
+    paddingVertical: 24,
   },
 });

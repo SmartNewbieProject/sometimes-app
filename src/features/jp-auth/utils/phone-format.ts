@@ -9,10 +9,20 @@
 /**
  * 입력된 전화번호를 API 요청용 국제 형식으로 변환
  * 예: "09012345678" → "+81-90-1234-5678"
+ * 테스트: "01026554276" → "+82-10-2655-4276"
  */
 export const formatJpPhoneForApi = (phone: string): string => {
   const cleaned = phone.replace(/\D/g, '');
 
+  // 한국 번호 처리 (테스트용)
+  if (cleaned.startsWith('010') && cleaned.length === 11) {
+    const firstPart = cleaned.slice(1, 3);
+    const secondPart = cleaned.slice(3, 7);
+    const thirdPart = cleaned.slice(7);
+    return `+82-${firstPart}-${secondPart}-${thirdPart}`;
+  }
+
+  // 일본 번호 처리
   if (cleaned.startsWith('0') && cleaned.length === 11) {
     const areaCode = cleaned.slice(1, 3);
     const firstPart = cleaned.slice(3, 7);
@@ -52,12 +62,34 @@ export const formatJpPhoneDisplay = (phone: string): string => {
 };
 
 /**
+ * 테스트용 번호 패턴
+ * 2655-4276이 포함된 번호는 테스트 번호로 인식
+ */
+const TEST_PHONE_PATTERN = '26554276';
+
+/**
+ * 테스트 번호 여부 확인
+ * 번호에 2655-4276 패턴이 포함되어 있으면 테스트 번호로 간주
+ */
+export const isTestPhoneNumber = (phone: string): boolean => {
+  const cleaned = phone.replace(/\D/g, '');
+  return cleaned.includes(TEST_PHONE_PATTERN);
+};
+
+/**
  * 일본 휴대폰 번호 유효성 검사
  * - 070, 080, 090으로 시작하는 11자리
+ * - 테스트 번호 (2655-4276 패턴 포함): 항상 허용
  */
 export const validateJpPhoneNumber = (phone: string): boolean => {
   const cleaned = phone.replace(/\D/g, '');
 
+  // 테스트용 번호 체크 (2655-4276 패턴 포함)
+  if (isTestPhoneNumber(cleaned)) {
+    return cleaned.length >= 10;
+  }
+
+  // 일본 번호 형식 검사
   if (cleaned.startsWith('0')) {
     return /^0[789]0\d{8}$/.test(cleaned);
   }
