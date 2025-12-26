@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation_plan>
+  <metadata>
+    <title>JP 회원가입 Flow 구현 계획</title>
+    <version>1.0</version>
+    <created_at>2025-12-26</created_at>
+    <author>Claude Code</author>
+    <status>READY_FOR_IMPLEMENTATION</status>
+  </metadata>
+
+  <overview>
+    <summary>
+      일본 사용자를 위한 회원가입 플로우 구현.
+      한국 회원가입과 동일한 UI/UX를 제공하되,
+      SMS 인증 기반으로 이름/생년월일/성별을 별도 화면에서 수집.
+    </summary>
+
+    <key_differences>
+      <difference id="1">
+        <kr>PASS 본인인증 → 이름/생년월일/성별 자동 수집</kr>
+        <jp>SMS 인증 → 별도 프로필 화면에서 수동 입력</jp>
+      </difference>
+      <difference id="2">
+        <kr>apis.signup() 호출</kr>
+        <jp>jpSignup() 호출 (multipart/form-data)</jp>
+      </difference>
+      <difference id="3">
+        <kr>kakaoId, appleId 지원</kr>
+        <jp>email 필드 추가 지원</jp>
+      </difference>
+    </key_differences>
+  </overview>
+
+  <user_flow>
+    <step order="1" status="COMPLETED">
+      <name>SMS 인증 - 전화번호 입력</name>
+      <route>/auth/jp-sms</route>
+      <component>JpSmsAuthContainer → PhoneInputScreen</component>
+      <api>POST /jp/auth/sms/send</api>
+      <output>
+        <item>phoneNumber (formatted: +81-XX-XXXX-XXXX)</item>
+      </output>
+    </step>
+
+    <step order="2" status="COMPLETED">
+      <name>SMS 인증 - 코드 검증</name>
+      <route>/auth/jp-sms</route>
+      <component>JpSmsAuthContainer → CodeVerificationScreen</component>
+      <api>POST /jp/auth/sms/verify</api>
+      <api>POST /jp/auth/login</api>
+      <output>
+        <item>isNewUser (boolean) - 신규/기존 회원 판별</item>
+      </output>
+      <branching>
+        <if condition="isNewUser === false">
+          <action>토큰 저장 → /home 이동</action>
+        </if>
+        <if condition="isNewUser === true">
+          <action>AsyncStorage 저장 → /auth/signup/jp-profile 이동</action>
+        </if>
+      </branching>
+    </step>
+
+    <step order="3" status="NEEDS_UPDATE">
+      <name>JP 프로필 입력</name>
+      <route>/auth/signup/jp-profile</route>
+      <component>JpProfilePage</component>
+      <required_fields>
+        <field name="name" type="string" validation="length >= 1"/>
+        <field name="birthday" type="string" format="YYYY-MM-DD" validation="regex + isAdult"/>
+        <field name="gender" type="enum" values="MALE|FEMALE"/>
+      </required_fields>
+      <output>
+        <item>name, birthday, gender, age (calculated)</item>
+        <item>AsyncStorage 업데이트</item>
+        <item>signupProgress.form 업데이트</item>
+      </output>
+      <todo>
+        <item priority="HIGH">표준 Header 컴포넌트로 교체</item>
+        <item priority="MEDIUM">키보드 여백 색상 수정</item>
+      </todo>
+    </step>
+
+    <step order="4" status="SHARED_WITH_KR">
+      <name>대학교 선택</name>
+      <route>/auth/signup/university</route>
+      <component>UniversityPage</component>
+      <note>KR과 동일한 컴포넌트 재사용</note>
+    </step>
+
+    <step order="5" status="SHARED_WITH_KR">
+      <name>학과/학년/학번 입력</name>
+      <route>/auth/signup/university-details</route>
+      <component>UniversityDetailsPage</component>
+      <required_fields>
+        <field name="departmentName" type="string"/>
+        <field name="grade" type="string"/>
+        <field name="studentNumber" type="string"/>
+      </required_fields>
+    </step>
+
+    <step order="6" status="SHARED_WITH_KR">
+      <name>인스타그램 ID 입력</name>
+      <route>/auth/signup/instagram</route>
+      <component>InstagramPage</component>
+      <required_fields>
+        <field name="instagramId" type="string" optional="true"/>
+      </required_fields>
+    </step>
+
+    <step order="7" status="SHARED_WITH_KR">
+      <name>프로필 이미지 업로드</name>
+      <route>/auth/signup/profile-image</route>
+      <component>ProfileImagePage</component>
+      <required_fields>
+        <field name="profileImages" type="File[]" min="1" max="3"/>
+        <field name="mainImageIndex" type="number" default="0"/>
+      </required_fields>
+    </step>
+
+    <step order="8" status="NEEDS_UPDATE">
+      <name>초대코드 입력 + 회원가입 완료</name>
+      <route>/auth/signup/invite-code</route>
+      <component>InviteCodePage</component>
+      <api_branching>
+        <if condition="loginType === 'jp_sms'">
+          <api>POST /jp/auth/signup (multipart/form-data)</api>
+        </if>
+        <else>
+          <api>POST /auth/signup (multipart/form-data)</api>
+        </else>
+      </api_branching>
+      <todo>
+        <item priority="CRITICAL">processSignup에서 JP 분기 로직 추가</item>
+      </todo>
+    </step>
+
+    <step order="9" status="SHARED_WITH_KR">
+      <name>회원가입 완료</name>
+      <route>/auth/signup/done</route>
+      <component>DonePage</component>
+      <action>토큰 저장 완료, 환영 화면 표시</action>
+    </step>
+  </user_flow>
+
+  <api_specifications>
+    <api id="jp_sms_send">
+      <endpoint>POST /jp/auth/sms/send</endpoint>
+      <request>
+        <field name="phoneNumber" type="string" required="true">
+          <format>+81-XX-XXXX-XXXX</format>
+          <example>+81-90-1234-5678</example>
+        </field>
+      </request>
+      <response>
+        <field name="message" type="string">認証コードを送信しました</field>
+      </response>
+      <status>IMPLEMENTED</status>
+    </api>
+
+    <api id="jp_sms_verify">
+      <endpoint>POST /jp/auth/sms/verify</endpoint>
+      <request>
+        <field name="phoneNumber" type="string" required="true"/>
+        <field name="code" type="string" required="true">
+          <format>6자리 숫자</format>
+          <test_value>123456</test_value>
+        </field>
+      </request>
+      <response>
+        <field name="message" type="string">認証に成功しました</field>
+      </response>
+      <status>IMPLEMENTED</status>
+    </api>
+
+    <api id="jp_login">
+      <endpoint>POST /jp/auth/login</endpoint>
+      <request>
+        <field name="phoneNumber" type="string" required="true"/>
+      </request>
+      <response>
+        <field name="accessToken" type="string"/>
+        <field name="refreshToken" type="string"/>
+        <field name="tokenType" type="string">Bearer</field>
+        <field name="expiresIn" type="number"/>
+        <field name="roles" type="string[]"/>
+        <field name="isNewUser" type="boolean">
+          <description>신규 회원 여부 - true면 회원가입 플로우로 이동</description>
+        </field>
+        <field name="userId" type="string" optional="true"/>
+      </response>
+      <status>IMPLEMENTED</status>
+    </api>
+
+    <api id="jp_signup">
+      <endpoint>POST /jp/auth/signup</endpoint>
+      <content_type>multipart/form-data</content_type>
+      <request>
+        <field name="phoneNumber" type="string" required="true">
+          <source>SMS 인증에서 수집</source>
+        </field>
+        <field name="name" type="string" required="true">
+          <source>JP 프로필 화면에서 수집</source>
+        </field>
+        <field name="gender" type="enum" required="true">
+          <values>MALE, FEMALE</values>
+          <source>JP 프로필 화면에서 수집</source>
+        </field>
+        <field name="birthday" type="string" required="true">
+          <format>YYYY-MM-DD</format>
+          <source>JP 프로필 화면에서 수집</source>
+        </field>
+        <field name="age" type="number" required="true">
+          <description>birthday에서 자동 계산</description>
+        </field>
+        <field name="universityId" type="string" required="true">
+          <source>대학 선택 화면</source>
+        </field>
+        <field name="departmentName" type="string" required="true">
+          <source>학과 입력 화면</source>
+        </field>
+        <field name="grade" type="string" required="true">
+          <source>학년 선택 화면</source>
+        </field>
+        <field name="studentNumber" type="string" required="true">
+          <source>학번 입력 화면</source>
+        </field>
+        <field name="profileImages" type="File[]" required="true">
+          <min>1</min>
+          <max>3</max>
+          <source>프로필 이미지 화면</source>
+        </field>
+        <field name="mainImageIndex" type="number" optional="true" default="0"/>
+        <field name="instagramId" type="string" optional="true"/>
+        <field name="email" type="string" optional="true">
+          <note>JP 전용 필드</note>
+        </field>
+        <field name="referralCode" type="string" optional="true">
+          <source>초대코드 화면</source>
+        </field>
+      </request>
+      <response>
+        <field name="accessToken" type="string"/>
+        <field name="refreshToken" type="string"/>
+        <field name="tokenType" type="string">Bearer</field>
+        <field name="expiresIn" type="number"/>
+        <field name="roles" type="string[]"/>
+      </response>
+      <status>API_READY_UI_PENDING</status>
+    </api>
+  </api_specifications>
+
+  <implementation_tasks>
+    <task id="1" priority="CRITICAL">
+      <title>processSignup JP 분기 로직 추가</title>
+      <file>src/features/signup/services/signup-validator.tsx</file>
+      <description>
+        loginType이 'jp_sms'인 경우 jpSignup() API를 호출하도록 수정
+      </description>
+      <code_changes>
+        <before><![CDATA[
+export async function processSignup(
+  signupForm: SignupForm,
+  options
+): Promise<void> {
+  const response = await apis.signup(signupForm);
+  // ...
+}
+        ]]></before>
+        <after><![CDATA[
+import { jpSignup } from '@/src/features/jp-auth/apis';
+
+export async function processSignup(
+  signupForm: SignupForm,
+  options
+): Promise<void> {
+  const isJpUser = signupForm.loginType === 'jp_sms';
+
+  const response = isJpUser
+    ? await jpSignup({
+        phoneNumber: signupForm.phone || signupForm.phoneNumber,
+        name: signupForm.name,
+        gender: signupForm.gender,
+        birthday: signupForm.birthday,
+        age: signupForm.age,
+        universityId: signupForm.universityId,
+        departmentName: signupForm.departmentName,
+        grade: signupForm.grade,
+        studentNumber: signupForm.studentNumber,
+        profileImages: signupForm.profileImages,
+        mainImageIndex: 0,
+        instagramId: signupForm.instagramId,
+        referralCode: signupForm.referralCode,
+      })
+    : await apis.signup(signupForm);
+  // ...
+}
+        ]]></after>
+      </code_changes>
+    </task>
+
+    <task id="2" priority="HIGH">
+      <title>JP 프로필 화면 헤더 표준화</title>
+      <file>app/auth/signup/jp-profile.tsx</file>
+      <description>
+        커스텀 헤더 대신 표준 Header 컴포넌트 사용,
+        배경색을 그라데이션 하단색(#EAE0FF)으로 설정하여 키보드 여백 문제 해결
+      </description>
+      <code_changes>
+        <imports_to_add>
+          <item>import { Header } from '@/src/shared/ui';</item>
+        </imports_to_add>
+        <style_changes>
+          <item>layout.backgroundColor: '#EAE0FF'</item>
+          <item>header.backgroundColor: 'transparent'</item>
+        </style_changes>
+      </code_changes>
+    </task>
+
+    <task id="3" priority="HIGH">
+      <title>SignupForm 타입에 loginType 추가</title>
+      <file>src/features/signup/hooks/use-signup-progress.tsx</file>
+      <description>
+        SignupForm 타입에 loginType 필드 추가하여 JP/KR 구분
+      </description>
+      <code_changes>
+        <type_addition><![CDATA[
+export interface SignupForm {
+  // 기존 필드들...
+  loginType?: 'kakao' | 'kakao_native' | 'apple' | 'pass' | 'jp_sms';
+  country?: 'KR' | 'JP';
+}
+        ]]></type_addition>
+      </code_changes>
+    </task>
+
+    <task id="4" priority="MEDIUM">
+      <title>JP 프로필에서 loginType 저장 확인</title>
+      <file>app/auth/signup/jp-profile.tsx</file>
+      <description>
+        updateForm 호출 시 loginType: 'jp_sms' 포함되도록 확인
+      </description>
+      <verification>
+        <check>AsyncStorage에서 signup_certification_info 읽어서 loginType 확인</check>
+        <check>updateForm에 loginType 전달 확인</check>
+      </verification>
+    </task>
+
+    <task id="5" priority="MEDIUM">
+      <title>validatePhone JP 분기 처리</title>
+      <file>src/features/signup/services/signup-validator.tsx</file>
+      <description>
+        JP 사용자는 이미 SMS 인증으로 전화번호 검증 완료되어 있으므로
+        중복 가입 체크만 수행하거나 스킵
+      </description>
+      <code_changes>
+        <logic><![CDATA[
+export async function validatePhone(signupForm, options): Promise<boolean> {
+  if (!signupForm.phone && !signupForm.phoneNumber) {
+    // JP 사용자는 phoneNumber 필드 사용
+    const phone = signupForm.phoneNumber || signupForm.phone;
+    if (!phone) {
+      showErrorModal("휴대폰 번호가 없습니다", "announcement");
+      return false;
+    }
+  }
+
+  // JP 사용자는 이미 jpLogin에서 isNewUser 체크했으므로 스킵 가능
+  if (signupForm.loginType === 'jp_sms') {
+    return true;
+  }
+
+  // KR 로직...
+}
+        ]]></logic>
+      </code_changes>
+    </task>
+
+    <task id="6" priority="LOW">
+      <title>일본어 번역 확인</title>
+      <file>src/shared/libs/locales/ja/</file>
+      <description>
+        회원가입 플로우 전체에 대한 일본어 번역 확인 및 보완
+      </description>
+      <checklist>
+        <item>대학 선택 화면 번역</item>
+        <item>학과/학년/학번 입력 화면 번역</item>
+        <item>프로필 이미지 화면 번역</item>
+        <item>초대코드 화면 번역</item>
+        <item>완료 화면 번역</item>
+        <item>에러 메시지 번역</item>
+      </checklist>
+    </task>
+  </implementation_tasks>
+
+  <data_flow>
+    <storage_keys>
+      <key name="signup_certification_info">
+        <description>SMS 인증 후 저장되는 인증 정보</description>
+        <structure><![CDATA[
+{
+  "phone": "+81-90-1234-5678",
+  "loginType": "jp_sms",
+  "country": "JP",
+  "name": "田中太郎",      // JP 프로필에서 추가
+  "birthday": "2000-01-15", // JP 프로필에서 추가
+  "gender": "MALE"          // JP 프로필에서 추가
+}
+        ]]></structure>
+      </key>
+      <key name="signupProgress.form">
+        <description>회원가입 진행 상태 (Zustand store)</description>
+        <jp_fields><![CDATA[
+{
+  "phone": "+81-90-1234-5678",  // or "phoneNumber"
+  "name": "田中太郎",
+  "birthday": "2000-01-15",
+  "gender": "MALE",
+  "age": 25,
+  "loginType": "jp_sms",
+  "universityId": "uuid",
+  "departmentName": "情報工学科",
+  "grade": "3",
+  "studentNumber": "2022001",
+  "instagramId": "tanaka_taro",
+  "profileImages": ["uri1", "uri2"],
+  "referralCode": "ABC123"
+}
+        ]]></jp_fields>
+      </key>
+    </storage_keys>
+  </data_flow>
+
+  <testing>
+    <test_scenarios>
+      <scenario id="1" name="JP 신규 회원가입 전체 플로우">
+        <steps>
+          <step>앱 언어를 일본어로 설정 (TEST_LANGUAGE_OVERRIDE = "ja")</step>
+          <step>로그인 화면에서 SMS 인증 버튼 클릭</step>
+          <step>테스트 번호 010-2655-4276 입력</step>
+          <step>인증코드 123456 입력</step>
+          <step>JP 프로필 화면에서 이름/생년월일/성별 입력</step>
+          <step>대학교 선택</step>
+          <step>학과/학년/학번 입력</step>
+          <step>인스타그램 ID 입력 (선택)</step>
+          <step>프로필 사진 1장 이상 업로드</step>
+          <step>초대코드 입력 (선택) 후 완료</step>
+          <step>회원가입 완료 화면 확인</step>
+        </steps>
+        <expected_result>
+          <item>jpSignup API 호출됨 (KR signup 아님)</item>
+          <item>토큰 저장 완료</item>
+          <item>/auth/signup/done 이동</item>
+        </expected_result>
+      </scenario>
+
+      <scenario id="2" name="JP 기존 회원 로그인">
+        <steps>
+          <step>이미 가입된 JP 전화번호로 SMS 인증</step>
+          <step>인증코드 입력</step>
+        </steps>
+        <expected_result>
+          <item>jpLogin에서 isNewUser: false 반환</item>
+          <item>바로 /home으로 이동</item>
+          <item>회원가입 플로우 진입 안 함</item>
+        </expected_result>
+      </scenario>
+
+      <scenario id="3" name="미성년자 가입 차단">
+        <steps>
+          <step>JP 프로필 화면에서 만 19세 미만 생년월일 입력</step>
+          <step>다음 버튼 클릭</step>
+        </steps>
+        <expected_result>
+          <item>/auth/age-restriction 화면으로 이동</item>
+          <item>회원가입 진행 불가</item>
+        </expected_result>
+      </scenario>
+    </test_scenarios>
+
+    <test_phone_numbers>
+      <number type="development">
+        <value>010-2655-4276</value>
+        <formatted>+82-10-2655-4276</formatted>
+        <sms_code>123456</sms_code>
+        <note>개발 환경 테스트용 한국 번호</note>
+      </number>
+      <number type="production_test">
+        <value>090-1234-5678</value>
+        <formatted>+81-90-1234-5678</formatted>
+        <note>실제 일본 번호 테스트 시 사용</note>
+      </number>
+    </test_phone_numbers>
+  </testing>
+
+  <files_to_modify>
+    <file path="src/features/signup/services/signup-validator.tsx" priority="CRITICAL">
+      <reason>JP/KR 분기 로직 추가 (jpSignup vs signup)</reason>
+    </file>
+    <file path="src/features/signup/hooks/use-signup-progress.tsx" priority="HIGH">
+      <reason>SignupForm 타입에 loginType 추가</reason>
+    </file>
+    <file path="app/auth/signup/jp-profile.tsx" priority="HIGH">
+      <reason>헤더 표준화, 배경색 수정</reason>
+    </file>
+    <file path="src/features/signup/hooks/use-invite-code.tsx" priority="MEDIUM">
+      <reason>JP 사용자 검증 로직 확인</reason>
+    </file>
+  </files_to_modify>
+
+  <files_to_reference>
+    <file path="src/features/jp-auth/apis/index.ts">
+      <reason>jpSignup API 함수 정의 확인</reason>
+    </file>
+    <file path="src/features/jp-auth/types/index.ts">
+      <reason>JpSignupRequest 타입 확인</reason>
+    </file>
+    <file path="src/features/jp-auth/hooks/use-jp-sms-login.ts">
+      <reason>SMS 인증 후 데이터 저장 방식 확인</reason>
+    </file>
+  </files_to_reference>
+
+  <success_criteria>
+    <criterion id="1">JP 사용자가 SMS 인증 후 전체 회원가입 플로우 완료 가능</criterion>
+    <criterion id="2">jpSignup API가 올바른 형식으로 호출됨</criterion>
+    <criterion id="3">KR 회원가입 플로우에 영향 없음 (기존 기능 유지)</criterion>
+    <criterion id="4">모든 화면에서 일본어 번역 표시</criterion>
+    <criterion id="5">타입 에러 없음 (tsc --noEmit 통과)</criterion>
+  </success_criteria>
+</implementation_plan>

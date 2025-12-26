@@ -1,0 +1,2962 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sometimes App - Complete User Journey Flow",
+  "version": "2.1.0",
+  "generatedAt": "2025-12-26",
+  "lastUpdated": "2025-12-26",
+  "description": "앱 내 모든 사용자 흐름의 상세 프로세스 문서 (모달/토스트/가드/UX문구 전체 포함)",
+
+  "documentStatistics": {
+    "totalLines": 2965,
+    "domains": 10,
+    "modals": 41,
+    "toasts": 25,
+    "guards": 5,
+    "uxCopy": {
+      "validationMessages": 35,
+      "stateMessages": 53,
+      "tutorialSlides": 11,
+      "signupSteps": 5,
+      "interestSteps": 8
+    },
+    "$note": "UX 문구(buttons, notifications, inputFields)는 실제 코드 확인 후 추가 필요"
+  },
+
+  "entryPoints": {
+    "appLaunch": {
+      "route": "/",
+      "file": "app/index.tsx",
+      "description": "앱 진입점 - 인증 상태에 따라 리다이렉트",
+      "flow": {
+        "authenticated": {
+          "redirect": "/home",
+          "condition": "accessToken exists"
+        },
+        "unauthenticated": {
+          "redirect": "/auth/login",
+          "condition": "no accessToken"
+        }
+      },
+      "sideEffects": [
+        "초대 코드 처리 (invite-code storage)",
+        "Mixpanel 세션 시작"
+      ]
+    }
+  },
+
+  "domains": {
+    "authentication": {
+      "id": "auth",
+      "name": "인증 도메인",
+      "description": "사용자 인증, 로그인, 회원가입 전체 프로세스",
+
+      "journeys": {
+        "login": {
+          "id": "auth.login",
+          "name": "로그인",
+          "route": "/auth/login",
+          "file": "app/auth/login/index.tsx",
+
+          "methods": {
+            "pass": {
+              "id": "auth.login.pass",
+              "name": "PASS 본인인증",
+              "country": "KR",
+              "provider": "PortOne V2",
+              "flow": [
+                {
+                  "step": 1,
+                  "action": "startPortOneLogin() 호출",
+                  "description": "본인인증 SDK 초기화"
+                },
+                {
+                  "step": 2,
+                  "action": "플랫폼별 인증 분기",
+                  "branches": {
+                    "web": "handleWebAuth() - iframe 기반",
+                    "mobile": "handleMobileAuth() - 네이티브 UI"
+                  }
+                },
+                {
+                  "step": 3,
+                  "action": "processLoginResult(identityVerificationId)",
+                  "apiCall": "POST /auth/pass-login",
+                  "response": {
+                    "accessToken": "JWT",
+                    "refreshToken": "JWT",
+                    "isNewUser": "boolean",
+                    "certificationInfo": "object"
+                  }
+                },
+                {
+                  "step": 4,
+                  "action": "신규/기존 사용자 분기",
+                  "branches": {
+                    "newUser": {
+                      "checks": [
+                        {
+                          "name": "나이 확인",
+                          "function": "isAdult(birthday)",
+                          "failRoute": "/auth/age-restriction"
+                        },
+                        {
+                          "name": "블랙리스트 확인",
+                          "api": "POST /auth/check/phone-number/blacklist",
+                          "failAction": "가입 차단 모달"
+                        }
+                      ],
+                      "successStorage": {
+                        "key": "signup_certification_info",
+                        "data": ["name", "phone", "gender", "birthday", "loginType", "identityVerificationId"]
+                      },
+                      "redirect": "/auth/signup/university"
+                    },
+                    "existingUser": {
+                      "tokenStorage": ["access-token", "refresh-token"],
+                      "redirect": "/home"
+                    }
+                  }
+                }
+              ],
+              "analytics": {
+                "events": [
+                  "Signup_Auth_Started",
+                  "Signup_IdentityVerification_Started",
+                  "Signup_IdentityVerification_Completed",
+                  "Signup_IdentityVerification_Failed"
+                ]
+              }
+            },
+
+            "kakao": {
+              "id": "auth.login.kakao",
+              "name": "카카오 로그인",
+              "country": "KR",
+              "variants": {
+                "native": {
+                  "method": "KakaoLogin.login()",
+                  "api": "POST /auth/oauth/kakao (accessToken)"
+                },
+                "web": {
+                  "method": "OAuth redirect",
+                  "api": "POST /auth/oauth/kakao (code)"
+                }
+              },
+              "flow": "pass 방식과 동일한 신규/기존 분기"
+            },
+
+            "apple": {
+              "id": "auth.login.apple",
+              "name": "Apple 로그인",
+              "country": "KR",
+              "platform": "iOS only",
+              "storage": {
+                "key": "appleUserId",
+                "ios": "AsyncStorage",
+                "web": "sessionStorage"
+              }
+            },
+
+            "jpSms": {
+              "id": "auth.login.jp_sms",
+              "name": "일본 SMS 인증",
+              "country": "JP",
+              "file": "src/features/jp-auth/hooks/use-jp-sms-login.ts",
+              "flow": [
+                {
+                  "step": 1,
+                  "phase": "phone_input",
+                  "action": "전화번호 입력",
+                  "format": "+81-XX-XXXX-XXXX",
+                  "api": "POST /jp/auth/sms/send"
+                },
+                {
+                  "step": 2,
+                  "phase": "code_verification",
+                  "action": "인증코드 입력",
+                  "timer": "3분 카운트다운",
+                  "api": "POST /jp/auth/sms/verify"
+                },
+                {
+                  "step": 3,
+                  "action": "로그인 처리",
+                  "api": "POST /jp/auth/login",
+                  "branches": {
+                    "newUser": "/auth/signup/jp-profile",
+                    "existingUser": "/home"ㅈ
+                  }
+                }
+              ],
+              "testData": {
+                "code": "123456",
+                "devPhone": "010-2655-4276"
+              }
+            }
+          }
+        },
+
+        "signup": {
+          "id": "auth.signup",
+          "name": "회원가입",
+          "baseRoute": "/auth/signup",
+          "layoutFile": "app/auth/signup/_layout.tsx",
+          "stateManagement": {
+            "store": "useSignupProgress (Zustand)",
+            "file": "src/features/signup/hooks/use-signup-progress.tsx"
+          },
+
+          "steps": {
+            "university": {
+              "step": 1,
+              "route": "/auth/signup/university",
+              "name": "대학교 선택",
+              "progress": 0.2,
+              "features": [
+                "상위 10개 대학 표시",
+                "실시간 검색",
+                "지역별 필터링"
+              ],
+              "apis": [
+                "GET /universities",
+                "GET /universities/top",
+                "POST /universities/regions"
+              ],
+              "analytics": ["Signup_University_View", "Signup_University_Verification_Started"]
+            },
+
+            "universityDetails": {
+              "step": 2,
+              "route": "/auth/signup/university-details",
+              "name": "대학 상세정보",
+              "progress": 0.4,
+              "inputs": [
+                { "field": "departmentName", "type": "autocomplete", "api": "GET /universities/departments" },
+                { "field": "grade", "type": "select" },
+                { "field": "studentNumber", "type": "text" }
+              ]
+            },
+
+            "instagram": {
+              "step": 3,
+              "route": "/auth/signup/instagram",
+              "name": "인스타그램 ID",
+              "progress": 0.6,
+              "validation": {
+                "api": "POST /auth/check/instagram",
+                "purpose": "중복 확인"
+              },
+              "animations": [
+                "@심볼 글로우",
+                "밑줄 색상 변화",
+                "햅틱 피드백"
+              ],
+              "analytics": ["Signup_Instagram_Entered"]
+            },
+
+            "profileImage": {
+              "step": 4,
+              "route": "/auth/signup/profile-image",
+              "name": "프로필 사진",
+              "progress": 0.8,
+              "requirements": {
+                "min": 1,
+                "max": 3,
+                "mainImageIndex": 0
+              },
+              "features": ["OppositeGenderPreview", "이미지 거부/재업로드"],
+              "analytics": ["Signup_Profile_View"]
+            },
+
+            "inviteCode": {
+              "step": 5,
+              "route": "/auth/signup/invite-code",
+              "name": "초대코드",
+              "progress": 1.0,
+              "required": false,
+              "storage": "invite-code"
+            },
+
+            "done": {
+              "route": "/auth/signup/done",
+              "name": "완료",
+              "action": {
+                "redirect": "/onboarding?source=signup"
+              },
+              "analytics": ["SIGNUP_COMPLETED"]
+            }
+          },
+
+          "formData": {
+            "type": "SignupForm",
+            "fields": {
+              "basic": ["name", "phone", "birthday", "gender", "age"],
+              "university": ["universityId", "area", "departmentName", "grade", "studentNumber"],
+              "profile": ["instagramId", "profileImages"],
+              "auth": ["passVerified", "kakaoId", "appleId", "loginType", "identityVerificationId"],
+              "optional": ["referralCode"]
+            }
+          },
+
+          "submission": {
+            "api": "POST /auth/signup",
+            "contentType": "multipart/form-data",
+            "file": "src/features/signup/services/signup-validator.tsx"
+          }
+        },
+
+        "universityVerification": {
+          "id": "auth.university_verification",
+          "name": "대학 인증",
+          "route": "/university-verification",
+          "methods": {
+            "documentUpload": {
+              "api": "POST /universities/certificate-image",
+              "description": "학생증/재학증명서 업로드"
+            },
+            "verificationRequest": {
+              "api": "POST /profile/university-verification/request",
+              "statuses": ["PENDING", "APPROVED", "REJECTED"]
+            },
+            "emailVerification": {
+              "sendApi": "POST /auth/email-verification/send",
+              "verifyApi": "POST /auth/email-verification/verify"
+            }
+          }
+        }
+      }
+    },
+
+    "onboarding": {
+      "id": "onboarding",
+      "name": "온보딩 도메인",
+      "description": "신규 사용자 앱 안내 및 취향 설정",
+
+      "journeys": {
+        "tutorial": {
+          "id": "onboarding.tutorial",
+          "name": "온보딩 튜토리얼",
+          "route": "/onboarding",
+          "file": "src/features/onboarding/ui/onboarding-screen.tsx",
+          "totalSlides": 11,
+
+          "slides": [
+            { "index": 0, "id": "welcome", "name": "환영", "animation": "HeartPulse" },
+            { "index": 1, "id": "story", "name": "스토리" },
+            { "index": 2, "id": "matchingTime", "name": "매칭 시간", "animation": "실시간 카운트다운" },
+            { "index": 3, "id": "verification", "name": "인증 시스템", "animation": "SequentialCheck" },
+            { "index": 4, "id": "studentOnly", "name": "대학생 전용" },
+            { "index": 5, "id": "aiMatching", "name": "AI 매칭", "animation": "PuzzleMatch" },
+            { "index": 6, "id": "likeGuide", "name": "좋아요 가이드", "animation": "HeartTouch" },
+            { "index": 7, "id": "chatGuide", "name": "채팅 가이드", "animation": "TypingEffect" },
+            { "index": 8, "id": "refund", "name": "환불 정책" },
+            { "index": 9, "id": "region", "name": "지역 매칭" },
+            { "index": 10, "id": "cta", "name": "시작하기", "action": "handleComplete" }
+          ],
+
+          "storage": {
+            "key": "@sometime:user:state",
+            "data": { "hasSeenOnboarding": "boolean", "completedAt": "string" }
+          },
+
+          "exitFlow": {
+            "complete": "/home",
+            "skip": {
+              "source_signup": "/home",
+              "source_login": "/auth/login"
+            }
+          }
+        },
+
+        "interest": {
+          "id": "onboarding.interest",
+          "name": "관심사/취향 설정",
+          "baseRoute": "/interest",
+          "layoutFile": "app/interest/_layout.tsx",
+          "stateManagement": {
+            "store": "useInterestForm (Zustand)",
+            "file": "src/features/interest/hooks/use-interest-form.tsx"
+          },
+          "totalSteps": 8,
+
+          "steps": [
+            { "step": 1, "route": "/interest/age", "name": "나이 선호", "type": "select", "options": ["동갑", "연하", "연상", "무관"] },
+            { "step": 2, "route": "/interest/like-mbti", "name": "좋아하는 MBTI", "type": "multiSelect" },
+            { "step": 3, "route": "/interest/bad-mbti", "name": "피하는 MBTI", "type": "multiSelect" },
+            { "step": 4, "route": "/interest/personality", "name": "성격 선호", "type": "multiSelect" },
+            { "step": 5, "route": "/interest/drinking", "name": "음주 선호", "type": "select" },
+            { "step": 6, "route": "/interest/smoking", "name": "흡연 선호", "type": "select" },
+            { "step": 7, "route": "/interest/tattoo", "name": "문신 선호", "type": "select" },
+            { "step": 8, "route": "/interest/military", "name": "군복무 선호", "type": "select", "visibility": "female_only" }
+          ],
+
+          "submission": {
+            "api": "PATCH /preferences/self",
+            "file": "src/features/interest/services/index.tsx"
+          },
+
+          "exitFlow": {
+            "done": "/home"
+          }
+        }
+      }
+    },
+
+    "home": {
+      "id": "home",
+      "name": "홈 도메인",
+      "description": "메인 화면 및 탭 네비게이션",
+
+      "journeys": {
+        "main": {
+          "id": "home.main",
+          "name": "홈 화면",
+          "route": "/home",
+          "layoutFile": "app/home/_layout.tsx",
+          "pageFile": "app/home/index.tsx",
+
+          "initialization": {
+            "checks": [
+              { "query": "MyDetails", "timeout": "5초" },
+              { "api": "useUserStatus", "purpose": "승인 상태 확인" }
+            ]
+          },
+
+          "sections": [
+            {
+              "id": "header",
+              "components": ["Logo", "NotificationIcon", "GemStoreIcon"],
+              "actions": {
+                "notification": "/notification",
+                "gemStore": "/purchase/gem-store"
+              }
+            },
+            {
+              "id": "bannerSlide",
+              "type": "carousel",
+              "autoPlay": "5초",
+              "items": ["일본 오픈", "첫 구매 이벤트", "친구 초대", "누적 매칭 카운터"]
+            },
+            {
+              "id": "likeSection",
+              "components": ["LikeCollapse", "NoneLikeBanner"],
+              "data": "받은 좋아요 목록"
+            },
+            {
+              "id": "matchingSection",
+              "conditionalRender": {
+                "lowCompletion": "HomeInfoSection (프로필 완성도 카드)",
+                "highCompletion": "IdleMatchTimer (실시간 매칭)"
+              }
+            },
+            {
+              "id": "matchingHistory",
+              "type": "collapse",
+              "data": "과거 매칭 목록"
+            },
+            {
+              "id": "community",
+              "components": ["CommunityAnnouncement", "ReviewSlide"]
+            }
+          ],
+
+          "bottomNavigation": {
+            "file": "src/shared/ui/navigation/index.tsx",
+            "tabs": [
+              { "id": "home", "route": "/home", "icon": "home", "always": true },
+              { "id": "community", "route": "/community", "icon": "community", "always": true },
+              { "id": "chat", "route": "/chat", "icon": "chat", "badge": "unreadCount", "always": true },
+              { "id": "moment", "route": "/moment", "icon": "moment", "condition": "momentEnabled.enabled" },
+              { "id": "my", "route": "/my", "icon": "my", "always": true }
+            ]
+          }
+        }
+      }
+    },
+
+    "matching": {
+      "id": "matching",
+      "name": "매칭 도메인",
+      "description": "사용자 매칭 및 좋아요 관리",
+
+      "journeys": {
+        "like": {
+          "id": "matching.like",
+          "name": "좋아요",
+          "file": "src/features/like/hooks/use-like.tsx",
+
+          "sendLike": {
+            "api": "POST /v1/matching/interactions/like/{connectionId}",
+            "flow": [
+              { "step": 1, "action": "useLikeMutation 호출" },
+              { "step": 2, "action": "Mixpanel: LIKE_SENT" },
+              { "step": 3, "action": "쿼리 무효화", "keys": ["latest-matching", "gem", "liked"] },
+              { "step": 4, "action": "Mixpanel: MATCHING_SUCCESS" }
+            ],
+            "errorHandling": {
+              "403": "재화 부족",
+              "409": "중복 좋아요/소통 제한"
+            }
+          },
+
+          "receiveLike": {
+            "api": "GET /v1/matching/interactions/liked-me",
+            "polling": "1분 간격",
+            "analytics": "LIKE_RECEIVED"
+          },
+
+          "cancelLike": {
+            "api": "POST /v1/matching/interactions/bye/{connectionId}",
+            "analytics": "LIKE_CANCELLED"
+          },
+
+          "rejectLike": {
+            "api": "DELETE /v1/matching/interactions/reject/{connectionId}"
+          }
+        },
+
+        "postBox": {
+          "id": "matching.postBox",
+          "name": "우편함",
+          "route": "/post-box",
+          "tabs": [
+            { "id": "liked-me", "route": "/post-box/liked-me", "name": "받은 좋아요" },
+            { "id": "i-liked", "route": "/post-box/i-liked", "name": "보낸 좋아요" }
+          ],
+          "data": {
+            "fields": ["connectionId", "matchId", "likedAt", "isMutualLike", "matchExpiredAt", "isExpired", "status"]
+          }
+        },
+
+        "externalMatching": {
+          "id": "matching.external",
+          "name": "확장 매칭",
+          "file": "src/features/matching/hooks/use-external-matching.ts",
+          "api": "POST /v3/matching/rematch/expand-region",
+          "purpose": "현재 지역에 매칭 대상 부족 시 지역 확장"
+        }
+      }
+    },
+
+    "chat": {
+      "id": "chat",
+      "name": "채팅 도메인",
+      "description": "실시간 메시징",
+
+      "journeys": {
+        "chatRoom": {
+          "id": "chat.room",
+          "name": "채팅",
+          "routes": {
+            "list": "/chat",
+            "detail": "/chat/[id]"
+          },
+
+          "realtime": {
+            "provider": "Socket.io",
+            "events": {
+              "createRoom": "createChatRoom",
+              "sendMessage": "sendMessage",
+              "receiveMessage": "messageReceived",
+              "roomCreated": "CHAT_ROOM_CREATED"
+            }
+          },
+
+          "messageTypes": ["text", "image", "system"],
+
+          "messageStates": {
+            "sendingStatus": ["sending", "sent", "failed"],
+            "uploadStatus": ["uploading", "completed", "failed"]
+          },
+
+          "optimisticUI": {
+            "description": "tempId로 즉시 표시, 서버 응답 후 교체",
+            "timeout": "10초"
+          },
+
+          "imageHandling": {
+            "compression": "src/features/chat/domain/actions/compression.ts",
+            "resize": "src/features/chat/domain/actions/resize.ts"
+          }
+        },
+
+        "somemate": {
+          "id": "chat.somemate",
+          "name": "썸메이트",
+          "routes": {
+            "list": "/(tabs)/chat/somemate",
+            "chat": "/(tabs)/chat/somemate-chat",
+            "report": "/(tabs)/chat/somemate-report"
+          }
+        }
+      }
+    },
+
+    "community": {
+      "id": "community",
+      "name": "커뮤니티 도메인",
+      "description": "게시물 및 댓글 관리",
+
+      "journeys": {
+        "articles": {
+          "id": "community.articles",
+          "name": "게시물",
+          "routes": {
+            "list": "/community",
+            "detail": "/community/[id]",
+            "write": "/community/write",
+            "update": "/community/update/[id]",
+            "report": "/community/report/[id]"
+          },
+
+          "categories": {
+            "types": ["GENERAL", "REVIEW", "LOVE_CONCERNS"],
+            "api": "GET /articles (categoryCode filter)"
+          },
+
+          "interactions": {
+            "like": {
+              "add": "POST /articles/{id}/like",
+              "remove": "DELETE /articles/{id}/like"
+            },
+            "comment": {
+              "add": "POST /articles/{id}/comments",
+              "update": "PATCH /comments/{id}",
+              "delete": "DELETE /comments/{id}",
+              "nested": true
+            }
+          },
+
+          "myContent": {
+            "articles": "/community/my/my-articles",
+            "comments": "/community/my/my-comments",
+            "liked": "/community/my/my-liked"
+          }
+        }
+      }
+    },
+
+    "moment": {
+      "id": "moment",
+      "name": "모먼트 도메인",
+      "description": "일일 질문 및 성격 분석",
+
+      "journeys": {
+        "daily": {
+          "id": "moment.daily",
+          "name": "일일 질문",
+          "route": "/moment",
+
+          "flow": [
+            { "step": 1, "action": "getDailyQuestion", "api": "GET /v1/moment/questions/daily" },
+            { "step": 2, "action": "답변 제출", "api": "POST /v1/moment/answers" },
+            { "step": 3, "action": "주간 리포트", "api": "GET /v1/moment/reports/weekly" }
+          ],
+
+          "dimensions": ["EXTRAVERSION", "OPENNESS", "CONSCIENTIOUSNESS", "AGREEABLENESS", "NEUROTICISM"],
+
+          "routes": {
+            "main": "/moment",
+            "myMoment": "/moment/my-moment",
+            "weeklyReport": "/moment/weekly-report",
+            "dailyRoulette": "/moment/daily-roulette",
+            "myAnswers": "/moment/my-answers"
+          }
+        }
+      }
+    },
+
+    "payment": {
+      "id": "payment",
+      "name": "결제 도메인",
+      "description": "상품 구매 및 결제 처리",
+
+      "journeys": {
+        "gemPurchase": {
+          "id": "payment.gem",
+          "name": "구슬 구매",
+          "route": "/purchase/gem-store",
+
+          "products": {
+            "api": "GET /v1/gem/products",
+            "fields": ["id", "productName", "gemAmount", "bonusGems", "totalGems", "price", "discountRate"]
+          },
+
+          "firstSaleEvent": {
+            "products": [
+              { "id": "SALE_7", "totalGems": 7, "price": 5250, "discountRate": 37.2 },
+              { "id": "SALE_16", "totalGems": 16, "price": 12000, "discountRate": 43.5 },
+              { "id": "SALE_27", "totalGems": 27, "price": 20250, "discountRate": 31.9 }
+            ]
+          },
+
+          "gemUsage": {
+            "types": ["PROFILE_OPEN", "LIKE_MESSAGE", "CHAT_START", "REMATCHING", "PREMIUM_FILTER"],
+            "api": "GET /v1/gem/features/cost"
+          }
+        },
+
+        "rematchTicket": {
+          "id": "payment.rematch",
+          "name": "재매칭권 구매",
+          "route": "/purchase/tickets/rematch",
+          "basePrice": 5900,
+          "bundles": [
+            { "quantity": 1, "discount": 0 },
+            { "quantity": 2, "discount": 16.2 },
+            { "quantity": 3, "discount": 27.2 },
+            { "quantity": 5, "discount": 29.2 },
+            { "quantity": 10, "discount": 37.5 }
+          ]
+        },
+
+        "paymentProcess": {
+          "id": "payment.process",
+          "name": "결제 처리",
+          "provider": "PortOne V2",
+
+          "platforms": {
+            "web": {
+              "sdk": "@portone/browser-sdk",
+              "method": "PortOne.requestPayment()",
+              "redirect": "/purchase/complete"
+            },
+            "native": {
+              "sdk": "@portone/react-native-sdk",
+              "component": "PortOnePayment"
+            },
+            "ios": {
+              "method": "Apple In-App Purchase",
+              "component": "AppleGemStore"
+            }
+          },
+
+          "payMethods": ["CARD", "VIRTUAL_ACCOUNT", "TRANSFER", "MOBILE", "EASY_PAY"],
+
+          "flow": [
+            { "step": 1, "action": "상품 선택" },
+            { "step": 2, "action": "PaymentView 렌더링 (플랫폼별 분기)" },
+            { "step": 3, "action": "결제 SDK 호출" },
+            { "step": 4, "action": "결과 콜백 처리" },
+            { "step": 5, "action": "API 확정", "apis": ["POST /payments/confirm", "POST /v1/gem/confirm"] },
+            { "step": 6, "action": "완료 모달 및 리다이렉트" }
+          ],
+
+          "errorCategories": ["NETWORK", "USER_CANCEL", "PG_ERROR", "CARD_LIMIT", "AUTH_FAIL", "INVALID_CARD", "TIMEOUT", "INSUFFICIENT_BALANCE", "UNKNOWN"]
+        }
+      }
+    },
+
+    "profile": {
+      "id": "profile",
+      "name": "프로필 도메인",
+      "description": "프로필 조회 및 편집",
+
+      "journeys": {
+        "myPage": {
+          "id": "profile.myPage",
+          "name": "마이페이지",
+          "route": "/my",
+          "file": "app/my/index.tsx",
+
+          "sections": [
+            { "id": "profile", "component": "Profile", "data": "프로필 요약" },
+            { "id": "matchingMenu", "component": "MatchingMenu" },
+            { "id": "privacyMenu", "component": "PrivacyMenu" },
+            { "id": "notificationMenu", "component": "NotificationMenu" },
+            { "id": "myActivityMenu", "component": "MyActivityMenu", "links": ["게시물", "댓글", "좋아요"] }
+          ],
+
+          "subRoutes": {
+            "withdrawal": "/my/withdrawal",
+            "approvalApproved": "/my/approval-step/approved",
+            "approvalWaiting": "/my/approval-step/waiting"
+          }
+        },
+
+        "profileEdit": {
+          "id": "profile.edit",
+          "name": "프로필 편집",
+          "route": "/profile-edit",
+          "layoutType": "tab",
+
+          "tabs": {
+            "profile": {
+              "route": "/profile-edit/profile",
+              "name": "기본 정보",
+              "fields": [
+                { "id": "profileImage", "component": "ProfileImageSection" },
+                { "id": "mbti", "component": "ProfileMbti" },
+                { "id": "interest", "component": "ProfileInterest" },
+                { "id": "personality", "component": "ProfilePersonality" },
+                { "id": "datingStyle", "component": "ProfileDatingStyle" },
+                { "id": "military", "component": "ProfileMilitary", "visibility": "male_only" },
+                { "id": "drinking", "component": "ProfileDrinking" },
+                { "id": "smoking", "component": "ProfileSmoking" },
+                { "id": "tattoo", "component": "ProfileTattoo" }
+              ],
+              "saveApi": "PATCH /preferences/self"
+            },
+            "interest": {
+              "route": "/profile-edit/interest",
+              "name": "선호도",
+              "fields": [
+                { "id": "age", "component": "InterestAge" },
+                { "id": "goodMbti", "component": "InterestGoodMbti" },
+                { "id": "badMbti", "component": "InterestBadMbti" },
+                { "id": "personality", "component": "InterestPersonality" },
+                { "id": "military", "component": "InterestMilitary", "visibility": "female_only" },
+                { "id": "drinking", "component": "InterestDrinking" },
+                { "id": "smoking", "component": "InterestSmoking" },
+                { "id": "tattoo", "component": "InterestTattoo" }
+              ],
+              "saveApi": "POST /preferences/interests"
+            }
+          }
+        },
+
+        "photoManagement": {
+          "id": "profile.photos",
+          "name": "사진 관리",
+          "route": "/profile/photo-management",
+          "file": "src/features/profile/hooks/use-photo-management.ts",
+
+          "slots": {
+            "count": 3,
+            "main": 0,
+            "sub": [1, 2]
+          },
+
+          "statuses": ["APPROVED", "PENDING", "REJECTED"],
+
+          "apis": {
+            "getSlots": "GET /v1/profile/images/management",
+            "upload": "POST /v1/profile/images",
+            "replace": "PUT /v1/profile/images/{id}/replace",
+            "reupload": "PUT /v1/profile/images/{id}/reupload",
+            "setMain": "PUT /v1/profile/images/{id}/set-main",
+            "delete": "DELETE /v1/profile/images/{id}"
+          },
+
+          "reuploadLimit": 3
+        },
+
+        "myInfo": {
+          "id": "profile.myInfo",
+          "name": "내 정보 설정",
+          "baseRoute": "/my-info",
+          "layoutType": "progress",
+
+          "steps": [
+            "/my-info/mbti",
+            "/my-info/personality",
+            "/my-info/drinking",
+            "/my-info/interest",
+            "/my-info/dating-style",
+            "/my-info/military",
+            "/my-info/smoking",
+            "/my-info/tattoo",
+            "/my-info/done"
+          ]
+        }
+      }
+    },
+
+    "setting": {
+      "id": "setting",
+      "name": "설정 도메인",
+      "description": "앱 설정 및 계정 관리",
+
+      "journeys": {
+        "main": {
+          "id": "setting.main",
+          "name": "설정",
+          "route": "/setting",
+          "subRoutes": {
+            "account": "/setting/account"
+          }
+        },
+
+        "accountManagement": {
+          "id": "setting.account",
+          "name": "계정 관리",
+          "route": "/setting/account",
+
+          "actions": {
+            "logout": {
+              "file": "src/features/auth/hooks/use-auth.tsx",
+              "flow": [
+                { "step": 1, "action": "확인 모달 표시" },
+                { "step": 2, "action": "Mixpanel: AUTH_LOGOUT" },
+                { "step": 3, "action": "logoutOnly() 호출" },
+                { "step": 4, "action": "토큰 제거" },
+                { "step": 5, "action": "완료 모달 → /auth/login" }
+              ],
+              "cleanup": [
+                "resetAppState()",
+                "Sentry.setUser(null)",
+                "logoutApi(refreshToken)",
+                "clearOnboardingCompletedFlag()"
+              ]
+            },
+
+            "withdrawal": {
+              "route": "/my/withdrawal",
+              "reasons": [
+                "FOUND_PARTNER",
+                "POOR_MATCHING",
+                "PRIVACY_CONCERN",
+                "SAFETY_CONCERN",
+                "TECHNICAL_ISSUES",
+                "INACTIVE_USAGE",
+                "DISSATISFIED_SERVICE",
+                "OTHER"
+              ],
+              "api": "DELETE /user/withdrawl",
+              "analytics": {
+                "requested": "Account_Deletion_Requested",
+                "cancelled": "Account_Deletion_Cancelled",
+                "completed": "Account_Deleted"
+              },
+              "specialHandling": {
+                "FOUND_PARTNER": "인앱 리뷰 트리거"
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "notification": {
+      "id": "notification",
+      "name": "알림 도메인",
+      "description": "푸시 알림 관리",
+
+      "journeys": {
+        "list": {
+          "id": "notification.list",
+          "name": "알림 목록",
+          "route": "/notification",
+
+          "types": ["reward", "general", "contact"],
+
+          "subTypes": [
+            "profile_view", "match_success", "new_profile", "chat_message",
+            "chat_room_created", "system", "community_comment", "community_like",
+            "match_like", "match_connection", "user_approval", "user_rejection",
+            "profile_image_approved", "profile_image_rejected", "roulette_reminder"
+          ],
+
+          "apis": {
+            "list": "GET /notifications",
+            "unreadCount": "GET /notifications/unread-count",
+            "markRead": "PATCH /notifications/{id}/read",
+            "markAllRead": "PATCH /notifications/read-all",
+            "delete": "DELETE /notifications/{id}",
+            "deleteAllRead": "POST /notifications/readed"
+          },
+
+          "pagination": {
+            "type": "infinite",
+            "pageSize": 20
+          },
+
+          "stateManagement": {
+            "store": "useNotificationStore (Zustand)",
+            "fields": ["unreadCount", "lastNotification"],
+            "sideEffect": "appBadgeManager.setNotificationCount()"
+          },
+
+          "clickHandling": {
+            "priority": ["redirectUrl", "subType special handling", "deepLink"],
+            "specialCases": {
+              "roulette_reminder": "/moment/daily-roulette"
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "crossDomainFlows": {
+    "newUserComplete": {
+      "id": "flow.newUser",
+      "name": "신규 사용자 완전 플로우",
+      "totalScreens": 24,
+      "phases": [
+        {
+          "phase": "인증",
+          "screens": 1,
+          "route": "/auth/login"
+        },
+        {
+          "phase": "회원가입",
+          "screens": 5,
+          "routes": [
+            "/auth/signup/university",
+            "/auth/signup/university-details",
+            "/auth/signup/instagram",
+            "/auth/signup/profile-image",
+            "/auth/signup/invite-code"
+          ]
+        },
+        {
+          "phase": "온보딩 튜토리얼",
+          "screens": 11,
+          "route": "/onboarding (슬라이드)"
+        },
+        {
+          "phase": "관심사 설정",
+          "screens": 8,
+          "routes": [
+            "/interest/age",
+            "/interest/like-mbti",
+            "/interest/bad-mbti",
+            "/interest/personality",
+            "/interest/drinking",
+            "/interest/smoking",
+            "/interest/tattoo",
+            "/interest/military"
+          ]
+        }
+      ]
+    },
+
+    "matchingToChat": {
+      "id": "flow.matchToChat",
+      "name": "매칭에서 채팅까지",
+      "steps": [
+        { "step": 1, "domain": "home", "action": "매칭 카드 표시" },
+        { "step": 2, "domain": "matching", "action": "좋아요 보내기" },
+        { "step": 3, "domain": "matching", "action": "상호 좋아요 확인" },
+        { "step": 4, "domain": "chat", "action": "채팅방 생성" },
+        { "step": 5, "domain": "chat", "action": "메시지 교환" }
+      ]
+    },
+
+    "purchaseToMatching": {
+      "id": "flow.purchaseToMatch",
+      "name": "구매 후 매칭",
+      "steps": [
+        { "step": 1, "domain": "payment", "action": "구슬/티켓 구매" },
+        { "step": 2, "domain": "home", "action": "매칭 시도" },
+        { "step": 3, "domain": "matching", "action": "확장 매칭 사용" }
+      ]
+    }
+  },
+
+  "analytics": {
+    "provider": "Mixpanel",
+    "keyEvents": {
+      "authentication": [
+        "Signup_Auth_Started",
+        "Signup_IdentityVerification_Started",
+        "Signup_IdentityVerification_Completed",
+        "SIGNUP_COMPLETED",
+        "AUTH_LOGOUT"
+      ],
+      "matching": [
+        "LIKE_SENT",
+        "LIKE_RECEIVED",
+        "MATCHING_SUCCESS",
+        "MATCHING_FAILURE",
+        "LIKE_CANCELLED"
+      ],
+      "payment": [
+        "GemStore_Entered",
+        "GemStore_Product_Clicked",
+        "Purchase_Done",
+        "trackPaymentCompleted",
+        "trackPaymentFailed"
+      ],
+      "profile": [
+        "PROFILE_STARTED",
+        "INTEREST_STARTED"
+      ],
+      "account": [
+        "Account_Deletion_Requested",
+        "Account_Deletion_Cancelled",
+        "Account_Deleted"
+      ]
+    }
+  },
+
+  "stateManagement": {
+    "zustand": {
+      "stores": [
+        { "name": "useSignupProgress", "purpose": "회원가입 폼 상태" },
+        { "name": "useInterestForm", "purpose": "관심사 폼 상태" },
+        { "name": "useMyInfoForm", "purpose": "프로필 편집 폼 상태" },
+        { "name": "useMatchingStore", "purpose": "매칭 상태" },
+        { "name": "useChatStore", "purpose": "채팅 연결 상태" },
+        { "name": "useNotificationStore", "purpose": "알림 상태" },
+        { "name": "usePortoneStore", "purpose": "결제 메타데이터" }
+      ]
+    },
+    "tanstackQuery": {
+      "keyPatterns": [
+        "['notifications']",
+        "['notifications', 'unread-count']",
+        "['preference-self']",
+        "['latest-matching']",
+        "['gem', 'current']",
+        "['liked', 'of-me']",
+        "['liked', 'to-me']",
+        "['chat-list', chatRoomId]",
+        "['articles']"
+      ]
+    },
+    "asyncStorage": {
+      "keys": [
+        "access-token",
+        "refresh-token",
+        "approval-status",
+        "signup_certification_info",
+        "invite-code",
+        "appleUserId",
+        "loginType",
+        "@sometime:user:state"
+      ]
+    }
+  },
+
+  "errorHandling": {
+    "patterns": {
+      "httpStatusCodes": {
+        "401": "인증 실패 → 로그인 페이지",
+        "403": "권한 없음/재화 부족",
+        "409": "중복 요청/제한",
+        "500": "서버 에러 → 재시도 버튼"
+      },
+      "paymentErrors": {
+        "categories": ["NETWORK", "USER_CANCEL", "PG_ERROR", "CARD_LIMIT", "AUTH_FAIL", "INVALID_CARD", "TIMEOUT", "INSUFFICIENT_BALANCE", "UNKNOWN"],
+        "recoverable": ["NETWORK", "TIMEOUT", "PG_ERROR"]
+      }
+    }
+  },
+
+  "localization": {
+    "languages": ["ko", "ja"],
+    "detection": {
+      "function": "getUserLanguage()",
+      "file": "src/shared/libs/local.ts"
+    },
+    "routing": {
+      "jp_sms": "일본어 사용자만",
+      "pass": "한국어 사용자만"
+    }
+  },
+
+  "modals": {
+    "$description": "앱 내 모든 모달 다이얼로그 상세 정의",
+    "system": {
+      "provider": "src/shared/providers/modal-provider.tsx",
+      "hook": "src/shared/hooks/use-modal.ts",
+      "types": "src/shared/providers/modal-types.ts",
+      "api": {
+        "showModal": "일반 모달 표시 (ModalOptions)",
+        "showErrorModal": "에러/안내 모달 표시 (message, type)",
+        "hideModal": "현재 모달 닫기",
+        "showNestedModal": "중첩 모달 표시",
+        "hideNestedModal": "중첩 모달 닫기"
+      },
+      "options": {
+        "title": "string | ReactNode",
+        "customTitle": "ReactNode",
+        "children": "string | ReactNode",
+        "primaryButton": { "text": "string", "onClick": "() => void" },
+        "secondaryButton": { "text": "string", "onClick": "() => void" },
+        "banner": "ReactNode",
+        "showParticle": "boolean (축하 파티클 효과)",
+        "showLogo": "boolean | ReactNode",
+        "reverse": "boolean (버튼 순서 역순)",
+        "custom": "ReactElementType (커스텀 컴포넌트)",
+        "buttonLayout": "'horizontal' | 'vertical'",
+        "dismissable": "boolean"
+      },
+      "buttonLayoutLogic": {
+        "autoVertical": "텍스트 길이 >= 6자 → vertical",
+        "default": "horizontal",
+        "reverse": "true 시 버튼 순서 반전"
+      }
+    },
+
+    "authentication": [
+      {
+        "id": "modal.auth.logout",
+        "domain": "setting",
+        "trigger": "설정 > 계정관리 > 로그아웃 버튼",
+        "title": "로그아웃 하시겠습니까?",
+        "content": "로그아웃 시 일부 기능을 사용할 수 없으며, 다시 로그인해야 합니다.",
+        "buttons": {
+          "primary": { "text": "취소", "action": "hideModal()" },
+          "secondary": { "text": "로그아웃", "action": "logout()" }
+        },
+        "options": { "reverse": true, "showLogo": true },
+        "file": "src/features/setting/ui/account-management-menu.tsx"
+      },
+      {
+        "id": "modal.auth.withdrawal",
+        "domain": "setting",
+        "trigger": "설정 > 계정관리 > 회원탈퇴 버튼",
+        "title": "정말 탈퇴하시겠습니까?",
+        "content": "탈퇴할 시, 계정은 삭제되며 복구되지 않습니다.",
+        "buttons": {
+          "primary": { "text": "취소", "action": "trackAccountDeletionCancelled('user_cancelled')" },
+          "secondary": { "text": "탈퇴", "action": "router.navigate('/my/withdrawal')" }
+        },
+        "options": { "reverse": true, "showLogo": true },
+        "file": "src/features/setting/ui/account-management-menu.tsx"
+      },
+      {
+        "id": "modal.signup.registration_restricted",
+        "domain": "signup",
+        "trigger": "소셜 로그인 실패 (등록 제한)",
+        "title": "가입이 제한되었습니다",
+        "content": "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
+        "buttons": {
+          "primary": { "text": "확인", "action": "router.replace('/')" }
+        },
+        "file": "src/features/signup/ui/login-form.tsx"
+      },
+      {
+        "id": "modal.signup.login_failed",
+        "domain": "signup",
+        "trigger": "소셜 로그인 실패",
+        "title": "로그인 실패",
+        "content": "[동적] 에러 메시지",
+        "buttons": {
+          "primary": { "text": "다시 시도 / 확인", "action": "handleNativeKakaoLogin() / hideModal()" }
+        },
+        "file": "src/features/signup/ui/login-form.tsx"
+      },
+      {
+        "id": "modal.signup.session_expired",
+        "domain": "signup",
+        "trigger": "회원가입 세션 만료",
+        "title": "알림",
+        "content": "회원가입을 처음부터 시작해주세요",
+        "buttons": {
+          "primary": { "text": "확인", "action": "router.navigate('/auth/login')" }
+        },
+        "file": "src/features/signup/ui/withSignupValidation.tsx"
+      },
+      {
+        "id": "modal.jp_auth.registration_restricted",
+        "domain": "jp-auth",
+        "trigger": "일본 SMS 로그인 (등록 제한)",
+        "title": "登録制限",
+        "content": "報告受付またはプロフィール情報不適合等の理由により登録が制限されました。",
+        "buttons": {
+          "primary": { "text": "確認", "action": "hideModal()" }
+        },
+        "locale": "ja",
+        "file": "src/features/jp-auth/hooks/use-jp-sms-login.ts"
+      }
+    ],
+
+    "matching": [
+      {
+        "id": "modal.like.send_like_message",
+        "domain": "like",
+        "trigger": "Post-Box > 좋아요 받은 사람 > 좋아요 버튼",
+        "title": "좋아요를 보낼까요?\n[남성] 구슬 {cost}개로",
+        "content": "상대방에게 당신의 마음을 전달할 수 있어요.\n지금 바로 좋아요를 보내보세요!",
+        "buttons": {
+          "primary": { "text": "좋아요 보내기", "action": "onLike(connectionId)" },
+          "secondary": { "text": "아니오", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true, "buttonLayout": "vertical" },
+        "file": "src/features/like/ui/like-button.tsx"
+      },
+      {
+        "id": "modal.postbox.confirm_chat_start",
+        "domain": "post-box",
+        "trigger": "Post-Box > 상호 좋아요 > 채팅 시작",
+        "title": "지금 채팅을 시작할까요?\n[남성] 구슬 {cost}개로",
+        "content": "상대방과 대화를 나눌 수 있어요.\n지금 바로 첫 메시지를 보내보세요!",
+        "buttons": {
+          "primary": { "text": "네, 해볼게요", "action": "mutation.mutateAsync({ matchId, matchLikeId })" },
+          "secondary": { "text": "아니오", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true },
+        "file": "src/features/post-box/ui/post-box-card.tsx"
+      },
+      {
+        "id": "modal.postbox.confirm_bye",
+        "domain": "post-box",
+        "trigger": "Post-Box > 더 이상 보고 싶지 않음",
+        "title": "더 이상 보고 싶지 않으신가요?",
+        "content": "한번 삭제하면 다시 볼 수 없어요.",
+        "buttons": {
+          "primary": { "text": "네, 삭제할게요", "action": "mutation.mutateAsync(connectionId)" },
+          "secondary": { "text": "닫기", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true },
+        "file": "src/features/post-box/ui/post-box-card.tsx"
+      },
+      {
+        "id": "modal.matching.regional_expansion",
+        "domain": "matching",
+        "trigger": "매칭 가능 인원 부족 시 자동 제안",
+        "title": "조금만 더 범위를\n넓혀볼까요?",
+        "content": "회원님 지역에선 아직 새 인연이 준비 중이에요.\n인근 지역에는 회원님을 기다리는 설레는 인연이 있을 거예요.",
+        "buttons": {
+          "primary": { "text": "내 인연 더 찾아보기", "action": "onConfirm()" },
+          "secondary": { "text": "다음에 할게요", "action": "onCancel()" }
+        },
+        "options": { "buttonLayout": "vertical" },
+        "file": "src/features/matching/hooks/use-regional-expansion-modal.tsx"
+      },
+      {
+        "id": "modal.match.partner_period_ended",
+        "domain": "match",
+        "trigger": "매칭 기간 만료",
+        "title": "매칭이 종료되었어요",
+        "content": "상대방의 매칭 기간이 종료되었습니다.\n재매칭 티켓을 사용해 새 인연을 찾아보세요!",
+        "buttons": {
+          "primary": { "text": "네, 알았어요", "action": "hideModal()" }
+        },
+        "file": "src/features/match/queries/index.tsx"
+      },
+      {
+        "id": "modal.idle_match_timer.rematch_announcement",
+        "domain": "idle-match-timer",
+        "trigger": "매칭 후 일정 시간 경과",
+        "title": "[기간 개선 제안]",
+        "content": "상대방과의 소통이 자연스럽게 흘러가고 있나요?\n더 나은 매칭을 위해 조금 더 범위를 넓혀볼까요?",
+        "buttons": {
+          "primary": { "text": "확인", "action": "expandRegion()" },
+          "secondary": { "text": "취소", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true },
+        "file": "src/features/idle-match-timer/ui/nav.tsx"
+      }
+    ],
+
+    "chat": [
+      {
+        "id": "modal.chat.conversation_suggestion",
+        "domain": "chat",
+        "trigger": "채팅 입력 시 추천 버튼 클릭",
+        "title": "대화 주제를 추천해드려요",
+        "content": "[동적] 추천 주제 목록",
+        "buttons": {
+          "primary": { "text": "닫기", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true },
+        "file": "src/features/chat/ui/input.tsx"
+      },
+      {
+        "id": "modal.chat.age_confirmation",
+        "domain": "chat",
+        "trigger": "JP 사용자 채팅 시작 시",
+        "title": "年齢確認",
+        "content": "18歳以上ですか?",
+        "buttons": {
+          "primary": { "text": "はい", "action": "confirmAge()" },
+          "secondary": { "text": "いいえ", "action": "hideModal()" }
+        },
+        "locale": "ja",
+        "file": "src/features/chat/ui/input.tsx"
+      },
+      {
+        "id": "modal.chat.confirm_image_send",
+        "domain": "chat",
+        "trigger": "채팅 이미지 선택 시",
+        "title": "이미지 전송",
+        "content": "선택하신 이미지를 전송하시겠어요?",
+        "buttons": {
+          "primary": { "text": "네, 전송할게요", "action": "sendImage()" },
+          "secondary": { "text": "아니오", "action": "hideModal()" }
+        },
+        "file": "src/features/chat/ui/camera.tsx"
+      },
+      {
+        "id": "modal.chat.confirm_leave",
+        "domain": "chat",
+        "trigger": "채팅방 나가기 메뉴",
+        "title": "채팅방을 나가시겠습니까?",
+        "content": "이후 다시 연결될 수 있습니다.",
+        "buttons": {
+          "primary": { "text": "네, 나갈게요", "action": "leaveChatRoom()" },
+          "secondary": { "text": "아니오", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true },
+        "file": "src/features/chat/ui/modal/menu-modal.tsx"
+      },
+      {
+        "id": "modal.chat.unlock_message",
+        "domain": "chat",
+        "trigger": "채팅 잠금 해제",
+        "title": "메시지 잠금 해제",
+        "content": "[동적] 해제 비용 표시",
+        "buttons": {
+          "primary": { "text": "네, 해제할게요", "action": "unlockMessages()" },
+          "secondary": { "text": "아니오", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true },
+        "file": "src/features/chat/hooks/use-chat-lock.tsx"
+      }
+    ],
+
+    "community": [
+      {
+        "id": "modal.community.block_user",
+        "domain": "community",
+        "trigger": "게시글 > 더보기 > 사용자 차단",
+        "title": "사용자 차단",
+        "content": "'{username}'님을 차단하시겠습니까?\n차단하면 해당 사용자의 모든 게시글이 보이지 않게 됩니다.",
+        "buttons": {
+          "primary": { "text": "네, 차단할게요", "action": "blockUser(userId)" },
+          "secondary": { "text": "아니오", "action": "hideModal()" }
+        },
+        "file": "src/features/community/ui/article/index.tsx"
+      },
+      {
+        "id": "modal.community.delete_article",
+        "domain": "community",
+        "trigger": "게시글 > 더보기 > 삭제",
+        "title": "게시글을 삭제하시겠습니까?",
+        "content": "삭제된 게시글은 복구되지 않습니다.",
+        "buttons": {
+          "primary": { "text": "네, 삭제할게요", "action": "deleteArticle(id)" },
+          "secondary": { "text": "취소", "action": "hideModal()" }
+        },
+        "file": "src/features/community/ui/infinite-article-list.tsx"
+      },
+      {
+        "id": "modal.community.category_selection",
+        "domain": "community",
+        "trigger": "게시글 작성 > 카테고리 선택",
+        "title": "카테고리 선택",
+        "content": "[동적] 카테고리 목록",
+        "buttons": {},
+        "file": "src/features/community/ui/article-write-screen/ui/form.tsx"
+      }
+    ],
+
+    "payment": [
+      {
+        "id": "modal.payment.purchase_complete_gem",
+        "domain": "payment",
+        "trigger": "구슬 구매 완료",
+        "title": "구매가 완료되었어요!",
+        "content": "구슬 {count}개를 구매하셨습니다.\n더 많은 기능을 즐겨보세요!",
+        "buttons": {
+          "primary": { "text": "확인", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true, "showParticle": true },
+        "file": "src/features/payment/hooks/use-portone.tsx"
+      },
+      {
+        "id": "modal.payment.purchase_complete_product",
+        "domain": "payment",
+        "trigger": "상품 구매 완료",
+        "title": "구매가 완료되었어요!",
+        "content": "[상품 이름] {count}개를 구매하셨습니다.",
+        "buttons": {
+          "primary": { "text": "확인", "action": "hideModal()" }
+        },
+        "options": { "showLogo": true },
+        "file": "src/features/payment/hooks/use-portone.tsx"
+      }
+    ],
+
+    "mypage": [
+      {
+        "id": "modal.mypage.delete_feed",
+        "domain": "mypage",
+        "trigger": "내 활동 > 게시글 삭제",
+        "title": "게시글을 삭제하시겠습니까?",
+        "content": "삭제된 게시글은 복구되지 않습니다.",
+        "buttons": {
+          "primary": { "text": "네, 삭제할게요", "action": "deleteArticle(id)" },
+          "secondary": { "text": "취소", "action": "hideModal()" }
+        },
+        "file": "src/features/mypage/ui/my-activity/feed-common-screen.tsx"
+      },
+      {
+        "id": "modal.mypage.push_notification_failed",
+        "domain": "mypage",
+        "trigger": "푸시 알림 활성화 실패",
+        "title": "알림 활성화 실패",
+        "content": "[동적] 에러 메시지",
+        "buttons": {
+          "primary": { "text": "확인", "action": "hideModal()" }
+        },
+        "file": "src/features/mypage/hooks/use-push-notification.ts"
+      }
+    ],
+
+    "event": [
+      {
+        "id": "modal.event.roulette_prize_0",
+        "domain": "event",
+        "trigger": "룰렛 스핀 완료 - 꽝",
+        "title": "오늘은 관망의 날",
+        "content": "급하게 다가가기보다 상대의 마음을 천천히 지켜보는게 좋아요",
+        "buttons": {
+          "primary": { "text": "닫기", "action": "hideNestedModal()" }
+        },
+        "options": { "showLogo": true },
+        "file": "src/features/event/service/roulette-modal-strategy.tsx"
+      },
+      {
+        "id": "modal.event.roulette_prize_1",
+        "domain": "event",
+        "trigger": "룰렛 스핀 완료 - 1등",
+        "title": "작은 떨림 감지",
+        "content": "사소한 대화에서도 상대방의 마음이 스며들 수 있어요",
+        "buttons": {
+          "primary": { "text": "구슬 받기", "action": "claimReward(1)" }
+        },
+        "options": { "showLogo": true, "showParticle": true },
+        "file": "src/features/event/service/roulette-modal-strategy.tsx"
+      },
+      {
+        "id": "modal.event.roulette_prize_5",
+        "domain": "event",
+        "trigger": "룰렛 스핀 완료 - 5등 (최고)",
+        "title": "최고의 러브데이",
+        "content": "마음이 통하는 순간이 찾아옵니다. 사랑의 신이 미소 짓는 하루!",
+        "buttons": {
+          "primary": { "text": "구슬 받기", "action": "claimReward(5)" }
+        },
+        "options": { "showLogo": true, "showParticle": true },
+        "file": "src/features/event/service/roulette-modal-strategy.tsx"
+      }
+    ],
+
+    "report": [
+      {
+        "id": "modal.ban_report.success",
+        "domain": "ban-report",
+        "trigger": "사용자 신고 완료",
+        "title": "신고가 접수되었습니다",
+        "content": "소중한 신고 감사합니다. 더 나은 서비스를 위해 성실하게 검토하겠습니다.",
+        "buttons": {
+          "primary": { "text": "확인", "action": "router.navigate('/home')" }
+        },
+        "file": "src/features/ban-report/hooks/useReport.ts"
+      },
+      {
+        "id": "modal.ban_report.error",
+        "domain": "ban-report",
+        "trigger": "사용자 신고 실패",
+        "title": "신고 실패",
+        "content": "[동적] 에러 메시지",
+        "buttons": {
+          "primary": { "text": "확인", "action": "hideModal()" }
+        },
+        "file": "src/features/ban-report/hooks/useReport.ts"
+      }
+    ],
+
+    "profileEdit": [
+      {
+        "id": "modal.profile_edit.unsaved_changes",
+        "domain": "profile-edit",
+        "trigger": "프로필 편집 중 뒤로가기",
+        "title": "변경 사항이 있습니다",
+        "content": "저장하지 않고 나가시겠습니까?",
+        "buttons": {
+          "primary": { "text": "나가기", "action": "router.back()" },
+          "secondary": { "text": "계속 편집", "action": "hideModal()" }
+        },
+        "file": "src/features/profile-edit/ui/header.tsx"
+      }
+    ],
+
+    "notification": [
+      {
+        "id": "modal.notification.mark_all_as_read",
+        "domain": "notification",
+        "trigger": "알림 > 메뉴 > 모든 알림 읽기",
+        "title": "모든 알림 읽기",
+        "content": "모든 알림을 읽음 상태로 변경하시겠습니까?",
+        "buttons": {
+          "primary": { "text": "확인", "action": "markAllAsReadMutation.mutate()" },
+          "secondary": { "text": "취소", "action": "hideModal()" }
+        },
+        "file": "src/features/notification/ui/notification-menu.tsx"
+      },
+      {
+        "id": "modal.notification.delete_all_read",
+        "domain": "notification",
+        "trigger": "알림 > 메뉴 > 읽은 알림 삭제",
+        "title": "읽은 알림 삭제",
+        "content": "모든 읽은 알림을 삭제하시겠습니까?",
+        "buttons": {
+          "primary": { "text": "확인", "action": "deleteAllReadMutation.mutate()" },
+          "secondary": { "text": "취소", "action": "hideModal()" }
+        },
+        "file": "src/features/notification/ui/notification-menu.tsx"
+      }
+    ],
+
+    "errorModals": [
+      {
+        "id": "error.chat.access_denied",
+        "type": "error",
+        "message": "채팅방 접근 권한이 존재하지 않습니다.",
+        "file": "src/features/chat/services/chat-leave-error-handler.tsx"
+      },
+      {
+        "id": "error.chat.room_not_found",
+        "type": "error",
+        "message": "채팅방을 찾을 수 없습니다.",
+        "file": "src/features/chat/services/chat-enter-error-handler.tsx"
+      },
+      {
+        "id": "error.chat.insufficient_gems",
+        "type": "error",
+        "message": "재화가 부족합니다",
+        "action": "router.push('/purchase/gem-store')",
+        "file": "src/features/chat/services/chat-enter-error-handler.tsx"
+      },
+      {
+        "id": "error.chat.image_format_invalid",
+        "type": "announcement",
+        "message": "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+        "file": "src/features/chat/ui/input.web.tsx"
+      },
+      {
+        "id": "error.chat.network_error",
+        "type": "announcement",
+        "message": "네트워크 연결을 확인해주세요.",
+        "file": "src/features/chat/queries/use-chat-snooze-query.tsx"
+      },
+      {
+        "id": "error.payment.invalid_receipt",
+        "type": "error",
+        "message": "결제 정보가 올바르지 않습니다. 다시 시도해주세요.",
+        "file": "src/features/payment/ui/apple-gem-store/apple-gem-store.tsx"
+      },
+      {
+        "id": "error.payment.verification_failed",
+        "type": "error",
+        "message": "결제 검증에 실패했습니다",
+        "file": "src/features/payment/ui/apple-gem-store/apple-gem-store.tsx"
+      },
+      {
+        "id": "error.mypage.profile_image_load",
+        "type": "error",
+        "message": "프로필 이미지를 불러올 수 없습니다.",
+        "file": "src/features/mypage/ui/modal/change-profile-image.modal.tsx"
+      },
+      {
+        "id": "error.mypage.profile_image_count",
+        "type": "announcement",
+        "message": "사진은 최소 3장이 필요합니다.",
+        "file": "src/features/mypage/ui/modal/change-profile-image.modal.tsx"
+      },
+      {
+        "id": "error.notification.mark_as_read",
+        "type": "error",
+        "message": "알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.",
+        "file": "src/features/notification/queries/use-notification-mutations.tsx"
+      },
+      {
+        "id": "error.matching.expansion_error",
+        "type": "error",
+        "message": "확장 매칭 중 오류가 발생했습니다",
+        "file": "src/features/idle-match-timer/hooks/use-rematch.tsx"
+      },
+      {
+        "id": "error.matching.no_match_available",
+        "type": "announcement",
+        "message": "현재 매칭 가능한 상대가 없습니다",
+        "file": "src/features/idle-match-timer/hooks/use-rematch.tsx"
+      }
+    ],
+
+    "statistics": {
+      "total": 41,
+      "byCategory": {
+        "authentication": 6,
+        "matching": 6,
+        "chat": 5,
+        "community": 3,
+        "payment": 2,
+        "mypage": 2,
+        "event": 3,
+        "report": 2,
+        "profileEdit": 1,
+        "notification": 2,
+        "errorModals": 12
+      },
+      "patterns": {
+        "confirmDelete": 15,
+        "purchaseComplete": 6,
+        "errorAnnouncement": 12,
+        "information": 8
+      }
+    }
+  },
+
+  "toasts": {
+    "$description": "앱 내 모든 토스트 메시지 상세 정의",
+    "system": {
+      "hook": "src/shared/hooks/use-toast.tsx",
+      "api": {
+        "emitToast": "emitToast(message: string, icon?: ReactNode, customDuration?: number)"
+      },
+      "duration": {
+        "formula": "BASE_DURATION(2500ms) + (문자수 * 70ms)",
+        "min": 3000,
+        "max": 5000
+      }
+    },
+
+    "messages": [
+      {
+        "id": "toast.profile.main_photo_set",
+        "domain": "profile",
+        "trigger": "대표 사진 변경 성공",
+        "message": "대표 프로필이 변경되었습니다",
+        "file": "src/features/profile/hooks/use-photo-management.ts"
+      },
+      {
+        "id": "toast.profile.main_photo_already",
+        "domain": "profile",
+        "trigger": "이미 대표 사진인 경우",
+        "message": "이미 대표 사진입니다",
+        "file": "src/features/profile/hooks/use-photo-management.ts"
+      },
+      {
+        "id": "toast.profile.photo_deleted",
+        "domain": "profile",
+        "trigger": "사진 삭제 성공",
+        "message": "사진이 삭제되었습니다",
+        "file": "src/features/profile/hooks/use-photo-management.ts"
+      },
+      {
+        "id": "toast.profile.photo_replaced",
+        "domain": "profile",
+        "trigger": "사진 교체 성공",
+        "message": "사진이 교체되었습니다. 관리자 승인 후 반영됩니다",
+        "file": "src/features/profile/hooks/use-photo-management.ts"
+      },
+      {
+        "id": "toast.profile.photo_added",
+        "domain": "profile",
+        "trigger": "사진 추가 성공",
+        "message": "사진이 추가되었습니다. 관리자 승인 후 반영됩니다",
+        "file": "src/features/profile/hooks/use-photo-management.ts"
+      },
+      {
+        "id": "toast.signup.profile_image_auto_set",
+        "domain": "signup",
+        "trigger": "회원가입 프로필 이미지 첫 업로드",
+        "message": "대표 사진이 자동으로 설정되었습니다",
+        "file": "src/features/signup/hooks/use-profile-image.tsx"
+      },
+      {
+        "id": "toast.community.user_blocked",
+        "domain": "community",
+        "trigger": "사용자 차단 성공",
+        "message": "사용자를 차단했습니다.",
+        "file": "src/features/community/hooks/use-block-user.ts"
+      },
+      {
+        "id": "toast.community.block_user_failed",
+        "domain": "community",
+        "trigger": "사용자 차단 실패",
+        "message": "사용자 차단에 실패했습니다.",
+        "file": "src/features/community/hooks/use-block-user.ts"
+      },
+      {
+        "id": "toast.event.share_code_copied",
+        "domain": "event",
+        "trigger": "초대 코드 복사",
+        "message": "초대 코드를 복사했어요",
+        "icon": "CopyIcon",
+        "file": "src/features/event/hooks/promotion/use-share.tsx"
+      },
+      {
+        "id": "toast.event.share_link_copied",
+        "domain": "event",
+        "trigger": "초대 링크 복사",
+        "message": "링크를 복사했어요",
+        "icon": "CopyIcon",
+        "file": "src/features/event/hooks/promotion/use-share.tsx"
+      },
+      {
+        "id": "toast.event.kakao_sdk_init_failed",
+        "domain": "event",
+        "trigger": "카카오 SDK 초기화 실패",
+        "message": "카카오 SDK 초기화에 실패했어요",
+        "file": "src/features/event/hooks/promotion/use-share-kakao.tsx"
+      },
+      {
+        "id": "toast.event.kakao_sdk_load_failed",
+        "domain": "event",
+        "trigger": "카카오 SDK 로드 실패",
+        "message": "카카오 SDK 로드에 실패했어요",
+        "file": "src/features/event/hooks/promotion/use-share-kakao.tsx"
+      },
+      {
+        "id": "toast.event.kakao_share_loading",
+        "domain": "event",
+        "trigger": "카카오 공유 준비 중",
+        "message": "공유하기 기능을 불러오는 중입니다",
+        "file": "src/features/event/hooks/promotion/use-share-kakao.tsx"
+      },
+      {
+        "id": "toast.event.kakao_share_failed",
+        "domain": "event",
+        "trigger": "카카오 공유 실패",
+        "message": "공유하기를 실패했어요",
+        "file": "src/features/event/hooks/promotion/use-share-kakao.tsx"
+      },
+      {
+        "id": "toast.event.referral_code_load_failed",
+        "domain": "event",
+        "trigger": "초대 코드 로드 실패",
+        "message": "코드를 불러오는데 실패했어요",
+        "file": "src/features/event/hooks/promotion/use-referral-code.tsx"
+      },
+      {
+        "id": "toast.contact_block.rate_limit",
+        "domain": "contact-block",
+        "trigger": "요청 속도 제한",
+        "message": "잠시 후 다시 시도해주세요",
+        "file": "src/features/contact-block/hooks/use-contact-block.ts"
+      }
+    ],
+
+    "statistics": {
+      "total": 25,
+      "byCategory": {
+        "success": 10,
+        "error": 10,
+        "info": 5
+      }
+    }
+  },
+
+  "guards": {
+    "$description": "앱 내 모든 접근 제어 및 권한 가드 상세 정의",
+
+    "authentication": {
+      "rootGuard": {
+        "file": "app/index.tsx",
+        "description": "Root level 인증 리다이렉션",
+        "logic": [
+          {
+            "condition": "isAuthorized (accessToken exists)",
+            "redirectPath": "/home",
+            "description": "인증된 사용자 → 홈으로"
+          },
+          {
+            "condition": "!isAuthorized (no accessToken)",
+            "redirectPath": "/auth/login",
+            "description": "미인증 사용자 → 로그인으로"
+          }
+        ],
+        "source": "useAuth() → isAuthorized flag from AsyncStorage 'access-token'"
+      },
+
+      "homeLayoutGuard": {
+        "file": "app/home/_layout.tsx",
+        "description": "홈 접근 전 승인 상태 확인",
+        "checks": [
+          {
+            "type": "profileCompletion",
+            "condition": "my?.phoneNumber loaded",
+            "timeout": "5초",
+            "behavior": "API 지연 시 강제 진행"
+          },
+          {
+            "type": "approvalStatus",
+            "condition": "useUserStatus(phoneNumber) returns status",
+            "possibleStatuses": ["pending", "rejected", "approved"],
+            "behavior": "모든 상태에서 홈 접근 허용 (로그만 기록)"
+          }
+        ],
+        "loadingScreen": "'Loading user information' until statusChecked=true",
+        "characteristic": "유연한 접근 - 승인 상태로 차단하지 않음"
+      }
+    },
+
+    "approvalStatus": {
+      "pending": {
+        "file": "app/auth/approval-pending.tsx",
+        "triggers": ["회원가입 후 사진 심사 필요"],
+        "source": "useUserStatus(my.phoneNumber).statusData?.status === 'pending'",
+        "features": [
+          "승인 대기 카드 표시",
+          "사용자 프로필 이미지 표시",
+          "로그아웃 버튼 제공",
+          "뒤로가기 비활성화"
+        ],
+        "navigation": "뒤로가기 → /auth/login"
+      },
+
+      "rejected": {
+        "reapply": {
+          "file": "app/auth/reapply.tsx",
+          "triggers": ["사진 거부 알림"],
+          "requiredParams": ["phoneNumber", "rejectionReason"],
+          "source": "URL search params",
+          "requirements": [
+            "Instagram ID (최소 1자)",
+            "프로필 이미지 3장 필수"
+          ],
+          "flow": [
+            "Instagram ID 업데이트",
+            "새 사진 3장 업로드",
+            "PATCH /profile/instagram",
+            "POST /auth/status/reapply",
+            "clearApprovalStatus()",
+            "/auth/login으로 리다이렉트"
+          ]
+        },
+
+        "profilePhotoRejected": {
+          "file": "src/features/idle-match-timer/ui/profile-photo-rejected.tsx",
+          "triggers": ["profileDetails?.status === 'rejected'"],
+          "source": "useProfileDetailsQuery(accessToken).status === 'rejected'",
+          "shows": [
+            "슬픈 이모지 메시지",
+            "가이드라인 링크 (Notion)",
+            "/profile/photo-management 버튼"
+          ],
+          "priority": "최고 - idle match timer 전에 체크"
+        }
+      },
+
+      "pendingApprovalMatch": {
+        "file": "src/features/idle-match-timer/ui/pending-approval.tsx",
+        "triggers": ["match?.type === 'pending-approval'"],
+        "source": "useLatestMatching().match.type === 'pending-approval'",
+        "shows": [
+          "PendingApprovalNotice 컴포넌트",
+          "승인 완료 예상 시간 타이머"
+        ]
+      }
+    },
+
+    "signupValidation": {
+      "pattern": "Higher-Order Component",
+      "file": "src/features/signup/ui/withSignupValidation.tsx",
+      "implementation": "export default withSignupValidation(Component, SignupSteps.STEP_NAME)",
+      "usedIn": ["app/auth/signup/university.tsx"],
+
+      "validations": {
+        "UNIVERSITY": {
+          "requiredFields": [],
+          "description": "첫 단계 - 빈 폼 허용"
+        },
+        "UNIVERSITY_DETAIL": {
+          "requiredFields": ["name", "phone", "birthday", "gender", "universityId"],
+          "redirectIfMissing": "/auth/login"
+        },
+        "INSTAGRAM": {
+          "requiredFields": ["name", "phone", "birthday", "gender", "universityId", "departmentName", "grade", "studentNumber"],
+          "redirectIfMissing": "누락된 단계로 자동 리다이렉트"
+        },
+        "PROFILE_IMAGE": {
+          "requiredFields": ["...INSTAGRAM fields", "instagramId"],
+          "message": "인스타그램 연결 후 프로필 이미지 필요"
+        },
+        "INVITE_CODE": {
+          "requiredFields": ["...all previous", "profileImages"],
+          "message": "초대 코드 전 모든 정보 필요"
+        }
+      },
+
+      "behavior": [
+        "마운트 시점 검증 (폼 변경 시 아님)",
+        "필드 누락 시 모달 표시",
+        "올바른 단계로 자동 리다이렉트",
+        "미완료 단계 직접 URL 접근 방지"
+      ]
+    },
+
+    "profileCompleteness": {
+      "homeScreen": {
+        "file": "app/home/index.tsx",
+        "checks": [
+          {
+            "type": "profileImages",
+            "source": "profileDetails?.profileImages",
+            "condition": "profileImages && profileImages.length > 0"
+          },
+          {
+            "type": "characteristics",
+            "source": "preferencesSelf query",
+            "condition": "preferencesSelf && preferencesSelf.length > 0"
+          },
+          {
+            "type": "preferences",
+            "source": "useRedirectPreferences()",
+            "condition": "isPreferenceFill (서버 확인)"
+          }
+        ],
+        "conditionalRendering": {
+          "isProfileComplete_true": "IdleMatchTimer (매칭 UI)",
+          "isProfileComplete_false": "HomeInfoSection + MatchingStatus (완성 유도)"
+        },
+        "announceCard": {
+          "condition": "!isPreferenceFill",
+          "shows": "/interest 이동 유도 카드",
+          "text": "관심사 설정 필요"
+        }
+      },
+
+      "redirectLogic": {
+        "file": "src/features/home/hooks/use-redirect-preferences.tsx",
+        "purpose": "프로필 완성도 상태 확인",
+        "logic": [
+          "isPreferenceFill = GET /user/check-preference-fill",
+          "isOnboardingCompleted = localStorage 'onboarding' flag",
+          "syncWithServerStatus() = 로컬 상태 서버 동기화"
+        ],
+        "note": "선호도 모달 비활성화됨 - 강제 리다이렉트 없음"
+      }
+    },
+
+    "genderAndCountry": {
+      "jpSmsAuth": {
+        "files": [
+          "app/auth/signup/jp-profile.tsx",
+          "src/features/jp-auth/ui/jp-sms-auth-container.tsx"
+        ],
+        "trigger": "loginType === 'jp_sms'",
+        "flow": [
+          "SMS 전화 인증",
+          "/auth/signup/jp-profile로 리다이렉트",
+          "이름, 생년월일, 성별 입력",
+          "나이 확인: isAdult()",
+          "18세 미만 시: /auth/age-restriction",
+          "대학 선택으로 진행"
+        ],
+        "difference": "SMS는 이름/생년월일/성별 미수집 → 별도 입력 페이지 필요"
+      },
+
+      "genderField": {
+        "values": ["MALE", "FEMALE"],
+        "usedFor": ["선호도 매칭", "특성 필터링", "프로필 표시"],
+        "noGenderBasedGating": "현재 성별 기반 기능 제한 없음"
+      },
+
+      "countryConditions": {
+        "implementation": "언어 기반 via i18n (ko vs ja)",
+        "jpSpecificFeatures": [
+          "JP SMS 로그인 (/auth/jp-sms/index)",
+          "JP 법적 링크 컴포넌트",
+          "JP 나이 확인 훅"
+        ],
+        "triggers": [
+          "일본 대학 선택",
+          "jp_sms 로그인 방식 선택",
+          "앱 로케일 'ja'"
+        ]
+      }
+    },
+
+    "tokenManagement": {
+      "storage": {
+        "accessToken": {
+          "key": "access-token",
+          "type": "string | null",
+          "location": "AsyncStorage"
+        },
+        "refreshToken": {
+          "key": "refresh-token",
+          "type": "string | null",
+          "location": "AsyncStorage"
+        }
+      },
+
+      "validation": {
+        "location": "src/shared/libs/axios.ts (interceptor)",
+        "logic": "응답 인터셉터가 .data 필드 자동 추출",
+        "expiration": "백엔드 토큰 만료로 처리"
+      },
+
+      "logoutFlow": {
+        "functions": [
+          "logout() - 사용자 발생, 모달 표시",
+          "logoutOnly() - 내부 로그아웃, UI 없음",
+          "clearTokensOnly() - 토큰만 제거"
+        ],
+        "cleanup": [
+          "AsyncStorage에서 accessToken, refreshToken 삭제",
+          "AsyncStorage에서 approvalStatus 삭제",
+          "'onboarding-completed' 플래그 삭제",
+          "resetAppState() - Zustand 스토어 초기화",
+          "Sentry.setUser(null)"
+        ],
+        "eventBus": "'auth:logout' 이벤트가 모든 리스닝 컴포넌트에서 정리 트리거"
+      }
+    },
+
+    "routeAccess": {
+      "public": [
+        "/auth/login",
+        "/auth/signup/* (모든 회원가입 경로)",
+        "/auth/approval-pending (회원가입 후 표시)",
+        "/auth/reapply (사진 거부 시 표시)",
+        "/auth/jp-sms/* (JP SMS 로그인 플로우)"
+      ],
+      "authenticated": [
+        "/home (accessToken 필요)",
+        "/my (accessToken 필요)",
+        "/profile-edit (accessToken 필요)",
+        "/purchase/* (accessToken 필요)",
+        "/chat (accessToken 필요)",
+        "/community (accessToken 필요)"
+      ],
+      "conditional": {
+        "/my/approval-step/waiting": "프로필 사진 승인 대기 시 표시",
+        "/my/approval-step/approved": "프로필 사진 승인 시 표시",
+        "/auth/reapply": "사진 거부 + rejectionReason 시 표시",
+        "HomeScreen": "프로필 완성도에 따라 매칭 섹션 적응"
+      }
+    },
+
+    "architecturalNotes": {
+      "noExplicitRejectionBlock": "거부된 사용자도 /home 접근 가능 (매칭 조회만, 매칭 불가)",
+      "noPendingApprovalBlock": "승인 대기 사용자 전체 앱 접근 가능 (매칭 시도 시 안내만)",
+      "noProactiveRedirects": "프로필 미완성이 /interest나 /profile-edit 강제 리다이렉트 안함",
+      "flexibleApproach": "미완성 프로필도 탐색 허용, 차단 대신 카드/배너로 부드러운 유도"
+    }
+  },
+
+  "uxCopy": {
+    "$description": "앱 내 모든 UX 문구 상세 정의 (다국어 지원: ko, ja, en)",
+
+    "validationMessages": {
+      "$description": "폼 유효성 검사 에러 메시지",
+
+      "signup": [
+        {
+          "id": "validation.signup.name",
+          "field": "이름",
+          "rule": "필수 입력 (1자 이상)",
+          "ko": "이름을 입력해주세요",
+          "ja": "名前を入力してください。"
+        },
+        {
+          "id": "validation.signup.birthday",
+          "field": "생년월일",
+          "rule": "필수 입력",
+          "ko": "생년월일을 입력해주세요",
+          "ja": "生年月日を入力してください。"
+        },
+        {
+          "id": "validation.signup.birthday_length",
+          "field": "생년월일",
+          "rule": "6자리 필수",
+          "ko": "생년월일 6자리",
+          "ja": "生年月日は6桁で入力してください。"
+        },
+        {
+          "id": "validation.signup.birthday_numeric",
+          "field": "생년월일",
+          "rule": "숫자만 입력",
+          "ko": "숫자만 입력해주세요",
+          "ja": "数字のみ入力してください。"
+        },
+        {
+          "id": "validation.signup.birthday_invalid",
+          "field": "생년월일",
+          "rule": "유효한 날짜",
+          "ko": "날짜가 존재하지 않습니다.",
+          "ja": "存在しない日付です。"
+        },
+        {
+          "id": "validation.signup.gender",
+          "field": "성별",
+          "rule": "필수 선택",
+          "ko": "성별을 선택해주세요",
+          "ja": "性別を選択してください。"
+        },
+        {
+          "id": "validation.signup.email",
+          "field": "이메일",
+          "rule": "필수 입력",
+          "ko": "이메일을 입력해주세요.",
+          "ja": "メールアドレスを入力してください。"
+        },
+        {
+          "id": "validation.signup.email_invalid",
+          "field": "이메일",
+          "rule": "올바른 이메일 형식",
+          "ko": "올바른 이메일을 입력해주세요.",
+          "ja": "有効なメールアドレスを入力してください。"
+        },
+        {
+          "id": "validation.signup.phone",
+          "field": "휴대폰 번호",
+          "rule": "필수 입력",
+          "ko": "휴대폰 번호를 입력해주세요.",
+          "ja": "電話番号を入力してください。"
+        },
+        {
+          "id": "validation.signup.phone_invalid",
+          "field": "휴대폰 번호",
+          "rule": "올바른 형식",
+          "ko": "올바른 휴대폰 번호를 입력해주세요.",
+          "ja": "有効な電話番号を入力してください。"
+        },
+        {
+          "id": "validation.signup.phone_already_exists",
+          "field": "휴대폰 번호",
+          "rule": "중복 확인",
+          "ko": "이미 가입된 사용자입니다",
+          "ja": "既に登録されているユーザーです"
+        },
+        {
+          "id": "validation.signup.password",
+          "field": "비밀번호",
+          "rule": "필수 입력",
+          "ko": "비밀번호를 입력해주세요.",
+          "ja": "パスワードを入力してください。"
+        },
+        {
+          "id": "validation.signup.password_invalid",
+          "field": "비밀번호",
+          "rule": "영문+숫자+특수문자 8자 이상",
+          "ko": "영문, 숫자, 특수문자 조합 8자리 이상을 입력해주세요.",
+          "ja": "英数字と記号を含む8文字以上で入力してください。"
+        },
+        {
+          "id": "validation.signup.auth_code",
+          "field": "인증번호",
+          "rule": "필수 입력",
+          "ko": "인증번호를 입력해주세요.",
+          "ja": "認証コードを入力してください。"
+        },
+        {
+          "id": "validation.signup.auth_code_invalid",
+          "field": "인증번호",
+          "rule": "올바른 인증번호",
+          "ko": "올바른 인증번호를 입력해주세요.",
+          "ja": "有効な認証コードを入力してください。"
+        },
+        {
+          "id": "validation.signup.mbti",
+          "field": "MBTI",
+          "rule": "필수 선택",
+          "ko": "MBTI를 선택해주세요",
+          "ja": "MBTIを選択してください。"
+        },
+        {
+          "id": "validation.signup.instagram",
+          "field": "인스타그램 ID",
+          "rule": "필수 입력",
+          "ko": "인스타그램 ID를 입력해주세요",
+          "ja": "インスタグラムIDを入力してね"
+        },
+        {
+          "id": "validation.signup.university_required",
+          "field": "학교",
+          "rule": "필수 선택",
+          "ko": "학교와 학과 정보가 필요해요.",
+          "ja": "学校と学科情報が必要です。"
+        },
+        {
+          "id": "validation.signup.area",
+          "field": "지역",
+          "rule": "오픈된 지역만 선택",
+          "ko": "지역을 선택해주세요",
+          "ja": "地域を選択してください"
+        }
+      ],
+
+      "jpAuth": [
+        {
+          "id": "validation.jp_auth.phone",
+          "field": "일본 휴대폰 번호",
+          "rule": "070/080/090으로 시작하는 11자리",
+          "ko": "정확한 형식이 아닙니다",
+          "ja": "正しい電話番号を入力してね"
+        },
+        {
+          "id": "validation.jp_auth.sms_failed",
+          "field": "SMS 전송",
+          "rule": "전송 실패",
+          "ko": "SMS 전송에 실패했습니다",
+          "ja": "SMSの送信に失敗しちゃった。もう一度試してみて"
+        },
+        {
+          "id": "validation.jp_auth.code_invalid",
+          "field": "인증 코드",
+          "rule": "6자리 숫자",
+          "ko": "코드가 맞지 않습니다",
+          "ja": "コードが違うみたい。もう一度確認してね"
+        },
+        {
+          "id": "validation.jp_auth.code_expired",
+          "field": "인증 코드",
+          "rule": "유효기한",
+          "ko": "코드의 유효기한이 만료되었습니다",
+          "ja": "コードの有効期限が切れちゃった。再送信してね"
+        },
+        {
+          "id": "validation.jp_auth.name",
+          "field": "이름 (JP)",
+          "rule": "필수 입력",
+          "ko": "이름을 입력해주세요",
+          "ja": "お名前を入力してね"
+        },
+        {
+          "id": "validation.jp_auth.birthday",
+          "field": "생년월일 (JP)",
+          "rule": "YYYY-MM-DD 형식",
+          "ko": "생년월일을 올바른 형식으로 입력해주세요",
+          "ja": "YYYY-MM-DD形式で入力してね"
+        },
+        {
+          "id": "validation.jp_auth.gender",
+          "field": "성별 (JP)",
+          "rule": "필수 선택",
+          "ko": "성별을 선택해주세요",
+          "ja": "性別を選択してね"
+        },
+        {
+          "id": "validation.jp_auth.error",
+          "field": "프로필 저장",
+          "rule": "서버 통신",
+          "ko": "에러가 발생했습니다",
+          "ja": "エラーが発生しちゃった。もう一度試してみてね"
+        }
+      ],
+
+      "community": [
+        {
+          "id": "validation.community.title_min",
+          "field": "게시글 제목",
+          "rule": "3자 이상",
+          "ko": "제목과 본문은 3자 이상으로 작성해주세요.",
+          "ja": "タイトルと本文は3文字以上で入力してください。"
+        },
+        {
+          "id": "validation.community.content_min",
+          "field": "게시글 내용",
+          "rule": "3자 이상",
+          "ko": "제목과 본문은 3자 이상으로 작성해주세요.",
+          "ja": "タイトルと本文は3文字以上で入力してください。"
+        },
+        {
+          "id": "validation.community.content_max",
+          "field": "게시글 내용",
+          "rule": "최대 2000자",
+          "ko": "본문은 2000자 이하로 작성해주세요.",
+          "ja": "本文は2000文字以内で入力してください。"
+        },
+        {
+          "id": "validation.community.image_limit",
+          "field": "이미지",
+          "rule": "최대 5개",
+          "ko": "이미지는 최대 5개까지 선택할 수 있습니다.",
+          "ja": "画像は最大5枚まで選択できます。"
+        }
+      ],
+
+      "profileEdit": [
+        {
+          "id": "validation.profile_edit.empty_form",
+          "field": "프로필 수정 폼",
+          "rule": "필수 필드 완성",
+          "ko": "비어있는 양식이 존재합니다.",
+          "ja": "入力していない項目があります。"
+        }
+      ],
+
+      "auth": [
+        {
+          "id": "validation.auth.phone_blacklist",
+          "field": "휴대폰 번호",
+          "rule": "블랙리스트 확인",
+          "ko": "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.",
+          "ja": "報告受付またはプロフィール情報不適合等の理由により登録が制限されました。"
+        },
+        {
+          "id": "validation.auth.apple_login_missing",
+          "field": "Apple 로그인",
+          "rule": "Apple ID 확인",
+          "ko": "애플 로그인 정보가 없습니다.",
+          "ja": "Appleログイン情報がありません。"
+        }
+      ],
+
+      "statistics": {
+        "total": 35,
+        "byDomain": {
+          "signup": 19,
+          "jpAuth": 8,
+          "community": 4,
+          "profileEdit": 1,
+          "auth": 2
+        }
+      }
+    },
+
+    "stateMessages": {
+      "$description": "Empty/Loading/Error State 메시지",
+
+      "loading": [
+        {
+          "id": "state.loading.home",
+          "domain": "home",
+          "ko": "사용자 정보를 확인하고 있어요..."
+        },
+        {
+          "id": "state.loading.post_box.i_liked",
+          "domain": "post-box",
+          "ko": "보낸 썸 리스트를 불러오는 중이에요!"
+        },
+        {
+          "id": "state.loading.post_box.liked_me",
+          "domain": "post-box",
+          "ko": "도착한 썸 리스트를 불러오는 중이에요!"
+        },
+        {
+          "id": "state.loading.community.category",
+          "domain": "community",
+          "ko": "카테고리를 불러오고 있어요"
+        },
+        {
+          "id": "state.loading.community.comments",
+          "domain": "community",
+          "ko": "댓글을 불러오고 있어요"
+        },
+        {
+          "id": "state.loading.community.detail",
+          "domain": "community",
+          "ko": "게시글을 불러오고 있어요"
+        },
+        {
+          "id": "state.loading.idle_match",
+          "domain": "idle-match-timer",
+          "ko": "지금 불러오는 중이에요"
+        },
+        {
+          "id": "state.loading.idle_match.rematching",
+          "domain": "idle-match-timer",
+          "ko": "새로운 인연을 찾고 있어요",
+          "en": "Looking for new connections"
+        },
+        {
+          "id": "state.loading.moment.question",
+          "domain": "moment",
+          "ko": "오늘의 질문을 불러오는 중..."
+        },
+        {
+          "id": "state.loading.somemate.report",
+          "domain": "somemate",
+          "ko": "리포트 분석 중이에요",
+          "subMessage": "미호가 열심히 분석하고 있어요. 잠시만 기다려주세요!"
+        },
+        {
+          "id": "state.loading.auth.login",
+          "domain": "auth",
+          "ko": "로그인 중..."
+        },
+        {
+          "id": "state.loading.auth.redirect",
+          "domain": "auth",
+          "ko": "로그인 처리 중입니다...",
+          "subMessage": "잠시만 기다려주세요."
+        },
+        {
+          "id": "state.loading.jp_auth.sms",
+          "domain": "jp-auth",
+          "ko": "발송 중..."
+        },
+        {
+          "id": "state.loading.jp_auth.verify",
+          "domain": "jp-auth",
+          "ko": "확인 중..."
+        },
+        {
+          "id": "state.loading.mypage.images",
+          "domain": "mypage",
+          "ko": "프로필 정보를 불러오고 있어요..."
+        },
+        {
+          "id": "state.loading.mypage.save",
+          "domain": "mypage",
+          "ko": "저장 중.."
+        },
+        {
+          "id": "state.loading.payment.gems",
+          "domain": "payment",
+          "ko": "젬 상품을 불러오는 중."
+        },
+        {
+          "id": "state.loading.payment.processing",
+          "domain": "payment",
+          "ko": "결제를 처리 중입니다. 잠시만 기다려주세요."
+        },
+        {
+          "id": "state.loading.partner",
+          "domain": "partner",
+          "ko": "파트너 정보를 불러오고 있어요"
+        }
+      ],
+
+      "empty": [
+        {
+          "id": "state.empty.like",
+          "domain": "like",
+          "ko": "관심을 가진 사람이 아직 없어요",
+          "subMessage": "'좋아요'를 보내보셨나요?",
+          "action": "프로필 검색해보기"
+        },
+        {
+          "id": "state.empty.chat.no_room",
+          "domain": "chat",
+          "ko": "아직 열린 채팅방이 없어요",
+          "subMessage": "서로 좋아요가 되면 대화가 시작돼요"
+        },
+        {
+          "id": "state.empty.chat.new_match",
+          "domain": "chat",
+          "ko": "새로운 마음이 도착했어요💜",
+          "subMessage": "채팅을 열고 메시지를 확인해보세요!"
+        },
+        {
+          "id": "state.empty.idle_match.no_match",
+          "domain": "idle-match-timer",
+          "ko": "매칭에 실패했어요",
+          "en": "Matching failed",
+          "subMessage": "이상형 범위를 넓혀보세요",
+          "action": "새로운 매칭 시도"
+        },
+        {
+          "id": "state.empty.idle_match.pending",
+          "domain": "idle-match-timer",
+          "ko": "프로필 심사 중",
+          "en": "Profile Under Review",
+          "subMessage": "승인 후 매칭이 시작됩니다"
+        },
+        {
+          "id": "state.empty.match.no_recommend",
+          "domain": "match",
+          "ko": "아직 추천할 수 있는 매칭이 없어요",
+          "en": "No recommendations available yet"
+        },
+        {
+          "id": "state.empty.match.no_condition",
+          "domain": "match",
+          "ko": "현재 조건에 맞는 매칭이 없어요.",
+          "en": "No matches found for your conditions right now.",
+          "subMessage": "곧 더 많은 사람들이 가입할 거예요!"
+        },
+        {
+          "id": "state.empty.moment.no_question",
+          "domain": "moment",
+          "ko": "오늘의 질문이 없습니다",
+          "subMessage": "내일 다시 방문해주세요"
+        },
+        {
+          "id": "state.empty.moment.no_analysis",
+          "domain": "moment",
+          "ko": "아직 모먼트가 없어요 🥺",
+          "subMessage": "매일 질문에 답변하면 일주일마다 나만의 모먼트 리포트가 생성돼요!"
+        },
+        {
+          "id": "state.empty.somemate.no_report",
+          "domain": "somemate",
+          "ko": "아직 생성된 리포트가 없어요",
+          "subMessage": "미호와 대화를 나눈 후 분석을 받아보세요!"
+        },
+        {
+          "id": "state.empty.mypage.images",
+          "domain": "mypage",
+          "ko": "3장의 프로필 사진을 모두 등록해주세요."
+        },
+        {
+          "id": "state.empty.mypage.pending_review",
+          "domain": "mypage",
+          "ko": "새 프로필 사진 승인 대기 중!",
+          "subMessage": "관리자가 검토 중입니다. 승인 여부는 푸시로 알려드릴게요"
+        },
+        {
+          "id": "state.empty.card_news",
+          "domain": "card-news",
+          "ko": "모든 소식을 확인했어요 🎉"
+        },
+        {
+          "id": "state.empty.matching_history",
+          "domain": "matching-history",
+          "ko": "더 많은 매칭을 원하시나요?",
+          "subMessage": "지금 재매칭권을 사용해 새로운 인연을 만나보세요!"
+        },
+        {
+          "id": "state.empty.matching_history.missed",
+          "domain": "matching-history",
+          "ko": "혹시 놓친 인연이 있을지도 몰라요",
+          "subMessage": "스쳐간 인연 중 아직 연결되지 않은 사람들이에요."
+        }
+      ],
+
+      "error": [
+        {
+          "id": "state.error.idle_match",
+          "domain": "idle-match-timer",
+          "ko": "연결이 불안정합니다. 나중에 다시 시도해주세요."
+        },
+        {
+          "id": "state.error.idle_match.rejection",
+          "domain": "idle-match-timer",
+          "ko": "프로필이 거절되었어요",
+          "en": "Profile Rejected",
+          "subMessage": "프로필 수정 후 다시 신청할 수 있어요.",
+          "action": "프로필 수정"
+        },
+        {
+          "id": "state.error.match.no_ticket",
+          "domain": "match",
+          "ko": "재매칭권이 없습니다.",
+          "en": "No rematch tickets available."
+        },
+        {
+          "id": "state.error.moment.question",
+          "domain": "moment",
+          "ko": "질문을 불러오는데 실패했습니다",
+          "subMessage": "네트워크 연결을 확인해주세요",
+          "action": "다시 시도"
+        },
+        {
+          "id": "state.error.auth.login_fail",
+          "domain": "auth",
+          "ko": "로그인에 실패했습니다. 다시 시도해주세요."
+        },
+        {
+          "id": "state.error.auth.invalid_code",
+          "domain": "auth",
+          "ko": "올바른 코드를 입력해주세요."
+        },
+        {
+          "id": "state.error.jp_auth.phone",
+          "domain": "jp-auth",
+          "ko": "올바른 전화번호를 입력해주세요"
+        },
+        {
+          "id": "state.error.jp_auth.sms",
+          "domain": "jp-auth",
+          "ko": "SMS 발송에 실패했습니다"
+        },
+        {
+          "id": "state.error.jp_auth.code",
+          "domain": "jp-auth",
+          "ko": "인증코드가 올바르지 않습니다"
+        },
+        {
+          "id": "state.error.jp_auth.expired",
+          "domain": "jp-auth",
+          "ko": "인증코드가 만료되었습니다"
+        },
+        {
+          "id": "state.error.community.detail",
+          "domain": "community",
+          "ko": "게시글을 불러오는 중 오류가 발생했습니다."
+        },
+        {
+          "id": "state.error.partner.not_found",
+          "domain": "partner",
+          "ko": "신고 대상을 찾을 수 없습니다."
+        },
+        {
+          "id": "state.error.partner.permission",
+          "domain": "partner",
+          "ko": "사진을 선택하려면 미디어 라이브러리 접근 권한이 필요합니다."
+        },
+        {
+          "id": "state.error.mypage.image_load",
+          "domain": "mypage",
+          "ko": "프로필 정보를 불러올 수 없습니다."
+        },
+        {
+          "id": "state.error.mypage.notification",
+          "domain": "mypage",
+          "ko": "푸시 알림 상태 확인 실패"
+        },
+        {
+          "id": "state.error.payment.gems",
+          "domain": "payment",
+          "ko": "젬 상품을 불러오는데 실패했습니다."
+        },
+        {
+          "id": "state.error.payment.general",
+          "domain": "payment",
+          "ko": "결제 처리 중 오류가 발생했습니다."
+        },
+        {
+          "id": "state.error.post_box.reject_like",
+          "domain": "post-box",
+          "ko": "서버 내부 오류로 좋아요 거절에 실패하였습니다."
+        },
+        {
+          "id": "state.error.post_box.bye_like",
+          "domain": "post-box",
+          "ko": "서버 내부 오류로 인연 삭제에 실패하였습니다."
+        }
+      ],
+
+      "statistics": {
+        "total": 53,
+        "byType": {
+          "loading": 19,
+          "empty": 15,
+          "error": 19
+        }
+      }
+    },
+
+    "onboardingGuide": {
+      "$description": "온보딩 튜토리얼 및 가이드 문구",
+
+      "tutorialSlides": [
+        {
+          "order": 1,
+          "id": "slide.welcome",
+          "component": "SlideWelcome",
+          "ko": {
+            "title": "환영합니다!",
+            "subtitle": "대학생을 위한 소셜 매칭 서비스"
+          },
+          "animation": "HeartPulse"
+        },
+        {
+          "order": 2,
+          "id": "slide.story",
+          "component": "SlideStory",
+          "ko": {
+            "title": "썸타임의 이야기",
+            "subtitle": "진정한 인연을 찾아가는 여정"
+          }
+        },
+        {
+          "order": 3,
+          "id": "slide.matching_time",
+          "component": "SlideMatchingTime",
+          "ko": {
+            "title": "매칭 시간",
+            "subtitle": "매일 정해진 시간에 새로운 인연을 만나보세요"
+          },
+          "animation": "RealtimeCountdown"
+        },
+        {
+          "order": 4,
+          "id": "slide.verification",
+          "component": "SlideVerification",
+          "ko": {
+            "title": "안전한 인증 시스템",
+            "subtitle": "대학 인증으로 신뢰할 수 있는 만남"
+          },
+          "animation": "SequentialCheck"
+        },
+        {
+          "order": 5,
+          "id": "slide.student_only",
+          "component": "SlideStudentOnly",
+          "ko": {
+            "title": "대학생 전용",
+            "subtitle": "오직 대학생만을 위한 커뮤니티"
+          }
+        },
+        {
+          "order": 6,
+          "id": "slide.ai_matching",
+          "component": "SlideAiMatching",
+          "ko": {
+            "title": "AI 매칭",
+            "subtitle": "취향과 관심사를 분석한 맞춤 매칭"
+          },
+          "animation": "PuzzleMatch"
+        },
+        {
+          "order": 7,
+          "id": "slide.like_guide",
+          "component": "SlideLikeGuide",
+          "ko": {
+            "title": "좋아요 보내기",
+            "subtitle": "마음에 드는 상대에게 좋아요를 보내보세요"
+          },
+          "animation": "HeartTouch"
+        },
+        {
+          "order": 8,
+          "id": "slide.chat_guide",
+          "component": "SlideChatGuide",
+          "ko": {
+            "title": "채팅하기",
+            "subtitle": "매칭이 되면 채팅을 시작할 수 있어요"
+          },
+          "animation": "TypingEffect"
+        },
+        {
+          "order": 9,
+          "id": "slide.refund",
+          "component": "SlideRefund",
+          "ko": {
+            "title": "환불 정책",
+            "subtitle": "안심하고 이용하세요"
+          }
+        },
+        {
+          "order": 10,
+          "id": "slide.region",
+          "component": "SlideRegion",
+          "ko": {
+            "title": "지역 매칭",
+            "subtitle": "같은 지역의 대학생과 만나보세요"
+          }
+        },
+        {
+          "order": 11,
+          "id": "slide.cta",
+          "component": "SlideCta",
+          "ko": {
+            "title": "시작해볼까요?",
+            "buttonText": "시작하기"
+          }
+        }
+      ],
+
+      "signupSteps": [
+        {
+          "step": 1,
+          "id": "signup.university",
+          "route": "/auth/signup/university",
+          "ko": {
+            "title": "대학교 선택",
+            "placeholder": "대학교를 검색해주세요",
+            "description": "재학 중인 대학교를 선택해주세요"
+          }
+        },
+        {
+          "step": 2,
+          "id": "signup.university_details",
+          "route": "/auth/signup/university-details",
+          "ko": {
+            "title": "학과 정보",
+            "fields": {
+              "department": "학과를 검색해주세요",
+              "grade": "학년 선택",
+              "studentNumber": "학번 입력"
+            }
+          }
+        },
+        {
+          "step": 3,
+          "id": "signup.instagram",
+          "route": "/auth/signup/instagram",
+          "ko": {
+            "title": "인스타그램",
+            "placeholder": "인스타그램 아이디",
+            "description": "프로필 인증에 사용됩니다"
+          }
+        },
+        {
+          "step": 4,
+          "id": "signup.profile_image",
+          "route": "/auth/signup/profile-image",
+          "ko": {
+            "title": "프로필 사진",
+            "description": "최대 3장까지 등록할 수 있어요",
+            "hint": "첫 번째 사진이 대표 사진이 됩니다"
+          }
+        },
+        {
+          "step": 5,
+          "id": "signup.invite_code",
+          "route": "/auth/signup/invite-code",
+          "ko": {
+            "title": "초대코드",
+            "placeholder": "초대코드 입력 (선택)",
+            "description": "친구에게 받은 초대코드가 있다면 입력해주세요"
+          }
+        }
+      ],
+
+      "interestSteps": [
+        {
+          "step": 1,
+          "id": "interest.age",
+          "route": "/interest/age",
+          "ko": {
+            "title": "나이 선호",
+            "options": ["동갑", "연하", "연상", "무관"]
+          }
+        },
+        {
+          "step": 2,
+          "id": "interest.good_mbti",
+          "route": "/interest/like-mbti",
+          "ko": {
+            "title": "좋아하는 MBTI",
+            "description": "선호하는 MBTI를 선택해주세요"
+          }
+        },
+        {
+          "step": 3,
+          "id": "interest.bad_mbti",
+          "route": "/interest/bad-mbti",
+          "ko": {
+            "title": "싫어하는 MBTI",
+            "description": "피하고 싶은 MBTI를 선택해주세요"
+          }
+        },
+        {
+          "step": 4,
+          "id": "interest.personality",
+          "route": "/interest/personality",
+          "ko": {
+            "title": "성격",
+            "description": "선호하는 성격을 선택해주세요"
+          }
+        },
+        {
+          "step": 5,
+          "id": "interest.drinking",
+          "route": "/interest/drinking",
+          "ko": {
+            "title": "음주 습관",
+            "options": ["전혀 안 마심", "가끔 마심", "자주 마심", "상관없음"]
+          }
+        },
+        {
+          "step": 6,
+          "id": "interest.smoking",
+          "route": "/interest/smoking",
+          "ko": {
+            "title": "흡연 여부",
+            "options": ["비흡연", "흡연", "상관없음"]
+          }
+        },
+        {
+          "step": 7,
+          "id": "interest.tattoo",
+          "route": "/interest/tattoo",
+          "ko": {
+            "title": "문신",
+            "options": ["없음", "있음", "상관없음"]
+          }
+        },
+        {
+          "step": 8,
+          "id": "interest.military",
+          "route": "/interest/military",
+          "ko": {
+            "title": "군복무",
+            "options": ["미필", "군필", "면제", "상관없음"]
+          }
+        }
+      ],
+
+      "statistics": {
+        "tutorialSlides": 11,
+        "signupSteps": 5,
+        "interestSteps": 8
+      }
+    }
+  }
+}

@@ -215,6 +215,26 @@ const { control, handleSubmit } = useForm({
 
 **파일 기반 라우팅**: `app/` 디렉터리
 
+### ⚠️ 중요: app/ 디렉터리 파일 규칙
+
+> **`app/` 디렉터리 내 모든 `.ts/.tsx` 파일은 라우트로 취급됩니다!**
+
+| 허용 | 금지 |
+|-----|-----|
+| `page.tsx` (React 컴포넌트) | `types.ts` (타입 정의) |
+| `_layout.tsx` (레이아웃) | `utils.ts` (유틸리티) |
+| `_components.tsx` (`_` 접두사) | `constants.ts` (상수) |
+
+```typescript
+// ❌ 절대 금지 - app/ 디렉터리에 타입/유틸 파일 생성
+app/auth/signup/types.ts  // 라우트로 인식되어 오류 발생!
+
+// ✅ 올바른 위치 - src/features/ 아래에 배치
+src/features/signup/types.ts
+```
+
+**예외 처리**: `_`로 시작하는 파일은 라우트에서 제외됨 (예: `_layout.tsx`, `_components.tsx`)
+
 ### 주요 라우트
 
 ```
