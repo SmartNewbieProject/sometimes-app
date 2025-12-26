@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import apis from "../apis";
+import type { BannerPosition } from "../types";
 
 export const useTotalMatchCountQuery = () =>
   useQuery({
@@ -35,6 +36,12 @@ export const useNotificationQuery = () =>
     queryKey: ["notification"],
     queryFn: apis.getNotification,
     staleTime: 0,
+  });
+
+export const useBannersQuery = (position: BannerPosition) =>
+  useQuery({
+    queryKey: ["banners", position],
+    queryFn: () => apis.getBanners(position),
   });
 
 export { useExistsUniversityQuery } from "./use-exists-university";
