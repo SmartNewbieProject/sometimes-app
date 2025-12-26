@@ -75,5 +75,20 @@
       "female": "女性",
       "male": "男性"
     }
+  },
+  "device": {
+    "storage": {
+      "toast": "⚠️ ストレージが不足しています",
+      "insufficient_title": "ストレージ不足",
+      "insufficient_description": "写真を保存するには最低{{required}}MBの空き容量が必要です。\n現在の空き容量: {{available}}"
+    },
+    "memory": {
+      "toast": "⚠️ メモリが不足しています",
+      "warning_title": "メモリ不足",
+      "warning_description": "デバイスのメモリが不足しています。\n他のアプリを終了してからもう一度お試しください。"
+    }
+  },
+  "common": {
+    "confirm": "確認"
   }
 }

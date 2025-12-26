@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { storage } from '@/src/shared/libs/store';
 import {
@@ -9,6 +9,8 @@ import {
   type PaymentEventProperties,
   type KpiEventTypePropertiesMap,
 } from '@/src/shared/constants/mixpanel-events';
+
+const VALID_EVENT_VALUES = new Set(Object.values(MIXPANEL_EVENTS));
 
 // Mixpanel 훅 반환 타입
 export interface UseMixpanelReturn {
@@ -216,18 +218,18 @@ export const useMixpanel = (): UseMixpanelReturn => {
         };
 
         // 이벤트 유효성 검사 (옵션)
-        if (opts.validate && !MIXPANEL_EVENTS[eventName]) {
+        if (opts.validate && !VALID_EVENT_VALUES.has(eventName)) {
           console.warn(`[Mixpanel] Unknown event: ${eventName}`);
           return;
         }
 
         // Mixpanel 이벤트 전송 (플랫폼 자동 선택)
-        mixpanelAdapter.track(MIXPANEL_EVENTS[eventName], eventProperties);
+        mixpanelAdapter.track(eventName, eventProperties);
 
         // 개발 환경에서 로그 출력
         if (process.env.EXPO_PUBLIC_TRACKING_MODE === 'development') {
           console.log(`[Mixpanel] Event tracked:`, {
-            event: MIXPANEL_EVENTS[eventName],
+            event: eventName,
             properties: eventProperties,
           });
         }

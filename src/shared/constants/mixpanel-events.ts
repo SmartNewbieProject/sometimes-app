@@ -109,6 +109,9 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
   // 좋아요 관련 (Engagement/Revenue)
   LIKE_SENT: 'Like_Sent',
   LIKE_RECEIVED: 'Like_Received',
+  LIKE_LIST_VIEWED: 'Like_List_Viewed',
+  LIKE_REJECTED: 'Like_Rejected',
+  LIKE_CANCELLED: 'Like_Cancelled',
 
   // 사용자 관리 관련 (Safety/Retention)
   USER_BLOCKED: 'User_Blocked',
@@ -565,6 +568,9 @@ export interface KpiEventTypePropertiesMap {
   // 좋아요 관련
   Like_Sent: LikeEventProperties;
   Like_Received: LikeEventProperties;
+  Like_List_Viewed: LikeEventProperties;
+  Like_Rejected: LikeEventProperties;
+  Like_Cancelled: LikeEventProperties;
 
   // 사용자 차단/신고 관련
   User_Blocked: UserActionEventProperties;
