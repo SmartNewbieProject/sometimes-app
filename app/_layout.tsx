@@ -70,7 +70,7 @@ export default Sentry.wrap(function RootLayout() {
   }, [navigationRef]);
 
   useEffect(() => {
-    if (Platform.OS !== "web") {
+    if (Platform.OS !== "web" && !__DEV__) {
       preventScreenCaptureAsync();
     }
   }, []);

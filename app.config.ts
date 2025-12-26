@@ -141,7 +141,7 @@ export default ({ config }: ConfigContext): any => {
       },
       web: {
         bundler: "metro",
-        output: "static",
+        output: "single",
         favicon: "./assets/images/favicon-logo.png",
         name: "썸타임 - 대학생 소개팅 앱",
         shortName: "썸타임",
@@ -152,7 +152,7 @@ export default ({ config }: ConfigContext): any => {
           "expo-router",
           {
             origin: "https://some-in-univ.com",
-            asyncRoutes: "production"
+            asyncRoutes: false
           }
         ],
         [

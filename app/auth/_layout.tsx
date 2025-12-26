@@ -61,6 +61,16 @@ export default function AuthLayout() {
             },
           }}
         />
+        <Stack.Screen
+          name="jp-sms/index"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+            animation: "slide_from_right",
+          }}
+        />
       </Stack>
     </View>
   );
