@@ -346,6 +346,15 @@ confirm_build() {
 build_ios() {
     print_step "Building iOS ($PROFILE)..."
 
+    # Workaround: Ruby 3.4.x FileUtils.mkdir_p bug with symlinked directories
+    # Creates the dated Archives subdirectory to prevent Fastlane gym failure
+    local archives_link="$HOME/Library/Developer/Xcode/Archives"
+    if [ -L "$archives_link" ]; then
+        local archives_target=$(readlink "$archives_link")
+        local dated_dir="$archives_target/$(date +%Y-%m-%d)"
+        mkdir -p "$dated_dir" 2>/dev/null || true
+    fi
+
     # Ad-hoc 빌드는 .env.production 사용
     local env_file="$ENV_FILE"
     if [ "$PROFILE" = "adhoc" ]; then
@@ -518,6 +527,18 @@ main() {
 
     # Perform clean build if requested
     perform_clean_build
+
+    echo ""
+    print_step "Syncing build version with EAS..."
+    local sync_platform="$PLATFORM"
+    if [ "$PLATFORM" = "all" ]; then
+        sync_platform="all"
+    fi
+    if eas build:version:sync --platform "$sync_platform" 2>/dev/null; then
+        print_success "Build version synced with EAS"
+    else
+        print_warning "Version sync skipped (may require remote build history)"
+    fi
 
     echo ""
     print_step "Starting build process..."

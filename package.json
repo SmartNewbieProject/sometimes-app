@@ -34,7 +34,9 @@
     "install:device": "./scripts/install-to-device.sh",
     "install:latest": "./scripts/install-latest.sh",
     "submit:testflight": "./scripts/submit-testflight.sh",
-    "logs": "./scripts/view-logs.sh"
+    "logs": "./scripts/view-logs.sh",
+    "i18n:extract": "tsx scripts/i18n-extract.ts",
+    "i18n:migrate": "tsx scripts/i18n-migrate.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -104,6 +106,7 @@
     "lottie-react-native": "^7.3.4",
     "lucide-react-native": "^0.554.0",
     "metro-react-native-babel-transformer": "^0.76.9",
+    "mixpanel": "^0.19.1",
     "mixpanel-browser": "^2.72.0",
     "mixpanel-react-native": "^3.1.2",
     "nanoid": "^5.1.5",
@@ -160,6 +163,7 @@
     "cross-env": "^10.0.0",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~10.0.0",
+    "glob": "^13.0.0",
     "jest": "^29.2.1",
     "jest-expo": "~54.0.16",
     "patch-package": "^8.0.1",
@@ -167,6 +171,7 @@
     "react-test-renderer": "19.0.0",
     "sharp": "^0.34.5",
     "ts-jest": "^29.3.2",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.2"
   },
   "private": true

@@ -56,7 +56,7 @@ export default ({ config }: ConfigContext): any => {
       ios: {
         supportsTablet: true,
         bundleIdentifier: "com.some-in-univ",
-        buildNumber: "316",
+        buildNumber: "332",
         entitlements: {
           "com.apple.developer.applesignin": ["Default"]
         },
