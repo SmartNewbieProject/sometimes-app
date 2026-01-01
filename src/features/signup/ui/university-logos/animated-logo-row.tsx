@@ -37,7 +37,7 @@ export default function AnimatedLogoRow({
 				}),
 				Animated.timing(anim1, {
 					toValue: 0,
-					duration: 0,
+					duration: 1,
 					useNativeDriver: Platform.OS !== 'web',
 				}),
 			]),
@@ -46,28 +46,28 @@ export default function AnimatedLogoRow({
 		return () => anim1.stopAnimation();
 	}, [anim1, logoSize, row1Logos.length]);
 
-	useEffect(() => {
-		const width = row2Logos.length * (logoSize + 8);
+	const row2Width = row2Logos.length * (logoSize + 8);
 
-		anim2.setValue(-width);
+	useEffect(() => {
+		anim2.setValue(0);
 		Animated.loop(
 			Animated.sequence([
 				Animated.timing(anim2, {
-					toValue: 0,
+					toValue: row2Width,
 					duration: 25000,
 					useNativeDriver: Platform.OS !== 'web',
 					easing: Easing.linear,
 				}),
 				Animated.timing(anim2, {
-					toValue: -width,
-					duration: 0,
+					toValue: 0,
+					duration: 1,
 					useNativeDriver: Platform.OS !== 'web',
 				}),
 			]),
 		).start();
 
 		return () => anim2.stopAnimation();
-	}, [anim2, logoSize, row2Logos.length]);
+	}, [anim2, logoSize, row2Logos.length, row2Width]);
 
 	const logoWithMargin = logoSize + 8;
 
@@ -107,6 +107,7 @@ export default function AnimatedLogoRow({
 							styles.animatedRow,
 							{
 								transform: [{ translateX: anim2 }],
+								left: -row2Width,
 								width: row2Logos.length * logoWithMargin * 3,
 							},
 						]}

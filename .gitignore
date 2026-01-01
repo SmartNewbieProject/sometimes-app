@@ -2,6 +2,7 @@
 
 .idea
 .serena
+.claude/
 
 # Environment variables (IMPORTANT: Never commit these!)
 .env
