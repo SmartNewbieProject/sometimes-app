@@ -1,3 +1,5 @@
+import i18next from 'i18next';
+
 export const formatTime = (totalSeconds: number): string => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -7,36 +9,36 @@ export const formatTime = (totalSeconds: number): string => {
 
 export const formatLastLogin = (lastLogin: string | null | undefined): string => {
   if (!lastLogin) {
-    return '3일 이상';
+    return i18next.t('shareds.utils.last_login.more_than_3_days');
   }
 
   const now = new Date();
   const loginDate = new Date(lastLogin);
 
   if (Number.isNaN(loginDate.getTime())) {
-    return '3일 이상';
+    return i18next.t('shareds.utils.last_login.more_than_3_days');
   }
 
   const diffMs = now.getTime() - loginDate.getTime();
   const diffHours = diffMs / (1000 * 60 * 60);
 
   if (diffHours < 1) {
-    return '방금 전';
+    return i18next.t('shareds.utils.last_login.just_now');
   }
   if (diffHours < 6) {
-    return '6시간 전';
+    return i18next.t('shareds.utils.last_login.hours_6');
   }
   if (diffHours < 12) {
-    return '12시간 전';
+    return i18next.t('shareds.utils.last_login.hours_12');
   }
   if (diffHours < 24) {
-    return '1일 전';
+    return i18next.t('shareds.utils.last_login.day_1');
   }
   if (diffHours < 48) {
-    return '2일 전';
+    return i18next.t('shareds.utils.last_login.day_2');
   }
   if (diffHours < 72) {
-    return '3일 전';
+    return i18next.t('shareds.utils.last_login.day_3');
   }
-  return '3일 이상';
+  return i18next.t('shareds.utils.last_login.more_than_3_days');
 };

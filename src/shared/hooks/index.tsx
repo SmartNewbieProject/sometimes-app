@@ -12,3 +12,4 @@ export { useMixpanel } from './use-mixpanel';
 export { useAppFont } from './use-app-font';
 export { useOnboardingCompleted } from './use-onboarding-completed';
 export { useDebounce } from './use-debounce';
+export { useTracking } from './use-tracking';

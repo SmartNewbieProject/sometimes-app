@@ -630,4 +630,7 @@ const createImageUrl = (univ: UniversityName) => {
 
 export const getUnivLogo = (univ: UniversityName) => createImageUrl(univ);
 
-export const getSmartUnivLogoUrl = (univCode: string) => `${baseUrl}${univCode.toLowerCase()}.webp`;
+export const getSmartUnivLogoUrl = (univCode: string, country: 'kr' | 'jp' = 'kr') => {
+	const code = country === 'jp' ? univCode : univCode.toLowerCase();
+	return `${baseUrl}${code}.webp`;
+};

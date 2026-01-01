@@ -1,5 +1,5 @@
 import * as Location from 'expo-location';
-import i18n from "@/src/shared/libs/i18n";
+import i18n from '@/src/shared/libs/i18n';
 
 const BUSAN = { lat: 35.1796, lon: 129.0756 };
 const DAEJEON = { lat: 36.3504, lon: 127.3845 };
@@ -19,7 +19,7 @@ export const getDistance = (lat1: number, lon1: number, lat2: number, lon2: numb
 	return R * c;
 };
 
-export const getNearestCity = async (): Promise<'부산' | '대전' | null> => {
+export const getNearestCity = async (): Promise<string | null> => {
 	try {
 		const { status } = await Location.requestForegroundPermissionsAsync();
 		if (status !== 'granted') {
@@ -36,7 +36,7 @@ export const getNearestCity = async (): Promise<'부산' | '대전' | null> => {
 		const distToBusan = getDistance(latitude, longitude, BUSAN.lat, BUSAN.lon);
 		const distToDaejeon = getDistance(latitude, longitude, DAEJEON.lat, DAEJEON.lon);
 
-		return distToBusan < distToDaejeon ? '부산' : '대전';
+		return distToBusan < distToDaejeon ? i18n.t('common.부산') : i18n.t('common.대전');
 	} catch (error) {
 		console.error(i18n.t('shareds.hooks.gps.cannot_get_location'), error);
 		return null;

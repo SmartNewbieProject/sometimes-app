@@ -1,4 +1,5 @@
 import ModalParticle from "@/src/widgets/particle/modal-particle";
+import { useTranslation } from 'react-i18next';
 import { semanticColors } from '../constants/semantic-colors';
 import ErrorFace from "@assets/icons/error-face.svg";
 import { Image } from "expo-image";
@@ -30,6 +31,7 @@ type ModalContextType = {
 export const ModalContext = createContext<ModalContextType | null>(null);
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const { showModal, hideModal, showErrorModal, currentModal } =
     useCurrentModal();
   const {
@@ -73,7 +75,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         <View style={styles.errorModalHeader}>
           <ErrorFace />
           <Text size="lg" weight="semibold" textColor="black">
-            {options.type === "error" ? "오류가 발생했어요." : "안내"}
+            {options.type === "error" ? t("common.오류가_발생했어요") : t("common.안내")}
           </Text>
         </View>
         <Text style={styles.errorModalMessage} weight="medium" textColor="black">
@@ -95,6 +97,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     type: "mono" | "nested"
   ) => {
     const handleButtonClick = (callback?: () => void) => {
+      console.log('[ModalProvider] handleButtonClick called', { callback: !!callback, type });
       callback?.();
       if (type === "mono") {
         hideModal();
@@ -284,7 +287,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             }
           }}
         >
-          <View onStartShouldSetResponder={() => true}>
+          <View pointerEvents="box-none">
             {currentModal && "type" in currentModal
               ? renderErrorModal(currentModal as ErrorModalOptions, "mono")
               : currentModal
@@ -307,7 +310,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
               }
             }}
           >
-            <View onStartShouldSetResponder={() => true}>
+            <View pointerEvents="box-none">
               {nestedModal && "type" in nestedModal
                 ? renderErrorModal(nestedModal as ErrorModalOptions, "nested")
                 : renderCustomModal(nestedModal as ModalOptions, "nested")}

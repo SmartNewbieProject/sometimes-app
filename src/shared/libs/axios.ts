@@ -11,10 +11,13 @@ const getCountryCode = (): string => isJapanese() ? 'jp' : 'kr';
 
 let refreshTokenPromise: Promise<string> | null = null;
 let isNetworkDisabled = false;
+let isLoggingOut = false;
 const detach = (token: string) => token.replaceAll('\"', '');
 const TokenErrorExceptPaths = [
   '/community',
 ];
+
+const AUTH_PATHS = ['/auth', '/onboarding'];
 
 export enum ErrorCode {
   REGION_NOT_ALLOWED = 'REGION_NOT_ALLOWED',
@@ -41,6 +44,7 @@ const refresh = async () => {
       // 토큰 갱신 이벤트 발생
       eventBus.emit('auth:tokensUpdated', {accessToken, refreshToken: newRefreshToken});
 
+      isLoggingOut = false;
       return accessToken;
     } finally {
       refreshTokenPromise = null;
@@ -103,12 +107,31 @@ axiosClient.interceptors.request.use(
         console.log('[API 요청 데이터]', typeof config.data === 'string' ? config.data : JSON.stringify(config.data, null, 2));
       }
 
-      // 로그인 요청에는 Authorization 헤더를 추가하지 않음
-      if (config.url === '/auth/login') {
+      // 인증 불필요 API 목록 (로그인, 회원가입 관련)
+      const noAuthRequiredPaths = [
+        '/auth/login',
+        '/jp/auth/login',
+        '/jp/auth/sms/send',
+        '/jp/auth/sms/verify',
+        '/universities',
+        '/auth/check/phone-number',
+      ];
+
+      const isNoAuthRequired = noAuthRequiredPaths.some(path =>
+        config.url?.startsWith(path)
+      );
+
+      if (isNoAuthRequired) {
+        console.log('[axios] 인증 불필요 API:', config.url);
         return config;
       }
+
       const accessToken = await storage.getItem('access-token');
-      config.headers.Authorization = `Bearer ${accessToken?.replaceAll('\"', '')}`;
+      if (accessToken && accessToken !== 'null') {
+        config.headers.Authorization = `Bearer ${accessToken?.replaceAll('\"', '')}`;
+      } else {
+        console.log('[axios] 토큰 없음, Authorization 헤더 생략:', config.url);
+      }
       return config;
     },
     (error) => {
@@ -144,6 +167,10 @@ axiosClient.interceptors.response.use(
       }
 
       if (status === 401) {
+        if (isLoggingOut) {
+          return Promise.reject(error);
+        }
+
         try {
           const newAccessToken = await refresh();
           error.config.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -155,15 +182,28 @@ axiosClient.interceptors.response.use(
               return result.data.data;
             }
             return result.data;
-          }, (error) => {
+          }, async (error) => {
+            if (isLoggingOut) return;
+            isLoggingOut = true;
+
             console.log({refreshError: error})
             storage.removeItem('access-token');
             storage.removeItem('refresh-token');
             eventBus.emit('auth:logout');
+
+            const currentPath = await storage.getItem('current-path');
+            const isAuthPage = AUTH_PATHS.some(path => currentPath?.includes(path));
+            if (!isAuthPage) {
+              eventBus.emit('auth:loginRequired');
+            }
             console.error(error);
-            router.push('/auth/login');
           });
         } catch (refreshError) {
+          if (isLoggingOut) {
+            return Promise.reject(refreshError);
+          }
+          isLoggingOut = true;
+
           const currentPath = await storage.getItem('current-path');
           console.table({
             currentPath,
@@ -171,6 +211,7 @@ axiosClient.interceptors.response.use(
 
           const justPropagateError = TokenErrorExceptPaths.some(path => currentPath?.includes(path));
           if (justPropagateError) {
+            isLoggingOut = false;
             return Promise.reject(refreshError);
           }
 
@@ -178,7 +219,11 @@ axiosClient.interceptors.response.use(
           storage.removeItem('refresh-token');
           // 로그아웃 이벤트 발생
           eventBus.emit('auth:logout');
-          router.push('/auth/login');
+
+          const isAuthPage = AUTH_PATHS.some(path => currentPath?.includes(path));
+          if (!isAuthPage) {
+            eventBus.emit('auth:loginRequired');
+          }
           return Promise.reject(refreshError);
         }
       }
@@ -191,5 +236,9 @@ axiosClient.interceptors.response.use(
       return Promise.reject(payload);
     }
 );
+
+export const resetAuthState = () => {
+  isLoggingOut = false;
+};
 
 export default axiosClient; 
