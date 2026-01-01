@@ -161,7 +161,7 @@ export default function WithdrawalScreen() {
           reason,
         });
 
-        const errorMessage = err?.message || err?.error || "회원 탈퇴에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        const errorMessage = err?.message || err?.error || t("apps.my.withdrawal.error");
         showErrorModal(errorMessage, "error");
       }
     );

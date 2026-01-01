@@ -7,6 +7,8 @@ import {
   NotificationMenu,
   PrivacyMenu,
 } from "@/src/features/mypage/ui";
+import { IdentityStatusCard } from "@/src/features/jp-identity";
+import { isJapanese } from "@/src/shared/libs/local";
 import {
   BottomNavigation,
   Button,
@@ -74,6 +76,7 @@ export default function MyScreen() {
         </View>
 
         <View style={styles.menuContainer}>
+          {isJapanese() && <IdentityStatusCard />}
           <MatchingMenu />
           <PrivacyMenu />
           <NotificationMenu />

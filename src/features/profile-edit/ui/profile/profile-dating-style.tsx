@@ -1,17 +1,13 @@
-import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
-import colors from "@/src/shared/constants/colors";
-
-import { Divider } from "@/src/shared/ui";
-import { ChipSelector, StepIndicator } from "@/src/widgets";
+import { PreferenceSelector, FormSection } from "@/src/shared/ui";
+import { StepIndicator } from "@/src/widgets";
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 
-const { hooks, services, queries } = MyInfo;
-const { useMyInfoForm, useMyInfoStep } = hooks;
-const { MyInfoSteps } = services;
+const { hooks, queries } = MyInfo;
+const { useMyInfoForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
 
 function ProfileDatingStyle() {
@@ -20,6 +16,7 @@ function ProfileDatingStyle() {
   const {
     data: preferencesArray = [
       {
+        typeCode: "",
         typeName: "",
         options: [],
       },
@@ -29,7 +26,7 @@ function ProfileDatingStyle() {
 
   const preferences: Preferences =
     preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.DATING_STYLE
+      (item) => item.typeCode === PreferenceKeys.DATING_STYLE
     ) ?? preferencesArray[0];
 
   const onChangeOption = (values: string[]) => {
@@ -40,64 +37,32 @@ function ProfileDatingStyle() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.indicatorContainer}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{t("features.profile-edit.ui.profile.dating_style.title")}</Text>
-          <StepIndicator
-            length={3}
-            step={datingStyleIds?.length ?? 0}
-            dotGap={4}
-            dotSize={16}
-            style={styles.stepIndicator}
-          />
-        </View>
-
-        <Divider.Horizontal />
-      </View>
-      <View>
-        <Loading.Lottie title={t("features.profile-edit.ui.profile.dating_style.loading")} loading={isLoading}>
-          <ChipSelector
-            value={datingStyleIds}
-            options={
-              preferences?.options?.map((option) => ({
-                label: option.displayName,
-                value: option.id,
-                imageUrl: option?.imageUrl,
-              })) ?? []
-            }
-            onChange={onChangeOption}
-            multiple
-            align="center"
-            style={styles.chipSelector}
-          />
-        </Loading.Lottie>
-      </View>
-    </View>
+    <FormSection
+      title={t("features.profile-edit.ui.profile.dating_style.title")}
+      titleRight={
+        <StepIndicator
+          length={3}
+          step={datingStyleIds?.length ?? 0}
+          dotGap={4}
+          dotSize={16}
+          style={styles.stepIndicator}
+        />
+      }
+    >
+      <PreferenceSelector
+        preferences={preferences}
+        value={datingStyleIds}
+        multiple={true}
+        onChange={onChangeOption}
+        isLoading={isLoading}
+        loadingTitle={t("features.profile-edit.ui.profile.dating_style.loading")}
+        style={styles.chipSelector}
+      />
+    </FormSection>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 28,
-    marginBottom: 30,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  indicatorContainer: {
-    width: "100%",
-    rowGap: 10,
-  },
-  title: {
-    color: colors.black,
-    fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
-    fontWeight: 600,
-    lineHeight: 22,
-  },
   chipSelector: {
     marginTop: 12,
     justifyContent: "flex-start",

@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { BlurView } from "expo-blur";
 import LockIcon from "@/assets/icons/lock-chat.svg";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 type ProfileImageCoverProps = {
   visible?: boolean;
@@ -13,10 +14,14 @@ type ProfileImageCoverProps = {
 
 export default function ProfileImageCover({
   visible = false,
-  title = "프로필 심사를 진행중이에요",
-  subtitle = "현재 프로필 심사를 진행중이에요\n끝난 후 사진 수정을 진행할 수 있어요",
+  title,
+  subtitle,
 }: ProfileImageCoverProps) {
   const router = useRouter();
+  const { t } = useTranslation();
+
+  const displayTitle = title ?? t("features.profile-edit.ui.profile_image_cover.default_title");
+  const displaySubtitle = subtitle ?? t("features.profile-edit.ui.profile_image_cover.default_subtitle");
 
   if (!visible) return null;
 
@@ -32,8 +37,8 @@ export default function ProfileImageCover({
 
       <View style={styles.center}>
         <LockIcon width={32} height={32} />
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <Text style={styles.title}>{displayTitle}</Text>
+        <Text style={styles.subtitle}>{displaySubtitle}</Text>
       </View>
     </Pressable>
   );

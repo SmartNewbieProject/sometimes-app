@@ -1,27 +1,35 @@
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
+import { useContactBlockEnabled } from '@/src/features/contact-block/queries/use-contact-block-enabled';
 
 const PrivacyMenu = () => {
   const router = useRouter();
+  const { t } = useTranslation();
+  const { data: contactBlockEnabled } = useContactBlockEnabled();
 
   const handlePress = () => {
     router.push('/contact-block' as any);
   };
 
+  if (!contactBlockEnabled?.enabled) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>개인정보 보호</Text>
+      <Text style={styles.title}>{t('features.mypage.privacy.title')}</Text>
       <View style={styles.bar} />
       <Pressable onPress={handlePress} style={styles.cardContainer}>
         <View style={styles.leftContent}>
           <Text style={styles.icon}>🔒</Text>
           <View style={styles.textContainer}>
-            <Text style={styles.cardTitle}>안심하고 시작하기</Text>
+            <Text style={styles.cardTitle}>{t('features.mypage.privacy.card_title')}</Text>
             <Text style={styles.cardDescription}>
-              연락처에 있는 지인과 마주치지 않아요
+              {t('features.mypage.privacy.card_description')}
             </Text>
           </View>
         </View>

@@ -11,14 +11,15 @@ import { StyleSheet, Text, View } from "react-native";
 const { hooks, services, queries } = MyInfo;
 const { MyInfoSteps } = services;
 const { useMyInfoForm, useMyInfoStep } = hooks;
-const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
+const { usePreferenceOptionsQuery, PreferenceKeys, getTypeNamesForLocale } = queries;
 
 function ProfileInterest() {
   const { interestIds, updateForm } = useMyInfoForm();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     data: preferencesArray = [
       {
+        typeCode: "",
         typeName: "",
         options: [],
       },
@@ -26,7 +27,7 @@ function ProfileInterest() {
     isLoading,
   } = usePreferenceOptionsQuery();
   const preferences = preferencesArray?.find(
-    (item) => item.typeName === PreferenceKeys.INTEREST
+    (item) => item.typeCode === PreferenceKeys.INTEREST
   );
 
   const onChangeOption = (values: string[]) => {

@@ -1,13 +1,10 @@
-import Loading from "@/src/features/loading";
 import MyInfo from "@/src/features/my-info";
 import type { Preferences } from "@/src/features/my-info/api";
-import colors from "@/src/shared/constants/colors";
-import { semanticColors } from "@/src/shared/constants/semantic-colors";
-
-import { ChipSelector, StepIndicator } from "@/src/widgets";
+import { PreferenceSelector, FormSection } from "@/src/shared/ui";
+import { StepIndicator } from "@/src/widgets";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 const { hooks, queries } = MyInfo;
 const { useMyInfoForm } = hooks;
@@ -19,6 +16,7 @@ function ProfilePersonality() {
   const {
     data: preferencesArray = [
       {
+        typeCode: "",
         typeName: "",
         options: [],
       },
@@ -28,7 +26,8 @@ function ProfilePersonality() {
 
   const preferences: Preferences =
     preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.PERSONALITY
+      (item) => item.typeCode === PreferenceKeys.PERSONALITY ||
+                item.typeCode === "personality"
     ) ?? preferencesArray[0];
 
   const onChangeOption = (values: string[]) => {
@@ -37,10 +36,11 @@ function ProfilePersonality() {
     }
     updateForm("personality", values);
   };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{t("features.profile-edit.ui.profile.personality.title")}</Text>
+    <FormSection
+      title={t("features.profile-edit.ui.profile.personality.title")}
+      titleRight={
         <StepIndicator
           length={3}
           step={personality?.length ?? 0}
@@ -48,60 +48,29 @@ function ProfilePersonality() {
           dotSize={16}
           style={styles.stepIndicator}
         />
-      </View>
-
-      <View style={styles.bar} />
-      <View style={styles.chipSelector}>
-        <Loading.Lottie title={t("features.profile-edit.ui.profile.personality.loading")} loading={isLoading}>
-          <ChipSelector
-            value={personality}
-            options={
-              preferences?.options?.map((option) => ({
-                label: option.displayName,
-                value: option.id,
-                imageUrl: option?.imageUrl,
-              })) ?? []
-            }
-            multiple={true}
-            onChange={onChangeOption}
-            style={{ width: "100%" }}
-          />
-        </Loading.Lottie>
-      </View>
-    </View>
+      }
+      contentStyle={styles.chipSelector}
+    >
+      <PreferenceSelector
+        preferences={preferences}
+        value={personality}
+        multiple={true}
+        onChange={onChangeOption}
+        isLoading={isLoading}
+        loadingTitle={t("features.profile-edit.ui.profile.personality.loading")}
+        style={{ width: "100%" }}
+      />
+    </FormSection>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 30,
-    paddingHorizontal: 28,
-  },
-  title: {
-    color: colors.black,
-    fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
-    fontWeight: 600,
-
-    lineHeight: 22,
-  },
   chipSelector: {
     marginTop: 16,
     width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "flex-start",
-  },
-  titleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  bar: {
-    marginTop: 6,
-    marginBottom: 10,
-    height: 0.5,
-    backgroundColor: semanticColors.surface.other,
   },
   stepIndicator: {
     alignSelf: 'flex-end',

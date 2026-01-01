@@ -3,21 +3,23 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from '@/src/shared/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import CustomSwitch from './custom-switch';
+import { useTranslation } from 'react-i18next';
 
 export const Notice = () => {
+    const { t } = useTranslation();
     const [isMatchComplete, setIsMatchComplete] = useState(false);
     const [isEvent, setIsEvent] = useState(false);
 
     return (
         <View>
-            <Text style={noticeStyles.title}>알림 설정</Text>
+            <Text style={noticeStyles.title}>{t('features.mypage.notification.title')}</Text>
             <View style={noticeStyles.divider} />
             <View style={noticeStyles.row}>
-                <Text style={noticeStyles.label}>매칭 완료 알림</Text>
+                <Text style={noticeStyles.label}>{t('features.mypage.notification.matching_complete')}</Text>
                 <CustomSwitch value={isMatchComplete} onChange={setIsMatchComplete} />
             </View>
             <View style={noticeStyles.rowLast}>
-                <Text style={noticeStyles.label}>이벤트 알림</Text>
+                <Text style={noticeStyles.label}>{t('features.mypage.notification.event_notification')}</Text>
                 <CustomSwitch value={isEvent} onChange={setIsEvent} />
             </View>
         </View>

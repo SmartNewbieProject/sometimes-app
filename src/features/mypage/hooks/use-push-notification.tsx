@@ -8,6 +8,7 @@ import {
   getNotificationPermissionStatus,
 } from '@/src/shared/libs/notifications';
 import { useTranslation } from 'react-i18next';
+import { Text } from 'react-native';
 
 export const usePushNotification = () => {
   const { t } = useTranslation();
@@ -66,12 +67,30 @@ export const usePushNotification = () => {
 
       const errorMessage = error instanceof Error ? error.message : t('features.mypage.notification.activation_failed_title');
 
-      if (Platform.OS === 'web' && errorMessage.includes('등록된 푸시 토큰이 없습니다')) {
-        showModal({
-          title: t('features.mypage.notification.registration_required_title'),
-          children: t('features.mypage.notification.registration_required_message'),
-          primaryButton: { text: t('features.mypage.notification.confirm'), onClick: () => {} },
-        });
+      if (errorMessage === 'NO_PUSH_TOKEN_REGISTERED') {
+        if (Platform.OS === 'web') {
+          showModal({
+            title: t('features.mypage.notification.registration_required_title'),
+            children: <Text>{t('features.mypage.notification.registration_required_message')}</Text>,
+            primaryButton: {
+              text: t('features.mypage.notification.confirm'),
+              onClick: () => {},
+            },
+          });
+        } else {
+          showModal({
+            title: t('features.mypage.notification.registration_required_title'),
+            children: <Text>{t('features.mypage.notification.registration_required_message')}</Text>,
+            primaryButton: {
+              text: t('features.mypage.notification.go_to_settings'),
+              onClick: () => Linking.openSettings(),
+            },
+            secondaryButton: {
+              text: t('features.mypage.notification.cancel'),
+              onClick: () => {},
+            },
+          });
+        }
       } else {
         showModal({
           title: t('features.mypage.notification.activation_failed_title'),

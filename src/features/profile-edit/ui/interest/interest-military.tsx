@@ -1,71 +1,40 @@
 import Interest from "@/src/features/interest";
 import type { Preferences } from "@/src/features/interest/api";
-import Loading from "@/src/features/loading";
-import React, { useEffect } from "react";
 import colors from "@/src/shared/constants/colors";
-import { StepSlider } from "@/src/shared/ui";
+import { PreferenceSlider } from "@/src/shared/ui";
+import React from "react";
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from "react-native";
 
-const { hooks, services, queries } = Interest;
+const { hooks, queries } = Interest;
 const { useInterestForm } = hooks;
 const { usePreferenceOptionsQuery, PreferenceKeys } = queries;
+
 function InterestMilitary() {
-  const {
-    updateForm,
-    clear: _,
-    militaryPreference,
-    ...form
-  } = useInterestForm();
+  const { updateForm, militaryPreference } = useInterestForm();
   const { t } = useTranslation();
 
   const {
-    data: preferencesArray = [{ typeName: "", options: [] }],
+    data: preferencesArray = [{ typeCode: "", typeName: "", options: [] }],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
+
   const preferences: Preferences =
     preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
+      (item) => item.typeCode === PreferenceKeys.MILITARY_PREFERENCE
     ) ?? preferencesArray[0];
-  const index = preferences?.options.findIndex(
-    (item) => item.id === militaryPreference?.id
-  );
 
-  const currentIndex = index !== undefined && index !== -1 ? index : 0;
-  useEffect(() => {
-    if (optionsLoading) return;
-    if (!militaryPreference && preferences.options[currentIndex]) {
-      updateForm("militaryPreference", preferences.options[currentIndex]);
-    }
-  }, [optionsLoading, preferences.options, currentIndex, militaryPreference]);
-  const onChangeOption = (value: number) => {
-    if (preferences?.options && preferences.options.length > value) {
-      updateForm("militaryPreference", preferences.options[value]);
-    }
-  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{t("features.profile-edit.ui.interest.military.title")}</Text>
-      <View style={styles.wrapper}>
-        <Loading.Lottie title={t("features.profile-edit.ui.interest.military.loading")} loading={optionsLoading}>
-          <StepSlider
-            key={`military-${currentIndex || "none"}`}
-            min={0}
-            defaultValue={currentIndex}
-            max={(preferences?.options.length ?? 1) - 1}
-            step={1}
-            value={currentIndex}
-            onChange={onChangeOption}
-            middleLabelLeft={-15}
-            options={
-              preferences?.options?.map((option) => ({
-                label: option.displayName,
-                value: option.id,
-              })) ?? []
-            }
-          />
-        </Loading.Lottie>
-      </View>
+      <PreferenceSlider
+        preferences={preferences}
+        value={militaryPreference}
+        onChange={(option) => updateForm("militaryPreference", option)}
+        isLoading={optionsLoading}
+        loadingTitle={t("features.profile-edit.ui.interest.military.loading")}
+        middleLabelLeft={-15}
+      />
     </View>
   );
 }

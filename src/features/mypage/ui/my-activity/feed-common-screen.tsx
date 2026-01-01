@@ -85,7 +85,7 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
                   articleId: id,
                 });
 
-                const errorMessage = err?.message || err?.error || "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+                const errorMessage = err?.message || err?.error || t("common.게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요");
                 showErrorModal(errorMessage, "error");
               }
             ),
