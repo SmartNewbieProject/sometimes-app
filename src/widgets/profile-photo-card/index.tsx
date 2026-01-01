@@ -6,6 +6,7 @@ import { semanticColors } from '@/src/shared/constants/colors';
 import { Badge } from '@/src/shared/ui/badge';
 import { Text } from '@/src/shared/ui/text';
 import MoreIcon from '@/assets/icons/vertical-ellipsis.svg';
+import { useTranslation } from 'react-i18next';
 
 export interface ProfilePhoto {
   id: string;
@@ -27,6 +28,7 @@ export function ProfilePhotoCard({
   onMorePress,
   onReuploadPress,
 }: ProfilePhotoCardProps) {
+  const { t } = useTranslation();
   const isRejected = photo.reviewStatus === 'REJECTED';
   const isApproved = photo.reviewStatus === 'APPROVED';
   const isReviewing = photo.reviewStatus === 'REVIEWING';
@@ -38,9 +40,9 @@ export function ProfilePhotoCard({
   };
 
   const getBadgeText = () => {
-    if (isApproved) return '승인됨';
-    if (isReviewing) return '심사중';
-    return '거절됨';
+    if (isApproved) return t('widgets.profile-photo-card.badge.approved');
+    if (isReviewing) return t('widgets.profile-photo-card.badge.reviewing');
+    return t('widgets.profile-photo-card.badge.rejected');
   };
 
   return (
@@ -70,7 +72,7 @@ export function ProfilePhotoCard({
             {photo.isMain && (
               <View style={styles.mainBadge}>
                 <Text weight="bold" size="xs" textColor="white">
-                  대표
+                  {t('widgets.profile-photo-card.main_badge')}
                 </Text>
               </View>
             )}
@@ -94,7 +96,7 @@ export function ProfilePhotoCard({
               textColor="white"
               style={styles.rejectedText}
             >
-              {photo.rejectionReason || '사유 미기재'}
+              {photo.rejectionReason || t('widgets.profile-photo-card.rejection.no_reason')}
             </Text>
             {onReuploadPress && (
               <Pressable
@@ -102,7 +104,7 @@ export function ProfilePhotoCard({
                 onPress={() => onReuploadPress(photo)}
               >
                 <Text weight="bold" size="xs" textColor="black">
-                  변경하기
+                  {t('widgets.profile-photo-card.rejection.change_button')}
                 </Text>
               </Pressable>
             )}
