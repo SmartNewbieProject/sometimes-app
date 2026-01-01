@@ -69,32 +69,32 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
       customTitle: (
         <View style={styles.modalTitleContainer}>
           <Text style={styles.modalTitleText}>
-            대화 주제를 추천해드려요
+            {t("features.chat.ui.tips_modal.confirm_title_1")}
           </Text>
           <Text style={styles.modalTitleText}>
-            구슬 1개가 사용됩니다
+            {t("features.chat.ui.tips_modal.confirm_title_2")}
           </Text>
         </View>
       ),
       children: (
         <View style={styles.modalBodyContainer}>
           <Text style={styles.modalBodyText}>
-            AI가 프로필을 기반으로
+            {t("features.chat.ui.tips_modal.confirm_desc_1")}
           </Text>
           <Text style={styles.modalBodyText}>
-            대화 주제를 추천해드려요
+            {t("features.chat.ui.tips_modal.confirm_desc_2")}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "사용하기",
+        text: t("features.chat.ui.tips_modal.confirm_button"),
         onClick: () => {
           setTipsModalVisible(true);
           fetchTips(id);
         },
       },
       secondaryButton: {
-        text: "취소",
+        text: t("features.chat.ui.tips_modal.cancel_button"),
         onClick: () => {},
       },
     });
@@ -225,7 +225,7 @@ function ChatInput({ isPhotoClicked, setPhotoClicked }: ChatInputProps) {
             onChangeText={(text) => setChat(text)}
             style={styles.textInput}
             placeholder={
-              partner?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
+              partner?.hasLeft ? t("features.chat.ui.input.placeholder_ended") : t("features.chat.ui.input.placeholder")
             }
             placeholderTextColor={semanticColors.text.disabled}
             numberOfLines={3}

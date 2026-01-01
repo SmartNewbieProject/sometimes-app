@@ -10,6 +10,7 @@ import type { Chat } from "../../types/chat";
 import { formatToAmPm } from "../../utils/time";
 import ChatBalloon from "./chat-balloon";
 import ChatProfileImage from "./chat-profile-image";
+import { useTranslation } from "react-i18next";
 
 interface ChatMessageProps {
   item: Chat;
@@ -17,6 +18,7 @@ interface ChatMessageProps {
 }
 
 function ChatMessage({ item, profileImage }: ChatMessageProps) {
+  const { t } = useTranslation();
   const { data } = useChatRoomDetail(item.chatRoomId);
   const isSending = item.sendingStatus === "sending";
   const isFailed = item.sendingStatus === "failed";
@@ -82,13 +84,13 @@ function ChatMessage({ item, profileImage }: ChatMessageProps) {
           ]}
         >
           {isFailed ? (
-            <Text style={styles.failedStatusText}>전송 실패 · 탭하여 재전송</Text>
+            <Text style={styles.failedStatusText}>{t('features.chat.ui.message.send_failed')}</Text>
           ) : (
             <Text style={styles.time}>{formatToAmPm(item.createdAt)}</Text>
           )}
 
           {item.isMe && item.isRead && !isSending && !isFailed && (
-            <Text style={styles.readText}>읽음</Text>
+            <Text style={styles.readText}>{t('features.chat.ui.message.read')}</Text>
           )}
         </View>
       </View>

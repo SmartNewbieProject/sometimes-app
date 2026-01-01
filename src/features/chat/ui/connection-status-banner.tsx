@@ -2,10 +2,12 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React, { useEffect, useState, useRef } from 'react';
 import { ActivityIndicator, Animated, Modal, StyleSheet, Text, View } from 'react-native';
 import { chatEventBus } from '../services/chat-event-bus';
+import { useTranslation } from 'react-i18next';
 
 type ConnectionStatus = 'connected' | 'disconnected' | 'reconnecting';
 
 function ConnectionStatusBanner() {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<ConnectionStatus>('connected');
   const [slideAnim] = useState(new Animated.Value(-60));
   const [reconnectAttempt, setReconnectAttempt] = useState(0);
@@ -110,13 +112,13 @@ function ConnectionStatusBanner() {
     if (status === 'disconnected') {
       return {
         backgroundColor: '#FF3B30',
-        text: '연결이 끊겼습니다',
+        text: t('features.chat.ui.connection_status.disconnected'),
         icon: '⚠️',
       };
     }
     return {
       backgroundColor: '#34C759',
-      text: '연결됨',
+      text: t('features.chat.ui.connection_status.connected'),
       icon: '✓',
     };
   };
@@ -135,18 +137,18 @@ function ConnectionStatusBanner() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <ActivityIndicator size="large" color="#7A4AE1" />
-            <Text style={styles.modalTitle}>다시 연결하고 있어요</Text>
+            <Text style={styles.modalTitle}>{t('features.chat.ui.connection_status.reconnecting_title')}</Text>
             {reconnectAttempt > 0 && (
               <Text style={styles.modalAttempt}>
-                재시도 {reconnectAttempt}회
+                {t('features.chat.ui.connection_status.reconnect_attempt', { attempt: reconnectAttempt })}
               </Text>
             )}
             {countdown > 0 ? (
               <Text style={styles.modalSubtitle}>
-                {countdown}초 후 다시 시도합니다
+                {t('features.chat.ui.connection_status.reconnect_countdown', { seconds: countdown })}
               </Text>
             ) : (
-              <Text style={styles.modalSubtitle}>잠시만 기다려주세요</Text>
+              <Text style={styles.modalSubtitle}>{t('features.chat.ui.connection_status.please_wait')}</Text>
             )}
           </View>
         </View>

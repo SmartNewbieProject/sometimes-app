@@ -179,6 +179,14 @@ export const GlobalChatProvider = ({
       }
     });
 
+    const unsubscribeTokenUpdated = chatEventBus.on('TOKEN_UPDATED').subscribe(({ payload }) => {
+      console.log('[GlobalChatProvider] Token updated, attempting connection...');
+      if (payload.token && socketConnectionManager.isModuleInitialized && isNetworkAvailable) {
+        reconnectAttempts.current = 0;
+        attemptConnection(payload.token, 'token updated after login');
+      }
+    });
+
     const unsubscribeReconnectFailed = chatEventBus.on('SOCKET_RECONNECT_FAILED').subscribe(({ payload }) => {
       console.log('[GlobalChatProvider] Socket reconnect failed:', payload.error);
 
@@ -200,10 +208,37 @@ export const GlobalChatProvider = ({
       }
     });
 
+    // 소켓이 null일 때 새 연결 필요 이벤트 처리
+    const unsubscribeConnectionNeeded = chatEventBus.on('SOCKET_CONNECTION_NEEDED').subscribe(() => {
+      console.log('[GlobalChatProvider] Socket connection needed (socket is null)');
+
+      if (accessToken && !tokenLoading && socketConnectionManager.isModuleInitialized && isNetworkAvailable) {
+        // 기존 타임아웃 취소
+        if (reconnectTimeoutRef.current) {
+          clearTimeout(reconnectTimeoutRef.current);
+          reconnectTimeoutRef.current = null;
+        }
+
+        // 즉시 새 연결 시도 (백오프 없이)
+        console.log('[GlobalChatProvider] Immediately attempting new connection...');
+        reconnectAttempts.current = 0; // 새 연결 시도 시 카운터 리셋
+        attemptConnection(accessToken, 'socket was null - creating new connection');
+      } else {
+        console.log('[GlobalChatProvider] Cannot create new connection:', {
+          hasToken: !!accessToken,
+          tokenLoading,
+          isModuleInitialized: socketConnectionManager.isModuleInitialized,
+          networkAvailable: isNetworkAvailable,
+        });
+      }
+    });
+
     return () => {
       unsubscribeDisconnect.unsubscribe();
       unsubscribeConnected.unsubscribe();
       unsubscribeReconnectFailed.unsubscribe();
+      unsubscribeTokenUpdated.unsubscribe();
+      unsubscribeConnectionNeeded.unsubscribe();
 
       // cleanup 시 타임아웃 정리
       if (reconnectTimeoutRef.current) {

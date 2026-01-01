@@ -13,6 +13,7 @@ import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface SomemateInputProps {
   onSend?: (message: string) => void;
@@ -20,6 +21,7 @@ interface SomemateInputProps {
 
 export function SomemateInput({ onSend }: SomemateInputProps) {
   const [chat, setChat] = useState("");
+  const { t } = useTranslation();
 
   const keyboard = useAnimatedKeyboard();
 
@@ -52,7 +54,7 @@ export function SomemateInput({ onSend }: SomemateInputProps) {
           editable={true}
           onChangeText={(text) => setChat(text)}
           style={styles.textInput}
-          placeholder="메세지를 입력하세요"
+          placeholder={t("features.chat.ui.input.placeholder")}
         />
         {chat !== "" ? (
           <Pressable onPress={handleSend} style={styles.send}>

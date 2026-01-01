@@ -11,6 +11,7 @@ import type { Chat } from "../types/chat";
 import ChatMessage from "./message/chat-message";
 import DateDivider from "./message/date-divider";
 import SystemMessage from "./message/system-message";
+import { useTranslation } from "react-i18next";
 
 type ChatListItem =
   | { type: "message"; data: Chat }
@@ -22,6 +23,7 @@ interface ChatListProps {
 
 const ChatList = ({ setPhotoClicked }: ChatListProps) => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t } = useTranslation();
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useChatList(id);
@@ -86,14 +88,14 @@ const ChatList = ({ setPhotoClicked }: ChatListProps) => {
         items.push({
           type: "date",
           data: {
-            date: formatDate(currentDate),
+            date: formatDateWithTranslation(currentDate, t),
             id: `date-${currentDate.toDateString()}`,
           },
         });
       }
     }
     return items;
-  }, [sortedChatList]);
+  }, [sortedChatList, t]);
 
   const renderItem = ({ item }: { item: ChatListItem }) => {
     if (item.type === "date") {
@@ -160,18 +162,18 @@ const isSameDay = (date1: Date, date2: Date): boolean => {
   return d1.getTime() === d2.getTime();
 };
 
-const formatDate = (date: Date): string => {
+const formatDateWithTranslation = (date: Date, t: (key: string, options?: Record<string, any>) => string): string => {
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(today.getDate() - 1);
 
-  if (isSameDay(date, today)) return "오늘";
-  if (isSameDay(date, yesterday)) return "어제";
+  if (isSameDay(date, today)) return t("features.chat.ui.chat_screen.today");
+  if (isSameDay(date, yesterday)) return t("features.chat.ui.chat_screen.yesterday");
 
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  return `${year}년 ${month}월 ${day}일`;
+  return t("features.chat.ui.chat_screen.date_format", { year, month, day });
 };
 
 export default ChatList;

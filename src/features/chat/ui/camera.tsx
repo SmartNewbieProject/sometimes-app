@@ -13,19 +13,21 @@ import { useAuth } from "../../auth";
 import useChatRoomDetail from "../queries/use-chat-room-detail";
 import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
+import { useTranslation } from "react-i18next";
 function ChatCamera() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { showModal, hideModal } = useModal();
   const { data: partner } = useChatRoomDetail(id);
   const { my: user } = useAuth();
+  const { t } = useTranslation();
 
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("권한 필요", "카메라 사용을 위해서 권한이 필요합니다", [
-        { text: "설정 열기", onPress: () => Linking.openSettings() },
+      Alert.alert(t('features.chat.ui.camera.permission_required_title'), t('features.chat.ui.camera.permission_required_message'), [
+        { text: t('features.chat.ui.camera.open_settings'), onPress: () => Linking.openSettings() },
         {
-          text: "닫기",
+          text: t('features.chat.ui.camera.close'),
         },
       ]);
 
@@ -47,12 +49,12 @@ function ChatCamera() {
       const imageUri = await uriToBase64(jpegUri);
 
       showModal({
-        title: "이미지 전송",
+        title: t('features.chat.ui.gallery.send_image_title'),
         children: (
-          <Text textColor="black">선택하신 이미지를 전송하시겠어요?</Text>
+          <Text textColor="black">{t('features.chat.ui.gallery.send_image_message')}</Text>
         ),
         primaryButton: {
-          text: "전송",
+          text: t('features.chat.ui.gallery.send_button'),
           onClick: async () => {
             if (!imageUri || !partner?.partnerId || !user?.id) {
               hideModal();
@@ -72,7 +74,7 @@ function ChatCamera() {
           },
         },
         secondaryButton: {
-          text: "취소",
+          text: t('features.chat.ui.gallery.cancel_button'),
           onClick: hideModal,
         },
       });

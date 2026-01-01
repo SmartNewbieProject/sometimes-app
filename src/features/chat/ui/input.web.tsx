@@ -18,8 +18,10 @@ import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
 import ChatTipsModal from "./chat-tips-modal";
 import { devLogWithTag } from "@/src/shared/utils";
+import { useTranslation } from "react-i18next";
 
 function WebChatInput() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [chat, setChat] = useState("");
   const { data: roomDetail, isError } = useChatRoomDetail(id);
@@ -87,14 +89,14 @@ function WebChatInput() {
         </div>
       ),
       primaryButton: {
-        text: "사용하기",
+        text: t("features.chat.ui.tips_modal.confirm_button"),
         onClick: () => {
           setTipsModalVisible(true);
           fetchTips(id);
         },
       },
       secondaryButton: {
-        text: "취소",
+        text: t("features.chat.ui.tips_modal.cancel_button"),
         onClick: () => {},
       },
     });
@@ -110,12 +112,16 @@ function WebChatInput() {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("권한 필요", "사진을 가져오기 위해서는 권한이 필요합니다.", [
-        { text: "설정 열기", onPress: () => Linking.openSettings() },
-        {
-          text: "닫기",
-        },
-      ]);
+      Alert.alert(
+        t("features.chat.ui.gallery.permission_required_title"),
+        t("features.chat.ui.gallery.permission_required_message"),
+        [
+          { text: t("features.chat.ui.camera.open_settings"), onPress: () => Linking.openSettings() },
+          {
+            text: t("features.chat.ui.camera.close"),
+          },
+        ]
+      );
       setImageModal(false);
       return null;
     }
@@ -131,7 +137,7 @@ function WebChatInput() {
       const pickedUri = result.assets[0].uri;
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
         showErrorModal(
-          "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+          t("widgets.form.image_selector.invalid_image_format"),
           "announcement"
         );
         setImageModal(false);
@@ -160,12 +166,16 @@ function WebChatInput() {
   const takePhoto = async () => {
     let { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("권한 필요", "카메라 사용을 위해서 권한이 필요합니다", [
-        { text: "설정 열기", onPress: () => Linking.openSettings() },
-        {
-          text: "닫기",
-        },
-      ]);
+      Alert.alert(
+        t("features.chat.ui.camera.permission_required_title"),
+        t("features.chat.ui.camera.permission_required_message"),
+        [
+          { text: t("features.chat.ui.camera.open_settings"), onPress: () => Linking.openSettings() },
+          {
+            text: t("features.chat.ui.camera.close"),
+          },
+        ]
+      );
       setImageModal(false);
       return null;
     }
@@ -183,7 +193,7 @@ function WebChatInput() {
       const pickedUri = result.assets[0].uri;
       if (Platform.OS === "web" && isHeicBase64(pickedUri)) {
         showErrorModal(
-          "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+          t("widgets.form.image_selector.invalid_image_format"),
           "announcement"
         );
         setImageModal(false);
@@ -274,7 +284,7 @@ function WebChatInput() {
             ...webStyles.tipsButton,
             opacity: roomDetail?.hasLeft ? 0.5 : 1,
           }}
-          aria-label="대화 주제 추천"
+          aria-label={t("features.chat.ui.tips_modal.header_title")}
         >
           <BulbIcon width={24} height={24} />
         </button>
@@ -287,7 +297,7 @@ function WebChatInput() {
             rows={1}
             readOnly={roomDetail?.hasLeft}
             placeholder={
-              roomDetail?.hasLeft ? "대화가 종료되었어요" : "메세지를 입력하세요"
+              roomDetail?.hasLeft ? t("features.chat.ui.input.placeholder_ended") : t("features.chat.ui.input.placeholder")
             }
             style={webStyles.textarea}
           />

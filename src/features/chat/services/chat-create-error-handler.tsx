@@ -4,31 +4,53 @@ import type { AxiosError } from "axios";
 import type { useRouter } from "expo-router";
 import { Text } from "react-native";
 import type { ErrorHandler } from "../../../types/error-handler";
+import { JP_IDENTITY_REQUIRED_MESSAGE } from "@/src/features/jp-identity/types";
+import i18n from "@/src/shared/libs/i18n";
 
 const handleConflict: ErrorHandler = {
   handle: (error, { router, showModal }) => {
     const errorMessage =
-      error.error || error.message || "이미 상대방과 채팅방이 개설되었습니다.";
+      error.error || error.message || i18n.t("features.chat.services.error_handlers.chat_already_exists");
     showModal({
-      title: "알림",
+      title: i18n.t("features.chat.services.error_handlers.notification"),
       children: <Text>{errorMessage}</Text>,
       primaryButton: {
-        text: "채팅 목록으로",
+        text: i18n.t("features.chat.services.error_handlers.go_to_chat_list"),
         onClick: () => router.push("/chat"),
       },
     });
   },
 };
 
-const handleFobbiden: ErrorHandler = {
+const handleForbidden: ErrorHandler = {
   handle: (error, { router, showModal }) => {
-    const errorMessage =
-      error.error || error.message || "문제가 발생하였습니다.";
+    const errorMessage = error.error || error.message || i18n.t("features.chat.services.error_handlers.general_error");
+
+    if (errorMessage === JP_IDENTITY_REQUIRED_MESSAGE) {
+      showModal({
+        title: i18n.t("features.chat.services.jp_identity.verification_required_title"),
+        children: (
+          <Text>
+            {i18n.t("features.chat.services.jp_identity.verification_required_message")}
+          </Text>
+        ),
+        primaryButton: {
+          text: i18n.t("features.chat.services.jp_identity.go_to_verification"),
+          onClick: () => router.push("/jp-identity"),
+        },
+        secondaryButton: {
+          text: i18n.t("features.chat.services.jp_identity.later"),
+          onClick: () => {},
+        },
+      });
+      return;
+    }
+
     showModal({
-      title: "알림",
+      title: i18n.t("features.chat.services.error_handlers.notification"),
       children: <Text>{errorMessage}</Text>,
       primaryButton: {
-        text: "확인",
+        text: i18n.t("features.chat.services.error_handlers.confirm"),
         onClick: () => {},
       },
     });
@@ -37,6 +59,6 @@ const handleFobbiden: ErrorHandler = {
 
 export const errorHandlers: Record<number | string, ErrorHandler> = {
   ...commonHandlers,
-  403: handleFobbiden,
+  403: handleForbidden,
   409: handleConflict,
 };

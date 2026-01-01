@@ -1,4 +1,5 @@
 import { uriToBase64 } from '@/src/shared/utils/image';
+import { useTranslation } from 'react-i18next';
 import { fromEvent, type Subscription } from 'rxjs';
 import { type Socket, io } from 'socket.io-client';
 import { buildChatSocketUrl } from '../domain/utils/build-socket-url';
@@ -146,10 +147,12 @@ class SocketConnectionManager {
 
 		setTimeout(() => {
 			if (!this.socket) {
-				devLogWithTag('Socket', 'Socket is null, cannot reconnect');
+				devLogWithTag('Socket', 'Socket is null, requesting new connection...');
+				// 소켓이 null이면 새 연결이 필요하다는 이벤트 발생
+				// GlobalChatProvider가 이 이벤트를 받아 CONNECTION_REQUESTED를 발생시킴
 				chatEventBus.emit({
-					type: 'SOCKET_RECONNECT_FAILED',
-					payload: { error: 'Socket is null' },
+					type: 'SOCKET_CONNECTION_NEEDED',
+					payload: {},
 				});
 				this.isReconnecting = false;
 				this.reconnectAttempts = 0;
@@ -275,18 +278,35 @@ class SocketConnectionManager {
 		);
 	}
 
-	private handleMessageSend(payload: any) {
-		devLogWithTag('Socket', 'Sending message:', { tempId: payload.tempId });
+	private handleMessageSend(payload: any, retryCount = 0) {
+		const MAX_RETRIES = 3;
+		const RETRY_DELAY_MS = 1500;
+
+		devLogWithTag('Socket', 'Sending message:', { tempId: payload.tempId, retryCount });
 
 		// 연결 상태 심층 체크
 		if (!this.isSocketHealthy()) {
-			devLogWithTag('Socket', 'Socket unhealthy, emitting failure...');
+			devLogWithTag('Socket', `Socket unhealthy (retry ${retryCount}/${MAX_RETRIES})...`);
+
+			// 재연결 시도
 			this.attemptReconnect();
+
+			// 최대 재시도 횟수 이내라면 자동 재시도
+			if (retryCount < MAX_RETRIES) {
+				devLogWithTag('Socket', `Scheduling retry in ${RETRY_DELAY_MS}ms...`);
+				setTimeout(() => {
+					this.handleMessageSend(payload, retryCount + 1);
+				}, RETRY_DELAY_MS);
+				return;
+			}
+
+			// 최대 재시도 후 실패 처리
+			devLogWithTag('Socket', 'Max retries reached, emitting failure...');
 			chatEventBus.emit({
 				type: 'MESSAGE_SEND_FAILED',
 				payload: {
 					success: false,
-					error: 'Socket not connected',
+					error: 'Socket not connected after retries',
 					tempId: payload.tempId,
 				},
 			});
@@ -385,15 +405,30 @@ class SocketConnectionManager {
 		}
 	}
 
-	private async handleImageUpload(payload: { options: any; optimisticMessage: Chat }) {
+	private async handleImageUpload(payload: { options: any; optimisticMessage: Chat }, retryCount = 0) {
+		const MAX_RETRIES = 3;
+		const RETRY_DELAY_MS = 1500;
+
 		const { options, optimisticMessage } = payload;
 		const { tempId } = optimisticMessage;
 
 		// 연결 상태 심층 체크 (텍스트 메시지와 동일하게)
 		if (!this.isSocketHealthy()) {
-			devLogWithTag('Socket', 'Socket unhealthy for image upload, emitting failure...');
+			devLogWithTag('Socket', `Socket unhealthy for image upload (retry ${retryCount}/${MAX_RETRIES})...`);
 			this.attemptReconnect();
-			this.emitImageUploadFailure('Socket not connected', tempId!);
+
+			// 최대 재시도 횟수 이내라면 자동 재시도
+			if (retryCount < MAX_RETRIES) {
+				devLogWithTag('Socket', `Scheduling image upload retry in ${RETRY_DELAY_MS}ms...`);
+				setTimeout(() => {
+					this.handleImageUpload(payload, retryCount + 1);
+				}, RETRY_DELAY_MS);
+				return;
+			}
+
+			// 최대 재시도 후 실패 처리
+			devLogWithTag('Socket', 'Max retries reached for image upload, emitting failure...');
+			this.emitImageUploadFailure('Socket not connected after retries', tempId!);
 			return;
 		}
 
@@ -435,7 +470,7 @@ class SocketConnectionManager {
 				quality: 0.7,
 				format: 'jpeg',
 			}).catch((compressionError) => {
-				devWarn('이미지 압축 실패, 원본 사용:', compressionError);
+				devWarn("common.이미지_압축_실패_원본_사용", compressionError);
 				return base64;
 			});
 		}
@@ -593,9 +628,31 @@ class SocketConnectionManager {
 			});
 		});
 
-		this.socket?.on('error', (error) => {
+		this.socket?.on('error', (error: { message?: string }) => {
 			logError('Socket error:', error);
 			devLogWithTag('Socket', 'Error:', error);
+
+			const errorMessage = error?.message || '';
+			const isSessionClosed = errorMessage.includes('Client was closed') ||
+				errorMessage.includes('not queryable');
+
+			if (isSessionClosed) {
+				devLogWithTag('Socket', 'Server session closed detected, forcing reconnect...');
+				this.forceReconnect();
+			}
+		});
+	}
+
+	private forceReconnect() {
+		devLogWithTag('Socket', 'Force reconnecting due to server session closed...');
+
+		this.disconnectSocket();
+		this.reconnectAttempts = 0;
+		this.isReconnecting = false;
+
+		chatEventBus.emit({
+			type: 'SOCKET_DISCONNECTED',
+			payload: { reason: 'server_session_closed' },
 		});
 	}
 
