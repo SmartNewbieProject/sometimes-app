@@ -2,22 +2,37 @@
   "highlights": {
     "section_title": "今注目のお知らせ",
     "cta_button": "今すぐ確認 →",
-    "reward_badge": "🎁 報酬"
+    "reward_badge": "🎁 報酬",
+    "empty_title": "もうすぐ新しいお知らせが届きます！",
+    "empty_description": "SOMETIMEが準備した特別なストーリー、\nもう少々お待ちください"
   },
   "list": {
     "section_title": "過去のお知らせ",
     "end_message": "すべてのお知らせを確認しました 🎉",
-    "views": "閲覧"
+    "views": "閲覧",
+    "empty_title": "最初のお知らせを準備しています",
+    "empty_description": "SOMETIMEコミュニティの始まり、一緒に作っていきましょう！\nまもなく面白いストーリーでお届けします"
   },
   "viewer": {
+    "header_title": "新しいお知らせ",
     "close": "✕ 閉じる",
     "reward_success": "🎉 ビー玉{{count}}個を獲得しました！",
+    "reward_success_toast": "ビー玉{{count}}個獲得！",
     "reward_already": "すでに報酬を受け取っています",
     "reward_error": "報酬のリクエストに失敗しました。もう一度お試しください。",
     "reward_hint_pending": "🎁 最後のカードに到達！",
-    "reward_hint_claimed": "✅ 報酬獲得完了"
+    "reward_hint_claimed": "✅ 報酬獲得完了",
+    "cards_remaining": "あと{{count}}枚です！"
+  },
+  "detail": {
+    "header_title": "新しいお知らせ",
+    "invalid_link": "無効なカードニュースリンクです",
+    "load_error": "カードニュースを読み込めません",
+    "back_button": "戻る"
   },
   "home": {
+    "faq_title": "よくある質問",
+    "faq_description": "何かお困りですか？FAQをご確認ください！",
     "live_status": "運営チームがリアルタイムでコミュニケーション中！⚡️",
     "notice_link": "既存のお知らせを見る"
   }

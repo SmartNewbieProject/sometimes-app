@@ -1,4 +1,20 @@
 {
+  "fields": {
+    "drinking": "飲酒",
+    "smoking": "喫煙",
+    "tattoo": "タトゥー",
+    "personality": "性格",
+    "dating_style": "デートスタイル",
+    "interests": "趣味",
+    "mbti": "MBTI",
+    "military_status": "軍歴"
+  },
+  "validation": {
+    "required_fields": "次の情報を入力してください: {{fields}}"
+  },
+  "errors": {
+    "profile_save_failed": "プロフィール保存に失敗しました。しばらくしてからもう一度お試しください。"
+  },
   "dating_style": {
     "more": "あと{{count}}つ！",
     "next": "次へ",

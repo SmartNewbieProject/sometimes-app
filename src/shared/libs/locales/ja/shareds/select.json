@@ -1,5 +1,9 @@
 {
   "select": {
     "placeholder": "選択してください"
+  },
+  "bottom_sheet_picker": {
+    "search_placeholder": "検索",
+    "empty_text": "結果がありません"
   }
 }

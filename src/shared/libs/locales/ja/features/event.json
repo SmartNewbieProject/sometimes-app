@@ -1,29 +1,54 @@
 {
-  "hooks": {
-    "use_event_control": {
-      "event_expired_comment": "イベント期限切れ",
-      "event_over_participated_comment": "イベント参加回数オーバー"
-    }
-  },
-  "ui": {
-    "community_event_prompt": {
-      "title": "サムタイムへようこそ！",
-      "subtitle": "簡単な自己紹介をしてみましょう！\n本当の出会いは挨拶から始まります\n挨拶して宝石ももらっていきましょう！",
-      "gem_label": "宝石7個",
-      "reward_text": "宝石{{gems}}個",
-      "write_button": "投稿を書く",
-      "later_button": "後で"
-    },
-    "community_event_error": {
-      "title": "エラー",
-      "message": "報酬付与中にエラーが発生しました。"
-    },
-    "university_certification_prompt": {
-      "title": "大学認証を完了してみませんか？",
-      "subtitle": "大学認証を完了して宝石9個をもらっていきましょう！\nより信頼性の高いプロフィールで他のユーザーとより簡単に繋がることができます！",
-      "benefit_text": "報酬: 宝石9個",
-      "certify_button": "認証する",
-      "later_button": "後で"
-    }
-  }
+	"notification": "お知らせ",
+	"hooks": {
+		"use_event_control": {
+			"event_expired_comment": "イベント期限切れ",
+			"event_over_participated_comment": "イベント参加回数オーバー"
+		},
+		"use_share": {
+			"code_copied": "招待コードをコピーしました",
+			"link_copied": "リンクをコピーしました",
+			"loading_code": "招待コードを読み込み中です",
+			"code_copy_failed": "招待コードのコピーに失敗しました",
+			"link_copy_failed": "リンクのコピーに失敗しました"
+		},
+		"use_share_kakao": {
+			"invite_title": "🎉 友達招待イベント開催中！",
+			"invite_description": "あなたとお友達の両方に宝石30個プレゼント 💜\n 理想のマッチング、今すぐ始めましょう！",
+			"button_web": "Webで開く",
+			"button_app": "アプリで開く",
+			"sdk_init_failed": "カカオSDKの初期化に失敗しました",
+			"sdk_load_failed": "カカオSDKの読み込みに失敗しました",
+			"share_loading": "共有機能を読み込み中です",
+			"kakao_not_ready": "カカオの準備ができていません",
+			"share_failed": "共有に失敗しました"
+		}
+	},
+	"ui": {
+		"community_event_prompt": {
+			"title": "サムタイムへようこそ！",
+			"subtitle": "簡単な自己紹介をしてみましょう！\n本当の出会いは挨拶から始まります\n挨拶して宝石ももらっていきましょう！",
+			"gem_label": "宝石7個",
+			"reward_text": "宝石{{gems}}個",
+			"reward_subtext": "もらって始めましょう！",
+			"write_button": "投稿を書く",
+			"later_button": "後で"
+		},
+		"community_event_error": {
+			"title": "エラー",
+			"message": "報酬付与中にエラーが発生しました。"
+		},
+		"university_certification_prompt": {
+			"title": "大学認証を完了してみませんか？",
+			"subtitle": "大学認証を完了して宝石9個をもらっていきましょう！\nより信頼性の高いプロフィールで他のユーザーとより簡単に繋がることができます！",
+			"benefit_text": "報酬: 宝石9個",
+			"reward_subtext": "すぐにもらえる！",
+			"certify_button": "認証する",
+			"later_button": "後で"
+		}
+	},
+	"common": {
+		"닫기": "閉じる",
+		"구슬_받기": "ジェムを受け取る"
+	}
 }

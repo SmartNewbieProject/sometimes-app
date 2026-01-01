@@ -1,4 +1,9 @@
 {
+  "report": {
+    "errors": {
+      "submit_failed": "通報受付に失敗しました。しばらくしてからもう一度お試しください。"
+    }
+  },
   "id": {
     "header_title": "コミュニティ",
     "dropdown_edit": "編集",
@@ -10,6 +15,7 @@
     "loading": "投稿を読み込んでいます"
   },
   "write": {
+    "default_type": "一般",
     "modal_short_title": "短すぎます",
     "modal_short_desc": "タイトルと本文は3文字以上で作成してください",
     "modal_overflow_title": "文字数オーバー",

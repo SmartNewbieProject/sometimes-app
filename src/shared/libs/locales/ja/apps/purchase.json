@@ -1,9 +1,12 @@
 {
   "gem_store": {
+    "gem": "ジェム",
+    "error_alert_title": "エラー",
     "error_alert_message": "決済処理中にエラーが発生しました",
     "payment_error_console": "決済エラー:",
     "payment_error_debug": "決済エラー時に新しいorderIdを生成:",
     "title": "ジェム購入",
+    "product_name": "ジェム",
     "loading_gems": "ジェム商品を読み込み中…",
     "failed_to_load_gems": "ジェム商品を読み込めませんでした"
   },

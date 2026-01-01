@@ -3,6 +3,14 @@
     "layout": {
       "loading_user_info": "ユーザー情報を確認しています..."
     },
+    "navigation_menu": {
+      "beginner_guide_title": "SOMETIMEが初めてですか？",
+      "beginner_guide_description": "あなたの恋愛観を理解し、恋人探しをお手伝いします",
+      "my_moment_title": "私のモーメント",
+      "my_moment_description": "SOMETIMEで進行中のイベントを確認して、プレゼントをもらいましょう！",
+      "activities_title": "様々な活動",
+      "activities_description": "あなたの恋愛傾向を分析してみましょう！"
+    },
     "banner_slide": {
       "loading_title": "何人がマッチングを申請したのでしょうか？"
     },
@@ -69,6 +77,19 @@
         "preference_info_description": "求める性格、趣味、飲酒など",
         "preference_info_tooltip": "好みのマッチングのためにタイプ情報を入力しましょう！"
       }
+    },
+    "invite_banner": {
+      "title_1": "友達を招待すると、",
+      "title_2": "私も友達も",
+      "reward": "30ビー玉",
+      "cta_button": "招待しに行く"
+    },
+    "preference_modal": {
+      "title": "会員様の好みのタイプ情報がありません！",
+      "description_line1": "ぴったりのパートナーマッチングのために",
+      "description_line2": "会員様の好みのタイプ情報を登録しますか？",
+      "primary_button": "登録します！",
+      "secondary_button": "後でやります"
     }
   }
 }

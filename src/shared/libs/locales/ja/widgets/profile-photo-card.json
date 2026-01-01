@@ -1,0 +1,12 @@
+{
+  "badge": {
+    "approved": "承認済",
+    "reviewing": "審査中",
+    "rejected": "却下"
+  },
+  "main_badge": "メイン",
+  "rejection": {
+    "no_reason": "理由未記載",
+    "change_button": "変更する"
+  }
+}

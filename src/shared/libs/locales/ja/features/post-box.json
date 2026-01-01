@@ -10,7 +10,8 @@
         "liked_me_relative": "{{time}} にいいねされました",
         "mutual_like": "お互いにいいねしました！",
         "rejected": "相手に拒否されました",
-        "waiting_response": "相手の返信を待っています"
+        "waiting_response": "相手の返信を待っています",
+        "in_chat": "相手と会話中です"
       },
       "buttons": {
         "ok": "ごめんなさい",
@@ -26,7 +27,11 @@
         "start_instagram_subline1": "Instagramを通じて",
         "start_instagram_subline2": "自然に会話をスタートできます",
         "bye_title": "今回はご縁がありませんでした",
-        "bye_subline": "もっと素敵な出会いがすぐに訪れますよ"
+        "bye_subline": "もっと素敵な出会いがすぐに訪れますよ",
+        "chat_start_cost_male": "ジェム{{cost}}個で",
+        "chat_start_now": "今すぐ",
+        "chat_start_suffix": "でチャットルームを開くことができます。",
+        "send_first_message": "今すぐ最初のメッセージを送ってみましょう!"
       },
       "withdrawn_text": "退会済みユーザーです"
     }
@@ -36,6 +41,11 @@
       "age_display": "{{age}}歳",
       "buttons": {
         "no": "いいえ"
+      },
+      "empty_state": {
+        "no_some_received": "まだ届いたサムがありません",
+        "no_some_sent": "まだ送ったサムがありません",
+        "description": "いいねを送って興味を示しましょう"
       }
     }
   },

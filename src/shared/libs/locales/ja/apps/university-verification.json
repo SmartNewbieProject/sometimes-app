@@ -24,5 +24,10 @@
     "verification_complete": "大学認証が完了しました！",
     "find_ideal_type": "これから好みのお相手を探しましょう",
     "go_to_find_ideal_type": "好みの相手を探しに行く →"
+  },
+  "idcard": {
+    "upload_success_title": "提出完了",
+    "upload_success_message": "ファイルが正常に提出されました。\n管理者の確認後に承認されます。",
+    "upload_error": "アップロード中にエラーが発生しました。しばらくしてから再度お試しください。"
   }
 }
