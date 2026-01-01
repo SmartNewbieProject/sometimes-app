@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,17 +12,19 @@ interface WebFallbackScreenProps {
   onBack?: () => void;
 }
 
-const BENEFITS = [
-  '내 연락처에 저장된 지인 자동 차단',
-  '안심하고 새로운 인연 만나기',
-  '언제든 설정 변경 가능',
-];
-
 export const WebFallbackScreen: React.FC<WebFallbackScreenProps> = ({ onBack }) => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+
+  const BENEFITS = [
+    t("ui.내_연락처에_저장된_지인_자동_차단"),
+    t("ui.안심하고_새로운_인연_만나기"),
+    t("ui.언제든_설정_변경_가능"),
+  ];
 
   const handleBack = () => {
+
     if (onBack) {
       onBack();
     } else {
@@ -64,7 +67,7 @@ export const WebFallbackScreen: React.FC<WebFallbackScreenProps> = ({ onBack }) 
           <AppDownloadSection
             onAppStorePress={handleAppStorePress}
             onGooglePlayPress={handleGooglePlayPress}
-            tooltipText="앱을 설치하고 안심하고 시작하세요!"
+            tooltipText={t("ui.앱을_설치하고_안심하고_시작하세요")}
             showTooltip={true}
             size="md"
           />
