@@ -1,0 +1,6 @@
+{
+  "android_key_hash_message": "Copy the key hash and register it in Kakao Developer Console:\n\n{{keyHash}}",
+  "confirm": "Confirm",
+  "view_in_console": "View in Console",
+  "app_updated_please_refresh": "The app has been updated. Please refresh the page."
+}

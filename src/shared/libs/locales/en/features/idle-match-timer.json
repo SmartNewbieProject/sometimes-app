@@ -82,7 +82,8 @@
     "error": {
       "highlight": "Connection",
       "message": " is unstable.\nPlease try again later."
-    }
+    },
+    "연애_스타일": "[EN] 연애 스타일"
   },
   "hooks": {
     "use-rematch": {
@@ -91,6 +92,7 @@
       "no_match": "No matches found for your conditions right now.",
       "retry_later": "More people will join soon. Please try again later!",
       "no_rematch_ticket": "No rematch tickets available."
-    }
+    },
+    "로딩": "[EN] 로딩"
   }
 }

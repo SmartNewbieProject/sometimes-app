@@ -1,0 +1,16 @@
+{
+  "ui": {
+    "categories": {
+      "hot": "Popular",
+      "notice": "Notice",
+      "general": "General",
+      "review": "Review",
+      "love-concerns": "Love Advice"
+    },
+    "category_list": {
+      "home": "Home"
+    },
+    "새_글_작성": "[EN] 새 글 작성",
+    "모달_닫기_영역": "[EN] 모달 닫기 영역"
+  }
+}

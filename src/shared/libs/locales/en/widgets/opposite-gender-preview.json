@@ -1,0 +1,8 @@
+{
+	"header_title": "👀 Partner's Profile Preview",
+	"badge_text": "{{count}} photos visible",
+	"gender": {
+		"male": "Male",
+		"female": "Female"
+	}
+}
