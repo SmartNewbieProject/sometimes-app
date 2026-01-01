@@ -24,12 +24,14 @@ import {
  OverlayProvider } from "@/src/shared/hooks/use-overlay";
 import Loading from "@/src/features/loading";
 import { useVerification } from "@/src/features/university-verification/hooks/use-id-verification";
+import { useTranslation } from "react-i18next";
 
 const { height } = Dimensions.get("window");
 
 export default function StudentVerifyPage() {
   const { showErrorModal } = useModal();
   const { showModal } = useModal();
+  const { t } = useTranslation();
   const { showOverlay, visible } = useOverlay();
   const animation = useRef(new Animated.Value(0)).current;
 
@@ -45,20 +47,20 @@ export default function StudentVerifyPage() {
       const response = await submitOne(image);
       const successMessage =
         response?.message ||
-        "파일이 성공적으로 제출되었습니다.\n관리자 검토 후 승인됩니다.";
+        t("apps.university-verification.idcard.upload_success_message");
 
       showModal({
-        title: "제출 완료",
+        title: t("apps.university-verification.idcard.upload_success_title"),
         children: successMessage,
         primaryButton: {
-          text: "확인",
+          text: t("shareds.utils.common.confirm"),
           onClick: () => router.replace("/"),
         },
       });
     } catch (e: any) {
       showErrorModal(
         e?.message ||
-          "업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+          t("apps.university-verification.idcard.upload_error"),
         "announcement"
       );
     }

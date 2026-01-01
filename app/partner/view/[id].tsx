@@ -52,7 +52,8 @@ const { useMatchPartnerQuery } = queries;
 const { useMatchReasonsQuery } = MatchReasons.queries;
 
 export default function PartnerDetailScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const country = i18n.language?.startsWith('ja') ? 'jp' : 'kr';
   const { id: matchId } = useLocalSearchParams<{ id: string }>();
   const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
   const { data: matchReasonsData } = useMatchReasonsQuery(partner?.connectionId);
@@ -150,20 +151,16 @@ export default function PartnerDetailScreen() {
   const userWithdrawal = !!partner?.deletedAt;
 
   if (isLoading || !partner) {
-    return <Loading.Page title="파트너 정보를 불러오고 있어요" />;
+    return <Loading.Page title={t("apps.partner.view.loading")} />;
   }
 
   const characteristicsOptions = parser.getMultipleCharacteristicsOptions(
-    [
-      t("apps.partner.view.profile_personality_type"),
-      t("apps.partner.view.profile_love_style"),
-      t("apps.partner.view.profile_interest"),
-    ],
+    ["PERSONALITY", "DATING_STYLE", "INTEREST"],
     partner.characteristics
   );
 
-  const personal = characteristicsOptions["성격"];
-  const loveStyles = characteristicsOptions["연애 스타일"];
+  const personal = characteristicsOptions["PERSONALITY"];
+  const loveStyles = characteristicsOptions["DATING_STYLE"];
 
   const mainProfileImageUrl =
     partner.profileImages.find((img) => img.isMain)?.imageUrl ||
@@ -340,21 +337,22 @@ export default function PartnerDetailScreen() {
                 >
                   <View style={styles.lastLoginBadge}>
                     <Text style={styles.lastLoginLabel}>
-                      마지막 접속
+                      {t("apps.partner.view.last_login_label")}
                     </Text>
                     <Text style={styles.lastLoginValue}>
                       {formatLastLogin(partner.updatedAt)}
                     </Text>
                   </View>
                   <Text style={styles.ageText}>
-                    만 {partner.age}세
+                    {t("apps.partner.view.age_format", { age: partner.age })}
                   </Text>
                   <View style={styles.universityRow}>
                     {partner.universityDetails?.code && (
                       <Image
                         source={{
                           uri: getSmartUnivLogoUrl(
-                            partner.universityDetails.code
+                            partner.universityDetails.code,
+                            country
                           ),
                         }}
                         style={styles.universityLogo}
@@ -373,8 +371,8 @@ export default function PartnerDetailScreen() {
                     />
                     <Text style={styles.verificationText}>
                       {partner.universityDetails?.authentication
-                        ? "대학교 인증 완료"
-                        : "대학교 인증 전"}
+                        ? t("apps.partner.view.university_verified")
+                        : t("apps.partner.view.university_unverified")}
                     </Text>
                   </View>
                 </View>
@@ -424,19 +422,40 @@ export default function PartnerDetailScreen() {
                 marginBottom: 4,
               }}
             >
-              미호가 두분을 연결한 특별한 이유
+              {t("apps.partner.view.matching_reason_title")}
             </Text>
 
-            {matchReasonsData?.reasons && matchReasonsData.reasons.length > 0 && (
-              <MatchingReasonCard
-                reasons={matchReasonsData.reasons.map((r) => r.description)}
-                keywords={[
-                  ...(parser.getMultipleCharacteristicsOptions(["성격"], partner.characteristics)["성격"]?.map((c: any) => c.label) || []),
-                  ...(parser.getMultipleCharacteristicsOptions(["연애 스타일"], partner.characteristics)["연애 스타일"]?.map((c: any) => c.label) || []),
-                  ...(parser.getMultipleCharacteristicsOptions(["관심사"], partner.characteristics)["관심사"]?.map((c: any) => c.label) || []),
-                ]}
-              />
-            )}
+            {matchReasonsData?.reasons && matchReasonsData.reasons.length > 0 && (() => {
+              // Helper: characteristics를 번역
+              const translateCharacteristics = (
+                categoryKey: string,
+                fallbackKey: string
+              ): string[] => {
+                // 영어 키 우선, 없으면 한글 키 fallback
+                const items =
+                  parser.getMultipleCharacteristicsOptions([categoryKey], partner.characteristics)[categoryKey] ||
+                  parser.getMultipleCharacteristicsOptions([fallbackKey], partner.characteristics)[fallbackKey];
+
+                return items?.map((c: any) => {
+                  // 서버에서 key 제공하면 i18n 사용, 아니면 label 그대로
+                  if (c.key) {
+                    return t(`apps.partner.characteristics.${c.key.toLowerCase()}`);
+                  }
+                  return c.label;
+                }) || [];
+              };
+
+              return (
+                <MatchingReasonCard
+                  reasons={matchReasonsData.reasons.map((r) => r.description)}
+                  keywords={[
+                    ...translateCharacteristics("PERSONALITY", "성격"),
+                    ...translateCharacteristics("DATING_STYLE", "연애 스타일"),
+                    ...translateCharacteristics("INTEREST", "관심사"),
+                  ]}
+                />
+              );
+            })()}
 
             {validProfileImages.length > 2 && myApprovedPhotosCount >= 3 && (
               <View

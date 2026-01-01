@@ -19,7 +19,7 @@ export default function HomeLayout() {
   const { data: statusData, isLoading, error } = useUserStatus(myDetailsReady ? my.phoneNumber : undefined);
 
   useEffect(() => {
-    console.log("🔍 [HomeLayout] 상태 체크 시작", {
+    console.log("🔍 [HomeLayout] Status check started", {
       myDetailsReady,
       isLoading,
       hasMy: !!my,
@@ -31,7 +31,7 @@ export default function HomeLayout() {
 
     // 5초 타임아웃 설정
     timeoutRef.current = setTimeout(() => {
-      console.log("⏰ [HomeLayout] 5초 타임아웃 - 강제 진행");
+      console.log("⏰ [HomeLayout] 5s timeout - forcing proceed");
       setIsTimeout(true);
       setStatusChecked(true);
     }, 5000);
@@ -40,10 +40,10 @@ export default function HomeLayout() {
       try {
         // 기본 정보가 없으면 2초 후 강제 진행
         if (!myDetailsReady) {
-          console.log("⏳ [HomeLayout] 기본 정보 로딩 중 - 2초 후 강제 진행 예정");
+          console.log("⏳ [HomeLayout] Basic info loading - will force proceed in 2s");
           setTimeout(() => {
             if (!myDetailsReady) {
-              console.log("⚡ [HomeLayout] 기본 정보 없음 - 강제로 statusChecked 설정");
+              console.log("⚡ [HomeLayout] No basic info - forcing statusChecked");
               setStatusChecked(true);
             }
           }, 2000);
@@ -52,7 +52,7 @@ export default function HomeLayout() {
 
         // API 로딩 중이면 기다림
         if (isLoading) {
-          console.log("⏳ [HomeLayout] API 로딩 중");
+          console.log("⏳ [HomeLayout] API loading");
           return;
         }
 
@@ -61,33 +61,33 @@ export default function HomeLayout() {
           clearTimeout(timeoutRef.current);
         }
 
-        console.log("✅ [HomeLayout] API 응답 확인:", { status: statusData?.status, error });
+        console.log("✅ [HomeLayout] API response check:", { status: statusData?.status, error });
 
         // 에러가 있어도 진행
         if (error) {
-          console.log("❌ [HomeLayout] API 에러 발생하지만 진행:", error.message);
+          console.log("❌ [HomeLayout] API error but proceeding:", error.message);
           setStatusChecked(true);
           return;
         }
 
         // 승인 상태 확인 - pending, rejected 상태도 홈으로 진행
         if (statusData?.status === "pending") {
-          console.log("⏸️ [HomeLayout] 승인 대기 상태 - 홈으로 진행");
+          console.log("⏸️ [HomeLayout] Pending status - proceeding to home");
           setStatusChecked(true);
           return;
         }
 
         if (statusData?.status === "rejected") {
-          console.log("🚫 [HomeLayout] 승인 거절 상태 - 홈으로 진행");
+          console.log("🚫 [HomeLayout] Rejected status - proceeding to home");
           setStatusChecked(true);
           return;
         }
 
         // 그 외 모든 경우 진행
-        console.log("🎉 [HomeLayout] 정상 상태 - 홈으로 진행");
+        console.log("🎉 [HomeLayout] Normal status - proceeding to home");
         setStatusChecked(true);
       } catch (error) {
-        console.error("💥 [HomeLayout] 예외 발생:", error);
+        console.error("💥 [HomeLayout] Exception occurred:", error);
         setStatusChecked(true); // 예외 발생해도 진행
       }
     };
@@ -105,7 +105,7 @@ export default function HomeLayout() {
   // 타임아웃 발생 시 강제 진행
   const shouldShowLoading = !statusChecked && !isTimeout;
 
-  console.log("🎯 [HomeLayout] 최종 상태:", {
+  console.log("🎯 [HomeLayout] Final state:", {
     shouldShowLoading,
     statusChecked,
     isTimeout,
@@ -114,7 +114,7 @@ export default function HomeLayout() {
   });
 
   if (shouldShowLoading) {
-    return <Loading.Page title="사용자 정보를 확인하고 있어요..." />;
+    return <Loading.Page title={t("features.home.ui.layout.loading_user_info")} />;
   }
 
   return (

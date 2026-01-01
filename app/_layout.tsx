@@ -17,6 +17,7 @@ import * as Notifications from "expo-notifications";
 
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/src/shared/libs/i18n";
+import { getCountryFromLocale } from "@/src/shared/libs/country-detector";
 
 import { GlobalChatProvider } from "@/src/features/chat/providers/global-chat-provider";
 import { ChatActivityTracker } from "@/src/features/chat/ui/chat-activity-tracker";
@@ -33,6 +34,7 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SessionTracker } from "@/src/shared/components/session-tracker";
 import { AppBadgeSync } from "@/src/shared/components/app-badge-sync";
+import { LoginRequiredModalListener } from "@/src/shared/components/login-required-modal-listener";
 import * as Sentry from '@sentry/react-native';
 
 const navigationIntegration = Sentry.reactNavigationIntegration({
@@ -103,10 +105,10 @@ export default Sentry.wrap(function RootLayout() {
             console.log('🔑 [Android Key Hash]', keyHash);
             Alert.alert(
               'Android Key Hash',
-              `키 해시를 복사하여 카카오 개발자 콘솔에 등록하세요:\n\n${keyHash}`,
+              i18n.t('apps.root.android_key_hash_message', { keyHash }),
               [
-                { text: '확인', style: 'default' },
-                { text: '콘솔에서 보기', onPress: () => console.log('🔑 Key Hash:', keyHash) }
+                { text: i18n.t('apps.root.confirm'), style: 'default' },
+                { text: i18n.t('apps.root.view_in_console'), onPress: () => console.log('🔑 Key Hash:', keyHash) }
               ]
             );
           } catch (error) {
@@ -119,7 +121,11 @@ export default Sentry.wrap(function RootLayout() {
         const mixpanelToken = env.MIXPANEL_TOKEN;
         if (mixpanelToken) {
           mixpanelAdapter.init(mixpanelToken, true);
-          console.log('[SDK Init] Mixpanel initialized');
+
+          // Super Properties 등록: 국가별 지표 분리
+          const country = getCountryFromLocale();
+          mixpanelAdapter.registerSuperProperties({ country });
+          console.log('[SDK Init] Mixpanel initialized with country:', country);
         }
 
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -192,6 +198,21 @@ export default Sentry.wrap(function RootLayout() {
     requestAtt();
   }, [requestAtt]);
 
+  // i18n 언어 변경 감지 시 Mixpanel country Super Property 업데이트
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      const country = getCountryFromLocale();
+      mixpanelAdapter.registerSuperProperties({ country });
+      console.log('[i18n] Language changed, updated country:', country);
+    };
+
+    i18n.on('languageChanged', handleLanguageChange);
+
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
+
   // Web: AsyncRequireError 처리 (배포 중 캐시 불일치 문제 해결)
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -249,9 +270,7 @@ export default Sentry.wrap(function RootLayout() {
 
           // 최대 재시도 초과 시 사용자에게 알림
           if (typeof alert !== 'undefined') {
-            alert(i18n.language === 'ja'
-              ? 'アプリが更新されました。ページを手動で更新してください。'
-              : '앱이 업데이트되었습니다. 페이지를 새로고침해주세요.');
+            alert(i18n.t('apps.root.app_updated_please_refresh'));
           }
         }
       }
@@ -385,6 +404,7 @@ export default Sentry.wrap(function RootLayout() {
                           <ChatActivityTracker />
                           <SessionTracker />
                           <AppBadgeSync />
+                          <LoginRequiredModalListener />
                       </>
                       </RouteTracker>
                     </AnalyticsProvider>

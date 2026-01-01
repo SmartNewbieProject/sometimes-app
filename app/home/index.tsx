@@ -70,7 +70,6 @@ const HomeScreen = () => {
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
   const { my, profileDetails } = useAuth();
   const queryClient = useQueryClient();
-  const [isSlideScrolling, setSlideScrolling] = useState(false);
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
   // const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
@@ -99,10 +98,6 @@ const HomeScreen = () => {
 
   // const visibleLikeGuide =
   //   step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
-
-  const onScrollStateChange = (bool: boolean) => {
-    setSlideScrolling(bool);
-  };
 
   const onNavigateGemStore = () => {
     mixpanelAdapter.track("onNavigateGemStore", {
@@ -190,7 +185,6 @@ const HomeScreen = () => {
       />
 
       <ScrollView
-        scrollEnabled={!isSlideScrolling}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
       >
@@ -222,7 +216,7 @@ const HomeScreen = () => {
         </View>
         <View>
           <CommunityAnnouncement />
-          <ReviewSlide onScrollStateChange={onScrollStateChange} />
+          <ReviewSlide />
         </View>
         <View style={styles.tipSection}>
           <TipAnnouncement />

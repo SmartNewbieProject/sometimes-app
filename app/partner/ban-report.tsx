@@ -101,7 +101,7 @@ export default function ReportScreen() {
         title: t("apps.partner.modal_image_error_title"),
         children: t("apps.partner.modal_error_desc"),
         primaryButton: {
-          text: "확인",
+          text: t("confirm"),
           onClick: () => hideModal(),
         },
       });
@@ -114,7 +114,7 @@ export default function ReportScreen() {
         title: t("apps.partner.modal_required_title"),
         children: t("apps.partner.modal_required_desc"),
         primaryButton: {
-          text: "확인",
+          text: t("confirm"),
           onClick: () => hideModal(),
         },
       });
@@ -166,7 +166,7 @@ export default function ReportScreen() {
         title: t("apps.partner.modal_permission_title"),
         children: t("apps.partner.modal_permission_desc"),
         primaryButton: {
-          text: "확인",
+          text: t("confirm"),
           onClick: () => hideModal(),
         },
       });
@@ -236,7 +236,7 @@ export default function ReportScreen() {
         title: t("apps.partner.modal_image_error_title"),
         children: t("apps.partner.modal_image_error_desc"),
         primaryButton: {
-          text: "확인",
+          text: t("confirm"),
           onClick: () => hideModal(),
         },
       });
