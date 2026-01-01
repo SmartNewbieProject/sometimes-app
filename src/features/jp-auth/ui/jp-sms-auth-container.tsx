@@ -49,7 +49,9 @@ export function JpSmsAuthContainer({ onCancel }: JpSmsAuthContainerProps) {
     }
   };
 
-  const progress = step === 'phone_input' ? 0.5 : 1;
+  // SMS 인증은 전체 회원가입의 일부 (전화번호 입력 → 코드 확인 → jp-profile → university → university-details → instagram → profile-image → invite-code)
+  // 총 8단계 중 1-2단계이므로 낮은 progress 유지
+  const progress = step === 'phone_input' ? 0.1 : 0.2;
   const stepTitle =
     step === 'phone_input'
       ? t('features.jp-auth.progress.step1')

@@ -136,11 +136,16 @@ export const useJpSmsLogin = ({
 
   const processLoginResult = useCallback(
     async (loginResult: JpLoginResponse) => {
+      console.log('[JP SMS] processLoginResult 시작, isNewUser:', loginResult.isNewUser);
       const formattedPhone = formatJpPhoneForApi(phoneNumber);
 
       if (loginResult.isNewUser) {
+        console.log('[JP SMS] 신규 회원 플로우 시작');
         try {
+          console.log('[JP SMS] 블랙리스트 체크 시작:', formattedPhone);
           const { isBlacklisted } = await checkPhoneNumberBlacklist(formattedPhone);
+          console.log('[JP SMS] 블랙리스트 체크 결과:', isBlacklisted);
+
           if (isBlacklisted) {
             mixpanelAdapter.track('Signup_PhoneBlacklist_Failed', {
               phone: formattedPhone,
@@ -159,7 +164,16 @@ export const useJpSmsLogin = ({
             return;
           }
         } catch (err) {
-          console.error('블랙리스트 체크 오류:', err);
+          console.error('[JP SMS] ❌ 블랙리스트 체크 오류:', err);
+        }
+
+        // 신규 회원: 토큰이 있으면 저장 (회원가입 중 API 호출용 임시 토큰)
+        if (loginResult.accessToken && loginResult.refreshToken) {
+          console.log('[JP SMS] 임시 토큰 저장 시작');
+          await updateToken(loginResult.accessToken, loginResult.refreshToken);
+          console.log('[JP SMS] 임시 토큰 저장 완료');
+        } else {
+          console.log('[JP SMS] 토큰 없음 (신규 회원은 회원가입 완료 후 토큰 발급)');
         }
 
         const certInfo: JpCertificationInfo = {
@@ -168,6 +182,7 @@ export const useJpSmsLogin = ({
           country: 'JP',
         };
 
+        console.log('[JP SMS] AsyncStorage에 certification info 저장');
         await AsyncStorage.setItem('signup_certification_info', JSON.stringify(certInfo));
 
         mixpanelAdapter.track('Signup_Route_Entered', {
@@ -176,9 +191,11 @@ export const useJpSmsLogin = ({
           env: process.env.EXPO_PUBLIC_TRACKING_MODE,
         });
 
+        console.log('[JP SMS] jp-profile 페이지로 이동');
         router.push('/auth/signup/jp-profile');
         onSuccess?.(true);
       } else {
+        console.log('[JP SMS] 기존 회원 플로우 시작');
         await updateToken(loginResult.accessToken, loginResult.refreshToken);
 
         mixpanelAdapter.track('Login_Completed', {
@@ -186,6 +203,7 @@ export const useJpSmsLogin = ({
           env: process.env.EXPO_PUBLIC_TRACKING_MODE,
         });
 
+        console.log('[JP SMS] 홈으로 이동');
         router.replace('/home');
         onSuccess?.(false);
       }
@@ -200,6 +218,7 @@ export const useJpSmsLogin = ({
 
       const formattedPhone = formatJpPhoneForApi(phoneNumber);
 
+      console.log('[JP SMS] 1. Verify 시작:', formattedPhone);
       mixpanelAdapter.track('Signup_JP_SMS_Verify_Started', {
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
@@ -208,16 +227,48 @@ export const useJpSmsLogin = ({
         phoneNumber: formattedPhone,
         code: verificationCode,
       });
+      console.log('[JP SMS] 2. Verify 성공');
 
       mixpanelAdapter.track('Signup_JP_SMS_Verify_Completed', {
         env: process.env.EXPO_PUBLIC_TRACKING_MODE,
       });
 
-      const loginResult = await jpLogin({ phoneNumber: formattedPhone });
+      console.log('[JP SMS] 3. Login API 호출 시작');
+      let loginResult: JpLoginResponse;
+
+      try {
+        loginResult = await jpLogin({ phoneNumber: formattedPhone });
+        console.log('[JP SMS] 4. Login API 응답 (기존 회원):', loginResult);
+      } catch (err: any) {
+        // 401 오류 = 신규 회원 (DB에 계정 없음)
+        if (err?.status === 401) {
+          console.log('[JP SMS] 4. 401 응답 → 신규 회원으로 처리');
+          loginResult = {
+            accessToken: '',
+            refreshToken: '',
+            tokenType: 'Bearer',
+            expiresIn: 0,
+            roles: [],
+            isNewUser: true,
+          };
+        } else {
+          // 다른 오류는 그대로 throw
+          throw err;
+        }
+      }
+
+      console.log('[JP SMS] 5. processLoginResult 시작');
       await processLoginResult(loginResult);
+      console.log('[JP SMS] 6. processLoginResult 완료');
 
       stopTimer();
     } catch (err) {
+      console.error('[JP SMS] ❌ 에러 발생:', err);
+      console.error('[JP SMS] ❌ 에러 상세:', {
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      });
+
       const errorMessage =
         err instanceof Error ? err.message : '認証コードが正しくありません';
       setError(errorMessage);
