@@ -1,4 +1,5 @@
 import type { ILiked, LikedMe } from '../../like/type/like';
+import { useTranslation } from 'react-i18next';
 
 export const likedMeMock = (gender: 'FEMALE' | 'MALE'): LikedMe[] => {
 	return [
@@ -20,6 +21,7 @@ export const likedMeMock = (gender: 'FEMALE' | 'MALE'): LikedMe[] => {
 			deletedAt: null,
 			connectionId: 'conn_001',
 			isMutualLike: true,
+			letter: null,
 		},
 	];
 };
@@ -42,6 +44,7 @@ export const mockLikedMe = (gender: 'FEMALE' | 'MALE'): LikedMe => ({
 	connectionId: 'conn_001',
 	isMutualLike: false,
 	deletedAt: null,
+	letter: null,
 });
 
 export const mockILiked = (gender: 'FEMALE' | 'MALE'): ILiked => ({
@@ -62,6 +65,7 @@ export const mockILiked = (gender: 'FEMALE' | 'MALE'): ILiked => ({
 	connectionId: 'conn_102',
 	isMutualLike: false,
 	deletedAt: null,
+	letter: null,
 });
 
 function getFutureDate(hoursToAdd: number) {

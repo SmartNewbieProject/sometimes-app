@@ -79,10 +79,12 @@ export interface PreferenceOption {
 	id: string;
 	displayName: string;
 	imageUrl?: string | null;
+	key?: string;  // NEW! 영어 ID (예: "SAME_AGE", "YOUNGER")
 }
 
 export interface PreferenceTypeGroup {
 	typeName: string;
+	typeKey?: string;  // NEW! 영어 ID (예: "AGE_PREFERENCE")
 	selectedOptions: PreferenceOption[];
 }
 

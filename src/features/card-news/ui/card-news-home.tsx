@@ -20,12 +20,14 @@ import { CardNewsList } from "./card-news-list";
 import { useCardNewsAnalytics } from "../hooks";
 import { useCardNewsHighlights, useCardNewsInfiniteList } from "../queries";
 import type { CardNewsHighlight, CardNewsListItem } from "../types";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   onNavigateToNotice?: () => void;
 };
 
 export function CardNewsHome({ onNavigateToNotice }: Props) {
+  const { t } = useTranslation();
   const analytics = useCardNewsAnalytics();
   const { data: highlights } = useCardNewsHighlights();
   const { items: listItems } = useCardNewsInfiniteList(10);
@@ -64,9 +66,9 @@ export function CardNewsHome({ onNavigateToNotice }: Props) {
         activeOpacity={0.8}
       >
         <View style={styles.faqContent}>
-          <Text style={styles.faqTitle}>자주 묻는 질문</Text>
+          <Text style={styles.faqTitle}>{t("features.card-news.home.faq_title")}</Text>
           <Text style={styles.faqDescription}>
-            궁금한 점이 있으신가요? FAQ를 확인해보세요!
+            {t("features.card-news.home.faq_description")}
           </Text>
         </View>
         <IconWrapper>
@@ -86,7 +88,7 @@ export function CardNewsHome({ onNavigateToNotice }: Props) {
             source={require("@/assets/images/loudspeaker.png")}
             style={styles.noticeLinkIcon}
           />
-          <Text style={styles.noticeLinkText}>기존 공지사항 보기</Text>
+          <Text style={styles.noticeLinkText}>{t("features.card-news.home.notice_link")}</Text>
           <View style={styles.mlAuto}>
             <IconWrapper>
               <VectorIcon width={9} height={12} color="black" />

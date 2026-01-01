@@ -23,6 +23,7 @@ import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useCardNewsDetail, useCardNewsReward } from "../queries";
 import { useToast } from "@/src/shared/hooks/use-toast";
 import type { CardSection } from "../types";
+import { useTranslation } from "react-i18next";
 
 const URL_REGEX = /(https?:\/\/[^\s<\]]+)/g;
 
@@ -90,6 +91,7 @@ type Props = {
 };
 
 export function CardNewsViewer({ cardNewsId, onClose }: Props) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasClaimedReward, setHasClaimedReward] = useState(false);
@@ -132,15 +134,15 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
         setHasClaimedReward(true);
         if (response.success && response.reward) {
           emitToast(
-            `구슬 ${response.reward.gems}개 획득!`,
+            t("features.card-news.viewer.reward_success_toast", { count: response.reward.gems }),
             <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: semanticColors.brand.primary }} />
           );
         } else if (response.alreadyRewarded) {
-          emitToast("이미 보상을 받으셨어요", undefined);
+          emitToast(t("features.card-news.viewer.reward_already"), undefined);
         }
       },
       onError: () => {
-        emitToast("보상 요청에 실패했어요. 다시 시도해주세요.", undefined);
+        emitToast(t("features.card-news.viewer.reward_error"), undefined);
       },
     });
   }, [cardNewsId, hasClaimedReward, isClaimingReward, claimReward, emitToast]);
@@ -206,7 +208,7 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
             >
               <Text style={styles.backIcon}>←</Text>
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>새로운 소식</Text>
+            <Text style={styles.headerTitle}>{t("features.card-news.viewer.header_title")}</Text>
             <View style={styles.headerSpacer} />
           </View>
 
@@ -259,7 +261,7 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
                 />
                 <View style={styles.pageIndicator}>
                   <Text style={styles.pageText}>
-                    {isLastCard ? " " : `${totalCards - currentIndex - 1}장 남았어요!`}
+                    {isLastCard ? " " : t("features.card-news.viewer.cards_remaining", { count: totalCards - currentIndex - 1 })}
                   </Text>
                 </View>
                 <AnimatedArrow

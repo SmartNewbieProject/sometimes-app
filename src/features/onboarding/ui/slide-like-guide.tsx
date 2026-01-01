@@ -69,17 +69,17 @@ export const SlideLikeGuide: SlideComponent = () => {
             <MockProfileCard
               image={mockGirlImage}
               age={23}
-              university="부산대"
+              university={t("ui.부산대")}
               universityLogo={pnuLogo}
-              keywords={['다정한', 'ENFP']}
+              keywords={[t("ui.다정한"), 'ENFP']}
               style={styles.leftCard}
             />
             <MockProfileCard
               image={mockManImage}
               age={25}
-              university="동의대"
+              university={t("ui.동의대")}
               universityLogo={deuLogo}
-              keywords={['유머있는', 'ENTP']}
+              keywords={[t("ui.유머있는"), 'ENTP']}
               style={styles.rightCard}
             />
           </View>

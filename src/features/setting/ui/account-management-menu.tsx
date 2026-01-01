@@ -15,7 +15,7 @@ const AccountManagementMenu = () => {
 
   const options = [
     {
-      text: "로그아웃",
+      text: t("features.setting.ui.menu.logout"),
 
       onClick: () =>
         showModal({
@@ -30,22 +30,22 @@ const AccountManagementMenu = () => {
                 width: "100%",
               }}
             >
-              <Text style={styles.modalTitleText}>로그아웃 하시겠습니까?</Text>
+              <Text style={styles.modalTitleText}>{t("features.setting.ui.logout_modal.title")}</Text>
             </View>
           ),
 
           children: (
             <View style={styles.modalContentContainer}>
               <Text style={styles.modalContentText}>
-                로그아웃 시 일부 기능을 사용할 수 없으며,
+                {t("features.setting.ui.logout_modal.description_1")}
               </Text>
               <Text style={styles.modalContentText}>
-                다시 로그인해야 합니다.
+                {t("features.setting.ui.logout_modal.description_2")}
               </Text>
             </View>
           ),
           primaryButton: {
-            text: "취소",
+            text: t("features.setting.ui.logout_modal.cancel"),
             onClick: () => {},
           },
           secondaryButton: {
@@ -69,26 +69,26 @@ const AccountManagementMenu = () => {
                 width: "100%",
               }}
             >
-              <Text style={styles.modalTitleText}>정말 탈퇴하시겠습니까?</Text>
+              <Text style={styles.modalTitleText}>{t("features.setting.ui.withdrawal_modal.title")}</Text>
             </View>
           ),
 
           children: (
             <View style={styles.modalContentContainer}>
               <Text style={styles.modalContentText}>
-                탈퇴할 시, 계정은 삭제되며
+                {t("features.setting.ui.withdrawal_modal.description_1")}
               </Text>
-              <Text style={styles.modalContentText}>복구되지 않습니다.</Text>
+              <Text style={styles.modalContentText}>{t("features.setting.ui.withdrawal_modal.description_2")}</Text>
             </View>
           ),
           primaryButton: {
-            text: "취소",
+            text: t("features.setting.ui.withdrawal_modal.cancel"),
             onClick: () => {
               accountEvents.trackAccountDeletionCancelled('user_cancelled');
             },
           },
           secondaryButton: {
-            text: "탈퇴",
+            text: t("features.setting.ui.withdrawal_modal.withdraw"),
             onClick: () => router.navigate("/my/withdrawal"),
           },
         }),

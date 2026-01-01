@@ -114,7 +114,7 @@ export const LikeButton = ({
               userAction: 'RETRY_LATER',
               recoverable: true,
               severity: 'MEDIUM',
-              serverMessage: error.message || '알 수 없는 오류'
+              serverMessage: error.message || t("ui.알_수_없는_오류")
             };
 
             trackMatchingFailure(connectionId!, failureReason);

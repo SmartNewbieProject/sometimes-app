@@ -28,12 +28,19 @@ export default function AnimatedLogoRow({
 
 		anim1.setValue(0);
 		Animated.loop(
-			Animated.timing(anim1, {
-				toValue: -width,
-				duration: 25000,
-				useNativeDriver: Platform.OS !== 'web',
-				easing: Easing.linear,
-			}),
+			Animated.sequence([
+				Animated.timing(anim1, {
+					toValue: -width,
+					duration: 25000,
+					useNativeDriver: Platform.OS !== 'web',
+					easing: Easing.linear,
+				}),
+				Animated.timing(anim1, {
+					toValue: 0,
+					duration: 0,
+					useNativeDriver: Platform.OS !== 'web',
+				}),
+			]),
 		).start();
 
 		return () => anim1.stopAnimation();
@@ -44,12 +51,19 @@ export default function AnimatedLogoRow({
 
 		anim2.setValue(-width);
 		Animated.loop(
-			Animated.timing(anim2, {
-				toValue: 0,
-				duration: 25000,
-				useNativeDriver: Platform.OS !== 'web',
-				easing: Easing.linear,
-			}),
+			Animated.sequence([
+				Animated.timing(anim2, {
+					toValue: 0,
+					duration: 25000,
+					useNativeDriver: Platform.OS !== 'web',
+					easing: Easing.linear,
+				}),
+				Animated.timing(anim2, {
+					toValue: -width,
+					duration: 0,
+					useNativeDriver: Platform.OS !== 'web',
+				}),
+			]),
 		).start();
 
 		return () => anim2.stopAnimation();

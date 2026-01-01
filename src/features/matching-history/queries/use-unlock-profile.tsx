@@ -26,8 +26,8 @@ export const useUnlockProfile = (matchId: string) => {
     onError: (err: { message?: string; errorCode?: string; status?: number }) => {
       console.log("err", err);
 
-      const isInsufficientGems = err.message?.includes("재화가 부족") ||
-                                 err.message?.includes("구슬이 부족") ||
+      const isInsufficientGems = err.message?.includes(t("common.재화가_부족")) ||
+                                 err.message?.includes(t("common.구슬이_부족")) ||
                                  err.message?.includes("insufficient");
 
       if (isInsufficientGems) {
@@ -37,7 +37,7 @@ export const useUnlockProfile = (matchId: string) => {
         return;
       }
 
-      showErrorModal(err.message || "오류가 발생했어요", "error");
+      showErrorModal(err.message || t("common.오류가_발생했어요"), "error");
       return;
     },
   });

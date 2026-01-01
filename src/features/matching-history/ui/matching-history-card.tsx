@@ -138,7 +138,7 @@ function MatchingHistoryCard({ item }: MatchingHistoryCardProps) {
             </View>
             <View style={styles.lastLoginBadge}>
               <Text textColor="white" weight="medium" size="10">
-                마지막 접속
+                {t("features.matching-history.ui.matching_history_card.last_login_label")}
               </Text>
               <Text textColor="white" weight="light" size="10">
                 {formatLastLogin(item.lastLogin)}

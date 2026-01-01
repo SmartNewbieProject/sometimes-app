@@ -8,10 +8,12 @@ import {
   deleteNotificationsBatch,
 } from '../apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useTranslation } from 'react-i18next';
 
 export const useMarkAsRead = () => {
   const queryClient = useQueryClient();
   const { showErrorModal } = useModal();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: markAsRead,
@@ -29,7 +31,7 @@ export const useMarkAsRead = () => {
         statusCode: error?.statusCode,
       });
 
-      const errorMessage = error?.message || error?.error || "알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      const errorMessage = error?.message || error?.error || t('apps.notification.index.error_mark_read');
       showErrorModal(errorMessage, 'error');
     },
   });
@@ -38,6 +40,7 @@ export const useMarkAsRead = () => {
 export const useMarkAllAsRead = () => {
   const queryClient = useQueryClient();
   const { showErrorModal } = useModal();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: markAllAsRead,
@@ -55,7 +58,7 @@ export const useMarkAllAsRead = () => {
         statusCode: error?.statusCode,
       });
 
-      const errorMessage = error?.message || error?.error || "전체 알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      const errorMessage = error?.message || error?.error || t('apps.notification.index.error_mark_all_read');
       showErrorModal(errorMessage, 'error');
     },
   });
@@ -64,6 +67,7 @@ export const useMarkAllAsRead = () => {
 export const useMarkAsReadBatch = () => {
   const queryClient = useQueryClient();
   const { showErrorModal } = useModal();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: markAsReadBatch,
@@ -81,7 +85,7 @@ export const useMarkAsReadBatch = () => {
         statusCode: error?.statusCode,
       });
 
-      const errorMessage = error?.message || error?.error || "선택한 알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      const errorMessage = error?.message || error?.error || t('apps.notification.index.error_mark_batch_read');
       showErrorModal(errorMessage, 'error');
     },
   });
@@ -90,6 +94,7 @@ export const useMarkAsReadBatch = () => {
 export const useDeleteNotification = () => {
   const queryClient = useQueryClient();
   const { showErrorModal } = useModal();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: deleteNotification,
@@ -107,7 +112,7 @@ export const useDeleteNotification = () => {
         statusCode: error?.statusCode,
       });
 
-      const errorMessage = error?.message || error?.error || "알림 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      const errorMessage = error?.message || error?.error || t('apps.notification.index.error_delete');
       showErrorModal(errorMessage, 'error');
     },
   });
@@ -116,6 +121,7 @@ export const useDeleteNotification = () => {
 export const useDeleteAllRead = () => {
   const queryClient = useQueryClient();
   const { showErrorModal } = useModal();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: deleteAllRead,
@@ -133,7 +139,7 @@ export const useDeleteAllRead = () => {
         statusCode: error?.statusCode,
       });
 
-      const errorMessage = error?.message || error?.error || "읽은 알림 전체 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      const errorMessage = error?.message || error?.error || t('apps.notification.index.error_delete_all_read');
       showErrorModal(errorMessage, 'error');
     },
   });
@@ -142,6 +148,7 @@ export const useDeleteAllRead = () => {
 export const useDeleteNotificationsBatch = () => {
   const queryClient = useQueryClient();
   const { showErrorModal } = useModal();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: deleteNotificationsBatch,
@@ -159,7 +166,7 @@ export const useDeleteNotificationsBatch = () => {
         statusCode: error?.statusCode,
       });
 
-      const errorMessage = error?.message || error?.error || "선택한 알림 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      const errorMessage = error?.message || error?.error || t('apps.notification.index.error_delete_batch');
       showErrorModal(errorMessage, 'error');
     },
   });

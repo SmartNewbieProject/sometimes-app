@@ -10,6 +10,7 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface GuideWithLayoutAnimationProps {
   lastStyle: StyleProp<ViewStyle>;
@@ -24,6 +25,7 @@ function GuideWithLayoutAnimation({
   isVisible,
   handleClose,
 }: GuideWithLayoutAnimationProps) {
+  const { t } = useTranslation();
   return (
     <Modal
       visible={isVisible}
@@ -33,11 +35,11 @@ function GuideWithLayoutAnimation({
     >
       <View style={styles.modalContainer}>
         <View style={styles.infoWrapper}>
-          <Text style={styles.infoTitle}>프로필을 매력적으로 보여주세요!</Text>
+          <Text style={styles.infoTitle}>{t("features.guide.ui.profile_guide.title")}</Text>
           <Text style={styles.infoDescription}>
-            사진을 업로드하고 계정을 공개로 설정하면
+            {t("features.guide.ui.profile_guide.description_line1")}
           </Text>
-          <Text style={styles.infoDescription}>매칭 확률이 더 높아져요</Text>
+          <Text style={styles.infoDescription}>{t("features.guide.ui.profile_guide.description_line2")}</Text>
           <Image
             source={require("@assets/images/instagram-some.png")}
             style={styles.instagramSomeImage}

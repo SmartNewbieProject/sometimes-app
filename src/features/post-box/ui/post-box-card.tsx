@@ -10,6 +10,7 @@ import type { UserProfile } from "@/src/types/user";
 import ChatIcon from "@assets/icons/chat.svg";
 import XIcon from "@assets/icons/x-icon.svg";
 import FillHeartIcon from "@assets/icons/fill-heart.svg";
+import { Feather } from "@expo/vector-icons";
 import { Text as CustomText } from "@/src/shared/ui/text";
 import { Image } from "expo-image";
 import { router, useRouter } from "expo-router";
@@ -44,6 +45,7 @@ interface PostBoxCardProps {
   deletedAt: string | null;
   type: "liked-me" | "i-liked";
   likeId?: string;
+  letter?: string | null;
 }
 
 function PostBoxCard({
@@ -63,6 +65,7 @@ function PostBoxCard({
   deletedAt,
   type,
   likeId,
+  letter,
 }: PostBoxCardProps) {
   const { t } = useTranslation();
   const opacity = useRef(new Animated.Value(1)).current;
@@ -74,7 +77,7 @@ function PostBoxCard({
       : status === "REJECTED"
       ? t("features.post-box.ui.card.status_messages.rejected")
       : status === "IN_CHAT"
-      ? "상대방과 대화중이에요"
+      ? t("features.post-box.ui.card.status_messages.in_chat")
       : t("features.post-box.ui.card.status_messages.waiting_response");
   const userWithdrawal = !!deletedAt;
 
@@ -85,7 +88,7 @@ function PostBoxCard({
       <InChatButton />
     ) : isExpired ? (
       <ILikedRejectedButton connectionId={connectionId} />
-    ) : status === "OPEN" && instagram ? (
+    ) : status === "OPEN" && isMutualLike ? (
       <LikedMeOpenButton matchId={matchId} likeId={likeId} />
     ) : type === "liked-me" ? (
       <LikedMePendingButton connectionId={connectionId} />
@@ -131,6 +134,16 @@ function PostBoxCard({
             <Text style={styles.age}>{t("features.post-box.apps.post_box.age_display", { age })}</Text>
           </View>
           <Text style={styles.university}>{universityName}</Text>
+          {letter && (
+            <View style={styles.letterContainer}>
+              <View style={styles.letterIconWrapper}>
+                <Feather name="mail" size={14} color="#A892D7" />
+              </View>
+              <Text style={styles.letterText} numberOfLines={2}>
+                {letter}
+              </Text>
+            </View>
+          )}
           <Show when={!userWithdrawal}>
             <Text
               style={[
@@ -293,12 +306,12 @@ export function LikedMeOpenButton({
         <View style={styles.modalContent}>
           <CustomText textColor="disabled" size="12">
             {profileDetails?.gender === "MALE"
-              ? `구슬 ${featureCosts?.CHAT_START}개로`
-              : "지금 바로"}
-            로 채팅방을 열 수 있어요.
+              ? t("features.post-box.ui.card.modal_texts.chat_start_cost_male", { cost: featureCosts?.CHAT_START })
+              : t("features.post-box.ui.card.modal_texts.chat_start_now")}
+            {t("features.post-box.ui.card.modal_texts.chat_start_suffix")}
           </CustomText>
           <CustomText textColor="disabled" size="12">
-            지금 바로 첫 메시지를 보내보세요!
+            {t("features.post-box.ui.card.modal_texts.send_first_message")}
           </CustomText>
         </View>
       ),
@@ -613,6 +626,26 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     width: "100%",
+  },
+  letterContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 6,
+    marginTop: 4,
+    marginBottom: 4,
+    paddingRight: 8,
+  },
+  letterIconWrapper: {
+    backgroundColor: "#F4F0FD",
+    borderRadius: 4,
+    padding: 3,
+    marginTop: 1,
+  },
+  letterText: {
+    flex: 1,
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#6B7280",
   },
 });
 

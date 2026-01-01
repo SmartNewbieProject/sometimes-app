@@ -17,6 +17,7 @@ import { useCardNewsInfiniteList } from "../queries";
 import { useCardNewsAnalytics } from "../hooks";
 import type { CardNewsListItem } from "../types";
 import dayUtils from "@/src/shared/libs/day";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   onPressItem: (item: CardNewsListItem) => void;
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
+  const { t } = useTranslation();
   const { items, isLoading, isLoadingMore, hasNextPage, loadMore, refetch } =
     useCardNewsInfiniteList(10);
   const analytics = useCardNewsAnalytics();
@@ -81,7 +83,7 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
             */}
           </View>
           <Text style={styles.meta}>
-            {dayUtils.formatRelativeTime(item.publishedAt)} • 조회 {item.readCount}
+            {dayUtils.formatRelativeTime(item.publishedAt)} • {t("features.card-news.list.views")} {item.readCount}
           </Text>
         </View>
       </TouchableOpacity>
@@ -100,7 +102,7 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
     if (!hasNextPage && items.length > 0) {
       return (
         <View style={styles.endMessage}>
-          <Text style={styles.endMessageText}>모든 소식을 확인했어요 🎉</Text>
+          <Text style={styles.endMessageText}>{t("features.card-news.list.end_message")}</Text>
         </View>
       );
     }
@@ -113,7 +115,7 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
         {ListHeaderComponent}
         {items.length > 0 && (
           <View style={styles.sectionHeader}>
-            <Text weight="bold" style={styles.sectionTitle}>지난 소식</Text>
+            <Text weight="bold" style={styles.sectionTitle}>{t("features.card-news.list.section_title")}</Text>
           </View>
         )}
       </>
@@ -126,14 +128,13 @@ export function CardNewsList({ onPressItem, ListHeaderComponent }: Props) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyEmoji}>🌱</Text>
-        <Text style={styles.emptyTitle}>첫 소식을 준비하고 있어요</Text>
+        <Text style={styles.emptyTitle}>{t("features.card-news.list.empty_title")}</Text>
         <Text style={styles.emptyDescription}>
-          썸타임 커뮤니티의 시작, 함께 만들어가요!{"\n"}
-          곧 흥미로운 이야기로 찾아뵐게요
+          {t("features.card-news.list.empty_description")}
         </Text>
       </View>
     );
-  }, [isLoading]);
+  }, [isLoading, t]);
 
   if (isLoading) {
     return (

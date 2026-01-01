@@ -1,43 +1,43 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { NavigationMenuItem } from "../types";
 import { devLogWithTag } from "@/src/shared/utils";
 
 export const useNavigationData = (): NavigationMenuItem[] => {
+  const { t } = useTranslation();
+
   const menuItems = useMemo<NavigationMenuItem[]>(
     () => [
       {
         id: "beginner-guide",
-        title: "썸타임이 처음이신가요?",
-        description: "나의 연애관을 알아가고, 연인을 찾도록 도와드립니다",
-        backgroundImageUrl: require("@/assets/images/info-miho.png"), // 임시 대체
+        title: "features.home.ui.navigation_menu.beginner_guide_title",
+        description: "features.home.ui.navigation_menu.beginner_guide_description",
+        backgroundImageUrl: require("@/assets/images/info-miho.png"),
         onPress: () => {
-          // TODO: 온보딩/가이드 페이지로 이동
           devLogWithTag('Navigation', 'TODO: onboarding');
         },
       },
       {
         id: "my-moment",
-        title: "나의 모먼트",
-        description: "썸타임에서 진행중인 이벤트를 확인하고 지금 상품을 받아가세요!",
-        backgroundImageUrl: require("@/assets/images/roulette.png"), // 임시 대체
+        title: "features.home.ui.navigation_menu.my_moment_title",
+        description: "features.home.ui.navigation_menu.my_moment_description",
+        backgroundImageUrl: require("@/assets/images/roulette.png"),
         onPress: () => {
-          // TODO: 이벤트/모먼트 페이지로 이동
           devLogWithTag('Navigation', 'TODO: events');
         },
       },
       {
         id: "activities",
-        title: "다양한 활동",
-        description: "나의 연애 성향을 분석해보세요!",
-        backgroundImageUrl: require("@/assets/images/interest-info.png"), // 임시 대체
+        title: "features.home.ui.navigation_menu.activities_title",
+        description: "features.home.ui.navigation_menu.activities_description",
+        backgroundImageUrl: require("@/assets/images/interest-info.png"),
         onPress: () => {
-          // TODO: 활동 메뉴 모달 또는 페이지로 이동
           devLogWithTag('Navigation', 'TODO: activities');
         },
       },
     ],
-    []
+    [t]
   );
 
   return menuItems;

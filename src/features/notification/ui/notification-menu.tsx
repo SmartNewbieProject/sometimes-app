@@ -4,6 +4,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text } from '@/src/shared/ui';
 import { useMarkAllAsRead, useDeleteAllRead } from '../queries/use-notification-mutations';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationMenuProps {
   visible: boolean;
@@ -11,25 +12,26 @@ interface NotificationMenuProps {
 }
 
 export const NotificationMenu: React.FC<NotificationMenuProps> = ({ visible, onClose }) => {
+  const { t } = useTranslation();
   const markAllAsReadMutation = useMarkAllAsRead();
   const deleteAllReadMutation = useDeleteAllRead();
   const { showModal } = useModal();
 
   const handleMarkAllAsRead = () => {
     showModal({
-      title: '모든 알림 읽기',
+      title: t('apps.notification.index.modal_mark_all_read_title'),
       children: (
-        <Text>모든 알림을 읽음 상태로 변경하시겠습니까?</Text>
+        <Text>{t('apps.notification.index.modal_mark_all_read_desc')}</Text>
       ),
       primaryButton: {
-        text: '확인',
+        text: t('apps.notification.index.modal_confirm'),
         onClick: () => {
           markAllAsReadMutation.mutate();
           onClose();
         },
       },
       secondaryButton: {
-        text: '취소',
+        text: t('apps.notification.index.modal_cancel'),
         onClick: () => {},
       },
     });
@@ -37,19 +39,19 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ visible, onC
 
   const handleDeleteAllRead = () => {
     showModal({
-      title: '읽은 알림 삭제',
+      title: t('apps.notification.index.modal_delete_all_read_title'),
       children: (
-        <Text>모든 읽은 알림을 삭제하시겠습니까?</Text>
+        <Text>{t('apps.notification.index.modal_delete_all_read_desc')}</Text>
       ),
       primaryButton: {
-        text: '확인',
+        text: t('apps.notification.index.modal_confirm'),
         onClick: () => {
           deleteAllReadMutation.mutate();
           onClose();
         },
       },
       secondaryButton: {
-        text: '취소',
+        text: t('apps.notification.index.modal_cancel'),
         onClick: () => {},
       },
     });
@@ -69,14 +71,14 @@ export const NotificationMenu: React.FC<NotificationMenuProps> = ({ visible, onC
           style={styles.menuItem}
           onPress={handleMarkAllAsRead}
         >
-          <Text style={styles.menuText}>모두 읽기</Text>
+          <Text style={styles.menuText}>{t('apps.notification.index.menu_mark_all_read')}</Text>
         </TouchableOpacity>
         <View style={styles.divider} />
         <TouchableOpacity
           style={styles.menuItem}
           onPress={handleDeleteAllRead}
         >
-          <Text style={styles.menuText}>읽은 알림 삭제</Text>
+          <Text style={styles.menuText}>{t('apps.notification.index.menu_delete_all_read')}</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationTabProps {
   activeTab: 'all' | 'unread' | 'read';
@@ -16,10 +17,11 @@ export const NotificationTab: React.FC<NotificationTabProps> = ({
   unreadCount,
   readCount,
 }) => {
+  const { t } = useTranslation();
   const tabs = [
-    { key: 'all', label: '전체', count: unreadCount + readCount },
-    { key: 'unread', label: '안읽음', count: unreadCount },
-    { key: 'read', label: '읽음', count: readCount },
+    { key: 'all', label: t('apps.notification.index.tab_all'), count: unreadCount + readCount },
+    { key: 'unread', label: t('apps.notification.index.tab_unread'), count: unreadCount },
+    { key: 'read', label: t('apps.notification.index.tab_read'), count: readCount },
   ] as const;
 
   return (

@@ -37,6 +37,7 @@ function useLikedMeQuery() {
         mixpanelAdapter.track(MIXPANEL_EVENTS.LIKE_RECEIVED, {
           source_profile_id: like.connectionId,
           timestamp: new Date().toISOString(),
+          tracking_source: 'client_polling', // 클라이언트 polling 구분
         });
       });
     }

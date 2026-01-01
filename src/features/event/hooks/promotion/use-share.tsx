@@ -6,7 +6,9 @@ import React, { useEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import useReferralCode from "./use-referral-code";
 import { useToast } from "@/src/shared/hooks/use-toast";
-import CopyIcon from "@assets/icons/toast/copy.svg"
+import CopyIcon from "@assets/icons/toast/copy.svg";
+import { useTranslation } from "react-i18next";
+
 declare global {
   interface Window {
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -18,7 +20,7 @@ declare global {
 const LINK = env.LINK;
 
 function useShare() {
-
+  const { t } = useTranslation();
   const { referralCode } = useReferralCode();
   const { emitToast } = useToast();
 
@@ -26,16 +28,16 @@ function useShare() {
      try {
        if (referralCode) {
         await Clipboard.setStringAsync(referralCode);
-        emitToast("초대 코드를 복사했어요", <CopyIcon />)
+        emitToast(t("features.event.hooks.use_share.code_copied"), <CopyIcon />)
 
        } else {
-         throw new Error("초대코드를 불러오는 중이에요")
+         throw new Error(t("features.event.hooks.use_share.loading_code"))
       }
-     
+
     } catch (error: any) {
        console.error(error);
-       emitToast(error?.message  ?? "초대 코드 복사 실패")
-    } 
+       emitToast(error?.message ?? t("features.event.hooks.use_share.code_copy_failed"))
+    }
   }
   
 
@@ -44,13 +46,13 @@ function useShare() {
       if (referralCode) {
         await Clipboard.setStringAsync(`${LINK}?invite-code=${referralCode}`);
       } else {
-        throw new Error("초대코드를 불러오는 중이에요")
+        throw new Error(t("features.event.hooks.use_share.loading_code"))
       }
-      emitToast("링크를 복사했어요", <CopyIcon />)
+      emitToast(t("features.event.hooks.use_share.link_copied"), <CopyIcon />)
     } catch (error:any) {
       console.error(error);
-         emitToast(error?.message  ?? "링크 복사 실패")
-    } 
+         emitToast(error?.message ?? t("features.event.hooks.use_share.link_copy_failed"))
+    }
   };
 
 

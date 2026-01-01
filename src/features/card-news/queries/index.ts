@@ -29,6 +29,7 @@ export const useCardNewsHighlights = () => {
     queryFn: getCardNewsHighlights,
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    placeholderData: (previousData) => previousData,
   });
 };
 

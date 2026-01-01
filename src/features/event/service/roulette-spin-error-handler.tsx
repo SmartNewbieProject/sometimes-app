@@ -1,5 +1,5 @@
 import { commonHandlers } from "@/src/shared/services/common-error-handler";
-
+import i18n from "@/src/shared/libs/i18n";
 import { Text } from "react-native";
 import type { ErrorHandler } from "../../../types/error-handler";
 
@@ -8,10 +8,10 @@ const handleDuplication: ErrorHandler = {
     // biome-ignore lint/style/noNonNullAssertion: <explanation>
     const errorMessage = error.message!;
     showModal({
-      title: "알림",
+      title: i18n.t("features.event.notification"),
       children: <Text>{errorMessage}</Text>,
       primaryButton: {
-        text: "확인",
+        text: i18n.t("confirm"),
         onClick: () => {},
       },
     });
@@ -22,10 +22,10 @@ const handleNotFound: ErrorHandler = {
   handle: (error, { router, showModal }) => {
     const errorMessage = error.message;
     showModal({
-      title: "알림",
+      title: i18n.t("features.event.notification"),
       children: <Text>{errorMessage}</Text>,
       primaryButton: {
-        text: "확인",
+        text: i18n.t("confirm"),
         onClick: () => {},
       },
     });

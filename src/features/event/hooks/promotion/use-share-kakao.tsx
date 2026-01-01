@@ -4,6 +4,7 @@ import { shareFeedTemplate } from "@react-native-kakao/share";
 import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import useReferralCode from "./use-referral-code";
+import { useTranslation } from "react-i18next";
 
 const KAKAO_JS_KEY = "2356db85eb35f5f941d0d66178e16b4e";
 
@@ -18,6 +19,7 @@ const SCRIPT = {
 function useShareKakao() {
   const { emitToast } = useToast();
   const { referralCode } = useReferralCode();
+  const { t } = useTranslation();
   const OS = Platform.OS;
   const [isKakaoReady, setIsKakaoReady] = useState(false);
 
@@ -25,9 +27,8 @@ function useShareKakao() {
 
   const TEMPLATE = {
     content: {
-      title: "🎉 친구 초대 이벤트 오픈!",
-      description:
-        "당신과 친구 모두에게 구슬 30개 지급 💜\n 이상형 매칭, 지금 바로 시작하세요!",
+      title: t("features.event.hooks.use_share_kakao.invite_title"),
+      description: t("features.event.hooks.use_share_kakao.invite_description"),
       imageUrl: getKakaoImage(),
       link: {
         mobileWebUrl: `${env.LINK}?invite-code=${inviteCode}`,
@@ -36,7 +37,7 @@ function useShareKakao() {
     },
     buttons: [
       {
-        title: "웹으로 이동",
+        title: t("features.event.hooks.use_share_kakao.button_web"),
         link: {
           mobileWebUrl: `${env.LINK}?invite-code=${inviteCode}`,
           webUrl: `${env.LINK}?invite-code=${inviteCode}`,
@@ -46,7 +47,7 @@ function useShareKakao() {
       ...(Platform.OS !== "web"
         ? [
             {
-              title: "앱으로 이동",
+              title: t("features.event.hooks.use_share_kakao.button_app"),
               link: {
                 androidExecutionParams: {
                   "invite-code": inviteCode,
@@ -86,14 +87,14 @@ function useShareKakao() {
         }
         setIsKakaoReady(true);
       } catch (error) {
-        console.error("카카오 SDK 초기화 실패:", error);
-        emitToast("카카오 SDK 초기화에 실패했어요");
+        console.error("Kakao SDK init failed:", error);
+        emitToast(t("features.event.hooks.use_share_kakao.sdk_init_failed"));
       }
     };
 
     script.onerror = (error) => {
-      console.error("카카오 SDK 로드 실패:", error);
-      emitToast("카카오 SDK 로드에 실패했어요");
+      console.error("Kakao SDK load failed:", error);
+      emitToast(t("features.event.hooks.use_share_kakao.sdk_load_failed"));
     };
 
     document.body.appendChild(script);
@@ -118,13 +119,13 @@ function useShareKakao() {
     }
 
     if (!isKakaoReady) {
-      emitToast("공유하기 기능을 불러오는 중입니다");
+      emitToast(t("features.event.hooks.use_share_kakao.share_loading"));
       return;
     }
 
     try {
       if (!window?.Kakao) {
-        emitToast("카카오가 준비되지 않았습니다");
+        emitToast(t("features.event.hooks.use_share_kakao.kakao_not_ready"));
         return;
       }
       console.log(window.Kakao);
@@ -134,8 +135,8 @@ function useShareKakao() {
         ...TEMPLATE,
       });
     } catch (error) {
-      console.error("카카오 공유 실패:", error);
-      emitToast("공유하기를 실패했어요");
+      console.error("Kakao share failed:", error);
+      emitToast(t("features.event.hooks.use_share_kakao.share_failed"));
     }
   };
 

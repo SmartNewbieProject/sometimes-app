@@ -13,11 +13,7 @@ type Review = {
   date: string;
 };
 
-interface ReviewSlideProps {
-  onScrollStateChange: (bool: boolean) => void;
-}
-
-export const ReviewSlide = ({ onScrollStateChange }: ReviewSlideProps) => {
+export const ReviewSlide = () => {
   return (
     <Slide
       autoPlayInterval={6000}
