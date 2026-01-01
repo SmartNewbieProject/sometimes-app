@@ -9,33 +9,38 @@ import Animated, {
     withTiming,
     Easing,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     imageUrl?: string;
 }
 
-const ANALYSIS_STEPS = [
-    {
-        text: "미호가 연결고리를 찾고 있어요!",
-        keywords: ["미호", "연결고리"]
-    },
-    {
-        text: "어떤 점이 통했는지 분석 중...",
-        keywords: []
-    },
-    {
-        text: "숨겨진 매력 포인트를 발견했어요!",
-        keywords: ["매력 포인트"]
-    },
-    {
-        text: "두 분이 연결된 이유를 알려드릴게요!",
-        keywords: ["이유"]
-    },
-];
-
 export default function MatchingAnalysis({ imageUrl }: Props) {
+    const { t } = useTranslation();
     const [stepIndex, setStepIndex] = useState(0);
     const scanPosition = useSharedValue(0);
+
+    const ANALYSIS_STEPS = [
+        {
+            text: t("features.match-reasons.ui.matching_analysis.steps.step1"),
+            keywords: [
+                t("features.match-reasons.ui.matching_analysis.keywords.miho"),
+                t("features.match-reasons.ui.matching_analysis.keywords.connection")
+            ]
+        },
+        {
+            text: t("features.match-reasons.ui.matching_analysis.steps.step2"),
+            keywords: []
+        },
+        {
+            text: t("features.match-reasons.ui.matching_analysis.steps.step3"),
+            keywords: [t("features.match-reasons.ui.matching_analysis.keywords.charm_point")]
+        },
+        {
+            text: t("features.match-reasons.ui.matching_analysis.steps.step4"),
+            keywords: [t("features.match-reasons.ui.matching_analysis.keywords.reason")]
+        },
+    ];
 
     useEffect(() => {
         console.log("MatchingAnalysis mounted");
@@ -72,8 +77,10 @@ export default function MatchingAnalysis({ imageUrl }: Props) {
                 <Animated.View style={[styles.scanLine, animatedStyle]} />
             </View>
             <Text style={styles.text}>
-                {ANALYSIS_STEPS[stepIndex].text.split(/(미호|연결고리|매력 포인트|이유)/).map((part, index) => {
-                    const isKeyword = ["미호", "연결고리", "매력 포인트", "이유"].includes(part);
+                {ANALYSIS_STEPS[stepIndex].text.split(
+                    new RegExp(`(${ANALYSIS_STEPS[stepIndex].keywords.join('|')})`)
+                ).map((part, index) => {
+                    const isKeyword = ANALYSIS_STEPS[stepIndex].keywords.includes(part);
                     return (
                         <Text
                             key={index}

@@ -4,6 +4,7 @@
  */
 
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { useTranslation } from 'react-i18next';
 
 export interface FailureReason {
   type: string;
@@ -50,7 +51,7 @@ export const determineFailureReason = (error: any): FailureReason => {
 
   // 403: 금지된 요청
   if (status === 403) {
-    if (message.includes('재매칭권이 없습니다') || message.includes('티켓이 없습니다')) {
+    if (message.includes("재매칭권이_없습니다") || message.includes("티켓이_없습니다")) {
       return {
         type: 'TICKET_INSUFFICIENT',
         category: 'PAYMENT',
@@ -62,7 +63,7 @@ export const determineFailureReason = (error: any): FailureReason => {
       };
     }
 
-    if (message.includes('유효하지 않은 매칭') || message.includes('유효하지 않습니다')) {
+    if (message.includes("유효하지_않은_매칭") || message.includes("유효하지_않습니다")) {
       return {
         type: 'INVALID_MATCH',
         category: 'PERMISSION',
@@ -87,7 +88,7 @@ export const determineFailureReason = (error: any): FailureReason => {
 
   // 409: 충돌 (중복 요청, 제한 사항)
   if (status === 409) {
-    if (message.includes('소통이 제한') || message.includes('제한되어 있습니다')) {
+    if (message.includes("소통이_제한") || message.includes("제한되어_있습니다")) {
       return {
         type: 'COMMUNICATION_RESTRICTED',
         category: 'USAGE',
@@ -101,7 +102,7 @@ export const determineFailureReason = (error: any): FailureReason => {
       };
     }
 
-    if (message.includes('이미 좋아요를 보냈습니다') || message.includes('이미 처리')) {
+    if (message.includes("이미_좋아요를_보냈습니다") || message.includes("이미_처리")) {
       return {
         type: 'DUPLICATE_LIKE',
         category: 'USAGE',
@@ -126,7 +127,7 @@ export const determineFailureReason = (error: any): FailureReason => {
 
   // 400: 잘못된 요청
   if (status === 400) {
-    if (message.includes('상대방이 좋아요를 하지 않았습니다')) {
+    if (message.includes("상대방이_좋아요를_하지_않았습니다")) {
       return {
         type: 'MUTUAL_LIKE_REQUIRED',
         category: 'USAGE',
@@ -138,7 +139,7 @@ export const determineFailureReason = (error: any): FailureReason => {
       };
     }
 
-    if (message.includes('잘못된 버전') || message.includes('버전')) {
+    if (message.includes("잘못된_버전") || message.includes("버전")) {
       return {
         type: 'APP_VERSION_MISMATCH',
         category: 'SYSTEM',
@@ -163,7 +164,7 @@ export const determineFailureReason = (error: any): FailureReason => {
 
   // 404: 리소스를 찾을 수 없음
   if (status === 404) {
-    if (message.includes('매칭 연결을 찾을 수 없습니다') || message.includes('매칭을 찾을 수 없습니다')) {
+    if (message.includes("매칭_연결을_찾을_수_없습니다") || message.includes("매칭을_찾을_수_없습니다")) {
       return {
         type: 'MATCH_NOT_FOUND',
         category: 'SYSTEM',
@@ -175,7 +176,7 @@ export const determineFailureReason = (error: any): FailureReason => {
       };
     }
 
-    if (message.includes('대상 사용자를 찾을 수 없습니다') || message.includes('사용자를 찾을 수 없습니다')) {
+    if (message.includes("대상_사용자를_찾을_수_없습니다") || message.includes("사용자를_찾을_수_없습니다")) {
       return {
         type: 'USER_NOT_FOUND',
         category: 'SYSTEM',
@@ -226,6 +227,8 @@ export const determineFailureReason = (error: any): FailureReason => {
  * 실패 가능성 미리 예측
  */
 export const predictFailureLikelihood = (context: FailureContext) => {
+  const { t } = useTranslation();
+
   let failureRisk = 0;
   let primaryRisk = '';
   let preventable = false;
@@ -278,63 +281,63 @@ export const predictFailureLikelihood = (context: FailureContext) => {
 };
 
 /**
- * 예상되는 서버 메시지 반환
+ * 예상되는 서버 메시지 키 반환 (i18n)
  */
 const getPredictedServerMessage = (riskType: string) => {
-  const messageMap: Record<string, string> = {
-    'TICKET_INSUFFICIENT': '재매칭권이 없습니다',
-    'GEM_INSUFFICIENT': '구슬이 부족합니다',
-    'COMMUNICATION_RESTRICTED': '현재 상대방과 소통이 제한되어 있습니다',
-    'RATE_LIMIT': '과도한 요청입니다',
-    'NETWORK_ERROR': '네트워크 연결을 확인해주세요',
-    'APP_VERSION_MISMATCH': '잘못된 버전입니다',
-    'PEAK_TIME_PRESSURE': '현재 사용자가 많아 일시적으로 지연될 수 있습니다'
+  const messageKeyMap: Record<string, string> = {
+    'TICKET_INSUFFICIENT': 'features.matching.errors.server_messages.ticket_insufficient',
+    'GEM_INSUFFICIENT': 'features.matching.errors.server_messages.gem_insufficient',
+    'COMMUNICATION_RESTRICTED': 'features.matching.errors.server_messages.communication_restricted',
+    'RATE_LIMIT': 'features.matching.errors.server_messages.rate_limit',
+    'NETWORK_ERROR': 'features.matching.errors.server_messages.network_error',
+    'APP_VERSION_MISMATCH': 'features.matching.errors.server_messages.version_mismatch_alt',
+    'PEAK_TIME_PRESSURE': 'features.matching.errors.server_messages.peak_time'
   };
 
-  return messageMap[riskType] || '알 수 없는 오류가 발생했습니다';
+  return messageKeyMap[riskType] || 'features.matching.errors.server_messages.unknown_error';
 };
 
 /**
- * 실패 방지 조치 제안
+ * 실패 방지 조치 제안 (i18n 키 반환)
  */
 const getFailurePreventionActions = (riskType: string, _context: FailureContext) => {
-  const actions: Record<string, { action: string; message: string; button: string; priority: string }> = {
+  const actions: Record<string, { action: string; messageKey: string; buttonKey: string; priority: string }> = {
     'TICKET_INSUFFICIENT': {
       action: 'SHOW_TICKET_PURCHASE_MODAL',
-      message: '재매칭권이 필요합니다. 지금 구매하시겠어요?',
-      button: '재매칭권 구매',
+      messageKey: 'features.matching.errors.prevention_actions.ticket_insufficient.message',
+      buttonKey: 'features.matching.errors.prevention_actions.ticket_insufficient.button',
       priority: 'HIGH'
     },
     'GEM_INSUFFICIENT': {
       action: 'SHOW_GEM_PURCHASE_MODAL',
-      message: '구슬이 부족합니다. 구슬을 충전하고 다시 시도해주세요.',
-      button: '구슬 구매',
+      messageKey: 'features.matching.errors.prevention_actions.gem_insufficient.message',
+      buttonKey: 'features.matching.errors.prevention_actions.gem_insufficient.button',
       priority: 'HIGH'
     },
     'COMMUNICATION_RESTRICTED': {
       action: 'SHOW_RESTRICTION_INFO',
-      message: '소통 제한 시간입니다. 잠시 기다려주세요.',
-      button: '제한 시간 확인',
+      messageKey: 'features.matching.errors.prevention_actions.communication_restricted.message',
+      buttonKey: 'features.matching.errors.prevention_actions.communication_restricted.button',
       priority: 'MEDIUM'
     },
     'RATE_LIMIT': {
       action: 'SHOW_COOLDOWN_INFO',
-      message: '요청이 너무 빠릅니다. 잠시 후 다시 시도해주세요.',
-      button: '잠시 후 재시도',
+      messageKey: 'features.matching.errors.prevention_actions.rate_limit.message',
+      buttonKey: 'features.matching.errors.prevention_actions.rate_limit.button',
       priority: 'LOW'
     },
     'PEAK_TIME_PRESSURE': {
       action: 'SHOW_PEAK_TIME_WARNING',
-      message: '지금 사용자가 많아 지연될 수 있습니다.',
-      button: '계속 진행',
+      messageKey: 'features.matching.errors.prevention_actions.peak_time.message',
+      buttonKey: 'features.matching.errors.prevention_actions.peak_time.button',
       priority: 'LOW'
     }
   };
 
   return actions[riskType] || {
     action: 'SHOW_RETRY_MODAL',
-    message: '오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-    button: '재시도',
+    messageKey: 'features.matching.errors.prevention_actions.default.message',
+    buttonKey: 'features.matching.errors.prevention_actions.default.button',
     priority: 'MEDIUM'
   };
 };

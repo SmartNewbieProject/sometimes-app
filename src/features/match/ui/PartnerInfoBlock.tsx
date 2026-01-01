@@ -6,6 +6,9 @@ import { ImageResource, Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { StyleSheet, View } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import { useTranslation } from "react-i18next";
+import { MBTICard } from "@/src/widgets/mbti-card";
+import type { MBTIType } from "@/src/widgets/mbti-card";
 
 
 interface PartnerInfoBlockProps {
@@ -13,32 +16,33 @@ interface PartnerInfoBlockProps {
 }
 
 export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
+    const { t } = useTranslation();
     const basicInfoItems = [
         {
             icon: ImageResources.BEER,
             label:
-                parser.getSingleOption("음주 선호도", partner.characteristics) ??
-                "정보 없음",
+                parser.getSingleOption(t("ui.음주_선호도"), partner.characteristics) ??
+                t("features.match.ui.partner_info_block.no_info"),
         },
         {
             icon: ImageResources.SMOKE,
             label:
-                parser.getSingleOption("흡연 선호도", partner.characteristics) ??
-                "정보 없음",
+                parser.getSingleOption(t("ui.흡연_선호도"), partner.characteristics) ??
+                t("features.match.ui.partner_info_block.no_info"),
         },
         {
             icon: ImageResources.TATOO,
-            prefix: "문신 : ",
+            prefix: t("features.match.ui.partner_info_block.tattoo_prefix"),
             label:
-                parser.getSingleOption("문신 선호도", partner.characteristics) ??
-                "정보 없음",
+                parser.getSingleOption(t("ui.문신_선호도"), partner.characteristics) ??
+                t("features.match.ui.partner_info_block.no_info"),
         },
         {
             icon: ImageResources.AGE,
-            prefix: "선호 연령 : ",
+            prefix: t("features.match.ui.partner_info_block.preferred_age_prefix"),
             label:
-                parser.getSingleOption("선호 나이대", partner.preferences) ??
-                "상관없음",
+                parser.getSingleOption(t("ui.선호_나이대"), partner.preferences) ??
+                t("features.match.ui.partner_info_block.doesnt_matter"),
         },
     ];
 
@@ -46,8 +50,8 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
         basicInfoItems.push({
             icon: ImageResources.ARMY,
             label:
-                parser.getSingleOption("군필 여부", partner.characteristics) ??
-                "정보 없음",
+                parser.getSingleOption(t("ui.군필_여부"), partner.characteristics) ??
+                t("features.match.ui.partner_info_block.no_info"),
         });
     }
 
@@ -57,7 +61,7 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
                 textColor="muted"
                 style={styles.title}
             >
-                기본 정보
+                {t("features.match.ui.partner_info_block.basic_info_title")}
             </Text>
             <View
                 style={[styles.infoCard, { backgroundColor: semanticColors.surface.surface }]}
@@ -90,14 +94,16 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
 };
 
 export const PartnerMBTI = ({ partner }: PartnerInfoBlockProps) => {
+    if (!partner.mbti) {
+        return null;
+    }
+
     return (
         <View style={styles.mbtiContainer}>
-            <View style={styles.mbtiImageContainer}>
-                <ImageResource
-                    resource={ImageResources[partner.mbti as keyof typeof ImageResources]}
-                    style={styles.mbtiImage}
-                />
-            </View>
+            <MBTICard
+                mbti={partner.mbti as MBTIType}
+                showCompatibility={true}
+            />
         </View>
     );
 };
@@ -133,13 +139,5 @@ const styles = StyleSheet.create({
     mbtiContainer: {
         paddingHorizontal: 20,
         paddingBottom: 24,
-    },
-    mbtiImageContainer: {
-        width: '100%',
-        aspectRatio: 280 / 160,
-    },
-    mbtiImage: {
-        width: '100%',
-        height: '100%',
     },
 });

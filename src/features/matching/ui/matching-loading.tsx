@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import colors from '@/src/shared/constants/colors';
+import { useTranslation } from 'react-i18next';
 
 interface MatchingLoadingProps {
 	message: string;
@@ -9,14 +10,16 @@ interface MatchingLoadingProps {
 
 export const MatchingLoading: React.FC<MatchingLoadingProps> = ({
 	message,
-	description = '잠시만 기다려주세요...',
+	description,
 }) => {
+	const { t } = useTranslation();
+	const defaultDescription = description || t('features.matching.ui.loading.default_message');
 	return (
 		<View style={styles.container}>
 			<ActivityIndicator size="large" color={colors.brand.primary} />
 			<View style={styles.textContainer}>
 				<Text style={styles.message}>{message}</Text>
-				<Text style={styles.description}>{description}</Text>
+				<Text style={styles.description}>{defaultDescription}</Text>
 			</View>
 		</View>
 	);

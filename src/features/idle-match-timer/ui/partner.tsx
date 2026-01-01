@@ -74,7 +74,7 @@ export const Partner = ({ match }: PartnerProps) => {
   };
 
   const datingStyle = partner?.characteristics?.find(
-    (char) => char.typeName === "연애 스타일"
+    (char) => char.typeName === t("ui.연애_스타일")
   )?.selectedOptions?.slice(0, 2);
 
   return (
@@ -96,7 +96,7 @@ export const Partner = ({ match }: PartnerProps) => {
 
       <View style={styles.infoContainer}>
         <Text textColor="white" weight="bold" size="xl">
-          만 {partner?.age}세
+          {t("features.idle-match-timer.ui.partner.age_prefix", { age: partner?.age })}
         </Text>
 
         <View style={styles.tagsRow}>
@@ -139,7 +139,7 @@ export const Partner = ({ match }: PartnerProps) => {
 
         <View style={styles.lastAccessBadge}>
           <Text textColor="white" weight="medium" size="sm">
-            마지막 접속
+            {t("features.idle-match-timer.ui.partner.last_access")}
           </Text>
           <Text textColor="white" weight="light" size="sm">
             {formatLastLogin(partner?.updatedAt)}

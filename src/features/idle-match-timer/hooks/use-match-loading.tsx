@@ -13,15 +13,15 @@ export const useMatchLoading = create<StoreStates>((set) => ({
   loading: false,
   rematchingLoading: false,
   onLoading: () => {
-    devLogWithTag('로딩', 'Start');
+    devLogWithTag("로딩", 'Start');
     set({ loading: true, rematchingLoading: true });
   },
   finishLoading: () => {
-    devLogWithTag('로딩', 'Finish');
+    devLogWithTag("로딩", 'Finish');
     set({ loading: false });
   },
   finishRematching: () => {
-    devLogWithTag('로딩', 'Rematch finish');
+    devLogWithTag("로딩", 'Rematch finish');
     set({ rematchingLoading: false });
   },
 }));

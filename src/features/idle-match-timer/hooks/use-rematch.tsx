@@ -18,9 +18,11 @@ import {
 import { logError } from "@/src/shared/utils";
 import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 
+const REMATCH_TIMEOUT = 30000;
+
 const useRematchingMutation = () =>
   useMutation<RematchResponseV3>({
-    mutationFn: () => axiosClient.post("/v3/matching/rematch"),
+    mutationFn: () => axiosClient.post("/v3/matching/rematch", {}, { timeout: REMATCH_TIMEOUT }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["latest-matching-v2"] });
       await queryClient.refetchQueries({ queryKey: ["latest-matching-v2"] });
@@ -61,7 +63,7 @@ function useRematch() {
     finishRematching();
 
     showErrorModal(
-      externalMatchError.message || "확장 매칭 중 오류가 발생했습니다",
+      externalMatchError.message || t("features.idle-match-timer.hooks.use-rematch.expansion_matching_error"),
       "error"
     );
   }, [externalMatchError, finishLoading, finishRematching, showErrorModal]);
@@ -91,7 +93,7 @@ function useRematch() {
           logError('[외부 매칭] Error:', error);
           finishLoading();
           finishRematching();
-          const errorMessage = error instanceof Error ? error.message : "확장 매칭 중 오류가 발생했습니다";
+          const errorMessage = error instanceof Error ? error.message : t("features.idle-match-timer.hooks.use-rematch.expansion_matching_error");
           showErrorModal(errorMessage, "error");
         }
       },
@@ -134,13 +136,19 @@ function useRematch() {
           if (expansionSuggestion.available) {
             handleShowExpansionModal(expansionSuggestion);
           } else {
-            showErrorModal("현재 매칭 가능한 상대가 없습니다", "announcement");
+            showErrorModal(
+              t("features.idle-match-timer.hooks.use-rematch.no_available_match"),
+              "announcement"
+            );
           }
           return;
         }
 
         // 기타 에러
-        showErrorModal(err.message || "매칭 중 오류가 발생했습니다", "error");
+        showErrorModal(
+          err.message || t("features.idle-match-timer.hooks.use-rematch.matching_error"),
+          "error"
+        );
       }
     );
   };
