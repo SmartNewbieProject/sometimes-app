@@ -2,12 +2,13 @@ import { IconWrapper } from "@/src/shared/ui/icons";
 import { Text } from "@/src/shared/ui/text";
 import { Image } from "expo-image";
 import { router, usePathname } from "expo-router";
-import React, { type ReactNode } from "react";
+import React, { type ReactNode, useCallback } from "react";
 import { StyleSheet, TouchableOpacity, View, Text as RNText } from "react-native";
 import colors from "@/src/shared/constants/colors";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { useMomentEnabled } from "@/src/features/moment/queries/use-moment-enabled";
 import { useUnreadChatCount } from "@/src/features/chat/hooks/use-unread-chat-count";
+import { useAppInstallPrompt } from "@/src/features/app-install-prompt";
 
 import CommunitySelected from "@/assets/icons/nav/community-selected.svg";
 import CommunityUnselected from "@/assets/icons/nav/community-unselected.svg";
@@ -106,22 +107,27 @@ export function BottomNavigation() {
   const pathname = usePathname();
   const { data: momentEnabled } = useMomentEnabled();
   const unreadChatCount = useUnreadChatCount();
+  const { incrementNavClickCount, showPromptForNavClick } = useAppInstallPrompt();
 
   const canAccessMoment = momentEnabled?.enabled ?? false;
 
   const isActive = (path: string) => {
-    // 썸메이트 경로인 경우 모먼트 탭 활성화
     if (pathname.includes('/chat/somemate')) {
       return path === '/moment';
     }
     return pathname.startsWith(path);
   };
 
-  const handleNavClick = (path: string) => {
+  const handleNavClick = useCallback(async (path: string) => {
     if (isActive(path)) return;
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+
+    const shouldShowPrompt = await incrementNavClickCount();
+    if (shouldShowPrompt) {
+      await showPromptForNavClick();
+    }
+
     router.push(path as any);
-  };
+  }, [incrementNavClickCount, showPromptForNavClick]);
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>

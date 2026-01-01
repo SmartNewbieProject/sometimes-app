@@ -41,8 +41,7 @@ export function renderImage(value: string | null, isPlaceHolder?: boolean) {
   );
 }
 
-export function renderPlaceholder() {
-  const { t } = useTranslation();
+export function renderPlaceholder(t: (key: string) => string) {
   return (
     <View style={styles.placeholderWrapper}>
       <View style={styles.placeholderContent}>
@@ -67,6 +66,7 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
   actionLabel = undefined,
   skipCompression = false,
 }, ref) => {
+  const { t } = useTranslation();
   const [isImageModal, setImageModal] = useState(false);
   const handlePress = async () => {
     setImageModal(true);
@@ -91,9 +91,9 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
     if (status !== "granted") {
       devLogWithTag('ImageSelector', 'Permission denied');
       Alert.alert("권한 필요", "사진을 가져오기 위해서는 권한이 필요합니다.", [
-        { text: "설정 열기", onPress: () => Linking.openSettings() },
+        { text: t("common.설정_열기"), onPress: () => Linking.openSettings() },
         {
-          text: "닫기",
+          text: t("common.닫기"),
         },
       ]);
       setImageModal(false);
@@ -131,7 +131,7 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
         try {
           devLogWithTag('ImageSelector', 'Starting compression...');
           showModal({
-            custom: () => <LoadingModal message="이미지를 최적화하고 있어요..." />,
+            custom: () => <LoadingModal message={t("common.이미지를_최적화하고_있어요")} />,
           });
 
           const compressed = await compressImage(jpegUri, PROFILE_IMAGE_CONFIG);
@@ -140,7 +140,7 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
 
           hideModal();
         } catch (error) {
-          devWarn('이미지 압축 실패, 원본 사용:', error);
+          devWarn(t("common.이미지_압축_실패_원본_사용"), error);
           hideModal();
         }
       }
@@ -169,9 +169,9 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
     if (status !== "granted") {
       devLogWithTag('ImageSelector', 'Camera permission denied');
       Alert.alert("권한 필요", "카메라 사용을 위해서 권한이 필요합니다", [
-        { text: "설정 열기", onPress: () => Linking.openSettings() },
+        { text: t("common.설정_열기"), onPress: () => Linking.openSettings() },
         {
-          text: "닫기",
+          text: t("common.닫기"),
         },
       ]);
       setImageModal(false);
@@ -214,7 +214,7 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
         try {
           devLogWithTag('ImageSelector', 'Starting compression (camera)...');
           showModal({
-            custom: () => <LoadingModal message="이미지를 최적화하고 있어요..." />,
+            custom: () => <LoadingModal message={t("common.이미지를_최적화하고_있어요")} />,
           });
 
           const compressed = await compressImage(jpegUri, PROFILE_IMAGE_CONFIG);
@@ -223,7 +223,7 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
 
           hideModal();
         } catch (error) {
-          devWarn('이미지 압축 실패, 원본 사용:', error);
+          devWarn(t("common.이미지_압축_실패_원본_사용"), error);
           hideModal();
         }
       }
@@ -247,7 +247,7 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(({
           style={style}
           actionLabel={actionLabel}
           renderContent={renderImage}
-          renderPlaceholder={renderPlaceholder}
+          renderPlaceholder={() => renderPlaceholder(t)}
         />
       </Pressable>
       <PhotoPickerModal
