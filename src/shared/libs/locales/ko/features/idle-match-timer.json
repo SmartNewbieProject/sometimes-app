@@ -9,7 +9,7 @@
       "main_button": "더 찾아보기",
       "complete_button": "썸 보내기 완료!"
     },
-    "waiting":{
+    "waiting": {
       "title_1": "{{name}}님",
       "title_2": "이상형 매칭까지",
       "description_2": "남았어요",
@@ -17,8 +17,15 @@
       "previous_button": "이전 매칭",
       "previous_button_text": "이전 매칭"
     },
-    "partner":{
-      "button_more": "더보기"
+    "partner": {
+      "button_more": "더보기",
+      "age_prefix": "만 {{age}}세",
+      "last_access": "마지막 접속"
+    },
+    "pre-open": {
+      "title": "설레는 만남을 위해 준비 중이에요.",
+      "subtitle": "곧 다시 찾아올게요 💜",
+      "info": "썸타임은 매주 목·일 21시에 매칭이 시작돼요!"
     },
     "pending-approval": {
       "title": "프로필 심사 진행 중",
@@ -50,15 +57,16 @@
       },
       "edit-profile-button": "프로필 수정하기",
       "rejected-info": "프로필을 수정한 후 다시 심사를 요청할 수 있습니다.",
+      "change-profile-photo-button": "대표 사진 변경하러가기",
       "photo-rejection-title": "프로필 사진을 다시\n올려주세요",
       "photo-rejection-line1": "심사 과정에서 프로필 사진이 가이드에 맞지 않아 승인이 어려웠어요.",
       "photo-rejection-line2": "걱정 마세요! 바로 다시 올리면 빠르게 승인해드릴게요 ✨",
       "view-guidelines-button": "사진 업로드 가이드라인 확인하기"
     },
-    "find-partner":{
+    "find-partner": {
       "button_more": "더보기"
     },
-    "not-found":{
+    "not-found": {
       "faild_title": "매칭에 실패했어요",
       "faild_try": "새로운 매칭 시도",
       "look_around": "다른 프로필들을 둘러보세요",
@@ -82,15 +90,20 @@
     "error": {
       "highlight": "연결",
       "message": "이 불안정해요.\n잠시 후 다시 확인해 주세요."
-    }
+    },
+    "연애_스타일": "연애 스타일"
   },
-  "hooks":{
-    "use-rematch":{
+  "hooks": {
+    "use-rematch": {
       "charge": "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
       "no_recommend": "아직 추천드릴 상대가 없어요",
       "no_match": "지금은 조건에 맞는 상대가 잠시 없어요.",
       "retry_later": "곧 더 많은 분들이 참여할 예정이니, 잠시 후 다시 시도해 주세요!",
-      "no_rematch_ticket":"재매칭권이 없습니다."
-    }
+      "no_rematch_ticket": "재매칭권이 없습니다.",
+      "expansion_matching_error": "확장 매칭 중 오류가 발생했습니다",
+      "no_available_match": "현재 매칭 가능한 상대가 없습니다",
+      "matching_error": "매칭 중 오류가 발생했습니다"
+    },
+    "로딩": "로딩"
   }
 }

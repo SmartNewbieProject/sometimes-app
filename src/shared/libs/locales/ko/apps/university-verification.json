@@ -24,5 +24,10 @@
     "verification_complete": "대학 인증이 완료되었어요!",
     "find_ideal_type": "이제 당신의 이상형을 만나보게 만나보세요",
     "go_to_find_ideal_type": "이상형 찾으러 가기 →"
+  },
+  "idcard": {
+    "upload_success_title": "제출 완료",
+    "upload_success_message": "파일이 성공적으로 제출되었습니다.\n관리자 검토 후 승인됩니다.",
+    "upload_error": "업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
   }
 }

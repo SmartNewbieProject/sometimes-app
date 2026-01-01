@@ -1,0 +1,18 @@
+{
+  "ui": {
+    "matching_analysis": {
+      "steps": {
+        "step1": "미호가 연결고리를 찾고 있어요!",
+        "step2": "어떤 점이 통했는지 분석 중...",
+        "step3": "숨겨진 매력 포인트를 발견했어요!",
+        "step4": "두 분이 연결된 이유를 알려드릴게요!"
+      },
+      "keywords": {
+        "miho": "미호",
+        "connection": "연결고리",
+        "charm_point": "매력 포인트",
+        "reason": "이유"
+      }
+    }
+  }
+}

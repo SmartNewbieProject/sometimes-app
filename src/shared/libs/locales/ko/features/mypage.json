@@ -51,6 +51,8 @@
   "notification": {
     "title": "알림 설정",
     "push_notification": "푸시 알림",
+    "matching_complete": "매칭 완료 알림",
+    "event_notification": "이벤트 알림",
     "permission_required_title": "알림 권한 필요",
     "permission_required_message": "푸시 알림을 받으려면 설정에서 알림을 허용해주세요.",
     "open_settings": "설정 열기",
@@ -58,8 +60,9 @@
     "status_check_failed": "푸시 알림 상태 확인 실패:",
     "enable_failed": "푸시 알림 활성화 실패:",
     "disable_failed": "푸시 알림 비활성화 실패:",
-    "registration_required_title": "푸시 알림 등록 필요",
-    "registration_required_message": "푸시 알림은 모바일 기기에서만 등록할 수 있습니다.\n모바일 앱에서 먼저 알림을 허용해주세요.",
+    "registration_required_title": "잠깐, 알림이 꺼져 있어요",
+    "registration_required_message": "소중한 알림을 받으시려면\n휴대폰 설정에서 알림을 허용해주세요.",
+    "go_to_settings": "설정으로 이동",
     "activation_failed_title": "알림 활성화 실패",
     "deactivation_failed_title": "알림 비활성화 실패",
     "deactivation_failed_message": "푸시 알림 비활성화에 실패했습니다. 다시 시도해주세요.",
@@ -108,5 +111,16 @@
     "thank_you": "썸타임을 아껴주셔서 감사합니다",
     "feedback_request": "느끼셨던 점을 공유해주시면 더욱 좋은 서비스를 제공할 수 있도록 하겠습니다.",
     "leave_service": "서비스 떠나기"
+  },
+  "privacy": {
+    "title": "개인정보 보호",
+    "card_title": "안심하고 시작하기",
+    "card_description": "연락처에 있는 지인과 마주치지 않아요"
+  },
+  "profile": {
+    "student_number": "{{prefix}}학번"
+  },
+  "common": {
+    "게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
   }
 }

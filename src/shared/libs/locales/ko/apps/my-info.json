@@ -1,4 +1,20 @@
 {
+  "fields": {
+    "drinking": "음주",
+    "smoking": "흡연",
+    "tattoo": "문신",
+    "personality": "성격",
+    "dating_style": "데이트 스타일",
+    "interests": "관심사",
+    "mbti": "MBTI",
+    "military_status": "군필 여부"
+  },
+  "validation": {
+    "required_fields": "다음 정보를 입력해주세요: {{fields}}"
+  },
+  "errors": {
+    "profile_save_failed": "프로필 저장에 실패했습니다. 잠시 후 다시 시도해주세요."
+  },
   "dating_style": {
     "more": "{{count}} 개만 더!",
     "next": "다음으로",

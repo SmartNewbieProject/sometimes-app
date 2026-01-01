@@ -13,6 +13,19 @@
     "error_invalid_link_title": "알림 오류",
     "error_invalid_link_desc": "잘못된 알림 링크입니다.",
     "error_invalid_article_title": "알림 오류",
-    "error_invalid_article_desc": "유효하지 않은 게시글입니다."
+    "error_invalid_article_desc": "유효하지 않은 게시글입니다.",
+    "just_now": "방금 전",
+    "loading": "알림을 불러오는 중...",
+    "empty": "알림이 없습니다",
+    "loading_more": "더 불러오는 중...",
+    "tab_all": "전체",
+    "tab_unread": "안읽음",
+    "tab_read": "읽음",
+    "error_mark_read": "알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.",
+    "error_mark_all_read": "전체 알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.",
+    "error_mark_batch_read": "선택한 알림 읽음 처리에 실패했습니다. 잠시 후 다시 시도해주세요.",
+    "error_delete": "알림 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.",
+    "error_delete_all_read": "읽은 알림 전체 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.",
+    "error_delete_batch": "선택한 알림 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
   }
 }

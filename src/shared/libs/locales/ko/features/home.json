@@ -3,6 +3,14 @@
     "layout": {
       "loading_user_info": "사용자 정보를 확인하고 있어요..."
     },
+    "navigation_menu": {
+      "beginner_guide_title": "썸타임이 처음이신가요?",
+      "beginner_guide_description": "나의 연애관을 알아가고, 연인을 찾도록 도와드립니다",
+      "my_moment_title": "나의 모먼트",
+      "my_moment_description": "썸타임에서 진행중인 이벤트를 확인하고 지금 상품을 받아가세요!",
+      "activities_title": "다양한 활동",
+      "activities_description": "나의 연애 성향을 분석해보세요!"
+    },
     "banner_slide": {
       "loading_title": "몇 명이 매칭을 신청했을까요?"
     },
@@ -70,6 +78,19 @@
         "preference_info_description": "선호하는 성격, 취향, 음주 등",
         "preference_info_tooltip": "이상형 매칭을 위해 이상형 정보를 입력하세요!"
       }
+    },
+    "invite_banner": {
+      "title_1": "친구 초대하면,",
+      "title_2": "나도 친구도",
+      "reward": "30구슬",
+      "cta_button": "초대하러 가기"
+    },
+    "preference_modal": {
+      "title": "회원님의 이상형 정보가 없어요!",
+      "description_line1": "나에게 맞는 연인 매칭을 위해",
+      "description_line2": "회원님의 이상형 정보를 등록하시겠어요?",
+      "primary_button": "등록할게요!",
+      "secondary_button": "나중에 할게요"
     }
   }
 }

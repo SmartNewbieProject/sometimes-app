@@ -3,5 +3,9 @@
     "error_title": "오류가 발생했어요.",
     "announcement_title": "안내",
     "confirm_button": "네, 확인했어요"
+  },
+  "common": {
+    "오류가_발생했어요": "오류가 발생했어요.",
+    "안내": "안내"
   }
 }

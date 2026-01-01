@@ -3,11 +3,68 @@
     "use_chat_event": {
       "connected_status": "연결됨",
       "disconnected_status": "연결 끊김"
-    }
+    },
+    "지금_바로": "지금 바로",
+    "네_해볼래요": "네, 해볼래요",
+    "아니요": "아니요",
+    "취소": "취소",
+    "삭제": "삭제"
   },
   "ui": {
     "chat_screen": {
-      "date_format": "{{year}}년 {{month}}월 {{day}}일"
+      "date_format": "{{year}}년 {{month}}월 {{day}}일",
+      "today": "오늘",
+      "yesterday": "어제"
+    },
+    "input": {
+      "placeholder": "메세지를 입력하세요",
+      "placeholder_ended": "대화가 종료되었어요"
+    },
+    "search": {
+      "placeholder": "검색"
+    },
+    "tips_modal": {
+      "confirm_title_1": "대화 주제를 추천해드려요",
+      "confirm_title_2": "구슬 1개가 사용됩니다",
+      "confirm_desc_1": "AI가 프로필을 기반으로",
+      "confirm_desc_2": "대화 주제를 추천해드려요",
+      "confirm_button": "사용하기",
+      "cancel_button": "취소",
+      "header_title": "대화 주제 추천",
+      "ai_badge": "AI 추천",
+      "loading": "추천 질문을 불러오는 중...",
+      "refresh_button": "다시 추천받기",
+      "footer_text": "프로필과 이상형 정보를 기반으로 추천해요"
+    },
+    "connection_status": {
+      "disconnected": "연결이 끊겼습니다",
+      "connected": "연결됨",
+      "reconnecting_title": "다시 연결하고 있어요",
+      "reconnect_attempt": "재시도 {{attempt}}회",
+      "reconnect_countdown": "{{seconds}}초 후 다시 시도합니다",
+      "please_wait": "잠시만 기다려주세요"
+    },
+    "message": {
+      "send_failed": "전송 실패 · 탭하여 재전송",
+      "read": "읽음"
+    },
+    "gallery": {
+      "permission_required_title": "권한 필요",
+      "permission_required_message": "갤러리 접근 권한이 필요합니다.",
+      "permission_denied": "갤러리 접근 권한이 필요합니다",
+      "confirm": "확인",
+      "error_title": "오류",
+      "error_load_photos": "사진을 불러오는데 실패했습니다.",
+      "send_image_title": "이미지 전송",
+      "send_image_message": "선택하신 이미지를 전송하시겠어요?",
+      "send_button": "전송",
+      "cancel_button": "취소"
+    },
+    "camera": {
+      "permission_required_title": "권한 필요",
+      "permission_required_message": "카메라 사용을 위해서 권한이 필요합니다",
+      "open_settings": "설정 열기",
+      "close": "닫기"
     },
     "chat_room_list": {
       "no_chat_title": "아직 열린 채팅방이 없어요",
@@ -47,5 +104,37 @@
       "leave_chat": "채팅방 나가기",
       "close": "닫기"
     }
+  },
+  "services": {
+    "error_handlers": {
+      "auth_failed": "인증에 실패하였습니다..",
+      "insufficient_funds": "재화가 부족합니다",
+      "chat_room_not_found": "채팅방을 찾을 수 없습니다.",
+      "no_access_permission": "채팅방 접근 권한이 존재하지 않습니다.",
+      "notification": "알림",
+      "permission_error": "권한 오류",
+      "login": "로그인",
+      "go_to_purchase": "구매하러 가기",
+      "cancel": "취소",
+      "confirm": "확인",
+      "chat_already_exists": "이미 상대방과 채팅방이 개설되었습니다.",
+      "go_to_chat_list": "채팅 목록으로",
+      "general_error": "문제가 발생하였습니다."
+    },
+    "jp_identity": {
+      "verification_required_title": "本人確認が必要です",
+      "verification_required_message": "チャットを開始するには本人確認が必要です。\n本人確認を完了してください。",
+      "go_to_verification": "本人確認へ",
+      "later": "後で"
+    }
+  },
+  "common": {
+    "잘못된_요청입니다": "잘못된 요청입니다.",
+    "알림": "알림",
+    "확인": "확인",
+    "채팅방_접근_권한이_존재하지_않습니다": "채팅방 접근 권한이 존재하지 않습니다.",
+    "네트워크_연결을_확인해주세요": "네트워크 연결을 확인해주세요.",
+    "이미지_압축_실패_원본_사용": "이미지 압축 실패, 원본 사용:",
+    "안내": "안내"
   }
 }

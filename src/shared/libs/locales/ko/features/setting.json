@@ -8,6 +8,19 @@
     },
     "header": {
       "title": "설정"
+    },
+    "logout_modal": {
+      "title": "로그아웃 하시겠습니까?",
+      "description_1": "로그아웃 시 일부 기능을 사용할 수 없으며,",
+      "description_2": "다시 로그인해야 합니다.",
+      "cancel": "취소"
+    },
+    "withdrawal_modal": {
+      "title": "정말 탈퇴하시겠습니까?",
+      "description_1": "탈퇴할 시, 계정은 삭제되며",
+      "description_2": "복구되지 않습니다.",
+      "cancel": "취소",
+      "withdraw": "탈퇴"
     }
   },
   "withdrawal": {

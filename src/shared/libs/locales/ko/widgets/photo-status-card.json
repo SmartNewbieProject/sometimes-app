@@ -1,0 +1,8 @@
+{
+	"current_level": "현재 레벨 {{level}}",
+	"title_prefix": "상대방 사진을",
+	"photo_count": "{{count}}장까지",
+	"title_suffix": "볼 수 있어요",
+	"max_level_description": "모든 사진을 볼 수 있는 최고 레벨이에요!",
+	"description": "사진을 추가로 승인받으면 더 많은 사진을 볼 수 있어요!"
+}

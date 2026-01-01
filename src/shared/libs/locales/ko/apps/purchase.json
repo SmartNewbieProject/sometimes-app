@@ -1,9 +1,12 @@
 {
   "gem_store": {
+    "gem": "구슬",
+    "error_alert_title": "오류",
     "error_alert_message": "결제 처리 중 오류가 발생했습니다.",
     "payment_error_console": "결제 오류:",
     "payment_error_debug": "결제 오류 발생 시 새로운 orderId 생성:",
     "title": "구슬 구매",
+    "product_name": "구슬",
     "loading_gems": "젬 상품을 불러오는 중...",
     "failed_to_load_gems": "젬 상품을 불러오는데 실패했습니다."
   },

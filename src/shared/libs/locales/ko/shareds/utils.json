@@ -1,4 +1,15 @@
 {
+    "common": {
+        "confirm": "확인",
+        "cancel": "취소",
+        "close": "닫기",
+        "retry": "재시도",
+        "error": "오류",
+        "alert": "알림",
+        "loading": "처리 중입니다...",
+        "other": "기타",
+        "other_reason_placeholder": "기타 이유를 입력해주세요"
+    },
     "like": {
         "wrong_date_format": "올바른 날짜 형식이 아닙니다.",
         "message_expired": "이미 편지가 사라졌어요.",
@@ -7,5 +18,14 @@
         "remaining_text_2": "{{hours}}시간 {{minutes}}분",
         "remaining_text_3": "{{minutes}}분",
         "remaining_text_4": "{{seconds}}초"
+    },
+    "last_login": {
+        "just_now": "방금 전",
+        "hours_6": "6시간 전",
+        "hours_12": "12시간 전",
+        "day_1": "1일 전",
+        "day_2": "2일 전",
+        "day_3": "3일 전",
+        "more_than_3_days": "3일 이상"
     }
 }

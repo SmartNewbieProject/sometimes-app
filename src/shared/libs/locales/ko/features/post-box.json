@@ -10,7 +10,8 @@
         "liked_me_relative": "{{time}} 좋아요를 눌렀어요",
         "mutual_like": "서로 좋아요를 눌렀어요!",
         "rejected": "상대방이 거절했어요",
-        "waiting_response": "상대방의 응답을 기다리고 있어요"
+        "waiting_response": "상대방의 응답을 기다리고 있어요",
+        "in_chat": "상대방과 대화중이에요"
       },
       "buttons": {
         "ok": "괜찮아요",
@@ -26,7 +27,11 @@
         "start_instagram_subline1": "인스타그램을 통해",
         "start_instagram_subline2": "자연스럽게 대화를 시작해보세요",
         "bye_title": "이번엔 인연이 닿지 않았어요",
-        "bye_subline": "괜찮아요 더 멋진 만남이 곧 찾아올 거예요."
+        "bye_subline": "괜찮아요 더 멋진 만남이 곧 찾아올 거예요.",
+        "chat_start_cost_male": "구슬 {{cost}}개로",
+        "chat_start_now": "지금 바로",
+        "chat_start_suffix": "로 채팅방을 열 수 있어요.",
+        "send_first_message": "지금 바로 첫 메시지를 보내보세요!"
       },
       "withdrawn_text": "서비스를 탈퇴한 유저에요"
     }
@@ -36,6 +41,11 @@
       "age_display": "만 {{age}}세",
       "buttons": {
         "no": "아니요"
+      },
+      "empty_state": {
+        "no_some_received": "아직 도착한 썸이 없어요",
+        "no_some_sent": "아직 보낸 썸이 없어요",
+        "description": "좋아요를 보내 관심을 표현해 보세요"
       }
     }
   },

@@ -1,4 +1,9 @@
 {
+  "report": {
+    "errors": {
+      "submit_failed": "신고 접수에 실패했습니다. 잠시 후 다시 시도해주세요."
+    }
+  },
   "id": {
     "header_title": "커뮤니티",
     "dropdown_edit": "수정",
@@ -10,6 +15,7 @@
     "loading": "게시글을 불러오고 있어요"
   },
   "write": {
+    "default_type": "일반",
     "modal_short_title": "너무 짧아요",
     "modal_short_desc": "제목과 본문은 3자 이상으로 작성해주세요.",
     "modal_overflow_title": "글자수 초과",

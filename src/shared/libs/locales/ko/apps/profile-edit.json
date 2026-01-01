@@ -1,17 +1,40 @@
 {
-  "tabs": {
-    "profile": "나의 프로필",
-    "interest": "이상형"
-  },
-  "ui": {
-    "save_button": "저장",
-    "validation": {
-      "empty_form": "비어있는 양식이 존재합니다.",
-      "age_required": "나이 선호도를 선택해주세요",
-      "drinking_required": "음주 선호도를 선택해주세요",
-      "smoking_required": "흡연 선호도를 선택해주세요",
-      "personality_required": "성격 선호도를 3개 선택해주세요",
-      "tattoo_required": "타투 선호도를 선택해주세요"
-    }
-  }
+	"tabs": {
+		"profile": "나의 프로필",
+		"interest": "이상형"
+	},
+	"errors": {
+		"preference_save_failed": "선호 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요."
+	},
+	"profile": {
+		"fields": {
+			"drinking": "음주",
+			"smoking": "흡연",
+			"tattoo": "문신",
+			"personality": "성격",
+			"dating_style": "데이트 스타일",
+			"interests": "관심사",
+			"mbti": "MBTI",
+			"military_status": "군필 여부"
+		},
+		"validation": {
+			"required_fields": "다음 정보를 입력해주세요: {{fields}}"
+		}
+	},
+	"ui": {
+		"save_button": "저장",
+		"validation": {
+			"empty_form": "비어있는 양식이 존재합니다.",
+			"age_required": "나이 선호도를 선택해주세요",
+			"drinking_required": "음주 선호도를 선택해주세요",
+			"smoking_required": "흡연 선호도를 선택해주세요",
+			"personality_required": "성격 선호도를 3개 선택해주세요",
+			"tattoo_required": "타투 선호도를 선택해주세요"
+		},
+		"success_modal": {
+			"title": "멋지게 업데이트 완료!",
+			"description": "프로필이 더 나다워졌어요! 이제 더 잘 맞는 분들을 찾아드릴게요 ✨",
+			"confirm_button": "좋아요!"
+		}
+	}
 }
