@@ -108,6 +108,32 @@ class MixpanelWeb implements MixpanelAdapter {
     }
   }
 
+  registerSuperProperties(properties: Record<string, any>): void {
+    if (!this.initialized) {
+      console.warn('[Mixpanel Web] Not initialized, skipping registerSuperProperties');
+      return;
+    }
+
+    if (!properties || typeof properties !== 'object') {
+      console.error('[Mixpanel Web] Invalid properties:', {
+        properties,
+        type: typeof properties,
+      });
+      return;
+    }
+
+    try {
+      console.log('[Mixpanel Web] Registering super properties:', properties);
+      mixpanel.register(properties);
+    } catch (error) {
+      console.error('[Mixpanel Web] RegisterSuperProperties error:', {
+        properties,
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
   reset(): void {
     if (!this.initialized) {
       console.warn('[Mixpanel Web] Not initialized, skipping reset');

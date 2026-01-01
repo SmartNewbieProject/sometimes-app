@@ -18,6 +18,7 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
   SIGNUP_UNIVERSITY: 'Signup_university',
   SINGUP_UNIVERSITY_DETAILS: 'Singup_university_details',
   SIGNUP_INSTAGRAM_ENTERED: 'Signup_instagram_entered',
+  SIGNUP_INSTAGRAM_SKIPPED: 'Signup_instagram_skipped',
   SIGNUP_PROFILE_IMAGE: 'Signup_profile_image',
   SIGNUP_PROFILE_IMAGE_ERROR: 'Signup_profile_image_error',
   SIGNUP_PROFILE_INVITE_CODE_ERROR: 'Signup_profile_invite_code_error',
@@ -132,6 +133,10 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
   PROFILE_VIEWED: 'Profile_Viewed',
   FILTER_APPLIED: 'Filter_Applied',
 
+  // 확장 매칭 관련
+  EXPAND_REGION_EMPTY_VIEWED: 'Expand_Region_Empty_Viewed',
+  EXPAND_REGION_EMPTY_ACTION: 'Expand_Region_Empty_Action',
+
   // 채팅 관련 (Activation → Retention)
   CHAT_STARTED: 'Chat_Started',
   CHAT_MESSAGE_SENT: 'Chat_Message_Sent',
@@ -198,6 +203,63 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
   // 리텐션 관련 (Retention)
   REACTIVATION: 'Reactivation',
   FEATURE_ADOPTED: 'Feature_Adopted',
+
+  // 앱 설치 유도 관련 (Web → App Conversion)
+  APP_INSTALL_PROMPT_SHOWN: 'App_Install_Prompt_Shown',
+  APP_INSTALL_PROMPT_INSTALL_CLICKED: 'App_Install_Prompt_Install_Clicked',
+  APP_INSTALL_PROMPT_DISMISSED: 'App_Install_Prompt_Dismissed',
+
+  // ===== HIGH PRIORITY 지표 (2025-12-29 추가) =====
+
+  // 결제 퍼널 심화
+  PAYMENT_ABANDONED_CART: 'Payment_Abandoned_Cart',
+  PAYMENT_ABANDONED_AT_STEP: 'Payment_Abandoned_At_Step',
+  PAYMENT_FIRST_PURCHASE: 'Payment_First_Purchase',
+  PAYMENT_REPEAT_PURCHASE: 'Payment_Repeat_Purchase',
+  GEM_BALANCE_LOW: 'Gem_Balance_Low',
+  GEM_BALANCE_DEPLETED: 'Gem_Balance_Depleted',
+  GEM_PURCHASE_PROMPT_SHOWN: 'Gem_Purchase_Prompt_Shown',
+  GEM_PURCHASE_PROMPT_DISMISSED: 'Gem_Purchase_Prompt_Dismissed',
+
+  // 매칭 효율성
+  MATCHING_QUEUE_TIME: 'Matching_Queue_Time',
+  MATCHING_QUEUE_JOINED: 'Matching_Queue_Joined',
+  MATCHING_QUEUE_ABANDONED: 'Matching_Queue_Abandoned',
+
+  // 좋아요 결과
+  LIKE_MATCH_CREATED: 'Like_Match_Created',
+  LIKE_MUTUAL_MATCH: 'Like_Mutual_Match',
+  LIKE_LIMIT_REACHED: 'Like_Limit_Reached',
+
+  // 채팅 품질
+  CHAT_FIRST_RESPONSE_TIME: 'Chat_First_Response_Time',
+  CHAT_AVERAGE_RESPONSE_TIME: 'Chat_Average_Response_Time',
+  CHAT_CONVERSATION_LENGTH: 'Chat_Conversation_Length',
+  CHAT_CONVERSATION_DURATION: 'Chat_Conversation_Duration',
+
+  // 리텐션 코호트
+  DAY_1_RETENTION: 'Day_1_Retention',
+  DAY_3_RETENTION: 'Day_3_Retention',
+  DAY_7_RETENTION: 'Day_7_Retention',
+  DAY_30_RETENTION: 'Day_30_Retention',
+
+  // 첫 경험 (Aha Moment)
+  FIRST_MATCH_ACHIEVED: 'First_Match_Achieved',
+  FIRST_MESSAGE_SENT: 'First_Message_Sent',
+  FIRST_MESSAGE_RECEIVED: 'First_Message_Received',
+  FIRST_LIKE_SENT: 'First_Like_Sent',
+  FIRST_LIKE_RECEIVED: 'First_Like_Received',
+
+  // ===== 서버 전용 이벤트 (백엔드에서만 발송) =====
+
+  // 매칭 파이프라인 (백엔드 NestJS)
+  MATCHING_EXECUTION_COMPLETED: 'Matching_Execution_Completed',
+  MATCHING_PIPELINE_STEP: 'Matching_Pipeline_Step',
+  VECTOR_SEARCH_EXECUTED: 'Vector_Search_Executed',
+  FILTER_RELAXATION_STEP: 'Filter_Relaxation_Step',
+  BIDIRECTIONAL_FILTER_EXECUTED: 'Bidirectional_Filter_Executed',
+  MATCHING_POOL_SNAPSHOT: 'Matching_Pool_Snapshot',
+  MATCHING_FAILURE_ANALYZED: 'Matching_Failure_Analyzed',
 } as const;
 
 // 인증 방법 Enum
@@ -287,10 +349,10 @@ export const EVENT_SOURCES = {
 
 // 썸메이트 카테고리 Enum
 export const SOMEMATE_CATEGORIES = {
-  DAILY: '일상',
-  RELATIONSHIP: '인간관계',
-  CAREER: '진로/학교',
-  LOVE: '연애',
+  DAILY: "일상",
+  RELATIONSHIP: "인간관계",
+  CAREER: "진로/학교",
+  LOVE: "연애",
 } as const;
 
 // 썸메이트 세션 상태 Enum
@@ -318,6 +380,7 @@ export interface BaseEventProperties {
   timestamp?: number;
   session_id?: string;
   source?: EventSource;
+  country?: 'KR' | 'JP'; // 국가별 지표 분리용
   [key: string]: unknown;
 }
 
@@ -384,6 +447,12 @@ export interface MatchingEventProperties extends BaseEventProperties {
   is_recoverable?: boolean;
 }
 
+// 확장 매칭 Empty State 이벤트 속성
+export interface ExpandRegionEmptyEventProperties extends BaseEventProperties {
+  action?: 'wait' | 'dismiss';
+  time_on_screen?: number;
+}
+
 // 프로필 조회 이벤트 속성
 export interface ProfileViewedEventProperties extends BaseEventProperties {
   viewed_profile_id: string;
@@ -448,6 +517,251 @@ export interface PaymentEventProperties extends BaseEventProperties {
   usage_type?: string;
   gem_count?: number;
   error_reason?: string;
+}
+
+// 결제 심화 이벤트 속성
+export interface PaymentDetailedEventProperties extends PaymentEventProperties {
+  price_tier?: 'low' | 'medium' | 'high' | 'premium';
+  discount_percentage?: number;
+  discount_code?: string;
+  abandoned_step?: 'item_selection' | 'payment_method' | 'confirmation' | 'processing';
+  abandoned_reason?: 'price_too_high' | 'changed_mind' | 'technical_error' | 'other';
+  time_to_purchase?: number;
+  is_first_purchase?: boolean;
+  days_since_signup?: number;
+  gem_balance_before?: number;
+  gem_balance_after?: number;
+  purchase_trigger?: 'low_balance' | 'feature_locked' | 'promotion' | 'organic';
+  cart_value?: number;
+  currency?: string;
+  payment_provider?: 'portone' | 'apple_iap' | 'google_play';
+  subscription_tier?: 'basic' | 'premium' | 'vip';
+}
+
+// 매칭 대기열 이벤트 속성
+export interface MatchingQueueEventProperties extends MatchingEventProperties {
+  queue_wait_time_seconds?: number;
+  queue_abandoned?: boolean;
+  queue_position?: number;
+  estimated_wait_time?: number;
+}
+
+// 좋아요 심화 이벤트 속성
+export interface LikeDetailedEventProperties extends LikeEventProperties {
+  is_mutual?: boolean;
+  match_created?: boolean;
+  time_to_response?: number;
+  likes_remaining?: number;
+  is_premium_like?: boolean;
+  message_included?: boolean;
+  message_length?: number;
+  profile_match_score?: number;
+  consecutive_likes_count?: number;
+}
+
+// 채팅 품질 이벤트 속성
+export interface ChatQualityEventProperties extends ChatEventProperties {
+  response_time_seconds?: number;
+  conversation_turn_count?: number;
+  message_character_count?: number;
+  is_first_interaction?: boolean;
+  time_since_match?: number;
+  media_count?: number;
+  emoji_count?: number;
+  read_time?: number;
+  conversation_sentiment?: 'positive' | 'neutral' | 'negative';
+}
+
+// 리텐션 이벤트 속성
+export interface RetentionEventProperties extends BaseEventProperties {
+  days_since_signup?: number;
+  first_match_achieved?: boolean;
+  first_message_sent?: boolean;
+  profile_completion_rate?: number;
+  messages_sent?: number;
+  matches_count?: number;
+  has_purchased?: boolean;
+}
+
+// 첫 경험 이벤트 속성
+export interface FirstExperienceEventProperties extends BaseEventProperties {
+  time_to_first_action?: number;
+  signup_date?: string;
+  profile_completion_rate?: number;
+}
+
+// ===== 서버 전용 이벤트 속성 (백엔드 NestJS) =====
+
+// 매칭 실행 완료 이벤트 속성
+export interface MatchingExecutionCompletedEventProperties extends BaseEventProperties {
+  country?: 'KR' | 'JP';
+  user_id?: string;
+  matched_user_id?: string;
+  matching_history_id?: string;
+  matching_type?: 'SCHEDULED' | 'ROULETTE' | 'REMATCH';
+  similarity_score?: number;
+  matching_duration_ms?: number;
+  total_process_steps?: number;
+  initial_candidates?: number;
+  final_candidates?: number;
+  total_elimination_count?: number;
+  elimination_rate?: number;
+  is_success?: boolean;
+  has_ai_description?: boolean;
+}
+
+// 매칭 파이프라인 단계 이벤트 속성
+export interface MatchingPipelineStepEventProperties extends BaseEventProperties {
+  country?: 'KR' | 'JP';
+  user_id?: string;
+  matching_history_id?: string;
+  step?: string;
+  step_name?: string;
+  step_order?: number;
+  candidates_before?: number;
+  candidates_after?: number;
+  candidates_filtered?: number;
+  filter_rate?: number;
+  duration_ms?: number;
+  filtered_reasons?: {
+    avoid_university?: number;
+    avoid_department?: number;
+    contact_block?: number;
+    gender_mismatch?: number;
+    already_matched?: number;
+  };
+}
+
+// 벡터 검색 실행 이벤트 속성
+export interface VectorSearchExecutedEventProperties extends BaseEventProperties {
+  country?: 'KR' | 'JP';
+  user_id?: string;
+  collection?: 'profiles_partner';
+  search_limit?: number;
+  score_threshold?: number;
+  qdrant_filters?: {
+    country?: 'KR' | 'JP';
+    gender?: 'male' | 'female';
+    regions?: string[];
+    age_min?: number;
+    age_max?: number;
+    must_not_user_ids_count?: number;
+  };
+  results_count?: number;
+  is_sufficient?: boolean;
+  search_time_ms?: number;
+  similarity_stats?: {
+    min?: number;
+    max?: number;
+    avg?: number;
+    median?: number;
+  };
+  has_mbti_bonus?: boolean;
+  user_mbti?: string;
+}
+
+// 필터 완화 단계 이벤트 속성
+export interface FilterRelaxationStepEventProperties extends BaseEventProperties {
+  country?: 'KR' | 'JP';
+  user_id?: string;
+  relaxation_mode?: 'static' | 'dynamic';
+  step_index?: number;
+  step_description?: string;
+  region_level?: 'NEARBY' | 'METROPOLITAN' | 'NATIONWIDE';
+  region_level_name?: string;
+  user_region?: string;
+  search_regions?: string[];
+  applied_filters?: string[];
+  relaxed_filters?: string[];
+  candidates_found?: number;
+  is_success?: boolean;
+  will_retry?: boolean;
+  adjusted_limit?: number;
+  allow_external_cluster?: boolean;
+}
+
+// 양방향 필터 실행 이벤트 속성
+export interface BidirectionalFilterExecutedEventProperties extends BaseEventProperties {
+  country?: 'KR' | 'JP';
+  user_id?: string;
+  filters_enabled?: {
+    avoid_university?: boolean;
+    avoid_department?: boolean;
+    contact_block?: boolean;
+  };
+  candidates_before?: number;
+  candidates_after?: number;
+  eliminated_by?: {
+    avoid_university?: number;
+    avoid_department?: number;
+    contact_block?: number;
+  };
+  user_university_id?: string;
+  user_department_id?: string;
+  user_phone_hash?: string;
+  user_contact_hashes_count?: number;
+  filter_duration_ms?: number;
+  is_over_filtering?: boolean;
+  total_elimination_rate?: number;
+}
+
+// 매칭 풀 스냅샷 이벤트 속성
+export interface MatchingPoolSnapshotEventProperties extends BaseEventProperties {
+  country?: 'KR' | 'JP';
+  snapshot_time?: string;
+  snapshot_trigger?: 'scheduled' | 'on_demand';
+  total_users_in_qdrant?: number;
+  approved_users_count?: number;
+  deleted_users_count?: number;
+  male_users?: number;
+  female_users?: number;
+  gender_ratio?: number;
+  users_by_region?: Record<string, number>;
+  users_by_metropolitan?: Record<string, number>;
+  users_by_age?: {
+    '18-20'?: number;
+    '21-23'?: number;
+    '24-26'?: number;
+    '27+'?: number;
+  };
+  active_users_last_7_days?: number;
+  dormant_users?: number;
+  avoid_university_enabled_count?: number;
+  avoid_department_enabled_count?: number;
+  contact_block_enabled_count?: number;
+  pool_health_score?: number;
+}
+
+// 매칭 실패 분석 이벤트 속성
+export interface MatchingFailureAnalyzedEventProperties extends BaseEventProperties {
+  country?: 'KR' | 'JP';
+  user_id?: string;
+  matching_type?: 'SCHEDULED' | 'ROULETTE' | 'REMATCH';
+  failure_stage?: 'CONTEXT_CREATION_FAILED' | 'VECTOR_SEARCH_EMPTY' | 'ALL_FILTERED_OUT' | 'PIPELINE_ERROR';
+  user_profile?: {
+    age?: number;
+    gender?: 'male' | 'female';
+    region?: string;
+    university_id?: string;
+    department_id?: string;
+  };
+  filters_enabled?: {
+    avoid_university?: boolean;
+    avoid_department?: boolean;
+    contact_block?: boolean;
+  };
+  vector_search_attempts?: number;
+  max_relaxation_level_reached?: 'NEARBY' | 'METROPOLITAN' | 'NATIONWIDE' | null;
+  total_candidates_from_vector?: number;
+  candidates_after_filter?: number;
+  pool_state?: {
+    total_opposite_gender_in_region?: number;
+    total_opposite_gender_in_metropolitan?: number;
+    total_opposite_gender_nationwide?: number;
+  };
+  suggested_actions?: string[];
+  can_retry?: boolean;
+  retry_available_at?: string;
 }
 
 // 모먼트 이벤트 속성
@@ -591,6 +905,10 @@ export interface KpiEventTypePropertiesMap {
   Profile_Viewed: ProfileViewedEventProperties;
   Filter_Applied: FilterAppliedEventProperties;
 
+  // 확장 매칭 관련
+  Expand_Region_Empty_Viewed: ExpandRegionEmptyEventProperties;
+  Expand_Region_Empty_Action: ExpandRegionEmptyEventProperties;
+
   // 채팅 관련
   Chat_Started: ChatEventProperties;
   Chat_Message_Sent: ChatEventProperties;
@@ -644,6 +962,49 @@ export interface KpiEventTypePropertiesMap {
   Somemate_Report_Viewed: SomemateEventProperties;
   Somemate_Report_Shared: SomemateEventProperties;
   Somemate_Category_Selected: SomemateEventProperties;
+
+  // High Priority 지표 (2025-12-29 추가)
+  Payment_Abandoned_Cart: PaymentDetailedEventProperties;
+  Payment_Abandoned_At_Step: PaymentDetailedEventProperties;
+  Payment_First_Purchase: PaymentDetailedEventProperties;
+  Payment_Repeat_Purchase: PaymentDetailedEventProperties;
+  Gem_Balance_Low: PaymentDetailedEventProperties;
+  Gem_Balance_Depleted: PaymentDetailedEventProperties;
+  Gem_Purchase_Prompt_Shown: PaymentDetailedEventProperties;
+  Gem_Purchase_Prompt_Dismissed: PaymentDetailedEventProperties;
+
+  Matching_Queue_Time: MatchingQueueEventProperties;
+  Matching_Queue_Joined: MatchingQueueEventProperties;
+  Matching_Queue_Abandoned: MatchingQueueEventProperties;
+
+  Like_Match_Created: LikeDetailedEventProperties;
+  Like_Mutual_Match: LikeDetailedEventProperties;
+  Like_Limit_Reached: LikeDetailedEventProperties;
+
+  Chat_First_Response_Time: ChatQualityEventProperties;
+  Chat_Average_Response_Time: ChatQualityEventProperties;
+  Chat_Conversation_Length: ChatQualityEventProperties;
+  Chat_Conversation_Duration: ChatQualityEventProperties;
+
+  Day_1_Retention: RetentionEventProperties;
+  Day_3_Retention: RetentionEventProperties;
+  Day_7_Retention: RetentionEventProperties;
+  Day_30_Retention: RetentionEventProperties;
+
+  First_Match_Achieved: FirstExperienceEventProperties;
+  First_Message_Sent: FirstExperienceEventProperties;
+  First_Message_Received: FirstExperienceEventProperties;
+  First_Like_Sent: FirstExperienceEventProperties;
+  First_Like_Received: FirstExperienceEventProperties;
+
+  // 서버 전용 이벤트 (백엔드 NestJS)
+  Matching_Execution_Completed: MatchingExecutionCompletedEventProperties;
+  Matching_Pipeline_Step: MatchingPipelineStepEventProperties;
+  Vector_Search_Executed: VectorSearchExecutedEventProperties;
+  Filter_Relaxation_Step: FilterRelaxationStepEventProperties;
+  Bidirectional_Filter_Executed: BidirectionalFilterExecutedEventProperties;
+  Matching_Pool_Snapshot: MatchingPoolSnapshotEventProperties;
+  Matching_Failure_Analyzed: MatchingFailureAnalyzedEventProperties;
 
   // 다른 모든 이벤트들도 기본 BaseEventProperties 사용
   [key: string]: BaseEventProperties;

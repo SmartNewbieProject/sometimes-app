@@ -106,6 +106,32 @@ class MixpanelNative implements MixpanelAdapter {
     }
   }
 
+  registerSuperProperties(properties: Record<string, any>): void {
+    if (!this.initialized || !this.mixpanel) {
+      console.warn('[Mixpanel Native] Not initialized, skipping registerSuperProperties');
+      return;
+    }
+
+    if (!properties || typeof properties !== 'object') {
+      console.error('[Mixpanel Native] Invalid properties:', {
+        properties,
+        type: typeof properties,
+      });
+      return;
+    }
+
+    try {
+      console.log('[Mixpanel Native] Registering super properties:', properties);
+      this.mixpanel.registerSuperProperties(properties);
+    } catch (error) {
+      console.error('[Mixpanel Native] RegisterSuperProperties error:', {
+        properties,
+        error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
   reset(): void {
     if (!this.initialized || !this.mixpanel) {
       console.warn('[Mixpanel Native] Not initialized, skipping reset');

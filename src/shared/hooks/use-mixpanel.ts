@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { storage } from '@/src/shared/libs/store';
+import { getCountryFromLocale } from '@/src/shared/libs/country-detector';
 import {
   MIXPANEL_EVENTS,
   EVENT_SOURCES,
@@ -205,6 +206,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
       const opts = { immediate: options?.immediate ?? false, validate: options?.validate ?? true };
       try {
         // 기본 공통 속성
+        // country는 Super Properties로 자동 추가됨 (app/_layout.tsx 참고)
         const baseProperties: BaseEventProperties = {
           env: process.env.EXPO_PUBLIC_TRACKING_MODE || 'development',
           timestamp: Date.now(),
