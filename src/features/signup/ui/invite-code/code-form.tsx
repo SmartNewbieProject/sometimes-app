@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import SearchIcon from "@assets/icons/search.svg"
@@ -7,17 +8,18 @@ import useInviteCode from '../../hooks/use-invite-code';
 
 
 function CodeForm() {
- const {code, handleInviteCode} = useInviteCode()
+  const { t } = useTranslation();
+  const {code, handleInviteCode} = useInviteCode()
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>초대코드</Text>
+      <Text style={styles.label}>{t("apps.auth.sign_up.invite_code.label")}</Text>
       <View style={styles.inputContainer}>
         <TextInput
           value={code}
           onChangeText={handleInviteCode}
           style={styles.input}
-          placeholder='초대코드를 입력하세요'
+          placeholder={t("apps.auth.sign_up.enter_invite_code_placeholder")}
           placeholderTextColor="#BAB0D0"
         />
         <SearchIcon />

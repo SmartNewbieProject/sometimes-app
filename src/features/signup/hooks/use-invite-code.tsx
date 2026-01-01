@@ -8,6 +8,7 @@ import { useModal } from '@/src/shared/hooks/use-modal';
 import Signup from '..';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { useTranslation } from 'react-i18next';
 
 
 const {
@@ -25,6 +26,7 @@ const track = (eventName: string, properties?: Record<string, any>) => {
 };
 
 function useInviteCode() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [signupLoading, setSignupLoading] = useState(false);
   const { showErrorModal } = useModal()
@@ -48,7 +50,9 @@ function useInviteCode() {
   const { value, removeValue } = useStorage({ key: "invite-code" })
   const initialValue: string | undefined = typeof value === "string" ? value : undefined
 
-  const nextMessage = signupForm?.referralCode && signupForm.referralCode !== "" ? "다음으로" : "넘어가기"
+  const nextMessage = signupForm?.referralCode && signupForm.referralCode !== ""
+    ? t("features.signup.hooks.use_invite_code.next_with_code")
+    : t("features.signup.hooks.use_invite_code.skip")
 
   useEffect(() => {
     if (initialValue) {
@@ -94,7 +98,7 @@ function useInviteCode() {
           if (!universityOk) return;
   
           if (!signupForm.name) {
-            showErrorModal("이름을 입력해주세요.", "announcement");
+            showErrorModal(t("features.signup.ui.validation.name_required"), "announcement");
             return;
           }
           await processSignup(signupForm as Required<typeof signupForm>, {
@@ -110,7 +114,7 @@ function useInviteCode() {
         (error) => {
           console.error("Signup error:", error);
           trackSignupEvent("error", error?.message);
-          showErrorModal(error?.message ?? "회원가입에 실패했습니다.", "announcement");
+          showErrorModal(error?.message ?? t("features.signup.hooks.use_invite_code.signup_failed"), "announcement");
         }
       );
       

@@ -3,9 +3,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { isAdult } from "@/src/features/pass/utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { env } from "@/src/shared/libs/env";
-import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useRouter } from "expo-router";
-// KakaoLoginWebView.tsx
 import type React from "react";
 import { useRef } from "react";
 import {
@@ -21,6 +19,7 @@ import { WebView, type WebViewNavigation } from "react-native-webview";
 import { useTranslation } from "react-i18next";
 import { checkPhoneNumberBlacklist } from "../apis";
 import { devLogWithTag } from "@/src/shared/utils";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 
 interface KakaoLoginWebViewProps {
   visible: boolean;
@@ -32,6 +31,7 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+  const { authEvents, signupEvents } = useMixpanel();
   const webViewRef = useRef<WebView>(null);
   const router = useRouter();
   const { loginWithKakao } = useAuth();
@@ -83,14 +83,11 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
   };
 
   const handleKakaoLogin = async (code: string) => {
+    const loginStartTime = Date.now();
+
     try {
       onClose();
       const result = await loginWithKakao(code);
-      mixpanelAdapter.track("Signup_Route_Entered", {
-        screen: "AreaSelect",
-        platform: "kakao",
-        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-      });
 
       if (result.isNewUser) {
         if (result.certificationInfo?.phone) {
@@ -100,9 +97,6 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
             );
 
             if (isBlacklisted) {
-              mixpanelAdapter.track("Signup_PhoneBlacklist_Failed", {
-                phone: result.certificationInfo?.phone,
-              });
               showModal({
                 title: t("features.signup.ui.login_form.registration_restricted_title"),
                 children:
@@ -118,10 +112,6 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
             }
           } catch (error) {
             console.error("블랙리스트 체크 오류:", error);
-            mixpanelAdapter.track("Signup_Error", {
-              stage: "PhoneBlacklistCheck",
-              message: error instanceof Error ? error.message : String(error),
-            });
             router.replace("/");
             return;
           }
@@ -129,11 +119,6 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
         const birthday = result.certificationInfo?.birthday;
 
         if (birthday && !isAdult(birthday)) {
-          mixpanelAdapter.track("Signup_AgeCheck_Failed", {
-            birthday,
-            platform: "kakao",
-            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-          });
           router.push("/auth/age-restriction");
           return;
         }
@@ -149,10 +134,13 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
           },
         });
       } else {
+        const loginDuration = Date.now() - loginStartTime;
+        authEvents.trackLoginCompleted('kakao', loginDuration);
         router.push("/home");
       }
     } catch (error) {
       devLogWithTag('Kakao WebView', 'Login processing error:', error);
+      authEvents.trackLoginFailed('kakao', 'login_processing_error');
     }
   };
 

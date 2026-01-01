@@ -20,8 +20,24 @@ function StudentIdSelector() {
 
   const [isVisible, setIsVisible] = useState(false);
 
-  const studentIdOptions: BottomSheetPickerOption[] = useMemo(
-    () => [
+  const studentIdOptions: BottomSheetPickerOption[] = useMemo(() => {
+    const locale = i18n.language;
+
+    // 일본 로케일인 경우
+    if (locale.startsWith('ja')) {
+      return [
+        { label: '25年', value: '25年' },
+        { label: '24年', value: '24年' },
+        { label: '23年', value: '23年' },
+        { label: '22年', value: '22年' },
+        { label: '21年', value: '21年' },
+        { label: '20年', value: '20年' },
+        { label: '19年', value: '19年' },
+      ];
+    }
+
+    // 한국: 기존 로직 유지
+    return [
       { label: i18n.t('features.signup.ui.student_id_25'), value: i18n.t('features.signup.ui.student_id_25') },
       { label: i18n.t('features.signup.ui.student_id_24'), value: i18n.t('features.signup.ui.student_id_24') },
       { label: i18n.t('features.signup.ui.student_id_23'), value: i18n.t('features.signup.ui.student_id_23') },
@@ -29,9 +45,8 @@ function StudentIdSelector() {
       { label: i18n.t('features.signup.ui.student_id_21'), value: i18n.t('features.signup.ui.student_id_21') },
       { label: i18n.t('features.signup.ui.student_id_20'), value: i18n.t('features.signup.ui.student_id_20') },
       { label: i18n.t('features.signup.ui.student_id_19'), value: i18n.t('features.signup.ui.student_id_19') },
-    ],
-    []
-  );
+    ];
+  }, []);
 
   const handleSelect = (value: string) => {
     const yearPrefix = value.slice(0, 2);

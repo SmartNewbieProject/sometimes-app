@@ -24,7 +24,7 @@ function SearchUniversity({
         <TextInput
           value={searchText}
           onChangeText={setSearchText}
-          placeholder="대학교 이름을 검색해주세요"
+          placeholder={t("common.대학교_이름을_검색해주세요")}
           placeholderTextColor="#999"
           style={styles.input}
           underlineColorAndroid="transparent"

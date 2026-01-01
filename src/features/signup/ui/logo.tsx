@@ -62,15 +62,15 @@ export default function Logo() {
         <Image
           style={logoStyles.letterIcon}
           source={require("@assets/images/letter.png")}
-          accessibilityLabel="썸타임 편지 아이콘"
-          alt="썸타임 편지 아이콘"
+          accessibilityLabel={t("ui.썸타임_편지_아이콘")}
+          alt={t("ui.썸타임_편지_아이콘")}
         />
         <Animated.View
           style={{ transform: [{ rotate: spin }] }}
-          accessibilityLabel="썸타임 로고"
+          accessibilityLabel={t("ui.썸타임_로고")}
           accessibilityRole="image"
         >
-          <BigTitle width={309} height={41} aria-label="썸타임" role="img" />
+          <BigTitle width={309} height={41} aria-label={t("ui.썸타임")} role="img" />
         </Animated.View>
       </Pressable>
       <View style={logoStyles.taglineWrapper}>

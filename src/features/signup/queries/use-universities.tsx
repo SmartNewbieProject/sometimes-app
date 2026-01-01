@@ -11,7 +11,9 @@ import { getAllRegionList, getRegionsByRegionCode } from "../lib";
 import { useTranslation } from "react-i18next";
 
 export default function useUniversities() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const country = i18n.language?.startsWith('ja') ? 'jp' : 'kr';
+
   const { data, isLoading } = useQuery({
     queryFn: () => getUniversitiesByRegion(getAllRegionList()),
     queryKey: ["universities", "all"],
@@ -19,7 +21,7 @@ export default function useUniversities() {
   console.log("universities", data);
   const mappedData = data?.map((item) => ({
     ...item,
-    logoUrl: getSmartUnivLogoUrl(item.code),
+    logoUrl: getSmartUnivLogoUrl(item.code, country),
     universityType: item.foundation,
     area: getRegionsByRegionCode(item.region as RegionCode),
   }));

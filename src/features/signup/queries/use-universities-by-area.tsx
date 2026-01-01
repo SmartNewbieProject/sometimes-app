@@ -6,6 +6,7 @@ import {
 } from "@/src/shared/libs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalSearchParams } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { getUniversitiesByRegion } from "../apis";
 import { useSignupProgress } from "../hooks";
 import {
@@ -15,6 +16,9 @@ import {
 } from "../lib";
 
 export default function useUniversitiesByArea(regions: string[]) {
+  const { i18n } = useTranslation();
+  const country = i18n.language?.startsWith('ja') ? 'jp' : 'kr';
+
   const { data, isLoading } = useQuery({
     queryFn: () => getUniversitiesByRegion(getRegionListByCode(regions[0])),
     queryKey: ["universities", [...regions]],
@@ -22,7 +26,7 @@ export default function useUniversitiesByArea(regions: string[]) {
   console.log("universities", data);
   const mappedData = data?.map((item) => ({
     ...item,
-    logoUrl: getSmartUnivLogoUrl(item.code),
+    logoUrl: getSmartUnivLogoUrl(item.code, country),
     universityType: item.foundation,
     area: getRegionsByRegionCode(item.region as RegionCode),
   }));

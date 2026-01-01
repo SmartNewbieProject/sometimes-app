@@ -14,10 +14,12 @@ import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidat
 import CodeForm from "./code-form";
 import Loading from "@/src/features/loading";
 import useInviteCode from "../../hooks/use-invite-code";
+import { useTranslation } from "react-i18next";
 
 
 
 function InviteCode() {
+  const { t } = useTranslation();
   const {signupLoading, storageLoading, onNext, onBackPress, nextMessage} = useInviteCode()
 
    if (signupLoading || storageLoading) {
@@ -31,20 +33,20 @@ function InviteCode() {
             style={styles.image}
           />
           <Text weight="semibold" size="20" textColor="black" style={styles.titleMargin}>
-            받으신 초대코드가 있다면
+            {t("apps.auth.sign_up.invite_code.subtitle_1")}
           </Text>
           <Text weight="semibold" size="20" textColor="black">
-            입력해주세요!
+            {t("apps.auth.sign_up.invite_code.subtitle_2")}
           </Text>
         </View>
         <View style={styles.descriptionContainer}>
           <Text weight="medium" size="sm" textColor="pale-purple">
-            초대코드는 회원가입 시에만 입력 가능해요
+            {t("apps.auth.sign_up.invite_code.description")}
           </Text>
         </View>
         <CodeForm />
 
-        
+
 
       <View style={styles.bottomContainer}>
         <TwoButtons

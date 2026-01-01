@@ -60,11 +60,11 @@ function useAreaHook() {
 
   useEffect(() => {
     setTimeout(() => {
-      setShow("대구");
+      setShow(t("hooks.대구"));
     }, 200);
 
     setTimeout(() => {
-      setShow("서울/인천/경기");
+      setShow(t("hooks.서울_인천_경기"));
     }, 700);
 
     setTimeout(() => {

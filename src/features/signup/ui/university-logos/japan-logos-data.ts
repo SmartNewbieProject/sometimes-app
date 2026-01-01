@@ -1,4 +1,5 @@
 import type { UniversityLogoData } from "./korea-logos-data";
+import { useTranslation } from 'react-i18next';
 
 /**
  * 일본 대학교 로고 데이터
@@ -56,8 +57,34 @@ import type { UniversityLogoData } from "./korea-logos-data";
  */
 
 export const japanUniversityLogos: UniversityLogoData = {
-  row1: [],
-  row2: [],
+  row1: [
+    require("@/assets/images/univ/japan/TODAI.webp"),
+    require("@/assets/images/univ/japan/WASEDA.webp"),
+    require("@/assets/images/univ/japan/KEIO.webp"),
+    require("@/assets/images/univ/japan/MEIJI.webp"),
+    require("@/assets/images/univ/japan/RIKKYO.webp"),
+    require("@/assets/images/univ/japan/CHUO.webp"),
+    require("@/assets/images/univ/japan/KYODAI.webp"),
+    require("@/assets/images/univ/japan/HANDAI.webp"),
+    require("@/assets/images/univ/japan/KOBEDAI.webp"),
+    require("@/assets/images/univ/japan/DOSHISHA.webp"),
+    require("@/assets/images/univ/japan/RITSUMEIKAN.webp"),
+    require("@/assets/images/univ/japan/KANSAI.webp"),
+  ],
+  row2: [
+    require("@/assets/images/univ/japan/HOSEI.webp"),
+    require("@/assets/images/univ/japan/HITOTSUBASHI.webp"),
+    require("@/assets/images/univ/japan/SOPHIA.webp"),
+    require("@/assets/images/univ/japan/ICU.webp"),
+    require("@/assets/images/univ/japan/TUS.webp"),
+    require("@/assets/images/univ/japan/AOYAMA.webp"),
+    require("@/assets/images/univ/japan/MEIDAI.webp"),
+    require("@/assets/images/univ/japan/KYUDAI.webp"),
+    require("@/assets/images/univ/japan/SEINAN.webp"),
+    require("@/assets/images/univ/japan/HOKUDAI.webp"),
+    require("@/assets/images/univ/japan/TOHOKUDAI.webp"),
+    require("@/assets/images/univ/japan/SENSHU.webp"),
+  ],
 };
 
 /**

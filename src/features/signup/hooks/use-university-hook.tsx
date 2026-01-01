@@ -2,6 +2,7 @@ import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useDebounce } from "@/src/shared/hooks";
 import { getSmartUnivLogoUrl } from "@/src/shared/libs";
 import type { RegionCode } from "@/src/shared/constants/region";
+import i18n from "@/src/shared/libs/i18n";
 import Signup from "@features/signup";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
@@ -28,19 +29,33 @@ function useUniversityHook() {
   );
   const params = useLocalSearchParams();
   const hasProcessedPassInfo = useRef(false);
-  const [trigger, setTrigger] = useState(true);
+  const [trigger, setTrigger] = useState(false);
   const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } =
     useSignupProgress();
   const [isFocused, setIsFocused] = useState(false);
 
+  // 현재 로케일에 따른 국가 코드
+  const locale = i18n.language || 'ko';
+  const country = locale.startsWith('ja') ? 'jp' : 'kr';
+
   const { data: topUnivs, isLoading: isLoadingTop } = useQuery({
-    queryKey: ["universities", "top"],
-    queryFn: getTopUniversities,
+    queryKey: ["universities", "top", country],
+    queryFn: () => getTopUniversities(country),
   });
 
+  useEffect(() => {
+    console.log('[University] 국가:', country);
+    if (topUnivs) {
+      console.log('[University] Top API 응답:', topUnivs.length, '개');
+      console.log('[University] 첫 번째 대학 원본:', topUnivs[0]);
+    } else {
+      console.log('[University] Top API 응답 없음');
+    }
+  }, [topUnivs, country]);
+
   const { data: searchResults, isLoading: isSearching } = useQuery({
-    queryKey: ["universities", "search", debouncedSearchText],
-    queryFn: () => searchUniversities(debouncedSearchText),
+    queryKey: ["universities", "search", debouncedSearchText, country],
+    queryFn: () => searchUniversities(debouncedSearchText, country),
     enabled: debouncedSearchText.length > 0,
   });
 
@@ -51,19 +66,31 @@ function useUniversityHook() {
   const isActuallySearching = isDebouncing || isSearching;
 
   const univs = useMemo(() => {
-    return rawUnivs?.map((item) => ({
+    const mapped = rawUnivs?.map((item) => ({
       ...item,
-      logoUrl: getSmartUnivLogoUrl(item.code),
+      logoUrl: getSmartUnivLogoUrl(item.code, country),
       universityType: item.foundation,
-      area: getRegionsByRegionCode(item.region as RegionCode),
+      area: getRegionsByRegionCode(item.region),
     }));
-  }, [rawUnivs]);
+    console.log('[University] 매핑된 대학 수:', mapped?.length);
+    console.log('[University] 첫 번째 대학:', mapped?.[0]);
+    return mapped;
+  }, [rawUnivs, country]);
 
   const filteredUniv = useMemo(() => {
-    if (!univs) return [];
-    const sorted = [...univs].sort((a, b) => a.name.localeCompare(b.name, "ko"));
+    if (!univs) {
+      console.log('[University] univs가 없음');
+      return [];
+    }
+    // 현재 언어에 맞는 locale로 정렬
+    const locale = i18n.language || 'ko';
+    console.log('[University] 정렬 locale:', locale);
+    const sorted = [...univs].sort((a, b) => a.name.localeCompare(b.name, locale));
+    console.log('[University] 정렬된 대학 수:', sorted.length);
+    console.log('[University] 처음 3개:', sorted.slice(0, 3).map(u => u.name));
+    console.log('[University] trigger:', trigger, 'isLoading:', isLoading, 'isSearching:', isActuallySearching);
     return sorted;
-  }, [univs]);
+  }, [univs, trigger, isLoading, isActuallySearching]);
 
   const titleOpacity = useSharedValue(0);
   const containerTranslateY = useSharedValue(0);
@@ -109,7 +136,7 @@ function useUniversityHook() {
       updateShowHeader(false);
 
       titleOpacity.value = withTiming(1, { duration: 0 });
-      containerTranslateY.value = withTiming(60, { duration: 0 });
+      containerTranslateY.value = withTiming(150, { duration: 0 });
       listOpacity.value = withTiming(0, { duration: 0 });
       listTranslateY.value = withTiming(50, { duration: 0 });
     } else {
@@ -149,20 +176,20 @@ function useUniversityHook() {
   };
 
   useEffect(() => {
-    updateShowHeader(true);
+    updateShowHeader(false);
     setIsFocused(false);
-    setTrigger(true);
+    setTrigger(false);
 
-    titleOpacity.value = 0;
-    containerTranslateY.value = 0;
-    listOpacity.value = 1;
-    listTranslateY.value = 0;
+    titleOpacity.value = 1;
+    containerTranslateY.value = 150;
+    listOpacity.value = 0;
+    listTranslateY.value = 50;
   }, []);
 
-  // 페이지가 포커스될 때마다 리스트를 보이도록 설정
+  // 페이지가 포커스될 때 초기 상태 복원 (로고 표시)
   useFocusEffect(
     useCallback(() => {
-      setTrigger(true);
+      setTrigger(false);
       setIsFocused(false);
     }, [])
   );

@@ -68,7 +68,7 @@ function KakaoLoginRedirect() {
                     children:
                       t("apps.auth.redirect.cant_register.children"),
                     primaryButton: {
-                      text: "확인",
+                      text: t("confirm"),
                       onClick: () => {
                         router.replace("/");
                       },

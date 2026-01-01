@@ -23,6 +23,7 @@ import {
 
 } from "../services/signup-validator";
 import { useToast } from "@/src/shared/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 const {
   SignupSteps,
@@ -36,17 +37,9 @@ type FormState = {
   images: (string | null)[];
 };
 
-const schema = z.object({
-  images: z
-    .array(z.string().nullable())
-    .min(1, { message: "최소 1장의 사진을 올려주세요" })
-    .refine((images) => images.some((img) => img !== null), {
-      message: "최소 1장의 사진을 올려주세요",
-    }),
-});
-
 
 function useProfileImage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { updateForm, form: userForm } = useSignupProgress();
   const { signupEvents } = useMixpanel();
@@ -54,6 +47,15 @@ function useProfileImage() {
     userForm.profileImages ?? [null, null, null]
   );
   const { showOverlay, visible } = useOverlay();
+
+  const schema = z.object({
+    images: z
+      .array(z.string().nullable())
+      .min(1, { message: t("apps.auth.sign_up.profile_image.validation_min_images") })
+      .refine((images) => images.some((img) => img !== null), {
+        message: t("apps.auth.sign_up.profile_image.validation_min_images"),
+      }),
+  });
 
   const getImaages = (index: number) => {
     return images[index] ?? undefined;
@@ -72,11 +74,11 @@ function useProfileImage() {
   useEffect(() => {
     showOverlay(
       <View style={styles.infoOverlayWrapper}>
-        <Text style={styles.infoTitle}>이목구비가 잘 보이는 사진 필수에요</Text>
+        <Text style={styles.infoTitle}>{t("apps.auth.sign_up.profile_image.info_title")}</Text>
         <Text style={styles.infoDescription}>
-          눈, 코, 입이 잘 보이는 사진이라면
+          {t("apps.auth.sign_up.profile_image.info_desc_1")}
         </Text>
-        <Text style={styles.infoDescription}>어떤 각도든 좋아요</Text>
+        <Text style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</Text>
         <Image
           source={require("@assets/images/instagram-some.png")}
           style={{
@@ -100,7 +102,7 @@ function useProfileImage() {
         />
       </View>
     );
-  }, []);
+  }, [t]);
 
   const onNext = async () => {
    
@@ -124,7 +126,7 @@ function useProfileImage() {
       if (!newImages[0]) {
         // 대표사진이 없으면: 추가한 사진을 대표로 자동 설정
         newImages[0] = value;
-        emitToast('대표 사진이 자동으로 설정되었습니다');
+        emitToast(t("apps.auth.sign_up.profile_image.toast_main_photo_set"));
       } else {
         // 대표사진이 있으면: 해당 위치에만 추가
         newImages[index] = value;
