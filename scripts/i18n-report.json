@@ -1,0 +1,3109 @@
+{
+  "summary": {
+    "totalFiles": 27,
+    "totalStrings": 485,
+    "alreadyTranslated": 100,
+    "timestamp": "2025-12-30T23:52:54.673Z"
+  },
+  "files": [
+    {
+      "path": "src/shared/libs/univ.ts",
+      "korean": 228,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "배재대학교",
+          "line": 2,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_배재대학교"
+        },
+        {
+          "text": "충남대학교",
+          "line": 3,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_충남대학교"
+        },
+        {
+          "text": "대전보건대학교",
+          "line": 4,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대전보건대학교"
+        },
+        {
+          "text": "대전대학교",
+          "line": 5,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대전대학교"
+        },
+        {
+          "text": "한밭대학교",
+          "line": 6,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한밭대학교"
+        },
+        {
+          "text": "한남대학교",
+          "line": 7,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한남대학교"
+        },
+        {
+          "text": "건양대학교 메디컬캠퍼스",
+          "line": 8,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_건양대학교_메디컬캠퍼스"
+        },
+        {
+          "text": "건양대학교 창의융합캠퍼스",
+          "line": 9,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_건양대학교_창의융합캠퍼스"
+        },
+        {
+          "text": "건양대학교",
+          "line": 11,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_건양대학교"
+        },
+        {
+          "text": "목원대학교",
+          "line": 12,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_목원대학교"
+        },
+        {
+          "text": "을지대학교",
+          "line": 13,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_을지대학교"
+        },
+        {
+          "text": "우송대학교",
+          "line": 14,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_우송대학교"
+        },
+        {
+          "text": "고려대학교 세종캠퍼스",
+          "line": 15,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_고려대학교_세종캠퍼스"
+        },
+        {
+          "text": "홍익대학교 세종캠퍼스",
+          "line": 16,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_홍익대학교_세종캠퍼스"
+        },
+        {
+          "text": "한국교원대학교",
+          "line": 17,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국교원대학교"
+        },
+        {
+          "text": "공주대학교",
+          "line": 19,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_공주대학교"
+        },
+        {
+          "text": "공주교육대학교",
+          "line": 20,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_공주교육대학교"
+        },
+        {
+          "text": "충북대학교",
+          "line": 21,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_충북대학교"
+        },
+        {
+          "text": "청주교육대학교",
+          "line": 22,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_청주교육대학교"
+        },
+        {
+          "text": "경성대학교",
+          "line": 23,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경성대학교"
+        },
+        {
+          "text": "고신대학교",
+          "line": 24,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_고신대학교"
+        },
+        {
+          "text": "부경대학교",
+          "line": 25,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부경대학교"
+        },
+        {
+          "text": "국립부경대학교",
+          "line": 26,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_국립부경대학교"
+        },
+        {
+          "text": "한국해양대학교",
+          "line": 27,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국해양대학교"
+        },
+        {
+          "text": "국립한국해양대학교",
+          "line": 28,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_국립한국해양대학교"
+        },
+        {
+          "text": "동명대학교",
+          "line": 29,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동명대학교"
+        },
+        {
+          "text": "동서대학교",
+          "line": 30,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동서대학교"
+        },
+        {
+          "text": "동아대학교",
+          "line": 31,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동아대학교"
+        },
+        {
+          "text": "동의대학교",
+          "line": 32,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동의대학교"
+        },
+        {
+          "text": "부산가톨릭대학교",
+          "line": 33,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산가톨릭대학교"
+        },
+        {
+          "text": "부산교육대학교",
+          "line": 34,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산교육대학교"
+        },
+        {
+          "text": "부산대학교",
+          "line": 35,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산대학교"
+        },
+        {
+          "text": "가야대학교",
+          "line": 36,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_가야대학교"
+        },
+        {
+          "text": "부산외국어대학교",
+          "line": 37,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산외국어대학교"
+        },
+        {
+          "text": "신라대학교",
+          "line": 38,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_신라대학교"
+        },
+        {
+          "text": "영신대학교",
+          "line": 39,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_영신대학교"
+        },
+        {
+          "text": "인제대학교",
+          "line": 40,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_인제대학교"
+        },
+        {
+          "text": "부산과학기술대학교",
+          "line": 41,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산과학기술대학교"
+        },
+        {
+          "text": "동의과학대학교",
+          "line": 42,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동의과학대학교"
+        },
+        {
+          "text": "부산여자대학교",
+          "line": 43,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산여자대학교"
+        },
+        {
+          "text": "부산경상대학교",
+          "line": 44,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산경상대학교"
+        },
+        {
+          "text": "부산보건대학교",
+          "line": 45,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산보건대학교"
+        },
+        {
+          "text": "부산예술대학교",
+          "line": 46,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_부산예술대학교"
+        },
+        {
+          "text": "김해대학교",
+          "line": 47,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_김해대학교"
+        },
+        {
+          "text": "동원과학기술대학교",
+          "line": 48,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동원과학기술대학교"
+        },
+        {
+          "text": "경남정보대학교",
+          "line": 49,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경남정보대학교"
+        },
+        {
+          "text": "대동대학교",
+          "line": 50,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대동대학교"
+        },
+        {
+          "text": "우송정보대",
+          "line": 53,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_우송정보대"
+        },
+        {
+          "text": "대전신학대학교",
+          "line": 54,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대전신학대학교"
+        },
+        {
+          "text": "중부대학교",
+          "line": 55,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_중부대학교"
+        },
+        {
+          "text": "충북도립대학교",
+          "line": 56,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_충북도립대학교"
+        },
+        {
+          "text": "한국폴리텍",
+          "line": 57,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍"
+        },
+        {
+          "text": "한국침례신학대학교",
+          "line": 58,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국침례신학대학교"
+        },
+        {
+          "text": "대덕대학교",
+          "line": 59,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대덕대학교"
+        },
+        {
+          "text": "금강대학교",
+          "line": 60,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_금강대학교"
+        },
+        {
+          "text": "대전과학기술대학교",
+          "line": 61,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대전과학기술대학교"
+        },
+        {
+          "text": "꽃동네대학교",
+          "line": 62,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_꽃동네대학교"
+        },
+        {
+          "text": "서원대학교",
+          "line": 63,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서원대학교"
+        },
+        {
+          "text": "청주대학교",
+          "line": 64,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_청주대학교"
+        },
+        {
+          "text": "충북보건과학대학교",
+          "line": 65,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_충북보건과학대학교"
+        },
+        {
+          "text": "충청대학교",
+          "line": 66,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_충청대학교"
+        },
+        {
+          "text": "한국폴리텍대학교 청주캠퍼스",
+          "line": 67,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_청주캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 청주캠퍼스",
+          "line": 67,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_청주캠퍼스"
+        },
+        {
+          "text": "경북대학교",
+          "line": 69,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경북대학교"
+        },
+        {
+          "text": "경북과학대학교",
+          "line": 70,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경북과학대학교"
+        },
+        {
+          "text": "경북보건대학교",
+          "line": 71,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경북보건대학교"
+        },
+        {
+          "text": "경일대학교",
+          "line": 72,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경일대학교"
+        },
+        {
+          "text": "계명대학교",
+          "line": 73,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_계명대학교"
+        },
+        {
+          "text": "계명문화대학교",
+          "line": 74,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_계명문화대학교"
+        },
+        {
+          "text": "구미대학교",
+          "line": 75,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_구미대학교"
+        },
+        {
+          "text": "금오공과대학교",
+          "line": 76,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_금오공과대학교"
+        },
+        {
+          "text": "김천대학교",
+          "line": 77,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_김천대학교"
+        },
+        {
+          "text": "대경대학교",
+          "line": 78,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대경대학교"
+        },
+        {
+          "text": "대구가톨릭대학교",
+          "line": 79,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구가톨릭대학교"
+        },
+        {
+          "text": "대구경북과학기술원",
+          "line": 80,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구경북과학기술원"
+        },
+        {
+          "text": "대구공업대학교",
+          "line": 81,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구공업대학교"
+        },
+        {
+          "text": "대구과학대학교",
+          "line": 82,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구과학대학교"
+        },
+        {
+          "text": "대구교육대학교",
+          "line": 83,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구교육대학교"
+        },
+        {
+          "text": "대구대학교",
+          "line": 84,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구대학교"
+        },
+        {
+          "text": "대구보건대학교",
+          "line": 85,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구보건대학교"
+        },
+        {
+          "text": "대구예술대학교",
+          "line": 86,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구예술대학교"
+        },
+        {
+          "text": "대구한의대학교",
+          "line": 87,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대구한의대학교"
+        },
+        {
+          "text": "대신대학교",
+          "line": 88,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대신대학교"
+        },
+        {
+          "text": "수성대학교",
+          "line": 89,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_수성대학교"
+        },
+        {
+          "text": "영남대학교",
+          "line": 90,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_영남대학교"
+        },
+        {
+          "text": "영남신학대학교",
+          "line": 91,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_영남신학대학교"
+        },
+        {
+          "text": "영남외국어대학교",
+          "line": 92,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_영남외국어대학교"
+        },
+        {
+          "text": "영남이공대학교",
+          "line": 93,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_영남이공대학교"
+        },
+        {
+          "text": "영진전문대학교",
+          "line": 94,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_영진전문대학교"
+        },
+        {
+          "text": "호산대학교",
+          "line": 95,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_호산대학교"
+        },
+        {
+          "text": "경운대학교",
+          "line": 96,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경운대학교"
+        },
+        {
+          "text": "한국폴리텍대학교 구미캠퍼스",
+          "line": 97,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_구미캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 구미캠퍼스",
+          "line": 97,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_구미캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 대구캠퍼스",
+          "line": 98,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_대구캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 대구캠퍼스",
+          "line": 98,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_대구캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 영남융합기술캠퍼스",
+          "line": 99,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_영남융합기술캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 영남융합기술캠퍼스",
+          "line": 99,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_영남융합기술캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 영주캠퍼스",
+          "line": 100,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_영주캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 영주캠퍼스",
+          "line": 100,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_영주캠퍼스"
+        },
+        {
+          "text": "국립공주대학교",
+          "line": 103,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_국립공주대학교"
+        },
+        {
+          "text": "나사렛대학교",
+          "line": 104,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_나사렛대학교"
+        },
+        {
+          "text": "남서울대학교",
+          "line": 105,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_남서울대학교"
+        },
+        {
+          "text": "백석대학교",
+          "line": 107,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_백석대학교"
+        },
+        {
+          "text": "상명대학교",
+          "line": 108,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_상명대학교"
+        },
+        {
+          "text": "한국기술교육대학교",
+          "line": 110,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국기술교육대학교"
+        },
+        {
+          "text": "유원대학교",
+          "line": 111,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_유원대학교"
+        },
+        {
+          "text": "호서대학교",
+          "line": 112,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_호서대학교"
+        },
+        {
+          "text": "연암대학교",
+          "line": 113,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_연암대학교"
+        },
+        {
+          "text": "한국체육대학교",
+          "line": 116,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국체육대학교"
+        },
+        {
+          "text": "서울대학교",
+          "line": 117,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울대학교"
+        },
+        {
+          "text": "서울과학기술대학교",
+          "line": 118,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울과학기술대학교"
+        },
+        {
+          "text": "화성의과학대학교",
+          "line": 119,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_화성의과학대학교"
+        },
+        {
+          "text": "협성대학교",
+          "line": 120,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_협성대학교"
+        },
+        {
+          "text": "한경국립대학교",
+          "line": 121,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한경국립대학교"
+        },
+        {
+          "text": "한국항공대학교",
+          "line": 122,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국항공대학교"
+        },
+        {
+          "text": "한국공학대학교",
+          "line": 123,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국공학대학교"
+        },
+        {
+          "text": "인천대학교",
+          "line": 126,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_인천대학교"
+        },
+        {
+          "text": "국립한국교통대학교",
+          "line": 127,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_국립한국교통대학교"
+        },
+        {
+          "text": "한국예술종합학교",
+          "line": 128,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국예술종합학교"
+        },
+        {
+          "text": "서울시립대학교",
+          "line": 129,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울시립대학교"
+        },
+        {
+          "text": "서울교육대학교",
+          "line": 130,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울교육대학교"
+        },
+        {
+          "text": "인덕대학교",
+          "line": 131,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_인덕대학교"
+        },
+        {
+          "text": "가천대학교",
+          "line": 132,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_가천대학교"
+        },
+        {
+          "text": "가톨릭대학교",
+          "line": 133,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_가톨릭대학교"
+        },
+        {
+          "text": "재능대학교",
+          "line": 134,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_재능대학교"
+        },
+        {
+          "text": "인하공업전문대학",
+          "line": 135,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_인하공업전문대학"
+        },
+        {
+          "text": "경인여자대학교",
+          "line": 136,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경인여자대학교"
+        },
+        {
+          "text": "청운대학교",
+          "line": 137,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_청운대학교"
+        },
+        {
+          "text": "인하대학교",
+          "line": 138,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_인하대학교"
+        },
+        {
+          "text": "인천가톨릭대학교",
+          "line": 139,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_인천가톨릭대학교"
+        },
+        {
+          "text": "안양대학교",
+          "line": 140,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_안양대학교"
+        },
+        {
+          "text": "경인교육대학교",
+          "line": 141,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경인교육대학교"
+        },
+        {
+          "text": "연세대학교국제캠퍼스",
+          "line": 142,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_연세대학교국제캠퍼스"
+        },
+        {
+          "text": "강남대학교",
+          "line": 143,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_강남대학교"
+        },
+        {
+          "text": "경기대학교",
+          "line": 144,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경기대학교"
+        },
+        {
+          "text": "경동대학교",
+          "line": 145,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경동대학교"
+        },
+        {
+          "text": "경희대학교",
+          "line": 146,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_경희대학교"
+        },
+        {
+          "text": "숭의여자대학교",
+          "line": 147,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_숭의여자대학교"
+        },
+        {
+          "text": "서일대학교",
+          "line": 148,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서일대학교"
+        },
+        {
+          "text": "서울여자간호대학교",
+          "line": 149,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울여자간호대학교"
+        },
+        {
+          "text": "삼육보건대학교",
+          "line": 150,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_삼육보건대학교"
+        },
+        {
+          "text": "명지전문대학",
+          "line": 151,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_명지전문대학"
+        },
+        {
+          "text": "동양미래대학교",
+          "line": 152,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동양미래대학교"
+        },
+        {
+          "text": "홍익대학교",
+          "line": 153,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_홍익대학교"
+        },
+        {
+          "text": "한양대학교",
+          "line": 154,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한양대학교"
+        },
+        {
+          "text": "한성대학교",
+          "line": 155,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한성대학교"
+        },
+        {
+          "text": "한국외국어대학교",
+          "line": 156,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국외국어대학교"
+        },
+        {
+          "text": "한국성서대학교",
+          "line": 157,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국성서대학교"
+        },
+        {
+          "text": "총신대학교",
+          "line": 158,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_총신대학교"
+        },
+        {
+          "text": "중앙대학교",
+          "line": 159,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_중앙대학교"
+        },
+        {
+          "text": "장로회신학대학교",
+          "line": 160,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_장로회신학대학교"
+        },
+        {
+          "text": "이화여자대학교",
+          "line": 161,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_이화여자대학교"
+        },
+        {
+          "text": "숭실대학교",
+          "line": 162,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_숭실대학교"
+        },
+        {
+          "text": "숙명여자대학교",
+          "line": 163,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_숙명여자대학교"
+        },
+        {
+          "text": "세종대학교",
+          "line": 164,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_세종대학교"
+        },
+        {
+          "text": "성신여자대학교",
+          "line": 165,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_성신여자대학교"
+        },
+        {
+          "text": "성공회대학교",
+          "line": 166,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_성공회대학교"
+        },
+        {
+          "text": "서울한영대학교",
+          "line": 167,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울한영대학교"
+        },
+        {
+          "text": "서울여자대학교",
+          "line": 168,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울여자대학교"
+        },
+        {
+          "text": "서울기독대학교",
+          "line": 169,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울기독대학교"
+        },
+        {
+          "text": "서경대학교",
+          "line": 170,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서경대학교"
+        },
+        {
+          "text": "서강대학교",
+          "line": 171,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서강대학교"
+        },
+        {
+          "text": "삼육대학교",
+          "line": 172,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_삼육대학교"
+        },
+        {
+          "text": "명지대학교",
+          "line": 173,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_명지대학교"
+        },
+        {
+          "text": "동덕여자대학교",
+          "line": 174,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동덕여자대학교"
+        },
+        {
+          "text": "동국대학교",
+          "line": 175,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동국대학교"
+        },
+        {
+          "text": "국민대학교",
+          "line": 176,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_국민대학교"
+        },
+        {
+          "text": "광운대학교",
+          "line": 177,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_광운대학교"
+        },
+        {
+          "text": "고려대학교",
+          "line": 178,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_고려대학교"
+        },
+        {
+          "text": "건국대학교",
+          "line": 179,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_건국대학교"
+        },
+        {
+          "text": "강서대학교",
+          "line": 180,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_강서대학교"
+        },
+        {
+          "text": "감리신학대학교",
+          "line": 181,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_감리신학대학교"
+        },
+        {
+          "text": "한양여자대학교",
+          "line": 182,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한양여자대학교"
+        },
+        {
+          "text": "배화여자대학교",
+          "line": 183,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_배화여자대학교"
+        },
+        {
+          "text": "추계예술대학교",
+          "line": 184,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_추계예술대학교"
+        },
+        {
+          "text": "연세대학교",
+          "line": 185,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_연세대학교"
+        },
+        {
+          "text": "성균관대학교",
+          "line": 186,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_성균관대학교"
+        },
+        {
+          "text": "덕성여자대학교",
+          "line": 187,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_덕성여자대학교"
+        },
+        {
+          "text": "단국대학교",
+          "line": 188,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_단국대학교"
+        },
+        {
+          "text": "대진대학교",
+          "line": 189,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_대진대학교"
+        },
+        {
+          "text": "동양대학교",
+          "line": 190,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동양대학교"
+        },
+        {
+          "text": "루터대학교",
+          "line": 191,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_루터대학교"
+        },
+        {
+          "text": "서울신학대학교",
+          "line": 192,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울신학대학교"
+        },
+        {
+          "text": "서울장신대학교",
+          "line": 193,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서울장신대학교"
+        },
+        {
+          "text": "성결대학교",
+          "line": 194,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_성결대학교"
+        },
+        {
+          "text": "수원가톨릭대학교",
+          "line": 195,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_수원가톨릭대학교"
+        },
+        {
+          "text": "수원대학교",
+          "line": 196,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_수원대학교"
+        },
+        {
+          "text": "신한대학교",
+          "line": 197,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_신한대학교"
+        },
+        {
+          "text": "아신대학교",
+          "line": 198,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_아신대학교"
+        },
+        {
+          "text": "아주대학교",
+          "line": 199,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_아주대학교"
+        },
+        {
+          "text": "예원예술대학교",
+          "line": 200,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_예원예술대학교"
+        },
+        {
+          "text": "용인대학교",
+          "line": 201,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_용인대학교"
+        },
+        {
+          "text": "중앙승가대학교",
+          "line": 203,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_중앙승가대학교"
+        },
+        {
+          "text": "차의과학대학교",
+          "line": 204,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_차의과학대학교"
+        },
+        {
+          "text": "칼빈대학교",
+          "line": 205,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_칼빈대학교"
+        },
+        {
+          "text": "평택대학교",
+          "line": 206,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_평택대학교"
+        },
+        {
+          "text": "한세대학교",
+          "line": 207,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한세대학교"
+        },
+        {
+          "text": "한신대학교",
+          "line": 208,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한신대학교"
+        },
+        {
+          "text": "순천향대학교",
+          "line": 210,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_순천향대학교"
+        },
+        {
+          "text": "광신대학교",
+          "line": 213,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_광신대학교"
+        },
+        {
+          "text": "광주과학기술원",
+          "line": 214,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_광주과학기술원"
+        },
+        {
+          "text": "광주교육대학교",
+          "line": 215,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_광주교육대학교"
+        },
+        {
+          "text": "광주대학교",
+          "line": 216,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_광주대학교"
+        },
+        {
+          "text": "광주여자대학교",
+          "line": 217,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_광주여자대학교"
+        },
+        {
+          "text": "남부대학교",
+          "line": 218,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_남부대학교"
+        },
+        {
+          "text": "송원대학교",
+          "line": 219,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_송원대학교"
+        },
+        {
+          "text": "전남대학교",
+          "line": 220,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_전남대학교"
+        },
+        {
+          "text": "조선대학교",
+          "line": 221,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_조선대학교"
+        },
+        {
+          "text": "호남대학교",
+          "line": 222,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_호남대학교"
+        },
+        {
+          "text": "호남신학대학교",
+          "line": 223,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_호남신학대학교"
+        },
+        {
+          "text": "광주보건대학교",
+          "line": 224,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_광주보건대학교"
+        },
+        {
+          "text": "기독간호대학교",
+          "line": 225,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_기독간호대학교"
+        },
+        {
+          "text": "동강대학교",
+          "line": 226,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동강대학교"
+        },
+        {
+          "text": "서영대학교",
+          "line": 227,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_서영대학교"
+        },
+        {
+          "text": "조선간호대학교",
+          "line": 228,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_조선간호대학교"
+        },
+        {
+          "text": "조선이공대학교",
+          "line": 229,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_조선이공대학교"
+        },
+        {
+          "text": "동신대학교",
+          "line": 231,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_동신대학교"
+        },
+        {
+          "text": "나주대학교",
+          "line": 232,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_나주대학교"
+        },
+        {
+          "text": "한국폴리텍대학교 청주캠퍼스",
+          "line": 270,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_청주캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 구미캠퍼스",
+          "line": 334,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_구미캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 대구캠퍼스",
+          "line": 335,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_대구캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 영남융합기술캠퍼스",
+          "line": 336,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_영남융합기술캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 영주캠퍼스",
+          "line": 337,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_영주캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 청주캠퍼스",
+          "line": 521,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_청주캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 구미캠퍼스",
+          "line": 585,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_구미캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 대구캠퍼스",
+          "line": 586,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_대구캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 영남융합기술캠퍼스",
+          "line": 587,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_영남융합기술캠퍼스"
+        },
+        {
+          "text": "한국폴리텍대학교 영주캠퍼스",
+          "line": 588,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_한국폴리텍대학교_영주캠퍼스"
+        }
+      ]
+    },
+    {
+      "path": "src/features/signup/lib/area.ts",
+      "korean": 79,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "대전",
+          "line": 6,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대전"
+        },
+        {
+          "text": "부산",
+          "line": 20,
+          "type": "string",
+          "suggestedKey": "features.lib.string_부산"
+        },
+        {
+          "text": "대구",
+          "line": 34,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대구"
+        },
+        {
+          "text": "경북",
+          "line": 62,
+          "type": "string",
+          "suggestedKey": "features.lib.string_경북"
+        },
+        {
+          "text": "경남",
+          "line": 76,
+          "type": "string",
+          "suggestedKey": "features.lib.string_경남"
+        },
+        {
+          "text": "전북",
+          "line": 90,
+          "type": "string",
+          "suggestedKey": "features.lib.string_전북"
+        },
+        {
+          "text": "전남",
+          "line": 104,
+          "type": "string",
+          "suggestedKey": "features.lib.string_전남"
+        },
+        {
+          "text": "강원",
+          "line": 132,
+          "type": "string",
+          "suggestedKey": "features.lib.string_강원"
+        },
+        {
+          "text": "천안",
+          "line": 146,
+          "type": "string",
+          "suggestedKey": "features.lib.string_천안"
+        },
+        {
+          "text": "대전",
+          "line": 161,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대전"
+        },
+        {
+          "text": "대전광역시",
+          "line": 162,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대전광역시"
+        },
+        {
+          "text": "부산",
+          "line": 163,
+          "type": "string",
+          "suggestedKey": "features.lib.string_부산"
+        },
+        {
+          "text": "부산광역시",
+          "line": 164,
+          "type": "string",
+          "suggestedKey": "features.lib.string_부산광역시"
+        },
+        {
+          "text": "김해시",
+          "line": 164,
+          "type": "string",
+          "suggestedKey": "features.lib.string_김해시"
+        },
+        {
+          "text": "대구",
+          "line": 165,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대구"
+        },
+        {
+          "text": "대구광역시",
+          "line": 166,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대구광역시"
+        },
+        {
+          "text": "안동시",
+          "line": 166,
+          "type": "string",
+          "suggestedKey": "features.lib.string_안동시"
+        },
+        {
+          "text": "문경시",
+          "line": 166,
+          "type": "string",
+          "suggestedKey": "features.lib.string_문경시"
+        },
+        {
+          "text": "영주시",
+          "line": 166,
+          "type": "string",
+          "suggestedKey": "features.lib.string_영주시"
+        },
+        {
+          "text": "청주시",
+          "line": 168,
+          "type": "string",
+          "suggestedKey": "features.lib.string_청주시"
+        },
+        {
+          "text": "세종특별자치시",
+          "line": 168,
+          "type": "string",
+          "suggestedKey": "features.lib.string_세종특별자치시"
+        },
+        {
+          "text": "천안",
+          "line": 169,
+          "type": "string",
+          "suggestedKey": "features.lib.string_천안"
+        },
+        {
+          "text": "천안시",
+          "line": 170,
+          "type": "string",
+          "suggestedKey": "features.lib.string_천안시"
+        },
+        {
+          "text": "인천광역시",
+          "line": 172,
+          "type": "string",
+          "suggestedKey": "features.lib.string_인천광역시"
+        },
+        {
+          "text": "서울특별시",
+          "line": 172,
+          "type": "string",
+          "suggestedKey": "features.lib.string_서울특별시"
+        },
+        {
+          "text": "광주",
+          "line": 173,
+          "type": "string",
+          "suggestedKey": "features.lib.string_광주"
+        },
+        {
+          "text": "광주광역시",
+          "line": 174,
+          "type": "string",
+          "suggestedKey": "features.lib.string_광주광역시"
+        },
+        {
+          "text": "전주시",
+          "line": 174,
+          "type": "string",
+          "suggestedKey": "features.lib.string_전주시"
+        },
+        {
+          "text": "군산시",
+          "line": 174,
+          "type": "string",
+          "suggestedKey": "features.lib.string_군산시"
+        },
+        {
+          "text": "익산시",
+          "line": 174,
+          "type": "string",
+          "suggestedKey": "features.lib.string_익산시"
+        },
+        {
+          "text": "대전광역시",
+          "line": 182,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대전광역시"
+        },
+        {
+          "text": "부산광역시",
+          "line": 185,
+          "type": "string",
+          "suggestedKey": "features.lib.string_부산광역시"
+        },
+        {
+          "text": "김해시",
+          "line": 185,
+          "type": "string",
+          "suggestedKey": "features.lib.string_김해시"
+        },
+        {
+          "text": "대구광역시",
+          "line": 190,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대구광역시"
+        },
+        {
+          "text": "안동시",
+          "line": 190,
+          "type": "string",
+          "suggestedKey": "features.lib.string_안동시"
+        },
+        {
+          "text": "문경시",
+          "line": 190,
+          "type": "string",
+          "suggestedKey": "features.lib.string_문경시"
+        },
+        {
+          "text": "영주시",
+          "line": 190,
+          "type": "string",
+          "suggestedKey": "features.lib.string_영주시"
+        },
+        {
+          "text": "청주시",
+          "line": 193,
+          "type": "string",
+          "suggestedKey": "features.lib.string_청주시"
+        },
+        {
+          "text": "세종특별자치시",
+          "line": 193,
+          "type": "string",
+          "suggestedKey": "features.lib.string_세종특별자치시"
+        },
+        {
+          "text": "천안시",
+          "line": 195,
+          "type": "string",
+          "suggestedKey": "features.lib.string_천안시"
+        },
+        {
+          "text": "인천광역시",
+          "line": 199,
+          "type": "string",
+          "suggestedKey": "features.lib.string_인천광역시"
+        },
+        {
+          "text": "서울특별시",
+          "line": 199,
+          "type": "string",
+          "suggestedKey": "features.lib.string_서울특별시"
+        },
+        {
+          "text": "광주광역시",
+          "line": 204,
+          "type": "string",
+          "suggestedKey": "features.lib.string_광주광역시"
+        },
+        {
+          "text": "전주시",
+          "line": 204,
+          "type": "string",
+          "suggestedKey": "features.lib.string_전주시"
+        },
+        {
+          "text": "군산시",
+          "line": 204,
+          "type": "string",
+          "suggestedKey": "features.lib.string_군산시"
+        },
+        {
+          "text": "익산시",
+          "line": 204,
+          "type": "string",
+          "suggestedKey": "features.lib.string_익산시"
+        },
+        {
+          "text": "대전",
+          "line": 212,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대전"
+        },
+        {
+          "text": "부산",
+          "line": 215,
+          "type": "string",
+          "suggestedKey": "features.lib.string_부산"
+        },
+        {
+          "text": "김해",
+          "line": 215,
+          "type": "string",
+          "suggestedKey": "features.lib.string_김해"
+        },
+        {
+          "text": "대구",
+          "line": 220,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대구"
+        },
+        {
+          "text": "안동",
+          "line": 220,
+          "type": "string",
+          "suggestedKey": "features.lib.string_안동"
+        },
+        {
+          "text": "문경",
+          "line": 220,
+          "type": "string",
+          "suggestedKey": "features.lib.string_문경"
+        },
+        {
+          "text": "영주",
+          "line": 220,
+          "type": "string",
+          "suggestedKey": "features.lib.string_영주"
+        },
+        {
+          "text": "청주",
+          "line": 223,
+          "type": "string",
+          "suggestedKey": "features.lib.string_청주"
+        },
+        {
+          "text": "세종",
+          "line": 223,
+          "type": "string",
+          "suggestedKey": "features.lib.string_세종"
+        },
+        {
+          "text": "천안",
+          "line": 225,
+          "type": "string",
+          "suggestedKey": "features.lib.string_천안"
+        },
+        {
+          "text": "서울",
+          "line": 229,
+          "type": "string",
+          "suggestedKey": "features.lib.string_서울"
+        },
+        {
+          "text": "인천",
+          "line": 229,
+          "type": "string",
+          "suggestedKey": "features.lib.string_인천"
+        },
+        {
+          "text": "경기",
+          "line": 229,
+          "type": "string",
+          "suggestedKey": "features.lib.string_경기"
+        },
+        {
+          "text": "광주",
+          "line": 234,
+          "type": "string",
+          "suggestedKey": "features.lib.string_광주"
+        },
+        {
+          "text": "전주",
+          "line": 234,
+          "type": "string",
+          "suggestedKey": "features.lib.string_전주"
+        },
+        {
+          "text": "군산",
+          "line": 234,
+          "type": "string",
+          "suggestedKey": "features.lib.string_군산"
+        },
+        {
+          "text": "익산",
+          "line": 234,
+          "type": "string",
+          "suggestedKey": "features.lib.string_익산"
+        },
+        {
+          "text": "대전광역시",
+          "line": 241,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대전광역시"
+        },
+        {
+          "text": "부산광역시",
+          "line": 242,
+          "type": "string",
+          "suggestedKey": "features.lib.string_부산광역시"
+        },
+        {
+          "text": "김해시",
+          "line": 243,
+          "type": "string",
+          "suggestedKey": "features.lib.string_김해시"
+        },
+        {
+          "text": "대구광역시",
+          "line": 244,
+          "type": "string",
+          "suggestedKey": "features.lib.string_대구광역시"
+        },
+        {
+          "text": "청주시",
+          "line": 245,
+          "type": "string",
+          "suggestedKey": "features.lib.string_청주시"
+        },
+        {
+          "text": "세종특별자치시",
+          "line": 246,
+          "type": "string",
+          "suggestedKey": "features.lib.string_세종특별자치시"
+        },
+        {
+          "text": "천안시",
+          "line": 247,
+          "type": "string",
+          "suggestedKey": "features.lib.string_천안시"
+        },
+        {
+          "text": "인천광역시",
+          "line": 248,
+          "type": "string",
+          "suggestedKey": "features.lib.string_인천광역시"
+        },
+        {
+          "text": "서울특별시",
+          "line": 249,
+          "type": "string",
+          "suggestedKey": "features.lib.string_서울특별시"
+        },
+        {
+          "text": "광주광역시",
+          "line": 250,
+          "type": "string",
+          "suggestedKey": "features.lib.string_광주광역시"
+        },
+        {
+          "text": "전주시",
+          "line": 252,
+          "type": "string",
+          "suggestedKey": "features.lib.string_전주시"
+        },
+        {
+          "text": "군산시",
+          "line": 253,
+          "type": "string",
+          "suggestedKey": "features.lib.string_군산시"
+        },
+        {
+          "text": "익산시",
+          "line": 254,
+          "type": "string",
+          "suggestedKey": "features.lib.string_익산시"
+        },
+        {
+          "text": "안동시",
+          "line": 255,
+          "type": "string",
+          "suggestedKey": "features.lib.string_안동시"
+        },
+        {
+          "text": "문경시",
+          "line": 256,
+          "type": "string",
+          "suggestedKey": "features.lib.string_문경시"
+        },
+        {
+          "text": "영주시",
+          "line": 257,
+          "type": "string",
+          "suggestedKey": "features.lib.string_영주시"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/constants/region.ts",
+      "korean": 68,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "서울특별시",
+          "line": 74,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_서울특별시"
+        },
+        {
+          "text": "부산광역시",
+          "line": 75,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_부산광역시"
+        },
+        {
+          "text": "대구광역시",
+          "line": 76,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_대구광역시"
+        },
+        {
+          "text": "인천광역시",
+          "line": 77,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_인천광역시"
+        },
+        {
+          "text": "광주광역시",
+          "line": 78,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_광주광역시"
+        },
+        {
+          "text": "대전광역시",
+          "line": 79,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_대전광역시"
+        },
+        {
+          "text": "울산광역시",
+          "line": 80,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_울산광역시"
+        },
+        {
+          "text": "세종특별자치시",
+          "line": 81,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_세종특별자치시"
+        },
+        {
+          "text": "수원시",
+          "line": 82,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_수원시"
+        },
+        {
+          "text": "용인시",
+          "line": 83,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_용인시"
+        },
+        {
+          "text": "성남시",
+          "line": 84,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_성남시"
+        },
+        {
+          "text": "안양시",
+          "line": 85,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_안양시"
+        },
+        {
+          "text": "안산시",
+          "line": 86,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_안산시"
+        },
+        {
+          "text": "부천시",
+          "line": 87,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_부천시"
+        },
+        {
+          "text": "고양시",
+          "line": 88,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_고양시"
+        },
+        {
+          "text": "광주시",
+          "line": 89,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_광주시"
+        },
+        {
+          "text": "화성시",
+          "line": 90,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_화성시"
+        },
+        {
+          "text": "평택시",
+          "line": 91,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_평택시"
+        },
+        {
+          "text": "의정부시",
+          "line": 92,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_의정부시"
+        },
+        {
+          "text": "이천시",
+          "line": 93,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_이천시"
+        },
+        {
+          "text": "포천시",
+          "line": 94,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_포천시"
+        },
+        {
+          "text": "안성시",
+          "line": 95,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_안성시"
+        },
+        {
+          "text": "오산시",
+          "line": 96,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_오산시"
+        },
+        {
+          "text": "양주시",
+          "line": 97,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_양주시"
+        },
+        {
+          "text": "춘천시",
+          "line": 98,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_춘천시"
+        },
+        {
+          "text": "원주시",
+          "line": 99,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_원주시"
+        },
+        {
+          "text": "강릉시",
+          "line": 100,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_강릉시"
+        },
+        {
+          "text": "속초시",
+          "line": 101,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_속초시"
+        },
+        {
+          "text": "삼척시",
+          "line": 102,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_삼척시"
+        },
+        {
+          "text": "청주시",
+          "line": 103,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_청주시"
+        },
+        {
+          "text": "충주시",
+          "line": 104,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_충주시"
+        },
+        {
+          "text": "제천시",
+          "line": 105,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_제천시"
+        },
+        {
+          "text": "천안시",
+          "line": 106,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_천안시"
+        },
+        {
+          "text": "공주시",
+          "line": 107,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_공주시"
+        },
+        {
+          "text": "아산시",
+          "line": 108,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_아산시"
+        },
+        {
+          "text": "서산시",
+          "line": 109,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_서산시"
+        },
+        {
+          "text": "논산시",
+          "line": 110,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_논산시"
+        },
+        {
+          "text": "보령시",
+          "line": 111,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_보령시"
+        },
+        {
+          "text": "전주시",
+          "line": 112,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_전주시"
+        },
+        {
+          "text": "군산시",
+          "line": 113,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_군산시"
+        },
+        {
+          "text": "익산시",
+          "line": 114,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_익산시"
+        },
+        {
+          "text": "정읍시",
+          "line": 115,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_정읍시"
+        },
+        {
+          "text": "남원시",
+          "line": 116,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_남원시"
+        },
+        {
+          "text": "여수시",
+          "line": 117,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_여수시"
+        },
+        {
+          "text": "순천시",
+          "line": 118,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_순천시"
+        },
+        {
+          "text": "목포시",
+          "line": 119,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_목포시"
+        },
+        {
+          "text": "광양시",
+          "line": 120,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_광양시"
+        },
+        {
+          "text": "나주시",
+          "line": 121,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_나주시"
+        },
+        {
+          "text": "포항시",
+          "line": 122,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_포항시"
+        },
+        {
+          "text": "구미시",
+          "line": 123,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_구미시"
+        },
+        {
+          "text": "경주시",
+          "line": 124,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_경주시"
+        },
+        {
+          "text": "안동시",
+          "line": 125,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_안동시"
+        },
+        {
+          "text": "김천시",
+          "line": 126,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_김천시"
+        },
+        {
+          "text": "경산시",
+          "line": 127,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_경산시"
+        },
+        {
+          "text": "영주시",
+          "line": 128,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_영주시"
+        },
+        {
+          "text": "상주시",
+          "line": 129,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_상주시"
+        },
+        {
+          "text": "영천시",
+          "line": 130,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_영천시"
+        },
+        {
+          "text": "문경시",
+          "line": 131,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_문경시"
+        },
+        {
+          "text": "창원시",
+          "line": 132,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_창원시"
+        },
+        {
+          "text": "진주시",
+          "line": 133,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_진주시"
+        },
+        {
+          "text": "김해시",
+          "line": 134,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_김해시"
+        },
+        {
+          "text": "양산시",
+          "line": 135,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_양산시"
+        },
+        {
+          "text": "거제시",
+          "line": 136,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_거제시"
+        },
+        {
+          "text": "통영시",
+          "line": 137,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_통영시"
+        },
+        {
+          "text": "사천시",
+          "line": 138,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_사천시"
+        },
+        {
+          "text": "밀양시",
+          "line": 139,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_밀양시"
+        },
+        {
+          "text": "제주시",
+          "line": 140,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_제주시"
+        },
+        {
+          "text": "서귀포시",
+          "line": 141,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_서귀포시"
+        }
+      ]
+    },
+    {
+      "path": "src/features/signup/ui/university-logos/japan-logos-data.ts",
+      "korean": 23,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "도쿄대학",
+          "line": 95,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_도쿄대학"
+        },
+        {
+          "text": "와세다대학",
+          "line": 96,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_와세다대학"
+        },
+        {
+          "text": "게이오대학",
+          "line": 97,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_게이오대학"
+        },
+        {
+          "text": "메이지대학",
+          "line": 98,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_메이지대학"
+        },
+        {
+          "text": "릿쿄대학",
+          "line": 99,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_릿쿄대학"
+        },
+        {
+          "text": "츄오대학",
+          "line": 100,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_츄오대학"
+        },
+        {
+          "text": "호세이대학",
+          "line": 101,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_호세이대학"
+        },
+        {
+          "text": "히토츠바시대학",
+          "line": 102,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_히토츠바시대학"
+        },
+        {
+          "text": "소피아대학",
+          "line": 103,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_소피아대학"
+        },
+        {
+          "text": "도쿄공업대학",
+          "line": 104,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_도쿄공업대학"
+        },
+        {
+          "text": "도쿄이과대학",
+          "line": 105,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_도쿄이과대학"
+        },
+        {
+          "text": "교토대학",
+          "line": 109,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_교토대학"
+        },
+        {
+          "text": "오사카대학",
+          "line": 110,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_오사카대학"
+        },
+        {
+          "text": "고베대학",
+          "line": 111,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_고베대학"
+        },
+        {
+          "text": "간사이대학",
+          "line": 112,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_간사이대학"
+        },
+        {
+          "text": "도시샤대학",
+          "line": 113,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_도시샤대학"
+        },
+        {
+          "text": "리츠메이칸대학",
+          "line": 114,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_리츠메이칸대학"
+        },
+        {
+          "text": "나고야대학",
+          "line": 117,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_나고야대학"
+        },
+        {
+          "text": "나고야공업대학",
+          "line": 118,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_나고야공업대학"
+        },
+        {
+          "text": "규슈대학",
+          "line": 121,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_규슈대학"
+        },
+        {
+          "text": "세이난학원대학",
+          "line": 122,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_세이난학원대학"
+        },
+        {
+          "text": "홋카이도대학",
+          "line": 124,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_홋카이도대학"
+        },
+        {
+          "text": "도호쿠대학",
+          "line": 125,
+          "type": "string",
+          "suggestedKey": "features.university-logos.string_도호쿠대학"
+        }
+      ]
+    },
+    {
+      "path": "test/e2e/fixtures/test-data.ts",
+      "korean": 15,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "테스트유저",
+          "line": 9,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_테스트유저"
+        },
+        {
+          "text": "남성",
+          "line": 11,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_남성"
+        },
+        {
+          "text": "서울대학교",
+          "line": 13,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_서울대학교"
+        },
+        {
+          "text": "영화감상",
+          "line": 23,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_영화감상"
+        },
+        {
+          "text": "운동",
+          "line": 23,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_운동"
+        },
+        {
+          "text": "여행",
+          "line": 23,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_여행"
+        },
+        {
+          "text": "서울특별시 강남구",
+          "line": 25,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_서울특별시_강남구"
+        },
+        {
+          "text": "안녕하세요! 만나서 반갑습니다 :)",
+          "line": 26,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_안녕하세요_만나서_반갑습니다"
+        },
+        {
+          "text": "안녕하세요!",
+          "line": 30,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_안녕하세요"
+        },
+        {
+          "text": "테스트 게시글",
+          "line": 37,
+          "type": "title",
+          "suggestedKey": ".fixtures.title_테스트_게시글"
+        },
+        {
+          "text": "이것은 테스트용 게시글입니다.",
+          "line": 38,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_이것은_테스트용_게시글입니다"
+        },
+        {
+          "text": "좋은 글이네요!",
+          "line": 40,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_좋은_글이네요"
+        },
+        {
+          "text": "일상",
+          "line": 45,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_일상"
+        },
+        {
+          "text": "행복",
+          "line": 45,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_행복"
+        },
+        {
+          "text": "좋은날",
+          "line": 45,
+          "type": "string",
+          "suggestedKey": ".fixtures.string_좋은날"
+        }
+      ]
+    },
+    {
+      "path": "app.config.ts",
+      "korean": 10,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "프로필 사진 촬영을 위해 카메라 접근이 필요합니다",
+          "line": 86,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_프로필_사진_촬영을_위해_카메라_접근이_필요합니다"
+        },
+        {
+          "text": "프로필 사진 선택을 위해 사진 라이브러리 접근이 필요합니다",
+          "line": 87,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_프로필_사진_선택을_위해_사진_라이브러리_접근이_필요합"
+        },
+        {
+          "text": "매칭 결과 및 중요한 알림을 받기 위해 알림 권한이 필요합니다",
+          "line": 88,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_매칭_결과_및_중요한_알림을_받기_위해_알림_권한이_필"
+        },
+        {
+          "text": "위치 정보를 사용하여 지도 서비스를 제공합니다.",
+          "line": 99,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_위치_정보를_사용하여_지도_서비스를_제공합니다"
+        },
+        {
+          "text": "백그라운드에서 위치 기반 서비스를 제공합니다.",
+          "line": 100,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_백그라운드에서_위치_기반_서비스를_제공합니다"
+        },
+        {
+          "text": "썸타임 - 대학생 소개팅 앱",
+          "line": 146,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_썸타임_대학생_소개팅_앱"
+        },
+        {
+          "text": "썸타임",
+          "line": 147,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_썸타임"
+        },
+        {
+          "text": "프로필 사진 촬영을 위해 카메라 권한이 필요합니다.",
+          "line": 223,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_프로필_사진_촬영을_위해_카메라_권한이_필요합니다"
+        },
+        {
+          "text": "데이트 일정 관리를 위해 캘린더 접근 권한이 필요합니다.",
+          "line": 229,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_데이트_일정_관리를_위해_캘린더_접근_권한이_필요합니다"
+        },
+        {
+          "text": "썸타임은 사용자에게 맞춤 광고를 위해 추적 권한을 요청합니다.",
+          "line": 235,
+          "type": "string",
+          "suggestedKey": ".app.config.ts.string_썸타임은_사용자에게_맞춤_광고를_위해_추적_권한을_요청"
+        }
+      ]
+    },
+    {
+      "path": "test/e2e/pages/auth.page.ts",
+      "korean": 9,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "전화번호",
+          "line": 15,
+          "type": "string",
+          "suggestedKey": ".pages.string_전화번호"
+        },
+        {
+          "text": "인증번호",
+          "line": 16,
+          "type": "string",
+          "suggestedKey": ".pages.string_인증번호"
+        },
+        {
+          "text": "이름",
+          "line": 17,
+          "type": "string",
+          "suggestedKey": ".pages.string_이름"
+        },
+        {
+          "text": "생년월일",
+          "line": 18,
+          "type": "string",
+          "suggestedKey": ".pages.string_생년월일"
+        },
+        {
+          "text": "닉네임",
+          "line": 19,
+          "type": "string",
+          "suggestedKey": ".pages.string_닉네임"
+        },
+        {
+          "text": "남성",
+          "line": 125,
+          "type": "string",
+          "suggestedKey": ".pages.string_남성"
+        },
+        {
+          "text": "여성",
+          "line": 125,
+          "type": "string",
+          "suggestedKey": ".pages.string_여성"
+        },
+        {
+          "text": "남성",
+          "line": 193,
+          "type": "string",
+          "suggestedKey": ".pages.string_남성"
+        },
+        {
+          "text": "여성",
+          "line": 193,
+          "type": "string",
+          "suggestedKey": ".pages.string_여성"
+        }
+      ]
+    },
+    {
+      "path": "src/widgets/gem-store/utils/apple.ts",
+      "korean": 9,
+      "translated": 6,
+      "strings": [
+        {
+          "text": "라이트팩",
+          "line": 29,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_라이트팩"
+        },
+        {
+          "text": "스타터팩",
+          "line": 30,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_스타터팩"
+        },
+        {
+          "text": "베이직팩",
+          "line": 31,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_베이직팩"
+        },
+        {
+          "text": "스탠다드팩",
+          "line": 32,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_스탠다드팩"
+        },
+        {
+          "text": "플러스팩",
+          "line": 33,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_플러스팩"
+        },
+        {
+          "text": "프리미엄팩",
+          "line": 34,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_프리미엄팩"
+        },
+        {
+          "text": "메가팩",
+          "line": 35,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_메가팩"
+        },
+        {
+          "text": "울트라팩",
+          "line": 36,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_울트라팩"
+        },
+        {
+          "text": "맥시멈팩",
+          "line": 37,
+          "type": "string",
+          "suggestedKey": "widgets.utils.string_맥시멈팩"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/lib/analytics-example.tsx",
+      "korean": 8,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "홈화면",
+          "line": 51,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_홈화면"
+        },
+        {
+          "text": "서울대학교",
+          "line": 58,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_서울대학교"
+        },
+        {
+          "text": "회원가입 이벤트 추적",
+          "line": 66,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_회원가입_이벤트_추적"
+        },
+        {
+          "text": "매칭권 결제 클릭 추적",
+          "line": 67,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_매칭권_결제_클릭_추적"
+        },
+        {
+          "text": "구매 완료 추적",
+          "line": 68,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_구매_완료_추적"
+        },
+        {
+          "text": "로그인 이벤트 추적",
+          "line": 69,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_로그인_이벤트_추적"
+        },
+        {
+          "text": "화면 조회 추적",
+          "line": 70,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_화면_조회_추적"
+        },
+        {
+          "text": "사용자 정보 설정",
+          "line": 71,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_사용자_정보_설정"
+        }
+      ]
+    },
+    {
+      "path": "app/+html.tsx",
+      "korean": 6,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "썸타임",
+          "line": 28,
+          "type": "string",
+          "suggestedKey": "apps.+html.tsx.string_썸타임"
+        },
+        {
+          "text": "썸타임 - 대학생 소개팅 앱",
+          "line": 33,
+          "type": "string",
+          "suggestedKey": "apps.+html.tsx.string_썸타임_대학생_소개팅_앱"
+        },
+        {
+          "text": "스마트 뉴비",
+          "line": 39,
+          "type": "string",
+          "suggestedKey": "apps.+html.tsx.string_스마트_뉴비"
+        },
+        {
+          "text": "썸타임",
+          "line": 40,
+          "type": "string",
+          "suggestedKey": "apps.+html.tsx.string_썸타임"
+        },
+        {
+          "text": "썸타임",
+          "line": 47,
+          "type": "string",
+          "suggestedKey": "apps.+html.tsx.string_썸타임"
+        },
+        {
+          "text": "스마트 뉴비",
+          "line": 63,
+          "type": "string",
+          "suggestedKey": "apps.+html.tsx.string_스마트_뉴비"
+        }
+      ]
+    },
+    {
+      "path": "app/interest/age.tsx",
+      "korean": 4,
+      "translated": 4,
+      "strings": [
+        {
+          "text": "동갑",
+          "line": 50,
+          "type": "string",
+          "suggestedKey": "apps.interest.string_동갑"
+        },
+        {
+          "text": "연하",
+          "line": 51,
+          "type": "string",
+          "suggestedKey": "apps.interest.string_연하"
+        },
+        {
+          "text": "연상",
+          "line": 52,
+          "type": "string",
+          "suggestedKey": "apps.interest.string_연상"
+        },
+        {
+          "text": "상관없음",
+          "line": 53,
+          "type": "string",
+          "suggestedKey": "apps.interest.string_상관없음"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/constants/mixpanel-events.ts",
+      "korean": 4,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "일상",
+          "line": 351,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_일상"
+        },
+        {
+          "text": "인간관계",
+          "line": 352,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_인간관계"
+        },
+        {
+          "text": "진로/학교",
+          "line": 353,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_진로_학교"
+        },
+        {
+          "text": "연애",
+          "line": 354,
+          "type": "string",
+          "suggestedKey": "shareds.constants.string_연애"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/lib/facebook-events-example.tsx",
+      "korean": 3,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "서울대학교",
+          "line": 68,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_서울대학교"
+        },
+        {
+          "text": "길동",
+          "line": 77,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_길동"
+        },
+        {
+          "text": "서울",
+          "line": 78,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_서울"
+        }
+      ]
+    },
+    {
+      "path": "app/partner/view/[id].tsx",
+      "korean": 3,
+      "translated": 10,
+      "strings": [
+        {
+          "text": "성격",
+          "line": 454,
+          "type": "string",
+          "suggestedKey": "apps.view.string_성격"
+        },
+        {
+          "text": "연애 스타일",
+          "line": 455,
+          "type": "string",
+          "suggestedKey": "apps.view.string_연애_스타일"
+        },
+        {
+          "text": "관심사",
+          "line": 456,
+          "type": "string",
+          "suggestedKey": "apps.view.string_관심사"
+        }
+      ]
+    },
+    {
+      "path": "app/partner/ban-report.tsx",
+      "korean": 2,
+      "translated": 37,
+      "strings": [
+        {
+          "text": "확인",
+          "line": 183,
+          "type": "string",
+          "suggestedKey": "apps.partner.string_확인"
+        },
+        {
+          "text": "확인",
+          "line": 221,
+          "type": "string",
+          "suggestedKey": "apps.partner.string_확인"
+        }
+      ]
+    },
+    {
+      "path": "app/interest/tattoo.tsx",
+      "korean": 2,
+      "translated": 12,
+      "strings": [
+        {
+          "text": "문신 없음",
+          "line": 187,
+          "type": "string",
+          "suggestedKey": "apps.interest.string_문신_없음"
+        },
+        {
+          "text": "작은 문신",
+          "line": 188,
+          "type": "string",
+          "suggestedKey": "apps.interest.string_작은_문신"
+        }
+      ]
+    },
+    {
+      "path": "src/widgets/opposite-gender-preview/index.tsx",
+      "korean": 2,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "남성",
+          "line": 121,
+          "type": "string",
+          "suggestedKey": "widgets.opposite-gender-preview.string_남성"
+        },
+        {
+          "text": "여성",
+          "line": 121,
+          "type": "string",
+          "suggestedKey": "widgets.opposite-gender-preview.string_여성"
+        }
+      ]
+    },
+    {
+      "path": "app/auth/reapply.tsx",
+      "korean": 1,
+      "translated": 16,
+      "strings": [
+        {
+          "text": "대표",
+          "line": 205,
+          "type": "string",
+          "suggestedKey": "apps.auth.string_대표"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/utils/image.ts",
+      "korean": 1,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "이미지 변환 실패:",
+          "line": 25,
+          "type": "string",
+          "suggestedKey": "shareds.utils.string_이미지_변환_실패"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/ui/loading-modal.tsx",
+      "korean": 1,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "처리 중입니다...",
+          "line": 10,
+          "type": "string",
+          "suggestedKey": "shareds.ui.string_처리_중입니다"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/lib/firebase-analytics.ts",
+      "korean": 1,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "앱 이름:",
+          "line": 31,
+          "type": "string",
+          "suggestedKey": "shareds.lib.string_앱_이름"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/libs/day.ts",
+      "korean": 1,
+      "translated": 1,
+      "strings": [
+        {
+          "text": "방금 전",
+          "line": 60,
+          "type": "string",
+          "suggestedKey": "shareds.libs.string_방금_전"
+        }
+      ]
+    },
+    {
+      "path": "app/auth/signup/university-cluster.tsx",
+      "korean": 1,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "폴리텍",
+          "line": 62,
+          "type": "string",
+          "suggestedKey": "apps.signup.string_폴리텍"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/ui/image-resource/image-resource.web.tsx",
+      "korean": 1,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "이미지를 불러오고 있어요",
+          "line": 13,
+          "type": "string",
+          "suggestedKey": "shareds.image-resource.string_이미지를_불러오고_있어요"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/ui/image-resource/image-resource.native.tsx",
+      "korean": 1,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "이미지를 불러오고 있어요",
+          "line": 14,
+          "type": "string",
+          "suggestedKey": "shareds.image-resource.string_이미지를_불러오고_있어요"
+        }
+      ]
+    },
+    {
+      "path": "src/shared/ui/app-download-section/index.tsx",
+      "korean": 1,
+      "translated": 0,
+      "strings": [
+        {
+          "text": "앱을 설치하여 더 간편하게 시작하세요!",
+          "line": 39,
+          "type": "string",
+          "suggestedKey": "shareds.app-download-section.string_앱을_설치하여_더_간편하게_시작하세요"
+        }
+      ]
+    },
+    {
+      "path": "src/features/signup/ui/login-form.tsx",
+      "korean": 1,
+      "translated": 14,
+      "strings": [
+        {
+          "text": "에러 정보:",
+          "line": 363,
+          "type": "error",
+          "suggestedKey": "features.ui.error_에러_정보"
+        }
+      ]
+    }
+  ]
+}
