@@ -5,8 +5,10 @@ import { QUERY_KEYS } from "../queries/keys";
 import { useToast } from "@/src/shared/hooks/use-toast";
 import { MIXPANEL_EVENTS, USER_ACTION_SOURCES } from "@/src/shared/constants/mixpanel-events";
 import type { Article } from "../types";
+import { useTranslation } from "react-i18next";
 
 export const useBlockUser = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { emitToast } = useToast();
 
@@ -41,7 +43,7 @@ export const useBlockUser = () => {
       if (context?.previousArticles) {
         queryClient.setQueryData(QUERY_KEYS.articles.lists(), context.previousArticles);
       }
-      emitToast("사용자 차단에 실패했습니다.");
+      emitToast(t("features.community.ui.block.error_toast"));
     },
     onSuccess: (_, blockedUserId) => {
 
@@ -52,7 +54,7 @@ export const useBlockUser = () => {
         timestamp: new Date().toISOString(),
       });
 
-      emitToast("사용자를 차단했습니다.");
+      emitToast(t("features.community.ui.block.success_toast"));
     },
     onSettled: () => {
       // Invalidate and refetch

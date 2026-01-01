@@ -75,23 +75,23 @@ export function Article({
 
   const handleBlockUser = () => {
     showModal({
-      title: "사용자 차단",
+      title: t("features.community.ui.block.modal_title"),
       children: (
         <View>
           <Text size="sm" textColor="black">
-            {`'${author.name}'님을 차단하시겠습니까?\n차단하면 해당 사용자의 모든 게시글이 보이지 않게 됩니다.`}
+            {t("features.community.ui.block.modal_message", { name: author.name })}
           </Text>
         </View>
       ),
       primaryButton: {
-        text: "차단하기",
+        text: t("features.community.ui.block.confirm_button"),
         onClick: () => {
           blockUser(author.id);
           setDropdownOpen(false);
         },
       },
       secondaryButton: {
-        text: "취소",
+        text: t("features.community.ui.block.cancel_button"),
         onClick: () => {
           setDropdownOpen(false);
         },
@@ -132,7 +132,7 @@ export function Article({
       });
       menus.push({
         key: "block",
-        content: "차단",
+        content: t("features.community.ui.block.menu_item"),
         onPress: handleBlockUser,
       });
     }
@@ -217,7 +217,7 @@ export function Article({
               {dayUtils.formatRelativeTime(data.createdAt)}
             </Text>
             <Text style={[styles.metaText, styles.metaTextWithMargin]}>
-              {`·  조회 ${data.readCount}`}
+              {`·  ${t("features.community.ui.common.views")} ${data.readCount}`}
             </Text>
           </View>
 

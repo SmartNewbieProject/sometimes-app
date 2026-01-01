@@ -89,7 +89,7 @@ export default function CommunityWriteScreen() {
         const { originalImages, deleteImageIds, ...articleData } = data;
 
         communityEngagementEvents.trackArticleCreated(
-          articleData.type || '일반',
+          articleData.type || t("apps.community.write.default_type"),
           !!originalImages && originalImages.length > 0,
           Math.ceil(articleData.content.length / 500)
         );
@@ -97,7 +97,7 @@ export default function CommunityWriteScreen() {
         const result = await articles.postArticles(articleData);
 
         communityEvents.trackPostCreated(
-          articleData.type || '일반',
+          articleData.type || t("apps.community.write.default_type"),
           !!originalImages && originalImages.length > 0
         );
 

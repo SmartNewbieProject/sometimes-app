@@ -139,7 +139,7 @@ export const InfiniteArticleList = forwardRef<
           await apis.articles.doLike(item);
         },
         (error) => {
-          console.error("좋아요 업데이트 실패:", error);
+          console.error("Article like update failed:", error);
         }
       );
     };
@@ -182,7 +182,7 @@ export const InfiniteArticleList = forwardRef<
                   articleId: id,
                 });
 
-                const errorMessage = err?.message || err?.error || "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+                const errorMessage = err?.message || err?.error || t("features.community.ui.delete_error");
                 showErrorModal(errorMessage, "error");
               }
             ),

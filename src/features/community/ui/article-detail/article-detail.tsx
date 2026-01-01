@@ -219,7 +219,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         await apis.articles.doLike(item);
       },
       (error) => {
-        console.error("좋아요 업데이트 실패:", error);
+        console.error("Article like update failed:", error);
       }
     );
   };
@@ -309,7 +309,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
         devLogWithTag('Comment Like', 'Server response:', { success: !!serverResponse });
       },
       (error) => {
-        console.error("댓글 좋아요 업데이트 실패:", error);
+        console.error("Comment like update failed:", error);
       }
     );
   };
@@ -448,7 +448,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
                   marginLeft: 8,
                 }}
               >
-                {`·  조회 ${article.readCount}`}
+                {`·  ${t("features.community.ui.common.views")} ${article.readCount}`}
               </Text>
             </View>
 
