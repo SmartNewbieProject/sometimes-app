@@ -28,7 +28,7 @@ type FirstSaleCardProps = {
 };
 
 export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
-  const { totalExpiredAt, show, setShow, event7Expired, event16Expired, event27Expired } = useFirstSaleEvents();
+  const { totalExpiredAt, show, setShow, event16Expired } = useFirstSaleEvents();
   const { seconds } = useTimer(totalExpiredAt, { autoStart: !!totalExpiredAt, onComplete: () => {
     setShow(false);
   } });
@@ -58,6 +58,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
   });
 
   if (!show) return null;
+  if (!FIRST_SALE_PRODUCTS.SALE_16) return null;
 
   return (
     <GlowingCard>
@@ -98,31 +99,10 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
           </View>
         </View>
 
-        <Show when={!event7Expired}>
-          <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_7} onOpenPayment={(metadata) => {
-            // KPI 이벤트: 결제 아이템 선택 (첫 구매)
-paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_7.totalGems);
-
-            // 기존 이벤트 호환성
-            paymentEvents.trackStoreViewed('gem');
-
-            setEventType(EventType.FIRST_SALE_7);
-            onOpenPayment(metadata);
-          }} hot={false} />
-        </Show>
         <Show when={!event16Expired}>
           <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_16} onOpenPayment={(metadata) => {
-            // KPI 이벤트: 결제 아이템 선택 (첫 구매)
-paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_16.totalGems);
+            paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_16.totalGems);
             setEventType(EventType.FIRST_SALE_16);
-            onOpenPayment(metadata);
-          }} hot={false} />
-        </Show>
-         <Show when={!event27Expired}>
-          <GemStoreWidget.Item gemProduct={FIRST_SALE_PRODUCTS.SALE_27} onOpenPayment={(metadata) => {
-            // KPI 이벤트: 결제 아이템 선택 (첫 구매)
-paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_27.totalGems);
-            setEventType(EventType.FIRST_SALE_27);
             onOpenPayment(metadata);
           }} hot={false} />
         </Show>

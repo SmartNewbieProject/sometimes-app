@@ -1,4 +1,5 @@
 import { env } from '@/src/shared/libs/env';
+import { useTranslation } from 'react-i18next';
 import type {
 	PortOneIdentityVerificationRequest,
 	PortOneIdentityVerificationResponse,
@@ -48,7 +49,7 @@ export class PortOneAuthService {
 	): Promise<PortOneIdentityVerificationResponse> {
 		try {
 			if (typeof window === 'undefined') {
-				throw new Error('웹 환경에서만 사용 가능합니다.');
+				throw new Error("common.웹_환경에서만_사용_가능합니다");
 			}
 			const PortOne = await this.loadPortOneSDK();
 
@@ -69,11 +70,11 @@ export class PortOneAuthService {
 			const response = await PortOne.requestIdentityVerification(request);
 
 			if (!response) {
-				throw new Error('본인인증 응답이 없습니다.');
+				throw new Error("common.본인인증_응답이_없습니다");
 			}
 
 			if (response.code != null) {
-				throw new Error(response.message || '본인인증에 실패했습니다.');
+				throw new Error(response.message || "common.본인인증에_실패했습니다");
 			}
 
 			return {

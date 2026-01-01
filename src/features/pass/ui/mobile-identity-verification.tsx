@@ -40,7 +40,7 @@ export const MobileIdentityVerification: React.FC<
   const { t } = useTranslation();
   const handleComplete = (response: unknown) => {
     if (!response) {
-      onError?.(new Error("본인인증 응답이 없습니다."));
+      onError?.(new Error(t("features.pass.mobile-identity-verification.no_response")));
       return;
     }
 
@@ -48,7 +48,7 @@ export const MobileIdentityVerification: React.FC<
 
     if (responseObj.code != null) {
       const errorMessage =
-        String(responseObj.message) || "본인인증에 실패했습니다.";
+        String(responseObj.message) || t("features.pass.mobile-identity-verification.verification_failed");
       onError?.(new Error(errorMessage));
       return;
     }

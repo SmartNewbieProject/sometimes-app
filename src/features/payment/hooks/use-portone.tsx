@@ -1,4 +1,4 @@
-import { useMixpanel } from "@/src/shared/hooks";
+import { useMixpanel, useTracking } from "@/src/shared/hooks";
 import { useModal } from "@shared/hooks/use-modal";
 import { Text } from "@shared/ui";
 import { router } from "expo-router";
@@ -13,6 +13,7 @@ import { useEventControl } from "@/src/features/event/hooks";
 import { EventType } from "@/src/features/event/types";
 import { useTranslation } from "react-i18next";
 import { devLogWithTag, devWarn } from "@/src/shared/utils";
+import { checkIsFirstAction } from "@/src/shared/libs/mixpanel-tracking";
 
 interface UsePortone {
   handlePaymentComplete: (
@@ -36,6 +37,7 @@ export function usePortone(): UsePortone {
   const { showModal, showErrorModal, hideModal } = useModal();
   const { gemCount, eventType, clearEventType } = usePortoneStore();
   const { paymentEvents } = useMixpanel();
+  const tracker = useTracking();
 
   const { t } = useTranslation();
   const { participate: participateFirstSale7 } = useEventControl({ type: EventType.FIRST_SALE_7 });
@@ -60,7 +62,7 @@ export function usePortone(): UsePortone {
           return;
       }
       await participate();
-      devLogWithTag('Payment Event', '참여 완료:', eventType);
+      devLogWithTag('Payment Event', t("hooks.참여_완료"), eventType);
     } catch (error) {
       console.error('이벤트 참여 실패:', error);
     }
@@ -97,21 +99,27 @@ export function usePortone(): UsePortone {
           });
         }
 
-        // KPI 이벤트: 결제 완료
-paymentEvents.trackPaymentCompleted(
-  result.paymentId,
-  result.pgProvider || 'unknown',
-  result.amount || 0,
-  result.products || []
-);
-
-// 기존 이벤트 호환성
-paymentEvents.trackPaymentCompleted(
-        result.paymentId ?? '',
-        result.method ?? '',
-        result.totalAmount ?? 0,
-        []
-      );
+        // 첫 구매 여부 체크 및 추적
+        const isFirstPurchase = await checkIsFirstAction('purchase');
+        if (isFirstPurchase) {
+          tracker.trackFirstPurchase({
+            transaction_id: result.paymentId,
+            payment_method: result.method as any,
+            total_amount: result.totalAmount || 0,
+            gem_count: gemCount || 0,
+            payment_provider: 'portone',
+            is_first_purchase: true,
+          });
+        } else {
+          tracker.trackRepeatPurchase({
+            transaction_id: result.paymentId,
+            payment_method: result.method as any,
+            total_amount: result.totalAmount || 0,
+            gem_count: gemCount || 0,
+            payment_provider: 'portone',
+            is_first_purchase: false,
+          });
+        }
 
         if (eventType) {
           await handleEventParticipation(eventType);
@@ -183,7 +191,7 @@ paymentEvents.trackPaymentCompleted(
         showErrorModal(
           error instanceof Error
             ? error.message
-            : "결제 처리 중 오류가 발생했습니다.",
+            : t("hooks.결제_처리_중_오류가_발생했습니다"),
           "error"
         );
         onError?.(error);

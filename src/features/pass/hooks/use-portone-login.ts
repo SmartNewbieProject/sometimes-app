@@ -1,4 +1,5 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { useTranslation } from 'react-i18next';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { env } from '@/src/shared/libs/env';
@@ -35,6 +36,8 @@ interface UsePortOneLoginReturn {
 }
 
 const validateEnvironmentVariables = () => {
+  const { t } = useTranslation();
+
 	const requiredEnvVars = {
 		API_URL: env.API_URL,
 		STORE_ID: env.STORE_ID,
@@ -91,10 +94,10 @@ export const usePortOneLogin = ({
 								env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 							});
 							showModal({
-								title: '가입 제한',
-								children: '신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.',
+								title: "hooks.가입_제한",
+								children: "hooks.신고_접수_또는_프로필_정보_부적합_등의_사유로_가입이",
 								primaryButton: {
-									text: '확인',
+									text: "hooks.확인",
 									onClick: () => {
 										router.replace('/');
 									},
@@ -156,7 +159,7 @@ export const usePortOneLogin = ({
 				setMobileAuthRequest(null);
 			} catch (error) {
 				const errorMessage =
-					error instanceof Error ? error.message : '로그인 처리 중 오류가 발생했습니다.';
+					error instanceof Error ? error.message : "hooks.로그인_처리_중_오류가_발생했습니다";
 				console.error('모바일 본인인증 완료 처리 중 오류:', errorMessage);
 				track('Signup_Error', {
 					stage: 'handleMobileAuthComplete',
@@ -247,7 +250,7 @@ export const usePortOneLogin = ({
 			}
 		} catch (error) {
 			const errorMessage =
-				error instanceof Error ? error.message : '로그인 처리 중 오류가 발생했습니다.';
+				error instanceof Error ? error.message : "hooks.로그인_처리_중_오류가_발생했습니다";
 			track('Signup_Error', {
 				stage: 'startPortOneLogin',
 				message: errorMessage,

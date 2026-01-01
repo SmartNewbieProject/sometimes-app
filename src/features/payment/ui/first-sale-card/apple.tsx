@@ -7,7 +7,6 @@ import { ImageResources, formatTime } from "@/src/shared/libs";
 import { GlowingCard, ImageResource, Show, Text } from "@/src/shared/ui";
 import { GemItemProps } from "@/src/widgets/gem-store";
 import { AppleGemStoreWidget } from "@/src/widgets/gem-store/apple";
-import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import type { Product } from "expo-iap";
 import type { GemDetails } from "@/src/features/payment/api";
 import { useEffect } from "react";
@@ -24,6 +23,7 @@ import { usePortoneStore } from "../../hooks/use-portone-store";
 import { useFirstSaleEvents } from "../../hooks/useFirstSaleEvents";
 import type { GemMetadata } from "../../types";
 import { useTranslation } from "react-i18next";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 
 type AppleFirstSaleCardProps = {
   onOpenPurchase: (productId: string) => void;
@@ -41,9 +41,7 @@ export const AppleFirstSaleCard = ({
     totalExpiredAt,
     show,
     setShow,
-    event7Expired,
     event16Expired,
-    event27Expired,
   } = useFirstSaleEvents();
   const { seconds } = useTimer(totalExpiredAt, {
     autoStart: !!totalExpiredAt,
@@ -54,6 +52,7 @@ export const AppleFirstSaleCard = ({
   const { setEventType } = usePortoneStore();
   const { my } = useAuth();
   const { t } = useTranslation();
+  const { paymentEvents } = useMixpanel();
 
   const translateYAnim = useSharedValue(0);
 
@@ -76,6 +75,8 @@ export const AppleFirstSaleCard = ({
   });
 
   if (!show) return null;
+  if (!gemProducts || gemProducts.length === 0) return null;
+  if (!gemProducts[0]) return null;
 
   return (
     <GlowingCard>
@@ -116,47 +117,14 @@ export const AppleFirstSaleCard = ({
           </View>
         </View>
 
-        <Show when={!event7Expired}>
+        <Show when={!event16Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[0]}
             serverGemProducts={serverGemProducts}
             onOpenPurchase={() => {
-              mixpanelAdapter.track("GemStore_FirstSale_7", {
-                who: my,
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
-              setEventType(EventType.FIRST_SALE_7);
-              onOpenPurchase(gemProducts[0].id);
-            }}
-            hot={false}
-          />
-        </Show>
-        <Show when={!event16Expired}>
-          <AppleGemStoreWidget.Item
-            gemProduct={gemProducts[1]}
-            serverGemProducts={serverGemProducts}
-            onOpenPurchase={() => {
-              mixpanelAdapter.track("GemStore_FirstSale_16", {
-                who: my,
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
+              paymentEvents.trackItemSelected('gem_16', 16);
               setEventType(EventType.FIRST_SALE_16);
-              onOpenPurchase(gemProducts[1].id);
-            }}
-            hot={false}
-          />
-        </Show>
-        <Show when={!event27Expired}>
-          <AppleGemStoreWidget.Item
-            gemProduct={gemProducts[2]}
-            serverGemProducts={serverGemProducts}
-            onOpenPurchase={() => {
-              mixpanelAdapter.track("GemStore_FirstSale_27", {
-                who: my,
-                env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-              });
-              setEventType(EventType.FIRST_SALE_27);
-              onOpenPurchase(gemProducts[2].id);
+              onOpenPurchase(gemProducts[0].id);
             }}
             hot={false}
           />

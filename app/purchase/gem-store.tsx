@@ -47,7 +47,7 @@ export default function GemStoreScreen() {
       setProductCount(metadata.count);
       setShowPayment(true);
     } catch (error) {
-      Alert.alert("오류", t("apps.purchase.gem_store.error_alert_message"));
+      Alert.alert(t("apps.purchase.gem_store.error_alert_title"), t("apps.purchase.gem_store.error_alert_message"));
       setShowPayment(false);
     }
   };
@@ -119,9 +119,9 @@ export default function GemStoreScreen() {
         ref={controller}
         productCount={productCount ?? 0}
         paymentId={paymentId}
-        orderName="구슬"
+        orderName={t("apps.purchase.gem_store.gem")}
         totalAmount={totalPrice ?? 0}
-        productName="구슬"
+        productName={t("apps.purchase.gem_store.gem")}
         onError={onError}
         onComplete={(result: unknown) =>
           onCompletePayment(result as PaymentResponse)
