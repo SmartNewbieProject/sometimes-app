@@ -1,10 +1,10 @@
 // 성격 유형 영문 키와 한국어 레이블 매핑
 export const PERSONALITY_TYPE_LABELS = {
-  openness: '감정 개방성',
-  agreeableness: '관계 안정감',
-  neuroticism: '갈등 성숙도',
-  conscientiousness: '가치 명확성',
-  extraversion: '열린 태도'
+  openness: "감정 개방성",
+  agreeableness: "관계 안정감",
+  neuroticism: "갈등 성숙도",
+  conscientiousness: "가치 명확성",
+  extraversion: "열린 태도"
 } as const;
 
 // 영문 키 타입 정의

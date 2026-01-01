@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 
 // =======================
 // Questions API 타입
@@ -47,7 +48,7 @@ export const RawQuestion = z.object({
   questionId: z.string(),
   text: z.string(),
   dimension: RawPersonalityDimension,
-  type: z.string(), // Server returns "선택형" instead of "single_choice"
+  type: z.string(), // Server returns "common.선택형" instead of "single_choice"
   options: z.array(QuestionOption),
   dayOfWeek: z.number(),
   isAnswered: z.boolean(),
@@ -73,12 +74,12 @@ export type Question = z.infer<typeof Question>;
 // Helper function to convert raw question to internal format
 export const convertRawQuestion = (rawQuestion: RawQuestion, weekInfo: WeekInfo): Question => {
   // Convert server type to internal enum
-  // Handle both Korean "선택형" and other possible types
+  // Handle both Korean "common.선택형" and other possible types
   let questionType: 'single_choice' = 'single_choice';
 
-  if (rawQuestion.type === '선택형' || rawQuestion.type === 'single_choice' || rawQuestion.type === '선택지') {
+  if (rawQuestion.type === "common.선택형" || rawQuestion.type === 'single_choice' || rawQuestion.type === "common.선택지") {
     questionType = 'single_choice';
-  } else if (rawQuestion.type === '주관식' || rawQuestion.type === 'text' || rawQuestion.type === '텍스트') {
+  } else if (rawQuestion.type === "common.주관식" || rawQuestion.type === 'text' || rawQuestion.type === "common.텍스트") {
     // Future: support text input questions
     questionType = 'single_choice'; // For now, default to single choice
   }

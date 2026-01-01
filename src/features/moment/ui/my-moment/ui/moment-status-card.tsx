@@ -40,7 +40,7 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
       title: t('features.moment.my_moment.status_card.empty_state_modal.title'),
       children: t('features.moment.my_moment.status_card.empty_state_modal.description'),
       primaryButton: {
-        text: "확인",
+        text: t("ui.확인"),
         onClick: () => {}
       }
     });
@@ -68,7 +68,7 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
 
     const title = hasNoData
       ? t('features.moment.my_moment.status_card.no_analysis_yet')
-      : (firstTitle?.title || latestReport.persona || "모먼트 분석 완료");
+      : (firstTitle?.title || latestReport.persona || t("ui.모먼트_분석_완료"));
     const subTitle = firstTitle?.subTitle || "";
 
     // summaryText를 description으로 사용

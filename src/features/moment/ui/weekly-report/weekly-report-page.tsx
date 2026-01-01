@@ -15,6 +15,7 @@ import { useModal } from '@/src/shared/hooks/use-modal';
 import { AnalysisCard } from '../widgets/analysis-card';
 import { getPersonalityTypeLabel } from '../../constants/personality-types';
 import { useMomentAnalytics } from '../../hooks/use-moment-analytics';
+import { useTranslation } from 'react-i18next';
 
 // API response types based on actual API response
 interface WeeklyReportStats {
@@ -47,6 +48,7 @@ interface WeeklyReportResponse {
 }
 
 export const WeeklyReportPage = () => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const localParams = useLocalSearchParams<{
     week?: string;
@@ -217,8 +219,8 @@ export const WeeklyReportPage = () => {
           </Text>
           <Text size="14" weight="normal" textColor="white" style={styles.noReportDescription}>
             {paramYear && paramWeek
-              ? `${paramYear}년 ${paramWeek}주차 보고서가 존재하지 않습니다.`
-              : "이번 주차 보고서가 아직 생성되지 않았습니다. 오늘의 질문에 답변하고 나만의 성장 보고서를 만들어보세요!"
+              ? t("features.moment.ui.weekly_report.report_not_found", { year: paramYear, week: paramWeek })
+              : t("features.moment.ui.weekly_report.no_report_this_week")
             }
           </Text>
           <TouchableOpacity
@@ -508,9 +510,9 @@ export const WeeklyReportPage = () => {
             resizeMode="contain"
           />
           <View style={styles.headerTextContainer}>
-            <SpecialText size="2xl" weight="semibold" style={styles.personalityTitle} text={report?.title || "성장을 응원하는 당신"} />
+            <SpecialText size="2xl" weight="semibold" style={styles.personalityTitle} text={report?.title || t("features.moment.ui.weekly_report.default_title")} />
             <Text size="13" weight="normal" textColor="purple" style={styles.description}>
-              {report?.subTitle || report?.description || "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."}
+              {report?.subTitle || report?.description || t("features.moment.ui.weekly_report.default_description")}
             </Text>
             <Text size="12" weight="semibold" textColor="purple" style={{ ...styles.description, marginTop: 8 }}>
               {report?.description}
@@ -687,7 +689,7 @@ export const WeeklyReportPage = () => {
               <ActivityIndicator size="small" color="white" />
             ) : (
               <Text size="md" weight="bold" textColor="white">
-                {report?.keywords?.length ? "내 프로필에 키워드 추가하기" : "키워드가 없습니다"}
+                {report?.keywords?.length ? t("common.내_프로필에_키워드_추가하기") : t("common.키워드가_없습니다")}
               </Text>
             )}
           </TouchableOpacity> */}

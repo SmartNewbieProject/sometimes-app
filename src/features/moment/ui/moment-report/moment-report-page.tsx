@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image, ActivityIndicator } from "react-native";
 import { Text } from "@/src/shared/ui";
 import colors from "@/src/shared/constants/colors";
@@ -15,6 +16,8 @@ import type { UIWeeklyReport } from "../../types";
 const { width } = Dimensions.get("window");
 
 export const MomentReportPage = () => {
+  const { t } = useTranslation();
+
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
 
   const toggleSection = (section: string) => {
@@ -44,14 +47,14 @@ export const MomentReportPage = () => {
   const handleSyncProfile = () => {
     if (!weeklyReport?.keywords?.length) {
       showModal({
-        title: "알림",
+        title: t("common.알림"),
         children: (
           <Text size="14" weight="normal" textColor="dark">
             프로필에 추가할 키워드가 없습니다.
           </Text>
         ),
         primaryButton: {
-          text: "확인",
+          text: t("common.확인"),
           onClick: () => { }
         }
       });
@@ -64,31 +67,31 @@ export const MomentReportPage = () => {
     }, {
       onSuccess: (response) => {
         showModal({
-          title: "성공",
+          title: t("common.성공"),
           children: (
             <Text size="14" weight="normal" textColor="dark">
               {response.syncedKeywords.length > 0
                 ? `${response.syncedKeywords.join(", ")} 키워드를 프로필에 추가했습니다.`
-                : "키워드가 프로필에 동기화되었습니다."
+                : t("common.키워드가_프로필에_동기화되었습니다")
               }
             </Text>
           ),
           primaryButton: {
-            text: "확인",
+            text: t("common.확인"),
             onClick: () => { }
           }
         });
       },
       onError: (error) => {
         showModal({
-          title: "오류",
+          title: t("common.오류"),
           children: (
             <Text size="14" weight="normal" textColor="dark">
               키워드 추가에 실패했습니다. 다시 시도해주세요.
             </Text>
           ),
           primaryButton: {
-            text: "확인",
+            text: t("common.확인"),
             onClick: () => { }
           }
         });
@@ -138,11 +141,11 @@ export const MomentReportPage = () => {
   const generateRadarData = () => {
     if (!weeklyReport) {
       return [
-        { label: "감정 개방성", value: 50, prevValue: 45, angle: -90 },
-        { label: "관계 안정감", value: 50, prevValue: 45, angle: -18 },
-        { label: "갈등 성숙도", value: 50, prevValue: 45, angle: 54 },
-        { label: "기회 명확성", value: 50, prevValue: 45, angle: 126 },
-        { label: "열린 태도", value: 50, prevValue: 45, angle: 198 },
+        { label: t("common.감정_개방성"), value: 50, prevValue: 45, angle: -90 },
+        { label: t("common.관계_안정감"), value: 50, prevValue: 45, angle: -18 },
+        { label: t("common.갈등_성숙도"), value: 50, prevValue: 45, angle: 54 },
+        { label: t("common.기회_명확성"), value: 50, prevValue: 45, angle: 126 },
+        { label: t("common.열린_태도"), value: 50, prevValue: 45, angle: 198 },
       ];
     }
 
@@ -151,11 +154,11 @@ export const MomentReportPage = () => {
     const keywords = weeklyReport.keywords || [];
 
     return [
-      { label: "감정 개방성", value: baseValue, prevValue: baseValue - 10, angle: -90 },
-      { label: "관계 안정감", value: Math.min(baseValue + (keywords.includes("안정") ? 10 : 0), 100), prevValue: baseValue, angle: -18 },
-      { label: "갈등 성숙도", value: Math.min(baseValue + (keywords.includes("성숙") ? 10 : 0), 100), prevValue: baseValue - 5, angle: 54 },
-      { label: "기회 명확성", value: Math.min(baseValue + (keywords.includes("명확") ? 10 : 0), 100), prevValue: baseValue + 5, angle: 126 },
-      { label: "열린 태도", value: Math.min(baseValue + (keywords.includes("열린") ? 10 : 0), 100), prevValue: baseValue - 5, angle: 198 },
+      { label: t("common.감정_개방성"), value: baseValue, prevValue: baseValue - 10, angle: -90 },
+      { label: t("common.관계_안정감"), value: Math.min(baseValue + (keywords.includes(t("common.안정")) ? 10 : 0), 100), prevValue: baseValue, angle: -18 },
+      { label: t("common.갈등_성숙도"), value: Math.min(baseValue + (keywords.includes(t("common.성숙")) ? 10 : 0), 100), prevValue: baseValue - 5, angle: 54 },
+      { label: t("common.기회_명확성"), value: Math.min(baseValue + (keywords.includes(t("common.명확")) ? 10 : 0), 100), prevValue: baseValue + 5, angle: 126 },
+      { label: t("common.열린_태도"), value: Math.min(baseValue + (keywords.includes(t("common.열린")) ? 10 : 0), 100), prevValue: baseValue - 5, angle: 198 },
     ];
   };
 
@@ -328,7 +331,7 @@ export const MomentReportPage = () => {
           />
           <View style={styles.headerTextContainer}>
             <Text size="20" weight="bold" textColor="purple" style={styles.personalityTitle}>
-              {weeklyReport?.insights?.[0]?.feedback || "성장을 응원하는 당신"}\n
+              {weeklyReport?.insights?.[0]?.feedback || t("common.성장을_응원하는_당신")}\n
               모먼트 레포트
             </Text>
             <Text size="12" weight="normal" textColor="purple" style={styles.description}>
@@ -479,7 +482,7 @@ export const MomentReportPage = () => {
               <ActivityIndicator size="small" color="white" />
             ) : (
               <Text size="md" weight="bold" textColor="white">
-                {weeklyReport?.keywords?.length ? "내 프로필에 키워드 추가하기" : "키워드가 없습니다"}
+                {weeklyReport?.keywords?.length ? t("common.내_프로필에_키워드_추가하기") : t("common.키워드가_없습니다")}
               </Text>
             )}
           </TouchableOpacity>

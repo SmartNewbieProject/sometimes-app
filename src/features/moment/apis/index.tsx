@@ -1,4 +1,5 @@
 import { axiosClient } from "@/src/shared/libs";
+import i18n from "@/src/shared/libs/i18n";
 import type {
   MomentSlide,
   MomentReport,
@@ -390,7 +391,7 @@ export const getDailyQuestion = async (): Promise<DailyQuestionResponse | { ques
       const dimension = rawQuestion.dimension?.toUpperCase() || 'OPENNESS';
 
       // Convert server type to internal enum
-      // Handle both Korean "선택형" and other possible types
+      // Handle both Korean API values and English types
       let questionType: 'single_choice' = 'single_choice';
 
       if (rawQuestion.type === '선택형' || rawQuestion.type === 'single_choice' || rawQuestion.type === '선택지') {

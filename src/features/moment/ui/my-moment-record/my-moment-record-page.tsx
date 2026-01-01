@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from "react";
+import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList } from "react-native";
 import { Text } from "@/src/shared/ui";
 import colors from "@/src/shared/constants/colors";
@@ -13,6 +14,8 @@ import type { ReportHistoryItem } from "../../apis";
 const CHART_MARGIN = 22;
 
 export const MyMomentRecordPage = () => {
+  const { t } = useTranslation();
+
   const {
     data: reportHistoryData,
     isLoading: reportLoading,
@@ -35,7 +38,7 @@ export const MyMomentRecordPage = () => {
 
   const renderItem = useCallback(({ item, index }: { item: ReportHistoryItem; index: number }) => {
     const weekNum = item.weekNumber;
-    const title = item.title ?? "모먼트 분석 결과";
+    const title = item.title ?? t("common.모먼트_분석_결과");
     const keywords = item.keywords ?? [];
 
     return (
