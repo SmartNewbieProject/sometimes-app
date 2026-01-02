@@ -230,11 +230,13 @@ function KrLoginForm() {
 				</Show>
 			</View>
 
-			<View style={loginFormStyles.errorMessage}>
-				<Text size="sm" style={{ color: '#DC2626', textAlign: 'center' }}>
-					{error}
-				</Text>
-			</View>
+			{typeof error === 'string' && error && (
+				<View style={loginFormStyles.errorMessage}>
+					<Text size="sm" style={{ color: '#DC2626', textAlign: 'center' }}>
+						{error}
+					</Text>
+				</View>
+			)}
 
 			<View style={loginFormStyles.privacyNotice}>
 				<PrivacyNotice />

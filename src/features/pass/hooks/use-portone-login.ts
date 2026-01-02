@@ -1,5 +1,4 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import { useTranslation } from 'react-i18next';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { env } from '@/src/shared/libs/env';
@@ -9,6 +8,7 @@ import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 import { PortOneAuthService } from '../services/portone-auth.service';
 import type {
 	PortOneIdentityVerificationRequest,
@@ -17,6 +17,22 @@ import type {
 import { isAdult } from '../utils';
 
 const track = mixpanelAdapter.track.bind(mixpanelAdapter);
+
+const getErrorMessage = (error: unknown): string => {
+	if (error instanceof Error) {
+		return error.message;
+	}
+	if (typeof error === 'object' && error !== null) {
+		const obj = error as Record<string, unknown>;
+		if (typeof obj.message === 'string') {
+			return obj.message;
+		}
+		if (typeof obj.error === 'string') {
+			return obj.error;
+		}
+	}
+	return '로그인 처리 중 오류가 발생했습니다';
+};
 
 interface UsePortOneLoginOptions {
 	onError?: (error: Error) => void;
@@ -36,8 +52,6 @@ interface UsePortOneLoginReturn {
 }
 
 const validateEnvironmentVariables = () => {
-  const { t } = useTranslation();
-
 	const requiredEnvVars = {
 		API_URL: env.API_URL,
 		STORE_ID: env.STORE_ID,
@@ -64,6 +78,7 @@ export const usePortOneLogin = ({
 	const { loginWithPass } = useAuth();
 	const authService = new PortOneAuthService();
 	const { showModal } = useModal();
+	const { t } = useTranslation();
 
 	const clearError = useCallback(() => {
 		setError(null);
@@ -94,10 +109,12 @@ export const usePortOneLogin = ({
 								env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 							});
 							showModal({
-								title: "hooks.가입_제한",
-								children: "hooks.신고_접수_또는_프로필_정보_부적합_등의_사유로_가입이",
+								title: t('features.pass.hooks.가입_제한'),
+								children: t(
+									'features.pass.hooks.신고_접수_또는_프로필_정보_부적합_등의_사유로_가입이',
+								),
 								primaryButton: {
-									text: "hooks.확인",
+									text: t('features.pass.hooks.확인'),
 									onClick: () => {
 										router.replace('/');
 									},
@@ -130,7 +147,7 @@ export const usePortOneLogin = ({
 						...loginResult.certificationInfo,
 						loginType: 'pass',
 						identityVerificationId,
-					})
+					}),
 				);
 
 				router.push('/auth/signup/university');
@@ -140,7 +157,7 @@ export const usePortOneLogin = ({
 				onSuccess?.(false);
 			}
 		},
-		[loginWithPass, onSuccess, showModal],
+		[loginWithPass, onSuccess, showModal, t],
 	);
 
 	const handleMobileAuthComplete = useCallback(
@@ -158,8 +175,7 @@ export const usePortOneLogin = ({
 				setShowMobileAuth(false);
 				setMobileAuthRequest(null);
 			} catch (error) {
-				const errorMessage =
-					error instanceof Error ? error.message : "hooks.로그인_처리_중_오류가_발생했습니다";
+				const errorMessage = getErrorMessage(error);
 				console.error('모바일 본인인증 완료 처리 중 오류:', errorMessage);
 				track('Signup_Error', {
 					stage: 'handleMobileAuthComplete',
@@ -249,8 +265,7 @@ export const usePortOneLogin = ({
 				handleMobileAuth();
 			}
 		} catch (error) {
-			const errorMessage =
-				error instanceof Error ? error.message : "hooks.로그인_처리_중_오류가_발생했습니다";
+			const errorMessage = getErrorMessage(error);
 			track('Signup_Error', {
 				stage: 'startPortOneLogin',
 				message: errorMessage,

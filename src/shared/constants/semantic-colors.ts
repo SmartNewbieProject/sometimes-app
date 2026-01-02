@@ -15,6 +15,7 @@ export const semanticColors = {
     other: '#E1D9FF',
     inverse: '#000000',
     disabled: '#E5E7EB',
+    matchWaiting: '#D9D9D9',
   },
   text: {
     primary: '#000000',
