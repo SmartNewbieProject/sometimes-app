@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import colors from '@/src/shared/constants/colors';
 import { ProgressBar } from '../components/progress-bar';
 import { NavigationButtons } from '../components/navigation-buttons';
@@ -25,20 +26,18 @@ import { SlideRefund } from './slide-refund';
 import { SlideRegion } from './slide-region';
 import { SlideCta } from './slide-cta';
 
-const TOTAL_SLIDES = 11;
-
-const SLIDES = [
-  SlideWelcome,
-  SlideStory,
-  SlideMatchingTime,
-  SlideVerification,
-  SlideStudentOnly,
-  SlideAiMatching,
-  SlideLikeGuide,
-  SlideChatGuide,
-  SlideRefund,
-  SlideRegion,
-  SlideCta,
+const ALL_SLIDES = [
+  { component: SlideWelcome, id: 'welcome' },
+  { component: SlideStory, id: 'story' },
+  { component: SlideMatchingTime, id: 'matchingTime' },
+  { component: SlideVerification, id: 'verification' },
+  { component: SlideStudentOnly, id: 'studentOnly' },
+  { component: SlideAiMatching, id: 'aiMatching' },
+  { component: SlideLikeGuide, id: 'likeGuide' },
+  { component: SlideChatGuide, id: 'chatGuide' },
+  { component: SlideRefund, id: 'refund' },
+  { component: SlideRegion, id: 'region' },
+  { component: SlideCta, id: 'cta' },
 ];
 
 interface OnboardingScreenProps {
@@ -47,11 +46,21 @@ interface OnboardingScreenProps {
 
 export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
   const insets = useSafeAreaInsets();
+  const { i18n } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
   const translateX = useSharedValue(0);
   const { saveOnboardingComplete } = useOnboardingStorage();
+
+  const activeSlides = useMemo(() => {
+    if (i18n.language === 'ja') {
+      return ALL_SLIDES.filter(slide => slide.id !== 'region');
+    }
+    return ALL_SLIDES;
+  }, [i18n.language]);
+
+  const totalSlides = activeSlides.length;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
@@ -67,7 +76,7 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
   const goToNextSlide = useCallback(() => {
     if (isTransitioning || containerWidth === 0) return;
 
-    if (currentIndex === TOTAL_SLIDES - 1) {
+    if (currentIndex === totalSlides - 1) {
       handleComplete();
       return;
     }
@@ -88,10 +97,14 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
     setTimeout(() => {
       setIsTransitioning(false);
     }, 320);
-  }, [currentIndex, isTransitioning, translateX, containerWidth]);
+  }, [currentIndex, isTransitioning, translateX, containerWidth, totalSlides]);
 
   const handleComplete = async () => {
     await saveOnboardingComplete();
+    if (source === 'login') {
+      router.replace('/auth/login');
+      return;
+    }
     router.replace('/home');
   };
 
@@ -106,13 +119,13 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <ProgressBar currentIndex={currentIndex} totalSlides={TOTAL_SLIDES} />
+      <ProgressBar currentIndex={currentIndex} totalSlides={totalSlides} />
 
-      {currentIndex === 0 && <SkipButton onSkip={handleSkip} />}
+      {currentIndex !== totalSlides - 1 && <SkipButton onSkip={handleSkip} />}
 
       <View style={styles.slidesOuterContainer} onLayout={handleLayout}>
         <Animated.View style={[styles.slidesContainer, animatedStyle]}>
-          {SLIDES.map((SlideComponent, index) => (
+          {activeSlides.map(({ component: SlideComponent }, index) => (
             <View
               key={index}
               style={[styles.slideWrapper, containerWidth > 0 && { width: containerWidth }]}
@@ -131,7 +144,7 @@ export const OnboardingScreen = ({ source }: OnboardingScreenProps) => {
 
       <NavigationButtons
         currentIndex={currentIndex}
-        totalSlides={TOTAL_SLIDES}
+        totalSlides={totalSlides}
         onNext={goToNextSlide}
         isTransitioning={isTransitioning}
         source={source}

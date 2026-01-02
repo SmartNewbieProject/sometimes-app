@@ -10,10 +10,15 @@
       "complete_button": "Message sent!"
     },
     "waiting": {
-      "title_1": "{{name}}",
-      "title_2": "Until your ideal match",
+      "title_1": "{{name}}'s",
+      "title_2": "ideal match countdown",
       "description_2": "remaining",
       "description_3": "Matching starts every Thu & Fri at 9 PM!",
+      "schedule_prefix": "Every ",
+      "schedule_time": "Thu & Sun 9 PM",
+      "schedule_suffix": " matching starts!",
+      "preview_button_line1": "Profile",
+      "preview_button_line2": "Preview",
       "previous_button": "Previous matches",
       "previous_button_text": "Previous matches"
     },

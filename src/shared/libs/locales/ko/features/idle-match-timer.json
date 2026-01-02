@@ -10,10 +10,15 @@
       "complete_button": "썸 보내기 완료!"
     },
     "waiting": {
-      "title_1": "{{name}}님",
+      "title_1": "{{name}}님의",
       "title_2": "이상형 매칭까지",
       "description_2": "남았어요",
       "description_3": "매주 목・금 21시에 매칭이 시작돼요!",
+      "schedule_prefix": "매주 ",
+      "schedule_time": "목·일 21시",
+      "schedule_suffix": "에 매칭이 시작돼요!",
+      "preview_button_line1": "내 프로필",
+      "preview_button_line2": "미리보기",
       "previous_button": "이전 매칭",
       "previous_button_text": "이전 매칭"
     },

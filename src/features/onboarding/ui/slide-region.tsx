@@ -1,26 +1,71 @@
-import { Image, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { SlideContainer } from './slide-container';
+import colors from '@/src/shared/constants/colors';
 import type { SlideComponent } from '../types';
 
-const sameRegionImage = require('@assets/images/onboarding/region/same_region.png');
+const { width } = Dimensions.get('window');
 
 export const SlideRegion: SlideComponent = () => {
   const { t } = useTranslation();
 
   return (
-    <SlideContainer
-      headline={t('features.onboarding.slides.region.headline')}
-      subtext={t('features.onboarding.slides.region.subtext')}
-    >
-      <Image source={sameRegionImage} style={styles.image} resizeMode="contain" />
-    </SlideContainer>
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.headline}>
+          {t('features.onboarding.slides.region.headline')}
+        </Text>
+        <Text style={styles.subtext}>
+          {t('features.onboarding.slides.region.subtext')}
+        </Text>
+
+        <View style={styles.illustrationArea}>
+          <Image
+            source={require('@/assets/images/onboarding/region_map.png')}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        </View>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+    paddingHorizontal: 24,
+    paddingTop: 80,
+  },
+  content: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  headline: {
+    fontSize: 26,
+    fontFamily: 'Pretendard-Bold',
+    color: colors.black,
+    textAlign: 'center',
+    marginBottom: 12,
+    lineHeight: 36,
+  },
+  subtext: {
+    fontSize: 16,
+    fontFamily: 'Pretendard-Regular',
+    color: '#8E94A0',
+    textAlign: 'center',
+    marginBottom: 40,
+    lineHeight: 24,
+  },
+  illustrationArea: {
+    width: width * 0.9,
+    height: width * 0.9,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
   image: {
-    width: 450,
-    height: 340,
+    width: '100%',
+    height: '100%',
   },
 });

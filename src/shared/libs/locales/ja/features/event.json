@@ -28,7 +28,7 @@
 		"community_event_prompt": {
 			"title": "サムタイムへようこそ！",
 			"subtitle": "簡単な自己紹介をしてみましょう！\n本当の出会いは挨拶から始まります\n挨拶して宝石ももらっていきましょう！",
-			"gem_label": "宝石7個",
+			"gem_label": "宝石10個",
 			"reward_text": "宝石{{gems}}個",
 			"reward_subtext": "もらって始めましょう！",
 			"write_button": "投稿を書く",
@@ -40,8 +40,8 @@
 		},
 		"university_certification_prompt": {
 			"title": "大学認証を完了してみませんか？",
-			"subtitle": "大学認証を完了して宝石9個をもらっていきましょう！\nより信頼性の高いプロフィールで他のユーザーとより簡単に繋がることができます！",
-			"benefit_text": "報酬: 宝石9個",
+			"subtitle": "大学認証を完了して宝石20個をもらっていきましょう！\nより信頼性の高いプロフィールで他のユーザーとより簡単に繋がることができます！",
+			"benefit_text": "報酬: 宝石20個",
 			"reward_subtext": "すぐにもらえる！",
 			"certify_button": "認証する",
 			"later_button": "後で"

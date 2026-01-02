@@ -103,6 +103,7 @@ load_env_file() {
     echo -e "  API_URL: ${GREEN}${EXPO_PUBLIC_API_URL:-NOT SET}${NC}"
     echo -e "  MERCHANT_ID: ${GREEN}${EXPO_PUBLIC_MERCHANT_ID:-NOT SET}${NC}"
     echo -e "  CHANNEL_KEY: ${GREEN}${EXPO_PUBLIC_CHANNEL_KEY:0:20}...${NC}"
+    echo -e "  APPLE_ENV: ${GREEN}${EXPO_PUBLIC_APPLE_ENVIRONMENT:-NOT SET}${NC}"
 
     if [ -z "$EXPO_PUBLIC_API_URL" ]; then
         echo ""
@@ -168,23 +169,29 @@ select_environment() {
         1)
             PROFILE="production"
             ENV_FILE=".env.production"
+            APPLE_ENV="production"
             ;;
         2)
             PROFILE="preview"
             ENV_FILE=".env.production"
+            APPLE_ENV="production"
             CAN_INSTALL_TO_DEVICE=true
             ;;
         3)
             PROFILE="preview"
             ENV_FILE=".env.preview"
+            APPLE_ENV="sandbox"
             CAN_INSTALL_TO_DEVICE=true
             ;;
         4)
             PROFILE="development"
             ENV_FILE=".env"
+            APPLE_ENV="sandbox"
             ;;
         *) print_error "Invalid choice"; exit 1 ;;
     esac
+
+    export EXPO_PUBLIC_APPLE_ENVIRONMENT="$APPLE_ENV"
 }
 
 # Select clean build option
@@ -324,12 +331,20 @@ confirm_build() {
         clean_mode="${YELLOW}Clean (prebuild)${NC}"
     fi
 
+    local apple_env_display="${GREEN}$APPLE_ENV${NC}"
+    if [ "$APPLE_ENV" = "production" ]; then
+        apple_env_display="${GREEN}production${NC} (App Store/TestFlight)"
+    else
+        apple_env_display="${YELLOW}sandbox${NC} (개발/테스트)"
+    fi
+
     echo ""
     echo -e "${CYAN}============================================================${NC}"
     echo -e "${BOLD}Build Configuration:${NC}"
     echo -e "  Platform:    ${GREEN}$PLATFORM${NC}"
     echo -e "  Profile:     ${GREEN}$PROFILE${NC}"
     echo -e "  Env File:    ${GREEN}$ENV_FILE${NC}"
+    echo -e "  Apple IAP:   $apple_env_display"
     echo -e "  Output:      ${GREEN}$OUTPUT_TYPE${NC}"
     echo -e "  Build Mode:  $clean_mode"
     echo -e "${CYAN}============================================================${NC}"

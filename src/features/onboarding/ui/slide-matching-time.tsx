@@ -1,21 +1,10 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import colors from '@/src/shared/constants/colors';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useCountdownTimer } from '../hooks/use-countdown-timer';
 import type { SlideComponent } from '../types';
 
-const clockImage = require('@assets/images/onboarding/matching-time/time.png');
-
-interface TimeCardProps {
-  value: string;
-}
-
-const TimeCard = ({ value }: TimeCardProps) => (
-  <View style={styles.timeCard}>
-    <Text style={styles.timeCardText}>{value}</Text>
-  </View>
-);
+const { width } = Dimensions.get('window');
 
 export const SlideMatchingTime: SlideComponent = () => {
   const { t } = useTranslation();
@@ -32,17 +21,20 @@ export const SlideMatchingTime: SlideComponent = () => {
         </Text>
 
         <View style={styles.illustrationArea}>
-          <Image source={clockImage} style={styles.clockImage} resizeMode="contain" />
-          <View style={styles.countdownContainer}>
-            <Text style={styles.countdownLabel}>
-              {t('features.onboarding.slides.matchingTime.countdownLabel')}
-            </Text>
-            <View style={styles.timeCardsRow}>
-              <TimeCard value={`D-${countdownParts.days}`} />
-              <TimeCard value={`${countdownParts.hours}시`} />
-              <TimeCard value={`${countdownParts.minutes}분`} />
-            </View>
-          </View>
+          <Image
+            source={require('@/assets/images/onboarding/matching_calendar.png')}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={styles.countdownBox}>
+          <Text style={styles.countdownLabel}>
+            {t('features.onboarding.slides.matchingTime.countdownLabel')}
+          </Text>
+          <Text style={styles.countdownText}>
+            {`${String(countdownParts.days).padStart(2, '0')}일 ${String(countdownParts.hours).padStart(2, '0')}시간 ${String(countdownParts.minutes).padStart(2, '0')}분`}
+          </Text>
         </View>
       </View>
     </View>
@@ -53,73 +45,57 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: 24,
+    paddingTop: 80,
   },
   content: {
     width: '100%',
-    maxWidth: 400,
     alignItems: 'center',
   },
   headline: {
-    fontSize: 24,
+    fontSize: 26,
     fontFamily: 'Pretendard-Bold',
     color: colors.black,
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 32,
+    marginBottom: 12,
+    lineHeight: 36,
   },
   subtext: {
     fontSize: 16,
     fontFamily: 'Pretendard-Regular',
-    color: colors.gray,
+    color: '#8E94A0',
     textAlign: 'center',
-    marginBottom: 48,
+    marginBottom: 40,
     lineHeight: 24,
   },
   illustrationArea: {
-    width: '100%',
-    minHeight: 200,
+    width: width * 0.6,
+    height: width * 0.6,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 20,
   },
-  clockImage: {
-    width: 120,
-    height: 120,
+  image: {
+    width: '100%',
+    height: '100%',
   },
-  countdownContainer: {
-    marginTop: 24,
+  countdownBox: {
+    width: '100%',
+    backgroundColor: '#F3F0FF',
+    borderRadius: 16,
+    paddingVertical: 20,
     alignItems: 'center',
+    marginTop: 20,
   },
   countdownLabel: {
     fontSize: 14,
-    fontFamily: 'Pretendard-SemiBold',
-    color: colors.gray,
-    marginBottom: 12,
+    fontFamily: 'Pretendard-Medium',
+    color: '#8E94A0',
+    marginBottom: 8,
   },
-  timeCardsRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  timeCard: {
-    backgroundColor: semanticColors.surface.background,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  timeCardText: {
-    fontSize: 23,
-    fontFamily: 'Rubik-Bold',
+  countdownText: {
+    fontSize: 28,
+    fontFamily: 'Pretendard-Bold',
     color: colors.primaryPurple,
   },
 });

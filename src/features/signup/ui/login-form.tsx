@@ -2,10 +2,11 @@ import { MobileIdentityVerification, usePortOneLogin } from '@/src/features/pass
 import { Button, Show, SlideUnlock, SlideToAbout, Text, AppDownloadSection } from '@/src/shared/ui';
 import { useMixpanel } from '@/src/shared/hooks';
 import { env } from '@/src/shared/libs/env';
+import { LOGIN_ABANDONED_STEPS, AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
 import KakaoLogo from '@assets/icons/kakao-logo.svg';
 import * as Localization from 'expo-localization';
 import { router, usePathname, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import {
 	Platform,
 	Pressable,
@@ -284,12 +285,24 @@ function KakaoLoginComponent() {
 	const { authEvents, signupEvents } = useMixpanel();
 	const { loginWithKakaoNative } = useAuth();
 	const { showModal } = useModal();
+	const authStartTimeRef = useRef<number | null>(null);
 
 	const KAKAO_CLIENT_ID = env.KAKAO_LOGIN_API_KEY;
 	const redirectUri = env.KAKAO_REDIRECT_URI;
 
+	const isUserCancellation = (error: unknown): boolean => {
+		if (error instanceof Error) {
+			const message = error.message.toLowerCase();
+			return message.includes('cancel') || message.includes('user') || message.includes('취소');
+		}
+		const errorObj = error as { code?: string; errorCode?: string };
+		const code = errorObj?.code || errorObj?.errorCode;
+		return code === 'CANCELED' || code === 'USER_CANCELED' || code === 'E_CANCELLED_OPERATION';
+	};
+
 	const handleNativeKakaoLogin = async () => {
 		const loginStartTime = Date.now();
+		authStartTimeRef.current = loginStartTime;
 
 		try {
 			setIsLoading(true);
@@ -312,6 +325,7 @@ function KakaoLoginComponent() {
 				isNewUser: loginResult.isNewUser,
 			});
 
+			authStartTimeRef.current = null;
 			if (loginResult.isNewUser) {
 				if (loginResult.certificationInfo?.phone) {
 					try {
@@ -363,18 +377,39 @@ function KakaoLoginComponent() {
 
 				router.push('/home');
 			}
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const errorObj = error as {
+				constructor?: { name?: string };
+				status?: number;
+				code?: string;
+				errorCode?: string;
+				data?: unknown;
+				response?: { data?: unknown };
+				message?: string;
+			};
 			const errorInfo = {
-				type: error?.constructor?.name || 'Unknown',
+				type: errorObj?.constructor?.name || 'Unknown',
 				message: error instanceof Error ? error.message : String(error),
-				status: error?.status,
-				code: error?.code || error?.errorCode,
-				data: error?.data || error?.response?.data,
+				status: errorObj?.status,
+				code: errorObj?.code || errorObj?.errorCode,
+				data: errorObj?.data || errorObj?.response?.data,
 			};
 
 			console.error('===== 카카오 로그인 에러 상세 정보 =====');
 			console.error('에러 정보:', JSON.stringify(errorInfo, null, 2));
 			console.error('=======================================');
+
+			const timeSpentSeconds = authStartTimeRef.current
+				? Math.round((Date.now() - authStartTimeRef.current) / 1000)
+				: undefined;
+			authStartTimeRef.current = null;
+
+			if (isUserCancellation(error)) {
+				authEvents.trackLoginAbandoned(AUTH_METHODS.KAKAO, LOGIN_ABANDONED_STEPS.USER_CANCELLED, {
+					timeSpentSeconds,
+				});
+				return;
+			}
 
 			authEvents.trackLoginFailed('kakao', errorInfo.code || 'authentication_error');
 

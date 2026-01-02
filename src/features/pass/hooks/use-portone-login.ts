@@ -3,9 +3,10 @@ import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { LOGIN_ABANDONED_STEPS, AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
 import { checkAppEnvironment } from '@shared/libs';
 import { router } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
@@ -74,6 +75,7 @@ export const usePortOneLogin = ({
 	const [showMobileAuth, setShowMobileAuth] = useState(false);
 	const [mobileAuthRequest, setMobileAuthRequest] =
 		useState<PortOneIdentityVerificationRequest | null>(null);
+	const authStartTimeRef = useRef<number | null>(null);
 
 	const { loginWithPass } = useAuth();
 	const authService = new PortOneAuthService();
@@ -172,6 +174,7 @@ export const usePortOneLogin = ({
 				});
 
 				await processLoginResult(response.identityVerificationId);
+				authStartTimeRef.current = null;
 				setShowMobileAuth(false);
 				setMobileAuthRequest(null);
 			} catch (error) {
@@ -198,6 +201,7 @@ export const usePortOneLogin = ({
 				reason: error.message,
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
+			authStartTimeRef.current = null;
 			setError(error.message);
 			setShowMobileAuth(false);
 			setMobileAuthRequest(null);
@@ -208,9 +212,22 @@ export const usePortOneLogin = ({
 	);
 
 	const handleMobileAuthCancel = useCallback(() => {
+		const timeSpentSeconds = authStartTimeRef.current
+			? Math.round((Date.now() - authStartTimeRef.current) / 1000)
+			: undefined;
+
 		track('Signup_IdentityVerification_Cancelled', {
 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 		});
+
+		track('Auth_Login_Abandoned', {
+			auth_method: AUTH_METHODS.PASS,
+			abandoned_step: LOGIN_ABANDONED_STEPS.USER_CANCELLED,
+			time_spent_seconds: timeSpentSeconds,
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
+
+		authStartTimeRef.current = null;
 		setShowMobileAuth(false);
 		setMobileAuthRequest(null);
 		setIsLoading(false);
@@ -240,6 +257,7 @@ export const usePortOneLogin = ({
 	const startPortOneLogin = useCallback(async () => {
 		try {
 			setError(null);
+			authStartTimeRef.current = Date.now();
 
 			track('Signup_IdentityVerification_Started', {
 				platform: Platform.OS,
