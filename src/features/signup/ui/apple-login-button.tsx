@@ -163,7 +163,7 @@ const AppleLoginButton: React.FC = () => {
 				userId = extractUserIdFromIdToken(data.authorization.id_token) ?? undefined;
 			}
 
-			await mutation.mutateAsync(userId ?? '');
+			await mutation.mutateAsync({ appleId: userId ?? '' });
 		} catch (error) {
 			console.error('백엔드 요청 실패:', error);
 			authEvents.trackLoginFailed('apple', 'backend_error');

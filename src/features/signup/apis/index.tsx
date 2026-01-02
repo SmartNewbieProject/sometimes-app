@@ -130,16 +130,23 @@ type Service = {
 	signup: (form: SignupForm) => Promise<SignupResponse>;
 	sendVerificationCode: (phoneNumber: string) => Promise<{ uniqueKey: string }>;
 	authenticateSmsCode: (smsCode: AuthorizeSmsCode) => Promise<void>;
-	postAppleLogin: (identityToken: string) => Promise<AppleLoginResponse>;
+	postAppleLogin: (params: AppleLoginRequest) => Promise<AppleLoginResponse>;
 };
 
 const sendVerificationCode = (phoneNumber: string): Promise<{ uniqueKey: string }> =>
 	axiosClient.post('/auth/sms/send', { phoneNumber });
 
-const postAppleLogin = (appleId: string): Promise<AppleLoginResponse> => {
-	return axiosClient.post('/auth/oauth/apple', {
-		appleId: appleId,
-	});
+export interface AppleLoginRequest {
+	appleId: string;
+	phoneNumber?: string;
+}
+
+const postAppleLogin = (params: AppleLoginRequest): Promise<AppleLoginResponse> => {
+	const body: AppleLoginRequest = { appleId: params.appleId };
+	if (params.phoneNumber) {
+		body.phoneNumber = params.phoneNumber.replace(/-/g, '');
+	}
+	return axiosClient.post('/auth/oauth/apple', body);
 };
 
 const apis: Service = {

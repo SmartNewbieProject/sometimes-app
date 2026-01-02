@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../../auth';
-import apis from '../apis';
+import apis, { type AppleLoginRequest } from '../apis';
 
 export interface AppleLoginResponse {
 	isNewUser: boolean;
@@ -30,8 +30,8 @@ export const useAppleLogin = () => {
 	});
 
 	return useMutation({
-		mutationFn: (appleId: string) => {
-			return apis.postAppleLogin(appleId);
+		mutationFn: (params: AppleLoginRequest) => {
+			return apis.postAppleLogin(params);
 		},
 		onSuccess: async (result: AppleLoginResponse) => {
 			if (result.isNewUser) {
