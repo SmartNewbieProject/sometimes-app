@@ -10,6 +10,9 @@ import colors from '@/src/shared/constants/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
 import { useStorage } from '@/src/shared/hooks/use-storage';
+import { useToast } from '@/src/shared/hooks/use-toast';
+import { useAuth } from '@/src/features/auth';
+import apis from '@/src/features/signup/apis';
 import AppleLogo from '@assets/icons/apple-logo.svg';
 import { isJapanese } from '@/src/shared/libs/local';
 import {
@@ -24,6 +27,8 @@ export default function AppleUserInfoPage() {
 	const router = useRouter();
 	const { t } = useTranslation();
 	const { updateForm, form, updateShowHeader } = useSignupProgress();
+	const { updateToken } = useAuth();
+	const { emitToast } = useToast();
 	const isJp = useMemo(() => isJapanese(), []);
 
 	const { value: appleUserFullName, loading: fullNameLoading } = useStorage<string | null>({
@@ -35,6 +40,7 @@ export default function AppleUserInfoPage() {
 	const [gender, setGender] = useState<Gender | null>((form.gender as Gender) || null);
 	const [phone, setPhone] = useState('');
 	const [error, setError] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		updateShowHeader(true);
@@ -125,15 +131,35 @@ export default function AppleUserInfoPage() {
 	};
 
 	const handleNext = async () => {
-		if (!isValid) return;
+		if (!isValid || isLoading) return;
 
 		setError(null);
+		setIsLoading(true);
 
 		try {
 			const phoneDigits = phone.replace(/\D/g, '');
 			const formattedPhone = isJp
 				? formatJpPhoneForApi(phoneDigits)
 				: `${phoneDigits.slice(0, 3)}-${phoneDigits.slice(3, 7)}-${phoneDigits.slice(7)}`;
+
+			const appleId = form.appleId || '';
+			if (!appleId) {
+				setError(t('features.signup.ui.validators.no_apple_login_info'));
+				setIsLoading(false);
+				return;
+			}
+
+			const result = await apis.postAppleLogin({
+				appleId,
+				phoneNumber: phoneDigits,
+			});
+
+			if (!result.isNewUser && result.accessToken && result.refreshToken) {
+				await updateToken(result.accessToken, result.refreshToken);
+				emitToast(t('features.auth.apple_account_linked'));
+				router.replace('/home');
+				return;
+			}
 
 			updateForm({
 				name,
@@ -148,6 +174,8 @@ export default function AppleUserInfoPage() {
 			router.push('/auth/signup/university');
 		} catch (err) {
 			setError(t('features.jp-auth.profile.error'));
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -280,7 +308,11 @@ export default function AppleUserInfoPage() {
 			</ScrollView>
 
 			<View style={styles.bottomContainer}>
-				<TwoButtons disabledNext={!isValid} onClickNext={handleNext} onClickPrevious={handleBack} />
+				<TwoButtons
+					disabledNext={!isValid || isLoading}
+					onClickNext={handleNext}
+					onClickPrevious={handleBack}
+				/>
 			</View>
 		</View>
 	);
