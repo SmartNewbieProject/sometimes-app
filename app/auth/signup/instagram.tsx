@@ -221,7 +221,7 @@ function SignupInstagram() {
 									}}
 								>
 									<Image
-										source={require('@assets/images/instagram.png')}
+										source={require('@assets/images/instagram.webp')}
 										style={
 											{
 												width: 81,
@@ -242,7 +242,7 @@ function SignupInstagram() {
 								// 모바일용 로고 (Reanimated)
 								<Animated.View style={[logoAnimatedStyle]}>
 									<Image
-										source={require('@assets/images/instagram.png')}
+										source={require('@assets/images/instagram.webp')}
 										style={{ width: 81, height: 81 }}
 									/>
 									<Animated.View style={[styles.logoGlowOverlay, logoGlowStyle]} />

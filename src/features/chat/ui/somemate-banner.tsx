@@ -11,7 +11,7 @@ function SomemateBanner() {
   return (
     <Pressable onPress={handlePress} style={styles.container}>
       <Image
-        source={require("@assets/images/somemate_banner.png")}
+        source={require("@assets/images/somemate_banner.webp")}
         style={styles.image}
         contentFit="contain"
       />

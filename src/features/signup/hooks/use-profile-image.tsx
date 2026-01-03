@@ -64,7 +64,7 @@ function useProfileImage() {
 					{t('apps.auth.sign_up.profile_image.info_desc_2')}
 				</Text>
 				<Image
-					source={require('@assets/images/instagram-some.png')}
+					source={require('@assets/images/instagram-some.webp')}
 					style={{
 						width: 116,
 						height: 175,
@@ -74,7 +74,7 @@ function useProfileImage() {
 					}}
 				/>
 				<Image
-					source={require('@assets/images/instagram-lock.png')}
+					source={require('@assets/images/instagram-lock.webp')}
 					style={{
 						width: 52,
 						height: 52,

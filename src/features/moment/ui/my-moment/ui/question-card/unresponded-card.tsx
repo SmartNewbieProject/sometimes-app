@@ -64,7 +64,7 @@ export const UnrespondedCard = ({ blocked = false, blockedReason = null, blocked
       onPress={cardContent.onPress}
     >
       <Image
-        source={blocked ? require("@/assets/images/moment/envelope-heart.png") : require("@/assets/images/moment/envelope.png")}
+        source={blocked ? require("@/assets/images/moment/envelope-heart.webp") : require("@/assets/images/moment/envelope.webp")}
         style={styles.icon}
         resizeMode="contain"
       />
@@ -84,7 +84,7 @@ export const UnrespondedCard = ({ blocked = false, blockedReason = null, blocked
       {!blocked && (
         <View style={styles.button}>
           <Image
-            source={require("@/assets/images/moment/go-to-answer.png")}
+            source={require("@/assets/images/moment/go-to-answer.webp")}
             style={styles.buttonImage}
             resizeMode="contain"
           />

@@ -189,7 +189,7 @@ export default function WithdrawalScreen() {
         <View style={styles.topContainer}>
           <View>
             <Image
-              source={require("@assets/images/withdrawal-miho.png")}
+              source={require("@assets/images/withdrawal-miho.webp")}
               style={styles.image}
             />
           </View>

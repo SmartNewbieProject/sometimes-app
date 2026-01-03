@@ -50,7 +50,7 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
       <View style={styles.separator} />
       <TouchableOpacity style={styles.faqButton}>
         <Image
-          source={require('@/assets/images/fireIcon.png')}
+          source={require('@/assets/images/fireIcon.webp')}
           style={styles.faqIcon}
         />
         <Text size="sm">[FAQ] 자주묻는 질문</Text>

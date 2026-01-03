@@ -42,7 +42,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
     id: "moment-events",
     titleComponent: <EventsTitle />,
     descriptionKey: "features.moment.navigation.events_description",
-    backgroundImageUrl: require("@/assets/images/moment/menu/events.png"),
+    backgroundImageUrl: require("@/assets/images/moment/menu/events.webp"),
     imageSize: 100,
     isReady: false,
     disabledMessageKey: "features.moment.navigation.events_disabled_message",
@@ -54,7 +54,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
     id: "moment-my-moment",
     titleComponent: <MyMomentTitle />,
     descriptionKey: "features.moment.navigation.my_moment_description",
-    backgroundImageUrl: require("@/assets/images/moment/menu/moment.png"),
+    backgroundImageUrl: require("@/assets/images/moment/menu/moment.webp"),
     imageSize: 100,
     disabledTextKey: "features.moment.navigation.my_moment_disabled_text",
     disabledMessageKey: "features.moment.navigation.my_moment_disabled_message",
@@ -66,7 +66,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
     id: "moment-check-in",
     titleComponent: <CheckInTitle />,
     descriptionKey: "features.moment.navigation.check_in_description",
-    backgroundImageUrl: require("@/assets/images/moment/menu/check.png"),
+    backgroundImageUrl: require("@/assets/images/moment/menu/check.webp"),
     isReady: false,
     disabledMessageKey: "features.moment.navigation.check_in_disabled_message",
     onPress: () => {
@@ -77,7 +77,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
     id: "moment-daily-roulette",
     titleComponent: <RouletteTitle />,
     descriptionKey: "features.moment.navigation.roulette_description",
-    backgroundImageUrl: require("@/assets/images/moment/menu/roulette.png"),
+    backgroundImageUrl: require("@/assets/images/moment/menu/roulette.webp"),
     disabledTextKey: "features.moment.navigation.roulette_disabled_text",
     disabledMessageKey: "features.moment.navigation.roulette_disabled_message",
     onPress: () => {
@@ -88,7 +88,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
     id: "moment-somemate",
     titleComponent: <SomemateTitle />,
     descriptionKey: "features.moment.navigation.somemate_description",
-    backgroundImageUrl: require("@/assets/images/moment/menu/persona.png"),
+    backgroundImageUrl: require("@/assets/images/moment/menu/persona.webp"),
     onPress: () => {
       router.push("/chat/somemate");
     },
@@ -97,7 +97,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
     id: "moment-weekly-report",
     titleComponent: <WeeklyReportTitle />,
     descriptionKey: "features.moment.navigation.weekly_report_description",
-    backgroundImageUrl: require("@/assets/images/moment/menu/moment.png"),
+    backgroundImageUrl: require("@/assets/images/moment/menu/moment.webp"),
     onPress: () => {
       router.push("/moment/weekly-report");
     },

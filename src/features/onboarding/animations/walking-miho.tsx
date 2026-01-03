@@ -14,9 +14,9 @@ interface WalkingMihoProps {
   isActive: boolean;
 }
 
-const schoolImage = require('@assets/images/onboarding/no-time/school.png');
-const mihoImage = require('@assets/images/onboarding/no-time/go_home_miho.png');
-const homeImage = require('@assets/images/onboarding/no-time/home.png');
+const schoolImage = require('@assets/images/onboarding/no-time/school.webp');
+const mihoImage = require('@assets/images/onboarding/no-time/go_home_miho.webp');
+const homeImage = require('@assets/images/onboarding/no-time/home.webp');
 
 const isWeb = Platform.OS === 'web';
 

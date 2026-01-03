@@ -33,7 +33,7 @@ function RouletteModal() {
           <View style={styles.deco3} />
           <View style={styles.deco4} />
           <Image
-            source={require("@assets/images/roulette-mini.png")}
+            source={require("@assets/images/roulette-mini.webp")}
             style={styles.rouletteMini}
           />
           <Image

@@ -70,7 +70,7 @@ export const Waiting = ({ match, onTimeEnd }: WaitingProps) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("@assets/images/sandclock.png")}
+        source={require("@assets/images/sandclock.webp")}
         style={styles.sandclockImage}
       />
       <View style={styles.titleContainer}>

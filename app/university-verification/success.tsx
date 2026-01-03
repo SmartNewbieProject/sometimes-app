@@ -33,7 +33,7 @@ export default function UniversityVerificationSuccess() {
           {/* 메인 이미지 */}
           <View style={styles.imageContainer}>
             <Image
-              source={require("@/assets/images/verification-done.png")}
+              source={require("@/assets/images/verification-done.webp")}
               style={{ width: 320, height: 320 }}
               resizeMode="contain"
             />

@@ -128,7 +128,7 @@ export default function SomemateReportScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.topCard}>
           <Image
-            source={require("@assets/images/somemate_miho.png")}
+            source={require("@assets/images/somemate_miho.webp")}
             style={styles.heartIcon}
             contentFit="contain"
           />

@@ -172,8 +172,8 @@ function HomeGuide() {
 				)}
 				<RNText style={styles.infoNextHint}>{t('features.guide.ui.home.info_next_hint')}</RNText>
 
-				<Image source={require('@assets/images/instagram-some.png')} style={styles.infoSomeImg} />
-				<Image source={require('@assets/images/instagram-lock.png')} style={styles.infoLockImg} />
+				<Image source={require('@assets/images/instagram-some.webp')} style={styles.infoSomeImg} />
+				<Image source={require('@assets/images/instagram-lock.webp')} style={styles.infoLockImg} />
 			</View>
 
 			{/* 오버레이 */}

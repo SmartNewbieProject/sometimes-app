@@ -77,7 +77,7 @@ export default function MyInfoIntroScreen() {
             }}
           >
             <Image
-              source={require("@assets/images/info-miho.png")}
+              source={require("@assets/images/info-miho.webp")}
               style={{ width: 255, height: 259, top: 20, position: "absolute" }}
             />
           </View>

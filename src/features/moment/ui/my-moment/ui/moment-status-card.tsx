@@ -129,7 +129,7 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
           )}
         </View>
         <Image
-          source={require("@/assets/images/moment/clipboard.png")}
+          source={require("@/assets/images/moment/clipboard.webp")}
           style={styles.illustration}
           resizeMode="contain"
         />
@@ -152,7 +152,7 @@ export const MomentStatusCard: React.FC<MomentStatusCardProps> = ({
         </Text>
       </View>
       <Image
-        source={require("@/assets/images/moment/clipboard.png")}
+        source={require("@/assets/images/moment/clipboard.webp")}
         style={[styles.illustration, styles.disabledIllustration]}
         resizeMode="contain"
       />

@@ -13,13 +13,13 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useMatchingBackground } from '../hooks';
 import { calculateTime } from '../services/calculate-time';
-import type { MatchDetails } from '../types';
+import type { OpenMatch } from '../types';
 import { sideStyle } from './constants';
 import Time from './time';
 import { useTranslation } from 'react-i18next';
 
 type PartnerProps = {
-	match: MatchDetails;
+	match: OpenMatch;
 };
 
 export const Partner = ({ match }: PartnerProps) => {

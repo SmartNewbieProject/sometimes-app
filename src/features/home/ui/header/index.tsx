@@ -11,10 +11,10 @@ export const Header = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top + 12 }]}>
       <Image
-        source={require("@/assets/images/moment/moment-logo.png")}
+        source={require("@/assets/images/moment/moment-logo.webp")}
         style={styles.logo}
         contentFit="contain"
-        defaultSource={require("@/assets/images/moment/moment-logo.png")}
+        defaultSource={require("@/assets/images/moment/moment-logo.webp")}
       />
       {/* Fallback: 이미지가 없을 경우 텍스트 표시 */}
       {/* <Text style={styles.logoText}>MOMENT</Text> */}

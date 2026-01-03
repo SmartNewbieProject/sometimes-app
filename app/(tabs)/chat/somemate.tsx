@@ -153,7 +153,7 @@ export default function SomemateScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.characterContainer}>
           <Image
-            source={require("@assets/images/somemate_miho.png")}
+            source={require("@assets/images/somemate_miho.webp")}
             style={styles.characterImage}
             contentFit="contain"
           />
@@ -161,7 +161,7 @@ export default function SomemateScreen() {
 
         <View style={styles.balloonContainer}>
           <Image
-            source={require("@assets/images/promotion/content/balloon.png")}
+            source={require("@assets/images/promotion/content/balloon.webp")}
             style={styles.balloonImage}
             contentFit="contain"
           />

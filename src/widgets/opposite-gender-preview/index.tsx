@@ -99,14 +99,14 @@ interface OppositeGenderPreviewProps {
 
 const SAMPLE_IMAGES = {
 	MALE: [
-		require('@/assets/images/samples/man/man_0.png'),
-		require('@/assets/images/samples/man/man_1.png'),
-		require('@/assets/images/samples/man/man_2.png'),
+		require('@/assets/images/samples/man/man_0.webp'),
+		require('@/assets/images/samples/man/man_1.webp'),
+		require('@/assets/images/samples/man/man_2.webp'),
 	],
 	FEMALE: [
-		require('@/assets/images/samples/girl/girl_0.png'),
-		require('@/assets/images/samples/girl/girl_1.png'),
-		require('@/assets/images/samples/girl/girl_2.png'),
+		require('@/assets/images/samples/girl/girl_0.webp'),
+		require('@/assets/images/samples/girl/girl_1.webp'),
+		require('@/assets/images/samples/girl/girl_2.webp'),
 	],
 };
 

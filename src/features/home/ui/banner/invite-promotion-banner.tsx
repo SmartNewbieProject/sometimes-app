@@ -43,30 +43,30 @@ function InvitePromotionBanner() {
   return (
     <LinearGradient colors={["#7A4AE2", "#43297C"]} start={{x: 0, y: 1}} end={{x: 1, y: 0}} locations={[0.2, 1]} style={styles.container}>
       <Image
-        source={require("@assets/images/promotion/home-banner/particle-left.png")}
+        source={require("@assets/images/promotion/home-banner/particle-left.webp")}
         style={styles.particleLeft}
       />
        <Image
-        source={require("@assets/images/promotion/home-banner/particle-right.png")}
+        source={require("@assets/images/promotion/home-banner/particle-right.webp")}
         style={styles.particleRight}
       />
        <Image
-        source={require("@assets/images/promotion/home-banner/coupon-miho.png")}
+        source={require("@assets/images/promotion/home-banner/coupon-miho.webp")}
         style={styles.couponMiho}
           />  
     
       <Pressable onPress={handlePromotion} style={styles.flexContainer}>
         <View style={styles.imageContainer} >
            <Image
-        source={require("@assets/images/promotion/home-banner/gem.png")}
+        source={require("@assets/images/promotion/home-banner/gem.webp")}
         style={styles.image}
           />
            <Image
-        source={require("@assets/images/promotion/home-banner/star3.png")}
+        source={require("@assets/images/promotion/home-banner/star3.webp")}
         style={styles.star3}
           />
              <Image
-        source={require("@assets/images/promotion/home-banner/star4.png")}
+        source={require("@assets/images/promotion/home-banner/star4.webp")}
         style={styles.star4}
       />
         </View>
@@ -78,16 +78,16 @@ function InvitePromotionBanner() {
             <View style={[styles.titleStrongContainer]}>
               
              <Image
-        source={require("@assets/images/promotion/home-banner/star5.png")}
+        source={require("@assets/images/promotion/home-banner/star5.webp")}
         style={styles.star5}
               />
                   
              <Image
-        source={require("@assets/images/promotion/home-banner/star6.png")}
+        source={require("@assets/images/promotion/home-banner/star6.webp")}
         style={styles.star6}
               />
                 <Image
-        source={require("@assets/images/promotion/home-banner/letter.png")}
+        source={require("@assets/images/promotion/home-banner/letter.webp")}
         style={styles.letter}
       />
             <Text style={styles.titleStrong}>{t("features.home.ui.invite_banner.reward")}</Text>

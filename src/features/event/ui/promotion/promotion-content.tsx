@@ -14,11 +14,11 @@ function PromotionContent() {
       locations={[0.01, 1]}
     >
       <Image
-        source={require("@assets/images/promotion/content/balloon.png")}
+        source={require("@assets/images/promotion/content/balloon.webp")}
         style={styles.balloon}
       />
       <Image
-        source={require("@assets/images/promotion/content/particle.png")}
+        source={require("@assets/images/promotion/content/particle.webp")}
         style={styles.particle}
       />
       <PromotionInviteCode />

@@ -56,7 +56,7 @@ function NoneLikeBanner() {
           style={styles.background}
         />
         <Image
-          source={require("@assets/images/sad-miho.png")}
+          source={require("@assets/images/sad-miho.webp")}
           style={styles.image}
         />
         <View style={styles.content}>

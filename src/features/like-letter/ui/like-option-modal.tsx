@@ -169,7 +169,7 @@ export function LikeOptionModal({
 					<View style={styles.iconRing}>
 						<View style={styles.iconInner}>
 							<Image
-								source={require('@assets/images/sometimelogo.png')}
+								source={require('@assets/images/sometimelogo.webp')}
 								style={styles.logoIcon}
 								contentFit="contain"
 							/>
@@ -231,7 +231,7 @@ export function LikeOptionModal({
 				<View style={styles.iconRing}>
 					<View style={styles.iconInner}>
 						<Image
-							source={require('@assets/images/sometimelogo.png')}
+							source={require('@assets/images/sometimelogo.webp')}
 							style={styles.logoIcon}
 							contentFit="contain"
 						/>

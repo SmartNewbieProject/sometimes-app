@@ -38,7 +38,7 @@ export default function CommingSoonScreen() {
 
         <View className="flex flex-col flex-1 items-center">
           <Image
-              source={require('@assets/images/commingsooncharacter.png')}
+              source={require('@assets/images/commingsooncharacter.webp')}
               style={{width: 200, height: 200}}
           />
 

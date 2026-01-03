@@ -57,7 +57,7 @@ export default function ProfileImgEditWaitingScreen() {
             <Image
               source={
                 statusData?.profileImage ??
-                require("@/assets/images/signup-pending.png")
+                require("@/assets/images/signup-pending.webp")
               }
               style={waitingStyles.profileImage}
               contentFit="contain"

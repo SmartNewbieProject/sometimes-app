@@ -5,7 +5,7 @@ import { useMatchLoading } from "./hooks";
 import { useLatestMatching } from "./queries";
 import { useProfileDetailsQuery } from "@/src/features/auth/queries";
 import { useStorage } from "@/src/shared/hooks/use-storage";
-import type { MatchDetails } from "./types";
+import type { MatchDetails, OpenMatch } from "./types";
 import { Waiting, Error, LoadingSkeleton } from "./ui";
 import { Container } from "./ui/container";
 import { InteractionNavigation } from "./ui/nav";
@@ -94,7 +94,7 @@ function IdleMatchTimerContent() {
     switch (match.type) {
       case "open":
       case "rematching":
-        return <Partner match={match} />;
+        return <Partner match={match as OpenMatch} />;
       case "pending-approval":
         return <PendingApproval match={match as MatchDetails & { type: 'pending-approval'; untilNext: string; approvalStatus: 'pending' | 'approved' | 'rejected' }} onTimeEnd={refetch} />;
       case "not-found":

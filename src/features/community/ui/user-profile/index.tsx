@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
-const DEFAULT_AVATAR = require("@assets/images/sometimelogo.png");
+const DEFAULT_AVATAR = require("@assets/images/sometimelogo.webp");
 
 interface UserProfileProps {
   author: Author;

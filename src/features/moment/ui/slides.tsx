@@ -149,10 +149,10 @@ export const MomentSlides = ({ items, autoPlayInterval = 5000, height }: MomentS
         const imageSource = imageStrategy.loadImage();
         return typeof imageSource === 'string' ? { uri: imageSource } : imageSource;
       }
-      return require("@/assets/images/moment/introduction-sometimes.png");
+      return require("@/assets/images/moment/introduction-sometimes.webp");
     } catch (error) {
       console.warn('Invalid image source for item:', item.id);
-      return require("@/assets/images/moment/introduction-sometimes.png");
+      return require("@/assets/images/moment/introduction-sometimes.webp");
     }
   };
 

@@ -95,7 +95,7 @@ export default function ProfileImgEditRejectScreen() {
             </View>
 
             <Image
-              source={require("@assets/images/limit-age.png")}
+              source={require("@assets/images/limit-age.webp")}
               style={{ width: 259, height: 259, top: 30, left: 30 }}
               className="mb-6"
             />

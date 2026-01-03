@@ -307,7 +307,7 @@ function LikeGuide() {
             : t("features.guide.ui.home.info_next_hint")}
         </RNText>
         <Image
-          source={require("@assets/images/instagram-some.png")}
+          source={require("@assets/images/instagram-some.webp")}
           style={{
             width: 116,
             height: 175,
@@ -317,7 +317,7 @@ function LikeGuide() {
           }}
         />
         <Image
-          source={require("@assets/images/instagram-lock.png")}
+          source={require("@assets/images/instagram-lock.webp")}
           style={{
             width: 52,
             height: 52,

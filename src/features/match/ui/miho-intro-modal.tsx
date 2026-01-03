@@ -353,7 +353,7 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
 
           <Animated.View style={[styles.mihoContainer, mihoAnimatedStyle]}>
             <Image
-              source={require('@assets/images/instagram-some.png')}
+              source={require('@assets/images/instagram-some.webp')}
               style={styles.mihoImage}
               contentFit="contain"
             />

@@ -45,7 +45,7 @@ export default function ProfileImgEditDoneScreen() {
         <View style={{ position: "relative" }}>
           <View style={approveStyles.circleBg} />
           <Image
-            source={require("@assets/images/signup-done.png")}
+            source={require("@assets/images/signup-done.webp")}
             style={{ width: 298, height: 296, marginTop: 50 }}
           />
         </View>

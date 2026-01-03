@@ -31,7 +31,7 @@ function RouletteItem() {
 
         <Animated.View style={[rouletteAnimationStyle, styles.roulette]}>
           <Image
-            source={require("@assets/images/roulette.png")}
+            source={require("@assets/images/roulette.webp")}
             style={styles.rouletteImage}
           />
         </Animated.View>
@@ -57,7 +57,7 @@ function RouletteItem() {
       />
       <Image
         style={styles.bottom}
-        source={require("@assets/images/roulette-bottom.png")}
+        source={require("@assets/images/roulette-bottom.webp")}
       />
     </View>
   );

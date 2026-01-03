@@ -350,7 +350,7 @@ export const QuestionDetailPage = () => {
         ) : questionError ? (
           <View style={styles.errorContainer}>
             <Image
-              source={require("@/assets/images/moment/envelope.png")}
+              source={require("@/assets/images/moment/envelope.webp")}
               style={styles.icon}
               resizeMode="contain"
             />
@@ -385,7 +385,7 @@ export const QuestionDetailPage = () => {
         ) : !dailyQuestionResponse?.question ? (
           <View style={styles.noQuestionContainer}>
             <Image
-              source={require("@/assets/images/moment/envelope.png")}
+              source={require("@/assets/images/moment/envelope.webp")}
               style={styles.icon}
               resizeMode="contain"
             />
@@ -462,7 +462,7 @@ export const QuestionDetailPage = () => {
 
                 <View style={sentStepStyles.rewardContainer}>
                   <Image
-                    source={require("@/assets/images/promotion/home-banner/gem.png")}
+                    source={require("@/assets/images/promotion/home-banner/gem.webp")}
                     style={sentStepStyles.gemIcon}
                     resizeMode="contain"
                   />

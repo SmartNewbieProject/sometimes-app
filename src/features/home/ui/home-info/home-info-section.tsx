@@ -38,7 +38,7 @@ function HomeInfoSection() {
           }
           buttonDisabled={preferencesSelf?.length !== 0}
           onClick={() => handleClickButton("my-info")}
-          imageUri={require("@assets/images/my-info.png")}
+          imageUri={require("@assets/images/my-info.webp")}
           title={t("features.home.ui.home_info.home_info_section.my_info_title")}
           description={t(
             "features.home.ui.home_info.home_info_section.my_info_description"

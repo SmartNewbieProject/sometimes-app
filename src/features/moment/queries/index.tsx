@@ -28,7 +28,7 @@ import { devLogWithTag, logError } from "@/src/shared/utils";
 const CLIENT_SLIDES: MomentSlide[] = [
   {
     id: "introduction-sometimes",
-    imageUrl: require("@/assets/images/moment/introduction-sometimes.png"),
+    imageUrl: require("@/assets/images/moment/introduction-sometimes.webp"),
     imageType: "local",
     title: "Sometimes 소개",
     order: 1,

@@ -343,7 +343,7 @@ export default function SomemateChatScreen() {
         >
           {!isUser && (
             <Image
-              source={require("@assets/images/somemate_miho.png")}
+              source={require("@assets/images/somemate_miho.webp")}
               style={styles.assistantAvatar}
               contentFit="cover"
             />
@@ -421,7 +421,7 @@ export default function SomemateChatScreen() {
         </Pressable>
         <Pressable style={styles.profileSection}>
           <Image
-            source={require("@assets/images/somemate_miho.png")}
+            source={require("@assets/images/somemate_miho.webp")}
             style={styles.profileImage}
             contentFit="cover"
           />

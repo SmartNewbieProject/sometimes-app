@@ -17,7 +17,7 @@ function BannerZero() {
 function BannerOne() {
   return (
     <Image
-      source={require("@assets/images/roulette/modal-banner/banner1.png")}
+      source={require("@assets/images/roulette/modal-banner/banner1.webp")}
       style={styles.bannerOne}
     />
   );
@@ -26,7 +26,7 @@ function BannerOne() {
 function BannerTwo() {
   return (
     <Image
-      source={require("@assets/images/roulette/modal-banner/banner2.png")}
+      source={require("@assets/images/roulette/modal-banner/banner2.webp")}
       style={styles.bannerTwo}
     />
   );
@@ -35,7 +35,7 @@ function BannerTwo() {
 function BannerThree() {
   return (
     <Image
-      source={require("@assets/images/roulette/modal-banner/banner3.png")}
+      source={require("@assets/images/roulette/modal-banner/banner3.webp")}
       style={styles.bannerThree}
     />
   );
@@ -44,7 +44,7 @@ function BannerThree() {
 function BannerFour() {
   return (
     <Image
-      source={require("@assets/images/roulette/modal-banner/banner4.png")}
+      source={require("@assets/images/roulette/modal-banner/banner4.webp")}
       style={styles.bannerFour}
     />
   );
@@ -53,7 +53,7 @@ function BannerFour() {
 function BannerFive() {
   return (
     <Image
-      source={require("@assets/images/roulette/modal-banner/banner5.png")}
+      source={require("@assets/images/roulette/modal-banner/banner5.webp")}
       style={styles.bannerFive}
     />
   );

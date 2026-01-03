@@ -10,7 +10,7 @@ export const Error = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("@assets/images/sad-miho.png")}
+        source={require("@assets/images/sad-miho.webp")}
         style={styles.image}
         contentFit="contain"
       />

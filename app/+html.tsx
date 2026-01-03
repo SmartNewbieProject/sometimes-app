@@ -22,7 +22,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta property="og:description" content="4,000명+ 대학생이 선택한 소개팅 앱. AI 이상형 매칭으로 같은 지역 대학생과 설레는 만남을 시작하세요." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://some-in-univ.com" />
-        <meta property="og:image" content="https://some-in-univ.com/opengraph.png" />
+        <meta property="og:image" content="https://some-in-univ.com/opengraph.webp" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:site_name" content="썸타임" />
@@ -32,7 +32,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="썸타임 - 대학생 소개팅 앱" />
         <meta name="twitter:description" content="대학생 연애의 시작, 썸타임. AI 매칭으로 이상형 대학생을 만나보세요." />
-        <meta name="twitter:image" content="https://some-in-univ.com/opengraph.png" />
+        <meta name="twitter:image" content="https://some-in-univ.com/opengraph.webp" />
 
         {/* 추가 SEO 메타 */}
         <meta name="robots" content="index, follow" />

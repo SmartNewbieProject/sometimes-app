@@ -11,7 +11,7 @@ export const RespondedCard = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("@/assets/images/moment/envelope-heart.png")}
+        source={require("@/assets/images/moment/envelope-heart.webp")}
         style={styles.icon}
         resizeMode="contain"
       />
