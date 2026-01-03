@@ -1,17 +1,40 @@
 {
-  "tabs": {
-    "profile": "マイプロフィール",
-    "interest": "好みのタイプ"
-  },
-  "ui": {
-    "save_button": "保存",
-    "validation": {
-      "empty_form": "未入力の項目があります",
-      "age_required": "年齢の好みを選択してください",
-      "drinking_required": "飲酒の好みを選択してください",
-      "smoking_required": "喫煙の好みを選択してください",
-      "personality_required": "性格の好みを3つ選択してください",
-      "tattoo_required": "タトゥーの好みを選択してください"
-    }
-  }
+	"tabs": {
+		"profile": "マイプロフィール",
+		"interest": "好みのタイプ"
+	},
+	"errors": {
+		"preference_save_failed": "好み情報の保存に失敗しました。しばらくしてからもう一度お試しください。"
+	},
+	"profile": {
+		"fields": {
+			"drinking": "飲酒",
+			"smoking": "喫煙",
+			"tattoo": "タトゥー",
+			"personality": "性格",
+			"dating_style": "デートスタイル",
+			"interests": "趣味",
+			"mbti": "MBTI",
+			"military_status": "軍歴"
+		},
+		"validation": {
+			"required_fields": "次の情報を入力してください: {{fields}}"
+		}
+	},
+	"ui": {
+		"save_button": "保存",
+		"validation": {
+			"empty_form": "未入力の項目があります",
+			"age_required": "年齢の好みを選択してください",
+			"drinking_required": "飲酒の好みを選択してください",
+			"smoking_required": "喫煙の好みを選択してください",
+			"personality_required": "性格の好みを3つ選択してください",
+			"tattoo_required": "タトゥーの好みを選択してください"
+		},
+		"success_modal": {
+			"title": "プロフィール更新完了！",
+			"description": "もっとあなたらしいプロフィールになりました！ぴったりの人を見つけますね ✨",
+			"confirm_button": "いいね！"
+		}
+	}
 }

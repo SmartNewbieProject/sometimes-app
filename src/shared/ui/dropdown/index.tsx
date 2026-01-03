@@ -124,7 +124,7 @@ export const Dropdown = ({ open, items, dropdownStyle, onOpenChange }: DropdownP
 					{triggerLayout && (
 						<Pressable
 							style={[
-								styles.backdrop,
+								styles.backdrop as import('react-native').ViewStyle,
 								{
 									top: -triggerLayout.y,
 									left: -triggerLayout.x,

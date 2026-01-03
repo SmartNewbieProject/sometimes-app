@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   setMainProfileImage,
   deleteProfileImage,
@@ -109,7 +110,7 @@ export function usePhotoManagement() {
       await refetch();
       emitToast('사진이 교체되었습니다. 관리자 승인 후 반영됩니다');
     } catch (error: any) {
-      const errorMessage = error?.message || '사진 교체에 실패했습니다';
+      const errorMessage = error?.message || "hooks.사진_교체에_실패했습니다";
       emitToast(errorMessage);
     } finally {
       setIsLoading(false);
@@ -120,7 +121,7 @@ export function usePhotoManagement() {
     setIsLoading(true);
     try {
       const uploadResponse = await uploadProfileImage(imageUri, slotIndex);
-      devLogWithTag('Photo Mgmt', 'Upload complete:', { photoId: uploadResponse?.id });
+      devLogWithTag('Photo Mgmt', 'Upload complete:', { photoId: uploadResponse?.image?.id });
 
       const refetchResult = await refetch();
       devLogWithTag('Photo Mgmt', 'Refetch complete:', {
@@ -181,10 +182,10 @@ export function usePhotoManagement() {
 
       // 재심사 요청 안내 모달 표시
       showModal({
-        title: '재심사 요청 완료',
+        title: "hooks.재심사_요청_완료",
         children: '사진이 재업로드되었습니다.\n관리자 심사가 완료될 때까지 기다려 주세요.\n보통 24시간 이내에 심사가 완료됩니다.',
         primaryButton: {
-          text: '확인',
+          text: "hooks.확인",
           onClick: () => {},
         },
       });
@@ -192,7 +193,7 @@ export function usePhotoManagement() {
       if (error?.errorCode === 'MAX_RETRY_EXCEEDED') {
         emitToast('최대 재심사 횟수를 초과했습니다. 고객센터에 문의하세요');
       } else {
-        const errorMessage = error?.message || '사진 재업로드에 실패했습니다';
+        const errorMessage = error?.message || "hooks.사진_재업로드에_실패했습니다";
         emitToast(errorMessage);
       }
     } finally {
@@ -211,6 +212,8 @@ export function usePhotoManagement() {
   };
 
   const openActionSheet = (photo: ProfileImage) => {
+  const { t } = useTranslation();
+
     setSelectedPhoto(photo);
     setActionSheetVisible(true);
   };

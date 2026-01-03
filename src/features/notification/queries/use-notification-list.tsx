@@ -3,7 +3,7 @@ import { getNotifications, NotificationListResponse } from '../apis';
 
 export const useNotificationList = (params?: {
   isRead?: boolean;
-  type?: 'general' | 'reward';
+  type?: 'general' | 'reward' | 'contact';
 }) => {
   return useInfiniteQuery({
     queryKey: ['notifications', params],

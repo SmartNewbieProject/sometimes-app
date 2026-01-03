@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 
 // =======================
 // Questions API 타입
@@ -47,7 +48,7 @@ export const RawQuestion = z.object({
   questionId: z.string(),
   text: z.string(),
   dimension: RawPersonalityDimension,
-  type: z.string(), // Server returns "선택형" instead of "single_choice"
+  type: z.string(), // Server returns "common.선택형" instead of "single_choice"
   options: z.array(QuestionOption),
   dayOfWeek: z.number(),
   isAnswered: z.boolean(),
@@ -73,12 +74,12 @@ export type Question = z.infer<typeof Question>;
 // Helper function to convert raw question to internal format
 export const convertRawQuestion = (rawQuestion: RawQuestion, weekInfo: WeekInfo): Question => {
   // Convert server type to internal enum
-  // Handle both Korean "선택형" and other possible types
+  // Handle both Korean "common.선택형" and other possible types
   let questionType: 'single_choice' = 'single_choice';
 
-  if (rawQuestion.type === '선택형' || rawQuestion.type === 'single_choice' || rawQuestion.type === '선택지') {
+  if (rawQuestion.type === "common.선택형" || rawQuestion.type === 'single_choice' || rawQuestion.type === "common.선택지") {
     questionType = 'single_choice';
-  } else if (rawQuestion.type === '주관식' || rawQuestion.type === 'text' || rawQuestion.type === '텍스트') {
+  } else if (rawQuestion.type === "common.주관식" || rawQuestion.type === 'text' || rawQuestion.type === "common.텍스트") {
     // Future: support text input questions
     questionType = 'single_choice'; // For now, default to single choice
   }
@@ -241,6 +242,37 @@ export const Report = z.object({
 
 export type Report = z.infer<typeof Report>;
 
+// Legacy/UI Weekly Report Types (for backward compatibility with UI components)
+export interface LegacyStatItem {
+  category: string;
+  currentScore: number;
+  prevScore: number;
+  status: 'INCREASE' | 'DECREASE' | 'MAINTAIN';
+}
+
+export interface InsightItem {
+  category: string;
+  score?: number;
+  definition?: string;
+  feedback?: string;
+  text?: string;
+}
+
+export interface UIWeeklyReport {
+  id: string;
+  userId: string;
+  weekNumber: number;
+  year: number;
+  title: string;
+  subTitle: string;
+  generatedAt: string;
+  stats?: LegacyStatItem[];
+  insights?: InsightItem[];
+  keywords?: string[];
+  sentimentScore?: number;
+  reports?: UIWeeklyReport[];
+}
+
 export const WeeklyReportResponse = z.object({
   success: z.boolean(),
   data: Report,
@@ -250,11 +282,16 @@ export const WeeklyReportResponse = z.object({
 
 export type WeeklyReportResponse = z.infer<typeof WeeklyReportResponse>;
 
+// Extended response type for UI (includes legacy properties)
+export type UIWeeklyReportResponse = UIWeeklyReport | WeeklyReportResponse;
+
 export const ReportHistoryResponse = z.object({
   reports: z.array(Report),
 });
 
 export type ReportHistoryResponse = z.infer<typeof ReportHistoryResponse>;
+
+export type ReportHistory = Report;
 
 // 새로운 API 스펙에 맞는 최신 리포트 응답 타입
 export const RadarDataItem = z.object({
@@ -320,11 +357,24 @@ export type LatestReportErrorResponse = z.infer<typeof LatestReportErrorResponse
 // Profile API 타입
 // =======================
 
-export const SyncProfileRequest = z.object({
+// Full profile sync request (for complete profile updates)
+export const FullSyncProfileRequest = z.object({
   mbti: z.string(),
   hobbies: z.array(z.string()),
   interests: z.array(z.string()),
   introduction: z.string(),
+});
+
+export type FullSyncProfileRequest = z.infer<typeof FullSyncProfileRequest>;
+
+// Legacy/UI sync request (for partial keyword/introduction sync)
+export const SyncProfileRequest = z.object({
+  syncKeywords: z.boolean().optional(),
+  syncIntroduction: z.boolean().optional(),
+  mbti: z.string().optional(),
+  hobbies: z.array(z.string()).optional(),
+  interests: z.array(z.string()).optional(),
+  introduction: z.string().optional(),
 });
 
 export type SyncProfileRequest = z.infer<typeof SyncProfileRequest>;
@@ -340,13 +390,17 @@ export const Profile = z.object({
 export type Profile = z.infer<typeof Profile>;
 
 export const SyncProfileResponse = z.object({
-  profile: Profile,
+  profile: Profile.optional(),
+  syncedKeywords: z.array(z.string()).optional(),
+  syncedIntroduction: z.string().optional(),
+  success: z.boolean().optional(),
 });
 
 export type SyncProfileResponse = z.infer<typeof SyncProfileResponse>;
 
 export const SyncStatusResponse = z.object({
   status: z.string(),
+  syncStatus: z.string().optional(),
   lastSyncAt: z.string(),
   pendingFields: z.array(z.string()),
 });
@@ -372,7 +426,12 @@ export const ApiResponse = <T = any>(data: z.Schema<T>) => z.object({
   message: z.string().optional(),
 });
 
-export type ApiResponse<T = any> = z.infer<ReturnType<ApiResponse<T>>>;
+export type ApiResponse<T = any> = {
+  success: boolean;
+  data?: T;
+  error?: ApiError;
+  message?: string;
+};
 
 // =======================
 // Query Parameters 타입
@@ -386,8 +445,11 @@ export const PaginationParams = z.object({
 export type PaginationParams = z.infer<typeof PaginationParams>;
 
 export const ReportParams = z.object({
-  week: z.number().min(1).max(53),
+  week: z.number().min(1).max(53).optional(),
+  weekNumber: z.number().min(1).max(53).optional(),
   year: z.number().min(2024),
+}).refine((data) => data.week !== undefined || data.weekNumber !== undefined, {
+  message: 'week 또는 weekNumber 중 하나는 필수입니다',
 });
 
 export type ReportParams = z.infer<typeof ReportParams>;
@@ -427,6 +489,7 @@ export interface MomentSlide {
   link?: string;
   externalLink?: string;
   order?: number;
+  category?: string;
 }
 
 export interface MomentSlidesProps {
@@ -437,7 +500,8 @@ export interface MomentSlidesProps {
 
 export interface MomentNavigationItem {
   id: string;
-  titleComponent: React.ReactNode;
+  title?: string;
+  titleComponent?: React.ReactNode;
   description?: string;
   descriptionKey?: string;
   backgroundImageUrl?: string | number;

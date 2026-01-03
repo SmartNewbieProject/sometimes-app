@@ -64,16 +64,8 @@ export const PortOnePaymentView = forwardRef(
 		const handleComplete = async (complete: PortOnePaymentCompleteResult) => {
 			try {
 				if (complete.txId) {
-					// 결제 완료 이벤트 추적
 					const itemType = payMode === 'gem' ? 'gem' : 'rematch_ticket';
 					const amount = complete.amount || 0;
-
-					conversionEvents.trackPaymentCompleted(
-						complete.txId,
-						complete.paymentMethod || 'unknown',
-						amount,
-						[{ type: itemType, quantity: 1, price: amount }]
-					);
 
 					if (payMode === 'gem') {
 						await paymentApis.payGem({ txId : complete.txId, merchantUid: complete.paymentId, eventType })

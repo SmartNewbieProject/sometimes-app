@@ -40,10 +40,10 @@ export function PhotoStatusWrapper({
   const handleShowRejectionDetail = (e: any) => {
     e.stopPropagation();
     showModal({
-      title: '거절 사유',
+      title: t("common.거절_사유"),
       children: rejectionReason || t('features.mypage.image-modal.no_reason'),
       primaryButton: {
-        text: '확인',
+        text: t("common.확인"),
         onClick: () => {},
       },
     });

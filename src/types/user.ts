@@ -16,11 +16,7 @@ export interface ProfileImage {
 }
 
 export interface ManagementImagesResponse {
-	images: [
-		ProfileImage | null,
-		ProfileImage | null,
-		ProfileImage | null
-	];
+	images: [ProfileImage | null, ProfileImage | null, ProfileImage | null];
 }
 
 export interface ManagementSlot {
@@ -72,16 +68,19 @@ export interface UniversityDetail {
 	studentNumber: string | null;
 	code: string | null;
 	region: string | null;
+	isVerified?: boolean;
 }
 
 export interface PreferenceOption {
 	id: string;
 	displayName: string;
 	imageUrl?: string | null;
+	key?: string; // NEW! 영어 ID (예: "SAME_AGE", "YOUNGER")
 }
 
 export interface PreferenceTypeGroup {
 	typeName: string;
+	typeKey?: string; // NEW! 영어 ID (예: "AGE_PREFERENCE")
 	selectedOptions: PreferenceOption[];
 }
 
@@ -127,6 +126,10 @@ export interface UserProfile {
 	myPhotoCount?: number;
 	isApproved?: boolean;
 	status?: 'approved' | 'rejected' | 'pending';
+	matchScore?: number;
+	isFirstMatch?: boolean;
+	tier?: string;
+	canLetter?: boolean;
 }
 
 export interface SimpleProfile {
@@ -146,6 +149,11 @@ export interface MyDetails {
 	profileImages: ProfileImage[];
 	instagramId: string;
 	universityDetails: UniversityDetail;
+	createdAt?: string;
+	nickname?: string;
+	totalMatches?: number;
+	hasPurchased?: boolean;
+	totalSpent?: number;
 }
 
 export type Gender = 'MALE' | 'FEMALE';

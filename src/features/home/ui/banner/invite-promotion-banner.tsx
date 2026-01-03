@@ -13,7 +13,9 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 function InvitePromotionBanner() {
+  const { t } = useTranslation();
   const translateXAnim = useSharedValue(0);
   const router = useRouter();
   useEffect(() => {
@@ -70,9 +72,9 @@ function InvitePromotionBanner() {
         </View>
        
       <View style={styles.content}>
-          <Text style={[styles.title]}>친구 초대하면,</Text>
+          <Text style={[styles.title]}>{t("features.home.ui.invite_banner.title_1")}</Text>
           <View style={styles.bottomContainer}>
-           <Text style={styles.title}>나도 친구도</Text>
+           <Text style={styles.title}>{t("features.home.ui.invite_banner.title_2")}</Text>
             <View style={[styles.titleStrongContainer]}>
               
              <Image
@@ -88,7 +90,7 @@ function InvitePromotionBanner() {
         source={require("@assets/images/promotion/home-banner/letter.png")}
         style={styles.letter}
       />
-            <Text style={styles.titleStrong}>30구슬</Text>
+            <Text style={styles.titleStrong}>{t("features.home.ui.invite_banner.reward")}</Text>
           </View>
           </View>
          
@@ -97,7 +99,7 @@ function InvitePromotionBanner() {
         <Animated.View style={[animatedStyle, { left: -2 }]}>
           <BannerRightArrowIcon  />
           </Animated.View>
-          <Text style={styles.inviteText}>초대하러 가기</Text>
+          <Text style={styles.inviteText}>{t("features.home.ui.invite_banner.cta_button")}</Text>
         </View>
         </Pressable>
     </LinearGradient>

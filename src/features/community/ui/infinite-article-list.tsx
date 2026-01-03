@@ -139,7 +139,7 @@ export const InfiniteArticleList = forwardRef<
           await apis.articles.doLike(item);
         },
         (error) => {
-          console.error("좋아요 업데이트 실패:", error);
+          console.error("Article like update failed:", error);
         }
       );
     };
@@ -171,23 +171,24 @@ export const InfiniteArticleList = forwardRef<
                 setOpenPreviewArticleId(null);
                 await invalidateAndRefetch();
               },
-              ({ error }) => {
+              (serverError: unknown) => {
+                const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
                 console.error("Article deletion error:", {
-                  error,
-                  errorMessage: error?.message,
-                  errorString: error?.error,
-                  status: error?.status,
-                  statusCode: error?.statusCode,
+                  error: serverError,
+                  errorMessage: err?.message,
+                  errorString: err?.error,
+                  status: err?.status,
+                  statusCode: err?.statusCode,
                   articleId: id,
                 });
 
-                const errorMessage = error?.message || error?.error || "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+                const errorMessage = err?.message || err?.error || t("features.community.ui.delete_error");
                 showErrorModal(errorMessage, "error");
               }
             ),
         },
         secondaryButton: {
-          text: t("global.cancel"),
+          text: t("cancel"),
           onClick: () => {},
         },
       });
@@ -341,6 +342,7 @@ export const InfiniteArticleList = forwardRef<
               }}
               onLike={() => like(article)}
               onDelete={deleteArticle}
+              refresh={invalidateAndRefetch}
               isPreviewOpen={openPreviewArticleId === article.id}
               onTogglePreview={() => {
                 setOpenPreviewArticleId((prev) =>

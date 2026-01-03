@@ -2,12 +2,14 @@ import { Image } from "expo-image";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 interface NotSomeProps {
   type: "likedMe" | "iLiked";
 }
 
 function NotSome({ type }: NotSomeProps) {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <Image
@@ -15,9 +17,11 @@ function NotSome({ type }: NotSomeProps) {
         style={styles.image}
       />
       <Text style={styles.description}>
-        아직 {type === "likedMe" ? "도착한" : "보낸"} 썸이 없어요
+        {type === "likedMe"
+          ? t("features.post-box.apps.post_box.empty_state.no_some_received")
+          : t("features.post-box.apps.post_box.empty_state.no_some_sent")}
       </Text>
-      <Text style={styles.description}>좋아요를 보내 관심을 표현해 보세요</Text>
+      <Text style={styles.description}>{t("features.post-box.apps.post_box.empty_state.description")}</Text>
     </View>
   );
 }

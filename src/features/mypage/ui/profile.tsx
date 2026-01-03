@@ -21,6 +21,7 @@ import { useRematchingTickets } from "../queries";
 import { useTranslation } from "react-i18next";
 
 export const Profile = () => {
+  const { t } = useTranslation();
   const { profileDetails } = useAuth();
   const { data: reMatchingTicketCount } = useRematchingTickets();
   const [isUniversityVerified, setIsUniversityVerified] =
@@ -31,7 +32,7 @@ export const Profile = () => {
   const formatStudentNumber = (studentNumber: string | null | undefined): string => {
     if (!studentNumber) return "";
     const prefix = studentNumber.substring(0, 2);
-    return `${prefix}학번`;
+    return t('features.mypage.profile.student_number', { prefix });
   };
 
   const profileData = {
@@ -45,7 +46,6 @@ export const Profile = () => {
       require("@/assets/images/profile.png"),
     totalRematchingTickets: reMatchingTicketCount?.total ?? 0,
   };
-  const { t } = useTranslation();
   useEffect(() => {
     const checkUniversityVerification = async () => {
       try {

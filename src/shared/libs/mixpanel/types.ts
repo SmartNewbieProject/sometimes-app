@@ -31,6 +31,13 @@ export interface MixpanelAdapter {
   setUserProperties(properties: Record<string, any>): void;
 
   /**
+   * Super Properties 등록
+   * 모든 이벤트에 자동으로 추가되는 공통 속성
+   * @param properties - Super Properties
+   */
+  registerSuperProperties(properties: Record<string, any>): void;
+
+  /**
    * 사용자 식별 초기화 (로그아웃)
    */
   reset(): void;

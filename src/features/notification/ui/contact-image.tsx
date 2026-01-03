@@ -28,10 +28,10 @@ export const ContactImage: React.FC<ContactImageProps> = ({
           <BlurView
             style={[
               styles.blurOverlay,
-              { width: size - 4, height: size - 4 },
+              { width: size - 4, height: size - 4, backgroundColor: 'rgba(122, 74, 226, 0.3)' },
             ]}
             intensity={5}
-            tint={colors.primaryPurple}
+            tint="light"
           />
         </>
       ) : (

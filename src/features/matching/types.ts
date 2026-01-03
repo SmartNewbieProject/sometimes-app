@@ -77,6 +77,7 @@ export interface ExternalMatchSuccessResponse {
 		matchId: string;
 		match: MatchData;
 		expansion: ExpansionData;
+		canLetter: boolean;
 	};
 }
 

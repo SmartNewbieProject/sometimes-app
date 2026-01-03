@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image, ActivityIndicator } from "react-native";
 import { Text } from "@/src/shared/ui";
 import colors from "@/src/shared/constants/colors";
@@ -10,10 +11,13 @@ import { AnalysisCard } from "../widgets/analysis-card";
 import { useWeeklyReportQuery, useWeeklyProgressQuery, useSyncProfileMutation } from "../../queries";
 import { getWeekNumber, getYear } from "@/src/shared/utils/date-utils";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import type { UIWeeklyReport } from "../../types";
 
 const { width } = Dimensions.get("window");
 
 export const MomentReportPage = () => {
+  const { t } = useTranslation();
+
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
 
   const toggleSection = (section: string) => {
@@ -28,10 +32,11 @@ export const MomentReportPage = () => {
   const currentYear = getYear();
 
   // API 데이터 조회
-  const { data: weeklyReport, isLoading: reportLoading } = useWeeklyReportQuery({
+  const { data: weeklyReportData, isLoading: reportLoading } = useWeeklyReportQuery({
     weekNumber: currentWeek,
     year: currentYear
   });
+  const weeklyReport = weeklyReportData as UIWeeklyReport | undefined;
 
   const { data: weeklyProgress, isLoading: progressLoading } = useWeeklyProgressQuery();
 
@@ -42,14 +47,14 @@ export const MomentReportPage = () => {
   const handleSyncProfile = () => {
     if (!weeklyReport?.keywords?.length) {
       showModal({
-        title: "알림",
+        title: t("common.알림"),
         children: (
           <Text size="14" weight="normal" textColor="dark">
             프로필에 추가할 키워드가 없습니다.
           </Text>
         ),
         primaryButton: {
-          text: "확인",
+          text: t("common.확인"),
           onClick: () => { }
         }
       });
@@ -62,31 +67,31 @@ export const MomentReportPage = () => {
     }, {
       onSuccess: (response) => {
         showModal({
-          title: "성공",
+          title: t("common.성공"),
           children: (
             <Text size="14" weight="normal" textColor="dark">
               {response.syncedKeywords.length > 0
                 ? `${response.syncedKeywords.join(", ")} 키워드를 프로필에 추가했습니다.`
-                : "키워드가 프로필에 동기화되었습니다."
+                : t("common.키워드가_프로필에_동기화되었습니다")
               }
             </Text>
           ),
           primaryButton: {
-            text: "확인",
+            text: t("common.확인"),
             onClick: () => { }
           }
         });
       },
       onError: (error) => {
         showModal({
-          title: "오류",
+          title: t("common.오류"),
           children: (
             <Text size="14" weight="normal" textColor="dark">
               키워드 추가에 실패했습니다. 다시 시도해주세요.
             </Text>
           ),
           primaryButton: {
-            text: "확인",
+            text: t("common.확인"),
             onClick: () => { }
           }
         });
@@ -136,11 +141,11 @@ export const MomentReportPage = () => {
   const generateRadarData = () => {
     if (!weeklyReport) {
       return [
-        { label: "감정 개방성", value: 50, prevValue: 45, angle: -90 },
-        { label: "관계 안정감", value: 50, prevValue: 45, angle: -18 },
-        { label: "갈등 성숙도", value: 50, prevValue: 45, angle: 54 },
-        { label: "기회 명확성", value: 50, prevValue: 45, angle: 126 },
-        { label: "열린 태도", value: 50, prevValue: 45, angle: 198 },
+        { label: t("common.감정_개방성"), value: 50, prevValue: 45, angle: -90 },
+        { label: t("common.관계_안정감"), value: 50, prevValue: 45, angle: -18 },
+        { label: t("common.갈등_성숙도"), value: 50, prevValue: 45, angle: 54 },
+        { label: t("common.기회_명확성"), value: 50, prevValue: 45, angle: 126 },
+        { label: t("common.열린_태도"), value: 50, prevValue: 45, angle: 198 },
       ];
     }
 
@@ -149,11 +154,11 @@ export const MomentReportPage = () => {
     const keywords = weeklyReport.keywords || [];
 
     return [
-      { label: "감정 개방성", value: baseValue, prevValue: baseValue - 10, angle: -90 },
-      { label: "관계 안정감", value: Math.min(baseValue + (keywords.includes("안정") ? 10 : 0), 100), prevValue: baseValue, angle: -18 },
-      { label: "갈등 성숙도", value: Math.min(baseValue + (keywords.includes("성숙") ? 10 : 0), 100), prevValue: baseValue - 5, angle: 54 },
-      { label: "기회 명확성", value: Math.min(baseValue + (keywords.includes("명확") ? 10 : 0), 100), prevValue: baseValue + 5, angle: 126 },
-      { label: "열린 태도", value: Math.min(baseValue + (keywords.includes("열린") ? 10 : 0), 100), prevValue: baseValue - 5, angle: 198 },
+      { label: t("common.감정_개방성"), value: baseValue, prevValue: baseValue - 10, angle: -90 },
+      { label: t("common.관계_안정감"), value: Math.min(baseValue + (keywords.includes(t("common.안정")) ? 10 : 0), 100), prevValue: baseValue, angle: -18 },
+      { label: t("common.갈등_성숙도"), value: Math.min(baseValue + (keywords.includes(t("common.성숙")) ? 10 : 0), 100), prevValue: baseValue - 5, angle: 54 },
+      { label: t("common.기회_명확성"), value: Math.min(baseValue + (keywords.includes(t("common.명확")) ? 10 : 0), 100), prevValue: baseValue + 5, angle: 126 },
+      { label: t("common.열린_태도"), value: Math.min(baseValue + (keywords.includes(t("common.열린")) ? 10 : 0), 100), prevValue: baseValue - 5, angle: 198 },
     ];
   };
 
@@ -326,11 +331,11 @@ export const MomentReportPage = () => {
           />
           <View style={styles.headerTextContainer}>
             <Text size="20" weight="bold" textColor="purple" style={styles.personalityTitle}>
-              {weeklyReport?.insights[0]?.feedback || "성장을 응원하는 당신"}\n
+              {weeklyReport?.insights?.[0]?.feedback || t("common.성장을_응원하는_당신")}\n
               모먼트 레포트
             </Text>
             <Text size="12" weight="normal" textColor="purple" style={styles.description}>
-              {weeklyReport?.insights[1]?.feedback || "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."}
+              {weeklyReport?.insights?.[1]?.feedback || "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."}
             </Text>
           </View>
         </View>
@@ -420,15 +425,15 @@ export const MomentReportPage = () => {
                   어떤 의미 인가요?
                 </Text>
                 <Text size="12" weight="normal" textColor="gray" style={styles.answerText}>
-                  {weeklyReport?.insights[index] || `${item.label}에 대한 분석 내용입니다.`}
+                  {weeklyReport?.insights?.[index]?.feedback || weeklyReport?.insights?.[index]?.text || `${item.label}에 대한 분석 내용입니다.`}
                 </Text>
-                {weeklyReport?.keywords.length > 0 && (
+                {(weeklyReport?.keywords?.length ?? 0) > 0 && (
                   <>
                     <Text size="12" weight="bold" textColor="black" style={styles.questionText}>
                       어떤 주요 요인이 작용했나요?
                     </Text>
                     <Text size="12" weight="normal" textColor="gray" style={styles.answerText}>
-                      이번 주 답변에서 {weeklyReport.keywords.slice(0, 3).join(", ")}와(과) 관련된 모습이 보였습니다.
+                      이번 주 답변에서 {weeklyReport?.keywords?.slice(0, 3).join(", ")}와(과) 관련된 모습이 보였습니다.
                     </Text>
                   </>
                 )}
@@ -445,8 +450,8 @@ export const MomentReportPage = () => {
               </Text>
             </View>
             <View style={styles.hashtagsContainer}>
-              {weeklyReport?.keywords.length > 0 ? (
-                weeklyReport.keywords.slice(0, 5).map((keyword, index) => (
+              {(weeklyReport?.keywords?.length ?? 0) > 0 ? (
+                weeklyReport?.keywords?.slice(0, 5).map((keyword: string, index: number) => (
                   <View key={index} style={styles.hashtag}>
                     <Text size="12" weight="medium" textColor="purple">#{keyword}</Text>
                   </View>
@@ -477,7 +482,7 @@ export const MomentReportPage = () => {
               <ActivityIndicator size="small" color="white" />
             ) : (
               <Text size="md" weight="bold" textColor="white">
-                {weeklyReport?.keywords?.length ? "내 프로필에 키워드 추가하기" : "키워드가 없습니다"}
+                {weeklyReport?.keywords?.length ? t("common.내_프로필에_키워드_추가하기") : t("common.키워드가_없습니다")}
               </Text>
             )}
           </TouchableOpacity>

@@ -3,7 +3,11 @@
     "loading": "年代の選好を読み込んでいます",
     "title_1": "希望する年代を",
     "title_2": "選択してください！",
-    "same_age": "同年齢",
+    "same_age": "同い年",
+    "younger": "年下",
+    "older": "年上",
+    "any": "どちらでも",
+    "no_preference": "どちらでも",
     "upper_age": "年上",
     "lower_age": "年下"
   },
@@ -84,6 +88,9 @@
     "loading": "選好を読み込んでいます"
   },
   "tattoo": {
+    "no_tattoo": "タトゥーなし",
+    "small_tattoo": "小さいタトゥー",
+    "has_tattoo": "タトゥーあり",
     "tooltip_0_title": "タトゥーがない人がいいです",
     "tooltip_0_desc_1": "全くタトゥーがない人を希望します",
     "tooltip_0_desc_2": "タトゥーに対して否定的な価値観を持っています",
@@ -99,7 +106,6 @@
     "title_1": "タトゥーについて",
     "title_2": "どう思いますか？",
     "loading": "選好を読み込んでいます",
-    "nothing_tattoo": "タトゥーなし",
-    "small_tattoo": "小さなタトゥー"
+    "nothing_tattoo": "タトゥーなし"
   }
 }

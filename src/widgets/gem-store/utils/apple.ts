@@ -1,4 +1,5 @@
-import type { Product, ProductPurchase } from 'expo-iap';
+import type { Product, Purchase as ProductPurchase } from 'expo-iap';
+import type { TFunction } from 'i18next';
 import type { GemDetails } from '@/src/features/payment/api';
 
 /**
@@ -51,39 +52,46 @@ const packNameToProductIdMap: Record<DbPackName, ProductID> = {
 	맥시멈팩: ProductID.GEM_800,
 };
 
-export const containsSale = (text: string): boolean => {
-	return text.includes('세일');
+export const containsSale = (text: string, t: TFunction): boolean => {
+	return text.includes(t('widgets.gem-store.common.세일'));
 };
+
+const getAppleToServerMapping = (): Record<string, string> => ({
+	// 현재 사용 중인 상품
+	gem_16: '스타터 팩',
+	gem_26: '라이트 팩',
+	gem_55: '베이직 팩',
+	gem_85: '스탠다드 팩',
+	gem_165: '프리미엄 팩',
+	gem_300: '메가 팩',
+
+	// 세일 상품
+	gem_sale_16: '스타터 팩',
+
+	// 레거시 호환성 (이전 상품들)
+	gem_12: '라이트 팩',
+	gem_27: '스타터 팩',
+	gem_39: '베이직 팩',
+	gem_54: '스탠다드 팩',
+	gem_67: '플러스 팩',
+	gem_15: '스타터 팩',
+	gem_30: '베이직 팩',
+	gem_60: '스탠다드 팩',
+	gem_130: '플러스 팩',
+	gem_sale_7: '라이트 팩',
+	gem_sale_27: '베이직 팩',
+});
 
 // Apple Product ID를 서버 GemDetails와 매핑하기 위한 함수
 export const mapAppleProductToServerGem = (
 	appleProductId: string,
 	serverGemProducts: GemDetails[],
 ): GemDetails | null => {
-	const appleToServerMapping: Record<string, string> = {
-		// 정상 상품 (totalGems 기반 매핑)
-		'gem_12': '라이트 팩',      // 12개
-		'gem_27': '스타터 팩',      // 27개
-		'gem_39': '베이직 팩',      // 39개
-		'gem_54': '스탠다드 팩',    // 54개
-		'gem_67': '플러스 팩',      // 67개
-
-		// 호환성을 위한 이전 매핑들
-		'gem_15': '스타터 팩',      // 호환성 유지
-		'gem_30': '베이직 팩',      // 호환성 유지
-		'gem_60': '스탠다드 팩',    // 호환성 유지
-		'gem_130': '플러스 팩',     // 호환성 유지
-
-		// 세일 상품 (totalGems 기반 매핑)
-		'gem_sale_7': '라이트 팩',     // 7개 -> 라이트 팩(12개) 기준 할인
-		'gem_sale_16': '스타터 팩',    // 16개 -> 스타터 팩(27개) 기준 할인
-		'gem_sale_27': '베이직 팩',     // 27개 -> 베이직 팩(39개) 기준 할인
-	};
-
+	const appleToServerMapping = getAppleToServerMapping();
 	const serverProductName = appleToServerMapping[appleProductId];
 	if (!serverProductName) return null;
 
-	return serverGemProducts.find(gem => gem.productName === serverProductName) || null;
+	return serverGemProducts.find((gem) => gem.productName === serverProductName) || null;
 };
 
 // 서버 데이터를 기반으로 가격과 할인율 반환
@@ -138,22 +146,27 @@ export const getPriceAndDiscount = (
 	return null;
 };
 
-export function splitAndSortProducts(products: Product[]): {
+export function splitAndSortProducts(
+	products: Product[],
+	t: TFunction,
+): {
 	sale: Product[];
 	normal: Product[];
 } {
-	const extractNumber = (str: string) => {
+	const extractNumberFromId = (str: string) => {
 		const match = str.match(/\d+/);
 		return match ? Number.parseInt(match[0], 10) : Number.POSITIVE_INFINITY;
 	};
 
+	const saleKeyword = t('widgets.gem-store.common.세일');
+
 	const sale = products
-		.filter((p) => p.title.includes('세일'))
-		.sort((a, b) => extractNumber(a.id) - extractNumber(b.id));
+		.filter((p) => p.title.includes(saleKeyword))
+		.sort((a, b) => extractNumberFromId(a.id) - extractNumberFromId(b.id));
 
 	const normal = products
-		.filter((p) => !p.title.includes('세일'))
-		.sort((a, b) => extractNumber(a.id) - extractNumber(b.id));
+		.filter((p) => !p.title.includes(saleKeyword))
+		.sort((a, b) => extractNumberFromId(a.id) - extractNumberFromId(b.id));
 
 	return { sale, normal };
 }

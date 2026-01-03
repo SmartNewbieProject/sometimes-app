@@ -1,8 +1,9 @@
 import { getRegionCodeByName } from '@/src/shared/constants/region';
+
 export const areaMap = [
 	{
 		id: 1,
-		area: '대전',
+		area: "대전",
 		location: {
 			top: 194,
 			left: 88,
@@ -16,7 +17,7 @@ export const areaMap = [
 	},
 	{
 		id: 2,
-		area: '부산',
+		area: "부산",
 		location: {
 			top: 274,
 			right: 25,
@@ -30,7 +31,7 @@ export const areaMap = [
 	},
 	{
 		id: 3,
-		area: '대구',
+		area: "대구",
 		location: {
 			top: 220,
 			right: 58,
@@ -44,7 +45,7 @@ export const areaMap = [
 	},
 	{
 		id: 4,
-		area: '충북/세종',
+		area: "충북_세종",
 		location: {
 			top: 158,
 			left: 100,
@@ -58,7 +59,7 @@ export const areaMap = [
 	},
 	{
 		id: 5,
-		area: '경북',
+		area: "경북",
 		location: {
 			top: 225,
 			right: 10,
@@ -68,11 +69,11 @@ export const areaMap = [
 			right: 40,
 		},
 		open: 'close',
-		description: '오픈 준비 중',
+		description: "오픈_준비_중",
 	},
 	{
 		id: 6,
-		area: '경남',
+		area: "경남",
 		location: {
 			top: 294,
 			right: 94,
@@ -82,11 +83,11 @@ export const areaMap = [
 			right: 118,
 		},
 		open: 'close',
-		description: '오픈 준비 중',
+		description: "오픈_준비_중",
 	},
 	{
 		id: 7,
-		area: '전북',
+		area: "전북",
 		location: {
 			top: 235,
 			left: 76,
@@ -96,11 +97,11 @@ export const areaMap = [
 			left: 100,
 		},
 		open: 'close',
-		description: '오픈 준비 중',
+		description: "오픈_준비_중",
 	},
 	{
 		id: 8,
-		area: '전남',
+		area: "전남",
 		location: {
 			top: 328,
 			left: 58,
@@ -109,12 +110,12 @@ export const areaMap = [
 			top: 328,
 			left: 82,
 		},
-		description: '오픈 준비 중',
+		description: "오픈_준비_중",
 		open: 'close',
 	},
 	{
 		id: 9,
-		area: '서울/인천/경기',
+		area: "서울_인천_경기",
 		location: {
 			top: 80,
 			left: 77,
@@ -128,7 +129,7 @@ export const areaMap = [
 	},
 	{
 		id: 11,
-		area: '강원',
+		area: "강원",
 		location: {
 			top: 84,
 			right: 78,
@@ -138,11 +139,11 @@ export const areaMap = [
 			right: 102,
 		},
 		open: 'close',
-		description: '오픈 준비 중',
+		description: "오픈_준비_중",
 	},
 	{
 		id: 13,
-		area: '천안',
+		area: "천안",
 		location: {
 			top: 148,
 			left: 60,
@@ -157,20 +158,20 @@ export const areaMap = [
 ] as const;
 export function getRegionList(area: string) {
 	switch (area) {
-		case '대전':
-			return [getRegionCodeByName('대전광역시')];
-		case '부산':
-			return [getRegionCodeByName('부산광역시'), getRegionCodeByName('김해시')];
-		case '대구':
-			return [getRegionCodeByName('대구광역시'), getRegionCodeByName('안동시'), getRegionCodeByName('문경시'), getRegionCodeByName('영주시')];
-		case '충북/세종':
-			return [getRegionCodeByName('청주시'), getRegionCodeByName('세종특별자치시')];
-		case '천안':
-			return [getRegionCodeByName('천안시')];
-		case '서울/인천/경기':
-			return [getRegionCodeByName('인천광역시'), getRegionCodeByName('서울특별시'), 'KYG'];
-		case '광주':
-			return [getRegionCodeByName('광주광역시'), getRegionCodeByName('전주시'), getRegionCodeByName('군산시'), getRegionCodeByName('익산시')];
+		case "대전":
+			return [getRegionCodeByName("대전광역시")];
+		case "부산":
+			return [getRegionCodeByName("부산광역시"), getRegionCodeByName("김해시")];
+		case "대구":
+			return [getRegionCodeByName("대구광역시"), getRegionCodeByName("안동시"), getRegionCodeByName("문경시"), getRegionCodeByName("영주시")];
+		case "충북_세종":
+			return [getRegionCodeByName("청주시"), getRegionCodeByName("세종특별자치시")];
+		case "천안":
+			return [getRegionCodeByName("천안시")];
+		case "서울_인천_경기":
+			return [getRegionCodeByName("인천광역시"), getRegionCodeByName("서울특별시"), 'KYG'];
+		case "광주":
+			return [getRegionCodeByName("광주광역시"), getRegionCodeByName("전주시"), getRegionCodeByName("군산시"), getRegionCodeByName("익산시")];
 		default:
 			return [];
 	}
@@ -178,29 +179,29 @@ export function getRegionList(area: string) {
 export function getRegionListByCode(regionCode: string) {
 	switch (regionCode) {
 		case 'DJN':
-			return [getRegionCodeByName('대전광역시')];
+			return [getRegionCodeByName("대전광역시")];
 		case 'BSN':
 		case 'GHE':
-			return [getRegionCodeByName('부산광역시'), getRegionCodeByName('김해시')];
+			return [getRegionCodeByName("부산광역시"), getRegionCodeByName("김해시")];
 		case 'DGU':
 		case 'ADG':
 		case 'MGY':
 		case 'YJA':
-			return [getRegionCodeByName('대구광역시'), getRegionCodeByName('안동시'), getRegionCodeByName('문경시'), getRegionCodeByName('영주시')];
+			return [getRegionCodeByName("대구광역시"), getRegionCodeByName("안동시"), getRegionCodeByName("문경시"), getRegionCodeByName("영주시")];
 		case 'SJG':
 		case 'CJU':
-			return [getRegionCodeByName('청주시'), getRegionCodeByName('세종특별자치시')];
+			return [getRegionCodeByName("청주시"), getRegionCodeByName("세종특별자치시")];
 		case 'CAN':
-			return [getRegionCodeByName('천안시')];
+			return [getRegionCodeByName("천안시")];
 		case 'ICN':
 		case 'SEL':
 		case 'KYG':
-			return [getRegionCodeByName('인천광역시'), getRegionCodeByName('서울특별시'), 'KYG'];
+			return [getRegionCodeByName("인천광역시"), getRegionCodeByName("서울특별시"), 'KYG'];
 		case 'GWJ':
 		case 'JJU':
 		case 'GSN':
 		case 'IKS':
-			return [getRegionCodeByName('광주광역시'), getRegionCodeByName('전주시'), getRegionCodeByName('군산시'), getRegionCodeByName('익산시')];
+			return [getRegionCodeByName("광주광역시"), getRegionCodeByName("전주시"), getRegionCodeByName("군산시"), getRegionCodeByName("익산시")];
 		default:
 			return [];
 	}
@@ -208,51 +209,51 @@ export function getRegionListByCode(regionCode: string) {
 export function getAreaByCode(regionCode: string) {
 	switch (regionCode) {
 		case 'DJN':
-			return ['대전'];
+			return ["대전"];
 		case 'BSN':
 		case 'GHE':
-			return ['부산', '김해'];
+			return ["부산", "김해"];
 		case 'DGU':
 		case 'ADG':
 		case 'MGY':
 		case 'YJA':
-			return ['대구', '안동', '문경', '영주'];
+			return ["대구", "안동", "문경", "영주"];
 		case 'SJG':
 		case 'CJU':
-			return ['청주', '세종'];
+			return ["청주", "세종"];
 		case 'CAN':
-			return ['천안'];
+			return ["천안"];
 		case 'ICN':
 		case 'SEL':
 		case 'KYG':
-			return ['서울', '인천', '경기'];
+			return ["서울", "인천", "경기"];
 		case 'GWJ':
 		case 'JJU':
 		case 'GSN':
 		case 'IKS':
-			return ['광주', '전주', '군산', '익산'];
+			return ["광주", "전주", "군산", "익산"];
 		default:
 			return [];
 	}
 }
 export function getAllRegionList() {
 	return [
-		getRegionCodeByName('대전광역시'),
-		getRegionCodeByName('부산광역시'),
-		getRegionCodeByName('김해시'),
-		getRegionCodeByName('대구광역시'),
-		getRegionCodeByName('청주시'),
-		getRegionCodeByName('세종특별자치시'),
-		getRegionCodeByName('천안시'),
-		getRegionCodeByName('인천광역시'),
-		getRegionCodeByName('서울특별시'),
-		getRegionCodeByName('광주광역시'),
+		getRegionCodeByName("대전광역시"),
+		getRegionCodeByName("부산광역시"),
+		getRegionCodeByName("김해시"),
+		getRegionCodeByName("대구광역시"),
+		getRegionCodeByName("청주시"),
+		getRegionCodeByName("세종특별자치시"),
+		getRegionCodeByName("천안시"),
+		getRegionCodeByName("인천광역시"),
+		getRegionCodeByName("서울특별시"),
+		getRegionCodeByName("광주광역시"),
 		'KYG',
-		getRegionCodeByName('전주시'),
-		getRegionCodeByName('군산시'),
-		getRegionCodeByName('익산시'),
-		getRegionCodeByName('안동시'),
-		getRegionCodeByName('문경시'),
-		getRegionCodeByName('영주시'),
+		getRegionCodeByName("전주시"),
+		getRegionCodeByName("군산시"),
+		getRegionCodeByName("익산시"),
+		getRegionCodeByName("안동시"),
+		getRegionCodeByName("문경시"),
+		getRegionCodeByName("영주시"),
 	];
 }

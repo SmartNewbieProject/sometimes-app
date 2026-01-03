@@ -1,19 +1,20 @@
 import { PreferenceOption } from "@/src/types/user";
+import { useTranslation } from 'react-i18next';
 import { useQuery } from "@tanstack/react-query";
 import { type Preferences, getPreferenceOptions } from "../api";
 
 export enum PreferenceKeys {
-  AGE = "선호 나이대",
-  DRINKING = "음주 선호도",
-  SMOKING = "흡연 선호도",
-  PERSONALITY = "성격",
-  INTEREST = "관심사",
-  DATING_STYLE = "연애 스타일",
-  MILITARY_PREFERENCE = "군필 여부 선호도",
-  GOOD_MBTI = "좋아하는 MBTI",
-  BAD_MBTI = "싫어하는 MBTI",
-  MILITARY_STATUS = "군필 여부",
-  TATTOO = "문신 선호도",
+  AGE = "AGE_PREFERENCE",
+  DRINKING = "DRINKING",
+  SMOKING = "SMOKING",
+  PERSONALITY = "personality",
+  INTEREST = "INTEREST",
+  DATING_STYLE = "DATING_STYLE",
+  MILITARY_PREFERENCE = "MILITARY_PREFERENCE_MALE",
+  GOOD_MBTI = "GOOD_MBTI",
+  BAD_MBTI = "BAD_MBTI",
+  MILITARY_STATUS = "MILITARY_STATUS_MALE",
+  TATTOO = "TATTOO",
 }
 
 export const usePreferenceOptionsQuery = () =>
@@ -23,6 +24,7 @@ export const usePreferenceOptionsQuery = () =>
 
     placeholderData: [
       {
+        typeCode: "",
         typeName: "",
         options: [],
       },

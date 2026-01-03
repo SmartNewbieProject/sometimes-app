@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from "react";
+import { useTranslation } from 'react-i18next';
 import { View, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList } from "react-native";
 import { Text } from "@/src/shared/ui";
 import colors from "@/src/shared/constants/colors";
@@ -8,11 +9,13 @@ import { useReportHistoryInfiniteQuery } from "../../queries";
 import { formatWeekDisplay } from "@/src/shared/utils/date-utils";
 import { GrowthChart } from "../growth-chart";
 import { useMomentAnalytics } from "../../hooks/use-moment-analytics";
-import type { ReportHistory } from "../../types";
+import type { ReportHistoryItem } from "../../apis";
 
 const CHART_MARGIN = 22;
 
 export const MyMomentRecordPage = () => {
+  const { t } = useTranslation();
+
   const {
     data: reportHistoryData,
     isLoading: reportLoading,
@@ -23,7 +26,7 @@ export const MyMomentRecordPage = () => {
   const { trackMyMomentRecordView, trackHistoryReportClick, trackHistoryScrollLoadMore } = useMomentAnalytics();
   const pageLoadedRef = useRef(0);
 
-  const reportHistory = reportHistoryData?.pages.flatMap(page => page.reports) || [];
+  const reportHistory = (reportHistoryData?.pages.flatMap(page => page.reports) || []) as ReportHistoryItem[];
 
   useEffect(() => {
     if (!reportLoading) {
@@ -33,51 +36,56 @@ export const MyMomentRecordPage = () => {
     }
   }, [reportLoading]);
 
-  const renderItem = useCallback(({ item, index }: { item: ReportHistory; index: number }) => (
-    <View style={styles.timelineItem}>
-      <View style={styles.timelineDot} />
-      <View style={styles.timelineCard}>
-        <Text size="12" weight="normal" textColor="gray" style={styles.dateText}>
-          {formatWeekDisplay(item.weekNumber, item.year)}
-        </Text>
-        <Text size="18" weight="bold" textColor="black" style={styles.cardTitle}>
-          {item.title || "모먼트 분석 결과"}
-        </Text>
-        {item.keywords.length > 0 && (
-          <View style={styles.tagsContainer}>
-            {item.keywords.slice(0, 3).map((keyword, keywordIndex) => (
-              <View key={keywordIndex} style={styles.tag}>
-                <Text size="12" weight="medium" textColor="purple">
-                  {keyword}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
-        <TouchableOpacity
-          style={styles.detailLink}
-          onPress={() => {
-            trackHistoryReportClick({
-              week: item.weekNumber,
-              year: item.year,
-              report_position: index,
-            });
-            router.push({
-              pathname: "/moment/weekly-report",
-              params: {
-                week: item.weekNumber,
-                year: item.year,
-              }
-            });
-          }}
-        >
-          <Text size="13" weight="medium" textColor="black">
-            자세히 보기 {'>'}
+  const renderItem = useCallback(({ item, index }: { item: ReportHistoryItem; index: number }) => {
+    const weekNum = item.weekNumber;
+    const title = item.title ?? t("common.모먼트_분석_결과");
+    const keywords = item.keywords ?? [];
+
+    return (
+      <View style={styles.timelineItem}>
+        <View style={styles.timelineDot} />
+        <View style={styles.timelineCard}>
+          <Text size="12" weight="normal" textColor="gray" style={styles.dateText}>
+            {formatWeekDisplay(weekNum, item.year)}
           </Text>
-        </TouchableOpacity>
+          <Text size="18" weight="bold" textColor="black" style={styles.cardTitle}>
+            {title}
+          </Text>
+          {keywords.length > 0 && (
+            <View style={styles.tagsContainer}>
+              {keywords.slice(0, 3).map((keyword: string, keywordIndex: number) => (
+                <View key={keywordIndex} style={styles.tag}>
+                  <Text size="12" weight="medium" textColor="purple">
+                    {keyword}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+          <TouchableOpacity
+            style={styles.detailLink}
+            onPress={() => {
+              trackHistoryReportClick({
+                week: weekNum,
+                year: item.year,
+              });
+              router.push({
+                pathname: "/moment/weekly-report",
+                params: {
+                  week: weekNum,
+                  year: item.year,
+                }
+              });
+            }}
+          >
+            <Text size="13" weight="medium" textColor="black">
+              자세히 보기 {'>'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  ), [trackHistoryReportClick]);
+    );
+  }, [trackHistoryReportClick]);
 
   const ListHeader = useCallback(() => (
     <View style={styles.chartSection}>

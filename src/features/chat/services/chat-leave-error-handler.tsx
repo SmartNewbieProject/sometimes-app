@@ -1,15 +1,16 @@
 import { commonHandlers } from "@/src/shared/services/common-error-handler";
 import type { ErrorHandler } from "@/src/types/error-handler";
 import { Text } from "react-native";
+import i18n from "@/src/shared/libs/i18n";
 
 const handleChatRoomForbidden: ErrorHandler = {
   handle: (error, { showModal, router }) => {
     const errorMessage =
-      error?.error || error?.message || "채팅방 접근 권한이 존재하지 않습니다.";
+      error?.error || error?.message || i18n.t("features.chat.services.error_handlers.no_access_permission");
     showModal({
-      title: "알림",
+      title: i18n.t("features.chat.services.error_handlers.notification"),
       children: <Text>{errorMessage}</Text>,
-      primaryButton: { text: "확인", onClick: () => router.push("/chat") },
+      primaryButton: { text: i18n.t("features.chat.services.error_handlers.confirm"), onClick: () => router.push("/chat") },
     });
   },
 };
@@ -17,12 +18,12 @@ const handleChatRoomForbidden: ErrorHandler = {
 const handlerChatRoomNotFound: ErrorHandler = {
   handle: (error, { router, showModal }) => {
     const errorMessage =
-      error?.error || error?.message || "채팅방을 찾을 수 없습니다.";
+      error?.error || error?.message || i18n.t("features.chat.services.error_handlers.chat_room_not_found");
     showModal({
-      title: "권한 오류",
+      title: i18n.t("features.chat.services.error_handlers.permission_error"),
       children: <Text>{errorMessage}</Text>,
       primaryButton: {
-        text: "확인",
+        text: i18n.t("features.chat.services.error_handlers.confirm"),
         onClick: () => router.push("/chat"),
       },
     });

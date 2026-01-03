@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, StyleSheet } from 'react-native';
 import { Text, LineChart } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
@@ -14,12 +15,14 @@ interface GrowthChartProps {
 const CHART_HEIGHT = 140;
 
 export const GrowthChart = ({ reports, maxWeeks = 5 }: GrowthChartProps) => {
+  const { t } = useTranslation();
+
   const chartData = convertReportsToChartData(reports, maxWeeks);
 
   const hasValidData = chartData.some(point => point.value > 0);
   const subtitle = reports.length > 0
     ? `최근 ${Math.min(reports.length, maxWeeks)}주간의 모먼트 변화를 보여줘요!`
-    : '아직 모먼트 기록이 없어요. 오늘의 질문에 답변해보세요!';
+    : t("common.아직_모먼트_기록이_없어요_오늘의_질문에_답변해보세요");
 
   return (
     <View style={styles.container}>
@@ -43,7 +46,7 @@ export const GrowthChart = ({ reports, maxWeeks = 5 }: GrowthChartProps) => {
       ) : (
         <View style={styles.emptyChart}>
           <LineChart
-            data={chartData.length > 0 ? chartData : [{ value: 0, label: '데이터 없음' }]}
+            data={chartData.length > 0 ? chartData : [{ value: 0, label: t("common.데이터_없음") }]}
             height={CHART_HEIGHT}
             minValue={0}
             maxValue={100}

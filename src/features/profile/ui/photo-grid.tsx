@@ -5,6 +5,7 @@ import { Badge } from '@/src/shared/ui/badge';
 import { Text } from '@/src/shared/ui/text';
 import { Button } from '@/src/shared/ui/button';
 import type { ProfileImage } from '@/src/types/user';
+import { useTranslation } from 'react-i18next';
 
 interface PhotoGridProps {
   photos: ProfileImage[];
@@ -14,6 +15,7 @@ interface PhotoGridProps {
 }
 
 export function PhotoGrid({ photos, onPhotoClick, onMoreClick, onChangeRejectedPhoto }: PhotoGridProps) {
+  const { t } = useTranslation();
   const sortedPhotos = [...photos].sort((a, b) => a.order - b.order);
   const displayPhotos = sortedPhotos.slice(0, 3);
 
@@ -24,9 +26,9 @@ export function PhotoGrid({ photos, onPhotoClick, onMoreClick, onChangeRejectedP
   };
 
   const getStatusLabel = (status?: string): string => {
-    if (status === 'APPROVED') return '승인됨';
-    if (status === 'REJECTED') return '거절됨';
-    return '심사중';
+    if (status === 'APPROVED') return t('features.mypage.image-modal.approved');
+    if (status === 'REJECTED') return t('features.mypage.image-modal.rejected');
+    return t('features.mypage.image-modal.reviewing');
   };
 
   const renderPhoto = (photo: ProfileImage, index: number, isMain: boolean) => {
@@ -49,10 +51,10 @@ export function PhotoGrid({ photos, onPhotoClick, onMoreClick, onChangeRejectedP
           <View style={styles.rejectedOverlay}>
             <View style={styles.rejectedContent}>
               <Text size="sm" weight="semibold" style={styles.rejectedTitle}>
-                거절 사유
+                {t('features.mypage.profile_status.reject.reason_title')}
               </Text>
               <Text size="xs" style={styles.rejectedReason}>
-                이목구비가 명확하지 않거나 부적절한 사진입니다
+                {t('features.mypage.profile_status.reject.default_reason')}
               </Text>
               {onChangeRejectedPhoto && (
                 <Pressable
@@ -60,7 +62,7 @@ export function PhotoGrid({ photos, onPhotoClick, onMoreClick, onChangeRejectedP
                   onPress={() => onChangeRejectedPhoto(photo)}
                 >
                   <Text size="sm" weight="semibold" style={styles.changeButtonText}>
-                    변경하기
+                    {t('features.mypage.image-modal.change_photo')}
                   </Text>
                 </Pressable>
               )}
@@ -78,7 +80,7 @@ export function PhotoGrid({ photos, onPhotoClick, onMoreClick, onChangeRejectedP
 
         {photo.isMain && !isRejected && (
           <View style={styles.mainBadge}>
-            <Badge variant="main">대표</Badge>
+            <Badge variant="main">{t('features.mypage.image-modal.main')}</Badge>
           </View>
         )}
 

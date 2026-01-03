@@ -16,9 +16,7 @@ export const NavigationButtons = ({
   const isLastSlide = currentIndex === totalSlides - 1;
   const isFromLogin = source === 'login';
 
-  if (isLastSlide && isFromLogin) {
-    return null;
-  }
+
 
   const buttonText = isLastSlide
     ? t('features.onboarding.navigation.start')

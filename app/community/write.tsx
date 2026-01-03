@@ -12,6 +12,8 @@ import { useMemo, useEffect, useState } from "react";
 import { useCategory } from "@/src/features/community/hooks";
 import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 import { useTranslation } from "react-i18next";
+import { getEventByType } from "@/src/features/event/api/index";
+import { EventType } from "@/src/features/event/types";
 
 const {
   ArticleWriteFormProvider,
@@ -23,7 +25,7 @@ const {
 export default function CommunityWriteScreen() {
   const { t } = useTranslation();
   const { showModal } = useModal();
-  const { communityEngagementEvents } = useMixpanel();
+  const { communityEngagementEvents, communityEvents } = useMixpanel();
   const [initialEventAttempt, setInitialEventAttempt] = useState<number | null>(null);
 
   const { category: initCategory } = useLocalSearchParams<{
@@ -42,9 +44,6 @@ export default function CommunityWriteScreen() {
   useEffect(() => {
     const saveInitialEventState = async () => {
       try {
-        const { getEventByType } = await import("@/src/features/event/api");
-        const { EventType } = await import("@/src/features/event/types");
-
         const eventDetails = await getEventByType(EventType.COMMUNITY_FIRST_POST);
         setInitialEventAttempt(eventDetails.currentAttempt);
       } catch (error) {
@@ -90,28 +89,20 @@ export default function CommunityWriteScreen() {
         const { originalImages, deleteImageIds, ...articleData } = data;
 
         communityEngagementEvents.trackArticleCreated(
-          articleData.type || '일반',
+          articleData.type || t("apps.community.write.default_type"),
           !!originalImages && originalImages.length > 0,
           Math.ceil(articleData.content.length / 500)
         );
 
-        await articles.postArticles(articleData);
+        const result = await articles.postArticles(articleData);
 
-        try {
-          const { storage } = await import("@/src/shared/libs");
-          const { my } = await import("@/src/features/auth");
-          const auth = my();
-          if (auth?.phoneNumber) {
-            await storage.setItem(`community-written-post-${auth.phoneNumber}`, "true");
-          }
-        } catch (error) {
-        }
+        communityEvents.trackPostCreated(
+          articleData.type || t("apps.community.write.default_type"),
+          !!originalImages && originalImages.length > 0
+        );
 
         if (initialEventAttempt !== null) {
           try {
-            const { getEventByType } = await import("@/src/features/event/api");
-            const { EventType } = await import("@/src/features/event/types");
-
             const eventDetails = await getEventByType(EventType.COMMUNITY_FIRST_POST);
             const actuallyReceivedReward = eventDetails.currentAttempt > initialEventAttempt;
 
@@ -131,7 +122,7 @@ export default function CommunityWriteScreen() {
           title: t("apps.community.write.modal_success_title"),
           children: <Text textColor="black">{t("apps.community.write.modal_success_desc")}</Text>,
           primaryButton: {
-            text: t("global.confirm"),
+            text: t("confirm"),
             onClick: () => {
               router.push("/community?refresh=true");
             },
@@ -144,7 +135,7 @@ export default function CommunityWriteScreen() {
         showModal({
           title: t("apps.community.write.modal_fail_title"),
           children: <Text textColor="black">{errorMessage}</Text>,
-          primaryButton: {text:  t("global.confirm"), onClick: () => {} },
+          primaryButton: {text:  t("confirm"), onClick: () => {} },
         });
       }
     );

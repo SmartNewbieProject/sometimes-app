@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/react-native";
 import { resetAppState } from "@/src/shared/libs/reset-app-state";
 import { eventBus } from "@/src/shared/libs/event-bus";
 import { registerForPushNotificationsAsync } from "@/src/shared/libs/notifications";
+import { getCountryFromLocale } from "@/src/shared/libs/country-detector";
 import type { TokenResponse } from "@/src/types/auth";
 import { passKakao, passKakaoNative, passLogin } from "@features/auth/apis/index";
 import { loginByPass } from "@features/auth/utils/login-utils";
@@ -11,6 +12,7 @@ import { useStorage } from "@shared/hooks/use-storage";
 import { useMixpanel } from "@shared/hooks/use-mixpanel";
 import { LOGOUT_REASONS } from "@shared/constants/mixpanel-events";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
+import { chatEventBus } from "@/src/features/chat/services/chat-event-bus";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
@@ -27,7 +29,7 @@ export function useAuth() {
   const { t } = useTranslation();
   const { trackEvent } = useMixpanel();
 
-  const { value: accessToken, setValue: setToken } = useStorage<string | null>({
+  const { value: accessToken, setValue: setToken, loading: tokenLoading } = useStorage<string | null>({
     key: "access-token",
     initialValue: null,
   });
@@ -59,6 +61,7 @@ export function useAuth() {
   const updateToken = async (accessToken: string, refreshToken: string) => {
     await setToken(accessToken);
     await setRefreshToken(refreshToken);
+    chatEventBus.emit({ type: 'TOKEN_UPDATED', payload: { token: accessToken } });
   };
 
   const login = async (email: string, password: string) => {
@@ -209,6 +212,7 @@ export function useAuth() {
   useEffect(() => {
     if (my?.id && profileDetails) {
       mixpanelAdapter.setUserProperties({
+        country: getCountryFromLocale(), // 국가별 사용자 세그먼트 분석용
         university_name: profileDetails.universityDetails?.name,
         university_verified: profileDetails.universityDetails?.isVerified,
         gender: my.gender,
@@ -242,6 +246,7 @@ export function useAuth() {
     logoutOnly,
     clearTokensOnly,
     accessToken,
+    tokenLoading,
     my: {
       ...my,
       universityDetails: profileDetails?.universityDetails,

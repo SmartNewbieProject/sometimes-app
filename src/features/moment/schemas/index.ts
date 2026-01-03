@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import {
   SyncProfileRequest,
   SubmitAnswerRequest,
@@ -20,7 +21,7 @@ export const SubmitAnswerFormSchema = z.object({
   answerOptionId: z.string().optional(),
   responseTimeSeconds: z.number().min(1, '응답 시간은 1초 이상이어야 합니다').max(3600, '응답 시간은 1시간을 초과할 수 없습니다'),
 }).refine((data) => data.answerText || data.answerOptionId, {
-  message: '답변 텍스트 또는 선택지 중 하나는 필수입니다',
+  message: "답변_텍스트_또는_선택지_중_하나는_필수입니다",
   path: ['answerText'],
 });
 
@@ -30,10 +31,10 @@ export const SyncProfileFormSchema = z.object({
     .regex(/^[IE][SN][TF][JP]$/i, '유효한 MBTI 형식이어야 합니다 (예: ENFP, ISTJ)')
     .transform(val => val.toUpperCase()),
   hobbies: z.array(z.string().min(1, '취미는 최소 1자 이상이어야 합니다'))
-    .min(1, '최소 하나의 취미를 입력해주세요')
+    .min(1, "최소_하나의_취미를_입력해주세요")
     .max(10, '취미는 최대 10개까지 입력 가능합니다'),
   interests: z.array(z.string().min(1, '관심사는 최소 1자 이상이어야 합니다'))
-    .min(1, '최소 하나의 관심사를 입력해주세요')
+    .min(1, "최소_하나의_관심사를_입력해주세요")
     .max(10, '관심사는 최대 10개까지 입력 가능합니다'),
   introduction: z.string()
     .min(10, '자기소개는 최소 10자 이상이어야 합니다')
@@ -80,12 +81,12 @@ export const ReportHistoryParamsSchema = z.object({
 
 // Quick Answer Form (for single choice questions)
 export const QuickAnswerFormSchema = z.object({
-  selectedOptionId: z.string().min(1, '옵션을 선택해주세요'),
+  selectedOptionId: z.string().min(1, "옵션을_선택해주세요"),
 });
 
 // Text Answer Form (for text input questions)
 export const TextAnswerFormSchema = z.object({
-  answerText: z.string().min(1, '답변을 입력해주세요').max(1000, '답변은 최대 1000자까지 가능합니다'),
+  answerText: z.string().min(1, "답변을_입력해주세요").max(1000, '답변은 최대 1000자까지 가능합니다'),
   responseTimeSeconds: z.number().default(0),
 });
 
@@ -138,16 +139,16 @@ export const isValidReportHistoryParams = (params: unknown): params is ReportHis
 // =======================
 
 export const FORM_ERROR_MESSAGES = {
-  REQUIRED: '이 필드는 필수입니다',
-  INVALID_EMAIL: '유효한 이메일 주소를 입력해주세요',
+  REQUIRED: "이_필드는_필수입니다",
+  INVALID_EMAIL: "유효한_이메일_주소를_입력해주세요",
   INVALID_MBTI: '유효한 MBTI 형식이어야 합니다 (예: ENFP, ISTJ)',
   MIN_LENGTH: (min: number) => `최소 ${min}자 이상 입력해주세요`,
   MAX_LENGTH: (max: number) => `최대 ${max}자까지 입력 가능합니다`,
   MIN_ARRAY_LENGTH: (min: number) => `최소 ${min}개 이상 선택해주세요`,
   MAX_ARRAY_LENGTH: (max: number) => `최대 ${max}개까지 선택 가능합니다`,
-  INVALID_NUMBER: '유효한 숫자를 입력해주세요',
-  INVALID_DATE: '유효한 날짜를 선택해주세요',
-  AT_LEAST_ONE_OPTION: '최소 하나의 옵션을 선택해주세요',
+  INVALID_NUMBER: "유효한_숫자를_입력해주세요",
+  INVALID_DATE: "유효한_날짜를_선택해주세요",
+  AT_LEAST_ONE_OPTION: "최소_하나의_옵션을_선택해주세요",
 } as const;
 
 // =======================

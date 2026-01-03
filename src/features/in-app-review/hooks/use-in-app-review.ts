@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as StoreReview from 'expo-store-review';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { useModal } from '@/src/shared/hooks/use-modal';
@@ -9,6 +10,8 @@ import type { TriggerReviewOptions } from '../types';
 import { devLogWithTag } from '@/src/shared/utils';
 
 export const useInAppReview = () => {
+	const { t } = useTranslation();
+
 	const { trackEvent } = useMixpanel();
 	const { showModal } = useModal();
 
@@ -43,11 +46,12 @@ export const useInAppReview = () => {
 					});
 
 					showModal({
-						title: '썸타임에 대한 당신만의 반응을 남겨주세요!',
-						children:
-							'완벽하진 않지만 대학생 여러분을 위해 계속 노력하고 있어요. 좋았던 점, 아쉬웠던 점 솔직하게 남겨주시면 더 나은 썸타임 만드는 데 쓸게요!',
+						title: t('features.in-app-review.hooks.썸타임에_대한_당신만의_반응을_남겨주세요'),
+						children: t(
+							'features.in-app-review.hooks.완벽하진_않지만_대학생_여러분을_위해_계속_노력하고_있',
+						),
 						primaryButton: {
-							text: '리뷰 남기기',
+							text: t('features.in-app-review.hooks.리뷰_남기기'),
 							onClick: async () => {
 								trackEvent('IN_APP_REVIEW_PRE_PROMPT_RESPONSE', {
 									trigger_type: triggerType,
@@ -63,7 +67,7 @@ export const useInAppReview = () => {
 							},
 						},
 						secondaryButton: {
-							text: '나중에',
+							text: t('features.in-app-review.hooks.나중에'),
 							onClick: async () => {
 								trackEvent('IN_APP_REVIEW_PRE_PROMPT_RESPONSE', {
 									trigger_type: triggerType,

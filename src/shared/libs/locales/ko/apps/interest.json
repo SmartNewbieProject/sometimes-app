@@ -4,6 +4,10 @@
     "title_1": "선호하는 나이대를",
     "title_2": "선택해 주세요!",
     "same_age": "동갑",
+    "younger": "연하",
+    "older": "연상",
+    "any": "상관없음",
+    "no_preference": "상관없음",
     "upper_age": "연상",
     "lower_age": "연하"
   },
@@ -84,6 +88,9 @@
     "loading": "선호도를 불러오고 있어요"
   },
   "tattoo": {
+    "no_tattoo": "문신 없음",
+    "small_tattoo": "작은 문신",
+    "has_tattoo": "문신 O",
     "tooltip_0_title": "문신 X",
     "tooltip_0_desc_1": "문신이 전혀 없는 사람을 선호해요",
     "tooltip_0_desc_2": "문신에 대해 보수적인 가치관을 가지고 있어요",
@@ -99,7 +106,6 @@
     "title_1": "문신에 대해",
     "title_2": "어떻게 생각하시나요?",
     "loading": "선호도를 불러오고 있어요",
-    "nothing_tattoo": "문신 없음",
-    "small_tattoo": "작은 문신"
+    "nothing_tattoo": "문신 없음"
   }
 }

@@ -4,12 +4,14 @@ import { StyleSheet, View, TouchableOpacity, ActivityIndicator } from "react-nat
 import { Text } from "@/src/shared/ui";
 import { useHomeHots } from "@/src/features/community/hooks/use-home";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   pageSize?: number;
 };
 
 export default function Hot({ pageSize = 5 }: Props) {
+  const { t } = useTranslation();
   const { hots, total, isLoading, isError, error } = useHomeHots(pageSize);
 
   if (isLoading) {
@@ -23,7 +25,7 @@ export default function Hot({ pageSize = 5 }: Props) {
   if (isError) {
     return (
       <View style={styles.emptyContainer}>
-        <Text textColor="black">인기 글을 불러오지 못했어요.</Text>
+        <Text textColor="black">{t("features.community.ui.hot.load_error")}</Text>
         {__DEV__ && (
           <Text size="sm" style={styles.errorText}>
             {String((error as any)?.message ?? "")}
@@ -36,7 +38,7 @@ export default function Hot({ pageSize = 5 }: Props) {
   if (!hots.length) {
     return (
       <View style={styles.emptyContainer}>
-        <Text textColor="black">현재 인기 글이 없습니다.</Text>
+        <Text textColor="black">{t("features.community.ui.hot.empty")}</Text>
       </View>
     );
   }

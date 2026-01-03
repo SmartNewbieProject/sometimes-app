@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import { useAuth } from "@/src/features/auth/hooks/use-auth";
 import { getILiked } from "../api";
 
 function useILikedQuery() {
+  const { isAuthorized } = useAuth();
   const { data, ...props } = useQuery({
     queryKey: ["liked", "of-me"],
     queryFn: getILiked,
@@ -11,10 +11,9 @@ function useILikedQuery() {
     refetchIntervalInBackground: true,
     staleTime: 0,
     gcTime: 0,
+    enabled: isAuthorized,
   });
   return { data, ...props };
 }
-
-const styles = StyleSheet.create({});
 
 export default useILikedQuery;

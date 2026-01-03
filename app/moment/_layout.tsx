@@ -1,6 +1,9 @@
 import { Stack } from "expo-router";
+import { useTranslation } from 'react-i18next';
 
 export default function MomentLayout() {
+  const { t } = useTranslation();
+
   return (
     <Stack>
       <Stack.Screen
@@ -13,7 +16,7 @@ export default function MomentLayout() {
       <Stack.Screen
         name="my-moment"
         options={{
-          title: "나의 모먼트",
+          title: t("apps.moment.common.my_moment"),
           headerShown: false,
         }}
       />
@@ -21,14 +24,14 @@ export default function MomentLayout() {
         name="weekly-report"
         options={{
           headerShown: false,
-          headerTitle: "모먼트 보고서",
+          headerTitle: t("apps.moment.common.weekly_report"),
         }}
       />
       <Stack.Screen
         name="daily-roulette"
         options={{
           headerShown: false,
-          title: "데일리 룰렛",
+          title: t("apps.moment.common.daily_roulette"),
         }}
       />
     </Stack>

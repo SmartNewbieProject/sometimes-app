@@ -31,7 +31,6 @@ function MatchingHistoryList() {
       <FlashList
         data={matchingHistoryList}
         renderItem={({ item }) => <MatchingHistoryCard item={item} />}
-        estimatedItemSize={200}
         numColumns={2}
       />
     );

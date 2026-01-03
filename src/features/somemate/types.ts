@@ -1,96 +1,107 @@
-export type AiChatCategory = "일상" | "인간관계" | "진로/학교" | "연애";
+export type AiChatCategory =
+	| '일상'
+	| '인간관계'
+	| '진로/학교'
+	| '연애'
+	| 'Daily'
+	| 'Relationships'
+	| 'Career/School'
+	| 'Romance'
+	| '日常'
+	| '人間関係'
+	| '進路/学校'
+	| '恋愛';
 
-export type AiChatSessionStatus = "active" | "completed" | "closed";
+export type AiChatSessionStatus = 'active' | 'completed' | 'closed';
 
-export type MessageRole = "user" | "assistant";
-export type ReportStatus = "completed" | "processing" | "failed";
+export type MessageRole = 'user' | 'assistant';
+export type ReportStatus = 'completed' | 'processing' | 'failed';
 
 export interface AiChatSession {
-  id: string;
-  category: AiChatCategory;
-  turnCount: number;
-  status: AiChatSessionStatus;
-  isActive: boolean;
-  createdAt: Date;
-  completedAt?: Date;
-  analyzedAt?: Date;
+	id: string;
+	category: AiChatCategory;
+	turnCount: number;
+	status: AiChatSessionStatus;
+	isActive: boolean;
+	createdAt: Date;
+	completedAt?: Date;
+	analyzedAt?: Date;
 }
 
 export interface AiChatMessage {
-  id: string;
-  sessionId: string;
-  role: MessageRole;
-  content: string;
-  createdAt: Date;
+	id: string;
+	sessionId: string;
+	role: MessageRole;
+	content: string;
+	createdAt: Date;
 }
 
 export interface ReportValue {
-  name: string;
-  description: string;
+	name: string;
+	description: string;
 }
 
 export interface CategoryAnalysis {
-  category: string;
-  summary: string;
-  values: ReportValue[] | null;
-  insights: string[];
-  relationshipStyle: string;
+	category: string;
+	summary: string;
+	values: ReportValue[] | null;
+	insights: string[];
+	relationshipStyle: string;
 }
 
 export interface ReportData {
-  title: string;
-  generatedAt: string;
-  overallSummary: string;
-  analysisByCategory: CategoryAnalysis[];
+	title: string;
+	generatedAt: string;
+	overallSummary: string;
+	analysisByCategory: CategoryAnalysis[];
 }
 
 export interface SignalReport {
-  id: string;
-  sessionId: string;
-  category: AiChatCategory;
-  status: ReportStatus;
-  reportData: ReportData;
-  createdAt: string;
+	id: string;
+	sessionId: string;
+	category: AiChatCategory;
+	status: ReportStatus;
+	reportData: ReportData;
+	createdAt: string;
 }
 
 export interface GetReportsResponse {
-  reports: SignalReport[];
-  totalCount: number;
+	reports: SignalReport[];
+	totalCount: number;
 }
 
 export interface CreateSessionRequest {
-  category: AiChatCategory;
+	category: AiChatCategory;
 }
 
 export interface CreateSessionResponse {
-  sessionId: string;
-  category: AiChatCategory;
-  message: string;
+	sessionId: string;
+	category: AiChatCategory;
+	message: string;
 }
 
 export interface SendMessageRequest {
-  content: string;
+	content: string;
 }
 
 export interface SendMessageResponse {
-  messageId: string;
-  content: string;
-  role: MessageRole;
-  createdAt: Date;
+	messageId: string;
+	content: string;
+	role: MessageRole;
+	createdAt: Date;
 }
 
 export interface GetMessagesResponse {
-  messages: AiChatMessage[];
-  totalCount: number;
+	messages: AiChatMessage[];
+	totalCount: number;
 }
 
 export interface AnalyzeRequest {
-  sessionId?: string;
+	sessionId?: string;
 }
 
 export interface AnalyzeResponse {
-  reportId: string;
-  status: "generating" | "completed" | "failed";
-  message: string;
+	reportId: string;
+	status: 'generating' | 'completed' | 'failed';
+	message: string;
 }
-

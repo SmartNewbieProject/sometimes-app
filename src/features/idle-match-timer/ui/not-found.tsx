@@ -35,7 +35,7 @@ export const NotFound = () => {
             <Button
               size="chip"
               onPress={onRematch}
-              style={styles.chipButton}
+              styles={styles.chipButton}
             >
               {t("features.idle-match-timer.ui.not-found.rematch")}
             </Button>
@@ -52,7 +52,7 @@ export const NotFound = () => {
               size="chip"
               onPress={() => router.push("/profile-edit/interest")}
               textColor="dark"
-              style={styles.editButton}
+              styles={styles.editButton}
             >
               {t("features.idle-match-timer.ui.not-found.edit")}
             </Button>
@@ -69,7 +69,7 @@ export const NotFound = () => {
               variant={"white"}
               size="chip"
               textColor="dark"
-              style={styles.editButton}
+              styles={styles.editButton}
             >
               {t("features.idle-match-timer.ui.not-found.edit")}
             </Button>

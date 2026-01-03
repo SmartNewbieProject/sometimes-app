@@ -50,7 +50,7 @@ export const MyAnswersPage = () => {
 
   const handleAnswerPress = (item: AnswerHistoryItem) => {
     trackHistoryAnswerClick({
-      question_id: item.questionId,
+      question_id: String(item.questionId),
       question_text: item.questionText,
       answer_position: answerHistory.findIndex(a => a.id === item.id),
     });

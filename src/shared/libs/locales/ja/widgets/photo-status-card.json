@@ -1,0 +1,8 @@
+{
+	"current_level": "現在レベル {{level}}",
+	"title_prefix": "お相手の写真を",
+	"photo_count": "{{count}}枚まで",
+	"title_suffix": "見れます",
+	"max_level_description": "全ての写真が見れる最高レベルです！",
+	"description": "写真を追加で承認されると、もっと多くの写真が見れます！"
+}

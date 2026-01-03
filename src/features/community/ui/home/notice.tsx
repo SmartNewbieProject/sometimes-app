@@ -11,12 +11,14 @@ import { router } from "expo-router";
 import { useHomeNotices } from "@/src/features/community/hooks/use-home";
 import { Article } from "../../ui/article";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   pageSize?: number;
 };
 
 export default function Notice({ pageSize = 5 }: Props) {
+  const { t } = useTranslation();
   const {
     notices,
     isLoading,
@@ -44,7 +46,7 @@ export default function Notice({ pageSize = 5 }: Props) {
   if (isError) {
     return (
       <View style={styles.emptyContainer}>
-        <Text textColor="black">공지사항을 불러오지 못했어요.</Text>
+        <Text textColor="black">{t("features.community.ui.notice.load_error")}</Text>
         {__DEV__ && (
           <Text size="sm" style={styles.errorText}>
             {String((error as any)?.message ?? "")}
@@ -57,7 +59,7 @@ export default function Notice({ pageSize = 5 }: Props) {
   if (!notices.length) {
     return (
       <View style={styles.emptyContainer}>
-        <Text textColor="black">등록된 공지가 없습니다.</Text>
+        <Text textColor="black">{t("features.community.ui.notice.empty")}</Text>
       </View>
     );
   }
@@ -87,7 +89,9 @@ export default function Notice({ pageSize = 5 }: Props) {
                   onPress={() => handlePressArticle(notice.id)}
                   onLike={() => {}}
                   onDelete={() => {}}
-                  refresh={async () => {}}
+                  refresh={() => {}}
+                  isPreviewOpen={false}
+                  onTogglePreview={() => {}}
                 />
               </TouchableOpacity>
             </View>

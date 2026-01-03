@@ -1,5 +1,5 @@
 import { type PreferenceSaveBody, savePreferencesApi } from "../apis";
-import { useInterestForm } from "../hooks";
+import { useInterestForm } from "../hooks/use-interest-form";
 import { PreferenceKeys } from "../queries";
 
 export enum InterestSteps {

@@ -91,7 +91,7 @@ export class ProfileCompletionCalculator {
     const hasCharacteristics = profile.characteristics && profile.characteristics.length > 0;
     const hasPreferences = profile.preferences && profile.preferences.length > 0;
 
-    return hasImages && hasCharacteristics && hasPreferences;
+    return Boolean(hasImages && hasCharacteristics && hasPreferences);
   }
 
   

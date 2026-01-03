@@ -57,6 +57,8 @@ export interface ChatClientToServerEvents {
 	createChatRoom: (payload: CreateChatRoomPayload) => void;
 	getChatHistory: (payload: GetChatHistoryPayload) => void;
 	leaveChatRoom: (payload: LeaveChatRoomPayload) => void;
+	joinRoom: (payload: { chatRoomId: string }) => void;
+	leaveRoom: (payload: { chatRoomId: string }) => void;
 	typing: (payload: TypingPayload) => void;
 	stopTyping: (payload: TypingPayload) => void;
 	uploadImage: (payload: UploadImagePayload, callback: (response: { success: boolean; serverMessage?: Chat; error?: string }) => void) => void;

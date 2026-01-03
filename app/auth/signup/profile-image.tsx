@@ -106,7 +106,7 @@ function ProfilePage() {
         <TwoButtons
           disabledNext={!nextable}
           onClickNext={onNext}
-          content={{ next: t("global.next") }}
+          content={{ next: t("next") }}
           onClickPrevious={onBackPress}
         />
       </View>

@@ -5,11 +5,7 @@ import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import type { PendingApprovalMatch } from "../types";
 import { UserRejectionCategory } from "../types";
-import { useState, useCallback, useEffect, useRef } from "react";
-import Svg, { Circle, Polyline } from "react-native-svg";
-import { dayUtils } from "@/src/shared/libs";
-import { calculateTime, type TimeResult } from "../services/calculate-time";
-import Time from "./time";
+import { PendingCard } from "./pending-card";
 
 type PendingApprovalNoticeProps = {
   match: PendingApprovalMatch;
@@ -35,128 +31,6 @@ const getRejectionCategoryLabel = (
     ),
   };
   return categoryMap[category] || category;
-};
-
-const ClockIcon = () => (
-  <Svg
-    width={14}
-    height={14}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke={semanticColors.brand.primary}
-    strokeWidth={2.5}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <Circle cx={12} cy={12} r={10} />
-    <Polyline points="12,6 12,12 16,14" />
-  </Svg>
-);
-
-const PendingCard = ({
-  match,
-  onRefresh,
-}: {
-  match: PendingApprovalMatch;
-  onRefresh?: () => void;
-}) => {
-  const { t } = useTranslation();
-  const trigger = useRef(false);
-  const [currentTime, setCurrentTime] = useState(() => dayUtils.create());
-  const [timeSet, setTimeSet] = useState<TimeResult>(() => {
-    return calculateTime(match.untilNext, currentTime);
-  });
-
-  const fire = useCallback(() => {
-    trigger.current = true;
-    onRefresh?.();
-  }, [onRefresh]);
-
-  const updateTime = useCallback(() => {
-    if (trigger.current) return;
-
-    const now = dayUtils.create();
-    setCurrentTime(now);
-
-    const { shouldTriggerCallback, value, delimeter } = calculateTime(
-      match.untilNext,
-      now
-    );
-
-    setTimeSet({
-      shouldTriggerCallback,
-      value,
-      delimeter,
-    });
-
-    if (shouldTriggerCallback && onRefresh) {
-      fire();
-    }
-  }, [match.untilNext, onRefresh, fire]);
-
-  useEffect(() => {
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [updateTime]);
-
-  return (
-    <View style={styles.pendingContainer}>
-      <View style={styles.card}>
-        <Text textColor="black" weight="bold" style={styles.timerLabel}>
-          {t("features.idle-match-timer.ui.pending-approval.next-matching")}
-        </Text>
-
-        <View style={styles.timerContainer}>
-          <Time value={timeSet.delimeter} size="sm" />
-          <Time value="-" size="sm" />
-          {timeSet.value
-            .toString()
-            .split("")
-            .map((char, index) => (
-              <Time size="sm" key={`${char}-${index}`} value={char} />
-            ))}
-        </View>
-
-        <Text textColor="black" style={styles.cardTitle}>
-          {t("features.idle-match-timer.ui.pending-approval.card-title-line1")}
-          {" "}
-          {t("features.idle-match-timer.ui.pending-approval.card-title-line2")}
-        </Text>
-
-        <Text textColor="secondary" style={styles.cardDesc}>
-          {t("features.idle-match-timer.ui.pending-approval.card-desc-line1")}
-          {"\n"}
-          {t("features.idle-match-timer.ui.pending-approval.card-desc-line2")}
-        </Text>
-
-        <View style={styles.infoRow}>
-          <View style={styles.infoBadge}>
-            <Text textColor="black" style={styles.badgeLabel}>
-              {t("features.idle-match-timer.ui.pending-approval.estimated-time")}
-            </Text>
-            <View style={styles.badgeValueContainer}>
-              <ClockIcon />
-              <Text textColor="purple" style={styles.badgeValue}>
-                {t("features.idle-match-timer.ui.pending-approval.default-time")}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.notificationBox}>
-            <View style={styles.notiIconWrapper}>
-              <Text style={styles.notiIcon}>🔔</Text>
-            </View>
-            <Text textColor="secondary" size="xs" style={styles.notiText}>
-              {t("features.idle-match-timer.ui.pending-approval.notification-info")}
-            </Text>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
 };
 
 const RejectedCard = ({ match }: { match: PendingApprovalMatch }) => {
@@ -312,12 +186,6 @@ export const PendingApprovalNotice = ({
 };
 
 const styles = StyleSheet.create({
-  pendingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
   card: {
     width: "100%",
     maxWidth: 320,
@@ -333,90 +201,6 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 12,
   },
-  timerLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: semanticColors.text.primary,
-    marginBottom: 12,
-  },
-  timerContainer: {
-    flexDirection: "row",
-    gap: 4,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: semanticColors.text.primary,
-    marginBottom: 6,
-    lineHeight: 24,
-    textAlign: "center",
-  },
-  cardDesc: {
-    fontSize: 13,
-    color: semanticColors.text.secondary,
-    fontWeight: "400",
-    lineHeight: 20,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  infoRow: {
-    width: "100%",
-    gap: 8,
-  },
-  infoBadge: {
-    backgroundColor: semanticColors.surface.surface,
-    padding: 12,
-    borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  badgeLabel: {
-    fontSize: 12,
-    color: semanticColors.text.primary,
-    fontWeight: "500",
-  },
-  badgeValueContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  badgeValue: {
-    fontSize: 13,
-    color: semanticColors.brand.primary,
-    fontWeight: "700",
-  },
-  notificationBox: {
-    backgroundColor: semanticColors.surface.secondary,
-    borderRadius: 10,
-    padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    width: "100%",
-  },
-  notiIconWrapper: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  notiIcon: {
-    fontSize: 12,
-  },
-  notiText: {
-    flex: 1,
-    fontSize: 12,
-    color: semanticColors.text.primary,
-    fontWeight: "400",
-    lineHeight: 16,
-  },
-
   rejectedContainer: {
     flex: 1,
     justifyContent: "center",

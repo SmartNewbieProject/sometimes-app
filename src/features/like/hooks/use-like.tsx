@@ -1,9 +1,8 @@
 import { queryClient } from "@/src/shared/config/query";
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { axiosClient, tryCatch } from "@/src/shared/libs";
 import { Text } from "@/src/shared/ui";
-import { useCashableModal } from "@shared/hooks";
+import { useCashableModal, useTracking } from "@shared/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { HttpStatusCode } from "axios";
 import { Image } from "expo-image";
@@ -14,20 +13,21 @@ import { useMatchLoading } from "../../idle-match-timer/hooks";
 import { determineFailureReason, predictFailureLikelihood } from "../../matching/utils/failure-analyzer";
 import { MIXPANEL_EVENTS, LIKE_TYPES } from "@/src/shared/constants/mixpanel-events";
 import { useTranslation } from "react-i18next";
+import { useAppInstallPrompt } from "@/src/features/app-install-prompt";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
+import { checkIsFirstAction } from "@/src/shared/libs/mixpanel-tracking";
 
-const useLikeMutation = () =>
+const useLikeMutation = (trackEvent: ReturnType<typeof useMixpanel>['trackEvent']) =>
   useMutation({
     mutationFn: (connectionId: string) =>
       axiosClient.post(`/v1/matching/interactions/like/${connectionId}`),
     onMutate: async (connectionId: string) => {
-
-      mixpanelAdapter.track(MIXPANEL_EVENTS.LIKE_SENT, {
+      trackEvent(MIXPANEL_EVENTS.LIKE_SENT, {
         target_profile_id: connectionId,
         like_type: LIKE_TYPES.FREE,
-        timestamp: new Date().toISOString(),
       });
     },
-    onSuccess: async () => {
+    onSuccess: async (data, connectionId) => {
       // 쿼리 무효화를 확실히 처리하기 위해 await 사용
       await queryClient.invalidateQueries({ queryKey: ["latest-matching"] });
 
@@ -37,72 +37,46 @@ const useLikeMutation = () =>
       await queryClient.refetchQueries({ queryKey: ["liked", "of-me"] });
       await queryClient.refetchQueries({ queryKey: ["liked", "to-me"] });
 
-      // 매칭 성공 이벤트 트래킹
-
-      mixpanelAdapter.track(MIXPANEL_EVENTS.MATCHING_SUCCESS, {
-        action_type: 'like_success',
-        result: 'success',
-        timestamp: new Date().toISOString(),
-        user_context: {
-          gem_balance: queryClient.getQueryData(["gem", "current"]),
-          matching_stage: 'like_sent'
-        }
-      });
+      // 좋아요 전송 성공 (LIKE_SENT는 onMutate에서 이미 tracking됨)
+      // Matching_Success는 서버에서 상호 좋아요 확인 후 tracking
     },
-    onError: async (error: any) => {
+    onError: async (error: any, connectionId) => {
       // 실패 원인 분석 및 트래킹
       const failureReason = determineFailureReason(error);
 
-
-      // 매칭 실패 이벤트 트래킹
-      mixpanelAdapter.track(MIXPANEL_EVENTS.MATCHING_FAILURE, {
-        action_type: 'like_failed',
-        failure_type: failureReason.type,
+      // 좋아요 실패 이벤트 트래킹
+      trackEvent(MIXPANEL_EVENTS.MATCHING_FAILED, {
+        profile_id: connectionId,
+        matching_type: 'like',
+        error_reason: failureReason.type,
         failure_category: failureReason.category,
-        user_action_required: failureReason.userAction,
-        recoverable: failureReason.recoverable,
-        severity: failureReason.severity,
-        server_message: failureReason.serverMessage,
-        http_status: failureReason.httpStatus,
-        retry_available_at: failureReason.retryAvailableAt,
-        wait_time_seconds: failureReason.waitTimeSeconds,
-        timestamp: new Date().toISOString()
-      });
-
-      // 실패 예측 데이터 수집 (다음 시도를 위해)
-      const currentGemBalance = queryClient.getQueryData(["gem", "current"]) as number || 0;
-      const failurePrediction = predictFailureLikelihood({
-        currentGemBalance,
-        ticketCount: 0, // TODO: 실제 티켓 수 가져오기
-        recentLikeCount: 0, // TODO: 최근 좋아요 수 가져오기
-        recentMatchCount: 0, // TODO: 최근 매칭 수 가져오기
-        restrictionHistory: [], // TODO: 제한 이력 가져오기
-        lastLikeTime: Date.now() - 3600000, // 1시간 전으로 가정
-        timeOfDay: new Date().getHours(),
-        isPeakTime: new Date().getHours() >= 20 && new Date().getHours() <= 23
-      });
-
-      // 실패 예측 이벤트 트래킹
-      mixpanelAdapter.track('MATCHING_FAILURE_PREDICTION', {
-        risk_score: failurePrediction.riskScore,
-        primary_risk: failurePrediction.primaryRisk,
-        is_high_risk: failurePrediction.isHighRisk,
-        preventable: failurePrediction.preventable,
-        predicted_server_message: failurePrediction.predictedServerMessage,
-        recommendations: failurePrediction.recommendations
+        is_recoverable: failureReason.recoverable,
       });
     }
   });
 
 export default function useLike() {
   const { showErrorModal, showModal } = useModal();
-  const { mutateAsync: like } = useLikeMutation();
+  const { trackEvent } = useMixpanel();
+  const { mutateAsync: like } = useLikeMutation(trackEvent);
   const { show: showCashable } = useCashableModal();
   const { t } = useTranslation();
+  const { showPromptForMatching } = useAppInstallPrompt();
+  const tracker = useTracking();
+
   const performLike = async (connectionId: string) => {
     await tryCatch(
       async () => {
-        await like(connectionId);
+        const result = await like(connectionId);
+
+        // 첫 좋아요 전송인지 확인
+        const isFirstLikeSent = await checkIsFirstAction('like_sent');
+        if (isFirstLikeSent) {
+          tracker.trackFirstLikeSent({
+            time_to_first_action: 0, // 추후 가입일 기반 계산 가능
+          });
+        }
+
         showModal({
           showLogo: true,
           showParticle: true,
@@ -145,7 +119,9 @@ export default function useLike() {
           ),
           primaryButton: {
             text: t("features.like.hooks.use-like.confirm"),
-            onClick: () => {},
+            onClick: () => {
+              showPromptForMatching();
+            },
           },
         });
       },
@@ -163,29 +139,35 @@ export default function useLike() {
 
         // 실패 원인에 따른 구체적인 사용자 가이드 제공
         if (failureReason.type === 'TICKET_INSUFFICIENT') {
+          // 좋아요 한도 도달 tracking
+          tracker.trackLikeLimitReached(0, {
+            like_type: LIKE_TYPES.FREE as any,
+            target_profile_id: connectionId,
+          });
+
           showCashable({
-            textContent: "재매칭권이 필요합니다. 지금 구매하고 계속 매칭을 즐겨보세요!",
+            textContent: t("features.like.hooks.use-like.ticket_insufficient"),
           });
           return;
         }
 
         if (failureReason.type === 'COMMUNICATION_RESTRICTED') {
-          showErrorModal("현재 상대방과 소통이 제한되어 있습니다. 잠시 후 다시 시도해주세요.", "announcement");
+          showErrorModal(t("features.like.hooks.use-like.communication_restricted"), "announcement");
           return;
         }
 
         if (failureReason.type === 'DUPLICATE_LIKE') {
-          showErrorModal("이미 좋아요를 보낸 상대방입니다.", "announcement");
+          showErrorModal(t("features.like.hooks.use-like.already_liked"), "announcement");
           return;
         }
 
         // 기타 409 에러 처리
         if (err.status === HttpStatusCode.Conflict) {
-          if (err.error?.includes('소통이 제한')) {
+          if (err.error?.includes(t("hooks.소통이_제한"))) {
             showErrorModal(err.error, "announcement");
             return;
           }
-          showErrorModal(t("features.like.hooks.use-like.duplicate_liked"), "announcement");
+          showErrorModal(t("features.like.hooks.use-like.duplicate_like"), "announcement");
           return;
         }
       }

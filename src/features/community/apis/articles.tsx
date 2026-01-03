@@ -144,7 +144,7 @@ export const getHotArticles = async (): Promise<import("../types").HotArticle[]>
 };
 
 type Service = {
-  getAllArticles: (params: getArticleParams) => Promise<Article[]>;
+  getAllArticles: (params: GetArticleParams) => Promise<PaginatedResponse<Article>>;
   postArticles: (body: PostArticleBody) => Promise<Article>;
   getArticle: (articleId: string) => Promise<Article>;
   patchArticle: (articleId: string, body: PatchArticleBody) => Promise<Article>;

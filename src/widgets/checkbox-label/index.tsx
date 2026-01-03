@@ -43,7 +43,7 @@ export const CheckboxLabel = ({
       >
         <Text
           size="md"
-          style={[styles.labelText, disabled && styles.disabledText]}
+          style={[styles.labelText, disabled && styles.disabledText].filter(Boolean) as import('react-native').TextStyle[]}
         >
           {label}
         </Text>

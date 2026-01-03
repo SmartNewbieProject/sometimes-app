@@ -13,7 +13,7 @@ const getGapBySize = (size: LabelInputSize | undefined | null): number => {
   }
 };
 
-export interface LabelInputProps extends InputProps {
+export interface LabelInputProps extends Omit<InputProps, 'containerClassName'> {
   label: string;
   required?: boolean;
   description?: string;
@@ -31,7 +31,6 @@ export function LabelInput({
   description,
   error,
   wrapperStyle,
-  containerClassName,
   placeholder,
   onBlur,
   size,
@@ -59,7 +58,6 @@ export function LabelInput({
 
       <Input
         size={size}
-        containerClassName={containerClassName}
         placeholder={placeholder}
         status={error ? "error" : "default"}
         onBlur={onBlur}

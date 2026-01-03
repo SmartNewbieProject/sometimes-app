@@ -21,13 +21,11 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
     infiniteScroll,
   });
 
-  const {
-    articles,
-    isLoading,
-  } = result;
+  const articles = result?.articles ?? [];
+  const isLoading = result?.isLoading ?? false;
 
-  const isLoadingMore = infiniteScroll ? result.isLoadingMore : false;
-  const scrollProps = infiniteScroll ? result.scrollProps : {};
+  const isLoadingMore = infiniteScroll && result ? result.isLoadingMore : false;
+  const scrollProps = infiniteScroll && result ? result.scrollProps : {};
 
   const renderFooter = () => {
     if (!isLoadingMore) return null;
@@ -71,7 +69,10 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
             data={item}
             onPress={() => { }}
             onLike={() => { }}
-            onComment={() => { }}
+            onDelete={() => { }}
+            refresh={() => { }}
+            isPreviewOpen={false}
+            onTogglePreview={() => { }}
           />
         )}
         keyExtractor={(item) => item.id.toString()}
@@ -81,7 +82,7 @@ export function ArticleList({ initialSize = 10, infiniteScroll = true }: Article
         {...scrollProps}
         onEndReached={infiniteScroll ? (info) => {
           console.log('onEndReached triggered', info);
-          if (result.loadMore) {
+          if (result?.loadMore) {
             result.loadMore();
           }
         } : undefined}

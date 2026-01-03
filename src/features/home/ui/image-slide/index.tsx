@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { View, StyleSheet, Dimensions, FlatList, Pressable, Text } from "react-native";
-import { Image } from "expo-image";
-import { Linking } from "expo-router";
+import { View, StyleSheet, Dimensions, FlatList, Pressable, Text, Linking } from "react-native";
+import { Image, type ImageErrorEventData } from "expo-image";
 
 import { ImageSlideProps, SlideItem } from "../../types";
 
@@ -11,10 +10,9 @@ const { width: screenWidth } = Dimensions.get("window");
 export const ImageSlide = ({ items, autoPlayInterval = 5000, width, height }: ImageSlideProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    // 자동 슬라이드 타이머 설정
     intervalRef.current = setInterval(() => {
       if (items.length > 0) {
         const nextIndex = (currentIndex + 1) % items.length;
@@ -64,8 +62,8 @@ export const ImageSlide = ({ items, autoPlayInterval = 5000, width, height }: Im
         source={getImageSource()}
         style={[styles.image, { width: imageWidth, height }]}
         contentFit="cover"
-        onError={(error) => {
-          console.log('Image load error:', error.nativeEvent.error);
+        onError={(error: ImageErrorEventData) => {
+          console.log('Image load error:', error.error);
         }}
         placeholder={require("@/assets/images/moment/introduction-sometimes.png")}
       />

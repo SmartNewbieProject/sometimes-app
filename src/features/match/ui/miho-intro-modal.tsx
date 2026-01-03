@@ -24,8 +24,10 @@ import {
   getMihoMessage,
   getRarityStyle,
   getRarityLabel,
+  getMihoMessageI18nKeys,
 } from '../services/miho-message-service';
 import { MatchContext, RarityTier, MihoMessage } from '../types/miho-message';
+import { useTranslation } from 'react-i18next';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -95,6 +97,7 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
   matchContext = { matchScore: 50 },
   onMessageShown,
 }) => {
+  const { t } = useTranslation();
   const modalOpacity = useSharedValue(0);
   const mihoScale = useSharedValue(0);
   const speechBubbleScale = useSharedValue(0);
@@ -105,6 +108,11 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
     if (!visible) return null;
     return getMihoMessage(matchContext);
   }, [visible, matchContext]);
+
+  const messageI18nKeys = useMemo(() => {
+    if (!message) return null;
+    return getMihoMessageI18nKeys(message);
+  }, [message]);
 
   const confettiPieces = useMemo(() => {
     return Array.from({ length: CONFETTI_COUNT }, (_, i) => ({
@@ -310,14 +318,15 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
                     { color: rarityStyle.accentColor },
                   ]}
                 >
-                  {message.title}
+                  {messageI18nKeys ? t(messageI18nKeys.titleKey) : message.title}
                 </RNText>
 
-                {message.lines.map((line, index) => (
-                  <RNText key={index} style={styles.speechText}>
-                    {line}
-                  </RNText>
-                ))}
+                <RNText style={styles.speechText}>
+                  {messageI18nKeys ? t(messageI18nKeys.line1Key) : message.lines[0]}
+                </RNText>
+                <RNText style={styles.speechText}>
+                  {messageI18nKeys ? t(messageI18nKeys.line2Key) : message.lines[1]}
+                </RNText>
 
                 {rarityStyle.sparkle && (
                   <Animated.View
@@ -328,7 +337,9 @@ const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
                 )}
 
                 <View style={styles.closeButtonContainer}>
-                  <RNText style={styles.closeButtonText}>터치해서 닫기</RNText>
+                  <RNText style={styles.closeButtonText}>
+                    {t("features.match.ui.miho_intro_modal.tap_to_close")}
+                  </RNText>
                 </View>
               </View>
               <View

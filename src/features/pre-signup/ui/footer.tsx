@@ -21,10 +21,10 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
           variant="primary"
           size="md"
           width="full"
-          style={styles.primaryButton}
+          styles={styles.primaryButton}
           onPress={() => {
             trackEventAction('signup_button_click');
-            router.navigate('/auth/signup/terms');
+            router.navigate('/auth/signup/terms' as any);
           }}
         >
           {t("features.pre-signup.ui.footer.start_intro_button")}
@@ -33,7 +33,7 @@ export const Footer: React.FC<FooterProps> = ({ trackEventAction = () => {} }) =
           variant="outline"
           size="md"
           width="full"
-          style={styles.outlineButton}
+          styles={styles.outlineButton}
           onPress={() => {
             trackEventAction('login_button_click');
             router.navigate('/auth/login');

@@ -1,3 +1,5 @@
+import { env } from '@/src/shared/libs/env';
+import { useTranslation } from 'react-i18next';
 import type {
 	PortOneIdentityVerificationRequest,
 	PortOneIdentityVerificationResponse,
@@ -12,8 +14,8 @@ export class PortOneAuthService {
 	private readonly passChannelKey: string;
 
 	constructor() {
-		this.storeId = process.env.EXPO_PUBLIC_STORE_ID as string;
-		this.passChannelKey = process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY as string;
+		this.storeId = env.STORE_ID;
+		this.passChannelKey = env.PASS_CHANNEL_KEY;
 
 		this.validateEnvironmentVariables();
 	}
@@ -25,8 +27,8 @@ export class PortOneAuthService {
 
 	private validateEnvironmentVariables() {
 		const requiredEnvVars = [
-			{ key: 'EXPO_PUBLIC_STORE_ID', value: this.storeId },
-			{ key: 'EXPO_PUBLIC_PASS_CHANNEL_KEY', value: this.passChannelKey },
+			{ key: 'STORE_ID', value: this.storeId },
+			{ key: 'PASS_CHANNEL_KEY', value: this.passChannelKey },
 		];
 
 		for (const { key, value } of requiredEnvVars) {
@@ -47,7 +49,7 @@ export class PortOneAuthService {
 	): Promise<PortOneIdentityVerificationResponse> {
 		try {
 			if (typeof window === 'undefined') {
-				throw new Error('웹 환경에서만 사용 가능합니다.');
+				throw new Error("common.웹_환경에서만_사용_가능합니다");
 			}
 			const PortOne = await this.loadPortOneSDK();
 
@@ -68,11 +70,11 @@ export class PortOneAuthService {
 			const response = await PortOne.requestIdentityVerification(request);
 
 			if (!response) {
-				throw new Error('본인인증 응답이 없습니다.');
+				throw new Error("common.본인인증_응답이_없습니다");
 			}
 
 			if (response.code != null) {
-				throw new Error(response.message || '본인인증에 실패했습니다.');
+				throw new Error(response.message || "common.본인인증에_실패했습니다");
 			}
 
 			return {

@@ -73,7 +73,6 @@ export default function InterestDoneScreen() {
         <View style={[styles.buttonContainer, { paddingBottom: insets.bottom + 24 }]}>
           <Button
             width="full"
-            flex="flex-1"
             variant="primary"
             onPress={() => {
               mixpanelAdapter.track("Interest_Done", {

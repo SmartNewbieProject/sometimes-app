@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>일본 SMS 인증 화면 - UI 목업</title>
+  <link href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-purple: #7A4AE2;
+      --light-purple: #E2D5FF;
+      --card-purple: #F7F3FF;
+      --pale-purple: #F3EDFF;
+      --white: #FFFFFF;
+      --black: #000000;
+      --gray: #9CA3AF;
+      --text-tertiary: #6B7280;
+      --error-red: #DC2626;
+      --error-bg: #FEF2F2;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--black);
+      margin-bottom: 16px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-tertiary);
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 24px;
+      padding: 12px 24px;
+      background: var(--light-purple);
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .section-wrapper {
+      text-align: center;
+    }
+
+    /* Phone Frame */
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: var(--white);
+      border-radius: 44px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .phone-frame.as-is {
+      filter: grayscale(0.3);
+      opacity: 0.85;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 47px;
+      background: transparent;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
+    }
+
+    .notch {
+      width: 126px;
+      height: 34px;
+      background: var(--black);
+      border-radius: 0 0 20px 20px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Gradient Background */
+    .gradient-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 300px;
+      background: linear-gradient(180deg, var(--card-purple) 0%, var(--white) 100%);
+      z-index: 0;
+    }
+
+    .phone-content {
+      position: relative;
+      z-index: 1;
+      height: calc(100% - 47px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header with Progress */
+    .header {
+      padding: 16px 24px 20px;
+      text-align: center;
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+
+    .progress-bar-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .progress-bar {
+      width: 327px;
+      height: 12px;
+      background: var(--pale-purple);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary-purple);
+      border-radius: 100px;
+      transition: width 0.3s ease;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .main-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .subtitle-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .main-subtitle {
+      font-size: 14px;
+      color: var(--text-tertiary);
+      line-height: 1.5;
+    }
+
+    /* Input Section */
+    .input-section {
+      margin-bottom: 24px;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .prefix-container {
+      padding: 16px 20px;
+      background: var(--light-purple);
+      border: 1px solid var(--primary-purple);
+      border-radius: 12px;
+    }
+
+    .prefix-container.as-is {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+    }
+
+    .prefix-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-purple);
+    }
+
+    .prefix-text.as-is {
+      color: var(--text-tertiary);
+    }
+
+    .input-wrapper {
+      flex: 1;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .text-input:focus {
+      border-color: var(--primary-purple);
+    }
+
+    .text-input::placeholder {
+      color: #9ca3af;
+    }
+
+    /* Code Input */
+    .code-input-container {
+      margin-bottom: 20px;
+    }
+
+    .code-input {
+      width: 100%;
+      padding: 20px;
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: 12px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    .code-input:focus {
+      border-color: var(--primary-purple);
+    }
+
+    .code-input.as-is {
+      font-size: 28px;
+      letter-spacing: 8px;
+    }
+
+    /* Timer */
+    .timer-container {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .timer-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      background: var(--light-purple);
+      border-radius: 20px;
+    }
+
+    .timer-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-purple);
+    }
+
+    .timer-text.as-is {
+      color: var(--text-tertiary);
+      background: none;
+      padding: 0;
+    }
+
+    .resend-link {
+      color: var(--primary-purple);
+      text-decoration: underline;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Back Button */
+    .back-button {
+      align-self: flex-start;
+      padding: 8px 0;
+      margin-bottom: 16px;
+      color: var(--primary-purple);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .back-button.as-is {
+      color: var(--text-tertiary);
+    }
+
+    /* Button Container */
+    .button-container {
+      margin-top: auto;
+      padding-bottom: 32px;
+    }
+
+    .primary-button {
+      width: 100%;
+      padding: 18px;
+      background: var(--primary-purple);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .primary-button:hover {
+      opacity: 0.9;
+    }
+
+    .primary-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Tooltip */
+    [data-tooltip] {
+      position: relative;
+      cursor: help;
+      border-bottom: 1px dotted var(--primary-purple);
+    }
+
+    [data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px 12px;
+      background: var(--black);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      white-space: nowrap;
+      z-index: 100;
+      animation: fadeIn 0.2s ease;
+    }
+
+    [data-tooltip]:hover::before {
+      content: '';
+      position: absolute;
+      bottom: calc(100% - 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--black);
+      z-index: 100;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Screen Tabs */
+    .screen-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .screen-tab {
+      padding: 10px 20px;
+      background: var(--white);
+      border: 2px solid var(--light-purple);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .screen-tab.active {
+      background: var(--primary-purple);
+      border-color: var(--primary-purple);
+      color: var(--white);
+    }
+
+    .screen-tab:hover:not(.active) {
+      border-color: var(--primary-purple);
+      color: var(--primary-purple);
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-tertiary);
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+
+    .legend-color.as-is {
+      background: #d1d5db;
+    }
+
+    .legend-color.to-be {
+      background: var(--primary-purple);
+    }
+
+    /* Brand Score */
+    .brand-score {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 40px auto;
+      max-width: 600px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .brand-score h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--black);
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .score-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .score-label {
+      font-size: 14px;
+      color: var(--text-tertiary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .score-bar {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .score-bar-fill.before {
+      background: #d1d5db;
+      position: absolute;
+    }
+
+    .score-bar-fill.after {
+      background: var(--primary-purple);
+      position: absolute;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .phone-frame {
+        width: 100%;
+        max-width: 375px;
+        height: auto;
+        aspect-ratio: 375 / 812;
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Error Container */
+    .error-container {
+      margin-top: 12px;
+      padding: 10px 16px;
+      background: var(--error-bg);
+      border-radius: 8px;
+    }
+
+    .error-text {
+      color: var(--error-red);
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🇯🇵 일본 SMS 인증 화면 UI/UX 개선</h1>
+    <p class="subtitle">일본어에 마우스를 올리면 한글 번역이 표시됩니다</p>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color as-is"></div>
+        <span>AS-IS (기존)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color to-be"></div>
+        <span>TO-BE (개선)</span>
+      </div>
+    </div>
+
+    <div class="screen-tabs">
+      <button class="screen-tab active" onclick="showScreen('phone')">
+        📱 전화번호 입력
+      </button>
+      <button class="screen-tab" onclick="showScreen('code')">
+        ✉️ 인증코드 입력
+      </button>
+    </div>
+
+    <!-- Phone Input Screen -->
+    <div id="phone-screen" class="comparison-grid">
+      <!-- AS-IS -->
+      <div class="section-wrapper">
+        <span class="section-title" style="background: #e5e7eb; color: #6b7280;">AS-IS (기존)</span>
+        <div class="phone-frame as-is">
+          <div class="notch"></div>
+          <div class="status-bar"></div>
+          <div class="phone-content">
+            <!-- No gradient, no progress -->
+            <div class="content-area" style="padding-top: 80px;">
+              <div class="header-section">
+                <h2 class="main-title" data-tooltip="전화번호를 입력해주세요">
+                  電話番号を入力してください
+                </h2>
+                <p class="main-subtitle" data-tooltip="인증 코드를 SMS로 발송합니다">
+                  認証コードをSMSで送信します
+                </p>
+              </div>
+
+              <div class="input-section">
+                <div class="input-container">
+                  <div class="prefix-container as-is">
+                    <span class="prefix-text as-is">+81</span>
+                  </div>
+                  <div class="input-wrapper">
+                    <input type="tel" class="text-input" placeholder="090-1234-5678" value="">
+                  </div>
+                </div>
+              </div>
+
+              <div class="button-container">
+                <button class="primary-button" disabled data-tooltip="인증 코드 발송">
+                  認証コードを送信
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TO-BE -->
+      <div class="section-wrapper">
+        <span class="section-title">TO-BE (개선) ✨</span>
+        <div class="phone-frame">
+          <div class="gradient-bg"></div>
+          <div class="notch"></div>
+          <div class="status-bar"></div>
+          <div class="phone-content">
+            <div class="header">
+              <h3 class="step-title" data-tooltip="전화번호 인증">電話番号認証</h3>
+              <div class="progress-bar-container">
+                <div class="progress-bar">
+                  <div class="progress-bar-fill" style="width: 50%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="content-area">
+              <div class="header-section">
+                <h2 class="main-title" data-tooltip="멋진 만남까지, 이제 조금!">
+                  素敵な出会いまで、あと少し！
+                </h2>
+                <div class="subtitle-row">
+                  <span class="main-subtitle" data-tooltip="전화번호를 알려줘. 안전한 인증을 위해서만 사용할게">
+                    電話番号を教えてね。安全な認証のためだけに使うよ
+                  </span>
+                  <span style="font-size: 16px;">🔐</span>
+                </div>
+              </div>
+
+              <div class="input-section">
+                <div class="input-container">
+                  <div class="prefix-container">
+                    <span class="prefix-text">+81</span>
+                  </div>
+                  <div class="input-wrapper">
+                    <input type="tel" class="text-input" placeholder="090-1234-5678" value="090-1234-5678">
+                  </div>
+                </div>
+              </div>
+
+              <div class="button-container">
+                <button class="primary-button" data-tooltip="인증 코드 받기">
+                  認証コードを受け取る
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code Verification Screen -->
+    <div id="code-screen" class="comparison-grid hidden">
+      <!-- AS-IS -->
+      <div class="section-wrapper">
+        <span class="section-title" style="background: #e5e7eb; color: #6b7280;">AS-IS (기존)</span>
+        <div class="phone-frame as-is">
+          <div class="notch"></div>
+          <div class="status-bar"></div>
+          <div class="phone-content">
+            <div class="content-area" style="padding-top: 60px;">
+              <div class="back-button as-is" data-tooltip="뒤로">
+                ← <span data-tooltip="뒤로">戻る</span>
+              </div>
+
+              <div class="header-section" style="margin-bottom: 40px;">
+                <h2 class="main-title" data-tooltip="인증 코드 입력">
+                  認証コードを入力
+                </h2>
+                <p class="main-subtitle" data-tooltip="090-1234-5678로 발송된 코드를 입력해주세요">
+                  090-1234-5678に送信されたコードを入力してください
+                </p>
+              </div>
+
+              <div class="code-input-container">
+                <input type="text" class="code-input as-is" placeholder="000000" value="" maxlength="6">
+              </div>
+
+              <div class="timer-container">
+                <span class="timer-text as-is" data-tooltip="남은 시간: 2:30">
+                  残り時間: 2:30
+                </span>
+              </div>
+
+              <div class="button-container">
+                <button class="primary-button" disabled data-tooltip="확인">
+                  確認
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TO-BE -->
+      <div class="section-wrapper">
+        <span class="section-title">TO-BE (개선) ✨</span>
+        <div class="phone-frame">
+          <div class="gradient-bg"></div>
+          <div class="notch"></div>
+          <div class="status-bar"></div>
+          <div class="phone-content">
+            <div class="header">
+              <h3 class="step-title" data-tooltip="코드 확인">コード確認</h3>
+              <div class="progress-bar-container">
+                <div class="progress-bar">
+                  <div class="progress-bar-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="content-area">
+              <div class="back-button" data-tooltip="번호 변경">
+                ← <span data-tooltip="번호 변경">番号を変える</span>
+              </div>
+
+              <div class="header-section" style="margin-bottom: 40px;">
+                <h2 class="main-title">
+                  <span data-tooltip="거의 다 왔어!">もうすぐだよ！</span> ✨
+                </h2>
+                <p class="main-subtitle" data-tooltip="090-1234-5678에 도착한 6자리 코드를 입력해">
+                  090-1234-5678に届いた6桁のコードを入れてね
+                </p>
+              </div>
+
+              <div class="code-input-container">
+                <input type="text" class="code-input" placeholder="000000" value="123456" maxlength="6">
+              </div>
+
+              <div class="timer-container">
+                <div class="timer-badge">
+                  <span class="timer-text" data-tooltip="남은 시간 2:30">あと 2:30</span>
+                </div>
+              </div>
+
+              <div class="button-container">
+                <button class="primary-button" data-tooltip="만남 시작하기">
+                  出会いをはじめる
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand Score -->
+    <div class="brand-score">
+      <h3>📊 브랜드 정합성 점수 비교</h3>
+      <div class="score-grid">
+        <div class="score-item">
+          <div class="score-label">
+            <span>진정성 (Authenticity)</span>
+            <span>40 → 80</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-fill before" style="width: 40%;"></div>
+            <div class="score-bar-fill after" style="width: 80%;"></div>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">
+            <span>신뢰 (Trust)</span>
+            <span>60 → 90</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-fill before" style="width: 60%;"></div>
+            <div class="score-bar-fill after" style="width: 90%;"></div>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">
+            <span>설렘 (Flutter)</span>
+            <span>20 → 85</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-fill before" style="width: 20%;"></div>
+            <div class="score-bar-fill after" style="width: 85%;"></div>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">
+            <span>성장 (Growth)</span>
+            <span>30 → 70</span>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-fill before" style="width: 30%;"></div>
+            <div class="score-bar-fill after" style="width: 70%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Summary Table -->
+    <div style="background: white; border-radius: 16px; padding: 32px; margin-top: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+      <h3 style="text-align: center; margin-bottom: 24px; color: var(--black);">📝 문구 변경 요약</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+        <thead>
+          <tr style="background: var(--card-purple);">
+            <th style="padding: 12px; text-align: left; border-radius: 8px 0 0 0;">항목</th>
+            <th style="padding: 12px; text-align: left;">AS-IS (기존)</th>
+            <th style="padding: 12px; text-align: left; border-radius: 0 8px 0 0;">TO-BE (개선)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: 600;">제목 1</td>
+            <td style="padding: 12px; color: var(--text-tertiary);" data-tooltip="전화번호를 입력해주세요">電話番号を入力してください</td>
+            <td style="padding: 12px; color: var(--primary-purple);" data-tooltip="멋진 만남까지, 이제 조금!">素敵な出会いまで、あと少し！</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: 600;">부제 1</td>
+            <td style="padding: 12px; color: var(--text-tertiary);" data-tooltip="인증 코드를 SMS로 발송합니다">認証コードをSMSで送信します</td>
+            <td style="padding: 12px; color: var(--primary-purple);" data-tooltip="전화번호를 알려줘. 안전한 인증을 위해서만 사용할게">電話番号を教えてね。安全な認証のためだけに使うよ 🔐</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: 600;">버튼 1</td>
+            <td style="padding: 12px; color: var(--text-tertiary);" data-tooltip="인증 코드 발송">認証コードを送信</td>
+            <td style="padding: 12px; color: var(--primary-purple);" data-tooltip="인증 코드 받기">認証コードを受け取る</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: 600;">제목 2</td>
+            <td style="padding: 12px; color: var(--text-tertiary);" data-tooltip="인증 코드 입력">認証コードを入力</td>
+            <td style="padding: 12px; color: var(--primary-purple);" data-tooltip="거의 다 왔어!">もうすぐだよ！ ✨</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: 600;">타이머</td>
+            <td style="padding: 12px; color: var(--text-tertiary);" data-tooltip="남은 시간: 2:30">残り時間: 2:30</td>
+            <td style="padding: 12px; color: var(--primary-purple);" data-tooltip="남은 시간 2:30">あと 2:30 (뱃지 스타일)</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: 600;">버튼 2</td>
+            <td style="padding: 12px; color: var(--text-tertiary);" data-tooltip="확인">確認</td>
+            <td style="padding: 12px; color: var(--primary-purple);" data-tooltip="만남 시작하기">出会いをはじめる</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; font-weight: 600;">재발송</td>
+            <td style="padding: 12px; color: var(--text-tertiary);" data-tooltip="코드 재발송">コードを再送信</td>
+            <td style="padding: 12px; color: var(--primary-purple);" data-tooltip="안 왔어? 다시 보내기">届いてない？もう一度送る</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function showScreen(screen) {
+      // Update tabs
+      document.querySelectorAll('.screen-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Show/hide screens
+      if (screen === 'phone') {
+        document.getElementById('phone-screen').classList.remove('hidden');
+        document.getElementById('code-screen').classList.add('hidden');
+      } else {
+        document.getElementById('phone-screen').classList.add('hidden');
+        document.getElementById('code-screen').classList.remove('hidden');
+      }
+    }
+
+    // Animate score bars on load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.querySelectorAll('.score-bar-fill.before').forEach(bar => {
+          bar.style.opacity = '0.3';
+        });
+      }, 500);
+    });
+
+    // Format phone input
+    document.querySelectorAll('input[type="tel"]').forEach(input => {
+      input.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 3 && value.length <= 7) {
+          value = value.slice(0, 3) + '-' + value.slice(3);
+        } else if (value.length > 7) {
+          value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+        }
+        e.target.value = value;
+      });
+    });
+  </script>
+</body>
+</html>

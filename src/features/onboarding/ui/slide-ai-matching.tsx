@@ -1,12 +1,18 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import colors from '@/src/shared/constants/colors';
 import type { SlideComponent } from '../types';
 
-const meetImage = require('@assets/images/onboarding/ai/meet.png');
+const { width } = Dimensions.get('window');
 
 export const SlideAiMatching: SlideComponent = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const isJapanese = i18n.language === 'ja';
+
+  const imageSource = isJapanese
+    ? require('@/assets/images/onboarding/ai_matching_fox_jp.png')
+    : require('@/assets/images/onboarding/ai_matching_fox_kr.png');
 
   return (
     <View style={styles.container}>
@@ -19,7 +25,11 @@ export const SlideAiMatching: SlideComponent = () => {
         </Text>
 
         <View style={styles.illustrationArea}>
-          <Image source={meetImage} style={styles.meetImage} resizeMode="contain" />
+          <Image
+            source={imageSource}
+            style={styles.image}
+            resizeMode="contain"
+          />
         </View>
       </View>
     </View>
@@ -30,39 +40,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: 24,
+    paddingTop: 80,
   },
   content: {
     width: '100%',
-    maxWidth: 400,
     alignItems: 'center',
   },
   headline: {
-    fontSize: 24,
+    fontSize: 26,
     fontFamily: 'Pretendard-Bold',
     color: colors.black,
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 32,
+    marginBottom: 12,
+    lineHeight: 36,
   },
   subtext: {
     fontSize: 16,
     fontFamily: 'Pretendard-Regular',
-    color: colors.gray,
+    color: '#8E94A0',
     textAlign: 'center',
-    marginBottom: 48,
+    marginBottom: 40,
     lineHeight: 24,
   },
   illustrationArea: {
-    width: '100%',
-    minHeight: 200,
+    width: width * 0.9,
+    height: width * 0.9,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
   },
-  meetImage: {
-    width: 200,
-    height: 120,
+  image: {
+    width: '100%',
+    height: '100%',
   },
 });

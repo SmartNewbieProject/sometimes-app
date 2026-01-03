@@ -1,0 +1,42 @@
+{
+  "view": {
+    "matching_reason_title": "Special reason Miho connected you two"
+  },
+  "characteristics": {
+    "energetic": "Energetic",
+    "calm": "Calm",
+    "humorous": "Humorous",
+    "serious": "Serious",
+    "outgoing": "Outgoing",
+    "introverted": "Introverted",
+    "optimistic": "Optimistic",
+    "realistic": "Realistic",
+    "kind": "Kind",
+    "passionate": "Passionate",
+    "thoughtful": "Thoughtful",
+    "adventurous": "Adventurous",
+    "romantic": "Romantic",
+    "active": "Active",
+    "casual": "Casual",
+    "cultural": "Cultural",
+    "homebody": "Homebody",
+    "foodie": "Foodie",
+    "nature": "Nature Lover",
+    "sports": "Sports",
+    "movies": "Movies",
+    "music": "Music",
+    "travel": "Travel",
+    "reading": "Reading",
+    "cooking": "Cooking",
+    "gaming": "Gaming",
+    "art": "Art",
+    "fashion": "Fashion",
+    "food": "Food",
+    "photography": "Photography",
+    "fitness": "Fitness",
+    "cafe": "Cafe",
+    "shopping": "Shopping",
+    "exhibition": "Exhibition",
+    "concert": "Concert"
+  }
+}

@@ -5,6 +5,10 @@
   },
   "ui": {
     "save_button": "저장",
+    "profile_image_cover": {
+      "default_title": "프로필 심사를 진행중이에요",
+      "default_subtitle": "현재 프로필 심사를 진행중이에요\n끝난 후 사진 수정을 진행할 수 있어요"
+    },
     "validation": {
       "empty_form": "비어있는 양식이 존재합니다."
     },
@@ -98,5 +102,9 @@
         "loading": "선호도를 불러오고 있어요"
       }
     }
+  },
+  "errors": {
+    "save_failed": "프로필 저장에 실패했습니다. 잠시 후 다시 시도해주세요.",
+    "validation_failed": "필수 정보를 모두 입력해주세요."
   }
 }

@@ -15,7 +15,8 @@
     "title": "다음에 다시 만나요",
     "textarea_placeholder": "기타 이유를 입력해주세요",
     "button_prev": "돌아기기",
-    "button_next": "서비스 떠나기"
+    "button_next": "서비스 떠나기",
+    "error": "회원 탈퇴에 실패했습니다. 잠시 후 다시 시도해주세요."
   },
   "info": {
     "dating_style": {

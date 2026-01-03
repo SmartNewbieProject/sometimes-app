@@ -3,5 +3,11 @@
     "button": {
       "contact": "連絡する"
     }
+  },
+  "services": {
+    "alert_title": "お知らせ",
+    "no_instagram_id": "InstagramのIDがありません。",
+    "error_title": "エラー",
+    "connection_error": "Instagramに接続できません。"
   }
 }

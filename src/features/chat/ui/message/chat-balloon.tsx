@@ -91,10 +91,10 @@ function ChatBalloon({ message, mediaUrl, isMe, uploadStatus = 'completed' }: Ch
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: "70%",
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 18,
+    flexShrink: 1,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 400,
     lineHeight: 21,
+    flexShrink: 1,
   },
   image: {
     width: 240,

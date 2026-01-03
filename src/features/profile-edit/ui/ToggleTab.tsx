@@ -35,7 +35,7 @@ export const ToggleTab = ({
   style,
 }: ToggleTabProps) => {
   const [isMounted, setIsMounted] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const left = useSharedValue(activeTab === "profile" ? 5 : 125);
   const width = useSharedValue(activeTab === "profile" ? 110 : 75);

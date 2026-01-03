@@ -20,12 +20,14 @@ import { chatEventBus } from "../services/chat-event-bus";
 import { generateTempId } from "../utils/generate-temp-id";
 import ChatCamera from "./camera";
 import { devLogWithTag } from "@/src/shared/utils";
+import { useTranslation } from "react-i18next";
 
 interface GalleryListProps {
   isPhotoClicked: boolean;
 }
 
 export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
+  const { t } = useTranslation();
   const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([firstDummy]);
   const [endCursor, setEndCursor] = useState<string | null>(null);
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -68,8 +70,8 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
       if (status === "granted") {
         setPermissionGranted(true);
       } else {
-        Alert.alert("권한 필요", "갤러리 접근 권한이 필요합니다.", [
-          { text: "확인" },
+        Alert.alert(t('features.chat.ui.gallery.permission_required_title'), t('features.chat.ui.gallery.permission_required_message'), [
+          { text: t('features.chat.ui.gallery.confirm') },
         ]);
       }
     } catch (error) {
@@ -104,7 +106,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
       setHasNextPage(result.hasNextPage);
     } catch (error) {
       console.error("Failed to load photos:", error);
-      Alert.alert("오류", "사진을 불러오는데 실패했습니다.");
+      Alert.alert(t('features.chat.ui.gallery.error_title'), t('features.chat.ui.gallery.error_load_photos'));
     } finally {
       setLoading(false);
     }
@@ -112,20 +114,20 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
 
   const toggleSelect = async (uri: string) => {
     showModal({
-      title: "이미지 전송",
+      title: t('features.chat.ui.gallery.send_image_title'),
       children: (
         <CustomText textColor="black">
-          선택하신 이미지를 전송하시겠어요?
+          {t('features.chat.ui.gallery.send_image_message')}
         </CustomText>
       ),
       primaryButton: {
-        text: "전송",
+        text: t('features.chat.ui.gallery.send_button'),
         onClick: () => {
           sendImage(uri);
         },
       },
       secondaryButton: {
-        text: "취소",
+        text: t('features.chat.ui.gallery.cancel_button'),
         onClick: hideModal,
       },
     });
@@ -175,7 +177,7 @@ export default function GalleryList({ isPhotoClicked }: GalleryListProps) {
   if (!permissionGranted) {
     return (
       <View style={styles.permissionContainer}>
-        <Text style={styles.permissionText}>갤러리 접근 권한이 필요합니다</Text>
+        <Text style={styles.permissionText}>{t('features.chat.ui.gallery.permission_denied')}</Text>
       </View>
     );
   }

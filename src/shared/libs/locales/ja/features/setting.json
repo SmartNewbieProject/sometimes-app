@@ -8,6 +8,19 @@
     },
     "header": {
       "title": "設定"
+    },
+    "logout_modal": {
+      "title": "ログアウトしますか？",
+      "description_1": "ログアウトすると一部の機能が利用できなくなり、",
+      "description_2": "再度ログインが必要です。",
+      "cancel": "キャンセル"
+    },
+    "withdrawal_modal": {
+      "title": "本当に退会しますか？",
+      "description_1": "退会するとアカウントは削除され、",
+      "description_2": "復元できません。",
+      "cancel": "キャンセル",
+      "withdraw": "退会"
     }
   },
   "withdrawal": {

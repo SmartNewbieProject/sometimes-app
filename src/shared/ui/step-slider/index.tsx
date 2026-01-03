@@ -1,4 +1,4 @@
-import { Text } from "@/src/shared/ui";
+import { Text } from "../text";
 import { throttle } from "lodash";
 import {
   type GestureResponderEvent,
@@ -213,13 +213,13 @@ export function StepSlider({
           {options.map((label, index) => {
             const totalSteps = options.length - 1;
             const left = (index / totalSteps) * sliderWidth;
-            if (
+            const middleIndex = Math.floor(options.length / 2);
+            const shouldShowLabel =
               index === 0 ||
               index === totalSteps ||
-              (showMiddle &&
-                options.length % 2 === 1 &&
-                index !== Math.ceil(options.length / 2))
-            ) {
+              (showMiddle && options.length % 2 === 1 && index === middleIndex);
+
+            if (shouldShowLabel) {
               return (
                 <View
                   key={index}
@@ -233,14 +233,14 @@ export function StepSlider({
                         : left + (middleLabelLeft ?? -30),
                   }}
                 >
-                  <Text size="13" numberofLine={1} textColor="dark">
+                  <Text size="13" numberOfLines={1} textColor="dark">
                     {label.label}
                   </Text>
                 </View>
               );
             }
 
-            return <React.Fragment key={label.label} />;
+            return <React.Fragment key={label.value} />;
           })}
         </View>
       )}
@@ -272,7 +272,7 @@ export function StepSlider({
                   const left = (index / totalSteps) * sliderWidth;
                   return (
                     <View
-                      key={label.label}
+                      key={label.value}
                       style={[
                         styles.stepDot,
                         {

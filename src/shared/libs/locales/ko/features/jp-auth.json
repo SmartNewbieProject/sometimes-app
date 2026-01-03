@@ -1,0 +1,41 @@
+{
+  "phone_input": {
+    "title": "전화번호를 입력해주세요",
+    "subtitle": "인증코드를 SMS로 발송합니다",
+    "placeholder": "090-1234-5678",
+    "submit_button": "인증코드 발송",
+    "loading": "발송 중..."
+  },
+  "code_verification": {
+    "title": "인증코드 입력",
+    "subtitle": "{{phoneNumber}}로 발송된 코드를 입력해주세요",
+    "placeholder": "000000",
+    "remaining_time": "남은 시간: {{time}}",
+    "resend": "코드 재발송",
+    "submit_button": "확인",
+    "loading": "확인 중...",
+    "back": "뒤로"
+  },
+  "errors": {
+    "invalid_phone": "올바른 전화번호를 입력해주세요",
+    "sms_send_failed": "SMS 발송에 실패했습니다",
+    "invalid_code": "인증코드가 올바르지 않습니다",
+    "expired_code": "인증코드가 만료되었습니다",
+    "blacklisted": "신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다"
+  },
+  "profile": {
+    "title": "기본 정보",
+    "name": "이름",
+    "name_placeholder": "홍길동",
+    "birthday": "생년월일",
+    "birthday_placeholder": "1998-01-15",
+    "birthday_hint": "YYYY-MM-DD 형식으로 입력해주세요",
+    "gender": "성별",
+    "male": "남성",
+    "female": "여성",
+    "next": "다음",
+    "back": "뒤로",
+    "error": "오류가 발생했습니다. 다시 시도해주세요."
+  },
+  "login_button": "전화번호로 시작하기"
+}

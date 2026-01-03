@@ -156,8 +156,12 @@ export interface MomentHistoryProperties {
   year?: number;
   report_title?: string;
   question_id?: string;
+  question_text?: string;
   answer_date?: string;
+  answer_position?: number;
   page?: number;
+  page_number?: number;
+  report_position?: number;
   items_loaded?: number;
   total_loaded?: number;
 }

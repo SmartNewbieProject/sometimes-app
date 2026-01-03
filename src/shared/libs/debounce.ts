@@ -5,7 +5,7 @@ export function debounce<T extends AnyFunction>(
   wait: number = 300,
   immediate: boolean = false
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
   return function executedFunction(this: unknown, ...args: Parameters<T>) {
     const later = () => {

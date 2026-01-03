@@ -51,6 +51,8 @@
   "notification": {
     "title": "通知設定",
     "push_notification": "プッシュ通知",
+    "matching_complete": "マッチング完了通知",
+    "event_notification": "イベント通知",
     "permission_required_title": "通知の許可が必要",
     "permission_required_message": "プッシュ通知を受け取るには、設定で通知を許可してください。",
     "open_settings": "設定を開く",
@@ -58,8 +60,9 @@
     "status_check_failed": "プッシュ通知の状態確認に失敗しました：",
     "enable_failed": "プッシュ通知の有効化に失敗しました：",
     "disable_failed": "プッシュ通知の無効化に失敗しました：",
-    "registration_required_title": "プッシュ通知の登録が必要",
-    "registration_required_message": "プッシュ通知はモバイル端末でのみ登録できます。\nまずモバイルアプリで通知を許可してください。",
+    "registration_required_title": "ちょっと待って、通知がオフになっています",
+    "registration_required_message": "大切な通知を受け取るには\n端末の設定で通知を許可してください。",
+    "go_to_settings": "設定へ移動",
     "activation_failed_title": "通知の有効化に失敗",
     "deactivation_failed_title": "通知の無効化に失敗",
     "deactivation_failed_message": "プッシュ通知の無効化に失敗しました。もう一度お試しください。",
@@ -108,5 +111,16 @@
     "thank_you": "Sometimeをご利用いただきありがとうございました",
     "feedback_request": "ご意見をお聞かせいただければ、より良いサービスを提供できるよう努めます。",
     "leave_service": "サービスを退会する"
+  },
+  "privacy": {
+    "title": "プライバシー保護",
+    "card_title": "安心して始める",
+    "card_description": "連絡先にいる知り合いとは出会いません"
+  },
+  "profile": {
+    "student_number": "{{prefix}}年入学"
+  },
+  "common": {
+    "게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "[JA] 게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
   }
 }

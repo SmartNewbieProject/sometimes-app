@@ -1,4 +1,5 @@
 import { ALL_MIHO_MESSAGES } from '../constants/miho-messages';
+import { useTranslation } from 'react-i18next';
 import {
   MihoMessage,
   RarityTier,
@@ -80,7 +81,7 @@ function getRelevantContextTags(context: MatchContext): ContextTag[] {
   if (context.commonPoints && context.commonPoints.length > 0) {
     tags.push('common_interests');
     if (context.commonPoints.some((p) =>
-      p && (p.includes('성격') || p.includes('MBTI') || p.includes('가치관'))
+      p && (p.includes("common.성격") || p.includes('MBTI') || p.includes("common.가치관"))
     )) {
       tags.push('personality_match');
     }
@@ -140,4 +141,32 @@ export function getRarityLabel(rarity: RarityTier): string {
     [RarityTier.LEGENDARY]: '👑 Legendary',
   };
   return labels[rarity];
+}
+
+/**
+ * 미호 메시지의 i18n 키를 생성합니다
+ * @param message - MihoMessage 객체
+ * @returns i18n 키 객체 { titleKey, line1Key, line2Key }
+ */
+export function getMihoMessageI18nKeys(message: MihoMessage): {
+  titleKey: string;
+  line1Key: string;
+  line2Key: string;
+} {
+  const rarityMap: Record<RarityTier, string> = {
+    [RarityTier.COMMON]: 'common',
+    [RarityTier.UNCOMMON]: 'uncommon',
+    [RarityTier.RARE]: 'rare',
+    [RarityTier.EPIC]: 'epic',
+    [RarityTier.LEGENDARY]: 'legendary',
+  };
+
+  const rarity = rarityMap[message.rarity];
+  const baseKey = `features.match.miho_messages.${rarity}.${message.id}`;
+
+  return {
+    titleKey: `${baseKey}.title`,
+    line1Key: `${baseKey}.line1`,
+    line2Key: `${baseKey}.line2`,
+  };
 }

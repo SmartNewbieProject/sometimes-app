@@ -2,6 +2,7 @@ import type React from "react";
 import { Linking, Alert, Text as RNText } from "react-native";
 import { Text, type TextProps } from "../text";
 import { parseTextWithLinks } from "../../utils/link-utils";
+import i18n from "@/src/shared/libs/i18n";
 
 export interface LinkifiedTextProps extends Omit<TextProps, "children"> {
   children: string;
@@ -26,8 +27,11 @@ export const LinkifiedText: React.FC<LinkifiedTextProps> = ({
     try {
       await Linking.openURL(url);
     } catch (error) {
-      console.error("링크 열기 오류:", error);
-      Alert.alert("오류", "링크를 열 수 없습니다.");
+      console.error("Link open error:", error);
+      Alert.alert(
+        i18n.t("shareds.linkified-text.linkified_text.error_title"),
+        i18n.t("shareds.linkified-text.linkified_text.cannot_open_link_message")
+      );
     }
   };
 

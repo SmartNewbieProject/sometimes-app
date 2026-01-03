@@ -16,11 +16,13 @@ export type ButtonProps = {
   prefix?: ReactNode;
   textColor?: "white" | "purple" | "black" | "gray" | "dark";
   styles?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
   disabled?: boolean;
   variant?: ButtonVariant;
   size?: ButtonSize;
   width?: ButtonWidth;
   rounded?: ButtonRounded;
+  className?: string;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -32,8 +34,10 @@ export const Button: React.FC<ButtonProps> = ({
   prefix,
   textColor,
   styles,
+  style,
   width,
   rounded = "lg",
+  className,
 }) => {
   const press = () => {
     if (disabled) return;
@@ -65,6 +69,7 @@ export const Button: React.FC<ButtonProps> = ({
     rounded && roundedStyles[rounded],
     disabled && baseStyles.disabled,
     styles,
+    style,
   ];
 
   return (

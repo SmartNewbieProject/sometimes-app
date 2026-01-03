@@ -1,18 +1,41 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { checkAppEnvironment, logger } from '@shared/libs';
+import { LOGIN_ABANDONED_STEPS, AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
+import { checkAppEnvironment } from '@shared/libs';
 import { router } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 import { PortOneAuthService } from '../services/portone-auth.service';
 import type {
 	PortOneIdentityVerificationRequest,
 	PortOneIdentityVerificationResponse,
 } from '../types';
 import { isAdult } from '../utils';
+import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
+
+const track = mixpanelAdapter.track.bind(mixpanelAdapter);
+const getAuthMethod = () => useSignupProgress.getState().authMethod;
+
+const getErrorMessage = (error: unknown): string => {
+	if (error instanceof Error) {
+		return error.message;
+	}
+	if (typeof error === 'object' && error !== null) {
+		const obj = error as Record<string, unknown>;
+		if (typeof obj.message === 'string') {
+			return obj.message;
+		}
+		if (typeof obj.error === 'string') {
+			return obj.error;
+		}
+	}
+	return '로그인 처리 중 오류가 발생했습니다';
+};
 
 interface UsePortOneLoginOptions {
 	onError?: (error: Error) => void;
@@ -31,16 +54,11 @@ interface UsePortOneLoginReturn {
 	handleMobileAuthCancel: () => void;
 }
 
-// Mixpanel track 헬퍼 함수
-const track = (eventName: string, properties?: Record<string, any>) => {
-	mixpanelAdapter.track(eventName, properties);
-};
-
 const validateEnvironmentVariables = () => {
 	const requiredEnvVars = {
-		EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
-		EXPO_PUBLIC_STORE_ID: process.env.EXPO_PUBLIC_STORE_ID,
-		EXPO_PUBLIC_PASS_CHANNEL_KEY: process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY,
+		API_URL: env.API_URL,
+		STORE_ID: env.STORE_ID,
+		PASS_CHANNEL_KEY: env.PASS_CHANNEL_KEY,
 	};
 
 	for (const [key, value] of Object.entries(requiredEnvVars)) {
@@ -59,10 +77,12 @@ export const usePortOneLogin = ({
 	const [showMobileAuth, setShowMobileAuth] = useState(false);
 	const [mobileAuthRequest, setMobileAuthRequest] =
 		useState<PortOneIdentityVerificationRequest | null>(null);
+	const authStartTimeRef = useRef<number | null>(null);
 
 	const { loginWithPass } = useAuth();
 	const authService = new PortOneAuthService();
 	const { showModal } = useModal();
+	const { t } = useTranslation();
 
 	const clearError = useCallback(() => {
 		setError(null);
@@ -77,7 +97,11 @@ export const usePortOneLogin = ({
 				const phone = loginResult.certificationInfo?.phone;
 
 				if (birthday && !isAdult(birthday)) {
-					track('Signup_AgeCheck_Failed', { birthday, env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+					track('Signup_AgeCheck_Failed', {
+						birthday,
+						auth_method: getAuthMethod(),
+						env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+					});
 					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					router.push('/auth/age-restriction' as any);
 					return;
@@ -90,13 +114,16 @@ export const usePortOneLogin = ({
 						if (isBlacklisted) {
 							track('Signup_PhoneBlacklist_Failed', {
 								phone,
+								auth_method: getAuthMethod(),
 								env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 							});
 							showModal({
-								title: '가입 제한',
-								children: '신고 접수 또는 프로필 정보 부적합 등의 사유로 가입이 제한되었습니다.',
+								title: t('features.pass.hooks.가입_제한'),
+								children: t(
+									'features.pass.hooks.신고_접수_또는_프로필_정보_부적합_등의_사유로_가입이',
+								),
 								primaryButton: {
-									text: '확인',
+									text: t('features.pass.hooks.확인'),
 									onClick: () => {
 										router.replace('/');
 									},
@@ -108,6 +135,7 @@ export const usePortOneLogin = ({
 						console.error('블랙리스트 체크 오류:', error);
 						track('Signup_Error', {
 							stage: 'PhoneBlacklistCheck',
+							auth_method: getAuthMethod(),
 							env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 							message: error instanceof Error ? error.message : String(error),
 						});
@@ -119,6 +147,7 @@ export const usePortOneLogin = ({
 				track('Signup_Route_Entered', {
 					screen: 'AreaSelect',
 					platform: 'pass',
+					auth_method: getAuthMethod(),
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
 
@@ -129,7 +158,7 @@ export const usePortOneLogin = ({
 						...loginResult.certificationInfo,
 						loginType: 'pass',
 						identityVerificationId,
-					})
+					}),
 				);
 
 				router.push('/auth/signup/university');
@@ -139,7 +168,7 @@ export const usePortOneLogin = ({
 				onSuccess?.(false);
 			}
 		},
-		[loginWithPass, onSuccess, showModal],
+		[loginWithPass, onSuccess, showModal, t],
 	);
 
 	const handleMobileAuthComplete = useCallback(
@@ -150,19 +179,21 @@ export const usePortOneLogin = ({
 				}
 
 				track('Signup_IdentityVerification_Completed', {
+					auth_method: getAuthMethod(),
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
 
 				await processLoginResult(response.identityVerificationId);
+				authStartTimeRef.current = null;
 				setShowMobileAuth(false);
 				setMobileAuthRequest(null);
 			} catch (error) {
-				const errorMessage =
-					error instanceof Error ? error.message : '로그인 처리 중 오류가 발생했습니다.';
+				const errorMessage = getErrorMessage(error);
 				console.error('모바일 본인인증 완료 처리 중 오류:', errorMessage);
 				track('Signup_Error', {
 					stage: 'handleMobileAuthComplete',
 					message: errorMessage,
+					auth_method: getAuthMethod(),
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
 				setError(errorMessage);
@@ -179,8 +210,10 @@ export const usePortOneLogin = ({
 			console.error('모바일 본인인증 오류:', error);
 			track('Signup_IdentityVerification_Failed', {
 				reason: error.message,
+				auth_method: getAuthMethod(),
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
+			authStartTimeRef.current = null;
 			setError(error.message);
 			setShowMobileAuth(false);
 			setMobileAuthRequest(null);
@@ -191,9 +224,23 @@ export const usePortOneLogin = ({
 	);
 
 	const handleMobileAuthCancel = useCallback(() => {
+		const timeSpentSeconds = authStartTimeRef.current
+			? Math.round((Date.now() - authStartTimeRef.current) / 1000)
+			: undefined;
+
 		track('Signup_IdentityVerification_Cancelled', {
+			auth_method: getAuthMethod(),
 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 		});
+
+		track('Auth_Login_Abandoned', {
+			auth_method: AUTH_METHODS.PASS,
+			abandoned_step: LOGIN_ABANDONED_STEPS.USER_CANCELLED,
+			time_spent_seconds: timeSpentSeconds,
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
+
+		authStartTimeRef.current = null;
 		setShowMobileAuth(false);
 		setMobileAuthRequest(null);
 		setIsLoading(false);
@@ -211,8 +258,8 @@ export const usePortOneLogin = ({
 
 	const handleMobileAuth = useCallback(() => {
 		const request: PortOneIdentityVerificationRequest = {
-			storeId: process.env.EXPO_PUBLIC_STORE_ID as string,
-			channelKey: process.env.EXPO_PUBLIC_PASS_CHANNEL_KEY as string,
+			storeId: env.STORE_ID,
+			channelKey: env.PASS_CHANNEL_KEY,
 			identityVerificationId: `cert_${Date.now()}`,
 		};
 
@@ -223,27 +270,24 @@ export const usePortOneLogin = ({
 	const startPortOneLogin = useCallback(async () => {
 		try {
 			setError(null);
-
-			// development 환경에서는 외부 인증 창을 띄우지 않고 바로 다음 프로세스로
-			if (checkAppEnvironment('development')) {
-				setIsLoading(true);
-				track('Signup_IdentityVerification_Started', {
-					platform: Platform.OS,
-					type: 'pass',
-					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-				});
-				logger.debug('개발 환경에서는 가짜 본인인증 ID로 바로 처리합니다.');
-				await processLoginResult(`dev_mock_${Date.now()}`);
-				return;
-			}
-
-			validateEnvironmentVariables();
+			authStartTimeRef.current = Date.now();
 
 			track('Signup_IdentityVerification_Started', {
 				platform: Platform.OS,
 				type: 'pass',
+				auth_method: getAuthMethod(),
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
+
+			// 개발 환경에서는 실제 PASS 인증을 건너뛰고 바로 백엔드 dev API 호출
+			if (__DEV__) {
+				setIsLoading(true);
+				await processLoginResult('dev_mock_id');
+				setIsLoading(false);
+				return;
+			}
+
+			validateEnvironmentVariables();
 
 			if (Platform.OS === 'web') {
 				setIsLoading(true);
@@ -253,11 +297,11 @@ export const usePortOneLogin = ({
 				handleMobileAuth();
 			}
 		} catch (error) {
-			const errorMessage =
-				error instanceof Error ? error.message : '로그인 처리 중 오류가 발생했습니다.';
+			const errorMessage = getErrorMessage(error);
 			track('Signup_Error', {
 				stage: 'startPortOneLogin',
 				message: errorMessage,
+				auth_method: getAuthMethod(),
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 			setError(errorMessage);

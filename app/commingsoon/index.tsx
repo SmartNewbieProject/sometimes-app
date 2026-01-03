@@ -7,18 +7,20 @@ import SmallTitle from '@assets/icons/small-title.svg';
 import Signup from '@/src/features/signup';
 import {useAuth} from '@/src/features/auth';
 import {useModal} from '@/src/shared/hooks/use-modal';
+import { useTranslation } from 'react-i18next';
 
 export default function CommingSoonScreen() {
   const {form: signupForm} = Signup.useSignupProgress();
   const {profileDetails} = useAuth();
   const {showModal} = useModal();
+  const { t } = useTranslation();
 
   const onClickSeeYouLater = () =>
       showModal({
-        title: '꼭 다시 만나요!',
-        children: <Text>7월 27일, 꼭 다시 만나요!</Text>,
+        title: t('features.commingsoon.ui.modal.title'),
+        children: <Text>{t('features.commingsoon.ui.modal.message')}</Text>,
         primaryButton: {
-          text: '확인',
+          text: t('shareds.utils.common.confirm'),
           onClick: () => {
           },
         },
@@ -43,22 +45,22 @@ export default function CommingSoonScreen() {
           <View className="flex flex-col">
             <View className="mt-8 px-5">
               <Text size="md" textColor="black" weight="semibold">
-                {userName}님!
+                {t('features.commingsoon.ui.greeting', { name: userName })}
               </Text>
               <Text size="md" textColor="black" weight="semibold">
-                빨리 보고싶어요!
+                {t('features.commingsoon.ui.title')}
               </Text>
             </View>
 
             <View className="mt-2 px-5">
               <Text weight="medium" size="sm" style={{color: semanticColors.brand.deep}}>
-                곧, 당신에게 꼭 맞는 사람을 소개해드릴게요.
+                {t('features.commingsoon.ui.description_1')}
               </Text>
               <Text weight="medium" size="sm" style={{color: semanticColors.brand.deep}}>
                 <Text weight="medium" size="sm" textColor="dark">
-                  7월 27일
+                  {t('features.commingsoon.ui.date')}
                 </Text>
-                {', '}꼭 다시 만나요!
+                {', '}{t('features.commingsoon.ui.description_2', { date: '' }).trim()}
               </Text>
             </View>
           </View>
@@ -68,13 +70,14 @@ export default function CommingSoonScreen() {
           <Button
               variant="primary"
               size="md"
+              width="full"
               onPress={() => {
                 onClickSeeYouLater();
 
               }}
-              className="mb-[14px] w-full"
+              styles={{ marginBottom: 14 }}
           >
-            출시일에 다시 볼게요.
+            {t('features.commingsoon.ui.cta_button')}
           </Button>
         </View>
       </View>

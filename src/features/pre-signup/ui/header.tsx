@@ -24,7 +24,7 @@ export const Header: React.FC = () => {
         </View>
 
         <View style={styles.titleContainer}>
-          <IconWrapper width={200} style={styles.iconWrapper}>
+          <IconWrapper width={200} color="#8B5CF6">
             <SmallTitle />
           </IconWrapper>
         </View>
@@ -49,8 +49,5 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     marginBottom: 8,
-  },
-  iconWrapper: {
-    color: '#8B5CF6',
   },
 });

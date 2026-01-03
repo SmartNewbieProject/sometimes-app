@@ -7,7 +7,7 @@ export function useCommentsQuery(articleId: string) {
     queryKey: QUERY_KEYS.comments.lists(articleId),
     queryFn: async () => {
       const comments = await apis_comments.getComments({ articleId });
-      console.log('댓글 데이터 가져옴:', comments.map(c => ({
+      console.log('Comments fetched:', comments.map(c => ({
         id: c.id,
         isLiked: c.isLiked,
         likeCount: c.likeCount,

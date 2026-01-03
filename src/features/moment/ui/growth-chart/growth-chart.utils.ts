@@ -2,11 +2,11 @@ import type { DataPoint } from '@/src/shared/ui/line-chart';
 import type { ReportHistoryItem, ChartData } from '../../apis/index';
 
 const CATEGORY_LABELS = {
-  emotionalOpenness: '감정 개방성',
-  valueClarity: '가치 명확성',
-  openAttitude: '열린 태도',
-  relationshipStability: '관계 안정감',
-  conflictMaturity: '갈등 성숙도',
+  emotionalOpenness: "감정 개방성",
+  valueClarity: "가치 명확성",
+  openAttitude: "열린 태도",
+  relationshipStability: "관계 안정감",
+  conflictMaturity: "갈등 성숙도",
 } as const;
 
 export const calculateAverageFromChartData = (chartData: ChartData): number => {
@@ -45,7 +45,7 @@ export const convertReportsToChartData = (
 };
 
 const createFallbackDataPoint = (report: ReportHistoryItem): DataPoint => {
-  const growthStat = report.stats?.find(stat => stat.label === '주차별 성장');
+  const growthStat = report.stats?.find(stat => stat.label === "주차별 성장");
 
   if (growthStat && typeof growthStat.value === 'string') {
     const match = growthStat.value.match(/(\d+)단계/);

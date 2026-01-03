@@ -3,12 +3,15 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import SearchIcon from "@assets/icons/search-chat.svg";
 import type React from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { useTranslation } from "react-i18next";
+
 interface ChatSearchProps {
   keyword: string;
   setKeyword: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function ChatSearch({ keyword, setKeyword }: ChatSearchProps) {
+  const { t } = useTranslation();
   const handleResetKeyword = () => {
     setKeyword("");
   };
@@ -18,7 +21,7 @@ function ChatSearch({ keyword, setKeyword }: ChatSearchProps) {
         <SearchIcon />
         <TextInput
           value={keyword}
-          placeholder="검색"
+          placeholder={t("features.chat.ui.search.placeholder")}
           placeholderTextColor={"#AEA3D6"}
           style={styles.input}
           onChangeText={(text) => setKeyword(text)}

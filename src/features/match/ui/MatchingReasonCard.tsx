@@ -11,6 +11,7 @@ import Animated, {
     runOnUI,
     useAnimatedRef,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 
 interface MatchingReasonCardProps {
     reasons: string[];
@@ -21,6 +22,7 @@ export const MatchingReasonCard = ({
     reasons,
     keywords,
 }: MatchingReasonCardProps) => {
+    const { t } = useTranslation();
     const [isExpanded, setIsExpanded] = useState(false);
     const height = useSharedValue(0);
 
@@ -46,11 +48,11 @@ export const MatchingReasonCard = ({
             {/* Analysis Basis Header */}
             <Pressable onPress={toggleExpand} style={styles.basisHeader}>
                 <Text style={styles.basisTitle} textColor="secondary">
-                    분석 키워드
+                    {t("features.match.ui.matching_reason_card.analysis_keywords")}
                 </Text>
                 <View style={styles.expandButton}>
                     <Text style={styles.expandText} textColor="secondary">
-                        {isExpanded ? "접기" : "더보기"}
+                        {isExpanded ? t("features.match.ui.matching_reason_card.collapse") : t("features.match.ui.matching_reason_card.expand")}
                     </Text>
                     <Feather
                         name={isExpanded ? "chevron-up" : "chevron-down"}

@@ -1,8 +1,10 @@
 import { View, StyleSheet } from "react-native";
 import { ImageResource, Text } from '@shared/ui';
 import { ImageResources } from "@/src/shared/libs";
+import { useTranslation } from "react-i18next";
 
 export const PreOpening = () => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <View style={styles.foxContainer}>
@@ -15,15 +17,15 @@ export const PreOpening = () => {
       <View style={styles.contentContainer}>
         <View style={styles.textCenter}>
           <Text textColor="deepPurple" weight="semibold" size="20">
-            설레는 만남을 위해 준비 중이에요.
+            {t("features.idle-match-timer.ui.pre-open.title")}
           </Text>
           <Text weight="semibold" size="18" style={styles.subTitle}>
-            곧 다시 찾아올게요&nbsp;💜
+            {t("features.idle-match-timer.ui.pre-open.subtitle")}
           </Text>
         </View>
 
         <Text textColor="pale-purple" style={styles.infoText}>
-          썸타임은 매주 목·일 21시에 매칭이 시작돼요!
+          {t("features.idle-match-timer.ui.pre-open.info")}
         </Text>
       </View>
 

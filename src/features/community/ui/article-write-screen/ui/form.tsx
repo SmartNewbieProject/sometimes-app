@@ -1,4 +1,4 @@
-import { CommunityGuideline } from "@/src/features/community/ui";
+import { CommunityGuideline } from "../../guideline";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import {
   ScrollView,
@@ -54,7 +54,7 @@ export const ArticleWriteForm = ({
   const { profileDetails } = useAuth();
   const { data: me } = useQuery<MySimpleDetails>({
     queryKey: ["my-simple-details"],
-    queryFn: async () => (await getMySimpleDetails()).data,
+    queryFn: async () => await getMySimpleDetails(),
     enabled: !!profileDetails,
     staleTime: 5 * 60 * 1000,
   });
@@ -84,7 +84,7 @@ export const ArticleWriteForm = ({
 
   const displayName = useMemo(() => {
     const found = categories.find((c) => c.code === selectedCategory);
-    return found?.displayName ?? "카테고리";
+    return found?.displayName ?? t("features.community.ui.category_selector.default_name");
   }, [categories, selectedCategory]);
 
   const pickCategory = (code: string) => {
@@ -100,14 +100,14 @@ export const ArticleWriteForm = ({
     if (mode !== "create") return;
     Keyboard.dismiss();
     showModal({
-      title: "카테고리 선택",
+      title: t("features.community.ui.category_selector.modal_title"),
       children: (
         <Pressable
           onPress={hideModal}
           style={{ width: "100%" }}
           android_disableSound
           accessibilityRole="button"
-          accessibilityLabel="모달 닫기 영역"
+          accessibilityLabel={t("ui.모달_닫기_영역")}
         >
           <Pressable onPress={() => {}} style={{ paddingVertical: 8 }}>
             {allowedCategories.length > 0 ? (
@@ -122,7 +122,7 @@ export const ArticleWriteForm = ({
                     }}
                     style={formStyles.categoryItem}
                     accessibilityRole="button"
-                    accessibilityLabel={`${c.displayName} 카테고리 선택`}
+                    accessibilityLabel={t("features.community.ui.category_selector.select_label", { name: c.displayName })}
                   >
                     <View
                       style={[
@@ -151,7 +151,7 @@ export const ArticleWriteForm = ({
             ) : (
               <View style={formStyles.noCategoriesContainer}>
                 <Text style={formStyles.noCategoriesText}>
-                  선택 가능한 카테고리가 없습니다.
+                  {t("features.community.ui.category_selector.empty")}
                 </Text>
               </View>
             )}

@@ -51,7 +51,7 @@ export const uploadProfileImage = async (
   });
 
   devLogWithTag('Profile API', 'Upload complete');
-  return response;
+  return response as unknown as AddImageResponse;
 };
 
 export const getManagementSlots = async (): Promise<ManagementImagesResponse> => {
@@ -75,7 +75,6 @@ export const reuploadProfileImage = async (
   });
 
   devLogWithTag('Profile API', 'Reupload complete');
-  return response;
 };
 
 export const markPhotoAsReviewed = async (imageId: string): Promise<void> => {

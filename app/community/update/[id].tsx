@@ -37,7 +37,7 @@ export default function CommunityUpdateScreen() {
           </Text>
         ),
         primaryButton: {
-          text: t("global.confirm_checked"),
+          text: t("confirm_checked"),
           onClick: () => {},
         },
       });
@@ -76,7 +76,7 @@ export default function CommunityUpdateScreen() {
         queryKey: QUERY_KEYS.articles.detail(id),
       });
       showModal({
-        title: t("global.success"),
+        title: t("success"),
         children: (
           <View style={styles.modalContent}>
             <Text textColor="black" size="sm">

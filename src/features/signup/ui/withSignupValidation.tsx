@@ -1,28 +1,27 @@
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { useTranslation } from 'react-i18next';
 import { router } from "expo-router";
 import type React from "react";
 import { useEffect, useRef } from "react";
 import { type SignupForm, SignupSteps, useSignupProgress } from "../hooks";
+import i18n from "@/src/shared/libs/i18n";
 
 interface PageValidation {
   requiredFields: (keyof SignupForm)[];
   redirectTo: string;
-
-  message: string;
+  messageKey: string;
 }
 
 const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
   [SignupSteps.UNIVERSITY]: {
     requiredFields: [],
     redirectTo: "/auth/login" as const,
-
-    message: "대학 선택을 위해 먼저 기본 정보를 입력해주세요",
+    messageKey: "features.signup.ui.validators.validation_messages.university_required",
   },
   [SignupSteps.UNIVERSITY_DETAIL]: {
     requiredFields: ["name", "phone", "birthday", "gender", "universityId"],
     redirectTo: "/auth/login" as const,
-
-    message: "앞선 정보 입력에서 누락된 부분이 있어요",
+    messageKey: "features.signup.ui.validators.validation_messages.missing_previous_info",
   },
   [SignupSteps.INSTAGRAM]: {
     requiredFields: [
@@ -36,8 +35,7 @@ const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
       "studentNumber",
     ],
     redirectTo: "/auth/login" as const,
-
-    message: "앞선 정보 입력에서 누락된 부분이 있어요",
+    messageKey: "features.signup.ui.validators.validation_messages.missing_previous_info",
   },
   [SignupSteps.PROFILE_IMAGE]: {
     requiredFields: [
@@ -49,11 +47,9 @@ const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
       "departmentName",
       "grade",
       "studentNumber",
-      "instagramId",
     ],
     redirectTo: "/auth/login" as const,
-
-    message: "프로필 사진 설정을 위해 먼저 인스타그램 계정을 연동해주세요.",
+    messageKey: "features.signup.ui.validators.validation_messages.all_info_required",
   },
   [SignupSteps.INVITE_CODE]: {
     requiredFields: [
@@ -65,12 +61,10 @@ const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
       "departmentName",
       "grade",
       "studentNumber",
-      "instagramId",
       "profileImages"
     ],
     redirectTo: "/auth/login" as const,
-
-    message: "회원가입에 필요한 정보를 모두 입력하셔야 회원가입 신청이 가능해요.",
+    messageKey: "features.signup.ui.validators.validation_messages.all_info_required",
   }
 };
 
@@ -79,16 +73,16 @@ const getDetailedMessage = (
   step: SignupSteps
 ): string => {
   const fieldNames: Record<string, string> = {
-    name: "이름",
-    phone: "전화번호",
-    birthday: "생년월일",
-    gender: "성별",
-    universityId: "대학 정보",
-    departmentName: "학과명",
-    grade: "학년",
-    studentNumber: "학번",
-    instagramId: "인스타그램 계정",
-    profileImage: "프로필 사진"
+    name: i18n.t("features.signup.ui.validators.field_names.name"),
+    phone: i18n.t("features.signup.ui.validators.field_names.phone"),
+    birthday: i18n.t("features.signup.ui.validators.field_names.birthday"),
+    gender: i18n.t("features.signup.ui.validators.field_names.gender"),
+    universityId: i18n.t("features.signup.ui.validators.field_names.universityId"),
+    departmentName: i18n.t("features.signup.ui.validators.field_names.departmentName"),
+    grade: i18n.t("features.signup.ui.validators.field_names.grade"),
+    studentNumber: i18n.t("features.signup.ui.validators.field_names.studentNumber"),
+    instagramId: i18n.t("features.signup.ui.validators.field_names.instagramId"),
+    profileImage: i18n.t("features.signup.ui.validators.field_names.profileImage")
   };
 
   const missingFieldNames = missingFields
@@ -97,7 +91,7 @@ const getDetailedMessage = (
 
   console.log("missingField", missingFieldNames);
 
-  const baseMessage = PAGE_VALIDATIONS[step].message;
+  const baseMessage = i18n.t(PAGE_VALIDATIONS[step].messageKey);
 
   if (missingFields.length > 0) {
     return `${baseMessage}\n누락된 정보: ${missingFieldNames}`;
@@ -126,10 +120,6 @@ const getRedirectRoute = (missingFields: string[]): string => {
     return "/auth/signup/university-details";
   }
 
-  if (missingFields.includes("instagramId")) {
-    return "/auth/signup/instagram";
-  }
-
   if (missingFields.includes("profileImages")) {
     return "/auth/signup/profile-image"
   }
@@ -154,6 +144,7 @@ export function withSignupValidation<P extends object>(
   return function ValidatedComponent(props: P) {
     const { form } = useSignupProgress();
     const { showModal, hideModal } = useModal();
+    const { t } = useTranslation();
     const hasValidatedRef = useRef(false);
 
     useEffect(() => {
@@ -174,10 +165,10 @@ export function withSignupValidation<P extends object>(
       if (currentStep !== SignupSteps.UNIVERSITY && Object.keys(form).length === 0) {
         hasValidatedRef.current = true;
         showModal({
-          title: "알림",
-          children: "회원가입을 처음부터 시작해주세요",
+          title: t("shareds.services.common.알림"),
+          children: t("features.signup.ui.validators.validation_messages.restart_signup"),
           primaryButton: {
-            text: "확인",
+            text: t("shareds.services.common.확인"),
             onClick: () => {
               // biome-ignore lint/suspicious/noExplicitAny: <explanation>
               router.navigate("/auth/login" as any);
@@ -200,10 +191,10 @@ export function withSignupValidation<P extends object>(
         const message = getDetailedMessage(missingFields, currentStep);
 
         showModal({
-          title: "알림",
+          title: t("shareds.services.common.알림"),
           children: message,
           primaryButton: {
-            text: "확인",
+            text: t("shareds.services.common.확인"),
             onClick: () => {
               // biome-ignore lint/suspicious/noExplicitAny: <explanation>
               router.navigate(redirectRoute as any);

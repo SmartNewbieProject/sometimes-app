@@ -1,5 +1,9 @@
 {
   "select": {
     "placeholder": "선택해주세요"
+  },
+  "bottom_sheet_picker": {
+    "search_placeholder": "검색",
+    "empty_text": "결과가 없습니다"
   }
 }

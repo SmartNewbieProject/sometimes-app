@@ -8,8 +8,8 @@ export class WebInfiniteScrollStrategy implements InfiniteScrollStrategy {
   private options: InfiniteScrollOptions = {};
   private lastItemRef: React.RefObject<HTMLElement> | null = null;
   private isCallbackCalled = false;
-  private callbackTimeout: NodeJS.Timeout | null = null;
-  private observerUpdateTimeout: NodeJS.Timeout | null = null;
+  private callbackTimeout: ReturnType<typeof setTimeout> | null = null;
+  private observerUpdateTimeout: ReturnType<typeof setTimeout> | null = null;
 
   setupScroll(callback: () => void, options: InfiniteScrollOptions) {
     this.callback = callback;

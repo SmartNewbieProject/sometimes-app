@@ -1,11 +1,9 @@
 import useLiked from "@/src/features/like/hooks/use-liked";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Show } from "@/src/shared/ui";
-import { LegendList } from "@legendapp/list";
-import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import { useState } from "react";
-import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useCallback, useRef, useState } from "react";
+import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import useChatRoomList from "../../hooks/use-chat-room-list";
 
@@ -24,13 +22,46 @@ function ChatRoomList() {
   const openChatRooms = data.open;
   const lockChatRooms = data.lock;
 
+  const isFetchingRef = useRef(false);
+  const lastTriggerPosition = useRef(0);
+
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+      const currentPosition = contentOffset.y;
+      const isNearBottom = layoutMeasurement.height + currentPosition >= contentSize.height - 200;
+
+      if (
+        isNearBottom &&
+        hasNextPage &&
+        !isFetchingNextPage &&
+        !isFetchingRef.current &&
+        currentPosition > lastTriggerPosition.current
+      ) {
+        isFetchingRef.current = true;
+        lastTriggerPosition.current = currentPosition;
+
+        fetchNextPage().finally(() => {
+          isFetchingRef.current = false;
+        });
+      }
+    },
+    [hasNextPage, isFetchingNextPage, fetchNextPage]
+  );
+
   return (
-    <ScrollView>
+    <ScrollView onScroll={handleScroll} scrollEventThrottle={400}>
       {collapse && (
         <ChatLikeCollapse type={collapse.type} collapse={collapse.data} />
       )}
       <View style={{ height: 18 }} />
       <ChatSearch keyword={keyword} setKeyword={setKeyword} />
+
+      <Show when={isLoading}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={semanticColors.brand.primary} />
+        </View>
+      </Show>
 
       <Show
         when={
@@ -55,74 +86,27 @@ function ChatRoomList() {
           </Text>
         </View>
       </Show>
-      <Show when={lockChatRooms.length > 0}>
+      <Show when={!isLoading && lockChatRooms.length > 0}>
         <View style={styles.lockContainer}>
           <Text style={styles.lockTitleText}>
             {t('features.chat.ui.chat_room_list.new_match_notice')}
           </Text>
-          {Platform.OS === "web" ? (
-            <FlashList
-              data={lockChatRooms}
-              style={{ flex: 1 }}
-              estimatedItemSize={80}
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              onEndReachedThreshold={0.5}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <ChatRoomCard item={item} />}
-            />
-          ) : (
-            <LegendList
-              data={lockChatRooms}
-              estimatedItemSize={80}
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              onEndReachedThreshold={0.5}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <ChatRoomCard item={item} />}
-              recycleItems
-            />
-          )}
+          {lockChatRooms.map((item) => (
+            <ChatRoomCard key={item.id} item={item} />
+          ))}
         </View>
       </Show>
-      <Show when={openChatRooms.length > 0}>
+      <Show when={!isLoading && openChatRooms.length > 0}>
         <View style={styles.openContainer}>
           <Text style={styles.openTitleText}>{t('features.chat.ui.chat_room_list.recent_chat')}</Text>
-          {Platform.OS === "web" ? (
-            <FlashList
-              data={openChatRooms}
-              style={{ flex: 1 }}
-              estimatedItemSize={80}
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              onEndReachedThreshold={0.5}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <ChatRoomCard item={item} />}
-            />
-          ) : (
-            <LegendList
-              data={openChatRooms}
-              estimatedItemSize={80}
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              onEndReachedThreshold={0.5}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <ChatRoomCard item={item} />}
-              recycleItems
-            />
-          )}
+          {openChatRooms.map((item) => (
+            <ChatRoomCard key={item.id} item={item} />
+          ))}
+        </View>
+      </Show>
+      <Show when={isFetchingNextPage}>
+        <View style={styles.fetchingMoreContainer}>
+          <ActivityIndicator size="small" color={semanticColors.brand.primary} />
         </View>
       </Show>
     </ScrollView>
@@ -130,6 +114,16 @@ function ChatRoomList() {
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 100,
+  },
+  fetchingMoreContainer: {
+    paddingVertical: 20,
+    alignItems: "center",
+  },
   infoText: {
     color: semanticColors.text.disabled,
     fontSize: 18,

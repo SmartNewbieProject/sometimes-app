@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import colors from '@/src/shared/constants/colors';
-import { HeartPulse } from '../animations/heart-pulse';
 import type { SlideComponent } from '../types';
 
-export const SlideWelcome: SlideComponent = ({ isActive }) => {
+const { width } = Dimensions.get('window');
+
+export const SlideWelcome: SlideComponent = () => {
   const { t } = useTranslation();
 
   return (
@@ -14,7 +15,11 @@ export const SlideWelcome: SlideComponent = ({ isActive }) => {
         <Text style={styles.subtext}>{t('features.onboarding.slides.welcome.subtext')}</Text>
 
         <View style={styles.illustrationArea}>
-          <HeartPulse isActive={isActive} />
+          <Image
+            source={require('@/assets/images/onboarding/welcome_heart.png')}
+            style={styles.image}
+            resizeMode="contain"
+          />
         </View>
       </View>
     </View>
@@ -25,35 +30,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: 24,
+    paddingTop: 80, // Adjust top padding to position text correctly bellow the progress bar
   },
   content: {
     width: '100%',
-    maxWidth: 400,
     alignItems: 'center',
   },
   headline: {
-    fontSize: 24,
+    fontSize: 26,
     fontFamily: 'Pretendard-Bold',
     color: colors.black,
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 32,
+    marginBottom: 12,
+    lineHeight: 36,
   },
   subtext: {
     fontSize: 16,
     fontFamily: 'Pretendard-Regular',
-    color: colors.gray,
+    color: '#8E94A0', // Lighter gray for subtext
     textAlign: 'center',
-    marginBottom: 48,
+    marginBottom: 40,
     lineHeight: 24,
   },
   illustrationArea: {
-    width: '100%',
-    minHeight: 200,
+    width: width * 0.8,
+    height: width * 0.8,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
 });

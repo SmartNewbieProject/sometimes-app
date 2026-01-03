@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     paddingVertical: 8,
     paddingHorizontal: 12,
+
   },
   text: {
     color: colors.gray,

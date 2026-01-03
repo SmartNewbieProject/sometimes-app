@@ -33,7 +33,7 @@ function BadMbti() {
     if (!badMbti) {
       return t("apps.interest.bad_mbti.next_none");
     }
-    return t("global.next");
+    return t("next");
   })();
 
   const onNext = () => {

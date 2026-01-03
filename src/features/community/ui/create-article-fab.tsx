@@ -1,4 +1,5 @@
 import WriteIcon from "@/assets/icons/write.svg";
+import { useTranslation } from 'react-i18next';
 import { IconWrapper } from "@shared/ui/icons";
 import { router } from "expo-router";
 import { StyleSheet, TouchableOpacity } from "react-native";
@@ -27,6 +28,7 @@ const isPopularCategory = (code?: string) => {
 };
 
 export const CreateArticleFAB = () => {
+  const { t } = useTranslation();
   const { currentCategory } = useCategory();
   const { profileDetails } = useAuth();
 
@@ -54,7 +56,7 @@ export const CreateArticleFAB = () => {
       }
       style={styles.fab}
       accessibilityRole="button"
-      accessibilityLabel="새 글 작성"
+      accessibilityLabel={t("ui.새_글_작성")}
     >
       <IconWrapper>
         <WriteIcon stroke="#FFFFFF" />

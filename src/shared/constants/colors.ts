@@ -10,6 +10,7 @@ const semanticColorsInline = {
     accent: '#A892D7',
     secondary: '#9747FF',
     deep: '#49386E',
+    primaryLight: '#E2D5FF',
   },
   surface: {
     background: '#FFFFFF',
@@ -18,6 +19,8 @@ const semanticColorsInline = {
     tertiary: '#F2EDFF',
     other: '#E1D9FF',
     inverse: '#000000',
+    disabled: '#E5E7EB',
+    matchWaiting: '#D9D9D9',
   },
   text: {
     primary: '#000000',
@@ -44,8 +47,8 @@ const semanticColorsInline = {
   },
 } as const;
 
-const colors = {
-  // legacy names
+// Define base legacy colors separately for proper type inference
+const legacyColors = {
   primaryPurple: '#7A4AE2',
   strongPurple: '#49386E',
   lightPurple: '#E2D5FF',
@@ -56,14 +59,23 @@ const colors = {
   black: '#000000',
   strong: '#2F2F2F',
   gray: '#9CA3AF',
-  // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-  ['gray-300']: '#D1D5DB',
-  // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-  ['gray-600']: '#8B94A1',
+  'gray-300': '#D1D5DB',
+  'gray-600': '#8B94A1',
+  gray100: '#F3F4F6',
+  gray500: '#6B7280',
+  gray600: '#4B5563',
+  red500: '#EF4444',
   momentBackground: '#FDFCFF',
-  // Spread semantic colors for backward compatibility
+  lightGray: '#D1D5DB',
+  green: '#22C55E',
+  orange: '#F97316',
+  red: '#EF4444',
+} as const;
+
+const colors = {
+  ...legacyColors,
   ...semanticColorsInline,
-};
+} as const;
 
 export default colors;
 export { semanticColorsInline as semanticColors };

@@ -7,6 +7,7 @@ import { ContactImage } from './contact-image';
 import colors from '@/src/shared/constants/colors';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import dayUtils from '@/src/shared/libs/day';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationListProps {
   isRead?: boolean;
@@ -19,6 +20,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   type,
   onNotificationPress
 }) => {
+  const { t } = useTranslation();
   const {
     data,
     fetchNextPage,
@@ -44,7 +46,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
     try {
       return dayUtils.formatRelativeTime(dateString);
     } catch {
-      return '방금 전';
+      return t('apps.notification.index.just_now');
     }
   };
 
@@ -102,7 +104,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   if (isLoading && notifications.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>알림을 불러오는 중...</Text>
+        <Text>{t('apps.notification.index.loading')}</Text>
       </View>
     );
   }
@@ -110,7 +112,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   if (notifications.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>알림이 없습니다</Text>
+        <Text style={styles.emptyText}>{t('apps.notification.index.empty')}</Text>
       </View>
     );
   }
@@ -130,7 +132,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
         ListFooterComponent={
           isFetchingNextPage ? (
             <View style={styles.loadingMore}>
-              <Text>더 불러오는 중...</Text>
+              <Text>{t('apps.notification.index.loading_more')}</Text>
             </View>
           ) : null
         }

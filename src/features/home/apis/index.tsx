@@ -1,5 +1,6 @@
 import {axiosClient} from "@/src/shared/libs";
 import type {Preferences, SelectedPreferences} from "../../my-info/api";
+import type { BannerPosition, BannerResponse } from "../types";
 
 interface TotalMatchCountResponse {
   count: number;
@@ -45,6 +46,9 @@ export const updateUniversity = async (body: UniversityUpdateRequest) => {
 export const checkBusan = (): Promise<boolean> =>
     axiosClient.get('/temporal/is-busan');
 
+export const getBanners = (position: BannerPosition): Promise<BannerResponse[]> =>
+    axiosClient.get('/banners', { params: { position } });
+
 type HomeApiService = {
   getTotalMatchCount: () => Promise<TotalMatchCountResponse>;
   checkPreferenceFill: () => Promise<boolean>;
@@ -54,6 +58,7 @@ type HomeApiService = {
   checkExistsUniversity: () => Promise<boolean>;
   updateUniversity: (body: UniversityUpdateRequest) => Promise<void>;
   checkBusan: () => Promise<boolean>;
+  getBanners: (position: BannerPosition) => Promise<BannerResponse[]>;
 };
 
 const apis: HomeApiService = {
@@ -65,6 +70,7 @@ const apis: HomeApiService = {
   checkExistsUniversity,
   updateUniversity,
   checkBusan,
+  getBanners,
 };
 
 export default apis;

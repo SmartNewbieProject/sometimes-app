@@ -9,6 +9,7 @@ import { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useCheckPreferenceFillQuery } from "../queries";
 import { devLogWithTag } from "@/src/shared/utils";
+import { useTranslation } from "react-i18next";
 
 type CheckPreferences = {
   isLater: boolean;
@@ -16,6 +17,7 @@ type CheckPreferences = {
 };
 
 export const useRedirectPreferences = () => {
+  const { t } = useTranslation();
   const { trackEvent } = useMixpanel();
   const {
     data: isPreferenceFill,
@@ -62,25 +64,25 @@ export const useRedirectPreferences = () => {
       showModal({
         customTitle: (
           <Text size="md" weight="bold" textColor="black" style={modalStyles.title}>
-            회원님의 이상형 정보가 없어요!
+            {t("features.home.ui.preference_modal.title")}
           </Text>
         ),
         children: (
           <View style={modalStyles.container}>
             <Text size="sm" textColor="black">
-              나에게 맞는 연인 매칭을 위해
+              {t("features.home.ui.preference_modal.description_line1")}
             </Text>
             <Text size="sm" textColor="black">
-              회원님의 이상형 정보를 등록하시겠어요?
+              {t("features.home.ui.preference_modal.description_line2")}
             </Text>
           </View>
         ),
         primaryButton: {
-          text: "등록할게요!",
+          text: t("features.home.ui.preference_modal.primary_button"),
           onClick: onRedirect,
         },
         secondaryButton: {
-          text: "나중에 할게요",
+          text: t("features.home.ui.preference_modal.secondary_button"),
           onClick: confirm,
         },
       });

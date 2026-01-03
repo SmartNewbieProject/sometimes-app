@@ -37,11 +37,11 @@ const GemProductList = ({ onPurchase }: GemProductListProps) => {
     );
   }
 
-  const gemProducts = gemProductsResponse?.data || [];
+  const gemProducts = gemProductsResponse || [];
 
   return (
     <View style={styles.content}>
-      <GemStoreWidget.Provider storeName={t("features.payment.ui.gem_store.store_name")}>
+      <GemStoreWidget.Provider>
         {gemProducts
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((product, index) => (

@@ -1,0 +1,45 @@
+{
+  "phone_input": {
+    "title": "素敵な出会いまで、あと少し！",
+    "subtitle": "電話番号を教えてね。安全な認証のためだけに使うよ",
+    "placeholder": "090-1234-5678",
+    "submit_button": "認証コードを受け取る",
+    "loading": "送信中..."
+  },
+  "code_verification": {
+    "title": "もうすぐだよ！",
+    "subtitle": "{{phoneNumber}}に届いた6桁のコードを入れてね",
+    "placeholder": "000000",
+    "remaining_time": "あと {{time}}",
+    "resend": "届いてない？もう一度送る",
+    "submit_button": "出会いをはじめる",
+    "loading": "確認中...",
+    "back": "番号を変える"
+  },
+  "errors": {
+    "invalid_phone": "正しい電話番号を入力してね",
+    "sms_send_failed": "SMSの送信に失敗しちゃった。もう一度試してみて",
+    "invalid_code": "コードが違うみたい。もう一度確認してね",
+    "expired_code": "コードの有効期限が切れちゃった。再送信してね",
+    "blacklisted": "申し訳ありません。登録に制限がかかっています"
+  },
+  "profile": {
+    "title": "基本情報を教えてね",
+    "name": "お名前",
+    "name_placeholder": "山田 太郎",
+    "birthday": "生年月日",
+    "birthday_placeholder": "1998-01-15",
+    "birthday_hint": "YYYY-MM-DD形式で入力してね",
+    "gender": "性別",
+    "male": "男性",
+    "female": "女性",
+    "next": "次へ進む",
+    "back": "戻る",
+    "error": "エラーが発生しちゃった。もう一度試してみてね"
+  },
+  "login_button": "電話番号ではじめる",
+  "progress": {
+    "step1": "電話番号認証",
+    "step2": "コード確認"
+  }
+}

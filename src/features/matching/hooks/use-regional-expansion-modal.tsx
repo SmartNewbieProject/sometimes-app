@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import colors from '@/src/shared/constants/colors';
 
@@ -12,6 +13,7 @@ interface RegionalExpansionModalProps {
 
 export const useRegionalExpansionModal = () => {
 	const { showModal, hideModal } = useModal();
+	const { t } = useTranslation();
 
 	const showExpansionModal = ({
 		userRegion,
@@ -22,31 +24,31 @@ export const useRegionalExpansionModal = () => {
 		const ExpansionContent = () => (
 			<View style={styles.modalContent}>
 				<Text style={styles.bodyText}>
-					회원님 지역에선 아직 새 인연이 준비 중이에요.{'\n\n'}
-					하지만 조금만 기다려주세요!{'\n'}
-					인근 지역에는 회원님을 기다리는 설레는 인연이 있을 거예요.
+					{t('features.matching.expandRegion.modal.description')}
 				</Text>
 
 				<View style={styles.pathContainer}>
-					<Text style={styles.pathLabel}>✨ 가까운 곳부터 차근차근</Text>
+					<Text style={styles.pathLabel}>
+						{t('features.matching.expandRegion.modal.pathLabel')}
+					</Text>
 					<Text style={styles.pathText}>{expansionPath}</Text>
 				</View>
 			</View>
 		);
 
 		showModal({
-			title: '조금만 더 범위를\n넓혀볼까요?',
+			title: t('features.matching.expandRegion.modal.title'),
 			children: <ExpansionContent />,
 			buttonLayout: 'vertical',
 			secondaryButton: {
-				text: '다음에 할게요',
+				text: t('features.matching.expandRegion.modal.cta.cancel'),
 				onClick: () => {
 					hideModal();
 					onCancel();
 				},
 			},
 			primaryButton: {
-				text: '내 인연 더 찾아보기',
+				text: t('features.matching.expandRegion.modal.cta.confirm'),
 				onClick: () => {
 					hideModal();
 					onConfirm();

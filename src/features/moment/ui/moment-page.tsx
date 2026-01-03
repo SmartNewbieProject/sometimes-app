@@ -56,9 +56,9 @@ export const MomentPage = () => {
           />
 
           <MomentNavigationMenu
-            items={MOMENT_NAVIGATION_ITEMS.slice(2, 5)}
+            items={MOMENT_NAVIGATION_ITEMS.slice(3, 5)}
             itemHeight={'md'}
-            itemsPerRow={3}
+            itemsPerRow={2}
           />
         </View>
       </ScrollView>

@@ -50,7 +50,7 @@ export const ProfilePhotoRejected = () => {
           activeOpacity={0.8}
         >
           <Text size="sm" weight="normal" textColor="black">
-            대표 사진 변경하러가기
+            {t("features.idle-match-timer.ui.pending-approval.change-profile-photo-button")}
           </Text>
         </TouchableOpacity>
 

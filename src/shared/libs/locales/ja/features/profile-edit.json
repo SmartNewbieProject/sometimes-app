@@ -5,6 +5,10 @@
   },
   "ui": {
     "save_button": "保存",
+    "profile_image_cover": {
+      "default_title": "プロフィール審査中です",
+      "default_subtitle": "現在プロフィールを審査中です\n審査完了後、写真の編集が可能になります"
+    },
     "validation": {
       "empty_form": "未入力の項目があります。"
     },
@@ -98,5 +102,9 @@
         "loading": "希望を読み込み中です"
       }
     }
+  },
+  "errors": {
+    "save_failed": "プロフィールの保存に失敗しました。しばらくしてから再度お試しください。",
+    "validation_failed": "必須情報をすべて入力してください。"
   }
 }

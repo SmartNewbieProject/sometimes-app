@@ -10,10 +10,15 @@
       "complete_button": "Message sent!"
     },
     "waiting": {
-      "title_1": "{{name}}",
-      "title_2": "Until your ideal match",
+      "title_1": "{{name}}'s",
+      "title_2": "ideal match countdown",
       "description_2": "remaining",
       "description_3": "Matching starts every Thu & Fri at 9 PM!",
+      "schedule_prefix": "Every ",
+      "schedule_time": "Thu & Sun 9 PM",
+      "schedule_suffix": " matching starts!",
+      "preview_button_line1": "Profile",
+      "preview_button_line2": "Preview",
       "previous_button": "Previous matches",
       "previous_button_text": "Previous matches"
     },
@@ -82,7 +87,8 @@
     "error": {
       "highlight": "Connection",
       "message": " is unstable.\nPlease try again later."
-    }
+    },
+    "연애_스타일": "[EN] 연애 스타일"
   },
   "hooks": {
     "use-rematch": {
@@ -91,6 +97,7 @@
       "no_match": "No matches found for your conditions right now.",
       "retry_later": "More people will join soon. Please try again later!",
       "no_rematch_ticket": "No rematch tickets available."
-    }
+    },
+    "로딩": "[EN] 로딩"
   }
 }

@@ -5,6 +5,7 @@ import home from './apps/home.json';
 import interest from './apps/interest.json';
 import matching_history from './apps/matching_history.json';
 import my from './apps/my.json';
+import notification from './apps/notification.json';
 import partner from './apps/partner.json';
 import postBox from './apps/post-box.json';
 import profile_edit from './apps/profile-edit.json';
@@ -14,7 +15,8 @@ import myInfo from './apps/my-info.json';
 import test from './apps/test.json';
 import index from './apps/index.json';
 import universityVerification from './apps/university-verification.json';
-
+import moment from './apps/moment.json';
+import root from './apps/root.json';
 import featuresAdmin from './features/admin.json';
 import featuresAppleInfo from './features/apple-info.json';
 import featuresAuth from './features/auth.json';
@@ -47,13 +49,25 @@ import featureMypage from './features/mypage.json';
 import featuresMoment from './features/moment.json';
 import featuresSomemate from './features/somemate.json';
 import featuresOnboarding from './features/onboarding.json';
-
+import featuresJpAuth from './features/jp-auth.json';
+import featuresJpIdentity from './features/jp-identity.json';
+import featuresCardNews from './features/card-news.json';
+import featuresAppInstallPrompt from './features/app-install-prompt.json';
+import featuresLikeLetter from './features/like-letter.json';
+import featuresMatchReasons from './features/match-reasons.json';
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
 import widgetsForm from './widgets/form.json';
 import widgetsGemStore from './widgets/gem-store.json';
+import widgetsMbtiCard from './widgets/mbti-card.json';
 import widgetsMbtiSelector from './widgets/mbti-selector.json';
 import widgetsTicket from './widgets/ticket.json';
+import widgetsProfilePhotoCard from './widgets/profile-photo-card.json';
+import widgetsOppositeGenderPreview from './widgets/opposite-gender-preview.json';
+import widgetsPhotoStatusCard from './widgets/photo-status-card.json';
+import widgetsPhotoStatusWrapper from './widgets/photo-status-wrapper.json';
+import widgetsProfileImageGrid from './widgets/profile-image-grid.json';
+import widgetsRejectedImageWrapper from './widgets/rejected-image-wrapper.json';
 
 import sharedsBusinessInfo from './shareds/business-info.json';
 import sharedsContentSelector from './shareds/content-selector.json';
@@ -63,85 +77,103 @@ import sharedsLinkifiedText from './shareds/linkified-text.json';
 import sharedsNavigation from './shareds/navigation.json';
 import sharedsProviders from './shareds/providers.json';
 import sharedsSelect from './shareds/select.json';
+import sharedsUi from './shareds/ui.json';
 import sharedsUtils from './shareds/utils.json';
 
 const apps = {
-  auth: auth,
-  community: community,
-  home: home,
-  interest: interest,
-  matching_history: matching_history,
-  my: my,
-  partner: partner,
-  'my-info': myInfo,
-  postBox: postBox,
-  profile_edit: profile_edit,
-  purchase: purchase,
-  tabs: tabs,
-  test: test,
-  index: index,
-  'university-verification':universityVerification,
-}
+	auth: auth,
+	community: community,
+	home: home,
+	interest: interest,
+	matching_history: matching_history,
+	my: my,
+	notification: notification,
+	partner: partner,
+	'my-info': myInfo,
+	postBox: postBox,
+	profile_edit: profile_edit,
+	purchase: purchase,
+	tabs: tabs,
+	test: test,
+	index: index,
+	'university-verification': universityVerification,
+	moment: moment,
+	root: root,
+};
 
 const features = {
-  'admin': featuresAdmin,
-  'apple-info': featuresAppleInfo,
-  'auth': featuresAuth,
-  'ban-report': featuresBanReport,
-  'chat': featuresChat,
-  'commingsoon': featuresCommingsoon,
-  'community': featuresCommunity,
-  'event': featuresEvent,
-  'feedback': featuresFeedback,
-  'guide': featuresGuide,
-  'home': featuresHome,
-  'interest': featuresInterest,
-  'like': featuresLike,
-  'loading': featuresLoading,
-  'match': featuresMatch,
-  'matching': featuresMatching,
-  'matching-history': featuresMatchingHistory,
-  'my-info': featuresMyInfo,
-  'mypage': featureMypage,
-  'partner': featuresPartner,
-  'payment': featuresPayment,
-  'pass': featuresPass,
-  'post-box': featuresPostBox,
-  'pre-signup': featuresPreSignup,
-  'profile-edit': featuresProfileEdit,
-  'setting': featuresSetting,
-  'signup': featuresSignup,
-  'welcome-reward': featuresWelcomeReward,
-  'idle-match-timer': featuresIdleMatchTimer,
-  'moment': featuresMoment,
-  'somemate': featuresSomemate,
-  'onboarding': featuresOnboarding,
+	admin: featuresAdmin,
+	'apple-info': featuresAppleInfo,
+	auth: featuresAuth,
+	'ban-report': featuresBanReport,
+	chat: featuresChat,
+	commingsoon: featuresCommingsoon,
+	community: featuresCommunity,
+	event: featuresEvent,
+	feedback: featuresFeedback,
+	guide: featuresGuide,
+	home: featuresHome,
+	interest: featuresInterest,
+	like: featuresLike,
+	loading: featuresLoading,
+	match: featuresMatch,
+	matching: featuresMatching,
+	'matching-history': featuresMatchingHistory,
+	'my-info': featuresMyInfo,
+	mypage: featureMypage,
+	partner: featuresPartner,
+	payment: featuresPayment,
+	pass: featuresPass,
+	'post-box': featuresPostBox,
+	'pre-signup': featuresPreSignup,
+	'profile-edit': featuresProfileEdit,
+	setting: featuresSetting,
+	signup: featuresSignup,
+	'welcome-reward': featuresWelcomeReward,
+	'idle-match-timer': featuresIdleMatchTimer,
+	moment: featuresMoment,
+	somemate: featuresSomemate,
+	onboarding: featuresOnboarding,
+	'jp-auth': featuresJpAuth,
+	'jp-identity': featuresJpIdentity,
+	'card-news': featuresCardNews,
+	'app-install-prompt': featuresAppInstallPrompt,
+	'like-letter': featuresLikeLetter,
+	'match-reasons': featuresMatchReasons,
 };
 
 const widgets = {
-  'checkbox-label': widgetsCheckboxLabel,
-  'form': widgetsForm,
-  'gem-store': widgetsGemStore,
-  'mbti-selector': widgetsMbtiSelector,
-  'ticket': widgetsTicket,
+	'checkbox-label': widgetsCheckboxLabel,
+	form: widgetsForm,
+	'gem-store': widgetsGemStore,
+	'mbti-card': widgetsMbtiCard,
+	'mbti-selector': widgetsMbtiSelector,
+	ticket: widgetsTicket,
+	'profile-photo-card': widgetsProfilePhotoCard,
+	'opposite-gender-preview': widgetsOppositeGenderPreview,
+	'photo-status-card': widgetsPhotoStatusCard,
+	'photo-status-wrapper': widgetsPhotoStatusWrapper,
+	'profile-image-grid': widgetsProfileImageGrid,
+	'rejected-image-wrapper': widgetsRejectedImageWrapper,
 };
 
 const shareds = {
-  'business-info': sharedsBusinessInfo,
-  'content-selector': sharedsContentSelector,
-  'hooks': sharedsHooks,
-  'image-selector': sharedsImageSelector,
-  'linkified-text': sharedsLinkifiedText,
-  'navigation': sharedsNavigation,
-  'providers': sharedsProviders,
-  'select': sharedsSelect,
-  'utils': sharedsUtils,
+	'business-info': sharedsBusinessInfo,
+	'content-selector': sharedsContentSelector,
+	hooks: sharedsHooks,
+	'image-selector': sharedsImageSelector,
+	'linkified-text': sharedsLinkifiedText,
+	navigation: sharedsNavigation,
+	providers: sharedsProviders,
+	select: sharedsSelect,
+	ui: sharedsUi,
+	utils: sharedsUtils,
 };
 
 export default {
-  global,
-  apps,
-  features,
-  widgets,
-  shareds,
+	...global,
+	apps,
+	features,
+	widgets,
+	shareds,
 };

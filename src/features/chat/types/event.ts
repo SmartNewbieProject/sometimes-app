@@ -10,6 +10,7 @@ export type ChatDomainEvent =
 			payload: { success: boolean; serverMessage: Chat; tempId: string };
 	  }
 	| { type: 'MESSAGE_SEND_FAILED'; payload: { success: boolean; error: string; tempId: string } }
+	| { type: 'MESSAGE_RETRY_REQUESTED'; payload: { message: Chat; to: string } }
 
 	// 이미지 업로드 플로우
 	| {
@@ -66,11 +67,16 @@ export type ChatDomainEvent =
 	// biome-ignore lint/complexity/noBannedTypes: <explanation>
 	| { type: 'SOCKET_RECONNECTED'; payload: {} }
 	| { type: 'SOCKET_RECONNECT_FAILED'; payload: { error: string } }
+	// biome-ignore lint/complexity/noBannedTypes: <explanation>
+	| { type: 'SOCKET_CONNECTION_NEEDED'; payload: {} }
 
 	// 에러 이벤트
 	| { type: 'SOCKET_ERROR'; payload: { error: string } }
 	| { type: 'PERMISSION_ERROR'; payload: { error: string; context: 'gallery' | 'camera' } }
-	| { type: 'CONNECTION_REQUESTED'; payload: { url: string; token: string } };
+	| { type: 'CONNECTION_REQUESTED'; payload: { url: string; token: string } }
+
+	// 인증 이벤트
+	| { type: 'TOKEN_UPDATED'; payload: { token: string } };
 
 // 타입 헬퍼들
 export type ChatEventType = ChatDomainEvent['type'];
@@ -116,6 +122,7 @@ export type SocketEvents = Extract<
 	| { type: 'SOCKET_RECONNECTING' }
 	| { type: 'SOCKET_RECONNECTED' }
 	| { type: 'SOCKET_ERROR' }
+	| { type: 'SOCKET_CONNECTION_NEEDED' }
 >;
 
 export type TypingEvents = Extract<

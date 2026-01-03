@@ -3,5 +3,11 @@
     "button": {
       "contact": "연락하기"
     }
+  },
+  "services": {
+    "alert_title": "알림",
+    "no_instagram_id": "인스타그램 아이디가 없습니다.",
+    "error_title": "오류",
+    "connection_error": "인스타그램에 연결할 수 없습니다."
   }
 }

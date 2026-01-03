@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, type ViewStyle, type TextStyle } from "react-native";
-import { Text, type TextProps } from "..";
+import { Text, type TextProps } from "./text";
 
 export interface SpecialTextProps extends Omit<TextProps, "children" | "textColor" | "style"> {
   text: string;

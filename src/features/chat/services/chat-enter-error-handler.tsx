@@ -2,15 +2,16 @@ import { commonHandlers } from "@/src/shared/services/common-error-handler";
 
 import { Text } from "react-native";
 import type { ErrorHandler } from "../../../types/error-handler";
+import i18n from "@/src/shared/libs/i18n";
 
 const handleAuth: ErrorHandler = {
   handle: (error, { router, showModal }) => {
-    const errorMessage = "인증에 실패하였습니다..";
+    const errorMessage = i18n.t("features.chat.services.error_handlers.auth_failed");
     showModal({
-      title: "알림",
+      title: i18n.t("features.chat.services.error_handlers.notification"),
       children: <Text>{errorMessage}</Text>,
       primaryButton: {
-        text: "로그인",
+        text: i18n.t("features.chat.services.error_handlers.login"),
         onClick: () => router.push("/auth/login"),
       },
     });
@@ -19,16 +20,16 @@ const handleAuth: ErrorHandler = {
 
 const handlePayment: ErrorHandler = {
   handle: (error, { router, showModal }) => {
-    const errorMessage = "재화가 부족합니다";
+    const errorMessage = i18n.t("features.chat.services.error_handlers.insufficient_funds");
     showModal({
-      title: "알림",
+      title: i18n.t("features.chat.services.error_handlers.notification"),
       children: <Text>{errorMessage}</Text>,
       primaryButton: {
-        text: "구매하러 가기",
+        text: i18n.t("features.chat.services.error_handlers.go_to_purchase"),
         onClick: () => router.push("/purchase/gem-store"),
       },
       secondaryButton: {
-        text: "취소",
+        text: i18n.t("features.chat.services.error_handlers.cancel"),
         onClick: () => {},
       },
     });
@@ -37,12 +38,12 @@ const handlePayment: ErrorHandler = {
 
 const handleNotFound: ErrorHandler = {
   handle: (error, { router, showModal }) => {
-    const errorMessage = "채팅방을 찾을 수 없습니다.";
+    const errorMessage = i18n.t("features.chat.services.error_handlers.chat_room_not_found");
     showModal({
-      title: "알림",
+      title: i18n.t("features.chat.services.error_handlers.notification"),
       children: <Text>{errorMessage}</Text>,
       primaryButton: {
-        text: "확인",
+        text: i18n.t("features.chat.services.error_handlers.confirm"),
         onClick: () => {},
       },
     });

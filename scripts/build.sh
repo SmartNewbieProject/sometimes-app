@@ -103,6 +103,7 @@ load_env_file() {
     echo -e "  API_URL: ${GREEN}${EXPO_PUBLIC_API_URL:-NOT SET}${NC}"
     echo -e "  MERCHANT_ID: ${GREEN}${EXPO_PUBLIC_MERCHANT_ID:-NOT SET}${NC}"
     echo -e "  CHANNEL_KEY: ${GREEN}${EXPO_PUBLIC_CHANNEL_KEY:0:20}...${NC}"
+    echo -e "  APPLE_ENV: ${GREEN}${EXPO_PUBLIC_APPLE_ENVIRONMENT:-NOT SET}${NC}"
 
     if [ -z "$EXPO_PUBLIC_API_URL" ]; then
         echo ""
@@ -158,8 +159,8 @@ select_environment() {
     echo ""
     echo -e "${BOLD}Select environment:${NC}"
     echo "  1) Production (Store Release - TestFlight only)"
-    echo "  2) Ad-hoc (Production env + USB Install)"
-    echo "  3) Preview (Internal Testing)"
+    echo "  2) Preview + Production ENV (USB Install) ${GREEN}← 권장${NC}"
+    echo "  3) Preview (Internal Testing - Dev Server)"
     echo "  4) Development (Dev Client)"
     echo ""
     read -p "Enter choice [1-4]: " env_choice
@@ -168,22 +169,29 @@ select_environment() {
         1)
             PROFILE="production"
             ENV_FILE=".env.production"
+            APPLE_ENV="production"
             ;;
         2)
-            PROFILE="adhoc"
+            PROFILE="preview"
             ENV_FILE=".env.production"
+            APPLE_ENV="production"
             CAN_INSTALL_TO_DEVICE=true
             ;;
         3)
             PROFILE="preview"
             ENV_FILE=".env.preview"
+            APPLE_ENV="sandbox"
+            CAN_INSTALL_TO_DEVICE=true
             ;;
         4)
             PROFILE="development"
             ENV_FILE=".env"
+            APPLE_ENV="sandbox"
             ;;
         *) print_error "Invalid choice"; exit 1 ;;
     esac
+
+    export EXPO_PUBLIC_APPLE_ENVIRONMENT="$APPLE_ENV"
 }
 
 # Select clean build option
@@ -200,6 +208,32 @@ select_clean_build() {
         2) CLEAN_BUILD=true ;;
         *) print_error "Invalid choice"; exit 1 ;;
     esac
+}
+
+# Run TypeScript type check
+run_typecheck() {
+    print_step "Running TypeScript type check..."
+    echo ""
+
+    if npm run typecheck 2>&1; then
+        print_success "Type check passed! ✓"
+        echo ""
+    else
+        echo ""
+        print_error "Type check failed!"
+        echo ""
+        echo -e "${YELLOW}타입 에러를 수정한 후 다시 빌드해주세요.${NC}"
+        echo -e "${CYAN}팁: npm run typecheck 로 에러를 확인할 수 있습니다.${NC}"
+        echo ""
+
+        read -p "타입 에러를 무시하고 계속 빌드하시겠습니까? (권장하지 않음) [y/N]: " ignore_typecheck
+        if [[ ! $ignore_typecheck =~ ^[Yy]$ ]]; then
+            notify "Build Cancelled ⚠️" "타입 에러로 인해 빌드가 취소되었습니다." "Basso"
+            exit 1
+        fi
+        print_warning "타입 에러를 무시하고 빌드를 계속합니다..."
+        echo ""
+    fi
 }
 
 # Perform clean build
@@ -297,12 +331,20 @@ confirm_build() {
         clean_mode="${YELLOW}Clean (prebuild)${NC}"
     fi
 
+    local apple_env_display="${GREEN}$APPLE_ENV${NC}"
+    if [ "$APPLE_ENV" = "production" ]; then
+        apple_env_display="${GREEN}production${NC} (App Store/TestFlight)"
+    else
+        apple_env_display="${YELLOW}sandbox${NC} (개발/테스트)"
+    fi
+
     echo ""
     echo -e "${CYAN}============================================================${NC}"
     echo -e "${BOLD}Build Configuration:${NC}"
     echo -e "  Platform:    ${GREEN}$PLATFORM${NC}"
     echo -e "  Profile:     ${GREEN}$PROFILE${NC}"
     echo -e "  Env File:    ${GREEN}$ENV_FILE${NC}"
+    echo -e "  Apple IAP:   $apple_env_display"
     echo -e "  Output:      ${GREEN}$OUTPUT_TYPE${NC}"
     echo -e "  Build Mode:  $clean_mode"
     echo -e "${CYAN}============================================================${NC}"
@@ -318,6 +360,15 @@ confirm_build() {
 # Build for iOS
 build_ios() {
     print_step "Building iOS ($PROFILE)..."
+
+    # Workaround: Ruby 3.4.x FileUtils.mkdir_p bug with symlinked directories
+    # Creates the dated Archives subdirectory to prevent Fastlane gym failure
+    local archives_link="$HOME/Library/Developer/Xcode/Archives"
+    if [ -L "$archives_link" ]; then
+        local archives_target=$(readlink "$archives_link")
+        local dated_dir="$archives_target/$(date +%Y-%m-%d)"
+        mkdir -p "$dated_dir" 2>/dev/null || true
+    fi
 
     # Ad-hoc 빌드는 .env.production 사용
     local env_file="$ENV_FILE"
@@ -486,8 +537,23 @@ main() {
 
     confirm_build
 
+    # Run type check before build
+    run_typecheck
+
     # Perform clean build if requested
     perform_clean_build
+
+    echo ""
+    print_step "Syncing build version with EAS..."
+    local sync_platform="$PLATFORM"
+    if [ "$PLATFORM" = "all" ]; then
+        sync_platform="all"
+    fi
+    if eas build:version:sync --platform "$sync_platform" 2>/dev/null; then
+        print_success "Build version synced with EAS"
+    else
+        print_warning "Version sync skipped (may require remote build history)"
+    fi
 
     echo ""
     print_step "Starting build process..."
@@ -549,6 +615,7 @@ main() {
     fi
 
     # Prompt to install to connected device (iOS only)
+    # Skip for production builds (they can't be installed via USB)
     if [ "$PLATFORM" = "ios" ] || [ "$PLATFORM" = "all" ]; then
         # Check if this build can be installed via USB
         if [ "$CAN_INSTALL_TO_DEVICE" = true ] || [ "$PROFILE" = "preview" ] || [ "$PROFILE" = "development" ]; then

@@ -2,6 +2,7 @@
 
 .idea
 .serena
+.claude/
 
 # Environment variables (IMPORTANT: Never commit these!)
 .env
@@ -71,3 +72,17 @@ review.md
 builds/
 
 .env.local
+
+# Test images (개발용 샘플, 실제 신분증 이미지는 커밋 금지)
+docs/test-images/*.png
+docs/test-images/*.jpg
+docs/test-images/*.jpeg
+docs/test-images/*.webp
+!docs/test-images/README.md
+!docs/test-images/SOURCES.md
+
+# Backup files
+*.bak
+*.bak2
+*.bak3
+*.backup

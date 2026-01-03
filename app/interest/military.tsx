@@ -13,6 +13,7 @@ import Interest from "@features/interest";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const { hooks, services, queries } = Interest;
 const { useInterestStep, useInterestForm } = hooks;
@@ -29,14 +30,15 @@ export default function MilitarySelectionScreen() {
   const [formSubmitLoading, setFormSubmitLoading] = useState(false);
   const { my } = useAuth();
   const { showErrorModal } = useModal();
+  const { t } = useTranslation();
   const {
-    data: preferencesArray = [{ typeName: "", options: [] }],
+    data: preferencesArray = [{ typeCode: "", typeName: "", options: [] }],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
   const preferences: Preferences =
     preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.MILITARY_PREFERENCE
+      (item) => item.typeCode === PreferenceKeys.MILITARY_PREFERENCE
     ) ?? preferencesArray[0];
   const index = preferences?.options.findIndex(
     (item) => item.id === militaryPreference?.id
@@ -63,14 +65,14 @@ export default function MilitarySelectionScreen() {
     await tryCatch(
       async () => {
         const emptyFields = [];
-        if (!form.age) emptyFields.push("선호 나이");
-        if (!form.drinking) emptyFields.push("음주");
-        if (!form.smoking) emptyFields.push("흡연");
-        if (!form.tattoo) emptyFields.push("문신");
-        if (!form.personality || form.personality.length === 0) emptyFields.push("성격");
+        if (!form.age) emptyFields.push(t("features.interest.validation.field_labels.preferred_age"));
+        if (!form.drinking) emptyFields.push(t("features.interest.validation.field_labels.drinking"));
+        if (!form.smoking) emptyFields.push(t("features.interest.validation.field_labels.smoking"));
+        if (!form.tattoo) emptyFields.push(t("features.interest.validation.field_labels.tattoo"));
+        if (!form.personality || form.personality.length === 0) emptyFields.push(t("features.interest.validation.field_labels.personality"));
 
         if (emptyFields.length > 0) {
-          const message = `다음 정보를 입력해주세요: ${emptyFields.join(", ")}`;
+          const message = t("features.interest.validation.required_fields", { fields: emptyFields.join(", ") });
           console.error("Validation failed:", { emptyFields, form });
           throw new Error(message);
         }
@@ -91,17 +93,18 @@ export default function MilitarySelectionScreen() {
         router.navigate("/interest/done");
         setFormSubmitLoading(false);
       },
-      ({ error }) => {
+      (serverError: unknown) => {
+        const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
         console.error("Preference save error:", {
-          error,
-          errorMessage: error?.message,
-          errorString: error?.error,
-          status: error?.status,
-          statusCode: error?.statusCode,
+          error: serverError,
+          errorMessage: err?.message,
+          errorString: err?.error,
+          status: err?.status,
+          statusCode: err?.statusCode,
           form,
         });
 
-        const errorMessage = error?.message || error?.error || "선호 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        const errorMessage = err?.message || err?.error || t("features.interest.errors.save_failed");
         showErrorModal(errorMessage, "error");
         setFormSubmitLoading(false);
       }
@@ -134,7 +137,7 @@ export default function MilitarySelectionScreen() {
 
         <View style={styles.wrapper}>
           <Loading.Lottie
-            title="옵션을 불러오고 있어요"
+            title={t("features.interest.ui.loading.loading_options")}
             loading={optionsLoading}
           >
             <StepSlider

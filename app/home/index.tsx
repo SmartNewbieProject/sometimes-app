@@ -42,6 +42,7 @@ import { ImageResource } from "@ui/image-resource";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import Constants from 'expo-constants';
 
 const { ui, queries, hooks } = Home;
 const {
@@ -69,7 +70,6 @@ const HomeScreen = () => {
   const { trackEventAction } = Event.hooks.useEventAnalytics("home");
   const { my, profileDetails } = useAuth();
   const queryClient = useQueryClient();
-  const [isSlideScrolling, setSlideScrolling] = useState(false);
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
   // const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
@@ -98,10 +98,6 @@ const HomeScreen = () => {
 
   // const visibleLikeGuide =
   //   step < 11 && !tutorialFinished && !hasFirstLoading && hasFirst;
-
-  const onScrollStateChange = (bool: boolean) => {
-    setSlideScrolling(bool);
-  };
 
   const onNavigateGemStore = () => {
     mixpanelAdapter.track("onNavigateGemStore", {
@@ -189,7 +185,6 @@ const HomeScreen = () => {
       />
 
       <ScrollView
-        scrollEnabled={!isSlideScrolling}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
       >
@@ -221,13 +216,19 @@ const HomeScreen = () => {
         </View>
         <View>
           <CommunityAnnouncement />
-          <ReviewSlide onScrollStateChange={onScrollStateChange} />
+          <ReviewSlide />
         </View>
         <View style={styles.tipSection}>
           <TipAnnouncement />
         </View>
 
         <BusinessInfo />
+
+        <View style={styles.versionContainer}>
+          <Text style={styles.versionText}>
+            v{Constants.expoConfig?.version}
+          </Text>
+        </View>
       </ScrollView>
 
       <BottomNavigation />
@@ -259,6 +260,16 @@ const styles = StyleSheet.create({
   },
   tipSection: {
     marginVertical: 25,
+  },
+  versionContainer: {
+    alignItems: 'center',
+    paddingVertical: 16,
+    marginTop: 8,
+  },
+  versionText: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    fontWeight: '400',
   },
 });
 

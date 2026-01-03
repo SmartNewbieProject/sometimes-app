@@ -1,0 +1,112 @@
+{
+  "card": {
+    "section_title": "本人確認",
+    "badge": {
+      "required": "あと少し",
+      "reviewing": "確認中",
+      "manual_review": "確認中",
+      "verified": "完了 ✓",
+      "rejected": "再提出"
+    },
+    "not_verified": {
+      "title": "あと一歩で準備完了！",
+      "description": "本人確認をすると、素敵な出会いが始められます"
+    },
+    "pending": {
+      "title": "審査中です",
+      "description": "本人確認書類を確認しています"
+    },
+    "manual_review": {
+      "title": "手動確認中",
+      "description": "担当者が書類を確認しています"
+    },
+    "approved": {
+      "title": "本人確認完了",
+      "description": "本人確認が完了しました"
+    },
+    "rejected": {
+      "title": "本人確認ができませんでした",
+      "description": "書類を再提出してください"
+    },
+    "submitted_at": "提出日時: {{date}}"
+  },
+  "select": {
+    "title": "本人確認をしましょう",
+    "subtitle": "安心・安全な出会いのために\n簡単な本人確認をお願いします",
+    "notice": "🔒 あなたの情報は安全に保護されます。書類は本人確認のみに使用し、第三者には共有しません。"
+  },
+  "document": {
+    "health_insurance": {
+      "title": "健康保険証",
+      "description": "国民健康保険証、社会保険証など"
+    },
+    "drivers_license": {
+      "title": "運転免許証",
+      "description": "有効期限内の運転免許証"
+    }
+  },
+  "capture": {
+    "guide_text": "書類を枠内に合わせてください",
+    "permission": {
+      "title": "カメラの許可が必要です",
+      "description": "本人確認書類を撮影するためにカメラへのアクセスを許可してください",
+      "button": "カメラを許可する"
+    },
+    "tips": {
+      "title": "撮影のコツ ✨",
+      "bright": "明るい場所で撮影",
+      "clear": "文字がはっきり見えるように",
+      "corners": "四隅が枠内に入るように"
+    },
+    "hide": {
+      "title": "隠すべき情報",
+      "insurance_number": "保険者番号",
+      "symbol": "記号・番号",
+      "qr_code": "QRコード",
+      "license_number": "免許証番号",
+      "reference_number": "照会番号"
+    }
+  },
+  "confirm": {
+    "title": "書類を確認してください",
+    "subtitle": "撮影した書類が鮮明に写っているか確認してください",
+    "validating": "確認中...",
+    "valid": "画像が確認されました",
+    "invalid": "画像を確認できませんでした",
+    "quality": "画質: {{quality}}",
+    "document_type": "書類タイプ",
+    "validate_button": "画像を確認する",
+    "submit_button": "提出する",
+    "submitting": "提出中...",
+    "retake_button": "再撮影する",
+    "validation_error": "画像の確認に失敗しました",
+    "submit_error": "提出に失敗しました。もう一度お試しください"
+  },
+  "status": {
+    "submitted_at": "提出日時",
+    "document_type": "書類タイプ",
+    "go_home": "ホームに戻る",
+    "pending": {
+      "title": "審査中です",
+      "description": "本人確認書類を確認しています。\nしばらくお待ちください。",
+      "notice": "審査には通常24時間以内に完了いたします。結果はプッシュ通知でお知らせします。"
+    },
+    "rejected": {
+      "title": "本人確認ができませんでした",
+      "description": "書類を再提出してください",
+      "reason_title": "却下理由",
+      "resubmit": "📷 再提出する",
+      "change_document": "別の書類で確認する",
+      "help_title": "再提出時の注意点",
+      "help_1": "明るい場所で撮影してください",
+      "help_2": "書類全体が写るようにしてください",
+      "help_3": "有効期限内の書類をご使用ください"
+    },
+    "approved": {
+      "title": "本人確認が完了しました",
+      "description": "これでチャットを開始できます",
+      "celebration": "素敵な出会いをお楽しみください！",
+      "start_chat": "💬 チャットを始める"
+    }
+  }
+}

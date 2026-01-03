@@ -27,13 +27,13 @@ export default function MilitarySelectionScreen() {
   const { my } = useAuth();
   const { showErrorModal } = useModal();
   const {
-    data: preferencesArray = [{ typeName: "", options: [] }],
+    data: preferencesArray = [{ typeCode: "", typeName: "", options: [] }],
     isLoading: optionsLoading,
   } = usePreferenceOptionsQuery();
 
   const preferences: Preferences =
     preferencesArray?.find(
-      (item) => item.typeName === PreferenceKeys.MILITARY_STATUS
+      (item) => item.typeCode === PreferenceKeys.MILITARY_STATUS
     ) ?? preferencesArray[0];
   const index = preferences?.options.findIndex(
     (item) => item.id === militaryStatus?.id
@@ -60,16 +60,16 @@ export default function MilitarySelectionScreen() {
     await tryCatch(
       async () => {
         const emptyFields = [];
-        if (!form.drinking) emptyFields.push("음주");
-        if (!form.smoking) emptyFields.push("흡연");
-        if (!form.tattoo) emptyFields.push("문신");
-        if (!form.personality || form.personality.length === 0) emptyFields.push("성격");
-        if (!form.datingStyleIds || form.datingStyleIds.length === 0) emptyFields.push("데이트 스타일");
-        if (!form.interestIds || form.interestIds.length === 0) emptyFields.push("관심사");
-        if (!form.mbti) emptyFields.push("MBTI");
+        if (!form.drinking) emptyFields.push(t("apps.my-info.fields.drinking"));
+        if (!form.smoking) emptyFields.push(t("apps.my-info.fields.smoking"));
+        if (!form.tattoo) emptyFields.push(t("apps.my-info.fields.tattoo"));
+        if (!form.personality || form.personality.length === 0) emptyFields.push(t("apps.my-info.fields.personality"));
+        if (!form.datingStyleIds || form.datingStyleIds.length === 0) emptyFields.push(t("apps.my-info.fields.dating_style"));
+        if (!form.interestIds || form.interestIds.length === 0) emptyFields.push(t("apps.my-info.fields.interests"));
+        if (!form.mbti) emptyFields.push(t("apps.my-info.fields.mbti"));
 
         if (emptyFields.length > 0) {
-          const message = `다음 정보를 입력해주세요: ${emptyFields.join(", ")}`;
+          const message = t("apps.my-info.validation.required_fields", { fields: emptyFields.join(", ") });
           console.error("Validation failed:", { emptyFields, form });
           throw new Error(message);
         }
@@ -91,17 +91,18 @@ export default function MilitarySelectionScreen() {
         router.navigate("/my-info/done");
         setFormSubmitLoading(false);
       },
-      ({ error }) => {
+      (serverError: unknown) => {
+        const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
         console.error("Profile save error:", {
-          error,
-          errorMessage: error?.message,
-          errorString: error?.error,
-          status: error?.status,
-          statusCode: error?.statusCode,
+          error: serverError,
+          errorMessage: err?.message,
+          errorString: err?.error,
+          status: err?.status,
+          statusCode: err?.statusCode,
           form,
         });
 
-        const errorMessage = error?.message || error?.error || "프로필 저장에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        const errorMessage = err?.message || err?.error || t("apps.my-info.errors.profile_save_failed");
         showErrorModal(errorMessage, "error");
         setFormSubmitLoading(false);
       }

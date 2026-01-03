@@ -75,5 +75,20 @@
       "female": "여성",
       "male": "남성"
     }
+  },
+  "device": {
+    "storage": {
+      "toast": "⚠️ 저장 공간이 부족해요",
+      "insufficient_title": "저장 공간 부족",
+      "insufficient_description": "사진을 저장하려면 최소 {{required}}MB의 공간이 필요합니다.\n현재 사용 가능: {{available}}"
+    },
+    "memory": {
+      "toast": "⚠️ 메모리가 부족해요",
+      "warning_title": "메모리 부족",
+      "warning_description": "기기의 메모리가 부족합니다.\n다른 앱을 종료하고 다시 시도해주세요."
+    }
+  },
+  "common": {
+    "confirm": "확인"
   }
 }

@@ -89,7 +89,7 @@ export default function PhotoManagementPage() {
               onMarkAsReviewed={handleMarkAsReviewed}
             >
               <ImageSelector
-                ref={(el) => (imageSelectorRefs.current[0] = el)}
+                ref={(el) => { imageSelectorRefs.current[0] = el; }}
                 size="lg"
                 value={getSlotImage(0)?.url}
                 onChange={(value) => handleImageChange(0, value)}
@@ -109,7 +109,7 @@ export default function PhotoManagementPage() {
               onMarkAsReviewed={handleMarkAsReviewed}
             >
               <ImageSelector
-                ref={(el) => (imageSelectorRefs.current[1] = el)}
+                ref={(el) => { imageSelectorRefs.current[1] = el; }}
                 size="sm"
                 value={getSlotImage(1)?.url}
                 onChange={(value) => handleImageChange(1, value)}
@@ -127,7 +127,7 @@ export default function PhotoManagementPage() {
               onMarkAsReviewed={handleMarkAsReviewed}
             >
               <ImageSelector
-                ref={(el) => (imageSelectorRefs.current[2] = el)}
+                ref={(el) => { imageSelectorRefs.current[2] = el; }}
                 size="sm"
                 value={getSlotImage(2)?.url}
                 onChange={(value) => handleImageChange(2, value)}

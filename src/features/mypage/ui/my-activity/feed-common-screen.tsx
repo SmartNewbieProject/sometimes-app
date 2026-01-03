@@ -74,17 +74,18 @@ export default function FeedListScreen({ title, type, pageSize = 10 }: Props) {
                 await apis.articles.deleteArticle(id);
                 await invalidateAndRefetch();
               },
-              ({ error }) => {
+              (serverError: unknown) => {
+                const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
                 console.error("Article deletion error:", {
-                  error,
-                  errorMessage: error?.message,
-                  errorString: error?.error,
-                  status: error?.status,
-                  statusCode: error?.statusCode,
+                  error: serverError,
+                  errorMessage: err?.message,
+                  errorString: err?.error,
+                  status: err?.status,
+                  statusCode: err?.statusCode,
                   articleId: id,
                 });
 
-                const errorMessage = error?.message || error?.error || "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+                const errorMessage = err?.message || err?.error || t("common.게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요");
                 showErrorModal(errorMessage, "error");
               }
             ),

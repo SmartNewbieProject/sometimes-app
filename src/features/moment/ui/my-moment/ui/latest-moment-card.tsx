@@ -100,7 +100,7 @@ export const LatestMomentCard: React.FC<LatestMomentCardProps> = ({
             <Image
               source={{ uri: reportData.imageUrl }}
               style={styles.image}
-              contentFit="cover"
+              resizeMode="cover"
             />
           </View>
         )}

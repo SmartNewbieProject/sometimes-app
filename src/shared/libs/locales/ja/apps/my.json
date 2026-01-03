@@ -15,7 +15,8 @@
     "title": "またお会いしましょう",
     "textarea_placeholder": "その他の理由を入力してください",
     "button_prev": "戻る",
-    "button_next": "サービスを退会する"
+    "button_next": "サービスを退会する",
+    "error": "退会に失敗しました。しばらくしてから再度お試しください。"
   },
   "info": {
     "dating_style": {

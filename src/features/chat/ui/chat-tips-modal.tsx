@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ChatTip } from '../apis';
+import { useTranslation } from 'react-i18next';
 
 interface ChatTipsModalProps {
 	visible: boolean;
@@ -33,6 +34,7 @@ function ChatTipsModal({
 	onRefresh,
 }: ChatTipsModalProps) {
 	const insets = useSafeAreaInsets();
+	const { t } = useTranslation();
 
 	const handleSelectTip = (question: string) => {
 		onSelectTip(question);
@@ -51,17 +53,17 @@ function ChatTipsModal({
 					<View style={styles.header}>
 						<View style={styles.headerLeft}>
 							<BulbIcon width={24} height={24} />
-							<Text style={styles.headerTitle}>대화 주제 추천</Text>
+							<Text style={styles.headerTitle}>{t('features.chat.ui.tips_modal.header_title')}</Text>
 						</View>
 						<View style={styles.aiBadge}>
-							<Text style={styles.aiBadgeText}>AI 추천</Text>
+							<Text style={styles.aiBadgeText}>{t('features.chat.ui.tips_modal.ai_badge')}</Text>
 						</View>
 					</View>
 
 					{isLoading ? (
 						<View style={styles.loadingContainer}>
 							<ActivityIndicator size="small" color={semanticColors.brand.primary} />
-							<Text style={styles.loadingText}>추천 질문을 불러오는 중...</Text>
+							<Text style={styles.loadingText}>{t('features.chat.ui.tips_modal.loading')}</Text>
 						</View>
 					) : (
 						<View style={styles.tipsContainer}>
@@ -84,11 +86,11 @@ function ChatTipsModal({
 						disabled={isLoading}
 					>
 						<ReloadingIcon width={20} height={20} />
-						<Text style={styles.refreshButtonText}>다시 추천받기</Text>
+						<Text style={styles.refreshButtonText}>{t('features.chat.ui.tips_modal.refresh_button')}</Text>
 					</TouchableOpacity>
 
 					<Text style={styles.footerText}>
-						프로필과 이상형 정보를 기반으로 추천해요
+						{t('features.chat.ui.tips_modal.footer_text')}
 					</Text>
 				</View>
 			</Pressable>

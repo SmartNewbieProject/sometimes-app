@@ -72,10 +72,9 @@ export default function MyInfoDoneScreen() {
 
         <View style={styles.buttonContainer}>
           <Button
-            flex="flex-1"
             variant="primary"
             size="md"
-            width={"full"}
+            width="full"
             onPress={() => {
               mixpanelAdapter.track("Profile_Done", {
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,

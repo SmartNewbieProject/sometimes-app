@@ -151,7 +151,7 @@ export default function PhotoSlider({
     },
   });
 
-  const watermarkText = `${profileDetails?.name}${profileDetails?.universityDetails.name}${my?.phoneNumber}`;
+  const watermarkText = `${profileDetails?.name}${profileDetails?.universityDetails?.name ?? ''}${my?.phoneNumber}`;
 
   return (
     <Modal

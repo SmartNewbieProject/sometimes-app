@@ -3,305 +3,321 @@ import { AppState, AppStateStatus } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
+
+const getAuthMethod = () => useSignupProgress.getState().authMethod;
 
 interface SignupSessionData {
-  startTime: number;
-  isAnonymous: boolean;
-  totalTime: number;
-  milestones: {
-    app_launch: number;
-    first_interaction?: number;
-    signup_started?: number;
-    profile_image_uploaded?: number;
-    interest_selected?: number;
-    signup_completed?: number;
-  };
-  interactions: {
-    action: string;
-    timestamp: number;
-    duration?: number;
-  }[];
+	startTime: number;
+	isAnonymous: boolean;
+	totalTime: number;
+	milestones: {
+		app_launch: number;
+		first_interaction?: number;
+		signup_started?: number;
+		profile_image_uploaded?: number;
+		interest_selected?: number;
+		signup_completed?: number;
+	};
+	interactions: {
+		action: string;
+		timestamp: number;
+		duration?: number;
+	}[];
 }
 
 interface SignupSessionResult {
-  totalTime: number;
-  milestones: SignupSessionData['milestones'];
-  completionRate: number;
-  dropOffPoints: string[];
-  timePerMilestone: Record<string, number>;
+	totalTime: number;
+	milestones: SignupSessionData['milestones'];
+	completionRate: number;
+	dropOffPoints: string[];
+	timePerMilestone: Record<string, number>;
 }
 
 export const useSignupSession = () => {
-  const sessionRef = useRef<SignupSessionData>({
-    startTime: 0,
-    isAnonymous: true,
-    totalTime: 0,
-    milestones: {
-      app_launch: 0
-    },
-    interactions: []
-  });
+	const sessionRef = useRef<SignupSessionData>({
+		startTime: 0,
+		isAnonymous: true,
+		totalTime: 0,
+		milestones: {
+			app_launch: 0,
+		},
+		interactions: [],
+	});
 
-  const backgroundTimeRef = useRef<number>(0);
+	const backgroundTimeRef = useRef<number>(0);
 
-  // 회원가입 세션 시작
-  const startSignupSession = useCallback(() => {
-    const startTime = Date.now();
+	// 회원가입 세션 시작
+	const startSignupSession = useCallback(() => {
+		const startTime = Date.now();
 
-    sessionRef.current = {
-      startTime,
-      isAnonymous: true,
-      totalTime: 0,
-      milestones: {
-        app_launch: startTime
-      },
-      interactions: [{
-        action: 'app_launch',
-        timestamp: startTime
-      }]
-    };
+		sessionRef.current = {
+			startTime,
+			isAnonymous: true,
+			totalTime: 0,
+			milestones: {
+				app_launch: startTime,
+			},
+			interactions: [
+				{
+					action: 'app_launch',
+					timestamp: startTime,
+				},
+			],
+		};
 
-    // 세션 데이터 저장
-    AsyncStorage.setItem('signup_session', JSON.stringify(sessionRef.current));
+		// 세션 데이터 저장
+		AsyncStorage.setItem('signup_session', JSON.stringify(sessionRef.current));
 
-    // 회원가입 세션 시작 이벤트
-    mixpanelAdapter.track(MIXPANEL_EVENTS.ONBOARDING_STARTED, {
-      is_anonymous_user: true,
-      session_start_time: startTime,
-      env: __DEV__ ? 'development' : 'production'
-    });
+		// 회원가입 세션 시작 이벤트
+		mixpanelAdapter.track(MIXPANEL_EVENTS.ONBOARDING_STARTED, {
+			is_anonymous_user: true,
+			session_start_time: startTime,
+			env: __DEV__ ? 'development' : 'production',
+		});
 
-    console.log('📝 회원가입 세션 시작:', new Date(startTime).toISOString());
-  }, []);
+		console.log('📝 회원가입 세션 시작:', new Date(startTime).toISOString());
+	}, []);
 
-  // 마일스톤 기록
-  const recordMilestone = useCallback((milestone: keyof SignupSessionData['milestones'], additionalData?: any) => {
-    const currentTime = Date.now();
+	// 마일스톤 기록
+	const recordMilestone = useCallback(
+		(milestone: keyof SignupSessionData['milestones'], additionalData?: any) => {
+			const currentTime = Date.now();
 
-    if (!sessionRef.current.milestone) {
-      sessionRef.current.startTime = currentTime;
-      sessionRef.current.milestones.app_launch = currentTime;
-    }
+			if (!sessionRef.current.startTime) {
+				sessionRef.current.startTime = currentTime;
+				(sessionRef.current.milestones as Record<string, number>).app_launch = currentTime;
+			}
 
-    sessionRef.current.milestones[milestone] = currentTime;
+			(sessionRef.current.milestones as Record<string, number>)[milestone] = currentTime;
 
-    // 상호작용 기록
-    sessionRef.current.interactions.push({
-      action: milestone,
-      timestamp: currentTime,
-      duration: currentTime - sessionRef.current.startTime
-    });
+			// 상호작용 기록
+			sessionRef.current.interactions.push({
+				action: milestone,
+				timestamp: currentTime,
+				duration: currentTime - sessionRef.current.startTime,
+			});
 
-    // 세션 데이터 업데이트
-    AsyncStorage.setItem('signup_session', JSON.stringify(sessionRef.current));
+			// 세션 데이터 업데이트
+			AsyncStorage.setItem('signup_session', JSON.stringify(sessionRef.current));
 
-    // 마일스톤 이벤트 발송
-    const milestoneEvents = {
-      signup_started: MIXPANEL_EVENTS.SIGNUP_STARTED,
-      profile_image_uploaded: MIXPANEL_EVENTS.SIGNUP_PROFILE_IMAGE_UPLOADED,
-      interest_selected: MIXPANEL_EVENTS.SIGNUP_INTEREST_SELECTED,
-      signup_completed: MIXPANEL_EVENTS.SIGNUP_COMPLETED
-    };
+			// 마일스톤 이벤트 발송
+			const milestoneEvents: Partial<Record<keyof SignupSessionData['milestones'], string>> = {
+				signup_started: MIXPANEL_EVENTS.SIGNUP_STARTED,
+				profile_image_uploaded: MIXPANEL_EVENTS.SIGNUP_PROFILE_IMAGE_UPLOADED,
+				interest_selected: MIXPANEL_EVENTS.SIGNUP_INTEREST_SELECTED,
+				signup_completed: MIXPANEL_EVENTS.SIGNUP_COMPLETED,
+			};
 
-    if (milestoneEvents[milestone]) {
-      const timeFromStart = currentTime - sessionRef.current.startTime;
+			if (milestoneEvents[milestone]) {
+				const timeFromStart = currentTime - sessionRef.current.startTime;
 
-      mixpanelAdapter.track(milestoneEvents[milestone], {
-        time_from_app_launch: timeFromStart,
-        milestone_step: milestone,
-        session_duration: timeFromStart,
-        is_anonymous_user: true,
-        ...additionalData
-      });
-    }
+				mixpanelAdapter.track(milestoneEvents[milestone], {
+					time_from_app_launch: timeFromStart,
+					milestone_step: milestone,
+					session_duration: timeFromStart,
+					is_anonymous_user: true,
+					auth_method: getAuthMethod(),
+					...additionalData,
+				});
+			}
 
-    console.log(`🏃 마일스톤 기록: ${milestone}`, {
-      timeFromStart: currentTime - sessionRef.current.startTime,
-      totalInteractions: sessionRef.current.interactions.length
-    });
-  }, []);
+			console.log(`🏃 마일스톤 기록: ${milestone}`, {
+				timeFromStart: currentTime - sessionRef.current.startTime,
+				totalInteractions: sessionRef.current.interactions.length,
+			});
+		},
+		[],
+	);
 
-  // 회원가입 세션 완료
-  const completeSignupSession = useCallback((userData?: any) => {
-    const endTime = Date.now();
-    const totalTime = endTime - sessionRef.current.startTime;
+	// 회원가입 세션 완료
+	const completeSignupSession = useCallback((userData?: any) => {
+		const endTime = Date.now();
+		const totalTime = endTime - sessionRef.current.startTime;
 
-    const sessionResult: SignupSessionResult = {
-      totalTime,
-      milestones: sessionRef.current.milestones,
-      completionRate: calculateCompletionRate(sessionRef.current.milestones),
-      dropOffPoints: findDropOffPoints(sessionRef.current.milestones),
-      timePerMilestone: calculateTimePerMilestone(sessionRef.current.milestones)
-    };
+		const sessionResult: SignupSessionResult = {
+			totalTime,
+			milestones: sessionRef.current.milestones,
+			completionRate: calculateCompletionRate(sessionRef.current.milestones),
+			dropOffPoints: findDropOffPoints(sessionRef.current.milestones),
+			timePerMilestone: calculateTimePerMilestone(sessionRef.current.milestones),
+		};
 
-    // 최종 회원가입 완료 이벤트
-    mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_COMPLETED, {
-      total_signup_time: totalTime,
-      completion_rate: sessionResult.completionRate,
-      time_per_milestone: sessionResult.timePerMilestone,
-      drop_off_points: sessionResult.dropOffPoints,
-      total_interactions: sessionRef.current.interactions.length,
-      user_data: userData ? {
-        has_profile_image: !!userData.profileImage,
-        interest_count: userData.interests?.length || 0,
-        profile_completion_rate: userData.profileCompletionRate || 0
-      } : undefined
-    });
+		// 최종 회원가입 완료 이벤트
+		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_COMPLETED, {
+			total_signup_time: totalTime,
+			completion_rate: sessionResult.completionRate,
+			time_per_milestone: sessionResult.timePerMilestone,
+			drop_off_points: sessionResult.dropOffPoints,
+			total_interactions: sessionRef.current.interactions.length,
+			auth_method: getAuthMethod(),
+			user_data: userData
+				? {
+						has_profile_image: !!userData.profileImage,
+						interest_count: userData.interests?.length || 0,
+						profile_completion_rate: userData.profileCompletionRate || 0,
+					}
+				: undefined,
+		});
 
-    // 세션 데이터 정리
-    AsyncStorage.removeItem('signup_session');
+		// 세션 데이터 정리
+		AsyncStorage.removeItem('signup_session');
 
-    console.log('✅ 회원가입 세션 완료:', {
-      totalTime: `${(totalTime / 1000).toFixed(2)}초`,
-      completionRate: `${sessionResult.completionRate}%`,
-      milestones: Object.keys(sessionResult.milestones).length
-    });
+		console.log('✅ 회원가입 세션 완료:', {
+			totalTime: `${(totalTime / 1000).toFixed(2)}초`,
+			completionRate: `${sessionResult.completionRate}%`,
+			milestones: Object.keys(sessionResult.milestones).length,
+		});
 
-    return sessionResult;
-  }, []);
+		return sessionResult;
+	}, []);
 
-  // 세션 중단 처리
-  const abortSignupSession = useCallback((reason: string, lastMilestone?: string) => {
-    const endTime = Date.now();
-    const totalTime = endTime - sessionRef.current.startTime;
+	// 세션 중단 처리
+	const abortSignupSession = useCallback((reason: string, lastMilestone?: string) => {
+		const endTime = Date.now();
+		const totalTime = endTime - sessionRef.current.startTime;
 
-    const sessionResult: SignupSessionResult = {
-      totalTime,
-      milestones: sessionRef.current.milestones,
-      completionRate: calculateCompletionRate(sessionRef.current.milestones),
-      dropOffPoints: findDropOffPoints(sessionRef.current.milestones),
-      timePerMilestone: calculateTimePerMilestone(sessionRef.current.milestones)
-    };
+		const sessionResult: SignupSessionResult = {
+			totalTime,
+			milestones: sessionRef.current.milestones,
+			completionRate: calculateCompletionRate(sessionRef.current.milestones),
+			dropOffPoints: findDropOffPoints(sessionRef.current.milestones),
+			timePerMilestone: calculateTimePerMilestone(sessionRef.current.milestones),
+		};
 
-    // 회원가입 중단 이벤트
-    mixpanelAdapter.track('Signup_Abandoned', {
-      total_time_spent: totalTime,
-      last_milestone: lastMilestone || 'app_launch',
-      completion_rate: sessionResult.completionRate,
-      drop_off_reason: reason,
-      time_per_milestone: sessionResult.timePerMilestone,
-      total_interactions: sessionRef.current.interactions.length
-    });
+		// 회원가입 중단 이벤트
+		mixpanelAdapter.track('Signup_Abandoned', {
+			total_time_spent: totalTime,
+			last_milestone: lastMilestone || 'app_launch',
+			completion_rate: sessionResult.completionRate,
+			drop_off_reason: reason,
+			time_per_milestone: sessionResult.timePerMilestone,
+			total_interactions: sessionRef.current.interactions.length,
+			auth_method: getAuthMethod(),
+		});
 
-    // 세션 데이터 정리
-    AsyncStorage.removeItem('signup_session');
+		// 세션 데이터 정리
+		AsyncStorage.removeItem('signup_session');
 
-    console.log('❌ 회원가입 세션 중단:', {
-      totalTime: `${(totalTime / 1000).toFixed(2)}초`,
-      lastMilestone,
-      reason,
-      completionRate: `${sessionResult.completionRate}%`
-    });
+		console.log('❌ 회원가입 세션 중단:', {
+			totalTime: `${(totalTime / 1000).toFixed(2)}초`,
+			lastMilestone,
+			reason,
+			completionRate: `${sessionResult.completionRate}%`,
+		});
 
-    return sessionResult;
-  }, []);
+		return sessionResult;
+	}, []);
 
-  // 백그라운드/포그라운드 처리
-  useEffect(() => {
-    const handleAppStateChange = (nextState: AppStateStatus) => {
-      if (nextState === 'background') {
-        backgroundTimeRef.current = Date.now();
+	// 백그라운드/포그라운드 처리
+	useEffect(() => {
+		const handleAppStateChange = (nextState: AppStateStatus) => {
+			if (nextState === 'background') {
+				backgroundTimeRef.current = Date.now();
 
-        // 백그라운드 전환 시 현재 세션 저장
-        AsyncStorage.setItem('signup_session', JSON.stringify(sessionRef.current));
+				// 백그라운드 전환 시 현재 세션 저장
+				AsyncStorage.setItem('signup_session', JSON.stringify(sessionRef.current));
+			} else if (nextState === 'active') {
+				// 포그라운드 복귀 시 세션 복원
+				AsyncStorage.getItem('signup_session').then((storedSession) => {
+					if (storedSession) {
+						sessionRef.current = JSON.parse(storedSession);
 
-      } else if (nextState === 'active') {
-        // 포그라운드 복귀 시 세션 복원
-        AsyncStorage.getItem('signup_session').then(storedSession => {
-          if (storedSession) {
-            sessionRef.current = JSON.parse(storedSession);
+						const backgroundDuration = Date.now() - backgroundTimeRef.current;
 
-            const backgroundDuration = Date.now() - backgroundTimeRef.current;
+						// 5분 이상 백그라운드였으면 세션 초기화
+						if (backgroundDuration > 5 * 60 * 1000) {
+							startSignupSession();
+						}
+					} else if (sessionRef.current.isAnonymous) {
+						// 저장된 세션이 없으면 새로 시작
+						startSignupSession();
+					}
+				});
+			}
+		};
 
-            // 5분 이상 백그라운드였으면 세션 초기화
-            if (backgroundDuration > 5 * 60 * 1000) {
-              startSignupSession();
-            }
-          } else if (sessionRef.current.isAnonymous) {
-            // 저장된 세션이 없으면 새로 시작
-            startSignupSession();
-          }
-        });
-      }
-    };
+		const subscription = AppState.addEventListener('change', handleAppStateChange);
 
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
+		// 컴포넌트 마운트 시 세션 확인
+		AsyncStorage.getItem('signup_session').then((storedSession) => {
+			if (storedSession) {
+				sessionRef.current = JSON.parse(storedSession);
+				console.log('📱 저장된 회원가입 세션 복원');
+			} else {
+				startSignupSession();
+			}
+		});
 
-    // 컴포넌트 마운트 시 세션 확인
-    AsyncStorage.getItem('signup_session').then(storedSession => {
-      if (storedSession) {
-        sessionRef.current = JSON.parse(storedSession);
-        console.log('📱 저장된 회원가입 세션 복원');
-      } else {
-        startSignupSession();
-      }
-    });
+		return () => {
+			subscription?.remove();
+		};
+	}, [startSignupSession]);
 
-    return () => {
-      subscription?.remove();
-    };
-  }, [startSignupSession]);
-
-  return {
-    startSignupSession,
-    recordMilestone,
-    completeSignupSession,
-    abortSignupSession,
-    getCurrentSession: () => sessionRef.current,
-    getSessionTime: () => Date.now() - sessionRef.current.startTime,
-    isSessionActive: () => sessionRef.current.isAnonymous
-  };
+	return {
+		startSignupSession,
+		recordMilestone,
+		completeSignupSession,
+		abortSignupSession,
+		getCurrentSession: () => sessionRef.current,
+		getSessionTime: () => Date.now() - sessionRef.current.startTime,
+		isSessionActive: () => sessionRef.current.isAnonymous,
+	};
 };
 
 // 헬퍼 함수들
 function calculateCompletionRate(milestones: SignupSessionData['milestones']): number {
-  const possibleMilestones = [
-    'app_launch',
-    'signup_started',
-    'profile_image_uploaded',
-    'interest_selected',
-    'signup_completed'
-  ];
+	const possibleMilestones = [
+		'app_launch',
+		'signup_started',
+		'profile_image_uploaded',
+		'interest_selected',
+		'signup_completed',
+	];
 
-  const completedMilestones = possibleMilestones.filter(milestone => milestones[milestone]);
+	const completedMilestones = possibleMilestones.filter(
+		(milestone) => milestones[milestone as keyof typeof milestones],
+	);
 
-  return Math.round((completedMilestones.length / possibleMilestones.length) * 100);
+	return Math.round((completedMilestones.length / possibleMilestones.length) * 100);
 }
 
 function findDropOffPoints(milestones: SignupSessionData['milestones']): string[] {
-  const allMilestones = [
-    'app_launch',
-    'signup_started',
-    'profile_image_uploaded',
-    'interest_selected',
-    'signup_completed'
-  ];
+	const allMilestones = [
+		'app_launch',
+		'signup_started',
+		'profile_image_uploaded',
+		'interest_selected',
+		'signup_completed',
+	];
 
-  const dropOffPoints: string[] = [];
-  let foundIncomplete = false;
+	const dropOffPoints: string[] = [];
+	let foundIncomplete = false;
 
-  for (const milestone of allMilestones) {
-    if (foundIncomplete || !milestones[milestone]) {
-      dropOffPoints.push(milestone);
-      foundIncomplete = true;
-    }
-  }
+	for (const milestone of allMilestones) {
+		if (foundIncomplete || !milestones[milestone as keyof typeof milestones]) {
+			dropOffPoints.push(milestone);
+			foundIncomplete = true;
+		}
+	}
 
-  return dropOffPoints;
+	return dropOffPoints;
 }
 
-function calculateTimePerMilestone(milestones: SignupSessionData['milestones']): Record<string, number> {
-  const times: Record<string, number> = {};
-  const sortedMilestones = Object.entries(milestones)
-    .filter(([_, time]) => time > 0)
-    .sort(([_, a], [__, b]) => a - b);
+function calculateTimePerMilestone(
+	milestones: SignupSessionData['milestones'],
+): Record<string, number> {
+	const times: Record<string, number> = {};
+	const sortedMilestones = Object.entries(milestones)
+		.filter(([_, time]) => time > 0)
+		.sort(([_, a], [__, b]) => a - b);
 
-  for (let i = 0; i < sortedMilestones.length; i++) {
-    const [milestone, timestamp] = sortedMilestones[i];
-    const previousTimestamp = i > 0 ? sortedMilestones[i - 1][1] : milestones.app_launch;
+	for (let i = 0; i < sortedMilestones.length; i++) {
+		const [milestone, timestamp] = sortedMilestones[i];
+		const previousTimestamp = i > 0 ? sortedMilestones[i - 1][1] : milestones.app_launch;
 
-    times[milestone] = timestamp - previousTimestamp;
-  }
+		times[milestone] = timestamp - previousTimestamp;
+	}
 
-  return times;
+	return times;
 }
