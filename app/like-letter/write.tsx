@@ -19,6 +19,7 @@ import { useAuth } from '@/src/features/auth/hooks/use-auth';
 
 type WriteParams = {
 	connectionId: string;
+	matchId?: string;
 	nickname: string;
 	profileUrl: string;
 	canLetter?: string;
@@ -42,9 +43,10 @@ export default function LikeLetterWriteScreen() {
 	const [isSending, setIsSending] = useState(false);
 
 	const connectionId = params.connectionId;
+	const matchId = params.matchId;
 	const canLetter = params.canLetter === 'true';
 
-	const { data: partner } = useMatchPartnerQuery(connectionId);
+	const { data: partner } = useMatchPartnerQuery(matchId);
 
 	const partnerProfileUrl = params.profileUrl
 		? decodeURIComponent(params.profileUrl)
@@ -88,11 +90,12 @@ export default function LikeLetterWriteScreen() {
 	}, []);
 
 	const handleViewProfile = useCallback(() => {
+		if (!matchId) return;
 		router.push({
 			pathname: '/partner/view/[id]',
-			params: { id: connectionId },
+			params: { id: matchId },
 		});
-	}, [connectionId]);
+	}, [matchId]);
 
 	const handlePreview = useCallback(() => {
 		showModal({

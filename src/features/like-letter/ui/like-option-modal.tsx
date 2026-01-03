@@ -11,6 +11,7 @@ import type { LikeOption } from '../types';
 
 type LikeOptionModalProps = {
 	connectionId: string;
+	matchId: string;
 	nickname: string;
 	profileUrl: string;
 	canLetter?: boolean;
@@ -20,6 +21,7 @@ type LikeOptionModalProps = {
 
 export function LikeOptionModal({
 	connectionId,
+	matchId,
 	nickname,
 	profileUrl,
 	canLetter = false,
@@ -47,6 +49,7 @@ export function LikeOptionModal({
 				pathname: '/like-letter/write',
 				params: {
 					connectionId,
+					matchId,
 					nickname,
 					profileUrl: encodeURIComponent(profileUrl),
 					canLetter: 'true',
@@ -72,12 +75,13 @@ export function LikeOptionModal({
 				pathname: '/like-letter/write',
 				params: {
 					connectionId,
+					matchId,
 					nickname,
 					profileUrl: encodeURIComponent(profileUrl),
 					canLetter: 'true',
 				},
 			});
-		} catch (error: any) {
+		} catch (error: unknown) {
 			// 402 Payment Required or Insufficient Funds handling
 			// 에러 코드가 구체적이지 않다면 일단 잔액 부족으로 간주하거나, 서버 에러 메시지를 확인
 			setIsInsufficient(true);
