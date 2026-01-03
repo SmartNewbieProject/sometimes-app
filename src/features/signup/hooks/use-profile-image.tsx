@@ -93,7 +93,7 @@ function useProfileImage() {
 		updateForm(signupForm);
 
 		const uploadedCount = images.filter((img) => img !== null).length;
-		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_PROFILE_IMAGE_DONE, {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_PROFILE_IMAGE_UPLOADED, {
 			image_count: uploadedCount,
 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 		});
