@@ -15,18 +15,13 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	SIGNUP_INVITE_CODE_VIEW: 'Signup_InviteCode_View',
 
 	// 회원가입 퍼널 - 완료 이벤트
-	SIGNUP_INIT: 'Signup_Init',
 	SIGNUP_ROUTE_ENTERED: 'Signup_Route_Entered',
 	SIGNUP_UNIVERSITY: 'Signup_university',
-	SIGNUP_UNIVERSITY_DONE: 'Signup_University_Done',
 	SIGNUP_DETAILS_DONE: 'Signup_Details_Done',
 	SIGNUP_INSTAGRAM_ENTERED: 'Signup_instagram_entered',
 	SIGNUP_INSTAGRAM_SKIPPED: 'Signup_instagram_skipped',
-	SIGNUP_PROFILE_IMAGE_DONE: 'Signup_ProfileImage_Done',
-	SIGNUP_PROFILE_IMAGE_ERROR: 'Signup_profile_image_error',
 	SIGNUP_INVITE_CODE_DONE: 'Signup_InviteCode_Done',
 	SIGNUP_INVITE_CODE_SKIPPED: 'Signup_InviteCode_Skipped',
-	SIGNUP_PROFILE_INVITE_CODE_ERROR: 'Signup_profile_invite_code_error',
 
 	// 나이/인증 관련
 	SIGNUP_AGE_CHECK_FAILED: 'Signup_AgeCheck_Failed',
@@ -38,21 +33,11 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	INTEREST_STARTED: 'Interest_Started',
 	PROFILE_STARTED: 'Profile_Started',
 
-	// 결제 관련
-	GEM_STORE_FIRST_SALE_7: 'GemStore_FirstSale_7',
-	GEM_STORE_FIRST_SALE_16: 'GemStore_FirstSale_16',
-	GEM_STORE_FIRST_SALE_27: 'GemStore_FirstSale_27',
-	GEM_STORE_PAYMENT_SUCCESS: 'GemStore_Payment_Success',
-
 	// 인앱 리뷰 관련
 	IN_APP_REVIEW_ELIGIBLE: 'InAppReview_Eligible',
 	IN_APP_REVIEW_PRE_PROMPT_SHOWN: 'InAppReview_PrePromptShown',
 	IN_APP_REVIEW_PRE_PROMPT_RESPONSE: 'InAppReview_PrePromptResponse',
 	IN_APP_REVIEW_REQUESTED: 'InAppReview_Requested',
-
-	// 기타
-	SIGNUP_COMPLETE: 'signup_complete',
-	IMAGE_UPLOAD: 'image_upload',
 
 	// 미호 멘트 관련
 	MIHO_MESSAGE_SHOWN: 'Miho_Message_Shown',
@@ -69,22 +54,10 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 
 	// 2. 매칭 효율성
 	MATCH_REQUEST_SENT: 'Match_Request_Sent',
-	MATCH_ACCEPTED: 'Match_Accepted',
-	MATCH_REJECTED: 'Match_Rejected',
 	FIRST_MESSAGE_SENT_AFTER_MATCH: 'First_Message_Sent_After_Match',
 	MATCH_CONVERSATION_RATE: 'Match_Conversation_Rate',
 	MATCH_CARD_VIEWED: 'Match_Card_Viewed',
 	MATCH_TIME_TO_RESPONSE: 'Match_Time_To_Response',
-
-	// 3. 커뮤니티 참여도
-	ARTICLE_CREATED: 'Article_Created',
-	ARTICLE_LIKED: 'Article_Liked',
-	ARTICLE_COMMENTED: 'Article_Commented',
-	ARTICLE_SHARED: 'Article_Shared',
-	ARTICLE_VIEWED: 'Article_Viewed',
-	COMMUNITY_DAILY_ACTIVE_USERS: 'Community_Daily_Active_Users',
-	ARTICLE_BOOKMARKED: 'Article_Bookmarked',
-	ARTICLE_REPORTED: 'Article_Reported',
 
 	// 4. 결제 전환율
 	PAYMENT_INITIATED: 'Payment_Initiated',
@@ -98,7 +71,6 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	REVENUE_PER_USER: 'Revenue_Per_User',
 	PAYMENT_METHOD_ADDED: 'Payment_Method_Added',
 	PAYMENT_METHOD_REMOVED: 'Payment_Method_Removed',
-	USER_METRICS_UPDATED: 'User_Metrics_Updated',
 
 	// 기존 인증 관련 (Acquisition)
 	AUTH_LOGIN_STARTED: 'Auth_Login_Started',
@@ -147,7 +119,6 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	CHAT_STARTED: 'Chat_Started',
 	CHAT_MESSAGE_SENT: 'Chat_Message_Sent',
 	CHAT_ENDED: 'Chat_Ended',
-	CHAT_GIFT_SENT: 'Chat_Gift_Sent',
 	CHAT_RESPONSE: 'Chat_Response',
 	CHAT_24H_ACTIVE: 'Chat_24h_Active',
 
@@ -179,7 +150,6 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	REFERRAL_SIGNUP_COMPLETED: 'Referral_Signup_Completed',
 	REFERRAL_REWARD_GRANTED: 'Referral_Reward_Granted',
 	INVITE_LINK_CLICKED: 'Invite_Link_Clicked',
-	INVITE_CONVERSION_COMPLETED: 'Invite_Conversion_Completed',
 
 	// 세션 관련 (Retention)
 	SESSION_STARTED: 'Session_Started',
@@ -219,7 +189,6 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 
 	// 결제 퍼널 심화
 	PAYMENT_ABANDONED_CART: 'Payment_Abandoned_Cart',
-	PAYMENT_ABANDONED_AT_STEP: 'Payment_Abandoned_At_Step',
 	PAYMENT_FIRST_PURCHASE: 'Payment_First_Purchase',
 	PAYMENT_REPEAT_PURCHASE: 'Payment_Repeat_Purchase',
 	GEM_BALANCE_LOW: 'Gem_Balance_Low',
@@ -234,7 +203,6 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 
 	// 좋아요 결과
 	LIKE_MATCH_CREATED: 'Like_Match_Created',
-	LIKE_MUTUAL_MATCH: 'Like_Mutual_Match',
 	LIKE_LIMIT_REACHED: 'Like_Limit_Reached',
 
 	// 채팅 품질
@@ -875,22 +843,10 @@ export interface KpiEventTypePropertiesMap {
 
 	// 매칭 효율성
 	Match_Request_Sent: MatchingEventProperties;
-	Match_Accepted: MatchingEventProperties;
-	Match_Rejected: MatchingEventProperties;
 	First_Message_Sent_After_Match: ChatEventProperties;
 	Match_Conversation_Rate: MatchingEventProperties;
 	Match_Card_Viewed: MatchingEventProperties;
 	Match_Time_To_Response: MatchingEventProperties;
-
-	// 커뮤니티 참여도
-	Article_Created: CommunityEventProperties;
-	Article_Liked: CommunityEventProperties;
-	Article_Commented: CommunityEventProperties;
-	Article_Shared: CommunityEventProperties;
-	Article_Viewed: CommunityEventProperties;
-	Community_Daily_Active_Users: BaseEventProperties;
-	Article_Bookmarked: CommunityEventProperties;
-	Article_Reported: CommunityEventProperties;
 
 	// 결제 전환율
 	Payment_Initiated: PaymentEventProperties;
@@ -952,7 +908,6 @@ export interface KpiEventTypePropertiesMap {
 	Chat_Started: ChatEventProperties;
 	Chat_Message_Sent: ChatEventProperties;
 	Chat_Ended: ChatEventProperties;
-	Chat_Gift_Sent: ChatEventProperties;
 	Chat_24h_Active: Chat24hActiveEventProperties;
 
 	// 커뮤니티 관련
@@ -1017,7 +972,6 @@ export interface KpiEventTypePropertiesMap {
 	Matching_Queue_Abandoned: MatchingQueueEventProperties;
 
 	Like_Match_Created: LikeDetailedEventProperties;
-	Like_Mutual_Match: LikeDetailedEventProperties;
 	Like_Limit_Reached: LikeDetailedEventProperties;
 
 	Chat_First_Response_Time: ChatQualityEventProperties;

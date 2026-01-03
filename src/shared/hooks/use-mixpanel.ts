@@ -100,7 +100,6 @@ export interface UseMixpanelReturn {
 			messageCount: number,
 			endReason: string,
 		) => void;
-		trackGiftSent: (chatId: string, giftType: string) => void;
 		trackChatResponse: (
 			chatId: string,
 			responseTimeSeconds: number,
@@ -182,8 +181,6 @@ export interface UseMixpanelReturn {
 	// 2. 매칭 효율성 이벤트
 	matchingEfficiencyEvents: {
 		trackMatchRequestSent: (targetProfileId: string, requestType: string) => void;
-		trackMatchAccepted: (sourceProfileId: string, timeToResponse: number) => Promise<void>;
-		trackMatchRejected: (sourceProfileId: string, rejectionReason?: string) => void;
 		trackFirstMessageSentAfterMatch: (
 			matchId: string,
 			chatId: string,
@@ -193,18 +190,6 @@ export interface UseMixpanelReturn {
 		trackMatchConversationRate: (matchId: string, conversationStarted: boolean) => void;
 		trackMatchCardViewed: (profileId: string, viewDuration: number) => void;
 		trackMatchTimeToResponse: (matchId: string, responseType: string, responseTime: number) => void;
-	};
-
-	// 3. 커뮤니티 참여도 이벤트
-	communityEngagementEvents: {
-		trackArticleCreated: (category: string, hasImage: boolean, estimatedReadTime?: number) => void;
-		trackArticleLiked: (articleId: string, articleCategory: string) => void;
-		trackArticleCommented: (articleId: string, commentLength: number, isReply: boolean) => void;
-		trackArticleShared: (articleId: string, sharePlatform: string) => void;
-		trackArticleViewed: (articleId: string, viewDuration: number, scrollDepth: number) => void;
-		trackCommunityDailyActiveUsers: (activityType: string, sessionDuration: number) => void;
-		trackArticleBookmarked: (articleId: string, category: string) => void;
-		trackArticleReported: (articleId: string, reportReason: string) => void;
 	};
 
 	// 4. 결제 전환율 이벤트
@@ -603,16 +588,6 @@ export const useMixpanel = (): UseMixpanelReturn => {
 					chat_duration: chatDuration,
 					message_count: messageCount,
 					end_reason: endReason as any,
-				});
-			},
-			[trackEvent],
-		),
-
-		trackGiftSent: useCallback(
-			(chatId: string, giftType: string) => {
-				trackEvent('Chat_Gift_Sent', {
-					chat_id: chatId,
-					gift_type: giftType,
 				});
 			},
 			[trackEvent],
@@ -1218,43 +1193,6 @@ export const useMixpanel = (): UseMixpanelReturn => {
 			[trackEvent],
 		),
 
-		trackMatchAccepted: useCallback(
-			async (sourceProfileId: string, timeToResponse: number) => {
-				trackEvent('Match_Accepted', {
-					profile_id: sourceProfileId,
-					time_to_response: timeToResponse,
-					response_type: 'accepted',
-				});
-
-				// User Properties 자동 업데이트: 상호 좋아요 횟수 증가
-				updateUserProperties({
-					$add: {
-						mutual_likes_count: 1,
-						successful_matches: 1,
-					},
-				});
-
-				// Match_Accepted 시각을 저장 (Chat_Started와의 시간 차이 계산용)
-				try {
-					await storage.setItem(`match_accepted_time_${sourceProfileId}`, Date.now().toString());
-				} catch (error) {
-					console.error('[Mixpanel] Failed to save match accepted time:', error);
-				}
-			},
-			[trackEvent, updateUserProperties],
-		),
-
-		trackMatchRejected: useCallback(
-			(sourceProfileId: string, rejectionReason?: string) => {
-				trackEvent('Match_Rejected', {
-					profile_id: sourceProfileId,
-					rejection_reason: rejectionReason || 'user_initiated',
-					response_type: 'rejected',
-				});
-			},
-			[trackEvent],
-		),
-
 		trackFirstMessageSentAfterMatch: useCallback(
 			(matchId: string, chatId: string, chatPartnerId: string, timeToMessage: number) => {
 				trackEvent('First_Message_Sent_After_Match', {
@@ -1295,100 +1233,6 @@ export const useMixpanel = (): UseMixpanelReturn => {
 					match_id: matchId,
 					response_type: responseType,
 					time_to_response: responseTime,
-				});
-			},
-			[trackEvent],
-		),
-	};
-
-	// 3. 커뮤니티 참여도 구현
-	const communityEngagementEvents = {
-		trackArticleCreated: useCallback(
-			(category: string, hasImage: boolean, estimatedReadTime?: number) => {
-				trackEvent('Article_Created', {
-					category,
-					has_image: hasImage,
-					estimated_read_time: estimatedReadTime,
-					source: 'community',
-				});
-			},
-			[trackEvent],
-		),
-
-		trackArticleLiked: useCallback(
-			(articleId: string, articleCategory: string) => {
-				trackEvent('Article_Liked', {
-					post_id: articleId,
-					category: articleCategory,
-					interaction_type: 'like',
-				});
-			},
-			[trackEvent],
-		),
-
-		trackArticleCommented: useCallback(
-			(articleId: string, commentLength: number, isReply: boolean) => {
-				trackEvent('Article_Commented', {
-					post_id: articleId,
-					comment_length: commentLength,
-					is_reply: isReply,
-					interaction_type: 'comment',
-				});
-			},
-			[trackEvent],
-		),
-
-		trackArticleShared: useCallback(
-			(articleId: string, sharePlatform: string) => {
-				trackEvent('Article_Shared', {
-					post_id: articleId,
-					share_platform: sharePlatform,
-					interaction_type: 'share',
-				});
-			},
-			[trackEvent],
-		),
-
-		trackArticleViewed: useCallback(
-			(articleId: string, viewDuration: number, scrollDepth: number) => {
-				trackEvent('Article_Viewed', {
-					post_id: articleId,
-					view_duration: viewDuration,
-					scroll_depth: scrollDepth,
-					interaction_type: 'view',
-				});
-			},
-			[trackEvent],
-		),
-
-		trackCommunityDailyActiveUsers: useCallback(
-			(activityType: string, sessionDuration: number) => {
-				trackEvent('Community_Daily_Active_Users', {
-					activity_type: activityType,
-					session_duration: sessionDuration,
-					source: 'community',
-				});
-			},
-			[trackEvent],
-		),
-
-		trackArticleBookmarked: useCallback(
-			(articleId: string, category: string) => {
-				trackEvent('Article_Bookmarked', {
-					post_id: articleId,
-					category,
-					interaction_type: 'bookmark',
-				});
-			},
-			[trackEvent],
-		),
-
-		trackArticleReported: useCallback(
-			(articleId: string, reportReason: string) => {
-				trackEvent('Article_Reported', {
-					post_id: articleId,
-					report_reason: reportReason,
-					interaction_type: 'report',
 				});
 			},
 			[trackEvent],
@@ -1581,7 +1425,6 @@ export const useMixpanel = (): UseMixpanelReturn => {
 		somemateEvents,
 		onboardingEvents,
 		matchingEfficiencyEvents,
-		communityEngagementEvents,
 		conversionEvents,
 		retentionEvents,
 	};
