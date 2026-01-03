@@ -1,5 +1,6 @@
 const PRIMARY_PRODUCT_IDS = [
 	'gem_sale_16',
+	'gem_16',
 	'gem_26',
 	'gem_55',
 	'gem_85',

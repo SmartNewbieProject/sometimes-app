@@ -6,6 +6,7 @@ import DepartmentSearch from '@/src/features/signup/ui/university-details/depart
 import { withSignupValidation } from '@/src/features/signup/ui/withSignupValidation';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { Text } from '@/src/shared/ui/text';
 import Loading from '@features/loading';
 import { Image } from 'expo-image';
@@ -31,7 +32,9 @@ function UniversityDetailsPage() {
 
 	useEffect(() => {
 		if (!hasTrackedView.current) {
+			const authMethod = useSignupProgress.getState().authMethod;
 			mixpanelAdapter.track('Signup_Details_View', {
+				auth_method: authMethod,
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 			hasTrackedView.current = true;
@@ -57,6 +60,9 @@ function UniversityDetailsPage() {
 
 	const handleNext = () => {
 		onNext(() => {
+			mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_DETAILS_DONE, {
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
 			router.push('/auth/signup/instagram');
 		});
 	};

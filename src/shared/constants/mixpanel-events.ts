@@ -10,17 +10,22 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	SIGNUP_AUTH_STARTED: 'Signup_Auth_Started',
 	SIGNUP_UNIVERSITY_VIEW: 'Signup_University_View',
 	SIGNUP_DETAILS_VIEW: 'Signup_Details_View',
+	SIGNUP_INSTAGRAM_VIEW: 'Signup_Instagram_View',
 	SIGNUP_PROFILE_VIEW: 'Signup_Profile_View',
+	SIGNUP_INVITE_CODE_VIEW: 'Signup_InviteCode_View',
 
 	// 회원가입 퍼널 - 완료 이벤트
 	SIGNUP_INIT: 'Signup_Init',
 	SIGNUP_ROUTE_ENTERED: 'Signup_Route_Entered',
 	SIGNUP_UNIVERSITY: 'Signup_university',
-	SINGUP_UNIVERSITY_DETAILS: 'Singup_university_details',
+	SIGNUP_UNIVERSITY_DONE: 'Signup_University_Done',
+	SIGNUP_DETAILS_DONE: 'Signup_Details_Done',
 	SIGNUP_INSTAGRAM_ENTERED: 'Signup_instagram_entered',
 	SIGNUP_INSTAGRAM_SKIPPED: 'Signup_instagram_skipped',
-	SIGNUP_PROFILE_IMAGE: 'Signup_profile_image',
+	SIGNUP_PROFILE_IMAGE_DONE: 'Signup_ProfileImage_Done',
 	SIGNUP_PROFILE_IMAGE_ERROR: 'Signup_profile_image_error',
+	SIGNUP_INVITE_CODE_DONE: 'Signup_InviteCode_Done',
+	SIGNUP_INVITE_CODE_SKIPPED: 'Signup_InviteCode_Skipped',
 	SIGNUP_PROFILE_INVITE_CODE_ERROR: 'Signup_profile_invite_code_error',
 
 	// 나이/인증 관련
@@ -268,6 +273,7 @@ export const AUTH_METHODS = {
 	PASS: 'pass',
 	KAKAO: 'kakao',
 	APPLE: 'apple',
+	JP_SMS: 'jp_sms',
 } as const;
 
 // 로그아웃 사유 Enum

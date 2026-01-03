@@ -2,6 +2,7 @@ import { DefaultLayout } from '@/src/features/layout/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 import useAreaHook from '@/src/features/signup/hooks/use-area-hook';
+import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
 import { areaMap } from '@/src/features/signup/lib';
 import Heart from '@/src/features/signup/ui/area/heart';
 import AreaModal from '@/src/features/signup/ui/area/modal';
@@ -32,8 +33,10 @@ function Area() {
 
 	const handleNext = () => {
 		onNext(() => {
+			const authMethod = useSignupProgress.getState().authMethod;
 			mixpanelAdapter.track('Signup_area', {
 				area: show,
+				auth_method: authMethod,
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 			router.push(`/auth/signup/university?area=${show}`);

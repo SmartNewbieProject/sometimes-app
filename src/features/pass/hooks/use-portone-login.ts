@@ -16,8 +16,10 @@ import type {
 	PortOneIdentityVerificationResponse,
 } from '../types';
 import { isAdult } from '../utils';
+import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
 
 const track = mixpanelAdapter.track.bind(mixpanelAdapter);
+const getAuthMethod = () => useSignupProgress.getState().authMethod;
 
 const getErrorMessage = (error: unknown): string => {
 	if (error instanceof Error) {
@@ -95,7 +97,11 @@ export const usePortOneLogin = ({
 				const phone = loginResult.certificationInfo?.phone;
 
 				if (birthday && !isAdult(birthday)) {
-					track('Signup_AgeCheck_Failed', { birthday, env: process.env.EXPO_PUBLIC_TRACKING_MODE });
+					track('Signup_AgeCheck_Failed', {
+						birthday,
+						auth_method: getAuthMethod(),
+						env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+					});
 					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					router.push('/auth/age-restriction' as any);
 					return;
@@ -108,6 +114,7 @@ export const usePortOneLogin = ({
 						if (isBlacklisted) {
 							track('Signup_PhoneBlacklist_Failed', {
 								phone,
+								auth_method: getAuthMethod(),
 								env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 							});
 							showModal({
@@ -128,6 +135,7 @@ export const usePortOneLogin = ({
 						console.error('블랙리스트 체크 오류:', error);
 						track('Signup_Error', {
 							stage: 'PhoneBlacklistCheck',
+							auth_method: getAuthMethod(),
 							env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 							message: error instanceof Error ? error.message : String(error),
 						});
@@ -139,6 +147,7 @@ export const usePortOneLogin = ({
 				track('Signup_Route_Entered', {
 					screen: 'AreaSelect',
 					platform: 'pass',
+					auth_method: getAuthMethod(),
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
 
@@ -170,6 +179,7 @@ export const usePortOneLogin = ({
 				}
 
 				track('Signup_IdentityVerification_Completed', {
+					auth_method: getAuthMethod(),
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
 
@@ -183,6 +193,7 @@ export const usePortOneLogin = ({
 				track('Signup_Error', {
 					stage: 'handleMobileAuthComplete',
 					message: errorMessage,
+					auth_method: getAuthMethod(),
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
 				setError(errorMessage);
@@ -199,6 +210,7 @@ export const usePortOneLogin = ({
 			console.error('모바일 본인인증 오류:', error);
 			track('Signup_IdentityVerification_Failed', {
 				reason: error.message,
+				auth_method: getAuthMethod(),
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 			authStartTimeRef.current = null;
@@ -217,6 +229,7 @@ export const usePortOneLogin = ({
 			: undefined;
 
 		track('Signup_IdentityVerification_Cancelled', {
+			auth_method: getAuthMethod(),
 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 		});
 
@@ -262,6 +275,7 @@ export const usePortOneLogin = ({
 			track('Signup_IdentityVerification_Started', {
 				platform: Platform.OS,
 				type: 'pass',
+				auth_method: getAuthMethod(),
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 
@@ -287,6 +301,7 @@ export const usePortOneLogin = ({
 			track('Signup_Error', {
 				stage: 'startPortOneLogin',
 				message: errorMessage,
+				auth_method: getAuthMethod(),
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 			setError(errorMessage);

@@ -13,8 +13,11 @@ import {
 	type LoginAbandonedStep,
 	type AuthMethod,
 } from '@/src/shared/constants/mixpanel-events';
+import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
 
 const VALID_EVENT_VALUES = new Set(Object.values(MIXPANEL_EVENTS));
+
+const getAuthMethod = () => useSignupProgress.getState().authMethod;
 
 // Mixpanel 훅 반환 타입
 export interface UseMixpanelReturn {
@@ -442,14 +445,20 @@ export const useMixpanel = (): UseMixpanelReturn => {
 	const signupEvents = {
 		trackSignupStarted: useCallback(
 			(source?: string) => {
-				trackEvent('Signup_Started', { source: source as any });
+				trackEvent('Signup_Started', {
+					source: source as any,
+					auth_method: getAuthMethod(),
+				});
 			},
 			[trackEvent],
 		),
 
 		trackProfileImageUploaded: useCallback(
 			(imageCount: number) => {
-				trackEvent('Signup_Profile_Image_Uploaded', { image_count: imageCount });
+				trackEvent('Signup_Profile_Image_Uploaded', {
+					image_count: imageCount,
+					auth_method: getAuthMethod(),
+				});
 			},
 			[trackEvent],
 		),
@@ -459,6 +468,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
 				trackEvent('Signup_Interest_Selected', {
 					category,
 					selection_count: selectionCount,
+					auth_method: getAuthMethod(),
 				});
 			},
 			[trackEvent],
@@ -469,6 +479,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
 				trackEvent('Signup_Completed', {
 					profile_completion_rate: completionRate,
 					total_duration: totalDuration,
+					auth_method: getAuthMethod(),
 				});
 			},
 			[trackEvent],

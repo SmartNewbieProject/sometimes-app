@@ -27,6 +27,7 @@ function SignupInstagram() {
 	const [isFocused, setIsFocused] = useState(false);
 	const { t } = useTranslation();
 	const previousLengthRef = useRef(0);
+	const hasTrackedView = useRef(false);
 
 	useChangePhase(SignupSteps.INSTAGRAM);
 	const { trackSignupEvent } = useSignupAnalytics('university_details');
@@ -39,6 +40,12 @@ function SignupInstagram() {
 	const logoGlow = useSharedValue(0);
 
 	useEffect(() => {
+		if (!hasTrackedView.current) {
+			mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_INSTAGRAM_VIEW, {
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+			hasTrackedView.current = true;
+		}
 		updateShowHeader(true);
 	}, [updateShowHeader]);
 

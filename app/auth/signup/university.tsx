@@ -1,5 +1,6 @@
 import { DefaultLayout, TwoButtons } from '@/src/features/layout/ui';
 import { SignupSteps } from '@/src/features/signup/hooks';
+import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
 import useUniversityHook from '@/src/features/signup/hooks/use-university-hook';
 import UniversityLogos from '@/src/features/signup/ui/university-logos';
 import { japanUniversityLogos } from '@/src/features/signup/ui/university-logos/japan-logos-data';
@@ -66,7 +67,9 @@ function UniversityPage() {
 
 	useEffect(() => {
 		if (!hasTrackedView.current) {
+			const authMethod = useSignupProgress.getState().authMethod;
 			mixpanelAdapter.track('Signup_University_View', {
+				auth_method: authMethod,
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 			hasTrackedView.current = true;

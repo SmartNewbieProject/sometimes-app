@@ -19,6 +19,7 @@ type WriteParams = {
 	connectionId: string;
 	nickname: string;
 	profileUrl: string;
+	canLetter?: string;
 	age?: string;
 	universityName?: string;
 };
@@ -40,8 +41,12 @@ export default function LikeLetterWriteScreen() {
 	const profileUrl = params.profileUrl ? decodeURIComponent(params.profileUrl) : '';
 	const age = params.age ? Number.parseInt(params.age, 10) : undefined;
 	const universityName = params.universityName || '';
+	const canLetter = params.canLetter === 'true';
 
-	const letterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
+	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 9;
+	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
+	// 이미 편지 권한이 있으면(canLetter=true) 일반 좋아요 비용만 부과
+	const letterLikeCost = canLetter ? simpleLikeCost : baseLetterLikeCost;
 
 	const handleLetterChange = useCallback((text: string) => {
 		setLetter(text);
@@ -112,35 +117,57 @@ export default function LikeLetterWriteScreen() {
 
 	return (
 		<View style={styles.container}>
+			<View style={styles.headerBackground}>
+				<Image
+					source={require('@assets/images/like-letter/bg-line.png')}
+					style={styles.bgLine}
+					contentFit="contain"
+				/>
+				<View style={styles.profileContainer}>
+					<View style={styles.profileWrapper}>
+						{profileUrl ? (
+							<Image source={{ uri: profileUrl }} style={styles.profileImage} contentFit="cover" />
+						) : (
+							<View style={[styles.profileImage, styles.profilePlaceholder]} />
+						)}
+						<View style={styles.heartBubbleContainer}>
+							<Image
+								source={require('@assets/images/like-letter/heart-bubble.png')}
+								style={styles.heartBubble}
+								contentFit="contain"
+							/>
+						</View>
+					</View>
+				</View>
+			</View>
+
 			<ScrollView
 				style={styles.scrollView}
 				contentContainerStyle={styles.scrollContent}
 				keyboardShouldPersistTaps="handled"
 				showsVerticalScrollIndicator={false}
 			>
-				<View style={styles.profileSection}>
-					<View style={styles.profileInfo}>
-						{profileUrl ? (
-							<Image source={{ uri: profileUrl }} style={styles.profileImage} contentFit="cover" />
-						) : (
-							<View style={[styles.profileImage, styles.profilePlaceholder]} />
-						)}
-						<View style={styles.profileText}>
-							<Text weight="semibold" size="18" textColor="black">
-								{nickname}
-							</Text>
-							{age && universityName && (
-								<Text size="14" style={styles.profileSubtext}>
-									만 {age}세 · {universityName}
-								</Text>
-							)}
-						</View>
-					</View>
+				<View style={styles.introCard}>
 					<Pressable style={styles.viewProfileButton} onPress={handleViewProfile}>
-						<Text size="12" style={styles.viewProfileText}>
+						<Text size="12" weight="medium" style={styles.viewProfileText}>
 							{t('features.like-letter.ui.write_screen.view_profile')}
 						</Text>
 					</Pressable>
+					<Text style={styles.introText}>
+						<Text weight="bold" size="18" style={styles.highlightText}>
+							{nickname}
+						</Text>
+						<Text weight="medium" size="18" textColor="black">
+							님에게 보내는 편지
+						</Text>
+					</Text>
+					<Text size="12" textColor="disabled" style={styles.subIntroText}>
+						프로필에서 한 가지를 언급하면 더 자연스러워요!
+					</Text>
+				</View>
+
+				<View style={styles.promptsSection}>
+					<LetterPrompts connectionId={connectionId} onSelect={handlePromptSelect} />
 				</View>
 
 				<View style={styles.inputSection}>
@@ -150,10 +177,6 @@ export default function LikeLetterWriteScreen() {
 						onValidationChange={handleValidationChange}
 						placeholder={t('features.like-letter.ui.write_screen.placeholder')}
 					/>
-				</View>
-
-				<View style={styles.promptsSection}>
-					<LetterPrompts onSelect={handlePromptSelect} />
 				</View>
 			</ScrollView>
 
@@ -173,7 +196,7 @@ export default function LikeLetterWriteScreen() {
 				</Pressable>
 
 				<Pressable
-					style={[styles.sendButton, !canSend && styles.sendButtonDisabled]}
+					style={[styles.sendButton, canSend && styles.sendButtonActive]}
 					onPress={handleSendLetter}
 					disabled={!canSend}
 				>
@@ -182,7 +205,7 @@ export default function LikeLetterWriteScreen() {
 						<Text size="14" style={styles.gemCount}>
 							x{letterLikeCost}
 						</Text>
-						<Text weight="semibold" size="16" style={styles.sendButtonText}>
+						<Text weight="semibold" size="16" style={[styles.sendButtonText, canSend ? styles.sendButtonTextActive : {}]}>
 							{isSending
 								? t('features.like-letter.ui.write_screen.sending')
 								: t('features.like-letter.ui.write_screen.send_button')}
@@ -197,56 +220,102 @@ export default function LikeLetterWriteScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#FBF9FF',
+		backgroundColor: colors.white,
 	},
-	scrollView: {
-		flex: 1,
-	},
-	scrollContent: {
-		paddingHorizontal: 20,
-		paddingTop: 20,
-		paddingBottom: 20,
-	},
-	profileSection: {
-		flexDirection: 'row',
+	headerBackground: {
+		height: 180,
 		alignItems: 'center',
-		justifyContent: 'space-between',
-		marginBottom: 20,
+		justifyContent: 'center',
+		backgroundColor: colors.white,
+		overflow: 'visible',
+		zIndex: 1,
 	},
-	profileInfo: {
-		flexDirection: 'row',
+	bgLine: {
+		position: 'absolute',
+		width: '100%',
+		height: '100%',
+		top: 10,
+	},
+	profileContainer: {
 		alignItems: 'center',
-		gap: 12,
+		justifyContent: 'center',
+		zIndex: 2,
+	},
+	profileWrapper: {
+		width: 100,
+		height: 100,
+		borderRadius: 50,
+		borderWidth: 2,
+		borderColor: colors.primaryPurple, // 보라색 테두리
+		padding: 2, // 테두리와 이미지 사이 간격
+		backgroundColor: colors.white,
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	profileImage: {
-		width: 50,
-		height: 50,
-		borderRadius: 25,
+		width: '100%',
+		height: '100%',
+		borderRadius: 50,
 	},
 	profilePlaceholder: {
 		backgroundColor: '#E2D6FF',
 	},
-	profileText: {
-		gap: 2,
+	heartBubbleContainer: {
+		position: 'absolute',
+		top: 0,
+		right: 0,
+		width: 34,
+		height: 34,
 	},
-	profileSubtext: {
-		color: '#6B7280',
+	heartBubble: {
+		width: '100%',
+		height: '100%',
+	},
+	scrollView: {
+		flex: 1,
+		zIndex: 0,
+	},
+	scrollContent: {
+		paddingHorizontal: 20,
+		paddingBottom: 20,
+	},
+	introCard: {
+		backgroundColor: '#FBF9FF',
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: '#E2D6FF',
+		paddingVertical: 20,
+		alignItems: 'center',
+		marginBottom: 16,
+		gap: 8,
 	},
 	viewProfileButton: {
-		paddingHorizontal: 12,
+		backgroundColor: colors.primaryPurple,
+		paddingHorizontal: 16,
 		paddingVertical: 6,
 		borderRadius: 6,
-		borderWidth: 1,
-		borderColor: colors.primaryPurple,
+		marginBottom: 4,
 	},
 	viewProfileText: {
+		color: colors.white,
+	},
+	introText: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 2,
+	},
+	highlightText: {
 		color: colors.primaryPurple,
+	},
+	subIntroText: {
+		textAlign: 'center',
+	},
+	promptsSection: {
+		marginBottom: 16,
 	},
 	inputSection: {
 		marginBottom: 16,
-	},
-	promptsSection: {
-		marginBottom: 20,
+		minHeight: 200, // 입력창 최소 높이 확보
 	},
 	bottomSection: {
 		flexDirection: 'row',
@@ -265,6 +334,7 @@ const styles = StyleSheet.create({
 		borderColor: colors.primaryPurple,
 		alignItems: 'center',
 		justifyContent: 'center',
+		backgroundColor: colors.white,
 	},
 	previewButtonText: {
 		color: colors.primaryPurple,
@@ -279,12 +349,12 @@ const styles = StyleSheet.create({
 		flex: 2,
 		height: 50,
 		borderRadius: 10,
-		backgroundColor: colors.primaryPurple,
+		backgroundColor: '#F3F4F6', // 초기 배경색 (활성화 전)
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
 	sendButtonDisabled: {
-		backgroundColor: '#D1D5DB',
+		backgroundColor: '#F3F4F6',
 	},
 	sendButtonContent: {
 		flexDirection: 'row',
@@ -295,8 +365,14 @@ const styles = StyleSheet.create({
 		color: '#BEACFF',
 	},
 	sendButtonText: {
+		color: '#9CA3AF', // 비활성화 텍스트 색상
+	},
+	// 활성화된 버튼 스타일
+	sendButtonActive: {
+		backgroundColor: colors.primaryPurple,
+	},
+	sendButtonTextActive: {
 		color: colors.white,
-		marginLeft: 4,
 	},
 	previewHeader: {
 		alignItems: 'center',

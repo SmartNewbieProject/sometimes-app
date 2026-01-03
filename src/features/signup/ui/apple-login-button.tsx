@@ -10,6 +10,8 @@ import { AppleLoginResponse, useAppleLogin } from '../queries/use-apple-login';
 import { devLogWithTag } from '@/src/shared/utils';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import AppleLogo from '@assets/icons/apple-logo.svg';
+import useSignupProgress from '../hooks/use-signup-progress';
+import { AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
 
 declare global {
 	interface Window {
@@ -94,6 +96,8 @@ const AppleLoginButton: React.FC = () => {
 	const [isAppleJSLoaded, setIsAppleJSLoaded] = useState<boolean>(false);
 	const mutation = useAppleLogin();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { setAuthMethod } = useSignupProgress();
+
 	useEffect(() => {
 		initializeAppleLogin();
 	}, []);
@@ -176,6 +180,7 @@ const AppleLoginButton: React.FC = () => {
 		devLogWithTag('Apple Login', 'Button clicked', { hasSDK: !!window.AppleID });
 		if (!window.AppleID || isLoading) return;
 
+		setAuthMethod(AUTH_METHODS.APPLE);
 		authEvents.trackLoginStarted('apple');
 		signupEvents.trackSignupStarted();
 
@@ -210,6 +215,7 @@ const AppleLoginButton: React.FC = () => {
 	const handleIOSAppleLogin = async (): Promise<void> => {
 		if (isLoading) return;
 
+		setAuthMethod(AUTH_METHODS.APPLE);
 		authEvents.trackLoginStarted('apple');
 		signupEvents.trackSignupStarted();
 

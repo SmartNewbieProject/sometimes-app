@@ -58,6 +58,7 @@ export const containsSale = (text: string, t: TFunction): boolean => {
 
 const getAppleToServerMapping = (): Record<string, string> => ({
 	// 현재 사용 중인 상품
+	gem_16: '스타터 팩',
 	gem_26: '라이트 팩',
 	gem_55: '베이직 팩',
 	gem_85: '스탠다드 팩',

@@ -1,95 +1,95 @@
-
-import { DefaultLayout, TwoButtons } from "@/src/features/layout/ui";
+import { DefaultLayout, TwoButtons } from '@/src/features/layout/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import {SignupSteps } from "@/src/features/signup/hooks";
-import { Text } from "@/src/shared/ui/text";
-import { Image } from "expo-image";
-import {
+import { SignupSteps } from '@/src/features/signup/hooks';
+import { Text } from '@/src/shared/ui/text';
+import { Image } from 'expo-image';
+import { StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
 
-  StyleSheet,
-  View,
-} from "react-native";
-
-import { withSignupValidation } from "@/src/features/signup/ui/withSignupValidation";
-import CodeForm from "./code-form";
-import Loading from "@/src/features/loading";
-import useInviteCode from "../../hooks/use-invite-code";
-import { useTranslation } from "react-i18next";
-
-
+import { withSignupValidation } from '@/src/features/signup/ui/withSignupValidation';
+import CodeForm from './code-form';
+import Loading from '@/src/features/loading';
+import useInviteCode from '../../hooks/use-invite-code';
+import { useTranslation } from 'react-i18next';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 
 function InviteCode() {
-  const { t } = useTranslation();
-  const {signupLoading, storageLoading, onNext, onBackPress, nextMessage} = useInviteCode()
+	const { t } = useTranslation();
+	const { signupLoading, storageLoading, onNext, onBackPress, nextMessage } = useInviteCode();
+	const hasTrackedView = useRef(false);
 
-   if (signupLoading || storageLoading) {
-    return <Loading.Page />;
-  }
-  return (
-    <DefaultLayout style={styles.layout}>
-        <View style={styles.titleContainer}>
-          <Image
-            source={require("@assets/images/invite-code-key.png")}
-            style={styles.image}
-          />
-          <Text weight="semibold" size="20" textColor="black" style={styles.titleMargin}>
-            {t("apps.auth.sign_up.invite_code.subtitle_1")}
-          </Text>
-          <Text weight="semibold" size="20" textColor="black">
-            {t("apps.auth.sign_up.invite_code.subtitle_2")}
-          </Text>
-        </View>
-        <View style={styles.descriptionContainer}>
-          <Text weight="medium" size="sm" textColor="pale-purple">
-            {t("apps.auth.sign_up.invite_code.description")}
-          </Text>
-        </View>
-        <CodeForm />
+	useEffect(() => {
+		if (!hasTrackedView.current) {
+			mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_INVITE_CODE_VIEW, {
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+			hasTrackedView.current = true;
+		}
+	}, []);
 
+	if (signupLoading || storageLoading) {
+		return <Loading.Page />;
+	}
+	return (
+		<DefaultLayout style={styles.layout}>
+			<View style={styles.titleContainer}>
+				<Image source={require('@assets/images/invite-code-key.png')} style={styles.image} />
+				<Text weight="semibold" size="20" textColor="black" style={styles.titleMargin}>
+					{t('apps.auth.sign_up.invite_code.subtitle_1')}
+				</Text>
+				<Text weight="semibold" size="20" textColor="black">
+					{t('apps.auth.sign_up.invite_code.subtitle_2')}
+				</Text>
+			</View>
+			<View style={styles.descriptionContainer}>
+				<Text weight="medium" size="sm" textColor="pale-purple">
+					{t('apps.auth.sign_up.invite_code.description')}
+				</Text>
+			</View>
+			<CodeForm />
 
-
-      <View style={styles.bottomContainer}>
-        <TwoButtons
-          disabledNext={false}
-          onClickNext={onNext}
-          content={{ next: nextMessage }}
-          onClickPrevious={onBackPress}
-        />
-      </View>
-    </DefaultLayout>
-  );
+			<View style={styles.bottomContainer}>
+				<TwoButtons
+					disabledNext={false}
+					onClickNext={onNext}
+					content={{ next: nextMessage }}
+					onClickPrevious={onBackPress}
+				/>
+			</View>
+		</DefaultLayout>
+	);
 }
 
 export default withSignupValidation(InviteCode, SignupSteps.INVITE_CODE);
 
-
 const styles = StyleSheet.create({
-  layout: {
-    flex: 1,
-    position: "relative",
-  },
-  titleContainer: {
-    paddingHorizontal: 30,
-  },
-  titleMargin: {
-    marginTop: 8,
-  },
-  bottomContainer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    paddingTop: 16,
-    paddingHorizontal: 0,
-    backgroundColor: semanticColors.surface.background,
-  },
-  image: {
-    width: 81,
-    height: 81,
-    marginBottom: 16,
-  },
-  descriptionContainer: {
-    paddingTop: 10,
-    paddingLeft: 30,
-    marginBottom: 42,
-  },
+	layout: {
+		flex: 1,
+		position: 'relative',
+	},
+	titleContainer: {
+		paddingHorizontal: 30,
+	},
+	titleMargin: {
+		marginTop: 8,
+	},
+	bottomContainer: {
+		position: 'absolute',
+		bottom: 0,
+		width: '100%',
+		paddingTop: 16,
+		paddingHorizontal: 0,
+		backgroundColor: semanticColors.surface.background,
+	},
+	image: {
+		width: 81,
+		height: 81,
+		marginBottom: 16,
+	},
+	descriptionContainer: {
+		paddingTop: 10,
+		paddingLeft: 30,
+		marginBottom: 42,
+	},
 });

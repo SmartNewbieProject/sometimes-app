@@ -81,9 +81,11 @@ export default function JpProfilePage() {
 		setError(null);
 
 		if (!isAdult(birthday)) {
+			const authMethod = useSignupProgress.getState().authMethod;
 			mixpanelAdapter.track('Signup_AgeCheck_Failed', {
 				birthday,
 				platform: 'jp_sms',
+				auth_method: authMethod,
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 			router.push('/auth/age-restriction');
@@ -115,7 +117,9 @@ export default function JpProfilePage() {
 				}),
 			);
 
+			const currentAuthMethod = useSignupProgress.getState().authMethod;
 			mixpanelAdapter.track('Signup_JpProfile_Completed', {
+				auth_method: currentAuthMethod,
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
 

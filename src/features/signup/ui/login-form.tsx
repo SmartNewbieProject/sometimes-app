@@ -2,7 +2,12 @@ import { MobileIdentityVerification, usePortOneLogin } from '@/src/features/pass
 import { Button, Show, SlideUnlock, SlideToAbout, Text, AppDownloadSection } from '@/src/shared/ui';
 import { useMixpanel } from '@/src/shared/hooks';
 import { env } from '@/src/shared/libs/env';
-import { LOGIN_ABANDONED_STEPS, AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import {
+	LOGIN_ABANDONED_STEPS,
+	AUTH_METHODS,
+	MIXPANEL_EVENTS,
+} from '@/src/shared/constants/mixpanel-events';
 import KakaoLogo from '@assets/icons/kakao-logo.svg';
 import * as Localization from 'expo-localization';
 import { router, usePathname, useRouter } from 'expo-router';
@@ -28,6 +33,7 @@ import { useModal } from '@/src/shared/hooks/use-modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { devLogWithTag } from '@/src/shared/utils';
 import { isJapanese } from '@/src/shared/libs/local';
+import useSignupProgress from '../hooks/use-signup-progress';
 
 /**
  * 로그인 폼 - JP/KR 분기 처리
@@ -50,6 +56,10 @@ function JpLoginForm() {
 	const routerLocal = useRouter();
 
 	const handleSmsAuth = () => {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
+			auth_method: 'sms',
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
 		routerLocal.push('/auth/jp-sms');
 	};
 
@@ -120,10 +130,16 @@ function KrLoginForm() {
 	const isUS = regionCode === 'US';
 	const { t } = useTranslation();
 	const router = useRouter();
+	const { setAuthMethod } = useSignupProgress();
 
 	const onPressPassLogin = async () => {
 		const loginStartTime = Date.now();
 
+		setAuthMethod(AUTH_METHODS.PASS);
+		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
+			auth_method: 'pass',
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
 		authEvents.trackLoginStarted('pass');
 		signupEvents.trackSignupStarted();
 
@@ -286,6 +302,7 @@ function KakaoLoginComponent() {
 	const { loginWithKakaoNative } = useAuth();
 	const { showModal } = useModal();
 	const authStartTimeRef = useRef<number | null>(null);
+	const { setAuthMethod } = useSignupProgress();
 
 	const KAKAO_CLIENT_ID = env.KAKAO_LOGIN_API_KEY;
 	const redirectUri = env.KAKAO_REDIRECT_URI;
@@ -467,6 +484,11 @@ function KakaoLoginComponent() {
 	};
 
 	const handleKakaoLogin = () => {
+		setAuthMethod(AUTH_METHODS.KAKAO);
+		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
+			auth_method: 'kakao',
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
 		authEvents.trackLoginStarted('kakao');
 		signupEvents.trackSignupStarted();
 		if (Platform.OS === 'web') {

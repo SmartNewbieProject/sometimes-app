@@ -1,6 +1,7 @@
 import type { Router } from 'expo-router';
 import { Platform } from 'react-native';
 import type { SignupForm } from '../hooks/use-signup-progress';
+import useSignupProgress from '../hooks/use-signup-progress';
 import { jpSignup } from '@/src/features/jp-auth/apis';
 import i18n from '@/src/shared/libs/i18n';
 
@@ -195,6 +196,7 @@ export async function processSignup(
 	const completionRate = Math.round((completedFields.length / profileFields.length) * 100);
 
 	if (trackKpiEvent) {
+		const authMethod = useSignupProgress.getState().authMethod;
 		trackKpiEvent('Profile_Completion_Updated', {
 			profile_completion_rate: completionRate,
 			completed_fields: completedFields,
@@ -203,6 +205,7 @@ export async function processSignup(
 		trackKpiEvent('Signup_Completed', {
 			profile_completion_rate: completionRate,
 			total_duration: Date.now() - (signupForm.signupStartTime || Date.now()),
+			auth_method: authMethod,
 		});
 	}
 

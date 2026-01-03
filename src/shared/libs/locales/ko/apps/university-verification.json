@@ -1,33 +1,43 @@
 {
-  "header_title": "대학 인증",
-  "email_input_placeholder": "학교 이메일 주소",
-  "sending_code": "전송중...",
-  "send_code_button": "인증번호 전송",
-  "code_input_placeholder": "인증번호 입력",
-  "verifying_code": "확인중...",
-  "confirm_button": "확인",
-  "no_email_guide_1": "학교 이메일이 없는 경우",
-  "no_email_guide_2": "DM",
-  "no_email_guide_3": "으로 문의 주시면 다른 인증 방법을 알려드립니다.",
-  "complete_verification_button": "대학 인증 완료하기",
-  "messages": {
-    "email_required": "이메일을 입력해주세요.",
-    "fields_required": "이메일과 인증번호를 모두 입력해주세요.",
-    "code_sent": "인증번호가 전송되었습니다.",
-    "verification_success": "이메일 인증이 완료되었습니다.",
-    "verification_failed": "인증번호가 일치하지 않아요",
-    "user_info_error": "사용자 정보를 불러올 수 없습니다.",
-    "not_verified": "아직 인증이 되지 않았어요. 먼저 이메일 인증을 완료해주세요."
-  },
-  "success": {
-    "congratulations": "축하드려요!",
-    "verification_complete": "대학 인증이 완료되었어요!",
-    "find_ideal_type": "이제 당신의 이상형을 만나보게 만나보세요",
-    "go_to_find_ideal_type": "이상형 찾으러 가기 →"
-  },
-  "idcard": {
-    "upload_success_title": "제출 완료",
-    "upload_success_message": "파일이 성공적으로 제출되었습니다.\n관리자 검토 후 승인됩니다.",
-    "upload_error": "업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-  }
+	"header_title": "대학 인증",
+	"email_input_placeholder": "학교 이메일 주소",
+	"sending_code": "전송중...",
+	"send_code_button": "인증번호 전송",
+	"code_input_placeholder": "인증번호 입력",
+	"verifying_code": "확인중...",
+	"confirm_button": "확인",
+	"no_email_guide_1": "학교 이메일이 없는 경우",
+	"no_email_guide_2": "DM",
+	"no_email_guide_3": "으로 문의 주시면 다른 인증 방법을 알려드립니다.",
+	"complete_verification_button": "대학 인증 완료하기",
+	"idcard_submit_link": "학생증 및 재학증명서 제출",
+	"idcard_submit_guide": "을 통해 재학 정보를 인증받을 수 있어요.",
+	"idcard_reward_guide": "(24시간 이내로 구슬 20개가 지급돼요)",
+	"dm_guide_1": "재학 인증에 어려움이 있는 경우",
+	"dm_guide_2": "으로 문의 주시면 확인 후 도와드립니다.",
+	"messages": {
+		"email_required": "이메일을 입력해주세요.",
+		"fields_required": "이메일과 인증번호를 모두 입력해주세요.",
+		"code_sent": "인증번호가 전송되었습니다.",
+		"verification_success": "이메일 인증이 완료되었습니다.",
+		"verification_failed": "인증번호가 일치하지 않아요",
+		"user_info_error": "사용자 정보를 불러올 수 없습니다.",
+		"not_verified": "아직 인증이 되지 않았어요. 먼저 이메일 인증을 완료해주세요."
+	},
+	"success": {
+		"congratulations": "축하드려요!",
+		"verification_complete": "대학 인증이 완료되었어요!",
+		"find_ideal_type": "이제 당신의 이상형을 만나보게 만나보세요",
+		"go_to_find_ideal_type": "이상형 찾으러 가기 →"
+	},
+	"idcard": {
+		"page_title": "대학 인증",
+		"main_title": "재학 인증을 진행해 주세요",
+		"main_subtitle": "학생증 또는 재학증명서 이미지 1장만 업로드해주세요.",
+		"file_format": "(JPG, JPEG, PNG, 10MB 이하)",
+		"submit_button": "제출하기",
+		"upload_success_title": "제출 완료",
+		"upload_success_message": "파일이 성공적으로 제출되었습니다.\n관리자 검토 후 승인됩니다.",
+		"upload_error": "업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+	}
 }
