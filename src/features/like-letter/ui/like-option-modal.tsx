@@ -67,8 +67,7 @@ export function LikeOptionModal({
 				return;
 			}
 
-			// API 호출하여 권한 구매
-			await likeLetterApi.purchaseLetterPermission(connectionId);
+			await likeLetterApi.getLetterPermission(connectionId);
 
 			onClose();
 			router.push({
