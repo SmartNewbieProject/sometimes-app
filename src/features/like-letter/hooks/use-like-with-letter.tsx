@@ -109,13 +109,26 @@ export function useLikeWithLetter() {
 	const performLikeWithLetter = async (
 		connectionId: string,
 		letter?: string,
-		options?: { source?: 'home' | 'profile'; matchId?: string },
+		options?: {
+			source?: 'home' | 'profile';
+			matchId?: string;
+			isFromPrompt?: boolean;
+			letterLength?: number;
+		},
 	) => {
-		const { source = 'home', matchId } = options ?? {};
+		const { source = 'home', matchId, isFromPrompt = false, letterLength = 0 } = options ?? {};
 
 		await tryCatch(
 			async () => {
 				await likeWithLetter({ connectionId, letter });
+
+				mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_LIKE_SUCCESS, {
+					connection_id: connectionId,
+					match_id: matchId,
+					letter_length: letterLength,
+					is_from_prompt: isFromPrompt,
+					has_letter: !!letter,
+				});
 
 				showModal({
 					showLogo: true,
@@ -158,6 +171,15 @@ export function useLikeWithLetter() {
 			},
 			(err) => {
 				const failureReason = determineFailureReason(err);
+
+				mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_LIKE_FAILED, {
+					connection_id: connectionId,
+					match_id: matchId,
+					letter_length: letterLength,
+					is_from_prompt: isFromPrompt,
+					error_type: failureReason.type,
+					error_message: err.message || err.error,
+				});
 
 				if (err.status === HttpStatusCode.Forbidden) {
 					showCashable({

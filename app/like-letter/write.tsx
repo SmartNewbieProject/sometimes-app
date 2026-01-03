@@ -1,10 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '@/src/shared/constants/colors';
 import { ImageResources } from '@/src/shared/libs';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { ImageResource, Text } from '@/src/shared/ui';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { LetterInput } from '@/src/features/like-letter/ui/letter-input';
@@ -42,11 +44,23 @@ export default function LikeLetterWriteScreen() {
 	const [letter, setLetter] = useState('');
 	const [isValid, setIsValid] = useState(true);
 	const [isSending, setIsSending] = useState(false);
+	const [isFromPrompt, setIsFromPrompt] = useState(false);
+	const startTimeRef = useRef(Date.now());
 
 	const connectionId = params.connectionId;
 	const matchId = params.matchId;
 	const canLetter = params.canLetter === 'true';
 	const source = (params.source as 'home' | 'profile') || 'home';
+
+	useEffect(() => {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_WRITE_STARTED, {
+			connection_id: connectionId,
+			match_id: matchId,
+			entry_source: source,
+			can_letter: canLetter,
+			entry_method: canLetter ? 'direct' : 'after_purchase',
+		});
+	}, []);
 
 	const { data: partner } = useMatchPartnerQuery(matchId);
 
@@ -84,11 +98,22 @@ export default function LikeLetterWriteScreen() {
 		setIsValid(valid);
 	}, []);
 
-	const handlePromptSelect = useCallback((prompt: string) => {
-		setLetter(prompt);
-		const validation = validateLetter(prompt);
-		setIsValid(validation.isValid);
-	}, []);
+	const handlePromptSelect = useCallback(
+		(prompt: string, promptIndex?: number) => {
+			setLetter(prompt);
+			setIsFromPrompt(true);
+			const validation = validateLetter(prompt);
+			setIsValid(validation.isValid);
+
+			mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_PROMPT_SELECTED, {
+				connection_id: connectionId,
+				match_id: matchId,
+				prompt_index: promptIndex,
+				prompt_text_preview: prompt.slice(0, 20),
+			});
+		},
+		[connectionId, matchId],
+	);
 
 	const handleViewProfile = useCallback(() => {
 		if (!matchId) return;
@@ -99,6 +124,12 @@ export default function LikeLetterWriteScreen() {
 	}, [matchId]);
 
 	const handlePreview = useCallback(() => {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_PREVIEW_VIEWED, {
+			connection_id: connectionId,
+			match_id: matchId,
+			letter_length: letter.length,
+		});
+
 		showModal({
 			showLogo: false,
 			customTitle: (
@@ -127,20 +158,58 @@ export default function LikeLetterWriteScreen() {
 				onClick: hideModal,
 			},
 		});
-	}, [showModal, hideModal, myNickname, myAge, myUniversityName, letter, myProfileUrl, t]);
+	}, [
+		showModal,
+		hideModal,
+		myNickname,
+		myAge,
+		myUniversityName,
+		letter,
+		myProfileUrl,
+		t,
+		connectionId,
+		matchId,
+	]);
 
 	const handleSendLetter = useCallback(async () => {
 		if (!isValid || letter.trim().length === 0 || isSending) {
 			return;
 		}
 
+		const timeToSend = Math.floor((Date.now() - startTimeRef.current) / 1000);
+
+		mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_LIKE_SENT, {
+			connection_id: connectionId,
+			match_id: matchId,
+			letter_length: letter.trim().length,
+			is_from_prompt: isFromPrompt,
+			time_to_send_seconds: timeToSend,
+			gem_cost: canLetter ? 0 : letterLikeCost,
+		});
+
 		setIsSending(true);
 		try {
-			await sendLikeWithLetter(connectionId, letter.trim(), { source, matchId });
+			await sendLikeWithLetter(connectionId, letter.trim(), {
+				source,
+				matchId,
+				isFromPrompt,
+				letterLength: letter.trim().length,
+			});
 		} finally {
 			setIsSending(false);
 		}
-	}, [isValid, letter, isSending, sendLikeWithLetter, connectionId, source, matchId]);
+	}, [
+		isValid,
+		letter,
+		isSending,
+		sendLikeWithLetter,
+		connectionId,
+		source,
+		matchId,
+		isFromPrompt,
+		canLetter,
+		letterLikeCost,
+	]);
 
 	const canSend = isValid && letter.trim().length > 0 && !isSending;
 

@@ -256,6 +256,28 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	FIRST_LIKE_SENT: 'First_Like_Sent',
 	FIRST_LIKE_RECEIVED: 'First_Like_Received',
 
+	// ===== 편지 좋아요 이벤트 (2025-01-04 추가) =====
+
+	// 진입/노출
+	LETTER_LIKE_ELIGIBLE: 'Letter_Like_Eligible',
+	LETTER_LIKE_OPTION_MODAL_SHOWN: 'Letter_Like_Option_Modal_Shown',
+
+	// 선택/행동
+	LETTER_LIKE_OPTION_SELECTED: 'Letter_Like_Option_Selected',
+	LETTER_PERMISSION_PURCHASED: 'Letter_Permission_Purchased',
+	LETTER_GEM_INSUFFICIENT: 'Letter_Gem_Insufficient',
+
+	// 편지 작성
+	LETTER_WRITE_STARTED: 'Letter_Write_Started',
+	LETTER_PROMPT_SELECTED: 'Letter_Prompt_Selected',
+	LETTER_PREVIEW_VIEWED: 'Letter_Preview_Viewed',
+	LETTER_WRITE_ABANDONED: 'Letter_Write_Abandoned',
+
+	// 전송 결과
+	LETTER_LIKE_SENT: 'Letter_Like_Sent',
+	LETTER_LIKE_SUCCESS: 'Letter_Like_Success',
+	LETTER_LIKE_FAILED: 'Letter_Like_Failed',
+
 	// ===== 서버 전용 이벤트 (백엔드에서만 발송) =====
 
 	// 매칭 파이프라인 (백엔드 NestJS)
@@ -622,6 +644,39 @@ export interface FirstExperienceEventProperties extends BaseEventProperties {
 	time_to_first_action?: number;
 	signup_date?: string;
 	profile_completion_rate?: number;
+}
+
+export interface LetterLikeEventProperties extends BaseEventProperties {
+	connection_id?: string;
+	match_id?: string;
+	entry_source?: 'home' | 'profile';
+	can_letter?: boolean;
+
+	gem_balance?: number;
+	gem_cost?: number;
+	letter_cost?: number;
+	simple_like_cost?: number;
+	gem_balance_before?: number;
+	gem_balance_after?: number;
+	gem_required?: number;
+	gem_shortage?: number;
+	had_sufficient_gems?: boolean;
+
+	letter_length?: number;
+	is_from_prompt?: boolean;
+	prompt_index?: number;
+	prompt_text_preview?: string;
+	is_valid?: boolean;
+
+	time_spent_seconds?: number;
+	time_to_send_seconds?: number;
+
+	option?: 'simple_like' | 'letter_like' | 'charge' | 'dismiss';
+	entry_method?: 'direct' | 'after_purchase';
+	abandon_reason?: 'back_button' | 'app_background';
+	error_type?: string;
+	error_message?: string;
+	has_mutual_like?: boolean;
 }
 
 // ===== 서버 전용 이벤트 속성 (백엔드 NestJS) =====
@@ -1045,7 +1100,19 @@ export interface KpiEventTypePropertiesMap {
 	Matching_Pool_Snapshot: MatchingPoolSnapshotEventProperties;
 	Matching_Failure_Analyzed: MatchingFailureAnalyzedEventProperties;
 
-	// 다른 모든 이벤트들도 기본 BaseEventProperties 사용
+	Letter_Like_Eligible: LetterLikeEventProperties;
+	Letter_Like_Option_Modal_Shown: LetterLikeEventProperties;
+	Letter_Like_Option_Selected: LetterLikeEventProperties;
+	Letter_Permission_Purchased: LetterLikeEventProperties;
+	Letter_Gem_Insufficient: LetterLikeEventProperties;
+	Letter_Write_Started: LetterLikeEventProperties;
+	Letter_Prompt_Selected: LetterLikeEventProperties;
+	Letter_Preview_Viewed: LetterLikeEventProperties;
+	Letter_Write_Abandoned: LetterLikeEventProperties;
+	Letter_Like_Sent: LetterLikeEventProperties;
+	Letter_Like_Success: LetterLikeEventProperties;
+	Letter_Like_Failed: LetterLikeEventProperties;
+
 	[key: string]: BaseEventProperties;
 }
 

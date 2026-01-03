@@ -1,13 +1,15 @@
 import { ImageResources } from '@/src/shared/libs';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { ImageResource, Text } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFeatureCost, useCurrentGem } from '@features/payment/hooks';
 import { likeLetterApi } from '../api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { LikeOption } from '../types';
 
 type LikeOptionModalProps = {
@@ -42,11 +44,38 @@ export function LikeOptionModal({
 	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
 	const letterLikeCost = canLetter ? 0 : baseLetterLikeCost;
 
+	useEffect(() => {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_LIKE_OPTION_MODAL_SHOWN, {
+			connection_id: connectionId,
+			match_id: matchId,
+			entry_source: source,
+			can_letter: canLetter,
+			gem_balance: currentGem,
+			letter_cost: letterLikeCost,
+			simple_like_cost: simpleLikeCost,
+		});
+	}, []);
+
+	const trackOptionSelected = (option: 'simple_like' | 'letter_like' | 'charge' | 'dismiss') => {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_LIKE_OPTION_SELECTED, {
+			connection_id: connectionId,
+			match_id: matchId,
+			entry_source: source,
+			can_letter: canLetter,
+			gem_balance: currentGem,
+			option,
+			had_sufficient_gems: currentGem >= letterLikeCost,
+		});
+	};
+
 	const handleSimpleLike = () => {
+		trackOptionSelected('simple_like');
 		onSelect('simple');
 	};
 
 	const handleLetterLike = async () => {
+		trackOptionSelected('letter_like');
+
 		if (canLetter) {
 			onClose();
 			router.push({
@@ -66,12 +95,28 @@ export function LikeOptionModal({
 		try {
 			setIsLoading(true);
 			if (currentGem < letterLikeCost) {
+				mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_GEM_INSUFFICIENT, {
+					connection_id: connectionId,
+					match_id: matchId,
+					gem_balance: currentGem,
+					gem_required: letterLikeCost,
+					gem_shortage: letterLikeCost - currentGem,
+				});
 				setIsInsufficient(true);
 				return;
 			}
 
+			const gemBefore = currentGem;
 			await likeLetterApi.getLetterPermission(connectionId);
 			await queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
+
+			mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_PERMISSION_PURCHASED, {
+				connection_id: connectionId,
+				match_id: matchId,
+				gem_cost: letterLikeCost,
+				gem_balance_before: gemBefore,
+				gem_balance_after: gemBefore - letterLikeCost,
+			});
 
 			onClose();
 			router.push({
@@ -86,6 +131,13 @@ export function LikeOptionModal({
 				},
 			});
 		} catch (error: unknown) {
+			mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_GEM_INSUFFICIENT, {
+				connection_id: connectionId,
+				match_id: matchId,
+				gem_balance: currentGem,
+				gem_required: letterLikeCost,
+				gem_shortage: letterLikeCost - currentGem,
+			});
 			setIsInsufficient(true);
 		} finally {
 			setIsLoading(false);
@@ -93,8 +145,14 @@ export function LikeOptionModal({
 	};
 
 	const handleGoToCharge = () => {
+		trackOptionSelected('charge');
 		onClose();
 		router.push('/purchase/gem-store');
+	};
+
+	const handleDismiss = () => {
+		trackOptionSelected('dismiss');
+		onClose();
 	};
 
 	if (isInsufficient) {
@@ -150,7 +208,7 @@ export function LikeOptionModal({
 						</Pressable>
 					</View>
 
-					<Pressable onPress={onClose} style={styles.closeButton}>
+					<Pressable onPress={handleDismiss} style={styles.closeButton}>
 						<Text size="12" textColor="disabled" style={{ textDecorationLine: 'underline' }}>
 							다음에
 						</Text>

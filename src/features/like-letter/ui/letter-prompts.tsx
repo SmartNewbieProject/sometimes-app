@@ -10,7 +10,7 @@ import { useLetterPrompts } from '../hooks/use-letter-prompts';
 
 type LetterPromptsProps = {
 	connectionId: string;
-	onSelect: (prompt: string) => void;
+	onSelect: (prompt: string, promptIndex?: number) => void;
 };
 
 export function LetterPrompts({ connectionId, onSelect }: LetterPromptsProps) {
@@ -26,7 +26,7 @@ export function LetterPrompts({ connectionId, onSelect }: LetterPromptsProps) {
 
 	const handleSelect = (prompt: string, index: number) => {
 		setSelectedIndex(index);
-		onSelect(prompt);
+		onSelect(prompt, index);
 		setIsExpanded(false);
 	};
 
