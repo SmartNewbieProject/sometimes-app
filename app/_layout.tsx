@@ -142,7 +142,7 @@ export default Sentry.wrap(function RootLayout() {
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				const mixpanelToken = env.MIXPANEL_TOKEN;
-				if (mixpanelToken) {
+				if (mixpanelToken && !__DEV__) {
 					try {
 						mixpanelAdapter.init(mixpanelToken, true);
 
@@ -153,6 +153,8 @@ export default Sentry.wrap(function RootLayout() {
 					} catch (mixpanelError) {
 						console.warn('[SDK Init] Mixpanel init failed:', mixpanelError);
 					}
+				} else if (__DEV__) {
+					console.log('[SDK Init] Mixpanel disabled in development mode');
 				}
 
 				await new Promise((resolve) => setTimeout(resolve, 100));
