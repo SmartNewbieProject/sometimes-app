@@ -57,7 +57,7 @@ function InterestSection() {
 				tattoo: ['タトゥー', '문신', '문신 선호도', 'Tattoo', 'TATTOO'],
 				age: ['希望の年齢', '희망 나이', '나이', 'Age', 'AGE_PREFERENCE'],
 				personality: ['性格', '성격', 'Personality', 'personality'],
-				military: ['兵役', '군필 여부', 'Military', 'MILITARY_PREFERENCE_MALE'],
+				military: ['兵役', '군필 여부', 'Military', 'MILITARY_PREFERENCE_FEMALE'],
 			};
 
 			const drinkingPreference = preferences.find(
