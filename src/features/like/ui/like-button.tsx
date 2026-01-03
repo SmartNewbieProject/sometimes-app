@@ -12,7 +12,7 @@ import {
 	Easing,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 
 import { useFeatureCost } from '@features/payment/hooks';
@@ -43,6 +43,7 @@ export const LikeButton = ({
 	source = 'profile',
 	style,
 }: LikeButtonProps) => {
+	const { redirectTo: currentRedirectTo } = useLocalSearchParams<{ redirectTo?: string }>();
 	const { profileDetails } = useAuth();
 	const { showModal, hideModal } = useModal();
 	const { featureCosts } = useFeatureCost();
@@ -103,6 +104,10 @@ export const LikeButton = ({
 	};
 
 	const handleLetterContinue = () => {
+		const basePath = source === 'home' ? '/home' : `/partner/view/${matchId}`;
+		const fullRedirectPath = currentRedirectTo
+			? `${basePath}?redirectTo=${currentRedirectTo}`
+			: basePath;
 		router.push({
 			pathname: '/like-letter/write',
 			params: {
@@ -112,6 +117,7 @@ export const LikeButton = ({
 				profileUrl: encodeURIComponent(profileUrl),
 				canLetter: 'true',
 				source,
+				redirectTo: encodeURIComponent(fullRedirectPath),
 			},
 		});
 	};

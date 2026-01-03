@@ -25,6 +25,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { Button, Show, Text, HeaderWithNotification } from '@shared/ui';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import type { Href } from 'expo-router';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,7 +39,15 @@ const { useMatchReasonsQuery } = MatchReasons.queries;
 export default function PartnerDetailScreen() {
 	const { t, i18n } = useTranslation();
 	const country = i18n.language?.startsWith('ja') ? 'jp' : 'kr';
-	const { id: matchId } = useLocalSearchParams<{ id: string }>();
+	const { id: matchId, redirectTo } = useLocalSearchParams<{ id: string; redirectTo?: string }>();
+
+	const handleBack = () => {
+		if (redirectTo) {
+			router.replace(decodeURIComponent(redirectTo) as Href);
+		} else {
+			router.replace('/matching-history');
+		}
+	};
 	const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
 	const { data: matchReasonsData } = useMatchReasonsQuery(partner?.connectionId);
 	const { profileDetails } = useAuth();
@@ -266,6 +275,7 @@ export default function PartnerDetailScreen() {
 			/>
 
 			<HeaderWithNotification
+				backButtonAction={handleBack}
 				rightContent={
 					<Pressable
 						onPress={() =>

@@ -4,7 +4,7 @@ import { ImageResource, Text } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFeatureCost, useCurrentGem } from '@features/payment/hooks';
@@ -33,6 +33,7 @@ export function LikeOptionModal({
 	onSelect,
 	onClose,
 }: LikeOptionModalProps) {
+	const { redirectTo: currentRedirectTo } = useLocalSearchParams<{ redirectTo?: string }>();
 	const queryClient = useQueryClient();
 	const { featureCosts } = useFeatureCost();
 	const { data } = useCurrentGem();
@@ -76,6 +77,10 @@ export function LikeOptionModal({
 	const handleLetterLike = async () => {
 		trackOptionSelected('letter_like');
 
+		const basePath = source === 'home' ? '/home' : `/partner/view/${matchId}`;
+		const fullRedirectPath = currentRedirectTo
+			? `${basePath}?redirectTo=${currentRedirectTo}`
+			: basePath;
 		if (canLetter) {
 			onClose();
 			router.push({
@@ -87,6 +92,7 @@ export function LikeOptionModal({
 					profileUrl: encodeURIComponent(profileUrl),
 					canLetter: 'true',
 					source,
+					redirectTo: encodeURIComponent(fullRedirectPath),
 				},
 			});
 			return;
@@ -128,6 +134,7 @@ export function LikeOptionModal({
 					profileUrl: encodeURIComponent(profileUrl),
 					canLetter: 'true',
 					source,
+					redirectTo: encodeURIComponent(fullRedirectPath),
 				},
 			});
 		} catch (error: unknown) {

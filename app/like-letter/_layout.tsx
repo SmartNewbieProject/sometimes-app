@@ -1,3 +1,4 @@
+import type { Href } from 'expo-router';
 import { Slot, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,15 +9,13 @@ import Layout from '@/src/features/layout';
 export default function LikeLetterLayout() {
 	const insets = useSafeAreaInsets();
 	const router = useRouter();
-	const { matchId, source } = useLocalSearchParams<{ matchId?: string; source?: string }>();
+	const { redirectTo } = useLocalSearchParams<{ redirectTo?: string }>();
 
 	const handleBack = () => {
-		if (source === 'home') {
-			router.replace('/home');
-		} else if (matchId) {
-			router.replace({ pathname: '/partner/view/[id]', params: { id: matchId } });
+		if (redirectTo) {
+			router.replace(decodeURIComponent(redirectTo) as Href);
 		} else {
-			router.replace('/home');
+			router.back();
 		}
 	};
 

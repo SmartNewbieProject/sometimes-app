@@ -22,7 +22,7 @@ import useByeLike from '../queries/useByeLike';
 import useRejectLike from '../queries/useRejectLike';
 import i18n from '@/src/shared/libs/i18n';
 
-import OpenLetterIcon from "@assets/images/post-box/open-letter.svg";
+import OpenLetterIcon from '@assets/images/post-box/open-letter.svg';
 
 interface PostBoxCardProps {
 	status: string;
@@ -71,8 +71,8 @@ function PostBoxCard({
 	const statusMessage =
 		type === 'liked-me'
 			? t('features.post-box.ui.card.status_messages.liked_me_relative', {
-				time: dayUtils.formatRelativeTime(likedAt),
-			})
+					time: dayUtils.formatRelativeTime(likedAt),
+				})
 			: status === 'OPEN'
 				? t('features.post-box.ui.card.status_messages.mutual_like')
 				: status === 'REJECTED'
@@ -128,7 +128,10 @@ function PostBoxCard({
 		<Pressable
 			onPress={() => {
 				if (userWithdrawal || isExpired) return;
-				router.push(`/partner/view/${matchId}`);
+				router.push({
+					pathname: '/partner/view/[id]',
+					params: { id: matchId, redirectTo: encodeURIComponent('/post-box') },
+				});
 			}}
 		>
 			<View style={[styles.container, isLetterCard && styles.letterCardContainer]}>
@@ -236,8 +239,8 @@ export function LikedMePendingButton({
 					<CustomText textColor="black" weight="bold" size="20">
 						{profileDetails?.gender === 'MALE'
 							? t('features.like.ui.like_button.modal.title_line2_male', {
-								cost: featureCosts?.LIKE_MESSAGE,
-							})
+									cost: featureCosts?.LIKE_MESSAGE,
+								})
 							: t('features.like.ui.like_button.modal.title_line2_default')}
 					</CustomText>
 				</View>
@@ -350,8 +353,8 @@ export function LikedMeOpenButton({
 					<CustomText textColor="disabled" size="12">
 						{profileDetails?.gender === 'MALE'
 							? t('features.post-box.ui.card.modal_texts.chat_start_cost_male', {
-								cost: featureCosts?.CHAT_START,
-							})
+									cost: featureCosts?.CHAT_START,
+								})
 							: t('features.post-box.ui.card.modal_texts.chat_start_now')}
 						{t('features.post-box.ui.card.modal_texts.chat_start_suffix')}
 					</CustomText>

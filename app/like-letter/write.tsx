@@ -119,7 +119,7 @@ export default function LikeLetterWriteScreen() {
 		if (!matchId) return;
 		router.push({
 			pathname: '/partner/view/[id]',
-			params: { id: matchId },
+			params: { id: matchId, redirectTo: encodeURIComponent('/like-letter/write') },
 		});
 	}, [matchId]);
 
