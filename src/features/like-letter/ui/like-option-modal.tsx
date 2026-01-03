@@ -36,7 +36,7 @@ export function LikeOptionModal({
 
 	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 9;
 	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
-	const letterLikeCost = canLetter ? simpleLikeCost : baseLetterLikeCost;
+	const letterLikeCost = canLetter ? 0 : baseLetterLikeCost;
 
 	const handleSimpleLike = () => {
 		onSelect('simple');

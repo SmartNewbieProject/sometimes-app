@@ -72,8 +72,7 @@ export default function LikeLetterWriteScreen() {
 
 	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 9;
 	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
-	// 이미 편지 권한이 있으면(canLetter=true) 일반 좋아요 비용만 부과
-	const letterLikeCost = canLetter ? simpleLikeCost : baseLetterLikeCost;
+	const letterLikeCost = canLetter ? 0 : baseLetterLikeCost;
 
 	const handleLetterChange = useCallback((text: string) => {
 		setLetter(text);
