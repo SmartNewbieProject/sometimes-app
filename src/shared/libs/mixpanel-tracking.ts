@@ -134,16 +134,6 @@ export class MixpanelTracker {
 	}
 
 	/**
-	 * 상호 좋아요
-	 */
-	trackLikeMutualMatch(properties: LikeDetailedEventProperties) {
-		this.mixpanel?.track(MIXPANEL_EVENTS.LIKE_MUTUAL_MATCH, {
-			...properties,
-			is_mutual: true,
-		});
-	}
-
-	/**
 	 * 좋아요 한도 도달
 	 */
 	trackLikeLimitReached(likesRemaining: number, properties?: LikeDetailedEventProperties) {
