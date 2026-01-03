@@ -12,6 +12,7 @@ import {
 	Easing,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 
 import { useFeatureCost } from '@features/payment/hooks';
@@ -29,6 +30,7 @@ type LikeButtonProps = {
 	nickname: string;
 	profileUrl: string;
 	canLetter?: boolean;
+	source?: 'home' | 'profile';
 	style?: StyleProp<ViewStyle>;
 };
 
@@ -38,6 +40,7 @@ export const LikeButton = ({
 	nickname,
 	profileUrl,
 	canLetter,
+	source = 'profile',
 	style,
 }: LikeButtonProps) => {
 	const { profileDetails } = useAuth();
@@ -99,6 +102,20 @@ export const LikeButton = ({
 		}
 	};
 
+	const handleLetterContinue = () => {
+		router.push({
+			pathname: '/like-letter/write',
+			params: {
+				connectionId,
+				matchId,
+				nickname,
+				profileUrl: encodeURIComponent(profileUrl),
+				canLetter: 'true',
+				source,
+			},
+		});
+	};
+
 	const showLikeOptions = () => {
 		showModal({
 			custom: () => (
@@ -107,7 +124,7 @@ export const LikeButton = ({
 					matchId={matchId}
 					nickname={nickname}
 					profileUrl={profileUrl}
-					canLetter={canLetter}
+					canLetter={false}
 					onSelect={(option) => {
 						if (option === 'simple') {
 							handleSimpleLike();
@@ -155,6 +172,42 @@ export const LikeButton = ({
 			},
 		],
 	};
+
+	if (canLetter) {
+		return (
+			<Pressable
+				onPress={handleLetterContinue}
+				onLayout={(e) => setContainerW(e.nativeEvent.layout.width || 0)}
+				style={[styles.gradientButtonContainer, style]}
+			>
+				<LinearGradient
+					colors={['#9B6DFF', '#7A4AE2', '#6B3FD4']}
+					start={{ x: 0, y: 0 }}
+					end={{ x: 1, y: 1 }}
+					style={styles.gradientButton}
+				>
+					<RNText style={styles.buttonText}>편지 이어쓰기</RNText>
+				</LinearGradient>
+				<Animated.View style={[styles.glowOverlay, animatedStyle]}>
+					<LinearGradient
+						colors={[
+							'transparent',
+							'rgba(255,255,255,0.05)',
+							'rgba(255,255,255,0.15)',
+							'rgba(255,255,255,0.2)',
+							'rgba(255,255,255,0.15)',
+							'rgba(255,255,255,0.05)',
+							'transparent',
+						]}
+						locations={[0, 0.2, 0.35, 0.5, 0.65, 0.8, 1]}
+						start={{ x: 0, y: 0.5 }}
+						end={{ x: 1, y: 0.5 }}
+						style={StyleSheet.absoluteFill}
+					/>
+				</Animated.View>
+			</Pressable>
+		);
+	}
 
 	return (
 		<Pressable

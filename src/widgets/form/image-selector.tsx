@@ -1,15 +1,13 @@
-import PhotoPickerModal from '@/src/features/mypage/ui/modal/image-modal';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { usePhotoPicker } from '@/src/shared/hooks/use-photo-picker';
 import { ContentSelector } from '@/src/shared/ui/content-selector';
 import { renderImage, renderPlaceholder } from '@/src/shared/ui/image-selector';
 import { convertToJpeg, isHeicBase64 } from '@/src/shared/utils/image';
 import type { StyleProp, ViewStyle } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
-import { useState } from 'react';
 import { type UseControllerProps, useController } from 'react-hook-form';
 import { Alert, Linking, Platform, Pressable } from 'react-native';
-import { FormContentSelector } from './content-selector';
 import i18n from '@/src/shared/libs/i18n';
 
 interface FormImageSelectorProps extends UseControllerProps {
@@ -34,10 +32,7 @@ export function FormImageSelector({
 		rules,
 	});
 	const { showErrorModal } = useModal();
-	const [isImageModal, setImageModal] = useState(false);
-	const handlePress = async () => {
-		setImageModal(true);
-	};
+	const { showPhotoPicker } = usePhotoPicker();
 
 	const pickImage = async () => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -55,7 +50,6 @@ export function FormImageSelector({
 					},
 				],
 			);
-			setImageModal(false);
 			return null;
 		}
 		const result = await ImagePicker.launchImageLibraryAsync({
@@ -68,14 +62,11 @@ export function FormImageSelector({
 			const pickedUri = result.assets[0].uri;
 			if (Platform.OS === 'web' && isHeicBase64(pickedUri)) {
 				showErrorModal(i18n.t('widgets.form.image_selector.invalid_image_format'), 'announcement');
-				setImageModal(false);
 				return null;
 			}
 			const jpegUri = await convertToJpeg(pickedUri);
-
 			onChange(jpegUri);
 		}
-		setImageModal(false);
 		return null;
 	};
 
@@ -95,7 +86,6 @@ export function FormImageSelector({
 					},
 				],
 			);
-			setImageModal(false);
 			return null;
 		}
 		const result = await ImagePicker.launchCameraAsync({
@@ -112,33 +102,32 @@ export function FormImageSelector({
 			const pickedUri = result.assets[0].uri;
 			if (Platform.OS === 'web' && isHeicBase64(pickedUri)) {
 				showErrorModal(i18n.t('widgets.form.image_selector.invalid_image_format'), 'announcement');
-				setImageModal(false);
 				return null;
 			}
 			const jpegUri = await convertToJpeg(pickedUri);
 			onChange(jpegUri);
 		}
-		setImageModal(false);
 		return null;
 	};
+
+	const handlePress = () => {
+		showPhotoPicker({
+			onTakePhoto: takePhoto,
+			onPickFromGallery: pickImage,
+			showGuide: false,
+		});
+	};
+
 	return (
-		<>
-			<Pressable onPress={handlePress}>
-				<ContentSelector
-					value={value}
-					size={size}
-					style={style}
-					actionLabel={actionLabel}
-					renderContent={renderImage}
-					renderPlaceholder={() => renderPlaceholder(i18n.t)}
-				/>
-			</Pressable>
-			<PhotoPickerModal
-				visible={isImageModal}
-				onClose={() => setImageModal(false)}
-				onTakePhoto={takePhoto}
-				onPickFromGallery={pickImage}
+		<Pressable onPress={handlePress}>
+			<ContentSelector
+				value={value}
+				size={size}
+				style={style}
+				actionLabel={actionLabel}
+				renderContent={renderImage}
+				renderPlaceholder={() => renderPlaceholder(i18n.t)}
 			/>
-		</>
+		</Pressable>
 	);
 }

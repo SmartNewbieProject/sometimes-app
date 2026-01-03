@@ -25,6 +25,7 @@ type WriteParams = {
 	canLetter?: string;
 	age?: string;
 	universityName?: string;
+	source?: string;
 };
 
 const { useMatchPartnerQuery } = Match.queries;
@@ -45,6 +46,7 @@ export default function LikeLetterWriteScreen() {
 	const connectionId = params.connectionId;
 	const matchId = params.matchId;
 	const canLetter = params.canLetter === 'true';
+	const source = (params.source as 'home' | 'profile') || 'home';
 
 	const { data: partner } = useMatchPartnerQuery(matchId);
 
@@ -134,11 +136,11 @@ export default function LikeLetterWriteScreen() {
 
 		setIsSending(true);
 		try {
-			await sendLikeWithLetter(connectionId, letter.trim());
+			await sendLikeWithLetter(connectionId, letter.trim(), { source, matchId });
 		} finally {
 			setIsSending(false);
 		}
-	}, [isValid, letter, isSending, sendLikeWithLetter, connectionId]);
+	}, [isValid, letter, isSending, sendLikeWithLetter, connectionId, source, matchId]);
 
 	const canSend = isValid && letter.trim().length > 0 && !isSending;
 
@@ -232,10 +234,14 @@ export default function LikeLetterWriteScreen() {
 					disabled={!canSend}
 				>
 					<View style={styles.sendButtonContent}>
-						<ImageResource resource={ImageResources.GEM} width={22} height={22} />
-						<Text size="14" style={styles.gemCount}>
-							x{letterLikeCost}
-						</Text>
+						{!canLetter && (
+							<>
+								<ImageResource resource={ImageResources.GEM} width={22} height={22} />
+								<Text size="14" style={styles.gemCount}>
+									x{letterLikeCost}
+								</Text>
+							</>
+						)}
 						<Text
 							weight="semibold"
 							size="16"

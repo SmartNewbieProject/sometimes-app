@@ -100,20 +100,22 @@ const useLikeWithLetterMutation = () =>
 	});
 
 export function useLikeWithLetter() {
-	const { showErrorModal, showModal } = useModal();
+	const { showErrorModal, showModal, hideModal } = useModal();
 	const { mutateAsync: likeWithLetter } = useLikeWithLetterMutation();
 	const { show: showCashable } = useCashableModal();
 	const { t } = useTranslation();
 	const { showPromptForMatching } = useAppInstallPrompt();
 
-	const performLikeWithLetter = async (connectionId: string, letter?: string) => {
+	const performLikeWithLetter = async (
+		connectionId: string,
+		letter?: string,
+		options?: { source?: 'home' | 'profile'; matchId?: string },
+	) => {
+		const { source = 'home', matchId } = options ?? {};
+
 		await tryCatch(
 			async () => {
 				await likeWithLetter({ connectionId, letter });
-
-				const successMessage = letter
-					? '편지를 함께 보냈어요.\n매칭되면 채팅은 무료로 시작돼요!'
-					: t('hooks.썸을_보냈어요');
 
 				showModal({
 					showLogo: true,
@@ -124,16 +126,14 @@ export function useLikeWithLetter() {
 							<Image style={styles.particle2} source={require('@assets/images/particle2.png')} />
 							<Image style={styles.particle3} source={require('@assets/images/particle3.png')} />
 							<Text textColor="black" weight="bold" size="20">
-								{letter ? t('hooks.편지를_함께_보냈어요') : t('hooks.썸을_보냈어요')}
+								{letter ? '편지를 함께 보냈어요!' : '썸을 보냈어요!'}
 							</Text>
 						</View>
 					),
 					children: (
 						<View style={styles.modalContent}>
 							<Text textColor="disabled" size="12">
-								{letter
-									? t('hooks.매칭되면_채팅은_무료로_시작돼요')
-									: t('hooks.상대방도_관심을_보이면')}
+								{letter ? '매칭되면 채팅은 무료로 시작돼요' : '상대방도 관심을 보이면'}
 							</Text>
 							{!letter && (
 								<Text textColor="disabled" size="12">
@@ -143,10 +143,15 @@ export function useLikeWithLetter() {
 						</View>
 					),
 					primaryButton: {
-						text: t('hooks.확인했어요'),
+						text: '설레는 마음 전달 완료!',
 						onClick: () => {
+							hideModal();
 							showPromptForMatching();
-							router.back();
+							if (source === 'profile' && matchId) {
+								router.replace({ pathname: '/partner/view/[id]', params: { id: matchId } });
+							} else {
+								router.replace('/home');
+							}
 						},
 					},
 				});

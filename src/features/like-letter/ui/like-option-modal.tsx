@@ -4,6 +4,7 @@ import colors from '@/src/shared/constants/colors';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 import { useFeatureCost, useCurrentGem } from '@features/payment/hooks';
 import { likeLetterApi } from '../api';
 import { useState } from 'react';
@@ -15,6 +16,7 @@ type LikeOptionModalProps = {
 	nickname: string;
 	profileUrl: string;
 	canLetter?: boolean;
+	source?: 'home' | 'profile';
 	onSelect: (option: LikeOption) => void;
 	onClose: () => void;
 };
@@ -25,9 +27,11 @@ export function LikeOptionModal({
 	nickname,
 	profileUrl,
 	canLetter = false,
+	source = 'profile',
 	onSelect,
 	onClose,
 }: LikeOptionModalProps) {
+	const queryClient = useQueryClient();
 	const { featureCosts } = useFeatureCost();
 	const { data } = useCurrentGem();
 	const currentGem = data?.totalGem ?? 0;
@@ -53,21 +57,21 @@ export function LikeOptionModal({
 					nickname,
 					profileUrl: encodeURIComponent(profileUrl),
 					canLetter: 'true',
+					source,
 				},
 			});
 			return;
 		}
 
-		// 권한 구매 시도
 		try {
 			setIsLoading(true);
-			// 로컬 잔액 체크 (API 호출 전 빠른 피드백)
 			if (currentGem < letterLikeCost) {
 				setIsInsufficient(true);
 				return;
 			}
 
 			await likeLetterApi.getLetterPermission(connectionId);
+			await queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
 
 			onClose();
 			router.push({
@@ -78,11 +82,10 @@ export function LikeOptionModal({
 					nickname,
 					profileUrl: encodeURIComponent(profileUrl),
 					canLetter: 'true',
+					source,
 				},
 			});
 		} catch (error: unknown) {
-			// 402 Payment Required or Insufficient Funds handling
-			// 에러 코드가 구체적이지 않다면 일단 잔액 부족으로 간주하거나, 서버 에러 메시지를 확인
 			setIsInsufficient(true);
 		} finally {
 			setIsLoading(false);
@@ -112,7 +115,7 @@ export function LikeOptionModal({
 				<View style={styles.content}>
 					<View style={styles.titleContainer}>
 						<Text weight="bold" size="20" textColor="black" style={styles.titleText}>
-							구슬이 1개 부족해요
+							구슬이 부족해요
 						</Text>
 					</View>
 
@@ -126,7 +129,7 @@ export function LikeOptionModal({
 						<Pressable style={styles.letterOption} onPress={handleGoToCharge}>
 							<View style={styles.chargeContent}>
 								<Text weight="medium" size="20" style={styles.letterLikeText}>
-									12개 충전하고 편지쓰기
+									충전하고 편지쓰기
 								</Text>
 								<Text size="12" style={styles.chargeSubText}>
 									결제 후 바로 편지를 보낼 수 있어요

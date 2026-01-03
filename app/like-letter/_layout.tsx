@@ -8,13 +8,15 @@ import Layout from '@/src/features/layout';
 export default function LikeLetterLayout() {
 	const insets = useSafeAreaInsets();
 	const router = useRouter();
-	const { matchId } = useLocalSearchParams<{ matchId?: string }>();
+	const { matchId, source } = useLocalSearchParams<{ matchId?: string; source?: string }>();
 
 	const handleBack = () => {
-		if (matchId) {
+		if (source === 'home') {
+			router.replace('/home');
+		} else if (matchId) {
 			router.replace({ pathname: '/partner/view/[id]', params: { id: matchId } });
 		} else {
-			router.back();
+			router.replace('/home');
 		}
 	};
 

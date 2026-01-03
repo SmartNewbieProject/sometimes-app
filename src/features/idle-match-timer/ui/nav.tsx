@@ -209,6 +209,7 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
 						nickname={match.partner?.name ?? ''}
 						profileUrl={match.partner?.profileImages[0]?.url ?? ''}
 						canLetter={match.canLetter}
+						source="home"
 					/>
 				</View>
 			) : null}

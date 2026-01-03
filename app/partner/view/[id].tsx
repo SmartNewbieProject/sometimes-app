@@ -210,6 +210,8 @@ export default function PartnerDetailScreen() {
 							matchId={matchId ?? ''}
 							nickname={partner.name ?? ''}
 							profileUrl={mainProfileImageUrl ?? ''}
+							canLetter={partner.canLetter}
+							source="profile"
 						/>
 					</View>
 				</Show>
@@ -219,12 +221,12 @@ export default function PartnerDetailScreen() {
 						isStatus(partner?.connectionId ?? '') === 'PENDING'
 					}
 				>
-					<View className="w-full flex flex-row">
+					<View style={{ width: '100%', flex: 1, flexDirection: 'row', height: 48 }}>
 						<Button
 							variant="outline"
 							disabled={true}
 							size="md"
-							styles={{ flex: 1, alignItems: 'center' }}
+							styles={{ flex: 1, alignItems: 'center', height: 48 }}
 						>
 							<Text>{t('apps.partner.view.button_waiting')}</Text>
 						</Button>

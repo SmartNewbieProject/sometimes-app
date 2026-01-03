@@ -5,8 +5,10 @@ export function getILiked(): Promise<ILiked[]> {
 	return axiosClient.get('/v1/matching/interactions/i-liked');
 }
 
-export function getLIkedMe(): Promise<LikedMe[]> {
-	return axiosClient.get('/v1/matching/interactions/liked-me');
+export function getLIkedMe(hasLetter?: boolean): Promise<LikedMe[]> {
+	return axiosClient.get('/v1/matching/interactions/liked-me', {
+		params: { hasLetter },
+	});
 }
 
 export function sendLike(connectionId: string, data?: SendLikeRequest): Promise<void> {

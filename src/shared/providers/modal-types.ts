@@ -1,31 +1,32 @@
-import type React from "react";
-import type { ReactNode } from "react";
+import type React from 'react';
+import type { ReactNode } from 'react';
 
 export type ModalOptions = {
-  title?: ReactNode;
-  customTitle?: ReactNode;
-  children?: ReactNode;
-  primaryButton?: {
-    text: string;
-    onClick: () => void;
-  };
-  banner?: React.ReactNode;
-  showParticle?: boolean;
-  showLogo?: boolean | React.ReactNode;
-  secondaryButton?: {
-    text: string;
-    onClick: () => void;
-  };
-  reverse?: boolean;
-  custom?: React.ElementType;
-  buttonLayout?: 'horizontal' | 'vertical';
-  dismissable?: boolean;
+	title?: ReactNode;
+	customTitle?: ReactNode;
+	children?: ReactNode;
+	primaryButton?: {
+		text: string;
+		onClick: () => void;
+	};
+	banner?: React.ReactNode;
+	showParticle?: boolean;
+	showLogo?: boolean | React.ReactNode;
+	secondaryButton?: {
+		text: string;
+		onClick: () => void;
+	};
+	reverse?: boolean;
+	custom?: React.ElementType;
+	buttonLayout?: 'horizontal' | 'vertical';
+	dismissable?: boolean;
+	position?: 'center' | 'bottom';
 };
 
 export type ErrorModalOptions = {
-  message: string;
-  type: "announcement" | "error";
-  dismissable?: boolean;
+	message: string;
+	type: 'announcement' | 'error';
+	dismissable?: boolean;
 };
 
 export type ModalOption = ModalOptions | ErrorModalOptions;
