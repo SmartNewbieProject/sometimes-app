@@ -119,6 +119,14 @@ export interface UseMixpanelReturn {
 		trackPostDeleted: (postId: string, deleteReason: string, postAge: number) => void;
 	};
 
+	communityEngagementEvents: {
+		trackArticleCreated: (category: string, hasImage: boolean, contentLengthTier: number) => void;
+		trackArticleViewed: (articleId: string, viewDuration: number, scrollDepth: number) => void;
+		trackArticleLiked: (articleId: string, likeSource: string) => void;
+		trackArticleBookmarked: (articleId: string) => void;
+		trackArticleCommented: (articleId: string, commentLength: number, isReply: boolean) => void;
+	};
+
 	paymentEvents: {
 		trackStoreViewed: (storeType: string) => void;
 		trackItemSelected: (itemType: string, itemValue: number) => void;
@@ -698,6 +706,60 @@ export const useMixpanel = (): UseMixpanelReturn => {
 					post_id: postId,
 					delete_reason: deleteReason,
 					post_age_hours: postAge,
+				});
+			},
+			[trackEvent],
+		),
+	};
+
+	const communityEngagementEvents = {
+		trackArticleCreated: useCallback(
+			(category: string, hasImage: boolean, contentLengthTier: number) => {
+				trackEvent('Article_Created', {
+					category,
+					has_image: hasImage,
+					content_length_tier: contentLengthTier,
+				});
+			},
+			[trackEvent],
+		),
+
+		trackArticleViewed: useCallback(
+			(articleId: string, viewDuration: number, scrollDepth: number) => {
+				trackEvent('Article_Viewed', {
+					post_id: articleId,
+					view_duration: viewDuration,
+					scroll_depth: scrollDepth,
+				});
+			},
+			[trackEvent],
+		),
+
+		trackArticleLiked: useCallback(
+			(articleId: string, likeSource: string) => {
+				trackEvent('Article_Liked', {
+					post_id: articleId,
+					like_source: likeSource,
+				});
+			},
+			[trackEvent],
+		),
+
+		trackArticleBookmarked: useCallback(
+			(articleId: string) => {
+				trackEvent('Article_Bookmarked', {
+					post_id: articleId,
+				});
+			},
+			[trackEvent],
+		),
+
+		trackArticleCommented: useCallback(
+			(articleId: string, commentLength: number, isReply: boolean) => {
+				trackEvent('Article_Commented', {
+					post_id: articleId,
+					comment_length: commentLength,
+					is_reply: isReply,
 				});
 			},
 			[trackEvent],
@@ -1417,6 +1479,7 @@ export const useMixpanel = (): UseMixpanelReturn => {
 		matchingEvents,
 		chatEvents,
 		communityEvents,
+		communityEngagementEvents,
 		paymentEvents,
 		momentEvents,
 		referralEvents,
