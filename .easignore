@@ -1,0 +1,65 @@
+# EAS Build Ignore File
+# Reduces archive size by excluding unnecessary files
+
+# Large build outputs (5.3GB!)
+builds/
+*.ipa
+*.aab
+*.apk
+
+# Git history (185MB)
+.git
+
+# Documentation & planning (not needed for build)
+docs/
+books/
+plan/
+*.md
+!README.md
+
+# Test files (not needed for build)
+__tests__/
+tests/
+test/
+.maestro/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Screenshots & images not used in app
+jp_screenshots/
+jp_screenshot.zip
+jp_screenshots.zip
+
+# IDE & editor configs
+.cursor/
+.idea/
+.vscode/
+.serena/
+.claude/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Patches - KEEP (needed for postinstall)
+# patches/
+
+# Scripts - KEEP (might be needed for build hooks)
+# scripts/
+
+# Miscellaneous
+*.log
+*.zip
+.DS_Store
+Thumbs.db
+
+# Keys (security - should not be in archive anyway)
+*.p8
+*.p12
+*.jks
+*.key
+*.mobileprovision
+google-service-account.json
