@@ -6,13 +6,13 @@ import { getLIkedMe } from "../api";
 import { MIXPANEL_EVENTS } from "@/src/shared/constants/mixpanel-events";
 import type { LikedMe } from "../type/like";
 
-function useLikedMeQuery() {
+function useLikedMeQuery(hasLetter?: boolean) {
   const queryClient = useQueryClient();
   const previousDataRef = useRef<LikedMe[] | null>(null);
 
   const { data, ...props } = useQuery({
-    queryKey: ["liked", "to-me"],
-    queryFn: getLIkedMe,
+    queryKey: ["liked", "to-me", { hasLetter }],
+    queryFn: () => getLIkedMe(hasLetter),
     refetchInterval: 1 * 60 * 1000,
     refetchIntervalInBackground: true,
     refetchOnMount: true,

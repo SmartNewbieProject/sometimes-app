@@ -26,7 +26,8 @@ export type LikedMe = {
 	likeId?: string;
 	status: SomeStatus | string;
 	likedAt: string;
-	letter: string | null;
+	letterContent?: string | null;
+	hasLetter?: boolean;
 	instagram: string | null;
 	matchExpiredAt: string;
 	isExpired: boolean;

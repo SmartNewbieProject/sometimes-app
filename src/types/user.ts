@@ -16,11 +16,7 @@ export interface ProfileImage {
 }
 
 export interface ManagementImagesResponse {
-	images: [
-		ProfileImage | null,
-		ProfileImage | null,
-		ProfileImage | null
-	];
+	images: [ProfileImage | null, ProfileImage | null, ProfileImage | null];
 }
 
 export interface ManagementSlot {
@@ -79,12 +75,12 @@ export interface PreferenceOption {
 	id: string;
 	displayName: string;
 	imageUrl?: string | null;
-	key?: string;  // NEW! 영어 ID (예: "SAME_AGE", "YOUNGER")
+	key?: string; // NEW! 영어 ID (예: "SAME_AGE", "YOUNGER")
 }
 
 export interface PreferenceTypeGroup {
 	typeName: string;
-	typeKey?: string;  // NEW! 영어 ID (예: "AGE_PREFERENCE")
+	typeKey?: string; // NEW! 영어 ID (예: "AGE_PREFERENCE")
 	selectedOptions: PreferenceOption[];
 }
 
@@ -133,6 +129,7 @@ export interface UserProfile {
 	matchScore?: number;
 	isFirstMatch?: boolean;
 	tier?: string;
+	canLetter?: boolean;
 }
 
 export interface SimpleProfile {

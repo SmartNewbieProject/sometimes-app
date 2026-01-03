@@ -6,10 +6,10 @@ export type MatchViewType = 'open' | 'waiting' | 'not-found' | 'rematching' | 'p
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
 
 export enum UserRejectionCategory {
-  INAPPROPRIATE_PROFILE_IMAGE = 'INAPPROPRIATE_PROFILE_IMAGE',
-  FALSE_INFORMATION = 'FALSE_INFORMATION',
-  TERMS_VIOLATION = 'TERMS_VIOLATION',
-  OTHER = 'OTHER',
+	INAPPROPRIATE_PROFILE_IMAGE = 'INAPPROPRIATE_PROFILE_IMAGE',
+	FALSE_INFORMATION = 'FALSE_INFORMATION',
+	TERMS_VIOLATION = 'TERMS_VIOLATION',
+	OTHER = 'OTHER',
 }
 
 export type MatchDetails = {
@@ -25,6 +25,7 @@ export type MatchDetails = {
 	rejectionCategory?: UserRejectionCategory;
 	rejectionReason?: string;
 	matchedAt?: string;
+	canLetter?: boolean;
 };
 
 export type ServerMatchDetails = Omit<MatchDetails, 'endOfView'> & {
@@ -34,6 +35,7 @@ export type ServerMatchDetails = Omit<MatchDetails, 'endOfView'> & {
 	estimatedApprovalTime?: string;
 	rejectionCategory?: UserRejectionCategory;
 	rejectionReason?: string;
+	canLetter?: boolean;
 };
 
 export type OpenMatch = MatchDetails & {

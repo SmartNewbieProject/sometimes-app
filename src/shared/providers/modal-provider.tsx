@@ -266,7 +266,13 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
 			<Modal visible={!!currentModal} transparent animationType="fade" onRequestClose={hideModal}>
 				<Pressable
-					style={styles.modalOverlay}
+					style={[
+						styles.modalOverlay,
+						currentModal &&
+							!('type' in currentModal) &&
+							(currentModal as ModalOptions).position === 'bottom' &&
+							styles.modalOverlayBottom,
+					]}
 					onPress={(e) => {
 						if (e.target === e.currentTarget) {
 							const isDismissable =
@@ -408,6 +414,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingHorizontal: 20,
+	},
+	modalOverlayBottom: {
+		justifyContent: 'flex-end',
+		paddingHorizontal: 0,
 	},
 	nestedModalOverlay: {
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',

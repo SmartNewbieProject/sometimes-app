@@ -1,10 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '@/src/shared/constants/colors';
 import { ImageResources } from '@/src/shared/libs';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { ImageResource, Text } from '@/src/shared/ui';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { LetterInput } from '@/src/features/like-letter/ui/letter-input';
@@ -14,15 +16,21 @@ import { useLikeWithLetter } from '@/src/features/like-letter/hooks/use-like-wit
 import { useFeatureCost } from '@features/payment/hooks';
 import { validateLetter } from '@/src/features/like-letter/utils/letter-validator';
 import { useTranslation } from 'react-i18next';
+import Match from '@features/match';
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
 
 type WriteParams = {
 	connectionId: string;
+	matchId?: string;
 	nickname: string;
 	profileUrl: string;
 	canLetter?: string;
 	age?: string;
 	universityName?: string;
+	source?: string;
 };
+
+const { useMatchPartnerQuery } = Match.queries;
 
 export default function LikeLetterWriteScreen() {
 	const params = useLocalSearchParams<WriteParams>();
@@ -31,22 +39,56 @@ export default function LikeLetterWriteScreen() {
 	const { sendLikeWithLetter } = useLikeWithLetter();
 	const { featureCosts } = useFeatureCost();
 	const { t } = useTranslation();
+	const { profileDetails } = useAuth();
 
 	const [letter, setLetter] = useState('');
 	const [isValid, setIsValid] = useState(true);
 	const [isSending, setIsSending] = useState(false);
+	const [isFromPrompt, setIsFromPrompt] = useState(false);
+	const startTimeRef = useRef(Date.now());
 
 	const connectionId = params.connectionId;
-	const nickname = params.nickname || t('features.like-letter.ui.write_screen.default_nickname');
-	const profileUrl = params.profileUrl ? decodeURIComponent(params.profileUrl) : '';
-	const age = params.age ? Number.parseInt(params.age, 10) : undefined;
-	const universityName = params.universityName || '';
+	const matchId = params.matchId;
 	const canLetter = params.canLetter === 'true';
+	const source = (params.source as 'home' | 'profile') || 'home';
+
+	useEffect(() => {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_WRITE_STARTED, {
+			connection_id: connectionId,
+			match_id: matchId,
+			entry_source: source,
+			can_letter: canLetter,
+			entry_method: canLetter ? 'direct' : 'after_purchase',
+		});
+	}, []);
+
+	const { data: partner } = useMatchPartnerQuery(matchId);
+
+	const partnerProfileUrl = params.profileUrl
+		? decodeURIComponent(params.profileUrl)
+		: partner?.profileImages?.find((img) => img.isMain)?.imageUrl ||
+			partner?.profileImages?.find((img) => img.isMain)?.url ||
+			partner?.profileImages?.[0]?.imageUrl ||
+			partner?.profileImages?.[0]?.url ||
+			'';
+	const partnerNickname =
+		params.nickname || partner?.name || t('features.like-letter.ui.write_screen.default_nickname');
+	const partnerAge = params.age ? Number.parseInt(params.age, 10) : partner?.age;
+	const partnerUniversityName = params.universityName || partner?.universityDetails?.name || '';
+
+	const myProfileUrl =
+		profileDetails?.profileImages?.find((img) => img.isMain)?.imageUrl ||
+		profileDetails?.profileImages?.find((img) => img.isMain)?.url ||
+		profileDetails?.profileImages?.[0]?.imageUrl ||
+		profileDetails?.profileImages?.[0]?.url ||
+		'';
+	const myNickname = profileDetails?.name || '';
+	const myAge = profileDetails?.age || 0;
+	const myUniversityName = profileDetails?.universityDetails?.name || '';
 
 	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 9;
 	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
-	// 이미 편지 권한이 있으면(canLetter=true) 일반 좋아요 비용만 부과
-	const letterLikeCost = canLetter ? simpleLikeCost : baseLetterLikeCost;
+	const letterLikeCost = canLetter ? 0 : baseLetterLikeCost;
 
 	const handleLetterChange = useCallback((text: string) => {
 		setLetter(text);
@@ -56,20 +98,38 @@ export default function LikeLetterWriteScreen() {
 		setIsValid(valid);
 	}, []);
 
-	const handlePromptSelect = useCallback((prompt: string) => {
-		setLetter(prompt);
-		const validation = validateLetter(prompt);
-		setIsValid(validation.isValid);
-	}, []);
+	const handlePromptSelect = useCallback(
+		(prompt: string, promptIndex?: number) => {
+			setLetter(prompt);
+			setIsFromPrompt(true);
+			const validation = validateLetter(prompt);
+			setIsValid(validation.isValid);
+
+			mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_PROMPT_SELECTED, {
+				connection_id: connectionId,
+				match_id: matchId,
+				prompt_index: promptIndex,
+				prompt_text_preview: prompt.slice(0, 20),
+			});
+		},
+		[connectionId, matchId],
+	);
 
 	const handleViewProfile = useCallback(() => {
+		if (!matchId) return;
 		router.push({
 			pathname: '/partner/view/[id]',
-			params: { id: connectionId },
+			params: { id: matchId },
 		});
-	}, [connectionId]);
+	}, [matchId]);
 
 	const handlePreview = useCallback(() => {
+		mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_PREVIEW_VIEWED, {
+			connection_id: connectionId,
+			match_id: matchId,
+			letter_length: letter.length,
+		});
+
 		showModal({
 			showLogo: false,
 			customTitle: (
@@ -83,11 +143,11 @@ export default function LikeLetterWriteScreen() {
 				<View style={styles.previewContent}>
 					<LetterPreviewCard
 						data={{
-							nickname,
-							age: age ?? 0,
-							universityName,
+							nickname: myNickname,
+							age: myAge,
+							universityName: myUniversityName,
 							letter,
-							profileUrl,
+							profileUrl: myProfileUrl,
 						}}
 						showChatButton={false}
 					/>
@@ -98,20 +158,58 @@ export default function LikeLetterWriteScreen() {
 				onClick: hideModal,
 			},
 		});
-	}, [showModal, hideModal, nickname, age, universityName, letter, profileUrl, t]);
+	}, [
+		showModal,
+		hideModal,
+		myNickname,
+		myAge,
+		myUniversityName,
+		letter,
+		myProfileUrl,
+		t,
+		connectionId,
+		matchId,
+	]);
 
 	const handleSendLetter = useCallback(async () => {
 		if (!isValid || letter.trim().length === 0 || isSending) {
 			return;
 		}
 
+		const timeToSend = Math.floor((Date.now() - startTimeRef.current) / 1000);
+
+		mixpanelAdapter.track(MIXPANEL_EVENTS.LETTER_LIKE_SENT, {
+			connection_id: connectionId,
+			match_id: matchId,
+			letter_length: letter.trim().length,
+			is_from_prompt: isFromPrompt,
+			time_to_send_seconds: timeToSend,
+			gem_cost: canLetter ? 0 : letterLikeCost,
+		});
+
 		setIsSending(true);
 		try {
-			await sendLikeWithLetter(connectionId, letter.trim());
+			await sendLikeWithLetter(connectionId, letter.trim(), {
+				source,
+				matchId,
+				isFromPrompt,
+				letterLength: letter.trim().length,
+			});
 		} finally {
 			setIsSending(false);
 		}
-	}, [isValid, letter, isSending, sendLikeWithLetter, connectionId]);
+	}, [
+		isValid,
+		letter,
+		isSending,
+		sendLikeWithLetter,
+		connectionId,
+		source,
+		matchId,
+		isFromPrompt,
+		canLetter,
+		letterLikeCost,
+	]);
 
 	const canSend = isValid && letter.trim().length > 0 && !isSending;
 
@@ -125,8 +223,12 @@ export default function LikeLetterWriteScreen() {
 				/>
 				<View style={styles.profileContainer}>
 					<View style={styles.profileWrapper}>
-						{profileUrl ? (
-							<Image source={{ uri: profileUrl }} style={styles.profileImage} contentFit="cover" />
+						{partnerProfileUrl ? (
+							<Image
+								source={{ uri: partnerProfileUrl }}
+								style={styles.profileImage}
+								contentFit="cover"
+							/>
 						) : (
 							<View style={[styles.profileImage, styles.profilePlaceholder]} />
 						)}
@@ -155,7 +257,7 @@ export default function LikeLetterWriteScreen() {
 					</Pressable>
 					<Text style={styles.introText}>
 						<Text weight="bold" size="18" style={styles.highlightText}>
-							{nickname}
+							{partnerNickname}
 						</Text>
 						<Text weight="medium" size="18" textColor="black">
 							님에게 보내는 편지
@@ -201,11 +303,19 @@ export default function LikeLetterWriteScreen() {
 					disabled={!canSend}
 				>
 					<View style={styles.sendButtonContent}>
-						<ImageResource resource={ImageResources.GEM} width={22} height={22} />
-						<Text size="14" style={styles.gemCount}>
-							x{letterLikeCost}
-						</Text>
-						<Text weight="semibold" size="16" style={[styles.sendButtonText, canSend ? styles.sendButtonTextActive : {}]}>
+						{!canLetter && (
+							<>
+								<ImageResource resource={ImageResources.GEM} width={22} height={22} />
+								<Text size="14" style={styles.gemCount}>
+									x{letterLikeCost}
+								</Text>
+							</>
+						)}
+						<Text
+							weight="semibold"
+							size="16"
+							style={[styles.sendButtonText, canSend ? styles.sendButtonTextActive : {}]}
+						>
 							{isSending
 								? t('features.like-letter.ui.write_screen.sending')
 								: t('features.like-letter.ui.write_screen.send_button')}

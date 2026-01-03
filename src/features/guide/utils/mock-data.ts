@@ -21,7 +21,6 @@ export const likedMeMock = (gender: 'FEMALE' | 'MALE'): LikedMe[] => {
 			deletedAt: null,
 			connectionId: 'conn_001',
 			isMutualLike: true,
-			letter: null,
 		},
 	];
 };
@@ -44,7 +43,6 @@ export const mockLikedMe = (gender: 'FEMALE' | 'MALE'): LikedMe => ({
 	connectionId: 'conn_001',
 	isMutualLike: false,
 	deletedAt: null,
-	letter: null,
 });
 
 export const mockILiked = (gender: 'FEMALE' | 'MALE'): ILiked => ({
