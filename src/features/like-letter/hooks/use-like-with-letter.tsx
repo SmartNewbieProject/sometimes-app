@@ -13,8 +13,7 @@ import { determineFailureReason, predictFailureLikelihood } from '../../matching
 import { MIXPANEL_EVENTS, LIKE_TYPES } from '@/src/shared/constants/mixpanel-events';
 import { useTranslation } from 'react-i18next';
 import { useAppInstallPrompt } from '@/src/features/app-install-prompt';
-import { sendLike } from '../../like/api';
-import type { SendLikeRequest } from '../../like/type/like';
+import { likeLetterApi } from '../api';
 
 type LikeWithLetterParams = {
   connectionId: string;
@@ -24,7 +23,10 @@ type LikeWithLetterParams = {
 const useLikeWithLetterMutation = () =>
   useMutation({
     mutationFn: ({ connectionId, letter }: LikeWithLetterParams) =>
-      sendLike(connectionId, letter ? { letter } : undefined),
+      likeLetterApi.postLikeWithLetter(connectionId, {
+        letterContent: letter,
+        isCustomLetter: !!letter,
+      }),
     onMutate: async ({ connectionId, letter }) => {
       const likeType = letter ? LIKE_TYPES.SUPER : LIKE_TYPES.FREE;
       mixpanelAdapter.track(MIXPANEL_EVENTS.LIKE_SENT, {

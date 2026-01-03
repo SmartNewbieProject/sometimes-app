@@ -14,6 +14,8 @@ import { useLikeWithLetter } from '@/src/features/like-letter/hooks/use-like-wit
 import { useFeatureCost } from '@features/payment/hooks';
 import { validateLetter } from '@/src/features/like-letter/utils/letter-validator';
 import { useTranslation } from 'react-i18next';
+import Match from '@features/match';
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
 
 type WriteParams = {
 	connectionId: string;
@@ -24,6 +26,8 @@ type WriteParams = {
 	universityName?: string;
 };
 
+const { useMatchPartnerQuery } = Match.queries;
+
 export default function LikeLetterWriteScreen() {
 	const params = useLocalSearchParams<WriteParams>();
 	const insets = useSafeAreaInsets();
@@ -31,17 +35,38 @@ export default function LikeLetterWriteScreen() {
 	const { sendLikeWithLetter } = useLikeWithLetter();
 	const { featureCosts } = useFeatureCost();
 	const { t } = useTranslation();
+	const { profileDetails } = useAuth();
 
 	const [letter, setLetter] = useState('');
 	const [isValid, setIsValid] = useState(true);
 	const [isSending, setIsSending] = useState(false);
 
 	const connectionId = params.connectionId;
-	const nickname = params.nickname || t('features.like-letter.ui.write_screen.default_nickname');
-	const profileUrl = params.profileUrl ? decodeURIComponent(params.profileUrl) : '';
-	const age = params.age ? Number.parseInt(params.age, 10) : undefined;
-	const universityName = params.universityName || '';
 	const canLetter = params.canLetter === 'true';
+
+	const { data: partner } = useMatchPartnerQuery(connectionId);
+
+	const partnerProfileUrl = params.profileUrl
+		? decodeURIComponent(params.profileUrl)
+		: partner?.profileImages?.find((img) => img.isMain)?.imageUrl ||
+			partner?.profileImages?.find((img) => img.isMain)?.url ||
+			partner?.profileImages?.[0]?.imageUrl ||
+			partner?.profileImages?.[0]?.url ||
+			'';
+	const partnerNickname =
+		params.nickname || partner?.name || t('features.like-letter.ui.write_screen.default_nickname');
+	const partnerAge = params.age ? Number.parseInt(params.age, 10) : partner?.age;
+	const partnerUniversityName = params.universityName || partner?.universityDetails?.name || '';
+
+	const myProfileUrl =
+		profileDetails?.profileImages?.find((img) => img.isMain)?.imageUrl ||
+		profileDetails?.profileImages?.find((img) => img.isMain)?.url ||
+		profileDetails?.profileImages?.[0]?.imageUrl ||
+		profileDetails?.profileImages?.[0]?.url ||
+		'';
+	const myNickname = profileDetails?.name || '';
+	const myAge = profileDetails?.age || 0;
+	const myUniversityName = profileDetails?.universityDetails?.name || '';
 
 	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 9;
 	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
@@ -83,11 +108,11 @@ export default function LikeLetterWriteScreen() {
 				<View style={styles.previewContent}>
 					<LetterPreviewCard
 						data={{
-							nickname,
-							age: age ?? 0,
-							universityName,
+							nickname: myNickname,
+							age: myAge,
+							universityName: myUniversityName,
 							letter,
-							profileUrl,
+							profileUrl: myProfileUrl,
 						}}
 						showChatButton={false}
 					/>
@@ -98,7 +123,7 @@ export default function LikeLetterWriteScreen() {
 				onClick: hideModal,
 			},
 		});
-	}, [showModal, hideModal, nickname, age, universityName, letter, profileUrl, t]);
+	}, [showModal, hideModal, myNickname, myAge, myUniversityName, letter, myProfileUrl, t]);
 
 	const handleSendLetter = useCallback(async () => {
 		if (!isValid || letter.trim().length === 0 || isSending) {
@@ -125,8 +150,12 @@ export default function LikeLetterWriteScreen() {
 				/>
 				<View style={styles.profileContainer}>
 					<View style={styles.profileWrapper}>
-						{profileUrl ? (
-							<Image source={{ uri: profileUrl }} style={styles.profileImage} contentFit="cover" />
+						{partnerProfileUrl ? (
+							<Image
+								source={{ uri: partnerProfileUrl }}
+								style={styles.profileImage}
+								contentFit="cover"
+							/>
 						) : (
 							<View style={[styles.profileImage, styles.profilePlaceholder]} />
 						)}
@@ -155,7 +184,7 @@ export default function LikeLetterWriteScreen() {
 					</Pressable>
 					<Text style={styles.introText}>
 						<Text weight="bold" size="18" style={styles.highlightText}>
-							{nickname}
+							{partnerNickname}
 						</Text>
 						<Text weight="medium" size="18" textColor="black">
 							님에게 보내는 편지
@@ -205,7 +234,11 @@ export default function LikeLetterWriteScreen() {
 						<Text size="14" style={styles.gemCount}>
 							x{letterLikeCost}
 						</Text>
-						<Text weight="semibold" size="16" style={[styles.sendButtonText, canSend ? styles.sendButtonTextActive : {}]}>
+						<Text
+							weight="semibold"
+							size="16"
+							style={[styles.sendButtonText, canSend ? styles.sendButtonTextActive : {}]}
+						>
 							{isSending
 								? t('features.like-letter.ui.write_screen.sending')
 								: t('features.like-letter.ui.write_screen.send_button')}

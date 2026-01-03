@@ -4,13 +4,16 @@ import colors from '@/src/shared/constants/colors';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { useFeatureCost } from '@features/payment/hooks';
+import { useFeatureCost, useCurrentGem } from '@features/payment/hooks';
+import { likeLetterApi } from '../api';
+import { useState } from 'react';
 import type { LikeOption } from '../types';
 
 type LikeOptionModalProps = {
 	connectionId: string;
 	nickname: string;
 	profileUrl: string;
+	canLetter?: boolean;
 	onSelect: (option: LikeOption) => void;
 	onClose: () => void;
 };
@@ -19,28 +22,137 @@ export function LikeOptionModal({
 	connectionId,
 	nickname,
 	profileUrl,
+	canLetter = false,
 	onSelect,
 	onClose,
 }: LikeOptionModalProps) {
 	const { featureCosts } = useFeatureCost();
+	const { data } = useCurrentGem();
+	const currentGem = data?.totalGem ?? 0;
+	const [isInsufficient, setIsInsufficient] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+
 	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 9;
-	const letterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
+	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
+	const letterLikeCost = canLetter ? simpleLikeCost : baseLetterLikeCost;
 
 	const handleSimpleLike = () => {
 		onSelect('simple');
 	};
 
-	const handleLetterLike = () => {
-		onClose();
-		router.push({
-			pathname: '/like-letter/write',
-			params: {
-				connectionId,
-				nickname,
-				profileUrl: encodeURIComponent(profileUrl),
-			},
-		});
+	const handleLetterLike = async () => {
+		if (canLetter) {
+			onClose();
+			router.push({
+				pathname: '/like-letter/write',
+				params: {
+					connectionId,
+					nickname,
+					profileUrl: encodeURIComponent(profileUrl),
+					canLetter: 'true',
+				},
+			});
+			return;
+		}
+
+		// 권한 구매 시도
+		try {
+			setIsLoading(true);
+			// 로컬 잔액 체크 (API 호출 전 빠른 피드백)
+			if (currentGem < letterLikeCost) {
+				setIsInsufficient(true);
+				return;
+			}
+
+			// API 호출하여 권한 구매
+			await likeLetterApi.purchaseLetterPermission(connectionId);
+
+			onClose();
+			router.push({
+				pathname: '/like-letter/write',
+				params: {
+					connectionId,
+					nickname,
+					profileUrl: encodeURIComponent(profileUrl),
+					canLetter: 'true',
+				},
+			});
+		} catch (error: any) {
+			// 402 Payment Required or Insufficient Funds handling
+			// 에러 코드가 구체적이지 않다면 일단 잔액 부족으로 간주하거나, 서버 에러 메시지를 확인
+			setIsInsufficient(true);
+		} finally {
+			setIsLoading(false);
+		}
 	};
+
+	const handleGoToCharge = () => {
+		onClose();
+		router.push('/purchase/gem-store');
+	};
+
+	if (isInsufficient) {
+		return (
+			<View style={styles.container}>
+				<View style={styles.iconContainer}>
+					<View style={styles.iconRing}>
+						<View style={styles.iconInner}>
+							<Image
+								source={require('@assets/images/sometimelogo.png')}
+								style={styles.logoIcon}
+								contentFit="contain"
+							/>
+						</View>
+					</View>
+				</View>
+
+				<View style={styles.content}>
+					<View style={styles.titleContainer}>
+						<Text weight="bold" size="20" textColor="black" style={styles.titleText}>
+							구슬이 1개 부족해요
+						</Text>
+					</View>
+
+					<View style={styles.descriptionContainer}>
+						<Text size="12" textColor="disabled" style={{ textAlign: 'center' }}>
+							{`충전하면 편지 1회(${baseLetterLikeCost})와 일반 좋아요 1회(${simpleLikeCost})를\n보낼 수 있어요`}
+						</Text>
+					</View>
+
+					<View style={styles.optionsContainer}>
+						<Pressable style={styles.letterOption} onPress={handleGoToCharge}>
+							<View style={styles.chargeContent}>
+								<Text weight="medium" size="20" style={styles.letterLikeText}>
+									12개 충전하고 편지쓰기
+								</Text>
+								<Text size="12" style={styles.chargeSubText}>
+									결제 후 바로 편지를 보낼 수 있어요
+								</Text>
+							</View>
+						</Pressable>
+
+						<Pressable style={styles.simpleOption} onPress={handleSimpleLike}>
+							<View style={styles.gemBadge}>
+								<ImageResource resource={ImageResources.GEM} width={22} height={22} />
+								<Text size="15" style={styles.gemCountLight}>
+									x{simpleLikeCost}
+								</Text>
+							</View>
+							<Text weight="medium" size="20" style={styles.simpleLikeText}>
+								일반 좋아요로 보내기
+							</Text>
+						</Pressable>
+					</View>
+
+					<Pressable onPress={onClose} style={styles.closeButton}>
+						<Text size="12" textColor="disabled" style={{ textDecorationLine: 'underline' }}>
+							다음에
+						</Text>
+					</Pressable>
+				</View>
+			</View>
+		);
+	}
 
 	return (
 		<View style={styles.container}>
@@ -48,7 +160,7 @@ export function LikeOptionModal({
 				<View style={styles.iconRing}>
 					<View style={styles.iconInner}>
 						<Image
-							source={require('@assets/images/sometime-logo.png')}
+							source={require('@assets/images/sometimelogo.png')}
 							style={styles.logoIcon}
 							contentFit="contain"
 						/>
@@ -88,7 +200,7 @@ export function LikeOptionModal({
 						</Text>
 					</Pressable>
 
-					<Pressable style={styles.letterOption} onPress={handleLetterLike}>
+					<Pressable style={styles.letterOption} onPress={handleLetterLike} disabled={isLoading}>
 						<View style={styles.gemBadge}>
 							<ImageResource resource={ImageResources.GEM} width={22} height={22} />
 							<Text size="15" style={styles.gemCountLight}>
@@ -96,7 +208,7 @@ export function LikeOptionModal({
 							</Text>
 						</View>
 						<Text weight="medium" size="20" style={styles.letterLikeText}>
-							편지와 함께 보내기
+							{isLoading ? '처리중...' : '편지와 함께 보내기'}
 						</Text>
 					</Pressable>
 				</View>
@@ -145,6 +257,7 @@ const styles = StyleSheet.create({
 	logoIcon: {
 		width: 48,
 		height: 48,
+		borderRadius: 10,
 	},
 	content: {
 		width: '100%',
@@ -187,6 +300,14 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		gap: 10,
 	},
+	chargeContent: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 2,
+	},
+	chargeSubText: {
+		color: 'rgba(255, 255, 255, 0.8)',
+	},
 	gemBadge: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -204,5 +325,9 @@ const styles = StyleSheet.create({
 	hint: {
 		textAlign: 'center',
 		marginTop: 5,
+	},
+	closeButton: {
+		marginTop: 5,
+		padding: 5,
 	},
 });

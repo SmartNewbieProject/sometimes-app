@@ -1,16 +1,22 @@
 import colors from '@/src/shared/constants/colors';
 import { Text } from '@/src/shared/ui';
 import { Feather } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { LETTER_PROMPT_KEYS } from '../utils/letter-validator';
 
+import { useLetterPrompts } from '../hooks/use-letter-prompts';
+
 type LetterPromptsProps = {
+	connectionId: string;
 	onSelect: (prompt: string) => void;
-	prompts?: string[];
 };
 
-export function LetterPrompts({ onSelect, prompts = LETTER_PROMPT_KEYS }: LetterPromptsProps) {
+export function LetterPrompts({ connectionId, onSelect }: LetterPromptsProps) {
+	const { data } = useLetterPrompts(connectionId);
+	const prompts = data?.questions || LETTER_PROMPT_KEYS;
+
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -31,7 +37,11 @@ export function LetterPrompts({ onSelect, prompts = LETTER_PROMPT_KEYS }: Letter
 				onPress={handleToggle}
 			>
 				<View style={styles.headerContent}>
-					<Feather name="sun" size={24} color="#F9A825" style={styles.icon} />
+					<Image
+						source={require('@assets/images/like-letter/bulb.png')}
+						style={styles.icon}
+						contentFit="contain"
+					/>
 					<Text size="14" style={styles.headerText}>
 						이런 문구는 어때요?
 					</Text>
@@ -89,7 +99,8 @@ const styles = StyleSheet.create({
 		gap: 8,
 	},
 	icon: {
-		marginLeft: -6,
+		width: 20,
+		height: 20,
 	},
 	headerText: {
 		color: '#737275',
