@@ -130,7 +130,7 @@ export const getPriceAndDiscount = (
 		gem_800: { price: 590000, discountRate: 67 },
 
 		gem_sale_7: { price: 5250, discountRate: 37.2 },
-		gem_sale_16: { price: 12000, discountRate: 43.3 },
+		gem_sale_16: { price: 12000, discountRate: 84.2 },
 		gem_sale_27: { price: 20250, discountRate: 31.9 },
 		gem_sale_6: { price: 6000, discountRate: 50.9 },
 		gem_sale_20: { price: 14700, discountRate: 53.2 },
