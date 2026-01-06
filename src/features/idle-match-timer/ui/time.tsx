@@ -13,9 +13,8 @@ export default function Time({ value, size = 'md' }: TimeProps) {
   return (
     <View style={[styles.container, styles[size]]}>
       <Text
-        weight="bold"
         textColor="purple"
-        style={size === 'md' ? styles.textMd : styles.textSm}
+        style={[size === 'md' ? styles.textMd : styles.textSm, { fontFamily: 'Rubik' }]} // Force Rubik
       >
         {value}
       </Text>

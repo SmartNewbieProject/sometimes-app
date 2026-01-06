@@ -14,20 +14,20 @@ type PendingApprovalNoticeProps = {
 
 const getRejectionCategoryLabel = (
   category: UserRejectionCategory,
-  t: (key: string) => string
+  t: (key: string) => string,
 ): string => {
   const categoryMap: Record<UserRejectionCategory, string> = {
     [UserRejectionCategory.INAPPROPRIATE_PROFILE_IMAGE]: t(
-      "features.idle-match-timer.ui.pending-approval.rejection-category.inappropriate-image"
+      "features.idle-match-timer.ui.pending-approval.rejection-category.inappropriate-image",
     ),
     [UserRejectionCategory.FALSE_INFORMATION]: t(
-      "features.idle-match-timer.ui.pending-approval.rejection-category.false-info"
+      "features.idle-match-timer.ui.pending-approval.rejection-category.false-info",
     ),
     [UserRejectionCategory.TERMS_VIOLATION]: t(
-      "features.idle-match-timer.ui.pending-approval.rejection-category.terms-violation"
+      "features.idle-match-timer.ui.pending-approval.rejection-category.terms-violation",
     ),
     [UserRejectionCategory.OTHER]: t(
-      "features.idle-match-timer.ui.pending-approval.rejection-category.other"
+      "features.idle-match-timer.ui.pending-approval.rejection-category.other",
     ),
   };
   return categoryMap[category] || category;
@@ -47,7 +47,8 @@ const RejectedCard = ({ match }: { match: PendingApprovalMatch }) => {
 
   // 프로필 사진 거절 케이스
   const isProfileImageRejection =
-    match.rejectionCategory === UserRejectionCategory.INAPPROPRIATE_PROFILE_IMAGE;
+    match.rejectionCategory ===
+    UserRejectionCategory.INAPPROPRIATE_PROFILE_IMAGE;
 
   if (isProfileImageRejection) {
     return (
@@ -64,7 +65,9 @@ const RejectedCard = ({ match }: { match: PendingApprovalMatch }) => {
               textColor="black"
               style={styles.photoRejectionTitle}
             >
-              {t("features.idle-match-timer.ui.pending-approval.photo-rejection-title")}
+              {t(
+                "features.idle-match-timer.ui.pending-approval.photo-rejection-title",
+              )}
             </Text>
 
             <Text
@@ -73,9 +76,13 @@ const RejectedCard = ({ match }: { match: PendingApprovalMatch }) => {
               textColor="secondary"
               style={styles.photoRejectionDescription}
             >
-              {t("features.idle-match-timer.ui.pending-approval.photo-rejection-line1")}
+              {t(
+                "features.idle-match-timer.ui.pending-approval.photo-rejection-line1",
+              )}
               {"\n\n"}
-              {t("features.idle-match-timer.ui.pending-approval.photo-rejection-line2")}
+              {t(
+                "features.idle-match-timer.ui.pending-approval.photo-rejection-line2",
+              )}
             </Text>
           </View>
 
@@ -85,7 +92,9 @@ const RejectedCard = ({ match }: { match: PendingApprovalMatch }) => {
             activeOpacity={0.8}
           >
             <Text size="md" weight="bold" textColor="white">
-              {t("features.idle-match-timer.ui.pending-approval.view-guidelines-button")}
+              {t(
+                "features.idle-match-timer.ui.pending-approval.view-guidelines-button",
+              )}
             </Text>
           </TouchableOpacity>
         </View>
@@ -104,11 +113,7 @@ const RejectedCard = ({ match }: { match: PendingApprovalMatch }) => {
         </View>
 
         <View style={styles.contentContainer}>
-          <Text
-            size="lg"
-            weight="bold"
-            style={styles.errorTitle}
-          >
+          <Text size="lg" weight="bold" style={styles.errorTitle}>
             {t("features.idle-match-timer.ui.pending-approval.rejected-title")}
           </Text>
 
@@ -127,7 +132,7 @@ const RejectedCard = ({ match }: { match: PendingApprovalMatch }) => {
               <View style={styles.rejectionHeader}>
                 <Text size="sm" weight="bold" style={styles.errorText}>
                   {t(
-                    "features.idle-match-timer.ui.pending-approval.rejection-reason-label"
+                    "features.idle-match-timer.ui.pending-approval.rejection-reason-label",
                   )}
                 </Text>
                 <View style={styles.categoryBadge}>
@@ -156,15 +161,16 @@ const RejectedCard = ({ match }: { match: PendingApprovalMatch }) => {
           >
             <Text size="md" weight="bold" textColor="white">
               {t(
-                "features.idle-match-timer.ui.pending-approval.edit-profile-button"
+                "features.idle-match-timer.ui.pending-approval.edit-profile-button",
               )}
             </Text>
           </TouchableOpacity>
         </View>
 
         <View style={[styles.infoBox, styles.rejectedInfoBox]}>
-          <Text size="sm" weight="medium" textColor="secondary">
-            💡 {t("features.idle-match-timer.ui.pending-approval.rejected-info")}
+          <Text size="xs" weight="medium" textColor="secondary">
+            💡{" "}
+            {t("features.idle-match-timer.ui.pending-approval.rejected-info")}
           </Text>
         </View>
       </View>
@@ -266,7 +272,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoBox: {
-    marginTop: 16,
+    marginTop: 8,
     padding: 12,
     backgroundColor: semanticColors.surface.tertiary,
     borderRadius: 8,
