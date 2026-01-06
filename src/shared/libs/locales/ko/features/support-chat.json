@@ -1,0 +1,22 @@
+{
+	"header_title": "1:1 문의",
+	"loading": "상담을 준비하고 있어요...",
+	"empty": {
+		"title": "무엇을 도와드릴까요?",
+		"description": "궁금한 점이나 불편한 사항이 있으시면\n언제든지 문의해주세요"
+	},
+	"input": {
+		"placeholder": "메시지를 입력하세요..."
+	},
+	"message": {
+		"bot_label": "AI 상담사",
+		"admin_label": "상담원"
+	},
+	"status": {
+		"bot_handling": "AI 상담사가 답변 중이에요",
+		"waiting_admin": "상담원 연결을 기다리고 있어요",
+		"admin_handling": "상담원이 답변 중이에요",
+		"resolved": "상담이 종료되었어요",
+		"typing": "입력 중..."
+	}
+}

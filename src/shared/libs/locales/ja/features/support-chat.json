@@ -1,0 +1,22 @@
+{
+	"header_title": "1:1 お問い合わせ",
+	"loading": "相談の準備をしています...",
+	"empty": {
+		"title": "何かお手伝いしましょうか？",
+		"description": "ご質問やお困りのことがございましたら\nお気軽にお問い合わせください"
+	},
+	"input": {
+		"placeholder": "メッセージを入力してください..."
+	},
+	"message": {
+		"bot_label": "AI相談員",
+		"admin_label": "相談員"
+	},
+	"status": {
+		"bot_handling": "AI相談員が対応中です",
+		"waiting_admin": "相談員の接続をお待ちください",
+		"admin_handling": "相談員が対応中です",
+		"resolved": "相談が終了しました",
+		"typing": "入力中..."
+	}
+}
