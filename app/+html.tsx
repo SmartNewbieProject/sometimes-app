@@ -41,29 +41,31 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#8B5CF6" />
 
         {/* JSON-LD 구조화 데이터 */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "MobileApplication",
-          "name": "썸타임",
-          "description": "대학생을 위한 AI 소개팅 매칭 앱. 같은 지역 대학생과 설레는 연애를 시작하세요.",
-          "applicationCategory": "SocialNetworkingApplication",
-          "operatingSystem": "iOS, Android",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "KRW"
-          },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "ratingCount": "500"
-          },
-          "author": {
-            "@type": "Organization",
-            "name": "스마트 뉴비",
-            "url": "https://some-in-univ.com"
-          }
-        })}} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "MobileApplication",
+            "name": "썸타임",
+            "description": "대학생을 위한 AI 소개팅 매칭 앱. 같은 지역 대학생과 설레는 연애를 시작하세요.",
+            "applicationCategory": "SocialNetworkingApplication",
+            "operatingSystem": "iOS, Android",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "KRW"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "500"
+            },
+            "author": {
+              "@type": "Organization",
+              "name": "스마트 뉴비",
+              "url": "https://some-in-univ.com"
+            }
+          })
+        }} />
 
         {/* DNS Prefetch & Preconnect for faster resource loading */}
         <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
@@ -136,11 +138,6 @@ export default function Root({ children }: { children: React.ReactNode }) {
               @font-face { font-family: 'Pretendard-Bold'; src: local('Pretendard Variable'); font-weight: 700; font-display: swap; }
               @font-face { font-family: 'Pretendard-ExtraBold'; src: local('Pretendard Variable'); font-weight: 800; font-display: swap; }
               @font-face { font-family: 'Pretendard-Black'; src: local('Pretendard Variable'); font-weight: 900; font-display: swap; }
-              @font-face { font-family: 'Rubik'; src: local('Rubik'); font-weight: 400; font-display: swap; }
-              @font-face { font-family: 'Rubik-Light'; src: local('Rubik'); font-weight: 300; font-display: swap; }
-              @font-face { font-family: 'Rubik-Medium'; src: local('Rubik'); font-weight: 500; font-display: swap; }
-              @font-face { font-family: 'Rubik-SemiBold'; src: local('Rubik'); font-weight: 600; font-display: swap; }
-              @font-face { font-family: 'Rubik-Bold'; src: local('Rubik'); font-weight: 700; font-display: swap; }
               @font-face { font-family: 'MPLUS1p-Thin'; src: local('M PLUS 1p'); font-weight: 100; font-display: swap; }
               @font-face { font-family: 'MPLUS1p-Light'; src: local('M PLUS 1p'); font-weight: 300; font-display: swap; }
               @font-face { font-family: 'MPLUS1p-Regular'; src: local('M PLUS 1p'); font-weight: 400; font-display: swap; }

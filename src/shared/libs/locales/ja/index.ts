@@ -55,6 +55,8 @@ import featuresCardNews from './features/card-news.json';
 import featuresAppInstallPrompt from './features/app-install-prompt.json';
 import featuresLikeLetter from './features/like-letter.json';
 import featuresMatchReasons from './features/match-reasons.json';
+import featuresContactBlock from './features/contact-block.json';
+import featuresSupportChat from './features/support-chat.json';
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
 import widgetsForm from './widgets/form.json';
@@ -140,6 +142,8 @@ const features = {
 	'app-install-prompt': featuresAppInstallPrompt,
 	'like-letter': featuresLikeLetter,
 	'match-reasons': featuresMatchReasons,
+	'contact-block': featuresContactBlock,
+	'support-chat': featuresSupportChat,
 };
 
 const widgets = {

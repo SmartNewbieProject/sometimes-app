@@ -1,126 +1,131 @@
 {
-  "error": "오류 발생: ",
-  "my_photos": "내 사진",
-  "matching_setting": "매칭 설정",
-  "ex_same_class": "같은 학과 매칭 제외",
-  "ex_same_school": "같은 학교 매칭 제외",
-  "mbti_변경_완료": "MBTI 변경 완료",
-  "mbti가_변경되었어요": "MBTI가 변경되었어요.",
-  "mbti_를_불러오고_있어요": "MBTI 를 불러오고 있어요",
-  "mbti_를_변경하고_있어요": "MBTI 를 변경하고 있어요",
-  "mbti_변경": "MBTI 변경",
-  "not_mbti_setting": "MBTI를 설정하지 않으면 목·일 21시 매칭에서 제외될 수 있어요.",
-  "나중에_할래요": "나중에 할래요.",
-  "변경할게요": "변경할게요",
-  "image-modal": {
-    "tips_1": "모든 사진은 안전하게 보관됩니다.",
-    "tips_2": "사진은 매칭 상대방에게만 공개됩니다.",
-    "tips_3": "본인의 사진이 아닌 경우에는 매칭이 제한됩니다.",
-    "take_photo": "📷 사진 찍기",
-    "choose_from_library": "🖼 사진 선택하기",
-    "close": "닫기",
-    "saving": "저장 중..",
-    "save": "저장하기",
-    "main": "대표",
-    "approved": "승인됨",
-    "reviewing": "심사중",
-    "pending": "심사중",
-    "rejected": "거절됨",
-    "no_reason": "사유 미기재",
-    "change_photo": "변경하기",
-    "retry_count": "재심사 {{current}}/{{max}}회",
-    "max_retry_exceeded": "최대 재심사 횟수 초과",
-    "contact_support": "고객센터에 문의하세요"
-  },
-  "my_activity": {
-    "title": "My 활동",
-    "my_articles": "내가 쓴 글",
-    "my_comments": "댓글 단 글",
-    "my_liked": "좋아요한 글",
-    "my_reviews": "리뷰 내역",
-    "articles_title": "내가 작성한 게시글",
-    "comments_title": "내가 댓글을 작성한 게시글",
-    "liked_title": "내가 좋아요한 게시글"
-  },
-  "feed": {
-    "delete_title": "게시글 삭제",
-    "delete_message": "해당 게시글을 삭제할까요?",
-    "delete_button": "삭제하기",
-    "cancel_button": "취소"
-  },
-  "notification": {
-    "title": "알림 설정",
-    "push_notification": "푸시 알림",
-    "matching_complete": "매칭 완료 알림",
-    "event_notification": "이벤트 알림",
-    "permission_required_title": "알림 권한 필요",
-    "permission_required_message": "푸시 알림을 받으려면 설정에서 알림을 허용해주세요.",
-    "open_settings": "설정 열기",
-    "cancel": "취소",
-    "status_check_failed": "푸시 알림 상태 확인 실패:",
-    "enable_failed": "푸시 알림 활성화 실패:",
-    "disable_failed": "푸시 알림 비활성화 실패:",
-    "registration_required_title": "잠깐, 알림이 꺼져 있어요",
-    "registration_required_message": "소중한 알림을 받으시려면\n휴대폰 설정에서 알림을 허용해주세요.",
-    "go_to_settings": "설정으로 이동",
-    "activation_failed_title": "알림 활성화 실패",
-    "deactivation_failed_title": "알림 비활성화 실패",
-    "deactivation_failed_message": "푸시 알림 비활성화에 실패했습니다. 다시 시도해주세요.",
-    "confirm": "확인"
-  },
-  "profile_status": {
-    "approve": {
-      "congratulations": "축하드려요!",
-      "photo_change_complete": "사진 변경이 완료되었어요!",
-      "meet_your_type": "이제 새로운 프로필로 당신의 이상형을 만나보세요.",
-      "go_find_type": "이상형 찾으러 가기 →",
-      "please_wait": "잠시만요..."
-    },
-    "reject": {
-      "title": "승인이 거절되었어요",
-      "description_1": "아래 사유를 확인하고 정보를 수정한 후",
-      "description_2": "다시 신청해주세요",
-      "reason_title": "거절 사유",
-      "default_reason": "승인이 거절되었습니다.",
-      "reapply_info": "정보를 수정하신 후 언제든지 다시 신청하실 수 있어요",
-      "reapply_button": "다시 입력하기",
-      "contact_support": "고객센터 문의"
-    },
-    "waiting": {
-      "title": "새 프로필 사진 승인 대기 중!",
-      "reviewing": "관리자가 검토 중입니다.",
-      "push_notify": "승인 여부는 푸시로 알려드릴게요",
-      "status_title": "승인 대기",
-      "time_info": "관리자 승인까지 2~12시간 소요됩니다",
-      "go_home": "썸타임 홈으로 돌아가기 →"
-    }
-  },
-  "profile_image_change": {
-    "page_title": "프로필 사진 관리",
-    "title": "프로필 사진을 변경해보세요",
-    "subtitle": "더 매력적인 나를 보여주세요!",
-    "guide": "이목구비가 잘 보이는 사진을 올려주세요"
-  },
-  "unknown_error": "알 수 없는 오류",
-  "profile_image_error_load": "프로필 정보를 불러올 수 없습니다.",
-  "profile_image_error_count": "3장의 프로필 사진을 모두 등록해주세요.",
-  "profile_image_error_change": "프로필 변경 실패: ",
-  "profile_image_loading": "프로필 정보를 불러오고 있어요...",
-  "withdrawal": {
-    "header_title": "탈퇴하기",
-    "thank_you": "썸타임을 아껴주셔서 감사합니다",
-    "feedback_request": "느끼셨던 점을 공유해주시면 더욱 좋은 서비스를 제공할 수 있도록 하겠습니다.",
-    "leave_service": "서비스 떠나기"
-  },
-  "privacy": {
-    "title": "개인정보 보호",
-    "card_title": "안심하고 시작하기",
-    "card_description": "연락처에 있는 지인과 마주치지 않아요"
-  },
-  "profile": {
-    "student_number": "{{prefix}}학번"
-  },
-  "common": {
-    "게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
-  }
+	"error": "오류 발생: ",
+	"my_photos": "내 사진",
+	"matching_setting": "매칭 설정",
+	"ex_same_class": "같은 학과 매칭 제외",
+	"ex_same_school": "같은 학교 매칭 제외",
+	"mbti_변경_완료": "MBTI 변경 완료",
+	"mbti가_변경되었어요": "MBTI가 변경되었어요.",
+	"mbti_를_불러오고_있어요": "MBTI 를 불러오고 있어요",
+	"mbti_를_변경하고_있어요": "MBTI 를 변경하고 있어요",
+	"mbti_변경": "MBTI 변경",
+	"not_mbti_setting": "MBTI를 설정하지 않으면 목·일 21시 매칭에서 제외될 수 있어요.",
+	"나중에_할래요": "나중에 할래요.",
+	"변경할게요": "변경할게요",
+	"image-modal": {
+		"tips_1": "모든 사진은 안전하게 보관됩니다.",
+		"tips_2": "사진은 매칭 상대방에게만 공개됩니다.",
+		"tips_3": "본인의 사진이 아닌 경우에는 매칭이 제한됩니다.",
+		"take_photo": "📷 사진 찍기",
+		"choose_from_library": "🖼 사진 선택하기",
+		"close": "닫기",
+		"saving": "저장 중..",
+		"save": "저장하기",
+		"main": "대표",
+		"approved": "승인됨",
+		"reviewing": "심사중",
+		"pending": "심사중",
+		"rejected": "거절됨",
+		"no_reason": "사유 미기재",
+		"change_photo": "변경하기",
+		"retry_count": "재심사 {{current}}/{{max}}회",
+		"max_retry_exceeded": "최대 재심사 횟수 초과",
+		"contact_support": "고객센터에 문의하세요"
+	},
+	"my_activity": {
+		"title": "My 활동",
+		"my_articles": "내가 쓴 글",
+		"my_comments": "댓글 단 글",
+		"my_liked": "좋아요한 글",
+		"my_reviews": "리뷰 내역",
+		"articles_title": "내가 작성한 게시글",
+		"comments_title": "내가 댓글을 작성한 게시글",
+		"liked_title": "내가 좋아요한 게시글"
+	},
+	"feed": {
+		"delete_title": "게시글 삭제",
+		"delete_message": "해당 게시글을 삭제할까요?",
+		"delete_button": "삭제하기",
+		"cancel_button": "취소"
+	},
+	"notification": {
+		"title": "알림 설정",
+		"push_notification": "푸시 알림",
+		"matching_complete": "매칭 완료 알림",
+		"event_notification": "이벤트 알림",
+		"permission_required_title": "알림 권한 필요",
+		"permission_required_message": "푸시 알림을 받으려면 설정에서 알림을 허용해주세요.",
+		"open_settings": "설정 열기",
+		"cancel": "취소",
+		"status_check_failed": "푸시 알림 상태 확인 실패:",
+		"enable_failed": "푸시 알림 활성화 실패:",
+		"disable_failed": "푸시 알림 비활성화 실패:",
+		"registration_required_title": "잠깐, 알림이 꺼져 있어요",
+		"registration_required_message": "소중한 알림을 받으시려면\n휴대폰 설정에서 알림을 허용해주세요.",
+		"go_to_settings": "설정으로 이동",
+		"activation_failed_title": "알림 활성화 실패",
+		"deactivation_failed_title": "알림 비활성화 실패",
+		"deactivation_failed_message": "푸시 알림 비활성화에 실패했습니다. 다시 시도해주세요.",
+		"confirm": "확인"
+	},
+	"profile_status": {
+		"approve": {
+			"congratulations": "축하드려요!",
+			"photo_change_complete": "사진 변경이 완료되었어요!",
+			"meet_your_type": "이제 새로운 프로필로 당신의 이상형을 만나보세요.",
+			"go_find_type": "이상형 찾으러 가기 →",
+			"please_wait": "잠시만요..."
+		},
+		"reject": {
+			"title": "승인이 거절되었어요",
+			"description_1": "아래 사유를 확인하고 정보를 수정한 후",
+			"description_2": "다시 신청해주세요",
+			"reason_title": "거절 사유",
+			"default_reason": "승인이 거절되었습니다.",
+			"reapply_info": "정보를 수정하신 후 언제든지 다시 신청하실 수 있어요",
+			"reapply_button": "다시 입력하기",
+			"contact_support": "고객센터 문의"
+		},
+		"waiting": {
+			"title": "새 프로필 사진 승인 대기 중!",
+			"reviewing": "관리자가 검토 중입니다.",
+			"push_notify": "승인 여부는 푸시로 알려드릴게요",
+			"status_title": "승인 대기",
+			"time_info": "관리자 승인까지 2~12시간 소요됩니다",
+			"go_home": "썸타임 홈으로 돌아가기 →"
+		}
+	},
+	"profile_image_change": {
+		"page_title": "프로필 사진 관리",
+		"title": "프로필 사진을 변경해보세요",
+		"subtitle": "더 매력적인 나를 보여주세요!",
+		"guide": "이목구비가 잘 보이는 사진을 올려주세요"
+	},
+	"unknown_error": "알 수 없는 오류",
+	"profile_image_error_load": "프로필 정보를 불러올 수 없습니다.",
+	"profile_image_error_count": "3장의 프로필 사진을 모두 등록해주세요.",
+	"profile_image_error_change": "프로필 변경 실패: ",
+	"profile_image_loading": "프로필 정보를 불러오고 있어요...",
+	"withdrawal": {
+		"header_title": "탈퇴하기",
+		"thank_you": "썸타임을 아껴주셔서 감사합니다",
+		"feedback_request": "느끼셨던 점을 공유해주시면 더욱 좋은 서비스를 제공할 수 있도록 하겠습니다.",
+		"leave_service": "서비스 떠나기"
+	},
+	"privacy": {
+		"title": "개인정보 보호",
+		"card_title": "안심하고 시작하기",
+		"card_description": "연락처에 있는 지인과 마주치지 않아요"
+	},
+	"support": {
+		"title": "고객센터",
+		"chatbot_title": "1:1 문의하기",
+		"chatbot_description": "궁금한 점이 있으시면 언제든 문의해주세요"
+	},
+	"profile": {
+		"student_number": "{{prefix}}학번"
+	},
+	"common": {
+		"게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
+	}
 }

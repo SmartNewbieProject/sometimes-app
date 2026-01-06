@@ -1,126 +1,131 @@
 {
-  "error": "エラーが発生しました: ",
-  "my_photos": "マイ写真",
-  "matching_setting": "マッチング設定",
-  "ex_same_class": "同じ学科とのマッチングを除外",
-  "ex_same_school": "同じ学校とのマッチングを除外",
-  "mbti_변경_완료": "MBTIの変更完了",
-  "mbti가_변경되었어요": "MBTIが変更されました。",
-  "mbti_를_불러오고_있어요": "MBTIを読み込み中…",
-  "mbti_를_변경하고_있어요": "MBTIを変更中…",
-  "mbti_변경": "MBTIを変更",
-  "not_mbti_setting": "MBTIを設定していないと、木・日（21時）のマッチングに参加できない場合があります。",
-  "나중에_할래요": "あとでやる",
-  "변경할게요": "変更する",
-  "image-modal": {
-    "tips_1": "すべての写真は安全に保管されます。",
-    "tips_2": "写真は出会った相手のみに公開されます。",
-    "tips_3": "本人の写真でない場合、出会いが制限されることがあります。",
-    "take_photo": "📷 写真を撮る",
-    "choose_from_library": "🖼 ライブラリから選択",
-    "close": "閉じる",
-    "saving": "保存中..",
-    "save": "保存する",
-    "main": "メイン",
-    "approved": "承認済み",
-    "reviewing": "審査中",
-    "pending": "審査中",
-    "rejected": "却下",
-    "no_reason": "理由未記載",
-    "change_photo": "変更する",
-    "retry_count": "再審査 {{current}}/{{max}}回",
-    "max_retry_exceeded": "最大再審査回数超過",
-    "contact_support": "カスタマーサポートにお問い合わせください"
-  },
-  "my_activity": {
-    "title": "Myアクティビティ",
-    "my_articles": "投稿した記事",
-    "my_comments": "コメントした記事",
-    "my_liked": "いいねした記事",
-    "my_reviews": "レビュー履歴",
-    "articles_title": "自分が投稿した記事",
-    "comments_title": "自分がコメントした記事",
-    "liked_title": "自分がいいねした記事"
-  },
-  "feed": {
-    "delete_title": "投稿を削除",
-    "delete_message": "この投稿を削除しますか？",
-    "delete_button": "削除する",
-    "cancel_button": "キャンセル"
-  },
-  "notification": {
-    "title": "通知設定",
-    "push_notification": "プッシュ通知",
-    "matching_complete": "マッチング完了通知",
-    "event_notification": "イベント通知",
-    "permission_required_title": "通知の許可が必要",
-    "permission_required_message": "プッシュ通知を受け取るには、設定で通知を許可してください。",
-    "open_settings": "設定を開く",
-    "cancel": "キャンセル",
-    "status_check_failed": "プッシュ通知の状態確認に失敗しました：",
-    "enable_failed": "プッシュ通知の有効化に失敗しました：",
-    "disable_failed": "プッシュ通知の無効化に失敗しました：",
-    "registration_required_title": "ちょっと待って、通知がオフになっています",
-    "registration_required_message": "大切な通知を受け取るには\n端末の設定で通知を許可してください。",
-    "go_to_settings": "設定へ移動",
-    "activation_failed_title": "通知の有効化に失敗",
-    "deactivation_failed_title": "通知の無効化に失敗",
-    "deactivation_failed_message": "プッシュ通知の無効化に失敗しました。もう一度お試しください。",
-    "confirm": "確認"
-  },
-  "profile_status": {
-    "approve": {
-      "congratulations": "おめでとうございます！",
-      "photo_change_complete": "写真の変更が完了しました！",
-      "meet_your_type": "新しいプロフィールであなたの理想のタイプに会いましょう。",
-      "go_find_type": "理想のタイプを探しに行く →",
-      "please_wait": "少々お待ちください..."
-    },
-    "reject": {
-      "title": "承認が拒否されました",
-      "description_1": "以下の理由を確認し、情報を修正した後",
-      "description_2": "再度申請してください",
-      "reason_title": "拒否理由",
-      "default_reason": "承認が拒否されました。",
-      "reapply_info": "情報を修正した後、いつでも再申請できます",
-      "reapply_button": "再入力する",
-      "contact_support": "サポートに問い合わせ"
-    },
-    "waiting": {
-      "title": "新しいプロフィール写真の承認待ち！",
-      "reviewing": "管理者が審査中です。",
-      "push_notify": "承認結果はプッシュ通知でお知らせします",
-      "status_title": "承認待ち",
-      "time_info": "管理者の承認まで2〜12時間かかります",
-      "go_home": "Sometimeホームに戻る →"
-    }
-  },
-  "profile_image_change": {
-    "page_title": "プロフィール写真管理",
-    "title": "プロフィール写真を変更しましょう",
-    "subtitle": "もっと魅力的な自分を見せましょう！",
-    "guide": "顔がはっきり見える写真をアップロードしてください"
-  },
-  "unknown_error": "不明なエラー",
-  "profile_image_error_load": "プロフィール情報を読み込めません。",
-  "profile_image_error_count": "3枚のプロフィール写真をすべて登録してください。",
-  "profile_image_error_change": "プロフィールの変更に失敗しました：",
-  "profile_image_loading": "プロフィール情報を読み込んでいます...",
-  "withdrawal": {
-    "header_title": "退会する",
-    "thank_you": "Sometimeをご利用いただきありがとうございました",
-    "feedback_request": "ご意見をお聞かせいただければ、より良いサービスを提供できるよう努めます。",
-    "leave_service": "サービスを退会する"
-  },
-  "privacy": {
-    "title": "プライバシー保護",
-    "card_title": "安心して始める",
-    "card_description": "連絡先にいる知り合いとは出会いません"
-  },
-  "profile": {
-    "student_number": "{{prefix}}年入学"
-  },
-  "common": {
-    "게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "[JA] 게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
-  }
+	"error": "エラーが発生しました: ",
+	"my_photos": "マイ写真",
+	"matching_setting": "マッチング設定",
+	"ex_same_class": "同じ学科とのマッチングを除外",
+	"ex_same_school": "同じ学校とのマッチングを除外",
+	"mbti_변경_완료": "MBTIの変更完了",
+	"mbti가_변경되었어요": "MBTIが変更されました。",
+	"mbti_를_불러오고_있어요": "MBTIを読み込み中…",
+	"mbti_를_변경하고_있어요": "MBTIを変更中…",
+	"mbti_변경": "MBTIを変更",
+	"not_mbti_setting": "MBTIを設定していないと、木・日（21時）のマッチングに参加できない場合があります。",
+	"나중에_할래요": "あとでやる",
+	"변경할게요": "変更する",
+	"image-modal": {
+		"tips_1": "すべての写真は安全に保管されます。",
+		"tips_2": "写真は出会った相手のみに公開されます。",
+		"tips_3": "本人の写真でない場合、出会いが制限されることがあります。",
+		"take_photo": "📷 写真を撮る",
+		"choose_from_library": "🖼 ライブラリから選択",
+		"close": "閉じる",
+		"saving": "保存中..",
+		"save": "保存する",
+		"main": "メイン",
+		"approved": "承認済み",
+		"reviewing": "審査中",
+		"pending": "審査中",
+		"rejected": "却下",
+		"no_reason": "理由未記載",
+		"change_photo": "変更する",
+		"retry_count": "再審査 {{current}}/{{max}}回",
+		"max_retry_exceeded": "最大再審査回数超過",
+		"contact_support": "カスタマーサポートにお問い合わせください"
+	},
+	"my_activity": {
+		"title": "Myアクティビティ",
+		"my_articles": "投稿した記事",
+		"my_comments": "コメントした記事",
+		"my_liked": "いいねした記事",
+		"my_reviews": "レビュー履歴",
+		"articles_title": "自分が投稿した記事",
+		"comments_title": "自分がコメントした記事",
+		"liked_title": "自分がいいねした記事"
+	},
+	"feed": {
+		"delete_title": "投稿を削除",
+		"delete_message": "この投稿を削除しますか？",
+		"delete_button": "削除する",
+		"cancel_button": "キャンセル"
+	},
+	"notification": {
+		"title": "通知設定",
+		"push_notification": "プッシュ通知",
+		"matching_complete": "マッチング完了通知",
+		"event_notification": "イベント通知",
+		"permission_required_title": "通知の許可が必要",
+		"permission_required_message": "プッシュ通知を受け取るには、設定で通知を許可してください。",
+		"open_settings": "設定を開く",
+		"cancel": "キャンセル",
+		"status_check_failed": "プッシュ通知の状態確認に失敗しました：",
+		"enable_failed": "プッシュ通知の有効化に失敗しました：",
+		"disable_failed": "プッシュ通知の無効化に失敗しました：",
+		"registration_required_title": "ちょっと待って、通知がオフになっています",
+		"registration_required_message": "大切な通知を受け取るには\n端末の設定で通知を許可してください。",
+		"go_to_settings": "設定へ移動",
+		"activation_failed_title": "通知の有効化に失敗",
+		"deactivation_failed_title": "通知の無効化に失敗",
+		"deactivation_failed_message": "プッシュ通知の無効化に失敗しました。もう一度お試しください。",
+		"confirm": "確認"
+	},
+	"profile_status": {
+		"approve": {
+			"congratulations": "おめでとうございます！",
+			"photo_change_complete": "写真の変更が完了しました！",
+			"meet_your_type": "新しいプロフィールであなたの理想のタイプに会いましょう。",
+			"go_find_type": "理想のタイプを探しに行く →",
+			"please_wait": "少々お待ちください..."
+		},
+		"reject": {
+			"title": "承認が拒否されました",
+			"description_1": "以下の理由を確認し、情報を修正した後",
+			"description_2": "再度申請してください",
+			"reason_title": "拒否理由",
+			"default_reason": "承認が拒否されました。",
+			"reapply_info": "情報を修正した後、いつでも再申請できます",
+			"reapply_button": "再入力する",
+			"contact_support": "サポートに問い合わせ"
+		},
+		"waiting": {
+			"title": "新しいプロフィール写真の承認待ち！",
+			"reviewing": "管理者が審査中です。",
+			"push_notify": "承認結果はプッシュ通知でお知らせします",
+			"status_title": "承認待ち",
+			"time_info": "管理者の承認まで2〜12時間かかります",
+			"go_home": "Sometimeホームに戻る →"
+		}
+	},
+	"profile_image_change": {
+		"page_title": "プロフィール写真管理",
+		"title": "プロフィール写真を変更しましょう",
+		"subtitle": "もっと魅力的な自分を見せましょう！",
+		"guide": "顔がはっきり見える写真をアップロードしてください"
+	},
+	"unknown_error": "不明なエラー",
+	"profile_image_error_load": "プロフィール情報を読み込めません。",
+	"profile_image_error_count": "3枚のプロフィール写真をすべて登録してください。",
+	"profile_image_error_change": "プロフィールの変更に失敗しました：",
+	"profile_image_loading": "プロフィール情報を読み込んでいます...",
+	"withdrawal": {
+		"header_title": "退会する",
+		"thank_you": "Sometimeをご利用いただきありがとうございました",
+		"feedback_request": "ご意見をお聞かせいただければ、より良いサービスを提供できるよう努めます。",
+		"leave_service": "サービスを退会する"
+	},
+	"privacy": {
+		"title": "プライバシー保護",
+		"card_title": "安心して始める",
+		"card_description": "連絡先にいる知り合いとは出会いません"
+	},
+	"support": {
+		"title": "カスタマーサポート",
+		"chatbot_title": "1:1 お問い合わせ",
+		"chatbot_description": "ご不明な点がございましたらお気軽にお問い合わせください"
+	},
+	"profile": {
+		"student_number": "{{prefix}}年入学"
+	},
+	"common": {
+		"게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "[JA] 게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
+	}
 }

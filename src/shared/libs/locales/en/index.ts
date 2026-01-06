@@ -9,6 +9,7 @@ import partner from './apps/partner.json';
 import featuresIdleMatchTimer from './features/idle-match-timer.json';
 import featuresOnboarding from './features/onboarding.json';
 import featuresInAppReview from './features/in-app-review.json';
+import featuresContactBlock from './features/contact-block.json';
 import sharedsUi from './shareds/ui.json';
 import widgetsOppositeGenderPreview from './widgets/opposite-gender-preview.json';
 import widgetsPhotoStatusCard from './widgets/photo-status-card.json';
@@ -30,6 +31,7 @@ const features = {
 	'idle-match-timer': featuresIdleMatchTimer,
 	onboarding: featuresOnboarding,
 	'in-app-review': featuresInAppReview,
+	'contact-block': featuresContactBlock,
 };
 
 const shareds = {

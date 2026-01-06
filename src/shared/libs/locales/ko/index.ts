@@ -57,6 +57,8 @@ import featuresAppInstallPrompt from './features/app-install-prompt.json';
 import featuresLikeLetter from './features/like-letter.json';
 import featuresMatchReasons from './features/match-reasons.json';
 import featuresInAppReview from './features/in-app-review.json';
+import featuresContactBlock from './features/contact-block.json';
+import featuresSupportChat from './features/support-chat.json';
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
 import widgetsForm from './widgets/form.json';
@@ -144,6 +146,8 @@ const features = {
 	'like-letter': featuresLikeLetter,
 	'match-reasons': featuresMatchReasons,
 	'in-app-review': featuresInAppReview,
+	'contact-block': featuresContactBlock,
+	'support-chat': featuresSupportChat,
 };
 
 const widgets = {
