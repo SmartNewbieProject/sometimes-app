@@ -38,6 +38,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SessionTracker } from '@/src/shared/components/session-tracker';
 import { AppBadgeSync } from '@/src/shared/components/app-badge-sync';
 import { LoginRequiredModalListener } from '@/src/shared/components/login-required-modal-listener';
+import { OTAUpdateHandler } from '@/src/shared/components/ota-update-handler';
 import * as Sentry from '@sentry/react-native';
 
 let navigationIntegration: ReturnType<typeof Sentry.reactNavigationIntegration> | null = null;
@@ -435,6 +436,7 @@ export default Sentry.wrap(function RootLayout() {
 											<RouteTracker>
 												<>
 													<Slot />
+													<OTAUpdateHandler />
 													<VersionUpdateChecker />
 													<Toast />
 													<ChatActivityTracker />

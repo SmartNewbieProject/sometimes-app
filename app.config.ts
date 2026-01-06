@@ -42,6 +42,9 @@ export default ({ config }: ConfigContext): any => {
 			name: 'sometimes',
 			slug: 'sometimes',
 			version: '3.9.4',
+			runtimeVersion: {
+				policy: 'appVersion',
+			},
 			orientation: 'portrait',
 			icon: './assets/icons/app.png',
 			scheme: 'myapp',
@@ -310,6 +313,12 @@ export default ({ config }: ConfigContext): any => {
 			locales: {
 				ko: './languages/ko.json',
 				ja: './languages/ja.json',
+			},
+			updates: {
+				url: 'https://u.expo.dev/f6df6d86-2504-4574-8bf2-e069c6e76316',
+				enabled: true,
+				fallbackToCacheTimeout: 0,
+				checkAutomatically: 'ON_LOAD',
 			},
 			experiments: {
 				typedRoutes: true,

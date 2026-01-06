@@ -5,6 +5,7 @@
 	},
 	"build": {
 		"development": {
+			"channel": "development",
 			"developmentClient": true,
 			"distribution": "internal",
 			"env": {
@@ -13,6 +14,7 @@
 			}
 		},
 		"preview": {
+			"channel": "preview",
 			"autoIncrement": true,
 			"distribution": "internal",
 			"env": {
@@ -39,6 +41,7 @@
 			}
 		},
 		"production": {
+			"channel": "production",
 			"autoIncrement": true,
 			"env": {
 				"ANDROID_HOME": "/Users/user/Library/Android/sdk",
