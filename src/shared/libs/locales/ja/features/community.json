@@ -62,7 +62,8 @@
 			"header_title": "コミュニティ",
 			"invalid_request": "不正なリクエストです",
 			"loading_error": "投稿読み込み中にエラーが発生しました",
-			"loading_article": "投稿を読み込んでいます"
+			"loading_article": "投稿を読み込んでいます",
+			"staff_comment_label": "SOMETIMEが回答しました"
 		},
 		"article_write_screen": {
 			"form": {
@@ -153,7 +154,8 @@
 		},
 		"user_profile": {
 			"me_indicator": "（自分）",
-			"separator": "·"
+			"separator": "·",
+			"staff_badge": "SOMETIME運営チーム"
 		},
 		"hot": {
 			"load_error": "人気投稿を読み込めませんでした。",

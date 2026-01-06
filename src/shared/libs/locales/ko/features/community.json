@@ -60,7 +60,8 @@
 			"header_title": "커뮤니티",
 			"invalid_request": "잘못된 요청입니다",
 			"loading_error": "게시글을 불러오는 중 오류가 발생했습니다.",
-			"loading_article": "게시글을 불러오고 있어요"
+			"loading_article": "게시글을 불러오고 있어요",
+			"staff_comment_label": "썸타임이 답변했어요"
 		},
 		"article_write_screen": {
 			"form": {
@@ -151,7 +152,8 @@
 		},
 		"user_profile": {
 			"me_indicator": "(나)",
-			"separator": "·"
+			"separator": "·",
+			"staff_badge": "썸타임 운영진"
 		},
 		"hot": {
 			"load_error": "인기 글을 불러오지 못했어요.",
