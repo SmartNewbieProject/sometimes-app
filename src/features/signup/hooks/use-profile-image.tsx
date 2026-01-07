@@ -129,7 +129,7 @@ function useProfileImage() {
 	};
 
 	const onBackPress = () => {
-		router.push('/auth/signup/instagram');
+		router.push('/auth/signup/university-details');
 		return true;
 	};
 
