@@ -3,19 +3,21 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
-import type { SenderType } from '../types';
+import type { ConversationPhase, SenderType } from '../types';
 
 interface SupportChatMessageProps {
 	content: string;
 	senderType: SenderType;
 	createdAt: string;
+	phase?: ConversationPhase;
 }
 
-function SupportChatMessage({ content, senderType, createdAt }: SupportChatMessageProps) {
+function SupportChatMessage({ content, senderType, createdAt, phase }: SupportChatMessageProps) {
 	const { t } = useTranslation();
 	const isUser = senderType === 'user';
 	const isBot = senderType === 'bot';
 	const isAdmin = senderType === 'admin';
+	const isAsking = isBot && phase === 'asking';
 
 	const formatTime = (dateString: string) => {
 		const date = new Date(dateString);
@@ -50,6 +52,13 @@ function SupportChatMessage({ content, senderType, createdAt }: SupportChatMessa
 					<Text style={[styles.messageText, isUser ? styles.userText : styles.otherText]}>
 						{content}
 					</Text>
+					{isAsking && (
+						<View style={styles.askingHint}>
+							<Text style={styles.askingHintText}>
+								{t('features.support-chat.message.asking_hint')}
+							</Text>
+						</View>
+					)}
 				</View>
 				{!isUser && <Text style={styles.time}>{formatTime(createdAt)}</Text>}
 			</View>
@@ -127,6 +136,17 @@ const styles = StyleSheet.create({
 		fontSize: 11,
 		color: semanticColors.text.muted,
 		fontFamily: 'Pretendard-Regular',
+	},
+	askingHint: {
+		marginTop: 8,
+		paddingTop: 8,
+		borderTopWidth: 1,
+		borderTopColor: 'rgba(122, 74, 226, 0.15)',
+	},
+	askingHintText: {
+		fontSize: 11,
+		color: semanticColors.brand.primary,
+		fontFamily: 'Pretendard-Medium',
 	},
 });
 

@@ -4,6 +4,10 @@ export type SenderType = 'user' | 'bot' | 'admin';
 
 export type Language = 'ko' | 'ja';
 
+export type SupportDomain = 'payment' | 'matching' | 'chat' | 'account' | 'other';
+
+export type ConversationPhase = 'asking' | 'answering';
+
 export interface MessageMetadata {
 	confidence?: number;
 	sources?: Array<{
@@ -12,6 +16,9 @@ export interface MessageMetadata {
 		similarity: number;
 	}>;
 	translatedFrom?: string;
+	domain?: SupportDomain;
+	collectedInfo?: Record<string, string>;
+	phase?: ConversationPhase;
 }
 
 export interface SupportChatMessage {

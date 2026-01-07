@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -7,7 +7,7 @@ import ChevronLeftIcon from '@assets/icons/chevron-left.svg';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
 import { useSupportChat } from '../hooks';
-import type { SupportChatMessage as MessageType } from '../types';
+import type { SupportChatMessage as MessageType, SupportDomain } from '../types';
 import SupportChatInput from './support-chat-input';
 import SupportChatMessage from './support-chat-message';
 import SupportChatStatusBanner from './support-chat-status-banner';
@@ -36,6 +36,14 @@ function SupportChatScreen() {
 			console.error('[SupportChatScreen] Error:', err);
 		},
 	});
+
+	const currentDomain = useMemo((): SupportDomain | null => {
+		for (let i = messages.length - 1; i >= 0; i--) {
+			const domain = messages[i].metadata?.domain;
+			if (domain) return domain;
+		}
+		return null;
+	}, [messages]);
 
 	useEffect(() => {
 		initSession();
@@ -69,6 +77,7 @@ function SupportChatScreen() {
 				content={item.content}
 				senderType={item.senderType}
 				createdAt={item.createdAt}
+				phase={item.metadata?.phase}
 			/>
 		),
 		[],
@@ -108,7 +117,16 @@ function SupportChatScreen() {
 				<Pressable onPress={() => router.back()} style={styles.backButton}>
 					<ChevronLeftIcon width={24} height={24} />
 				</Pressable>
-				<Text style={styles.headerTitle}>{t('features.support-chat.header_title')}</Text>
+				<View style={styles.headerCenter}>
+					<Text style={styles.headerTitle}>{t('features.support-chat.header_title')}</Text>
+					{currentDomain && (
+						<View style={styles.domainBadge}>
+							<Text style={styles.domainBadgeText}>
+								{t(`features.support-chat.domain.${currentDomain}`)}
+							</Text>
+						</View>
+					)}
+				</View>
 				<View style={styles.headerRight} />
 			</View>
 
@@ -158,11 +176,26 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
+	headerCenter: {
+		alignItems: 'center',
+	},
 	headerTitle: {
 		fontSize: 18,
 		fontWeight: '600',
 		color: semanticColors.text.primary,
 		fontFamily: 'Pretendard-SemiBold',
+	},
+	domainBadge: {
+		marginTop: 2,
+		paddingHorizontal: 8,
+		paddingVertical: 2,
+		backgroundColor: semanticColors.surface.tertiary,
+		borderRadius: 10,
+	},
+	domainBadgeText: {
+		fontSize: 11,
+		color: semanticColors.text.muted,
+		fontFamily: 'Pretendard-Medium',
 	},
 	headerRight: {
 		width: 40,
