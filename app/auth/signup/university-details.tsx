@@ -63,7 +63,7 @@ function UniversityDetailsPage() {
 			mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_DETAILS_DONE, {
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
-			router.push('/auth/signup/instagram');
+			router.push('/auth/signup/profile-image');
 		});
 	};
 
