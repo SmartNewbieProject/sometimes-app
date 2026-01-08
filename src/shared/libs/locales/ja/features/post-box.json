@@ -2,6 +2,10 @@
   "ui": {
     "i_liked_loading": "送ったサムリストを読み込み中…",
     "liked_me_loading": "届いたサムリストを読み込み中…",
+    "filter": {
+      "latest": "新着順",
+      "letter_first": "レター優先"
+    },
     "header": {
       "title": "サムボックス"
     },
@@ -19,7 +23,8 @@
         "yes_try": "はい、やってみます",
         "not_a_match": "ご縁がなかったようです",
         "confirm": "確認",
-        "close": "閉じる"
+        "close": "閉じる",
+        "in_chat_continue": "会話が続いています"
       },
       "modal_texts": {
         "start_instagram_title_line1": "気になる相手と",

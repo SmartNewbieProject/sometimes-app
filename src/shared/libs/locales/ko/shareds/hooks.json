@@ -37,10 +37,10 @@
   "day": {
     "date_not_exist": "날짜가 존재하지 않습니다.",
     "just_now": "방금 전",
-    "seconds_ago": "{seconds}초 전",
-    "minutes_ago": "{minutes}분 전",
-    "hours_ago": "{hours}시간 전",
-    "days_ago": "{days}일 전"
+    "seconds_ago": "{{seconds}}초 전",
+    "minutes_ago": "{{minutes}}분 전",
+    "hours_ago": "{{hours}}시간 전",
+    "days_ago": "{{days}}일 전"
   },
   "environment": {
     "current_environment": "현재 환경: {env}"

@@ -292,6 +292,7 @@ export function LikedMePendingButton({
 }
 
 export function LetterPendingButton({ connectionId }: { connectionId: string }) {
+	const { t } = useTranslation();
 	const { onLike } = useLike();
 
 	const handleLike = async () => {
@@ -306,7 +307,7 @@ export function LetterPendingButton({ connectionId }: { connectionId: string }) 
 				styles={{ height: 48, borderRadius: 12 }}
 				prefix={<ChatIcon width={20} height={20} color="#fff" />}
 			>
-				대화 시작하기
+				{t('features.post-box.ui.card.buttons.start_chat')}
 			</Button>
 		</View>
 	);
@@ -453,6 +454,7 @@ export function ILikedRejectedButton({
 }
 
 export function InChatButton({ height = 48 }: { height?: number }) {
+	const { t } = useTranslation();
 	const router = useRouter();
 	const translateX = useRef(new Animated.Value(-1)).current;
 	const [containerW, setContainerW] = useState(0);
@@ -506,7 +508,7 @@ export function InChatButton({ height = 48 }: { height?: number }) {
 				style={styles.glowingButtonGradient}
 			>
 				<ChatIcon width={20} height={20} />
-				<Text style={styles.glowingButtonText}>대화가 이어지고 있어요</Text>
+				<Text style={styles.glowingButtonText}>{t('features.post-box.ui.card.buttons.in_chat_continue')}</Text>
 			</LinearGradient>
 			<Animated.View style={[styles.glowOverlay, animatedStyle]}>
 				<LinearGradient

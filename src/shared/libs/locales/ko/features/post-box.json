@@ -2,6 +2,10 @@
   "ui": {
     "i_liked_loading": "보낸 썸 리스트를 불러오는 중이에요!",
     "liked_me_loading": "도착한 썸 리스트를 불러오는 중이에요!",
+    "filter": {
+      "latest": "최신순",
+      "letter_first": "편지 포함 우선"
+    },
     "header": {
       "title": "썸 우편함"
     },
@@ -19,7 +23,8 @@
         "yes_try": "네, 해볼래요",
         "not_a_match": "인연이 아니었나봐요",
         "confirm": "확인",
-        "close": "닫기"
+        "close": "닫기",
+        "in_chat_continue": "대화가 이어지고 있어요"
       },
       "modal_texts": {
         "start_instagram_title_line1": "마음에 드는 이성과",

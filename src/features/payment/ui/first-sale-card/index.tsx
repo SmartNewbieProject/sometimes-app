@@ -37,7 +37,8 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
   const { paymentEvents } = useMixpanel();
 
   const translateYAnim = useSharedValue(0);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isJapanese = i18n.language === 'ja';
 
   useEffect(() => {
     translateYAnim.value = withRepeat(
@@ -83,14 +84,14 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
               <Text
                 textColor="purple"
                 weight="semibold"
-                style={styles.bubbleTextFirst}
+                style={[styles.bubbleTextFirst, isJapanese && styles.bubbleTextJa]}
               >
                   {t("features.payment.ui.apple_first_sale_card.cheer_message")}
               </Text>
               <Text
                 textColor="purple"
                 weight="semibold"
-                style={styles.bubbleText}
+                style={[styles.bubbleText, isJapanese && styles.bubbleTextJa]}
               >
                 {t("features.payment.ui.apple_first_sale_card.new_member_discount")}
               </Text>
@@ -151,6 +152,9 @@ const styles = StyleSheet.create({
   },
   bubbleText: {
     fontSize: 15,
+  },
+  bubbleTextJa: {
+    fontSize: 13,
   },
   bubbleTail: {
     position: "absolute",
