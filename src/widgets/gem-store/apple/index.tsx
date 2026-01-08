@@ -74,7 +74,7 @@ const AppleGemStoreItem = ({
 					<ImageResource resource={ImageResources.GEM} width={42} height={42} />
 					<View style={{ flex: 1 }}>
 						<Text style={{ fontSize: 18, fontWeight: 'bold', color: semanticColors.text.primary }}>
-							{extractNumber(gemProduct.title)}
+							{extractNumber(gemProduct.id)}
 							{t('widgets.gem-store.apple.unit_piece')}
 						</Text>
 					</View>

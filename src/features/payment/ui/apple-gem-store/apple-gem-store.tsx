@@ -157,7 +157,7 @@ function AppleGemStore() {
 		expectedCount,
 	} = getAppleProductIds();
 
-	const { sale, normal } = products ? splitAndSortProducts(products, t) : { sale: [], normal: [] };
+	const { sale, normal } = products ? splitAndSortProducts(products) : { sale: [], normal: [] };
 
 	useEffect(() => {
 		if (!connected || fetchState !== 'idle') return;
