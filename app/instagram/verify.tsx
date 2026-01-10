@@ -88,6 +88,7 @@ export default function InstagramVerifyPage() {
 						children: t(INSTAGRAM_KEYS.verifyErrorMessage),
 						primaryButton: {
 							text: t(INSTAGRAM_KEYS.servicesConfirm),
+							onClick: () => {},
 						},
 					});
 				},
@@ -159,8 +160,7 @@ export default function InstagramVerifyPage() {
 
 				<Button
 					onPress={handleSubmit}
-					disabled={!canSubmit}
-					loading={isPending}
+					disabled={!canSubmit || isPending}
 					styles={styles.submitButton}
 				>
 					<Text size="lg" weight="semibold" style={styles.submitButtonText}>

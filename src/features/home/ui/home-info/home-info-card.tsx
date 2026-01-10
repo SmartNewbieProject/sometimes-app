@@ -1,7 +1,7 @@
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { Text } from "@/src/shared/ui";
-import { Image } from "expo-image";
-import { StyleSheet, TouchableOpacity, View, type ViewStyle } from "react-native";
+import { Image, type ImageStyle } from "expo-image";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface ImagePosition {
   top?: number;
@@ -16,7 +16,7 @@ interface HomeInfoCardProps {
   buttonMessage: string;
   title: string;
   characterImageUri: number;
-  heartImageUri: number;
+  heartImageUri?: number;
   description: string;
   isCompleted?: boolean;
   onClick: () => void;
@@ -35,7 +35,7 @@ function HomeInfoCard({
   characterPosition,
   heartPosition,
 }: HomeInfoCardProps) {
-  const characterStyle: ViewStyle = {
+  const characterStyle: ImageStyle = {
     position: "absolute",
     width: characterPosition?.width ?? 140,
     height: characterPosition?.height ?? 102,
@@ -45,7 +45,7 @@ function HomeInfoCard({
     bottom: characterPosition?.bottom,
   };
 
-  const heartStyle: ViewStyle = {
+  const heartStyle: ImageStyle = {
     position: "absolute",
     width: heartPosition?.width ?? 50,
     height: heartPosition?.height ?? 50,
@@ -70,11 +70,13 @@ function HomeInfoCard({
             style={characterStyle}
             contentFit="contain"
           />
-          <Image
-            source={heartImageUri}
-            style={heartStyle}
-            contentFit="contain"
-          />
+          {heartImageUri && (
+            <Image
+              source={heartImageUri}
+              style={heartStyle}
+              contentFit="contain"
+            />
+          )}
         </View>
       </View>
       <Text size="lg" weight="semibold" textColor="black" style={styles.title}>
