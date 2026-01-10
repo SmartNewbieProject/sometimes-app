@@ -80,8 +80,6 @@ export const signup = async (form: SignupForm): Promise<SignupResponse> => {
 	formData.append('age', age.toString());
 	formData.append('universityId', form.universityId);
 	formData.append('departmentName', form.departmentName);
-	formData.append('grade', form.grade);
-	formData.append('studentNumber', form.studentNumber);
 	formData.append('instagramId', form.instagramId);
 	if (form.kakaoId) {
 		formData.append('kakaoId', form.kakaoId);
@@ -98,15 +96,16 @@ export const signup = async (form: SignupForm): Promise<SignupResponse> => {
 		formData.append('country', form.country);
 	}
 
-	const filePromises = form.profileImages.map((imageUri) =>
-		createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`),
-	);
-	const files = await Promise.all(filePromises);
-	for (const file of files) {
-		formData.append('profileImages', file);
+	if (form.profileImages && form.profileImages.length > 0) {
+		const filePromises = form.profileImages.map((imageUri) =>
+			createFileObject(imageUri, `${form.name}-${nanoid(6)}.png`),
+		);
+		const files = await Promise.all(filePromises);
+		for (const file of files) {
+			formData.append('profileImages', file);
+		}
+		formData.append('mainImageIndex', '0');
 	}
-
-	formData.append('mainImageIndex', '0');
 
 	const headers: Record<string, string> = {
 		'Content-Type': 'multipart/form-data',
