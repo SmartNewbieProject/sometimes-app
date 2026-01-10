@@ -141,6 +141,8 @@ const styles = RNStyleSheet.create({
 		textDecorationLine: 'line-through',
 	},
 	discountRate: {
-		fontSize: 10,
+		fontSize: 14,
+		fontWeight: '500',
+		color: colors.primaryPurple,
 	},
 });

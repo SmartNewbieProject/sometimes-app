@@ -1,20 +1,18 @@
 import { useAuth } from "@/src/features/auth";
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
-import { useScrollIndicator } from "@/src/shared/hooks";
 import { useModal } from "@/src/shared/hooks/use-modal";
 import { GemStoreWidget } from "@/src/widgets";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Payment from "@features/payment";
-import { useCurrentGem, useGemProducts } from "@features/payment/hooks";
+import { useCurrentGem, useGemProducts, useGemMissions } from "@features/payment/hooks";
+import { useRouter } from "expo-router";
 import { usePortoneStore } from "@features/payment/hooks/use-portone-store";
 import { FirstSaleCard, GemStore } from "@features/payment/ui";
 import type { PortOneController } from "@portone/react-native-sdk";
-import { ScrollDownIndicator, Show, Text } from "@shared/ui";
-import { createRef, lazy, useEffect, useState } from "react";
-import { Alert, BackHandler, Platform, ScrollView, StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Show, Text } from "@shared/ui";
+import { createRef, useEffect, useState } from "react";
+import { Alert, BackHandler, Platform, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
 const { ui, services } = Payment;
@@ -23,7 +21,6 @@ const { createUniqueId } = services;
 
 export default function GemStoreScreen() {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const { data: gem } = useCurrentGem();
   const { data: gemProducts, isLoading, error } = useGemProducts();
   const [productCount, setProductCount] = useState<number>();
@@ -34,9 +31,16 @@ export default function GemStoreScreen() {
   const [paymentId, setPaymentId] = useState<string>(() => createUniqueId());
   const { setGemCount, clearEventType } = usePortoneStore();
   const { my } = useAuth();
-  const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
 
   const { handlePaymentComplete } = usePortone();
+  const { missions } = useGemMissions();
+  const router = useRouter();
+
+  const handleMissionPress = (mission: { navigateTo?: string }) => {
+    if (mission.navigateTo) {
+      router.push(mission.navigateTo as any);
+    }
+  };
 
   const onPurchase = async (metadata: {
     totalPrice: number;
@@ -139,121 +143,73 @@ export default function GemStoreScreen() {
       require("@/src/features/payment/ui/apple-gem-store/apple-gem-store").default;
     return <AppleGemStore />;
   }
+
   return (
-    <View style={[styles.container, { backgroundColor: semanticColors.surface.background, paddingTop: insets.top }]}>
-      <GemStore.Header gemCount={gem?.totalGem ?? 0} />
-      <ScrollView
-        ref={scrollViewRef}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
-      >
-        <GemStore.Banner />
-        <View style={styles.contentCard}>
-          <View style={styles.contentWrapper}>
-            <View style={styles.titleSection}>
-              <View style={styles.firstSaleWrapper}>
-                <FirstSaleCard
-                  onOpenPayment={(metadata) => {
-                    setGemCount(metadata.gemProduct.totalGems);
-                    onPurchase({
-                      totalPrice: metadata.totalPrice,
-                      count: 1,
-                    });
-                  }}
-                />
-              </View>
-
-              <Text weight="semibold" size="20" textColor="black">
-                {t("apps.purchase.gem_store.title")}
-              </Text>
+    <GemStore.Layout
+      gemCount={gem?.totalGem ?? 0}
+      title={t("apps.purchase.gem_store.title")}
+      renderSaleCard={() => (
+        <FirstSaleCard
+          onOpenPayment={(metadata) => {
+            setGemCount(metadata.gemProduct.totalGems);
+            onPurchase({
+              totalPrice: metadata.totalPrice,
+              count: 1,
+            });
+          }}
+        />
+      )}
+      renderProductList={() => (
+        <>
+          <Show when={isLoading}>
+            <View style={styles.centered}>
+              <Text>{t("apps.purchase.gem_store.loading_gems")}</Text>
             </View>
-
-            <View style={styles.productList}>
-              <Show when={isLoading}>
-                <View style={styles.centered}>
-                  <Text>{t("apps.purchase.gem_store.loading_gems")}</Text>
-                </View>
-              </Show>
-              <Show when={!!error}>
-                <View style={styles.centered}>
-                  <Text>{t("apps.purchase.gem_store.failed_to_load_gems")}</Text>
-                </View>
-              </Show>
-              <Show when={!isLoading}>
-                <GemStoreWidget.Provider>
-                  {gemProducts
-                    ?.sort((a, b) => a.sortOrder - b.sortOrder)
-                    .map((product, index) => (
-                      <GemStoreWidget.Item
-                        key={product.id}
-                        gemProduct={product}
-                        onOpenPayment={(metadata) => {
-                          mixpanelAdapter.track("GemStore_Product_Clicked", {
-                            who: my,
-                            product: metadata,
-                            env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-                          });
-                          setGemCount(product.totalGems);
-                          clearEventType();
-                          onPurchase({
-                            totalPrice: metadata.totalPrice,
-                            count: 1,
-                          });
-                        }}
-                        hot={index === 2}
-                      />
-                    ))}
-                </GemStoreWidget.Provider>
-              </Show>
+          </Show>
+          <Show when={!!error}>
+            <View style={styles.centered}>
+              <Text>{t("apps.purchase.gem_store.failed_to_load_gems")}</Text>
             </View>
-          </View>
-        </View>
-      </ScrollView>
-      <ScrollDownIndicator visible={showIndicator} />
-    </View>
+          </Show>
+          <Show when={!isLoading && !error}>
+            <GemStoreWidget.Provider>
+              {gemProducts
+                ?.sort((a, b) => a.sortOrder - b.sortOrder)
+                .map((product, index) => (
+                  <GemStoreWidget.Item
+                    key={product.id}
+                    gemProduct={product}
+                    onOpenPayment={(metadata) => {
+                      mixpanelAdapter.track("GemStore_Product_Clicked", {
+                        who: my,
+                        product: metadata,
+                        env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+                      });
+                      setGemCount(product.totalGems);
+                      clearEventType();
+                      onPurchase({
+                        totalPrice: metadata.totalPrice,
+                        count: 1,
+                      });
+                    }}
+                    hot={index === 2}
+                  />
+                ))}
+            </GemStoreWidget.Provider>
+          </Show>
+        </>
+      )}
+      renderMissionSection={() => (
+        <GemStore.MissionSection
+          missions={missions}
+          onMissionPress={handleMissionPress}
+        />
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollViewContent: {
-    paddingBottom: 40,
-  },
-  contentCard: {
-    backgroundColor: semanticColors.surface.secondary,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    marginTop: -32,
-    paddingTop: 32,
-    paddingBottom: 28,
-    minHeight: 400,
-  },
-  contentWrapper: {
-    flex: 1,
-    flexDirection: "column",
-    paddingHorizontal: 16,
-    marginTop: 16,
-  },
-  titleSection: {
-    flexDirection: "column",
-    marginBottom: 8,
-  },
-  firstSaleWrapper: {
-    marginBottom: 30,
-  },
-  productList: {
-    flexDirection: "column",
-    gap: 16,
-    justifyContent: "center",
-    paddingBottom: 20,
-  },
   centered: {
     flex: 1,
     justifyContent: "center",

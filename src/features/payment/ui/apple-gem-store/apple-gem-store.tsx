@@ -1,7 +1,5 @@
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { Platform, StyleSheet, View } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // iOS에서만 expo-iap import (웹/안드로이드에서는 스킵)
 let useIAP: any;
@@ -14,9 +12,7 @@ if (Platform.OS === 'ios') {
 	finishTransaction = iapModule.finishTransaction;
 }
 
-import Layout from '@/src/features/layout';
-import { useScrollIndicator } from '@/src/shared/hooks';
-import { ScrollDownIndicator, Show, Text } from '@/src/shared/ui';
+import { Show, Text } from '@/src/shared/ui';
 import { AppleGemStoreWidget } from '@/src/widgets/gem-store/apple';
 import {
 	type ExtendedProductPurchase,
@@ -26,8 +22,7 @@ import {
 import { participateEvent } from '@/src/features/event/api';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { usePathname, useRouter } from 'expo-router';
-import paymentApis from '../../api';
-import { useCurrentGem, useGemProducts } from '../../hooks';
+import { useCurrentGem, useGemProducts, useGemMissions } from '../../hooks';
 import { useAppleInApp } from '../../hooks/use-apple-in-app';
 import { usePortoneStore } from '../../hooks/use-portone-store';
 import { AppleFirstSaleCard } from '../first-sale-card/apple';
@@ -40,8 +35,6 @@ import { getAppleProductIds } from '../../constants/apple-product-ids';
 function AppleGemStore() {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const insets = useSafeAreaInsets();
-	const { showIndicator, handleScroll, scrollViewRef } = useScrollIndicator();
 	const pathname = usePathname();
 	const { data: gem } = useCurrentGem();
 	const { data: serverGemProducts, isLoading: isLoadingServer } = useGemProducts();
@@ -50,6 +43,7 @@ function AppleGemStore() {
 	const { showErrorModal } = useModal();
 	const { eventType } = usePortoneStore();
 	const { paymentEvents, conversionEvents } = useMixpanel();
+	const { missions } = useGemMissions();
 
 	const productsRef = useRef<any[]>([]);
 	const [isUsingFallback, setIsUsingFallback] = useState(false);
@@ -239,122 +233,62 @@ function AppleGemStore() {
 		}
 	};
 
+	const isProductsLoading = isLoadingServer || !products || products?.length === 0;
+
+	const handleMissionPress = (mission: { navigateTo?: string }) => {
+		if (mission.navigateTo) {
+			router.push(mission.navigateTo as any);
+		}
+	};
+
 	return (
-		<Layout.Default
-			style={[
-				styles.layoutContainer,
-				{ backgroundColor: semanticColors.surface.background, paddingTop: insets.top },
-			]}
-		>
-			<GemStore.Header gemCount={gem?.totalGem ?? 0} />
-			<ScrollView
-				ref={scrollViewRef}
-				onScroll={handleScroll}
-				scrollEventThrottle={16}
-				style={styles.scrollView}
-				contentContainerStyle={styles.scrollViewContent}
-			>
-				<GemStore.Banner />
-				<View style={styles.contentCard}>
-					<View style={styles.contentContainer}>
-						<View style={styles.headerSection}>
-							<View style={styles.saleCardContainer}>
-								<Show when={sale.length > 0}>
-									<AppleFirstSaleCard
-										gemProducts={sale}
-										serverGemProducts={serverGemProducts}
-										onOpenPurchase={handlePurchase}
-									/>
-								</Show>
-							</View>
-
-							<Text weight="semibold" size="20" textColor="black">
-								{t('features.payment.ui.apple_gem_store.gem_purchase_title')}
-							</Text>
+		<GemStore.Layout
+			gemCount={gem?.totalGem ?? 0}
+			title={t('features.payment.ui.apple_gem_store.gem_purchase_title')}
+			isLoading={purchasing}
+			renderSaleCard={() => (
+				<Show when={sale.length > 0}>
+					<AppleFirstSaleCard
+						gemProducts={sale}
+						serverGemProducts={serverGemProducts}
+						onOpenPurchase={handlePurchase}
+					/>
+				</Show>
+			)}
+			renderProductList={() => (
+				<>
+					<Show when={isProductsLoading}>
+						<View style={styles.loadingContainer}>
+							<Text>{t('features.payment.ui.apple_gem_store.loading_gem_products')}</Text>
 						</View>
+					</Show>
 
-						<View style={styles.productListContainer}>
-							<Show when={isLoadingServer || !products || products?.length === 0}>
-								<View style={styles.loadingContainer}>
-									<Text>{t('features.payment.ui.apple_gem_store.loading_gem_products')}</Text>
-								</View>
-							</Show>
-
-							<Show when={!isLoadingServer && normal && normal?.length > 0}>
-								<AppleGemStoreWidget.Provider>
-									{normal.map((product, index) => (
-										<AppleGemStoreWidget.Item
-											key={product.id}
-											gemProduct={product}
-											serverGemProducts={serverGemProducts}
-											onOpenPurchase={handlePurchase}
-											hot={index === 2}
-										/>
-									))}
-								</AppleGemStoreWidget.Provider>
-							</Show>
-						</View>
-					</View>
-				</View>
-			</ScrollView>
-			<ScrollDownIndicator visible={showIndicator} />
-
-			{/* 화면 전체 로딩 UI */}
-			<Show when={purchasing}>
-				<View style={styles.loadingOverlay}>
-					<ActivityIndicator size="large" color="#fff" />
-				</View>
-			</Show>
-		</Layout.Default>
+					<Show when={!isProductsLoading && normal && normal?.length > 0}>
+						<AppleGemStoreWidget.Provider>
+							{normal.map((product, index) => (
+								<AppleGemStoreWidget.Item
+									key={product.id}
+									gemProduct={product}
+									serverGemProducts={serverGemProducts}
+									onOpenPurchase={handlePurchase}
+									hot={index === 2}
+								/>
+							))}
+						</AppleGemStoreWidget.Provider>
+					</Show>
+				</>
+			)}
+			renderMissionSection={() => (
+				<GemStore.MissionSection
+					missions={missions}
+					onMissionPress={handleMissionPress}
+				/>
+			)}
+		/>
 	);
 }
 
 const styles = StyleSheet.create({
-	loadingOverlay: {
-		...StyleSheet.absoluteFillObject,
-		backgroundColor: 'rgba(0,0,0,0.5)',
-		justifyContent: 'center',
-		alignItems: 'center',
-		zIndex: 9999,
-	},
-	layoutContainer: {
-		flex: 1,
-		flexDirection: 'column',
-	},
-	scrollView: {
-		flex: 1,
-	},
-	scrollViewContent: {
-		paddingBottom: 40,
-	},
-	contentCard: {
-		backgroundColor: semanticColors.surface.secondary,
-		borderTopLeftRadius: 12,
-		borderTopRightRadius: 12,
-		marginTop: -32,
-		paddingTop: 32,
-		paddingBottom: 28,
-		minHeight: 400,
-	},
-	contentContainer: {
-		flex: 1,
-		flexDirection: 'column',
-		paddingHorizontal: 16,
-		marginTop: 16,
-	},
-	headerSection: {
-		flexDirection: 'column',
-		marginBottom: 8,
-	},
-	saleCardContainer: {
-		marginBottom: 30,
-	},
-	productListContainer: {
-		flexDirection: 'column',
-		gap: 16,
-		justifyContent: 'center',
-		marginBottom: 'auto',
-	},
 	loadingContainer: {
 		flex: 1,
 		justifyContent: 'center',
