@@ -25,11 +25,9 @@ type StoreProps = {
 };
 
 export enum SignupSteps {
-	// AREA = 1,
 	UNIVERSITY = 1,
 	UNIVERSITY_DETAIL = 2,
-	PROFILE_IMAGE = 3,
-	INVITE_CODE = 4,
+	INVITE_CODE = 3,
 }
 
 const phaseCount = Object.keys(SignupSteps).length / 2;

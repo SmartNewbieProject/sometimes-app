@@ -23,20 +23,6 @@ const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
 		redirectTo: '/auth/login' as const,
 		messageKey: 'features.signup.ui.validators.validation_messages.missing_previous_info',
 	},
-	[SignupSteps.PROFILE_IMAGE]: {
-		requiredFields: [
-			'name',
-			'phone',
-			'birthday',
-			'gender',
-			'universityId',
-			'departmentName',
-			'grade',
-			'studentNumber',
-		],
-		redirectTo: '/auth/login' as const,
-		messageKey: 'features.signup.ui.validators.validation_messages.all_info_required',
-	},
 	[SignupSteps.INVITE_CODE]: {
 		requiredFields: [
 			'name',
@@ -45,9 +31,6 @@ const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
 			'gender',
 			'universityId',
 			'departmentName',
-			'grade',
-			'studentNumber',
-			'profileImages',
 		],
 		redirectTo: '/auth/login' as const,
 		messageKey: 'features.signup.ui.validators.validation_messages.all_info_required',
@@ -62,8 +45,6 @@ const getDetailedMessage = (missingFields: string[], step: SignupSteps): string 
 		gender: i18n.t('features.signup.ui.validators.field_names.gender'),
 		universityId: i18n.t('features.signup.ui.validators.field_names.universityId'),
 		departmentName: i18n.t('features.signup.ui.validators.field_names.departmentName'),
-		grade: i18n.t('features.signup.ui.validators.field_names.grade'),
-		studentNumber: i18n.t('features.signup.ui.validators.field_names.studentNumber'),
 		instagramId: i18n.t('features.signup.ui.validators.field_names.instagramId'),
 		profileImage: i18n.t('features.signup.ui.validators.field_names.profileImage'),
 	};
@@ -89,12 +70,8 @@ const getRedirectRoute = (missingFields: string[]): string => {
 		return '/auth/signup/university';
 	}
 
-	if (missingFields.some((field) => ['departmentName', 'grade', 'studentNumber'].includes(field))) {
+	if (missingFields.includes('departmentName')) {
 		return '/auth/signup/university-details';
-	}
-
-	if (missingFields.includes('profileImages')) {
-		return '/auth/signup/profile-image';
 	}
 
 	return '/auth/login';

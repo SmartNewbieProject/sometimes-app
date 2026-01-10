@@ -1,10 +1,8 @@
 import { tryCatch } from '@/src/shared/libs';
 import { useTranslation } from 'react-i18next';
-import i18n from '@/src/shared/libs/i18n';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useGlobalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { BackHandler, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
 import { useDepartmentQuery } from '../queries';
 import useChangePhase from './use-change-phase';
 import { useSignupAnalytics } from './use-signup-analytics';
@@ -36,20 +34,9 @@ function useUniversityDetails() {
 	const { trackSignupEvent } = useSignupAnalytics('university_details');
 
 	const onNext = async (fallback: () => void) => {
-		const rawNumber = form.studentNumber ?? '';
-		const locale = i18n.language;
-
-		// 숫자만 있는 경우 로케일에 맞는 접미사 추가
-		if (/^([0][1-9]|1[0-9]|2[0-5])$/.test(rawNumber)) {
-			const suffix = locale.startsWith('ja') ? '年' : '학번';
-			updateForm({ studentNumber: `${rawNumber}${suffix}` });
-		}
-
 		trackSignupEvent('next_button_click', 'to_done');
 		mixpanelAdapter.track('Signup_University_Details', {
-			grade: form.grade,
 			department: form.departmentName,
-			studentNumber: `${form.studentNumber}`,
 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 		});
 
@@ -62,31 +49,18 @@ function useUniversityDetails() {
 	};
 
 	const validateUniversityForm = (): boolean => {
-		const isValidGrade = !!form.grade;
 		const isValidDepartment =
 			!!form?.departmentName &&
 			(departments.length === 0 || departments.includes(form.departmentName));
-		const studentNumber = form.studentNumber ?? '';
-
-		// 한국어: "24학번" 또는 "24"
-		// 일본어: "24年"
-		const isValidStudentNumber =
-			/^([0][1-9]|1[0-9]|2[0-5])학번$/.test(studentNumber) ||
-			/^([0][1-9]|1[0-9]|2[0-5])年$/.test(studentNumber) ||
-			/^([0][1-9]|1[0-9]|2[0-5])$/.test(studentNumber);
 
 		console.log('[UniversityDetails] Validation:', {
-			isValidGrade,
-			grade: form.grade,
 			isValidDepartment,
 			departmentName: form.departmentName,
 			departmentsCount: departments.length,
-			isValidStudentNumber,
-			studentNumber,
-			nextable: isValidGrade && isValidDepartment && isValidStudentNumber,
+			nextable: isValidDepartment,
 		});
 
-		return isValidGrade && isValidDepartment && isValidStudentNumber;
+		return isValidDepartment;
 	};
 	const nextable = validateUniversityForm();
 
