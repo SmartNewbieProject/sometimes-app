@@ -7,8 +7,8 @@ import * as Localization from "expo-localization";
  * KR 테스트: 'ko' 로 변경
  * 실제 기기 언어 사용: null 로 설정
  */
-// const TEST_LANGUAGE_OVERRIDE: "ja" | "ko" | null = null;
-const TEST_LANGUAGE_OVERRIDE: "ja" | "ko" | null = "ja"; // ← JP 테스트 활성화
+const TEST_LANGUAGE_OVERRIDE: "ja" | "ko" | null = null;
+// const TEST_LANGUAGE_OVERRIDE: "ja" | "ko" | null = "ja"; // ← JP 테스트 활성화
 
 export function getUserLanguage(): string {
   if (TEST_LANGUAGE_OVERRIDE) {
