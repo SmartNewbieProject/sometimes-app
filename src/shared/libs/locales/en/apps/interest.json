@@ -1,14 +1,14 @@
 {
-  "age": {
-    "same_age": "Same Age",
-    "younger": "Younger",
-    "older": "Older",
-    "any": "Any",
-    "no_preference": "Any"
-  },
-  "tattoo": {
-    "no_tattoo": "No Tattoo",
-    "small_tattoo": "Small Tattoo",
-    "has_tattoo": "Has Tattoo"
-  }
+	"age": {
+		"same_age": "Same Age",
+		"younger": "Younger",
+		"older": "Older",
+		"any": "Any",
+		"no_preference": "Any"
+	},
+	"tattoo": {
+		"no_tattoo": "No Tattoo",
+		"small_tattoo": "Small Tattoo",
+		"has_tattoo": "Has Tattoo"
+	}
 }

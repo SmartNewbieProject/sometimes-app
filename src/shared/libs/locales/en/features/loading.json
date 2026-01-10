@@ -1,0 +1,21 @@
+{
+	"ui": {
+		"lottie": {
+			"default_title": "Loading now..."
+		}
+	},
+	"global_overlay": {
+		"messages": [
+			"Miho is working hard for you",
+			"Finding exciting connections...",
+			"Just a moment, almost there!",
+			"Heart racing, see you soon",
+			"Bringing good vibes your way...",
+			"Miho is doing her best",
+			"Please wait a little",
+			"Have a wonderful day",
+			"Today will be full of excitement",
+			"Preparing something special for you"
+		]
+	}
+}

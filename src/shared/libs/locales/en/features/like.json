@@ -1,8 +1,48 @@
 {
-  "ui": {
-    "알_수_없는_오류": "[EN] 알 수 없는 오류"
-  },
-  "hooks": {
-    "소통이_제한": "[EN] 소통이 제한"
-  }
+	"ui": {
+		"none_like_banner": {
+			"title_female": "Like",
+			"title_female_1": "Have you sent a like yet?",
+			"title_male": "Let's check out some",
+			"title_male_profile": "profiles",
+			"title_male_1": "first?",
+			"nothing_like": "No one has shown interest yet",
+			"description_female_part1": "Send a 'like' to someone you're interested in,",
+			"description_female_part2": "and share the excitement!",
+			"description_male_part1": "Add your hobbies and interests to find common ground,",
+			"description_male_part2": "and show off your unique charm!",
+			"cta_locked": ""
+		},
+		"like_button": {
+			"modal": {
+				"title_line1": "Would you like to express your interest",
+				"title_line2_male": "using {{cost}} gems?",
+				"title_line2_default": "to someone special?",
+				"body_line1": "Simply express your interest,",
+				"body_line2": "and naturally move to the next step.",
+				"primary_button": "Yes, let's do it"
+			},
+			"button_label": "Like"
+		},
+		"like_collapse": {
+			"i_liked_title": "People {{name}} showed interest in",
+			"liked_me_title": "Someone showed interest in {{name}}"
+		},
+		"알_수_없는_오류": "Unknown error"
+	},
+	"hooks": {
+		"use-like": {
+			"like_sent": "Like sent!",
+			"if_interested": "If they're interested too,",
+			"can_contact": "you can start chatting right away!",
+			"confirm": "Got it",
+			"charge_message": "Charge now and start chatting with someone you like!",
+			"duplicate_like": "This is a duplicate request or a temporary issue occurred.",
+			"no_gems": "You don't have enough gems.",
+			"ticket_insufficient": "You need a rematch ticket. Purchase now and keep matching!",
+			"communication_restricted": "Communication with this person is currently restricted. Please try again later.",
+			"already_liked": "You've already sent a like to this person."
+		},
+		"소통이_제한": "Communication restricted"
+	}
 }

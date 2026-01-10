@@ -1,0 +1,116 @@
+{
+	"ui": {
+		"layout": {
+			"loading_user_info": "Checking user information..."
+		},
+		"navigation_menu": {
+			"beginner_guide_title": "New to SOMETIME?",
+			"beginner_guide_description": "We'll help you understand your dating preferences and find your match",
+			"my_moment_title": "My Moments",
+			"my_moment_description": "Check out ongoing events on SOMETIME and claim your rewards!",
+			"activities_title": "Various Activities",
+			"activities_description": "Analyze your dating preferences!"
+		},
+		"banner_slide": {
+			"loading_title": "How many people have applied for matching?"
+		},
+		"announce_card": {
+			"text": "Tell us about your ideal type, and we'll help you with more accurate matching!"
+		},
+		"community_announcement": {
+			"greeting": "{{name}}, you can do it too",
+			"default_user": "Member",
+			"success_story_prompt": "Check out dating success stories!"
+		},
+		"first_purchase_event_banner": {
+			"title": "Is this your first time?",
+			"brand_name": "SOMETIME",
+			"description_1": "A special match",
+			"description_2": "prepared just for you!",
+			"special_match": "special match",
+			"comment_android_shadow": "Shadow on Android"
+		},
+		"matching_status": {
+			"title": "SOMETIME Matching Status",
+			"success_rate": "Match Success Rate",
+			"new_matches_this_week": "New Matches This Week"
+		},
+		"review_slide": {
+			"anonymous": "Anonymous",
+			"review_1": "I first saw this on an Instagram ad.😀 I signed up thinking 'why not?' when I saw they expanded to Busan! Now I have a good friend from matching and recently matched with a lovely person. Unlike other apps, there's no pressure to pay, and you can meet great people without spending money. The best app! I sincerely respect and thank the developers!! ❤️❤️❤️",
+			"review_2": "Most other apps are mostly for Seoul or the metropolitan area, which was disappointing, but I can meet people in Daejeon here, which is great. They match you twice a week, so I found my ideal type quickly. Lots of attractive people, and most importantly, it feels like a safe app!!",
+			"review_3": "With free re-matching every 3 days, 9 PM has become a time I look forward to without even realizing it. It's a shame people don't know about this app yet, but I feel like many single people will soon flock here...lol It's fun meeting new people!! I hope more people use it and make meaningful connections!",
+			"review_4": "I've actually been on several dates through this app and am actively recommending it to my university friends!... I'm grateful just to be able to use such an app for free",
+			"review_5": "Other dating apps claim to consider your ideal type but barely reflect it or match you with anyone randomly, but SOMETIME uses AI to match based on your preferences, so it seems more accurate! I'll keep using it to see~! I like that it's for university students🥰"
+		},
+		"tip_announcement": {
+			"title": "Today's dating tip",
+			"tip": "Show respect for the other person."
+		},
+		"total_match_counter": {
+			"count_prefix": "So far,",
+			"count_suffix": "people have applied!"
+		},
+		"university_form": {
+			"grade": "Grade",
+			"student_number": "Student ID",
+			"error_university_name": "Please enter your university name.",
+			"error_department_name": "Please select your department.",
+			"error_grade": "Please select your grade.",
+			"error_student_number": "Please select your student ID.",
+			"submit_button": "Update University Info",
+			"university_label": "University",
+			"university_placeholder": "Enter university name",
+			"department_label": "Department",
+			"department_placeholder": "Select your department",
+			"student_number_placeholder": "Select student ID",
+			"grade_placeholder": "Select grade"
+		},
+		"home_info": {
+			"home_info_section": {
+				"status_complete": "Complete",
+				"status_incomplete": "Enter",
+				"my_info_title": "My Info",
+				"my_info_description": "Personality, hobbies, dating style, etc.",
+				"my_info_tooltip": "Enter your information for ideal type matching!",
+				"preference_info_title": "Ideal Type Info",
+				"preference_info_description": "Preferred personality, interests, smoking, etc.",
+				"preference_info_tooltip": "Enter your ideal type information for better matching!"
+			},
+			"guide_card": {
+				"title": "Match with Verified Profiles",
+				"checklist_1": "Enter your info and ideal type preferences",
+				"checklist_2": "After profile review",
+				"checklist_3": "Start matching!"
+			}
+		},
+		"invite_banner": {
+			"title_1": "Invite friends,",
+			"title_2": "you and your friend both get",
+			"reward": "30 gems",
+			"cta_button": "Invite Now"
+		},
+		"preference_modal": {
+			"title": "You haven't entered your ideal type information!",
+			"description_line1": "To match you with the right partner,",
+			"description_line2": "would you like to register your ideal type information?",
+			"primary_button": "Yes, I will!",
+			"secondary_button": "Maybe later"
+		},
+		"profile_photo_card": {
+			"title": "Add Profile Photo",
+			"required": "Required",
+			"recommended": "Recommended",
+			"description_1": "For matching, ",
+			"description_highlight": "at least 1 photo",
+			"description_2": " is required.",
+			"description_3": "Adding 3 photos increases your match probability!"
+		},
+		"instagram_verification_card": {
+			"title": "Verify Instagram Account",
+			"description_1": "Verified profiles get more visibility in matching.",
+			"description_2": "Your ID won't be shared with others.",
+			"reward_label": "Reward"
+		}
+	}
+}
