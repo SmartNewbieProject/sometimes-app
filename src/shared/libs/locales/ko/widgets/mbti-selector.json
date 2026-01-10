@@ -1,12 +1,12 @@
 {
-  "mbti_selector": {
-    "extroversion": "외향",
-    "introversion": "내향",
-    "intuition": "직관",
-    "sensing": "현실",
-    "feeling": "감성",
-    "thinking": "이성",
-    "prospecting": "탐색",
-    "judging": "계획"
-  }
+	"mbti_selector": {
+		"extroversion": "외향",
+		"introversion": "내향",
+		"intuition": "직관",
+		"sensing": "현실",
+		"feeling": "감성",
+		"thinking": "이성",
+		"prospecting": "탐색",
+		"judging": "계획"
+	}
 }

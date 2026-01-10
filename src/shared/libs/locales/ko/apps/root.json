@@ -1,6 +1,6 @@
 {
-  "android_key_hash_message": "키 해시를 복사하여 카카오 개발자 콘솔에 등록하세요:\n\n{{keyHash}}",
-  "confirm": "확인",
-  "view_in_console": "콘솔에서 보기",
-  "app_updated_please_refresh": "앱이 업데이트되었습니다. 페이지를 새로고침해주세요."
+	"android_key_hash_message": "키 해시를 복사하여 카카오 개발자 콘솔에 등록하세요:\n\n{{keyHash}}",
+	"confirm": "확인",
+	"view_in_console": "콘솔에서 보기",
+	"app_updated_please_refresh": "앱이 업데이트되었습니다. 페이지를 새로고침해주세요."
 }

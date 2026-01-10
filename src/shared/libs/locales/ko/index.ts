@@ -1,77 +1,78 @@
-import global from './global.json';
 import auth from './apps/auth.json';
 import community from './apps/community.json';
 import home from './apps/home.json';
+import index from './apps/index.json';
 import interest from './apps/interest.json';
 import matching_history from './apps/matching_history.json';
+import moment from './apps/moment.json';
+import myInfo from './apps/my-info.json';
 import my from './apps/my.json';
 import notification from './apps/notification.json';
 import partner from './apps/partner.json';
 import postBox from './apps/post-box.json';
 import profile_edit from './apps/profile-edit.json';
 import purchase from './apps/purchase.json';
+import root from './apps/root.json';
 import tabs from './apps/tabs.json';
 import test from './apps/test.json';
-import index from './apps/index.json';
 import universityVerification from './apps/university-verification.json';
-import myInfo from './apps/my-info.json';
-import moment from './apps/moment.json';
-import root from './apps/root.json';
+import global from './global.json';
 
 import featuresAdmin from './features/admin.json';
+import featuresAppInstallPrompt from './features/app-install-prompt.json';
 import featuresAppleInfo from './features/apple-info.json';
 import featuresAuth from './features/auth.json';
 import featuresBanReport from './features/ban-report.json';
+import featuresCardNews from './features/card-news.json';
 import featuresChat from './features/chat.json';
 import featuresCommingsoon from './features/commingsoon.json';
 import featuresCommunity from './features/community.json';
+import featuresContactBlock from './features/contact-block.json';
 import featuresEvent from './features/event.json';
 import featuresFeedback from './features/feedback.json';
 import featuresGuide from './features/guide.json';
-import featuresPass from './features/pass.json';
 import featuresHome from './features/home.json';
+import featuresIdleMatchTimer from './features/idle-match-timer.json';
+import featuresInAppReview from './features/in-app-review.json';
+import featuresInstagram from './features/instagram.json';
 import featuresInterest from './features/interest.json';
+import featuresJpAuth from './features/jp-auth.json';
+import featuresJpIdentity from './features/jp-identity.json';
+import featuresLikeLetter from './features/like-letter.json';
 import featuresLike from './features/like.json';
 import featuresLoading from './features/loading.json';
+import featuresMatchReasons from './features/match-reasons.json';
 import featuresMatch from './features/match.json';
-import featuresMatching from './features/matching.json';
 import featuresMatchingHistory from './features/matching-history.json';
+import featuresMatching from './features/matching.json';
+import featuresMoment from './features/moment.json';
 import featuresMyInfo from './features/my-info.json';
+import featureMypage from './features/mypage.json';
+import featuresOnboarding from './features/onboarding.json';
 import featuresPartner from './features/partner.json';
+import featuresPass from './features/pass.json';
 import featuresPayment from './features/payment.json';
 import featuresPostBox from './features/post-box.json';
 import featuresPreSignup from './features/pre-signup.json';
 import featuresProfileEdit from './features/profile-edit.json';
 import featuresSetting from './features/setting.json';
 import featuresSignup from './features/signup.json';
-import featuresWelcomeReward from './features/welcome-reward.json';
-import featuresIdleMatchTimer from './features/idle-match-timer.json';
-import featureMypage from './features/mypage.json';
-import featuresMoment from './features/moment.json';
 import featuresSomemate from './features/somemate.json';
-import featuresOnboarding from './features/onboarding.json';
-import featuresJpAuth from './features/jp-auth.json';
-import featuresJpIdentity from './features/jp-identity.json';
-import featuresCardNews from './features/card-news.json';
-import featuresAppInstallPrompt from './features/app-install-prompt.json';
-import featuresLikeLetter from './features/like-letter.json';
-import featuresMatchReasons from './features/match-reasons.json';
-import featuresInAppReview from './features/in-app-review.json';
-import featuresContactBlock from './features/contact-block.json';
 import featuresSupportChat from './features/support-chat.json';
+import featuresWelcomeReward from './features/welcome-reward.json';
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
 import widgetsForm from './widgets/form.json';
 import widgetsGemStore from './widgets/gem-store.json';
 import widgetsMbtiCard from './widgets/mbti-card.json';
 import widgetsMbtiSelector from './widgets/mbti-selector.json';
-import widgetsTicket from './widgets/ticket.json';
-import widgetsProfilePhotoCard from './widgets/profile-photo-card.json';
 import widgetsOppositeGenderPreview from './widgets/opposite-gender-preview.json';
 import widgetsPhotoStatusCard from './widgets/photo-status-card.json';
 import widgetsPhotoStatusWrapper from './widgets/photo-status-wrapper.json';
 import widgetsProfileImageGrid from './widgets/profile-image-grid.json';
+import widgetsProfilePhotoCard from './widgets/profile-photo-card.json';
 import widgetsRejectedImageWrapper from './widgets/rejected-image-wrapper.json';
+import widgetsTicket from './widgets/ticket.json';
 
 import sharedsBusinessInfo from './shareds/business-info.json';
 import sharedsConstants from './shareds/constants.json';
@@ -118,6 +119,7 @@ const features = {
 	feedback: featuresFeedback,
 	guide: featuresGuide,
 	home: featuresHome,
+	instagram: featuresInstagram,
 	interest: featuresInterest,
 	like: featuresLike,
 	loading: featuresLoading,

@@ -1,27 +1,27 @@
 {
-  "ui": {
-    "top_bar": {
-      "title": "Apple 로그인"
-    },
-    "name_input": {
-      "title": "이름을 입력해주세요",
-      "placeholder": "구미호"
-    },
-    "gender_selector": {
-      "title": "성별을 선택해주세요",
-      "male": "남성",
-      "female": "여성"
-    },
-    "birth_input": {
-      "title": "생년월일을 입력해주세요"
-    },
-    "phone_input": {
-      "title": "전화번호를 입력해주세요"
-    },
-    "bottom_cta": {
-      "message": "회원가입을 위해 정보를 입력해주세요!",
-      "button_complete": "썸타임 시작하기",
-      "button_incomplete": "내가 누구인지 알려주세요!"
-    }
-  }
+	"ui": {
+		"top_bar": {
+			"title": "Apple 로그인"
+		},
+		"name_input": {
+			"title": "이름을 입력해주세요",
+			"placeholder": "구미호"
+		},
+		"gender_selector": {
+			"title": "성별을 선택해주세요",
+			"male": "남성",
+			"female": "여성"
+		},
+		"birth_input": {
+			"title": "생년월일을 입력해주세요"
+		},
+		"phone_input": {
+			"title": "전화번호를 입력해주세요"
+		},
+		"bottom_cta": {
+			"message": "회원가입을 위해 정보를 입력해주세요!",
+			"button_complete": "썸타임 시작하기",
+			"button_incomplete": "내가 누구인지 알려주세요!"
+		}
+	}
 }

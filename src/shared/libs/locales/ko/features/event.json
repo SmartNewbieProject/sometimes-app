@@ -50,5 +50,22 @@
 	"common": {
 		"닫기": "닫기",
 		"구슬_받기": "구슬 받기"
+	},
+	"roulette": {
+		"header_title": "데일리 룰렛",
+		"top_title": "오늘의",
+		"bottom_title": "럭키 룰렛",
+		"description": "오늘의 <strong>운</strong>을 <strong>시험</strong>해보세요!",
+		"description_luck": "운",
+		"description_try": "시험",
+		"description_parts": {
+			"prefix": "오늘의 ",
+			"luck": "운",
+			"middle": "을 ",
+			"try": "시험",
+			"suffix": "해보세요!"
+		},
+		"start_button": "START",
+		"result_zero": "꽝!"
 	}
 }

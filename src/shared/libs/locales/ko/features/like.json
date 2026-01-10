@@ -1,48 +1,48 @@
 {
-  "ui": {
-    "none_like_banner": {
-      "title_female": "‘좋아요'",
-      "title_femail_1": "를 보내보셨나요?",
-      "title_male": "잠시",
-      "title_male_profile": "‘프로필'",
-      "title_male_1": "을 검색해 볼까요?",
-      "nothing_like": "관심을 가진 사람이 아직 없어요",
-      "description_female_part1": "마음에 드는 상대에게 '좋아요'를 보내고,",
-      "description_female_part2": "설렘은 반으로 나눠보세요!",
-      "description_male_part1": "취미나 관심사를 추가해서, 공통점 찾고",
-      "description_male_part2": "나만의 매력을 어필해 보세요!",
-      "cta_locked": ""
-    },
-    "like_button": {
-      "modal": {
-        "title_line1": "마음에 드는 이성에게",
-        "title_line2_male": "구슬 {{cost}}개로 관심을 표현할까요?",
-        "title_line2_default": "관심을 표현할까요?",
-        "body_line1": "이성에게 간단히 관심을 표현하고,",
-        "body_line2": "그 다음 단계로 자연스럽게 나아가 보세요.",
-        "primary_button": "네, 해볼래요"
-      },
-      "button_label": "좋아요"
-    },
-    "like_collapse": {
-      "i_liked_title": "{{name}}님께서 관심을 가지신 분들이에요",
-      "liked_me_title": "{{name}}님께 관심을 가졌어요"
-    },
-    "알_수_없는_오류": "알 수 없는 오류"
-  },
-  "hooks": {
-    "use-like": {
-      "like_sent": "썸을 보냈어요!",
-      "if_interested": "상대방도 관심을 보이면,",
-      "can_contact": "바로 대화 시작할 수 있어!",
-      "confirm": "확인했어요",
-      "charge_message": "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
-      "duplicate_like": "중복된 요청이거나 일시적인 문제가 발생했습니다.",
-      "no_gems": "구슬이 없습니다.",
-      "ticket_insufficient": "재매칭권이 필요합니다. 지금 구매하고 계속 매칭을 즐겨보세요!",
-      "communication_restricted": "현재 상대방과 소통이 제한되어 있습니다. 잠시 후 다시 시도해주세요.",
-      "already_liked": "이미 좋아요를 보낸 상대방입니다."
-    },
-    "소통이_제한": "소통이 제한"
-  }
+	"ui": {
+		"none_like_banner": {
+			"title_female": "‘좋아요'",
+			"title_femail_1": "를 보내보셨나요?",
+			"title_male": "잠시",
+			"title_male_profile": "‘프로필'",
+			"title_male_1": "을 검색해 볼까요?",
+			"nothing_like": "관심을 가진 사람이 아직 없어요",
+			"description_female_part1": "마음에 드는 상대에게 '좋아요'를 보내고,",
+			"description_female_part2": "설렘은 반으로 나눠보세요!",
+			"description_male_part1": "취미나 관심사를 추가해서, 공통점 찾고",
+			"description_male_part2": "나만의 매력을 어필해 보세요!",
+			"cta_locked": ""
+		},
+		"like_button": {
+			"modal": {
+				"title_line1": "마음에 드는 이성에게",
+				"title_line2_male": "구슬 {{cost}}개로 관심을 표현할까요?",
+				"title_line2_default": "관심을 표현할까요?",
+				"body_line1": "이성에게 간단히 관심을 표현하고,",
+				"body_line2": "그 다음 단계로 자연스럽게 나아가 보세요.",
+				"primary_button": "네, 해볼래요"
+			},
+			"button_label": "좋아요"
+		},
+		"like_collapse": {
+			"i_liked_title": "{{name}}님께서 관심을 가지신 분들이에요",
+			"liked_me_title": "{{name}}님께 관심을 가졌어요"
+		},
+		"알_수_없는_오류": "알 수 없는 오류"
+	},
+	"hooks": {
+		"use-like": {
+			"like_sent": "썸을 보냈어요!",
+			"if_interested": "상대방도 관심을 보이면,",
+			"can_contact": "바로 대화 시작할 수 있어!",
+			"confirm": "확인했어요",
+			"charge_message": "지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
+			"duplicate_like": "중복된 요청이거나 일시적인 문제가 발생했습니다.",
+			"no_gems": "구슬이 없습니다.",
+			"ticket_insufficient": "재매칭권이 필요합니다. 지금 구매하고 계속 매칭을 즐겨보세요!",
+			"communication_restricted": "현재 상대방과 소통이 제한되어 있습니다. 잠시 후 다시 시도해주세요.",
+			"already_liked": "이미 좋아요를 보낸 상대방입니다."
+		},
+		"소통이_제한": "소통이 제한"
+	}
 }

@@ -1,6 +1,6 @@
 {
-  "linkified_text": {
-    "error_title": "오류",
-    "cannot_open_link_message": "링크를 열 수 없습니다."
-  }
+	"linkified_text": {
+		"error_title": "오류",
+		"cannot_open_link_message": "링크를 열 수 없습니다."
+	}
 }
