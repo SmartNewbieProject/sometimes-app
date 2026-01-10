@@ -3,7 +3,7 @@ import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { LOGIN_ABANDONED_STEPS, AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
+import { LOGIN_ABANDONED_STEPS, AUTH_METHODS, MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { checkAppEnvironment } from '@shared/libs';
 import { router } from 'expo-router';
 import { useCallback, useState, useRef } from 'react';
@@ -97,11 +97,24 @@ export const usePortOneLogin = ({
 				const phone = loginResult.certificationInfo?.phone;
 
 				if (birthday && !isAdult(birthday)) {
+					// 기존 이벤트
 					track('Signup_AgeCheck_Failed', {
 						birthday,
 						auth_method: getAuthMethod(),
 						env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 					});
+
+					// 나이 제한 상세 이벤트
+					const birthYear = parseInt(birthday.substring(0, 4), 10);
+					const currentYear = new Date().getFullYear();
+					const calculatedAge = currentYear - birthYear;
+					track(MIXPANEL_EVENTS.SIGNUP_AGE_RESTRICTION_BLOCKED, {
+						birth_year: birthYear,
+						calculated_age: calculatedAge,
+						auth_method: getAuthMethod(),
+						env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+					});
+
 					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					router.push('/auth/age-restriction' as any);
 					return;
@@ -112,11 +125,20 @@ export const usePortOneLogin = ({
 						const { isBlacklisted } = await checkPhoneNumberBlacklist(phone);
 
 						if (isBlacklisted) {
+							// 기존 이벤트
 							track('Signup_PhoneBlacklist_Failed', {
 								phone,
 								auth_method: getAuthMethod(),
 								env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 							});
+
+							// 블랙리스트 상세 이벤트
+							track(MIXPANEL_EVENTS.SIGNUP_BLACKLIST_BLOCKED, {
+								auth_method: getAuthMethod(),
+								block_reason: 'phone_blacklist',
+								env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+							});
+
 							showModal({
 								title: t('features.pass.hooks.가입_제한'),
 								children: t(
@@ -178,8 +200,24 @@ export const usePortOneLogin = ({
 					throw new Error('본인인증 ID를 받지 못했습니다.');
 				}
 
-				track('Signup_IdentityVerification_Completed', {
+				const durationSeconds = authStartTimeRef.current
+					? Math.round((Date.now() - authStartTimeRef.current) / 1000)
+					: undefined;
+
+				// 외부 앱에서 복귀 성공
+				track(MIXPANEL_EVENTS.AUTH_EXTERNAL_APP_RETURNED, {
+					auth_method: AUTH_METHODS.PASS,
+					time_away_seconds: durationSeconds,
+					returned_with_result: true,
+					platform: Platform.OS,
+					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+				});
+
+				// 본인인증 완료
+				track(MIXPANEL_EVENTS.SIGNUP_IDENTITY_VERIFICATION_COMPLETED, {
 					auth_method: getAuthMethod(),
+					duration_seconds: durationSeconds,
+					platform: Platform.OS,
 					env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 				});
 
@@ -208,11 +246,51 @@ export const usePortOneLogin = ({
 	const handleMobileAuthError = useCallback(
 		(error: Error) => {
 			console.error('모바일 본인인증 오류:', error);
+
+			const timeAwaySeconds = authStartTimeRef.current
+				? Math.round((Date.now() - authStartTimeRef.current) / 1000)
+				: undefined;
+
+			// 외부 앱에서 복귀 (에러)
+			track(MIXPANEL_EVENTS.AUTH_EXTERNAL_APP_RETURNED, {
+				auth_method: AUTH_METHODS.PASS,
+				time_away_seconds: timeAwaySeconds,
+				returned_with_result: false,
+				platform: Platform.OS,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+
+			// 에러 타입 분류
+			const errorMessage = error.message.toLowerCase();
+			let errorType: string = 'unknown';
+			if (errorMessage.includes('network') || errorMessage.includes('연결')) {
+				errorType = 'network';
+			} else if (errorMessage.includes('timeout') || errorMessage.includes('시간')) {
+				errorType = 'timeout';
+			} else if (errorMessage.includes('install') || errorMessage.includes('설치')) {
+				errorType = 'app_not_installed';
+			} else if (errorMessage.includes('carrier') || errorMessage.includes('통신사')) {
+				errorType = 'carrier_error';
+			} else if (errorMessage.includes('certificate') || errorMessage.includes('인증서')) {
+				errorType = 'certificate_expired';
+			}
+
+			// 인증 에러 상세
+			track(MIXPANEL_EVENTS.AUTH_VERIFICATION_ERROR, {
+				auth_method: AUTH_METHODS.PASS,
+				error_type: errorType,
+				error_message: error.message,
+				platform: Platform.OS,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+
 			track('Signup_IdentityVerification_Failed', {
 				reason: error.message,
+				error_type: errorType,
 				auth_method: getAuthMethod(),
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
+
 			authStartTimeRef.current = null;
 			setError(error.message);
 			setShowMobileAuth(false);
@@ -262,6 +340,14 @@ export const usePortOneLogin = ({
 			channelKey: env.PASS_CHANNEL_KEY,
 			identityVerificationId: `cert_${Date.now()}`,
 		};
+
+		// 외부 앱(PASS) 이동 추적
+		track(MIXPANEL_EVENTS.AUTH_EXTERNAL_APP_OPENED, {
+			auth_method: AUTH_METHODS.PASS,
+			timestamp: Date.now(),
+			platform: Platform.OS,
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
 
 		setMobileAuthRequest(request);
 		setShowMobileAuth(true);

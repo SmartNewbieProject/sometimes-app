@@ -1,15 +1,16 @@
+import colors from '@/src/shared/constants/colors';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { ImageResources } from '@/src/shared/libs';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { ImageResource, Text } from '@/src/shared/ui';
-import colors from '@/src/shared/constants/colors';
-import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { useCurrentGem, useFeatureCost } from '@features/payment/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { useQueryClient } from '@tanstack/react-query';
-import { useFeatureCost, useCurrentGem } from '@features/payment/hooks';
 import { likeLetterApi } from '../api';
-import { useState, useEffect } from 'react';
 import type { LikeOption } from '../types';
 
 type LikeOptionModalProps = {
@@ -33,6 +34,7 @@ export function LikeOptionModal({
 	onSelect,
 	onClose,
 }: LikeOptionModalProps) {
+	const { t } = useTranslation('like-letter');
 	const { redirectTo: currentRedirectTo } = useLocalSearchParams<{ redirectTo?: string }>();
 	const queryClient = useQueryClient();
 	const { featureCosts } = useFeatureCost();
@@ -180,13 +182,16 @@ export function LikeOptionModal({
 				<View style={styles.content}>
 					<View style={styles.titleContainer}>
 						<Text weight="bold" size="20" textColor="black" style={styles.titleText}>
-							구슬이 부족해요
+							{t('ui.insufficient_modal.title')}
 						</Text>
 					</View>
 
 					<View style={styles.descriptionContainer}>
 						<Text size="12" textColor="disabled" style={{ textAlign: 'center' }}>
-							{`충전하면 편지 1회(${baseLetterLikeCost})와 일반 좋아요 1회(${simpleLikeCost})를\n보낼 수 있어요`}
+							{t('ui.insufficient_modal.description', {
+								letterCost: baseLetterLikeCost,
+								likeCost: simpleLikeCost,
+							})}
 						</Text>
 					</View>
 
@@ -194,10 +199,10 @@ export function LikeOptionModal({
 						<Pressable style={styles.letterOption} onPress={handleGoToCharge}>
 							<View style={styles.chargeContent}>
 								<Text weight="medium" size="20" style={styles.letterLikeText}>
-									충전하고 편지쓰기
+									{t('ui.insufficient_modal.charge_and_write')}
 								</Text>
 								<Text size="12" style={styles.chargeSubText}>
-									결제 후 바로 편지를 보낼 수 있어요
+									{t('ui.insufficient_modal.charge_sub_text')}
 								</Text>
 							</View>
 						</Pressable>
@@ -210,14 +215,14 @@ export function LikeOptionModal({
 								</Text>
 							</View>
 							<Text weight="medium" size="20" style={styles.simpleLikeText}>
-								일반 좋아요로 보내기
+								{t('ui.insufficient_modal.send_simple_like')}
 							</Text>
 						</Pressable>
 					</View>
 
 					<Pressable onPress={handleDismiss} style={styles.closeButton}>
 						<Text size="12" textColor="disabled" style={{ textDecorationLine: 'underline' }}>
-							다음에
+							{t('ui.insufficient_modal.later')}
 						</Text>
 					</Pressable>
 				</View>
@@ -242,19 +247,19 @@ export function LikeOptionModal({
 			<View style={styles.content}>
 				<View style={styles.titleContainer}>
 					<Text weight="bold" size="20" textColor="black" style={styles.titleText}>
-						마음에 드는 이성에게
+						{t('ui.option_modal.title_line1')}
 					</Text>
 					<Text weight="bold" size="20" textColor="black" style={styles.titleText}>
-						좋아요를 보내볼까요?
+						{t('ui.option_modal.title_line2')}
 					</Text>
 				</View>
 
 				<View style={styles.descriptionContainer}>
 					<Text size="12" textColor="disabled">
-						이성에게 간단히 관심을 표현하고,
+						{t('ui.option_modal.description_line1')}
 					</Text>
 					<Text size="12" textColor="disabled">
-						그 다음 단계로 자연스럽게 나아가 보세요.
+						{t('ui.option_modal.description_line2')}
 					</Text>
 				</View>
 
@@ -267,7 +272,7 @@ export function LikeOptionModal({
 							</Text>
 						</View>
 						<Text weight="medium" size="20" style={styles.simpleLikeText}>
-							좋아요만 보내기
+							{t('ui.option_modal.simple_like')}
 						</Text>
 					</Pressable>
 
@@ -279,13 +284,13 @@ export function LikeOptionModal({
 							</Text>
 						</View>
 						<Text weight="medium" size="20" style={styles.letterLikeText}>
-							{isLoading ? '처리중...' : '편지와 함께 보내기'}
+							{isLoading ? t('ui.option_modal.loading') : t('ui.option_modal.letter_like')}
 						</Text>
 					</Pressable>
 				</View>
 
 				<Text size="10" textColor="disabled" style={styles.hint}>
-					직접 채팅과 같은 비용으로, 매칭되면 채팅이 무료로 열려요!
+					{t('ui.option_modal.hint')}
 				</Text>
 			</View>
 		</View>

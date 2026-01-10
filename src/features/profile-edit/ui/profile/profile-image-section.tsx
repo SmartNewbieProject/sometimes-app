@@ -42,7 +42,7 @@ function ProfileImageSection() {
   }, [managementData?.images]);
 
   const handleProfileImageOpen = () => {
-    router.push('/profile/photo-management');
+    router.push('/profile/photo-management?referrer=profile-edit');
   };
   const handleProfileImageClose = () => {
     setProfileOpen(false);

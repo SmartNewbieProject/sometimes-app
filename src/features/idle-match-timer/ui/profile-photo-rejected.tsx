@@ -12,7 +12,7 @@ export const ProfilePhotoRejected = () => {
   };
 
   const handleChangeProfilePhoto = () => {
-    router.push("/profile/photo-management");
+    router.push("/profile/photo-management?referrer=home");
   };
 
   return (

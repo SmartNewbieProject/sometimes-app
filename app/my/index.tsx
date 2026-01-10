@@ -22,7 +22,9 @@ import {
 import { useUniversityCertificationPrompt } from '@/src/features/event/hooks/use-university-certification-prompt';
 import SettingIcon from '@assets/icons/setting.svg';
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import {
 	Pressable,
 	ScrollView,
@@ -42,6 +44,15 @@ export default function MyScreen() {
 	const insets = useSafeAreaInsets();
 	const { renderPromptModal } = useUniversityCertificationPrompt();
 	const { data: supportChatEnabled } = useSupportChatEnabled();
+	const queryClient = useQueryClient();
+
+	useFocusEffect(
+		useCallback(() => {
+			queryClient.invalidateQueries({
+				queryKey: ['my-profile-details'],
+			});
+		}, [queryClient])
+	);
 
 	// REMOVED: 마이페이지 자동 리다이렉션 제거 (2025-12-14)
 	// useProfileReviewRedirect();
