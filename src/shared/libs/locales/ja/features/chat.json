@@ -1,140 +1,155 @@
 {
-  "hooks": {
-    "use_chat_event": {
-      "connected_status": "接続中",
-      "disconnected_status": "接続切断"
-    },
-    "지금_바로": "[JA] 지금 바로",
-    "네_해볼래요": "[JA] 네, 해볼래요",
-    "아니요": "[JA] 아니요",
-    "취소": "[JA] 취소",
-    "삭제": "[JA] 삭제"
-  },
-  "ui": {
-    "chat_screen": {
-      "date_format": "{{year}}年{{month}}月{{day}}日",
-      "today": "今日",
-      "yesterday": "昨日"
-    },
-    "input": {
-      "placeholder": "メッセージを入力してください",
-      "placeholder_ended": "会話が終了しました"
-    },
-    "search": {
-      "placeholder": "検索"
-    },
-    "tips_modal": {
-      "confirm_title_1": "会話トピックをおすすめします",
-      "confirm_title_2": "ジェム1個を使用します",
-      "confirm_desc_1": "AIがプロフィールを基に",
-      "confirm_desc_2": "会話トピックをおすすめします",
-      "confirm_button": "使用する",
-      "cancel_button": "キャンセル",
-      "header_title": "会話トピックおすすめ",
-      "ai_badge": "AIおすすめ",
-      "loading": "おすすめ質問を読み込み中...",
-      "refresh_button": "もう一度おすすめ",
-      "footer_text": "プロフィールと理想のタイプ情報を基におすすめします"
-    },
-    "connection_status": {
-      "disconnected": "接続が切断されました",
-      "connected": "接続中",
-      "reconnecting_title": "再接続しています",
-      "reconnect_attempt": "再試行 {{attempt}}回",
-      "reconnect_countdown": "{{seconds}}秒後に再試行します",
-      "please_wait": "少々お待ちください"
-    },
-    "message": {
-      "send_failed": "送信失敗 · タップして再送信",
-      "read": "既読"
-    },
-    "gallery": {
-      "permission_required_title": "権限が必要",
-      "permission_required_message": "ギャラリーへのアクセス権限が必要です。",
-      "permission_denied": "ギャラリーへのアクセス権限が必要です",
-      "confirm": "確認",
-      "error_title": "エラー",
-      "error_load_photos": "写真の読み込みに失敗しました。",
-      "send_image_title": "画像を送信",
-      "send_image_message": "選択した画像を送信しますか？",
-      "send_button": "送信",
-      "cancel_button": "キャンセル"
-    },
-    "camera": {
-      "permission_required_title": "権限が必要",
-      "permission_required_message": "カメラを使用するには権限が必要です",
-      "open_settings": "設定を開く",
-      "close": "閉じる"
-    },
-    "chat_room_list": {
-      "no_chat_title": "まだチャットルームがありません",
-      "no_chat_subtitle": "お互いに「いいね」するとチャットが始まります",
-      "new_match_notice": "新しいマッチングが届きました💜 チャットを開いてメッセージを確認しましょう！",
-      "recent_chat": "最近のチャット"
-    },
-    "chat_room_card": {
-      "delete": "削除",
-      "accept": "承認",
-      "leave": "退出",
-      "photo": "写真",
-      "start_conversation": "会話を始めてみませんか？"
-    },
-    "new_match_banner": {
-      "default_name": "サムタイム",
-      "congrats": "おめでとうございます！",
-      "matched": "さんとマッチングしました",
-      "mutual_interest": "お互いに興味を持っています！"
-    },
-    "chat_guide_banner": {
-      "title": "会話スターターヘルパー",
-      "guide_1": "最近ハマっているドラマやバラエティ番組はありますか？",
-      "guide_2": "週末はどのように過ごしていますか？",
-      "guide_3": "こんにちは！プロフィールでカフェ巡りが好きとありましたが、おすすめのカフェはありますか？",
-      "guide_4": "サークルや研究会の活動はされていますか？",
-      "guide_5": "〇〇学科とのことですが、どんな分野に興味がありますか？",
-      "guide_6": "休暇中はどんな活動をされていましたか？"
-    },
-    "menu_modal": {
-      "leave_chat_title": "チャットルームを退出しますか？",
-      "leave_chat_warning_1": "退出するとチャット履歴とリストから完全に削除され、",
-      "leave_chat_warning_2": "復元できません。",
-      "cancel": "キャンセル",
-      "leave": "退出",
-      "report_and_leave": "通報して退出",
-      "leave_chat": "チャットルームを退出",
-      "close": "閉じる"
-    }
-  },
-  "services": {
-    "error_handlers": {
-      "auth_failed": "認証に失敗しました..",
-      "insufficient_funds": "ジェムが不足しています",
-      "chat_room_not_found": "チャットルームが見つかりません。",
-      "no_access_permission": "チャットルームへのアクセス権限がありません。",
-      "notification": "お知らせ",
-      "permission_error": "権限エラー",
-      "login": "ログイン",
-      "go_to_purchase": "購入する",
-      "cancel": "キャンセル",
-      "confirm": "確認",
-      "chat_already_exists": "すでに相手とチャットルームが開設されています。",
-      "go_to_chat_list": "チャットリストへ",
-      "general_error": "問題が発生しました。"
-    },
-    "jp_identity": {
-      "verification_required_title": "本人確認が必要です",
-      "verification_required_message": "チャットを開始するには本人確認が必要です。\n本人確認を完了してください。",
-      "go_to_verification": "本人確認へ",
-      "later": "後で"
-    }
-  },
-  "common": {
-    "잘못된_요청입니다": "[JA] 잘못된 요청입니다.",
-    "알림": "[JA] 알림",
-    "확인": "[JA] 확인",
-    "채팅방_접근_권한이_존재하지_않습니다": "[JA] 채팅방 접근 권한이 존재하지 않습니다.",
-    "네트워크_연결을_확인해주세요": "[JA] 네트워크 연결을 확인해주세요.",
-    "이미지_압축_실패_원본_사용": "[JA] 이미지 압축 실패, 원본 사용:",
-    "안내": "[JA] 안내"
-  }
+	"hooks": {
+		"use_chat_event": {
+			"connected_status": "接続中",
+			"disconnected_status": "接続切断"
+		},
+		"use_chat_lock": {
+			"unlock_modal": {
+				"title_line1": "チャットを開いて",
+				"title_line2": "会話を続けてみませんか？",
+				"content_gems": "ジェム{{cost}}個でチャットルームを開けます",
+				"content_free": "今すぐチャットルームを開けます",
+				"content_cta": "今すぐ返信して、ときめく会話を始めましょう！"
+			},
+			"remove_modal": {
+				"title_line1": "チャットリクエストを",
+				"title_line2": "削除しますか？",
+				"content_warning": "削除するとこのリクエストは再確認できません",
+				"content_confirm": "本当に削除しますか？"
+			}
+		},
+		"지금_바로": "今すぐ",
+		"네_해볼래요": "はい、やってみます",
+		"아니요": "いいえ",
+		"취소": "キャンセル",
+		"삭제": "削除"
+	},
+	"ui": {
+		"chat_screen": {
+			"date_format": "{{year}}年{{month}}月{{day}}日",
+			"today": "今日",
+			"yesterday": "昨日"
+		},
+		"input": {
+			"placeholder": "メッセージを入力してください",
+			"placeholder_ended": "会話が終了しました"
+		},
+		"search": {
+			"placeholder": "検索"
+		},
+		"tips_modal": {
+			"confirm_title_1": "会話トピックをおすすめします",
+			"confirm_title_2": "ジェム1個を使用します",
+			"confirm_desc_1": "AIがプロフィールを基に",
+			"confirm_desc_2": "会話トピックをおすすめします",
+			"confirm_button": "使用する",
+			"cancel_button": "キャンセル",
+			"header_title": "会話トピックおすすめ",
+			"ai_badge": "AIおすすめ",
+			"loading": "おすすめ質問を読み込み中...",
+			"refresh_button": "もう一度おすすめ",
+			"footer_text": "プロフィールと理想のタイプ情報を基におすすめします"
+		},
+		"connection_status": {
+			"disconnected": "接続が切断されました",
+			"connected": "接続中",
+			"reconnecting_title": "再接続しています",
+			"reconnect_attempt": "再試行 {{attempt}}回",
+			"reconnect_countdown": "{{seconds}}秒後に再試行します",
+			"please_wait": "少々お待ちください"
+		},
+		"message": {
+			"send_failed": "送信失敗 · タップして再送信",
+			"read": "既読"
+		},
+		"gallery": {
+			"permission_required_title": "権限が必要",
+			"permission_required_message": "ギャラリーへのアクセス権限が必要です。",
+			"permission_denied": "ギャラリーへのアクセス権限が必要です",
+			"confirm": "確認",
+			"error_title": "エラー",
+			"error_load_photos": "写真の読み込みに失敗しました。",
+			"send_image_title": "画像を送信",
+			"send_image_message": "選択した画像を送信しますか？",
+			"send_button": "送信",
+			"cancel_button": "キャンセル"
+		},
+		"camera": {
+			"permission_required_title": "権限が必要",
+			"permission_required_message": "カメラを使用するには権限が必要です",
+			"open_settings": "設定を開く",
+			"close": "閉じる"
+		},
+		"chat_room_list": {
+			"no_chat_title": "まだチャットルームがありません",
+			"no_chat_subtitle": "お互いに「いいね」するとチャットが始まります",
+			"new_match_notice": "新しいマッチングが届きました💜 チャットを開いてメッセージを確認しましょう！",
+			"recent_chat": "最近のチャット"
+		},
+		"chat_room_card": {
+			"delete": "削除",
+			"accept": "承認",
+			"leave": "退出",
+			"photo": "写真",
+			"start_conversation": "会話を始めてみませんか？"
+		},
+		"new_match_banner": {
+			"default_name": "サムタイム",
+			"congrats": "おめでとうございます！",
+			"matched": "さんとマッチングしました",
+			"mutual_interest": "お互いに興味を持っています！"
+		},
+		"chat_guide_banner": {
+			"title": "会話スターターヘルパー",
+			"guide_1": "最近ハマっているドラマやバラエティ番組はありますか？",
+			"guide_2": "週末はどのように過ごしていますか？",
+			"guide_3": "こんにちは！プロフィールでカフェ巡りが好きとありましたが、おすすめのカフェはありますか？",
+			"guide_4": "サークルや研究会の活動はされていますか？",
+			"guide_5": "〇〇学科とのことですが、どんな分野に興味がありますか？",
+			"guide_6": "休暇中はどんな活動をされていましたか？"
+		},
+		"menu_modal": {
+			"leave_chat_title": "チャットルームを退出しますか？",
+			"leave_chat_warning_1": "退出するとチャット履歴とリストから完全に削除され、",
+			"leave_chat_warning_2": "復元できません。",
+			"cancel": "キャンセル",
+			"leave": "退出",
+			"report_and_leave": "通報して退出",
+			"leave_chat": "チャットルームを退出",
+			"close": "閉じる"
+		}
+	},
+	"services": {
+		"error_handlers": {
+			"auth_failed": "認証に失敗しました..",
+			"insufficient_funds": "ジェムが不足しています",
+			"chat_room_not_found": "チャットルームが見つかりません。",
+			"no_access_permission": "チャットルームへのアクセス権限がありません。",
+			"notification": "お知らせ",
+			"permission_error": "権限エラー",
+			"login": "ログイン",
+			"go_to_purchase": "購入する",
+			"cancel": "キャンセル",
+			"confirm": "確認",
+			"chat_already_exists": "すでに相手とチャットルームが開設されています。",
+			"go_to_chat_list": "チャットリストへ",
+			"general_error": "問題が発生しました。"
+		},
+		"jp_identity": {
+			"verification_required_title": "本人確認が必要です",
+			"verification_required_message": "チャットを開始するには本人確認が必要です。\n本人確認を完了してください。",
+			"go_to_verification": "本人確認へ",
+			"later": "後で"
+		}
+	},
+	"common": {
+		"잘못된_요청입니다": "[JA] 잘못된 요청입니다.",
+		"알림": "[JA] 알림",
+		"확인": "[JA] 확인",
+		"채팅방_접근_권한이_존재하지_않습니다": "[JA] 채팅방 접근 권한이 존재하지 않습니다.",
+		"네트워크_연결을_확인해주세요": "[JA] 네트워크 연결을 확인해주세요.",
+		"이미지_압축_실패_원본_사용": "[JA] 이미지 압축 실패, 원본 사용:",
+		"안내": "[JA] 안내"
+	}
 }

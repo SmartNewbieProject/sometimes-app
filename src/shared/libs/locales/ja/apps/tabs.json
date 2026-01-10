@@ -1,15 +1,15 @@
 {
-  "index": {
-    "title": "SOMETIME",
-    "subtitle": "いつもの日常に、ときめきをひとつ、",
-    "subtitle_2": "SOMETIMEで",
-    "email": "メールアドレス",
-    "email_placeholder": "メールアドレスを入力",
-    "password": "パスワード",
-    "password_placeholder": "英字・数字・記号を含む8文字以上",
-    "login": "ログイン",
-    "register": "新規登録",
-    "find_id": "IDを探す",
-    "find_password": "パスワードを忘れた場合はこちら"
-  }
+	"index": {
+		"title": "SOMETIME",
+		"subtitle": "いつもの日常に、ときめきをひとつ、",
+		"subtitle_2": "SOMETIMEで",
+		"email": "メールアドレス",
+		"email_placeholder": "メールアドレスを入力",
+		"password": "パスワード",
+		"password_placeholder": "英字・数字・記号を含む8文字以上",
+		"login": "ログイン",
+		"register": "新規登録",
+		"find_id": "IDを探す",
+		"find_password": "パスワードを忘れた場合はこちら"
+	}
 }

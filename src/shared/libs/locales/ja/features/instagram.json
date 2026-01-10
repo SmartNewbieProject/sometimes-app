@@ -1,13 +1,27 @@
 {
-  "ui": {
-    "button": {
-      "contact": "連絡する"
-    }
-  },
-  "services": {
-    "alert_title": "お知らせ",
-    "no_instagram_id": "InstagramのIDがありません。",
-    "error_title": "エラー",
-    "connection_error": "Instagramに接続できません。"
-  }
+	"ui": {
+		"button": {
+			"contact": "連絡する"
+		}
+	},
+	"verify": {
+		"header_title": "Instagramアカウント認証",
+		"title": "InstagramのIDを教えてください",
+		"description": "偽プロフィールやスパムを防ぎ、安全な出会いのために必要です。",
+		"placeholder": "IDを入力してください",
+		"privacy_note": "IDは相手に公開されません！",
+		"submit_button": "認証完了",
+		"success_title": "認証完了",
+		"success_message": "InstagramのIDが登録されました。",
+		"success_rewarded_title": "おめでとうございます！",
+		"success_rewarded_message": "Instagram認証完了！ビー玉10個が付与されました。",
+		"error_message": "InstagramのID登録に失敗しました。もう一度お試しください。"
+	},
+	"services": {
+		"alert_title": "お知らせ",
+		"no_instagram_id": "InstagramのIDがありません。",
+		"error_title": "エラー",
+		"connection_error": "Instagramに接続できません。",
+		"confirm": "確認"
+	}
 }

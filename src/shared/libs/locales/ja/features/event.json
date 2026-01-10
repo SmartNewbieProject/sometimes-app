@@ -50,5 +50,22 @@
 	"common": {
 		"닫기": "閉じる",
 		"구슬_받기": "ジェムを受け取る"
+	},
+	"roulette": {
+		"header_title": "デイリールーレット",
+		"top_title": "今日の",
+		"bottom_title": "ラッキールーレット",
+		"description": "今日の<strong>運</strong>を<strong>試して</strong>みませんか！",
+		"description_luck": "運",
+		"description_try": "試して",
+		"description_parts": {
+			"prefix": "今日の",
+			"luck": "運",
+			"middle": "を",
+			"try": "試して",
+			"suffix": "みませんか！"
+		},
+		"start_button": "START",
+		"result_zero": "ハズレ！"
 	}
 }

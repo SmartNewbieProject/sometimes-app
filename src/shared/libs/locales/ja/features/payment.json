@@ -1,5 +1,17 @@
 {
 	"ui": {
+		"gem_mission": {
+			"header_title": "ジェム報酬ミッション",
+			"status": {
+				"completed": "完了",
+				"claimable": "ジェムを受け取る"
+			},
+			"missions": {
+				"university_verification": "大学認証する",
+				"instagram_verification": "InstagramのID認証する",
+				"community_first_post": "コミュニティで初投稿"
+			}
+		},
 		"gem_store": {
 			"banner": {
 				"guide_button_text": "既にある再マッチングチケットはどうなりますか？"

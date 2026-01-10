@@ -1,6 +1,6 @@
 {
-  "android_key_hash_message": "キーハッシュをコピーしてKakao開発者コンソールに登録してください:\n\n{{keyHash}}",
-  "confirm": "確認",
-  "view_in_console": "コンソールで表示",
-  "app_updated_please_refresh": "アプリが更新されました。ページを手動で更新してください。"
+	"android_key_hash_message": "キーハッシュをコピーしてKakao開発者コンソールに登録してください:\n\n{{keyHash}}",
+	"confirm": "確認",
+	"view_in_console": "コンソールで表示",
+	"app_updated_please_refresh": "アプリが更新されました。ページを手動で更新してください。"
 }

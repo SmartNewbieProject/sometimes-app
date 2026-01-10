@@ -1,14 +1,14 @@
 {
-  "ui": {
-    "greeting": "",
-    "title": "",
-    "description_1": "",
-    "description_2": "",
-    "date": "",
-    "cta_button": "",
-    "modal": {
-      "title": "",
-      "message": ""
-    }
-  }
+	"ui": {
+		"greeting": "",
+		"title": "",
+		"description_1": "",
+		"description_2": "",
+		"date": "",
+		"cta_button": "",
+		"modal": {
+			"title": "",
+			"message": ""
+		}
+	}
 }

@@ -1,105 +1,105 @@
 {
-  "mock": {
-    "mock_like_button": {
-      "modal_title": "サムを送りました！",
-      "modal_text_1": "相手も関心を示したら、",
-      "modal_text_2": "Instagramで連絡できます。",
-      "primary_button": "確認しました",
-      "partner_modal_title_1": "気になる相手に",
-      "partner_modal_title_2_male": "ジェム {{count}}個で気持ちを伝えますか？",
-      "partner_modal_title_2_female": "気持ちを伝えますか？",
-      "partner_modal_text_1": "相手に簡単に興味を示して、",
-      "partner_modal_text_2": "その次のステップへ自然に進んでみましょう。",
-      "partner_primary_button": "はい、やってみます",
-      "main_button": "いいね"
-    },
-    "mock_interaction_navigation": {
-      "modal_title_1": "気になる相手を見つけるために",
-      "modal_title_2": "ジェム {{count}}個を使います！",
-      "modal_text_1": "性格やコミュニケーションスタイルをもとに、",
-      "modal_text_2": "自然につながれる相手をご紹介いたします。",
-      "primary_button": "はい、やってみます",
-      "secondary_button": "いいえ",
-      "main_button": "もっと探す",
-      "complete_button": "サム送信完了！"
-    },
-    "mock_partner": {
-      "mbti_tag": "#ISTJ #{{name}}",
-      "button_more": "もっと見る"
-    }
-  },
-  "ui": {
-    "profile_guide": {
-      "title": "プロフィールを魅力的に見せましょう！",
-      "description_line1": "写真をアップロードしてアカウントを公開に設定すると",
-      "description_line2": "マッチング確率がさらに高まります"
-    },
-    "like_guide_scenario": {
-      "like": {
-        "tab_liked_me": "相手から",
-        "tab_i_liked": "自分から",
-        "info": {
-          "step3_title": "自分から",
-          "step3_desc1": "いいね送った",
-          "step3_desc2": "相手を確認できます",
-          "step4_title": "相手から",
-          "step4_desc1": "誰が自分にいいねを送ったかすぐ確認できます",
-          "step5_title": "プロフィール閲覧",
-          "step5_desc1": "ここでプロフィールを事前に確認できます",
-          "step5_desc2": "カードをタップすると詳細プロフィールへ移動します",
-          "step6_title": "いいね",
-          "step6_desc1": "いいねを押すとお互いにマッチします！",
-          "step6_desc2": "マッチするとInstagramで",
-          "step6_desc3": "会話を始められます",
-          "step7_title": "ごめんなさい",
-          "step7_desc1": "興味がなければ「ごめんなさい」を押してください",
-          "step7_desc2": "今回のご縁は残念ながら終了し、",
-          "step7_desc3": "カードが消えます",
-          "step8_title": "ご縁ではなかったようです",
-          "step8_desc1": "カードが消えて、",
-          "step8_desc2": "次のご縁を確認できます",
-          "step9_title": "期限切れ案内",
-          "step9_desc1": "表示された時間が過ぎると自動的に",
-          "step9_desc2": "「ご縁はなかったようです」と処理されます。",
-          "step10_title": "チュートリアル終了！",
-          "step10_desc1": "さあ、自分だけの好みの相手に会いに行きましょう！",
-          "close_hint": "👉 チュートリアルを閉じる"
-        }
-      }
-    },
-    "home": {
-      "info_title_1": "いいね機能が新しく追加されました ✨️",
-      "info_description_1": "ここで自分がいいねした人と、",
-      "info_description_2": "自分にいいねしてくれた人を確認できます。",
-      "info_title_2": "以前見た相手はここに移動しました",
-      "info_description_3": "マッチングカードの下で確認できます",
-      "info_description_4": "見逃さずチェックしてください",
-      "info_title_3": "いいね、もっと詳しく見てみますか？",
-      "info_description_5": "上のボタンを押すとすぐに",
-      "info_description_6": "いいね欄に入れます",
-      "info_next_hint": "👉 タップして次へ"
-    }
-  },
-  "utils": {
-    "mock_data": {
-      "nickname_1": "ダウンジェ",
-      "university_1": "ハンビッ大学",
-      "nickname_2_male": "キム・ソヒ",
-      "nickname_2_female": "キム・ゴヌ",
-      "university_2": "ソウル大学",
-      "nickname_3_male": "イ・ジヘ",
-      "nickname_3_female": "パク・ミンソク",
-      "university_3": "漢陽大学"
-    }
-  },
-  "common": {
-    "다온재": "[JA] 다온재",
-    "한빛대학교": "[JA] 한빛대학교",
-    "김소희": "[JA] 김소희",
-    "김건우": "[JA] 김건우",
-    "서울대학교": "[JA] 서울대학교",
-    "이지혜": "[JA] 이지혜",
-    "박민석": "[JA] 박민석",
-    "한양대학교": "[JA] 한양대학교"
-  }
+	"mock": {
+		"mock_like_button": {
+			"modal_title": "サムを送りました！",
+			"modal_text_1": "相手も関心を示したら、",
+			"modal_text_2": "Instagramで連絡できます。",
+			"primary_button": "確認しました",
+			"partner_modal_title_1": "気になる相手に",
+			"partner_modal_title_2_male": "ジェム {{count}}個で気持ちを伝えますか？",
+			"partner_modal_title_2_female": "気持ちを伝えますか？",
+			"partner_modal_text_1": "相手に簡単に興味を示して、",
+			"partner_modal_text_2": "その次のステップへ自然に進んでみましょう。",
+			"partner_primary_button": "はい、やってみます",
+			"main_button": "いいね"
+		},
+		"mock_interaction_navigation": {
+			"modal_title_1": "気になる相手を見つけるために",
+			"modal_title_2": "ジェム {{count}}個を使います！",
+			"modal_text_1": "性格やコミュニケーションスタイルをもとに、",
+			"modal_text_2": "自然につながれる相手をご紹介いたします。",
+			"primary_button": "はい、やってみます",
+			"secondary_button": "いいえ",
+			"main_button": "もっと探す",
+			"complete_button": "サム送信完了！"
+		},
+		"mock_partner": {
+			"mbti_tag": "#ISTJ #{{name}}",
+			"button_more": "もっと見る"
+		}
+	},
+	"ui": {
+		"profile_guide": {
+			"title": "プロフィールを魅力的に見せましょう！",
+			"description_line1": "写真をアップロードしてアカウントを公開に設定すると",
+			"description_line2": "マッチング確率がさらに高まります"
+		},
+		"like_guide_scenario": {
+			"like": {
+				"tab_liked_me": "相手から",
+				"tab_i_liked": "自分から",
+				"info": {
+					"step3_title": "自分から",
+					"step3_desc1": "いいね送った",
+					"step3_desc2": "相手を確認できます",
+					"step4_title": "相手から",
+					"step4_desc1": "誰が自分にいいねを送ったかすぐ確認できます",
+					"step5_title": "プロフィール閲覧",
+					"step5_desc1": "ここでプロフィールを事前に確認できます",
+					"step5_desc2": "カードをタップすると詳細プロフィールへ移動します",
+					"step6_title": "いいね",
+					"step6_desc1": "いいねを押すとお互いにマッチします！",
+					"step6_desc2": "マッチするとInstagramで",
+					"step6_desc3": "会話を始められます",
+					"step7_title": "ごめんなさい",
+					"step7_desc1": "興味がなければ「ごめんなさい」を押してください",
+					"step7_desc2": "今回のご縁は残念ながら終了し、",
+					"step7_desc3": "カードが消えます",
+					"step8_title": "ご縁ではなかったようです",
+					"step8_desc1": "カードが消えて、",
+					"step8_desc2": "次のご縁を確認できます",
+					"step9_title": "期限切れ案内",
+					"step9_desc1": "表示された時間が過ぎると自動的に",
+					"step9_desc2": "「ご縁はなかったようです」と処理されます。",
+					"step10_title": "チュートリアル終了！",
+					"step10_desc1": "さあ、自分だけの好みの相手に会いに行きましょう！",
+					"close_hint": "👉 チュートリアルを閉じる"
+				}
+			}
+		},
+		"home": {
+			"info_title_1": "いいね機能が新しく追加されました ✨️",
+			"info_description_1": "ここで自分がいいねした人と、",
+			"info_description_2": "自分にいいねしてくれた人を確認できます。",
+			"info_title_2": "以前見た相手はここに移動しました",
+			"info_description_3": "マッチングカードの下で確認できます",
+			"info_description_4": "見逃さずチェックしてください",
+			"info_title_3": "いいね、もっと詳しく見てみますか？",
+			"info_description_5": "上のボタンを押すとすぐに",
+			"info_description_6": "いいね欄に入れます",
+			"info_next_hint": "👉 タップして次へ"
+		}
+	},
+	"utils": {
+		"mock_data": {
+			"nickname_1": "ダウンジェ",
+			"university_1": "ハンビッ大学",
+			"nickname_2_male": "キム・ソヒ",
+			"nickname_2_female": "キム・ゴヌ",
+			"university_2": "ソウル大学",
+			"nickname_3_male": "イ・ジヘ",
+			"nickname_3_female": "パク・ミンソク",
+			"university_3": "漢陽大学"
+		}
+	},
+	"common": {
+		"다온재": "[JA] 다온재",
+		"한빛대학교": "[JA] 한빛대학교",
+		"김소희": "[JA] 김소희",
+		"김건우": "[JA] 김건우",
+		"서울대학교": "[JA] 서울대학교",
+		"이지혜": "[JA] 이지혜",
+		"박민석": "[JA] 박민석",
+		"한양대학교": "[JA] 한양대학교"
+	}
 }
