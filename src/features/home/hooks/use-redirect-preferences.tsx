@@ -40,7 +40,7 @@ export const useRedirectPreferences = () => {
 
   useEffect(() => {
     if (!isLoading && isPreferenceFill !== undefined) {
-      syncWithServerStatus(isPreferenceFill);
+      syncWithServerStatus(isPreferenceFill.filled);
     }
   }, [isLoading, isPreferenceFill, syncWithServerStatus]);
 
@@ -93,7 +93,7 @@ export const useRedirectPreferences = () => {
   useEffect(() => {
     // 이상형 정보 모달 비활성화
     // 로딩 중이거나 이상형이 이미 등록된 경우 모달을 보여주지 않음
-    if (loading || isLoading || isPreferenceFill) {
+    if (loading || isLoading || isPreferenceFill?.filled) {
       devLogWithTag('Preference Modal', 'Skipped:', {
         loading,
         isLoading,
@@ -123,7 +123,9 @@ export const useRedirectPreferences = () => {
 
   return {
     ...latest,
-    isPreferenceFill,
+    isPreferenceFill: isPreferenceFill?.filled ?? false,
+    preferenceFillStatus: isPreferenceFill,
+    canJoinMatching: isPreferenceFill?.canJoinMatching ?? false,
     refetchPreferenceFill: refetch,
     isOnboardingCompleted,
     onboardingLoading,

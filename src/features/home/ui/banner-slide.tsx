@@ -11,7 +11,6 @@ import {
 import FirstPurchaseEvent from "./first-purchase-event-banner";
 import TotalMatchCounter from "./total-match-counter";
 import InvitePromotionBanner from "./banner/invite-promotion-banner";
-import JapanOpeningBanner from "./banner/japan-opening-banner";
 import ServerBanner from "./banner/server-banner";
 
 function BannerSlide() {
@@ -31,7 +30,6 @@ function BannerSlide() {
       ...sortedServerBanners.map((banner) => (
         <ServerBanner key={banner.id} banner={banner} />
       )),
-      <JapanOpeningBanner key="japan" />,
       <FirstPurchaseEvent key="purchase" />,
       <InvitePromotionBanner key="invite" />,
       <TotalMatchCounter
