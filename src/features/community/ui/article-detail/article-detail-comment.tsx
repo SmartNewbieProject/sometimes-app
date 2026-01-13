@@ -1,25 +1,26 @@
+import AreaFillHeart from '@/assets/icons/area-fill-heart.svg';
 import colors from '@/src/shared/constants/colors';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useBoolean } from '@/src/shared/hooks/use-boolean';
 import { dayUtils } from '@/src/shared/libs';
 import type { UniversityName } from '@/src/shared/libs/univ';
 import { LinkifiedText, Show, Text } from '@/src/shared/ui';
-import React, { useRef, useState } from 'react';
+import type React from 'react';
+import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-	Platform,
-	View,
-	TouchableOpacity,
 	Image,
 	Modal,
+	Platform,
 	Pressable,
-	TouchableWithoutFeedback,
 	StyleSheet,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	View,
 } from 'react-native';
 import { useAuth } from '../../../auth';
 import type { Comment } from '../../types';
 import { UserProfile } from '../user-profile';
-import AreaFillHeart from '@/assets/icons/area-fill-heart.svg';
-import { useTranslation } from 'react-i18next';
 
 const ADMIN_COMMENT_LABEL_EMOJI = '💜';
 
@@ -33,6 +34,7 @@ interface ArticleDetailCommentProps {
 	isReply?: boolean;
 	rootParentId?: string;
 	hideBottomBorder?: boolean;
+	articleAuthorId?: string;
 }
 
 export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
@@ -45,11 +47,13 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 	isReply = false,
 	rootParentId,
 	hideBottomBorder = false,
+	articleAuthorId,
 }) => {
 	const { my } = useAuth();
 	const { t } = useTranslation();
 	const isAuthor = comment.author.id === my?.id;
 	const isStaffComment = comment.author.isStaff === true;
+	const isArticleAuthor = articleAuthorId ? comment.author.id === articleAuthorId : false;
 	const { value: isMenuOpen, setFalse: closeMenu, setTrue: openMenu } = useBoolean();
 	const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
 	const containerRef = useRef<View>(null);
@@ -80,33 +84,38 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 
 	const renderActionButtons = () => (
 		<View style={isStaffComment ? styles.staffActionButtons : styles.actionButtons}>
-			{onReply && (
-				<TouchableOpacity onPress={() => onReply(rootParentId || comment.id)}>
-					<Image
-						source={require('@/assets/icons/engagement.png')}
-						style={{ width: 12, height: 12 }}
-					/>
-				</TouchableOpacity>
-			)}
-			<TouchableOpacity onPress={() => onLike(comment.id)}>
+			<TouchableOpacity style={styles.actionButton} onPress={() => onLike(comment.id)}>
 				{comment.isLiked ? (
-					<AreaFillHeart width={14} height={14} />
+					<AreaFillHeart width={18} height={18} />
 				) : (
 					<Image
 						source={require('@/assets/icons/heart.png')}
-						style={{ width: 12, height: 10, tintColor: '#A892D7' }}
+						style={{ width: 18, height: 16, tintColor: '#676767' }}
 					/>
 				)}
+				{comment.likeCount > 0 && <Text style={styles.actionCountText}>{comment.likeCount}</Text>}
 			</TouchableOpacity>
+			<View style={styles.actionDivider} />
 			<Show when={isAuthor}>
 				<TouchableWithoutFeedback onPress={handleToggleMenu}>
-					<View ref={containerRef} style={{ position: 'relative' }}>
+					<View ref={containerRef} style={styles.actionButton}>
 						<Image
 							source={require('@/assets/icons/menu-dots-vertical.png')}
-							style={{ width: 12, height: 12 }}
+							style={{ width: 18, height: 18 }}
 						/>
 					</View>
 				</TouchableWithoutFeedback>
+			</Show>
+			<Show when={!isAuthor && !!onReply}>
+				<TouchableOpacity
+					style={styles.actionButton}
+					onPress={() => onReply?.(rootParentId || comment.id)}
+				>
+					<Image
+						source={require('@/assets/icons/engagement.png')}
+						style={{ width: 16, height: 16 }}
+					/>
+				</TouchableOpacity>
 			</Show>
 		</View>
 	);
@@ -117,13 +126,18 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 			style={[
 				styles.container,
 				isStaffComment && styles.staffContainer,
+				isArticleAuthor && !isStaffComment && styles.articleAuthorContainer,
 				{
 					backgroundColor: isEditing
 						? colors.moreLightPurple
 						: isStaffComment
 							? 'rgba(247, 243, 255, 0.4)'
-							: colors.white,
-					...(isStaffComment ? {} : { borderBottomWidth: hideBottomBorder ? 0 : 1 }),
+							: isArticleAuthor
+								? '#f8f4ff'
+								: colors.white,
+					...(isStaffComment || isArticleAuthor
+						? {}
+						: { borderBottomWidth: hideBottomBorder ? 0 : 1 }),
 				},
 			]}
 		>
@@ -156,6 +170,7 @@ export const ArticleDetailComment: React.FC<ArticleDetailCommentProps> = ({
 							author={comment.author}
 							universityName={comment.author.universityDetails.name as UniversityName}
 							isOwner={isAuthor}
+							isArticleAuthor={isArticleAuthor}
 							updatedAt={
 								isStaffComment ? undefined : (
 									<View style={styles.metaRow}>
@@ -276,9 +291,15 @@ const styles = StyleSheet.create({
 	},
 	staffContainer: {
 		paddingHorizontal: 16,
-		borderRadius: 12,
+		borderRadius: 15,
 		borderWidth: 1,
 		borderColor: semanticColors.surface.other,
+		marginBottom: 12,
+		backgroundColor: '#f8f4ff',
+	},
+	articleAuthorContainer: {
+		paddingHorizontal: 16,
+		borderRadius: 15,
 		marginBottom: 12,
 	},
 	staffHeaderRow: {
@@ -289,35 +310,37 @@ const styles = StyleSheet.create({
 	},
 	staffLabelContainer: {
 		alignSelf: 'flex-start',
-		backgroundColor: semanticColors.surface.secondary,
-		paddingVertical: 6,
-		paddingHorizontal: 10,
-		borderRadius: 8,
+		backgroundColor: '#e6dbff',
+		paddingVertical: 4,
+		paddingHorizontal: 8,
+		borderRadius: 15,
 	},
 	staffLabelText: {
-		fontSize: 13,
+		fontSize: 8.4,
 		fontWeight: '600',
-		color: semanticColors.brand.primary,
+		color: '#7a4ae2',
 	},
 	staffActionButtons: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		gap: 12,
+		gap: 6,
+		backgroundColor: '#ffffff',
 		paddingHorizontal: 8,
 		paddingVertical: 4,
+		borderRadius: 4,
 	},
 	row: {
 		flexDirection: 'row',
 	},
 	replyPadding: {
-		paddingLeft: 16,
+		paddingLeft: 35,
 	},
 	replyIcon: {
 		marginRight: 8,
 		marginTop: 4,
 	},
 	replyImage: {
-		width: 16,
+		width: 15,
 		height: 16,
 	},
 	flex1: {
@@ -333,8 +356,9 @@ const styles = StyleSheet.create({
 	commentBody: {
 		flex: 1,
 		flexDirection: 'row',
-		paddingLeft: 48,
+		paddingLeft: 36,
 		paddingRight: 16,
+		marginTop: 8,
 	},
 	staffCommentBody: {
 		flex: 1,
@@ -361,14 +385,33 @@ const styles = StyleSheet.create({
 	actionButtons: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		gap: 12,
+		gap: 6,
+		backgroundColor: '#ffffff',
 		paddingHorizontal: 8,
 		paddingVertical: 4,
-		borderRadius: 8,
-		backgroundColor: semanticColors.surface.background,
+		borderRadius: 4,
+	},
+	actionButton: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 4,
+		paddingHorizontal: 2,
+	},
+	actionCountText: {
+		fontFamily: 'Pretendard',
+		fontSize: 13,
+		fontWeight: '300' as any,
+		color: '#676767',
+	},
+	actionDivider: {
+		width: 1,
+		height: 9,
+		backgroundColor: '#d9d9d9',
 	},
 	commentText: {
-		fontSize: 14,
+		fontSize: 13,
+		lineHeight: 20.8,
+		color: '#646464',
 		flex: 1,
 		flexWrap: 'wrap',
 		flexShrink: 1,

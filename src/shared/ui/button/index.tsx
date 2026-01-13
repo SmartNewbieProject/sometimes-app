@@ -152,7 +152,7 @@ const sizeStyles = StyleSheet.create({
     height: 60,
   },
   chip: {
-    height: Platform.OS === "web" ? 28 : 34,
+    height: Platform.OS === "web" ? 34 : 41,
     paddingHorizontal: 8,
   },
 });

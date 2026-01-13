@@ -1,6 +1,4 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { useMixpanel } from '@/src/shared/hooks';
 import apis from '@/src/features/community/apis';
 import apis_comments from '@/src/features/community/apis/comments';
 import {
@@ -12,22 +10,25 @@ import {
 import { QUERY_KEYS } from '@/src/features/community/queries/keys';
 import Interaction from '@/src/features/community/ui/article/interaction-nav';
 import Loading from '@/src/features/loading';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useMixpanel } from '@/src/shared/hooks';
 import { LinkifiedText, Text } from '@/src/shared/ui';
 import { dayUtils, tryCatch } from '@shared/libs';
 import type { UniversityName } from '@shared/libs';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
 import {
-	Keyboard,
-	ScrollView,
-	View,
 	Image,
-	Pressable,
-	StyleSheet,
+	Keyboard,
 	KeyboardAvoidingView,
 	Platform,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Article, Comment, CommentForm } from '../../types';
@@ -35,9 +36,9 @@ import { InputForm } from '../comment/input-form';
 import { UserProfile } from '../user-profile';
 import { ArticleDetailComment } from './article-detail-comment';
 
+import { devLogWithTag } from '@/src/shared/utils';
 import PhotoSlider from '@/src/widgets/slide/photo-slider';
 import { useForm } from 'react-hook-form';
-import { devLogWithTag } from '@/src/shared/utils';
 
 export const ArticleDetail = ({ article }: { article: Article }) => {
 	const insets = useSafeAreaInsets();
@@ -344,6 +345,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 					isReply={item.isReply}
 					rootParentId={item.rootParentId}
 					hideBottomBorder={nextIsStaff}
+					articleAuthorId={article.author.id}
 				/>,
 			);
 		});
@@ -367,93 +369,67 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 				keyboardShouldPersistTaps="handled"
 				style={detailStyles.scrollView}
 			>
-				<View style={detailStyles.separator} />
+				<View style={detailStyles.articleCard}>
+					<UserProfile
+						author={article.author}
+						universityName={article.author.universityDetails.name as UniversityName}
+						isOwner={isOwner}
+					/>
 
-				<UserProfile
-					author={article.author}
-					universityName={article.author.universityDetails.name as UniversityName}
-					isOwner={isOwner}
-				/>
+					<View style={detailStyles.titleRow}>
+						<Text style={detailStyles.titleText}>{article.title}</Text>
+					</View>
+					<LinkifiedText style={detailStyles.contentText}>{article.content}</LinkifiedText>
 
-				<View style={detailStyles.titleRow}>
-					<Text size="md" weight="medium" textColor="black">
-						{article.title}
-					</Text>
-				</View>
-				<LinkifiedText style={detailStyles.contentText} textColor="black">
-					{article.content}
-				</LinkifiedText>
+					{article.images && article.images.length > 0 && (
+						<View style={detailStyles.imagesContainer}>
+							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+								<View style={detailStyles.imagesRow}>
+									{article.images
+										.sort((a, b) => a.displayOrder - b.displayOrder)
+										.map((image, index) => (
+											<Pressable
+												key={`article-image-${image.id}`}
+												onPress={() => {
+													setSelectedIndex(index);
+													setZoomVisible(true);
+												}}
+											>
+												<Image
+													source={{ uri: image.imageUrl }}
+													style={detailStyles.articleImage}
+													resizeMode="cover"
+												/>
+											</Pressable>
+										))}
+								</View>
+							</ScrollView>
+						</View>
+					)}
 
-				{article.images && article.images.length > 0 && (
-					<View style={detailStyles.imagesContainer}>
-						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							<View style={detailStyles.imagesRow}>
-								{article.images
-									.sort((a, b) => a.displayOrder - b.displayOrder)
-									.map((image, index) => (
-										<Pressable
-											key={`article-image-${image.id}`}
-											onPress={() => {
-												setSelectedIndex(index);
-												setZoomVisible(true);
-											}}
-										>
-											<Image
-												source={{ uri: image.imageUrl }}
-												style={detailStyles.articleImage}
-												resizeMode="cover"
-											/>
-										</Pressable>
-									))}
+					<View style={detailStyles.metaContainer}>
+						<View style={detailStyles.metaRow}>
+							<View style={detailStyles.metaLeft}>
+								<Text style={detailStyles.metaText}>
+									{dayUtils.formatRelativeTime(article.createdAt)}・
+									{t('features.community.ui.common.views')} {article.readCount}
+								</Text>
 							</View>
-						</ScrollView>
-					</View>
-				)}
 
-				<View style={detailStyles.metaContainer}>
-					<View style={detailStyles.metaRow}>
-						<View style={detailStyles.metaLeft}>
-							<Text
-								style={{
-									color: semanticColors.text.muted,
-									fontFamily: 'Pretendard',
-									fontSize: 13,
-									fontStyle: 'normal',
-									fontWeight: '300' as any,
-									lineHeight: 14.4,
-									fontFeatureSettings: "'liga' off, 'clig' off",
-								}}
-							>
-								{dayUtils.formatRelativeTime(article.createdAt)}
-							</Text>
-							<Text
-								style={{
-									color: semanticColors.text.muted,
-									fontFamily: 'Pretendard',
-									fontSize: 13,
-									fontStyle: 'normal',
-									fontWeight: '300' as any,
-									lineHeight: 14.4,
-									fontFeatureSettings: "'liga' off, 'clig' off",
-									marginLeft: 8,
-								}}
-							>
-								{`·  ${t('features.community.ui.common.views')} ${article.readCount}`}
-							</Text>
-						</View>
-
-						<View style={detailStyles.metaRight}>
-							<Interaction.Like
-								count={likeCount}
-								isLiked={isLiked}
-								iconSize={18}
-								onPress={() => like(article)}
-							/>
-							<View style={detailStyles.interactionSpacer} />
-							<Interaction.Comment count={totalCommentCount} iconSize={18} />
+							<View style={detailStyles.metaRight}>
+								<Interaction.Like
+									count={likeCount}
+									isLiked={isLiked}
+									iconSize={16}
+									onPress={() => like(article)}
+								/>
+								<View style={detailStyles.interactionSpacer} />
+								<Interaction.Comment count={totalCommentCount} iconSize={16} />
+							</View>
 						</View>
 					</View>
 				</View>
+
 				<View style={detailStyles.divider} />
 				<View style={detailStyles.flex1}>
 					<Loading.Lottie
@@ -503,30 +479,33 @@ const detailStyles = StyleSheet.create({
 	scrollView: {
 		flex: 1,
 		position: 'relative',
-		paddingHorizontal: 20,
+		paddingHorizontal: 16,
 	},
-	separator: {
-		height: 1,
-		backgroundColor: semanticColors.surface.other,
-		marginBottom: 15,
+	articleCard: {
+		marginTop: 8,
+		padding: 14,
+		borderWidth: 1,
+		borderColor: '#7a4ae2',
+		borderRadius: 15,
 	},
 	titleRow: {
-		marginVertical: 12,
-		marginBottom: 24,
-		marginHorizontal: 8,
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
+		marginTop: 16,
+		marginBottom: 10,
+	},
+	titleText: {
+		fontFamily: 'Pretendard',
+		fontSize: 16,
+		fontWeight: '600' as any,
+		lineHeight: 19.2,
+		color: '#000000',
 	},
 	contentText: {
 		marginBottom: 16,
-		fontSize: 14,
-		marginHorizontal: 8,
-		lineHeight: 20,
+		fontSize: 13,
+		lineHeight: 20.8,
+		color: '#646464',
 	},
 	imagesContainer: {
-		marginHorizontal: 8,
 		marginBottom: 16,
 	},
 	imagesRow: {
@@ -546,23 +525,29 @@ const detailStyles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingBottom: 10,
-		marginHorizontal: 8,
 	},
 	metaLeft: {
 		flexDirection: 'row',
 		alignItems: 'center',
+	},
+	metaText: {
+		fontFamily: 'Pretendard',
+		fontSize: 13,
+		fontWeight: '300' as any,
+		lineHeight: 15.6,
+		color: '#676767',
 	},
 	metaRight: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	interactionSpacer: {
-		width: 12,
+		width: 10,
 	},
 	divider: {
 		height: 1,
 		backgroundColor: semanticColors.surface.other,
+		marginTop: 16,
 	},
 	flex1: {
 		flex: 1,

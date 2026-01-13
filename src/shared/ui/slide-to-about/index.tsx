@@ -21,7 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Text } from '@/src/shared/ui';
-import SometimeLogo from '@assets/images/sometime-logo.svg';
+import SometimeLogo from '@assets/images/sometime-brand-logo.svg';
 import SlideArrow from '@assets/icons/slide-arrow-icon.svg';
 
 export interface SlideToAboutProps {

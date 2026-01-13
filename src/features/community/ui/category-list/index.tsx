@@ -1,12 +1,12 @@
+import { NOTICE_CODE } from '@/src/features/community/queries/use-home';
 import Loading from '@/src/features/loading';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button } from '@shared/ui';
 import { Image } from 'expo-image';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
-import { useCategory } from '../../hooks';
-import { NOTICE_CODE } from '@/src/features/community/queries/use-home';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useTranslation } from 'react-i18next';
+import { type LayoutChangeEvent, ScrollView, StyleSheet, View } from 'react-native';
+import { useCategory } from '../../hooks';
 
 type LayoutMap = Record<string, { x: number; width: number }>;
 

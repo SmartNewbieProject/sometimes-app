@@ -1,12 +1,12 @@
 import type { Author } from '@/src/features/community/types';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { type UniversityName, getUnivLogo } from '@/src/shared/libs/univ';
 import { Show, Text } from '@/src/shared/ui';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { useTranslation } from 'react-i18next';
 
 const DEFAULT_AVATAR = require('@assets/images/sometimelogo.webp');
 
@@ -28,6 +28,7 @@ interface UserProfileProps {
 	isOwner: boolean;
 	updatedAt?: ReactNode;
 	hideUniv?: boolean;
+	isArticleAuthor?: boolean;
 }
 
 export const UserProfile = ({
@@ -36,6 +37,7 @@ export const UserProfile = ({
 	isOwner,
 	updatedAt,
 	hideUniv = false,
+	isArticleAuthor = false,
 }: UserProfileProps) => {
 	const [imageError, setImageError] = useState(false);
 	const { t } = useTranslation();
@@ -69,6 +71,13 @@ export const UserProfile = ({
 								<Text size="sm" style={styles.ownerBadge} textColor="pale-purple">
 									(나)
 								</Text>
+							</Show>
+							<Show when={isArticleAuthor && !isStaff}>
+								<View style={styles.articleAuthorBadge}>
+									<Text style={styles.articleAuthorBadgeText}>
+										{t('features.community.ui.user_profile.article_author_badge', '글쓴이')}
+									</Text>
+								</View>
 							</Show>
 							<Show when={!!updatedAt}>
 								<View style={styles.updatedAtWrapper}>
@@ -149,5 +158,17 @@ const styles = StyleSheet.create({
 	},
 	univText: {
 		opacity: 0.7,
+	},
+	articleAuthorBadge: {
+		backgroundColor: '#e6dbff',
+		paddingHorizontal: 8,
+		paddingVertical: 2,
+		borderRadius: 15,
+		marginLeft: 6,
+	},
+	articleAuthorBadgeText: {
+		fontSize: 8.4,
+		fontWeight: '600' as const,
+		color: '#7a4ae2',
 	},
 });

@@ -1,11 +1,11 @@
-import { View, Image, Platform, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import type { Comment as CommentType } from '../../types';
-import { dayUtils, getUnivLogo, UniversityName } from '@/src/shared/libs';
-import { LinkifiedText, Text } from '@/src/shared/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { UniversityName, dayUtils, getUnivLogo } from '@/src/shared/libs';
+import { LinkifiedText, Text } from '@/src/shared/ui';
 import { useState } from 'react';
-import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
+import { Image, Platform, type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
+import type { Comment as CommentType } from '../../types';
 
 const CheckIcon = () => (
 	<Svg width={12} height={12} viewBox="0 0 14 14" fill="none">
