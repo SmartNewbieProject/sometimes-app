@@ -1,5 +1,8 @@
 {
 	"age": {
+		"loading": "Loading age preferences",
+		"title_1": "Do you have a preference",
+		"title_2": "for age difference?",
 		"same_age": "Same Age",
 		"younger": "Younger",
 		"older": "Older",
