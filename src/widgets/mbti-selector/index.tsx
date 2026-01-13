@@ -56,7 +56,7 @@ export function MbtiSelector({
           <Pressable
             style={[
               styles.circleButton,
-              selectedValue === leftValue && styles.circleButtonSelected,
+              ...(selectedValue === leftValue ? [styles.circleButtonSelected] : []),
             ]}
             onPress={() => {
               onSelect(leftValue);
@@ -66,7 +66,7 @@ export function MbtiSelector({
             <Text
               style={[
                 styles.buttonText,
-                selectedValue === leftValue && styles.buttonTextSelected,
+                ...(selectedValue === leftValue ? [styles.buttonTextSelected] : []),
               ]}
             >
               {leftValue}
@@ -83,7 +83,7 @@ export function MbtiSelector({
           <Pressable
             style={[
               styles.circleButton,
-              selectedValue === rightValue && styles.circleButtonSelected,
+              ...(selectedValue === rightValue ? [styles.circleButtonSelected] : []),
             ]}
             onPress={() => {
               onSelect(rightValue);
@@ -93,7 +93,7 @@ export function MbtiSelector({
             <Text
               style={[
                 styles.buttonText,
-                selectedValue === rightValue && styles.buttonTextSelected,
+                ...(selectedValue === rightValue ? [styles.buttonTextSelected] : []),
               ]}
             >
               {rightValue}
