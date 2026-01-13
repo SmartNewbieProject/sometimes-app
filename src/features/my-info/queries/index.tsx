@@ -39,6 +39,26 @@ export const getTypeNamesForLocale = (key: PreferenceKeys, locale: string): stri
 	}
 };
 
+/**
+ * typeKey를 우선적으로 사용하여 preference를 찾는 헬퍼 함수
+ * typeKey가 없으면 typeName으로 fallback (하위 호환성)
+ */
+export const findPreferenceByType = (
+	preferences: Array<{ typeKey?: string; typeName: string }>,
+	preferenceKey: PreferenceKeys,
+	locale: string,
+): any => {
+	// 1순위: typeKey로 매칭 (locale-independent)
+	const byTypeKey = preferences.find((item) => item?.typeKey === preferenceKey);
+	if (byTypeKey) {
+		return byTypeKey;
+	}
+
+	// 2순위: typeName으로 fallback (legacy 지원)
+	const typeNames = getTypeNamesForLocale(preferenceKey, locale);
+	return preferences.find((item) => typeNames.includes(item?.typeName));
+};
+
 export const usePreferenceOptionsQuery = () =>
 	useQuery({
 		queryKey: ['self-preference-options'],
