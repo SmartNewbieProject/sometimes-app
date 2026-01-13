@@ -12,7 +12,7 @@ export function SometimeLogo({ showSubtitle = true }: SometimeLogoProps) {
 	return (
 		<View style={styles.container}>
 			<Image
-				source={require('@assets/images/sometime-logo.png')}
+				source={require('@assets/images/sometimelogo.webp')}
 				style={styles.logo}
 				resizeMode="contain"
 			/>

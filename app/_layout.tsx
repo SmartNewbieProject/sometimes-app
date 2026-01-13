@@ -175,15 +175,15 @@ export default Sentry.wrap(function RootLayout() {
 	const nativeFonts: Record<string, number> =
 		Platform.OS !== 'web'
 			? {
-					'Pretendard-Thin': require('../assets/fonts/Pretendard-Thin.ttf'),
-					'Pretendard-ExtraLight': require('../assets/fonts/Pretendard-ExtraLight.ttf'),
+					'Pretendard-Thin': require('../assets/fonts/Pretendard-Thin.otf'),
+					'Pretendard-ExtraLight': require('../assets/fonts/Pretendard-ExtraLight.otf'),
 					'Pretendard-Light': require('../assets/fonts/Pretendard-Light.otf'),
 					'Pretendard-Regular': require('../assets/fonts/Pretendard-Regular.otf'),
 					'Pretendard-Medium': require('../assets/fonts/Pretendard-Medium.otf'),
-					'Pretendard-SemiBold': require('../assets/fonts/Pretendard-SemiBold.ttf'),
-					'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.ttf'),
-					'Pretendard-ExtraBold': require('../assets/fonts/Pretendard-ExtraBold.ttf'),
-					'Pretendard-Black': require('../assets/fonts/Pretendard-Black.ttf'),
+					'Pretendard-SemiBold': require('../assets/fonts/Pretendard-SemiBold.otf'),
+					'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.otf'),
+					'Pretendard-ExtraBold': require('../assets/fonts/Pretendard-ExtraBold.otf'),
+					'Pretendard-Black': require('../assets/fonts/Pretendard-Black.otf'),
 					Rubik: require('../assets/fonts/Rubik-Regular.ttf'),
 					'Rubik-Bold': require('../assets/fonts/Rubik-Bold.ttf'),
 					'Gmarket-Sans-Medium': require('../assets/fonts/GmarketSansTTFMedium.ttf'),

@@ -2,6 +2,7 @@ import { useAuth } from "@/src/features/auth";
 import { usePortone } from "@/src/features/payment/hooks/use-portone";
 import { type PaymentResponse, Product } from "@/src/features/payment/types";
 import { useModal } from "@/src/shared/hooks/use-modal";
+import { useGlobalLoading } from "@/src/shared/hooks/use-global-loading";
 import { GemStoreWidget } from "@/src/widgets";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import Payment from "@features/payment";
@@ -28,6 +29,7 @@ export default function GemStoreScreen() {
   const [showPayment, setShowPayment] = useState<boolean>(false);
   const controller = createRef<PortOneController>();
   const { showErrorModal } = useModal();
+  const { showLoading, hideLoading } = useGlobalLoading();
   const [paymentId, setPaymentId] = useState<string>(() => createUniqueId());
   const { setGemCount, clearEventType } = usePortoneStore();
   const { my } = useAuth();
@@ -35,6 +37,15 @@ export default function GemStoreScreen() {
   const { handlePaymentComplete } = usePortone();
   const { missions } = useGemMissions();
   const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) {
+      showLoading();
+    } else {
+      hideLoading();
+    }
+    return () => hideLoading();
+  }, [isLoading]);
 
   const handleMissionPress = (mission: { navigateTo?: string }) => {
     if (mission.navigateTo) {

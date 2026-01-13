@@ -21,6 +21,7 @@ import {
 
 import { participateEvent } from '@/src/features/event/api';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { usePathname, useRouter } from 'expo-router';
 import { useCurrentGem, useGemProducts, useGemMissions } from '../../hooks';
 import { useAppleInApp } from '../../hooks/use-apple-in-app';
@@ -41,6 +42,7 @@ function AppleGemStore() {
 	const [purchasing, setPurchasing] = useState(false);
 	const appleInAppMutation = useAppleInApp();
 	const { showErrorModal } = useModal();
+	const { showLoading, hideLoading } = useGlobalLoading();
 	const { eventType } = usePortoneStore();
 	const { paymentEvents, conversionEvents } = useMixpanel();
 	const { missions } = useGemMissions();
@@ -234,6 +236,15 @@ function AppleGemStore() {
 	};
 
 	const isProductsLoading = isLoadingServer || !products || products?.length === 0;
+
+	useEffect(() => {
+		if (isProductsLoading) {
+			showLoading();
+		} else {
+			hideLoading();
+		}
+		return () => hideLoading();
+	}, [isProductsLoading]);
 
 	const handleMissionPress = (mission: { navigateTo?: string }) => {
 		if (mission.navigateTo) {

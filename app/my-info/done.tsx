@@ -81,10 +81,13 @@ export default function MyInfoDoneScreen() {
 							mixpanelAdapter.track('Profile_Done', {
 								env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 							});
+
+							const isFromHome = referrer === 'home';
+
 							clear();
 							clearReferrer();
 
-							if (referrer === 'home') {
+							if (isFromHome) {
 								router.push('/home');
 								return;
 							}
