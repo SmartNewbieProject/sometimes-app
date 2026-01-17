@@ -30,7 +30,7 @@ export const MatchingReasonPlaceholder = () => {
 
 				<View style={styles.hintContainer}>
 					<Feather name="info" size={14} color={semanticColors.text.tertiary} />
-					<Text style={styles.hintText} textColor="tertiary">
+					<Text style={styles.hintText} textColor="muted">
 						{t('features.match.ui.matching_reason_placeholder.hint')}
 					</Text>
 				</View>
