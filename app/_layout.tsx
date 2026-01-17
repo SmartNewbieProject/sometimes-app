@@ -30,7 +30,7 @@ import { VersionUpdateChecker } from '@/src/features/version-update';
 import { QueryProvider, RouteTracker } from '@/src/shared/config';
 import { useAtt } from '@/src/shared/hooks';
 import { useStorage } from '@/src/shared/hooks/use-storage';
-import { AnalyticsProvider, ModalProvider } from '@/src/shared/providers';
+import { AnalyticsProvider, ModalProvider, PortalProvider } from '@/src/shared/providers';
 import Toast from '@/src/shared/ui/toast';
 import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -433,7 +433,8 @@ export default Sentry.wrap(function RootLayout() {
 							<GlobalChatProvider>
 								<PortoneProvider>
 									<View style={styles.container}>
-										<AnalyticsProvider>
+										<PortalProvider>
+											<AnalyticsProvider>
 											<RouteTracker>
 												<>
 													<Slot />
@@ -448,6 +449,7 @@ export default Sentry.wrap(function RootLayout() {
 												</>
 											</RouteTracker>
 										</AnalyticsProvider>
+										</PortalProvider>
 									</View>
 								</PortoneProvider>
 							</GlobalChatProvider>
