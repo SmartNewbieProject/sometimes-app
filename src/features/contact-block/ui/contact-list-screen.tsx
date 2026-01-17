@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Text, Button } from '@/src/shared/ui';
+import { Text, Button, Input } from '@/src/shared/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import colors from '@/src/shared/constants/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 interface MaskedContact {
 	id: string;
@@ -14,7 +15,7 @@ interface MaskedContact {
 
 interface ContactListScreenProps {
 	contacts: MaskedContact[];
-	onConfirm: () => void;
+	onConfirm: (selectedIds: string[]) => void;
 	onCancel: () => void;
 	isLoading?: boolean;
 }
@@ -35,22 +36,41 @@ const maskPhoneNumber = (phone: string): string => {
 	return phone.replace(/(\d{2})(\d+)(\d{2})/, '$1XX-XX$3');
 };
 
-const ContactItem: React.FC<{ contact: MaskedContact }> = ({ contact }) => (
-	<View style={styles.contactItem}>
-		<View style={styles.avatarContainer}>
-			<Text style={styles.avatarIcon}>👤</Text>
-		</View>
-		<View style={styles.contactInfo}>
-			{contact.name && (
-				<Text size="md" weight="semibold" textColor="black">
-					{contact.name}
+const ContactItem: React.FC<{
+	contact: MaskedContact;
+	isSelected: boolean;
+	onToggle: (id: string) => void;
+}> = ({ contact, isSelected, onToggle }) => (
+	<TouchableOpacity
+		style={styles.contactItem}
+		onPress={() => onToggle(contact.id)}
+		activeOpacity={0.7}
+	>
+		<View style={styles.leftContent}>
+			<Ionicons
+				name={isSelected ? 'checkbox' : 'square-outline'}
+				size={24}
+				color={isSelected ? colors.primaryPurple : colors.lightGray}
+			/>
+			<View style={styles.avatarContainer}>
+				<Image
+					source={require('@/src/assets/images/contact-block/contact_icon.png')}
+					style={styles.avatarImage}
+					resizeMode="contain"
+				/>
+			</View>
+			<View style={styles.contactInfo}>
+				{contact.name && (
+					<Text size="md" weight="semibold" textColor="black">
+						{contact.name}
+					</Text>
+				)}
+				<Text size="sm" textColor="gray">
+					{contact.maskedPhone}
 				</Text>
-			)}
-			<Text size="sm" textColor="gray">
-				{contact.maskedPhone}
-			</Text>
+			</View>
 		</View>
-	</View>
+	</TouchableOpacity>
 );
 
 export const ContactListScreen: React.FC<ContactListScreenProps> = ({
@@ -61,11 +81,65 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const insets = useSafeAreaInsets();
+	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+	const [searchQuery, setSearchQuery] = useState('');
 
-	const maskedContacts: MaskedContact[] = contacts.map((contact) => ({
-		...contact,
-		maskedPhone: maskPhoneNumber(contact.maskedPhone),
-	}));
+	// Initialize all selected by default
+	useEffect(() => {
+		setSelectedIds(new Set(contacts.map((c) => c.id)));
+	}, [contacts]);
+
+	const maskedContacts: MaskedContact[] = useMemo(() => {
+		return contacts.map((contact) => ({
+			...contact,
+			maskedPhone: maskPhoneNumber(contact.maskedPhone),
+		}));
+	}, [contacts]);
+
+	const filteredContacts = useMemo(() => {
+		if (!searchQuery) return maskedContacts;
+		const query = searchQuery.toLowerCase();
+		return maskedContacts.filter(
+			(c) =>
+				c.name?.toLowerCase().includes(query) ||
+				c.maskedPhone.replace(/-/g, '').includes(query) ||
+				c.maskedPhone.includes(query),
+		);
+	}, [maskedContacts, searchQuery]);
+
+	const toggleSelection = (id: string) => {
+		const newSelected = new Set(selectedIds);
+		if (newSelected.has(id)) {
+			newSelected.delete(id);
+		} else {
+			newSelected.add(id);
+		}
+		setSelectedIds(newSelected);
+	};
+
+	const handleSelectAll = () => {
+		const allFilteredIds = filteredContacts.map((c) => c.id);
+		const allFilteredSelected = allFilteredIds.every((id) => selectedIds.has(id));
+
+		const newSelected = new Set(selectedIds);
+
+		if (allFilteredSelected) {
+			// Deselect all visible
+			allFilteredIds.forEach((id) => newSelected.delete(id));
+		} else {
+			// Select all visible
+			allFilteredIds.forEach((id) => newSelected.add(id));
+		}
+		setSelectedIds(newSelected);
+	};
+
+	const handleConfirm = () => {
+		onConfirm(Array.from(selectedIds));
+	};
+
+	const isAllFilteredSelected =
+		filteredContacts.length > 0 &&
+		filteredContacts.every((c) => selectedIds.has(c.id));
 
 	return (
 		<View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
@@ -78,19 +152,46 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 				</Text>
 			</View>
 
+			<View style={styles.searchContainer}>
+				<Input
+					value={searchQuery}
+					onChangeText={setSearchQuery}
+					placeholder="이름 또는 전화번호 검색"
+					size="md"
+					containerStyle={styles.searchInput}
+				/>
+			</View>
+
+			<View style={styles.selectionInfo}>
+				<Text size="sm" weight="semibold" style={{ color: colors.primaryPurple }}>
+					{selectedIds.size}명 선택됨
+				</Text>
+				<TouchableOpacity onPress={handleSelectAll}>
+					<Text size="sm" textColor="gray">
+						{isAllFilteredSelected ? '전체 해제' : '전체 선택'}
+					</Text>
+				</TouchableOpacity>
+			</View>
+
 			<FlatList
-				data={maskedContacts}
+				data={filteredContacts}
 				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => <ContactItem contact={item} />}
+				renderItem={({ item }) => (
+					<ContactItem
+						contact={item}
+						isSelected={selectedIds.has(item.id)}
+						onToggle={toggleSelection}
+					/>
+				)}
 				style={styles.list}
 				contentContainerStyle={styles.listContent}
 				showsVerticalScrollIndicator={false}
 				ListEmptyComponent={
 					<View style={styles.emptyContainer}>
 						<Text size="md" textColor="gray" style={styles.emptyText}>
-							연락처에서 썸타임 회원을 찾지 못했어요.{'\n'}
-							그래도 안심 설정을 켜두시면{'\n'}
-							나중에 가입하는 분들도 자동으로 차단돼요!
+							{searchQuery
+								? '검색 결과가 없어요.'
+								: '연락처에서 썸타임 회원을 찾지 못했어요.'}
 						</Text>
 					</View>
 				}
@@ -105,8 +206,14 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 			</View>
 
 			<View style={styles.buttonContainer}>
-				<Button variant="primary" size="lg" width="full" onPress={onConfirm} disabled={isLoading}>
-					{isLoading ? t('ui.설정_중') : t('ui.좋아요_안심할게요')}
+				<Button
+					variant="primary"
+					size="lg"
+					width="full"
+					onPress={handleConfirm}
+					disabled={isLoading}
+				>
+					{isLoading ? t('ui.설정_중') : `${selectedIds.size}명 차단하기`}
 				</Button>
 
 				<Button
@@ -136,6 +243,21 @@ const styles = StyleSheet.create({
 	headerSubtitle: {
 		marginTop: 4,
 	},
+	searchContainer: {
+		paddingHorizontal: 24,
+		paddingBottom: 16,
+	},
+	searchInput: {
+		width: '100%',
+	},
+	selectionInfo: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		paddingHorizontal: 24,
+		paddingBottom: 12,
+		borderBottomWidth: 1,
+		borderBottomColor: semanticColors.border.smooth,
+	},
 	list: {
 		flex: 1,
 	},
@@ -143,11 +265,13 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 24,
 	},
 	contactItem: {
-		flexDirection: 'row',
-		alignItems: 'center',
 		paddingVertical: 12,
 		borderBottomWidth: 1,
 		borderBottomColor: semanticColors.border.smooth,
+	},
+	leftContent: {
+		flexDirection: 'row',
+		alignItems: 'center',
 	},
 	avatarContainer: {
 		width: 44,
@@ -156,9 +280,11 @@ const styles = StyleSheet.create({
 		backgroundColor: semanticColors.surface.secondary,
 		alignItems: 'center',
 		justifyContent: 'center',
+		marginLeft: 12,
 	},
-	avatarIcon: {
-		fontSize: 20,
+	avatarImage: {
+		width: 24,
+		height: 24,
 	},
 	contactInfo: {
 		marginLeft: 12,
