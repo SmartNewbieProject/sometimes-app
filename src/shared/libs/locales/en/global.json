@@ -94,6 +94,9 @@
 		"우호성": "Agreeableness",
 		"신경성": "Neuroticism",
 		"모먼트_분석_결과": "Moment Analysis Result",
-		"질문에_대답했어요": "Answered the question"
+		"질문에_대답했어요": "Answered the question",
+		"완료": "Done",
+		"회전": "Rotate",
+		"사진_편집": "Edit Photo"
 	}
 }
