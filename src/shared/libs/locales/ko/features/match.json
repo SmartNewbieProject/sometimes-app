@@ -8,6 +8,12 @@
 			"collapse": "접기",
 			"expand": "더보기"
 		},
+		"matching_reason_placeholder": {
+			"title": "이 분과 매칭된 이유",
+			"description": "상대방은 이곳에서\n당신과 매칭된 이유를 확인해요",
+			"example_reason": "비슷한 관심사와 가치관을 가지고 있어요",
+			"hint": "미호가 분석한 매칭 이유가 표시돼요"
+		},
 		"partner_info_block": {
 			"basic_info_title": "기본 정보",
 			"no_info": "정보 없음",

@@ -1,5 +1,11 @@
 {
 	"ui": {
+		"matching_reason_placeholder": {
+			"title": "Why you matched",
+			"description": "Your match will see here\nwhy you were matched together",
+			"example_reason": "You share similar interests and values",
+			"hint": "Miho's matching analysis will appear here"
+		},
 		"음주_선호도": "[EN] 음주 선호도",
 		"흡연_선호도": "[EN] 흡연 선호도",
 		"문신_선호도": "[EN] 문신 선호도",

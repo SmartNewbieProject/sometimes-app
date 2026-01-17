@@ -8,6 +8,12 @@
 			"collapse": "閉じる",
 			"expand": "もっと見る"
 		},
+		"matching_reason_placeholder": {
+			"title": "この方とマッチングした理由",
+			"description": "相手はここで\nあなたとマッチングした理由を確認します",
+			"example_reason": "似た趣味や価値観を持っています",
+			"hint": "Mihoが分析したマッチング理由が表示されます"
+		},
 		"partner_info_block": {
 			"basic_info_title": "基本情報",
 			"no_info": "情報なし",
