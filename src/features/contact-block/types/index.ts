@@ -21,3 +21,34 @@ export interface DeviceContact {
 }
 
 export type ContactPermissionStatus = 'granted' | 'denied' | 'undetermined';
+
+export interface BlockedContact {
+  id: string;
+  phoneHash: string;
+  createdAt: string;
+  name?: string;
+  phoneNumber?: string;
+}
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+export interface BlockedContactsResponse {
+  items: BlockedContact[];
+  meta: PaginationMeta;
+}
+
+export interface UnblockContactsRequest {
+  ids: string[];
+}
+
+export interface UnblockContactsResponse {
+  success: boolean;
+  deletedCount: number;
+  message: string;
+}

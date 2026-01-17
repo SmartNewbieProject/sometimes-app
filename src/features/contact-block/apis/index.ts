@@ -3,6 +3,8 @@ import type {
   ContactBlockSettings,
   ContactSyncResult,
   ContactSyncRequest,
+  BlockedContactsResponse,
+  UnblockContactsResponse,
 } from '../types';
 
 export const contactBlockApi = {
@@ -16,5 +18,13 @@ export const contactBlockApi = {
 
   updateSettings(settings: { enabled: boolean }): Promise<void> {
     return axiosClient.patch('/v1/matching/contact-block/settings', settings);
+  },
+
+  getBlockedContacts(params: { page: number; limit: number }): Promise<BlockedContactsResponse> {
+    return axiosClient.get('/v1/matching/contact-block/contacts', { params });
+  },
+
+  unblockContacts(ids: string[]): Promise<UnblockContactsResponse> {
+    return axiosClient.patch('/v1/matching/contact-block/contacts', { ids });
   },
 };
