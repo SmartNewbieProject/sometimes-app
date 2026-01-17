@@ -1,4 +1,4 @@
-import { Slot, useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
@@ -22,7 +22,7 @@ export default function ContactBlockLayout() {
         </Header.LeftContent>
         <Header.CenterContent>
           <Text size="lg" weight="bold" textColor="black">
-            안심하고 시작하기
+            지인 차단
           </Text>
         </Header.CenterContent>
         <Header.RightContent>
@@ -30,7 +30,7 @@ export default function ContactBlockLayout() {
         </Header.RightContent>
       </Header.Container>
 
-      <Slot />
+      <Stack screenOptions={{ headerShown: false }} />
     </Layout.Default>
   );
 }

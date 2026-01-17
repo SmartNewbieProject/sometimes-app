@@ -25,6 +25,7 @@ export default function ContactBlockScreen() {
   const router = useRouter();
   const [step, setStep] = useState<Step>('intro');
   const [contacts, setContacts] = useState<ContactForDisplay[]>([]);
+  const [deviceContacts, setDeviceContacts] = useState<DeviceContact[]>([]);
   const [blockedCount, setBlockedCount] = useState(0);
 
   const {
@@ -45,10 +46,10 @@ export default function ContactBlockScreen() {
       return;
     }
 
-    const deviceContacts = await contactService.getContacts();
+    const fetchedContacts = await contactService.getContacts();
+    setDeviceContacts(fetchedContacts);
 
-    const displayContacts: ContactForDisplay[] = deviceContacts
-      .slice(0, 50)
+    const displayContacts: ContactForDisplay[] = fetchedContacts
       .map((contact: DeviceContact, index: number) => ({
         id: contact.id || `contact-${index}`,
         maskedPhone: contact.phoneNumbers[0] || '',
@@ -60,15 +61,18 @@ export default function ContactBlockScreen() {
     setStep('list');
   }, []);
 
-  const handleConfirmBlock = useCallback(async () => {
-    const result = await syncContacts();
+  const handleConfirmBlock = useCallback(async (selectedIds: string[]) => {
+    const selectedContacts = deviceContacts.filter(c => selectedIds.includes(c.id));
+    const phoneNumbers = contactService.normalizeContacts(selectedContacts);
+
+    const result = await syncContacts(phoneNumbers);
 
     if (result) {
       setBlockedCount(result.matchedCount);
       await toggleContactBlock(true);
       setStep('complete');
     }
-  }, [syncContacts, toggleContactBlock]);
+  }, [deviceContacts, syncContacts, toggleContactBlock]);
 
   const handleSkip = useCallback(() => {
     router.back();
