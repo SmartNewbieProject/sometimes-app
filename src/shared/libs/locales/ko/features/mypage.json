@@ -34,6 +34,7 @@
 	},
 	"my_activity": {
 		"title": "My 활동",
+		"my_profile_preview": "내 프로필 보기",
 		"my_articles": "내가 쓴 글",
 		"my_comments": "댓글 단 글",
 		"my_liked": "좋아요한 글",

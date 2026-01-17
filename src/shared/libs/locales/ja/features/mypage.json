@@ -34,6 +34,7 @@
 	},
 	"my_activity": {
 		"title": "Myアクティビティ",
+		"my_profile_preview": "マイプロフィールを見る",
 		"my_articles": "投稿した記事",
 		"my_comments": "コメントした記事",
 		"my_liked": "いいねした記事",

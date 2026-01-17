@@ -14,7 +14,7 @@ export const SideButton = () => {
 	return (
 		<TouchableOpacity
 			style={styles.container}
-			onPress={() => router.push('/matching-history')}
+			onPress={() => router.push('/my-profile-preview')}
 			activeOpacity={0.8}
 		>
 			{/* SVG로 부드러운 곡선 배경 만들기 */}
