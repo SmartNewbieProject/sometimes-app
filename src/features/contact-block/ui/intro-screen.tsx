@@ -1,10 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text, Button } from '@/src/shared/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import colors from '@/src/shared/constants/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 interface IntroScreenProps {
 	onRequestContacts: () => void;
@@ -18,6 +20,7 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({
 	isLoading = false,
 }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const insets = useSafeAreaInsets();
 
 	return (
@@ -27,69 +30,76 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({
 				contentContainerStyle={styles.content}
 				showsVerticalScrollIndicator={false}
 			>
-				<View style={styles.iconContainer}>
-					<Text style={styles.emoji}>🔒</Text>
-				</View>
-
-				<Text size="xl" weight="bold" textColor="black" style={styles.title}>
-					혹시 아는 사람 만날까{'\n'}걱정되시나요?
-				</Text>
-
-				<Text size="md" textColor="gray" style={styles.description}>
-					연락처에 있는 사람들은{'\n'}
-					서로 프로필이 보이지 않아요.
-				</Text>
-
-				<View style={styles.benefitCard}>
-					<View style={styles.benefitItem}>
-						<Text style={styles.checkIcon}>✓</Text>
-						<Text size="md" textColor="black">
-							전 남친도 마주칠 일 없어요
+				<View style={styles.card}>
+					<View style={styles.cardHeader}>
+						<Image
+							source={require('@/src/assets/images/contact-block/shield_lock.png')}
+							style={styles.shieldIcon}
+							resizeMode="contain"
+						/>
+						<Text size="md" weight="bold" textColor="black">
+							안전한 매칭을 위한 지인 차단
 						</Text>
 					</View>
-					<View style={styles.benefitItem}>
-						<Text style={styles.checkIcon}>✓</Text>
-						<Text size="md" textColor="black">
-							동기, 선후배도 걱정 끝
-						</Text>
-					</View>
-					<View style={styles.benefitItem}>
-						<Text style={styles.checkIcon}>✓</Text>
-						<Text size="md" textColor="black">
-							안심하고 새로운 설렘을 찾으세요
-						</Text>
-					</View>
-				</View>
 
-				<View style={styles.privacyNote}>
-					<Text size="sm" textColor="gray" style={styles.privacyText}>
-						🛡️ 연락처는 안전하게 암호화되어 전송되며,{'\n'}
-						원본은 저장되지 않아요.
+					<Text size="sm" textColor="gray" style={styles.cardDescription}>
+						연락처를 업로드하면 지인들에게 내 프로필이 노출되지 않고, 지인의 프로필도 보이지 않습니다.
 					</Text>
+
+					<Image
+						source={require('@/src/assets/images/contact-block/fox_phone.png')}
+						style={styles.foxImage}
+						resizeMode="contain"
+					/>
+
+					<Button
+						variant="primary"
+						size="lg"
+						width="full"
+						onPress={onRequestContacts}
+						disabled={isLoading}
+					>
+						{isLoading ? t('ui.확인_중') : '연락처 업로드'}
+					</Button>
+				</View>
+
+				<View style={styles.benefitContainer}>
+					<View style={styles.benefitItem}>
+						<Ionicons name="checkmark" size={16} color={colors.primaryPurple} />
+						<Text size="sm" textColor="gray">
+							업로드된 연락처는 매칭 목적으로만 사용
+						</Text>
+					</View>
+					<View style={styles.benefitItem}>
+						<Ionicons name="checkmark" size={16} color={colors.primaryPurple} />
+						<Text size="sm" textColor="gray">
+							개인정보는 암호화되어 안전하게 보관
+						</Text>
+					</View>
+					<View style={styles.benefitItem}>
+						<Ionicons name="checkmark" size={16} color={colors.primaryPurple} />
+						<Text size="sm" textColor="gray">
+							언제든지 설정을 변경할 수 있음
+						</Text>
+					</View>
+				</View>
+
+				<View style={styles.manageContainer}>
+					<Text size="lg" weight="bold" textColor="black" style={styles.manageTitle}>
+						연락처 관리
+					</Text>
+					<View style={styles.divider} />
+					<TouchableOpacity
+						style={styles.manageItem}
+						onPress={() => router.push('/contact-block/management')}
+					>
+						<Text size="md" textColor="black">
+							차단된 연락처
+						</Text>
+						<Ionicons name="chevron-forward" size={20} color={colors.lightGray} />
+					</TouchableOpacity>
 				</View>
 			</ScrollView>
-
-			<View style={styles.buttonContainer}>
-				<Button
-					variant="primary"
-					size="lg"
-					width="full"
-					onPress={onRequestContacts}
-					disabled={isLoading}
-				>
-					{isLoading ? t('ui.확인_중') : t('ui.내_연락처_확인하기')}
-				</Button>
-
-				<Button
-					variant="secondary"
-					size="md"
-					width="full"
-					onPress={onSkip}
-					style={styles.skipButton}
-				>
-					다음에 할게요
-				</Button>
-			</View>
 		</View>
 	);
 };
@@ -103,62 +113,72 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	content: {
-		paddingHorizontal: 24,
-		paddingTop: 40,
-		alignItems: 'center',
+		paddingHorizontal: 20,
+		paddingTop: 20,
+		paddingBottom: 40,
 	},
-	iconContainer: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
-		backgroundColor: semanticColors.surface.secondary,
+	card: {
+		backgroundColor: semanticColors.surface.background,
+		borderRadius: 20,
+		padding: 24,
 		alignItems: 'center',
-		justifyContent: 'center',
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.1,
+		shadowRadius: 8,
+		elevation: 4,
+		borderWidth: 1,
+		borderColor: '#F0F0F0',
+	},
+	cardHeader: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginBottom: 12,
+		gap: 8,
+	},
+	shieldIcon: {
+		width: 24,
+		height: 24,
+	},
+	cardDescription: {
+		textAlign: 'center',
+		lineHeight: 22,
+		marginBottom: 24,
+		paddingHorizontal: 10,
+	},
+	foxImage: {
+		width: 200,
+		height: 180,
 		marginBottom: 24,
 	},
-	emoji: {
-		fontSize: 40,
-	},
-	title: {
-		textAlign: 'center',
-		marginBottom: 16,
-		lineHeight: 32,
-	},
-	description: {
-		textAlign: 'center',
-		marginBottom: 32,
-		lineHeight: 24,
-	},
-	benefitCard: {
-		width: '100%',
-		backgroundColor: semanticColors.surface.secondary,
-		borderRadius: 16,
-		padding: 20,
-		gap: 16,
+	benefitContainer: {
+		marginTop: 24,
+		gap: 12,
+		paddingHorizontal: 12,
 	},
 	benefitItem: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		gap: 12,
+		gap: 8,
 	},
-	checkIcon: {
-		fontSize: 16,
-		color: colors.primaryPurple,
-		fontWeight: 'bold',
+	manageContainer: {
+		marginTop: 40,
 	},
-	privacyNote: {
-		marginTop: 24,
-		paddingHorizontal: 16,
+	manageTitle: {
+		marginBottom: 12,
 	},
-	privacyText: {
-		textAlign: 'center',
-		lineHeight: 20,
+	divider: {
+		height: 1,
+		backgroundColor: semanticColors.border.smooth,
+		marginBottom: 0,
 	},
-	buttonContainer: {
-		paddingHorizontal: 24,
-		gap: 12,
-	},
-	skipButton: {
-		marginTop: 4,
+	manageItem: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		paddingVertical: 16,
 	},
 });
