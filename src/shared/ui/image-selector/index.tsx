@@ -19,6 +19,7 @@ import { convertToJpeg, isHeicBase64 } from '../../utils/image';
 import { compressImage } from '@/src/shared/libs/image-compression';
 import { PROFILE_IMAGE_CONFIG } from '@/src/shared/libs/image-compression/config';
 import { ContentSelector, type ContentSelectorSize } from '../content-selector';
+import { ImageCropModal } from '../image-crop-modal';
 import { Text } from '../text';
 import { useTranslation } from 'react-i18next';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
@@ -69,6 +70,8 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(
 	({ value, onChange, size, style, actionLabel = undefined, skipCompression = false }, ref) => {
 		const { t } = useTranslation();
 		const [isCompressing, setIsCompressing] = useState(false);
+		const [showCropModal, setShowCropModal] = useState(false);
+		const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
 		const { showErrorModal } = useModal();
 		const { showPhotoPicker } = usePhotoPicker();
@@ -116,27 +119,12 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(
 				}
 
 				devLogWithTag('ImageSelector', 'Converting to JPEG...');
-				let jpegUri = await convertToJpeg(pickedUri);
+				const jpegUri = await convertToJpeg(pickedUri);
 				devLogWithTag('ImageSelector', 'JPEG URI length:', jpegUri.length);
 
-				if (!skipCompression) {
-					try {
-						devLogWithTag('ImageSelector', 'Starting compression...');
-						setIsCompressing(true);
-
-						const compressed = await compressImage(jpegUri, PROFILE_IMAGE_CONFIG);
-						jpegUri = compressed.uri;
-						devLogWithTag('ImageSelector', 'Compression completed, URI length:', jpegUri.length);
-					} catch (error) {
-						devWarn(t('common.이미지_압축_실패_원본_사용'), error);
-					} finally {
-						setIsCompressing(false);
-					}
-				}
-
-				devLogWithTag('ImageSelector', 'Calling onChange with URI length:', jpegUri.length);
-				onChange(jpegUri);
-				devLogWithTag('ImageSelector', 'onChange called successfully');
+				devLogWithTag('ImageSelector', 'Opening crop modal...');
+				setImageToCrop(jpegUri);
+				setShowCropModal(true);
 			} else {
 				devLogWithTag('ImageSelector', 'Image selection canceled');
 			}
@@ -191,35 +179,12 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(
 				}
 
 				devLogWithTag('ImageSelector', 'Converting to JPEG (camera)...');
-				let jpegUri = await convertToJpeg(pickedUri);
+				const jpegUri = await convertToJpeg(pickedUri);
 				devLogWithTag('ImageSelector', 'JPEG URI length (camera):', jpegUri.length);
 
-				if (!skipCompression) {
-					try {
-						devLogWithTag('ImageSelector', 'Starting compression (camera)...');
-						setIsCompressing(true);
-
-						const compressed = await compressImage(jpegUri, PROFILE_IMAGE_CONFIG);
-						jpegUri = compressed.uri;
-						devLogWithTag(
-							'ImageSelector',
-							'Compression completed (camera), URI length:',
-							jpegUri.length,
-						);
-					} catch (error) {
-						devWarn(t('common.이미지_압축_실패_원본_사용'), error);
-					} finally {
-						setIsCompressing(false);
-					}
-				}
-
-				devLogWithTag(
-					'ImageSelector',
-					'Calling onChange (camera) with URI length:',
-					jpegUri.length,
-				);
-				onChange(jpegUri);
-				devLogWithTag('ImageSelector', 'onChange called successfully (camera)');
+				devLogWithTag('ImageSelector', 'Opening crop modal (camera)...');
+				setImageToCrop(jpegUri);
+				setShowCropModal(true);
 			} else {
 				devLogWithTag('ImageSelector', 'Camera capture canceled');
 			}
@@ -233,6 +198,39 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(
 				onPickFromGallery: pickImage,
 				showGuide: true,
 			});
+		};
+
+		const handleCropComplete = async (croppedUri: string) => {
+			devLogWithTag('ImageSelector', 'Crop completed, URI length:', croppedUri.length);
+			setShowCropModal(false);
+			setImageToCrop(null);
+
+			let finalUri = croppedUri;
+
+			if (!skipCompression) {
+				try {
+					devLogWithTag('ImageSelector', 'Starting compression after crop...');
+					setIsCompressing(true);
+
+					const compressed = await compressImage(croppedUri, PROFILE_IMAGE_CONFIG);
+					finalUri = compressed.uri;
+					devLogWithTag('ImageSelector', 'Compression completed, URI length:', finalUri.length);
+				} catch (error) {
+					devWarn(t('common.이미지_압축_실패_원본_사용'), error);
+				} finally {
+					setIsCompressing(false);
+				}
+			}
+
+			devLogWithTag('ImageSelector', 'Calling onChange with URI length:', finalUri.length);
+			onChange(finalUri);
+			devLogWithTag('ImageSelector', 'onChange called successfully');
+		};
+
+		const handleCropCancel = () => {
+			devLogWithTag('ImageSelector', 'Crop canceled');
+			setShowCropModal(false);
+			setImageToCrop(null);
 		};
 
 		useImperativeHandle(ref, () => ({
@@ -258,6 +256,14 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(
 							{t('common.이미지를_최적화하고_있어요')}
 						</Text>
 					</View>
+				)}
+				{imageToCrop && (
+					<ImageCropModal
+						visible={showCropModal}
+						imageUri={imageToCrop}
+						onComplete={handleCropComplete}
+						onCancel={handleCropCancel}
+					/>
 				)}
 			</View>
 		);
