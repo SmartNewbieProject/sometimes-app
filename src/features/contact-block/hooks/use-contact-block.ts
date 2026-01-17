@@ -20,8 +20,8 @@ export const useContactBlock = () => {
   });
 
   const syncMutation = useMutation({
-    mutationFn: async (): Promise<ContactSyncResult> => {
-      const phoneNumbers = await contactService.getNormalizedPhoneNumbers();
+    mutationFn: async (targetContacts?: string[]): Promise<ContactSyncResult> => {
+      const phoneNumbers = targetContacts || await contactService.getNormalizedPhoneNumbers();
       return contactBlockApi.syncContacts({ phoneNumbers });
     },
     onSuccess: () => {
@@ -53,7 +53,7 @@ export const useContactBlock = () => {
     return status;
   }, []);
 
-  const syncContacts = useCallback(async (): Promise<ContactSyncResult | null> => {
+  const syncContacts = useCallback(async (targetContacts?: string[]): Promise<ContactSyncResult | null> => {
     const status = await checkPermission();
 
     if (status !== 'granted') {
@@ -63,7 +63,7 @@ export const useContactBlock = () => {
       }
     }
 
-    return syncMutation.mutateAsync();
+    return syncMutation.mutateAsync(targetContacts);
   }, [checkPermission, requestPermission, syncMutation]);
 
   const toggleContactBlock = useCallback(async (enabled: boolean) => {
