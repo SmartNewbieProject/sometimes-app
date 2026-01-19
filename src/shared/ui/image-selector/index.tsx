@@ -45,6 +45,7 @@ export function renderImage(value: string | null, isPlaceHolder?: boolean) {
 			source={isPlaceHolder ? value : { uri: value }}
 			style={{ width: '100%', height: '100%' }}
 			contentFit="cover"
+			cachePolicy="none"
 		/>
 	);
 }
