@@ -1,6 +1,6 @@
 import * as Contacts from 'expo-contacts';
 import * as Crypto from 'expo-crypto';
-import type { DeviceContact, ContactPermissionStatus, BlockedContact } from '../types';
+import type { DeviceContact, ContactPermissionStatus, BlockedContact, ContactItem } from '../types';
 
 const SALT = process.env.EXPO_PUBLIC_CONTACT_SALT || 'contact-block-salt';
 
@@ -63,12 +63,24 @@ export const contactService = {
     return contacts.length;
   },
 
-  normalizeContacts(contacts: DeviceContact[]): string[] {
-    const allPhoneNumbers = contacts.flatMap(c => c.phoneNumbers);
-    const normalizedPhones = allPhoneNumbers.map(normalizePhoneNumber);
-    const uniquePhones = Array.from(new Set(normalizedPhones));
+  normalizeContacts(contacts: DeviceContact[]): ContactItem[] {
+    const seen = new Set<string>();
+    const result: ContactItem[] = [];
 
-    return uniquePhones.filter(phone => phone.length >= 10);
+    for (const contact of contacts) {
+      for (const phone of contact.phoneNumbers) {
+        const normalized = normalizePhoneNumber(phone);
+        if (normalized.length >= 10 && !seen.has(normalized)) {
+          seen.add(normalized);
+          result.push({
+            name: contact.name || '이름 없음',
+            phoneNumber: normalized,
+          });
+        }
+      }
+    }
+
+    return result;
   },
 
   async hashPhoneNumber(phone: string): Promise<string> {

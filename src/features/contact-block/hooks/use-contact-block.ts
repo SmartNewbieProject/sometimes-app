@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { contactService } from '../services/contact.service';
 import { contactBlockApi } from '../apis';
 import { useToast } from '@/src/shared/hooks/use-toast';
-import type { ContactPermissionStatus, ContactSyncResult } from '../types';
+import type { ContactPermissionStatus, ContactSyncResult, ContactItem } from '../types';
 
 const QUERY_KEYS = {
   settings: ['contact-block', 'settings'],
@@ -20,9 +20,8 @@ export const useContactBlock = () => {
   });
 
   const syncMutation = useMutation({
-    mutationFn: async (targetContacts?: string[]): Promise<ContactSyncResult> => {
-      const phoneNumbers = targetContacts || await contactService.getNormalizedPhoneNumbers();
-      return contactBlockApi.syncContacts({ phoneNumbers });
+    mutationFn: async (contacts: ContactItem[]): Promise<ContactSyncResult> => {
+      return contactBlockApi.syncContacts({ contacts });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.settings });
@@ -53,7 +52,7 @@ export const useContactBlock = () => {
     return status;
   }, []);
 
-  const syncContacts = useCallback(async (targetContacts?: string[]): Promise<ContactSyncResult | null> => {
+  const syncContacts = useCallback(async (contacts: ContactItem[]): Promise<ContactSyncResult | null> => {
     const status = await checkPermission();
 
     if (status !== 'granted') {
@@ -63,17 +62,12 @@ export const useContactBlock = () => {
       }
     }
 
-    return syncMutation.mutateAsync(targetContacts);
+    return syncMutation.mutateAsync(contacts);
   }, [checkPermission, requestPermission, syncMutation]);
 
   const toggleContactBlock = useCallback(async (enabled: boolean) => {
-    if (enabled) {
-      const result = await syncContacts();
-      if (!result) return null;
-    }
-
     return updateSettingsMutation.mutateAsync({ enabled });
-  }, [syncContacts, updateSettingsMutation]);
+  }, [updateSettingsMutation]);
 
   return {
     settings: settingsQuery.data,

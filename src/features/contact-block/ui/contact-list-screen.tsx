@@ -213,7 +213,9 @@ export const ContactListScreen: React.FC<ContactListScreenProps> = ({
 					onPress={handleConfirm}
 					disabled={isLoading}
 				>
-					{isLoading ? t('ui.설정_중') : `${selectedIds.size}명 차단하기`}
+					{isLoading
+					? t('features.contact-block.ui.설정_중')
+					: `${selectedIds.size}명 차단하기`}
 				</Button>
 
 				<Button

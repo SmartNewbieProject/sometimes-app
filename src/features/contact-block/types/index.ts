@@ -10,8 +10,13 @@ export interface ContactSyncResult {
   syncedAt: string;
 }
 
+export interface ContactItem {
+  name: string;
+  phoneNumber: string;
+}
+
 export interface ContactSyncRequest {
-  phoneNumbers: string[];
+  contacts: ContactItem[];
 }
 
 export interface DeviceContact {
@@ -26,8 +31,8 @@ export interface BlockedContact {
   id: string;
   phoneHash: string;
   createdAt: string;
-  name?: string;
-  phoneNumber?: string;
+  name: string | null;
+  phoneNumber: string | null;
 }
 
 export interface PaginationMeta {
