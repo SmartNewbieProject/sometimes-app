@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
@@ -7,17 +7,22 @@ import { CropOverlay } from './crop-overlay';
 import type { CropCanvasProps, ImageSize } from './types';
 import { useCropGesture } from './use-crop-gesture';
 
-interface CropCanvasWithGestureProps extends CropCanvasProps {
-	containerSize: ImageSize;
-}
-
 export function CropCanvas({
 	imageUri,
 	cropSize,
 	transform,
 	imageSize,
-	containerSize,
-}: CropCanvasWithGestureProps) {
+}: CropCanvasProps) {
+	const [canvasSize, setCanvasSize] = useState<ImageSize>({ width: 0, height: 0 });
+
+	const handleLayout = useCallback(
+		(event: { nativeEvent: { layout: { width: number; height: number } } }) => {
+			const { width, height } = event.nativeEvent.layout;
+			setCanvasSize({ width, height });
+		},
+		[],
+	);
+
 	const { nativeGesture, webHandlers } = useCropGesture({
 		transform,
 		imageSize,
@@ -50,7 +55,7 @@ export function CropCanvas({
 
 	if (Platform.OS === 'web') {
 		return (
-			<View style={styles.container}>
+			<View style={styles.container} onLayout={handleLayout}>
 				<View
 					style={styles.gestureArea}
 					onPointerDown={webHandlers.onPointerDown}
@@ -65,17 +70,21 @@ export function CropCanvas({
 				>
 					{renderImage()}
 				</View>
-				<CropOverlay cropSize={cropSize} containerSize={containerSize} />
+				{canvasSize.width > 0 && (
+					<CropOverlay cropSize={cropSize} containerSize={canvasSize} />
+				)}
 			</View>
 		);
 	}
 
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} onLayout={handleLayout}>
 			<GestureDetector gesture={nativeGesture}>
 				<View style={styles.gestureArea}>{renderImage()}</View>
 			</GestureDetector>
-			<CropOverlay cropSize={cropSize} containerSize={containerSize} />
+			{canvasSize.width > 0 && (
+				<CropOverlay cropSize={cropSize} containerSize={canvasSize} />
+			)}
 		</View>
 	);
 }

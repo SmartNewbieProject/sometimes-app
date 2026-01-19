@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import * as ImageManipulator from 'expo-image-manipulator';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Dimensions, Platform, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
@@ -29,23 +29,21 @@ export function ImageCropModal({
 }: ImageCropModalProps) {
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [imageSize, setImageSize] = useState<ImageSize>({ width: 0, height: 0 });
-	const [containerSize, setContainerSize] = useState<ImageSize>({
-		width: SCREEN_WIDTH,
-		height: SCREEN_HEIGHT,
-	});
+	const [originalImageSize, setOriginalImageSize] = useState<ImageSize>({ width: 0, height: 0 });
 	const [isReady, setIsReady] = useState(false);
 	const [isVisible, setIsVisible] = useState(false);
 
 	const opacity = useSharedValue(0);
 	const translateY = useSharedValue(50);
+	const initializedForUri = useRef<string | null>(null);
 
-	const displayImageSize =
-		imageSize.width > 0
-			? {
-					width: Math.min(imageSize.width, SCREEN_WIDTH * 2),
-					height: Math.min(imageSize.height, SCREEN_HEIGHT * 2),
-				}
-			: { width: cropSize, height: cropSize };
+	// displayImageSize는 imageSize와 동일하게 사용 (이미 적절히 스케일링됨)
+	const displayImageSize = useMemo(() => {
+		if (imageSize.width > 0 && imageSize.height > 0) {
+			return { width: imageSize.width, height: imageSize.height };
+		}
+		return { width: cropSize, height: cropSize };
+	}, [imageSize.width, imageSize.height, cropSize]);
 
 	const { transform, initializeTransform, rotateBy90 } = useCropTransform(
 		displayImageSize,
@@ -74,6 +72,7 @@ export function ImageCropModal({
 			if (Platform.OS === 'web') {
 				const img = new window.Image();
 				img.onload = () => {
+					setOriginalImageSize({ width: img.width, height: img.height });
 					const maxDimension = Math.max(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2);
 					const scale = Math.min(1, maxDimension / Math.max(img.width, img.height));
 					setImageSize({
@@ -86,6 +85,7 @@ export function ImageCropModal({
 			} else {
 				ImageManipulator.manipulateAsync(imageUri, [], { compress: 1 })
 					.then((result) => {
+						setOriginalImageSize({ width: result.width, height: result.height });
 						const maxDimension = Math.max(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2);
 						const scale = Math.min(1, maxDimension / Math.max(result.width, result.height));
 						setImageSize({
@@ -103,10 +103,12 @@ export function ImageCropModal({
 	}, [visible, imageUri, cropSize]);
 
 	useEffect(() => {
-		if (isReady && displayImageSize.width > 0) {
+		// 같은 이미지에 대해서는 한 번만 초기화
+		if (isReady && displayImageSize.width > 0 && imageUri && initializedForUri.current !== imageUri) {
+			initializedForUri.current = imageUri;
 			initializeTransform();
 		}
-	}, [isReady, displayImageSize, initializeTransform]);
+	}, [isReady, displayImageSize, initializeTransform, imageUri]);
 
 	const handleRotate = useCallback(() => {
 		rotateBy90();
@@ -123,6 +125,19 @@ export function ImageCropModal({
 			const currentTranslateX = transform.translateX.value;
 			const currentTranslateY = transform.translateY.value;
 
+			console.log('[ImageCropModal] handleComplete - transform values:', {
+				rotation,
+				scale,
+				translateX: currentTranslateX,
+				translateY: currentTranslateY,
+			});
+			console.log('[ImageCropModal] handleComplete - sizes:', {
+				originalImageSize,
+				imageSize,
+				displayImageSize,
+				cropSize,
+			});
+
 			const cropResult = calcCropResult(
 				displayImageSize,
 				cropSize,
@@ -132,6 +147,27 @@ export function ImageCropModal({
 				rotation,
 			);
 
+			console.log('[ImageCropModal] handleComplete - cropResult (displayImageSize 기준):', cropResult);
+
+			// displayImageSize -> originalImageSize 변환 비율
+			const displayToOriginalRatio = originalImageSize.width / displayImageSize.width;
+
+			console.log('[ImageCropModal] handleComplete - displayToOriginalRatio:', displayToOriginalRatio);
+
+			// 원본 이미지 좌표로 변환
+			const originalCropResult = {
+				originX: Math.round(cropResult.originX * displayToOriginalRatio),
+				originY: Math.round(cropResult.originY * displayToOriginalRatio),
+				width: Math.round(cropResult.width * displayToOriginalRatio),
+				height: Math.round(cropResult.height * displayToOriginalRatio),
+			};
+
+			console.log('[ImageCropModal] handleComplete - originalCropResult:', originalCropResult);
+			console.log('[ImageCropModal] handleComplete - 원본 이미지 범위 체크:', {
+				validX: originalCropResult.originX >= 0 && originalCropResult.originX + originalCropResult.width <= originalImageSize.width,
+				validY: originalCropResult.originY >= 0 && originalCropResult.originY + originalCropResult.height <= originalImageSize.height,
+			});
+
 			const actions: ImageManipulator.Action[] = [];
 
 			if (rotation !== 0) {
@@ -140,10 +176,10 @@ export function ImageCropModal({
 
 			actions.push({
 				crop: {
-					originX: cropResult.originX,
-					originY: cropResult.originY,
-					width: cropResult.width,
-					height: cropResult.height,
+					originX: originalCropResult.originX,
+					originY: originalCropResult.originY,
+					width: originalCropResult.width,
+					height: originalCropResult.height,
 				},
 			});
 
@@ -152,27 +188,27 @@ export function ImageCropModal({
 				format: ImageManipulator.SaveFormat.JPEG,
 			});
 
-			onComplete(result.uri);
+			// 먼저 닫기 애니메이션 시작 (현재 crop 상태 유지)
+			opacity.value = withTiming(0, { duration: 150, easing: Easing.in(Easing.ease) });
+			translateY.value = withTiming(50, { duration: 150, easing: Easing.in(Easing.ease) });
+
+			// 애니메이션 후 콜백 호출
+			setTimeout(() => {
+				setIsVisible(false);
+				setIsProcessing(false);
+				onComplete(result.uri);
+			}, 160);
 		} catch (error) {
 			console.error('Crop failed:', error);
-			onComplete(imageUri);
-		} finally {
 			setIsProcessing(false);
+			onComplete(imageUri);
 		}
-	}, [isProcessing, isReady, transform, displayImageSize, cropSize, imageUri, onComplete]);
+	}, [isProcessing, isReady, transform, displayImageSize, originalImageSize, cropSize, imageUri, onComplete, opacity, translateY]);
 
 	const handleCancel = useCallback(() => {
 		if (isProcessing) return;
 		onCancel();
 	}, [isProcessing, onCancel]);
-
-	const handleContainerLayout = useCallback(
-		(event: { nativeEvent: { layout: { width: number; height: number } } }) => {
-			const { width, height } = event.nativeEvent.layout;
-			setContainerSize({ width, height });
-		},
-		[],
-	);
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		opacity: opacity.value,
@@ -182,7 +218,7 @@ export function ImageCropModal({
 	if (!isVisible) return null;
 
 	const content = (
-		<Animated.View style={[styles.container, animatedStyle]} onLayout={handleContainerLayout}>
+		<Animated.View style={[styles.container, animatedStyle]}>
 			<CropHeader onCancel={handleCancel} onComplete={handleComplete} isProcessing={isProcessing} />
 
 			{isReady && displayImageSize.width > 0 && (
@@ -191,7 +227,6 @@ export function ImageCropModal({
 					cropSize={cropSize}
 					transform={transform}
 					imageSize={displayImageSize}
-					containerSize={containerSize}
 				/>
 			)}
 
