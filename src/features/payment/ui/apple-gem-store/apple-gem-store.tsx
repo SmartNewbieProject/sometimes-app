@@ -1,12 +1,12 @@
 import { Platform, StyleSheet, View } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-// iOS에서만 expo-iap import (웹/안드로이드에서는 스킵)
+// iOS 프로덕션에서만 expo-iap import (웹/안드로이드/개발환경에서는 스킵)
 let useIAP: any;
 let finishTransaction: any;
 type Purchase = any;
 
-if (Platform.OS === 'ios') {
+if (Platform.OS === 'ios' && !__DEV__) {
 	const iapModule = require('expo-iap');
 	useIAP = iapModule.useIAP;
 	finishTransaction = iapModule.finishTransaction;
