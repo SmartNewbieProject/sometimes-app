@@ -1,85 +1,85 @@
 {
-	"cli": {
-		"version": ">= 16.4.1",
-		"appVersionSource": "remote"
-	},
-	"build": {
-		"development": {
-			"channel": "development",
-			"developmentClient": true,
-			"distribution": "internal",
-			"env": {
-				"ANDROID_HOME": "/Users/user/Library/Android/sdk",
-				"SENTRY_ALLOW_FAILURE": "true"
-			}
-		},
-		"preview": {
-			"channel": "preview",
-			"autoIncrement": true,
-			"distribution": "internal",
-			"env": {
-				"ANDROID_HOME": "/Users/user/Library/Android/sdk",
-				"SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
-				"SENTRY_ORG": "smartnewbie",
-				"SENTRY_PROJECT": "react-native",
-				"SENTRY_ALLOW_FAILURE": "true"
-			}
-		},
-		"adhoc": {
-			"autoIncrement": true,
-			"distribution": "internal",
-			"env": {
-				"ANDROID_HOME": "/Users/user/Library/Android/sdk",
-				"SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
-				"SENTRY_ALLOW_FAILURE": "true"
-			},
-			"ios": {
-				"buildConfiguration": "Release"
-			},
-			"android": {
-				"buildType": "apk"
-			}
-		},
-		"production": {
-			"channel": "production",
-			"autoIncrement": true,
-			"env": {
-				"ANDROID_HOME": "/Users/user/Library/Android/sdk",
-				"SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
-				"SENTRY_ORG": "smartnewbie",
-				"SENTRY_PROJECT": "react-native",
-				"SENTRY_ALLOW_FAILURE": "true"
-			},
-			"ios": {
-				"distribution": "store",
-				"developmentClient": false,
-				"buildConfiguration": "Release"
-			},
-			"android": {
-				"distribution": "store",
-				"developmentClient": false,
-				"buildType": "app-bundle"
-			}
-		},
-		"production-debug": {
-			"extends": "production",
-			"ios": {
-				"buildConfiguration": "Debug"
-			}
-		}
-	},
-	"submit": {
-		"production": {
-			"ios": {
-				"ascAppId": "6746120889",
-				"ascApiKeyPath": "/Users/user/keys/AuthKey_S48XP27Q9R.p8",
-				"ascApiKeyId": "S48XP27Q9R",
-				"ascApiKeyIssuerId": "e8dbd13d-74e7-45ba-8f51-02977b51f1a6"
-			},
-			"android": {
-				"serviceAccountKeyPath": "./google-service-account.json",
-				"track": "internal"
-			}
-		}
-	}
+  "cli": {
+    "version": ">= 16.4.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "channel": "development",
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk",
+        "SENTRY_ALLOW_FAILURE": "true"
+      }
+    },
+    "preview": {
+      "channel": "preview",
+      "autoIncrement": true,
+      "distribution": "internal",
+      "env": {
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk",
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
+        "SENTRY_ORG": "smartnewbie",
+        "SENTRY_PROJECT": "react-native",
+        "SENTRY_ALLOW_FAILURE": "true"
+      }
+    },
+    "adhoc": {
+      "autoIncrement": true,
+      "distribution": "internal",
+      "env": {
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk",
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
+        "SENTRY_ALLOW_FAILURE": "true"
+      },
+      "ios": {
+        "buildConfiguration": "Release"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "ANDROID_HOME": "/Users/user/Library/Android/sdk",
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}",
+        "SENTRY_ORG": "smartnewbie",
+        "SENTRY_PROJECT": "react-native",
+        "SENTRY_ALLOW_FAILURE": "true"
+      },
+      "ios": {
+        "distribution": "store",
+        "developmentClient": false,
+        "buildConfiguration": "Release"
+      },
+      "android": {
+        "distribution": "store",
+        "developmentClient": false,
+        "buildType": "app-bundle"
+      }
+    },
+    "production-debug": {
+      "extends": "production",
+      "ios": {
+        "buildConfiguration": "Debug"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6746120889",
+        "ascApiKeyPath": "/Users/user/keys/AuthKey_S48XP27Q9R.p8",
+        "ascApiKeyId": "S48XP27Q9R",
+        "ascApiKeyIssuerId": "e8dbd13d-74e7-45ba-8f51-02977b51f1a6"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
+      }
+    }
+  }
 }
