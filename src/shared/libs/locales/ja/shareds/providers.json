@@ -1,11 +1,11 @@
 {
-  "modal_provider": {
-    "error_title": "エラーが発生しました",
-    "announcement_title": "お知らせ",
-    "confirm_button": "確認しました"
-  },
-  "common": {
-    "오류가_발생했어요": "[JA] 오류가 발생했어요.",
-    "안내": "[JA] 안내"
-  }
+	"modal_provider": {
+		"error_title": "エラーが発生しました",
+		"announcement_title": "お知らせ",
+		"confirm_button": "確認しました"
+	},
+	"common": {
+		"오류가_발생했어요": "[JA] 오류가 발생했어요.",
+		"안내": "[JA] 안내"
+	}
 }

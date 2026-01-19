@@ -1,7 +1,6 @@
 import { DefaultLayout, TwoButtons } from '@/src/features/layout/ui';
 import { SignupSteps, useSignupProgress } from '@/src/features/signup/hooks';
 import useUniversityDetails from '@/src/features/signup/hooks/use-university-details';
-import AcademicInfoSelector from '@/src/features/signup/ui/university-details/academic-info-selector';
 import DepartmentSearch from '@/src/features/signup/ui/university-details/department-search';
 import { withSignupValidation } from '@/src/features/signup/ui/withSignupValidation';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
@@ -63,7 +62,7 @@ function UniversityDetailsPage() {
 			mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_DETAILS_DONE, {
 				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 			});
-			router.push('/auth/signup/instagram');
+			router.push('/auth/signup/invite-code');
 		});
 	};
 
@@ -104,18 +103,6 @@ function UniversityDetailsPage() {
 							</Text>
 						</View>
 						<DepartmentSearch />
-					</View>
-
-					<View style={[styles.contentWrapper, styles.academicSection]}>
-						<View style={styles.titleWrapper}>
-							<Text size="lg" weight="semibold" textColor="purple" style={styles.title}>
-								{t('apps.auth.sign_up.university_detail.title_academic')}
-							</Text>
-							<Text size="sm" weight="normal" textColor="muted" style={styles.subtitle}>
-								{t('apps.auth.sign_up.university_detail.subtitle_academic')}
-							</Text>
-						</View>
-						<AcademicInfoSelector />
 					</View>
 				</Pressable>
 			</ScrollView>
@@ -163,9 +150,6 @@ const styles = StyleSheet.create({
 	},
 	departmentSection: {
 		zIndex: 10,
-	},
-	academicSection: {
-		marginTop: 40,
 		paddingBottom: 214,
 	},
 	bottomContainer: {

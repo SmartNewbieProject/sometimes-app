@@ -1,68 +1,80 @@
 {
-  "slides": {
-    "welcome": {
-      "headline": "Welcome! 👋\nWelcome to Sometime",
-      "subtext": "Safe and exciting connections with\nuniversity students in your area begin now!"
-    },
-    "story": {
-      "headline": "No friends to set up dates?\nSo we made it ourselves!",
-      "subtext": "No club activities or mixers,\njust home-school-home routine…\nSometime was born from\nthe concerns of university students"
-    },
-    "matchingTime": {
-      "headline": "Every Thursday & Sunday at 9 PM,\nNew connections arrive 💌",
-      "subtext": "A relaxed time after class,\nwhen everyone's waiting,\nso responses come faster!",
-      "countdownLabel": "Until next matching"
-    },
-    "verification": {
-      "headline": "Yes, only university students can join!\nWe verify personally ✅",
-      "subtext": "With our thorough 3-step verification,\nmeet safely without worries\nabout suspicious people!",
-      "badges": {
-        "pass": "✅ PASS Identity Verification",
-        "email": "✅ University Email/Student ID",
-        "photo": "✅ Profile Photo Review"
-      }
-    },
-    "studentOnly": {
-      "headline": "Not 30s or 40s,\nMeet real university students",
-      "subtext": "No one faking their age like other apps.\nPeers going through the same phase\nconnect better."
-    },
-    "aiMatching": {
-      "headline": "AI finds people who\nmatch you well 🤖💕",
-      "subtext": "Not just specs, but values, interests,\nand lifestyle are analyzed to\nrecommend truly compatible people."
-    },
-    "likeGuide": {
-      "headline": "Browse profiles and\nlike if you're interested 💕",
-      "subtext": "1. Check recommended profiles\n2. Like if interested\n3. Match and chat opens!"
-    },
-    "chatGuide": {
-      "headline": "You both liked each other!\nNow start a conversation 💬",
-      "subtext": "If the first greeting is difficult,\nfind common ground in their profile.\n\"I like OO too!\" is enough."
-    },
-    "refund": {
-      "headline": "It's okay if\nconversation doesn't flow",
-      "subtext": "If no reply within 48 hours,\ngem refund is possible.\nFeel free to message first!"
-    },
-    "region": {
-      "headline": "Seoul-Busan long distance\nis too tough 🚗💨",
-      "subtext": "Sometime only matches near your university.\nClose enough to meet briefly\nafter class ☕"
-    },
-    "cta": {
-      "headline": "Ready?\nExcitement awaits ✨",
-      "subtext": "Not much time until next matching.\nComplete your profile right now!"
-    }
-  },
-  "navigation": {
-    "next": "Next",
-    "start": "Get Started",
-    "skip": "Skip"
-  },
-  "countdown": {
-    "format": "{{days}}d {{hours}}h {{minutes}}m"
-  },
-  "ui": {
-    "부산대": "[EN] 부산대",
-    "다정한": "[EN] 다정한",
-    "동의대": "[EN] 동의대",
-    "유머있는": "[EN] 유머있는"
-  }
+	"slides": {
+		"welcome": {
+			"headline": "Nice to meet you! 👋\nWelcome to Sometime",
+			"subtext": "Safe and exciting connections with\nuniversity students in your area begin now!"
+		},
+		"story": {
+			"headline": "No friends to set up dates?\nSo we made it ourselves!",
+			"subtext": "No club activities or mixers,\njust home-school-home routine…\nSometime was born from\nthe concerns of university students"
+		},
+		"matchingTime": {
+			"headline": "Every Thursday & Sunday at 9 PM,\nNew connections arrive 💌",
+			"subtext": "A relaxed time after class,\nwhen everyone's waiting,\nso responses come faster!",
+			"countdownLabel": "Until next matching"
+		},
+		"verification": {
+			"headline": "Yes, only university students can join!\nWe verify personally ✅",
+			"subtext": "With our thorough 3-step verification,\nmeet safely without worries\nabout suspicious people!",
+			"badges": {
+				"pass": "✅ PASS Identity Verification",
+				"email": "✅ University Email/Student ID",
+				"photo": "✅ Profile Photo Review"
+			}
+		},
+		"studentOnly": {
+			"headline": "Not 30s or 40s,\nMeet real university students",
+			"subtext": "No one faking their age like other apps.\nPeers going through the same phase\nconnect better."
+		},
+		"aiMatching": {
+			"headline": "AI finds people who\nmatch you well 🤖💕",
+			"subtext": "Not just specs, but values, interests,\nand lifestyle are analyzed to\nrecommend truly compatible people."
+		},
+		"likeGuide": {
+			"headline": "Browse profiles and\nlike if you're interested 💕",
+			"subtext": "1. Check recommended profiles\n2. Like if interested\n3. Match and chat opens!"
+		},
+		"chatGuide": {
+			"headline": "You both liked each other!\nNow start a conversation 💬",
+			"subtext": "If the first greeting is difficult,\nfind common ground in their profile.\n\"I like OO too!\" is enough."
+		},
+		"refund": {
+			"headline": "It's okay if\nconversation doesn't flow",
+			"subtext": "If no reply within 48 hours,\ngem refund is possible.\nFeel free to message first!"
+		},
+		"region": {
+			"headline": "Seoul-Busan long distance\nis too tough 🚗💨",
+			"subtext": "Sometime only matches near your university.\nClose enough to meet briefly\nafter class ☕"
+		},
+		"cta": {
+			"headline": "Ready?\nExcitement awaits ✨",
+			"subtext": "Not much time until next matching.\nComplete your profile right now!"
+		}
+	},
+	"navigation": {
+		"next": "Next",
+		"start": "Get Started",
+		"skip": "Skip"
+	},
+	"countdown": {
+		"format": "{{days}}d {{hours}}h {{minutes}}m"
+	},
+	"ui": {
+		"부산대": "[EN] 부산대",
+		"다정한": "[EN] 다정한",
+		"동의대": "[EN] 동의대",
+		"유머있는": "[EN] 유머있는"
+	},
+	"profile_photo": {
+		"title": "Upload your",
+		"subtitle": "attractive photos",
+		"guide_1": "Please upload photos where your face is clearly visible",
+		"guide_2": "Bright and clear photos work best",
+		"required": "Required",
+		"recommended": "Recommended",
+		"min_one_required": "Please upload at least 1 photo",
+		"submit": "Complete Profile",
+		"uploading": "Uploading...",
+		"back": "Back"
+	}
 }

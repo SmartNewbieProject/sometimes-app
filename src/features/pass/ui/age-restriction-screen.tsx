@@ -60,7 +60,7 @@ export const AgeRestrictionScreen: React.FC<AgeRestrictionScreenProps> = ({
             </View>
 
             <Image
-              source={require("@assets/images/limit-age.png")}
+              source={require("@assets/images/limit-age.webp")}
               style={styles.mainImage}
             />
           </View>

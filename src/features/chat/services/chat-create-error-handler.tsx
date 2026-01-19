@@ -25,6 +25,7 @@ const handleConflict: ErrorHandler = {
 const handleForbidden: ErrorHandler = {
   handle: (error, { router, showModal }) => {
     const errorMessage = error.error || error.message || i18n.t("features.chat.services.error_handlers.general_error");
+    const isJapanese = i18n.language === 'ja';
 
     if (errorMessage === JP_IDENTITY_REQUIRED_MESSAGE) {
       showModal({
@@ -42,6 +43,7 @@ const handleForbidden: ErrorHandler = {
           text: i18n.t("features.chat.services.jp_identity.later"),
           onClick: () => {},
         },
+        buttonLayout: isJapanese ? 'vertical' : 'horizontal',
       });
       return;
     }

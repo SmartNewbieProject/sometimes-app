@@ -51,8 +51,6 @@ export interface JpSignupRequest {
   age: number;
   universityId: string;
   departmentName: string;
-  grade: string;
-  studentNumber: string;
   profileImages: File[] | Blob[];
   mainImageIndex?: number;
   instagramId?: string;

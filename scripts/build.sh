@@ -134,6 +134,35 @@ check_eas_login() {
     fi
 }
 
+# Sync build version with EAS at the beginning
+sync_version_early() {
+    local platform="$1"
+
+    echo ""
+    print_step "Syncing build version with App Store Connect / Play Store..."
+
+    if eas build:version:sync --platform "$platform" 2>&1; then
+        print_success "Build version synced successfully"
+    else
+        print_warning "Version sync failed - this may cause submission errors"
+        echo ""
+        echo -e "${YELLOW}가능한 원인:${NC}"
+        echo "  1. App Store Connect에서 해당 버전이 이미 닫혀있음"
+        echo "  2. 네트워크 연결 문제"
+        echo "  3. EAS 인증 문제"
+        echo ""
+        read -p "계속 빌드를 진행하시겠습니까? [y/N]: " continue_build
+        if [[ ! $continue_build =~ ^[Yy]$ ]]; then
+            echo ""
+            echo -e "${CYAN}해결 방법:${NC}"
+            echo "  1. App Store Connect에서 새 버전 생성"
+            echo "  2. app.config.ts의 version 값 증가"
+            echo ""
+            exit 1
+        fi
+    fi
+}
+
 # Select platform
 select_platform() {
     echo ""
@@ -528,6 +557,14 @@ main() {
     check_eas_cli
     check_eas_login
     select_platform
+
+    # 플랫폼 선택 직후 버전 동기화 (문제 조기 감지)
+    local sync_platform="$PLATFORM"
+    if [ "$PLATFORM" = "all" ]; then
+        sync_platform="all"
+    fi
+    sync_version_early "$sync_platform"
+
     select_environment
     select_deployment
     select_clean_build
@@ -542,18 +579,6 @@ main() {
 
     # Perform clean build if requested
     perform_clean_build
-
-    echo ""
-    print_step "Syncing build version with EAS..."
-    local sync_platform="$PLATFORM"
-    if [ "$PLATFORM" = "all" ]; then
-        sync_platform="all"
-    fi
-    if eas build:version:sync --platform "$sync_platform" 2>/dev/null; then
-        print_success "Build version synced with EAS"
-    else
-        print_warning "Version sync skipped (may require remote build history)"
-    fi
 
     echo ""
     print_step "Starting build process..."

@@ -159,8 +159,6 @@ export async function processSignup(
 				age: signupForm.age ?? 0,
 				universityId: signupForm.universityId,
 				departmentName: signupForm.departmentName,
-				grade: signupForm.grade,
-				studentNumber: signupForm.studentNumber,
 				profileImages: signupForm.profileImages as unknown as File[],
 				mainImageIndex: 0,
 				instagramId: signupForm.instagramId,
@@ -178,8 +176,6 @@ export async function processSignup(
 		'birthday',
 		'gender',
 		'departmentName',
-		'grade',
-		'studentNumber',
 		'instagramId',
 	];
 	const completedFields = profileFields.filter((field) => {

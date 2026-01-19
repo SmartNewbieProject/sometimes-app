@@ -74,7 +74,7 @@ const AppleGemStoreItem = ({
 					<ImageResource resource={ImageResources.GEM} width={42} height={42} />
 					<View style={{ flex: 1 }}>
 						<Text style={{ fontSize: 18, fontWeight: 'bold', color: semanticColors.text.primary }}>
-							{extractNumber(gemProduct.title)}
+							{extractNumber(gemProduct.id)}
 							{t('widgets.gem-store.apple.unit_piece')}
 						</Text>
 					</View>
@@ -141,6 +141,8 @@ const styles = RNStyleSheet.create({
 		textDecorationLine: 'line-through',
 	},
 	discountRate: {
-		fontSize: 10,
+		fontSize: 14,
+		fontWeight: '500',
+		color: colors.primaryPurple,
 	},
 });

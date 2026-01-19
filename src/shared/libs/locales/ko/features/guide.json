@@ -1,105 +1,105 @@
 {
-  "mock": {
-    "mock_like_button": {
-      "modal_title": "썸을 보냈어요!",
-      "modal_text_1": "상대방도 관심을 보이면,",
-      "modal_text_2": "바로 대화 시작할 수 있어!",
-      "primary_button": "확인했어요",
-      "partner_modal_title_1": "마음에 드는 이성에게",
-      "partner_modal_title_2_male": "구슬 {{count}}개로 관심을 표현할까요?",
-      "partner_modal_title_2_female": "관심을 표현할까요?",
-      "partner_modal_text_1": "이성에게 간단히 관심을 표현하고,",
-      "partner_modal_text_2": "그 다음 단계로 자연스럽게 나아가 보세요.",
-      "partner_primary_button": "네, 해볼래요",
-      "main_button": "좋아요"
-    },
-    "mock_interaction_navigation": {
-      "modal_title_1": "마음에 드는 이성을 찾기위해",
-      "modal_title_2": "구슬 {{count}}개를 사용할게요!",
-      "modal_text_1": "성격과 소통 스타일을 바탕으로,",
-      "modal_text_2": "자연스럽게 연결될 수 있는 인연을 추천해드릴게요.",
-      "primary_button": "네, 해볼래요",
-      "secondary_button": "아니요",
-      "main_button": "더 찾아보기",
-      "complete_button": "썸 보내기 완료!"
-    },
-    "mock_partner": {
-      "mbti_tag": "#ISTJ #{{name}}",
-      "button_more": "더보기"
-    }
-  },
-  "ui": {
-    "profile_guide": {
-      "title": "프로필을 매력적으로 보여주세요!",
-      "description_line1": "사진을 업로드하고 계정을 공개로 설정하면",
-      "description_line2": "매칭 확률이 더 높아져요"
-    },
-    "like_guide_scenario": {
-      "like": {
-        "tab_liked_me": "도착한 썸",
-        "tab_i_liked": "보낸 썸",
-        "info": {
-          "step3_title": "보낸 썸",
-          "step3_desc1": "내가 먼저 마음을 표현한",
-          "step3_desc2": "사람들을 볼 수 있어요",
-          "step4_title": "도착한 썸",
-          "step4_desc1": "누가 나에게 호감을 보냈는지 바로 확인해요",
-          "step5_title": "프로필 미리보기",
-          "step5_desc1": "여기서 프로필 미리보기를 확인할 수 있어요",
-          "step5_desc2": "카드를 누르면 상세 프로필로 이동해요",
-          "step6_title": "좋아요",
-          "step6_desc1": "좋아요를 누르면 서로 매칭돼요!",
-          "step6_desc2": "매칭이 되면 인스타그램에서",
-          "step6_desc3": "대화를 시작할 수 있어요",
-          "step7_title": "괜찮아요",
-          "step7_desc1": "관심이 없으면 ‘괜찮아요’를 눌러주세요",
-          "step7_desc2": "이번 인연은 아쉽게 마무리되고,",
-          "step7_desc3": "카드가 사라져요",
-          "step8_title": "인연이 아니였나봐요",
-          "step8_desc1": "카드는 사라지고,",
-          "step8_desc2": "다음 인연을 확인할 수 있어요",
-          "step9_title": "만료 안내",
-          "step9_desc1": "표시된 시간이 지나면 자동으로",
-          "step9_desc2": "‘인연이 아니였나봐요’로 처리돼요.",
-          "step10_title": "튜토리얼이 끝났어요!",
-          "step10_desc1": "이제 나만의 이상형을 만나러 가볼까요?",
-          "close_hint": "👉 튜토리얼 닫기"
-        }
-      }
-    },
-    "home": {
-      "info_title_1": "좋아요 기능이 새로 생겼어요 ✨️",
-      "info_description_1": "이제 여기서 내가 좋아요한 사람과,",
-      "info_description_2": "나에게 좋아요한 사람을 확인할 수 있어요.",
-      "info_title_2": "기존 이전 매칭은 여기로 이동했어요",
-      "info_description_3": "매칭 카드 아래에서 바로 확인할 수 있어요",
-      "info_description_4": "놓치지 말고 확인해보세요",
-      "info_title_3": "좋아요, 자세히 알아볼까요?",
-      "info_description_5": "위 버튼을 누르면 바로",
-      "info_description_6": "썸 우편함으로 들어갈 수 있어요",
-      "info_next_hint": "👉 터치해서 다음"
-    }
-  },
-  "utils": {
-    "mock_data": {
-      "nickname_1": "다운재",
-      "university_1": "한빛대학교",
-      "nickname_2_male": "김소희",
-      "nickname_2_female": "김건우",
-      "university_2": "서울대학교",
-      "nickname_3_male": "이지혜",
-      "nickname_3_female": "박민석",
-      "university_3": "한양대학교"
-    }
-  },
-  "common": {
-    "다온재": "다온재",
-    "한빛대학교": "한빛대학교",
-    "김소희": "김소희",
-    "김건우": "김건우",
-    "서울대학교": "서울대학교",
-    "이지혜": "이지혜",
-    "박민석": "박민석",
-    "한양대학교": "한양대학교"
-  }
+	"mock": {
+		"mock_like_button": {
+			"modal_title": "썸을 보냈어요!",
+			"modal_text_1": "상대방도 관심을 보이면,",
+			"modal_text_2": "바로 대화 시작할 수 있어!",
+			"primary_button": "확인했어요",
+			"partner_modal_title_1": "마음에 드는 이성에게",
+			"partner_modal_title_2_male": "구슬 {{count}}개로 관심을 표현할까요?",
+			"partner_modal_title_2_female": "관심을 표현할까요?",
+			"partner_modal_text_1": "이성에게 간단히 관심을 표현하고,",
+			"partner_modal_text_2": "그 다음 단계로 자연스럽게 나아가 보세요.",
+			"partner_primary_button": "네, 해볼래요",
+			"main_button": "좋아요"
+		},
+		"mock_interaction_navigation": {
+			"modal_title_1": "마음에 드는 이성을 찾기위해",
+			"modal_title_2": "구슬 {{count}}개를 사용할게요!",
+			"modal_text_1": "성격과 소통 스타일을 바탕으로,",
+			"modal_text_2": "자연스럽게 연결될 수 있는 인연을 추천해드릴게요.",
+			"primary_button": "네, 해볼래요",
+			"secondary_button": "아니요",
+			"main_button": "더 찾아보기",
+			"complete_button": "썸 보내기 완료!"
+		},
+		"mock_partner": {
+			"mbti_tag": "#ISTJ #{{name}}",
+			"button_more": "더보기"
+		}
+	},
+	"ui": {
+		"profile_guide": {
+			"title": "프로필을 매력적으로 보여주세요!",
+			"description_line1": "사진을 업로드하고 계정을 공개로 설정하면",
+			"description_line2": "매칭 확률이 더 높아져요"
+		},
+		"like_guide_scenario": {
+			"like": {
+				"tab_liked_me": "도착한 썸",
+				"tab_i_liked": "보낸 썸",
+				"info": {
+					"step3_title": "보낸 썸",
+					"step3_desc1": "내가 먼저 마음을 표현한",
+					"step3_desc2": "사람들을 볼 수 있어요",
+					"step4_title": "도착한 썸",
+					"step4_desc1": "누가 나에게 호감을 보냈는지 바로 확인해요",
+					"step5_title": "프로필 미리보기",
+					"step5_desc1": "여기서 프로필 미리보기를 확인할 수 있어요",
+					"step5_desc2": "카드를 누르면 상세 프로필로 이동해요",
+					"step6_title": "좋아요",
+					"step6_desc1": "좋아요를 누르면 서로 매칭돼요!",
+					"step6_desc2": "매칭이 되면 인스타그램에서",
+					"step6_desc3": "대화를 시작할 수 있어요",
+					"step7_title": "괜찮아요",
+					"step7_desc1": "관심이 없으면 ‘괜찮아요’를 눌러주세요",
+					"step7_desc2": "이번 인연은 아쉽게 마무리되고,",
+					"step7_desc3": "카드가 사라져요",
+					"step8_title": "인연이 아니였나봐요",
+					"step8_desc1": "카드는 사라지고,",
+					"step8_desc2": "다음 인연을 확인할 수 있어요",
+					"step9_title": "만료 안내",
+					"step9_desc1": "표시된 시간이 지나면 자동으로",
+					"step9_desc2": "‘인연이 아니였나봐요’로 처리돼요.",
+					"step10_title": "튜토리얼이 끝났어요!",
+					"step10_desc1": "이제 나만의 이상형을 만나러 가볼까요?",
+					"close_hint": "👉 튜토리얼 닫기"
+				}
+			}
+		},
+		"home": {
+			"info_title_1": "좋아요 기능이 새로 생겼어요 ✨️",
+			"info_description_1": "이제 여기서 내가 좋아요한 사람과,",
+			"info_description_2": "나에게 좋아요한 사람을 확인할 수 있어요.",
+			"info_title_2": "기존 이전 매칭은 여기로 이동했어요",
+			"info_description_3": "매칭 카드 아래에서 바로 확인할 수 있어요",
+			"info_description_4": "놓치지 말고 확인해보세요",
+			"info_title_3": "좋아요, 자세히 알아볼까요?",
+			"info_description_5": "위 버튼을 누르면 바로",
+			"info_description_6": "썸 우편함으로 들어갈 수 있어요",
+			"info_next_hint": "👉 터치해서 다음"
+		}
+	},
+	"utils": {
+		"mock_data": {
+			"nickname_1": "다운재",
+			"university_1": "한빛대학교",
+			"nickname_2_male": "김소희",
+			"nickname_2_female": "김건우",
+			"university_2": "서울대학교",
+			"nickname_3_male": "이지혜",
+			"nickname_3_female": "박민석",
+			"university_3": "한양대학교"
+		}
+	},
+	"common": {
+		"다온재": "다온재",
+		"한빛대학교": "한빛대학교",
+		"김소희": "김소희",
+		"김건우": "김건우",
+		"서울대학교": "서울대학교",
+		"이지혜": "이지혜",
+		"박민석": "박민석",
+		"한양대학교": "한양대학교"
+	}
 }

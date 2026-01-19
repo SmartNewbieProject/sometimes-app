@@ -9,7 +9,7 @@ import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import Signup from '@features/signup';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -133,12 +133,12 @@ const styles = StyleSheet.create({
 	logoSection: {
 		alignItems: 'center',
 		width: '100%',
-		marginTop: 40,
+		marginTop: Platform.OS === 'web' ? 40 : 0,
 	},
 	mainContent: {
 		flex: 1,
 		width: '100%',
 		alignItems: 'center',
-		marginTop: 40,
+		marginTop: 4,
 	},
 });

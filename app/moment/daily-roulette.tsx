@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { RouletteWheel } from "@/src/features/event/ui/roulette/roulette-wheel";
 import { useRoulettePage } from "@/src/features/event/hooks/roulette/use-roulette-page";
@@ -11,6 +12,7 @@ import ChevronLeft from "@assets/icons/chevron-left.svg";
 export default function DailyRoulettePage() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t } = useTranslation();
   const { rouletteAnimationStyle, handleStart, isSpinning } = useRoulettePage();
 
   return (
@@ -22,7 +24,7 @@ export default function DailyRoulettePage() {
         >
           <ChevronLeft />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>데일리 룰렛</Text>
+        <Text style={styles.headerTitle}>{t('features.event.roulette.header_title')}</Text>
       </View>
 
       <LinearGradient
@@ -39,8 +41,8 @@ export default function DailyRoulettePage() {
         </View>
 
         <View style={styles.titleContainer}>
-          <Text style={styles.topTitle}>오늘의</Text>
-          <Text style={styles.bottomTitle}>럭키 룰렛</Text>
+          <Text style={styles.topTitle}>{t('features.event.roulette.top_title')}</Text>
+          <Text style={styles.bottomTitle}>{t('features.event.roulette.bottom_title')}</Text>
           <Text style={styles.luckyText}>lucky</Text>
 
           <View style={styles.deco1} />
@@ -49,7 +51,7 @@ export default function DailyRoulettePage() {
           <View style={styles.deco4} />
 
           <Image
-            source={require("@assets/images/roulette-mini.png")}
+            source={require("@assets/images/roulette-mini.webp")}
             style={styles.rouletteMini}
           />
           <Image
@@ -60,8 +62,9 @@ export default function DailyRoulettePage() {
 
         <View style={styles.descContainer}>
           <Text style={styles.descText}>
-            오늘의 <Text style={styles.strongText}>운</Text>을{" "}
-            <Text style={styles.strongText}>시험</Text>해보세요!
+            {t('features.event.roulette.description_parts.prefix')}<Text style={styles.strongText}>{t('features.event.roulette.description_parts.luck')}</Text>
+            {t('features.event.roulette.description_parts.middle')}<Text style={styles.strongText}>{t('features.event.roulette.description_parts.try')}</Text>
+            {t('features.event.roulette.description_parts.suffix')}
           </Text>
         </View>
 

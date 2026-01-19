@@ -78,7 +78,7 @@ function ChatRoomList() {
         >
           <Image
             style={{ width: 216, height: 216, marginBottom: 20 }}
-            source={require("@assets/images/no-chat-miho.png")}
+            source={require("@assets/images/no-chat-miho.webp")}
           />
           <Text style={styles.infoText}>{t('features.chat.ui.chat_room_list.no_chat_title')}</Text>
           <Text style={styles.infoText}>

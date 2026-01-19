@@ -4,7 +4,7 @@ import { EmailLoginModal } from "@/src/features/auth/ui/email-login-modal";
 import { Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
 import { useRef, useState } from "react";
-import { Animated, Easing, Pressable, StyleSheet, View } from "react-native";
+import { Animated, Easing, Platform, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 
@@ -105,7 +105,7 @@ const logoStyles = StyleSheet.create({
   },
   logoWrapper: {
     position: 'relative',
-    marginTop: 40,
+    marginTop: Platform.OS === 'web' ? 20 : 0,
   },
   letterIcon: {
     position: "absolute",
@@ -115,6 +115,6 @@ const logoStyles = StyleSheet.create({
     height: 48,
   },
   taglineWrapper: {
-    marginTop: 12,
+    marginTop: 8,
   },
 });

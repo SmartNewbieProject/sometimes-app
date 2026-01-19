@@ -4,6 +4,7 @@ export { contactBlockApi } from './apis';
 export type {
   ContactBlockSettings,
   ContactSyncResult,
+  ContactItem,
   DeviceContact,
   ContactPermissionStatus,
 } from './types';

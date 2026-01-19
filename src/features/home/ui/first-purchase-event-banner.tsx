@@ -44,7 +44,7 @@ function FirstPurchaseEvent() {
   return (
     <Pressable onPress={handleStore} style={styles.container}>
       <Image
-        source={require("@assets/images/first-purchase.png")}
+        source={require("@assets/images/first-purchase.webp")}
         style={styles.image}
       />
       <View style={styles.content}>

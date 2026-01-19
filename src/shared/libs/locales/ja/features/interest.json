@@ -1,55 +1,55 @@
 {
-  "ui": {
-    "age-selector": {
-      "select": "選択"
-    },
-    "loading": {
-      "loading_options": "オプションを読み込んでいます"
-    }
-  },
-  "preference_keys": {
-    "age": "希望年齢",
-    "drinking": "飲酒の好み",
-    "smoking": "喫煙の好み",
-    "personality": "性格",
-    "interest": "趣味",
-    "dating_style": "恋愛スタイル",
-    "military_preference": "兵役の好み",
-    "good_mbti": "好きなMBTI",
-    "bad_mbti": "苦手なMBTI",
-    "military_status": "兵役",
-    "tattoo": "タトゥーの好み"
-  },
-  "age_labels": {
-    "same_age": "同い年",
-    "younger": "年下",
-    "older": "年上"
-  },
-  "validation": {
-    "required_fields": "次の情報を入力してください: {{fields}}",
-    "field_labels": {
-      "preferred_age": "希望年齢",
-      "drinking": "飲酒",
-      "smoking": "喫煙",
-      "personality": "性格",
-      "military": "兵役",
-      "tattoo": "タトゥー",
-      "dating_style": "デートスタイル",
-      "interest": "趣味"
-    }
-  },
-  "errors": {
-    "save_failed": "好みの保存に失敗しました。しばらくしてから再度お試しください。"
-  },
-  "common": {
-    "선호_나이대": "[JA] 선호 나이대",
-    "음주_선호도": "[JA] 음주 선호도",
-    "흡연_선호도": "[JA] 흡연 선호도",
-    "성격": "[JA] 성격",
-    "관심사": "[JA] 관심사",
-    "연애_스타일": "[JA] 연애 스타일",
-    "군필_여부_선호도": "[JA] 군필 여부 선호도",
-    "군필_여부": "[JA] 군필 여부",
-    "문신_선호도": "[JA] 문신 선호도"
-  }
+	"ui": {
+		"age-selector": {
+			"select": "選択"
+		},
+		"loading": {
+			"loading_options": "オプションを読み込んでいます"
+		}
+	},
+	"preference_keys": {
+		"age": "希望年齢",
+		"drinking": "飲酒の好み",
+		"smoking": "喫煙の好み",
+		"personality": "性格",
+		"interest": "趣味",
+		"dating_style": "恋愛スタイル",
+		"military_preference": "兵役の好み",
+		"good_mbti": "好きなMBTI",
+		"bad_mbti": "苦手なMBTI",
+		"military_status": "兵役",
+		"tattoo": "タトゥーの好み"
+	},
+	"age_labels": {
+		"same_age": "同い年",
+		"younger": "年下",
+		"older": "年上"
+	},
+	"validation": {
+		"required_fields": "次の情報を入力してください: {{fields}}",
+		"field_labels": {
+			"preferred_age": "希望年齢",
+			"drinking": "飲酒",
+			"smoking": "喫煙",
+			"personality": "性格",
+			"military": "兵役",
+			"tattoo": "タトゥー",
+			"dating_style": "デートスタイル",
+			"interest": "趣味"
+		}
+	},
+	"errors": {
+		"save_failed": "好みの保存に失敗しました。しばらくしてから再度お試しください。"
+	},
+	"common": {
+		"선호_나이대": "[JA] 선호 나이대",
+		"음주_선호도": "[JA] 음주 선호도",
+		"흡연_선호도": "[JA] 흡연 선호도",
+		"성격": "[JA] 성격",
+		"관심사": "[JA] 관심사",
+		"연애_스타일": "[JA] 연애 스타일",
+		"군필_여부_선호도": "[JA] 군필 여부 선호도",
+		"군필_여부": "[JA] 군필 여부",
+		"문신_선호도": "[JA] 문신 선호도"
+	}
 }

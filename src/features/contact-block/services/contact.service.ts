@@ -1,7 +1,10 @@
 import * as Contacts from 'expo-contacts';
-import type { DeviceContact, ContactPermissionStatus } from '../types';
+import * as Crypto from 'expo-crypto';
+import type { DeviceContact, ContactPermissionStatus, BlockedContact, ContactItem } from '../types';
 
-const normalizePhoneNumber = (phone: string): string => {
+const SALT = process.env.EXPO_PUBLIC_CONTACT_SALT || 'contact-block-salt';
+
+export const normalizePhoneNumber = (phone: string): string => {
   const digitsOnly = phone.replace(/\D/g, '');
 
   if (digitsOnly.startsWith('82') && digitsOnly.length >= 11) {
@@ -58,5 +61,94 @@ export const contactService = {
   async getContactCount(): Promise<number> {
     const contacts = await this.getContacts();
     return contacts.length;
+  },
+
+  normalizeContacts(contacts: DeviceContact[]): ContactItem[] {
+    const seen = new Set<string>();
+    const result: ContactItem[] = [];
+
+    for (const contact of contacts) {
+      for (const phone of contact.phoneNumbers) {
+        const normalized = normalizePhoneNumber(phone);
+        if (normalized.length >= 10 && !seen.has(normalized)) {
+          seen.add(normalized);
+          result.push({
+            name: contact.name || '이름 없음',
+            phoneNumber: normalized,
+          });
+        }
+      }
+    }
+
+    return result;
+  },
+
+  async hashPhoneNumber(phone: string): Promise<string> {
+    const normalized = normalizePhoneNumber(phone);
+    const text = `${normalized}${SALT}`;
+    const hash = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      text
+    );
+    return hash;
+  },
+
+  async matchContacts(
+    serverContacts: BlockedContact[],
+    deviceContacts: DeviceContact[]
+  ): Promise<Array<{ id: string; name: string; phoneNumber: string; createdAt: string }>> {
+    // 1. Pre-calculate hashes for all device contacts
+    // This could be slow for many contacts, so we might want to optimize or do it in chunks
+    // For now, we'll try to do it efficiently
+
+    const deviceMap = new Map<string, DeviceContact>();
+
+    // Create a map of Hash -> DeviceContact
+    // A single DeviceContact might have multiple phone numbers, so multiple hashes point to one name
+    for (const contact of deviceContacts) {
+      for (const phone of contact.phoneNumbers) {
+        try {
+          const hash = await this.hashPhoneNumber(phone);
+          deviceMap.set(hash, contact);
+        } catch (e) {
+          console.error('Failed to hash phone number', e);
+        }
+      }
+    }
+
+    const matched = [];
+    for (const serverContact of serverContacts) {
+      if (serverContact.name && serverContact.phoneNumber) {
+        matched.push({
+          id: serverContact.id,
+          name: serverContact.name,
+          phoneNumber: serverContact.phoneNumber,
+          createdAt: serverContact.createdAt,
+        });
+        continue;
+      }
+
+      const deviceContact = deviceMap.get(serverContact.phoneHash);
+      if (deviceContact) {
+        matched.push({
+          id: serverContact.id, // ID from server (for unblocking)
+          name: deviceContact.name,
+          phoneNumber: deviceContact.phoneNumbers[0], // Display first number or matching number if we tracked it
+          createdAt: serverContact.createdAt,
+        });
+      } else {
+        // If not found in device, we can show "Unknown" or hide it.
+        // The requirements say "Server has hashes only, client maps them".
+        // If map fails, we probably populate with a placeholder or just hash
+        matched.push({
+          id: serverContact.id,
+          name: '알 수 없음',
+          phoneNumber: '', // Cannot recover phone from hash
+          createdAt: serverContact.createdAt,
+        });
+      }
+    }
+
+    return matched;
   },
 };

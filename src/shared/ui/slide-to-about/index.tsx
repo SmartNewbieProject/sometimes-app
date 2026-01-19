@@ -1,5 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import {
+	Platform,
+	StyleSheet,
+	View,
+	Animated as RNAnimated,
+	Easing as RNEasing,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, {
 	useSharedValue,
@@ -15,7 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Text } from '@/src/shared/ui';
-import SometimeLogo from '@assets/images/sometime-logo.svg';
+import SometimeLogo from '@assets/images/sometime-brand-logo.svg';
 import SlideArrow from '@assets/icons/slide-arrow-icon.svg';
 
 export interface SlideToAboutProps {
@@ -23,8 +29,8 @@ export interface SlideToAboutProps {
 	threshold?: number;
 }
 
-const CONTAINER_HEIGHT = 60;
-const PADDING = 10;
+const CONTAINER_HEIGHT = 50;
+const PADDING = 8;
 const CONTAINER_BG_COLOR = '#FFFFFF';
 const UNLOCK_THRESHOLD = 0.7;
 const HANDLE_SIZE = CONTAINER_HEIGHT - PADDING * 2;
@@ -44,6 +50,9 @@ export const SlideToAbout: React.FC<SlideToAboutProps> = ({
 	const isDraggingRef = useRef(false);
 	const startXRef = useRef(0);
 
+	// 웹용 화살표 애니메이션 (RN Animated API 사용)
+	const webArrowTranslateX = useRef(new RNAnimated.Value(0)).current;
+
 	// JS 레이어용 containerWidth (웹 핸들러에서 사용)
 	const [containerWidth, setContainerWidth] = React.useState(0);
 	const maxDrag = containerWidth - HANDLE_SIZE - PADDING * 2;
@@ -59,22 +68,25 @@ export const SlideToAbout: React.FC<SlideToAboutProps> = ({
 	// Arrow left-right animation
 	useEffect(() => {
 		if (Platform.OS === 'web') {
-			// 웹에서는 CSS 애니메이션 사용
-			if (typeof document !== 'undefined') {
-				const styleId = 'arrow-slide-animation';
-				if (!document.getElementById(styleId)) {
-					const style = document.createElement('style');
-					style.id = styleId;
-					style.textContent = `
-            @keyframes arrowSlide {
-              0%, 100% { transform: translateX(-6px); }
-              50% { transform: translateX(6px); }
-            }
-          `;
-					document.head.appendChild(style);
-				}
-			}
-			return;
+			// 웹에서는 RN Animated API 사용
+			const animation = RNAnimated.loop(
+				RNAnimated.sequence([
+					RNAnimated.timing(webArrowTranslateX, {
+						toValue: 6,
+						duration: 600,
+						easing: RNEasing.out(RNEasing.ease),
+						useNativeDriver: true,
+					}),
+					RNAnimated.timing(webArrowTranslateX, {
+						toValue: 0,
+						duration: 600,
+						easing: RNEasing.in(RNEasing.ease),
+						useNativeDriver: true,
+					}),
+				]),
+			);
+			animation.start();
+			return () => animation.stop();
 		}
 		arrowTranslateX.value = -6;
 		arrowTranslateX.value = withRepeat(
@@ -237,11 +249,11 @@ export const SlideToAbout: React.FC<SlideToAboutProps> = ({
 				style={[styles.textContainer, { height: CONTAINER_HEIGHT }, textContainerAnimatedStyle]}
 			>
 				<View style={styles.textContent}>
-					<Text size="18" weight="black" textColor="black">
+					<Text size="16" weight="black" textColor="black" style={styles.aboutText}>
 						ABOUT{' '}
 					</Text>
 					<View style={styles.logoContainer}>
-						<SometimeLogo width={93} height={13} />
+						<SometimeLogo width={80} height={11} />
 					</View>
 				</View>
 			</Animated.View>
@@ -278,14 +290,13 @@ export const SlideToAbout: React.FC<SlideToAboutProps> = ({
 							},
 						]}
 					>
-						<Animated.View
-							style={[
-								(Platform.OS as string) !== 'web' ? arrowAnimatedStyle : undefined,
-								(Platform.OS as string) === 'web' ? styles.arrowWeb : undefined,
-							]}
+						<RNAnimated.View
+							style={{
+								transform: [{ translateX: webArrowTranslateX }],
+							}}
 						>
-							<SlideArrow width={24} height={24} />
-						</Animated.View>
+							<SlideArrow width={20} height={20} />
+						</RNAnimated.View>
 					</View>
 				</Animated.View>
 			) : (
@@ -318,7 +329,7 @@ export const SlideToAbout: React.FC<SlideToAboutProps> = ({
 									(Platform.OS as string) === 'web' ? styles.arrowWeb : undefined,
 								]}
 							>
-								<SlideArrow width={24} height={24} />
+								<SlideArrow width={20} height={20} />
 							</Animated.View>
 						</View>
 					</Animated.View>
@@ -370,9 +381,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		gap: 5,
 	},
+	aboutText: {
+		fontFamily: 'Pretendard-Black',
+	},
 	logoContainer: {
-		width: 93,
-		height: 13,
+		width: 80,
+		height: 11,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

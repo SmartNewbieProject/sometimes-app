@@ -33,8 +33,8 @@ export const ToggleTab = ({
   onTabClick,
   style,
 }: ToggleTabProps) => {
-  const left = useSharedValue(activeTab === "liked-me" ? 5 : 88);
-  const width = useSharedValue(activeTab === "liked-me" ? 76 : 60);
+  const left = useSharedValue(activeTab === "liked-me" ? 5 : 100);
+  const width = useSharedValue(90);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -52,10 +52,10 @@ export const ToggleTab = ({
   useEffect(() => {
     if (activeTab === "liked-me") {
       left.value = withTiming(5, { duration: 300 });
-      width.value = withTiming(74, { duration: 300 });
+      width.value = withTiming(90, { duration: 300 });
     } else {
-      left.value = withTiming(86, { duration: 300 });
-      width.value = withTiming(58, { duration: 300 });
+      left.value = withTiming(100, { duration: 300 });
+      width.value = withTiming(90, { duration: 300 });
     }
   }, [activeTab]);
 
@@ -87,7 +87,7 @@ export const ToggleTab = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: 151,
+    width: 195,
     height: 50,
     borderRadius: 20,
     position: "relative",
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 15,
     width: "100%",
-    gap: 26,
+    gap: 15,
     justifyContent: "space-between",
     alignItems: "center",
   },

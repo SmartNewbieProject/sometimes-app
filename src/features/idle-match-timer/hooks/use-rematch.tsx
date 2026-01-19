@@ -17,6 +17,7 @@ import {
 } from "@/src/features/matching";
 import { logError } from "@/src/shared/utils";
 import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
+import { useGlobalLoading } from "@/src/shared/hooks/use-global-loading";
 
 const REMATCH_TIMEOUT = 30000;
 
@@ -52,6 +53,7 @@ function useRematch() {
   const { startExternalMatch, error: externalMatchError } = useExternalMatching();
   const { userRegion, matchAttempts, setCurrentMatch, setCurrentBadge } = useMatchingStore();
   const { matchingEvents } = useMixpanel();
+  const { disableGlobalLoading, enableGlobalLoading } = useGlobalLoading();
 
   // 외부 매칭 에러 처리
   useEffect(() => {
@@ -102,6 +104,7 @@ function useRematch() {
   };
 
   const performRematch = async () => {
+    disableGlobalLoading();
     await tryCatch(
       async () => {
         // KPI 이벤트: 매칭 시작 (재매칭)
@@ -111,10 +114,12 @@ function useRematch() {
         await rematch();
         finishLoading();
         finishRematching();
+        enableGlobalLoading();
       },
       (err) => {
         finishLoading();
         finishRematching();
+        enableGlobalLoading();
 
         // Forbidden - 재매칭 티켓 부족
         if (err.status === HttpStatusCode.Forbidden) {

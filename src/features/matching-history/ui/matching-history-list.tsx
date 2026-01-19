@@ -44,7 +44,7 @@ function MatchingHistoryList() {
         <View style={[styles.info, { flex: 1 }]}>
           <Image
             style={styles.image}
-            source={require("@assets/images/love-letter.png")}
+            source={require("@assets/images/love-letter.webp")}
           />
           <Text size="md" textColor={"purple"} style={styles.infoText}>
             {t(

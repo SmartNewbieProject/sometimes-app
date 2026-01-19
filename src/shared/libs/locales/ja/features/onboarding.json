@@ -1,7 +1,7 @@
 {
 	"slides": {
 		"welcome": {
-			"headline": "ようこそ! 👋\nサムタイムへようこそ",
+			"headline": "はじめまして! 👋\nサムタイムへようこそ",
 			"subtext": "同じ地域の大学生との\n安全でワクワクする出会いが始まります!"
 		},
 		"story": {
@@ -70,5 +70,17 @@
 		"apple_login": "Apple ログイン",
 		"typing_message1": "こんにちは！はじめまして ☺️",
 		"typing_message2": "私も○○好きです！"
+	},
+	"profile_photo": {
+		"title": "魅力的な写真を",
+		"subtitle": "アップロードしてください",
+		"guide_1": "顔がよく見える写真でお願いします",
+		"guide_2": "明るく鮮明な写真ほど良いです",
+		"required": "必須",
+		"recommended": "推奨",
+		"min_one_required": "最低1枚の写真をアップロードしてください",
+		"submit": "プロフィールを完成",
+		"uploading": "アップロード中...",
+		"back": "戻る"
 	}
 }

@@ -48,20 +48,11 @@ const formatRelativeTime = (stringDate: string) => {
   const hoursDiff = now.diff(stringDate, 'hours');
   const daysDiff = now.diff(stringDate, 'days');
 
-  const safeT = (key: string, fallback: string) => {
-    try {
-      const result = i18n.t(key);
-      return result.includes('{') ? fallback : result;
-    } catch {
-      return fallback;
-    }
-  };
-
-  if (secondsDiff < 0) return safeT("shareds.hooks.day.just_now", "방금 전");
-  if (secondsDiff < 60) return safeT("shareds.hooks.day.seconds_ago", `${secondsDiff}초 전`);
-  if (minutesDiff < 60) return safeT("shareds.hooks.day.minutes_ago", `${minutesDiff}분 전`);
-  if (hoursDiff < 24) return safeT("shareds.hooks.day.hours_ago", `${hoursDiff}시간 전`);
-  if (daysDiff < 8) return safeT("shareds.hooks.day.days_ago", `${daysDiff}일 전`);
+  if (secondsDiff < 0) return i18n.t("shareds.hooks.day.just_now");
+  if (secondsDiff < 60) return i18n.t("shareds.hooks.day.seconds_ago", { seconds: secondsDiff });
+  if (minutesDiff < 60) return i18n.t("shareds.hooks.day.minutes_ago", { minutes: minutesDiff });
+  if (hoursDiff < 24) return i18n.t("shareds.hooks.day.hours_ago", { hours: hoursDiff });
+  if (daysDiff < 8) return i18n.t("shareds.hooks.day.days_ago", { days: daysDiff });
   return target.format('MM/DD HH:mm');
 };
 

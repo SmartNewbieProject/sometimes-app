@@ -70,5 +70,17 @@
 		"apple_login": "애플 로그인",
 		"typing_message1": "안녕하세요! 반가워요 ☺️",
 		"typing_message2": "저도 OO 좋아해요!"
+	},
+	"profile_photo": {
+		"title": "매력적인 사진을",
+		"subtitle": "올려주세요",
+		"guide_1": "얼굴이 잘 보이는 사진으로 올려주세요",
+		"guide_2": "밝고 선명한 사진일수록 좋아요",
+		"required": "필수",
+		"recommended": "권장",
+		"min_one_required": "최소 1장의 사진을 올려주세요",
+		"submit": "프로필 완성하기",
+		"uploading": "업로드 중...",
+		"back": "이전"
 	}
 }

@@ -6,7 +6,6 @@ import { useSignupDaysReviewTrigger } from "@/src/features/in-app-review";
 import BannerSlide from "@/src/features/home/ui/banner-slide";
 import FirstPurchaseEvent from "@/src/features/home/ui/first-purchase-event-banner";
 import HomeInfoSection from "@/src/features/home/ui/home-info/home-info-section";
-import MatchingStatus from "@/src/features/home/ui/matching-status";
 import useLiked from "@/src/features/like/hooks/use-liked";
 import LikeCollapse from "@/src/features/like/ui/like-collapse";
 import NoneLikeBanner from "@/src/features/like/ui/none-like-banner";
@@ -27,9 +26,9 @@ import {
   BottomNavigation,
   BusinessInfo,
   Header,
-  PalePurpleGradient,
   Show,
- Text } from "@/src/shared/ui";
+  Text,
+} from "@/src/shared/ui";
 import { NotificationIcon } from "@/src/features/notification/ui/notification-icon";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { useAuth } from "@features/auth";
@@ -42,6 +41,7 @@ import { ImageResource } from "@ui/image-resource";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import Constants from 'expo-constants';
 
 const { ui, queries, hooks } = Home;
@@ -50,6 +50,8 @@ const {
   CommunityAnnouncement,
   ReviewSlide,
   TipAnnouncement,
+  ProfilePhotoCard,
+  InstagramVerificationCard,
 } = ui;
 const { usePreferenceSelfQuery } = queries;
 const { useRedirectPreferences } = hooks;
@@ -72,6 +74,13 @@ const HomeScreen = () => {
   const queryClient = useQueryClient();
   const { showCollapse } = useLiked();
   const collapse = showCollapse();
+
+  const hasProfileImages = profileDetails?.profileImages && profileDetails.profileImages.length > 0;
+  const hasCharacteristics = preferencesSelf && preferencesSelf.length > 0;
+  const hasPreferences = isPreferenceFill;
+  const showPreferenceGuide = !hasCharacteristics || !hasPreferences;
+  const showPhotoGuide = hasCharacteristics && hasPreferences && !hasProfileImages;
+
   // const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
   // const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
 
@@ -117,12 +126,15 @@ const HomeScreen = () => {
 
   useVersionUpdate();
 
-  // 화면이 포커스될 때마다 매칭 데이터 리프레시
+  // 화면이 포커스될 때마다 데이터 리프레시
   useFocusEffect(
     useCallback(() => {
       queryClient.invalidateQueries({
         queryKey: ["notification", "check-preference-fill", "latest-matching"],
         refetchType: "active",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["my-profile-details"],
       });
     }, [queryClient])
   );
@@ -133,6 +145,8 @@ const HomeScreen = () => {
     const hasPreferences = isPreferenceFill;
 
     const isProfileComplete = hasProfileImages && hasCharacteristics && hasPreferences;
+    const isOnboardingInfoComplete = hasCharacteristics && hasPreferences;
+
     if (onboardingLoading) {
       return (
         <View style={styles.matchingSection}>
@@ -149,17 +163,15 @@ const HomeScreen = () => {
       );
     }
 
-    return (
-      <View style={{ gap: 14 }}>
-        <HomeInfoSection />
-        <MatchingStatus />
-      </View>
-    );
+    if (isOnboardingInfoComplete && !hasProfileImages) {
+      return null;
+    }
+
+    return <HomeInfoSection />;
   };
 
   return (
     <View style={styles.container}>
-      <PalePurpleGradient />
       <VersionUpdateChecker />
       {/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
       <WelcomeRewardModal
@@ -198,9 +210,16 @@ const HomeScreen = () => {
             <NoneLikeBanner />
           )}
         </View>
+
+        <Show when={showPhotoGuide ?? false}>
+          <View style={styles.profilePhotoSection}>
+            <ProfilePhotoCard />
+            <InstagramVerificationCard />
+          </View>
+        </Show>
+
         <View style={styles.feedbackSection}>
-          <Feedback.WallaFeedbackBanner />
-          <Show when={!isPreferenceFill}>
+          <Show when={showPreferenceGuide}>
             <AnnounceCard
               emoji={ImageResources.DETAILS}
               emojiSize={{ width: 31, height: 28 }}
@@ -222,6 +241,8 @@ const HomeScreen = () => {
           <TipAnnouncement />
         </View>
 
+        <Feedback.WallaFeedbackBanner />
+
         <BusinessInfo />
 
         <View style={styles.versionContainer}>
@@ -239,6 +260,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: semanticColors.surface.background,
   },
   matchingSection: {
     marginTop: 14,
@@ -252,6 +274,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 14,
     paddingBottom: 20,
+  },
+  profilePhotoSection: {
+    marginTop: 14,
   },
   feedbackSection: {
     marginTop: 18,

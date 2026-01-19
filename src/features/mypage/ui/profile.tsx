@@ -127,7 +127,7 @@ export const Profile = () => {
                   opacity: pressed ? 0.7 : 1,
                 },
               ]}
-              onPress={() => router.push('/profile/photo-management')}
+              onPress={() => router.push('/profile/photo-management?referrer=mypage')}
             >
               <Image
                 key={profileData.profileImage || ""}

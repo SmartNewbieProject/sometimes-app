@@ -30,8 +30,6 @@ export default function SignupLayout() {
 	const titleMap = {
 		[SignupSteps.UNIVERSITY]: t('apps.auth.sign_up.select_university'),
 		[SignupSteps.UNIVERSITY_DETAIL]: t('apps.auth.sign_up.select_university_detail'),
-		[SignupSteps.INSTAGRAM]: t('apps.auth.sign_up.instageam'),
-		[SignupSteps.PROFILE_IMAGE]: t('apps.auth.sign_up.Profile_image'),
 		[SignupSteps.INVITE_CODE]: t('apps.auth.sign_up.invite_code.title'),
 	};
 
@@ -107,8 +105,7 @@ export default function SignupLayout() {
 						/>
 						<Stack.Screen name="university-cluster" options={{ headerShown: false }} />
 						<Stack.Screen name="university-details" options={{ headerShown: false }} />
-						<Stack.Screen name="instagram" options={{ headerShown: false }} />
-						<Stack.Screen name="profile-image" options={{ headerShown: false }} />
+						<Stack.Screen name="invite-code" options={{ headerShown: false }} />
 						<Stack.Screen name="done" options={{ headerShown: false }} />
 					</Stack>
 				</Suspense>

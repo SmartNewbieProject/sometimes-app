@@ -1,6 +1,23 @@
 {
-  "common": {
-    "닫기": "[EN] 닫기",
-    "구슬_받기": "[EN] 구슬 받기"
-  }
+	"common": {
+		"닫기": "[EN] 닫기",
+		"구슬_받기": "[EN] 구슬 받기"
+	},
+	"roulette": {
+		"header_title": "Daily Roulette",
+		"top_title": "Today's",
+		"bottom_title": "Lucky Roulette",
+		"description": "Try your <strong>luck</strong> <strong>today</strong>!",
+		"description_luck": "luck",
+		"description_try": "today",
+		"description_parts": {
+			"prefix": "Try your ",
+			"luck": "luck",
+			"middle": " ",
+			"try": "today",
+			"suffix": "!"
+		},
+		"start_button": "START",
+		"result_zero": "Better luck next time!"
+	}
 }

@@ -1,33 +1,33 @@
 {
-  "ui": {
-    "header_title": "以前見た相手",
-    "gem_unit": "個",
-    "matching_history_list": {
-      "more_matches_prompt": "もっと相手を探してみませんか？",
-      "use_rematch_hint": "今すぐチケットを使って、新しい出会いを見つけましょう！"
-    },
-    "history_collapse": {
-      "title": "もしかすると、見逃した",
-      "title_2": "相手",
-      "title_3": "がいるかもしれません",
-      "description_1": "以前見た相手の中にも、あなたにぴったりの人がいるかも",
-      "description_2": "もう一度見たら、新しい出会いが見つかるかもしれません"
-    },
-    "matching_history_card": {
-      "modal_title": "以前出会った方に再び連絡するために、ジェム{{cost}}個を使いますか？",
-      "modal_description": "時間がたっても気になる相手には、勇気を出してメッセージを送ってみましょう。",
-      "profile_unlock_button": "プロフィール\n開放",
-      "more_button": "プロフィール\n閲覧",
-      "last_login_label": "最終ログイン",
-      "messages": {
-        "error_insufficient_gems": "残りのジェムが足りません",
-        "modal_recharge_prompt": "今すぐチャージして、気になる相手との会話を始めましょう！"
-      }
-    }
-  },
-  "common": {
-    "재화가_부족": "[JA] 재화가 부족",
-    "구슬이_부족": "[JA] 구슬이 부족",
-    "오류가_발생했어요": "[JA] 오류가 발생했어요"
-  }
+	"ui": {
+		"header_title": "以前見た相手",
+		"gem_unit": "個",
+		"matching_history_list": {
+			"more_matches_prompt": "もっと相手を探してみませんか？",
+			"use_rematch_hint": "今すぐチケットを使って、新しい出会いを見つけましょう！"
+		},
+		"history_collapse": {
+			"title": "もしかすると、見逃した",
+			"title_2": "相手",
+			"title_3": "がいるかもしれません",
+			"description_1": "以前見た相手の中にも、あなたにぴったりの人がいるかも",
+			"description_2": "もう一度見たら、新しい出会いが見つかるかもしれません"
+		},
+		"matching_history_card": {
+			"modal_title": "以前出会った方に再び連絡するために、ジェム{{cost}}個を使いますか？",
+			"modal_description": "時間がたっても気になる相手には、勇気を出してメッセージを送ってみましょう。",
+			"profile_unlock_button": "プロフィール\n開放",
+			"more_button": "プロフィール\n閲覧",
+			"last_login_label": "最終ログイン",
+			"messages": {
+				"error_insufficient_gems": "残りのジェムが足りません",
+				"modal_recharge_prompt": "今すぐチャージして、気になる相手との会話を始めましょう！"
+			}
+		}
+	},
+	"common": {
+		"재화가_부족": "[JA] 재화가 부족",
+		"구슬이_부족": "[JA] 구슬이 부족",
+		"오류가_발생했어요": "[JA] 오류가 발생했어요"
+	}
 }

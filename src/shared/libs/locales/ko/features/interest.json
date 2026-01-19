@@ -1,55 +1,55 @@
 {
-  "ui": {
-    "age-selector": {
-      "select": "선택"
-    },
-    "loading": {
-      "loading_options": "옵션을 불러오고 있어요"
-    }
-  },
-  "preference_keys": {
-    "age": "선호 나이대",
-    "drinking": "음주 선호도",
-    "smoking": "흡연 선호도",
-    "personality": "성격",
-    "interest": "관심사",
-    "dating_style": "연애 스타일",
-    "military_preference": "군필 여부 선호도",
-    "good_mbti": "좋아하는 MBTI",
-    "bad_mbti": "싫어하는 MBTI",
-    "military_status": "군필 여부",
-    "tattoo": "문신 선호도"
-  },
-  "age_labels": {
-    "same_age": "동갑",
-    "younger": "연하",
-    "older": "연상"
-  },
-  "validation": {
-    "required_fields": "다음 정보를 입력해주세요: {{fields}}",
-    "field_labels": {
-      "preferred_age": "선호 나이",
-      "drinking": "음주",
-      "smoking": "흡연",
-      "personality": "성격",
-      "military": "군필 여부",
-      "tattoo": "문신",
-      "dating_style": "데이트 스타일",
-      "interest": "관심사"
-    }
-  },
-  "errors": {
-    "save_failed": "선호 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요."
-  },
-  "common": {
-    "선호_나이대": "선호 나이대",
-    "음주_선호도": "음주 선호도",
-    "흡연_선호도": "흡연 선호도",
-    "성격": "성격",
-    "관심사": "관심사",
-    "연애_스타일": "연애 스타일",
-    "군필_여부_선호도": "군필 여부 선호도",
-    "군필_여부": "군필 여부",
-    "문신_선호도": "문신 선호도"
-  }
+	"ui": {
+		"age-selector": {
+			"select": "선택"
+		},
+		"loading": {
+			"loading_options": "옵션을 불러오고 있어요"
+		}
+	},
+	"preference_keys": {
+		"age": "선호 나이대",
+		"drinking": "음주 선호도",
+		"smoking": "흡연 선호도",
+		"personality": "성격",
+		"interest": "관심사",
+		"dating_style": "연애 스타일",
+		"military_preference": "군필 여부 선호도",
+		"good_mbti": "좋아하는 MBTI",
+		"bad_mbti": "싫어하는 MBTI",
+		"military_status": "군필 여부",
+		"tattoo": "문신 선호도"
+	},
+	"age_labels": {
+		"same_age": "동갑",
+		"younger": "연하",
+		"older": "연상"
+	},
+	"validation": {
+		"required_fields": "다음 정보를 입력해주세요: {{fields}}",
+		"field_labels": {
+			"preferred_age": "선호 나이",
+			"drinking": "음주",
+			"smoking": "흡연",
+			"personality": "성격",
+			"military": "군필 여부",
+			"tattoo": "문신",
+			"dating_style": "데이트 스타일",
+			"interest": "관심사"
+		}
+	},
+	"errors": {
+		"save_failed": "선호 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요."
+	},
+	"common": {
+		"선호_나이대": "선호 나이대",
+		"음주_선호도": "음주 선호도",
+		"흡연_선호도": "흡연 선호도",
+		"성격": "성격",
+		"관심사": "관심사",
+		"연애_스타일": "연애 스타일",
+		"군필_여부_선호도": "군필 여부 선호도",
+		"군필_여부": "군필 여부",
+		"문신_선호도": "문신 선호도"
+	}
 }

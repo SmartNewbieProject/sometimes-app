@@ -1,18 +1,18 @@
 {
-  "index": {
-    "title": "Notifications",
-    "back_button_label": "Back",
-    "menu_mark_all_read": "Mark All as Read",
-    "menu_delete_all_read": "Delete Read Notifications",
-    "modal_mark_all_read_title": "Mark All Notifications as Read",
-    "modal_mark_all_read_desc": "Do you want to mark all notifications as read?",
-    "modal_delete_all_read_title": "Delete Read Notifications",
-    "modal_delete_all_read_desc": "Do you want to delete all read notifications?",
-    "modal_confirm": "Confirm",
-    "modal_cancel": "Cancel",
-    "error_invalid_link_title": "Notification Error",
-    "error_invalid_link_desc": "Invalid notification link.",
-    "error_invalid_article_title": "Notification Error",
-    "error_invalid_article_desc": "Invalid article."
-  }
+	"index": {
+		"title": "Notifications",
+		"back_button_label": "Back",
+		"menu_mark_all_read": "Mark All as Read",
+		"menu_delete_all_read": "Delete Read Notifications",
+		"modal_mark_all_read_title": "Mark All Notifications as Read",
+		"modal_mark_all_read_desc": "Do you want to mark all notifications as read?",
+		"modal_delete_all_read_title": "Delete Read Notifications",
+		"modal_delete_all_read_desc": "Do you want to delete all read notifications?",
+		"modal_confirm": "Confirm",
+		"modal_cancel": "Cancel",
+		"error_invalid_link_title": "Notification Error",
+		"error_invalid_link_desc": "Invalid notification link.",
+		"error_invalid_article_title": "Notification Error",
+		"error_invalid_article_desc": "Invalid article."
+	}
 }

@@ -23,7 +23,7 @@ export function BlurredPhotoCard({
   const { t } = useTranslation();
 
   const handleAddPhotoPress = () => {
-    router.push('/profile/photo-management');
+    router.push('/profile/photo-management?referrer=home');
   };
 
   const sizeStyles = {

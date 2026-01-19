@@ -22,7 +22,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta property="og:description" content="4,000명+ 대학생이 선택한 소개팅 앱. AI 이상형 매칭으로 같은 지역 대학생과 설레는 만남을 시작하세요." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://some-in-univ.com" />
-        <meta property="og:image" content="https://some-in-univ.com/opengraph.png" />
+        <meta property="og:image" content="https://some-in-univ.com/opengraph.webp" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:site_name" content="썸타임" />
@@ -32,7 +32,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="썸타임 - 대학생 소개팅 앱" />
         <meta name="twitter:description" content="대학생 연애의 시작, 썸타임. AI 매칭으로 이상형 대학생을 만나보세요." />
-        <meta name="twitter:image" content="https://some-in-univ.com/opengraph.png" />
+        <meta name="twitter:image" content="https://some-in-univ.com/opengraph.webp" />
 
         {/* 추가 SEO 메타 */}
         <meta name="robots" content="index, follow" />
@@ -41,29 +41,31 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#8B5CF6" />
 
         {/* JSON-LD 구조화 데이터 */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "MobileApplication",
-          "name": "썸타임",
-          "description": "대학생을 위한 AI 소개팅 매칭 앱. 같은 지역 대학생과 설레는 연애를 시작하세요.",
-          "applicationCategory": "SocialNetworkingApplication",
-          "operatingSystem": "iOS, Android",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "KRW"
-          },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "ratingCount": "500"
-          },
-          "author": {
-            "@type": "Organization",
-            "name": "스마트 뉴비",
-            "url": "https://some-in-univ.com"
-          }
-        })}} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "MobileApplication",
+            "name": "썸타임",
+            "description": "대학생을 위한 AI 소개팅 매칭 앱. 같은 지역 대학생과 설레는 연애를 시작하세요.",
+            "applicationCategory": "SocialNetworkingApplication",
+            "operatingSystem": "iOS, Android",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "KRW"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "500"
+            },
+            "author": {
+              "@type": "Organization",
+              "name": "스마트 뉴비",
+              "url": "https://some-in-univ.com"
+            }
+          })
+        }} />
 
         {/* DNS Prefetch & Preconnect for faster resource loading */}
         <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
@@ -126,32 +128,31 @@ export default function Root({ children }: { children: React.ReactNode }) {
                 font-weight: 600;
               }
 
-              /* 웹 폰트 매핑 - font-display: swap 추가 */
-              @font-face { font-family: 'Pretendard-Thin'; src: local('Pretendard Variable'); font-weight: 100; font-display: swap; }
-              @font-face { font-family: 'Pretendard-ExtraLight'; src: local('Pretendard Variable'); font-weight: 200; font-display: swap; }
-              @font-face { font-family: 'Pretendard-Light'; src: local('Pretendard Variable'); font-weight: 300; font-display: swap; }
-              @font-face { font-family: 'Pretendard-Regular'; src: local('Pretendard Variable'); font-weight: 400; font-display: swap; }
-              @font-face { font-family: 'Pretendard-Medium'; src: local('Pretendard Variable'); font-weight: 500; font-display: swap; }
-              @font-face { font-family: 'Pretendard-SemiBold'; src: local('Pretendard Variable'); font-weight: 600; font-display: swap; }
-              @font-face { font-family: 'Pretendard-Bold'; src: local('Pretendard Variable'); font-weight: 700; font-display: swap; }
-              @font-face { font-family: 'Pretendard-ExtraBold'; src: local('Pretendard Variable'); font-weight: 800; font-display: swap; }
-              @font-face { font-family: 'Pretendard-Black'; src: local('Pretendard Variable'); font-weight: 900; font-display: swap; }
-              @font-face { font-family: 'Rubik'; src: local('Rubik'); font-weight: 400; font-display: swap; }
-              @font-face { font-family: 'Rubik-Light'; src: local('Rubik'); font-weight: 300; font-display: swap; }
-              @font-face { font-family: 'Rubik-Medium'; src: local('Rubik'); font-weight: 500; font-display: swap; }
-              @font-face { font-family: 'Rubik-SemiBold'; src: local('Rubik'); font-weight: 600; font-display: swap; }
-              @font-face { font-family: 'Rubik-Bold'; src: local('Rubik'); font-weight: 700; font-display: swap; }
-              @font-face { font-family: 'MPLUS1p-Thin'; src: local('M PLUS 1p'); font-weight: 100; font-display: swap; }
-              @font-face { font-family: 'MPLUS1p-Light'; src: local('M PLUS 1p'); font-weight: 300; font-display: swap; }
-              @font-face { font-family: 'MPLUS1p-Regular'; src: local('M PLUS 1p'); font-weight: 400; font-display: swap; }
-              @font-face { font-family: 'MPLUS1p-Medium'; src: local('M PLUS 1p'); font-weight: 500; font-display: swap; }
-              @font-face { font-family: 'MPLUS1p-Bold'; src: local('M PLUS 1p'); font-weight: 700; font-display: swap; }
-              @font-face { font-family: 'MPLUS1p-ExtraBold'; src: local('M PLUS 1p'); font-weight: 800; font-display: swap; }
-              @font-face { font-family: 'MPLUS1p-Black'; src: local('M PLUS 1p'); font-weight: 900; font-display: swap; }
-              @font-face { font-family: 'Gmarket-Sans-Light'; src: local('GmarketSans'); font-weight: 300; font-display: swap; }
-              @font-face { font-family: 'Gmarket-Sans-Medium'; src: local('GmarketSans'); font-weight: 500; font-display: swap; }
-              @font-face { font-family: 'Gmarket-Sans-Bold'; src: local('GmarketSans'); font-weight: 700; font-display: swap; }
-              @font-face { font-family: 'StyleScript'; src: local('StyleScript'), local('cursive'); font-display: swap; }
+              /* Pretendard Variable - CDN에서 직접 로드 */
+              @font-face { font-family: 'Pretendard-Thin'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 100; font-display: swap; }
+              @font-face { font-family: 'Pretendard-ExtraLight'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 200; font-display: swap; }
+              @font-face { font-family: 'Pretendard-Light'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 300; font-display: swap; }
+              @font-face { font-family: 'Pretendard-Regular'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+              @font-face { font-family: 'Pretendard-Medium'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+              @font-face { font-family: 'Pretendard-SemiBold'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+              @font-face { font-family: 'Pretendard-Bold'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+              @font-face { font-family: 'Pretendard-ExtraBold'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 800; font-display: swap; }
+              @font-face { font-family: 'Pretendard-Black'; src: url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+
+              /* M PLUS 1p - Google Fonts에서 로드됨 (위 link 태그) */
+              @font-face { font-family: 'MPLUS1p-Thin'; src: local('M PLUS 1p Thin'), local('MPLUS1p-Thin'); font-weight: 100; font-display: swap; }
+              @font-face { font-family: 'MPLUS1p-Light'; src: local('M PLUS 1p Light'), local('MPLUS1p-Light'); font-weight: 300; font-display: swap; }
+              @font-face { font-family: 'MPLUS1p-Regular'; src: local('M PLUS 1p Regular'), local('MPLUS1p-Regular'); font-weight: 400; font-display: swap; }
+              @font-face { font-family: 'MPLUS1p-Medium'; src: local('M PLUS 1p Medium'), local('MPLUS1p-Medium'); font-weight: 500; font-display: swap; }
+              @font-face { font-family: 'MPLUS1p-Bold'; src: local('M PLUS 1p Bold'), local('MPLUS1p-Bold'); font-weight: 700; font-display: swap; }
+              @font-face { font-family: 'MPLUS1p-ExtraBold'; src: local('M PLUS 1p ExtraBold'), local('MPLUS1p-ExtraBold'); font-weight: 800; font-display: swap; }
+              @font-face { font-family: 'MPLUS1p-Black'; src: local('M PLUS 1p Black'), local('MPLUS1p-Black'); font-weight: 900; font-display: swap; }
+
+              /* Gmarket Sans, StyleScript - 로컬 폴백 */
+              @font-face { font-family: 'Gmarket-Sans-Light'; src: url('/assets/fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight: 300; font-display: swap; }
+              @font-face { font-family: 'Gmarket-Sans-Medium'; src: url('/assets/fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
+              @font-face { font-family: 'Gmarket-Sans-Bold'; src: url('/assets/fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+              @font-face { font-family: 'StyleScript'; src: url('/assets/fonts/StyleScript-Regular.ttf') format('truetype'); font-display: swap; }
             `,
           }}
         />

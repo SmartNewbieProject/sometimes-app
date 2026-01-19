@@ -26,7 +26,7 @@ export default function ProfileImageCover({
   if (!visible) return null;
 
   const handlePress = () => {
-    router.push('/profile/photo-management');
+    router.push('/profile/photo-management?referrer=profile-edit');
   };
 
   return (

@@ -1,0 +1,27 @@
+{
+	"ui": {
+		"button": {
+			"contact": "Contact"
+		}
+	},
+	"verify": {
+		"header_title": "Verify Instagram Account",
+		"title": "Please tell us your Instagram ID",
+		"description": "This helps prevent fake profiles and spam for safer connections.",
+		"placeholder": "Enter your ID",
+		"privacy_note": "Your ID won't be shared with others!",
+		"submit_button": "Complete Verification",
+		"success_title": "Verification Complete",
+		"success_message": "Your Instagram ID has been registered.",
+		"success_rewarded_title": "Congratulations!",
+		"success_rewarded_message": "Instagram verified! You received 10 gems.",
+		"error_message": "Failed to register Instagram ID. Please try again."
+	},
+	"services": {
+		"alert_title": "Alert",
+		"no_instagram_id": "No Instagram ID found.",
+		"error_title": "Error",
+		"connection_error": "Unable to connect to Instagram.",
+		"confirm": "OK"
+	}
+}

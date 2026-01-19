@@ -28,6 +28,29 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	SIGNUP_PHONE_BLACKLIST_FAILED: 'Signup_PhoneBlacklist_Failed',
 	SIGNUP_ERROR: 'Signup_Error',
 
+	// 인증 퍼널 상세 추적 (2025-01-10 추가)
+	// 외부 앱 이동/복귀 추적
+	AUTH_EXTERNAL_APP_OPENED: 'Auth_External_App_Opened',
+	AUTH_EXTERNAL_APP_RETURNED: 'Auth_External_App_Returned',
+	AUTH_EXTERNAL_APP_NOT_RETURNED: 'Auth_External_App_Not_Returned',
+
+	// 본인인증 완료
+	SIGNUP_IDENTITY_VERIFICATION_COMPLETED: 'Signup_IdentityVerification_Completed',
+
+	// 인증 방법 선택/변경
+	AUTH_METHOD_SELECTED: 'Auth_Method_Selected',
+	AUTH_METHOD_SWITCHED: 'Auth_Method_Switched',
+
+	// 인증 재시도
+	AUTH_RETRY_ATTEMPTED: 'Auth_Retry_Attempted',
+
+	// 차단 원인 상세
+	SIGNUP_AGE_RESTRICTION_BLOCKED: 'Signup_Age_Restriction_Blocked',
+	SIGNUP_BLACKLIST_BLOCKED: 'Signup_Blacklist_Blocked',
+
+	// 인증 에러 상세
+	AUTH_VERIFICATION_ERROR: 'Auth_Verification_Error',
+
 	// 관심사/프로필 관련
 	INTEREST_HOLD: 'Interest_Hold',
 	INTEREST_STARTED: 'Interest_Started',
@@ -411,6 +434,56 @@ export interface AuthLoginAbandonedEventProperties extends BaseEventProperties {
 	time_spent_seconds?: number;
 	is_retry?: boolean;
 	retry_count?: number;
+}
+
+// 외부 앱 이동/복귀 이벤트 속성
+export interface AuthExternalAppEventProperties extends BaseEventProperties {
+	auth_method: AuthMethod;
+	timestamp?: number;
+	time_away_seconds?: number;
+	returned_with_result?: boolean;
+	last_step?: string;
+}
+
+// 본인인증 완료 이벤트 속성
+export interface IdentityVerificationCompletedEventProperties extends BaseEventProperties {
+	auth_method: AuthMethod;
+	duration_seconds?: number;
+	carrier?: string;
+	platform?: 'ios' | 'android' | 'web';
+}
+
+// 인증 방법 선택/변경 이벤트 속성
+export interface AuthMethodEventProperties extends BaseEventProperties {
+	auth_method: AuthMethod;
+	is_retry?: boolean;
+	retry_count?: number;
+	from_method?: AuthMethod;
+	to_method?: AuthMethod;
+	switch_reason?: 'failure' | 'user_choice';
+	previous_failure_reason?: string;
+}
+
+// 나이 제한 차단 이벤트 속성
+export interface AgeRestrictionBlockedEventProperties extends BaseEventProperties {
+	birth_year?: number;
+	calculated_age?: number;
+	auth_method?: AuthMethod;
+}
+
+// 블랙리스트 차단 이벤트 속성
+export interface BlacklistBlockedEventProperties extends BaseEventProperties {
+	auth_method?: AuthMethod;
+	block_reason?: string;
+}
+
+// 인증 에러 상세 이벤트 속성
+export interface AuthVerificationErrorEventProperties extends BaseEventProperties {
+	auth_method: AuthMethod;
+	error_type: 'network' | 'timeout' | 'app_not_installed' | 'carrier_error' | 'certificate_expired' | 'user_cancelled' | 'unknown';
+	error_code?: string;
+	error_message?: string;
+	platform?: 'ios' | 'android' | 'web';
 }
 
 // 회원 탈퇴 이벤트 속성

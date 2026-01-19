@@ -1,110 +1,110 @@
 {
-  "tabs": {
-    "profile": "マイプロフィール",
-    "interest": "理想のタイプ"
-  },
-  "ui": {
-    "save_button": "保存",
-    "profile_image_cover": {
-      "default_title": "プロフィール審査中です",
-      "default_subtitle": "現在プロフィールを審査中です\n審査完了後、写真の編集が可能になります"
-    },
-    "validation": {
-      "empty_form": "未入力の項目があります。"
-    },
-    "header": {
-      "modal_title": "編集中の内容があります",
-      "modal_description": "今離れると入力中の内容はすべて失われます。\n本当に退出しますか？",
-      "modal_primary_button": "編集を続ける",
-      "modal_secondary_button": "退出する",
-      "title": "プロフィール編集",
-      "gem":"ジェムが",
-      "gem_unit":"{{count}}個",
-      "gem_left":"残っています",
-      "university_verification":"学校認証"
-    },
-    "interest": {
-      "age": {
-        "title": "希望年齢層",
-        "loading": "希望年齢層のオプションを読み込み中です"
-      },
-      "bad_mbti": {
-        "title": "苦手なMBTI",
-        "no_preference": "こだわらない"
-      },
-      "drinking": {
-        "title": "飲酒の好み",
-        "loading": "飲酒の好みを読み込み中です"
-      },
-      "good_mbti": {
-        "title": "好きなMBTI",
-        "no_preference": "こだわらない"
-      },
-      "military": {
-        "title": "兵役経験の希望",
-        "loading": "オプションを読み込み中です"
-      },
-      "personality": {
-        "title": "理想の性格",
-        "loading": "性格タイプを読み込み中です"
-      },
-      "smoking": {
-        "title": "喫煙の好み",
-        "loading": "喫煙に関するオプションを読み込み中です"
-      },
-      "tattoo": {
-        "title": "タトゥーの好み",
-        "loading": "タトゥーに関するオプションを読み込み中です",
-        "no_tattoo": "タトゥーなし",
-        "small_tattoo": "小さなタトゥー"
-      }
-    },
-    "profile": {
-      "dating_style": {
-        "title": "恋愛スタイル",
-        "loading": "関心事項を読み込み中です"
-      },
-      "drinking": {
-        "title": "飲酒頻度",
-        "loading": "飲酒に関する情報を読み込み中です",
-        "not_drinking_at_all_old": "全く飲まない",
-        "not_drinking_at_all": "全く飲まない"
-      },
-      "image_card": {
-        "add_photo": "写真を追加する",
-        "main": "メイン",
-        "select": "選択"
-      },
-      "image_section": {
-        "title": "プロフィール写真"
-      },
-      "interest": {
-        "title": "関心事",
-        "loading": "関心事項を読み込み中です"
-      },
-      "mbti": {
-        "title": "MBTI"
-      },
-      "military": {
-        "title": "兵役状況",
-        "loading": "オプションを読み込み中です"
-      },
-      "personality": {
-        "title": "性格タイプ",
-        "loading": "性格タイプを読み込み中です"
-      },
-      "smoking": {
-        "title": "喫煙有無",
-        "loading": "喫煙に関する情報を読み込み中です"
-      },
-      "tattoo": {
-        "title": "タトゥー有無",
-        "loading": "希望を読み込み中です"
-      }
-    }
-  },
-  "errors": {
-    "save_failed": "プロフィールの保存に失敗しました。しばらくしてから再度お試しください。",
-    "validation_failed": "必須情報をすべて入力してください。"
-  }
+	"tabs": {
+		"profile": "マイプロフィール",
+		"interest": "理想のタイプ"
+	},
+	"ui": {
+		"save_button": "保存",
+		"profile_image_cover": {
+			"default_title": "プロフィール審査中です",
+			"default_subtitle": "現在プロフィールを審査中です\n審査完了後、写真の編集が可能になります"
+		},
+		"validation": {
+			"empty_form": "未入力の項目があります。"
+		},
+		"header": {
+			"modal_title": "編集中の内容があります",
+			"modal_description": "今離れると入力中の内容はすべて失われます。\n本当に退出しますか？",
+			"modal_primary_button": "編集を続ける",
+			"modal_secondary_button": "退出する",
+			"title": "プロフィール編集",
+			"gem": "ジェムが",
+			"gem_unit": "{{count}}個",
+			"gem_left": "残っています",
+			"university_verification": "学校認証"
+		},
+		"interest": {
+			"age": {
+				"title": "希望年齢層",
+				"loading": "希望年齢層のオプションを読み込み中です"
+			},
+			"bad_mbti": {
+				"title": "苦手なMBTI",
+				"no_preference": "こだわらない"
+			},
+			"drinking": {
+				"title": "飲酒の好み",
+				"loading": "飲酒の好みを読み込み中です"
+			},
+			"good_mbti": {
+				"title": "好きなMBTI",
+				"no_preference": "こだわらない"
+			},
+			"military": {
+				"title": "兵役経験の希望",
+				"loading": "オプションを読み込み中です"
+			},
+			"personality": {
+				"title": "理想の性格",
+				"loading": "性格タイプを読み込み中です"
+			},
+			"smoking": {
+				"title": "喫煙の好み",
+				"loading": "喫煙に関するオプションを読み込み中です"
+			},
+			"tattoo": {
+				"title": "タトゥーの好み",
+				"loading": "タトゥーに関するオプションを読み込み中です",
+				"no_tattoo": "タトゥーなし",
+				"small_tattoo": "小さなタトゥー"
+			}
+		},
+		"profile": {
+			"dating_style": {
+				"title": "恋愛スタイル",
+				"loading": "関心事項を読み込み中です"
+			},
+			"drinking": {
+				"title": "飲酒頻度",
+				"loading": "飲酒に関する情報を読み込み中です",
+				"not_drinking_at_all_old": "全く飲まない",
+				"not_drinking_at_all": "全く飲まない"
+			},
+			"image_card": {
+				"add_photo": "写真を追加する",
+				"main": "メイン",
+				"select": "選択"
+			},
+			"image_section": {
+				"title": "プロフィール写真"
+			},
+			"interest": {
+				"title": "関心事",
+				"loading": "関心事項を読み込み中です"
+			},
+			"mbti": {
+				"title": "MBTI"
+			},
+			"military": {
+				"title": "兵役状況",
+				"loading": "オプションを読み込み中です"
+			},
+			"personality": {
+				"title": "性格タイプ",
+				"loading": "性格タイプを読み込み中です"
+			},
+			"smoking": {
+				"title": "喫煙有無",
+				"loading": "喫煙に関する情報を読み込み中です"
+			},
+			"tattoo": {
+				"title": "タトゥー有無",
+				"loading": "希望を読み込み中です"
+			}
+		}
+	},
+	"errors": {
+		"save_failed": "プロフィールの保存に失敗しました。しばらくしてから再度お試しください。",
+		"validation_failed": "必須情報をすべて入力してください。"
+	}
 }

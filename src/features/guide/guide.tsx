@@ -30,7 +30,7 @@ function Guide({ isVisible, handleClose, children, height = 120 }: GuideProps) {
         <View style={[styles.boxContainer, { height }]}>
           {children}
           <Image
-            source={require("@assets/images/guide-miho.png")}
+            source={require("@assets/images/guide-miho.webp")}
             style={styles.image}
           />
         </View>

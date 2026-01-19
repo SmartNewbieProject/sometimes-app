@@ -21,14 +21,14 @@ function PromotionBanner() {
         <Text style={styles.sub}>당신과 친구 모두에게</Text>
         <View style={styles.invite}>
           <Image
-            source={require("@assets/images/promotion/banner/letter.png")}
+            source={require("@assets/images/promotion/banner/letter.webp")}
             style={styles.letter}
           />
           <DownArrowIcon />
           <Text style={styles.inviteText}>초대하러 가기</Text>
         </View>
         <Image
-          source={require("@assets/images/promotion/banner/coupon-miho.png")}
+          source={require("@assets/images/promotion/banner/coupon-miho.webp")}
           style={[
             styles.couponMiho,
             Dimensions.get("window").width < 390
@@ -49,7 +49,7 @@ function PromotionBanner() {
 
 const BACKGROUND_IMAGES = [
   {
-    source: require("@assets/images/promotion/banner/particle-top-left.png"),
+    source: require("@assets/images/promotion/banner/particle-top-left.webp"),
     name: "particleTopLeft",
     style: {
       width: 198,
@@ -59,7 +59,7 @@ const BACKGROUND_IMAGES = [
     },
   },
   {
-    source: require("@assets/images/promotion/banner/particle-top-right.png"),
+    source: require("@assets/images/promotion/banner/particle-top-right.webp"),
     name: "particleTopRight",
     style: {
       width: 216,
@@ -69,7 +69,7 @@ const BACKGROUND_IMAGES = [
     },
   },
   {
-    source: require("@assets/images/promotion/banner/particle-bottom-left.png"),
+    source: require("@assets/images/promotion/banner/particle-bottom-left.webp"),
     name: "particleBottomLeft",
     style: {
       width: 180,
@@ -79,7 +79,7 @@ const BACKGROUND_IMAGES = [
     },
   },
   {
-    source: require("@assets/images/promotion/banner/particle-bottom-middle.png"),
+    source: require("@assets/images/promotion/banner/particle-bottom-middle.webp"),
     name: "particleBottomMiddle",
     style: {
       width: 232,
@@ -89,7 +89,7 @@ const BACKGROUND_IMAGES = [
     },
   },
   {
-    source: require("@assets/images/promotion/banner/particle-bottom-right.png"),
+    source: require("@assets/images/promotion/banner/particle-bottom-right.webp"),
     name: "particleBottomRight",
     style: {
       width: 80,

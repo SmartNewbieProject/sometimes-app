@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   containerStart: {
     justifyContent: 'flex-start',
@@ -149,26 +149,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonPaddingWeb: {
-    paddingVertical: 4,
-    paddingHorizontal: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 14,
   },
   buttonPaddingNative: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 19,
   },
   buttonBorderRadius: {
-    borderRadius: 12,
+    borderRadius: 14,
   },
   chipImage: {
-    width: 16,
-    height: 16,
-    marginRight: 4,
+    width: 19,
+    height: 19,
+    marginRight: 5,
     alignSelf: 'center',
   },
   chipLabel: {
-    fontSize: 13,
+    fontSize: 16,
     fontFamily: 'Pretendard-SemiBold',
-    lineHeight: 16,
+    lineHeight: 19,
     alignSelf: 'center',
   },
 });

@@ -10,10 +10,10 @@ export const MomentHeader = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top + 12 }]}>
       <Image
-        source={require("@/assets/images/moment/moment-logo.png")}
+        source={require("@/assets/images/moment/moment-logo.webp")}
         style={styles.logo}
         contentFit="contain"
-        defaultSource={require("@/assets/images/moment/moment-logo.png")}
+        defaultSource={require("@/assets/images/moment/moment-logo.webp")}
       />
     </View>
   );

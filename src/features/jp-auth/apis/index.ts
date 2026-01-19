@@ -55,8 +55,6 @@ export const jpSignup = async (data: JpSignupRequest): Promise<JpSignupResponse>
   formData.append('age', data.age.toString());
   formData.append('universityId', data.universityId);
   formData.append('departmentName', data.departmentName);
-  formData.append('grade', data.grade);
-  formData.append('studentNumber', data.studentNumber);
 
   if (data.mainImageIndex !== undefined) {
     formData.append('mainImageIndex', data.mainImageIndex.toString());

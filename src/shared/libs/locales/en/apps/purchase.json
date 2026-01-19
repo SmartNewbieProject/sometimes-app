@@ -1,35 +1,35 @@
 {
-  "gem_store": {
-    "gem": "Gem",
-    "error_alert_title": "Error",
-    "error_alert_message": "An error occurred during payment processing.",
-    "payment_error_console": "Payment error:",
-    "payment_error_debug": "New orderId generated on payment error:",
-    "title": "Buy Gems",
-    "product_name": "Gem",
-    "loading_gems": "Loading gem products...",
-    "failed_to_load_gems": "Failed to load gem products."
-  },
-  "complete": {
-    "processing_payment": "Processing payment..."
-  },
-  "rematch": {
-    "rematch_ticket_name": "Partner Match Ticket",
-    "error_alert_message": "An error occurred during payment processing.",
-    "purchase_count_tracking": "Purchase_Count"
-  },
-  "tickets": {
-    "rematch": {
-      "rematch_ticket_name": "Partner Match Ticket",
-      "rematch_ticket_name_repeat": "Partner Rematch Ticket",
-      "error_alert_message": "An error occurred during payment processing.",
-      "payment_error_console": "Payment error:",
-      "payment_error_debug": "New orderId generated on payment error:",
-      "payment_error_modal": "An error occurred during payment processing.",
-      "order_name_single": "Partner Rematch Ticket",
-      "order_name_multiple": "Partner Rematch Ticket x{{productCount}}",
-      "title_1": "Buy a Partner Rematch Ticket",
-      "title_2": "Find your ideal type through rematching"
-    }
-  }
+	"gem_store": {
+		"gem": "Gem",
+		"error_alert_title": "Error",
+		"error_alert_message": "An error occurred during payment processing.",
+		"payment_error_console": "Payment error:",
+		"payment_error_debug": "New orderId generated on payment error:",
+		"title": "Buy Gems",
+		"product_name": "Gem",
+		"loading_gems": "Loading gem products...",
+		"failed_to_load_gems": "Failed to load gem products."
+	},
+	"complete": {
+		"processing_payment": "Processing payment..."
+	},
+	"rematch": {
+		"rematch_ticket_name": "Partner Match Ticket",
+		"error_alert_message": "An error occurred during payment processing.",
+		"purchase_count_tracking": "Purchase_Count"
+	},
+	"tickets": {
+		"rematch": {
+			"rematch_ticket_name": "Partner Match Ticket",
+			"rematch_ticket_name_repeat": "Partner Rematch Ticket",
+			"error_alert_message": "An error occurred during payment processing.",
+			"payment_error_console": "Payment error:",
+			"payment_error_debug": "New orderId generated on payment error:",
+			"payment_error_modal": "An error occurred during payment processing.",
+			"order_name_single": "Partner Rematch Ticket",
+			"order_name_multiple": "Partner Rematch Ticket x{{productCount}}",
+			"title_1": "Buy a Partner Rematch Ticket",
+			"title_2": "Find your ideal type through rematching"
+		}
+	}
 }

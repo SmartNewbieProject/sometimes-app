@@ -1,96 +1,117 @@
 {
-  "ui": {
-    "layout": {
-      "loading_user_info": "사용자 정보를 확인하고 있어요..."
-    },
-    "navigation_menu": {
-      "beginner_guide_title": "썸타임이 처음이신가요?",
-      "beginner_guide_description": "나의 연애관을 알아가고, 연인을 찾도록 도와드립니다",
-      "my_moment_title": "나의 모먼트",
-      "my_moment_description": "썸타임에서 진행중인 이벤트를 확인하고 지금 상품을 받아가세요!",
-      "activities_title": "다양한 활동",
-      "activities_description": "나의 연애 성향을 분석해보세요!"
-    },
-    "banner_slide": {
-      "loading_title": "몇 명이 매칭을 신청했을까요?"
-    },
-    "announce_card": {
-      "text": "나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
-    },
-    "community_announcement": {
-      "greeting": "{{name}}님도 가능해요",
-      "default_user": "회원",
-      "success_story_prompt": "연애 성공 후기, 한번 확인해 보세요!"
-    },
-    "first_purchase_event_banner": {
-      "title": "이 처음이신가요?",
-      "brand_name": "썸타임",
-      "description_1": "당신만을 위한",
-      "description_2": "이 준비되었어요!",
-      "special_match": "특별한 매칭",
-      "comment_android_shadow": "Android에서 그림자"
-    },
-    "matching_status": {
-      "title": "썸타임 매칭 현황",
-      "success_rate": "매칭 성공률",
-      "new_matches_this_week": "이번 주 새 매칭",
-      "comment_color": "연보라"
-    },
-    "review_slide": {
-      "anonymous": "익명",
-      "review_1": "처음에는 인스타에서 광고형식으로 마주했는데요.😀 부산지역까지 확장한다는 광고에 속는 셈 치고 가입 해봤습니다! 현재는 매칭을 통해 만난 좋은 친구가 생겼고 그와 동시에 최근 매칭에서 연이 닿은 예쁜 썸녀가 한 분 생겼습니다. 다른 앱들에 비해서 현질유도와 현질의 의미가 크지 않고 현질 없이도 좋은 인연 만들 수 있는 가장 좋은 어플이라고 생각합니다! 개발자 선배님들 진심으로 존경하고 감사하고 사랑합니다!! ❤️❤️❤️",
-      "review_2": "다른앱들 보면 보통 서울이나 수도권이어서 사람들이 대부분이어서 아쉬웠는데 대전에서 사람 만날 수 있어서 좋고 매주 두번씩 매칭해주니 이상형 바로 찾았다 잘생긴사람 많아서 좋아요 그리고 무엇보다 안전한 앱인거 같아요 !!",
-      "review_3": "3일에 한번씩 무료 재매칭권이 있어서 저도 모르게 오후 9시가 기대되는 시간이 되었어요 아직 사람들이 이 앱을 잘 모르는것 같아 아쉽지만 주변에 이성 없는 사람들이 곧 몰려올거 같은 느낌이에요..ㅋㅋㅋ 새로운 사람들을 알게 되어 재밌습니다!! 좀 더 많은 분들이 사용하시게 되어 많은 사람들의 인연이 연결되길 바랍니당!",
-      "review_4": "저는 실제로 어플을 통해서 데이트도 몇번해봐서 대학 동기들한테 마구 추천하는중입니다!... 이런 어플을 무료로 쓸 수 있다는것 만응로도 감사하네요",
-      "review_5": "기존에 다른 소개팅어플은 이상형을 참고해서 해준다 하고 전혀 반영이 안되거나 아무나 막 매칭되는 경우가 많았는데 썸타임은 이상형 반영해서 ai가 매칭해주는 거라 정확성이 높은 것 같아용 더 두고 보면서 사용해볼 예정!~! 대학생끼리 하는거라 더 좋은 것 같아요🥰"
-    },
-    "tip_announcement": {
-      "title": "오늘의 소개팅 꿀팁을 알려드릴게요",
-      "tip": "상대방을 존중하는 태도를 보여주세요."
-    },
-    "total_match_counter": {
-      "count_prefix": "지금까지",
-      "count_suffix": "명이 신청했어요!"
-    },
-    "university_form": {
-      "grade": "학년",
-      "student_number": "학번",
-      "error_university_name": "대학교 이름을 입력해주세요.",
-      "error_department_name": "학과를 선택해주세요.",
-      "error_grade": "학년을 선택해주세요.",
-      "error_student_number": "학번을 선택해주세요.",
-      "submit_button": "대학정보 갱신하기",
-      "university_label": "대학교",
-      "university_placeholder": "대학교 이름을 입력하세요",
-      "department_label": "학과",
-      "department_placeholder": "학과를 선택하세요.",
-      "student_number_placeholder": "학번 선택",
-      "grade_placeholder": "학년 선택"
-    },
-    "home_info": {
-      "home_info_section": {
-        "status_complete": "완료",
-        "status_incomplete": "입력 하기",
-        "my_info_title": "나의 정보",
-        "my_info_description": "성격, 취미, 연애 스타일 등",
-        "my_info_tooltip": "이상형 매칭을 위해 나의 정보를 입력하세요!",
-        "preference_info_title": "이상형 정보",
-        "preference_info_description": "선호하는 성격, 취향, 음주 등",
-        "preference_info_tooltip": "이상형 매칭을 위해 이상형 정보를 입력하세요!"
-      }
-    },
-    "invite_banner": {
-      "title_1": "친구 초대하면,",
-      "title_2": "나도 친구도",
-      "reward": "30구슬",
-      "cta_button": "초대하러 가기"
-    },
-    "preference_modal": {
-      "title": "회원님의 이상형 정보가 없어요!",
-      "description_line1": "나에게 맞는 연인 매칭을 위해",
-      "description_line2": "회원님의 이상형 정보를 등록하시겠어요?",
-      "primary_button": "등록할게요!",
-      "secondary_button": "나중에 할게요"
-    }
-  }
+	"ui": {
+		"layout": {
+			"loading_user_info": "사용자 정보를 확인하고 있어요..."
+		},
+		"navigation_menu": {
+			"beginner_guide_title": "썸타임이 처음이신가요?",
+			"beginner_guide_description": "나의 연애관을 알아가고, 연인을 찾도록 도와드립니다",
+			"my_moment_title": "나의 모먼트",
+			"my_moment_description": "썸타임에서 진행중인 이벤트를 확인하고 지금 상품을 받아가세요!",
+			"activities_title": "다양한 활동",
+			"activities_description": "나의 연애 성향을 분석해보세요!"
+		},
+		"banner_slide": {
+			"loading_title": "몇 명이 매칭을 신청했을까요?"
+		},
+		"announce_card": {
+			"text": "나의 이상형을 알려주면, 더 정확한 매칭을 도와드릴게요!"
+		},
+		"community_announcement": {
+			"greeting": "{{name}}님도 가능해요",
+			"default_user": "회원",
+			"success_story_prompt": "연애 성공 후기, 한번 확인해 보세요!"
+		},
+		"first_purchase_event_banner": {
+			"title": "이 처음이신가요?",
+			"brand_name": "썸타임",
+			"description_1": "당신만을 위한",
+			"description_2": "이 준비되었어요!",
+			"special_match": "특별한 매칭",
+			"comment_android_shadow": "Android에서 그림자"
+		},
+		"matching_status": {
+			"title": "썸타임 매칭 현황",
+			"success_rate": "매칭 성공률",
+			"new_matches_this_week": "이번 주 새 매칭",
+			"comment_color": "연보라"
+		},
+		"review_slide": {
+			"anonymous": "익명",
+			"review_1": "처음에는 인스타에서 광고형식으로 마주했는데요.😀 부산지역까지 확장한다는 광고에 속는 셈 치고 가입 해봤습니다! 현재는 매칭을 통해 만난 좋은 친구가 생겼고 그와 동시에 최근 매칭에서 연이 닿은 예쁜 썸녀가 한 분 생겼습니다. 다른 앱들에 비해서 현질유도와 현질의 의미가 크지 않고 현질 없이도 좋은 인연 만들 수 있는 가장 좋은 어플이라고 생각합니다! 개발자 선배님들 진심으로 존경하고 감사하고 사랑합니다!! ❤️❤️❤️",
+			"review_2": "다른앱들 보면 보통 서울이나 수도권이어서 사람들이 대부분이어서 아쉬웠는데 대전에서 사람 만날 수 있어서 좋고 매주 두번씩 매칭해주니 이상형 바로 찾았다 잘생긴사람 많아서 좋아요 그리고 무엇보다 안전한 앱인거 같아요 !!",
+			"review_3": "3일에 한번씩 무료 재매칭권이 있어서 저도 모르게 오후 9시가 기대되는 시간이 되었어요 아직 사람들이 이 앱을 잘 모르는것 같아 아쉽지만 주변에 이성 없는 사람들이 곧 몰려올거 같은 느낌이에요..ㅋㅋㅋ 새로운 사람들을 알게 되어 재밌습니다!! 좀 더 많은 분들이 사용하시게 되어 많은 사람들의 인연이 연결되길 바랍니당!",
+			"review_4": "저는 실제로 어플을 통해서 데이트도 몇번해봐서 대학 동기들한테 마구 추천하는중입니다!... 이런 어플을 무료로 쓸 수 있다는것 만응로도 감사하네요",
+			"review_5": "기존에 다른 소개팅어플은 이상형을 참고해서 해준다 하고 전혀 반영이 안되거나 아무나 막 매칭되는 경우가 많았는데 썸타임은 이상형 반영해서 ai가 매칭해주는 거라 정확성이 높은 것 같아용 더 두고 보면서 사용해볼 예정!~! 대학생끼리 하는거라 더 좋은 것 같아요🥰"
+		},
+		"tip_announcement": {
+			"title": "오늘의 소개팅 꿀팁을 알려드릴게요",
+			"tip": "상대방을 존중하는 태도를 보여주세요."
+		},
+		"total_match_counter": {
+			"count_prefix": "지금까지",
+			"count_suffix": "명이 신청했어요!"
+		},
+		"university_form": {
+			"grade": "학년",
+			"student_number": "학번",
+			"error_university_name": "대학교 이름을 입력해주세요.",
+			"error_department_name": "학과를 선택해주세요.",
+			"error_grade": "학년을 선택해주세요.",
+			"error_student_number": "학번을 선택해주세요.",
+			"submit_button": "대학정보 갱신하기",
+			"university_label": "대학교",
+			"university_placeholder": "대학교 이름을 입력하세요",
+			"department_label": "학과",
+			"department_placeholder": "학과를 선택하세요.",
+			"student_number_placeholder": "학번 선택",
+			"grade_placeholder": "학년 선택"
+		},
+		"home_info": {
+			"home_info_section": {
+				"status_complete": "완료",
+				"status_incomplete": "입력 하기",
+				"my_info_title": "나의 정보",
+				"my_info_description": "성격, 취미, 연애 스타일 등",
+				"my_info_tooltip": "이상형 매칭을 위해 나의 정보를 입력하세요!",
+				"preference_info_title": "이상형 정보",
+				"preference_info_description": "선호하는 성격, 취향, 흡연 등",
+				"preference_info_tooltip": "이상형 매칭을 위해 이상형 정보를 입력하세요!"
+			},
+			"guide_card": {
+				"title": "확인된 프로필로 매칭해요",
+				"checklist_1": "나의 정보와 이상형 정보를 입력하고",
+				"checklist_2": "프로필 심사를 거친 뒤",
+				"checklist_3": "매칭을 시작할 수 있어요!"
+			}
+		},
+		"invite_banner": {
+			"title_1": "친구 초대하면,",
+			"title_2": "나도 친구도",
+			"reward": "30구슬",
+			"cta_button": "초대하러 가기"
+		},
+		"preference_modal": {
+			"title": "회원님의 이상형 정보가 없어요!",
+			"description_line1": "나에게 맞는 연인 매칭을 위해",
+			"description_line2": "회원님의 이상형 정보를 등록하시겠어요?",
+			"primary_button": "등록할게요!",
+			"secondary_button": "나중에 할게요"
+		},
+		"profile_photo_card": {
+			"title": "프로필 사진 추가하기",
+			"required": "필수",
+			"recommended": "권장",
+			"description_1": "매칭을 위해 ",
+			"description_highlight": "최소 1장",
+			"description_2": "은 꼭 필요해요.",
+			"description_3": "3장을 추가하면 매칭 확률이 더 높아져요!"
+		},
+		"instagram_verification_card": {
+			"title": "인스타그램 아이디 인증하기",
+			"description_1": "인증된 프로필은 매칭에 더 잘 노출돼요.",
+			"description_2": "아이디는 상대에게 공개되지 않아요.",
+			"reward_label": "인증보상"
+		}
+	}
 }

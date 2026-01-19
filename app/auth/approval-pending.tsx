@@ -57,7 +57,7 @@ export default function ApprovalPendingScreen() {
             <Image
               source={
                 statusData?.profileImage ??
-                require("@/assets/images/signup-pending.png")
+                require("@/assets/images/signup-pending.webp")
               }
               style={styles.profileImage}
               contentFit="contain"

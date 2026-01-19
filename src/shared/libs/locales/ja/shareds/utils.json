@@ -1,31 +1,31 @@
 {
-    "common": {
-        "confirm": "確認",
-        "cancel": "キャンセル",
-        "close": "閉じる",
-        "retry": "再試行",
-        "error": "エラー",
-        "alert": "お知らせ",
-        "loading": "処理中です...",
-        "other": "その他",
-        "other_reason_placeholder": "その他の理由を入力してください"
-    },
-    "like": {
-        "wrong_date_format": "正しい日付の形式ではありません。",
-        "message_expired": "このいいねはすでに消えました。",
-        "remaining_time_formatted": "{{time}}後にいいねが消えます！",
-        "remaining_text_1": "{{days}}日と{{hours}}時間",
-        "remaining_text_2": "{{hours}}時間{{minutes}}分",
-        "remaining_text_3": "{{minutes}}分",
-        "remaining_text_4": "{{seconds}}秒"
-    },
-    "last_login": {
-        "just_now": "たった今",
-        "hours_6": "6時間前",
-        "hours_12": "12時間前",
-        "day_1": "1日前",
-        "day_2": "2日前",
-        "day_3": "3日前",
-        "more_than_3_days": "3日以上前"
-    }
+	"common": {
+		"confirm": "確認",
+		"cancel": "キャンセル",
+		"close": "閉じる",
+		"retry": "再試行",
+		"error": "エラー",
+		"alert": "お知らせ",
+		"loading": "処理中です...",
+		"other": "その他",
+		"other_reason_placeholder": "その他の理由を入力してください"
+	},
+	"like": {
+		"wrong_date_format": "正しい日付の形式ではありません。",
+		"message_expired": "このいいねはすでに消えました。",
+		"remaining_time_formatted": "{{time}}後にいいねが消えます！",
+		"remaining_text_1": "{{days}}日と{{hours}}時間",
+		"remaining_text_2": "{{hours}}時間{{minutes}}分",
+		"remaining_text_3": "{{minutes}}分",
+		"remaining_text_4": "{{seconds}}秒"
+	},
+	"last_login": {
+		"just_now": "たった今",
+		"hours_6": "6時間前",
+		"hours_12": "12時間前",
+		"day_1": "1日前",
+		"day_2": "2日前",
+		"day_3": "3日前",
+		"more_than_3_days": "3日以上前"
+	}
 }

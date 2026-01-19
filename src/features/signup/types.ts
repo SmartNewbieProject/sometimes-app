@@ -11,10 +11,8 @@ export type SignupForm = {
 	universityId: string;
 	area: string;
 	departmentName: string;
-	grade: string;
-	studentNumber: string;
 	instagramId: string;
-	profileImages: string[];
+	profileImages?: string[];
 	passVerified: boolean;
 	kakaoId?: string;
 	appleId?: string;

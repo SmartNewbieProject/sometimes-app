@@ -8,8 +8,6 @@ type StoreStates = {
   goodMbti?: string | null;
   badMbti?: string | null;
   personality: string[];
-  // interestIds: string[];
-  // datingStyleIds: string[];
   militaryPreference?: PreferenceOption;
   init: boolean;
   smoking?: PreferenceOption;
@@ -23,14 +21,18 @@ type StoreProps = {
   ) => void;
   init: boolean;
   clear: () => void;
+  initialSnapshot: StoreStates | null;
+  setInitialSnapshot: (data: StoreStates) => void;
 } & StoreStates;
 
-export const useInterestForm = create<StoreProps>((set) => ({
+export const useInterestForm = create<StoreProps>((set, get) => ({
   goodMbti: null,
   badMbti: null,
   init: false,
   personality: [],
+  initialSnapshot: null,
   updateForm: (propertyName, data) => set({ [propertyName]: data }),
+  setInitialSnapshot: (data) => set({ initialSnapshot: data }),
   clear: () =>
     set({
       age: undefined,
@@ -41,5 +43,7 @@ export const useInterestForm = create<StoreProps>((set) => ({
       goodMbti: null,
       personality: [],
       badMbti: null,
+      militaryPreference: undefined,
+      initialSnapshot: null,
     }),
 }));

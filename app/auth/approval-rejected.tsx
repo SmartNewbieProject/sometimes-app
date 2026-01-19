@@ -49,7 +49,7 @@ export default function ApprovalRejectedScreen() {
           <View style={styles.imageContainer}>
             <View style={styles.imageBackground} />
             <Image
-              source={require("@assets/images/limit-signup.png")}
+              source={require("@assets/images/limit-signup.webp")}
               style={styles.mainImage}
             />
           </View>

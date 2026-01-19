@@ -8,7 +8,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 
-const celebrationImage = require('@assets/images/info-miho.png');
+const celebrationImage = require('@assets/images/info-miho.webp');
 
 export default function SignupDoneScreen() {
 	const { t } = useTranslation();

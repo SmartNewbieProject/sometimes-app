@@ -28,6 +28,7 @@ function InterestBadMbti() {
         onChange={onUpdateMbti}
         justifyContent="flex-start"
         onBlur={() => {}}
+        layout="horizontal"
       />
       <View style={styles.buttonContainer}>
         <Button

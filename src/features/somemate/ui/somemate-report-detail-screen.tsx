@@ -68,7 +68,7 @@ export default function SomemateReportDetailScreen() {
         </View>
         <View style={styles.loadingContainer}>
           <Image
-            source={require("@assets/images/somemate_miho.png")}
+            source={require("@assets/images/somemate_miho.webp")}
             style={styles.processingImage}
             contentFit="contain"
           />
@@ -181,7 +181,7 @@ export default function SomemateReportDetailScreen() {
           </View>
 
           <Image
-            source={require("@assets/images/somemate_miho.png")}
+            source={require("@assets/images/somemate_miho.webp")}
             style={styles.mihoImage}
             contentFit="contain"
           />

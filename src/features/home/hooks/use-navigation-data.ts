@@ -13,7 +13,7 @@ export const useNavigationData = (): NavigationMenuItem[] => {
         id: "beginner-guide",
         title: "features.home.ui.navigation_menu.beginner_guide_title",
         description: "features.home.ui.navigation_menu.beginner_guide_description",
-        backgroundImageUrl: require("@/assets/images/info-miho.png"),
+        backgroundImageUrl: require("@/assets/images/info-miho.webp"),
         onPress: () => {
           devLogWithTag('Navigation', 'TODO: onboarding');
         },
@@ -22,7 +22,7 @@ export const useNavigationData = (): NavigationMenuItem[] => {
         id: "my-moment",
         title: "features.home.ui.navigation_menu.my_moment_title",
         description: "features.home.ui.navigation_menu.my_moment_description",
-        backgroundImageUrl: require("@/assets/images/roulette.png"),
+        backgroundImageUrl: require("@/assets/images/roulette.webp"),
         onPress: () => {
           devLogWithTag('Navigation', 'TODO: events');
         },

@@ -1,12 +1,12 @@
 {
-  "id": {
-    "header_title": "Community",
-    "dropdown_edit": "Edit",
-    "dropdown_delete": "Delete",
-    "error_invalid": "Invalid request",
-    "error_loading": "An error occurred while loading the post.",
-    "error_not_found": "The post could not be found or may have been deleted.",
-    "error_back_button": "Go Back",
-    "loading": "Loading post"
-  }
+	"id": {
+		"header_title": "Community",
+		"dropdown_edit": "Edit",
+		"dropdown_delete": "Delete",
+		"error_invalid": "Invalid request",
+		"error_loading": "An error occurred while loading the post.",
+		"error_not_found": "The post could not be found or may have been deleted.",
+		"error_back_button": "Go Back",
+		"loading": "Loading post"
+	}
 }

@@ -1,5 +1,4 @@
 import type { Product, Purchase as ProductPurchase } from 'expo-iap';
-import type { TFunction } from 'i18next';
 import type { GemDetails } from '@/src/features/payment/api';
 
 /**
@@ -52,8 +51,8 @@ const packNameToProductIdMap: Record<DbPackName, ProductID> = {
 	맥시멈팩: ProductID.GEM_800,
 };
 
-export const containsSale = (text: string, t: TFunction): boolean => {
-	return text.includes(t('widgets.gem-store.common.세일'));
+export const containsSale = (productId: string): boolean => {
+	return productId.includes('sale');
 };
 
 const getAppleToServerMapping = (): Record<string, string> => ({
@@ -130,7 +129,7 @@ export const getPriceAndDiscount = (
 		gem_800: { price: 590000, discountRate: 67 },
 
 		gem_sale_7: { price: 5250, discountRate: 37.2 },
-		gem_sale_16: { price: 12000, discountRate: 43.3 },
+		gem_sale_16: { price: 12000, discountRate: 84.2 },
 		gem_sale_27: { price: 20250, discountRate: 31.9 },
 		gem_sale_6: { price: 6000, discountRate: 50.9 },
 		gem_sale_20: { price: 14700, discountRate: 53.2 },
@@ -146,10 +145,7 @@ export const getPriceAndDiscount = (
 	return null;
 };
 
-export function splitAndSortProducts(
-	products: Product[],
-	t: TFunction,
-): {
+export function splitAndSortProducts(products: Product[]): {
 	sale: Product[];
 	normal: Product[];
 } {
@@ -158,14 +154,12 @@ export function splitAndSortProducts(
 		return match ? Number.parseInt(match[0], 10) : Number.POSITIVE_INFINITY;
 	};
 
-	const saleKeyword = t('widgets.gem-store.common.세일');
-
 	const sale = products
-		.filter((p) => p.title.includes(saleKeyword))
+		.filter((p) => containsSale(p.id))
 		.sort((a, b) => extractNumberFromId(a.id) - extractNumberFromId(b.id));
 
 	const normal = products
-		.filter((p) => !p.title.includes(saleKeyword))
+		.filter((p) => !containsSale(p.id))
 		.sort((a, b) => extractNumberFromId(a.id) - extractNumberFromId(b.id));
 
 	return { sale, normal };

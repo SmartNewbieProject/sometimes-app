@@ -1,48 +1,48 @@
 {
-  "ui": {
-    "none_like_banner": {
-      "title_female": "いいね",
-      "title_female_1": "を送ってみましたか？",
-      "title_male": "まずは",
-      "title_male_profile": "プロフィール",
-      "title_male_1": "をチェックしてみませんか？",
-      "nothing_like": "いいねした相手がまだいません",
-      "description_female_part1": "気になる相手に「いいね」を送り、",
-      "description_female_part2": "気持ちをシェアしましょう！",
-      "description_male_part1": "趣味や関心を追加して共通点を見つけ、",
-      "description_male_part2": "自分の魅力をアピールしてみましょう！",
-      "cta_locked": ""
-    },
-    "like_button": {
-      "modal": {
-        "title_line1": "気になる相手に",
-        "title_line2_male": "ジェム{{cost}}個で気持ちを伝えますか？",
-        "title_line2_default": "気持ちを伝えますか？",
-        "body_line1": "気持ちを伝えて、",
-        "body_line2": "次のステップへ自然に進んでみましょう。",
-        "primary_button": "はい、やってみる"
-      },
-      "button_label": "いいね"
-    },
-    "like_collapse": {
-      "i_liked_title": "{{name}}さんが送ったいいね欄",
-      "liked_me_title": "{{name}}さんが貰ったいいね欄"
-    },
-    "알_수_없는_오류": "[JA] 알 수 없는 오류"
-  },
-  "hooks": {
-    "use-like": {
-      "like_sent": "いいね！しました！",
-      "if_interested": "相手も興味を持ってくれたら、",
-      "can_contact": "Instagramでつながることができます。",
-      "confirm": "確認しました",
-      "charge_message": "今すぐチャージして、気になるお相手と会話を始めましょう！",
-      "duplicate_like": "すでにいいね！しています！",
-      "no_gems": "ジェムがありません。",
-      "ticket_insufficient": "再マッチングチケットが必要です。今すぐ購入してマッチングを楽しみましょう！",
-      "communication_restricted": "現在、相手とのコミュニケーションが制限されています。しばらくしてから再度お試しください。",
-      "already_liked": "すでにいいねを送った相手です。"
-    },
-    "소통이_제한": "[JA] 소통이 제한"
-  }
+	"ui": {
+		"none_like_banner": {
+			"title_female": "いいね",
+			"title_female_1": "を送ってみましたか？",
+			"title_male": "まずは",
+			"title_male_profile": "プロフィール",
+			"title_male_1": "をチェックしてみませんか？",
+			"nothing_like": "いいねした相手がまだいません",
+			"description_female_part1": "気になる相手に「いいね」を送り、",
+			"description_female_part2": "気持ちをシェアしましょう！",
+			"description_male_part1": "趣味や関心を追加して共通点を見つけ、",
+			"description_male_part2": "自分の魅力をアピールしてみましょう！",
+			"cta_locked": ""
+		},
+		"like_button": {
+			"modal": {
+				"title_line1": "気になる相手に",
+				"title_line2_male": "ジェム{{cost}}個で気持ちを伝えますか？",
+				"title_line2_default": "気持ちを伝えますか？",
+				"body_line1": "気持ちを伝えて、",
+				"body_line2": "次のステップへ自然に進んでみましょう。",
+				"primary_button": "はい、やってみる"
+			},
+			"button_label": "いいね"
+		},
+		"like_collapse": {
+			"i_liked_title": "{{name}}さんが送ったいいね欄",
+			"liked_me_title": "{{name}}さんが貰ったいいね欄"
+		},
+		"알_수_없는_오류": "[JA] 알 수 없는 오류"
+	},
+	"hooks": {
+		"use-like": {
+			"like_sent": "いいね！しました！",
+			"if_interested": "相手も興味を持ってくれたら、",
+			"can_contact": "Instagramでつながることができます。",
+			"confirm": "確認しました",
+			"charge_message": "今すぐチャージして、気になるお相手と会話を始めましょう！",
+			"duplicate_like": "すでにいいね！しています！",
+			"no_gems": "ジェムがありません。",
+			"ticket_insufficient": "再マッチングチケットが必要です。今すぐ購入してマッチングを楽しみましょう！",
+			"communication_restricted": "現在、相手とのコミュニケーションが制限されています。しばらくしてから再度お試しください。",
+			"already_liked": "すでにいいねを送った相手です。"
+		},
+		"소통이_제한": "[JA] 소통이 제한"
+	}
 }

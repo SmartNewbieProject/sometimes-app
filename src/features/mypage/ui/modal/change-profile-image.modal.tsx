@@ -77,7 +77,7 @@ export const ChangeProfileImageModal = ({
           </RNText>
           <RNText style={styles.infoDescription}>{t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
           <Image
-            source={require("@assets/images/instagram-some.png")}
+            source={require("@assets/images/instagram-some.webp")}
             style={{
               width: 116,
               height: 175,
@@ -87,7 +87,7 @@ export const ChangeProfileImageModal = ({
             }}
           />
           <Image
-            source={require("@assets/images/instagram-lock.png")}
+            source={require("@assets/images/instagram-lock.webp")}
             style={{
               width: 52,
               height: 52,
@@ -283,7 +283,7 @@ export const ChangeProfileImageModal = ({
               </RNText>
               <RNText style={styles.infoDescription}> {t("apps.auth.sign_up.profile_image.info_desc_2")}</RNText>
               <Image
-                source={require("@assets/images/instagram-some.png")}
+                source={require("@assets/images/instagram-some.webp")}
                 style={{
                   width: 116,
                   height: 175,
@@ -293,7 +293,7 @@ export const ChangeProfileImageModal = ({
                 }}
               />
               <Image
-                source={require("@assets/images/instagram-lock.png")}
+                source={require("@assets/images/instagram-lock.webp")}
                 style={{
                   width: 52,
                   height: 52,

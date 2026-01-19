@@ -27,13 +27,13 @@ function PhotoPickerContent({
 	const insets = useSafeAreaInsets();
 
 	const handleTakePhoto = async () => {
-		onClose();
 		await onTakePhoto();
+		onClose();
 	};
 
 	const handlePickFromGallery = async () => {
-		onClose();
 		await onPickFromGallery();
+		onClose();
 	};
 
 	return (

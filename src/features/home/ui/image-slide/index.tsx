@@ -65,7 +65,7 @@ export const ImageSlide = ({ items, autoPlayInterval = 5000, width, height }: Im
         onError={(error: ImageErrorEventData) => {
           console.log('Image load error:', error.error);
         }}
-        placeholder={require("@/assets/images/moment/introduction-sometimes.png")}
+        placeholder={require("@/assets/images/moment/introduction-sometimes.webp")}
       />
     </Pressable>
   );

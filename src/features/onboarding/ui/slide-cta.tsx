@@ -4,6 +4,8 @@ import colors from '@/src/shared/constants/colors';
 import type { SlideComponent } from '../types';
 
 const { width } = Dimensions.get('window');
+const MAX_IMAGE_SIZE = 350;
+const imageSize = Math.min(width * 0.9, MAX_IMAGE_SIZE);
 
 export const SlideCta: SlideComponent = () => {
 	const { t } = useTranslation();
@@ -11,16 +13,12 @@ export const SlideCta: SlideComponent = () => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.content}>
-				<Text style={styles.headline}>
-					{t('features.onboarding.slides.cta.headline')}
-				</Text>
-				<Text style={styles.subtext}>
-					{t('features.onboarding.slides.cta.subtext')}
-				</Text>
+				<Text style={styles.headline}>{t('features.onboarding.slides.cta.headline')}</Text>
+				<Text style={styles.subtext}>{t('features.onboarding.slides.cta.subtext')}</Text>
 
 				<View style={styles.illustrationArea}>
 					<Image
-						source={require('@/assets/images/onboarding/cta_fox.png')}
+						source={require('@/assets/images/onboarding/cta_fox.webp')}
 						style={styles.image}
 						resizeMode="contain"
 					/>
@@ -58,8 +56,8 @@ const styles = StyleSheet.create({
 		lineHeight: 24,
 	},
 	illustrationArea: {
-		width: width * 0.9,
-		height: width * 0.9,
+		width: imageSize,
+		height: imageSize,
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginTop: 20,

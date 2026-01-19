@@ -38,7 +38,7 @@ export function RouletteWheel({
 
         <Animated.View style={[rouletteAnimationStyle, styles.roulette]}>
           <Image
-            source={require("@assets/images/roulette.png")}
+            source={require("@assets/images/roulette.webp")}
             style={styles.rouletteImage}
           />
         </Animated.View>
@@ -64,7 +64,7 @@ export function RouletteWheel({
       />
       <Image
         style={styles.bottom}
-        source={require("@assets/images/roulette-bottom.png")}
+        source={require("@assets/images/roulette-bottom.webp")}
       />
     </View>
   );

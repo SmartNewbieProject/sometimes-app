@@ -14,11 +14,11 @@ function PromotionInviteCode() {
     <View style={styles.container}>
       <Image
         style={styles.frontLetter}
-        source={require("@assets/images/promotion/invite-code/front-letter.png")}
+        source={require("@assets/images/promotion/invite-code/front-letter.webp")}
       />
       <Image
         style={styles.letter}
-        source={require("@assets/images/promotion/invite-code/letter.png")}
+        source={require("@assets/images/promotion/invite-code/letter.webp")}
       />
       <View
         style={[
@@ -36,7 +36,7 @@ function PromotionInviteCode() {
         <View style={[StyleSheet.absoluteFill, styles.colorOverlay]} />
         <View style={styles.topContainer}>
           <Image
-            source={require("@assets/images/promotion/invite-code/key.png")}
+            source={require("@assets/images/promotion/invite-code/key.webp")}
             style={styles.key}
           />
           <Text style={styles.title}>내 초대 코드</Text>

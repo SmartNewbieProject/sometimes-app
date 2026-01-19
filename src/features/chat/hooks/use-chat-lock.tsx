@@ -1,10 +1,11 @@
-import { useModal } from '@/src/shared/hooks/use-modal';
-import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/src/features/auth';
+import { useFeatureCost } from '@/src/features/payment/hooks';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { CHAT_KEYS } from '@/src/shared/libs/locales/keys';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
-import { useAuth } from '../../auth';
-import { useFeatureCost } from '../../payment/hooks';
 import useChatRockQuery from '../queries/use-chat-lock-query';
 import useLeaveChatRoom from '../queries/use-leave-chat-room';
 
@@ -28,8 +29,12 @@ function useChatLock(chatRoomId: string) {
 						width: '100%',
 					}}
 				>
-					<Text style={styles.modalTitleText}>채팅을 열어</Text>
-					<Text style={styles.modalTitleText}>대화를 이어나가볼까요?</Text>
+					<Text style={styles.modalTitleText}>
+						{t(CHAT_KEYS.hooksUseChatLockUnlockModalTitleLine1)}
+					</Text>
+					<Text style={styles.modalTitleText}>
+						{t(CHAT_KEYS.hooksUseChatLockUnlockModalTitleLine2)}
+					</Text>
 				</View>
 			),
 
@@ -37,19 +42,22 @@ function useChatLock(chatRoomId: string) {
 				<View style={styles.modalContentContainer}>
 					<Text style={styles.modalContentText}>
 						{profileDetails?.gender === 'MALE'
-							? `구슬 ${featureCosts?.CHAT_START}개로`
-							: t('hooks.지금_바로')}
-						채팅방을 열 수 있어요
+							? t(CHAT_KEYS.hooksUseChatLockUnlockModalContentGems, {
+									cost: featureCosts?.CHAT_START,
+								})
+							: t(CHAT_KEYS.hooksUseChatLockUnlockModalContentFree)}
 					</Text>
-					<Text style={styles.modalContentText}>지금 답장을 보내 설레는 대화를 시작해보세요!</Text>
+					<Text style={styles.modalContentText}>
+						{t(CHAT_KEYS.hooksUseChatLockUnlockModalContentCta)}
+					</Text>
 				</View>
 			),
 			primaryButton: {
-				text: t('hooks.네_해볼래요'),
+				text: t(CHAT_KEYS.hooksYesTry),
 				onClick: () => enterMutate(),
 			},
 			secondaryButton: {
-				text: t('hooks.아니요'),
+				text: t(CHAT_KEYS.hooksNo),
 				onClick: () => {},
 			},
 		});
@@ -67,22 +75,30 @@ function useChatLock(chatRoomId: string) {
 						width: '100%',
 					}}
 				>
-					<Text style={styles.modalTitleText}>채팅 요청을</Text>
-					<Text style={styles.modalTitleText}>삭제하시겠어요?</Text>
+					<Text style={styles.modalTitleText}>
+						{t(CHAT_KEYS.hooksUseChatLockRemoveModalTitleLine1)}
+					</Text>
+					<Text style={styles.modalTitleText}>
+						{t(CHAT_KEYS.hooksUseChatLockRemoveModalTitleLine2)}
+					</Text>
 				</View>
 			),
 			children: (
 				<View style={styles.modalContentContainer}>
-					<Text style={styles.modalContentText}>삭제하면 이 요청은 다시 확인할 수 없어요</Text>
-					<Text style={styles.modalContentText}>정말 삭제하시겠어요?</Text>
+					<Text style={styles.modalContentText}>
+						{t(CHAT_KEYS.hooksUseChatLockRemoveModalContentWarning)}
+					</Text>
+					<Text style={styles.modalContentText}>
+						{t(CHAT_KEYS.hooksUseChatLockRemoveModalContentConfirm)}
+					</Text>
 				</View>
 			),
 			primaryButton: {
-				text: t('hooks.취소'),
+				text: t(CHAT_KEYS.hooksCancel),
 				onClick: () => {},
 			},
 			secondaryButton: {
-				text: t('hooks.삭제'),
+				text: t(CHAT_KEYS.hooksDelete),
 				onClick: () => leaveMutate({ chatRoomId }),
 			},
 			reverse: true,

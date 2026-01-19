@@ -1,6 +1,6 @@
 {
-  "linkified_text": {
-    "error_title": "エラー",
-    "cannot_open_link_message": "リンクを開けません。"
-  }
+	"linkified_text": {
+		"error_title": "エラー",
+		"cannot_open_link_message": "リンクを開けません。"
+	}
 }

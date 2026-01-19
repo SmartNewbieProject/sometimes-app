@@ -108,12 +108,12 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
       <View style={styles.container}>
         <View style={styles.errorContainer}>
           <Image
-            source={require("@/assets/images/moment/paw-prints-top.png")}
+            source={require("@/assets/images/moment/paw-prints-top.webp")}
             style={styles.pawPrints}
             resizeMode="contain"
           />
           <Image
-            source={require("@/assets/images/moment/my-moment-bg.png")}
+            source={require("@/assets/images/moment/my-moment-bg.webp")}
             style={styles.background}
             resizeMode="stretch"
           />
@@ -133,12 +133,12 @@ export const MyMomentPage: React.FC<MyMomentPageProps> = ({ onBackPress }) => {
         showsVerticalScrollIndicator={false}
       >
         <Image
-          source={require("@/assets/images/moment/paw-prints-top.png")}
+          source={require("@/assets/images/moment/paw-prints-top.webp")}
           style={styles.pawPrints}
           resizeMode="contain"
         />
         <Image
-          source={require("@/assets/images/moment/my-moment-bg.png")}
+          source={require("@/assets/images/moment/my-moment-bg.webp")}
           style={styles.background}
           resizeMode="stretch"
         />

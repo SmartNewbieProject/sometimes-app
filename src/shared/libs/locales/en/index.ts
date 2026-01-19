@@ -1,20 +1,23 @@
-import global from './global.json';
-import notification from './apps/notification.json';
 import community from './apps/community.json';
-import moment from './apps/moment.json';
-import root from './apps/root.json';
-import purchase from './apps/purchase.json';
 import interest from './apps/interest.json';
+import moment from './apps/moment.json';
+import notification from './apps/notification.json';
 import partner from './apps/partner.json';
+import purchase from './apps/purchase.json';
+import root from './apps/root.json';
+import featuresContactBlock from './features/contact-block.json';
 import featuresIdleMatchTimer from './features/idle-match-timer.json';
-import featuresOnboarding from './features/onboarding.json';
 import featuresInAppReview from './features/in-app-review.json';
+import featuresLoading from './features/loading.json';
+import featuresInstagram from './features/instagram.json';
+import featuresOnboarding from './features/onboarding.json';
+import global from './global.json';
 import sharedsUi from './shareds/ui.json';
+import widgetsGemStore from './widgets/gem-store.json';
 import widgetsOppositeGenderPreview from './widgets/opposite-gender-preview.json';
 import widgetsPhotoStatusCard from './widgets/photo-status-card.json';
 import widgetsPhotoStatusWrapper from './widgets/photo-status-wrapper.json';
 import widgetsRejectedImageWrapper from './widgets/rejected-image-wrapper.json';
-import widgetsGemStore from './widgets/gem-store.json';
 
 const apps = {
 	notification: notification,
@@ -28,8 +31,11 @@ const apps = {
 
 const features = {
 	'idle-match-timer': featuresIdleMatchTimer,
+	instagram: featuresInstagram,
+	loading: featuresLoading,
 	onboarding: featuresOnboarding,
 	'in-app-review': featuresInAppReview,
+	'contact-block': featuresContactBlock,
 };
 
 const shareds = {

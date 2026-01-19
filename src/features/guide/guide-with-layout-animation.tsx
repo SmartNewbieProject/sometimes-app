@@ -41,11 +41,11 @@ function GuideWithLayoutAnimation({
           </Text>
           <Text style={styles.infoDescription}>{t("features.guide.ui.profile_guide.description_line2")}</Text>
           <Image
-            source={require("@assets/images/instagram-some.png")}
+            source={require("@assets/images/instagram-some.webp")}
             style={styles.instagramSomeImage}
           />
           <Image
-            source={require("@assets/images/instagram-lock.png")}
+            source={require("@assets/images/instagram-lock.webp")}
             style={styles.instagramLockImage}
           />
         </View>

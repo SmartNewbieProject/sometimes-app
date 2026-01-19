@@ -17,7 +17,7 @@ export default function NotFoundScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.content}>
           <Image
-            source={require('@assets/images/sad-miho.png')}
+            source={require('@assets/images/sad-miho.webp')}
             style={styles.mihoImage}
             contentFit="contain"
           />

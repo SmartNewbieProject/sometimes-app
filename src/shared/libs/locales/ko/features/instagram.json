@@ -1,13 +1,27 @@
 {
-  "ui": {
-    "button": {
-      "contact": "연락하기"
-    }
-  },
-  "services": {
-    "alert_title": "알림",
-    "no_instagram_id": "인스타그램 아이디가 없습니다.",
-    "error_title": "오류",
-    "connection_error": "인스타그램에 연결할 수 없습니다."
-  }
+	"ui": {
+		"button": {
+			"contact": "연락하기"
+		}
+	},
+	"verify": {
+		"header_title": "인스타그램 아이디 인증하기",
+		"title": "인스타그램 아이디를 알려주세요",
+		"description": "허위 프로필과 스팸을 방지하고, 안전한 만남을 위해 필요해요.",
+		"placeholder": "아이디를 입력해주세요",
+		"privacy_note": "아이디는 상대에게 공개되지 않아요!",
+		"submit_button": "인증 완료하기",
+		"success_title": "인증 완료",
+		"success_message": "인스타그램 아이디가 등록되었어요.",
+		"success_rewarded_title": "축하해요!",
+		"success_rewarded_message": "인스타그램 인증 완료! 구슬 10개가 지급되었어요.",
+		"error_message": "인스타그램 아이디 등록에 실패했어요. 다시 시도해주세요."
+	},
+	"services": {
+		"alert_title": "알림",
+		"no_instagram_id": "인스타그램 아이디가 없습니다.",
+		"error_title": "오류",
+		"connection_error": "인스타그램에 연결할 수 없습니다.",
+		"confirm": "확인"
+	}
 }

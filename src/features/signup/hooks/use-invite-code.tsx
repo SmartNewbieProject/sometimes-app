@@ -132,7 +132,7 @@ function useInviteCode() {
 		setSignupLoading(false);
 	};
 	const onBackPress = () => {
-		router.push('/auth/signup/profile-image');
+		router.back();
 		return true;
 	};
 

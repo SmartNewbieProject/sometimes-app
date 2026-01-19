@@ -1,28 +1,28 @@
 {
-  "ui": {
-    "variants": {
-      "nav_click": {
-        "title": "サムタイムを気に入りましたか？ 💜",
-        "subtitle": "アプリをインストールするともっと快適に利用できます"
-      },
-      "matching": {
-        "title": "ときめきを逃さないで 💜",
-        "subtitle": "アプリをインストールすると相手の反応がすぐわかります"
-      },
-      "community": {
-        "title": "もっと多くの話が待っています",
-        "subtitle": "アプリでサムタイムコミュニティをもっと快適に楽しんでください"
-      }
-    },
-    "benefits": {
-      "realtime_notification": "誰かがあなたを好きになったらすぐお知らせします",
-      "contact_block": "知り合いは自動的に表示されません",
-      "more_benefits": "アプリを使うともっと多くの特典があります"
-    },
-    "buttons": {
-      "app_store": "App Storeでダウンロード",
-      "play_store": "Play Storeでダウンロード",
-      "dismiss": "後でする"
-    }
-  }
+	"ui": {
+		"variants": {
+			"nav_click": {
+				"title": "サムタイムを気に入りましたか？ 💜",
+				"subtitle": "アプリをインストールするともっと快適に利用できます"
+			},
+			"matching": {
+				"title": "ときめきを逃さないで 💜",
+				"subtitle": "アプリをインストールすると相手の反応がすぐわかります"
+			},
+			"community": {
+				"title": "もっと多くの話が待っています",
+				"subtitle": "アプリでサムタイムコミュニティをもっと快適に楽しんでください"
+			}
+		},
+		"benefits": {
+			"realtime_notification": "誰かがあなたを好きになったらすぐお知らせします",
+			"contact_block": "知り合いは自動的に表示されません",
+			"more_benefits": "アプリを使うともっと多くの特典があります"
+		},
+		"buttons": {
+			"app_store": "App Storeでダウンロード",
+			"play_store": "Play Storeでダウンロード",
+			"dismiss": "後でする"
+		}
+	}
 }

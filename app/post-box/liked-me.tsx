@@ -103,7 +103,7 @@ function LikedMe() {
               color: filter === 'LATEST' ? colors.primaryPurple : '#9CA3AF',
             }}
           >
-            최신순
+            {t("features.post-box.ui.filter.latest")}
           </Text>
         </Pressable>
         <Pressable
@@ -120,7 +120,7 @@ function LikedMe() {
               color: filter === 'LETTER' ? colors.primaryPurple : '#9CA3AF',
             }}
           >
-            편지 포함 우선
+            {t("features.post-box.ui.filter.letter_first")}
           </Text>
         </Pressable>
       </View>

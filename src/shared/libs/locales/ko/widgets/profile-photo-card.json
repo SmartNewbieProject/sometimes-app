@@ -1,12 +1,12 @@
 {
-  "badge": {
-    "approved": "승인됨",
-    "reviewing": "심사중",
-    "rejected": "거절됨"
-  },
-  "main_badge": "대표",
-  "rejection": {
-    "no_reason": "사유 미기재",
-    "change_button": "변경하기"
-  }
+	"badge": {
+		"approved": "승인됨",
+		"reviewing": "심사중",
+		"rejected": "거절됨"
+	},
+	"main_badge": "대표",
+	"rejection": {
+		"no_reason": "사유 미기재",
+		"change_button": "변경하기"
+	}
 }

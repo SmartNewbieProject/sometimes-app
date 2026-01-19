@@ -131,7 +131,7 @@ const WelcomeRewardModal: React.FC<WelcomeRewardModalProps> = ({
           {/* 미호 캐릭터 */}
           <Animated.View style={[styles.mihoContainer, mihoAnimatedStyle]}>
             <Image
-              source={require("@assets/images/instagram-some.png")}
+              source={require("@assets/images/instagram-some.webp")}
               style={styles.mihoImage}
               resizeMode="contain"
             />

@@ -1,404 +1,382 @@
-import VectorIcon from "@/assets/icons/Vector.svg";
-import { useAuth } from "@/src/features/auth";
-import { useModal } from "@/src/shared/hooks/use-modal";
-import { tryCatch } from "@/src/shared/libs";
-import { Lottie, PalePurpleGradient, Text } from "@/src/shared/ui";
-import { IconWrapper } from "@/src/shared/ui/icons";
-import { useQueryClient } from "@tanstack/react-query";
-import { router } from "expo-router";
+import { useAuth } from '@/src/features/auth';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { tryCatch } from '@/src/shared/libs';
+import { Text } from '@/src/shared/ui';
+import { useQueryClient } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import {
-  type RefObject,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+	type RefObject,
+	forwardRef,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useRef,
+	useState,
+} from 'react';
 import {
-  type FlatList,
-  Image,
-  Linking,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  type ViewToken,
-  type ViewabilityConfig,
-} from "react-native";
-import { semanticColors } from "@/src/shared/constants/semantic-colors";
-import { CustomInfiniteScrollView } from "../../../shared/infinite-scroll/custom-infinite-scroll-view";
-import apis from "../apis";
-import { useCategory } from "../hooks";
-import { useInfiniteArticlesQuery , createArticlesQueryKey } from "../queries/use-infinite-articles";
-import type { Article as ArticleType } from "../types";
-import { Article } from "./article";
+	type FlatList,
+	Image,
+	type NativeScrollEvent,
+	type NativeSyntheticEvent,
+	Platform,
+	StyleSheet,
+	TouchableOpacity,
+	View,
+	type ViewToken,
+	type ViewabilityConfig,
+} from 'react-native';
+import { CustomInfiniteScrollView } from '../../../shared/infinite-scroll/custom-infinite-scroll-view';
+import apis from '../apis';
+import { useCategory } from '../hooks';
+import { createArticlesQueryKey, useInfiniteArticlesQuery } from '../queries/use-infinite-articles';
+import type { Article as ArticleType } from '../types';
+import { Article } from './article';
 
-import { ArticleSkeleton } from "../../loading/skeleton/article-skeleton";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
+import { ArticleSkeleton } from '../../loading/skeleton/article-skeleton';
+import HotSlide from './home/hot-slide';
 
 interface InfiniteArticleListProps {
-  initialSize?: number;
-  categoryCode?: string;
-  preferSkeletonOnCategoryChange?: boolean;
+	initialSize?: number;
+	categoryCode?: string;
+	preferSkeletonOnCategoryChange?: boolean;
 }
 
 export interface InfiniteArticleListHandle {
-  refresh: () => void;
+	refresh: () => void;
 }
 
-export const InfiniteArticleList = forwardRef<
-  InfiniteArticleListHandle,
-  InfiniteArticleListProps
->(
-  (
-    {
-      initialSize = 10,
-      categoryCode: categoryCodeOverride,
-      preferSkeletonOnCategoryChange = true,
-    }: InfiniteArticleListProps,
-    ref
-  ) => {
-    const { showModal, showErrorModal } = useModal();
-    const { currentCategory: currentFromContext } = useCategory();
-    const categoryCode = categoryCodeOverride ?? currentFromContext;
-    const { my } = useAuth();
-    const { t } = useTranslation();
-    const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<
-      FlatList<ArticleType>
-    >;
-    const queryClient = useQueryClient();
+export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, InfiniteArticleListProps>(
+	(
+		{
+			initialSize = 10,
+			categoryCode: categoryCodeOverride,
+			preferSkeletonOnCategoryChange = true,
+		}: InfiniteArticleListProps,
+		ref,
+	) => {
+		const { showModal, showErrorModal } = useModal();
+		const { currentCategory: currentFromContext } = useCategory();
+		const categoryCode = categoryCodeOverride ?? currentFromContext;
+		const { my } = useAuth();
+		const { t } = useTranslation();
+		const flatListRef = useRef<FlatList<ArticleType>>(null) as RefObject<FlatList<ArticleType>>;
+		const queryClient = useQueryClient();
 
-    const {
-      articles,
-      pagesCount,
-      isLoading,
-      isLoadingMore,
-      hasNextPage,
-      loadMore,
-      updateArticleLike,
-      saveScrollPosition,
-      getScrollPosition,
-      refetch,
-    } = useInfiniteArticlesQuery({
-      categoryCode,
-      pageSize: initialSize,
-    });
+		const {
+			articles,
+			pagesCount,
+			isLoading,
+			isLoadingMore,
+			hasNextPage,
+			loadMore,
+			updateArticleLike,
+			saveScrollPosition,
+			getScrollPosition,
+			refetch,
+		} = useInfiniteArticlesQuery({
+			categoryCode,
+			pageSize: initialSize,
+		});
 
-    const prevCategoryRef = useRef<string | undefined>(categoryCode);
-    const [forceSkeleton, setForceSkeleton] = useState<boolean>(false);
+		const prevCategoryRef = useRef<string | undefined>(categoryCode);
+		const [forceSkeleton, setForceSkeleton] = useState<boolean>(false);
 
-    useEffect(() => {
-      if (!preferSkeletonOnCategoryChange) return;
-      if (prevCategoryRef.current !== categoryCode) {
-        prevCategoryRef.current = categoryCode;
-        setForceSkeleton(true);
-        // 페이지 보장/프리패치 락도 리셋
-        didEnsureTwoPagesRef.current = false;
-        lastEnsuredTargetRef.current = null;
-      }
-    }, [categoryCode, preferSkeletonOnCategoryChange]);
+		useEffect(() => {
+			if (!preferSkeletonOnCategoryChange) return;
+			if (prevCategoryRef.current !== categoryCode) {
+				prevCategoryRef.current = categoryCode;
+				setForceSkeleton(true);
+				// 페이지 보장/프리패치 락도 리셋
+				didEnsureTwoPagesRef.current = false;
+				lastEnsuredTargetRef.current = null;
+			}
+		}, [categoryCode, preferSkeletonOnCategoryChange]);
 
-    useEffect(() => {
-      if (!preferSkeletonOnCategoryChange) return;
-      if ((articles && articles.length > 0) || (!isLoading && !isLoadingMore)) {
-        setForceSkeleton(false);
-      }
-    }, [articles, isLoading, isLoadingMore, preferSkeletonOnCategoryChange]);
+		useEffect(() => {
+			if (!preferSkeletonOnCategoryChange) return;
+			if ((articles && articles.length > 0) || (!isLoading && !isLoadingMore)) {
+				setForceSkeleton(false);
+			}
+		}, [articles, isLoading, isLoadingMore, preferSkeletonOnCategoryChange]);
 
-    const isWeb = Platform.OS === "web";
+		const isWeb = Platform.OS === 'web';
 
-    const invalidateAndRefetch = async () => {
-      await queryClient.invalidateQueries({
-        queryKey: createArticlesQueryKey(categoryCode),
-      });
-      await refetch();
-      setOpenPreviewArticleId(null);
-    };
+		const invalidateAndRefetch = async () => {
+			await queryClient.invalidateQueries({
+				queryKey: createArticlesQueryKey(categoryCode),
+			});
+			await refetch();
+			setOpenPreviewArticleId(null);
+		};
 
-    const handleScroll = useCallback(
-      (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        if (!isWeb) {
-          const position = event.nativeEvent.contentOffset.y;
-          saveScrollPosition(position);
-        }
-      },
-      [isWeb, saveScrollPosition]
-    );
+		const handleScroll = useCallback(
+			(event: NativeSyntheticEvent<NativeScrollEvent>) => {
+				if (!isWeb) {
+					const position = event.nativeEvent.contentOffset.y;
+					saveScrollPosition(position);
+				}
+			},
+			[isWeb, saveScrollPosition],
+		);
 
-    const like = (item: ArticleType) => {
-      if (!my?.id) {
-        Linking.openURL("https://info.some-in-univ.com");
-        return;
-      }
-      tryCatch(
-        async () => {
-          updateArticleLike(item.id);
-          await apis.articles.doLike(item);
-        },
-        (error) => {
-          console.error("Article like update failed:", error);
-        }
-      );
-    };
+		const like = (item: ArticleType) => {
+			if (!my?.id) {
+				return;
+			}
+			tryCatch(
+				async () => {
+					updateArticleLike(item.id);
+					await apis.articles.doLike(item);
+				},
+				(error) => {
+					console.error('Article like update failed:', error);
+				},
+			);
+		};
 
-    const [openPreviewArticleId, setOpenPreviewArticleId] = useState<
-      string | null
-    >(null);
+		const [openPreviewArticleId, setOpenPreviewArticleId] = useState<string | null>(null);
 
-    useEffect(() => {
-      setOpenPreviewArticleId(null);
-    }, [categoryCode]);
+		useEffect(() => {
+			setOpenPreviewArticleId(null);
+		}, [categoryCode]);
 
-    const deleteArticle = (id: string) => {
-      showModal({
-        title: t("features.community.ui.infinite_article_list.delete_article_title"),
-        children: (
-          <View>
-            <Text size="sm" textColor="black">
-              {t("features.community.ui.infinite_article_list.delete_article_confirm")}
-            </Text>
-          </View>
-        ),
-        primaryButton: {
-          text:  t("features.community.ui.infinite_article_list.delete_button"),
-          onClick: () =>
-            tryCatch(
-              async () => {
-                await apis.articles.deleteArticle(id);
-                setOpenPreviewArticleId(null);
-                await invalidateAndRefetch();
-              },
-              (serverError: unknown) => {
-                const err = serverError as { message?: string; error?: string; status?: number; statusCode?: number } | null;
-                console.error("Article deletion error:", {
-                  error: serverError,
-                  errorMessage: err?.message,
-                  errorString: err?.error,
-                  status: err?.status,
-                  statusCode: err?.statusCode,
-                  articleId: id,
-                });
+		const deleteArticle = (id: string) => {
+			showModal({
+				title: t('features.community.ui.infinite_article_list.delete_article_title'),
+				children: (
+					<View>
+						<Text size="sm" textColor="black">
+							{t('features.community.ui.infinite_article_list.delete_article_confirm')}
+						</Text>
+					</View>
+				),
+				primaryButton: {
+					text: t('features.community.ui.infinite_article_list.delete_button'),
+					onClick: () =>
+						tryCatch(
+							async () => {
+								await apis.articles.deleteArticle(id);
+								setOpenPreviewArticleId(null);
+								await invalidateAndRefetch();
+							},
+							(serverError: unknown) => {
+								const err = serverError as {
+									message?: string;
+									error?: string;
+									status?: number;
+									statusCode?: number;
+								} | null;
+								console.error('Article deletion error:', {
+									error: serverError,
+									errorMessage: err?.message,
+									errorString: err?.error,
+									status: err?.status,
+									statusCode: err?.statusCode,
+									articleId: id,
+								});
 
-                const errorMessage = err?.message || err?.error || t("features.community.ui.delete_error");
-                showErrorModal(errorMessage, "error");
-              }
-            ),
-        },
-        secondaryButton: {
-          text: t("cancel"),
-          onClick: () => {},
-        },
-      });
-    };
+								const errorMessage =
+									err?.message || err?.error || t('features.community.ui.delete_error');
+								showErrorModal(errorMessage, 'error');
+							},
+						),
+				},
+				secondaryButton: {
+					text: t('cancel'),
+					onClick: () => {},
+				},
+			});
+		};
 
-    // 스켈레톤 버킷
-    const pickVariant = useCallback((): "short" | "medium" | "long" => {
-      const r = Math.random();
-      if (r < 0.33) return "short";
-      if (r < 0.66) return "medium";
-      return "long";
-    }, []);
+		// 스켈레톤 버킷
+		const pickVariant = useCallback((): 'short' | 'medium' | 'long' => {
+			const r = Math.random();
+			if (r < 0.33) return 'short';
+			if (r < 0.66) return 'medium';
+			return 'long';
+		}, []);
 
-    const renderFooter = useCallback(() => {
-      if (!isLoadingMore) return null;
-      return (
-        <View style={listStyles.footerLoader}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <ArticleSkeleton key={`skel-more-${i}`} variant={pickVariant()} />
-          ))}
-        </View>
-      );
-    }, [isLoadingMore, pickVariant]);
+		const renderFooter = useCallback(() => {
+			if (!isLoadingMore) return null;
+			return (
+				<View style={listStyles.footerLoader}>
+					{Array.from({ length: 3 }).map((_, i) => (
+						<ArticleSkeleton key={`skel-more-${i}`} variant={pickVariant()} />
+					))}
+				</View>
+			);
+		}, [isLoadingMore, pickVariant]);
 
-    useImperativeHandle(ref, () => ({
-      refresh: () => invalidateAndRefetch(),
-    }));
+		useImperativeHandle(ref, () => ({
+			refresh: () => invalidateAndRefetch(),
+		}));
 
-    const didEnsureTwoPagesRef = useRef(false);
-    useEffect(() => {
-      if (didEnsureTwoPagesRef.current) return;
-      if (isLoading) return;
-      if (isLoadingMore) return;
-      if (pagesCount >= 2) {
-        didEnsureTwoPagesRef.current = true;
-        return;
-      }
-      if (hasNextPage) {
-        didEnsureTwoPagesRef.current = true;
-        loadMore();
-      }
-    }, [isLoading, isLoadingMore, pagesCount, hasNextPage, loadMore]);
+		const didEnsureTwoPagesRef = useRef(false);
+		useEffect(() => {
+			if (didEnsureTwoPagesRef.current) return;
+			if (isLoading) return;
+			if (isLoadingMore) return;
+			if (pagesCount >= 2) {
+				didEnsureTwoPagesRef.current = true;
+				return;
+			}
+			if (hasNextPage) {
+				didEnsureTwoPagesRef.current = true;
+				loadMore();
+			}
+		}, [isLoading, isLoadingMore, pagesCount, hasNextPage, loadMore]);
 
-    const lastEnsuredTargetRef = useRef<number | null>(null);
+		const lastEnsuredTargetRef = useRef<number | null>(null);
 
-    const pageSizeRef = useRef(initialSize);
-    const pagesCountRef = useRef(pagesCount);
-    const hasNextPageRef = useRef(hasNextPage);
-    const isLoadingMoreRef = useRef(isLoadingMore);
-    useEffect(() => {
-      pageSizeRef.current = initialSize;
-    }, [initialSize]);
-    useEffect(() => {
-      pagesCountRef.current = pagesCount;
-    }, [pagesCount]);
-    useEffect(() => {
-      hasNextPageRef.current = hasNextPage;
-    }, [hasNextPage]);
-    useEffect(() => {
-      isLoadingMoreRef.current = isLoadingMore;
-    }, [isLoadingMore]);
+		const pageSizeRef = useRef(initialSize);
+		const pagesCountRef = useRef(pagesCount);
+		const hasNextPageRef = useRef(hasNextPage);
+		const isLoadingMoreRef = useRef(isLoadingMore);
+		useEffect(() => {
+			pageSizeRef.current = initialSize;
+		}, [initialSize]);
+		useEffect(() => {
+			pagesCountRef.current = pagesCount;
+		}, [pagesCount]);
+		useEffect(() => {
+			hasNextPageRef.current = hasNextPage;
+		}, [hasNextPage]);
+		useEffect(() => {
+			isLoadingMoreRef.current = isLoadingMore;
+		}, [isLoadingMore]);
 
-    const viewabilityConfigRef = useRef<ViewabilityConfig>({
-      itemVisiblePercentThreshold: 10,
-      minimumViewTime: 80,
-    });
+		const viewabilityConfigRef = useRef<ViewabilityConfig>({
+			itemVisiblePercentThreshold: 10,
+			minimumViewTime: 80,
+		});
 
-    const onViewableItemsChangedRef = useRef(
-      ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-        if (!viewableItems || viewableItems.length === 0) return;
+		const onViewableItemsChangedRef = useRef(
+			({ viewableItems }: { viewableItems: ViewToken[] }) => {
+				if (!viewableItems || viewableItems.length === 0) return;
 
-        const firstIdx = viewableItems.reduce((min, v) => {
-          return typeof v.index === "number" ? Math.min(min, v.index) : min;
-        }, Number.POSITIVE_INFINITY);
-        if (!Number.isFinite(firstIdx)) return;
+				const firstIdx = viewableItems.reduce((min, v) => {
+					return typeof v.index === 'number' ? Math.min(min, v.index) : min;
+				}, Number.POSITIVE_INFINITY);
+				if (!Number.isFinite(firstIdx)) return;
 
-        const size = Math.max(1, pageSizeRef.current);
-        const currentPage = Math.floor(firstIdx / size) + 1;
-        const targetPages = currentPage + 1;
+				const size = Math.max(1, pageSizeRef.current);
+				const currentPage = Math.floor(firstIdx / size) + 1;
+				const targetPages = currentPage + 1;
 
-        if (pagesCountRef.current >= targetPages) return;
-        if (!hasNextPageRef.current) return;
-        if (lastEnsuredTargetRef.current === targetPages) return;
-        if (isLoadingMoreRef.current) return;
+				if (pagesCountRef.current >= targetPages) return;
+				if (!hasNextPageRef.current) return;
+				if (lastEnsuredTargetRef.current === targetPages) return;
+				if (isLoadingMoreRef.current) return;
 
-        lastEnsuredTargetRef.current = targetPages;
-        loadMore().catch(() => {
-          lastEnsuredTargetRef.current = null;
-        });
-      }
-    );
+				lastEnsuredTargetRef.current = targetPages;
+				loadMore().catch(() => {
+					lastEnsuredTargetRef.current = null;
+				});
+			},
+		);
 
-    useEffect(() => {
-      if (!isWeb) return;
-      const el = document?.getElementById(
-        "CommunityScrollView"
-      ) as HTMLElement | null;
-      if (!el) return;
+		useEffect(() => {
+			if (!isWeb) return;
+			const el = document?.getElementById('CommunityScrollView') as HTMLElement | null;
+			if (!el) return;
 
-      const handleWebScroll = () => {
-        saveScrollPosition(el.scrollTop);
-      };
-      el.addEventListener("scroll", handleWebScroll, { passive: true });
-      return () => el.removeEventListener("scroll", handleWebScroll);
-    }, [isWeb, saveScrollPosition]);
+			const handleWebScroll = () => {
+				saveScrollPosition(el.scrollTop);
+			};
+			el.addEventListener('scroll', handleWebScroll, { passive: true });
+			return () => el.removeEventListener('scroll', handleWebScroll);
+		}, [isWeb, saveScrollPosition]);
 
-    useEffect(() => {
-      if (!isWeb) return;
-      const position = getScrollPosition();
-      const el = document.getElementById(
-        "CommunityScrollView"
-      ) as HTMLElement | null;
-      if (!el) return;
+		useEffect(() => {
+			if (!isWeb) return;
+			const position = getScrollPosition();
+			const el = document.getElementById('CommunityScrollView') as HTMLElement | null;
+			if (!el) return;
 
-      if (position > 0) {
-        setTimeout(() => {
-          el.scrollTo({ top: position, behavior: "auto" });
-        }, 100);
-      }
-    }, [getScrollPosition, isWeb]);
+			if (position > 0) {
+				setTimeout(() => {
+					el.scrollTo({ top: position, behavior: 'auto' });
+				}, 100);
+			}
+		}, [getScrollPosition, isWeb]);
 
-    if (
-      (preferSkeletonOnCategoryChange && forceSkeleton) ||
-      (isLoading && articles.length === 0)
-    ) {
-      return (
-        <View style={listStyles.container}>
-          <View style={listStyles.separator} />
-          <View style={listStyles.separatorWithMargin} />
-          {Array.from({ length: initialSize }).map((_, i) => (
-            <ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
-          ))}
-        </View>
-      );
-    }
+		if ((preferSkeletonOnCategoryChange && forceSkeleton) || (isLoading && articles.length === 0)) {
+			return (
+				<View style={listStyles.container}>
+					<View style={listStyles.separator} />
+					<View style={listStyles.separatorWithMargin} />
+					{Array.from({ length: initialSize }).map((_, i) => (
+						<ArticleSkeleton key={`skel-init-${i}`} variant={pickVariant()} />
+					))}
+				</View>
+			);
+		}
 
-    return (
-      <View style={listStyles.container}>
-        <View style={listStyles.separatorBackground} />
-        <View style={listStyles.separatorBackgroundWithMargin} />
-        <PalePurpleGradient />
+		const isRealtimeCategory = categoryCode === 'realtime' || categoryCode === undefined;
 
-        <CustomInfiniteScrollView
-          data={articles}
-          id="ArticleListContainer"
-          renderItem={(article: ArticleType) => (
-            <Article
-              data={article}
-              onPress={() => {
-                router.push(`/community/${article.id}`);
-              }}
-              onLike={() => like(article)}
-              onDelete={deleteArticle}
-              refresh={invalidateAndRefetch}
-              isPreviewOpen={openPreviewArticleId === article.id}
-              onTogglePreview={() => {
-                setOpenPreviewArticleId((prev) =>
-                  prev === article.id ? null : article.id
-                );
-              }}
-            />
-          )}
-          onLoadMore={loadMore}
-          isLoading={isLoading}
-          isLoadingMore={isLoadingMore}
-          hasMore={hasNextPage}
-          onRefresh={invalidateAndRefetch}
-          refreshing={isLoading && !isLoadingMore}
-          style={listStyles.scrollView}
-          ListFooterComponent={renderFooter}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-          flatListRef={flatListRef}
-          observerEnabled={false}
-          autoFillMaxPages={0}
-          onViewableItemsChanged={onViewableItemsChangedRef.current}
-          viewabilityConfig={viewabilityConfigRef.current}
-        />
-      </View>
-    );
-  }
+		return (
+			<View style={listStyles.container}>
+				{isRealtimeCategory && <HotSlide pageSize={5} />}
+
+				<CustomInfiniteScrollView
+					data={articles}
+					id="ArticleListContainer"
+					renderItem={(article: ArticleType) => (
+						<Article
+							data={article}
+							onPress={() => {
+								router.push(`/community/${article.id}`);
+							}}
+							onLike={() => like(article)}
+							onDelete={deleteArticle}
+							refresh={invalidateAndRefetch}
+							isPreviewOpen={openPreviewArticleId === article.id}
+							onTogglePreview={() => {
+								setOpenPreviewArticleId((prev) => (prev === article.id ? null : article.id));
+							}}
+						/>
+					)}
+					onLoadMore={loadMore}
+					isLoading={isLoading}
+					isLoadingMore={isLoadingMore}
+					hasMore={hasNextPage}
+					onRefresh={invalidateAndRefetch}
+					refreshing={isLoading && !isLoadingMore}
+					style={listStyles.scrollView}
+					ListFooterComponent={renderFooter}
+					onScroll={handleScroll}
+					scrollEventThrottle={16}
+					flatListRef={flatListRef}
+					observerEnabled={false}
+					autoFillMaxPages={0}
+					onViewableItemsChanged={onViewableItemsChangedRef.current}
+					viewabilityConfig={viewabilityConfigRef.current}
+				/>
+			</View>
+		);
+	},
 );
 
 const listStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: semanticColors.surface.background,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: semanticColors.surface.other,
-  },
-  separatorWithMargin: {
-    height: 1,
-    backgroundColor: semanticColors.surface.other,
-    marginBottom: 8,
-  },
-  separatorBackground: {
-    height: 1,
-    backgroundColor: semanticColors.surface.background,
-  },
-  separatorBackgroundWithMargin: {
-    height: 1,
-    backgroundColor: semanticColors.surface.background,
-    marginBottom: 8,
-  },
-  footerLoader: {
-    paddingVertical: 8,
-  },
-  scrollView: {
-    flex: 1,
-  },
+	container: {
+		flex: 1,
+		backgroundColor: '#FFFFFF',
+	},
+	separator: {
+		height: 1,
+		backgroundColor: semanticColors.surface.other,
+	},
+	separatorWithMargin: {
+		height: 1,
+		backgroundColor: semanticColors.surface.other,
+		marginBottom: 8,
+	},
+	footerLoader: {
+		paddingVertical: 8,
+	},
+	scrollView: {
+		flex: 1,
+	},
 });

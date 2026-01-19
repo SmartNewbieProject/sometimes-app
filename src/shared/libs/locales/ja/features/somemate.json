@@ -1,126 +1,126 @@
 {
-  "intro": {
-    "header_title": "サムメイト",
-    "topic_title": "会話トピックを設定する",
-    "topic_subtitle": "AIミホと話したいトピックを選んでみてください！",
-    "categories": {
-      "daily": "日常",
-      "relationship": "人間関係",
-      "hobby": "進路/学校",
-      "love": "恋愛"
-    },
-    "promotion": {
-      "title": "サムタイムは十分な会話が蓄積された後に生成されます",
-      "subtitle": "ミホとの会話を続けながら\n自分だけのパターンを発見してみてください！"
-    },
-    "chat_button": "ミホと会話する",
-    "report_button": "レポートを見に行く"
-  },
-  "modal": {
-    "gem_shortage": {
-      "title": "ビー玉が足りません",
-      "message_1": "サムメイトの会話を始めるにはビー玉1個が必要です。",
-      "message_2": "ビー玉をチャージしてミホと会話してみてください！"
-    },
-    "start_chat": {
-      "title_1": "AIミホとの会話を始めるために",
-      "title_2": "ビー玉1個を使用します！",
-      "discount_info": "🎉 オープン割引価格！5個 → 1個",
-      "discount_subtitle": "特別割引価格でAIミホと会話してみてください",
-      "confirm": "はい、やってみます",
-      "cancel": "キャンセル"
-    },
-    "error": {
-      "title": "エラー",
-      "session_failed": "セッションの作成に失敗しました。",
-      "confirm": "確認"
-    }
-  },
-  "chat": {
-    "name": "ミホ",
-    "turn_count": "会話 {{count}}ターン",
-    "input_placeholder": "メッセージを入力してください",
-    "error": {
-      "title": "エラー",
-      "message_failed": "メッセージの送信に失敗しました。",
-      "confirm": "確認"
-    },
-    "analyze": {
-      "title": "分析リクエスト",
-      "message": "会話を分析してサムタイムレポートを作成しますか？\nレポート作成後は新しい会話を始められます。",
-      "button": "分析する",
-      "cancel": "キャンセル",
-      "button_text": "分析を受ける ({{count}}ターン)",
-      "button_text_disabled": "もう少し会話してみてください ({{count}}/10ターン)",
-      "hint_enabled": "💡 今分析を受けるか、もっと会話してから後で分析を受けることができます",
-      "hint_disabled": "💬 10ターン以上会話するとサムタイプレポートを受け取れます"
-    },
-    "analyze_started": {
-      "title": "分析開始",
-      "message": "レポート作成を開始しました。\nしばらくしてからレポート一覧でご確認ください。",
-      "button": "レポートを見に行く"
-    },
-    "analyze_error": {
-      "title": "エラー",
-      "message": "分析リクエストに失敗しました。",
-      "confirm": "確認"
-    },
-    "leave": {
-      "title": "チャットルームを退出",
-      "message": "チャットルームを退出すると現在の会話内容が削除され、\nレポートを受け取ることができません。\n\n本当に退出しますか？",
-      "button": "退出する",
-      "cancel": "キャンセル",
-      "success_title": "チャットルームを退出",
-      "success_message": "チャットルームから退出しました。",
-      "confirm": "確認",
-      "error_title": "エラー",
-      "error_message": "チャットルームの退出に失敗しました。"
-    }
-  },
-  "report": {
-    "header_title": "マイサムタイム",
-    "top_card": {
-      "title": "マイサムタイムコレクション",
-      "description": "これまで作成されたレポートを一目で確認できます！",
-      "total_count": "作成されたサムタイム：",
-      "count_unit": "{{count}}個",
-      "last_update": "最終更新："
-    },
-    "empty": {
-      "title": "まだ作成されたレポートがありません",
-      "subtitle": "ミホと会話した後、分析を受けてみてください！"
-    },
-    "card": {
-      "default_title": "サムタイム #{{number}}",
-      "processing": "分析中"
-    },
-    "date": {
-      "am": "午前",
-      "pm": "午後"
-    }
-  },
-  "report_detail": {
-    "header_title": "サムタイムレポート",
-    "processing": {
-      "title": "レポートを分析中です",
-      "message": "ミホが一生懸命分析しています。\n少々お待ちください！"
-    },
-    "no_data": "レポートデータがありません。",
-    "sections": {
-      "overall_summary": "全体要約",
-      "personality_traits": "性格特性",
-      "insights": "インサイト",
-      "category_analysis": "カテゴリー分析"
-    }
-  },
-  "apis": {
-    "메시지_전송에_실패했습니다": "[JA] 메시지 전송에 실패했습니다.",
-    "스트림을_읽을_수_없습니다": "[JA] 스트림을 읽을 수 없습니다."
-  },
-  "common": {
-    "일상": "[JA] 일상",
-    "인간관계": "[JA] 인간관계",
-    "진로_학교": "[JA] 진로/학교",
-    "연애": "[JA] 연애"
-  }
+	"intro": {
+		"header_title": "サムメイト",
+		"topic_title": "会話トピックを設定する",
+		"topic_subtitle": "AIミホと話したいトピックを選んでみてください！",
+		"categories": {
+			"daily": "日常",
+			"relationship": "人間関係",
+			"hobby": "進路/学校",
+			"love": "恋愛"
+		},
+		"promotion": {
+			"title": "サムタイムは十分な会話が蓄積された後に生成されます",
+			"subtitle": "ミホとの会話を続けながら\n自分だけのパターンを発見してみてください！"
+		},
+		"chat_button": "ミホと会話する",
+		"report_button": "レポートを見に行く"
+	},
+	"modal": {
+		"gem_shortage": {
+			"title": "ビー玉が足りません",
+			"message_1": "サムメイトの会話を始めるにはビー玉1個が必要です。",
+			"message_2": "ビー玉をチャージしてミホと会話してみてください！"
+		},
+		"start_chat": {
+			"title_1": "AIミホとの会話を始めるために",
+			"title_2": "ビー玉1個を使用します！",
+			"discount_info": "🎉 オープン割引価格！5個 → 1個",
+			"discount_subtitle": "特別割引価格でAIミホと会話してみてください",
+			"confirm": "はい、やってみます",
+			"cancel": "キャンセル"
+		},
+		"error": {
+			"title": "エラー",
+			"session_failed": "セッションの作成に失敗しました。",
+			"confirm": "確認"
+		}
+	},
+	"chat": {
+		"name": "ミホ",
+		"turn_count": "会話 {{count}}ターン",
+		"input_placeholder": "メッセージを入力してください",
+		"error": {
+			"title": "エラー",
+			"message_failed": "メッセージの送信に失敗しました。",
+			"confirm": "確認"
+		},
+		"analyze": {
+			"title": "分析リクエスト",
+			"message": "会話を分析してサムタイムレポートを作成しますか？\nレポート作成後は新しい会話を始められます。",
+			"button": "分析する",
+			"cancel": "キャンセル",
+			"button_text": "分析を受ける ({{count}}ターン)",
+			"button_text_disabled": "もう少し会話してみてください ({{count}}/10ターン)",
+			"hint_enabled": "💡 今分析を受けるか、もっと会話してから後で分析を受けることができます",
+			"hint_disabled": "💬 10ターン以上会話するとサムタイプレポートを受け取れます"
+		},
+		"analyze_started": {
+			"title": "分析開始",
+			"message": "レポート作成を開始しました。\nしばらくしてからレポート一覧でご確認ください。",
+			"button": "レポートを見に行く"
+		},
+		"analyze_error": {
+			"title": "エラー",
+			"message": "分析リクエストに失敗しました。",
+			"confirm": "確認"
+		},
+		"leave": {
+			"title": "チャットルームを退出",
+			"message": "チャットルームを退出すると現在の会話内容が削除され、\nレポートを受け取ることができません。\n\n本当に退出しますか？",
+			"button": "退出する",
+			"cancel": "キャンセル",
+			"success_title": "チャットルームを退出",
+			"success_message": "チャットルームから退出しました。",
+			"confirm": "確認",
+			"error_title": "エラー",
+			"error_message": "チャットルームの退出に失敗しました。"
+		}
+	},
+	"report": {
+		"header_title": "マイサムタイム",
+		"top_card": {
+			"title": "マイサムタイムコレクション",
+			"description": "これまで作成されたレポートを一目で確認できます！",
+			"total_count": "作成されたサムタイム：",
+			"count_unit": "{{count}}個",
+			"last_update": "最終更新："
+		},
+		"empty": {
+			"title": "まだ作成されたレポートがありません",
+			"subtitle": "ミホと会話した後、分析を受けてみてください！"
+		},
+		"card": {
+			"default_title": "サムタイム #{{number}}",
+			"processing": "分析中"
+		},
+		"date": {
+			"am": "午前",
+			"pm": "午後"
+		}
+	},
+	"report_detail": {
+		"header_title": "サムタイムレポート",
+		"processing": {
+			"title": "レポートを分析中です",
+			"message": "ミホが一生懸命分析しています。\n少々お待ちください！"
+		},
+		"no_data": "レポートデータがありません。",
+		"sections": {
+			"overall_summary": "全体要約",
+			"personality_traits": "性格特性",
+			"insights": "インサイト",
+			"category_analysis": "カテゴリー分析"
+		}
+	},
+	"apis": {
+		"메시지_전송에_실패했습니다": "[JA] 메시지 전송에 실패했습니다.",
+		"스트림을_읽을_수_없습니다": "[JA] 스트림을 읽을 수 없습니다."
+	},
+	"common": {
+		"일상": "[JA] 일상",
+		"인간관계": "[JA] 인간관계",
+		"진로_학교": "[JA] 진로/학교",
+		"연애": "[JA] 연애"
+	}
 }

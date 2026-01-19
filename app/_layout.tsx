@@ -30,7 +30,7 @@ import { VersionUpdateChecker } from '@/src/features/version-update';
 import { QueryProvider, RouteTracker } from '@/src/shared/config';
 import { useAtt } from '@/src/shared/hooks';
 import { useStorage } from '@/src/shared/hooks/use-storage';
-import { AnalyticsProvider, ModalProvider } from '@/src/shared/providers';
+import { AnalyticsProvider, ModalProvider, PortalProvider } from '@/src/shared/providers';
 import Toast from '@/src/shared/ui/toast';
 import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -38,6 +38,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SessionTracker } from '@/src/shared/components/session-tracker';
 import { AppBadgeSync } from '@/src/shared/components/app-badge-sync';
 import { LoginRequiredModalListener } from '@/src/shared/components/login-required-modal-listener';
+import { OTAUpdateHandler } from '@/src/shared/components/ota-update-handler';
+import { GlobalLoadingOverlay } from '@/src/shared/ui/global-loading-overlay';
 import * as Sentry from '@sentry/react-native';
 
 let navigationIntegration: ReturnType<typeof Sentry.reactNavigationIntegration> | null = null;
@@ -142,7 +144,7 @@ export default Sentry.wrap(function RootLayout() {
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				const mixpanelToken = env.MIXPANEL_TOKEN;
-				if (mixpanelToken) {
+				if (mixpanelToken && !__DEV__) {
 					try {
 						mixpanelAdapter.init(mixpanelToken, true);
 
@@ -153,6 +155,8 @@ export default Sentry.wrap(function RootLayout() {
 					} catch (mixpanelError) {
 						console.warn('[SDK Init] Mixpanel init failed:', mixpanelError);
 					}
+				} else if (__DEV__) {
+					console.log('[SDK Init] Mixpanel disabled in development mode');
 				}
 
 				await new Promise((resolve) => setTimeout(resolve, 100));
@@ -171,15 +175,15 @@ export default Sentry.wrap(function RootLayout() {
 	const nativeFonts: Record<string, number> =
 		Platform.OS !== 'web'
 			? {
-					'Pretendard-Thin': require('../assets/fonts/Pretendard-Thin.ttf'),
-					'Pretendard-ExtraLight': require('../assets/fonts/Pretendard-ExtraLight.ttf'),
+					'Pretendard-Thin': require('../assets/fonts/Pretendard-Thin.otf'),
+					'Pretendard-ExtraLight': require('../assets/fonts/Pretendard-ExtraLight.otf'),
 					'Pretendard-Light': require('../assets/fonts/Pretendard-Light.otf'),
 					'Pretendard-Regular': require('../assets/fonts/Pretendard-Regular.otf'),
 					'Pretendard-Medium': require('../assets/fonts/Pretendard-Medium.otf'),
-					'Pretendard-SemiBold': require('../assets/fonts/Pretendard-SemiBold.ttf'),
-					'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.ttf'),
-					'Pretendard-ExtraBold': require('../assets/fonts/Pretendard-ExtraBold.ttf'),
-					'Pretendard-Black': require('../assets/fonts/Pretendard-Black.ttf'),
+					'Pretendard-SemiBold': require('../assets/fonts/Pretendard-SemiBold.otf'),
+					'Pretendard-Bold': require('../assets/fonts/Pretendard-Bold.otf'),
+					'Pretendard-ExtraBold': require('../assets/fonts/Pretendard-ExtraBold.otf'),
+					'Pretendard-Black': require('../assets/fonts/Pretendard-Black.otf'),
 					Rubik: require('../assets/fonts/Rubik-Regular.ttf'),
 					'Rubik-Bold': require('../assets/fonts/Rubik-Bold.ttf'),
 					'Gmarket-Sans-Medium': require('../assets/fonts/GmarketSansTTFMedium.ttf'),
@@ -429,19 +433,23 @@ export default Sentry.wrap(function RootLayout() {
 							<GlobalChatProvider>
 								<PortoneProvider>
 									<View style={styles.container}>
-										<AnalyticsProvider>
+										<PortalProvider>
+											<AnalyticsProvider>
 											<RouteTracker>
 												<>
 													<Slot />
+													<OTAUpdateHandler />
 													<VersionUpdateChecker />
 													<Toast />
 													<ChatActivityTracker />
 													<SessionTracker />
 													<AppBadgeSync />
 													<LoginRequiredModalListener />
+													<GlobalLoadingOverlay />
 												</>
 											</RouteTracker>
 										</AnalyticsProvider>
+										</PortalProvider>
 									</View>
 								</PortoneProvider>
 							</GlobalChatProvider>

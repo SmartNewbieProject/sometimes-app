@@ -13,7 +13,7 @@ function NotSome({ type }: NotSomeProps) {
   return (
     <View style={styles.container}>
       <Image
-        source={require("@assets/images/no-some-post-miho.png")}
+        source={require("@assets/images/no-some-post-miho.webp")}
         style={styles.image}
       />
       <Text style={styles.description}>

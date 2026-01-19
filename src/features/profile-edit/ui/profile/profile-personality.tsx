@@ -26,8 +26,7 @@ function ProfilePersonality() {
 
   const preferences: Preferences =
     preferencesArray?.find(
-      (item) => item.typeCode === PreferenceKeys.PERSONALITY ||
-                item.typeCode === "personality"
+      (item) => item.typeCode === PreferenceKeys.PERSONALITY
     ) ?? preferencesArray[0];
 
   const onChangeOption = (values: string[]) => {

@@ -1,39 +1,34 @@
 import { MobileIdentityVerification, usePortOneLogin } from '@/src/features/pass';
-import { Button, Show, SlideUnlock, SlideToAbout, Text, AppDownloadSection } from '@/src/shared/ui';
-import { useMixpanel } from '@/src/shared/hooks';
-import { env } from '@/src/shared/libs/env';
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { isAdult } from '@/src/features/pass/utils';
 import {
-	LOGIN_ABANDONED_STEPS,
 	AUTH_METHODS,
+	LOGIN_ABANDONED_STEPS,
 	MIXPANEL_EVENTS,
 } from '@/src/shared/constants/mixpanel-events';
+import { useMixpanel } from '@/src/shared/hooks';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { env } from '@/src/shared/libs/env';
+import { isJapanese } from '@/src/shared/libs/local';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { Button, Show, SlideToAbout, Text } from '@/src/shared/ui';
+import { devLogWithTag } from '@/src/shared/utils';
 import KakaoLogo from '@assets/icons/kakao-logo.svg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as KakaoLogin from '@react-native-kakao/user';
 import * as Localization from 'expo-localization';
-import { router, usePathname, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState, useRef } from 'react';
-import {
-	Platform,
-	Pressable,
-	StyleSheet,
-	TouchableOpacity,
-	View,
-	ActivityIndicator,
-} from 'react-native';
+import { usePathname, useRouter } from 'expo-router';
+import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useAuth } from '../../auth';
 import { PrivacyNotice } from '../../auth/ui/privacy-notice';
-import AppleLoginButton from './apple-login-button';
-import UniversityLogos from './university-logos';
-import { useTranslation } from 'react-i18next';
-import i18n from '@/src/shared/libs/i18n';
-import * as KakaoLogin from '@react-native-kakao/user';
 import { checkPhoneNumberBlacklist } from '../apis';
-import { isAdult } from '@/src/features/pass/utils';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { devLogWithTag } from '@/src/shared/utils';
-import { isJapanese } from '@/src/shared/libs/local';
 import useSignupProgress from '../hooks/use-signup-progress';
+import AppleLoginButton from './apple-login-button';
+import { SignupFastBadge } from './signup-fast-badge';
+import { SocialLoginIcons } from './social-login-icons';
+import { SometimeLogo } from './sometime-logo';
+import UniversityLogos from './university-logos';
 
 /**
  * 로그인 폼 - JP/KR 분기 처리
@@ -131,13 +126,35 @@ function KrLoginForm() {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { setAuthMethod } = useSignupProgress();
+	const [passRetryCount, setPassRetryCount] = useState(0);
+	const [passLastFailureReason, setPassLastFailureReason] = useState<string | null>(null);
 
 	const onPressPassLogin = async () => {
 		const loginStartTime = Date.now();
 
 		setAuthMethod(AUTH_METHODS.PASS);
+
+		// 인증 방법 선택 이벤트
+		mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_METHOD_SELECTED, {
+			auth_method: AUTH_METHODS.PASS,
+			is_retry: passRetryCount > 0,
+			retry_count: passRetryCount,
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
+
+		// 재시도인 경우 추가 이벤트
+		if (passRetryCount > 0 && passLastFailureReason) {
+			mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_RETRY_ATTEMPTED, {
+				auth_method: AUTH_METHODS.PASS,
+				retry_count: passRetryCount,
+				previous_failure_reason: passLastFailureReason,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+		}
+
 		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
 			auth_method: 'pass',
+			is_retry: passRetryCount > 0,
 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 		});
 		authEvents.trackLoginStarted('pass');
@@ -150,6 +167,8 @@ function KrLoginForm() {
 			const loginDuration = Date.now() - loginStartTime;
 			authEvents.trackLoginCompleted('pass', loginDuration);
 		} catch (error) {
+			setPassRetryCount((prev) => prev + 1);
+			setPassLastFailureReason('authentication_error');
 			authEvents.trackLoginFailed('pass', 'authentication_error');
 		}
 	};
@@ -165,85 +184,65 @@ function KrLoginForm() {
 		);
 	}
 
+	const isIOS = Platform.OS === 'ios';
+	const isAndroidOrWeb = Platform.OS === 'android' || Platform.OS === 'web';
+
 	return (
 		<View style={loginFormStyles.container}>
+			<SometimeLogo showSubtitle={false} />
+
 			<View style={loginFormStyles.universityLogos}>
 				<UniversityLogos logoSize={64} country="kr" />
 			</View>
-
-			<Show when={Platform.OS === 'web'}>
-				<AppDownloadSection
-					size="sm"
-					onAppStorePress={() => {
-						if (Platform.OS === 'web') {
-							window.open(
-								'https://apps.apple.com/kr/app/%EC%8D%B8%ED%83%80%EC%9E%84-%EC%A7%80%EC%97%AD-%EB%8C%80%ED%95%99%EC%83%9D-%EC%86%8C%EA%B0%9C%ED%8C%85/id6746120889?l=en-GB',
-								'_blank',
-							);
-						}
-					}}
-					onGooglePlayPress={() => {
-						if (Platform.OS === 'web') {
-							window.open(
-								'https://play.google.com/store/apps/details?id=com.smartnewb.sometimes&hl=ko&pli=1',
-								'_blank',
-							);
-						}
-					}}
-				/>
-			</Show>
 
 			<View style={loginFormStyles.slideToAboutWrapper}>
 				<SlideToAbout onAction={() => router.push('/onboarding?source=login')} />
 			</View>
 
-			<View style={loginFormStyles.buttonsContainer}>
-				<View style={loginFormStyles.buttonWrapper}>
-					<Button
-						variant="primary"
-						size="lg"
-						rounded="full"
-						onPress={onPressPassLogin}
-						disabled={isLoading}
-						styles={{
-							width: 330,
-							alignItems: 'center',
-							justifyContent: 'center',
-						}}
-					>
-						{isLoading ? (
-							<View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-								<ActivityIndicator size="small" color="#FFFFFF" />
-								<Text
-									textColor="white"
-									size="18"
-									weight="semibold"
-									style={{ lineHeight: 40, textAlign: 'center' }}
-								>
-									{t('features.signup.ui.login_form.pass_loading')}
-								</Text>
-							</View>
-						) : (
-							<Text
-								textColor="white"
-								size="18"
-								weight="semibold"
-								style={{ lineHeight: 40, textAlign: 'center' }}
-							>
-								{t('features.signup.ui.login_form.pass_login')}
-							</Text>
-						)}
-					</Button>
-				</View>
+			<SignupFastBadge />
 
+			<View style={loginFormStyles.buttonsContainer}>
 				<View style={loginFormStyles.buttonWrapper}>
 					<KakaoLoginComponent />
 				</View>
 
-				<Show when={Platform.OS === 'ios'}>
-					<View>
-						<AppleLoginButton />
+				<Show when={isAndroidOrWeb}>
+					<View style={loginFormStyles.buttonWrapper}>
+						<Pressable
+							onPress={onPressPassLogin}
+							disabled={isLoading}
+							style={[passStyles.button, { opacity: isLoading ? 0.6 : 1 }]}
+						>
+							{isLoading ? (
+								<View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+									<ActivityIndicator size="small" color="#FFFFFF" />
+									<Text
+										textColor="white"
+										size="16"
+										weight="semibold"
+										style={{ textAlign: 'center' }}
+									>
+										{t('features.signup.ui.login_form.pass_loading')}
+									</Text>
+								</View>
+							) : (
+								<Text textColor="white" size="16" weight="semibold" style={{ textAlign: 'center' }}>
+									{t('features.signup.ui.login_form.pass_login')}
+								</Text>
+							)}
+						</Pressable>
 					</View>
+				</Show>
+
+				<Show when={isIOS}>
+					<View style={loginFormStyles.dividerContainer}>
+						<View style={loginFormStyles.dividerLine} />
+						<Text size="sm" style={loginFormStyles.dividerText}>
+							{t('features.signup.ui.login_form.divider_or')}
+						</Text>
+						<View style={loginFormStyles.dividerLine} />
+					</View>
+					<SocialLoginIcons onPressPass={onPressPassLogin} isPassLoading={isLoading} />
 				</Show>
 			</View>
 
@@ -283,6 +282,21 @@ const loginFormStyles = StyleSheet.create({
 	buttonWrapper: {
 		marginBottom: 15,
 	},
+	dividerContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		width: 330,
+		marginVertical: 16,
+	},
+	dividerLine: {
+		flex: 1,
+		height: 1,
+		backgroundColor: '#E0E0E0',
+	},
+	dividerText: {
+		marginHorizontal: 12,
+		color: '#999999',
+	},
 	errorMessage: {
 		width: '100%',
 		paddingHorizontal: 24,
@@ -291,13 +305,17 @@ const loginFormStyles = StyleSheet.create({
 	privacyNotice: {
 		width: '100%',
 		paddingHorizontal: 24,
-		marginTop: 24,
+		marginTop: 'auto',
+		paddingTop: 24,
+		marginBottom: 8,
 	},
 });
 function KakaoLoginComponent() {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
+	const [retryCount, setRetryCount] = useState(0);
+	const [lastFailureReason, setLastFailureReason] = useState<string | null>(null);
 	const { authEvents, signupEvents } = useMixpanel();
 	const { loginWithKakaoNative } = useAuth();
 	const { showModal } = useModal();
@@ -430,6 +448,29 @@ function KakaoLoginComponent() {
 
 			authEvents.trackLoginFailed('kakao', errorInfo.code || 'authentication_error');
 
+			// 재시도 카운터 증가 및 실패 이유 저장
+			setRetryCount((prev) => prev + 1);
+			setLastFailureReason(errorInfo.code || 'authentication_error');
+
+			// 인증 에러 상세 이벤트
+			let errorType = 'unknown';
+			if (errorInfo.status === undefined || !errorInfo.status) {
+				errorType = 'network';
+			} else if (errorInfo.status >= 500) {
+				errorType = 'network';
+			} else if (errorInfo.status === 401 || errorInfo.status === 403) {
+				errorType = 'certificate_expired';
+			}
+
+			mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_VERIFICATION_ERROR, {
+				auth_method: AUTH_METHODS.KAKAO,
+				error_type: errorType,
+				error_code: errorInfo.code,
+				error_message: errorInfo.message,
+				platform: Platform.OS,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+
 			let errorMessage = '';
 			let showRetryButton = false;
 
@@ -485,8 +526,28 @@ function KakaoLoginComponent() {
 
 	const handleKakaoLogin = () => {
 		setAuthMethod(AUTH_METHODS.KAKAO);
+
+		// 인증 방법 선택 이벤트
+		mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_METHOD_SELECTED, {
+			auth_method: AUTH_METHODS.KAKAO,
+			is_retry: retryCount > 0,
+			retry_count: retryCount,
+			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+		});
+
+		// 재시도인 경우 추가 이벤트
+		if (retryCount > 0 && lastFailureReason) {
+			mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_RETRY_ATTEMPTED, {
+				auth_method: AUTH_METHODS.KAKAO,
+				retry_count: retryCount,
+				previous_failure_reason: lastFailureReason,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+		}
+
 		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
 			auth_method: 'kakao',
+			is_retry: retryCount > 0,
 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 		});
 		authEvents.trackLoginStarted('kakao');
@@ -539,13 +600,24 @@ const kakaoStyles = StyleSheet.create({
 	},
 	button: {
 		width: 330,
-		height: 60,
-		borderRadius: 30,
+		height: 50,
+		borderRadius: 47,
 		backgroundColor: '#FEE500',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
 		gap: 10,
-		paddingVertical: 16,
+	},
+});
+
+const passStyles = StyleSheet.create({
+	button: {
+		width: 330,
+		height: 50,
+		borderRadius: 20,
+		backgroundColor: '#FF3A4A',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 });

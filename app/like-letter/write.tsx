@@ -1,8 +1,22 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import {
+	Keyboard,
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	View,
+} from 'react-native';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming,
+	Easing,
+} from 'react-native-reanimated';
 import colors from '@/src/shared/constants/colors';
 import { ImageResources } from '@/src/shared/libs';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -45,7 +59,86 @@ export default function LikeLetterWriteScreen() {
 	const [isValid, setIsValid] = useState(true);
 	const [isSending, setIsSending] = useState(false);
 	const [isFromPrompt, setIsFromPrompt] = useState(false);
+	const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 	const startTimeRef = useRef(Date.now());
+
+	const headerOpacity = useSharedValue(1);
+	const headerTranslateY = useSharedValue(0);
+	const headerHeight = useSharedValue(180);
+	const introCardMaxHeight = useSharedValue(200);
+	const introCardMargin = useSharedValue(16);
+
+	useEffect(() => {
+		const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+		const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+		const keyboardShowListener = Keyboard.addListener(showEvent, () => {
+			setIsKeyboardVisible(true);
+			headerOpacity.value = withTiming(0, {
+				duration: 200,
+				easing: Easing.out(Easing.ease),
+			});
+			headerTranslateY.value = withTiming(-30, {
+				duration: 200,
+				easing: Easing.out(Easing.ease),
+			});
+			headerHeight.value = withTiming(0, {
+				duration: 200,
+				easing: Easing.out(Easing.ease),
+			});
+			introCardMaxHeight.value = withTiming(0, {
+				duration: 200,
+				easing: Easing.out(Easing.ease),
+			});
+			introCardMargin.value = withTiming(0, {
+				duration: 200,
+				easing: Easing.out(Easing.ease),
+			});
+		});
+		const keyboardHideListener = Keyboard.addListener(hideEvent, () => {
+			setIsKeyboardVisible(false);
+			headerOpacity.value = withTiming(1, {
+				duration: 250,
+				easing: Easing.out(Easing.ease),
+			});
+			headerTranslateY.value = withTiming(0, {
+				duration: 250,
+				easing: Easing.out(Easing.ease),
+			});
+			headerHeight.value = withTiming(180, {
+				duration: 250,
+				easing: Easing.out(Easing.ease),
+			});
+			introCardMaxHeight.value = withTiming(200, {
+				duration: 250,
+				easing: Easing.out(Easing.ease),
+			});
+			introCardMargin.value = withTiming(16, {
+				duration: 250,
+				easing: Easing.out(Easing.ease),
+			});
+		});
+
+		return () => {
+			keyboardShowListener.remove();
+			keyboardHideListener.remove();
+		};
+	}, [headerOpacity, headerTranslateY, headerHeight, introCardMaxHeight, introCardMargin]);
+
+	const animatedHeaderStyle = useAnimatedStyle(() => ({
+		opacity: headerOpacity.value,
+		transform: [{ translateY: headerTranslateY.value }],
+		height: headerHeight.value,
+		overflow: 'hidden',
+	}));
+
+	const animatedIntroStyle = useAnimatedStyle(() => ({
+		opacity: headerOpacity.value,
+		transform: [{ translateY: headerTranslateY.value }],
+		maxHeight: introCardMaxHeight.value,
+		marginBottom: introCardMargin.value,
+		overflow: 'hidden',
+	}));
 
 	const connectionId = params.connectionId;
 	const matchId = params.matchId;
@@ -214,8 +307,12 @@ export default function LikeLetterWriteScreen() {
 	const canSend = isValid && letter.trim().length > 0 && !isSending;
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.headerBackground}>
+		<KeyboardAvoidingView
+			style={styles.container}
+			behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+			keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+		>
+			<Animated.View style={[styles.headerBackground, animatedHeaderStyle]}>
 				<Image
 					source={require('@assets/images/like-letter/bg-line.png')}
 					style={styles.bgLine}
@@ -241,7 +338,7 @@ export default function LikeLetterWriteScreen() {
 						</View>
 					</View>
 				</View>
-			</View>
+			</Animated.View>
 
 			<ScrollView
 				style={styles.scrollView}
@@ -249,7 +346,7 @@ export default function LikeLetterWriteScreen() {
 				keyboardShouldPersistTaps="handled"
 				showsVerticalScrollIndicator={false}
 			>
-				<View style={styles.introCard}>
+				<Animated.View style={[styles.introCard, animatedIntroStyle]}>
 					<Pressable style={styles.viewProfileButton} onPress={handleViewProfile}>
 						<Text size="12" weight="medium" style={styles.viewProfileText}>
 							{t('features.like-letter.ui.write_screen.view_profile')}
@@ -266,7 +363,7 @@ export default function LikeLetterWriteScreen() {
 					<Text size="12" textColor="disabled" style={styles.subIntroText}>
 						프로필에서 한 가지를 언급하면 더 자연스러워요!
 					</Text>
-				</View>
+				</Animated.View>
 
 				<View style={styles.promptsSection}>
 					<LetterPrompts connectionId={connectionId} onSelect={handlePromptSelect} />
@@ -282,48 +379,50 @@ export default function LikeLetterWriteScreen() {
 				</View>
 			</ScrollView>
 
-			<View style={[styles.bottomSection, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-				<Pressable
-					style={[styles.previewButton, !letter.trim() && styles.buttonDisabled]}
-					onPress={handlePreview}
-					disabled={!letter.trim()}
-				>
-					<Text
-						weight="medium"
-						size="16"
-						style={[styles.previewButtonText, !letter.trim() ? styles.buttonTextDisabled : {}]}
+			{!isKeyboardVisible && (
+				<View style={[styles.bottomSection, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+					<Pressable
+						style={[styles.previewButton, !letter.trim() && styles.buttonDisabled]}
+						onPress={handlePreview}
+						disabled={!letter.trim()}
 					>
-						{t('features.like-letter.ui.write_screen.preview_button')}
-					</Text>
-				</Pressable>
-
-				<Pressable
-					style={[styles.sendButton, canSend && styles.sendButtonActive]}
-					onPress={handleSendLetter}
-					disabled={!canSend}
-				>
-					<View style={styles.sendButtonContent}>
-						{!canLetter && (
-							<>
-								<ImageResource resource={ImageResources.GEM} width={22} height={22} />
-								<Text size="14" style={styles.gemCount}>
-									x{letterLikeCost}
-								</Text>
-							</>
-						)}
 						<Text
-							weight="semibold"
+							weight="medium"
 							size="16"
-							style={[styles.sendButtonText, canSend ? styles.sendButtonTextActive : {}]}
+							style={[styles.previewButtonText, !letter.trim() ? styles.buttonTextDisabled : {}]}
 						>
-							{isSending
-								? t('features.like-letter.ui.write_screen.sending')
-								: t('features.like-letter.ui.write_screen.send_button')}
+							{t('features.like-letter.ui.write_screen.preview_button')}
 						</Text>
-					</View>
-				</Pressable>
-			</View>
-		</View>
+					</Pressable>
+
+					<Pressable
+						style={[styles.sendButton, canSend && styles.sendButtonActive]}
+						onPress={handleSendLetter}
+						disabled={!canSend}
+					>
+						<View style={styles.sendButtonContent}>
+							{!canLetter && (
+								<>
+									<ImageResource resource={ImageResources.GEM} width={22} height={22} />
+									<Text size="14" style={styles.gemCount}>
+										x{letterLikeCost}
+									</Text>
+								</>
+							)}
+							<Text
+								weight="semibold"
+								size="16"
+								style={[styles.sendButtonText, canSend ? styles.sendButtonTextActive : {}]}
+							>
+								{isSending
+									? t('features.like-letter.ui.write_screen.sending')
+									: t('features.like-letter.ui.write_screen.send_button')}
+							</Text>
+						</View>
+					</Pressable>
+				</View>
+			)}
+		</KeyboardAvoidingView>
 	);
 }
 

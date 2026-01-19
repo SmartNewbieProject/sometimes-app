@@ -1,114 +1,114 @@
 {
-  "ui": {
-    "nav": {
-      "modal_title_1": "気になる相手を探すために",
-      "modal_title_2": "ジェム{{count}}個を使います！",
-      "modal_text_1": "AIがあなたのタイプを分析して、",
-      "modal_text_2": "ぴったりの相手を探します",
-      "primary_button": "はい",
-      "main_button": "もっと探す",
-      "complete_button": "いいね送信完了！"
-    },
-    "waiting": {
-      "title_1": "{{name}}さんの",
-      "title_2": "理想のマッチングまで",
-      "description_2": "残っています",
-      "description_3": "毎週、月・金(21時)に無料で相手を探せます！",
-      "schedule_prefix": "毎週 ",
-      "schedule_time": "木・日 21時",
-      "schedule_suffix": "にマッチングが始まります！",
-      "preview_button_line1": "プロフィール",
-      "preview_button_line2": "プレビュー",
-      "previous_button": "以前見た相手",
-      "previous_button_text": "以前見た相手"
-    },
-    "partner": {
-      "button_more": "もっと見る",
-      "age_prefix": "{{age}}歳",
-      "last_access": "最終ログイン"
-    },
-    "pre-open": {
-      "title": "素敵な出会いのために準備中です。",
-      "subtitle": "もうすぐまた来ます 💜",
-      "info": "Sometimeは毎週木・日曜日21時にマッチングが開始されます！"
-    },
-    "pending-approval": {
-      "title": "プロフィール審査中",
-      "description": "プロフィールを審査中です。承認後、マッチングが開始されます。",
-      "estimated-time": "予想所要時間",
-      "default-time": "2時間",
-      "info": "承認が完了したら通知をお送りします！",
-      "notification-info": "承認が完了したら、登録したSMSにメッセージをお送りします。",
-      "next-matching": "次のマッチングまで",
-      "timer-description": "承認後、マッチングが開始されます",
-      "card-title-line1": "プロフィール審査が",
-      "card-title-line2": "進行中です",
-      "card-desc-line1": "管理者が丁寧に確認しています。",
-      "card-desc-line2": "もう少しお待ちください！",
-      "refresh-button": "タップして状態を確認",
-      "refresh-messages": {
-        "still-reviewing": "まだ審査中です！🦊",
-        "please-wait": "もう少しお待ちください ✨",
-        "team-reviewing": "運営チームが確認中です 👀",
-        "almost-done": "もうすぐです！⏳"
-      },
-      "rejected-title": "プロフィールが却下されました",
-      "rejection-reason-label": "却下理由",
-      "rejection-category": {
-        "inappropriate-image": "不適切なプロフィール画像",
-        "false-info": "虚偽の情報",
-        "terms-violation": "利用規約違反",
-        "other": "その他"
-      },
-      "edit-profile-button": "プロフィールを編集",
-      "rejected-info": "プロフィールを修正後、再度審査をリクエストできます。",
-      "change-profile-photo-button": "プロフィール写真を変更する",
-      "photo-rejection-title": "プロフィール写真を\n再度アップロードしてください",
-      "photo-rejection-line1": "審査の過程でプロフィール写真がガイドラインに適合せず、承認が困難でした。",
-      "photo-rejection-line2": "ご心配なく！すぐに再アップロードすれば、迅速に承認いたします ✨",
-      "view-guidelines-button": "写真アップロードガイドラインを確認"
-    },
-    "find-partner": {
-      "button_more": "もっと見る"
-    },
-    "not-found": {
-      "faild_title": "マッチングに失敗しました",
-      "faild_try": "もう一度マッチングを試す",
-      "look_around": "他のプロフィールを見てみる",
-      "rematch": "再マッチング",
-      "expand_condition": "条件を広げる",
-      "expand_ideal_type": "理想の範囲を広げてみましょう",
-      "edit": "編集する",
-      "improve_profile": "プロフィールを改善する",
-      "update_profile": "写真や自己紹介を更新してみましょう"
-    },
-    "rematching": {
-      "title": "新しい出会いを探しています",
-      "complete_text": "完了",
-      "steps": {
-        "profile_analysis": "プロフィール分析が完了しました",
-        "condition_check": "マッチング条件の確認が完了しました",
-        "profile_search": "新しいプロフィールの検索が完了しました",
-        "result_ready": "マッチング結果の準備ができました"
-      }
-    },
-    "error": {
-      "highlight": "接続",
-      "message": "が不安定です。\nしばらくしてからもう一度お試しください。"
-    },
-    "연애_스타일": "[JA] 연애 스타일"
-  },
-  "hooks": {
-    "use-rematch": {
-      "charge": "今すぐチャージして、気になるお相手と会話を始めましょう！",
-      "no_recommend": "まだ、おすすめできるお相手がいません",
-      "no_match": "現在、条件に合うお相手がいません。",
-      "retry_later": "まもなく新しい方が参加予定です。少し時間をおいて再度お試しください！",
-      "no_rematch_ticket": "再マッチングチケットがありません。",
-      "expansion_matching_error": "エリア拡大マッチング中にエラーが発生しました",
-      "no_available_match": "現在マッチング可能なお相手がいません",
-      "matching_error": "マッチング中にエラーが発生しました"
-    },
-    "로딩": "[JA] 로딩"
-  }
+	"ui": {
+		"nav": {
+			"modal_title_1": "気になる相手を探すために",
+			"modal_title_2": "ジェム{{count}}個を使います！",
+			"modal_text_1": "AIがあなたのタイプを分析して、",
+			"modal_text_2": "ぴったりの相手を探します",
+			"primary_button": "はい",
+			"main_button": "もっと探す",
+			"complete_button": "いいね送信完了！"
+		},
+		"waiting": {
+			"title_1": "{{name}}さんの",
+			"title_2": "理想のマッチングまで",
+			"description_2": "残っています",
+			"description_3": "毎週、月・金(21時)に無料で相手を探せます！",
+			"schedule_prefix": "毎週 ",
+			"schedule_time": "木・日 21時",
+			"schedule_suffix": "にマッチングが始まります！",
+			"preview_button_line1": "プロフィール",
+			"preview_button_line2": "プレビュー",
+			"previous_button": "以前見た相手",
+			"previous_button_text": "以前見た相手"
+		},
+		"partner": {
+			"button_more": "もっと見る",
+			"age_prefix": "{{age}}歳",
+			"last_access": "最終ログイン"
+		},
+		"pre-open": {
+			"title": "素敵な出会いのために準備中です。",
+			"subtitle": "もうすぐまた来ます 💜",
+			"info": "Sometimeは毎週木・日曜日21時にマッチングが開始されます！"
+		},
+		"pending-approval": {
+			"title": "プロフィール審査中",
+			"description": "プロフィールを審査中です。承認後、マッチングが開始されます。",
+			"estimated-time": "予想所要時間",
+			"default-time": "2時間",
+			"info": "承認が完了したら通知をお送りします！",
+			"notification-info": "承認が完了したら、登録したSMSにメッセージをお送りします。",
+			"next-matching": "次のマッチングまで",
+			"timer-description": "承認後、マッチングが開始されます",
+			"card-title-line1": "プロフィールを確認しています",
+			"card-title-line2": "",
+			"card-desc-line1": "より安全で素敵なマッチングのために",
+			"card-desc-line2": "しばらくお待ちください",
+			"refresh-button": "タップして状態を確認",
+			"refresh-messages": {
+				"still-reviewing": "まだ審査中です！🦊",
+				"please-wait": "もう少しお待ちください ✨",
+				"team-reviewing": "運営チームが確認中です 👀",
+				"almost-done": "もうすぐです！⏳"
+			},
+			"rejected-title": "プロフィールが却下されました",
+			"rejection-reason-label": "却下理由",
+			"rejection-category": {
+				"inappropriate-image": "不適切なプロフィール画像",
+				"false-info": "虚偽の情報",
+				"terms-violation": "利用規約違反",
+				"other": "その他"
+			},
+			"edit-profile-button": "プロフィールを編集",
+			"rejected-info": "プロフィールを修正後、再度審査をリクエストできます。",
+			"change-profile-photo-button": "プロフィール写真を変更する",
+			"photo-rejection-title": "プロフィール写真を\n再度アップロードしてください",
+			"photo-rejection-line1": "審査の過程でプロフィール写真がガイドラインに適合せず、承認が困難でした。",
+			"photo-rejection-line2": "ご心配なく！すぐに再アップロードすれば、迅速に承認いたします ✨",
+			"view-guidelines-button": "写真アップロードガイドラインを確認"
+		},
+		"find-partner": {
+			"button_more": "もっと見る"
+		},
+		"not-found": {
+			"faild_title": "マッチングに失敗しました",
+			"faild_try": "もう一度マッチングを試す",
+			"look_around": "他のプロフィールを見てみる",
+			"rematch": "再マッチング",
+			"expand_condition": "条件を広げる",
+			"expand_ideal_type": "理想の範囲を広げてみましょう",
+			"edit": "編集する",
+			"improve_profile": "プロフィールを改善する",
+			"update_profile": "写真や自己紹介を更新してみましょう"
+		},
+		"rematching": {
+			"title": "新しい出会いを探しています",
+			"complete_text": "完了",
+			"steps": {
+				"profile_analysis": "プロフィール分析が完了しました",
+				"condition_check": "マッチング条件の確認が完了しました",
+				"profile_search": "新しいプロフィールの検索が完了しました",
+				"result_ready": "マッチング結果の準備ができました"
+			}
+		},
+		"error": {
+			"highlight": "接続",
+			"message": "が不安定です。\nしばらくしてからもう一度お試しください。"
+		},
+		"연애_스타일": "[JA] 연애 스타일"
+	},
+	"hooks": {
+		"use-rematch": {
+			"charge": "今すぐチャージして、気になるお相手と会話を始めましょう！",
+			"no_recommend": "まだ、おすすめできるお相手がいません",
+			"no_match": "現在、条件に合うお相手がいません。",
+			"retry_later": "まもなく新しい方が参加予定です。少し時間をおいて再度お試しください！",
+			"no_rematch_ticket": "再マッチングチケットがありません。",
+			"expansion_matching_error": "エリア拡大マッチング中にエラーが発生しました",
+			"no_available_match": "現在マッチング可能なお相手がいません",
+			"matching_error": "マッチング中にエラーが発生しました"
+		},
+		"로딩": "[JA] 로딩"
+	}
 }

@@ -20,7 +20,7 @@ function JapanOpeningBanner() {
       onPress={handlePress}
     >
       <Image
-        source={require("@assets/images/banner/japan-opening.png")}
+        source={require("@assets/images/banner/japan-opening.webp")}
         style={styles.image}
         contentFit="cover"
       />

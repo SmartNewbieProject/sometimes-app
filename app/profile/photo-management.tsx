@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { semanticColors } from '@/src/shared/constants/colors';
 import { Text } from '@/src/shared/ui/text';
 import { Header } from '@/src/shared/ui/header';
@@ -10,8 +10,17 @@ import { usePhotoManagement } from '@/src/features/profile/hooks/use-photo-manag
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/src/features/auth';
 
+type ReferrerType = 'home' | 'profile-edit' | 'mypage';
+
+const REFERRER_ROUTES: Record<ReferrerType, string> = {
+  'home': '/home',
+  'profile-edit': '/profile-edit/profile',
+  'mypage': '/my',
+};
+
 export default function PhotoManagementPage() {
   const { t } = useTranslation();
+  const { referrer } = useLocalSearchParams<{ referrer?: ReferrerType }>();
   const { profileDetails } = useAuth();
   const {
     slots,
@@ -52,7 +61,10 @@ export default function PhotoManagementPage() {
   };
 
   const handleBackPress = () => {
-    router.push('/profile-edit/profile');
+    const targetRoute = referrer && REFERRER_ROUTES[referrer]
+      ? REFERRER_ROUTES[referrer]
+      : '/profile-edit/profile';
+    router.replace(targetRoute as '/home' | '/profile-edit/profile' | '/my');
   };
 
   return (

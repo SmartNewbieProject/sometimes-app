@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function InterestDoneScreen() {
   const { t } = useTranslation();
-  const { profileDetails } = useAuth();
+  const { my } = useAuth();
   const queryClient = useQueryClient();
   const { updateForm, clear, tattoo, ...form } = useInterestForm();
   const insets = useSafeAreaInsets();
@@ -49,7 +49,7 @@ export default function InterestDoneScreen() {
             }}
           >
             <Image
-              source={require("@assets/images/info-miho.png")}
+              source={require("@assets/images/info-miho.webp")}
               style={{ width: 255, height: 259, top: 20, position: "absolute" }}
             />
           </View>
@@ -65,7 +65,7 @@ export default function InterestDoneScreen() {
 
           <View style={styles.descriptionWrapper}>
             <Text size="sm" textColor="pale-purple" weight="light">
-              {t('apps.my-info.done.desc', { name: profileDetails?.name })}
+              {t('apps.my-info.done.desc', { name: my?.name })}
             </Text>
           </View>
         </View>
@@ -79,7 +79,7 @@ export default function InterestDoneScreen() {
                 env: process.env.EXPO_PUBLIC_TRACKING_MODE,
               });
               clear();
-              router.push("/home");
+              router.replace("/home");
             }}
             styles={styles.button}
           >

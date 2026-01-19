@@ -1,43 +1,104 @@
-import colors from "@/src/shared/constants/colors";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
-import { Image } from "expo-image";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text } from "@/src/shared/ui";
+import { Image, type ImageStyle } from "expo-image";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+
+interface ImagePosition {
+  top?: number;
+  left?: number;
+  right?: number;
+  bottom?: number;
+  width?: number;
+  height?: number;
+}
 
 interface HomeInfoCardProps {
   buttonMessage: string;
   title: string;
-  imageUri: string;
+  characterImageUri: number;
+  heartImageUri?: number;
   description: string;
-  buttonDisabled?: boolean;
+  isCompleted?: boolean;
   onClick: () => void;
+  characterPosition?: ImagePosition;
+  heartPosition?: ImagePosition;
 }
 
 function HomeInfoCard({
   buttonMessage,
   title,
-  buttonDisabled = false,
+  isCompleted = false,
   onClick,
   description,
-  imageUri,
+  characterImageUri,
+  heartImageUri,
+  characterPosition,
+  heartPosition,
 }: HomeInfoCardProps) {
+  const characterStyle: ImageStyle = {
+    position: "absolute",
+    width: characterPosition?.width ?? 140,
+    height: characterPosition?.height ?? 102,
+    left: characterPosition?.left,
+    top: characterPosition?.top,
+    right: characterPosition?.right,
+    bottom: characterPosition?.bottom,
+  };
+
+  const heartStyle: ImageStyle = {
+    position: "absolute",
+    width: heartPosition?.width ?? 50,
+    height: heartPosition?.height ?? 50,
+    left: heartPosition?.left,
+    top: heartPosition?.top ?? 35,
+    right: heartPosition?.right ?? -5,
+    bottom: heartPosition?.bottom,
+  };
+
   return (
     <TouchableOpacity
-      disabled={buttonDisabled}
+      disabled={isCompleted}
       onPress={onClick}
       style={styles.container}
+      activeOpacity={0.8}
     >
-      <Image source={imageUri} style={styles.image} />
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <View style={styles.imageSection}>
+        <View style={styles.circleWrapper}>
+          <View style={styles.circle} />
+          <Image
+            source={characterImageUri}
+            style={characterStyle}
+            contentFit="contain"
+          />
+          {heartImageUri && (
+            <Image
+              source={heartImageUri}
+              style={heartStyle}
+              contentFit="contain"
+            />
+          )}
+        </View>
+      </View>
+      <Text size="lg" weight="semibold" textColor="black" style={styles.title}>
+        {title}
+      </Text>
+      <Text size="xs" weight="light" style={styles.description}>
+        {description}
+      </Text>
       <View
-        style={[styles.button, buttonDisabled && styles.buttonDisabledStyle]}
+        style={[
+          styles.button,
+          isCompleted ? styles.buttonCompleted : styles.buttonIncomplete,
+        ]}
       >
         <Text
-          style={[
-            styles.buttonText,
-            buttonDisabled && styles.buttonDisabledText,
-          ]}
+          size="sm"
+          weight="semibold"
+          style={
+            isCompleted
+              ? styles.buttonTextCompleted
+              : styles.buttonTextIncomplete
+          }
         >
           {buttonMessage}
         </Text>
@@ -49,59 +110,61 @@ function HomeInfoCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    minHeight: 200,
+    height: 199,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "rgba(134, 56, 229, 0.5)",
-    backgroundColor: semanticColors.surface.secondary,
+    backgroundColor: "#F8F4FF",
+    alignItems: "center",
+    paddingTop: 12,
+    paddingBottom: 13,
+    paddingHorizontal: 8,
+  },
+  imageSection: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 2,
+  },
+  circleWrapper: {
+    position: "relative",
+    width: 80,
+    height: 80,
     alignItems: "center",
     justifyContent: "center",
   },
-  image: {
-    width: 82,
-    height: 90,
+  circle: {
+    position: "absolute",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: semanticColors.brand.primary,
   },
   title: {
-    marginTop: 8,
-    marginBottom: 2,
-    color: semanticColors.text.primary,
     textAlign: "center",
-    fontSize: 18,
-    fontFamily: "Pretendard-SemiBold",
-    fontWeight: 600,
-    lineHeight: 21.6,
+    marginBottom: 4,
   },
   description: {
-    color: semanticColors.text.disabled,
     textAlign: "center",
-    fontSize: 12,
-    marginBottom: 11,
-    fontFamily: "Pretendard-Light",
-    fontWeight: 300,
-    lineHeight: 13.4,
+    marginBottom: 12,
+    color: "#717171",
   },
   button: {
     borderRadius: 20,
-    borderWidth: 0,
     width: 90,
-    height: 30,
+    height: 31,
     justifyContent: "center",
     alignItems: "center",
-
-    backgroundColor: semanticColors.surface.other,
   },
-  buttonDisabledStyle: {
+  buttonCompleted: {
     backgroundColor: semanticColors.brand.primary,
   },
-  buttonText: {
-    fontSize: 16,
-    fontFamily: "Pretendard-SemiBold",
-    fontWeight: 600,
-    lineHeight: 18,
-    color: semanticColors.brand.primary,
+  buttonIncomplete: {
+    backgroundColor: "rgba(122, 74, 226, 0.25)",
   },
-  buttonDisabledText: {
-    color: semanticColors.text.inverse,
+  buttonTextCompleted: {
+    color: "white",
+  },
+  buttonTextIncomplete: {
+    color: semanticColors.brand.primary,
   },
 });
 

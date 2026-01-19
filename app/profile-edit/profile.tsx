@@ -3,7 +3,7 @@ import { usePreferenceSelfQuery } from '@/src/features/home/queries';
 import Layout from '@/src/features/layout';
 import PageLoading from '@/src/features/loading/ui/page';
 import MyInfo from '@/src/features/my-info';
-import { PreferenceKeys, getTypeNamesForLocale } from '@/src/features/my-info/queries';
+import { PreferenceKeys, findPreferenceByType } from '@/src/features/my-info/queries';
 import { savePreferences } from '@/src/features/my-info/services';
 import { useMbti } from '@/src/features/mypage/hooks';
 import ProfileDatingStyle from '@/src/features/profile-edit/ui/profile/profile-dating-style';
@@ -17,6 +17,7 @@ import ProfileSmoking from '@/src/features/profile-edit/ui/profile/profile-smoki
 import ProfileTattoo from '@/src/features/profile-edit/ui/profile/profile-tattoo';
 import { queryClient } from '@/src/shared/config/query';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { tryCatch } from '@/src/shared/libs';
 import { Button } from '@/src/shared/ui';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -38,6 +39,7 @@ function ProfileContent() {
 	const { profileDetails } = useAuth();
 	const [formSubmitLoading, setFormSubmitLoading] = useState(false);
 	const { showErrorModal, showModal } = useModal();
+	const { showLoading, hideLoading } = useGlobalLoading();
 	const { data: preferenceSelfFromAPI = [] } = usePreferenceSelfQuery();
 
 	// profileDetails.characteristics와 preferences를 합침 (백엔드 버그 대응)
@@ -118,33 +120,29 @@ function ProfileContent() {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (profileDetails?.id && preferenceSelf && !form.init) {
-			const drinkingTypeNames = getTypeNamesForLocale(PreferenceKeys.DRINKING, i18n.language);
-			const drinking = preferenceSelf?.find(
-				(item) =>
-					item.typeCode === PreferenceKeys.DRINKING || drinkingTypeNames.includes(item.typeName),
-			)?.selectedOptions[0];
+			const drinkingData = findPreferenceByType(
+				preferenceSelf,
+				PreferenceKeys.DRINKING,
+				i18n.language,
+			);
+			const drinking = drinkingData?.selectedOptions[0];
 
-			const militaryTypeNames = getTypeNamesForLocale(
+			const militaryData = findPreferenceByType(
+				preferenceSelf,
 				PreferenceKeys.MILITARY_STATUS,
 				i18n.language,
 			);
-			const militaryStatus = preferenceSelf?.find(
-				(item) =>
-					item.typeCode === PreferenceKeys.MILITARY_STATUS ||
-					militaryTypeNames.includes(item.typeName),
-			)?.selectedOptions[0];
+			const militaryStatus = militaryData?.selectedOptions[0];
 
-			const smokingTypeNames = getTypeNamesForLocale(PreferenceKeys.SMOKING, i18n.language);
-			const smoking = preferenceSelf?.find(
-				(item) =>
-					item.typeCode === PreferenceKeys.SMOKING || smokingTypeNames.includes(item.typeName),
-			)?.selectedOptions[0];
+			const smokingData = findPreferenceByType(
+				preferenceSelf,
+				PreferenceKeys.SMOKING,
+				i18n.language,
+			);
+			const smoking = smokingData?.selectedOptions[0];
 
-			const tattooTypeNames = getTypeNamesForLocale(PreferenceKeys.TATTOO, i18n.language);
-			const tattoo = preferenceSelf?.find(
-				(item) =>
-					item.typeCode === PreferenceKeys.TATTOO || tattooTypeNames.includes(item.typeName),
-			)?.selectedOptions[0];
+			const tattooData = findPreferenceByType(preferenceSelf, PreferenceKeys.TATTOO, i18n.language);
+			const tattoo = tattooData?.selectedOptions[0];
 			if (drinking) {
 				updateForm('drinking', drinking);
 			}
@@ -158,24 +156,21 @@ function ProfileContent() {
 				updateForm('tattoo', tattoo);
 			}
 			updateForm('mbti', profileDetails.mbti ?? undefined);
-			const interestTypeNames = getTypeNamesForLocale(PreferenceKeys.INTEREST, i18n.language);
-			const interestData = preferenceSelf?.find(
-				(item) =>
-					item.typeCode === PreferenceKeys.INTEREST || interestTypeNames.includes(item.typeName),
+
+			const interestData = findPreferenceByType(
+				preferenceSelf,
+				PreferenceKeys.INTEREST,
+				i18n.language,
 			);
 			const interestIds = interestData?.selectedOptions?.map(
 				(item: { id: string }) => item.id,
 			) as string[];
 			updateForm('interestIds', interestIds);
 
-			const datingStyleTypeNames = getTypeNamesForLocale(
+			const datingStyleData = findPreferenceByType(
+				preferenceSelf,
 				PreferenceKeys.DATING_STYLE,
 				i18n.language,
-			);
-			const datingStyleData = preferenceSelf?.find(
-				(item) =>
-					item.typeCode === PreferenceKeys.DATING_STYLE ||
-					datingStyleTypeNames.includes(item.typeName),
 			);
 			const datingStyleIdsRaw = datingStyleData?.selectedOptions?.map(
 				(item: { id: string }) => item.id,
@@ -183,11 +178,10 @@ function ProfileContent() {
 			const datingStyleIds = datingStyleIdsRaw ? Array.from(new Set(datingStyleIdsRaw)) : [];
 			updateForm('datingStyleIds', datingStyleIds);
 
-			const personalityTypeNames = getTypeNamesForLocale(PreferenceKeys.PERSONALITY, i18n.language);
-			const personalityData = preferenceSelf?.find(
-				(item) =>
-					item.typeCode === PreferenceKeys.PERSONALITY ||
-					personalityTypeNames.includes(item.typeName),
+			const personalityData = findPreferenceByType(
+				preferenceSelf,
+				PreferenceKeys.PERSONALITY,
+				i18n.language,
 			);
 			const personalityIds = personalityData?.selectedOptions?.map(
 				(item: { id: string }) => item.id,
@@ -220,6 +214,7 @@ function ProfileContent() {
 
 	const onFinish = async () => {
 		setFormSubmitLoading(true);
+		showLoading();
 		await tryCatch(
 			async () => {
 				const emptyFields = [];
@@ -276,6 +271,7 @@ function ProfileContent() {
 				updateForm('init', false);
 
 				setFormSubmitLoading(false);
+				hideLoading();
 
 				showModal({
 					title: t('apps.profile_edit.ui.success_modal.title'),
@@ -306,6 +302,7 @@ function ProfileContent() {
 					err?.message || err?.error || t('features.profile-edit.errors.save_failed');
 				showErrorModal(errorMessage, 'error');
 				setFormSubmitLoading(false);
+				hideLoading();
 			},
 		);
 	};

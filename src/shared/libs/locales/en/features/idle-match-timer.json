@@ -1,103 +1,103 @@
 {
-  "ui": {
-    "nav": {
-      "modal_title_1": "To find your ideal match",
-      "modal_title_2": "We'll use {{count}} gems!",
-      "modal_text_1": "Based on your personality and communication style,",
-      "modal_text_2": "we'll recommend someone you can connect with naturally.",
-      "primary_button": "Yes, let's try",
-      "main_button": "Find more",
-      "complete_button": "Message sent!"
-    },
-    "waiting": {
-      "title_1": "{{name}}'s",
-      "title_2": "ideal match countdown",
-      "description_2": "remaining",
-      "description_3": "Matching starts every Thu & Fri at 9 PM!",
-      "schedule_prefix": "Every ",
-      "schedule_time": "Thu & Sun 9 PM",
-      "schedule_suffix": " matching starts!",
-      "preview_button_line1": "Profile",
-      "preview_button_line2": "Preview",
-      "previous_button": "Previous matches",
-      "previous_button_text": "Previous matches"
-    },
-    "partner": {
-      "button_more": "See more"
-    },
-    "pending-approval": {
-      "title": "Profile Under Review",
-      "description": "Your profile is currently under review. Matching will start once approved.",
-      "estimated-time": "Estimated time",
-      "default-time": "2 hours",
-      "info": "We'll notify you when your profile is approved!",
-      "notification-info": "We'll send you an SMS when your profile is approved.",
-      "next-matching": "Until next matching",
-      "timer-description": "Matching will start after approval",
-      "card-title-line1": "Profile review",
-      "card-title-line2": "in progress",
-      "card-desc-line1": "Our team is carefully reviewing.",
-      "card-desc-line2": "We'll let you know soon!",
-      "refresh-button": "Tap to check status",
-      "refresh-messages": {
-        "still-reviewing": "Still under review! 🦊",
-        "please-wait": "Please wait a bit more ✨",
-        "team-reviewing": "Our team is reviewing 👀",
-        "almost-done": "Almost done! ⏳"
-      },
-      "rejected-title": "Profile Rejected",
-      "rejection-reason-label": "Rejection Reason",
-      "rejection-category": {
-        "inappropriate-image": "Inappropriate Profile Image",
-        "false-info": "False Information",
-        "terms-violation": "Terms Violation",
-        "other": "Other"
-      },
-      "edit-profile-button": "Edit Profile",
-      "rejected-info": "You can request review again after updating your profile.",
-      "photo-rejection-title": "Please upload your\nprofile photo again",
-      "photo-rejection-line1": "Your profile photo didn't meet our guidelines during the review process.",
-      "photo-rejection-line2": "Don't worry! Upload a new one and we'll review it quickly ✨",
-      "view-guidelines-button": "View Photo Upload Guidelines"
-    },
-    "find-partner": {
-      "button_more": "See more"
-    },
-    "not-found": {
-      "faild_title": "Matching failed",
-      "faild_try": "Try matching again",
-      "look_around": "Browse other profiles",
-      "rematch": "Rematch",
-      "expand_condition": "Expand conditions",
-      "expand_ideal_type": "Try expanding your ideal type range",
-      "edit": "Edit",
-      "improve_profile": "Improve profile",
-      "update_profile": "Try updating your photos or bio"
-    },
-    "rematching": {
-      "title": "Looking for new connections",
-      "complete_text": "Done",
-      "steps": {
-        "profile_analysis": "Profile analysis complete",
-        "condition_check": "Matching conditions verified",
-        "profile_search": "New profile search complete",
-        "result_ready": "Matching results ready"
-      }
-    },
-    "error": {
-      "highlight": "Connection",
-      "message": " is unstable.\nPlease try again later."
-    },
-    "연애_스타일": "[EN] 연애 스타일"
-  },
-  "hooks": {
-    "use-rematch": {
-      "charge": "Charge now and start chatting with someone you like!",
-      "no_recommend": "No recommendations available yet",
-      "no_match": "No matches found for your conditions right now.",
-      "retry_later": "More people will join soon. Please try again later!",
-      "no_rematch_ticket": "No rematch tickets available."
-    },
-    "로딩": "[EN] 로딩"
-  }
+	"ui": {
+		"nav": {
+			"modal_title_1": "To find your ideal match",
+			"modal_title_2": "We'll use {{count}} gems!",
+			"modal_text_1": "Based on your personality and communication style,",
+			"modal_text_2": "we'll recommend someone you can connect with naturally.",
+			"primary_button": "Yes, let's try",
+			"main_button": "Find more",
+			"complete_button": "Message sent!"
+		},
+		"waiting": {
+			"title_1": "{{name}}'s",
+			"title_2": "ideal match countdown",
+			"description_2": "remaining",
+			"description_3": "Matching starts every Thu & Fri at 9 PM!",
+			"schedule_prefix": "Every ",
+			"schedule_time": "Thu & Sun 9 PM",
+			"schedule_suffix": " matching starts!",
+			"preview_button_line1": "Profile",
+			"preview_button_line2": "Preview",
+			"previous_button": "Previous matches",
+			"previous_button_text": "Previous matches"
+		},
+		"partner": {
+			"button_more": "See more"
+		},
+		"pending-approval": {
+			"title": "Profile Under Review",
+			"description": "Your profile is currently under review. Matching will start once approved.",
+			"estimated-time": "Estimated time",
+			"default-time": "2 hours",
+			"info": "We'll notify you when your profile is approved!",
+			"notification-info": "We'll send you an SMS when your profile is approved.",
+			"next-matching": "Until next matching",
+			"timer-description": "Matching will start after approval",
+			"card-title-line1": "Profile review",
+			"card-title-line2": "in progress",
+			"card-desc-line1": "Our team is carefully reviewing.",
+			"card-desc-line2": "We'll let you know soon!",
+			"refresh-button": "Tap to check status",
+			"refresh-messages": {
+				"still-reviewing": "Still under review! 🦊",
+				"please-wait": "Please wait a bit more ✨",
+				"team-reviewing": "Our team is reviewing 👀",
+				"almost-done": "Almost done! ⏳"
+			},
+			"rejected-title": "Profile Rejected",
+			"rejection-reason-label": "Rejection Reason",
+			"rejection-category": {
+				"inappropriate-image": "Inappropriate Profile Image",
+				"false-info": "False Information",
+				"terms-violation": "Terms Violation",
+				"other": "Other"
+			},
+			"edit-profile-button": "Edit Profile",
+			"rejected-info": "You can request review again after updating your profile.",
+			"photo-rejection-title": "Please upload your\nprofile photo again",
+			"photo-rejection-line1": "Your profile photo didn't meet our guidelines during the review process.",
+			"photo-rejection-line2": "Don't worry! Upload a new one and we'll review it quickly ✨",
+			"view-guidelines-button": "View Photo Upload Guidelines"
+		},
+		"find-partner": {
+			"button_more": "See more"
+		},
+		"not-found": {
+			"faild_title": "Matching failed",
+			"faild_try": "Try matching again",
+			"look_around": "Browse other profiles",
+			"rematch": "Rematch",
+			"expand_condition": "Expand conditions",
+			"expand_ideal_type": "Try expanding your ideal type range",
+			"edit": "Edit",
+			"improve_profile": "Improve profile",
+			"update_profile": "Try updating your photos or bio"
+		},
+		"rematching": {
+			"title": "Looking for new connections",
+			"complete_text": "Done",
+			"steps": {
+				"profile_analysis": "Profile analysis complete",
+				"condition_check": "Matching conditions verified",
+				"profile_search": "New profile search complete",
+				"result_ready": "Matching results ready"
+			}
+		},
+		"error": {
+			"highlight": "Connection",
+			"message": " is unstable.\nPlease try again later."
+		},
+		"연애_스타일": "[EN] 연애 스타일"
+	},
+	"hooks": {
+		"use-rematch": {
+			"charge": "Charge now and start chatting with someone you like!",
+			"no_recommend": "No recommendations available yet",
+			"no_match": "No matches found for your conditions right now.",
+			"retry_later": "More people will join soon. Please try again later!",
+			"no_rematch_ticket": "No rematch tickets available."
+		},
+		"로딩": "[EN] 로딩"
+	}
 }

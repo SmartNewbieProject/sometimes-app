@@ -50,7 +50,7 @@ export function CharacterPromptModal({
   secondaryButtonText,
   onPrimary,
   onSecondary,
-  characterImage = require("@assets/images/instagram-some.png"),
+  characterImage = require("@assets/images/instagram-some.webp"),
   animationDuration = 300,
   animationDelay = 200,
   springDamping = 15,
@@ -127,7 +127,7 @@ export function CharacterPromptModal({
               <View style={styles.rewardContainer}>
                 <View style={styles.gemIconContainer}>
                   <Image
-                    source={require("@/assets/images/promotion/home-banner/gem.png")}
+                    source={require("@/assets/images/promotion/home-banner/gem.webp")}
                     style={styles.gemImage}
                     resizeMode="contain"
                   />

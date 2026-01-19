@@ -25,6 +25,7 @@ function ProfileMbti() {
         onChange={onUpdateMbti}
         justifyContent="flex-start"
         onBlur={() => {}}
+        layout="horizontal"
       />
     </View>
   );

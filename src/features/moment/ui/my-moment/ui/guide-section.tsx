@@ -32,7 +32,7 @@ export const GuideSection = ({ responded = false }: GuideSectionProps) => {
         {responded && (
           <View style={styles.rewardContainer}>
             <Image
-              source={require("@/assets/images/promotion/home-banner/gem.png")}
+              source={require("@/assets/images/promotion/home-banner/gem.webp")}
               style={styles.gemIcon}
               resizeMode="contain"
             />
@@ -43,7 +43,7 @@ export const GuideSection = ({ responded = false }: GuideSectionProps) => {
         )}
       </View>
       <Image
-        source={require("@/assets/images/moment/miho-mailbox.png")}
+        source={require("@/assets/images/moment/miho-mailbox.webp")}
         style={styles.character}
         resizeMode="contain"
       />

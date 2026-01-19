@@ -13,7 +13,7 @@ export default function SomemateIntroScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.characterContainer}>
           <Image
-            source={require("@assets/images/somemate_miho.png")}
+            source={require("@assets/images/somemate_miho.webp")}
             style={styles.characterImage}
             contentFit="contain"
           />

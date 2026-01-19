@@ -5,9 +5,11 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import RouletteItem from "./roulette-item";
 function RouletteModal() {
   const { hideModal } = useModal();
+  const { t } = useTranslation();
   return (
     <LinearGradient
       colors={["#FFCFE5", "#FFFFFF", "#DECEFF"]}
@@ -24,16 +26,15 @@ function RouletteModal() {
           <Text style={styles.logoText}>SOMETIME</Text>
         </View>
         <View style={styles.titleContainer}>
-          <Text style={styles.topTitle}>오늘의</Text>
-          <Text style={styles.bottomTitle}>럭키 룰렛</Text>
+          <Text style={styles.topTitle}>{t('features.event.roulette.top_title')}</Text>
+          <Text style={styles.bottomTitle}>{t('features.event.roulette.bottom_title')}</Text>
           <Text style={styles.freeText}>lucky</Text>
-          {/*  이거 위치 되게 노가다로 잡았는데 보이지도 않네 */}
           <View style={styles.deco1} />
           <View style={styles.deco2} />
           <View style={styles.deco3} />
           <View style={styles.deco4} />
           <Image
-            source={require("@assets/images/roulette-mini.png")}
+            source={require("@assets/images/roulette-mini.webp")}
             style={styles.rouletteMini}
           />
           <Image
@@ -43,8 +44,9 @@ function RouletteModal() {
         </View>
         <View style={styles.descContainer}>
           <Text style={styles.descText}>
-            오늘의 <Text style={styles.strongText}>운</Text>을{" "}
-            <Text style={styles.strongText}>시험</Text>해보세요!
+            {t('features.event.roulette.description_parts.prefix')}<Text style={styles.strongText}>{t('features.event.roulette.description_parts.luck')}</Text>
+            {t('features.event.roulette.description_parts.middle')}<Text style={styles.strongText}>{t('features.event.roulette.description_parts.try')}</Text>
+            {t('features.event.roulette.description_parts.suffix')}
           </Text>
         </View>
         <RouletteItem />

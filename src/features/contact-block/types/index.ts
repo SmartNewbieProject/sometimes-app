@@ -10,8 +10,13 @@ export interface ContactSyncResult {
   syncedAt: string;
 }
 
+export interface ContactItem {
+  name: string;
+  phoneNumber: string;
+}
+
 export interface ContactSyncRequest {
-  phoneNumbers: string[];
+  contacts: ContactItem[];
 }
 
 export interface DeviceContact {
@@ -21,3 +26,34 @@ export interface DeviceContact {
 }
 
 export type ContactPermissionStatus = 'granted' | 'denied' | 'undetermined';
+
+export interface BlockedContact {
+  id: string;
+  phoneHash: string;
+  createdAt: string;
+  name: string | null;
+  phoneNumber: string | null;
+}
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+export interface BlockedContactsResponse {
+  items: BlockedContact[];
+  meta: PaginationMeta;
+}
+
+export interface UnblockContactsRequest {
+  ids: string[];
+}
+
+export interface UnblockContactsResponse {
+  success: boolean;
+  deletedCount: number;
+  message: string;
+}

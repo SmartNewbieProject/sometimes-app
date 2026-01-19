@@ -1,13 +1,13 @@
 {
-  "ui": {
-    "안심_설정이_완료됐어요": "[EN] 안심 설정이 완료됐어요.",
-    "확인_중": "[EN] 확인 중...",
-    "내_연락처_확인하기": "[EN] 내 연락처 확인하기",
-    "설정_중": "[EN] 설정 중...",
-    "좋아요_안심할게요": "[EN] 좋아요, 안심할게요!",
-    "내_연락처에_저장된_지인_자동_차단": "[EN] 내 연락처에 저장된 지인 자동 차단",
-    "안심하고_새로운_인연_만나기": "[EN] 안심하고 새로운 인연 만나기",
-    "언제든_설정_변경_가능": "[EN] 언제든 설정 변경 가능",
-    "앱을_설치하고_안심하고_시작하세요": "[EN] 앱을 설치하고 안심하고 시작하세요!"
-  }
+	"ui": {
+		"안심_설정이_완료됐어요": "Contact blocking has been set up.",
+		"확인_중": "Checking...",
+		"내_연락처_확인하기": "Check My Contacts",
+		"설정_중": "Setting up...",
+		"좋아요_안심할게요": "Sounds good!",
+		"내_연락처에_저장된_지인_자동_차단": "Auto-block contacts from your phone",
+		"안심하고_새로운_인연_만나기": "Meet new people with peace of mind",
+		"언제든_설정_변경_가능": "You can change this anytime",
+		"앱을_설치하고_안심하고_시작하세요": "Install the app and start with confidence!"
+	}
 }

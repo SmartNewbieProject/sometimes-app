@@ -505,7 +505,7 @@ export const WeeklyReportPage = () => {
         {/* Header Section */}
         <View style={styles.header}>
           <Image
-            source={require("@/assets/images/guide-miho.png")}
+            source={require("@/assets/images/guide-miho.webp")}
             style={styles.characterImage}
             resizeMode="contain"
           />

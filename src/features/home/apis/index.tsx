@@ -21,13 +21,20 @@ export interface UniversityUpdateRequest {
   grade: string;
 }
 
+export interface CheckPreferenceFillResponse {
+  filled: boolean;
+  profileImageUploaded: boolean;
+  profileApproved: boolean;
+  canJoinMatching: boolean;
+}
+
 export const getTotalMatchCount = (): Promise<TotalMatchCountResponse> =>
     axiosClient.get("/matching/total-count");
 
 export const getNotification = (): Promise<Notification[]> =>
     axiosClient.get("/profile/notifications");
 
-export const checkPreferenceFill = async (): Promise<boolean> =>
+export const checkPreferenceFill = async (): Promise<CheckPreferenceFillResponse> =>
     axiosClient.get("/preferences/check/fill");
 
 export const getTotalUserCount = (): Promise<number> =>
@@ -51,7 +58,7 @@ export const getBanners = (position: BannerPosition): Promise<BannerResponse[]> 
 
 type HomeApiService = {
   getTotalMatchCount: () => Promise<TotalMatchCountResponse>;
-  checkPreferenceFill: () => Promise<boolean>;
+  checkPreferenceFill: () => Promise<CheckPreferenceFillResponse>;
   getTotalUserCount: () => Promise<number>;
   getNotification: () => Promise<Notification[]>;
   getPreferencesSelf: () => Promise<SelectedPreferences[]>;

@@ -1,17 +1,15 @@
 import type { Preferences } from '@/src/features/interest/api';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { PreferenceKeys, usePreferenceOptionsQuery } from '@/src/features/interest/queries';
-import type { AgeOptionData } from '@/src/features/interest/types';
+import type { AgeOptionData, AgeOptionType } from '@/src/features/interest/types';
 import Layout from '@/src/features/layout';
 import Loading from '@/src/features/loading';
-import { environmentStrategy, platform } from '@/src/shared/libs';
 import { PalePurpleGradient, Text } from '@/src/shared/ui';
 import { useTranslation } from 'react-i18next';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import Interest from '@features/interest';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { Image, Platform, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
 const { ui, hooks, services } = Interest;
 const { AgeSelector } = ui;
@@ -43,10 +41,8 @@ export default function AgeSelectionScreen() {
 		}
 
 		const loaded = preferences.options.map((option) => {
-			// Fallback: 백엔드 key 미적용 시 displayName으로 매핑
 			const getKey = () => {
 				if (option.key) {
-					// NO_PREFERENCE를 NO_PREFERENCE로 유지 (번역 키가 있음)
 					return option.key;
 				}
 				const mapping: Record<string, string> = {
@@ -60,21 +56,23 @@ export default function AgeSelectionScreen() {
 
 			const optionKey = getKey();
 
+			const getType = (): AgeOptionType => {
+				switch (optionKey) {
+					case 'SAME_AGE':
+						return 'SAME_AGE';
+					case 'YOUNGER':
+						return 'YOUNGER';
+					case 'OLDER':
+						return 'OLDER';
+					default:
+						return 'ANY';
+				}
+			};
+
 			return {
 				value: option.id,
 				label: t(`apps.interest.age.${optionKey.toLowerCase()}`),
-				image: (() => {
-					switch (optionKey) {
-						case 'SAME_AGE':
-							return require('@assets/images/age/same.png');
-						case 'YOUNGER':
-							return require('@assets/images/age/under.png');
-						case 'OLDER':
-							return require('@assets/images/age/high.png');
-						default:
-							return require('@assets/images/age/nothing.png');
-					}
-				})(),
+				type: getType(),
 			};
 		}) as AgeOptionData[];
 
@@ -97,8 +95,8 @@ export default function AgeSelectionScreen() {
 			<PalePurpleGradient />
 			<View style={styles.contentContainer}>
 				<Image
-					source={require('@assets/images/peoples.png')}
-					style={{ width: 81, height: 81, marginLeft: 28 }}
+					source={require('@assets/images/age/cake-character.png')}
+					style={styles.characterImage}
 				/>
 				<View style={styles.topContainer}>
 					<Text weight="semibold" size="20" textColor="black">
@@ -108,8 +106,7 @@ export default function AgeSelectionScreen() {
 						{t('apps.interest.age.title_2')}
 					</Text>
 				</View>
-				<View style={styles.bar} />
-				<View style={[styles.ageContainer]}>
+				<View style={styles.ageContainer}>
 					<AgeSelector options={options} value={age} onChange={(age) => updateForm('age', age)} />
 				</View>
 
@@ -127,23 +124,20 @@ export default function AgeSelectionScreen() {
 
 const styles = StyleSheet.create({
 	topContainer: {
-		marginHorizontal: 32,
+		marginHorizontal: 30,
 		marginTop: 15,
 	},
 	contentContainer: {
 		flex: 1,
 	},
+	characterImage: {
+		width: 74,
+		height: 85,
+		marginLeft: 30,
+	},
 	ageContainer: {
 		flex: 1,
-
 		alignItems: 'center',
-	},
-	bar: {
-		marginHorizontal: 32,
-
-		height: 0.5,
-		backgroundColor: semanticColors.surface.background,
-		marginTop: 15,
-		marginBottom: 30,
+		marginTop: 30,
 	},
 });

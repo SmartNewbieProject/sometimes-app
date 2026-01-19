@@ -1,7 +1,7 @@
 import { useAuth } from '@/src/features/auth';
 import { usePreferenceSelfQuery } from '@/src/features/home/queries';
 import Interest from '@/src/features/interest';
-import { PreferenceKeys } from '@/src/features/interest/queries';
+import { PreferenceKeys, findPreferenceByType } from '@/src/features/interest/queries';
 import { savePreferences } from '@/src/features/interest/services';
 import InterestAge from '@/src/features/profile-edit/ui/interest/interest-age';
 import InterestBadMbti from '@/src/features/profile-edit/ui/interest/interest-bad-mbti';
@@ -14,6 +14,7 @@ import InterestTattoo from '@/src/features/profile-edit/ui/interest/interest-tat
 
 import { queryClient } from '@/src/shared/config/query';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { tryCatch } from '@/src/shared/libs';
 import { Button } from '@/src/shared/ui';
 import { useRouter } from 'expo-router';
@@ -28,6 +29,7 @@ const { useInterestForm } = hooks;
 function InterestSection() {
 	const { t, i18n } = useTranslation();
 	const { updateForm, clear: _, ...form } = useInterestForm();
+	const setInitialSnapshot = useInterestForm((state) => state.setInitialSnapshot);
 	const router = useRouter();
 	const insets = useSafeAreaInsets();
 
@@ -35,8 +37,27 @@ function InterestSection() {
 	const [formSubmitLoading, setFormSubmitLoading] = useState(false);
 	const [isInitialized, setIsInitialized] = useState(false);
 	const { showErrorModal, showModal } = useModal();
+	const { showLoading, hideLoading } = useGlobalLoading();
 
-	const disabled = !!(!form.age || !form.personality || form.personality.length === 0);
+	const hasChanges = useInterestForm((state) => {
+		const { initialSnapshot } = state;
+		if (!initialSnapshot) return false;
+
+		const currentValues = {
+			age: state.age,
+			drinking: state.drinking,
+			goodMbti: state.goodMbti,
+			badMbti: state.badMbti,
+			personality: state.personality,
+			militaryPreference: state.militaryPreference,
+			smoking: state.smoking,
+			tattoo: state.tattoo,
+		};
+
+		return JSON.stringify(initialSnapshot) !== JSON.stringify(currentValues);
+	});
+
+	const disabled = !hasChanges;
 
 	useEffect(() => {
 		if (isInitialized) {
@@ -50,56 +71,29 @@ function InterestSection() {
 		try {
 			const preferences = profileDetails.preferences;
 			const additionalPreferences = profileDetails.additionalPreferences;
+			const locale = i18n.language;
 
-			const LOCALIZED_TYPE_NAMES = {
-				drinking: ['お酒', '음주', '음주 선호도', 'Drinking', 'DRINKING'],
-				smoking: ['タバコ', '흡연', '흡연 선호도', 'Smoking', 'SMOKING'],
-				tattoo: ['タトゥー', '문신', '문신 선호도', 'Tattoo', 'TATTOO'],
-				age: ['希望の年齢', '희망 나이', '나이', 'Age', 'AGE_PREFERENCE'],
-				personality: ['性格', '성격', 'Personality', 'personality'],
-				military: ['兵役', '군필 여부', 'Military', 'MILITARY_PREFERENCE_MALE'],
-			};
+			const drinkingPref = findPreferenceByType(preferences, PreferenceKeys.DRINKING, locale);
+			const drinking = drinkingPref?.selectedOptions?.[0];
 
-			const drinkingPreference = preferences.find(
-				(item) =>
-					item?.typeKey === PreferenceKeys.DRINKING ||
-					LOCALIZED_TYPE_NAMES.drinking.includes(item?.typeName),
+			const militaryPref = findPreferenceByType(
+				preferences,
+				PreferenceKeys.MILITARY_PREFERENCE,
+				locale,
 			);
-			const drinking = drinkingPreference?.selectedOptions?.[0];
+			const militaryPreference = militaryPref?.selectedOptions?.[0];
 
-			const militaryPreferenceData = preferences.find(
-				(item) =>
-					item?.typeKey === PreferenceKeys.MILITARY_PREFERENCE ||
-					LOCALIZED_TYPE_NAMES.military.includes(item?.typeName),
-			);
-			const militaryPreference = militaryPreferenceData?.selectedOptions?.[0];
+			const smokingPref = findPreferenceByType(preferences, PreferenceKeys.SMOKING, locale);
+			const smoking = smokingPref?.selectedOptions?.[0];
 
-			const smokingPreference = preferences.find(
-				(item) =>
-					item?.typeKey === PreferenceKeys.SMOKING ||
-					LOCALIZED_TYPE_NAMES.smoking.includes(item?.typeName),
-			);
-			const smoking = smokingPreference?.selectedOptions?.[0];
+			const tattooPref = findPreferenceByType(preferences, PreferenceKeys.TATTOO, locale);
+			const tattoo = tattooPref?.selectedOptions?.[0];
 
-			const tattooPreference = preferences.find(
-				(item) =>
-					item?.typeKey === PreferenceKeys.TATTOO ||
-					LOCALIZED_TYPE_NAMES.tattoo.includes(item?.typeName),
-			);
-			const tattoo = tattooPreference?.selectedOptions?.[0];
+			const agePref = findPreferenceByType(preferences, PreferenceKeys.AGE, locale);
+			const age = agePref?.selectedOptions?.[0];
 
-			const agePreference = preferences.find(
-				(item) =>
-					item?.typeKey === PreferenceKeys.AGE || LOCALIZED_TYPE_NAMES.age.includes(item?.typeName),
-			);
-			const age = agePreference?.selectedOptions?.[0];
-
-			const personalityPreference = preferences.find(
-				(item) =>
-					item?.typeKey === PreferenceKeys.PERSONALITY ||
-					LOCALIZED_TYPE_NAMES.personality.includes(item?.typeName),
-			);
-			const personality = personalityPreference?.selectedOptions;
+			const personalityPref = findPreferenceByType(preferences, PreferenceKeys.PERSONALITY, locale);
+			const personality = personalityPref?.selectedOptions;
 
 			if (drinking?.id) {
 				updateForm('drinking', drinking);
@@ -130,12 +124,26 @@ function InterestSection() {
 				updateForm('badMbti', additionalPreferences.badMbti);
 			}
 
+			setInitialSnapshot({
+				age: age?.id,
+				drinking,
+				goodMbti: additionalPreferences?.goodMbti ?? null,
+				badMbti: additionalPreferences?.badMbti ?? null,
+				personality:
+					Array.isArray(personality) && personality.length > 0
+						? personality.filter((item) => item?.id).map((item) => item.id)
+						: [],
+				militaryPreference: profileDetails.gender === 'FEMALE' ? militaryPreference : undefined,
+				smoking,
+				tattoo,
+				init: true,
+			});
+
 			setIsInitialized(true);
 		} catch (error) {
 			console.error('Failed to initialize interest form:', error);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [profileDetails?.preferences, isInitialized, profileDetails?.gender]);
+	}, [profileDetails?.preferences, isInitialized, profileDetails?.gender, i18n.language]);
 
 	useEffect(() => {
 		return () => {
@@ -145,6 +153,7 @@ function InterestSection() {
 
 	const onFinish = async () => {
 		setFormSubmitLoading(true);
+		showLoading();
 		await tryCatch(
 			async () => {
 				if (!form.age || typeof form.age !== 'string') {
@@ -190,6 +199,7 @@ function InterestSection() {
 				setIsInitialized(false);
 
 				setFormSubmitLoading(false);
+				hideLoading();
 
 				showModal({
 					title: t('apps.profile_edit.ui.success_modal.title'),
@@ -220,6 +230,7 @@ function InterestSection() {
 					err?.message || err?.error || t('apps.profile_edit.errors.preference_save_failed');
 				showErrorModal(errorMessage, 'error');
 				setFormSubmitLoading(false);
+				hideLoading();
 			},
 		);
 	};

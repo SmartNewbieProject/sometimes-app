@@ -1,13 +1,13 @@
 {
-  "image_selector": {
-    "add_photo": "사진 추가하기",
-    "permission_needed_title": "권한 필요",
-    "gallery_permission_message": "사진을 가져오기 위해서는 권한이 필요합니다.",
-    "open_settings": "설정 열기",
-    "close": "닫기",
-    "unsupported_format": "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
-    "camera_permission_message": "카메라 사용을 위해서 권한이 필요합니다",
-    "optimizing_image": "이미지를 최적화하고 있어요...",
-    "compression_failed": "이미지 압축 실패, 원본 사용:"
-  }
+	"image_selector": {
+		"add_photo": "사진 추가하기",
+		"permission_needed_title": "권한 필요",
+		"gallery_permission_message": "사진을 가져오기 위해서는 권한이 필요합니다.",
+		"open_settings": "설정 열기",
+		"close": "닫기",
+		"unsupported_format": "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
+		"camera_permission_message": "카메라 사용을 위해서 권한이 필요합니다",
+		"optimizing_image": "이미지를 최적화하고 있어요...",
+		"compression_failed": "이미지 압축 실패, 원본 사용:"
+	}
 }
