@@ -10,7 +10,7 @@ import { loginByPass } from "@features/auth/utils/login-utils";
 import { useModal } from "@hooks/use-modal";
 import { useStorage } from "@shared/hooks/use-storage";
 import { useMixpanel } from "@shared/hooks/use-mixpanel";
-import { LOGOUT_REASONS } from "@shared/constants/mixpanel-events";
+import { LOGOUT_REASONS, MIXPANEL_EVENTS } from "@shared/constants/mixpanel-events";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
 import { chatEventBus } from "@/src/features/chat/services/chat-event-bus";
 import { router } from "expo-router";
@@ -164,7 +164,7 @@ export function useAuth() {
   const logout = () => {
     tryCatch(
       async () => {
-        trackEvent('AUTH_LOGOUT', {
+        trackEvent(MIXPANEL_EVENTS.AUTH_LOGOUT, {
           reason: LOGOUT_REASONS.MANUAL,
         });
         logoutOnly();
