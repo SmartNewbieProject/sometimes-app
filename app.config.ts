@@ -192,6 +192,7 @@ export default ({ config }: ConfigContext): any => {
 				description: '대학생을 위한 AI 소개팅 매칭 앱',
 			},
 			plugins: [
+				'./plugins/with-ksp-version.js',
 				[
 					'expo-router',
 					{
@@ -241,7 +242,7 @@ export default ({ config }: ConfigContext): any => {
 						},
 						android: {
 							extraMavenRepos: ['https://devrepo.kakao.com/nexus/content/groups/public/'],
-							kotlinVersion: '2.0.21',
+							kotlinVersion: '2.1.20',
 						},
 					},
 				],

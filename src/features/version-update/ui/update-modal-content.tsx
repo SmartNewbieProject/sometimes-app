@@ -1,5 +1,4 @@
 import colors from '@/src/shared/constants/colors';
-import { useTranslation } from 'react-i18next';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import {
 	getAndroidStoreUrl,
@@ -10,7 +9,8 @@ import {
 import { Button, Show, Text } from '@shared/ui';
 import { Image } from 'expo-image';
 import type React from 'react';
-import { StyleSheet, TouchableOpacity, View, Linking } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
 import type { VersionUpdateResponse } from '../types';
 
 interface UpdateModalContentProps {
