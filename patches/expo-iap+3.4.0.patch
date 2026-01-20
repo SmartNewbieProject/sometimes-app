@@ -1,8 +1,8 @@
 diff --git a/node_modules/expo-iap/ios/ExpoIap.podspec b/node_modules/expo-iap/ios/ExpoIap.podspec
-index 04e6ddc..5f8c9a0 100644
+index 04e6ddc..91fc249 100644
 --- a/node_modules/expo-iap/ios/ExpoIap.podspec
 +++ b/node_modules/expo-iap/ios/ExpoIap.podspec
-@@ -28,7 +28,8 @@ Pod::Spec.new do |s|
+@@ -29,7 +29,8 @@ Pod::Spec.new do |s|
    # Swift/Objective-C compatibility
    s.pod_target_xcconfig = {
      'DEFINES_MODULE' => 'YES',
@@ -10,5 +10,5 @@ index 04e6ddc..5f8c9a0 100644
 +    'SWIFT_COMPILATION_MODE' => 'wholemodule',
 +    'IPHONEOS_DEPLOYMENT_TARGET' => '16.0'
    }
-
+ 
    s.source_files = "**/*.{h,m,swift}"
