@@ -34,7 +34,7 @@ export function LikeOptionModal({
 	onSelect,
 	onClose,
 }: LikeOptionModalProps) {
-	const { t } = useTranslation('like-letter');
+	const { t } = useTranslation();
 	const { redirectTo: currentRedirectTo } = useLocalSearchParams<{ redirectTo?: string }>();
 	const queryClient = useQueryClient();
 	const { featureCosts } = useFeatureCost();
@@ -182,13 +182,13 @@ export function LikeOptionModal({
 				<View style={styles.content}>
 					<View style={styles.titleContainer}>
 						<Text weight="bold" size="20" textColor="black" style={styles.titleText}>
-							{t('ui.insufficient_modal.title')}
+							{t('features.like-letter.ui.insufficient_modal.title')}
 						</Text>
 					</View>
 
 					<View style={styles.descriptionContainer}>
 						<Text size="12" textColor="disabled" style={{ textAlign: 'center' }}>
-							{t('ui.insufficient_modal.description', {
+							{t('features.like-letter.ui.insufficient_modal.description', {
 								letterCost: baseLetterLikeCost,
 								likeCost: simpleLikeCost,
 							})}
@@ -199,10 +199,10 @@ export function LikeOptionModal({
 						<Pressable style={styles.letterOption} onPress={handleGoToCharge}>
 							<View style={styles.chargeContent}>
 								<Text weight="medium" size="20" style={styles.letterLikeText}>
-									{t('ui.insufficient_modal.charge_and_write')}
+									{t('features.like-letter.ui.insufficient_modal.charge_and_write')}
 								</Text>
 								<Text size="12" style={styles.chargeSubText}>
-									{t('ui.insufficient_modal.charge_sub_text')}
+									{t('features.like-letter.ui.insufficient_modal.charge_sub_text')}
 								</Text>
 							</View>
 						</Pressable>
@@ -215,14 +215,14 @@ export function LikeOptionModal({
 								</Text>
 							</View>
 							<Text weight="medium" size="20" style={styles.simpleLikeText}>
-								{t('ui.insufficient_modal.send_simple_like')}
+								{t('features.like-letter.ui.insufficient_modal.send_simple_like')}
 							</Text>
 						</Pressable>
 					</View>
 
 					<Pressable onPress={handleDismiss} style={styles.closeButton}>
 						<Text size="12" textColor="disabled" style={{ textDecorationLine: 'underline' }}>
-							{t('ui.insufficient_modal.later')}
+							{t('features.like-letter.ui.insufficient_modal.later')}
 						</Text>
 					</Pressable>
 				</View>
@@ -247,19 +247,19 @@ export function LikeOptionModal({
 			<View style={styles.content}>
 				<View style={styles.titleContainer}>
 					<Text weight="bold" size="20" textColor="black" style={styles.titleText}>
-						{t('ui.option_modal.title_line1')}
+						{t('features.like-letter.ui.option_modal.title_line1')}
 					</Text>
 					<Text weight="bold" size="20" textColor="black" style={styles.titleText}>
-						{t('ui.option_modal.title_line2')}
+						{t('features.like-letter.ui.option_modal.title_line2')}
 					</Text>
 				</View>
 
 				<View style={styles.descriptionContainer}>
 					<Text size="12" textColor="disabled">
-						{t('ui.option_modal.description_line1')}
+						{t('features.like-letter.ui.option_modal.description_line1')}
 					</Text>
 					<Text size="12" textColor="disabled">
-						{t('ui.option_modal.description_line2')}
+						{t('features.like-letter.ui.option_modal.description_line2')}
 					</Text>
 				</View>
 
@@ -272,7 +272,7 @@ export function LikeOptionModal({
 							</Text>
 						</View>
 						<Text weight="medium" size="20" style={styles.simpleLikeText}>
-							{t('ui.option_modal.simple_like')}
+							{t('features.like-letter.ui.option_modal.simple_like')}
 						</Text>
 					</Pressable>
 
@@ -284,13 +284,13 @@ export function LikeOptionModal({
 							</Text>
 						</View>
 						<Text weight="medium" size="20" style={styles.letterLikeText}>
-							{isLoading ? t('ui.option_modal.loading') : t('ui.option_modal.letter_like')}
+							{isLoading ? t('features.like-letter.ui.option_modal.loading') : t('features.like-letter.ui.option_modal.letter_like')}
 						</Text>
 					</Pressable>
 				</View>
 
 				<Text size="10" textColor="disabled" style={styles.hint}>
-					{t('ui.option_modal.hint')}
+					{t('features.like-letter.ui.option_modal.hint')}
 				</Text>
 			</View>
 		</View>
