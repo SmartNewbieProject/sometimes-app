@@ -11,6 +11,7 @@ import featuresInAppReview from './features/in-app-review.json';
 import featuresLoading from './features/loading.json';
 import featuresInstagram from './features/instagram.json';
 import featuresOnboarding from './features/onboarding.json';
+import featuresLikeLetter from './features/like-letter.json';
 import global from './global.json';
 import sharedsUi from './shareds/ui.json';
 import widgetsGemStore from './widgets/gem-store.json';
@@ -36,6 +37,7 @@ const features = {
 	onboarding: featuresOnboarding,
 	'in-app-review': featuresInAppReview,
 	'contact-block': featuresContactBlock,
+	'like-letter': featuresLikeLetter,
 };
 
 const shareds = {
