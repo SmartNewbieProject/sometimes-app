@@ -78,9 +78,8 @@ function useRematch() {
       expansionPath: `${expansionPath.icon} ${expansionPath.summary}`,
       onConfirm: async () => {
         try {
+          disableGlobalLoading();
           onLoading();
-          // JWT 토큰으로 인증되므로 userId 생략
-          // 서버가 Authorization 헤더의 토큰에서 userId 추출
           await startExternalMatch({
             context: {
               previousMatchAttempts: matchAttempts,
@@ -89,12 +88,14 @@ function useRematch() {
             onComplete: () => {
               finishLoading();
               finishRematching();
+              enableGlobalLoading();
             },
           });
         } catch (error) {
           logError('[외부 매칭] Error:', error);
           finishLoading();
           finishRematching();
+          enableGlobalLoading();
           const errorMessage = error instanceof Error ? error.message : t("features.idle-match-timer.hooks.use-rematch.expansion_matching_error");
           showErrorModal(errorMessage, "error");
         }
@@ -119,10 +120,10 @@ function useRematch() {
       (err) => {
         finishLoading();
         finishRematching();
-        enableGlobalLoading();
 
         // Forbidden - 재매칭 티켓 부족
         if (err.status === HttpStatusCode.Forbidden) {
+          enableGlobalLoading();
           showCashable({
             textContent:
               t("features.idle-match-timer.hooks.use-rematch.charge"),
@@ -141,6 +142,7 @@ function useRematch() {
           if (expansionSuggestion.available) {
             handleShowExpansionModal(expansionSuggestion);
           } else {
+            enableGlobalLoading();
             showErrorModal(
               t("features.idle-match-timer.hooks.use-rematch.no_available_match"),
               "announcement"
@@ -150,6 +152,7 @@ function useRematch() {
         }
 
         // 기타 에러
+        enableGlobalLoading();
         showErrorModal(
           err.message || t("features.idle-match-timer.hooks.use-rematch.matching_error"),
           "error"
