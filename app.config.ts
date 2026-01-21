@@ -41,8 +41,8 @@ export default ({ config }: ConfigContext): any => {
 		expo: {
 			name: 'sometimes',
 			slug: 'sometimes',
-			version: '4.0.1',
-			runtimeVersion: '4.0.1',
+			version: '4.0.2',
+			runtimeVersion: '4.0.2',
 			orientation: 'portrait',
 			icon: './assets/icons/app.png',
 			scheme: 'myapp',
@@ -57,7 +57,7 @@ export default ({ config }: ConfigContext): any => {
 			ios: {
 				supportsTablet: true,
 				bundleIdentifier: 'com.some-in-univ',
-				buildNumber: '332',
+				buildNumber: '333',
 				entitlements: {
 					'com.apple.developer.applesignin': ['Default'],
 				},
