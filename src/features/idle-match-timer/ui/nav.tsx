@@ -1,9 +1,9 @@
 import { ImageResources } from '@/src/shared/libs';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Button, ImageResource, Text } from '@/src/shared/ui';
-import { Text as RNText, StyleSheet, View, Pressable, Animated, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Pressable, Text as RNText, StyleSheet, View } from 'react-native';
 import type { MatchDetails } from '../types';
 
 import { useFeatureCost } from '@features/payment/hooks';

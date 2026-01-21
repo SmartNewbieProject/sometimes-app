@@ -1,28 +1,25 @@
-import { ImageResources } from '@/src/shared/libs';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { ImageResource } from '@/src/shared/ui';
-import {
-	Text as RNText,
-	StyleSheet,
-	View,
-	StyleProp,
-	ViewStyle,
-	Pressable,
-	Animated,
-	Easing,
-} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
+import {
+	Animated,
+	Easing,
+	Pressable,
+	Text as RNText,
+	type StyleProp,
+	StyleSheet,
+	type ViewStyle,
+} from 'react-native';
 
+import { useMixpanel } from '@/src/shared/hooks';
 import { useFeatureCost } from '@features/payment/hooks';
 import { useModal } from '@hooks/use-modal';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../auth';
-import { useMixpanel } from '@/src/shared/hooks';
+import { LikeOptionModal } from '../../like-letter';
 import { useMatchingEfficiency } from '../../matching/hooks/use-matching-efficiency';
 import useLike from '../hooks/use-like';
-import { LikeOptionModal } from '../../like-letter';
 
 type LikeButtonProps = {
 	connectionId: string;
@@ -227,12 +224,6 @@ export const LikeButton = ({
 				end={{ x: 1, y: 1 }}
 				style={styles.gradientButton}
 			>
-				{profileDetails?.gender === 'MALE' && (
-					<View style={styles.gemContainer}>
-						<ImageResource resource={ImageResources.GEM} width={31} height={31} />
-						<RNText style={styles.gemCountText}>x{featureCosts?.LIKE_MESSAGE}</RNText>
-					</View>
-				)}
 				<RNText style={styles.buttonText}>{t('features.like.ui.like_button.button_label')}</RNText>
 			</LinearGradient>
 			<Animated.View style={[styles.glowOverlay, animatedStyle]}>
@@ -281,21 +272,6 @@ const styles = StyleSheet.create({
 		right: 0,
 		bottom: 0,
 		width: '100%',
-	},
-	gemContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		gap: 2,
-		flexShrink: 0,
-	},
-	gemCountText: {
-		fontSize: 16,
-		fontWeight: '500',
-		color: semanticColors.text.inverse,
-		includeFontPadding: false,
-		textAlignVertical: 'center',
-		lineHeight: 31,
 	},
 	buttonText: {
 		fontSize: 20,

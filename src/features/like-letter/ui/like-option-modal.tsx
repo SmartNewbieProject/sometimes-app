@@ -208,12 +208,6 @@ export function LikeOptionModal({
 						</Pressable>
 
 						<Pressable style={styles.simpleOption} onPress={handleSimpleLike}>
-							<View style={styles.gemBadge}>
-								<ImageResource resource={ImageResources.GEM} width={22} height={22} />
-								<Text size="15" style={styles.gemCountLight}>
-									x{simpleLikeCost}
-								</Text>
-							</View>
 							<Text weight="medium" size="20" style={styles.simpleLikeText}>
 								{t('features.like-letter.ui.insufficient_modal.send_simple_like')}
 							</Text>
@@ -265,12 +259,6 @@ export function LikeOptionModal({
 
 				<View style={styles.optionsContainer}>
 					<Pressable style={styles.simpleOption} onPress={handleSimpleLike}>
-						<View style={styles.gemBadge}>
-							<ImageResource resource={ImageResources.GEM} width={22} height={22} />
-							<Text size="15" style={styles.gemCountLight}>
-								x{simpleLikeCost}
-							</Text>
-						</View>
 						<Text weight="medium" size="20" style={styles.simpleLikeText}>
 							{t('features.like-letter.ui.option_modal.simple_like')}
 						</Text>
@@ -284,7 +272,9 @@ export function LikeOptionModal({
 							</Text>
 						</View>
 						<Text weight="medium" size="20" style={styles.letterLikeText}>
-							{isLoading ? t('features.like-letter.ui.option_modal.loading') : t('features.like-letter.ui.option_modal.letter_like')}
+							{isLoading
+								? t('features.like-letter.ui.option_modal.loading')
+								: t('features.like-letter.ui.option_modal.letter_like')}
 						</Text>
 					</Pressable>
 				</View>
