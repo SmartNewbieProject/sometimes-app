@@ -19,6 +19,7 @@ import {
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { BlurredPhotoCard } from '@/src/widgets/blurred-photo-card';
 import { cn, formatLastLogin, getSmartUnivLogoUrl, parser } from '@/src/shared/libs';
 import Feather from '@expo/vector-icons/Feather';
@@ -51,12 +52,26 @@ export default function PartnerDetailScreen() {
 	const { data: partner, isLoading } = useMatchPartnerQuery(matchId);
 	const { data: matchReasonsData } = useMatchReasonsQuery(partner?.connectionId);
 	const { profileDetails } = useAuth();
+	const { disableGlobalLoading, enableGlobalLoading } = useGlobalLoading();
 	const [isZoomVisible, setZoomVisible] = useState(false);
 	const { isStatus, isLiked, isExpired } = useLiked();
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [showMihoIntro, setShowMihoIntro] = useState(false);
 	const [isAnalyzing, setIsAnalyzing] = useState(true);
 	const hasTrackedView = useRef(false);
+
+	// 온보딩 로딩 중에는 전역 로딩 오버레이 비활성화
+	useEffect(() => {
+		if (isAnalyzing) {
+			disableGlobalLoading();
+		} else {
+			enableGlobalLoading();
+		}
+
+		return () => {
+			enableGlobalLoading();
+		};
+	}, [isAnalyzing, disableGlobalLoading, enableGlobalLoading]);
 
 	// 내 승인된 사진 개수 계산
 	const myApprovedPhotosCount =

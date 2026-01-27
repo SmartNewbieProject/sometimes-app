@@ -41,8 +41,8 @@ export default ({ config }: ConfigContext): any => {
 		expo: {
 			name: 'sometimes',
 			slug: 'sometimes',
-			version: '4.0.2',
-			runtimeVersion: '4.0.2',
+			version: '4.0.3',
+			runtimeVersion: '4.0.3',
 			orientation: 'portrait',
 			icon: './assets/icons/app.png',
 			scheme: 'myapp',
