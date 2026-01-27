@@ -86,3 +86,16 @@ docs/test-images/*.webp
 *.bak2
 *.bak3
 *.backup
+
+# Development docs & scripts (local only)
+PLAN.md
+docs/html/
+docs/idea/
+docs/memory/
+docs/xml/
+docs/jp-results/
+docs/*.xml
+docs/*-release-note.md
+docs/color-guide.md
+docs/global-matching-implementation-spec.md
+scripts/sync-version.py
