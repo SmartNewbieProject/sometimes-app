@@ -1,18 +1,15 @@
-import { useMemo } from "react";
-import { useChatStore } from "../store/chat";
-import { createChatEventActions } from "../domain/chat-event-actions";
+import { useMemo } from 'react';
+import { createChatEventActions } from '../domain/chat-event-actions';
+import { useChatStore } from '../store/chat';
 
 export const useChatEvent = () => {
-  const { socket } = useChatStore();
+	const { socket } = useChatStore();
 
-  const chatEventActions = useMemo(
-    () => createChatEventActions(() => socket),
-    [socket]
-  );
+	const chatEventActions = useMemo(() => createChatEventActions(() => socket), [socket]);
 
-  return {
-    socket,
-    actions: chatEventActions,
-    chatEventActions,
-  } as const;
+	return {
+		socket,
+		actions: chatEventActions,
+		chatEventActions,
+	} as const;
 };

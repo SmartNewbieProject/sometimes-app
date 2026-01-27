@@ -1,5 +1,5 @@
-import { commonHandlers } from '@/src/shared/services/common-error-handler';
 import i18n from '@/src/shared/libs/i18n';
+import { commonHandlers } from '@/src/shared/services/common-error-handler';
 import type { ErrorHandler } from '@/src/types/error-handler';
 import { Text } from 'react-native';
 

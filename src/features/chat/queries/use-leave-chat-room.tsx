@@ -1,9 +1,9 @@
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { useTranslation } from 'react-i18next';
 import { Text } from '@/src/shared/ui';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { leaveChatRoom } from '../apis';
 import { chatLeaveErrorHandlers } from '../services/chat-leave-error-handler';
 

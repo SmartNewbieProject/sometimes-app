@@ -69,9 +69,7 @@ export const snoozeChatRoom = ({
 	});
 };
 
-export const getChatRoomActivityStatus = (
-	chatRoomId: string,
-): Promise<ChatRoomActivityStatus> => {
+export const getChatRoomActivityStatus = (chatRoomId: string): Promise<ChatRoomActivityStatus> => {
 	return axiosClient.get(`/chat/rooms/${chatRoomId}/activity-status`);
 };
 

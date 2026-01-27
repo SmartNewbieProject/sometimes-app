@@ -1,14 +1,14 @@
+import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { useTranslation } from 'react-i18next';
+import { storage } from '@/src/shared/libs/store';
 import { Text } from '@/src/shared/ui';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { createChatRoom } from '../apis';
 import { errorHandlers } from '../services/chat-create-error-handler';
-import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
-import { storage } from '@/src/shared/libs/store';
 
 function useCreateChatRoom() {
 	const { t } = useTranslation();
@@ -26,7 +26,7 @@ function useCreateChatRoom() {
 					const matchAcceptedTimeStr = await storage.getItem(`match_accepted_time_${partnerId}`);
 
 					if (matchAcceptedTimeStr) {
-						const matchAcceptedTime = parseInt(matchAcceptedTimeStr, 10);
+						const matchAcceptedTime = Number.parseInt(matchAcceptedTimeStr, 10);
 						const now = Date.now();
 						const timeSinceMatchAccepted = Math.floor((now - matchAcceptedTime) / 1000); // 초 단위
 

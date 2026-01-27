@@ -6,6 +6,8 @@ export * from './event.keys';
 export * from './instagram.keys';
 export * from './onboarding.keys';
 export * from './contact-block.keys';
+export * from './profile-viewer.keys';
+export * from './profile.keys';
 
 // 다른 feature 키 파일들이 추가되면 여기에 export
 // export * from './signup.keys';

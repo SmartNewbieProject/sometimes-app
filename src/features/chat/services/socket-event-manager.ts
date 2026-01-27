@@ -1,6 +1,9 @@
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { devLogWithTag, devWarn, logError } from '@/src/shared/utils';
 import { uriToBase64 } from '@/src/shared/utils/image';
 import { useTranslation } from 'react-i18next';
-import { fromEvent, type Subscription } from 'rxjs';
+import { type Subscription, fromEvent } from 'rxjs';
 import { type Socket, io } from 'socket.io-client';
 import { buildChatSocketUrl } from '../domain/utils/build-socket-url';
 import { type RNFileLike, fileToBase64Payload } from '../domain/utils/file-to-base64';
@@ -8,9 +11,6 @@ import type { Chat } from '../types/chat';
 import { generateTempId } from '../utils/generate-temp-id';
 import { compressImage, isImageTooLarge } from '../utils/image-compression';
 import { chatEventBus } from './chat-event-bus';
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
-import { devLogWithTag, logError, devWarn } from '@/src/shared/utils';
 
 declare const globalThis: {
 	__socketManagerSubscriptions?: Subscription[];
@@ -20,11 +20,18 @@ class SocketConnectionManager {
 	private socket: Socket | null = null;
 	private currentUrl: string | null = null;
 	private reconnectAttempts = 0;
-	private maxReconnectAttempts = 5;
+	private maxReconnectAttempts = 20;
 	private reconnectDelay = 1000;
 	private isReconnecting = false;
 	private lastSuccessfulSend: number = Date.now();
 	private isInitialized = false;
+
+	// Health Check 관련 속성
+	private healthCheckInterval: ReturnType<typeof setInterval> | null = null;
+	private lastPongReceived: number = Date.now();
+	private readonly HEALTH_CHECK_INTERVAL = 25000; // 25초마다 ping
+	private readonly STALE_CONNECTION_THRESHOLD = 35000; // 35초 (기존 60초에서 단축)
+
 	private pendingMessages: {
 		event: string;
 		payload: any;
@@ -90,13 +97,21 @@ class SocketConnectionManager {
 			devWarn('Failed to check engine state:', error);
 		}
 
-		// 마지막 성공한 전송으로부터 너무 오래 지났는지 체크 (60초)
-		const STALE_CONNECTION_THRESHOLD = 60000;
-		const timeSinceLastSuccess = Date.now() - this.lastSuccessfulSend;
-		if (timeSinceLastSuccess > STALE_CONNECTION_THRESHOLD) {
-			devLogWithTag('Socket Health', `Stale connection: ${timeSinceLastSuccess}ms since last success`);
-			// 오래됐지만 연결은 되어있다면 경고만 하고 통과
-			devWarn('Connection might be stale, but allowing send attempt');
+		// Health Check 기반 stale 연결 체크
+		const timeSinceLastPong = Date.now() - this.lastPongReceived;
+		if (timeSinceLastPong > this.STALE_CONNECTION_THRESHOLD) {
+			devLogWithTag(
+				'Socket Health',
+				`Stale connection detected: ${timeSinceLastPong}ms since last pong (threshold: ${this.STALE_CONNECTION_THRESHOLD}ms)`,
+			);
+
+			// Health check 실패 이벤트 발생
+			chatEventBus.emit({
+				type: 'SOCKET_HEALTH_CHECK_FAILED',
+				payload: { lastActivity: this.lastPongReceived },
+			});
+
+			return false;
 		}
 
 		return true;
@@ -118,53 +133,80 @@ class SocketConnectionManager {
 		}
 	}
 
-	private attemptReconnect() {
-		if (this.isReconnecting) {
-			devLogWithTag('Socket', 'Already reconnecting...');
-			return;
-		}
+	/**
+	 * Health Check 시작 - 25초마다 ping 전송
+	 * 서버로부터 pong 응답을 받으면 lastPongReceived 갱신
+	 */
+	private startHealthCheck() {
+		// 기존 interval 정리
+		this.stopHealthCheck();
 
-		if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-			logError('Max reconnection attempts reached');
-			chatEventBus.emit({
-				type: 'SOCKET_RECONNECT_FAILED',
-				payload: { error: 'Max reconnection attempts reached' },
-			});
-			this.isReconnecting = false;
-			this.reconnectAttempts = 0;
-			return;
-		}
+		devLogWithTag(
+			'Socket Health',
+			`Starting health check (interval: ${this.HEALTH_CHECK_INTERVAL}ms)`,
+		);
 
-		this.isReconnecting = true;
-		this.reconnectAttempts++;
+		// 초기값 설정
+		this.lastPongReceived = Date.now();
 
-		devLogWithTag('Socket', `Reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
-
-		chatEventBus.emit({
-			type: 'SOCKET_RECONNECTING',
-			payload: { attempt: this.reconnectAttempts },
+		// pong 응답 리스너 등록
+		this.socket?.on('pong', () => {
+			this.lastPongReceived = Date.now();
+			devLogWithTag('Socket Health', 'Pong received');
 		});
 
-		setTimeout(() => {
-			if (!this.socket) {
-				devLogWithTag('Socket', 'Socket is null, requesting new connection...');
-				// 소켓이 null이면 새 연결이 필요하다는 이벤트 발생
-				// GlobalChatProvider가 이 이벤트를 받아 CONNECTION_REQUESTED를 발생시킴
-				chatEventBus.emit({
-					type: 'SOCKET_CONNECTION_NEEDED',
-					payload: {},
-				});
-				this.isReconnecting = false;
-				this.reconnectAttempts = 0;
-				return;
+		// 주기적 ping 전송
+		this.healthCheckInterval = setInterval(() => {
+			if (this.socket?.connected) {
+				devLogWithTag('Socket Health', 'Sending ping...');
+				this.socket.emit('ping');
+			} else {
+				devLogWithTag('Socket Health', 'Socket not connected, skipping ping');
 			}
+		}, this.HEALTH_CHECK_INTERVAL);
+	}
 
-			if (!this.socket.connected) {
-				devLogWithTag('Socket', 'Attempting to connect...');
-				this.socket.connect();
-			}
-			this.isReconnecting = false;
-		}, this.reconnectDelay * this.reconnectAttempts);
+	/**
+	 * Health Check 중지
+	 */
+	private stopHealthCheck() {
+		if (this.healthCheckInterval) {
+			clearInterval(this.healthCheckInterval);
+			this.healthCheckInterval = null;
+			devLogWithTag('Socket Health', 'Health check stopped');
+		}
+
+		// pong 리스너 제거
+		this.socket?.off('pong');
+	}
+
+	/**
+	 * 재연결 시도 - Socket.IO 내장 재연결에 위임
+	 * Socket.IO의 reconnection: true 설정이 자동으로 재시도를 관리함
+	 * 이 메서드는 소켓이 null인 경우에만 새 연결을 요청
+	 */
+	private attemptReconnect() {
+		if (this.isReconnecting) {
+			devLogWithTag('Socket', 'Already reconnecting (Socket.IO handling)...');
+			return;
+		}
+
+		// 소켓이 null이면 새 연결 필요
+		if (!this.socket) {
+			devLogWithTag('Socket', 'Socket is null, requesting new connection...');
+			chatEventBus.emit({
+				type: 'SOCKET_CONNECTION_NEEDED',
+				payload: {},
+			});
+			return;
+		}
+
+		// Socket.IO 내장 재연결에 위임
+		// reconnection: true 설정으로 Socket.IO가 자동으로 재시도함
+		devLogWithTag('Socket', 'Delegating reconnection to Socket.IO...');
+		if (!this.socket.connected) {
+			this.socket.connect();
+		}
 	}
 
 	initialize() {
@@ -189,6 +231,7 @@ class SocketConnectionManager {
 	cleanup() {
 		devLogWithTag('Socket', 'Cleaning up socket manager...');
 
+		this.stopHealthCheck();
 		this.cleanupSubscriptions();
 
 		if (this.socket) {
@@ -205,8 +248,11 @@ class SocketConnectionManager {
 
 	private cleanupSubscriptions() {
 		if (globalThis.__socketManagerSubscriptions?.length) {
-			devLogWithTag('Socket', `Cleaning up ${globalThis.__socketManagerSubscriptions.length} subscriptions...`);
-			globalThis.__socketManagerSubscriptions.forEach(sub => sub.unsubscribe());
+			devLogWithTag(
+				'Socket',
+				`Cleaning up ${globalThis.__socketManagerSubscriptions.length} subscriptions...`,
+			);
+			globalThis.__socketManagerSubscriptions.forEach((sub) => sub.unsubscribe());
 			globalThis.__socketManagerSubscriptions = [];
 		}
 	}
@@ -229,7 +275,7 @@ class SocketConnectionManager {
 				}
 
 				this.connect(payload.url, payload.token);
-			})
+			}),
 		);
 		devLogWithTag('Socket', 'Connection handlers ready');
 	}
@@ -238,19 +284,19 @@ class SocketConnectionManager {
 		this.addSubscription(
 			chatEventBus.on('MESSAGES_READ_REQUESTED').subscribe(({ payload }) => {
 				this.socket?.emit('readMessages', { chatRoomId: payload.chatRoomId });
-			})
+			}),
 		);
 
 		this.addSubscription(
 			chatEventBus.on('MESSAGE_SEND_REQUESTED').subscribe(({ payload }) => {
 				this.handleMessageSend(payload);
-			})
+			}),
 		);
 
 		this.addSubscription(
 			chatEventBus.on('MESSAGE_RETRY_REQUESTED').subscribe(({ payload }) => {
 				this.handleMessageRetry(payload);
-			})
+			}),
 		);
 	}
 
@@ -259,14 +305,14 @@ class SocketConnectionManager {
 			chatEventBus.on('CHAT_ROOM_JOIN_REQUESTED').subscribe(({ payload }) => {
 				devLogWithTag('Chat Room', `Joining: ${payload.chatRoomId}`);
 				this.socket?.emit('joinRoom', { chatRoomId: payload.chatRoomId });
-			})
+			}),
 		);
 
 		this.addSubscription(
 			chatEventBus.on('CHAT_ROOM_LEAVE_REQUESTED').subscribe(({ payload }) => {
 				devLogWithTag('Chat Room', `Leaving: ${payload.chatRoomId}`);
 				this.socket?.emit('leaveRoom', { chatRoomId: payload.chatRoomId });
-			})
+			}),
 		);
 	}
 
@@ -274,7 +320,7 @@ class SocketConnectionManager {
 		this.addSubscription(
 			chatEventBus.on('IMAGE_OPTIMISTIC_ADDED').subscribe(async ({ payload }) => {
 				await this.handleImageUpload(payload);
-			})
+			}),
 		);
 	}
 
@@ -405,7 +451,10 @@ class SocketConnectionManager {
 		}
 	}
 
-	private async handleImageUpload(payload: { options: any; optimisticMessage: Chat }, retryCount = 0) {
+	private async handleImageUpload(
+		payload: { options: any; optimisticMessage: Chat },
+		retryCount = 0,
+	) {
 		const MAX_RETRIES = 3;
 		const RETRY_DELAY_MS = 1500;
 
@@ -414,7 +463,10 @@ class SocketConnectionManager {
 
 		// 연결 상태 심층 체크 (텍스트 메시지와 동일하게)
 		if (!this.isSocketHealthy()) {
-			devLogWithTag('Socket', `Socket unhealthy for image upload (retry ${retryCount}/${MAX_RETRIES})...`);
+			devLogWithTag(
+				'Socket',
+				`Socket unhealthy for image upload (retry ${retryCount}/${MAX_RETRIES})...`,
+			);
 			this.attemptReconnect();
 
 			// 최대 재시도 횟수 이내라면 자동 재시도
@@ -470,7 +522,7 @@ class SocketConnectionManager {
 				quality: 0.7,
 				format: 'jpeg',
 			}).catch((compressionError) => {
-				devWarn("common.이미지_압축_실패_원본_사용", compressionError);
+				devWarn('common.이미지_압축_실패_원본_사용', compressionError);
 				return base64;
 			});
 		}
@@ -501,7 +553,6 @@ class SocketConnectionManager {
 			payload: { success: false, error, tempId },
 		});
 	}
-
 
 	private connect(url: string, token: string) {
 		devLogWithTag('Socket', '=== CONNECT START ===');
@@ -558,15 +609,21 @@ class SocketConnectionManager {
 
 	private createSocketConnection(socketUrl: string, token: string) {
 		const options = {
-			transports: ['websocket', 'polling'],
+			transports: ['websocket', 'polling'], // WebSocket 우선, polling fallback
+			upgrade: true, // polling → websocket 자동 업그레이드
 			withCredentials: true,
 			secure: process.env.NODE_ENV === 'production',
 			rejectUnauthorized: true,
 			auth: { token: `Bearer ${token}` },
+
+			// 재연결 설정 (ALB timeout 3600초 대응)
 			reconnection: true,
-			reconnectionAttempts: 5,
-			reconnectionDelay: 1000,
-			timeout: 20000,
+			reconnectionAttempts: 20, // 5 → 20 (더 많은 재시도)
+			reconnectionDelay: 1000, // 첫 재연결 1초 후
+			reconnectionDelayMax: 5000, // 최대 5초 간격
+			randomizationFactor: 0.5, // jitter 추가 (thundering herd 방지)
+
+			timeout: 20000, // 연결 타임아웃 20초
 			forceNew: !!this.socket,
 		};
 
@@ -592,6 +649,41 @@ class SocketConnectionManager {
 		this.registerDisconnectHandler();
 		this.registerErrorHandler();
 		this.registerMessageListeners();
+		this.registerManagerEventHandlers();
+	}
+
+	private registerManagerEventHandlers() {
+		if (!this.socket?.io) return;
+
+		// 재연결 성공
+		this.socket.io.on('reconnect', (attempt) => {
+			devLogWithTag('Socket', `Reconnected after ${attempt} attempts`);
+			this.reconnectAttempts = 0;
+			this.isReconnecting = false;
+			chatEventBus.emit({
+				type: 'SOCKET_CONNECTED',
+				payload: { reconnected: true, attempts: attempt },
+			});
+		});
+
+		// 재연결 시도
+		this.socket.io.on('reconnect_attempt', (attempt) => {
+			devLogWithTag('Socket', `Reconnect attempt: ${attempt}`);
+		});
+
+		// 재연결 실패 (모든 시도 소진)
+		this.socket.io.on('reconnect_failed', () => {
+			devLogWithTag('Socket', 'All reconnection attempts failed');
+			chatEventBus.emit({
+				type: 'SOCKET_RECONNECT_FAILED',
+				payload: { error: 'All reconnection attempts exhausted' },
+			});
+		});
+
+		// 재연결 에러
+		this.socket.io.on('reconnect_error', (error) => {
+			devLogWithTag('Socket', 'Reconnect error:', error.message);
+		});
 	}
 
 	private registerConnectHandler() {
@@ -600,21 +692,28 @@ class SocketConnectionManager {
 			this.reconnectAttempts = 0;
 			this.isReconnecting = false;
 			this.lastSuccessfulSend = Date.now();
+			this.lastPongReceived = Date.now(); // Health check 초기화
 			chatEventBus.emit({ type: 'SOCKET_CONNECTED', payload: {} });
 			this.processPendingMessages();
+			this.startHealthCheck(); // Health check 시작
 		});
 	}
 
 	private registerDisconnectHandler() {
 		this.socket?.on('disconnect', (reason) => {
 			devLogWithTag('Socket', 'Disconnected:', reason);
+			this.stopHealthCheck(); // Health check 중지
 			chatEventBus.emit({ type: 'SOCKET_DISCONNECTED', payload: { reason } });
 
-			const shouldReconnect = reason === 'io server disconnect' || reason === 'transport close';
-			if (shouldReconnect) {
-				devLogWithTag('Socket', 'Unexpected disconnect, reconnecting...');
-				this.attemptReconnect();
+			// 'io server disconnect' → 서버가 강제로 끊음 (수동 재연결 필요)
+			if (reason === 'io server disconnect') {
+				devLogWithTag('Socket', 'Server disconnected, manual reconnect needed');
+				this.socket?.connect(); // 수동 재연결
+				return;
 			}
+
+			// 'transport close', 'ping timeout' → Socket.IO가 자동 재연결 시도함
+			// 추가적인 수동 재연결 로직은 불필요 (Socket.IO 내장 재연결 사용)
 		});
 	}
 
@@ -633,8 +732,8 @@ class SocketConnectionManager {
 			devLogWithTag('Socket', 'Error:', error);
 
 			const errorMessage = error?.message || '';
-			const isSessionClosed = errorMessage.includes('Client was closed') ||
-				errorMessage.includes('not queryable');
+			const isSessionClosed =
+				errorMessage.includes('Client was closed') || errorMessage.includes('not queryable');
 
 			if (isSessionClosed) {
 				devLogWithTag('Socket', 'Server session closed detected, forcing reconnect...');

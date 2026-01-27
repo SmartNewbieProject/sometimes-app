@@ -55,6 +55,7 @@ import featuresPayment from './features/payment.json';
 import featuresPostBox from './features/post-box.json';
 import featuresPreSignup from './features/pre-signup.json';
 import featuresProfileEdit from './features/profile-edit.json';
+import featuresProfileViewer from './features/profile-viewer.json';
 import featuresSetting from './features/setting.json';
 import featuresSignup from './features/signup.json';
 import featuresSomemate from './features/somemate.json';
@@ -134,6 +135,7 @@ const features = {
 	'post-box': featuresPostBox,
 	'pre-signup': featuresPreSignup,
 	'profile-edit': featuresProfileEdit,
+	'profile-viewer': featuresProfileViewer,
 	setting: featuresSetting,
 	signup: featuresSignup,
 	'welcome-reward': featuresWelcomeReward,

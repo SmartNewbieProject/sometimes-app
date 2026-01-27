@@ -69,6 +69,10 @@ export type ChatDomainEvent =
 	| { type: 'SOCKET_RECONNECT_FAILED'; payload: { error: string } }
 	// biome-ignore lint/complexity/noBannedTypes: <explanation>
 	| { type: 'SOCKET_CONNECTION_NEEDED'; payload: {} }
+	| { type: 'SOCKET_HEALTH_CHECK_FAILED'; payload: { lastActivity: number } }
+
+	// 앱 상태 (AppStateStatus: 'active' | 'background' | 'inactive' | 'unknown' | 'extension')
+	| { type: 'APP_STATE_CHANGED'; payload: { state: string } }
 
 	// 에러 이벤트
 	| { type: 'SOCKET_ERROR'; payload: { error: string } }
@@ -123,7 +127,10 @@ export type SocketEvents = Extract<
 	| { type: 'SOCKET_RECONNECTED' }
 	| { type: 'SOCKET_ERROR' }
 	| { type: 'SOCKET_CONNECTION_NEEDED' }
+	| { type: 'SOCKET_HEALTH_CHECK_FAILED' }
 >;
+
+export type AppStateEvents = Extract<ChatDomainEvent, { type: 'APP_STATE_CHANGED' }>;
 
 export type TypingEvents = Extract<
 	ChatDomainEvent,

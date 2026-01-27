@@ -1,12 +1,15 @@
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { devLogWithTag, logError } from '@/src/shared/utils';
 import { useEffect, useRef } from 'react';
 import { useChatActivitySummary, useMarkActivityTracked } from '../queries/use-chat-activity';
-import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import type { Activity24hStatus } from '../types/chat-activity';
-import { devLogWithTag, logError } from '@/src/shared/utils';
 
-function determineActivityStatus(isActive: boolean, isMutualConversation: boolean): Activity24hStatus {
+function determineActivityStatus(
+	isActive: boolean,
+	isMutualConversation: boolean,
+): Activity24hStatus {
 	if (!isActive) return 'inactive';
 	if (isMutualConversation) return 'mutual';
 	return 'one_sided';

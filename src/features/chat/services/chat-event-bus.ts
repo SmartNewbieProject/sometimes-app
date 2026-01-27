@@ -1,7 +1,7 @@
+import { devLogWithTag } from '@/src/shared/utils';
 import type { Observable, Subject as SubjectType } from 'rxjs';
 import { Subject } from 'rxjs';
 import type { ChatDomainEvent } from '../types/event';
-import { devLogWithTag } from '@/src/shared/utils';
 
 declare const globalThis: {
 	__chatEventBus?: ChatEventBus;
@@ -40,4 +40,5 @@ class ChatEventBus {
 	}
 }
 
-export const chatEventBus = globalThis.__chatEventBus ?? (globalThis.__chatEventBus = new ChatEventBus());
+export const chatEventBus =
+	globalThis.__chatEventBus ?? (globalThis.__chatEventBus = new ChatEventBus());
