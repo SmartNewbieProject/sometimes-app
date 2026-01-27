@@ -1,8 +1,19 @@
 {
 	"hooks": {
-		"사진_교체에_실패했습니다": "[EN] 사진 교체에 실패했습니다",
-		"재심사_요청_완료": "[EN] 재심사 요청 완료",
-		"확인": "[EN] 확인",
-		"사진_재업로드에_실패했습니다": "[EN] 사진 재업로드에 실패했습니다"
+		"사진_교체에_실패했습니다": "Failed to change photo",
+		"재심사_요청_완료": "Review request submitted",
+		"확인": "OK",
+		"사진_재업로드에_실패했습니다": "Failed to re-upload photo"
+	},
+	"errors": {
+		"no_face_detected": {
+			"title": "Face not detected",
+			"message": "No face was detected in the photo.\nPlease upload a photo where your face is clearly visible."
+		},
+		"multiple_faces_detected": {
+			"title": "Multiple faces detected",
+			"message": "Multiple faces were detected.\nPlease upload a photo with only yourself."
+		},
+		"confirm": "OK"
 	}
 }

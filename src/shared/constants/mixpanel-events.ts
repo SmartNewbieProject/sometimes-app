@@ -269,6 +269,11 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	LETTER_LIKE_SUCCESS: 'Letter_Like_Success',
 	LETTER_LIKE_FAILED: 'Letter_Like_Failed',
 
+	// ===== 프로필 뷰어 이벤트 (나를 본 사람) =====
+	PROFILE_VIEWER_LIST_VIEWED: 'Profile_Viewer_List_Viewed',
+	PROFILE_VIEWER_REVEAL_CLICKED: 'Profile_Viewer_Reveal_Clicked',
+	PROFILE_VIEWER_LIKE_CLICKED: 'Profile_Viewer_Like_Clicked',
+
 	// ===== 서버 전용 이벤트 (백엔드에서만 발송) =====
 
 	// 매칭 파이프라인 (백엔드 NestJS)

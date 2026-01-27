@@ -1,0 +1,53 @@
+{
+	"floating_summary_card": {
+		"viewer_count_text": "{{count}} people viewed you!",
+		"viewer_count_prefix": "Currently ",
+		"viewer_count_suffix": " people are viewing me!",
+		"accessibility_label": "{{count}} people are interested in your profile. Tap to see details"
+	},
+	"viewed_me": {
+		"header_title": "Who Viewed Me",
+		"description": "People who viewed your profile in the last 7 days.\nReveal their profiles to see more details!",
+		"empty_title": "No one has viewed your profile yet",
+		"empty_description": "Complete your profile to get more attention",
+		"loading": "Loading people who viewed your profile!",
+		"card": {
+			"view_count": "Viewed {{count}} times",
+			"view_count_more": "Viewed 5+ times",
+			"last_viewed": "Viewed {{time}}",
+			"free_unlock": "Unlock Free",
+			"reveal_button": "Reveal Profile",
+			"reveal_cost": "{{cost}} Gems",
+			"like_button": "Send Like",
+			"liked_label": "Liked"
+		},
+		"anchor_text": "Who viewed me"
+	},
+	"reveal_confirm": {
+		"title": "Would you like to reveal this profile?",
+		"cost_info": "{{cost}} gems will be used",
+		"free_label": "Free",
+		"free_info": "You can reveal for free after 24 hours!",
+		"confirm_button": "Yes, reveal!",
+		"cancel_button": "Maybe later"
+	},
+	"insufficient_gem": {
+		"title": "Not enough gems",
+		"description": "You need {{cost}} gems to reveal this profile.",
+		"charge_button": "Get more gems",
+		"cancel_button": "Cancel"
+	},
+	"free_unlock_fab": {
+		"available": "FREE",
+		"countdown": "until free",
+		"countdown_prefix": "Free profile in ",
+		"gem_hint": "Use gems now, next profile will be free",
+		"available_title": "Check the profile for free!",
+		"available_subtitle": "You can reveal it for free now"
+	},
+	"interaction_status": {
+		"i_liked": "Like Sent",
+		"they_liked": "Like Received",
+		"mutual": "You both like each other!"
+	}
+}

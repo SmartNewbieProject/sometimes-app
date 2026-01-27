@@ -1,5 +1,6 @@
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { usePhotoPicker } from '@/src/shared/hooks/use-photo-picker';
+import { devLogWithTag } from '@/src/shared/utils';
 import { isHeicBase64 } from '@/src/shared/utils/image';
 import BulbIcon from '@assets/icons/bulb.svg';
 import SendChatIcon from '@assets/icons/send-chat.svg';
@@ -9,6 +10,7 @@ import * as MediaLibrary from 'expo-media-library';
 import { useLocalSearchParams } from 'expo-router';
 import type React from 'react';
 import { type ChangeEvent, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Linking, Platform } from 'react-native';
 import { useAuth } from '../../auth';
 import useKeyboardResizeEffect from '../hooks/use-keyboard-resize-effect';
@@ -17,8 +19,6 @@ import useChatTips from '../queries/use-chat-tips';
 import { chatEventBus } from '../services/chat-event-bus';
 import { generateTempId } from '../utils/generate-temp-id';
 import ChatTipsModal from './chat-tips-modal';
-import { devLogWithTag } from '@/src/shared/utils';
-import { useTranslation } from 'react-i18next';
 
 function WebChatInput() {
 	const { t } = useTranslation();

@@ -1,0 +1,53 @@
+{
+	"floating_summary_card": {
+		"viewer_count_text": "{{count}}人が見ました!",
+		"viewer_count_prefix": "現在 ",
+		"viewer_count_suffix": "人が私を見ています!",
+		"accessibility_label": "{{count}}人があなたのプロフィールに興味を持っています。タップして確認してください"
+	},
+	"viewed_me": {
+		"header_title": "私を見た人",
+		"description": "過去7日間にあなたのプロフィールを見た人たちです。\nプロフィールを開いて詳細を確認しましょう！",
+		"empty_title": "まだプロフィールを見た人はいません",
+		"empty_description": "プロフィールを完成させて、もっと注目を集めましょう",
+		"loading": "プロフィールを見た人を読み込んでいます！",
+		"card": {
+			"view_count": "{{count}}回閲覧",
+			"view_count_more": "5回以上閲覧",
+			"last_viewed": "{{time}}に閲覧",
+			"free_unlock": "無料で開く",
+			"reveal_button": "プロフィールを開く",
+			"reveal_cost": "{{cost}} ジェム",
+			"like_button": "いいねを送る",
+			"liked_label": "いいね済み"
+		},
+		"anchor_text": "私を見た人"
+	},
+	"reveal_confirm": {
+		"title": "私を見た異性のプロフィールを開きますか？",
+		"cost_info": "{{cost}}ジェムを使用します",
+		"free_label": "無料",
+		"free_info": "24時間経過で無料で開けます！",
+		"confirm_button": "はい、確認します！",
+		"cancel_button": "また今度にします"
+	},
+	"insufficient_gem": {
+		"title": "ジェムが足りません",
+		"description": "プロフィールを開くには{{cost}}ジェムが必要です。",
+		"charge_button": "ジェムをチャージする",
+		"cancel_button": "キャンセル"
+	},
+	"free_unlock_fab": {
+		"available": "無料",
+		"countdown": "後に無料",
+		"countdown_prefix": "無料プロフィールまで ",
+		"gem_hint": "ジェムで閲覧すると次のプロフィールが無料に",
+		"available_title": "無料でプロフィールを確認しましょう！",
+		"available_subtitle": "今すぐ無料で開けます"
+	},
+	"interaction_status": {
+		"i_liked": "いいね送信済み",
+		"they_liked": "いいね受信",
+		"mutual": "お互いに好き！"
+	}
+}

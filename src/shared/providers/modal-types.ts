@@ -20,6 +20,7 @@ export type ModalOptions = {
 	custom?: React.ElementType;
 	buttonLayout?: 'horizontal' | 'vertical';
 	dismissable?: boolean;
+	hideCloseButton?: boolean;
 	position?: 'center' | 'bottom';
 };
 

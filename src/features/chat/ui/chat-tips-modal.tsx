@@ -1,7 +1,8 @@
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import BulbIcon from '@assets/icons/bulb.svg';
 import ReloadingIcon from '@assets/icons/reloading.svg';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	ActivityIndicator,
 	Modal,
@@ -14,7 +15,6 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { ChatTip } from '../apis';
-import { useTranslation } from 'react-i18next';
 
 interface ChatTipsModalProps {
 	visible: boolean;
@@ -53,7 +53,9 @@ function ChatTipsModal({
 					<View style={styles.header}>
 						<View style={styles.headerLeft}>
 							<BulbIcon width={24} height={24} />
-							<Text style={styles.headerTitle}>{t('features.chat.ui.tips_modal.header_title')}</Text>
+							<Text style={styles.headerTitle}>
+								{t('features.chat.ui.tips_modal.header_title')}
+							</Text>
 						</View>
 						<View style={styles.aiBadge}>
 							<Text style={styles.aiBadgeText}>{t('features.chat.ui.tips_modal.ai_badge')}</Text>
@@ -80,18 +82,14 @@ function ChatTipsModal({
 						</View>
 					)}
 
-					<TouchableOpacity
-						style={styles.refreshButton}
-						onPress={onRefresh}
-						disabled={isLoading}
-					>
+					<TouchableOpacity style={styles.refreshButton} onPress={onRefresh} disabled={isLoading}>
 						<ReloadingIcon width={20} height={20} />
-						<Text style={styles.refreshButtonText}>{t('features.chat.ui.tips_modal.refresh_button')}</Text>
+						<Text style={styles.refreshButtonText}>
+							{t('features.chat.ui.tips_modal.refresh_button')}
+						</Text>
 					</TouchableOpacity>
 
-					<Text style={styles.footerText}>
-						{t('features.chat.ui.tips_modal.footer_text')}
-					</Text>
+					<Text style={styles.footerText}>{t('features.chat.ui.tips_modal.footer_text')}</Text>
 				</View>
 			</Pressable>
 		</Modal>

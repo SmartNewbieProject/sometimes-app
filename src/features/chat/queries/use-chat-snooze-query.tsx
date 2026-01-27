@@ -1,8 +1,8 @@
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { snoozeChatRoom } from '../apis';
 import { chatSnoozeErrorHandlers } from '../services/chat-snooze-error-handler';
 

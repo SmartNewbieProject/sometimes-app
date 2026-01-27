@@ -3,25 +3,41 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
+import { PROFILE_VIEWER_KEYS } from "@/src/shared/libs/locales/keys";
 
 interface NotSomeProps {
-  type: "likedMe" | "iLiked";
+  type: "likedMe" | "iLiked" | "viewedMe";
 }
 
 function NotSome({ type }: NotSomeProps) {
   const { t } = useTranslation();
+
+  const getEmptyText = () => {
+    switch (type) {
+      case "likedMe":
+        return t("features.post-box.apps.post_box.empty_state.no_some_received");
+      case "iLiked":
+        return t("features.post-box.apps.post_box.empty_state.no_some_sent");
+      case "viewedMe":
+        return t(PROFILE_VIEWER_KEYS.viewedMeEmptyTitle);
+    }
+  };
+
+  const getDescriptionText = () => {
+    if (type === "viewedMe") {
+      return t(PROFILE_VIEWER_KEYS.viewedMeEmptyDescription);
+    }
+    return t("features.post-box.apps.post_box.empty_state.description");
+  };
+
   return (
     <View style={styles.container}>
       <Image
         source={require("@assets/images/no-some-post-miho.webp")}
         style={styles.image}
       />
-      <Text style={styles.description}>
-        {type === "likedMe"
-          ? t("features.post-box.apps.post_box.empty_state.no_some_received")
-          : t("features.post-box.apps.post_box.empty_state.no_some_sent")}
-      </Text>
-      <Text style={styles.description}>{t("features.post-box.apps.post_box.empty_state.description")}</Text>
+      <Text style={styles.description}>{getEmptyText()}</Text>
+      <Text style={styles.description}>{getDescriptionText()}</Text>
     </View>
   );
 }

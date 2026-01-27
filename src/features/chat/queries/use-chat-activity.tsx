@@ -1,18 +1,19 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	getChatRoomActivityStatus,
-	markChatRoomActivityTracked,
 	getChatRoomActivitySummary,
+	markChatRoomActivityTracked,
 } from '../apis';
 import type { Activity24hStatus } from '../types/chat-activity';
 
 export const chatActivityKeys = {
 	all: ['chat-activity'] as const,
 	status: (chatRoomId: string) => [...chatActivityKeys.all, 'status', chatRoomId] as const,
-	summary: (needsTracking?: boolean) => [...chatActivityKeys.all, 'summary', needsTracking] as const,
+	summary: (needsTracking?: boolean) =>
+		[...chatActivityKeys.all, 'summary', needsTracking] as const,
 };
 
-export function useChatRoomActivityStatus(chatRoomId: string, enabled: boolean = true) {
+export function useChatRoomActivityStatus(chatRoomId: string, enabled = true) {
 	return useQuery({
 		queryKey: chatActivityKeys.status(chatRoomId),
 		queryFn: () => getChatRoomActivityStatus(chatRoomId),
@@ -45,7 +46,7 @@ export function useMarkActivityTracked() {
 	});
 }
 
-export function useChatActivitySummary(needsTracking: boolean = false, enabled: boolean = true) {
+export function useChatActivitySummary(needsTracking = false, enabled = true) {
 	return useQuery({
 		queryKey: chatActivityKeys.summary(needsTracking),
 		queryFn: () => getChatRoomActivitySummary(needsTracking),

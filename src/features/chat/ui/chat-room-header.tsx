@@ -1,5 +1,5 @@
-import ChevronLeft from '@assets/icons/chevron-left.svg';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import ChevronLeft from '@assets/icons/chevron-left.svg';
 import VerticalEllipsisIcon from '@assets/icons/vertical-ellipsis.svg';
 import { Image } from 'expo-image';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';

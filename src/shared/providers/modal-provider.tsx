@@ -1,27 +1,27 @@
 import ModalParticle from '@/src/widgets/particle/modal-particle';
-import { useTranslation } from 'react-i18next';
-import { semanticColors } from '../constants/semantic-colors';
 import ErrorFace from '@assets/icons/error-face.svg';
 import { Image } from 'expo-image';
-import { createContext, useState, isValidElement } from 'react';
+import { createContext, isValidElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	type LayoutChangeEvent,
 	Modal,
+	Pressable,
 	StyleSheet,
+	TouchableOpacity,
 	View,
 	useWindowDimensions,
-	TouchableOpacity,
-	Pressable,
 } from 'react-native';
+import { semanticColors } from '../constants/semantic-colors';
 import useCurrentModal from '../hooks/use-current-modal';
 import useNestedModal from '../hooks/use-nested-modal';
 import { Button } from '../ui/button';
 import { Text } from '../ui/text';
 import type {
-	ModalOptions,
 	ErrorModalOptions,
 	ModalOption,
 	ModalOptionOrNull,
+	ModalOptions,
 } from './modal-types';
 
 export type { ModalOptions, ErrorModalOptions, ModalOption, ModalOptionOrNull };
@@ -100,6 +100,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 		};
 		const handleClose = type === 'mono' ? hideModal : hideNestedModal;
 		const dismissable = options.dismissable ?? true;
+		const showCloseButton = dismissable && !options.hideCloseButton;
 
 		const Custom = options?.custom;
 		if (Custom) {
@@ -115,7 +116,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 					options?.showLogo ? styles.customModalWithLogo : undefined,
 				]}
 			>
-				{dismissable && (
+				{showCloseButton && (
 					<TouchableOpacity
 						style={styles.closeButton}
 						onPress={handleClose}

@@ -16,8 +16,7 @@ export const INSTAGRAM_KEYS = {
 	verifySuccessTitle: 'features.instagram.verify.success_title',
 	verifySuccessMessage: 'features.instagram.verify.success_message',
 	verifySuccessRewardedTitle: 'features.instagram.verify.success_rewarded_title',
-	verifySuccessRewardedMessage:
-		'features.instagram.verify.success_rewarded_message',
+	verifySuccessRewardedMessage: 'features.instagram.verify.success_rewarded_message',
 	verifyErrorMessage: 'features.instagram.verify.error_message',
 
 	// services

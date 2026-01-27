@@ -1,0 +1,53 @@
+{
+	"floating_summary_card": {
+		"viewer_count_text": "{{count}}명이 봤어요!",
+		"viewer_count_prefix": "현재 ",
+		"viewer_count_suffix": "명이 나를 보고있어요!",
+		"accessibility_label": "{{count}}명이 당신의 프로필에 관심있어요. 탭하여 확인하세요"
+	},
+	"viewed_me": {
+		"header_title": "나를 본 사람",
+		"description": "최근 7일 동안 당신의 프로필을 본 사람들이에요.\n프로필을 열어 자세한 정보를 확인해보세요!",
+		"empty_title": "아직 프로필을 본 사람이 없어요",
+		"empty_description": "프로필을 완성하면 더 많은 관심을 받을 수 있어요",
+		"loading": "프로필을 확인한 분들을 불러오는 중이에요!",
+		"card": {
+			"view_count": "{{count}}회 조회",
+			"view_count_more": "5회 이상 조회",
+			"last_viewed": "{{time}} 조회",
+			"free_unlock": "무료로 열기",
+			"reveal_button": "프로필 열기",
+			"reveal_cost": "{{cost}} 젬",
+			"like_button": "좋아요 보내기",
+			"liked_label": "좋아요 완료"
+		},
+		"anchor_text": "나를 본 사람"
+	},
+	"reveal_confirm": {
+		"title": "나를 본 이성의 프로필을 열어볼까요?",
+		"cost_info": "{{cost}}구슬이 사용됩니다",
+		"free_label": "무료",
+		"free_info": "24시간이 지나 무료로 열 수 있어요!",
+		"confirm_button": "네 확인할게요!",
+		"cancel_button": "다음에 할게요"
+	},
+	"insufficient_gem": {
+		"title": "구슬이 부족해요",
+		"description": "프로필을 공개하려면 {{cost}}구슬이 필요해요.",
+		"charge_button": "구슬 충전하기",
+		"cancel_button": "취소"
+	},
+	"free_unlock_fab": {
+		"available": "무료",
+		"countdown": "후 무료",
+		"countdown_prefix": "무료 프로필까지 ",
+		"gem_hint": "구슬로 열람 시 다음 프로필에 무료 적용",
+		"available_title": "무료로 프로필을 확인하세요!",
+		"available_subtitle": "지금 바로 무료로 열어볼 수 있어요"
+	},
+	"interaction_status": {
+		"i_liked": "좋아요 보냄",
+		"they_liked": "좋아요 받음",
+		"mutual": "서로가 좋아해요!"
+	}
+}
