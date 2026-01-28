@@ -1,26 +1,28 @@
-import { useModal } from '@/src/shared/hooks/use-modal';
+import { ExternalRegionBadge } from '@/src/features/matching/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useModal } from '@/src/shared/hooks/use-modal';
 import { dayUtils, tryCatch } from '@/src/shared/libs';
+import i18n from '@/src/shared/libs/i18n';
 import { Button, Show } from '@/src/shared/ui';
-import { getRemainingTimeFormatted, getRemainingTimeLimit } from '@/src/shared/utils/like';
-import ChatIcon from '@assets/icons/chat.svg';
-import XIcon from '@assets/icons/x-icon.svg';
-import FillHeartIcon from '@assets/icons/fill-heart.svg';
-import { Feather } from '@expo/vector-icons';
 import { Text as CustomText } from '@/src/shared/ui/text';
+import { getRemainingTimeFormatted, getRemainingTimeLimit } from '@/src/shared/utils/like';
+import type { ExternalMatchInfo } from '@/src/types/user';
+import ChatIcon from '@assets/icons/chat.svg';
+import FillHeartIcon from '@assets/icons/fill-heart.svg';
+import XIcon from '@assets/icons/x-icon.svg';
+import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../../auth';
 import useCreateChatRoom from '../../chat/queries/use-create-chat-room';
-import { useTranslation } from 'react-i18next';
 import useLike from '../../like/hooks/use-like';
 import { useFeatureCost } from '../../payment/hooks';
 import useByeLike from '../queries/useByeLike';
 import useRejectLike from '../queries/useRejectLike';
-import i18n from '@/src/shared/libs/i18n';
 
 import OpenLetterIcon from '@assets/images/post-box/open-letter.svg';
 
@@ -43,6 +45,7 @@ interface PostBoxCardProps {
 	likeId?: string;
 	letterContent?: string | null;
 	hasLetter?: boolean;
+	external?: ExternalMatchInfo | null;
 }
 
 function PostBoxCard({
@@ -64,6 +67,7 @@ function PostBoxCard({
 	likeId,
 	letterContent,
 	hasLetter,
+	external,
 }: PostBoxCardProps) {
 	const { t } = useTranslation();
 	const opacity = useRef(new Animated.Value(1)).current;
@@ -130,75 +134,80 @@ function PostBoxCard({
 				if (userWithdrawal || isExpired) return;
 				router.push({
 					pathname: '/partner/view/[id]',
-					params: { id: matchId, redirectTo: encodeURIComponent('/post-box') },
+					params: { id: matchId, redirectTo: encodeURIComponent(`/post-box/${type}`) },
 				});
 			}}
 		>
 			<View style={[styles.container, isLetterCard && styles.letterCardContainer]}>
-				{!isLetterCard && <View style={[styles.viewPoint, !viewedAt && styles.viewYet]} />}
-				<Image source={mainProfileUrl} style={styles.profileImage} />
-				<View style={styles.contentContainer}>
-					<View style={styles.topText}>
-						<Text style={styles.name}>{nickname}</Text>
-						<Text style={styles.age}>
-							{t('features.post-box.apps.post_box.age_display', { age })}
-						</Text>
-						{isLetterCard && (
-							<View style={{ flex: 1, alignItems: 'flex-end' }}>
-								{/* Option menu or other elements can go here */}
-							</View>
-						)}
-					</View>
-					<Text style={styles.university}>{universityName}</Text>
-
-					{isLetterCard ? (
-						<View style={styles.letterContentWrapper}>
-							<OpenLetterIcon width={23} height={23} />
-							<Text style={styles.letterContentText} numberOfLines={3}>
-								{letterContent}
+				{external && <ExternalRegionBadge external={external} variant="banner" />}
+				<View style={[styles.cardContent, !external && styles.cardContentNoBanner]}>
+					{!isLetterCard && <View style={[styles.viewPoint, !viewedAt && styles.viewYet]} />}
+					<Image source={mainProfileUrl} style={styles.profileImage} />
+					<View style={styles.contentContainer}>
+						<View style={styles.topText}>
+							<Text style={styles.name}>{nickname}</Text>
+							<Text style={styles.age}>
+								{t('features.post-box.apps.post_box.age_display', { age })}
 							</Text>
-						</View>
-					) : (
-						<>
-							{letterContent && (
-								<View style={styles.letterContainer}>
-									<View style={styles.letterIconWrapper}>
-										<Feather name="mail" size={14} color="#A892D7" />
-									</View>
-									<Text style={styles.letterText} numberOfLines={2}>
-										{letterContent}
-									</Text>
+							{isLetterCard && (
+								<View style={{ flex: 1, alignItems: 'flex-end' }}>
+									{/* Option menu or other elements can go here */}
 								</View>
 							)}
-							<Show when={!userWithdrawal}>
-								<Text
+						</View>
+						<View style={styles.universityRow}>
+							<Text style={styles.university}>{universityName}</Text>
+						</View>
+
+						{isLetterCard ? (
+							<View style={styles.letterContentWrapper}>
+								<OpenLetterIcon width={23} height={23} />
+								<Text style={styles.letterContentText} numberOfLines={3}>
+									{letterContent}
+								</Text>
+							</View>
+						) : (
+							<>
+								{letterContent && (
+									<View style={styles.letterContainer}>
+										<View style={styles.letterIconWrapper}>
+											<Feather name="mail" size={14} color="#A892D7" />
+										</View>
+										<Text style={styles.letterText} numberOfLines={2}>
+											{letterContent}
+										</Text>
+									</View>
+								)}
+								<Show when={!userWithdrawal}>
+									<Text
+										style={[
+											styles.status,
+											styles.pending,
+											type === 'i-liked' && status === 'REJECTED' && styles.reject,
+											type === 'i-liked' && status === 'OPEN' && styles.open,
+										]}
+									>
+										{statusMessage}
+									</Text>
+								</Show>
+
+								<Animated.Text
 									style={[
 										styles.status,
-										styles.pending,
-										type === 'i-liked' && status === 'REJECTED' && styles.reject,
-										type === 'i-liked' && status === 'OPEN' && styles.open,
+										styles.timeText,
+										getRemainingTimeLimit(matchExpiredAt) && {
+											color: '#EF4444',
+											opacity,
+										},
 									]}
 								>
-									{statusMessage}
-								</Text>
-							</Show>
+									{status === 'IN_CHAT' ? '' : getRemainingTimeFormatted(matchExpiredAt, isExpired)}
+								</Animated.Text>
+							</>
+						)}
 
-							<Animated.Text
-								style={[
-									styles.status,
-									styles.timeText,
-									getRemainingTimeLimit(matchExpiredAt) && {
-										color: '#EF4444',
-										opacity,
-									},
-								]}
-							>
-								{status === 'IN_CHAT' ? '' : getRemainingTimeFormatted(matchExpiredAt, isExpired)}
-							</Animated.Text>
-						</>
-					)}
-
-					{renderBottomButton}
+						{renderBottomButton}
+					</View>
 				</View>
 			</View>
 		</Pressable>
@@ -273,6 +282,7 @@ export function LikedMePendingButton({
 			<Button
 				onPress={handleReject}
 				variant="outline"
+				size="sm"
 				styles={styles.actionButton}
 				prefix={<XIcon width={21} height={21} />}
 			>
@@ -282,6 +292,7 @@ export function LikedMePendingButton({
 			<Button
 				onPress={handleLike}
 				variant="primary"
+				size="sm"
 				styles={styles.actionButton}
 				prefix={<FillHeartIcon width={18} height={18} color="#fff" />}
 			>
@@ -508,7 +519,9 @@ export function InChatButton({ height = 48 }: { height?: number }) {
 				style={styles.glowingButtonGradient}
 			>
 				<ChatIcon width={20} height={20} />
-				<Text style={styles.glowingButtonText}>{t('features.post-box.ui.card.buttons.in_chat_continue')}</Text>
+				<Text style={styles.glowingButtonText}>
+					{t('features.post-box.ui.card.buttons.in_chat_continue')}
+				</Text>
 			</LinearGradient>
 			<Animated.View style={[styles.glowOverlay, animatedStyle]}>
 				<LinearGradient
@@ -535,17 +548,24 @@ const styles = StyleSheet.create({
 	container: {
 		position: 'relative',
 		width: '100%',
-		paddingTop: 16,
-		paddingBottom: 20,
 		borderRadius: 20,
 		borderWidth: 1,
 		marginTop: 10,
 		borderColor: semanticColors.border.default,
+		backgroundColor: semanticColors.surface.background,
+		overflow: 'hidden',
+	},
+	cardContent: {
+		position: 'relative',
+		paddingTop: 16,
+		paddingBottom: 20,
 		paddingLeft: 12,
 		paddingRight: 16,
 		flexDirection: 'row',
 		gap: 8,
-		backgroundColor: semanticColors.surface.background,
+	},
+	cardContentNoBanner: {
+		paddingTop: 16,
 	},
 	letterCardContainer: {
 		borderColor: semanticColors.brand.primary,
@@ -595,11 +615,16 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		color: semanticColors.text.muted,
 	},
+	universityRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 6,
+		marginBottom: 6,
+	},
 	university: {
 		fontSize: 16,
 		lineHeight: 20,
 		color: semanticColors.text.muted,
-		marginBottom: 6,
 	},
 	status: {
 		lineHeight: 16,
@@ -634,7 +659,7 @@ const styles = StyleSheet.create({
 	actionButton: {
 		flex: 1,
 		alignItems: 'center',
-		height: 48,
+		height: 40,
 	},
 	modalTitleContainer: {
 		flexDirection: 'column',

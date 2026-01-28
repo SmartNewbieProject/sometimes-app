@@ -1,7 +1,7 @@
-import Loading from '@/src/features/loading';
 import NotSome from '@/src/features/post-box/ui/not-some';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useGlobalLoadingStore } from '@/src/shared/stores/global-loading-store';
 import { PROFILE_VIEWER_KEYS } from '@/src/shared/libs/locales/keys';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { Text } from '@/src/shared/ui';
@@ -25,6 +25,15 @@ export function ViewerList() {
 	const likeMutation = useLikeViewer();
 	const listRef = useRef<FlashListType<ProfileViewerItem>>(null);
 	const flatListRef = useRef<FlatList<ProfileViewerItem>>(null);
+	const setGlobalLoading = useGlobalLoadingStore((state) => state.setLoading);
+
+	// 전역 로딩 모달 제어
+	useEffect(() => {
+		setGlobalLoading(isLoading);
+		return () => {
+			setGlobalLoading(false);
+		};
+	}, [isLoading, setGlobalLoading]);
 
 	const nextFreeUnlock = data?.nextFreeUnlock ?? null;
 	const freeUnlockSummaryId = nextFreeUnlock?.summaryId;
@@ -161,7 +170,7 @@ export function ViewerList() {
 	);
 
 	if (isLoading) {
-		return <Loading.Lottie title={t(PROFILE_VIEWER_KEYS.viewedMeLoading)} loading />;
+		return null;
 	}
 
 	if (sortedViewers.length === 0) {

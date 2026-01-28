@@ -27,7 +27,6 @@ import useSignupProgress from '../hooks/use-signup-progress';
 import AppleLoginButton from './apple-login-button';
 import { SignupFastBadge } from './signup-fast-badge';
 import { SocialLoginIcons } from './social-login-icons';
-import { SometimeLogo } from './sometime-logo';
 import UniversityLogos from './university-logos';
 
 /**
@@ -189,8 +188,6 @@ function KrLoginForm() {
 
 	return (
 		<View style={loginFormStyles.container}>
-			<SometimeLogo showSubtitle={false} />
-
 			<View style={loginFormStyles.universityLogos}>
 				<UniversityLogos logoSize={64} country="kr" />
 			</View>

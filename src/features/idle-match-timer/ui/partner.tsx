@@ -1,22 +1,23 @@
 import NotSecuredIcon from '@/assets/icons/shield-not-secured.svg';
-import { UniversityName, dayUtils, getUnivLogo, formatLastLogin } from '@/src/shared/libs';
+import { useRegularMatchingReviewTrigger } from '@/src/features/in-app-review';
+import { ExternalRegionBadge } from '@/src/features/matching/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { UniversityName, dayUtils, formatLastLogin, getUnivLogo } from '@/src/shared/libs';
 import { IconWrapper } from '@/src/shared/ui/icons';
 import ArrowRight from '@assets/icons/right-white-arrow.svg';
 import { Text } from '@shared/ui';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useRegularMatchingReviewTrigger } from '@/src/features/in-app-review';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useMatchingBackground } from '../hooks';
 import { calculateTime } from '../services/calculate-time';
 import type { OpenMatch } from '../types';
 import { sideStyle } from './constants';
 import Time from './time';
-import { useTranslation } from 'react-i18next';
 
 type PartnerProps = {
 	match: OpenMatch;
@@ -85,6 +86,12 @@ export const Partner = ({ match }: PartnerProps) => {
 						<Time size="sm" key={`${char}-${index}`} value={char} />
 					))}
 			</View>
+
+			{partner?.external && (
+				<View style={styles.externalBadgeContainer}>
+					<ExternalRegionBadge external={partner.external} variant="overlay" />
+				</View>
+			)}
 
 			<View style={styles.infoContainer}>
 				<Text textColor="white" weight="bold" size="xl">
@@ -178,6 +185,12 @@ const styles = StyleSheet.create({
 	timerContainer: {
 		flexDirection: 'row',
 		gap: 2,
+	},
+	externalBadgeContainer: {
+		position: 'absolute',
+		top: 16,
+		right: 16,
+		zIndex: 10,
 	},
 	infoContainer: {
 		position: 'absolute',

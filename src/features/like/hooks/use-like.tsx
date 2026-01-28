@@ -163,7 +163,8 @@ export default function useLike() {
 
         // 기타 409 에러 처리
         if (err.status === HttpStatusCode.Conflict) {
-          if (err.error?.includes(t("hooks.소통이_제한"))) {
+          // 서버 응답 메시지는 한국어로 오므로 한국어 문자열로 비교
+          if (err.error?.includes('소통이 제한')) {
             showErrorModal(err.error, "announcement");
             return;
           }
