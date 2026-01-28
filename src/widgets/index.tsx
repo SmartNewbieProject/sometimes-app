@@ -15,3 +15,4 @@ export * from './rejected-image-wrapper';
 export * from './photo-status-wrapper';
 export * from './blurred-photo-card';
 export * from './profile-view-card';
+export * from './sometime-article';

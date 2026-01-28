@@ -1,5 +1,8 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import {
+	AuthTabBar,
+	type AuthTab,
+} from '@/src/features/article/ui';
 import { isAdult } from '@/src/features/pass/utils';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { useModal } from '@/src/shared/hooks/use-modal';
@@ -26,6 +29,12 @@ export default function LoginScreen() {
 	const { t } = useTranslation();
 	const hasTrackedView = useRef(false);
 	const insets = useSafeAreaInsets();
+
+	const handleTabChange = (tab: AuthTab) => {
+		if (tab === 'story') {
+			router.replace('/auth/sometimes');
+		}
+	};
 
 	useEffect(() => {
 		resetAuthState();
@@ -95,29 +104,36 @@ export default function LoginScreen() {
 	}, [clear]);
 
 	return (
-		<LinearGradient colors={['#FFFFFF', '#F5F1FF']} style={styles.container}>
-			<ScrollView
-				style={styles.scrollView}
-				contentContainerStyle={styles.scrollContent}
-				showsVerticalScrollIndicator={false}
-				bounces={false}
-			>
-				<View style={[styles.contentWrapper, { paddingTop: insets.top }]}>
-					<View style={styles.logoSection}>
-						<Signup.Logo />
-					</View>
+		<View style={styles.container}>
+			<LinearGradient colors={['#FFFFFF', '#F5F1FF']} style={styles.gradientContainer}>
+				<ScrollView
+					style={styles.scrollView}
+					contentContainerStyle={styles.scrollContent}
+					showsVerticalScrollIndicator={false}
+					bounces={false}
+				>
+					<View style={[styles.contentWrapper, { paddingTop: insets.top }]}>
+						<View style={styles.logoSection}>
+							<Signup.Logo />
+						</View>
 
-					<View style={styles.mainContent}>
-						<Signup.LoginForm />
+						<View style={styles.mainContent}>
+							<Signup.LoginForm />
+						</View>
 					</View>
-				</View>
-			</ScrollView>
-		</LinearGradient>
+				</ScrollView>
+			</LinearGradient>
+			<AuthTabBar activeTab="login" onTabChange={handleTabChange} />
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
+		flex: 1,
+		backgroundColor: '#FFFFFF',
+	},
+	gradientContainer: {
 		flex: 1,
 	},
 	scrollView: {

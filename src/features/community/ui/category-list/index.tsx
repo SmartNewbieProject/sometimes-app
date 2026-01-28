@@ -1,16 +1,15 @@
 import { NOTICE_CODE } from '@/src/features/community/queries/use-home';
 import Loading from '@/src/features/loading';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { Button } from '@shared/ui';
 import { Image } from 'expo-image';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type LayoutChangeEvent, ScrollView, StyleSheet, View } from 'react-native';
-import { useCategory } from '../../hooks';
+import { HOME_CODE, SOMETIME_STORY_CODE, useCategory } from '../../hooks';
 
 type LayoutMap = Record<string, { x: number; width: number }>;
-
-const HOME_CODE = '__home__';
 
 function hasEmojiUrl(c: unknown): c is { emojiUrl: string } {
 	return !!c && typeof (c as any).emojiUrl === 'string';
@@ -19,6 +18,7 @@ function hasEmojiUrl(c: unknown): c is { emojiUrl: string } {
 export const CategoryList = () => {
 	const { categories, changeCategory, currentCategory, isLoading } = useCategory();
 	const { t } = useTranslation();
+	const { sometimeStoryEvents } = useMixpanel();
 	const scrollRef = useRef<ScrollView>(null);
 	const [containerWidth, setContainerWidth] = useState(0);
 	const itemLayoutsRef = useRef<LayoutMap>({});
@@ -39,6 +39,10 @@ export const CategoryList = () => {
 				...c,
 				displayName: getCategoryDisplayName(c.code, c.displayName),
 			})),
+			{
+				code: SOMETIME_STORY_CODE,
+				displayName: t('features.community.ui.category_list.sometime_story', '썸타임 이야기'),
+			} as const,
 		],
 		[categories, t, getCategoryDisplayName],
 	);
@@ -120,6 +124,10 @@ export const CategoryList = () => {
 										variant="white"
 										textColor={isActive ? 'white' : 'dark'}
 										onPress={() => {
+											// 썸타임 이야기 탭 클릭 트래킹
+											if (category.code === SOMETIME_STORY_CODE) {
+												sometimeStoryEvents.trackCommunityTabClicked();
+											}
 											changeCategory(category.code);
 											ensureVisible(category.code, true);
 										}}

@@ -9,6 +9,7 @@
 		},
 		"category_list": {
 			"home": "ホーム",
+			"sometime_story": "SOMETIMEストーリー",
 			"comment_category_change_cache_reset": "カテゴリ数（またはコード構成）が変わったら、以前のレイアウトキャッシュを初期化",
 			"comment_button_wrapper_layout_save": "各コンテナのレイアウト保存",
 			"loading_categories": "カテゴリを読み込んでいます"
