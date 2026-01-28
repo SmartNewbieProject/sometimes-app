@@ -93,6 +93,12 @@ export interface IntroductionData {
 	};
 }
 
+export interface ExternalMatchInfo {
+	region: string;
+	requestedRegion: string;
+	matchedRegion: string;
+}
+
 export interface UserProfile {
 	id: string;
 	name: string;
@@ -130,6 +136,7 @@ export interface UserProfile {
 	isFirstMatch?: boolean;
 	tier?: string;
 	canLetter?: boolean;
+	external?: ExternalMatchInfo | null;
 }
 
 export interface SimpleProfile {

@@ -1,3 +1,5 @@
+import type { ExternalMatchInfo } from '@/src/types/user';
+
 export type SomeStatus = 'PENDING' | 'OPEN' | 'REJECTED' | 'IN_CHAT';
 
 export type ILiked = {
@@ -20,6 +22,7 @@ export type ILiked = {
 	isExpired: boolean;
 	deletedAt: string | null;
 	status: SomeStatus | string;
+	external?: ExternalMatchInfo | null;
 };
 
 export type LikedMe = {
@@ -43,6 +46,7 @@ export type LikedMe = {
 	deletedAt: string | null;
 	connectionId: string;
 	isMutualLike: boolean;
+	external?: ExternalMatchInfo | null;
 };
 
 export type SendLikeRequest = {

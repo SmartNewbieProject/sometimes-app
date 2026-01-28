@@ -2,6 +2,9 @@
 	"ui": {
 		"loading": {
 			"default_message": "少々お待ちください..."
+		},
+		"external_region_badge": {
+			"banner_text": "{{from}}から{{to}}まで繋がったご縁です"
 		}
 	},
 	"blur_photo": {
