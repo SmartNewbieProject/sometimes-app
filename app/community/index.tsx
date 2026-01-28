@@ -1,36 +1,36 @@
+import { useAppInstallPrompt } from '@/src/features/app-install-prompt';
 // app/community/index.tsx
-import { useCategory } from '@/src/features/community/hooks';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { CategoryList, CreateArticleFAB } from '@/src/features/community/ui';
-import { ImageResources } from '@/src/shared/libs';
-import {
-	BottomNavigation,
-	Header,
-	ImageResource,
-	HeaderWithNotification,
-	Text,
-} from '@/src/shared/ui';
-import { useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { StyleSheet, View, useWindowDimensions, ActivityIndicator } from 'react-native';
-import { TabView, type NavigationState, type SceneRendererProps } from 'react-native-tab-view';
-import { InfiniteArticleList } from '@/src/features/community/ui/infinite-article-list';
+import { HOME_CODE, SOMETIME_STORY_CODE, useCategory } from '@/src/features/community/hooks';
+import { NOTICE_CODE } from '@/src/features/community/queries/use-home';
 import {
 	prefetchArticlesFirstPage,
 	useInfiniteArticlesQuery,
 } from '@/src/features/community/queries/use-infinite-articles';
-import { useQueryClient } from '@tanstack/react-query';
-import { ArticleSkeleton } from '@/src/features/loading/skeleton/article-skeleton';
+import { CategoryList, CreateArticleFAB } from '@/src/features/community/ui';
 import CommuHome from '@/src/features/community/ui/home';
-import { NOTICE_CODE } from '@/src/features/community/queries/use-home';
+import { InfiniteArticleList } from '@/src/features/community/ui/infinite-article-list';
 import { useCommunityEvent } from '@/src/features/event/hooks/use-community-event';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import { useTranslation } from 'react-i18next';
+import { ArticleSkeleton } from '@/src/features/loading/skeleton/article-skeleton';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
-import { useAppInstallPrompt } from '@/src/features/app-install-prompt';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { ImageResources } from '@/src/shared/libs';
+import {
+	BottomNavigation,
+	Header,
+	HeaderWithNotification,
+	ImageResource,
+	Text,
+} from '@/src/shared/ui';
+import { SometimeArticleList } from '@/src/widgets/sometime-article';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { type NavigationState, type SceneRendererProps, TabView } from 'react-native-tab-view';
 
-const HOME_CODE = '__home__';
-type CategoryRoute = { key: string; title: string; isHome?: boolean };
+type CategoryRoute = { key: string; title: string; isHome?: boolean; isSometimeStory?: boolean };
 
 export default function CommunityScreen() {
 	const { t } = useTranslation();
@@ -94,6 +94,11 @@ export default function CommunityScreen() {
 			...safeCategories
 				.filter((c) => c.code !== NOTICE_CODE)
 				.map((c) => ({ key: c.code, title: getCategoryDisplayName(c.code, c.displayName) })),
+			{
+				key: SOMETIME_STORY_CODE,
+				title: t('features.community.ui.category_list.sometime_story', '썸타임 이야기'),
+				isSometimeStory: true,
+			},
 		];
 	}, [categories, t, getCategoryDisplayName]);
 
@@ -171,6 +176,17 @@ export default function CommunityScreen() {
 				>
 					<View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
 					<CommuHome />
+				</View>
+			);
+		}
+		if (route.isSometimeStory) {
+			return (
+				<View
+					style={{ flex: 1, backgroundColor: semanticColors.surface.background }}
+					key={route.key}
+				>
+					<View style={{ height: 1, backgroundColor: semanticColors.surface.other }} />
+					<SometimeArticleList embedded />
 				</View>
 			);
 		}

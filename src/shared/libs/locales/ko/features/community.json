@@ -9,6 +9,7 @@
 		},
 		"category_list": {
 			"home": "홈",
+			"sometime_story": "썸타임 이야기",
 			"comment_category_change_cache_reset": "카테고리 수(혹은 코드 조합)가 바뀌면 이전 레이아웃 캐시를 초기화",
 			"comment_button_wrapper_layout_save": "각 버튼 래퍼의 레이아웃 저장",
 			"loading_categories": "카테고리를 불러오고 있어요"
