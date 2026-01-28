@@ -275,6 +275,16 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	PROFILE_VIEWER_REVEAL_CLICKED: 'Profile_Viewer_Reveal_Clicked',
 	PROFILE_VIEWER_LIKE_CLICKED: 'Profile_Viewer_Like_Clicked',
 
+	// ===== 썸타임 이야기 이벤트 =====
+	// Auth 페이지
+	AUTH_SOMETIME_STORY_TAB_CLICKED: 'Auth_SometimeStory_Tab_Clicked',
+	AUTH_SOMETIME_STORY_ARTICLE_CLICKED: 'Auth_SometimeStory_Article_Clicked',
+	// 커뮤니티 페이지
+	COMMUNITY_SOMETIME_STORY_TAB_CLICKED: 'Community_SometimeStory_Tab_Clicked',
+	COMMUNITY_SOMETIME_STORY_ARTICLE_CLICKED: 'Community_SometimeStory_Article_Clicked',
+	// 공유 이벤트 (모든 접근 경로 공통)
+	SOMETIME_STORY_ARTICLE_SHARED: 'SometimeStory_Article_Shared',
+
 	// ===== 서버 전용 이벤트 (백엔드에서만 발송) =====
 
 	// 매칭 파이프라인 (백엔드 NestJS)
@@ -380,6 +390,7 @@ export const EVENT_SOURCES = {
 	PAYMENT_CANCELLATION: 'payment_cancellation',
 	MATCHING: 'matching',
 	SETTINGS: 'settings',
+	AUTH_PAGE: 'auth_page',
 } as const;
 
 // 썸메이트 카테고리 Enum
