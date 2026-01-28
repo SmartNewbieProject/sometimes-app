@@ -181,53 +181,87 @@ export function useLikeWithLetter() {
 					error_message: err.message || err.error,
 				});
 
-				if (err.status === HttpStatusCode.Forbidden) {
-					showCashable({
-						textContent: t('hooks.지금_충전하고_마음에_드는_상대와_대화를_시작해보세요'),
-					});
-					return;
-				}
-
-				if (failureReason.type === 'TICKET_INSUFFICIENT') {
-					showCashable({
-						textContent: t('hooks.재매칭권이_필요합니다_지금_구매하고_계속_매칭을_즐겨'),
-					});
-					return;
-				}
-
-				if (failureReason.type === 'COMMUNICATION_RESTRICTED') {
-					showErrorModal(
-						t('hooks.현재_상대방과_소통이_제한되어_있습니다_잠시_후_다시'),
-						'announcement',
-					);
-					return;
-				}
-
-				if (failureReason.type === 'DUPLICATE_LIKE') {
-					showErrorModal(t('hooks.이미_좋아요를_보낸_상대방입니다'), 'announcement');
-					return;
-				}
-
-				if (err.message?.includes('50자')) {
-					showErrorModal('편지는 최대 50자까지 작성할 수 있습니다.', 'announcement');
-					return;
-				}
-
-				if (err.message?.includes(t('hooks.부적절'))) {
-					showErrorModal(t('hooks.부적절한_내용이_포함되어_있습니다'), 'announcement');
-					return;
-				}
-
-				if (err.status === HttpStatusCode.Conflict) {
-					if (err.error?.includes(t('hooks.소통이_제한'))) {
-						showErrorModal(err.error, 'announcement');
+				// failureReason.type 기반 우선 처리 (failure-analyzer 활용)
+				switch (failureReason.type) {
+					// 결제 관련 에러 - showCashable 모달
+					case 'TICKET_INSUFFICIENT':
+						showCashable({
+							textContent: t('features.like-letter.error.ticket_required'),
+						});
 						return;
-					}
-					showErrorModal(t('hooks.중복된_요청이거나_일시적인_문제가_발생했습니다'), 'announcement');
+
+					case 'FORBIDDEN':
+						// 구슬 부족 등 일반 403 에러
+						showCashable({
+							textContent: t('features.like-letter.error.insufficient_gems'),
+						});
+						return;
+
+					// 사용 제한 관련 에러
+					case 'COMMUNICATION_RESTRICTED':
+						showErrorModal(
+							t('features.like-letter.error.communication_restricted'),
+							'announcement',
+						);
+						return;
+
+					case 'DUPLICATE_LIKE':
+						showErrorModal(t('features.like-letter.error.duplicate_like'), 'announcement');
+						return;
+
+					case 'CONFLICT':
+						showErrorModal(t('features.like-letter.error.duplicate_request'), 'announcement');
+						return;
+
+					// 매칭/사용자 관련 에러
+					case 'INVALID_MATCH':
+						showErrorModal(t('features.like-letter.error.invalid_match'), 'announcement');
+						return;
+
+					case 'MATCH_NOT_FOUND':
+						showErrorModal(t('features.like-letter.error.match_not_found'), 'announcement');
+						return;
+
+					case 'USER_NOT_FOUND':
+						showErrorModal(t('features.like-letter.error.user_not_found'), 'announcement');
+						return;
+
+					// 시스템 관련 에러
+					case 'APP_VERSION_MISMATCH':
+						showErrorModal(t('features.like-letter.error.app_version_mismatch'), 'announcement');
+						return;
+
+					// 편지 내용 유효성 검사 에러 (BAD_REQUEST에서 처리)
+					case 'BAD_REQUEST':
+						// 편지 글자수 초과
+						if (err.message?.includes('50자')) {
+							showErrorModal(t('features.like-letter.validation.max_length'), 'announcement');
+							return;
+						}
+						// 부적절한 내용 (서버 응답이 한국어이므로 한국어로 비교)
+						if (err.message?.includes('부적절')) {
+							showErrorModal(t('features.like-letter.validation.inappropriate'), 'announcement');
+							return;
+						}
+						break;
+
+					default:
+						break;
+				}
+
+				// 폴백: 메시지 기반 추가 처리
+				if (err.message?.includes('50자')) {
+					showErrorModal(t('features.like-letter.validation.max_length'), 'announcement');
 					return;
 				}
 
-				showErrorModal(err.error || t('hooks.오류가_발생했습니다'), 'error');
+				if (err.message?.includes('부적절')) {
+					showErrorModal(t('features.like-letter.validation.inappropriate'), 'announcement');
+					return;
+				}
+
+				// 최종 폴백: 일반 에러 메시지
+				showErrorModal(err.error || t('features.like-letter.error.generic'), 'error');
 			},
 		);
 	};

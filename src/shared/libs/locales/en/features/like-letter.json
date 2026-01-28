@@ -66,7 +66,11 @@
 		"communication_restricted": "Communication is currently restricted with this person. Please try again later.",
 		"duplicate_like": "You've already sent a like to this person.",
 		"duplicate_request": "Duplicate request or temporary issue occurred.",
-		"generic": "An error occurred."
+		"invalid_match": "This match is no longer valid. Please try a new match.",
+		"match_not_found": "Match not found. Please try a new match.",
+		"user_not_found": "User not found.",
+		"app_version_mismatch": "App update required. Please update to the latest version.",
+		"generic": "An error occurred. Please try again later."
 	},
 	"common": {
 		"섹스": "[EN] 섹스",
@@ -83,21 +87,5 @@
 		"만나자": "[EN] 만나자",
 		"뭐해": "[EN] 뭐해",
 		"자고": "[EN] 자고"
-	},
-	"hooks": {
-		"썸을_보냈어요": "[EN] 썸을 보냈어요!",
-		"편지를_함께_보냈어요": "[EN] 편지를 함께 보냈어요!",
-		"매칭되면_채팅은_무료로_시작돼요": "[EN] 매칭되면 채팅은 무료로 시작돼요!",
-		"상대방도_관심을_보이면": "[EN] 상대방도 관심을 보이면,",
-		"확인했어요": "[EN] 확인했어요",
-		"지금_충전하고_마음에_드는_상대와_대화를_시작해보세요": "[EN] 지금 충전하고, 마음에 드는 상대와 대화를 시작해보세요!",
-		"재매칭권이_필요합니다_지금_구매하고_계속_매칭을_즐겨": "[EN] 재매칭권이 필요합니다. 지금 구매하고 계속 매칭을 즐겨보세요!",
-		"현재_상대방과_소통이_제한되어_있습니다_잠시_후_다시": "[EN] 현재 상대방과 소통이 제한되어 있습니다. 잠시 후 다시 시도해주세요.",
-		"이미_좋아요를_보낸_상대방입니다": "[EN] 이미 좋아요를 보낸 상대방입니다.",
-		"부적절": "[EN] 부적절",
-		"부적절한_내용이_포함되어_있습니다": "[EN] 부적절한 내용이 포함되어 있습니다.",
-		"소통이_제한": "[EN] 소통이 제한",
-		"중복된_요청이거나_일시적인_문제가_발생했습니다": "[EN] 중복된 요청이거나 일시적인 문제가 발생했습니다.",
-		"오류가_발생했습니다": "[EN] 오류가 발생했습니다."
 	}
 }
