@@ -78,6 +78,24 @@ export function CardNewsHome({ onNavigateToNotice }: Props) {
 
       <CardNewsHighlights onPressItem={handlePressHighlight} />
 
+      {/* 썸타임 이야기 링크 */}
+      <TouchableOpacity
+        style={styles.storyLink}
+        onPress={() => router.push('/article')}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.storyLinkEmoji}>📖</Text>
+        <View style={styles.storyLinkContent}>
+          <Text style={styles.storyLinkTitle}>썸타임 이야기</Text>
+          <Text style={styles.storyLinkDescription}>썸타임이 들려주는 이야기를 만나보세요</Text>
+        </View>
+        <View style={styles.mlAuto}>
+          <IconWrapper>
+            <VectorIcon width={9} height={12} color={semanticColors.brand.primary} />
+          </IconWrapper>
+        </View>
+      </TouchableOpacity>
+
       {onNavigateToNotice && (
         <TouchableOpacity
           style={styles.noticeLink}
@@ -159,5 +177,32 @@ const styles = StyleSheet.create({
   },
   mlAuto: {
     marginLeft: "auto",
+  },
+  storyLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: semanticColors.surface.secondary,
+    marginHorizontal: 16,
+    marginBottom: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 12,
+  },
+  storyLinkEmoji: {
+    fontSize: 24,
+  },
+  storyLinkContent: {
+    flex: 1,
+    gap: 2,
+  },
+  storyLinkTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: semanticColors.text.primary,
+  },
+  storyLinkDescription: {
+    fontSize: 13,
+    color: semanticColors.text.muted,
   },
 });
