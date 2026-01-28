@@ -276,6 +276,27 @@ export interface UseMixpanelReturn {
 			adoptionSource: string,
 		) => void;
 	};
+
+	sometimeStoryEvents: {
+		// Auth 페이지 이벤트
+		trackAuthTabClicked: () => void;
+		trackAuthArticleClicked: (articleId: string, articleSlug: string, articleTitle: string) => void;
+		// 커뮤니티 페이지 이벤트
+		trackCommunityTabClicked: () => void;
+		trackCommunityArticleClicked: (
+			articleId: string,
+			articleSlug: string,
+			articleTitle: string,
+		) => void;
+		// 공유 이벤트 (모든 접근 경로 공통)
+		trackArticleShared: (
+			articleId: string,
+			articleSlug: string,
+			articleTitle: string,
+			sharePlatform: 'kakao' | 'link' | 'native',
+			source: 'auth' | 'community' | 'direct',
+		) => void;
+	};
 }
 
 export const useMixpanel = (): UseMixpanelReturn => {
@@ -1471,6 +1492,67 @@ export const useMixpanel = (): UseMixpanelReturn => {
 		),
 	};
 
+	// 썸타임 이야기 이벤트들
+	const sometimeStoryEvents = {
+		// Auth 페이지 이벤트
+		trackAuthTabClicked: useCallback(() => {
+			trackEvent('Auth_SometimeStory_Tab_Clicked', {
+				source: EVENT_SOURCES.AUTH_PAGE,
+			});
+		}, [trackEvent]),
+
+		trackAuthArticleClicked: useCallback(
+			(articleId: string, articleSlug: string, articleTitle: string) => {
+				trackEvent('Auth_SometimeStory_Article_Clicked', {
+					post_id: articleId,
+					article_slug: articleSlug,
+					article_title: articleTitle,
+					source: EVENT_SOURCES.AUTH_PAGE,
+				});
+			},
+			[trackEvent],
+		),
+
+		// 커뮤니티 페이지 이벤트
+		trackCommunityTabClicked: useCallback(() => {
+			trackEvent('Community_SometimeStory_Tab_Clicked', {
+				source: EVENT_SOURCES.COMMUNITY,
+			});
+		}, [trackEvent]),
+
+		trackCommunityArticleClicked: useCallback(
+			(articleId: string, articleSlug: string, articleTitle: string) => {
+				trackEvent('Community_SometimeStory_Article_Clicked', {
+					post_id: articleId,
+					article_slug: articleSlug,
+					article_title: articleTitle,
+					source: EVENT_SOURCES.COMMUNITY,
+				});
+			},
+			[trackEvent],
+		),
+
+		// 공유 이벤트 (모든 접근 경로 공통)
+		trackArticleShared: useCallback(
+			(
+				articleId: string,
+				articleSlug: string,
+				articleTitle: string,
+				sharePlatform: 'kakao' | 'link' | 'native',
+				source: 'auth' | 'community' | 'direct',
+			) => {
+				trackEvent('SometimeStory_Article_Shared', {
+					post_id: articleId,
+					article_slug: articleSlug,
+					article_title: articleTitle,
+					share_platform: sharePlatform,
+					entry_source: source,
+				});
+			},
+			[trackEvent],
+		),
+	};
+
 	return {
 		trackEvent,
 		authEvents,
@@ -1490,5 +1572,6 @@ export const useMixpanel = (): UseMixpanelReturn => {
 		matchingEfficiencyEvents,
 		conversionEvents,
 		retentionEvents,
+		sometimeStoryEvents,
 	};
 };
