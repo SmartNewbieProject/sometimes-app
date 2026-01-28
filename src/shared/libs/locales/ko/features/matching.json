@@ -2,6 +2,9 @@
 	"ui": {
 		"loading": {
 			"default_message": "잠시만 기다려주세요..."
+		},
+		"external_region_badge": {
+			"banner_text": "{{from}}에서 {{to}}까지 연결된 인연이에요"
 		}
 	},
 	"blur_photo": {

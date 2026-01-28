@@ -1,4 +1,9 @@
 {
+	"ui": {
+		"external_region_badge": {
+			"banner_text": "A connection from {{from}} to {{to}}"
+		}
+	},
 	"hooks": {
 		"요청": "[EN] 요청:",
 		"응답": "[EN] 응답:",
