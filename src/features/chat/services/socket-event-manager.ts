@@ -3,6 +3,7 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { devLogWithTag, devWarn, logError } from '@/src/shared/utils';
 import { uriToBase64 } from '@/src/shared/utils/image';
 import { useTranslation } from 'react-i18next';
+import { Platform } from 'react-native';
 import { type Subscription, fromEvent } from 'rxjs';
 import { type Socket, io } from 'socket.io-client';
 import { buildChatSocketUrl } from '../domain/utils/build-socket-url';
@@ -26,11 +27,11 @@ class SocketConnectionManager {
 	private lastSuccessfulSend: number = Date.now();
 	private isInitialized = false;
 
-	// Health Check 관련 속성
+	// Health Check 관련 속성 (서버 pingInterval: 35초, pingTimeout: 25초와 동기화)
 	private healthCheckInterval: ReturnType<typeof setInterval> | null = null;
 	private lastPongReceived: number = Date.now();
-	private readonly HEALTH_CHECK_INTERVAL = 25000; // 25초마다 ping
-	private readonly STALE_CONNECTION_THRESHOLD = 35000; // 35초 (기존 60초에서 단축)
+	private readonly HEALTH_CHECK_INTERVAL = 35000; // 35초마다 ping (서버와 동일)
+	private readonly STALE_CONNECTION_THRESHOLD = 60000; // 60초 (모바일 네트워크 지연 대응)
 
 	private pendingMessages: {
 		event: string;
@@ -608,8 +609,14 @@ class SocketConnectionManager {
 	}
 
 	private createSocketConnection(socketUrl: string, token: string) {
+		// 모바일 환경에서는 polling 우선 (네트워크 안정성), 웹에서는 websocket 우선
+		const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+		const transports = isMobile
+			? ['polling', 'websocket'] // 모바일: polling 우선 (WiFi↔LTE 전환 시 안정적)
+			: ['websocket', 'polling']; // 웹: websocket 우선
+
 		const options = {
-			transports: ['websocket', 'polling'], // WebSocket 우선, polling fallback
+			transports,
 			upgrade: true, // polling → websocket 자동 업그레이드
 			withCredentials: true,
 			secure: process.env.NODE_ENV === 'production',
@@ -623,7 +630,7 @@ class SocketConnectionManager {
 			reconnectionDelayMax: 5000, // 최대 5초 간격
 			randomizationFactor: 0.5, // jitter 추가 (thundering herd 방지)
 
-			timeout: 20000, // 연결 타임아웃 20초
+			timeout: 25000, // 연결 타임아웃 25초 (모바일 네트워크 지연 대응)
 			forceNew: !!this.socket,
 		};
 
