@@ -141,7 +141,10 @@ export const InteractionNavigation = ({ match }: InteractionNavigationProps) => 
 			),
 			primaryButton: {
 				text: t('features.idle-match-timer.ui.nav.primary_button'),
-				onClick: onRematch,
+				onClick: () => {
+					hideModal();
+					onRematch();
+				},
 			},
 			secondaryButton: {
 				text: t('no'),
