@@ -1,8 +1,8 @@
-import React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Platform, StyleSheet, View } from 'react-native';
 import type { ConversationPhase, SenderType } from '../types';
 
 interface SupportChatMessageProps {

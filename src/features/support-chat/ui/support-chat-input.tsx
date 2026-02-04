@@ -1,10 +1,10 @@
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import SendChatIcon from '@assets/icons/send-chat.svg';
 import React, { useCallback, useState } from 'react';
-import { Keyboard, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Keyboard, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import SendChatIcon from '@assets/icons/send-chat.svg';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 interface SupportChatInputProps {
 	onSend: (message: string) => void;

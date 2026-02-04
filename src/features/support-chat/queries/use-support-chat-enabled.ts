@@ -1,6 +1,6 @@
+import type { FeatureFlagResponse } from '@/src/features/somemate/apis/feature-flags';
 import { useQuery } from '@tanstack/react-query';
 import { checkSupportChatEnabled } from '../apis/feature-flags';
-import type { FeatureFlagResponse } from '@/src/features/somemate/apis/feature-flags';
 
 export const SUPPORT_CHAT_ENABLED_KEY = ['support-chat', 'enabled'] as const;
 
