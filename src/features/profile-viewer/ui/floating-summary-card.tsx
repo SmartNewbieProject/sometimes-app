@@ -41,7 +41,13 @@ function FloatingSummaryCardContent({
 		>
 			{/* Glassmorphism: Blur layer */}
 			{Platform.OS === 'web' ? (
-				<View style={styles.glassBackgroundWeb} />
+				<View
+					style={[
+						styles.glassBackgroundWeb,
+						// @ts-ignore - Web only CSS properties
+						{ backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)' },
+					]}
+				/>
 			) : (
 				<BlurView intensity={50} tint="light" style={styles.glassBackground} />
 			)}
@@ -232,9 +238,6 @@ const styles = StyleSheet.create({
 	glassBackgroundWeb: {
 		...StyleSheet.absoluteFillObject,
 		backgroundColor: 'rgba(255, 255, 255, 0.82)',
-		// @ts-ignore - Web only property
-		backdropFilter: 'blur(40px)',
-		WebkitBackdropFilter: 'blur(40px)',
 	},
 	innerHighlight: {
 		position: 'absolute',

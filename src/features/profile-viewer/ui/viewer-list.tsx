@@ -5,8 +5,7 @@ import { useGlobalLoadingStore } from '@/src/shared/stores/global-loading-store'
 import { PROFILE_VIEWER_KEYS } from '@/src/shared/libs/locales/keys';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { Text } from '@/src/shared/ui';
-import { FlashList } from '@shopify/flash-list';
-import type { FlashList as FlashListType } from '@shopify/flash-list';
+import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +22,7 @@ export function ViewerList() {
 	const { data, isLoading } = useViewerList();
 	const { handleRevealWithConfirm } = useRevealWithConfirm();
 	const likeMutation = useLikeViewer();
-	const listRef = useRef<FlashListType<ProfileViewerItem>>(null);
+	const listRef = useRef<FlashListRef<ProfileViewerItem>>(null);
 	const flatListRef = useRef<FlatList<ProfileViewerItem>>(null);
 	const setGlobalLoading = useGlobalLoadingStore((state) => state.setLoading);
 
@@ -203,7 +202,7 @@ export function ViewerList() {
 					renderItem={renderItem}
 					numColumns={2}
 					contentContainerStyle={styles.listContent}
-					estimatedItemSize={200}
+					{...({ estimatedItemSize: 200 } as object)}
 					onScroll={handleScroll}
 					scrollEventThrottle={16}
 				/>
