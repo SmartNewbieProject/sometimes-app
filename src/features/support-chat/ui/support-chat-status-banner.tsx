@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, View } from 'react-native';
 import type { SessionStatus } from '../types';
 
 interface SupportChatStatusBannerProps {
@@ -44,6 +44,20 @@ function SupportChatStatusBanner({ status, isTyping = false }: SupportChatStatus
 					backgroundColor: '#E8F5E9',
 					textColor: '#2E7D32',
 					dotColor: '#4CAF50',
+				};
+			case 'admin_resolved':
+				return {
+					text: t('features.support-chat.status.admin_resolved'),
+					backgroundColor: '#E8F5E9',
+					textColor: '#2E7D32',
+					dotColor: '#4CAF50',
+				};
+			case 'user_closed':
+				return {
+					text: t('features.support-chat.status.user_closed'),
+					backgroundColor: '#ECEFF1',
+					textColor: '#607D8B',
+					dotColor: '#90A4AE',
 				};
 			case 'resolved':
 				return {

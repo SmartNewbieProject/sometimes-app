@@ -1,4 +1,10 @@
-export type SessionStatus = 'bot_handling' | 'waiting_admin' | 'admin_handling' | 'resolved';
+export type SessionStatus =
+	| 'bot_handling'
+	| 'waiting_admin'
+	| 'admin_handling'
+	| 'admin_resolved'
+	| 'user_closed'
+	| 'resolved';
 
 export type SenderType = 'user' | 'bot' | 'admin';
 
@@ -108,4 +114,26 @@ export interface TypingEvent {
 	sessionId: string;
 	userId: string;
 	isTyping: boolean;
+}
+
+export interface CloseSessionRequest {
+	reason?: string;
+	rating?: number;
+}
+
+export interface CloseSessionResponse {
+	success: boolean;
+	sessionId: string;
+	status: 'user_closed' | 'resolved';
+	closedAt: string;
+	rating?: number;
+}
+
+export interface SessionClosedEvent {
+	sessionId: string;
+	closedBy: string;
+	closedByType: 'user' | 'admin';
+	closedReason?: string;
+	closedAt: string;
+	rating?: number;
 }

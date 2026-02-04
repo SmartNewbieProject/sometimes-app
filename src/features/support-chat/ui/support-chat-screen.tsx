@@ -1,13 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ChevronLeftIcon from '@assets/icons/chevron-left.svg';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useModal } from '@/src/shared/hooks/use-modal';
+import { GLOBAL_KEYS } from '@/src/shared/libs/locales/keys';
 import { Text } from '@/src/shared/ui';
+import ChevronLeftIcon from '@assets/icons/chevron-left.svg';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSupportChat } from '../hooks';
+import { useCloseSession } from '../queries';
 import type { SupportChatMessage as MessageType, SupportDomain } from '../types';
+import RatingModalContent from './rating-modal-content';
 import SupportChatInput from './support-chat-input';
 import SupportChatMessage from './support-chat-message';
 import SupportChatStatusBanner from './support-chat-status-banner';
@@ -17,8 +21,11 @@ function SupportChatScreen() {
 	const router = useRouter();
 	const insets = useSafeAreaInsets();
 	const flatListRef = useRef<FlatList<MessageType>>(null);
+	const { showModal, hideModal } = useModal();
+	const closeSessionMutation = useCloseSession();
 
 	const {
+		session,
 		messages,
 		status,
 		isConnected,
@@ -70,6 +77,63 @@ function SupportChatScreen() {
 		},
 		[setTyping],
 	);
+
+	const handleCloseSession = useCallback(
+		(rating?: number) => {
+			if (!session?.sessionId) return;
+
+			closeSessionMutation.mutate(
+				{
+					sessionId: session.sessionId,
+					data: rating ? { rating } : undefined,
+				},
+				{
+					onSuccess: () => {
+						hideModal();
+						router.replace('/my');
+					},
+					onError: () => {
+						// 이미 종료된 세션인 경우에도 /my로 이동
+						hideModal();
+						router.replace('/my');
+					},
+				},
+			);
+		},
+		[session?.sessionId, closeSessionMutation, hideModal, router],
+	);
+
+	const showRatingModal = useCallback(() => {
+		showModal({
+			children: (
+				<RatingModalContent
+					onSubmit={(rating) => handleCloseSession(rating)}
+					onSkip={() => handleCloseSession()}
+				/>
+			),
+			dismissable: false,
+			hideCloseButton: true,
+		});
+	}, [showModal, handleCloseSession]);
+
+	const showCloseConfirmModal = useCallback(() => {
+		showModal({
+			title: t('features.support-chat.close.confirm.title'),
+			children: t('features.support-chat.close.confirm.description'),
+			primaryButton: {
+				text: t('features.support-chat.close.button'),
+				onClick: () => {
+					hideModal();
+					// 확인 클릭 시 별점 모달 띄우기
+					setTimeout(() => showRatingModal(), 100);
+				},
+			},
+			secondaryButton: {
+				text: t(GLOBAL_KEYS.cancel),
+				onClick: () => hideModal(),
+			},
+		});
+	}, [showModal, hideModal, t, showRatingModal]);
 
 	const renderMessage = useCallback(
 		({ item }: { item: MessageType }) => (
@@ -127,7 +191,15 @@ function SupportChatScreen() {
 						</View>
 					)}
 				</View>
-				<View style={styles.headerRight} />
+				<View style={styles.headerRight}>
+					{status && !['resolved', 'user_closed'].includes(status) && (
+						<Pressable onPress={showCloseConfirmModal} style={styles.closeSessionButton}>
+							<Text style={styles.closeSessionButtonText} numberOfLines={1}>
+								{t('features.support-chat.close.button')}
+							</Text>
+						</Pressable>
+					)}
+				</View>
 			</View>
 
 			{status && <SupportChatStatusBanner status={status} isTyping={isTyping} />}
@@ -150,7 +222,12 @@ function SupportChatScreen() {
 			<SupportChatInput
 				onSend={handleSend}
 				onTyping={handleTyping}
-				disabled={!isConnected || status === 'resolved'}
+				disabled={
+					!isConnected ||
+					status === 'resolved' ||
+					status === 'user_closed' ||
+					status === 'admin_resolved'
+				}
 			/>
 		</View>
 	);
@@ -198,7 +275,19 @@ const styles = StyleSheet.create({
 		fontFamily: 'Pretendard-Medium',
 	},
 	headerRight: {
-		width: 40,
+		width: 50,
+		alignItems: 'flex-end',
+	},
+	closeSessionButton: {
+		paddingHorizontal: 10,
+		paddingVertical: 6,
+		backgroundColor: semanticColors.surface.tertiary,
+		borderRadius: 6,
+	},
+	closeSessionButtonText: {
+		fontSize: 13,
+		color: semanticColors.text.muted,
+		fontFamily: 'Pretendard-Medium',
 	},
 	messageList: {
 		flexGrow: 1,
