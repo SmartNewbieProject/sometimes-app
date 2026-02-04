@@ -365,6 +365,8 @@ export const EVENT_SOURCES = {
 	NOTIFICATION: 'notification',
 	SEARCH: 'search',
 	SYSTEM: 'system',
+	MOBILE: 'mobile',
+	WEB: 'web',
 	GEM_MANAGEMENT: 'gem_management',
 	MONETIZATION: 'monetization',
 	REVENUE: 'revenue',
