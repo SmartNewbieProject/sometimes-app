@@ -1,21 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { io, type Socket } from 'socket.io-client';
-import { useQueryClient } from '@tanstack/react-query';
 import { storage } from '@/src/shared/libs';
 import { env } from '@/src/shared/libs/env';
 import { isJapanese } from '@/src/shared/libs/local';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { type Socket, io } from 'socket.io-client';
 import { createSession, getMySessions, getSessionMessages } from '../apis';
 import type {
-	SupportChatMessage,
-	SessionStatus,
 	NewMessageEvent,
+	SessionClosedEvent,
+	SessionStatus,
 	SessionStatusChangedEvent,
-	TypingEvent,
+	SupportChatMessage,
 	SupportChatSession,
+	TypingEvent,
 } from '../types';
 
 interface UseSupportChatOptions {
 	onStatusChange?: (newStatus: SessionStatus) => void;
+	onSessionClosed?: (event: SessionClosedEvent) => void;
 	onError?: (error: string) => void;
 }
 
@@ -171,6 +173,16 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 			newSocket.on('typing', (data: TypingEvent) => {
 				if (data.sessionId === session.sessionId) {
 					setIsTypingState(data.isTyping);
+				}
+			});
+
+			newSocket.on('session_closed', (data: SessionClosedEvent) => {
+				console.log('[SupportChat] Session closed:', data);
+				if (data.sessionId === session.sessionId) {
+					const newStatus = data.closedByType === 'admin' ? 'admin_resolved' : 'user_closed';
+					setStatus(newStatus as SessionStatus);
+					setSession((prev) => (prev ? { ...prev, status: newStatus as SessionStatus } : null));
+					optionsRef.current?.onSessionClosed?.(data);
 				}
 			});
 

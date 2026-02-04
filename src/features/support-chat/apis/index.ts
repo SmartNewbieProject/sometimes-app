@@ -1,5 +1,7 @@
 import axiosClient from '@/src/shared/libs/axios';
 import type {
+	CloseSessionRequest,
+	CloseSessionResponse,
 	CreateSessionRequest,
 	CreateSessionResponse,
 	GetMySessionsResponse,
@@ -18,4 +20,11 @@ export const getMySessions = (): Promise<GetMySessionsResponse> => {
 
 export const getSessionMessages = (sessionId: string): Promise<GetSessionMessagesResponse> => {
 	return axiosClient.get(`${BASE_PATH}/sessions/${sessionId}/messages`);
+};
+
+export const closeSession = (
+	sessionId: string,
+	data?: CloseSessionRequest,
+): Promise<CloseSessionResponse> => {
+	return axiosClient.post(`${BASE_PATH}/sessions/${sessionId}/close`, data ?? {});
 };

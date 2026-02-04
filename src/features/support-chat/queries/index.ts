@@ -1,3 +1,4 @@
+export { useCloseSession } from './use-close-session';
 export { useCreateSession } from './use-create-session';
 export { useMySessions } from './use-my-sessions';
 export { useSessionMessages } from './use-session-messages';

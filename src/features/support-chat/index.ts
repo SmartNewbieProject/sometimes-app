@@ -18,7 +18,10 @@ export type {
 	TypingPayload,
 	NewMessageEvent,
 	SessionStatusChangedEvent,
+	SessionClosedEvent,
 	TypingEvent,
+	CloseSessionRequest,
+	CloseSessionResponse,
 } from './types';
 export {
 	SupportChatScreen,
