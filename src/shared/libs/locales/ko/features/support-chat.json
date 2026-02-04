@@ -17,6 +17,8 @@
 		"bot_handling": "AI 상담사가 답변 중이에요",
 		"waiting_admin": "상담원 연결을 기다리고 있어요",
 		"admin_handling": "상담원이 답변 중이에요",
+		"admin_resolved": "상담원이 상담을 종료했어요",
+		"user_closed": "상담이 종료되었어요",
 		"resolved": "상담이 종료되었어요",
 		"typing": "입력 중..."
 	},
@@ -26,5 +28,21 @@
 		"chat": "💬 채팅 문의",
 		"account": "👤 계정 문의",
 		"other": "📋 기타 문의"
+	},
+	"close": {
+		"button": "종료",
+		"confirm": {
+			"title": "상담을 종료할까요?",
+			"description": "종료 후에는 새로운 상담을 시작할 수 있어요"
+		},
+		"reason": {
+			"placeholder": "종료 사유를 입력해주세요 (선택)"
+		}
+	},
+	"rating": {
+		"title": "상담은 어떠셨나요?",
+		"description": "더 나은 서비스를 위해 평가해주세요",
+		"submit": "평가 완료",
+		"skip": "건너뛰기"
 	}
 }

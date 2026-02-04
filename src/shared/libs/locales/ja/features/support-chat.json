@@ -17,6 +17,8 @@
 		"bot_handling": "AI相談員が対応中です",
 		"waiting_admin": "相談員の接続をお待ちください",
 		"admin_handling": "相談員が対応中です",
+		"admin_resolved": "相談員が相談を終了しました",
+		"user_closed": "相談が終了しました",
 		"resolved": "相談が終了しました",
 		"typing": "入力中..."
 	},
@@ -26,5 +28,21 @@
 		"chat": "💬 チャットのお問い合わせ",
 		"account": "👤 アカウントのお問い合わせ",
 		"other": "📋 その他のお問い合わせ"
+	},
+	"close": {
+		"button": "終了",
+		"confirm": {
+			"title": "相談を終了しますか？",
+			"description": "終了後は新しい相談を開始できます"
+		},
+		"reason": {
+			"placeholder": "終了理由を入力してください（任意）"
+		}
+	},
+	"rating": {
+		"title": "相談はいかがでしたか？",
+		"description": "より良いサービスのため評価をお願いします",
+		"submit": "評価完了",
+		"skip": "スキップ"
 	}
 }
