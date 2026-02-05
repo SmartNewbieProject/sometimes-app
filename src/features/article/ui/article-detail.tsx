@@ -2,7 +2,7 @@ import colors from '@/src/shared/constants/colors';
 import dayUtils from '@/src/shared/libs/day';
 import { Ionicons } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image';
-import { usePathname, useRouter } from 'expo-router';
+import { type Href, usePathname, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -33,7 +33,7 @@ export const ArticleDetail = ({ idOrSlug, returnPath }: ArticleDetailProps) => {
 
 	const handleBack = () => {
 		if (returnPath) {
-			router.replace(returnPath);
+			router.replace(returnPath as Href);
 			return;
 		}
 
