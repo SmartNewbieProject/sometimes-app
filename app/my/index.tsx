@@ -51,6 +51,9 @@ export default function MyScreen() {
 			queryClient.invalidateQueries({
 				queryKey: ['my-profile-details'],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ['gem', 'current'],
+			});
 		}, [queryClient])
 	);
 
