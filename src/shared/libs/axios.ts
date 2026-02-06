@@ -115,6 +115,7 @@ axiosClient.interceptors.request.use(
         '/jp/auth/sms/verify',
         '/universities',
         '/auth/check/phone-number',
+        '/sometime-articles',
       ];
 
       const isNoAuthRequired = noAuthRequiredPaths.some(path =>
