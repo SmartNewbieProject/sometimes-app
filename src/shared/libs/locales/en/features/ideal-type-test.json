@@ -1,0 +1,45 @@
+{
+	"start": {
+		"title": "What's Your Ideal Type?",
+		"subtitle": "Discover your dating style with 5 questions",
+		"feature_1": "Quick 5-minute test",
+		"feature_2": "Takes just 2-3 minutes",
+		"feature_3": "Get personalized match recommendations",
+		"start_button": "Start Test",
+		"loading": "Loading...",
+		"already_completed_title": "You've already taken the test!",
+		"already_completed_subtitle": "You can retake the test or view your previous results",
+		"view_result_button": "View Results",
+		"retake_test_button": "Retake Test"
+	},
+	"questions": {
+		"question_number": "Question {{current}} / {{total}}",
+		"progress_info": "{{answered}} answered / {{total}} total"
+	},
+	"result": {
+		"stats_title": "Statistics",
+		"stats_description": "Statistics will be displayed when more people complete the test",
+		"signup_prompt": "Sign up to meet your ideal match!",
+		"share_button": "Share",
+		"retake_button": "Retake",
+		"signup_button": "Sign Up and Start Matching",
+		"start_matching_button": "Start Matching",
+		"logged_in_info": "Your test results have been saved automatically!"
+	},
+	"errors": {
+		"start_failed": "Failed to start the test. Please try again.",
+		"submit_failed": "Failed to submit your answer. Please try again.",
+		"network_error": "Please check your network connection.",
+		"session_expired": "Your session has expired. Please start over."
+	},
+	"prompt": {
+		"title": "Find Your Match in 2 Minutes",
+		"participant_count": "12,847",
+		"participant_suffix": " people already tested!",
+		"feature_1": "Just 2-3 minutes",
+		"feature_2": "Your perfect match type",
+		"feature_3": "5 simple questions",
+		"cta_button": "Start Test",
+		"dismiss_hint": "Maybe later"
+	}
+}
