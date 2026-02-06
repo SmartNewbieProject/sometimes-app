@@ -192,5 +192,25 @@
 		"주관식": "[JA] 주관식",
 		"텍스트": "[JA] 텍스트",
 		"답변_제출에_실패했습니다": "[JA] 답변 제출에 실패했습니다"
+	},
+	"onboarding": {
+		"intro": {
+			"title": "あなただけの性格分析レポート",
+			"subtitle": "簡単な質問から始めましょう",
+			"feature1": "{{count}}つの簡単な質問",
+			"feature2": "AIが性格を分析します",
+			"feature3": "すぐにレポート作成！",
+			"start_button": "始める"
+		},
+		"questions": {
+			"header_title": "オンボーディング",
+			"next_button": "次へ",
+			"submit_button": "完了",
+			"placeholder": "回答を入力してください"
+		},
+		"result": {
+			"complete_title": "分析完了！",
+			"start_moment_button": "モーメントを始める"
+		}
 	}
 }

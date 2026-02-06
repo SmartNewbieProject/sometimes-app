@@ -338,6 +338,7 @@ export const invalidateProfileQueries = (queryClient: QueryClient) => {
 // =============================================
 
 export { useMyMomentEnabled, MY_MOMENT_ENABLED_KEY } from "./use-my-moment-enabled";
+export { useMomentOnboardingEnabled, MOMENT_ONBOARDING_ENABLED_KEY } from "./use-moment-onboarding-enabled";
 
 // =============================================
 // Additional Legacy Queries (Missing Functions)
@@ -442,3 +443,6 @@ export const useGenerateWeeklyReportMutation = () => {
     },
   });
 };
+
+// Onboarding Query exports
+export * from './onboarding';
