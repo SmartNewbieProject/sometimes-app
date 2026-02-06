@@ -8,3 +8,7 @@ export const checkMomentEnabled = async (): Promise<FeatureFlagResponse> => {
 export const checkMyMomentEnabled = async (): Promise<FeatureFlagResponse> => {
   return axiosClient.get("/feature-flags/my-moment");
 };
+
+export const checkMomentOnboardingEnabled = async (): Promise<FeatureFlagResponse> => {
+  return axiosClient.get("/feature-flags/moment-onboarding");
+};

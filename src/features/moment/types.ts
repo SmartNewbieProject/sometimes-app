@@ -540,3 +540,75 @@ export interface MomentReportResponse {
   message: string;
   data: MomentReport | null;
 }
+
+// =======================
+// Onboarding API 타입
+// =======================
+
+// 온보딩 상태 응답
+export const OnboardingStatusResponse = z.object({
+  needsOnboarding: z.boolean(),
+  completedAt: z.string().nullable().optional(),
+});
+
+export type OnboardingStatusResponse = z.infer<typeof OnboardingStatusResponse>;
+
+// 온보딩 질문 유형
+export const OnboardingQuestionType = z.enum(['choice', 'text']);
+
+export type OnboardingQuestionType = z.infer<typeof OnboardingQuestionType>;
+
+// 온보딩 질문 선택지
+export const OnboardingQuestionOption = z.object({
+  id: z.string(),
+  text: z.string(),
+});
+
+export type OnboardingQuestionOption = z.infer<typeof OnboardingQuestionOption>;
+
+// 온보딩 질문
+export const OnboardingQuestion = z.object({
+  id: z.string(),
+  text: z.string(),
+  type: OnboardingQuestionType,
+  dimension: RawPersonalityDimension,
+  options: z.array(OnboardingQuestionOption).optional(),
+  placeholder: z.string().optional(),
+  maxLength: z.number().optional(),
+});
+
+export type OnboardingQuestion = z.infer<typeof OnboardingQuestion>;
+
+// 온보딩 질문 목록 응답
+export const OnboardingQuestionsResponse = z.object({
+  questions: z.array(OnboardingQuestion),
+});
+
+export type OnboardingQuestionsResponse = z.infer<typeof OnboardingQuestionsResponse>;
+
+// 온보딩 답변
+export interface OnboardingAnswer {
+  questionId: string;
+  answerText?: string;
+  answerOptionId?: string;
+}
+
+// 온보딩 답변 제출 요청
+export const OnboardingSubmitRequest = z.object({
+  answers: z.array(z.object({
+    questionId: z.string(),
+    answerText: z.string().optional(),
+    answerOptionId: z.string().optional(),
+  })),
+});
+
+export type OnboardingSubmitRequest = z.infer<typeof OnboardingSubmitRequest>;
+
+// 온보딩 제출 응답 (생성된 리포트 포함)
+export const OnboardingSubmitResponse = z.object({
+  success: z.boolean(),
+  report: LatestReport.optional(),
+  message: z.string().optional(),
+});
+
+export type OnboardingSubmitResponse = z.infer<typeof OnboardingSubmitResponse>;

@@ -65,5 +65,25 @@
 		"주관식": "[EN] 주관식",
 		"텍스트": "[EN] 텍스트",
 		"답변_제출에_실패했습니다": "[EN] 답변 제출에 실패했습니다"
+	},
+	"onboarding": {
+		"intro": {
+			"title": "Your Personal Analysis Report",
+			"subtitle": "Start with simple questions",
+			"feature1": "{{count}} simple questions",
+			"feature2": "AI analyzes your personality",
+			"feature3": "Instant report generation!",
+			"start_button": "Get Started"
+		},
+		"questions": {
+			"header_title": "Onboarding",
+			"next_button": "Next",
+			"submit_button": "Complete",
+			"placeholder": "Enter your answer"
+		},
+		"result": {
+			"complete_title": "Analysis Complete!",
+			"start_moment_button": "Start Moment"
+		}
 	}
 }
