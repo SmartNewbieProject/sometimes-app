@@ -91,6 +91,36 @@ temporaryAxiosClient.interceptors.request.use((config) => {
   return config;
 });
 
+// 클라이언트 에러 리포트 전송 (fire-and-forget)
+const reportClientError = async (error: any) => {
+  try {
+    const accessToken = await storage.getItem('access-token');
+    if (!accessToken || accessToken === 'null') return;
+
+    await temporaryAxiosClient.post(
+      '/client-error-reports',
+      {
+        errorMessage: JSON.stringify({
+          method: error.config?.method?.toUpperCase(),
+          url: error.config?.url,
+          status: error.response?.status,
+          responseData: error.response?.data,
+          message: error.message,
+          code: error.code,
+          timestamp: new Date().toISOString(),
+        }),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${detach(accessToken)}`,
+        },
+      }
+    );
+  } catch {
+    // fire-and-forget: 전송 실패는 무시
+  }
+};
+
 // 요청 인터셉터
 axiosClient.interceptors.request.use(
     async (config) => {
@@ -160,6 +190,11 @@ axiosClient.interceptors.response.use(
 
       const data = error?.response?.data;
       const status = error?.response?.status;
+
+      // 5xx 서버 에러 리포트 (fire-and-forget)
+      if (status >= 500 && error.config?.url !== '/client-error-reports') {
+        reportClientError(error);
+      }
 
       if (status === 403 && data?.code === ErrorCode.REGION_NOT_ALLOWED) {
         isNetworkDisabled = true;
