@@ -64,7 +64,7 @@ export interface Article {
 	subtitle: string | null;
 	content: string;
 	excerpt: string;
-	thumbnail: MediaAsset;
+	thumbnail: MediaAsset | null;
 	coverImage: MediaAsset | null;
 	author: ArticleAuthor;
 	viewCount: number;
@@ -82,7 +82,7 @@ export interface ArticleListItem {
 	title: string;
 	subtitle: string | null;
 	excerpt: string;
-	thumbnail: MediaAsset;
+	thumbnail: MediaAsset | null;
 	author: ArticleAuthor;
 	viewCount: number;
 }

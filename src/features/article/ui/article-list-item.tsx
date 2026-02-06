@@ -34,12 +34,14 @@ export const ArticleListItemCard = ({ article }: ArticleListItemProps) => {
 			onPress={handlePress}
 		>
 			{/* 썸네일 이미지 */}
-			<ExpoImage
-				source={{ uri: article.thumbnail.url }}
-				style={styles.thumbnail}
-				contentFit="cover"
-				transition={200}
-			/>
+			{article.thumbnail && (
+				<ExpoImage
+					source={{ uri: article.thumbnail.url }}
+					style={styles.thumbnail}
+					contentFit="cover"
+					transition={200}
+				/>
+			)}
 
 			{/* 콘텐츠 */}
 			<View style={styles.content}>
