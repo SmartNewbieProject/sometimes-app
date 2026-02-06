@@ -1,0 +1,43 @@
+{
+	"start": {
+		"title": "私の理想のタイプは?",
+		"subtitle": "5つの質問で分かる私の恋愛スタイル",
+		"feature_1": "5分で完了する簡単なテスト",
+		"feature_2": "2-3分で十分です",
+		"feature_3": "あなたにぴったりの恋愛タイプを推薦",
+		"start_button": "テストを始める",
+		"loading": "準備中...",
+		"already_completed_title": "すでにテストを完了されています!",
+		"already_completed_subtitle": "もう一度テストするか、以前の結果を確認できます",
+		"view_result_button": "結果を見る",
+		"retake_test_button": "もう一度やる"
+	},
+	"questions": {
+		"question_number": "質問 {{current}} / {{total}}",
+		"progress_info": "{{answered}}個回答完了 / 全{{total}}個"
+	},
+	"result": {
+		"stats_title": "統計情報",
+		"stats_description": "より多くの人がテストを完了すると統計が表示されます",
+		"signup_prompt": "会員登録して、あなたに合う理想のタイプに会いましょう!",
+		"share_button": "共有する",
+		"retake_button": "もう一度やる",
+		"signup_button": "会員登録してマッチング開始",
+		"start_matching_button": "マッチング開始",
+		"logged_in_info": "テスト結果が自動的に保存されました!"
+	},
+	"errors": {
+		"start_failed": "テストの開始に失敗しました。もう一度お試しください。",
+		"submit_failed": "回答の送信に失敗しました。もう一度お試しください。",
+		"network_error": "ネットワーク接続を確認してください。",
+		"session_expired": "セッションが期限切れです。最初からやり直してください。"
+	},
+	"prompt": {
+		"title": "2分で理想のタイプを発見",
+		"feature_1": "2-3分で完了",
+		"feature_2": "あなたにぴったりのタイプ",
+		"feature_3": "5つの簡単な質問",
+		"cta_button": "テストを開始",
+		"dismiss_hint": "後で"
+	}
+}

@@ -1,0 +1,43 @@
+{
+	"start": {
+		"title": "나의 이상형 유형은?",
+		"subtitle": "5가지 질문으로 알아보는 나의 연애 스타일",
+		"feature_1": "5분이면 완료되는 간단한 테스트",
+		"feature_2": "2-3분이면 충분해요",
+		"feature_3": "나에게 딱 맞는 연애 유형 추천",
+		"start_button": "테스트 시작하기",
+		"loading": "준비 중...",
+		"already_completed_title": "이미 테스트를 완료하셨네요!",
+		"already_completed_subtitle": "다시 테스트하거나 이전 결과를 확인하실 수 있어요",
+		"view_result_button": "결과 보기",
+		"retake_test_button": "다시 하기"
+	},
+	"questions": {
+		"question_number": "질문 {{current}} / {{total}}",
+		"progress_info": "{{answered}}개 답변 완료 / 총 {{total}}개"
+	},
+	"result": {
+		"stats_title": "통계 정보",
+		"stats_description": "더 많은 사람들이 테스트를 완료하면 통계가 표시됩니다",
+		"signup_prompt": "회원가입하고 나와 맞는 이상형을 만나보세요!",
+		"share_button": "공유하기",
+		"retake_button": "다시하기",
+		"signup_button": "회원가입하고 매칭 시작하기",
+		"start_matching_button": "매칭 시작하기",
+		"logged_in_info": "테스트 결과가 자동으로 저장되었습니다!"
+	},
+	"errors": {
+		"start_failed": "테스트 시작에 실패했습니다. 다시 시도해주세요.",
+		"submit_failed": "답변 제출에 실패했습니다. 다시 시도해주세요.",
+		"network_error": "네트워크 연결을 확인해주세요.",
+		"session_expired": "세션이 만료되었습니다. 처음부터 다시 시작해주세요."
+	},
+	"prompt": {
+		"title": "2분만에 내 이상형 찾기",
+		"feature_1": "2-3분이면 충분해요",
+		"feature_2": "나에게 딱 맞는 유형",
+		"feature_3": "5가지 간단한 질문",
+		"cta_button": "테스트 시작하기",
+		"dismiss_hint": "나중에 할게요"
+	}
+}
