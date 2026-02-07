@@ -110,31 +110,24 @@ export default function CommunityScreen() {
 		return idx >= 0 ? idx : 0;
 	}, [routes, categoryCode]);
 
-	const [index, setIndex] = useState<number>(currentIndex);
-	useEffect(() => {
-		if (!isNotice && index !== currentIndex) setIndex(currentIndex);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentIndex, isNotice]);
-
 	useEffect(() => {
 		if (isNotice || routes.length === 0) return;
-		const targets = [index, index - 1, index + 1]
+		const targets = [currentIndex, currentIndex - 1, currentIndex + 1]
 			.filter((i) => i >= 0 && i < routes.length)
 			.map((i) => routes[i].key)
 			.filter((code) => code !== HOME_CODE);
 		targets.forEach((code) => {
 			prefetchArticlesFirstPage(queryClient, code, 10).catch(() => {});
 		});
-	}, [index, routes, queryClient, isNotice]);
+	}, [currentIndex, routes, queryClient, isNotice]);
 
 	const onIndexChange = useCallback(
 		(next: number) => {
 			if (next < 0 || next >= routes.length) return;
-			setIndex(next);
 			const nextKey = routes[next]?.key;
-			if (nextKey && nextKey !== categoryCode) changeCategory(nextKey);
+			if (nextKey) changeCategory(nextKey);
 		},
-		[routes, categoryCode, changeCategory],
+		[routes, changeCategory],
 	);
 
 	const { refetch } = useInfiniteArticlesQuery({
@@ -220,7 +213,7 @@ export default function CommunityScreen() {
 		);
 	}, []);
 
-	const isHome = !isNotice && routes[index]?.isHome === true;
+	const isHome = !isNotice && routes[currentIndex]?.isHome === true;
 
 	return (
 		<View style={styles.container}>
@@ -244,7 +237,7 @@ export default function CommunityScreen() {
 				) : hasRoutes ? (
 					<TabView<CategoryRoute>
 						key="community-tab-view"
-						navigationState={{ index, routes } as NavigationState<CategoryRoute>}
+						navigationState={{ index: currentIndex, routes } as NavigationState<CategoryRoute>}
 						renderScene={renderScene}
 						renderLazyPlaceholder={renderLazyPlaceholder}
 						onIndexChange={onIndexChange}
