@@ -195,22 +195,29 @@
 	},
 	"onboarding": {
 		"intro": {
-			"title": "나만의 성격 분석 리포트",
-			"subtitle": "간단한 질문으로 시작해요",
-			"feature1": "{{count}}개의 간단한 질문",
-			"feature2": "AI가 성격을 분석해요",
-			"feature3": "즉시 리포트 생성!",
-			"start_button": "시작하기"
+			"title": "좋은 만남은 나를 아는 것부터",
+			"subtitle": "잠깐이면 돼요, 약속",
+			"feature1": "짧은 질문 {{count}}개",
+			"feature2": "나와 잘 맞는 사람을 찾아줘요",
+			"feature3": "당신만의 매력 포인트 발견",
+			"start_button": "나를 알아보기"
 		},
 		"questions": {
-			"header_title": "온보딩",
-			"next_button": "다음",
-			"submit_button": "완료",
-			"placeholder": "답변을 입력해주세요"
+			"header_title": "나 알아가기",
+			"next_button": "다음으로",
+			"submit_button": "내 매력 확인하기",
+			"placeholder": "솔직하게 적어주세요",
+			"tab_text": "주관식",
+			"tab_choice": "단답식"
+		},
+		"loading": {
+			"message": "당신의 매력을 분석하고 있어요..."
 		},
 		"result": {
-			"complete_title": "분석 완료!",
-			"start_moment_button": "모먼트 시작하기"
+			"complete_title": "당신의 매력, 찾았어요",
+			"start_moment_button": "인연 만나러 가기",
+			"insight1_title": "나의 관계 스타일",
+			"insight2_title": "나와 잘 맞는 유형"
 		}
 	}
 }

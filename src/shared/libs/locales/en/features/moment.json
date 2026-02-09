@@ -68,22 +68,29 @@
 	},
 	"onboarding": {
 		"intro": {
-			"title": "Your Personal Analysis Report",
-			"subtitle": "Start with simple questions",
-			"feature1": "{{count}} simple questions",
-			"feature2": "AI analyzes your personality",
-			"feature3": "Instant report generation!",
-			"start_button": "Get Started"
+			"title": "Great connections start with knowing yourself",
+			"subtitle": "It only takes a moment, promise",
+			"feature1": "{{count}} quick questions",
+			"feature2": "Find people who match you",
+			"feature3": "Discover your unique charm",
+			"start_button": "Discover Myself"
 		},
 		"questions": {
-			"header_title": "Onboarding",
+			"header_title": "Get to Know Me",
 			"next_button": "Next",
-			"submit_button": "Complete",
-			"placeholder": "Enter your answer"
+			"submit_button": "See My Charm",
+			"placeholder": "Be honest with yourself",
+			"tab_text": "Free Text",
+			"tab_choice": "Select"
+		},
+		"loading": {
+			"message": "Analyzing your charm..."
 		},
 		"result": {
-			"complete_title": "Analysis Complete!",
-			"start_moment_button": "Start Moment"
+			"complete_title": "Your charm, discovered",
+			"start_moment_button": "Meet Your Match",
+			"insight1_title": "My Relationship Style",
+			"insight2_title": "My Best Match Type"
 		}
 	}
 }

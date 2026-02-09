@@ -195,22 +195,29 @@
 	},
 	"onboarding": {
 		"intro": {
-			"title": "あなただけの性格分析レポート",
-			"subtitle": "簡単な質問から始めましょう",
-			"feature1": "{{count}}つの簡単な質問",
-			"feature2": "AIが性格を分析します",
-			"feature3": "すぐにレポート作成！",
-			"start_button": "始める"
+			"title": "良い出会いは自分を知ることから",
+			"subtitle": "ほんの少しだけ、約束",
+			"feature1": "短い質問{{count}}つ",
+			"feature2": "あなたに合う人を見つけます",
+			"feature3": "あなただけの魅力を発見",
+			"start_button": "自分を知る"
 		},
 		"questions": {
-			"header_title": "オンボーディング",
+			"header_title": "自分を知る",
 			"next_button": "次へ",
-			"submit_button": "完了",
-			"placeholder": "回答を入力してください"
+			"submit_button": "私の魅力を確認",
+			"placeholder": "素直に書いてください",
+			"tab_text": "自由記述",
+			"tab_choice": "選択式"
+		},
+		"loading": {
+			"message": "あなたの魅力を分析中..."
 		},
 		"result": {
-			"complete_title": "分析完了！",
-			"start_moment_button": "モーメントを始める"
+			"complete_title": "あなたの魅力、見つけました",
+			"start_moment_button": "運命の人に会いに行く",
+			"insight1_title": "私の関係スタイル",
+			"insight2_title": "私に合うタイプ"
 		}
 	}
 }
