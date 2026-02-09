@@ -4,6 +4,7 @@ import type {
   OnboardingQuestionsResponse,
   OnboardingSubmitRequest,
   OnboardingSubmitResponse,
+  OnboardingSkipResponse,
 } from "../types";
 
 // =======================
@@ -36,6 +37,13 @@ export const submitOnboardingAnswers = (
   data: OnboardingSubmitRequest
 ): Promise<OnboardingSubmitResponse> => {
   return axiosClient.post('/v2/moment/onboarding/submit', data);
+};
+
+/**
+ * 온보딩 건너뛰기
+ */
+export const skipOnboarding = (): Promise<OnboardingSkipResponse> => {
+  return axiosClient.post('/v2/moment/onboarding/skip');
 };
 
 // Query Keys

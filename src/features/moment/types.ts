@@ -548,7 +548,8 @@ export interface MomentReportResponse {
 // 온보딩 상태 응답
 export const OnboardingStatusResponse = z.object({
   needsOnboarding: z.boolean(),
-  completedAt: z.string().nullable().optional(),
+  hasSkipped: z.boolean(),
+  totalReports: z.number(),
 });
 
 export type OnboardingStatusResponse = z.infer<typeof OnboardingStatusResponse>;
@@ -572,6 +573,7 @@ export const OnboardingQuestion = z.object({
   text: z.string(),
   type: OnboardingQuestionType,
   dimension: RawPersonalityDimension,
+  order: z.number(),
   options: z.array(OnboardingQuestionOption).optional(),
   placeholder: z.string().optional(),
   maxLength: z.number().optional(),
@@ -582,6 +584,7 @@ export type OnboardingQuestion = z.infer<typeof OnboardingQuestion>;
 // 온보딩 질문 목록 응답
 export const OnboardingQuestionsResponse = z.object({
   questions: z.array(OnboardingQuestion),
+  totalQuestions: z.number(),
 });
 
 export type OnboardingQuestionsResponse = z.infer<typeof OnboardingQuestionsResponse>;
@@ -589,26 +592,59 @@ export type OnboardingQuestionsResponse = z.infer<typeof OnboardingQuestionsResp
 // 온보딩 답변
 export interface OnboardingAnswer {
   questionId: string;
-  answerText?: string;
-  answerOptionId?: string;
+  answer: string;
+  optionId?: string;
 }
 
 // 온보딩 답변 제출 요청
 export const OnboardingSubmitRequest = z.object({
   answers: z.array(z.object({
     questionId: z.string(),
-    answerText: z.string().optional(),
-    answerOptionId: z.string().optional(),
+    answer: z.string(),
+    optionId: z.string().optional(),
   })),
 });
 
 export type OnboardingSubmitRequest = z.infer<typeof OnboardingSubmitRequest>;
 
-// 온보딩 제출 응답 (생성된 리포트 포함)
+// 온보딩 리포트 타이틀 정보
+export const OnboardingReportTitleInfo = z.object({
+  title: z.string(),
+  subTitle: z.string(),
+  imageUrl: z.string(),
+});
+
+export type OnboardingReportTitleInfo = z.infer<typeof OnboardingReportTitleInfo>;
+
+// 온보딩 제출로 생성된 리포트
+export const OnboardingReport = z.object({
+  id: z.string(),
+  weekOfYear: z.number(),
+  year: z.number(),
+  narrativeSections: z.array(z.any()),
+  storyFlow: z.any(),
+  dimensionScores: z.record(z.string(), z.number()),
+  titleInfo: OnboardingReportTitleInfo,
+  reportType: z.string(),
+  createdAt: z.string(),
+});
+
+export type OnboardingReport = z.infer<typeof OnboardingReport>;
+
+// 온보딩 제출 응답
 export const OnboardingSubmitResponse = z.object({
   success: z.boolean(),
-  report: LatestReport.optional(),
-  message: z.string().optional(),
+  reportId: z.string(),
+  message: z.string(),
+  report: OnboardingReport,
 });
 
 export type OnboardingSubmitResponse = z.infer<typeof OnboardingSubmitResponse>;
+
+// 온보딩 스킵 응답
+export const OnboardingSkipResponse = z.object({
+  success: z.boolean(),
+  message: z.string(),
+});
+
+export type OnboardingSkipResponse = z.infer<typeof OnboardingSkipResponse>;

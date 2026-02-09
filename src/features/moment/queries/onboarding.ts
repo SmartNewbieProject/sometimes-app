@@ -3,6 +3,7 @@ import {
   getOnboardingStatus,
   getOnboardingQuestions,
   submitOnboardingAnswers,
+  skipOnboarding,
   ONBOARDING_QUERY_KEYS,
 } from "../apis/onboarding";
 import { MOMENT_QUERY_KEYS } from "../apis";
@@ -11,6 +12,7 @@ import type {
   OnboardingQuestionsResponse,
   OnboardingSubmitRequest,
   OnboardingSubmitResponse,
+  OnboardingSkipResponse,
 } from "../types";
 
 // =======================
@@ -55,6 +57,22 @@ export const useSubmitOnboardingMutation = () => {
       });
       queryClient.invalidateQueries({
         queryKey: MOMENT_QUERY_KEYS.REPORT_HISTORY,
+      });
+    },
+  });
+};
+
+// =======================
+// 온보딩 건너뛰기
+// =======================
+export const useSkipOnboardingMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<OnboardingSkipResponse, Error>({
+    mutationFn: skipOnboarding,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ONBOARDING_QUERY_KEYS.status(),
       });
     },
   });
