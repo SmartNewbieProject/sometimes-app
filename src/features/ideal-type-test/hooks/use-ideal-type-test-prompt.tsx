@@ -10,6 +10,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useIdealTypeTestModalEnabled } from '../queries/use-ideal-type-test-modal-enabled';
 
 interface IdealTypeTestPromptOptions {
 	onStart?: () => void;
@@ -120,6 +121,7 @@ export function useIdealTypeTestPrompt(
 ): UseIdealTypeTestPromptReturn {
 	const { showModal, hideModal } = useModal();
 	const router = useRouter();
+	const { data: featureFlag } = useIdealTypeTestModalEnabled();
 
 	const showPrompt = useCallback(() => {
 		showModal({
@@ -147,8 +149,10 @@ export function useIdealTypeTestPrompt(
 		});
 	}, [showModal, hideModal, options, router]);
 
-	// 자동 트리거 로직 (3초 후 자동 등장)
+	// 자동 트리거 로직 (3초 후 자동 등장, 피쳐플래그 활성화 시에만)
 	useEffect(() => {
+		if (!featureFlag?.enabled) return;
+
 		// Web에서만 sessionStorage 사용
 		if (Platform.OS === 'web') {
 			const hasShown = sessionStorage.getItem('ideal_type_test_prompt_shown');
@@ -173,7 +177,7 @@ export function useIdealTypeTestPrompt(
 		}, 3000);
 
 		return () => clearTimeout(timer);
-	}, [showPrompt]);
+	}, [featureFlag?.enabled, showPrompt]);
 
 	return { showPrompt };
 }
