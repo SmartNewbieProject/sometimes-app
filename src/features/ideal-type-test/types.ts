@@ -107,5 +107,15 @@ export interface MyResultResponse {
 	testVersion: string;
 }
 
+/** 쿨다운 에러 응답 (400) */
+export interface RetakeCooldownError {
+	code: 'IDEAL_TYPE.BAD_REQUEST_RETAKE_COOLDOWN';
+	detail: {
+		retakeAvailableAt: string;
+		remainingDays: number;
+	};
+	status: 400;
+}
+
 // 언어 코드
 export type LanguageCode = 'ko' | 'ja';
