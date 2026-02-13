@@ -89,8 +89,11 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 	};
 
 	const renderCustomModal = (options: ModalOptions, type: 'mono' | 'nested') => {
+		let buttonClicked = false;
+
 		const handleButtonClick = (callback?: () => void) => {
-			console.log('[ModalProvider] handleButtonClick called', { callback: !!callback, type });
+			if (buttonClicked) return;
+			buttonClicked = true;
 			callback?.();
 			if (type === 'mono') {
 				hideModal();
@@ -286,7 +289,16 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 						}
 					}}
 				>
-					<View pointerEvents="box-none">
+					<View
+						pointerEvents="box-none"
+						style={
+							currentModal &&
+							!('type' in currentModal) &&
+							(currentModal as ModalOptions).position === 'bottom'
+								? styles.bottomContentWrapper
+								: undefined
+						}
+					>
 						{currentModal && 'type' in currentModal
 							? renderErrorModal(currentModal as ErrorModalOptions, 'mono')
 							: currentModal
@@ -419,6 +431,9 @@ const styles = StyleSheet.create({
 	modalOverlayBottom: {
 		justifyContent: 'flex-end',
 		paddingHorizontal: 0,
+	},
+	bottomContentWrapper: {
+		width: '100%',
 	},
 	nestedModalOverlay: {
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
