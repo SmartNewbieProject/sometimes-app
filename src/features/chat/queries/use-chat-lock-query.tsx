@@ -1,3 +1,4 @@
+import { queryClient } from '@/src/shared/config/query';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -13,7 +14,8 @@ function useChatRockQuery(chatRoomId: string) {
 	const { showModal, showErrorModal, hideModal } = useModal();
 	return useMutation({
 		mutationFn: () => enterChatRoom({ chatRoomId }),
-		onSuccess: ({ paymentConfirm }: { paymentConfirm: boolean }) => {
+		onSuccess: async ({ paymentConfirm }: { paymentConfirm: boolean }) => {
+			await queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
 			router.push(`/chat/${chatRoomId}`);
 		},
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>

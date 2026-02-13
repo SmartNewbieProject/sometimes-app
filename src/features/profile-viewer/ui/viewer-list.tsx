@@ -1,9 +1,9 @@
 import NotSome from '@/src/features/post-box/ui/not-some';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { useGlobalLoadingStore } from '@/src/shared/stores/global-loading-store';
 import { PROFILE_VIEWER_KEYS } from '@/src/shared/libs/locales/keys';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { useGlobalLoadingStore } from '@/src/shared/stores/global-loading-store';
 import { Text } from '@/src/shared/ui';
 import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { router } from 'expo-router';
@@ -106,6 +106,8 @@ export function ViewerList() {
 
 	const handleLike = useCallback(
 		async (summaryId: string) => {
+			if (likeMutation.isPending) return;
+
 			mixpanelAdapter.track(MIXPANEL_EVENTS.PROFILE_VIEWER_LIKE_CLICKED, {
 				summaryId,
 				timestamp: new Date().toISOString(),
