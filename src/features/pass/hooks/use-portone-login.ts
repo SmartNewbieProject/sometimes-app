@@ -1,22 +1,26 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
+import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
+import {
+	AUTH_METHODS,
+	LOGIN_ABANDONED_STEPS,
+	MIXPANEL_EVENTS,
+} from '@/src/shared/constants/mixpanel-events';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { env } from '@/src/shared/libs/env';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { LOGIN_ABANDONED_STEPS, AUTH_METHODS, MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { checkAppEnvironment } from '@shared/libs';
 import { router } from 'expo-router';
-import { useCallback, useState, useRef } from 'react';
-import { Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Platform } from 'react-native';
 import { PortOneAuthService } from '../services/portone-auth.service';
 import type {
 	PortOneIdentityVerificationRequest,
 	PortOneIdentityVerificationResponse,
 } from '../types';
 import { isAdult } from '../utils';
-import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
 
 const track = mixpanelAdapter.track.bind(mixpanelAdapter);
 const getAuthMethod = () => useSignupProgress.getState().authMethod;
@@ -40,6 +44,7 @@ const getErrorMessage = (error: unknown): string => {
 interface UsePortOneLoginOptions {
 	onError?: (error: Error) => void;
 	onSuccess?: (isNewUser: boolean) => void;
+	signupPath?: string;
 }
 
 interface UsePortOneLoginReturn {
@@ -71,6 +76,7 @@ const validateEnvironmentVariables = () => {
 export const usePortOneLogin = ({
 	onError,
 	onSuccess,
+	signupPath,
 }: UsePortOneLoginOptions = {}): UsePortOneLoginReturn => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -105,7 +111,7 @@ export const usePortOneLogin = ({
 					});
 
 					// 나이 제한 상세 이벤트
-					const birthYear = parseInt(birthday.substring(0, 4), 10);
+					const birthYear = Number.parseInt(birthday.substring(0, 4), 10);
 					const currentYear = new Date().getFullYear();
 					const calculatedAge = currentYear - birthYear;
 					track(MIXPANEL_EVENTS.SIGNUP_AGE_RESTRICTION_BLOCKED, {
@@ -183,14 +189,15 @@ export const usePortOneLogin = ({
 					}),
 				);
 
-				router.push('/auth/signup/university');
+				// biome-ignore lint/suspicious/noExplicitAny: dynamic signup path
+				router.push((signupPath || '/auth/signup/university') as any);
 				onSuccess?.(true);
 			} else {
 				router.replace('/home');
 				onSuccess?.(false);
 			}
 		},
-		[loginWithPass, onSuccess, showModal, t],
+		[loginWithPass, onSuccess, showModal, t, signupPath],
 	);
 
 	const handleMobileAuthComplete = useCallback(
@@ -262,7 +269,7 @@ export const usePortOneLogin = ({
 
 			// 에러 타입 분류
 			const errorMessage = error.message.toLowerCase();
-			let errorType: string = 'unknown';
+			let errorType = 'unknown';
 			if (errorMessage.includes('network') || errorMessage.includes('연결')) {
 				errorType = 'network';
 			} else if (errorMessage.includes('timeout') || errorMessage.includes('시간')) {

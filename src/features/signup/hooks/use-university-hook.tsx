@@ -207,6 +207,15 @@ function useUniversityHook() {
 
 	useChangePhase(SignupSteps.UNIVERSITY);
 
+	// 이상형 테스트 세션 ID를 URL 파라미터에서 읽어 form에 저장
+	useEffect(() => {
+		if (params.idealTypeSessionId) {
+			updateForm({
+				idealTypeTestSessionId: params.idealTypeSessionId as string,
+			});
+		}
+	}, [params.idealTypeSessionId]);
+
 	// 보안: AsyncStorage에서 certificationInfo를 읽어옴 (URL에서 제거)
 	useEffect(() => {
 		const loadCertificationInfo = async () => {

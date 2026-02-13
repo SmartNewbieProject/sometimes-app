@@ -25,6 +25,7 @@ export type SignupForm = {
 	universitySearchText?: string;
 	signupStartTime?: number;
 	country?: Country;
+	idealTypeTestSessionId?: string;
 };
 
 export interface SignupResponse {
