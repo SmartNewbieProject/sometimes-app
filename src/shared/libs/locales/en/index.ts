@@ -6,6 +6,7 @@ import partner from './apps/partner.json';
 import purchase from './apps/purchase.json';
 import root from './apps/root.json';
 import featuresContactBlock from './features/contact-block.json';
+import featuresIdealTypeTest from './features/ideal-type-test.json';
 import featuresIdleMatchTimer from './features/idle-match-timer.json';
 import featuresInAppReview from './features/in-app-review.json';
 import featuresInstagram from './features/instagram.json';
@@ -32,6 +33,7 @@ const apps = {
 };
 
 const features = {
+	'ideal-type-test': featuresIdealTypeTest,
 	'idle-match-timer': featuresIdleMatchTimer,
 	instagram: featuresInstagram,
 	loading: featuresLoading,

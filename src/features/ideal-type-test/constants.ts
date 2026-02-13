@@ -219,21 +219,21 @@ export const RESULT_TYPE_METADATA_JA: Record<
  */
 export const IDEAL_TYPE_TEST_ENDPOINTS = {
 	/** 테스트 시작 */
-	START: '/api/v1/ideal-type-test/start',
+	START: '/v1/ideal-type-test/start',
 	/** 답변 제출 */
-	ANSWER: '/api/v1/ideal-type-test/answer',
+	ANSWER: '/v1/ideal-type-test/answer',
 	/** 세션 상태 조회 */
-	SESSION_STATUS: (sessionId: string) => `/api/v1/ideal-type-test/session/${sessionId}`,
+	SESSION_STATUS: (sessionId: string) => `/v1/ideal-type-test/session/${sessionId}`,
 	/** 테스트 결과 조회 */
-	RESULT: (sessionId: string) => `/api/v1/ideal-type-test/result/${sessionId}`,
+	RESULT: (sessionId: string) => `/v1/ideal-type-test/result/${sessionId}`,
 	/** 결과 타입 통계 조회 */
-	STATS: (resultTypeId: ResultTypeId) => `/api/v1/ideal-type-test/stats/${resultTypeId}`,
+	STATS: (resultTypeId: ResultTypeId) => `/v1/ideal-type-test/stats/${resultTypeId}`,
 	/** 내 결과 조회 */
-	MY_RESULT: '/api/v1/users/me/ideal-type-result',
+	MY_RESULT: '/v1/users/me/ideal-type-result',
 	/** 테스트 재시도 */
-	RETAKE: '/api/v1/users/me/ideal-type-result/retake',
+	RETAKE: '/v1/users/me/ideal-type-result/retake',
 	/** 결과 삭제 */
-	DELETE_RESULT: '/api/v1/users/me/ideal-type-result',
+	DELETE_RESULT: '/v1/users/me/ideal-type-result',
 } as const;
 
 // ==================== Query Keys ====================

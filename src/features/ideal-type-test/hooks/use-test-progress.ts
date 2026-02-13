@@ -16,10 +16,6 @@ interface TestProgressState {
 	setResult: (result: TestResult) => void;
 	nextQuestion: () => void;
 	clear: () => void;
-
-	// Computed
-	progress: number;
-	isLastQuestion: boolean;
 }
 
 export const useTestProgress = create<TestProgressState>((set, get) => ({
@@ -63,16 +59,4 @@ export const useTestProgress = create<TestProgressState>((set, get) => ({
 			answers: [],
 			result: null,
 		}),
-
-	// Computed getters
-	get progress() {
-		const state = get();
-		if (state.questions.length === 0) return 0;
-		return (state.currentQuestionIndex / state.questions.length) * 100;
-	},
-
-	get isLastQuestion() {
-		const state = get();
-		return state.currentQuestionIndex === state.questions.length - 1;
-	},
 }));

@@ -9,6 +9,7 @@ export const useIdealTypeTestModalEnabled = () => {
 		queryKey: IDEAL_TYPE_TEST_MODAL_ENABLED_KEY,
 		queryFn: checkIdealTypeTestModalEnabled,
 		staleTime: 1000 * 60 * 5, // 5분
-		retry: false, // 피처플래그 실패 시 재시도 안함
+		retry: 1,
+		placeholderData: { featureName: 'ideal-type-test-modal', enabled: true },
 	});
 };
