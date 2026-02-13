@@ -10,7 +10,8 @@
 		"already_completed_title": "You've already taken the test!",
 		"already_completed_subtitle": "You can retake the test or view your previous results",
 		"view_result_button": "View Results",
-		"retake_test_button": "Retake Test"
+		"retake_test_button": "Retake Test",
+		"retake_cooldown": "Retake available in {{days}} days"
 	},
 	"questions": {
 		"question_number": "Question {{current}} / {{total}}",
@@ -19,12 +20,21 @@
 	"result": {
 		"stats_title": "Statistics",
 		"stats_description": "Statistics will be displayed when more people complete the test",
+		"stats_count": "{{percentage}}% of {{count}} people share this type",
 		"signup_prompt": "Sign up to meet your ideal match!",
 		"share_button": "Share",
+		"share_button_copy_link": "Copy Link",
 		"retake_button": "Retake",
 		"signup_button": "Sign Up and Start Matching",
 		"start_matching_button": "Start Matching",
-		"logged_in_info": "Your test results have been saved automatically!"
+		"save_and_match_button": "Save Results & Start Matching",
+		"dismiss_button": "Maybe Later",
+		"logged_in_info": "Your test results have been saved automatically!",
+		"your_type": "Your Dating Type",
+		"auth_modal_title": "Sign Up & Start Matching",
+		"auth_modal_subtitle": "Get started with easy login",
+		"confirm_button": "Confirm",
+		"link_copied": "Link copied"
 	},
 	"errors": {
 		"start_failed": "Failed to start the test. Please try again.",
@@ -34,6 +44,7 @@
 	},
 	"prompt": {
 		"title": "Find Your Match in 2 Minutes",
+		"subtitle": "Discover your dating style with 5 simple questions",
 		"participant_count": "12,847",
 		"participant_suffix": " people already tested!",
 		"feature_1": "Just 2-3 minutes",

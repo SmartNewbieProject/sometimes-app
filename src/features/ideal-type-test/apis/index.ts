@@ -12,7 +12,7 @@ import type {
 } from '../types';
 
 // API 기본 경로
-const BASE_PATH = '/api/v1/ideal-type-test';
+const BASE_PATH = '/v1/ideal-type-test';
 
 /**
  * 테스트 시작
@@ -115,7 +115,7 @@ export const getStats = (resultTypeId: string): Promise<StatsResponse> => {
 
 /**
  * 내 결과 조회 (인증 필요)
- * GET /api/v1/users/me/ideal-type-result
+ * GET /v1/users/me/ideal-type-result
  *
  * @param lang - 언어 코드 (ko, ja). 기본값: ko
  * @returns 사용자의 테스트 결과
@@ -127,13 +127,13 @@ export const getMyResult = (lang: LanguageCode = 'ko'): Promise<MyResultResponse
 	}
 
 	const queryString = params.toString();
-	const url = `/api/v1/users/me/ideal-type-result${queryString ? `?${queryString}` : ''}`;
+	const url = `/v1/users/me/ideal-type-result${queryString ? `?${queryString}` : ''}`;
 	return axiosClient.get(url);
 };
 
 /**
  * 테스트 재시도 (인증 필요)
- * POST /api/v1/users/me/ideal-type-result/retake
+ * POST /v1/users/me/ideal-type-result/retake
  *
  * @param lang - 언어 코드 (ko, ja). 기본값: ko
  * @returns 새로운 테스트 세션 시작
@@ -145,18 +145,18 @@ export const retakeTest = (lang: LanguageCode = 'ko'): Promise<StartTestResponse
 	}
 
 	const queryString = params.toString();
-	const url = `/api/v1/users/me/ideal-type-result/retake${queryString ? `?${queryString}` : ''}`;
+	const url = `/v1/users/me/ideal-type-result/retake${queryString ? `?${queryString}` : ''}`;
 	return axiosClient.post(url, {});
 };
 
 /**
  * 결과 삭제 (인증 필요)
- * DELETE /api/v1/users/me/ideal-type-result
+ * DELETE /v1/users/me/ideal-type-result
  *
  * @returns void (204 No Content)
  */
 export const deleteMyResult = (): Promise<void> => {
-	return axiosClient.delete('/api/v1/users/me/ideal-type-result');
+	return axiosClient.delete('/v1/users/me/ideal-type-result');
 };
 
 const apis = {

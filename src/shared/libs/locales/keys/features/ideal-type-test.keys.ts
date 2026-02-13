@@ -15,6 +15,7 @@ export const IDEAL_TYPE_TEST_KEYS = {
 	startAlreadyCompletedSubtitle: 'features.ideal-type-test.start.already_completed_subtitle',
 	startViewResultButton: 'features.ideal-type-test.start.view_result_button',
 	startRetakeTestButton: 'features.ideal-type-test.start.retake_test_button',
+	startRetakeCooldown: 'features.ideal-type-test.start.retake_cooldown',
 
 	// questions
 	questionsQuestionNumber: 'features.ideal-type-test.questions.question_number',
@@ -25,10 +26,18 @@ export const IDEAL_TYPE_TEST_KEYS = {
 	resultStatsDescription: 'features.ideal-type-test.result.stats_description',
 	resultSignupPrompt: 'features.ideal-type-test.result.signup_prompt',
 	resultShareButton: 'features.ideal-type-test.result.share_button',
+	resultShareButtonCopyLink: 'features.ideal-type-test.result.share_button_copy_link',
 	resultRetakeButton: 'features.ideal-type-test.result.retake_button',
 	resultSignupButton: 'features.ideal-type-test.result.signup_button',
 	resultStartMatchingButton: 'features.ideal-type-test.result.start_matching_button',
+	resultSaveAndMatchButton: 'features.ideal-type-test.result.save_and_match_button',
+	resultDismissButton: 'features.ideal-type-test.result.dismiss_button',
 	resultLoggedInInfo: 'features.ideal-type-test.result.logged_in_info',
+	resultYourType: 'features.ideal-type-test.result.your_type',
+	resultAuthModalTitle: 'features.ideal-type-test.result.auth_modal_title',
+	resultAuthModalSubtitle: 'features.ideal-type-test.result.auth_modal_subtitle',
+	resultConfirmButton: 'features.ideal-type-test.result.confirm_button',
+	resultLinkCopied: 'features.ideal-type-test.result.link_copied',
 
 	// errors
 	errorsStartFailed: 'features.ideal-type-test.errors.start_failed',

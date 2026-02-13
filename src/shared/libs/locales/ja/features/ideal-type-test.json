@@ -10,7 +10,8 @@
 		"already_completed_title": "すでにテストを完了されています!",
 		"already_completed_subtitle": "もう一度テストするか、以前の結果を確認できます",
 		"view_result_button": "結果を見る",
-		"retake_test_button": "もう一度やる"
+		"retake_test_button": "もう一度やる",
+		"retake_cooldown": "{{days}}日後に再テストできます"
 	},
 	"questions": {
 		"question_number": "質問 {{current}} / {{total}}",
@@ -19,12 +20,21 @@
 	"result": {
 		"stats_title": "統計情報",
 		"stats_description": "より多くの人がテストを完了すると統計が表示されます",
+		"stats_count": "{{count}}人中{{percentage}}%が同じタイプです",
 		"signup_prompt": "会員登録して、あなたに合う理想のタイプに会いましょう!",
 		"share_button": "共有する",
+		"share_button_copy_link": "リンクをコピー",
 		"retake_button": "もう一度やる",
 		"signup_button": "会員登録してマッチング開始",
 		"start_matching_button": "マッチング開始",
-		"logged_in_info": "テスト結果が自動的に保存されました!"
+		"save_and_match_button": "結果を保存してマッチング開始",
+		"dismiss_button": "後でやります",
+		"logged_in_info": "テスト結果が自動的に保存されました!",
+		"your_type": "あなたの恋愛タイプ",
+		"auth_modal_title": "会員登録してマッチング開始",
+		"auth_modal_subtitle": "簡単ログインで始めましょう",
+		"confirm_button": "確認",
+		"link_copied": "リンクがコピーされました"
 	},
 	"errors": {
 		"start_failed": "テストの開始に失敗しました。もう一度お試しください。",
@@ -34,6 +44,7 @@
 	},
 	"prompt": {
 		"title": "2分で理想のタイプを発見",
+		"subtitle": "簡単な5つの質問であなたの恋愛スタイルがわかります",
 		"feature_1": "2-3分で完了",
 		"feature_2": "あなたにぴったりのタイプ",
 		"feature_3": "5つの簡単な質問",

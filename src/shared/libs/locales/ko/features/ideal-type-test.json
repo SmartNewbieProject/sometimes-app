@@ -10,7 +10,8 @@
 		"already_completed_title": "이미 테스트를 완료하셨네요!",
 		"already_completed_subtitle": "다시 테스트하거나 이전 결과를 확인하실 수 있어요",
 		"view_result_button": "결과 보기",
-		"retake_test_button": "다시 하기"
+		"retake_test_button": "다시 하기",
+		"retake_cooldown": "{{days}}일 후 다시 테스트할 수 있어요"
 	},
 	"questions": {
 		"question_number": "질문 {{current}} / {{total}}",
@@ -19,12 +20,21 @@
 	"result": {
 		"stats_title": "통계 정보",
 		"stats_description": "더 많은 사람들이 테스트를 완료하면 통계가 표시됩니다",
+		"stats_count": "{{count}}명 중 {{percentage}}%가 같은 유형이에요",
 		"signup_prompt": "회원가입하고 나와 맞는 이상형을 만나보세요!",
 		"share_button": "공유하기",
+		"share_button_copy_link": "링크 복사",
 		"retake_button": "다시하기",
 		"signup_button": "회원가입하고 매칭 시작하기",
 		"start_matching_button": "매칭 시작하기",
-		"logged_in_info": "테스트 결과가 자동으로 저장되었습니다!"
+		"save_and_match_button": "결과 저장하고 매칭 시작",
+		"dismiss_button": "나중에 할게요",
+		"logged_in_info": "테스트 결과가 자동으로 저장되었습니다!",
+		"your_type": "당신의 연애 유형",
+		"auth_modal_title": "회원가입하고 매칭 시작",
+		"auth_modal_subtitle": "간편 로그인으로 시작하세요",
+		"confirm_button": "확인",
+		"link_copied": "링크가 복사되었어요"
 	},
 	"errors": {
 		"start_failed": "테스트 시작에 실패했습니다. 다시 시도해주세요.",
@@ -34,6 +44,7 @@
 	},
 	"prompt": {
 		"title": "2분만에 내 이상형 찾기",
+		"subtitle": "간단한 질문 5개로 나의 연애 스타일을 알아보세요",
 		"feature_1": "2-3분이면 충분해요",
 		"feature_2": "나에게 딱 맞는 유형",
 		"feature_3": "5가지 간단한 질문",
