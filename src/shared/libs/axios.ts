@@ -146,6 +146,8 @@ axiosClient.interceptors.request.use(
         '/universities',
         '/auth/check/phone-number',
         '/sometime-articles',
+        '/feature-flags',
+        '/v1/ideal-type-test',
       ];
 
       const isNoAuthRequired = noAuthRequiredPaths.some(path =>
