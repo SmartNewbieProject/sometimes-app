@@ -18,7 +18,9 @@
 		"somemate_description": "대화할수록 나를\n더 잘 아는 썸메이트",
 		"weekly_report_title": "모먼트 보고서",
 		"weekly_report_description": "이번 주 활동을\n리포트로 확인해보세요!",
-		"preparing": "준비 중.."
+		"preparing": "준비 중..",
+		"ideal_type_test_title": "이상형 테스트",
+		"ideal_type_test_description": "나의 연애 유형\n알아보기"
 	},
 	"headers": {
 		"my_answers": "내 답변 기록",

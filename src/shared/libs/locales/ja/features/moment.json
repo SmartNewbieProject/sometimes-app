@@ -18,7 +18,9 @@
 		"somemate_description": "会話するほど\n私をよく知る\nサムメイト",
 		"weekly_report_title": "モーメントレポート",
 		"weekly_report_description": "今週の活動を\nレポートで確認しよう！",
-		"preparing": "準備中.."
+		"preparing": "準備中..",
+		"ideal_type_test_title": "理想タイプ診断",
+		"ideal_type_test_description": "恋愛タイプを\n調べよう"
 	},
 	"headers": {
 		"my_answers": "私の回答記録",
