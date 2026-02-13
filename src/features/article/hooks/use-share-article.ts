@@ -54,7 +54,7 @@ export const useShareArticle = ({ article, source = 'direct' }: UseShareArticleP
 			content: {
 				title: article.title,
 				description: article.excerpt,
-				imageUrl: article.thumbnail.url,
+				imageUrl: article.thumbnail?.url ?? '',
 				link: {
 					mobileWebUrl: articleUrl,
 					webUrl: articleUrl,

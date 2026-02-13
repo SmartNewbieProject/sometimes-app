@@ -44,13 +44,14 @@ export const LikeButton = ({
 	const { profileDetails } = useAuth();
 	const { showModal, hideModal } = useModal();
 	const { featureCosts } = useFeatureCost();
-	const { onLike } = useLike();
+	const { onLike, isLikePending } = useLike();
 	const { matchingEvents, paymentEvents } = useMixpanel();
 	const { trackMatchingAttempt, trackMatchingSuccess, trackMatchingFailure } =
 		useMatchingEfficiency();
 	const { t } = useTranslation();
 
 	const handleSimpleLike = async () => {
+		if (isLikePending) return;
 		const gemCost = profileDetails?.gender === 'MALE' ? featureCosts?.LIKE_MESSAGE : 0;
 		const currentTime = new Date().getHours();
 		const isPeakTime = currentTime >= 20 && currentTime <= 23;
