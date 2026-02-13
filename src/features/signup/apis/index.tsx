@@ -92,6 +92,10 @@ export const signup = async (form: SignupForm): Promise<SignupResponse> => {
 		formData.append('referralCode', form.referralCode);
 	}
 
+	if (form.idealTypeTestSessionId) {
+		formData.append('idealTypeTestSessionId', form.idealTypeTestSessionId);
+	}
+
 	if (form.country) {
 		formData.append('country', form.country);
 	}

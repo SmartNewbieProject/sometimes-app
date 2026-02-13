@@ -137,6 +137,10 @@ export interface UserProfile {
 	tier?: string;
 	canLetter?: boolean;
 	external?: ExternalMatchInfo | null;
+	idealTypeResult?: {
+		name: string;
+		tags: string[];
+	} | null;
 }
 
 export interface SimpleProfile {
