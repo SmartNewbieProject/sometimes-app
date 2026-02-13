@@ -1,225 +1,250 @@
-import React from "react";
-import { View, StyleSheet, Dimensions, Pressable, Text as RNText } from "react-native";
-import { Image } from "expo-image";
-import { router } from "expo-router";
-import { useTranslation } from "react-i18next";
-import { MomentNavigationProps, MomentNavigationItem, MomentNavigationHeight } from "../types";
-import colors from "@/src/shared/constants/colors";
-import { Text } from "@/src/shared/ui/text";
-import { useRouletteEligibility } from "@/src/features/event/hooks/roulette/use-roulette-eligibility";
-import { useMyMomentEnabled } from "../queries";
-import { useMomentAnalytics } from "../hooks/use-moment-analytics";
+import { useRouletteEligibility } from '@/src/features/event/hooks/roulette/use-roulette-eligibility';
+import colors from '@/src/shared/constants/colors';
+import { Text } from '@/src/shared/ui/text';
+import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Dimensions, Pressable, Text as RNText, StyleSheet, View } from 'react-native';
+import { useMomentAnalytics } from '../hooks/use-moment-analytics';
+import { useMyMomentEnabled } from '../queries';
+import {
+	MomentNavigationHeight,
+	type MomentNavigationItem,
+	type MomentNavigationProps,
+} from '../types';
 
-const { width: screenWidth } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get('window');
 
 const HEIGHT_CONFIG = {
-  lg: 151,
-  md: 120,
+	lg: 151,
+	md: 120,
 } as const;
 
 export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentNavigationProps) => {
-  const { t } = useTranslation();
-  const actualHeight = HEIGHT_CONFIG[itemHeight];
-  const { data: rouletteEligibility } = useRouletteEligibility();
-  const { data: myMomentEnabled } = useMyMomentEnabled();
-  const {
-    trackNavMyMomentClick,
-    trackNavDailyRouletteClick,
-    trackNavSomemateClick,
-    trackNavWeeklyReportClick,
-    trackNavEventsClick,
-    trackNavCheckinClick,
-  } = useMomentAnalytics();
+	const { t } = useTranslation();
+	const actualHeight = HEIGHT_CONFIG[itemHeight];
+	const { data: rouletteEligibility } = useRouletteEligibility();
+	const { data: myMomentEnabled } = useMyMomentEnabled();
+	const {
+		trackNavMyMomentClick,
+		trackNavDailyRouletteClick,
+		trackNavSomemateClick,
+		trackNavWeeklyReportClick,
+		trackNavEventsClick,
+		trackNavCheckinClick,
+	} = useMomentAnalytics();
 
-  const rows = [];
-  for (let i = 0; i < items.length; i += itemsPerRow) {
-    rows.push(items.slice(i, i + itemsPerRow));
-  }
+	const rows = [];
+	for (let i = 0; i < items.length; i += itemsPerRow) {
+		rows.push(items.slice(i, i + itemsPerRow));
+	}
 
-  const trackNavClick = (itemId: string, isDisabled: boolean) => {
-    const properties = { is_ready: !isDisabled, destination: itemId };
-    switch (itemId) {
-      case "moment-my-moment":
-        trackNavMyMomentClick(properties);
-        break;
-      case "moment-daily-roulette":
-        trackNavDailyRouletteClick({ ...properties, is_eligible: rouletteEligibility?.canParticipate });
-        break;
-      case "moment-somemate":
-        trackNavSomemateClick(properties);
-        break;
-      case "moment-weekly-report":
-        trackNavWeeklyReportClick(properties);
-        break;
-      case "moment-events":
-        trackNavEventsClick(properties);
-        break;
-      case "moment-checkin":
-        trackNavCheckinClick(properties);
-        break;
-    }
-  };
+	const trackNavClick = (itemId: string, isDisabled: boolean) => {
+		const properties = { is_ready: !isDisabled, destination: itemId };
+		switch (itemId) {
+			case 'moment-my-moment':
+				trackNavMyMomentClick(properties);
+				break;
+			case 'moment-daily-roulette':
+				trackNavDailyRouletteClick({
+					...properties,
+					is_eligible: rouletteEligibility?.canParticipate,
+				});
+				break;
+			case 'moment-somemate':
+				trackNavSomemateClick(properties);
+				break;
+			case 'moment-weekly-report':
+				trackNavWeeklyReportClick(properties);
+				break;
+			case 'moment-events':
+				trackNavEventsClick(properties);
+				break;
+			case 'moment-checkin':
+				trackNavCheckinClick(properties);
+				break;
+			case 'moment-ideal-type-test':
+				break;
+		}
+	};
 
-  const handlePress = (item: MomentNavigationItem) => {
-    trackNavClick(item.id, false);
-    if (item.id === "moment-daily-roulette") {
-      router.push("/moment/daily-roulette");
-    } else {
-      item.onPress?.();
-    }
-  };
+	const handlePress = (item: MomentNavigationItem) => {
+		trackNavClick(item.id, false);
+		if (item.id === 'moment-daily-roulette') {
+			router.push('/moment/daily-roulette');
+		} else {
+			item.onPress?.();
+		}
+	};
 
-  const getItemDisabledState = (item: MomentNavigationItem) => {
-    if (item.id === "moment-daily-roulette" && rouletteEligibility && !rouletteEligibility.canParticipate) {
-      return {
-        isDisabled: true,
-        text: item.disabledTextKey ? t(item.disabledTextKey) : (item.disabledText || t('features.moment.navigation.roulette_disabled_text')),
-        message: item.disabledMessageKey ? t(item.disabledMessageKey) : (item.disabledMessage || t('features.moment.navigation.roulette_disabled_message')),
-      };
-    }
-    if (item.id === "moment-my-moment" && myMomentEnabled && !myMomentEnabled.enabled) {
-      return {
-        isDisabled: true,
-        text: item.disabledTextKey ? t(item.disabledTextKey) : (item.disabledText || t('features.moment.navigation.preparing')),
-        message: item.disabledMessageKey ? t(item.disabledMessageKey) : item.disabledMessage,
-      };
-    }
-    if (item.isReady === false) {
-      return {
-        isDisabled: true,
-        text: item.disabledTextKey ? t(item.disabledTextKey) : (item.disabledText || t('features.moment.navigation.preparing')),
-        message: item.disabledMessageKey ? t(item.disabledMessageKey) : item.disabledMessage,
-      };
-    }
-    return { isDisabled: false, text: null, message: null };
-  };
+	const getItemDisabledState = (item: MomentNavigationItem) => {
+		if (
+			item.id === 'moment-daily-roulette' &&
+			rouletteEligibility &&
+			!rouletteEligibility.canParticipate
+		) {
+			return {
+				isDisabled: true,
+				text: item.disabledTextKey
+					? t(item.disabledTextKey)
+					: item.disabledText || t('features.moment.navigation.roulette_disabled_text'),
+				message: item.disabledMessageKey
+					? t(item.disabledMessageKey)
+					: item.disabledMessage || t('features.moment.navigation.roulette_disabled_message'),
+			};
+		}
+		if (item.id === 'moment-my-moment' && myMomentEnabled && !myMomentEnabled.enabled) {
+			return {
+				isDisabled: true,
+				text: item.disabledTextKey
+					? t(item.disabledTextKey)
+					: item.disabledText || t('features.moment.navigation.preparing'),
+				message: item.disabledMessageKey ? t(item.disabledMessageKey) : item.disabledMessage,
+			};
+		}
+		if (item.isReady === false) {
+			return {
+				isDisabled: true,
+				text: item.disabledTextKey
+					? t(item.disabledTextKey)
+					: item.disabledText || t('features.moment.navigation.preparing'),
+				message: item.disabledMessageKey ? t(item.disabledMessageKey) : item.disabledMessage,
+			};
+		}
+		return { isDisabled: false, text: null, message: null };
+	};
 
-  const renderItem = (item: MomentNavigationItem, itemIndex: number, totalInRow: number) => {
-    const isLastInRow = itemIndex === totalInRow - 1;
-    const imageSize = item.imageSize || 60;
-    const disabledState = getItemDisabledState(item);
+	const renderItem = (item: MomentNavigationItem, itemIndex: number, totalInRow: number) => {
+		const isLastInRow = itemIndex === totalInRow - 1;
+		const imageSize = item.imageSize || 60;
+		const disabledState = getItemDisabledState(item);
 
-    return (
-      <Pressable
-        key={item.id}
-        style={[
-          styles.menuItem,
-          {
-            flex: 1,
-            height: actualHeight,
-            marginRight: isLastInRow ? 0 : 7,
-          },
-        ]}
-        onPress={!disabledState.isDisabled ? () => handlePress(item) : undefined}
-        disabled={disabledState.isDisabled}
-      >
-        {item.backgroundImageUrl && (
-          <Image
-            source={typeof item.backgroundImageUrl === 'string' ? { uri: item.backgroundImageUrl } : item.backgroundImageUrl}
-            style={[
-              styles.backgroundImage,
-              {
-                width: imageSize,
-                height: imageSize,
-              },
-            ]}
-            contentFit="cover"
-          />
-        )}
+		return (
+			<Pressable
+				key={item.id}
+				style={[
+					styles.menuItem,
+					{
+						flex: 1,
+						height: actualHeight,
+						marginRight: isLastInRow ? 0 : 7,
+					},
+				]}
+				onPress={!disabledState.isDisabled ? () => handlePress(item) : undefined}
+				disabled={disabledState.isDisabled}
+			>
+				{item.backgroundImageUrl && (
+					<Image
+						source={
+							typeof item.backgroundImageUrl === 'string'
+								? { uri: item.backgroundImageUrl }
+								: item.backgroundImageUrl
+						}
+						style={[
+							styles.backgroundImage,
+							{
+								width: imageSize,
+								height: imageSize,
+							},
+						]}
+						contentFit="cover"
+					/>
+				)}
 
-        <View style={styles.content}>
-          {item.titleComponent}
-          <RNText style={styles.description}>
-            {item.descriptionKey ? t(item.descriptionKey) : item.description}
-          </RNText>
-        </View>
+				<View style={styles.content}>
+					{item.titleComponent}
+					<RNText style={styles.description}>
+						{item.descriptionKey ? t(item.descriptionKey) : item.description}
+					</RNText>
+				</View>
 
-        {disabledState.isDisabled && (
-          <View style={styles.overlay}>
-            <View style={styles.overlayContent}>
-              <Text textColor="white" weight="semibold" size="md">
-                {disabledState.text}
-              </Text>
-              {disabledState.message && (
-                <Text textColor="white" size="10" style={styles.disabledMessage}>
-                  {disabledState.message}
-                </Text>
-              )}
-            </View>
-          </View>
-        )}
-      </Pressable>
-    );
-  };
+				{disabledState.isDisabled && (
+					<View style={styles.overlay}>
+						<View style={styles.overlayContent}>
+							<Text textColor="white" weight="semibold" size="md">
+								{disabledState.text}
+							</Text>
+							{disabledState.message && (
+								<Text textColor="white" size="10" style={styles.disabledMessage}>
+									{disabledState.message}
+								</Text>
+							)}
+						</View>
+					</View>
+				)}
+			</Pressable>
+		);
+	};
 
-  return (
-    <View style={styles.container}>
-      {rows.map((row, rowIndex) => (
-        <View key={rowIndex} style={styles.row}>
-          {row.map((item, itemIndex) => renderItem(item, itemIndex, row.length))}
-        </View>
-      ))}
-    </View>
-  );
+	return (
+		<View style={styles.container}>
+			{rows.map((row, rowIndex) => (
+				<View key={rowIndex} style={styles.row}>
+					{row.map((item, itemIndex) => renderItem(item, itemIndex, row.length))}
+				</View>
+			))}
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    paddingHorizontal: 20,
-  },
-  row: {
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    marginBottom: 9,
-    width: "100%",
-  },
-  menuItem: {
-    backgroundColor: "#F9F7FF",
-    borderWidth: 1,
-    borderColor: "#E2D6FF",
-    borderRadius: 16,
-    padding: 16,
-    position: "relative",
-    overflow: "hidden",
-    elevation: 5,
-  },
-  backgroundImage: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    width: 60,
-    height: 60,
-  },
-  content: {
-    flex: 1,
-    zIndex: 1,
-  },
-  description: {
-    fontSize: 10,
-    color: colors.strong,
-    lineHeight: 12,
-  },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 10,
-  },
-  overlayContent: {
-    alignItems: "center",
-    gap: 4,
-  },
-  disabledMessage: {
-    textAlign: "center",
-    paddingHorizontal: 8,
-  },
+	container: {
+		width: '100%',
+		paddingHorizontal: 20,
+	},
+	row: {
+		flexDirection: 'row',
+		flexWrap: 'nowrap',
+		justifyContent: 'flex-start',
+		alignItems: 'flex-start',
+		marginBottom: 9,
+		width: '100%',
+	},
+	menuItem: {
+		backgroundColor: '#F9F7FF',
+		borderWidth: 1,
+		borderColor: '#E2D6FF',
+		borderRadius: 16,
+		padding: 16,
+		position: 'relative',
+		overflow: 'hidden',
+		elevation: 5,
+	},
+	backgroundImage: {
+		position: 'absolute',
+		bottom: 0,
+		right: 0,
+		width: 60,
+		height: 60,
+	},
+	content: {
+		flex: 1,
+		zIndex: 1,
+	},
+	description: {
+		fontSize: 10,
+		color: colors.strong,
+		lineHeight: 12,
+	},
+	overlay: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		backgroundColor: 'rgba(0, 0, 0, 0.7)',
+		borderRadius: 16,
+		justifyContent: 'center',
+		alignItems: 'center',
+		zIndex: 10,
+	},
+	overlayContent: {
+		alignItems: 'center',
+		gap: 4,
+	},
+	disabledMessage: {
+		textAlign: 'center',
+		paddingHorizontal: 8,
+	},
 });

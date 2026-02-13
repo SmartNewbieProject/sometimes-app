@@ -1,4 +1,8 @@
 {
+	"navigation": {
+		"ideal_type_test_title": "Ideal Type Test",
+		"ideal_type_test_description": "Find your\nlove style"
+	},
 	"common": {
 		"답변_텍스트_또는_선택지_중_하나는_필수입니다": "[EN] 답변 텍스트 또는 선택지 중 하나는 필수입니다",
 		"최소_하나의_취미를_입력해주세요": "[EN] 최소 하나의 취미를 입력해주세요",
