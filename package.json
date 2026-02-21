@@ -18,6 +18,8 @@
     "web:restart": "./scripts/restart-web.sh",
     "cache:clear": "./scripts/clear-cache.sh",
     "cache:clear:hard": "./scripts/clear-cache.sh --hard",
+    "cache:nuke": "./scripts/delete-sometimes-cache.sh",
+    "start:clean": "./scripts/delete-sometimes-cache.sh && NODE_OPTIONS='--max-old-space-size=8192' expo start --clear --port 3000",
     "test": "jest",
     "test:watch": "jest --watchAll",
     "test:server-ping": "node scripts/test-server-ping-pong.js",
@@ -34,6 +36,7 @@
     "build:ios:preview": "./scripts/build-with-notify.sh ios preview",
     "build:android:preview": "./scripts/build-with-notify.sh android preview",
     "build:ios:dev": "./scripts/build-with-notify.sh ios development",
+    "build:all": "./scripts/build-all-production.sh",
     "install:device": "./scripts/install-to-device.sh",
     "install:latest": "./scripts/install-latest.sh",
     "submit:testflight": "./scripts/submit-testflight.sh",
@@ -41,7 +44,10 @@
     "i18n:extract": "tsx scripts/i18n-extract.ts",
     "i18n:migrate": "tsx scripts/i18n-migrate.ts",
     "setup:auto-build": "./scripts/setup-auto-build.sh",
-    "next-version": "./scripts/sometimes-next-version"
+    "next-version": "./scripts/sometimes-next-version",
+    "deploy-manager": "cd tools/deploy-manager && npm run dev",
+    "deploy-manager:build": "cd tools/deploy-manager && npm run build",
+    "deploy-manager:install": "cd tools/deploy-manager && npm install"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

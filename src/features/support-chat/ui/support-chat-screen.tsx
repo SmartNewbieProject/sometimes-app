@@ -6,7 +6,15 @@ import ChevronLeftIcon from '@assets/icons/chevron-left.svg';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import {
+	ActivityIndicator,
+	FlatList,
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	StyleSheet,
+	View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSupportChat } from '../hooks';
 import { useCloseSession } from '../queries';
@@ -204,31 +212,37 @@ function SupportChatScreen() {
 
 			{status && <SupportChatStatusBanner status={status} isTyping={isTyping} />}
 
-			<FlatList
-				ref={flatListRef}
-				data={messages}
-				renderItem={renderMessage}
-				keyExtractor={keyExtractor}
-				contentContainerStyle={[styles.messageList, messages.length === 0 && styles.emptyList]}
-				ListEmptyComponent={renderEmptyState}
-				showsVerticalScrollIndicator={false}
-				onContentSizeChange={() => {
-					if (messages.length > 0) {
-						flatListRef.current?.scrollToEnd({ animated: false });
-					}
-				}}
-			/>
+			<KeyboardAvoidingView
+				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+				keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 56 : 0}
+				style={styles.keyboardAvoidingView}
+			>
+				<FlatList
+					ref={flatListRef}
+					data={messages}
+					renderItem={renderMessage}
+					keyExtractor={keyExtractor}
+					contentContainerStyle={[styles.messageList, messages.length === 0 && styles.emptyList]}
+					ListEmptyComponent={renderEmptyState}
+					showsVerticalScrollIndicator={false}
+					onContentSizeChange={() => {
+						if (messages.length > 0) {
+							flatListRef.current?.scrollToEnd({ animated: false });
+						}
+					}}
+				/>
 
-			<SupportChatInput
-				onSend={handleSend}
-				onTyping={handleTyping}
-				disabled={
-					!isConnected ||
-					status === 'resolved' ||
-					status === 'user_closed' ||
-					status === 'admin_resolved'
-				}
-			/>
+				<SupportChatInput
+					onSend={handleSend}
+					onTyping={handleTyping}
+					disabled={
+						!isConnected ||
+						status === 'resolved' ||
+						status === 'user_closed' ||
+						status === 'admin_resolved'
+					}
+				/>
+			</KeyboardAvoidingView>
 		</View>
 	);
 }
@@ -237,6 +251,9 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: semanticColors.surface.background,
+	},
+	keyboardAvoidingView: {
+		flex: 1,
 	},
 	header: {
 		flexDirection: 'row',

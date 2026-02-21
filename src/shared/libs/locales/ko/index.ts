@@ -60,6 +60,7 @@ import featuresSetting from './features/setting.json';
 import featuresSignup from './features/signup.json';
 import featuresSomemate from './features/somemate.json';
 import featuresIdealTypeTest from './features/ideal-type-test.json';
+import featuresGlobalMatching from './features/global-matching.json';
 import featuresSupportChat from './features/support-chat.json';
 import featuresWelcomeReward from './features/welcome-reward.json';
 
@@ -154,6 +155,7 @@ const features = {
 	'contact-block': featuresContactBlock,
 	'ideal-type-test': featuresIdealTypeTest,
 	'support-chat': featuresSupportChat,
+	'global-matching': featuresGlobalMatching,
 };
 
 const widgets = {

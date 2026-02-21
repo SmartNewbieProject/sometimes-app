@@ -6,6 +6,7 @@ import partner from './apps/partner.json';
 import purchase from './apps/purchase.json';
 import root from './apps/root.json';
 import featuresContactBlock from './features/contact-block.json';
+import featuresGlobalMatching from './features/global-matching.json';
 import featuresIdealTypeTest from './features/ideal-type-test.json';
 import featuresIdleMatchTimer from './features/idle-match-timer.json';
 import featuresInAppReview from './features/in-app-review.json';
@@ -42,6 +43,7 @@ const features = {
 	'contact-block': featuresContactBlock,
 	'like-letter': featuresLikeLetter,
 	'profile-viewer': featuresProfileViewer,
+	'global-matching': featuresGlobalMatching,
 };
 
 const shareds = {

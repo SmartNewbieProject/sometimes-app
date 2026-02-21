@@ -93,12 +93,12 @@ export default function MyScreen() {
 				</View>
 
 				<View style={styles.menuContainer}>
+					{supportChatEnabled?.enabled && <SupportMenu />}
 					{isJapanese() && <IdentityStatusCard />}
 					<MatchingMenu />
 					<PrivacyMenu />
 					<NotificationMenu />
 					<MyActivityMenu />
-					{supportChatEnabled?.enabled && <SupportMenu />}
 				</View>
 			</ScrollView>
 

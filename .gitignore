@@ -99,3 +99,8 @@ docs/*-release-note.md
 docs/color-guide.md
 docs/global-matching-implementation-spec.md
 scripts/sync-version.py
+
+# Deploy Manager (Electron)
+tools/deploy-manager/out/
+tools/deploy-manager/dist/
+tools/deploy-manager/node_modules/

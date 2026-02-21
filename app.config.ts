@@ -41,8 +41,8 @@ export default ({ config }: ConfigContext): any => {
 		expo: {
 			name: 'sometimes',
 			slug: 'sometimes',
-			version: '4.0.6',
-			runtimeVersion: '4.0.6',
+			version: '4.1.1',
+			runtimeVersion: '4.1.1',
 			orientation: 'portrait',
 			icon: './assets/icons/app.png',
 			scheme: 'myapp',
@@ -57,7 +57,7 @@ export default ({ config }: ConfigContext): any => {
 			ios: {
 				supportsTablet: true,
 				bundleIdentifier: 'com.some-in-univ',
-				buildNumber: '334',
+				buildNumber: '339',
 				entitlements: {
 					'com.apple.developer.applesignin': ['Default'],
 				},
@@ -242,7 +242,7 @@ export default ({ config }: ConfigContext): any => {
 						},
 						android: {
 							extraMavenRepos: ['https://devrepo.kakao.com/nexus/content/groups/public/'],
-							kotlinVersion: '2.1.20',
+							kotlinVersion: '2.0.21',
 						},
 					},
 				],
