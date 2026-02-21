@@ -1,4 +1,5 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { useIdealTypeTestPrompt } from '@/src/features/ideal-type-test/hooks';
 import {
 	AuthTabBar,
 	type AuthTab,
@@ -29,6 +30,7 @@ export default function LoginScreen() {
 	const { t } = useTranslation();
 	const hasTrackedView = useRef(false);
 	const insets = useSafeAreaInsets();
+	useIdealTypeTestPrompt();
 
 	const handleTabChange = (tab: AuthTab) => {
 		if (tab === 'story') {

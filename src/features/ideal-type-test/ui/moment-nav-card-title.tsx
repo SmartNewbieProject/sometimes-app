@@ -21,7 +21,7 @@ export const IdealTypeTestNavTitle = () => {
 	if (isAuthorized && myResult?.result) {
 		return (
 			<Text style={titleStyle}>
-				{myResult.result.emoji} {myResult.result.name}
+				{myResult.result.name}
 			</Text>
 		);
 	}
