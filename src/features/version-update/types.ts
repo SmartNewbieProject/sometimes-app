@@ -5,7 +5,7 @@ export interface VersionUpdateResponse {
 	version: string;
 	metadata: {
 		description: string[];
-		supports: VersionSupportPlatform[];
+		supports?: VersionSupportPlatform[];
 	};
 	shouldUpdate: boolean;
 }
