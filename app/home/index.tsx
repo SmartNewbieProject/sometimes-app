@@ -24,6 +24,7 @@ import { sendHeartbeat } from '@/src/shared/libs/heartbeat';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { ensurePushTokenRegistered } from '@/src/shared/libs/notifications';
 import { AnnounceCard, BottomNavigation, BusinessInfo, Header, Show, Text } from '@/src/shared/ui';
+import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { useAuth } from '@features/auth';
 import Event from '@features/event';
 import { Feedback } from '@features/feedback';
@@ -64,6 +65,8 @@ const { useWelcomeReward } = welcomeRewardHooks;
 const HomeScreen = () => {
 	const { t } = useTranslation();
 	const { showModal } = useModal();
+	const { featureEvents } = useMixpanel();
+	const hasTrackedHomeView = useRef(false);
 	const { step } = useStep();
 	const { isPreferenceFill, onboardingLoading } = useRedirectPreferences();
 	const { data: preferencesSelf, isLoading: isPreferencesSelfLoading } = usePreferenceSelfQuery();
@@ -166,6 +169,12 @@ const HomeScreen = () => {
 		useCallback(() => {
 			// 서버에 heartbeat 전송 (lastLoginAt 업데이트)
 			sendHeartbeat();
+
+			// 세션당 1회 Home_Viewed 이벤트 전송 (DAU 측정용)
+			if (!hasTrackedHomeView.current) {
+				featureEvents.trackHomeViewed();
+				hasTrackedHomeView.current = true;
+			}
 
 			queryClient.invalidateQueries({
 				queryKey: ['notification', 'check-preference-fill', 'latest-matching'],

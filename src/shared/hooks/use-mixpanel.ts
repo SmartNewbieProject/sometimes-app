@@ -223,6 +223,7 @@ export interface UseMixpanelReturn {
 	featureEvents: {
 		trackAppOpened: () => void;
 		trackAppBackgrounded: () => void;
+		trackHomeViewed: () => void;
 		trackFeatureUsed: (
 			featureName: string,
 			featureCategory: string,
@@ -1004,6 +1005,10 @@ export const useMixpanel = (): UseMixpanelReturn => {
 
 		trackAppBackgrounded: useCallback(() => {
 			trackEvent('App_Backgrounded');
+		}, [trackEvent]),
+
+		trackHomeViewed: useCallback(() => {
+			trackEvent('Home_Viewed');
 		}, [trackEvent]),
 
 		trackFeatureUsed: useCallback(
