@@ -323,6 +323,7 @@ export const InfiniteArticleList = forwardRef<InfiniteArticleListHandle, Infinit
 				<CustomInfiniteScrollView
 					data={articles}
 					id="ArticleListContainer"
+					getItemKey={(item: ArticleType) => item.id}
 					renderItem={(article: ArticleType) => (
 						<Article
 							data={article}

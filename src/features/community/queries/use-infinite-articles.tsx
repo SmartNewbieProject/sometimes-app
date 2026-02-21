@@ -92,7 +92,15 @@ export const useInfiniteArticlesQuery = ({
   });
 
   const pagesCount = data?.pages?.length ?? 0; // ✅ 추가
-  const articles = data?.pages.flatMap((page) => page.items) || [];
+  const articles = (() => {
+    const all = data?.pages.flatMap((page) => page.items) || [];
+    const seen = new Set<string>();
+    return all.filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  })();
 
   const saveScrollPosition = useCallback((position: number) => {
     scrollPosition = position;
