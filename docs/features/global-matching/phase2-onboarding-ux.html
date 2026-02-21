@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Matching Phase 2 — 온보딩 UX 전략</title>
+<style>
+  :root {
+    --primary: #7A4AE2;
+    --primary-light: #E2D5FF;
+    --primary-bg: #F7F3FF;
+    --primary-deep: #49386E;
+    --primary-dark: #6B3FD4;
+    --surface: #F8F9FA;
+    --surface-tertiary: #F2EDFF;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-tertiary: #666666;
+    --text-muted: #7C7C7C;
+    --text-disabled: #AEAEAE;
+    --border-smooth: #E4E2E2;
+    --border-default: #AEAEAE;
+    --white: #FFFFFF;
+    --black: #000000;
+    --error: #FF0000;
+    --attention: #F70A8D;
+    --success: #34C759;
+    --warning: #FFB02E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, 'Pretendard', sans-serif;
+    background: #0F0A1A;
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    text-align: center;
+    padding: 80px 24px 60px;
+    background: linear-gradient(180deg, #1A0F2E 0%, #0F0A1A 100%);
+  }
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary), #9B6DFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .hero .subtitle {
+    font-size: 16px;
+    color: var(--text-disabled);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 32px;
+  }
+  .hero .detection-flow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(122,74,226,0.15);
+    border: 1px solid rgba(122,74,226,0.3);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--primary-light);
+  }
+  .hero .detection-flow code {
+    background: rgba(122,74,226,0.3);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  /* ===== SECTION LAYOUT ===== */
+  .section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .section-header .badge {
+    display: inline-block;
+    background: rgba(122,74,226,0.2);
+    color: var(--primary-light);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+  .section-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .section-header p {
+    font-size: 14px;
+    color: var(--text-disabled);
+  }
+
+  /* ===== PHONE MOCKUP ===== */
+  .phone {
+    width: 320px;
+    height: 640px;
+    background: var(--black);
+    border-radius: 36px;
+    border: 3px solid #333;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .phone .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 28px;
+    background: var(--black);
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+  .phone .status-bar {
+    height: 48px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 4px;
+    font-size: 11px;
+    color: var(--white);
+    font-weight: 600;
+    background: transparent;
+    position: relative;
+    z-index: 5;
+  }
+  .phone .screen {
+    height: calc(100% - 48px);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* ===== STRATEGY CARD LAYOUT ===== */
+  .strategy {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 48px 40px;
+    margin-bottom: 48px;
+  }
+  .strategy-top {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .strategy-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .strategy h3 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .strategy .strategy-desc {
+    font-size: 14px;
+    color: var(--text-disabled);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+  .strategy-body {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+  }
+  .strategy-phones {
+    display: flex;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+  .strategy-info {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  /* ===== PHONE INNER STYLES ===== */
+  /* Video Background */
+  .video-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg,
+      rgba(26,15,46,0.3) 0%,
+      rgba(0,0,0,0) 30%,
+      rgba(0,0,0,0) 50%,
+      rgba(0,0,0,0.65) 100%
+    ),
+    linear-gradient(135deg, #2D1B69, #1A0F2E, #0D1117);
+    z-index: 0;
+  }
+  .video-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    padding-bottom: 16px;
+  }
+  .flag-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .flag-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .video-headline {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .video-sub {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+  .typing-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .typing-highlight {
+    color: var(--primary-light);
+  }
+  .keyword-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .kw-chip {
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.15);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .kw-chip.active {
+    background: var(--primary);
+  }
+
+  /* GlowButton */
+  .glow-btn {
+    width: 100%;
+    padding: 13px 20px;
+    border-radius: 14px;
+    border: 2.5px solid var(--primary-dark);
+    background: linear-gradient(135deg, #9B6DFF, #7A4AE2, #6B3FD4);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+  .glow-btn .glow {
+    position: absolute;
+    top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: glowSweep 2.5s infinite;
+  }
+  @keyframes glowSweep {
+    0% { left: -60%; }
+    50% { left: 120%; }
+    100% { left: 120%; }
+  }
+
+  /* ===== STRATEGY A: Inline Accordion ===== */
+  .inline-panel {
+    margin-top: 12px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.12);
+    overflow: hidden;
+  }
+  .inline-step {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+  }
+  .inline-step:last-child { border-bottom: none; }
+  .inline-step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .inline-step-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .inline-step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    background: rgba(122,74,226,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary-light);
+  }
+  .inline-step-num.done {
+    background: var(--success);
+    color: var(--white);
+  }
+  .inline-step-title {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .inline-step-arrow {
+    font-size: 10px;
+    color: var(--text-disabled);
+    transition: transform 0.2s;
+  }
+  .inline-step-arrow.open { transform: rotate(180deg); }
+  .inline-step-body {
+    padding-top: 10px;
+  }
+  .step-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .step-chip {
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .step-chip.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  /* ===== STRATEGY B: Bottom Sheet ===== */
+  .bottom-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70%;
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+  }
+  .bs-handle-area {
+    display: flex;
+    justify-content: center;
+    padding: 12px 0;
+  }
+  .bs-handle {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-default);
+  }
+  .bs-header {
+    padding: 0 20px 16px;
+  }
+  .bs-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+  .bs-progress-bar {
+    height: 6px;
+    background: #F3EDFF;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bs-progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .bs-step-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .bs-body {
+    flex: 1;
+    padding: 0 20px;
+    overflow-y: auto;
+  }
+  .bs-question {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .bs-question-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .bs-choice {
+    display: flex;
+    align-items: center;
+    padding: 14px 14px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    border: 1.5px solid #E5E5E5;
+    background: var(--white);
+    cursor: pointer;
+    gap: 12px;
+  }
+  .bs-choice.selected {
+    border-color: var(--primary);
+    background: #F8F5FF;
+  }
+  .bs-radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    border: 2px solid #CCC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .bs-radio.selected {
+    border-color: var(--primary);
+  }
+  .bs-radio-inner {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background: var(--primary);
+  }
+  .bs-choice-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .bs-footer {
+    padding: 12px 20px 24px;
+  }
+  .bs-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+  }
+  .bs-btn.disabled {
+    background: var(--surface);
+    color: var(--text-disabled);
+  }
+  /* Chip selector in BS */
+  .bs-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .bs-chip {
+    padding: 8px 16px;
+    border-radius: 14px;
+    border: 1.5px solid #E5E5E5;
+    background: var(--white);
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .bs-chip.selected {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+  }
+
+  /* ===== STRATEGY C: Full-Screen Wizard ===== */
+  .wizard-screen {
+    height: 100%;
+    background: linear-gradient(180deg, var(--white) 0%, #F5F1FF 60%, #E8DEFF 100%);
+    display: flex;
+    flex-direction: column;
+  }
+  .wizard-top {
+    padding: 12px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .wizard-back {
+    font-size: 18px;
+    color: var(--text-primary);
+  }
+  .wizard-skip {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .wizard-progress {
+    padding: 12px 20px;
+  }
+  .hearts-row {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .heart {
+    font-size: 16px;
+    opacity: 0.3;
+  }
+  .heart.filled {
+    opacity: 1;
+    color: #FF6B9D;
+  }
+  .wizard-body {
+    flex: 1;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .wizard-card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border-smooth);
+    box-shadow: 0 2px 8px rgba(122,74,226,0.08);
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .wizard-card-emoji {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+  .wizard-card-text {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+  .wizard-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .wizard-choice {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1.5px solid #E5E5E5;
+    background: var(--white);
+    gap: 12px;
+    cursor: pointer;
+  }
+  .wizard-choice.selected {
+    border-color: var(--primary);
+    background: #F8F5FF;
+  }
+  .wizard-choice-icon {
+    font-size: 20px;
+  }
+  .wizard-choice-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .wizard-footer {
+    padding: 12px 24px 28px;
+  }
+  .wizard-btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    border: none;
+  }
+  .wizard-btn.disabled {
+    background: #E5E7EB;
+    color: var(--text-disabled);
+  }
+
+  /* ===== STRATEGY D: Nudge Banner ===== */
+  .nudge-banner {
+    margin-top: 10px;
+    background: rgba(122,74,226,0.15);
+    border: 1px solid rgba(122,74,226,0.3);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .nudge-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .nudge-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary-light);
+  }
+  .nudge-badge {
+    background: var(--attention);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+  }
+  .nudge-text {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .nudge-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .nudge-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .nudge-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary), #9B6DFF);
+  }
+  .nudge-pct {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary-light);
+  }
+  .nudge-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(122,74,226,0.3);
+    border: 1px solid rgba(122,74,226,0.4);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* After completion nudge */
+  .nudge-complete {
+    margin-top: 10px;
+    background: rgba(52,199,89,0.15);
+    border: 1px solid rgba(52,199,89,0.3);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nudge-complete-icon {
+    font-size: 20px;
+  }
+  .nudge-complete-text {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.4;
+  }
+  .nudge-complete-text strong {
+    color: var(--success);
+  }
+
+  /* ===== INFO CARDS ===== */
+  .info-block {
+    margin-bottom: 24px;
+  }
+  .info-block h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--primary-light);
+  }
+  .info-block p, .info-block li {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+  }
+  .info-block ul {
+    list-style: none;
+    padding: 0;
+  }
+  .info-block li {
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .info-block li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+  }
+
+  .pros-cons {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .pros, .cons {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+  }
+  .pros {
+    background: rgba(52,199,89,0.1);
+    border: 1px solid rgba(52,199,89,0.2);
+  }
+  .cons {
+    background: rgba(255,59,48,0.1);
+    border: 1px solid rgba(255,59,48,0.2);
+  }
+  .pros h5 { color: var(--success); font-size: 12px; margin-bottom: 6px; }
+  .cons h5 { color: #FF3B30; font-size: 12px; margin-bottom: 6px; }
+  .pros li::before { color: var(--success); }
+  .cons li::before { color: #FF3B30; }
+
+  /* Score badge */
+  .score-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .score-item {
+    flex: 1;
+    min-width: 80px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .score-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary-light);
+  }
+  .score-label {
+    font-size: 10px;
+    color: var(--text-disabled);
+    margin-top: 4px;
+  }
+
+  /* ===== COMPARISON TABLE ===== */
+  .comparison {
+    margin-top: 60px;
+    padding: 40px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+  }
+  .comparison h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 32px;
+  }
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .comp-table th, .comp-table td {
+    padding: 14px 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 13px;
+  }
+  .comp-table th {
+    color: var(--text-disabled);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .comp-table td:first-child {
+    text-align: left;
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+  }
+  .comp-table .highlight {
+    background: rgba(122,74,226,0.1);
+  }
+  .star { color: #FFD700; }
+  .check { color: var(--success); }
+  .cross { color: #FF3B30; }
+
+  /* ===== RECOMMENDATION ===== */
+  .recommendation {
+    margin-top: 60px;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(122,74,226,0.15), rgba(155,109,255,0.08));
+    border: 1px solid rgba(122,74,226,0.3);
+    border-radius: 24px;
+    text-align: center;
+  }
+  .recommendation h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  .recommendation p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 0 auto 24px;
+  }
+  .rec-combo {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .rec-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .rec-tag.primary {
+    background: var(--primary);
+    color: var(--white);
+  }
+  .rec-tag.secondary {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white);
+  }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow-diagram {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .strategy-body {
+      flex-direction: column;
+      align-items: center;
+    }
+    .strategy-info {
+      min-width: auto;
+    }
+    .strategy-phones {
+      justify-content: center;
+    }
+  }
+  @media (max-width: 500px) {
+    .phone {
+      width: 280px;
+      height: 560px;
+    }
+    .strategy {
+      padding: 24px 16px;
+    }
+    .strategy-phones {
+      flex-direction: column;
+      align-items: center;
+    }
+    .section {
+      padding: 40px 16px;
+    }
+  }
+
+  /* phone label */
+  .phone-label {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-disabled);
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  /* ===== STRATEGY D: Second Phone — Quick Setup Sheet ===== */
+  .quick-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55%;
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+  }
+  .quick-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .quick-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+  .quick-section {
+    margin-bottom: 14px;
+  }
+  .quick-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .quick-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .quick-chip {
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 1.5px solid #E5E5E5;
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 600;
+    background: var(--white);
+  }
+  .quick-chip.selected {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <h1>Phase 2: 선호도 온보딩 UX</h1>
+  <p class="subtitle">
+    온보딩 미완료 유저를 API로 감지하고, 선호도 설정을 유도하는 4가지 전략.
+    <br>기존 GlobalFirstMatch 영상 화면 위에 자연스럽게 통합됩니다.
+  </p>
+  <div class="detection-flow">
+    <code>useGlobalMatchingStatus()</code>
+    <span>→</span>
+    <span>onboardingCompleted: false</span>
+    <span>→</span>
+    <span>선호도 UI 노출</span>
+  </div>
+</div>
+
+<!-- ===== SECTIONS ===== -->
+<div class="section">
+
+  <div class="section-header">
+    <div class="badge">API 감지 흐름</div>
+    <h2>공통 감지 로직</h2>
+    <p>모든 전략에 적용되는 온보딩 상태 감지 → UI 분기 로직</p>
+  </div>
+
+  <div class="flow-diagram" style="max-width:700px;margin:0 auto 60px;">
+홈 화면 진입
+  ↓
+useGlobalMatchingStatus() → GET /global-matching/status
+  ↓
+┌─ onboardingCompleted: false ──────────────────┐
+│  + preferenceCount: 0                         │
+│                                               │
+│  → GlobalFirstMatch 영상 표시                  │
+│  → 영상 아래에 <b style="color:#E2D5FF;">선호도 온보딩 UI 추가</b>          │
+│  → GlowButton: "나와 맞는 친구 찾기"          │
+│     └─ 클릭 시:                               │
+│        1) completeOnboarding(preferenceIds)    │
+│        2) globalRematch()                      │
+│        3) completeFirstMatch() (localStorage)  │
+└───────────────────────────────────────────────┘
+  ↓
+┌─ onboardingCompleted: true ───────────────────┐
+│  + preferenceCount: 3                         │
+│  + profileTranslated: true                    │
+│                                               │
+│  → 일반 매칭 화면 (기존 플로우)                │
+│  → 온보딩 UI 숨김                              │
+└───────────────────────────────────────────────┘</div>
+
+
+  <!-- ==================== STRATEGY A ==================== -->
+  <div class="strategy">
+    <div class="strategy-top">
+      <div class="strategy-number">A</div>
+      <h3>Inline Accordion Steps</h3>
+    </div>
+    <p class="strategy-desc">
+      영상 화면 안에서 아코디언 패널로 선호도를 단계별 입력. 화면 이동 없이 모든 것을 한 곳에서 완료.
+    </p>
+    <div class="strategy-body">
+      <div class="strategy-phones">
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="status-bar">9:41</div>
+            <div class="screen">
+              <div class="video-bg"></div>
+              <div class="video-content">
+                <div class="flag-row">
+                  <div class="flag-badge">🇰🇷</div>
+                  <div class="flag-badge">🇯🇵</div>
+                </div>
+                <div class="video-headline">일본에서 온 인연</div>
+                <div class="video-sub">바다 건너</div>
+                <div class="typing-row">
+                  나와 맞는 <span class="typing-highlight">&nbsp;#여행&nbsp;</span> |
+                </div>
+                <div style="font-size:15px;font-weight:700;">친구를 찾아보세요</div>
+
+                <!-- Accordion Panel -->
+                <div class="inline-panel">
+                  <div class="inline-step">
+                    <div class="inline-step-header">
+                      <div class="inline-step-left">
+                        <div class="inline-step-num done">✓</div>
+                        <span class="inline-step-title">일본어 실력</span>
+                      </div>
+                      <span class="inline-step-arrow">▼</span>
+                    </div>
+                  </div>
+                  <div class="inline-step" style="background:rgba(122,74,226,0.1);">
+                    <div class="inline-step-header">
+                      <div class="inline-step-left">
+                        <div class="inline-step-num" style="background:var(--primary);color:white;">2</div>
+                        <span class="inline-step-title">관심사</span>
+                      </div>
+                      <span class="inline-step-arrow open">▼</span>
+                    </div>
+                    <div class="inline-step-body">
+                      <div class="step-chips">
+                        <div class="step-chip selected">🎵 음악</div>
+                        <div class="step-chip selected">✈️ 여행</div>
+                        <div class="step-chip">🍜 음식</div>
+                        <div class="step-chip">📚 언어교환</div>
+                        <div class="step-chip">🎮 게임</div>
+                        <div class="step-chip">📸 사진</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inline-step">
+                    <div class="inline-step-header">
+                      <div class="inline-step-left">
+                        <div class="inline-step-num">3</div>
+                        <span class="inline-step-title">선호 나이대</span>
+                      </div>
+                      <span class="inline-step-arrow">▼</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="glow-btn">
+                  <span class="glow"></span>
+                  나와 맞는 친구 찾기
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">선호도 입력 (Step 2 열림)</div>
+        </div>
+      </div>
+
+      <div class="strategy-info">
+        <div class="info-block">
+          <h4>핵심 아이디어</h4>
+          <p>영상 하단에 3단계 아코디언을 오버레이. 각 단계를 탭하면 해당 섹션만 열려 칩을 선택. 완료된 단계는 ✓ 표시.</p>
+        </div>
+        <div class="info-block">
+          <h4>인터랙션 흐름</h4>
+          <ul>
+            <li>Step 1: 일본어 실력 (4지선다 라디오)</li>
+            <li>Step 2: 관심사 (칩 복수 선택)</li>
+            <li>Step 3: 선호 나이대 (칩 단일 선택)</li>
+            <li>→ GlowButton으로 완료 + API 전송</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h4>구현 매핑</h4>
+          <ul>
+            <li>아코디언 → GlobalFirstMatch 내 신규 컴포넌트</li>
+            <li>칩 → 앱 내 <code>ChipSelector</code> 변형 (다크 테마)</li>
+            <li>라디오 → <code>ChoiceOptions</code> 변형</li>
+            <li>완료 마커 → 로컬 state 관리</li>
+          </ul>
+        </div>
+        <div class="pros-cons">
+          <div class="pros">
+            <h5>장점</h5>
+            <ul>
+              <li>화면 이동 없음 (제로 마찰)</li>
+              <li>영상 배경 유지 → 몰입감</li>
+              <li>부분 완료 가능</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h5>단점</h5>
+            <ul>
+              <li>공간 부족 → 옵션 수 제한</li>
+              <li>다크 테마 칩 별도 제작</li>
+              <li>스크롤 충돌 가능성</li>
+            </ul>
+          </div>
+        </div>
+        <div class="score-row">
+          <div class="score-item">
+            <div class="score-value">85%</div>
+            <div class="score-label">예상 시작률</div>
+          </div>
+          <div class="score-item">
+            <div class="score-value">60%</div>
+            <div class="score-label">예상 완료율</div>
+          </div>
+          <div class="score-item">
+            <div class="score-value">Low</div>
+            <div class="score-label">구현 복잡도</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== STRATEGY B ==================== -->
+  <div class="strategy">
+    <div class="strategy-top">
+      <div class="strategy-number">B</div>
+      <h3>Bottom Sheet Multi-Step</h3>
+    </div>
+    <p class="strategy-desc">
+      GlowButton 클릭 시 바텀시트가 올라오며 단계별 질문을 표시. 기존 BottomSheetPicker 패턴과 동일한 UX.
+    </p>
+    <div class="strategy-body">
+      <div class="strategy-phones">
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="status-bar">9:41</div>
+            <div class="screen">
+              <div class="video-bg"></div>
+              <div class="video-content">
+                <div class="flag-row">
+                  <div class="flag-badge">🇰🇷</div>
+                  <div class="flag-badge">🇯🇵</div>
+                </div>
+                <div class="video-headline">일본에서 온 인연</div>
+                <div class="video-sub">바다 건너</div>
+                <div class="typing-row">
+                  나와 맞는 <span class="typing-highlight">&nbsp;#음악&nbsp;</span> |
+                </div>
+                <div style="font-size:15px;font-weight:700;">친구를 찾아보세요</div>
+                <div class="glow-btn">
+                  <span class="glow"></span>
+                  선호도 설정하고 시작하기
+                </div>
+              </div>
+
+              <!-- Bottom Sheet -->
+              <div class="bottom-sheet">
+                <div class="bs-handle-area"><div class="bs-handle"></div></div>
+                <div class="bs-header">
+                  <div class="bs-title">매칭 선호도 설정</div>
+                  <div class="bs-progress-bar">
+                    <div class="bs-progress-fill" style="width:33%"></div>
+                  </div>
+                  <div class="bs-step-label">
+                    <span>Step 1/3</span>
+                    <span style="color:var(--primary);font-weight:600;">일본어 실력</span>
+                  </div>
+                </div>
+                <div class="bs-body">
+                  <div class="bs-question">일본어를 얼마나 할 수 있나요?</div>
+                  <div class="bs-question-sub">상대방과의 소통 수준을 맞춰드려요</div>
+                  <div class="bs-choice">
+                    <div class="bs-radio"></div>
+                    <span class="bs-choice-text">🙅 전혀 못해요</span>
+                  </div>
+                  <div class="bs-choice selected">
+                    <div class="bs-radio selected"><div class="bs-radio-inner"></div></div>
+                    <span class="bs-choice-text">🙂 기본 인사 정도</span>
+                  </div>
+                  <div class="bs-choice">
+                    <div class="bs-radio"></div>
+                    <span class="bs-choice-text">😊 일상 대화 가능</span>
+                  </div>
+                  <div class="bs-choice">
+                    <div class="bs-radio"></div>
+                    <span class="bs-choice-text">🗣️ 자유롭게 소통</span>
+                  </div>
+                </div>
+                <div class="bs-footer">
+                  <div class="bs-btn">다음</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">Step 1: 일본어 실력</div>
+        </div>
+
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="status-bar">9:41</div>
+            <div class="screen">
+              <div class="video-bg"></div>
+              <div class="video-content" style="opacity:0.3;"></div>
+
+              <div class="bottom-sheet">
+                <div class="bs-handle-area"><div class="bs-handle"></div></div>
+                <div class="bs-header">
+                  <div class="bs-title">매칭 선호도 설정</div>
+                  <div class="bs-progress-bar">
+                    <div class="bs-progress-fill" style="width:66%"></div>
+                  </div>
+                  <div class="bs-step-label">
+                    <span>Step 2/3</span>
+                    <span style="color:var(--primary);font-weight:600;">관심사 선택</span>
+                  </div>
+                </div>
+                <div class="bs-body">
+                  <div class="bs-question">어떤 관심사로 연결될까요?</div>
+                  <div class="bs-question-sub">2개 이상 선택해주세요</div>
+                  <div class="bs-chips">
+                    <div class="bs-chip selected">🎵 음악</div>
+                    <div class="bs-chip selected">✈️ 여행</div>
+                    <div class="bs-chip">🍜 음식탐방</div>
+                    <div class="bs-chip selected">📚 언어교환</div>
+                    <div class="bs-chip">🎮 게임</div>
+                    <div class="bs-chip">📸 사진</div>
+                    <div class="bs-chip">🎬 영화/드라마</div>
+                    <div class="bs-chip">💪 운동</div>
+                    <div class="bs-chip">🎨 그림/예술</div>
+                    <div class="bs-chip">☕ 카페투어</div>
+                  </div>
+                </div>
+                <div class="bs-footer">
+                  <div class="bs-btn">다음</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">Step 2: 관심사 선택</div>
+        </div>
+      </div>
+
+      <div class="strategy-info">
+        <div class="info-block">
+          <h4>핵심 아이디어</h4>
+          <p>GlowButton 클릭 → 바텀시트 올라옴 → 3단계 질문을 순차 진행. 기존 BottomSheetPicker 70% 높이에 프로그레스 바 + 라디오/칩 선택.</p>
+        </div>
+        <div class="info-block">
+          <h4>인터랙션 흐름</h4>
+          <ul>
+            <li>GlowButton "선호도 설정하고 시작하기" 클릭</li>
+            <li>Step 1: 일본어 실력 (라디오 4지선다)</li>
+            <li>Step 2: 관심사 (칩 복수 선택, 2개 이상)</li>
+            <li>Step 3: 선호 나이대 (칩 단일 선택)</li>
+            <li>"매칭 시작" → completeOnboarding + rematch</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h4>구현 매핑</h4>
+          <ul>
+            <li>시트 → <code>BottomSheetPicker</code> 확장 (multi-step)</li>
+            <li>프로그레스 → <code>AnimatedProgressBar</code></li>
+            <li>라디오 → <code>ChoiceOptions</code> (화이트 테마 그대로)</li>
+            <li>칩 → <code>ChipSelector</code> (기존 패턴 재사용)</li>
+          </ul>
+        </div>
+        <div class="pros-cons">
+          <div class="pros">
+            <h5>장점</h5>
+            <ul>
+              <li>기존 패턴 90% 재사용</li>
+              <li>화이트 테마 → 가독성 최상</li>
+              <li>dismiss로 나중에 하기 가능</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h5>단점</h5>
+            <ul>
+              <li>영상 배경 가려짐</li>
+              <li>버튼 한 번 더 눌러야 시작</li>
+              <li>시트 내 step 전환 구현 필요</li>
+            </ul>
+          </div>
+        </div>
+        <div class="score-row">
+          <div class="score-item">
+            <div class="score-value">70%</div>
+            <div class="score-label">예상 시작률</div>
+          </div>
+          <div class="score-item">
+            <div class="score-value">80%</div>
+            <div class="score-label">예상 완료율</div>
+          </div>
+          <div class="score-item">
+            <div class="score-value">Mid</div>
+            <div class="score-label">구현 복잡도</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== STRATEGY C ==================== -->
+  <div class="strategy">
+    <div class="strategy-top">
+      <div class="strategy-number">C</div>
+      <h3>Full-Screen Wizard</h3>
+    </div>
+    <p class="strategy-desc">
+      GlowButton 클릭 시 전용 온보딩 라우트로 이동. 기존 Moment 온보딩과 동일한 패턴으로 몰입형 경험 제공.
+    </p>
+    <div class="strategy-body">
+      <div class="strategy-phones">
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="status-bar" style="color:var(--text-primary);">9:41</div>
+            <div class="screen">
+              <div class="wizard-screen">
+                <div class="wizard-top">
+                  <span class="wizard-back">←</span>
+                  <span class="wizard-skip">건너뛰기</span>
+                </div>
+                <div class="wizard-progress">
+                  <div class="hearts-row">
+                    <span class="heart filled">♥</span>
+                    <span class="heart">♥</span>
+                    <span class="heart">♥</span>
+                  </div>
+                  <div style="height:6px;background:#F3EDFF;border-radius:3px;overflow:hidden;">
+                    <div style="width:33%;height:100%;background:var(--primary);border-radius:3px;"></div>
+                  </div>
+                </div>
+                <div class="wizard-body">
+                  <div class="wizard-card">
+                    <div class="wizard-card-emoji">🗣️</div>
+                    <div class="wizard-card-text">일본어를<br>얼마나 할 수 있나요?</div>
+                  </div>
+                  <div class="wizard-choices">
+                    <div class="wizard-choice">
+                      <span class="wizard-choice-icon">🙅</span>
+                      <div class="bs-radio"></div>
+                      <span class="wizard-choice-label">전혀 못해요</span>
+                    </div>
+                    <div class="wizard-choice selected">
+                      <span class="wizard-choice-icon">🙂</span>
+                      <div class="bs-radio selected"><div class="bs-radio-inner"></div></div>
+                      <span class="wizard-choice-label">기본 인사 정도</span>
+                    </div>
+                    <div class="wizard-choice">
+                      <span class="wizard-choice-icon">😊</span>
+                      <div class="bs-radio"></div>
+                      <span class="wizard-choice-label">일상 대화 가능</span>
+                    </div>
+                    <div class="wizard-choice">
+                      <span class="wizard-choice-icon">🗣️</span>
+                      <div class="bs-radio"></div>
+                      <span class="wizard-choice-label">자유롭게 소통</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="wizard-footer">
+                  <div class="wizard-btn">다음</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">Step 1: 언어 실력</div>
+        </div>
+
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="status-bar" style="color:var(--text-primary);">9:41</div>
+            <div class="screen">
+              <div class="wizard-screen">
+                <div class="wizard-top">
+                  <span class="wizard-back">←</span>
+                  <span class="wizard-skip">건너뛰기</span>
+                </div>
+                <div class="wizard-progress">
+                  <div class="hearts-row">
+                    <span class="heart filled">♥</span>
+                    <span class="heart filled">♥</span>
+                    <span class="heart filled">♥</span>
+                  </div>
+                  <div style="height:6px;background:#F3EDFF;border-radius:3px;overflow:hidden;">
+                    <div style="width:100%;height:100%;background:var(--primary);border-radius:3px;"></div>
+                  </div>
+                </div>
+                <div class="wizard-body">
+                  <div class="wizard-card">
+                    <div class="wizard-card-emoji">🎯</div>
+                    <div class="wizard-card-text">어떤 나이대의<br>친구를 만나고 싶나요?</div>
+                  </div>
+                  <div class="wizard-choices">
+                    <div class="wizard-choice">
+                      <span class="wizard-choice-icon">👶</span>
+                      <div class="bs-radio"></div>
+                      <span class="wizard-choice-label">동갑 ± 1살</span>
+                    </div>
+                    <div class="wizard-choice selected">
+                      <span class="wizard-choice-icon">🤝</span>
+                      <div class="bs-radio selected"><div class="bs-radio-inner"></div></div>
+                      <span class="wizard-choice-label">± 3살 이내</span>
+                    </div>
+                    <div class="wizard-choice">
+                      <span class="wizard-choice-icon">🌍</span>
+                      <div class="bs-radio"></div>
+                      <span class="wizard-choice-label">상관없어요</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="wizard-footer">
+                  <div class="wizard-btn">매칭 시작하기 ✨</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">Step 3: 선호 나이대</div>
+        </div>
+      </div>
+
+      <div class="strategy-info">
+        <div class="info-block">
+          <h4>핵심 아이디어</h4>
+          <p>전용 온보딩 경로(<code>/home/global-onboarding</code>)로 이동. Moment 온보딩과 동일한 그래디언트 배경 + 카드 질문 + 하트 프로그레스 패턴.</p>
+        </div>
+        <div class="info-block">
+          <h4>인터랙션 흐름</h4>
+          <ul>
+            <li>GlowButton → router.push('/home/global-onboarding')</li>
+            <li>Step 1: 일본어 실력 (라디오)</li>
+            <li>Step 2: 관심사 (칩 복수 선택)</li>
+            <li>Step 3: 선호 나이대 (라디오)</li>
+            <li>"매칭 시작" → API → 로딩 화면 → 결과</li>
+            <li>"건너뛰기" → 선호도 없이 바로 매칭</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h4>구현 매핑</h4>
+          <ul>
+            <li>전체 플로우 → Moment onboarding 패턴 복제</li>
+            <li>카드 → <code>OnboardingQuestionCard</code> 재사용</li>
+            <li>프로그레스 → <code>HeartsProgress</code> 재사용</li>
+            <li>선택지 → <code>ChoiceOptions</code> 재사용</li>
+            <li>라우트 → <code>app/home/global-onboarding.tsx</code></li>
+          </ul>
+        </div>
+        <div class="pros-cons">
+          <div class="pros">
+            <h5>장점</h5>
+            <ul>
+              <li>검증된 UX 패턴 (Moment에서 검증)</li>
+              <li>넓은 공간 → 풍부한 옵션</li>
+              <li>"건너뛰기" 선택지 제공</li>
+              <li>애니메이션/전환 자연스러움</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h5>단점</h5>
+            <ul>
+              <li>화면 전환 → 이탈 가능성</li>
+              <li>구현 공수 가장 높음</li>
+              <li>영상 몰입감 끊김</li>
+            </ul>
+          </div>
+        </div>
+        <div class="score-row">
+          <div class="score-item">
+            <div class="score-value">55%</div>
+            <div class="score-label">예상 시작률</div>
+          </div>
+          <div class="score-item">
+            <div class="score-value">90%</div>
+            <div class="score-label">예상 완료율</div>
+          </div>
+          <div class="score-item">
+            <div class="score-value">High</div>
+            <div class="score-label">구현 복잡도</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== STRATEGY D ==================== -->
+  <div class="strategy">
+    <div class="strategy-top">
+      <div class="strategy-number">D</div>
+      <h3>Progressive Nudge + Quick Setup</h3>
+    </div>
+    <p class="strategy-desc">
+      2단계 접근: 먼저 빠르게 매칭 시작(마찰 최소화), 이후 매칭 품질 향상 넛지 배너로 선호도 입력 유도. 선호도 설정 시 간소화된 Quick Sheet 사용.
+    </p>
+    <div class="strategy-body">
+      <div class="strategy-phones">
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="status-bar">9:41</div>
+            <div class="screen">
+              <div class="video-bg"></div>
+              <div class="video-content">
+                <div class="flag-row">
+                  <div class="flag-badge">🇰🇷</div>
+                  <div class="flag-badge">🇯🇵</div>
+                </div>
+                <div class="video-headline">일본에서 온 인연</div>
+                <div class="video-sub">바다 건너</div>
+                <div class="typing-row">
+                  나와 맞는 <span class="typing-highlight">&nbsp;#음악&nbsp;</span> |
+                </div>
+                <div style="font-size:15px;font-weight:700;">친구를 찾아보세요</div>
+
+                <!-- Nudge Banner -->
+                <div class="nudge-banner">
+                  <div class="nudge-top">
+                    <span class="nudge-label">매칭 품질</span>
+                    <span class="nudge-badge">UP</span>
+                  </div>
+                  <div class="nudge-text">
+                    선호도를 설정하면 나에게 더 잘 맞는<br>상대를 찾아드릴 수 있어요
+                  </div>
+                  <div class="nudge-progress">
+                    <div class="nudge-bar">
+                      <div class="nudge-bar-fill" style="width:35%"></div>
+                    </div>
+                    <span class="nudge-pct">35%</span>
+                  </div>
+                  <div class="nudge-btn">선호도 설정하기 →</div>
+                </div>
+
+                <div class="glow-btn">
+                  <span class="glow"></span>
+                  바로 시작하기
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">Phase 1: 넛지 + 바로 시작</div>
+        </div>
+
+        <div>
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="status-bar">9:41</div>
+            <div class="screen">
+              <div class="video-bg"></div>
+              <div class="video-content" style="opacity:0.3;"></div>
+
+              <!-- Quick Setup Sheet -->
+              <div class="quick-sheet">
+                <div class="bs-handle-area"><div class="bs-handle"></div></div>
+                <div style="padding:0 20px;flex:1;display:flex;flex-direction:column;">
+                  <div class="quick-title">빠른 선호도 설정</div>
+                  <div class="quick-sub">1분이면 완료! 매칭 품질이 크게 올라가요</div>
+
+                  <div class="quick-section">
+                    <div class="quick-label">🗣️ 일본어 실력</div>
+                    <div class="quick-chips">
+                      <div class="quick-chip">전혀 못해요</div>
+                      <div class="quick-chip selected">기본 인사</div>
+                      <div class="quick-chip">일상 대화</div>
+                      <div class="quick-chip">자유 소통</div>
+                    </div>
+                  </div>
+
+                  <div class="quick-section">
+                    <div class="quick-label">💫 관심사 (2개 이상)</div>
+                    <div class="quick-chips">
+                      <div class="quick-chip selected">🎵 음악</div>
+                      <div class="quick-chip selected">✈️ 여행</div>
+                      <div class="quick-chip">🍜 음식</div>
+                      <div class="quick-chip selected">📚 언어교환</div>
+                      <div class="quick-chip">🎮 게임</div>
+                      <div class="quick-chip">📸 사진</div>
+                      <div class="quick-chip">🎬 영화</div>
+                      <div class="quick-chip">💪 운동</div>
+                    </div>
+                  </div>
+
+                  <div class="quick-section">
+                    <div class="quick-label">🎯 선호 나이대</div>
+                    <div class="quick-chips">
+                      <div class="quick-chip">동갑 ± 1</div>
+                      <div class="quick-chip selected">± 3살</div>
+                      <div class="quick-chip">상관없음</div>
+                    </div>
+                  </div>
+
+                  <div style="flex:1;"></div>
+                  <div style="padding:12px 0 24px;">
+                    <div class="bs-btn">설정 완료 ✨</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">Quick Setup Sheet (한 화면)</div>
+        </div>
+      </div>
+
+      <div class="strategy-info">
+        <div class="info-block">
+          <h4>핵심 아이디어</h4>
+          <p>마찰을 최소화하는 2-track 접근. "바로 시작" 버튼으로 즉시 매칭 가능 + 넛지 배너로 선호도 설정 유도. 선호도 클릭 시 모든 질문이 한 화면에 보이는 Quick Sheet.</p>
+        </div>
+        <div class="info-block">
+          <h4>넛지 배너 로직</h4>
+          <ul>
+            <li><code>preferenceCount: 0</code> → 35% (기본 프로필만)</li>
+            <li><code>preferenceCount: 1~2</code> → 65% (일부 설정)</li>
+            <li><code>preferenceCount: 3+</code> → 95% (배너 숨김)</li>
+            <li><code>profileTranslated: true</code> → +5% 보너스</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h4>구현 매핑</h4>
+          <ul>
+            <li>넛지 배너 → GlobalFirstMatch 내 조건부 렌더링</li>
+            <li>Quick Sheet → <code>BottomSheetPicker</code> 변형 (단일 화면)</li>
+            <li>품질 % → <code>preferenceCount</code> 기반 계산</li>
+            <li>칩 → <code>ChipSelector</code> (화이트 테마)</li>
+          </ul>
+        </div>
+        <div class="pros-cons">
+          <div class="pros">
+            <h5>장점</h5>
+            <ul>
+              <li>진입 마찰 제로 (바로 시작 가능)</li>
+              <li>Gamification (품질 % 상승)</li>
+              <li>한 화면에 모든 옵션 → 빠른 완료</li>
+              <li>선호도 미입력도 매칭 가능</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h5>단점</h5>
+            <ul>
+              <li>선호도 미입력 유저 비율 높을 수 있음</li>
+              <li>넛지 무시 시 매칭 품질 저하</li>
+              <li>Quick Sheet 공간 부족 가능</li>
+            </ul>
+          </div>
+        </div>
+        <div class="score-row">
+          <div class="score-item">
+            <div class="score-value">95%</div>
+            <div class="score-label">매칭 시작률</div>
+          </div>
+          <div class="score-item">
+            <div class="score-value">50%</div>
+            <div class="score-label">선호도 완료율</div>
+          </div>
+          <div class="score-item">
+            <div class="score-value">Mid</div>
+            <div class="score-label">구현 복잡도</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== COMPARISON TABLE ===== -->
+  <div class="comparison">
+    <h2>전략 비교표</h2>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>평가 항목</th>
+          <th>A. Inline Accordion</th>
+          <th>B. Bottom Sheet</th>
+          <th>C. Full Wizard</th>
+          <th class="highlight">D. Nudge + Quick</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>매칭 시작률</td>
+          <td>85%</td>
+          <td>70%</td>
+          <td>55%</td>
+          <td class="highlight"><strong>95%</strong></td>
+        </tr>
+        <tr>
+          <td>선호도 완료율</td>
+          <td>60%</td>
+          <td>80%</td>
+          <td><strong>90%</strong></td>
+          <td class="highlight">50%</td>
+        </tr>
+        <tr>
+          <td>종합 전환율 (시작 × 완료)</td>
+          <td>51%</td>
+          <td>56%</td>
+          <td>50%</td>
+          <td class="highlight"><strong>48%</strong></td>
+        </tr>
+        <tr>
+          <td>구현 복잡도</td>
+          <td><span class="check">Low</span></td>
+          <td>Mid</td>
+          <td><span class="cross">High</span></td>
+          <td class="highlight">Mid</td>
+        </tr>
+        <tr>
+          <td>기존 컴포넌트 재사용</td>
+          <td>30%</td>
+          <td><strong>90%</strong></td>
+          <td>80%</td>
+          <td class="highlight">70%</td>
+        </tr>
+        <tr>
+          <td>영상 몰입감 유지</td>
+          <td><span class="check">유지</span></td>
+          <td>부분 가림</td>
+          <td><span class="cross">이탈</span></td>
+          <td class="highlight"><span class="check">유지</span></td>
+        </tr>
+        <tr>
+          <td>미완료 유저 대응</td>
+          <td><span class="cross">없음</span></td>
+          <td><span class="cross">없음</span></td>
+          <td>"건너뛰기"</td>
+          <td class="highlight"><span class="check">"바로 시작"</span></td>
+        </tr>
+        <tr>
+          <td>나중에 완료 가능</td>
+          <td><span class="cross">X</span></td>
+          <td>dismiss</td>
+          <td>"건너뛰기"</td>
+          <td class="highlight"><span class="check">넛지 반복</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ===== RECOMMENDATION ===== -->
+  <div class="recommendation">
+    <div class="badge">RECOMMENDED</div>
+    <h2>추천: B + D 하이브리드</h2>
+    <p>
+      <strong>D의 "바로 시작" + 넛지 배너</strong>로 진입 마찰을 제거하고,<br>
+      선호도 설정 클릭 시 <strong>B의 Bottom Sheet Multi-Step</strong>으로 안내.
+      <br><br>
+      이렇게 하면 <strong>매칭 시작률 95%</strong>를 유지하면서,
+      선호도 완료율도 <strong>Bottom Sheet의 80%</strong>를 확보할 수 있습니다.
+      <br>
+      기존 컴포넌트 재사용률도 높아 구현 효율적입니다.
+    </p>
+
+    <div class="rec-combo">
+      <div class="rec-tag primary">D. 넛지 배너 + 바로 시작</div>
+      <div class="rec-tag secondary">+ B. Bottom Sheet 선호도</div>
+    </div>
+
+    <div class="flow-diagram" style="margin-top:32px;text-align:left;max-width:600px;margin-left:auto;margin-right:auto;">
+GlobalFirstMatch 영상 화면
+│
+├─ [넛지 배너] "매칭 품질 35% → 선호도 설정하기"
+│   └─ 클릭 → <b style="color:#E2D5FF;">Bottom Sheet 3-Step</b>
+│              Step 1 → Step 2 → Step 3
+│              └─ "매칭 시작" → completeOnboarding(ids) + rematch
+│
+├─ [GlowButton] "바로 시작하기"
+│   └─ 클릭 → completeOnboarding({}) + rematch (선호도 없이)
+│
+└─ 매칭 완료 후 (not-found / open)
+    └─ preferenceCount: 0 이면 넛지 배너 재노출
+       "선호도를 설정하면 다음 매칭이 더 정확해져요"</div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -10,7 +10,7 @@ import {
 import { isRunningInExpoGo } from 'expo';
 import * as Application from 'expo-application';
 import * as SplashScreen from 'expo-splash-screen';
-import { preventScreenCaptureAsync } from 'expo-screen-capture';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, AppState, Platform, View, StyleSheet } from 'react-native';
 import 'react-native-reanimated';
@@ -80,12 +80,6 @@ export default Sentry.wrap(function RootLayout() {
 			navigationIntegration.registerNavigationContainer(navigationRef);
 		}
 	}, [navigationRef]);
-
-	useEffect(() => {
-		if (Platform.OS !== 'web' && !__DEV__) {
-			preventScreenCaptureAsync();
-		}
-	}, []);
 
 	const { request: requestAtt } = useAtt();
 	const notificationListener = useRef<{ remove(): void } | null>(null);

@@ -1,3 +1,4 @@
+import { GlobalMatchingTimer, ModeToggle, useMatchingMode, useGlobalMatchingEnabled } from '@/src/features/global-matching';
 import { useStep } from '@/src/features/guide/hooks/use-step';
 import useMatchingFirst from '@/src/features/guide/queries/use-maching-first';
 import LikeGuideScenario from '@/src/features/guide/ui/like-guide-scenario';
@@ -19,6 +20,7 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { useStorage } from '@/src/shared/hooks/use-storage';
 import { ImageResources, storage } from '@/src/shared/libs';
+import { sendHeartbeat } from '@/src/shared/libs/heartbeat';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { ensurePushTokenRegistered } from '@/src/shared/libs/notifications';
 import { AnnounceCard, BottomNavigation, BusinessInfo, Header, Show, Text } from '@/src/shared/ui';
@@ -68,6 +70,9 @@ const HomeScreen = () => {
 	const { trackEventAction } = Event.hooks.useEventAnalytics('home');
 	const { my, profileDetails } = useAuth();
 	const queryClient = useQueryClient();
+	const { isGlobalMode } = useMatchingMode();
+	const { data: globalMatchingFlag } = useGlobalMatchingEnabled();
+	const isGlobalMatchingEnabled = globalMatchingFlag?.enabled ?? false;
 	const { showCollapse } = useLiked();
 	const collapse = showCollapse();
 
@@ -156,9 +161,12 @@ const HomeScreen = () => {
 		}
 	}, [showModal]);
 
-	// 화면이 포커스될 때마다 데이터 리프레시
+	// 화면이 포커스될 때마다 데이터 리프레시 및 heartbeat 전송
 	useFocusEffect(
 		useCallback(() => {
+			// 서버에 heartbeat 전송 (lastLoginAt 업데이트)
+			sendHeartbeat();
+
 			queryClient.invalidateQueries({
 				queryKey: ['notification', 'check-preference-fill', 'latest-matching'],
 				refetchType: 'active',
@@ -189,7 +197,8 @@ const HomeScreen = () => {
 		if (isProfileComplete) {
 			return (
 				<View style={styles.matchingSection}>
-					<IdleMatchTimer />
+					{isGlobalMatchingEnabled && <ModeToggle />}
+					{isGlobalMatchingEnabled && isGlobalMode ? <GlobalMatchingTimer /> : <IdleMatchTimer />}
 				</View>
 			);
 		}
