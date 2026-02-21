@@ -25,27 +25,27 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
 		{
 			icon: ImageResources.BEER,
 			label:
-				parser.getSingleOption(t('ui.음주_선호도'), partner.characteristics) ??
+				parser.getSingleOption('DRINKING', partner.characteristics) ??
 				t('features.match.ui.partner_info_block.no_info'),
 		},
 		{
 			icon: ImageResources.SMOKE,
 			label:
-				parser.getSingleOption(t('ui.흡연_선호도'), partner.characteristics) ??
+				parser.getSingleOption('SMOKING', partner.characteristics) ??
 				t('features.match.ui.partner_info_block.no_info'),
 		},
 		{
 			icon: ImageResources.TATOO,
 			prefix: t('features.match.ui.partner_info_block.tattoo_prefix'),
 			label:
-				parser.getSingleOption(t('ui.문신_선호도'), partner.characteristics) ??
+				parser.getSingleOption('TATTOO', partner.characteristics) ??
 				t('features.match.ui.partner_info_block.no_info'),
 		},
 		{
 			icon: ImageResources.AGE,
 			prefix: t('features.match.ui.partner_info_block.preferred_age_prefix'),
 			label:
-				parser.getSingleOption(t('ui.선호_나이대'), partner.preferences) ??
+				parser.getSingleOption('AGE_PREFERENCE', partner.preferences) ??
 				t('features.match.ui.partner_info_block.doesnt_matter'),
 		},
 	];
@@ -54,7 +54,7 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
 		basicInfoItems.push({
 			icon: ImageResources.ARMY,
 			label:
-				parser.getSingleOption(t('ui.군필_여부'), partner.characteristics) ??
+				parser.getSingleOption('MILITARY_STATUS_MALE', partner.characteristics) ??
 				t('features.match.ui.partner_info_block.no_info'),
 		});
 	}
