@@ -31,9 +31,9 @@ export const useVersionUpdate = () => {
 			return;
 		}
 		const needsUpdate = compareVersions(currentVersion, serverVersion);
-		const supportedPlatform = latestVersionData.metadata.supports?.includes(
-			Platform.OS as VersionSupportPlatform,
-		);
+		const supportedPlatform = latestVersionData.metadata.supports
+			? latestVersionData.metadata.supports.includes(Platform.OS as VersionSupportPlatform)
+			: true;
 
 		if (needsUpdate && supportedPlatform) {
 			setUpdateData(latestVersionData);
