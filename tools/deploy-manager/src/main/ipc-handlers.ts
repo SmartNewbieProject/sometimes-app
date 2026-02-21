@@ -6,14 +6,17 @@ import { GooglePlayAPI } from './services/google-play-api'
 import { ReleaseNotesGenerator } from './services/release-notes'
 import { VersionReader } from './services/version-reader'
 import { ConfigStore } from './services/config-store'
+import { MonitorService } from './services/monitor-service'
 import { db } from './services/database'
 import { logger } from './utils/logger'
 import { sendNotification } from './utils/notify'
+import { sendSlackMessage } from './utils/slack'
 
 const configStore = new ConfigStore()
 let activeBuildService: BuildService | null = null
 
-export function registerIpcHandlers(): void {
+export function registerIpcHandlers(): MonitorService {
+  const monitorService = new MonitorService(configStore)
   // ── Config ──
   ipcMain.handle('config:get', () => configStore.getAll())
   ipcMain.handle('config:set', (_, partial) => configStore.update(partial))
@@ -221,6 +224,7 @@ export function registerIpcHandlers(): void {
       }
 
       await asc.releaseVersion(status.id)
+      configStore.updateDeployHistoryStatus(status.versionString, 'ios', 'READY_FOR_SALE')
       logger.info(`iOS released: version=${status.versionString}`)
       sendNotification('iOS 출시 완료', `${status.versionString}이 App Store에 출시되었습니다.`)
       return { success: true }
@@ -238,7 +242,15 @@ export function registerIpcHandlers(): void {
 
     try {
       await gplay.getAccessToken()
+      // Get track info before releasing to capture version name
+      const trackInfo = await gplay.getTrackStatus()
+      const draftRelease = trackInfo?.releases?.find((r) => r.status === 'draft')
+
       await gplay.releaseToProduction()
+
+      if (draftRelease?.name) {
+        configStore.updateDeployHistoryStatus(draftRelease.name, 'android', 'completed')
+      }
       logger.info('Android released to production')
       sendNotification('Android 출시 완료', 'Google Play에 출시되었습니다.')
       return { success: true }
@@ -315,11 +327,61 @@ export function registerIpcHandlers(): void {
     return configStore.addDeployHistory(entry)
   })
 
+  ipcMain.handle('monitor:refresh-all', async () => {
+    return monitorService.pollNow()
+  })
+
   ipcMain.handle('monitor:import-git-history', () => {
     const config = configStore.getAll()
     const count = db.importFromGit(config.sometimesAppPath)
     logger.info(`Git history imported: ${count} entries`)
     return { imported: count }
+  })
+
+  // ── iOS Resubmit (after rejection) ──
+  ipcMain.handle('deploy:resubmit-ios', async () => {
+    const config = configStore.getAll()
+    const asc = new AppStoreConnectAPI(config.ios)
+
+    try {
+      const status = await asc.getVersionStatus()
+      if (!status) {
+        return { success: false, error: '버전 정보를 찾을 수 없습니다' }
+      }
+      if (status.appStoreState !== 'REJECTED') {
+        return { success: false, error: `현재 상태(${status.appStoreState})에서는 재제출할 수 없습니다` }
+      }
+
+      await asc.submitForReview(status.id)
+      configStore.updateDeployHistoryStatus(status.versionString, 'ios', 'WAITING_FOR_REVIEW')
+      logger.info(`iOS resubmitted for review: version=${status.versionString}`)
+      sendNotification('iOS 재제출 완료', `${status.versionString} 심사 재제출이 완료되었습니다.`)
+      return { success: true }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      logger.error(`iOS resubmit failed: ${message}`)
+      return { success: false, error: message }
+    }
+  })
+
+  ipcMain.handle('deploy:resolution-center-url', () => {
+    const config = configStore.getAll()
+    return `https://appstoreconnect.apple.com/apps/${config.ios.appId}/appstore/resolutioncenter`
+  })
+
+  // ── Slack ──
+  ipcMain.handle('slack:test', async () => {
+    const config = configStore.getAll()
+    const { slack } = config
+    if (!slack.botToken || !slack.channelId) {
+      return { ok: false, error: 'Bot Token과 Channel ID를 설정해주세요.' }
+    }
+    return sendSlackMessage(
+      slack.botToken,
+      slack.channelId,
+      '\ud83d\udd14 테스트 알림',
+      'Deploy Manager Slack 연동이 정상 작동합니다!'
+    )
   })
 
   // ── System ──
@@ -356,4 +418,6 @@ export function registerIpcHandlers(): void {
       win.webContents.send('system:notification', { title, body })
     }
   })
+
+  return monitorService
 }

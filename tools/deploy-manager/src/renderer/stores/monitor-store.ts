@@ -38,6 +38,7 @@ interface MonitorState {
   setHistory: (h: DeployHistoryEntry[]) => void
   setLoading: (v: boolean) => void
   setLastRefresh: () => void
+  handleStateChange: (data: { ios: IOSVersionStatus | null; android: AndroidTrackStatus | null; timestamp: string }) => void
 }
 
 export const useMonitorStore = create<MonitorState>((set) => ({
@@ -51,5 +52,10 @@ export const useMonitorStore = create<MonitorState>((set) => ({
   setAndroidStatus: (s) => set({ androidStatus: s }),
   setHistory: (h) => set({ history: h }),
   setLoading: (v) => set({ isLoading: v }),
-  setLastRefresh: () => set({ lastRefresh: new Date().toLocaleTimeString() })
+  setLastRefresh: () => set({ lastRefresh: new Date().toLocaleTimeString() }),
+  handleStateChange: (data) => set({
+    iosStatus: data.ios,
+    androidStatus: data.android,
+    lastRefresh: new Date(data.timestamp).toLocaleTimeString()
+  })
 }))

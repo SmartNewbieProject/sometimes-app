@@ -17,7 +17,8 @@ import {
   AndroidOutlined,
   ClockCircleOutlined,
   ImportOutlined,
-  RocketOutlined
+  RocketOutlined,
+  ExportOutlined
 } from '@ant-design/icons'
 import { useMonitorStore } from '../stores/monitor-store'
 
@@ -64,7 +65,8 @@ export function MonitorPage(): JSX.Element {
     setAndroidStatus,
     setHistory,
     setLoading,
-    setLastRefresh
+    setLastRefresh,
+    handleStateChange
   } = useMonitorStore()
 
   const refresh = async () => {
@@ -88,6 +90,7 @@ export function MonitorPage(): JSX.Element {
 
   const [importing, setImporting] = useState(false)
   const [releasing, setReleasing] = useState<'ios' | 'android' | null>(null)
+  const [resubmitting, setResubmitting] = useState(false)
 
   const handleRelease = async (platform: 'ios' | 'android') => {
     setReleasing(platform)
@@ -107,6 +110,27 @@ export function MonitorPage(): JSX.Element {
     setReleasing(null)
   }
 
+  const handleResubmit = async () => {
+    setResubmitting(true)
+    try {
+      const result = await window.api.deploy.resubmitIos()
+      if (result.success) {
+        message.success('심사 재제출이 완료되었습니다!')
+        await refresh()
+      } else {
+        message.error(result.error)
+      }
+    } catch {
+      message.error('심사 재제출 실패')
+    }
+    setResubmitting(false)
+  }
+
+  const handleOpenResolutionCenter = async () => {
+    const url = await window.api.deploy.resolutionCenterUrl()
+    window.api.system.openExternal(url)
+  }
+
   const handleImportGit = async () => {
     setImporting(true)
     try {
@@ -120,17 +144,20 @@ export function MonitorPage(): JSX.Element {
   }
 
   useEffect(() => {
+    // Initial load
     refresh()
 
-    // Auto-refresh based on monitorInterval config
-    let timer: ReturnType<typeof setInterval> | null = null
-    window.api.config.get().then((config: any) => {
-      const interval = Math.max(config.monitorInterval || 300000, 60000)
-      timer = setInterval(refresh, interval)
+    // Listen for push events from MonitorService (Main process)
+    const unsubscribe = window.api.monitor.onStateChanged((data) => {
+      handleStateChange(data as Parameters<typeof handleStateChange>[0])
+      // Also refresh history since MonitorService may have updated it
+      window.api.monitor.history().then((hist) => {
+        useMonitorStore.getState().setHistory(hist)
+      })
     })
 
     return () => {
-      if (timer) clearInterval(timer)
+      unsubscribe()
     }
   }, [])
 
@@ -216,6 +243,27 @@ export function MonitorPage(): JSX.Element {
                       App Store 출시
                     </Button>
                   )}
+                  {iosStatus.appStoreState === 'REJECTED' && (
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                      <Button
+                        icon={<ExportOutlined />}
+                        onClick={handleOpenResolutionCenter}
+                        block
+                      >
+                        거부 사유 확인 (Resolution Center)
+                      </Button>
+                      <Button
+                        type="primary"
+                        danger
+                        icon={<RocketOutlined />}
+                        loading={resubmitting}
+                        onClick={handleResubmit}
+                        block
+                      >
+                        심사 재제출
+                      </Button>
+                    </Space>
+                  )}
                 </Space>
               ) : (
                 <Text type="secondary">No data available. Check settings.</Text>
@@ -234,41 +282,42 @@ export function MonitorPage(): JSX.Element {
                 </Space>
               }
             >
-              {androidStatus?.releases?.length ? (() => {
-                // draft/inProgress 릴리즈를 우선 표시 (게시 대기 상태를 놓치지 않도록)
-                const priorityOrder = ['draft', 'inProgress', 'halted', 'completed']
-                const sorted = [...androidStatus.releases].sort(
-                  (a, b) => priorityOrder.indexOf(a.status) - priorityOrder.indexOf(b.status)
-                )
-                const release = sorted[0]
-                return (
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <Space>
-                    <Text strong>{release.name}</Text>
-                    <Tag color={stateColors[release.status] || 'default'}>
-                      {stateLabels[release.status] || release.status}
-                    </Tag>
-                  </Space>
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    Track: {androidStatus.track}
-                    {release.userFraction != null &&
-                      ` | Rollout: ${(release.userFraction * 100).toFixed(0)}%`}
-                  </Text>
-                  {release.status === 'draft' && (
-                    <Button
-                      type="primary"
-                      icon={<RocketOutlined />}
-                      loading={releasing === 'android'}
-                      onClick={() => handleRelease('android')}
-                      block
-                    >
-                      Google Play 출시
-                    </Button>
-                  )}
-                </Space>
-                )
-              })()
-              ) : (
+              {androidStatus?.releases?.length ? (
+                () => {
+                  // draft/inProgress 릴리즈를 우선 표시 (게시 대기 상태를 놓치지 않도록)
+                  const priorityOrder = ['draft', 'inProgress', 'halted', 'completed']
+                  const sorted = [...androidStatus.releases].sort(
+                    (a, b) => priorityOrder.indexOf(a.status) - priorityOrder.indexOf(b.status)
+                  )
+                  const release = sorted[0]
+                  return (
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                      <Space>
+                        <Text strong>{release.name}</Text>
+                        <Tag color={stateColors[release.status] || 'default'}>
+                          {stateLabels[release.status] || release.status}
+                        </Tag>
+                      </Space>
+                      <Text type="secondary" style={{ fontSize: 12 }}>
+                        Track: {androidStatus.track}
+                        {release.userFraction != null &&
+                          ` | Rollout: ${(release.userFraction * 100).toFixed(0)}%`}
+                      </Text>
+                      {release.status === 'draft' && (
+                        <Button
+                          type="primary"
+                          icon={<RocketOutlined />}
+                          loading={releasing === 'android'}
+                          onClick={() => handleRelease('android')}
+                          block
+                        >
+                          Google Play 출시
+                        </Button>
+                      )}
+                    </Space>
+                  )
+                }
+              )() : (
                 <Text type="secondary">No data available. Check settings.</Text>
               )}
             </Card>

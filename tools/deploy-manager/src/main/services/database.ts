@@ -36,6 +36,11 @@ export interface AppConfig {
   buildDir: string
   monitorInterval: number
   openaiApiKey: string
+  slack: {
+    botToken: string
+    channelId: string
+    enabled: boolean
+  }
 }
 
 export interface DeployHistoryEntry {
@@ -167,7 +172,8 @@ We appreciate your guidance in helping us improve our app and look forward to yo
   },
   buildDir: '/Volumes/eungu/build/sometimes',
   monitorInterval: 300000,
-  openaiApiKey: ''
+  openaiApiKey: '',
+  slack: { botToken: '', channelId: '', enabled: false }
 }
 
 // ── Line Classifier ──
@@ -322,6 +328,7 @@ class DeployDatabase {
       merged.ios = { ...DEFAULT_CONFIG.ios, ...stored.ios }
       merged.ios.review = { ...DEFAULT_CONFIG.ios.review, ...(stored.ios?.review || {}) }
       merged.android = { ...DEFAULT_CONFIG.android, ...stored.android }
+      merged.slack = { ...DEFAULT_CONFIG.slack, ...stored.slack }
       return merged
     } catch {
       return { ...DEFAULT_CONFIG }
@@ -337,6 +344,7 @@ class DeployDatabase {
       if (partial.ios.review) merged.ios.review = { ...current.ios.review, ...partial.ios.review }
     }
     if (partial.android) merged.android = { ...current.android, ...partial.android }
+    if (partial.slack) merged.slack = { ...current.slack, ...partial.slack }
 
     const json = JSON.stringify(merged)
     this._db.prepare(
@@ -369,6 +377,21 @@ class DeployDatabase {
       androidStatus: entry.androidStatus || '',
       createdAt: new Date(entry.date).getTime() || Date.now()
     })
+  }
+
+  // ── Deploy History Status Update ──
+
+  updateDeployHistoryStatus(version: string, platform: 'ios' | 'android', newStatus: string): boolean {
+    const column = platform === 'ios' ? 'ios_status' : 'android_status'
+    // Find the most recent entry for this version
+    const row = this._db.prepare(
+      `SELECT id FROM deploy_history WHERE version = ? ORDER BY created_at DESC LIMIT 1`
+    ).get(version) as { id: string } | undefined
+    if (!row) return false
+    const result = this._db.prepare(
+      `UPDATE deploy_history SET ${column} = ? WHERE id = ?`
+    ).run(newStatus, row.id)
+    return result.changes > 0
   }
 
   // ── Build Sessions ──

@@ -20,4 +20,8 @@ export class ConfigStore {
   addDeployHistory(entry: DeployHistoryEntry): void {
     db.addDeployHistory(entry)
   }
+
+  updateDeployHistoryStatus(version: string, platform: 'ios' | 'android', newStatus: string): boolean {
+    return db.updateDeployHistoryStatus(version, platform, newStatus)
+  }
 }

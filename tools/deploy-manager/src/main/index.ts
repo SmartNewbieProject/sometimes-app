@@ -3,6 +3,9 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { registerIpcHandlers } from './ipc-handlers'
 import { db } from './services/database'
+import type { MonitorService } from './services/monitor-service'
+
+let monitorService: MonitorService | null = null
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -83,7 +86,8 @@ app.whenReady().then(() => {
   ]
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 
-  registerIpcHandlers()
+  monitorService = registerIpcHandlers()
+  monitorService.start()
   createWindow()
 
   app.on('activate', () => {
@@ -92,6 +96,7 @@ app.whenReady().then(() => {
 })
 
 app.on('before-quit', () => {
+  monitorService?.stop()
   db.close()
 })
 

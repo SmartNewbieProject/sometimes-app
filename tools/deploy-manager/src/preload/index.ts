@@ -54,6 +54,8 @@ const api = {
       ipcRenderer.invoke('deploy:android', opts),
     releaseIos: () => ipcRenderer.invoke('deploy:release-ios'),
     releaseAndroid: () => ipcRenderer.invoke('deploy:release-android'),
+    resubmitIos: () => ipcRenderer.invoke('deploy:resubmit-ios'),
+    resolutionCenterUrl: () => ipcRenderer.invoke('deploy:resolution-center-url'),
     generateReleaseNotes: (sinceTag?: string) =>
       ipcRenderer.invoke('release-notes:generate', sinceTag),
     generateReleaseNotesAI: (sinceTag?: string) =>
@@ -69,9 +71,20 @@ const api = {
   monitor: {
     iosStatus: () => ipcRenderer.invoke('monitor:ios-status'),
     androidStatus: () => ipcRenderer.invoke('monitor:android-status'),
+    refreshAll: () => ipcRenderer.invoke('monitor:refresh-all'),
     history: () => ipcRenderer.invoke('monitor:history'),
     saveHistory: (entry: Record<string, unknown>) => ipcRenderer.invoke('monitor:save-history', entry),
-    importGitHistory: () => ipcRenderer.invoke('monitor:import-git-history')
+    importGitHistory: () => ipcRenderer.invoke('monitor:import-git-history'),
+    onStateChanged: (cb: (data: { ios: unknown; android: unknown; timestamp: string }) => void) => {
+      const handler = (_: unknown, data: { ios: unknown; android: unknown; timestamp: string }) => cb(data)
+      ipcRenderer.on('monitor:state-changed', handler)
+      return () => { ipcRenderer.removeListener('monitor:state-changed', handler) }
+    }
+  },
+
+  // Slack
+  slack: {
+    test: () => ipcRenderer.invoke('slack:test')
   },
 
   // System

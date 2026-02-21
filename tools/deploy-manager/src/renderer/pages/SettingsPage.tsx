@@ -17,7 +17,9 @@ import {
   AndroidOutlined,
   SettingOutlined,
   SafetyCertificateOutlined,
-  ThunderboltOutlined
+  ThunderboltOutlined,
+  MessageOutlined,
+  SendOutlined
 } from '@ant-design/icons'
 
 const { Title, Text } = Typography
@@ -50,6 +52,11 @@ interface AppConfig {
   buildDir: string
   monitorInterval: number
   openaiApiKey: string
+  slack: {
+    botToken: string
+    channelId: string
+    enabled: boolean
+  }
 }
 
 // Glass section card
@@ -135,6 +142,7 @@ const SubHeading = ({ children }: { children: string }) => (
 export function SettingsPage(): JSX.Element {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
+  const [slackTesting, setSlackTesting] = useState(false)
 
   const loadConfig = async () => {
     try {
@@ -161,7 +169,10 @@ export function SettingsPage(): JSX.Element {
         androidPackage: config.android.packageName,
         androidSAPath: config.android.serviceAccountPath,
         androidTrack: config.android.track,
-        openaiApiKey: config.openaiApiKey
+        openaiApiKey: config.openaiApiKey,
+        slackEnabled: config.slack?.enabled ?? false,
+        slackBotToken: config.slack?.botToken ?? '',
+        slackChannelId: config.slack?.channelId ?? ''
       })
     } catch {
       message.error('Failed to load config')
@@ -202,13 +213,33 @@ export function SettingsPage(): JSX.Element {
           serviceAccountPath: values.androidSAPath,
           track: values.androidTrack
         },
-        openaiApiKey: values.openaiApiKey
+        openaiApiKey: values.openaiApiKey,
+        slack: {
+          botToken: values.slackBotToken || '',
+          channelId: values.slackChannelId || '',
+          enabled: values.slackEnabled ?? false
+        }
       })
       message.success('Settings saved!')
     } catch {
       message.error('Failed to save settings')
     }
     setLoading(false)
+  }
+
+  const handleSlackTest = async () => {
+    setSlackTesting(true)
+    try {
+      const result = await window.api.slack.test()
+      if (result.ok) {
+        message.success('Slack 테스트 메시지 전송 성공!')
+      } else {
+        message.error(`Slack 전송 실패: ${result.error}`)
+      }
+    } catch {
+      message.error('Slack 테스트에 실패했습니다')
+    }
+    setSlackTesting(false)
   }
 
   const selectPath = async (field: string, type: 'file' | 'directory') => {
@@ -257,6 +288,40 @@ export function SettingsPage(): JSX.Element {
           <FormRow label="OpenAI API Key" name="openaiApiKey">
             <Input.Password style={inputStyle} placeholder="sk-..." />
           </FormRow>
+        </SectionCard>
+
+        {/* ── Slack ── */}
+        <SectionCard icon={<MessageOutlined />} title="Slack" description="Monitor alerts to Slack channel">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '7px 16px',
+              borderBottom: '1px solid rgba(0,0,0,0.04)'
+            }}
+          >
+            <Text style={{ fontSize: 13, flex: 1 }}>Enable Slack Alerts</Text>
+            <Form.Item name="slackEnabled" valuePropName="checked" noStyle>
+              <Switch size="small" />
+            </Form.Item>
+          </div>
+          <FormRow label="Bot Token" name="slackBotToken">
+            <Input.Password style={inputStyle} placeholder="xoxb-..." />
+          </FormRow>
+          <FormRow label="Channel ID" name="slackChannelId">
+            <Input style={inputStyle} placeholder="C0XXXXXXX" />
+          </FormRow>
+          <div style={{ padding: '10px 16px', textAlign: 'right' }}>
+            <Button
+              icon={<SendOutlined />}
+              size="small"
+              onClick={handleSlackTest}
+              loading={slackTesting}
+              style={{ borderRadius: 6 }}
+            >
+              Test
+            </Button>
+          </div>
         </SectionCard>
 
         {/* ── iOS ── */}

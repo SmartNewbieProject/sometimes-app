@@ -46,6 +46,10 @@ export class AppStoreConnectAPI {
     this.config = config
   }
 
+  getAppId(): string {
+    return this.config.appId
+  }
+
   private ensureConfigured(): void {
     if (!this.config.ascApiKeyPath || !this.config.ascApiKeyId || !this.config.ascApiKeyIssuerId) {
       throw new Error('App Store Connect API is not configured. Please set API Key in Settings.')
