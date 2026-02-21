@@ -9,7 +9,7 @@ import type { ResultTypeId } from './types';
 /**
  * 테스트 버전
  */
-export const TEST_VERSION = 'v1' as const;
+export const TEST_VERSION = 'v2' as const;
 
 /**
  * 총 질문 수
@@ -46,21 +46,14 @@ export const QUESTION_IDS = ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'] as const;
 // ==================== Result Type IDs ====================
 
 /**
- * 결과 타입 ID 목록 (12개)
+ * 결과 타입 ID 목록 (5개)
  */
 export const RESULT_TYPE_IDS: readonly ResultTypeId[] = [
-	'romantic_dreamer',
-	'steady_supporter',
-	'intellectual_partner',
-	'emotional_connector',
-	'gentle_guardian',
-	'free_spirit',
-	'adventure_seeker',
-	'social_butterfly',
-	'playful_partner',
-	'ambitious_achiever',
-	'creative_soul',
-	'practical_planner',
+	'romantic_emotional',
+	'warm_healing',
+	'free_explorer',
+	'reliable_trust',
+	'energetic_active',
 ] as const;
 
 // ==================== Result Type Metadata ====================
@@ -73,69 +66,28 @@ export const RESULT_TYPE_METADATA_KO: Record<
 	ResultTypeId,
 	{
 		name: string;
-		emoji: string;
 		shortDescription: string;
 	}
 > = {
-	romantic_dreamer: {
-		name: '로맨틱 드리머',
-		emoji: '💕',
-		shortDescription: '감성적이고 로맨틱한 연애를 꿈꾸는 타입',
+	romantic_emotional: {
+		name: '로맨틱 감성형',
+		shortDescription: '깊은 감정적 교류를 원하는 당신',
 	},
-	steady_supporter: {
-		name: '든든한 서포터',
-		emoji: '🤝',
-		shortDescription: '안정적이고 믿음직한 관계를 원하는 타입',
+	warm_healing: {
+		name: '따뜻한 힐링형',
+		shortDescription: '편안하고 다정한 관계를 원하는 당신',
 	},
-	intellectual_partner: {
-		name: '지적인 파트너',
-		emoji: '📚',
-		shortDescription: '깊은 대화와 지적인 자극을 즐기는 타입',
+	free_explorer: {
+		name: '자유로운 탐험가형',
+		shortDescription: '서로의 성장을 응원하는 관계를 원하는 당신',
 	},
-	emotional_connector: {
-		name: '감정 커넥터',
-		emoji: '💗',
-		shortDescription: '깊은 감정적 교류를 중시하는 타입',
+	reliable_trust: {
+		name: '든든한 신뢰형',
+		shortDescription: '믿음직하고 안정적인 관계를 원하는 당신',
 	},
-	gentle_guardian: {
-		name: '포근한 수호자',
-		emoji: '🏠',
-		shortDescription: '편안하고 따뜻한 관계를 추구하는 타입',
-	},
-	free_spirit: {
-		name: '자유로운 영혼',
-		emoji: '🦋',
-		shortDescription: '독립적이고 자유로운 관계를 원하는 타입',
-	},
-	adventure_seeker: {
-		name: '모험 추구자',
-		emoji: '🌍',
-		shortDescription: '새로운 경험을 함께 즐기고 싶은 타입',
-	},
-	social_butterfly: {
-		name: '소셜 버터플라이',
-		emoji: '🎉',
-		shortDescription: '사교적이고 활발한 연애를 즐기는 타입',
-	},
-	playful_partner: {
-		name: '유쾌한 파트너',
-		emoji: '😄',
-		shortDescription: '웃음이 넘치는 재미있는 연애를 원하는 타입',
-	},
-	ambitious_achiever: {
-		name: '열정적 성취자',
-		emoji: '🚀',
-		shortDescription: '목표 지향적이고 열정적인 타입',
-	},
-	creative_soul: {
-		name: '창의적 영혼',
-		emoji: '🎨',
-		shortDescription: '창의적이고 예술적인 감성을 가진 타입',
-	},
-	practical_planner: {
-		name: '현실적 플래너',
-		emoji: '📋',
-		shortDescription: '계획적이고 현실적인 연애를 원하는 타입',
+	energetic_active: {
+		name: '에너지 넘치는 활발형',
+		shortDescription: '함께 웃고 즐기는 관계를 원하는 당신',
 	},
 };
 
@@ -146,69 +98,28 @@ export const RESULT_TYPE_METADATA_JA: Record<
 	ResultTypeId,
 	{
 		name: string;
-		emoji: string;
 		shortDescription: string;
 	}
 > = {
-	romantic_dreamer: {
-		name: 'ロマンチックドリーマー',
-		emoji: '💕',
-		shortDescription: '感性的でロマンチックな恋愛を夢見るタイプ',
+	romantic_emotional: {
+		name: 'ロマンチック感性型',
+		shortDescription: '深い感情的な交流を望むあなた',
 	},
-	steady_supporter: {
-		name: '頼れるサポーター',
-		emoji: '🤝',
-		shortDescription: '安定的で信頼できる関係を望むタイプ',
+	warm_healing: {
+		name: '温かいヒーリング型',
+		shortDescription: '穏やかで優しい関係を望むあなた',
 	},
-	intellectual_partner: {
-		name: '知的パートナー',
-		emoji: '📚',
-		shortDescription: '深い会話と知的刺激を楽しむタイプ',
+	free_explorer: {
+		name: '自由な探検家型',
+		shortDescription: 'お互いの成長を応援する関係を望むあなた',
 	},
-	emotional_connector: {
-		name: '感情コネクター',
-		emoji: '💗',
-		shortDescription: '深い感情的交流を重視するタイプ',
+	reliable_trust: {
+		name: '頼れる信頼型',
+		shortDescription: '信頼できて安定した関係を望むあなた',
 	},
-	gentle_guardian: {
-		name: '優しい守護者',
-		emoji: '🏠',
-		shortDescription: '心地よく温かい関係を求めるタイプ',
-	},
-	free_spirit: {
-		name: '自由な魂',
-		emoji: '🦋',
-		shortDescription: '独立的で自由な関係を望むタイプ',
-	},
-	adventure_seeker: {
-		name: '冒険探求者',
-		emoji: '🌍',
-		shortDescription: '新しい経験を一緒に楽しみたいタイプ',
-	},
-	social_butterfly: {
-		name: 'ソーシャルバタフライ',
-		emoji: '🎉',
-		shortDescription: '社交的で活発な恋愛を楽しむタイプ',
-	},
-	playful_partner: {
-		name: '楽しいパートナー',
-		emoji: '😄',
-		shortDescription: '笑いあふれる楽しい恋愛を望むタイプ',
-	},
-	ambitious_achiever: {
-		name: '情熱的達成者',
-		emoji: '🚀',
-		shortDescription: '目標志向的で情熱的なタイプ',
-	},
-	creative_soul: {
-		name: 'クリエイティブソウル',
-		emoji: '🎨',
-		shortDescription: '創造的で芸術的な感性を持つタイプ',
-	},
-	practical_planner: {
-		name: '現実的プランナー',
-		emoji: '📋',
-		shortDescription: '計画的で現実的な恋愛を望むタイプ',
+	energetic_active: {
+		name: 'エネルギッシュ活発型',
+		shortDescription: '一緒に笑って楽しむ関係を望むあなた',
 	},
 };
 

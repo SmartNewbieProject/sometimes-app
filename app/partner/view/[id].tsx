@@ -14,6 +14,7 @@ import {
 	MihoIntroModal,
 	PartnerBasicInfo,
 	PartnerMBTI,
+	PartnerIdealType,
 	MatchingReasonCard,
 } from '@/src/features/match/ui';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
@@ -30,7 +31,7 @@ import type { Href } from 'expo-router';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View, Text as RNText } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, View, Text as RNText } from 'react-native';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 
 const { queries } = Match;
@@ -424,6 +425,8 @@ export default function PartnerDetailScreen() {
 						)}
 
 						<PartnerMBTI partner={partner} />
+
+						<PartnerIdealType partner={partner} />
 
 						<Text
 							style={{

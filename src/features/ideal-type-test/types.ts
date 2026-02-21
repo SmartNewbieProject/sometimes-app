@@ -17,26 +17,18 @@ export interface Answer {
 	selectedOptionId: string;
 }
 
-// 결과 타입 ID
+// 결과 타입 ID (v2: 5개 타입)
 export type ResultTypeId =
-	| 'romantic_dreamer'
-	| 'steady_supporter'
-	| 'intellectual_partner'
-	| 'emotional_connector'
-	| 'gentle_guardian'
-	| 'free_spirit'
-	| 'adventure_seeker'
-	| 'social_butterfly'
-	| 'playful_partner'
-	| 'ambitious_achiever'
-	| 'creative_soul'
-	| 'practical_planner';
+	| 'romantic_emotional'
+	| 'warm_healing'
+	| 'free_explorer'
+	| 'reliable_trust'
+	| 'energetic_active';
 
 // 테스트 결과
 export interface TestResult {
 	id: ResultTypeId;
 	name: string;
-	emoji: string;
 	description: string;
 	tags: string[];
 }

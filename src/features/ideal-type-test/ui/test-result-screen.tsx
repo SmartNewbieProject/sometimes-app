@@ -112,7 +112,6 @@ export function TestResultScreen({
 			<View style={[styles.content, { paddingTop: insets.top }]}>
 				{/* Hero result */}
 				<Animated.View entering={FadeInDown.duration(500)} style={styles.heroSection}>
-					<Text style={styles.heroEmoji}>{result.emoji}</Text>
 					<Text style={styles.heroLabel}>{t('features.ideal-type-test.result.your_type')}</Text>
 					<Text style={styles.heroName}>{result.name}</Text>
 					<Text style={styles.heroDescription}>{result.description}</Text>
@@ -218,9 +217,6 @@ const styles = StyleSheet.create({
 		paddingTop: 16,
 		paddingBottom: 8,
 		alignItems: 'center',
-	},
-	heroEmoji: {
-		fontSize: 48,
 	},
 	heroLabel: {
 		fontSize: 12,

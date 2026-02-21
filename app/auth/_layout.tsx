@@ -53,6 +53,15 @@ export default function AuthLayout() {
           }}
         />
         <Stack.Screen
+          name="login/ideal-type-test"
+          options={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "transparent",
+            },
+          }}
+        />
+        <Stack.Screen
           name="login/apple-info"
           options={{
             headerShown: false,
