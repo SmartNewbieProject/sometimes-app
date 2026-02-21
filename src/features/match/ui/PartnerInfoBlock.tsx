@@ -1,10 +1,14 @@
 import {
 	getIdealTypeCardMeta,
+	getIdealTypeCardMetaById,
+	getResultMascotImage,
 	getResultMascotImageByName,
+	resolveResultTypeId,
 } from '@/src/features/ideal-type-test/get-result-mascot-image';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { ImageResources, parser } from '@/src/shared/libs';
 import { ImageResource, Text } from '@/src/shared/ui';
+import type { UserProfile } from '@/src/types/user';
 import { MBTICard } from '@/src/widgets/mbti-card';
 import type { MBTIType } from '@/src/widgets/mbti-card';
 import { Image } from 'expo-image';
@@ -12,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 interface PartnerInfoBlockProps {
-	partner: any; // Using any for now to match the flexibility
+	partner: UserProfile;
 }
 
 export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
@@ -61,8 +65,8 @@ export const PartnerBasicInfo = ({ partner }: PartnerInfoBlockProps) => {
 				{t('features.match.ui.partner_info_block.basic_info_title')}
 			</Text>
 			<View style={[styles.infoCard, { backgroundColor: semanticColors.surface.surface }]}>
-				{basicInfoItems.map((info, index) => (
-					<View key={index} style={styles.infoItem}>
+				{basicInfoItems.map((info) => (
+					<View key={info.label} style={styles.infoItem}>
 						<ImageResource resource={info.icon} width={24} height={24} />
 						<Text textColor="secondary" style={styles.infoText} numberOfLines={1}>
 							{info.prefix && (
@@ -104,9 +108,16 @@ export const PartnerIdealType = ({ partner }: PartnerInfoBlockProps) => {
 		return null;
 	}
 
-	const { name, tags } = partner.idealTypeResult;
-	const meta = getIdealTypeCardMeta(name, lang);
-	const mascotImage = getResultMascotImageByName(name, lang);
+	const { id, name, tags } = partner.idealTypeResult;
+
+	// id 기반 조회 (primary), name 기반 fallback
+	const resultTypeId = id || resolveResultTypeId(name);
+	const meta = resultTypeId
+		? getIdealTypeCardMetaById(resultTypeId, lang)
+		: getIdealTypeCardMeta(name, lang);
+	const mascotImage = resultTypeId
+		? getResultMascotImage(resultTypeId)
+		: getResultMascotImageByName(name);
 
 	return (
 		<View style={styles.idealTypeContainer}>

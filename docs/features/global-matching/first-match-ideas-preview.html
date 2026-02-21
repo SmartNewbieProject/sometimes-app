@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlobalFirstMatch - 10 Ideas Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #0a0a0f;
+    color: #fff;
+    padding: 40px 20px 80px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #7A4AE2, #E2D5FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-sub {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 48px;
+  }
+
+  /* === Current State === */
+  .section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #7A4AE2;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    padding-left: 4px;
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .difficulty {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .diff-easy { background: rgba(0,200,100,0.15); color: #4ade80; }
+  .diff-mid { background: rgba(255,180,0,0.15); color: #fbbf24; }
+  .diff-hard { background: rgba(255,60,60,0.15); color: #f87171; }
+
+  /* === Phone Frame === */
+  .phone-frame {
+    width: 320px;
+    margin: 0 auto 64px;
+    position: relative;
+  }
+
+  .card {
+    width: 320px;
+    height: 320px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    background: #1a1a2e;
+  }
+
+  /* Simulated video background - animated scene transitions */
+  .video-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+
+  @keyframes sceneCycle {
+    0%, 30% {
+      background: linear-gradient(135deg, #8B6914 0%, #D4A843 30%, #F5DEB3 50%, #C49B3A 70%, #6B4F12 100%);
+      filter: brightness(0.9) saturate(1.2);
+    }
+    35%, 65% {
+      background: linear-gradient(135deg, #FFB7C5 0%, #FADADD 30%, #E8A0BF 50%, #C77DA3 70%, #FFD1DC 100%);
+      filter: brightness(1.0) saturate(1.1);
+    }
+    70%, 95% {
+      background: linear-gradient(135deg, #FF6B35 0%, #8B2252 30%, #FF8C42 50%, #C41E3A 70%, #FF6347 100%);
+      filter: brightness(0.75) saturate(1.3);
+    }
+    100% {
+      background: linear-gradient(135deg, #8B6914 0%, #D4A843 30%, #F5DEB3 50%, #C49B3A 70%, #6B4F12 100%);
+      filter: brightness(0.9) saturate(1.2);
+    }
+  }
+
+  .video-bg { animation: sceneCycle 10s ease-in-out infinite; }
+
+  /* People silhouette hint */
+  .video-bg::after {
+    content: '';
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 140px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  /* Standard dark overlay */
+  .overlay-standard {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.65) 100%);
+  }
+
+  /* Card content */
+  .card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    z-index: 2;
+  }
+
+  .headline {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .sub-sea {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 4px;
+  }
+
+  .typing-line {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+    min-height: 26px;
+  }
+
+  .typing-highlight {
+    color: #E2D5FF;
+  }
+
+  .typing-cursor {
+    color: #E2D5FF;
+    opacity: 0.6;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .chip {
+    padding: 5px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    color: #fff;
+    background: rgba(255,255,255,0.15);
+  }
+
+  .chip.active {
+    background: #7A4AE2;
+    font-weight: 700;
+  }
+
+  .chip-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 8px;
+  }
+
+  /* ============================================
+     IDEA-SPECIFIC STYLES
+     ============================================ */
+
+  /* IDEA 1: Fade-in + Slide-up */
+  .idea1 .headline { animation: slideUp 0.6s ease-out both; }
+  .idea1 .text-section { animation: slideUp 0.6s 0.2s ease-out both; }
+  .idea1 .chip-area { animation: slideUp 0.6s 0.4s ease-out both; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* IDEA 2: Vignette overlay */
+  .overlay-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center, rgba(0,0,0,0) 30%, rgba(0,0,0,0.55) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5) 100%);
+  }
+
+  /* IDEA 3: Glassmorphism text area */
+  .glass-panel {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 8px;
+  }
+
+  /* IDEA 4: Cursor blink */
+  .cursor-blink {
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* IDEA 5: Chip scale bounce */
+  .chip-bounce.active {
+    animation: chipPop 0.4s ease-out;
+    box-shadow: 0 0 12px rgba(122, 74, 226, 0.5);
+  }
+  @keyframes chipPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  /* IDEA 6: Flag badges */
+  .flag-badges {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .flag-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+  }
+
+  /* IDEA 7: Scene-synced gradient tint */
+  .overlay-tinted {
+    position: absolute;
+    inset: 0;
+  }
+  @keyframes tintCycle {
+    0%, 30% {
+      background: linear-gradient(to bottom, rgba(139,105,20,0) 0%, rgba(139,105,20,0.12) 40%, rgba(30,20,5,0.7) 100%);
+    }
+    35%, 65% {
+      background: linear-gradient(to bottom, rgba(255,183,197,0) 0%, rgba(200,125,163,0.12) 40%, rgba(40,10,25,0.7) 100%);
+    }
+    70%, 95% {
+      background: linear-gradient(to bottom, rgba(255,107,53,0) 0%, rgba(139,34,82,0.12) 40%, rgba(20,5,15,0.7) 100%);
+    }
+    100% {
+      background: linear-gradient(to bottom, rgba(139,105,20,0) 0%, rgba(139,105,20,0.12) 40%, rgba(30,20,5,0.7) 100%);
+    }
+  }
+  .overlay-tinted { animation: tintCycle 10s ease-in-out infinite; }
+
+  /* IDEA 8: Bokeh particles */
+  .particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-320px) translateX(30px); opacity: 0; }
+  }
+
+  /* IDEA 9: CTA hint */
+  .cta-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+  .cta-arrow {
+    animation: bounceDown 1.5s ease-in-out infinite;
+    font-size: 14px;
+  }
+  @keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* IDEA 10: Watermark logo */
+  .watermark {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    z-index: 3;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.15);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ============================================
+     COMBINED (ALL IDEAS)
+     ============================================ */
+  .idea-all .headline { animation: slideUp 0.6s ease-out both; }
+  .idea-all .text-section { animation: slideUp 0.6s 0.2s ease-out both; }
+  .idea-all .chip-area { animation: slideUp 0.6s 0.4s ease-out both; }
+
+  /* ============================================
+     LAYOUT
+     ============================================ */
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 64px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .idea-item {
+    scroll-margin-top: 40px;
+  }
+
+  /* Nav */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 10px 20px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .nav a {
+    font-size: 12px;
+    color: #888;
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav a:hover { background: rgba(122,74,226,0.25); color: #E2D5FF; }
+  .nav a.current { background: #7A4AE2; color: #fff; }
+
+  body { padding-top: 80px; }
+
+  /* Divider */
+  .divider {
+    width: 60px;
+    height: 2px;
+    background: rgba(122,74,226,0.3);
+    margin: 0 auto 48px;
+  }
+
+  /* Combined card at end */
+  .combined-section {
+    margin-top: 40px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#current" class="current">Current</a>
+  <a href="#idea1">1.Fade-in</a>
+  <a href="#idea2">2.Vignette</a>
+  <a href="#idea3">3.Glass</a>
+  <a href="#idea4">4.Cursor</a>
+  <a href="#idea5">5.Bounce</a>
+  <a href="#idea6">6.Flags</a>
+  <a href="#idea7">7.Tint</a>
+  <a href="#idea8">8.Bokeh</a>
+  <a href="#idea9">9.CTA</a>
+  <a href="#idea10">10.Logo</a>
+  <a href="#combined">ALL</a>
+</nav>
+
+<h1>GlobalFirstMatch UI Ideas</h1>
+<p class="page-sub">10 visual enhancement ideas - scroll to compare</p>
+
+<div class="divider"></div>
+
+<div class="ideas-grid">
+
+  <!-- ==================== CURRENT ==================== -->
+  <div class="idea-item" id="current">
+    <div class="section-label">Current</div>
+    <div class="section-title">현재 상태</div>
+    <div class="section-desc">영상 배경 + 상→하 다크 그라데이션 + 좌측 정렬 텍스트. 기본 베이스라인.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="card-content">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 1 ==================== -->
+  <div class="idea-item" id="idea1">
+    <span class="difficulty diff-mid">보통</span>
+    <div class="section-label">Idea 1</div>
+    <div class="section-title">페이드인 + 슬라이드업 진입</div>
+    <div class="section-desc">카드 등장 시 헤드라인→서브텍스트→칩이 0.2초 간격으로 아래에서 위로 순차 진입. 첫인상의 "와" 모먼트.</div>
+    <div class="phone-frame">
+      <div class="card idea1">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="card-content">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="text-section">
+            <div class="sub-sea">바다 건너</div>
+            <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+            <div class="typing-line">친구를 찾아보세요</div>
+          </div>
+          <div class="chip-area">
+            <div class="chip-row">
+              <span class="chip active">#여행</span>
+              <span class="chip">#음악</span>
+              <span class="chip">#맛집탐방</span>
+            </div>
+            <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 2 ==================== -->
+  <div class="idea-item" id="idea2">
+    <span class="difficulty diff-hard">높음</span>
+    <div class="section-label">Idea 2</div>
+    <div class="section-title">4방향 비네팅 오버레이</div>
+    <div class="section-desc">단방향 그라데이션 대신 가장자리가 어둡고 중앙이 밝은 비네팅. 영상 속 인물이 더 돋보이고, 영화 포스터 느낌.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-vignette"></div>
+        <div class="card-content">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 3 ==================== -->
+  <div class="idea-item" id="idea3">
+    <span class="difficulty diff-mid">보통</span>
+    <div class="section-label">Idea 3</div>
+    <div class="section-title">글래스모피즘 텍스트 영역</div>
+    <div class="section-desc">텍스트를 블러 배경 유리판 패널로 감싸기. 가독성과 고급감 동시 확보. 영상이 패널 뒤로 은은하게 비침.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="card-content">
+          <div class="glass-panel">
+            <div class="headline" style="font-size:24px; margin-bottom:10px;">일본에서 온 인연</div>
+            <div class="sub-sea">바다 건너</div>
+            <div class="typing-line" style="font-size:16px;">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+            <div class="typing-line" style="font-size:16px;">친구를 찾아보세요</div>
+            <div class="chip-row" style="margin-top:12px;">
+              <span class="chip active">#여행</span>
+              <span class="chip">#음악</span>
+              <span class="chip">#맛집탐방</span>
+            </div>
+            <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 4 ==================== -->
+  <div class="idea-item" id="idea4">
+    <span class="difficulty diff-easy">쉬움</span>
+    <div class="section-label">Idea 4</div>
+    <div class="section-title">타이핑 커서 블링크</div>
+    <div class="section-desc">커서 | 가 0.5초 간격으로 깜빡임. 실제 타이핑 UX와 동일한 느낌. 현재 정적 커서 대비 생동감.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="card-content">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor cursor-blink"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 5 ==================== -->
+  <div class="idea-item" id="idea5">
+    <span class="difficulty diff-mid">보통</span>
+    <div class="section-label">Idea 5</div>
+    <div class="section-title">활성 칩 스케일 바운스</div>
+    <div class="section-desc">타이핑 키워드 전환 시 해당 칩이 scale 1.08까지 튀었다 돌아오며 glow 효과. 칩↔타이핑 연동이 명확.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="card-content">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor cursor-blink"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip chip-bounce active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 6 ==================== -->
+  <div class="idea-item" id="idea6">
+    <span class="difficulty diff-easy">쉬움</span>
+    <div class="section-label">Idea 6</div>
+    <div class="section-title">국기 이모지 배지</div>
+    <div class="section-desc">헤드라인 위에 원형 국기 배지. "한일 매칭"이라는 기능을 아이콘으로 즉시 전달. 글래스 스타일 원형 배경.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="card-content">
+          <div class="flag-badges">
+            <div class="flag-badge">🇰🇷</div>
+            <div class="flag-badge">🇯🇵</div>
+          </div>
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 7 ==================== -->
+  <div class="idea-item" id="idea7">
+    <span class="difficulty diff-hard">높음</span>
+    <div class="section-label">Idea 7</div>
+    <div class="section-title">씬 연동 그라데이션 틴트</div>
+    <div class="section-desc">영상 씬 전환(카페→벚꽃→축제)에 맞춰 오버레이 색조가 앰버→핑크→퍼플로 변화. 영상과 UI의 유기적 연결.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-tinted"></div>
+        <div class="card-content">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 8 ==================== -->
+  <div class="idea-item" id="idea8">
+    <span class="difficulty diff-hard">높음</span>
+    <div class="section-label">Idea 8</div>
+    <div class="section-title">보케 파티클 오버레이</div>
+    <div class="section-desc">영상 위에 떠다니는 반투명 빛 보케 6~8개. 느리게 상승하며 좌우 흔들림. 몽환적 분위기 극대화.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="particles">
+          <div class="particle" style="width:40px;height:40px;left:10%;bottom:-20px;animation-duration:8s;animation-delay:0s;"></div>
+          <div class="particle" style="width:24px;height:24px;left:30%;bottom:-20px;animation-duration:10s;animation-delay:1.5s;"></div>
+          <div class="particle" style="width:32px;height:32px;left:55%;bottom:-20px;animation-duration:9s;animation-delay:3s;"></div>
+          <div class="particle" style="width:20px;height:20px;left:75%;bottom:-20px;animation-duration:11s;animation-delay:2s;"></div>
+          <div class="particle" style="width:28px;height:28px;left:45%;bottom:-20px;animation-duration:7s;animation-delay:4.5s;"></div>
+          <div class="particle" style="width:36px;height:36px;left:85%;bottom:-20px;animation-duration:9.5s;animation-delay:1s;"></div>
+        </div>
+        <div class="card-content" style="z-index:3;">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 9 ==================== -->
+  <div class="idea-item" id="idea9">
+    <span class="difficulty diff-mid">보통</span>
+    <div class="section-label">Idea 9</div>
+    <div class="section-title">하단 CTA 힌트</div>
+    <div class="section-desc">칩 아래에 "아래 버튼으로 시작 ↓" 바운스 힌트. 첫 매칭 유저의 다음 행동 유도. GlowButton과 시각적 연결.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="card-content">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+          <div class="cta-hint">
+            <span>아래 버튼으로 시작</span>
+            <span class="cta-arrow">↓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== IDEA 10 ==================== -->
+  <div class="idea-item" id="idea10">
+    <span class="difficulty diff-mid">보통</span>
+    <div class="section-label">Idea 10</div>
+    <div class="section-title">반투명 로고 워터마크</div>
+    <div class="section-desc">카드 좌상단에 은은한 "GLOBAL MATCHING" 워터마크. 프리미엄 콘텐츠 느낌 + 기능의 정체성 각인.</div>
+    <div class="phone-frame">
+      <div class="card">
+        <div class="video-bg"></div>
+        <div class="overlay-standard"></div>
+        <div class="watermark">GLOBAL MATCHING</div>
+        <div class="card-content">
+          <div class="headline">일본에서 온 인연</div>
+          <div class="sub-sea">바다 건너</div>
+          <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor"> |</span></div>
+          <div class="typing-line">친구를 찾아보세요</div>
+          <div class="chip-row">
+            <span class="chip active">#여행</span>
+            <span class="chip">#음악</span>
+            <span class="chip">#맛집탐방</span>
+          </div>
+          <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== COMBINED ==================== -->
+  <div class="idea-item combined-section" id="combined">
+    <span class="difficulty" style="background:rgba(122,74,226,0.25);color:#c4b5fd;">COMBINED</span>
+    <div class="section-label">All Ideas Combined</div>
+    <div class="section-title">추천 조합: 1+2+4+5+6</div>
+    <div class="section-desc">진입 애니메이션 + 비네팅 + 커서 블링크 + 칩 바운스 + 국기 배지. 과하지 않으면서 완성도 높은 조합.</div>
+    <div class="phone-frame">
+      <div class="card idea-all">
+        <div class="video-bg"></div>
+        <div class="overlay-vignette"></div>
+        <div class="card-content">
+          <div class="headline">
+            <div class="flag-badges" style="margin-bottom:8px;">
+              <div class="flag-badge">🇰🇷</div>
+              <div class="flag-badge">🇯🇵</div>
+            </div>
+            일본에서 온 인연
+          </div>
+          <div class="text-section">
+            <div class="sub-sea">바다 건너</div>
+            <div class="typing-line">나와 맞는 <span class="typing-highlight">#여행 좋아하는</span><span class="typing-cursor cursor-blink"> |</span></div>
+            <div class="typing-line">친구를 찾아보세요</div>
+          </div>
+          <div class="chip-area">
+            <div class="chip-row">
+              <span class="chip chip-bounce active">#여행</span>
+              <span class="chip">#음악</span>
+              <span class="chip">#맛집탐방</span>
+            </div>
+            <div class="chip-desc">나의 관심사로 찾아드릴게요</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Chip bounce rotation (ideas 5 and combined)
+setInterval(() => {
+  document.querySelectorAll('.chip-bounce').forEach(el => {
+    el.classList.remove('active');
+    el.style.animation = 'none';
+    el.offsetHeight; // reflow
+    el.style.animation = '';
+  });
+
+  document.querySelectorAll('.chip-row').forEach(row => {
+    const chips = row.querySelectorAll('.chip');
+    const bounceChips = row.querySelectorAll('.chip-bounce');
+    if (bounceChips.length === 0) return;
+
+    // Find current active index
+    let activeIdx = 0;
+    chips.forEach((c, i) => { if (c.classList.contains('active')) activeIdx = i; });
+
+    // Remove all active
+    chips.forEach(c => c.classList.remove('active'));
+
+    // Next chip
+    const nextIdx = (activeIdx + 1) % chips.length;
+    chips[nextIdx].classList.add('active');
+    if (chips[nextIdx].classList.contains('chip-bounce')) {
+      chips[nextIdx].style.animation = 'none';
+      chips[nextIdx].offsetHeight;
+      chips[nextIdx].style.animation = '';
+    }
+  });
+}, 2500);
+
+// Replay slide-up on scroll into view
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const card = entry.target.querySelector('.idea1, .idea-all');
+      if (card) {
+        card.querySelectorAll('.headline, .text-section, .chip-area').forEach(el => {
+          el.style.animation = 'none';
+          el.offsetHeight;
+          el.style.animation = '';
+        });
+      }
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.idea-item').forEach(item => observer.observe(item));
+
+// Active nav on scroll
+const sections = document.querySelectorAll('.idea-item');
+const navLinks = document.querySelectorAll('.nav a');
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(a => a.classList.toggle('current', a.getAttribute('href') === '#' + id));
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => navObserver.observe(s));
+</script>
+
+</body>
+</html>

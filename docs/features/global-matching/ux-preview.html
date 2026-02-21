@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Matching UX Preview v2</title>
+<style>
+  :root {
+    --brand-primary: #7A4AE2;
+    --brand-accent: #A892D7;
+    --brand-secondary: #9747FF;
+    --brand-deep: #49386E;
+    --brand-light: #E2D5FF;
+    --surface-bg: #FFFFFF;
+    --surface-surface: #F8F9FA;
+    --surface-secondary: #F7F3FF;
+    --surface-tertiary: #F2EDFF;
+    --surface-other: #E1D9FF;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-muted: #7C7C7C;
+    --text-disabled: #AEAEAE;
+    --border-smooth: #e4e2e2;
+    --state-error: #FF0000;
+    --state-success: #22C55E;
+    --state-warning: #FFB02E;
+    --state-attention: #F70A8D;
+    --global-gradient: linear-gradient(135deg, #7A4AE2 0%, #3B82F6 100%);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Pretendard',sans-serif; background:#f0ecf7; color:var(--text-primary); line-height:1.5; }
+
+  .top-header {
+    background: var(--global-gradient);
+    color:#fff; padding:48px 24px 24px; text-align:center;
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 4px 20px rgba(122,74,226,0.3);
+  }
+  .top-header h1 { font-size:22px; font-weight:700; letter-spacing:-0.3px; }
+  .top-header p { font-size:12px; opacity:0.85; margin-top:4px; }
+  .top-header .flags { font-size:28px; margin-bottom:8px; }
+  .top-header .version-badge { display:inline-block; background:rgba(255,255,255,0.2); padding:2px 10px; border-radius:10px; font-size:10px; margin-top:6px; }
+
+  .nav-tabs {
+    display:flex; gap:6px; padding:12px 16px; overflow-x:auto;
+    background:#fff; border-bottom:1px solid var(--border-smooth);
+    position:sticky; top:96px; z-index:99; -webkit-overflow-scrolling:touch;
+  }
+  .nav-tab {
+    flex-shrink:0; padding:8px 14px; border-radius:20px; font-size:13px; font-weight:600;
+    border:1.5px solid var(--brand-light); background:#fff; color:var(--brand-primary);
+    cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .nav-tab:hover,.nav-tab.active { background:var(--brand-primary); color:#fff; border-color:var(--brand-primary); }
+
+  .section { display:none; padding:20px 16px 60px; max-width:1400px; margin:0 auto; }
+  .section.active { display:block; }
+  .section-title { font-size:20px; font-weight:700; color:var(--brand-deep); margin-bottom:4px; }
+  .section-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; line-height:1.6; }
+  .section-rationale {
+    background:var(--surface-secondary); border-left:3px solid var(--brand-primary);
+    padding:12px 16px; border-radius:0 12px 12px 0; margin-bottom:24px;
+    font-size:12px; color:var(--text-secondary); line-height:1.7;
+  }
+  .section-rationale strong { color:var(--brand-primary); }
+
+  .confirmed-label {
+    display:inline-block; font-size:14px; font-weight:700; color:#fff;
+    background: linear-gradient(135deg, var(--brand-primary), var(--state-attention));
+    padding:6px 16px; border-radius:20px; margin-bottom:16px;
+  }
+
+  .mockups-row { display:flex; gap:24px; flex-wrap:wrap; justify-content:center; }
+  .mockup-item { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .mockup-label { font-size:12px; font-weight:700; color:var(--brand-deep); background:var(--surface-tertiary); padding:4px 12px; border-radius:10px; text-align:center; }
+  .mockup-sublabel { font-size:10px; color:var(--text-muted); max-width:280px; text-align:center; line-height:1.5; }
+
+  .phone {
+    width:280px; height:580px; border:3px solid #222; border-radius:36px;
+    overflow:hidden; background:#fff; position:relative;
+    box-shadow:0 8px 32px rgba(0,0,0,0.15);
+  }
+  .phone-notch { width:100px; height:24px; background:#222; border-radius:0 0 14px 14px; margin:0 auto; position:relative; z-index:2; }
+  .phone-screen { height:calc(100% - 24px); overflow:hidden; position:relative; font-size:11px; display:flex; flex-direction:column; }
+
+  .ph-header-white {
+    background:#fff; color:var(--text-primary); padding:10px 14px; font-size:13px; font-weight:600;
+    display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+    border-bottom:1px solid var(--border-smooth);
+  }
+  .ph-body { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+
+  .home-scroll { flex:1; padding:12px 14px; display:flex; flex-direction:column; gap:12px; overflow-y:auto; background:var(--surface-bg); }
+  .home-banner {
+    background: linear-gradient(135deg, #E2D5FF 0%, #F2EDFF 100%);
+    border-radius:16px; padding:14px; height:70px; display:flex; align-items:center; gap:10px;
+  }
+  .home-banner .emoji { font-size:28px; }
+  .home-banner .text { font-size:11px; color:var(--text-secondary); }
+  .home-banner .text strong { display:block; font-size:13px; color:var(--text-primary); }
+
+  .segment-control {
+    display:flex; background:var(--surface-surface); border-radius:12px; padding:3px; margin:10px 14px; gap:2px;
+  }
+  .segment-item {
+    flex:1; text-align:center; padding:8px; border-radius:10px; font-size:12px; font-weight:600;
+    color:var(--text-muted); cursor:pointer; transition:all 0.2s; position:relative;
+  }
+  .segment-item.active { background:#fff; color:var(--brand-primary); box-shadow:0 1px 4px rgba(0,0,0,0.1); }
+  .segment-new {
+    position:absolute; top:-2px; right:4px;
+    background:var(--state-attention); color:#fff; font-size:7px; font-weight:700;
+    padding:1px 4px; border-radius:6px; line-height:1.2;
+  }
+
+  /* Match timer card (domestic style) */
+  .match-timer-card {
+    background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.75) 100%),
+    linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+    border-radius:16px; height:160px; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:flex-end; padding:12px;
+  }
+  .match-timer-card .timer { color:#fff; font-size:20px; font-weight:700; }
+  .match-timer-card .subtitle { color:rgba(255,255,255,0.8); font-size:10px; }
+  .match-timer-card .tags { display:flex; gap:4px; margin-top:6px; }
+  .match-timer-card .tag { background:rgba(255,255,255,0.2); color:#fff; padding:2px 8px; border-radius:10px; font-size:9px; }
+  .match-timer-card .country-flag {
+    position:absolute; top:12px; left:12px;
+    background:rgba(0,0,0,0.5); color:#fff; padding:3px 8px; border-radius:10px;
+    font-size:10px; font-weight:600; backdrop-filter:blur(4px);
+  }
+  .match-timer-card .more-btn {
+    position:absolute; bottom:12px; right:12px;
+    background:rgba(255,255,255,0.2); color:#fff; padding:4px 10px; border-radius:10px;
+    font-size:10px; font-weight:600; backdrop-filter:blur(4px);
+  }
+
+  .bottom-nav {
+    display:flex; justify-content:space-around; padding:8px 0 6px;
+    border-top:1px solid var(--border-smooth); background:#fff; flex-shrink:0;
+  }
+  .bottom-nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9px; color:var(--text-disabled); }
+  .bottom-nav-item.active { color:var(--brand-primary); }
+  .bottom-nav-item .icon { font-size:16px; }
+
+  /* Onboarding */
+  .ob-progress { display:flex; gap:4px; padding:12px 20px; }
+  .ob-dot { flex:1; height:3px; border-radius:2px; background:var(--border-smooth); }
+  .ob-dot.active { background:var(--brand-primary); }
+  .ob-dot.done { background:var(--brand-accent); }
+  .ob-body { flex:1; padding:16px 20px; display:flex; flex-direction:column; }
+  .ob-title { font-size:17px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+  .ob-subtitle { font-size:11px; color:var(--text-muted); margin-bottom:16px; }
+  .ob-center { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .ob-flags { font-size:48px; margin-bottom:12px; }
+  .ob-hero-text { font-size:16px; font-weight:700; text-align:center; margin-bottom:6px; }
+  .ob-hero-desc { font-size:11px; color:var(--text-muted); text-align:center; line-height:1.6; }
+  .ob-feature { display:flex; align-items:center; gap:10px; padding:10px 0; }
+  .ob-feature .check { width:22px; height:22px; border-radius:50%; background:var(--surface-tertiary); color:var(--brand-primary); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .ob-feature .feat-text { font-size:12px; color:var(--text-secondary); }
+  .ob-bottom { padding:12px 20px 16px; flex-shrink:0; }
+  .ob-btn { width:100%; padding:14px; border-radius:14px; border:none; font-size:14px; font-weight:600; cursor:pointer; }
+  .ob-btn.primary { background:var(--brand-primary); color:#fff; }
+
+  .option-list { display:flex; flex-direction:column; gap:8px; }
+  .option-item { display:flex; align-items:center; gap:10px; padding:14px 16px; border:1.5px solid var(--border-smooth); border-radius:14px; cursor:pointer; }
+  .option-item.selected { border-color:var(--brand-primary); background:var(--surface-tertiary); }
+  .option-radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--text-disabled); flex-shrink:0; }
+  .option-item.selected .option-radio { border-color:var(--brand-primary); background:var(--brand-primary); box-shadow:inset 0 0 0 3px #fff; }
+  .option-text { font-size:13px; font-weight:500; }
+  .option-desc { font-size:10px; color:var(--text-muted); }
+
+  .chip-grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { padding:10px 14px; border-radius:14px; border:1.5px solid var(--border-smooth); font-size:12px; font-weight:500; cursor:pointer; background:#fff; }
+  .chip.selected { background:var(--brand-primary); color:#fff; border-color:var(--brand-primary); }
+  .chip .emoji { margin-right:4px; }
+
+  /* Partner detail view */
+  .partner-detail { flex:1; overflow-y:auto; background:var(--surface-bg); }
+  .partner-photo {
+    width:100%; height:220px; position:relative; overflow:hidden;
+    background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%),
+    linear-gradient(135deg, #C4B5F0 0%, #8B7EC8 100%);
+  }
+  .partner-photo .overlay { position:absolute; bottom:0; left:0; right:0; padding:12px 14px;
+    background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.75) 100%); }
+  .partner-photo .name { color:#fff; font-size:17px; font-weight:700; }
+  .partner-photo .meta { color:rgba(255,255,255,0.85); font-size:11px; margin-top:2px; }
+  .partner-photo .country-badge {
+    position:absolute; top:10px; left:10px;
+    background:rgba(0,0,0,0.5); color:#fff; padding:3px 10px; border-radius:10px;
+    font-size:10px; font-weight:600; backdrop-filter:blur(4px);
+  }
+  .partner-photo .recent-badge {
+    position:absolute; top:10px; right:10px;
+    background:var(--brand-primary); color:#fff; padding:3px 8px; border-radius:8px;
+    font-size:9px; font-weight:600;
+  }
+  .partner-info-section { padding:14px; }
+  .partner-info-row { display:flex; justify-content:space-between; padding:6px 0; font-size:11px; border-bottom:1px solid var(--surface-surface); }
+  .partner-info-label { color:var(--text-muted); }
+  .partner-info-value { font-weight:600; }
+  .partner-section-title { font-size:13px; font-weight:700; margin:12px 0 8px; }
+  .partner-keyword-tags { display:flex; gap:4px; flex-wrap:wrap; }
+  .partner-keyword-tag { background:var(--surface-tertiary); color:var(--brand-primary); padding:3px 10px; border-radius:10px; font-size:10px; }
+
+  .like-button-bar {
+    padding:12px 14px; background:#fff; border-top:1px solid var(--border-smooth); flex-shrink:0;
+    display:flex; gap:10px;
+  }
+  .like-btn-main {
+    flex:1; padding:14px; border-radius:14px; border:none; font-size:14px; font-weight:700;
+    color:#fff; cursor:pointer;
+    background:linear-gradient(135deg, #9B6DFF 0%, #7A4AE2 50%, #6B3FD4 100%);
+    box-shadow:0 4px 16px rgba(122,74,226,0.4);
+  }
+  .like-btn-pass {
+    width:50px; padding:14px; border-radius:14px; border:1.5px solid var(--border-smooth);
+    background:#fff; font-size:16px; cursor:pointer;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position:absolute; top:0; left:0; right:0; bottom:0; z-index:10;
+    background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;
+  }
+  .modal-box {
+    background:#fff; border-radius:20px; width:240px; padding:20px; text-align:center;
+    box-shadow:0 8px 32px rgba(0,0,0,0.2);
+  }
+  .modal-icon { font-size:36px; margin-bottom:8px; }
+  .modal-title { font-size:15px; font-weight:700; margin-bottom:4px; }
+  .modal-desc { font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.5; }
+  .modal-gem-info { background:var(--surface-tertiary); border-radius:10px; padding:8px; margin-bottom:12px; font-size:11px; }
+  .modal-gem-info .cost { font-size:16px; font-weight:700; color:var(--brand-primary); }
+  .modal-gem-info .remain { font-size:10px; color:var(--text-muted); }
+  .modal-btns { display:flex; gap:8px; }
+  .modal-btn { flex:1; padding:10px; border-radius:12px; border:none; font-size:12px; font-weight:600; cursor:pointer; }
+  .modal-btn.secondary { background:var(--surface-surface); color:var(--text-secondary); }
+  .modal-btn.primary { background:var(--brand-primary); color:#fff; }
+
+  /* PostBox card */
+  .postbox-card {
+    background:#fff; border-radius:14px; padding:12px; margin-bottom:8px;
+    border:1px solid var(--border-smooth);
+  }
+  .postbox-card .top-row { display:flex; gap:10px; align-items:center; margin-bottom:6px; }
+  .postbox-card .avatar {
+    width:44px; height:44px; border-radius:14px; flex-shrink:0;
+    background:linear-gradient(135deg, #E2D5FF, #C4B5F0);
+    display:flex; align-items:center; justify-content:center; font-size:20px; position:relative;
+  }
+  .postbox-card .avatar .flag-badge {
+    position:absolute; bottom:-2px; right:-2px; font-size:12px;
+    background:#fff; border-radius:50%; width:16px; height:16px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .postbox-card .person-info { flex:1; }
+  .postbox-card .person-name { font-size:13px; font-weight:600; }
+  .postbox-card .person-meta { font-size:10px; color:var(--text-muted); }
+  .postbox-card .letter-box {
+    background:var(--surface-surface); border-radius:10px; padding:8px 10px; margin-bottom:6px;
+  }
+  .postbox-card .letter-label { font-size:10px; color:var(--brand-primary); font-weight:600; margin-bottom:2px; }
+  .postbox-card .letter-text { font-size:10px; color:var(--text-secondary); line-height:1.4; }
+  .postbox-card .timer-row { display:flex; align-items:center; gap:4px; margin-bottom:6px; }
+  .postbox-card .timer-text { font-size:10px; font-weight:600; }
+  .postbox-card .timer-text.urgent { color:var(--state-error); }
+  .postbox-card .timer-text.normal { color:var(--text-muted); }
+  .postbox-card .action-row { display:flex; gap:8px; }
+  .postbox-card .action-btn { flex:1; padding:8px; border-radius:10px; border:none; font-size:11px; font-weight:600; cursor:pointer; }
+  .postbox-card .action-btn.decline { background:var(--surface-surface); color:var(--text-muted); }
+  .postbox-card .action-btn.accept { background:var(--brand-primary); color:#fff; }
+  .postbox-card .status-badge { font-size:9px; padding:2px 6px; border-radius:6px; font-weight:600; }
+  .postbox-card .status-badge.pending { background:var(--surface-tertiary); color:var(--brand-primary); }
+  .postbox-card .status-badge.open { background:#dcfce7; color:#166534; }
+
+  /* Chat */
+  .chat-header {
+    background:#fff; padding:10px 14px; display:flex; align-items:center; gap:10px;
+    border-bottom:1px solid var(--border-smooth); flex-shrink:0;
+  }
+  .chat-header .back-btn { font-size:16px; color:var(--text-primary); }
+  .chat-header .chat-avatar {
+    width:32px; height:32px; border-radius:10px;
+    background:linear-gradient(135deg, #E2D5FF, #C4B5F0);
+    display:flex; align-items:center; justify-content:center; font-size:14px;
+  }
+  .chat-header .chat-name { font-size:13px; font-weight:600; }
+  .chat-header .chat-country { font-size:10px; color:var(--text-muted); }
+  .chat-header .translate-badge {
+    margin-left:auto; background:var(--surface-tertiary); color:var(--brand-primary);
+    padding:3px 8px; border-radius:8px; font-size:9px; font-weight:600;
+  }
+  .chat-area { flex:1; padding:10px 14px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; background:var(--surface-surface); }
+  .chat-bubble { max-width:78%; padding:8px 12px; border-radius:16px; font-size:11px; line-height:1.5; }
+  .chat-bubble.mine { background:var(--brand-primary); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+  .chat-bubble.theirs { background:#fff; color:var(--text-primary); align-self:flex-start; border-bottom-left-radius:4px; }
+  .chat-bubble .divider { height:1px; background:rgba(255,255,255,0.2); margin:4px 0; }
+  .chat-bubble.theirs .divider { background:var(--border-smooth); }
+  .chat-bubble .translated { font-size:10px; opacity:0.7; line-height:1.4; }
+  .chat-bubble.mine .translated { color:rgba(255,255,255,0.7); }
+  .chat-bubble.theirs .translated { color:var(--text-muted); }
+  .chat-time { font-size:8px; color:var(--text-disabled); margin-top:-4px; }
+  .chat-time.mine { align-self:flex-end; }
+  .chat-time.theirs { align-self:flex-start; }
+  .chat-input-bar {
+    display:flex; align-items:center; gap:8px; padding:8px 10px; background:#fff;
+    border-top:1px solid var(--border-smooth); flex-shrink:0;
+  }
+  .chat-input-icon { font-size:16px; color:var(--text-muted); flex-shrink:0; }
+  .chat-input-field {
+    flex:1; background:var(--surface-surface); border:none; border-radius:18px;
+    padding:8px 12px; font-size:11px; outline:none;
+  }
+  .chat-send-btn {
+    width:32px; height:32px; border-radius:50%; background:var(--brand-primary);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:14px; border:none; flex-shrink:0;
+  }
+  .chat-translate-notice {
+    background:var(--surface-tertiary); padding:4px 10px; font-size:9px; color:var(--brand-primary);
+    text-align:center; font-weight:500;
+  }
+
+  /* Match success modal */
+  .match-modal {
+    position:absolute; top:0; left:0; right:0; bottom:0; z-index:10;
+    background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center;
+  }
+  .match-modal-box {
+    background:#fff; border-radius:24px; width:240px; padding:24px; text-align:center;
+    box-shadow:0 12px 40px rgba(0,0,0,0.3);
+  }
+  .match-modal-box .confetti { font-size:40px; margin-bottom:8px; }
+  .match-modal-box .title { font-size:16px; font-weight:700; margin-bottom:4px; }
+  .match-modal-box .desc { font-size:11px; color:var(--text-muted); margin-bottom:16px; }
+  .match-modal-box .avatars { display:flex; justify-content:center; margin-bottom:12px; }
+  .match-modal-box .m-avatar {
+    width:48px; height:48px; border-radius:50%; border:3px solid #fff;
+    background:linear-gradient(135deg, #E2D5FF, #C4B5F0);
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+  }
+  .match-modal-box .m-avatar:last-child { margin-left:-12px; }
+  .match-modal-box .chat-btn {
+    width:100%; padding:12px; border-radius:14px; border:none; background:var(--brand-primary);
+    color:#fff; font-size:13px; font-weight:600; cursor:pointer;
+  }
+
+  /* Settings */
+  .settings-sheet {
+    position:absolute; bottom:0; left:0; right:0; z-index:10;
+    background:#fff; border-radius:20px 20px 0 0; padding:12px 20px 20px;
+    box-shadow:0 -4px 20px rgba(0,0,0,0.15);
+  }
+  .sheet-handle { width:40px; height:4px; background:var(--text-disabled); border-radius:2px; margin:0 auto 14px; }
+  .sheet-title { font-size:15px; font-weight:700; margin-bottom:16px; }
+  .sheet-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; }
+  .sheet-row-label { font-size:12px; font-weight:600; }
+  .toggle-track { width:40px; height:22px; border-radius:11px; background:var(--brand-primary); position:relative; }
+  .toggle-thumb { width:18px; height:18px; border-radius:50%; background:#fff; position:absolute; top:2px; right:2px; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+  .sheet-section-title { font-size:11px; font-weight:600; color:var(--text-muted); margin:12px 0 8px; }
+  .sheet-save-btn {
+    width:100%; padding:12px; border-radius:14px; border:none; background:var(--brand-primary);
+    color:#fff; font-size:13px; font-weight:600; cursor:pointer; margin-top:16px;
+  }
+
+  .profile-global-section { background:var(--surface-secondary); border-radius:14px; padding:14px; margin:0 14px; }
+  .pgs-header { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
+  .pgs-title { font-size:13px; font-weight:700; }
+  .pgs-status { background:var(--surface-tertiary); color:var(--brand-primary); padding:2px 8px; border-radius:8px; font-size:9px; font-weight:600; }
+  .pgs-row { display:flex; justify-content:space-between; padding:4px 0; font-size:11px; }
+  .pgs-label { color:var(--text-muted); }
+  .pgs-value { font-weight:600; }
+  .pgs-tags { display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; }
+  .pgs-tag { background:var(--surface-tertiary); color:var(--brand-primary); padding:2px 8px; border-radius:8px; font-size:9px; }
+  .pgs-edit-btn { width:100%; padding:8px; border-radius:10px; border:1.5px solid var(--brand-primary); background:transparent; color:var(--brand-primary); font-size:11px; font-weight:600; cursor:pointer; margin-top:10px; }
+
+  /* Waiting state */
+  .waiting-card {
+    background:linear-gradient(135deg, #E2D5FF, #C9E4FF);
+    border-radius:16px; height:160px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:16px;
+  }
+  .waiting-card .wait-icon { font-size:36px; margin-bottom:8px; }
+  .waiting-card .wait-title { font-size:14px; font-weight:700; color:var(--brand-deep); }
+  .waiting-card .wait-desc { font-size:10px; color:var(--text-muted); margin-top:4px; }
+  .waiting-card .wait-timer { font-size:18px; font-weight:700; color:var(--brand-primary); margin-top:8px; }
+</style>
+</head>
+<body>
+
+<!-- Top Header -->
+<div class="top-header">
+  <div class="flags">🇰🇷 ↔ 🇯🇵</div>
+  <h1>Global Matching UX Preview</h1>
+  <p>Sometimes App - 한일 글로벌 매칭 확정 시안</p>
+  <div class="version-badge">v2 - 매칭 모드 통일</div>
+</div>
+
+<!-- Nav Tabs -->
+<div class="nav-tabs" id="navTabs">
+  <div class="nav-tab active" onclick="showSection(0)">1. 모드 전환</div>
+  <div class="nav-tab" onclick="showSection(1)">2. 온보딩</div>
+  <div class="nav-tab" onclick="showSection(2)">3. 매칭 (domestic 동일)</div>
+  <div class="nav-tab" onclick="showSection(3)">4. 좋아요 (domestic 동일)</div>
+  <div class="nav-tab" onclick="showSection(4)">5. 받은 좋아요 (post-box 통합)</div>
+  <div class="nav-tab" onclick="showSection(5)">6. 채팅 번역</div>
+  <div class="nav-tab" onclick="showSection(6)">7. 상태/설정</div>
+</div>
+
+<!-- ==================== SECTION 1: 모드 전환 ==================== -->
+<div class="section active" id="sec-0">
+  <div class="section-title">1. 매칭 모드 전환 (Entry Point)</div>
+  <div class="section-desc">홈 상단 세그먼트 컨트롤로 [국내 매칭] / [글로벌] 모드를 전환합니다.</div>
+  <div class="section-rationale">
+    <strong>설계 원칙:</strong> 기존 홈 화면에 세그먼트 컨트롤만 추가. 글로벌 탭 선택 시 IdleMatchTimer가 글로벌 모드로 전환되어 <strong>동일한 UI</strong>로 글로벌 후보를 표시합니다. 글로벌 탭 첫 클릭 시 온보딩 화면으로 자동 이동합니다.
+  </div>
+
+  <div class="confirmed-label">확정: 홈 상단 세그먼트 컨트롤</div>
+  <div class="mockups-row">
+    <!-- Domestic mode -->
+    <div class="mockup-item">
+      <div class="mockup-label">국내 매칭 (기존 그대로)</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header-white">
+            <span style="font-size:15px;font-weight:700;">Sometime</span>
+            <span style="font-size:14px;">🔔 💎</span>
+          </div>
+          <div class="segment-control">
+            <div class="segment-item active">국내 매칭</div>
+            <div class="segment-item" style="position:relative;">🌏 글로벌<span class="segment-new">NEW</span></div>
+          </div>
+          <div class="home-scroll" style="padding-top:4px;">
+            <div class="home-banner">
+              <div class="emoji">💜</div>
+              <div class="text"><strong>오늘의 매칭</strong>새로운 인연이 기다려요</div>
+            </div>
+            <div class="match-timer-card">
+              <div class="timer">03:42:18</div>
+              <div class="subtitle">다음 매칭까지</div>
+              <div class="tags"><span class="tag">23세</span><span class="tag">#ENFP</span><span class="tag">#서울대</span></div>
+            </div>
+            <div style="background:var(--surface-surface);border-radius:14px;padding:12px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-align:center;">매칭 히스토리</div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bottom-nav-item active"><span class="icon">🏠</span>홈</div>
+            <div class="bottom-nav-item"><span class="icon">💬</span>채팅</div>
+            <div class="bottom-nav-item"><span class="icon">👤</span>프로필</div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">기존 국내 매칭 화면 그대로.<br>세그먼트 컨트롤만 추가됨. NEW 배지로 인지 유도</div>
+    </div>
+
+    <!-- Global mode - first click (onboarding) -->
+    <div class="mockup-item">
+      <div class="mockup-label">글로벌 첫 클릭 (온보딩 미완료)</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header-white">
+            <span style="font-size:15px;font-weight:700;">Sometime</span>
+            <span style="font-size:14px;">🔔 💎</span>
+          </div>
+          <div class="segment-control">
+            <div class="segment-item">국내 매칭</div>
+            <div class="segment-item active">🌏 글로벌</div>
+          </div>
+          <div class="home-scroll" style="padding-top:4px;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;">
+              <div style="font-size:48px;margin-bottom:12px;">🌏</div>
+              <div style="font-size:16px;font-weight:700;margin-bottom:4px;">글로벌 매칭을 시작해볼까요?</div>
+              <div style="font-size:11px;color:var(--text-muted);line-height:1.6;margin-bottom:20px;">일본 대학생과 AI 자동 번역으로<br>언어 걱정 없이 대화해요</div>
+              <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px;">→ 온보딩 화면으로 자동 이동</div>
+              <div style="background:var(--brand-primary);color:#fff;padding:12px 32px;border-radius:14px;font-size:13px;font-weight:600;">시작하기 →</div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bottom-nav-item active"><span class="icon">🏠</span>홈</div>
+            <div class="bottom-nav-item"><span class="icon">💬</span>채팅</div>
+            <div class="bottom-nav-item"><span class="icon">👤</span>프로필</div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">온보딩 미완료 시 온보딩 페이지로<br>자동 이동 (router.push)</div>
+    </div>
+
+    <!-- Global mode - active -->
+    <div class="mockup-item">
+      <div class="mockup-label">글로벌 모드 (매칭 대기)</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header-white">
+            <span style="font-size:15px;font-weight:700;">Sometime</span>
+            <span style="font-size:14px;">🔔 💎</span>
+          </div>
+          <div class="segment-control">
+            <div class="segment-item">국내 매칭</div>
+            <div class="segment-item active">🌏 글로벌</div>
+          </div>
+          <div class="home-scroll" style="padding-top:4px;">
+            <div class="home-banner" style="background:linear-gradient(135deg,#E2D5FF,#C9E4FF);">
+              <div class="emoji">🌏</div>
+              <div class="text"><strong>글로벌 매칭</strong>일본 대학생과 매칭 중</div>
+            </div>
+            <div class="waiting-card">
+              <div class="wait-icon">🕐</div>
+              <div class="wait-title">다음 글로벌 매칭까지</div>
+              <div class="wait-desc">새로운 일본 대학생을 찾고 있어요</div>
+              <div class="wait-timer">05:32:18</div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bottom-nav-item active"><span class="icon">🏠</span>홈</div>
+            <div class="bottom-nav-item"><span class="icon">💬</span>채팅</div>
+            <div class="bottom-nav-item"><span class="icon">👤</span>프로필</div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">domestic과 동일한 대기 상태 UI.<br>IdleMatchTimer 그대로 재사용</div>
+    </div>
+
+    <!-- Global mode - match found -->
+    <div class="mockup-item">
+      <div class="mockup-label">글로벌 모드 (매칭 성공)</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header-white">
+            <span style="font-size:15px;font-weight:700;">Sometime</span>
+            <span style="font-size:14px;">🔔 💎</span>
+          </div>
+          <div class="segment-control">
+            <div class="segment-item">국내 매칭</div>
+            <div class="segment-item active">🌏 글로벌</div>
+          </div>
+          <div class="home-scroll" style="padding-top:4px;">
+            <div class="match-timer-card" style="height:200px;">
+              <div class="country-flag">🇯🇵 Japan</div>
+              <div class="more-btn">더보기 →</div>
+              <div class="timer">23:42:18</div>
+              <div class="subtitle">프로필 열람 종료까지</div>
+              <div class="tags">
+                <span class="tag">23세</span>
+                <span class="tag">#ENFP</span>
+                <span class="tag">도쿄대학교</span>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bottom-nav-item active"><span class="icon">🏠</span>홈</div>
+            <div class="bottom-nav-item"><span class="icon">💬</span>채팅</div>
+            <div class="bottom-nav-item"><span class="icon">👤</span>프로필</div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">domestic 파트너 카드와 동일한 UI.<br>국기 배지 + 번역된 정보 표시</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 2: 온보딩 ==================== -->
+<div class="section" id="sec-1">
+  <div class="section-title">2. 온보딩 플로우</div>
+  <div class="section-desc">글로벌 탭 첫 클릭 시 자동 이동. 3단계 완료 후 글로벌 매칭 활성화</div>
+  <div class="section-rationale">
+    <strong>진입 트리거:</strong> 글로벌 세그먼트 탭 첫 클릭 시 <strong>router.push('/global-matching/onboarding')</strong>으로 자동 이동.
+    3단계(소개→언어실력→관심이유) 완료 시 <strong>POST /global-matching/onboarding</strong> 호출하여 활성화 후 홈으로 복귀.
+  </div>
+
+  <div class="confirmed-label">확정: 3단계 슬라이드 온보딩</div>
+  <div class="mockups-row">
+    <div class="mockup-item">
+      <div class="mockup-label">Step 1: 소개</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#fff;">
+          <div class="ob-progress"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+          <div class="ob-body">
+            <div class="ob-center">
+              <div class="ob-flags">🇰🇷 ↔ 🇯🇵</div>
+              <div class="ob-hero-text">일본 대학생과<br>매칭을 시작해요</div>
+              <div class="ob-hero-desc" style="margin-bottom:24px;">AI가 프로필과 채팅을 실시간으로<br>번역해드려요</div>
+              <div style="width:100%;">
+                <div class="ob-feature"><div class="check">✓</div><div class="feat-text">AI 자동 번역으로 언어 걱정 없이</div></div>
+                <div class="ob-feature"><div class="check">✓</div><div class="feat-text">프로필 · 편지 · 채팅 실시간 번역</div></div>
+                <div class="ob-feature"><div class="check">✓</div><div class="feat-text">48시간 내 응답 시 매칭 성립</div></div>
+                <div class="ob-feature"><div class="check">💎</div><div class="feat-text">좋아요 1회 16구슬</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="ob-bottom"><button class="ob-btn primary">다음 →</button></div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">핵심 가치 제안 + 비용 안내</div>
+    </div>
+
+    <div class="mockup-item">
+      <div class="mockup-label">Step 2: 언어 실력</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#fff;">
+          <div class="ob-progress"><div class="ob-dot done"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div>
+          <div class="ob-body">
+            <div class="ob-title">나의 일본어 실력은?</div>
+            <div class="ob-subtitle">상대방 프로필에 표시돼요</div>
+            <div class="option-list">
+              <div class="option-item"><div class="option-radio"></div><div><div class="option-text">없음 (번역기 사용)</div><div class="option-desc">일본어를 못해도 번역 기능으로 대화할 수 있어요</div></div></div>
+              <div class="option-item selected"><div class="option-radio"></div><div><div class="option-text">기초</div><div class="option-desc">인사, 간단한 대화 정도 가능해요</div></div></div>
+              <div class="option-item"><div class="option-radio"></div><div><div class="option-text">중급</div><div class="option-desc">일상 대화가 가능해요</div></div></div>
+              <div class="option-item"><div class="option-radio"></div><div><div class="option-text">고급</div><div class="option-desc">자유로운 대화가 가능해요</div></div></div>
+            </div>
+          </div>
+          <div class="ob-bottom"><button class="ob-btn primary">다음 →</button></div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">4단계 Radio 단일 선택</div>
+    </div>
+
+    <div class="mockup-item">
+      <div class="mockup-label">Step 3: 관심 이유</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#fff;">
+          <div class="ob-progress"><div class="ob-dot done"></div><div class="ob-dot done"></div><div class="ob-dot active"></div></div>
+          <div class="ob-body">
+            <div class="ob-title">일본에 관심 있는 이유는?</div>
+            <div class="ob-subtitle">복수 선택 가능 · 프로필 태그로 표시돼요</div>
+            <div class="chip-grid" style="margin-top:8px;">
+              <div class="chip selected"><span class="emoji">🏯</span>일본 문화</div>
+              <div class="chip"><span class="emoji">📝</span>일본어 학습</div>
+              <div class="chip selected"><span class="emoji">✈️</span>여행 계획</div>
+              <div class="chip"><span class="emoji">🤝</span>친구 사귀기</div>
+              <div class="chip"><span class="emoji">🎮</span>애니/게임</div>
+              <div class="chip"><span class="emoji">💼</span>비즈니스</div>
+            </div>
+            <div style="flex:1;"></div>
+            <div style="background:var(--surface-tertiary);border-radius:12px;padding:10px;margin-top:16px;text-align:center;">
+              <div style="font-size:10px;color:var(--text-muted);">선택한 이유가 상대방에게 이렇게 보여요</div>
+              <div style="display:flex;gap:4px;justify-content:center;margin-top:6px;">
+                <span style="background:var(--brand-primary);color:#fff;padding:3px 10px;border-radius:10px;font-size:10px;">🏯 일본 문화</span>
+                <span style="background:var(--brand-primary);color:#fff;padding:3px 10px;border-radius:10px;font-size:10px;">✈️ 여행</span>
+              </div>
+            </div>
+          </div>
+          <div class="ob-bottom"><button class="ob-btn primary">글로벌 매칭 시작! 🌏</button></div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">Chip 복수 선택 + 프리뷰 미리보기</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 3: 매칭 (domestic 동일) ==================== -->
+<div class="section" id="sec-2">
+  <div class="section-title">3. 글로벌 매칭 후보 (Domestic 동일)</div>
+  <div class="section-desc">기존 IdleMatchTimer + partner/view 를 그대로 재사용. API만 글로벌용으로 분기</div>
+  <div class="section-rationale">
+    <strong>핵심 원칙:</strong> 서버가 글로벌 후보를 <strong>1명씩 배정</strong>하고 <strong>endOfView 타이머</strong>를 제공합니다.
+    프론트엔드는 domestic과 <strong>완전히 동일한 UI</strong>를 사용하되, 국기 배지와 번역된 프로필만 추가 렌더링합니다.
+    파트너 상세 뷰(partner/view)도 그대로 재사용합니다.
+  </div>
+
+  <div class="confirmed-label">확정: domestic 동일 (1명씩 + 48h 타이머)</div>
+  <div class="mockups-row">
+    <!-- KR user - partner card -->
+    <div class="mockup-item">
+      <div class="mockup-label">KR 유저 - 파트너 상세 뷰</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header-white">
+            <span style="font-size:14px;">← 뒤로</span>
+            <span style="font-size:12px;">⚠️</span>
+          </div>
+          <div class="partner-detail">
+            <div class="partner-photo">
+              <div class="country-badge">🇯🇵 Japan</div>
+              <div class="recent-badge">2시간 전 접속</div>
+              <div class="overlay">
+                <div class="name">사쿠라, 23</div>
+                <div class="meta">도쿄대학교 문학부</div>
+              </div>
+            </div>
+            <div class="partner-info-section">
+              <div class="partner-section-title">기본 정보</div>
+              <div class="partner-info-row"><span class="partner-info-label">MBTI</span><span class="partner-info-value">#ENFP</span></div>
+              <div class="partner-info-row"><span class="partner-info-label">음주</span><span class="partner-info-value">가끔</span></div>
+              <div class="partner-info-row"><span class="partner-info-label">흡연</span><span class="partner-info-value">비흡연</span></div>
+              <div class="partner-section-title">관심사</div>
+              <div class="partner-keyword-tags">
+                <span class="partner-keyword-tag">🏯 일본 문화</span>
+                <span class="partner-keyword-tag">🎵 음악</span>
+                <span class="partner-keyword-tag">✈️ 여행</span>
+              </div>
+              <div class="partner-section-title">자기소개</div>
+              <div style="font-size:11px;color:var(--text-secondary);line-height:1.6;background:var(--surface-surface);padding:10px;border-radius:10px;">
+                "음악을 좋아해요. 한국 드라마 보는 게 취미예요. 같이 좋아하는 음악 공유해요!"
+              </div>
+              <div style="height:20px;"></div>
+            </div>
+          </div>
+          <div class="like-button-bar">
+            <button class="like-btn-pass">✕</button>
+            <button class="like-btn-main">💜 좋아요 보내기 · 💎16</button>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">domestic partner/view와 동일한 UI.<br>번역된 프로필 표시 + 국기 배지 + 구슬 비용</div>
+    </div>
+
+    <!-- JP user - partner card -->
+    <div class="mockup-item">
+      <div class="mockup-label">JP 유저 - パートナー詳細</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header-white">
+            <span style="font-size:14px;">← 戻る</span>
+            <span style="font-size:12px;">⚠️</span>
+          </div>
+          <div class="partner-detail">
+            <div class="partner-photo" style="background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%),linear-gradient(135deg, #8DB4E6 0%, #5A8AC8 100%);">
+              <div class="country-badge">🇰🇷 Korea</div>
+              <div class="recent-badge">1時間前</div>
+              <div class="overlay">
+                <div class="name">ミンス, 24</div>
+                <div class="meta">ソウル大学 コンピュータ工学</div>
+              </div>
+            </div>
+            <div class="partner-info-section">
+              <div class="partner-section-title">基本情報</div>
+              <div class="partner-info-row"><span class="partner-info-label">MBTI</span><span class="partner-info-value">#INTJ</span></div>
+              <div class="partner-info-row"><span class="partner-info-label">飲酒</span><span class="partner-info-value">時々</span></div>
+              <div class="partner-info-row"><span class="partner-info-label">喫煙</span><span class="partner-info-value">なし</span></div>
+              <div class="partner-section-title">関心事</div>
+              <div class="partner-keyword-tags">
+                <span class="partner-keyword-tag">🎵 K-POP</span>
+                <span class="partner-keyword-tag">🤝 友達作り</span>
+                <span class="partner-keyword-tag">💻 プログラミング</span>
+              </div>
+              <div class="partner-section-title">自己紹介</div>
+              <div style="font-size:11px;color:var(--text-secondary);line-height:1.6;background:var(--surface-surface);padding:10px;border-radius:10px;">
+                "日本の文化が好きです。一緒に言語交換しましょう！旅行の話もしたいです"
+              </div>
+            </div>
+          </div>
+          <div class="like-button-bar">
+            <button class="like-btn-pass">✕</button>
+            <button class="like-btn-main">💜 いいねを送る · 🆓無料</button>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">JP 유저는 무료 표시.<br>번역된 프로필로 자연스러운 탐색</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 4: 좋아요 (domestic 동일) ==================== -->
+<div class="section" id="sec-3">
+  <div class="section-title">4. 좋아요 & 편지 (Domestic 동일)</div>
+  <div class="section-desc">기존 LikeButton + LikeOptionModal 재사용. 구슬 비용과 편지 필드만 분기</div>
+  <div class="section-rationale">
+    <strong>기존 컴포넌트 재사용:</strong> LikeButton의 <strong>isGlobalMatch</strong> prop으로 구슬 비용 텍스트만 분기합니다.
+    LikeOptionModal에서 편지 토글은 기존 canLetter 로직을 활용합니다.
+    API만 <strong>POST /api/global-matching/like</strong>로 분기됩니다.
+  </div>
+
+  <div class="confirmed-label">확정: domestic LikeOptionModal 재사용</div>
+  <div class="mockups-row">
+    <div class="mockup-item">
+      <div class="mockup-label">좋아요 확인 (KR · 16구슬)</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:var(--surface-surface);">
+          <div class="modal-overlay">
+            <div class="modal-box">
+              <div class="modal-icon">💜</div>
+              <div class="modal-title">좋아요를 보낼까요?</div>
+              <div class="modal-desc">사쿠라에게 관심을 표현해보세요</div>
+              <div class="modal-gem-info">
+                <div class="cost">💎 16구슬 사용</div>
+                <div class="remain">잔여: 84구슬</div>
+              </div>
+              <div style="font-size:10px;color:var(--brand-primary);font-weight:600;margin-bottom:8px;cursor:pointer;">✉️ 편지도 같이 보내기 ▾</div>
+              <textarea style="width:100%;border:1px solid var(--border-smooth);border-radius:10px;padding:8px;font-size:10px;height:50px;resize:none;margin-bottom:12px;font-family:inherit;" placeholder="100자 이내로 마음을 전해보세요..."></textarea>
+              <div class="modal-btns">
+                <button class="modal-btn secondary">취소</button>
+                <button class="modal-btn primary">보내기 💜</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">기존 LikeOptionModal 그대로.<br>구슬 비용만 16으로 표시</div>
+    </div>
+
+    <div class="mockup-item">
+      <div class="mockup-label">좋아요 확인 (JP · 무료)</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:var(--surface-surface);">
+          <div class="modal-overlay">
+            <div class="modal-box">
+              <div class="modal-icon">💜</div>
+              <div class="modal-title">いいねを送りますか？</div>
+              <div class="modal-desc">ミンスに気持ちを伝えましょう</div>
+              <div style="background:var(--surface-tertiary);border-radius:10px;padding:8px;margin-bottom:12px;font-size:11px;">
+                <div style="color:var(--state-success);font-weight:600;">🆓 無料</div>
+              </div>
+              <div style="font-size:10px;color:var(--brand-primary);font-weight:600;margin-bottom:8px;">✉️ レターも一緒に送る ▾</div>
+              <div class="modal-btns">
+                <button class="modal-btn secondary">キャンセル</button>
+                <button class="modal-btn primary">送る 💜</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">JP 유저는 무료 표시.<br>동일한 모달 구조, 비용 텍스트만 다름</div>
+    </div>
+
+    <div class="mockup-item">
+      <div class="mockup-label">전송 성공</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:var(--surface-surface);">
+          <div class="modal-overlay">
+            <div class="modal-box">
+              <div class="modal-icon">🎉</div>
+              <div class="modal-title">좋아요를 보냈어요!</div>
+              <div class="modal-desc">사쿠라가 48시간 내에 수락하면<br>채팅이 시작돼요</div>
+              <div style="background:var(--surface-tertiary);border-radius:10px;padding:10px;margin-bottom:12px;">
+                <div style="font-size:10px;color:var(--text-muted);">남은 시간</div>
+                <div style="font-size:18px;font-weight:700;color:var(--brand-primary);">47:59:42</div>
+              </div>
+              <button class="modal-btn primary" style="width:100%;">확인</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">기존 성공 모달 + 파티클 애니메이션.<br>48시간 타이머 안내</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 5: 받은 좋아요 (post-box 통합) ==================== -->
+<div class="section" id="sec-4">
+  <div class="section-title">5. 받은 좋아요 (Post-Box 통합)</div>
+  <div class="section-desc">글로벌 좋아요를 기존 post-box에 혼합 표시. 국기 배지로 구분</div>
+  <div class="section-rationale">
+    <strong>통합 방식:</strong> 기존 <strong>PostBoxCard</strong>에 isGlobalMatch 필드를 추가하여 국기 배지를 렌더링합니다.
+    별도 탭 없이 국내/글로벌 좋아요를 <strong>시간순으로 혼합</strong> 표시합니다.
+    글로벌 좋아요에는 번역된 편지와 48h 타이머가 표시됩니다.
+  </div>
+
+  <div class="confirmed-label">확정: post-box 혼합 (국기 배지 구분)</div>
+  <div class="mockups-row">
+    <!-- PostBox mixed -->
+    <div class="mockup-item">
+      <div class="mockup-label">받은 좋아요 (혼합)</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header-white">
+            <span style="font-size:14px;">←</span>
+            <span style="font-size:14px;font-weight:700;">받은 좋아요</span>
+            <span style="font-size:12px;color:var(--text-muted);">3건</span>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--surface-surface);">
+            <!-- Global like with letter -->
+            <div class="postbox-card">
+              <div class="top-row">
+                <div class="avatar">👨<div class="flag-badge">🇯🇵</div></div>
+                <div class="person-info">
+                  <div class="person-name">사쿠라, 23 <span style="font-size:10px;color:var(--text-muted);">🇯🇵</span></div>
+                  <div class="person-meta">도쿄대학교 · 23시간 42분 남음</div>
+                </div>
+                <div class="status-badge pending">대기중</div>
+              </div>
+              <div class="letter-box">
+                <div class="letter-label">✉️ 편지 (번역)</div>
+                <div class="letter-text">"안녕하세요! 멋진 프로필이네요. 음악 얘기 해요!"</div>
+              </div>
+              <div class="action-row">
+                <button class="action-btn decline">✕ 거절</button>
+                <button class="action-btn accept">💜 수락</button>
+              </div>
+            </div>
+
+            <!-- Domestic like (existing) -->
+            <div class="postbox-card">
+              <div class="top-row">
+                <div class="avatar">👨</div>
+                <div class="person-info">
+                  <div class="person-name">지훈, 24</div>
+                  <div class="person-meta">연세대학교 · 12시간 남음</div>
+                </div>
+                <div class="status-badge pending">대기중</div>
+              </div>
+              <div class="action-row">
+                <button class="action-btn decline">✕ 거절</button>
+                <button class="action-btn accept">💜 수락</button>
+              </div>
+            </div>
+
+            <!-- Global like urgent -->
+            <div class="postbox-card" style="border-color:rgba(255,0,0,0.2);">
+              <div class="top-row">
+                <div class="avatar">👨<div class="flag-badge">🇯🇵</div></div>
+                <div class="person-info">
+                  <div class="person-name">유키, 22 <span style="font-size:10px;color:var(--text-muted);">🇯🇵</span></div>
+                  <div class="person-meta" style="color:var(--state-error);font-weight:600;">⚠️ 5시간 18분 남음</div>
+                </div>
+                <div class="status-badge pending">대기중</div>
+              </div>
+              <div class="action-row">
+                <button class="action-btn decline">✕ 거절</button>
+                <button class="action-btn accept">💜 수락</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">국내/글로벌 혼합 표시. 국기 배지로 구분.<br>글로벌은 아바타에 국기 오버레이</div>
+    </div>
+
+    <!-- Match success -->
+    <div class="mockup-item">
+      <div class="mockup-label">매칭 성립 축하</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:var(--surface-surface);">
+          <div class="match-modal">
+            <div class="match-modal-box">
+              <div class="confetti">🎉</div>
+              <div class="title">매칭이 성립됐어요!</div>
+              <div class="desc">번역 채팅이 시작돼요 💬</div>
+              <div class="avatars">
+                <div class="m-avatar">👩</div>
+                <div class="m-avatar">👨</div>
+              </div>
+              <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px;">
+                <span style="background:var(--surface-tertiary);padding:2px 8px;border-radius:8px;font-size:10px;">🇯🇵 사쿠라</span>
+                <span style="font-size:12px;color:var(--text-muted);">&</span>
+                <span style="background:var(--surface-tertiary);padding:2px 8px;border-radius:8px;font-size:10px;">🇰🇷 김민수</span>
+              </div>
+              <button class="chat-btn" style="width:100%;padding:12px;border-radius:14px;border:none;background:var(--brand-primary);color:#fff;font-size:13px;font-weight:600;">채팅방 가기 → 💬</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">기존 매칭 성립 모달 + 파티클.<br>글로벌 채팅방으로 이동</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 6: 채팅 번역 ==================== -->
+<div class="section" id="sec-5">
+  <div class="section-title">6. 채팅 번역 UI (이중 버블)</div>
+  <div class="section-desc">글로벌 채팅방에서 원문 + 번역을 하나의 버블에 표시</div>
+  <div class="section-rationale">
+    <strong>이중 버블 규칙:</strong> <strong>is_global_chat = true</strong>인 채팅방에서만 이중 버블 활성화.
+    원문(위) + 구분선 + 번역(아래) 구조. 내 메시지는 내 언어(위) + 번역(아래), 상대 메시지는 상대 언어(위) + 내 언어 번역(아래).
+  </div>
+
+  <div class="confirmed-label">확정: 이중 버블 (A안)</div>
+  <div class="mockups-row">
+    <div class="mockup-item">
+      <div class="mockup-label">KR 유저 시점</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="chat-header">
+            <span class="back-btn">←</span>
+            <div class="chat-avatar">👩</div>
+            <div><div class="chat-name">사쿠라 🇯🇵</div><div class="chat-country">도쿄대학교</div></div>
+            <div class="translate-badge">🌏 자동번역</div>
+          </div>
+          <div class="chat-translate-notice">🌏 메시지가 자동으로 번역돼요</div>
+          <div class="chat-area">
+            <div class="chat-bubble theirs">
+              こんにちは！マッチングありがとう😊
+              <div class="divider"></div>
+              <div class="translated">안녕하세요! 매칭 감사해요😊</div>
+            </div>
+            <div class="chat-time theirs">14:30</div>
+            <div class="chat-bubble mine">
+              안녕하세요! 프로필 보고 관심이 생겼어요 ☺️
+              <div class="divider"></div>
+              <div class="translated">こんにちは！プロフィール見て興味が湧きました☺️</div>
+            </div>
+            <div class="chat-time mine">14:32</div>
+            <div class="chat-bubble theirs">
+              音楽が好きって書いてましたね！どんなジャンルが好きですか？
+              <div class="divider"></div>
+              <div class="translated">음악 좋아한다고 적혀있었네요! 어떤 장르를 좋아해요?</div>
+            </div>
+            <div class="chat-time theirs">14:33</div>
+            <div class="chat-bubble mine">
+              K-POP이랑 J-POP 둘 다 좋아해요! 요즘 YOASOBI 자주 들어요 🎵
+              <div class="divider"></div>
+              <div class="translated">K-POPとJ-POP両方好きです！最近YOASOBIよく聴いてます🎵</div>
+            </div>
+            <div class="chat-time mine">14:35</div>
+          </div>
+          <div class="chat-input-bar">
+            <span class="chat-input-icon">📷</span>
+            <input class="chat-input-field" placeholder="메시지 입력..." />
+            <button class="chat-send-btn">▶</button>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">원본(위) + 구분선 + 번역(아래)<br>원문과 번역 동시 확인</div>
+    </div>
+
+    <div class="mockup-item">
+      <div class="mockup-label">JP 유저 시점</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="chat-header">
+            <span class="back-btn">←</span>
+            <div class="chat-avatar">👨</div>
+            <div><div class="chat-name">ミンス 🇰🇷</div><div class="chat-country">ソウル大学</div></div>
+            <div class="translate-badge">🌏 自動翻訳</div>
+          </div>
+          <div class="chat-translate-notice">🌏 メッセージは自動翻訳されます</div>
+          <div class="chat-area">
+            <div class="chat-bubble mine">
+              こんにちは！マッチングありがとう😊
+              <div class="divider"></div>
+              <div class="translated">안녕하세요! 매칭 감사해요😊</div>
+            </div>
+            <div class="chat-time mine">14:30</div>
+            <div class="chat-bubble theirs">
+              안녕하세요! 프로필 보고 관심이 생겼어요 ☺️
+              <div class="divider"></div>
+              <div class="translated">こんにちは！プロフィール見て興味が湧きました☺️</div>
+            </div>
+            <div class="chat-time theirs">14:32</div>
+            <div class="chat-bubble mine">
+              音楽が好きって書いてましたね！どんなジャンルが好きですか？
+              <div class="divider"></div>
+              <div class="translated">음악 좋아한다고 적혀있었네요! 어떤 장르를 좋아해요?</div>
+            </div>
+            <div class="chat-time mine">14:33</div>
+            <div class="chat-bubble theirs">
+              K-POP이랑 J-POP 둘 다 좋아해요! 요즘 YOASOBI 자주 들어요 🎵
+              <div class="divider"></div>
+              <div class="translated">K-POPとJ-POP両方好きです！最近YOASOBIよく聴いてます🎵</div>
+            </div>
+            <div class="chat-time theirs">14:35</div>
+          </div>
+          <div class="chat-input-bar">
+            <span class="chat-input-icon">📷</span>
+            <input class="chat-input-field" placeholder="メッセージを入力..." />
+            <button class="chat-send-btn">▶</button>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">JP 시점: 동일 대화, 반대 방향 버블</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 7: 상태/설정 ==================== -->
+<div class="section" id="sec-6">
+  <div class="section-title">7. 상태 & 설정</div>
+  <div class="section-desc">프로필 화면 내 글로벌 매칭 상태 확인, 설정 변경</div>
+  <div class="section-rationale">
+    <strong>위치:</strong> 프로필 화면 내 별도 섹션으로 표시합니다. 설정 변경은 <strong>BottomSheetPicker</strong> 패턴의 바텀시트를 사용합니다.
+    ON/OFF 토글로 글로벌 매칭을 비활성화할 수 있습니다.
+  </div>
+
+  <div class="confirmed-label">확정: 프로필 섹션 + 설정 바텀시트</div>
+  <div class="mockups-row">
+    <div class="mockup-item">
+      <div class="mockup-label">프로필 내 섹션</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header-white">
+            <span style="font-size:14px;">←</span>
+            <span style="font-size:14px;font-weight:700;">내 프로필</span>
+            <span style="font-size:12px;">⚙️</span>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:14px 0;display:flex;flex-direction:column;gap:14px;">
+            <div style="text-align:center;padding:0 14px;">
+              <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#E2D5FF,#C4B5F0);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:32px;">👨</div>
+              <div style="font-size:16px;font-weight:700;">김민수, 24</div>
+              <div style="font-size:11px;color:var(--text-muted);">서울대학교 컴퓨터공학</div>
+            </div>
+            <div style="height:1px;background:var(--border-smooth);margin:0 14px;"></div>
+            <div class="profile-global-section">
+              <div class="pgs-header">
+                <span style="font-size:16px;">🌏</span>
+                <span class="pgs-title">글로벌 매칭</span>
+                <span class="pgs-status">활성화</span>
+              </div>
+              <div class="pgs-row"><span class="pgs-label">대상 국가</span><span class="pgs-value">🇯🇵 일본</span></div>
+              <div class="pgs-row"><span class="pgs-label">일본어 실력</span><span class="pgs-value">📝 기초</span></div>
+              <div class="pgs-row"><span class="pgs-label">관심 이유</span></div>
+              <div class="pgs-tags">
+                <span class="pgs-tag">🏯 일본 문화</span>
+                <span class="pgs-tag">✈️ 여행 계획</span>
+              </div>
+              <button class="pgs-edit-btn">설정 변경</button>
+            </div>
+            <div style="height:1px;background:var(--border-smooth);margin:0 14px;"></div>
+            <div style="padding:0 14px;">
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px;">📋 프로필 정보</div>
+              <div style="background:var(--surface-surface);border-radius:12px;padding:12px;font-size:11px;color:var(--text-muted);">MBTI, 키, 체형, 음주, 흡연...</div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bottom-nav-item"><span class="icon">🏠</span>홈</div>
+            <div class="bottom-nav-item"><span class="icon">💬</span>채팅</div>
+            <div class="bottom-nav-item active"><span class="icon">👤</span>프로필</div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">프로필 내 글로벌 매칭 정보 섹션</div>
+    </div>
+
+    <div class="mockup-item">
+      <div class="mockup-label">설정 바텀시트</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:rgba(0,0,0,0.4);">
+          <div style="flex:1;"></div>
+          <div class="settings-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">🌏 글로벌 매칭 설정</div>
+            <div class="sheet-row">
+              <span class="sheet-row-label">글로벌 매칭</span>
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="sheet-row" style="opacity:0.5;">
+              <span class="sheet-row-label">대상 국가</span>
+              <span style="font-size:12px;font-weight:600;">🇯🇵 일본</span>
+            </div>
+            <div class="sheet-section-title">일본어 실력</div>
+            <div class="chip-grid">
+              <div class="chip">없음</div>
+              <div class="chip selected">기초</div>
+              <div class="chip">중급</div>
+              <div class="chip">고급</div>
+            </div>
+            <div class="sheet-section-title">관심 이유</div>
+            <div class="chip-grid">
+              <div class="chip selected"><span class="emoji">🏯</span>일본 문화</div>
+              <div class="chip"><span class="emoji">📝</span>학습</div>
+              <div class="chip selected"><span class="emoji">✈️</span>여행</div>
+              <div class="chip"><span class="emoji">🤝</span>친구</div>
+              <div class="chip"><span class="emoji">🎮</span>애니/게임</div>
+              <div class="chip"><span class="emoji">💼</span>비즈니스</div>
+            </div>
+            <button class="sheet-save-btn">저장하기</button>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-sublabel">BottomSheetPicker 패턴.<br>ON/OFF 토글 + 선호도 수정</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showSection(idx) {
+  document.querySelectorAll('.section').forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.querySelectorAll('.nav-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

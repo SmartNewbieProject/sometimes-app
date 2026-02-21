@@ -138,6 +138,7 @@ export interface UserProfile {
 	canLetter?: boolean;
 	external?: ExternalMatchInfo | null;
 	idealTypeResult?: {
+		id?: string;
 		name: string;
 		tags: string[];
 	} | null;

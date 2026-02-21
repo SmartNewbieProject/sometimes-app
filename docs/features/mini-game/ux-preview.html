@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Game UX - Refined Preview v2</title>
+<style>
+  :root {
+    --brand-primary: #7A4AE2;
+    --brand-accent: #A892D7;
+    --brand-secondary: #9747FF;
+    --brand-deep: #49386E;
+    --brand-light: #E2D5FF;
+    --surface-bg: #FFFFFF;
+    --surface-surface: #F8F9FA;
+    --surface-secondary: #F7F3FF;
+    --surface-tertiary: #F2EDFF;
+    --surface-other: #E1D9FF;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-muted: #7C7C7C;
+    --text-disabled: #AEAEAE;
+    --border-smooth: #e4e2e2;
+    --state-error: #FF0000;
+    --state-success: #22C55E;
+    --state-attention: #F70A8D;
+    --state-warning: #FFB02E;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f0ecf7; color:var(--text-primary); line-height:1.5; }
+
+  .top-header {
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    color:#fff; padding:40px 24px 20px; text-align:center;
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 4px 20px rgba(122,74,226,0.3);
+  }
+  .top-header h1 { font-size:20px; font-weight:700; }
+  .top-header p { font-size:12px; opacity:0.85; margin-top:4px; }
+
+  .nav-tabs {
+    display:flex; gap:6px; padding:12px 16px; overflow-x:auto;
+    background:#fff; border-bottom:1px solid var(--border-smooth);
+    position:sticky; top:80px; z-index:99; -webkit-overflow-scrolling:touch;
+  }
+  .nav-tab {
+    flex-shrink:0; padding:8px 14px; border-radius:20px; font-size:13px; font-weight:600;
+    border:1.5px solid var(--brand-light); background:#fff; color:var(--brand-primary);
+    cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .nav-tab:hover,.nav-tab.active { background:var(--brand-primary); color:#fff; border-color:var(--brand-primary); }
+  .nav-tab.hold { background:var(--text-disabled); color:#fff; border-color:var(--text-disabled); opacity:0.5; pointer-events:none; }
+
+  .section { display:none; padding:20px 16px 40px; max-width:1400px; margin:0 auto; }
+  .section.active { display:block; }
+  .section-title { font-size:18px; font-weight:700; color:var(--brand-deep); margin-bottom:4px; }
+  .section-desc { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+  .section-rationale {
+    background:var(--surface-secondary); border-left:3px solid var(--brand-primary);
+    padding:12px 16px; border-radius:0 12px 12px 0; margin-bottom:20px; font-size:12px; color:var(--text-secondary); line-height:1.6;
+  }
+  .section-rationale strong { color:var(--brand-primary); }
+
+  /* Phone mockups */
+  .mockups-row { display:flex; gap:24px; flex-wrap:wrap; justify-content:center; }
+  .mockup-item { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .mockup-label { font-size:12px; font-weight:700; color:var(--brand-deep); background:var(--surface-tertiary); padding:4px 12px; border-radius:10px; }
+  .mockup-sublabel { font-size:10px; color:var(--text-muted); max-width:260px; text-align:center; }
+
+  .phone {
+    width:280px; height:560px; border:3px solid #222; border-radius:36px;
+    overflow:hidden; background:#fff; position:relative;
+    box-shadow:0 8px 32px rgba(0,0,0,0.15);
+  }
+  .phone-notch {
+    width:100px; height:24px; background:#222; border-radius:0 0 14px 14px; margin:0 auto; position:relative; z-index:2;
+  }
+  .phone-screen {
+    height:calc(100% - 24px); overflow:hidden; position:relative;
+    font-size:11px; display:flex; flex-direction:column;
+  }
+
+  .ph-header {
+    background:var(--brand-primary); color:#fff; padding:10px 14px; font-size:13px; font-weight:600;
+    display:flex; align-items:center; gap:8px; flex-shrink:0;
+  }
+  .ph-header .back { font-size:16px; }
+  .ph-body { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+  .ph-chat-area { flex:1; padding:10px; display:flex; flex-direction:column; gap:6px; overflow:hidden; }
+
+  .ph-msg-bubble { max-width:75%; padding:7px 11px; border-radius:14px; font-size:11px; line-height:1.4; }
+  .ph-msg-bubble.mine { background:var(--brand-primary); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+  .ph-msg-bubble.theirs { background:var(--surface-surface); color:var(--text-primary); align-self:flex-start; border-bottom-left-radius:4px; }
+
+  .ph-input-bar {
+    display:flex; align-items:center; gap:8px; padding:8px 10px;
+    border-top:1px solid var(--border-smooth); background:#fff; flex-shrink:0;
+  }
+  .ph-input-bar .icon { font-size:16px; cursor:default; }
+  .ph-input-field {
+    flex:1; background:var(--surface-surface); border-radius:20px;
+    padding:7px 12px; font-size:11px; color:var(--text-disabled);
+  }
+
+  .ph-system-msg { text-align:center; font-size:9px; color:var(--text-muted); padding:4px 0; }
+
+  /* Tooltip bubble */
+  .ph-tooltip-bubble {
+    position:relative; background:var(--brand-deep); color:#fff;
+    padding:8px 12px; border-radius:12px; font-size:10px; font-weight:500;
+    margin:0 10px; text-align:center; line-height:1.4;
+    animation: tooltipPulse 2s ease-in-out infinite;
+  }
+  .ph-tooltip-bubble::after {
+    content:''; position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
+    width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent;
+    border-top:6px solid var(--brand-deep);
+  }
+  @keyframes tooltipPulse {
+    0%,100% { box-shadow:0 0 0 0 rgba(122,74,226,0.4); }
+    50% { box-shadow:0 0 0 6px rgba(122,74,226,0); }
+  }
+
+  /* Game icon with badge */
+  .ph-game-icon-wrap {
+    position:relative; width:28px; height:28px; border-radius:50%;
+    background:linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    display:flex; align-items:center; justify-content:center; font-size:14px;
+    box-shadow:0 2px 8px rgba(122,74,226,0.3);
+    animation: iconGlow 2s ease-in-out infinite;
+  }
+  .ph-game-icon-wrap .dot-badge {
+    position:absolute; top:-1px; right:-1px; width:8px; height:8px;
+    background:var(--state-attention); border-radius:50%; border:1.5px solid #fff;
+  }
+  @keyframes iconGlow {
+    0%,100% { box-shadow:0 2px 8px rgba(122,74,226,0.3); }
+    50% { box-shadow:0 2px 16px rgba(122,74,226,0.6); }
+  }
+
+  /* Content Panel */
+  .ph-panel {
+    position:absolute; bottom:0; left:0; right:0; background:#fff;
+    border-radius:20px 20px 0 0; box-shadow:0 -4px 24px rgba(0,0,0,0.12);
+    z-index:5; overflow:hidden;
+  }
+  .ph-panel-handle { width:36px; height:4px; background:var(--text-disabled); border-radius:2px; margin:10px auto 0; }
+  .ph-panel-tabs {
+    display:flex; border-bottom:2px solid #f3f3f3; margin:0 12px;
+  }
+  .ph-panel-tab {
+    flex:1; text-align:center; padding:10px 4px; font-size:11px; font-weight:600;
+    color:var(--text-muted); position:relative;
+  }
+  .ph-panel-tab.active { color:var(--brand-primary); }
+  .ph-panel-tab.active::after {
+    content:''; position:absolute; bottom:-2px; left:15%; right:15%; height:2px;
+    background:var(--brand-primary); border-radius:1px;
+  }
+  .ph-panel-tab .new-badge {
+    display:inline-block; font-size:7px; background:var(--state-attention); color:#fff;
+    padding:1px 4px; border-radius:6px; vertical-align:top; margin-left:2px; font-weight:700;
+  }
+
+  .ph-panel-content { padding:12px; }
+
+  .ph-game-card-mini {
+    display:flex; align-items:center; gap:10px; padding:10px 12px;
+    background:var(--surface-secondary); border-radius:14px; margin-bottom:8px;
+    border:1px solid var(--brand-light);
+  }
+  .ph-game-card-mini .emoji { font-size:24px; width:36px; text-align:center; }
+  .ph-game-card-mini .info { flex:1; }
+  .ph-game-card-mini .name { font-size:12px; font-weight:700; color:var(--brand-deep); }
+  .ph-game-card-mini .desc { font-size:9px; color:var(--text-muted); margin-top:1px; }
+  .ph-game-card-mini .arrow { font-size:12px; color:var(--text-disabled); }
+  .ph-game-card-mini .time-badge {
+    font-size:8px; background:var(--surface-other); color:var(--brand-deep);
+    padding:2px 6px; border-radius:8px; font-weight:600;
+  }
+
+  /* Topic chips */
+  .ph-topic-chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .ph-topic-chip {
+    padding:6px 12px; border-radius:20px; font-size:10px; font-weight:600;
+    background:var(--surface-tertiary); color:var(--brand-deep);
+    border:1px solid var(--brand-light);
+  }
+
+  /* Push notification */
+  .ph-lockscreen { background:linear-gradient(180deg,#1a1a2e 0%,#2d1b69 100%); }
+  .ph-push {
+    background:rgba(255,255,255,0.95); backdrop-filter:blur(10px);
+    border-radius:16px; padding:12px; margin:12px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.2);
+  }
+  .ph-push-header { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+  .ph-push-icon { width:20px; height:20px; border-radius:5px; background:var(--brand-primary); display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; }
+  .ph-push-app { font-size:10px; font-weight:600; color:var(--text-muted); }
+  .ph-push-time { font-size:9px; color:var(--text-disabled); margin-left:auto; }
+  .ph-push-title { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .ph-push-body { font-size:11px; color:var(--text-secondary); line-height:1.4; margin-top:2px; }
+
+  /* Milestone Journey */
+  .ph-journey { padding:12px 16px; }
+  .ph-journey-header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:12px;
+  }
+  .ph-journey-avatars { display:flex; align-items:center; gap:4px; }
+  .ph-avatar {
+    width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:13px; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,0.1);
+  }
+  .ph-avatar.me { background:var(--brand-light); }
+  .ph-avatar.them { background:#FFE4EC; }
+  .ph-avatar-connector { width:16px; height:2px; background:var(--brand-light); border-radius:1px; }
+
+  .ph-timeline { position:relative; padding-left:20px; }
+  .ph-timeline::before {
+    content:''; position:absolute; left:7px; top:0; bottom:0; width:2px;
+    background:linear-gradient(180deg, var(--brand-primary), var(--brand-light), var(--text-disabled));
+    border-radius:1px;
+  }
+  .ph-milestone {
+    position:relative; padding:6px 0 12px 16px; font-size:10px;
+  }
+  .ph-milestone::before {
+    content:''; position:absolute; left:-16px; top:8px; width:10px; height:10px;
+    border-radius:50%; border:2px solid var(--brand-primary); background:#fff; z-index:1;
+  }
+  .ph-milestone.done::before { background:var(--brand-primary); }
+  .ph-milestone.active::before {
+    background:var(--brand-primary);
+    box-shadow:0 0 0 4px rgba(122,74,226,0.2);
+  }
+  .ph-milestone.future::before { border-color:var(--text-disabled); }
+  .ph-milestone.locked::before { border-color:var(--text-disabled); background:var(--surface-surface); }
+
+  .ph-milestone-title { font-weight:700; color:var(--brand-deep); font-size:11px; }
+  .ph-milestone-subtitle { color:var(--text-muted); font-size:9px; margin-top:1px; }
+  .ph-milestone-badge {
+    display:inline-block; font-size:8px; padding:2px 6px; border-radius:6px;
+    font-weight:600; margin-top:3px;
+  }
+  .ph-milestone-badge.match { background:#E8F8E8; color:var(--state-success); }
+  .ph-milestone-badge.game { background:var(--surface-tertiary); color:var(--brand-primary); }
+  .ph-milestone-badge.streak { background:#FFF3E0; color:#F97316; }
+  .ph-milestone-badge.meet { background:#FFE4EC; color:var(--state-attention); }
+  .ph-milestone-badge.locked { background:var(--surface-surface); color:var(--text-disabled); }
+
+  .ph-milestone-detail {
+    background:var(--surface-secondary); border-radius:10px; padding:8px 10px;
+    margin-top:4px; font-size:9px; color:var(--text-secondary); line-height:1.5;
+  }
+  .ph-milestone-detail .result-row {
+    display:flex; align-items:center; gap:4px; padding:2px 0;
+  }
+
+  /* Design note cards */
+  .design-notes {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+    gap:16px; margin-top:24px;
+  }
+  .design-note {
+    background:#fff; border-radius:16px; padding:16px; box-shadow:0 2px 12px rgba(0,0,0,0.05);
+  }
+  .design-note h4 { font-size:13px; font-weight:700; color:var(--brand-deep); margin-bottom:6px; }
+  .design-note p { font-size:11px; color:var(--text-muted); line-height:1.6; }
+  .design-note ul { font-size:11px; color:var(--text-secondary); padding-left:16px; line-height:1.8; }
+  .design-note .tag {
+    display:inline-block; font-size:9px; padding:2px 8px; border-radius:8px;
+    margin-right:4px; margin-bottom:4px; font-weight:600;
+  }
+  .design-note .tag.component { background:var(--surface-tertiary); color:var(--brand-primary); }
+  .design-note .tag.pattern { background:#E8F8E8; color:var(--state-success); }
+  .design-note .tag.animation { background:#FFF3E0; color:#F97316; }
+
+  /* Flow diagram */
+  .flow-wrap {
+    background:#fff; border-radius:16px; padding:20px; margin-top:24px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.05);
+  }
+  .flow-wrap h3 { font-size:14px; font-weight:700; color:var(--brand-deep); margin-bottom:12px; }
+  .flow-steps { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .flow-step {
+    padding:8px 14px; border-radius:12px; font-size:11px; font-weight:600;
+    display:flex; align-items:center; gap:4px;
+  }
+  .flow-step.action { background:var(--brand-primary); color:#fff; }
+  .flow-step.result { background:var(--surface-tertiary); color:var(--brand-deep); }
+  .flow-step.panel { background:var(--surface-other); color:var(--brand-deep); }
+  .flow-arrow { font-size:14px; color:var(--text-disabled); }
+
+  /* State tabs within mockup area */
+  .state-tabs { display:flex; gap:6px; justify-content:center; margin-bottom:12px; }
+  .state-tab {
+    padding:4px 10px; border-radius:12px; font-size:10px; font-weight:600;
+    border:1px solid var(--brand-light); color:var(--brand-primary); cursor:pointer; background:#fff;
+  }
+  .state-tab.active { background:var(--brand-primary); color:#fff; }
+
+  @media (max-width:700px) {
+    .mockups-row { flex-direction:column; align-items:center; }
+    .phone { width:260px; height:520px; }
+    .design-notes { grid-template-columns:1fr; }
+    .flow-steps { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <h1>Mini Game UX - Refined v2</h1>
+  <p>1. Tooltip + Panel &middot; 2. Icon Button &middot; 3. Push Nudge &middot; 4. Hold &middot; 5. Milestone Journey</p>
+</div>
+
+<div class="nav-tabs" id="navTabs">
+  <div class="nav-tab active" data-section="s1">1. Tooltip + Panel</div>
+  <div class="nav-tab" data-section="s2">2. Icon Button</div>
+  <div class="nav-tab" data-section="s3">3. Push Nudge</div>
+  <div class="nav-tab hold" data-section="s4">4. Gameplay (Hold)</div>
+  <div class="nav-tab" data-section="s5">5. Milestone Journey</div>
+</div>
+
+<!-- ===== SECTION 1: Tooltip + Content Panel ===== -->
+<div class="section active" id="s1">
+  <h2 class="section-title">1. Icebreaker: Tooltip + Content Panel</h2>
+  <p class="section-desc">ChatInput 근처에 자연스러운 Tooltip으로 유도 &rarr; 탭하면 게임/대화주제/미션이 모인 Content Panel 오픈</p>
+
+  <div class="section-rationale">
+    <strong>핵심 설계 원칙:</strong> "뭐라고 시작하지?" 고민하는 순간에 <strong>입력창 바로 위에 눈에 띄는 툴팁</strong>이 뜸.
+    탭하면 미니게임뿐만 아니라 <strong>대화 주제, 미션, AI 추천</strong>까지 한 패널에서 선택 가능.
+    기존 앱의 <code>BottomSheetPicker</code> + <code>Tooltip</code> 패턴 활용. 첫 사용 시 pulse 애니메이션으로 발견성 극대화.
+  </div>
+
+  <div class="mockups-row">
+    <!-- State 1: Tooltip visible -->
+    <div class="mockup-item">
+      <div class="mockup-label">State 1: Tooltip 노출</div>
+      <div class="mockup-sublabel">첫 매칭 or 입력창 포커스 시 자동 표시</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body">
+            <div style="background:var(--surface-tertiary);padding:8px 12px;text-align:center;font-size:10px;color:var(--brand-deep);border-bottom:1px solid var(--brand-light)">
+              💌 OO님과 매칭됐어요!
+            </div>
+            <div class="ph-chat-area">
+              <div style="flex:1"></div>
+              <!-- Tooltip -->
+              <div class="ph-tooltip-bubble">
+                💡 뭐라고 시작할지 고민이라면?<br>
+                <span style="font-weight:700;color:var(--brand-light)">탭해서 게임 & 대화주제 보기</span>
+              </div>
+            </div>
+          </div>
+          <div class="ph-input-bar">
+            <span class="icon">📷</span>
+            <div class="ph-game-icon-wrap">
+              🎮
+              <span class="dot-badge"></span>
+            </div>
+            <div class="ph-input-field">메시지를 입력하세요...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 2: Panel open - Games -->
+    <div class="mockup-item">
+      <div class="mockup-label">State 2: Panel 오픈 (게임)</div>
+      <div class="mockup-sublabel">🎮 아이콘 탭 &rarr; 콘텐츠 패널 슬라이드업</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body" style="opacity:0.25">
+            <div class="ph-chat-area"></div>
+          </div>
+          <!-- Content Panel -->
+          <div class="ph-panel" style="max-height:75%">
+            <div class="ph-panel-handle"></div>
+            <div class="ph-panel-tabs">
+              <div class="ph-panel-tab active">🎮 게임 <span class="new-badge">NEW</span></div>
+              <div class="ph-panel-tab">💬 대화주제</div>
+              <div class="ph-panel-tab">📸 미션</div>
+            </div>
+            <div class="ph-panel-content">
+              <div class="ph-game-card-mini">
+                <div class="emoji">⚖️</div>
+                <div class="info">
+                  <div class="name">밸런스 게임</div>
+                  <div class="desc">둘 중 하나! 취향 비교하기</div>
+                </div>
+                <div class="time-badge">~1분</div>
+                <div class="arrow">&rsaquo;</div>
+              </div>
+              <div class="ph-game-card-mini">
+                <div class="emoji">🤔</div>
+                <div class="info">
+                  <div class="name">취향 퀴즈</div>
+                  <div class="desc">상대방 답을 맞춰보세요</div>
+                </div>
+                <div class="time-badge">~2분</div>
+                <div class="arrow">&rsaquo;</div>
+              </div>
+              <div class="ph-game-card-mini">
+                <div class="emoji">🎲</div>
+                <div class="info">
+                  <div class="name">랜덤 질문</div>
+                  <div class="desc">깊은 대화를 위한 질문 카드</div>
+                </div>
+                <div class="time-badge">자유</div>
+                <div class="arrow">&rsaquo;</div>
+              </div>
+              <div style="text-align:center;font-size:9px;color:var(--text-disabled);margin-top:8px">
+                오늘 남은 게임: 2/3
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: Panel open - Topics -->
+    <div class="mockup-item">
+      <div class="mockup-label">State 3: Panel (대화주제)</div>
+      <div class="mockup-sublabel">대화주제 탭 &rarr; AI 추천 토픽 & 칩</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body" style="opacity:0.25">
+            <div class="ph-chat-area"></div>
+          </div>
+          <div class="ph-panel" style="max-height:75%">
+            <div class="ph-panel-handle"></div>
+            <div class="ph-panel-tabs">
+              <div class="ph-panel-tab">🎮 게임 <span class="new-badge">NEW</span></div>
+              <div class="ph-panel-tab active">💬 대화주제</div>
+              <div class="ph-panel-tab">📸 미션</div>
+            </div>
+            <div class="ph-panel-content">
+              <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">
+                🤖 AI가 OO님 프로필 기반으로 추천해요
+              </div>
+              <div class="ph-topic-chips">
+                <span class="ph-topic-chip">🎵 좋아하는 음악</span>
+                <span class="ph-topic-chip">✈️ 여행 경험</span>
+                <span class="ph-topic-chip">🍕 맛집 추천</span>
+                <span class="ph-topic-chip">📺 요즘 빠진 드라마</span>
+                <span class="ph-topic-chip">🐶 반려동물</span>
+                <span class="ph-topic-chip">💪 운동/취미</span>
+              </div>
+              <div style="margin-top:12px;background:var(--surface-secondary);border-radius:12px;padding:10px">
+                <div style="font-size:10px;font-weight:700;color:var(--brand-deep);margin-bottom:4px">💡 이렇게 시작해보세요</div>
+                <div style="font-size:10px;color:var(--text-secondary);line-height:1.5">
+                  "프로필에 여행 사진이 있던데,<br>
+                  제일 좋았던 곳은 어디예요?"
+                </div>
+                <div style="text-align:right;margin-top:6px">
+                  <span style="font-size:9px;background:var(--brand-primary);color:#fff;padding:4px 10px;border-radius:8px;font-weight:600">복사해서 보내기</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 4: Panel open - Mission -->
+    <div class="mockup-item">
+      <div class="mockup-label">State 4: Panel (미션)</div>
+      <div class="mockup-sublabel">함께하기 미션 &rarr; 사진/활동 공유 유도</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body" style="opacity:0.25">
+            <div class="ph-chat-area"></div>
+          </div>
+          <div class="ph-panel" style="max-height:75%">
+            <div class="ph-panel-handle"></div>
+            <div class="ph-panel-tabs">
+              <div class="ph-panel-tab">🎮 게임 <span class="new-badge">NEW</span></div>
+              <div class="ph-panel-tab">💬 대화주제</div>
+              <div class="ph-panel-tab active">📸 미션</div>
+            </div>
+            <div class="ph-panel-content">
+              <div class="ph-game-card-mini" style="border-color:var(--state-warning);background:linear-gradient(135deg,#FFF8EC,#FFFDF7)">
+                <div class="emoji">🌅</div>
+                <div class="info">
+                  <div class="name" style="color:#D97706">오늘의 미션</div>
+                  <div class="desc">지금 보이는 하늘 사진 공유하기</div>
+                </div>
+                <div class="time-badge" style="background:#FFF3E0;color:#D97706">하루</div>
+              </div>
+              <div class="ph-game-card-mini">
+                <div class="emoji">🎵</div>
+                <div class="info">
+                  <div class="name">BGM 공유</div>
+                  <div class="desc">지금 듣고 있는 노래 공유</div>
+                </div>
+                <div class="time-badge">자유</div>
+              </div>
+              <div class="ph-game-card-mini" style="opacity:0.5">
+                <div class="emoji">🔒</div>
+                <div class="info">
+                  <div class="name">셀카 교환</div>
+                  <div class="desc">게임 3회 완료 시 해금</div>
+                </div>
+                <div class="time-badge" style="background:var(--surface-surface);color:var(--text-disabled)">잠김</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flow diagram -->
+  <div class="flow-wrap">
+    <h3>User Flow</h3>
+    <div class="flow-steps">
+      <div class="flow-step action">채팅방 진입</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step result">Tooltip 자동 표시</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step action">🎮 아이콘 탭 or 툴팁 탭</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step panel">Content Panel 오픈</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step action">게임/주제/미션 선택</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step result">대화 시작!</div>
+    </div>
+  </div>
+
+  <!-- Design notes -->
+  <div class="design-notes">
+    <div class="design-note">
+      <h4>Tooltip 노출 조건</h4>
+      <ul>
+        <li><strong>첫 매칭:</strong> 채팅방 진입 시 자동 표시 (3초 후 축소 애니메이션)</li>
+        <li><strong>첫 메시지 전:</strong> 입력창 포커스 시 재표시</li>
+        <li><strong>대화 정체:</strong> 12시간 이상 무응답 시 재표시</li>
+        <li><strong>닫기 후:</strong> 🎮 아이콘 dot badge로 최소화</li>
+      </ul>
+      <div style="margin-top:8px">
+        <span class="tag component">Tooltip</span>
+        <span class="tag animation">Pulse 애니메이션</span>
+        <span class="tag pattern">Reanimated Spring</span>
+      </div>
+    </div>
+    <div class="design-note">
+      <h4>Content Panel 구조</h4>
+      <ul>
+        <li><strong>3개 탭:</strong> 게임 | 대화주제 | 미션</li>
+        <li>높이: 화면 60~75% (드래그로 조절)</li>
+        <li>게임 탭: 카드 리스트 (밸런스/퀴즈/랜덤질문)</li>
+        <li>대화주제 탭: AI 추천 칩 + 예시 메시지</li>
+        <li>미션 탭: 일일미션 + 잠금해제 컨텐츠</li>
+      </ul>
+      <div style="margin-top:8px">
+        <span class="tag component">BottomSheetPicker</span>
+        <span class="tag component">ChipSelector</span>
+        <span class="tag pattern">기존 ChatTipsModal 확장</span>
+      </div>
+    </div>
+    <div class="design-note">
+      <h4>발견성 (Discoverability) 보장</h4>
+      <ul>
+        <li>🎮 아이콘: gradient 배경 + pulse glow 애니메이션</li>
+        <li>빨간 dot badge (NEW) - 첫 사용 전까지 유지</li>
+        <li>Tooltip: 진한 배경(brand-deep) + 화살표로 아이콘 가리킴</li>
+        <li>첫 진입 시 3초 대기 후 자동 패널 오픈 (온보딩)</li>
+      </ul>
+      <div style="margin-top:8px">
+        <span class="tag animation">iconGlow keyframe</span>
+        <span class="tag animation">tooltipPulse keyframe</span>
+        <span class="tag pattern">onboarding coach mark</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 2: Icon Button ===== -->
+<div class="section" id="s2">
+  <h2 class="section-title">2. 채팅 내 게임 시작: Icon Button</h2>
+  <p class="section-desc">기존 입력바 [📷] [💡] 사이에 [🎮] 아이콘 추가 &rarr; Section 1의 Content Panel과 동일 패널 오픈</p>
+
+  <div class="section-rationale">
+    <strong>Section 1과 연동:</strong> 아이스브레이커 단계가 끝난 후에도 <strong>동일한 🎮 아이콘</strong>이 입력바에 상주.
+    탭하면 Section 1과 같은 Content Panel이 올라옴. 기존 <code>[💡팁]</code> 버튼 패턴과 일관성 유지.
+    첫 사용 후에는 pulse 애니메이션 제거, dot badge만 신규 컨텐츠 시 표시.
+  </div>
+
+  <div class="mockups-row">
+    <!-- Normal state -->
+    <div class="mockup-item">
+      <div class="mockup-label">평상시: 아이콘 상주</div>
+      <div class="mockup-sublabel">대화 중 언제든 탭 가능</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body">
+            <div class="ph-chat-area">
+              <div class="ph-msg-bubble mine">오늘 뭐 했어?</div>
+              <div class="ph-msg-bubble theirs">카페 갔다왔어! ☕</div>
+              <div class="ph-msg-bubble mine">오 어디?</div>
+              <div class="ph-msg-bubble theirs">성수동에 새로 생긴 데 ㅎㅎ</div>
+              <div class="ph-msg-bubble mine">거기 좋다던데!</div>
+            </div>
+          </div>
+          <div class="ph-input-bar">
+            <span class="icon">📷</span>
+            <div class="ph-game-icon-wrap" style="animation:none;box-shadow:0 1px 4px rgba(122,74,226,0.2)">
+              🎮
+            </div>
+            <div class="ph-input-field">메시지를 입력하세요...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- First time with badge -->
+    <div class="mockup-item">
+      <div class="mockup-label">첫 사용 전: Glow + Badge</div>
+      <div class="mockup-sublabel">아직 한 번도 안 눌렀을 때</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body">
+            <div class="ph-chat-area">
+              <div class="ph-msg-bubble theirs">안녕하세요! 😊</div>
+              <div style="flex:1"></div>
+              <div class="ph-tooltip-bubble" style="margin-bottom:4px">
+                💡 대화가 어색하다면?<br>
+                <span style="font-weight:700;color:var(--brand-light)">게임으로 시작해보세요!</span>
+              </div>
+            </div>
+          </div>
+          <div class="ph-input-bar">
+            <span class="icon">📷</span>
+            <div class="ph-game-icon-wrap">
+              🎮
+              <span class="dot-badge"></span>
+            </div>
+            <div class="ph-input-field">메시지를 입력하세요...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel open -->
+    <div class="mockup-item">
+      <div class="mockup-label">탭 후: Content Panel</div>
+      <div class="mockup-sublabel">Section 1과 동일한 패널 재활용</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body" style="opacity:0.2">
+            <div class="ph-chat-area">
+              <div class="ph-msg-bubble mine">오늘 뭐 했어?</div>
+              <div class="ph-msg-bubble theirs">카페 갔다왔어! ☕</div>
+            </div>
+          </div>
+          <div class="ph-panel" style="max-height:72%">
+            <div class="ph-panel-handle"></div>
+            <div class="ph-panel-tabs">
+              <div class="ph-panel-tab active">🎮 게임</div>
+              <div class="ph-panel-tab">💬 대화주제</div>
+              <div class="ph-panel-tab">📸 미션</div>
+            </div>
+            <div class="ph-panel-content">
+              <div class="ph-game-card-mini">
+                <div class="emoji">⚖️</div>
+                <div class="info">
+                  <div class="name">밸런스 게임</div>
+                  <div class="desc">둘 중 하나! 취향 비교하기</div>
+                </div>
+                <div class="time-badge">~1분</div>
+                <div class="arrow">&rsaquo;</div>
+              </div>
+              <div class="ph-game-card-mini">
+                <div class="emoji">🤔</div>
+                <div class="info">
+                  <div class="name">취향 퀴즈</div>
+                  <div class="desc">상대방 답을 맞춰보세요</div>
+                </div>
+                <div class="time-badge">~2분</div>
+                <div class="arrow">&rsaquo;</div>
+              </div>
+              <div class="ph-game-card-mini">
+                <div class="emoji">🎲</div>
+                <div class="info">
+                  <div class="name">랜덤 질문</div>
+                  <div class="desc">깊은 대화를 위한 질문 카드</div>
+                </div>
+                <div class="time-badge">자유</div>
+                <div class="arrow">&rsaquo;</div>
+              </div>
+              <div style="text-align:center;font-size:9px;color:var(--text-disabled);margin-top:6px">
+                오늘 남은 게임: 1/3
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="design-notes">
+    <div class="design-note">
+      <h4>입력바 레이아웃</h4>
+      <p>기존: <code>[📷] [💡팁] [입력창]</code><br>
+      변경: <code>[📷] [🎮] [입력창]</code></p>
+      <ul>
+        <li>💡팁 버튼은 Content Panel 안 "대화주제" 탭으로 흡수</li>
+        <li>🎮 아이콘이 기존 💡 위치를 대체 (기능 통합)</li>
+        <li>입력창 크기 변경 없음</li>
+      </ul>
+      <div style="margin-top:8px">
+        <span class="tag component">ChatInput 수정</span>
+        <span class="tag pattern">기존 💡팁 통합</span>
+      </div>
+    </div>
+    <div class="design-note">
+      <h4>아이콘 상태 변화</h4>
+      <ul>
+        <li><strong>첫 진입:</strong> Gradient + Glow + Dot Badge + Tooltip</li>
+        <li><strong>첫 사용 후:</strong> Gradient 유지, Glow/Badge 제거</li>
+        <li><strong>신규 컨텐츠:</strong> Dot Badge 재표시</li>
+        <li><strong>대화 정체:</strong> Glow 재활성화 + Tooltip</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: Push Nudge ===== -->
+<div class="section" id="s3">
+  <h2 class="section-title">3. 대화 정체 시 Push Nudge</h2>
+  <p class="section-desc">12시간 양방향 메시지 없을 때 푸시 알림으로 게임 제안 &rarr; 딥링크로 채팅방 게임 패널 직접 오픈</p>
+
+  <div class="section-rationale">
+    <strong>Push + Deep Link 조합:</strong> 앱 미사용 중에도 도달 가능한 유일한 채널.
+    푸시 알림 탭 &rarr; 채팅방으로 이동 &rarr; Content Panel 자동 오픈 (Section 1/2 연동).
+    과도한 푸시 방지를 위해 <strong>1일 1회, 최대 3일 연속</strong> 제한.
+  </div>
+
+  <div class="mockups-row">
+    <!-- Push on lockscreen -->
+    <div class="mockup-item">
+      <div class="mockup-label">Push 알림 (잠금화면)</div>
+      <div class="mockup-sublabel">앱 외부에서 게임 제안</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen ph-lockscreen">
+          <div style="text-align:center;padding-top:40px;color:rgba(255,255,255,0.7);font-size:28px;font-weight:200;letter-spacing:-1px">9:41</div>
+          <div style="text-align:center;color:rgba(255,255,255,0.4);font-size:10px;margin-top:2px">2월 15일 토요일</div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px;gap:12px">
+            <div class="ph-push">
+              <div class="ph-push-header">
+                <div class="ph-push-icon">S</div>
+                <div class="ph-push-app">썸타임</div>
+                <div class="ph-push-time">지금</div>
+              </div>
+              <div class="ph-push-title">🎮 OO님과 밸런스 게임 해볼래요?</div>
+              <div class="ph-push-body">대화 주제가 필요할 때 딱이에요! 탭해서 시작하기</div>
+            </div>
+            <div class="ph-push" style="opacity:0.6">
+              <div class="ph-push-header">
+                <div class="ph-push-icon">S</div>
+                <div class="ph-push-app">썸타임</div>
+                <div class="ph-push-time">2시간 전</div>
+              </div>
+              <div class="ph-push-title">XX님이 프로필을 확인했어요</div>
+              <div class="ph-push-body">관심을 보이고 있어요! 대화를 시작해보세요</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Push tapped -> Deep link result -->
+    <div class="mockup-item">
+      <div class="mockup-label">Push 탭 &rarr; 채팅방 진입</div>
+      <div class="mockup-sublabel">딥링크로 채팅방 + Panel 자동 오픈</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body" style="opacity:0.2">
+            <div class="ph-chat-area">
+              <div class="ph-msg-bubble mine">오늘 뭐 했어?</div>
+              <div style="font-size:8px;color:var(--text-disabled);text-align:center">어제 오후 7:32</div>
+            </div>
+          </div>
+          <div class="ph-panel" style="max-height:65%">
+            <div class="ph-panel-handle"></div>
+            <div class="ph-panel-tabs">
+              <div class="ph-panel-tab active">🎮 게임</div>
+              <div class="ph-panel-tab">💬 대화주제</div>
+              <div class="ph-panel-tab">📸 미션</div>
+            </div>
+            <div class="ph-panel-content">
+              <!-- Highlighted recommended game -->
+              <div class="ph-game-card-mini" style="border:2px solid var(--brand-primary);background:linear-gradient(135deg,var(--surface-secondary),#fff);box-shadow:0 2px 12px rgba(122,74,226,0.15)">
+                <div class="emoji">⚖️</div>
+                <div class="info">
+                  <div class="name">밸런스 게임 <span style="font-size:8px;background:var(--brand-primary);color:#fff;padding:1px 5px;border-radius:4px;margin-left:4px">추천</span></div>
+                  <div class="desc">대화가 뜸할 때 딱 좋아요!</div>
+                </div>
+                <div class="time-badge">~1분</div>
+                <div class="arrow">&rsaquo;</div>
+              </div>
+              <div class="ph-game-card-mini">
+                <div class="emoji">🤔</div>
+                <div class="info">
+                  <div class="name">취향 퀴즈</div>
+                  <div class="desc">상대방 답을 맞춰보세요</div>
+                </div>
+                <div class="time-badge">~2분</div>
+                <div class="arrow">&rsaquo;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Push variants -->
+    <div class="mockup-item">
+      <div class="mockup-label">Push 문구 변형</div>
+      <div class="mockup-sublabel">상황별 메시지 (A/B 테스트용)</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen ph-lockscreen">
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px;gap:10px">
+            <div class="ph-push">
+              <div class="ph-push-header">
+                <div class="ph-push-icon">S</div>
+                <div class="ph-push-app">썸타임</div>
+                <div class="ph-push-time">v1</div>
+              </div>
+              <div class="ph-push-title">🎮 OO님과 밸런스 게임</div>
+              <div class="ph-push-body">짜장면 vs 짬뽕, OO님의 선택은? 탭해서 확인!</div>
+            </div>
+            <div class="ph-push">
+              <div class="ph-push-header">
+                <div class="ph-push-icon">S</div>
+                <div class="ph-push-app">썸타임</div>
+                <div class="ph-push-time">v2</div>
+              </div>
+              <div class="ph-push-title">💬 OO님에게 할 말이 떠오르지 않나요?</div>
+              <div class="ph-push-body">게임으로 자연스럽게 대화를 이어가보세요!</div>
+            </div>
+            <div class="ph-push">
+              <div class="ph-push-header">
+                <div class="ph-push-icon">S</div>
+                <div class="ph-push-app">썸타임</div>
+                <div class="ph-push-time">v3</div>
+              </div>
+              <div class="ph-push-title">🔥 OO님과의 대화가 식어가고 있어요</div>
+              <div class="ph-push-body">1분 밸런스 게임으로 다시 불붙여볼까요?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="design-notes">
+    <div class="design-note">
+      <h4>Push 전략</h4>
+      <ul>
+        <li><strong>트리거:</strong> 12시간 양방향 메시지 없음</li>
+        <li><strong>빈도:</strong> 1일 1회, 최대 3일 연속 (이후 간격 점증)</li>
+        <li><strong>시간대:</strong> 오후 7~10시 (피크 타임)</li>
+        <li><strong>딥링크:</strong> <code>chat/{id}?panel=game</code></li>
+      </ul>
+    </div>
+    <div class="design-note">
+      <h4>Deep Link 동작</h4>
+      <ul>
+        <li>Push 탭 &rarr; 앱 오픈 &rarr; 해당 채팅방 이동</li>
+        <li>Content Panel 자동 오픈 (게임 탭 활성화)</li>
+        <li>추천 게임 하이라이트 표시</li>
+        <li>패널 닫으면 일반 채팅 상태로 전환</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 4: Gameplay (Hold) ===== -->
+<div class="section" id="s4">
+  <h2 class="section-title">4. Gameplay UI</h2>
+  <p class="section-desc" style="color:var(--text-disabled)">보류 - 추후 결정</p>
+  <div style="text-align:center;padding:60px 20px;color:var(--text-disabled)">
+    <div style="font-size:40px;margin-bottom:12px">⏸️</div>
+    <div style="font-size:14px;font-weight:600">보류됨</div>
+    <div style="font-size:12px;margin-top:4px">게임 플레이 UI는 추후 결정합니다.</div>
+  </div>
+</div>
+
+<!-- ===== SECTION 5: Milestone Journey ===== -->
+<div class="section" id="s5">
+  <h2 class="section-title">5. 결과: Milestone Journey UI</h2>
+  <p class="section-desc">게임 결과 + 행동이 이정표로 쌓이는 여정 UI. 두 사람의 관계 진행도를 한눈에.</p>
+
+  <div class="section-rationale">
+    <strong>핵심 컨셉:</strong> 단순 결과 카드가 아니라, 매칭부터 만남까지의 <strong>관계 여정(Journey)</strong>을 타임라인으로 시각화.
+    각 게임 결과, 대화 이벤트, 미션 완료가 이정표(Milestone)로 쌓이며 다음 단계를 향한 <strong>진행감</strong>을 제공.
+    <strong>기능 확장 가능:</strong> 궁합 분석, 배지 시스템, 기념일, 만남 기록 등 무한 확장.
+  </div>
+
+  <div class="mockups-row">
+    <!-- Journey main view -->
+    <div class="mockup-item">
+      <div class="mockup-label">Journey 메인 뷰</div>
+      <div class="mockup-sublabel">채팅방 프로필 or 전용 탭에서 접근</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header">
+            <span class="back">&larr;</span>
+            <span style="flex:1;text-align:center">우리의 여정</span>
+            <span style="font-size:10px;opacity:0.7">5일째</span>
+          </div>
+          <div class="ph-body" style="overflow-y:auto">
+            <!-- Header with avatars -->
+            <div style="padding:16px;text-align:center;background:linear-gradient(180deg,var(--surface-secondary),#fff)">
+              <div class="ph-journey-avatars" style="justify-content:center">
+                <div class="ph-avatar me">🙂</div>
+                <div class="ph-avatar-connector"></div>
+                <div style="font-size:14px">❤️</div>
+                <div class="ph-avatar-connector"></div>
+                <div class="ph-avatar them">😊</div>
+              </div>
+              <div style="font-size:10px;color:var(--text-muted);margin-top:6px">나 &amp; OO님</div>
+              <div style="display:flex;justify-content:center;gap:12px;margin-top:10px">
+                <div style="text-align:center">
+                  <div style="font-size:16px;font-weight:800;color:var(--brand-primary)">73%</div>
+                  <div style="font-size:8px;color:var(--text-muted)">평균 일치율</div>
+                </div>
+                <div style="width:1px;background:var(--border-smooth)"></div>
+                <div style="text-align:center">
+                  <div style="font-size:16px;font-weight:800;color:#F97316">🔥3</div>
+                  <div style="font-size:8px;color:var(--text-muted)">연속 스트릭</div>
+                </div>
+                <div style="width:1px;background:var(--border-smooth)"></div>
+                <div style="text-align:center">
+                  <div style="font-size:16px;font-weight:800;color:var(--state-success)">4</div>
+                  <div style="font-size:8px;color:var(--text-muted)">게임 완료</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="ph-journey" style="padding-top:4px">
+              <div class="ph-timeline">
+                <div class="ph-milestone done">
+                  <div class="ph-milestone-title">💌 매칭 성사</div>
+                  <div class="ph-milestone-subtitle">2월 11일 · 서로 좋아요!</div>
+                  <span class="ph-milestone-badge match">첫 만남</span>
+                </div>
+
+                <div class="ph-milestone done">
+                  <div class="ph-milestone-title">🎮 밸런스 게임 #1</div>
+                  <div class="ph-milestone-subtitle">2월 11일 · 첫 게임 완료!</div>
+                  <div class="ph-milestone-detail">
+                    <div class="result-row">❤️ 짜장면 → 둘 다 짜장</div>
+                    <div class="result-row">❤️ 바다 → 둘 다 바다</div>
+                    <div class="result-row">💔 아침형/저녁형 → 다름</div>
+                    <div style="font-weight:700;color:var(--brand-primary);margin-top:2px">일치율: 67%</div>
+                  </div>
+                  <span class="ph-milestone-badge game">+3 구슬</span>
+                </div>
+
+                <div class="ph-milestone done">
+                  <div class="ph-milestone-title">💬 첫 번째 깊은 대화</div>
+                  <div class="ph-milestone-subtitle">2월 12일 · 50개 이상 메시지 교환</div>
+                  <span class="ph-milestone-badge match">대화 활발</span>
+                </div>
+
+                <div class="ph-milestone done">
+                  <div class="ph-milestone-title">🤔 취향 퀴즈 #1</div>
+                  <div class="ph-milestone-subtitle">2월 13일 · 서로 맞추기</div>
+                  <div class="ph-milestone-detail">
+                    <div style="font-weight:700;color:var(--brand-primary)">일치율: 80% 🎉</div>
+                  </div>
+                  <span class="ph-milestone-badge game">+5 구슬</span>
+                  <span class="ph-milestone-badge streak">🔥 2일 연속!</span>
+                </div>
+
+                <div class="ph-milestone active">
+                  <div class="ph-milestone-title">⚖️ 밸런스 게임 #2</div>
+                  <div class="ph-milestone-subtitle">2월 14일 · 오늘!</div>
+                  <div class="ph-milestone-detail">
+                    <div style="font-weight:700;color:var(--brand-primary)">일치율: 60%</div>
+                    <div style="margin-top:2px">3일 연속 스트릭! 🔥</div>
+                  </div>
+                  <span class="ph-milestone-badge streak">🔥 3일 연속!</span>
+                </div>
+
+                <div class="ph-milestone future">
+                  <div class="ph-milestone-title" style="color:var(--text-muted)">☕ 만남 제안</div>
+                  <div class="ph-milestone-subtitle">게임 5회 완료 시 해금</div>
+                  <span class="ph-milestone-badge meet">1회 남음</span>
+                </div>
+
+                <div class="ph-milestone locked">
+                  <div class="ph-milestone-title" style="color:var(--text-disabled)">🏷️ 궁합 분석 리포트</div>
+                  <div class="ph-milestone-subtitle">만남 제안 후 해금</div>
+                  <span class="ph-milestone-badge locked">🔒 잠김</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game result card (inline) -->
+    <div class="mockup-item">
+      <div class="mockup-label">게임 직후: 결과 + Journey 연결</div>
+      <div class="mockup-sublabel">결과 카드에서 Journey로 이동 가능</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header"><span class="back">&larr;</span> OO님</div>
+          <div class="ph-body">
+            <div class="ph-chat-area">
+              <div class="ph-system-msg">─── ⚖️ 밸런스 게임 완료 ───</div>
+              <div style="background:linear-gradient(135deg,var(--surface-secondary),#fff);border:1.5px solid var(--brand-light);border-radius:16px;padding:14px;text-align:center">
+                <div style="font-size:18px;font-weight:800;color:var(--brand-primary)">🎯 3/5 일치!</div>
+                <div style="font-size:10px;color:var(--text-muted);margin:4px 0">비슷한 점이 많네요!</div>
+
+                <!-- Mini results -->
+                <div style="text-align:left;padding:8px 0;font-size:10px;border-top:1px solid var(--brand-light);margin-top:8px">
+                  <div style="padding:2px 0">❤️ 짜장면 → 둘 다 같음</div>
+                  <div style="padding:2px 0">❤️ 바다 → 둘 다 같음</div>
+                  <div style="padding:2px 0">💔 아침/저녁 → 다름</div>
+                </div>
+
+                <!-- Streak + journey link -->
+                <div style="background:linear-gradient(135deg,#FFF3E0,#FFFDF7);border-radius:10px;padding:8px;margin-top:8px;display:flex;align-items:center;gap:8px">
+                  <div style="font-size:16px">🔥</div>
+                  <div style="flex:1;text-align:left">
+                    <div style="font-size:10px;font-weight:700;color:#D97706">3일 연속 스트릭!</div>
+                    <div style="font-size:8px;color:var(--text-muted)">만남 제안까지 게임 1회 남음</div>
+                  </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">
+                  <div style="background:var(--brand-primary);color:#fff;padding:10px;border-radius:12px;font-size:11px;font-weight:700">💬 결과로 대화하기</div>
+                  <div style="display:flex;gap:6px">
+                    <div style="flex:1;background:var(--surface-tertiary);color:var(--brand-deep);padding:8px;border-radius:10px;font-size:10px;font-weight:600;text-align:center">🎮 다른 게임</div>
+                    <div style="flex:1;background:var(--surface-tertiary);color:var(--brand-deep);padding:8px;border-radius:10px;font-size:10px;font-weight:600;text-align:center">📊 여정 보기</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-input-bar">
+            <span class="icon">📷</span>
+            <div class="ph-game-icon-wrap" style="animation:none">🎮</div>
+            <div class="ph-input-field">메시지를 입력하세요...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey expansion possibilities -->
+    <div class="mockup-item">
+      <div class="mockup-label">확장 가능성: 궁합 리포트</div>
+      <div class="mockup-sublabel">게임 데이터 축적 &rarr; 궁합 분석</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-header">
+            <span class="back">&larr;</span>
+            <span style="flex:1;text-align:center">궁합 분석</span>
+          </div>
+          <div class="ph-body" style="overflow-y:auto;padding:16px">
+            <!-- Chemistry radar -->
+            <div style="text-align:center;padding:16px;background:var(--surface-secondary);border-radius:16px;margin-bottom:12px">
+              <div style="font-size:36px;font-weight:800;color:var(--brand-primary)">73%</div>
+              <div style="font-size:11px;color:var(--brand-deep);font-weight:600">종합 궁합 점수</div>
+              <div style="font-size:9px;color:var(--text-muted);margin-top:4px">게임 4회, 미션 1회 기반</div>
+            </div>
+
+            <!-- Category breakdown -->
+            <div style="font-size:11px;font-weight:700;color:var(--brand-deep);margin-bottom:8px">카테고리별 일치율</div>
+
+            <div style="margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
+                <span style="color:var(--text-secondary)">🍕 음식 취향</span>
+                <span style="font-weight:700;color:var(--brand-primary)">85%</span>
+              </div>
+              <div style="height:6px;background:var(--brand-light);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:85%;background:var(--brand-primary);border-radius:3px"></div>
+              </div>
+            </div>
+
+            <div style="margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
+                <span style="color:var(--text-secondary)">🎬 엔터테인먼트</span>
+                <span style="font-weight:700;color:var(--brand-primary)">70%</span>
+              </div>
+              <div style="height:6px;background:var(--brand-light);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:70%;background:var(--brand-primary);border-radius:3px"></div>
+              </div>
+            </div>
+
+            <div style="margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
+                <span style="color:var(--text-secondary)">💪 라이프스타일</span>
+                <span style="font-weight:700;color:var(--state-warning)">55%</span>
+              </div>
+              <div style="height:6px;background:var(--brand-light);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:55%;background:var(--state-warning);border-radius:3px"></div>
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
+                <span style="color:var(--text-secondary)">❤️ 연애관</span>
+                <span style="font-weight:700;color:var(--state-attention)">80%</span>
+              </div>
+              <div style="height:6px;background:var(--brand-light);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:80%;background:var(--state-attention);border-radius:3px"></div>
+              </div>
+            </div>
+
+            <!-- Insight -->
+            <div style="background:linear-gradient(135deg,var(--surface-secondary),#fff);border:1px solid var(--brand-light);border-radius:12px;padding:10px;margin-top:8px">
+              <div style="font-size:10px;font-weight:700;color:var(--brand-deep);margin-bottom:4px">🤖 AI 인사이트</div>
+              <div style="font-size:10px;color:var(--text-secondary);line-height:1.5">
+                음식 취향이 잘 맞아요! 다음 만남에서 맛집 탐방을 추천해요.
+                라이프스타일은 조금 다르지만, 그래서 더 재미있을 수 있어요 😊
+              </div>
+            </div>
+
+            <!-- More games CTA -->
+            <div style="margin-top:12px;text-align:center">
+              <div style="background:var(--brand-primary);color:#fff;padding:10px;border-radius:12px;font-size:11px;font-weight:700">🎮 더 많은 게임으로 정확도 높이기</div>
+              <div style="font-size:8px;color:var(--text-disabled);margin-top:4px">게임할수록 궁합 분석이 정교해져요</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="design-notes">
+    <div class="design-note">
+      <h4>Milestone 유형 (확장 가능)</h4>
+      <ul>
+        <li>💌 <strong>매칭 성사</strong> - 자동 생성</li>
+        <li>🎮 <strong>게임 완료</strong> - 결과 포함</li>
+        <li>💬 <strong>대화 이벤트</strong> - N개 메시지, 첫 사진 등</li>
+        <li>📸 <strong>미션 완료</strong> - 함께한 활동</li>
+        <li>🔥 <strong>스트릭 달성</strong> - N일 연속</li>
+        <li>☕ <strong>만남 제안/수락</strong> - 관계 전환점</li>
+        <li>🏷️ <strong>궁합 리포트</strong> - 데이터 축적 후 해금</li>
+        <li>🎂 <strong>기념일</strong> (Phase 2) - N일째 등</li>
+      </ul>
+    </div>
+    <div class="design-note">
+      <h4>Journey 접근 경로</h4>
+      <ul>
+        <li>채팅방 헤더 프로필 탭 &rarr; Journey 탭</li>
+        <li>게임 결과 카드 "📊 여정 보기" 버튼</li>
+        <li>매칭 목록에서 상대 프로필 &rarr; Journey</li>
+      </ul>
+    </div>
+    <div class="design-note">
+      <h4>확장 로드맵</h4>
+      <ul>
+        <li><strong>Phase 1:</strong> 게임 결과 + 스트릭 이정표</li>
+        <li><strong>Phase 2:</strong> 궁합 분석 리포트 (카테고리별)</li>
+        <li><strong>Phase 3:</strong> 배지 시스템 + 기념일 자동 기록</li>
+        <li><strong>Phase 4:</strong> 만남 기록 + 후기 (양쪽 동의)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.nav-tab:not(.hold)');
+  const allTabs = document.querySelectorAll('.nav-tab');
+  const sections = document.querySelectorAll('.section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      allTabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.section).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

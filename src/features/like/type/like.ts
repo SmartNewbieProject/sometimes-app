@@ -47,6 +47,8 @@ export type LikedMe = {
 	connectionId: string;
 	isMutualLike: boolean;
 	external?: ExternalMatchInfo | null;
+	isGlobalMatch?: boolean;
+	targetCountry?: 'kr' | 'jp';
 };
 
 export type SendLikeRequest = {
