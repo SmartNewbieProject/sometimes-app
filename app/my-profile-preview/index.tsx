@@ -1,5 +1,5 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import { MatchingReasonPlaceholder, PartnerBasicInfo, PartnerMBTI } from '@/src/features/match/ui';
+import { MatchingReasonPlaceholder, PartnerBasicInfo, PartnerMBTI, PartnerIdealType } from '@/src/features/match/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { ProfileMainImage } from '@/src/widgets/profile-view-card';
 import PhotoSlider from '@/src/widgets/slide/photo-slider';
@@ -86,6 +86,8 @@ export default function MyProfilePreviewScreen() {
 				)}
 
 				<PartnerMBTI partner={profileDetails} />
+
+				<PartnerIdealType partner={profileDetails} />
 
 				<MatchingReasonPlaceholder />
 

@@ -1,0 +1,416 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background-attachment: fixed;
+}
+
+/* Titlebar drag region */
+.titlebar-drag {
+  -webkit-app-region: drag;
+  height: 40px;
+}
+
+.titlebar-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* ── Glassmorphism base ── */
+
+.glass-sider {
+  background: rgba(40, 20, 80, 0.75) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.glass-sider .ant-menu {
+  background: transparent !important;
+  border-inline-end: none !important;
+}
+
+.glass-sider .ant-menu-item {
+  color: rgba(255, 255, 255, 0.65) !important;
+  transition: all 0.2s ease;
+}
+
+.glass-sider .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+}
+
+.glass-sider .ant-menu-item-selected {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.glass-titlebar {
+  background: rgba(40, 20, 80, 0.55) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.glass-titlebar .ant-typography {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.glass-content {
+  background: rgba(255, 255, 255, 0.08) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* ── Page title (white on glass bg) ── */
+.glass-content .ant-typography.page-title,
+.glass-content h4.ant-typography {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* ── Glass Card ── */
+.glass-card,
+.glass-content .ant-card {
+  background: rgba(255, 255, 255, 0.65) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 14px !important;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.glass-card:hover,
+.glass-content .ant-card:hover {
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.1),
+    0 2px 6px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+.glass-card .ant-card-head,
+.glass-content .ant-card .ant-card-head {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 14px 14px 0 0 !important;
+}
+
+/* ── Glass Inputs (inside cards) ── */
+.glass-content .ant-input,
+.glass-content .ant-input-number,
+.glass-content .ant-input-affix-wrapper,
+.glass-content .ant-input-number-input,
+.glass-content .ant-select-selector {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.glass-content .ant-input:focus,
+.glass-content .ant-input-affix-wrapper-focused,
+.glass-content .ant-select-focused .ant-select-selector {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(102, 126, 234, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15) !important;
+}
+
+.glass-content .ant-input-group-addon {
+  background: rgba(255, 255, 255, 0.35) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.glass-content textarea.ant-input {
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ── Glass Buttons ── */
+.glass-btn,
+.glass-content .ant-btn-default {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  color: #333 !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.glass-btn:hover,
+.glass-content .ant-btn-default:hover {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+  transform: translateY(-1px);
+}
+
+.glass-btn-primary,
+.glass-content .ant-btn-primary {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.85), rgba(118, 75, 162, 0.85)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow:
+    0 4px 16px rgba(102, 126, 234, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.glass-btn-primary:hover,
+.glass-content .ant-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95)) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow:
+    0 6px 24px rgba(102, 126, 234, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+/* Danger button */
+.glass-content .ant-btn-dangerous {
+  background: rgba(255, 77, 79, 0.15) !important;
+  border: 1px solid rgba(255, 77, 79, 0.3) !important;
+  color: #ff4d4f !important;
+}
+
+.glass-content .ant-btn-dangerous:hover {
+  background: rgba(255, 77, 79, 0.25) !important;
+  border-color: rgba(255, 77, 79, 0.5) !important;
+}
+
+/* ── Glass Radio / Segmented ── */
+.glass-content .ant-radio-button-wrapper {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.glass-content .ant-radio-button-wrapper-checked {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8)) !important;
+  border-color: rgba(102, 126, 234, 0.5) !important;
+  color: #fff !important;
+}
+
+.glass-content .ant-segmented {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px;
+}
+
+.glass-content .ant-segmented-item-selected {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Glass Tags ── */
+.glass-content .ant-tag {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.glass-content .ant-tag-purple {
+  background: rgba(102, 126, 234, 0.15) !important;
+  border-color: rgba(102, 126, 234, 0.3) !important;
+  color: #5b4db5 !important;
+}
+
+.glass-content .ant-tag-green {
+  background: rgba(82, 196, 26, 0.15) !important;
+  border-color: rgba(82, 196, 26, 0.3) !important;
+  color: #389e0d !important;
+}
+
+.glass-content .ant-tag-orange {
+  background: rgba(250, 173, 20, 0.15) !important;
+  border-color: rgba(250, 173, 20, 0.3) !important;
+  color: #d48806 !important;
+}
+
+.glass-content .ant-tag-blue {
+  background: rgba(22, 119, 255, 0.15) !important;
+  border-color: rgba(22, 119, 255, 0.3) !important;
+  color: #0958d9 !important;
+}
+
+.glass-content .ant-tag-red {
+  background: rgba(255, 77, 79, 0.15) !important;
+  border-color: rgba(255, 77, 79, 0.3) !important;
+  color: #cf1322 !important;
+}
+
+.glass-content .ant-tag-volcano {
+  background: rgba(250, 84, 28, 0.15) !important;
+  border-color: rgba(250, 84, 28, 0.3) !important;
+  color: #d4380d !important;
+}
+
+.glass-content .ant-tag-cyan {
+  background: rgba(19, 194, 194, 0.15) !important;
+  border-color: rgba(19, 194, 194, 0.3) !important;
+  color: #08979c !important;
+}
+
+/* ── Glass Table ── */
+.glass-content .ant-table {
+  background: transparent !important;
+}
+
+.glass-content .ant-table-thead > tr > th {
+  background: rgba(255, 255, 255, 0.4) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.glass-content .ant-table-tbody > tr > td {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+.glass-content .ant-table-tbody > tr:hover > td {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.glass-content .ant-table-cell-row-hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.glass-content .ant-pagination .ant-pagination-item {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.glass-content .ant-pagination .ant-pagination-item-active {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8)) !important;
+  border-color: transparent !important;
+}
+
+.glass-content .ant-pagination .ant-pagination-item-active a {
+  color: #fff !important;
+}
+
+/* ── Glass Progress ── */
+.glass-content .ant-progress-bg {
+  background: linear-gradient(90deg, #667eea, #764ba2) !important;
+}
+
+/* ── Glass Steps ── */
+.glass-content .ant-steps .ant-steps-item-process .ant-steps-item-icon {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  border-color: transparent !important;
+}
+
+.glass-content .ant-steps .ant-steps-item-finish .ant-steps-item-icon {
+  background: rgba(82, 196, 26, 0.15) !important;
+  border-color: #52c41a !important;
+}
+
+/* ── Glass Timeline ── */
+.glass-content .ant-timeline-item-tail {
+  border-inline-start-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ── Glass Tabs ── */
+.glass-content .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #5b4db5 !important;
+}
+
+.glass-content .ant-tabs-ink-bar {
+  background: linear-gradient(90deg, #667eea, #764ba2) !important;
+}
+
+/* ── Glass Switch ── */
+.glass-content .ant-switch-checked {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+}
+
+/* ── Glass Spin ── */
+.glass-content .ant-spin-dot-item {
+  background: #764ba2 !important;
+}
+
+/* ── Glass Popconfirm (portal) ── */
+.ant-popconfirm .ant-btn-primary {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.85), rgba(118, 75, 162, 0.85)) !important;
+  border-color: transparent !important;
+}
+
+/* ── Glass Empty ── */
+.glass-content .ant-empty-description {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ── Utility: white text for secondary on glass bg ── */
+.glass-content .text-on-glass {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Build log viewer */
+.build-log {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  background: rgba(30, 30, 30, 0.85);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  color: #d4d4d4;
+  padding: 12px;
+  border-radius: 12px;
+  overflow-y: auto;
+  max-height: 400px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.build-log .log-line {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.build-log .log-line.error {
+  color: #f14c4c;
+}
+
+.build-log .log-line.warn {
+  color: #cca700;
+}
+
+.build-log .log-line.success {
+  color: #23d18b;
+}
+
+/* Release notes editor */
+.release-notes-editor textarea {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Progress steps */
+.deploy-steps .ant-steps-item-title {
+  font-size: 13px !important;
+}

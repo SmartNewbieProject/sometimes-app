@@ -1,0 +1,22 @@
+appId: com.sometimes.deploy-manager
+productName: Deploy Manager
+directories:
+  buildResources: resources
+  output: dist
+files:
+  - out/**/*
+  - "!out/**/*.map"
+  - node_modules/**/*
+  - package.json
+extraResources:
+  - from: resources/
+    to: resources/
+    filter:
+      - "**/*.icns"
+      - "**/*.png"
+mac:
+  icon: resources/icon.icns
+  target: dir
+  category: public.app-category.developer-tools
+  artifactName: "${productName}.${ext}"
+npmRebuild: true

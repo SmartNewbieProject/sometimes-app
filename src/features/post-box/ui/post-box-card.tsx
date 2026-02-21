@@ -19,6 +19,8 @@ import { useTranslation } from 'react-i18next';
 import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../auth';
 import useCreateChatRoom from '../../chat/queries/use-create-chat-room';
+import { useGlobalAccept } from '../../global-matching/hooks/use-global-accept';
+import { useGlobalReject } from '../../global-matching/hooks/use-global-reject';
 import useLike from '../../like/hooks/use-like';
 import { useFeatureCost } from '../../payment/hooks';
 import useByeLike from '../queries/useByeLike';
@@ -46,6 +48,7 @@ interface PostBoxCardProps {
 	letterContent?: string | null;
 	hasLetter?: boolean;
 	external?: ExternalMatchInfo | null;
+	isGlobalMatch?: boolean;
 }
 
 function PostBoxCard({
@@ -68,6 +71,7 @@ function PostBoxCard({
 	letterContent,
 	hasLetter,
 	external,
+	isGlobalMatch,
 }: PostBoxCardProps) {
 	const { t } = useTranslation();
 	const opacity = useRef(new Animated.Value(1)).current;
@@ -100,9 +104,9 @@ function PostBoxCard({
 			<LikedMeOpenButton matchId={matchId} likeId={likeId} />
 		) : type === 'liked-me' ? (
 			isLetterCard ? (
-				<LetterPendingButton connectionId={connectionId} />
+				<LetterPendingButton connectionId={connectionId} isGlobalMatch={isGlobalMatch} />
 			) : (
-				<LikedMePendingButton connectionId={connectionId} />
+				<LikedMePendingButton connectionId={connectionId} isGlobalMatch={isGlobalMatch} />
 			)
 		) : (
 			<></>
@@ -216,20 +220,28 @@ function PostBoxCard({
 
 export function LikedMePendingButton({
 	connectionId,
+	isGlobalMatch,
 }: {
 	connectionId: string;
+	isGlobalMatch?: boolean;
 }) {
 	const { t } = useTranslation();
 	const { showModal, hideModal } = useModal();
 	const { featureCosts } = useFeatureCost();
 	const { onLike } = useLike();
 	const mutation = useRejectLike();
+	const { onGlobalAccept } = useGlobalAccept();
+	const { onGlobalReject } = useGlobalReject();
 	const { profileDetails } = useAuth();
 
 	const handleReject = () => {
 		tryCatch(
 			async () => {
-				await mutation.mutateAsync(connectionId);
+				if (isGlobalMatch) {
+					await onGlobalReject(connectionId);
+				} else {
+					await mutation.mutateAsync(connectionId);
+				}
 			},
 			(error) => {
 				console.log('error', error);
@@ -238,6 +250,18 @@ export function LikedMePendingButton({
 	};
 
 	const handleLike = () => {
+		if (isGlobalMatch) {
+			tryCatch(
+				async () => {
+					await onGlobalAccept(connectionId);
+				},
+				(error) => {
+					console.log('error', error);
+				},
+			);
+			return;
+		}
+
 		showModal({
 			showLogo: true,
 			customTitle: (
@@ -302,11 +326,29 @@ export function LikedMePendingButton({
 	);
 }
 
-export function LetterPendingButton({ connectionId }: { connectionId: string }) {
+export function LetterPendingButton({
+	connectionId,
+	isGlobalMatch,
+}: {
+	connectionId: string;
+	isGlobalMatch?: boolean;
+}) {
 	const { t } = useTranslation();
 	const { onLike } = useLike();
+	const { onGlobalAccept } = useGlobalAccept();
 
 	const handleLike = async () => {
+		if (isGlobalMatch) {
+			await tryCatch(
+				async () => {
+					await onGlobalAccept(connectionId);
+				},
+				(error) => {
+					console.log('error', error);
+				},
+			);
+			return;
+		}
 		await onLike(connectionId);
 	};
 

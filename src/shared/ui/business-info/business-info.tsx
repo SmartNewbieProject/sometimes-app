@@ -37,7 +37,7 @@ export const BusinessInfo: React.FC = () => {
 		<View style={styles.container}>
 			<Text style={styles.infoText}>
 				상호명: 스마트 뉴비 | 사업장 소재지: 대전광역시 서구 갈마중로 7번길 42, 4동 407호 | 대표:
-				전준영 | 사업자 등록번호: 498-05-02914 | 통신판매업신고: 제 2025-대전유성-0530호 | 문의전화:
+				전준영 | 사업자 등록번호: 498-05-02914 | 통신판매업신고: 제2026-대전유성-0328호 | 문의전화:
 				010-8465-2476 | 이메일: notify@smartnewb.com |{' '}
 				<TouchableOpacity onPress={() => onClickLink(businessRegistrationLink)}>
 					<Text style={styles.infoTextSmall}>{t('common.business_info_check')}</Text>
