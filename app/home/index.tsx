@@ -31,6 +31,7 @@ import {
 } from "@/src/shared/ui";
 import { NotificationIcon } from "@/src/features/notification/ui/notification-icon";
 import { mixpanelAdapter } from "@/src/shared/libs/mixpanel";
+import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
 import { useAuth } from "@features/auth";
 import Event from "@features/event";
 import { Feedback } from "@features/feedback";
@@ -39,7 +40,7 @@ import IdleMatchTimer from "@features/idle-match-timer";
 import { useQueryClient } from "@tanstack/react-query";
 import { ImageResource } from "@ui/image-resource";
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import Constants from 'expo-constants';
@@ -63,6 +64,8 @@ const { useWelcomeReward } = welcomeRewardHooks;
 const HomeScreen = () => {
   const { t } = useTranslation();
   const { showModal } = useModal();
+  const { featureEvents } = useMixpanel();
+  const hasTrackedHomeView = useRef(false);
   const { step } = useStep();
   const {
     isPreferenceFill,
@@ -129,6 +132,11 @@ const HomeScreen = () => {
   // 화면이 포커스될 때마다 데이터 리프레시
   useFocusEffect(
     useCallback(() => {
+      if (!hasTrackedHomeView.current) {
+        featureEvents.trackHomeViewed();
+        hasTrackedHomeView.current = true;
+      }
+
       queryClient.invalidateQueries({
         queryKey: ["notification", "check-preference-fill", "latest-matching"],
         refetchType: "active",

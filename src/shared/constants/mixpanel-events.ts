@@ -183,6 +183,7 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	// 앱 사용 관련 (Retention)
 	APP_OPENED: 'App_Opened',
 	APP_BACKGROUNDED: 'App_Backgrounded',
+	HOME_VIEWED: 'Home_Viewed',
 	FEATURE_USED: 'Feature_Used',
 
 	// 썸메이트(AI 채팅) 관련 (Retention/Engagement)
@@ -1072,6 +1073,7 @@ export interface KpiEventTypePropertiesMap {
 	// 앱 사용 관련
 	App_Opened: BaseEventProperties;
 	App_Backgrounded: BaseEventProperties;
+	Home_Viewed: BaseEventProperties;
 	Feature_Used: FeatureEventProperties;
 
 	// 썸메이트 관련
