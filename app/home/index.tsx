@@ -1,4 +1,9 @@
-import { GlobalMatchingTimer, ModeToggle, useMatchingMode, useGlobalMatchingEnabled } from '@/src/features/global-matching';
+import {
+	GlobalMatchingTimer,
+	ModeToggle,
+	useGlobalMatchingEnabled,
+	useMatchingMode,
+} from '@/src/features/global-matching';
 import { useStep } from '@/src/features/guide/hooks/use-step';
 import useMatchingFirst from '@/src/features/guide/queries/use-maching-first';
 import LikeGuideScenario from '@/src/features/guide/ui/like-guide-scenario';
@@ -51,9 +56,9 @@ const {
 	TotalMatchCounter,
 	CommunityAnnouncement,
 	ReviewSlide,
-	TipAnnouncement,
 	ProfilePhotoCard,
 	InstagramVerificationCard,
+	HotPostsCarousel,
 } = ui;
 const { usePreferenceSelfQuery } = queries;
 const { useRedirectPreferences } = hooks;
@@ -279,10 +284,7 @@ const HomeScreen = () => {
 					<CommunityAnnouncement />
 					<ReviewSlide />
 				</View>
-				<View style={styles.tipSection}>
-					<TipAnnouncement />
-				</View>
-
+				<HotPostsCarousel />
 				<Feedback.WallaFeedbackBanner />
 
 				<BusinessInfo />
@@ -331,9 +333,6 @@ const styles = StyleSheet.create({
 		marginTop: 18,
 		flexDirection: 'column',
 		gap: 6,
-	},
-	tipSection: {
-		marginVertical: 25,
 	},
 	versionContainer: {
 		alignItems: 'center',
