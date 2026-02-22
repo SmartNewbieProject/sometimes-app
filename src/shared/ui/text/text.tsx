@@ -1,12 +1,12 @@
 import type React from 'react';
 import {
 	Text as RNText,
-	type TextStyle,
 	type TextProps as RNTextProps,
 	StyleSheet,
+	type TextStyle,
 } from 'react-native';
-import { semanticColors } from '../../constants/semantic-colors';
 import colors from '../../constants/colors';
+import { semanticColors } from '../../constants/semantic-colors';
 
 export type TextVariant = 'primary' | 'secondary';
 export type TextSize =
@@ -44,7 +44,8 @@ export type TextColor =
 	| 'muted'
 	| 'disabled'
 	| 'inverse'
-	| 'red';
+	| 'red'
+	| 'cta';
 
 export type TextProps = Omit<RNTextProps, 'style' | 'children'> & {
 	children?: React.ReactNode;
@@ -136,6 +137,8 @@ export const Text: React.FC<TextProps> = ({
 				return semanticColors.text.inverse;
 			case 'red':
 				return colors.red500 || '#EF4444';
+			case 'cta':
+				return semanticColors.brand.cta;
 			default:
 				return colors.darkPurple;
 		}
