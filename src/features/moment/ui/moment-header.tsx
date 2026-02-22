@@ -21,7 +21,7 @@ export const MomentHeader = () => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
     paddingHorizontal: 20,
     paddingBottom: 16,
