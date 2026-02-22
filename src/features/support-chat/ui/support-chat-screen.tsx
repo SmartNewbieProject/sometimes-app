@@ -61,6 +61,11 @@ function SupportChatScreen() {
 		return null;
 	}, [messages]);
 
+	const hasUserMessage = useMemo(
+		() => messages.some((msg) => msg.senderType === 'user'),
+		[messages],
+	);
+
 	useEffect(() => {
 		initSession();
 	}, [initSession]);
@@ -211,7 +216,7 @@ function SupportChatScreen() {
 				</View>
 			</View>
 
-			{status && <SupportChatStatusBanner status={status} />}
+			{status && <SupportChatStatusBanner status={status} hasUserMessage={hasUserMessage} />}
 
 			<KeyboardAvoidingView
 				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

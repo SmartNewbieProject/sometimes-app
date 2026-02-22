@@ -13,6 +13,7 @@ import type { SessionStatus } from '../types';
 
 interface SupportChatStatusBannerProps {
 	status: SessionStatus;
+	hasUserMessage?: boolean;
 }
 
 type StepState = 'done' | 'active' | 'pending';
@@ -29,10 +30,12 @@ const STEP_KEYS = [
 	'status.steps.resolved',
 ] as const;
 
-function getSteps(status: SessionStatus): StepState[] {
+function getSteps(status: SessionStatus, hasUserMessage: boolean): StepState[] {
 	switch (status) {
 		case 'bot_handling':
-			return ['done', 'active', 'pending', 'pending'];
+			return hasUserMessage
+				? ['done', 'active', 'pending', 'pending']
+				: ['active', 'pending', 'pending', 'pending'];
 		case 'waiting_admin':
 		case 'admin_handling':
 			return ['done', 'done', 'active', 'pending'];
@@ -87,9 +90,9 @@ function StepLine({ done }: { done: boolean }) {
 	return <View style={[styles.line, done ? styles.lineDone : styles.linePending]} />;
 }
 
-function SupportChatStatusBanner({ status }: SupportChatStatusBannerProps) {
+function SupportChatStatusBanner({ status, hasUserMessage = false }: SupportChatStatusBannerProps) {
 	const { t } = useTranslation();
-	const stepStates = getSteps(status);
+	const stepStates = getSteps(status, hasUserMessage);
 
 	const steps: StepConfig[] = STEP_KEYS.map((key, i) => ({
 		labelKey: key,
