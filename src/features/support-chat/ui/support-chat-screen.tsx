@@ -23,6 +23,7 @@ import RatingModalContent from './rating-modal-content';
 import SupportChatInput from './support-chat-input';
 import SupportChatMessage from './support-chat-message';
 import SupportChatStatusBanner from './support-chat-status-banner';
+import TypingIndicator from './typing-indicator';
 
 function SupportChatScreen() {
 	const { t } = useTranslation();
@@ -210,7 +211,7 @@ function SupportChatScreen() {
 				</View>
 			</View>
 
-			{status && <SupportChatStatusBanner status={status} isTyping={isTyping} />}
+			{status && <SupportChatStatusBanner status={status} />}
 
 			<KeyboardAvoidingView
 				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -224,6 +225,7 @@ function SupportChatScreen() {
 					keyExtractor={keyExtractor}
 					contentContainerStyle={[styles.messageList, messages.length === 0 && styles.emptyList]}
 					ListEmptyComponent={renderEmptyState}
+					ListFooterComponent={isTyping && status ? <TypingIndicator status={status} /> : null}
 					showsVerticalScrollIndicator={false}
 					onContentSizeChange={() => {
 						if (messages.length > 0) {
