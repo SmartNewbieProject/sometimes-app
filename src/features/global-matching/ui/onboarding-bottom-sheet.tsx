@@ -1,6 +1,7 @@
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useToast } from '@/src/shared/hooks/use-toast';
 import { Text } from '@/src/shared/ui';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	ActivityIndicator,
@@ -15,11 +16,14 @@ import {
 	View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useCompleteOnboarding } from '../hooks/use-complete-onboarding';
 import { useOnboardingPreferences } from '../hooks/use-onboarding-preferences';
 import { useGlobalPreferenceOptions } from '../queries';
+import { useGlobalMatchingStatus } from '../queries/use-global-matching-status';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SHEET_HEIGHT = SCREEN_HEIGHT * 0.7;
+const SHEET_HEIGHT = SCREEN_HEIGHT * 0.65;
+const MAX_SHEET_WIDTH = 500;
 const ANIMATION_DURATION = 300;
 
 type Props = {
@@ -34,12 +38,20 @@ export const OnboardingBottomSheet = ({ visible, onClose, onComplete }: Props) =
 	const translateY = useRef(new Animated.Value(SHEET_HEIGHT)).current;
 	const backdropOpacity = useRef(new Animated.Value(0)).current;
 	const { data: categories, isLoading } = useGlobalPreferenceOptions();
+	const { emitToast } = useToast();
+
+	const [showSuccess, setShowSuccess] = useState(false);
+	const [savedIds, setSavedIds] = useState<string[]>([]);
+	const checkScale = useRef(new Animated.Value(0)).current;
+
+	const completeOnboarding = useCompleteOnboarding();
+	const { data: status } = useGlobalMatchingStatus(showSuccess ? 2000 : undefined);
+	const profileTranslated = status?.profileTranslated ?? false;
 
 	const {
 		currentStep,
 		currentCategory,
 		totalSteps,
-		progress,
 		isLastStep,
 		selections,
 		select,
@@ -81,21 +93,85 @@ export const OnboardingBottomSheet = ({ visible, onClose, onComplete }: Props) =
 		}
 	}, [visible, translateY, backdropOpacity]);
 
+	useEffect(() => {
+		if (showSuccess) {
+			checkScale.setValue(0);
+			Animated.spring(checkScale, {
+				toValue: 1,
+				tension: 50,
+				friction: 6,
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [showSuccess, checkScale]);
+
 	const handleClose = () => {
 		reset();
+		setShowSuccess(false);
+		completeOnboarding.reset();
 		onClose();
 	};
 
-	const handleNext = () => {
+	const handleNext = async () => {
 		if (isLastStep) {
-			onComplete(getPreferenceOptionIds());
-			reset();
+			const ids = getPreferenceOptionIds();
+			setSavedIds(ids);
+			try {
+				await completeOnboarding.mutateAsync(ids);
+				setShowSuccess(true);
+			} catch {
+				emitToast(t('features.global-matching.onboarding_save_error'));
+			}
 		} else {
 			nextStep();
 		}
 	};
 
+	const handleStartMatching = () => {
+		onComplete(savedIds);
+		reset();
+		setShowSuccess(false);
+		completeOnboarding.reset();
+	};
+
 	const currentSelections = currentCategory ? (selections[currentCategory.optionId] ?? []) : [];
+
+	const renderSuccessContent = () => (
+		<View style={styles.successContainer}>
+			<Animated.View style={[styles.checkCircle, { transform: [{ scale: checkScale }] }]}>
+				<Text size="32" style={styles.checkIcon}>
+					{'\u2713'}
+				</Text>
+			</Animated.View>
+
+			<Text size="20" weight="bold" style={styles.successTitle}>
+				{t('features.global-matching.onboarding_complete_title')}
+			</Text>
+
+			<Text size="14" textColor="secondary" style={styles.successDesc}>
+				{t('features.global-matching.onboarding_complete_desc')}
+			</Text>
+
+			<View style={styles.translationBadge}>
+				{!profileTranslated && (
+					<ActivityIndicator
+						size="small"
+						color={semanticColors.brand.primary}
+						style={styles.translationSpinner}
+					/>
+				)}
+				<Text
+					size="13"
+					weight="bold"
+					style={profileTranslated ? styles.translatedText : styles.translatingText}
+				>
+					{profileTranslated
+						? t('features.global-matching.onboarding_translated')
+						: t('features.global-matching.onboarding_translating')}
+				</Text>
+			</View>
+		</View>
+	);
 
 	return (
 		<Modal visible={visible} transparent animationType="none" onRequestClose={handleClose}>
@@ -119,112 +195,158 @@ export const OnboardingBottomSheet = ({ visible, onClose, onComplete }: Props) =
 						<View style={styles.handle} />
 					</View>
 
-					{/* Header */}
-					<View style={styles.header}>
-						<Text size="18" weight="bold">
-							{t('features.global-matching.onboarding_sheet_title')}
-						</Text>
-						<Text size="13" textColor="disabled">
-							{t('features.global-matching.onboarding_step_label', {
-								current: currentStep + 1,
-								total: totalSteps,
-							})}
-						</Text>
-					</View>
+					{showSuccess ? (
+						<>
+							{/* Close button for success */}
+							<View style={styles.successCloseRow}>
+								<Pressable onPress={handleClose} hitSlop={8} style={styles.closeButton}>
+									<Text size="20" textColor="disabled">
+										{'\u2715'}
+									</Text>
+								</Pressable>
+							</View>
 
-					{/* Progress bar */}
-					<View style={styles.progressBar}>
-						<View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
-					</View>
+							{renderSuccessContent()}
 
-					{/* Content */}
-					{isLoading ? (
-						<View style={styles.loadingContainer}>
-							<ActivityIndicator color={semanticColors.brand.primary} />
-						</View>
-					) : currentCategory ? (
-						<ScrollView
-							style={styles.scrollContent}
-							contentContainerStyle={styles.scrollContainer}
-							showsVerticalScrollIndicator={false}
-						>
-							<Text size="16" weight="bold" style={styles.categoryTitle}>
-								{currentCategory.optionDisplayName}
-							</Text>
-
-							{currentCategory.multiple && currentCategory.maximumChoiceCount > 1 && (
-								<Text size="12" textColor="disabled" style={styles.maxSelectHint}>
-									{t('features.global-matching.onboarding_max_select', {
-										count: currentCategory.maximumChoiceCount,
-									})}
-								</Text>
-							)}
-
-							{currentCategory.multiple ? (
-								<View style={styles.chipGrid}>
-									{currentCategory.options?.map((option) => {
-										const isSelected = currentSelections.includes(option.id);
-										return (
-											<Pressable
-												key={option.id}
-												style={[styles.chip, isSelected && styles.chipSelected]}
-												onPress={() => select(currentCategory.optionId, option.id)}
-											>
-												<Text
-													size="14"
-													weight={isSelected ? 'bold' : 'normal'}
-													style={isSelected ? styles.chipTextSelected : styles.chipText}
-												>
-													{option.displayName}
-												</Text>
-											</Pressable>
-										);
-									})}
+							{/* Start matching CTA */}
+							<View style={styles.actionContainer}>
+								<Pressable style={styles.actionButton} onPress={handleStartMatching}>
+									<Text size="16" weight="bold" style={styles.actionText}>
+										{t('features.global-matching.onboarding_start_matching')}
+									</Text>
+								</Pressable>
+							</View>
+						</>
+					) : (
+						<>
+							{/* Header */}
+							<View style={styles.header}>
+								<View style={styles.headerLeft}>
+									<Text size="18" weight="bold">
+										{t('features.global-matching.onboarding_sheet_title')}
+									</Text>
+									<Text size="13" textColor="disabled" style={styles.stepLabel}>
+										{t('features.global-matching.onboarding_step_label', {
+											current: currentStep + 1,
+											total: totalSteps,
+										})}
+									</Text>
 								</View>
-							) : (
-								<View style={styles.radioList}>
-									{currentCategory.options?.map((option) => {
-										const isSelected = currentSelections.includes(option.id);
-										return (
-											<Pressable
-												key={option.id}
-												style={[styles.radioItem, isSelected && styles.radioItemSelected]}
-												onPress={() => select(currentCategory.optionId, option.id)}
-											>
-												<View
-													style={[styles.radioCircle, isSelected && styles.radioCircleSelected]}
-												>
-													{isSelected && <View style={styles.radioInner} />}
-												</View>
-												<Text
-													size="15"
-													weight={isSelected ? 'bold' : 'normal'}
-													style={isSelected ? styles.radioTextSelected : undefined}
-												>
-													{option.displayName}
-												</Text>
-											</Pressable>
-										);
-									})}
-								</View>
-							)}
-						</ScrollView>
-					) : null}
+								<Pressable onPress={handleClose} hitSlop={8} style={styles.closeButton}>
+									<Text size="20" textColor="disabled">
+										{'\u2715'}
+									</Text>
+								</Pressable>
+							</View>
 
-					{/* Action button */}
-					<View style={styles.actionContainer}>
-						<Pressable
-							style={[styles.actionButton, !isCurrentStepValid && styles.actionButtonDisabled]}
-							onPress={handleNext}
-							disabled={!isCurrentStepValid}
-						>
-							<Text size="16" weight="bold" style={styles.actionText}>
-								{isLastStep
-									? t('features.global-matching.onboarding_complete')
-									: t('features.global-matching.onboarding_next')}
-							</Text>
-						</Pressable>
-					</View>
+							{/* Progress dots */}
+							<View style={styles.progressContainer}>
+								{(categories ?? []).map((cat, i) => (
+									<View
+										key={cat.optionId}
+										style={[styles.progressDot, i <= currentStep && styles.progressDotActive]}
+									/>
+								))}
+							</View>
+
+							{/* Content */}
+							{isLoading ? (
+								<View style={styles.loadingContainer}>
+									<ActivityIndicator color={semanticColors.brand.primary} />
+								</View>
+							) : currentCategory ? (
+								<ScrollView
+									style={styles.scrollContent}
+									contentContainerStyle={styles.scrollContainer}
+									showsVerticalScrollIndicator={false}
+								>
+									<Text size="16" weight="bold" style={styles.categoryTitle}>
+										{currentCategory.optionDisplayName}
+									</Text>
+
+									{currentCategory.multiple && currentCategory.maximumChoiceCount > 1 && (
+										<Text size="12" textColor="disabled" style={styles.maxSelectHint}>
+											{t('features.global-matching.onboarding_max_select', {
+												count: currentCategory.maximumChoiceCount,
+											})}
+										</Text>
+									)}
+
+									{currentCategory.multiple ? (
+										<View style={styles.chipGrid}>
+											{currentCategory.options?.map((option) => {
+												const isSelected = currentSelections.includes(option.id);
+												return (
+													<Pressable
+														key={option.id}
+														style={[styles.chip, isSelected && styles.chipSelected]}
+														onPress={() => select(currentCategory.optionId, option.id)}
+													>
+														<Text
+															size="14"
+															weight={isSelected ? 'bold' : 'normal'}
+															style={isSelected ? styles.chipTextSelected : styles.chipText}
+														>
+															{option.displayName}
+														</Text>
+													</Pressable>
+												);
+											})}
+										</View>
+									) : (
+										<View style={styles.radioList}>
+											{currentCategory.options?.map((option) => {
+												const isSelected = currentSelections.includes(option.id);
+												return (
+													<Pressable
+														key={option.id}
+														style={[styles.radioItem, isSelected && styles.radioItemSelected]}
+														onPress={() => select(currentCategory.optionId, option.id)}
+													>
+														<View
+															style={[styles.radioCircle, isSelected && styles.radioCircleSelected]}
+														>
+															{isSelected && <View style={styles.radioInner} />}
+														</View>
+														<Text
+															size="15"
+															weight={isSelected ? 'bold' : 'normal'}
+															style={isSelected ? styles.radioTextSelected : styles.radioText}
+														>
+															{option.displayName}
+														</Text>
+													</Pressable>
+												);
+											})}
+										</View>
+									)}
+								</ScrollView>
+							) : null}
+
+							{/* Action button */}
+							<View style={styles.actionContainer}>
+								<Pressable
+									style={[
+										styles.actionButton,
+										(!isCurrentStepValid || completeOnboarding.isPending) &&
+											styles.actionButtonDisabled,
+									]}
+									onPress={handleNext}
+									disabled={!isCurrentStepValid || completeOnboarding.isPending}
+								>
+									{completeOnboarding.isPending ? (
+										<ActivityIndicator color="#FFFFFF" />
+									) : (
+										<Text size="16" weight="bold" style={styles.actionText}>
+											{isLastStep
+												? t('features.global-matching.onboarding_complete')
+												: t('features.global-matching.onboarding_next')}
+										</Text>
+									)}
+								</Pressable>
+							</View>
+						</>
+					)}
 				</Animated.View>
 			</View>
 		</Modal>
@@ -235,21 +357,24 @@ const styles = StyleSheet.create({
 	overlay: {
 		flex: 1,
 		justifyContent: 'flex-end',
+		alignItems: 'center',
 	},
 	backdrop: {
 		...StyleSheet.absoluteFillObject,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		backgroundColor: 'rgba(0, 0, 0, 0.4)',
 	},
 	sheet: {
-		backgroundColor: semanticColors.surface.background,
-		borderTopLeftRadius: 24,
-		borderTopRightRadius: 24,
+		width: '100%',
+		maxWidth: MAX_SHEET_WIDTH,
+		backgroundColor: '#FFFFFF',
+		borderTopLeftRadius: 28,
+		borderTopRightRadius: 28,
 		...Platform.select({
 			ios: {
 				shadowColor: '#000',
-				shadowOffset: { width: 0, height: -3 },
-				shadowOpacity: 0.1,
-				shadowRadius: 5,
+				shadowOffset: { width: 0, height: -4 },
+				shadowOpacity: 0.08,
+				shadowRadius: 12,
 			},
 			android: {
 				elevation: 16,
@@ -258,32 +383,49 @@ const styles = StyleSheet.create({
 	},
 	handleContainer: {
 		alignItems: 'center',
-		paddingVertical: 12,
+		paddingTop: 12,
+		paddingBottom: 4,
 	},
 	handle: {
 		width: 40,
 		height: 4,
-		backgroundColor: semanticColors.border.default,
+		backgroundColor: '#E0E0E0',
 		borderRadius: 2,
 	},
 	header: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+		alignItems: 'flex-start',
+		paddingHorizontal: 24,
+		paddingTop: 8,
+		paddingBottom: 16,
+	},
+	headerLeft: {
+		flex: 1,
+	},
+	stepLabel: {
+		marginTop: 4,
+	},
+	closeButton: {
+		width: 32,
+		height: 32,
 		alignItems: 'center',
-		paddingHorizontal: 20,
-		paddingBottom: 12,
+		justifyContent: 'center',
 	},
-	progressBar: {
-		height: 3,
-		backgroundColor: semanticColors.border.light,
-		marginHorizontal: 20,
+	progressContainer: {
+		flexDirection: 'row',
+		gap: 6,
+		paddingHorizontal: 24,
+		marginBottom: 8,
+	},
+	progressDot: {
+		flex: 1,
+		height: 4,
 		borderRadius: 2,
-		overflow: 'hidden',
+		backgroundColor: '#F0F0F0',
 	},
-	progressFill: {
-		height: '100%',
+	progressDotActive: {
 		backgroundColor: semanticColors.brand.primary,
-		borderRadius: 2,
 	},
 	loadingContainer: {
 		flex: 1,
@@ -294,14 +436,16 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	scrollContainer: {
-		padding: 20,
+		paddingHorizontal: 24,
+		paddingTop: 16,
 		paddingBottom: 10,
 	},
 	categoryTitle: {
 		marginBottom: 6,
+		color: '#1A1A1A',
 	},
 	maxSelectHint: {
-		marginBottom: 16,
+		marginBottom: 12,
 	},
 	chipGrid: {
 		flexDirection: 'row',
@@ -310,40 +454,40 @@ const styles = StyleSheet.create({
 		marginTop: 16,
 	},
 	chip: {
-		paddingHorizontal: 16,
-		paddingVertical: 10,
-		borderRadius: 20,
-		backgroundColor: semanticColors.surface.secondary,
+		paddingHorizontal: 18,
+		paddingVertical: 11,
+		borderRadius: 22,
+		backgroundColor: '#F5F5F5',
 		borderWidth: 1.5,
-		borderColor: 'transparent',
+		borderColor: '#F5F5F5',
 	},
 	chipSelected: {
-		backgroundColor: 'rgba(122, 74, 226, 0.1)',
+		backgroundColor: 'rgba(122, 74, 226, 0.08)',
 		borderColor: semanticColors.brand.primary,
 	},
 	chipText: {
-		color: semanticColors.text.secondary,
+		color: '#1A1A1A',
 	},
 	chipTextSelected: {
 		color: semanticColors.brand.primary,
 	},
 	radioList: {
-		gap: 8,
+		gap: 10,
 		marginTop: 16,
 	},
 	radioItem: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 12,
-		paddingVertical: 14,
-		paddingHorizontal: 16,
-		borderRadius: 14,
-		backgroundColor: semanticColors.surface.secondary,
+		paddingVertical: 15,
+		paddingHorizontal: 18,
+		borderRadius: 16,
+		backgroundColor: '#F8F8F8',
 		borderWidth: 1.5,
-		borderColor: 'transparent',
+		borderColor: '#F8F8F8',
 	},
 	radioItemSelected: {
-		backgroundColor: 'rgba(122, 74, 226, 0.1)',
+		backgroundColor: 'rgba(122, 74, 226, 0.06)',
 		borderColor: semanticColors.brand.primary,
 	},
 	radioCircle: {
@@ -351,7 +495,7 @@ const styles = StyleSheet.create({
 		height: 22,
 		borderRadius: 11,
 		borderWidth: 2,
-		borderColor: semanticColors.border.default,
+		borderColor: '#D0D0D0',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
@@ -367,20 +511,74 @@ const styles = StyleSheet.create({
 	radioTextSelected: {
 		color: semanticColors.brand.primary,
 	},
+	radioText: {
+		color: '#1A1A1A',
+	},
 	actionContainer: {
-		paddingHorizontal: 20,
+		paddingHorizontal: 24,
 		paddingTop: 12,
 	},
 	actionButton: {
 		backgroundColor: semanticColors.brand.primary,
-		borderRadius: 14,
+		borderRadius: 16,
 		paddingVertical: 16,
 		alignItems: 'center',
 	},
 	actionButtonDisabled: {
-		opacity: 0.4,
+		opacity: 0.35,
 	},
 	actionText: {
 		color: '#FFFFFF',
+	},
+	successCloseRow: {
+		alignItems: 'flex-end',
+		paddingHorizontal: 24,
+		paddingTop: 4,
+	},
+	successContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		paddingHorizontal: 32,
+	},
+	checkCircle: {
+		width: 72,
+		height: 72,
+		borderRadius: 36,
+		backgroundColor: 'rgba(122, 74, 226, 0.1)',
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginBottom: 20,
+	},
+	checkIcon: {
+		color: semanticColors.brand.primary,
+	},
+	successTitle: {
+		color: '#1A1A1A',
+		marginBottom: 8,
+		textAlign: 'center',
+	},
+	successDesc: {
+		textAlign: 'center',
+		lineHeight: 20,
+		marginBottom: 20,
+	},
+	translationBadge: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		backgroundColor: '#F5F3FF',
+		paddingHorizontal: 14,
+		paddingVertical: 8,
+		borderRadius: 20,
+		gap: 6,
+	},
+	translationSpinner: {
+		marginRight: 2,
+	},
+	translatingText: {
+		color: '#9B8ABB',
+	},
+	translatedText: {
+		color: semanticColors.brand.primary,
 	},
 });

@@ -39,9 +39,10 @@
 	"first_match_fallback_2": "enjoys music",
 	"first_match_fallback_3": "shares your vibe",
 	"first_match_cta_hint": "Tap the button below to start",
-	"onboarding_nudge_label": "Match Quality",
-	"onboarding_nudge_badge": "UP",
+	"onboarding_nudge_label": "Setup Required",
+	"onboarding_nudge_badge": "Required",
 	"onboarding_nudge_text": "Set your preferences and we'll find\nsomeone who's a better fit for you",
+	"onboarding_nudge_desc_short": "Set your ideal type to start KR-JP matching",
 	"onboarding_nudge_btn": "Set Preferences",
 	"onboarding_sheet_title": "Matching Preferences",
 	"onboarding_step_label": "Step {{current}}/{{total}}",
@@ -49,5 +50,12 @@
 	"onboarding_complete": "Done",
 	"onboarding_max_select": "Choose up to {{count}}",
 	"first_match_quick_start": "Start Now",
-	"first_match_start_with_prefs": "Start Matching ✨"
+	"first_match_start_with_prefs": "Start Matching ✨",
+	"first_match_set_prefs": "Set Preferences & Start",
+	"onboarding_complete_title": "Preferences Saved!",
+	"onboarding_complete_desc": "Your preferences have been saved.\nReady to find your match?",
+	"onboarding_translating": "Translating your profile...",
+	"onboarding_translated": "Profile translated",
+	"onboarding_start_matching": "Start Matching",
+	"onboarding_save_error": "Failed to save. Please try again."
 }

@@ -9,6 +9,7 @@ import { Animated, Easing, Pressable, Text as RNText, StyleSheet, View } from 'r
 import { useFirstGlobalMatch } from '../hooks/use-first-global-match';
 import { useGlobalLike } from '../hooks/use-global-like';
 import { useGlobalRematch } from '../hooks/use-global-rematch';
+import { useGlobalMatchingStatus } from '../queries';
 import type { GlobalMatchDetails } from '../types';
 import { isOpenGlobalMatch } from '../types';
 
@@ -91,39 +92,43 @@ const GlowButton = ({ onPress, children }: GlowButtonProps) => {
 type GlobalNavProps = {
 	match: GlobalMatchDetails | undefined;
 	preferenceOptionIds?: string[] | null;
+	onOpenSheet?: () => void;
 };
 
-export const GlobalNav = ({ match, preferenceOptionIds }: GlobalNavProps) => {
+export const GlobalNav = ({ match, preferenceOptionIds, onOpenSheet }: GlobalNavProps) => {
 	const { t } = useTranslation();
 	const { showModal, hideModal } = useModal();
 	const { onGlobalLike, isLikePending } = useGlobalLike();
 	const { onGlobalRematch, isRematchPending, rematchCost } = useGlobalRematch();
 	const { isFirstGlobalMatch } = useFirstGlobalMatch();
+	const { data: status } = useGlobalMatchingStatus();
 
+	const isOnboardingPending = isFirstGlobalMatch || !status?.onboardingCompleted;
+	const needsPreferences = isOnboardingPending && !preferenceOptionIds;
 	const isPartnerOpen = match && isOpenGlobalMatch(match);
 
 	const handleRematch = () => {
 		showModal({
 			showLogo: true,
-			title: isFirstGlobalMatch
+			title: isOnboardingPending
 				? t('features.global-matching.first_match_confirm_title')
 				: t('features.global-matching.rematch_confirm_title'),
 			children: (
 				<View style={styles.modalContent}>
 					<Text textColor="disabled" size="12">
-						{isFirstGlobalMatch
+						{isOnboardingPending
 							? t('features.global-matching.first_match_confirm_description')
 							: t('features.global-matching.rematch_confirm_description')}
 					</Text>
 				</View>
 			),
 			primaryButton: {
-				text: isFirstGlobalMatch
+				text: isOnboardingPending
 					? t('features.global-matching.first_match_button')
 					: t('features.global-matching.rematch_button'),
 				onClick: async () => {
 					hideModal();
-					await onGlobalRematch(preferenceOptionIds ?? undefined);
+					await onGlobalRematch();
 				},
 			},
 			secondaryButton: {
@@ -209,23 +214,31 @@ export const GlobalNav = ({ match, preferenceOptionIds }: GlobalNavProps) => {
 		);
 	}
 
+	const handleButtonPress = () => {
+		if (needsPreferences && onOpenSheet) {
+			onOpenSheet();
+		} else {
+			handleRematch();
+		}
+	};
+
+	const buttonLabel = isOnboardingPending
+		? preferenceOptionIds
+			? t('features.global-matching.first_match_start_with_prefs')
+			: t('features.global-matching.first_match_set_prefs')
+		: t('features.global-matching.rematch_button');
+
 	return (
 		<View style={styles.navContainer}>
 			<View style={styles.buttonWrapper}>
-				<GlowButton onPress={handleRematch}>
+				<GlowButton onPress={handleButtonPress}>
 					<ImageResource
 						resource={ImageResources.GEM}
 						width={26}
 						height={26}
 						style={{ marginRight: 4 }}
 					/>
-					<RNText style={styles.buttonTextInverse}>
-						{isFirstGlobalMatch
-							? preferenceOptionIds
-								? t('features.global-matching.first_match_start_with_prefs')
-								: t('features.global-matching.first_match_quick_start')
-							: t('features.global-matching.rematch_button')}
-					</RNText>
+					<RNText style={styles.buttonTextInverse}>{buttonLabel}</RNText>
 				</GlowButton>
 			</View>
 		</View>

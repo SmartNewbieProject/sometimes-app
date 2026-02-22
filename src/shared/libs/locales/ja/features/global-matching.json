@@ -39,9 +39,10 @@
 	"first_match_fallback_2": "特別な",
 	"first_match_fallback_3": "気の合う",
 	"first_match_cta_hint": "下のボタンで始める",
-	"onboarding_nudge_label": "マッチング品質",
-	"onboarding_nudge_badge": "UP",
+	"onboarding_nudge_label": "理想のタイプ設定が必要",
+	"onboarding_nudge_badge": "必須",
 	"onboarding_nudge_text": "好みを設定すると、もっとぴったりな\n相手を見つけられますよ",
+	"onboarding_nudge_desc_short": "理想のタイプを設定して日韓マッチングを始めましょう",
 	"onboarding_nudge_btn": "好みを設定する",
 	"onboarding_sheet_title": "マッチングの好みを設定",
 	"onboarding_step_label": "Step {{current}}/{{total}}",
@@ -49,5 +50,12 @@
 	"onboarding_complete": "完了",
 	"onboarding_max_select": "最大{{count}}個選択できます",
 	"first_match_quick_start": "すぐに始める",
-	"first_match_start_with_prefs": "マッチングを始める ✨"
+	"first_match_start_with_prefs": "マッチングを始める ✨",
+	"first_match_set_prefs": "好みを設定して始める",
+	"onboarding_complete_title": "理想のタイプ設定完了!",
+	"onboarding_complete_desc": "好みが保存されました。\nぴったりの相手を探しましょう！",
+	"onboarding_translating": "プロフィール翻訳中...",
+	"onboarding_translated": "プロフィール翻訳完了",
+	"onboarding_start_matching": "マッチングを始める",
+	"onboarding_save_error": "設定の保存に失敗しました。もう一度お試しください。"
 }

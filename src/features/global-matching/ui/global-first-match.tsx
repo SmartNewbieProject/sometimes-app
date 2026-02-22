@@ -3,13 +3,10 @@ import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
 import { ResizeMode, Video } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { useTypingAnimation } from '../hooks/use-typing-animation';
-import { useGlobalMatchingStatus } from '../queries';
-import { OnboardingBottomSheet } from './onboarding-bottom-sheet';
-import { OnboardingNudgeBanner } from './onboarding-nudge-banner';
 
 const bgVideo = require('@/assets/videos/global-first-match-bg.mp4');
 
@@ -100,25 +97,9 @@ function ChipWithBounce({ label, isActive }: { label: string; isActive: boolean 
 	);
 }
 
-type GlobalFirstMatchProps = {
-	onPreferenceSelected?: (ids: string[]) => void;
-};
-
-export const GlobalFirstMatch = ({ onPreferenceSelected }: GlobalFirstMatchProps) => {
+export const GlobalFirstMatch = () => {
 	const { t } = useTranslation();
 	const { profileDetails } = useAuth();
-	const { data: status } = useGlobalMatchingStatus();
-	const [sheetVisible, setSheetVisible] = useState(false);
-	const [selectedPreferenceIds, setSelectedPreferenceIds] = useState<string[] | null>(null);
-
-	const showNudge =
-		selectedPreferenceIds === null && (!status?.preferenceCount || status.preferenceCount === 0);
-
-	const handleSheetComplete = (ids: string[]) => {
-		setSheetVisible(false);
-		setSelectedPreferenceIds(ids);
-		onPreferenceSelected?.(ids);
-	};
 
 	const keywords = profileDetails?.keywords;
 	const hasKeywords = keywords && keywords.length > 0;
@@ -238,14 +219,6 @@ export const GlobalFirstMatch = ({ onPreferenceSelected }: GlobalFirstMatchProps
 					</Animated.View>
 				)}
 
-				{/* Nudge banner */}
-				{showNudge && (
-					<OnboardingNudgeBanner
-						preferenceCount={status?.preferenceCount ?? 0}
-						onPress={() => setSheetVisible(true)}
-					/>
-				)}
-
 				{/* #9 CTA hint */}
 				<Animated.View style={[styles.ctaHint, ctaAnim]}>
 					<Text textColor="inverse" size="12" style={styles.ctaText}>
@@ -253,49 +226,9 @@ export const GlobalFirstMatch = ({ onPreferenceSelected }: GlobalFirstMatchProps
 					</Text>
 				</Animated.View>
 			</View>
-
-			<OnboardingBottomSheet
-				visible={sheetVisible}
-				onClose={() => setSheetVisible(false)}
-				onComplete={handleSheetComplete}
-			/>
 		</View>
 	);
 };
-
-// #9 Bouncing arrow
-function BouncingArrow() {
-	const translateY = useRef(new Animated.Value(0)).current;
-
-	useEffect(() => {
-		const loop = Animated.loop(
-			Animated.sequence([
-				Animated.timing(translateY, {
-					toValue: 4,
-					duration: 600,
-					easing: Easing.inOut(Easing.ease),
-					useNativeDriver: true,
-				}),
-				Animated.timing(translateY, {
-					toValue: 0,
-					duration: 600,
-					easing: Easing.inOut(Easing.ease),
-					useNativeDriver: true,
-				}),
-			]),
-		);
-		loop.start();
-		return () => loop.stop();
-	}, [translateY]);
-
-	return (
-		<Animated.View style={{ transform: [{ translateY }] }}>
-			<Text textColor="inverse" size="14" style={styles.ctaArrow}>
-				↓
-			</Text>
-		</Animated.View>
-	);
-}
 
 const styles = StyleSheet.create({
 	container: {
@@ -385,9 +318,6 @@ const styles = StyleSheet.create({
 		marginTop: 4,
 	},
 	ctaText: {
-		opacity: 0.5,
-	},
-	ctaArrow: {
 		opacity: 0.5,
 	},
 });
