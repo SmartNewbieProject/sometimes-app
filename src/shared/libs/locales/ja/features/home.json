@@ -111,6 +111,10 @@
 			"description_1": "認証済みプロフィールはマッチングでより多く表示されます。",
 			"description_2": "IDは相手に公開されません。",
 			"reward_label": "認証報酬"
+		},
+		"hot_posts_carousel": {
+			"title": "人気投稿",
+			"view_all": "すべて見る"
 		}
 	}
 }

@@ -112,6 +112,10 @@
 			"description_1": "인증된 프로필은 매칭에 더 잘 노출돼요.",
 			"description_2": "아이디는 상대에게 공개되지 않아요.",
 			"reward_label": "인증보상"
+		},
+		"hot_posts_carousel": {
+			"title": "인기 게시글",
+			"view_all": "전체보기"
 		}
 	}
 }

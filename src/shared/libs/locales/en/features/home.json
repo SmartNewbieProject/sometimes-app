@@ -111,6 +111,10 @@
 			"description_1": "Verified profiles get more visibility in matching.",
 			"description_2": "Your ID won't be shared with others.",
 			"reward_label": "Reward"
+		},
+		"hot_posts_carousel": {
+			"title": "Popular Posts",
+			"view_all": "See All"
 		}
 	}
 }
