@@ -161,7 +161,7 @@
 		"support": "サポート",
 		"support_desc": "ご不明な点はお気軽にお問い合わせください",
 		"account": "アカウント",
-		"account_desc": "パスワード、通知、退会などの設定",
+		"account_desc": "パスワード、通知などの設定",
 		"my_tendency": "自分の傾向",
 		"my_tendency_desc": "MBTI、性格、趣味など",
 		"ideal_type_desc": "理想のタイプの条件設定",
@@ -170,7 +170,7 @@
 		"photo_complete": "完了"
 	},
 	"photo_nudge": {
-		"description": "写真を3枚登録すると「いいね」をもらえる確率が2倍に！",
+		"description": "写真を3枚登録すると\n「いいね」をもらえる確率が2倍に！",
 		"cta": "写真を追加する"
 	},
 	"common": {

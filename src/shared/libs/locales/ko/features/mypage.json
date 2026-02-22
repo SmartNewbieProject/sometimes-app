@@ -161,7 +161,7 @@
 		"support": "고객지원",
 		"support_desc": "궁금한 점이 있으면 언제든 문의하세요",
 		"account": "계정 관리",
-		"account_desc": "비밀번호, 알림, 탈퇴 등 설정",
+		"account_desc": "비밀번호, 알림 등 설정",
 		"my_tendency": "내 성향",
 		"my_tendency_desc": "MBTI, 성격, 관심사 등",
 		"ideal_type_desc": "나의 이상형 조건 설정",
@@ -170,7 +170,7 @@
 		"photo_complete": "완료"
 	},
 	"photo_nudge": {
-		"description": "사진을 3장 등록하면 상대방이 좋아요를 보낼 확률이 2배 올라요!",
+		"description": "사진을 3장 등록하면\n좋아요를 받을 확률이 2배 올라요!",
 		"cta": "사진 추가하기"
 	},
 	"common": {
