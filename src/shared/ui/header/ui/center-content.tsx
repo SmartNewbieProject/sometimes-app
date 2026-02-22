@@ -13,7 +13,7 @@ export function CenterContent({ children, style }: CenterContentProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
   },
 });

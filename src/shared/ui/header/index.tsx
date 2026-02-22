@@ -41,9 +41,11 @@ export function Header({
 
   return (
     <Container style={style} centered={centered}>
-      <LeftContent>
-        <LeftButton visible={showBackButton} onPress={handleBackPress} />
-      </LeftContent>
+      {showBackButton && (
+        <LeftContent>
+          <LeftButton visible onPress={handleBackPress} />
+        </LeftContent>
+      )}
 
       <Logo title={title} showLogo={showLogo} logoSize={logoSize} />
 
