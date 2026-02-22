@@ -2,6 +2,53 @@
 	"my_activity": {
 		"my_profile_preview": "View My Profile"
 	},
+	"bento": {
+		"edit": "Edit",
+		"photo_hint": "Tap here to view your profile!",
+		"gem_label": "Gems",
+		"gem_remaining": "{{count}} Gems",
+		"ideal_type": "Ideal Type",
+		"photo_mgmt": "Photos",
+		"preview": "Preview",
+		"articles": "Posts",
+		"comments": "Comments",
+		"likes": "Likes",
+		"block": "Block",
+		"support": "Support",
+		"support_desc": "Got questions? Contact us anytime",
+		"account": "Account",
+		"account_desc": "Password, notifications, and more",
+		"my_tendency": "My Type",
+		"my_tendency_desc": "MBTI, personality, interests",
+		"ideal_type_desc": "Set your ideal type criteria",
+		"contact_block": "Contact Block",
+		"contact_block_desc": "Block contacts so people you know can't find you",
+		"photo_complete": "Complete"
+	},
+	"missed_notification": {
+		"badge": "{{count}} missed",
+		"matching": "Match notifications",
+		"likes": "Likes received",
+		"messages": "New messages",
+		"cta": "Turn on & check",
+		"web_header": "Notifications you're missing",
+		"web_tag": "App only",
+		"web_notif_match": "You have a new match!",
+		"web_notif_like": "Someone sent you a like 💜",
+		"web_notif_message": "You have a new message",
+		"web_time_min": "{{count}}m ago",
+		"web_time_hour": "{{count}}h ago",
+		"web_download": "Download the app to check"
+	},
+	"toggle_desc": {
+		"department": "You won't be matched with students from the same department",
+		"university": "You won't be matched with students from the same school",
+		"push": "Get notified about matches, messages, and more"
+	},
+	"photo_nudge": {
+		"description": "Upload 3 photos and double your chances of getting likes!",
+		"cta": "Add Photos"
+	},
 	"common": {
 		"게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "[EN] 게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
 	}

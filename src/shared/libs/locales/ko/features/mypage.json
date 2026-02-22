@@ -4,6 +4,26 @@
 	"matching_setting": "매칭 설정",
 	"ex_same_class": "같은 학과 매칭 제외",
 	"ex_same_school": "같은 학교 매칭 제외",
+	"toggle_desc": {
+		"department": "같은 학과 학생과는 매칭되지 않아요",
+		"university": "같은 학교 학생과는 매칭되지 않아요",
+		"push": "매칭 결과, 메시지 등을 알려드려요"
+	},
+	"missed_notification": {
+		"badge": "{{count}}건 놓침",
+		"matching": "매칭 완료 알림",
+		"likes": "좋아요 수신",
+		"messages": "새 메시지",
+		"cta": "알림 켜고 확인하기",
+		"web_header": "놓치고 있는 알림",
+		"web_tag": "앱 전용",
+		"web_notif_match": "새로운 매칭이 도착했어요!",
+		"web_notif_like": "누군가 좋아요를 보냈어요 💜",
+		"web_notif_message": "새 메시지가 도착했어요",
+		"web_time_min": "{{count}}분 전",
+		"web_time_hour": "{{count}}시간 전",
+		"web_download": "앱 다운로드하고 확인하기"
+	},
 	"mbti_변경_완료": "MBTI 변경 완료",
 	"mbti가_변경되었어요": "MBTI가 변경되었어요.",
 	"mbti_를_불러오고_있어요": "MBTI 를 불러오고 있어요",
@@ -125,6 +145,33 @@
 	},
 	"profile": {
 		"student_number": "{{prefix}}학번"
+	},
+	"bento": {
+		"edit": "수정",
+		"photo_hint": "여기를 터치하여 내 프로필을 볼 수 있어요!",
+		"gem_label": "구슬",
+		"gem_remaining": "구슬 {{count}}개",
+		"ideal_type": "이상형 설정",
+		"photo_mgmt": "사진 관리",
+		"preview": "미리보기",
+		"articles": "게시글",
+		"comments": "댓글",
+		"likes": "좋아요",
+		"block": "차단",
+		"support": "고객지원",
+		"support_desc": "궁금한 점이 있으면 언제든 문의하세요",
+		"account": "계정 관리",
+		"account_desc": "비밀번호, 알림, 탈퇴 등 설정",
+		"my_tendency": "내 성향",
+		"my_tendency_desc": "MBTI, 성격, 관심사 등",
+		"ideal_type_desc": "나의 이상형 조건 설정",
+		"contact_block": "연락처 차단",
+		"contact_block_desc": "연락처에 저장된 지인이 나를 발견하지 못하도록 차단할 수 있어요",
+		"photo_complete": "완료"
+	},
+	"photo_nudge": {
+		"description": "사진을 3장 등록하면 상대방이 좋아요를 보낼 확률이 2배 올라요!",
+		"cta": "사진 추가하기"
 	},
 	"common": {
 		"게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."

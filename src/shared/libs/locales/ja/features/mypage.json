@@ -4,6 +4,26 @@
 	"matching_setting": "マッチング設定",
 	"ex_same_class": "同じ学科とのマッチングを除外",
 	"ex_same_school": "同じ学校とのマッチングを除外",
+	"toggle_desc": {
+		"department": "同じ学科の学生とはマッチングされません",
+		"university": "同じ学校の学生とはマッチングされません",
+		"push": "マッチング結果やメッセージなどをお知らせします"
+	},
+	"missed_notification": {
+		"badge": "{{count}}件見逃し",
+		"matching": "マッチング完了通知",
+		"likes": "いいね受信",
+		"messages": "新着メッセージ",
+		"cta": "通知をオンにして確認する",
+		"web_header": "見逃している通知",
+		"web_tag": "アプリ限定",
+		"web_notif_match": "新しいマッチングが届きました！",
+		"web_notif_like": "誰かがいいねを送りました 💜",
+		"web_notif_message": "新着メッセージが届きました",
+		"web_time_min": "{{count}}分前",
+		"web_time_hour": "{{count}}時間前",
+		"web_download": "アプリをダウンロードして確認する"
+	},
 	"mbti_변경_완료": "MBTIの変更完了",
 	"mbti가_변경되었어요": "MBTIが変更されました。",
 	"mbti_를_불러오고_있어요": "MBTIを読み込み中…",
@@ -125,6 +145,33 @@
 	},
 	"profile": {
 		"student_number": "{{prefix}}年入学"
+	},
+	"bento": {
+		"edit": "編集",
+		"photo_hint": "タップしてプロフィールを確認できます！",
+		"gem_label": "ビー玉",
+		"gem_remaining": "ビー玉 {{count}}個",
+		"ideal_type": "理想の相手",
+		"photo_mgmt": "写真管理",
+		"preview": "プレビュー",
+		"articles": "投稿",
+		"comments": "コメント",
+		"likes": "いいね",
+		"block": "ブロック",
+		"support": "サポート",
+		"support_desc": "ご不明な点はお気軽にお問い合わせください",
+		"account": "アカウント",
+		"account_desc": "パスワード、通知、退会などの設定",
+		"my_tendency": "自分の傾向",
+		"my_tendency_desc": "MBTI、性格、趣味など",
+		"ideal_type_desc": "理想のタイプの条件設定",
+		"contact_block": "連絡先ブロック",
+		"contact_block_desc": "連絡先に保存されている知人があなたを見つけられないようにブロックできます",
+		"photo_complete": "完了"
+	},
+	"photo_nudge": {
+		"description": "写真を3枚登録すると「いいね」をもらえる確率が2倍に！",
+		"cta": "写真を追加する"
 	},
 	"common": {
 		"게시글_삭제에_실패했습니다_잠시_후_다시_시도해주세요": "[JA] 게시글 삭제에 실패했습니다. 잠시 후 다시 시도해주세요."
