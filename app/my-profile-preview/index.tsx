@@ -1,8 +1,11 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { MatchingReasonPlaceholder, PartnerBasicInfo, PartnerMBTI, PartnerIdealType } from '@/src/features/match/ui';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { Text } from '@/src/shared/ui';
+import { OppositeGenderPreview } from '@/src/widgets/opposite-gender-preview';
 import { ProfileMainImage } from '@/src/widgets/profile-view-card';
 import PhotoSlider from '@/src/widgets/slide/photo-slider';
+import Feather from '@expo/vector-icons/Feather';
 import Loading from '@features/loading';
 import { HeaderWithNotification } from '@shared/ui';
 import { Image } from 'expo-image';
@@ -14,7 +17,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 export default function MyProfilePreviewScreen() {
 	const { t, i18n } = useTranslation();
 	const country = i18n.language?.startsWith('ja') ? 'jp' : 'kr';
-	const { profileDetails } = useAuth();
+	const { profileDetails, my } = useAuth();
 	const [isZoomVisible, setZoomVisible] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -130,6 +133,30 @@ export default function MyProfilePreviewScreen() {
 						))}
 					</View>
 				)}
+
+				{validProfileImages.length < 3 && (
+					<>
+						<OppositeGenderPreview
+							uploadedCount={validProfileImages.length}
+							userGender={my?.gender}
+						/>
+
+						<View style={styles.nudgeGuide}>
+							<Text weight="medium" size="sm" style={styles.nudgeGuideDesc}>
+								{t('features.mypage.photo_nudge.description')}
+							</Text>
+							<Pressable
+								style={styles.nudgeGuideCta}
+								onPress={() => router.push('/profile/photo-management?referrer=mypage')}
+							>
+								<Feather name="camera" size={16} color={semanticColors.text.inverse} />
+								<Text weight="semibold" size="sm" style={styles.nudgeGuideCtaText}>
+									{t('features.mypage.photo_nudge.cta')}
+								</Text>
+							</Pressable>
+						</View>
+					</>
+				)}
 			</ScrollView>
 		</View>
 	);
@@ -161,5 +188,31 @@ const styles = StyleSheet.create({
 	},
 	remainingImagesContainer: {
 		paddingBottom: 10,
+	},
+	nudgeGuide: {
+		marginHorizontal: 20,
+		marginBottom: 32,
+		padding: 16,
+		backgroundColor: semanticColors.surface.tertiary,
+		borderRadius: 12,
+		alignItems: 'center',
+		gap: 12,
+	},
+	nudgeGuideDesc: {
+		color: semanticColors.text.secondary,
+		textAlign: 'center',
+		lineHeight: 20,
+	},
+	nudgeGuideCta: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 6,
+		backgroundColor: semanticColors.brand.primary,
+		paddingHorizontal: 20,
+		paddingVertical: 10,
+		borderRadius: 24,
+	},
+	nudgeGuideCtaText: {
+		color: semanticColors.text.inverse,
 	},
 });
