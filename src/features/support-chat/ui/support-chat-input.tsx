@@ -44,7 +44,7 @@ function SupportChatInput({ onSend, onTyping, disabled = false }: SupportChatInp
 		<Animated.View
 			style={[
 				styles.container,
-				{ paddingBottom: Platform.OS === 'ios' ? insets.bottom : 12 },
+				{ paddingBottom: Math.max(insets.bottom, 16) },
 				animatedKeyboardStyles,
 			]}
 		>
@@ -71,20 +71,24 @@ function SupportChatInput({ onSend, onTyping, disabled = false }: SupportChatInp
 
 const styles = StyleSheet.create({
 	container: {
-		minHeight: 70,
 		alignItems: 'center',
 		backgroundColor: semanticColors.surface.background,
 		flexDirection: 'row',
-		paddingVertical: 12,
-		paddingHorizontal: 16,
+		paddingTop: 8,
+		paddingBottom: 8,
+		paddingHorizontal: 12,
+		borderTopWidth: 1,
+		borderTopColor: semanticColors.border.smooth,
 	},
 	inputContainer: {
 		flex: 1,
-		minHeight: 47,
+		minHeight: 44,
 		position: 'relative',
 		flexDirection: 'row',
 		alignItems: 'center',
-		borderRadius: 24,
+		borderRadius: 22,
+		borderWidth: 1,
+		borderColor: semanticColors.border.smooth,
 		backgroundColor: semanticColors.surface.surface,
 		paddingHorizontal: 8,
 	},

@@ -189,8 +189,17 @@ function SupportChatScreen() {
 		);
 	};
 
+	const listHeaderComponent = useMemo(() => {
+		if (!status) return null;
+		return <SupportChatStatusBanner status={status} hasUserMessage={hasUserMessage} />;
+	}, [status, hasUserMessage]);
+
 	return (
-		<View style={[styles.container, { paddingTop: insets.top }]}>
+		<KeyboardAvoidingView
+			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+			keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
+			style={[styles.container, { paddingTop: insets.top }]}
+		>
 			<View style={styles.header}>
 				<Pressable onPress={() => router.back()} style={styles.backButton}>
 					<ChevronLeftIcon width={24} height={24} />
@@ -216,41 +225,35 @@ function SupportChatScreen() {
 				</View>
 			</View>
 
-			{status && <SupportChatStatusBanner status={status} hasUserMessage={hasUserMessage} />}
-
-			<KeyboardAvoidingView
-				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-				keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 56 : 0}
-				style={styles.keyboardAvoidingView}
-			>
-				<FlatList
-					ref={flatListRef}
-					data={messages}
-					renderItem={renderMessage}
-					keyExtractor={keyExtractor}
-					contentContainerStyle={[styles.messageList, messages.length === 0 && styles.emptyList]}
-					ListEmptyComponent={renderEmptyState}
-					ListFooterComponent={isTyping && status ? <TypingIndicator status={status} /> : null}
-					showsVerticalScrollIndicator={false}
-					onContentSizeChange={() => {
-						if (messages.length > 0) {
-							flatListRef.current?.scrollToEnd({ animated: false });
-						}
-					}}
-				/>
-
-				<SupportChatInput
-					onSend={handleSend}
-					onTyping={handleTyping}
-					disabled={
-						!isConnected ||
-						status === 'resolved' ||
-						status === 'user_closed' ||
-						status === 'admin_resolved'
+			<FlatList
+				ref={flatListRef}
+				data={messages}
+				renderItem={renderMessage}
+				keyExtractor={keyExtractor}
+				contentContainerStyle={[styles.messageList, messages.length === 0 && styles.emptyList]}
+				ListHeaderComponent={listHeaderComponent}
+				ListEmptyComponent={renderEmptyState}
+				ListFooterComponent={isTyping && status ? <TypingIndicator status={status} /> : null}
+				showsVerticalScrollIndicator={false}
+				keyboardShouldPersistTaps="handled"
+				onContentSizeChange={() => {
+					if (messages.length > 0) {
+						flatListRef.current?.scrollToEnd({ animated: false });
 					}
-				/>
-			</KeyboardAvoidingView>
-		</View>
+				}}
+			/>
+
+			<SupportChatInput
+				onSend={handleSend}
+				onTyping={handleTyping}
+				disabled={
+					!isConnected ||
+					status === 'resolved' ||
+					status === 'user_closed' ||
+					status === 'admin_resolved'
+				}
+			/>
+		</KeyboardAvoidingView>
 	);
 }
 
@@ -258,9 +261,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: semanticColors.surface.background,
-	},
-	keyboardAvoidingView: {
-		flex: 1,
 	},
 	header: {
 		flexDirection: 'row',
