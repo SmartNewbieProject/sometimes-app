@@ -99,6 +99,23 @@ const injectNotifAnimations = () => {
 	document.head.appendChild(el);
 };
 
+// --- Web: Toggle animation keyframes ---
+const TOGGLE_ANIM_ID = 'toggle-anim-styles';
+const injectToggleAnimations = () => {
+	if (Platform.OS !== 'web') return;
+	if (document.getElementById(TOGGLE_ANIM_ID)) return;
+	const el = document.createElement('style');
+	el.id = TOGGLE_ANIM_ID;
+	el.textContent = `
+		@keyframes badgePop {
+			0% { transform: scale(1); }
+			40% { transform: scale(1.25); }
+			100% { transform: scale(1); }
+		}
+	`;
+	document.head.appendChild(el);
+};
+
 // --- Native: Reanimated lazy require ---
 let ReanimatedView: React.ComponentType<{
 	style: Record<string, unknown>;
@@ -107,11 +124,21 @@ let ReanimatedView: React.ComponentType<{
 let useNativeNotifAnim:
 	| ((index: number, isFaded: boolean, started: boolean) => Record<string, unknown>)
 	| null = null;
+let useNativeBadgePop: ((trigger: boolean) => Record<string, unknown>) | null = null;
+let NativeExplodingParticles: React.ComponentType<{
+	particleCount?: number;
+	top: number;
+	left: number;
+	delay: number;
+	handleEnd: () => void;
+	startTiming: boolean;
+}> | null = null;
 
 if (Platform.OS !== 'web') {
 	const Reanimated = require('react-native-reanimated');
-	const { useSharedValue, useAnimatedStyle, withDelay, withTiming } = Reanimated;
+	const { useSharedValue, useAnimatedStyle, withDelay, withTiming, withSpring } = Reanimated;
 	ReanimatedView = Reanimated.default.View;
+	NativeExplodingParticles = require('@/src/shared/interaction/exploding-particles').default;
 
 	useNativeNotifAnim = (index: number, isFaded: boolean, started: boolean) => {
 		const opacity = useSharedValue(0);
@@ -131,6 +158,23 @@ if (Platform.OS !== 'web') {
 			transform: [{ translateY: translateY.value }, { scale: scale.value }],
 		}));
 	};
+
+	useNativeBadgePop = (trigger: boolean) => {
+		const scale = useSharedValue(1);
+		const prevTrigger = useRef(trigger);
+
+		useEffect(() => {
+			if (prevTrigger.current !== trigger) {
+				scale.value = 0.5;
+				scale.value = withSpring(1, { damping: 12, stiffness: 200 });
+				prevTrigger.current = trigger;
+			}
+		}, [trigger, scale]);
+
+		return useAnimatedStyle(() => ({
+			transform: [{ scale: scale.value }],
+		}));
+	};
 }
 
 function AnimatedNotifCard({
@@ -141,6 +185,125 @@ function AnimatedNotifCard({
 }: { index: number; isFaded: boolean; started: boolean; children: React.ReactNode }) {
 	const animStyle = useNativeNotifAnim?.(index, isFaded, started);
 	return <ReanimatedView style={animStyle}>{children}</ReanimatedView>;
+}
+
+const CONFETTI_COLORS = [
+	'#F2B6B6',
+	'#F2C8A2',
+	'#F2F0AA',
+	'#BFE3BF',
+	'#BFCFEA',
+	'#BFAED3',
+	'#D9C3E6',
+];
+
+function AnimatedBadge({ value, children }: { value: boolean; children: React.ReactNode }) {
+	const animStyle = useNativeBadgePop?.(value);
+	return <ReanimatedView style={animStyle}>{children}</ReanimatedView>;
+}
+
+function StatusBadge({ value }: { value: boolean }) {
+	const prevValue = useRef(value);
+	const [popping, setPopping] = useState(false);
+
+	useEffect(() => {
+		if (prevValue.current !== value) {
+			setPopping(true);
+			prevValue.current = value;
+			const timer = setTimeout(() => setPopping(false), 350);
+			return () => clearTimeout(timer);
+		}
+	}, [value]);
+
+	const badge = (
+		<View style={[styles.statusBadge, value ? styles.statusBadgeOn : styles.statusBadgeOff]}>
+			<Text
+				style={[
+					styles.statusBadgeText,
+					value ? styles.statusBadgeTextOn : styles.statusBadgeTextOff,
+				]}
+			>
+				{value ? 'ON' : 'OFF'}
+			</Text>
+		</View>
+	);
+
+	if (!isWeb && ReanimatedView && useNativeBadgePop) {
+		return <AnimatedBadge value={value}>{badge}</AnimatedBadge>;
+	}
+
+	if (isWeb) {
+		return (
+			<View
+				style={[
+					// @ts-ignore - web CSS properties
+					popping && {
+						animationName: 'badgePop',
+						animationDuration: '350ms',
+						animationTimingFunction: 'ease-out',
+					},
+				]}
+			>
+				{badge}
+			</View>
+		);
+	}
+
+	return badge;
+}
+
+function WebConfetti({ onEnd }: { onEnd: () => void }) {
+	const id = useRef(`confetti-${Date.now()}-${Math.random().toString(36).slice(2)}`).current;
+	const particles = useRef(
+		Array.from({ length: 12 }, (_, i) => ({
+			angle: Math.random() * Math.PI * 2,
+			distance: 20 + Math.random() * 20,
+			color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+			name: `${id}-p${i}`,
+		})),
+	).current;
+
+	useEffect(() => {
+		const style = document.createElement('style');
+		style.id = id;
+		style.textContent = particles
+			.map(
+				(p) =>
+					`@keyframes ${p.name} {
+					0% { opacity: 1; transform: translate(0, 0) scale(1); }
+					100% { opacity: 0; transform: translate(${Math.cos(p.angle) * p.distance}px, ${Math.sin(p.angle) * p.distance}px) scale(0); }
+				}`,
+			)
+			.join('\n');
+		document.head.appendChild(style);
+
+		const timer = setTimeout(onEnd, 700);
+		return () => {
+			clearTimeout(timer);
+			document.getElementById(id)?.remove();
+		};
+	}, [id, particles, onEnd]);
+
+	return (
+		<View style={styles.confettiContainer} pointerEvents="none">
+			{particles.map((p) => (
+				<View
+					key={p.name}
+					style={[
+						styles.confettiParticle,
+						{ backgroundColor: p.color },
+						// @ts-ignore - web CSS properties
+						{
+							animationName: p.name,
+							animationDuration: '700ms',
+							animationTimingFunction: 'ease-out',
+							animationFillMode: 'forwards',
+						},
+					]}
+				/>
+			))}
+		</View>
+	);
 }
 
 export const ToggleSettingsTile = () => {
@@ -162,8 +325,29 @@ export const ToggleSettingsTile = () => {
 	const [animStarted, setAnimStarted] = useState(false);
 	const panelRef = useRef<View>(null);
 
+	// Toggle interaction state
+	const [deptConfetti, setDeptConfetti] = useState(0);
+	const [uniConfetti, setUniConfetti] = useState(0);
+	const [pushConfetti, setPushConfetti] = useState(0);
+
+	const handleToggleDept = (val: boolean) => {
+		toggleAvoidDepartment(val);
+		if (val) setDeptConfetti(Date.now());
+	};
+
+	const handleToggleUni = (val: boolean) => {
+		toggleAvoidUniversity(val);
+		if (val) setUniConfetti(Date.now());
+	};
+
+	const handleTogglePush = (val: boolean) => {
+		togglePush(val);
+		if (val) setPushConfetti(Date.now());
+	};
+
 	useEffect(() => {
 		if (showPanel) injectNotifAnimations();
+		injectToggleAnimations();
 	}, [showPanel]);
 
 	// Web: IntersectionObserver로 뷰포트 진입 감지
@@ -197,14 +381,32 @@ export const ToggleSettingsTile = () => {
 					<DepartmentIcon />
 				</View>
 				<View style={styles.textWrap}>
-					<Text style={styles.label}>{t('features.mypage.ex_same_class')}</Text>
+					<View style={styles.labelRow}>
+						<Text style={styles.label}>{t('features.mypage.ex_same_class')}</Text>
+						<StatusBadge value={filters?.avoidDepartment || false} />
+					</View>
 					<Text style={styles.desc}>{t('features.mypage.toggle_desc.department')}</Text>
 				</View>
-				<CustomSwitch
-					value={filters?.avoidDepartment || false}
-					onChange={toggleAvoidDepartment}
-					disabled={isUpdating}
-				/>
+				<View style={styles.switchWrap}>
+					<CustomSwitch
+						value={filters?.avoidDepartment || false}
+						onChange={handleToggleDept}
+						disabled={isUpdating}
+					/>
+					{deptConfetti > 0 &&
+						(isWeb ? (
+							<WebConfetti key={deptConfetti} onEnd={() => setDeptConfetti(0)} />
+						) : NativeExplodingParticles ? (
+							<NativeExplodingParticles
+								key={deptConfetti}
+								top={15}
+								left={30}
+								delay={0}
+								startTiming
+								handleEnd={() => setDeptConfetti(0)}
+							/>
+						) : null)}
+				</View>
 			</View>
 			<View style={styles.divider} />
 			<View style={styles.row}>
@@ -212,14 +414,32 @@ export const ToggleSettingsTile = () => {
 					<UniversityIcon />
 				</View>
 				<View style={styles.textWrap}>
-					<Text style={styles.label}>{t('features.mypage.ex_same_school')}</Text>
+					<View style={styles.labelRow}>
+						<Text style={styles.label}>{t('features.mypage.ex_same_school')}</Text>
+						<StatusBadge value={filters?.avoidUniversity || false} />
+					</View>
 					<Text style={styles.desc}>{t('features.mypage.toggle_desc.university')}</Text>
 				</View>
-				<CustomSwitch
-					value={filters?.avoidUniversity || false}
-					onChange={toggleAvoidUniversity}
-					disabled={isUpdating}
-				/>
+				<View style={styles.switchWrap}>
+					<CustomSwitch
+						value={filters?.avoidUniversity || false}
+						onChange={handleToggleUni}
+						disabled={isUpdating}
+					/>
+					{uniConfetti > 0 &&
+						(isWeb ? (
+							<WebConfetti key={uniConfetti} onEnd={() => setUniConfetti(0)} />
+						) : NativeExplodingParticles ? (
+							<NativeExplodingParticles
+								key={uniConfetti}
+								top={15}
+								left={30}
+								delay={0}
+								startTiming
+								handleEnd={() => setUniConfetti(0)}
+							/>
+						) : null)}
+				</View>
 			</View>
 			<View style={styles.divider} />
 			<View style={styles.row}>
@@ -233,6 +453,7 @@ export const ToggleSettingsTile = () => {
 						<Text style={[styles.label, hasMissed && styles.labelOff]}>
 							{t('features.mypage.notification.push_notification')}
 						</Text>
+						<StatusBadge value={!pushOff} />
 						{hasMissed && (
 							<View style={styles.missedBadge}>
 								<Text style={styles.missedBadgeText}>
@@ -243,7 +464,22 @@ export const ToggleSettingsTile = () => {
 					</View>
 					<Text style={styles.desc}>{t('features.mypage.toggle_desc.push')}</Text>
 				</View>
-				<CustomSwitch value={!pushOff} onChange={togglePush} disabled={isWeb} />
+				<View style={styles.switchWrap}>
+					<CustomSwitch value={!pushOff} onChange={handleTogglePush} disabled={isWeb} />
+					{pushConfetti > 0 &&
+						(isWeb ? (
+							<WebConfetti key={pushConfetti} onEnd={() => setPushConfetti(0)} />
+						) : NativeExplodingParticles ? (
+							<NativeExplodingParticles
+								key={pushConfetti}
+								top={15}
+								left={30}
+								delay={0}
+								startTiming
+								handleEnd={() => setPushConfetti(0)}
+							/>
+						) : null)}
+				</View>
 			</View>
 
 			{showPanel && (
@@ -533,5 +769,44 @@ const styles = StyleSheet.create({
 	downloadArrow: {
 		fontSize: 12,
 		color: '#7A4AE2',
+	},
+	statusBadge: {
+		paddingHorizontal: 6,
+		paddingVertical: 2,
+		borderRadius: 6,
+	},
+	statusBadgeOn: {
+		backgroundColor: '#F7F3FF',
+	},
+	statusBadgeOff: {
+		backgroundColor: '#F3F4F6',
+	},
+	statusBadgeText: {
+		fontSize: 10,
+		fontFamily: 'Pretendard-Bold',
+	},
+	statusBadgeTextOn: {
+		color: '#7A4AE2',
+	},
+	statusBadgeTextOff: {
+		color: '#AEAEAE',
+	},
+	switchWrap: {
+		position: 'relative',
+		// @ts-ignore - web/native overflow visible
+		overflow: 'visible',
+	},
+	confettiContainer: {
+		position: 'absolute',
+		top: 15,
+		left: 30,
+		width: 0,
+		height: 0,
+	},
+	confettiParticle: {
+		position: 'absolute',
+		width: 8,
+		height: 8,
+		borderRadius: 4,
 	},
 });
