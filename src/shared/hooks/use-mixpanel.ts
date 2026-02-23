@@ -31,7 +31,7 @@ export interface UseMixpanelReturn {
 	// 도메인별 전용 훅들
 	authEvents: {
 		trackLoginStarted: (authMethod: string) => void;
-		trackLoginCompleted: (authMethod: string, duration: number) => void;
+		trackLoginCompleted: (authMethod: string, duration: number, isNewUser?: boolean) => void;
 		trackLoginFailed: (authMethod: string, errorType: string) => void;
 		trackLoginAbandoned: (
 			authMethod: AuthMethod,
@@ -349,10 +349,11 @@ export const useMixpanel = (): UseMixpanelReturn => {
 		),
 
 		trackLoginCompleted: useCallback(
-			(authMethod: string, duration: number) => {
+			(authMethod: string, duration: number, isNewUser?: boolean) => {
 				trackEvent('Auth_Login_Completed', {
 					auth_method: authMethod as any,
 					login_duration: duration,
+					is_new_user: isNewUser,
 				});
 			},
 			[trackEvent],

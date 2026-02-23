@@ -22,6 +22,7 @@ function useUniversityHook() {
 	const [selectedUniv, setSelectedUniv] = useState<string | undefined>(userForm.universityId);
 	const params = useLocalSearchParams();
 	const hasProcessedPassInfo = useRef(false);
+	const screenEnteredAt = useRef(Date.now());
 	const [trigger, setTrigger] = useState(false);
 	const { updateShowHeader, showHeader, updateRegions, updateUnivTitle } = useSignupProgress();
 	const [isFocused, setIsFocused] = useState(false);
@@ -94,6 +95,21 @@ function useUniversityHook() {
 		return sorted;
 	}, [univs, trigger, isLoading, isActuallySearching]);
 
+	useEffect(() => {
+		if (
+			debouncedSearchText.length > 0
+			&& searchResults !== undefined
+			&& searchResults.length === 0
+			&& !isSearching
+		) {
+			mixpanelAdapter.track('Signup_University_Not_Found', {
+				search_query: debouncedSearchText,
+				auth_method: useSignupProgress.getState().authMethod,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+		}
+	}, [debouncedSearchText, searchResults, isSearching]);
+
 	const titleOpacity = useSharedValue(0);
 	const containerTranslateY = useSharedValue(0);
 	const listOpacity = useSharedValue(1);
@@ -140,6 +156,15 @@ function useUniversityHook() {
 			listOpacity.value = withTiming(0, { duration: 0 });
 			listTranslateY.value = withTiming(50, { duration: 0 });
 		} else {
+			mixpanelAdapter.track('Signup_University_Abandoned', {
+				had_search: searchText.length > 0 || debouncedSearchText.length > 0,
+				search_query: debouncedSearchText || undefined,
+				search_results_count: filteredUniv?.length ?? 0,
+				had_selection: !!selectedUniv,
+				time_spent_seconds: Math.round((Date.now() - screenEnteredAt.current) / 1000),
+				auth_method: useSignupProgress.getState().authMethod,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
 			fallback();
 		}
 		return true;

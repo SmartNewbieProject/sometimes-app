@@ -322,8 +322,7 @@ export const useUserSession = (userId?: string) => {
     if (userId && sessionRef.current.userId !== userId) {
       sessionRef.current.userId = userId;
 
-      // 로그인 이벤트 발송
-      mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_LOGIN_COMPLETED, {
+      mixpanelAdapter.track('Auth_Session_Restored', {
         session_id: sessionRef.current.sessionId,
         user_id: userId,
         login_method: 'existing_session',

@@ -26,6 +26,8 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	// 나이/인증 관련
 	SIGNUP_AGE_CHECK_FAILED: 'Signup_AgeCheck_Failed',
 	SIGNUP_PHONE_BLACKLIST_FAILED: 'Signup_PhoneBlacklist_Failed',
+	SIGNUP_UNIVERSITY_NOT_FOUND: 'Signup_University_Not_Found',
+	SIGNUP_UNIVERSITY_ABANDONED: 'Signup_University_Abandoned',
 	SIGNUP_ERROR: 'Signup_Error',
 
 	// 인증 퍼널 상세 추적 (2025-01-10 추가)
@@ -421,6 +423,7 @@ export interface AuthEventProperties extends BaseEventProperties {
 	auth_method?: AuthMethod;
 	login_duration?: number;
 	error_type?: string;
+	is_new_user?: boolean;
 }
 
 // 로그아웃 이벤트 속성

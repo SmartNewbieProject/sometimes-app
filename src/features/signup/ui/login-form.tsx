@@ -130,8 +130,6 @@ function KrLoginForm() {
 	const [passLastFailureReason, setPassLastFailureReason] = useState<string | null>(null);
 
 	const onPressPassLogin = async () => {
-		const loginStartTime = Date.now();
-
 		setAuthMethod(AUTH_METHODS.PASS);
 
 		// 인증 방법 선택 이벤트
@@ -163,9 +161,6 @@ function KrLoginForm() {
 		clearError();
 		try {
 			await startPortOneLogin();
-
-			const loginDuration = Date.now() - loginStartTime;
-			authEvents.trackLoginCompleted('pass', loginDuration);
 		} catch (error) {
 			setPassRetryCount((prev) => prev + 1);
 			setPassLastFailureReason('authentication_error');
@@ -360,6 +355,9 @@ function KakaoLoginComponent() {
 				isNewUser: loginResult.isNewUser,
 			});
 
+			const loginDuration = Date.now() - loginStartTime;
+			authEvents.trackLoginCompleted('kakao', loginDuration, loginResult.isNewUser);
+
 			authStartTimeRef.current = null;
 			if (loginResult.isNewUser) {
 				if (loginResult.certificationInfo?.phone) {
@@ -407,9 +405,6 @@ function KakaoLoginComponent() {
 
 				router.push('/auth/signup/university');
 			} else {
-				const loginDuration = Date.now() - loginStartTime;
-				authEvents.trackLoginCompleted('kakao', loginDuration);
-
 				router.push('/home');
 			}
 		} catch (error: unknown) {

@@ -92,6 +92,15 @@ export const usePortOneLogin = ({
 		async (identityVerificationId: string) => {
 			const loginResult = await loginWithPass(identityVerificationId);
 
+			track(MIXPANEL_EVENTS.AUTH_LOGIN_COMPLETED, {
+				auth_method: getAuthMethod(),
+				is_new_user: loginResult.isNewUser,
+				login_duration: authStartTimeRef.current
+					? Date.now() - authStartTimeRef.current
+					: undefined,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+
 			if (checkAppEnvironment('development') || loginResult.isNewUser) {
 				const birthday = loginResult.certificationInfo?.birthday;
 				const phone = loginResult.certificationInfo?.phone;

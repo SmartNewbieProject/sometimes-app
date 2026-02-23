@@ -1,4 +1,5 @@
 import { useStorage } from '@/src/shared/hooks/use-storage';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Platform } from 'react-native';
@@ -34,6 +35,12 @@ export const useAppleLogin = () => {
 			return apis.postAppleLogin(params);
 		},
 		onSuccess: async (result: AppleLoginResponse) => {
+			mixpanelAdapter.track('Auth_Login_Completed', {
+				auth_method: 'apple',
+				is_new_user: result.isNewUser,
+				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+			});
+
 			if (result.isNewUser) {
 				if (Platform.OS === 'ios') {
 					setLoginType('apple');

@@ -88,6 +88,8 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
     try {
       onClose();
       const result = await loginWithKakao(code);
+      const loginDuration = Date.now() - loginStartTime;
+      authEvents.trackLoginCompleted('kakao', loginDuration, result.isNewUser);
 
       if (result.isNewUser) {
         if (result.certificationInfo?.phone) {
@@ -134,8 +136,6 @@ const KakaoLoginWebView: React.FC<KakaoLoginWebViewProps> = ({
           },
         });
       } else {
-        const loginDuration = Date.now() - loginStartTime;
-        authEvents.trackLoginCompleted('kakao', loginDuration);
         router.push("/home");
       }
     } catch (error) {
