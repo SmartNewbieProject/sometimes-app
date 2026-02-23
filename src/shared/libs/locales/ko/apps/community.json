@@ -12,7 +12,11 @@
 		"error_loading": "게시글을 불러오는 중 오류가 발생했습니다.",
 		"error_not_found": "게시글을 찾을 수 없거나 삭제되었을 수 있습니다.",
 		"error_back_button": "뒤로 가기",
-		"loading": "게시글을 불러오고 있어요"
+		"loading": "게시글을 불러오고 있어요",
+		"login_required_title": "로그인이 필요해요",
+		"login_required_description": "게시글을 보려면 로그인이 필요해요.\n회원가입하고 커뮤니티를 즐겨보세요!",
+		"login_required_confirm": "로그인하기",
+		"login_required_cancel": "돌아가기"
 	},
 	"write": {
 		"default_type": "일반",

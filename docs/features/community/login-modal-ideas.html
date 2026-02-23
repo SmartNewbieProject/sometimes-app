@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커뮤니티 로그인 유도 모달 - 시안 비교</title>
+<style>
+  :root {
+    --brand-primary: #7A4AE2;
+    --brand-secondary: #9747FF;
+    --brand-deep: #49386E;
+    --brand-accent: #A892D7;
+    --brand-primaryLight: #E2D5FF;
+    --brand-cta: #3871FF;
+    --surface-bg: #FFFFFF;
+    --surface-secondary: #F7F3FF;
+    --surface-tertiary: #F2EDFF;
+    --surface-other: #E1D9FF;
+    --surface-disabled: #E5E7EB;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-tertiary: #666666;
+    --text-muted: #7C7C7C;
+    --text-disabled: #AEAEAE;
+    --border-smooth: #e4e2e2;
+    --state-attention: #F70A8D;
+    --overlay-scrim: rgba(0,0,0,0.5);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #F0ECF9;
+    color: var(--text-primary);
+    padding: 0 0 80px;
+  }
+
+  /* ── Hero header ── */
+  .hero {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+    padding: 48px 20px 40px;
+    text-align: center;
+    color: #fff;
+  }
+  .hero h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .hero p { font-size: 14px; opacity: .85; line-height: 1.5; }
+
+  /* ── Section ── */
+  .section {
+    max-width: 440px;
+    margin: 32px auto 0;
+    padding: 0 16px;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+  }
+  .section-number {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--brand-primary); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .section-title { font-size: 18px; font-weight: 700; }
+  .section-desc {
+    font-size: 13px; color: var(--text-tertiary);
+    margin-bottom: 16px; padding-left: 40px; line-height: 1.5;
+  }
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 600; margin-left: 4px;
+  }
+  .tag-current { background: var(--brand-primaryLight); color: var(--brand-primary); }
+  .tag-recommend { background: #DCFCE7; color: #16A34A; }
+  .tag-premium { background: #FEF3C7; color: #D97706; }
+  .tag-minimal { background: #F3F4F6; color: #6B7280; }
+
+  /* ── Phone frame ── */
+  .phone {
+    width: 300px; height: 540px;
+    border-radius: 36px;
+    border: 3px solid #222;
+    background: var(--surface-bg);
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.15);
+  }
+  .phone-notch {
+    width: 120px; height: 28px;
+    background: #222; border-radius: 0 0 16px 16px;
+    margin: 0 auto;
+    position: relative; z-index: 10;
+  }
+
+  /* ── Background community feed (blurred) ── */
+  .feed-bg {
+    position: absolute; inset: 0;
+    padding: 36px 16px 0;
+    filter: blur(2px);
+    opacity: .5;
+  }
+  .feed-header {
+    height: 44px; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: var(--text-primary);
+  }
+  .feed-card {
+    background: #fff; border-radius: 12px;
+    padding: 14px; margin-bottom: 10px;
+    border: 1px solid var(--border-smooth);
+  }
+  .feed-card-title {
+    width: 70%; height: 12px; background: #E5E7EB; border-radius: 4px; margin-bottom: 8px;
+  }
+  .feed-card-body {
+    width: 100%; height: 8px; background: #F3F4F6; border-radius: 4px; margin-bottom: 5px;
+  }
+  .feed-card-body.short { width: 55%; }
+
+  /* ── Overlay ── */
+  .overlay {
+    position: absolute; inset: 0;
+    background: var(--overlay-scrim);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 5;
+    padding: 16px;
+  }
+  .overlay-bottom {
+    align-items: flex-end;
+    padding-bottom: 0;
+  }
+
+  /* ── Modal base ── */
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    max-width: 268px;
+    position: relative;
+    text-align: center;
+    animation: modalIn .3s ease-out;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(12px) scale(.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-close {
+    position: absolute; top: 12px; right: 12px;
+    width: 28px; height: 28px; border-radius: 14px;
+    background: var(--surface-tertiary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--text-muted); cursor: pointer;
+    border: none;
+  }
+  .modal-title {
+    font-size: 17px; font-weight: 700; color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+  .modal-body {
+    font-size: 13px; color: var(--text-secondary);
+    line-height: 1.6; margin-bottom: 20px;
+    white-space: pre-line;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: block; width: 100%; padding: 13px 0;
+    border-radius: 12px; font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer; text-align: center;
+    transition: transform .1s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary {
+    background: var(--brand-primary); color: #fff;
+  }
+  .btn-secondary {
+    background: var(--surface-tertiary); color: var(--brand-primary);
+  }
+  .btn-ghost {
+    background: transparent; color: var(--text-muted);
+    font-weight: 500;
+  }
+  .btn-outline {
+    background: transparent; color: var(--brand-primary);
+    border: 1.5px solid var(--brand-primary);
+  }
+  .btn-cta {
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    color: #fff;
+  }
+  .btn-group { display: flex; flex-direction: column; gap: 8px; }
+  .btn-group-h { display: flex; gap: 8px; }
+  .btn-group-h .btn { flex: 1; }
+
+  /* ── Logo circle ── */
+  .modal-logo {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--brand-primary);
+    margin: -48px auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    border: 4px solid #fff;
+    font-size: 24px; color: #fff;
+    box-shadow: 0 4px 12px rgba(122,74,226,.3);
+  }
+
+  /* ── Icon illustration ── */
+  .modal-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+
+  /* ── Bottom sheet ── */
+  .bottom-sheet {
+    background: #fff;
+    border-radius: 24px 24px 0 0;
+    padding: 12px 20px 24px;
+    width: 100%;
+    max-width: 100%;
+    animation: sheetUp .35s ease-out;
+  }
+  @keyframes sheetUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .sheet-handle {
+    width: 40px; height: 4px; border-radius: 2px;
+    background: #D1D5DB; margin: 0 auto 16px;
+  }
+
+  /* ── Inline banner ── */
+  .inline-banner {
+    background: linear-gradient(135deg, var(--surface-secondary), var(--surface-tertiary));
+    border-radius: 14px;
+    padding: 16px;
+    margin: 0 auto 16px;
+    width: 100%;
+    text-align: center;
+  }
+  .inline-banner-icon {
+    font-size: 36px; margin-bottom: 8px;
+  }
+
+  /* ── Comparison table ── */
+  .comparison {
+    max-width: 440px; margin: 48px auto 0; padding: 0 16px;
+  }
+  .comparison h2 {
+    font-size: 20px; font-weight: 800; margin-bottom: 20px; text-align: center;
+  }
+  .comparison table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+    background: #fff; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+  .comparison th {
+    background: var(--surface-tertiary); color: var(--brand-primary);
+    padding: 10px 8px; text-align: left; font-weight: 700;
+  }
+  .comparison td {
+    padding: 10px 8px; border-bottom: 1px solid #F3F4F6;
+    vertical-align: top; line-height: 1.5;
+  }
+  .comparison tr:last-child td { border-bottom: none; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  .dot-green { background: #16A34A; }
+  .dot-yellow { background: #D97706; }
+  .dot-gray { background: #9CA3AF; }
+
+  /* ── Pros/Cons chips ── */
+  .pros-cons { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .chip {
+    display: inline-block; padding: 2px 8px; border-radius: 8px;
+    font-size: 11px; font-weight: 500;
+  }
+  .chip-pro { background: #DCFCE7; color: #16A34A; }
+  .chip-con { background: #FEE2E2; color: #DC2626; }
+
+  /* ── Fullscreen toast-like ── */
+  .toast-bar {
+    position: absolute; bottom: 60px; left: 16px; right: 16px;
+    background: var(--brand-deep);
+    color: #fff; border-radius: 12px;
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 6;
+    animation: toastIn .3s ease-out;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .toast-bar-text { font-size: 13px; font-weight: 500; }
+  .toast-bar-btn {
+    background: var(--brand-primary); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: 12px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<div class="hero">
+  <h1>커뮤니티 로그인 유도 모달</h1>
+  <p>비로그인 유저가 게시글 상세에 진입할 때<br>로그인을 유도하는 5가지 시안 비교</p>
+</div>
+
+<!-- ═══════════════════════ IDEA 1 ═══════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <div class="section-title">기본 모달 (현재 구현)</div>
+    <span class="tag tag-current">현재</span>
+  </div>
+  <p class="section-desc">
+    기존 useModal 패턴 그대로 사용. title + children + 2버튼.<br>
+    구현 비용 최소, 앱 전체 모달 톤앤매너 일관성 유지.
+  </p>
+
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="feed-bg">
+      <div class="feed-header">커뮤니티</div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+        <div class="feed-card-body short"></div>
+      </div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+        <div class="feed-card-body short"></div>
+      </div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+      </div>
+    </div>
+    <div class="overlay">
+      <div class="modal">
+        <button class="modal-close">✕</button>
+        <div class="modal-title">로그인이 필요해요</div>
+        <div class="modal-body">게시글을 보려면 로그인이 필요해요.
+회원가입하고 커뮤니티를 즐겨보세요!</div>
+        <div class="btn-group-h">
+          <button class="btn btn-secondary">돌아가기</button>
+          <button class="btn btn-primary">로그인하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ IDEA 2 ═══════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <div class="section-title">로고 + 일러스트 모달</div>
+    <span class="tag tag-recommend">추천</span>
+  </div>
+  <p class="section-desc">
+    showLogo 옵션 활용해 브랜드 아이덴티티 강화.<br>
+    잠금 아이콘으로 "인증 필요" 시각적 인지 + 혜택 문구로 전환 유도.
+  </p>
+
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="feed-bg">
+      <div class="feed-header">커뮤니티</div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+        <div class="feed-card-body short"></div>
+      </div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+        <div class="feed-card-body short"></div>
+      </div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+      </div>
+    </div>
+    <div class="overlay">
+      <div class="modal" style="padding-top: 48px;">
+        <div class="modal-logo">🔒</div>
+        <button class="modal-close">✕</button>
+        <div class="modal-title">잠깐! 로그인이 필요해요</div>
+        <div class="modal-body">대학생 전용 커뮤니티의 모든 글을
+읽고, 댓글도 남겨보세요!
+
+<span style="color: var(--brand-primary); font-weight: 600;">3초면 가입 완료 ✨</span></div>
+        <div class="btn-group">
+          <button class="btn btn-cta">회원가입 / 로그인</button>
+          <button class="btn btn-ghost">나중에 할게요</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ IDEA 3 ═══════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <div class="section-title">바텀시트 모달</div>
+    <span class="tag tag-premium">임팩트</span>
+  </div>
+  <p class="section-desc">
+    BottomSheet 패턴으로 하단에서 올라오는 형태.<br>
+    게시글 배경이 살짝 보여 맥락 유지. 혜택 리스트로 가입 동기 부여.
+  </p>
+
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="feed-bg">
+      <div class="feed-header">커뮤니티</div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+        <div class="feed-card-body short"></div>
+      </div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+        <div class="feed-card-body short"></div>
+      </div>
+      <div class="feed-card">
+        <div class="feed-card-title"></div>
+        <div class="feed-card-body"></div>
+      </div>
+    </div>
+    <div class="overlay overlay-bottom">
+      <div class="bottom-sheet" style="text-align: center;">
+        <div class="sheet-handle"></div>
+        <div style="font-size: 36px; margin-bottom: 8px;">💬</div>
+        <div class="modal-title">커뮤니티를 즐기려면<br>로그인이 필요해요</div>
+        <div style="text-align: left; margin-bottom: 20px; padding: 0 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 18px;">📝</span>
+            <span style="font-size: 13px; color: var(--text-secondary);">게시글 읽기 & 댓글 작성</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 18px;">❤️</span>
+            <span style="font-size: 13px; color: var(--text-secondary);">좋아요 & 공감하기</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 18px;">🎓</span>
+            <span style="font-size: 13px; color: var(--text-secondary);">대학생 인증 전용 커뮤니티</span>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary">로그인하기</button>
+          <button class="btn btn-ghost">둘러보기만 할게요</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ IDEA 4 ═══════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <div class="section-title">인라인 배너 + 토스트</div>
+    <span class="tag tag-minimal">비침투</span>
+  </div>
+  <p class="section-desc">
+    글 내용을 일부 보여주되 블러 처리 + 하단에 로그인 유도 배너.<br>
+    사용자 흐름 중단 최소화, 콘텐츠 맛보기로 가입 전환 유도.
+  </p>
+
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <!-- 실제 글 일부 노출 -->
+    <div style="padding: 36px 16px 0;">
+      <div class="feed-header" style="margin-bottom: 8px;">
+        <span style="font-size: 13px; color: var(--text-muted); margin-right: auto; padding-left: 4px;">←</span>
+        <span style="font-weight: 700; font-size: 15px;">커뮤니티</span>
+        <span style="margin-left: auto; width: 16px;"></span>
+      </div>
+      <div style="padding: 8px 4px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface-tertiary);"></div>
+          <div>
+            <div style="font-size: 13px; font-weight: 600;">익명의 여우</div>
+            <div style="font-size: 11px; color: var(--text-muted);">2시간 전</div>
+          </div>
+        </div>
+        <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">
+          오늘 학교에서 있었던 일...
+        </div>
+        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
+          수업 끝나고 도서관에서 공부하는데
+          옆자리에 앉은 사람이...
+        </div>
+        <!-- 블러 영역 -->
+        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; filter: blur(6px); user-select: none; margin-top: 4px;">
+          진짜 너무 웃긴 일이 있었어ㅋㅋㅋ
+          그래서 결국 같이 밥을 먹었는데
+          알고보니 같은 과였던 거 있지?
+        </div>
+      </div>
+      <!-- 인라인 배너 -->
+      <div class="inline-banner" style="margin-top: 12px;">
+        <div class="inline-banner-icon">🔐</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--brand-primary); margin-bottom: 4px;">
+          전체 글을 보려면 로그인하세요
+        </div>
+        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 12px;">
+          대학 인증 후 모든 글을 읽을 수 있어요
+        </div>
+        <button class="btn btn-primary" style="max-width: 200px; margin: 0 auto; padding: 10px 0; font-size: 13px;">
+          로그인 / 회원가입
+        </button>
+      </div>
+    </div>
+    <!-- 하단 토스트 바 -->
+    <div class="toast-bar" style="bottom: 12px;">
+      <span class="toast-bar-text">👀 이 글이 궁금하세요?</span>
+      <button class="toast-bar-btn">로그인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ IDEA 5 ═══════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <div class="section-title">풀스크린 온보딩</div>
+    <span class="tag tag-premium">전환율</span>
+  </div>
+  <p class="section-desc">
+    전체 화면 온보딩으로 앱 가치 제안 + 로그인 유도.<br>
+    높은 전환율이 기대되나, 사용자 흐름 중단이 큼. 첫 방문자에게 적합.
+  </p>
+
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div style="
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, var(--surface-secondary) 0%, #fff 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+    ">
+      <!-- 일러스트 영역 -->
+      <div style="
+        width: 100px; height: 100px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--brand-primaryLight), var(--surface-other));
+        display: flex; align-items: center; justify-content: center;
+        font-size: 48px; margin-bottom: 24px;
+        box-shadow: 0 8px 32px rgba(122,74,226,.15);
+      ">🦊</div>
+
+      <div style="font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
+        대학생들의 이야기가<br>가득한 곳
+      </div>
+      <div style="font-size: 13px; color: var(--text-tertiary); line-height: 1.6; margin-bottom: 32px;">
+        같은 캠퍼스, 같은 고민을 나누는<br>
+        대학생 전용 커뮤니티에 참여하세요
+      </div>
+
+      <!-- 혜택 칩 -->
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px;">
+        <span style="
+          background: var(--brand-primaryLight); color: var(--brand-primary);
+          padding: 6px 14px; border-radius: 20px;
+          font-size: 12px; font-weight: 600;
+        ">📝 자유로운 익명 글쓰기</span>
+        <span style="
+          background: var(--brand-primaryLight); color: var(--brand-primary);
+          padding: 6px 14px; border-radius: 20px;
+          font-size: 12px; font-weight: 600;
+        ">💬 실시간 댓글</span>
+        <span style="
+          background: var(--brand-primaryLight); color: var(--brand-primary);
+          padding: 6px 14px; border-radius: 20px;
+          font-size: 12px; font-weight: 600;
+        ">🎓 대학 인증</span>
+      </div>
+
+      <div style="width: 100%; max-width: 240px;">
+        <div class="btn-group">
+          <button class="btn btn-cta" style="padding: 15px 0; font-size: 15px;">시작하기</button>
+          <button class="btn btn-ghost" style="font-size: 13px;">← 커뮤니티로 돌아가기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ COMPARISON TABLE ═══════════════════════ -->
+<div class="comparison">
+  <h2>시안 비교 분석</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 22%;">시안</th>
+        <th style="width: 26%;">구현 난이도</th>
+        <th style="width: 26%;">UX 침투도</th>
+        <th style="width: 26%;">전환 기대</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. 기본</strong></td>
+        <td><span class="dot dot-green"></span>최소 (현재)</td>
+        <td>중간</td>
+        <td>보통</td>
+      </tr>
+      <tr>
+        <td><strong>2. 로고</strong></td>
+        <td><span class="dot dot-green"></span>낮음</td>
+        <td>중간</td>
+        <td><strong style="color: var(--brand-primary);">높음</strong></td>
+      </tr>
+      <tr>
+        <td><strong>3. 시트</strong></td>
+        <td><span class="dot dot-yellow"></span>중간</td>
+        <td>중간</td>
+        <td><strong style="color: var(--brand-primary);">높음</strong></td>
+      </tr>
+      <tr>
+        <td><strong>4. 배너</strong></td>
+        <td><span class="dot dot-yellow"></span>중간</td>
+        <td><strong style="color: #16A34A;">낮음 (좋음)</strong></td>
+        <td>보통</td>
+      </tr>
+      <tr>
+        <td><strong>5. 풀스크린</strong></td>
+        <td><span class="dot dot-yellow"></span>중간</td>
+        <td>높음</td>
+        <td><strong style="color: var(--brand-primary);">최고</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 각 시안별 장단점 -->
+  <div style="margin-top: 20px;">
+    <div style="background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06);">
+      <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px;">1. 기본 모달 <span class="tag tag-current">현재</span></div>
+      <div class="pros-cons">
+        <span class="chip chip-pro">+ 즉시 적용 가능</span>
+        <span class="chip chip-pro">+ 일관된 UI</span>
+        <span class="chip chip-con">- 차별화 없음</span>
+        <span class="chip chip-con">- 가입 동기 부족</span>
+      </div>
+    </div>
+    <div style="background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06); border: 2px solid var(--brand-primaryLight);">
+      <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px;">2. 로고 + 일러스트 <span class="tag tag-recommend">추천</span></div>
+      <div class="pros-cons">
+        <span class="chip chip-pro">+ showLogo 기존 옵션</span>
+        <span class="chip chip-pro">+ 브랜드 인지</span>
+        <span class="chip chip-pro">+ 구현 간단</span>
+        <span class="chip chip-con">- 혜택 정보 제한</span>
+      </div>
+    </div>
+    <div style="background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06);">
+      <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px;">3. 바텀시트 <span class="tag tag-premium">임팩트</span></div>
+      <div class="pros-cons">
+        <span class="chip chip-pro">+ 혜택 리스트</span>
+        <span class="chip chip-pro">+ 맥락 유지</span>
+        <span class="chip chip-con">- position:bottom 필요</span>
+        <span class="chip chip-con">- 스와이프 닫기 구현</span>
+      </div>
+    </div>
+    <div style="background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06);">
+      <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px;">4. 인라인 배너 <span class="tag tag-minimal">비침투</span></div>
+      <div class="pros-cons">
+        <span class="chip chip-pro">+ 콘텐츠 맛보기</span>
+        <span class="chip chip-pro">+ 흐름 중단 없음</span>
+        <span class="chip chip-con">- API 비인가 응답 처리</span>
+        <span class="chip chip-con">- 글 부분 로딩 필요</span>
+      </div>
+    </div>
+    <div style="background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.06);">
+      <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px;">5. 풀스크린 온보딩 <span class="tag tag-premium">전환율</span></div>
+      <div class="pros-cons">
+        <span class="chip chip-pro">+ 최고 전환율</span>
+        <span class="chip chip-pro">+ 가치 제안 강력</span>
+        <span class="chip chip-con">- 사용자 중단 큼</span>
+        <span class="chip chip-con">- 별도 화면 구현</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 추천 -->
+  <div style="
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    border-radius: 16px; padding: 20px; margin-top: 24px;
+    color: #fff; text-align: center;
+  ">
+    <div style="font-size: 16px; font-weight: 800; margin-bottom: 8px;">
+      추천: 시안 2 (로고 + 일러스트)
+    </div>
+    <div style="font-size: 13px; opacity: .9; line-height: 1.6;">
+      기존 useModal의 <code style="background: rgba(255,255,255,.2); padding: 1px 5px; border-radius: 4px;">showLogo</code> 옵션만 추가하면 되므로<br>
+      구현 비용 최소 + 브랜드 인지 + 높은 전환율 기대.<br>
+      <strong>점진적 개선 시 시안 3(바텀시트)으로 발전 가능.</strong>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

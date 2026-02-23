@@ -12,7 +12,11 @@
 		"error_loading": "読み込む際にエラーが発生しました",
 		"error_not_found": "投稿が見つからないか、削除された可能性があります。",
 		"error_back_button": "戻る",
-		"loading": "投稿を読み込んでいます"
+		"loading": "投稿を読み込んでいます",
+		"login_required_title": "ログインが必要です",
+		"login_required_description": "投稿を見るにはログインが必要です。\n会員登録してコミュニティを楽しみましょう！",
+		"login_required_confirm": "ログイン",
+		"login_required_cancel": "戻る"
 	},
 	"write": {
 		"default_type": "一般",

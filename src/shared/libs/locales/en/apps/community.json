@@ -7,6 +7,10 @@
 		"error_loading": "An error occurred while loading the post.",
 		"error_not_found": "The post could not be found or may have been deleted.",
 		"error_back_button": "Go Back",
-		"loading": "Loading post"
+		"loading": "Loading post",
+		"login_required_title": "Login required",
+		"login_required_description": "You need to log in to view this post.\nSign up and enjoy the community!",
+		"login_required_confirm": "Log in",
+		"login_required_cancel": "Go back"
 	}
 }

@@ -8,13 +8,14 @@ import { ArticleDetail } from "@/src/features/community/ui/article-detail/articl
 import { DefaultLayout } from "@/src/features/layout/ui";
 import Loading from "@/src/features/loading";
 import { useBoolean } from "@/src/shared/hooks/use-boolean";
+import { useModal } from "@/src/shared/hooks/use-modal";
 import { Header, Show, Text, HeaderWithNotification } from "@/src/shared/ui";
 import { Dropdown, type DropdownItem } from "@/src/shared/ui/dropdown";
 import { router, useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useMixpanel } from "@/src/shared/hooks/use-mixpanel";
-import { Linking, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -55,13 +56,24 @@ export default function ArticleDetailScreen() {
     setFalse: closeDropdown,
   } = useBoolean();
   const { my } = useAuth();
+  const { showModal } = useModal();
   const { communityEvents } = useMixpanel();
   const viewStartTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
     if (!my?.id) {
-      Linking.openURL("https://info.some-in-univ.com");
-      router.navigate("/community");
+      showModal({
+        title: t("apps.community.id.login_required_title"),
+        children: <Text textColor="black">{t("apps.community.id.login_required_description")}</Text>,
+        primaryButton: {
+          text: t("apps.community.id.login_required_confirm"),
+          onClick: () => router.replace("/auth/login"),
+        },
+        secondaryButton: {
+          text: t("apps.community.id.login_required_cancel"),
+          onClick: () => router.back(),
+        },
+      });
       return;
     }
   }, [my?.id]);
