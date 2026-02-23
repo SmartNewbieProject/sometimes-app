@@ -41,3 +41,4 @@ export * from './preference-selector';
 export * from './preference-slider';
 export * from './form-section';
 export * from './character-prompt-modal';
+export * from './badge';
