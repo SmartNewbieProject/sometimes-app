@@ -1,4 +1,4 @@
-import { MobileIdentityVerification, usePortOneLogin } from '@/src/features/pass';
+// import { MobileIdentityVerification, usePortOneLogin } from '@/src/features/pass';
 import { isAdult } from '@/src/features/pass/utils';
 import {
 	AUTH_METHODS,
@@ -7,6 +7,7 @@ import {
 } from '@/src/shared/constants/mixpanel-events';
 import { useMixpanel } from '@/src/shared/hooks';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useToast } from '@/src/shared/hooks/use-toast';
 import { env } from '@/src/shared/libs/env';
 import { isJapanese } from '@/src/shared/libs/local';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
@@ -17,9 +18,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as KakaoLogin from '@react-native-kakao/user';
 import * as Localization from 'expo-localization';
 import { usePathname, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from 'react-native';
+import {
+	ActivityIndicator,
+	Platform,
+	Pressable,
+	StyleSheet,
+	Text as RNText,
+	View,
+} from 'react-native';
 import { useAuth } from '../../auth';
 import { PrivacyNotice } from '../../auth/ui/privacy-notice';
 import { checkPhoneNumberBlacklist } from '../apis';
@@ -107,84 +115,93 @@ function JpLoginForm() {
  * KR 로그인 폼 - Kakao + PASS + Apple 로그인 (기존 코드)
  */
 function KrLoginForm() {
-	const {
-		startPortOneLogin,
-		isLoading,
-		error,
-		clearError,
-		showMobileAuth,
-		mobileAuthRequest,
-		handleMobileAuthComplete,
-		handleMobileAuthError,
-		handleMobileAuthCancel,
-	} = usePortOneLogin();
-	const { authEvents, signupEvents } = useMixpanel();
-	const pathname = usePathname();
-	const { regionCode } = Localization.getLocales()[0];
-	const isUS = regionCode === 'US';
+	// const {
+	// 	startPortOneLogin,
+	// 	isLoading,
+	// 	error,
+	// 	clearError,
+	// 	showMobileAuth,
+	// 	mobileAuthRequest,
+	// 	handleMobileAuthComplete,
+	// 	handleMobileAuthError,
+	// 	handleMobileAuthCancel,
+	// } = usePortOneLogin();
+	// [PASS 로그인 주석 처리 - 관련 변수]
+	// const { authEvents, signupEvents } = useMixpanel();
+	// const pathname = usePathname();
+	// const { regionCode } = Localization.getLocales()[0];
+	// const isUS = regionCode === 'US';
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { setAuthMethod } = useSignupProgress();
-	const [passRetryCount, setPassRetryCount] = useState(0);
-	const [passLastFailureReason, setPassLastFailureReason] = useState<string | null>(null);
+	const { emitToast } = useToast();
+	// const { setAuthMethod } = useSignupProgress();
+	// [PASS 로그인 주석 처리]
+	// const [passRetryCount, setPassRetryCount] = useState(0);
+	// const [passLastFailureReason, setPassLastFailureReason] = useState<string | null>(null);
 
-	const onPressPassLogin = async () => {
-		const loginStartTime = Date.now();
-
-		setAuthMethod(AUTH_METHODS.PASS);
-
-		// 인증 방법 선택 이벤트
-		mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_METHOD_SELECTED, {
-			auth_method: AUTH_METHODS.PASS,
-			is_retry: passRetryCount > 0,
-			retry_count: passRetryCount,
-			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-		});
-
-		// 재시도인 경우 추가 이벤트
-		if (passRetryCount > 0 && passLastFailureReason) {
-			mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_RETRY_ATTEMPTED, {
-				auth_method: AUTH_METHODS.PASS,
-				retry_count: passRetryCount,
-				previous_failure_reason: passLastFailureReason,
-				env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-			});
-		}
-
-		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
-			auth_method: 'pass',
-			is_retry: passRetryCount > 0,
-			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-		});
-		authEvents.trackLoginStarted('pass');
-		signupEvents.trackSignupStarted();
-
-		clearError();
-		try {
-			await startPortOneLogin();
-
-			const loginDuration = Date.now() - loginStartTime;
-			authEvents.trackLoginCompleted('pass', loginDuration);
-		} catch (error) {
-			setPassRetryCount((prev) => prev + 1);
-			setPassLastFailureReason('authentication_error');
-			authEvents.trackLoginFailed('pass', 'authentication_error');
-		}
-	};
-
-	if (showMobileAuth && mobileAuthRequest && Platform.OS !== 'web') {
-		return (
-			<MobileIdentityVerification
-				request={mobileAuthRequest}
-				onComplete={handleMobileAuthComplete}
-				onError={handleMobileAuthError}
-				onCancel={handleMobileAuthCancel}
-			/>
+	useEffect(() => {
+		// TODO: 테스트 완료 후 AsyncStorage 조건 복원할 것
+		const passIcon = (
+			<View style={passCircleStyles.circle}>
+				<RNText style={passCircleStyles.text}>PASS</RNText>
+			</View>
 		);
-	}
+		emitToast(
+			t('features.signup.ui.login_form.pass_migration_notice'),
+			passIcon,
+			5000,
+		);
+	}, []);
+
+	// const onPressPassLogin = async () => {
+	// 	const loginStartTime = Date.now();
+	// 	setAuthMethod(AUTH_METHODS.PASS);
+	// 	mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_METHOD_SELECTED, {
+	// 		auth_method: AUTH_METHODS.PASS,
+	// 		is_retry: passRetryCount > 0,
+	// 		retry_count: passRetryCount,
+	// 		env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+	// 	});
+	// 	if (passRetryCount > 0 && passLastFailureReason) {
+	// 		mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_RETRY_ATTEMPTED, {
+	// 			auth_method: AUTH_METHODS.PASS,
+	// 			retry_count: passRetryCount,
+	// 			previous_failure_reason: passLastFailureReason,
+	// 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+	// 		});
+	// 	}
+	// 	mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
+	// 		auth_method: 'pass',
+	// 		is_retry: passRetryCount > 0,
+	// 		env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+	// 	});
+	// 	authEvents.trackLoginStarted('pass');
+	// 	signupEvents.trackSignupStarted();
+	// 	clearError();
+	// 	try {
+	// 		await startPortOneLogin();
+	// 		const loginDuration = Date.now() - loginStartTime;
+	// 		authEvents.trackLoginCompleted('pass', loginDuration);
+	// 	} catch (error) {
+	// 		setPassRetryCount((prev) => prev + 1);
+	// 		setPassLastFailureReason('authentication_error');
+	// 		authEvents.trackLoginFailed('pass', 'authentication_error');
+	// 	}
+	// };
+
+	// if (showMobileAuth && mobileAuthRequest && Platform.OS !== 'web') {
+	// 	return (
+	// 		<MobileIdentityVerification
+	// 			request={mobileAuthRequest}
+	// 			onComplete={handleMobileAuthComplete}
+	// 			onError={handleMobileAuthError}
+	// 			onCancel={handleMobileAuthCancel}
+	// 		/>
+	// 	);
+	// }
 
 	const isIOS = Platform.OS === 'ios';
-	const isAndroidOrWeb = Platform.OS === 'android' || Platform.OS === 'web';
+	// const isAndroidOrWeb = Platform.OS === 'android' || Platform.OS === 'web';
 
 	return (
 		<View style={loginFormStyles.container}>
@@ -203,7 +220,8 @@ function KrLoginForm() {
 					<KakaoLoginComponent />
 				</View>
 
-				<Show when={isAndroidOrWeb}>
+				{/* [PASS 로그인 주석 처리 - Android/Web] */}
+				{/* <Show when={isAndroidOrWeb}>
 					<View style={loginFormStyles.buttonWrapper}>
 						<Pressable
 							onPress={onPressPassLogin}
@@ -229,7 +247,7 @@ function KrLoginForm() {
 							)}
 						</Pressable>
 					</View>
-				</Show>
+				</Show> */}
 
 				<Show when={isIOS}>
 					<View style={loginFormStyles.dividerContainer}>
@@ -239,17 +257,9 @@ function KrLoginForm() {
 						</Text>
 						<View style={loginFormStyles.dividerLine} />
 					</View>
-					<SocialLoginIcons onPressPass={onPressPassLogin} isPassLoading={isLoading} />
+					<SocialLoginIcons />
 				</Show>
 			</View>
-
-			{typeof error === 'string' && error && (
-				<View style={loginFormStyles.errorMessage}>
-					<Text size="sm" style={{ color: '#DC2626', textAlign: 'center' }}>
-						{error}
-					</Text>
-				</View>
-			)}
 
 			<View style={loginFormStyles.privacyNotice}>
 				<PrivacyNotice />
@@ -325,7 +335,14 @@ function KakaoLoginComponent() {
 	const isUserCancellation = (error: unknown): boolean => {
 		if (error instanceof Error) {
 			const message = error.message.toLowerCase();
-			return message.includes('cancel') || message.includes('user') || message.includes('취소');
+			return (
+				message.includes('cancel') ||
+				message.includes('취소') ||
+				message.includes('user_canceled') ||
+				message.includes('user_cancelled') ||
+				message === 'user canceled' ||
+				message === 'user cancelled'
+			);
 		}
 		const errorObj = error as { code?: string; errorCode?: string };
 		const code = errorObj?.code || errorObj?.errorCode;
@@ -359,6 +376,26 @@ function KakaoLoginComponent() {
 
 			authStartTimeRef.current = null;
 			if (loginResult.isNewUser) {
+				// 카카오 동의 거부로 필수 정보 누락 추적
+				const cert = loginResult.certificationInfo;
+				const missingFields = [
+					!cert?.name && 'name',
+					!cert?.phone && 'phone',
+					!cert?.gender && 'gender',
+					!cert?.birthday && 'birthday',
+				].filter(Boolean);
+
+				if (missingFields.length > 0) {
+					mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_VERIFICATION_ERROR, {
+						auth_method: AUTH_METHODS.KAKAO,
+						error_type: 'consent_denied',
+						error_code: 'missing_required_fields',
+						error_message: `Missing: ${missingFields.join(', ')}`,
+						platform: Platform.OS,
+						env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+					});
+				}
+
 				if (loginResult.certificationInfo?.phone) {
 					try {
 						const { isBlacklisted } = await checkPhoneNumberBlacklist(
@@ -392,6 +429,9 @@ function KakaoLoginComponent() {
 					return;
 				}
 
+				const loginDuration = Date.now() - loginStartTime;
+				authEvents.trackLoginCompleted('kakao', loginDuration, true);
+
 				// 보안: certificationInfo를 AsyncStorage에 저장 (URL에 노출 방지)
 				await AsyncStorage.setItem(
 					'signup_certification_info',
@@ -405,7 +445,7 @@ function KakaoLoginComponent() {
 				router.push('/auth/signup/university');
 			} else {
 				const loginDuration = Date.now() - loginStartTime;
-				authEvents.trackLoginCompleted('kakao', loginDuration);
+				authEvents.trackLoginCompleted('kakao', loginDuration, false);
 
 				router.push('/home');
 			}
@@ -607,14 +647,31 @@ const kakaoStyles = StyleSheet.create({
 	},
 });
 
-const passStyles = StyleSheet.create({
-	button: {
-		width: 330,
-		height: 50,
-		borderRadius: 20,
+const passCircleStyles = StyleSheet.create({
+	circle: {
+		width: 48,
+		height: 48,
+		borderRadius: 24,
 		backgroundColor: '#FF3A4A',
-		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
+	text: {
+		color: '#FFFFFF',
+		fontSize: 12,
+		fontWeight: '800',
+	},
 });
+
+// [PASS 로그인 주석 처리]
+// const passStyles = StyleSheet.create({
+// 	button: {
+// 		width: 330,
+// 		height: 50,
+// 		borderRadius: 20,
+// 		backgroundColor: '#FF3A4A',
+// 		flexDirection: 'row',
+// 		alignItems: 'center',
+// 		justifyContent: 'center',
+// 	},
+// });
