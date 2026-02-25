@@ -67,6 +67,7 @@ export function useAuth() {
   const login = async (email: string, password: string) => {
     const { accessToken, refreshToken } = await loginApi(email, password);
     await updateToken(accessToken, refreshToken);
+    await storage.setItem('user-country', 'kr');
   };
 
   const loginWithPass = async (impUid: string) => {
@@ -78,6 +79,7 @@ export function useAuth() {
     }
 
     await updateToken(data.accessToken, data.refreshToken);
+    await storage.setItem('user-country', 'kr');
 
     // Mixpanel 사용자 식별 (로그인 성공 시)
     if (data.userId) {
@@ -100,6 +102,7 @@ export function useAuth() {
     }
 
     await updateToken(data.accessToken, data.refreshToken);
+    await storage.setItem('user-country', 'kr');
 
     // Mixpanel 사용자 식별 (로그인 성공 시)
     if (data.userId) {
@@ -122,6 +125,7 @@ export function useAuth() {
     }
 
     await updateToken(data.accessToken, data.refreshToken);
+    await storage.setItem('user-country', 'kr');
 
     // Mixpanel 사용자 식별 (로그인 성공 시)
     if (data.userId) {
@@ -145,6 +149,7 @@ export function useAuth() {
       await setRefreshToken(null);
       await setApprovalStatus(null);
       await clearOnboardingCompletedFlag();
+      await storage.removeItem('user-country');
       return;
     }
 
@@ -153,12 +158,14 @@ export function useAuth() {
     await setRefreshToken(null);
     await setApprovalStatus(null);
     await clearOnboardingCompletedFlag();
+    await storage.removeItem('user-country');
   };
   const clearTokensOnly = async () => {
     await setToken(null);
     await setRefreshToken(null);
     await setApprovalStatus(null);
     await clearOnboardingCompletedFlag();
+    await storage.removeItem('user-country');
   };
 
   const logout = () => {
@@ -200,6 +207,7 @@ export function useAuth() {
       await setRefreshToken(null);
       await setApprovalStatus(null);
       await clearOnboardingCompletedFlag();
+      await storage.removeItem('user-country');
     });
 
     return () => {

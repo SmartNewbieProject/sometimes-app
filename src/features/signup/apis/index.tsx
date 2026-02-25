@@ -1,8 +1,8 @@
 import { axiosClient, dayUtils, fileUtils, platform } from '@/src/shared/libs';
 import { nanoid } from 'nanoid';
-import type { AuthorizeSmsCode, SignupForm, SignupResponse } from '../types';
 import type { AppleLoginResponse } from '../queries/use-apple-login';
 import type { UniversitiesByRegion } from '../queries/use-universities';
+import type { AuthorizeSmsCode, SignupForm, SignupResponse } from '../types';
 
 export type { SignupResponse };
 
@@ -41,6 +41,90 @@ export const searchUniversities = (
 
 export const getDepartments = async (univ: string): Promise<string[]> => {
 	return axiosClient.get(`/universities/departments?universityId=${univ}`);
+};
+
+export interface CreateUniversityParams {
+	name: string;
+	region: string;
+}
+
+export interface CreateUniversityResult {
+	id: string;
+	name: string;
+	region: string;
+}
+
+export const createUniversity = (
+	params: CreateUniversityParams,
+): Promise<CreateUniversityResult> => {
+	return axiosClient.post('/universities/new', params);
+};
+
+export interface CreateDepartmentParams {
+	universityId: string;
+	name: string;
+}
+
+export interface CreateDepartmentResult {
+	id: string;
+	name: string;
+	universityId: string;
+}
+
+export const createDepartment = (
+	params: CreateDepartmentParams,
+): Promise<CreateDepartmentResult> => {
+	return axiosClient.post(`/universities/${params.universityId}/departments/new`, {
+		name: params.name,
+	});
+};
+
+export interface RegionItem {
+	code: string;
+	name: string;
+}
+
+export const getRegionsList = (): Promise<RegionItem[]> => {
+	return axiosClient.get('/universities/regions/list');
+};
+
+export interface SearchDepartmentItem {
+	id: string;
+	name: string;
+	universityId: string;
+	universityName: string;
+}
+
+export const searchDepartments = (keyword: string): Promise<SearchDepartmentItem[]> => {
+	return axiosClient.get(`/universities/departments/search?keyword=${encodeURIComponent(keyword)}`);
+};
+
+export interface ClusterRegion {
+	code: string;
+	name: string;
+}
+
+export interface ClusterInfo {
+	id: string;
+	name: string;
+	regions: ClusterRegion[];
+}
+
+export interface ClusterUniversity {
+	id: string;
+	name: string;
+	code: string;
+	region: string;
+	foundation: string;
+}
+
+export interface ClusterResponse {
+	cluster: ClusterInfo | null;
+	universities: ClusterUniversity[];
+}
+
+export const getClusterByRegion = (regionCode: string): Promise<ClusterResponse> => {
+	return axiosClient.get(`/universities/clusters?regionCode=${encodeURIComponent(regionCode)}`);
 };
 
 const createFileObject = (imageUri: string, fileName: string) =>
@@ -116,7 +200,7 @@ export const signup = async (form: SignupForm): Promise<SignupResponse> => {
 	};
 
 	if (form.country) {
-		headers['x-country'] = form.country.toLowerCase();
+		headers['X-Country'] = form.country.toLowerCase();
 	}
 
 	return axiosClient.post('/auth/signup', formData, { headers });

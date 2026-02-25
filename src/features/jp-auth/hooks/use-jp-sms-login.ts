@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { storage } from '@/src/shared/libs/store';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import { sendJpSms, verifyJpSms, jpLogin } from '../apis';
 import { formatJpPhoneForApi } from '../utils/phone-format';
@@ -144,6 +145,9 @@ export const useJpSmsLogin = ({
 		async (loginResult: JpLoginResponse) => {
 			console.log('[JP SMS] processLoginResult 시작, isNewUser:', loginResult.isNewUser);
 			const formattedPhone = formatJpPhoneForApi(phoneNumber);
+
+			// JP 로그인/회원가입 시 user-country 저장
+			await storage.setItem('user-country', 'jp');
 
 			if (loginResult.isNewUser) {
 				console.log('[JP SMS] 신규 회원 플로우 시작');
