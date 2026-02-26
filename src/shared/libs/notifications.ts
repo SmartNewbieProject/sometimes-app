@@ -1,10 +1,11 @@
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import Constants from 'expo-constants';
-import { Platform } from 'react-native';
-import type { Router } from 'expo-router';
-import axiosClient from './axios';
 import i18n from '@/src/shared/libs/i18n';
+import messaging from '@react-native-firebase/messaging';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import type { Router } from 'expo-router';
+import { Platform } from 'react-native';
+import axiosClient from './axios';
 
 // 상수 정의
 const NOTIFICATION_CHANNELS = {
@@ -124,6 +125,9 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
 		await registerPushToken(token);
 		console.log(i18n.t('shareds.hooks.notifications.success_token_registration'), token);
 
+		// FCM 토큰도 함께 등록 (OTA 백그라운드 업데이트용)
+		await registerFcmTokenAsync();
+
 		return token;
 	} catch (error) {
 		console.error('푸시 토큰 등록 실패:', error);
@@ -132,7 +136,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
 }
 
 /**
- * 백엔드에 푸시 토큰을 등록합니다.
+ * 백엔드에 Expo 푸시 토큰을 등록합니다.
  */
 async function registerPushToken(pushToken: string): Promise<void> {
 	const payload = {
@@ -143,6 +147,27 @@ async function registerPushToken(pushToken: string): Promise<void> {
 
 	await axiosClient.post('/push-notifications/register-token', payload);
 	console.log('푸시 토큰 백엔드 등록 성공');
+}
+
+/**
+ * FCM 토큰을 획득하여 백엔드에 등록합니다. (OTA 백그라운드 업데이트용)
+ */
+export async function registerFcmTokenAsync(): Promise<void> {
+	if (!Device.isDevice || Platform.OS === 'web') return;
+
+	try {
+		const fcmToken = await messaging().getToken();
+		if (!fcmToken) return;
+
+		await axiosClient.post('/push-notifications/register-fcm-token', {
+			fcmToken,
+			deviceId: Constants.deviceId || 'unknown',
+			platform: Platform.OS,
+		});
+		console.log('[FCM] 토큰 등록 성공');
+	} catch (error) {
+		console.error('[FCM] 토큰 등록 실패:', error);
+	}
 }
 
 /**
@@ -318,7 +343,7 @@ export function handleNotificationTap(data: NotificationData, router: Router): v
 	const navigateWithDelay = (path: string) => {
 		setTimeout(() => {
 			try {
-				router.push(path as any);
+				router.push(path as Parameters<Router['push']>[0]);
 			} catch (error) {
 				router.push('/home');
 			}
