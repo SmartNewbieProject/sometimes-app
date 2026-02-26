@@ -31,7 +31,11 @@ export const SlideMatchingTime: SlideComponent = () => {
 						{t('features.onboarding.slides.matchingTime.countdownLabel')}
 					</Text>
 					<Text style={styles.countdownText}>
-						{`${String(countdownParts.days).padStart(2, '0')}일 ${String(countdownParts.hours).padStart(2, '0')}시간 ${String(countdownParts.minutes).padStart(2, '0')}분`}
+						{t('features.onboarding.countdown.format', {
+							days: String(countdownParts.days).padStart(2, '0'),
+							hours: String(countdownParts.hours).padStart(2, '0'),
+							minutes: String(countdownParts.minutes).padStart(2, '0'),
+						})}
 					</Text>
 				</View>
 			</View>
