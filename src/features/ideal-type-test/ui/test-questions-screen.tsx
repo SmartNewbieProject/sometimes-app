@@ -121,6 +121,8 @@ export function TestQuestionsScreen({
 	const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const hasTrackedCurrentQuestion = useRef(false);
+	const questionStartTimeRef = useRef<number>(Date.now());
+	const testStartTimeRef = useRef<number>(Date.now());
 
 	const currentLang = (i18n.language?.startsWith('ja') ? 'ja' : 'ko') as LanguageCode;
 	const currentQuestion = questions[currentQuestionIndex];
@@ -140,18 +142,20 @@ export function TestQuestionsScreen({
 			trackQuestionViewed({
 				source: 'mobile',
 				session_id: sessionId || '',
-				question_number: currentQuestionIndex + 1,
+				question_index: currentQuestionIndex,
 				question_id: currentQuestion.id,
+				total_questions: questions.length,
 				user_type: userType,
 			});
 			hasTrackedCurrentQuestion.current = true;
 		}
 	}, [currentQuestion, currentQuestionIndex, sessionId, trackQuestionViewed, userType]);
 
-	// Reset tracking flag when question changes
+	// Reset tracking flag and timer when question changes
 	useEffect(() => {
 		hasTrackedCurrentQuestion.current = false;
 		setSelectedOptionId(null);
+		questionStartTimeRef.current = Date.now();
 	}, [currentQuestion]);
 
 	// Handle back button
@@ -160,8 +164,10 @@ export function TestQuestionsScreen({
 			trackAbandoned({
 				source: 'mobile',
 				session_id: sessionId || '',
-				question_number: currentQuestionIndex + 1,
+				abandoned_at_question: currentQuestionIndex,
 				total_answered: answers.length,
+				time_spent_seconds: Math.round((Date.now() - testStartTimeRef.current) / 1000),
+				abandon_trigger: 'back_button',
 				user_type: userType,
 			});
 			onAbandon();
@@ -187,13 +193,16 @@ export function TestQuestionsScreen({
 
 		addAnswer(answer);
 
+		const timeSpentSeconds = Math.round((Date.now() - questionStartTimeRef.current) / 1000);
+
 		trackQuestionAnswered({
 			source: 'mobile',
 			session_id: sessionId,
-			question_number: currentQuestionIndex + 1,
+			question_index: currentQuestionIndex,
 			question_id: currentQuestion.id,
-			answer_id: optionId,
-			time_spent_seconds: 0,
+			selected_option_id: optionId,
+			total_questions: questions.length,
+			time_spent_seconds: timeSpentSeconds,
 			user_type: userType,
 		});
 
@@ -220,12 +229,13 @@ export function TestQuestionsScreen({
 					if (data.isComplete) {
 						setResult(data.result);
 
+						const totalTimeSeconds = Math.round((Date.now() - testStartTimeRef.current) / 1000);
+
 						trackTestCompleted({
 							source: 'mobile',
 							session_id: sessionId,
 							result_type_id: data.result.id,
-							total_questions: questions.length,
-							completion_time_seconds: 0,
+							total_time_seconds: totalTimeSeconds,
 							user_type: userType,
 						});
 

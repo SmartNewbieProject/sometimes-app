@@ -37,7 +37,7 @@ export function TestStartScreen({
 	const { t, i18n } = useTranslation();
 	const insets = useSafeAreaInsets();
 	const { isAuthorized } = useAuth();
-	const { trackEntryClicked, trackTestStarted } = useTestAnalytics();
+	const { trackEntryClicked, trackTestStarted, trackRetakeBlocked } = useTestAnalytics();
 	const { mutate: startTest, isPending } = useStartTest();
 	const { mutate: retakeTest, isPending: isRetakePending } = useRetakeTest();
 	const { setSession, setResult } = useTestProgress();
@@ -82,12 +82,20 @@ export function TestStartScreen({
 		if (!hasTrackedEntry.current && !isCheckingSession && !isLoadingMyResult) {
 			trackEntryClicked({
 				source: 'mobile',
-				screen: source === 'auth' ? 'login' : 'moment',
+				entry_source: source,
 				user_type: isAuthorized ? 'logged_in' : 'guest',
+				has_existing_result: hasExistingResult,
 			});
 			hasTrackedEntry.current = true;
 		}
-	}, [trackEntryClicked, isCheckingSession, isLoadingMyResult, isAuthorized, source]);
+	}, [
+		trackEntryClicked,
+		isCheckingSession,
+		isLoadingMyResult,
+		isAuthorized,
+		source,
+		hasExistingResult,
+	]);
 
 	const onTestStartSuccess = async (data: StartTestResponse) => {
 		await saveSession({
@@ -103,8 +111,9 @@ export function TestStartScreen({
 		trackTestStarted({
 			source: 'mobile',
 			session_id: data.sessionId,
-			total_questions: data.totalQuestions,
+			entry_source: source,
 			user_type: isAuthorized ? 'logged_in' : 'guest',
+			is_retake: hasExistingResult,
 		});
 
 		onNavigateToQuestions();
@@ -135,6 +144,12 @@ export function TestStartScreen({
 					const err = error as { code?: string; detail?: { remainingDays?: number } };
 					if (err.code === 'IDEAL_TYPE.BAD_REQUEST_RETAKE_COOLDOWN' && err.detail?.remainingDays) {
 						setServerCooldown({ remainingDays: err.detail.remainingDays });
+						trackRetakeBlocked({
+							source: 'mobile',
+							previous_result_type_id: myResult?.result?.id,
+							remaining_days: err.detail.remainingDays,
+							user_type: isAuthorized ? 'logged_in' : 'guest',
+						});
 						emitToast(
 							t('features.ideal-type-test.start.retake_cooldown', {
 								days: err.detail.remainingDays,

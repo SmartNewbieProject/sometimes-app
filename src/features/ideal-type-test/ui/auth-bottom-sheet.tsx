@@ -1,5 +1,6 @@
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import { MobileIdentityVerification, usePortOneLogin } from '@/src/features/pass';
+// import { MobileIdentityVerification, usePortOneLogin } from '@/src/features/pass';
+import { useTestAnalytics } from '@/src/features/ideal-type-test/hooks/use-test-analytics';
 import { isAdult } from '@/src/features/pass/utils';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
@@ -13,9 +14,9 @@ import KakaoLogo from '@assets/icons/kakao-logo.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as KakaoLogin from '@react-native-kakao/user';
 import { useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const mascotImage = require('@assets/images/info-miho.webp');
@@ -33,33 +34,61 @@ export function AuthBottomSheet({ sessionId, onClose, onAuthComplete }: AuthBott
 	const { loginWithKakaoNative } = useAuth();
 	const { showModal } = useModal();
 	const { setAuthMethod } = useSignupProgress();
+	const { trackAuthSheetShown, trackAuthSheetDismissed, trackAuthMethodSelected } =
+		useTestAnalytics();
 	const [isKakaoLoading, setIsKakaoLoading] = useState(false);
 	const authStartTimeRef = useRef<number | null>(null);
+	const sheetShownTimeRef = useRef<number>(Date.now());
 
 	const signupPath = `/auth/signup/university?idealTypeSessionId=${sessionId}`;
 
-	const {
-		startPortOneLogin,
-		isLoading: isPassLoading,
-		showMobileAuth,
-		mobileAuthRequest,
-		handleMobileAuthComplete,
-		handleMobileAuthError,
-		handleMobileAuthCancel,
-	} = usePortOneLogin({
-		signupPath,
-		onSuccess: (isNewUser) => {
-			if (isNewUser) {
-				onAuthComplete();
-			} else {
-				onAuthComplete();
-			}
-		},
-	});
+	useEffect(() => {
+		sheetShownTimeRef.current = Date.now();
+		trackAuthSheetShown({
+			source: 'mobile',
+			session_id: sessionId || '',
+		});
+	}, [trackAuthSheetShown, sessionId]);
+
+	const handleClose = () => {
+		const timeOnSheet = Math.round((Date.now() - sheetShownTimeRef.current) / 1000);
+		trackAuthSheetDismissed({
+			source: 'mobile',
+			session_id: sessionId || '',
+			time_on_sheet_seconds: timeOnSheet,
+		});
+		onClose();
+	};
+
+	// [PASS 로그인 주석 처리]
+	// const {
+	// 	startPortOneLogin,
+	// 	isLoading: isPassLoading,
+	// 	showMobileAuth,
+	// 	mobileAuthRequest,
+	// 	handleMobileAuthComplete,
+	// 	handleMobileAuthError,
+	// 	handleMobileAuthCancel,
+	// } = usePortOneLogin({
+	// 	signupPath,
+	// 	onSuccess: (isNewUser) => {
+	// 		if (isNewUser) {
+	// 			onAuthComplete();
+	// 		} else {
+	// 			onAuthComplete();
+	// 		}
+	// 	},
+	// });
 
 	const handleKakaoLogin = async () => {
 		setAuthMethod(AUTH_METHODS.KAKAO);
 		authStartTimeRef.current = Date.now();
+
+		trackAuthMethodSelected({
+			source: 'mobile',
+			session_id: sessionId || '',
+			auth_method: 'kakao',
+		});
 
 		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
 			auth_method: 'kakao',
@@ -140,30 +169,29 @@ export function AuthBottomSheet({ sessionId, onClose, onAuthComplete }: AuthBott
 		}
 	};
 
-	const handlePassLogin = async () => {
-		setAuthMethod(AUTH_METHODS.PASS);
+	// [PASS 로그인 주석 처리]
+	// const handlePassLogin = async () => {
+	// 	setAuthMethod(AUTH_METHODS.PASS);
+	// 	mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
+	// 		auth_method: 'pass',
+	// 		source: 'ideal_type_test_result',
+	// 		env: process.env.EXPO_PUBLIC_TRACKING_MODE,
+	// 	});
+	// 	await startPortOneLogin();
+	// };
 
-		mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
-			auth_method: 'pass',
-			source: 'ideal_type_test_result',
-			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-		});
+	// if (showMobileAuth && mobileAuthRequest && Platform.OS !== 'web') {
+	// 	return (
+	// 		<MobileIdentityVerification
+	// 			request={mobileAuthRequest}
+	// 			onComplete={handleMobileAuthComplete}
+	// 			onError={handleMobileAuthError}
+	// 			onCancel={handleMobileAuthCancel}
+	// 		/>
+	// 	);
+	// }
 
-		await startPortOneLogin();
-	};
-
-	if (showMobileAuth && mobileAuthRequest && Platform.OS !== 'web') {
-		return (
-			<MobileIdentityVerification
-				request={mobileAuthRequest}
-				onComplete={handleMobileAuthComplete}
-				onError={handleMobileAuthError}
-				onCancel={handleMobileAuthCancel}
-			/>
-		);
-	}
-
-	const isAndroidOrWeb = Platform.OS === 'android' || Platform.OS === 'web';
+	// const isAndroidOrWeb = Platform.OS === 'android' || Platform.OS === 'web';
 
 	return (
 		<View style={[styles.container, { paddingBottom: insets.bottom + 24 }]}>
@@ -197,8 +225,8 @@ export function AuthBottomSheet({ sessionId, onClose, onAuthComplete }: AuthBott
 					)}
 				</Pressable>
 
-				{/* PASS Login - Android/Web only */}
-				{isAndroidOrWeb && (
+				{/* [PASS 로그인 주석 처리 - Android/Web] */}
+				{/* {isAndroidOrWeb && (
 					<Pressable
 						onPress={handlePassLogin}
 						disabled={isPassLoading}
@@ -212,10 +240,10 @@ export function AuthBottomSheet({ sessionId, onClose, onAuthComplete }: AuthBott
 							</Text>
 						)}
 					</Pressable>
-				)}
+				)} */}
 			</View>
 
-			<Pressable onPress={onClose} style={styles.closeLink}>
+			<Pressable onPress={handleClose} style={styles.closeLink}>
 				<Text size="14" weight="medium" style={styles.closeText}>
 					{t('features.ideal-type-test.result.dismiss_button')}
 				</Text>

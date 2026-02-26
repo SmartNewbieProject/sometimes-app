@@ -5,7 +5,7 @@ import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { Button } from '@/src/shared/ui';
 import { Text } from '@/src/shared/ui/text';
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -139,9 +139,15 @@ export function useIdealTypeTestPrompt(
 	const { mutate: startTest } = useStartTest();
 	const { setSession } = useTestProgress();
 	const { saveSession, clearSession } = useTestSession();
+	const pathname = usePathname();
 	const hasShownRef = useRef(false);
+	const pathnameRef = useRef(pathname);
 	const onStartRef = useRef(options.onStart);
 	onStartRef.current = options.onStart;
+
+	useEffect(() => {
+		pathnameRef.current = pathname;
+	}, [pathname]);
 
 	const handleStartTest = useCallback(async () => {
 		const lang = (i18n.language?.startsWith('ja') ? 'ja' : 'ko') as LanguageCode;
@@ -199,6 +205,9 @@ export function useIdealTypeTestPrompt(
 		}
 
 		const timer = setTimeout(() => {
+			// /auth/login 페이지가 아니면 모달 표시하지 않음
+			if (pathnameRef.current !== '/auth/login') return;
+
 			hasShownRef.current = true;
 			showPrompt();
 

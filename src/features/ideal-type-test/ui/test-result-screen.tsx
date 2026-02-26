@@ -43,7 +43,7 @@ export function TestResultScreen({
 	const { t, i18n } = useTranslation();
 	const insets = useSafeAreaInsets();
 	const { isAuthorized } = useAuth();
-	const { trackSignupClicked } = useTestAnalytics();
+	const { trackSignupClicked, trackResultViewed, trackResultCtaClicked } = useTestAnalytics();
 	const { result, sessionId } = useTestProgress();
 	const hasTrackedResult = useRef(false);
 
@@ -62,22 +62,29 @@ export function TestResultScreen({
 	}, [result, onRedirectToStart]);
 
 	useEffect(() => {
-		if (result && sessionId && !hasTrackedResult.current) {
+		if (result && !hasTrackedResult.current) {
+			trackResultViewed({
+				source: 'mobile',
+				session_id: sessionId || '',
+				result_type_id: result.id,
+				result_name: result.name,
+				view_type: sessionId ? 'new_result' : 'existing_result',
+				user_type: userType,
+			});
 			hasTrackedResult.current = true;
 		}
-	}, [result, sessionId]);
+	}, [result, sessionId, trackResultViewed, userType]);
 
 	const matchCount = stats?.count || 23;
 
 	const handleCta = () => {
 		if (!result) return;
 
-		trackSignupClicked({
+		trackResultCtaClicked({
 			source: 'mobile',
 			session_id: sessionId || '',
 			result_type_id: result.id,
-			total_questions: 5,
-			completion_time_seconds: 0,
+			result_name: result.name,
 			user_type: userType,
 		});
 
