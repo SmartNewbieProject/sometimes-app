@@ -1,6 +1,6 @@
+import type { AuthMethod } from '@/src/shared/constants/mixpanel-events';
 import { create } from 'zustand';
 import type { SignupForm, SignupResponse } from '../types';
-import type { AuthMethod } from '@/src/shared/constants/mixpanel-events';
 
 export type { SignupForm };
 

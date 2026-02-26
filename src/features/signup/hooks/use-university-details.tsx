@@ -1,8 +1,8 @@
 import { tryCatch } from '@/src/shared/libs';
-import { useTranslation } from 'react-i18next';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { useGlobalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDepartmentQuery } from '../queries';
 import useChangePhase from './use-change-phase';
 import { useSignupAnalytics } from './use-signup-analytics';
@@ -49,9 +49,7 @@ function useUniversityDetails() {
 	};
 
 	const validateUniversityForm = (): boolean => {
-		const isValidDepartment =
-			!!form?.departmentName &&
-			(departments.length === 0 || departments.includes(form.departmentName));
+		const isValidDepartment = !!form?.departmentName;
 
 		console.log('[UniversityDetails] Validation:', {
 			isValidDepartment,

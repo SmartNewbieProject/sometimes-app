@@ -1,8 +1,8 @@
 import { useStorage } from '@/src/shared/hooks/use-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../../auth';
 import apis, { type AppleLoginRequest } from '../apis';
 

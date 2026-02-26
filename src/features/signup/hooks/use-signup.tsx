@@ -1,10 +1,10 @@
-import useSignupProgress from "./use-signup-progress";
+import useSignupProgress from './use-signup-progress';
 
 export const useSignup = () => {
-  const { signupResponse, setSignupResponse } = useSignupProgress();
+	const { signupResponse, setSignupResponse } = useSignupProgress();
 
-  return {
-    signupResponse,
-    setSignupResponse,
-  };
+	return {
+		signupResponse,
+		setSignupResponse,
+	};
 };

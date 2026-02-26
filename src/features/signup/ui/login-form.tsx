@@ -24,8 +24,8 @@ import {
 	ActivityIndicator,
 	Platform,
 	Pressable,
-	StyleSheet,
 	Text as RNText,
+	StyleSheet,
 	View,
 } from 'react-native';
 import { useAuth } from '../../auth';
@@ -146,11 +146,7 @@ function KrLoginForm() {
 				<RNText style={passCircleStyles.text}>PASS</RNText>
 			</View>
 		);
-		emitToast(
-			t('features.signup.ui.login_form.pass_migration_notice'),
-			passIcon,
-			5000,
-		);
+		emitToast(t('features.signup.ui.login_form.pass_migration_notice'), passIcon, 5000);
 	}, []);
 
 	// const onPressPassLogin = async () => {
@@ -219,6 +215,12 @@ function KrLoginForm() {
 				<View style={loginFormStyles.buttonWrapper}>
 					<KakaoLoginComponent />
 				</View>
+
+				{__DEV__ && (
+					<View style={loginFormStyles.buttonWrapper}>
+						<DevLoginButton />
+					</View>
+				)}
 
 				{/* [PASS 로그인 주석 처리 - Android/Web] */}
 				{/* <Show when={isAndroidOrWeb}>
@@ -332,6 +334,13 @@ function KakaoLoginComponent() {
 	const KAKAO_CLIENT_ID = env.KAKAO_LOGIN_API_KEY;
 	const redirectUri = env.KAKAO_REDIRECT_URI;
 
+	const CERT_TO_SCOPE_MAP: Record<string, string[]> = {
+		name: ['name'],
+		phone: ['phone_number'],
+		gender: ['gender'],
+		birthday: ['birthday', 'birthyear'],
+	};
+
 	const isUserCancellation = (error: unknown): boolean => {
 		if (error instanceof Error) {
 			const message = error.message.toLowerCase();
@@ -347,6 +356,21 @@ function KakaoLoginComponent() {
 		const errorObj = error as { code?: string; errorCode?: string };
 		const code = errorObj?.code || errorObj?.errorCode;
 		return code === 'CANCELED' || code === 'USER_CANCELED' || code === 'E_CANCELLED_OPERATION';
+	};
+
+	const requestAdditionalConsent = async (
+		missingScopes: string[],
+	): Promise<KakaoLogin.KakaoLoginToken | null> => {
+		try {
+			const token = await KakaoLogin.login({
+				scopes: missingScopes,
+				useKakaoAccountLogin: true,
+			});
+			return token;
+		} catch (error) {
+			if (isUserCancellation(error)) return null;
+			throw error;
+		}
 	};
 
 	const handleNativeKakaoLogin = async () => {
@@ -377,13 +401,15 @@ function KakaoLoginComponent() {
 			authStartTimeRef.current = null;
 			if (loginResult.isNewUser) {
 				// 카카오 동의 거부로 필수 정보 누락 추적
-				const cert = loginResult.certificationInfo;
+				let cert = loginResult.certificationInfo;
+				let currentLoginResult = loginResult;
+				let currentAccessToken = result.accessToken;
 				const missingFields = [
 					!cert?.name && 'name',
 					!cert?.phone && 'phone',
 					!cert?.gender && 'gender',
 					!cert?.birthday && 'birthday',
-				].filter(Boolean);
+				].filter(Boolean) as string[];
 
 				if (missingFields.length > 0) {
 					mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_VERIFICATION_ERROR, {
@@ -394,12 +420,56 @@ function KakaoLoginComponent() {
 						platform: Platform.OS,
 						env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 					});
+
+					// 누락된 필드에 해당하는 scope 목록 생성
+					const missingScopes = missingFields.flatMap((field) => CERT_TO_SCOPE_MAP[field] || []);
+
+					// 재동의 요청 (카카오계정 웹 로그인으로 강제됨)
+					const reConsentResult = await requestAdditionalConsent(missingScopes);
+
+					if (!reConsentResult) {
+						// 재거부 → 가입 차단 모달
+						showModal({
+							title: t('features.signup.ui.login_form.consent_required_title'),
+							children: t('features.signup.ui.login_form.consent_required_message'),
+							primaryButton: {
+								text: t('features.signup.ui.login_form.confirm_button'),
+								onClick: () => {},
+							},
+						});
+						return;
+					}
+
+					// 새 토큰으로 백엔드 재호출
+					currentAccessToken = reConsentResult.accessToken;
+					currentLoginResult = await loginWithKakaoNative(currentAccessToken);
+					cert = currentLoginResult.certificationInfo;
+
+					// 여전히 누락이면 차단
+					const stillMissing = [
+						!cert?.name && 'name',
+						!cert?.phone && 'phone',
+						!cert?.gender && 'gender',
+						!cert?.birthday && 'birthday',
+					].filter(Boolean);
+
+					if (stillMissing.length > 0) {
+						showModal({
+							title: t('features.signup.ui.login_form.consent_retry_failed_title'),
+							children: t('features.signup.ui.login_form.consent_retry_failed_message'),
+							primaryButton: {
+								text: t('features.signup.ui.login_form.confirm_button'),
+								onClick: () => {},
+							},
+						});
+						return;
+					}
 				}
 
-				if (loginResult.certificationInfo?.phone) {
+				if (currentLoginResult.certificationInfo?.phone) {
 					try {
 						const { isBlacklisted } = await checkPhoneNumberBlacklist(
-							loginResult.certificationInfo?.phone,
+							currentLoginResult.certificationInfo?.phone,
 						);
 
 						if (isBlacklisted) {
@@ -422,7 +492,7 @@ function KakaoLoginComponent() {
 					}
 				}
 
-				const birthday = loginResult.certificationInfo?.birthday;
+				const birthday = currentLoginResult.certificationInfo?.birthday;
 
 				if (birthday && !isAdult(birthday)) {
 					router.push('/auth/age-restriction');
@@ -436,9 +506,9 @@ function KakaoLoginComponent() {
 				await AsyncStorage.setItem(
 					'signup_certification_info',
 					JSON.stringify({
-						...loginResult.certificationInfo,
+						...currentLoginResult.certificationInfo,
 						loginType: 'kakao_native',
-						kakaoAccessToken: result.accessToken,
+						kakaoAccessToken: currentAccessToken,
 					}),
 				);
 
@@ -675,3 +745,65 @@ const passCircleStyles = StyleSheet.create({
 // 		justifyContent: 'center',
 // 	},
 // });
+
+function DevLoginButton() {
+	const router = useRouter();
+	const { loginWithPass } = useAuth();
+	const [isLoading, setIsLoading] = useState(false);
+
+	const handleDevLogin = async () => {
+		try {
+			setIsLoading(true);
+			const result = await loginWithPass('dev');
+
+			if (result.isNewUser) {
+				await AsyncStorage.setItem(
+					'signup_certification_info',
+					JSON.stringify(result.certificationInfo),
+				);
+				router.push('/auth/signup/university');
+			} else {
+				router.push('/home');
+			}
+		} catch (error) {
+			console.error('Dev login error:', error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	return (
+		<Pressable
+			onPress={handleDevLogin}
+			disabled={isLoading}
+			style={[devLoginStyles.button, { opacity: isLoading ? 0.6 : 1 }]}
+		>
+			{isLoading ? (
+				<ActivityIndicator size="small" color="#FFFFFF" />
+			) : (
+				<RNText style={devLoginStyles.text}>DEV 로그인</RNText>
+			)}
+		</Pressable>
+	);
+}
+
+const devLoginStyles = StyleSheet.create({
+	button: {
+		width: 330,
+		height: 50,
+		borderRadius: 47,
+		backgroundColor: '#333333',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+		borderWidth: 1,
+		borderColor: '#555555',
+		borderStyle: 'dashed',
+	},
+	text: {
+		color: '#FFFFFF',
+		fontSize: 16,
+		fontWeight: '600',
+	},
+});

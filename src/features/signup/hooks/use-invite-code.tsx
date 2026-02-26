@@ -1,20 +1,20 @@
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { BackHandler } from 'react-native';
+import { useAuth } from '@/src/features/auth/hooks/use-auth';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { useModal } from '@/src/shared/hooks/use-modal';
 import { useStorage } from '@/src/shared/hooks/use-storage';
 import { tryCatch } from '@/src/shared/libs';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { BackHandler } from 'react-native';
+import Signup from '..';
 import {
 	ensureAppleId,
 	processSignup,
 	validatePhone,
 	validateUniversity,
 } from '../services/signup-validator';
-import { useModal } from '@/src/shared/hooks/use-modal';
-import Signup from '..';
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
-import { useAuth } from '@/src/features/auth/hooks/use-auth';
-import { useTranslation } from 'react-i18next';
 
 const { SignupSteps, useChangePhase, useSignupProgress, apis, useSignupAnalytics, useSignup } =
 	Signup;

@@ -1,18 +1,18 @@
 import { DefaultLayout, TwoButtons } from '@/src/features/layout/ui';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { SignupSteps } from '@/src/features/signup/hooks';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui/text';
 import { Image } from 'expo-image';
-import { StyleSheet, View } from 'react-native';
 import { useEffect, useRef } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { withSignupValidation } from '@/src/features/signup/ui/withSignupValidation';
-import CodeForm from './code-form';
 import Loading from '@/src/features/loading';
-import useInviteCode from '../../hooks/use-invite-code';
-import { useTranslation } from 'react-i18next';
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { withSignupValidation } from '@/src/features/signup/ui/withSignupValidation';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { useTranslation } from 'react-i18next';
+import useInviteCode from '../../hooks/use-invite-code';
+import CodeForm from './code-form';
 
 function InviteCode() {
 	const { t } = useTranslation();

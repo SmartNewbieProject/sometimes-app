@@ -1,17 +1,17 @@
-import { useStorage } from '@/src/shared/hooks/use-storage';
+import { AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
+import { useStorage } from '@/src/shared/hooks/use-storage';
+import { devLogWithTag } from '@/src/shared/utils';
+import AppleLogo from '@assets/icons/apple-logo.svg';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useRouter } from 'expo-router';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { AppleLoginResponse, useAppleLogin } from '../queries/use-apple-login';
-import { devLogWithTag } from '@/src/shared/utils';
-import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
-import AppleLogo from '@assets/icons/apple-logo.svg';
+import { Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import useSignupProgress from '../hooks/use-signup-progress';
-import { AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
+import { AppleLoginResponse, useAppleLogin } from '../queries/use-apple-login';
 
 declare global {
 	interface Window {

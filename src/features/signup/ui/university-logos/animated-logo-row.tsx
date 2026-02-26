@@ -1,7 +1,14 @@
 import { Image } from 'expo-image';
-import { useTranslation } from 'react-i18next';
 import { useEffect, useRef } from 'react';
-import { Animated, Easing, ImageSourcePropType, Platform, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import {
+	Animated,
+	Easing,
+	type ImageSourcePropType,
+	Platform,
+	StyleSheet,
+	View,
+} from 'react-native';
 
 export interface AnimatedLogoRowProps {
 	row1Logos: ImageSourcePropType[];

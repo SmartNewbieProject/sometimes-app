@@ -1,15 +1,15 @@
-import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import type { RegionCode } from '@/src/shared/constants/region';
 import { useDebounce } from '@/src/shared/hooks';
 import { getSmartUnivLogoUrl } from '@/src/shared/libs';
-import type { RegionCode } from '@/src/shared/constants/region';
 import i18n from '@/src/shared/libs/i18n';
+import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import Signup from '@features/signup';
-import { useLocalSearchParams, useFocusEffect } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useQuery } from '@tanstack/react-query';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { Keyboard, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { useQuery } from '@tanstack/react-query';
 import { getTopUniversities, searchUniversities } from '../apis';
 import { getRegionsByRegionCode } from '../lib';
 

@@ -1,9 +1,9 @@
+import { jpSignup } from '@/src/features/jp-auth/apis';
+import i18n from '@/src/shared/libs/i18n';
 import type { Router } from 'expo-router';
 import { Platform } from 'react-native';
 import type { SignupForm } from '../hooks/use-signup-progress';
 import useSignupProgress from '../hooks/use-signup-progress';
-import { jpSignup } from '@/src/features/jp-auth/apis';
-import i18n from '@/src/shared/libs/i18n';
 
 export function buildSignupForm(
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>

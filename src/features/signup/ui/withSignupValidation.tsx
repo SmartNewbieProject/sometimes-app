@@ -1,10 +1,10 @@
 import { useModal } from '@/src/shared/hooks/use-modal';
-import { useTranslation } from 'react-i18next';
+import i18n from '@/src/shared/libs/i18n';
 import { router } from 'expo-router';
 import type React from 'react';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { type SignupForm, SignupSteps, useSignupProgress } from '../hooks';
-import i18n from '@/src/shared/libs/i18n';
 
 interface PageValidation {
 	requiredFields: (keyof SignupForm)[];
@@ -24,14 +24,7 @@ const PAGE_VALIDATIONS: Record<SignupSteps, PageValidation> = {
 		messageKey: 'features.signup.ui.validators.validation_messages.missing_previous_info',
 	},
 	[SignupSteps.INVITE_CODE]: {
-		requiredFields: [
-			'name',
-			'phone',
-			'birthday',
-			'gender',
-			'universityId',
-			'departmentName',
-		],
+		requiredFields: ['name', 'phone', 'birthday', 'gender', 'universityId', 'departmentName'],
 		redirectTo: '/auth/login' as const,
 		messageKey: 'features.signup.ui.validators.validation_messages.all_info_required',
 	},

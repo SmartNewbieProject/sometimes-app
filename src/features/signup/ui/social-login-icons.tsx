@@ -5,16 +5,17 @@ import { devLogWithTag } from '@/src/shared/utils';
 import AppleLogo from '@assets/icons/apple-logo.svg';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import useSignupProgress from '../hooks/use-signup-progress';
 import { useAppleLogin } from '../queries/use-apple-login';
 
-interface SocialLoginIconsProps {
-	onPressPass: () => void;
-	isPassLoading?: boolean;
-}
+// [PASS 로그인 주석 처리]
+// interface SocialLoginIconsProps {
+// 	onPressPass: () => void;
+// 	isPassLoading?: boolean;
+// }
 
-export function SocialLoginIcons({ onPressPass, isPassLoading = false }: SocialLoginIconsProps) {
+export function SocialLoginIcons() {
 	const { authEvents, signupEvents } = useMixpanel();
 	const { removeValue: removeAppleUserId } = useStorage({ key: 'appleUserId' });
 	const { setValue: setAppleUserFullName, removeValue: removeAppleUserFullName } = useStorage<
@@ -77,7 +78,8 @@ export function SocialLoginIcons({ onPressPass, isPassLoading = false }: SocialL
 
 	return (
 		<View style={styles.container}>
-			<Pressable
+			{/* [PASS 로그인 주석 처리] */}
+			{/* <Pressable
 				onPress={onPressPass}
 				disabled={isPassLoading}
 				style={[styles.iconButton, isPassLoading && styles.disabled]}
@@ -93,7 +95,7 @@ export function SocialLoginIcons({ onPressPass, isPassLoading = false }: SocialL
 				)}
 			</Pressable>
 
-			<View style={styles.divider} />
+			<View style={styles.divider} /> */}
 
 			<Pressable
 				onPress={handleIOSAppleLogin}

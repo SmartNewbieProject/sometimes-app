@@ -1,5 +1,5 @@
-import type { UniversityLogoData } from "./korea-logos-data";
 import { useTranslation } from 'react-i18next';
+import type { UniversityLogoData } from './korea-logos-data';
 
 /**
  * 일본 대학교 로고 데이터
@@ -57,70 +57,70 @@ import { useTranslation } from 'react-i18next';
  */
 
 export const japanUniversityLogos: UniversityLogoData = {
-  row1: [
-    require("@/assets/images/univ/japan/TODAI.webp"),
-    require("@/assets/images/univ/japan/WASEDA.webp"),
-    require("@/assets/images/univ/japan/KEIO.webp"),
-    require("@/assets/images/univ/japan/MEIJI.webp"),
-    require("@/assets/images/univ/japan/RIKKYO.webp"),
-    require("@/assets/images/univ/japan/CHUO.webp"),
-    require("@/assets/images/univ/japan/KYODAI.webp"),
-    require("@/assets/images/univ/japan/HANDAI.webp"),
-    require("@/assets/images/univ/japan/KOBEDAI.webp"),
-    require("@/assets/images/univ/japan/DOSHISHA.webp"),
-    require("@/assets/images/univ/japan/RITSUMEIKAN.webp"),
-    require("@/assets/images/univ/japan/KANSAI.webp"),
-  ],
-  row2: [
-    require("@/assets/images/univ/japan/HOSEI.webp"),
-    require("@/assets/images/univ/japan/HITOTSUBASHI.webp"),
-    require("@/assets/images/univ/japan/SOPHIA.webp"),
-    require("@/assets/images/univ/japan/ICU.webp"),
-    require("@/assets/images/univ/japan/TUS.webp"),
-    require("@/assets/images/univ/japan/AOYAMA.webp"),
-    require("@/assets/images/univ/japan/MEIDAI.webp"),
-    require("@/assets/images/univ/japan/KYUDAI.webp"),
-    require("@/assets/images/univ/japan/SEINAN.webp"),
-    require("@/assets/images/univ/japan/HOKUDAI.webp"),
-    require("@/assets/images/univ/japan/TOHOKUDAI.webp"),
-    require("@/assets/images/univ/japan/SENSHU.webp"),
-  ],
+	row1: [
+		require('@/assets/images/univ/japan/TODAI.webp'),
+		require('@/assets/images/univ/japan/WASEDA.webp'),
+		require('@/assets/images/univ/japan/KEIO.webp'),
+		require('@/assets/images/univ/japan/MEIJI.webp'),
+		require('@/assets/images/univ/japan/RIKKYO.webp'),
+		require('@/assets/images/univ/japan/CHUO.webp'),
+		require('@/assets/images/univ/japan/KYODAI.webp'),
+		require('@/assets/images/univ/japan/HANDAI.webp'),
+		require('@/assets/images/univ/japan/KOBEDAI.webp'),
+		require('@/assets/images/univ/japan/DOSHISHA.webp'),
+		require('@/assets/images/univ/japan/RITSUMEIKAN.webp'),
+		require('@/assets/images/univ/japan/KANSAI.webp'),
+	],
+	row2: [
+		require('@/assets/images/univ/japan/HOSEI.webp'),
+		require('@/assets/images/univ/japan/HITOTSUBASHI.webp'),
+		require('@/assets/images/univ/japan/SOPHIA.webp'),
+		require('@/assets/images/univ/japan/ICU.webp'),
+		require('@/assets/images/univ/japan/TUS.webp'),
+		require('@/assets/images/univ/japan/AOYAMA.webp'),
+		require('@/assets/images/univ/japan/MEIDAI.webp'),
+		require('@/assets/images/univ/japan/KYUDAI.webp'),
+		require('@/assets/images/univ/japan/SEINAN.webp'),
+		require('@/assets/images/univ/japan/HOKUDAI.webp'),
+		require('@/assets/images/univ/japan/TOHOKUDAI.webp'),
+		require('@/assets/images/univ/japan/SENSHU.webp'),
+	],
 };
 
 /**
  * 일본 대학교 목록 (로고 파일명 참조용)
  */
 export const JAPAN_UNIVERSITY_LIST = {
-  tokyo: [
-    { id: "utokyo", name: "東京大学", nameKo: "도쿄대학" },
-    { id: "waseda", name: "早稲田大学", nameKo: "와세다대학" },
-    { id: "keio", name: "慶應義塾大学", nameKo: "게이오대학" },
-    { id: "meiji", name: "明治大学", nameKo: "메이지대학" },
-    { id: "rikkyo", name: "立教大学", nameKo: "릿쿄대학" },
-    { id: "chuo", name: "中央大学", nameKo: "츄오대학" },
-    { id: "hosei", name: "法政大学", nameKo: "호세이대학" },
-    { id: "hitotsubashi", name: "一橋大学", nameKo: "히토츠바시대학" },
-    { id: "sophia", name: "上智大学", nameKo: "소피아대학" },
-    { id: "titech", name: "東京工業大学", nameKo: "도쿄공업대학" },
-    { id: "tus", name: "東京理科大学", nameKo: "도쿄이과대학" },
-    { id: "icu", name: "国際基督教大学", nameKo: "ICU" },
-  ],
-  osaka: [
-    { id: "kyoto", name: "京都大学", nameKo: "교토대학" },
-    { id: "osaka", name: "大阪大学", nameKo: "오사카대학" },
-    { id: "kobe", name: "神戸大学", nameKo: "고베대학" },
-    { id: "kansai", name: "関西大学", nameKo: "간사이대학" },
-    { id: "doshisha", name: "同志社大学", nameKo: "도시샤대학" },
-    { id: "ritsumeikan", name: "立命館大学", nameKo: "리츠메이칸대학" },
-  ],
-  nagoya: [
-    { id: "nagoya", name: "名古屋大学", nameKo: "나고야대학" },
-    { id: "nit", name: "名古屋工業大学", nameKo: "나고야공업대학" },
-  ],
-  fukuoka: [
-    { id: "kyushu", name: "九州大学", nameKo: "규슈대학" },
-    { id: "seinan", name: "西南学院大学", nameKo: "세이난학원대학" },
-  ],
-  sapporo: [{ id: "hokkaido", name: "北海道大学", nameKo: "홋카이도대학" }],
-  sendai: [{ id: "tohoku", name: "東北大学", nameKo: "도호쿠대학" }],
+	tokyo: [
+		{ id: 'utokyo', name: '東京大学', nameKo: '도쿄대학' },
+		{ id: 'waseda', name: '早稲田大学', nameKo: '와세다대학' },
+		{ id: 'keio', name: '慶應義塾大学', nameKo: '게이오대학' },
+		{ id: 'meiji', name: '明治大学', nameKo: '메이지대학' },
+		{ id: 'rikkyo', name: '立教大学', nameKo: '릿쿄대학' },
+		{ id: 'chuo', name: '中央大学', nameKo: '츄오대학' },
+		{ id: 'hosei', name: '法政大学', nameKo: '호세이대학' },
+		{ id: 'hitotsubashi', name: '一橋大学', nameKo: '히토츠바시대학' },
+		{ id: 'sophia', name: '上智大学', nameKo: '소피아대학' },
+		{ id: 'titech', name: '東京工業大学', nameKo: '도쿄공업대학' },
+		{ id: 'tus', name: '東京理科大学', nameKo: '도쿄이과대학' },
+		{ id: 'icu', name: '国際基督教大学', nameKo: 'ICU' },
+	],
+	osaka: [
+		{ id: 'kyoto', name: '京都大学', nameKo: '교토대학' },
+		{ id: 'osaka', name: '大阪大学', nameKo: '오사카대학' },
+		{ id: 'kobe', name: '神戸大学', nameKo: '고베대학' },
+		{ id: 'kansai', name: '関西大学', nameKo: '간사이대학' },
+		{ id: 'doshisha', name: '同志社大学', nameKo: '도시샤대학' },
+		{ id: 'ritsumeikan', name: '立命館大学', nameKo: '리츠메이칸대학' },
+	],
+	nagoya: [
+		{ id: 'nagoya', name: '名古屋大学', nameKo: '나고야대학' },
+		{ id: 'nit', name: '名古屋工業大学', nameKo: '나고야공업대학' },
+	],
+	fukuoka: [
+		{ id: 'kyushu', name: '九州大学', nameKo: '규슈대학' },
+		{ id: 'seinan', name: '西南学院大学', nameKo: '세이난학원대학' },
+	],
+	sapporo: [{ id: 'hokkaido', name: '北海道大学', nameKo: '홋카이도대학' }],
+	sendai: [{ id: 'tohoku', name: '東北大学', nameKo: '도호쿠대학' }],
 } as const;

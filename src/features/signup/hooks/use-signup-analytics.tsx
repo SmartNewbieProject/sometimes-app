@@ -1,5 +1,5 @@
-import { sendEvent, sendPageView } from '@/src/shared/utils';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import { sendEvent, sendPageView } from '@/src/shared/utils';
 import { usePathname } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
