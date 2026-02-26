@@ -1,502 +1,240 @@
-import { useEffect, useMemo, useCallback } from 'react';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import {
-  Modal,
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableWithoutFeedback,
-  Text as RNText,
-} from 'react-native';
+import { Text } from '@/src/shared/ui';
 import { Image } from 'expo-image';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withTiming,
-  Easing,
-  withSpring,
-  withSequence,
-  withRepeat,
-  runOnJS,
-} from 'react-native-reanimated';
-import {
-  getMihoMessage,
-  getRarityStyle,
-  getRarityLabel,
-  getMihoMessageI18nKeys,
-} from '../services/miho-message-service';
-import { MatchContext, RarityTier, MihoMessage } from '../types/miho-message';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+	Animated,
+	Easing,
+	type LayoutChangeEvent,
+	Pressable,
+	StyleSheet,
+	View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getMihoMessage, getRarityStyle } from '../services/miho-message-service';
+import type { MatchContext, MihoMessage } from '../types/miho-message';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-
-const CONFETTI_EMOJIS = ['🎉', '✨', '💫', '🌟', '💜', '👑'];
-const CONFETTI_COUNT = 12;
+const AUTO_DISMISS_MS = 3000;
 
 interface MihoIntroModalProps {
-  visible: boolean;
-  onClose: () => void;
-  matchContext?: MatchContext;
-  onMessageShown?: (message: MihoMessage) => void;
+	visible: boolean;
+	onClose: () => void;
+	matchContext?: MatchContext;
+	onMessageShown?: (message: MihoMessage) => void;
 }
-
-interface ConfettiPieceProps {
-  emoji: string;
-  delay: number;
-  startX: number;
-}
-
-const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ emoji, delay, startX }) => {
-  const translateY = useSharedValue(-50);
-  const translateX = useSharedValue(startX);
-  const rotate = useSharedValue(0);
-  const opacity = useSharedValue(1);
-
-  useEffect(() => {
-    const randomEndX = startX + (Math.random() - 0.5) * 100;
-    const duration = 2000 + Math.random() * 1000;
-
-    translateY.value = withDelay(
-      delay,
-      withTiming(screenHeight * 0.6, { duration, easing: Easing.out(Easing.quad) })
-    );
-    translateX.value = withDelay(
-      delay,
-      withTiming(randomEndX, { duration, easing: Easing.inOut(Easing.sin) })
-    );
-    rotate.value = withDelay(
-      delay,
-      withTiming(360 * (Math.random() > 0.5 ? 1 : -1), { duration })
-    );
-    opacity.value = withDelay(
-      delay + duration - 500,
-      withTiming(0, { duration: 500 })
-    );
-  }, [delay, startX, translateY, translateX, rotate, opacity]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-      { rotate: `${rotate.value}deg` },
-    ],
-    opacity: opacity.value,
-  }));
-
-  return (
-    <Animated.View style={[styles.confettiPiece, animatedStyle]}>
-      <RNText style={styles.confettiEmoji}>{emoji}</RNText>
-    </Animated.View>
-  );
-};
 
 const MihoIntroModal: React.FC<MihoIntroModalProps> = ({
-  visible,
-  onClose,
-  matchContext = { matchScore: 50 },
-  onMessageShown,
+	visible,
+	onClose,
+	matchContext = { matchScore: 50 },
+	onMessageShown,
 }) => {
-  const { t } = useTranslation();
-  const modalOpacity = useSharedValue(0);
-  const mihoScale = useSharedValue(0);
-  const speechBubbleScale = useSharedValue(0);
-  const sparkleOpacity = useSharedValue(0);
-  const glowScale = useSharedValue(1);
+	const { t } = useTranslation();
+	const insets = useSafeAreaInsets();
+	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const message = useMemo(() => {
-    if (!visible) return null;
-    return getMihoMessage(matchContext);
-  }, [visible, matchContext]);
+	const translateY = useRef(new Animated.Value(50)).current;
+	const chipOpacity = useRef(new Animated.Value(0)).current;
+	const progress = useRef(new Animated.Value(1)).current;
+	const trackWidthAnim = useRef(new Animated.Value(0)).current;
+	const barWidth = useRef(Animated.multiply(progress, trackWidthAnim)).current;
 
-  const messageI18nKeys = useMemo(() => {
-    if (!message) return null;
-    return getMihoMessageI18nKeys(message);
-  }, [message]);
+	const message = useMemo(() => {
+		if (!visible) return null;
+		return getMihoMessage(matchContext);
+	}, [visible, matchContext]);
 
-  const confettiPieces = useMemo(() => {
-    return Array.from({ length: CONFETTI_COUNT }, (_, i) => ({
-      id: i,
-      emoji: CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length],
-      delay: 600 + Math.random() * 400,
-      startX: (screenWidth / CONFETTI_COUNT) * i,
-    }));
-  }, []);
+	const rarityStyle = useMemo(() => {
+		if (!message) return null;
+		return getRarityStyle(message.rarity);
+	}, [message]);
 
-  useEffect(() => {
-    if (visible && message && onMessageShown) {
-      onMessageShown(message);
-    }
-  }, [visible, message, onMessageShown]);
+	const dismiss = useCallback(() => {
+		if (timerRef.current) {
+			clearTimeout(timerRef.current);
+			timerRef.current = null;
+		}
+		Animated.parallel([
+			Animated.timing(translateY, {
+				toValue: 50,
+				duration: 250,
+				easing: Easing.in(Easing.cubic),
+				useNativeDriver: false,
+			}),
+			Animated.timing(chipOpacity, {
+				toValue: 0,
+				duration: 250,
+				easing: Easing.in(Easing.cubic),
+				useNativeDriver: false,
+			}),
+		]).start(() => onClose());
+	}, [onClose, translateY, chipOpacity]);
 
-  const rarityStyle = useMemo(() => {
-    if (!message) return null;
-    return getRarityStyle(message.rarity);
-  }, [message]);
+	useEffect(() => {
+		if (visible && message) {
+			onMessageShown?.(message);
 
-  const rarityLabel = useMemo(() => {
-    if (!message) return '';
-    return getRarityLabel(message.rarity);
-  }, [message]);
+			translateY.setValue(50);
+			chipOpacity.setValue(0);
+			progress.setValue(1);
 
-  useEffect(() => {
-    if (visible && rarityStyle) {
-      modalOpacity.value = withTiming(1, {
-        duration: 200,
-        easing: Easing.out(Easing.ease),
-      });
+			Animated.parallel([
+				Animated.timing(translateY, {
+					toValue: 0,
+					duration: 400,
+					easing: Easing.out(Easing.back(1.2)),
+					useNativeDriver: false,
+				}),
+				Animated.timing(chipOpacity, {
+					toValue: 1,
+					duration: 300,
+					easing: Easing.out(Easing.cubic),
+					useNativeDriver: false,
+				}),
+			]).start();
 
-      mihoScale.value = withDelay(
-        100,
-        withSpring(1, {
-          damping: 12,
-          stiffness: 250,
-        })
-      );
+			Animated.timing(progress, {
+				toValue: 0,
+				duration: AUTO_DISMISS_MS,
+				easing: Easing.linear,
+				useNativeDriver: false,
+			}).start();
 
-      const animationConfig = getAnimationConfig(rarityStyle.animation);
-      speechBubbleScale.value = withDelay(300, animationConfig);
+			timerRef.current = setTimeout(dismiss, AUTO_DISMISS_MS);
+		}
 
-      if (rarityStyle.sparkle) {
-        sparkleOpacity.value = withDelay(
-          800,
-          withRepeat(
-            withSequence(
-              withTiming(1, { duration: 400 }),
-              withTiming(0.3, { duration: 400 })
-            ),
-            -1,
-            true
-          )
-        );
-      }
+		return () => {
+			if (timerRef.current) {
+				clearTimeout(timerRef.current);
+				timerRef.current = null;
+			}
+		};
+	}, [visible, message, onMessageShown, translateY, chipOpacity, progress, dismiss]);
 
-      if (rarityStyle.glow) {
-        glowScale.value = withDelay(
-          800,
-          withRepeat(
-            withSequence(
-              withTiming(1.05, { duration: 600 }),
-              withTiming(1, { duration: 600 })
-            ),
-            -1,
-            true
-          )
-        );
-      }
-    } else {
-      modalOpacity.value = 0;
-      mihoScale.value = 0;
-      speechBubbleScale.value = 0;
-      sparkleOpacity.value = 0;
-      glowScale.value = 1;
-    }
-  }, [
-    visible,
-    rarityStyle,
-    modalOpacity,
-    mihoScale,
-    speechBubbleScale,
-    sparkleOpacity,
-    glowScale,
-  ]);
+	const handleTrackLayout = useCallback(
+		(e: LayoutChangeEvent) => {
+			trackWidthAnim.setValue(e.nativeEvent.layout.width);
+		},
+		[trackWidthAnim],
+	);
 
-  const getAnimationConfig = (animation: string) => {
-    switch (animation) {
-      case 'bounce':
-        return withSpring(1, { damping: 6, stiffness: 300 });
-      case 'shake':
-        return withSequence(
-          withSpring(1.1, { damping: 4, stiffness: 400 }),
-          withSpring(1, { damping: 8, stiffness: 300 })
-        );
-      case 'heartbeat':
-        return withSequence(
-          withSpring(1.15, { damping: 4, stiffness: 500 }),
-          withSpring(0.95, { damping: 4, stiffness: 500 }),
-          withSpring(1.1, { damping: 4, stiffness: 500 }),
-          withSpring(1, { damping: 8, stiffness: 300 })
-        );
-      case 'slideUp':
-        return withSpring(1, { damping: 10, stiffness: 250 });
-      default:
-        return withSpring(1, { damping: 10, stiffness: 300 });
-    }
-  };
+	if (!visible || !message || !rarityStyle) return null;
 
-  const modalAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: modalOpacity.value,
-  }));
+	const title = t(
+		`features.match.miho_messages.${message.rarity}.${message.id}.title`,
+		message.title,
+	);
+	const line1 = t(
+		`features.match.miho_messages.${message.rarity}.${message.id}.line1`,
+		message.lines[0],
+	);
 
-  const mihoAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: mihoScale.value }],
-  }));
-
-  const speechBubbleAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: speechBubbleScale.value },
-      { scale: glowScale.value },
-    ],
-  }));
-
-  const sparkleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: sparkleOpacity.value,
-  }));
-
-  const handleClose = () => {
-    modalOpacity.value = withTiming(0, {
-      duration: 150,
-      easing: Easing.in(Easing.ease),
-    });
-    setTimeout(() => {
-      onClose();
-    }, 150);
-  };
-
-  if (!visible || !message || !rarityStyle) return null;
-
-  const isSpecialRarity =
-    message.rarity === RarityTier.RARE ||
-    message.rarity === RarityTier.EPIC ||
-    message.rarity === RarityTier.LEGENDARY;
-
-  return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="none"
-      onRequestClose={handleClose}
-    >
-      <Animated.View style={[styles.overlay, modalAnimatedStyle]}>
-        {rarityStyle.confetti && (
-          <View style={styles.confettiContainer} pointerEvents="none">
-            {confettiPieces.map((piece) => (
-              <ConfettiPiece
-                key={piece.id}
-                emoji={piece.emoji}
-                delay={piece.delay}
-                startX={piece.startX}
-              />
-            ))}
-          </View>
-        )}
-
-        <TouchableWithoutFeedback onPress={handleClose}>
-          <View style={{ flex: 1 }} />
-        </TouchableWithoutFeedback>
-
-        <Animated.View
-          style={[styles.container, speechBubbleAnimatedStyle]}
-        >
-          <TouchableWithoutFeedback onPress={handleClose}>
-            <View style={styles.speechBubbleContainer}>
-              {rarityStyle.glow && (
-                <View
-                  style={[
-                    styles.glowEffect,
-                    { backgroundColor: rarityStyle.accentColor },
-                  ]}
-                />
-              )}
-              <View
-                style={[
-                  styles.speechBubble,
-                  { backgroundColor: rarityStyle.bubbleColor },
-                ]}
-              >
-                {isSpecialRarity && rarityLabel && (
-                  <View style={styles.rarityBadge}>
-                    <RNText style={styles.rarityBadgeText}>
-                      {rarityLabel}
-                    </RNText>
-                  </View>
-                )}
-
-                <RNText
-                  style={[
-                    styles.speechTitle,
-                    { color: rarityStyle.accentColor },
-                  ]}
-                >
-                  {messageI18nKeys ? t(messageI18nKeys.titleKey) : message.title}
-                </RNText>
-
-                <RNText style={styles.speechText}>
-                  {messageI18nKeys ? t(messageI18nKeys.line1Key) : message.lines[0]}
-                </RNText>
-                <RNText style={styles.speechText}>
-                  {messageI18nKeys ? t(messageI18nKeys.line2Key) : message.lines[1]}
-                </RNText>
-
-                {rarityStyle.sparkle && (
-                  <Animated.View
-                    style={[styles.sparkleContainer, sparkleAnimatedStyle]}
-                  >
-                    <RNText style={styles.sparkleEmoji}>✨</RNText>
-                  </Animated.View>
-                )}
-
-                <View style={styles.closeButtonContainer}>
-                  <RNText style={styles.closeButtonText}>
-                    {t("features.match.ui.miho_intro_modal.tap_to_close")}
-                  </RNText>
-                </View>
-              </View>
-              <View
-                style={[
-                  styles.speechTail,
-                  { borderLeftColor: rarityStyle.bubbleColor },
-                ]}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-
-          <Animated.View style={[styles.mihoContainer, mihoAnimatedStyle]}>
-            <Image
-              source={require('@assets/images/instagram-some.webp')}
-              style={styles.mihoImage}
-              contentFit="contain"
-            />
-          </Animated.View>
-        </Animated.View>
-      </Animated.View>
-    </Modal>
-  );
+	return (
+		<Animated.View
+			style={[
+				styles.wrapper,
+				{ bottom: insets.bottom + 100 },
+				{ transform: [{ translateY }], opacity: chipOpacity },
+			]}
+			pointerEvents={visible ? 'auto' : 'none'}
+		>
+			<Pressable onPress={dismiss} style={styles.chip}>
+				{/* 좌측 오버플로 아바타 */}
+				<View style={styles.avatarContainer}>
+					<Image
+						source={require('@assets/images/instagram-some.webp')}
+						style={styles.avatar}
+						contentFit="cover"
+					/>
+				</View>
+				<View style={styles.textContainer}>
+					<Text style={styles.title} numberOfLines={1}>
+						{title}
+					</Text>
+					<Text style={styles.subtitle} numberOfLines={1}>
+						{line1}
+					</Text>
+					<View style={styles.progressTrack} onLayout={handleTrackLayout}>
+						<Animated.View style={[styles.progressBar, { width: barWidth }]} />
+					</View>
+				</View>
+			</Pressable>
+		</Animated.View>
+	);
 };
 
+const AVATAR_SIZE = 52;
+
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingBottom: 100,
-  },
-  container: {
-    width: screenWidth * 0.9,
-    maxWidth: 400,
-    position: 'relative',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  mihoContainer: {
-    position: 'absolute',
-    bottom: -10,
-    right: -20,
-    zIndex: 2,
-  },
-  mihoImage: {
-    width: 100,
-    height: 150,
-  },
-  speechBubbleContainer: {
-    zIndex: 3,
-    marginRight: 80,
-  },
-  glowEffect: {
-    position: 'absolute',
-    top: -4,
-    left: -4,
-    right: -4,
-    bottom: -4,
-    borderRadius: 20,
-    opacity: 0.3,
-  },
-  speechBubble: {
-    backgroundColor: semanticColors.surface.secondary,
-    borderRadius: 16,
-    padding: 18,
-    minHeight: 120,
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  rarityBadge: {
-    position: 'absolute',
-    top: -10,
-    right: 12,
-    backgroundColor: '#FFF',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  rarityBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  sparkleContainer: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-  },
-  sparkleEmoji: {
-    fontSize: 16,
-  },
-  speechTail: {
-    position: 'absolute',
-    bottom: 20,
-    right: -8,
-    width: 0,
-    height: 0,
-    borderTopWidth: 12,
-    borderBottomWidth: 12,
-    borderLeftWidth: 12,
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderLeftColor: semanticColors.surface.secondary,
-  },
-  speechTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: semanticColors.brand.accent,
-    marginBottom: 8,
-    textAlign: 'left',
-  },
-  speechText: {
-    fontSize: 14,
-    color: semanticColors.text.primary,
-    lineHeight: 20,
-    marginBottom: 4,
-    textAlign: 'left',
-  },
-  closeButtonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: semanticColors.surface.background,
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginTop: 12,
-  },
-  closeButtonText: {
-    fontSize: 14,
-    color: semanticColors.text.primary,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  confettiContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 10,
-  },
-  confettiPiece: {
-    position: 'absolute',
-    top: 0,
-  },
-  confettiEmoji: {
-    fontSize: 24,
-  },
+	wrapper: {
+		position: 'absolute',
+		left: '4%',
+		width: '92%',
+		zIndex: 999,
+	},
+	chip: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		backgroundColor: 'rgba(122, 74, 226, 0.95)',
+		borderRadius: 20,
+		paddingTop: 10,
+		paddingBottom: 10,
+		paddingLeft: 40,
+		paddingRight: 16,
+		marginLeft: 20,
+		shadowColor: '#7A4AE2',
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.25,
+		shadowRadius: 12,
+		elevation: 8,
+	},
+	avatarContainer: {
+		position: 'absolute',
+		left: -AVATAR_SIZE / 2 + 6,
+		top: '50%',
+		marginTop: -AVATAR_SIZE / 2,
+		width: AVATAR_SIZE,
+		height: AVATAR_SIZE,
+		borderRadius: AVATAR_SIZE / 2,
+		backgroundColor: '#E8DEFF',
+		borderWidth: 3,
+		borderColor: 'rgba(122, 74, 226, 0.95)',
+		overflow: 'hidden',
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.2,
+		shadowRadius: 6,
+		elevation: 6,
+	},
+	avatar: {
+		width: '100%',
+		height: '100%',
+	},
+	textContainer: {
+		flex: 1,
+		gap: 2,
+	},
+	title: {
+		fontSize: 13,
+		fontWeight: '700',
+		color: '#FFFFFF',
+	},
+	subtitle: {
+		fontSize: 12,
+		color: 'rgba(255, 255, 255, 0.85)',
+	},
+	progressTrack: {
+		height: 3,
+		backgroundColor: 'rgba(255, 255, 255, 0.2)',
+		borderRadius: 1.5,
+		marginTop: 6,
+		overflow: 'hidden',
+	},
+	progressBar: {
+		height: 3,
+		backgroundColor: 'rgba(255, 255, 255, 0.7)',
+		borderRadius: 1.5,
+	},
 });
 
 export default MihoIntroModal;
