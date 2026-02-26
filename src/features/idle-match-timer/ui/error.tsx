@@ -1,10 +1,14 @@
 import { Text } from "@shared/ui";
 import { Image } from "expo-image";
-import { StyleSheet, View, Text as RNText } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text as RNText } from "react-native";
 import { useTranslation } from "react-i18next";
 import colors from "@/src/shared/constants/colors";
 
-export const Error = () => {
+type ErrorProps = {
+  onRetry?: () => void;
+};
+
+export const Error = ({ onRetry }: ErrorProps) => {
   const { t } = useTranslation();
 
   return (
@@ -20,6 +24,13 @@ export const Error = () => {
         </RNText>
         {t("features.idle-match-timer.ui.error.message")}
       </RNText>
+      {onRetry && (
+        <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
+          <RNText style={styles.retryText}>
+            {t("features.idle-match-timer.ui.error.retry", { defaultValue: "다시 시도" })}
+          </RNText>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -46,5 +57,18 @@ const styles = StyleSheet.create({
   },
   highlight: {
     color: colors.primaryPurple,
+  },
+  retryButton: {
+    marginTop: 20,
+    backgroundColor: colors.primaryPurple,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  retryText: {
+    color: colors.white,
+    fontSize: 16,
+    fontFamily: "Pretendard-Bold",
+    fontWeight: "700",
   },
 });

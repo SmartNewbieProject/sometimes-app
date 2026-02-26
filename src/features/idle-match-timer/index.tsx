@@ -1,19 +1,22 @@
-import { dayUtils } from '@/src/shared/libs';
-import { Suspense, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { useMatchLoading } from './hooks';
-import { useLatestMatching } from './queries';
 import { useProfileDetailsQuery } from '@/src/features/auth/queries';
+import { useQueryClient } from '@tanstack/react-query';
 import { useStorage } from '@/src/shared/hooks/use-storage';
+import { dayUtils } from '@/src/shared/libs';
+import { Suspense, useCallback, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { ErrorBoundary } from 'react-error-boundary';
+import { useMatchLoading } from './hooks';
+import { useSecondaryMatch } from './hooks/use-secondary-match';
+import { useLatestMatchingV31 } from './queries/use-latest-matching-v31';
 import type { MatchDetails, OpenMatch } from './types';
-import { Waiting, Error, LoadingSkeleton } from './ui';
+import { Error, LoadingSkeleton, Waiting } from './ui';
 import { Container } from './ui/container';
 import { InteractionNavigation } from './ui/nav';
 import { NotFound } from './ui/not-found';
 import { Partner } from './ui/partner';
-import { RematchLoading } from './ui/rematching';
 import { PendingApproval } from './ui/pending-approval';
 import { ProfilePhotoRejected } from './ui/profile-photo-rejected';
+import { RematchLoading } from './ui/rematching';
 
 const createDefaultWaitingMatch = (): MatchDetails => ({
 	type: 'waiting',
@@ -25,13 +28,21 @@ const createDefaultWaitingMatch = (): MatchDetails => ({
 });
 
 function IdleMatchTimerContent() {
-	const { match, isError, refetch } = useLatestMatching();
+	const { primary, secondary, refetch } = useLatestMatchingV31();
+	const match = primary;
 	const { value: accessToken } = useStorage<string | null>({
 		key: 'access-token',
 		initialValue: null,
 	});
 	const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
 	const { rematchingLoading, finishRematching, loading: realRematchingLoading } = useMatchLoading();
+	const setSecondary = useSecondaryMatch((s) => s.setSecondary);
+
+	// secondary 변경 시 전역 store 동기화 (home의 floating PeekSheet에서 사용)
+	useEffect(() => {
+		setSecondary(secondary ?? null);
+		return () => setSecondary(null);
+	}, [secondary, setSecondary]);
 
 	useEffect(() => {
 		if (rematchingLoading) {
@@ -74,10 +85,6 @@ function IdleMatchTimerContent() {
 	}
 
 	const renderContent = () => {
-		if (isError) {
-			return <Error />;
-		}
-
 		if (!match) {
 			return (
 				<Waiting
@@ -92,7 +99,13 @@ function IdleMatchTimerContent() {
 		switch (match.type) {
 			case 'open':
 			case 'rematching':
-				return <Partner match={match as OpenMatch} />;
+				return (
+					<Partner
+						match={match as OpenMatch}
+						category={match.category}
+						showCategoryBadge={!!secondary}
+					/>
+				);
 			case 'pending-approval':
 				return (
 					<PendingApproval
@@ -128,23 +141,42 @@ function IdleMatchTimerContent() {
 	};
 
 	const isPartnerView = match?.type === 'open' || match?.type === 'rematching';
-	const shouldShowGradient = !isPartnerView || isError;
+	const shouldShowGradient = !isPartnerView;
 
 	return (
 		<View>
 			<View style={styles.container}>
-				<Container gradientMode={shouldShowGradient}>{renderContent()}</Container>
+				<Container gradientMode={shouldShowGradient} category={match?.category}>
+					{renderContent()}
+				</Container>
 			</View>
 			<InteractionNavigation match={match} />
 		</View>
 	);
 }
 
-export default function IdleMatchTimer() {
+function MatchingErrorFallback({ resetErrorBoundary }: { resetErrorBoundary: () => void }) {
 	return (
-		<Suspense fallback={<LoadingSkeleton />}>
-			<IdleMatchTimerContent />
-		</Suspense>
+		<View style={styles.container}>
+			<Container gradientMode>
+				<Error onRetry={resetErrorBoundary} />
+			</Container>
+		</View>
+	);
+}
+
+export default function IdleMatchTimer() {
+	const queryClient = useQueryClient();
+	const handleReset = useCallback(() => {
+		queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'] });
+	}, [queryClient]);
+
+	return (
+		<ErrorBoundary FallbackComponent={MatchingErrorFallback} onReset={handleReset}>
+			<Suspense fallback={<LoadingSkeleton />}>
+				<IdleMatchTimerContent />
+			</Suspense>
+		</ErrorBoundary>
 	);
 }
 

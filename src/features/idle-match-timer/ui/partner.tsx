@@ -16,14 +16,18 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useMatchingBackground } from '../hooks';
 import { calculateTime } from '../services/calculate-time';
 import type { OpenMatch } from '../types';
+import type { MatchCategory } from '../types-v31';
+import { CategoryBadge } from './category-badge';
 import { sideStyle } from './constants';
 import Time from './time';
 
 type PartnerProps = {
 	match: OpenMatch;
+	category?: MatchCategory;
+	showCategoryBadge?: boolean;
 };
 
-export const Partner = ({ match }: PartnerProps) => {
+export const Partner = ({ match, category, showCategoryBadge }: PartnerProps) => {
 	const { partner } = match;
 	const { update } = useMatchingBackground();
 	const { t } = useTranslation();
@@ -86,6 +90,12 @@ export const Partner = ({ match }: PartnerProps) => {
 						<Time size="sm" key={`${char}-${index}`} value={char} />
 					))}
 			</View>
+
+			{showCategoryBadge && category && (
+				<View style={styles.categoryBadgeContainer}>
+					<CategoryBadge category={category} variant="overlay" />
+				</View>
+			)}
 
 			{partner?.external && (
 				<View style={styles.externalBadgeContainer}>
@@ -185,6 +195,9 @@ const styles = StyleSheet.create({
 	timerContainer: {
 		flexDirection: 'row',
 		gap: 2,
+	},
+	categoryBadgeContainer: {
+		marginTop: 4,
 	},
 	externalBadgeContainer: {
 		position: 'absolute',

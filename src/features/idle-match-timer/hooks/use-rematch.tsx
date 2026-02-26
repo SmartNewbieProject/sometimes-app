@@ -25,6 +25,8 @@ const useRematchingMutation = () =>
 	useMutation<RematchResponseV3>({
 		mutationFn: () => axiosClient.post('/v3/matching/rematch', {}, { timeout: REMATCH_TIMEOUT }),
 		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'] });
+			await queryClient.refetchQueries({ queryKey: ['latest-matching-v31'] });
 			await queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
 			await queryClient.refetchQueries({ queryKey: ['latest-matching-v2'] });
 			await queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
@@ -36,6 +38,8 @@ const useDevRematchingMutation = () =>
 	useMutation({
 		mutationFn: () => axiosClient.post('/matching/dev/auto-match'),
 		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'] });
+			await queryClient.refetchQueries({ queryKey: ['latest-matching-v31'] });
 			await queryClient.invalidateQueries({ queryKey: ['latest-matching-v2'] });
 			await queryClient.refetchQueries({ queryKey: ['latest-matching-v2'] });
 			await queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
