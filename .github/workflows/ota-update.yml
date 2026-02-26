@@ -1,0 +1,103 @@
+name: OTA Update
+
+on:
+  push:
+    branches:
+      - ota-deploy
+
+jobs:
+  ota-update:
+    name: EAS Update & Silent Push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 🏗️ Setup EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EAS_ACCESS_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🚀 Publish OTA update
+        run: |
+          eas update \
+            --channel production \
+            --message "OTA ${{ github.sha }}" \
+            --non-interactive
+
+      - name: 🔔 Trigger Silent Push (FCM Multicast)
+        run: |
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "x-admin-key: ${{ secrets.ADMIN_OTA_KEY }}" \
+            -d '{
+              "version": "${{ github.sha }}",
+              "channel": "production",
+              "targetPlatform": "all"
+            }' \
+            https://api.some-in-univ.com/admin/ota/notify)
+
+          echo "Response status: $RESPONSE"
+          if [ "$RESPONSE" != "200" ]; then
+            echo "::warning::OTA notify API returned $RESPONSE (EAS update itself succeeded)"
+          fi
+
+      - name: 📢 Notify Slack on Success
+        if: success()
+        run: |
+          curl -s -X POST \
+          -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+          -H "Content-type: application/json" \
+          --data '{
+            "channel": "#썸타임-github-알림",
+            "text": ":rocket: OTA 업데이트가 배포되었습니다!",
+            "username": "GitHub Bot",
+            "attachments": [
+              {
+                "color": "good",
+                "fields": [
+                  { "title": "채널", "value": "production", "short": true },
+                  { "title": "상태", "value": "성공", "short": true },
+                  { "title": "커밋", "value": "${{ github.sha }}", "short": true },
+                  { "title": "작성자", "value": "${{ github.actor }}", "short": true }
+                ]
+              }
+            ]
+          }' \
+          https://slack.com/api/chat.postMessage
+
+      - name: 📢 Notify Slack on Failure
+        if: failure()
+        run: |
+          curl -s -X POST \
+          -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+          -H "Content-type: application/json" \
+          --data '{
+            "channel": "#썸타임-github-알림",
+            "text": ":x: OTA 업데이트 실패",
+            "username": "GitHub Bot",
+            "attachments": [
+              {
+                "color": "danger",
+                "fields": [
+                  { "title": "채널", "value": "production", "short": true },
+                  { "title": "상태", "value": "실패", "short": true },
+                  { "title": "커밋", "value": "${{ github.sha }}", "short": true },
+                  { "title": "브랜치", "value": "${{ github.ref_name }}", "short": true }
+                ]
+              }
+            ]
+          }' \
+          https://slack.com/api/chat.postMessage
