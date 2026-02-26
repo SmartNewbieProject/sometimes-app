@@ -15,6 +15,9 @@ class MixpanelWeb implements MixpanelAdapter {
         debug: process.env.NODE_ENV === 'development',
         track_pageview: trackAutomaticEvents,
         persistence: 'localStorage',
+        record_sessions_percent: 100,
+        record_mask_all_text: true,
+        record_mask_all_inputs: true,
       });
       this.initialized = true;
       console.log('[Mixpanel Web] Initialized successfully');
