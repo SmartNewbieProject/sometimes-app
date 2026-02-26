@@ -1,12 +1,12 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { View, TouchableOpacity } from 'react-native';
-import { List, PenTool } from 'lucide-react-native';
-import { Text } from '@/src/shared/ui';
 import colors from '@/src/shared/constants/colors';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { questionCardStyles } from './envelope.styles';
+import { Text } from '@/src/shared/ui';
+import { List, PenTool } from 'lucide-react-native';
+import type React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TouchableOpacity, View } from 'react-native';
 import type { Question, QuestionType } from '../../types';
+import { questionCardStyles } from './envelope.styles';
 
 interface QuestionCardProps {
 	question?: string;
@@ -39,7 +39,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 		if (!questionText || typeof questionText !== 'string') {
 			return (
 				<Text size="xl" weight="bold" textColor="primary" style={questionCardStyles.questionText}>
-					질문을 불러오는 중...
+					{t('features.moment.question_detail.loading')}
 				</Text>
 			);
 		}
@@ -65,20 +65,13 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 	const supportsToggle = hasOptions;
 	const currentType = questionType; // 현재 UI 상태 기반으로 표시
 
-	// Debug logging
-	console.log('🎯 QuestionCard Debug:', {
-		hasOptions,
-		supportsToggle,
-		currentType,
-		questionData,
-		optionsCount: questionData?.options?.length || 0,
-	});
-
 	return (
 		<View style={questionCardStyles.container}>
 			<View style={questionCardStyles.badge}>
 				<Text size="xs" weight="bold" textColor="purple">
-					{canProceed ? 'From. 오늘의 질문' : t('common.질문에_대답했어요')}
+					{canProceed
+						? t('features.moment.question_detail.from_today')
+						: t('common.질문에_대답했어요')}
 				</Text>
 			</View>
 
@@ -99,7 +92,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 								textColor="muted"
 								style={questionCardStyles.toggleText}
 							>
-								보기 선택
+								{t('features.moment.question_detail.toggle_choice')}
 							</Text>
 						</>
 					) : (
@@ -111,7 +104,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 								textColor="muted"
 								style={questionCardStyles.toggleText}
 							>
-								직접 입력
+								{t('features.moment.question_detail.toggle_text')}
 							</Text>
 						</>
 					)}

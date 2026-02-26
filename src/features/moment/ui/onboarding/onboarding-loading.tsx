@@ -2,8 +2,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import type { DimensionValue } from 'react-native';
+import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 import Animated, {
+	Easing,
 	useSharedValue,
 	useAnimatedStyle,
 	withRepeat,
@@ -18,6 +20,9 @@ import { useMomentOnboarding } from '../../hooks/use-moment-onboarding';
 import { useSubmitOnboardingMutation } from '../../queries/onboarding';
 import { MOMENT_ONBOARDING_KEYS } from './keys';
 
+// ============================================
+// Bouncing Dot
+// ============================================
 const BouncingDot = ({ delay }: { delay: number }) => {
 	const translateY = useSharedValue(0);
 	const opacity = useSharedValue(0.4);
@@ -47,6 +52,114 @@ const BouncingDot = ({ delay }: { delay: number }) => {
 	return <Animated.View style={[styles.dot, animatedStyle]} />;
 };
 
+// ============================================
+// Floating Particle (Intro와 동일 패턴)
+// ============================================
+interface ParticleConfig {
+	emoji: string;
+	size: number;
+	color: string;
+	top: DimensionValue;
+	left: DimensionValue;
+	delay: number;
+	duration: number;
+}
+
+const FloatingParticle = ({ emoji, size, color, top, left, delay, duration }: ParticleConfig) => {
+	const translateY = useSharedValue(0);
+	const opacity = useSharedValue(0);
+
+	useEffect(() => {
+		AccessibilityInfo.isReduceMotionEnabled().then((reduceMotion) => {
+			opacity.value = withDelay(delay, withTiming(1, { duration: 600 }));
+			if (!reduceMotion) {
+				translateY.value = withDelay(
+					delay,
+					withRepeat(
+						withSequence(
+							withTiming(-12, { duration, easing: Easing.inOut(Easing.ease) }),
+							withTiming(12, { duration, easing: Easing.inOut(Easing.ease) }),
+						),
+						-1,
+						true,
+					),
+				);
+			}
+		});
+	}, [delay, duration, translateY, opacity]);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ translateY: translateY.value }],
+		opacity: opacity.value,
+	}));
+
+	return (
+		<Animated.Text style={[styles.particle, { top, left, fontSize: size, color }, animatedStyle]}>
+			{emoji}
+		</Animated.Text>
+	);
+};
+
+const PARTICLES: ParticleConfig[] = [
+	{
+		emoji: '\u2665',
+		size: 18,
+		color: '#FF6B9D',
+		top: '18%',
+		left: '12%',
+		delay: 0,
+		duration: 3000,
+	},
+	{
+		emoji: '\u2726',
+		size: 14,
+		color: '#FFD700',
+		top: '15%',
+		left: '78%',
+		delay: 400,
+		duration: 3500,
+	},
+	{
+		emoji: '\u2665',
+		size: 12,
+		color: '#E2D5FF',
+		top: '70%',
+		left: '82%',
+		delay: 800,
+		duration: 4000,
+	},
+	{
+		emoji: '\u2726',
+		size: 16,
+		color: '#FF6B9D',
+		top: '65%',
+		left: '8%',
+		delay: 1200,
+		duration: 3200,
+	},
+	{
+		emoji: '\u2665',
+		size: 10,
+		color: '#FFD700',
+		top: '25%',
+		left: '88%',
+		delay: 600,
+		duration: 3800,
+	},
+	{
+		emoji: '\u2726',
+		size: 13,
+		color: '#E2D5FF',
+		top: '75%',
+		left: '45%',
+		delay: 1000,
+		duration: 4200,
+	},
+];
+
+// ============================================
+// Main Component
+// ============================================
 export const OnboardingLoading = () => {
 	const { t } = useTranslation();
 	const { emitToast } = useToast();
@@ -54,6 +167,10 @@ export const OnboardingLoading = () => {
 	const submitMutation = useSubmitOnboardingMutation();
 
 	const hasSubmitted = useRef(false);
+
+	useEffect(() => {
+		AccessibilityInfo.announceForAccessibility(t(MOMENT_ONBOARDING_KEYS.loading.message));
+	}, [t]);
 
 	useEffect(() => {
 		if (hasSubmitted.current) return;
@@ -85,12 +202,10 @@ export const OnboardingLoading = () => {
 				style={styles.gradient}
 			/>
 
-			{/* 하트 파티클 장식 */}
-			<View style={styles.heartParticle}>
-				<Text size="14" style={{ opacity: 0.7, color: '#E2D5FF' }}>
-					{'♥'}
-				</Text>
-			</View>
+			{/* Floating Particles */}
+			{PARTICLES.map((p) => (
+				<FloatingParticle key={`${p.emoji}-${p.delay}`} {...p} />
+			))}
 
 			<View style={styles.content}>
 				<Text size="18" weight="semibold" style={styles.message}>
@@ -115,6 +230,10 @@ const styles = StyleSheet.create({
 	gradient: {
 		...StyleSheet.absoluteFillObject,
 	},
+	particle: {
+		position: 'absolute',
+		zIndex: 1,
+	},
 	content: {
 		flex: 1,
 		justifyContent: 'center',
@@ -133,10 +252,5 @@ const styles = StyleSheet.create({
 		height: 8,
 		borderRadius: 4,
 		backgroundColor: '#7A4AE2',
-	},
-	heartParticle: {
-		position: 'absolute',
-		top: '30%',
-		right: '20%',
 	},
 });

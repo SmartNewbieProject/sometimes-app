@@ -23,10 +23,13 @@ export const OnboardingTextInput = ({
 				value={value}
 				onChangeText={onChange}
 				placeholder={placeholder}
-				placeholderTextColor="#999999"
+				placeholderTextColor="#767676"
 				multiline
 				maxLength={maxLength}
 				textAlignVertical="top"
+				accessibilityLabel={placeholder}
+				accessibilityHint={`최대 ${maxLength}자 입력 가능`}
+				returnKeyType="default"
 			/>
 			<View style={styles.charCount}>
 				<Text size="12" weight="normal" textColor="gray">

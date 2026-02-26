@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
 
 // =======================
 // Questions API 타입
@@ -7,29 +7,31 @@ import { useTranslation } from 'react-i18next';
 
 // Raw API response types (matching server response)
 export const RawPersonalityDimension = z.enum([
-  'extraversion',
-  'openness',
-  'conscientiousness',
-  'agreeableness',
-  'neuroticism'
+	'extraversion',
+	'openness',
+	'conscientiousness',
+	'agreeableness',
+	'neuroticism',
 ]);
 
 export type RawPersonalityDimension = z.infer<typeof RawPersonalityDimension>;
 
 // Internal processed types (converting to uppercase for consistency)
 export const PersonalityDimension = z.enum([
-  'EXTRAVERSION',
-  'OPENNESS',
-  'CONSCIENTIOUSNESS',
-  'AGREEABLENESS',
-  'NEUROTICISM'
+	'EXTRAVERSION',
+	'OPENNESS',
+	'CONSCIENTIOUSNESS',
+	'AGREEABLENESS',
+	'NEUROTICISM',
 ]);
 
 export type PersonalityDimension = z.infer<typeof PersonalityDimension>;
 
 // Helper function to convert raw dimension to internal format
-export const convertRawDimension = (rawDimension: RawPersonalityDimension): PersonalityDimension => {
-  return rawDimension.toUpperCase() as PersonalityDimension;
+export const convertRawDimension = (
+	rawDimension: RawPersonalityDimension,
+): PersonalityDimension => {
+	return rawDimension.toUpperCase() as PersonalityDimension;
 };
 
 export const QuestionType = z.enum(['single_choice']);
@@ -37,99 +39,107 @@ export const QuestionType = z.enum(['single_choice']);
 export type QuestionType = z.infer<typeof QuestionType>;
 
 export const QuestionOption = z.object({
-  id: z.string(),
-  text: z.string(),
+	id: z.string(),
+	text: z.string(),
 });
 
 export type QuestionOption = z.infer<typeof QuestionOption>;
 
 // Raw question type matching server response
 export const RawQuestion = z.object({
-  questionId: z.string(),
-  text: z.string(),
-  dimension: RawPersonalityDimension,
-  type: z.string(), // Server returns "common.선택형" instead of "single_choice"
-  options: z.array(QuestionOption),
-  dayOfWeek: z.number(),
-  isAnswered: z.boolean(),
-  remainingQuestions: z.number(),
+	questionId: z.string(),
+	text: z.string(),
+	dimension: RawPersonalityDimension,
+	type: z.string(), // Server returns "common.선택형" instead of "single_choice"
+	options: z.array(QuestionOption),
+	dayOfWeek: z.number(),
+	isAnswered: z.boolean(),
+	remainingQuestions: z.number(),
 });
 
 export type RawQuestion = z.infer<typeof RawQuestion>;
 
 // Processed question type for internal use
 export const Question = z.object({
-  id: z.string(),
-  text: z.string(),
-  dimension: PersonalityDimension,
-  type: QuestionType,
-  options: z.array(QuestionOption),
-  dayOfWeek: z.number(),
-  week: z.number(),
-  year: z.number(),
+	id: z.string(),
+	text: z.string(),
+	dimension: PersonalityDimension,
+	type: QuestionType,
+	options: z.array(QuestionOption),
+	dayOfWeek: z.number(),
+	week: z.number(),
+	year: z.number(),
 });
 
 export type Question = z.infer<typeof Question>;
 
 // Helper function to convert raw question to internal format
 export const convertRawQuestion = (rawQuestion: RawQuestion, weekInfo: WeekInfo): Question => {
-  // Convert server type to internal enum
-  // Handle both Korean "common.선택형" and other possible types
-  let questionType: 'single_choice' = 'single_choice';
+	// Convert server type to internal enum
+	// Handle both Korean "common.선택형" and other possible types
+	let questionType = 'single_choice' as const;
 
-  if (rawQuestion.type === "common.선택형" || rawQuestion.type === 'single_choice' || rawQuestion.type === "common.선택지") {
-    questionType = 'single_choice';
-  } else if (rawQuestion.type === "common.주관식" || rawQuestion.type === 'text' || rawQuestion.type === "common.텍스트") {
-    // Future: support text input questions
-    questionType = 'single_choice'; // For now, default to single choice
-  }
+	if (
+		rawQuestion.type === 'common.선택형' ||
+		rawQuestion.type === 'single_choice' ||
+		rawQuestion.type === 'common.선택지'
+	) {
+		questionType = 'single_choice';
+	} else if (
+		rawQuestion.type === 'common.주관식' ||
+		rawQuestion.type === 'text' ||
+		rawQuestion.type === 'common.텍스트'
+	) {
+		// Future: support text input questions
+		questionType = 'single_choice'; // For now, default to single choice
+	}
 
-  return {
-    id: rawQuestion.questionId,
-    text: rawQuestion.text,
-    dimension: convertRawDimension(rawQuestion.dimension),
-    type: questionType, // Dynamic type conversion
-    options: rawQuestion.options,
-    dayOfWeek: rawQuestion.dayOfWeek,
-    week: weekInfo.week,
-    year: weekInfo.year,
-  };
+	return {
+		id: rawQuestion.questionId,
+		text: rawQuestion.text,
+		dimension: convertRawDimension(rawQuestion.dimension),
+		type: questionType, // Dynamic type conversion
+		options: rawQuestion.options,
+		dayOfWeek: rawQuestion.dayOfWeek,
+		week: weekInfo.week,
+		year: weekInfo.year,
+	};
 };
 
 export const WeekInfo = z.object({
-  week: z.number(),
-  year: z.number(),
-  dayOfWeek: z.number(),
+	week: z.number(),
+	year: z.number(),
+	dayOfWeek: z.number(),
 });
 
 export type WeekInfo = z.infer<typeof WeekInfo>;
 
 // Raw daily question response matching server API structure
 export const RawDailyQuestionResponse = z.object({
-  success: z.boolean(),
-  data: RawQuestion,
-  timestamp: z.string(),
-  requestId: z.string(),
+	success: z.boolean(),
+	data: RawQuestion,
+	timestamp: z.string(),
+	requestId: z.string(),
 });
 
 export type RawDailyQuestionResponse = z.infer<typeof RawDailyQuestionResponse>;
 
 // Processed daily question response for internal use
 export const DailyQuestionResponse = z.object({
-  question: Question,
-  weekInfo: WeekInfo,
+	question: Question,
+	weekInfo: WeekInfo,
 });
 
 export type DailyQuestionResponse = z.infer<typeof DailyQuestionResponse>;
 
 export const QuestionHistoryResponse = z.object({
-  questions: z.array(Question),
+	questions: z.array(Question),
 });
 
 export type QuestionHistoryResponse = z.infer<typeof QuestionHistoryResponse>;
 
 export const LatestQuestionsResponse = z.object({
-  questions: z.array(Question),
+	questions: z.array(Question),
 });
 
 export type LatestQuestionsResponse = z.infer<typeof LatestQuestionsResponse>;
@@ -138,55 +148,57 @@ export type LatestQuestionsResponse = z.infer<typeof LatestQuestionsResponse>;
 // Answers API 타입
 // =======================
 
-export const SubmitAnswerRequest = z.object({
-  questionId: z.string(),
-  answerText: z.string().optional(),
-  answerOptionId: z.string().optional(),
-  responseTimeSeconds: z.number(),
-}).refine((data) => data.answerText || data.answerOptionId, {
-  message: 'answerText 또는 answerOptionId 중 하나는 필수입니다',
-});
+export const SubmitAnswerRequest = z
+	.object({
+		questionId: z.string(),
+		answerText: z.string().optional(),
+		answerOptionId: z.string().optional(),
+		responseTimeSeconds: z.number(),
+	})
+	.refine((data) => data.answerText || data.answerOptionId, {
+		message: 'answerText 또는 answerOptionId 중 하나는 필수입니다',
+	});
 
 export type SubmitAnswerRequest = z.infer<typeof SubmitAnswerRequest>;
 
 export const Answer = z.object({
-  id: z.string(),
-  userId: z.string(),
-  questionId: z.string(),
-  answerText: z.string().optional(),
-  answerOptionId: z.string().optional(),
-  responseTimeSeconds: z.number(),
-  answeredAt: z.string(),
-  sequenceNumber: z.number(),
+	id: z.string(),
+	userId: z.string(),
+	questionId: z.string(),
+	answerText: z.string().optional(),
+	answerOptionId: z.string().optional(),
+	responseTimeSeconds: z.number(),
+	answeredAt: z.string(),
+	sequenceNumber: z.number(),
 });
 
 export type Answer = z.infer<typeof Answer>;
 
 // 새로운 API 응답 타입 (성공)
 export const SubmitAnswerResponse = z.object({
-  id: z.string(),
+	id: z.string(),
 });
 
 export type SubmitAnswerResponse = z.infer<typeof SubmitAnswerResponse>;
 
 // API 에러 응답 타입
 export const SubmitAnswerErrorResponse = z.object({
-  error: z.boolean(),
-  message: z.string(),
-  blockedReason: z.string().optional(),
-  suggestedAction: z.string().optional(),
+	error: z.boolean(),
+	message: z.string(),
+	blockedReason: z.string().optional(),
+	suggestedAction: z.string().optional(),
 });
 
 export type SubmitAnswerErrorResponse = z.infer<typeof SubmitAnswerErrorResponse>;
 
 export const GetAnswersResponse = z.object({
-  answers: z.array(Answer),
+	answers: z.array(Answer),
 });
 
 export type GetAnswersResponse = z.infer<typeof GetAnswersResponse>;
 
 export const WeeklyAnswersResponse = z.object({
-  answers: z.array(Answer),
+	answers: z.array(Answer),
 });
 
 export type WeeklyAnswersResponse = z.infer<typeof WeeklyAnswersResponse>;
@@ -200,10 +212,10 @@ export const ReportStatus = z.enum(['in_progress', 'completed', 'failed']);
 export type ReportStatus = z.infer<typeof ReportStatus>;
 
 export const GenerateReportResponse = z.object({
-  reportId: z.string(),
-  week: z.number(),
-  year: z.number(),
-  status: ReportStatus,
+	reportId: z.string(),
+	week: z.number(),
+	year: z.number(),
+	status: ReportStatus,
 });
 
 export type GenerateReportResponse = z.infer<typeof GenerateReportResponse>;
@@ -213,71 +225,71 @@ export const DimensionScores = z.record(PersonalityDimension, z.number());
 export type DimensionScores = z.infer<typeof DimensionScores>;
 
 export const ReportStatistics = z.object({
-  totalAnswers: z.number(),
-  averageResponseTime: z.number(),
-  completionRate: z.number(),
-  dimensions: DimensionScores,
+	totalAnswers: z.number(),
+	averageResponseTime: z.number(),
+	completionRate: z.number(),
+	dimensions: DimensionScores,
 });
 
 export type ReportStatistics = z.infer<typeof ReportStatistics>;
 
 export const ReportNarrative = z.object({
-  title: z.string(),
-  summary: z.string(),
-  highlights: z.array(z.string()),
-  insights: z.array(z.string()),
+	title: z.string(),
+	summary: z.string(),
+	highlights: z.array(z.string()),
+	insights: z.array(z.string()),
 });
 
 export type ReportNarrative = z.infer<typeof ReportNarrative>;
 
 export const Report = z.object({
-  id: z.string(),
-  userId: z.string(),
-  week: z.number(),
-  year: z.number(),
-  narrative: ReportNarrative,
-  statistics: ReportStatistics,
-  generatedAt: z.string(),
+	id: z.string(),
+	userId: z.string(),
+	week: z.number(),
+	year: z.number(),
+	narrative: ReportNarrative,
+	statistics: ReportStatistics,
+	generatedAt: z.string(),
 });
 
 export type Report = z.infer<typeof Report>;
 
 // Legacy/UI Weekly Report Types (for backward compatibility with UI components)
 export interface LegacyStatItem {
-  category: string;
-  currentScore: number;
-  prevScore: number;
-  status: 'INCREASE' | 'DECREASE' | 'MAINTAIN';
+	category: string;
+	currentScore: number;
+	prevScore: number;
+	status: 'INCREASE' | 'DECREASE' | 'MAINTAIN';
 }
 
 export interface InsightItem {
-  category: string;
-  score?: number;
-  definition?: string;
-  feedback?: string;
-  text?: string;
+	category: string;
+	score?: number;
+	definition?: string;
+	feedback?: string;
+	text?: string;
 }
 
 export interface UIWeeklyReport {
-  id: string;
-  userId: string;
-  weekNumber: number;
-  year: number;
-  title: string;
-  subTitle: string;
-  generatedAt: string;
-  stats?: LegacyStatItem[];
-  insights?: InsightItem[];
-  keywords?: string[];
-  sentimentScore?: number;
-  reports?: UIWeeklyReport[];
+	id: string;
+	userId: string;
+	weekNumber: number;
+	year: number;
+	title: string;
+	subTitle: string;
+	generatedAt: string;
+	stats?: LegacyStatItem[];
+	insights?: InsightItem[];
+	keywords?: string[];
+	sentimentScore?: number;
+	reports?: UIWeeklyReport[];
 }
 
 export const WeeklyReportResponse = z.object({
-  success: z.boolean(),
-  data: Report,
-  timestamp: z.string().optional(),
-  requestId: z.string().optional(),
+	success: z.boolean(),
+	data: Report,
+	timestamp: z.string().optional(),
+	requestId: z.string().optional(),
 });
 
 export type WeeklyReportResponse = z.infer<typeof WeeklyReportResponse>;
@@ -286,7 +298,7 @@ export type WeeklyReportResponse = z.infer<typeof WeeklyReportResponse>;
 export type UIWeeklyReportResponse = UIWeeklyReport | WeeklyReportResponse;
 
 export const ReportHistoryResponse = z.object({
-  reports: z.array(Report),
+	reports: z.array(Report),
 });
 
 export type ReportHistoryResponse = z.infer<typeof ReportHistoryResponse>;
@@ -295,49 +307,51 @@ export type ReportHistory = Report;
 
 // 새로운 API 스펙에 맞는 최신 리포트 응답 타입
 export const RadarDataItem = z.object({
-  color: z.string(),
-  value: z.number(),
-  fullMark: z.number(),
-  dimension: z.string(),
-  percentile: z.number(),
+	color: z.string(),
+	value: z.number(),
+	fullMark: z.number(),
+	dimension: z.string(),
+	percentile: z.number(),
 });
 
 export type RadarDataItem = z.infer<typeof RadarDataItem>;
 
 export const UserTitle = z.object({
-  title: z.string(),
-  subTitle: z.string(),
-  imageUrl: z.string().optional(),
-  generatedAt: z.string(),
+	title: z.string(),
+	subTitle: z.string(),
+	imageUrl: z.string().optional(),
+	generatedAt: z.string(),
 });
 
 export type UserTitle = z.infer<typeof UserTitle>;
 
 export const LatestReport = z.object({
-  id: z.string(),
-  userId: z.string(),
-  weekNumber: z.number(),  // API는 weekNumber 필드 사용
-  year: z.number(),
-  totalAnswers: z.number(),
-  dimensionScores: z.record(z.string(), z.number()),
-  insights: z.array(z.string()),
-  keywords: z.array(z.string()),
-  radarData: z.array(RadarDataItem),
-  characterAnalysis: z.object({
-    persona: z.string()
-  }).optional(),
-  persona: z.string(),
-  summaryText: z.string(),
-  userTitles: z.array(UserTitle),
-  dominantDimension: z.string(),
-  growthAreas: z.array(z.string()),
-  reportType: z.string(),
-  migrationStatus: z.string(),
-  reportStatus: z.string(),
-  aiModelVersion: z.string(),
-  generationError: z.string().nullable(),
-  updatedAt: z.string(),
-  createdAt: z.string(),
+	id: z.string(),
+	userId: z.string(),
+	weekNumber: z.number(), // API는 weekNumber 필드 사용
+	year: z.number(),
+	totalAnswers: z.number(),
+	dimensionScores: z.record(z.string(), z.number()),
+	insights: z.array(z.string()),
+	keywords: z.array(z.string()),
+	radarData: z.array(RadarDataItem),
+	characterAnalysis: z
+		.object({
+			persona: z.string(),
+		})
+		.optional(),
+	persona: z.string(),
+	summaryText: z.string(),
+	userTitles: z.array(UserTitle),
+	dominantDimension: z.string(),
+	growthAreas: z.array(z.string()),
+	reportType: z.string(),
+	migrationStatus: z.string(),
+	reportStatus: z.string(),
+	aiModelVersion: z.string(),
+	generationError: z.string().nullable(),
+	updatedAt: z.string(),
+	createdAt: z.string(),
 });
 
 export type LatestReport = z.infer<typeof LatestReport>;
@@ -346,9 +360,9 @@ export const LatestReportResponse = LatestReport;
 
 // 에러 응답 타입
 export const LatestReportErrorResponse = z.object({
-  success: z.literal(false),
-  message: z.string(),
-  data: z.literal(null),
+	success: z.literal(false),
+	message: z.string(),
+	data: z.literal(null),
 });
 
 export type LatestReportErrorResponse = z.infer<typeof LatestReportErrorResponse>;
@@ -359,50 +373,50 @@ export type LatestReportErrorResponse = z.infer<typeof LatestReportErrorResponse
 
 // Full profile sync request (for complete profile updates)
 export const FullSyncProfileRequest = z.object({
-  mbti: z.string(),
-  hobbies: z.array(z.string()),
-  interests: z.array(z.string()),
-  introduction: z.string(),
+	mbti: z.string(),
+	hobbies: z.array(z.string()),
+	interests: z.array(z.string()),
+	introduction: z.string(),
 });
 
 export type FullSyncProfileRequest = z.infer<typeof FullSyncProfileRequest>;
 
 // Legacy/UI sync request (for partial keyword/introduction sync)
 export const SyncProfileRequest = z.object({
-  syncKeywords: z.boolean().optional(),
-  syncIntroduction: z.boolean().optional(),
-  mbti: z.string().optional(),
-  hobbies: z.array(z.string()).optional(),
-  interests: z.array(z.string()).optional(),
-  introduction: z.string().optional(),
+	syncKeywords: z.boolean().optional(),
+	syncIntroduction: z.boolean().optional(),
+	mbti: z.string().optional(),
+	hobbies: z.array(z.string()).optional(),
+	interests: z.array(z.string()).optional(),
+	introduction: z.string().optional(),
 });
 
 export type SyncProfileRequest = z.infer<typeof SyncProfileRequest>;
 
 export const Profile = z.object({
-  userId: z.string(),
-  syncStatus: z.enum(['completed', 'pending', 'failed']),
-  lastSyncAt: z.string(),
-  embeddingsGenerated: z.boolean(),
-  updatedFields: z.array(z.string()),
+	userId: z.string(),
+	syncStatus: z.enum(['completed', 'pending', 'failed']),
+	lastSyncAt: z.string(),
+	embeddingsGenerated: z.boolean(),
+	updatedFields: z.array(z.string()),
 });
 
 export type Profile = z.infer<typeof Profile>;
 
 export const SyncProfileResponse = z.object({
-  profile: Profile.optional(),
-  syncedKeywords: z.array(z.string()).optional(),
-  syncedIntroduction: z.string().optional(),
-  success: z.boolean().optional(),
+	profile: Profile.optional(),
+	syncedKeywords: z.array(z.string()).optional(),
+	syncedIntroduction: z.string().optional(),
+	success: z.boolean().optional(),
 });
 
 export type SyncProfileResponse = z.infer<typeof SyncProfileResponse>;
 
 export const SyncStatusResponse = z.object({
-  status: z.string(),
-  syncStatus: z.string().optional(),
-  lastSyncAt: z.string(),
-  pendingFields: z.array(z.string()),
+	status: z.string(),
+	syncStatus: z.string().optional(),
+	lastSyncAt: z.string(),
+	pendingFields: z.array(z.string()),
 });
 
 export type SyncStatusResponse = z.infer<typeof SyncStatusResponse>;
@@ -412,25 +426,26 @@ export type SyncStatusResponse = z.infer<typeof SyncStatusResponse>;
 // =======================
 
 export const ApiError = z.object({
-  code: z.string(),
-  message: z.string(),
-  details: z.record(z.any()).optional(),
+	code: z.string(),
+	message: z.string(),
+	details: z.record(z.any()).optional(),
 });
 
 export type ApiError = z.infer<typeof ApiError>;
 
-export const ApiResponse = <T = any>(data: z.Schema<T>) => z.object({
-  success: z.boolean(),
-  data: data.optional(),
-  error: ApiError.optional(),
-  message: z.string().optional(),
-});
+export const ApiResponse = <T = any>(data: z.Schema<T>) =>
+	z.object({
+		success: z.boolean(),
+		data: data.optional(),
+		error: ApiError.optional(),
+		message: z.string().optional(),
+	});
 
 export type ApiResponse<T = any> = {
-  success: boolean;
-  data?: T;
-  error?: ApiError;
-  message?: string;
+	success: boolean;
+	data?: T;
+	error?: ApiError;
+	message?: string;
 };
 
 // =======================
@@ -438,19 +453,21 @@ export type ApiResponse<T = any> = {
 // =======================
 
 export const PaginationParams = z.object({
-  limit: z.number().min(1).max(100),
-  offset: z.number().min(0),
+	limit: z.number().min(1).max(100),
+	offset: z.number().min(0),
 });
 
 export type PaginationParams = z.infer<typeof PaginationParams>;
 
-export const ReportParams = z.object({
-  week: z.number().min(1).max(53).optional(),
-  weekNumber: z.number().min(1).max(53).optional(),
-  year: z.number().min(2024),
-}).refine((data) => data.week !== undefined || data.weekNumber !== undefined, {
-  message: 'week 또는 weekNumber 중 하나는 필수입니다',
-});
+export const ReportParams = z
+	.object({
+		week: z.number().min(1).max(53).optional(),
+		weekNumber: z.number().min(1).max(53).optional(),
+		year: z.number().min(2024),
+	})
+	.refine((data) => data.week !== undefined || data.weekNumber !== undefined, {
+		message: 'week 또는 weekNumber 중 하나는 필수입니다',
+	});
 
 export type ReportParams = z.infer<typeof ReportParams>;
 
@@ -471,8 +488,8 @@ export const WeeklyReportParams = ReportParams;
 export type WeeklyReportParams = z.infer<typeof WeeklyReportParams>;
 
 export const ReportHistoryParams = z.object({
-  page: z.number().min(1),
-  limit: z.number().min(1).max(100),
+	page: z.number().min(1),
+	limit: z.number().min(1).max(100),
 });
 
 export type ReportHistoryParams = z.infer<typeof ReportHistoryParams>;
@@ -482,63 +499,64 @@ export type ReportHistoryParams = z.infer<typeof ReportHistoryParams>;
 // =======================
 
 export interface MomentSlide {
-  id: string;
-  imageUrl: string | number;
-  imageType: 'local' | 'remote';
-  title?: string;
-  link?: string;
-  externalLink?: string;
-  order?: number;
-  category?: string;
+	id: string;
+	imageUrl: string | number;
+	imageType: 'local' | 'remote';
+	title?: string;
+	link?: string;
+	externalLink?: string;
+	order?: number;
+	category?: string;
 }
 
 export interface MomentSlidesProps {
-  items: MomentSlide[];
-  autoPlayInterval?: number;
-  height: number;
+	items: MomentSlide[];
+	autoPlayInterval?: number;
+	height: number;
 }
 
 export interface MomentNavigationItem {
-  id: string;
-  title?: string;
-  titleComponent?: React.ReactNode;
-  description?: string;
-  descriptionKey?: string;
-  backgroundImageUrl?: string | number;
-  imageSize?: number;
-  isReady?: boolean;
-  disabledText?: string;
-  disabledTextKey?: string;
-  disabledMessage?: string;
-  disabledMessageKey?: string;
-  onPress: () => void;
-  width?: number;
+	id: string;
+	title?: string;
+	titleKey?: string;
+	titleComponent?: React.ReactNode;
+	description?: string;
+	descriptionKey?: string;
+	backgroundImageUrl?: string | number;
+	imageSize?: number;
+	isReady?: boolean;
+	disabledText?: string;
+	disabledTextKey?: string;
+	disabledMessage?: string;
+	disabledMessageKey?: string;
+	onPress: () => void;
+	width?: number;
 }
 
 export type MomentNavigationHeight = 'lg' | 'md';
 
 export interface MomentNavigationProps {
-  items: MomentNavigationItem[];
-  itemHeight: MomentNavigationHeight;
-  itemsPerRow: number;
+	items: MomentNavigationItem[];
+	itemHeight: MomentNavigationHeight;
+	itemsPerRow: number;
 }
 
 export interface MomentReport {
-  id: string;
-  weekNumber: number;
-  year: number;
-  keywords: string[];
-  title: string;
-  subTitle: string;
-  description: string;
-  imageUrl: string;
-  generatedAt: string;
+	id: string;
+	weekNumber: number;
+	year: number;
+	keywords: string[];
+	title: string;
+	subTitle: string;
+	description: string;
+	imageUrl: string;
+	generatedAt: string;
 }
 
 export interface MomentReportResponse {
-  success: boolean;
-  message: string;
-  data: MomentReport | null;
+	success: boolean;
+	message: string;
+	data: MomentReport | null;
 }
 
 // =======================
@@ -547,9 +565,9 @@ export interface MomentReportResponse {
 
 // 온보딩 상태 응답
 export const OnboardingStatusResponse = z.object({
-  needsOnboarding: z.boolean(),
-  hasSkipped: z.boolean(),
-  totalReports: z.number(),
+	needsOnboarding: z.boolean(),
+	hasSkipped: z.boolean(),
+	totalReports: z.number(),
 });
 
 export type OnboardingStatusResponse = z.infer<typeof OnboardingStatusResponse>;
@@ -561,90 +579,92 @@ export type OnboardingQuestionType = z.infer<typeof OnboardingQuestionType>;
 
 // 온보딩 질문 선택지
 export const OnboardingQuestionOption = z.object({
-  id: z.string(),
-  text: z.string(),
+	id: z.string(),
+	text: z.string(),
 });
 
 export type OnboardingQuestionOption = z.infer<typeof OnboardingQuestionOption>;
 
 // 온보딩 질문
 export const OnboardingQuestion = z.object({
-  id: z.string(),
-  text: z.string(),
-  type: OnboardingQuestionType,
-  dimension: RawPersonalityDimension,
-  order: z.number(),
-  options: z.array(OnboardingQuestionOption).optional(),
-  placeholder: z.string().optional(),
-  maxLength: z.number().optional(),
+	id: z.string(),
+	text: z.string(),
+	type: OnboardingQuestionType,
+	dimension: RawPersonalityDimension,
+	order: z.number(),
+	options: z.array(OnboardingQuestionOption).optional(),
+	placeholder: z.string().optional(),
+	maxLength: z.number().optional(),
 });
 
 export type OnboardingQuestion = z.infer<typeof OnboardingQuestion>;
 
 // 온보딩 질문 목록 응답
 export const OnboardingQuestionsResponse = z.object({
-  questions: z.array(OnboardingQuestion),
-  totalQuestions: z.number(),
+	questions: z.array(OnboardingQuestion),
+	totalQuestions: z.number(),
 });
 
 export type OnboardingQuestionsResponse = z.infer<typeof OnboardingQuestionsResponse>;
 
 // 온보딩 답변
 export interface OnboardingAnswer {
-  questionId: string;
-  answer: string;
-  optionId?: string;
+	questionId: string;
+	answer: string;
+	optionId?: string;
 }
 
 // 온보딩 답변 제출 요청
 export const OnboardingSubmitRequest = z.object({
-  answers: z.array(z.object({
-    questionId: z.string(),
-    answer: z.string(),
-    optionId: z.string().optional(),
-  })),
+	answers: z.array(
+		z.object({
+			questionId: z.string(),
+			answer: z.string(),
+			optionId: z.string().optional(),
+		}),
+	),
 });
 
 export type OnboardingSubmitRequest = z.infer<typeof OnboardingSubmitRequest>;
 
 // 온보딩 리포트 타이틀 정보
 export const OnboardingReportTitleInfo = z.object({
-  title: z.string(),
-  subTitle: z.string(),
-  imageUrl: z.string(),
+	title: z.string(),
+	subTitle: z.string(),
+	imageUrl: z.string(),
 });
 
 export type OnboardingReportTitleInfo = z.infer<typeof OnboardingReportTitleInfo>;
 
 // 온보딩 제출로 생성된 리포트
 export const OnboardingReport = z.object({
-  id: z.string(),
-  weekOfYear: z.number(),
-  year: z.number(),
-  narrativeSections: z.array(z.any()),
-  storyFlow: z.any(),
-  dimensionScores: z.record(z.string(), z.number()),
-  titleInfo: OnboardingReportTitleInfo,
-  reportType: z.string(),
-  createdAt: z.string(),
+	id: z.string(),
+	weekOfYear: z.number(),
+	year: z.number(),
+	narrativeSections: z.array(z.any()),
+	storyFlow: z.any(),
+	dimensionScores: z.record(z.string(), z.number()),
+	titleInfo: OnboardingReportTitleInfo,
+	reportType: z.string(),
+	createdAt: z.string(),
 });
 
 export type OnboardingReport = z.infer<typeof OnboardingReport>;
 
 // 온보딩 제출 응답
 export const OnboardingSubmitResponse = z.object({
-  success: z.boolean(),
-  reportId: z.string(),
-  message: z.string(),
-  report: OnboardingReport,
+	success: z.boolean(),
+	reportId: z.string(),
+	message: z.string(),
+	report: OnboardingReport,
 });
 
 export type OnboardingSubmitResponse = z.infer<typeof OnboardingSubmitResponse>;
 
 // 온보딩 스킵 응답
 export const OnboardingSkipResponse = z.object({
-  success: z.boolean(),
-  message: z.string(),
+	success: z.boolean(),
+	message: z.string(),
 });
 
 export type OnboardingSkipResponse = z.infer<typeof OnboardingSkipResponse>;

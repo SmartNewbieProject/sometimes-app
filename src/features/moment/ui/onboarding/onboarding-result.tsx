@@ -1,8 +1,17 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useMemo } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react-native';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
+import {
+	Dimensions,
+	Image,
+	LayoutAnimation,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Polygon, Line, Text as SvgText, Circle } from 'react-native-svg';
 
@@ -14,13 +23,22 @@ import { MOMENT_ONBOARDING_KEYS } from './keys';
 
 const { width } = Dimensions.get('window');
 
-// 레이더 차트 컴포넌트
+// ============================================
+// Radar Chart (i18n 적용)
+// ============================================
 const RadarChart = ({ radarData }: { radarData: RadarDataItem[] }) => {
+	const { t } = useTranslation();
 	const size = width - 80;
 	const center = size / 2;
 	const maxRadius = size / 2 - 40;
 
-	const dimensions = ['외향성', '개방성', '성실성', '친화성', '정서적 안정'];
+	const dimensions = [
+		t(MOMENT_ONBOARDING_KEYS.result.radarExtraversion),
+		t(MOMENT_ONBOARDING_KEYS.result.radarOpenness),
+		t(MOMENT_ONBOARDING_KEYS.result.radarConscientiousness),
+		t(MOMENT_ONBOARDING_KEYS.result.radarAgreeableness),
+		t(MOMENT_ONBOARDING_KEYS.result.radarNeuroticism),
+	];
 
 	const getPoint = (index: number, value: number) => {
 		const angle = (Math.PI * 2 * index) / 5 - Math.PI / 2;
@@ -39,7 +57,7 @@ const RadarChart = ({ radarData }: { radarData: RadarDataItem[] }) => {
 	return (
 		<View style={styles.chartContainer}>
 			<Svg width={size} height={size}>
-				{/* 그리드 라인 */}
+				{/* Grid lines */}
 				{gridLevels.map((level) => {
 					const gridPoints = Array.from({ length: 5 }, (_, i) => getPoint(i, level));
 					return (
@@ -53,7 +71,7 @@ const RadarChart = ({ radarData }: { radarData: RadarDataItem[] }) => {
 					);
 				})}
 
-				{/* 축 라인 */}
+				{/* Axis lines */}
 				{Array.from({ length: 5 }, (_, i) => {
 					const point = getPoint(i, 100);
 					return (
@@ -69,7 +87,7 @@ const RadarChart = ({ radarData }: { radarData: RadarDataItem[] }) => {
 					);
 				})}
 
-				{/* 데이터 폴리곤 */}
+				{/* Data polygon */}
 				<Polygon
 					points={polygonPoints}
 					fill="rgba(122, 74, 226, 0.2)"
@@ -77,12 +95,12 @@ const RadarChart = ({ radarData }: { radarData: RadarDataItem[] }) => {
 					strokeWidth={2}
 				/>
 
-				{/* 데이터 포인트 */}
+				{/* Data points */}
 				{points.map((point, i) => (
 					<Circle key={i} cx={point.x} cy={point.y} r={4} fill={colors.primaryPurple} />
 				))}
 
-				{/* 라벨 */}
+				{/* Labels */}
 				{dimensions.map((label, i) => {
 					const labelPoint = getPoint(i, 120);
 					return (
@@ -104,7 +122,76 @@ const RadarChart = ({ radarData }: { radarData: RadarDataItem[] }) => {
 	);
 };
 
-const DIMENSION_ORDER = ['extraversion', 'openness', 'conscientiousness', 'agreeableness', 'neuroticism'] as const;
+// ============================================
+// Insight Card (접기/펼치기)
+// ============================================
+interface InsightCardProps {
+	title: string;
+	content: string;
+	psychologicalInsight?: string;
+	defaultExpanded?: boolean;
+}
+
+const InsightCard = ({
+	title,
+	content,
+	psychologicalInsight,
+	defaultExpanded = false,
+}: InsightCardProps) => {
+	const [expanded, setExpanded] = useState(defaultExpanded);
+
+	const toggleExpanded = () => {
+		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+		setExpanded((prev) => !prev);
+	};
+
+	return (
+		<Pressable
+			style={styles.insightCard}
+			onPress={toggleExpanded}
+			accessible={true}
+			accessibilityRole="button"
+			accessibilityLabel={title}
+			accessibilityState={{ expanded }}
+		>
+			<View style={styles.insightHeader}>
+				<Text size="15" weight="semibold" textColor="black" style={{ flex: 1 }}>
+					{title}
+				</Text>
+				{expanded ? (
+					<ChevronUp size={18} color="#767676" accessible={false} />
+				) : (
+					<ChevronDown size={18} color="#767676" accessible={false} />
+				)}
+			</View>
+			{expanded && (
+				<View style={styles.insightBody}>
+					<Text size="14" weight="normal" textColor="gray" style={styles.insightText}>
+						{content}
+					</Text>
+					{psychologicalInsight && (
+						<View style={styles.psychInsightContainer}>
+							<Text size="13" weight="medium" style={{ color: colors.primaryPurple }}>
+								{psychologicalInsight}
+							</Text>
+						</View>
+					)}
+				</View>
+			)}
+		</Pressable>
+	);
+};
+
+// ============================================
+// Dimension order
+// ============================================
+const DIMENSION_ORDER = [
+	'extraversion',
+	'openness',
+	'conscientiousness',
+	'agreeableness',
+	'neuroticism',
+] as const;
 
 const convertToRadarData = (dimensionScores: Record<string, number>): RadarDataItem[] =>
 	DIMENSION_ORDER.map((dim) => ({
@@ -115,6 +202,9 @@ const convertToRadarData = (dimensionScores: Record<string, number>): RadarDataI
 		percentile: dimensionScores[dim] ?? 0,
 	}));
 
+// ============================================
+// Main Component
+// ============================================
 export const OnboardingResult = () => {
 	const { t } = useTranslation();
 	const insets = useSafeAreaInsets();
@@ -137,6 +227,30 @@ export const OnboardingResult = () => {
 		[report],
 	);
 
+	// 키워드 추출: storyFlow.integratedInsights.keyPatterns 또는 personaNarrative.characteristics
+	const keywords = useMemo(() => {
+		if (!report?.storyFlow) return [];
+		const sf = report.storyFlow;
+		if (sf?.integratedInsights?.keyPatterns?.length > 0) {
+			return sf.integratedInsights.keyPatterns as string[];
+		}
+		if (sf?.personaNarrative?.characteristics?.length > 0) {
+			return sf.personaNarrative.characteristics as string[];
+		}
+		return [];
+	}, [report]);
+
+	// 인사이트 섹션 추출: narrativeSections
+	const insightSections = useMemo(() => {
+		if (!report?.narrativeSections) return [];
+		return report.narrativeSections.filter(
+			(s: {
+				sectionTitle?: string;
+				interpretation?: { content?: string; psychologicalInsight?: string };
+			}) => s?.sectionTitle && s?.interpretation,
+		);
+	}, [report]);
+
 	const handleStartMoment = () => {
 		reset();
 		router.replace('/moment');
@@ -147,10 +261,10 @@ export const OnboardingResult = () => {
 			<View style={[styles.container, { paddingTop: insets.top }]}>
 				<View style={styles.errorContainer}>
 					<Text size="16" weight="medium" textColor="gray">
-						리포트를 불러올 수 없습니다.
+						{t(MOMENT_ONBOARDING_KEYS.result.completeTitle)}
 					</Text>
 					<Button variant="primary" size="lg" onPress={handleStartMoment}>
-						모먼트로 이동
+						{t(MOMENT_ONBOARDING_KEYS.result.startMomentButton)}
 					</Button>
 				</View>
 			</View>
@@ -170,7 +284,7 @@ export const OnboardingResult = () => {
 				contentContainerStyle={styles.scrollContent}
 				showsVerticalScrollIndicator={false}
 			>
-				{/* 완료 헤더 */}
+				{/* Header */}
 				<View style={styles.headerSection}>
 					<Image
 						source={require('@/assets/images/moment/miho-mailbox.webp')}
@@ -182,7 +296,7 @@ export const OnboardingResult = () => {
 					</Text>
 				</View>
 
-				{/* 메인 타이틀 카드 */}
+				{/* Title Card */}
 				<View style={styles.titleCard}>
 					<Text size="24" weight="bold" textColor="black" style={styles.personaTitle}>
 						"{report.titleInfo.title}"
@@ -192,17 +306,53 @@ export const OnboardingResult = () => {
 					</Text>
 				</View>
 
-				{/* 레이더 차트 */}
+				{/* Keywords */}
+				{keywords.length > 0 && (
+					<View style={styles.keywordsSection}>
+						<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+							{t(MOMENT_ONBOARDING_KEYS.result.keywordsTitle)}
+						</Text>
+						<View style={styles.keywordsContainer}>
+							{keywords.map((keyword: string) => (
+								<View key={keyword} style={styles.keywordTag}>
+									<Text size="13" weight="medium" style={{ color: colors.primaryPurple }}>
+										{keyword}
+									</Text>
+								</View>
+							))}
+						</View>
+					</View>
+				)}
+
+				{/* Radar Chart */}
 				{radarData.length > 0 && (
 					<View style={styles.chartSection}>
 						<RadarChart radarData={radarData} />
 					</View>
 				)}
 
+				{/* Insight Cards */}
+				{insightSections.length > 0 && (
+					<View style={styles.insightsSection}>
+						<Text size="16" weight="semibold" textColor="black" style={styles.sectionTitle}>
+							{t(MOMENT_ONBOARDING_KEYS.result.insightsTitle)}
+						</Text>
+						{insightSections.map((section, index) => (
+							<InsightCard
+								key={section.sectionTitle}
+								title={section.sectionTitle}
+								content={section.interpretation?.content ?? ''}
+								psychologicalInsight={section.interpretation?.psychologicalInsight}
+								defaultExpanded={index === 0}
+							/>
+						))}
+					</View>
+				)}
+
 				<View style={{ height: 100 }} />
 			</ScrollView>
 
-			{/* 하단 버튼 */}
+			{/* Bottom Button */}
 			<View style={[styles.buttonContainer, { paddingBottom: insets.bottom + 24 }]}>
 				<Button variant="primary" size="lg" onPress={handleStartMoment} style={styles.startButton}>
 					{t(MOMENT_ONBOARDING_KEYS.result.startMomentButton)}
@@ -264,14 +414,8 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		lineHeight: 22,
 	},
-	chartSection: {
-		marginBottom: 24,
-	},
-	chartContainer: {
-		alignItems: 'center',
-		backgroundColor: colors.white,
-		borderRadius: 20,
-		padding: 16,
+	sectionTitle: {
+		marginBottom: 12,
 	},
 	keywordsSection: {
 		marginBottom: 24,
@@ -288,11 +432,45 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		borderRadius: 20,
 	},
+	chartSection: {
+		marginBottom: 24,
+	},
+	chartContainer: {
+		alignItems: 'center',
+		backgroundColor: colors.white,
+		borderRadius: 20,
+		padding: 16,
+	},
 	insightsSection: {
 		marginBottom: 24,
 	},
+	insightCard: {
+		backgroundColor: colors.white,
+		borderRadius: 16,
+		padding: 16,
+		marginBottom: 10,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 1 },
+		shadowOpacity: 0.06,
+		shadowRadius: 4,
+		elevation: 1,
+	},
+	insightHeader: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+	},
+	insightBody: {
+		marginTop: 12,
+	},
 	insightText: {
 		lineHeight: 22,
+	},
+	psychInsightContainer: {
+		marginTop: 10,
+		backgroundColor: '#F8F5FF',
+		borderRadius: 10,
+		padding: 12,
 	},
 	buttonContainer: {
 		position: 'absolute',

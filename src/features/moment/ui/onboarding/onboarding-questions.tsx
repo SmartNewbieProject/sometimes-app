@@ -1,7 +1,9 @@
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import colors from '@/src/shared/constants/colors';
@@ -58,12 +60,34 @@ export const OnboardingQuestions = () => {
 
 	const hasOptions = currentQuestion?.options && currentQuestion.options.length > 0;
 
+	// 배경 색상 점진적 변화
+	const BACKGROUND_COLORS = ['#FFFFFF', '#FEFCFF', '#FDFAFF', '#FCF8FF', '#FBF6FF'];
+	const bgColorIndex = Math.min(currentStep, BACKGROUND_COLORS.length - 1);
+	const bgR = useSharedValue(255);
+	const bgG = useSharedValue(255);
+	const bgB = useSharedValue(255);
+
+	useEffect(() => {
+		const hex = BACKGROUND_COLORS[bgColorIndex];
+		const r = Number.parseInt(hex.slice(1, 3), 16);
+		const g = Number.parseInt(hex.slice(3, 5), 16);
+		const b = Number.parseInt(hex.slice(5, 7), 16);
+		bgR.value = withTiming(r, { duration: 200 });
+		bgG.value = withTiming(g, { duration: 200 });
+		bgB.value = withTiming(b, { duration: 200 });
+	}, [bgColorIndex, bgR, bgG, bgB]);
+
+	const animatedBgStyle = useAnimatedStyle(() => ({
+		backgroundColor: `rgb(${Math.round(bgR.value)}, ${Math.round(bgG.value)}, ${Math.round(bgB.value)})`,
+	}));
+
 	useEffect(() => {
 		prevStepRef.current = currentStep;
 	}, [currentStep]);
 
 	const handleOptionSelect = (optionId: string) => {
 		if (!currentQuestion) return;
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 		const optionText = currentQuestion.options?.find((o) => o.id === optionId)?.text ?? '';
 		setAnswer(currentQuestion.id, {
 			...currentAnswer,
@@ -116,7 +140,7 @@ export const OnboardingQuestions = () => {
 	}
 
 	return (
-		<View style={[styles.container, { paddingTop: insets.top }]}>
+		<Animated.View style={[styles.container, { paddingTop: insets.top }, animatedBgStyle]}>
 			<Header.Container>
 				<Header.LeftContent>
 					<Header.LeftButton visible onPress={handleBack} />
@@ -146,11 +170,14 @@ export const OnboardingQuestions = () => {
 							<Pressable
 								style={[styles.tab, answerMode === 'text' && styles.tabActive]}
 								onPress={() => setAnswerMode('text')}
+								accessibilityRole="tab"
+								accessibilityState={{ selected: answerMode === 'text' }}
+								accessibilityLabel={t(MOMENT_ONBOARDING_KEYS.questions.tabText)}
 							>
 								<Text
 									size="14"
 									weight={answerMode === 'text' ? 'semibold' : 'medium'}
-									style={{ color: answerMode === 'text' ? colors.primaryPurple : '#999999' }}
+									style={{ color: answerMode === 'text' ? colors.primaryPurple : '#767676' }}
 								>
 									{t(MOMENT_ONBOARDING_KEYS.questions.tabText)}
 								</Text>
@@ -158,11 +185,14 @@ export const OnboardingQuestions = () => {
 							<Pressable
 								style={[styles.tab, answerMode === 'choice' && styles.tabActive]}
 								onPress={() => setAnswerMode('choice')}
+								accessibilityRole="tab"
+								accessibilityState={{ selected: answerMode === 'choice' }}
+								accessibilityLabel={t(MOMENT_ONBOARDING_KEYS.questions.tabChoice)}
 							>
 								<Text
 									size="14"
 									weight={answerMode === 'choice' ? 'semibold' : 'medium'}
-									style={{ color: answerMode === 'choice' ? colors.primaryPurple : '#999999' }}
+									style={{ color: answerMode === 'choice' ? colors.primaryPurple : '#767676' }}
 								>
 									{t(MOMENT_ONBOARDING_KEYS.questions.tabChoice)}
 								</Text>
@@ -205,7 +235,7 @@ export const OnboardingQuestions = () => {
 						: t(MOMENT_ONBOARDING_KEYS.questions.nextButton)}
 				</Button>
 			</View>
-		</View>
+		</Animated.View>
 	);
 };
 

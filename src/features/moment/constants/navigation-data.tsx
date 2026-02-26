@@ -46,6 +46,7 @@ const WeeklyReportTitle = () => {
 export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
 	{
 		id: 'moment-events',
+		titleKey: 'features.moment.navigation.events_title',
 		titleComponent: <EventsTitle />,
 		descriptionKey: 'features.moment.navigation.events_description',
 		backgroundImageUrl: require('@/assets/images/moment/menu/events.webp'),
@@ -58,6 +59,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
 	},
 	{
 		id: 'moment-my-moment',
+		titleKey: 'features.moment.navigation.my_moment_title',
 		titleComponent: <MyMomentTitle />,
 		descriptionKey: 'features.moment.navigation.my_moment_description',
 		backgroundImageUrl: require('@/assets/images/moment/menu/moment.webp'),
@@ -70,6 +72,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
 	},
 	{
 		id: 'moment-check-in',
+		titleKey: 'features.moment.navigation.check_in_title',
 		titleComponent: <CheckInTitle />,
 		descriptionKey: 'features.moment.navigation.check_in_description',
 		backgroundImageUrl: require('@/assets/images/moment/menu/check.webp'),
@@ -81,6 +84,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
 	},
 	{
 		id: 'moment-daily-roulette',
+		titleKey: 'features.moment.navigation.roulette_title',
 		titleComponent: <RouletteTitle />,
 		descriptionKey: 'features.moment.navigation.roulette_description',
 		backgroundImageUrl: require('@/assets/images/moment/menu/roulette.webp'),
@@ -92,6 +96,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
 	},
 	{
 		id: 'moment-somemate',
+		titleKey: 'features.moment.navigation.somemate_title',
 		titleComponent: <SomemateTitle />,
 		descriptionKey: 'features.moment.navigation.somemate_description',
 		backgroundImageUrl: require('@/assets/images/moment/menu/persona.webp'),
@@ -101,6 +106,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
 	},
 	{
 		id: 'moment-ideal-type-test',
+		titleKey: 'features.moment.navigation.ideal_type_test_title',
 		titleComponent: <IdealTypeTestNavTitle />,
 		descriptionKey: 'features.moment.navigation.ideal_type_test_description',
 		backgroundImageUrl: require('@/assets/images/ideal-type-test/gift-heart.png'),
@@ -110,6 +116,7 @@ export const MOMENT_NAVIGATION_ITEMS: MomentNavigationItem[] = [
 	},
 	{
 		id: 'moment-weekly-report',
+		titleKey: 'features.moment.navigation.weekly_report_title',
 		titleComponent: <WeeklyReportTitle />,
 		descriptionKey: 'features.moment.navigation.weekly_report_description',
 		backgroundImageUrl: require('@/assets/images/moment/menu/moment.webp'),

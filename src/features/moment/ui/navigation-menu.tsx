@@ -133,6 +133,13 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
 				]}
 				onPress={!disabledState.isDisabled ? () => handlePress(item) : undefined}
 				disabled={disabledState.isDisabled}
+				accessible={true}
+				accessibilityRole="button"
+				accessibilityLabel={item.titleKey ? t(item.titleKey) : (item.title ?? item.id)}
+				accessibilityState={{ disabled: disabledState.isDisabled }}
+				accessibilityHint={
+					disabledState.isDisabled && disabledState.message ? disabledState.message : undefined
+				}
 			>
 				{item.backgroundImageUrl && (
 					<Image
@@ -166,7 +173,7 @@ export const MomentNavigationMenu = ({ items, itemHeight, itemsPerRow }: MomentN
 								{disabledState.text}
 							</Text>
 							{disabledState.message && (
-								<Text textColor="white" size="10" style={styles.disabledMessage}>
+								<Text textColor="white" size="12" style={styles.disabledMessage}>
 									{disabledState.message}
 								</Text>
 							)}
@@ -223,9 +230,9 @@ const styles = StyleSheet.create({
 		zIndex: 1,
 	},
 	description: {
-		fontSize: 10,
+		fontSize: 12,
 		color: colors.strong,
-		lineHeight: 12,
+		lineHeight: 16,
 	},
 	overlay: {
 		position: 'absolute',
