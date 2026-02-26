@@ -11,6 +11,9 @@ import type { Notification } from '@/src/features/home/apis';
 import BannerSlide from '@/src/features/home/ui/banner-slide';
 import FirstPurchaseEvent from '@/src/features/home/ui/first-purchase-event-banner';
 import HomeInfoSection from '@/src/features/home/ui/home-info/home-info-section';
+import { DevScenarioFab } from '@/src/features/idle-match-timer/__dev__/dev-scenario-fab';
+import { useSecondaryMatch } from '@/src/features/idle-match-timer/hooks/use-secondary-match';
+import { PeekSheet } from '@/src/features/idle-match-timer/ui/peek-sheet';
 import { useSignupDaysReviewTrigger } from '@/src/features/in-app-review';
 import useLiked from '@/src/features/like/hooks/use-liked';
 import LikeCollapse from '@/src/features/like/ui/like-collapse';
@@ -28,7 +31,7 @@ import { useStorage } from '@/src/shared/hooks/use-storage';
 import { ImageResources, storage } from '@/src/shared/libs';
 import { sendHeartbeat } from '@/src/shared/libs/heartbeat';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { ensurePushTokenRegistered } from '@/src/shared/libs/notifications';
+import { ensurePushTokenRegistered, registerFcmTokenAsync } from '@/src/shared/libs/notifications';
 import { AnnounceCard, BottomNavigation, BusinessInfo, Header, Show, Text } from '@/src/shared/ui';
 import { useAuth } from '@features/auth';
 import Event from '@features/event';
@@ -109,29 +112,41 @@ const HomeScreen = () => {
 	const { data: homeSummary, isLoading: isHomeSummaryLoading } = useHomeSummary();
 	const viewerCount = homeSummary?.viewerCount ?? 0;
 	const previewImages = homeSummary?.previewImages ?? [];
-	const shouldShowFloatingCard = !isHomeSummaryLoading && viewerCount > 0;
+	const shouldShowFloatingCard = !isHomeSummaryLoading;
+
+	// 2차 매칭 floating PeekSheet
+	const secondary = useSecondaryMatch((s) => s.secondary);
+	const [isPeekSheetDismissed, setIsPeekSheetDismissed] = useState(false);
+
+	// secondary가 새로 생기면 dismissed 리셋
+	useEffect(() => {
+		if (secondary) setIsPeekSheetDismissed(false);
+	}, [secondary?.id]);
+
+	// BottomNavigation 실제 높이 측정
+	const [bottomNavHeight, setBottomNavHeight] = useState(82);
+	// Header 높이 측정 (PeekSheet 상단 배치)
+	const [headerHeight, setHeaderHeight] = useState(0);
 
 	// 플로팅 카드 스크롤 기반 표시/숨김
-	const [isCardVisible, setIsCardVisible] = useState(true);
+	const [isFloatingVisible, setIsFloatingVisible] = useState(true);
 	const lastScrollY = useRef(0);
 
 	const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
 		const currentScrollY = event.nativeEvent.contentOffset.y;
 		const scrollDelta = currentScrollY - lastScrollY.current;
 
-		// 스크롤 임계값 (5px 이상 움직여야 반응)
 		if (Math.abs(scrollDelta) > 5) {
 			if (scrollDelta > 0 && currentScrollY > 50) {
-				// 아래로 스크롤 (50px 이상 내려갔을 때만)
-				setIsCardVisible(false);
+				setIsFloatingVisible(false);
 			} else if (scrollDelta < 0) {
-				// 위로 스크롤
-				setIsCardVisible(true);
+				setIsFloatingVisible(true);
 			}
 		}
 
 		lastScrollY.current = currentScrollY;
 	}, []);
+
 	// useEffect(() => {
 	//   const fetchTutorialStatus = async () => {
 	//     const finished = await storage.getItem("like-guide");
@@ -165,6 +180,8 @@ const HomeScreen = () => {
 		trackEventAction('home_view');
 		if (!loading && value !== 'true') {
 			ensurePushTokenRegistered(showModal);
+			// 기존 로그인 사용자도 FCM 토큰 등록 (UPSERT, 에러 무시)
+			registerFcmTokenAsync().catch(() => {});
 			setValue('true');
 		}
 	}, [showModal]);
@@ -181,7 +198,12 @@ const HomeScreen = () => {
 			sendHeartbeat();
 
 			queryClient.invalidateQueries({
-				queryKey: ['notification', 'check-preference-fill', 'latest-matching'],
+				queryKey: [
+					'notification',
+					'check-preference-fill',
+					'latest-matching',
+					'latest-matching-v31',
+				],
 				refetchType: 'active',
 			});
 			queryClient.invalidateQueries({
@@ -227,19 +249,21 @@ const HomeScreen = () => {
 		<View style={styles.container}>
 			{/* <LikeGuideScenario visible={!!visibleLikeGuide} hideModal={() => {}} /> */}
 			<WelcomeRewardModal visible={shouldShowReward} onClose={markRewardAsReceived} />
-			<Header
-				centered={true}
-				logoSize={128}
-				showBackButton={false}
-				rightContent={
-					<View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginRight: 16 }}>
-						<NotificationIcon size={41} />
-						<TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
-							<ImageResource resource={ImageResources.GEM} width={41} height={41} />
-						</TouchableOpacity>
-					</View>
-				}
-			/>
+			<View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
+				<Header
+					centered={true}
+					logoSize={128}
+					showBackButton={false}
+					rightContent={
+						<View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginRight: 16 }}>
+							<NotificationIcon size={41} />
+							<TouchableOpacity activeOpacity={0.8} onPress={onNavigateGemStore}>
+								<ImageResource resource={ImageResources.GEM} width={41} height={41} />
+							</TouchableOpacity>
+						</View>
+					}
+				/>
+			</View>
 
 			<ScrollView
 				style={styles.scrollView}
@@ -294,16 +318,40 @@ const HomeScreen = () => {
 				</View>
 			</ScrollView>
 
+			{/* 상단 플로팅: 다음 정기매칭/리매칭 공개 PeekSheet */}
+			{secondary && !isPeekSheetDismissed && (
+				<PeekSheet
+					secondary={secondary}
+					slideFrom="top"
+					onDismiss={() => setIsPeekSheetDismissed(true)}
+					containerStyle={{
+						position: 'absolute',
+						left: 16,
+						right: 16,
+						top: headerHeight + 8,
+					}}
+					isVisible={isFloatingVisible}
+				/>
+			)}
+
+			{/* 하단 플로팅: 나를 본 사용자 */}
 			{shouldShowFloatingCard && (
 				<FloatingSummaryCard
 					viewerCount={viewerCount}
 					previewImages={previewImages}
 					onPress={handleFloatingCardPress}
-					isVisible={isCardVisible}
+					isVisible={isFloatingVisible}
 				/>
 			)}
 
-			<BottomNavigation />
+			{__DEV__ && (
+				<DevScenarioFab
+					bottomOffset={shouldShowFloatingCard ? 160 : 100}
+				/>
+			)}
+			<View onLayout={(e) => setBottomNavHeight(e.nativeEvent.layout.height)}>
+				<BottomNavigation />
+			</View>
 		</View>
 	);
 };
