@@ -90,5 +90,15 @@
 	},
 	"common": {
 		"confirm": "확인"
+	},
+	"server_maintenance": {
+		"temporary_title": "일시적인 오류가 발생했어요",
+		"temporary_body": "서버가 잠시 불안정해요.\n잠시 후 다시 시도해주세요.",
+		"maintenance_title": "서버 점검 중이에요",
+		"maintenance_body": "더 나은 서비스를 위해 점검 중이에요.\n곧 정상화될 예정이니 잠시만 기다려주세요.",
+		"retry_button": "다시 시도",
+		"close_button": "닫기",
+		"confirm_button": "확인",
+		"contact": "문의: support@some-in-univ.com"
 	}
 }

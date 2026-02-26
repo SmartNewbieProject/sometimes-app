@@ -1,0 +1,12 @@
+{
+	"server_maintenance": {
+		"temporary_title": "A temporary error occurred",
+		"temporary_body": "The server is temporarily unstable.\nPlease try again in a moment.",
+		"maintenance_title": "Server maintenance in progress",
+		"maintenance_body": "We're performing maintenance for a better service.\nPlease wait a moment.",
+		"retry_button": "Retry",
+		"close_button": "Close",
+		"confirm_button": "OK",
+		"contact": "Contact: support@some-in-univ.com"
+	}
+}

@@ -90,5 +90,15 @@
 	},
 	"common": {
 		"confirm": "確認"
+	},
+	"server_maintenance": {
+		"temporary_title": "一時的なエラーが発生しました",
+		"temporary_body": "サーバーが一時的に不安定です。\nしばらくしてからもう一度お試しください。",
+		"maintenance_title": "サーバーメンテナンス中です",
+		"maintenance_body": "より良いサービスのためにメンテナンス中です。\nまもなく復旧予定ですので、しばらくお待ちください。",
+		"retry_button": "再試行",
+		"close_button": "閉じる",
+		"confirm_button": "確認",
+		"contact": "お問い合わせ: support@some-in-univ.com"
 	}
 }

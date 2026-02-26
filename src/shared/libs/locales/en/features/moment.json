@@ -61,7 +61,25 @@
 	},
 	"ui": {
 		"확인": "[EN] 확인",
-		"모먼트_분석_완료": "[EN] 모먼트 분석 완료"
+		"모먼트_분석_완료": "[EN] 모먼트 분석 완료",
+		"weekly_report": {
+			"loading": "Loading report...",
+			"error_title": "Couldn't load report",
+			"error_description": "Please try again later.",
+			"go_back": "Go Back",
+			"go_to_question": "Answer Today's Question",
+			"back_button": "Back",
+			"traits_title": "My 5 Moment Traits",
+			"this_week": "This Week",
+			"last_week": "Last Week",
+			"comparison_title": "Compare with Last Week",
+			"analysis_title": "Detailed Analysis",
+			"label_definition": "Definition",
+			"label_feedback": "Feedback",
+			"label_score": "Score",
+			"keywords_cta_title": "Add Report to Profile!",
+			"default_keyword": "#moment_analysis"
+		}
 	},
 	"apis": {
 		"선택형": "[EN] 선택형",
@@ -70,6 +88,17 @@
 		"텍스트": "[EN] 텍스트",
 		"답변_제출에_실패했습니다": "[EN] 답변 제출에 실패했습니다"
 	},
+	"my_moment": {
+		"question_card": {
+			"go_to_answer_hint": "Tap to answer today's question"
+		}
+	},
+	"question_detail": {
+		"back": "Back",
+		"from_today": "From. Today's Question",
+		"toggle_choice": "Select Option",
+		"toggle_text": "Type Answer"
+	},
 	"onboarding": {
 		"intro": {
 			"title": "Great connections start with knowing yourself",
@@ -77,7 +106,8 @@
 			"feature1": "{{count}} quick questions",
 			"feature2": "Find people who match you",
 			"feature3": "Discover your unique charm",
-			"start_button": "Discover Myself"
+			"start_button": "Discover Myself",
+			"skip_button": "Skip"
 		},
 		"questions": {
 			"header_title": "Get to Know Me",
@@ -94,7 +124,14 @@
 			"complete_title": "Your charm, discovered",
 			"start_moment_button": "Meet Your Match",
 			"insight1_title": "My Relationship Style",
-			"insight2_title": "My Best Match Type"
+			"insight2_title": "My Best Match Type",
+			"keywords_title": "My Keywords",
+			"insights_title": "Analysis Insights",
+			"radar_extraversion": "Extraversion",
+			"radar_openness": "Openness",
+			"radar_conscientiousness": "Conscientiousness",
+			"radar_agreeableness": "Agreeableness",
+			"radar_neuroticism": "Emotional Stability"
 		}
 	}
 }

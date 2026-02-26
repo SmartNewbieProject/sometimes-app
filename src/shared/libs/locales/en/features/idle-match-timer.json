@@ -88,6 +88,17 @@
 			"highlight": "Connection",
 			"message": " is unstable.\nPlease try again later."
 		},
+		"peek-sheet": {
+			"view_button": "View",
+			"waiting_title": "Next Scheduled Match",
+			"waiting_desc": "Opens {{date}}",
+			"partner_suffix": "Partner"
+		},
+		"category-badge": {
+			"scheduled": "Scheduled",
+			"rematch": "Rematch",
+			"global": "Global"
+		},
 		"연애_스타일": "[EN] 연애 스타일"
 	},
 	"hooks": {

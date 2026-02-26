@@ -37,7 +37,11 @@
 			"url_parsing_error": "URL解析エラー：",
 			"blacklist_check_error": "ブラックリスト確認エラー：",
 			"login_processing_error": "ログイン処理エラー：",
-			"web_localstorage_save_failed": "Web環境ですが、localStorageに保存できませんでした。"
+			"web_localstorage_save_failed": "Web環境ですが、localStorageに保存できませんでした。",
+			"consent_required_title": "必須情報の同意が必要",
+			"consent_required_message": "サービスのご利用には必須情報（氏名、性別、生年月日、電話番号）への同意が必要です。\n同意いただけない場合、登録できません。",
+			"consent_retry_failed_title": "登録不可",
+			"consent_retry_failed_message": "必須情報への同意が完了していないため、登録を進めることができません。\nもう一度お試しください。"
 		},
 		"validators": {
 			"no_apple_login_info": "Appleログイン情報がありません。",
@@ -106,6 +110,13 @@
 		"department_search_placeholder": "学科を入力してください",
 		"department_search_title": "学科を選択",
 		"department_search_empty": "検索結果がありません",
+		"department_direct_input_option": "学科が見つかりません（直接入力）",
+		"department_direct_input_placeholder": "学科名を入力してください",
+		"department_direct_cancel": "キャンセル",
+		"department_direct_submit": "登録",
+		"department_direct_submitting": "登録中...",
+		"department_direct_rate_limit": "リクエストが多すぎます。しばらくしてからもう一度お試しください",
+		"department_direct_error": "学科の登録に失敗しました。もう一度お試しください",
 		"grade_select_placeholder": "学年を選択",
 		"grade_1": "1年生",
 		"grade_2": "2年生",

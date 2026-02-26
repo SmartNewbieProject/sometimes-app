@@ -40,6 +40,7 @@
 			"report_generated": "レポートが生成されます"
 		},
 		"question_card": {
+			"go_to_answer_hint": "タップして今日の質問に答えましょう",
 			"today_arrived": "今日の質問が届きました！",
 			"today_answered": "今日の質問に回答しました！",
 			"previous_first": "前の質問に先に答えてください！",
@@ -127,7 +128,23 @@
 			"no_report_this_week": "今週のレポートはまだ作成されていません。今日の質問に答えて、自分だけの成長レポートを作ってみましょう！",
 			"report_not_found": "{{year}}年第{{week}}週のレポートは存在しません。",
 			"default_title": "成長を応援するあなた",
-			"default_description": "あなたの成長を応援しています！\n今週の回答を通じて、あなたの\n関係の安定感がさらに深まりました。"
+			"default_description": "あなたの成長を応援しています！\n今週の回答を通じて、あなたの\n関係の安定感がさらに深まりました。",
+			"loading": "レポートを読み込み中...",
+			"error_title": "レポートを読み込めませんでした",
+			"error_description": "しばらくしてからもう一度お試しください。",
+			"go_back": "戻る",
+			"go_to_question": "今日の質問に答えに行く",
+			"back_button": "戻る",
+			"traits_title": "私の5つのモーメント特性",
+			"this_week": "今週",
+			"last_week": "先週",
+			"comparison_title": "先週と比べてみよう",
+			"analysis_title": "詳細分析",
+			"label_definition": "定義",
+			"label_feedback": "フィードバック",
+			"label_score": "スコア",
+			"keywords_cta_title": "レポートをプロフィールに追加しよう！",
+			"default_keyword": "#モーメント分析"
 		},
 		"확인": "[JA] 확인",
 		"모먼트_분석_완료": "[JA] 모먼트 분석 완료"
@@ -195,6 +212,12 @@
 		"텍스트": "[JA] 텍스트",
 		"답변_제출에_실패했습니다": "[JA] 답변 제출에 실패했습니다"
 	},
+	"question_detail": {
+		"back": "戻る",
+		"from_today": "From. 今日の質問",
+		"toggle_choice": "選択肢を選ぶ",
+		"toggle_text": "直接入力"
+	},
 	"onboarding": {
 		"intro": {
 			"title": "良い出会いは自分を知ることから",
@@ -202,7 +225,8 @@
 			"feature1": "短い質問{{count}}つ",
 			"feature2": "あなたに合う人を見つけます",
 			"feature3": "あなただけの魅力を発見",
-			"start_button": "自分を知る"
+			"start_button": "自分を知る",
+			"skip_button": "スキップ"
 		},
 		"questions": {
 			"header_title": "自分を知る",
@@ -219,7 +243,14 @@
 			"complete_title": "あなたの魅力、見つけました",
 			"start_moment_button": "運命の人に会いに行く",
 			"insight1_title": "私の関係スタイル",
-			"insight2_title": "私に合うタイプ"
+			"insight2_title": "私に合うタイプ",
+			"keywords_title": "私のキーワード",
+			"insights_title": "分析インサイト",
+			"radar_extraversion": "外向性",
+			"radar_openness": "開放性",
+			"radar_conscientiousness": "誠実性",
+			"radar_agreeableness": "親和性",
+			"radar_neuroticism": "情緒的安定"
 		}
 	}
 }

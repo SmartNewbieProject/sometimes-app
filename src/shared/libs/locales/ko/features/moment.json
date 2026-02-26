@@ -40,6 +40,7 @@
 			"report_generated": "리포트가 생성되요"
 		},
 		"question_card": {
+			"go_to_answer_hint": "탭하면 오늘의 질문에 답변할 수 있어요",
 			"today_arrived": "오늘의 질문이 도착했어요!",
 			"today_answered": "오늘의 질문에 답변했어요!",
 			"previous_first": "이전 질문에 먼저 답변해야 해요!",
@@ -95,6 +96,10 @@
 			"fri": "금",
 			"sat": "토"
 		},
+		"back": "뒤로",
+		"from_today": "From. 오늘의 질문",
+		"toggle_choice": "보기 선택",
+		"toggle_text": "직접 입력",
 		"answer_input": {
 			"to_myself": "To. 나에게",
 			"placeholder": "이곳에 당신의 진심을 적어주세요...",
@@ -127,7 +132,23 @@
 			"no_report_this_week": "이번 주차 보고서가 아직 생성되지 않았습니다. 오늘의 질문에 답변하고 나만의 성장 보고서를 만들어보세요!",
 			"report_not_found": "{{year}}년 {{week}}주차 보고서가 존재하지 않습니다.",
 			"default_title": "성장을 응원하는 당신",
-			"default_description": "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요."
+			"default_description": "당신의 성장을 응원하고 있어요!\n이번 주 답변을 통해 당신의\n관계 안정감이 더 깊어졌어요.",
+			"loading": "보고서를 불러오는 중...",
+			"error_title": "보고서를 불러올 수 없어요",
+			"error_description": "잠시 후 다시 시도해주세요.",
+			"go_back": "돌아가기",
+			"go_to_question": "질문 답변하러 가기",
+			"back_button": "뒤로",
+			"traits_title": "나의 모먼트 성향 5가지",
+			"this_week": "이번 주",
+			"last_week": "지난 주",
+			"comparison_title": "지난 주와 비교해보세요",
+			"analysis_title": "상세 분석",
+			"label_definition": "정의",
+			"label_feedback": "피드백",
+			"label_score": "점수",
+			"keywords_cta_title": "레포트를 프로필에 넣어보세요!",
+			"default_keyword": "#모먼트_분석"
 		},
 		"확인": "확인",
 		"모먼트_분석_완료": "모먼트 분석 완료"
@@ -202,7 +223,8 @@
 			"feature1": "짧은 질문 {{count}}개",
 			"feature2": "나와 잘 맞는 사람을 찾아줘요",
 			"feature3": "당신만의 매력 포인트 발견",
-			"start_button": "나를 알아보기"
+			"start_button": "나를 알아보기",
+			"skip_button": "건너뛰기"
 		},
 		"questions": {
 			"header_title": "나 알아가기",
@@ -219,7 +241,14 @@
 			"complete_title": "당신의 매력, 찾았어요",
 			"start_moment_button": "인연 만나러 가기",
 			"insight1_title": "나의 관계 스타일",
-			"insight2_title": "나와 잘 맞는 유형"
+			"insight2_title": "나와 잘 맞는 유형",
+			"keywords_title": "나의 키워드",
+			"insights_title": "분석 인사이트",
+			"radar_extraversion": "외향성",
+			"radar_openness": "개방성",
+			"radar_conscientiousness": "성실성",
+			"radar_agreeableness": "친화성",
+			"radar_neuroticism": "정서적 안정"
 		}
 	}
 }

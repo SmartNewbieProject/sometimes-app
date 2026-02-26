@@ -5,7 +5,12 @@
 			"fast_signup_badge": "Sign up in 3 seconds",
 			"divider_or": "or",
 			"pass_login": "Start with PASS",
-			"kakao_login": "Start with Kakao"
+			"kakao_login": "Start with Kakao",
+			"consent_required_title": "Required Information Consent Needed",
+			"consent_required_message": "To use this service, you must agree to provide required information (name, gender, date of birth, phone number).\nYou cannot sign up without consent.",
+			"consent_retry_failed_title": "Unable to Sign Up",
+			"consent_retry_failed_message": "Sign up cannot proceed because required information consent was not completed.\nPlease try again.",
+			"confirm_button": "OK"
 		},
 		"알림": "[EN] 알림",
 		"회원가입을_처음부터_시작해주세요": "[EN] 회원가입을 처음부터 시작해주세요",
@@ -16,7 +21,14 @@
 		"다시_시도": "[EN] 다시 시도",
 		"닫기": "[EN] 닫기",
 		"카카오_로고": "[EN] 카카오 로고",
-		"카카오": "[EN] 카카오"
+		"카카오": "[EN] 카카오",
+		"department_direct_input_option": "[EN] My department is not listed (enter manually)",
+		"department_direct_input_placeholder": "[EN] Enter department name",
+		"department_direct_cancel": "[EN] Cancel",
+		"department_direct_submit": "[EN] Register",
+		"department_direct_submitting": "[EN] Registering...",
+		"department_direct_rate_limit": "[EN] Too many requests. Please try again later",
+		"department_direct_error": "[EN] Failed to register department. Please try again"
 	},
 	"hooks": {
 		"없음": "[EN] 없음",

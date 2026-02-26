@@ -37,7 +37,12 @@
 			"url_parsing_error": "URL 파싱 에러:",
 			"blacklist_check_error": "블랙리스트 체크 오류:",
 			"login_processing_error": "로그인 처리 에러:",
-			"web_localstorage_save_failed": "Web 환경이지만 localStorage에 저장하지 못했습니다."
+			"web_localstorage_save_failed": "Web 환경이지만 localStorage에 저장하지 못했습니다.",
+			"pass_migration_notice": "PASS 인증이 카카오 로그인으로 통합되었어요",
+			"consent_required_title": "필수 정보 동의 필요",
+			"consent_required_message": "서비스 이용을 위해 필수 정보(이름, 성별, 생년월일, 전화번호) 동의가 필요합니다.\n동의하지 않으면 가입이 어렵습니다.",
+			"consent_retry_failed_title": "가입 불가",
+			"consent_retry_failed_message": "필수 정보 동의가 완료되지 않아 가입을 진행할 수 없습니다.\n다시 시도해주세요."
 		},
 		"validators": {
 			"no_apple_login_info": "애플 로그인 정보가 없습니다.",
@@ -106,6 +111,13 @@
 		"department_search_placeholder": "학과를 입력해주세요",
 		"department_search_title": "학과 선택",
 		"department_search_empty": "검색 결과가 없습니다",
+		"department_direct_input_option": "내 학과가 없어요 (직접 입력)",
+		"department_direct_input_placeholder": "학과 이름을 입력해주세요",
+		"department_direct_cancel": "취소",
+		"department_direct_submit": "등록",
+		"department_direct_submitting": "등록 중...",
+		"department_direct_rate_limit": "요청이 너무 많습니다. 잠시 후 다시 시도해주세요",
+		"department_direct_error": "학과 등록에 실패했습니다. 다시 시도해주세요",
 		"grade_select_placeholder": "학년 선택",
 		"grade_1": "1학년",
 		"grade_2": "2학년",

@@ -17,6 +17,10 @@
 		"article_detail": {
 			"staff_comment_label": "SOMETIME replied"
 		},
+		"article_list_screen": {
+			"title": "SOMETIME Stories",
+			"subtitle": "Discover stories from SOMETIME"
+		},
 		"새_글_작성": "[EN] 새 글 작성",
 		"모달_닫기_영역": "[EN] 모달 닫기 영역"
 	}

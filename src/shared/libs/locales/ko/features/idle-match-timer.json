@@ -96,6 +96,17 @@
 			"highlight": "연결",
 			"message": "이 불안정해요.\n잠시 후 다시 확인해 주세요."
 		},
+		"peek-sheet": {
+			"view_button": "보기",
+			"waiting_title": "다음 정기매칭",
+			"waiting_desc": "{{date}} 공개",
+			"partner_suffix": "파트너"
+		},
+		"category-badge": {
+			"scheduled": "정기",
+			"rematch": "리매칭",
+			"global": "글로벌"
+		},
 		"연애_스타일": "연애 스타일"
 	},
 	"hooks": {

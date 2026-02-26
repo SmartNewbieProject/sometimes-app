@@ -96,6 +96,17 @@
 			"highlight": "接続",
 			"message": "が不安定です。\nしばらくしてからもう一度お試しください。"
 		},
+		"peek-sheet": {
+			"view_button": "見る",
+			"waiting_title": "次の定期マッチング",
+			"waiting_desc": "{{date}} 公開",
+			"partner_suffix": "パートナー"
+		},
+		"category-badge": {
+			"scheduled": "定期",
+			"rematch": "再マッチ",
+			"global": "グローバル"
+		},
 		"연애_스타일": "[JA] 연애 스타일"
 	},
 	"hooks": {
