@@ -2,6 +2,7 @@ import colors from '@/src/shared/constants/colors';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,6 +15,7 @@ interface AuthTabBarProps {
 
 export const AuthTabBar = ({ activeTab, onTabChange }: AuthTabBarProps) => {
 	const insets = useSafeAreaInsets();
+	const { t } = useTranslation();
 	const { sometimeStoryEvents } = useMixpanel();
 
 	const handleTabChange = (tab: AuthTab) => {
@@ -34,7 +36,9 @@ export const AuthTabBar = ({ activeTab, onTabChange }: AuthTabBarProps) => {
 					size={22}
 					color={activeTab === 'login' ? colors.brand.primary : colors.text.muted}
 				/>
-				<Text style={[styles.tabText, activeTab === 'login' && styles.activeTabText]}>로그인</Text>
+				<Text style={[styles.tabText, activeTab === 'login' && styles.activeTabText]}>
+					{t('features.auth.auth_tab_bar.login')}
+				</Text>
 			</Pressable>
 
 			<Pressable
@@ -47,7 +51,7 @@ export const AuthTabBar = ({ activeTab, onTabChange }: AuthTabBarProps) => {
 					color={activeTab === 'story' ? colors.brand.primary : colors.text.muted}
 				/>
 				<Text style={[styles.tabText, activeTab === 'story' && styles.activeTabText]}>
-					썸타임 이야기
+					{t('features.auth.auth_tab_bar.story')}
 				</Text>
 			</Pressable>
 		</View>

@@ -1,16 +1,18 @@
 import colors from '@/src/shared/constants/colors';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArticleList } from './article-list';
 
 export const ArticleListScreen = () => {
 	const insets = useSafeAreaInsets();
+	const { t } = useTranslation();
 
 	const ListHeader = () => (
 		<View style={styles.header}>
-			<Text style={styles.title}>썸타임 이야기</Text>
-			<Text style={styles.subtitle}>썸타임이 들려주는 이야기를 만나보세요</Text>
+			<Text style={styles.title}>{t('features.community.ui.article_list_screen.title')}</Text>
+			<Text style={styles.subtitle}>{t('features.community.ui.article_list_screen.subtitle')}</Text>
 		</View>
 	);
 
