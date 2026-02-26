@@ -171,6 +171,23 @@ export async function registerFcmTokenAsync(): Promise<void> {
 }
 
 /**
+ * 로그아웃 시 FCM 토큰을 비활성화합니다. (OTA 백그라운드 업데이트용)
+ * 미호출 시 로그아웃된 기기에도 OTA Silent Push가 계속 전송됩니다.
+ */
+export async function deleteFcmTokenAsync(): Promise<void> {
+	if (!Device.isDevice || Platform.OS === 'web') return;
+
+	try {
+		const deviceId = Constants.deviceId || 'unknown';
+		await axiosClient.delete(`/push-notifications/fcm-token?deviceId=${deviceId}`);
+		console.log('[FCM] 토큰 비활성화 성공');
+	} catch (error) {
+		// 로그아웃 흐름을 막지 않도록 에러를 삼킴
+		console.error('[FCM] 토큰 비활성화 실패:', error);
+	}
+}
+
+/**
  * 푸시 토큰 API 응답 타입
  */
 interface PushTokenResponse {

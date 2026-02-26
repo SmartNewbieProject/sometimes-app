@@ -618,7 +618,8 @@ export const UniversityEnglishName: Partial<Record<UniversityName, string>> = {
 };
 
 const baseUrl = 'https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/univ/';
-const DEFAULT_UNIV_LOGO = 'https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/univ/default.webp';
+const DEFAULT_UNIV_LOGO =
+	'https://sometimes-resources.s3.ap-northeast-2.amazonaws.com/univ/default.webp';
 
 const createImageUrl = (univ: UniversityName) => {
 	const imageName = UniversityImage[univ];
@@ -630,7 +631,8 @@ const createImageUrl = (univ: UniversityName) => {
 
 export const getUnivLogo = (univ: UniversityName) => createImageUrl(univ);
 
-export const getSmartUnivLogoUrl = (univCode: string, country: 'kr' | 'jp' = 'kr') => {
+export const getSmartUnivLogoUrl = (univCode: string | null, country: 'kr' | 'jp' = 'kr') => {
+	if (!univCode) return '';
 	const code = country === 'jp' ? univCode : univCode.toLowerCase();
 	return `${baseUrl}${code}.webp`;
 };

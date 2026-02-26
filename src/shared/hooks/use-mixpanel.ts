@@ -1,19 +1,19 @@
-import { useCallback, useMemo } from 'react';
+import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
+import {
+	type AuthMethod,
+	type BaseEventProperties,
+	EVENT_SOURCES,
+	type KpiEventTypePropertiesMap,
+	LOGIN_ABANDONED_STEPS,
+	type LoginAbandonedStep,
+	MIXPANEL_EVENTS,
+	type PaymentEventProperties,
+	type SignupEventProperties,
+} from '@/src/shared/constants/mixpanel-events';
+import { getCountryFromLocale } from '@/src/shared/libs/country-detector';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { storage } from '@/src/shared/libs/store';
-import { getCountryFromLocale } from '@/src/shared/libs/country-detector';
-import {
-	MIXPANEL_EVENTS,
-	EVENT_SOURCES,
-	LOGIN_ABANDONED_STEPS,
-	type BaseEventProperties,
-	type SignupEventProperties,
-	type PaymentEventProperties,
-	type KpiEventTypePropertiesMap,
-	type LoginAbandonedStep,
-	type AuthMethod,
-} from '@/src/shared/constants/mixpanel-events';
-import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
+import { useCallback, useMemo } from 'react';
 
 const VALID_EVENT_VALUES = new Set(Object.values(MIXPANEL_EVENTS));
 
@@ -31,7 +31,7 @@ export interface UseMixpanelReturn {
 	// 도메인별 전용 훅들
 	authEvents: {
 		trackLoginStarted: (authMethod: string) => void;
-		trackLoginCompleted: (authMethod: string, duration: number) => void;
+		trackLoginCompleted: (authMethod: string, duration: number, isNewUser?: boolean) => void;
 		trackLoginFailed: (authMethod: string, errorType: string) => void;
 		trackLoginAbandoned: (
 			authMethod: AuthMethod,
@@ -370,10 +370,11 @@ export const useMixpanel = (): UseMixpanelReturn => {
 		),
 
 		trackLoginCompleted: useCallback(
-			(authMethod: string, duration: number) => {
+			(authMethod: string, duration: number, isNewUser?: boolean) => {
 				trackEvent('Auth_Login_Completed', {
 					auth_method: authMethod as any,
 					login_duration: duration,
+					is_new_user: isNewUser,
 				});
 			},
 			[trackEvent],

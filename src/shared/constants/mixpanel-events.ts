@@ -285,6 +285,23 @@ export const MIXPANEL_EVENTS: Record<string, string> = {
 	// 공유 이벤트 (모든 접근 경로 공통)
 	SOMETIME_STORY_ARTICLE_SHARED: 'SometimeStory_Article_Shared',
 
+	// ===== 이상형 테스트 이벤트 =====
+	IDEAL_TYPE_TEST_ENTRY_CLICKED: 'IdealType_Entry_Clicked',
+	IDEAL_TYPE_TEST_STARTED: 'IdealType_Test_Started',
+	IDEAL_TYPE_QUESTION_VIEWED: 'IdealType_Question_Viewed',
+	IDEAL_TYPE_QUESTION_ANSWERED: 'IdealType_Question_Answered',
+	IDEAL_TYPE_TEST_COMPLETED: 'IdealType_Test_Completed',
+	IDEAL_TYPE_TEST_ABANDONED: 'IdealType_Test_Abandoned',
+	IDEAL_TYPE_RESULT_VIEWED: 'IdealType_Result_Viewed',
+	IDEAL_TYPE_TEST_SIGNUP_CLICKED: 'IdealType_Signup_Clicked',
+	IDEAL_TYPE_AUTH_SHEET_SHOWN: 'IdealType_Auth_Sheet_Shown',
+	IDEAL_TYPE_AUTH_SHEET_DISMISSED: 'IdealType_Auth_Sheet_Dismissed',
+	IDEAL_TYPE_AUTH_METHOD_SELECTED: 'IdealType_Auth_Method_Selected',
+	IDEAL_TYPE_TEST_SHARED: 'IdealType_Test_Shared',
+	IDEAL_TYPE_TEST_RETAKE_CLICKED: 'IdealType_Retake_Clicked',
+	IDEAL_TYPE_RETAKE_BLOCKED: 'IdealType_Retake_Blocked',
+	IDEAL_TYPE_RESULT_CTA_CLICKED: 'IdealType_Result_CTA_Clicked',
+
 	// ===== 서버 전용 이벤트 (백엔드에서만 발송) =====
 
 	// 매칭 파이프라인 (백엔드 NestJS)
@@ -439,6 +456,7 @@ export interface AuthEventProperties extends BaseEventProperties {
 	auth_method?: AuthMethod;
 	login_duration?: number;
 	error_type?: string;
+	is_new_user?: boolean;
 }
 
 // 로그아웃 이벤트 속성
@@ -499,7 +517,14 @@ export interface BlacklistBlockedEventProperties extends BaseEventProperties {
 // 인증 에러 상세 이벤트 속성
 export interface AuthVerificationErrorEventProperties extends BaseEventProperties {
 	auth_method: AuthMethod;
-	error_type: 'network' | 'timeout' | 'app_not_installed' | 'carrier_error' | 'certificate_expired' | 'user_cancelled' | 'unknown';
+	error_type:
+		| 'network'
+		| 'timeout'
+		| 'app_not_installed'
+		| 'carrier_error'
+		| 'certificate_expired'
+		| 'user_cancelled'
+		| 'unknown';
 	error_code?: string;
 	error_message?: string;
 	platform?: 'ios' | 'android' | 'web';
@@ -737,6 +762,56 @@ export interface LetterLikeEventProperties extends BaseEventProperties {
 	error_type?: string;
 	error_message?: string;
 	has_mutual_like?: boolean;
+}
+
+// ===== 이상형 테스트 이벤트 속성 =====
+export interface IdealTypeTestBaseProperties extends BaseEventProperties {
+	session_id?: string;
+	entry_source?: 'auth' | 'moment' | 'web_landing' | 'web_share_link';
+	user_type?: 'guest' | 'logged_in';
+	test_version?: string;
+	language?: 'ko' | 'ja';
+}
+
+export interface IdealTypeQuestionProperties extends IdealTypeTestBaseProperties {
+	question_index?: number;
+	question_id?: string;
+	total_questions?: number;
+	selected_option_id?: string;
+	selected_option_index?: number;
+	time_spent_seconds?: number;
+}
+
+export interface IdealTypeResultProperties extends IdealTypeTestBaseProperties {
+	result_type_id?: string;
+	result_name?: string;
+	total_time_seconds?: number;
+	is_retake?: boolean;
+	match_count?: number;
+	view_type?: 'new_result' | 'existing_result';
+}
+
+export interface IdealTypeShareProperties extends IdealTypeTestBaseProperties {
+	result_type_id?: string;
+	share_method?: 'native' | 'link_copy';
+}
+
+export interface IdealTypeAuthSheetProperties extends IdealTypeTestBaseProperties {
+	result_type_id?: string;
+	auth_method?: string;
+	time_on_sheet_seconds?: number;
+}
+
+export interface IdealTypeAbandonProperties extends IdealTypeTestBaseProperties {
+	abandoned_at_question?: number;
+	total_answered?: number;
+	time_spent_seconds?: number;
+	abandon_trigger?: 'back_button' | 'app_background' | 'session_expired';
+}
+
+export interface IdealTypeRetakeProperties extends IdealTypeTestBaseProperties {
+	previous_result_type_id?: string;
+	remaining_days?: number;
 }
 
 // ===== 서버 전용 이벤트 속성 (백엔드 NestJS) =====
@@ -1137,6 +1212,23 @@ export interface KpiEventTypePropertiesMap {
 	First_Message_Received: FirstExperienceEventProperties;
 	First_Like_Sent: FirstExperienceEventProperties;
 	First_Like_Received: FirstExperienceEventProperties;
+
+	// 이상형 테스트 관련
+	IdealType_Entry_Clicked: IdealTypeTestBaseProperties;
+	IdealType_Test_Started: IdealTypeTestBaseProperties;
+	IdealType_Question_Viewed: IdealTypeQuestionProperties;
+	IdealType_Question_Answered: IdealTypeQuestionProperties;
+	IdealType_Test_Completed: IdealTypeResultProperties;
+	IdealType_Test_Abandoned: IdealTypeAbandonProperties;
+	IdealType_Result_Viewed: IdealTypeResultProperties;
+	IdealType_Signup_Clicked: IdealTypeResultProperties;
+	IdealType_Auth_Sheet_Shown: IdealTypeAuthSheetProperties;
+	IdealType_Auth_Sheet_Dismissed: IdealTypeAuthSheetProperties;
+	IdealType_Auth_Method_Selected: IdealTypeAuthSheetProperties;
+	IdealType_Test_Shared: IdealTypeShareProperties;
+	IdealType_Retake_Clicked: IdealTypeResultProperties;
+	IdealType_Retake_Blocked: IdealTypeRetakeProperties;
+	IdealType_Result_CTA_Clicked: IdealTypeResultProperties;
 
 	// 서버 전용 이벤트 (백엔드 NestJS)
 	Matching_Execution_Completed: MatchingExecutionCompletedEventProperties;
