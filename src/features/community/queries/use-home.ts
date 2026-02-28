@@ -8,10 +8,12 @@ import type { Article, HotArticle } from "../types";
 
 export const NOTICE_CODE = "notice";
 export const HOT_CODE = "hot";
+export const GENERAL_CODE = "general";
 
 export const HOME_QUERY_KEYS = {
   notices: ["home", "notices"] as const,
   hots: ["home", "hots"] as const,
+  latestArticles: ["home", "latestArticles"] as const,
 };
 
 export async function fetchHomeNotices(size = 5) {
@@ -77,6 +79,42 @@ export function useHomeHotsQuery() {
 
   return {
     hots: query.data ?? [],
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
+    prefetch,
+  };
+}
+
+export async function fetchHomeLatestArticles(size = 10) {
+  const res = await getArticles({ code: GENERAL_CODE, page: 1, size });
+  return Array.isArray(res?.items)
+    ? (res.items.slice(0, size) as Article[])
+    : [];
+}
+
+export function prefetchHomeLatestArticles(queryClient: QueryClient, size = 10) {
+  return queryClient.prefetchQuery({
+    queryKey: [...HOME_QUERY_KEYS.latestArticles, { size }],
+    queryFn: () => fetchHomeLatestArticles(size),
+    staleTime: 30_000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
+export function useHomeLatestArticlesQuery(size = 10) {
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: [...HOME_QUERY_KEYS.latestArticles, { size }],
+    queryFn: () => fetchHomeLatestArticles(size),
+    staleTime: 30_000,
+    gcTime: 10 * 60 * 1000,
+  });
+  const prefetch = () => prefetchHomeLatestArticles(queryClient, size);
+
+  return {
+    articles: query.data ?? [],
     isLoading: query.isLoading,
     isError: query.isError,
     error: query.error,

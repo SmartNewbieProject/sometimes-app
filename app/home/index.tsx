@@ -62,6 +62,7 @@ const {
 	ProfilePhotoCard,
 	InstagramVerificationCard,
 	HotPostsCarousel,
+	LatestPostsCarousel,
 } = ui;
 const { usePreferenceSelfQuery } = queries;
 const { useRedirectPreferences } = hooks;
@@ -112,16 +113,20 @@ const HomeScreen = () => {
 	const { data: homeSummary, isLoading: isHomeSummaryLoading } = useHomeSummary();
 	const viewerCount = homeSummary?.viewerCount ?? 0;
 	const previewImages = homeSummary?.previewImages ?? [];
-	const shouldShowFloatingCard = !isHomeSummaryLoading;
+	const shouldShowFloatingCard = !isHomeSummaryLoading && viewerCount > 0;
 
 	// 2차 매칭 floating PeekSheet
 	const secondary = useSecondaryMatch((s) => s.secondary);
+	const notFoundMatch = useSecondaryMatch((s) => s.notFoundMatch);
 	const [isPeekSheetDismissed, setIsPeekSheetDismissed] = useState(false);
 
-	// secondary가 새로 생기면 dismissed 리셋
+	// PeekSheet에 표시할 데이터: secondary 우선, 없으면 not-found의 untilNext
+	const peekSheetData = secondary ?? notFoundMatch;
+
+	// secondary 또는 notFoundMatch가 새로 생기면 dismissed 리셋
 	useEffect(() => {
-		if (secondary) setIsPeekSheetDismissed(false);
-	}, [secondary?.id]);
+		if (peekSheetData) setIsPeekSheetDismissed(false);
+	}, [peekSheetData?.id, peekSheetData?.type, peekSheetData?.untilNext]);
 
 	// BottomNavigation 실제 높이 측정
 	const [bottomNavHeight, setBottomNavHeight] = useState(82);
@@ -309,6 +314,7 @@ const HomeScreen = () => {
 					<ReviewSlide />
 				</View>
 				<HotPostsCarousel />
+				<LatestPostsCarousel />
 				<Feedback.WallaFeedbackBanner />
 
 				<BusinessInfo />
@@ -318,28 +324,31 @@ const HomeScreen = () => {
 				</View>
 			</ScrollView>
 
-			{/* 상단 플로팅: 다음 정기매칭/리매칭 공개 PeekSheet */}
-			{secondary && !isPeekSheetDismissed && (
-				<PeekSheet
-					secondary={secondary}
-					slideFrom="top"
-					onDismiss={() => setIsPeekSheetDismissed(true)}
-					containerStyle={{
-						position: 'absolute',
-						left: 16,
-						right: 16,
-						top: headerHeight + 8,
-					}}
-					isVisible={isFloatingVisible}
-				/>
-			)}
-
-			{/* 하단 플로팅: 나를 본 사용자 */}
+			{/* 상단 플로팅: 나를 본 사용자 */}
 			{shouldShowFloatingCard && (
 				<FloatingSummaryCard
 					viewerCount={viewerCount}
 					previewImages={previewImages}
 					onPress={handleFloatingCardPress}
+					isVisible={isFloatingVisible}
+					containerStyle={{
+						top: headerHeight + 8,
+					}}
+				/>
+			)}
+
+			{/* 하단 플로팅: 다음 목·일 매칭/유료매칭 공개 PeekSheet */}
+			{peekSheetData && !isPeekSheetDismissed && (
+				<PeekSheet
+					secondary={peekSheetData}
+					slideFrom="bottom"
+					onDismiss={() => setIsPeekSheetDismissed(true)}
+					containerStyle={{
+						position: 'absolute',
+						left: 0,
+						right: 0,
+						bottom: bottomNavHeight,
+					}}
 					isVisible={isFloatingVisible}
 				/>
 			)}

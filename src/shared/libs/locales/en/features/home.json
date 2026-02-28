@@ -115,6 +115,10 @@
 		"hot_posts_carousel": {
 			"title": "Popular Posts",
 			"view_all": "See All"
+		},
+		"latest_posts_carousel": {
+			"title": "Latest Posts",
+			"view_all": "See All"
 		}
 	}
 }

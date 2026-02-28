@@ -116,6 +116,10 @@
 		"hot_posts_carousel": {
 			"title": "인기 게시글",
 			"view_all": "전체보기"
+		},
+		"latest_posts_carousel": {
+			"title": "최신 게시글",
+			"view_all": "전체보기"
 		}
 	}
 }

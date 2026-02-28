@@ -115,6 +115,10 @@
 		"hot_posts_carousel": {
 			"title": "人気投稿",
 			"view_all": "すべて見る"
+		},
+		"latest_posts_carousel": {
+			"title": "最新投稿",
+			"view_all": "すべて見る"
 		}
 	}
 }

@@ -5,3 +5,4 @@ export { TipAnnouncement } from './tip-announcement';
 export { default as ProfilePhotoCard } from './profile-photo-card';
 export { default as InstagramVerificationCard } from './instagram-verification-card';
 export { HotPostsCarousel } from './hot-posts-carousel';
+export { LatestPostsCarousel } from './latest-posts-carousel';
