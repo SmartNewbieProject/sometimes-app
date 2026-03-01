@@ -1,15 +1,15 @@
 import { useAuth } from '@/src/features/auth';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { isAdult } from '@/src/features/pass/utils';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
 import useSignupProgress from '@/src/features/signup/hooks/use-signup-progress';
 import { AUTH_METHODS } from '@/src/shared/constants/mixpanel-events';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Platform, Text, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTranslation } from 'react-i18next';
 
@@ -25,7 +25,12 @@ function KakaoLoginRedirect() {
 
 		if (error) {
 			console.log('카카오 로그인 에러:', error);
-			router.replace('/auth/login');
+			router.replace({
+				pathname: '/auth/login',
+				params: {
+					error: t('apps.auth.redirect.kakao_login_error.params'),
+				},
+			});
 			return;
 		}
 

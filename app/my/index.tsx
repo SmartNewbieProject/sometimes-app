@@ -1,8 +1,6 @@
 import { useUniversityCertificationPrompt } from '@/src/features/event/hooks/use-university-certification-prompt';
-import { IdentityStatusCard } from '@/src/features/jp-identity';
 import Layout from '@/src/features/layout';
 import { BentoGrid } from '@/src/features/mypage/ui';
-import { isJapanese } from '@/src/shared/libs/local';
 import { BottomNavigation, HeaderWithNotification } from '@/src/shared/ui';
 import SettingIcon from '@assets/icons/setting.svg';
 import { useQueryClient } from '@tanstack/react-query';
@@ -57,9 +55,11 @@ export default function MyScreen() {
 				style={{ marginTop: 9 }}
 			/>
 
-			<ScrollView style={styles.scrollViewContainer}>
+			<ScrollView
+				style={styles.scrollView}
+				contentContainerStyle={styles.scrollViewContent}
+			>
 				<BentoGrid />
-				{isJapanese() && <IdentityStatusCard />}
 			</ScrollView>
 
 			<BottomNavigation />
@@ -75,8 +75,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		gap: 6,
 	},
-	scrollViewContainer: {
+	scrollView: {
 		flex: 1,
+	},
+	scrollViewContent: {
 		paddingHorizontal: 16,
 		paddingBottom: 24,
 	},

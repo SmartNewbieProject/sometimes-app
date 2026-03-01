@@ -1,21 +1,20 @@
 import { DefaultLayout, TwoButtons } from '@/src/features/layout/ui';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useSignupProgress } from '@/src/features/signup/hooks';
-import { getAreaByCode } from '@/src/features/signup/lib';
-import useUniversitiesByArea from '@/src/features/signup/queries/use-universities-by-area';
+import { useClusterQuery } from '@/src/features/signup/queries';
 import UniversityCard from '@/src/features/signup/ui/university/university-card';
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import PinIcon from '@assets/icons/pin.svg';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { BackHandler, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function UniversityCluster() {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const {
 		form: { universityId },
 		univTitle,
@@ -23,10 +22,16 @@ function UniversityCluster() {
 	} = useSignupProgress();
 	const router = useRouter();
 	const insets = useSafeAreaInsets();
-	const { data } = useUniversitiesByArea(regions);
 
-	const areaList = regions.length > 0 ? getAreaByCode(regions[0]) : [];
-	const sortedData = data ? [...data.sort((a, b) => a.name.localeCompare(b.name, 'ko'))] : [];
+	const regionCode = regions.length > 0 ? regions[0] : '';
+	const { cluster, universities, isLoading } = useClusterQuery(regionCode);
+
+	const clusterName = cluster?.name ?? '';
+	const sortedData = useMemo(
+		() => [...universities].sort((a, b) => a.name.localeCompare(b.name, 'ko')),
+		[universities],
+	);
+
 	const onBackPress = () => {
 		router.navigate('/auth/signup/university');
 		return true;
@@ -40,6 +45,7 @@ function UniversityCluster() {
 	const handleNext = () => {
 		router.push(`/auth/signup/university-details?universityId=${universityId}`);
 	};
+
 	return (
 		<DefaultLayout style={styles.container}>
 			<View style={[styles.lottieContainer, { paddingTop: insets.top }]}>
@@ -67,30 +73,57 @@ function UniversityCluster() {
 					</Text>
 				)}
 			</View>
-			<View style={styles.clusterContainer}>
-				<PinIcon />
-				<View style={{ gap: 6 }}>
-					<Text style={styles.clusterLabel}>
-						{t('apps.auth.sign_up.university_cluster.cluster_label')}
-					</Text>
-					<Text style={styles.clusterText}>
-						{areaList.join('/')}
-						{t('apps.auth.sign_up.university_cluster.cluster_suffix')}
-					</Text>
-					<Text style={styles.clusterDesc}>
-						{t('apps.auth.sign_up.university_cluster.cluster_desc')}
-					</Text>
+
+			{isLoading ? (
+				<View style={styles.loadingContainer}>
+					<ActivityIndicator size="small" color={semanticColors.brand.primary} />
 				</View>
-			</View>
-			<ScrollView style={styles.univContainer}>
-				<FlashList
-					data={sortedData}
-					renderItem={({ item }) => (
-						<UniversityCard onClick={() => {}} isSelected={false} item={item} />
-					)}
-					contentContainerStyle={{ paddingBottom: 160 }}
-				/>
-			</ScrollView>
+			) : cluster ? (
+				<>
+					<View style={styles.clusterContainer}>
+						<PinIcon />
+						<View style={{ gap: 6 }}>
+							<Text style={styles.clusterLabel}>
+								{t('apps.auth.sign_up.university_cluster.cluster_label')}
+							</Text>
+							<Text style={styles.clusterText}>
+								{clusterName}
+								{t('apps.auth.sign_up.university_cluster.cluster_suffix')}
+							</Text>
+							<Text style={styles.clusterDesc}>
+								{t('apps.auth.sign_up.university_cluster.cluster_desc')}
+							</Text>
+						</View>
+					</View>
+					<ScrollView style={styles.univContainer}>
+						<FlashList
+							data={sortedData}
+							renderItem={({ item }) => (
+								<UniversityCard onClick={() => {}} isSelected={false} item={item} />
+							)}
+							contentContainerStyle={{ paddingBottom: 160 }}
+						/>
+					</ScrollView>
+				</>
+			) : (
+				<View style={styles.pendingContainer}>
+					<View style={styles.pendingCard}>
+						<PinIcon />
+						<View style={{ gap: 6, flex: 1 }}>
+							<Text style={styles.clusterLabel}>
+								{t('apps.auth.sign_up.university_cluster.cluster_label')}
+							</Text>
+							<Text style={styles.pendingText}>
+								{t('apps.auth.sign_up.university_cluster.pending_cluster')}
+							</Text>
+							<Text style={styles.pendingDesc}>
+								{t('apps.auth.sign_up.university_cluster.pending_desc')}
+							</Text>
+						</View>
+					</View>
+				</View>
+			)}
+
 			<View style={styles.bottomContainer}>
 				<TwoButtons
 					disabledNext={false}
@@ -125,6 +158,10 @@ const styles = StyleSheet.create({
 		fontWeight: 700,
 		fontFamily: 'Pretendard-ExtraBold',
 	},
+	loadingContainer: {
+		marginTop: 40,
+		alignItems: 'center',
+	},
 	clusterContainer: {
 		padding: 16,
 		marginTop: 24,
@@ -148,6 +185,31 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		fontWeight: 400,
 		color: semanticColors.text.primary,
+	},
+	pendingContainer: {
+		marginTop: 24,
+		marginHorizontal: 16,
+		width: '100%',
+		paddingHorizontal: 16,
+	},
+	pendingCard: {
+		padding: 16,
+		flexDirection: 'row',
+		backgroundColor: semanticColors.surface.background,
+		borderRadius: 12,
+		gap: 12,
+	},
+	pendingText: {
+		fontSize: 16,
+		fontWeight: '600',
+		fontFamily: 'Pretendard-SemiBold',
+		color: semanticColors.text.secondary,
+	},
+	pendingDesc: {
+		fontSize: 12,
+		fontWeight: '400',
+		color: semanticColors.text.muted,
+		lineHeight: 17,
 	},
 	bottomContainer: {
 		position: 'absolute',

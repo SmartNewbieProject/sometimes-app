@@ -10,6 +10,7 @@ import { GraduateBanner } from '@/src/features/signup/ui/university/graduate-ban
 import { SearchTip } from '@/src/features/signup/ui/university/search-tip';
 import { SearchingState } from '@/src/features/signup/ui/university/searching-state';
 import UniversityCard from '@/src/features/signup/ui/university/university-card';
+import { UniversityEmptyState } from '@/src/features/signup/ui/university/university-empty-state';
 import { withSignupValidation } from '@/src/features/signup/ui/withSignupValidation';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useKeyboarding } from '@/src/shared/hooks';
@@ -166,14 +167,25 @@ function UniversityPage() {
 									showsVerticalScrollIndicator={false}
 									contentContainerStyle={styles.scrollContent}
 								>
-									{filteredUniv?.map((item) => (
-										<UniversityCard
-											key={item.id}
-											item={item}
-											isSelected={selectedUniv === item.id}
-											onClick={handleClickUniv(item.id)}
+									{filteredUniv?.length === 0 && searchText.length > 0 ? (
+										<UniversityEmptyState
+											keyword={searchText}
+											onRegisterPress={() => {
+												router.push(
+													`/auth/signup/register-university?name=${encodeURIComponent(searchText)}`,
+												);
+											}}
 										/>
-									))}
+									) : (
+										filteredUniv?.map((item) => (
+											<UniversityCard
+												key={item.id}
+												item={item}
+												isSelected={selectedUniv === item.id}
+												onClick={handleClickUniv(item.id)}
+											/>
+										))
+									)}
 								</ScrollView>
 							</>
 						)}

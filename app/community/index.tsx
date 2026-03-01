@@ -262,7 +262,7 @@ export default function CommunityScreen() {
 
 const ListHeaderComponent = () => {
 	return (
-		<View>
+		<View style={{ backgroundColor: semanticColors.surface.background }}>
 			<HeaderWithNotification
 				centerContent={
 					<ImageResource resource={ImageResources.COMMUNITY_LOGO} width={152} height={18} />
@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		position: 'relative',
+		backgroundColor: semanticColors.surface.background,
 	},
 	contentArea: {
 		flex: 1,

@@ -1,23 +1,21 @@
+import { type AuthTab, AuthTabBar } from '@/src/features/article/ui';
 import { useAuth } from '@/src/features/auth/hooks/use-auth';
 import { useIdealTypeTestPrompt } from '@/src/features/ideal-type-test/hooks';
-import {
-	AuthTabBar,
-	type AuthTab,
-} from '@/src/features/article/ui';
 import { isAdult } from '@/src/features/pass/utils';
 import { checkPhoneNumberBlacklist } from '@/src/features/signup/apis';
+import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { useModal } from '@/src/shared/hooks/use-modal';
+import { useToast } from '@/src/shared/hooks/use-toast';
 import { resetAuthState } from '@/src/shared/libs/axios';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
-import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import Signup from '@features/signup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { useSignupProgress } = Signup;
 
@@ -27,6 +25,7 @@ export default function LoginScreen() {
 	const router = useRouter();
 	const { loginWithPass } = useAuth();
 	const { showModal } = useModal();
+	const { emitToast } = useToast();
 	const { t } = useTranslation();
 	const hasTrackedView = useRef(false);
 	const insets = useSafeAreaInsets();
@@ -48,6 +47,13 @@ export default function LoginScreen() {
 			hasTrackedView.current = true;
 		}
 	}, []);
+
+	useEffect(() => {
+		const errorMessage = params.error as string;
+		if (errorMessage) {
+			emitToast(errorMessage, undefined, 4000);
+		}
+	}, [params.error]);
 
 	useEffect(() => {
 		const identityVerificationId = params.identityVerificationId as string;

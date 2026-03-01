@@ -10,9 +10,9 @@ import { ProgressBar } from '@shared/ui/progress-bar';
 import { Stack, usePathname } from 'expo-router';
 import * as React from 'react';
 import { Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
 
 const { useSignupProgress, SignupSteps } = Signup;
 
@@ -23,7 +23,9 @@ export default function SignupLayout() {
 	const { t } = useTranslation();
 	const pathname = usePathname();
 	const renderProgress =
-		pathname !== '/auth/signup/done' && pathname !== '/auth/signup/university-cluster';
+		pathname !== '/auth/signup/done' &&
+		pathname !== '/auth/signup/university-cluster' &&
+		pathname !== '/auth/signup/register-university';
 	const width = useWindowWidth();
 	const progressWidth = width > 480 ? 448 : width - 32;
 	const insets = useSafeAreaInsets();
@@ -98,6 +100,13 @@ export default function SignupLayout() {
 						/>
 						<Stack.Screen
 							name="university"
+							options={{
+								headerShown: false,
+								gestureEnabled: false,
+							}}
+						/>
+						<Stack.Screen
+							name="register-university"
 							options={{
 								headerShown: false,
 								gestureEnabled: false,

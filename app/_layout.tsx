@@ -38,6 +38,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SessionTracker } from '@/src/shared/components/session-tracker';
 import { AppBadgeSync } from '@/src/shared/components/app-badge-sync';
 import { LoginRequiredModalListener } from '@/src/shared/components/login-required-modal-listener';
+import { ServerMaintenanceListener } from '@/src/shared/components/server-maintenance-listener';
 import { OTAUpdateHandler } from '@/src/shared/components/ota-update-handler';
 import { GlobalLoadingOverlay } from '@/src/shared/ui/global-loading-overlay';
 import * as Sentry from '@sentry/react-native';
@@ -439,6 +440,7 @@ export default Sentry.wrap(function RootLayout() {
 													<SessionTracker />
 													<AppBadgeSync />
 													<LoginRequiredModalListener />
+													<ServerMaintenanceListener />
 													<GlobalLoadingOverlay />
 												</>
 											</RouteTracker>
