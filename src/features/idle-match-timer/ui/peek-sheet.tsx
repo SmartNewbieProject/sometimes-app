@@ -350,6 +350,12 @@ const WaitingContent = ({ secondary }: { secondary: MatchDetailsV31 }) => {
 	);
 };
 
+const FAILURE_ICONS: Record<string, string> = {
+	NO_MATCH_POOL: '\uD83D\uDD0D',
+	FILTERED_OUT: '\u2699\uFE0F',
+	ALREADY_MATCHED: '\uD83D\uDC91',
+};
+
 const NotFoundContent = ({ match }: { match: MatchDetailsV31 }) => {
 	const { t } = useTranslation();
 	const [timeResult, setTimeResult] = useState(() =>
@@ -367,26 +373,63 @@ const NotFoundContent = ({ match }: { match: MatchDetailsV31 }) => {
 		? dayUtils.create(match.untilNext).format('M/D HH:mm')
 		: '';
 
+	const failureCode = match.failureCode;
+	const hasFailureInfo = failureCode && FAILURE_ICONS[failureCode];
+
+	const titleKey = hasFailureInfo
+		? `features.idle-match-timer.ui.peek-sheet.not_found_${failureCode.toLowerCase()}_title`
+		: 'features.idle-match-timer.ui.peek-sheet.next_matching_title';
+
+	const descKey = hasFailureInfo
+		? `features.idle-match-timer.ui.peek-sheet.not_found_${failureCode.toLowerCase()}_desc`
+		: 'features.idle-match-timer.ui.peek-sheet.waiting_desc';
+
+	const ctaKey = hasFailureInfo
+		? `features.idle-match-timer.ui.peek-sheet.not_found_${failureCode.toLowerCase()}_cta`
+		: null;
+
+	const handleCta = () => {
+		if (failureCode === 'FILTERED_OUT') {
+			router.push('/profile-edit/interest');
+		} else if (failureCode === 'NO_MATCH_POOL') {
+			router.push('/profile-edit/interest');
+		}
+	};
+
 	return (
 		<View style={styles.row}>
 			<View style={[styles.avatar, styles.waitingAvatar]}>
-				<StopwatchIcon width={20} height={20} color="#FFFFFF" />
+				{hasFailureInfo ? (
+					<Text size="sm">{FAILURE_ICONS[failureCode]}</Text>
+				) : (
+					<StopwatchIcon width={20} height={20} color="#FFFFFF" />
+				)}
 			</View>
 
 			<View style={styles.info}>
 				<Text weight="bold" size="sm">
-					{t('features.idle-match-timer.ui.peek-sheet.next_matching_title')}
+					{t(titleKey)}
 				</Text>
 				<Text size="xs" textColor="muted">
-					{t('features.idle-match-timer.ui.peek-sheet.waiting_desc', { date: formattedDate })}
+					{hasFailureInfo
+						? t(descKey, { date: formattedDate })
+						: t('features.idle-match-timer.ui.peek-sheet.waiting_desc', { date: formattedDate })}
 				</Text>
 			</View>
 
-			<View style={styles.countdownContainer}>
-				<Text size="sm" weight="bold" style={styles.countdownText}>
-					{timeResult.delimeter}-{timeResult.value}
-				</Text>
-			</View>
+			{ctaKey ? (
+				<TouchableOpacity style={styles.ctaButton} onPress={handleCta} activeOpacity={0.7}>
+					<Text size="xs" weight="bold" style={styles.viewButtonText}>
+						{t(ctaKey)}
+					</Text>
+				</TouchableOpacity>
+			) : (
+				<View style={styles.countdownContainer}>
+					<Text size="sm" weight="bold" style={styles.countdownText}>
+						{timeResult.delimeter}-{timeResult.value}
+					</Text>
+				</View>
+			)}
 		</View>
 	);
 };
@@ -488,5 +531,11 @@ const styles = StyleSheet.create({
 	},
 	countdownText: {
 		color: semanticColors.brand.primary,
+	},
+	ctaButton: {
+		backgroundColor: semanticColors.brand.primary,
+		paddingHorizontal: 12,
+		paddingVertical: 8,
+		borderRadius: 8,
 	},
 });

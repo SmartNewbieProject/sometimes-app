@@ -102,7 +102,15 @@
 			"waiting_title": "次の木·日マッチング",
 			"next_matching_title": "次のマッチング",
 			"waiting_desc": "{{date}} 公開",
-			"partner_suffix": "パートナー"
+			"partner_suffix": "パートナー",
+			"not_found_no_match_pool_title": "マッチング相手が不足",
+			"not_found_no_match_pool_desc": "次回{{date}}に再マッチングされます",
+			"not_found_no_match_pool_cta": "条件を広げる",
+			"not_found_filtered_out_title": "条件が厳しめです",
+			"not_found_filtered_out_desc": "理想の範囲を広げるとマッチング率がアップ",
+			"not_found_filtered_out_cta": "フィルター変更",
+			"not_found_already_matched_title": "新しい出会いを待っています",
+			"not_found_already_matched_desc": "以前マッチした方のみです。{{date}}に再マッチング"
 		},
 		"category-badge": {
 			"scheduled": "木·日",

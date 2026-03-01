@@ -102,7 +102,15 @@
 			"waiting_title": "다음 목·일 매칭",
 			"next_matching_title": "다음 매칭",
 			"waiting_desc": "{{date}} 공개",
-			"partner_suffix": "파트너"
+			"partner_suffix": "파트너",
+			"not_found_no_match_pool_title": "매칭 상대가 부족해요",
+			"not_found_no_match_pool_desc": "다음 매칭 {{date}}에 다시 시도돼요",
+			"not_found_no_match_pool_cta": "조건 넓히기",
+			"not_found_filtered_out_title": "조건이 까다로워요",
+			"not_found_filtered_out_desc": "이상형 범위를 넓히면 매칭 확률이 올라가요",
+			"not_found_filtered_out_cta": "필터 수정",
+			"not_found_already_matched_title": "새 인연을 기다려요",
+			"not_found_already_matched_desc": "이전에 만난 분들뿐이에요. {{date}} 다시 매칭돼요"
 		},
 		"category-badge": {
 			"scheduled": "목·일",

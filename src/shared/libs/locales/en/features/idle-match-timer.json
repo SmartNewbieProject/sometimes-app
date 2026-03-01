@@ -94,7 +94,15 @@
 			"waiting_title": "Next Thu·Sun Match",
 			"next_matching_title": "Next matching",
 			"waiting_desc": "Opens {{date}}",
-			"partner_suffix": "Partner"
+			"partner_suffix": "Partner",
+			"not_found_no_match_pool_title": "Not enough matches",
+			"not_found_no_match_pool_desc": "Next match on {{date}}",
+			"not_found_no_match_pool_cta": "Broaden criteria",
+			"not_found_filtered_out_title": "Filters too strict",
+			"not_found_filtered_out_desc": "Broaden your type for better match odds",
+			"not_found_filtered_out_cta": "Edit filters",
+			"not_found_already_matched_title": "Waiting for new matches",
+			"not_found_already_matched_desc": "Only previous matches left. Next on {{date}}"
 		},
 		"category-badge": {
 			"scheduled": "Thu·Sun",
