@@ -4,14 +4,53 @@ import { Button, ImageResource, Text } from '@/src/shared/ui';
 import FrameIcon from '@assets/icons/frame.svg';
 import ImproveProfileIcon from '@assets/icons/improve-profile.svg';
 import ReloadingIcon from '@assets/icons/reloading.svg';
-import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import type { MatchFailureCode } from '../types';
 import useRematch from '../hooks/use-rematch';
 import NotFoundCard from './not-found-card';
 
-export const NotFound = () => {
+type NotFoundProps = {
+	failureCode?: MatchFailureCode;
+	failureReason?: string;
+};
+
+const TOAST_ICONS: Record<MatchFailureCode, string> = {
+	NO_MATCH_POOL: '\uD83D\uDD0D',
+	FILTERED_OUT: '\u2699\uFE0F',
+	ALREADY_MATCHED: '\uD83D\uDC91',
+};
+
+function FailureReasonToast({ failureCode, failureReason }: Required<Pick<NotFoundProps, 'failureCode' | 'failureReason'>>) {
+	const router = useRouter();
+	const { t } = useTranslation();
+	const isFiltered = failureCode === 'FILTERED_OUT';
+
+	return (
+		<View style={[toastStyles.container, isFiltered && toastStyles.containerFiltered]}>
+			<View style={toastStyles.icon}>
+				<Text size="14">{TOAST_ICONS[failureCode]}</Text>
+			</View>
+			<Text size="13" style={toastStyles.text} numberOfLines={2}>
+				{failureReason}
+			</Text>
+			{isFiltered && (
+				<TouchableOpacity
+					style={toastStyles.action}
+					onPress={() => router.push('/profile-edit/interest')}
+					activeOpacity={0.7}
+				>
+					<Text size="12" weight="bold" style={toastStyles.actionText}>
+						{t('features.idle-match-timer.ui.not-found.filter_settings')}
+					</Text>
+				</TouchableOpacity>
+			)}
+		</View>
+	);
+}
+
+export const NotFound = ({ failureCode, failureReason }: NotFoundProps) => {
 	const router = useRouter();
 	const { onRematch, isRematchPending } = useRematch();
 	const { t } = useTranslation();
@@ -28,6 +67,9 @@ export const NotFound = () => {
 			</Text>
 
 			<View style={styles.contentContainer}>
+				{failureCode && failureReason && (
+					<FailureReasonToast failureCode={failureCode} failureReason={failureReason} />
+				)}
 				<NotFoundCard
 					title={t('features.idle-match-timer.ui.not-found.faild_try')}
 					description={t('features.idle-match-timer.ui.not-found.look_around')}
@@ -82,6 +124,46 @@ export const NotFound = () => {
 	);
 };
 
+const toastStyles = StyleSheet.create({
+	container: {
+		width: '100%',
+		backgroundColor: semanticColors.brand.deep,
+		borderRadius: 12,
+		paddingVertical: 12,
+		paddingHorizontal: 16,
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 10,
+	},
+	containerFiltered: {
+		backgroundColor: '#5C3D8F',
+	},
+	icon: {
+		width: 32,
+		height: 32,
+		borderRadius: 8,
+		backgroundColor: 'rgba(255, 255, 255, 0.15)',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	text: {
+		flex: 1,
+		color: 'rgba(255, 255, 255, 0.92)',
+		lineHeight: 18,
+	},
+	action: {
+		paddingVertical: 6,
+		paddingHorizontal: 12,
+		borderRadius: 8,
+		borderWidth: 1,
+		borderColor: 'rgba(226, 213, 255, 0.3)',
+		backgroundColor: 'rgba(255, 255, 255, 0.08)',
+	},
+	actionText: {
+		color: semanticColors.brand.primaryLight,
+	},
+});
+
 const styles = StyleSheet.create({
 	container: {
 		justifyContent: 'center',
@@ -91,13 +173,6 @@ const styles = StyleSheet.create({
 	image: {
 		marginTop: 27,
 	},
-	title: {
-		fontSize: 20,
-		fontFamily: 'Pretendard-SemiBold',
-		fontWeight: 600,
-		lineHeight: 24,
-		color: semanticColors.text.primary,
-	},
 	contentContainer: {
 		marginTop: 24,
 		marginBottom: 24,
@@ -105,14 +180,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 26,
 		alignItems: 'center',
 		gap: 12,
-	},
-	button: {
-		paddingHorizontal: 7,
-		paddingVertical: 6,
-	},
-	frameIcon: {
-		width: 38,
-		height: 38,
 	},
 	chipButton: {
 		paddingHorizontal: 7,

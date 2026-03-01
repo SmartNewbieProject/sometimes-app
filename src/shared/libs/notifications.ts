@@ -150,7 +150,7 @@ async function registerPushToken(pushToken: string): Promise<void> {
 }
 
 /**
- * FCM 토큰을 획득하여 백엔드에 등록합니다. (OTA 백그라운드 업데이트용)
+ * FCM 토큰을 획득하여 백엔드에 등록하고, OTA 업데이트 토픽을 구독합니다.
  */
 export async function registerFcmTokenAsync(): Promise<void> {
 	if (!Device.isDevice || Platform.OS === 'web') return;
@@ -165,6 +165,10 @@ export async function registerFcmTokenAsync(): Promise<void> {
 			platform: Platform.OS,
 		});
 		console.log('[FCM] 토큰 등록 성공');
+
+		// OTA 업데이트 토픽 구독 (Deploy Manager에서 topic으로 OTA 메시지 전송)
+		await messaging().subscribeToTopic('ota-updates');
+		console.log('[FCM] ota-updates 토픽 구독 완료');
 	} catch (error) {
 		console.error('[FCM] 토큰 등록 실패:', error);
 	}

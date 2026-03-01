@@ -24,6 +24,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Path, Circle as SvgCircle } from 'react-native-svg';
+import { IdentityStatusCard } from '@/src/features/jp-identity';
+import { isJapanese } from '@/src/shared/libs/local';
 import { ToggleSettingsTile } from './toggle-settings-tile';
 
 const GAP = 10;
@@ -232,6 +234,9 @@ export const BentoGrid = () => {
 				</View>
 				<Text style={styles.photoHint}>{t('features.mypage.bento.photo_hint')}</Text>
 			</Pressable>
+
+			{/* JP Identity Verification */}
+			{isJapanese() && <IdentityStatusCard />}
 
 			{/* Row 1: 내 성향 + 이상형 설정 (2열) */}
 			<View style={styles.row}>

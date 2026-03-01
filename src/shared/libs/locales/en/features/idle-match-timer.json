@@ -72,7 +72,8 @@
 			"expand_ideal_type": "Try expanding your ideal type range",
 			"edit": "Edit",
 			"improve_profile": "Improve profile",
-			"update_profile": "Try updating your photos or bio"
+			"update_profile": "Try updating your photos or bio",
+			"filter_settings": "Filters →"
 		},
 		"rematching": {
 			"title": "Looking for new connections",
@@ -90,13 +91,14 @@
 		},
 		"peek-sheet": {
 			"view_button": "View",
-			"waiting_title": "Next Scheduled Match",
+			"waiting_title": "Next Thu·Sun Match",
+			"next_matching_title": "Next matching",
 			"waiting_desc": "Opens {{date}}",
 			"partner_suffix": "Partner"
 		},
 		"category-badge": {
-			"scheduled": "Scheduled",
-			"rematch": "Rematch",
+			"scheduled": "Thu·Sun",
+			"rematch": "Paid Match",
 			"global": "Global"
 		},
 		"연애_스타일": "[EN] 연애 스타일"

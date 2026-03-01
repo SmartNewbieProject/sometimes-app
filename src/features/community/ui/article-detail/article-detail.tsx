@@ -431,7 +431,7 @@ export const ArticleDetail = ({ article }: { article: Article }) => {
 				</View>
 
 				<View style={detailStyles.divider} />
-				<View style={detailStyles.flex1}>
+				<View>
 					<Loading.Lottie
 						title={t('features.community.ui.article_detail.loading_comments')}
 						loading={isCommentLoading}
@@ -474,7 +474,7 @@ const detailStyles = StyleSheet.create({
 		backgroundColor: semanticColors.surface.background,
 	},
 	scrollContent: {
-		paddingBottom: 100,
+		paddingBottom: 140,
 	},
 	scrollView: {
 		flex: 1,
@@ -548,9 +548,6 @@ const detailStyles = StyleSheet.create({
 		height: 1,
 		backgroundColor: semanticColors.surface.other,
 		marginTop: 16,
-	},
-	flex1: {
-		flex: 1,
 	},
 	commentsContainer: {
 		display: 'flex',

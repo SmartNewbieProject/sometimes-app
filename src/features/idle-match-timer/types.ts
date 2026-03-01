@@ -12,6 +12,8 @@ export enum UserRejectionCategory {
 	OTHER = 'OTHER',
 }
 
+export type MatchFailureCode = 'NO_MATCH_POOL' | 'FILTERED_OUT' | 'ALREADY_MATCHED';
+
 export type MatchDetails = {
 	id: string | null;
 	type: MatchViewType;
@@ -26,6 +28,8 @@ export type MatchDetails = {
 	rejectionReason?: string;
 	matchedAt?: string;
 	canLetter?: boolean;
+	failureCode?: MatchFailureCode;
+	failureReason?: string;
 };
 
 export type ServerMatchDetails = Omit<MatchDetails, 'endOfView'> & {

@@ -12,7 +12,15 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, Easing, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+	Animated,
+	Easing,
+	Platform,
+	StyleSheet,
+	TouchableOpacity,
+	View,
+	type ViewStyle,
+} from 'react-native';
 import { OverlappingAvatars } from './overlapping-avatars';
 
 interface FloatingSummaryCardProps {
@@ -20,6 +28,7 @@ interface FloatingSummaryCardProps {
 	previewImages: string[];
 	onPress: () => void;
 	isVisible?: boolean;
+	containerStyle?: ViewStyle;
 }
 
 function FloatingSummaryCardContent({
@@ -87,8 +96,12 @@ function FloatingSummaryCardContent({
 	);
 }
 
-function FloatingSummaryCardWeb({ isVisible = true, ...props }: FloatingSummaryCardProps) {
-	const translateY = useRef(new Animated.Value(100)).current;
+function FloatingSummaryCardWeb({
+	isVisible = true,
+	containerStyle,
+	...props
+}: FloatingSummaryCardProps) {
+	const translateY = useRef(new Animated.Value(-40)).current;
 	const opacity = useRef(new Animated.Value(0)).current;
 	const [mounted, setMounted] = useState(false);
 
@@ -115,7 +128,7 @@ function FloatingSummaryCardWeb({ isVisible = true, ...props }: FloatingSummaryC
 
 		Animated.parallel([
 			Animated.timing(translateY, {
-				toValue: isVisible ? 0 : 120,
+				toValue: isVisible ? 0 : -120,
 				duration: 300,
 				easing: isVisible ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
 				useNativeDriver: true,
@@ -132,6 +145,7 @@ function FloatingSummaryCardWeb({ isVisible = true, ...props }: FloatingSummaryC
 		<Animated.View
 			style={[
 				styles.animatedWrapper,
+				containerStyle,
 				{
 					transform: [{ translateY }],
 					opacity,
@@ -151,9 +165,10 @@ if (Platform.OS !== 'web') {
 
 	FloatingSummaryCardNative = function FloatingSummaryCardNativeImpl({
 		isVisible = true,
+		containerStyle,
 		...props
 	}: FloatingSummaryCardProps) {
-		const translateY = useSharedValue(100);
+		const translateY = useSharedValue(-40);
 		const opacity = useSharedValue(0);
 		const mounted = useSharedValue(false);
 
@@ -176,7 +191,7 @@ if (Platform.OS !== 'web') {
 		useEffect(() => {
 			if (!mounted.value) return;
 
-			translateY.value = withTiming(isVisible ? 0 : 120, {
+			translateY.value = withTiming(isVisible ? 0 : -120, {
 				duration: 300,
 				easing: isVisible
 					? ReanimatedEasing.out(ReanimatedEasing.cubic)
@@ -191,7 +206,7 @@ if (Platform.OS !== 'web') {
 		}));
 
 		return (
-			<Reanimated.default.View style={[styles.animatedWrapper, animatedStyle]}>
+			<Reanimated.default.View style={[styles.animatedWrapper, containerStyle, animatedStyle]}>
 				<FloatingSummaryCardContent {...props} />
 			</Reanimated.default.View>
 		);
@@ -213,9 +228,8 @@ export const FloatingSummaryCard = (props: FloatingSummaryCardProps) => {
 const styles = StyleSheet.create({
 	animatedWrapper: {
 		position: 'absolute',
-		bottom: 92,
-		left: 20,
-		right: 20,
+		left: 16,
+		right: 16,
 	},
 	container: {
 		height: 56,

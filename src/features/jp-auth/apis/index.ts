@@ -69,8 +69,10 @@ export const jpSignup = async (data: JpSignupRequest): Promise<JpSignupResponse>
     formData.append('referralCode', data.referralCode);
   }
 
-  for (const image of data.profileImages) {
-    formData.append('profileImages', image);
+  if (data.profileImages && data.profileImages.length > 0) {
+    for (const image of data.profileImages) {
+      formData.append('profileImages', image);
+    }
   }
 
   return axiosClient.post('/jp/auth/signup', formData, {

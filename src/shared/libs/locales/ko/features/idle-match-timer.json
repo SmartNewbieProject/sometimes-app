@@ -80,7 +80,8 @@
 			"expand_ideal_type": "이상형 범위를 넓혀보세요",
 			"edit": "수정",
 			"improve_profile": "프로필 개선",
-			"update_profile": "사진이나 자기소개를 업데이트\n해보세요"
+			"update_profile": "사진이나 자기소개를 업데이트\n해보세요",
+			"filter_settings": "필터 설정 →"
 		},
 		"rematching": {
 			"title": "새로운 인연을 찾고 있어요",
@@ -98,13 +99,14 @@
 		},
 		"peek-sheet": {
 			"view_button": "보기",
-			"waiting_title": "다음 정기매칭",
+			"waiting_title": "다음 목·일 매칭",
+			"next_matching_title": "다음 매칭",
 			"waiting_desc": "{{date}} 공개",
 			"partner_suffix": "파트너"
 		},
 		"category-badge": {
-			"scheduled": "정기",
-			"rematch": "리매칭",
+			"scheduled": "목·일",
+			"rematch": "유료매칭",
 			"global": "글로벌"
 		},
 		"연애_스타일": "연애 스타일"

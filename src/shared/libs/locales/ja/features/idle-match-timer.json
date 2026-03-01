@@ -80,7 +80,8 @@
 			"expand_ideal_type": "理想の範囲を広げてみましょう",
 			"edit": "編集する",
 			"improve_profile": "プロフィールを改善する",
-			"update_profile": "写真や自己紹介を更新してみましょう"
+			"update_profile": "写真や自己紹介を更新してみましょう",
+			"filter_settings": "フィルター設定 →"
 		},
 		"rematching": {
 			"title": "新しい出会いを探しています",
@@ -98,13 +99,14 @@
 		},
 		"peek-sheet": {
 			"view_button": "見る",
-			"waiting_title": "次の定期マッチング",
+			"waiting_title": "次の木·日マッチング",
+			"next_matching_title": "次のマッチング",
 			"waiting_desc": "{{date}} 公開",
 			"partner_suffix": "パートナー"
 		},
 		"category-badge": {
-			"scheduled": "定期",
-			"rematch": "再マッチ",
+			"scheduled": "木·日",
+			"rematch": "有料マッチング",
 			"global": "グローバル"
 		},
 		"연애_스타일": "[JA] 연애 스타일"

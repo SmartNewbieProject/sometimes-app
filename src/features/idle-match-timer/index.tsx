@@ -37,12 +37,23 @@ function IdleMatchTimerContent() {
 	const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
 	const { rematchingLoading, finishRematching, loading: realRematchingLoading } = useMatchLoading();
 	const setSecondary = useSecondaryMatch((s) => s.setSecondary);
+	const setNotFoundMatch = useSecondaryMatch((s) => s.setNotFoundMatch);
 
 	// secondary 변경 시 전역 store 동기화 (home의 floating PeekSheet에서 사용)
 	useEffect(() => {
 		setSecondary(secondary ?? null);
 		return () => setSecondary(null);
 	}, [secondary, setSecondary]);
+
+	// not-found + untilNext → PeekSheet에 다음 매칭 시간 노출
+	useEffect(() => {
+		if (match?.type === 'not-found' && match.untilNext) {
+			setNotFoundMatch(match);
+		} else {
+			setNotFoundMatch(null);
+		}
+		return () => setNotFoundMatch(null);
+	}, [match?.type, match?.untilNext, setNotFoundMatch]);
 
 	useEffect(() => {
 		if (rematchingLoading) {
@@ -120,7 +131,7 @@ function IdleMatchTimerContent() {
 					/>
 				);
 			case 'not-found':
-				return <NotFound />;
+				return <NotFound failureCode={match.failureCode} failureReason={match.failureReason} />;
 			case 'waiting':
 				return (
 					<Waiting

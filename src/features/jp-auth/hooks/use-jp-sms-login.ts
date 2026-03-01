@@ -253,9 +253,9 @@ export const useJpSmsLogin = ({
 				loginResult = await jpLogin({ phoneNumber: formattedPhone });
 				console.log('[JP SMS] 4. Login API 응답 (기존 회원):', loginResult);
 			} catch (err: any) {
-				// 401 오류 = 신규 회원 (DB에 계정 없음)
-				if (err?.status === 401) {
-					console.log('[JP SMS] 4. 401 응답 → 신규 회원으로 처리');
+				// 400/401 오류 = 신규 회원 (DB에 계정 없음)
+				if (err?.status === 401 || err?.status === 400) {
+					console.log(`[JP SMS] 4. ${err?.status} 응답 → 신규 회원으로 처리`);
 					loginResult = {
 						accessToken: '',
 						refreshToken: '',
