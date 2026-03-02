@@ -16,6 +16,7 @@ import featuresLoading from './features/loading.json';
 import featuresOnboarding from './features/onboarding.json';
 import featuresProfileViewer from './features/profile-viewer.json';
 import global from './global.json';
+import sharedsServices from './shareds/services.json';
 import sharedsUi from './shareds/ui.json';
 import widgetsGemStore from './widgets/gem-store.json';
 import widgetsOppositeGenderPreview from './widgets/opposite-gender-preview.json';
@@ -47,6 +48,7 @@ const features = {
 };
 
 const shareds = {
+	services: sharedsServices,
 	ui: sharedsUi,
 };
 

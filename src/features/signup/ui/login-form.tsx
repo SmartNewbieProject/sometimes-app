@@ -381,8 +381,10 @@ function KakaoLoginComponent() {
 			setIsLoading(true);
 			devLogWithTag('Kakao Login', '1. SDK 호출');
 
-			// 카카오 네이티브 SDK로 로그인
-			const result = await KakaoLogin.login();
+			// 카카오 네이티브 SDK로 로그인 (필수 정보 scope 명시)
+			const result = await KakaoLogin.login({
+				scopes: ['name', 'gender', 'birthyear', 'birthday', 'phone_number'],
+			});
 			devLogWithTag('Kakao Login', '2. SDK 응답 받음', {
 				hasAccessToken: !!result.accessToken,
 			});

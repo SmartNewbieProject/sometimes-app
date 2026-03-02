@@ -66,7 +66,8 @@
 				"missing_previous_info": "앞선 정보 입력에서 누락된 부분이 있어요",
 				"instagram_required": "프로필 사진 설정을 위해 먼저 인스타그램 계정을 연동해주세요.",
 				"all_info_required": "회원가입에 필요한 정보를 모두 입력하셔야 회원가입 신청이 가능해요.",
-				"restart_signup": "회원가입을 처음부터 시작해주세요"
+				"restart_signup": "회원가입을 처음부터 시작해주세요",
+				"missing_info_label": "누락된 정보: {{fields}}"
 			}
 		},
 		"area": {

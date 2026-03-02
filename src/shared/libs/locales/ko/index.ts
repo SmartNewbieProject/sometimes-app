@@ -86,6 +86,7 @@ import sharedsLinkifiedText from './shareds/linkified-text.json';
 import sharedsNavigation from './shareds/navigation.json';
 import sharedsProviders from './shareds/providers.json';
 import sharedsSelect from './shareds/select.json';
+import sharedsServices from './shareds/services.json';
 import sharedsUi from './shareds/ui.json';
 import sharedsUtils from './shareds/utils.json';
 
@@ -183,6 +184,7 @@ const shareds = {
 	navigation: sharedsNavigation,
 	providers: sharedsProviders,
 	select: sharedsSelect,
+	services: sharedsServices,
 	ui: sharedsUi,
 	utils: sharedsUtils,
 };

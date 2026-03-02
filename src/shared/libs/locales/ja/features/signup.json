@@ -65,7 +65,8 @@
 				"missing_previous_info": "前の入力項目に未記入があります",
 				"instagram_required": "プロフィール写真設定のため、まずInstagramアカウントを連携してください。",
 				"all_info_required": "会員登録に必要な情報をすべて入力する必要があります。",
-				"restart_signup": "会員登録を最初からやり直してください"
+				"restart_signup": "会員登録を最初からやり直してください",
+				"missing_info_label": "未記入の情報: {{fields}}"
 			}
 		},
 		"area": {

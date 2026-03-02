@@ -44,12 +44,11 @@ const getDetailedMessage = (missingFields: string[], step: SignupSteps): string 
 
 	const missingFieldNames = missingFields.map((field) => fieldNames[field] || field).join(', ');
 
-	console.log('missingField', missingFieldNames);
-
 	const baseMessage = i18n.t(PAGE_VALIDATIONS[step].messageKey);
 
 	if (missingFields.length > 0) {
-		return `${baseMessage}\n누락된 정보: ${missingFieldNames}`;
+		const missingLabel = i18n.t('features.signup.ui.validators.validation_messages.missing_info_label', { fields: missingFieldNames });
+		return `${baseMessage}\n${missingLabel}`;
 	}
 	return baseMessage;
 };
