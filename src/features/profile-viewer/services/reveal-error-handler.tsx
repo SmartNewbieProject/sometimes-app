@@ -6,7 +6,7 @@ const handleInsufficientGems: ErrorHandler = {
 	handle: (error, { router, showModal }) => {
 		showModal({
 			title: '구슬이 부족해요',
-			children: <Text>프로필을 공개하려면 5구슬이 필요해요.</Text>,
+			children: <Text>프로필을 공개하려면 구슬이 필요해요. 충전 후 다시 시도해주세요.</Text>,
 			primaryButton: {
 				text: '구슬 충전하기',
 				onClick: () => router.push('/purchase/gem-store'),

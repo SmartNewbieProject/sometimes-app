@@ -14,7 +14,7 @@
 		"success_title": "Verification Complete",
 		"success_message": "Your Instagram ID has been registered.",
 		"success_rewarded_title": "Congratulations!",
-		"success_rewarded_message": "Instagram verified! You received 10 gems.",
+		"success_rewarded_message": "Instagram verified! You received 2 gems.",
 		"error_message": "Failed to register Instagram ID. Please try again."
 	},
 	"services": {

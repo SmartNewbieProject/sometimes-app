@@ -98,3 +98,16 @@ export interface ChatTipsResponse {
 export const getChatTips = (chatRoomId: string): Promise<ChatTipsResponse> => {
 	return axiosClient.get(`/chat/rooms/${chatRoomId}/tips`);
 };
+
+export interface RefundResponse {
+	refundedGems: number;
+	totalGems: number;
+}
+
+export const refundChatRoom = ({
+	chatRoomId,
+}: {
+	chatRoomId: string;
+}): Promise<RefundResponse> => {
+	return axiosClient.post(`/chat/rooms/${chatRoomId}/refund`);
+};

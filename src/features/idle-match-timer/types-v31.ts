@@ -25,6 +25,6 @@ export type MatchComposite = {
 
 export const CATEGORY_COLORS = {
 	scheduled: { primary: '#7A4AE2', gradient: ['#9B6DFF', '#7A4AE2'] as const },
-	rematch: { primary: '#FF8C42', gradient: ['#FFB347', '#FF8C42'] as const },
-	global: { primary: '#4A90D9', gradient: ['#6BB5FF', '#4A90D9'] as const },
+	rematch: { primary: '#9B7FD6', gradient: ['#B89AEF', '#9B7FD6'] as const },
+	global: { primary: '#5C3D8F', gradient: ['#7A52B8', '#5C3D8F'] as const },
 } as const;

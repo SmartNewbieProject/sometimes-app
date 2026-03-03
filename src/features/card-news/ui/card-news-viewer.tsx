@@ -158,28 +158,31 @@ export function CardNewsViewer({ cardNewsId, onClose }: Props) {
   const renderCard = useCallback(
     (section: CardSection) => (
       <View key={section.order} style={styles.cardContainer}>
-        <View style={styles.cardPadding}>
-          <View style={styles.cardImageArea}>
-            {section.imageUrl ? (
-              <Image
-                source={{ uri: section.imageUrl }}
-                style={styles.cardImage}
-                contentFit="cover"
-              />
-            ) : (
-              <View style={styles.cardImagePlaceholder}>
-                <Text style={styles.placeholderEmoji}>📰</Text>
+        <ScrollView
+          style={styles.cardScrollView}
+          contentContainerStyle={styles.cardScrollContent}
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled
+        >
+          <View style={styles.cardPadding}>
+            {section.imageUrl && (
+              <View style={styles.cardImageArea}>
+                <Image
+                  source={{ uri: section.imageUrl }}
+                  style={styles.cardImage}
+                  contentFit="cover"
+                />
               </View>
             )}
-          </View>
 
-          <View style={styles.cardTextArea}>
-            <Text style={styles.cardTitle}>{section.title}</Text>
-            <View style={styles.cardBodyContainer}>
-              {renderHtmlContent(section.content)}
+            <View style={[styles.cardTextArea, !section.imageUrl && styles.cardTextAreaNoImage]}>
+              <Text style={styles.cardTitle}>{section.title}</Text>
+              <View style={styles.cardBodyContainer}>
+                {renderHtmlContent(section.content)}
+              </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
     ),
     []
@@ -358,10 +361,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
+  cardScrollView: {
+    flex: 1,
+    paddingTop: 40,
+  },
+  cardScrollContent: {
+    flexGrow: 1,
+  },
   cardPadding: {
     paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 20,
   },
   cardImageArea: {
     width: "100%",
@@ -375,19 +383,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  cardImagePlaceholder: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#F7F3FF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  placeholderEmoji: {
-    fontSize: 60,
-  },
   cardTextArea: {
     marginTop: 24,
     paddingBottom: 40,
+  },
+  cardTextAreaNoImage: {
+    marginTop: 0,
   },
   cardTitle: {
     fontSize: 24,

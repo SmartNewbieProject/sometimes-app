@@ -8,7 +8,7 @@
 			"simple_like": "좋아요만 보내기",
 			"letter_like": "편지와 함께 보내기",
 			"loading": "처리중...",
-			"hint": "직접 채팅과 같은 비용으로, 매칭되면 채팅이 무료로 열려요!"
+			"hint": "편지와 함께 보내면 상대의 수락률이 높아져요!"
 		},
 		"insufficient_modal": {
 			"title": "구슬이 부족해요",

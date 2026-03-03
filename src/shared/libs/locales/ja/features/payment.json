@@ -90,7 +90,7 @@
 		},
 		"community_event_modal": {
 			"title": "❤️ ジェム付与完了",
-			"description": "ジェム7個を受け取りました",
+			"description": "ジェム1個を受け取りました",
 			"redirect_text": "コミュニティへの移動が完了しました",
 			"confirm_button": "確認",
 			"continue_button": "探索を続ける"

@@ -137,3 +137,19 @@ export interface SessionClosedEvent {
 	closedAt: string;
 	rating?: number;
 }
+
+export interface BotMessageChunkEvent {
+	sessionId: string;
+	chunk: string;
+}
+
+export interface BotMessageDoneEvent {
+	sessionId: string;
+	messageId: string;
+	metadata: {
+		domain?: SupportDomain;
+		collectedInfo?: Record<string, string>;
+		phase?: ConversationPhase;
+		confidence?: number;
+	};
+}

@@ -3,7 +3,7 @@
 		"modal": {
 			"title": "ようこそ！ 🎉",
 			"subline": "ご登録ありがとうございます。\n特別なプレゼントをご用意しました！",
-			"gem_reward_label": "ジェム10個",
+			"gem_reward_label": "ジェム5個",
 			"reward_text": "をプレゼントします！",
 			"close_hint": "タップして閉じる",
 			"status_check_error": "ウェルカム特典の状態確認エラー：",

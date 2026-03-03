@@ -1,0 +1,14 @@
+{
+	"image_selector": {
+		"add_photo": "Add Photo",
+		"permission_needed_title": "Permission Needed",
+		"gallery_permission_message": "Permission is required to access your photos.",
+		"open_settings": "Open Settings",
+		"close": "Close",
+		"unsupported_format": "Only jpeg, jpg, png formats are supported",
+		"camera_permission_message": "Permission is required to use the camera",
+		"optimizing_image": "Optimizing image...",
+		"compression_failed": "Image compression failed, using original:",
+		"resolution_too_low": "Image resolution is too low.\nPlease use a photo at least 500×500."
+	}
+}

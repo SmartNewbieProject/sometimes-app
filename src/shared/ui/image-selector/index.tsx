@@ -1,7 +1,12 @@
+import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { compressImage } from '@/src/shared/libs/image-compression';
+import { PROFILE_IMAGE_CONFIG } from '@/src/shared/libs/image-compression/config';
+import { devLogWithTag, devWarn } from '@/src/shared/utils';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	ActivityIndicator,
 	Alert,
@@ -12,18 +17,15 @@ import {
 	View,
 } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
+import { useDeviceResourceCheck } from '../../hooks/use-device-resource-check';
 import { useModal } from '../../hooks/use-modal';
 import { usePhotoPicker } from '../../hooks/use-photo-picker';
-import { useDeviceResourceCheck } from '../../hooks/use-device-resource-check';
 import { convertToJpeg, isHeicBase64 } from '../../utils/image';
-import { compressImage } from '@/src/shared/libs/image-compression';
-import { PROFILE_IMAGE_CONFIG } from '@/src/shared/libs/image-compression/config';
 import { ContentSelector, type ContentSelectorSize } from '../content-selector';
 import { ImageCropModal } from '../image-crop-modal';
 import { Text } from '../text';
-import { useTranslation } from 'react-i18next';
-import { semanticColors } from '@/src/shared/constants/semantic-colors';
-import { devLogWithTag, devWarn } from '@/src/shared/utils';
+
+const MIN_IMAGE_DIMENSION = 500;
 
 export interface ImageSelectorProps {
 	value?: string;
@@ -110,17 +112,36 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(
 			});
 
 			if (!result.canceled) {
-				const pickedUri = result.assets[0].uri;
-				devLogWithTag('ImageSelector', 'Picked image URI length:', pickedUri.length);
+				const asset = result.assets[0];
+				devLogWithTag('ImageSelector', 'Picked image URI length:', asset.uri.length);
 
-				if (Platform.OS === 'web' && isHeicBase64(pickedUri)) {
+				if (
+					asset.width &&
+					asset.height &&
+					Math.min(asset.width, asset.height) < MIN_IMAGE_DIMENSION
+				) {
+					devLogWithTag('ImageSelector', 'Resolution too low:', {
+						width: asset.width,
+						height: asset.height,
+					});
+					showErrorModal(
+						t('shareds.image-selector.image_selector.resolution_too_low'),
+						'announcement',
+					);
+					return null;
+				}
+
+				if (Platform.OS === 'web' && isHeicBase64(asset.uri)) {
 					devLogWithTag('ImageSelector', 'HEIC format detected on web');
-					showErrorModal('이미지 형식은 jpeg, jpg, png 형식만 가능해요', 'announcement');
+					showErrorModal(
+						t('shareds.image-selector.image_selector.unsupported_format'),
+						'announcement',
+					);
 					return null;
 				}
 
 				devLogWithTag('ImageSelector', 'Converting to JPEG...');
-				const jpegUri = await convertToJpeg(pickedUri);
+				const jpegUri = await convertToJpeg(asset.uri);
 				devLogWithTag('ImageSelector', 'JPEG URI length:', jpegUri.length);
 
 				devLogWithTag('ImageSelector', 'Opening crop modal...');
@@ -170,17 +191,36 @@ export const ImageSelector = forwardRef<ImageSelectorRef, ImageSelectorProps>(
 			}
 
 			if (!result.canceled) {
-				const pickedUri = result.assets[0].uri;
-				devLogWithTag('ImageSelector', 'Captured image URI length:', pickedUri.length);
+				const asset = result.assets[0];
+				devLogWithTag('ImageSelector', 'Captured image URI length:', asset.uri.length);
 
-				if (Platform.OS === 'web' && isHeicBase64(pickedUri)) {
+				if (
+					asset.width &&
+					asset.height &&
+					Math.min(asset.width, asset.height) < MIN_IMAGE_DIMENSION
+				) {
+					devLogWithTag('ImageSelector', 'Resolution too low (camera):', {
+						width: asset.width,
+						height: asset.height,
+					});
+					showErrorModal(
+						t('shareds.image-selector.image_selector.resolution_too_low'),
+						'announcement',
+					);
+					return null;
+				}
+
+				if (Platform.OS === 'web' && isHeicBase64(asset.uri)) {
 					devLogWithTag('ImageSelector', 'HEIC format detected on web (camera)');
-					showErrorModal('이미지 형식은 jpeg, jpg, png 형식만 가능해요', 'announcement');
+					showErrorModal(
+						t('shareds.image-selector.image_selector.unsupported_format'),
+						'announcement',
+					);
 					return null;
 				}
 
 				devLogWithTag('ImageSelector', 'Converting to JPEG (camera)...');
-				const jpegUri = await convertToJpeg(pickedUri);
+				const jpegUri = await convertToJpeg(asset.uri);
 				devLogWithTag('ImageSelector', 'JPEG URI length (camera):', jpegUri.length);
 
 				devLogWithTag('ImageSelector', 'Opening crop modal (camera)...');

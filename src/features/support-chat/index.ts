@@ -22,6 +22,8 @@ export type {
 	TypingEvent,
 	CloseSessionRequest,
 	CloseSessionResponse,
+	BotMessageChunkEvent,
+	BotMessageDoneEvent,
 } from './types';
 export {
 	SupportChatScreen,

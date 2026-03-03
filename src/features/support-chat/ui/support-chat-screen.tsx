@@ -40,6 +40,7 @@ function SupportChatScreen() {
 		isConnected,
 		isLoading,
 		isTyping,
+		streaming,
 		error,
 		initSession,
 		sendMessage,
@@ -71,12 +72,12 @@ function SupportChatScreen() {
 	}, [initSession]);
 
 	useEffect(() => {
-		if (messages.length > 0) {
+		if (messages.length > 0 || streaming.isStreaming) {
 			setTimeout(() => {
 				flatListRef.current?.scrollToEnd({ animated: true });
 			}, 100);
 		}
-	}, [messages.length]);
+	}, [messages.length, streaming.text]);
 
 	const handleSend = useCallback(
 		(content: string) => {
@@ -233,11 +234,25 @@ function SupportChatScreen() {
 				contentContainerStyle={[styles.messageList, messages.length === 0 && styles.emptyList]}
 				ListHeaderComponent={listHeaderComponent}
 				ListEmptyComponent={renderEmptyState}
-				ListFooterComponent={isTyping && status ? <TypingIndicator status={status} /> : null}
+				ListFooterComponent={
+					<>
+						{streaming.isStreaming && (
+							<SupportChatMessage
+								content={streaming.text}
+								senderType="bot"
+								createdAt={new Date().toISOString()}
+								isStreaming
+							/>
+						)}
+						{isTyping && status && !streaming.isStreaming ? (
+							<TypingIndicator status={status} />
+						) : null}
+					</>
+				}
 				showsVerticalScrollIndicator={false}
 				keyboardShouldPersistTaps="handled"
 				onContentSizeChange={() => {
-					if (messages.length > 0) {
+					if (messages.length > 0 || streaming.isStreaming) {
 						flatListRef.current?.scrollToEnd({ animated: false });
 					}
 				}}

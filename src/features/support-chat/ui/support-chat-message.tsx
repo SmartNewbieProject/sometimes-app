@@ -1,8 +1,8 @@
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { Text } from '@/src/shared/ui';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Animated, Platform, StyleSheet, View } from 'react-native';
 import type { ConversationPhase, SenderType } from '../types';
 
 interface SupportChatMessageProps {
@@ -10,9 +10,37 @@ interface SupportChatMessageProps {
 	senderType: SenderType;
 	createdAt: string;
 	phase?: ConversationPhase;
+	isStreaming?: boolean;
 }
 
-function SupportChatMessage({ content, senderType, createdAt, phase }: SupportChatMessageProps) {
+function StreamingCursor() {
+	const opacity = useRef(new Animated.Value(1)).current;
+
+	useEffect(() => {
+		const animation = Animated.loop(
+			Animated.sequence([
+				Animated.timing(opacity, {
+					toValue: 0,
+					duration: 500,
+					useNativeDriver: true,
+				}),
+				Animated.timing(opacity, {
+					toValue: 1,
+					duration: 500,
+					useNativeDriver: true,
+				}),
+			]),
+		);
+		animation.start();
+		return () => animation.stop();
+	}, [opacity]);
+
+	return (
+		<Animated.View style={[styles.streamingCursor, { opacity }]} />
+	);
+}
+
+function SupportChatMessage({ content, senderType, createdAt, phase, isStreaming }: SupportChatMessageProps) {
 	const { t } = useTranslation();
 	const isUser = senderType === 'user';
 	const isBot = senderType === 'bot';
@@ -49,9 +77,12 @@ function SupportChatMessage({ content, senderType, createdAt, phase }: SupportCh
 						isAdmin && styles.adminBubble,
 					]}
 				>
-					<Text style={[styles.messageText, isUser ? styles.userText : styles.otherText]}>
-						{content}
-					</Text>
+					<View style={styles.messageContent}>
+						<Text style={[styles.messageText, isUser ? styles.userText : styles.otherText]}>
+							{content}
+						</Text>
+						{isStreaming && <StreamingCursor />}
+					</View>
 					{isAsking && (
 						<View style={styles.askingHint}>
 							<Text style={styles.askingHintText}>
@@ -60,7 +91,7 @@ function SupportChatMessage({ content, senderType, createdAt, phase }: SupportCh
 						</View>
 					)}
 				</View>
-				{!isUser && <Text style={styles.time}>{formatTime(createdAt)}</Text>}
+				{!isUser && !isStreaming && <Text style={styles.time}>{formatTime(createdAt)}</Text>}
 			</View>
 		</View>
 	);
@@ -120,11 +151,24 @@ const styles = StyleSheet.create({
 	adminBubble: {
 		backgroundColor: semanticColors.surface.background,
 	},
+	messageContent: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		flexWrap: 'wrap',
+	},
 	messageText: {
 		fontSize: 14,
 		fontWeight: '400',
 		lineHeight: 21,
 		fontFamily: 'Pretendard-Regular',
+		flexShrink: 1,
+	},
+	streamingCursor: {
+		width: 2,
+		height: 16,
+		backgroundColor: semanticColors.brand.primary,
+		marginLeft: 1,
+		borderRadius: 1,
 	},
 	userText: {
 		color: semanticColors.text.inverse,

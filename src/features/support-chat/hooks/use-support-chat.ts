@@ -6,6 +6,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { type Socket, io } from 'socket.io-client';
 import { createSession, getMySessions, getSessionMessages } from '../apis';
 import type {
+	BotMessageChunkEvent,
+	BotMessageDoneEvent,
+	MessageMetadata,
 	NewMessageEvent,
 	SessionClosedEvent,
 	SessionStatus,
@@ -21,6 +24,13 @@ interface UseSupportChatOptions {
 	onError?: (error: string) => void;
 }
 
+interface StreamingState {
+	isStreaming: boolean;
+	text: string;
+	messageId?: string;
+	metadata?: MessageMetadata;
+}
+
 interface UseSupportChatReturn {
 	session: SupportChatSession | null;
 	messages: SupportChatMessage[];
@@ -28,6 +38,7 @@ interface UseSupportChatReturn {
 	isConnected: boolean;
 	isLoading: boolean;
 	isTyping: boolean;
+	streaming: StreamingState;
 	error: string | null;
 	initSession: () => Promise<void>;
 	sendMessage: (content: string) => void;
@@ -43,12 +54,17 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 	const [isConnected, setIsConnected] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isTyping, setIsTypingState] = useState(false);
+	const [streaming, setStreaming] = useState<StreamingState>({
+		isStreaming: false,
+		text: '',
+	});
 	const [error, setError] = useState<string | null>(null);
 
 	const queryClient = useQueryClient();
 	const socketRef = useRef<Socket | null>(null);
 	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const optionsRef = useRef(options);
+	const streamingDoneMessageIdRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		optionsRef.current = options;
@@ -150,6 +166,14 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 
 			newSocket.on('new_message', (message: NewMessageEvent) => {
 				console.log('[SupportChat] New message:', message.senderType);
+				// 스트리밍으로 이미 처리된 봇 메시지는 중복 추가하지 않음
+				if (
+					message.senderType === 'bot' &&
+					streamingDoneMessageIdRef.current === message.id
+				) {
+					streamingDoneMessageIdRef.current = null;
+					return;
+				}
 				setMessages((prev) => [
 					...prev,
 					{
@@ -161,6 +185,37 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 						createdAt: message.createdAt,
 					},
 				]);
+			});
+
+			newSocket.on('bot_message_chunk', (data: BotMessageChunkEvent) => {
+				if (data.sessionId !== session.sessionId) return;
+				setStreaming((prev) => ({
+					...prev,
+					isStreaming: true,
+					text: prev.text + data.chunk,
+				}));
+			});
+
+			newSocket.on('bot_message_done', (data: BotMessageDoneEvent) => {
+				if (data.sessionId !== session.sessionId) return;
+				console.log('[SupportChat] Streaming done:', data.messageId);
+				streamingDoneMessageIdRef.current = data.messageId;
+				setStreaming((prev) => {
+					// 스트리밍된 텍스트를 정식 메시지로 messages에 추가
+					const finalText = prev.text;
+					setMessages((msgs) => [
+						...msgs,
+						{
+							id: data.messageId,
+							sessionId: data.sessionId,
+							senderType: 'bot',
+							content: finalText,
+							metadata: data.metadata,
+							createdAt: new Date().toISOString(),
+						},
+					]);
+					return { isStreaming: false, text: '', messageId: undefined, metadata: undefined };
+				});
 			});
 
 			newSocket.on('session_status_changed', (data: SessionStatusChangedEvent) => {
@@ -274,6 +329,7 @@ export function useSupportChat(options?: UseSupportChatOptions): UseSupportChatR
 		isConnected,
 		isLoading,
 		isTyping,
+		streaming,
 		error,
 		initSession,
 		sendMessage,

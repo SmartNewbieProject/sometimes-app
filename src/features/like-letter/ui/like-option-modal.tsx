@@ -43,8 +43,8 @@ export function LikeOptionModal({
 	const [isInsufficient, setIsInsufficient] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 9;
-	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 11;
+	const simpleLikeCost = (featureCosts as Record<string, number>)?.LIKE_MESSAGE ?? 3;
+	const baseLetterLikeCost = (featureCosts as Record<string, number>)?.LIKE_WITH_LETTER ?? 5;
 	const letterLikeCost = canLetter ? 0 : baseLetterLikeCost;
 
 	useEffect(() => {

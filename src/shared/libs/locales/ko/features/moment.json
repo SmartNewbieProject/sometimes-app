@@ -218,13 +218,24 @@
 	},
 	"onboarding": {
 		"intro": {
-			"title": "좋은 만남은 나를 아는 것부터",
-			"subtitle": "잠깐이면 돼요, 약속",
-			"feature1": "짧은 질문 {{count}}개",
-			"feature2": "나와 잘 맞는 사람을 찾아줘요",
-			"feature3": "당신만의 매력 포인트 발견",
-			"start_button": "나를 알아보기",
-			"skip_button": "건너뛰기"
+			"title": "당신의 프로필, 어떻게 보일까요?",
+			"subtitle": "모먼트 등록으로 매력이 달라져요",
+			"start_button": "매력 프로필 만들기",
+			"skip_button": "건너뛰기",
+			"before_tag": "지금",
+			"after_tag": "모먼트 등록 후",
+			"before_name": "기본 프로필",
+			"after_name": "매력 프로필",
+			"before_trait1": "사진 3장",
+			"before_trait2": "한줄 소개",
+			"before_trait3": "기본 정보",
+			"after_trait1": "감성 탐험가",
+			"after_trait2": "성격 분석",
+			"after_trait3": "궁합 매칭",
+			"benefit_matching": "매칭률 +40%",
+			"benefit_conversation": "대화 시작이 쉬워져요",
+			"benefit_insight": "상대 성향도 확인",
+			"cta_subtext": "질문 8개 · 약 2분"
 		},
 		"questions": {
 			"header_title": "나 알아가기",

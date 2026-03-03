@@ -4,8 +4,6 @@ import { getDepartments } from '../apis';
 export const useDepartmentQuery = (univ?: string) =>
 	useQuery({
 		queryKey: ['departments', univ],
-		queryFn: () => {
-			if (!univ) return [] as string[];
-			return getDepartments(univ);
-		},
+		queryFn: () => getDepartments(univ as string),
+		enabled: !!univ,
 	});

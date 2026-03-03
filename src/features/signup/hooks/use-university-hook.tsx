@@ -191,11 +191,17 @@ function useUniversityHook() {
 		listTranslateY.value = 50;
 	}, []);
 
-	// 페이지가 포커스될 때 초기 상태 복원 (로고 표시)
+	// 페이지가 포커스될 때 초기 상태 복원 (로고 표시 + 애니메이션 값 리셋)
 	useFocusEffect(
 		useCallback(() => {
 			setTrigger(false);
 			setIsFocused(false);
+			updateShowHeader(false);
+
+			titleOpacity.value = 1;
+			containerTranslateY.value = 150;
+			listOpacity.value = 0;
+			listTranslateY.value = 50;
 		}, []),
 	);
 

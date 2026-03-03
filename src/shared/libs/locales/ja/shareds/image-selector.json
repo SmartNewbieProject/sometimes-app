@@ -8,6 +8,7 @@
 		"unsupported_format": "対応している画像形式は jpeg、jpg、png のみです。",
 		"camera_permission_message": "カメラを使用するには設定からカメラへのアクセスを許可してください。",
 		"optimizing_image": "画像を最適化しています...",
-		"compression_failed": "画像圧縮に失敗しました。元の画像を使用:"
+		"compression_failed": "画像圧縮に失敗しました。元の画像を使用:",
+		"resolution_too_low": "画像の解像度が低すぎます。\n500×500以上の写真をご使用ください。"
 	}
 }

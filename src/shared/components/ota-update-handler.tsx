@@ -1,21 +1,40 @@
 import messaging from '@react-native-firebase/messaging';
 import * as Updates from 'expo-updates';
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { AppState, type AppStateStatus, Platform } from 'react-native';
 
 export function OTAUpdateHandler() {
 	const { isUpdatePending } = Updates.useUpdates();
+	const appStateRef = useRef<AppStateStatus>(AppState.currentState);
+	const pendingReload = useRef(false);
 
-	// 업데이트 다운로드 완료 시 재시작
 	useEffect(() => {
 		if (__DEV__ || Platform.OS === 'web') return;
 
 		if (isUpdatePending) {
-			Updates.reloadAsync();
+			if (appStateRef.current === 'active') {
+				pendingReload.current = true;
+			} else {
+				Updates.reloadAsync();
+			}
 		}
 	}, [isUpdatePending]);
 
-	// 포그라운드 silent push 처리 (앱이 열려 있을 때)
+	useEffect(() => {
+		if (__DEV__ || Platform.OS === 'web') return;
+
+		const sub = AppState.addEventListener('change', (nextState) => {
+			if (appStateRef.current.match(/inactive|background/) && nextState === 'active') {
+				if (pendingReload.current) {
+					Updates.reloadAsync();
+				}
+			}
+			appStateRef.current = nextState;
+		});
+
+		return () => sub.remove();
+	}, []);
+
 	useEffect(() => {
 		if (__DEV__ || Platform.OS === 'web') return;
 

@@ -8,6 +8,7 @@
 		"unsupported_format": "이미지 형식은 jpeg, jpg, png 형식만 가능해요",
 		"camera_permission_message": "카메라 사용을 위해서 권한이 필요합니다",
 		"optimizing_image": "이미지를 최적화하고 있어요...",
-		"compression_failed": "이미지 압축 실패, 원본 사용:"
+		"compression_failed": "이미지 압축 실패, 원본 사용:",
+		"resolution_too_low": "이미지 해상도가 너무 낮습니다.\n500×500 이상의 사진을 사용해주세요."
 	}
 }

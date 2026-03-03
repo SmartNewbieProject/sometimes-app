@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 		borderWidth: 3,
 		borderColor: '#6B3FD4',
+		backgroundColor: '#6B3FD4',
 		overflow: 'hidden',
 	},
 	gradientButton: {

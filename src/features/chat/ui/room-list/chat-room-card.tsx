@@ -1,4 +1,5 @@
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useModal } from '@/src/shared/hooks/use-modal';
 import { dayUtils } from '@/src/shared/libs';
 import LockChatIcon from '@assets/icons/lock-chat.svg';
 import { useRouter } from 'expo-router';
@@ -7,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import {
 	Animated,
 	Dimensions,
-	Linking,
 	PanResponder,
 	Pressable,
 	StyleSheet,
@@ -16,10 +16,9 @@ import {
 } from 'react-native';
 import { useAuth } from '../../../auth';
 import useChatLock from '../../hooks/use-chat-lock';
+import useRefundChatRoom from '../../queries/use-refund-chat-room';
 import type { ChatRoomList } from '../../types/chat';
 import ChatProfileImage from '../message/chat-profile-image';
-
-const REFUND_GOOGLE_FORM_URL = 'https://forms.gle/DYSKhgzPEVTWuqcr9';
 
 interface ChatRoomCardProps {
 	item: ChatRoomList;
@@ -130,11 +129,31 @@ const RenderContent = ({ item }: ChatRoomCardProps) => {
 	const { t } = useTranslation();
 	const screenWidth = Dimensions.get('window').width > 468 ? 468 : Dimensions.get('window').width;
 	const { my: user } = useAuth();
+	const { showModal, hideModal } = useModal();
+	const refundMutation = useRefundChatRoom();
 	const isMale = user?.gender === 'MALE';
 	const showRefund = isMale && item.canRefund && item.paymentConfirm;
 
 	const handleRefundPress = () => {
-		Linking.openURL(REFUND_GOOGLE_FORM_URL);
+		showModal({
+			title: '구슬 환불',
+			children: (
+				<Text style={{ color: semanticColors.text.primary, fontSize: 15, lineHeight: 22 }}>
+					구슬 11개를 돌려받으시겠어요?{'\n'}환불 시 채팅방에서 자동으로 나가게 됩니다.
+				</Text>
+			),
+			primaryButton: {
+				text: '환불받기',
+				onClick: () => {
+					hideModal();
+					refundMutation.mutate({ chatRoomId: item.id });
+				},
+			},
+			secondaryButton: {
+				text: '취소',
+				onClick: hideModal,
+			},
+		});
 	};
 
 	return (

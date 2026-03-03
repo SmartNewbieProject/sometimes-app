@@ -6,6 +6,13 @@ import type { GemDetails } from '@/src/features/payment/api';
  * 이 값들은 Apple과 통신하는 데 사용됩니다.
  */
 export enum ProductID {
+	// 신규 상품 (2026-03)
+	GEM_1 = 'gem_1',
+	GEM_5 = 'gem_5',
+	GEM_25 = 'gem_25',
+	GEM_50 = 'gem_50',
+	GEM_100 = 'gem_100',
+	// 레거시
 	GEM_8 = 'gem_8',
 	GEM_15 = 'gem_15',
 	GEM_30 = 'gem_30',
@@ -56,18 +63,23 @@ export const containsSale = (productId: string): boolean => {
 };
 
 const getAppleToServerMapping = (): Record<string, string> => ({
-	// 현재 사용 중인 상품
+	// 신규 상품 (2026-03 가격 재정비)
+	gem_1: '구슬 1개',
+	gem_5: '구슬 5개',
+	gem_25: '구슬 25개',
+	gem_50: '구슬 50개',
+	gem_100: '구슬 100개',
+
+	// 세일 상품
+	gem_sale_16: '스타터 팩',
+
+	// 레거시 호환성 (기존 구매 이력 조회용, 상점에는 미표시)
 	gem_16: '스타터 팩',
 	gem_26: '라이트 팩',
 	gem_55: '베이직 팩',
 	gem_85: '스탠다드 팩',
 	gem_165: '프리미엄 팩',
 	gem_300: '메가 팩',
-
-	// 세일 상품
-	gem_sale_16: '스타터 팩',
-
-	// 레거시 호환성 (이전 상품들)
 	gem_12: '라이트 팩',
 	gem_27: '스타터 팩',
 	gem_39: '베이직 팩',
@@ -119,6 +131,14 @@ export const getPriceAndDiscount = (
 
 	// 레거시 하드코딩 데이터 (fallback)
 	const mapping: Record<string, { price: number; discountRate: number }> = {
+		// 신규 상품 (2026-03)
+		gem_1: { price: 1000, discountRate: 0 },
+		gem_5: { price: 5000, discountRate: 0 },
+		gem_25: { price: 25000, discountRate: 0 },
+		gem_50: { price: 45000, discountRate: 10 },
+		gem_100: { price: 80000, discountRate: 20 },
+
+		// 레거시
 		gem_15: { price: 11000, discountRate: 21 },
 		gem_30: { price: 22000, discountRate: 37 },
 		gem_60: { price: 44000, discountRate: 51 },

@@ -101,13 +101,24 @@
 	},
 	"onboarding": {
 		"intro": {
-			"title": "Great connections start with knowing yourself",
-			"subtitle": "It only takes a moment, promise",
-			"feature1": "{{count}} quick questions",
-			"feature2": "Find people who match you",
-			"feature3": "Discover your unique charm",
-			"start_button": "Discover Myself",
-			"skip_button": "Skip"
+			"title": "How will your profile look?",
+			"subtitle": "Moment registration transforms your appeal",
+			"start_button": "Create Charm Profile",
+			"skip_button": "Skip",
+			"before_tag": "Now",
+			"after_tag": "After Moment",
+			"before_name": "Basic Profile",
+			"after_name": "Charm Profile",
+			"before_trait1": "3 Photos",
+			"before_trait2": "Short Bio",
+			"before_trait3": "Basic Info",
+			"after_trait1": "Emotional Explorer",
+			"after_trait2": "Personality Analysis",
+			"after_trait3": "Compatibility Match",
+			"benefit_matching": "Matching +40%",
+			"benefit_conversation": "Easier conversations",
+			"benefit_insight": "See their traits too",
+			"cta_subtext": "8 questions · about 2 min"
 		},
 		"questions": {
 			"header_title": "Get to Know Me",

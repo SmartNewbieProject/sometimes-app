@@ -4,7 +4,7 @@
 		"community_event_prompt": {
 			"title": "썸타임에 온 걸 환영해요!",
 			"subtitle": "간단히 자기소개 남겨보세요!\n진짜 만남은 인사부터 시작해요\n인사하고 구슬도 받아가세요!",
-			"gem_label": "구슬 10개",
+			"gem_label": "구슬 1개",
 			"reward_text": "구슬 {{gems}}개",
 			"reward_subtext": "받고 시작해보세요!",
 			"write_button": "작성하기",
@@ -17,7 +17,7 @@
 		"university_certification_prompt": {
 			"title": "학교 인증하고 구슬 받기",
 			"subtitle": "신뢰도 있는 프로필로 더 쉽게 연결될 수 있어요!",
-			"benefit_text": "구슬 20개",
+			"benefit_text": "구슬 5개",
 			"reward_subtext": "바로 지급!",
 			"certify_button": "인증하기",
 			"later_button": "나중에"
@@ -37,7 +37,7 @@
 		},
 		"use_share_kakao": {
 			"invite_title": "🎉 친구 초대 이벤트 오픈!",
-			"invite_description": "당신과 친구 모두에게 구슬 30개 지급 💜\n 이상형 매칭, 지금 바로 시작하세요!",
+			"invite_description": "당신과 친구 모두에게 구슬 10개 지급 💜\n 이상형 매칭, 지금 바로 시작하세요!",
 			"button_web": "웹으로 이동",
 			"button_app": "앱으로 이동",
 			"sdk_init_failed": "카카오 SDK 초기화에 실패했어요",

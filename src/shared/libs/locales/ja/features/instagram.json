@@ -14,7 +14,7 @@
 		"success_title": "認証完了",
 		"success_message": "InstagramのIDが登録されました。",
 		"success_rewarded_title": "おめでとうございます！",
-		"success_rewarded_message": "Instagram認証完了！ビー玉10個が付与されました。",
+		"success_rewarded_message": "Instagram認証完了！ビー玉2個が付与されました。",
 		"error_message": "InstagramのID登録に失敗しました。もう一度お試しください。"
 	},
 	"services": {

@@ -1,20 +1,24 @@
+import CheckIcon from '@assets/icons/circle-check.svg';
+import SearchIcon from '@assets/icons/search.svg';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Dimensions,
 	FlatList,
+	InteractionManager,
 	Keyboard,
 	Modal,
 	Platform,
 	Pressable,
-	StyleSheet,
 	Text as RNText,
+	StyleSheet,
 	TextInput,
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
 import Animated, {
 	Easing,
+	cancelAnimation,
 	runOnJS,
 	useAnimatedStyle,
 	useSharedValue,
@@ -23,8 +27,6 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { semanticColors } from '../../constants/semantic-colors';
 import { Text } from '../text';
-import SearchIcon from '@assets/icons/search.svg';
-import CheckIcon from '@assets/icons/circle-check.svg';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const MIN_TOUCH_TARGET = 48;
@@ -285,9 +287,39 @@ function NativeBottomSheetPicker({
 		});
 	}, [translateY, backdropOpacity]);
 
+	const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const isClosingRef = useRef(false);
+
+	const forceCleanup = useCallback(() => {
+		if (closeTimeoutRef.current) {
+			clearTimeout(closeTimeoutRef.current);
+			closeTimeoutRef.current = null;
+		}
+		isClosingRef.current = false;
+		cancelAnimation(translateY);
+		cancelAnimation(backdropOpacity);
+		translateY.value = SHEET_HEIGHT;
+		backdropOpacity.value = 0;
+		setIsModalVisible(false);
+		setSearchQuery('');
+	}, [translateY, backdropOpacity]);
+
 	const animateClose = useCallback(
 		(callback: () => void) => {
+			if (isClosingRef.current) return;
+			isClosingRef.current = true;
 			Keyboard.dismiss();
+
+			// timeout fallback: runOnJS callback이 실행되지 않을 경우를 대비
+			closeTimeoutRef.current = setTimeout(() => {
+				closeTimeoutRef.current = null;
+				if (isClosingRef.current) {
+					isClosingRef.current = false;
+					forceCleanup();
+					callback();
+				}
+			}, ANIMATION_DURATION + 100);
+
 			translateY.value = withTiming(SHEET_HEIGHT, {
 				duration: ANIMATION_DURATION - 50,
 				easing: Easing.in(Easing.cubic),
@@ -298,23 +330,45 @@ function NativeBottomSheetPicker({
 					duration: ANIMATION_DURATION - 50,
 				},
 				() => {
-					runOnJS(callback)();
+					runOnJS(() => {
+						if (closeTimeoutRef.current) {
+							clearTimeout(closeTimeoutRef.current);
+							closeTimeoutRef.current = null;
+						}
+						isClosingRef.current = false;
+						callback();
+					})();
 				},
 			);
 		},
-		[translateY, backdropOpacity],
+		[translateY, backdropOpacity, forceCleanup],
 	);
 
+	// visible prop 변경 감지: 열기 + 닫기(cleanup) 모두 처리
 	useEffect(() => {
 		if (visible) {
+			isClosingRef.current = false;
 			translateY.value = SHEET_HEIGHT;
 			backdropOpacity.value = 0;
 			setIsModalVisible(true);
-			requestAnimationFrame(() => {
+			// Modal이 실제로 마운트된 후 애니메이션 시작
+			const handle = InteractionManager.runAfterInteractions(() => {
 				animateOpen();
 			});
+			return () => handle.cancel();
 		}
-	}, [visible, animateOpen, translateY, backdropOpacity]);
+		// visible이 false로 변경될 때 강제 cleanup (데드락 방지)
+		forceCleanup();
+	}, [visible, animateOpen, translateY, backdropOpacity, forceCleanup]);
+
+	// 언마운트 시 cleanup
+	useEffect(() => {
+		return () => {
+			if (closeTimeoutRef.current) {
+				clearTimeout(closeTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	const handleClose = useCallback(() => {
 		animateClose(() => {
