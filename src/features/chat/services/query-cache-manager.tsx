@@ -371,6 +371,10 @@ class QueryCacheManager {
 				pages: updatedPages,
 			};
 		});
+
+		this.queryClient?.invalidateQueries({
+			queryKey: ['notifications', 'unread-count'],
+		});
 	}
 
 	private replaceOptimisticMessageInCache(tempId: string, serverMessage: Chat) {

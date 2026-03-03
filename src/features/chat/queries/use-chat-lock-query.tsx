@@ -14,8 +14,11 @@ function useChatRockQuery(chatRoomId: string) {
 	const { showModal, showErrorModal, hideModal } = useModal();
 	return useMutation({
 		mutationFn: () => enterChatRoom({ chatRoomId }),
-		onSuccess: async ({ paymentConfirm }: { paymentConfirm: boolean }) => {
-			await queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
+		onSuccess: async () => {
+			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: ['gem', 'current'] }),
+				queryClient.invalidateQueries({ queryKey: ['chat-room'] }),
+			]);
 			router.push(`/chat/${chatRoomId}`);
 		},
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
