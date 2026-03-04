@@ -77,8 +77,8 @@
         "ascApiKeyIssuerId": "e8dbd13d-74e7-45ba-8f51-02977b51f1a6"
       },
       "android": {
-        "serviceAccountKeyPath": "./google-service-account.json",
-        "track": "internal"
+        "serviceAccountKeyPath": "./infra/app-review-collector/secrets/play-store-service-account.json",
+        "track": "production"
       }
     }
   }

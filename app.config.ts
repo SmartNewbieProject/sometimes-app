@@ -41,8 +41,8 @@ export default ({ config }: ConfigContext): any => {
 		expo: {
 			name: 'sometimes',
 			slug: 'sometimes',
-			version: '4.1.1',
-			runtimeVersion: '4.1.1',
+			version: '4.1.9',
+			runtimeVersion: '4.1.9',
 			orientation: 'portrait',
 			icon: './assets/icons/app.png',
 			scheme: 'myapp',
@@ -57,7 +57,7 @@ export default ({ config }: ConfigContext): any => {
 			ios: {
 				supportsTablet: true,
 				bundleIdentifier: 'com.some-in-univ',
-				buildNumber: '339',
+				buildNumber: '345',
 				entitlements: {
 					'com.apple.developer.applesignin': ['Default'],
 				},
@@ -165,6 +165,7 @@ export default ({ config }: ConfigContext): any => {
 				},
 			},
 			android: {
+				versionCode: 341,
 				adaptiveIcon: {
 					foregroundImage: './assets/images/android-adaptive-icon.png',
 					backgroundColor: '#8B7BFF',
@@ -216,6 +217,7 @@ export default ({ config }: ConfigContext): any => {
 					},
 				],
 				'@react-native-firebase/app',
+				'@react-native-firebase/messaging',
 				[
 					'@react-native-kakao/core',
 					{
@@ -236,6 +238,7 @@ export default ({ config }: ConfigContext): any => {
 							deploymentTarget: '16.0',
 							useFrameworks: 'static',
 							ccacheEnabled: true,
+							forceStaticLinking: ['RNFBApp', 'RNFBMessaging'],
 							buildSettings: {
 								CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES: 'YES',
 							},
