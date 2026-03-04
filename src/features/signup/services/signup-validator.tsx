@@ -125,6 +125,24 @@ export function validateUniversity(
 	return true;
 }
 
+export function validateRequiredFields(
+	signupForm: Partial<SignupForm>,
+	{
+		router,
+		showErrorModal,
+	}: {
+		router: Router;
+		showErrorModal: (message: string, type: 'announcement' | 'error') => void;
+	},
+): boolean {
+	if (!signupForm.birthday || !signupForm.gender) {
+		showErrorModal(i18n.t('features.signup.ui.validators.restart_signup'), 'announcement');
+		router.push('/auth/login');
+		return false;
+	}
+	return true;
+}
+
 export async function processSignup(
 	signupForm: SignupForm,
 	{

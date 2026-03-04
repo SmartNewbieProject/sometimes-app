@@ -13,8 +13,10 @@ import {
 	ensureAppleId,
 	processSignup,
 	validatePhone,
+	validateRequiredFields,
 	validateUniversity,
 } from '../services/signup-validator';
+import type { SignupForm } from './use-signup-progress';
 
 const { SignupSteps, useChangePhase, useSignupProgress, apis, useSignupAnalytics, useSignup } =
 	Signup;
@@ -109,7 +111,11 @@ function useInviteCode() {
 					showErrorModal(t('features.signup.ui.validation.name_required'), 'announcement');
 					return;
 				}
-				await processSignup(signupForm as Required<typeof signupForm>, {
+
+				const requiredOk = validateRequiredFields(signupForm, { router, showErrorModal });
+				if (!requiredOk) return;
+
+				await processSignup(signupForm as SignupForm, {
 					router,
 					apis,
 					trackSignupEvent,
