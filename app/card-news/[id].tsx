@@ -255,23 +255,20 @@ export default function CardNewsDetailScreen() {
 					style={styles.cardScrollView}
 					contentContainerStyle={styles.cardScrollContent}
 					showsVerticalScrollIndicator={false}
+					nestedScrollEnabled
 				>
 					<View style={styles.cardPadding}>
-						<View style={styles.cardImageArea}>
-							{section.imageUrl ? (
+						{section.imageUrl && (
+							<View style={styles.cardImageArea}>
 								<Image
 									source={{ uri: section.imageUrl }}
 									style={styles.cardImage}
 									contentFit="cover"
 								/>
-							) : (
-								<View style={styles.cardImagePlaceholder}>
-									<Text style={styles.placeholderEmoji}>📰</Text>
-								</View>
-							)}
-						</View>
+							</View>
+						)}
 
-						<View style={styles.cardTextArea}>
+						<View style={[styles.cardTextArea, !section.imageUrl && styles.cardTextAreaNoImage]}>
 							<Text style={styles.cardTitle}>{section.title}</Text>
 							<View style={styles.cardBodyContainer}>{renderHtmlContent(section.content)}</View>
 						</View>
@@ -546,19 +543,12 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 	},
-	cardImagePlaceholder: {
-		width: '100%',
-		height: '100%',
-		backgroundColor: '#F7F3FF',
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	placeholderEmoji: {
-		fontSize: 60,
-	},
 	cardTextArea: {
 		marginTop: 24,
 		paddingBottom: 40,
+	},
+	cardTextAreaNoImage: {
+		marginTop: 0,
 	},
 	cardTitle: {
 		fontSize: 24,
