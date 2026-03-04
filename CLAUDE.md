@@ -1,74 +1,74 @@
-# Sometimes App - 개발 가이드
+# Sometimes App - Dev Guide
 
-## 프로젝트 개요
+## Overview
 
-**기술 스택**: Expo 54 · React Native 0.81 · TypeScript · Zustand · TanStack Query
+**Stack**: Expo 54 · React Native 0.81 · TypeScript · Zustand · TanStack Query
 
 ---
 
-## 아키텍처 (FSD - Feature-Sliced Design)
+## Architecture (FSD - Feature-Sliced Design)
 
 ```
 src/
-├── features/       # 비즈니스 로직별 기능 (apis, hooks, queries, ui, types.ts)
-├── shared/         # 공통 코드 (ui, hooks, libs, constants, config, providers)
-├── widgets/        # 복합 컴포넌트
-└── types/          # 타입 정의
+├── features/       # Business logic per feature (apis, hooks, queries, ui, types.ts)
+├── shared/         # Common code (ui, hooks, libs, constants, config, providers)
+├── widgets/        # Composite components
+└── types/          # Type definitions
 
-app/                # Expo Router 라우팅 (파일 기반)
+app/                # Expo Router file-based routing
 ```
 
 ---
 
-## 코딩 컨벤션
+## Coding Conventions
 
-### 네이밍 규칙
+### Naming
 
-- **파일/모듈**: `kebab-case` (예: `use-modal.ts`, `profile-card.tsx`)
-- **컴포넌트**: `PascalCase` (예: `ProfileCard`)
-- **훅**: `use` 접두사 (예: `useModal`)
+- **Files/modules**: `kebab-case` (e.g. `use-modal.ts`, `profile-card.tsx`)
+- **Components**: `PascalCase` (e.g. `ProfileCard`)
+- **Hooks**: `use` prefix (e.g. `useModal`)
 
-### API 호출 규칙 ⚠️ 중요
+### API Call Rules — IMPORTANT
 
-**axiosClient interceptor가 자동으로 `response.data.data` 반환**
+**axiosClient interceptor auto-returns `response.data.data`**
 
 ```typescript
-// ❌ 잘못된 방식 - 이중 .data 접근
+// WRONG — double .data access
 const response = await axiosClient.get('/users');
 return response.data;
 
-// ✅ 올바른 방식 - interceptor가 이미 데이터 추출
+// CORRECT — interceptor already extracts data
 return axiosClient.get('/users');
 ```
 
-### 색상 사용 규칙
+### Colors
 
 ```typescript
 import colors from '@/src/shared/constants/colors';
 
-// Semantic 색상 (권장)
+// Semantic (preferred)
 colors.brand.primary         // #7A4AE2
 colors.surface.background    // #FFFFFF
 colors.text.primary          // #000000
 
-// Legacy 색상 (호환성)
+// Legacy (compat)
 colors.primaryPurple, colors.lightPurple, colors.white, colors.black
 ```
 
-### 모달 사용 규칙
+### Modal
 
 ```typescript
 import { useModal } from '@/src/shared/hooks/use-modal';
 
 const { showModal } = useModal();
 showModal({
-  title: '제목',
+  title: 'Title',
   children: <CustomComponent />,
-  primaryButton: { text: '확인', onClick: () => {} }
+  primaryButton: { text: 'OK', onClick: () => {} }
 });
 ```
 
-### Safe Area 처리 (필수)
+### Safe Area (required)
 
 ```typescript
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -77,13 +77,13 @@ const insets = useSafeAreaInsets();
 const headerStyle = { paddingTop: insets.top + 12 };
 ```
 
-**공통 컴포넌트 우선 사용**: `HeaderWithNotification`, `Header.Container`
+**Prefer shared components**: `HeaderWithNotification`, `Header.Container`
 
 ---
 
 ## Git Hooks (Biome)
 
-**Pre-commit 자동 검사**: `.git/hooks/pre-commit`
+**Pre-commit auto-check**: `.git/hooks/pre-commit`
 
 ```bash
 #!/bin/sh
@@ -91,78 +91,78 @@ npx @biomejs/biome check --write ./src
 npx @biomejs/biome format --write ./src
 ```
 
-**수동 실행**:
+**Manual**:
 ```bash
-npm run format      # Biome 포맷팅
-npm run check       # Biome 검사
+npm run format      # Biome format
+npm run check       # Biome lint
 ```
 
 ---
 
-## 라우팅 구조 ⚠️ 중요
+## Routing — IMPORTANT
 
-### app/ 디렉터리 파일 규칙
+### app/ directory file rules
 
-> **`app/` 내 모든 `.ts/.tsx` 파일은 라우트로 취급됨!**
+> **Every `.ts/.tsx` file in `app/` is treated as a route!**
 
-| 허용 | 금지 |
-|-----|-----|
+| Allowed | Forbidden |
+|---------|-----------|
 | `page.tsx`, `_layout.tsx`, `_components.tsx` | `types.ts`, `utils.ts`, `constants.ts` |
 
 ```typescript
-// ❌ 절대 금지
-app/auth/signup/types.ts  // 라우트로 인식되어 오류!
+// NEVER — recognized as route, causes errors
+app/auth/signup/types.ts
 
-// ✅ 올바른 위치
+// CORRECT location
 src/features/signup/types.ts
 ```
 
-**예외**: `_` 접두사 파일은 라우트 제외 (예: `_layout.tsx`)
+**Exception**: `_` prefixed files are excluded from routes (e.g. `_layout.tsx`)
 
 ---
 
 ## Quick Reference
 
-### 자주 사용하는 컴포넌트
+### Common Components
 
 `Button`, `Input`, `Card`, `Badge`, `BottomSheetPicker`, `Toast`, `Header`, `Divider`
 
-### 자주 사용하는 Hooks
+### Common Hooks
 
 `useModal`, `useToast`, `useTimer`, `useDebounce`, `useInfiniteScroll`, `useUserSession`
 
-### 자주 사용하는 Libs
+### Common Libs
 
 `axiosClient`, `storage`, `eventBus`, `day`, `logger`
 
 ---
 
-## 주요 명령어
+## Commands
 
 ```bash
-# 개발
-npm start                    # Expo 개발 서버
-npm run ios / android        # 플랫폼별 실행
+# Dev
+npm start                    # Expo dev server
+npm run ios / android        # Platform-specific run
 
-# 코드 품질
-npm run format               # Biome 포맷팅
-npm run check                # Biome 검사
+# Code quality
+npm run format               # Biome format
+npm run check                # Biome lint
 
-# 테스트
-npm test                     # Jest 단위 테스트
+# Test
+npm test                     # Jest unit tests
 npm run test:e2e             # Playwright E2E
 
-# 빌드
-npm run build:ios            # iOS Production
-npm run build:android        # Android Production
+# Build
+npm run build:ios            # iOS production
+npm run build:android        # Android production
 ```
 
 ---
 
-## 개발 우선순위
+## Dev Priorities
 
-1. ✅ `src/shared/` 재사용 컴포넌트 확인
-2. ✅ FSD 아키텍처 준수
-3. ✅ API 호출 규칙 준수 (interceptor 이해)
-4. ✅ app/ 디렉터리 파일 규칙 준수
-5. ✅ Safe Area 처리 (모든 신규 페이지)
+1. Check `src/shared/` for reusable components first
+2. Follow FSD architecture
+3. Follow API call rules (understand interceptor)
+4. Follow app/ directory file rules
+5. Handle Safe Area on all new pages
