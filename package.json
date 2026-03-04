@@ -7,6 +7,7 @@
   },
   "scripts": {
     "postinstall": "npx patch-package || true",
+    "prestart": "./scripts/update-local-ip.sh",
     "start": "NODE_OPTIONS='--max-old-space-size=8192' expo start --port 3000",
     "start:prod": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=production expo start --port 3000",
     "reset-project": "node ./scripts/reset-project.js",
@@ -44,10 +45,7 @@
     "i18n:extract": "tsx scripts/i18n-extract.ts",
     "i18n:migrate": "tsx scripts/i18n-migrate.ts",
     "setup:auto-build": "./scripts/setup-auto-build.sh",
-    "next-version": "./scripts/sometimes-next-version",
-    "deploy-manager": "cd tools/deploy-manager && npm run dev",
-    "deploy-manager:build": "cd tools/deploy-manager && npm run build",
-    "deploy-manager:install": "cd tools/deploy-manager && npm install"
+    "next-version": "./scripts/sometimes-next-version"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

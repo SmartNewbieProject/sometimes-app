@@ -96,6 +96,53 @@ load_env() {
     echo -e "${GREEN}[OK]${NC} Environment loaded"
 }
 
+sync_native_versions() {
+    echo -e "${BLUE}[STEP]${NC} Syncing native version files from app.config.ts"
+
+    local config_file="$PROJECT_ROOT/app.config.ts"
+    if [ ! -f "$config_file" ]; then
+        echo -e "${RED}[ERROR] app.config.ts not found: $config_file${NC}"
+        exit 1
+    fi
+
+    local version_info
+    version_info=$(node -e '
+const fs = require("fs");
+const content = fs.readFileSync(process.argv[1], "utf8");
+const version = (content.match(/version:\s*["'\'']([^"'\'']+)["'\'']/) || [])[1];
+const iosBuild = (content.match(/buildNumber:\s*["'\''](\d+)["'\'']/) || [])[1];
+const androidCode = (content.match(/versionCode:\s*(\d+)/) || [])[1];
+if (!version || !iosBuild || !androidCode) process.exit(1);
+process.stdout.write(`${version}\t${iosBuild}\t${androidCode}`);
+' "$config_file") || {
+        echo -e "${RED}[ERROR] Failed to parse version/build values from app.config.ts${NC}"
+        exit 1
+    }
+
+    local app_version ios_build android_code
+    IFS=$'\t' read -r app_version ios_build android_code <<< "$version_info"
+
+    local info_plist="$PROJECT_ROOT/ios/sometimes/Info.plist"
+    if [ -f "$info_plist" ]; then
+        perl -0777 -i -pe \
+            "s#(<key>CFBundleShortVersionString</key>\\s*<string>)[^<]*(</string>)#\\\${1}${app_version}\\\${2}#s; s#(<key>CFBundleVersion</key>\\s*<string>)[^<]*(</string>)#\\\${1}${ios_build}\\\${2}#s" \
+            "$info_plist"
+    else
+        echo -e "${YELLOW}[WARN] iOS Info.plist not found: $info_plist${NC}"
+    fi
+
+    local android_gradle="$PROJECT_ROOT/android/app/build.gradle"
+    if [ -f "$android_gradle" ]; then
+        perl -i -pe \
+            "s/versionName\\s+\"[^\"]+\"/versionName \"${app_version}\"/; s/versionCode\\s+\\d+/versionCode ${android_code}/" \
+            "$android_gradle"
+    else
+        echo -e "${YELLOW}[WARN] Android build.gradle not found: $android_gradle${NC}"
+    fi
+
+    echo -e "${GREEN}[OK]${NC} Native versions synced: v${app_version} (ios ${ios_build}, android ${android_code})"
+}
+
 # ============================================================
 # Build Functions
 # ============================================================
@@ -188,6 +235,8 @@ main() {
         echo "Build cancelled."
         exit 0
     fi
+
+    sync_native_versions
 
     notify "Build Started" "iOS + Android 프로덕션 빌드 시작..." "Ping"
     play_sound "start"
