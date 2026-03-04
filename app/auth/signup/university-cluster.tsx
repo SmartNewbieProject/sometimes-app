@@ -10,7 +10,7 @@ import LottieView from 'lottie-react-native';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, BackHandler, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function UniversityCluster() {
@@ -95,15 +95,15 @@ function UniversityCluster() {
 							</Text>
 						</View>
 					</View>
-					<ScrollView style={styles.univContainer}>
-						<FlashList
-							data={sortedData}
-							renderItem={({ item }) => (
-								<UniversityCard onClick={() => {}} isSelected={false} item={item} />
-							)}
-							contentContainerStyle={{ paddingBottom: 160 }}
-						/>
-					</ScrollView>
+					<FlashList
+						data={sortedData}
+						renderItem={({ item }) => (
+							<UniversityCard onClick={() => {}} isSelected={false} item={item} />
+						)}
+						estimatedItemSize={72}
+						contentContainerStyle={{ paddingBottom: 160 }}
+						style={styles.univContainer}
+					/>
 				</>
 			) : (
 				<View style={styles.pendingContainer}>

@@ -14,9 +14,6 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	BackHandler,
-	Keyboard,
-	Platform,
-	Pressable,
 	ScrollView,
 	StyleSheet,
 	View,
@@ -78,33 +75,25 @@ function UniversityDetailsPage() {
 		<DefaultLayout>
 			<ScrollView
 				nestedScrollEnabled={true}
-				keyboardShouldPersistTaps="always"
-				keyboardDismissMode="none"
+				keyboardShouldPersistTaps="handled"
+				keyboardDismissMode="on-drag"
 				contentContainerStyle={styles.scrollContent}
 			>
-				<Pressable
-					onPress={() => {
-						if (Platform.OS !== 'web') {
-							Keyboard.dismiss();
-						}
-					}}
-				>
-					<View style={styles.imageWrapper}>
-						<Image source={require('@assets/images/details.png')} style={styles.headerImage} />
-					</View>
+				<View style={styles.imageWrapper}>
+					<Image source={require('@assets/images/details.png')} style={styles.headerImage} />
+				</View>
 
-					<View style={[styles.contentWrapper, styles.departmentSection]}>
-						<View style={styles.titleWrapper}>
-							<Text size="lg" weight="semibold" textColor="purple" style={styles.title}>
-								{t('apps.auth.sign_up.university_detail.title_department')}
-							</Text>
-							<Text size="sm" weight="normal" textColor="muted" style={styles.subtitle}>
-								{t('apps.auth.sign_up.university_detail.subtitle_department')}
-							</Text>
-						</View>
-						<DepartmentSearch />
+				<View style={[styles.contentWrapper, styles.departmentSection]}>
+					<View style={styles.titleWrapper}>
+						<Text size="lg" weight="semibold" textColor="purple" style={styles.title}>
+							{t('apps.auth.sign_up.university_detail.title_department')}
+						</Text>
+						<Text size="sm" weight="normal" textColor="muted" style={styles.subtitle}>
+							{t('apps.auth.sign_up.university_detail.subtitle_department')}
+						</Text>
 					</View>
-				</Pressable>
+					<DepartmentSearch />
+				</View>
 			</ScrollView>
 			<View style={styles.bottomContainer}>
 				<TwoButtons

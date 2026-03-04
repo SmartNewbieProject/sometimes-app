@@ -182,14 +182,16 @@ const HomeScreen = () => {
 	}, [viewerCount, previewImages.length]);
 
 	useEffect(() => {
+		registerFcmTokenAsync().catch(() => {});
+	}, []);
+
+	useEffect(() => {
 		trackEventAction('home_view');
 		if (!loading && value !== 'true') {
 			ensurePushTokenRegistered(showModal);
-			// 기존 로그인 사용자도 FCM 토큰 등록 (UPSERT, 에러 무시)
-			registerFcmTokenAsync().catch(() => {});
 			setValue('true');
 		}
-	}, [showModal]);
+	}, [loading, value, showModal]);
 
 	// 화면이 포커스될 때마다 데이터 리프레시, 홈 조회 추적 및 heartbeat 전송
 	useFocusEffect(
