@@ -54,12 +54,12 @@ export const UpdateModalContent: React.FC<UpdateModalContentProps> = ({
 
 				<View style={{ marginTop: 14 }} />
 				<Text size="20" weight="bold" textColor="black">
-					{isWeb ? t('ui.새로운_업데이트가_있어요') : t('ui.새로운_업데이트가_있어요')}
+					{isWeb ? t('features.version-update.ui.새로운_업데이트가_있어요') : t('features.version-update.ui.새로운_업데이트가_있어요')}
 				</Text>
 				<Text size="sm" style={styles.mutedText}>
 					{isWeb
-						? t('ui.앱을_설치하셔서_이용하시면_더_빠르게_서비스를_이용가능')
-						: t('ui.더_나은_썸타임을_위한_새로운_기능들이_추가되었습니다')}
+						? t('features.version-update.ui.앱을_설치하셔서_이용하시면_더_빠르게_서비스를_이용가능')
+						: t('features.version-update.ui.더_나은_썸타임을_위한_새로운_기능들이_추가되었습니다')}
 				</Text>
 			</View>
 

@@ -36,7 +36,7 @@ export const getOnboardingQuestions = (): Promise<OnboardingQuestionsResponse> =
 export const submitOnboardingAnswers = (
   data: OnboardingSubmitRequest
 ): Promise<OnboardingSubmitResponse> => {
-  return axiosClient.post('/v2/moment/onboarding/submit', data);
+  return axiosClient.post('/v2/moment/onboarding/submit', data, { timeout: 60000 });
 };
 
 /**

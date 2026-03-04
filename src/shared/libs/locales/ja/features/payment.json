@@ -4,7 +4,8 @@
 			"header_title": "ジェム報酬ミッション",
 			"status": {
 				"completed": "完了",
-				"claimable": "ジェムを受け取る"
+				"claimable": "ジェムを受け取る",
+				"received": "受取済み"
 			},
 			"missions": {
 				"university_verification": "大学認証する",

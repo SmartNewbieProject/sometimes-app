@@ -1,4 +1,3 @@
-// import { MobileIdentityVerification, usePortOneLogin } from '@/src/features/pass';
 import { isAdult } from '@/src/features/pass/utils';
 import {
 	AUTH_METHODS,
@@ -16,8 +15,7 @@ import { devLogWithTag } from '@/src/shared/utils';
 import KakaoLogo from '@assets/icons/kakao-logo.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as KakaoLogin from '@react-native-kakao/user';
-import * as Localization from 'expo-localization';
-import { usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -40,7 +38,7 @@ import UniversityLogos from './university-logos';
 /**
  * 로그인 폼 - JP/KR 분기 처리
  * - JP: SMS 인증 + Apple 로그인
- * - KR: Kakao + PASS + Apple 로그인
+ * - KR: Kakao + Apple 로그인
  */
 export default function LoginForm() {
 	if (isJapanese()) {
@@ -112,35 +110,14 @@ function JpLoginForm() {
 }
 
 /**
- * KR 로그인 폼 - Kakao + PASS + Apple 로그인 (기존 코드)
+ * KR 로그인 폼 - Kakao + Apple 로그인
  */
 function KrLoginForm() {
-	// const {
-	// 	startPortOneLogin,
-	// 	isLoading,
-	// 	error,
-	// 	clearError,
-	// 	showMobileAuth,
-	// 	mobileAuthRequest,
-	// 	handleMobileAuthComplete,
-	// 	handleMobileAuthError,
-	// 	handleMobileAuthCancel,
-	// } = usePortOneLogin();
-	// [PASS 로그인 주석 처리 - 관련 변수]
-	// const { authEvents, signupEvents } = useMixpanel();
-	// const pathname = usePathname();
-	// const { regionCode } = Localization.getLocales()[0];
-	// const isUS = regionCode === 'US';
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { emitToast } = useToast();
-	// const { setAuthMethod } = useSignupProgress();
-	// [PASS 로그인 주석 처리]
-	// const [passRetryCount, setPassRetryCount] = useState(0);
-	// const [passLastFailureReason, setPassLastFailureReason] = useState<string | null>(null);
 
 	useEffect(() => {
-		// TODO: 테스트 완료 후 AsyncStorage 조건 복원할 것
 		const passIcon = (
 			<View style={passCircleStyles.circle}>
 				<RNText style={passCircleStyles.text}>PASS</RNText>
@@ -149,55 +126,7 @@ function KrLoginForm() {
 		emitToast(t('features.signup.ui.login_form.pass_migration_notice'), passIcon, 5000);
 	}, []);
 
-	// const onPressPassLogin = async () => {
-	// 	const loginStartTime = Date.now();
-	// 	setAuthMethod(AUTH_METHODS.PASS);
-	// 	mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_METHOD_SELECTED, {
-	// 		auth_method: AUTH_METHODS.PASS,
-	// 		is_retry: passRetryCount > 0,
-	// 		retry_count: passRetryCount,
-	// 		env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-	// 	});
-	// 	if (passRetryCount > 0 && passLastFailureReason) {
-	// 		mixpanelAdapter.track(MIXPANEL_EVENTS.AUTH_RETRY_ATTEMPTED, {
-	// 			auth_method: AUTH_METHODS.PASS,
-	// 			retry_count: passRetryCount,
-	// 			previous_failure_reason: passLastFailureReason,
-	// 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-	// 		});
-	// 	}
-	// 	mixpanelAdapter.track(MIXPANEL_EVENTS.SIGNUP_AUTH_STARTED, {
-	// 		auth_method: 'pass',
-	// 		is_retry: passRetryCount > 0,
-	// 		env: process.env.EXPO_PUBLIC_TRACKING_MODE,
-	// 	});
-	// 	authEvents.trackLoginStarted('pass');
-	// 	signupEvents.trackSignupStarted();
-	// 	clearError();
-	// 	try {
-	// 		await startPortOneLogin();
-	// 		const loginDuration = Date.now() - loginStartTime;
-	// 		authEvents.trackLoginCompleted('pass', loginDuration);
-	// 	} catch (error) {
-	// 		setPassRetryCount((prev) => prev + 1);
-	// 		setPassLastFailureReason('authentication_error');
-	// 		authEvents.trackLoginFailed('pass', 'authentication_error');
-	// 	}
-	// };
-
-	// if (showMobileAuth && mobileAuthRequest && Platform.OS !== 'web') {
-	// 	return (
-	// 		<MobileIdentityVerification
-	// 			request={mobileAuthRequest}
-	// 			onComplete={handleMobileAuthComplete}
-	// 			onError={handleMobileAuthError}
-	// 			onCancel={handleMobileAuthCancel}
-	// 		/>
-	// 	);
-	// }
-
 	const isIOS = Platform.OS === 'ios';
-	// const isAndroidOrWeb = Platform.OS === 'android' || Platform.OS === 'web';
 
 	return (
 		<View style={loginFormStyles.container}>
@@ -221,35 +150,6 @@ function KrLoginForm() {
 						<DevLoginButton />
 					</View>
 				)}
-
-				{/* [PASS 로그인 주석 처리 - Android/Web] */}
-				{/* <Show when={isAndroidOrWeb}>
-					<View style={loginFormStyles.buttonWrapper}>
-						<Pressable
-							onPress={onPressPassLogin}
-							disabled={isLoading}
-							style={[passStyles.button, { opacity: isLoading ? 0.6 : 1 }]}
-						>
-							{isLoading ? (
-								<View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-									<ActivityIndicator size="small" color="#FFFFFF" />
-									<Text
-										textColor="white"
-										size="16"
-										weight="semibold"
-										style={{ textAlign: 'center' }}
-									>
-										{t('features.signup.ui.login_form.pass_loading')}
-									</Text>
-								</View>
-							) : (
-								<Text textColor="white" size="16" weight="semibold" style={{ textAlign: 'center' }}>
-									{t('features.signup.ui.login_form.pass_login')}
-								</Text>
-							)}
-						</Pressable>
-					</View>
-				</Show> */}
 
 				<Show when={isIOS}>
 					<View style={loginFormStyles.dividerContainer}>
@@ -319,6 +219,23 @@ const loginFormStyles = StyleSheet.create({
 		marginBottom: 8,
 	},
 });
+
+const passCircleStyles = StyleSheet.create({
+	circle: {
+		width: 48,
+		height: 48,
+		borderRadius: 24,
+		backgroundColor: '#FF3A4A',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	text: {
+		color: '#FFFFFF',
+		fontSize: 12,
+		fontWeight: '800',
+	},
+});
+
 function KakaoLoginComponent() {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -718,35 +635,6 @@ const kakaoStyles = StyleSheet.create({
 		gap: 10,
 	},
 });
-
-const passCircleStyles = StyleSheet.create({
-	circle: {
-		width: 48,
-		height: 48,
-		borderRadius: 24,
-		backgroundColor: '#FF3A4A',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	text: {
-		color: '#FFFFFF',
-		fontSize: 12,
-		fontWeight: '800',
-	},
-});
-
-// [PASS 로그인 주석 처리]
-// const passStyles = StyleSheet.create({
-// 	button: {
-// 		width: 330,
-// 		height: 50,
-// 		borderRadius: 20,
-// 		backgroundColor: '#FF3A4A',
-// 		flexDirection: 'row',
-// 		alignItems: 'center',
-// 		justifyContent: 'center',
-// 	},
-// });
 
 function DevLoginButton() {
 	const router = useRouter();

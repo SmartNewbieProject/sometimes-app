@@ -9,12 +9,6 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import useSignupProgress from '../hooks/use-signup-progress';
 import { useAppleLogin } from '../queries/use-apple-login';
 
-// [PASS 로그인 주석 처리]
-// interface SocialLoginIconsProps {
-// 	onPressPass: () => void;
-// 	isPassLoading?: boolean;
-// }
-
 export function SocialLoginIcons() {
 	const { authEvents, signupEvents } = useMixpanel();
 	const { removeValue: removeAppleUserId } = useStorage({ key: 'appleUserId' });
@@ -78,25 +72,6 @@ export function SocialLoginIcons() {
 
 	return (
 		<View style={styles.container}>
-			{/* [PASS 로그인 주석 처리] */}
-			{/* <Pressable
-				onPress={onPressPass}
-				disabled={isPassLoading}
-				style={[styles.iconButton, isPassLoading && styles.disabled]}
-			>
-				{isPassLoading ? (
-					<ActivityIndicator size="small" color="#FF3A4A" />
-				) : (
-					<Image
-						source={require('@assets/images/pass-icon-circle.png')}
-						style={styles.icon}
-						resizeMode="contain"
-					/>
-				)}
-			</Pressable>
-
-			<View style={styles.divider} /> */}
-
 			<Pressable
 				onPress={handleIOSAppleLogin}
 				disabled={isAppleLoading}
@@ -129,16 +104,6 @@ const styles = StyleSheet.create({
 	},
 	appleButton: {
 		backgroundColor: '#000000',
-	},
-	icon: {
-		width: 43,
-		height: 43,
-		borderRadius: 21.5,
-	},
-	divider: {
-		width: 1,
-		height: 14,
-		backgroundColor: '#E0E0E0',
 	},
 	disabled: {
 		opacity: 0.6,

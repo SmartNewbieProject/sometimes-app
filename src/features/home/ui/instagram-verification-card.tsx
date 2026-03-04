@@ -1,3 +1,4 @@
+import { useFreeRewardStatus } from "@/src/features/free-reward";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 import { Text } from "@/src/shared/ui";
 import { Image } from "expo-image";
@@ -7,16 +8,20 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function InstagramVerificationCard() {
   const { t } = useTranslation();
+  const { isRewardEligible } = useFreeRewardStatus();
+  const eligible = isRewardEligible("instagramRegistration");
 
   const handlePress = () => {
+    if (!eligible) return;
     router.navigate("/instagram/verify?referrer=home");
   };
 
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, !eligible && styles.containerDisabled]}
       onPress={handlePress}
-      activeOpacity={0.8}
+      activeOpacity={eligible ? 0.8 : 1}
+      disabled={!eligible}
     >
       <View style={styles.contentWrapper}>
         <View style={styles.iconWrapper}>
@@ -39,21 +44,29 @@ export default function InstagramVerificationCard() {
           </Text>
         </View>
 
-        <View style={styles.rewardWrapper}>
-          <Text size="xs" weight="medium" style={styles.rewardLabel}>
-            {t("features.home.ui.instagram_verification_card.reward_label")}
-          </Text>
-          <View style={styles.rewardBadge}>
-            <Image
-              source={require("@assets/images/promotion/home-banner/gem.webp")}
-              style={styles.gemIcon}
-              contentFit="contain"
-            />
-            <Text size="sm" weight="bold" style={styles.rewardAmount}>
-              x10
+        {eligible ? (
+          <View style={styles.rewardWrapper}>
+            <Text size="xs" weight="medium" style={styles.rewardLabel}>
+              {t("features.home.ui.instagram_verification_card.reward_label")}
+            </Text>
+            <View style={styles.rewardBadge}>
+              <Image
+                source={require("@assets/images/promotion/home-banner/gem.webp")}
+                style={styles.gemIcon}
+                contentFit="contain"
+              />
+              <Text size="sm" weight="bold" style={styles.rewardAmount}>
+                x10
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.completedBadge}>
+            <Text size="xs" weight="semibold" style={styles.completedText}>
+              ✓ {t("features.payment.ui.gem_mission.status.received")}
             </Text>
           </View>
-        </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -112,5 +125,17 @@ const styles = StyleSheet.create({
   },
   rewardAmount: {
     color: "white",
+  },
+  containerDisabled: {
+    opacity: 0.5,
+  },
+  completedBadge: {
+    backgroundColor: semanticColors.surface.disabled,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  completedText: {
+    color: semanticColors.text.disabled,
   },
 });

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/src/features/auth";
+import { useFreeRewardStatus } from "@/src/features/free-reward";
 import { UniversityCertificationPromptModal } from "./ui/university-certification-prompt-modal";
 import { getProfileId, getUniversityVerificationStatus } from "@/src/features/university-verification/apis";
 import { storage } from "@/src/shared/libs";
@@ -8,11 +9,19 @@ import { useRouter } from "expo-router";
 export const useUniversityCertificationPrompt = () => {
   const router = useRouter();
   const { my, isAuthorized } = useAuth();
+  const { isRewardEligible, isSuccess: isFreeRewardLoaded } = useFreeRewardStatus();
   const [shouldShowPrompt, setShouldShowPrompt] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const checkUniversityCertificationStatus = async () => {
     if (!isAuthorized || !my) {
+      setIsLoading(false);
+      return;
+    }
+
+    // free-reward API에서 eligible=false이면 프롬프트 표시 안 함
+    if (isFreeRewardLoaded && !isRewardEligible('universityVerification')) {
+      setShouldShowPrompt(false);
       setIsLoading(false);
       return;
     }
@@ -54,7 +63,7 @@ export const useUniversityCertificationPrompt = () => {
 
   useEffect(() => {
     checkUniversityCertificationStatus();
-  }, [isAuthorized, my]);
+  }, [isAuthorized, my, isFreeRewardLoaded]);
 
   const handleCertify = () => {
     router.push("/university-verification");

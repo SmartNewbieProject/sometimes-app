@@ -8,7 +8,7 @@
 			"simple_like": "Send a like",
 			"letter_like": "Send with a letter",
 			"loading": "Processing...",
-			"hint": "Same cost as direct chat, and if matched, chat opens for free!"
+			"hint": "Sending with a letter increases their acceptance rate!"
 		},
 		"insufficient_modal": {
 			"title": "Not enough gems",

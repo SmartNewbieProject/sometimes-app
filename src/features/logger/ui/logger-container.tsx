@@ -1,14 +1,13 @@
 import type React from "react";
 import { useRef, useState } from "react";
-import { View, useWindowDimensions } from "react-native";
-import type { GestureResponderEvent } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LoggerOverlay from "./logger-overlay";
 
 interface LoggerContainerProps {
   children: React.ReactNode;
 }
 
-const ZONE_SIZE = 60;
 const SEQUENCE_TIMEOUT = 4000;
 const REQUIRED_SEQUENCE = ["top-left", "bottom-right", "top-left"] as const;
 type Zone = (typeof REQUIRED_SEQUENCE)[number];
@@ -16,28 +15,14 @@ type Zone = (typeof REQUIRED_SEQUENCE)[number];
 function LoggerContainer({ children }: LoggerContainerProps) {
   const [isVisible, setVisible] = useState(false);
   const sequenceRef = useRef({ index: 0, lastTapTime: 0 });
-  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
-  const getZone = (x: number, y: number): Zone | null => {
-    if (x <= ZONE_SIZE && y <= ZONE_SIZE) return "top-left";
-    if (x >= width - ZONE_SIZE && y >= height - ZONE_SIZE)
-      return "bottom-right";
-    return null;
-  };
-
-  const handleTouchEnd = (event: GestureResponderEvent) => {
-    const { pageX, pageY } = event.nativeEvent;
+  const advanceSequence = (zone: Zone) => {
     const now = Date.now();
     const seq = sequenceRef.current;
 
     if (seq.index > 0 && now - seq.lastTapTime > SEQUENCE_TIMEOUT) {
       seq.index = 0;
-    }
-
-    const zone = getZone(pageX, pageY);
-    if (!zone) {
-      seq.index = 0;
-      return;
     }
 
     if (zone === REQUIRED_SEQUENCE[seq.index]) {
@@ -57,11 +42,40 @@ function LoggerContainer({ children }: LoggerContainerProps) {
   };
 
   return (
-    <View style={{ flex: 1 }} onTouchEnd={handleTouchEnd}>
+    <View style={styles.root}>
       {children}
+      {!isVisible && (
+        <>
+          <Pressable
+            style={[styles.zone, styles.topLeft, { height: Math.max(insets.top, 20) }]}
+            onPress={() => advanceSequence("top-left")}
+          />
+          <Pressable
+            style={[styles.zone, styles.bottomRight, { height: Math.max(insets.bottom, 20) }]}
+            onPress={() => advanceSequence("bottom-right")}
+          />
+        </>
+      )}
       <LoggerOverlay isVisible={isVisible} onClose={() => setVisible(false)} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  zone: {
+    position: "absolute",
+    width: 100,
+    zIndex: 9998,
+  },
+  topLeft: {
+    left: 0,
+    top: 0,
+  },
+  bottomRight: {
+    right: 0,
+    bottom: 0,
+  },
+});
 
 export default LoggerContainer;

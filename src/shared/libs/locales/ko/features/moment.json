@@ -218,16 +218,15 @@
 	},
 	"onboarding": {
 		"intro": {
-			"title": "당신의 프로필, 어떻게 보일까요?",
-			"subtitle": "모먼트 등록으로 매력이 달라져요",
-			"start_button": "매력 프로필 만들기",
+			"title": "내 프로필이 이렇게 달라져요",
+			"subtitle": "2분이면 더 많은 인연이 나를 알아봐요",
+			"start_button": "지금 바로 시작하기",
 			"skip_button": "건너뛰기",
 			"before_tag": "지금",
 			"after_tag": "모먼트 등록 후",
 			"before_name": "기본 프로필",
 			"after_name": "매력 프로필",
 			"before_trait1": "사진 3장",
-			"before_trait2": "한줄 소개",
 			"before_trait3": "기본 정보",
 			"after_trait1": "감성 탐험가",
 			"after_trait2": "성격 분석",
@@ -259,7 +258,18 @@
 			"radar_openness": "개방성",
 			"radar_conscientiousness": "성실성",
 			"radar_agreeableness": "친화성",
-			"radar_neuroticism": "정서적 안정"
+			"radar_neuroticism": "정서적 안정",
+			"stats_title": "나의 연애 성향",
+			"radar_chart_title": "성향 전체 지도",
+			"patterns_title": "내가 가진 연애 패턴",
+			"story_title": "답변으로 보는 나",
+			"growth_title": "앞으로의 성장 힌트",
+			"persona_title": "나의 페르소나",
+			"dimension_desc_extraversion": "사회적 에너지",
+			"dimension_desc_openness": "새로운 경험 수용",
+			"dimension_desc_conscientiousness": "계획과 책임감",
+			"dimension_desc_agreeableness": "공감과 배려",
+			"dimension_desc_neuroticism": "감정 민감성"
 		}
 	}
 }

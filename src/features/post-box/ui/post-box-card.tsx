@@ -74,6 +74,8 @@ function PostBoxCard({
 	isGlobalMatch,
 }: PostBoxCardProps) {
 	const { t } = useTranslation();
+	const { profileDetails } = useAuth();
+	const isFemale = profileDetails?.gender === 'FEMALE';
 	const opacity = useRef(new Animated.Value(1)).current;
 
 	const statusMessage =
@@ -164,12 +166,22 @@ function PostBoxCard({
 						</View>
 
 						{isLetterCard ? (
-							<View style={styles.letterContentWrapper}>
-								<OpenLetterIcon width={23} height={23} />
-								<Text style={styles.letterContentText} numberOfLines={3}>
-									{letterContent}
+							<>
+								<Text style={styles.letterBadgeText}>
+									{t('features.post-box.ui.card.letter_received.badge')}
 								</Text>
-							</View>
+								<View style={styles.letterContentWrapper}>
+									<OpenLetterIcon width={23} height={23} />
+									<Text style={styles.letterContentText} numberOfLines={3}>
+										{letterContent}
+									</Text>
+								</View>
+								<Text style={styles.letterHintText}>
+									{isFemale
+										? t('features.post-box.ui.card.letter_received.free_chat_hint')
+										: t('features.post-box.ui.card.letter_received.chat_hint_male')}
+								</Text>
+							</>
 						) : (
 							<>
 								{letterContent && (
@@ -353,7 +365,10 @@ export function LetterPendingButton({
 	};
 
 	return (
-		<View style={{ marginTop: 8 }}>
+		<View style={{ marginTop: 8, gap: 6 }}>
+			<Text style={styles.letterAppealText}>
+				{t('features.post-box.ui.card.letter_received.appeal')}
+			</Text>
 			<Button
 				onPress={handleLike}
 				variant="primary"
@@ -781,6 +796,26 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		lineHeight: 20,
 		color: '#4B5563',
+	},
+	letterBadgeText: {
+		fontSize: 11,
+		lineHeight: 16,
+		color: semanticColors.brand.primary,
+		fontWeight: '600',
+		marginBottom: 4,
+	},
+	letterHintText: {
+		fontSize: 11,
+		lineHeight: 16,
+		color: semanticColors.text.muted,
+		marginTop: 6,
+	},
+	letterAppealText: {
+		fontSize: 12,
+		lineHeight: 16,
+		color: semanticColors.brand.primary,
+		fontWeight: '500',
+		textAlign: 'center',
 	},
 });
 

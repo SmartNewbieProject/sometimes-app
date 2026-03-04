@@ -155,7 +155,6 @@ function useUniversityHook() {
 
 	const handleBlur = () => {
 		setIsFocused(false);
-		Keyboard.dismiss();
 	};
 
 	const onNext = (fallback: () => void) => {

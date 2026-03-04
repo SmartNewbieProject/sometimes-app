@@ -289,6 +289,7 @@ function NativeBottomSheetPicker({
 
 	const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const isClosingRef = useRef(false);
+	const animateCloseCallbackRef = useRef<(() => void) | null>(null);
 
 	const forceCleanup = useCallback(() => {
 		if (closeTimeoutRef.current) {
@@ -304,10 +305,21 @@ function NativeBottomSheetPicker({
 		setSearchQuery('');
 	}, [translateY, backdropOpacity]);
 
+	// runOnJS에 전달할 stable한 함수 — 인라인 클로저 대신 ref를 통해 callback 접근
+	const onAnimationComplete = useCallback(() => {
+		if (closeTimeoutRef.current) {
+			clearTimeout(closeTimeoutRef.current);
+			closeTimeoutRef.current = null;
+		}
+		isClosingRef.current = false;
+		animateCloseCallbackRef.current?.();
+	}, []);
+
 	const animateClose = useCallback(
 		(callback: () => void) => {
 			if (isClosingRef.current) return;
 			isClosingRef.current = true;
+			animateCloseCallbackRef.current = callback;
 			Keyboard.dismiss();
 
 			// timeout fallback: runOnJS callback이 실행되지 않을 경우를 대비
@@ -330,18 +342,11 @@ function NativeBottomSheetPicker({
 					duration: ANIMATION_DURATION - 50,
 				},
 				() => {
-					runOnJS(() => {
-						if (closeTimeoutRef.current) {
-							clearTimeout(closeTimeoutRef.current);
-							closeTimeoutRef.current = null;
-						}
-						isClosingRef.current = false;
-						callback();
-					})();
+					runOnJS(onAnimationComplete)();
 				},
 			);
 		},
-		[translateY, backdropOpacity, forceCleanup],
+		[translateY, backdropOpacity, forceCleanup, onAnimationComplete],
 	);
 
 	// visible prop 변경 감지: 열기 + 닫기(cleanup) 모두 처리

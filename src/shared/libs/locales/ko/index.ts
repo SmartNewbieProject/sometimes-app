@@ -62,6 +62,7 @@ import featuresSomemate from './features/somemate.json';
 import featuresIdealTypeTest from './features/ideal-type-test.json';
 import featuresGlobalMatching from './features/global-matching.json';
 import featuresSupportChat from './features/support-chat.json';
+import featuresVersionUpdate from './features/version-update.json';
 import featuresWelcomeReward from './features/welcome-reward.json';
 
 import widgetsCheckboxLabel from './widgets/checkbox-label.json';
@@ -157,6 +158,7 @@ const features = {
 	'ideal-type-test': featuresIdealTypeTest,
 	'support-chat': featuresSupportChat,
 	'global-matching': featuresGlobalMatching,
+	'version-update': featuresVersionUpdate,
 };
 
 const widgets = {

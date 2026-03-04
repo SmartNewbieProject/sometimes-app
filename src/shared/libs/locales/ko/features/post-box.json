@@ -38,7 +38,13 @@
 				"chat_start_suffix": "로 채팅방을 열 수 있어요.",
 				"send_first_message": "지금 바로 첫 메시지를 보내보세요!"
 			},
-			"withdrawn_text": "서비스를 탈퇴한 유저에요"
+			"withdrawn_text": "서비스를 탈퇴한 유저에요",
+			"letter_received": {
+				"badge": "평범한 좋아요가 아니에요 — 특별한 마음이 도착했습니다",
+				"free_chat_hint": "상대방이 먼저 비용을 부담했어요. 좋아요만 누르면 바로 채팅이 열려요",
+				"chat_hint_male": "특별한 마음을 담아 편지를 보냈어요. 좋아요로 답장해보세요",
+				"appeal": "특별한 관심을 보낸 사람이에요 — 부담 없이 만나보세요"
+			}
 		}
 	},
 	"apps": {

@@ -1,6 +1,8 @@
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { axiosClient } from '@shared/libs';
 import { useAuth } from '@features/auth/hooks';
+import { useFreeRewardStatus } from '@/src/features/free-reward';
+import type { RewardKey } from '@/src/features/free-reward';
 
 interface EventStatus {
 	eventType: string;
@@ -63,7 +65,14 @@ export const useUniversityVerificationQuery = (profileId: string | null) =>
 		staleTime: 1000 * 60 * 5,
 	});
 
-const determineMissionStatus = (isCompleted: boolean): MissionStatus => {
+const MISSION_TO_REWARD_KEY: Record<string, RewardKey> = {
+	'instagram-registration': 'instagramRegistration',
+	'community-first-post': 'communityFirstPost',
+	'university-verification': 'universityVerification',
+};
+
+const determineMissionStatus = (isCompleted: boolean, isEligible: boolean): MissionStatus => {
+	if (!isEligible) return 'completed';
 	if (isCompleted) return 'completed';
 	return 'pending';
 };
@@ -71,6 +80,7 @@ const determineMissionStatus = (isCompleted: boolean): MissionStatus => {
 export const useGemMissions = () => {
 	const { my } = useAuth();
 	const profileId = my?.id;
+	const { isRewardEligible } = useFreeRewardStatus();
 
 	const queries = useQueries({
 		queries: [
@@ -103,21 +113,30 @@ export const useGemMissions = () => {
 			id: 'instagram-registration',
 			titleKey: 'features.payment.ui.gem_mission.missions.instagram_verification',
 			reward: 2,
-			status: determineMissionStatus((instagramQuery.data?.currentAttempt ?? 0) > 0),
+			status: determineMissionStatus(
+				(instagramQuery.data?.currentAttempt ?? 0) > 0,
+				isRewardEligible('instagramRegistration'),
+			),
 			navigateTo: '/instagram/verify?referrer=home',
 		},
 		{
 			id: 'community-first-post',
 			titleKey: 'features.payment.ui.gem_mission.missions.community_first_post',
 			reward: 1,
-			status: determineMissionStatus((communityQuery.data?.currentAttempt ?? 0) > 0),
+			status: determineMissionStatus(
+				(communityQuery.data?.currentAttempt ?? 0) > 0,
+				isRewardEligible('communityFirstPost'),
+			),
 			navigateTo: '/community',
 		},
 		{
 			id: 'university-verification',
 			titleKey: 'features.payment.ui.gem_mission.missions.university_verification',
 			reward: 5,
-			status: determineMissionStatus(!!universityQuery.data?.verifiedAt),
+			status: determineMissionStatus(
+				!!universityQuery.data?.verifiedAt,
+				isRewardEligible('universityVerification'),
+			),
 			navigateTo: '/university-verification',
 		},
 	];

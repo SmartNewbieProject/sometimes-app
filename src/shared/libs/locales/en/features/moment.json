@@ -101,16 +101,15 @@
 	},
 	"onboarding": {
 		"intro": {
-			"title": "How will your profile look?",
-			"subtitle": "Moment registration transforms your appeal",
-			"start_button": "Create Charm Profile",
+			"title": "See how your profile can change",
+			"subtitle": "2 min to get more people noticing you",
+			"start_button": "Start Now",
 			"skip_button": "Skip",
 			"before_tag": "Now",
 			"after_tag": "After Moment",
 			"before_name": "Basic Profile",
 			"after_name": "Charm Profile",
 			"before_trait1": "3 Photos",
-			"before_trait2": "Short Bio",
 			"before_trait3": "Basic Info",
 			"after_trait1": "Emotional Explorer",
 			"after_trait2": "Personality Analysis",
@@ -142,7 +141,18 @@
 			"radar_openness": "Openness",
 			"radar_conscientiousness": "Conscientiousness",
 			"radar_agreeableness": "Agreeableness",
-			"radar_neuroticism": "Emotional Stability"
+			"radar_neuroticism": "Emotional Stability",
+			"stats_title": "My Dating Tendencies",
+			"radar_chart_title": "Full Personality Map",
+			"patterns_title": "My Dating Patterns",
+			"story_title": "Me Through My Answers",
+			"growth_title": "Growth Hints Ahead",
+			"persona_title": "My Persona",
+			"dimension_desc_extraversion": "Social Energy",
+			"dimension_desc_openness": "Openness to Experience",
+			"dimension_desc_conscientiousness": "Planning & Responsibility",
+			"dimension_desc_agreeableness": "Empathy & Care",
+			"dimension_desc_neuroticism": "Emotional Sensitivity"
 		}
 	}
 }

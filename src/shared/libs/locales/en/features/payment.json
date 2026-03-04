@@ -4,7 +4,8 @@
 			"header_title": "Gem Reward Missions",
 			"status": {
 				"completed": "Done",
-				"claimable": "Claim Gems"
+				"claimable": "Claim Gems",
+				"received": "Received"
 			},
 			"missions": {
 				"university_verification": "Verify University",

@@ -14,7 +14,9 @@ import featuresInstagram from './features/instagram.json';
 import featuresLikeLetter from './features/like-letter.json';
 import featuresLoading from './features/loading.json';
 import featuresOnboarding from './features/onboarding.json';
+import featuresPostBox from './features/post-box.json';
 import featuresProfileViewer from './features/profile-viewer.json';
+import featuresVersionUpdate from './features/version-update.json';
 import global from './global.json';
 import sharedsServices from './shareds/services.json';
 import sharedsUi from './shareds/ui.json';
@@ -43,8 +45,10 @@ const features = {
 	'in-app-review': featuresInAppReview,
 	'contact-block': featuresContactBlock,
 	'like-letter': featuresLikeLetter,
+	'post-box': featuresPostBox,
 	'profile-viewer': featuresProfileViewer,
 	'global-matching': featuresGlobalMatching,
+	'version-update': featuresVersionUpdate,
 };
 
 const shareds = {

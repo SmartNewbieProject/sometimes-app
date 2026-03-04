@@ -259,6 +259,12 @@ export function LikeOptionModal({
 
 				<View style={styles.optionsContainer}>
 					<Pressable style={styles.simpleOption} onPress={handleSimpleLike}>
+						<View style={styles.gemBadge}>
+							<ImageResource resource={ImageResources.GEM} width={22} height={22} />
+							<Text size="15" style={styles.simpleLikeText}>
+								x{simpleLikeCost}
+							</Text>
+						</View>
 						<Text weight="medium" size="20" style={styles.simpleLikeText}>
 							{t('features.like-letter.ui.option_modal.simple_like')}
 						</Text>

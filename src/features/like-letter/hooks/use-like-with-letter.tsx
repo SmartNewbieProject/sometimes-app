@@ -16,6 +16,7 @@ import {
 import { MIXPANEL_EVENTS, LIKE_TYPES } from '@/src/shared/constants/mixpanel-events';
 import { useTranslation } from 'react-i18next';
 import { useAppInstallPrompt } from '@/src/features/app-install-prompt';
+import { useAuth } from '../../auth';
 import { likeLetterApi } from '../api';
 
 type LikeWithLetterParams = {
@@ -104,6 +105,8 @@ export function useLikeWithLetter() {
 	const { mutateAsync: likeWithLetter } = useLikeWithLetterMutation();
 	const { show: showCashable } = useCashableModal();
 	const { t } = useTranslation();
+	const { profileDetails } = useAuth();
+	const isFemale = profileDetails?.gender === 'FEMALE';
 	const { showPromptForMatching } = useAppInstallPrompt();
 
 	const performLikeWithLetter = async (
@@ -146,7 +149,11 @@ export function useLikeWithLetter() {
 					children: (
 						<View style={styles.modalContent}>
 							<Text textColor="disabled" size="12">
-								{letter ? '매칭되면 채팅은 무료로 시작돼요' : '상대방도 관심을 보이면'}
+								{letter
+									? isFemale
+										? '상대방이 좋아요를 누르면 채팅이 시작돼요'
+										: '매칭되면 채팅은 무료로 시작돼요'
+									: '상대방도 관심을 보이면'}
 							</Text>
 							{!letter && (
 								<Text textColor="disabled" size="12">

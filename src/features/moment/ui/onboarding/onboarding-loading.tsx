@@ -14,6 +14,7 @@ import Animated, {
 	withDelay,
 } from 'react-native-reanimated';
 
+import { useGlobalLoading } from '@/src/shared/hooks/use-global-loading';
 import { useToast } from '@/src/shared/hooks/use-toast';
 import { Text } from '@/src/shared/ui';
 import { useMomentOnboarding } from '../../hooks/use-moment-onboarding';
@@ -165,8 +166,17 @@ export const OnboardingLoading = () => {
 	const { emitToast } = useToast();
 	const { getAnswersArray } = useMomentOnboarding();
 	const submitMutation = useSubmitOnboardingMutation();
+	const { disableGlobalLoading, enableGlobalLoading } = useGlobalLoading();
 
 	const hasSubmitted = useRef(false);
+
+	// 이 페이지에서는 전역 미호 로딩 오버레이를 표시하지 않음
+	useEffect(() => {
+		disableGlobalLoading();
+		return () => {
+			enableGlobalLoading();
+		};
+	}, [disableGlobalLoading, enableGlobalLoading]);
 
 	useEffect(() => {
 		AccessibilityInfo.announceForAccessibility(t(MOMENT_ONBOARDING_KEYS.loading.message));

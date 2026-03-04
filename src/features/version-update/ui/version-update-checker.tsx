@@ -13,6 +13,7 @@ export const VersionUpdateChecker = () => {
 		if (showUpdateModal && updateData) {
 			const canSkip = !updateData.shouldUpdate;
 			showModal({
+				dismissable: canSkip,
 				children: (
 					<UpdateModalContent
 						updateData={updateData}

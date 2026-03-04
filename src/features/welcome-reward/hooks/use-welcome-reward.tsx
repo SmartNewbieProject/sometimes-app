@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/src/features/auth';
+import { useFreeRewardStatus, useInvalidateFreeRewardStatus } from '@/src/features/free-reward';
 import { storage, axiosClient } from '@/src/shared/libs';
 import { useTranslation } from 'react-i18next';
 
@@ -16,10 +17,19 @@ export const useWelcomeReward = () => {
 	const [shouldShowReward, setShouldShowReward] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const { my, isAuthorized } = useAuth();
+	const { isRewardEligible, isSuccess: isFreeRewardLoaded } = useFreeRewardStatus();
+	const invalidateFreeRewardStatus = useInvalidateFreeRewardStatus();
 
 	useEffect(() => {
 		const checkRewardStatus = async () => {
 			if (!isAuthorized || !my) {
+				setIsLoading(false);
+				return;
+			}
+
+			// free-reward API에서 eligible=false이면 모달 표시 안 함
+			if (isFreeRewardLoaded && !isRewardEligible('welcomeReward')) {
+				setShouldShowReward(false);
 				setIsLoading(false);
 				return;
 			}
@@ -53,7 +63,7 @@ export const useWelcomeReward = () => {
 		};
 
 		checkRewardStatus();
-	}, [isAuthorized, my]);
+	}, [isAuthorized, my, isFreeRewardLoaded]);
 
 	const markRewardAsReceived = async () => {
 		if (!my?.phoneNumber) {
@@ -67,6 +77,7 @@ export const useWelcomeReward = () => {
 			await receiveWelcomeReward();
 			await storage.setItem(`welcome-reward-${phoneNumber}`, 'true');
 			setShouldShowReward(false);
+			invalidateFreeRewardStatus();
 		} catch (error) {
 			console.error(t('features.welcome-reward.ui.modal.receive_error'), error);
 			await storage.setItem(`welcome-reward-${phoneNumber}`, 'true');

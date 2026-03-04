@@ -37,10 +37,12 @@ function DepartmentSearch() {
 
 	const departmentOptions: BottomSheetPickerOption[] = useMemo(
 		() => [
-			...departments.map((dept) => ({
-				label: dept,
-				value: dept,
-			})),
+			...departments
+				.filter((dept): dept is string => typeof dept === 'string' && dept.length > 0)
+				.map((dept) => ({
+					label: dept,
+					value: dept,
+				})),
 			{
 				label: t('features.signup.ui.department_direct_input_option'),
 				value: CREATE_NEW_VALUE,

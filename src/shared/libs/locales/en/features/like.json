@@ -17,7 +17,7 @@
 			"modal": {
 				"title_line1": "Would you like to express your interest",
 				"title_line2_male": "using {{cost}} gems?",
-				"title_line2_default": "to someone special?",
+				"title_line2_default": "using {{cost}} gems to express your interest?",
 				"body_line1": "Simply express your interest,",
 				"body_line2": "and naturally move to the next step.",
 				"primary_button": "Yes, let's do it"

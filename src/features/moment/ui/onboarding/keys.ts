@@ -13,7 +13,6 @@ export const MOMENT_ONBOARDING_KEYS = {
 		beforeName: 'features.moment.onboarding.intro.before_name',
 		afterName: 'features.moment.onboarding.intro.after_name',
 		beforeTrait1: 'features.moment.onboarding.intro.before_trait1',
-		beforeTrait2: 'features.moment.onboarding.intro.before_trait2',
 		beforeTrait3: 'features.moment.onboarding.intro.before_trait3',
 		afterTrait1: 'features.moment.onboarding.intro.after_trait1',
 		afterTrait2: 'features.moment.onboarding.intro.after_trait2',
@@ -46,6 +45,18 @@ export const MOMENT_ONBOARDING_KEYS = {
 		radarConscientiousness: 'features.moment.onboarding.result.radar_conscientiousness',
 		radarAgreeableness: 'features.moment.onboarding.result.radar_agreeableness',
 		radarNeuroticism: 'features.moment.onboarding.result.radar_neuroticism',
+		statsTitle: 'features.moment.onboarding.result.stats_title',
+		radarChartTitle: 'features.moment.onboarding.result.radar_chart_title',
+		patternsTitle: 'features.moment.onboarding.result.patterns_title',
+		storyTitle: 'features.moment.onboarding.result.story_title',
+		growthTitle: 'features.moment.onboarding.result.growth_title',
+		personaTitle: 'features.moment.onboarding.result.persona_title',
+		dimensionDescExtraversion: 'features.moment.onboarding.result.dimension_desc_extraversion',
+		dimensionDescOpenness: 'features.moment.onboarding.result.dimension_desc_openness',
+		dimensionDescConscientiousness:
+			'features.moment.onboarding.result.dimension_desc_conscientiousness',
+		dimensionDescAgreeableness: 'features.moment.onboarding.result.dimension_desc_agreeableness',
+		dimensionDescNeuroticism: 'features.moment.onboarding.result.dimension_desc_neuroticism',
 	},
 } as const;
 

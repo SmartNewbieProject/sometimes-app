@@ -17,7 +17,7 @@
 			"modal": {
 				"title_line1": "気になる相手に",
 				"title_line2_male": "ジェム{{cost}}個で気持ちを伝えますか？",
-				"title_line2_default": "気持ちを伝えますか？",
+				"title_line2_default": "ジェム{{cost}}個で気持ちを伝えますか？",
 				"body_line1": "気持ちを伝えて、",
 				"body_line2": "次のステップへ自然に進んでみましょう。",
 				"primary_button": "はい、やってみる"

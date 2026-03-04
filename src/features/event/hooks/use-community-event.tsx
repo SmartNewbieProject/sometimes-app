@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/src/features/auth';
+import { useFreeRewardStatus, useInvalidateFreeRewardStatus } from '@/src/features/free-reward';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { CommunityEventPromptModal } from './ui/community-event-prompt-modal';
 import { getEventByType } from '../api';
@@ -13,11 +14,20 @@ export const useCommunityEvent = () => {
 	const router = useRouter();
 	const { my, isAuthorized } = useAuth();
 	const { showModal } = useModal();
+	const { isRewardEligible, isSuccess: isFreeRewardLoaded } = useFreeRewardStatus();
+	const invalidateFreeRewardStatus = useInvalidateFreeRewardStatus();
 	const [shouldShowPrompt, setShouldShowPrompt] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 
 	const checkCommunityEventStatus = async () => {
 		if (!isAuthorized || !my) {
+			setIsLoading(false);
+			return;
+		}
+
+		// free-reward API에서 eligible=false이면 프롬프트 표시 안 함
+		if (isFreeRewardLoaded && !isRewardEligible('communityFirstPost')) {
+			setShouldShowPrompt(false);
 			setIsLoading(false);
 			return;
 		}
@@ -50,7 +60,7 @@ export const useCommunityEvent = () => {
 
 	useEffect(() => {
 		checkCommunityEventStatus();
-	}, [isAuthorized, my]);
+	}, [isAuthorized, my, isFreeRewardLoaded]);
 
 	const markRewardAsReceived = async () => {
 		if (!my?.phoneNumber) return;
@@ -58,6 +68,7 @@ export const useCommunityEvent = () => {
 		try {
 			await storage.setItem(`community-written-post-${my.phoneNumber}`, 'true');
 			setShouldShowPrompt(false);
+			invalidateFreeRewardStatus();
 		} catch (error) {
 			console.error('Failed to mark post as written:', error);
 		}

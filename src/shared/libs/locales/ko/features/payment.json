@@ -4,7 +4,8 @@
 			"header_title": "구슬 보상 미션",
 			"status": {
 				"completed": "완료",
-				"claimable": "구슬 받기"
+				"claimable": "구슬 받기",
+				"received": "수령 완료"
 			},
 			"missions": {
 				"university_verification": "대학 인증하기",

@@ -1,0 +1,11 @@
+{
+	"ui": {
+		"card": {
+			"letter_received": {
+				"badge": "This isn't an ordinary like — a special message has arrived",
+				"free_chat_hint": "They already covered the cost. Just tap like and start chatting for free",
+				"appeal": "Someone showed special interest — feel free to connect"
+			}
+		}
+	}
+}

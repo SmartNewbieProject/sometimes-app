@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react-native';
 import type React from 'react';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { DimensionValue } from 'react-native';
+import type { DimensionValue, ImageSourcePropType } from 'react-native';
 import {
 	AccessibilityInfo,
 	Dimensions,
@@ -28,7 +28,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useProfileDetailsQuery } from '@/src/features/auth/queries';
 import colors from '@/src/shared/constants/colors';
 import { useStorage } from '@/src/shared/hooks/use-storage';
-import { Button, Text } from '@/src/shared/ui';
+import { Text } from '@/src/shared/ui';
 import { useSkipOnboardingMutation } from '../../queries/onboarding';
 import { MOMENT_ONBOARDING_KEYS } from './keys';
 
@@ -190,7 +190,7 @@ const ShimmerButton = ({
 	}));
 
 	return (
-		<Button variant="primary" size="lg" onPress={onPress} style={styles.startButton}>
+		<Pressable onPress={onPress} style={styles.startButton}>
 			{children}
 			<Animated.View style={[styles.shimmerOverlay, shimmerStyle]} pointerEvents="none">
 				<LinearGradient
@@ -200,54 +200,65 @@ const ShimmerButton = ({
 					style={StyleSheet.absoluteFill}
 				/>
 			</Animated.View>
-		</Button>
+		</Pressable>
 	);
 };
+
+// ============================================
+// Gender Fallback Images
+// ============================================
+const GENDER_FALLBACK_IMAGES: Record<string, ImageSourcePropType> = {
+	MALE: require('@/assets/images/samples/man/man_0.webp'),
+	FEMALE: require('@/assets/images/samples/girl/girl_0.webp'),
+};
+
+// ============================================
+// Onboarding Icon Assets
+// ============================================
+const ONBOARDING_ICONS = {
+	traitExplorer: require('@/assets/images/heart-balloon.png'),
+	traitPersonality: require('@/assets/images/gem-icon.webp'),
+	traitMatching: require('@/assets/images/heart-arrow.png'),
+	benefitMatching: require('@/assets/images/chart-arrow.png'),
+	benefitChat: require('@/assets/images/matching-guide-hearts.webp'),
+	benefitInsight: require('@/assets/images/love-letter.webp'),
+} as const;
 
 // ============================================
 // Before Card
 // ============================================
 const ProfileCircle = ({
-	imageUrl,
+	imageSource,
 	style: circleStyle,
-}: { imageUrl: string | null; style: object }) => (
+}: { imageSource: ImageSourcePropType; style: object }) => (
 	<View style={circleStyle}>
-		{imageUrl ? (
-			<Image source={{ uri: imageUrl }} style={styles.profileImage} resizeMode="cover" />
-		) : (
-			<Text size="28">{'\uD83D\uDC64'}</Text>
-		)}
+		<Image source={imageSource} style={styles.profileImage} resizeMode="cover" />
 	</View>
 );
 
-const BeforeCard = ({ profileImageUrl }: { profileImageUrl: string | null }) => {
+const BeforeCard = ({ profileImageSource }: { profileImageSource: ImageSourcePropType }) => {
 	const { t } = useTranslation();
 
 	return (
 		<View style={styles.compareCard}>
 			<View style={styles.beforeCardInner}>
 				<View style={styles.beforeTag}>
-					<Text size="11" weight="semibold" style={styles.beforeTagText}>
+					<Text size="12" weight="semibold" style={styles.beforeTagText}>
 						{t(MOMENT_ONBOARDING_KEYS.intro.beforeTag)}
 					</Text>
 				</View>
-				<ProfileCircle imageUrl={profileImageUrl} style={styles.profileCircleBefore} />
+				<ProfileCircle imageSource={profileImageSource} style={styles.profileCircleBefore} />
 				<Text size="14" weight="bold" style={styles.beforeName}>
 					{t(MOMENT_ONBOARDING_KEYS.intro.beforeName)}
 				</Text>
 				<View style={styles.traitList}>
 					<View style={styles.beforeTraitChip}>
-						<Text size="11" weight="medium" style={styles.beforeTraitText}>
+						<Text size="12" weight="medium" style={styles.beforeTraitText}>
 							{t(MOMENT_ONBOARDING_KEYS.intro.beforeTrait1)}
 						</Text>
 					</View>
 					<View style={styles.beforeTraitChip}>
-						<Text size="11" weight="medium" style={styles.beforeTraitText}>
-							{t(MOMENT_ONBOARDING_KEYS.intro.beforeTrait2)}
-						</Text>
-					</View>
-					<View style={styles.beforeTraitChip}>
-						<Text size="11" weight="medium" style={styles.beforeTraitText}>
+						<Text size="12" weight="medium" style={styles.beforeTraitText}>
 							{t(MOMENT_ONBOARDING_KEYS.intro.beforeTrait3)}
 						</Text>
 					</View>
@@ -260,38 +271,41 @@ const BeforeCard = ({ profileImageUrl }: { profileImageUrl: string | null }) => 
 // ============================================
 // After Card
 // ============================================
-const AfterCard = ({ profileImageUrl }: { profileImageUrl: string | null }) => {
+const AfterCard = ({ profileImageSource }: { profileImageSource: ImageSourcePropType }) => {
 	const { t } = useTranslation();
 
 	return (
 		<View style={styles.compareCard}>
 			<View style={styles.afterCardInner}>
 				<View style={styles.sparkleBadge}>
-					<Text size="14">{'\u2728'}</Text>
+					<Sparkles size={14} color="#FFFFFF" />
 				</View>
 				<View style={styles.afterTag}>
-					<Text size="11" weight="semibold" style={styles.afterTagText}>
+					<Text size="12" weight="semibold" style={styles.afterTagText}>
 						{t(MOMENT_ONBOARDING_KEYS.intro.afterTag)}
 					</Text>
 				</View>
-				<ProfileCircle imageUrl={profileImageUrl} style={styles.profileCircleAfter} />
+				<ProfileCircle imageSource={profileImageSource} style={styles.profileCircleAfter} />
 				<Text size="14" weight="bold" style={styles.afterName}>
 					{t(MOMENT_ONBOARDING_KEYS.intro.afterName)}
 				</Text>
 				<View style={styles.traitList}>
 					<View style={styles.afterTraitChip}>
-						<Text size="11" weight="medium" style={styles.afterTraitText}>
-							{'\uD83C\uDFAD'} {t(MOMENT_ONBOARDING_KEYS.intro.afterTrait1)}
+						<Image source={ONBOARDING_ICONS.traitExplorer} style={styles.traitIcon} />
+						<Text size="12" weight="medium" style={styles.afterTraitText}>
+							{t(MOMENT_ONBOARDING_KEYS.intro.afterTrait1)}
 						</Text>
 					</View>
 					<View style={styles.afterTraitChip}>
-						<Text size="11" weight="medium" style={styles.afterTraitText}>
-							{'\uD83D\uDCCA'} {t(MOMENT_ONBOARDING_KEYS.intro.afterTrait2)}
+						<Image source={ONBOARDING_ICONS.traitPersonality} style={styles.traitIcon} />
+						<Text size="12" weight="medium" style={styles.afterTraitText}>
+							{t(MOMENT_ONBOARDING_KEYS.intro.afterTrait2)}
 						</Text>
 					</View>
 					<View style={styles.afterTraitChip}>
-						<Text size="11" weight="medium" style={styles.afterTraitText}>
-							{'\uD83D\uDC95'} {t(MOMENT_ONBOARDING_KEYS.intro.afterTrait3)}
+						<Image source={ONBOARDING_ICONS.traitMatching} style={styles.traitIcon} />
+						<Text size="12" weight="medium" style={styles.afterTraitText}>
+							{t(MOMENT_ONBOARDING_KEYS.intro.afterTrait3)}
 						</Text>
 					</View>
 				</View>
@@ -307,17 +321,23 @@ const BenefitPills = () => {
 	const { t } = useTranslation();
 
 	const benefits = [
-		{ emoji: '\uD83D\uDCC8', text: t(MOMENT_ONBOARDING_KEYS.intro.benefitMatching) },
-		{ emoji: '\uD83D\uDCAC', text: t(MOMENT_ONBOARDING_KEYS.intro.benefitConversation) },
-		{ emoji: '\uD83D\uDC8E', text: t(MOMENT_ONBOARDING_KEYS.intro.benefitInsight) },
+		{
+			icon: ONBOARDING_ICONS.benefitMatching,
+			text: t(MOMENT_ONBOARDING_KEYS.intro.benefitMatching),
+		},
+		{
+			icon: ONBOARDING_ICONS.benefitChat,
+			text: t(MOMENT_ONBOARDING_KEYS.intro.benefitConversation),
+		},
+		{ icon: ONBOARDING_ICONS.benefitInsight, text: t(MOMENT_ONBOARDING_KEYS.intro.benefitInsight) },
 	];
 
 	return (
 		<View style={styles.benefitPillsContainer}>
 			{benefits.map((b) => (
 				<View key={b.text} style={styles.benefitPill}>
-					<Text size="14">{b.emoji}</Text>
-					<Text size="12" weight="medium" style={styles.benefitPillText}>
+					<Image source={b.icon} style={styles.benefitIcon} />
+					<Text size="13" weight="medium" style={styles.benefitPillText}>
 						{b.text}
 					</Text>
 				</View>
@@ -337,12 +357,16 @@ export const OnboardingIntro = () => {
 		key: 'access-token',
 		initialValue: null,
 	});
-	const { data: profileDetails } = useProfileDetailsQuery(accessToken);
+	const { data: profileDetails } = useProfileDetailsQuery(accessToken ?? null);
 
-	const mainProfileImageUrl = useMemo(() => {
-		if (!profileDetails?.profileImages?.length) return null;
-		const mainImage = profileDetails.profileImages.find((img) => img.isMain);
-		return mainImage?.url ?? profileDetails.profileImages[0]?.url ?? null;
+	const profileImageSource: ImageSourcePropType = useMemo(() => {
+		if (profileDetails?.profileImages?.length) {
+			const mainImage = profileDetails.profileImages.find((img) => img.isMain);
+			const url = mainImage?.url ?? profileDetails.profileImages[0]?.url;
+			if (url) return { uri: url };
+		}
+		const gender = profileDetails?.gender ?? 'MALE';
+		return GENDER_FALLBACK_IMAGES[gender];
 	}, [profileDetails]);
 
 	const handleStart = () => {
@@ -401,8 +425,8 @@ export const OnboardingIntro = () => {
 
 				{/* Before / After Comparison */}
 				<StaggerFadeIn delay={200} style={styles.comparisonRow}>
-					<BeforeCard profileImageUrl={mainProfileImageUrl} />
-					<AfterCard profileImageUrl={mainProfileImageUrl} />
+					<BeforeCard profileImageSource={profileImageSource} />
+					<AfterCard profileImageSource={profileImageSource} />
 				</StaggerFadeIn>
 
 				{/* Benefit Pills */}
@@ -453,17 +477,19 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	scrollContent: {
+		flexGrow: 1,
+		justifyContent: 'center',
 		paddingHorizontal: 16,
 		paddingBottom: 16,
 	},
 	titleSection: {
 		alignItems: 'center',
-		marginBottom: 20,
+		marginBottom: 24,
 		paddingHorizontal: 8,
 	},
 	title: {
 		textAlign: 'center',
-		marginBottom: 4,
+		marginBottom: 6,
 	},
 	subtitle: {
 		textAlign: 'center',
@@ -471,7 +497,7 @@ const styles = StyleSheet.create({
 	comparisonRow: {
 		flexDirection: 'row',
 		gap: 12,
-		marginBottom: 16,
+		marginBottom: 20,
 	},
 	compareCard: {
 		flex: 1,
@@ -479,9 +505,9 @@ const styles = StyleSheet.create({
 	// Before Card
 	beforeCardInner: {
 		flex: 1,
-		borderRadius: 16,
-		paddingVertical: 16,
-		paddingHorizontal: 12,
+		borderRadius: 20,
+		paddingVertical: 24,
+		paddingHorizontal: 16,
 		alignItems: 'center',
 		backgroundColor: '#F5F5F5',
 		borderWidth: 1.5,
@@ -489,43 +515,44 @@ const styles = StyleSheet.create({
 		borderColor: '#D0D0D0',
 	},
 	beforeTag: {
-		paddingVertical: 3,
-		paddingHorizontal: 10,
+		paddingVertical: 4,
+		paddingHorizontal: 12,
 		borderRadius: 20,
 		backgroundColor: '#E8E8E8',
-		marginBottom: 12,
+		marginBottom: 16,
 	},
 	beforeTagText: {
 		color: '#999999',
 	},
 	profileCircleBefore: {
-		width: 56,
-		height: 56,
-		borderRadius: 28,
+		width: 80,
+		height: 80,
+		borderRadius: 40,
 		backgroundColor: '#E0E0E0',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 10,
+		marginBottom: 14,
 		overflow: 'hidden',
 	},
 	profileImage: {
-		width: 56,
-		height: 56,
-		borderRadius: 28,
+		width: 80,
+		height: 80,
+		borderRadius: 40,
 	},
 	beforeName: {
 		color: '#999999',
-		marginBottom: 8,
+		marginBottom: 12,
 	},
 	traitList: {
-		gap: 6,
-		alignItems: 'center',
+		gap: 8,
+		alignSelf: 'stretch',
 	},
 	beforeTraitChip: {
-		paddingVertical: 4,
-		paddingHorizontal: 8,
-		borderRadius: 8,
+		paddingVertical: 7,
+		paddingHorizontal: 12,
+		borderRadius: 10,
 		backgroundColor: '#E8E8E8',
+		alignItems: 'center',
 	},
 	beforeTraitText: {
 		color: '#BBBBBB',
@@ -533,12 +560,13 @@ const styles = StyleSheet.create({
 	// After Card
 	afterCardInner: {
 		flex: 1,
-		borderRadius: 16,
-		paddingVertical: 16,
-		paddingHorizontal: 12,
+		borderRadius: 20,
+		paddingVertical: 24,
+		paddingHorizontal: 16,
 		alignItems: 'center',
 		borderWidth: 1.5,
 		borderColor: '#D4BBFF',
+		backgroundColor: '#FDFBFF',
 		shadowColor: '#7A4AE2',
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.12,
@@ -546,19 +574,19 @@ const styles = StyleSheet.create({
 		elevation: 4,
 	},
 	afterTag: {
-		paddingVertical: 3,
-		paddingHorizontal: 10,
+		paddingVertical: 4,
+		paddingHorizontal: 12,
 		borderRadius: 20,
 		backgroundColor: '#7A4AE2',
-		marginBottom: 12,
+		marginBottom: 16,
 	},
 	afterTagText: {
 		color: '#FFFFFF',
 	},
 	sparkleBadge: {
 		position: 'absolute',
-		top: -4,
-		right: -4,
+		top: 8,
+		right: 8,
 		backgroundColor: '#FFD700',
 		width: 28,
 		height: 28,
@@ -573,12 +601,13 @@ const styles = StyleSheet.create({
 		zIndex: 2,
 	},
 	profileCircleAfter: {
-		width: 56,
-		height: 56,
-		borderRadius: 28,
+		width: 80,
+		height: 80,
+		borderRadius: 40,
+		backgroundColor: '#E8DEFF',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginBottom: 10,
+		marginBottom: 14,
 		overflow: 'hidden',
 		shadowColor: '#7A4AE2',
 		shadowOffset: { width: 0, height: 0 },
@@ -588,16 +617,24 @@ const styles = StyleSheet.create({
 	},
 	afterName: {
 		color: '#2D1B69',
-		marginBottom: 8,
+		marginBottom: 12,
 	},
 	afterTraitChip: {
-		paddingVertical: 4,
-		paddingHorizontal: 8,
-		borderRadius: 8,
+		flexDirection: 'row',
+		gap: 6,
+		paddingVertical: 7,
+		paddingHorizontal: 12,
+		borderRadius: 10,
 		backgroundColor: 'rgba(122, 74, 226, 0.1)',
+		alignItems: 'center',
+		alignSelf: 'stretch',
 	},
 	afterTraitText: {
 		color: '#7A4AE2',
+	},
+	traitIcon: {
+		width: 18,
+		height: 18,
 	},
 	// Benefit Pills
 	benefitSection: {
@@ -607,24 +644,28 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 		justifyContent: 'center',
-		gap: 6,
+		gap: 8,
 	},
 	benefitPill: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		gap: 4,
-		paddingVertical: 6,
-		paddingHorizontal: 12,
+		gap: 6,
+		paddingVertical: 10,
+		paddingHorizontal: 16,
 		backgroundColor: '#FFFFFF',
-		borderRadius: 20,
+		borderRadius: 24,
 		shadowColor: '#000000',
 		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.06,
-		shadowRadius: 4,
-		elevation: 1,
+		shadowOpacity: 0.08,
+		shadowRadius: 6,
+		elevation: 2,
 	},
 	benefitPillText: {
-		color: '#555555',
+		color: '#444444',
+	},
+	benefitIcon: {
+		width: 22,
+		height: 22,
 	},
 	// CTA
 	buttonContainer: {
@@ -634,11 +675,18 @@ const styles = StyleSheet.create({
 	},
 	startButton: {
 		width: '100%',
+		height: 60,
+		backgroundColor: colors.brand.primary,
+		borderRadius: 9999,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
 		overflow: 'hidden',
 	},
 	buttonContent: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		justifyContent: 'center',
 		gap: 8,
 	},
 	ctaSubtext: {

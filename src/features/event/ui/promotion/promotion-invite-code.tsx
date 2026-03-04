@@ -1,3 +1,4 @@
+import { useFreeRewardStatus } from "@/src/features/free-reward";
 import { Button } from "@/src/shared/ui";
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import CopyIcon from "@assets/icons/promotion/invite-code/copy.svg";
@@ -10,6 +11,9 @@ import useShare from "../../hooks/promotion/use-share";
 
 function PromotionInviteCode() {
   const {handleShareCode, referralCode} = useShare();
+  const { isRewardEligible } = useFreeRewardStatus();
+  const referralEligible = isRewardEligible("referralInvitee");
+
   return (
     <View style={styles.container}>
       <Image
@@ -56,6 +60,11 @@ function PromotionInviteCode() {
             </View>
           </View>
         </Pressable>
+        {!referralEligible && (
+          <View style={styles.receivedBadge}>
+            <Text style={styles.receivedText}>✓ 이미 보상을 받았습니다</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -157,6 +166,20 @@ const styles = StyleSheet.create({
     left: -24,
     width: 128,
     height: 128,
+  },
+  receivedBadge: {
+    backgroundColor: semanticColors.surface.disabled,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+  receivedText: {
+    color: semanticColors.text.disabled,
+    fontSize: 14,
+    fontWeight: "600",
+    fontFamily: "Pretendard-SemiBold",
   },
 });
 

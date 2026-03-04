@@ -52,7 +52,7 @@ export const LikeButton = ({
 
 	const handleSimpleLike = async () => {
 		if (isLikePending) return;
-		const gemCost = profileDetails?.gender === 'MALE' ? featureCosts?.LIKE_MESSAGE : 0;
+		const gemCost = featureCosts?.LIKE_MESSAGE ?? 3;
 		const currentTime = new Date().getHours();
 		const isPeakTime = currentTime >= 20 && currentTime <= 23;
 
@@ -65,10 +65,10 @@ export const LikeButton = ({
 		});
 
 		// 기존 KPI 이벤트: 매칭 요청
-		matchingEvents.trackMatchingRequested(connectionId, gemCost ?? 0);
+		matchingEvents.trackMatchingRequested(connectionId, gemCost);
 
-		// 구슬 사용 이벤트 (남성의 경우)
-		if (profileDetails?.gender === 'MALE' && gemCost && gemCost > 0) {
+		// 구슬 사용 이벤트 (남녀 동일 차감)
+		if (gemCost > 0) {
 			paymentEvents.trackGemUsed('matching', gemCost);
 		}
 

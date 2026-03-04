@@ -39,7 +39,7 @@ const MissionItem = ({ mission, onPress }: MissionItemProps) => {
 			case 'completed':
 				return (
 					<View style={styles.completedButton}>
-						<Text style={styles.completedButtonText}>{t('features.payment.ui.gem_mission.status.completed')}</Text>
+						<Text style={styles.completedButtonText}>✓ {t('features.payment.ui.gem_mission.status.received')}</Text>
 					</View>
 				);
 			case 'claimable':
@@ -62,7 +62,7 @@ const MissionItem = ({ mission, onPress }: MissionItemProps) => {
 	const containerProps = isCompleted ? {} : { onPress: handlePress };
 
 	return (
-		<Container style={styles.missionItem} {...containerProps}>
+		<Container style={[styles.missionItem, isCompleted && styles.missionItemCompleted]} {...containerProps}>
 			<View style={styles.missionLeft}>
 				<View style={styles.rewardBadge}>
 					<ImageResource resource={ImageResources.GEM} width={33} height={33} />
@@ -149,14 +149,17 @@ const styles = StyleSheet.create({
 		color: semanticColors.text.primary,
 		flex: 1,
 	},
+	missionItemCompleted: {
+		opacity: 0.5,
+	},
 	completedButton: {
-		backgroundColor: colors.primaryPurple,
+		backgroundColor: semanticColors.surface.disabled,
 		paddingHorizontal: 15,
 		paddingVertical: 6,
 		borderRadius: 20,
 	},
 	completedButtonText: {
-		color: semanticColors.text.inverse,
+		color: semanticColors.text.disabled,
 		fontSize: 13,
 		fontWeight: '600',
 	},
