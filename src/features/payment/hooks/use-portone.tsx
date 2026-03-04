@@ -41,6 +41,7 @@ export function usePortone(): UsePortone {
 
   const { t } = useTranslation();
   const { participate: participateFirstSale7 } = useEventControl({ type: EventType.FIRST_SALE_7 });
+  const { participate: participateFirstSale10 } = useEventControl({ type: EventType.FIRST_SALE_10 });
   const { participate: participateFirstSale16 } = useEventControl({ type: EventType.FIRST_SALE_16 });
   const { participate: participateFirstSale27 } = useEventControl({ type: EventType.FIRST_SALE_27 });
 
@@ -50,6 +51,9 @@ export function usePortone(): UsePortone {
       switch (eventType) {
         case EventType.FIRST_SALE_7:
           participate = participateFirstSale7;
+          break;
+        case EventType.FIRST_SALE_10:
+          participate = participateFirstSale10;
           break;
         case EventType.FIRST_SALE_16:
           participate = participateFirstSale16;
@@ -66,7 +70,7 @@ export function usePortone(): UsePortone {
     } catch (error) {
       console.error('이벤트 참여 실패:', error);
     }
-  }, [participateFirstSale7, participateFirstSale16, participateFirstSale27]);
+  }, [participateFirstSale7, participateFirstSale10, participateFirstSale16, participateFirstSale27]);
 
 
   const handlePaymentComplete = useCallback(

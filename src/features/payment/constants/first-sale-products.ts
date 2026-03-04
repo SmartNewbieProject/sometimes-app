@@ -2,16 +2,16 @@ import { EventType } from '@/src/features/event/types';
 import type { GemMetadata } from '../types';
 
 export const FIRST_SALE_PRODUCTS = {
-	SALE_16: {
-		id: 'sale-16',
+	SALE_10: {
+		id: 'sale-10',
 		sortOrder: 0,
-		price: 12000,
-		discountRate: 84.2,
-		totalGems: 16,
+		price: 10000,
+		discountRate: 50,
+		totalGems: 10,
 		bonusGems: 0,
 		gemAmount: 0,
-		productName: '최초 세일 16개',
-		eventType: EventType.FIRST_SALE_16,
+		productName: '최초 세일 10개',
+		eventType: EventType.FIRST_SALE_10,
 	},
 } as const;
 

@@ -98,6 +98,20 @@
 		"cafe": "カフェ",
 		"shopping": "ショッピング",
 		"exhibition": "展示会",
-		"concert": "コンサート"
+		"concert": "コンサート",
+		"emotional": "感情豊か",
+		"caring": "思いやりがある",
+		"leader": "リーダーシップがある",
+		"planner": "計画的",
+		"spontaneous": "気まぐれ",
+		"quiet": "物静か",
+		"proactive": "積極的",
+		"affectionate": "甘えん坊",
+		"friendly": "フレンドリー",
+		"tsundere": "ツンデレ",
+		"attentive": "気配り上手",
+		"reserved_but_caring": "クールだけど優しい",
+		"free_spirited": "自由奔放",
+		"frequent_contact": "こまめに連絡"
 	}
 }

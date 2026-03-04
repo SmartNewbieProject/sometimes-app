@@ -1,5 +1,5 @@
 const PRIMARY_PRODUCT_IDS = [
-	'gem_sale_16',
+	'gem_sale_10',
 	'gem_1',
 	'gem_5',
 	'gem_25',
@@ -8,7 +8,7 @@ const PRIMARY_PRODUCT_IDS = [
 ] as const;
 
 const FALLBACK_PRODUCT_IDS = [
-	'gem_sale_16',
+	'gem_sale_10',
 	'gem_1',
 	'gem_5',
 	'gem_25',

@@ -37,6 +37,20 @@
 		"cafe": "Cafe",
 		"shopping": "Shopping",
 		"exhibition": "Exhibition",
-		"concert": "Concert"
+		"concert": "Concert",
+		"emotional": "Emotional",
+		"caring": "Caring",
+		"leader": "Leader",
+		"planner": "Planner",
+		"spontaneous": "Spontaneous",
+		"quiet": "Quiet",
+		"proactive": "Proactive",
+		"affectionate": "Affectionate",
+		"friendly": "Friendly",
+		"tsundere": "Tsundere",
+		"attentive": "Attentive",
+		"reserved_but_caring": "Secretly Caring",
+		"free_spirited": "Free-Spirited",
+		"frequent_contact": "Frequent Texter"
 	}
 }

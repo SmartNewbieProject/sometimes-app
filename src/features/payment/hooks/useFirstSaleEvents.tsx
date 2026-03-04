@@ -3,30 +3,30 @@ import { EventType } from "@/src/features/event/types";
 import { useEffect, useState } from "react";
 
 export const useFirstSaleEvents = () => {
-  const { event: event16, eventExpired: eventExpired16, eventOverParticipated: eventOverParticipated16, participate: participateFirstSale16 } = useEventControl({ type: EventType.FIRST_SALE_16 });
+  const { event: event10, eventExpired: eventExpired10, eventOverParticipated: eventOverParticipated10, participate: participateFirstSale10 } = useEventControl({ type: EventType.FIRST_SALE_10 });
 
-  const event16Expired = eventOverParticipated16 || eventExpired16;
+  const event10Expired = eventOverParticipated10 || eventExpired10;
 
-  const shouldShow = event16 ? !event16Expired : false;
+  const shouldShow = event10 ? !event10Expired : false;
   const [show, setShow] = useState(shouldShow);
 
-  const totalExpiredAt = event16?.expiredAt ?? null;
+  const totalExpiredAt = event10?.expiredAt ?? null;
 
   useEffect(() => {
-    if (!event16) {
+    if (!event10) {
       setShow(false);
       return;
     }
-    const newShow = !event16Expired;
+    const newShow = !event10Expired;
     setShow(newShow);
-  }, [event16, event16Expired]);
+  }, [event10, event10Expired]);
 
 
   return {
-    event16: event16 ?? null,
-    event16Expired: event16Expired ?? true,
-    eventOverParticipated16: eventOverParticipated16 ?? false,
-    participateFirstSale16,
+    event10: event10 ?? null,
+    event10Expired: event10Expired ?? true,
+    eventOverParticipated10: eventOverParticipated10 ?? false,
+    participateFirstSale10,
     show,
     setShow,
     totalExpiredAt,

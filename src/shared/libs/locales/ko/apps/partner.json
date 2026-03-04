@@ -98,6 +98,20 @@
 		"cafe": "카페",
 		"shopping": "쇼핑",
 		"exhibition": "전시회",
-		"concert": "공연/콘서트"
+		"concert": "공연/콘서트",
+		"emotional": "감성적인",
+		"caring": "배려심 깊은",
+		"leader": "리더십 있는",
+		"planner": "계획적인",
+		"spontaneous": "즉흥적인",
+		"quiet": "조용한",
+		"proactive": "적극적인",
+		"affectionate": "다정다감한",
+		"friendly": "친구 같은",
+		"tsundere": "츤데레",
+		"attentive": "챙겨주는",
+		"reserved_but_caring": "속 다정한",
+		"free_spirited": "자유로운",
+		"frequent_contact": "자주 연락하는"
 	}
 }

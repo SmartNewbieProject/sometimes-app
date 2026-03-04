@@ -41,7 +41,7 @@ export const AppleFirstSaleCard = ({
     totalExpiredAt,
     show,
     setShow,
-    event16Expired,
+    event10Expired,
   } = useFirstSaleEvents();
   const { seconds } = useTimer(totalExpiredAt, {
     autoStart: !!totalExpiredAt,
@@ -91,39 +91,37 @@ export const AppleFirstSaleCard = ({
 
       <View style={styles.paymentList}>
         <View style={styles.saleMiho}>
-          <View style={{ position: "relative" }}>
-            <ImageResource
-              resource={ImageResources.SALE_MIHO}
-              width={120}
-              height={140}
-            />
-            <Animated.View style={[styles.bubble, animatedStyle]}>
-              <Text
-                textColor="purple"
-                weight="semibold"
-                style={styles.bubbleTextTop}
-              >
-                {t("features.payment.ui.apple_first_sale_card.cheer_message")}
-              </Text>
-              <Text
-                textColor="purple"
-                weight="semibold"
-                style={styles.bubbleText}
-              >
-                {t("features.payment.ui.apple_first_sale_card.new_member_discount")}
-              </Text>
-              <View style={styles.bubbleTail} />
-            </Animated.View>
-          </View>
+          <ImageResource
+            resource={ImageResources.SALE_MIHO}
+            width={120}
+            height={140}
+          />
+          <Animated.View style={[styles.bubble, animatedStyle]}>
+            <Text
+              textColor="purple"
+              weight="semibold"
+              style={styles.bubbleTextTop}
+            >
+              {t("features.payment.ui.apple_first_sale_card.cheer_message")}
+            </Text>
+            <Text
+              textColor="purple"
+              weight="semibold"
+              style={styles.bubbleText}
+            >
+              {t("features.payment.ui.apple_first_sale_card.new_member_discount")}
+            </Text>
+            <View style={styles.bubbleTail} />
+          </Animated.View>
         </View>
 
-        <Show when={!event16Expired}>
+        <Show when={!event10Expired}>
           <AppleGemStoreWidget.Item
             gemProduct={gemProducts[0]}
             serverGemProducts={serverGemProducts}
             onOpenPurchase={() => {
-              paymentEvents.trackItemSelected('gem_16', 16);
-              setEventType(EventType.FIRST_SALE_16);
+              paymentEvents.trackItemSelected('gem_10', 10);
+              setEventType(EventType.FIRST_SALE_10);
               onOpenPurchase(gemProducts[0].id);
             }}
             hot={false}
@@ -137,32 +135,26 @@ export const AppleFirstSaleCard = ({
 const styles = StyleSheet.create({
   paymentList: {
     flexDirection: "column",
-    position: "relative",
-    alignItems: "center",
-    rowGap: 4,
-    marginTop: 120,
+    rowGap: 8,
+    marginTop: 12,
   },
   saleMiho: {
-    position: "absolute",
-    top: -106,
+    flexDirection: "row",
+    alignItems: "center",
     width: "100%",
-    left: 0,
-    zIndex: 1,
   },
   bubble: {
+    flex: 1,
     paddingVertical: 11,
     paddingHorizontal: 16,
     backgroundColor: colors.white,
     borderRadius: 20,
-    textDecorationColor: colors.primaryPurple,
-    display: "flex",
     flexDirection: "column",
-    position: "absolute",
-    left: 120,
+    marginLeft: 8,
   },
   bubbleTail: {
     position: "absolute",
-    bottom: 20,
+    top: "50%",
     left: -8,
     width: 0,
     height: 0,

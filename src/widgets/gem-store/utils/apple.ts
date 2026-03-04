@@ -12,6 +12,8 @@ export enum ProductID {
 	GEM_25 = 'gem_25',
 	GEM_50 = 'gem_50',
 	GEM_100 = 'gem_100',
+	// 첫구매 할인 상품
+	GEM_SALE_10 = 'gem_sale_10',
 	// 레거시
 	GEM_8 = 'gem_8',
 	GEM_15 = 'gem_15',
@@ -70,7 +72,10 @@ const getAppleToServerMapping = (): Record<string, string> => ({
 	gem_50: '구슬 50개',
 	gem_100: '구슬 100개',
 
-	// 세일 상품
+	// 첫구매 할인 상품
+	gem_sale_10: '최초 세일 10개',
+
+	// 레거시 세일 상품
 	gem_sale_16: '스타터 팩',
 
 	// 레거시 호환성 (기존 구매 이력 조회용, 상점에는 미표시)
@@ -147,6 +152,9 @@ export const getPriceAndDiscount = (
 		gem_400: { price: 295000, discountRate: 64 },
 		gem_500: { price: 368000, discountRate: 66 },
 		gem_800: { price: 590000, discountRate: 67 },
+
+		// 첫구매 할인 상품 (구슬 10개, 정가 10,000원 → 50% 할인 → 5,000원)
+		gem_sale_10: { price: 10000, discountRate: 50 },
 
 		gem_sale_7: { price: 5250, discountRate: 37.2 },
 		gem_sale_16: { price: 12000, discountRate: 84.2 },

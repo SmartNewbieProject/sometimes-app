@@ -28,7 +28,7 @@ type FirstSaleCardProps = {
 };
 
 export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
-	const { totalExpiredAt, show, setShow, event16Expired } = useFirstSaleEvents();
+	const { totalExpiredAt, show, setShow, event10Expired } = useFirstSaleEvents();
 	const { seconds } = useTimer(totalExpiredAt, {
 		autoStart: !!totalExpiredAt,
 		onComplete: () => {
@@ -62,7 +62,7 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
 	});
 
 	if (!show) return null;
-	if (!FIRST_SALE_PRODUCTS.SALE_16) return null;
+	if (!FIRST_SALE_PRODUCTS.SALE_10) return null;
 
 	return (
 		<GlowingCard>
@@ -77,38 +77,36 @@ export const FirstSaleCard = ({ onOpenPayment }: FirstSaleCardProps) => {
 
 			<View style={styles.paymentList}>
 				<View style={styles.saleMiho}>
-					<View style={{ position: 'relative' }}>
-						<Image
-							source={require('@/assets/images/gem-store-fox-sale.webp')}
-							style={{ width: 113, height: 113 }}
-							resizeMode="contain"
-						/>
-						<Animated.View style={[styles.bubble, animatedStyle]}>
-							<Text
-								textColor="purple"
-								weight="semibold"
-								style={[styles.bubbleTextFirst, isJapanese ? styles.bubbleTextJa : {}]}
-							>
-								{t(PAYMENT_KEYS.uiAppleFirstSaleCardCheerMessage)}
-							</Text>
-							<Text
-								textColor="purple"
-								weight="semibold"
-								style={[styles.bubbleText, isJapanese ? styles.bubbleTextJa : {}]}
-							>
-								{t(PAYMENT_KEYS.uiAppleFirstSaleCardNewMemberDiscount)}
-							</Text>
-							<View style={styles.bubbleTail} />
-						</Animated.View>
-					</View>
+					<Image
+						source={require('@/assets/images/gem-store-fox-sale.webp')}
+						style={{ width: 113, height: 113 }}
+						resizeMode="contain"
+					/>
+					<Animated.View style={[styles.bubble, animatedStyle]}>
+						<Text
+							textColor="purple"
+							weight="semibold"
+							style={[styles.bubbleTextFirst, isJapanese ? styles.bubbleTextJa : {}]}
+						>
+							{t(PAYMENT_KEYS.uiAppleFirstSaleCardCheerMessage)}
+						</Text>
+						<Text
+							textColor="purple"
+							weight="semibold"
+							style={[styles.bubbleText, isJapanese ? styles.bubbleTextJa : {}]}
+						>
+							{t(PAYMENT_KEYS.uiAppleFirstSaleCardNewMemberDiscount)}
+						</Text>
+						<View style={styles.bubbleTail} />
+					</Animated.View>
 				</View>
 
-				<Show when={!event16Expired}>
+				<Show when={!event10Expired}>
 					<GemStoreWidget.Item
-						gemProduct={FIRST_SALE_PRODUCTS.SALE_16}
+						gemProduct={FIRST_SALE_PRODUCTS.SALE_10}
 						onOpenPayment={(metadata) => {
-							paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_16.totalGems);
-							setEventType(EventType.FIRST_SALE_16);
+							paymentEvents.trackItemSelected('gems', FIRST_SALE_PRODUCTS.SALE_10.totalGems);
+							setEventType(EventType.FIRST_SALE_10);
 							onOpenPayment(metadata);
 						}}
 						hot={false}
@@ -130,29 +128,22 @@ const styles = StyleSheet.create({
 	},
 	paymentList: {
 		flexDirection: 'column',
-		position: 'relative',
-		alignItems: 'center',
-		rowGap: 4,
-		marginTop: 100,
+		rowGap: 8,
+		marginTop: 12,
 	},
 	saleMiho: {
-		position: 'absolute',
-		top: -90,
+		flexDirection: 'row',
+		alignItems: 'center',
 		width: '100%',
-		left: 0,
-		zIndex: 1,
 	},
 	bubble: {
+		flex: 1,
 		paddingVertical: 11,
 		paddingHorizontal: 16,
 		backgroundColor: colors.white,
 		borderRadius: 20,
-		textDecorationColor: colors.primaryPurple,
-		display: 'flex',
 		flexDirection: 'column',
-		position: 'absolute',
-		left: 113,
-		top: 0,
+		marginLeft: 8,
 	},
 	bubbleTextFirst: {
 		fontSize: 15,
@@ -166,7 +157,7 @@ const styles = StyleSheet.create({
 	},
 	bubbleTail: {
 		position: 'absolute',
-		bottom: 20,
+		top: '50%',
 		left: -8,
 		width: 0,
 		height: 0,
