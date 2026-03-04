@@ -61,7 +61,6 @@ const {
 	ReviewSlide,
 	ProfilePhotoCard,
 	InstagramVerificationCard,
-	HotPostsCarousel,
 	LatestPostsCarousel,
 } = ui;
 const { usePreferenceSelfQuery } = queries;
@@ -315,7 +314,6 @@ const HomeScreen = () => {
 					<CommunityAnnouncement />
 					<ReviewSlide />
 				</View>
-				<HotPostsCarousel />
 				<LatestPostsCarousel />
 				<Feedback.WallaFeedbackBanner />
 
