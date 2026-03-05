@@ -104,7 +104,12 @@
 			"description_1": "マッチングのために",
 			"description_highlight": "最低1枚",
 			"description_2": "は必要です。",
-			"description_3": "3枚追加するとマッチング確率がさらに上がります！"
+			"description_3": "3枚追加するとマッチング確率がさらに上がります！",
+			"reviewing_title": "写真を審査中です",
+			"reviewing_description": "通常、数時間以内に結果をお知らせします",
+			"reviewing_approved": "承認されたらマッチングが始まります！",
+			"rejected_title": "一部の写真が却下されました",
+			"rejected_description": "審査を通過できなかった写真を差し替えてください"
 		},
 		"instagram_verification_card": {
 			"title": "Instagramアカウント認証",

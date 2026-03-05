@@ -11,6 +11,7 @@ import type { Notification } from '@/src/features/home/apis';
 import BannerSlide from '@/src/features/home/ui/banner-slide';
 import FirstPurchaseEvent from '@/src/features/home/ui/first-purchase-event-banner';
 import HomeInfoSection from '@/src/features/home/ui/home-info/home-info-section';
+import type { PhotoCardStatus } from '@/src/features/home/ui/profile-photo-card';
 import { DevScenarioFab } from '@/src/features/idle-match-timer/__dev__/dev-scenario-fab';
 import { useSecondaryMatch } from '@/src/features/idle-match-timer/hooks/use-secondary-match';
 import { PeekSheet } from '@/src/features/idle-match-timer/ui/peek-sheet';
@@ -33,6 +34,7 @@ import { sendHeartbeat } from '@/src/shared/libs/heartbeat';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { ensurePushTokenRegistered, registerFcmTokenAsync } from '@/src/shared/libs/notifications';
 import { AnnounceCard, BottomNavigation, BusinessInfo, Header, Show, Text } from '@/src/shared/ui';
+import type { ProfileImage } from '@/src/types/user';
 import { useAuth } from '@features/auth';
 import Event from '@features/event';
 import { Feedback } from '@features/feedback';
@@ -53,6 +55,13 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
+
+function getPhotoCardStatus(images: ProfileImage[]): PhotoCardStatus {
+	if (images.length === 0) return 'none';
+	if (images.some((img) => img.reviewStatus === 'rejected')) return 'rejected';
+	if (images.some((img) => img.reviewStatus === 'pending')) return 'reviewing';
+	return 'partial';
+}
 
 const { ui, queries, hooks } = Home;
 const {
@@ -87,11 +96,15 @@ const HomeScreen = () => {
 	const { showCollapse } = useLiked();
 	const collapse = showCollapse();
 
-	const hasProfileImages = profileDetails?.profileImages && profileDetails.profileImages.length > 0;
+	const profileImages = profileDetails?.profileImages ?? [];
+	const allPhotosApproved =
+		profileImages.length > 0 && profileImages.every((img) => img.reviewStatus === 'approved');
+	const photoCardStatus = getPhotoCardStatus(profileImages);
+
 	const hasCharacteristics = preferencesSelf && preferencesSelf.length > 0;
 	const hasPreferences = isPreferenceFill;
 	const showPreferenceGuide = !hasCharacteristics || !hasPreferences;
-	const showPhotoGuide = hasCharacteristics && hasPreferences && !hasProfileImages;
+	const showPhotoGuide = hasCharacteristics && hasPreferences && !allPhotosApproved;
 
 	// const [tutorialFinished, setTutorialFinished] = useState<boolean>(false);
 	// const { data: hasFirst, isLoading: hasFirstLoading } = useMatchingFirst();
@@ -219,12 +232,7 @@ const HomeScreen = () => {
 	);
 
 	const renderMatchingSection = () => {
-		const hasProfileImages =
-			profileDetails?.profileImages && profileDetails.profileImages.length > 0;
-		const hasCharacteristics = preferencesSelf && preferencesSelf.length > 0;
-		const hasPreferences = isPreferenceFill;
-
-		const isProfileComplete = hasProfileImages && hasCharacteristics && hasPreferences;
+		const isProfileComplete = allPhotosApproved && hasCharacteristics && hasPreferences;
 		const isOnboardingInfoComplete = hasCharacteristics && hasPreferences;
 
 		if (onboardingLoading) {
@@ -244,7 +252,7 @@ const HomeScreen = () => {
 			);
 		}
 
-		if (isOnboardingInfoComplete && !hasProfileImages) {
+		if (isOnboardingInfoComplete && !allPhotosApproved) {
 			return null;
 		}
 
@@ -290,7 +298,7 @@ const HomeScreen = () => {
 
 				<Show when={showPhotoGuide ?? false}>
 					<View style={styles.profilePhotoSection}>
-						<ProfilePhotoCard />
+						<ProfilePhotoCard status={photoCardStatus} images={profileImages} />
 						<InstagramVerificationCard />
 					</View>
 				</Show>
@@ -353,11 +361,7 @@ const HomeScreen = () => {
 				/>
 			)}
 
-			{__DEV__ && (
-				<DevScenarioFab
-					bottomOffset={shouldShowFloatingCard ? 160 : 100}
-				/>
-			)}
+			{__DEV__ && <DevScenarioFab bottomOffset={shouldShowFloatingCard ? 160 : 100} />}
 			<View onLayout={(e) => setBottomNavHeight(e.nativeEvent.layout.height)}>
 				<BottomNavigation />
 			</View>
