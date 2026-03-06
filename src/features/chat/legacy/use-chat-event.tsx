@@ -3,7 +3,7 @@ import { createChatEventActions } from '../domain/chat-event-actions';
 import { useChatStore } from '../store/chat';
 
 export const useChatEvent = () => {
-	const { socket } = useChatStore();
+	const socket = useChatStore((s) => s.socket);
 
 	const chatEventActions = useMemo(() => createChatEventActions(() => socket), [socket]);
 

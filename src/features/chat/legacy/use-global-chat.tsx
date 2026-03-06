@@ -12,7 +12,7 @@ interface UseGlobalChatOptions {
 
 export const useGlobalChat = ({ baseUrl, namespace = '' }: UseGlobalChatOptions) => {
 	const { accessToken } = useAuth();
-	const { initSocket, socket, setConnected, isInitialized, disconnectSocket } = useChatStore();
+	const socket = useChatStore((s) => s.socket);
 	const [currentToken, setCurrentToken] = useState<string | null>(null);
 
 	const url = buildChatSocketUrl(baseUrl, namespace, accessToken);

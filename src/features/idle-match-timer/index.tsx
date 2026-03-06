@@ -57,11 +57,14 @@ function IdleMatchTimerContent() {
 
 	useEffect(() => {
 		if (rematchingLoading) {
+			let interval: ReturnType<typeof setInterval> | null = null;
+
 			const timer = setTimeout(() => {
 				if (realRematchingLoading) {
-					const interval = setInterval(() => {
+					interval = setInterval(() => {
 						if (!realRematchingLoading) {
-							clearInterval(interval);
+							clearInterval(interval!);
+							interval = null;
 							finishRematching();
 						}
 					}, 100);
@@ -70,7 +73,10 @@ function IdleMatchTimerContent() {
 				}
 			}, 4000);
 
-			return () => clearTimeout(timer);
+			return () => {
+				clearTimeout(timer);
+				if (interval) clearInterval(interval);
+			};
 		}
 	}, [rematchingLoading, realRematchingLoading, finishRematching]);
 

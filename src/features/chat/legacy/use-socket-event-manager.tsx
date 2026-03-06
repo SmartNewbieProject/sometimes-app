@@ -109,7 +109,7 @@ class SocketEventManager {
 const eventManager = new SocketEventManager();
 
 export const useSocketEventManager = () => {
-	const { socket } = useChatStore();
+	const socket = useChatStore((s) => s.socket);
 	const subscriptionsRef = useRef<Map<string, string>>(new Map());
 
 	useEffect(() => {
