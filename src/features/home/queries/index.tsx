@@ -24,7 +24,7 @@ export const useCheckPreferenceFillQuery = () => {
     queryKey: ["check-preference-fill"],
     queryFn: apis.checkPreferenceFill,
     staleTime: 0,
-    gcTime: 0,
+    gcTime: 5 * 60 * 1000,
     enabled: isAuthorized,
   });
 };
@@ -55,6 +55,13 @@ export const useBannersQuery = (position: BannerPosition) =>
   useQuery({
     queryKey: ["banners", position],
     queryFn: () => apis.getBanners(position),
+  });
+
+export const usePublicReviewsQuery = (type?: import("../types").PublicReviewType) =>
+  useQuery({
+    queryKey: ["public-reviews", type],
+    queryFn: () => apis.getPublicReviews(type),
+    staleTime: 1000 * 60 * 10,
   });
 
 export { useExistsUniversityQuery } from "./use-exists-university";

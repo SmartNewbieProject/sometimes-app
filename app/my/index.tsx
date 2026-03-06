@@ -16,15 +16,9 @@ export default function MyScreen() {
 
 	useFocusEffect(
 		useCallback(() => {
-			queryClient.invalidateQueries({
-				queryKey: ['my-profile-details'],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['gem', 'current'],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['mbti'],
-			});
+			queryClient.invalidateQueries({ queryKey: ['my-profile-details'], refetchType: 'active' });
+			queryClient.invalidateQueries({ queryKey: ['gem', 'current'], refetchType: 'active' });
+			queryClient.invalidateQueries({ queryKey: ['mbti'], refetchType: 'active' });
 		}, [queryClient]),
 	);
 

@@ -83,6 +83,7 @@ const HomeScreen = () => {
 	const { t } = useTranslation();
 	const { showModal } = useModal();
 	const { featureEvents } = useMixpanel();
+	const { trackHomeViewed } = featureEvents;
 	const hasTrackedHomeView = useRef(false);
 	const { step } = useStep();
 	const { isPreferenceFill, onboardingLoading } = useRedirectPreferences();
@@ -209,26 +210,18 @@ const HomeScreen = () => {
 	useFocusEffect(
 		useCallback(() => {
 			if (!hasTrackedHomeView.current) {
-				featureEvents.trackHomeViewed();
+				trackHomeViewed();
 				hasTrackedHomeView.current = true;
 			}
 
 			// 서버에 heartbeat 전송 (lastLoginAt 업데이트)
 			sendHeartbeat();
 
-			queryClient.invalidateQueries({
-				queryKey: [
-					'notification',
-					'check-preference-fill',
-					'latest-matching',
-					'latest-matching-v31',
-				],
-				refetchType: 'active',
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['my-profile-details'],
-			});
-		}, [queryClient, featureEvents]),
+			queryClient.invalidateQueries({ queryKey: ['notification'], refetchType: 'active' });
+			queryClient.invalidateQueries({ queryKey: ['check-preference-fill'], refetchType: 'active' });
+			queryClient.invalidateQueries({ queryKey: ['latest-matching-v31'], refetchType: 'active' });
+			queryClient.invalidateQueries({ queryKey: ['my-profile-details'], refetchType: 'active' });
+		}, [queryClient, trackHomeViewed]),
 	);
 
 	const renderMatchingSection = () => {

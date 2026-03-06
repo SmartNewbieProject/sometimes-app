@@ -140,7 +140,7 @@ export function GlobalLoadingOverlay() {
 	const [randomMessage, setRandomMessage] = useState('');
 
 	useEffect(() => {
-		if (Array.isArray(messages) && messages.length > 0) {
+		if (isLoading && Array.isArray(messages) && messages.length > 0) {
 			const randomIndex = Math.floor(Math.random() * messages.length);
 			setRandomMessage(messages[randomIndex]);
 		}
@@ -178,7 +178,7 @@ export function GlobalLoadingOverlay() {
 	}
 
 	return (
-		<Animated.View style={[styles.container, { opacity: fadeAnim }]} pointerEvents="auto">
+		<Animated.View style={[styles.container, { opacity: fadeAnim }]} pointerEvents={isLoading ? 'auto' : 'none'}>
 			<View style={styles.content}>
 				{Platform.OS === 'web' ? (
 					<WebVideo isPlaying={isLoading} />
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 32,
 	},
 	char: {
-		fontSize: 30,
+		fontSize: 22,
 		color: '#FFFFFF',
 	},
 });
