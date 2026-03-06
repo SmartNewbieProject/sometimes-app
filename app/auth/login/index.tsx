@@ -1,5 +1,4 @@
 import { type AuthTab, AuthTabBar } from '@/src/features/article/ui';
-import { useIdealTypeTestPrompt } from '@/src/features/ideal-type-test/hooks';
 import { MIXPANEL_EVENTS } from '@/src/shared/constants/mixpanel-events';
 import { useToast } from '@/src/shared/hooks/use-toast';
 import { resetAuthState } from '@/src/shared/libs/axios';
@@ -21,7 +20,6 @@ export default function LoginScreen() {
 	const { emitToast } = useToast();
 	const hasTrackedView = useRef(false);
 	const insets = useSafeAreaInsets();
-	useIdealTypeTestPrompt();
 
 	const handleTabChange = (tab: AuthTab) => {
 		if (tab === 'story') {
@@ -43,7 +41,7 @@ export default function LoginScreen() {
 	useEffect(() => {
 		const errorMessage = params.error as string;
 		if (errorMessage) {
-			emitToast(errorMessage, undefined, 4000);
+			emitToast(errorMessage, undefined, 3000);
 		}
 	}, [params.error]);
 
@@ -93,8 +91,8 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 	},
 	contentWrapper: {
-		flex: 1,
 		alignItems: 'center',
+		paddingBottom: 24,
 	},
 	logoSection: {
 		alignItems: 'center',
@@ -102,7 +100,6 @@ const styles = StyleSheet.create({
 		marginTop: Platform.OS === 'web' ? 40 : 0,
 	},
 	mainContent: {
-		flex: 1,
 		width: '100%',
 		alignItems: 'center',
 		marginTop: 4,
