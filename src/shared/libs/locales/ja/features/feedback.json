@@ -1,7 +1,23 @@
 {
 	"ui": {
-		"index": {
-			"feedback_banner_text": "皆さまの貴重なご意見がSOMETIMEをもっとより良い場所にします！"
+		"banner": {
+			"title": "SOMETIMEにお手紙を送ってください",
+			"subtitle": "ご意見を確認後、ジェムをプレゼントします"
+		},
+		"letter": {
+			"title": "SOMETIMEにお手紙を送る ✉️",
+			"subtitle": "率直なご意見がより良いサービスを作ります",
+			"reward": "運営チームがご意見を確認し、より良いサービスでお応えします",
+			"placeholder": "ご自由にご意見をお書きください。（5文字以上）",
+			"submit": "ご意見を送る"
+		},
+		"success": {
+			"title": "貴重なご意見ありがとうございます！ 🙏",
+			"confirm": "確認"
+		},
+		"error": {
+			"title": "送信に失敗しました。もう一度お試しください。",
+			"confirm": "確認"
 		}
 	}
 }
