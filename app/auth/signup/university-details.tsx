@@ -67,10 +67,6 @@ function UniversityDetailsPage() {
 		return <Loading.Page title={t('apps.auth.sign_up.university_detail.next_button_wait')} />;
 	}
 
-	const handleGoToStart = () => {
-		router.replace('/auth/login');
-	};
-
 	return (
 		<DefaultLayout>
 			<ScrollView
@@ -99,8 +95,7 @@ function UniversityDetailsPage() {
 				<TwoButtons
 					disabledNext={!nextable}
 					onClickNext={handleNext}
-					onClickPrevious={handleGoToStart}
-					content={{ prev: t('apps.auth.sign_up.university_detail.go_to_start') }}
+					onClickPrevious={handleBackPress}
 				/>
 			</View>
 		</DefaultLayout>

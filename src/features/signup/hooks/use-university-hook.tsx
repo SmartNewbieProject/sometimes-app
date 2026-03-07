@@ -92,7 +92,7 @@ function useUniversityHook() {
 			isActuallySearching,
 		);
 		return sorted;
-	}, [univs, trigger, isLoading, isActuallySearching]);
+	}, [univs]);
 
 	const titleOpacity = useSharedValue(0);
 	const containerTranslateY = useSharedValue(0);
@@ -111,8 +111,6 @@ function useUniversityHook() {
 		opacity: listOpacity.value,
 		transform: [{ translateY: listTranslateY.value }],
 	}));
-
-	const selectedUnivObj = filteredUniv?.find((item) => item.id === selectedUniv);
 
 	const handleFocus = () => {
 		if (!isFocused) {
@@ -161,6 +159,10 @@ function useUniversityHook() {
 		if (!selectedUniv) {
 			return;
 		}
+		const univObj = filteredUniv?.find((item) => item.id === selectedUniv);
+		if (!univObj) {
+			return;
+		}
 		trackSignupEvent('next_button_click', 'to_university_details');
 		updateForm({
 			...userForm,
@@ -172,11 +174,9 @@ function useUniversityHook() {
 			auth_method: authMethod,
 			env: process.env.EXPO_PUBLIC_TRACKING_MODE,
 		});
-		if (selectedUnivObj) {
-			updateRegions([selectedUnivObj.region]);
-			updateUnivTitle(selectedUnivObj.name);
-			fallback();
-		}
+		updateRegions([univObj.region]);
+		updateUnivTitle(univObj.name);
+		fallback();
 	};
 
 	useEffect(() => {

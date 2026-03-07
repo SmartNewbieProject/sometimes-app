@@ -30,18 +30,18 @@ export type UniversitiesByRegion = {
 	name: string;
 	code: string;
 	region: RegionCode;
-	en: string;
-	foundation: string;
+	en: string | null;
+	foundation?: 'NATIONAL' | 'PUBLIC' | 'PRIVATE';
 }[];
 
 export type UniversityCard = {
 	logoUrl: string;
-	universityType: string;
+	universityType: 'NATIONAL' | 'PUBLIC' | 'PRIVATE' | undefined;
 	area: string | undefined;
 	id: string;
 	name: string;
 	code: string;
 	region: RegionCode;
-	en: string;
-	foundation: string;
+	en: string | null;
+	foundation?: 'NATIONAL' | 'PUBLIC' | 'PRIVATE';
 };

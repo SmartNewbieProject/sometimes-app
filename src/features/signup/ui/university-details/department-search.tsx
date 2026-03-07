@@ -1,5 +1,6 @@
 import Loading from '@/src/features/loading';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
+import { useDebounce } from '@/src/shared/hooks/use-debounce';
 import { useToast } from '@/src/shared/hooks/use-toast';
 import { BottomSheetPicker } from '@/src/shared/ui/bottom-sheet-picker';
 import type { BottomSheetPickerOption } from '@/src/shared/ui/bottom-sheet-picker';
@@ -7,11 +8,15 @@ import { Text } from '@/src/shared/ui/text';
 import BottomArrowIcon from '@assets/icons/bottom-arrow.svg';
 import type { AxiosError } from 'axios';
 import { useGlobalSearchParams } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { useSignupProgress } from '../../hooks';
-import { useCreateDepartmentMutation, useDepartmentQuery } from '../../queries';
+import {
+	useCreateDepartmentMutation,
+	useDepartmentQuery,
+	useSearchDepartmentsQuery,
+} from '../../queries';
 
 const MIN_TOUCH_TARGET = 48;
 const CREATE_NEW_VALUE = '__CREATE_NEW__';
@@ -27,28 +32,41 @@ function DepartmentSearch() {
 	const [isVisible, setIsVisible] = useState(false);
 	const [isInlineMode, setIsInlineMode] = useState(false);
 	const [inlineDeptName, setInlineDeptName] = useState('');
+	const [pickerSearchQuery, setPickerSearchQuery] = useState('');
+	const debouncedSearchQuery = useDebounce(pickerSearchQuery, 300);
 
 	const { universityId } = useGlobalSearchParams<{
 		universityId: string;
 	}>();
 	const effectiveUniversityId = universityId ?? formUniversityId;
 	const { data: departments = [], isLoading } = useDepartmentQuery(effectiveUniversityId);
+	const {
+		data: searchResults = [],
+		isFetching: isSearchFetching,
+	} = useSearchDepartmentsQuery(debouncedSearchQuery);
 	const createDepartmentMutation = useCreateDepartmentMutation();
 
-	const departmentOptions: BottomSheetPickerOption[] = useMemo(
+	const departmentOptions: BottomSheetPickerOption[] = useMemo(() => {
+		if (debouncedSearchQuery.trim()) {
+			return searchResults.map((item) => ({
+				label: item.name,
+				value: item.name,
+				subtitle: item.universityName,
+			}));
+		}
+		return departments
+			.filter((dept): dept is string => typeof dept === 'string' && dept.length > 0)
+			.map((dept) => ({ label: dept, value: dept }));
+	}, [debouncedSearchQuery, searchResults, departments]);
+
+	const pinnedOptions: BottomSheetPickerOption[] = useMemo(
 		() => [
-			...departments
-				.filter((dept): dept is string => typeof dept === 'string' && dept.length > 0)
-				.map((dept) => ({
-					label: dept,
-					value: dept,
-				})),
 			{
 				label: t('features.signup.ui.department_direct_input_option'),
 				value: CREATE_NEW_VALUE,
 			},
 		],
-		[departments, t],
+		[t],
 	);
 
 	const handleSelect = (value: string) => {
@@ -89,6 +107,69 @@ function DepartmentSearch() {
 		setIsInlineMode(false);
 		setInlineDeptName('');
 	};
+
+	const handleEmptyRegister = useCallback(
+		async (name: string) => {
+			if (!name.trim() || !effectiveUniversityId) return;
+
+			try {
+				await createDepartmentMutation.mutateAsync({
+					universityId: effectiveUniversityId,
+					name: name.trim(),
+				});
+				updateForm({ departmentName: name.trim() });
+				setIsVisible(false);
+			} catch (error) {
+				const axiosError = error as AxiosError;
+				if (axiosError?.response?.status === 409) {
+					updateForm({ departmentName: name.trim() });
+					setIsVisible(false);
+				} else if (axiosError?.response?.status === 429) {
+					emitToast(t('features.signup.ui.department_direct_rate_limit'));
+				} else {
+					emitToast(t('features.signup.ui.department_direct_error'));
+				}
+			}
+		},
+		[effectiveUniversityId, createDepartmentMutation, updateForm, emitToast, t],
+	);
+
+	const renderEmpty = useCallback(
+		(query: string) => {
+			if (!query.trim()) {
+				return (
+					<Text size="md" textColor="muted" style={styles.emptyText}>
+						{t('features.signup.ui.department_search_empty')}
+					</Text>
+				);
+			}
+			return (
+				<View style={styles.emptyRegisterContainer}>
+					<Text size="md" textColor="muted" style={styles.emptyMessageText}>
+						{t('features.signup.ui.department_search_empty_with_query', { query })}
+					</Text>
+					<Pressable
+						onPress={() => handleEmptyRegister(query)}
+						disabled={createDepartmentMutation.isPending}
+						style={({ pressed }) => [
+							styles.emptyRegisterButton,
+							createDepartmentMutation.isPending && styles.submitButtonDisabled,
+							pressed && styles.buttonPressed,
+						]}
+					>
+						{createDepartmentMutation.isPending ? (
+							<ActivityIndicator color="#FFFFFF" size="small" />
+						) : (
+							<Text size="sm" weight="semibold" style={styles.emptyRegisterButtonText}>
+								{t('features.signup.ui.department_empty_register', { query })}
+							</Text>
+						)}
+					</Pressable>
+				</View>
+			);
+		},
+		[t, createDepartmentMutation.isPending, handleEmptyRegister],
+	);
 
 	const hasValue = !!departmentName;
 
@@ -171,7 +252,10 @@ function DepartmentSearch() {
 				searchable={true}
 				searchPlaceholder={t('features.signup.ui.department_search_placeholder')}
 				emptyText={t('features.signup.ui.department_search_empty')}
-				loading={isLoading}
+				loading={isLoading || (debouncedSearchQuery.trim().length > 0 && isSearchFetching)}
+				pinnedOptions={pinnedOptions}
+				renderEmpty={renderEmpty}
+				onSearchChange={setPickerSearchQuery}
 			/>
 		</View>
 	);
@@ -252,6 +336,29 @@ const styles = StyleSheet.create({
 	},
 	buttonPressed: {
 		opacity: 0.85,
+	},
+	emptyRegisterContainer: {
+		alignItems: 'center',
+		gap: 16,
+		paddingHorizontal: 20,
+	},
+	emptyMessageText: {
+		textAlign: 'center',
+	},
+	emptyText: {
+		textAlign: 'center',
+	},
+	emptyRegisterButton: {
+		minHeight: 44,
+		borderRadius: 12,
+		backgroundColor: semanticColors.brand.primary,
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingHorizontal: 24,
+		paddingVertical: 12,
+	},
+	emptyRegisterButtonText: {
+		color: '#FFFFFF',
 	},
 });
 

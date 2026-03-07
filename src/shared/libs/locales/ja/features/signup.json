@@ -111,6 +111,8 @@
 		"department_search_placeholder": "学科を入力してください",
 		"department_search_title": "学科を選択",
 		"department_search_empty": "検索結果がありません",
+		"department_search_empty_with_query": "「{{query}}」の検索結果がありません",
+		"department_empty_register": "「{{query}}」を学科として登録する",
 		"department_direct_input_option": "学科が見つかりません（直接入力）",
 		"department_direct_input_placeholder": "学科名を入力してください",
 		"department_direct_cancel": "キャンセル",

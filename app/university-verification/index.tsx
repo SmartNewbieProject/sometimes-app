@@ -5,14 +5,17 @@ import { ScrollView, TouchableOpacity, View, Pressable, Linking, StyleSheet } fr
 import ChevronLeftIcon from '@/assets/icons/chevron-left.svg';
 import { useModal } from '@/src/shared/hooks/use-modal';
 import { tryCatch } from '@/src/shared/libs';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	sendEmailVerification,
 	verifyEmailCode,
 	getProfileId,
+	getUniversityVerificationStatus,
 	MESSAGES,
 	UI_CONSTANTS,
 } from '@/src/features/university-verification';
+import { useInvalidateFreeRewardStatus } from '@/src/features/free-reward';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import colors from '@/src/shared/constants/colors';
@@ -20,11 +23,29 @@ import colors from '@/src/shared/constants/colors';
 export default function UniversityVerificationScreen() {
 	const { t } = useTranslation();
 	const { showModal } = useModal();
+	const invalidateFreeRewardStatus = useInvalidateFreeRewardStatus();
+	const queryClient = useQueryClient();
 
 	const [email, setEmail] = useState('');
 	const [verificationCode, setVerificationCode] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [isVerified, setIsVerified] = useState(false);
+	const [isAlreadyVerified, setIsAlreadyVerified] = useState(false);
+
+	useEffect(() => {
+		const checkExistingVerification = async () => {
+			const profileId = await getProfileId().catch(() => null);
+			if (!profileId) return;
+			const status = await getUniversityVerificationStatus(profileId).catch(() => null);
+			if (status?.verifiedAt) {
+				const verifiedYear = new Date(status.verifiedAt).getFullYear();
+				if (verifiedYear === new Date().getFullYear()) {
+					setIsAlreadyVerified(true);
+				}
+			}
+		};
+		checkExistingVerification();
+	}, []);
 
 	const handleEmailVerification = async () => {
 		if (!email.trim()) {
@@ -91,6 +112,9 @@ export default function UniversityVerificationScreen() {
 				await verifyEmailCode(email, verificationCode, profileId);
 
 				setIsVerified(true);
+				invalidateFreeRewardStatus();
+				queryClient.invalidateQueries({ queryKey: ['gem-mission', 'university-verification'] });
+				queryClient.invalidateQueries({ queryKey: ['gem', 'current'] });
 				showModal({
 					title: t('apps.university-verification.confirm_button'),
 					children: t('apps.university-verification.messages.verification_success'),
@@ -137,6 +161,40 @@ export default function UniversityVerificationScreen() {
 
 		router.push('/university-verification/success');
 	};
+
+	if (isAlreadyVerified) {
+		return (
+			<View style={styles.container}>
+				<PalePurpleGradient />
+				<Header.Container>
+					<Header.LeftContent>
+						<Pressable onPress={() => router.back()} style={styles.backButton}>
+							<ChevronLeftIcon width={24} height={24} />
+						</Pressable>
+					</Header.LeftContent>
+					<Header.CenterContent>
+						<Text size="lg" weight="regular" textColor="black">
+							{t('apps.university-verification.header_title')}
+						</Text>
+					</Header.CenterContent>
+					<Header.RightContent />
+				</Header.Container>
+				<View style={styles.alreadyVerifiedContainer}>
+					<Text size="xl" weight="semibold" textColor="black" style={styles.alreadyVerifiedTitle}>
+						✓ 이미 인증 완료
+					</Text>
+					<Text size="sm" weight="regular" style={styles.alreadyVerifiedDesc}>
+						이미 대학 이메일 인증이 완료되었어요.
+					</Text>
+					<TouchableOpacity onPress={() => router.back()} style={styles.confirmButton}>
+						<Text size="md" weight="regular" textColor="white">
+							돌아가기
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
+		);
+	}
 
 	return (
 		<View style={styles.container}>
@@ -343,5 +401,20 @@ const styles = StyleSheet.create({
 		height: 50,
 		justifyContent: 'center',
 		alignItems: 'center',
+	},
+	alreadyVerifiedContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		paddingHorizontal: 20,
+		gap: 12,
+	},
+	alreadyVerifiedTitle: {
+		marginBottom: 4,
+	},
+	alreadyVerifiedDesc: {
+		color: colors.gray,
+		marginBottom: 24,
+		textAlign: 'center',
 	},
 });

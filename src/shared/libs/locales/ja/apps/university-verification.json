@@ -27,6 +27,7 @@
 	"success": {
 		"congratulations": "おめでとうございます！",
 		"verification_complete": "大学認証が完了しました！",
+		"gems_reward": "宝石{{count}}個を受け取りました！",
 		"find_ideal_type": "これから好みのお相手を探しましょう",
 		"go_to_find_ideal_type": "好みの相手を探しに行く →"
 	},

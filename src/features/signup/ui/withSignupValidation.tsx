@@ -107,10 +107,10 @@ export function withSignupValidation<P extends object>(
 			if (currentStep !== SignupSteps.UNIVERSITY && Object.keys(form).length === 0) {
 				hasValidatedRef.current = true;
 				showModal({
-					title: t('shareds.services.common.알림'),
+					title: t('common.알림'),
 					children: t('features.signup.ui.validators.validation_messages.restart_signup'),
 					primaryButton: {
-						text: t('shareds.services.common.확인'),
+						text: t('common.확인'),
 						onClick: () => {
 							// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 							router.navigate('/auth/login' as any);
@@ -133,10 +133,10 @@ export function withSignupValidation<P extends object>(
 				const message = getDetailedMessage(missingFields, currentStep);
 
 				showModal({
-					title: t('shareds.services.common.알림'),
+					title: t('common.알림'),
 					children: message,
 					primaryButton: {
-						text: t('shareds.services.common.확인'),
+						text: t('common.확인'),
 						onClick: () => {
 							// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 							router.navigate(redirectRoute as any);

@@ -112,6 +112,8 @@
 		"department_search_placeholder": "학과를 입력해주세요",
 		"department_search_title": "학과 선택",
 		"department_search_empty": "검색 결과가 없습니다",
+		"department_search_empty_with_query": "'{{query}}' 검색 결과가 없습니다",
+		"department_empty_register": "'{{query}}' 학과로 등록하기",
 		"department_direct_input_option": "내 학과가 없어요 (직접 입력)",
 		"department_direct_input_placeholder": "학과 이름을 입력해주세요",
 		"department_direct_cancel": "취소",

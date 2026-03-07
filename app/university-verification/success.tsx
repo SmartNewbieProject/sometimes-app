@@ -1,12 +1,15 @@
 import ChevronLeftIcon from "@/assets/icons/chevron-left.svg";
 import { useTranslation } from "react-i18next";
 import { Header, PalePurpleGradient, Text } from "@/src/shared/ui";
+import { useFreeRewardStatus } from "@/src/features/free-reward";
 import { router } from "expo-router";
 import { Image, Pressable, TouchableOpacity, View, ScrollView, StyleSheet } from "react-native";
 import { semanticColors } from "@/src/shared/constants/semantic-colors";
 
 export default function UniversityVerificationSuccess() {
   const { t } = useTranslation();
+  const { data: rewardStatus } = useFreeRewardStatus();
+  const gemsAmount = rewardStatus?.rewards.universityVerification.gemsAmount ?? 5;
   const handleGoToProfile = () => {
     router.push("/home");
   };
@@ -49,7 +52,7 @@ export default function UniversityVerificationSuccess() {
             </Text>
 
             <Text size="sm" weight="normal" style={[styles.disabledText, styles.textMarginBottom1]}>
-              구슬 9개를 받았어요!
+              {t("apps.university-verification.success.gems_reward", { count: gemsAmount })}
             </Text>
             <Text size="sm" weight="normal" style={[styles.disabledText, styles.textMarginBottom1]}>
               이제 안심하고 시작해볼까요?

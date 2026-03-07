@@ -27,6 +27,7 @@
 	"success": {
 		"congratulations": "축하드려요!",
 		"verification_complete": "대학 인증이 완료되었어요!",
+		"gems_reward": "구슬 {{count}}개를 받았어요!",
 		"find_ideal_type": "이제 당신의 이상형을 만나보게 만나보세요",
 		"go_to_find_ideal_type": "이상형 찾으러 가기 →"
 	},

@@ -15,15 +15,25 @@ import { withSignupValidation } from '@/src/features/signup/ui/withSignupValidat
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import { useKeyboarding } from '@/src/shared/hooks';
 import { useMixpanel } from '@/src/shared/hooks/use-mixpanel';
+import { useModal } from '@/src/shared/hooks/use-modal';
 import { mixpanelAdapter } from '@/src/shared/libs/mixpanel';
 import { PalePurpleGradient, Show } from '@/src/shared/ui';
-import HelpIcon from '@assets/icons/help.svg';
 import SearchIcon from '@assets/icons/search.svg';
 import Loading from '@features/loading';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BackHandler, Text as RNText, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import {
+	BackHandler,
+	Keyboard,
+	Pressable,
+	Text as RNText,
+	ScrollView,
+	StyleSheet,
+	TextInput,
+	View,
+} from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 function UniversityPage() {
@@ -32,7 +42,6 @@ function UniversityPage() {
 	const hasTrackedView = useRef(false);
 	const {
 		searchText,
-		setSearchText,
 		filteredUniv,
 		handleClickUniv,
 		trigger,
@@ -54,6 +63,7 @@ function UniversityPage() {
 	const currentLocale = i18n.language;
 	const country = currentLocale?.startsWith('ja') ? 'jp' : 'kr';
 	const { isKeyboardVisible } = useKeyboarding();
+	const { showModal, hideModal } = useModal();
 
 	const searchTipAnimatedStyle = useAnimatedStyle(() => ({
 		opacity: withTiming(isKeyboardVisible ? 0 : 1, { duration: 200 }),
@@ -78,27 +88,43 @@ function UniversityPage() {
 		onboardingEvents.trackUniversityVerificationStarted();
 	}, [onboardingEvents]);
 
-	const handleBackPress = () => {
-		onBackPress(() => {
-			router.navigate('/auth/login');
+	const handleBackPress = useCallback(() => {
+		return onBackPress(() => {
+			showModal({
+				title: '회원가입을 중단하시겠습니까?',
+				children: (
+					<RNText style={{ textAlign: 'center', color: semanticColors.text.secondary }}>
+						로그인 화면으로 이동하면 다시 본인인증을 진행해야 합니다.
+					</RNText>
+				),
+				primaryButton: {
+					text: '이동',
+					onClick: () => {
+						hideModal();
+						router.navigate('/auth/login');
+					},
+				},
+				secondaryButton: {
+					text: '취소',
+					onClick: hideModal,
+				},
+				});
 		});
-	};
-	const handleNext = () => {
-		onNext(() => {
-			// 대학 인증 완료 이벤트 추적
-			onboardingEvents.trackUniversityVerificationCompleted('search_selection');
-			router.push(`/auth/signup/university-cluster?universityId=${selectedUniv}`);
-		});
-	};
+	}, [hideModal, onBackPress, router, showModal]);
+
+		const handleNext = () => {
+			onNext(() => {
+				// 대학 인증 완료 이벤트 추적
+				onboardingEvents.trackUniversityVerificationCompleted('search_selection');
+				router.push(`/auth/signup/university-cluster?universityId=${selectedUniv}`);
+				return true;
+			});
+		};
 
 	useEffect(() => {
-		const subscription = BackHandler.addEventListener('hardwareBackPress', () =>
-			onBackPress(() => {
-				router.navigate('/auth/login');
-			}),
-		);
+		const subscription = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 		return () => subscription.remove();
-	}, []);
+	}, [handleBackPress]);
 
 	console.log('[UniversityPage] Render:', {
 		trigger,
@@ -114,7 +140,7 @@ function UniversityPage() {
 			<View style={[styles.container]}>
 				{!trigger && <UniversityLogos logoSize={64} country={country} />}
 
-				<Animated.View style={[styles.titleContainer, animatedTitleStyle]}>
+				<Animated.View style={[styles.titleContainer, animatedTitleStyle]} pointerEvents="none">
 					<RNText style={styles.welcome}>{t('apps.auth.sign_up.university.welcome')}</RNText>
 					<RNText style={styles.title}>{t('apps.auth.sign_up.university.title')}</RNText>
 				</Animated.View>
@@ -165,7 +191,12 @@ function UniversityPage() {
 								<ScrollView
 									style={styles.scrollView}
 									showsVerticalScrollIndicator={false}
-									contentContainerStyle={styles.scrollContent}
+									contentContainerStyle={[
+										styles.scrollContent,
+										isKeyboardVisible && styles.scrollContentKeyboardVisible,
+									]}
+									keyboardDismissMode="on-drag"
+									keyboardShouldPersistTaps="always"
 								>
 									{filteredUniv?.length === 0 && searchText.length > 0 ? (
 										<UniversityEmptyState
@@ -177,24 +208,45 @@ function UniversityPage() {
 											}}
 										/>
 									) : (
-										filteredUniv?.map((item) => (
-											<UniversityCard
-												key={item.id}
-												item={item}
-												isSelected={selectedUniv === item.id}
-												onClick={handleClickUniv(item.id)}
-											/>
-										))
+										<>
+											{filteredUniv?.map((item) => (
+												<UniversityCard
+													key={item.id}
+													item={item}
+													isSelected={selectedUniv === item.id}
+													onClick={() => {
+														Keyboard.dismiss();
+														handleClickUniv(item.id)();
+													}}
+												/>
+											))}
+											<Pressable
+												style={styles.noUnivLink}
+												onPress={() => {
+													router.push(
+														`/auth/signup/register-university?name=${encodeURIComponent(searchText)}`,
+													);
+												}}
+											>
+												<RNText style={styles.noUnivText}>
+													{t('apps.auth.sign_up.university.no_university_link')}
+												</RNText>
+											</Pressable>
+										</>
 									)}
 								</ScrollView>
 							</>
 						)}
 
-						<Animated.View style={[styles.bottomContainer, bottomButtonsAnimatedStyle]}>
-							<View style={styles.tipContainer}>
-								<HelpIcon width={20} height={20} />
-								<RNText style={styles.tip}>{t('apps.auth.sign_up.university.tip')}</RNText>
-							</View>
+						<LinearGradient
+							colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0.92)']}
+							style={styles.fadeGradient}
+							pointerEvents="none"
+						/>
+						<Animated.View
+							pointerEvents={isKeyboardVisible ? 'none' : 'auto'}
+							style={[styles.bottomContainer, bottomButtonsAnimatedStyle]}
+						>
 							<TwoButtons
 								disabledNext={!selectedUniv}
 								onClickNext={handleNext}
@@ -262,7 +314,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: '100%',
 		marginTop: 24,
-		height: '100%',
 	},
 	scrollView: {
 		flex: 1,
@@ -270,6 +321,9 @@ const styles = StyleSheet.create({
 	},
 	scrollContent: {
 		paddingBottom: 120,
+	},
+	scrollContentKeyboardVisible: {
+		paddingBottom: 24,
 	},
 	bottomContainer: {
 		position: 'absolute',
@@ -279,19 +333,12 @@ const styles = StyleSheet.create({
 		paddingTop: 16,
 		backgroundColor: 'transparent',
 	},
-	tipContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		gap: 5,
-		marginBottom: 16,
-	},
-	tip: {
-		color: semanticColors.text.disabled,
-		fontWeight: '300',
-		fontFamily: 'Pretendard-Thin',
-		fontSize: 13,
-		lineHeight: 20,
+	fadeGradient: {
+		position: 'absolute',
+		bottom: 0,
+		left: -16,
+		right: -16,
+		height: 120,
 	},
 	welcome: {
 		fontSize: 18,
@@ -299,5 +346,16 @@ const styles = StyleSheet.create({
 		fontFamily: 'Pretendard-SemiBold',
 		marginBottom: 8,
 		textAlign: 'center',
+	},
+	noUnivLink: {
+		alignItems: 'center',
+		paddingVertical: 16,
+		marginBottom: 8,
+	},
+	noUnivText: {
+		fontSize: 13,
+		color: semanticColors.text.muted,
+		fontFamily: 'Pretendard-Regular',
+		textDecorationLine: 'underline',
 	},
 });

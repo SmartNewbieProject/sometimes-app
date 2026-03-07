@@ -1,6 +1,7 @@
 import { DefaultLayout, TwoButtons } from '@/src/features/layout/ui';
 import { useSignupProgress } from '@/src/features/signup/hooks';
 import { useClusterQuery } from '@/src/features/signup/queries';
+import type { UniversityCard as UniversityCardType } from '@/src/features/signup/queries/use-universities';
 import UniversityCard from '@/src/features/signup/ui/university/university-card';
 import { semanticColors } from '@/src/shared/constants/semantic-colors';
 import PinIcon from '@assets/icons/pin.svg';
@@ -95,15 +96,24 @@ function UniversityCluster() {
 							</Text>
 						</View>
 					</View>
-					<FlashList
-						data={sortedData}
-						renderItem={({ item }) => (
-							<UniversityCard onClick={() => {}} isSelected={false} item={item} />
-						)}
-						estimatedItemSize={72}
-						contentContainerStyle={{ paddingBottom: 160 }}
-						style={styles.univContainer}
-					/>
+						<FlashList
+							data={sortedData}
+							renderItem={({ item }) => (
+								<UniversityCard
+									onClick={() => {}}
+									isSelected={false}
+									item={{
+										...item,
+										area: item.region,
+										foundation: item.foundation as UniversityCardType['foundation'],
+										en: null,
+										universityType: item.foundation as UniversityCardType['universityType'],
+									} as UniversityCardType}
+								/>
+							)}
+							contentContainerStyle={{ paddingBottom: 160 }}
+							style={styles.univContainer}
+						/>
 				</>
 			) : (
 				<View style={styles.pendingContainer}>

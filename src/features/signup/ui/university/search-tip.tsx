@@ -10,13 +10,11 @@ interface SearchTipProps {
 export function SearchTip({ title, description }: SearchTipProps) {
 	return (
 		<View style={styles.container}>
-			<View style={styles.iconContainer}>
-				<HelpIcon width={20} height={20} color={semanticColors.brand.primary} />
-			</View>
-			<View style={styles.textContainer}>
-				<Text style={styles.title}>{title}</Text>
+			<HelpIcon width={14} height={14} color={semanticColors.brand.primary} />
+			<Text style={styles.text}>
+				<Text style={styles.title}>{title} </Text>
 				<Text style={styles.description}>{description}</Text>
-			</View>
+			</Text>
 		</View>
 	);
 }
@@ -24,32 +22,28 @@ export function SearchTip({ title, description }: SearchTipProps) {
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
-		alignItems: 'flex-start',
+		alignItems: 'center',
+		gap: 6,
+		paddingVertical: 8,
+		paddingHorizontal: 10,
+		marginBottom: 8,
 		backgroundColor: semanticColors.surface.secondary,
-		borderRadius: 12,
-		padding: 16,
-		marginBottom: 16,
+		borderRadius: 8,
 		borderWidth: 1,
 		borderColor: semanticColors.brand.primary,
 	},
-	iconContainer: {
-		marginRight: 12,
-		marginTop: 2,
-	},
-	textContainer: {
+	text: {
 		flex: 1,
 	},
 	title: {
-		fontSize: 14,
+		fontSize: 12,
 		fontWeight: '600',
 		color: semanticColors.text.primary,
 		fontFamily: 'Pretendard-SemiBold',
-		marginBottom: 4,
 	},
 	description: {
-		fontSize: 13,
+		fontSize: 12,
 		color: semanticColors.text.secondary,
 		fontFamily: 'Pretendard-Regular',
-		lineHeight: 18,
 	},
 });
